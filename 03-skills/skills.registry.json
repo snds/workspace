@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 228,
+    "total": 233,
     "by_tier": {
       "cross-cutting": 23,
       "foundation": 21,
       "hub": 40,
-      "spoke": 144
+      "spoke": 149
     }
   },
   "skills": {
@@ -1627,6 +1627,38 @@
       ],
       "hash": "sha256:63da47c443bc705def52e467fe80c652aedefbf5901dbeae5aa27ea8aa5e6091"
     },
+    "game-scale-traversal": {
+      "path": "03-skills/game-scale-traversal/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "lead-game-developer",
+      "prerequisites": [
+        "lead-game-developer"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "scale traversal",
+        "floating origin",
+        "camera relative rendering",
+        "logarithmic depth",
+        "reversed-z",
+        "z-fighting",
+        "lod",
+        "impostor",
+        "powers of ten",
+        "galaxy zoom",
+        "flythrough",
+        "space camera",
+        "double precision",
+        "level of detail"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:5734cc11a9b6666abd789ff73d6d410e875c3b943536736660063668b03dad78"
+    },
     "gd-brand-identity": {
       "path": "03-skills/gd-brand-identity/SKILL.md",
       "tier": "spoke",
@@ -2133,7 +2165,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6f1cda2f646a46f106b0639326774f5a4a17494b97fad8f780ccd6a17b73b87f"
+      "hash": "sha256:974acaa75d7333cf6104d0580c81aaa554e686184e90e3a025512dfd7f165dc0"
     },
     "infod-dashboard-patterns": {
       "path": "03-skills/infod-dashboard-patterns/SKILL.md",
@@ -2406,7 +2438,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6e49a61871fbc7914986014677169807a411c3a7a8d163c75c9d5d66d782519f"
+      "hash": "sha256:16c8679d2b61c8dfdaf077ee1cd271f351782a142b411d58beae48cad3c549b9"
     },
     "lead-graphic-designer": {
       "path": "03-skills/lead-graphic-designer/SKILL.md",
@@ -2935,7 +2967,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:7d861934f2fcd1f4a8418550a9b026eb0a64367108ecc6db11582676da3c485b"
+      "hash": "sha256:c956bae1ed8ba6c5738e9cd8658779cc8f3233e0de0132ef47a406017dc77b3d"
     },
     "motion-accessibility": {
       "path": "03-skills/motion-accessibility/SKILL.md",
@@ -3246,6 +3278,71 @@
       ],
       "hash": "sha256:868fa19ae2aa6c534d5b5f654b6280ac89890752115f9e1f438909397551d241"
     },
+    "sci-astro-objects": {
+      "path": "03-skills/sci-astro-objects/SKILL.md",
+      "tier": "spoke",
+      "domain": "science",
+      "hub": "science-foundations",
+      "prerequisites": [
+        "science-foundations"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "star",
+        "stellar classification",
+        "color temperature",
+        "hr diagram",
+        "binary star",
+        "black hole",
+        "accretion disk",
+        "gravitational lensing",
+        "neutron star",
+        "pulsar",
+        "gas giant",
+        "exoplanet",
+        "blackbody",
+        "relativistic beaming"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:1d26fd59e25c98e8325431418666d42210bec2c175e027deb1c3c0f207cecaa2"
+    },
+    "sci-astro-structures": {
+      "path": "03-skills/sci-astro-structures/SKILL.md",
+      "tier": "spoke",
+      "domain": "science",
+      "hub": "science-foundations",
+      "prerequisites": [
+        "science-foundations"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "nebula",
+        "emission nebula",
+        "reflection nebula",
+        "dark nebula",
+        "planetary nebula",
+        "supernova remnant",
+        "galaxy",
+        "spiral arm",
+        "dust lane",
+        "interstellar medium",
+        "star forming",
+        "h-alpha",
+        "cosmic scale",
+        "parsec",
+        "light year"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:a326d7c48273709b626ec64afca2d390aadd8aa82e504ee5797a20e728fc9cf6"
+    },
     "sci-linear-algebra": {
       "path": "03-skills/sci-linear-algebra/SKILL.md",
       "tier": "foundation",
@@ -3392,7 +3489,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:c9b88f457738d3c699606d9a4ab4450e5b8bc1406b89150c0767eb3dd85dbf2e"
+      "hash": "sha256:9589f5d23b2cb3e0b6e6995f1c5e4b2bce410e53ac3c8ade803fcb1ace18d80b"
     },
     "sec-appsec-owasp": {
       "path": "03-skills/sec-appsec-owasp/SKILL.md",
@@ -3573,7 +3670,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:4f428906a7d3af6e0531ae40f1998c44b7e02ed50d6bb40e4dd7b255c9c5bb09"
+      "hash": "sha256:1c46b54c056da275fda848bb46f9e51eac1f479aba9c9f5496431b2e35963f23"
     },
     "type": {
       "path": "03-skills/type/SKILL.md",
@@ -4034,6 +4131,71 @@
         "*"
       ],
       "hash": "sha256:7e7123158cd8b56403381fe8fb957c299759745d861e8328d4636acff76002e2"
+    },
+    "vfx-particle-systems": {
+      "path": "03-skills/vfx-particle-systems/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "threejs-vfx-atmosphere",
+      "prerequisites": [
+        "threejs-vfx-atmosphere",
+        "img-vfx"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "particle system",
+        "gpu particles",
+        "compute particles",
+        "transform feedback",
+        "gpgpu",
+        "curl noise",
+        "flow field",
+        "instancing",
+        "billboard",
+        "point cloud",
+        "soft particles",
+        "sprite",
+        "star field",
+        "millions of particles"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:2fefb92db7cdb733d080c18bcd833f695657e82b76a4531c0e2c0df198af1564"
+    },
+    "vfx-volumetrics": {
+      "path": "03-skills/vfx-volumetrics/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "threejs-vfx-atmosphere",
+      "prerequisites": [
+        "threejs-vfx-atmosphere",
+        "img-vfx"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "volumetric",
+        "raymarching",
+        "density field",
+        "participating media",
+        "beer-lambert",
+        "scattering",
+        "phase function",
+        "froxel",
+        "volumetric fog",
+        "god rays",
+        "nebula rendering",
+        "3d texture",
+        "ray march"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:6a180bf2821dc9a9400480a2ccafe2da69fb621a4e3004b0d2e61258954faa8d"
     },
     "visual-qa-accessibility": {
       "path": "03-skills/visual-qa-accessibility/SKILL.md",
@@ -4650,6 +4812,12 @@
     "game-foundations": [
       "game-foundations"
     ],
+    "game-scale-traversal": [
+      "game-foundations",
+      "science-foundations",
+      "lead-game-developer",
+      "game-scale-traversal"
+    ],
     "gd-brand-identity": [
       "design-foundations",
       "lead-graphic-designer",
@@ -5035,6 +5203,14 @@
       "design-foundations",
       "redesign"
     ],
+    "sci-astro-objects": [
+      "science-foundations",
+      "sci-astro-objects"
+    ],
+    "sci-astro-structures": [
+      "science-foundations",
+      "sci-astro-structures"
+    ],
     "sci-linear-algebra": [
       "science-foundations",
       "sci-linear-algebra"
@@ -5228,6 +5404,24 @@
       "design-foundations",
       "lead-type-designer",
       "variable-icon-font-architect"
+    ],
+    "vfx-particle-systems": [
+      "game-foundations",
+      "imaging-foundations",
+      "img-vfx",
+      "science-foundations",
+      "lead-game-developer",
+      "threejs-vfx-atmosphere",
+      "vfx-particle-systems"
+    ],
+    "vfx-volumetrics": [
+      "game-foundations",
+      "imaging-foundations",
+      "img-vfx",
+      "science-foundations",
+      "lead-game-developer",
+      "threejs-vfx-atmosphere",
+      "vfx-volumetrics"
     ],
     "visual-qa-accessibility": [
       "lead-visual-qa",

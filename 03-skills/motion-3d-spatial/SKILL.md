@@ -438,3 +438,4 @@ const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
 ## Related
 - foundation → [[imaging-foundations]]
 - hub → [[lead-motion-designer]]
+- peer ↔ [[game-scale-traversal]]

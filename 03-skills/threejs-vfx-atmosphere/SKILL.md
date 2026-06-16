@@ -176,3 +176,4 @@ See `/references/particle-and-atmosphere.md` for:
 ## Related
 - foundation → [[imaging-foundations]]
 - hub → [[lead-game-developer]]
+- spoke → [[vfx-particle-systems]] · [[vfx-volumetrics]]

@@ -49,4 +49,5 @@ spectacle.
 
 ## Related
 - hub → [[imaging-foundations]]
+- applies-in ← [[vfx-particle-systems]] · [[vfx-volumetrics]]
 - peer ↔ [[img-photoreal-rendering]] · [[img-cinematography]]
