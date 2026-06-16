@@ -9,14 +9,13 @@ What it does, in order:
   1. Detect OS, hostname, existing tooling.
   2. Install package manager if missing (Homebrew on macOS; winget assumed on Win 11).
   3. Install Claude Code, Obsidian, Git, gh (GitHub CLI).
-  4. Ensure Google Drive for Desktop is running (prompts sign-in; can't automate).
-  5. Wait for Google Drive's Claude Workspace folder to appear locally.
-  6. Clone or pull the claude-workspace-system Git repo into the workspace.
-  7. Install Obsidian community plugins from .obsidian/plugins-manifest.json.
-  8. Register this machine's hostname if unknown.
-  9. Verify: run `claude --version`, check Obsidian opens, verify git remote.
+  4. Resolve the workspace root = the checkout this script lives in (the dir containing AGENTS.md).
+     No Google Drive, no cloud-mount detection — the workspace is a plain git checkout.
+  5. Install Obsidian community plugins from .obsidian/plugins-manifest.json.
+  6. Register this machine's hostname if unknown.
+  7. Verify: run `claude --version`, check Obsidian opens, verify git remote.
 
-Idempotent. Safe to re-run. Skips what's already done.
+Run this from inside a `git clone` of the workspace. Idempotent. Safe to re-run.
 """
 
 from __future__ import annotations
@@ -35,8 +34,8 @@ from pathlib import Path
 
 # ---------- Config ----------
 
-REPO_NAME = "claude-workspace-system"
-DEFAULT_REPO_URL = os.environ.get("CLAUDE_WORKSPACE_REPO", "")  # e.g. git@github.com:you/claude-workspace-system.git
+REPO_NAME = "workspace"
+DEFAULT_REPO_URL = os.environ.get("CLAUDE_WORKSPACE_REPO", "")  # e.g. git@github.com:snds/workspace.git
 
 HOSTNAME_MAP = {
     "Voyager-2.local": "Personal MacBook Pro",
@@ -46,8 +45,8 @@ HOSTNAME_MAP = {
     "Enterprise": "Windows Desktop",
 }
 
-# Drive workspace folder name (inside "My Drive")
-DRIVE_FOLDER = "Claude Workspace"
+# Marker file that identifies the workspace root (the universal contract).
+ROOT_MARKER = "AGENTS.md"
 
 
 # ---------- Utilities ----------
@@ -126,46 +125,33 @@ def detect_machine_label() -> str:
     return HOSTNAME_MAP.get(host, f"unknown ({host})")
 
 
-def find_drive_root(os_name: str) -> Path | None:
-    """Locate the Google Drive 'My Drive/Claude Workspace' path. Returns None if not present."""
-    candidates: list[Path] = []
-    home = Path.home()
+def find_workspace_root() -> Path | None:
+    """Resolve the workspace root = nearest ancestor of this script containing AGENTS.md.
 
-    if os_name == "macos":
-        cs = home / "Library" / "CloudStorage"
-        if cs.exists():
-            for p in cs.glob("GoogleDrive-*"):
-                candidates.append(p / "My Drive" / DRIVE_FOLDER)
-
-    elif os_name == "windows":
-        for drive in ("G:", "H:", "I:", "J:"):
-            candidates.append(Path(f"{drive}/My Drive/{DRIVE_FOLDER}"))
-        candidates.append(home / "Google Drive" / "My Drive" / DRIVE_FOLDER)
-
-    elif os_name == "linux":
-        # Most Linux setups use rclone, insync, or similar. Best guess only.
-        candidates.append(home / "GoogleDrive" / "Claude Workspace")
-        candidates.append(home / "google-drive" / "Claude Workspace")
-
-    for p in candidates:
-        if p.exists() and p.is_dir():
-            return p
+    The workspace is a plain git checkout; this script lives at 00-bootstrap/setup/setup.py,
+    so the root is normally three levels up. No Google Drive / cloud-mount detection.
+    """
+    here = Path(__file__).resolve()
+    for parent in here.parents:
+        if (parent / ROOT_MARKER).is_file():
+            return parent
     return None
 
 
-def wait_for_drive(os_name: str, timeout: int = 300) -> Path:
-    """Wait for the Drive folder to appear. Useful right after Drive for Desktop sign-in."""
-    start = time.time()
-    info("Waiting for Google Drive to sync 'Claude Workspace' folder (up to 5 min)...")
-    while time.time() - start < timeout:
-        found = find_drive_root(os_name)
-        if found:
-            ok(f"Drive folder found at: {found}")
-            return found
-        time.sleep(5)
-    raise SystemExit(
-        "Timed out waiting for Drive. Ensure Google Drive for Desktop is running and signed into hello@snds.design."
-    )
+# Back-compat shims: callers may still reference the old names. Both now resolve the checkout.
+def find_drive_root(os_name: str | None = None) -> Path | None:  # noqa: ARG001
+    return find_workspace_root()
+
+
+def wait_for_drive(os_name: str | None = None, timeout: int = 0) -> Path:  # noqa: ARG001
+    root = find_workspace_root()
+    if root is None:
+        raise SystemExit(
+            "Could not resolve the workspace root. Run setup.py from inside a git clone of the "
+            "workspace (the directory tree containing AGENTS.md)."
+        )
+    ok(f"Workspace root: {root}")
+    return root
 
 
 # ---------- Package managers + tool installs ----------
@@ -256,24 +242,6 @@ def install_git_and_gh(os_name: str) -> None:
         if not have("gh"):
             winget_install("GitHub.cli", "gh")
     ok("git + gh ready")
-
-
-def install_google_drive(os_name: str) -> None:
-    step("Ensuring Google Drive for Desktop")
-    if os_name == "macos":
-        if (Path("/Applications") / "Google Drive.app").exists():
-            ok("Google Drive for Desktop installed")
-        else:
-            info("Installing Google Drive for Desktop...")
-            run(["brew", "install", "--cask", "google-drive"], check=False, capture=False)
-    elif os_name == "windows":
-        # winget Google.Drive (may not be in winget; fall back to manual)
-        run(
-            ["winget", "install", "--id", "Google.Drive", "-e", "--silent"],
-            check=False,
-            capture=False,
-        )
-    info("If first run: sign into hello@snds.design and wait for sync to start.")
 
 
 # ---------- Git repo setup ----------
@@ -478,22 +446,16 @@ def main() -> int:
     install_git_and_gh(os_name)
     install_claude_code(os_name)
     install_obsidian(os_name)
-    install_google_drive(os_name)
     if os_name == "windows":
         ensure_python3_shim_windows()
 
-    # 3. Locate Drive workspace
-    workspace = find_drive_root(os_name)
-    if not workspace:
-        print("\n\033[33mGoogle Drive 'Claude Workspace' folder not found.\033[0m")
-        print("  If Google Drive just installed: sign in with hello@snds.design, then press Enter.")
-        input("  Press Enter to retry (or Ctrl+C to abort)...")
-        workspace = wait_for_drive(os_name)
+    # 3. Resolve the workspace root = the checkout this script lives in (dir containing AGENTS.md).
+    workspace = wait_for_drive()
 
-    # 4. Git sync
+    # 4. Git sync — pull latest if this is a clone with a remote (idempotent; optional).
     repo_url = DEFAULT_REPO_URL
     if not repo_url:
-        repo_url = input(f"\n  Git remote URL for {REPO_NAME} (leave blank to skip): ").strip()
+        repo_url = input(f"\n  Git remote URL for {REPO_NAME} (blank to skip, already cloned): ").strip()
     if repo_url:
         git_clone_or_pull(workspace, repo_url)
 

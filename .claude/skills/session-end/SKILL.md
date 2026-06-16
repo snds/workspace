@@ -93,10 +93,12 @@ related_projects: [project-name]
 ---
 ```
 
-### Step 6 — Skills sync
+### Step 6 — Regenerate the skill registry
 
-Run `python 02-skills/reconcile-manifest.py` if it exists. Commit its changes
-alongside the session log. (Skip on Cursor — no runner available.)
+If any `SKILL.md` frontmatter changed this session, run
+`python3 09-tools/build-registry.py` and commit the regenerated
+`02-skills/skills.registry.json` alongside the session log. No Drive/mount sync —
+git is the source of truth.
 
 ### Step 7 — Commit + push (session changes only)
 
@@ -122,7 +124,7 @@ If `git push` fails, surface the error and stop. Don't retry.
 After the session commit, check for remaining dirty tracked files:
 
 ```bash
-cd "/Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace"
+cd "."
 git status --short
 ```
 
@@ -200,9 +202,9 @@ Omit any section with no content. Keep entries to one line.
 
 When running in Cursor (detected via surface detection or `brain.mdc` context):
 
-- **Skip Step 6** — no `reconcile-manifest.py` runner.
+- **Step 6** — run `python3 09-tools/build-registry.py` from the terminal if skills changed.
 - **Skip the SessionEnd hook reference** — hooks are Claude Code only.
-- **Use `claude-workspace`** to read/write files; use terminal for git.
+- **Read/write files via the filesystem**; use the terminal for git.
 - **Surface detection probe** still applies — run it in terminal.
 - Confirm line: `✓ Session logged and pushed — {N} files committed. Obsidian will reflect on next focus.`
 

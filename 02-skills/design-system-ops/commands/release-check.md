@@ -5,9 +5,9 @@ allowed-tools: Read, Write, Grep, Glob, Bash(find:*), Bash(wc:*)
 
 Run the component-to-release pipeline to validate a component is ready to ship.
 
-This command chains multiple skills into a single pre-release workflow. Load the agent instructions from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/component-to-release-agent.md and follow the complete pipeline.
+This command chains multiple skills into a single pre-release workflow. Load the agent instructions from 02-skills/design-system-ops/skills/component-to-release-agent.md and follow the complete pipeline.
 
-Before starting, read the reference material for each chained skill from their respective /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/*/references/ directories.
+Before starting, read the reference material for each chained skill from their respective 02-skills/design-system-ops/skills/*/references/ directories.
 
 Begin with Phase 0 (Component type decision) — classify whether this is a new component, enhancement, breaking change, or bug fix, then adjust the pipeline depth accordingly.
 

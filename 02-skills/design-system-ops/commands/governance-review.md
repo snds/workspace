@@ -5,9 +5,9 @@ allowed-tools: Read, Write, Grep, Glob
 
 Run the governance review — a quarterly assessment that produces an internal review, adoption analysis, drift summary, and stakeholder-ready brief.
 
-Load the agent instructions from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/governance-review-agent.md and follow the complete workflow.
+Load the agent instructions from 02-skills/design-system-ops/skills/governance-review-agent.md and follow the complete workflow.
 
-Before starting, read the reference material for the adoption-report and drift-detection skills from their respective /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/*/references/ directories.
+Before starting, read the reference material for the adoption-report and drift-detection skills from their respective 02-skills/design-system-ops/skills/*/references/ directories.
 
 Begin with Step 1b (Adoption measurement calibration) to establish maturity-appropriate adoption expectations.
 

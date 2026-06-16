@@ -1,21 +1,23 @@
-# Claude Workspace — Claude Code Context
+# Claude Adapter — Claude Code / Desktop
 
-_This file is auto-loaded into every Claude Code session run from this directory._
-_Keep it link-heavy. Details live in the files it points to — don't duplicate them here._
+_This is the **Claude adapter** over the universal contract in [AGENTS.md](AGENTS.md). It describes
+only how Claude executes that contract (hooks, slash commands, the session-start ritual). The contract
+itself — folder semantics, read order, the skill loading algorithm, the routing map — lives in
+AGENTS.md and is not duplicated here. Auto-loaded into every Claude Code session run from this directory._
 
 ---
 
 ## What this is
 
-The Claude Workspace is Sean's cross-device design + engineering workspace. It doubles as
-an Obsidian vault and a Claude Code working directory. The same files serve both:
+The workspace is Sean's cross-device, **portable** design + engineering environment. The git checkout
+is the source of truth; the plain filesystem is the I/O layer. The same files serve several readers:
 
 - **Obsidian** reads this folder as a vault — notes, MOCs, graph, templates.
 - **Claude Code** (you) runs from here — loads context at session start, writes changes back.
-- **Claude Desktop** reads the same files via Desktop Commander — filesystem is the shared layer.
+- **Any other agent** (Cursor, Perplexity, a generic MCP client) enters via [AGENTS.md](AGENTS.md).
 
-Three-way file-system integration, no API bridge. Whatever Obsidian sees, you see. Whatever
-you write, Obsidian sees on next focus. Whatever Claude Desktop writes via DC, everyone sees.
+Whatever Obsidian sees, you see. Whatever you write, Obsidian sees on next focus. Nothing here requires
+Google Drive or Desktop Commander — read and write ordinary files; git is the sync layer.
 
 ---
 
@@ -91,8 +93,6 @@ Use `/framework-check` to run current work through all six as a critique pass.
 
 ---
 
-## Skills
-
 ## Knowledge Vault
 
 Accumulated domain insights that outlive individual sessions: `08-knowledge/`. Distinct from
@@ -117,18 +117,20 @@ capture hard-won constraints and decisions that aren't in the skills or session 
 
 Two skill systems, intentionally separate.
 
-### `02-skills/` — the full hub/spoke network (60+ skills)
+### `02-skills/` — the full hub/spoke network
 
-Claude Desktop skills, synced via `skills-manifest.json` hash check. **You don't auto-load
-these** — they're documentation you read when a task matches. Hub skills to know about:
+The skill library. **You don't auto-load these** — load per the precedence algorithm in
+[AGENTS.md](AGENTS.md) (route by `triggers`/`description`, then load the `load_chains` ancestors
+foundation-first). The machine graph is `02-skills/skills.registry.json` (generated from frontmatter
+by `09-tools/build-registry.py` — not a Drive sync). Hub skills to know about:
 
 - **Design / DS:** `ds-advisor`, `design-engineer`, `figma-canvas-designer`, `figma-plugin-dev`
 - **Legion (game):** `legion-project` → `lead-game-designer` / `lead-art-director` / `lead-game-developer`
 - **Icon fonts:** `variable-icon-font-architect` + math/vector/geometry spokes
-- **Visual QA:** `visual-qa-toolkit` (being built) + discipline-specific spokes
-- **Workspace mgmt:** `workspace-bootstrap`, `cowork-skills-sync`
+- **Visual QA:** `visual-qa-toolkit` + discipline-specific spokes
+- **Workspace mgmt:** `workspace-bootstrap`
 
-Full list: `ls 02-skills/`. Each directory has a `SKILL.md` with frontmatter describing its trigger.
+Full list: `ls 02-skills/`. Each directory has a `SKILL.md` whose frontmatter defines its graph edges.
 
 ### `.claude/skills/` — Claude Code workflow skills
 
@@ -197,10 +199,10 @@ Resolve from `hostname` at boot. Never ask, never carry forward.
 
 ## Paths
 
-- **Workspace root (Windows):** `G:\My Drive\Claude Workspace\`
-- **Workspace root (macOS):** `~/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace`
-- **Drive account:** `hello@snds.design`
-- **Git remote:** `claude-workspace-system` on GitHub (private; system layer only)
+- **Workspace root:** the directory containing `AGENTS.md` (this checkout). Resolve by walking up to
+  it — no hardcoded paths, no cloud-drive mount detection.
+- **Git remote:** `snds/workspace` on GitHub (the canonical portable workspace). The legacy Drive-based
+  original (`claude-workspace-system`) is separate and untouched — see `06-context/memory/fact-workspace-repos.md`.
 
 ---
 

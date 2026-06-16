@@ -5,7 +5,7 @@ allowed-tools: Read, Write, Grep, Glob, Bash(find:*), Bash(wc:*), Bash(diff:*)
 
 Run the migration agent to plan and execute a design system migration.
 
-Load the migration agent from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/migration-agent.md and follow its complete workflow.
+Load the migration agent from 02-skills/design-system-ops/skills/migration-agent.md and follow its complete workflow.
 
 The user should describe the migration context: $ARGUMENTS
 

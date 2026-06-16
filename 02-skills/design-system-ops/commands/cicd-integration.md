@@ -5,10 +5,10 @@ allowed-tools: Read, Write, Grep, Glob, Bash(find:*), Bash(wc:*)
 
 Run the cicd-integration skill to generate a CI/CD pipeline configuration.
 
-Load the cicd-integration skill from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/cicd-integration/SKILL.md and follow its complete workflow.
+Load the cicd-integration skill from 02-skills/design-system-ops/skills/cicd-integration/SKILL.md and follow its complete workflow.
 
 If the user provided a file or directory path as an argument, use that as the system root: $ARGUMENTS
 
-Before starting, read the reference material specified in the skill's frontmatter from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/cicd-integration/references/.
+Before starting, read the reference material specified in the skill's frontmatter from 02-skills/design-system-ops/skills/cicd-integration/references/.
 
 Produce the full pipeline package including: workflow YAML, helper scripts, quality gates configuration, PIPELINE.md documentation, and phased roadmap.

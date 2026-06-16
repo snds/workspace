@@ -95,7 +95,7 @@ consolidated report back into the session. The SKILL.md documents both modes
 so the handoff is smooth either way.
 
 ```bash
-cd "~/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/visual-qa-toolkit"
+cd "02-skills/visual-qa-toolkit"
 python qa-suite.py --input ~/screenshots/page.png --config configs/default.yaml --output ~/qa-out
 ```
 

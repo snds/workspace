@@ -5,9 +5,9 @@ allowed-tools: Read, Grep, Glob, Bash(find:*), Bash(diff:*)
 
 Run the drift-detection skill to identify where consuming teams are diverging from the design system.
 
-Load the drift-detection skill from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/drift-detection/SKILL.md and follow its complete workflow.
+Load the drift-detection skill from 02-skills/design-system-ops/skills/drift-detection/SKILL.md and follow its complete workflow.
 
-Before starting, read the reference material specified in the skill's frontmatter from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/drift-detection/references/.
+Before starting, read the reference material specified in the skill's frontmatter from 02-skills/design-system-ops/skills/drift-detection/references/.
 
 Classify every drift instance into one of five categories: A (intentional divergence), B (version lag), C (accidental drift), D (misunderstanding), E (system gap). Apply severity weighting based on component criticality (Step 4a).
 

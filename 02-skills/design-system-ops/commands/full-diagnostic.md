@@ -5,9 +5,9 @@ allowed-tools: Read, Write, Grep, Glob, Bash(find:*), Bash(wc:*), Bash(sort:*)
 
 Run the full system diagnostic — a comprehensive health sweep that chains five audit skills into a unified diagnostic report.
 
-Load the agent instructions from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/full-system-diagnostic-agent.md and follow the complete workflow.
+Load the agent instructions from 02-skills/design-system-ops/skills/full-system-diagnostic-agent.md and follow the complete workflow.
 
-Before starting, read the reference material for each chained skill from their respective /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/*/references/ directories.
+Before starting, read the reference material for each chained skill from their respective 02-skills/design-system-ops/skills/*/references/ directories.
 
 The diagnostic runs in this order:
 1. Token audit — token architecture, naming, structural debt

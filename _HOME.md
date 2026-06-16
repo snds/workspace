@@ -55,13 +55,15 @@ WHERE file.name = "project-context"
 
 - **`.claude/`** — Claude Code config, hooks, slash-command skills. Don't edit in Obsidian; it's ignored.
 - **`.obsidian/`** — Vault config. Also ignored.
-- **`00-bootstrap/`** — Installer, Obsidian templates, integration docs (`OBSIDIAN-SETUP.md`), workspace manifest + fallback GDocs.
-- **`00-frameworks/`** — The five operating frameworks.
-- **`01-shared-references/`** — Standards for reasoning, artifacts, etc.
-- **`02-skills/`** — 60+ Claude Desktop skills (hub/spoke). Synced via `skills-manifest.json`.
+- **`00-bootstrap/`** — Getting-started + setup. Contract lives in `AGENTS.md`.
+- **`00-frameworks/`** — The eight operating frameworks (08 governs editing the workspace itself).
+- **`01-shared-references/`** — Standards: ontology + routing map, frontmatter spec, reasoning/artifact standards.
+- **`02-skills/`** — Skill library (hub/spoke). Graph in `skills.registry.json` (generated from frontmatter).
 - **`03-preferences/`** — User preferences file (how Sean wants to collaborate).
 - **`04-artifacts/`** — Deliverables. `active/` is WIP; `archive/` is done.
 - **`05-version-registers/`** — Versioned artifact history.
-- **`06-context/`** — Role, project context, session log, artifact registry.
+- **`06-context/`** — Role, project context, session log, artifact registry, and `memory/` (durable non-project memory).
 - **`07-projects/`** — Active projects, numbered.
-- **`09-tools/`** — Standalone tools used across projects.
+- **`08-knowledge/`** — Learned domain insight.
+- **`09-tools/`** — Portable scripts, generators, validators.
+- **`_archive/`** — Retired files + `ARCHIVE-LOG.md` provenance.

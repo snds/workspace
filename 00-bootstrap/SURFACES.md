@@ -16,7 +16,8 @@ _Last updated: 2026-04-27_
 | **VS Code** + Claude Code extension | Same as CLI — walks up to find `CLAUDE.md` | Anthropic | Yes (extension respects hooks) | Use this if you prefer VS Code's UI to the desktop app. Worktree behavior depends on extension settings. |
 | **VS Code** + Copilot | `.github/copilot-instructions.md` per repo root | OpenAI | No | Not currently set up. Mirror would live at workspace root if needed. |
 | **Obsidian** | Folder = vault; reads everything | n/a (no AI) | n/a | UI for navigation, editing, graph view, daily notes. Plugins: Dataview, Templater, Git, Excalidraw, etc. |
-| **Claude Desktop** (chat app) | Loads via Desktop Commander MCP filesystem reads | Anthropic | n/a (no hook system in chat) | Read-only by default; can write via DC tool. The 60+ skills in `02-skills/` mount via `skills-manifest.json`. |
+| **Claude Desktop** (chat app) | Reads workspace files via whatever filesystem MCP is configured | Anthropic | n/a (no hook system in chat) | Skills load per the precedence algorithm in `AGENTS.md` against `02-skills/skills.registry.json`. |
+| **Perplexity / generic MCP / a human** | Reads `llms.txt` → `AGENTS.md` → registry | any | n/a | No adapter required — follows the universal contract directly. |
 | **Claude iOS app** | None — no local filesystem access | Anthropic | n/a | Brain context only available if you paste/reference it explicitly. Use for chat continuity, not file operations. |
 
 ---
@@ -55,7 +56,7 @@ Already configured. Open the app → vault is `Claude Workspace`. Just use it.
 
 ### Claude Desktop
 
-Open the chat app. The `workspace-bootstrap` skill loads brain context via Desktop Commander when triggered. Phrases like "continuing", "I'm back", "let's get started" trigger the bootstrap.
+Open the chat app. The `workspace-bootstrap` skill loads context via whatever filesystem MCP is configured when triggered. Phrases like "continuing", "I'm back", "let's get started" trigger the bootstrap.
 
 ### Claude iOS
 
@@ -126,9 +127,12 @@ Filesystem reads only. No AI involved. Plugins handle the smarts (Dataview queri
 
 ## Per-machine notes
 
-Each machine needs the per-machine `.git/` relocation done once — see [`OBSIDIAN-SETUP.md`](OBSIDIAN-SETUP.md) → "Git store lives off Drive". This applies regardless of which surface you use.
+The workspace is a plain git checkout — clone it anywhere; no per-machine mount or `.git` relocation is
+needed. (The legacy Drive-based original required moving `.git` off Drive; that workaround is obsolete here.)
 
-Cursor and VS Code both store user-level settings outside the workspace, so font, theme, etc. are per-machine. The `.code-workspace` files only carry workspace-scoped settings (folders + `files.exclude`); they're the same on every machine via Drive sync.
+Cursor and VS Code store user-level settings outside the workspace, so font, theme, etc. are per-machine.
+The `.code-workspace` files only carry workspace-scoped settings (folders + `files.exclude`); they're the
+same on every machine via git.
 
 ---
 
@@ -142,6 +146,6 @@ Rough heuristic — adjust based on the work:
 | Writing notes, navigating wikilinks, daily notes, graph view | Obsidian |
 | Heavy code editing with intellisense + AI completion | Cursor (or VS Code with extension) |
 | Experimental refactor in isolation | Claude Code desktop app (worktree mode is a feature here, not a bug) |
-| Quick file lookups + reads from anywhere on the machine | Claude Desktop with DC |
+| Quick file lookups + reads from anywhere on the machine | Claude Desktop (filesystem MCP) |
 | Continuing a thought thread on the go (read/discuss only) | Claude iOS app |
-| Cross-machine sync without thinking | Already automatic — Drive + git auto-commit + auto-push |
+| Cross-machine sync | git — commit + push; pull on the other machine |

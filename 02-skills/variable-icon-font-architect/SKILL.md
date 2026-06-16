@@ -63,12 +63,10 @@ Common routing patterns:
 - **Font quality / fontbakery failures**: `font-qa-validation`
 - **Full build review**: load spokes incrementally as each aspect is addressed
 
-**Step 2**: Load the identified spoke(s) from the user's Google Drive via
-Filesystem MCP or Desktop Commander:
+**Step 2**: Load the identified spoke(s) from the workspace checkout:
 ```
-[workspace root]/02-skills/[skill-name]/SKILL.md
+02-skills/[skill-name]/SKILL.md
 ```
-Fallback: VM mount at `/mnt/skills/user/[skill-name]/SKILL.md`
 
 **Step 3**: If the conversation shifts to a different spoke's domain
 mid-session, load that spoke then — not preemptively.

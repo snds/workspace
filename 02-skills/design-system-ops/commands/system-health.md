@@ -5,9 +5,9 @@ allowed-tools: Read, Grep, Glob
 
 Run the system-health skill to produce a scored health assessment of the user's design system.
 
-Load the system-health skill from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/system-health/SKILL.md and follow its complete workflow.
+Load the system-health skill from 02-skills/design-system-ops/skills/system-health/SKILL.md and follow its complete workflow.
 
-Before starting, read the reference material specified in the skill's frontmatter from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/system-health/references/.
+Before starting, read the reference material specified in the skill's frontmatter from 02-skills/design-system-ops/skills/system-health/references/.
 
 Begin with Step 1b (Baseline calibration) to establish the system's maturity level before scoring. Score all 7 dimensions (Tokens, Components, Documentation, Adoption, Governance, AI readiness, Platform maturity) with calibrated expectations appropriate to the system's maturity level.
 

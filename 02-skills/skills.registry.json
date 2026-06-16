@@ -10,9 +10,10 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 199,
+    "total": 198,
     "by_tier": {
-      "unspecified": 199
+      "cross-cutting": 2,
+      "unspecified": 196
     }
   },
   "skills": {
@@ -360,21 +361,6 @@
         "*"
       ],
       "hash": "sha256:79f47b9b5a84298f4a9173576e3aabcf6b8a5c26a8fe1f8145614254bd771efc"
-    },
-    "cowork-skills-sync": {
-      "path": "02-skills/cowork-skills-sync/SKILL.md",
-      "tier": null,
-      "domain": null,
-      "hub": null,
-      "prerequisites": [],
-      "related": [],
-      "governed_by": [],
-      "governs": [],
-      "triggers": [],
-      "surfaces": [
-        "*"
-      ],
-      "hash": "sha256:7774a6260de2e8c674b091fcdb559b89c298df18de8b2c9a229557e396e1946c"
     },
     "design-engineer": {
       "path": "02-skills/design-engineer/SKILL.md",
@@ -1664,7 +1650,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:90cfe6537790e4aa15ee2824cfba567412883d9df538d3d4f8c57b43d1856709"
+      "hash": "sha256:4dd70e64bd15c0cc91365238bfd2878cc9d278d1985b3a34a37812e348faa080"
     },
     "lead-art-director": {
       "path": "02-skills/lead-art-director/SKILL.md",
@@ -1844,7 +1830,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:36ffc04900b16862908781f25102acb043584845ef6e92cadf874aa86a4fe49d"
+      "hash": "sha256:c205e74ed8fecb69fa3c189b9b959cc720ad38a52f4e8bbc3063c4ee8c67926e"
     },
     "lead-product-manager": {
       "path": "02-skills/lead-product-manager/SKILL.md",
@@ -2373,18 +2359,24 @@
     },
     "skill-placement": {
       "path": "02-skills/skill-placement/SKILL.md",
-      "tier": null,
-      "domain": null,
+      "tier": "cross-cutting",
+      "domain": "workspace",
       "hub": null,
       "prerequisites": [],
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "create a skill",
+        "generate skill",
+        "make a skill",
+        "new skill",
+        "skill placement"
+      ],
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:c19c3bcb409ad0e98479fe319c552fab7598afe7c1205e2e3d5db2422c931db6"
+      "hash": "sha256:ac456de7ff589f91fe9d7fcafa25ab014a91a151e6036e501c0383d9357c7a05"
     },
     "svg-font-extraction": {
       "path": "02-skills/svg-font-extraction/SKILL.md",
@@ -2834,7 +2826,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:7a519f934fff326209f71d6334221deb667712ce3e773d42c500b5d49e1ce4b1"
+      "hash": "sha256:32d6e4719c07211c43e140e01b7d1275d99844ae355880f789648f2d9624ce2a"
     },
     "visual-qa-accessibility": {
       "path": "02-skills/visual-qa-accessibility/SKILL.md",
@@ -2924,7 +2916,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:73c742f04ea79639ea4317259b23a02d599378c19ad7da608037f45b6833841b"
+      "hash": "sha256:6cca8999aff7cd82f56b1e68ef23fde00d1d0135d7f6bce0430ac39e9b033d2c"
     },
     "visual-qa-ui-design": {
       "path": "02-skills/visual-qa-ui-design/SKILL.md",
@@ -2988,18 +2980,26 @@
     },
     "workspace-bootstrap": {
       "path": "02-skills/workspace-bootstrap/SKILL.md",
-      "tier": null,
-      "domain": null,
+      "tier": "cross-cutting",
+      "domain": "workspace",
       "hub": null,
       "prerequisites": [],
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "bootstrap",
+        "resume",
+        "new session",
+        "load context",
+        "get started",
+        "reconcile sessions",
+        "legion"
+      ],
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:657b8dde2a849ff6c7709783ab6b1d02de072e77a910b7a5ab9eb474c0a5a2ed"
+      "hash": "sha256:014f2608862b1a2522abae2d7efa944de7af5b1323e60fa90f32ec20470b6d1b"
     }
   },
   "load_chains": {
@@ -3078,9 +3078,6 @@
     ],
     "centric-ui-workflow": [
       "centric-ui-workflow"
-    ],
-    "cowork-skills-sync": [
-      "cowork-skills-sync"
     ],
     "design-engineer": [
       "design-engineer"

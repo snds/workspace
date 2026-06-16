@@ -14,7 +14,7 @@ This folder is the **project workspace** — design notes, session state, build 
 The integration's *deployed* files live at the workspace root (one level up from `07-projects/`):
 
 ```
-G:\My Drive\Claude Workspace\
+
 ├── CLAUDE.md             ← deployed: Claude Code context
 ├── _HOME.md ... (5 MOCs) ← deployed: Obsidian navigation entry points
 ├── .claude/              ← deployed: hooks + slash-command skills

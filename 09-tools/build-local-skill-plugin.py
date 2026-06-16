@@ -43,7 +43,6 @@ from pathlib import Path
 HUBS = [
     # Workspace / session ops
     "workspace-bootstrap",
-    "cowork-skills-sync",
     # Design systems + Figma
     "ds-advisor",
     "design-engineer",

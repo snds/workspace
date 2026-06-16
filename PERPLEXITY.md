@@ -69,7 +69,7 @@ Skills live primarily in `02-skills/`.
 
 When trying to locate relevant capabilities:
 
-1. Read `02-skills/skills-manifest.json` if present.
+1. Read `02-skills/skills.registry.json` — the generated routing/dependency graph (tiers, prerequisites, triggers, precomputed load chains). Follow the loading-precedence algorithm in `AGENTS.md`.
 2. Use `_SKILLS.md` as the human-readable shortcut.
 3. Inspect individual skill folders for `SKILL.md`, README files, scripts, manifests, and packaging artifacts.
 4. Treat skill metadata as preferred over folder name guesses.

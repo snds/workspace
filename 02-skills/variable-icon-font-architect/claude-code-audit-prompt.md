@@ -3,13 +3,13 @@
 ## Context Loading (do this first, in order)
 
 1. Read the hub skill for this project:
-   `~/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/variable-icon-font-architect/SKILL.md`
+   `02-skills/variable-icon-font-architect/SKILL.md`
 
 2. From the hub's Spoke Manifest table, load these spokes (the audit spans all domains):
    - `lead-technical-digital-artist/SKILL.md` (pipeline architecture)
    - `lead-icon-artist/SKILL.md` (design methodology)
    - `lead-vector-designer/SKILL.md` (path construction)
-   All at the same path root: `~/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/`
+   All at the same path root: `02-skills/`
 
 3. Do NOT load the math spokes yet — load them only if the audit surfaces
    specific math-level questions (interpolation artifacts, curve quality,

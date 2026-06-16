@@ -11,7 +11,7 @@ This folder is **the brain**: a multi-purpose Claude Workspace serving as Obsidi
 
 **Before responding to Sean's first message in every new Cursor session**, you must:
 
-**Step 1 — Read context files using the `claude-workspace` MCP tool.** Its root is the per-device alias `~/claude-workspace/` (a symlink to the materialized brain on this machine, maintained at session start; resolves correctly regardless of username or Drive mount). Use that prefix — never a hardcoded `/Users/<name>/` path.
+**Step 1 — Read context files from the workspace checkout.** Resolve the workspace root as the directory containing `AGENTS.md` (walk up from the open file). Use paths relative to that root — never a hardcoded `/Users/<name>/` or cloud-drive path. See [AGENTS.md](../../AGENTS.md) for the universal contract.
 
 Read these files directly by full path — do NOT use glob search, as most of `07-projects/` is gitignored and glob will miss them:
 - `CLAUDE.md` (skim for conventions; follow `brain.mdc` format for Cursor)

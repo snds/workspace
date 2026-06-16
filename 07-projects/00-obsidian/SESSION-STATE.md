@@ -9,8 +9,8 @@ _Last updated: 2026-04-25 — checkpoint (post-restructure)_
 ### Environment
 - **Machine**: `Enterprise` (Windows Desktop)
 - **OS context**: Windows 11 Pro 10.0.26200
-- **Workspace root**: `G:\My Drive\Claude Workspace\`
-- **Project root**: `G:\My Drive\Claude Workspace\07-projects\00-obsidian\`
+- **Workspace root**: ``
+- **Project root**: `07-projects\00-obsidian\`
 
 ### Active servers and processes
 - **Dev server**: n/a

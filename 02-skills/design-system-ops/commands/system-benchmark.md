@@ -5,12 +5,12 @@ allowed-tools: Read, Grep, Glob, Bash(find:*), Bash(wc:*), Bash(sort:*)
 
 Run the system-benchmark skill against the user's design system.
 
-Load the system-benchmark skill from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/system-benchmark/SKILL.md and follow its complete workflow.
+Load the system-benchmark skill from 02-skills/design-system-ops/skills/system-benchmark/SKILL.md and follow its complete workflow.
 
 If the user provided a file or directory path as an argument, use that as the system root: $ARGUMENTS
 
 If no argument was provided, search the codebase for package.json, component directories, token files, and documentation to identify the system boundaries.
 
-Before starting the benchmark, read the reference material specified in the skill's frontmatter from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/system-benchmark/references/.
+Before starting the benchmark, read the reference material specified in the skill's frontmatter from 02-skills/design-system-ops/skills/system-benchmark/references/.
 
 Produce the full benchmark report including: 12-dimension scores across 4 pillars, percentile positioning, pillar analysis, and improvement recommendations.

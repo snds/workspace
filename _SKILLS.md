@@ -7,10 +7,11 @@ tags: [moc, skills]
 
 Two skill systems coexist by design.
 
-## `02-skills/` — Claude Desktop skills (full hub/spoke network)
+## `02-skills/` — skill library (full hub/spoke network)
 
-These live in `02-skills/{skill-name}/SKILL.md`. Loaded by Claude Desktop via the skills-plugin
-mount. Synced across machines via `skills-manifest.json` hash check.
+These live in `02-skills/{skill-name}/SKILL.md`. Loaded per the precedence algorithm in `AGENTS.md`;
+the machine graph is `skills.registry.json` (generated from frontmatter by `09-tools/build-registry.py`).
+Synced across machines via git.
 
 ```dataview
 TABLE WITHOUT ID
@@ -30,7 +31,7 @@ LIMIT 60
 - **Legion game:** [[02-skills/legion-project/SKILL|legion-project]] → [[02-skills/lead-game-designer/SKILL|lead-game-designer]] / [[02-skills/lead-art-director/SKILL|lead-art-director]] / [[02-skills/lead-game-developer/SKILL|lead-game-developer]]
 - **Icon fonts:** [[02-skills/variable-icon-font-architect/SKILL|variable-icon-font-architect]] + math spokes
 - **Visual QA:** [[02-skills/visual-qa-toolkit/SKILL|visual-qa-toolkit]] (being built)
-- **Workspace mgmt:** [[02-skills/workspace-bootstrap/SKILL|workspace-bootstrap]], [[02-skills/cowork-skills-sync/SKILL|cowork-skills-sync]]
+- **Workspace mgmt:** [[02-skills/workspace-bootstrap/SKILL|workspace-bootstrap]]
 
 ## `.claude/skills/` — Claude Code slash commands
 

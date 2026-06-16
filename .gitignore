@@ -74,8 +74,6 @@
 !09-tools/validate-workspace.py
 !09-tools/compile-cursor-rules.py
 !09-tools/build-local-skill-plugin.py
-!09-tools/drive-audit.py
-!09-tools/drive-monitor.py
 
 # Track only the 00-obsidian integration project; other projects stay local.
 !07-projects/

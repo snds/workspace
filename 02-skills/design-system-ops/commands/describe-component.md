@@ -5,9 +5,9 @@ allowed-tools: Read, Write, Grep, Glob
 
 Run the ai-component-description skill to generate a structured, machine-readable description for a design system component.
 
-Load the ai-component-description skill from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/ai-component-description/SKILL.md and follow its complete workflow.
+Load the ai-component-description skill from 02-skills/design-system-ops/skills/ai-component-description/SKILL.md and follow its complete workflow.
 
-Before starting, read the reference material specified in the skill's frontmatter from /Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace/02-skills/design-system-ops/skills/ai-component-description/references/.
+Before starting, read the reference material specified in the skill's frontmatter from 02-skills/design-system-ops/skills/ai-component-description/references/.
 
 Produce a six-section description:
 1. Purpose — what the component does and when to use it

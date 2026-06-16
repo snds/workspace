@@ -72,9 +72,9 @@ Common routing patterns:
 - **Voice control / Dragon**: `a11y-motor-physical` + `a11y-assistive-tech`
 - **Switch access**: `a11y-motor-physical` + `a11y-assistive-tech`
 
-**Step 2**: Load the identified spoke(s) from Google Drive:
+**Step 2**: Load the identified spoke(s) from the workspace checkout:
 ```
-[workspace root]/02-skills/[skill-name]/SKILL.md
+02-skills/[skill-name]/SKILL.md
 ```
 
 **Step 3**: If the conversation shifts domain mid-session, load the relevant spoke then.
