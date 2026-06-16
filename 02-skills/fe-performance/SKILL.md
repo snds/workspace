@@ -326,3 +326,6 @@ rolling field data for public URLs.
 | Web Vitals instrumentation as product analytics | `ds-product-analytics` |
 | Loading state taxonomy (skeleton vs. spinner decisions) | `fe-api-integration` |
 | Virtual scrolling for large datasets | `fe-data-visualization` |
+
+## Related
+- hub → [[lead-frontend-engineer]]

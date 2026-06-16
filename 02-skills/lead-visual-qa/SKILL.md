@@ -265,3 +265,6 @@ identify the most critical visual deviations.
    background reads as cool blue (approx. #5B8DB8) but the reference material uses a
    warm blue closer to #3D6B9A — shift hue toward 220° and reduce saturation by ~15%"
    is a remediation. Deliver remediations, not observations.
+
+## Related
+- spoke → [[visual-qa-accessibility]] · [[visual-qa-architecture]] · [[visual-qa-game-design]] · [[visual-qa-graphic-design]] · [[visual-qa-interior-design]] · [[visual-qa-toolkit]] · [[visual-qa-ui-design]] · [[visual-qa-usability]] · [[visual-qa-ux-design]]

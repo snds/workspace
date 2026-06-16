@@ -273,3 +273,6 @@ Game feel is the tactile quality of interaction. Visually evaluate:
 - [ ] Menu hierarchy is visually clear (primary > secondary > tertiary options)
 - [ ] Currently focused/selected item is unmistakably highlighted
 - [ ] Typography is legible at platform-appropriate viewing distance
+
+## Related
+- hub → [[lead-visual-qa]]

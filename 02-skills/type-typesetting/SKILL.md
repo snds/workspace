@@ -337,3 +337,6 @@ blockquote, .pull-quote {
 - `ds-advisor` — typesetting knowledge translates into DS text style token design; the typographic system (scale + leading + tracking + measure) should be designed as a coordinated set
 - `lead-ux-designer`/`ux-information-architecture` — typographic hierarchy is the visual form of IA hierarchy; the two should be designed in parallel
 - `lead-ux-designer`/`ux-interaction-design` — reading flow, cognitive load, and text legibility are user experience decisions grounded in typesetting quality
+
+## Related
+- hub → [[lead-type-designer]]

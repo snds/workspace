@@ -350,4 +350,4 @@ Before shipping any visual UI component:
 ---
 
 ## Related
-- governs → [[uid-color-for-ui]] · [[gd-color-theory]]
+- governs → [[gd-color-theory]] · [[uid-color-for-ui]]

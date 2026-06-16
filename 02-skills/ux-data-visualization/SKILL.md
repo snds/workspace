@@ -328,3 +328,6 @@ reduces the cognitive load of decoding each chart independently.
 - Datawrapper Academy — Chart type selection: https://academy.datawrapper.de/
 - Observable — Data visualization patterns: https://observablehq.com/
 - Carbon Design System — Data visualization guidelines: https://carbondesignsystem.com/data-visualization/
+
+## Related
+- hub → [[lead-ux-designer]]

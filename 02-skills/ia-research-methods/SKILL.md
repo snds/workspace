@@ -447,3 +447,6 @@ third, incorrect mental model that serves neither role.
 - Jared Spool & Bob Bailey, "First Click Testing" (CHI 2001)
 - Steve Krug, *Don't Make Me Think* — navigation clarity heuristics
 - Nielsen Norman Group, tree testing and card sorting research reports
+
+## Related
+- hub → [[lead-information-architect]]

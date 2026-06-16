@@ -330,3 +330,6 @@ those sections genuinely require different navigation patterns.
 - Peter Morville, Louis Rosenfeld — Information Architecture for the Web and Beyond
 - Optimal Workshop (tree testing + card sort tooling): https://www.optimalworkshop.com/
 - Nielsen Norman Group — Navigation IA articles: https://www.nngroup.com/topic/ia/
+
+## Related
+- hub → [[lead-ux-designer]]

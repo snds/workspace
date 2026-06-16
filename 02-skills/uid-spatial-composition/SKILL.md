@@ -342,3 +342,6 @@ as a density system, not individual values.
 - `uid-visual-critique` — blur test and hierarchy evaluation frameworks
 - `lead-ux-designer` / `ux-interaction-design` — interactive layout patterns (tabs, drawers, accordions)
 - `uid-visual-system` — spacing as part of the complete visual language
+
+## Related
+- hub → [[lead-ui-designer]]

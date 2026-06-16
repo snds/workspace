@@ -398,3 +398,6 @@ should be. When Sean specifies a typeface, he is participating in that argument.
 - Jan Tschichold: *The Form of the Book* (1975)
 - Type classification: PANOSE system; Adobe Type classification
 - Modular scale: Tim Brown's modular scale calculator (https://www.modularscale.com/)
+
+## Related
+- hub → [[lead-graphic-designer]]

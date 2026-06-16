@@ -187,3 +187,6 @@ Pair with:
 - **fw-shadcn** — Composes styled components from Radix primitives
 - **fw-tailwind-css** — Styles Radix primitives with utility classes
 - **fw-radix-colors** — Provides the color tokens for state indication
+
+## Related
+- hub → [[lead-frontend-engineer]]

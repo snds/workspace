@@ -422,3 +422,6 @@ letting users encounter features at the moment they're relevant.
 - IBM Design for AI — Guidelines: https://www.ibm.com/design/ai/
 - Ethan Mollick — Co-Intelligence (on human-AI collaboration norms)
 - Ben Shneiderman — Human-Centered AI (book)
+
+## Related
+- hub → [[lead-ux-designer]]

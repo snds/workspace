@@ -322,3 +322,4 @@ explicitly and make the exception deliberately.
 
 ## Related
 - foundation → [[design-foundations]]
+- spoke → [[infod-dashboard-patterns]] · [[infod-design-system-patterns]] · [[infod-encoding-theory]] · [[infod-narrative-design]] · [[infod-network-graphs]] · [[infod-spatial-maps]] · [[infod-statistical-viz]]

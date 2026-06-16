@@ -154,3 +154,6 @@ Spoke of `design-engineer`. Storybook is the documentation and testing layer:
 - Use `addon-designs` to link Figma frames
 - Use `addon-a11y` for automated accessibility auditing
 - Use interaction tests for behavioral contracts
+
+## Related
+- hub → [[lead-frontend-engineer]]

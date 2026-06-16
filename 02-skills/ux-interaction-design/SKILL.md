@@ -311,3 +311,6 @@ state design — not a single loading state that blocks everything.
 - Luke Wroblewski — Web Form Design (book)
 - Nielsen Norman Group — Error message writing: https://www.nngroup.com/articles/error-message-guidelines/
 - ARIA APG — Combobox, multiselect patterns: https://www.w3.org/WAI/ARIA/apg/patterns/
+
+## Related
+- hub → [[lead-ux-designer]]

@@ -321,3 +321,6 @@ Pair with:
 - **fw-tailwind-css** — Consumes Radix Colors as @theme primitives
 - **fw-shadcn** — Components referencing semantic tokens derived from Radix scales
 - **fw-radix-primitives** — Behavior layer using these colors for state indication
+
+## Related
+- hub → [[lead-frontend-engineer]]

@@ -228,3 +228,6 @@ This hub and its spoke network operate at staff/principal IC depth. That means:
 - Don Norman, *The Design of Everyday Things* (gulf of execution/evaluation)
 - Donna Spencer, card sorting methodology
 - Bob Bailey / Jared Spool, first-click testing research
+
+## Related
+- spoke → [[ia-content-strategy]] · [[ia-enterprise-complexity]] · [[ia-mental-models]] · [[ia-navigation-systems]] · [[ia-research-methods]] · [[ia-search-findability]] · [[ia-taxonomy-classification]]

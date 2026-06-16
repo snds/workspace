@@ -334,3 +334,6 @@ The brush state is URL-serializable for shareable filter states.
 | Rendering performance at extreme scale | `fe-performance` |
 | Cross-filter state, server state per widget | `fe-state-management` |
 | Chart interaction event instrumentation | `ds-product-analytics` |
+
+## Related
+- hub → [[lead-frontend-engineer]]

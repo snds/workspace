@@ -86,3 +86,6 @@ Spoke of `design-engineer`. SLDS is a reference exemplar for:
 - Blueprint-first (CSS-only) component specification
 - Density/mode switching via tokens
 - Agentic/AI UI patterns (emerging, SLDS 2)
+
+## Related
+- hub → [[lead-frontend-engineer]]

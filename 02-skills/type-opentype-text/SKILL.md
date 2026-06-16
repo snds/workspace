@@ -320,3 +320,6 @@ when browser support allows — it's more readable and survives font stack chang
 - `ds-advisor` — encoding OpenType features in design system text style tokens; which features belong at the component level vs. the token level
 - `lead-ui-designer`/`uid-type-for-screens` — feature availability in web fonts; font subsetting can strip features if not explicitly included
 - `lead-accessibility-architect`/`a11y-visual` — disambiguation variants (cv01, cv02) as accessibility decisions
+
+## Related
+- hub → [[lead-type-designer]]

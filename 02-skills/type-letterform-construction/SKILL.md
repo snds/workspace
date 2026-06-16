@@ -275,3 +275,6 @@ primary craft judgment — it cannot be derived mathematically, only tested visu
 - `type-variable-text` — construction decisions propagate through variable font interpolation; weight axis compatibility requires construction consistency
 - `ds-advisor` — how construction quality informs type scale decisions; optical size steps in the type scale should reflect actual perceptual differences at the construction level
 - `lead-ui-designer`/`uid-type-for-screens` — construction decisions (stem weight, counter size, aperture openness) predict which typefaces render well on screen
+
+## Related
+- hub → [[lead-type-designer]]

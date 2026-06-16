@@ -48,4 +48,4 @@ as the player improves. Balance, difficulty curves, and progression exist to kee
 skill. Tune against the *target player*, not the designer's mastery.
 
 ## Related
-- applies-in ← [[lead-game-designer]] · [[lead-game-developer]] · [[lead-art-director]]
+- applies-in ← [[lead-art-director]] · [[lead-game-designer]] · [[lead-game-developer]]

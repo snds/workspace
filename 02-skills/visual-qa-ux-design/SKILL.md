@@ -200,3 +200,6 @@ or fights against it by placing secondary content in primary scan positions.
 - [ ] Density is appropriate for the use case and audience
 - [ ] Secondary content is visually subordinated to primary content
 - [ ] No orphaned elements that lack visual relationship to the content structure
+
+## Related
+- hub → [[lead-visual-qa]]

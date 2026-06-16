@@ -230,3 +230,6 @@ structure is serving the content or constraining it.
 - [ ] Logo usage follows clear space and proportion rules
 - [ ] Visual treatment matches brand personality
 - [ ] All touchpoints being evaluated are internally consistent
+
+## Related
+- hub → [[lead-visual-qa]]

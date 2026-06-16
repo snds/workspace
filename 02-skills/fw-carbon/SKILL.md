@@ -87,3 +87,6 @@ Spoke of `design-engineer`. Carbon is a reference exemplar for enterprise DS:
 - Study its component taxonomy for coverage gaps in your own system
 - Reference its token naming for cross-system alignment
 - Use its accessibility patterns (Carbon follows WCAG 2.1 AA)
+
+## Related
+- hub → [[lead-frontend-engineer]]

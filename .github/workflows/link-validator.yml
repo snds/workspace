@@ -8,9 +8,9 @@ name: link-validator
 on:
   push:
     branches: [main]
-    paths: ["02-skills/**", "09-tools/validate-links.py"]
+    paths: ["02-skills/**", "09-tools/validate-links.py", "09-tools/build-related.py"]
   pull_request:
-    paths: ["02-skills/**", "09-tools/validate-links.py"]
+    paths: ["02-skills/**", "09-tools/validate-links.py", "09-tools/build-related.py"]
 
 jobs:
   check:
@@ -20,5 +20,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
+      - name: Related blocks in sync with frontmatter graph
+        run: python3 09-tools/build-related.py --check
       - name: Validate skill cross-links
         run: python3 09-tools/validate-links.py

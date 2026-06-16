@@ -370,3 +370,6 @@ A public accessibility statement should include:
 | `a11y-motor-physical` | WCAG 2.1.x / 2.4.x / 2.5.x design depth; this spoke owns the legal standard context |
 | `a11y-cognitive` | WCAG 3.2.6 / 3.3.7 / 3.3.8 / 3.3.9 COGA criteria; this spoke owns the legal standard context |
 | `lead-accessibility-architect` | Hub — routes to this spoke for legal requirements, compliance audit, WCAG criteria, VPAT, and conformance reporting |
+
+## Related
+- hub → [[lead-accessibility-architect]]

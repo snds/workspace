@@ -251,3 +251,6 @@ When evaluating a dark mode or alternate color scheme:
 - [ ] Border-radius follows the design system scale
 - [ ] Radius is consistent across equivalent component tiers
 - [ ] All components feel like they share the same shape language
+
+## Related
+- hub → [[lead-visual-qa]]

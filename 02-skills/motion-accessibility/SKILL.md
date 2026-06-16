@@ -448,3 +448,6 @@ communicating essential information — it was decorative.
 - MDN — prefers-reduced-motion
 - Josh Comeau, "Accessible Animations in React" (joshwcomeau.com)
 - Framer Motion — useReducedMotion documentation
+
+## Related
+- hub → [[lead-motion-designer]]

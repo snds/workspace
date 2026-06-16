@@ -235,3 +235,4 @@ scaling is a distraction from the real work.
 
 ## Related
 - foundation → [[eng-foundations]]
+- spoke → [[be-api-design]] · [[be-auth-patterns]] · [[be-caching-performance]] · [[be-data-modeling]] · [[be-integration-patterns]] · [[be-relational-db]] · [[be-security-posture]] · [[be-service-architecture]]

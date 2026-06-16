@@ -110,11 +110,13 @@ def main():
                         f"{name}: `{rel} → [[{target}]]` not reciprocated "
                         f"({target} should declare `{inverse} → [[{name}]]`)")
 
-    # 3: design/eng spokes should declare a foundation (warning until fully migrated)
+    # 3: design/eng spokes should reach a foundation — directly (`foundation →`) or via their
+    #    hub (`hub →`, since hubs carry the foundation prerequisite). Warn only if neither exists.
     for name, rec in skills.items():
         if name.startswith(DESIGN_ENG_PREFIXES) and rec["rels"]:
-            if not any(rel == "foundation" for rel, _ in rec["rels"]):
-                warnings.append(f"{name}: design/eng spoke has a Related block but no `foundation →` link")
+            rels = {rel for rel, _ in rec["rels"]}
+            if "foundation" not in rels and "hub" not in rels:
+                warnings.append(f"{name}: design/eng spoke reaches no foundation (no `foundation →` or `hub →`)")
 
     for w in warnings:
         print(f"  ⚠ {w}", file=sys.stderr)

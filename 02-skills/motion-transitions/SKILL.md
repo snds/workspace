@@ -333,3 +333,6 @@ Consistent direction conventions build spatial memory. Break them only with inte
 - Apple HIG — Animation
 - CSS View Transitions API spec (WICG)
 - Framer Motion documentation — AnimatePresence
+
+## Related
+- hub → [[lead-motion-designer]]

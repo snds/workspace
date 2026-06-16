@@ -331,3 +331,6 @@ Assumptions are invisible until they cause offense.
 - W.J.T. Mitchell: *Picture Theory* (1994)
 - Paul Messaris: *Visual Persuasion* (1997)
 - Wolfgang Köhler, Kurt Koffka, Max Wertheimer: Gestalt psychology foundations
+
+## Related
+- hub → [[lead-graphic-designer]]

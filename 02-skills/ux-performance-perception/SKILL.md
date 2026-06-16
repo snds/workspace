@@ -348,3 +348,6 @@ always takes 8 seconds is worse than no timeout message.
 - Google Web Vitals — LCP, INP, CLS: https://web.dev/vitals/
 - Luke Wroblewski — Mobile First (progressive loading patterns)
 - Cloudflare — Stale-while-revalidate: https://developers.cloudflare.com/cache/concepts/cache-control/
+
+## Related
+- hub → [[lead-ux-designer]]

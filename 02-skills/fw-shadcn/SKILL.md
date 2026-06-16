@@ -313,3 +313,6 @@ This skill is a spoke of `design-engineer`. When loaded alongside:
 - **fw-radix-primitives** — Covers the headless behavior layer (Dialog, Popover, Tabs)
 
 The full stack: Radix Colors → Radix Primitives → Tailwind CSS → shadcn/ui.
+
+## Related
+- hub → [[lead-frontend-engineer]]

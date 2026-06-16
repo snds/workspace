@@ -430,3 +430,6 @@ notice it — but they understand the interface better because of it.
 - Frank Thomas & Ollie Johnston, *The Illusion of Life* — Overlapping Action chapter
 - Val Head, *Designing Interface Animation* — sequencing and rhythm
 - Google Material Motion — Choreography guidelines
+
+## Related
+- hub → [[lead-motion-designer]]

@@ -135,3 +135,6 @@ Spoke of `design-engineer`. When building DS components for Vue:
 2. Map props, slots, and composition patterns per the table above
 3. Ensure token consumption is identical (CSS custom properties)
 4. Test keyboard and a11y behavior parity
+
+## Related
+- hub → [[lead-frontend-engineer]]

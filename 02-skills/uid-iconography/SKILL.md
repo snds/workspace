@@ -313,3 +313,6 @@ burden, not a design achievement.
 - `lead-accessibility-architect` / `a11y-visual` — accessible icon communication, ARIA, minimum touch targets
 - `uid-visual-system` — icon style as part of the complete visual language
 - `uid-visual-critique` — icon set audits using blur test and weight consistency evaluation
+
+## Related
+- hub → [[lead-ui-designer]]

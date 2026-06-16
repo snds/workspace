@@ -150,3 +150,6 @@ Spoke of `design-engineer`. Svelte DS components should:
 2. Use snippets for composition (not legacy slots)
 3. Consume tokens via CSS custom properties in scoped `<style>`
 4. Keep components as thin wrappers over the DS token system
+
+## Related
+- hub → [[lead-frontend-engineer]]

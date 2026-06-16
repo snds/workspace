@@ -390,3 +390,6 @@ Route to `ia-research-methods` for full protocols.
 - Paul Mijksenaar, *Visual Function: An Introduction to Information Design* (1997)
 - Miller, "The Magical Number Seven, Plus or Minus Two" (1956)
 - Jakob Nielsen, useit.com navigation research
+
+## Related
+- hub → [[lead-information-architect]]

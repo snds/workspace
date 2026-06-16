@@ -196,3 +196,6 @@ own design-forward directive; the hub enforces this as a network-wide principle.
 - Google Material Symbols methodology
 - OpenType variable font spec (axes, GSUB, COLRv1)
 - FontTools documentation
+
+## Related
+- hub → [[lead-type-designer]]

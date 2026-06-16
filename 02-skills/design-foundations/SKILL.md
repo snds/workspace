@@ -50,5 +50,5 @@ load all five for a narrow question.
 - **Evaluate in context, never in isolation.** Color, weight, and spacing are all relative to their neighbors.
 
 ## Related
-- spoke → [[found-perception]] · [[found-color]] · [[found-typography]] · [[found-composition]] · [[found-hierarchy]]
-- applies-in ← [[lead-ui-designer]] · [[lead-graphic-designer]] · [[lead-ux-designer]] · [[lead-type-designer]] · [[lead-motion-designer]] · [[lead-information-designer]] · [[lead-3d-designer]]
+- spoke → [[found-color]] · [[found-composition]] · [[found-hierarchy]] · [[found-perception]] · [[found-typography]]
+- applies-in ← [[lead-3d-designer]] · [[lead-graphic-designer]] · [[lead-information-designer]] · [[lead-motion-designer]] · [[lead-type-designer]] · [[lead-ui-designer]] · [[lead-ux-designer]]

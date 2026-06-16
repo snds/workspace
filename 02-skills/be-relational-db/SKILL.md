@@ -415,3 +415,6 @@ one (must scan all partition children).
 | Connection pooling, read replica routing | `be-caching-performance` |
 | Analytical queries on OLTP data | `ds-product-analytics` |
 | OLTP schema as pipeline source | `ds-data-engineering` |
+
+## Related
+- hub → [[lead-backend-engineer]]

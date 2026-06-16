@@ -455,3 +455,6 @@ Route to `fe-testing` for integration patterns.
 | Accessibility design decisions, focus order, label copy | `ux-accessibility` |
 | ARIA in headless component primitives | `fe-component-architecture` |
 | jest-axe, Playwright accessibility, axe in CI | `fe-testing` |
+
+## Related
+- hub → [[lead-frontend-engineer]]

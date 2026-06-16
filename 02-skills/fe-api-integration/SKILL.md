@@ -473,3 +473,6 @@ with error boundaries requires careful co-placement.
 | WebSocket/SSE server implementation | `be-integration-patterns` |
 | Loading state UX design, skeleton screens | `ux-performance-perception` |
 | ML prediction endpoints, streaming inference | `ds-ml-engineering` |
+
+## Related
+- hub → [[lead-frontend-engineer]]

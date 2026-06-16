@@ -273,3 +273,6 @@ part of the visual design. Evaluate:
 - [ ] Empty states provide an actionable next step, not just a placeholder
 - [ ] Recurring controls appear in consistent positions across screens
 - [ ] Microcopy is specific, outcome-focused, and tells the user what to do
+
+## Related
+- hub → [[lead-visual-qa]]

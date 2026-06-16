@@ -212,3 +212,4 @@ For the twelve-factor model in the context of service design, see `be-service-ar
 
 ## Related
 - foundation → [[eng-foundations]]
+- spoke → [[devops-ci-cd]] · [[devops-container-orchestration]] · [[devops-cost-optimization]] · [[devops-infrastructure-as-code]] · [[devops-observability]] · [[devops-release-engineering]]

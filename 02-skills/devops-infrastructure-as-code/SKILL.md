@@ -582,3 +582,6 @@ is too slow for application deployments. Use GitOps for that layer.
 | Data infrastructure specifics | `ds-data-engineering` |
 | MLOps infrastructure | `ds-ml-engineering` |
 | IaC cost (Reserved Instances, spot, right-sizing) | `devops-cost-optimization` |
+
+## Related
+- hub → [[lead-devops-engineer]]

@@ -139,3 +139,6 @@ Spoke of `design-engineer`. Angular DS components should:
 3. Use CSS custom properties for tokens (not TypeScript theme objects)
 4. Use OnPush change detection universally
 5. Test a11y with cdk/a11y utilities
+
+## Related
+- hub → [[lead-frontend-engineer]]

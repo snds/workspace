@@ -161,3 +161,6 @@ export const darkTheme = createTheme(vars, {
 Spoke of `design-engineer`. Use alongside:
 - **fw-radix-colors** — Radix Colors as CSS custom properties consumed by CSS Modules
 - **fw-radix-primitives** — Headless components styled via CSS Modules or Vanilla Extract
+
+## Related
+- hub → [[lead-frontend-engineer]]

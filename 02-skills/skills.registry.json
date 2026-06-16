@@ -35,7 +35,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6943c2d39fbf78d6affda1baaaa595d3cb997ae2024221c841a73c3fedf860dd"
+      "hash": "sha256:be9e0a60bc147b38afaf77319982dac6cc97a13e9a8a893f2eb53cfaa8e4f312"
     },
     "3d-lighting-rendering": {
       "path": "02-skills/3d-lighting-rendering/SKILL.md",
@@ -52,7 +52,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6be061e18ddb2b3829097a678414808d6327022a0964273514440d0083ca507a"
+      "hash": "sha256:dbe73086556dc653e0f6ffd308495ec2b74b6778681d83df438955fe013f22b6"
     },
     "3d-materials-shading": {
       "path": "02-skills/3d-materials-shading/SKILL.md",
@@ -69,7 +69,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6fdf838508cc60e7e8206786555523205d678dee93d0ec4ce004076bc7c7e5b3"
+      "hash": "sha256:1d930fd96fc0452f9e21116b11a496597be62230f09e6cab5d6fa9e760c94fb9"
     },
     "3d-modeling-fundamentals": {
       "path": "02-skills/3d-modeling-fundamentals/SKILL.md",
@@ -86,7 +86,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:878389700693f51f0fea6ce7159f5b00ad6edb4a823dda4984ed8c6f142337fd"
+      "hash": "sha256:96aae59828a41d5092d971d19ee61ab2bb3d65c2b965f1cb6da81a5f882022a4"
     },
     "3d-rigging-animation": {
       "path": "02-skills/3d-rigging-animation/SKILL.md",
@@ -103,7 +103,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:7398bc5c84124f4febbcfded069689b801f2969d7b3dd09aa6ad2b13acdcfdf4"
+      "hash": "sha256:4cbd7ed429918c67fdb964cc4a1adfbef7ea73331dfe57eeb71b1bbb237e604c"
     },
     "3d-spatial-design-for-games": {
       "path": "02-skills/3d-spatial-design-for-games/SKILL.md",
@@ -120,7 +120,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:8b572273406ab0d83da26d69e0797be72a2c87df19f83789a75d8499d2bef2e8"
+      "hash": "sha256:008a14b22b26c0e8eca81c5b9d38257bce4d1a0cf16d19f74c6d30ea8752dc10"
     },
     "a11y-assistive-tech": {
       "path": "02-skills/a11y-assistive-tech/SKILL.md",
@@ -135,7 +135,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:1d0efd217897741bea116b3255cc46e4deadca91833ed1c68527a87d7c868cf7"
+      "hash": "sha256:eed591fbe1670a61b6e1631d0b3c5edfaad94b4f6945fabd97bca0dde1543ecc"
     },
     "a11y-auditory": {
       "path": "02-skills/a11y-auditory/SKILL.md",
@@ -150,7 +150,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:9b9834fc3f1c8e3f92199a31a698db1a0f0ac49f98ba24684d430014d2f2cd30"
+      "hash": "sha256:b577722ba10175a74d9975ea0ce81777e2d68dfc0361db30529a1669c80bf10d"
     },
     "a11y-cognitive": {
       "path": "02-skills/a11y-cognitive/SKILL.md",
@@ -165,7 +165,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:86ef70ec00c9f2bd955a2652e3e19c69421d812bfa171b2d5553c457440fd087"
+      "hash": "sha256:e3302a3540a906b102fa5af1d5eaa25bbc89087fa62265cb8f1d38db75e275f2"
     },
     "a11y-legal-compliance": {
       "path": "02-skills/a11y-legal-compliance/SKILL.md",
@@ -180,7 +180,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:0388a6233174651915ceaa0c40627db261490fccc19cd649c91fcb77638a8a95"
+      "hash": "sha256:b16273f51dd250e6f6f00c6d592f1f02f40b922323be79597e9792f8d88397b7"
     },
     "a11y-motor-physical": {
       "path": "02-skills/a11y-motor-physical/SKILL.md",
@@ -195,7 +195,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:600cc0b7d9726e60a11e5c3f74be9a78a49e3ead7e40e62e68a5a6ad05ac83b5"
+      "hash": "sha256:0c1b8b406e52e756c1ab4e5cf0f0722e4635ce265959e80597fd91637faefd89"
     },
     "a11y-neurodiversity": {
       "path": "02-skills/a11y-neurodiversity/SKILL.md",
@@ -210,7 +210,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:c34d0815a718fdc67e31b8dfaf11b5a4095b93bdc467b187eb01296b9799d766"
+      "hash": "sha256:6848f419ec80e221f7ab76e628655944eaacc699a071bc003ec0d0c5e518a702"
     },
     "a11y-visual": {
       "path": "02-skills/a11y-visual/SKILL.md",
@@ -225,7 +225,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:e31887292770ff739dd0494a5a4212c303bcd9e456cdac21599c00b1b8657842"
+      "hash": "sha256:162370aeb9a770372079b00ffe855036795dea6789a63d4f59ab1d299d806758"
     },
     "be-api-design": {
       "path": "02-skills/be-api-design/SKILL.md",
@@ -242,7 +242,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:aac34c4b44bdc058761faf893989622e9500e3ba59a5cb0af10201dc8f59613b"
+      "hash": "sha256:19c36dff399c139d8af189781168aa5da7c775d72ec7f10bf299e150393810f6"
     },
     "be-auth-patterns": {
       "path": "02-skills/be-auth-patterns/SKILL.md",
@@ -259,7 +259,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:e109a05ad6135fccb575109a3c35e6a482cfb3c4d288d0d6b02353cad1568898"
+      "hash": "sha256:91c836d4b8edd5bb79f271ac16a03700d05cbd3e9156bcf165ab8e8a262b49e2"
     },
     "be-caching-performance": {
       "path": "02-skills/be-caching-performance/SKILL.md",
@@ -276,7 +276,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:fb4cbf821c73998c90f9bccc31ea4bb79f65243430e23c3a0a65261d74496103"
+      "hash": "sha256:d978ae44745b36c20f4bb4902d3634a5900f2ce3ab683ccef7622e47a4a30ecb"
     },
     "be-data-modeling": {
       "path": "02-skills/be-data-modeling/SKILL.md",
@@ -293,7 +293,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:bd93356be988d325d53438aac59ea091f34ac7148d2ac28c367e041821f57fc4"
+      "hash": "sha256:2aa0e38f2e050d7c1defc369531d9e40ff37c8517a0fe3153cda8aa553dc6164"
     },
     "be-integration-patterns": {
       "path": "02-skills/be-integration-patterns/SKILL.md",
@@ -310,7 +310,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:bd77202b1498fd79ba2b991ca9d7f2e25f4507ecc03a1d774eb5bccbf17cd32d"
+      "hash": "sha256:0fe6679b58ed69f7782ea369bd8f726a87f8e41dd0d384b4097d5cb350efd75e"
     },
     "be-relational-db": {
       "path": "02-skills/be-relational-db/SKILL.md",
@@ -327,7 +327,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:90dcbf82aa8566d246dd1c12433f87fd72aad67690524a028fc2105e8faac36e"
+      "hash": "sha256:c7655a9cbf6d4c09c8aa7c36211b145a518cd57d058fb0b5da37a28a33a9e1b8"
     },
     "be-security-posture": {
       "path": "02-skills/be-security-posture/SKILL.md",
@@ -344,7 +344,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:df219f9ce3f912bd36656be36a69b062e63c77087108dcddd389e3909ef3fe20"
+      "hash": "sha256:bfa3d40f3ee851ff1f204031a96fc320c490651634e322ce314aba25c5309c4f"
     },
     "be-service-architecture": {
       "path": "02-skills/be-service-architecture/SKILL.md",
@@ -361,7 +361,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:e39c61e5e75028819d0faf5e63121951eb45422d6f94e150c90f06757ed4820c"
+      "hash": "sha256:5f2e63759f78028f866a47d93d44952daff65662617c24165d2400c804fa710d"
     },
     "centric-ui-storybook": {
       "path": "02-skills/centric-ui-storybook/SKILL.md",
@@ -461,7 +461,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6a131896bcb0abed4e45f10e9cd5edf0c4eb169c64b9ab71b3905ed9226adf93"
+      "hash": "sha256:fd04e0fabb14b8bdc5077e31c1b2573521cb8e8eb6c990f20b353ee365f60c39"
     },
     "devops-ci-cd": {
       "path": "02-skills/devops-ci-cd/SKILL.md",
@@ -478,7 +478,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:63da06b473ccfdb39f7894f2d0df23408099a6fb0f07406ccce3690f2e7385b0"
+      "hash": "sha256:5dfa6074b084830dcb90170c837e6eb01ea02d35793c1edb78b30a4bdc3f95dc"
     },
     "devops-container-orchestration": {
       "path": "02-skills/devops-container-orchestration/SKILL.md",
@@ -495,7 +495,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:c93a6ffcb97f673beedf933fbe1a145502d7c4afd4048db8ff00e877b6f2eec1"
+      "hash": "sha256:77ecd93804126d52a44730f3f9508599ab2d997460c85f1a78d093f9fae5f6c6"
     },
     "devops-cost-optimization": {
       "path": "02-skills/devops-cost-optimization/SKILL.md",
@@ -512,7 +512,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:fdee3684eacda73338dcb36b9c741dbbf43a9b3bcddcae34d800b6f7451c512b"
+      "hash": "sha256:31d4b597f65dd7d6553fab9a1a599cb2c164950aa9029ea66fe3052bc6782fb8"
     },
     "devops-infrastructure-as-code": {
       "path": "02-skills/devops-infrastructure-as-code/SKILL.md",
@@ -529,7 +529,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:13c43312862406e9aff9062b168a0872f6f9267320486e286ea4fd6ce9b69b00"
+      "hash": "sha256:b52f8f2120b7304e2608de25dc5fcf7c3f265739c28f21dddd7ddc4a54054565"
     },
     "devops-observability": {
       "path": "02-skills/devops-observability/SKILL.md",
@@ -546,7 +546,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6edb7a8533b1693b5ae55b1f42c9aa69cc77787e4b7f66e70d985f3db8c97553"
+      "hash": "sha256:142c427c7621e8fd13ce64bb47fd7c460b8926c6ad9040b8861349df76329b64"
     },
     "devops-release-engineering": {
       "path": "02-skills/devops-release-engineering/SKILL.md",
@@ -563,7 +563,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:4093d669bb6880d20f2c6f6470008b5fd4e2d5a835b35f1b3ada0e2decd8f7c0"
+      "hash": "sha256:2b663684e1679ad763fa9d71e4f488aa7575a8ff18cbf5e19bffd7084c762ec3"
     },
     "ds": {
       "path": "02-skills/ds/SKILL.md",
@@ -608,7 +608,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:0e54d513c99e10f06b9cab0d3af400b6a0656da369786a27c212c29f5431001e"
+      "hash": "sha256:6176744ee89ce37c90515875e985e68ede11451e127429f971d44d722d74313d"
     },
     "ds-data-engineering": {
       "path": "02-skills/ds-data-engineering/SKILL.md",
@@ -638,7 +638,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:aab937019b08b1e55e21a1c0ddd74198f588835c59132281aeab5dc61be79109"
+      "hash": "sha256:92aeb121bf7262d77505bf1ac5e9644109c9798a3cac8f862e2d00a41b8463bd"
     },
     "ds-executive-storytelling": {
       "path": "02-skills/ds-executive-storytelling/SKILL.md",
@@ -758,7 +758,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:057f3a8a3bdaa6634f894184cfa82a713733a65abc030b471809c716b30fb623"
+      "hash": "sha256:96e124cdbf7a65c74c5eeb678f50eaf82748a9422858126947e54180dfc4750c"
     },
     "eng-foundations": {
       "path": "02-skills/eng-foundations/SKILL.md",
@@ -786,7 +786,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6771e18ed5bc032322cc42e3a05f6e3b900ffde4317376e582f443e6a39755de"
+      "hash": "sha256:6b9f3d2a3762446aa485613e3245b5fa34c048121b30cd9150060f1547ce1fb5"
     },
     "fe-accessibility": {
       "path": "02-skills/fe-accessibility/SKILL.md",
@@ -803,7 +803,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:17b0ed32f79b1a24ed471cef04e8f10a8fd46c844d16e96c529a32f78e5c4657"
+      "hash": "sha256:c38aa34394b51be51a9d1aba34ca8c62772355565a34a49b925fd1eca824744f"
     },
     "fe-api-integration": {
       "path": "02-skills/fe-api-integration/SKILL.md",
@@ -820,7 +820,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:55dced8fc9a2bc313308331e3e2253f4a1b5b5d1120eb86dfa99a6a7e1d0195a"
+      "hash": "sha256:d4e229ec9f4f65a401e2babf1b4d3418f58627b73af943918f105118c4d969db"
     },
     "fe-component-architecture": {
       "path": "02-skills/fe-component-architecture/SKILL.md",
@@ -837,7 +837,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:4c29edbcb27b27160e1c1b6304846c204c4a6e8a038905bf210b96415bdb6788"
+      "hash": "sha256:ec0400961cdc67eca5d761d3ce2de32ddb66fffa95d9424544eb3fa495d5501e"
     },
     "fe-data-visualization": {
       "path": "02-skills/fe-data-visualization/SKILL.md",
@@ -854,7 +854,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:744de115eba66403a506cab9a4a22bdd11a088e438b86e1e2038984df2c3b318"
+      "hash": "sha256:d3cf8a00188f7a88b4aff37ba0b9c1f3f16c265681943977469367165eacdc78"
     },
     "fe-design-tokens": {
       "path": "02-skills/fe-design-tokens/SKILL.md",
@@ -871,7 +871,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:397519f32a528e57e78d569b3e4045fcf4206dc52741682b17c99dbe17eab031"
+      "hash": "sha256:3bb1488670fefb9c75a6fe19dab46db30e9b113673a04096b09fc2b5cfe04f70"
     },
     "fe-i18n": {
       "path": "02-skills/fe-i18n/SKILL.md",
@@ -888,7 +888,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:58db3128e7190fce160ffe22b57f7dcac55c3b24e111c2d6e926a0e1575f483a"
+      "hash": "sha256:0b34635420f1c35f45b24c283d6a337bc1df923fa4de5c38aae8ca5cc53647aa"
     },
     "fe-performance": {
       "path": "02-skills/fe-performance/SKILL.md",
@@ -905,7 +905,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:733ab14b1ae098929ca8cd5d22a1ce968fa85460289915234ecd4a9f3f9bacc7"
+      "hash": "sha256:b170319229171e1a891ecd108a1f47830a46196ddeaf6077699b4894f05799f6"
     },
     "fe-state-management": {
       "path": "02-skills/fe-state-management/SKILL.md",
@@ -922,7 +922,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:9c2f904afd436524927f88b9025676fc91fea3fb72e9c442e5ff8eb593bf6a17"
+      "hash": "sha256:34ba1068a04cb920fa8a3a33699b6e43876de0e1b34a5836d04f6a96b1755979"
     },
     "fe-testing": {
       "path": "02-skills/fe-testing/SKILL.md",
@@ -939,7 +939,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:a0e53a1399dad304ea362eb1d56bbcea625a3c1460ad5d8e68daa037da15651e"
+      "hash": "sha256:b51192b070286ad1c31455baf179c59148f431b662ff87fb0103c35ece32e84d"
     },
     "figma": {
       "path": "02-skills/figma/SKILL.md",
@@ -969,7 +969,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:d50442c72c84ef768547e58292540c19eae4f8054e240641a71932adbe09b007"
+      "hash": "sha256:7fcea6dd8d05ec6b735cd55dfe310c1ca942b37da114e839537ad92b1b9bb0f0"
     },
     "figma-canvas-designer": {
       "path": "02-skills/figma-canvas-designer/SKILL.md",
@@ -1119,7 +1119,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:201dbf04b794110ea61307594352571b8d6a07732ae5348261b6287e1f20cb18"
+      "hash": "sha256:ecf05a98d0720cf4bbe00e1597befc53feaf8e94760d90ee8b58dbb458da9956"
     },
     "figma-variable-creation": {
       "path": "02-skills/figma-variable-creation/SKILL.md",
@@ -1134,7 +1134,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:a9bf2af79c38c98e70d724e42be4138b50f619df79b03b0e1b8036f8377c68f6"
+      "hash": "sha256:d63f884f756f7323c8cc7e2b2c1790831c11dcd5105c1d579b0a096425431b5b"
     },
     "found-color": {
       "path": "02-skills/found-color/SKILL.md",
@@ -1159,7 +1159,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6f756b72540230b83a8a33a86ba41c33bbe0074a9818957388993a5ea711bfd3"
+      "hash": "sha256:0b9b5d1b0aada3993f3335de2cf3f60947de4d020461c932e238272a37fe55c1"
     },
     "found-composition": {
       "path": "02-skills/found-composition/SKILL.md",
@@ -1278,7 +1278,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:9e83fad9f4ffb9252a5dcf371251d5bb49941176940a9b9b87cd4323d1bc754c"
+      "hash": "sha256:0a0b1a94a0e7f82452733a0335803578edcdf00ec37fcf0b09c7458b0721a7e4"
     },
     "fw-bootstrap": {
       "path": "02-skills/fw-bootstrap/SKILL.md",
@@ -1295,7 +1295,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:14ca49773b36144c5feb456564144f2ee5abf5f8a412323291d4607348613bd2"
+      "hash": "sha256:50149b2afbfc272178962445de3ac270368755f9b2456c0df488b21bd72ad996"
     },
     "fw-carbon": {
       "path": "02-skills/fw-carbon/SKILL.md",
@@ -1312,7 +1312,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:d74325f782e316f2f4b38db67940ce2081ad3acb30fc9ff5535e8a41552cc506"
+      "hash": "sha256:fbf3570ded949970f39d928fe63c80e203e918469075a8aa86c3337348969c0b"
     },
     "fw-css-modules": {
       "path": "02-skills/fw-css-modules/SKILL.md",
@@ -1329,7 +1329,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:3a63d6fc844e4b1a1eba8401fa0c9882574704322be24a27882572c8f30e1167"
+      "hash": "sha256:101828d43cf9c422666098641bca0e4875f58e35529552781b1614d60a4eb9eb"
     },
     "fw-dojo": {
       "path": "02-skills/fw-dojo/SKILL.md",
@@ -1346,7 +1346,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:e40133563710ba44f23bf2964ee06eaf430bc08d770d35a70514f0c515483c10"
+      "hash": "sha256:03c24f6a2fa011a50f3aa24734f41a122212ab264cc241038c66eda01eeeb98f"
     },
     "fw-lightning": {
       "path": "02-skills/fw-lightning/SKILL.md",
@@ -1363,7 +1363,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:577cd4f02bd7bde255aaeadbfe1fa6057fb6e57ccfd007b5490be334194998fb"
+      "hash": "sha256:ae01e63a26fbe36d698910a78861342c1377b0203319f386bd580de84172aee0"
     },
     "fw-radix-colors": {
       "path": "02-skills/fw-radix-colors/SKILL.md",
@@ -1380,7 +1380,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:3c49ee5f491753349879f3e96e527c2286ca48050314b55ad06208ea53a3bdf5"
+      "hash": "sha256:b86587f7b9bf34b7b3d00336de993959686ca24691ce2ab95c1768de83141e9d"
     },
     "fw-radix-primitives": {
       "path": "02-skills/fw-radix-primitives/SKILL.md",
@@ -1397,7 +1397,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:21698ddab8bc0c3164180452e1f3aebab64e43d9fc3c5c33cd3a0446b9e3f18e"
+      "hash": "sha256:a77f79c3c6234a8ed86eed95b9ca7a8d3d44129ee19c92c6a17186d20f8ba5eb"
     },
     "fw-react": {
       "path": "02-skills/fw-react/SKILL.md",
@@ -1414,7 +1414,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:d975c2e6bba4ef5664d9a6934b71994031326a0bd419ec08bbe30c30f79b7a5f"
+      "hash": "sha256:7938a862a4d7e9d7c0b94c6ef13569d1318a08f6e46a9092df4473729e97463f"
     },
     "fw-react-aria": {
       "path": "02-skills/fw-react-aria/SKILL.md",
@@ -1431,7 +1431,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:c548f1736a0fd4029661e326fce85d4b47d1dbc0c97ab840fbe8a3c9f2c57729"
+      "hash": "sha256:b3b1b45bd66884203c556638221961227b73542a819ffe361c42513070bacf9c"
     },
     "fw-shadcn": {
       "path": "02-skills/fw-shadcn/SKILL.md",
@@ -1448,7 +1448,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:b1807bca7b289859abc3f47f5e473aa263c29018db14ade8edf3ac7a83e753a2"
+      "hash": "sha256:48abeb1ceb76303abf6b7198f12a4eeaf2a31fdacc35308f79fe3d8a11544cda"
     },
     "fw-storybook": {
       "path": "02-skills/fw-storybook/SKILL.md",
@@ -1465,7 +1465,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:da98be7b7d875cac117d5b5fcfe6e24fd3d77f0ad67f72aa11b22a987707c9e9"
+      "hash": "sha256:12b9bfdd7a1f71883c6518bc8e2b27d829c3308541f19d6c304662dba8971b8a"
     },
     "fw-svelte": {
       "path": "02-skills/fw-svelte/SKILL.md",
@@ -1482,7 +1482,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:0424321ed896f6f131f55d0594d05a0a39669b4f7d99cbefd0b121565eb85621"
+      "hash": "sha256:dc4f2577f0f5d79b45efc2a188d01737c902e9ae60f73a25c1ba8195ca02aa71"
     },
     "fw-tailwind-css": {
       "path": "02-skills/fw-tailwind-css/SKILL.md",
@@ -1499,7 +1499,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:dd9882679d6f084cc51af596acbd5c925be691910aab1067a02a050cb747c2cc"
+      "hash": "sha256:5ab226854427d6bcc357b6e3ee4b3104aeb7bd6c5156e02cc3f35c36c14b907f"
     },
     "fw-vue": {
       "path": "02-skills/fw-vue/SKILL.md",
@@ -1516,7 +1516,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:d2e422e8bdc3ddc7e66215b64dcaffaae7f996bea66b008b094c90830133a491"
+      "hash": "sha256:748a6d0884fe4298025041c82260457e9c62084082d5f2614e13ae22d4b2e6ea"
     },
     "fw-web-components": {
       "path": "02-skills/fw-web-components/SKILL.md",
@@ -1533,7 +1533,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:f2cb1045e321ea9252a2aa72450af73846ea36a5a2cb5e5cce9f4eaa35169efb"
+      "hash": "sha256:abe1ced2821b61b772f433c1aa02aea1da9a4e66f4ea5b533bd8abe77f427fb5"
     },
     "game-foundations": {
       "path": "02-skills/game-foundations/SKILL.md",
@@ -1559,7 +1559,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:208ba23e0a9c95d53e6d9458cc2bbbd150a133f0d182d05ce241b860d64d9477"
+      "hash": "sha256:63da47c443bc705def52e467fe80c652aedefbf5901dbeae5aa27ea8aa5e6091"
     },
     "gd-brand-identity": {
       "path": "02-skills/gd-brand-identity/SKILL.md",
@@ -1576,7 +1576,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:1c75ee44a60a32c74fcaded1c03008cf084541f144f95d8239486b886a7262f7"
+      "hash": "sha256:4c6933b9cd26f69a872c38a1a6a808aca689ca18dc2bc23636c86fdb1f081a03"
     },
     "gd-color-theory": {
       "path": "02-skills/gd-color-theory/SKILL.md",
@@ -1613,7 +1613,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:eb438693d42d06f25a95348392bf7a8f90f0e71d5725c6490e28e2b5f10d5eac"
+      "hash": "sha256:9acb0f81009b25a9b87eaef310f5e80b51a5b2767b7e0db0b468d3653b5c501b"
     },
     "gd-image-composition": {
       "path": "02-skills/gd-image-composition/SKILL.md",
@@ -1630,7 +1630,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:57b470e7f3f6bad5739e790fd54f87c301669e8ac983be1f23dd723ab7708dbf"
+      "hash": "sha256:072f6ea5d6de7f43c07275767bf58e4e79ed69fb71bdd2731175c854076c3608"
     },
     "gd-print-production": {
       "path": "02-skills/gd-print-production/SKILL.md",
@@ -1647,7 +1647,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:a9dac336f4a4a3cd411fccbd4733ce8e0ee2e5ab6692c7d5fb391aaa417a1673"
+      "hash": "sha256:783908908c826df5148693a5656a0fa5084280039214e204f8d33ffcbb2b63e9"
     },
     "gd-typography": {
       "path": "02-skills/gd-typography/SKILL.md",
@@ -1664,7 +1664,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:8589af2451af55ef236d2fb304bb57eff74ff46f76bcb1d17987fb545ea47d14"
+      "hash": "sha256:3e7244432625b9ee49e51f76144afe7bcd805fe66674e00d1d5f9aeed7d28f58"
     },
     "gd-visual-communication": {
       "path": "02-skills/gd-visual-communication/SKILL.md",
@@ -1681,7 +1681,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:8c50446d5333cac8a1830f774093cb4102f73618b6694cffd45c0fa29858c474"
+      "hash": "sha256:2d8916f3da9cee21e53dd6f78d6dc7a1955c2250357c237b3b1750dbd5417606"
     },
     "gen-manifest": {
       "path": "02-skills/gen-manifest/SKILL.md",
@@ -1773,7 +1773,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:2f93bc8902f1fba036f76eb8bb11b0c249056a3ba703b678c9e5f3487622a605"
+      "hash": "sha256:adea1f0b26c1aa7a5ac7cc04b4150a7699d8bf0f79b72d51237ef00af1a460d8"
     },
     "ia-enterprise-complexity": {
       "path": "02-skills/ia-enterprise-complexity/SKILL.md",
@@ -1790,7 +1790,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:46471109b0bc6e71256f1c073b0e7c3085501e87afc14836eb2d127d3402ae85"
+      "hash": "sha256:f1632e2a0c07b81006ea9ea45c5cf106b650b92100d17589e3759780233789d2"
     },
     "ia-mental-models": {
       "path": "02-skills/ia-mental-models/SKILL.md",
@@ -1807,7 +1807,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:f493b96c2f3ce08b9af4eba1cc7a25d7c0bc610682c9b216b036f1e9bb3bf8ee"
+      "hash": "sha256:c9c0356091a18ea9496361306e82a64bda268db86fd3f3f0be57c70e6d283edc"
     },
     "ia-navigation-systems": {
       "path": "02-skills/ia-navigation-systems/SKILL.md",
@@ -1824,7 +1824,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:e34ca4595134aa122263cb3fbf40a23168feaee5801a46ea78094df1210f3781"
+      "hash": "sha256:91f754eac0d80cda3015d6c66cdf1c5aad2c2f329d8f13670f1d5adaffaa7e65"
     },
     "ia-research-methods": {
       "path": "02-skills/ia-research-methods/SKILL.md",
@@ -1841,7 +1841,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:f55e4b0ef8299f5424ecac2648829bf4e4e4d3040ad53479174dc96219dde19e"
+      "hash": "sha256:20595599f8c9132ae2e9c3cb4bc99f0337d27876efafde138cbc6183d386d1de"
     },
     "ia-search-findability": {
       "path": "02-skills/ia-search-findability/SKILL.md",
@@ -1858,7 +1858,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:7d65c4e4f30d0e3e0e474e98d06bef7b4f771319626ecf2d7a08723f2bdf1844"
+      "hash": "sha256:c87fef34bc546fe62d748a6a5ee517679095e8906c38b97cbf760c6172271765"
     },
     "ia-taxonomy-classification": {
       "path": "02-skills/ia-taxonomy-classification/SKILL.md",
@@ -1875,7 +1875,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:1cb8df328e13742b387928c20c5c0a68dadcaedae8a3c7ab59486c5d2ac3c3b5"
+      "hash": "sha256:f73550ae42e0e3751583ed2c385f3839200e591382bd8dac98395eeba5d66a53"
     },
     "infod-dashboard-patterns": {
       "path": "02-skills/infod-dashboard-patterns/SKILL.md",
@@ -1892,7 +1892,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:084c8e19c88eefa8364b6d73c534f8ab05e29a50af5da9ef648b429741f4dff2"
+      "hash": "sha256:7757c13582ab1b5cabba7fa4ff31059dce4ea0ab33a328d5513b6b0eb489b7e1"
     },
     "infod-design-system-patterns": {
       "path": "02-skills/infod-design-system-patterns/SKILL.md",
@@ -1909,7 +1909,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:690c86c9cc37179c711d64e722779d50aff2198ed4aa7e3ee5fdc61453caea4e"
+      "hash": "sha256:64fe002aed6f5e5d58899929b749f6d91fdddfe1041c344d61393b965447370b"
     },
     "infod-encoding-theory": {
       "path": "02-skills/infod-encoding-theory/SKILL.md",
@@ -1926,7 +1926,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:74d8fb958011ca591e6a1022a7c04e153fd7d94307547f49fa3739da1a1d2afc"
+      "hash": "sha256:e9a82f1213617a8baca029628788a66a937620eaccb602505da5183813bbb02c"
     },
     "infod-narrative-design": {
       "path": "02-skills/infod-narrative-design/SKILL.md",
@@ -1943,7 +1943,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:9542ec4ad4766cad21f64cdc81b399448b026bb967655ede2282d480ae410897"
+      "hash": "sha256:6da0f7dea81b247ad76328cd6493ca67223934a200b309a65c1fb5f3e890b225"
     },
     "infod-network-graphs": {
       "path": "02-skills/infod-network-graphs/SKILL.md",
@@ -1960,7 +1960,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:b9d6ce518c9320e89b06f30579a79449ae603edb524cc7b6747b7d6accbfb930"
+      "hash": "sha256:d8458ba55489f69bdad7fc11b9b7d03ee1dbd66ef0f1c9d216d494b3642f355c"
     },
     "infod-spatial-maps": {
       "path": "02-skills/infod-spatial-maps/SKILL.md",
@@ -1977,7 +1977,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:d2ed8ff42fe97d24d14e5a1ab8d3e19d788ef12950616e31f6d50b98eaefdb7f"
+      "hash": "sha256:b591b395759657ee7365a5bebe780f421b3395d3bbac4066afd944ef63191f08"
     },
     "infod-statistical-viz": {
       "path": "02-skills/infod-statistical-viz/SKILL.md",
@@ -1994,7 +1994,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:5062782a229535fd2e37511cd49eb1d531109d35177cdcccbfea253a857f55ea"
+      "hash": "sha256:af73534629efcca542d52ed38bb0be7aa6ba1cc065bcfdca6dca52a1babbb1ee"
     },
     "lead-3d-designer": {
       "path": "02-skills/lead-3d-designer/SKILL.md",
@@ -2011,7 +2011,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:767ffa2246bcb20cf36813e1eae77c49dce311141d7e1d22b04ddcaac6142752"
+      "hash": "sha256:5707e9585681c76ef87b0b7b5129b27292d5086c2b6b98e2a1e0822d489ce56f"
     },
     "lead-accessibility-architect": {
       "path": "02-skills/lead-accessibility-architect/SKILL.md",
@@ -2026,7 +2026,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:179596cf821565c57d3053b16e24b1563a4d58740b743b851003c8b3f55a62cf"
+      "hash": "sha256:96eb6e9fe618297cef512b20464ddb08db41874281856753cc335051462483cf"
     },
     "lead-art-director": {
       "path": "02-skills/lead-art-director/SKILL.md",
@@ -2060,7 +2060,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:f1f9021a48a7d6cd53c8d30df11af8c67000547e9476a7a2b95418003a2abe59"
+      "hash": "sha256:c43922fdb44213935adf46cf7188d5b4876b62a50ebff94776e6fe2244c0a032"
     },
     "lead-data-scientist": {
       "path": "02-skills/lead-data-scientist/SKILL.md",
@@ -2077,7 +2077,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:13525d43eb35296636b39e007f7ac2fcb1e70098cf87a317d354227f40b30a38"
+      "hash": "sha256:ea49a5aced422b63ef0a04b22c6cb13b1a723d9b214fc1df7867a9a7cb47423a"
     },
     "lead-devops-engineer": {
       "path": "02-skills/lead-devops-engineer/SKILL.md",
@@ -2094,7 +2094,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:ba7f80381eabde11814a92bbae1758f426375fda2bea409501a1922b76f1f135"
+      "hash": "sha256:69abec905d320a1125cf117c96e3edc9d7bf87b9196f951567fd168e2b6252e1"
     },
     "lead-frontend-engineer": {
       "path": "02-skills/lead-frontend-engineer/SKILL.md",
@@ -2111,7 +2111,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:64ab3896787a9d38e23280fd53ff4e4597795dda9275a253a823d0e1db566a34"
+      "hash": "sha256:35f77d1f825e3776a3d05429a646b3fb32f1ee8240f6d03e0fad0c492eb8c6e1"
     },
     "lead-game-designer": {
       "path": "02-skills/lead-game-designer/SKILL.md",
@@ -2162,7 +2162,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:878d235c485938d495301dce89c8b9ab30c460776eb9abdf8be9d735bbbe7d79"
+      "hash": "sha256:51eae22b3a1cdf1183ad8ccbdd6ecafedf0209993f0f28ca79af65c54d729e67"
     },
     "lead-icon-artist": {
       "path": "02-skills/lead-icon-artist/SKILL.md",
@@ -2192,7 +2192,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:a43176eae155e55bfe8ccb7128a1f23dff9b34122309e2c28199671c8370cabe"
+      "hash": "sha256:315023905e273e5beb26277890d0a221a701f50b09ae391b64d943728a92eeb0"
     },
     "lead-information-designer": {
       "path": "02-skills/lead-information-designer/SKILL.md",
@@ -2209,7 +2209,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:5a77c838c9e7172f56541e0de0bb133698bc8fc7c2aeb5fc6f7bf30ba13dc7b6"
+      "hash": "sha256:7439f3687f2b47984b4423e5ddf19aec3d0fafe2260e1fd09339c5ce3fa1fb47"
     },
     "lead-motion-designer": {
       "path": "02-skills/lead-motion-designer/SKILL.md",
@@ -2226,7 +2226,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:a411f73440d39bbec92392469296549119666651acb28cdf3de1b7f7a8c12684"
+      "hash": "sha256:654ca57f682ba3a64cdc82414918526d444724505388741f9f57a7d625967398"
     },
     "lead-product-manager": {
       "path": "02-skills/lead-product-manager/SKILL.md",
@@ -2275,7 +2275,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:7f278a2cfe981ce66e8a8ce7d5ba1ab07e9ea75d4b161686bd87f9d35c7a254e"
+      "hash": "sha256:6e8ec9825c488b1a37950abb22217fde09fd400ec3fbe1b29053d586b6ac6d7c"
     },
     "lead-ui-designer": {
       "path": "02-skills/lead-ui-designer/SKILL.md",
@@ -2292,7 +2292,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:4a1be7421edcbc2be09f2027954edb2b986ef5d2d2999ac1227fc24a62b573d9"
+      "hash": "sha256:7b1e783b34a19830621bbcdc968e63428fd3cc01cb48f1b076fc9594f688eca6"
     },
     "lead-ux-designer": {
       "path": "02-skills/lead-ux-designer/SKILL.md",
@@ -2309,7 +2309,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:411be8d140e7901b361d5d2a455ff63c751d3fcfb9bd51e38166d9e4f16affae"
+      "hash": "sha256:b337b494d231e053224f4c38ddaa7b408eb7f563f0040efa253bfca89d6daefa"
     },
     "lead-vector-designer": {
       "path": "02-skills/lead-vector-designer/SKILL.md",
@@ -2339,7 +2339,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:352a15a4e84f14dbaf6abae9f201ff76e215a7a0f15151f10083d788be52c513"
+      "hash": "sha256:bb187ebefd728f38cbc240efb79ec1b37b4623f06ce31bb6492de742ad7fdc75"
     },
     "legion-narrative-design": {
       "path": "02-skills/legion-narrative-design/SKILL.md",
@@ -2354,7 +2354,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:b7bbe3167e8cd11b40cdc369097023bf7a2fe38ff0cb794b221b389d7f1e6709"
+      "hash": "sha256:6a5fc95403e9dc8e76879ce911025f09b15722a62a31423a26192ddd5c99ee8a"
     },
     "legion-project": {
       "path": "02-skills/legion-project/SKILL.md",
@@ -2369,7 +2369,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:7c2a033a38cb37b75a235ef13965c3356e2d0576427c2fb469916cd754ef1de2"
+      "hash": "sha256:3beb86f12d414550bfc8ba2e4894a7a73e371099f9e62434010253d9e16137bb"
     },
     "material-symbols-project": {
       "path": "02-skills/material-symbols-project/SKILL.md",
@@ -2506,7 +2506,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:15c4182f5c29e7c310ec77ef5c6be42ae95b5088a76eb745f7dc9146b2909e14"
+      "hash": "sha256:46db68b8f9030db7008bd806ac7976a8bc575255e65ab94a42cdb2468a5baa9a"
     },
     "motion-accessibility": {
       "path": "02-skills/motion-accessibility/SKILL.md",
@@ -2523,7 +2523,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:0fc9b49f4280b3406397e0bda3169a0941f77856af6d4de99668bd1d29055fb9"
+      "hash": "sha256:6011badbefcfe85a5a2199c2532f99d5396c80cb7f7eb485e441997110d0885d"
     },
     "motion-choreography": {
       "path": "02-skills/motion-choreography/SKILL.md",
@@ -2540,7 +2540,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:768a3579e2c0d369d7c49213fcaeef13ee65abfec6edb74dc075e913db4b340d"
+      "hash": "sha256:3a067bf09521e179feb7c3b4cd3240f6dc7180464c52882a593c78afde1db6d3"
     },
     "motion-performance": {
       "path": "02-skills/motion-performance/SKILL.md",
@@ -2557,7 +2557,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:a944f5bb462225086407538436468d20bef708625e6a55e47a449c0c8109a237"
+      "hash": "sha256:43bfbefd519e98485d276624822146a3da89dd5399130ed1a57b9b41b59d466f"
     },
     "motion-principles": {
       "path": "02-skills/motion-principles/SKILL.md",
@@ -2574,7 +2574,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:0be9fbe53753e6fe7188aed4152d52e649dfb07c774ec80203d83c7fbc303dbc"
+      "hash": "sha256:c3595d017e34030ccf31cfe64b55cddeb8ed41392d9137c8a43a316b54edc16c"
     },
     "motion-tooling": {
       "path": "02-skills/motion-tooling/SKILL.md",
@@ -2591,7 +2591,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:974978120fb375711daf32eb965c00af24fa8295e5a1a1c100818c722790dc84"
+      "hash": "sha256:12cb66cac4e5c36d2bc001f08d1a9576fac3fc3ad6304f5c15cb143cd810b288"
     },
     "motion-transitions": {
       "path": "02-skills/motion-transitions/SKILL.md",
@@ -2608,7 +2608,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:8c9891cc24ef7d0b2c99dd458aacc360389cb87a9a8cbca2287b0ae2c3982f56"
+      "hash": "sha256:bdd118bb2888cbc99a0c4cb320f772c856d1695c43a10879322acec46fa8b360"
     },
     "omni-project": {
       "path": "02-skills/omni-project/SKILL.md",
@@ -2623,7 +2623,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:de7103cfa3ce28c8a498b3b08e101ed29b36ebb686639dabea544862c3554fcb"
+      "hash": "sha256:c08cc0ae669475805062bcc99362f5d40c74c1191b04cb2a11b0a1904eff9cbd"
     },
     "pm-competitive-intelligence": {
       "path": "02-skills/pm-competitive-intelligence/SKILL.md",
@@ -2895,7 +2895,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:23069446485f928dd1470e133baed7e226e85e85f25de87be7a46c67f6dccdb7"
+      "hash": "sha256:6b6255a6293893cf602a39e706cc9e2ff0260e862d03ca632e47dd6dcec83375"
     },
     "type-letterform-construction": {
       "path": "02-skills/type-letterform-construction/SKILL.md",
@@ -2912,7 +2912,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:69801df2fb0aba421b6798a15c5323ca883fa44a1fc8c0857d6dffe77c30aedf"
+      "hash": "sha256:a7db094aadb080ea427e71e977a1cb39f53b96ce82faa7d37d6e1ba777c09249"
     },
     "type-multi-script": {
       "path": "02-skills/type-multi-script/SKILL.md",
@@ -2929,7 +2929,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:2990621065d1d0ffff2c2dbc4063446f6b15f30a228a8ca9058a774071f97be9"
+      "hash": "sha256:4488c0dd99cd5e91e9db2521fc4c134b7b9676b64ee203a0c662e55cbdf56b7f"
     },
     "type-opentype-text": {
       "path": "02-skills/type-opentype-text/SKILL.md",
@@ -2946,7 +2946,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:dcba95d6e4390a28463175bf3ee669c87518941a1acdfbc006931ec827b56b0d"
+      "hash": "sha256:67bcf271723b3be911dee45ac79ab9b63265cae9936fc1bde45e634e96e22bad"
     },
     "type-spacing-metrics": {
       "path": "02-skills/type-spacing-metrics/SKILL.md",
@@ -2963,7 +2963,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:f74b8d9e21db43348dfead819a296cecc59a317bf02a7bffc2a15bd07f25e640"
+      "hash": "sha256:de23cf64917fecc1c763eb0d371ab3f983375ac8f3efd6b29f513217b88cdc35"
     },
     "type-typesetting": {
       "path": "02-skills/type-typesetting/SKILL.md",
@@ -2980,7 +2980,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:077c673de088e1a9ab0310174bc8a975eab2ba9c1e9294a8ee5bc923558b48e7"
+      "hash": "sha256:65708f047b6d8d2883ce917b234897fe316f8ef47f5e88ec271e51d25b54073e"
     },
     "type-variable-text": {
       "path": "02-skills/type-variable-text/SKILL.md",
@@ -2997,7 +2997,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:c37080c89d77ff496508426113869fd5922209d7d714c28b342a039c28a488b6"
+      "hash": "sha256:82661ee48bac0b301fc862e14a18c6e8bd6555b417927476b46bbd68b130fa3a"
     },
     "uid-color-for-ui": {
       "path": "02-skills/uid-color-for-ui/SKILL.md",
@@ -3034,7 +3034,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:4602bcd72a6185cca2c22666f93f1ec2addef37e97c4de49d39e85a9f8874526"
+      "hash": "sha256:53e228c5d58da35dfe56309f24db33e24bd9e07bbfb287d9063a28b0e182248f"
     },
     "uid-spatial-composition": {
       "path": "02-skills/uid-spatial-composition/SKILL.md",
@@ -3051,7 +3051,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:75f90257cd2e859adeaa91a159e2d53c78bc18161acdb393eafe463f14251aab"
+      "hash": "sha256:711c39c2a444d8e322ce8be019f7078051d2a35a540a221e597c1ddab47c0e8b"
     },
     "uid-surface-depth": {
       "path": "02-skills/uid-surface-depth/SKILL.md",
@@ -3068,7 +3068,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:7fa1a35c2b3ae377e747a3684242b16d8a0e4430e04653709ce102e7691fa92a"
+      "hash": "sha256:1a405adc1655c01acd57785387d03982c00c303bacb9acac787aa103e9439d0a"
     },
     "uid-type-for-screens": {
       "path": "02-skills/uid-type-for-screens/SKILL.md",
@@ -3085,7 +3085,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:8ad4ec6b850312f25bee504506e6663b67c0b33e809a1986be0530d4ad8b05c2"
+      "hash": "sha256:6c0f9a34ddc939a7b86118aa06ba42445c3a93835436d4258c89eac22ac9b70b"
     },
     "uid-visual-critique": {
       "path": "02-skills/uid-visual-critique/SKILL.md",
@@ -3102,7 +3102,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:8123a70ad47b3ea23963516d2328ac03f3e883ec0dcc0daf73a1fa868d762bf1"
+      "hash": "sha256:3e725298bd3502c1f9514f006454c687d53ef529d62f638fb01534db57ed67e3"
     },
     "uid-visual-system": {
       "path": "02-skills/uid-visual-system/SKILL.md",
@@ -3119,7 +3119,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:74e6f5d9c661bb65cd4a6373bdcb822de19b80759e1f511d8aac4041108a2100"
+      "hash": "sha256:8a86ca4e5e57f1669ff4c82540daeea6dab2ed163fe3a747e1bdd3d4c9bb975f"
     },
     "ux-accessibility": {
       "path": "02-skills/ux-accessibility/SKILL.md",
@@ -3136,7 +3136,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:9cd7f148b4ee2f4510ef2fdbd5d448c88973f8da5190dc3ed465112de727d4f6"
+      "hash": "sha256:30e592ea92356769224da8b558a7bc1695e7685da84cb44cbfc002bb40259546"
     },
     "ux-ai-product-design": {
       "path": "02-skills/ux-ai-product-design/SKILL.md",
@@ -3153,7 +3153,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:f08d9d33c9138179832ccf1265a97640c9321eaa647a87fbe938564404464dca"
+      "hash": "sha256:8bf93d65d00bc7e940c68945a204cf26068709def3f0809035dfdd5535927a73"
     },
     "ux-component-library": {
       "path": "02-skills/ux-component-library/SKILL.md",
@@ -3170,7 +3170,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:3c886b854a64431c054a3e180dc56f89c0fc7a6245675e906044d299d94d4a3b"
+      "hash": "sha256:84fe76636b5506db2e0575800de131fe3675564fe9bf4f8b7e0ecd428a6f2b21"
     },
     "ux-data-visualization": {
       "path": "02-skills/ux-data-visualization/SKILL.md",
@@ -3187,7 +3187,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:c3ed0d4ffd66cd7ff57baf4460185cb4dc2d6c5cd2b8ab53d2551e2f7e1702f1"
+      "hash": "sha256:0a701ede9413cede34e1750dac28487d0b411adbf7fc8d5afeb3a1abf6dcaab7"
     },
     "ux-design-systems": {
       "path": "02-skills/ux-design-systems/SKILL.md",
@@ -3204,7 +3204,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:2a0056f566a0b2e67fb83e115ba1e2a78be8a2a855803ba66159e72f1a25aabf"
+      "hash": "sha256:0c25c0ada8db0e9ac2a3ec34d40a49b0041c0c2f97e155a64d2ac18b0e6a55ca"
     },
     "ux-information-architecture": {
       "path": "02-skills/ux-information-architecture/SKILL.md",
@@ -3221,7 +3221,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:2732164fb25c868d87c4d59c432a669a9e7b4567955742052b8b5ba4479a684c"
+      "hash": "sha256:2f40a66ffffd178aab4a11f9f5ecf91df5a04ed2ebfe079f6b7f30c0ca64b834"
     },
     "ux-interaction-design": {
       "path": "02-skills/ux-interaction-design/SKILL.md",
@@ -3238,7 +3238,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6d2d6427fb3e697ab4fbdfa5c2b041b025c37519805f87658683e6bbc98e3b44"
+      "hash": "sha256:30587fff57c5dd0d26bd962c118d23cbde04ce821a90bcf66fb97f09df30a690"
     },
     "ux-performance-perception": {
       "path": "02-skills/ux-performance-perception/SKILL.md",
@@ -3255,7 +3255,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:8c57f0f5bf1e05940a759b0e1532d3eee009f60795d71bc8a362ebfbd7e57950"
+      "hash": "sha256:d52196c5dc22e6a72cececaeb244abed410aff1eef78fb2bbfe815f2b6cd58ce"
     },
     "ux-research-synthesis": {
       "path": "02-skills/ux-research-synthesis/SKILL.md",
@@ -3272,7 +3272,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:87238c8455f82399be9480302ecf7607526527416744515d2195e399fd9d6306"
+      "hash": "sha256:8bb1fef58b2887ef7c13202b08a813cd87cf82ca39d6e263c95d10f50856bf70"
     },
     "ux-service-design": {
       "path": "02-skills/ux-service-design/SKILL.md",
@@ -3289,7 +3289,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:a2c5d1e6b419158645047cf1869210c40b6f630c3df497b6a56426768418d648"
+      "hash": "sha256:8c80064c2faedf5758dfe6c32a6437771db7aa66f8bc578b490954eb33761012"
     },
     "ux-writing": {
       "path": "02-skills/ux-writing/SKILL.md",
@@ -3306,7 +3306,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:7f205fb5ac74f74bdfb37c1b00954ba190c007e52a37fa7b0140a6ec137affc9"
+      "hash": "sha256:caab27599aca19c638cfa5c1bda5ec192773f5fbbb6c2f88192a906b18c54380"
     },
     "variable-icon-font-architect": {
       "path": "02-skills/variable-icon-font-architect/SKILL.md",
@@ -3321,7 +3321,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:e512d413975b80d3783cb1c3dbad3f4aa6dc0b4aed0aa4ca3284d0bcb67ac580"
+      "hash": "sha256:ce67aa2a4de1c7f301e199afc4ce68ce80094dd43a2774a7d280a49ab5e7d813"
     },
     "visual-qa-accessibility": {
       "path": "02-skills/visual-qa-accessibility/SKILL.md",
@@ -3336,7 +3336,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6d5d9ea95f3e9ad056228f86955cf9ffc933b0f3493b8790e9391ef7bdc56117"
+      "hash": "sha256:df761e29523b0c6d7ae58652894e47dcc0c8ecce72803bd0b101785749b2addc"
     },
     "visual-qa-architecture": {
       "path": "02-skills/visual-qa-architecture/SKILL.md",
@@ -3351,7 +3351,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:337aba38c33f694ce315426280db801e7a32bf2363438bef939a8130a553b45e"
+      "hash": "sha256:8141d403092f66db9db244386c7cf21fc29967cb8baf5aec0c11312f30218378"
     },
     "visual-qa-game-design": {
       "path": "02-skills/visual-qa-game-design/SKILL.md",
@@ -3366,7 +3366,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:63827ab4d287b2362e11162c52dc8c2737b844e395d6f00feaa50db0635e6051"
+      "hash": "sha256:07e15967a21581ac112ccc10fa01cdb5b396aeb70f362562352800b6cf9d0d69"
     },
     "visual-qa-graphic-design": {
       "path": "02-skills/visual-qa-graphic-design/SKILL.md",
@@ -3381,7 +3381,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:dc60f6c8d90aabd43dc9a2eb07c9a12879f6dfbbf383c9a595b43a26259b6aa6"
+      "hash": "sha256:2e90c9b052b612bdf7905c55a0b7cb97403d3ef2c215c13779fa9cbb90b5fb95"
     },
     "visual-qa-interior-design": {
       "path": "02-skills/visual-qa-interior-design/SKILL.md",
@@ -3396,7 +3396,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:e96b4765e722f4c6c09707c1667632776f9e1945b3707b37b42affa013148b83"
+      "hash": "sha256:189cf11db6a8caac1d67753d2258b8c151336bcd4b57190378f799fd8aa76f7b"
     },
     "visual-qa-toolkit": {
       "path": "02-skills/visual-qa-toolkit/SKILL.md",
@@ -3411,7 +3411,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:c55af04ae94dedd1fbcf10a8bb4f764d46d4424ef6d5fc3389b96d69fc138c61"
+      "hash": "sha256:aa4f4dc0606af59f7ba20cc861bf6d45c70c231e710c668b7ebe5c8ce358d3b7"
     },
     "visual-qa-ui-design": {
       "path": "02-skills/visual-qa-ui-design/SKILL.md",
@@ -3426,7 +3426,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:1334a1bb17f6902caf3fbd64018dc44824008fe45c09de9426e629d6c6bebc27"
+      "hash": "sha256:656bfbe0617494b1b4adabad961638efeb86d405d08b55c5b997238d054a607f"
     },
     "visual-qa-usability": {
       "path": "02-skills/visual-qa-usability/SKILL.md",
@@ -3441,7 +3441,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:0ae5f3c87d8ce000538c7f2db82df6d4e33422d2ce3ba85e24df7987e83102e1"
+      "hash": "sha256:9a39690c36cd3040b8d8eae982aa80be0b999cc92321bc0cc8f547c037b3bbec"
     },
     "visual-qa-ux-design": {
       "path": "02-skills/visual-qa-ux-design/SKILL.md",
@@ -3456,7 +3456,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:e67c4c151c7cc4e94da3ddb8b37b497bee397d82cbd1d4ac181150b057a107b4"
+      "hash": "sha256:36fdaca12f6e130580028ecc8e3ed56b36b9ba29e08f924b42a100e519c441ea"
     },
     "webgpu-advanced-rendering": {
       "path": "02-skills/webgpu-advanced-rendering/SKILL.md",

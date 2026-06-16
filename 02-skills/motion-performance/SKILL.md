@@ -469,3 +469,6 @@ of the animation.
 - CSS Triggers (csstriggers.com) — lookup table for property rendering costs
 - David Khourshid, "FLIP Your Animations" (css-tricks.com)
 - Chrome DevTools — Performance Analysis Reference
+
+## Related
+- hub → [[lead-motion-designer]]

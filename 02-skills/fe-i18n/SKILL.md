@@ -661,3 +661,6 @@ symbol for the locale.
 | Multi-script typography design (not engineering) | `type-multi-script` |
 | Backend API design for locale-aware responses | `be-api-design` |
 | Language metadata for screen reader accessibility | `a11y-auditory` |
+
+## Related
+- hub → [[lead-frontend-engineer]]

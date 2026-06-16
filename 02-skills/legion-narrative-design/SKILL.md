@@ -425,3 +425,6 @@ formal in French or German — even if a literal translation would sound natural
 - For visual identity, faction visual language, VFX → `lead-art-director`
 - For implementation of narrative event systems, state machines → `lead-game-developer`
 - For content modeling parallels (taxonomy, editorial workflow) → `ia-content-strategy`
+
+## Related
+- hub → [[legion-project]]

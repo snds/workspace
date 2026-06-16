@@ -461,3 +461,6 @@ Before delivering animations:
 - [ ] Graph editor reviewed for unintended velocity artifacts (overshoots, dips)
 - [ ] State machine transitions tested (no pop at blend boundaries)
 - [ ] Foot contact frames match terrain in-engine (no sliding)
+
+## Related
+- hub → [[lead-3d-designer]]

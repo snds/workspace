@@ -395,3 +395,6 @@ Before delivering a lighting/rendering setup:
 - [ ] No color clipping in highlights (verify with false-color or histogram)
 - [ ] All lights have physically plausible intensity and color temperature
 - [ ] Real-time: shadow and reflection probe placement covers all hero surfaces
+
+## Related
+- hub → [[lead-3d-designer]]

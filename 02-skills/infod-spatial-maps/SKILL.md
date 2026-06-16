@@ -351,3 +351,6 @@ overlay thematic data using an equal-area transformation for choropleth polygons
 - ColorBrewer 2.0 — geographic projection filters: https://colorbrewer2.org/
 - deck.gl documentation: https://deck.gl/
 - Mapbox GL JS documentation: https://docs.mapbox.com/mapbox-gl-js/
+
+## Related
+- hub → [[lead-information-designer]]

@@ -431,3 +431,6 @@ A complete AT testing protocol for a web product:
 | `a11y-legal-compliance` | Audit methodology framework; this spoke provides the testing protocol |
 | `fe-accessibility` | Code implementation of ARIA patterns documented here |
 | `lead-accessibility-architect` | Hub — routes to this spoke for AT internals, ARIA implementation, testing protocol, and Dragon NaturallySpeaking |
+
+## Related
+- hub → [[lead-accessibility-architect]]

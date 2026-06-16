@@ -254,4 +254,4 @@ discipline that made all of this possible.
 
 ## Related
 - foundation → [[design-foundations]]
-- spoke → [[gd-color-theory]]
+- spoke → [[gd-brand-identity]] · [[gd-color-theory]] · [[gd-grid-and-layout]] · [[gd-image-composition]] · [[gd-print-production]] · [[gd-typography]] · [[gd-visual-communication]]

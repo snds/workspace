@@ -419,3 +419,6 @@ coordination is genuinely efficient.
 - For application auth and API key management → `be-auth-patterns`
 - For compliance as enterprise sales and GTM motion → `pm-enterprise-gtm`
 - For legal compliance considerations (a11y parallel) → `a11y-legal-compliance`
+
+## Related
+- hub → [[lead-data-scientist]]

@@ -440,3 +440,6 @@ environment) align with the brand's established visual language?
 - Steve Biver / Frank Kurtz: *Light: Science and Magic* (4th ed., 2012)
 - Edward Tufte: *Envisioning Information* (1990) — image as communication
 - Paul Martin Lester: *Visual Communication: Images with Messages* (7th ed., 2013)
+
+## Related
+- hub → [[lead-graphic-designer]]

@@ -375,3 +375,6 @@ This is a translation problem, not a rendering problem.
 - Paul Rand: *A Designer's Art* (1985); *Design, Form and Chaos* (1993)
 - Pantone LLC: Pantone Matching System standards
 - ISO 3098: Technical drawing — lettering (for mark specification documentation)
+
+## Related
+- hub → [[lead-graphic-designer]]

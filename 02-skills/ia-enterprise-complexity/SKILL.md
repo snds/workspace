@@ -335,3 +335,6 @@ from the ground up — not retrofitted.
 - Enterprise UX research: Nielsen Norman Group enterprise usability studies
 - SAP Fiori design system (enterprise IA at extreme scale)
 - Atlassian navigation design documentation (multi-product suite IA)
+
+## Related
+- hub → [[lead-information-architect]]

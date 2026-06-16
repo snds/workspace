@@ -434,3 +434,6 @@ const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
 - Three.js documentation (threejs.org)
 - Google Web Fundamentals — Compositor-only properties
 - W3C CSS Transforms Module Level 2 specification
+
+## Related
+- hub → [[lead-motion-designer]]

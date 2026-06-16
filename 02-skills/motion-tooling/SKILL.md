@@ -607,3 +607,6 @@ const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)
 - LottieFiles (lottiefiles.com) — preview, optimize, share
 - Web Animations API — MDN documentation
 - dotLottie specification (dotlottie.io)
+
+## Related
+- hub → [[lead-motion-designer]]

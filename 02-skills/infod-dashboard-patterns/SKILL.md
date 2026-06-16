@@ -383,3 +383,6 @@ changes the metric value and must match how the metric was defined.
 - Edward Tufte — *Envisioning Information* (1990)
 - Nielsen Norman Group — Dashboard Design patterns research
 - Juice Analytics — "Guide to Dashboard Design": https://juiceanalytics.com/
+
+## Related
+- hub → [[lead-information-designer]]

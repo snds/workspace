@@ -408,3 +408,6 @@ user-facing symptoms they cause.
 | Service-to-service OAuth (client credentials) | `be-auth-patterns` |
 | ML model serving as a microservice | `ds-ml-engineering` |
 | Event data flowing to analytics pipeline | `ds-data-engineering` |
+
+## Related
+- hub → [[lead-backend-engineer]]

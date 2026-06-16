@@ -279,3 +279,6 @@ default all audio to muted with user opt-in.
 | `a11y-neurodiversity` | Audio control for sensory-sensitive users; auditory sensory overload triggers |
 | `ux-interaction-design` | Visual notification design (toast, badge) as audio alternatives |
 | `lead-accessibility-architect` | Hub — routes to this spoke for captions, transcripts, audio alternatives, and WCAG 1.2.x |
+
+## Related
+- hub → [[lead-accessibility-architect]]

@@ -423,3 +423,6 @@ ambient lighting controlled; proof comparison against a reference print.
 - Fogra Research Institute: ICC profile documentation
 - PrintWiki: open resource for printing technology terminology
 - Frank Romano: *Delmar's Dictionary of Digital Printing and Publishing* (2004)
+
+## Related
+- hub → [[lead-graphic-designer]]

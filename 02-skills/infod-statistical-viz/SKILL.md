@@ -337,3 +337,6 @@ across subsets by position — the most perceptually accurate channel.
 - Edward Tufte — *The Visual Display of Quantitative Information* (1983)
 - Claus Wilke — *Fundamentals of Data Visualization* (2019): https://clauswilke.com/dataviz/
 - Alberto Cairo — *How Charts Lie* (2019)
+
+## Related
+- hub → [[lead-information-designer]]

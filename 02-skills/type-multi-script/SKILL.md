@@ -292,3 +292,6 @@ the highest-complexity challenges in type design.
 - `type-letterform-construction` — construction principles in Latin; each script has analogous construction principles specific to its calligraphic tradition
 - `ds-advisor` — DS type token system must account for multilingual typography; different scripts may need different line-height tokens at the same point size
 - `lead-ui-designer`/`uid-type-for-screens` — RTL layout in UI; bidirectional text; font selection for screen rendering across scripts
+
+## Related
+- hub → [[lead-type-designer]]

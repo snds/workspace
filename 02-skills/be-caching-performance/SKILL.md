@@ -468,3 +468,6 @@ of the period remaining) — that's a signal that the burn rate is too high.
 | ML prediction result caching | `ds-ml-engineering` |
 | LLM prompt/response semantic caching | `ds-nlp-llm` |
 | API rate limiting implementation | `be-api-design` |
+
+## Related
+- hub → [[lead-backend-engineer]]

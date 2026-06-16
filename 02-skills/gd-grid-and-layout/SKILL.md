@@ -343,3 +343,6 @@ current grid. They are content-driven, not arbitrary device-width round numbers.
 - Emil Ruder: *Typography* (1967)
 - Richard Rutter: *Web Typography* (2017) — the translation to screen
 - Van de Graaf canon: documented in Tschichold, *The Form of the Book*
+
+## Related
+- hub → [[lead-graphic-designer]]

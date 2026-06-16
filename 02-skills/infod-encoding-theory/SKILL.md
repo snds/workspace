@@ -328,3 +328,6 @@ what to notice and why. Route to `infod-narrative-design` for annotation strateg
 - Björn Ottosson — OKLCH specification and rationale: https://bottosson.github.io/posts/oklab/
 - CSS Color Level 4 — oklch() specification
 - Ware, Colin — *Information Visualization: Perception for Design* (4th ed., 2020)
+
+## Related
+- hub → [[lead-information-designer]]

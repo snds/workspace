@@ -315,3 +315,6 @@ components. Or build a project-specific library from reused modular kit pieces.
 | `3d-asset-pipeline` | LOD generation, collision mesh generation, and engine import for modular pieces |
 | `lead-game-designer` | Spatial flow, navigational intent, cover placement, and zone pacing are game design decisions that constrain spatial design |
 | `anthropic-skills:lead-art-director` | Faction aesthetic and visual language decisions sit with art direction; spatial design executes that direction |
+
+## Related
+- hub → [[lead-3d-designer]]

@@ -286,3 +286,6 @@ Visual design must communicate errors clearly without relying on color alone:
 - [ ] Error states include non-color signal and proximate recovery path
 - [ ] Navigation and component placement is consistent across screens
 - [ ] No unexpected context change on focus or simple input
+
+## Related
+- hub → [[lead-visual-qa]]

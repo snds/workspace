@@ -386,3 +386,6 @@ Before considering a model ready for materials or pipeline:
 - [ ] Object naming follows project convention
 - [ ] Within polygon budget for asset tier
 - [ ] Silhouette reads correctly from primary view distances
+
+## Related
+- hub → [[lead-3d-designer]]

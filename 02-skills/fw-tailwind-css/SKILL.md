@@ -300,3 +300,6 @@ Pair with:
 - **fw-shadcn** — Components consuming Tailwind tokens
 - **fw-radix-colors** — Color primitive system feeding Tailwind
 - **fw-radix-primitives** — Headless behaviors styled by Tailwind
+
+## Related
+- hub → [[lead-frontend-engineer]]

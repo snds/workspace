@@ -252,3 +252,6 @@ Entourage (people, vehicles, trees, signage) must:
 - [ ] Line weights are differentiated by cut, visible, and background
 - [ ] Scale bar present and legible
 - [ ] Diagrams communicate their message without requiring label reading
+
+## Related
+- hub → [[lead-visual-qa]]

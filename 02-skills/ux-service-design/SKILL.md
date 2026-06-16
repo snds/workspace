@@ -371,3 +371,6 @@ retention (the "aha moment") and design the onboarding to guide every user to it
 - Kerry Bodine & Harley Manning — Outside In: The Power of Putting Customers at the Center of Your Business
 - Nielsen Norman Group — Journey Mapping 101: https://www.nngroup.com/articles/journey-mapping-101/
 - Nielsen Norman Group — Service Blueprinting: https://www.nngroup.com/articles/service-blueprints-definition/
+
+## Related
+- hub → [[lead-ux-designer]]

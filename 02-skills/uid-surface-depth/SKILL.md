@@ -315,3 +315,6 @@ would add noise rather than hierarchy.
 - `lead-frontend-engineer` / `fe-performance` — backdrop-filter GPU cost; compositor layer implications
 - `uid-spatial-composition` — z-axis and layering overview at the composition level
 - `uid-visual-critique` — evaluating whether depth hierarchy is working
+
+## Related
+- hub → [[lead-ui-designer]]

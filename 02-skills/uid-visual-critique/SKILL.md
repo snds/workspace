@@ -358,3 +358,6 @@ useful if it also identifies which 3 to fix first.
 - `uid-visual-system` — evaluating against the defined visual language standard
 - `lead-visual-qa` / `visual-qa-ui-design` — when output is ready for a structured quality pass
 - `lead-icon-artist` — icon-specific critique (visual weight, metaphor, keyline adherence)
+
+## Related
+- hub → [[lead-ui-designer]]

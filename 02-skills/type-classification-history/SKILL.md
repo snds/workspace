@@ -242,3 +242,6 @@ When choosing a typeface for a project, evaluate against these criteria:
 - `lead-ui-designer`/`uid-type-for-screens` — selecting type for screen contexts; legibility at screen densities relates back to classification (humanist and transitional faces tend to render better at text sizes on screen than extreme-contrast Didone faces)
 - `ds-advisor` — DS-level typeface decisions; the classification and register of the chosen typeface directly informs what the design system communicates
 - `lead-ux-designer`/`ux-research-synthesis` — understanding type semantics informs communication decisions in research artifacts and presentations
+
+## Related
+- hub → [[lead-type-designer]]

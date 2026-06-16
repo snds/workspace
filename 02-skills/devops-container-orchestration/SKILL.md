@@ -599,3 +599,6 @@ etcd is the source of truth for all cluster state. Back it up:
 | Application secrets (auth tokens, API keys) | `be-auth-patterns` |
 | Secrets in IaC, ESO configuration | `devops-infrastructure-as-code` |
 | Cloud cost of k8s node pools | `devops-cost-optimization` |
+
+## Related
+- hub → [[lead-devops-engineer]]

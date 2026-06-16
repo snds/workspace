@@ -407,3 +407,6 @@ The curve is defined by two control points: `(x1, y1)` and `(x2, y2)`.
 - Pasquale D'Silva, "Transitional Interfaces" (Medium, 2013)
 - Google Material Design Motion documentation
 - cubic-bezier.com (Lea Verou)
+
+## Related
+- hub → [[lead-motion-designer]]

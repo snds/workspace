@@ -358,3 +358,6 @@ Before shipping any interactive component or flow:
 | `uid-iconography` | Touch target size, visible label requirement for voice control compatibility |
 | `fe-accessibility` | Keyboard interaction implementation — event handlers, focus traps, tab order in code |
 | `lead-accessibility-architect` | Hub — routes to this spoke for keyboard navigation, switch access, voice control, target size, and tremor accommodation |
+
+## Related
+- hub → [[lead-accessibility-architect]]

@@ -444,3 +444,6 @@ difficulties are associated with ADHD, TBI, autism, depression, and many other c
 | `lead-ux-designer` / `ux-interaction-design` | Cognitive load is the primary constraint on acceptable interaction complexity |
 | `infod-dashboard-patterns` | Cognitive load is the primary enemy of accessible dashboard design; progressive disclosure architecture |
 | `lead-accessibility-architect` | Hub — routes to this spoke for cognitive load, reading disabilities, ADHD, dyslexia, anxiety design, and plain language |
+
+## Related
+- hub → [[lead-accessibility-architect]]

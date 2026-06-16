@@ -310,3 +310,6 @@ for visual clarity.
 - Cytoscape.js: https://js.cytoscape.org/
 - Elk.js: https://eclipse.dev/elk/
 - NetworkX documentation: https://networkx.org/
+
+## Related
+- hub → [[lead-information-designer]]

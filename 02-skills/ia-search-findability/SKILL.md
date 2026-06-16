@@ -371,3 +371,6 @@ Route to `ds-product-analytics` for quantitative tracking setup.
 - Marcia Bates, "The Design of Browsing and Berrypicking Techniques for the Online Search Interface" (1989)
 - Peter Morville, *Ambient Findability* (2005)
 - Karen Markey Drabenstott, faceted search research
+
+## Related
+- hub → [[lead-information-architect]]

@@ -476,3 +476,6 @@ else. Audit the diff before merging.
 | Metrics for automated canary analysis | `devops-observability` |
 | Helm lifecycle hooks for migrations | `devops-container-orchestration` |
 | IaC for release infrastructure | `devops-infrastructure-as-code` |
+
+## Related
+- hub → [[lead-devops-engineer]]

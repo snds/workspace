@@ -342,3 +342,6 @@ inherit a CMS's content model limitations as IA constraints.
 - Sara Wachter-Boettcher, *Content Everywhere* (2012)
 - Karen McGrane, *Content Strategy for Mobile* (2012)
 - Brain Traffic, content strategy methodology
+
+## Related
+- hub → [[lead-information-architect]]

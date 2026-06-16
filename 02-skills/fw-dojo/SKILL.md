@@ -514,3 +514,6 @@ Context: this skill is used exclusively in a migration context within Centric PL
 3. Note all `dojo/aspect` calls — these are patches that must be carried forward or resolved
 4. Note all `dojo/topic` subscriptions — map topic strings to a migration inventory
 5. Assess dgrid usage: column count, custom `renderCell` formatters, selection mode, store type
+
+## Related
+- hub → [[lead-frontend-engineer]]

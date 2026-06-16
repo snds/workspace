@@ -433,3 +433,6 @@ plus a visually-hidden data table providing the same data in text form.
 - ARIA Authoring Practices Guide — Chart and data visualization patterns
 - deck.gl — accessibility layer docs: https://deck.gl/docs/developer-guide/accessibility
 - Figma — variable token documentation for design systems
+
+## Related
+- hub → [[lead-information-designer]]

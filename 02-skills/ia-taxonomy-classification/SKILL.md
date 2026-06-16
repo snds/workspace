@@ -397,3 +397,6 @@ triggered by product pivots, acquisitions, or accumulated governance debt.
 - ANSI/NISO Z39.19, *Guidelines for the Construction, Format, and Management of Monolingual Controlled Vocabularies*
 - Tom Gruber, "A translation approach to portable ontology specifications" (1993)
 - OWL 2 Web Ontology Language (W3C)
+
+## Related
+- hub → [[lead-information-architect]]

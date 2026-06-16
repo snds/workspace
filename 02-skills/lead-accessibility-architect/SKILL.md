@@ -251,3 +251,6 @@ When reviewing or specifying design work through this lens:
 - WHO World Report on Disability
 - W3C ARIA Authoring Practices Guide
 - Deque axe-core accessibility engine
+
+## Related
+- spoke → [[a11y-assistive-tech]] · [[a11y-auditory]] · [[a11y-cognitive]] · [[a11y-legal-compliance]] · [[a11y-motor-physical]] · [[a11y-neurodiversity]]

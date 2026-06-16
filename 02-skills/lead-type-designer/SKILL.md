@@ -278,3 +278,4 @@ rigor in service of the reading experience. Not the reverse.
 
 ## Related
 - foundation → [[design-foundations]]
+- spoke → [[type-classification-history]] · [[type-letterform-construction]] · [[type-multi-script]] · [[type-opentype-text]] · [[type-spacing-metrics]] · [[type-typesetting]] · [[type-variable-text]] · [[variable-icon-font-architect]]

@@ -112,3 +112,6 @@ Spoke of `design-engineer`. Bootstrap is relevant as:
 - Reference for utility API design
 - Sass variable architecture exemplar
 - When the target stack requires Bootstrap compatibility
+
+## Related
+- hub → [[lead-frontend-engineer]]

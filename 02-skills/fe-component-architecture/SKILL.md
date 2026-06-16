@@ -398,3 +398,6 @@ focus management while also forwarding the ref to the consumer.
 | ARIA within headless components | `fe-accessibility` |
 | Performance impact of deep component trees | `fe-performance` |
 | Token storage (auth flow, SPA OAuth) | `be-auth-patterns` |
+
+## Related
+- hub → [[lead-frontend-engineer]]

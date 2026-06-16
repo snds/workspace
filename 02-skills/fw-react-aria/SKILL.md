@@ -140,3 +140,6 @@ Spoke of `design-engineer`. Use React Aria when:
 - You want hooks, not pre-composed components
 
 Pair with **fw-tailwind-css** for styling and **fw-radix-colors** for the color system.
+
+## Related
+- hub → [[lead-frontend-engineer]]

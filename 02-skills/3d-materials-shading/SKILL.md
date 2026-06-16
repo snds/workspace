@@ -383,3 +383,6 @@ Before delivering a material set:
 - [ ] Compression format set correctly per map type and platform target
 - [ ] Material verified in the target engine (not just in Painter)
 - [ ] No texture seams visible at normal viewing distance
+
+## Related
+- hub → [[lead-3d-designer]]

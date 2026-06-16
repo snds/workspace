@@ -322,3 +322,6 @@ users often process implicitly from visual grouping and whitespace:
 | `a11y-assistive-tech` | `forced-colors` and WHCM testing; media query handling in AT-tested environments |
 | `uid-color-for-ui` | Color saturation for sensory-sensitive users; dark mode and forced-colors token system |
 | `lead-accessibility-architect` | Hub — routes to this spoke for ASD design, sensory processing, prefers-reduced-motion, and sensory overload |
+
+## Related
+- hub → [[lead-accessibility-architect]]

@@ -182,3 +182,6 @@ Load that file when discussing:
 **Current Focus**: V1 prototype — exploration, factory, RTS combat, basic Bob mechanics
 **Technology**: Three.js + WebGPU (TypeScript + GLSL)
 **Last Updated**: 2026-03-27
+
+## Related
+- spoke → [[legion-narrative-design]]

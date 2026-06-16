@@ -547,3 +547,6 @@ Attach the SBOM to the artifact, not just the build job. It must travel with the
 | Application security (OWASP, auth) | `be-security-posture` |
 | MLOps pipeline specifics | `ds-ml-engineering` |
 | Frontend performance budget in CI | `fe-performance` |
+
+## Related
+- hub → [[lead-devops-engineer]]

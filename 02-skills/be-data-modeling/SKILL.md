@@ -495,3 +495,6 @@ as the primary audit record.
 | Cache key design for tenant-scoped data | `be-caching-performance` |
 | Analytical schema design, warehouse modeling | `ds-data-engineering` |
 | Multi-tenancy in data pipelines | `ds-data-engineering` |
+
+## Related
+- hub → [[lead-backend-engineer]]

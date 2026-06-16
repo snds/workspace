@@ -29,8 +29,11 @@ Keys: `name` (= dir name) · `description` · `aliases` · `triggers` · `tier` 
 ## Cross-links — the typed `## Related` block
 Wikilinks by basename (resolved via `aliases`). Vocabulary:
 `foundation · hub · spoke · applies-in · governed-by · peer · encodes-into`.
-**Reciprocity is mandatory** (`foundation→`B ⟹ B `applies-in←`; `peer↔` both ways) and CI-enforced.
-Only `foundation →` carries load precedence; the rest are navigational.
+**Structural links are generated** from the frontmatter graph by `09-tools/build-related.py`
+(foundation/hub/spoke/applies-in/governed-by/governs) — don't hand-edit them; edit the frontmatter
+and regenerate. Hand-authored `peer ↔` lines and prose above `## Related` are preserved.
+**Reciprocity is mandatory** (guaranteed by the generator) and CI-enforced. Only `foundation →`
+carries load precedence; the rest are navigational.
 
 ## Hard rules
 - **Never rename a `SKILL.md` file or its directory** without re-pointing every loader path and
@@ -42,4 +45,8 @@ Only `foundation →` carries load precedence; the rest are navigational.
 
 ## Generators / validators (`09-tools/`, stdlib-only)
 - `build-registry.py` — frontmatter → `skills.registry.json` (`--check` for CI drift).
+- `build-related.py` — frontmatter graph → reciprocal `## Related` blocks (`--check` for CI drift).
 - `validate-links.py` — dangling + reciprocity checks on the typed graph (`--strict` to fail on warnings).
+- `validate-workspace.py` — archive provenance + memory-index coverage.
+
+After any frontmatter edit: `build-registry.py` **then** `build-related.py`, and commit both outputs.

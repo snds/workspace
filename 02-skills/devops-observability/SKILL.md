@@ -612,3 +612,6 @@ On-call rotation design:
 | OTel instrumentation in the backend service | `be-service-architecture` (twelve-factor, observability architecture) |
 | SLO target as product strategy | product management context |
 | CI/CD build metrics | `devops-ci-cd` |
+
+## Related
+- hub → [[lead-devops-engineer]]

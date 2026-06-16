@@ -469,3 +469,6 @@ which iPaaS platforms support but it's a worse enterprise experience.
 | Event instrumentation for product metrics | `ds-product-analytics` |
 | Platform integration strategy (roadmap) | `pm-platform-api` |
 | Event-driven metrics requirements | `pm-metrics-analytics` |
+
+## Related
+- hub → [[lead-backend-engineer]]

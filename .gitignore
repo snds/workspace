@@ -70,6 +70,7 @@
 !09-tools/
 !09-tools/README.md
 !09-tools/build-registry.py
+!09-tools/build-related.py
 !09-tools/validate-links.py
 !09-tools/validate-workspace.py
 !09-tools/compile-cursor-rules.py

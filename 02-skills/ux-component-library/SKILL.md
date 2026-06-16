@@ -112,3 +112,6 @@ Tabs, Table, Tooltip). Components mapped to few systems are specialized — veri
 system has them or plan to compose them: Hover Card, Color Picker, Scroll Area, Timeline, Meter,
 Data Table, Tree View, Rating. The dataset also does NOT model Command Palette, Aspect Ratio,
 Resizable, dedicated Drawer/Multi-select/Video — compose from the nearest primitive and note the gap.
+
+## Related
+- hub → [[lead-ux-designer]]

@@ -544,3 +544,6 @@ Spoke of `design-engineer` and `lead-frontend-engineer`. React DS components sho
 4. Support both controlled and uncontrolled usage via `useControllableState`
 5. Export TypeScript types alongside components — consumers depend on them
 6. Test with React Testing Library against ARIA roles, not implementation details
+
+## Related
+- hub → [[lead-frontend-engineer]]

@@ -323,3 +323,6 @@ navigation no longer tells a coherent story.
 - Don Norman, *The Design of Everyday Things* (1988, revised 2013)
 - Philip Johnson-Laird, *Mental Models* (1983)
 - Susan Carey, *Conceptual Change in Childhood* (1985)
+
+## Related
+- hub → [[lead-information-architect]]

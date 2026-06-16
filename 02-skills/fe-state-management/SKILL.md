@@ -405,3 +405,6 @@ Track unsaved changes to prevent accidental data loss:
 | Form UX design, wizard flow | `ux-interaction-design` |
 | Vue-specific Pinia patterns and composables | `fw-vue` |
 | React-specific hooks and concurrent patterns | `fw-react` |
+
+## Related
+- hub → [[lead-frontend-engineer]]

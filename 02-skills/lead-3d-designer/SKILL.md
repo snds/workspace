@@ -238,3 +238,4 @@ how it **looks and performs** in the context it was made for.
 
 ## Related
 - foundation → [[design-foundations]]
+- spoke → [[3d-asset-pipeline]] · [[3d-lighting-rendering]] · [[3d-materials-shading]] · [[3d-modeling-fundamentals]] · [[3d-rigging-animation]] · [[3d-spatial-design-for-games]]

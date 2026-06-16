@@ -913,3 +913,6 @@ gltf-transform join model.glb model-joined.glb
 | `3d-rigging-animation` | Animation bake settings, FBX deform-bone-only export, and root motion extraction are pipeline concerns |
 | `3d-lighting-rendering` | Lightmap UV generation and bake quality settings live at the pipeline stage |
 | `anthropic-skills:threejs-materials-master` | Three.js material configuration after glTF import — loading GLBs, assigning textures, configuring tone mapping |
+
+## Related
+- hub → [[lead-3d-designer]]

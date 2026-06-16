@@ -308,3 +308,6 @@ of floating anchors destroys the addition/subtraction structure.
 - Bateman et al. — "Useful Junk? The Effects of Visual Embellishment on
   Comprehension and Memorability of Charts" (CHI 2010)
 - Cole Nussbaumer Knaflic — *Storytelling with Data* (2015)
+
+## Related
+- hub → [[lead-information-designer]]

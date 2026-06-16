@@ -722,3 +722,6 @@ prevents accidental breaking changes from landing silently.
 | Component implementation that consumes tokens | `fe-component-architecture` |
 | Visual design system decisions (what tokens encode) | `lead-ui-designer` |
 | Design engineering integration | `design-engineer` |
+
+## Related
+- hub → [[lead-frontend-engineer]]

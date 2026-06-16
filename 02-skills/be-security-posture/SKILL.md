@@ -700,3 +700,6 @@ intentional security design, not just reactive patching.
 | Service-to-service communication, event-driven security | `be-service-architecture` |
 | Legal/regulatory compliance beyond SOC 2 (GDPR, HIPAA) | `a11y-legal-compliance` |
 | Accessibility and security overlap in UI/form design | `a11y-legal-compliance` |
+
+## Related
+- hub → [[lead-backend-engineer]]

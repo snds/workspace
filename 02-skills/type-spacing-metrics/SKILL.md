@@ -263,3 +263,6 @@ type even at the same point size. Solutions:
 - `lead-ui-designer`/`uid-type-for-screens` — screen-specific spacing decisions; when to override letter-spacing tokens
 - `lead-ux-designer`/`ux-interaction-design` — optical spacing informs form layout; label-to-field relationships; list item spacing as readability and interaction decisions
 - `lead-accessibility-architect`/`a11y-cognitive` — generous letter-spacing and line-height benefit users with dyslexia and reading disabilities
+
+## Related
+- hub → [[lead-type-designer]]

@@ -217,3 +217,6 @@ Spoke of `design-engineer`. Web Components are relevant when:
 
 Pair with **fw-radix-colors** for the color token system and **fw-tailwind-css** for
 utility generation alongside Web Components.
+
+## Related
+- hub → [[lead-frontend-engineer]]

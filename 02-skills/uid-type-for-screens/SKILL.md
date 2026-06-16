@@ -332,3 +332,6 @@ hard to control and rarely provide meaningful improvement.
 - `lead-accessibility-architect` / `a11y-visual` — minimum text sizes, legibility for accessibility
 - `uid-visual-system` — type system as part of the complete visual language
 - `uid-color-for-ui` — color contrast for text must be re-evaluated against all surface colors
+
+## Related
+- hub → [[lead-ui-designer]]

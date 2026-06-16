@@ -322,3 +322,6 @@ Variable fonts should still be subsetted to used character ranges:
 - `type-spacing-metrics` — spacing must be coordinated across variable axes; opsz should include spacing adjustments
 - `ds-advisor` — variable font axis token architecture: `font-weight` for wght, responsive opsz tokens, GRAD for dark mode; how to expose axes through the DS layer
 - `lead-ui-designer`/`uid-type-for-screens` — opsz axis in responsive UI typography; GRAD for dark mode type density compensation; `font-optical-sizing: auto` as a base stylesheet requirement
+
+## Related
+- hub → [[lead-type-designer]]

@@ -352,3 +352,6 @@ not a research finding.
 - Erika Hall — Just Enough Research
 - Nielsen Norman Group — Research methods: https://www.nngroup.com/topic/user-research/
 - Dovetail — Research repository and synthesis tooling: https://dovetailapp.com/
+
+## Related
+- hub → [[lead-ux-designer]]

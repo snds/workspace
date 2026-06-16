@@ -565,3 +565,6 @@ cost — err toward more parallelism.
 | Observability sampling (accuracy vs. cost) | `devops-observability` |
 | IaC for Reserved Instance / Savings Plan purchases | `devops-infrastructure-as-code` |
 | CI pipeline design (parallelism, caching) | `devops-ci-cd` |
+
+## Related
+- hub → [[lead-devops-engineer]]

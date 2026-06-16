@@ -518,3 +518,6 @@ Agentic tasks fail mid-loop. Prompts must handle:
 - For API design for prompt endpoints → `be-integration-patterns`
 - For AI-native product UX patterns → `ux-ai-product-design`
 - For caching infrastructure → `be-caching-performance`
+
+## Related
+- hub → [[lead-data-scientist]]

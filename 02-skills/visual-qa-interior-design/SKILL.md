@@ -253,3 +253,6 @@ or vice versa — flag the delta between stated mood and achieved mood.
 - [ ] All furniture, materials, and objects belong to the same style family (or bridged deliberately)
 - [ ] The render's mood (light quality, palette, texture) matches the stated brief
 - [ ] No rogue elements that break the style coherence without justification
+
+## Related
+- hub → [[lead-visual-qa]]

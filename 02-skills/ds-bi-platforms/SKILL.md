@@ -401,3 +401,6 @@ or reverse ETL for customers who want integration into their own data warehouse.
 - For executive narrative from data → `ds-executive-storytelling`
 - For product metrics, funnel analysis → `ds-product-analytics`
 - For information hierarchy and visual encoding → `lead-information-designer`
+
+## Related
+- hub → [[lead-data-scientist]]
