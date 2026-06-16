@@ -15,6 +15,10 @@ description: >
 
   Current Project Context: Legion (interstellar hard sci-fi game —
   NASA-industrial aesthetic).
+aliases: [lead-art-director]
+tier: hub
+domain: design
+spec_version: "2.0"
 ---
 
 # Lead Art Director

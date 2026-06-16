@@ -1,6 +1,8 @@
 ---
 name: figma-plugin-dev
 description: Develop Figma plugins with TypeScript. Use when building plugins that import assets, create components, manage pages, or use combineAsVariants(). Covers async page loading, error recovery, component sets, and avoiding "object not extensible" errors. Essential for bulk icon import plugins.
+aliases: [figma-plugin-dev]
+spec_version: "2.0"
 ---
 
 # Figma Plugin Development

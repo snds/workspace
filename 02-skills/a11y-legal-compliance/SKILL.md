@@ -13,6 +13,11 @@ description: >
   remediation priority, accessibility testing, screen reader testing, zoom testing,
   color blindness simulation, legal risk, Title II, Title III, Rehabilitation Act,
   Directive 2016/2102.
+aliases: [a11y-legal-compliance]
+tier: cross-cutting
+domain: accessibility
+hub: lead-accessibility-architect
+spec_version: "2.0"
 ---
 
 # a11y-legal-compliance

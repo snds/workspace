@@ -18,6 +18,12 @@ description: >
   cluster) — that's at the boundary with devops-container-orchestration. Not for:
   CI build time metrics — route to devops-ci-cd. Not for: cost attribution — route
   to devops-cost-optimization.
+aliases: [devops-observability]
+tier: spoke
+domain: engineering
+hub: lead-devops-engineer
+prerequisites: [lead-devops-engineer]
+spec_version: "2.0"
 ---
 
 # DevOps: Observability

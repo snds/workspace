@@ -16,6 +16,12 @@ description: >
   authentication and authorization in APIs (be-auth-patterns), backend service
   decomposition (be-service-architecture), or ML prediction endpoint design
   (ds-ml-engineering, though cross-referenced here).
+aliases: [be-api-design]
+tier: spoke
+domain: engineering
+hub: lead-backend-engineer
+prerequisites: [lead-backend-engineer]
+spec_version: "2.0"
 ---
 
 # Be: API Design

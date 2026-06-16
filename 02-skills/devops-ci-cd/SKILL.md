@@ -16,6 +16,12 @@ description: >
   Not for: deep deployment strategy (blue-green, canary, feature flags) — route
   to devops-release-engineering. Not for: Kubernetes resource design — route to
   devops-container-orchestration.
+aliases: [devops-ci-cd]
+tier: spoke
+domain: engineering
+hub: lead-devops-engineer
+prerequisites: [lead-devops-engineer]
+spec_version: "2.0"
 ---
 
 # DevOps: CI/CD

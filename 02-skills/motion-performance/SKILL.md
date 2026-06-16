@@ -10,6 +10,12 @@ description: >
   synchronous layout, DevTools Performance panel, Layer panel, paint flashing,
   frame budget, 120fps/ProMotion, Web Animations API vs CSS vs GSAP performance,
   or any question about why an animation is slow and how to fix it.
+aliases: [motion-performance]
+tier: spoke
+domain: design
+hub: lead-motion-designer
+prerequisites: [lead-motion-designer]
+spec_version: "2.0"
 ---
 
 # Motion Performance

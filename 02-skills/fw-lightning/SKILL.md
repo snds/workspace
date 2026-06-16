@@ -11,6 +11,12 @@ description: >
 pinned_version: "SLDS 2 (2.29.0)"
 pinned_date: "2026-03-26"
 changelog_url: "https://www.lightningdesignsystem.com/release-notes/"
+aliases: [fw-lightning]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # Salesforce Lightning Design System — Framework Skill

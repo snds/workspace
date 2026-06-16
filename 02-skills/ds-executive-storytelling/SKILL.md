@@ -13,6 +13,8 @@ description: >
   analysis, or any question about how to make analytical findings land with business
   stakeholders who want decisions, not model metrics. This skill covers analytical
   communication — not the analytical methods themselves (see other DS spokes).
+aliases: [ds-executive-storytelling]
+spec_version: "2.0"
 ---
 
 # DS: Executive Storytelling

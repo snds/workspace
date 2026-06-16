@@ -13,6 +13,12 @@ description: >
   job", or any question about the designed experience between user action and data display.
   This skill understands that performance perception is a joint design/engineering problem
   and names the backend and frontend constraints that affect perceived performance decisions.
+aliases: [ux-performance-perception]
+tier: spoke
+domain: design
+hub: lead-ux-designer
+prerequisites: [lead-ux-designer]
+spec_version: "2.0"
 ---
 
 # UX — Performance Perception

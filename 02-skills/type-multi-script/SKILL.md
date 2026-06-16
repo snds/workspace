@@ -10,6 +10,12 @@ description: >
   algorithm; vertical typesetting for CJK; multilingual product typography;
   testing type with non-Latin languages; or any question about text type that
   extends beyond the Latin alphabet. Spoke of `lead-type-designer`.
+aliases: [type-multi-script]
+tier: spoke
+domain: design
+hub: lead-type-designer
+prerequisites: [lead-type-designer]
+spec_version: "2.0"
 ---
 
 # Type Multi-Script Design

@@ -13,6 +13,11 @@ description: >
   shader code (glsl-shader-architect), Three.js material classes (threejs-materials-master),
   or model topology (3d-modeling-fundamentals).
 hub: lead-3d-designer
+aliases: [3d-materials-shading]
+tier: spoke
+domain: design
+prerequisites: [lead-3d-designer]
+spec_version: "2.0"
 ---
 
 # 3D Materials and Shading

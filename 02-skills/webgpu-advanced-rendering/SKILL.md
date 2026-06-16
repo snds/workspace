@@ -7,6 +7,8 @@ description: >
   objects, instancing, indirect draw, bindless textures, or any question about 
   high-performance 3D rendering on the web. Generates production-ready WebGPU-optimized 
   Three.js code and complex TSL node materials for cutting-edge visual effects.
+aliases: [webgpu-advanced-rendering]
+spec_version: "2.0"
 ---
 
 # WebGPU Advanced Rendering & Three.js TSL

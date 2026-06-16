@@ -9,6 +9,12 @@ description: >
   knowledge organization, or any question about how information should be
   classified and labeled. Distinguished from ia-navigation-systems (how taxonomy
   is navigated) and ia-mental-models (how taxonomy aligns to user expectations).
+aliases: [ia-taxonomy-classification]
+tier: spoke
+domain: design
+hub: lead-information-architect
+prerequisites: [lead-information-architect]
+spec_version: "2.0"
 ---
 
 # IA: Taxonomy & Classification

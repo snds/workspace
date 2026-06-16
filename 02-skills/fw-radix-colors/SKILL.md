@@ -14,6 +14,12 @@ description: >
 pinned_version: "3.0.0"
 pinned_date: "2026-03-26"
 changelog_url: "https://github.com/radix-ui/colors/releases"
+aliases: [fw-radix-colors]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # Radix UI Colors — Framework Skill

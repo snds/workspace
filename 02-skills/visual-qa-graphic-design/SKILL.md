@@ -14,6 +14,11 @@ description: >
   or interactive behavior. Sub-specialties: typography QA, iconography QA
   (graphic design lens), brand identity QA, editorial layout QA, illustration QA.
   Spoke of lead-visual-qa.
+aliases: [visual-qa-graphic-design]
+tier: cross-cutting
+domain: quality
+hub: lead-visual-qa
+spec_version: "2.0"
 ---
 
 # Visual QA — Graphic Design

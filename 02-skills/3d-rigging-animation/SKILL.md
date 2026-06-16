@@ -13,6 +13,11 @@ description: >
   interpolation, looping animation, animation state machine, blend tree, animation
   retargeting, or any question about how to rig or animate a character for games.
 hub: lead-3d-designer
+aliases: [3d-rigging-animation]
+tier: spoke
+domain: design
+prerequisites: [lead-3d-designer]
+spec_version: "2.0"
 ---
 
 # 3D Rigging and Animation

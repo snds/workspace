@@ -15,6 +15,11 @@ description: >
   modes (gameplay vs. menus vs. pause), 2D and 3D rendering quality,
   sprite and pixel art quality, icon design within game context. Spoke of
   lead-visual-qa.
+aliases: [visual-qa-game-design]
+tier: cross-cutting
+domain: quality
+hub: lead-visual-qa
+spec_version: "2.0"
 ---
 
 # Visual QA — Game Design

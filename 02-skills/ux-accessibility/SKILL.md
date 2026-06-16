@@ -16,6 +16,12 @@ description: >
   this error message meet WCAG", "what about reduced motion", or any question where
   inclusion and accessibility affect design decisions. WCAG implementation in code
   lives in `fe-accessibility` — this spoke owns the design decisions.
+aliases: [ux-accessibility]
+tier: spoke
+domain: design
+hub: lead-ux-designer
+prerequisites: [lead-ux-designer]
+spec_version: "2.0"
 ---
 
 # UX — Accessibility

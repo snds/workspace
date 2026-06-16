@@ -12,6 +12,12 @@ description: >
   CSS font-feature-settings for typesetting, text-wrap: balance for headlines,
   optical alignment in layout, or any question about making text read beautifully
   on the page or screen. Spoke of `lead-type-designer`.
+aliases: [type-typesetting]
+tier: spoke
+domain: design
+hub: lead-type-designer
+prerequisites: [lead-type-designer]
+spec_version: "2.0"
 ---
 
 # Type Typesetting

@@ -14,6 +14,12 @@ description: >
   "how do I annotate this for engineers", or any question about the design-side
   decisions in a design system. Token architecture, Figma ops, and DS strategy live
   in `ds-advisor` — route there for those topics.
+aliases: [ux-design-systems]
+tier: spoke
+domain: design
+hub: lead-ux-designer
+prerequisites: [lead-ux-designer]
+spec_version: "2.0"
 ---
 
 # UX — Design Systems (Component Behavior Layer)

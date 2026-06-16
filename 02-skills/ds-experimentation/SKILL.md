@@ -12,6 +12,8 @@ description: >
   platforms, assignment service, guardrail metrics, or any question about measuring
   whether an intervention caused an effect. This skill covers causal measurement —
   not model evaluation (ds-ml-engineering), not metric definition ownership (pm-metrics-analytics).
+aliases: [ds-experimentation]
+spec_version: "2.0"
 ---
 
 # DS: Experimentation

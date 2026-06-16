@@ -17,6 +17,11 @@ description: >
   not material authoring (3d-materials-shading), shader code (glsl-shader-architect),
   or Three.js implementation (threejs-materials-master).
 hub: lead-3d-designer
+aliases: [3d-asset-pipeline]
+tier: spoke
+domain: design
+prerequisites: [lead-3d-designer]
+spec_version: "2.0"
 ---
 
 # 3D Asset Pipeline

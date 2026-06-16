@@ -16,6 +16,12 @@ description: >
   Not for: CI/CD pipeline design — route to devops-ci-cd. Not for: deployment
   strategies (blue-green, canary logic) — route to devops-release-engineering.
   Not for: Prometheus/metrics/SLO — route to devops-observability.
+aliases: [devops-container-orchestration]
+tier: spoke
+domain: engineering
+hub: lead-devops-engineer
+prerequisites: [lead-devops-engineer]
+spec_version: "2.0"
 ---
 
 # DevOps: Container Orchestration

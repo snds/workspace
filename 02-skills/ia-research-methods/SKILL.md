@@ -11,6 +11,12 @@ description: >
   any question about how to validate or evaluate an information architecture.
   Distinguished from ia-mental-models (the insights that drive IA decisions)
   and ux-research-synthesis (broader UX research synthesis methods).
+aliases: [ia-research-methods]
+tier: spoke
+domain: design
+hub: lead-information-architect
+prerequisites: [lead-information-architect]
+spec_version: "2.0"
 ---
 
 # IA: Research Methods

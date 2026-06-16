@@ -15,6 +15,12 @@ migration_note: >
   maintaining existing Dojo code safely during extraction, and (2) planning and
   executing the migration to modern frameworks (Vue/React). Approach all Dojo patterns
   with "how do I safely replace this?" as the secondary lens.
+aliases: [fw-dojo]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # Dojo — Framework Skill (Legacy + Migration)

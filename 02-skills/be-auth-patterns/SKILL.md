@@ -16,6 +16,12 @@ description: >
   who can do what, how they prove it, and how you record that they did it.
   Not for: session management in a web framework (handled at app layer),
   encryption at rest (infrastructure concern), or network-level security.
+aliases: [be-auth-patterns]
+tier: spoke
+domain: engineering
+hub: lead-backend-engineer
+prerequisites: [lead-backend-engineer]
+spec_version: "2.0"
 ---
 
 # Be: Auth Patterns

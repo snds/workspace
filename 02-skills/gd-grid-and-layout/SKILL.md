@@ -8,6 +8,12 @@ description: >
   Van de Graaf canon, golden ratio layout, rule of thirds, asymmetrical
   balance, negative space as a design element, or how print grid logic
   translates to responsive web grids and spacing token systems.
+aliases: [gd-grid-and-layout]
+tier: spoke
+domain: design
+hub: lead-graphic-designer
+prerequisites: [lead-graphic-designer]
+spec_version: "2.0"
 ---
 
 # GD — Grid and Layout

@@ -9,6 +9,12 @@ description: >
   metaphor, image-text relationships, Barthes anchorage and relay, cultural
   specificity of visual symbols, how composition makes an argument, or how to
   evaluate whether a visual communicates what it intends to communicate.
+aliases: [gd-visual-communication]
+tier: spoke
+domain: design
+hub: lead-graphic-designer
+prerequisites: [lead-graphic-designer]
+spec_version: "2.0"
 ---
 
 # GD — Visual Communication

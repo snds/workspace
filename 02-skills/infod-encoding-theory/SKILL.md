@@ -10,6 +10,11 @@ description: >
   preattentive processing, how to design colorblind-safe visualizations, or
   how to use preattentive attributes to direct attention in dashboards.
 hub: lead-information-designer
+aliases: [infod-encoding-theory]
+tier: spoke
+domain: design
+prerequisites: [lead-information-designer]
+spec_version: "2.0"
 ---
 
 # Encoding Theory

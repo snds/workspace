@@ -12,6 +12,11 @@ description: >
   parallax, executive function, task initiation, task switching, planning, sequencing,
   breadcrumbs, shallow navigation, hypersensitivity, hyposensitivity, sensory diet,
   reduced contrast mode, low stimulation mode, environmental customization.
+aliases: [a11y-neurodiversity]
+tier: cross-cutting
+domain: accessibility
+hub: lead-accessibility-architect
+spec_version: "2.0"
 ---
 
 # a11y-neurodiversity

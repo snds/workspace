@@ -12,6 +12,8 @@ description: >
   intervals, or any question about predicting future values from time-ordered data.
   This skill covers forecasting and anomaly detection — not general regression or
   classification (ds-ml-engineering), not retention cohort analysis (ds-product-analytics).
+aliases: [ds-forecasting]
+spec_version: "2.0"
 ---
 
 # DS: Forecasting

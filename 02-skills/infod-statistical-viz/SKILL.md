@@ -10,6 +10,11 @@ description: >
   type is inappropriate or misleading, how to annotate a chart for clarity, or
   when to use small multiples vs. animation vs. interaction.
 hub: lead-information-designer
+aliases: [infod-statistical-viz]
+tier: spoke
+domain: design
+prerequisites: [lead-information-designer]
+spec_version: "2.0"
 ---
 
 # Statistical Visualization

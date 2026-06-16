@@ -18,6 +18,11 @@ description: >
   component implementation that consumes tokens (fe-component-architecture),
   or visual design system decisions (lead-ui-designer).
 hub: lead-frontend-engineer
+aliases: [fe-design-tokens]
+tier: spoke
+domain: engineering
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # Fe: Design Tokens

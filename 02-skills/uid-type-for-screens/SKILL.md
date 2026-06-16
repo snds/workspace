@@ -10,6 +10,12 @@ description: >
   variable font usage (opsz, wght axes), responsive type scales, web font
   performance, or "why does this font look wrong on screen?" This spoke is part
   of the lead-ui-designer hub skill network.
+aliases: [uid-type-for-screens]
+tier: spoke
+domain: design
+hub: lead-ui-designer
+prerequisites: [lead-ui-designer]
+spec_version: "2.0"
 ---
 
 # UID: Type for Screens

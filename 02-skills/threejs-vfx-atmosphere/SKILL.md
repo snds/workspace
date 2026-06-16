@@ -5,6 +5,8 @@ description: >
   Trigger on: post-processing, bloom, SSAO, tone mapping, color grading, particles, VFX, fog, atmosphere, god rays, shadows,
   lighting setup, EffectComposer, Niagara-like effects, explosions, thrusters, sparks, dust, smoke, volumetric, ambient occlusion,
   anti-aliasing, depth of field, film grain, or any "make this scene feel like X" atmospheric request. Generates working TypeScript code.
+aliases: [threejs-vfx-atmosphere]
+spec_version: "2.0"
 ---
 
 # Three.js VFX and Atmosphere Specialist

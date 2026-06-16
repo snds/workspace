@@ -12,6 +12,12 @@ description: >
 pinned_version: "5.3.8"
 pinned_date: "2026-03-26"
 changelog_url: "https://github.com/twbs/bootstrap/releases"
+aliases: [fw-bootstrap]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # Bootstrap — Framework Skill

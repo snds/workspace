@@ -10,6 +10,11 @@ description: >
   label right", "how should we write validation messages", "what's our tone guide",
   "how do I write for this alert type", or any question about the words in a UI.
 hub: lead-ux-designer
+aliases: [ux-writing]
+tier: spoke
+domain: design
+prerequisites: [lead-ux-designer]
+spec_version: "2.0"
 ---
 
 # UX — Writing

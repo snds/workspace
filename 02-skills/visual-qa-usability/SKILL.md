@@ -12,6 +12,11 @@ description: >
   action safeguards, data density vs. comprehension, and any evaluation of
   whether a visual design enables users to accomplish their goals without
   frustration, confusion, or error. Spoke of lead-visual-qa.
+aliases: [visual-qa-usability]
+tier: cross-cutting
+domain: quality
+hub: lead-visual-qa
+spec_version: "2.0"
 ---
 
 # Visual QA — Usability

@@ -9,6 +9,12 @@ description: >
   staging attention with motion, ease-in vs ease-out confusion, overshoot and settle,
   arc motion, secondary action, timing relative to element weight/size, follow-through,
   or any question about the underlying principles that govern how motion communicates.
+aliases: [motion-principles]
+tier: spoke
+domain: design
+hub: lead-motion-designer
+prerequisites: [lead-motion-designer]
+spec_version: "2.0"
 ---
 
 # Motion Principles

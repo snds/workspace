@@ -13,6 +13,12 @@ description: >
   Vitest, Jest, Lighthouse CI, bundlesize, size-limit, Web Vitals in CI,
   snapshot testing, or any question about testing strategy, test quality, or
   CI integration for a frontend application.
+aliases: [fe-testing]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # FE Testing

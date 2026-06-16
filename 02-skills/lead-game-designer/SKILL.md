@@ -15,6 +15,10 @@ description: >
 
   Current Project Context: Legion (interstellar hard sci-fi game — factory
   management × 4X × RTS × narrative).
+aliases: [lead-game-designer]
+tier: hub
+domain: game
+spec_version: "2.0"
 ---
 
 # Lead Game Designer

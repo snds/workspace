@@ -15,6 +15,8 @@ description: >
   This skill covers prompt engineering craft — not NLP/LLM pipeline architecture
   (ds-nlp-llm), not LLM as a product decision (pm-platform-api).
 hub: lead-data-scientist
+aliases: [ds-prompt-engineering]
+spec_version: "2.0"
 ---
 
 # DS: Prompt Engineering

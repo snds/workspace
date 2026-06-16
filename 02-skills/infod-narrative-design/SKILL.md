@@ -9,6 +9,11 @@ description: >
   data-ink ratio, designing executive charts, or deciding whether scrollytelling is
   appropriate for a given context.
 hub: lead-information-designer
+aliases: [infod-narrative-design]
+tier: spoke
+domain: design
+prerequisites: [lead-information-designer]
+spec_version: "2.0"
 ---
 
 # Narrative Design

@@ -1,6 +1,8 @@
 ---
 name: figma-plugin
 description: Figma plugin development with TypeScript. Use when creating or debugging Figma plugins, handling TypeScript compilation errors, bundling assets, or working with the Figma Plugin API. Covers common API quirks, sandbox limitations, and error patterns.
+aliases: [figma-plugin]
+spec_version: "2.0"
 ---
 
 # Figma Plugin Development

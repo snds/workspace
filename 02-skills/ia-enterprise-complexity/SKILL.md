@@ -10,6 +10,12 @@ description: >
   product scales from 10 to 100+ features, mega-suite navigation failure signals,
   multi-tenant IA, or any question about IA challenges specific to enterprise
   SaaS products serving multiple user roles at scale.
+aliases: [ia-enterprise-complexity]
+tier: spoke
+domain: design
+hub: lead-information-architect
+prerequisites: [lead-information-architect]
+spec_version: "2.0"
 ---
 
 # IA: Enterprise Complexity

@@ -15,6 +15,8 @@ description: >
   (ds-data-engineering), not executive narrative (ds-executive-storytelling), not product
   metrics definitions (ds-product-analytics).
 hub: lead-data-scientist
+aliases: [ds-bi-platforms]
+spec_version: "2.0"
 ---
 
 # DS: BI Platforms & Embedded Analytics

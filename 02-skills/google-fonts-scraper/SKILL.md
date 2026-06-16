@@ -1,6 +1,8 @@
 ---
 name: google-fonts-scraper
 description: Scraping Google Fonts website (fonts.google.com/icons) for icon metadata. Use when building tools that need Material Symbols/Icons categories, tags, or icon lists. Covers virtual scrolling handling, metadata API, and DOM navigation patterns.
+aliases: [google-fonts-scraper]
+spec_version: "2.0"
 ---
 
 # Google Fonts Scraping

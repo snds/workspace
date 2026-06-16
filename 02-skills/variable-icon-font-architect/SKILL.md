@@ -14,6 +14,8 @@ description: >
   "path direction", "glyph construction", or any reference to building or
   debugging variable icon font masters.
 hub: lead-type-designer
+aliases: [variable-icon-font-architect]
+spec_version: "2.0"
 ---
 
 # Variable Icon Font Architect

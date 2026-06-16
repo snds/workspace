@@ -13,6 +13,11 @@ description: >
   error messages, help text, instructions, memory load, sustained attention, cognitive
   fatigue, TBI, traumatic brain injury, dementia, Alzheimer's, intellectual disability,
   executive function, planning, task initiation, time awareness, timeout warnings.
+aliases: [a11y-cognitive]
+tier: cross-cutting
+domain: accessibility
+hub: lead-accessibility-architect
+spec_version: "2.0"
 ---
 
 # a11y-cognitive

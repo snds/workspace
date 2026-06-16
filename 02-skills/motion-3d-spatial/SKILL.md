@@ -9,6 +9,12 @@ description: >
   in interfaces, WebGL for UI, spatial transitions, modal rise, depth hierarchy in
   flat design, Z-axis motion, or any question involving depth, perspective, or
   three-dimensional reasoning in a 2D screen context.
+aliases: [motion-3d-spatial]
+tier: spoke
+domain: design
+hub: lead-motion-designer
+prerequisites: [lead-motion-designer]
+spec_version: "2.0"
 ---
 
 # Motion 3D Spatial

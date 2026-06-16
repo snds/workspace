@@ -1,6 +1,8 @@
 ---
 name: material-symbols-svg-export
 description: Extract SVG icons from Google Material Symbols variable fonts. Use when working with fontTools to export glyphs as SVGs, handling coordinate transforms, variable font axes (opsz, wght, GRAD, FILL), or filtering font glyphs. Critical for font-to-SVG conversion with correct Y-axis handling.
+aliases: [material-symbols-svg-export]
+spec_version: "2.0"
 ---
 
 # Material Symbols SVG Export

@@ -15,6 +15,12 @@ description: >
   Not for: Kubernetes resource design (Deployment, Service, Helm chart authoring)
   — route to devops-container-orchestration. Not for: secrets at the application
   auth layer — route to be-auth-patterns.
+aliases: [devops-infrastructure-as-code]
+tier: spoke
+domain: engineering
+hub: lead-devops-engineer
+prerequisites: [lead-devops-engineer]
+spec_version: "2.0"
 ---
 
 # DevOps: Infrastructure as Code

@@ -9,6 +9,11 @@ description: >
   Use this spoke when any data has a geographic dimension or when the question
   involves a map as the primary visualization.
 hub: lead-information-designer
+aliases: [infod-spatial-maps]
+tier: spoke
+domain: design
+prerequisites: [lead-information-designer]
+spec_version: "2.0"
 ---
 
 # Spatial Maps

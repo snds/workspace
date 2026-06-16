@@ -17,6 +17,12 @@ description: >
   divergence where it matters. Not for: application-level entity modeling
   (be-data-modeling), analytical pipeline schema design (ds-data-engineering),
   or Redis/cache patterns (be-caching-performance).
+aliases: [be-relational-db]
+tier: spoke
+domain: engineering
+hub: lead-backend-engineer
+prerequisites: [lead-backend-engineer]
+spec_version: "2.0"
 ---
 
 # Be: Relational Database

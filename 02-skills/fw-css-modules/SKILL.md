@@ -13,6 +13,12 @@ description: >
 pinned_version: "vanilla-extract@1.20.0"
 pinned_date: "2026-03-26"
 changelog_url: "https://github.com/vanilla-extract-css/vanilla-extract/releases"
+aliases: [fw-css-modules]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # CSS Modules & Vanilla Extract — Framework Skill

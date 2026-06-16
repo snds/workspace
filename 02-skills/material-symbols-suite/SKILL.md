@@ -1,6 +1,8 @@
 ---
 name: material-symbols-suite
 description: Material Symbols Icon Automation Suite patterns and architecture. Use when building multi-part automation tools with shared configuration, debugging multi-component systems, or creating user-friendly tooling for non-developers. Covers shared config, folder structure, and debugging workflows.
+aliases: [material-symbols-suite]
+spec_version: "2.0"
 ---
 
 # Material Symbols Suite Patterns

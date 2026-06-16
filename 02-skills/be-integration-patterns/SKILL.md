@@ -18,6 +18,12 @@ description: >
   API contract design for your own REST/GraphQL API (be-api-design), or
   event-driven architecture patterns within your service boundary
   (be-service-architecture covers sagas and CQRS).
+aliases: [be-integration-patterns]
+tier: spoke
+domain: engineering
+hub: lead-backend-engineer
+prerequisites: [lead-backend-engineer]
+spec_version: "2.0"
 ---
 
 # Be: Integration Patterns

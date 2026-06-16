@@ -17,6 +17,8 @@ description: >
   (ds-data-engineering), not warehouse or BI tooling (ds-bi-platforms), not authentication
   (be-auth-patterns).
 hub: lead-data-scientist
+aliases: [ds-data-governance]
+spec_version: "2.0"
 ---
 
 # DS: Data Governance

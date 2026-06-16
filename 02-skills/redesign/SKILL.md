@@ -20,6 +20,8 @@ metadata:
   family: redesign
   poc: false
   version: 0.1.0
+aliases: [redesign]
+spec_version: "2.0"
 ---
 
 # /redesign — End-to-End Redesign Hub

@@ -14,6 +14,11 @@ description: >
   selection, Dragon NaturallySpeaking, Dragon accessibility, Voice Control macOS,
   AT market share, WebAIM screen reader survey, browser pairing, NVDA Firefox, JAWS
   Chrome, VoiceOver Safari, ARIA Authoring Practices Guide, APG, widget patterns.
+aliases: [a11y-assistive-tech]
+tier: cross-cutting
+domain: accessibility
+hub: lead-accessibility-architect
+spec_version: "2.0"
 ---
 
 # a11y-assistive-tech

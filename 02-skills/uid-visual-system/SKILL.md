@@ -8,6 +8,12 @@ description: >
   character, visual system evolution, platform-specific visual conventions, or any
   question about how to make a product look and feel like itself. This spoke is
   part of the lead-ui-designer hub skill network.
+aliases: [uid-visual-system]
+tier: spoke
+domain: design
+hub: lead-ui-designer
+prerequisites: [lead-ui-designer]
+spec_version: "2.0"
 ---
 
 # UID: Visual System

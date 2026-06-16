@@ -14,6 +14,8 @@ description: >
   "integration ecosystem", "iPaaS", "Zapier", "Workato", "extensibility",
   "custom fields", "open API", "developer experience", "SSO", "SCIM",
   "audit log", "platformize", "platform vs. product".
+aliases: [pm-platform-api]
+spec_version: "2.0"
 ---
 
 # PM Platform & API

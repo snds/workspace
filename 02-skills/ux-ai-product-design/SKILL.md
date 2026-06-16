@@ -12,6 +12,11 @@ description: >
   about designing a feature where the output is produced by a model rather than
   deterministic logic.
 hub: lead-ux-designer
+aliases: [ux-ai-product-design]
+tier: spoke
+domain: design
+prerequisites: [lead-ux-designer]
+spec_version: "2.0"
 ---
 
 # UX — AI Product Design

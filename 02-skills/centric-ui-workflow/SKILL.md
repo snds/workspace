@@ -12,6 +12,8 @@ description: >
   "which feature folder", "codegen", or "deploy a release" in the context of
   this project. Spoke of the `design-engineer` hub — load in addition to it,
   not instead of it.
+aliases: [centric-ui-workflow]
+spec_version: "2.0"
 ---
 
 # Centric UI — Design-Engineer Workflow

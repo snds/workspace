@@ -14,6 +14,12 @@ description: >
   APG, axe-core, jest-axe, focus indicator, outline, VPAT, accessibility
   audit, or any question about making an enterprise SaaS UI operable by all
   users including those using assistive technology.
+aliases: [fe-accessibility]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # FE Accessibility

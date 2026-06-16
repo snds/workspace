@@ -13,6 +13,8 @@ description: >
   parametric curves. This skill provides the theoretical foundation — not the
   Figma workflow (lead-vector-designer) or the FontTools implementation
   (lead-technical-digital-artist).
+aliases: [math-bezier-spline-theory]
+spec_version: "2.0"
 ---
 
 # Bezier & Spline Theory

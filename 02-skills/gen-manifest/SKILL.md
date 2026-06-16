@@ -11,6 +11,8 @@ description: >
   Trigger on: "generate design system", "generation pipeline", "run
   generation", "create DS from scratch", or any multi-phase DS creation task.
   Always load this skill before any individual gen-* phase skill.
+aliases: [gen-manifest]
+spec_version: "2.0"
 ---
 
 # Generation Manifest

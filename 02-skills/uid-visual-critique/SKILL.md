@@ -10,6 +10,12 @@ description: >
   any structured quality evaluation of visual design output. This spoke provides
   the frameworks for making aesthetic judgment precise, communicable, and
   actionable. Part of the lead-ui-designer hub skill network.
+aliases: [uid-visual-critique]
+tier: spoke
+domain: design
+hub: lead-ui-designer
+prerequisites: [lead-ui-designer]
+spec_version: "2.0"
 ---
 
 # UID: Visual Critique

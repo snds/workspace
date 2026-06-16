@@ -15,6 +15,11 @@ description: >
   question about how to design a game environment, space station, spaceship
   interior, or outdoor level from a spatial and craft perspective.
 hub: lead-3d-designer
+aliases: [3d-spatial-design-for-games]
+tier: spoke
+domain: design
+prerequisites: [lead-3d-designer]
+spec_version: "2.0"
 ---
 
 # 3D Spatial Design for Games

@@ -21,6 +21,8 @@ metadata:
   family: design-system
   poc: false
   version: 0.1.0
+aliases: [ds]
+spec_version: "2.0"
 ---
 
 # /ds — Design-System Operations Hub

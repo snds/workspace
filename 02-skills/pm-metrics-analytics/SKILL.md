@@ -11,6 +11,8 @@ description: >
   Also trigger on: "success metrics", "OKRs", "KPIs", "north star metric",
   "event tracking", "instrumentation", "experiment design", "A/B test framing",
   "leading indicators", "product analytics", "metric definition", "data spec".
+aliases: [pm-metrics-analytics]
+spec_version: "2.0"
 ---
 
 # PM Metrics & Analytics

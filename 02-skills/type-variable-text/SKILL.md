@@ -12,6 +12,12 @@ description: >
   question about variable font technology applied to text typefaces. Spoke of
   `lead-type-designer`. For icon font variable axes (FILL, wght for icons,
   GRAD for icons, opsz for icon simplification), use `variable-icon-font-architect`.
+aliases: [type-variable-text]
+tier: spoke
+domain: design
+hub: lead-type-designer
+prerequisites: [lead-type-designer]
+spec_version: "2.0"
 ---
 
 # Type Variable Fonts for Text

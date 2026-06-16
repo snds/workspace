@@ -17,6 +17,10 @@ description: >
   "database design", "how do I handle multi-tenancy", "what auth flow",
   "cache invalidation", "zero-downtime migration", "event-driven", or any
   question about making a backend system correct, fast, and maintainable at scale.
+aliases: [lead-backend-engineer]
+tier: hub
+domain: engineering
+spec_version: "2.0"
 ---
 
 # Lead Backend Engineer

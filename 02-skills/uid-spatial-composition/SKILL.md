@@ -9,6 +9,12 @@ description: >
   negative space in UI, visual weight distribution, responsive layout adaptation,
   z-axis and layering in 2D interfaces, or density design in enterprise UIs.
   This spoke is part of the lead-ui-designer hub skill network.
+aliases: [uid-spatial-composition]
+tier: spoke
+domain: design
+hub: lead-ui-designer
+prerequisites: [lead-ui-designer]
+spec_version: "2.0"
 ---
 
 # UID: Spatial Composition

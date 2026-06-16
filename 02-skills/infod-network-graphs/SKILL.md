@@ -8,6 +8,11 @@ description: >
   the visualization involves nodes and edges, hierarchical relationships,
   dependency structures, supply chain networks, or any graph-structured data.
 hub: lead-information-designer
+aliases: [infod-network-graphs]
+tier: spoke
+domain: design
+prerequisites: [lead-information-designer]
+spec_version: "2.0"
 ---
 
 # Network Graphs

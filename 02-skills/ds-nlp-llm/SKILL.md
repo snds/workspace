@@ -13,6 +13,8 @@ description: >
   building NLP or LLM-powered features in an enterprise product at production scale.
   This skill covers NLP/LLM engineering — not general ML serving infrastructure
   (ds-ml-engineering), not LLM as a product management decision (pm-platform-api).
+aliases: [ds-nlp-llm]
+spec_version: "2.0"
 ---
 
 # DS: NLP & LLM Engineering

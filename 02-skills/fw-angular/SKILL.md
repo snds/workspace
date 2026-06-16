@@ -12,6 +12,12 @@ description: >
 pinned_version: "21"
 pinned_date: "2026-03-26"
 changelog_url: "https://github.com/angular/angular/releases"
+aliases: [fw-angular]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # Angular — Framework Skill

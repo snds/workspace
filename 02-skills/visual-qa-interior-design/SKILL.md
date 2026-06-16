@@ -16,6 +16,11 @@ description: >
   flow and traffic path legibility, color palette harmony in a three-
   dimensional context, and whether an interior render communicates the
   intended mood, function, and aesthetic accurately. Spoke of lead-visual-qa.
+aliases: [visual-qa-interior-design]
+tier: cross-cutting
+domain: quality
+hub: lead-visual-qa
+spec_version: "2.0"
 ---
 
 # Visual QA — Interior Design

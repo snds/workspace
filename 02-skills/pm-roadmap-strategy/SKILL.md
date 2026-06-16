@@ -11,6 +11,8 @@ description: >
   Also trigger on: "roadmap", "prioritization", "backlog grooming", "RICE",
   "WSJF", "Kano model", "now/next/later", "quarterly planning", "platform
   sequencing", "portfolio roadmap", "dependency management", "cost of delay".
+aliases: [pm-roadmap-strategy]
+spec_version: "2.0"
 ---
 
 # PM Roadmap & Strategy

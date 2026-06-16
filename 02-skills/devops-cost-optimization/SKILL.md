@@ -18,6 +18,12 @@ description: >
   Not for: general Kubernetes resource design — route to
   devops-container-orchestration. Not for: sampling strategy for observability
   accuracy (vs. cost) — start with devops-observability.
+aliases: [devops-cost-optimization]
+tier: spoke
+domain: engineering
+hub: lead-devops-engineer
+prerequisites: [lead-devops-engineer]
+spec_version: "2.0"
 ---
 
 # DevOps: Cost Optimization

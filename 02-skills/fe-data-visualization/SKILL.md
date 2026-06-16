@@ -13,6 +13,12 @@ description: >
   per widget, cross-filter interactions, brushing, linked views, data-dense
   UIs, or any question about rendering, performing, and composing data-heavy
   surfaces in an enterprise context.
+aliases: [fe-data-visualization]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # FE Data Visualization

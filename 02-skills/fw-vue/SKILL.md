@@ -13,6 +13,12 @@ description: >
 pinned_version: "3.5.30"
 pinned_date: "2026-03-26"
 changelog_url: "https://github.com/vuejs/core/releases"
+aliases: [fw-vue]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # Vue.js — Framework Skill

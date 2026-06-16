@@ -12,6 +12,11 @@ description: >
   mental model, communicates the right affordances, or supports the user in
   understanding what to do next — the experience layer, not just the
   component layer. Spoke of lead-visual-qa.
+aliases: [visual-qa-ux-design]
+tier: cross-cutting
+domain: quality
+hub: lead-visual-qa
+spec_version: "2.0"
 ---
 
 # Visual QA — UX Design

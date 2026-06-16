@@ -12,6 +12,11 @@ description: >
   topology decisions — not materials (3d-materials-shading), rigging (3d-rigging-
   animation), or pipeline/export (3d-asset-pipeline).
 hub: lead-3d-designer
+aliases: [3d-modeling-fundamentals]
+tier: spoke
+domain: design
+prerequisites: [lead-3d-designer]
+spec_version: "2.0"
 ---
 
 # 3D Modeling Fundamentals

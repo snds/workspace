@@ -18,6 +18,10 @@ description: >
   Hub skill — routes to visual-qa-graphic-design, visual-qa-ux-design,
   visual-qa-ui-design, visual-qa-accessibility, visual-qa-usability,
   visual-qa-game-design, visual-qa-architecture, visual-qa-interior-design.
+aliases: [lead-visual-qa]
+tier: hub
+domain: quality
+spec_version: "2.0"
 ---
 
 # Lead Visual QA

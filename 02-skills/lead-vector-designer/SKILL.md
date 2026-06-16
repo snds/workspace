@@ -11,6 +11,10 @@ description: >
   correctly* for interpolation-safe output. This skill covers the craft of
   drawing — not what to draw (lead-icon-artist) or how to compile it
   (lead-technical-digital-artist).
+aliases: [lead-vector-designer]
+tier: hub
+domain: design
+spec_version: "2.0"
 ---
 
 # Lead Vector Designer

@@ -12,6 +12,12 @@ description: >
   context providers in compound components, merge refs, or any question about
   how to structure and expose component APIs in an enterprise design system
   context.
+aliases: [fe-component-architecture]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # FE Component Architecture

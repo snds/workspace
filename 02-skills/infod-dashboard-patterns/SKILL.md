@@ -9,6 +9,11 @@ description: >
   deciding on a drill-down navigation pattern; when designing filters for a
   dashboard; or when addressing responsive layout degradation for dashboards.
 hub: lead-information-designer
+aliases: [infod-dashboard-patterns]
+tier: spoke
+domain: design
+prerequisites: [lead-information-designer]
+spec_version: "2.0"
 ---
 
 # Dashboard Patterns

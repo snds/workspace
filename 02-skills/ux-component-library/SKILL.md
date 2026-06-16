@@ -18,6 +18,12 @@ description: >
   enterprise/product UI decision. This is the default component-reasoning lens — if the topic
   touches a UI element, pattern, screen, or component name, use it. Complements snds:lead-ux-designer,
   snds:lead-ui-designer, snds:design-engineer, snds:ds-advisor, and snds:figma-canvas-designer.
+aliases: [ux-component-library]
+tier: spoke
+domain: design
+hub: lead-ux-designer
+prerequisites: [lead-ux-designer]
+spec_version: "2.0"
 ---
 
 # UX Component Library & Pattern Framework

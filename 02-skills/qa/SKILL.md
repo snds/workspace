@@ -25,6 +25,8 @@ metadata:
   family: design-quality
   poc: true
   version: 0.1.0
+aliases: [qa]
+spec_version: "2.0"
 ---
 
 # /qa — Visual & Functional QA Hub

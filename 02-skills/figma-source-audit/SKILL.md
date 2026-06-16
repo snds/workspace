@@ -13,6 +13,8 @@ description: >
   components", "review Figma against source", "grade Figma library", "Figma
   visual QA", "Figma generation review", "design-engineer audit", "spec gap",
   "state coverage", "variant audit", "shadcn parity in Figma".
+aliases: [figma-source-audit]
+spec_version: "2.0"
 ---
 
 # Figma source-audit — methodology

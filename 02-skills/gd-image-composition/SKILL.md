@@ -10,6 +10,12 @@ description: >
   photographers and illustrators, image selection criteria, technical quality
   assessment, cultural representation in imagery, or how photographic and
   illustrated elements interact with typographic layouts.
+aliases: [gd-image-composition]
+tier: spoke
+domain: design
+hub: lead-graphic-designer
+prerequisites: [lead-graphic-designer]
+spec_version: "2.0"
 ---
 
 # GD — Image Composition

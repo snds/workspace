@@ -13,6 +13,12 @@ description: >
 pinned_version: "Lit 3.3.2"
 pinned_date: "2026-03-26"
 changelog_url: "https://github.com/lit/lit/releases"
+aliases: [fw-web-components]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # Web Components / Lit — Framework Skill

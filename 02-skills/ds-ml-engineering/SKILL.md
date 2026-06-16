@@ -11,6 +11,8 @@ description: >
   a model from research/notebook to production and keeping it healthy there. This skill
   covers production ML engineering — not experiment design (ds-experimentation), not
   analytical use of models (ds-product-analytics), not NLP-specific pipelines (ds-nlp-llm).
+aliases: [ds-ml-engineering]
+spec_version: "2.0"
 ---
 
 # DS: ML Engineering

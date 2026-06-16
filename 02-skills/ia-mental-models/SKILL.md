@@ -11,6 +11,12 @@ description: >
   or any question about how users understand and expect systems to work. Distinguished
   from ia-research-methods (the techniques to discover mental models) and
   ia-taxonomy-classification (formalizing the structure that results from model alignment).
+aliases: [ia-mental-models]
+tier: spoke
+domain: design
+hub: lead-information-architect
+prerequisites: [lead-information-architect]
+spec_version: "2.0"
 ---
 
 # IA: Mental Models

@@ -9,6 +9,8 @@ description: >
   driven by visual style. Trigger words: "modes for variants", "variable modes",
   "component-scoped collection", "collapse variants", "variant explosion", "mode-driven
   component", "shadcn variant in Figma".
+aliases: [figma-modes-for-variants]
+spec_version: "2.0"
 ---
 
 # Modes for Variants — Collapsing Component Sets via Variable Modes

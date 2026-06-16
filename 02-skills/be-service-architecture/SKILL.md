@@ -14,6 +14,12 @@ description: >
   should be decomposed, communicate, and fail safely. Not for: Kafka and
   message queue implementation details (be-integration-patterns), API contract
   design (be-api-design), or authentication between services (be-auth-patterns).
+aliases: [be-service-architecture]
+tier: spoke
+domain: engineering
+hub: lead-backend-engineer
+prerequisites: [lead-backend-engineer]
+spec_version: "2.0"
 ---
 
 # Be: Service Architecture

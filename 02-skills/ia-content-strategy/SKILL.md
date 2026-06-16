@@ -12,6 +12,12 @@ description: >
   Distinguished from ia-taxonomy-classification (the classification layer that
   organizes content) and be-data-modeling (the technical implementation of
   content schemas).
+aliases: [ia-content-strategy]
+tier: spoke
+domain: design
+hub: lead-information-architect
+prerequisites: [lead-information-architect]
+spec_version: "2.0"
 ---
 
 # IA: Content Strategy

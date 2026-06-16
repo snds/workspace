@@ -13,6 +13,12 @@ description: >
   work", "what happens when the operation fails", "should I use a wizard or not",
   "how do I handle N selected items", "what's the feedback for this action", or any
   question about the detailed behavioral design of an interface.
+aliases: [ux-interaction-design]
+tier: spoke
+domain: design
+hub: lead-ux-designer
+prerequisites: [lead-ux-designer]
+spec_version: "2.0"
 ---
 
 # UX — Interaction Design

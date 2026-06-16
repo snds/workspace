@@ -11,6 +11,10 @@ description: >
   funnel analysis, retention analysis, feature store, model monitoring, causal inference,
   time series, text classification, embeddings, RAG, dbt, data warehouse, executive
   dashboard, or any question about turning data into business decisions in a SaaS product.
+aliases: [lead-data-scientist]
+tier: hub
+domain: data
+spec_version: "2.0"
 ---
 
 # Lead Data Scientist

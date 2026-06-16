@@ -12,6 +12,12 @@ description: >
   forms, multi-step forms, dynamic field arrays, atom-based state, or any
   question about how to architect and manage state in an enterprise SaaS
   frontend application.
+aliases: [fe-state-management]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # FE State Management

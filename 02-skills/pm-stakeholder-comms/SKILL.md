@@ -12,6 +12,8 @@ description: >
   "steering committee", "DACI", "RACI", "stakeholder alignment",
   "decision rights", "escalation", "executive sponsor", "presenting to
   leadership", "Amazon memo", "6-pager", "asking for approval".
+aliases: [pm-stakeholder-comms]
+spec_version: "2.0"
 ---
 
 # PM Stakeholder Communications

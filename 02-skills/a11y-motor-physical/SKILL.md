@@ -12,6 +12,11 @@ description: >
   pointer precision, drag and drop alternatives, single pointer, WCAG 2.1.1, WCAG
   2.1.2, WCAG 2.4.3, WCAG 2.5.3, WCAG 2.5.7, WCAG 2.5.8, keyboard shortcut, sticky
   keys, dwell activation, eye tracking pointer.
+aliases: [a11y-motor-physical]
+tier: cross-cutting
+domain: accessibility
+hub: lead-accessibility-architect
+spec_version: "2.0"
 ---
 
 # a11y-motor-physical

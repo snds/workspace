@@ -11,6 +11,11 @@ description: >
   most", or any question where the scope of the design problem extends beyond the
   product UI itself to the surrounding organizational processes and touchpoints.
 hub: lead-ux-designer
+aliases: [ux-service-design]
+tier: spoke
+domain: design
+prerequisites: [lead-ux-designer]
+spec_version: "2.0"
 ---
 
 # UX — Service Design

@@ -16,6 +16,12 @@ description: >
   relationships in the database. Not for: query optimization and index design
   on an existing schema (be-relational-db), authentication data models
   (be-auth-patterns), or analytical/warehouse schema (ds-data-engineering).
+aliases: [be-data-modeling]
+tier: spoke
+domain: engineering
+hub: lead-backend-engineer
+prerequisites: [lead-backend-engineer]
+spec_version: "2.0"
 ---
 
 # Be: Data Modeling

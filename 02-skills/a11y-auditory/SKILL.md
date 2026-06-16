@@ -11,6 +11,11 @@ description: >
   WCAG 1.2.6, WCAG 1.4.2, audio control, video with captions, podcast accessibility,
   audio-only content, live captions, real-time captioning, CART, synchronous media,
   prerecorded media.
+aliases: [a11y-auditory]
+tier: cross-cutting
+domain: accessibility
+hub: lead-accessibility-architect
+spec_version: "2.0"
 ---
 
 # a11y-auditory

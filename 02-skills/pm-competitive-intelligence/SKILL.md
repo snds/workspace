@@ -12,6 +12,8 @@ description: >
   "battlecard", "competitive positioning", "feature parity", "Gartner",
   "Magic Quadrant", "Forrester Wave", "competitive intelligence", "competitor
   X", "how do we differentiate", "competitive landscape".
+aliases: [pm-competitive-intelligence]
+spec_version: "2.0"
 ---
 
 # PM Competitive Intelligence

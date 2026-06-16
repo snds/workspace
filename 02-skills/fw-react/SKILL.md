@@ -14,6 +14,12 @@ description: >
 pinned_version: "19.1.0"
 pinned_date: "2026-04-22"
 changelog_url: "https://github.com/facebook/react/releases"
+aliases: [fw-react]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # React — Framework Skill

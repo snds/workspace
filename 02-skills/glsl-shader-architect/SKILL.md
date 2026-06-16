@@ -6,6 +6,8 @@ description: >
   Trigger on: shader, GLSL, vertex shader, fragment shader, custom effect, procedural texture, noise, raymarching, SDF, 
   dissolve, hologram, force field, energy shield, scan line, heat distortion, fresnel, rim light, parallax mapping, 
   volumetric, custom lighting, or any visual effect requiring custom shader code.
+aliases: [glsl-shader-architect]
+spec_version: "2.0"
 ---
 
 # GLSL Shader Architect for Three.js

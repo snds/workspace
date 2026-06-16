@@ -20,6 +20,8 @@ description: >
   (lead-game-designer), not visual identity (lead-art-director), not game implementation
   (lead-game-developer).
 hub: legion-project
+aliases: [legion-narrative-design]
+spec_version: "2.0"
 ---
 
 # Legion: Narrative Design

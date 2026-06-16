@@ -11,6 +11,8 @@ description: >
   to perform any Git or GitHub action, or asks how GitHub works. Load alongside
   `centric-ui-workflow` (which has the team-specific rules) — this skill
   provides the educational safety layer underneath those rules.
+aliases: [github-guardrails]
+spec_version: "2.0"
 ---
 
 # GitHub Guardrails

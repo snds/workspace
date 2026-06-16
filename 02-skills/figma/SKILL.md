@@ -22,6 +22,8 @@ metadata:
   family: figma
   poc: false
   version: 0.1.0
+aliases: [figma]
+spec_version: "2.0"
 ---
 
 # /figma — Figma Authoring & Code-Connect Hub

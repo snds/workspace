@@ -21,6 +21,10 @@ description: >
   good on-call setup", "how do I reduce cloud spend", "what SLO should I set",
   "how do I instrument this service", or any question about pipeline, platform,
   or reliability engineering in a production enterprise SaaS context.
+aliases: [lead-devops-engineer]
+tier: hub
+domain: engineering
+spec_version: "2.0"
 ---
 
 # Lead DevOps / Platform Engineer

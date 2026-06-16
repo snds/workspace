@@ -13,6 +13,12 @@ description: >
 pinned_version: "radix-ui@1.4.3"
 pinned_date: "2026-03-26"
 changelog_url: "https://github.com/radix-ui/primitives/releases"
+aliases: [fw-radix-primitives]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # Radix UI Primitives — Framework Skill

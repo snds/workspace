@@ -9,6 +9,12 @@ description: >
   sequence, exit sequence, list animation, hero animation, overlapping transitions,
   choreographed onboarding, complex animation sequences, or any question about
   how multiple elements animate in relation to each other.
+aliases: [motion-choreography]
+tier: spoke
+domain: design
+hub: lead-motion-designer
+prerequisites: [lead-motion-designer]
+spec_version: "2.0"
 ---
 
 # Motion Choreography

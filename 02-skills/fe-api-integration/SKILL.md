@@ -14,6 +14,12 @@ description: >
   state, skeleton screen, error boundary, empty state, zero state, React
   Suspense, Vue Suspense, or any question about how a frontend application
   fetches, streams, and handles data from backend APIs.
+aliases: [fe-api-integration]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # FE API Integration

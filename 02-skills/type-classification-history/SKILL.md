@@ -11,6 +11,12 @@ description: >
   incunabula to contemporary variable fonts, understanding why a specific typeface
   belongs to a project or doesn't, or any question about type history, cultural
   context, or classification. Spoke of `lead-type-designer`.
+aliases: [type-classification-history]
+tier: spoke
+domain: design
+hub: lead-type-designer
+prerequisites: [lead-type-designer]
+spec_version: "2.0"
 ---
 
 # Type Classification and History

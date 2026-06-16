@@ -13,6 +13,12 @@ description: >
 pinned_version: "4.0.0 (CLI v4)"
 pinned_date: "2026-03-26"
 changelog_url: "https://ui.shadcn.com/docs/changelog"
+aliases: [fw-shadcn]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # shadcn/ui — Framework Skill

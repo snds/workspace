@@ -11,6 +11,8 @@ description: >
   computational design system. This skill ensures every decision considers the full
   ecosystem intent — it should load alongside workspace-bootstrap at session start
   for any Omni-related work.
+aliases: [omni-project]
+spec_version: "2.0"
 ---
 
 # Omni Project Context

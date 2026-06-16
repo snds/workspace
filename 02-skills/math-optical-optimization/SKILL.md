@@ -16,6 +16,8 @@ description: >
   between geometry and human visual perception. This skill provides the
   optimization theory — not the curve math (math-bezier-spline-theory) or the
   shape topology (math-computational-geometry).
+aliases: [math-optical-optimization]
+spec_version: "2.0"
 ---
 
 # Optical Optimization Mathematics

@@ -10,6 +10,12 @@ description: >
   cognitive motion load, motion in design systems, motion tokens, a11y for
   animation, reduced motion testing, or any question about making motion safe and
   inclusive.
+aliases: [motion-accessibility]
+tier: spoke
+domain: design
+hub: lead-motion-designer
+prerequisites: [lead-motion-designer]
+spec_version: "2.0"
 ---
 
 # Motion Accessibility

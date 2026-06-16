@@ -12,6 +12,12 @@ description: >
   budgets, bundlesize, size-limit, module federation, micro-frontend performance,
   barrel files, side effects, or any question about making an enterprise SaaS
   UI measurably faster under real user conditions.
+aliases: [fe-performance]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # FE Performance

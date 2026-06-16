@@ -12,6 +12,8 @@ description: >
   "GTM", "sales enablement", "ARR", "NRR", "NDR", "net dollar retention",
   "pricing", "packaging", "general availability", "GA", "limited availability",
   "beta", "customer advisory board", "CAB", "launch checklist".
+aliases: [pm-enterprise-gtm]
+spec_version: "2.0"
 ---
 
 # PM Enterprise GTM

@@ -14,6 +14,8 @@ description: >
   between operational systems and analytical consumers. This skill covers analytical
   data engineering — not OLTP schema design (be-relational-db), not ML feature
   pipeline specifics (ds-ml-engineering).
+aliases: [ds-data-engineering]
+spec_version: "2.0"
 ---
 
 # DS: Data Engineering

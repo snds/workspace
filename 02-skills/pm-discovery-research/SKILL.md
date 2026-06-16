@@ -13,6 +13,8 @@ description: >
   "customer discovery", "user research", "JTBD", "jobs to be done",
   "opportunity sizing", "customer interviews", "research synthesis",
   "continuous discovery", "assumption mapping", "research methodology".
+aliases: [pm-discovery-research]
+spec_version: "2.0"
 ---
 
 # PM Discovery & Research

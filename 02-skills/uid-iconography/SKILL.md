@@ -11,6 +11,12 @@ description: >
   multicolor), when icons need labels, or icon readability tests. This spoke covers
   the design side of iconography. Deep icon construction and keyline math live in
   lead-icon-artist. Part of the lead-ui-designer hub skill network.
+aliases: [uid-iconography]
+tier: spoke
+domain: design
+hub: lead-ui-designer
+prerequisites: [lead-ui-designer]
+spec_version: "2.0"
 ---
 
 # UID: Iconography

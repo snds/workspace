@@ -9,6 +9,12 @@ description: >
   dotLottie, Lottie optimization, After Effects Bodymovin export, CSS transition
   vs CSS animation vs WAAPI, requestAnimationFrame patterns, or any question about
   implementing animation in code.
+aliases: [motion-tooling]
+tier: spoke
+domain: design
+hub: lead-motion-designer
+prerequisites: [lead-motion-designer]
+spec_version: "2.0"
 ---
 
 # Motion Tooling

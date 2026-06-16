@@ -21,6 +21,8 @@ metadata:
   family: motion-implementation
   poc: false
   version: 0.1.0
+aliases: [motion]
+spec_version: "2.0"
 ---
 
 # /motion — Motion Implementation Hub

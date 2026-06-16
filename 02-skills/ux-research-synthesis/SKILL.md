@@ -14,6 +14,12 @@ description: >
   requirements", "what do I actually know vs. assume about our users", or any question
   about generating or making sense of evidence about user behavior and needs in an
   enterprise context.
+aliases: [ux-research-synthesis]
+tier: spoke
+domain: design
+hub: lead-ux-designer
+prerequisites: [lead-ux-designer]
+spec_version: "2.0"
 ---
 
 # UX — Research Synthesis

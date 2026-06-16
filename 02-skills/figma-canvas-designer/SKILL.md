@@ -12,6 +12,8 @@ description: >
   mentions Figma and the intent is visual design output (not plugin development
   or code generation), use this skill. Do NOT use for Figma plugin development
   (TypeScript, bundling, Plugin API code) — defer to figma-plugin-dev instead.
+aliases: [figma-canvas-designer]
+spec_version: "2.0"
 ---
 
 # Figma Canvas Designer

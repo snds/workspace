@@ -13,6 +13,12 @@ description: >
   dashboard", "how do I show trend in a table", "what's the right color scale for X",
   "this chart is unreadable — how do I fix it", or any question about data-to-visual
   encoding decisions. Assumes the designer understands Tufte-level data-ink ratio basics.
+aliases: [ux-data-visualization]
+tier: spoke
+domain: design
+hub: lead-ux-designer
+prerequisites: [lead-ux-designer]
+spec_version: "2.0"
 ---
 
 # UX — Data Visualization

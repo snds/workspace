@@ -17,6 +17,10 @@ description: >
   skip navigation, alt text, captions, transcripts, color contrast, target size, touch
   target, neurodiversity, sensory processing, executive function, plain language,
   curb cut effect.
+aliases: [lead-accessibility-architect]
+tier: hub
+domain: accessibility
+spec_version: "2.0"
 ---
 
 # Lead Accessibility Architect

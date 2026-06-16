@@ -9,6 +9,12 @@ description: >
   enable/disable, loading/loaded, error/success), skeleton-to-content transitions,
   micro-interaction design, enter/exit direction conventions, transition duration
   selection, or any question about how a specific UI element or view should move.
+aliases: [motion-transitions]
+tier: spoke
+domain: design
+hub: lead-motion-designer
+prerequisites: [lead-motion-designer]
+spec_version: "2.0"
 ---
 
 # Motion Transitions

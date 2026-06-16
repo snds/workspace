@@ -18,6 +18,10 @@ description: >
   "keyboard navigation", "axe violations", "visual regression", "frontend
   architecture", or any question about building a polished, correct, performant
   enterprise UI.
+aliases: [lead-frontend-engineer]
+tier: hub
+domain: engineering
+spec_version: "2.0"
 ---
 
 # Lead Frontend Engineer

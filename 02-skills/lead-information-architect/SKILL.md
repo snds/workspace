@@ -10,6 +10,10 @@ description: >
   findability, search UX, mental models, content strategy, content modeling,
   card sorting, tree testing, sitemap, IA audit, site structure, app structure,
   label design, navigation labels, enterprise navigation, multi-role navigation.
+aliases: [lead-information-architect]
+tier: hub
+domain: design
+spec_version: "2.0"
 ---
 
 # Lead Information Architect

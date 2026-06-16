@@ -9,6 +9,12 @@ description: >
   movements, typeface selection rationale, or any question about how type is
   set or why. This is the practitioner-side typographic lens — type design and
   glyph construction live in `lead-type-designer`.
+aliases: [gd-typography]
+tier: spoke
+domain: design
+hub: lead-graphic-designer
+prerequisites: [lead-graphic-designer]
+spec_version: "2.0"
 ---
 
 # GD — Typography

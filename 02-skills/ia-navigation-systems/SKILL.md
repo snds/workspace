@@ -10,6 +10,12 @@ description: >
   or any question about how navigation structure should be designed and organized.
   Distinguished from ia-taxonomy-classification (what the structure is) and
   ux-interaction-design (how navigation interactions behave).
+aliases: [ia-navigation-systems]
+tier: spoke
+domain: design
+hub: lead-information-architect
+prerequisites: [lead-information-architect]
+spec_version: "2.0"
 ---
 
 # IA: Navigation Systems

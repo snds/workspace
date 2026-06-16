@@ -12,6 +12,11 @@ description: >
   communication without color alone, screen reader visual structure alignment,
   accessible typography (size, weight, spacing for low-vision), and WCAG 2.1/2.2
   success criterion evaluation at the visual level. Spoke of lead-visual-qa.
+aliases: [visual-qa-accessibility]
+tier: cross-cutting
+domain: quality
+hub: lead-visual-qa
+spec_version: "2.0"
 ---
 
 # Visual QA — Accessibility

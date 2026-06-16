@@ -9,6 +9,12 @@ description: >
   modal and overlay depth, the surface layer stack in enterprise UI, or "how do
   we express depth without looking dated or decorative?" This spoke is part of
   the lead-ui-designer hub skill network.
+aliases: [uid-surface-depth]
+tier: spoke
+domain: design
+hub: lead-ui-designer
+prerequisites: [lead-ui-designer]
+spec_version: "2.0"
 ---
 
 # UID: Surface Depth

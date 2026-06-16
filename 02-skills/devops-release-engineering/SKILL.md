@@ -15,6 +15,12 @@ description: >
   Not for: CI pipeline design — route to devops-ci-cd. Not for: Kubernetes
   resource mechanics for traffic routing — route to devops-container-orchestration
   for Istio VirtualService and DestinationRule specifics.
+aliases: [devops-release-engineering]
+tier: spoke
+domain: engineering
+hub: lead-devops-engineer
+prerequisites: [lead-devops-engineer]
+spec_version: "2.0"
 ---
 
 # DevOps: Release Engineering

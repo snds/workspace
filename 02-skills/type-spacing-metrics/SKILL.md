@@ -10,6 +10,12 @@ description: >
   on a common baseline, optical spacing overrides, or any question about the
   spatial layer of typography. Spoke of `lead-type-designer`. For icon font
   advance widths and padding, use `variable-icon-font-architect`.
+aliases: [type-spacing-metrics]
+tier: spoke
+domain: design
+hub: lead-type-designer
+prerequisites: [lead-type-designer]
+spec_version: "2.0"
 ---
 
 # Type Spacing and Metrics

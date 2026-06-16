@@ -13,6 +13,8 @@ description: >
   users and accounts behave in the product and what that means for the business.
   This skill covers descriptive and predictive product analytics — not experiment
   design (ds-experimentation), not production ML serving (ds-ml-engineering).
+aliases: [ds-product-analytics]
+spec_version: "2.0"
 ---
 
 # DS: Product Analytics

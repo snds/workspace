@@ -13,6 +13,8 @@ description: >
   asks for cross-framework DS output. This is the meta-skill that coordinates
   all fw-* spoke skills — load it when the task is generation, not advisory.
 pinned_date: "2026-03-26"
+aliases: [ds-generation-pipeline]
+spec_version: "2.0"
 ---
 
 # DS Generation Pipeline — Orchestrator Skill

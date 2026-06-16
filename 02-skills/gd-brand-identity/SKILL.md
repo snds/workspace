@@ -10,6 +10,12 @@ description: >
   architecture (monolithic, endorsed, pluralistic), brand in digital products,
   dark mode brand behavior, brand token architecture, or any question about
   how a brand identity is constructed, extended, or documented.
+aliases: [gd-brand-identity]
+tier: spoke
+domain: design
+hub: lead-graphic-designer
+prerequisites: [lead-graphic-designer]
+spec_version: "2.0"
 ---
 
 # GD — Brand Identity

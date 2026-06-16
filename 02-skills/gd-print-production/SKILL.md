@@ -10,6 +10,12 @@ description: >
   grain direction, binding methods (saddle stitch, perfect bind, case bind),
   PDF/X-1a, PDF/X-4, font embedding, prepress, contract proofs, print proofing,
   or any question about preparing files for physical output.
+aliases: [gd-print-production]
+tier: spoke
+domain: design
+hub: lead-graphic-designer
+prerequisites: [lead-graphic-designer]
+spec_version: "2.0"
 ---
 
 # GD — Print Production

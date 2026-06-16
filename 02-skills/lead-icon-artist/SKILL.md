@@ -12,6 +12,10 @@ description: >
   conventions, or any question about *what to draw and why*. This skill covers
   icon design intent — not path construction craft (lead-vector-designer) or
   pipeline engineering (lead-technical-digital-artist).
+aliases: [lead-icon-artist]
+tier: hub
+domain: design
+spec_version: "2.0"
 ---
 
 # Lead Icon Artist

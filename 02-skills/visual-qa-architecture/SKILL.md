@@ -14,6 +14,11 @@ description: >
   architectural diagram legibility, form and geometry accuracy, window
   and glazing material quality, contextual fit of buildings in existing
   streetscapes or environments. Spoke of lead-visual-qa.
+aliases: [visual-qa-architecture]
+tier: cross-cutting
+domain: quality
+hub: lead-visual-qa
+spec_version: "2.0"
 ---
 
 # Visual QA — Architecture

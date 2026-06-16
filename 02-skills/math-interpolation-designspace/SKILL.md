@@ -17,6 +17,8 @@ description: >
   provides the interpolation theory — not the curve math
   (math-bezier-spline-theory) or the perceptual optimization
   (math-optical-optimization).
+aliases: [math-interpolation-designspace]
+spec_version: "2.0"
 ---
 
 # Interpolation & Designspace Theory

@@ -9,6 +9,11 @@ description: >
   tokens, specifying chart accessibility requirements, designing chart tooltips, or
   addressing SVG vs. Canvas rendering decisions for chart components.
 hub: lead-information-designer
+aliases: [infod-design-system-patterns]
+tier: spoke
+domain: design
+prerequisites: [lead-information-designer]
+spec_version: "2.0"
 ---
 
 # Design System Patterns for Visualization

@@ -1,6 +1,11 @@
 ---
 name: visual-qa-toolkit
 description: Augmented-perception visual QA toolkit for design system and UI craft audits. Use when evaluating a screenshot or design export against measurable craft dimensions — alignment, spacing, contrast (WCAG 2.x), color palette drift (delta-E), visual diff (SSIM), color-vision simulation, icon consistency, typography scale, grid compliance, or component state differentiation. Trigger when: the user uploads a screenshot and asks for an audit/review; a design-to-code comparison is needed; icon or component set consistency is being evaluated; accessibility verification is in scope; visual regression checks are required; or the user wants measurable findings beyond visual inspection. Trigger on phrases like "audit this screen," "check the contrast," "compare design vs. implementation," "are these icons consistent," "is this on the spacing scale," "visual diff," or "color-blindness check." Do NOT trigger for: code-level linting, Figma authoring work (use `design-engineer`), Figma plugin development, or tasks that don't involve measuring an image.
+aliases: [visual-qa-toolkit]
+tier: cross-cutting
+domain: quality
+hub: lead-visual-qa
+spec_version: "2.0"
 ---
 
 # Visual QA Toolkit

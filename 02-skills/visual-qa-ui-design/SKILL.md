@@ -14,6 +14,11 @@ description: >
   review, or any pixel-level screen quality evaluation. Sub-specialties include:
   typography QA (interface context), iconography QA (UI context), component
   state coverage, design token compliance, dark mode QA. Spoke of lead-visual-qa.
+aliases: [visual-qa-ui-design]
+tier: cross-cutting
+domain: quality
+hub: lead-visual-qa
+spec_version: "2.0"
 ---
 
 # Visual QA — UI Design

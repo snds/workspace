@@ -11,6 +11,12 @@ description: >
   texture, or any question about how to draw a letter correctly for a text face.
   Spoke of `lead-type-designer`. For icon glyph construction, use
   `variable-icon-font-architect`/`lead-vector-designer`.
+aliases: [type-letterform-construction]
+tier: spoke
+domain: design
+hub: lead-type-designer
+prerequisites: [lead-type-designer]
+spec_version: "2.0"
 ---
 
 # Type Letterform Construction

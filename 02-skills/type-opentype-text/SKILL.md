@@ -12,6 +12,12 @@ description: >
   be on by default, or why a font feature is or is not working. Spoke of
   `lead-type-designer`. For icon font GSUB/CALT/liga in pictographic glyph
   contexts, use `variable-icon-font-architect`/`opentype-layout-engineering`.
+aliases: [type-opentype-text]
+tier: spoke
+domain: design
+hub: lead-type-designer
+prerequisites: [lead-type-designer]
+spec_version: "2.0"
 ---
 
 # Type OpenType Features for Text

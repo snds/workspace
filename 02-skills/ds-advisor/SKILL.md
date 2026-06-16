@@ -12,6 +12,8 @@ description: >
   lens for all design system conversations — if the topic touches components, tokens,
   systems thinking, design process, or the relationship between design and engineering,
   use it.
+aliases: [ds-advisor]
+spec_version: "2.0"
 ---
 
 # Design Systems Advisor

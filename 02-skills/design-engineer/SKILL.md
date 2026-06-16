@@ -13,6 +13,8 @@ description: >
   producing Figma plugin code, canvas-generation scripts, or evaluating existing
   UI for componentization opportunities. If the topic involves components, tokens,
   design systems, Figma, or frontend implementation — use this skill.
+aliases: [design-engineer]
+spec_version: "2.0"
 ---
 
 # Design Engineer

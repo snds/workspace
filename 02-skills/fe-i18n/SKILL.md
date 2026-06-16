@@ -17,6 +17,11 @@ description: >
   design for multi-script (type-multi-script), or screen reader language
   metadata (a11y-auditory).
 hub: lead-frontend-engineer
+aliases: [fe-i18n]
+tier: spoke
+domain: engineering
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # Fe: i18n

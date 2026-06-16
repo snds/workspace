@@ -12,6 +12,8 @@ description: >
   both the `design-engineer` hub and `centric-ui-workflow` — load alongside
   both. For generic Storybook concepts (CSF 3 syntax, addon APIs, interaction
   testing patterns) defer to `fw-storybook`.
+aliases: [centric-ui-storybook]
+spec_version: "2.0"
 ---
 
 # Centric UI — Storybook

@@ -10,6 +10,12 @@ description: >
   find things through search interfaces. Distinguished from ia-navigation-systems
   (navigation as the structural findability mechanism) and ia-taxonomy-classification
   (the vocabulary and structure search operates on).
+aliases: [ia-search-findability]
+tier: spoke
+domain: design
+hub: lead-information-architect
+prerequisites: [lead-information-architect]
+spec_version: "2.0"
 ---
 
 # IA: Search & Findability

@@ -16,6 +16,11 @@ description: >
   Not for: authentication flow design (be-auth-patterns), infrastructure-level
   network security, or penetration testing methodology.
 hub: lead-backend-engineer
+aliases: [be-security-posture]
+tier: spoke
+domain: engineering
+prerequisites: [lead-backend-engineer]
+spec_version: "2.0"
 ---
 
 # Be: Security Posture

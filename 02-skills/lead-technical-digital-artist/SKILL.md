@@ -13,6 +13,10 @@ description: >
   *how to process vectors into compiled deliverables*. This skill covers the
   engineering pipeline — not path construction craft (lead-vector-designer) or
   icon design decisions (lead-icon-artist).
+aliases: [lead-technical-digital-artist]
+tier: hub
+domain: design
+spec_version: "2.0"
 ---
 
 # Lead Technical Digital Artist

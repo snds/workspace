@@ -12,6 +12,12 @@ description: >
 pinned_version: "10.3.3"
 pinned_date: "2026-03-26"
 changelog_url: "https://github.com/storybookjs/storybook/releases"
+aliases: [fw-storybook]
+tier: spoke
+domain: engineering
+hub: lead-frontend-engineer
+prerequisites: [lead-frontend-engineer]
+spec_version: "2.0"
 ---
 
 # Storybook — Framework Skill

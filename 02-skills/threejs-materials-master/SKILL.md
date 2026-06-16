@@ -8,6 +8,8 @@ description: >
   MeshPhysicalMaterial, clearcoat, transmission, sheen, anisotropy, iridescence, texture compression,
   KTX2, surface appearance, realistic rendering, material recipe, or any "make this surface look like X"
   request. This skill generates working Three.js material code suitable for production.
+aliases: [threejs-materials-master]
+spec_version: "2.0"
 ---
 
 # Three.js Materials Master

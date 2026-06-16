@@ -15,6 +15,10 @@ description: >
   "user research", "enterprise features", "go-to-market", "product metrics",
   "OKRs", "prioritization", "stakeholder alignment", "competitive analysis",
   "platform strategy", "API product", "enterprise SaaS PM".
+aliases: [lead-product-manager]
+tier: hub
+domain: product
+spec_version: "2.0"
 ---
 
 # Lead Product Manager

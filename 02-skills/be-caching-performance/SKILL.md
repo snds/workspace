@@ -17,6 +17,12 @@ description: >
   (be-relational-db handles query optimization, cross-reference here for
   application-layer decisions), prediction caching for ML inference
   (ds-ml-engineering), or semantic caching for LLM responses (ds-nlp-llm).
+aliases: [be-caching-performance]
+tier: spoke
+domain: engineering
+hub: lead-backend-engineer
+prerequisites: [lead-backend-engineer]
+spec_version: "2.0"
 ---
 
 # Be: Caching & Performance

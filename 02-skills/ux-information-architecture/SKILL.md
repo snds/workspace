@@ -11,6 +11,12 @@ description: >
   "how should I organize the navigation", "is this IA too deep", "users can't find X",
   "should this be a tab or a page", "how do I handle multi-role navigation", or any
   question about the structural organization of a complex product.
+aliases: [ux-information-architecture]
+tier: spoke
+domain: design
+hub: lead-ux-designer
+prerequisites: [lead-ux-designer]
+spec_version: "2.0"
 ---
 
 # UX — Information Architecture
