@@ -8,7 +8,7 @@ status: canonical
 
 Every `03-skills/<name>/SKILL.md` opens with a YAML frontmatter block. These keys are
 the **single source of truth** for the skill graph: `09-tools/build-registry.py` reads
-them to generate [[skills.registry.json]], and any agent reads them (directly or via the
+them to generate `03-skills/skills.registry.json`, and any agent reads them (directly or via the
 registry) to decide what to load and in what order. See [[workspace-ontology]] for the
 vocabulary and [[AGENTS]] → "Skill loading precedence" for the algorithm.
 

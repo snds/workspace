@@ -8,7 +8,7 @@ confidence: high
 The workspace was refactored from a Google-Drive + Desktop-Commander + Claude-specific system into a
 portable, surface/device/LLM-agnostic one where **the git checkout is the source of truth** and any
 capable agent follows one declarative loading + contribution structure via [[AGENTS]] and the generated
-[[skills.registry.json]].
+`03-skills/skills.registry.json`.
 
 **Why:** the prior design coupled everything to Google Drive (as the sync/source-of-truth filesystem),
 Desktop Commander (the read/write MCP), and Claude-only mechanisms (`.claude/hooks`, slash commands).

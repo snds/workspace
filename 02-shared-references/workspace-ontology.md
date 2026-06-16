@@ -71,5 +71,5 @@ context-free principle.** One consumer → it's just that hub's core principles,
 principle applied everywhere but owned by no single layer → it's **cross-cutting**, not a foundation.
 
 ## Tooling pointers (workspace-native, no external dependency)
-- `09-tools/build-registry.py` → generates [[skills.registry.json]] from frontmatter. Stdlib-only.
+- `09-tools/build-registry.py` → generates `03-skills/skills.registry.json` from frontmatter. Stdlib-only.
 - Frontmatter contract: [[skill-frontmatter]]. · Loading algorithm: [[AGENTS]].
