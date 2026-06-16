@@ -5,17 +5,17 @@ Code plugin so they surface as native `/snds:<name>` slash commands.
 
 Why this exists
 ---------------
-`03-skills/` is the source of truth for Sean's hub/spoke skill network. Those
-skills are synced to the Cowork VM by `cowork-skills-sync` (copy, not symlink,
-because the VM can't follow Google Drive symlinks). They become available to the
-*model* but are NOT installable local Claude Code plugins, so they never appear
-in the interactive `/` autocomplete menu.
+`03-skills/` (in the portable git checkout — the source of truth) defines Sean's
+hub/spoke skill network. Those skills are available to the *model* but are NOT
+installable local Claude Code plugins, so they never appear in the interactive `/`
+autocomplete menu.
 
-This script does the equivalent for local Claude Code: it COPIES a curated set of
-hub skills out of `03-skills/` into a self-contained plugin under
-`~/.claude/local-plugins/` (outside Google Drive — avoids spaces-in-path issues,
-the symlink-sync problem, and committing duplicate skill copies into the vault),
-then writes the marketplace + plugin manifests.
+This script does that for local Claude Code: it COPIES a curated set of hub skills
+out of the checkout's `03-skills/` into a self-contained plugin under
+`~/.claude/local-plugins/` (kept outside the repo so the generated mirror isn't
+committed back into the workspace as duplicate skill copies), then writes the
+marketplace + plugin manifests. Re-run it after any refactor so the slash commands
+reflect the current checkout.
 
 After running, register it once per machine:
 
@@ -67,7 +67,7 @@ HUBS = [
 
 MARKETPLACE_NAME = "snds-local"
 PLUGIN_NAME = "snds"  # command prefix -> /snds:<skill>
-PLUGIN_VERSION = "0.1.0"
+PLUGIN_VERSION = "0.2.0"  # bumped post-refactor so reinstall refreshes the runtime cache
 
 # --- Paths ------------------------------------------------------------------
 
