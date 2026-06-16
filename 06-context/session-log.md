@@ -1,14 +1,14 @@
 # Session Log — Sean Sands
 _Authoritative source: this file (06-context/session-log.md)_
-_Written by Claude via Desktop Commander. GDoc_4 is read-only fallback._
+_Written by any agent at session end — the git checkout is the source of truth._
 _Entries: newest first._
 
 ---
 
 ## How This Works
 
-**Claude reads this at boot** to surface pending items and last session context.
-**Claude writes to this** via Desktop Commander at session end — no manual paste needed.
+**Any agent reads this at boot** to surface pending items and last session context.
+**Any agent writes to this** at session end — no manual paste needed; git is the source of truth.
 **Reconciliation** ("reconcile sessions") merges blocks from concurrent sessions
 into a single update, then writes the result here automatically.
 
@@ -17,6 +17,44 @@ Keep entries concise. This is a handoff log, not a journal.
 ---
 
 ## Session Entries
+
+---
+
+--- SESSION BLOCK ---
+Date: 2026-06-16
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Surface: Claude Code (Mac desktop app)
+Project(s):
+  - Workspace refactor → portable, surface/device/LLM-agnostic, foundation-driven agent workspace. Canonical copy at github.com/snds/workspace (Drive original `claude-workspace-system` untouched).
+Artifacts: (the full 16-PR stack — all now consolidated onto `main` by fast-forward)
+  Standards + portable contract:
+    - AGENTS.md — universal contract: portable-first rules, bootstrap-on-checkout, skill-loading precedence algorithm, multi-agent continuity/handoff, write-quality gates, adapter model. Thin adapters CLAUDE.md / CURSOR.md / PERPLEXITY.md + llms.txt + 02-shared-references/workspace-ontology.md routing map.
+    - Frontmatter v2 (tier/domain/hub/prerequisites/related/governs/surfaces) as single source of truth → generated 03-skills/skills.registry.json (233 skills) + reciprocal `## Related` blocks.
+    - 09-tools/{build-registry,build-related,validate-links,validate-workspace,validate-integrity}.py — five stdlib-only gates, CI-enforced.
+  Governance + memory + archive:
+    - 01-frameworks/08-workspace-contribution-framework.md — how/when/where/what/why to edit every layer + routing map + memory/archive protocols + portable session protocol + write-quality gates.
+    - 06-context/memory/ — portable non-project memory layer (MEMORY.md index, _template, decision + fact records).
+    - _archive/ARCHIVE-LOG.md — provenance ledger (why/when archived + canonical replacement; no zombies).
+  Foundations-first architecture (foundations load before specialty skills) across design, engineering, product, data, game, imaging, science:
+    - imaging-foundations/ + img-{optics-light,photography,photoreal-rendering,cinematography,vfx}.
+    - science-foundations/ + sci-{linear-algebra,numerical-methods,physics-simulation,probability-stochastic}.
+    - Expansion: mobile (react-native/ios-swiftui/android-kotlin/platform-craft); security (lead-security-architect + sec-{threat-modeling,authn-authz,appsec-owasp,supply-chain}); be-relational-db Postgres enhancement; 08-knowledge/cross-domain/skill-ecosystem-and-mcp-servers.md.
+    - Galaxy/Legion: sci-astro-objects, sci-astro-structures, vfx-particle-systems, vfx-volumetrics, game-scale-traversal + 08-knowledge/game-dev/legion-galaxy-playbook.md (prescriptive recipe, complementary to the existing threejs-galaxy-visualization gotchas doc).
+  - Clean contiguous folder renumber 00–09; multi-agent continuity (one unified contract, boundary + dynamic Cursor handoff); token + Obsidian polish; all 61 unspecified-tier skills resolved → 0.
+Decisions:
+  - Fresh isolated git repo at github.com/snds/workspace; this copy is the new canonical portable workspace. See memory decision-portable-workspace-refactor.
+  - Foundations for ALL major domains; delivered as a sequenced foundation-first PR stack (#1–#16).
+  - Open writes (any capable agent may write) but behind HARD gates: file quality, intent integrity, cross-link continuity, no zombies (archive-or-regenerate). Enforced by the five validators.
+  - Decoupled from Google Drive / Desktop Commander / Claude-only paths — git checkout is the source of truth; the bootstrap-generator effort kept separate (learnings used, not a dependency).
+  - Consolidated the entire 16-PR stack onto `main` by fast-forward (linear history preserved); closed #2–#16 as merged-by-fast-forward (#1 auto-merged) and deleted all 16 refactor/* branches (commits preserved on `main`) — no zombie PRs/branches.
+Pending resolved:
+  - All 7 original refactor asks (restructure, foundations, surface/LLM-agnostic + de-Google, token reduction, interconnections, Obsidian, GitHub) + follow-ups (governance, portable memory, archive-with-provenance, multi-agent continuity incl. Cursor dynamic switching, open-writes-with-gates, folder renumber, skill-library expansion).
+Project status changes:
+  - Workspace: Drive/Desktop-Commander/Claude-coupled → portable, git-native, LLM/surface/device-agnostic; consolidated on `main`, all five gates green (233 skills · 540 md files · 0 warnings).
+Next:
+  - Operate from `main` going forward; future contributions follow 01-frameworks/08 + AGENTS.md write-quality gates.
+  - (Optional) per-machine: install/propagate the local skill plugin; clone github.com/snds/workspace on other devices to validate cross-surface continuity.
+--- END BLOCK ---
 
 ---
 

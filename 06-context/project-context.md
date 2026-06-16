@@ -1,7 +1,12 @@
 # Project Context — Sean Sands
 _Authoritative source: this file (06-context/project-context.md)_
-_Written by Claude via Desktop Commander. GDoc_3 is read-only fallback._
-_Last updated: 2026-06-04_
+_Written by any agent — the git checkout is the source of truth._
+_Last updated: 2026-06-16_
+
+> **Platform note (2026-06-16):** the workspace itself was refactored to be portable, git-native, and
+> LLM/surface/device-agnostic, then consolidated onto `main` at `github.com/snds/workspace` (16-PR stack,
+> all five validators green). The git checkout — not Google Drive / Desktop Commander — is now the source
+> of truth. Day-to-day contribution rules live in [01-frameworks/08-workspace-contribution-framework.md](01-frameworks/08-workspace-contribution-framework.md) + [AGENTS.md](../AGENTS.md). See memory `decision-portable-workspace-refactor`. The project pending items below are unchanged.
 
 ---
 
