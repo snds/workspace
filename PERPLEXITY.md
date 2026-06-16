@@ -30,10 +30,10 @@ This workspace remains fully compatible with Claude. All Perplexity-specific beh
 When entering this workspace fresh, read files in this order:
 
 1. `llms.txt` → `AGENTS.md` (the universal contract)
-2. `02-skills/skills.registry.json` (the skill graph)
-3. `01-shared-references/workspace-ontology.md` (routing map)
+2. `03-skills/skills.registry.json` (the skill graph)
+3. `02-shared-references/workspace-ontology.md` (routing map)
 4. `06-context/` — `role-and-context`, `project-context`, head of `session-log`, `memory/MEMORY.md`
-5. `_MOC.md` / `_HOME.md` for navigation; `03-preferences/` when relevant
+5. `_MOC.md` / `_HOME.md` for navigation; `04-preferences/` when relevant
 6. Project-local files when working inside a project
 
 **Continuity (multi-agent):** if working inside a project, read its `SESSION-STATE.md` **Live handoff**
@@ -49,12 +49,11 @@ read-only, surface the handoff update for the user to commit.)
 The workspace is organized into durable zones:
 
 - `00-bootstrap/` — bootstrap docs, manifests, and setup logic
-- `00-frameworks/` — reusable methods, systems, and process frameworks
-- `01-shared-references/` — epistemic and artifact standards shared across work
-- `02-skills/` — reusable skills, utilities, manifests, and install helpers
-- `03-preferences/` — user preferences and operating defaults
-- `04-artifacts/` — working outputs and archived deliverables
-- `05-version-registers/` — version and change tracking
+- `01-frameworks/` — reusable methods, systems, and process frameworks
+- `02-shared-references/` — epistemic and artifact standards shared across work
+- `03-skills/` — reusable skills, utilities, manifests, and install helpers
+- `04-preferences/` — user preferences and operating defaults
+- `05-artifacts/` — working outputs and archived deliverables
 - `06-context/` — durable context and supporting notes
 - `07-projects/` — project workspaces with local context
 - `08-knowledge/` — knowledge base and long-lived reference material
@@ -66,11 +65,11 @@ Root-level helper files such as `_HOME.md`, `_CONTEXT.md`, `_FRAMEWORKS.md`, and
 
 ## Skills discovery
 
-Skills live primarily in `02-skills/`.
+Skills live primarily in `03-skills/`.
 
 When trying to locate relevant capabilities:
 
-1. Read `02-skills/skills.registry.json` — the generated routing/dependency graph (tiers, prerequisites, triggers, precomputed load chains). Follow the loading-precedence algorithm in `AGENTS.md`.
+1. Read `03-skills/skills.registry.json` — the generated routing/dependency graph (tiers, prerequisites, triggers, precomputed load chains). Follow the loading-precedence algorithm in `AGENTS.md`.
 2. Use `_SKILLS.md` as the human-readable shortcut.
 3. Inspect individual skill folders for `SKILL.md`, README files, scripts, manifests, and packaging artifacts.
 4. Treat skill metadata as preferred over folder name guesses.
@@ -149,7 +148,7 @@ When improving this workspace for Perplexity, prefer adding or extending:
 - `PERPLEXITY.md`
 - `00-bootstrap/perplexity-bootstrap.md`
 - `00-bootstrap/workspace-manifest.v2.json` or additive fields in the existing manifest
-- Skill compatibility metadata under `02-skills/`
+- Skill compatibility metadata under `03-skills/`
 - Project-local universal context files where needed
 - Validation scripts in `09-tools/`
 

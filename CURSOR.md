@@ -13,11 +13,11 @@ algorithm, the routing map — lives in AGENTS.md and is not duplicated here._
 - **Workspace root:** resolve to the directory containing `AGENTS.md` (this checkout). No cloud-drive
   mount detection.
 - **Context:** read `06-context/` (role, project-context, session-log head, `memory/MEMORY.md`) and
-  `03-preferences/user-preferences.md` at session start, per the portable session protocol in
-  [framework 08](00-frameworks/08-workspace-contribution-framework.md).
+  `04-preferences/user-preferences.md` at session start, per the portable session protocol in
+  [framework 08](01-frameworks/08-workspace-contribution-framework.md).
 - **Skills:** Cursor does not have Claude's slash-command skills. Load skills as documents per the
   precedence algorithm in [AGENTS.md](AGENTS.md): route by `triggers`/`description`, then read the
-  `load_chains` ancestors (foundation→hub→spoke) from `02-skills/skills.registry.json`.
+  `load_chains` ancestors (foundation→hub→spoke) from `03-skills/skills.registry.json`.
 - **Continuity (multi-agent):** on entry, read the active project's `SESSION-STATE.md` **Live handoff**
   block to pick up exactly where the previous agent (Claude, Perplexity, a human…) left off; on
   handoff/pause/end, update it + append an attributed `session-log` entry. Cursor is one participant in a

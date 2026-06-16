@@ -17,7 +17,7 @@ Skill loading order was implicit (the model guessed) and cross-links were sparse
 
 **Alternatives rejected:** (1) keeping Drive as source of truth with read-only fallbacks — still couples
 the core; (2) building on the `wsx` bootstrap generator — kept as a *separate* effort, not a dependency,
-so the workspace stands alone; (3) physically nesting `02-skills/` by domain — would break 200+ hardcoded
+so the workspace stands alone; (3) physically nesting `03-skills/` by domain — would break 200+ hardcoded
 `SKILL.md` loader paths, so the flat-with-prefixes layout was kept and the tree imposed via frontmatter +
 registry + MOCs.
 

@@ -10,7 +10,7 @@ by construction and never drift from the frontmatter.
 Structural relations are GENERATED (foundation/hub/spoke/applies-in/governed-by/governs);
 hand-authored `peer ↔` lines and all prose above `## Related` are PRESERVED.
 
-Reads `02-skills/skills.registry.json` (run build-registry.py first). Stdlib-only.
+Reads `03-skills/skills.registry.json` (run build-registry.py first). Stdlib-only.
 
 Usage:
   python3 09-tools/build-related.py            # rewrite Related blocks
@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SK = ROOT / "02-skills"
+SK = ROOT / "03-skills"
 REG = SK / "skills.registry.json"
 
 

@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """
-build-local-skill-plugin.py — mirror curated 02-skills/ hubs into a LOCAL Claude
+build-local-skill-plugin.py — mirror curated 03-skills/ hubs into a LOCAL Claude
 Code plugin so they surface as native `/snds:<name>` slash commands.
 
 Why this exists
 ---------------
-`02-skills/` is the source of truth for Sean's hub/spoke skill network. Those
+`03-skills/` is the source of truth for Sean's hub/spoke skill network. Those
 skills are synced to the Cowork VM by `cowork-skills-sync` (copy, not symlink,
 because the VM can't follow Google Drive symlinks). They become available to the
 *model* but are NOT installable local Claude Code plugins, so they never appear
 in the interactive `/` autocomplete menu.
 
 This script does the equivalent for local Claude Code: it COPIES a curated set of
-hub skills out of `02-skills/` into a self-contained plugin under
+hub skills out of `03-skills/` into a self-contained plugin under
 `~/.claude/local-plugins/` (outside Google Drive — avoids spaces-in-path issues,
 the symlink-sync problem, and committing duplicate skill copies into the vault),
 then writes the marketplace + plugin manifests.
@@ -26,7 +26,7 @@ After running, register it once per machine:
 Re-run this script any time you edit a hub's SKILL.md or change the HUBS list.
 It rebuilds the plugin's skills/ dir from scratch, so removed hubs disappear.
 
-Single source of truth stays `02-skills/`. This is a generated mirror.
+Single source of truth stays `03-skills/`. This is a generated mirror.
 """
 
 from __future__ import annotations
@@ -39,7 +39,7 @@ from pathlib import Path
 # --- Config -----------------------------------------------------------------
 
 # Curated operational hub skills (entry points), not the spokes. Edit this list
-# to add/remove commands, then re-run. Names must match dir names in 02-skills/.
+# to add/remove commands, then re-run. Names must match dir names in 03-skills/.
 HUBS = [
     # Workspace / session ops
     "workspace-bootstrap",
@@ -73,7 +73,7 @@ PLUGIN_VERSION = "0.1.0"
 
 SCRIPT_DIR = Path(__file__).resolve().parent           # .../09-tools
 WORKSPACE_ROOT = SCRIPT_DIR.parent                      # workspace root
-SRC_SKILLS = WORKSPACE_ROOT / "02-skills"
+SRC_SKILLS = WORKSPACE_ROOT / "03-skills"
 
 DEST_ROOT = Path.home() / ".claude" / "local-plugins" / MARKETPLACE_NAME
 PLUGIN_DIR = DEST_ROOT / PLUGIN_NAME
@@ -88,7 +88,7 @@ def main() -> int:
     # Validate every hub before we touch anything.
     missing = [h for h in HUBS if not (SRC_SKILLS / h / "SKILL.md").is_file()]
     if missing:
-        print("ERROR: these hubs have no SKILL.md in 02-skills/:", file=sys.stderr)
+        print("ERROR: these hubs have no SKILL.md in 03-skills/:", file=sys.stderr)
         for h in missing:
             print(f"  - {h}", file=sys.stderr)
         return 1
@@ -110,7 +110,7 @@ def main() -> int:
     plugin_manifest = {
         "name": PLUGIN_NAME,
         "description": "Sean's curated operational hub skills, mirrored from the "
-        "Claude Workspace 02-skills/ network for native slash-command access.",
+        "Claude Workspace 03-skills/ network for native slash-command access.",
         "version": PLUGIN_VERSION,
         "keywords": ["design-systems", "figma", "workspace", "qa", "legion", "icon-fonts"],
     }

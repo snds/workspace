@@ -148,7 +148,7 @@ _Newest first._
 
 **Accomplishments**:
 - Authored `SPEC.md` v0.2 (skill+CLI seam, git+Obsidian transport, MCP runtime, walled-context model, 5-movement interview, Resolver, Emitter, `wsx` command surface, dogfood-first build order).
-- Moved the spec out of gitignored `04-artifacts/active/` into `07-projects/18-bootstrap-generator/` and whitelisted the folder in `.gitignore` so it syncs via the workspace git repo.
+- Moved the spec out of gitignored `05-artifacts/active/` into `07-projects/18-bootstrap-generator/` and whitelisted the folder in `.gitignore` so it syncs via the workspace git repo.
 - Seeded this `SESSION-STATE.md`.
 
 **Decisions made**:

@@ -26,9 +26,9 @@ AGENTS_OUT   = WORKSPACE / "AGENTS.md"
 # Source files compiled into AGENTS.md (order = section order in output)
 SOURCES = [
     ("Role & Context",      WORKSPACE / "06-context/role-and-context.md"),
-    ("Preferences",         WORKSPACE / "03-preferences/user-preferences.md"),
+    ("Preferences",         WORKSPACE / "04-preferences/user-preferences.md"),
     ("Active Projects",     WORKSPACE / "06-context/project-context.md"),
-    ("Frameworks Summary",  WORKSPACE / "00-frameworks/00-README.md"),
+    ("Frameworks Summary",  WORKSPACE / "01-frameworks/00-README.md"),
 ]
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────

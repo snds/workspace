@@ -11,9 +11,9 @@ alwaysApply: true
 to any model — use `claude-workspace` or Cursor's native Read tool freely.
 
 **Writing** to the Claude Workspace requires Claude (claude-sonnet or claude-opus):
-- Modifying or creating skills in `02-skills/`
+- Modifying or creating skills in `03-skills/`
 - Updating session context (`06-context/`, `CLAUDE.md`, `BOOTSTRAP.md`)
-- Modifying framework files (`00-frameworks/`)
+- Modifying framework files (`01-frameworks/`)
 - Writing knowledge vault entries (`08-knowledge/`)
 - Writing compiled rules or `AGENTS.md`
 - Any `git commit` or `git push` on the workspace repo

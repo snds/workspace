@@ -53,7 +53,7 @@ trigger_words:
 > reach for, which primitives compose them, and which discipline to apply.
 >
 > The synthesis (long-form) lives at
-> `04-artifacts/active/enterprise-saas-pattern-synthesis_v0.1_2026-05-12.md`.
+> `05-artifacts/active/enterprise-saas-pattern-synthesis_v0.1_2026-05-12.md`.
 > The audit sources are next to it.
 
 ---
@@ -357,20 +357,20 @@ Watch-fors that surfaced during the audit:
 ## Cross-references
 
 ### Audit source (this entry's foundation)
-- `04-artifacts/active/enterprise-saas-pattern-taxonomy_v0.1_2026-05-12.md` — original taxonomy
-- `04-artifacts/active/enterprise-saas-pattern-audit_section-a_v0.1_2026-05-12.md` — Stream A audit (20 patterns + 6 deep re-audits)
-- `04-artifacts/active/enterprise-saas-pattern-audit_ai-forward_v0.1_2026-05-12.md` — Stream C audit (8 patterns)
-- `04-artifacts/active/enterprise-saas-pattern-synthesis_v0.1_2026-05-12.md` — synthesis (impact-ranked, primitives consolidated, cross-stream tensions resolved)
+- `05-artifacts/active/enterprise-saas-pattern-taxonomy_v0.1_2026-05-12.md` — original taxonomy
+- `05-artifacts/active/enterprise-saas-pattern-audit_section-a_v0.1_2026-05-12.md` — Stream A audit (20 patterns + 6 deep re-audits)
+- `05-artifacts/active/enterprise-saas-pattern-audit_ai-forward_v0.1_2026-05-12.md` — Stream C audit (8 patterns)
+- `05-artifacts/active/enterprise-saas-pattern-synthesis_v0.1_2026-05-12.md` — synthesis (impact-ranked, primitives consolidated, cross-stream tensions resolved)
 
 ### Skills
-- `02-skills/ds-advisor/SKILL.md` — strategic / triage / governance lens
-- `02-skills/design-engineer/SKILL.md` — component / code / primitive lens
-- `02-skills/figma-canvas-designer/SKILL.md` — when laying out screens in Figma
+- `03-skills/ds-advisor/SKILL.md` — strategic / triage / governance lens
+- `03-skills/design-engineer/SKILL.md` — component / code / primitive lens
+- `03-skills/figma-canvas-designer/SKILL.md` — when laying out screens in Figma
 
 ### Frameworks
-- `00-frameworks/02-ui-ux-operational-framework.md` — sits above this entry
-- `00-frameworks/05-last-mile-craft-framework.md` — finishing discipline applies to every pattern shipped
-- `00-frameworks/06-qa-operating-model.md` — target-user lens for verifying the patterns work in context
+- `01-frameworks/02-ui-ux-operational-framework.md` — sits above this entry
+- `01-frameworks/05-last-mile-craft-framework.md` — finishing discipline applies to every pattern shipped
+- `01-frameworks/06-qa-operating-model.md` — target-user lens for verifying the patterns work in context
 
 ### Knowledge entries that pre-date this one
 - `08-knowledge/design/centric-plm-design-system.md` — Centric DS strategy, token architecture, Ark UI decision

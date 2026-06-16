@@ -8,7 +8,7 @@ Checks:
   2. MEMORY COVERAGE    — every memory file in `06-context/memory/` (except `_template.md` and
      `MEMORY.md`) is listed in `MEMORY.md`, so the session-start index stays complete.        [error]
 
-Stdlib-only. See 00-frameworks/08-workspace-contribution-framework.md (Archive + Memory protocols).
+Stdlib-only. See 01-frameworks/08-workspace-contribution-framework.md (Archive + Memory protocols).
 
 Usage:
   python3 09-tools/validate-workspace.py

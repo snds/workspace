@@ -2,13 +2,13 @@
 """
 validate-links.py — validate the typed `## Related` wikilink graph across skills.
 
-Checks, on every `02-skills/<name>/SKILL.md` that has a `## Related` section:
+Checks, on every `03-skills/<name>/SKILL.md` that has a `## Related` section:
   1. DANGLING   — every `[[target]]` resolves to an existing skill (by dir name or alias). [error]
   2. RECIPROCITY — typed relations are mutual per the vocabulary below.                     [error]
   3. FOUNDATION  — design/engineering spokes declare a `foundation →` link.                 [warning]
 
 It only inspects the canonical typed `## Related` format (see
-01-shared-references/skill-frontmatter.md). Skills not yet migrated have no such block and are
+02-shared-references/skill-frontmatter.md). Skills not yet migrated have no such block and are
 skipped — so this passes today and tightens automatically as skills are migrated. Stdlib-only.
 
 Reciprocal pairs:
@@ -29,7 +29,7 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 WORKSPACE_ROOT = SCRIPT_DIR.parent
-SKILLS_DIR = WORKSPACE_ROOT / "02-skills"
+SKILLS_DIR = WORKSPACE_ROOT / "03-skills"
 
 WIKILINK = re.compile(r"\[\[([^\]|]+?)(?:\|[^\]]+)?\]\]")
 RELATION = re.compile(r"^\s*-\s*([a-z-]+)\s*(?:→|->|←|<-|↔|<->)\s*(.+)$")

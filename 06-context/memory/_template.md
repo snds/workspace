@@ -6,8 +6,8 @@ confidence: high      # high | medium | low
 ---
 
 <!--
-One durable fact per file. See 00-frameworks/08-workspace-contribution-framework.md
-(Memory protocol) for when/how/why, and 01-shared-references/workspace-ontology.md
+One durable fact per file. See 01-frameworks/08-workspace-contribution-framework.md
+(Memory protocol) for when/how/why, and 02-shared-references/workspace-ontology.md
 (routing map) for what belongs here vs. knowledge / context / preferences.
 
 - fact      → a durable, non-project truth about Sean's world (tools, accounts, environment).

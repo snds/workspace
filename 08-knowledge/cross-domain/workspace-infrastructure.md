@@ -37,8 +37,8 @@ These two systems serve different roles and are deliberately layered, not altern
 | Layer | System | What It Covers |
 |-------|--------|---------------|
 | File sync (all content) | Google Drive for Desktop | Everything — binaries, images, all formats |
-| Version control (system layer only) | Git → GitHub | CLAUDE.md, .claude/, .obsidian/, 00-bootstrap/, 00-frameworks/, 01-shared-references/, 02-skills/, 03-preferences/, 06-context/, MOCs |
-| Excluded from Git | .gitignore | 04-artifacts/, 05-version-registers/, most of 07-projects/ |
+| Version control (system layer only) | Git → GitHub | CLAUDE.md, .claude/, .obsidian/, 00-bootstrap/, 01-frameworks/, 02-shared-references/, 03-skills/, 04-preferences/, 06-context/, MOCs |
+| Excluded from Git | .gitignore | 05-artifacts/, most of 07-projects/ |
 
 **The .gitignore strategy:** Uses `*` (ignore everything) then explicit `!directory/` whitelist entries. This means adding a new section to git requires explicitly adding it to the whitelist. The gitignore IS the source of truth — the session-end dispatcher uses `git add -A` safely because of this.
 
@@ -129,7 +129,7 @@ When a fresh machine is added (new laptop, loaner swap, reset device), Google Dr
 **Performance trap.** A bash audit that does multiple separate `find` traversals (one per metric — count, dataless count, apparent size, on-disk size) does NOT finish in 10+ minutes during heavy sync. Each traversal serially stat()s every file. The fix is a single Python `os.scandir()` walk that accumulates all metrics in one pass. Even then, expect ~30-40 min per scan on a 125K-file workspace mid-sync.
 
 **Workspace-specific patterns from the 2026-05-07 migration:**
-- 99.98% of pending placeholders concentrated in `07-projects/` (the project content). System layer (`00-frameworks`, `02-skills`, `06-context`, dotfiles) syncs fast.
+- 99.98% of pending placeholders concentrated in `07-projects/` (the project content). System layer (`01-frameworks`, `03-skills`, `06-context`, dotfiles) syncs fast.
 - Bytes complete long before files complete — Drive prioritizes large files first, leaving the long tail of small files for last. Watch *file* count, not byte progress, as the gating signal.
 - Drive strips macOS executable bits in transit on at least some script files (`dispatcher.py` mode `100755` → `100644`). After sync, `chmod +x` any tracked scripts that need it. Diff-detect with `git diff --raw` to see mode changes.
 

@@ -1,9 +1,9 @@
 # Workspace Conventions
 
 How to make changes here cleanly. The full per-layer governance is in
-[00-frameworks/08-workspace-contribution-framework.md](../00-frameworks/08-workspace-contribution-framework.md);
+[01-frameworks/08-workspace-contribution-framework.md](../01-frameworks/08-workspace-contribution-framework.md);
 the vocabulary + routing map is in
-[01-shared-references/workspace-ontology.md](../01-shared-references/workspace-ontology.md).
+[02-shared-references/workspace-ontology.md](../02-shared-references/workspace-ontology.md).
 This file is the quick reference.
 
 ## Commits
@@ -19,7 +19,7 @@ This file is the quick reference.
 ## The layer model (skills)
 `foundation → hub → spoke`, with `cross-cutting` lenses (a11y, visual-qa) applied sideways.
 Foundations own context-free principle; specialty spokes own applied-in-context. See
-[skill-frontmatter.md](../01-shared-references/skill-frontmatter.md).
+[skill-frontmatter.md](../02-shared-references/skill-frontmatter.md).
 
 ## Frontmatter (source of truth for the skill graph)
 Keys: `name` (= dir name) · `description` · `aliases` · `triggers` · `tier` · `domain` · `hub` ·
@@ -37,7 +37,7 @@ carries load precedence; the rest are navigational.
 
 ## Hard rules
 - **Never rename a `SKILL.md` file or its directory** without re-pointing every loader path and
-  wikilink. Add `aliases` instead. 200+ files hardcode `02-skills/<name>/SKILL.md`.
+  wikilink. Add `aliases` instead. 200+ files hardcode `03-skills/<name>/SKILL.md`.
 - **Never delete.** Archive to `_archive/` with an `ARCHIVE-LOG.md` entry (reason + `superseded_by`)
   and leave a tombstone redirect where external links may exist.
 - **Never hand-edit** `skills.registry.json` — it is generated from frontmatter.

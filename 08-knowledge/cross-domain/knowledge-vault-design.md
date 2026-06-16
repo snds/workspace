@@ -18,7 +18,7 @@ Why the vault is structured the way it is, and why three surfacing tiers are nee
 ## Why a Separate Vault Layer (Not Just Better Skills)
 
 The workspace already has two content layers before the knowledge vault:
-- **02-skills/** — operational how-to. "When you encounter X, do Y."
+- **03-skills/** — operational how-to. "When you encounter X, do Y."
 - **06-context/** — session and project state. "Here's what's active and pending."
 
 Neither layer is the right home for accumulated domain insight. Skills are generic by design — they don't capture what we've specifically learned from Sean's actual work. Context files are ephemeral — they hold current state, not durable lessons.

@@ -10,7 +10,7 @@
 
 ## Layer / structure
 - [ ] New/changed frontmatter follows the v2 spec (`tier`, `hub`, `prerequisites`, `aliases`)
-- [ ] `02-skills/skills.registry.json` regenerated (`python3 09-tools/build-registry.py`)
+- [ ] `03-skills/skills.registry.json` regenerated (`python3 09-tools/build-registry.py`)
 - [ ] Cross-links use the typed `## Related` block and are **reciprocal**
 - [ ] No `SKILL.md` file/dir renamed (or: renames listed below + loader paths/wikilinks re-pointed)
 

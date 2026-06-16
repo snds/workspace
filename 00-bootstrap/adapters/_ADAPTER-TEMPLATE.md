@@ -17,7 +17,7 @@ the multi-agent handoff protocol all live in AGENTS.md and are not duplicated he
 
 ## How <Tool> executes the contract
 - **Workspace root:** the directory containing `AGENTS.md` (this checkout). No cloud-drive paths.
-- **Entry:** read `llms.txt` → `AGENTS.md` → `02-skills/skills.registry.json`, then `06-context/`
+- **Entry:** read `llms.txt` → `AGENTS.md` → `03-skills/skills.registry.json`, then `06-context/`
   (role, project-context, session-log head, `memory/MEMORY.md`).
 - **Skills:** load per the precedence algorithm in AGENTS.md — route by `triggers`/`description`, then
   read the `load_chains` ancestors (foundation → hub → spoke).

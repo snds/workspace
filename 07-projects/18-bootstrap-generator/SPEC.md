@@ -8,7 +8,7 @@ derived-from: "[[workspace-bootstrap]]"
 
 # Portable, Model-Agnostic Workspace Bootstrap Generator — Spec v0.2
 
-_2026-06-13 · derived from Sean's Claude Workspace (`02-skills/workspace-bootstrap`)_
+_2026-06-13 · derived from Sean's Claude Workspace (`03-skills/workspace-bootstrap`)_
 
 **Goal:** let a friend run an interview and walk away with a personalized hub/spoke skill network + context system that works on any model and any surface.
 
@@ -104,4 +104,4 @@ Format churn → adapters thin, never hand-edited. Library trust → vet/pin/nam
 
 ## 9. Ship-as (last open choice)
 
-A `bootstrap-gen` skill in `02-skills/` and a standalone `wsx` CLI repo — the seam in §6 makes them one system, not two.
+A `bootstrap-gen` skill in `03-skills/` and a standalone `wsx` CLI repo — the seam in §6 makes them one system, not two.

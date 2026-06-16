@@ -25,13 +25,13 @@ and history layer across machines.
 │   ├── settings.json · hooks/dispatcher.py · skills/ (/today, /session-end, …)
 ├── .obsidian/                              ← vault config — NOT shown in Obsidian
 │   ├── app.json · graph.json (color groups) · community-plugins.json · plugins/ (per-machine)
-├── 00-bootstrap/ 00-frameworks/ 01-shared-references/ 02-skills/ 03-preferences/
-├── 04-artifacts/ 05-version-registers/ 06-context/ 07-projects/ 08-knowledge/ 09-tools/ _archive/
+├── 00-bootstrap/ 01-frameworks/ 02-shared-references/ 03-skills/ 04-preferences/
+├── 05-artifacts/ 06-context/ 07-projects/ 08-knowledge/ 09-tools/ _archive/
 ```
 
 ## How the consumers see it
 
-**Obsidian** — opens the root as a vault; ignores `.claude/`, `.obsidian/`, `04-artifacts/archive/`, etc.
+**Obsidian** — opens the root as a vault; ignores `.claude/`, `.obsidian/`, `05-artifacts/archive/`, etc.
 (see `userIgnoreFilters` in `.obsidian/app.json`); renders MOCs with live Dataview queries; uses
 `[[wikilinks]]` (`useMarkdownLinks: false`). The Obsidian Git plugin can auto-commit + push on a timer.
 
@@ -40,7 +40,7 @@ hook injects `06-context/*` heads; slash commands (`/today`, `/session-end`, `/r
 `/framework-check`) come from `.claude/skills/`; `SessionEnd` commits + pushes. These are Claude-adapter
 ergonomics — the workspace works without them (the portable session protocol in framework 08 covers it).
 
-**Any other agent** — reads `llms.txt` → `AGENTS.md` → `02-skills/skills.registry.json`, then follows the
+**Any other agent** — reads `llms.txt` → `AGENTS.md` → `03-skills/skills.registry.json`, then follows the
 loading-precedence algorithm. No hooks required.
 
 ## Sync topology

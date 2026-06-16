@@ -11,7 +11,7 @@ related_projects: [09-figma-repo-sync-plugin, centric-ui]
 
 # Figma source-audit patterns
 
-What we've learned reviewing a fully-generated centric-ui Figma library against shadcn source + canonical visual expectations. These are recurring observations across ~24 generated components — not Select-specific. The companion skill [`figma-source-audit`](../../02-skills/figma-source-audit/SKILL.md) packages the *methodology*; this entry holds the substance.
+What we've learned reviewing a fully-generated centric-ui Figma library against shadcn source + canonical visual expectations. These are recurring observations across ~24 generated components — not Select-specific. The companion skill [`figma-source-audit`](../../03-skills/figma-source-audit/SKILL.md) packages the *methodology*; this entry holds the substance.
 
 ---
 

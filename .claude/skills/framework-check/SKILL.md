@@ -25,11 +25,11 @@ Confirm the target before critiquing.
 ### Step 2 — Load frameworks
 
 Read (or verify already loaded):
-- `00-frameworks/01-aesthetic-lens.md`
-- `00-frameworks/02-ui-ux-operational-framework.md`
-- `00-frameworks/03-collaboration-and-critique-framework.md`
-- `00-frameworks/04-research-and-evidence-framework.md`
-- `00-frameworks/05-last-mile-craft-framework.md`
+- `01-frameworks/01-aesthetic-lens.md`
+- `01-frameworks/02-ui-ux-operational-framework.md`
+- `01-frameworks/03-collaboration-and-critique-framework.md`
+- `01-frameworks/04-research-and-evidence-framework.md`
+- `01-frameworks/05-last-mile-craft-framework.md`
 
 (If any is missing, flag it and continue with the rest.)
 

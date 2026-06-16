@@ -24,20 +24,20 @@ Default scope is **full**: read all the foundation files listed below. If user s
 **Full-scope reads (in this order):**
 
 1. `CLAUDE.md` — primary context
-2. `00-frameworks/00-README.md` + the 5 framework files (`01-aesthetic-lens.md` through `05-last-mile-craft-framework.md`)
-3. `00-frameworks/team-practices-and-decisions.md`
+2. `01-frameworks/00-README.md` + the 5 framework files (`01-aesthetic-lens.md` through `05-last-mile-craft-framework.md`)
+3. `01-frameworks/team-practices-and-decisions.md`
 4. `06-context/role-and-context.md`
 5. `06-context/project-context.md` (full file)
 6. `06-context/session-log.md` (head — first 200 lines is enough for recency)
 7. `06-context/artifact-registry.md` (if exists)
-8. `03-preferences/user-preferences.md`
+8. `04-preferences/user-preferences.md`
 9. All MOCs at workspace root: `_HOME.md`, `_PROJECTS.md`, `_SKILLS.md`, `_FRAMEWORKS.md`, `_CONTEXT.md`, `_CHEATSHEET.md`
 10. `00-bootstrap/OBSIDIAN-SETUP.md`
 11. `00-bootstrap/SURFACES.md`
 12. `.claude/settings.json`
 13. `.claude/hooks/dispatcher.py` (skim for hook-event coverage and helpers actually invoked)
 14. List `.claude/skills/` and read each SKILL.md (small set, 5-10 files)
-15. List `02-skills/` and sample the hub skills mentioned in CLAUDE.md (don't read all 60+)
+15. List `03-skills/` and sample the hub skills mentioned in CLAUDE.md (don't read all 60+)
 
 ### Step 1.5 — Honor audit-skip opt-outs
 
@@ -54,7 +54,7 @@ Look for the following classes of issue. Mark each finding with priority and con
 **Drift (docs vs filesystem):**
 - Paths referenced in docs that don't exist on disk
 - Files in the filesystem that no docs mention (orphans)
-- Skills in `02-skills/` not listed in `_SKILLS.md` or CLAUDE.md hub mentions
+- Skills in `03-skills/` not listed in `_SKILLS.md` or CLAUDE.md hub mentions
 - Wikilinks in MOCs pointing to deleted notes
 - Setup commands that reference moved/renamed files
 
@@ -79,12 +79,12 @@ Look for the following classes of issue. Mark each finding with priority and con
 **Gaps:**
 - Mentioned but unimplemented (e.g., "we will build X" — never built)
 - Skills referenced from hubs but the SKILL.md doesn't exist
-- Frameworks alluded to in docs but not actually present in `00-frameworks/`
+- Frameworks alluded to in docs but not actually present in `01-frameworks/`
 - Surface-discovery gaps (a tool surface mentioned but no setup docs)
 
 **Clutter:**
 - `_archive` folders that should be cleared
-- Loose `.md` files at `02-skills/` root that duplicate folder contents (Sean has flagged these before — see project-context.md "Clean up duplicate skill files")
+- Loose `.md` files at `03-skills/` root that duplicate folder contents (Sean has flagged these before — see project-context.md "Clean up duplicate skill files")
 - Drive-injected `desktop.ini` / `.DS_Store` files anywhere git tracks them
 
 ### Step 3 — Output the punch list
@@ -175,7 +175,7 @@ If carried-forward findings include things that ought to become real pending ite
 - Doesn't rename files (cascade risk too high without targeted user input)
 - Doesn't archive without confirmation
 - Doesn't second-guess deliberate stylistic choices in user-authored content
-- Doesn't audit project-internal artifacts (`04-artifacts/`, `07-projects/<project>/<work-files>`) — those have their own per-project review cadence; this is meta-level only
+- Doesn't audit project-internal artifacts (`05-artifacts/`, `07-projects/<project>/<work-files>`) — those have their own per-project review cadence; this is meta-level only
 
 ## Tone
 

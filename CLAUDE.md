@@ -29,7 +29,7 @@ When starting a non-trivial task, read (in this order):
 2. **[06-context/project-context.md](06-context/project-context.md)** — active projects + pending items (authoritative)
 3. **[06-context/session-log.md](06-context/session-log.md)** — recent session entries, newest-first
 4. **[06-context/artifact-registry.md](06-context/artifact-registry.md)** — structural index of known files
-5. **[03-preferences/user-preferences.md](03-preferences/user-preferences.md)** — communication style, tone
+5. **[04-preferences/user-preferences.md](04-preferences/user-preferences.md)** — communication style, tone
 
 The `SessionStart` hook loads these automatically. If the hook didn't fire (e.g., you were
 invoked headless), read them explicitly before answering substantive questions.
@@ -75,17 +75,17 @@ This ritual costs ~150 tokens per session start in exchange for cross-surface co
 
 Eight top-level frameworks govern all project work. They sit **above** any skill.
 
-- **[00-frameworks/01-aesthetic-lens.md](00-frameworks/01-aesthetic-lens.md)** — philosophical ground, visual/aesthetic judgment
-- **[00-frameworks/02-ui-ux-operational-framework.md](00-frameworks/02-ui-ux-operational-framework.md)** — UX/UI operational decisions
-- **[00-frameworks/03-collaboration-and-critique-framework.md](00-frameworks/03-collaboration-and-critique-framework.md)** — conduct, critique, handoff
-- **[00-frameworks/04-research-and-evidence-framework.md](00-frameworks/04-research-and-evidence-framework.md)** — epistemology, evidence standards
-- **[00-frameworks/05-last-mile-craft-framework.md](00-frameworks/05-last-mile-craft-framework.md)** — finishing discipline, augmented perception
-- **[00-frameworks/06-qa-operating-model.md](00-frameworks/06-qa-operating-model.md)** — target-user QA lens, default skill loading, reference-comparison protocol, iteration-default mindset
-- **[00-frameworks/07-integration-and-review-framework.md](00-frameworks/07-integration-and-review-framework.md)** — branching, PRs, merge order, reviewable diffs
-- **[00-frameworks/08-workspace-contribution-framework.md](00-frameworks/08-workspace-contribution-framework.md)** — how/when/where/what/why to edit the workspace itself; routing map, memory + archive protocols
+- **[01-frameworks/01-aesthetic-lens.md](01-frameworks/01-aesthetic-lens.md)** — philosophical ground, visual/aesthetic judgment
+- **[01-frameworks/02-ui-ux-operational-framework.md](01-frameworks/02-ui-ux-operational-framework.md)** — UX/UI operational decisions
+- **[01-frameworks/03-collaboration-and-critique-framework.md](01-frameworks/03-collaboration-and-critique-framework.md)** — conduct, critique, handoff
+- **[01-frameworks/04-research-and-evidence-framework.md](01-frameworks/04-research-and-evidence-framework.md)** — epistemology, evidence standards
+- **[01-frameworks/05-last-mile-craft-framework.md](01-frameworks/05-last-mile-craft-framework.md)** — finishing discipline, augmented perception
+- **[01-frameworks/06-qa-operating-model.md](01-frameworks/06-qa-operating-model.md)** — target-user QA lens, default skill loading, reference-comparison protocol, iteration-default mindset
+- **[01-frameworks/07-integration-and-review-framework.md](01-frameworks/07-integration-and-review-framework.md)** — branching, PRs, merge order, reviewable diffs
+- **[01-frameworks/08-workspace-contribution-framework.md](01-frameworks/08-workspace-contribution-framework.md)** — how/when/where/what/why to edit the workspace itself; routing map, memory + archive protocols
 
-Compressed summaries: **[00-frameworks/00-README.md](00-frameworks/00-README.md)** — read this first.
-Team practices: **[00-frameworks/team-practices-and-decisions.md](00-frameworks/team-practices-and-decisions.md)**.
+Compressed summaries: **[01-frameworks/00-README.md](01-frameworks/00-README.md)** — read this first.
+Team practices: **[01-frameworks/team-practices-and-decisions.md](01-frameworks/team-practices-and-decisions.md)**.
 
 Use `/framework-check` to run current work through all six as a critique pass.
 
@@ -117,11 +117,11 @@ capture hard-won constraints and decisions that aren't in the skills or session 
 
 Two skill systems, intentionally separate.
 
-### `02-skills/` — the full hub/spoke network
+### `03-skills/` — the full hub/spoke network
 
 The skill library. **You don't auto-load these** — load per the precedence algorithm in
 [AGENTS.md](AGENTS.md) (route by `triggers`/`description`, then load the `load_chains` ancestors
-foundation-first). The machine graph is `02-skills/skills.registry.json` (generated from frontmatter
+foundation-first). The machine graph is `03-skills/skills.registry.json` (generated from frontmatter
 by `09-tools/build-registry.py` — not a Drive sync). Hub skills to know about:
 
 - **Design / DS:** `ds-advisor`, `design-engineer`, `figma-canvas-designer`, `figma-plugin-dev`
@@ -130,7 +130,7 @@ by `09-tools/build-registry.py` — not a Drive sync). Hub skills to know about:
 - **Visual QA:** `visual-qa-toolkit` + discipline-specific spokes
 - **Workspace mgmt:** `workspace-bootstrap`
 
-Full list: `ls 02-skills/`. Each directory has a `SKILL.md` whose frontmatter defines its graph edges.
+Full list: `ls 03-skills/`. Each directory has a `SKILL.md` whose frontmatter defines its graph edges.
 
 ### `.claude/skills/` — Claude Code workflow skills
 
@@ -148,13 +148,13 @@ Slash-command workflows native to Claude Code. Small, focused, invocable by `/na
 ## Projects
 
 Active projects live in `07-projects/NN-name/`. Each carries a `SESSION-STATE.md` with the
-operational state (template at [00-frameworks/_session-state-template.md](00-frameworks/_session-state-template.md)).
+operational state (template at [01-frameworks/_session-state-template.md](01-frameworks/_session-state-template.md)).
 
 **Trigger words** route context automatically (handled by the `UserPromptSubmit` hook):
 
 | Trigger | Loads |
 |---|---|
-| `legion`, `the game`, `bobiverse` | `02-skills/legion-project/SKILL.md` + appropriate hub |
+| `legion`, `the game`, `bobiverse` | `03-skills/legion-project/SKILL.md` + appropriate hub |
 | `centric`, `PLM`, `data table` | Design system context, Ark UI notes, cell anatomy WIP |
 | `icon font`, `centricsymbols`, `variable axis` | `variable-icon-font-architect` + math spokes |
 | `figma plugin`, `plugin dev` | `figma-plugin-dev` |
@@ -169,7 +169,7 @@ Current active projects and their status: **[06-context/project-context.md](06-c
 ### File naming
 - Artifacts: `context_descriptor_vN.N_YYYY-MM-DD.ext`
 - Never overwrite — increment version. Minor = iterative, major = structural.
-- Sessions write to `04-artifacts/active/`; archive moves to `04-artifacts/archive/`.
+- Sessions write to `05-artifacts/active/`; archive moves to `05-artifacts/archive/`.
 
 ### Markdown + Obsidian
 - Use `[[wikilinks]]` for internal connections — the graph view depends on them.
@@ -193,7 +193,7 @@ Resolve from `hostname` at boot. Never ask, never carry forward.
 - Never overwrite artifacts — increment version.
 - Never modify `00-bootstrap/templates/` content without asking.
 - Never rename files without asking — Obsidian links will break silently.
-- Never commit `04-artifacts/`, `05-version-registers/`, or most of `07-projects/` — see `.gitignore`.
+- Never commit `05-artifacts/` or most of `07-projects/` — see `.gitignore`.
 
 ---
 

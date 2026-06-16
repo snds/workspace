@@ -18,7 +18,7 @@ Mostly transparent. There's a small core worth keeping handy.
 
 **Obsidian**
 - Git plugin: auto-commit + push + pull every 15 min
-- Templater: auto-applies templates when you create notes in `04-artifacts/active/daily/` or `07-projects/`
+- Templater: auto-applies templates when you create notes in `05-artifacts/active/daily/` or `07-projects/`
 - Dataview tables in MOCs refresh on file focus
 
 ## Claude Code — 5 slash commands

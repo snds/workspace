@@ -8,7 +8,7 @@ stdlib-only, and useful on every machine.
 
 ## build-registry.py
 
-Generates `02-skills/skills.registry.json` (the routing + dependency graph) from each
+Generates `03-skills/skills.registry.json` (the routing + dependency graph) from each
 `SKILL.md`'s frontmatter. Single source of truth = frontmatter. Validates the graph
 (no cycles, no dangling prerequisites) and precomputes `load_chains` (foundation→hub→spoke).
 
@@ -43,7 +43,7 @@ Compiles workspace context into `AGENTS.md` for non-Claude tools. `--watch` for 
 
 ## build-local-skill-plugin.py
 
-Mirrors curated hubs from `02-skills/` into a local Claude Code plugin so they appear as
+Mirrors curated hubs from `03-skills/` into a local Claude Code plugin so they appear as
 native `/snds:<name>` slash commands. Claude-specific ergonomics; optional.
 
 ---

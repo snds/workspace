@@ -2,7 +2,7 @@
 <!-- Auto-maintained by Claude. Updated after each task. -->
 <!-- Last updated: 2026-06-04 | Session: Six-hub operation-grammar set completed (/qa + 5 siblings) -->
 
-## Skill Ecosystem & Trigger System — 04-artifacts/active/ + 02-skills/
+## Skill Ecosystem & Trigger System — 05-artifacts/active/ + 03-skills/
 
 ### skill-ecosystem-stocktake_v0.3_2026-06-01.md
 - **Size**: ~250 lines | 18 KB
@@ -19,13 +19,13 @@
 - **Purpose**: Self-contained HTML reference for the trigger system — two planes, verb spine, six hubs (status-tagged), targets/modifiers, 8 real-session worked combos, organic-phrasing map, impeccable modes/bridge, project trigger words, rules of thumb. Print/PDF-clean.
 - **Last modified**: 2026-06-01 — v1.0 created.
 
-### 02-skills/qa/SKILL.md
+### 03-skills/qa/SKILL.md
 - **Size**: ~191 lines | 10 KB
 - **Purpose**: `/qa` POC hub — user-invocable workspace wrapper implementing the operation grammar. Owns UI-evaluation routing; delegates to visual-qa-* spokes + visual-qa-toolkit + lead-visual-qa.
 - **Last modified**: 2026-06-01 — v0.1.0 created. Verbs audit·critique·triage·inventory·spec; 8 target types; modifiers --lens/--level/--theme/--live/--out/--dry. Encodes disambiguation contract (qa judges · design-engineer authors · ds-advisor decides · impeccable creates) + preserves impeccable --live bridge with multi-spoke expansion seam.
 - **Coverage**: First sibling of the 6-hub set; pattern validates remaining 5 (/ds /figma /motion /type /redesign). Synced to live skills mount.
 
-### 02-skills/{ds,figma,motion,type,redesign}/SKILL.md  — the 5 sibling hubs
+### 03-skills/{ds,figma,motion,type,redesign}/SKILL.md  — the 5 sibling hubs
 - **Size**: ds 141 · figma 124 · redesign 122 · motion 105 · type 99 lines
 - **Purpose**: Complete the six-hub operation-grammar set. Each is a user-invocable workspace wrapper carrying the `/hub verb target --modifiers` grammar, a verb subset, and the cross-hub disambiguation contract; depth stays in delegated base skills/plugins.
   - `/ds` → ds-advisor + design-engineer + fe-design-tokens (system decisions, tokens, anatomy, governance)
@@ -36,9 +36,9 @@
 - **Last modified**: 2026-06-04 — observed built on disk; completes the set begun with /qa (2026-06-01).
 - **Coverage**: Six-hub set complete. Open: design-system-ops plugin (38 commands) overlaps /ds → fold into description-contract pass; cheatsheet "planned" tags now stale.
 
-## Workspace Infrastructure — 02-skills/ + 00-bootstrap/ + ~/.claude/
+## Workspace Infrastructure — 03-skills/ + 00-bootstrap/ + ~/.claude/
 
-### 02-skills/workspace-bootstrap/SKILL.md
+### 03-skills/workspace-bootstrap/SKILL.md
 - **Size**: ~470 lines | 47 KB
 - **Purpose**: Session-start context loader + boot protocol.
 - **Last modified**: 2026-06-01 — Added Drive Stream-vs-Mirror path resolution (`resolve_workspace_root()` probing both roots, `[ -s ]` materialization gate to reject online-only placeholders), per-machine sync-mode section, and reference to the machine-local symlink resolver hook.

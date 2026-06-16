@@ -17,7 +17,7 @@ What exists in the Meridian DS prototype (as of 2026-03-08) and what decisions w
 
 ## What Was Built
 
-Three prototype files plus supporting specs and audits, all in `04-artifacts/active/files/meridian-ds/`:
+Three prototype files plus supporting specs and audits, all in `05-artifacts/active/files/meridian-ds/`:
 
 | File | Purpose | Size |
 |------|---------|------|

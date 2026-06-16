@@ -16,7 +16,7 @@ _Last updated: 2026-04-27_
 | **VS Code** + Claude Code extension | Same as CLI — walks up to find `CLAUDE.md` | Anthropic | Yes (extension respects hooks) | Use this if you prefer VS Code's UI to the desktop app. Worktree behavior depends on extension settings. |
 | **VS Code** + Copilot | `.github/copilot-instructions.md` per repo root | OpenAI | No | Not currently set up. Mirror would live at workspace root if needed. |
 | **Obsidian** | Folder = vault; reads everything | n/a (no AI) | n/a | UI for navigation, editing, graph view, daily notes. Plugins: Dataview, Templater, Git, Excalidraw, etc. |
-| **Claude Desktop** (chat app) | Reads workspace files via whatever filesystem MCP is configured | Anthropic | n/a (no hook system in chat) | Skills load per the precedence algorithm in `AGENTS.md` against `02-skills/skills.registry.json`. |
+| **Claude Desktop** (chat app) | Reads workspace files via whatever filesystem MCP is configured | Anthropic | n/a (no hook system in chat) | Skills load per the precedence algorithm in `AGENTS.md` against `03-skills/skills.registry.json`. |
 | **Perplexity / generic MCP / a human** | Reads `llms.txt` → `AGENTS.md` → registry | any | n/a | No adapter required — follows the universal contract directly. |
 | **Claude iOS app** | None — no local filesystem access | Anthropic | n/a | Brain context only available if you paste/reference it explicitly. Use for chat continuity, not file operations. |
 

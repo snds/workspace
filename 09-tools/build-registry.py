@@ -2,10 +2,10 @@
 """
 build-registry.py — generate the skill routing/dependency registry from frontmatter.
 
-Single source of truth = the YAML frontmatter on every `02-skills/<name>/SKILL.md`.
+Single source of truth = the YAML frontmatter on every `03-skills/<name>/SKILL.md`.
 This script reads that frontmatter, builds the skill graph (hub/spoke membership +
 hard `prerequisites`), validates it (no cycles, no dangling references), precomputes
-the ordered load chain for every skill, and writes `02-skills/skills.registry.json`.
+the ordered load chain for every skill, and writes `03-skills/skills.registry.json`.
 
 It is intentionally:
   - stdlib-only (no PyYAML) — runs on any machine with Python 3, no install step;
@@ -20,7 +20,7 @@ Usage:
                                                 #     or if the graph is invalid
   python3 09-tools/build-registry.py --quiet    # only print on error
 
-See 01-shared-references/skill-frontmatter.md for the field spec and
+See 02-shared-references/skill-frontmatter.md for the field spec and
 AGENTS.md "Skill loading precedence" for how an agent consumes the registry.
 """
 
@@ -32,7 +32,7 @@ from pathlib import Path
 # ---- locations -------------------------------------------------------------
 SCRIPT_DIR = Path(__file__).resolve().parent
 WORKSPACE_ROOT = SCRIPT_DIR.parent
-SKILLS_DIR = WORKSPACE_ROOT / "02-skills"
+SKILLS_DIR = WORKSPACE_ROOT / "03-skills"
 REGISTRY_PATH = SKILLS_DIR / "skills.registry.json"
 
 REGISTRY_VERSION = "1.0"        # shape of skills.registry.json
@@ -132,14 +132,14 @@ def compute_hash(path):
 # ---- graph build -----------------------------------------------------------
 
 def read_skills():
-    """Map skill-name -> record dict, read from every 02-skills/*/SKILL.md."""
+    """Map skill-name -> record dict, read from every 03-skills/*/SKILL.md."""
     skills = {}
     for skill_md in sorted(SKILLS_DIR.glob("*/SKILL.md")):
         dir_name = skill_md.parent.name
         fm = parse_frontmatter(skill_md.read_text(encoding="utf-8", errors="replace"))
         name = fm.get("name") or dir_name
         rec = {
-            "path": f"02-skills/{dir_name}/SKILL.md",
+            "path": f"03-skills/{dir_name}/SKILL.md",
             "tier": fm.get("tier"),
             "domain": fm.get("domain"),
             "hub": fm.get("hub"),

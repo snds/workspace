@@ -62,7 +62,7 @@ The optimize skill reads this flag and excludes the file from analysis. First us
 
 ## Skill File Discovery Pattern
 
-When there are two files for the same skill — one at `02-skills/skill-name.md` (loose) and one at `02-skills/skill-name/SKILL.md` (canonical) — the directory version is always authoritative. The loose file is a legacy artifact from an earlier era of the skill system.
+When there are two files for the same skill — one at `03-skills/skill-name.md` (loose) and one at `03-skills/skill-name/SKILL.md` (canonical) — the directory version is always authoritative. The loose file is a legacy artifact from an earlier era of the skill system.
 
 The skills-manifest.json always points to the directory SKILL.md. The manifest is the single source of truth for the canonical location of every skill.
 

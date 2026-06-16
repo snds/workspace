@@ -63,14 +63,14 @@ HOSTNAME_MAP = {
 }
 
 TRIGGER_WORDS = {
-    "legion": "02-skills/legion-project/SKILL.md + appropriate hub (lead-game-designer / lead-art-director / lead-game-developer)",
-    "bobiverse": "02-skills/legion-project/SKILL.md",
+    "legion": "03-skills/legion-project/SKILL.md + appropriate hub (lead-game-designer / lead-art-director / lead-game-developer)",
+    "bobiverse": "03-skills/legion-project/SKILL.md",
     "centric": "Centric PLM project context — see 06-context/project-context.md; ds-advisor hub",
     "data table": "Data table cell anatomy work — cross-reference 06-context/artifact-registry.md",
-    "icon font": "02-skills/variable-icon-font-architect/SKILL.md + math spokes",
-    "centricsymbols": "02-skills/variable-icon-font-architect/SKILL.md",
-    "omni": "02-skills/omni-project/SKILL.md",
-    "figma plugin": "02-skills/figma-plugin-dev/SKILL.md",
+    "icon font": "03-skills/variable-icon-font-architect/SKILL.md + math spokes",
+    "centricsymbols": "03-skills/variable-icon-font-architect/SKILL.md",
+    "omni": "03-skills/omni-project/SKILL.md",
+    "figma plugin": "03-skills/figma-plugin-dev/SKILL.md",
 }
 
 # Knowledge hints: topic keywords → relevant 08-knowledge/ entry paths.
@@ -753,15 +753,15 @@ If the session produces a durable insight, add or update the entry at session en
 ```
 {knowledge_block}
 _Full context: `06-context/project-context.md`, `06-context/session-log.md`,_
-_`06-context/role-and-context.md`, `03-preferences/user-preferences.md`._
-_Frameworks: `00-frameworks/00-README.md`._
+_`06-context/role-and-context.md`, `04-preferences/user-preferences.md`._
+_Frameworks: `01-frameworks/00-README.md`._
 _The mandatory session-start ritual format is in CLAUDE.md — render it before responding._
 """
 
 
 def _find_canonical_workspace_root(start: Path | None = None) -> Path | None:
     """Walk up from `start` (default CWD) looking for the canonical workspace
-    root — the topmost directory with `.claude/`, `00-frameworks/`, and
+    root — the topmost directory with `.claude/`, `01-frameworks/`, and
     `06-context/` that is NOT itself inside a `.claude/worktrees/` path.
 
     Used to heal the canonical workspace's `.git` pointer even when the
@@ -776,7 +776,7 @@ def _find_canonical_workspace_root(start: Path | None = None) -> Path | None:
             continue
         if (
             (candidate / ".claude").is_dir()
-            and (candidate / "00-frameworks").is_dir()
+            and (candidate / "01-frameworks").is_dir()
             and (candidate / "06-context").is_dir()
         ):
             return candidate

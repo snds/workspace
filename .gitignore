@@ -43,17 +43,17 @@
 !00-bootstrap/
 !00-bootstrap/**
 
-!00-frameworks/
-!00-frameworks/**
+!01-frameworks/
+!01-frameworks/**
 
-!01-shared-references/
-!01-shared-references/**
+!02-shared-references/
+!02-shared-references/**
 
-!02-skills/
-!02-skills/**
+!03-skills/
+!03-skills/**
 
-!03-preferences/
-!03-preferences/**
+!04-preferences/
+!04-preferences/**
 
 !06-context/
 !06-context/**
@@ -118,7 +118,7 @@
 .obsidian/plugins/*/styles.css
 
 # Daily notes — local to each machine
-04-artifacts/active/daily/
+05-artifacts/active/daily/
 
 # Google Drive metadata + virtual shortcuts (not real bytes; git can't read them)
 **/desktop.ini

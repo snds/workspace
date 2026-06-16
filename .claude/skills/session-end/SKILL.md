@@ -97,7 +97,7 @@ related_projects: [project-name]
 
 If any `SKILL.md` frontmatter changed this session, run
 `python3 09-tools/build-registry.py` and commit the regenerated
-`02-skills/skills.registry.json` alongside the session log. No Drive/mount sync —
+`03-skills/skills.registry.json` alongside the session log. No Drive/mount sync —
 git is the source of truth.
 
 ### Step 7 — Commit + push (session changes only)
@@ -105,8 +105,8 @@ git is the source of truth.
 Use the session signature from surface detection in the commit message:
 
 ```bash
-git add -A -- .claude CLAUDE.md 06-context 00-frameworks 01-shared-references \
-               02-skills 03-preferences 00-bootstrap 08-knowledge \
+git add -A -- .claude CLAUDE.md 06-context 01-frameworks 02-shared-references \
+               03-skills 04-preferences 00-bootstrap 08-knowledge \
                _HOME.md _PROJECTS.md _SKILLS.md _FRAMEWORKS.md _CONTEXT.md
 git commit -m "session: {YYYY-MM-DD} [{session signature}] — {one-line summary}"
 git push

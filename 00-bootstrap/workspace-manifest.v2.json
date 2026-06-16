@@ -50,12 +50,11 @@
   ],
   "folders": {
     "00-bootstrap": "Bootstrap docs, manifests, setup logic, and adapters.",
-    "00-frameworks": "Reusable frameworks and methods.",
-    "01-shared-references": "Shared standards and references.",
-    "02-skills": "Reusable skills, packaging, manifests, and installers.",
-    "03-preferences": "User preferences and response defaults.",
-    "04-artifacts": "Generated artifacts and archived outputs.",
-    "05-version-registers": "Version tracking and registers.",
+    "01-frameworks": "Reusable frameworks and methods.",
+    "02-shared-references": "Shared standards and references.",
+    "03-skills": "Reusable skills, packaging, manifests, and installers.",
+    "04-preferences": "User preferences and response defaults.",
+    "05-artifacts": "Generated artifacts and archived outputs.",
     "06-context": "Durable supporting context.",
     "07-projects": "Project-specific working areas and local context.",
     "08-knowledge": "Knowledge base and long-lived notes.",
@@ -66,19 +65,19 @@
     "universal_agent_contract": "AGENTS.md",
     "claude_adapter": "CLAUDE.md",
     "perplexity_adapter": "PERPLEXITY.md",
-    "skills_manifest": "02-skills/skills-manifest.json"
+    "skills_manifest": "03-skills/skills-manifest.json"
   },
   "shared_references": {
     "load_when_relevant": true,
     "paths": [
-      "01-shared-references"
+      "02-shared-references"
     ]
   },
   "skills": {
-    "primary_root": "02-skills",
-    "manifest": "02-skills/skills-manifest.json",
+    "primary_root": "03-skills",
+    "manifest": "03-skills/skills-manifest.json",
     "discovery_order": [
-      "02-skills/skills-manifest.json",
+      "03-skills/skills-manifest.json",
       "_SKILLS.md",
       "skill folder metadata",
       "SKILL.md",

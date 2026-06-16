@@ -22,7 +22,7 @@
       }
     },
     {
-      "query": "path:\"00-frameworks/\"",
+      "query": "path:\"01-frameworks/\"",
       "color": {
         "a": 1,
         "rgb": 10980346
@@ -50,21 +50,21 @@
       }
     },
     {
-      "query": "path:\"02-skills/found-\" OR path:\"-foundations/\"",
+      "query": "path:\"03-skills/found-\" OR path:\"-foundations/\"",
       "color": {
         "a": 1,
         "rgb": 16755200
       }
     },
     {
-      "query": "path:\"02-skills/lead-\"",
+      "query": "path:\"03-skills/lead-\"",
       "color": {
         "a": 1,
         "rgb": 3447003
       }
     },
     {
-      "query": "path:\"02-skills/a11y-\" OR path:\"02-skills/visual-qa-\"",
+      "query": "path:\"03-skills/a11y-\" OR path:\"03-skills/visual-qa-\"",
       "color": {
         "a": 1,
         "rgb": 15277667

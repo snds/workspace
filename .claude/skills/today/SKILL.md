@@ -5,13 +5,13 @@ description: Daily note. Carries yesterday's open tasks forward, surfaces projec
 
 # /today — Daily planning note
 
-Creates or opens today's daily note at `04-artifacts/active/daily/YYYY/YYYY-MM-DD.md`.
+Creates or opens today's daily note at `05-artifacts/active/daily/YYYY/YYYY-MM-DD.md`.
 Carries forward open tasks from the most recent prior daily, surfaces current project
 priorities, and drafts a focus block.
 
 ## Behavior
 
-1. **Resolve today's path.** `04-artifacts/active/daily/{YYYY}/{YYYY-MM-DD}.md`.
+1. **Resolve today's path.** `05-artifacts/active/daily/{YYYY}/{YYYY-MM-DD}.md`.
    Create the `YYYY` directory if missing.
 
 2. **Check if today's note exists.**
@@ -19,7 +19,7 @@ priorities, and drafts a focus block.
    - If not: proceed to create.
 
 3. **Find yesterday's (or most recent) daily note.**
-   `ls 04-artifacts/active/daily/{YYYY}/` — pick the highest-dated file before today.
+   `ls 05-artifacts/active/daily/{YYYY}/` — pick the highest-dated file before today.
    Read it. Extract open tasks (`- [ ]` lines) from the **## Tasks** section.
 
 4. **Read current project context.** `06-context/project-context.md` — extract

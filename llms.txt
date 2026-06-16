@@ -9,9 +9,9 @@
 ## Start here (read in order)
 - [AGENTS.md](AGENTS.md): the universal agent contract — folder semantics, read order, the skill
   loading-precedence algorithm, and the bootstrap-on-a-checkout protocol.
-- [skills.registry.json](02-skills/skills.registry.json): machine-readable skill graph (tiers,
+- [skills.registry.json](03-skills/skills.registry.json): machine-readable skill graph (tiers,
   prerequisites, cross-references, triggers, precomputed load chains). Generated from frontmatter.
-- [workspace-ontology.md](01-shared-references/workspace-ontology.md): vocabulary + the
+- [workspace-ontology.md](02-shared-references/workspace-ontology.md): vocabulary + the
   "where does this belong?" routing map. Read before writing anything.
 
 ## How to work here
@@ -24,13 +24,13 @@
   exactly where the last agent left off; on handoff/pause/end, update it + append an attributed
   `session-log` entry. See AGENTS.md → "Multi-agent continuity & handoff". A new agent needs no adapter.
 - Before editing the workspace, consult the routing map and the contribution framework
-  ([00-frameworks/08-workspace-contribution-framework.md](00-frameworks/08-workspace-contribution-framework.md)).
+  ([01-frameworks/08-workspace-contribution-framework.md](01-frameworks/08-workspace-contribution-framework.md)).
 
 ## Contracts + specs
-- [skill-frontmatter.md](01-shared-references/skill-frontmatter.md): the SKILL.md frontmatter v2 spec.
-- [skills.registry.schema.json](02-skills/skills.registry.schema.json): JSON Schema for the registry.
-- [epistemic-standards.md](01-shared-references/epistemic-standards.md),
-  [artifact-standards.md](01-shared-references/artifact-standards.md): reasoning + output standards.
+- [skill-frontmatter.md](02-shared-references/skill-frontmatter.md): the SKILL.md frontmatter v2 spec.
+- [skills.registry.schema.json](03-skills/skills.registry.schema.json): JSON Schema for the registry.
+- [epistemic-standards.md](02-shared-references/epistemic-standards.md),
+  [artifact-standards.md](02-shared-references/artifact-standards.md): reasoning + output standards.
 
 ## Per-tool adapters (thin layers over AGENTS.md; optional)
 - [CLAUDE.md](CLAUDE.md) — Claude Code / Desktop · [CURSOR.md](CURSOR.md) — Cursor ·

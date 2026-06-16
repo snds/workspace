@@ -18,7 +18,7 @@ are auto-generated from each skill's `tier` frontmatter (single source of truth 
 
 ```dataview
 LIST rows.file.link
-FROM "02-skills"
+FROM "03-skills"
 WHERE tier = "foundation"
 GROUP BY domain
 SORT domain ASC
@@ -27,7 +27,7 @@ SORT domain ASC
 ### Discipline hubs
 ```dataview
 LIST rows.file.link
-FROM "02-skills"
+FROM "03-skills"
 WHERE tier = "hub"
 GROUP BY domain
 SORT domain ASC
@@ -38,7 +38,7 @@ SORT domain ASC
 
 ```dataview
 LIST rows.file.link
-FROM "02-skills"
+FROM "03-skills"
 WHERE tier = "cross-cutting"
 SORT file.name ASC
 ```
@@ -46,7 +46,7 @@ SORT file.name ASC
 ### Spokes missing a foundation path (migration backlog)
 ```dataview
 LIST file.link
-FROM "02-skills"
+FROM "03-skills"
 WHERE tier = "spoke" AND !hub
 SORT file.name ASC
 ```
@@ -65,5 +65,5 @@ SORT file.name ASC
 ## The system layer
 - **Contract:** [[AGENTS]] (universal) · adapters [[CLAUDE]] · [[CURSOR]] · [[PERPLEXITY]]
 - **Governance:** [[08-workspace-contribution-framework]] (how/when/where/what/why to edit) · [[workspace-ontology]] (routing map)
-- **Generated graph:** `02-skills/skills.registry.json` ← `09-tools/build-registry.py` + `build-related.py`
+- **Generated graph:** `03-skills/skills.registry.json` ← `09-tools/build-registry.py` + `build-related.py`
 - **Memory:** [[MEMORY]] · **Archive:** `_archive/ARCHIVE-LOG.md`

@@ -2,7 +2,7 @@ name: workspace-integrity
 
 # Governance integrity: archive provenance (every _archive/ file has a ledger entry) and
 # memory-index coverage (every 06-context/memory/ entry is listed in MEMORY.md).
-# See 00-frameworks/08-workspace-contribution-framework.md.
+# See 01-frameworks/08-workspace-contribution-framework.md.
 
 on:
   push:

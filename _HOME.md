@@ -18,7 +18,7 @@ you read this.
 
 ## Daily flow
 
-1. **Start the day** — open the most recent [[04-artifacts/active/daily|daily note]], or run `/today` in Claude Code to draft one
+1. **Start the day** — open the most recent [[05-artifacts/active/daily|daily note]], or run `/today` in Claude Code to draft one
 2. **Work** — edit notes, create artifacts; Claude Code reads context automatically
 3. **End the day** — run `/session-end` in Claude Code; it writes the session block, commits, pushes
 
@@ -35,7 +35,7 @@ If you worked on multiple machines today, run `/reconcile` to merge the session 
 
 ```dataview
 TABLE file.mtime AS "Modified", file.folder AS "Folder"
-FROM "06-context" OR "00-frameworks" OR "02-skills" OR "07-projects" OR ".claude/skills"
+FROM "06-context" OR "01-frameworks" OR "03-skills" OR "07-projects" OR ".claude/skills"
 WHERE file.mtime > date(today) - dur(14 days)
 SORT file.mtime DESC
 LIMIT 20
@@ -56,12 +56,11 @@ WHERE file.name = "project-context"
 - **`.claude/`** — Claude Code config, hooks, slash-command skills. Don't edit in Obsidian; it's ignored.
 - **`.obsidian/`** — Vault config. Also ignored.
 - **`00-bootstrap/`** — Getting-started + setup. Contract lives in `AGENTS.md`.
-- **`00-frameworks/`** — The eight operating frameworks (08 governs editing the workspace itself).
-- **`01-shared-references/`** — Standards: ontology + routing map, frontmatter spec, reasoning/artifact standards.
-- **`02-skills/`** — Skill library (hub/spoke). Graph in `skills.registry.json` (generated from frontmatter).
-- **`03-preferences/`** — User preferences file (how Sean wants to collaborate).
-- **`04-artifacts/`** — Deliverables. `active/` is WIP; `archive/` is done.
-- **`05-version-registers/`** — Versioned artifact history.
+- **`01-frameworks/`** — The eight operating frameworks (08 governs editing the workspace itself).
+- **`02-shared-references/`** — Standards: ontology + routing map, frontmatter spec, reasoning/artifact standards.
+- **`03-skills/`** — Skill library (hub/spoke). Graph in `skills.registry.json` (generated from frontmatter).
+- **`04-preferences/`** — User preferences file (how Sean wants to collaborate).
+- **`05-artifacts/`** — Deliverables. `active/` is WIP; `archive/` is done.
 - **`06-context/`** — Role, project context, session log, artifact registry, and `memory/` (durable non-project memory).
 - **`07-projects/`** — Active projects, numbered.
 - **`08-knowledge/`** — Learned domain insight.

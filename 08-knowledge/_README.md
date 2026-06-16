@@ -16,7 +16,7 @@ a session log, or a project state.
 
 | Type of content | Where it lives |
 |----------------|---------------|
-| How to do something (operational) | `02-skills/` |
+| How to do something (operational) | `03-skills/` |
 | Active project state and decisions | `07-projects/NN-name/SESSION-STATE.md` |
 | Session recap and what happened | `06-context/session-log.md` |
 | Cross-session, cross-project insight | **`08-knowledge/`** ← here |
@@ -112,7 +112,7 @@ Write an entry when:
 Do NOT write entries for:
 - Session recaps → `06-context/session-log.md`
 - Project-specific decisions → `SESSION-STATE.md`
-- Operational how-to patterns → `02-skills/`
+- Operational how-to patterns → `03-skills/`
 
 ### Adding new triggers
 

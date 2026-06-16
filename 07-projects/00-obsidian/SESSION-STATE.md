@@ -75,7 +75,7 @@ _Last updated: 2026-04-25 — checkpoint (post-restructure)_
 - **Switch dispatcher from explicit `git add` whitelist to `git add -A`**. `.gitignore` is now well-scoped enough to be the single source of truth.
 
 **Next resumption needs**:
-- Run `git add -A` at workspace root, verify `git status` shows only the system layer (no `04-artifacts/`, no other `07-projects/` subfolders)
+- Run `git add -A` at workspace root, verify `git status` shows only the system layer (no `05-artifacts/`, no other `07-projects/` subfolders)
 - First commit + push
 - Verify hook dispatcher works post-restructure: `python .claude/hooks/dispatcher.py session-start < /dev/null`
 - Address remaining 2026-04-23 pending items: Python binary strategy, Mac smoke-test, community-plugin enablement docs

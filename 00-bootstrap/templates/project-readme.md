@@ -20,11 +20,11 @@ Planning / Active / Paused / Archived
 - 
 
 ## Frameworks active
-- [[00-frameworks/01-aesthetic-lens]]
-- [[00-frameworks/02-ui-ux-operational-framework]]
-- [[00-frameworks/03-collaboration-and-critique-framework]]
-- [[00-frameworks/04-research-and-evidence-framework]]
-- [[00-frameworks/05-last-mile-craft-framework]]
+- [[01-frameworks/01-aesthetic-lens]]
+- [[01-frameworks/02-ui-ux-operational-framework]]
+- [[01-frameworks/03-collaboration-and-critique-framework]]
+- [[01-frameworks/04-research-and-evidence-framework]]
+- [[01-frameworks/05-last-mile-craft-framework]]
 
 ## Links
 - [[SESSION-STATE]] — operational state

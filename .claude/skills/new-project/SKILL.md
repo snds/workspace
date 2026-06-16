@@ -42,7 +42,7 @@ Parse the highest `NN`, increment. If `07-projects/` is empty, start at `00`.
 └── notes/                       # freeform notes folder (Obsidian-friendly)
 ```
 
-Seed `SESSION-STATE.md` from `00-frameworks/_session-state-template.md`.
+Seed `SESSION-STATE.md` from `01-frameworks/_session-state-template.md`.
 Seed `README.md` with summary, status, trigger words, framework refs, and
 a link back to the project-context.md entry.
 

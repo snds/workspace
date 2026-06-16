@@ -51,7 +51,7 @@ This ritual is non-negotiable. Do not skip, abbreviate, or defer it because the 
 
 ## Frameworks (the operating layer)
 
-Five top-level frameworks govern all project work — read [`00-frameworks/00-README.md`](../../00-frameworks/00-README.md) for compressed summaries:
+Five top-level frameworks govern all project work — read [`01-frameworks/00-README.md`](../../01-frameworks/00-README.md) for compressed summaries:
 
 1. Aesthetic Lens — philosophical ground, visual judgment
 2. UI/UX Operational Framework — operational decisions
@@ -61,10 +61,10 @@ Five top-level frameworks govern all project work — read [`00-frameworks/00-RE
 
 ## Skills
 
-- **`02-skills/`** — 60+ Claude Desktop skills (hub/spoke). Each has a `SKILL.md` with frontmatter trigger description.
+- **`03-skills/`** — 60+ Claude Desktop skills (hub/spoke). Each has a `SKILL.md` with frontmatter trigger description.
 - **`.claude/skills/`** — Claude Code slash commands (`/today`, `/session-end`, `/reconcile`, `/new-project`, `/framework-check`).
 
-Cursor doesn't auto-load skills the way Claude Code does — read any `02-skills/<name>/SKILL.md` directly when a task matches.
+Cursor doesn't auto-load skills the way Claude Code does — read any `03-skills/<name>/SKILL.md` directly when a task matches.
 
 ## Conventions
 
@@ -73,7 +73,7 @@ Cursor doesn't auto-load skills the way Claude Code does — read any `02-skills
 - YAML frontmatter on metadata-bearing notes. Tags: lowercase + hyphenated.
 - Tasks: `- [ ]` open, `- [x]` done.
 - Never delete notes — move to `_archive/` subfolders.
-- Never commit `04-artifacts/`, `05-version-registers/`, or most of `07-projects/`.
+- Never commit `05-artifacts/`, `05-version-registers/`, or most of `07-projects/`.
 
 ## Surfaces aware of the brain
 

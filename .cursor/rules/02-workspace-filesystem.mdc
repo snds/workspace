@@ -1,6 +1,6 @@
 ---
 description: Workspace filesystem protocol — skill loading, bootstrap, memory. Auto-attaches on workspace files.
-globs: ["**/02-skills/**", "**/06-context/**", "**/00-bootstrap/**", "**/00-frameworks/**", "**/08-knowledge/**", "**/CLAUDE.md", "**/BOOTSTRAP.md", "**/AGENTS.md", "**/.cursor/rules/**"]
+globs: ["**/03-skills/**", "**/06-context/**", "**/00-bootstrap/**", "**/01-frameworks/**", "**/08-knowledge/**", "**/CLAUDE.md", "**/BOOTSTRAP.md", "**/AGENTS.md", "**/.cursor/rules/**"]
 ---
 
 # Workspace Filesystem Protocol
@@ -15,14 +15,14 @@ Available to all models in Cursor; per `01-agent-controller.mdc`, only Claude wr
 ## Claude — allowed without confirmation
 
 - Read any workspace file to answer context questions
-- Write artifacts to `04-artifacts/active/` (naming convention required)
+- Write artifacts to `05-artifacts/active/` (naming convention required)
 - Update `06-context/project-context.md`, `session-log.md`, `artifact-registry.md`
-- Update skills in `02-skills/` when explicitly requested
+- Update skills in `03-skills/` when explicitly requested
 - Run `09-tools/compile-cursor-rules.py` to sync compiled outputs
 
 ## Claude — requires user confirmation
 
-- Modifying `00-frameworks/` or `03-preferences/user-preferences.md`
+- Modifying `01-frameworks/` or `04-preferences/user-preferences.md`
 - Modifying any file in `00-bootstrap/`
 - Deleting or archiving any skill directory
 - Writing to `.cursor/rules/` outside of the compile script
@@ -38,7 +38,7 @@ Available to all models in Cursor; per `01-agent-controller.mdc`, only Claude wr
 
 ## Compile script
 
-Syncs context files → `AGENTS.md`. Run after changes to `06-context/` or `03-preferences/`.
+Syncs context files → `AGENTS.md`. Run after changes to `06-context/` or `04-preferences/`.
 
 ```bash
 cd "<workspace checkout>"   # the directory containing AGENTS.md

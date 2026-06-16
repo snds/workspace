@@ -51,9 +51,9 @@ The workspace is both a knowledge base and an execution environment.
   (see [Mutation policy](#mutation-policy)).
 - Use canonical files already in the workspace before inventing new sources of truth.
 - Keep human-readable markdown and machine-readable manifests aligned. Frontmatter is the source of
-  truth for the skill graph; `02-skills/skills.registry.json` is generated from it, never hand-edited.
+  truth for the skill graph; `03-skills/skills.registry.json` is generated from it, never hand-edited.
 - Favor idempotent updates, deterministic naming, and reviewable diffs.
-- Before writing anything, consult the routing map in [workspace-ontology.md](01-shared-references/workspace-ontology.md).
+- Before writing anything, consult the routing map in [workspace-ontology.md](02-shared-references/workspace-ontology.md).
 
 ---
 
@@ -73,11 +73,11 @@ When entering the workspace without prior context, read in this order:
 
 1. [llms.txt](llms.txt) — machine entry point
 2. `AGENTS.md` (this file)
-3. `02-skills/skills.registry.json` — the skill graph (for routing + load order)
-4. [workspace-ontology.md](01-shared-references/workspace-ontology.md) — vocabulary + routing map
+3. `03-skills/skills.registry.json` — the skill graph (for routing + load order)
+4. [workspace-ontology.md](02-shared-references/workspace-ontology.md) — vocabulary + routing map
 5. Root helper files such as `_HOME.md`, `_CONTEXT.md`, `_FRAMEWORKS.md`, `_SKILLS.md`
 6. `06-context/` — durable context + memory (`memory/MEMORY.md` index)
-7. Shared references in `01-shared-references/` and preferences in `03-preferences/` when relevant
+7. Shared references in `02-shared-references/` and preferences in `04-preferences/` when relevant
 8. Project-local context files for the active project; skill files when performing specialized work
 
 If a task is clearly project-scoped, move to the nearest project root and read local context immediately after these workspace files.
@@ -87,12 +87,11 @@ If a task is clearly project-scoped, move to the nearest project root and read l
 ## Folder semantics
 
 - `00-bootstrap/` — bootstrap docs, setup, adapters, environment logic
-- `00-frameworks/` — reusable frameworks, methods, and operating models (incl. the contribution framework that governs edits to this workspace)
-- `01-shared-references/` — durable standards: ontology + routing map, frontmatter spec, reasoning/artifact standards
-- `02-skills/` — reusable capabilities; `skills.registry.json` is the generated skill graph (source of truth = each `SKILL.md` frontmatter)
-- `03-preferences/` — stable, deliberately set behavioral defaults
-- `04-artifacts/` — generated outputs, active artifacts
-- `05-version-registers/` — registers, logs, version tracking
+- `01-frameworks/` — reusable frameworks, methods, and operating models (incl. the contribution framework that governs edits to this workspace)
+- `02-shared-references/` — durable standards: ontology + routing map, frontmatter spec, reasoning/artifact standards
+- `03-skills/` — reusable capabilities; `skills.registry.json` is the generated skill graph (source of truth = each `SKILL.md` frontmatter)
+- `04-preferences/` — stable, deliberately set behavioral defaults
+- `05-artifacts/` — generated outputs, active artifacts
 - `06-context/` — durable operational context; `06-context/memory/` is the typed, non-project memory layer
 - `07-projects/` — project workspaces with local instructions and deliverables
 - `08-knowledge/` — long-lived domain insight learned from real work
@@ -121,10 +120,10 @@ Project-local overrides should be interpreted narrowly and should not silently r
 
 Skills are discoverable by both humans and machines through one generated graph:
 
-1. `02-skills/skills.registry.json` — the machine graph (tiers, prerequisites, related, triggers,
+1. `03-skills/skills.registry.json` — the machine graph (tiers, prerequisites, related, triggers,
    precomputed `load_chains`). Generated from frontmatter by `09-tools/build-registry.py`.
-2. Each `02-skills/<name>/SKILL.md` — the skill itself; its frontmatter is the source of truth.
-   Spec: [skill-frontmatter.md](01-shared-references/skill-frontmatter.md).
+2. Each `03-skills/<name>/SKILL.md` — the skill itself; its frontmatter is the source of truth.
+   Spec: [skill-frontmatter.md](02-shared-references/skill-frontmatter.md).
 3. `_SKILLS.md` and per-domain MOCs — human navigation.
 
 Each skill's frontmatter exposes: `name`, `description` (routing prose), `triggers`, `tier`
@@ -173,8 +172,8 @@ For future normalization, each project should eventually expose a universal loca
 ## Mutation policy
 
 All agents default to safe, reviewable mutation. **Where a piece of information belongs, and how to
-add it, is governed by the routing map** ([workspace-ontology.md](01-shared-references/workspace-ontology.md))
-and the full per-layer rules in [00-frameworks/08-workspace-contribution-framework.md](00-frameworks/08-workspace-contribution-framework.md).
+add it, is governed by the routing map** ([workspace-ontology.md](02-shared-references/workspace-ontology.md))
+and the full per-layer rules in [01-frameworks/08-workspace-contribution-framework.md](01-frameworks/08-workspace-contribution-framework.md).
 Read those before writing.
 
 Preferred actions:
@@ -260,11 +259,11 @@ what lets one continuous thread show *who did what* without fragmenting into per
 
 ### What makes it unified (not N contracts)
 - One contract (this file) every agent obeys → identical rules, identical loading precedence.
-- One generated skill graph (`02-skills/skills.registry.json`) → identical skill set + order for the same request.
+- One generated skill graph (`03-skills/skills.registry.json`) → identical skill set + order for the same request.
 - One live state (above) → the baton passes intact.
-- One routing map (`01-shared-references/workspace-ontology.md`) → everyone writes to the same place.
+- One routing map (`02-shared-references/workspace-ontology.md`) → everyone writes to the same place.
 
-Full per-layer protocol: `00-frameworks/08-workspace-contribution-framework.md` → "Portable session protocol".
+Full per-layer protocol: `01-frameworks/08-workspace-contribution-framework.md` → "Portable session protocol".
 
 ---
 

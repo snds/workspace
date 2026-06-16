@@ -8,9 +8,9 @@ name: link-validator
 on:
   push:
     branches: [main]
-    paths: ["02-skills/**", "09-tools/validate-links.py", "09-tools/build-related.py"]
+    paths: ["03-skills/**", "09-tools/validate-links.py", "09-tools/build-related.py"]
   pull_request:
-    paths: ["02-skills/**", "09-tools/validate-links.py", "09-tools/build-related.py"]
+    paths: ["03-skills/**", "09-tools/validate-links.py", "09-tools/build-related.py"]
 
 jobs:
   check:

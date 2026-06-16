@@ -8,12 +8,12 @@
 
   "shared_references": [
     {
-      "file": "01-shared-references/epistemic-standards.md",
+      "file": "02-shared-references/epistemic-standards.md",
       "description": "Assumption checking and evidence standards",
       "required": true
     },
     {
-      "file": "01-shared-references/artifact-standards.md",
+      "file": "02-shared-references/artifact-standards.md",
       "description": "Naming, versioning, and delivery conventions",
       "required": true
     }
@@ -22,80 +22,80 @@
   "skills": [
     {
       "name": "workspace-bootstrap",
-      "skill_file": "02-skills/workspace-bootstrap/workspace-bootstrap.skill",
-      "skill_md": "02-skills/workspace-bootstrap/SKILL.md",
+      "skill_file": "03-skills/workspace-bootstrap/workspace-bootstrap.skill",
+      "skill_md": "03-skills/workspace-bootstrap/SKILL.md",
       "installed": false,
       "required": true,
       "description": "Auto-loads workspace context at session start"
     },
     {
       "name": "ds-advisor",
-      "skill_file": "02-skills/ds-advisor/ds-advisor.skill",
-      "skill_md": "02-skills/ds-advisor/SKILL.md",
+      "skill_file": "03-skills/ds-advisor/ds-advisor.skill",
+      "skill_md": "03-skills/ds-advisor/SKILL.md",
       "installed": false,
       "required": true,
       "description": "Design systems advisor — primary work skill"
     },
     {
       "name": "figma-plugin",
-      "skill_file": "02-skills/figma-plugin/figma-plugin.skill",
-      "skill_md": "02-skills/figma-plugin/SKILL.md",
+      "skill_file": "03-skills/figma-plugin/figma-plugin.skill",
+      "skill_md": "03-skills/figma-plugin/SKILL.md",
       "installed": false,
       "required": false
     },
     {
       "name": "figma-plugin-dev",
-      "skill_file": "02-skills/figma-plugin-dev/figma-plugin-dev.skill",
-      "skill_md": "02-skills/figma-plugin-dev/SKILL.md",
+      "skill_file": "03-skills/figma-plugin-dev/figma-plugin-dev.skill",
+      "skill_md": "03-skills/figma-plugin-dev/SKILL.md",
       "installed": false,
       "required": false
     },
     {
       "name": "google-fonts-scraper",
-      "skill_file": "02-skills/google-fonts-scraper/google-fonts-scraper.skill",
-      "skill_md": "02-skills/google-fonts-scraper/SKILL.md",
+      "skill_file": "03-skills/google-fonts-scraper/google-fonts-scraper.skill",
+      "skill_md": "03-skills/google-fonts-scraper/SKILL.md",
       "installed": false,
       "required": false
     },
     {
       "name": "google-fonts-web-scraping",
-      "skill_file": "02-skills/google-fonts-web-scraping/google-fonts-web-scraping.skill",
-      "skill_md": "02-skills/google-fonts-web-scraping/SKILL.md",
+      "skill_file": "03-skills/google-fonts-web-scraping/google-fonts-web-scraping.skill",
+      "skill_md": "03-skills/google-fonts-web-scraping/SKILL.md",
       "installed": false,
       "required": false
     },
     {
       "name": "material-symbols-project",
-      "skill_file": "02-skills/material-symbols-project/material-symbols-project.skill",
-      "skill_md": "02-skills/material-symbols-project/SKILL.md",
+      "skill_file": "03-skills/material-symbols-project/material-symbols-project.skill",
+      "skill_md": "03-skills/material-symbols-project/SKILL.md",
       "installed": false,
       "required": false
     },
     {
       "name": "material-symbols-suite",
-      "skill_file": "02-skills/material-symbols-suite/material-symbols-suite.skill",
-      "skill_md": "02-skills/material-symbols-suite/SKILL.md",
+      "skill_file": "03-skills/material-symbols-suite/material-symbols-suite.skill",
+      "skill_md": "03-skills/material-symbols-suite/SKILL.md",
       "installed": false,
       "required": false
     },
     {
       "name": "material-symbols-svg-export",
-      "skill_file": "02-skills/material-symbols-svg-export/material-symbols-svg-export.skill",
-      "skill_md": "02-skills/material-symbols-svg-export/SKILL.md",
+      "skill_file": "03-skills/material-symbols-svg-export/material-symbols-svg-export.skill",
+      "skill_md": "03-skills/material-symbols-svg-export/SKILL.md",
       "installed": false,
       "required": false
     },
     {
       "name": "python-cross-platform-gui",
-      "skill_file": "02-skills/python-cross-platform-gui/python-cross-platform-gui.skill",
-      "skill_md": "02-skills/python-cross-platform-gui/SKILL.md",
+      "skill_file": "03-skills/python-cross-platform-gui/python-cross-platform-gui.skill",
+      "skill_md": "03-skills/python-cross-platform-gui/SKILL.md",
       "installed": false,
       "required": false
     },
     {
       "name": "svg-font-extraction",
-      "skill_file": "02-skills/svg-font-extraction/svg-font-extraction.skill",
-      "skill_md": "02-skills/svg-font-extraction/SKILL.md",
+      "skill_file": "03-skills/svg-font-extraction/svg-font-extraction.skill",
+      "skill_md": "03-skills/svg-font-extraction/SKILL.md",
       "installed": false,
       "required": false
     }

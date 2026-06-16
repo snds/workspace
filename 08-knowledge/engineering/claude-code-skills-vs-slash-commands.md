@@ -27,7 +27,7 @@ A skill can therefore be fully usable by Claude yet invisible when you type `/`.
 ## Why Sean's `anthropic-skills:*` were absent from the menu
 
 The `anthropic-skills:`-namespaced skills (workspace-bootstrap, ds-advisor, design-engineer,
-the lead-*/project hubs, etc.) are the **Cowork managed bundle**: `02-skills/` copied into the
+the lead-*/project hubs, etc.) are the **Cowork managed bundle**: `03-skills/` copied into the
 Cowork VM's skills-plugin dir by `cowork-skills-sync` (copy, not symlink — the VM can't follow
 Drive symlinks). They have **no install footprint** under `~/.claude/plugins` and aren't a
 registered marketplace, so they're model-only — never in the local `/` menu.
@@ -72,5 +72,5 @@ Commands then appear namespaced as `/<plugin>:<skill>`.
 ## Reference implementation
 
 `08-tools/build-local-skill-plugin.py` — config-driven (`HUBS` list), clean-rebuild mirror
-of curated `02-skills/` hubs into `~/.claude/local-plugins/snds-local` → `/snds:<name>`.
+of curated `03-skills/` hubs into `~/.claude/local-plugins/snds-local` → `/snds:<name>`.
 Same copy-not-symlink approach as `cowork-skills-sync`, targeting local CC instead of the VM.
