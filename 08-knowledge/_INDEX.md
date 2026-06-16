@@ -38,6 +38,7 @@ _No entries yet._
 
 - [[legion-architecture]] — Legion tech stack, V1 scope, 3D asset context, skill routing, open questions (2026-04-28)
 - [[threejs-galaxy-visualization]] — Five hard-won Three.js patterns from the 2026-05-11 Legion galaxy pass: userData.type for selection, per-layer pattern uniqueness for stacked-shader volume, dedicated dust planes for true occlusion, opacity ramps for seamless zoom transitions, per-object camera framing scale (2026-05-11)
+- [[legion-galaxy-playbook]] — Prescriptive build recipe for the Legion galaxy: the skill-load chain + ordered sequence (scale architecture → star field → volumetric disc/nebulae → dust occlusion → HDR/ACES pipeline → hero bodies → flythrough camera) + 60fps perf budget. Wires the new astro/VFX/scale-traversal skills; defers gotchas to [[threejs-galaxy-visualization]]. Triggers: `galaxy`, `nebula`, `star field`, `flythrough`, `volumetric`, `scale traversal`, `legion galaxy` (2026-06-16)
 
 ## Research
 

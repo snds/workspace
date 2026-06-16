@@ -15,6 +15,10 @@ Captured from the Legion 2026-05-11 session. Pulling out the patterns
 that generalize beyond Legion so the next Three.js scene-at-scale work
 doesn't repeat the same dead-ends.
 
+> This doc is the **gotchas / hard-won patterns**. For the prescriptive
+> build recipe (skill chain + ordered sequence + perf budget), see
+> [[legion-galaxy-playbook]].
+
 ## The five things that matter
 
 ### 1. Selection: every interactive Object3D MUST seed `userData.type` in its factory
