@@ -28,10 +28,24 @@ _Last updated: [YYYY-MM-DD HH:MM] — [update reason: rolling | checkpoint | wra
 
 ## Current state (rewritten atomically — no stale fields)
 
+### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
+> This is the cross-agent continuity record. Per [[AGENTS]] → "Multi-agent continuity & handoff", any
+> agent (Claude, Cursor, Perplexity, a local model, a human) picks up *exactly here*. Keep it current,
+> not just at session end. Rewrite atomically — no stale fields.
+
+- **Current focus**: [the one thing being worked on right now]
+- **Working set**: [files/areas currently in play — where the next agent should look]
+- **Last action**: [what was just done] — by [Agent · Surface · Machine]
+- **Next action**: [the immediate next step, concrete enough to execute cold]
+- **Open decisions**: [anything awaiting a call — and the options on the table]
+- **Blocked on**: [external dependency, approval, the user's input — or "nothing"]
+- **In-flight / do-not-touch**: [uncommitted edits, half-done refactors another agent should not clobber]
+- **Agent thread**: [last few handoffs, newest first — e.g. `Claude/Claude Code → Cursor (2026-06-16): wired registry; next = cross-links`]
+
 ### Environment
-- **Machine**: [e.g. `seansands.local` (work Mac) | `Voyager-2.local` (personal Mac) | `TARDIS-Win` (Windows desktop)]
+- **Machine**: [e.g. `seansands.local` (work Mac) | `Voyager-2.local` (personal Mac) | `Enterprise` (Windows desktop)]
 - **OS context**: [e.g. macOS 14.4 / Windows 11 / Bazzite 40]
-- **Workspace root**: [absolute path to the Drive workspace on this machine]
+- **Workspace root**: [the git checkout root — the directory containing `AGENTS.md`]
 - **Project root**: [absolute path to this project on this machine]
 
 ### Active servers and processes

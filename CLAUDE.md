@@ -208,8 +208,14 @@ Resolve from `hostname` at boot. Never ask, never carry forward.
 
 ## Session lifecycle
 
-1. **Start** — `SessionStart` hook loads context, skills manifest, current date.
+1. **Start** — `SessionStart` hook loads context + the skill registry + current date. If resuming a
+   project, read its `SESSION-STATE.md` **Live handoff** block to pick up where the last agent left off.
 2. **Work** — use tools freely. Default to reading context files before claiming to know something.
-3. **End** — `/session-end` writes the session block, commits, pushes. Hook catches stray exits.
+   Keep the Live handoff block current as you go.
+3. **End / handoff** — `/session-end` writes the attributed session block, updates the Live handoff block,
+   commits, pushes. Hook catches stray exits.
 
-For the full session-end protocol, see [.claude/skills/session-end/SKILL.md](.claude/skills/session-end/SKILL.md).
+**Multi-agent continuity:** Claude is one participant in a single unified thread — the same contract and
+shared state apply to Cursor, Perplexity, other models, and a human. See
+[AGENTS.md](AGENTS.md) → "Multi-agent continuity & handoff". For the full session-end protocol, see
+[.claude/skills/session-end/SKILL.md](.claude/skills/session-end/SKILL.md).

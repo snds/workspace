@@ -211,19 +211,60 @@ When adding structure, prefer formats that are friendly to both markdown readers
 
 ## Adapter model
 
-Agent-specific files are adapters over the same workspace.
+Agent-specific files are thin adapters over this one contract — **not** separate contracts.
 
-Examples:
+- `CLAUDE.md` — Claude Code / Desktop · `CURSOR.md` — Cursor · `PERPLEXITY.md` — Perplexity ·
+  any future agent ecosystem (GPT-based tools, Gemini, local models, a human).
+- **A new agent needs no adapter to participate at full fidelity** — executing this contract is
+  sufficient. An adapter only documents that tool's ergonomics (hooks, rule files, slash commands)
+  and capability limits. Onboard a new one from `00-bootstrap/adapters/_ADAPTER-TEMPLATE.md`.
 
-- `CLAUDE.md` — Claude-specific adapter
-- `PERPLEXITY.md` — Perplexity-specific adapter
-- future adapters may exist for other agent ecosystems
+Adapters must: reference this contract; describe only tool-specific execution; never fork the workspace
+model or hold state the contract lacks. No tool is privileged over another.
 
-Adapters should:
+---
 
-- reference the universal contract
-- define agent-specific capabilities or limitations
-- avoid forking the underlying workspace model unless absolutely necessary
+## Multi-agent continuity & handoff
+
+**The guarantee: one workspace = one contract = one continuous, shared state.** A project, conversation,
+or session is a **single unified thread** no matter how many agents, models, surfaces, or devices touch
+it. Mid-project handoff between *any* agents — Claude → Cursor → Perplexity → a local model → a human and
+back — must feel seamless, never like separate contracts or restarted context. This is the hardest part of
+multi-agent work, so it is a first-class contract obligation, not an afterthought.
+
+### Single shared state (no private contexts)
+Every agent reads from and writes to the **same** state. An agent must never keep a private/parallel
+context store; it updates the shared one so the next agent inherits an unbroken thread.
+
+| State | Holds | Cadence |
+|---|---|---|
+| Active project `SESSION-STATE.md` (its **Live handoff** block) | "pick up exactly here": current focus, working set, last action, next action, open decisions, blocked-on, in-flight/do-not-touch | updated **continuously** + at every handoff |
+| `06-context/session-log.md` | chronological history, newest-first, each block attributed | appended at handoff / session end |
+| `06-context/memory/` | durable, non-project facts + decisions | when a durable fact emerges |
+
+### Handoff protocol (tool-neutral — every agent follows this)
+1. **On entry** — read this contract, then the active project's `SESSION-STATE.md` **Live handoff** block
+   and the head of `session-log.md`. You now hold the same context the previous agent had. Do **not** infer
+   state from scratch or assume a fresh project.
+2. **While working** — keep the Live handoff block current as the situation changes (focus, working set,
+   decisions). It is the baton, not a journal.
+3. **On handoff / pause / end** — rewrite the Live handoff block (atomically, no stale fields) and append a
+   session-log entry. Leave the next agent a clean "next action."
+4. **Concurrent edits** — if two agents touched the same project in parallel, run the reconcile protocol
+   (`/reconcile` or the merge steps in the bootstrap skill) to merge into one thread; flag genuine conflicts.
+
+### Agent self-identification
+Every session-log entry and Live handoff update stamps **Agent · Surface · Machine** (e.g.
+`Claude Opus / Claude Code / Personal MBP`, `GPT / Cursor / Work MBP`, `Perplexity / web`). Attribution is
+what lets one continuous thread show *who did what* without fragmenting into per-agent contexts.
+
+### What makes it unified (not N contracts)
+- One contract (this file) every agent obeys → identical rules, identical loading precedence.
+- One generated skill graph (`02-skills/skills.registry.json`) → identical skill set + order for the same request.
+- One live state (above) → the baton passes intact.
+- One routing map (`01-shared-references/workspace-ontology.md`) → everyone writes to the same place.
+
+Full per-layer protocol: `00-frameworks/08-workspace-contribution-framework.md` → "Portable session protocol".
 
 ---
 

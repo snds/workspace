@@ -89,10 +89,14 @@ Triggered by "end of session", "wrap up", "done for today", or any closing signa
 5. Record durable non-project facts in `06-context/memory/`; learned domain insight in `08-knowledge/`.
 6. Commit + push.
 
-**Session Block format** (portable unit of state; N blocks can be merged in a reconciliation session):
+**Session Block format** (portable unit of state; N blocks can be merged in a reconciliation session).
+The `Agent`/`Surface`/`Machine` stamp is what keeps a multi-agent project one unified thread — see
+[[AGENTS]] → "Multi-agent continuity & handoff".
 ```
 --- SESSION BLOCK ---
 Date: YYYY-MM-DD
+Agent: <model/tool, e.g. Claude Opus / GPT / Perplexity / local>
+Surface: <Claude Code | Cursor | Perplexity | web | ...>
 Machine: <hostname-derived label>
 Project(s): <names>
 Artifacts: - <filename> — <one-line>

@@ -18,6 +18,10 @@ algorithm, the routing map — lives in AGENTS.md and is not duplicated here._
 - **Skills:** Cursor does not have Claude's slash-command skills. Load skills as documents per the
   precedence algorithm in [AGENTS.md](AGENTS.md): route by `triggers`/`description`, then read the
   `load_chains` ancestors (foundation→hub→spoke) from `02-skills/skills.registry.json`.
+- **Continuity (multi-agent):** on entry, read the active project's `SESSION-STATE.md` **Live handoff**
+  block to pick up exactly where the previous agent (Claude, Perplexity, a human…) left off; on
+  handoff/pause/end, update it + append an attributed `session-log` entry. Cursor is one participant in a
+  single unified thread — see [AGENTS.md](AGENTS.md) → "Multi-agent continuity & handoff".
 
 ## Capabilities / limits
 

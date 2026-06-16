@@ -29,17 +29,18 @@ This workspace remains fully compatible with Claude. All Perplexity-specific beh
 
 When entering this workspace fresh, read files in this order:
 
-1. `00-bootstrap/BOOTSTRAP.md`
-2. `AGENTS.md`
-3. `00-bootstrap/workspace-manifest.json`
-4. `_HOME.md`
-5. `_CONTEXT.md`
-6. `_FRAMEWORKS.md`
-7. `_SKILLS.md`
-8. `03-preferences/` or root preference summaries when relevant
-9. Project-local files when working inside a project
+1. `llms.txt` → `AGENTS.md` (the universal contract)
+2. `02-skills/skills.registry.json` (the skill graph)
+3. `01-shared-references/workspace-ontology.md` (routing map)
+4. `06-context/` — `role-and-context`, `project-context`, head of `session-log`, `memory/MEMORY.md`
+5. `_MOC.md` / `_HOME.md` for navigation; `03-preferences/` when relevant
+6. Project-local files when working inside a project
 
-If the task is project-specific, also inspect the nearest local context files such as `README.md`, `CLAUDE.md`, `.visual-qa-context.yaml`, and any project notes.
+**Continuity (multi-agent):** if working inside a project, read its `SESSION-STATE.md` **Live handoff**
+block first to pick up exactly where the previous agent (Claude, Cursor, a human…) left off; on
+handoff/pause/end, update it + append an attributed `session-log` entry. Perplexity is one participant in
+a single unified thread — see `AGENTS.md` → "Multi-agent continuity & handoff". (Where Perplexity is
+read-only, surface the handoff update for the user to commit.)
 
 ---
 

@@ -161,20 +161,32 @@ CI (`archive-provenance`) fails if a file under `_archive/` has no matching `ARC
 How any agent opens and closes a working session here, with **no dependency on tool hooks**. A tool
 adapter (e.g. a Claude hook) may automate this, but the protocol is the contract.
 
-**Session start — read:**
+**Session start — read (and inherit the thread):**
 1. `llms.txt` → `AGENTS.md` (contract) → `02-skills/skills.registry.json` (skill graph).
 2. `06-context/`: `role-and-context`, `project-context`, head of `session-log`, `memory/MEMORY.md`.
-3. The active project's `SESSION-STATE.md` if one is in play.
+3. The active project's `SESSION-STATE.md` — **read the Live handoff block first**; you now hold the same
+   context the previous agent had. Identify yourself (Agent · Surface · Machine) for attribution.
 
-**During — write per the routing map.** Compute the skill load set via the precedence algorithm
-(`AGENTS.md`). Record durable insights/facts in the moment (knowledge/memory), not just at the end.
+**During — work the shared state.** Compute the skill load set via the precedence algorithm (`AGENTS.md`).
+Keep the active project's **Live handoff block current** as focus/working-set/decisions change — it is the
+baton. Record durable insights/facts in the moment (knowledge/memory), not just at the end.
+
+**On handoff / pause (mid-project, not just at the end) — pass the baton:**
+1. Rewrite the **Live handoff block** atomically: current focus, working set, last action (attributed),
+   next action, open decisions, blocked-on, in-flight/do-not-touch; prepend an Agent-thread line.
+2. Append a session-log entry (attributed) if meaningful work landed.
+3. Commit so the next agent — on any tool — inherits an unbroken thread. This is what makes a multi-agent
+   project one contract instead of N. See [[AGENTS]] → "Multi-agent continuity & handoff".
 
 **Session end — write:**
-1. Append a session block to `06-context/session-log.md`.
+1. Append a session block to `06-context/session-log.md` (stamped Agent · Surface · Machine).
 2. Apply any project status / pending changes to `06-context/project-context.md`.
-3. Update the active project's `SESSION-STATE.md`.
-4. If a generated artifact changed (e.g. frontmatter edited), regenerate `skills.registry.json`.
+3. Update the active project's `SESSION-STATE.md` (incl. the Live handoff block).
+4. If a generated artifact changed (frontmatter edited), regenerate `skills.registry.json` + Related blocks.
 5. Commit + push reviewable diffs.
+
+**Concurrent agents.** If two agents touched the same project in parallel, run the reconcile protocol to
+merge their session blocks + handoff state into one thread; flag genuine conflicts rather than overwriting.
 
 ---
 
