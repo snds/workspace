@@ -58,6 +58,10 @@
 !06-context/
 !06-context/**
 
+# Archive (retired files + provenance ledger). Tracked so provenance is auditable.
+!_archive/
+!_archive/**
+
 !08-knowledge/
 !08-knowledge/**
 
@@ -67,6 +71,7 @@
 !09-tools/README.md
 !09-tools/build-registry.py
 !09-tools/validate-links.py
+!09-tools/validate-workspace.py
 !09-tools/compile-cursor-rules.py
 !09-tools/build-local-skill-plugin.py
 !09-tools/drive-audit.py

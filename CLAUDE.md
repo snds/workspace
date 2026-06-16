@@ -71,7 +71,7 @@ This ritual costs ~150 tokens per session start in exchange for cross-surface co
 
 ## Frameworks (the operating layer)
 
-Six top-level frameworks govern all project work. They sit **above** any skill.
+Eight top-level frameworks govern all project work. They sit **above** any skill.
 
 - **[00-frameworks/01-aesthetic-lens.md](00-frameworks/01-aesthetic-lens.md)** — philosophical ground, visual/aesthetic judgment
 - **[00-frameworks/02-ui-ux-operational-framework.md](00-frameworks/02-ui-ux-operational-framework.md)** — UX/UI operational decisions
@@ -79,6 +79,8 @@ Six top-level frameworks govern all project work. They sit **above** any skill.
 - **[00-frameworks/04-research-and-evidence-framework.md](00-frameworks/04-research-and-evidence-framework.md)** — epistemology, evidence standards
 - **[00-frameworks/05-last-mile-craft-framework.md](00-frameworks/05-last-mile-craft-framework.md)** — finishing discipline, augmented perception
 - **[00-frameworks/06-qa-operating-model.md](00-frameworks/06-qa-operating-model.md)** — target-user QA lens, default skill loading, reference-comparison protocol, iteration-default mindset
+- **[00-frameworks/07-integration-and-review-framework.md](00-frameworks/07-integration-and-review-framework.md)** — branching, PRs, merge order, reviewable diffs
+- **[00-frameworks/08-workspace-contribution-framework.md](00-frameworks/08-workspace-contribution-framework.md)** — how/when/where/what/why to edit the workspace itself; routing map, memory + archive protocols
 
 Compressed summaries: **[00-frameworks/00-README.md](00-frameworks/00-README.md)** — read this first.
 Team practices: **[00-frameworks/team-practices-and-decisions.md](00-frameworks/team-practices-and-decisions.md)**.

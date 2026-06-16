@@ -3,13 +3,13 @@
 _Workspace: `00-frameworks/`_
 _Last updated: 2026-06-08_
 
-Seven top-level operating documents that govern how design, collaboration, research, craft, QA, and integration decisions get made across all projects. They sit above any project-specific skill or context. Not project-gated. Not domain-gated. They're the portable layer that stays consistent even when the specific work shifts.
+Eight top-level operating documents that govern how design, collaboration, research, craft, QA, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. Not project-gated. Not domain-gated. They're the portable layer that stays consistent even when the specific work shifts.
 
-This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all seven full documents.
+This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all eight full documents.
 
 ---
 
-## The seven frameworks
+## The eight frameworks
 
 | # | Framework | Answers |
 |---|---|---|
@@ -20,12 +20,13 @@ This README is the orientation layer. Load it when you need to know which framew
 | 05 | **Last-Mile Craft Framework** | How do we finish well? |
 | 06 | **QA Operating Model** | How do we frame QA outcomes against target-user expectations on first delivery? |
 | 07 | **Integration & Review Framework** | How do we land work so it merges cleanly and reviews well? |
+| 08 | **Workspace Contribution Framework** | How/when/where/what/why do we edit the workspace itself? |
 
 ---
 
 ## Recommended reading order
 
-**First pass (all six).** Read in numerical order. They build on each other — Aesthetic Lens sets the philosophical ground, UI/UX lays operational structure on top, Collaboration and Research govern how the work gets produced and justified, Last-Mile governs the finishing layer that ties it all together, and the QA Operating Model frames every audit / review / iteration outcome against target-user expectations.
+**First pass (01–06).** Read in numerical order. They build on each other — Aesthetic Lens sets the philosophical ground, UI/UX lays operational structure on top, Collaboration and Research govern how the work gets produced and justified, Last-Mile governs the finishing layer that ties it all together, and the QA Operating Model frames every audit / review / iteration outcome against target-user expectations. Frameworks 07 (integration) and 08 (contribution) are orthogonal meta-layers — load them when landing work or editing the workspace itself.
 
 **By context (once familiar).** Load only what's relevant:
 
@@ -42,7 +43,8 @@ This README is the orientation layer. Load it when you need to know which framew
 | Icon / variable font system | 01, 05 |
 | Architectural or interior reference | 01, 05 |
 | Branching, PRs, merging, multi-branch consolidation | 07 |
-| Full design-engineered delivery | all seven |
+| Editing the workspace itself — skills, frameworks, memory, archive, structure | 08 |
+| Full design-engineered delivery | 01–07 |
 
 ---
 
@@ -146,6 +148,20 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 - Decomposition ladder: generated/foundation data → semantic layer → consumers → harnesses/refs → tooling/pipeline, each its own PR.
 - Anti-patterns: the mega-PR, divergent duplicates, drift dumped on the reviewer, mixed-purpose diffs, local-only work, stale base masquerading as ready.
 
+### 08 — Workspace Contribution Framework
+
+**Core conviction.** Most contribution mistakes are *placement* mistakes — the right content in the wrong layer. The workspace stays coherent when every agent (LLM or human) routes new information to the correct layer the first time and follows that layer's add/extend rules. Git is the source of truth; additive over destructive; never delete (archive with provenance); portable-first.
+
+**When to invoke.** Any change to the workspace's own structure — authoring/editing skills, frameworks, shared references, context, memory, knowledge; archiving; or deciding where a new piece of information belongs. Not for project deliverables.
+
+**Key operating habits.**
+- Consult the routing map first ([[workspace-ontology]]) — where does this belong?
+- Per-layer rules: what belongs, when to add vs. extend, what never goes there.
+- Memory protocol: durable + non-project + not-derivable → `06-context/memory/` (typed entry + index).
+- Archive protocol: move + frontmatter provenance + `ARCHIVE-LOG.md` row + tombstone; never delete.
+- Portable session protocol: tool-neutral session-start reads and session-end writes (no hook dependency).
+- Never rename a `SKILL.md` (add `aliases`); never hand-edit generated files.
+
 ---
 
 ## How they interconnect
@@ -190,6 +206,7 @@ The seven frameworks are layered, not parallel. They're listed in the order they
 - **06 → all.** Every QA outcome runs the pre-output gate; failures or mis-calibrations feed back into whichever upstream framework needs adjustment.
 - **05 → all.** Convention drift and craft failures feed back into whichever upstream framework the issue surfaces from — research signal, IA failure, aesthetic drift.
 - **07 ⟂ all.** Integration & Review is orthogonal to the content frameworks: whatever framework produced the work, #07 governs how it's partitioned and landed so review stays cheap. It fires at the boundary where work crosses from *done* to *merged* — and is the only framework whose audience is the reviewer, not the artifact.
+- **08 ⟂ all.** Workspace Contribution is the other orthogonal meta-layer: whatever the work, #08 governs *where it gets written and how* — the routing map, per-layer add/extend rules, the memory and archive protocols, and the portable session protocol. It fires whenever a change touches the workspace's own structure (skills, frameworks, references, context, memory, knowledge), not a project deliverable.
 
 ---
 
@@ -211,6 +228,6 @@ The seven frameworks are layered, not parallel. They're listed in the order they
 
 **When the README isn't enough.** The compressed summaries preserve the *what* but not the *why* — the examples, the canon references, the tier descriptions with thresholds, the principle-to-check translations. Any serious reasoning task in the framework's domain should load the full document.
 
-**Updates.** Framework numbering is stable (01–07). Any future framework additions should extend the sequence (08, 09, etc.) or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly.
+**Updates.** Framework numbering is stable (01–08). Any future framework additions should extend the sequence (09, 10, etc.) or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly.
 
 **Operational state.** This folder is static reference. Operational continuity between sessions lives in per-project `SESSION-STATE.md` files (see framework 05's Operational State section for the spec) and in `../06-context/session-log.md` for cross-project session logs.

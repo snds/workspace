@@ -1,0 +1,186 @@
+# 08 — Workspace Contribution Framework
+
+_Answers: **How, when, where, what, and why** do I edit or add to this workspace — at every layer?_
+
+This is the governance spine for changing the workspace itself. It is **LLM-agnostic**: any agent
+(or human) follows it identically. It sits above the skills and is portable — it assumes only a git
+checkout and a filesystem. Read it before writing anything that isn't a project deliverable.
+
+The one rule that precedes all others: **consult the routing map first**
+([[workspace-ontology]] → "where does this belong?"). Most contribution mistakes are *placement*
+mistakes — the right content in the wrong layer. Get the layer right, then follow that layer's rules
+below.
+
+---
+
+## Universal principles (the WHY)
+
+1. **Git is the source of truth.** Every change is a reviewable diff. No hidden state, no
+   out-of-band sync. If it matters, it's committed.
+2. **Additive over destructive.** Prefer adding/extending to replacing. Never delete — **archive**
+   with provenance (see §Archive). Renames are destructive (they break loader paths + wikilinks):
+   avoid; add `aliases` instead.
+3. **One source, generated views.** Where a machine-readable artifact exists (`skills.registry.json`),
+   the human-authored side (frontmatter) is canonical and the artifact is generated. Never hand-edit
+   a generated file.
+4. **Portable-first.** Nothing you add may require one vendor, device, or cloud drive. If a mechanism
+   only works in one tool, it belongs in that tool's adapter, not the shared layers.
+5. **Smallest correct change.** Right altitude, right layer, minimal blast radius, reviewable in one sitting.
+
+---
+
+## The routing map (the WHERE)
+
+Canonical copy + rationale in [[workspace-ontology]]. Compressed here for quick reference:
+
+| The thing is… | Layer | 
+|---|---|
+| Active project state / pending work | `06-context/project-context.md` + project `SESSION-STATE.md` |
+| What happened this session | `06-context/session-log.md` |
+| A durable, non-project fact about Sean's world / the working relationship | `06-context/memory/` |
+| A stable, deliberately set behavioral default | `03-preferences/user-preferences.md` |
+| A validated domain insight learned from real work | `08-knowledge/<domain>/` |
+| A reusable "when X, do Y" capability | `02-skills/<name>/SKILL.md` |
+| A cross-cutting method / lens / operating model | `00-frameworks/` |
+| A durable standard / spec / vocabulary | `01-shared-references/` |
+| Why a structural choice was made | `06-context/memory/` (`type: decision`) |
+| A generated deliverable | `04-artifacts/` |
+| Something being retired | `_archive/` + `ARCHIVE-LOG.md` |
+
+---
+
+## Per-layer rules (the WHAT, WHEN, HOW)
+
+Each layer: what belongs · when to add vs. extend · what never goes here · the mechanics.
+
+### `00-bootstrap/` — orientation + setup
+- **Belongs:** how the workspace is set up and entered; installer + adapters' setup docs.
+- **Add vs. extend:** extend existing docs; a new bootstrap doc only for a genuinely new entry path.
+- **Never:** vendor-specific assumptions baked in as universal; Drive/mount path logic (root is resolved by the `AGENTS.md` marker).
+- **How:** plain markdown; keep it thin and link out.
+
+### `00-frameworks/` — operating models (this layer)
+- **Belongs:** portable, domain-agnostic methods that govern *how* work is done or decided.
+- **Add vs. extend:** a **new framework only if 3+ areas consume it** and no existing framework fits. Otherwise extend one. Register it in `00-README.md` and update the count.
+- **Never:** domain how-to (that's a skill); one-off project rules (project-local).
+- **How:** number it; add to the README table + reading order.
+
+### `01-shared-references/` — standards + vocabulary
+- **Belongs:** durable specs, standards, the ontology/routing map, the frontmatter spec.
+- **Add vs. extend:** extend a standard in place; a new file for a genuinely new standard.
+- **Never:** anything that changes frequently (that's context/memory).
+- **How:** additive; if it defines vocabulary, link it from [[workspace-ontology]].
+
+### `02-skills/` — capabilities
+- **Belongs:** reusable "when X, do Y." One concern per skill.
+- **Add vs. extend:** extend an existing skill if the need is within its domain; add a spoke under the
+  right hub if it's a new specialty; add a foundation **only** when 3+ sibling hubs re-derive a shared
+  principle. Decide tier (`foundation`/`hub`/`spoke`/`cross-cutting`) up front.
+- **Never:** rename a `SKILL.md` file/dir (add `aliases`); duplicate a skill per agent (extend
+  frontmatter); restate in a spoke the principle its foundation owns.
+- **How:** author from `00-bootstrap/templates/skill.md` (frontmatter v2 + typed `## Related`); then
+  `python3 09-tools/build-registry.py`; ensure cross-links are reciprocal. CI gates both.
+
+### `03-preferences/` — behavioral defaults
+- **Belongs:** stable, deliberately chosen defaults — tone, format, terminology, conventions.
+- **When:** **only on an explicit user signal** ("from now on…", "I prefer…"). Never infer a preference from a single instance.
+- **Never:** situational guidance/corrections (that's `memory`, `type: feedback`); project facts.
+- **How:** edit `user-preferences.md`; keep entries terse and rule-shaped.
+
+### `06-context/` — operational state
+- **Belongs:** `role-and-context` (who Sean is), `project-context` (active projects + pending),
+  `session-log` (append-only history), `artifact-registry` (structural file index), `relational-context`.
+- **When:** project/session state changes; at session end.
+- **Never:** durable non-project facts (→ `memory/`); domain insight (→ `knowledge`).
+- **How:** append session blocks newest-first; keep `project-context` the authoritative pending list.
+
+### `06-context/memory/` — durable non-project memory (see §Memory)
+### `08-knowledge/` — learned domain insight
+- **Belongs:** "here's what we found out about X from real work" — validated patterns, working theories, research synthesis. Domain-scoped.
+- **When:** a session produces a durable insight that will matter again. Propose writing it.
+- **Never:** how-to procedures (that's a skill); volatile state.
+- **How:** entry in the right domain folder + register in `_INDEX.md`; cross-link with wikilinks.
+
+### `07-projects/` — project workspaces
+- **Belongs:** per-project deliverables, local context, `SESSION-STATE.md`.
+- **Never:** workspace-global policy (push that up to frameworks/shared-references).
+- **How:** scaffold via the project template; keep local context local.
+
+### `04-artifacts/` — generated outputs
+- **How:** versioned `context_descriptor_vN.N_YYYY-MM-DD.ext`; never overwrite — increment.
+
+### `09-tools/` — automation
+- **Belongs:** portable, stdlib-first scripts/generators/validators.
+- **Never:** a tool that only one vendor can run as a shared dependency.
+
+### Root files + MOCs + adapters
+- Root `_*.md` are Obsidian navigation (MOCs) — keep link-only, Dataview-driven. `AGENTS.md` is the
+  universal contract (edit deliberately). `CLAUDE.md`/`CURSOR.md`/`PERPLEXITY.md` are **thin adapters**
+  — only how that tool executes the contract; never logic the contract lacks.
+
+---
+
+## Memory protocol (`06-context/memory/`)
+
+Durable facts about Sean's world and the working relationship that aren't project state, aren't domain
+how-to, and aren't a deliberate preference. Generalizes the agent-voiced `relational-context.md` into a
+typed, portable store any agent reads and writes.
+
+- **When to store:** the fact is **durable** (true across sessions), **non-project**, and **not
+  derivable** from the repo or git history. If re-reading the repo would tell you, don't store it.
+- **What NOT to store:** project status (→ `project-context`), session events (→ `session-log`), domain
+  patterns (→ `knowledge`), deliberate behavioral defaults (→ `preferences`).
+- **How:** one fact per file in `06-context/memory/`, frontmatter `type` (`fact`|`feedback`|`reference`|
+  `decision`), `description`, `created`, `confidence`; body holds the fact and links related memories
+  with `[[ ]]`. Add a one-line pointer to `MEMORY.md` (the index loaded at session start). Template:
+  `06-context/memory/_template.md`.
+- **Before adding:** check `MEMORY.md` for an existing entry to extend rather than duplicate. Delete
+  (archive) memories that turn out wrong.
+
+---
+
+## Archive protocol (`_archive/`)
+
+Nothing is deleted. Retiring a file means moving it to `_archive/` **with provenance**, so a future
+reader knows why it's gone and where the live version is.
+
+1. **Move** the file into `_archive/` (mirror its original path under `_archive/` when helpful).
+2. **Frontmatter** on the archived file: `archived: <YYYY-MM-DD>`, `reason:`, `superseded_by:` (path or
+   `[[link]]`, or `none`), `original_path:`.
+3. **Ledger:** append one row to `_archive/ARCHIVE-LOG.md`:
+   `original_path → archive_path · date · reason · superseded_by`.
+4. **Tombstone:** if external files or links may still point at the original path, leave a 2-line stub
+   there: `> Archived <date> → see [[canonical]]`. Otherwise omit.
+
+CI (`archive-provenance`) fails if a file under `_archive/` has no matching `ARCHIVE-LOG.md` entry.
+
+---
+
+## Portable session protocol (tool-neutral)
+
+How any agent opens and closes a working session here, with **no dependency on tool hooks**. A tool
+adapter (e.g. a Claude hook) may automate this, but the protocol is the contract.
+
+**Session start — read:**
+1. `llms.txt` → `AGENTS.md` (contract) → `02-skills/skills.registry.json` (skill graph).
+2. `06-context/`: `role-and-context`, `project-context`, head of `session-log`, `memory/MEMORY.md`.
+3. The active project's `SESSION-STATE.md` if one is in play.
+
+**During — write per the routing map.** Compute the skill load set via the precedence algorithm
+(`AGENTS.md`). Record durable insights/facts in the moment (knowledge/memory), not just at the end.
+
+**Session end — write:**
+1. Append a session block to `06-context/session-log.md`.
+2. Apply any project status / pending changes to `06-context/project-context.md`.
+3. Update the active project's `SESSION-STATE.md`.
+4. If a generated artifact changed (e.g. frontmatter edited), regenerate `skills.registry.json`.
+5. Commit + push reviewable diffs.
+
+---
+
+## When in doubt
+
+- Unsure which layer? → routing map, then ask the user only if still ambiguous.
+- Unsure add vs. extend? → extend, unless it's a genuinely new concern.
+- Unsure whether to keep something? → archive with provenance; never delete.
+- Unsure if it's portable? → if it needs one tool, put it in that tool's adapter, not a shared layer.

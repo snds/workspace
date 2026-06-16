@@ -1,0 +1,23 @@
+name: workspace-integrity
+
+# Governance integrity: archive provenance (every _archive/ file has a ledger entry) and
+# memory-index coverage (every 06-context/memory/ entry is listed in MEMORY.md).
+# See 00-frameworks/08-workspace-contribution-framework.md.
+
+on:
+  push:
+    branches: [main]
+    paths: ["_archive/**", "06-context/memory/**", "09-tools/validate-workspace.py"]
+  pull_request:
+    paths: ["_archive/**", "06-context/memory/**", "09-tools/validate-workspace.py"]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Validate archive provenance + memory index
+        run: python3 09-tools/validate-workspace.py

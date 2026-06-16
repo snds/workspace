@@ -1,4 +1,14 @@
+---
+type: feedback
+description: The working-relationship texture between Sean and the agent, carried across sessions
+created: 2026-06-05
+confidence: high
+aliases: [relational-context]
+---
+
 # Relational Context
+
+> Part of the [[MEMORY]] layer (`type: feedback`). See [[08-workspace-contribution-framework]] → Memory protocol.
 
 A persistent record of the working relationship between Sean and Claude —
 the personal texture, not the project state. Kept distinct from
