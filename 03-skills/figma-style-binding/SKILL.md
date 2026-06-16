@@ -1,3 +1,15 @@
+---
+name: figma-style-binding
+description: >
+  Binding variables to Figma styles and the clone-modify-reassign pattern for the ReadonlyArray fills/strokes/effects — prevents the most common Plugin API failures.
+aliases: [figma-style-binding]
+tier: spoke
+domain: design
+hub: figma
+prerequisites: [figma]
+spec_version: "2.0"
+---
+
 # Figma Style Binding and Immutability Rules
 
 **Trigger**: Use this skill whenever binding variables to styles, encountering fill/stroke/effect errors, or when the user mentions style creation, variable binding, paint styles, text styles, or effect styles. Critical for preventing the most common Plugin API failures.
@@ -243,3 +255,6 @@ console.log('Resolved value:', resolvedValue)
 ---
 
 This skill prevents 90% of Plugin API errors by enforcing correct immutability patterns and proper variable binding workflows.
+
+## Related
+- hub → [[figma]]

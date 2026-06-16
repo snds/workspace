@@ -3,6 +3,8 @@ name: material-symbols-project
 description: Complete workflow for Material Symbols Icon Automation Suite. Use when working on any part of this 3-part system (SVG Exporter, Metadata Scraper, Figma Plugin). Covers folder structure, config.json conventions, debug versions, continuation prompts, and cross-component integration.
 aliases: [material-symbols-project]
 spec_version: "2.0"
+tier: hub
+domain: design
 ---
 
 # Material Symbols Project Conventions
@@ -242,3 +244,6 @@ Transform for SVG export: `scale(1, -1)` only — no translate.
 2. Run Metadata Scraper → verify all categories found, tags populated
 3. Run Figma Plugin → verify component sets created with metadata
 4. Compare counts: SVGs = metadata icons = Figma components
+
+## Related
+- spoke → [[material-symbols-suite]] · [[material-symbols-svg-export]]

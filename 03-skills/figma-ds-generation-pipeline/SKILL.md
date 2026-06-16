@@ -1,3 +1,15 @@
+---
+name: figma-ds-generation-pipeline
+description: >
+  Orchestrates end-to-end design-system generation in Figma in dependency order (variables to styles to components) with validation at each phase.
+aliases: [figma-ds-generation-pipeline]
+tier: spoke
+domain: design
+hub: figma
+prerequisites: [figma]
+spec_version: "2.0"
+---
+
 # Complete Design System Generation Pipeline
 
 ## When to Use This Skill
@@ -1171,3 +1183,6 @@ await useFigma({
   `
 })
 ```
+
+## Related
+- hub → [[figma]]

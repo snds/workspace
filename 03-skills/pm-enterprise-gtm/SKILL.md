@@ -14,6 +14,10 @@ description: >
   "beta", "customer advisory board", "CAB", "launch checklist".
 aliases: [pm-enterprise-gtm]
 spec_version: "2.0"
+tier: spoke
+domain: product
+hub: lead-product-manager
+prerequisites: [lead-product-manager]
 ---
 
 # PM Enterprise GTM
@@ -296,3 +300,6 @@ instrument. Used well, it does three things:
   1-pager and briefing format for steering committees
 - **Auth and provisioning implementation** → `be-auth-patterns`: SSO/SCIM
   implementation requirements flow from GTM table stakes
+
+## Related
+- hub → [[lead-product-manager]]

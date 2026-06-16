@@ -27,6 +27,9 @@ metadata:
   version: 0.1.0
 aliases: [qa]
 spec_version: "2.0"
+tier: hub
+domain: quality
+prerequisites: [design-foundations]
 ---
 
 # /qa — Visual & Functional QA Hub
@@ -191,3 +194,6 @@ skill-ecosystem effort). It validates the pattern against the pending **Davinci
 Storybook QA audit**. Once proven, the same wrapper shape generates the sibling hubs
 (`/ds`, `/figma`, `/motion`, `/type`, `/redesign`) per
 `invokable-operations-spec_v0.1`. Keep this hub thin: depth lives in the spokes.
+
+## Related
+- foundation → [[design-foundations]]

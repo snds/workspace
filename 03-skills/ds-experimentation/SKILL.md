@@ -14,6 +14,10 @@ description: >
   not model evaluation (ds-ml-engineering), not metric definition ownership (pm-metrics-analytics).
 aliases: [ds-experimentation]
 spec_version: "2.0"
+tier: spoke
+domain: data
+hub: lead-data-scientist
+prerequisites: [lead-data-scientist]
 ---
 
 # DS: Experimentation
@@ -299,3 +303,6 @@ the experiment should be stopped regardless of primary metric performance.
 - For metric definition and OKR framing → `pm-metrics-analytics`
 - For event instrumentation for experiment logging → `be-integration-patterns`
 - For production model launch experiments (shadow/canary) → `ds-ml-engineering`
+
+## Related
+- hub → [[lead-data-scientist]]

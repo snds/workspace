@@ -13,6 +13,10 @@ description: >
   sequencing", "portfolio roadmap", "dependency management", "cost of delay".
 aliases: [pm-roadmap-strategy]
 spec_version: "2.0"
+tier: spoke
+domain: product
+hub: lead-product-manager
+prerequisites: [lead-product-manager]
 ---
 
 # PM Roadmap & Strategy
@@ -326,3 +330,6 @@ to shared capabilities at the start of the planning cycle, not mid-execution.
 - **Platform sequencing decisions** → `pm-platform-api`: when the roadmap
   item is a platform investment rather than a user-facing feature
 - **Usage forecasts and churn signals as roadmap inputs** → `ds-forecasting`
+
+## Related
+- hub → [[lead-product-manager]]

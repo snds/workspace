@@ -13,6 +13,8 @@ description: >
   provides the educational safety layer underneath those rules.
 aliases: [github-guardrails]
 spec_version: "2.0"
+tier: cross-cutting
+domain: engineering
 ---
 
 # GitHub Guardrails

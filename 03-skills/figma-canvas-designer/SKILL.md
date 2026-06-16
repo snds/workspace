@@ -14,6 +14,10 @@ description: >
   (TypeScript, bundling, Plugin API code) — defer to figma-plugin-dev instead.
 aliases: [figma-canvas-designer]
 spec_version: "2.0"
+tier: spoke
+domain: design
+hub: figma
+prerequisites: [figma]
 ---
 
 # Figma Canvas Designer
@@ -375,3 +379,6 @@ component set variants for opsz, or any CentricSymbols icon authoring.
 The icon font network provides the deep domain knowledge for path construction
 (`lead-vector-designer`), icon design language (`lead-icon-artist`), and the
 mathematical foundations for optical correction and node placement.
+
+## Related
+- hub → [[figma]]

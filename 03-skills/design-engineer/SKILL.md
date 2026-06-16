@@ -15,6 +15,9 @@ description: >
   design systems, Figma, or frontend implementation — use this skill.
 aliases: [design-engineer]
 spec_version: "2.0"
+tier: hub
+domain: design
+prerequisites: [design-foundations]
 ---
 
 # Design Engineer
@@ -408,3 +411,7 @@ Name every artifact: `context_descriptor_vN.N_YYYY-MM-DD.ext`. Never silently
 overwrite — increment the version. Minor = iterative, major = structural.
 Deliver runnable code as a double-click zip (macOS default). All outputs must
 be immediately usable without a terminal.
+
+## Related
+- foundation → [[design-foundations]]
+- spoke → [[centric-ui-storybook]] · [[centric-ui-workflow]]

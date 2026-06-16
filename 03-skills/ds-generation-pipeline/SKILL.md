@@ -15,6 +15,9 @@ description: >
 pinned_date: "2026-03-26"
 aliases: [ds-generation-pipeline]
 spec_version: "2.0"
+tier: hub
+domain: design
+prerequisites: [design-foundations]
 ---
 
 # DS Generation Pipeline — Orchestrator Skill
@@ -209,3 +212,6 @@ When generating alongside Figma:
   (Variable Collections → Styles → Canvas Components)
 - Token names must align 1:1 between code and Figma variables
 - Component property names map to React/Vue/Angular props
+
+## Related
+- foundation → [[design-foundations]]

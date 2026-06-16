@@ -15,6 +15,8 @@ description: >
   as the default.
 aliases: [legion-project]
 spec_version: "2.0"
+tier: hub
+domain: game
 ---
 
 # Legion Project Context

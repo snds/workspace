@@ -15,6 +15,10 @@ description: >
   communication — not the analytical methods themselves (see other DS spokes).
 aliases: [ds-executive-storytelling]
 spec_version: "2.0"
+tier: spoke
+domain: data
+hub: lead-data-scientist
+prerequisites: [lead-data-scientist]
 ---
 
 # DS: Executive Storytelling
@@ -314,3 +318,6 @@ the thinking to get to the "so what" before the room gets together, not in the r
 - For PM alignment on recommendation framing and stakeholder management → `pm-stakeholder-comms`
 - For metric definition and OKR ownership → `pm-metrics-analytics`
 - For the visual communication craft — chart selection, data encoding, dashboard architecture, narrative visualization — route to `lead-information-designer`; this spoke provides the analytical story; `infod-narrative-design` and `infod-dashboard-patterns` provide the designed form it takes
+
+## Related
+- hub → [[lead-data-scientist]]

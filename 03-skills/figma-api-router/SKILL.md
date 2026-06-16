@@ -1,3 +1,15 @@
+---
+name: figma-api-router
+description: >
+  Decision matrix for choosing the right Figma API surface (Plugin API, REST API, or MCP server) for automation, AI-agent workflows, or programmatic design-system generation; also for debugging API access issues.
+aliases: [figma-api-router]
+tier: spoke
+domain: design
+hub: figma
+prerequisites: [figma]
+spec_version: "2.0"
+---
+
 # Figma API Router
 
 **Trigger**: Use this skill whenever you need to decide which Figma API surface to use, when working with Figma automation, AI-agent workflows, or programmatic design system generation. Also trigger when debugging API access issues or when the user mentions Figma in the context of automation, plugin development, or external integrations.
@@ -178,3 +190,6 @@ curl -X POST -H "X-FIGMA-TOKEN: $TOKEN" \
 ---
 
 This skill ensures correct API surface selection and prevents common routing mistakes that lead to authentication errors, scope limitations, and feature availability issues.
+
+## Related
+- hub → [[figma]]

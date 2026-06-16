@@ -13,6 +13,10 @@ description: >
   analytical use of models (ds-product-analytics), not NLP-specific pipelines (ds-nlp-llm).
 aliases: [ds-ml-engineering]
 spec_version: "2.0"
+tier: spoke
+domain: data
+hub: lead-data-scientist
+prerequisites: [lead-data-scientist]
 ---
 
 # DS: ML Engineering
@@ -301,3 +305,6 @@ without one.
 - For experiment design around model launches → `ds-experimentation`
 - For NLP/LLM-specific model patterns → `ds-nlp-llm`
 - For the data pipeline feeding training data → `ds-data-engineering`
+
+## Related
+- hub → [[lead-data-scientist]]

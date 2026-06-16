@@ -7,6 +7,10 @@ description: >
   anti-aliasing, depth of field, film grain, or any "make this scene feel like X" atmospheric request. Generates working TypeScript code.
 aliases: [threejs-vfx-atmosphere]
 spec_version: "2.0"
+tier: spoke
+domain: game
+hub: lead-game-developer
+prerequisites: [lead-game-developer]
 ---
 
 # Three.js VFX and Atmosphere Specialist
@@ -168,3 +172,6 @@ See `/references/particle-and-atmosphere.md` for:
 - God rays
 - Sky effects
 - Weather systems
+
+## Related
+- hub → [[lead-game-developer]]

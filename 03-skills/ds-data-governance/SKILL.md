@@ -19,6 +19,9 @@ description: >
 hub: lead-data-scientist
 aliases: [ds-data-governance]
 spec_version: "2.0"
+tier: spoke
+domain: data
+prerequisites: [lead-data-scientist]
 ---
 
 # DS: Data Governance

@@ -16,6 +16,10 @@ description: >
   "audit log", "platformize", "platform vs. product".
 aliases: [pm-platform-api]
 spec_version: "2.0"
+tier: spoke
+domain: product
+hub: lead-product-manager
+prerequisites: [lead-product-manager]
 ---
 
 # PM Platform & API
@@ -331,3 +335,6 @@ bugs, not documentation bugs.
   stakes checklist, launch readiness
 - **Platform roadmap sequencing** → `pm-roadmap-strategy`: foundation-before-
   features logic, platform vs. feature portfolio tradeoffs
+
+## Related
+- hub → [[lead-product-manager]]

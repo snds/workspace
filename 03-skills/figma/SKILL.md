@@ -24,6 +24,9 @@ metadata:
   version: 0.1.0
 aliases: [figma]
 spec_version: "2.0"
+tier: hub
+domain: design
+prerequisites: [design-foundations]
 ---
 
 # /figma — Figma Authoring & Code-Connect Hub
@@ -124,3 +127,7 @@ resolve).
 
 Sibling to `/qa`, cloned from the same wrapper shape per `invokable-operations-spec_v0.2`.
 Thin by design: the figma-* skills + Figma MCP hold the depth.
+
+## Related
+- foundation → [[design-foundations]]
+- spoke → [[figma-api-router]] · [[figma-canvas-designer]] · [[figma-component-generation]] · [[figma-ds-generation-pipeline]] · [[figma-error-troubleshooting]] · [[figma-mcp-tool-usage]] · [[figma-modes-for-variants]] · [[figma-plugin]] · [[figma-plugin-dev]] · [[figma-source-audit]] · [[figma-style-binding]] · [[figma-variable-creation]]

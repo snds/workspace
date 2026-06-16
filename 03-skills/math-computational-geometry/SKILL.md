@@ -18,6 +18,10 @@ description: >
   (math-optical-optimization).
 aliases: [math-computational-geometry]
 spec_version: "2.0"
+tier: spoke
+domain: design
+hub: variable-icon-font-architect
+prerequisites: [variable-icon-font-architect]
 ---
 
 # Computational Geometry & Topology
@@ -489,3 +493,6 @@ every geometric operation through an aesthetic lens.
    at high curvature, cap and join geometry — directly determine visual
    quality at corners, endpoints, and tight curves. Recommend solutions that
    produce the cleanest, most visually consistent stroke geometry.
+
+## Related
+- hub → [[variable-icon-font-architect]]

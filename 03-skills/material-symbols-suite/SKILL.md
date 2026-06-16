@@ -3,6 +3,10 @@ name: material-symbols-suite
 description: Material Symbols Icon Automation Suite patterns and architecture. Use when building multi-part automation tools with shared configuration, debugging multi-component systems, or creating user-friendly tooling for non-developers. Covers shared config, folder structure, and debugging workflows.
 aliases: [material-symbols-suite]
 spec_version: "2.0"
+tier: spoke
+domain: design
+hub: material-symbols-project
+prerequisites: [material-symbols-project]
 ---
 
 # Material Symbols Suite Patterns
@@ -199,3 +203,6 @@ For long debugging sessions, provide structured continuation:
 ### Next Steps
 Continue from v{X} with [specific context]
 ```
+
+## Related
+- hub → [[material-symbols-project]]

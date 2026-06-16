@@ -15,6 +15,10 @@ description: >
   design (ds-experimentation), not production ML serving (ds-ml-engineering).
 aliases: [ds-product-analytics]
 spec_version: "2.0"
+tier: spoke
+domain: data
+hub: lead-data-scientist
+prerequisites: [lead-data-scientist]
 ---
 
 # DS: Product Analytics
@@ -282,3 +286,6 @@ and has a consistent consumer. Ad-hoc analysis infrastructure is tech debt.
 - For analytical queries on OLTP data sources → `be-relational-db`
 - For causal measurement of feature impact → `ds-experimentation`
 - For churn prediction models → `ds-ml-engineering` and `ds-forecasting`
+
+## Related
+- hub → [[lead-data-scientist]]

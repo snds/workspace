@@ -9,6 +9,10 @@ description: >
   Three.js code and complex TSL node materials for cutting-edge visual effects.
 aliases: [webgpu-advanced-rendering]
 spec_version: "2.0"
+tier: spoke
+domain: game
+hub: lead-game-developer
+prerequisites: [lead-game-developer]
 ---
 
 # WebGPU Advanced Rendering & Three.js TSL
@@ -259,3 +263,6 @@ if (navigator.gpu) {
 | Compute shader not running | Check workgroup size ≤ 256 threads |
 | Low FPS with many objects | Profile CPU vs GPU; consider LOD or culling |
 | Texture not appearing | Use `texture(textureResource, uvCoords)` not direct sampling |
+
+## Related
+- hub → [[lead-game-developer]]

@@ -1,3 +1,15 @@
+---
+name: figma-variable-creation
+description: >
+  Creating Figma variables / design tokens in strict dependency order (collections, modes, variables, bindings).
+aliases: [figma-variable-creation]
+tier: spoke
+domain: design
+hub: figma
+prerequisites: [figma]
+spec_version: "2.0"
+---
+
 # Figma Variable Creation Pipeline
 
 **Trigger**: Use this skill whenever creating variables in Figma, setting up design token systems, or when encountering variable-related errors. Also trigger when the user mentions "variables", "design tokens", "collections", "modes", or asks about binding variables to styles or components.
@@ -249,3 +261,6 @@ This skill ensures variables are created in the correct dependency order and wit
 - [figma-modes-for-variants](../figma-modes-for-variants/SKILL.md) — architectural
   pattern for using mode-driven variables to collapse component-set variant
   matrices when an axis is purely color/style. Sits one layer above this skill.
+
+## Related
+- hub → [[figma]]

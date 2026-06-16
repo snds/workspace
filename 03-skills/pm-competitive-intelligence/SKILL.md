@@ -14,6 +14,10 @@ description: >
   X", "how do we differentiate", "competitive landscape".
 aliases: [pm-competitive-intelligence]
 spec_version: "2.0"
+tier: spoke
+domain: product
+hub: lead-product-manager
+prerequisites: [lead-product-manager]
 ---
 
 # PM Competitive Intelligence
@@ -345,3 +349,6 @@ Analysts evaluate products on:
   directly into launch enablement
 - **Executive communication on competitive strategy** → `pm-stakeholder-comms`:
   framing competitive recommendations for steering committee
+
+## Related
+- hub → [[lead-product-manager]]

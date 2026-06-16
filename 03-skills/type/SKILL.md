@@ -24,6 +24,9 @@ metadata:
   version: 0.1.0
 aliases: [type]
 spec_version: "2.0"
+tier: hub
+domain: design
+prerequisites: [design-foundations]
 ---
 
 # /type — Typography Hub
@@ -99,3 +102,6 @@ rhythm tokens) and where it's emitted.
 
 Sibling to `/qa`, cloned from the same wrapper shape per `invokable-operations-spec_v0.2`.
 Thin by design: the `type-*` skills + `gd-typography` + `lead-type-designer` hold the depth.
+
+## Related
+- foundation → [[design-foundations]]

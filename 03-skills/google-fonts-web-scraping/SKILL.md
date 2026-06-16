@@ -3,6 +3,8 @@ name: google-fonts-web-scraping
 description: Scrape icon metadata from fonts.google.com/icons using Selenium. Use when extracting categories, tags, or icon data from Google's icon site. Handles virtual scrolling, flyout panels, and dynamic content. Required for Material Symbols metadata collection. Use Selenium (not Playwright) for macOS compatibility.
 aliases: [google-fonts-web-scraping]
 spec_version: "2.0"
+tier: hub
+domain: design
 ---
 
 # Google Fonts Web Scraping

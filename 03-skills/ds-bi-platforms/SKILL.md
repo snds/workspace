@@ -17,6 +17,9 @@ description: >
 hub: lead-data-scientist
 aliases: [ds-bi-platforms]
 spec_version: "2.0"
+tier: spoke
+domain: data
+prerequisites: [lead-data-scientist]
 ---
 
 # DS: BI Platforms & Embedded Analytics

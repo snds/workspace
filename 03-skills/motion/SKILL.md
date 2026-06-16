@@ -23,6 +23,9 @@ metadata:
   version: 0.1.0
 aliases: [motion]
 spec_version: "2.0"
+tier: hub
+domain: design
+prerequisites: [design-foundations]
 ---
 
 # /motion — Motion Implementation Hub
@@ -105,3 +108,6 @@ points, and a perf/reduced-motion note.
 Sibling to `/qa`, cloned from the same wrapper shape per `invokable-operations-spec_v0.2`;
 it is the Phase-E plugin wrapper over `claude-design-skillstack`. Thin by design — the
 library skills hold the depth, the `motion-*` skills hold the theory.
+
+## Related
+- foundation → [[design-foundations]]

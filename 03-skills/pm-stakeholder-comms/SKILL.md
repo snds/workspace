@@ -14,6 +14,10 @@ description: >
   leadership", "Amazon memo", "6-pager", "asking for approval".
 aliases: [pm-stakeholder-comms]
 spec_version: "2.0"
+tier: spoke
+domain: product
+hub: lead-product-manager
+prerequisites: [lead-product-manager]
 ---
 
 # PM Stakeholder Communications
@@ -349,3 +353,6 @@ opportunity to resolve it 1:1.
   communicated through these formats
 - **Launch approval** → `pm-enterprise-gtm`: the 1-pager format is the
   standard artifact for launch readiness approval
+
+## Related
+- hub → [[lead-product-manager]]

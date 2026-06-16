@@ -13,6 +13,9 @@ description: >
   Always load this skill before any individual gen-* phase skill.
 aliases: [gen-manifest]
 spec_version: "2.0"
+tier: hub
+domain: design
+prerequisites: [design-foundations]
 ---
 
 # Generation Manifest
@@ -245,3 +248,6 @@ Load the adapter when executing any phase. The adapter defines:
   Don't cross the streams — if the task is "design a settings page," use
   figma-canvas-designer. If the task is "generate the Button component for
   the design system," use gen-manifest + gen-components.
+
+## Related
+- foundation → [[design-foundations]]

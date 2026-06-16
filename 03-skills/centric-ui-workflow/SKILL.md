@@ -14,6 +14,10 @@ description: >
   not instead of it.
 aliases: [centric-ui-workflow]
 spec_version: "2.0"
+tier: spoke
+domain: design
+hub: design-engineer
+prerequisites: [design-engineer]
 ---
 
 # Centric UI — Design-Engineer Workflow
@@ -381,3 +385,6 @@ Three similar lines of code is better than a premature abstraction.
 
 Agent configuration: `plan_only`. Generate implementation plans before execution.
 Human review is required before implementation begins. Max retries per task: 3.
+
+## Related
+- hub → [[design-engineer]]

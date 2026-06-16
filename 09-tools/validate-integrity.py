@@ -146,18 +146,20 @@ def main():
                 if tok in text:
                     errors.append(f"{rel}: unfilled scaffold token `{tok}` (stub/zombie)")
                     break
-            # 5. stub markers
-            for tok in STUB_MARKERS:
-                if re.search(rf"\b{re.escape(tok)}\b", text):
-                    warnings.append(f"{rel}: contains `{tok}` marker")
+            # 5. stub markers — only flag a marker ALONE on a line (an actual placeholder),
+            #    not legitimate prose that mentions the word (e.g. "no TODO hacks in production").
+            for ln in text.splitlines():
+                if re.match(r"^\s*[-*#>\s]*(TODO|TBD|FIXME|PLACEHOLDER|XXX)\b\s*[:.\-]?\s*$", ln):
+                    warnings.append(f"{rel}: stub-marker line `{ln.strip()}`")
                     break
             # 6. thin skill description
             if p.name == "SKILL.md":
                 dm = re.search(r"^description:\s*(.*)$", text, re.MULTILINE)
                 desc = (dm.group(1).strip() if dm else "")
-                if desc in (">", "|", ""):  # block scalar — measure the block
-                    block = re.search(r"^description:\s*[>|]\s*\n((?:\s+.*\n)+)", text, re.MULTILINE)
-                    desc = block.group(1) if block else ""
+                # block scalar (`>`, `|`, `>-`, `|-`, `>+`, `|+`) — measure the indented body
+                if re.fullmatch(r"[>|][-+]?", desc) or desc == "":
+                    block = re.search(r"^description:\s*[>|][-+]?\s*\n((?:[ \t]+.*\n)+)", text, re.MULTILINE)
+                    desc = block.group(1) if block else desc
                 if len(desc.strip()) < 40:
                     warnings.append(f"{rel}: thin/empty description (quality-bar smell)")
 

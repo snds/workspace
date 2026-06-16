@@ -14,6 +14,10 @@ description: >
   testing patterns) defer to `fw-storybook`.
 aliases: [centric-ui-storybook]
 spec_version: "2.0"
+tier: spoke
+domain: design
+hub: design-engineer
+prerequisites: [design-engineer]
 ---
 
 # Centric UI — Storybook
@@ -419,3 +423,6 @@ storybook-static/
 - [ ] Enable GitHub Pages in repo settings (Source: GitHub Actions)
 - [ ] Add `storybook-static/` to `.gitignore`
 - [ ] Open PR via `centric-ui-workflow` process: branch `chore/storybook-setup`
+
+## Related
+- hub → [[design-engineer]]

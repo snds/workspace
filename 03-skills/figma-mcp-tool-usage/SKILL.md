@@ -1,3 +1,15 @@
+---
+name: figma-mcp-tool-usage
+description: >
+  Correct selection, parameters, and usage patterns for the Figma MCP server tools in AI-driven design workflows.
+aliases: [figma-mcp-tool-usage]
+tier: spoke
+domain: design
+hub: figma
+prerequisites: [figma]
+spec_version: "2.0"
+---
+
 # Figma MCP Tool Usage
 
 ## When to Use This Skill
@@ -310,3 +322,6 @@ if (diff.hasChanges) {
 - [ ] Implement retry logic for rate-limited operations
 - [ ] Use `whoami` to get planKey before creating files
 - [ ] Target specific nodes rather than processing everything at once
+
+## Related
+- hub → [[figma]]

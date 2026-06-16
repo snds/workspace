@@ -29,5 +29,6 @@
   ],
   "spellcheck": true,
   "spellcheckLanguages": null,
-  "vimMode": false
+  "vimMode": false,
+  "promptDelete": false
 }

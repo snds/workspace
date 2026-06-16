@@ -249,3 +249,4 @@ Patterns that fail across all PM domains:
 
 ## Related
 - foundation → [[product-foundations]]
+- spoke → [[pm-competitive-intelligence]] · [[pm-discovery-research]] · [[pm-enterprise-gtm]] · [[pm-metrics-analytics]] · [[pm-platform-api]] · [[pm-roadmap-strategy]] · [[pm-stakeholder-comms]]

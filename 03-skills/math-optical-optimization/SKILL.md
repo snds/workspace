@@ -18,6 +18,10 @@ description: >
   shape topology (math-computational-geometry).
 aliases: [math-optical-optimization]
 spec_version: "2.0"
+tier: spoke
+domain: design
+hub: variable-icon-font-architect
+prerequisites: [variable-icon-font-architect]
 ---
 
 # Optical Optimization Mathematics
@@ -487,3 +491,6 @@ variable, contextual, and ultimately subjective.
    where optical corrections are invisible — where the geometry quietly
    compensates for perceptual bias so the viewer sees only clarity, balance,
    and intentional form. The math should disappear into the design.
+
+## Related
+- hub → [[variable-icon-font-architect]]

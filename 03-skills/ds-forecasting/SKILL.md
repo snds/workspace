@@ -14,6 +14,10 @@ description: >
   classification (ds-ml-engineering), not retention cohort analysis (ds-product-analytics).
 aliases: [ds-forecasting]
 spec_version: "2.0"
+tier: spoke
+domain: data
+hub: lead-data-scientist
+prerequisites: [lead-data-scientist]
 ---
 
 # DS: Forecasting
@@ -312,3 +316,6 @@ data. Never use random splits for time series — it leaks future information in
 - For roadmap inputs from usage and growth forecasts → `pm-roadmap-strategy`
 - For serving forecast models as APIs → `ds-ml-engineering`
 - For leading indicators from product behavior → `ds-product-analytics`
+
+## Related
+- hub → [[lead-data-scientist]]

@@ -15,6 +15,10 @@ description: >
   "state coverage", "variant audit", "shadcn parity in Figma".
 aliases: [figma-source-audit]
 spec_version: "2.0"
+tier: spoke
+domain: design
+hub: figma
+prerequisites: [figma]
 ---
 
 # Figma source-audit — methodology
@@ -535,3 +539,6 @@ Load when relevant to the audit:
   providing a focused review framework for source-driven generated libraries.
 - **Does not** cover plugin generator bugs or implementation work — those
   follow from the audit's recommendations but live in different sessions.
+
+## Related
+- hub → [[figma]]

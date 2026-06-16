@@ -23,6 +23,9 @@ metadata:
   version: 0.1.0
 aliases: [ds]
 spec_version: "2.0"
+tier: hub
+domain: design
+prerequisites: [design-foundations]
 ---
 
 # /ds — Design-System Operations Hub
@@ -141,3 +144,6 @@ Method:   <token coverage scan | tier validation | anatomy matrix | governance c
 Sibling to the proven `/qa` hub, cloned from the same wrapper shape per
 `invokable-operations-spec_v0.2`. Keep this hub thin: depth lives in `ds-advisor`,
 `design-engineer`, and `fe-design-tokens`.
+
+## Related
+- foundation → [[design-foundations]]

@@ -1,3 +1,15 @@
+---
+name: figma-error-troubleshooting
+description: >
+  Identifying and resolving errors across the Figma Plugin API, MCP server, and REST API.
+aliases: [figma-error-troubleshooting]
+tier: spoke
+domain: design
+hub: figma
+prerequisites: [figma]
+spec_version: "2.0"
+---
+
 # Figma API Error Troubleshooting
 
 ## When to Use This Skill
@@ -564,3 +576,6 @@ for (const id of componentIds) {
 | **Silent failure** | Ignored setBoundVariableForPaint return, scope conflict | Add validation step; check bindings programmatically |
 | **Performance** | Timeout, memory, truncated responses | Batch operations, target specific nodes, reduce scope |
 | **Plan-gated** | Enterprise-only APIs, mode limits | Check plan tier before attempting; use Plugin API fallbacks |
+
+## Related
+- hub → [[figma]]

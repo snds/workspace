@@ -16,6 +16,10 @@ description: >
   pipeline specifics (ds-ml-engineering).
 aliases: [ds-data-engineering]
 spec_version: "2.0"
+tier: spoke
+domain: data
+hub: lead-data-scientist
+prerequisites: [lead-data-scientist]
 ---
 
 # DS: Data Engineering
@@ -387,3 +391,6 @@ interface layer between teams.
 - For event streaming from application into pipelines → `be-integration-patterns`
 - For ML feature pipelines and feature stores → `ds-ml-engineering`
 - For BI tooling and analytical consumers → `ds-product-analytics`
+
+## Related
+- hub → [[lead-data-scientist]]

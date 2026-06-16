@@ -3,6 +3,8 @@ name: python-cross-platform-gui
 description: Cross-platform Python GUI development with tkinter. Use when building desktop tools that need GUI interfaces on Windows, macOS, and Linux. Covers macOS Tcl/Tk compatibility, CLI fallbacks, path resolution, and launcher scripts.
 aliases: [python-cross-platform-gui]
 spec_version: "2.0"
+tier: hub
+domain: engineering
 ---
 
 # Cross-Platform Python GUI

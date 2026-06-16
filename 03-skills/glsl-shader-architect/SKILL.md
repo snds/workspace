@@ -8,6 +8,10 @@ description: >
   volumetric, custom lighting, or any visual effect requiring custom shader code.
 aliases: [glsl-shader-architect]
 spec_version: "2.0"
+tier: spoke
+domain: game
+hub: lead-game-developer
+prerequisites: [lead-game-developer]
 ---
 
 # GLSL Shader Architect for Three.js
@@ -144,3 +148,6 @@ Comprehensive implementation guides available in:
 4. Add uniform controls for tweaking
 5. Provide complete TypeScript + GLSL integration code
 6. Include explanation of key shader techniques used
+
+## Related
+- hub → [[lead-game-developer]]

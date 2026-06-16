@@ -1,3 +1,15 @@
+---
+name: figma-component-generation
+description: >
+  Creating Figma components, component sets, and variant combinations with auto-layout best practices.
+aliases: [figma-component-generation]
+tier: spoke
+domain: design
+hub: figma
+prerequisites: [figma]
+spec_version: "2.0"
+---
+
 # Figma Component and Variant Generation
 
 ## When to Use This Skill
@@ -545,3 +557,6 @@ function validateComponent(component) {
   generating an N × M variant matrix, check whether one of the axes is
   color/style-only and would be better expressed as variable modes on a
   component-scoped collection. Avoids combinatorial blow-up.
+
+## Related
+- hub → [[figma]]

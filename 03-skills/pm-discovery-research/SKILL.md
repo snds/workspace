@@ -15,6 +15,10 @@ description: >
   "continuous discovery", "assumption mapping", "research methodology".
 aliases: [pm-discovery-research]
 spec_version: "2.0"
+tier: spoke
+domain: product
+hub: lead-product-manager
+prerequisites: [lead-product-manager]
 ---
 
 # PM Discovery & Research
@@ -328,3 +332,6 @@ evaluative (testing solutions). Most teams are inverted.
 - **Translating opportunity findings into a roadmap** → `pm-roadmap-strategy`
 - **Communicating research findings to executives** → `pm-stakeholder-comms`
 - **Competitive discoveries from interviews** → `pm-competitive-intelligence`
+
+## Related
+- hub → [[lead-product-manager]]

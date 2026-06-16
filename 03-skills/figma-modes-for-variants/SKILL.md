@@ -11,6 +11,10 @@ description: >
   component", "shadcn variant in Figma".
 aliases: [figma-modes-for-variants]
 spec_version: "2.0"
+tier: spoke
+domain: design
+hub: figma
+prerequisites: [figma]
 ---
 
 # Modes for Variants — Collapsing Component Sets via Variable Modes
@@ -416,3 +420,6 @@ short — facts, not narrative.
     imperfection until v1.1 introduces conditional sizing.
   - State-prefixed classes (`hover:bg-*`, `aria-expanded:*`, `dark:*`) stripped
     and recorded under `unhandledStateClasses`.
+
+## Related
+- hub → [[figma]]

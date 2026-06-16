@@ -14,6 +14,9 @@ description: >
   use it.
 aliases: [ds-advisor]
 spec_version: "2.0"
+tier: hub
+domain: design
+prerequisites: [design-foundations]
 ---
 
 # Design Systems Advisor
@@ -868,3 +871,6 @@ into tokens, styles, and components so that the mathematics is encoded once and 
   of a component or setting direction for a system.
 - **Don't moralize about org dysfunction.** Name it, route around it, document the
   constraint, and move forward.
+
+## Related
+- foundation → [[design-foundations]]

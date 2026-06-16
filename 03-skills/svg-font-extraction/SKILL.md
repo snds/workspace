@@ -3,6 +3,8 @@ name: svg-font-extraction
 description: Extracting SVG icons from variable fonts like Google Material Symbols. Use when converting font glyphs to SVG files, handling coordinate systems, Y-axis transformations, and preserving design intent. Covers fontTools usage and glyph filtering.
 aliases: [svg-font-extraction]
 spec_version: "2.0"
+tier: hub
+domain: design
 ---
 
 # SVG Font Extraction

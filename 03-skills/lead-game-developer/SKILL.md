@@ -152,3 +152,4 @@ This hub includes six deep-dive references:
 
 ## Related
 - foundation → [[game-foundations]]
+- spoke → [[glsl-shader-architect]] · [[threejs-materials-master]] · [[threejs-vfx-atmosphere]] · [[webgpu-advanced-rendering]]

@@ -15,6 +15,10 @@ description: >
   (ds-ml-engineering), not LLM as a product management decision (pm-platform-api).
 aliases: [ds-nlp-llm]
 spec_version: "2.0"
+tier: spoke
+domain: data
+hub: lead-data-scientist
+prerequisites: [lead-data-scientist]
 ---
 
 # DS: NLP & LLM Engineering
@@ -328,3 +332,6 @@ data that cannot leave the tenant's data perimeter.
 - For API key management for third-party LLM services → `be-auth-patterns`
 - For LLM as product capability → `pm-platform-api`
 - For fine-tuned model deployment → `ds-ml-engineering`
+
+## Related
+- hub → [[lead-data-scientist]]

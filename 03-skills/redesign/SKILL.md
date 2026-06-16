@@ -22,6 +22,9 @@ metadata:
   version: 0.1.0
 aliases: [redesign]
 spec_version: "2.0"
+tier: hub
+domain: design
+prerequisites: [design-foundations]
 ---
 
 # /redesign — End-to-End Redesign Hub
@@ -122,3 +125,6 @@ Sibling to `/qa`, cloned from the same wrapper shape per `invokable-operations-s
 it is the Phase-E plugin wrapper over the adobe **stardust** pipeline + **impeccable**.
 Thin by design — stardust and impeccable hold the depth; this hub carries the routing and
 preserves the live/extension bridge.
+
+## Related
+- foundation → [[design-foundations]]

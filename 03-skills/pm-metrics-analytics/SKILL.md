@@ -13,6 +13,10 @@ description: >
   "leading indicators", "product analytics", "metric definition", "data spec".
 aliases: [pm-metrics-analytics]
 spec_version: "2.0"
+tier: spoke
+domain: product
+hub: lead-product-manager
+prerequisites: [lead-product-manager]
 ---
 
 # PM Metrics & Analytics
@@ -312,3 +316,6 @@ lower churn in your data, or are you assuming it does?
 - **Communicating metrics in exec presentations** → `pm-stakeholder-comms`
 - **Metrics as roadmap inputs** → `pm-roadmap-strategy`: north star movement
   and leading indicator changes should inform sequencing decisions
+
+## Related
+- hub → [[lead-product-manager]]

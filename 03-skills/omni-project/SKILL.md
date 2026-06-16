@@ -13,6 +13,8 @@ description: >
   for any Omni-related work.
 aliases: [omni-project]
 spec_version: "2.0"
+tier: hub
+domain: design
 ---
 
 # Omni Project Context

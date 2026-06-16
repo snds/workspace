@@ -16,6 +16,8 @@ description: >
 hub: lead-type-designer
 aliases: [variable-icon-font-architect]
 spec_version: "2.0"
+tier: hub
+domain: design
 ---
 
 # Variable Icon Font Architect
@@ -199,3 +201,4 @@ own design-forward directive; the hub enforces this as a network-wide principle.
 
 ## Related
 - hub → [[lead-type-designer]]
+- spoke → [[math-bezier-spline-theory]] · [[math-computational-geometry]] · [[math-interpolation-designspace]] · [[math-optical-optimization]]

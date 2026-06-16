@@ -15,6 +15,10 @@ description: >
   (lead-technical-digital-artist).
 aliases: [math-bezier-spline-theory]
 spec_version: "2.0"
+tier: spoke
+domain: design
+hub: variable-icon-font-architect
+prerequisites: [variable-icon-font-architect]
 ---
 
 # Bezier & Spline Theory
@@ -520,3 +524,6 @@ their final rendered size.
    predictable interpolation behavior, and simpler downstream maintenance —
    even if it's not the theoretically optimal one. Engineering taste and
    design sensibility apply to mathematics too.
+
+## Related
+- hub → [[variable-icon-font-architect]]

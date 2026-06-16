@@ -19,6 +19,10 @@ description: >
   (math-optical-optimization).
 aliases: [math-interpolation-designspace]
 spec_version: "2.0"
+tier: spoke
+domain: design
+hub: variable-icon-font-architect
+prerequisites: [variable-icon-font-architect]
 ---
 
 # Interpolation & Designspace Theory
@@ -601,3 +605,6 @@ every possible instance.
    interpolated instance at (bold, filled) look as good as if a designer drew
    it directly?" If yes, skip the master. If no, add it. The math determines
    where to look; the design eye determines what to do.
+
+## Related
+- hub → [[variable-icon-font-architect]]

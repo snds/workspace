@@ -22,6 +22,9 @@ description: >
 hub: legion-project
 aliases: [legion-narrative-design]
 spec_version: "2.0"
+tier: spoke
+domain: game
+prerequisites: [legion-project]
 ---
 
 # Legion: Narrative Design
