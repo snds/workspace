@@ -17,6 +17,7 @@ aliases: [legion-project]
 spec_version: "2.0"
 tier: hub
 domain: game
+prerequisites: [science-foundations]
 ---
 
 # Legion Project Context
@@ -186,4 +187,5 @@ Load that file when discussing:
 **Last Updated**: 2026-03-27
 
 ## Related
+- foundation → [[science-foundations]]
 - spoke → [[legion-narrative-design]]

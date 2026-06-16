@@ -13,7 +13,7 @@ spec_version: "2.0"
 tier: spoke
 domain: game
 hub: lead-game-developer
-prerequisites: [lead-game-developer]
+prerequisites: [lead-game-developer, science-foundations]
 ---
 
 # Three.js Materials Master
@@ -412,4 +412,5 @@ Each recipe includes full TypeScript function, parameter tuning notes, and perfo
 - **references/material-recipes.md**: Complete code for specific surface types, material factory patterns, texture utilities, HDRI setup functions
 
 ## Related
+- foundation → [[science-foundations]]
 - hub → [[lead-game-developer]]

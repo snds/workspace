@@ -15,7 +15,7 @@ aliases: [lead-data-scientist]
 tier: hub
 domain: data
 spec_version: "2.0"
-prerequisites: [data-foundations]
+prerequisites: [data-foundations, science-foundations]
 ---
 
 # Lead Data Scientist
@@ -212,5 +212,5 @@ Never let technical sophistication substitute for business clarity. Name the mod
 the math, and name what decision it supports.
 
 ## Related
-- foundation → [[data-foundations]]
+- foundation → [[data-foundations]] · [[science-foundations]]
 - spoke → [[ds-bi-platforms]] · [[ds-data-engineering]] · [[ds-data-governance]] · [[ds-executive-storytelling]] · [[ds-experimentation]] · [[ds-forecasting]] · [[ds-ml-engineering]] · [[ds-nlp-llm]] · [[ds-product-analytics]] · [[ds-prompt-engineering]]

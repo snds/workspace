@@ -10,10 +10,10 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 208,
+    "total": 213,
     "by_tier": {
       "cross-cutting": 19,
-      "foundation": 10,
+      "foundation": 15,
       "hub": 39,
       "spoke": 140
     }
@@ -1778,7 +1778,8 @@
       "domain": "game",
       "hub": "lead-game-developer",
       "prerequisites": [
-        "lead-game-developer"
+        "lead-game-developer",
+        "science-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -1787,7 +1788,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:d5158f5d3eb768d4d1788eb12e87cc5a7a4516ebeb711c97fba1df7ea9ade181"
+      "hash": "sha256:1fda41815f665085440e1a5c720cee9ef1c3d0372d03592a6722ce54896793a0"
     },
     "google-fonts-scraper": {
       "path": "03-skills/google-fonts-scraper/SKILL.md",
@@ -2129,7 +2130,8 @@
       "domain": "data",
       "hub": null,
       "prerequisites": [
-        "data-foundations"
+        "data-foundations",
+        "science-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -2138,7 +2140,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:59b0990281991b56f1b1735d4b211d3a9eb468437e95f1358afe346671dd6767"
+      "hash": "sha256:1f83d06b3c226fe53c09faec8280f08cd9381efe37698020976b2448eea6176e"
     },
     "lead-devops-engineer": {
       "path": "03-skills/lead-devops-engineer/SKILL.md",
@@ -2197,7 +2199,8 @@
       "domain": "game",
       "hub": null,
       "prerequisites": [
-        "game-foundations"
+        "game-foundations",
+        "science-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -2206,7 +2209,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:ebb4611c220b16726eeb5eb99d475d49539481fe18c0b7c6a32483d0efad6aa9"
+      "hash": "sha256:6e49a61871fbc7914986014677169807a411c3a7a8d163c75c9d5d66d782519f"
     },
     "lead-graphic-designer": {
       "path": "03-skills/lead-graphic-designer/SKILL.md",
@@ -2424,7 +2427,9 @@
       "tier": "hub",
       "domain": "game",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "science-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -2432,7 +2437,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:2481fa12fb5f55685c50491234502b5a18706ef261e47a04f40306cfade727c0"
+      "hash": "sha256:a286b12afbe103f6e0faefd2ad01810115f497f3eb52e11cc0b78d420bd60eb3"
     },
     "material-symbols-project": {
       "path": "03-skills/material-symbols-project/SKILL.md",
@@ -2894,6 +2899,154 @@
       ],
       "hash": "sha256:868fa19ae2aa6c534d5b5f654b6280ac89890752115f9e1f438909397551d241"
     },
+    "sci-linear-algebra": {
+      "path": "03-skills/sci-linear-algebra/SKILL.md",
+      "tier": "foundation",
+      "domain": "science",
+      "hub": "science-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "vector",
+        "matrix",
+        "quaternion",
+        "dot product",
+        "cross product",
+        "transform",
+        "rotation",
+        "basis",
+        "projection",
+        "mvp",
+        "homogeneous coordinates",
+        "slerp",
+        "normal matrix"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:78350dcccdad283f13e9eac229d9cfb23332f9976ea37cc16bb6a96b261dfebd"
+    },
+    "sci-numerical-methods": {
+      "path": "03-skills/sci-numerical-methods/SKILL.md",
+      "tier": "foundation",
+      "domain": "science",
+      "hub": "science-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "floating point",
+        "epsilon",
+        "interpolation",
+        "lerp",
+        "easing",
+        "numerical integration",
+        "euler",
+        "verlet",
+        "rk4",
+        "stability",
+        "numerical error",
+        "convergence",
+        "root finding"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:6e0081e576ec061d99b8ffe87c2d808b44fe2cfe0a13ff811a8bd18909dd9249"
+    },
+    "sci-physics-simulation": {
+      "path": "03-skills/sci-physics-simulation/SKILL.md",
+      "tier": "foundation",
+      "domain": "science",
+      "hub": "science-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "physics",
+        "simulation",
+        "rigid body",
+        "collision detection",
+        "collision response",
+        "impulse",
+        "restitution",
+        "friction",
+        "constraint",
+        "fixed timestep",
+        "kinematics",
+        "dynamics",
+        "broadphase",
+        "aabb",
+        "gjk"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:d009939850684410c64a7d6af650767ff7c7582842c162d3e3ea4e2fbf031294"
+    },
+    "sci-probability-stochastic": {
+      "path": "03-skills/sci-probability-stochastic/SKILL.md",
+      "tier": "foundation",
+      "domain": "science",
+      "hub": "science-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "probability",
+        "distribution",
+        "random",
+        "rng",
+        "seed",
+        "sampling",
+        "noise",
+        "perlin",
+        "simplex",
+        "procedural generation",
+        "monte carlo",
+        "weighted random",
+        "gaussian"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:7552563382d38c91e21c97b277e4a3ba36e1a3aa53898955ae4c2080350dbc21"
+    },
+    "science-foundations": {
+      "path": "03-skills/science-foundations/SKILL.md",
+      "tier": "foundation",
+      "domain": "science",
+      "hub": null,
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "math",
+        "physics",
+        "linear algebra",
+        "vector",
+        "matrix",
+        "quaternion",
+        "transform",
+        "simulation",
+        "numerical methods",
+        "integration",
+        "probability",
+        "monte carlo",
+        "collision",
+        "mechanics"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:25775592b721dcb1a6464304b086147c417ab102d5bdae56ff6f0e02c356659b"
+    },
     "skill-placement": {
       "path": "03-skills/skill-placement/SKILL.md",
       "tier": "cross-cutting",
@@ -2936,7 +3089,8 @@
       "domain": "game",
       "hub": "lead-game-developer",
       "prerequisites": [
-        "lead-game-developer"
+        "lead-game-developer",
+        "science-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -2945,7 +3099,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:3ba3230318f747bb20d57855ca6e9e1daef39802decc8133674999e6afede84a"
+      "hash": "sha256:35ae6b413909190a0b0e1f87a6c30ba4d95a5ce4c81767c3b97760c8928a564c"
     },
     "threejs-vfx-atmosphere": {
       "path": "03-skills/threejs-vfx-atmosphere/SKILL.md",
@@ -3565,7 +3719,8 @@
       "domain": "game",
       "hub": "lead-game-developer",
       "prerequisites": [
-        "lead-game-developer"
+        "lead-game-developer",
+        "science-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -3574,7 +3729,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:e35cc9b42f257944c83f23de0cb9f4e3eb1cf17054fb99f4df9b027da9591f77"
+      "hash": "sha256:1045b5af2d1c8ab2878295c75e7211f97791a710100818c41d7230d998aebed2"
     },
     "workspace-bootstrap": {
       "path": "03-skills/workspace-bootstrap/SKILL.md",
@@ -3758,31 +3913,37 @@
     ],
     "ds-bi-platforms": [
       "data-foundations",
+      "science-foundations",
       "lead-data-scientist",
       "ds-bi-platforms"
     ],
     "ds-data-engineering": [
       "data-foundations",
+      "science-foundations",
       "lead-data-scientist",
       "ds-data-engineering"
     ],
     "ds-data-governance": [
       "data-foundations",
+      "science-foundations",
       "lead-data-scientist",
       "ds-data-governance"
     ],
     "ds-executive-storytelling": [
       "data-foundations",
+      "science-foundations",
       "lead-data-scientist",
       "ds-executive-storytelling"
     ],
     "ds-experimentation": [
       "data-foundations",
+      "science-foundations",
       "lead-data-scientist",
       "ds-experimentation"
     ],
     "ds-forecasting": [
       "data-foundations",
+      "science-foundations",
       "lead-data-scientist",
       "ds-forecasting"
     ],
@@ -3792,21 +3953,25 @@
     ],
     "ds-ml-engineering": [
       "data-foundations",
+      "science-foundations",
       "lead-data-scientist",
       "ds-ml-engineering"
     ],
     "ds-nlp-llm": [
       "data-foundations",
+      "science-foundations",
       "lead-data-scientist",
       "ds-nlp-llm"
     ],
     "ds-product-analytics": [
       "data-foundations",
+      "science-foundations",
       "lead-data-scientist",
       "ds-product-analytics"
     ],
     "ds-prompt-engineering": [
       "data-foundations",
+      "science-foundations",
       "lead-data-scientist",
       "ds-prompt-engineering"
     ],
@@ -4070,6 +4235,7 @@
     ],
     "glsl-shader-architect": [
       "game-foundations",
+      "science-foundations",
       "lead-game-developer",
       "glsl-shader-architect"
     ],
@@ -4159,6 +4325,7 @@
     ],
     "lead-data-scientist": [
       "data-foundations",
+      "science-foundations",
       "lead-data-scientist"
     ],
     "lead-devops-engineer": [
@@ -4175,6 +4342,7 @@
     ],
     "lead-game-developer": [
       "game-foundations",
+      "science-foundations",
       "lead-game-developer"
     ],
     "lead-graphic-designer": [
@@ -4221,10 +4389,12 @@
       "lead-visual-qa"
     ],
     "legion-narrative-design": [
+      "science-foundations",
       "legion-project",
       "legion-narrative-design"
     ],
     "legion-project": [
+      "science-foundations",
       "legion-project"
     ],
     "material-symbols-project": [
@@ -4353,6 +4523,25 @@
       "design-foundations",
       "redesign"
     ],
+    "sci-linear-algebra": [
+      "science-foundations",
+      "sci-linear-algebra"
+    ],
+    "sci-numerical-methods": [
+      "science-foundations",
+      "sci-numerical-methods"
+    ],
+    "sci-physics-simulation": [
+      "science-foundations",
+      "sci-physics-simulation"
+    ],
+    "sci-probability-stochastic": [
+      "science-foundations",
+      "sci-probability-stochastic"
+    ],
+    "science-foundations": [
+      "science-foundations"
+    ],
     "skill-placement": [
       "skill-placement"
     ],
@@ -4361,11 +4550,13 @@
     ],
     "threejs-materials-master": [
       "game-foundations",
+      "science-foundations",
       "lead-game-developer",
       "threejs-materials-master"
     ],
     "threejs-vfx-atmosphere": [
       "game-foundations",
+      "science-foundations",
       "lead-game-developer",
       "threejs-vfx-atmosphere"
     ],
@@ -4542,6 +4733,7 @@
     ],
     "webgpu-advanced-rendering": [
       "game-foundations",
+      "science-foundations",
       "lead-game-developer",
       "webgpu-advanced-rendering"
     ],

@@ -12,7 +12,7 @@ spec_version: "2.0"
 tier: spoke
 domain: game
 hub: lead-game-developer
-prerequisites: [lead-game-developer]
+prerequisites: [lead-game-developer, science-foundations]
 ---
 
 # WebGPU Advanced Rendering & Three.js TSL
@@ -265,4 +265,5 @@ if (navigator.gpu) {
 | Texture not appearing | Use `texture(textureResource, uvCoords)` not direct sampling |
 
 ## Related
+- foundation → [[science-foundations]]
 - hub → [[lead-game-developer]]
