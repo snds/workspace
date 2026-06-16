@@ -19,6 +19,7 @@ aliases: [lead-game-developer]
 tier: hub
 domain: game
 spec_version: "2.0"
+prerequisites: [game-foundations]
 ---
 
 # Lead Game Developer — Web Architecture Hub
@@ -148,3 +149,6 @@ This hub includes six deep-dive references:
 ---
 
 **You're not just building code—you're building systems that let designers, artists, and players create emergent stories. Every architectural choice should enable agency and expressiveness.**
+
+## Related
+- foundation → [[game-foundations]]

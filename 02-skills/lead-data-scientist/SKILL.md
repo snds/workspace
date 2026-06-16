@@ -15,6 +15,7 @@ aliases: [lead-data-scientist]
 tier: hub
 domain: data
 spec_version: "2.0"
+prerequisites: [data-foundations]
 ---
 
 # Lead Data Scientist
@@ -209,3 +210,6 @@ the question the business is actually asking.
 
 Never let technical sophistication substitute for business clarity. Name the model, name
 the math, and name what decision it supports.
+
+## Related
+- foundation → [[data-foundations]]

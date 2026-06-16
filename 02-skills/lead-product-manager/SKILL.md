@@ -19,6 +19,7 @@ aliases: [lead-product-manager]
 tier: hub
 domain: product
 spec_version: "2.0"
+prerequisites: [product-foundations]
 ---
 
 # Lead Product Manager
@@ -245,3 +246,6 @@ Patterns that fail across all PM domains:
 - **Shipping without the narrative**: Launching a feature before sales,
   support, and customers understand what it does and why it exists. Reduces
   adoption regardless of feature quality.
+
+## Related
+- foundation → [[product-foundations]]

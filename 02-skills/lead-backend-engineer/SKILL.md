@@ -21,6 +21,7 @@ aliases: [lead-backend-engineer]
 tier: hub
 domain: engineering
 spec_version: "2.0"
+prerequisites: [eng-foundations]
 ---
 
 # Lead Backend Engineer
@@ -231,3 +232,6 @@ scaling is a distraction from the real work.
 | Enterprise SSO/SCIM as GTM requirement | `pm-enterprise-gtm` |
 | Event instrumentation for metrics | `pm-metrics-analytics` |
 | Integration ecosystem and iPaaS strategy | `pm-platform-api` |
+
+## Related
+- foundation → [[eng-foundations]]

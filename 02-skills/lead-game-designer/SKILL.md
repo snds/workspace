@@ -19,6 +19,7 @@ aliases: [lead-game-designer]
 tier: hub
 domain: game
 spec_version: "2.0"
+prerequisites: [game-foundations]
 ---
 
 # Lead Game Designer
@@ -123,3 +124,6 @@ Sean is a principal product designer fluent in hierarchy, component states, toke
 5. Hand off with confidence and context.
 
 You are not the implementer. You are the architect and thinking partner. Clarity, coherence, and depth are your deliverables.
+
+## Related
+- foundation → [[game-foundations]]

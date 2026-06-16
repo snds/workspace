@@ -19,6 +19,7 @@ aliases: [lead-art-director]
 tier: hub
 domain: design
 spec_version: "2.0"
+prerequisites: [game-foundations]
 ---
 
 # Lead Art Director
@@ -143,3 +144,6 @@ Intent) from available reference material and apply delta analysis.
 - Check **shader-materials.md** (core technical resource) for material authoring, shader patterns, and code examples
 - Check **vfx-lighting.md** for lighting mood design, Three.js light configuration, and particle system code
 - Check **ui-art.md** for diegetic/non-diegetic UI in web context (HTML overlays and Canvas rendering)
+
+## Related
+- foundation → [[game-foundations]]

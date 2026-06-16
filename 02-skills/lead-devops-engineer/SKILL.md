@@ -25,6 +25,7 @@ aliases: [lead-devops-engineer]
 tier: hub
 domain: engineering
 spec_version: "2.0"
+prerequisites: [eng-foundations]
 ---
 
 # Lead DevOps / Platform Engineer
@@ -208,3 +209,6 @@ For the twelve-factor model in the context of service design, see `be-service-ar
 | Frontend build pipeline, CDN, asset optimization | `devops-ci-cd` (build pipeline) + `fe-performance` |
 | Performance budgets enforced in CI | `devops-ci-cd` + `fe-performance` |
 | Edge caching strategy | `fe-performance` |
+
+## Related
+- foundation → [[eng-foundations]]

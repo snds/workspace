@@ -22,6 +22,7 @@ aliases: [lead-frontend-engineer]
 tier: hub
 domain: engineering
 spec_version: "2.0"
+prerequisites: [eng-foundations]
 ---
 
 # Lead Frontend Engineer
@@ -244,3 +245,6 @@ for design-layer decisions. Route to `fe-testing` for axe-core integration in CI
 | Angular-specific patterns (signals, DI, NgRx) | `fw-angular` |
 | Svelte-specific patterns (stores, transitions) | `fw-svelte` |
 | Dojo legacy code, Dijit widgets, dgrid, AMD modules, migration off Dojo | `fw-dojo` |
+
+## Related
+- foundation → [[eng-foundations]]

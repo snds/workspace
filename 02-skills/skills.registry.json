@@ -10,10 +10,10 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 204,
+    "total": 208,
     "by_tier": {
       "cross-cutting": 18,
-      "foundation": 6,
+      "foundation": 10,
       "hub": 21,
       "spoke": 98,
       "unspecified": 61
@@ -393,6 +393,32 @@
       ],
       "hash": "sha256:72f1974729450dd43f8e4209f1544f9566061dd91031b83b784f82993efff305"
     },
+    "data-foundations": {
+      "path": "02-skills/data-foundations/SKILL.md",
+      "tier": "foundation",
+      "domain": "data",
+      "hub": null,
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "data quality",
+        "statistics",
+        "uncertainty",
+        "correlation causation",
+        "causal inference",
+        "experimentation",
+        "a/b test",
+        "bias",
+        "reproducibility",
+        "sampling"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:2300cf87a0be83f373183db60aac7ed27c1b2ba8280009252482733c828d2096"
+    },
     "design-engineer": {
       "path": "02-skills/design-engineer/SKILL.md",
       "tier": null,
@@ -733,6 +759,34 @@
         "*"
       ],
       "hash": "sha256:057f3a8a3bdaa6634f894184cfa82a713733a65abc030b471809c716b30fb623"
+    },
+    "eng-foundations": {
+      "path": "02-skills/eng-foundations/SKILL.md",
+      "tier": "foundation",
+      "domain": "engineering",
+      "hub": null,
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "software design",
+        "complexity",
+        "abstraction",
+        "naming",
+        "api contract",
+        "idempotency",
+        "versioning",
+        "caching",
+        "invalidation",
+        "testing pyramid",
+        "resilience",
+        "error handling"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:6771e18ed5bc032322cc42e3a05f6e3b900ffde4317376e582f443e6a39755de"
     },
     "fe-accessibility": {
       "path": "02-skills/fe-accessibility/SKILL.md",
@@ -1481,6 +1535,32 @@
       ],
       "hash": "sha256:f2cb1045e321ea9252a2aa72450af73846ea36a5a2cb5e5cce9f4eaa35169efb"
     },
+    "game-foundations": {
+      "path": "02-skills/game-foundations/SKILL.md",
+      "tier": "foundation",
+      "domain": "game",
+      "hub": null,
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "game design",
+        "core loop",
+        "game feel",
+        "player experience",
+        "game balance",
+        "progression",
+        "flow",
+        "mechanics",
+        "feedback loop",
+        "player agency"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:208ba23e0a9c95d53e6d9458cc2bbbd150a133f0d182d05ce241b860d64d9477"
+    },
     "gd-brand-identity": {
       "path": "02-skills/gd-brand-identity/SKILL.md",
       "tier": "spoke",
@@ -1953,7 +2033,9 @@
       "tier": "hub",
       "domain": "design",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "game-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -1961,14 +2043,16 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:793f071de5ebb2bf9a0f6e708ed7384581fe25930f62d2a67cdd9c9d3092c004"
+      "hash": "sha256:6f1c47f3ffd823780f90b60ba08019df9b1255a8591a7116734f1ba7ff1ce162"
     },
     "lead-backend-engineer": {
       "path": "02-skills/lead-backend-engineer/SKILL.md",
       "tier": "hub",
       "domain": "engineering",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "eng-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -1976,14 +2060,16 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:5d1f033d1b63506e7bd9a6b7e1d35a9c1491ea0bd25791080096f926657180a0"
+      "hash": "sha256:f1f9021a48a7d6cd53c8d30df11af8c67000547e9476a7a2b95418003a2abe59"
     },
     "lead-data-scientist": {
       "path": "02-skills/lead-data-scientist/SKILL.md",
       "tier": "hub",
       "domain": "data",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "data-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -1991,14 +2077,16 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:3764e736846fcbc3a7e89455d76667a91941bd9a8726ea650e10e885560587c5"
+      "hash": "sha256:13525d43eb35296636b39e007f7ac2fcb1e70098cf87a317d354227f40b30a38"
     },
     "lead-devops-engineer": {
       "path": "02-skills/lead-devops-engineer/SKILL.md",
       "tier": "hub",
       "domain": "engineering",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "eng-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -2006,14 +2094,16 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:42a9e94ff6dbca3909f9bef162fb78f0cb6f8043c88e20dd7beeac17dcc7559c"
+      "hash": "sha256:ba7f80381eabde11814a92bbae1758f426375fda2bea409501a1922b76f1f135"
     },
     "lead-frontend-engineer": {
       "path": "02-skills/lead-frontend-engineer/SKILL.md",
       "tier": "hub",
       "domain": "engineering",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "eng-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -2021,14 +2111,16 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:efcfdeb55537bc1e690f6a85ca3e9dc016766e08e4ee073a2018cb7b0a4eb48f"
+      "hash": "sha256:64ab3896787a9d38e23280fd53ff4e4597795dda9275a253a823d0e1db566a34"
     },
     "lead-game-designer": {
       "path": "02-skills/lead-game-designer/SKILL.md",
       "tier": "hub",
       "domain": "game",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "game-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -2036,14 +2128,16 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:53ad00a5b2370afd2204d57c74caa96394620f865cb50f8028c2cdc63e8ab70b"
+      "hash": "sha256:8c17e60a08247ad4a2e104783ef8a756666e52b31ad6c4ee3bcc5b36f850372b"
     },
     "lead-game-developer": {
       "path": "02-skills/lead-game-developer/SKILL.md",
       "tier": "hub",
       "domain": "game",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "game-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -2051,7 +2145,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:534e732584c7952253585e1a0a24f0ba9af7c7079f2d444b9f6ee9bc7ee64978"
+      "hash": "sha256:b4555e2e6b295eb62f4ef6751814ebdfe805c60bf283fc5a68ff07eba9c84135"
     },
     "lead-graphic-designer": {
       "path": "02-skills/lead-graphic-designer/SKILL.md",
@@ -2139,7 +2233,9 @@
       "tier": "hub",
       "domain": "product",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "product-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -2147,7 +2243,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:7bc57bc94a8195219077464b68b883aeb4e7c3fbd561bbf50c6dfa313e1cee5f"
+      "hash": "sha256:cc6758026ee5dc7618ba29513145a7100beaa162967443c40685603487d9661a"
     },
     "lead-technical-digital-artist": {
       "path": "02-skills/lead-technical-digital-artist/SKILL.md",
@@ -2633,6 +2729,30 @@
         "*"
       ],
       "hash": "sha256:267435404c2774ea7f47f5bd77ce9fc8c0f51a5b77af7ae705258766cad54aaa"
+    },
+    "product-foundations": {
+      "path": "02-skills/product-foundations/SKILL.md",
+      "tier": "foundation",
+      "domain": "product",
+      "hub": null,
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "product strategy",
+        "outcomes over output",
+        "jobs to be done",
+        "jtbd",
+        "prioritization",
+        "discovery",
+        "product principles",
+        "value proposition"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:cedddf3a2a5f420ebf6934dd7950950749bf1db33f544d8904719cea276f7664"
     },
     "python-cross-platform-gui": {
       "path": "02-skills/python-cross-platform-gui/SKILL.md",
@@ -3436,34 +3556,42 @@
       "a11y-visual"
     ],
     "be-api-design": [
+      "eng-foundations",
       "lead-backend-engineer",
       "be-api-design"
     ],
     "be-auth-patterns": [
+      "eng-foundations",
       "lead-backend-engineer",
       "be-auth-patterns"
     ],
     "be-caching-performance": [
+      "eng-foundations",
       "lead-backend-engineer",
       "be-caching-performance"
     ],
     "be-data-modeling": [
+      "eng-foundations",
       "lead-backend-engineer",
       "be-data-modeling"
     ],
     "be-integration-patterns": [
+      "eng-foundations",
       "lead-backend-engineer",
       "be-integration-patterns"
     ],
     "be-relational-db": [
+      "eng-foundations",
       "lead-backend-engineer",
       "be-relational-db"
     ],
     "be-security-posture": [
+      "eng-foundations",
       "lead-backend-engineer",
       "be-security-posture"
     ],
     "be-service-architecture": [
+      "eng-foundations",
       "lead-backend-engineer",
       "be-service-architecture"
     ],
@@ -3473,6 +3601,9 @@
     "centric-ui-workflow": [
       "centric-ui-workflow"
     ],
+    "data-foundations": [
+      "data-foundations"
+    ],
     "design-engineer": [
       "design-engineer"
     ],
@@ -3480,26 +3611,32 @@
       "design-foundations"
     ],
     "devops-ci-cd": [
+      "eng-foundations",
       "lead-devops-engineer",
       "devops-ci-cd"
     ],
     "devops-container-orchestration": [
+      "eng-foundations",
       "lead-devops-engineer",
       "devops-container-orchestration"
     ],
     "devops-cost-optimization": [
+      "eng-foundations",
       "lead-devops-engineer",
       "devops-cost-optimization"
     ],
     "devops-infrastructure-as-code": [
+      "eng-foundations",
       "lead-devops-engineer",
       "devops-infrastructure-as-code"
     ],
     "devops-observability": [
+      "eng-foundations",
       "lead-devops-engineer",
       "devops-observability"
     ],
     "devops-release-engineering": [
+      "eng-foundations",
       "lead-devops-engineer",
       "devops-release-engineering"
     ],
@@ -3510,6 +3647,7 @@
       "ds-advisor"
     ],
     "ds-bi-platforms": [
+      "data-foundations",
       "lead-data-scientist",
       "ds-bi-platforms"
     ],
@@ -3517,6 +3655,7 @@
       "ds-data-engineering"
     ],
     "ds-data-governance": [
+      "data-foundations",
       "lead-data-scientist",
       "ds-data-governance"
     ],
@@ -3542,42 +3681,55 @@
       "ds-product-analytics"
     ],
     "ds-prompt-engineering": [
+      "data-foundations",
       "lead-data-scientist",
       "ds-prompt-engineering"
     ],
+    "eng-foundations": [
+      "eng-foundations"
+    ],
     "fe-accessibility": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fe-accessibility"
     ],
     "fe-api-integration": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fe-api-integration"
     ],
     "fe-component-architecture": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fe-component-architecture"
     ],
     "fe-data-visualization": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fe-data-visualization"
     ],
     "fe-design-tokens": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fe-design-tokens"
     ],
     "fe-i18n": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fe-i18n"
     ],
     "fe-performance": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fe-performance"
     ],
     "fe-state-management": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fe-state-management"
     ],
     "fe-testing": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fe-testing"
     ],
@@ -3641,68 +3793,87 @@
       "found-typography"
     ],
     "fw-angular": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-angular"
     ],
     "fw-bootstrap": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-bootstrap"
     ],
     "fw-carbon": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-carbon"
     ],
     "fw-css-modules": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-css-modules"
     ],
     "fw-dojo": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-dojo"
     ],
     "fw-lightning": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-lightning"
     ],
     "fw-radix-colors": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-radix-colors"
     ],
     "fw-radix-primitives": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-radix-primitives"
     ],
     "fw-react": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-react"
     ],
     "fw-react-aria": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-react-aria"
     ],
     "fw-shadcn": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-shadcn"
     ],
     "fw-storybook": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-storybook"
     ],
     "fw-svelte": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-svelte"
     ],
     "fw-tailwind-css": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-tailwind-css"
     ],
     "fw-vue": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-vue"
     ],
     "fw-web-components": [
+      "eng-foundations",
       "lead-frontend-engineer",
       "fw-web-components"
+    ],
+    "game-foundations": [
+      "game-foundations"
     ],
     "gd-brand-identity": [
       "design-foundations",
@@ -3826,24 +3997,31 @@
       "lead-accessibility-architect"
     ],
     "lead-art-director": [
+      "game-foundations",
       "lead-art-director"
     ],
     "lead-backend-engineer": [
+      "eng-foundations",
       "lead-backend-engineer"
     ],
     "lead-data-scientist": [
+      "data-foundations",
       "lead-data-scientist"
     ],
     "lead-devops-engineer": [
+      "eng-foundations",
       "lead-devops-engineer"
     ],
     "lead-frontend-engineer": [
+      "eng-foundations",
       "lead-frontend-engineer"
     ],
     "lead-game-designer": [
+      "game-foundations",
       "lead-game-designer"
     ],
     "lead-game-developer": [
+      "game-foundations",
       "lead-game-developer"
     ],
     "lead-graphic-designer": [
@@ -3865,6 +4043,7 @@
       "lead-motion-designer"
     ],
     "lead-product-manager": [
+      "product-foundations",
       "lead-product-manager"
     ],
     "lead-technical-digital-artist": [
@@ -3977,6 +4156,9 @@
     ],
     "pm-stakeholder-comms": [
       "pm-stakeholder-comms"
+    ],
+    "product-foundations": [
+      "product-foundations"
     ],
     "python-cross-platform-gui": [
       "python-cross-platform-gui"
