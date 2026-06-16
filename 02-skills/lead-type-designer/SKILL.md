@@ -22,6 +22,11 @@ description: >
   glyphs, FILL axis, FontTools icon pipeline), use the `variable-icon-font-architect`
   spoke (which is part of this hub's network). Also trigger on "icon font",
   "variable axes for icons", "FILL axis", "icon interpolation".
+aliases: [lead-type-designer]
+tier: hub
+domain: design
+prerequisites: [design-foundations]
+spec_version: "2.0"
 ---
 
 # Lead Type Designer
@@ -270,3 +275,6 @@ rigor in service of the reading experience. Not the reverse.
 - OpenType specification (Microsoft/Adobe)
 - Google Fonts Knowledge — practical design principles (fonts.google.com/knowledge)
 - Variable fonts specification (OpenType 1.8+)
+
+## Related
+- foundation → [[design-foundations]]

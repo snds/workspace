@@ -12,6 +12,10 @@ description: >
   link text, accessible name, screen reader markup, ARIA labels, landmark regions,
   semantic HTML, low vision design, zoom support, text scaling, relative units, reflow,
   color as information.
+aliases: [a11y-visual]
+tier: cross-cutting
+domain: accessibility
+spec_version: "2.0"
 ---
 
 # a11y-visual
@@ -345,14 +349,5 @@ Before shipping any visual UI component:
 
 ---
 
-## Cross-Links
-
-| Skill | Relationship |
-|-------|-------------|
-| `uid-color-for-ui` | Color palette design within accessibility constraints; this spoke is authority on contrast requirements |
-| `infod-encoding-theory` | Colorblind-safe data encoding; never use hue alone to encode categorical data |
-| `ds-advisor` | Semantic color token system must encode contrast guarantees by construction |
-| `a11y-assistive-tech` | AT internals for screen reader behavior; this spoke owns design-level decisions (alt text, reading order) |
-| `a11y-legal-compliance` | WCAG 1.4.3, 1.4.10, 1.4.11, 1.4.12 legal requirements and audit methodology |
-| `lead-type-designer` | Font selection for legibility; x-height, letterform differentiation, minimum sizes |
-| `lead-accessibility-architect` | Hub — routes to this spoke for color contrast, color blindness, low vision, and screen reader design |
+## Related
+- governs → [[uid-color-for-ui]] · [[gd-color-theory]]

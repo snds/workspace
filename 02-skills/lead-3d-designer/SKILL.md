@@ -20,6 +20,11 @@ description: >
 
   Current project context: Legion (Bobiverse-inspired 4X strategy game) + personal 3D
   modeling for game assets and parametric/CAD work.
+aliases: [lead-3d-designer]
+tier: hub
+domain: design
+prerequisites: [design-foundations]
+spec_version: "2.0"
 ---
 
 # Lead 3D Designer
@@ -230,3 +235,6 @@ how it **looks and performs** in the context it was made for.
 4. **Pipeline hygiene is a design responsibility.** Clean transforms, correct UV
    naming, proper LOD chain — these are not the engine programmer's problem to fix.
    The 3D artist owns the asset until it works correctly in the engine.
+
+## Related
+- foundation → [[design-foundations]]

@@ -16,6 +16,11 @@ description: >
   design, operational vs. analytical vs. strategic dashboards, drill-down
   architecture, scrollytelling, data-ink ratio, Tufte, Wattenberg, or any question
   about communicating data visually in an enterprise product context.
+aliases: [lead-information-designer]
+tier: hub
+domain: design
+prerequisites: [design-foundations]
+spec_version: "2.0"
 ---
 
 # Lead Information Designer
@@ -314,3 +319,6 @@ explicitly and make the exception deliberately.
 - Marten Wattenberg & Fernanda Viégas — narrative visualization research
 - Stephen Few — *Show Me the Numbers* (2004); *Information Dashboard Design* (2006)
 - Maureen Stone — *A Field Guide to Digital Color* (2003)
+
+## Related
+- foundation → [[design-foundations]]

@@ -12,6 +12,11 @@ description: >
   animation, prefers-reduced-motion, vestibular disorders, motion accessibility,
   choreography, staggering, animation performance, will-change, compositor layer,
   spring physics, or any question about *how things move and why*.
+aliases: [lead-motion-designer]
+tier: hub
+domain: design
+prerequisites: [design-foundations]
+spec_version: "2.0"
 ---
 
 # Lead Motion Designer
@@ -240,3 +245,6 @@ is a human judgment that requires rehearsal, iteration, and critique.
 - Apple Human Interface Guidelines — Motion
 - GSAP documentation (greensock.com/docs)
 - Framer Motion documentation (framer.com/motion)
+
+## Related
+- foundation → [[design-foundations]]

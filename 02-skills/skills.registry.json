@@ -10,10 +10,13 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 198,
+    "total": 204,
     "by_tier": {
-      "cross-cutting": 2,
-      "unspecified": 196
+      "cross-cutting": 3,
+      "foundation": 6,
+      "hub": 7,
+      "spoke": 2,
+      "unspecified": 186
     }
   },
   "skills": {
@@ -199,8 +202,8 @@
     },
     "a11y-visual": {
       "path": "02-skills/a11y-visual/SKILL.md",
-      "tier": null,
-      "domain": null,
+      "tier": "cross-cutting",
+      "domain": "accessibility",
       "hub": null,
       "prerequisites": [],
       "related": [],
@@ -210,7 +213,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:a1218f44204cb564d7c64cc78b6aa62cfe4b92cc79e60f3ed777e8a9892c6002"
+      "hash": "sha256:e31887292770ff739dd0494a5a4212c303bcd9e456cdac21599c00b1b8657842"
     },
     "be-api-design": {
       "path": "02-skills/be-api-design/SKILL.md",
@@ -376,6 +379,35 @@
         "*"
       ],
       "hash": "sha256:446e90f6f433f67bc3c0666d8cee8f16017d6a1357d8bcdf479a0ba67a0c3c02"
+    },
+    "design-foundations": {
+      "path": "02-skills/design-foundations/SKILL.md",
+      "tier": "foundation",
+      "domain": "design",
+      "hub": null,
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "design",
+        "visual design",
+        "ui",
+        "ux",
+        "layout",
+        "color",
+        "typography",
+        "composition",
+        "hierarchy",
+        "contrast",
+        "gestalt",
+        "aesthetic",
+        "design critique"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:6a131896bcb0abed4e45f10e9cd5edf0c4eb169c64b9ab71b3905ed9226adf93"
     },
     "devops-ci-cd": {
       "path": "02-skills/devops-ci-cd/SKILL.md",
@@ -992,6 +1024,133 @@
       ],
       "hash": "sha256:a9bf2af79c38c98e70d724e42be4138b50f619df79b03b0e1b8036f8377c68f6"
     },
+    "found-color": {
+      "path": "02-skills/found-color/SKILL.md",
+      "tier": "foundation",
+      "domain": "design",
+      "hub": "design-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "color harmony",
+        "oklch",
+        "perceptual color",
+        "simultaneous contrast",
+        "albers",
+        "color blindness",
+        "color vision deficiency",
+        "60-30-10",
+        "color proportion"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:6f756b72540230b83a8a33a86ba41c33bbe0074a9818957388993a5ea711bfd3"
+    },
+    "found-composition": {
+      "path": "02-skills/found-composition/SKILL.md",
+      "tier": "foundation",
+      "domain": "design",
+      "hub": "design-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "layout",
+        "composition",
+        "grid",
+        "white space",
+        "alignment",
+        "balance",
+        "rhythm",
+        "spacing",
+        "negative space",
+        "visual relationships"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:ef360aa7035d220b1b8cb65d8dc910064e920c52ad74f92e61b2b3cce177605c"
+    },
+    "found-hierarchy": {
+      "path": "02-skills/found-hierarchy/SKILL.md",
+      "tier": "foundation",
+      "domain": "design",
+      "hub": "design-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "visual hierarchy",
+        "contrast",
+        "emphasis",
+        "priority",
+        "focal point",
+        "information hierarchy",
+        "scanning",
+        "dominance"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:0c2cd19113b2540d83873abca1ee1f4310e6acd98f4e26121601bb6f2aec5d10"
+    },
+    "found-perception": {
+      "path": "02-skills/found-perception/SKILL.md",
+      "tier": "foundation",
+      "domain": "design",
+      "hub": "design-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "gestalt",
+        "figure ground",
+        "visual perception",
+        "pre-attentive",
+        "visual weight",
+        "optical adjustment",
+        "proximity",
+        "similarity",
+        "closure",
+        "continuity"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:1922ccec381efcc4c0b345e9b0d5e215546988ce25adcf033b4956a6ad286dc8"
+    },
+    "found-typography": {
+      "path": "02-skills/found-typography/SKILL.md",
+      "tier": "foundation",
+      "domain": "design",
+      "hub": "design-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "typography",
+        "type hierarchy",
+        "type scale",
+        "leading",
+        "measure",
+        "letterform",
+        "typeface classification",
+        "modular scale",
+        "baseline",
+        "x-height"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:e1d7b34544cab1417d63af1d4574fd413fea9a6f3f74a3f61dd3ffbeeb72b43f"
+    },
     "fw-angular": {
       "path": "02-skills/fw-angular/SKILL.md",
       "tier": null,
@@ -1249,18 +1408,23 @@
     },
     "gd-color-theory": {
       "path": "02-skills/gd-color-theory/SKILL.md",
-      "tier": null,
-      "domain": null,
-      "hub": null,
-      "prerequisites": [],
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "lead-graphic-designer",
+      "prerequisites": [
+        "lead-graphic-designer",
+        "found-color"
+      ],
       "related": [],
-      "governed_by": [],
+      "governed_by": [
+        "a11y-visual"
+      ],
       "governs": [],
       "triggers": [],
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:47f7f6716907bc68dda96f35ca89bb3873a87630d5158ef26212f458ec0a3cd0"
+      "hash": "sha256:22d29db531e007f31f0883bd9d7cb521b7d7e9f55180639fa03995fa34c5bc1e"
     },
     "gd-grid-and-layout": {
       "path": "02-skills/gd-grid-and-layout/SKILL.md",
@@ -1624,10 +1788,12 @@
     },
     "lead-3d-designer": {
       "path": "02-skills/lead-3d-designer/SKILL.md",
-      "tier": null,
-      "domain": null,
+      "tier": "hub",
+      "domain": "design",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "design-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -1635,7 +1801,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:5d48041f264aa5ae5f01142a82f762a8d176934d32b252c0988dc2ae619cca05"
+      "hash": "sha256:767ffa2246bcb20cf36813e1eae77c49dce311141d7e1d22b04ddcaac6142752"
     },
     "lead-accessibility-architect": {
       "path": "02-skills/lead-accessibility-architect/SKILL.md",
@@ -1759,10 +1925,12 @@
     },
     "lead-graphic-designer": {
       "path": "02-skills/lead-graphic-designer/SKILL.md",
-      "tier": null,
-      "domain": null,
+      "tier": "hub",
+      "domain": "design",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "design-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -1770,7 +1938,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:799f06cb4392f15e6850f4293b502f8629b491dc6c263894848d8bfe0e077ec7"
+      "hash": "sha256:878d235c485938d495301dce89c8b9ab30c460776eb9abdf8be9d735bbbe7d79"
     },
     "lead-icon-artist": {
       "path": "02-skills/lead-icon-artist/SKILL.md",
@@ -1804,10 +1972,12 @@
     },
     "lead-information-designer": {
       "path": "02-skills/lead-information-designer/SKILL.md",
-      "tier": null,
-      "domain": null,
+      "tier": "hub",
+      "domain": "design",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "design-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -1815,14 +1985,16 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:75926b173c1f94c889f045c77b7de08ecd162dbe9299871be00a00b9f06e9bbb"
+      "hash": "sha256:5a77c838c9e7172f56541e0de0bb133698bc8fc7c2aeb5fc6f7bf30ba13dc7b6"
     },
     "lead-motion-designer": {
       "path": "02-skills/lead-motion-designer/SKILL.md",
-      "tier": null,
-      "domain": null,
+      "tier": "hub",
+      "domain": "design",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "design-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -1830,7 +2002,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:c205e74ed8fecb69fa3c189b9b959cc720ad38a52f4e8bbc3063c4ee8c67926e"
+      "hash": "sha256:a411f73440d39bbec92392469296549119666651acb28cdf3de1b7f7a8c12684"
     },
     "lead-product-manager": {
       "path": "02-skills/lead-product-manager/SKILL.md",
@@ -1864,10 +2036,12 @@
     },
     "lead-type-designer": {
       "path": "02-skills/lead-type-designer/SKILL.md",
-      "tier": null,
-      "domain": null,
+      "tier": "hub",
+      "domain": "design",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "design-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -1875,14 +2049,16 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:c8f34a9cf56e655e344da0bdcffcd16f568eb37a19def1686a2503b172cf5bcb"
+      "hash": "sha256:7f278a2cfe981ce66e8a8ce7d5ba1ab07e9ea75d4b161686bd87f9d35c7a254e"
     },
     "lead-ui-designer": {
       "path": "02-skills/lead-ui-designer/SKILL.md",
-      "tier": null,
-      "domain": null,
+      "tier": "hub",
+      "domain": "design",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "design-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -1890,14 +2066,16 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:4e21ba90d3683981ecfc0d25940beb85185c0cc3bd3850b69b65ad619655c947"
+      "hash": "sha256:4a1be7421edcbc2be09f2027954edb2b986ef5d2d2999ac1227fc24a62b573d9"
     },
     "lead-ux-designer": {
       "path": "02-skills/lead-ux-designer/SKILL.md",
-      "tier": null,
-      "domain": null,
+      "tier": "hub",
+      "domain": "design",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "design-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -1905,7 +2083,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:f61d768c455939e7dfb1945b0362b0497cbf230f89f1ba5cc1e7295e5a63246d"
+      "hash": "sha256:411be8d140e7901b361d5d2a455ff63c751d3fcfb9bd51e38166d9e4f16affae"
     },
     "lead-vector-designer": {
       "path": "02-skills/lead-vector-designer/SKILL.md",
@@ -2545,18 +2723,23 @@
     },
     "uid-color-for-ui": {
       "path": "02-skills/uid-color-for-ui/SKILL.md",
-      "tier": null,
-      "domain": null,
-      "hub": null,
-      "prerequisites": [],
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "lead-ui-designer",
+      "prerequisites": [
+        "lead-ui-designer",
+        "found-color"
+      ],
       "related": [],
-      "governed_by": [],
+      "governed_by": [
+        "a11y-visual"
+      ],
       "governs": [],
       "triggers": [],
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:17b217a01639017f612e629fe31e1196de9cd29ddb9947f28f73db3c64313d13"
+      "hash": "sha256:d458a286a5e44558ff2d954b6c0f4fc2a7843b6f988138ec4a936d6b472ea08f"
     },
     "uid-iconography": {
       "path": "02-skills/uid-iconography/SKILL.md",
@@ -3004,26 +3187,32 @@
   },
   "load_chains": {
     "3d-asset-pipeline": [
+      "design-foundations",
       "lead-3d-designer",
       "3d-asset-pipeline"
     ],
     "3d-lighting-rendering": [
+      "design-foundations",
       "lead-3d-designer",
       "3d-lighting-rendering"
     ],
     "3d-materials-shading": [
+      "design-foundations",
       "lead-3d-designer",
       "3d-materials-shading"
     ],
     "3d-modeling-fundamentals": [
+      "design-foundations",
       "lead-3d-designer",
       "3d-modeling-fundamentals"
     ],
     "3d-rigging-animation": [
+      "design-foundations",
       "lead-3d-designer",
       "3d-rigging-animation"
     ],
     "3d-spatial-design-for-games": [
+      "design-foundations",
       "lead-3d-designer",
       "3d-spatial-design-for-games"
     ],
@@ -3081,6 +3270,9 @@
     ],
     "design-engineer": [
       "design-engineer"
+    ],
+    "design-foundations": [
+      "design-foundations"
     ],
     "devops-ci-cd": [
       "devops-ci-cd"
@@ -3210,6 +3402,26 @@
     "figma-variable-creation": [
       "figma-variable-creation"
     ],
+    "found-color": [
+      "design-foundations",
+      "found-color"
+    ],
+    "found-composition": [
+      "design-foundations",
+      "found-composition"
+    ],
+    "found-hierarchy": [
+      "design-foundations",
+      "found-hierarchy"
+    ],
+    "found-perception": [
+      "design-foundations",
+      "found-perception"
+    ],
+    "found-typography": [
+      "design-foundations",
+      "found-typography"
+    ],
     "fw-angular": [
       "fw-angular"
     ],
@@ -3262,6 +3474,9 @@
       "gd-brand-identity"
     ],
     "gd-color-theory": [
+      "design-foundations",
+      "found-color",
+      "lead-graphic-designer",
       "gd-color-theory"
     ],
     "gd-grid-and-layout": [
@@ -3316,34 +3531,42 @@
       "ia-taxonomy-classification"
     ],
     "infod-dashboard-patterns": [
+      "design-foundations",
       "lead-information-designer",
       "infod-dashboard-patterns"
     ],
     "infod-design-system-patterns": [
+      "design-foundations",
       "lead-information-designer",
       "infod-design-system-patterns"
     ],
     "infod-encoding-theory": [
+      "design-foundations",
       "lead-information-designer",
       "infod-encoding-theory"
     ],
     "infod-narrative-design": [
+      "design-foundations",
       "lead-information-designer",
       "infod-narrative-design"
     ],
     "infod-network-graphs": [
+      "design-foundations",
       "lead-information-designer",
       "infod-network-graphs"
     ],
     "infod-spatial-maps": [
+      "design-foundations",
       "lead-information-designer",
       "infod-spatial-maps"
     ],
     "infod-statistical-viz": [
+      "design-foundations",
       "lead-information-designer",
       "infod-statistical-viz"
     ],
     "lead-3d-designer": [
+      "design-foundations",
       "lead-3d-designer"
     ],
     "lead-accessibility-architect": [
@@ -3371,6 +3594,7 @@
       "lead-game-developer"
     ],
     "lead-graphic-designer": [
+      "design-foundations",
       "lead-graphic-designer"
     ],
     "lead-icon-artist": [
@@ -3380,9 +3604,11 @@
       "lead-information-architect"
     ],
     "lead-information-designer": [
+      "design-foundations",
       "lead-information-designer"
     ],
     "lead-motion-designer": [
+      "design-foundations",
       "lead-motion-designer"
     ],
     "lead-product-manager": [
@@ -3392,12 +3618,15 @@
       "lead-technical-digital-artist"
     ],
     "lead-type-designer": [
+      "design-foundations",
       "lead-type-designer"
     ],
     "lead-ui-designer": [
+      "design-foundations",
       "lead-ui-designer"
     ],
     "lead-ux-designer": [
+      "design-foundations",
       "lead-ux-designer"
     ],
     "lead-vector-designer": [
@@ -3528,6 +3757,9 @@
       "type-variable-text"
     ],
     "uid-color-for-ui": [
+      "design-foundations",
+      "found-color",
+      "lead-ui-designer",
       "uid-color-for-ui"
     ],
     "uid-iconography": [
@@ -3552,6 +3784,7 @@
       "ux-accessibility"
     ],
     "ux-ai-product-design": [
+      "design-foundations",
       "lead-ux-designer",
       "ux-ai-product-design"
     ],
@@ -3577,14 +3810,17 @@
       "ux-research-synthesis"
     ],
     "ux-service-design": [
+      "design-foundations",
       "lead-ux-designer",
       "ux-service-design"
     ],
     "ux-writing": [
+      "design-foundations",
       "lead-ux-designer",
       "ux-writing"
     ],
     "variable-icon-font-architect": [
+      "design-foundations",
       "lead-type-designer",
       "variable-icon-font-architect"
     ],

@@ -11,6 +11,13 @@ description: >
   WCAG color contrast, APCA, or design system color token architecture. This
   skill is the upstream rationale for all color decisions in brand, print, UI,
   and design systems.
+aliases: [gd-color-theory]
+tier: spoke
+domain: design
+hub: lead-graphic-designer
+prerequisites: [lead-graphic-designer, found-color]
+governed_by: [a11y-visual]
+spec_version: "2.0"
 ---
 
 # GD — Color Theory
@@ -18,6 +25,10 @@ description: >
 Specialist lens for color as a design material — its physics, perception,
 psychology, print behavior, and application logic. Part of the Lead Graphic
 Designer skill network.
+
+
+> **Foundations:** [[found-color]] — perceptual model, harmony, simultaneous contrast,
+> proportion, and CVD mechanics live there. This spoke covers **print-specific** application.
 
 ---
 
@@ -131,109 +142,11 @@ chroma to preserve lightness relationships.
 
 ---
 
-## Color Harmony Systems
+## Harmony, proportion, simultaneous contrast → foundations
 
-Color harmony describes relationships between hues on the color wheel that
-produce specific perceptual effects. These are not rules — they are
-frameworks for generating and evaluating color relationships.
-
-### Complementary
-Hues directly opposite on the color wheel (~180° apart).
-*Examples: red/green, blue/orange, yellow/violet*
-
-- Maximum contrast and visual energy
-- Vibrate when placed adjacent at high saturation (simultaneous contrast;
-  see below)
-- Effective for emphasis and call-to-action in UI
-- In brand design: high energy, assertive, difficult to sustain as a
-  dominant palette
-
-### Analogous
-Adjacent hues on the color wheel (within ~30–60°).
-*Examples: yellow/yellow-green/green; blue/blue-violet/violet*
-
-- Cohesion and harmony; the palette feels unified
-- Low tension; may feel monotonous without value and saturation variation
-- Excellent for brand palettes that need to feel sophisticated and coherent
-
-### Triadic
-Three hues equally spaced on the color wheel (~120° apart).
-*Examples: red/yellow/blue (primary triadic); orange/green/violet*
-
-- Balances variety with harmony
-- More complex than complementary; more energetic than analogous
-- Requires careful saturation management — equal saturation at all three
-  produces equal competition; differentiate by saturation and value
-
-### Split-Complementary
-One base hue and the two hues adjacent to its complement.
-*Example: blue base, with yellow-orange and red-orange*
-
-- Similar energy to complementary but more forgiving and complex
-- Provides high contrast without the direct vibration of complementary pairs
-
-### Tetradic (Square/Rectangle)
-Four hues equally or proportionally spaced on the color wheel.
-*Examples: red/yellow/green/blue*
-
-- Rich and complex; difficult to balance
-- One hue should dominate; others play supporting roles
-- The 60-30-10 rule (see below) is the application principle for tetradic schemes
-
----
-
-## The 60-30-10 Rule
-
-A proportional color application framework from interior design, directly
-applicable to graphic design and UI:
-
-- **60%**: dominant color — the background, the field, the baseline
-- **30%**: secondary color — containers, cards, surfaces
-- **10%**: accent color — brand color, interactive elements, emphasis
-
-**Why this works:** The eye needs a resting ground (60%), a secondary layer
-to create depth and separation (30%), and a signal for what matters most (10%).
-When all three appear in equal proportions, there is no hierarchy — the eye
-has nowhere to rest and nothing to prioritize.
-
-**DS translation:** This maps directly to token surface hierarchy:
-- Surface tokens (page background, primary container) = 60%
-- Container tokens (cards, panels, secondary containers) = 30%
-- Brand/accent tokens (interactive elements, highlights) = 10%
-
----
-
-## Josef Albers: Simultaneous Contrast
-
-Josef Albers' *Interaction of Color* (1963) demonstrated that color is
-never perceived in isolation — it is always perceived relative to its context.
-
-**The principle:** A color looks different depending on its surrounding
-colors. A medium gray appears lighter on a dark background and darker on
-a light background. A warm gray appears cooler next to a saturated warm hue.
-
-**Design implications:**
-
-1. **Never evaluate a color in isolation.** A brand color evaluated on
-   white in a swatch book will look different on the gray surface of a UI,
-   on coated paper, on uncoated paper, and in a dark mode context. Swatch
-   documentation must show colors on their actual backgrounds.
-
-2. **Color harmony systems predict interaction effects.** Complementary
-   colors placed adjacent vibrate (each makes the other appear more saturated).
-   This is an asset in poster design and a liability in UI (where it causes
-   visual discomfort at interactive element boundaries).
-
-3. **Design system color swatches must be evaluated in context.** An APCA
-   contrast check between text color and background color is only valid on
-   that specific background — not on all backgrounds.
-
-4. **The Bezold effect:** changing one color in a multi-color composition
-   shifts the perceived appearance of adjacent colors. When modifying a
-   design system color token, evaluate not just the token in isolation but
-   its behavior in every context where it is used.
-
----
+Harmony systems, the 60-30-10 proportion law, and Albers' simultaneous contrast are **context-free
+principle** — they live in [[found-color]] (loaded first via this spoke's foundation prerequisite).
+Apply them here with print constraints in mind (ink limits, substrate shift, spot vs. process).
 
 ## Color Psychology
 
@@ -362,32 +275,7 @@ reliably distinguish red from green. This makes red/green status color systems
 
 ---
 
-## Cross-Links
-
-- **`lead-ui-designer` / `uid-color-for-ui`**: color harmony systems and OKLCH
-  perceptual uniformity are the print-to-screen bridge; the 60-30-10 rule
-  translates directly to UI surface/container/accent hierarchy
-- **`ds-advisor`**: color harmony logic is the upstream rationale for how brand,
-  semantic, and neutral token families relate; perceptual uniformity (OKLCH) is
-  why token steps must be built in perceptual space; 60-30-10 maps to surface/
-  container/accent token proportions; Albers' simultaneous contrast explains
-  why tokens must be evaluated in context not isolation
-- **`lead-accessibility-architect` / `a11y-visual`**: CVD simulation, WCAG/APCA
-  contrast requirements, and color-independent encoding are the accessibility
-  application of this spoke's principles
-- **`lead-information-designer`**: categorical color palettes for data apply
-  the same harmony and perceptual uniformity principles as brand color
-
----
-
-## References
-
-- Josef Albers: *Interaction of Color* (1963; Yale edition 2013)
-- Johannes Itten: *The Art of Color* (1961)
-- Harald Arnkil: *Colours in the Visual World* (2013)
-- Björn Ottosson: OKLCH specification and Oklab paper (2020)
-- ISO 12647-2: Graphic technology — Process control for offset lithographic printing
-- Fogra39 / ISO Coated v2 ICC profile documentation
-- Pantone LLC: Pantone Matching System specifications
-- WCAG 2.1: https://www.w3.org/TR/WCAG21/
-- APCA (Accessible Perceptual Contrast Algorithm): https://git.apcacontrast.com/
+## Related
+- foundation → [[found-color]]
+- hub → [[lead-graphic-designer]]
+- governed-by → [[a11y-visual]]

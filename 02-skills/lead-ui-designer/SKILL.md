@@ -11,6 +11,11 @@ description: >
   judgment layer — "does this look right, feel right, and express the right
   visual language?" — in enterprise SaaS contexts: data-dense UIs, design
   system compliance, dark mode, and accessibility-constrained palettes.
+aliases: [lead-ui-designer]
+tier: hub
+domain: design
+prerequisites: [design-foundations]
+spec_version: "2.0"
 ---
 
 # Lead UI Designer
@@ -260,3 +265,7 @@ not a replacement for it.
 - Apple Human Interface Guidelines: https://developer.apple.com/design/human-interface-guidelines/
 - Carbon Design System (IBM): https://carbondesignsystem.com/
 - Refactoring UI (Wathan & Schoger): practical UI visual design reference
+
+## Related
+- foundation → [[design-foundations]]
+- spoke → [[uid-color-for-ui]]

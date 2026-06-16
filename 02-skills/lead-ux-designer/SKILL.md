@@ -15,6 +15,11 @@ description: >
   good", "how do enterprise users think about X", "what loading state should I use",
   "how do I design for X constraint", or any question that requires reasoning about
   design decisions against technical, data, or organizational constraints.
+aliases: [lead-ux-designer]
+tier: hub
+domain: design
+prerequisites: [design-foundations]
+spec_version: "2.0"
 ---
 
 # Lead UX Designer
@@ -256,3 +261,6 @@ causes real errors with real consequences.
 - WCAG 2.2: https://www.w3.org/TR/WCAG22/
 - Teresa Torres — Opportunity/Solution Trees: https://www.producttalk.org/
 - Abby Covert — How to Make Sense of Any Mess (IA): https://www.howtomakesenseofanymess.com/
+
+## Related
+- foundation → [[design-foundations]]

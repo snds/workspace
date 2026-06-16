@@ -10,9 +10,20 @@ description: >
   neutral color design for surfaces, or "does this color choice work?" This spoke
   owns the design decisions. Token architecture that encodes these decisions lives
   in ds-advisor. Part of the lead-ui-designer hub skill network.
+aliases: [uid-color-for-ui]
+tier: spoke
+domain: design
+hub: lead-ui-designer
+prerequisites: [lead-ui-designer, found-color]
+governed_by: [a11y-visual]
+spec_version: "2.0"
 ---
 
 # UID: Color for UI
+
+> **Foundations:** [[found-color]] — perceptual model (OKLCH), harmony, simultaneous contrast,
+> proportion, and CVD mechanics live there (loaded first via this spoke's foundation prerequisite).
+> This spoke covers **screen-specific** application: UI color roles, dark-mode surfaces, token values.
 
 Specialist spoke for color design in digital interfaces — the decisions, not
 the token encoding. Part of the `lead-ui-designer` hub skill network.
@@ -290,12 +301,7 @@ focused, disabled.
 
 ---
 
-## Cross-Links
-
-- `gd-color-theory` — foundational color science: harmony, perceptual uniformity, simultaneous contrast
-- `ds-advisor` — color decisions become token architecture here; semantic token design
-- `lead-accessibility-architect` / `a11y-visual` — contrast requirements, APCA measurement
-- `uid-surface-depth` — dark mode elevation expressed through surface lightness
-- `uid-visual-system` — color palette as part of the complete visual language
-- `lead-frontend-engineer` / `fe-component-architecture` — OKLCH in CSS custom properties
-- `lead-type-designer` / `type-letterform-construction` — how color interacts with type rendering at small sizes
+## Related
+- foundation → [[found-color]]
+- hub → [[lead-ui-designer]]
+- governed-by → [[a11y-visual]]

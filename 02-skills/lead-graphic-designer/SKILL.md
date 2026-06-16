@@ -12,6 +12,11 @@ description: >
   visual craft question. This is the root node — its principles inform UI
   design, UX design, motion design, type design, and design systems. When in
   doubt, start here.
+aliases: [lead-graphic-designer]
+tier: hub
+domain: design
+prerequisites: [design-foundations]
+spec_version: "2.0"
 ---
 
 # Lead Graphic Designer
@@ -246,3 +251,7 @@ discipline that made all of this possible.
 - PANTONE Color Institute specifications
 - ISO 12647 (process color for offset printing)
 - PDF/X standards: ISO 15930
+
+## Related
+- foundation → [[design-foundations]]
+- spoke → [[gd-color-theory]]
