@@ -22,6 +22,7 @@ domain: engineering
 hub: lead-backend-engineer
 prerequisites: [lead-backend-engineer]
 spec_version: "2.0"
+governed_by: [sec-authn-authz, sec-appsec-owasp]
 ---
 
 # Be: API Design
@@ -483,3 +484,4 @@ separately. The spec is the source of truth.
 
 ## Related
 - hub → [[lead-backend-engineer]]
+- governed-by → [[sec-appsec-owasp]] · [[sec-authn-authz]]

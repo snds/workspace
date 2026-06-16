@@ -22,6 +22,7 @@ domain: engineering
 hub: lead-devops-engineer
 prerequisites: [lead-devops-engineer]
 spec_version: "2.0"
+governed_by: [sec-supply-chain]
 ---
 
 # DevOps: CI/CD
@@ -550,3 +551,4 @@ Attach the SBOM to the artifact, not just the build job. It must travel with the
 
 ## Related
 - hub → [[lead-devops-engineer]]
+- governed-by → [[sec-supply-chain]]

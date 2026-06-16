@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 213,
+    "total": 222,
     "by_tier": {
-      "cross-cutting": 19,
+      "cross-cutting": 23,
       "foundation": 15,
-      "hub": 39,
-      "spoke": 140
+      "hub": 40,
+      "spoke": 144
     }
   },
   "skills": {
@@ -194,7 +194,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:0c1b8b406e52e756c1ab4e5cf0f0722e4635ce265959e80597fd91637faefd89"
+      "hash": "sha256:71dec5d4d8bdc3f2514520a6742484384131cba281339587fe48c2bcefd86078"
     },
     "a11y-neurodiversity": {
       "path": "03-skills/a11y-neurodiversity/SKILL.md",
@@ -235,13 +235,16 @@
         "lead-backend-engineer"
       ],
       "related": [],
-      "governed_by": [],
+      "governed_by": [
+        "sec-authn-authz",
+        "sec-appsec-owasp"
+      ],
       "governs": [],
       "triggers": [],
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:19c36dff399c139d8af189781168aa5da7c775d72ec7f10bf299e150393810f6"
+      "hash": "sha256:6d7bde40e5550251354d38ee658719d5f50bb39d2559ec2cd8b7762750a11a04"
     },
     "be-auth-patterns": {
       "path": "03-skills/be-auth-patterns/SKILL.md",
@@ -326,7 +329,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:c7655a9cbf6d4c09c8aa7c36211b145a518cd57d058fb0b5da37a28a33a9e1b8"
+      "hash": "sha256:bedc8d707e93f127d45dbbb3e630ca683f15fe252b1970999dbd58c5b293ffac"
     },
     "be-security-posture": {
       "path": "03-skills/be-security-posture/SKILL.md",
@@ -477,13 +480,15 @@
         "lead-devops-engineer"
       ],
       "related": [],
-      "governed_by": [],
+      "governed_by": [
+        "sec-supply-chain"
+      ],
       "governs": [],
       "triggers": [],
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:5dfa6074b084830dcb90170c837e6eb01ea02d35793c1edb78b30a4bdc3f95dc"
+      "hash": "sha256:023d47d879ed29cea55318277f272355137c4e39cce78510cca85854a85180f1"
     },
     "devops-container-orchestration": {
       "path": "03-skills/devops-container-orchestration/SKILL.md",
@@ -817,7 +822,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6b9f3d2a3762446aa485613e3245b5fa34c048121b30cd9150060f1547ce1fb5"
+      "hash": "sha256:dca70c2906c81584470493d7b41365a764d540c6773ef8c9e0e05552d5dff246"
     },
     "fe-accessibility": {
       "path": "03-skills/fe-accessibility/SKILL.md",
@@ -845,13 +850,15 @@
         "lead-frontend-engineer"
       ],
       "related": [],
-      "governed_by": [],
+      "governed_by": [
+        "sec-appsec-owasp"
+      ],
       "governs": [],
       "triggers": [],
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:d4e229ec9f4f65a401e2babf1b4d3418f58627b73af943918f105118c4d969db"
+      "hash": "sha256:acefa5ea823c4db160f3ac941d04416487d14329de2942f417346474ed42a634"
     },
     "fe-component-architecture": {
       "path": "03-skills/fe-component-architecture/SKILL.md",
@@ -2088,7 +2095,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:7f466f04beaddeb3d8e32d510cf645578238cd402085252e2275c546365f306e"
+      "hash": "sha256:a3d82c09e841c6b7ffdbcb49cf90f10f1b53b5acfca8ce6957ee5c096e8b9166"
     },
     "lead-art-director": {
       "path": "03-skills/lead-art-director/SKILL.md",
@@ -2174,7 +2181,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:8f386517cc0d4aa6c3e7958c719a75b198d51663a4f71193d9f7f168a10e5acd"
+      "hash": "sha256:9f2e0782f3c1de6a96892fd1fb98e8938914c4507024cf2c4833724dcf6dc8b5"
     },
     "lead-game-designer": {
       "path": "03-skills/lead-game-designer/SKILL.md",
@@ -2308,6 +2315,38 @@
         "*"
       ],
       "hash": "sha256:b880e93fc7e7a8030e9edbfcc48ecd48c37240d1adcaef513f1fbe1609c7fcfb"
+    },
+    "lead-security-architect": {
+      "path": "03-skills/lead-security-architect/SKILL.md",
+      "tier": "hub",
+      "domain": "security",
+      "hub": null,
+      "prerequisites": [
+        "eng-foundations"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "security",
+        "appsec",
+        "threat model",
+        "authentication",
+        "authorization",
+        "oauth",
+        "owasp",
+        "vulnerability",
+        "secrets",
+        "supply chain",
+        "csrf",
+        "xss",
+        "ssrf",
+        "least privilege"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:4afb5e41bde9a82f4c03b409ae6f97b3e82ef8fe89cabb8e428028c885303926"
     },
     "lead-technical-digital-artist": {
       "path": "03-skills/lead-technical-digital-artist/SKILL.md",
@@ -2555,6 +2594,122 @@
         "*"
       ],
       "hash": "sha256:1541c8f389fa353891e293f69e53594b9d12438d96076548178fbd870fec1d9b"
+    },
+    "mobile-android-kotlin": {
+      "path": "03-skills/mobile-android-kotlin/SKILL.md",
+      "tier": "spoke",
+      "domain": "engineering",
+      "hub": "lead-frontend-engineer",
+      "prerequisites": [
+        "lead-frontend-engineer"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "kotlin",
+        "android",
+        "jetpack compose",
+        "coroutines",
+        "flow",
+        "viewmodel",
+        "clean architecture",
+        "material 3",
+        "gradle",
+        "play store",
+        "kmp"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:6eb451dc6cdfb657c731dc3bbb1028b34992d78f119726233325df0223870760"
+    },
+    "mobile-ios-swiftui": {
+      "path": "03-skills/mobile-ios-swiftui/SKILL.md",
+      "tier": "spoke",
+      "domain": "engineering",
+      "hub": "lead-frontend-engineer",
+      "prerequisites": [
+        "lead-frontend-engineer"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "swift",
+        "swiftui",
+        "ios",
+        "xcode",
+        "observable",
+        "async await",
+        "actor",
+        "human interface guidelines",
+        "testflight",
+        "app store",
+        "uikit"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:955ee55a146f737d9e53479254c7b8fea65145f693a253b1d1fe7907807562a8"
+    },
+    "mobile-platform-craft": {
+      "path": "03-skills/mobile-platform-craft/SKILL.md",
+      "tier": "spoke",
+      "domain": "engineering",
+      "hub": "lead-frontend-engineer",
+      "prerequisites": [
+        "lead-frontend-engineer"
+      ],
+      "related": [],
+      "governed_by": [
+        "a11y-motor-physical"
+      ],
+      "governs": [],
+      "triggers": [
+        "native vs cross-platform",
+        "flutter",
+        "offline first",
+        "app lifecycle",
+        "mobile performance",
+        "battery",
+        "push notifications",
+        "permissions",
+        "deep linking",
+        "app store submission"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:a6b03d2140a6b397bf883ae85d0c3b9304256f7ba9d190fd92fde2000c086981"
+    },
+    "mobile-react-native": {
+      "path": "03-skills/mobile-react-native/SKILL.md",
+      "tier": "spoke",
+      "domain": "engineering",
+      "hub": "lead-frontend-engineer",
+      "prerequisites": [
+        "lead-frontend-engineer"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "react native",
+        "expo",
+        "eas",
+        "react navigation",
+        "expo router",
+        "native module",
+        "jsi",
+        "hermes",
+        "flashlist",
+        "mobile react"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:a767e2e6c1dda7500b28fd41829853fddb3eb51bb3efaa2687ac30bf6e5d186a"
     },
     "motion": {
       "path": "03-skills/motion/SKILL.md",
@@ -3046,6 +3201,114 @@
         "*"
       ],
       "hash": "sha256:25775592b721dcb1a6464304b086147c417ab102d5bdae56ff6f0e02c356659b"
+    },
+    "sec-appsec-owasp": {
+      "path": "03-skills/sec-appsec-owasp/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "security",
+      "hub": "lead-security-architect",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "owasp",
+        "injection",
+        "sql injection",
+        "xss",
+        "csrf",
+        "ssrf",
+        "input validation",
+        "output encoding",
+        "content security policy",
+        "sanitization",
+        "secure sdlc"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:e5777fcb98730444cbc6cc0f93a0cb23c9693cf14ebb0056eb1db2ddb4d7f2e4"
+    },
+    "sec-authn-authz": {
+      "path": "03-skills/sec-authn-authz/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "security",
+      "hub": "lead-security-architect",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "authentication",
+        "authorization",
+        "oauth",
+        "oidc",
+        "jwt",
+        "session",
+        "rbac",
+        "abac",
+        "access control",
+        "idor",
+        "least privilege",
+        "sso",
+        "mfa"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:78bcc87ba6c1142abd8b3801a6ac7f511e27c693312f59e915412fde84c69e89"
+    },
+    "sec-supply-chain": {
+      "path": "03-skills/sec-supply-chain/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "security",
+      "hub": "lead-security-architect",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "supply chain",
+        "dependency",
+        "sbom",
+        "provenance",
+        "lockfile",
+        "secrets",
+        "secret management",
+        "vault",
+        "ci/cd security",
+        "token",
+        "dependabot",
+        "typosquatting"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:6d92c158ee3b57bdd5e5e004b50fe20d144e75086a3ada950a29e9ba4f3a51e5"
+    },
+    "sec-threat-modeling": {
+      "path": "03-skills/sec-threat-modeling/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "security",
+      "hub": "lead-security-architect",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "threat model",
+        "stride",
+        "attack tree",
+        "trust boundary",
+        "data flow diagram",
+        "attack surface",
+        "risk assessment",
+        "abuse case"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:2fa73da905d6a9ed8b1695d23d07337dcbf83728056750ed8b0bbd5d19b9f1b8"
     },
     "skill-placement": {
       "path": "03-skills/skill-placement/SKILL.md",
@@ -4367,6 +4630,10 @@
       "product-foundations",
       "lead-product-manager"
     ],
+    "lead-security-architect": [
+      "eng-foundations",
+      "lead-security-architect"
+    ],
     "lead-technical-digital-artist": [
       "lead-technical-digital-artist"
     ],
@@ -4431,6 +4698,26 @@
       "lead-type-designer",
       "variable-icon-font-architect",
       "math-optical-optimization"
+    ],
+    "mobile-android-kotlin": [
+      "eng-foundations",
+      "lead-frontend-engineer",
+      "mobile-android-kotlin"
+    ],
+    "mobile-ios-swiftui": [
+      "eng-foundations",
+      "lead-frontend-engineer",
+      "mobile-ios-swiftui"
+    ],
+    "mobile-platform-craft": [
+      "eng-foundations",
+      "lead-frontend-engineer",
+      "mobile-platform-craft"
+    ],
+    "mobile-react-native": [
+      "eng-foundations",
+      "lead-frontend-engineer",
+      "mobile-react-native"
     ],
     "motion": [
       "design-foundations",
@@ -4541,6 +4828,26 @@
     ],
     "science-foundations": [
       "science-foundations"
+    ],
+    "sec-appsec-owasp": [
+      "eng-foundations",
+      "lead-security-architect",
+      "sec-appsec-owasp"
+    ],
+    "sec-authn-authz": [
+      "eng-foundations",
+      "lead-security-architect",
+      "sec-authn-authz"
+    ],
+    "sec-supply-chain": [
+      "eng-foundations",
+      "lead-security-architect",
+      "sec-supply-chain"
+    ],
+    "sec-threat-modeling": [
+      "eng-foundations",
+      "lead-security-architect",
+      "sec-threat-modeling"
     ],
     "skill-placement": [
       "skill-placement"

@@ -361,3 +361,4 @@ Before shipping any interactive component or flow:
 
 ## Related
 - hub → [[lead-accessibility-architect]]
+- governs → [[mobile-platform-craft]]

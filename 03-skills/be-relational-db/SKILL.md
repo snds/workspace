@@ -406,6 +406,26 @@ one (must scan all partition children).
 
 ---
 
+## Postgres in practice
+
+_Synthesized from community "Postgres best-practices" skills (e.g. supabase-postgres-best-practices on
+skills.sh). Postgres-specific application of the relational principles above._
+
+- **Read the plan.** `EXPLAIN (ANALYZE, BUFFERS)` is the source of truth — never guess at performance.
+  Watch for sequential scans on large tables, bad row estimates (stale stats → `ANALYZE`), and nested-loop
+  joins over big sets.
+- **Index types matter.** B-tree for equality/range; **GIN** for `jsonb`/array/full-text containment;
+  **GiST** for geometric/range; partial + expression indexes for targeted predicates. An unused index is
+  pure write cost — drop it.
+- **MVCC + VACUUM.** Updates create dead tuples; autovacuum reclaims them. Long transactions and high churn
+  cause bloat — monitor it. `VACUUM`/`REINDEX` are operational realities, not afterthoughts.
+- **`jsonb`, used deliberately.** Great for genuinely schemaless data; not a substitute for columns you query
+  or constrain. Index the paths you filter on.
+- **Row-Level Security** for multi-tenant isolation enforced *in the database* — pairs with
+  [[sec-authn-authz]] (authorization at the data layer, defense in depth).
+- **Pool connections.** Postgres connections are expensive (process-per-connection); use a pooler
+  (PgBouncer/built-in) — see [[be-caching-performance]].
+
 ## Cross-Spoke Routing
 
 | Topic | Route To |

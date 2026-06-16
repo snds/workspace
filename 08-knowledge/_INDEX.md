@@ -50,6 +50,7 @@ _No entries yet._
 - [[workspace-infrastructure]] — Drive+Git layered sync, hook dispatcher, Drive desync bug + fix, multi-machine topology, sync monitoring on macOS (UF_DATALESS), multi-identity GitHub setup (2026-05-07)
 - [[workflow-patterns]] — Stale-content review, 3-bucket pending structure, audit_skip, session-end habits, trigger-word loading (2026-04-28)
 - [[knowledge-vault-design]] — Why three surfacing tiers exist, why entries ≠ skills, how to extend the system (2026-04-29)
+- [[skill-ecosystem-and-mcp-servers]] — Evaluation of skills.sh + mcpmarket.com: the three buckets (tool integrations / already-covered / genuine gaps), what we added (science math+physics, mobile, security), dedup decisions, attribution convention, recommended MCP servers (Blender for Legion, Postgres). Triggers: `mcpmarket`, `skills.sh`, `mcp server`, `blender`, `add skills`, `skill library` (2026-06-16)
 
 ---
 

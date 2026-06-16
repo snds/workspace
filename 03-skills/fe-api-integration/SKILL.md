@@ -20,6 +20,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+governed_by: [sec-appsec-owasp]
 ---
 
 # FE API Integration
@@ -476,3 +477,4 @@ with error boundaries requires careful co-placement.
 
 ## Related
 - hub → [[lead-frontend-engineer]]
+- governed-by → [[sec-appsec-owasp]]
