@@ -19,7 +19,7 @@ aliases: [lead-art-director]
 tier: hub
 domain: design
 spec_version: "2.0"
-prerequisites: [game-foundations]
+prerequisites: [game-foundations, imaging-foundations]
 ---
 
 # Lead Art Director
@@ -146,4 +146,4 @@ Intent) from available reference material and apply delta analysis.
 - Check **ui-art.md** for diegetic/non-diegetic UI in web context (HTML overlays and Canvas rendering)
 
 ## Related
-- foundation → [[game-foundations]]
+- foundation → [[game-foundations]] · [[imaging-foundations]]

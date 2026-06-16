@@ -10,7 +10,7 @@ spec_version: "2.0"
 tier: spoke
 domain: game
 hub: lead-game-developer
-prerequisites: [lead-game-developer]
+prerequisites: [lead-game-developer, imaging-foundations]
 ---
 
 # Three.js VFX and Atmosphere Specialist
@@ -174,4 +174,5 @@ See `/references/particle-and-atmosphere.md` for:
 - Weather systems
 
 ## Related
+- foundation → [[imaging-foundations]]
 - hub → [[lead-game-developer]]

@@ -13,7 +13,7 @@ aliases: [motion-3d-spatial]
 tier: spoke
 domain: design
 hub: lead-motion-designer
-prerequisites: [lead-motion-designer]
+prerequisites: [lead-motion-designer, imaging-foundations]
 spec_version: "2.0"
 ---
 
@@ -436,4 +436,5 @@ const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
 - W3C CSS Transforms Module Level 2 specification
 
 ## Related
+- foundation → [[imaging-foundations]]
 - hub → [[lead-motion-designer]]

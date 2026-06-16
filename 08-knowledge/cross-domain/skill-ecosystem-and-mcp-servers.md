@@ -40,6 +40,14 @@ the math/physics substrate** beneath them — confirming that the science domain
 - **Security** — `lead-security-architect` (cross-cutting hub) + `sec-threat-modeling`, `sec-authn-authz`,
   `sec-appsec-owasp`, `sec-supply-chain`. Governs `be-api-design`, `fe-api-integration`, `devops-ci-cd`;
   complements (does not duplicate) the existing `be-security-posture`.
+- **Imaging & rendering foundation** (2026-06-16, follow-up) — `imaging-foundations` + `img-optics-light`,
+  `img-photography`, `img-photoreal-rendering`, `img-cinematography`, `img-vfx`. Authored because the
+  directories cover only *engine wrappers* (Unity HDRP, Three.js) and AI *image generators* (e.g. "LaChapelle
+  style") — **none teach the light/optics/camera/photorealistic-rendering theory.** Engine-agnostic with
+  Three.js/WebGPU corollaries; wired under `lead-art-director`, the `3d-*`/`threejs-*`/`glsl`/`webgpu`
+  rendering skills, `motion-3d-spatial`, and `legion-project` → photoreal rendering work now loads the
+  light + math/physics foundations first. The route to bring Unreal/Unity/Cycles-grade photorealism into
+  Legion via Three.js.
 - **Enhancement:** Postgres-specific practices appended to `be-relational-db` (EXPLAIN, index types, MVCC/VACUUM,
   jsonb, RLS, pooling).
 

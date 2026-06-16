@@ -11,7 +11,7 @@ spec_version: "2.0"
 tier: spoke
 domain: game
 hub: lead-game-developer
-prerequisites: [lead-game-developer, science-foundations]
+prerequisites: [lead-game-developer, science-foundations, imaging-foundations]
 ---
 
 # GLSL Shader Architect for Three.js
@@ -150,5 +150,5 @@ Comprehensive implementation guides available in:
 6. Include explanation of key shader techniques used
 
 ## Related
-- foundation → [[science-foundations]]
+- foundation → [[imaging-foundations]] · [[science-foundations]]
 - hub → [[lead-game-developer]]

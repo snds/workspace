@@ -16,7 +16,7 @@ hub: lead-3d-designer
 aliases: [3d-lighting-rendering]
 tier: spoke
 domain: design
-prerequisites: [lead-3d-designer]
+prerequisites: [lead-3d-designer, imaging-foundations]
 spec_version: "2.0"
 ---
 
@@ -397,4 +397,5 @@ Before delivering a lighting/rendering setup:
 - [ ] Real-time: shadow and reflection probe placement covers all hero surfaces
 
 ## Related
+- foundation → [[imaging-foundations]]
 - hub → [[lead-3d-designer]]

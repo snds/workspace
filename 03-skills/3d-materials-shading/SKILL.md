@@ -16,7 +16,7 @@ hub: lead-3d-designer
 aliases: [3d-materials-shading]
 tier: spoke
 domain: design
-prerequisites: [lead-3d-designer]
+prerequisites: [lead-3d-designer, imaging-foundations]
 spec_version: "2.0"
 ---
 
@@ -385,4 +385,5 @@ Before delivering a material set:
 - [ ] No texture seams visible at normal viewing distance
 
 ## Related
+- foundation → [[imaging-foundations]]
 - hub → [[lead-3d-designer]]

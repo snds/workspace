@@ -10,10 +10,10 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 222,
+    "total": 228,
     "by_tier": {
       "cross-cutting": 23,
-      "foundation": 15,
+      "foundation": 21,
       "hub": 40,
       "spoke": 144
     }
@@ -42,7 +42,8 @@
       "domain": "design",
       "hub": "lead-3d-designer",
       "prerequisites": [
-        "lead-3d-designer"
+        "lead-3d-designer",
+        "imaging-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -51,7 +52,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:dbe73086556dc653e0f6ffd308495ec2b74b6778681d83df438955fe013f22b6"
+      "hash": "sha256:32c4eea962639447ac218c9fb4efbd1780c30bf0d8d92b5bb331ef56cb93940c"
     },
     "3d-materials-shading": {
       "path": "03-skills/3d-materials-shading/SKILL.md",
@@ -59,7 +60,8 @@
       "domain": "design",
       "hub": "lead-3d-designer",
       "prerequisites": [
-        "lead-3d-designer"
+        "lead-3d-designer",
+        "imaging-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -68,7 +70,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:1d930fd96fc0452f9e21116b11a496597be62230f09e6cab5d6fa9e760c94fb9"
+      "hash": "sha256:91c35a428255b0fe07419e48871edc135f4d276e1e87672011363912acccc043"
     },
     "3d-modeling-fundamentals": {
       "path": "03-skills/3d-modeling-fundamentals/SKILL.md",
@@ -469,7 +471,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:8d95bf8a663e00b8605161c783e1e32a1eb4f5b326cc2bbf0614732ea1b434e8"
+      "hash": "sha256:ecb666970353663774ec72759721efb4365f579f7d8cf786d72e4e13fb7facf2"
     },
     "devops-ci-cd": {
       "path": "03-skills/devops-ci-cd/SKILL.md",
@@ -1786,7 +1788,8 @@
       "hub": "lead-game-developer",
       "prerequisites": [
         "lead-game-developer",
-        "science-foundations"
+        "science-foundations",
+        "imaging-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -1795,7 +1798,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:1fda41815f665085440e1a5c720cee9ef1c3d0372d03592a6722ce54896793a0"
+      "hash": "sha256:a65b6b0a251a66f53a0a73fe1b62ba1f804b280445a0f37f47270b0020a9c064"
     },
     "google-fonts-scraper": {
       "path": "03-skills/google-fonts-scraper/SKILL.md",
@@ -1945,6 +1948,192 @@
         "*"
       ],
       "hash": "sha256:f73550ae42e0e3751583ed2c385f3839200e591382bd8dac98395eeba5d66a53"
+    },
+    "imaging-foundations": {
+      "path": "03-skills/imaging-foundations/SKILL.md",
+      "tier": "foundation",
+      "domain": "imaging",
+      "hub": null,
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "light",
+        "optics",
+        "exposure",
+        "camera",
+        "lens",
+        "pbr",
+        "brdf",
+        "global illumination",
+        "ray tracing",
+        "path tracing",
+        "tonemapping",
+        "hdr",
+        "cinematography",
+        "vfx",
+        "photorealism",
+        "rendering equation",
+        "image based lighting"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:6c3ed630fdeb645cdcfeac6629e3c82e472d8fb90d4f387b2da5c5e3ae372866"
+    },
+    "img-cinematography": {
+      "path": "03-skills/img-cinematography/SKILL.md",
+      "tier": "foundation",
+      "domain": "imaging",
+      "hub": "imaging-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "cinematography",
+        "shot",
+        "framing",
+        "composition",
+        "camera movement",
+        "dolly",
+        "crane",
+        "three-point lighting",
+        "key light",
+        "mood lighting",
+        "color grading",
+        "180 degree rule",
+        "shot list",
+        "blocking"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:df7b8b464bc080037385d4c0d4e94f91c81638d0cf3ee5f390fa9d51919bf8b6"
+    },
+    "img-optics-light": {
+      "path": "03-skills/img-optics-light/SKILL.md",
+      "tier": "foundation",
+      "domain": "imaging",
+      "hub": "imaging-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "radiometry",
+        "photometry",
+        "irradiance",
+        "radiance",
+        "flux",
+        "inverse square",
+        "fresnel",
+        "refraction",
+        "scattering",
+        "subsurface",
+        "rendering equation",
+        "energy conservation",
+        "light physics"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:c645ddec209a6d645a18d559209786ce37a5514f242823456b60f3aad5e1a711"
+    },
+    "img-photography": {
+      "path": "03-skills/img-photography/SKILL.md",
+      "tier": "foundation",
+      "domain": "imaging",
+      "hub": "imaging-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "exposure",
+        "aperture",
+        "f-stop",
+        "shutter speed",
+        "iso",
+        "depth of field",
+        "bokeh",
+        "focal length",
+        "field of view",
+        "dynamic range",
+        "white balance",
+        "ev",
+        "sensor",
+        "lens",
+        "motion blur"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:dc75e06173703fd419258534fb92b2da023c2b7df0eed1164a59cfc356398cb7"
+    },
+    "img-photoreal-rendering": {
+      "path": "03-skills/img-photoreal-rendering/SKILL.md",
+      "tier": "foundation",
+      "domain": "imaging",
+      "hub": "imaging-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "pbr",
+        "physically based rendering",
+        "brdf",
+        "metallic roughness",
+        "global illumination",
+        "ray tracing",
+        "path tracing",
+        "ambient occlusion",
+        "ibl",
+        "light probe",
+        "lightmap",
+        "radiosity",
+        "shadow mapping",
+        "tonemapping",
+        "aces",
+        "deferred rendering"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:eed0e19c11e7156b6445bbc754a1f965f8e8fb54f81893c6d222d11645cf31e3"
+    },
+    "img-vfx": {
+      "path": "03-skills/img-vfx/SKILL.md",
+      "tier": "foundation",
+      "domain": "imaging",
+      "hub": "imaging-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "vfx",
+        "particles",
+        "particle system",
+        "simulation",
+        "fluid",
+        "smoke",
+        "fire",
+        "volumetrics",
+        "god rays",
+        "atmospheric scattering",
+        "compositing",
+        "bloom",
+        "dissolve",
+        "trail",
+        "emitter"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:6f1cda2f646a46f106b0639326774f5a4a17494b97fad8f780ccd6a17b73b87f"
     },
     "infod-dashboard-patterns": {
       "path": "03-skills/infod-dashboard-patterns/SKILL.md",
@@ -2103,7 +2292,8 @@
       "domain": "design",
       "hub": null,
       "prerequisites": [
-        "game-foundations"
+        "game-foundations",
+        "imaging-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -2112,7 +2302,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6f1c47f3ffd823780f90b60ba08019df9b1255a8591a7116734f1ba7ff1ce162"
+      "hash": "sha256:e8b434284bac1a7080f5dc56a08fefeac2b8b892b7bf77ddc736caa47f803994"
     },
     "lead-backend-engineer": {
       "path": "03-skills/lead-backend-engineer/SKILL.md",
@@ -2467,7 +2657,8 @@
       "domain": "game",
       "hub": null,
       "prerequisites": [
-        "science-foundations"
+        "science-foundations",
+        "imaging-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -2476,7 +2667,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:a286b12afbe103f6e0faefd2ad01810115f497f3eb52e11cc0b78d420bd60eb3"
+      "hash": "sha256:b3e48ea9ff8285241b46b595028599ecd0b28737f7fe161dc44f85669cbf332d"
     },
     "material-symbols-project": {
       "path": "03-skills/material-symbols-project/SKILL.md",
@@ -2734,7 +2925,8 @@
       "domain": "design",
       "hub": "lead-motion-designer",
       "prerequisites": [
-        "lead-motion-designer"
+        "lead-motion-designer",
+        "imaging-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -2743,7 +2935,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:46db68b8f9030db7008bd806ac7976a8bc575255e65ab94a42cdb2468a5baa9a"
+      "hash": "sha256:7d861934f2fcd1f4a8418550a9b026eb0a64367108ecc6db11582676da3c485b"
     },
     "motion-accessibility": {
       "path": "03-skills/motion-accessibility/SKILL.md",
@@ -3200,7 +3392,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:25775592b721dcb1a6464304b086147c417ab102d5bdae56ff6f0e02c356659b"
+      "hash": "sha256:c9b88f457738d3c699606d9a4ab4450e5b8bc1406b89150c0767eb3dd85dbf2e"
     },
     "sec-appsec-owasp": {
       "path": "03-skills/sec-appsec-owasp/SKILL.md",
@@ -3353,7 +3545,8 @@
       "hub": "lead-game-developer",
       "prerequisites": [
         "lead-game-developer",
-        "science-foundations"
+        "science-foundations",
+        "imaging-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -3362,7 +3555,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:35ae6b413909190a0b0e1f87a6c30ba4d95a5ce4c81767c3b97760c8928a564c"
+      "hash": "sha256:3857fa740d7c45f07067375830322400a913cfb428c6b76cf8122b4b5cc4fd8d"
     },
     "threejs-vfx-atmosphere": {
       "path": "03-skills/threejs-vfx-atmosphere/SKILL.md",
@@ -3370,7 +3563,8 @@
       "domain": "game",
       "hub": "lead-game-developer",
       "prerequisites": [
-        "lead-game-developer"
+        "lead-game-developer",
+        "imaging-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -3379,7 +3573,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:66fb7aa9c5fec79aa9764aee5ab25d51278e95ace1d023e1b7350e321f884adc"
+      "hash": "sha256:4f428906a7d3af6e0531ae40f1998c44b7e02ed50d6bb40e4dd7b255c9c5bb09"
     },
     "type": {
       "path": "03-skills/type/SKILL.md",
@@ -3983,7 +4177,8 @@
       "hub": "lead-game-developer",
       "prerequisites": [
         "lead-game-developer",
-        "science-foundations"
+        "science-foundations",
+        "imaging-foundations"
       ],
       "related": [],
       "governed_by": [],
@@ -3992,7 +4187,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:1045b5af2d1c8ab2878295c75e7211f97791a710100818c41d7230d998aebed2"
+      "hash": "sha256:3155355259ed62da321e96b7bda16a16a9f6ca3f1cbe308cfcba727ccb73f808"
     },
     "workspace-bootstrap": {
       "path": "03-skills/workspace-bootstrap/SKILL.md",
@@ -4026,11 +4221,13 @@
     ],
     "3d-lighting-rendering": [
       "design-foundations",
+      "imaging-foundations",
       "lead-3d-designer",
       "3d-lighting-rendering"
     ],
     "3d-materials-shading": [
       "design-foundations",
+      "imaging-foundations",
       "lead-3d-designer",
       "3d-materials-shading"
     ],
@@ -4498,6 +4695,7 @@
     ],
     "glsl-shader-architect": [
       "game-foundations",
+      "imaging-foundations",
       "science-foundations",
       "lead-game-developer",
       "glsl-shader-architect"
@@ -4535,6 +4733,29 @@
     "ia-taxonomy-classification": [
       "lead-information-architect",
       "ia-taxonomy-classification"
+    ],
+    "imaging-foundations": [
+      "imaging-foundations"
+    ],
+    "img-cinematography": [
+      "imaging-foundations",
+      "img-cinematography"
+    ],
+    "img-optics-light": [
+      "imaging-foundations",
+      "img-optics-light"
+    ],
+    "img-photography": [
+      "imaging-foundations",
+      "img-photography"
+    ],
+    "img-photoreal-rendering": [
+      "imaging-foundations",
+      "img-photoreal-rendering"
+    ],
+    "img-vfx": [
+      "imaging-foundations",
+      "img-vfx"
     ],
     "infod-dashboard-patterns": [
       "design-foundations",
@@ -4580,6 +4801,7 @@
     ],
     "lead-art-director": [
       "game-foundations",
+      "imaging-foundations",
       "lead-art-director"
     ],
     "lead-backend-engineer": [
@@ -4656,11 +4878,13 @@
       "lead-visual-qa"
     ],
     "legion-narrative-design": [
+      "imaging-foundations",
       "science-foundations",
       "legion-project",
       "legion-narrative-design"
     ],
     "legion-project": [
+      "imaging-foundations",
       "science-foundations",
       "legion-project"
     ],
@@ -4725,6 +4949,7 @@
     ],
     "motion-3d-spatial": [
       "design-foundations",
+      "imaging-foundations",
       "lead-motion-designer",
       "motion-3d-spatial"
     ],
@@ -4857,12 +5082,14 @@
     ],
     "threejs-materials-master": [
       "game-foundations",
+      "imaging-foundations",
       "science-foundations",
       "lead-game-developer",
       "threejs-materials-master"
     ],
     "threejs-vfx-atmosphere": [
       "game-foundations",
+      "imaging-foundations",
       "science-foundations",
       "lead-game-developer",
       "threejs-vfx-atmosphere"
@@ -5040,6 +5267,7 @@
     ],
     "webgpu-advanced-rendering": [
       "game-foundations",
+      "imaging-foundations",
       "science-foundations",
       "lead-game-developer",
       "webgpu-advanced-rendering"
