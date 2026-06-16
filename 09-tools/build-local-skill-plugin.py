@@ -72,7 +72,7 @@ PLUGIN_VERSION = "0.1.0"
 
 # --- Paths ------------------------------------------------------------------
 
-SCRIPT_DIR = Path(__file__).resolve().parent           # .../08-tools
+SCRIPT_DIR = Path(__file__).resolve().parent           # .../09-tools
 WORKSPACE_ROOT = SCRIPT_DIR.parent                      # workspace root
 SRC_SKILLS = WORKSPACE_ROOT / "02-skills"
 

@@ -59,7 +59,7 @@
     "06-context": "Durable supporting context.",
     "07-projects": "Project-specific working areas and local context.",
     "08-knowledge": "Knowledge base and long-lived notes.",
-    "08-tools": "Scripts, validators, and automation support."
+    "09-tools": "Scripts, validators, and automation support."
   },
   "canonical_documents": {
     "bootstrap": "00-bootstrap/BOOTSTRAP.md",
@@ -154,6 +154,6 @@
     "Keep CLAUDE.md as active adapter",
     "Add Perplexity bootstrap support without altering Claude assumptions",
     "Extend skills metadata for agent compatibility",
-    "Add bootstrap validation tooling under 08-tools"
+    "Add bootstrap validation tooling under 09-tools"
   ]
 }

@@ -1,0 +1,24 @@
+name: registry-drift
+
+# Fails if 02-skills/skills.registry.json is out of date with the SKILL.md frontmatter,
+# or if the skill graph is invalid (dependency cycle or dangling prerequisite).
+# The registry is generated, never hand-edited — regenerate with:
+#   python3 09-tools/build-registry.py
+
+on:
+  push:
+    branches: [main]
+    paths: ["02-skills/**", "09-tools/build-registry.py"]
+  pull_request:
+    paths: ["02-skills/**", "09-tools/build-registry.py"]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Check registry is in sync with frontmatter
+        run: python3 09-tools/build-registry.py --check

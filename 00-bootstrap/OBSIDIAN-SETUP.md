@@ -58,7 +58,7 @@ Claude Workspace/                          ← Obsidian vault root = Claude Code
 ├── 06-context/                            ← authoritative context
 ├── 07-projects/                           ← project folders (mostly ignored by Git)
 │   └── 00-obsidian/                       ← THIS integration as a project (tracked in Git)
-└── 08-tools/                              ← (ignored by Git)
+└── 09-tools/                              ← (ignored by Git)
 ```
 
 ## How the three consumers see it

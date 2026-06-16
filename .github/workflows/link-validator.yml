@@ -1,0 +1,24 @@
+name: link-validator
+
+# Validates the typed `## Related` wikilink graph: no dangling links, and typed
+# relations are reciprocal (A foundation→B implies B applies-in←A). Warns when a
+# design/engineering spoke is missing a `foundation →` link. Only inspects the
+# canonical typed format, so unmigrated skills are skipped.
+
+on:
+  push:
+    branches: [main]
+    paths: ["02-skills/**", "09-tools/validate-links.py"]
+  pull_request:
+    paths: ["02-skills/**", "09-tools/validate-links.py"]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Validate skill cross-links
+        run: python3 09-tools/validate-links.py

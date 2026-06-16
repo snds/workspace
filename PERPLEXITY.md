@@ -57,7 +57,7 @@ The workspace is organized into durable zones:
 - `06-context/` — durable context and supporting notes
 - `07-projects/` — project workspaces with local context
 - `08-knowledge/` — knowledge base and long-lived reference material
-- `08-tools/` — scripts, compilers, and support utilities
+- `09-tools/` — scripts, compilers, and support utilities
 
 Root-level helper files such as `_HOME.md`, `_CONTEXT.md`, `_FRAMEWORKS.md`, and `_SKILLS.md` act as discovery shortcuts.
 
@@ -150,7 +150,7 @@ When improving this workspace for Perplexity, prefer adding or extending:
 - `00-bootstrap/workspace-manifest.v2.json` or additive fields in the existing manifest
 - Skill compatibility metadata under `02-skills/`
 - Project-local universal context files where needed
-- Validation scripts in `08-tools/`
+- Validation scripts in `09-tools/`
 
 ---
 

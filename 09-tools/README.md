@@ -1,6 +1,6 @@
-# 08-tools/
+# 09-tools/
 
-Workspace utilities. Most of `08-tools/` is gitignored (vendor + per-machine tools); the
+Workspace utilities. Most of `09-tools/` is gitignored (vendor + per-machine tools); the
 files listed here are explicitly whitelisted in `.gitignore` because they're useful on
 every machine and worth version control.
 
@@ -11,7 +11,7 @@ every machine and worth version control.
 One-shot snapshot of Google Drive sync state for the workspace.
 
 ```
-./08-tools/drive-audit.py
+./09-tools/drive-audit.py
 ```
 
 Reports total files, downloaded vs. placeholder ("dataless") files, apparent vs. on-disk
@@ -27,7 +27,7 @@ sets on placeholder files.
 Live monitor that loops the same scan and auto-exits when sync looks complete.
 
 ```
-./08-tools/drive-monitor.py [interval_seconds]   # default 60s
+./09-tools/drive-monitor.py [interval_seconds]   # default 60s
 ```
 
 Each tick prints a row with file count, pending placeholders, % remaining, on-disk size,

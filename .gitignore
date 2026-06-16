@@ -37,6 +37,9 @@
 !.obsidian/
 !.obsidian/**
 
+!.github/
+!.github/**
+
 !00-bootstrap/
 !00-bootstrap/**
 
@@ -58,13 +61,16 @@
 !08-knowledge/
 !08-knowledge/**
 
-# 08-tools/ stays mostly local (vendor + per-machine tools), but selectively
-# track the cross-machine utilities so they're version-controlled.
-!08-tools/
-!08-tools/README.md
-!08-tools/drive-audit.py
-!08-tools/drive-monitor.py
-!08-tools/build-local-skill-plugin.py
+# 09-tools/ stays mostly local (vendor + per-machine tools), but selectively
+# track the cross-machine, portable utilities so they're version-controlled.
+!09-tools/
+!09-tools/README.md
+!09-tools/build-registry.py
+!09-tools/validate-links.py
+!09-tools/compile-cursor-rules.py
+!09-tools/build-local-skill-plugin.py
+!09-tools/drive-audit.py
+!09-tools/drive-monitor.py
 
 # Track only the 00-obsidian integration project; other projects stay local.
 !07-projects/

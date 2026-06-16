@@ -64,4 +64,4 @@ WHERE file.name = "project-context"
 - **`05-version-registers/`** — Versioned artifact history.
 - **`06-context/`** — Role, project context, session log, artifact registry.
 - **`07-projects/`** — Active projects, numbered.
-- **`08-tools/`** — Standalone tools used across projects.
+- **`09-tools/`** — Standalone tools used across projects.

@@ -1,0 +1,37 @@
+# Sean's Workspace
+
+> A long-lived, surface/device/LLM-agnostic personal operating environment for design,
+> engineering, product, data, and game work. It is simultaneously a git repository (the
+> source of truth), an Obsidian vault, and an agent workspace. Any capable model — not just
+> one vendor's — can enter, orient, and work here by following the universal contract below.
+> Nothing here depends on Google Drive, Desktop Commander, or a specific assistant.
+
+## Start here (read in order)
+- [AGENTS.md](AGENTS.md): the universal agent contract — folder semantics, read order, the skill
+  loading-precedence algorithm, and the bootstrap-on-a-checkout protocol.
+- [skills.registry.json](02-skills/skills.registry.json): machine-readable skill graph (tiers,
+  prerequisites, cross-references, triggers, precomputed load chains). Generated from frontmatter.
+- [workspace-ontology.md](01-shared-references/workspace-ontology.md): vocabulary + the
+  "where does this belong?" routing map. Read before writing anything.
+
+## How to work here
+- Resolve the workspace root as the directory containing `AGENTS.md`. The git checkout is the
+  source of truth — read and write plain files; commit reviewable diffs.
+- To answer a request: match it to skills (via `triggers`/`description`), then load the skill plus
+  its `load_chains` ancestors in order (foundation → hub → spoke). See AGENTS.md for the algorithm.
+- Before editing the workspace, consult the routing map and the contribution framework
+  ([00-frameworks/08-workspace-contribution-framework.md](00-frameworks/08-workspace-contribution-framework.md)).
+
+## Contracts + specs
+- [skill-frontmatter.md](01-shared-references/skill-frontmatter.md): the SKILL.md frontmatter v2 spec.
+- [skills.registry.schema.json](02-skills/skills.registry.schema.json): JSON Schema for the registry.
+- [epistemic-standards.md](01-shared-references/epistemic-standards.md),
+  [artifact-standards.md](01-shared-references/artifact-standards.md): reasoning + output standards.
+
+## Per-tool adapters (thin layers over AGENTS.md; optional)
+- [CLAUDE.md](CLAUDE.md) — Claude Code / Desktop · [CURSOR.md](CURSOR.md) — Cursor ·
+  [PERPLEXITY.md](PERPLEXITY.md) — Perplexity. A new tool needs no adapter to work at full fidelity;
+  it just executes the AGENTS.md contract.
+
+## Generate / validate
+- `python3 09-tools/build-registry.py` — regenerate the skill registry from frontmatter (stdlib-only).
