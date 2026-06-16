@@ -48,6 +48,27 @@
         "a": 1,
         "rgb": 16486972
       }
+    },
+    {
+      "query": "path:\"02-skills/found-\" OR path:\"-foundations/\"",
+      "color": {
+        "a": 1,
+        "rgb": 16755200
+      }
+    },
+    {
+      "query": "path:\"02-skills/lead-\"",
+      "color": {
+        "a": 1,
+        "rgb": 3447003
+      }
+    },
+    {
+      "query": "path:\"02-skills/a11y-\" OR path:\"02-skills/visual-qa-\"",
+      "color": {
+        "a": 1,
+        "rgb": 15277667
+      }
     }
   ],
   "collapse-display": false,
