@@ -1,0 +1,41 @@
+{
+  "_comment": "Manifest used by setup.py to download and install community plugins. Not read by Obsidian.",
+  "_comment2": "Obsidian enables plugins listed in community-plugins.json; this file tells the installer WHERE to fetch each one.",
+  "plugins": [
+    {
+      "id": "obsidian-git",
+      "repo": "Vinzent03/obsidian-git",
+      "description": "Auto-commit, pull, push. The hands-off git layer."
+    },
+    {
+      "id": "dataview",
+      "repo": "blacksmithgu/obsidian-dataview",
+      "description": "Live queries over vault frontmatter. Powers the MOCs."
+    },
+    {
+      "id": "templater-obsidian",
+      "repo": "SilentVoid13/Templater",
+      "description": "Powerful templates with JS expressions. Replaces core Templates."
+    },
+    {
+      "id": "obsidian-icon-folder",
+      "repo": "FlorianWoelki/obsidian-icon-folder",
+      "description": "Folder + file icons. Visual wayfinding across 15+ projects."
+    },
+    {
+      "id": "omnisearch",
+      "repo": "scambier/obsidian-omnisearch",
+      "description": "Better full-text search. Native search struggles at scale."
+    },
+    {
+      "id": "obsidian-excalidraw-plugin",
+      "repo": "zsviczian/obsidian-excalidraw-plugin",
+      "description": "Diagramming. Useful for design work."
+    },
+    {
+      "id": "periodic-notes",
+      "repo": "liamcain/obsidian-periodic-notes",
+      "description": "Daily/weekly/monthly notes with templating. Powers /today scheduling."
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+# Bootstrap Generator — project-local ignores (also apply when this folder
+# becomes a standalone repo per SPEC §9).
+
+# Generated/test workspaces created by `wsx init` (each is its own git repo)
+demo/
+my-workspace/
+scratch/
+*-workspace/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.venv/
+
+# OS / editor noise
+.DS_Store
+**/.DS_Store
+Icon?
+**/Icon?

@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bootstrap-gen-wsx"
+version = "0.1.0"
+description = "wsx — the deterministic 'hands' of the Bootstrap Generator (AI-agnostic workspace CLI)."
+readme = "../README.md"
+requires-python = ">=3.9"
+# Intentionally ZERO runtime dependencies — runs on a stock Python 3 anywhere.
+dependencies = []
+
+[project.scripts]
+wsx = "wsxlib.cli:main"
+
+[tool.setuptools]
+packages = ["wsxlib"]

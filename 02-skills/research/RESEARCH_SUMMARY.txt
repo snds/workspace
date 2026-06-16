@@ -1,0 +1,184 @@
+WEBGPU, THREE.JS TSL & WEBGPURENDERER: RESEARCH SUMMARY
+========================================================
+
+RESEARCH COMPLETED: March 27, 2026
+
+Document: webgpu-tsl-deep-dive.md (1,416 lines)
+
+SECTIONS COVERED
+================
+
+1. WebGPU Fundamentals
+   - Architecture overview
+   - Why WebGPU is faster (CPU overhead reduction, memory management, compute)
+   - Render pipeline structure
+   - Bind groups concept
+   - Browser support status (Chrome 113+, Firefox 141+/145+, Safari 26+)
+
+2. WebGPU vs WebGL Architecture
+   - State machine vs explicit pipelines comparison
+   - GLSL vs WGSL type system differences
+   - Performance implications
+
+3. Three.js WebGPURenderer
+   - Setup & initialization (async requirement)
+   - API differences from WebGLRenderer
+   - Breaking changes (ShaderMaterial, EffectComposer)
+   - Configuration options
+   - Performance characteristics in practice
+   - TSL migration requirements
+
+4. TSL (Three.js Shading Language)
+   - Overview and purpose
+   - Node categories (mathematical, camera, vertex, world space, screen)
+   - Math operations (basic, trigonometric, vector)
+   - Texture sampling
+   - Control flow (If/Else, Switch, Loop)
+   - Variable declaration (Var, Const, VarIntent)
+   - Post-processing effects (bloom, DOF, FXAA, etc.)
+   - Color operations and tone mapping
+   - Custom functions with Fn()
+
+5. WGSL Syntax Basics
+   - Type system (scalars, vectors, matrices, arrays)
+   - Variable declaration and immutability
+   - Functions and control flow
+   - Built-in functions
+   - Vertex and fragment shader structure
+   - Attributes, bindings, and builtin variables
+
+6. Compute Shaders
+   - What they are and use cases
+   - Workgroups and threading model
+   - Storage buffers and atomic operations
+   - Shared memory and synchronization
+   - Race conditions and thread safety
+   - Three.js integration patterns
+
+7. Advanced Techniques
+   - GPU-driven rendering and frustum culling
+   - Clustered lighting (96 FPS vs 24 FPS improvement)
+   - Bindless textures
+   - Indirect draw calls
+
+8. Converting GLSL to TSL
+   - Transpiler usage
+   - Manual fixes required
+   - Common conversion patterns
+   - Step-by-step examples
+
+9. Browser Support & Deployment
+   - Current browser support (March 2026)
+   - Deployment strategy with automatic fallback
+   - WebGPU support checking
+   - Performance expectations
+   - Known limitations
+
+10. Code Examples
+    - Animated glass material with wave effects
+    - Particle physics with compute shaders
+    - Clustered lighting scene setup
+    - ShaderMaterial to TSL migration
+    - Texture blending with custom nodes
+
+KEY FINDINGS
+============
+
+PRODUCTION READINESS:
+- WebGPU is production-ready since Three.js r171 (September 2025)
+- Zero-configuration imports: import * as THREE from 'three/webgpu'
+- Automatic WebGL 2 fallback for 5% of users without WebGPU support
+- Safari 26 (September 2025) completed browser support coverage
+
+PERFORMANCE GAINS:
+- 2-10x performance improvements in draw-call-heavy scenes
+- Up to 96 FPS vs 24 FPS with clustered lighting
+- 1 million particles updating in <1ms with compute shaders
+- Significant CPU overhead reduction for GPU-bound workloads
+
+TSL ADVANTAGES:
+- Write once, compile to GLSL (WebGL) and WGSL (WebGPU)
+- JavaScript-based with IDE support and refactoring
+- Automatic compiler optimization (dead code elimination, uniform reuse)
+- Type-safe node graphs
+- Integrates with Three.js material lighting system
+
+BROWSER COVERAGE (MARCH 2026):
+- Chrome 113+ : Enabled (April 2023)
+- Edge 113+   : Enabled (April 2023)
+- Firefox 141+ (Windows), 145+ (macOS) : Enabled (July/Sept 2025)
+- Safari 26+  : Enabled (September 2025)
+- Coverage: ~95% of global users
+- Fallback: WebGL 2 for remaining 5%
+
+BREAKING CHANGES:
+- ShaderMaterial / RawShaderMaterial → migrate to TSL + Node Materials
+- EffectComposer → new node-based post-processing system
+- Async initialization required (await renderer.init())
+
+COMPUTE SHADER USE CASES:
+- Particle physics updates (orders of magnitude faster)
+- Physics simulations and constraints
+- GPU-driven rendering (frustum culling, LOD selection)
+- Image processing and filters
+- Spatial data structure building (BVH, grid)
+- Light culling for clustered shading
+
+WEBGPU-SPECIFIC VISUAL TECHNIQUES:
+- GPU-driven rendering with indirect draw calls
+- Clustered lighting for 100+ lights without performance loss
+- Bindless textures for material variety
+- GPU culling and LOD selection
+- Compute shader-based particle systems
+
+SOURCES CONSULTED
+=================
+
+Primary Sources:
+- WebGPU Fundamentals (webgpufundamentals.org)
+- Three.js Official Docs (threejs.org)
+- WebGPU Specification (w3.org)
+- MDN WebGPU API Documentation
+- Three.js Roadmap Blog Posts
+- Toji.dev WebGPU Best Practices
+- Tour of WGSL (google.github.io)
+
+Secondary Sources:
+- Medium articles on TSL and WebGPU
+- Three.js Forum discussions
+- GitHub release notes (r170-r175+)
+- webgpu.com showcase and tutorials
+- Technical blog posts on shader migration
+
+ALL 7 RESEARCH TOPICS FULLY COVERED:
+1. ✓ WebGPU fundamentals and architecture
+2. ✓ Three.js WebGPURenderer setup and migration
+3. ✓ TSL (Three Shading Language) and node materials
+4. ✓ Compute shaders and GPU computation
+5. ✓ Advanced visual techniques (GPU-driven, clustered lighting, etc.)
+6. ✓ Three.js r170+ changes and features
+7. ✓ WGSL syntax and language basics
+
+DOCUMENT FORMAT
+===============
+
+Markdown document with:
+- Comprehensive table of contents
+- Detailed explanations with context
+- Code examples (JavaScript, WGSL, TSL)
+- Performance comparisons
+- Migration guides
+- Architecture diagrams (ASCII)
+- Browser support tables
+- Resource links
+- Document metadata
+
+Total: 1,416 lines of detailed technical documentation
+
+READY FOR:
+- Developer onboarding to WebGPU/TSL
+- Architecture decision making
+- Migration planning from WebGL to WebGPU
+- Code example reference
+- Performance tuning strategies
+- Job candidate interview preparation

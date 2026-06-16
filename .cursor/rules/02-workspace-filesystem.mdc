@@ -1,0 +1,49 @@
+---
+description: Workspace filesystem protocol — skill loading, bootstrap, memory. Auto-attaches on workspace files.
+globs: ["**/02-skills/**", "**/06-context/**", "**/00-bootstrap/**", "**/00-frameworks/**", "**/08-knowledge/**", "**/CLAUDE.md", "**/BOOTSTRAP.md", "**/AGENTS.md", "**/.cursor/rules/**"]
+---
+
+# Workspace Filesystem Protocol
+
+## MCP tool
+
+The `claude-workspace` MCP tool is scoped to:
+- `/Users/sean.sands/claude-workspace` (symlink → Drive/Claude Workspace)
+- `/Users/sean.sands/projects`
+
+Available to all models in Cursor; per `01-agent-controller.mdc`, only Claude writes.
+
+## Claude — allowed without confirmation
+
+- Read any workspace file to answer context questions
+- Write artifacts to `04-artifacts/active/` (naming convention required)
+- Update `06-context/project-context.md`, `session-log.md`, `artifact-registry.md`
+- Update skills in `02-skills/` when explicitly requested
+- Run `08-tools/compile-cursor-rules.py` to sync compiled outputs
+
+## Claude — requires user confirmation
+
+- Modifying `00-frameworks/` or `03-preferences/user-preferences.md`
+- Modifying any file in `00-bootstrap/`
+- Deleting or archiving any skill directory
+- Writing to `.cursor/rules/` outside of the compile script
+
+## Obsidian conventions (always preserve)
+
+- `[[wikilinks]]` for internal links — graph depends on them
+- YAML frontmatter on metadata-bearing notes
+- Tags: lowercase + hyphenated
+- Tasks: `- [ ]` open, `- [x]` done
+- Artifact names: `context_descriptor_vN.N_YYYY-MM-DD.ext`
+- Never delete — move to `_archive/`
+
+## Compile script
+
+Syncs context files → `AGENTS.md`. Run after changes to `06-context/` or `03-preferences/`.
+
+```bash
+cd "/Users/sean.sands/Library/CloudStorage/GoogleDrive-hello@snds.design/My Drive/Claude Workspace"
+python3 08-tools/compile-cursor-rules.py
+# watch mode:
+python3 08-tools/compile-cursor-rules.py --watch
+```

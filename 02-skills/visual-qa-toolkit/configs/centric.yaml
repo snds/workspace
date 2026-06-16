@@ -1,0 +1,127 @@
+# ════════════════════════════════════════════════════════════════════
+# EXAMPLE CONFIG — enterprise-style tuning
+#
+# Named after Centric PLM as the reference project, but contains no
+# Centric-specific baked-in assumptions. This illustrates how to tune
+# the toolkit for a dense enterprise context:
+#   - tight alignment and spacing tolerances
+#   - 4-based spacing scale
+#   - strict WCAG AA and low delta-E palette drift
+#   - tight icon consistency (enterprise DS credibility)
+#
+# FOR AN ACTUAL PROJECT, author a dedicated config at a path the user
+# controls (e.g. alongside the project, or in a project-specific skill).
+# Pass it via `--config /path/to/your-project.yaml`. This file is a
+# starting point, not a bundled project config.
+# ════════════════════════════════════════════════════════════════════
+
+# ────────────────────────────────────────────────────────────────────
+# Centric PLM visual QA config.
+#
+# Tuned for enterprise dense-data UIs: tighter alignment tolerances,
+# strict WCAG AA, the density token scale used by the Centric Core DS.
+# ────────────────────────────────────────────────────────────────────
+
+project_name: Centric
+
+alignment:
+  # Enterprise data-heavy UIs need tight alignment — pixel-perfect left
+  # edges across dense forms and tables.
+  tolerance_px: 1
+  cluster_tolerance_px: 3
+  min_cluster_size: 2
+  min_element_area: 300
+  max_element_area_pct: 0.5
+  edges_to_check: [left, right, top, bottom]
+
+spacing:
+  # Centric density scale: 4-based, supports compact data-table layouts.
+  # Update if the CDS density tokens change.
+  base_scale: [4, 8, 12, 16, 20, 24, 32, 40, 48, 64]
+  tolerance_px: 1
+  min_element_area: 300
+  max_element_area_pct: 0.5
+  max_gap_px: 240
+  min_gap_px: 2
+  overlap_threshold_pct: 0.3
+
+contrast:
+  # Enterprise: WCAG AA non-negotiable. Use AAA config for text-heavy surfaces.
+  standard: WCAG_AA
+  text_size: body
+  auto_detect: true
+  min_region_area: 200
+  max_region_area_pct: 0.2
+
+color_extraction:
+  # Add your tokens path when a palette file exists, e.g.:
+  # palette_path: ./configs/tokens/centric-palette.json
+  delta_e_threshold: 4.0     # tighter than default — brand color fidelity matters
+  delta_e_ideal: 2.3
+  auto_detect: true
+  auto_detect_count: 16
+  sample_radius: 3
+
+visual_diff:
+  reference_path: null
+  ssim_threshold: 0.97       # enterprise: less tolerance for implementation drift
+  pixel_diff_threshold: 20
+  min_region_area: 150
+  dilation_iterations: 3
+  overlay_alpha: 0.5
+
+color_vision:
+  simulations: [deuteranopia, protanopia, tritanopia]
+  dominant_color_count: 10
+  distinct_original_threshold: 10.0
+  collapse_threshold: 4.0
+  min_area_pct: 0.5
+
+typography:
+  # Centric type scale — update if CDS type tokens change.
+  type_scale_px: [11, 12, 13, 14, 16, 18, 20, 24, 28, 32]
+  tolerance_px: 1
+  auto_detect: true
+  min_region_area: 100
+
+grid_overlay:
+  # Centric PLM uses 12-col grids for primary layouts; data panels often
+  # use their own composition outside the column grid.
+  columns: 12
+  column_width_px: null
+  gutter_px: 16
+  margin_px: 24
+  baseline_px: 4             # Centric density baseline
+  ruler_spacing_px: 50
+  ruler_major_spacing_px: 100
+  draw_column_fill: true
+  draw_column_edges: true
+  draw_baseline: true
+  draw_ruler: true
+
+icon_consistency:
+  # Centric icons target a 16/20/24px canvas depending on density mode.
+  # Adjust `canvas_size` to match the icon export size you're analyzing.
+  canvas_size: 24
+  extensions: [.png]
+  background_threshold: 240
+  alpha_threshold: 10
+  # Tight — icon set consistency is important for DS credibility
+  bbox_size_stdev_threshold: 1.5
+  weight_stdev_threshold: 1.5
+  stroke_stdev_threshold: 1.5
+  max_icons_in_grid: 80
+
+state_comparison:
+  # Centric components: standard state set for interactive elements.
+  extensions: [.png, .jpg, .jpeg]
+  expected_states: [default, hover, focus, active, disabled]
+  min_ssim_delta: 0.02
+  critical_pairs:
+    - [default, hover]
+    - [default, focus]
+    - [default, active]
+    - [default, disabled]
+    - [hover, focus]           # hover and focus should be distinguishable
+  critical_min_delta: 0.04
+  resize_to_smallest: true

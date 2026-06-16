@@ -1,0 +1,4 @@
+# Personal identity — applied by ~/.gitconfig when gitdir is under ~/personal/
+[user]
+	name = snds
+	email = 570874+snds@users.noreply.github.com

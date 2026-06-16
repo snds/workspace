@@ -1,0 +1,1021 @@
+{
+  "last_sync_check": "2026-06-04T15:01:16",
+  "sync_interval_minutes": 15,
+  "local_mount": {
+    "user": "/Users/sean.sands/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/e70b732c-e743-4131-b894-b66663f7b348/a1c64046-45ec-4c66-b9c2-c87132d2ee6a/skills",
+    "public": "/mnt/skills/public",
+    "examples": "/mnt/skills/examples"
+  },
+  "skills": {
+    "3d-asset-pipeline": {
+      "drive_path": "02-skills/3d-asset-pipeline/SKILL.md",
+      "hash": "sha256:b15ea7dba369eea9d835c4a6fcc72173318731c76fcc6321e64bb8793a82c5d2",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "3d-lighting-rendering": {
+      "drive_path": "02-skills/3d-lighting-rendering/SKILL.md",
+      "hash": "sha256:4d1dc99bdabda31ba4d61bde32e60c6aa2126d6ab14862872afa42ba312d7e29",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "3d-materials-shading": {
+      "drive_path": "02-skills/3d-materials-shading/SKILL.md",
+      "hash": "sha256:2ccdc09e5382f38e6ea7e504855e0a2d0a8799101ccc00c240ac462f4dd366fd",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "3d-modeling-fundamentals": {
+      "drive_path": "02-skills/3d-modeling-fundamentals/SKILL.md",
+      "hash": "sha256:28db78e81afa75b2d8a1904c2590aae30603671ce4ce9f1e68faac86cce6a480",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "3d-rigging-animation": {
+      "drive_path": "02-skills/3d-rigging-animation/SKILL.md",
+      "hash": "sha256:ecf05aef7a6ebec3183afc3fe62cdf32e295383704312d1e7c28210a0c7a1027",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "3d-spatial-design-for-games": {
+      "drive_path": "02-skills/3d-spatial-design-for-games/SKILL.md",
+      "hash": "sha256:b569292c37f69108af8e43726603a8f50f569af9d25f8e8935b9b2c672ef982e",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "a11y-assistive-tech": {
+      "drive_path": "02-skills/a11y-assistive-tech/SKILL.md",
+      "hash": "sha256:886537d3aeabc7b7818d90f63bb38c173c615b3a31f6cc1cf3e9d7d222420ee0",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "a11y-auditory": {
+      "drive_path": "02-skills/a11y-auditory/SKILL.md",
+      "hash": "sha256:3d69808ce94fd8d56c396d9a0ff347ff02c719c3effceed4b045f295cd74b116",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "a11y-cognitive": {
+      "drive_path": "02-skills/a11y-cognitive/SKILL.md",
+      "hash": "sha256:0bbb0eec856953cd9a3b36b1a57beeabb77fff78b1a18710df6c90f50d5c5978",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "a11y-legal-compliance": {
+      "drive_path": "02-skills/a11y-legal-compliance/SKILL.md",
+      "hash": "sha256:5ac74da6614980ee4973cb173d54c56a9eba945361718cff76e1a8843127b5cc",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "a11y-motor-physical": {
+      "drive_path": "02-skills/a11y-motor-physical/SKILL.md",
+      "hash": "sha256:1c0ea59bc5e4f518d80c2befe6c87051c856dac8027a7711d38135e2277cd35b",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "a11y-neurodiversity": {
+      "drive_path": "02-skills/a11y-neurodiversity/SKILL.md",
+      "hash": "sha256:0fd20043e4ce490b0da43334d7ada80875dd2f1804d2b58428e241bc7ec6488e",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "a11y-visual": {
+      "drive_path": "02-skills/a11y-visual/SKILL.md",
+      "hash": "sha256:a1218f44204cb564d7c64cc78b6aa62cfe4b92cc79e60f3ed777e8a9892c6002",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "be-api-design": {
+      "drive_path": "02-skills/be-api-design/SKILL.md",
+      "hash": "sha256:323dd3ae8fda3fb1dd6418bc36a4c1be9bc96e340b6fdecd0a9762ca3be59341",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "be-auth-patterns": {
+      "drive_path": "02-skills/be-auth-patterns/SKILL.md",
+      "hash": "sha256:4f4c5af6e4824f7b952a98dd67c7388000a436b90788048fec5906873fbd6782",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "be-caching-performance": {
+      "drive_path": "02-skills/be-caching-performance/SKILL.md",
+      "hash": "sha256:04880b545bb9b16c35b8d3689b6e9df7f33c19a1da2e77a9fb0a83e008e823e4",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "be-data-modeling": {
+      "drive_path": "02-skills/be-data-modeling/SKILL.md",
+      "hash": "sha256:07cca61e862f8ad567a417cc65f740f77a78df36cb300144d958fa2997cedda8",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "be-integration-patterns": {
+      "drive_path": "02-skills/be-integration-patterns/SKILL.md",
+      "hash": "sha256:c75bc7225636d83bdb0a6c8724cfa5b3744fb9a30def6e21a28b393c8ab19ba8",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "be-relational-db": {
+      "drive_path": "02-skills/be-relational-db/SKILL.md",
+      "hash": "sha256:9973bf90ec4ed29ff10036e2257ced5c01bbf3ce6e6b41b43b5c5142699bc4e4",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "be-security-posture": {
+      "drive_path": "02-skills/be-security-posture/SKILL.md",
+      "hash": "sha256:4749ce70f8ae97d6f5cb472ab10d439a5d73c49c3c7eb2a419867ff6cdd3e15d",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "be-service-architecture": {
+      "drive_path": "02-skills/be-service-architecture/SKILL.md",
+      "hash": "sha256:ee2d282430042c8731de76e1ca374c665e17a80535c34b997f72109b64eba535",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "centric-ui-storybook": {
+      "drive_path": "02-skills/centric-ui-storybook/SKILL.md",
+      "hash": "sha256:e9318caf0b363df3347f8d335d4c5184a456e90915806af62f21663bb0475fe6",
+      "last_synced": "2026-04-21T16:40:50"
+    },
+    "centric-ui-workflow": {
+      "drive_path": "02-skills/centric-ui-workflow/SKILL.md",
+      "hash": "sha256:79f47b9b5a84298f4a9173576e3aabcf6b8a5c26a8fe1f8145614254bd771efc",
+      "last_synced": "2026-04-21T16:40:50"
+    },
+    "cowork-skills-sync": {
+      "drive_path": "02-skills/cowork-skills-sync/SKILL.md",
+      "hash": "sha256:7774a6260de2e8c674b091fcdb559b89c298df18de8b2c9a229557e396e1946c",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "design-engineer": {
+      "drive_path": "02-skills/design-engineer/SKILL.md",
+      "hash": "sha256:446e90f6f433f67bc3c0666d8cee8f16017d6a1357d8bcdf479a0ba67a0c3c02",
+      "last_synced": "2026-05-13T00:04:54"
+    },
+    "design-system-ops": {
+      "drive_path": "02-skills/design-system-ops/SKILL.md",
+      "hash": "sha256:62829d9f80c3c2c109c414327c56c0def2aee37625ee6899c409de7a45d64684",
+      "last_synced": "2026-04-29T14:23:34"
+    },
+    "devops-ci-cd": {
+      "drive_path": "02-skills/devops-ci-cd/SKILL.md",
+      "hash": "sha256:13dc0370aa0e67e43ad3de77da1153c74fbca1db4187deaa310d5159d4280cf1",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "devops-container-orchestration": {
+      "drive_path": "02-skills/devops-container-orchestration/SKILL.md",
+      "hash": "sha256:df42c3aec3dc9c5fb439ac657d153d3ec92cf019dda6cd886a131ce72812fad4",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "devops-cost-optimization": {
+      "drive_path": "02-skills/devops-cost-optimization/SKILL.md",
+      "hash": "sha256:c48f960afc4b0efa82af28ea8c3637dc07e61ff2d4935848584c6d150b02e89b",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "devops-infrastructure-as-code": {
+      "drive_path": "02-skills/devops-infrastructure-as-code/SKILL.md",
+      "hash": "sha256:521b61f5c503b63eff1a89d18b283e4fc05f800875a7a951f5fbec3d624050f7",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "devops-observability": {
+      "drive_path": "02-skills/devops-observability/SKILL.md",
+      "hash": "sha256:c35c8da0f33968d2627e2a2b7387af07d124f5172ecbde860431dc21ab722833",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "devops-release-engineering": {
+      "drive_path": "02-skills/devops-release-engineering/SKILL.md",
+      "hash": "sha256:c0ccd6fb163c99470afaf57d612ec9cc643bc7a6903530645ee8cd69b1f3ff7d",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "ds-advisor": {
+      "drive_path": "02-skills/ds-advisor/SKILL.md",
+      "hash": "sha256:d41744533dce42ffa37a37e7b38e90342e0773ed0bd5189134426043d2b1079d",
+      "last_synced": "2026-05-13T00:04:54"
+    },
+    "ds-bi-platforms": {
+      "drive_path": "02-skills/ds-bi-platforms/SKILL.md",
+      "hash": "sha256:fac3b252b3202cbf3ee9b1e0a8252793145726a5ebd5e58b2434d7a0ec6b038c",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "ds-data-engineering": {
+      "drive_path": "02-skills/ds-data-engineering/SKILL.md",
+      "hash": "sha256:00d12c9692fc5e0d4b1f20e66c65c5b3f8a77c471bdd54d1aed964bd2355a2b0",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ds-data-governance": {
+      "drive_path": "02-skills/ds-data-governance/SKILL.md",
+      "hash": "sha256:fd7cd929938021d97ea3d102af159ceeacaebbce092f6ec3be6b89308e3eb9f6",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "ds-executive-storytelling": {
+      "drive_path": "02-skills/ds-executive-storytelling/SKILL.md",
+      "hash": "sha256:cec6e604dce804bd1bc7cb24cd104a13c58c9e525e78d4e64c94678b248b8444",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "ds-experimentation": {
+      "drive_path": "02-skills/ds-experimentation/SKILL.md",
+      "hash": "sha256:90359533dd4bdac27704f9606fdab4475774f3bb3378b15012e3d1adc232f928",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ds-forecasting": {
+      "drive_path": "02-skills/ds-forecasting/SKILL.md",
+      "hash": "sha256:13793fb6385aa9e5d4146e0cdc476bc9b9f943aee728f6b58b00ea5a08798b50",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ds-generation-pipeline": {
+      "drive_path": "02-skills/ds-generation-pipeline/SKILL.md",
+      "hash": "sha256:e702b45d791f5a9481ccb40acb1d4553f110877399f9ba8fc0a316a77890b0fb",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "ds-ml-engineering": {
+      "drive_path": "02-skills/ds-ml-engineering/SKILL.md",
+      "hash": "sha256:afe37da461c1ab12975e6e0f427b23a8537b95a82c3108f664432283113a9e2b",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ds-nlp-llm": {
+      "drive_path": "02-skills/ds-nlp-llm/SKILL.md",
+      "hash": "sha256:63a1f7282a62c9105d074a973f072bd969d2744ceed5081e925b10e618bb7141",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ds-product-analytics": {
+      "drive_path": "02-skills/ds-product-analytics/SKILL.md",
+      "hash": "sha256:bfbdae0ea15e7786949ed365f52f324c0464716a2bf0ac1e45eb217358035452",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ds-prompt-engineering": {
+      "drive_path": "02-skills/ds-prompt-engineering/SKILL.md",
+      "hash": "sha256:7ffff9f9f9b8025dd4685af6fe2c3eca57524e2789b9f4f6ae4da1c55385a2ac",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "fe-accessibility": {
+      "drive_path": "02-skills/fe-accessibility/SKILL.md",
+      "hash": "sha256:aa961d593ed2a44594a99f874fb5e46a657ac28c9433003a5902e02b2c62e501",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "fe-api-integration": {
+      "drive_path": "02-skills/fe-api-integration/SKILL.md",
+      "hash": "sha256:c6a8b48b2e8402d79b3f042bd3bd21f4d98dffeed9c1af5dd92594c9ae02cace",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "fe-component-architecture": {
+      "drive_path": "02-skills/fe-component-architecture/SKILL.md",
+      "hash": "sha256:9a1996ce6414d7391c2e61646adb45dc916e973879202ac5de05f5a2869d20ce",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "fe-data-visualization": {
+      "drive_path": "02-skills/fe-data-visualization/SKILL.md",
+      "hash": "sha256:d60a8adcccb5d077faf30b08371ea22b71a362d3c2e4b757cc8b960120edd3a2",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "fe-design-tokens": {
+      "drive_path": "02-skills/fe-design-tokens/SKILL.md",
+      "hash": "sha256:629df8595e5692f13bfbd7902293fa516a711db729d383dd2811caaa48e0c6ec",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "fe-i18n": {
+      "drive_path": "02-skills/fe-i18n/SKILL.md",
+      "hash": "sha256:fe8b057af8f9e789d9890d2d78077993b216a2bf87bd8d5131a261e49586d79f",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "fe-performance": {
+      "drive_path": "02-skills/fe-performance/SKILL.md",
+      "hash": "sha256:124b8c7477eb603978269c4a530ab7375e54a25947328331a98dc22685a68050",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "fe-state-management": {
+      "drive_path": "02-skills/fe-state-management/SKILL.md",
+      "hash": "sha256:954d5731bb44788785fbe50c791dafaa1e162c95786c60dfef8b0f24cdb060dc",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "fe-testing": {
+      "drive_path": "02-skills/fe-testing/SKILL.md",
+      "hash": "sha256:1a95753f7ac8a7663264a0892c7db5fdf28418799b6d14272e34bd41a46c2c02",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "figma-api-pipeline": {
+      "drive_path": "02-skills/figma-api-pipeline/SKILL.md",
+      "hash": "sha256:8070996a1ecc90b0a2458a4467a769d9c08eb5047d62cd4053601b9a6092f7b0",
+      "last_synced": "2026-04-29T14:23:34"
+    },
+    "figma-api-router": {
+      "drive_path": "02-skills/figma-api-router/SKILL.md",
+      "hash": "sha256:d50442c72c84ef768547e58292540c19eae4f8054e240641a71932adbe09b007",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "figma-canvas-designer": {
+      "drive_path": "02-skills/figma-canvas-designer/SKILL.md",
+      "hash": "sha256:44542efa4edc0d14ebdf32dc8f6d911e587dd993f4cfd5431cca2548e0bbc677",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "figma-component-generation": {
+      "drive_path": "02-skills/figma-component-generation/SKILL.md",
+      "hash": "sha256:0f43a97aa24c1d65bb199dc116ff24bbbbd542438c90d7aef0d95fe42df6845f",
+      "last_synced": "2026-05-07T16:31:45"
+    },
+    "figma-ds-generation-pipeline": {
+      "drive_path": "02-skills/figma-ds-generation-pipeline/SKILL.md",
+      "hash": "sha256:b10c5a8d4d8969c0146d59581b039128c7f164d0800c6c68be1e5fbcba2c8301",
+      "last_synced": "2026-04-29T14:23:34"
+    },
+    "figma-error-troubleshooting": {
+      "drive_path": "02-skills/figma-error-troubleshooting/SKILL.md",
+      "hash": "sha256:52de9abba5d4cb863b868b912b917b5b3c004d35843f675a0a117739b84eeb74",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "figma-mcp-tool-usage": {
+      "drive_path": "02-skills/figma-mcp-tool-usage/SKILL.md",
+      "hash": "sha256:bff06bb28e0416779293142c38de79159293da72597d267d94b061437e52a561",
+      "last_synced": "2026-04-25T21:04:51"
+    },
+    "figma-modes-for-variants": {
+      "drive_path": "02-skills/figma-modes-for-variants/SKILL.md",
+      "hash": "sha256:07c0a7d4390cef7e872e2f7d0e9c0671f7dd11921b41c49497bceebf76ba481f",
+      "last_synced": "2026-05-12T00:26:36"
+    },
+    "figma-plugin": {
+      "drive_path": "02-skills/figma-plugin/SKILL.md",
+      "hash": "sha256:459361273994b99b0bbc09ec4ee613b15b71d15391e85cda2f0d352408e366f0",
+      "last_synced": "2026-03-09T01:19:17"
+    },
+    "figma-plugin-dev": {
+      "drive_path": "02-skills/figma-plugin-dev/SKILL.md",
+      "hash": "sha256:d4a726fbbe10358c52dee84d79dcd0c091a8b16f53d71032873081cfdbb4babc",
+      "last_synced": "2026-03-09T01:19:17"
+    },
+    "figma-source-audit": {
+      "drive_path": "02-skills/figma-source-audit/SKILL.md",
+      "hash": "sha256:f81a294c486a86e302dbf855e2b4bf4f63d5ed04d8d79cad5e65a4d46777f59f",
+      "last_synced": "2026-05-12T00:26:36"
+    },
+    "figma-style-binding": {
+      "drive_path": "02-skills/figma-style-binding/SKILL.md",
+      "hash": "sha256:201dbf04b794110ea61307594352571b8d6a07732ae5348261b6287e1f20cb18",
+      "last_synced": "2026-04-29T14:23:34"
+    },
+    "figma-variable-creation": {
+      "drive_path": "02-skills/figma-variable-creation/SKILL.md",
+      "hash": "sha256:a9bf2af79c38c98e70d724e42be4138b50f619df79b03b0e1b8036f8377c68f6",
+      "last_synced": "2026-05-07T16:31:45"
+    },
+    "fw-angular": {
+      "drive_path": "02-skills/fw-angular/SKILL.md",
+      "hash": "sha256:89cea2531d0f771cf200bb9e712feb2ab349743897243e83716f34321d89c7c4",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "fw-bootstrap": {
+      "drive_path": "02-skills/fw-bootstrap/SKILL.md",
+      "hash": "sha256:679baa5a1827d240a47a0baf23010df93dbe981295ab11dfe989d03ceee084c2",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "fw-carbon": {
+      "drive_path": "02-skills/fw-carbon/SKILL.md",
+      "hash": "sha256:cf626ed3453a68d65ba34dca6f8f64f0c1f5b303378889f12227d8c9a7d6e653",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "fw-css-modules": {
+      "drive_path": "02-skills/fw-css-modules/SKILL.md",
+      "hash": "sha256:75ffd73c89b4a65aececba2a9d28339f9108eb665eba55b7f07e42ac9d5872ae",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "fw-dojo": {
+      "drive_path": "02-skills/fw-dojo/SKILL.md",
+      "hash": "sha256:97380cef9ee5ebc583bf4ac8a982cf365441258368c62ae88fe04c6dc30729aa",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "fw-lightning": {
+      "drive_path": "02-skills/fw-lightning/SKILL.md",
+      "hash": "sha256:60a4014f0d93932e842a2b332ed11286fa5a33eb6e5bc9acf3c671d82d8d8120",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "fw-radix-colors": {
+      "drive_path": "02-skills/fw-radix-colors/SKILL.md",
+      "hash": "sha256:2d7512d49b1cb1fb8e21dd2398cefe690ccb6a1fd397c61cd31df963e09362c3",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "fw-radix-primitives": {
+      "drive_path": "02-skills/fw-radix-primitives/SKILL.md",
+      "hash": "sha256:fa3e1c123b192b2cdff0b78796b72364e22fda4a31474b29cf73fc193c9bfcd4",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "fw-react": {
+      "drive_path": "02-skills/fw-react/SKILL.md",
+      "hash": "sha256:a96e316c0bd1e6fe68b6d264ee5228aacb75a50e31340730bf61269201a4fd65",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "fw-react-aria": {
+      "drive_path": "02-skills/fw-react-aria/SKILL.md",
+      "hash": "sha256:71e1f669a3b5b30fcf4dd55146277c01239281841524feaa13f987fa68807c4c",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "fw-shadcn": {
+      "drive_path": "02-skills/fw-shadcn/SKILL.md",
+      "hash": "sha256:2a04ccc15896857db81c447fdb3225343dadbbec68cf08d4087161fc6e1ef896",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "fw-storybook": {
+      "drive_path": "02-skills/fw-storybook/SKILL.md",
+      "hash": "sha256:fc5c587367637cba016c560d3f4abb224cb004e501b309dc7cbef303c735e069",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "fw-svelte": {
+      "drive_path": "02-skills/fw-svelte/SKILL.md",
+      "hash": "sha256:5c5cb7ab85c5600e30bfd8c7d3294f5d9efc6e6d3b0d1ee3365f75e36ebaace6",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "fw-tailwind-css": {
+      "drive_path": "02-skills/fw-tailwind-css/SKILL.md",
+      "hash": "sha256:43655da9a4fe96fdc67999d7b1c0320890302b902037a7b1f9a2f75942af1a6b",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "fw-vue": {
+      "drive_path": "02-skills/fw-vue/SKILL.md",
+      "hash": "sha256:167ddbccce89f1dd95d6a5a31389440787c18dba98b31e5c85db6366c45387c6",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "fw-web-components": {
+      "drive_path": "02-skills/fw-web-components/SKILL.md",
+      "hash": "sha256:4146c299f6cc839c5e858aae1af8263c498ea74d6782c97fe8b9058187343937",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "gd-brand-identity": {
+      "drive_path": "02-skills/gd-brand-identity/SKILL.md",
+      "hash": "sha256:20699a2e4e1da016fd06750623d2fcdd6018fa9293766b881bdfef80d6019f5b",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "gd-color-theory": {
+      "drive_path": "02-skills/gd-color-theory/SKILL.md",
+      "hash": "sha256:47f7f6716907bc68dda96f35ca89bb3873a87630d5158ef26212f458ec0a3cd0",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "gd-grid-and-layout": {
+      "drive_path": "02-skills/gd-grid-and-layout/SKILL.md",
+      "hash": "sha256:ae6455481289f45fb0ab93020470fe4e6424615cbc004f2470bc3ddf5a54428a",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "gd-image-composition": {
+      "drive_path": "02-skills/gd-image-composition/SKILL.md",
+      "hash": "sha256:3a08d900b59af126e0254612de7120a2b08e2675670a77f0837a58c180d23685",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "gd-print-production": {
+      "drive_path": "02-skills/gd-print-production/SKILL.md",
+      "hash": "sha256:d1dd2cabbae882abb9c08f7bbe20ef14a56b4ca8671c70ed34c6e49a67c94a8e",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "gd-typography": {
+      "drive_path": "02-skills/gd-typography/SKILL.md",
+      "hash": "sha256:be68c501258c8c2b4aad59a45f4f7ac38ad838435bc576b07a4d61428e2b37da",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "gd-visual-communication": {
+      "drive_path": "02-skills/gd-visual-communication/SKILL.md",
+      "hash": "sha256:6907f61ece2283bffb4c5629b0d0bf34a3aa36ebb4a3de581bbb377f16175f95",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "gen-manifest": {
+      "drive_path": "02-skills/gen-manifest/SKILL.md",
+      "hash": "sha256:616629bacc7ad3631eeeeee2254a23ec95dfb5e63a68ba986b1621580327e93d",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "github-guardrails": {
+      "drive_path": "02-skills/github-guardrails/SKILL.md",
+      "hash": "sha256:7f19e96094e138338c6684ebdbac62b0226fe03da2934482a2548394190c3443",
+      "last_synced": "2026-04-21T16:40:50"
+    },
+    "glsl-shader-architect": {
+      "drive_path": "02-skills/glsl-shader-architect/SKILL.md",
+      "hash": "sha256:5f29939aac8d2c7742b6202ab770a45482f21858167e2f6fefbc7753b84c3cdb",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "google-fonts-scraper": {
+      "drive_path": "02-skills/google-fonts-scraper/SKILL.md",
+      "hash": "sha256:2776c22a462b7bdcf68e80e5050e45ef015767ac7184edb14e6e984e623cfdc1",
+      "last_synced": "2026-03-09T01:19:17"
+    },
+    "google-fonts-web-scraping": {
+      "drive_path": "02-skills/google-fonts-web-scraping/SKILL.md",
+      "hash": "sha256:ac9f19d46b6ba6a4024b08744e18c7c88464498e2837f755fe7479733cc0511d",
+      "last_synced": "2026-03-09T01:19:17"
+    },
+    "ia-content-strategy": {
+      "drive_path": "02-skills/ia-content-strategy/SKILL.md",
+      "hash": "sha256:7022f69fd59ab8bf9b29212675d41268d09e655535c5dc96e0d91a6d46e74005",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ia-enterprise-complexity": {
+      "drive_path": "02-skills/ia-enterprise-complexity/SKILL.md",
+      "hash": "sha256:db5e07cd96155f5230ab0a45dab7ffe0baa18f215b365820025eff00057f340e",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ia-mental-models": {
+      "drive_path": "02-skills/ia-mental-models/SKILL.md",
+      "hash": "sha256:53b398797a33863cc9f1a98ed22f8cf10a912633ecb5cddba8a33e19ce9492c6",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ia-navigation-systems": {
+      "drive_path": "02-skills/ia-navigation-systems/SKILL.md",
+      "hash": "sha256:8f72d34b127f1175995521e3819ab372dc27344e086e16927ae268b9570f1a4d",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ia-research-methods": {
+      "drive_path": "02-skills/ia-research-methods/SKILL.md",
+      "hash": "sha256:36323222dd891e8d95e4a5de0e2db14a26c43f0d3c23aef8081b14f25350bff8",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ia-search-findability": {
+      "drive_path": "02-skills/ia-search-findability/SKILL.md",
+      "hash": "sha256:9ce9422744aef403b7dff7892b3083109a6885fee63b8cfde1c55da16e0df9a1",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ia-taxonomy-classification": {
+      "drive_path": "02-skills/ia-taxonomy-classification/SKILL.md",
+      "hash": "sha256:e28f3272726a0c9e5acd5aaa9af750a34f231fafdeaabe08f5a4e929baba3a9e",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "infod-dashboard-patterns": {
+      "drive_path": "02-skills/infod-dashboard-patterns/SKILL.md",
+      "hash": "sha256:34da1e34faf0b03dda0337e1b8c6e80402ba21f6c7485243c0baa3ddcaf407e2",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "infod-design-system-patterns": {
+      "drive_path": "02-skills/infod-design-system-patterns/SKILL.md",
+      "hash": "sha256:e700efb421566b8096d4f223fd35bc6ca8133c6f14af39e4eee2f4b8e91fea61",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "infod-encoding-theory": {
+      "drive_path": "02-skills/infod-encoding-theory/SKILL.md",
+      "hash": "sha256:ac666872931b00aaf843ba33308b030ef9d2acb40f47d74d2d4425c329dc367a",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "infod-narrative-design": {
+      "drive_path": "02-skills/infod-narrative-design/SKILL.md",
+      "hash": "sha256:b4ad9705a9c9f76f35cf95406975f4fae80d044a5cf83c3472c277904cc75c77",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "infod-network-graphs": {
+      "drive_path": "02-skills/infod-network-graphs/SKILL.md",
+      "hash": "sha256:613ca6ed4b8fe191dfc4c299ac54b8967c6bbe75131e528ba9bee1d04d7e5028",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "infod-spatial-maps": {
+      "drive_path": "02-skills/infod-spatial-maps/SKILL.md",
+      "hash": "sha256:a26d48e472a8ebb815ffe189bedd8086c680517073b795414b17aff02647a9f9",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "infod-statistical-viz": {
+      "drive_path": "02-skills/infod-statistical-viz/SKILL.md",
+      "hash": "sha256:ff225a905c2df00052d5864fb0c4009aeafb17c447dd7d6e036905af88f1609a",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "lead-3d-designer": {
+      "drive_path": "02-skills/lead-3d-designer/SKILL.md",
+      "hash": "sha256:5d48041f264aa5ae5f01142a82f762a8d176934d32b252c0988dc2ae619cca05",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "lead-accessibility-architect": {
+      "drive_path": "02-skills/lead-accessibility-architect/SKILL.md",
+      "hash": "sha256:90cfe6537790e4aa15ee2824cfba567412883d9df538d3d4f8c57b43d1856709",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "lead-art-director": {
+      "drive_path": "02-skills/lead-art-director/SKILL.md",
+      "hash": "sha256:191bc3148d541176f000c2c1848ad7df71ff966d55273c88d5bf869e7bc3d1f5",
+      "last_synced": "2026-04-21T16:40:50"
+    },
+    "lead-backend-engineer": {
+      "drive_path": "02-skills/lead-backend-engineer/SKILL.md",
+      "hash": "sha256:522db60493d6558e1cfb2b535637967f7086579a910a429fd6696cd3714b7db0",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "lead-data-scientist": {
+      "drive_path": "02-skills/lead-data-scientist/SKILL.md",
+      "hash": "sha256:2fa64d31ba3d167590acca661efd5dfacfb1e9a2488e84970935d7607646a41b",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "lead-devops-engineer": {
+      "drive_path": "02-skills/lead-devops-engineer/SKILL.md",
+      "hash": "sha256:9c9c75857d506fb689b50cff1adba7718e6798ed63a71f2d4a7c98a5b97fc89d",
+      "last_synced": "2026-04-28T12:00:00"
+    },
+    "lead-frontend-engineer": {
+      "drive_path": "02-skills/lead-frontend-engineer/SKILL.md",
+      "hash": "sha256:7de860c2bd7c202e79db5bf73fbe2a5d159dcec2afd7c486409287cd02b5a178",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "lead-game-designer": {
+      "drive_path": "02-skills/lead-game-designer/SKILL.md",
+      "hash": "sha256:be3b12556d683590e4299c1e93ccb51af8fc595be8025f3a61138a4a71082eb4",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "lead-game-developer": {
+      "drive_path": "02-skills/lead-game-developer/SKILL.md",
+      "hash": "sha256:3628988f1c0a6d7dc9e874a3f905dc3a0860d6dd655139a40f145aa507bf2a3a",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "lead-graphic-designer": {
+      "drive_path": "02-skills/lead-graphic-designer/SKILL.md",
+      "hash": "sha256:799f06cb4392f15e6850f4293b502f8629b491dc6c263894848d8bfe0e077ec7",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "lead-icon-artist": {
+      "drive_path": "02-skills/lead-icon-artist/SKILL.md",
+      "hash": "sha256:aba2533a8687f694906caaa70ac7251aff291c63e9d8055080803c4669526e56",
+      "last_synced": "2026-04-21T16:40:50"
+    },
+    "lead-information-architect": {
+      "drive_path": "02-skills/lead-information-architect/SKILL.md",
+      "hash": "sha256:d2d4a22eb5c33c34c41e51d88cd3b573638d55dc08314a34cbd63c307596ccbe",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "lead-information-designer": {
+      "drive_path": "02-skills/lead-information-designer/SKILL.md",
+      "hash": "sha256:75926b173c1f94c889f045c77b7de08ecd162dbe9299871be00a00b9f06e9bbb",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "lead-motion-designer": {
+      "drive_path": "02-skills/lead-motion-designer/SKILL.md",
+      "hash": "sha256:36ffc04900b16862908781f25102acb043584845ef6e92cadf874aa86a4fe49d",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "lead-product-manager": {
+      "drive_path": "02-skills/lead-product-manager/SKILL.md",
+      "hash": "sha256:201029d32d04009d9c735a4a2343a5f747c46ddc62511fde5ae29bb7a6b1fbd1",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "lead-technical-digital-artist": {
+      "drive_path": "02-skills/lead-technical-digital-artist/SKILL.md",
+      "hash": "sha256:caa989c1c6229661f1316a6be5dd1db5d975258260e6613cf0b56adeaf51e2df",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "lead-type-designer": {
+      "drive_path": "02-skills/lead-type-designer/SKILL.md",
+      "hash": "sha256:c8f34a9cf56e655e344da0bdcffcd16f568eb37a19def1686a2503b172cf5bcb",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "lead-ui-designer": {
+      "drive_path": "02-skills/lead-ui-designer/SKILL.md",
+      "hash": "sha256:4e21ba90d3683981ecfc0d25940beb85185c0cc3bd3850b69b65ad619655c947",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "lead-ux-designer": {
+      "drive_path": "02-skills/lead-ux-designer/SKILL.md",
+      "hash": "sha256:f61d768c455939e7dfb1945b0362b0497cbf230f89f1ba5cc1e7295e5a63246d",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "lead-vector-designer": {
+      "drive_path": "02-skills/lead-vector-designer/SKILL.md",
+      "hash": "sha256:3e1166eb96107ef696b3ae45bfbb9956febe9aa01bfc52dc12dc47789e3ae58e",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "lead-visual-qa": {
+      "drive_path": "02-skills/lead-visual-qa/SKILL.md",
+      "hash": "sha256:570f29a25a14d211918abde5ff8c76881a7998bee81ab680799912954e7ffd6e",
+      "last_synced": "2026-04-21T16:55:43"
+    },
+    "legion-narrative-design": {
+      "drive_path": "02-skills/legion-narrative-design/SKILL.md",
+      "hash": "sha256:0cfe95eea5eb8add1f74092c0baa2861dea1e68033c3c22725aec53e7a1bfc02",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "legion-project": {
+      "drive_path": "02-skills/legion-project/SKILL.md",
+      "hash": "sha256:1bc242a83418017df28871bd3e3deee89ea0ba18bd6607fc3f76915bec4b0878",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "material-symbols-project": {
+      "drive_path": "02-skills/material-symbols-project/SKILL.md",
+      "hash": "sha256:c8a9c707fbca6e0f93e0f0d13e2b4770053d8f2bb21de6a0a29f6491fb396fee",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "material-symbols-suite": {
+      "drive_path": "02-skills/material-symbols-suite/SKILL.md",
+      "hash": "sha256:2051e69c92934ce00b2280caa3fe542fe78e7f62dfd0d792900cdf0f9413f581",
+      "last_synced": "2026-03-09T01:19:17"
+    },
+    "material-symbols-svg-export": {
+      "drive_path": "02-skills/material-symbols-svg-export/SKILL.md",
+      "hash": "sha256:334d5e54f3f237e0da2ee88cf720eb501587945e32022c72cce7a37ab8e0c651",
+      "last_synced": "2026-03-09T01:19:17"
+    },
+    "math-bezier-spline-theory": {
+      "drive_path": "02-skills/math-bezier-spline-theory/SKILL.md",
+      "hash": "sha256:44424e091f46403b67dbcf6c91249ad408f5668aeea7cfc477eab2a06ec04294",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "math-computational-geometry": {
+      "drive_path": "02-skills/math-computational-geometry/SKILL.md",
+      "hash": "sha256:b4daadccd83f5144edcd1a4bfc74cccefba2535679b2a8915bac4b969cf0478d",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "math-interpolation-designspace": {
+      "drive_path": "02-skills/math-interpolation-designspace/SKILL.md",
+      "hash": "sha256:cb52999d406e1f6174e605e6f83dbfc2db7f83585f452b0ff05fc9137b83031a",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "math-optical-optimization": {
+      "drive_path": "02-skills/math-optical-optimization/SKILL.md",
+      "hash": "sha256:f072ea10f17ace063f5552f75c9493220bddefb7a8b2e5c5e621560347d6ed87",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "motion-3d-spatial": {
+      "drive_path": "02-skills/motion-3d-spatial/SKILL.md",
+      "hash": "sha256:e3c3f00126c833dd0ef8662aa9acbbc65426ade7d6f9741af8aa35f8d1daf37a",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "motion-accessibility": {
+      "drive_path": "02-skills/motion-accessibility/SKILL.md",
+      "hash": "sha256:63288621b4a6973fdc5cc2e85da22fad7c376680da76aaf9bb6413445b58ed91",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "motion-choreography": {
+      "drive_path": "02-skills/motion-choreography/SKILL.md",
+      "hash": "sha256:c267e7ad8038eee84218970bb3d8109242f010dc0a45ab88206d9961cfd9b872",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "motion-performance": {
+      "drive_path": "02-skills/motion-performance/SKILL.md",
+      "hash": "sha256:8f1bb98d6347caa44ca5ce004312621377c622ef7d7b3c73d4ae1a0016faddd9",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "motion-principles": {
+      "drive_path": "02-skills/motion-principles/SKILL.md",
+      "hash": "sha256:2205eae1fc5677085b3841e9aa3e3d206c8849834e8a9b3e2bba5853d9315e05",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "motion-tooling": {
+      "drive_path": "02-skills/motion-tooling/SKILL.md",
+      "hash": "sha256:07276815859eacf4febc68db0cd0030f53883a50134134a73d3c86cb9e80b2b7",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "motion-transitions": {
+      "drive_path": "02-skills/motion-transitions/SKILL.md",
+      "hash": "sha256:bf7e6cc72cba6dd5929160a06e5b3766acc814405bf703f9271ab89074469f08",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "omni-project": {
+      "drive_path": "02-skills/omni-project/SKILL.md",
+      "hash": "sha256:c90c17992eec1f5e2b2788656071427a1ee58f0289434b23401489c7d3692366",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "pm-competitive-intelligence": {
+      "drive_path": "02-skills/pm-competitive-intelligence/SKILL.md",
+      "hash": "sha256:98d40bba1e85b9d94f845609b614ca539192b0eb9b5d22c6579cd4d55e8f1b8b",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "pm-discovery-research": {
+      "drive_path": "02-skills/pm-discovery-research/SKILL.md",
+      "hash": "sha256:a01d3f0cf42b2b2f9edbf0f250e71b8a200cb49dd1e73ff89e412d40ef903b3e",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "pm-enterprise-gtm": {
+      "drive_path": "02-skills/pm-enterprise-gtm/SKILL.md",
+      "hash": "sha256:c52f3931ad99180eb38ff579bc6e8f2a2ca0831c1ea3efcc30f101c370ca1731",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "pm-metrics-analytics": {
+      "drive_path": "02-skills/pm-metrics-analytics/SKILL.md",
+      "hash": "sha256:bb27a661f746cc8cc102623608801db831ace894bf976308daf064338e057a61",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "pm-platform-api": {
+      "drive_path": "02-skills/pm-platform-api/SKILL.md",
+      "hash": "sha256:6602d71d0b6dc89e07f12508065fcdeb858ac1799ef2b5331dc142bf6a18f4ec",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "pm-roadmap-strategy": {
+      "drive_path": "02-skills/pm-roadmap-strategy/SKILL.md",
+      "hash": "sha256:ed7e321fec8153a2887ef35f22339f8a9af8de4d3dd4daa319cdb3abe253d054",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "pm-stakeholder-comms": {
+      "drive_path": "02-skills/pm-stakeholder-comms/SKILL.md",
+      "hash": "sha256:67151e4272fa01269a3123c9bc1aec48e05e5728d557b87039be56edd8e123ab",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "python-cross-platform-gui": {
+      "drive_path": "02-skills/python-cross-platform-gui/SKILL.md",
+      "hash": "sha256:863a53179e33e00142bf178871ed91fedc31aeb41d1228fc7d01700d961b3e43",
+      "last_synced": "2026-03-09T01:19:17"
+    },
+    "qa": {
+      "drive_path": "02-skills/qa/SKILL.md",
+      "hash": "sha256:ba0df0e036843d499c0e35595c61c9c2aa5df92d963b8b1973368b35dcb6df81",
+      "last_synced": "2026-06-02T14:51:36"
+    },
+    "research": {
+      "drive_path": "02-skills/research/SKILL.md",
+      "hash": "sha256:2c26731c6fd8a0f64cd74a75d7950c6a42abecd154ee6d90ccf25ff995c8e394",
+      "last_synced": "2026-04-29T14:23:34"
+    },
+    "skill-placement": {
+      "drive_path": "02-skills/skill-placement/SKILL.md",
+      "hash": "sha256:c19c3bcb409ad0e98479fe319c552fab7598afe7c1205e2e3d5db2422c931db6",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "svg-font-extraction": {
+      "drive_path": "02-skills/svg-font-extraction/SKILL.md",
+      "hash": "sha256:012f470be7a6a748521ba2623a81ad31940eee12f1e53320f7cec3a2a9688710",
+      "last_synced": "2026-03-09T01:19:17"
+    },
+    "test-results": {
+      "drive_path": "02-skills/test-results/SKILL.md",
+      "hash": "sha256:a7952006e3b1281e89e01b60911f21fc55d3053c8ef0ceab9aa1f3518ea041eb",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "threejs-materials-master": {
+      "drive_path": "02-skills/threejs-materials-master/SKILL.md",
+      "hash": "sha256:b4e52c22e522f340c120837a60d9636310b818edf7081601de0e614218b90e0c",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "threejs-vfx-atmosphere": {
+      "drive_path": "02-skills/threejs-vfx-atmosphere/SKILL.md",
+      "hash": "sha256:ed07ec1c0fa66614b29c56a3d58d536b2768cacdcb3f37b49cacc9517ca1f0f2",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "type-classification-history": {
+      "drive_path": "02-skills/type-classification-history/SKILL.md",
+      "hash": "sha256:939b35cf67d32b4b2727222acab8460483ed0f60da33156f43709eade37eb270",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "type-letterform-construction": {
+      "drive_path": "02-skills/type-letterform-construction/SKILL.md",
+      "hash": "sha256:4ec3967027ed5dd30f16c11c3a7367be2ef1d9727790b5b8e042c8c4236c0338",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "type-multi-script": {
+      "drive_path": "02-skills/type-multi-script/SKILL.md",
+      "hash": "sha256:71354a20a916a4546e9632741ec8e2e7a7b0693bf8aa7b07d7c73c3b4fdfd6c8",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "type-opentype-text": {
+      "drive_path": "02-skills/type-opentype-text/SKILL.md",
+      "hash": "sha256:98568b91d4135e462bf04e9b07f197f9054a5099321d6493578bc598f9be8b04",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "type-spacing-metrics": {
+      "drive_path": "02-skills/type-spacing-metrics/SKILL.md",
+      "hash": "sha256:c1396098fb04dbc31fe66215565611238db8afd1c0cb54ee910ed3501c566f6f",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "type-typesetting": {
+      "drive_path": "02-skills/type-typesetting/SKILL.md",
+      "hash": "sha256:d38520ac8a916b26e68d9fe5a4e16d87f3e4f579e84b7bb10810e6e902c1fa0c",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "type-variable-text": {
+      "drive_path": "02-skills/type-variable-text/SKILL.md",
+      "hash": "sha256:3f3d1040d8c02dacd7043d92bea6c6c9c495e8d19b5f83e4b2f4dac4f1ee6b3a",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "uid-color-for-ui": {
+      "drive_path": "02-skills/uid-color-for-ui/SKILL.md",
+      "hash": "sha256:17b217a01639017f612e629fe31e1196de9cd29ddb9947f28f73db3c64313d13",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "uid-iconography": {
+      "drive_path": "02-skills/uid-iconography/SKILL.md",
+      "hash": "sha256:bc01e5456f3d4e26381f07c3f2241a4660208e3deb4b76e9987861458a8533de",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "uid-spatial-composition": {
+      "drive_path": "02-skills/uid-spatial-composition/SKILL.md",
+      "hash": "sha256:8a71c40755ab1e41e1036965abd5def1130323afd9f58103a47247898ff4634f",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "uid-surface-depth": {
+      "drive_path": "02-skills/uid-surface-depth/SKILL.md",
+      "hash": "sha256:8dda7af42effd98dd7308d276932af56f26157b67361e82ddec6f071c13fa67f",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "uid-type-for-screens": {
+      "drive_path": "02-skills/uid-type-for-screens/SKILL.md",
+      "hash": "sha256:c23c2912240300b7627caf68f1c7a4f9c365d9ccd404604971d7c4ae4ef84d60",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "uid-visual-critique": {
+      "drive_path": "02-skills/uid-visual-critique/SKILL.md",
+      "hash": "sha256:b40901d4242f4cc6972fc525ee3bc17308e2870f367b16bf7458d5691ca9bc85",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "uid-visual-system": {
+      "drive_path": "02-skills/uid-visual-system/SKILL.md",
+      "hash": "sha256:3549a0909bd2a03cfd1de1e38bba8850f78d3455af7e3ed80678c2b1d1c05dca",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ux-accessibility": {
+      "drive_path": "02-skills/ux-accessibility/SKILL.md",
+      "hash": "sha256:837c5236acf3392f9204b924398a198f2bf4cb0fa270e54cb41d6455f00f2661",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ux-ai-product-design": {
+      "drive_path": "02-skills/ux-ai-product-design/SKILL.md",
+      "hash": "sha256:343e7f842e708004c7a8917f05522197b11d183459c36764d4106684b03d2cec",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "ux-data-visualization": {
+      "drive_path": "02-skills/ux-data-visualization/SKILL.md",
+      "hash": "sha256:d80e9053fcbc50fab6b1d64ef4d49ad04616b530266d357c3843f6fa80142283",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "ux-design-systems": {
+      "drive_path": "02-skills/ux-design-systems/SKILL.md",
+      "hash": "sha256:9ffc466b730b429047091bbaa4269414b9430605dc4cc32fd89b46b66e57b837",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ux-information-architecture": {
+      "drive_path": "02-skills/ux-information-architecture/SKILL.md",
+      "hash": "sha256:91c71203262696b6107b185bc5280e38859a902637e213255ef4ff6505317f64",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ux-interaction-design": {
+      "drive_path": "02-skills/ux-interaction-design/SKILL.md",
+      "hash": "sha256:67656dae8a783462440cc3bef0541771c447649513769e8c20b8da2846a7cc7a",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ux-performance-perception": {
+      "drive_path": "02-skills/ux-performance-perception/SKILL.md",
+      "hash": "sha256:1918acdc724dab5aa15789ef0bd3a50e4c99e954cdf287b560b9bb95490640a4",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ux-research-synthesis": {
+      "drive_path": "02-skills/ux-research-synthesis/SKILL.md",
+      "hash": "sha256:9c7271d0617120ab61f176be8eece743971b20ee550cd6093bf782b9cc2511fd",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "ux-service-design": {
+      "drive_path": "02-skills/ux-service-design/SKILL.md",
+      "hash": "sha256:3c3fbf9c04fe5650220238ffe1ec8892aca4f1f9c907420f2477cbfaa07acf0d",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "ux-writing": {
+      "drive_path": "02-skills/ux-writing/SKILL.md",
+      "hash": "sha256:45f9f5b19b1eee19fbb8201a1eb507f95e135de878546d46b2f80b83f94a14da",
+      "last_synced": "2026-04-28T01:00:00"
+    },
+    "variable-icon-font-architect": {
+      "drive_path": "02-skills/variable-icon-font-architect/SKILL.md",
+      "hash": "sha256:7a519f934fff326209f71d6334221deb667712ce3e773d42c500b5d49e1ce4b1",
+      "last_synced": "2026-04-28T00:00:00"
+    },
+    "visual-qa-accessibility": {
+      "drive_path": "02-skills/visual-qa-accessibility/SKILL.md",
+      "hash": "sha256:cbf74b47ec55f882e1b66ee772d41b0bbde6e8699724fb678a0b5dcd1a138acd",
+      "last_synced": "2026-04-21T16:55:43"
+    },
+    "visual-qa-architecture": {
+      "drive_path": "02-skills/visual-qa-architecture/SKILL.md",
+      "hash": "sha256:9ded44d327e076a2b46e5cd61516207c6f264ed1f3d747e36534d8ad9a8585e9",
+      "last_synced": "2026-04-21T16:40:50"
+    },
+    "visual-qa-game-design": {
+      "drive_path": "02-skills/visual-qa-game-design/SKILL.md",
+      "hash": "sha256:9eaedf6662c64a5bec7929e347593ddb984ec3d4a32f27008be6c363ef66ad08",
+      "last_synced": "2026-04-21T16:40:50"
+    },
+    "visual-qa-graphic-design": {
+      "drive_path": "02-skills/visual-qa-graphic-design/SKILL.md",
+      "hash": "sha256:2a05b09617833b9b8c62734f8b11c4fa8d278cded80ba11f7cf4d4cf9d9d6c9a",
+      "last_synced": "2026-04-21T16:40:50"
+    },
+    "visual-qa-interior-design": {
+      "drive_path": "02-skills/visual-qa-interior-design/SKILL.md",
+      "hash": "sha256:66651b9835a1fc0c6cc46802ef755d08e4cff79e55a3917e683f82d1d9f0e444",
+      "last_synced": "2026-04-21T16:40:50"
+    },
+    "visual-qa-toolkit": {
+      "drive_path": "02-skills/visual-qa-toolkit/SKILL.md",
+      "hash": "sha256:73c742f04ea79639ea4317259b23a02d599378c19ad7da608037f45b6833841b",
+      "last_synced": "2026-04-21T17:37:50"
+    },
+    "visual-qa-ui-design": {
+      "drive_path": "02-skills/visual-qa-ui-design/SKILL.md",
+      "hash": "sha256:76a7a66d3d841083309b2c2755cd25f3ad73c08f3c060fcee2d532ae138aa231",
+      "last_synced": "2026-04-21T16:55:43"
+    },
+    "visual-qa-usability": {
+      "drive_path": "02-skills/visual-qa-usability/SKILL.md",
+      "hash": "sha256:b6ae397de48a161b5806c0dba0865166f77bead9bcff50ab5e5c0e88a0f408b2",
+      "last_synced": "2026-04-21T16:55:43"
+    },
+    "visual-qa-ux-design": {
+      "drive_path": "02-skills/visual-qa-ux-design/SKILL.md",
+      "hash": "sha256:3360662b635c080b25279df5138e3833d20a529b7212c43116ff04d8b256b2d4",
+      "last_synced": "2026-04-21T16:40:50"
+    },
+    "webgpu-advanced-rendering": {
+      "drive_path": "02-skills/webgpu-advanced-rendering/SKILL.md",
+      "hash": "sha256:4d509c8b200e2e66779d49df394b51a455fa8fb711660013b4a0b908f4a146c7",
+      "last_synced": "2026-04-10T20:22:08"
+    },
+    "workspace-bootstrap": {
+      "drive_path": "02-skills/workspace-bootstrap/SKILL.md",
+      "hash": "sha256:657b8dde2a849ff6c7709783ab6b1d02de072e77a910b7a5ab9eb474c0a5a2ed",
+      "last_synced": "2026-06-05T00:00:00"
+    },
+    "ds": {
+      "drive_path": "02-skills/ds/SKILL.md",
+      "hash": "sha256:23b52f09fab3e77106b64cb93f4f54e089e9cdbc345d28861c54e3225cd99ca1",
+      "last_synced": "2026-06-04T15:57:04"
+    },
+    "figma": {
+      "drive_path": "02-skills/figma/SKILL.md",
+      "hash": "sha256:f89d83db55ec6d20935ff418ef82dcda006ea25884ad3ea3524e1fc143a1b79f",
+      "last_synced": "2026-06-04T15:57:04"
+    },
+    "motion": {
+      "drive_path": "02-skills/motion/SKILL.md",
+      "hash": "sha256:0549f9e8d3e264d151b5b398965733f9b52b872a32e381047e2ff9725bfd7950",
+      "last_synced": "2026-06-04T15:57:04"
+    },
+    "type": {
+      "drive_path": "02-skills/type/SKILL.md",
+      "hash": "sha256:933c93f748d8f031e1f770a9c3b27f95a95afb0c0189bd541ea54040dca25f83",
+      "last_synced": "2026-06-04T15:57:04"
+    },
+    "redesign": {
+      "drive_path": "02-skills/redesign/SKILL.md",
+      "hash": "sha256:669431f6e6d4755bcefa56ba62b5da55d64773f35e32376e4757d33e09939a0a",
+      "last_synced": "2026-06-04T15:57:04"
+    }
+  }
+}

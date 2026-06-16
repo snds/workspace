@@ -1,0 +1,30 @@
+# ════════════════════════════════════════════════════════════════════
+# EXAMPLE PROJECT CONTEXT FILE — used for the toolkit's own smoke test.
+#
+# A context file bundles per-project defaults and config overrides so
+# the toolkit can run with minimal CLI args once the context is set up.
+#
+# Precedence: CLI args > context defaults > config file > script defaults
+# check_overrides are deep-merged INTO the loaded config.
+#
+# Path resolution inside this file:
+#   - In `defaults`: tilde expanded AND relative paths resolved against
+#     this file's directory (so the context is portable).
+#   - In `check_overrides`: tilde expanded only. Use absolute paths if you
+#     need them inside overrides.
+# ════════════════════════════════════════════════════════════════════
+
+project: visual-qa-toolkit smoke test
+
+defaults:
+  # These paths are relative to THIS file's directory (tests/)
+  input: fixture_screenshot.png
+  config: ../configs/default.yaml
+  output: ./qa-out-from-context
+
+check_overrides:
+  # Prove deep-merge works — these should show up in the final config
+  spacing:
+    tolerance_px: 5        # looser than default's 2
+  contrast:
+    standard: WCAG_AAA     # tighter than default's WCAG_AA

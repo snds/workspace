@@ -1,0 +1,159 @@
+{
+  "manifest_version": "2.0-draft",
+  "status": "additive-draft",
+  "owner": {
+    "name": "Sean Sands",
+    "email": "hello@snds.design"
+  },
+  "workspace": {
+    "name": "Claude Workspace",
+    "purpose": "Long-lived personal AI workspace for knowledge, execution, artifacts, and reusable skills.",
+    "design_goals": [
+      "Claude compatibility remains intact",
+      "Perplexity compatibility is additive",
+      "Agent-agnostic bootstrap becomes possible over time",
+      "Git-friendly and Obsidian-friendly resilience",
+      "Deterministic paths and idempotent setup"
+    ]
+  },
+  "bootstrap_entrypoints": {
+    "universal": [
+      "AGENTS.md",
+      "00-bootstrap/BOOTSTRAP.md",
+      "00-bootstrap/workspace-manifest.json"
+    ],
+    "adapters": {
+      "claude": [
+        "CLAUDE.md",
+        ".claude/settings.json",
+        ".claude/settings.local.json"
+      ],
+      "perplexity": [
+        "PERPLEXITY.md"
+      ]
+    },
+    "discovery_helpers": [
+      "_HOME.md",
+      "_CONTEXT.md",
+      "_FRAMEWORKS.md",
+      "_SKILLS.md"
+    ]
+  },
+  "read_order": [
+    "00-bootstrap/BOOTSTRAP.md",
+    "AGENTS.md",
+    "00-bootstrap/workspace-manifest.json",
+    "_HOME.md",
+    "_CONTEXT.md",
+    "_FRAMEWORKS.md",
+    "_SKILLS.md"
+  ],
+  "folders": {
+    "00-bootstrap": "Bootstrap docs, manifests, setup logic, and adapters.",
+    "00-frameworks": "Reusable frameworks and methods.",
+    "01-shared-references": "Shared standards and references.",
+    "02-skills": "Reusable skills, packaging, manifests, and installers.",
+    "03-preferences": "User preferences and response defaults.",
+    "04-artifacts": "Generated artifacts and archived outputs.",
+    "05-version-registers": "Version tracking and registers.",
+    "06-context": "Durable supporting context.",
+    "07-projects": "Project-specific working areas and local context.",
+    "08-knowledge": "Knowledge base and long-lived notes.",
+    "08-tools": "Scripts, validators, and automation support."
+  },
+  "canonical_documents": {
+    "bootstrap": "00-bootstrap/BOOTSTRAP.md",
+    "universal_agent_contract": "AGENTS.md",
+    "claude_adapter": "CLAUDE.md",
+    "perplexity_adapter": "PERPLEXITY.md",
+    "skills_manifest": "02-skills/skills-manifest.json"
+  },
+  "shared_references": {
+    "load_when_relevant": true,
+    "paths": [
+      "01-shared-references"
+    ]
+  },
+  "skills": {
+    "primary_root": "02-skills",
+    "manifest": "02-skills/skills-manifest.json",
+    "discovery_order": [
+      "02-skills/skills-manifest.json",
+      "_SKILLS.md",
+      "skill folder metadata",
+      "SKILL.md",
+      "README files"
+    ],
+    "required_metadata": [
+      "id",
+      "name",
+      "purpose",
+      "invocation_guidance",
+      "inputs",
+      "outputs",
+      "compatibility",
+      "dependencies",
+      "safe_mutation_scope"
+    ]
+  },
+  "context": {
+    "precedence": [
+      "current user instruction",
+      "project-local context",
+      "workspace bootstrap and manifest",
+      "shared references and frameworks",
+      "historical artifacts and archives"
+    ],
+    "project_local_discovery": [
+      "README.md",
+      "CLAUDE.md",
+      ".visual-qa-context.yaml",
+      "local specs and notes"
+    ],
+    "future_project_contract": [
+      "PROJECT.md",
+      "AGENT-CONTEXT.md"
+    ]
+  },
+  "mutation_policy": {
+    "default_mode": "additive",
+    "preferred_actions": [
+      "add adapter files",
+      "add manifest fields",
+      "add compatibility notes",
+      "add validators or reconcilers",
+      "update canonical files backward-compatibly"
+    ],
+    "avoid_by_default": [
+      "delete bootstrap files",
+      "rename stable root files",
+      "move active folders",
+      "replace Claude-specific flows",
+      "introduce hidden state outside Git review"
+    ]
+  },
+  "resilience": {
+    "obsidian_friendly": true,
+    "git_friendly": true,
+    "deterministic_paths": true,
+    "idempotent_bootstrap_preferred": true,
+    "human_and_machine_readable": true
+  },
+  "agent_adapters": {
+    "claude": {
+      "status": "existing-production",
+      "preserve_behavior": true
+    },
+    "perplexity": {
+      "status": "draft-additive-adapter",
+      "preserve_claude_behavior": true
+    }
+  },
+  "next_steps": [
+    "Normalize AGENTS.md as canonical universal contract",
+    "Keep CLAUDE.md as active adapter",
+    "Add Perplexity bootstrap support without altering Claude assumptions",
+    "Extend skills metadata for agent compatibility",
+    "Add bootstrap validation tooling under 08-tools"
+  ]
+}

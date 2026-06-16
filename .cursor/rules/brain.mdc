@@ -1,0 +1,89 @@
+---
+description: Always-on brain context for the Claude Workspace. Loaded by Cursor's AI in any session inside this folder.
+alwaysApply: true
+---
+
+# Workspace brain — Cursor context
+
+This folder is **the brain**: a multi-purpose Claude Workspace serving as Obsidian vault, Claude Code working directory, and shared design+engineering knowledge base. One filesystem, multiple consumers.
+
+## Session Start Protocol (mandatory)
+
+**Before responding to Sean's first message in every new Cursor session**, you must:
+
+**Step 1 — Read context files using the `claude-workspace` MCP tool.** Its root is the per-device alias `~/claude-workspace/` (a symlink to the materialized brain on this machine, maintained at session start; resolves correctly regardless of username or Drive mount). Use that prefix — never a hardcoded `/Users/<name>/` path.
+
+Read these files directly by full path — do NOT use glob search, as most of `07-projects/` is gitignored and glob will miss them:
+- `CLAUDE.md` (skim for conventions; follow `brain.mdc` format for Cursor)
+- `06-context/role-and-context.md`
+- `06-context/project-context.md` (first 100 lines)
+- `06-context/session-log.md` (first 20 lines)
+
+For active projects: **list the `07-projects/` directory**, then for each subdirectory read `{subdir}/SESSION-STATE.md` directly by full path. Do not glob for SESSION-STATE.md — it will silently miss gitignored project folders.
+
+**Step 2 — Output the session-start summary in exactly this format:**
+
+```
+**✓ Workspace loaded** — {Machine label} · {YYYY-MM-DD HH:MM}
+
+- **Surface:** Cursor (auto)
+- **Model:** {model name}
+- **Last session:** {YYYY-MM-DD} — {one-line title from session-log.md}
+- **Pending:** {N open items} → see 06-context/project-context.md
+- **Active projects ({N}):**
+  - **{folder-name}** — {one-line from SESSION-STATE.md}
+
+What's on the agenda today?
+```
+
+Machine labels (resolve from environment or ask if unknown):
+| Hostname | Label |
+|---|---|
+| `Voyager-2.local` | Personal MacBook Pro |
+| `seansands.local` or `CS-KQ23N94M0W` | Work MacBook Pro |
+| `Enterprise` | Windows Desktop |
+
+**Step 3 — Then respond to Sean's message normally.**
+
+This ritual is non-negotiable. Do not skip, abbreviate, or defer it because the first message seems simple. The ritual IS the confirmation that context loaded correctly. If you are not Claude, follow `01-agent-controller.mdc` — state that this task requires Claude and prompt Sean to switch.
+
+---
+
+## Frameworks (the operating layer)
+
+Five top-level frameworks govern all project work — read [`00-frameworks/00-README.md`](../../00-frameworks/00-README.md) for compressed summaries:
+
+1. Aesthetic Lens — philosophical ground, visual judgment
+2. UI/UX Operational Framework — operational decisions
+3. Collaboration and Critique Framework — conduct, critique, handoff
+4. Research and Evidence Framework — epistemology, evidence
+5. Last-Mile Craft Framework — finishing discipline
+
+## Skills
+
+- **`02-skills/`** — 60+ Claude Desktop skills (hub/spoke). Each has a `SKILL.md` with frontmatter trigger description.
+- **`.claude/skills/`** — Claude Code slash commands (`/today`, `/session-end`, `/reconcile`, `/new-project`, `/framework-check`).
+
+Cursor doesn't auto-load skills the way Claude Code does — read any `02-skills/<name>/SKILL.md` directly when a task matches.
+
+## Conventions
+
+- Artifact filenames: `context_descriptor_vN.N_YYYY-MM-DD.ext` — never overwrite, increment version.
+- `[[wikilinks]]` for internal connections (Obsidian graph view depends on them).
+- YAML frontmatter on metadata-bearing notes. Tags: lowercase + hyphenated.
+- Tasks: `- [ ]` open, `- [x]` done.
+- Never delete notes — move to `_archive/` subfolders.
+- Never commit `04-artifacts/`, `05-version-registers/`, or most of `07-projects/`.
+
+## Surfaces aware of the brain
+
+- **Claude Code** — auto-loads via `.claude/hooks/dispatcher.py` and `CLAUDE.md`
+- **Cursor** — this rule (`.cursor/rules/brain.mdc`)
+- **Obsidian** — reads the folder as a vault (Templater + Dataview + Git plugins)
+- **Claude Desktop** — reads via Desktop Commander MCP
+
+Filesystem is the contract. Whatever any surface writes, all others see on next read.
+
+## Cross-context note
+
+Sean works across personal (snds.design) and employer (Centric Software) contexts in this single workspace. Use `07-projects/<project>/` for context separation. Don't mix Centric-specific decisions into general workspace artifacts.

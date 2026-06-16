@@ -1,0 +1,120 @@
+# ════════════════════════════════════════════════════════════════════
+# EXAMPLE CONFIG — game-UI tuning
+#
+# Named after Legion as the reference project, but contains no
+# Legion-specific baked-in assumptions. This illustrates how to tune
+# the toolkit for a game-UI context:
+#   - looser alignment/spacing tolerances (game UIs aren't pixel-perfect)
+#   - bigger spacing scale (HUD clusters use larger steps)
+#   - WCAG AA contrast preserved (accessibility matters in games too)
+#   - strict color-vision checks (color-encoded game information
+#     must survive CVD)
+#
+# FOR AN ACTUAL PROJECT, author a dedicated config at a path the user
+# controls. Pass it via `--config /path/to/your-project.yaml`. This
+# file is a starting point, not a bundled project config.
+# ════════════════════════════════════════════════════════════════════
+
+# ────────────────────────────────────────────────────────────────────
+# Legion game-UI visual QA config.
+#
+# Tuned for game HUDs and menu UIs: looser tolerances than enterprise
+# (pixel-perfection isn't the goal — readable at speed, in motion,
+# against variable game-world backgrounds is).
+#
+# Color-vision checks and contrast stay strict — accessibility matters
+# in games even when other craft dimensions are more forgiving.
+# ────────────────────────────────────────────────────────────────────
+
+project_name: Legion
+
+alignment:
+  tolerance_px: 2              # a little more give for game UI
+  cluster_tolerance_px: 6
+  min_cluster_size: 2
+  min_element_area: 400
+  max_element_area_pct: 0.5
+  edges_to_check: [left, right, top, bottom]
+
+spacing:
+  # Game UIs tend toward 4-based or 8-based with bigger steps for HUD clusters.
+  base_scale: [4, 8, 12, 16, 24, 32, 48, 64, 96, 128]
+  tolerance_px: 3
+  min_element_area: 400
+  overlap_threshold_pct: 0.25
+
+contrast:
+  # Game UI overlays variable backgrounds — WCAG AA for UI text;
+  # call-outs and HUD counters often demand AAA.
+  standard: WCAG_AA
+  text_size: body
+  auto_detect: true
+  min_region_area: 300
+
+color_extraction:
+  # Set when a palette file exists:
+  # palette_path: ./configs/tokens/legion-palette.json
+  delta_e_threshold: 6.0       # looser — game art is saturated and varies by scene
+  delta_e_ideal: 2.3
+  auto_detect: true
+  auto_detect_count: 16
+
+visual_diff:
+  reference_path: null
+  ssim_threshold: 0.92         # game scenes have animated backgrounds — tolerate more
+  pixel_diff_threshold: 30
+  min_region_area: 300
+  dilation_iterations: 4
+  overlay_alpha: 0.5
+
+color_vision:
+  # Critical for games: color-encoded information (faction, resource,
+  # threat) must survive CVD simulation.
+  simulations: [deuteranopia, protanopia, tritanopia]
+  dominant_color_count: 12
+  distinct_original_threshold: 10.0
+  collapse_threshold: 4.0
+  min_area_pct: 0.3
+
+typography:
+  # Legion type scale — placeholder. Update when the in-game type scale is finalized.
+  type_scale_px: [12, 14, 16, 20, 24, 32, 48, 64]
+  tolerance_px: 3
+  auto_detect: true
+
+grid_overlay:
+  # Game UIs usually don't follow a strict column grid. Use this as a
+  # sanity-check overlay rather than a rigorous compliance check.
+  columns: 8
+  column_width_px: null
+  gutter_px: 16
+  margin_px: 64
+  baseline_px: 8
+  ruler_spacing_px: 100
+  ruler_major_spacing_px: 200
+  draw_column_fill: false      # less noisy for game UIs
+  draw_column_edges: true
+  draw_baseline: true
+  draw_ruler: true
+
+icon_consistency:
+  canvas_size: 32              # game UI icons often larger
+  extensions: [.png]
+  background_threshold: 240
+  alpha_threshold: 10
+  # Looser — game icons intentionally vary in silhouette/weight per faction
+  bbox_size_stdev_threshold: 2.5
+  weight_stdev_threshold: 2.5
+  stroke_stdev_threshold: 2.5
+  max_icons_in_grid: 80
+
+state_comparison:
+  extensions: [.png, .jpg, .jpeg]
+  expected_states: [default, hover, focus, pressed, disabled]
+  min_ssim_delta: 0.03         # game buttons often have bigger hover/pressed deltas
+  critical_pairs:
+    - [default, hover]
+    - [default, pressed]
+    - [default, disabled]
+  critical_min_delta: 0.05
+  resize_to_smallest: true

@@ -1,0 +1,32 @@
+{
+  "_comment": "Figma plugin development — Brain + Claude Figma plugin + Component Set Manager + figma CLI test. Open from VS Code or Cursor: File → Open Workspace from File... → pick this.",
+  "folders": [
+    { "path": "../..", "name": "Brain" },
+    { "path": "../../07-projects/04-claude-figma-plugin", "name": "Claude Figma Plugin" },
+    { "path": "../../07-projects/12-MCS", "name": "Component Set Manager" },
+    { "path": "../../07-projects/09-figmaCLI-test", "name": "Figma CLI test" }
+  ],
+  "settings": {
+    "files.exclude": {
+      "04-artifacts": true,
+      "05-version-registers": true,
+      "08-tools": true,
+      "07-projects/00-obsidian": true,
+      "07-projects/01-mediaservices": true,
+      "07-projects/02-centricPLM": true,
+      "07-projects/03-omni": true,
+      "07-projects/04-unraidTheme": true,
+      "07-projects/05-C8-PLM": true,
+      "07-projects/06-context-aware-DS": true,
+      "07-projects/07-algo-DS-tool": true,
+      "07-projects/08-customDesk": true,
+      "07-projects/10-centric-UX-research": true,
+      "07-projects/11-lexical-react-native": true,
+      "07-projects/13-legion": true,
+      "07-projects/14-variable-icon-font-generator": true,
+      "07-projects/15-DavinciRemake": true,
+      "07-projects/plans": true,
+      "07-projects/todos": true
+    }
+  }
+}

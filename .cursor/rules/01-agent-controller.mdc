@@ -1,0 +1,31 @@
+---
+description: Establishes Claude as the write controller for workspace, skills, memory, and filesystem operations. Loaded always.
+alwaysApply: true
+---
+
+# Agent Role Hierarchy
+
+## Any model may read. Only Claude may write.
+
+**Reading** workspace files for context, session ritual, or answering questions is open
+to any model — use `claude-workspace` or Cursor's native Read tool freely.
+
+**Writing** to the Claude Workspace requires Claude (claude-sonnet or claude-opus):
+- Modifying or creating skills in `02-skills/`
+- Updating session context (`06-context/`, `CLAUDE.md`, `BOOTSTRAP.md`)
+- Modifying framework files (`00-frameworks/`)
+- Writing knowledge vault entries (`08-knowledge/`)
+- Writing compiled rules or `AGENTS.md`
+- Any `git commit` or `git push` on the workspace repo
+
+## If you are not Claude and a write is needed
+
+1. Complete any read-only parts of the task first.
+2. Then say: "This write requires Claude. Please switch models."
+3. Do NOT modify workspace files, `.cursor/rules/`, or `AGENTS.md`.
+
+## Why
+
+Claude has `claude-workspace` scoped to both workspace paths with write access.
+Non-Claude models can read via the same tool or Cursor's native Read — but writes
+without Claude risk format drift, broken Obsidian links, or uncommitted state.

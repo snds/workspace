@@ -1,0 +1,30 @@
+# Global git config — uses includeIf to apply identity by directory.
+# Personal repos under ~/personal/** or ~/Projects/**, work repos under ~/work/**.
+# Repos outside all routed directories use repo-local config (e.g., the Claude Workspace).
+
+[init]
+	defaultBranch = main
+
+[pull]
+	rebase = false
+
+[push]
+	default = current
+
+[fetch]
+	prune = true
+
+[core]
+	excludesFile = ~/.gitignore_global
+
+# Directory-routed identity.
+# The trailing slash in the pattern is required for gitdir matching.
+
+[includeIf "gitdir:~/personal/"]
+	path = ~/.gitconfig.personal
+
+[includeIf "gitdir:~/Projects/"]
+	path = ~/.gitconfig.personal
+
+[includeIf "gitdir:~/work/"]
+	path = ~/.gitconfig.work
