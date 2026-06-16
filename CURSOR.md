@@ -26,8 +26,13 @@ algorithm, the routing map — lives in AGENTS.md and is not duplicated here._
 ## Capabilities / limits
 
 - No `.claude/hooks` — the session-start/-end rituals are executed by reading/following the protocol,
-  not by a hook. `.cursor/rules/*.mdc` provide the always-on framing.
-- Writes go to the filesystem and are committed via git, same as any tool. Follow the routing map
-  before writing.
+  not by a hook. `.cursor/rules/*.mdc` provide the always-on framing (re-injected for every model).
+- **Dynamic model switching:** when you swap the active model mid-task, re-anchor on your turn — re-read the
+  project's Live handoff block + load the skills the task needs from the registry before acting. See
+  `.cursor/rules/brain.mdc` → "Dynamic model switching" and [AGENTS.md](AGENTS.md) → "Multi-agent continuity".
+- **Writing is open to any model, behind the write-quality gates** (quality ≥ standard · intent integrity ·
+  cross-link continuity · no zombies). Run `build-registry.py` → `build-related.py` → `validate-integrity.py`
+  → `validate-links.py` → `validate-workspace.py` before committing. See [AGENTS.md](AGENTS.md) →
+  "Write-quality gates" and `.cursor/rules/01-agent-controller.mdc`.
 
 Other adapters: [CLAUDE.md](CLAUDE.md) · [PERPLEXITY.md](PERPLEXITY.md).

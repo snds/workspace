@@ -1,31 +1,44 @@
 ---
-description: Establishes Claude as the write controller for workspace, skills, memory, and filesystem operations. Loaded always.
+description: Write policy for the workspace — any capable agent may write, behind hard quality/integrity/continuity gates. Loaded always.
 alwaysApply: true
 ---
 
-# Agent Role Hierarchy
+# Write Policy — gated, not gated-by-identity
 
-## Any model may read. Only Claude may write.
+## Any capable agent may read AND write.
 
-**Reading** workspace files for context, session ritual, or answering questions is open
-to any model — use `claude-workspace` or Cursor's native Read tool freely.
+Writing is **no longer restricted to Claude.** Any model (Cursor's Claude/GPT/Gemini, a local model,
+a human) may modify the workspace — *provided every write passes the write-quality gates below.*
+Correctness is enforced by **deterministic validation + CI**, not by which model holds the pen. This is
+what makes dynamic, mid-task agent switching (Cursor swapping models) feel like **one unified contract**.
 
-**Writing** to the Claude Workspace requires Claude (claude-sonnet or claude-opus):
-- Modifying or creating skills in `03-skills/`
-- Updating session context (`06-context/`, `CLAUDE.md`, `BOOTSTRAP.md`)
-- Modifying framework files (`01-frameworks/`)
-- Writing knowledge vault entries (`08-knowledge/`)
-- Writing compiled rules or `AGENTS.md`
-- Any `git commit` or `git push` on the workspace repo
+Full rationale + the universal version of these gates: [AGENTS.md](../../AGENTS.md) → "Write-quality gates".
 
-## If you are not Claude and a write is needed
+## The write-quality gates (every write, every agent)
 
-1. Complete any read-only parts of the task first.
-2. Then say: "This write requires Claude. Please switch models."
-3. Do NOT modify workspace files, `.cursor/rules/`, or `AGENTS.md`.
+1. **Quality** — output must **meet or exceed** the workspace's documentation standard: complete (no
+   stubs, TODOs, or unfilled template tokens), in the file's established structure and voice, with valid
+   frontmatter. Follow `01-frameworks/05-last-mile-craft-framework.md` + `06-qa-operating-model.md`.
+2. **Intent integrity (no loss)** — read the file and understand its intent *before* editing; after, verify
+   no data, context, or intent was silently dropped. Preserve meaning unless deliberately superseding (gate 4).
+3. **Cross-link continuity** — when you change a file, update **every** related/cross-linked file
+   (frontmatter edges, `## Related`, foundations, MOCs, knowledge refs, prose mentions). Then regenerate
+   (`build-registry.py`, `build-related.py`) and run the validators. A change that orphans a reference is
+   **incomplete**, not done.
+4. **No zombies — archive-or-regenerate** — if a change is so dramatic the old file no longer makes sense,
+   do **not** leave it stale or half-updated. **Archive** it with provenance (`_archive/` + `ARCHIVE-LOG.md`),
+   **generate** the replacement, and **repoint** all cross-links. Never leave an orphaned, superseded-but-live,
+   or stub file.
 
-## Why
+## Enforcement (run before you commit — CI runs them too)
 
-Claude has `claude-workspace` scoped to both workspace paths with write access.
-Non-Claude models can read via the same tool or Cursor's native Read — but writes
-without Claude risk format drift, broken Obsidian links, or uncommitted state.
+```
+python3 09-tools/build-registry.py        # regenerate the graph from frontmatter
+python3 09-tools/build-related.py         # regenerate reciprocal cross-links
+python3 09-tools/validate-integrity.py    # quality + cross-link continuity + anti-zombie
+python3 09-tools/validate-links.py        # dangling + reciprocity
+python3 09-tools/validate-workspace.py    # archive provenance + memory index
+```
+
+If any gate fails, the write is not finished. Gate 2 (intent) is partly semantic — CI can't fully judge it;
+that's on the authoring agent and PR review. Everything else is machine-checked.

@@ -29,6 +29,29 @@ below.
 
 ---
 
+## Write-quality gates (every write, every agent)
+
+**Any capable agent may write here — not just Claude.** Open participation is safe because correctness is
+enforced by deterministic validation + CI, not by model identity. Every write — by any model, on any surface,
+including a mid-task dynamic model swap in Cursor — must clear four gates:
+
+1. **Quality** — meets or exceeds the workspace documentation standard: complete (no stubs/TODOs/unfilled
+   template tokens), in the file's established structure + voice, valid frontmatter. (Frameworks 05 + 06.)
+2. **Intent integrity (no loss)** — understand the file's intent before editing; afterward, verify no data,
+   context, or intent was silently dropped. Preserve meaning unless deliberately superseding (gate 4).
+3. **Cross-link continuity** — a change to one file updates **every** related/cross-linked file (frontmatter
+   edges, `## Related`, foundations, MOCs, knowledge refs, prose), then regenerates + passes the validators.
+   A change that orphans a reference is incomplete.
+4. **No zombies — archive-or-regenerate** — the *only* sanctioned path for intent loss: if a change is so
+   dramatic the old file no longer makes sense, archive it with provenance, generate the replacement, and
+   repoint all cross-links. Never leave an orphaned, superseded-but-live, half-updated, or stub file.
+
+Run before commit (CI mirrors these): `build-registry.py` → `build-related.py` → `validate-integrity.py`
+→ `validate-links.py` → `validate-workspace.py`. Gate 2 is partly semantic — the authoring agent + PR review
+own it; the rest is machine-checked. Mirrored, compressed, in [[AGENTS]] → "Write-quality gates".
+
+---
+
 ## The routing map (the WHERE)
 
 Canonical copy + rationale in [[workspace-ontology]]. Compressed here for quick reference:

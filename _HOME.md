@@ -18,7 +18,7 @@ you read this.
 
 ## Daily flow
 
-1. **Start the day** — open the most recent [[05-artifacts/active/daily|daily note]], or run `/today` in Claude Code to draft one
+1. **Start the day** — open the most recent daily note in `05-artifacts/active/daily/`, or run `/today` in Claude Code to draft one
 2. **Work** — edit notes, create artifacts; Claude Code reads context automatically
 3. **End the day** — run `/session-end` in Claude Code; it writes the session block, commits, pushes
 

@@ -17,6 +17,12 @@
 ## Routing / governance (if this adds content)
 - [ ] Content placed per the routing map (skill / framework / knowledge / memory / context / preference)
 
+## Write-quality gates (every change — any agent)
+- [ ] **Quality** ≥ workspace standard — no stubs/TODOs/unfilled tokens; established structure + voice
+- [ ] **Intent integrity** — no data/context/intent loss vs. the prior version (semantic; reviewer confirms)
+- [ ] **Cross-link continuity** — every related/cross-linked file updated; registry + Related regenerated
+- [ ] **No zombies** — nothing orphaned/superseded-but-live; dramatic changes archived + regenerated + repointed
+
 ## Archive (if anything was retired)
 - [ ] `_archive/ARCHIVE-LOG.md` entry added with reason + `superseded_by`; tombstone left if linked
 
@@ -24,4 +30,5 @@
 <!-- Rough +/- lines. Flag if a foundation extracted duplication out of specialty spokes. -->
 
 ## Verification
-<!-- What you ran: build-registry.py, validate-links.py, a load-chain spot check, Obsidian graph, etc. -->
+- [ ] Ran `build-registry.py` → `build-related.py` → `validate-integrity.py` → `validate-links.py` → `validate-workspace.py` (all green)
+<!-- Plus any spot checks: a load-chain trace, Obsidian graph, etc. -->

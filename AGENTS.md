@@ -252,6 +252,18 @@ context store; it updates the shared one so the next agent inherits an unbroken 
 4. **Concurrent edits** — if two agents touched the same project in parallel, run the reconcile protocol
    (`/reconcile` or the merge steps in the bootstrap skill) to merge into one thread; flag genuine conflicts.
 
+### Two handoff modes
+- **Boundary handoff (tool → tool):** a session ends in one tool and resumes in another — driven by the
+  session-start/-end protocol (read the baton on entry, write it on exit).
+- **Dynamic handoff (model swap *within* one tool — e.g. Cursor switching models mid-task):** there is **no
+  session boundary** and often no explicit event. Continuity is carried two other ways: (a) the tool's
+  always-on rule (`.cursor/rules/*.mdc`, `alwaysApply:true`) re-injects this contract into **every** request
+  regardless of the active model, and (b) all state lives in **files read on demand**, not in the model — so a
+  freshly-swapped-in model still has the contract and the same baton. Its one extra obligation: **re-anchor on
+  your turn** — if you may have just become active or are resuming, re-read the project's Live handoff block
+  and load the skills the task needs (per the precedence algorithm) *before acting*. The chat history is
+  shared, but workspace state must be re-read from files; don't assume the prior model's loaded context is yours.
+
 ### Agent self-identification
 Every session-log entry and Live handoff update stamps **Agent · Surface · Machine** (e.g.
 `Claude Opus / Claude Code / Personal MBP`, `GPT / Cursor / Work MBP`, `Perplexity / web`). Attribution is
@@ -264,6 +276,32 @@ what lets one continuous thread show *who did what* without fragmenting into per
 - One routing map (`02-shared-references/workspace-ontology.md`) → everyone writes to the same place.
 
 Full per-layer protocol: `01-frameworks/08-workspace-contribution-framework.md` → "Portable session protocol".
+
+---
+
+## Write-quality gates
+
+**Any capable agent may write here — not just Claude — but every write must clear these gates.** Open
+participation is safe *because* correctness is enforced by deterministic validation + CI, not by which model
+holds the pen. These gates apply to every agent on every surface (Cursor's GPT/Gemini, a local model, a
+human), and they are what let dynamic multi-agent work stay one coherent contract instead of degrading.
+
+1. **Quality** — output must **meet or exceed** the workspace documentation standard: complete (no stubs,
+   TODOs, or unfilled template tokens), in the file's established structure and voice, valid frontmatter.
+   Follow Last-Mile Craft (framework 05) + the QA Operating Model (framework 06).
+2. **Intent integrity (no loss)** — read and understand a file's intent *before* editing; after, verify no
+   data, context, or intent was silently dropped. Preserve meaning unless deliberately superseding (gate 4).
+3. **Cross-link continuity** — a change to one file must update **every** related/cross-linked file
+   (frontmatter edges, `## Related`, foundations, MOCs, knowledge refs, prose mentions), then regenerate the
+   registry + Related and pass the validators. A change that orphans a reference is incomplete.
+4. **No zombies — archive-or-regenerate** — if a change is so dramatic the old file no longer makes sense,
+   **archive** it with provenance (`_archive/` + `ARCHIVE-LOG.md`), **generate** the replacement, and
+   **repoint** all cross-links. Never leave an orphaned, superseded-but-live, half-updated, or stub file.
+
+**Enforcement (run before commit; CI runs them too):** `build-registry.py` → `build-related.py` →
+`validate-integrity.py` (quality + cross-link continuity + anti-zombie) → `validate-links.py` →
+`validate-workspace.py`. Gate 2 is partly semantic — CI can't fully judge intent; that's the authoring agent
++ PR review. Everything else is machine-checked. See framework 08 for the per-layer detail.
 
 ---
 

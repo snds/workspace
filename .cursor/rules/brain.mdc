@@ -1,89 +1,83 @@
 ---
-description: Always-on brain context for the Claude Workspace. Loaded by Cursor's AI in any session inside this folder.
+description: Always-on workspace contract for Cursor — loaded into every request, for every model. Carries continuity across dynamic model switches.
 alwaysApply: true
 ---
 
 # Workspace brain — Cursor context
 
-This folder is **the brain**: a multi-purpose Claude Workspace serving as Obsidian vault, Claude Code working directory, and shared design+engineering knowledge base. One filesystem, multiple consumers.
+This folder is a portable, multi-agent workspace: an Obsidian vault, a Claude Code working directory, and a
+shared design+engineering knowledge base. One filesystem (the git checkout), many consumers. The universal
+contract is [AGENTS.md](../../AGENTS.md); this rule is the Cursor adapter over it.
 
-## Session Start Protocol (mandatory)
+**This rule is `alwaysApply:true`, so Cursor injects it into every request regardless of which model is
+active.** That is the mechanism that keeps continuity intact when you swap models mid-task (see "Dynamic
+model switching" below). Whatever model you are, you follow this contract.
 
-**Before responding to Sean's first message in every new Cursor session**, you must:
+## Session Start Protocol
 
-**Step 1 — Read context files from the workspace checkout.** Resolve the workspace root as the directory containing `AGENTS.md` (walk up from the open file). Use paths relative to that root — never a hardcoded `/Users/<name>/` or cloud-drive path. See [AGENTS.md](../../AGENTS.md) for the universal contract.
+Before responding to the first message in a new Cursor session:
 
-Read these files directly by full path — do NOT use glob search, as most of `07-projects/` is gitignored and glob will miss them:
-- `CLAUDE.md` (skim for conventions; follow `brain.mdc` format for Cursor)
-- `06-context/role-and-context.md`
-- `06-context/project-context.md` (first 100 lines)
-- `06-context/session-log.md` (first 20 lines)
+**Step 1 — Read context from the checkout.** Resolve the workspace root as the directory containing
+`AGENTS.md`. Use paths relative to it — never a hardcoded `/Users/<name>/` or cloud-drive path. Read:
+- `AGENTS.md` (the contract) → `03-skills/skills.registry.json` (the skill graph)
+- `06-context/role-and-context.md`, `06-context/project-context.md` (first 100 lines),
+  `06-context/session-log.md` (first 20 lines), `06-context/memory/MEMORY.md`
+- For active projects: list `07-projects/`, then read each `{subdir}/SESSION-STATE.md` directly (do not
+  glob — most of `07-projects/` is gitignored). **Read the `🤝 Live handoff` block first** to inherit the thread.
 
-For active projects: **list the `07-projects/` directory**, then for each subdirectory read `{subdir}/SESSION-STATE.md` directly by full path. Do not glob for SESSION-STATE.md — it will silently miss gitignored project folders.
-
-**Step 2 — Output the session-start summary in exactly this format:**
-
+**Step 2 — Output the session-start summary:**
 ```
 **✓ Workspace loaded** — {Machine label} · {YYYY-MM-DD HH:MM}
 
-- **Surface:** Cursor (auto)
-- **Model:** {model name}
-- **Last session:** {YYYY-MM-DD} — {one-line title from session-log.md}
-- **Pending:** {N open items} → see 06-context/project-context.md
+- **Surface:** Cursor · **Model:** {active model}
+- **Last session:** {YYYY-MM-DD} — {one-line from session-log.md}
+- **Pending:** {N} → see 06-context/project-context.md
 - **Active projects ({N}):**
-  - **{folder-name}** — {one-line from SESSION-STATE.md}
+  - **{folder}** — {one-line from its Live handoff / SESSION-STATE.md}
 
-What's on the agenda today?
+What's on the agenda?
 ```
+Machine labels: `Voyager-2.local`→Personal MacBook Pro · `seansands.local`/`CS-KQ23N94M0W`/`CS-K746DRWXY1`→Work
+MacBook Pro · `Enterprise`→Windows Desktop. **Step 3** — then respond normally. Don't skip the ritual; it's
+the confirmation that context loaded.
 
-Machine labels (resolve from environment or ask if unknown):
-| Hostname | Label |
-|---|---|
-| `Voyager-2.local` | Personal MacBook Pro |
-| `seansands.local` or `CS-KQ23N94M0W` | Work MacBook Pro |
-| `Enterprise` | Windows Desktop |
+## Dynamic model switching (mid-conversation)
 
-**Step 3 — Then respond to Sean's message normally.**
+Cursor lets you swap the active model mid-task. There is **no session boundary** when that happens, so:
+- This rule + the contract are re-injected for the **new** model automatically (that's `alwaysApply`).
+- All state lives in **files** (the Live handoff baton, `skills.registry.json`, the skills themselves) —
+  read on demand, not held in the model.
+- **Your obligation when you may have just become the active model (or are resuming): re-anchor first.**
+  Re-read the active project's `SESSION-STATE.md` Live handoff block and load the skills the task needs (route
+  by `triggers`/`description`, then read the `load_chains` ancestors foundation→hub→spoke). The chat history
+  is shared, but the workspace state must be re-read from files — don't assume the previous model's loaded
+  context is yours. This is what makes a model swap feel like one unified thread. See AGENTS.md →
+  "Multi-agent continuity & handoff".
+- On a meaningful change or before yielding, **update the Live handoff block** (attributed `Cursor · {model}`)
+  so the next model/agent inherits cleanly.
 
-This ritual is non-negotiable. Do not skip, abbreviate, or defer it because the first message seems simple. The ritual IS the confirmation that context loaded correctly. If you are not Claude, follow `01-agent-controller.mdc` — state that this task requires Claude and prompt Sean to switch.
+## Writing — any model may write, behind the gates
 
----
+Writing is **not** restricted to Claude. Any model in Cursor may write, **provided every write clears the
+write-quality gates** (see `01-agent-controller.mdc` and AGENTS.md → "Write-quality gates"):
+1. **Quality** ≥ the workspace standard (no stubs/TODOs/unfilled tokens; established structure + voice).
+2. **Intent integrity** — no data/context/intent loss on edit.
+3. **Cross-link continuity** — update every related/cross-linked file; regenerate + validate.
+4. **No zombies** — if a change is dramatic, archive the old (with provenance) + regenerate + repoint.
 
-## Frameworks (the operating layer)
+Before committing, run: `build-registry.py` → `build-related.py` → `validate-integrity.py` →
+`validate-links.py` → `validate-workspace.py` (CI runs them too). A write that fails a gate isn't finished.
 
-Five top-level frameworks govern all project work — read [`01-frameworks/00-README.md`](../../01-frameworks/00-README.md) for compressed summaries:
-
-1. Aesthetic Lens — philosophical ground, visual judgment
-2. UI/UX Operational Framework — operational decisions
-3. Collaboration and Critique Framework — conduct, critique, handoff
-4. Research and Evidence Framework — epistemology, evidence
-5. Last-Mile Craft Framework — finishing discipline
-
-## Skills
-
-- **`03-skills/`** — 60+ Claude Desktop skills (hub/spoke). Each has a `SKILL.md` with frontmatter trigger description.
-- **`.claude/skills/`** — Claude Code slash commands (`/today`, `/session-end`, `/reconcile`, `/new-project`, `/framework-check`).
-
-Cursor doesn't auto-load skills the way Claude Code does — read any `03-skills/<name>/SKILL.md` directly when a task matches.
-
-## Conventions
-
-- Artifact filenames: `context_descriptor_vN.N_YYYY-MM-DD.ext` — never overwrite, increment version.
-- `[[wikilinks]]` for internal connections (Obsidian graph view depends on them).
-- YAML frontmatter on metadata-bearing notes. Tags: lowercase + hyphenated.
-- Tasks: `- [ ]` open, `- [x]` done.
-- Never delete notes — move to `_archive/` subfolders.
-- Never commit `05-artifacts/`, `05-version-registers/`, or most of `07-projects/`.
-
-## Surfaces aware of the brain
-
-- **Claude Code** — auto-loads via `.claude/hooks/dispatcher.py` and `CLAUDE.md`
-- **Cursor** — this rule (`.cursor/rules/brain.mdc`)
-- **Obsidian** — reads the folder as a vault (Templater + Dataview + Git plugins)
-- **Claude Desktop** — reads via Desktop Commander MCP
-
-Filesystem is the contract. Whatever any surface writes, all others see on next read.
+## Frameworks, skills, conventions
+- **Frameworks (8):** see [`01-frameworks/00-README.md`](../../01-frameworks/00-README.md) for compressed
+  summaries — Aesthetic Lens, UI/UX Operational, Collaboration & Critique, Research & Evidence, Last-Mile
+  Craft, QA Operating Model, Integration & Review, and **Workspace Contribution** (governs editing the workspace).
+- **Skills:** `03-skills/` (hub/spoke). Don't bulk-load — route per AGENTS.md and read `load_chains` from the
+  registry. `.claude/skills/` are Claude Code slash commands (not available in Cursor).
+- **Conventions:** artifacts `context_descriptor_vN.N_YYYY-MM-DD.ext` (never overwrite — increment);
+  `[[wikilinks]]` for internal links (the graph + integrity check depend on them); never delete — archive to
+  `_archive/` with provenance; never rename a `SKILL.md` (add `aliases`); never hand-edit generated files.
 
 ## Cross-context note
-
-Sean works across personal (snds.design) and employer (Centric Software) contexts in this single workspace. Use `07-projects/<project>/` for context separation. Don't mix Centric-specific decisions into general workspace artifacts.
+Sean works across personal (snds.design) and employer (Centric) contexts in this one workspace. Use
+`07-projects/<project>/` for separation; don't mix Centric-specific decisions into general workspace artifacts.

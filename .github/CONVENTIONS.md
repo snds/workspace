@@ -43,10 +43,21 @@ carries load precedence; the rest are navigational.
 - **Never hand-edit** `skills.registry.json` — it is generated from frontmatter.
 - Consult the routing map before adding content; put it in the right layer the first time.
 
+## Write-quality gates (any agent may write — these are how it stays safe)
+Writing is open to any capable agent (not just Claude); correctness is enforced by validation + CI, not
+model identity. Every write must clear: **(1) quality** ≥ standard (no stubs/TODOs/unfilled tokens),
+**(2) intent integrity** (no data/context/intent loss), **(3) cross-link continuity** (update every
+related file + regenerate + validate), **(4) no zombies** (dramatic change → archive-with-provenance +
+regenerate + repoint; never leave orphaned/superseded-but-live/stub files). Full spec: `AGENTS.md` →
+"Write-quality gates" and framework 08.
+
 ## Generators / validators (`09-tools/`, stdlib-only)
 - `build-registry.py` — frontmatter → `skills.registry.json` (`--check` for CI drift).
 - `build-related.py` — frontmatter graph → reciprocal `## Related` blocks (`--check` for CI drift).
-- `validate-links.py` — dangling + reciprocity checks on the typed graph (`--strict` to fail on warnings).
+- `validate-integrity.py` — write-quality gates: name==dir, cross-link continuity (no dangling wikilinks),
+  no superseded-but-live, no unfilled scaffold/stub tokens, thin-doc smells (`--strict` to fail on warnings).
+- `validate-links.py` — dangling + reciprocity on the typed `## Related` graph.
 - `validate-workspace.py` — archive provenance + memory-index coverage.
 
-After any frontmatter edit: `build-registry.py` **then** `build-related.py`, and commit both outputs.
+Before committing any change: `build-registry.py` → `build-related.py` → `validate-integrity.py` →
+`validate-links.py` → `validate-workspace.py`. CI runs all five.

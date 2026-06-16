@@ -1,15 +1,27 @@
 name: workspace-integrity
 
-# Governance integrity: archive provenance (every _archive/ file has a ledger entry) and
-# memory-index coverage (every 06-context/memory/ entry is listed in MEMORY.md).
-# See 01-frameworks/08-workspace-contribution-framework.md.
+# The write-quality / continuity / anti-zombie gates that let ANY agent write safely:
+#  - validate-workspace.py: archive provenance + memory-index coverage
+#  - validate-integrity.py: name==dir, cross-link continuity (no dangling wikilinks),
+#    no superseded-but-live files, no unfilled scaffold/stub tokens, quality smells
+# See 01-frameworks/08-workspace-contribution-framework.md → "Write-quality gates".
 
 on:
   push:
     branches: [main]
-    paths: ["_archive/**", "06-context/memory/**", "09-tools/validate-workspace.py"]
+    paths:
+      - "**/*.md"
+      - "_archive/**"
+      - "06-context/memory/**"
+      - "09-tools/validate-workspace.py"
+      - "09-tools/validate-integrity.py"
   pull_request:
-    paths: ["_archive/**", "06-context/memory/**", "09-tools/validate-workspace.py"]
+    paths:
+      - "**/*.md"
+      - "_archive/**"
+      - "06-context/memory/**"
+      - "09-tools/validate-workspace.py"
+      - "09-tools/validate-integrity.py"
 
 jobs:
   check:
@@ -19,5 +31,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-      - name: Validate archive provenance + memory index
+      - name: Archive provenance + memory index
         run: python3 09-tools/validate-workspace.py
+      - name: Write-quality + cross-link continuity + anti-zombie
+        run: python3 09-tools/validate-integrity.py
