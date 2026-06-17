@@ -12,6 +12,9 @@
   "obsidian-importer",
   "obsidian-meta-bind-plugin",
   "copilot",
-  "fast-note-sync",
-  "flexplorer"
+  "flexplorer",
+  "numerals",
+  "link-favicon",
+  "obsidian-style-settings",
+  "mermaid-tools"
 ]
