@@ -154,6 +154,35 @@ Worked example — "dark-mode palette for this dashboard" →
 
 ---
 
+## Capability preflight (external tool dependencies)
+
+Some skills declare `requires: [<capability-id>]` — an external **MCP server** or **CLI** they need
+(e.g. `figma-mcp`, `agent-browser`, `ffmpeg`). Surfaces differ in what's installed, so before you use
+that tool you **preflight** the capability. The id resolves in
+`02-shared-references/capability-registry.md`, which holds the detection probe, per-surface install
+command, and fallback — never hard-coded into the skill.
+
+```
+preflight(skill):
+  for cap_id in skill.requires:                       # also in registry: skills[name].requires
+    cap = capability_registry[cap_id]
+    present = (cap.kind == "mcp")  ? a tool matching cap.detect.match exists in YOUR tool surface
+                                   : shell(cap.detect.probe) exits 0     # cli/env
+    if present: continue
+    else: apply cap.fallback —
+       degrade → proceed with the reduced path in cap.fallback_note (tell the user what's degraded)
+       block   → stop the tool step; surface cap.install[<this surface>]; ask the user to install
+       route   → hand off to cap.fallback_skill
+```
+
+The rule: **never call a required tool without confirming it's there, and never fail silently.** An
+absent dependency produces a clear "missing X — here's how to install it, or here's the degraded path,"
+identically on Claude Code, Cursor, or any MCP client. Detection is surface-agnostic: for MCP, inspect
+*your own available tools* (including tool-search/deferred ones) for the name pattern; for CLIs, a
+`command -v` probe.
+
+---
+
 ## Project contract
 
 Each project under `07-projects/` should be interpretable by any agent.

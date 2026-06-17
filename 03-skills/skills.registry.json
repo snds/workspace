@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 239,
+    "total": 242,
     "by_tier": {
-      "cross-cutting": 23,
+      "cross-cutting": 25,
       "foundation": 22,
       "hub": 40,
-      "spoke": 154
+      "spoke": 155
     }
   },
   "skills": {
@@ -34,6 +34,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:be9e0a60bc147b38afaf77319982dac6cc97a13e9a8a893f2eb53cfaa8e4f312"
     },
     "3d-lighting-rendering": {
@@ -52,6 +53,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:32c4eea962639447ac218c9fb4efbd1780c30bf0d8d92b5bb331ef56cb93940c"
     },
     "3d-materials-shading": {
@@ -70,6 +72,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:91c35a428255b0fe07419e48871edc135f4d276e1e87672011363912acccc043"
     },
     "3d-modeling-fundamentals": {
@@ -87,6 +90,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:96aae59828a41d5092d971d19ee61ab2bb3d65c2b965f1cb6da81a5f882022a4"
     },
     "3d-rigging-animation": {
@@ -104,6 +108,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:4cbd7ed429918c67fdb964cc4a1adfbef7ea73331dfe57eeb71b1bbb237e604c"
     },
     "3d-spatial-design-for-games": {
@@ -121,6 +126,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:008a14b22b26c0e8eca81c5b9d38257bce4d1a0cf16d19f74c6d30ea8752dc10"
     },
     "a11y-assistive-tech": {
@@ -136,6 +142,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:eed591fbe1670a61b6e1631d0b3c5edfaad94b4f6945fabd97bca0dde1543ecc"
     },
     "a11y-auditory": {
@@ -151,6 +158,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:b577722ba10175a74d9975ea0ce81777e2d68dfc0361db30529a1669c80bf10d"
     },
     "a11y-cognitive": {
@@ -166,6 +174,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:e3302a3540a906b102fa5af1d5eaa25bbc89087fa62265cb8f1d38db75e275f2"
     },
     "a11y-legal-compliance": {
@@ -181,6 +190,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:b16273f51dd250e6f6f00c6d592f1f02f40b922323be79597e9792f8d88397b7"
     },
     "a11y-motor-physical": {
@@ -196,6 +206,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:71dec5d4d8bdc3f2514520a6742484384131cba281339587fe48c2bcefd86078"
     },
     "a11y-neurodiversity": {
@@ -211,6 +222,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:6848f419ec80e221f7ab76e628655944eaacc699a071bc003ec0d0c5e518a702"
     },
     "a11y-visual": {
@@ -226,7 +238,41 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:162370aeb9a770372079b00ffe855036795dea6789a63d4f59ab1d299d806758"
+    },
+    "ai-video-generation": {
+      "path": "03-skills/ai-video-generation/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "imaging",
+      "hub": null,
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "ai video",
+        "text to video",
+        "image to video",
+        "animate image",
+        "generate video",
+        "video generation",
+        "veo",
+        "seedance",
+        "wan",
+        "lipsync",
+        "video upscale",
+        "b-roll",
+        "motion concept",
+        "ai animation"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "inference-belt"
+      ],
+      "hash": "sha256:0d6776c8f750b6ed1b419b99b029b55022eae0a7f208e33a8180096732ca7e4d"
     },
     "be-api-design": {
       "path": "03-skills/be-api-design/SKILL.md",
@@ -246,6 +292,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:6d7bde40e5550251354d38ee658719d5f50bb39d2559ec2cd8b7762750a11a04"
     },
     "be-auth-patterns": {
@@ -263,6 +310,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:91c836d4b8edd5bb79f271ac16a03700d05cbd3e9156bcf165ab8e8a262b49e2"
     },
     "be-caching-performance": {
@@ -280,6 +328,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:d978ae44745b36c20f4bb4902d3634a5900f2ce3ab683ccef7622e47a4a30ecb"
     },
     "be-data-modeling": {
@@ -297,6 +346,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:2aa0e38f2e050d7c1defc369531d9e40ff37c8517a0fe3153cda8aa553dc6164"
     },
     "be-integration-patterns": {
@@ -314,6 +364,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:0fe6679b58ed69f7782ea369bd8f726a87f8e41dd0d384b4097d5cb350efd75e"
     },
     "be-relational-db": {
@@ -331,6 +382,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:bedc8d707e93f127d45dbbb3e630ca683f15fe252b1970999dbd58c5b293ffac"
     },
     "be-security-posture": {
@@ -348,6 +400,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:bfa3d40f3ee851ff1f204031a96fc320c490651634e322ce314aba25c5309c4f"
     },
     "be-service-architecture": {
@@ -365,6 +418,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:5f2e63759f78028f866a47d93d44952daff65662617c24165d2400c804fa710d"
     },
     "centric-ui-storybook": {
@@ -382,6 +436,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:3058194ed6b0752ec3437a3af6205ea553a7c967cf76102b6b594c677c0087d6"
     },
     "centric-ui-workflow": {
@@ -399,6 +454,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:59c8f602686a18156fbbf6d0404ecdcb6ef7da27836259cfbec1b312d6024937"
     },
     "data-foundations": {
@@ -425,6 +481,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:fe6d3d68a3aff66fe2c3118f9accc6f580a29e632f3536c7bb27849bbdc7f743"
     },
     "design-engineer": {
@@ -442,6 +499,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:44e2ecd92dbf268d26fe297d6f4bf50006321a06e4e9622455f5bcaf2ebada66"
     },
     "design-foundations": {
@@ -471,6 +529,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:ecb666970353663774ec72759721efb4365f579f7d8cf786d72e4e13fb7facf2"
     },
     "devops-ci-cd": {
@@ -490,6 +549,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:023d47d879ed29cea55318277f272355137c4e39cce78510cca85854a85180f1"
     },
     "devops-container-orchestration": {
@@ -507,6 +567,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:77ecd93804126d52a44730f3f9508599ab2d997460c85f1a78d093f9fae5f6c6"
     },
     "devops-cost-optimization": {
@@ -524,6 +585,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:31d4b597f65dd7d6553fab9a1a599cb2c164950aa9029ea66fe3052bc6782fb8"
     },
     "devops-infrastructure-as-code": {
@@ -541,6 +603,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:b52f8f2120b7304e2608de25dc5fcf7c3f265739c28f21dddd7ddc4a54054565"
     },
     "devops-observability": {
@@ -558,6 +621,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:142c427c7621e8fd13ce64bb47fd7c460b8926c6ad9040b8861349df76329b64"
     },
     "devops-release-engineering": {
@@ -575,6 +639,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:2b663684e1679ad763fa9d71e4f488aa7575a8ff18cbf5e19bffd7084c762ec3"
     },
     "ds": {
@@ -592,6 +657,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:32bf1076f5986d450119cc446048d13b9e735f9bdb4ee4d3392fa837c4ed7a2b"
     },
     "ds-advisor": {
@@ -609,6 +675,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:8ad454f012b1940aaea837d83369b3966bc267f3c1fd9073b4c5aa71ffad672f"
     },
     "ds-bi-platforms": {
@@ -626,6 +693,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:bf7229220de66fd37208223b9d93b2f341864ccfcadbd8fabc70b75c229583f0"
     },
     "ds-data-engineering": {
@@ -643,6 +711,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:5e2d48330e3daf5d24ab4eda795196d06447aeea3d6c51bc22ff1e88270233b5"
     },
     "ds-data-governance": {
@@ -660,6 +729,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:1bf8c265a3d59b6e84d1fa442997e7bc7fea4e69c7510e653255011bb4ddb3db"
     },
     "ds-executive-storytelling": {
@@ -677,6 +747,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:9216e0bcc4ef48076a2a755a53ff8f028a0f321f9f0ad051f114df819b5535f0"
     },
     "ds-experimentation": {
@@ -694,6 +765,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:1e8b349dc771e9aec53ca8a63041027d0ae759ee5ab40a1804629c8618903eb6"
     },
     "ds-forecasting": {
@@ -711,6 +783,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:ac7897d64e09c35aa2181d692bf767e373e0b18d2266dbddb98127d41ccb1331"
     },
     "ds-generation-pipeline": {
@@ -728,6 +801,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:a7273400d1bb322ef6e27bbcac721f5ca135979bf962fcf7313549e380b9690c"
     },
     "ds-ml-engineering": {
@@ -745,6 +819,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:002e170f74901eba43319a0b06fadec621c4b8e44727b70c04555e777a6fe39b"
     },
     "ds-nlp-llm": {
@@ -762,6 +837,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:3ac7209e14f5be17574765f3664267217d5da4495f7b735d10f4e651c4c2afdb"
     },
     "ds-product-analytics": {
@@ -779,6 +855,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:4968e37c5c63fd10894bb7fb451b3fc36eca85d77690d30e401076e9ef530c46"
     },
     "ds-prompt-engineering": {
@@ -796,6 +873,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:42183b1e03d6a1e5a522f18b7b3d767d471bad5bed276228faf9cbec6d231050"
     },
     "eng-foundations": {
@@ -824,6 +902,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:dca70c2906c81584470493d7b41365a764d540c6773ef8c9e0e05552d5dff246"
     },
     "fe-accessibility": {
@@ -841,6 +920,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:c38aa34394b51be51a9d1aba34ca8c62772355565a34a49b925fd1eca824744f"
     },
     "fe-api-integration": {
@@ -860,6 +940,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:acefa5ea823c4db160f3ac941d04416487d14329de2942f417346474ed42a634"
     },
     "fe-component-architecture": {
@@ -877,6 +958,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:ec0400961cdc67eca5d761d3ce2de32ddb66fffa95d9424544eb3fa495d5501e"
     },
     "fe-data-visualization": {
@@ -894,6 +976,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:d3cf8a00188f7a88b4aff37ba0b9c1f3f16c265681943977469367165eacdc78"
     },
     "fe-design-tokens": {
@@ -911,6 +994,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:3bb1488670fefb9c75a6fe19dab46db30e9b113673a04096b09fc2b5cfe04f70"
     },
     "fe-i18n": {
@@ -928,6 +1012,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:0b34635420f1c35f45b24c283d6a337bc1df923fa4de5c38aae8ca5cc53647aa"
     },
     "fe-performance": {
@@ -945,6 +1030,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:b170319229171e1a891ecd108a1f47830a46196ddeaf6077699b4894f05799f6"
     },
     "fe-state-management": {
@@ -962,6 +1048,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:34ba1068a04cb920fa8a3a33699b6e43876de0e1b34a5836d04f6a96b1755979"
     },
     "fe-testing": {
@@ -979,6 +1066,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:b51192b070286ad1c31455baf179c59148f431b662ff87fb0103c35ece32e84d"
     },
     "figma": {
@@ -996,6 +1084,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:fdb6e09d3b0c6c0682c5fd97d34b0a9ec54a071c5aeaee71190d11100a33f4b5"
     },
     "figma-api-router": {
@@ -1013,6 +1102,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:2a12a5c98fdbfb3be1633b08d145f58b8fe033d15120ff8aec9ae3fd113f0663"
     },
     "figma-canvas-designer": {
@@ -1030,7 +1120,10 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:2d4b7c56bafbc50f4621f44fa9ecb43b1179ad6f229983e8888f8847e03011d9"
+      "requires": [
+        "figma-mcp"
+      ],
+      "hash": "sha256:bb526a8b4f7e7ac316224a73cac84b40dfccdee8f1cfdd0a9ae23f714aead1da"
     },
     "figma-component-generation": {
       "path": "03-skills/figma-component-generation/SKILL.md",
@@ -1047,6 +1140,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:d283d2cd25702a71f24afebe0d740826f2a07e4f7af9e89af68158b5618289a8"
     },
     "figma-ds-generation-pipeline": {
@@ -1064,6 +1158,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:99269edbf99173e454f77b4679cf68b5adab5857046360c116dd33cdc4b0152b"
     },
     "figma-error-troubleshooting": {
@@ -1081,6 +1176,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:d0e79a4b7ee6fbadd4bd7f9f088f18cccb2c106f6a430c1f6c078f5fccd5ddc4"
     },
     "figma-mcp-tool-usage": {
@@ -1098,6 +1194,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:d055bbea09a418b6a3d3b993a4d63c1e61ed05d4d021f327268c5925ce67a8e1"
     },
     "figma-modes-for-variants": {
@@ -1115,6 +1212,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:631747c76d2c57626ce9b4cbd9bf0bbca53716ed158bbb5eb8458aedd641be8c"
     },
     "figma-plugin": {
@@ -1132,6 +1230,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:dec5deac2ee9c52dbced6939e844c21fce38d0f43a460bf4f32edec6e04c813a"
     },
     "figma-plugin-dev": {
@@ -1149,6 +1248,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:976a63b12fdb0c4139e6bdfb8f8024ab75ec48c5213b67b1dcce727dfd5677f1"
     },
     "figma-source-audit": {
@@ -1166,6 +1266,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:e3d855dedc28b8c5158990bc525cf13ec001d68356be65ce590a8380c0c90076"
     },
     "figma-style-binding": {
@@ -1183,6 +1284,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:3950883ec97b573b87778687d5401d53ce6e34dcb2e51b15ca9a499ad3ea9385"
     },
     "figma-variable-creation": {
@@ -1200,6 +1302,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:3ed46f24d3f3e6b54f45b9a06c01b06be1cedee1de40514354a57cd4390fa618"
     },
     "found-color": {
@@ -1225,6 +1328,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:0b9b5d1b0aada3993f3335de2cf3f60947de4d020461c932e238272a37fe55c1"
     },
     "found-composition": {
@@ -1251,6 +1355,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:ef360aa7035d220b1b8cb65d8dc910064e920c52ad74f92e61b2b3cce177605c"
     },
     "found-hierarchy": {
@@ -1275,6 +1380,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:0c2cd19113b2540d83873abca1ee1f4310e6acd98f4e26121601bb6f2aec5d10"
     },
     "found-perception": {
@@ -1301,6 +1407,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:1922ccec381efcc4c0b345e9b0d5e215546988ce25adcf033b4956a6ad286dc8"
     },
     "found-typography": {
@@ -1327,6 +1434,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:e1d7b34544cab1417d63af1d4574fd413fea9a6f3f74a3f61dd3ffbeeb72b43f"
     },
     "fw-angular": {
@@ -1344,6 +1452,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:0a0b1a94a0e7f82452733a0335803578edcdf00ec37fcf0b09c7458b0721a7e4"
     },
     "fw-bootstrap": {
@@ -1361,6 +1470,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:50149b2afbfc272178962445de3ac270368755f9b2456c0df488b21bd72ad996"
     },
     "fw-carbon": {
@@ -1378,6 +1488,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:fbf3570ded949970f39d928fe63c80e203e918469075a8aa86c3337348969c0b"
     },
     "fw-css-modules": {
@@ -1395,6 +1506,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:101828d43cf9c422666098641bca0e4875f58e35529552781b1614d60a4eb9eb"
     },
     "fw-dojo": {
@@ -1412,6 +1524,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:03c24f6a2fa011a50f3aa24734f41a122212ab264cc241038c66eda01eeeb98f"
     },
     "fw-lightning": {
@@ -1429,6 +1542,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:ae01e63a26fbe36d698910a78861342c1377b0203319f386bd580de84172aee0"
     },
     "fw-radix-colors": {
@@ -1446,6 +1560,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:b86587f7b9bf34b7b3d00336de993959686ca24691ce2ab95c1768de83141e9d"
     },
     "fw-radix-primitives": {
@@ -1463,6 +1578,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:a77f79c3c6234a8ed86eed95b9ca7a8d3d44129ee19c92c6a17186d20f8ba5eb"
     },
     "fw-react": {
@@ -1480,6 +1596,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:7938a862a4d7e9d7c0b94c6ef13569d1318a08f6e46a9092df4473729e97463f"
     },
     "fw-react-aria": {
@@ -1497,6 +1614,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:b3b1b45bd66884203c556638221961227b73542a819ffe361c42513070bacf9c"
     },
     "fw-shadcn": {
@@ -1514,6 +1632,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:48abeb1ceb76303abf6b7198f12a4eeaf2a31fdacc35308f79fe3d8a11544cda"
     },
     "fw-storybook": {
@@ -1531,6 +1650,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:12b9bfdd7a1f71883c6518bc8e2b27d829c3308541f19d6c304662dba8971b8a"
     },
     "fw-svelte": {
@@ -1548,6 +1668,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:dc4f2577f0f5d79b45efc2a188d01737c902e9ae60f73a25c1ba8195ca02aa71"
     },
     "fw-tailwind-css": {
@@ -1565,6 +1686,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:5ab226854427d6bcc357b6e3ee4b3104aeb7bd6c5156e02cc3f35c36c14b907f"
     },
     "fw-vue": {
@@ -1582,6 +1704,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:748a6d0884fe4298025041c82260457e9c62084082d5f2614e13ae22d4b2e6ea"
     },
     "fw-web-components": {
@@ -1599,6 +1722,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:abe1ced2821b61b772f433c1aa02aea1da9a4e66f4ea5b533bd8abe77f427fb5"
     },
     "game-foundations": {
@@ -1625,6 +1749,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:63da47c443bc705def52e467fe80c652aedefbf5901dbeae5aa27ea8aa5e6091"
     },
     "game-scale-traversal": {
@@ -1657,6 +1782,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:5734cc11a9b6666abd789ff73d6d410e875c3b943536736660063668b03dad78"
     },
     "gd-brand-identity": {
@@ -1674,6 +1800,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:4c6933b9cd26f69a872c38a1a6a808aca689ca18dc2bc23636c86fdb1f081a03"
     },
     "gd-color-theory": {
@@ -1694,6 +1821,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:22d29db531e007f31f0883bd9d7cb521b7d7e9f55180639fa03995fa34c5bc1e"
     },
     "gd-grid-and-layout": {
@@ -1711,6 +1839,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:9acb0f81009b25a9b87eaef310f5e80b51a5b2767b7e0db0b468d3653b5c501b"
     },
     "gd-image-composition": {
@@ -1728,6 +1857,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:072f6ea5d6de7f43c07275767bf58e4e79ed69fb71bdd2731175c854076c3608"
     },
     "gd-print-production": {
@@ -1745,6 +1875,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:783908908c826df5148693a5656a0fa5084280039214e204f8d33ffcbb2b63e9"
     },
     "gd-typography": {
@@ -1762,6 +1893,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:3e7244432625b9ee49e51f76144afe7bcd805fe66674e00d1d5f9aeed7d28f58"
     },
     "gd-visual-communication": {
@@ -1779,6 +1911,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:2d8916f3da9cee21e53dd6f78d6dc7a1955c2250357c237b3b1750dbd5417606"
     },
     "gen-manifest": {
@@ -1796,6 +1929,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:8e614c006460e2dd93ce391c76a08a61ba47ca68debda3e3535fe408a91d389a"
     },
     "github-guardrails": {
@@ -1811,6 +1945,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:e11db44170a1165761e43f263ca98f35962a38bf84bf818fac69693d6d4383e0"
     },
     "glsl-shader-architect": {
@@ -1830,6 +1965,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:a65b6b0a251a66f53a0a73fe1b62ba1f804b280445a0f37f47270b0020a9c064"
     },
     "google-fonts-scraper": {
@@ -1845,6 +1981,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:213d5bd40830f465aaf10fbde1dcb58615c60e5fb298fe35ba7fb8b77fcfa574"
     },
     "google-fonts-web-scraping": {
@@ -1860,6 +1997,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:6d35e079be869608b548964d2a604bb63458bbeaa15d03152e0ddd91556b5b3b"
     },
     "ia-content-strategy": {
@@ -1877,6 +2015,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:adea1f0b26c1aa7a5ac7cc04b4150a7699d8bf0f79b72d51237ef00af1a460d8"
     },
     "ia-enterprise-complexity": {
@@ -1894,6 +2033,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:f1632e2a0c07b81006ea9ea45c5cf106b650b92100d17589e3759780233789d2"
     },
     "ia-mental-models": {
@@ -1911,6 +2051,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:c9c0356091a18ea9496361306e82a64bda268db86fd3f3f0be57c70e6d283edc"
     },
     "ia-navigation-systems": {
@@ -1928,6 +2069,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:91f754eac0d80cda3015d6c66cdf1c5aad2c2f329d8f13670f1d5adaffaa7e65"
     },
     "ia-research-methods": {
@@ -1945,6 +2087,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:20595599f8c9132ae2e9c3cb4bc99f0337d27876efafde138cbc6183d386d1de"
     },
     "ia-search-findability": {
@@ -1962,6 +2105,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:c87fef34bc546fe62d748a6a5ee517679095e8906c38b97cbf760c6172271765"
     },
     "ia-taxonomy-classification": {
@@ -1979,6 +2123,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:f73550ae42e0e3751583ed2c385f3839200e591382bd8dac98395eeba5d66a53"
     },
     "imaging-foundations": {
@@ -2012,6 +2157,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:ad9058e811b4402a64b0b52488bc1868d4a976da5216c41c2786fd9fdd23b6a5"
     },
     "img-cinematography": {
@@ -2042,6 +2188,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:df7b8b464bc080037385d4c0d4e94f91c81638d0cf3ee5f390fa9d51919bf8b6"
     },
     "img-optics-light": {
@@ -2071,6 +2218,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:c645ddec209a6d645a18d559209786ce37a5514f242823456b60f3aad5e1a711"
     },
     "img-photography": {
@@ -2102,6 +2250,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:dc75e06173703fd419258534fb92b2da023c2b7df0eed1164a59cfc356398cb7"
     },
     "img-photoreal-rendering": {
@@ -2134,6 +2283,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:eed0e19c11e7156b6445bbc754a1f965f8e8fb54f81893c6d222d11645cf31e3"
     },
     "img-vfx": {
@@ -2165,6 +2315,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:974acaa75d7333cf6104d0580c81aaa554e686184e90e3a025512dfd7f165dc0"
     },
     "infod-dashboard-patterns": {
@@ -2182,6 +2333,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:7757c13582ab1b5cabba7fa4ff31059dce4ea0ab33a328d5513b6b0eb489b7e1"
     },
     "infod-design-system-patterns": {
@@ -2199,6 +2351,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:64fe002aed6f5e5d58899929b749f6d91fdddfe1041c344d61393b965447370b"
     },
     "infod-encoding-theory": {
@@ -2216,6 +2369,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:e9a82f1213617a8baca029628788a66a937620eaccb602505da5183813bbb02c"
     },
     "infod-narrative-design": {
@@ -2233,6 +2387,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:6da0f7dea81b247ad76328cd6493ca67223934a200b309a65c1fb5f3e890b225"
     },
     "infod-network-graphs": {
@@ -2250,6 +2405,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:d8458ba55489f69bdad7fc11b9b7d03ee1dbd66ef0f1c9d216d494b3642f355c"
     },
     "infod-spatial-maps": {
@@ -2267,6 +2423,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:b591b395759657ee7365a5bebe780f421b3395d3bbac4066afd944ef63191f08"
     },
     "infod-statistical-viz": {
@@ -2284,6 +2441,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:af73534629efcca542d52ed38bb0be7aa6ba1cc065bcfdca6dca52a1babbb1ee"
     },
     "lead-3d-designer": {
@@ -2301,6 +2459,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:947cd1ef54546ba639195a71cf4eb808cdd676af98bbfd5e18a69bcbf0913c05"
     },
     "lead-accessibility-architect": {
@@ -2316,6 +2475,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:a3d82c09e841c6b7ffdbcb49cf90f10f1b53b5acfca8ce6957ee5c096e8b9166"
     },
     "lead-art-director": {
@@ -2334,6 +2494,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:e8b434284bac1a7080f5dc56a08fefeac2b8b892b7bf77ddc736caa47f803994"
     },
     "lead-backend-engineer": {
@@ -2351,6 +2512,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:c4293be17cc53309f9a2165862c8bab7264f42a4f2f36621aceae9aa8b3d63dc"
     },
     "lead-data-scientist": {
@@ -2369,6 +2531,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:1f83d06b3c226fe53c09faec8280f08cd9381efe37698020976b2448eea6176e"
     },
     "lead-devops-engineer": {
@@ -2386,6 +2549,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:1f4f2059c29e342a7c272923fda29d8d1d8de4c9ef14125cfd6e51a4beab43c0"
     },
     "lead-frontend-engineer": {
@@ -2403,6 +2567,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:9f2e0782f3c1de6a96892fd1fb98e8938914c4507024cf2c4833724dcf6dc8b5"
     },
     "lead-game-designer": {
@@ -2420,6 +2585,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:8c17e60a08247ad4a2e104783ef8a756666e52b31ad6c4ee3bcc5b36f850372b"
     },
     "lead-game-developer": {
@@ -2438,6 +2604,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:16c8679d2b61c8dfdaf077ee1cd271f351782a142b411d58beae48cad3c549b9"
     },
     "lead-graphic-designer": {
@@ -2455,6 +2622,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:c9fa27e0768631046061c3d6751df0ba74eb4d9ebfb209fa8d22fa51e7daa743"
     },
     "lead-icon-artist": {
@@ -2470,6 +2638,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:021509742e209a41eaa9393250aefdadf6330b4bdc41aa5947711bde7bb690e4"
     },
     "lead-information-architect": {
@@ -2485,6 +2654,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:40605a7fb1f3a797fc5510cf5614e249905ee9c19b896d3eb4f70a08c1ad2c3a"
     },
     "lead-information-designer": {
@@ -2502,6 +2672,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:810d767d260af0889c7a5e0b4c2e7f96a1f432564786a0e4c0ac72fb8552c1c0"
     },
     "lead-motion-designer": {
@@ -2519,6 +2690,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:7a7fd671d64cbc958edefe1549118fb397d2d08ddf5295fa864b9c4255e5314c"
     },
     "lead-product-manager": {
@@ -2536,6 +2708,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:b880e93fc7e7a8030e9edbfcc48ecd48c37240d1adcaef513f1fbe1609c7fcfb"
     },
     "lead-security-architect": {
@@ -2568,6 +2741,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:4afb5e41bde9a82f4c03b409ae6f97b3e82ef8fe89cabb8e428028c885303926"
     },
     "lead-technical-digital-artist": {
@@ -2583,6 +2757,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:147ab0dbd972b8a923e0e116741937335fa923ae8dea94eb670408e6d211f5dc"
     },
     "lead-type-designer": {
@@ -2600,6 +2775,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:2e1aff50ef3f81d075cedd4ac86ba24e463c0d10961ccb770b34ccf5fe16fb61"
     },
     "lead-ui-designer": {
@@ -2617,6 +2793,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:17975235e6523665780685732094ea58a022fb90d7e71fc14f344c2a453c10cc"
     },
     "lead-ux-designer": {
@@ -2634,6 +2811,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:7eef376525be4b4f77191fb0dcb1362b98db5cbee26a9e32345c32248f2d4426"
     },
     "lead-vector-designer": {
@@ -2649,6 +2827,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:d9c0e584f4d86c757e2b6a9483c357e4696a506d35c6b52b9734373587ea4770"
     },
     "lead-visual-qa": {
@@ -2664,6 +2843,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:bb187ebefd728f38cbc240efb79ec1b37b4623f06ce31bb6492de742ad7fdc75"
     },
     "legion-narrative-design": {
@@ -2681,6 +2861,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:4f68b038c140d31a37f7c4870cd1cf3aded137c861f966cf2da5d9d4be59e86b"
     },
     "legion-project": {
@@ -2699,6 +2880,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:b3e48ea9ff8285241b46b595028599ecd0b28737f7fe161dc44f85669cbf332d"
     },
     "material-symbols-project": {
@@ -2714,6 +2896,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:d74a8a78c8c09b07461a4f2c436ae428bf8c6553d315340b6bd4fe77780ddef7"
     },
     "material-symbols-suite": {
@@ -2731,6 +2914,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:d739da1e79c397b86c908a8a9d3b0e574032255420812d055ac9e9eec7e4faa6"
     },
     "material-symbols-svg-export": {
@@ -2748,6 +2932,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:563596394ea5ea0d399ab5d6a464d7e3365d37b1ae93a33df41d49b559f12bb0"
     },
     "math-bezier-spline-theory": {
@@ -2765,6 +2950,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:5309d337791bc1ec28913f2f5fb2ad5e8573d153bd3efb917ec7b3a6da92a4e1"
     },
     "math-computational-geometry": {
@@ -2782,6 +2968,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:93b60c4a30fa98bc0380ee55a0400e6e31ef4796cda26719d7af04c58eab4b17"
     },
     "math-interpolation-designspace": {
@@ -2799,6 +2986,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:2edb8974ff8dcc164f9903c151d3c8910055647b4eb82651882c489f5a0bef01"
     },
     "math-optical-optimization": {
@@ -2816,6 +3004,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:1541c8f389fa353891e293f69e53594b9d12438d96076548178fbd870fec1d9b"
     },
     "mobile-android-kotlin": {
@@ -2845,6 +3034,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:6eb451dc6cdfb657c731dc3bbb1028b34992d78f119726233325df0223870760"
     },
     "mobile-ios-swiftui": {
@@ -2874,6 +3064,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:955ee55a146f737d9e53479254c7b8fea65145f693a253b1d1fe7907807562a8"
     },
     "mobile-platform-craft": {
@@ -2904,6 +3095,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:a6b03d2140a6b397bf883ae85d0c3b9304256f7ba9d190fd92fde2000c086981"
     },
     "mobile-react-native": {
@@ -2932,6 +3124,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:a767e2e6c1dda7500b28fd41829853fddb3eb51bb3efaa2687ac30bf6e5d186a"
     },
     "motion": {
@@ -2949,6 +3142,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:8aae1c9886f97a139f48cb451aa5946cb9787015f1f8c2584c7ae52cbc3cd0e3"
     },
     "motion-3d-spatial": {
@@ -2967,6 +3161,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:c956bae1ed8ba6c5738e9cd8658779cc8f3233e0de0132ef47a406017dc77b3d"
     },
     "motion-accessibility": {
@@ -2984,6 +3179,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:6011badbefcfe85a5a2199c2532f99d5396c80cb7f7eb485e441997110d0885d"
     },
     "motion-choreography": {
@@ -3001,6 +3197,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:3a067bf09521e179feb7c3b4cd3240f6dc7180464c52882a593c78afde1db6d3"
     },
     "motion-performance": {
@@ -3018,6 +3215,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:43bfbefd519e98485d276624822146a3da89dd5399130ed1a57b9b41b59d466f"
     },
     "motion-principles": {
@@ -3035,6 +3233,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:c3595d017e34030ccf31cfe64b55cddeb8ed41392d9137c8a43a316b54edc16c"
     },
     "motion-tooling": {
@@ -3052,6 +3251,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:12cb66cac4e5c36d2bc001f08d1a9576fac3fc3ad6304f5c15cb143cd810b288"
     },
     "motion-transitions": {
@@ -3069,6 +3269,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:bdd118bb2888cbc99a0c4cb320f772c856d1695c43a10879322acec46fa8b360"
     },
     "omni-project": {
@@ -3084,6 +3285,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:557b19d0209c5f6fc391148f419949fef6d3074e3c8ee71ed289adcc71e4b4e1"
     },
     "pm-competitive-intelligence": {
@@ -3101,6 +3303,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:3bc95bc7120f9f3f4a159a5ee82a7b27698c862e133e204367273ad71d4e7fb0"
     },
     "pm-discovery-research": {
@@ -3118,6 +3321,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:951ca371fecb1eb24e73b248d4085ccb01a2662590b26d8e57055879e33ffc79"
     },
     "pm-enterprise-gtm": {
@@ -3135,6 +3339,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:62ad9e8583827e4ba5da8d1efe30bd1ef1d4fe1128d01ae49fee535c49f8c4f4"
     },
     "pm-metrics-analytics": {
@@ -3152,6 +3357,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:25950873369d3e89d9ab5c90a087e16f4657cb15507e58cdf04f55f40a5d9786"
     },
     "pm-platform-api": {
@@ -3169,6 +3375,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:465dcd23f09083f013086dc7dfd2c52c8134508f47abe9f7522a605830cca5fe"
     },
     "pm-roadmap-strategy": {
@@ -3186,6 +3393,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:253e13b69b453211849bbc2803c26f7e0317be9bd5583a3c6abe5b8d82eba71b"
     },
     "pm-stakeholder-comms": {
@@ -3203,6 +3411,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:c3f42efdac5e6ed020e8ec32bab31c99a829d65911141ef54864a40c38faf1e5"
     },
     "product-foundations": {
@@ -3227,6 +3436,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:cedddf3a2a5f420ebf6934dd7950950749bf1db33f544d8904719cea276f7664"
     },
     "python-cross-platform-gui": {
@@ -3242,6 +3452,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:b28de6e91c5ac95c48d1402acc21380dd6d31e20480ed4c2546dda3fd7fb94d4"
     },
     "qa": {
@@ -3259,6 +3470,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:22c547d50acc7ee5740451347ba624d823263845060c2831ac768255ad5a7363"
     },
     "redesign": {
@@ -3276,7 +3488,39 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:868fa19ae2aa6c534d5b5f654b6280ac89890752115f9e1f438909397551d241"
+    },
+    "reference-video-review": {
+      "path": "03-skills/reference-video-review/SKILL.md",
+      "tier": "spoke",
+      "domain": "quality",
+      "hub": "visual-qa-toolkit",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "reference video",
+        "extract frames",
+        "ffmpeg",
+        "yt-dlp",
+        "triage frames",
+        "frame extraction",
+        "video reference",
+        "screen recording review",
+        "motion reference",
+        "flythrough reference",
+        "storyboard from video"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "ffmpeg",
+        "yt-dlp"
+      ],
+      "hash": "sha256:e6ab05daeb3c3b9ec9fa543d3a00295e32cfa04b2245686ae4bdf6a610a0d594"
     },
     "sci-astro-objects": {
       "path": "03-skills/sci-astro-objects/SKILL.md",
@@ -3308,6 +3552,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:1d26fd59e25c98e8325431418666d42210bec2c175e027deb1c3c0f207cecaa2"
     },
     "sci-astro-structures": {
@@ -3341,6 +3586,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:a326d7c48273709b626ec64afca2d390aadd8aa82e504ee5797a20e728fc9cf6"
     },
     "sci-linear-algebra": {
@@ -3370,6 +3616,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:315b298c64dfd1ad57345f55296fece221d8464a88c08e7a2f6d415f78eb99c0"
     },
     "sci-numerical-methods": {
@@ -3399,6 +3646,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:6e0081e576ec061d99b8ffe87c2d808b44fe2cfe0a13ff811a8bd18909dd9249"
     },
     "sci-physics-simulation": {
@@ -3430,6 +3678,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:d009939850684410c64a7d6af650767ff7c7582842c162d3e3ea4e2fbf031294"
     },
     "sci-probability-stochastic": {
@@ -3459,6 +3708,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:0c6c0beec6a1953cb0db5bc3c7859ec5d6d3294687a06edb28b002c686c52493"
     },
     "science-foundations": {
@@ -3489,6 +3739,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:ee8d3ccdc2d1f008a5d0a73df44cfd188b0792df19d17d896d3ba93eea5f7edc"
     },
     "sec-appsec-owasp": {
@@ -3516,6 +3767,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:e5777fcb98730444cbc6cc0f93a0cb23c9693cf14ebb0056eb1db2ddb4d7f2e4"
     },
     "sec-authn-authz": {
@@ -3545,6 +3797,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:78bcc87ba6c1142abd8b3801a6ac7f511e27c693312f59e915412fde84c69e89"
     },
     "sec-supply-chain": {
@@ -3573,6 +3826,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:6d92c158ee3b57bdd5e5e004b50fe20d144e75086a3ada950a29e9ba4f3a51e5"
     },
     "sec-threat-modeling": {
@@ -3597,6 +3851,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:2fa73da905d6a9ed8b1695d23d07337dcbf83728056750ed8b0bbd5d19b9f1b8"
     },
     "skill-placement": {
@@ -3618,6 +3873,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:984040dca569e5e4a04c61f3d5d073fb30418b2fdfc5d3b1d61e2dd99834a58a"
     },
     "svg-font-extraction": {
@@ -3633,6 +3889,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:98ed05a3953055206091b4e2577834244751ce43c9719f7e9fdc8decce173613"
     },
     "threejs-materials-master": {
@@ -3652,6 +3909,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:3857fa740d7c45f07067375830322400a913cfb428c6b76cf8122b4b5cc4fd8d"
     },
     "threejs-vfx-atmosphere": {
@@ -3670,6 +3928,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:1c46b54c056da275fda848bb46f9e51eac1f479aba9c9f5496431b2e35963f23"
     },
     "type": {
@@ -3687,6 +3946,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:44424ceeaa06f794313f96cfe28fe1d960d56d3f7d3091a1e87150ed98bf3d93"
     },
     "type-classification-history": {
@@ -3704,6 +3964,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:6b6255a6293893cf602a39e706cc9e2ff0260e862d03ca632e47dd6dcec83375"
     },
     "type-letterform-construction": {
@@ -3721,6 +3982,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:a7db094aadb080ea427e71e977a1cb39f53b96ce82faa7d37d6e1ba777c09249"
     },
     "type-multi-script": {
@@ -3738,6 +4000,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:4488c0dd99cd5e91e9db2521fc4c134b7b9676b64ee203a0c662e55cbdf56b7f"
     },
     "type-opentype-text": {
@@ -3755,6 +4018,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:67bcf271723b3be911dee45ac79ab9b63265cae9936fc1bde45e634e96e22bad"
     },
     "type-spacing-metrics": {
@@ -3772,6 +4036,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:de23cf64917fecc1c763eb0d371ab3f983375ac8f3efd6b29f513217b88cdc35"
     },
     "type-typesetting": {
@@ -3789,6 +4054,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:65708f047b6d8d2883ce917b234897fe316f8ef47f5e88ec271e51d25b54073e"
     },
     "type-variable-text": {
@@ -3806,6 +4072,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:82661ee48bac0b301fc862e14a18c6e8bd6555b417927476b46bbd68b130fa3a"
     },
     "uid-color-for-ui": {
@@ -3826,6 +4093,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:d458a286a5e44558ff2d954b6c0f4fc2a7843b6f988138ec4a936d6b472ea08f"
     },
     "uid-iconography": {
@@ -3843,6 +4111,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:53e228c5d58da35dfe56309f24db33e24bd9e07bbfb287d9063a28b0e182248f"
     },
     "uid-spatial-composition": {
@@ -3860,6 +4129,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:711c39c2a444d8e322ce8be019f7078051d2a35a540a221e597c1ddab47c0e8b"
     },
     "uid-surface-depth": {
@@ -3877,6 +4147,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:1a405adc1655c01acd57785387d03982c00c303bacb9acac787aa103e9439d0a"
     },
     "uid-type-for-screens": {
@@ -3894,6 +4165,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:6c0f9a34ddc939a7b86118aa06ba42445c3a93835436d4258c89eac22ac9b70b"
     },
     "uid-visual-critique": {
@@ -3911,6 +4183,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:3e725298bd3502c1f9514f006454c687d53ef529d62f638fb01534db57ed67e3"
     },
     "uid-visual-system": {
@@ -3928,6 +4201,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:8a86ca4e5e57f1669ff4c82540daeea6dab2ed163fe3a747e1bdd3d4c9bb975f"
     },
     "ux-accessibility": {
@@ -3945,6 +4219,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:30e592ea92356769224da8b558a7bc1695e7685da84cb44cbfc002bb40259546"
     },
     "ux-ai-product-design": {
@@ -3962,6 +4237,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:8bf93d65d00bc7e940c68945a204cf26068709def3f0809035dfdd5535927a73"
     },
     "ux-component-library": {
@@ -3979,6 +4255,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:84fe76636b5506db2e0575800de131fe3675564fe9bf4f8b7e0ecd428a6f2b21"
     },
     "ux-data-visualization": {
@@ -3996,6 +4273,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:0a701ede9413cede34e1750dac28487d0b411adbf7fc8d5afeb3a1abf6dcaab7"
     },
     "ux-design-systems": {
@@ -4013,6 +4291,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:0c25c0ada8db0e9ac2a3ec34d40a49b0041c0c2f97e155a64d2ac18b0e6a55ca"
     },
     "ux-information-architecture": {
@@ -4030,6 +4309,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:2f40a66ffffd178aab4a11f9f5ecf91df5a04ed2ebfe079f6b7f30c0ca64b834"
     },
     "ux-interaction-design": {
@@ -4047,6 +4327,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:30587fff57c5dd0d26bd962c118d23cbde04ce821a90bcf66fb97f09df30a690"
     },
     "ux-performance-perception": {
@@ -4064,6 +4345,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:d52196c5dc22e6a72cececaeb244abed410aff1eef78fb2bbfe815f2b6cd58ce"
     },
     "ux-research-synthesis": {
@@ -4081,6 +4363,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:8bb1fef58b2887ef7c13202b08a813cd87cf82ca39d6e263c95d10f50856bf70"
     },
     "ux-service-design": {
@@ -4098,6 +4381,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:8c80064c2faedf5758dfe6c32a6437771db7aa66f8bc578b490954eb33761012"
     },
     "ux-writing": {
@@ -4115,6 +4399,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:caab27599aca19c638cfa5c1bda5ec192773f5fbbb6c2f88192a906b18c54380"
     },
     "variable-icon-font-architect": {
@@ -4130,6 +4415,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:7e7123158cd8b56403381fe8fb957c299759745d861e8328d4636acff76002e2"
     },
     "vfx-particle-systems": {
@@ -4163,6 +4449,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:2fefb92db7cdb733d080c18bcd833f695657e82b76a4531c0e2c0df198af1564"
     },
     "vfx-volumetrics": {
@@ -4195,6 +4482,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:6a180bf2821dc9a9400480a2ccafe2da69fb621a4e3004b0d2e61258954faa8d"
     },
     "vis-classical-opencv": {
@@ -4232,6 +4520,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:65bd758c4dc2c84be45951fe8ab4d355f0d28a7acc076fbb690b133f7f680b57"
     },
     "vis-detection-tracking": {
@@ -4269,6 +4558,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:4ce66e9a197e55e5fc026fa4c1efe37b4cccbaad883cc59e9e0f93639600007c"
     },
     "vis-segmentation": {
@@ -4301,6 +4591,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:138b6197b2c91f96d3277ffc8c286862330bd7d9e42ead03766b840e0f989234"
     },
     "vis-video-pipelines": {
@@ -4339,6 +4630,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:b1a2959135c4e38b15bd648fcfab5293ff8e3af626ac0bcd72cfd222e7af88c3"
     },
     "vis-vlm-multimodal": {
@@ -4372,6 +4664,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:cac176ec3f73624a3822e27f9557253dc9e5fd04d5081332b23ab3312b58bfc9"
     },
     "vision-foundations": {
@@ -4403,6 +4696,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:c892110e9c82df07d999c685cf047d206aa40e159436cf80cde941db603c50a2"
     },
     "visual-qa-accessibility": {
@@ -4418,6 +4712,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:df761e29523b0c6d7ae58652894e47dcc0c8ecce72803bd0b101785749b2addc"
     },
     "visual-qa-architecture": {
@@ -4433,6 +4728,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:8141d403092f66db9db244386c7cf21fc29967cb8baf5aec0c11312f30218378"
     },
     "visual-qa-game-design": {
@@ -4448,6 +4744,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:07e15967a21581ac112ccc10fa01cdb5b396aeb70f362562352800b6cf9d0d69"
     },
     "visual-qa-graphic-design": {
@@ -4463,6 +4760,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:2e90c9b052b612bdf7905c55a0b7cb97403d3ef2c215c13779fa9cbb90b5fb95"
     },
     "visual-qa-interior-design": {
@@ -4478,6 +4776,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:189cf11db6a8caac1d67753d2258b8c151336bcd4b57190378f799fd8aa76f7b"
     },
     "visual-qa-toolkit": {
@@ -4493,7 +4792,8 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:c8eb091a4425d615ba0ff9e9e1eaa562829847d7cd36ef06ef9f8314c8ae5d3f"
+      "requires": [],
+      "hash": "sha256:a528f80d6ab7ddf00d997eeda7f1ed89d55de7d24f350060bf77f8be10dc0cf1"
     },
     "visual-qa-ui-design": {
       "path": "03-skills/visual-qa-ui-design/SKILL.md",
@@ -4508,6 +4808,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:656bfbe0617494b1b4adabad961638efeb86d405d08b55c5b997238d054a607f"
     },
     "visual-qa-usability": {
@@ -4523,6 +4824,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:9a39690c36cd3040b8d8eae982aa80be0b999cc92321bc0cc8f547c037b3bbec"
     },
     "visual-qa-ux-design": {
@@ -4538,7 +4840,41 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:36fdaca12f6e130580028ecc8e3ed56b36b9ba29e08f924b42a100e519c441ea"
+    },
+    "web-automation": {
+      "path": "03-skills/web-automation/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "engineering",
+      "hub": null,
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "browser automation",
+        "scrape",
+        "web scraping",
+        "headless browser",
+        "agent-browser",
+        "cdp",
+        "click through",
+        "log in",
+        "fill form",
+        "infinite scroll",
+        "spa",
+        "js-rendered",
+        "dynamic page",
+        "accessibility tree snapshot"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "agent-browser"
+      ],
+      "hash": "sha256:54ebe5f8c63aaa7e8390f3db90b2751a156f35510f414c3f80b3a2d26b8d4991"
     },
     "webgpu-advanced-rendering": {
       "path": "03-skills/webgpu-advanced-rendering/SKILL.md",
@@ -4557,6 +4893,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:3155355259ed62da321e96b7bda16a16a9f6ca3f1cbe308cfcba727ccb73f808"
     },
     "workspace-bootstrap": {
@@ -4580,6 +4917,7 @@
       "surfaces": [
         "*"
       ],
+      "requires": [],
       "hash": "sha256:7c1b6a1219aa79edf0368010147e5a84d206f05a0feedeece69e27d4cdc338a7"
     }
   },
@@ -4642,6 +4980,9 @@
     ],
     "a11y-visual": [
       "a11y-visual"
+    ],
+    "ai-video-generation": [
+      "ai-video-generation"
     ],
     "be-api-design": [
       "eng-foundations",
@@ -5411,6 +5752,11 @@
       "design-foundations",
       "redesign"
     ],
+    "reference-video-review": [
+      "lead-visual-qa",
+      "visual-qa-toolkit",
+      "reference-video-review"
+    ],
     "sci-astro-objects": [
       "science-foundations",
       "sci-astro-objects"
@@ -5695,6 +6041,9 @@
     "visual-qa-ux-design": [
       "lead-visual-qa",
       "visual-qa-ux-design"
+    ],
+    "web-automation": [
+      "web-automation"
     ],
     "webgpu-advanced-rendering": [
       "game-foundations",

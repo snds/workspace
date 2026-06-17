@@ -74,6 +74,7 @@
 !09-tools/validate-links.py
 !09-tools/validate-workspace.py
 !09-tools/validate-integrity.py
+!09-tools/validate-capabilities.py
 !09-tools/compile-cursor-rules.py
 !09-tools/build-local-skill-plugin.py
 

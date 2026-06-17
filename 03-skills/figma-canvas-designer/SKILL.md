@@ -13,14 +13,20 @@ description: >
   or code generation), use this skill. Do NOT use for Figma plugin development
   (TypeScript, bundling, Plugin API code) — defer to figma-plugin-dev instead.
 aliases: [figma-canvas-designer]
-spec_version: "2.0"
+spec_version: "2.1"
 tier: spoke
 domain: design
 hub: figma
 prerequisites: [figma]
+requires: [figma-mcp]
 ---
 
 # Figma Canvas Designer
+
+> **Tool dependency — preflight first.** This skill requires the `figma-mcp` capability
+> ([[capability-registry]]). Before acting, confirm a `mcp__*figma*__*` tool is available on this
+> surface. If it isn't, **degrade** per the registry: ask the user to paste the frame/spec or export
+> assets and work from those — don't silently fail. See [[AGENTS]] → "Capability preflight".
 
 Generate and modify UI designs directly on the Figma canvas through a structured
 ideation workflow. Outputs mid-fidelity screens using design system components

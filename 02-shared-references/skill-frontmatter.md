@@ -1,10 +1,13 @@
 ---
 title: Skill Frontmatter Spec (v2)
-spec_version: "2.0"
+spec_version: "2.1"
 status: canonical
 ---
 
 # Skill Frontmatter Spec — v2
+
+> **v2.1** adds the optional `requires:` field (external-tool capability dependencies). Backward
+> compatible — skills without it are unaffected.
 
 Every `03-skills/<name>/SKILL.md` opens with a YAML frontmatter block. These keys are
 the **single source of truth** for the skill graph: `09-tools/build-registry.py` reads
@@ -33,7 +36,8 @@ ordered or cross-linked until migrated.
 | `governed_by` | list | design/eng spokes | Cross-cutting lenses (e.g. `a11y-visual`, `visual-qa-ui-design`) applied *after* this skill produces output. |
 | `governs` | list | cross-cutting skills | Inverse of `governed_by`. |
 | `surfaces` | list | optional | Where the skill is valid. Default `["*"]`. Use e.g. `["claude-code","mcp"]` for tool-specific skills. |
-| `spec_version` | string | optional | Frontmatter contract version. Stamp `"2.0"` on migrated skills. |
+| `requires` | list | tool-dependent skills | Capability ids ([[capability-registry]]) for external tools (MCP servers / CLIs) the skill needs. The agent **preflights** these before use — see "Capability requirements" below. |
+| `spec_version` | string | optional | Frontmatter contract version. Stamp `"2.0"` (or `"2.1"` if using `requires`). |
 | `pinned_version` | string | rare | Keep as-is on framework skills (`fw-*`). Orthogonal to loading. |
 
 ## Load-precedence rule
@@ -42,6 +46,25 @@ ordered or cross-linked until migrated.
 `prerequisites` and the implicit spoke→`hub` edge are the only **hard** edges. The transitive
 chain `spoke → hub → foundation` is what guarantees principles load before specialty work —
 **without restating the foundation on every spoke.**
+
+## Capability requirements (`requires`)
+
+A skill that depends on an external tool — an MCP server or a CLI — declares it by **capability
+id**, not by hard-coding detection or install steps:
+
+```yaml
+requires: [figma-mcp]      # ids defined in 02-shared-references/capability-registry.md
+```
+
+The id resolves in [[capability-registry]], which holds the **detection probe**, **per-surface
+install command**, and **fallback** for that capability. Before invoking the tool, the agent
+**preflights** the capability (see [[AGENTS]] → "Capability preflight") and, if it's absent on the
+current surface, follows the registry's fallback (`degrade` / `block` / `route`) instead of failing
+opaquely. Reciprocity is enforced: the capability's `powers` list must name the skill, and vice
+versa (`09-tools/validate-capabilities.py`).
+
+This keeps skills portable — the same `requires: [figma-mcp]` works on Claude Code, Cursor, or any
+MCP client, because *how* to detect/install lives in one surface-agnostic place.
 
 ## Examples
 

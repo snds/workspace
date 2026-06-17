@@ -45,7 +45,7 @@ TIER_RANK = {"foundation": 0, "hub": 1, "spoke": 2, "cross-cutting": 3, None: 4}
 # stored here (it's token-heavy and already lives in the SKILL.md, which is the
 # zero-cost routing surface in the system prompt).
 LIST_KEYS = {"aliases", "triggers", "prerequisites", "related",
-             "governed_by", "governs", "surfaces"}
+             "governed_by", "governs", "surfaces", "requires"}
 SCALAR_KEYS = {"name", "hub", "tier", "domain", "spec_version", "pinned_version"}
 
 
@@ -149,6 +149,7 @@ def read_skills():
             "governs": fm.get("governs", []),
             "triggers": fm.get("triggers", []),
             "surfaces": fm.get("surfaces", ["*"]),
+            "requires": fm.get("requires", []),
             "hash": compute_hash(skill_md),
             "dir": dir_name,
         }
@@ -266,6 +267,7 @@ def build():
             "governs": rec["governs"],
             "triggers": rec["triggers"],
             "surfaces": rec["surfaces"],
+            "requires": rec["requires"],
             "hash": rec["hash"],
         }
         if not errors:

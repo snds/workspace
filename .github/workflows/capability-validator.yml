@@ -1,0 +1,36 @@
+name: capability-validator
+
+# The external-tool dependency contract: skills declare `requires: [<id>]`, capabilities are
+# defined in 02-shared-references/capability-registry.md. This gate enforces no dangling capability
+# ids, well-formed entries, real powers/route targets, and requires<->powers reciprocity.
+# See 01-frameworks/08-workspace-contribution-framework.md + AGENTS.md -> "Capability preflight".
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "03-skills/**/SKILL.md"
+      - "03-skills/skills.registry.json"
+      - "02-shared-references/capability-registry.md"
+      - "09-tools/validate-capabilities.py"
+      - "09-tools/build-registry.py"
+  pull_request:
+    paths:
+      - "03-skills/**/SKILL.md"
+      - "03-skills/skills.registry.json"
+      - "02-shared-references/capability-registry.md"
+      - "09-tools/validate-capabilities.py"
+      - "09-tools/build-registry.py"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Registry reflects frontmatter (incl. requires)
+        run: python3 09-tools/build-registry.py --check
+      - name: Capability contract (requires/powers/fallback, no dangling)
+        run: python3 09-tools/validate-capabilities.py --check

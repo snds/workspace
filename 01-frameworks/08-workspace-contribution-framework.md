@@ -103,6 +103,12 @@ Each layer: what belongs · when to add vs. extend · what never goes here · th
   frontmatter); restate in a spoke the principle its foundation owns.
 - **How:** author from `00-bootstrap/templates/skill.md` (frontmatter v2 + typed `## Related`); then
   `python3 09-tools/build-registry.py`; ensure cross-links are reciprocal. CI gates both.
+- **External tools:** if a skill needs an MCP server or CLI, declare `requires: [<capability-id>]` and
+  register the capability in `02-shared-references/capability-registry.md` (detection + install +
+  fallback). Don't hard-code tool paths or install steps in the skill. The agent **preflights** the
+  capability before use ([[AGENTS]] → "Capability preflight") and degrades/blocks/routes if it's
+  absent on the current surface — so the skill stays portable across surfaces that may or may not have
+  the tool. `09-tools/validate-capabilities.py` enforces the contract (no dangling ids, reciprocity).
 
 ### `04-preferences/` — behavioral defaults
 - **Belongs:** stable, deliberately chosen defaults — tone, format, terminology, conventions.
