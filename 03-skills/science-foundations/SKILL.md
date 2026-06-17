@@ -56,4 +56,4 @@ the specialty (engine code, GLSL, a training loop) owns the application. Distinc
 ## Related
 - spoke → [[sci-astro-objects]] · [[sci-astro-structures]] · [[sci-linear-algebra]] · [[sci-numerical-methods]] · [[sci-physics-simulation]] · [[sci-probability-stochastic]]
 - applies-in ← [[glsl-shader-architect]] · [[lead-data-scientist]] · [[lead-game-developer]] · [[legion-project]] · [[sci-astro-objects]] · [[sci-astro-structures]] · [[threejs-materials-master]] · [[webgpu-advanced-rendering]]
-- peer ↔ [[imaging-foundations]]
+- peer ↔ [[imaging-foundations]] · [[vision-foundations]]

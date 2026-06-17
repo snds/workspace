@@ -48,4 +48,5 @@ tangent space). Always name the space a vector lives in; transform deliberately 
 
 ## Related
 - hub → [[science-foundations]]
+- applies-in ← [[vis-classical-opencv]]
 - peer ↔ [[sci-numerical-methods]] · [[sci-physics-simulation]]

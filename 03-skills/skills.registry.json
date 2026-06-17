@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 233,
+    "total": 239,
     "by_tier": {
       "cross-cutting": 23,
-      "foundation": 21,
+      "foundation": 22,
       "hub": 40,
-      "spoke": 149
+      "spoke": 154
     }
   },
   "skills": {
@@ -425,7 +425,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:2300cf87a0be83f373183db60aac7ed27c1b2ba8280009252482733c828d2096"
+      "hash": "sha256:fe6d3d68a3aff66fe2c3118f9accc6f580a29e632f3536c7bb27849bbdc7f743"
     },
     "design-engineer": {
       "path": "03-skills/design-engineer/SKILL.md",
@@ -2012,7 +2012,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:6c3ed630fdeb645cdcfeac6629e3c82e472d8fb90d4f387b2da5c5e3ae372866"
+      "hash": "sha256:ad9058e811b4402a64b0b52488bc1868d4a976da5216c41c2786fd9fdd23b6a5"
     },
     "img-cinematography": {
       "path": "03-skills/img-cinematography/SKILL.md",
@@ -3370,7 +3370,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:78350dcccdad283f13e9eac229d9cfb23332f9976ea37cc16bb6a96b261dfebd"
+      "hash": "sha256:315b298c64dfd1ad57345f55296fece221d8464a88c08e7a2f6d415f78eb99c0"
     },
     "sci-numerical-methods": {
       "path": "03-skills/sci-numerical-methods/SKILL.md",
@@ -3459,7 +3459,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:7552563382d38c91e21c97b277e4a3ba36e1a3aa53898955ae4c2080350dbc21"
+      "hash": "sha256:0c6c0beec6a1953cb0db5bc3c7859ec5d6d3294687a06edb28b002c686c52493"
     },
     "science-foundations": {
       "path": "03-skills/science-foundations/SKILL.md",
@@ -3489,7 +3489,7 @@
       "surfaces": [
         "*"
       ],
-      "hash": "sha256:9589f5d23b2cb3e0b6e6995f1c5e4b2bce410e53ac3c8ade803fcb1ace18d80b"
+      "hash": "sha256:ee8d3ccdc2d1f008a5d0a73df44cfd188b0792df19d17d896d3ba93eea5f7edc"
     },
     "sec-appsec-owasp": {
       "path": "03-skills/sec-appsec-owasp/SKILL.md",
@@ -4196,6 +4196,214 @@
         "*"
       ],
       "hash": "sha256:6a180bf2821dc9a9400480a2ccafe2da69fb621a4e3004b0d2e61258954faa8d"
+    },
+    "vis-classical-opencv": {
+      "path": "03-skills/vis-classical-opencv/SKILL.md",
+      "tier": "spoke",
+      "domain": "vision",
+      "hub": "vision-foundations",
+      "prerequisites": [
+        "sci-linear-algebra"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "opencv",
+        "image processing",
+        "gaussian blur",
+        "canny",
+        "contours",
+        "morphology",
+        "color space",
+        "feature matching",
+        "sift",
+        "orb",
+        "akaze",
+        "homography",
+        "camera calibration",
+        "undistortion",
+        "epipolar",
+        "stereo",
+        "optical flow",
+        "pnp",
+        "pose estimation"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:65bd758c4dc2c84be45951fe8ab4d355f0d28a7acc076fbb690b133f7f680b57"
+    },
+    "vis-detection-tracking": {
+      "path": "03-skills/vis-detection-tracking/SKILL.md",
+      "tier": "spoke",
+      "domain": "vision",
+      "hub": "vision-foundations",
+      "prerequisites": [
+        "sci-probability-stochastic"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "object detection",
+        "yolo",
+        "rt-detr",
+        "detr",
+        "bounding box",
+        "anchor free",
+        "nms",
+        "non max suppression",
+        "map",
+        "iou",
+        "multi object tracking",
+        "tracking",
+        "bytetrack",
+        "sort",
+        "deepsort",
+        "kalman filter",
+        "hungarian",
+        "re-identification",
+        "counting"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:4ce66e9a197e55e5fc026fa4c1efe37b4cccbaad883cc59e9e0f93639600007c"
+    },
+    "vis-segmentation": {
+      "path": "03-skills/vis-segmentation/SKILL.md",
+      "tier": "spoke",
+      "domain": "vision",
+      "hub": "vision-foundations",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "segmentation",
+        "semantic segmentation",
+        "instance segmentation",
+        "panoptic",
+        "mask",
+        "segment anything",
+        "sam",
+        "sam2",
+        "sam3",
+        "u-net",
+        "mask r-cnn",
+        "mask2former",
+        "miou",
+        "dice coefficient",
+        "matting",
+        "video object segmentation"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:138b6197b2c91f96d3277ffc8c286862330bd7d9e42ead03766b840e0f989234"
+    },
+    "vis-video-pipelines": {
+      "path": "03-skills/vis-video-pipelines/SKILL.md",
+      "tier": "spoke",
+      "domain": "vision",
+      "hub": "vision-foundations",
+      "prerequisites": [
+        "data-foundations"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "video pipeline",
+        "real-time inference",
+        "frame sampling",
+        "batching",
+        "video decode",
+        "ffmpeg",
+        "decord",
+        "tiling",
+        "sahi",
+        "aerial",
+        "drone footage",
+        "edge deployment",
+        "tensorrt",
+        "onnx",
+        "coreml",
+        "quantization",
+        "drift monitoring",
+        "dataset ops",
+        "annotation pipeline",
+        "mlops vision"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:b1a2959135c4e38b15bd648fcfab5293ff8e3af626ac0bcd72cfd222e7af88c3"
+    },
+    "vis-vlm-multimodal": {
+      "path": "03-skills/vis-vlm-multimodal/SKILL.md",
+      "tier": "spoke",
+      "domain": "vision",
+      "hub": "vision-foundations",
+      "prerequisites": [
+        "data-foundations"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "vlm",
+        "vision language model",
+        "clip",
+        "multimodal",
+        "image captioning",
+        "visual question answering",
+        "vqa",
+        "visual grounding",
+        "open vocabulary",
+        "ocr",
+        "document understanding",
+        "image embedding",
+        "zero-shot classification",
+        "image retrieval",
+        "multimodal rag"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:cac176ec3f73624a3822e27f9557253dc9e5fd04d5081332b23ab3312b58bfc9"
+    },
+    "vision-foundations": {
+      "path": "03-skills/vision-foundations/SKILL.md",
+      "tier": "foundation",
+      "domain": "vision",
+      "hub": null,
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "computer vision",
+        "machine vision",
+        "image classification",
+        "object detection",
+        "image segmentation",
+        "feature extraction",
+        "convolution",
+        "vision model",
+        "image embedding",
+        "map metric",
+        "iou",
+        "dataset",
+        "annotation",
+        "perception pipeline",
+        "deep learning vision"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "hash": "sha256:c892110e9c82df07d999c685cf047d206aa40e159436cf80cde941db603c50a2"
     },
     "visual-qa-accessibility": {
       "path": "03-skills/visual-qa-accessibility/SKILL.md",
@@ -5422,6 +5630,35 @@
       "lead-game-developer",
       "threejs-vfx-atmosphere",
       "vfx-volumetrics"
+    ],
+    "vis-classical-opencv": [
+      "science-foundations",
+      "sci-linear-algebra",
+      "vision-foundations",
+      "vis-classical-opencv"
+    ],
+    "vis-detection-tracking": [
+      "science-foundations",
+      "sci-probability-stochastic",
+      "vision-foundations",
+      "vis-detection-tracking"
+    ],
+    "vis-segmentation": [
+      "vision-foundations",
+      "vis-segmentation"
+    ],
+    "vis-video-pipelines": [
+      "data-foundations",
+      "vision-foundations",
+      "vis-video-pipelines"
+    ],
+    "vis-vlm-multimodal": [
+      "data-foundations",
+      "vision-foundations",
+      "vis-vlm-multimodal"
+    ],
+    "vision-foundations": [
+      "vision-foundations"
     ],
     "visual-qa-accessibility": [
       "lead-visual-qa",

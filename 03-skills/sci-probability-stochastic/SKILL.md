@@ -46,4 +46,5 @@ and better sampling reduce it.
 
 ## Related
 - hub → [[science-foundations]]
+- applies-in ← [[vis-detection-tracking]]
 - peer ↔ [[sci-numerical-methods]]

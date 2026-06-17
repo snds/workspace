@@ -60,4 +60,4 @@ Three.js + WebGPU** — the techniques transfer; only the approximations change.
 ## Related
 - spoke → [[img-cinematography]] · [[img-optics-light]] · [[img-photography]] · [[img-photoreal-rendering]] · [[img-vfx]]
 - applies-in ← [[3d-lighting-rendering]] · [[3d-materials-shading]] · [[glsl-shader-architect]] · [[lead-art-director]] · [[legion-project]] · [[motion-3d-spatial]] · [[threejs-materials-master]] · [[threejs-vfx-atmosphere]] · [[webgpu-advanced-rendering]]
-- peer ↔ [[design-foundations]] · [[science-foundations]]
+- peer ↔ [[design-foundations]] · [[science-foundations]] · [[vision-foundations]]

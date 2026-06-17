@@ -45,4 +45,5 @@ An analysis you can't reproduce is an anecdote. Version data, code, and assumpti
 raw data to claim auditable. State what the data *can't* tell you as clearly as what it can.
 
 ## Related
-- applies-in ← [[lead-data-scientist]]
+- applies-in ← [[lead-data-scientist]] · [[vis-video-pipelines]] · [[vis-vlm-multimodal]]
+- peer ↔ [[vision-foundations]]
