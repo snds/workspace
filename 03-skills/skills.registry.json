@@ -1310,8 +1310,10 @@
       "surfaces": [
         "*"
       ],
-      "requires": [],
-      "hash": "sha256:d055bbea09a418b6a3d3b993a4d63c1e61ed05d4d021f327268c5925ce67a8e1"
+      "requires": [
+        "figma-mcp"
+      ],
+      "hash": "sha256:e1216f5f538ed51262e972b36410fb661124171a5ae804168dcc38a7c9842b76"
     },
     "figma-modes-for-variants": {
       "path": "03-skills/figma-modes-for-variants/SKILL.md",
@@ -1382,8 +1384,10 @@
       "surfaces": [
         "*"
       ],
-      "requires": [],
-      "hash": "sha256:e3d855dedc28b8c5158990bc525cf13ec001d68356be65ce590a8380c0c90076"
+      "requires": [
+        "figma-mcp"
+      ],
+      "hash": "sha256:7b41e076fd8dfe1d5403dd12615e4bc1401368a97112e3b7e0e9b02e619e4e3a"
     },
     "figma-style-binding": {
       "path": "03-skills/figma-style-binding/SKILL.md",
@@ -4598,8 +4602,10 @@
       "surfaces": [
         "*"
       ],
-      "requires": [],
-      "hash": "sha256:6a180bf2821dc9a9400480a2ccafe2da69fb621a4e3004b0d2e61258954faa8d"
+      "requires": [
+        "blender-mcp"
+      ],
+      "hash": "sha256:e1bd8920031ed4474db43f6f669ae8977f506c55571b0810d510f50ca4b65060"
     },
     "vis-classical-opencv": {
       "path": "03-skills/vis-classical-opencv/SKILL.md",

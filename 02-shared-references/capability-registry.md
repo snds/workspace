@@ -116,9 +116,15 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
 
 - **figma-mcp** — powers the Figma Dev Mode workflow spokes: [[figma-canvas-designer]] (author on canvas),
   [[figma-design-to-code]] (design→code), [[figma-code-connect]] (component→snippet mapping),
-  [[figma-design-specs]] (design→spec/PRD), [[figma-diagramming]] (Mermaid→FigJam). Already present on most
-  Claude surfaces; degrade cleanly to paste-the-spec/export-assets when absent. The Figma *plugin* API
-  ([[figma-plugin-dev]]) is a separate path and does **not** depend on this MCP.
+  [[figma-design-specs]] (design→spec/PRD), [[figma-diagramming]] (Mermaid→FigJam),
+  [[figma-mcp-tool-usage]] (tool selection/params), [[figma-source-audit]] (audit a library via `use_figma`).
+  Already present on most Claude surfaces; degrade cleanly to paste-the-spec/export-assets when absent. The
+  Figma *plugin* API spokes ([[figma-plugin-dev]], `figma-component-generation`, `figma-variable-creation`,
+  etc.) run **inside Figma** and do **not** depend on this MCP — so they carry no `requires`.
+- **blender-mcp** — powers [[vfx-volumetrics]] (bake hero nebula/volume assets). Optional by design: the
+  procedural path is the default, so absence degrades to fBm/curl-noise generation. The many *generic*
+  Blender mentions across `3d-*` / `imaging-*` skills are theory/reference (Blender as an industry DCC),
+  not MCP-driving, and correctly carry no `requires`.
 - **agent-browser** — powers [[web-automation]]. The CLI ships its own usage docs (`agent-browser
   skills get core`); the workspace skill is the *when/why*, the CLI is the *how*.
 - **ffmpeg / yt-dlp** — power [[reference-video-review]]. ffmpeg is the hard dependency (frames);

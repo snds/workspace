@@ -65,19 +65,28 @@ Artifacts:
     - figma-canvas-designer → requires figma-mcp; web-automation (new) → agent-browser; reference-video-review (new, spoke of visual-qa-toolkit) → ffmpeg+yt-dlp; ai-video-generation (new) → inference-belt.
   Vision↔assessment cross-links:
     - 12 reciprocal peer pairs connecting vision to visual-QA / game / imaging so CV is the agent's "seeing" instrument; visual-qa-toolkit gained a "pairs with the vision domain" note.
+  Figma Dev Mode workflows (capability-bound spokes, not vendor forks) — the distinct external skills the canvas-design binding didn't cover:
+    - figma-design-to-code, figma-code-connect, figma-design-specs, figma-diagramming — all under the figma hub, each requires figma-mcp, defer mechanical specifics to the installed skill + MCP.
+  Capability consistency sweep (workspace-wide audit for skills that DRIVE an MCP/CLI but didn't declare it):
+    - +requires figma-mcp on figma-mcp-tool-usage, figma-source-audit (primary path = use_figma).
+    - Registered new `blender-mcp` capability (degrade→procedural); +requires on vfx-volumetrics (optional baked-asset path).
+    - Codified the rule in skill-frontmatter.md: declare `requires` only where a skill *drives* the tool — not lenses/hubs (design-engineer, figma hub, /qa), Plugin-API skills (figma-component-generation, figma-variable-creation), or methodology that merely mentions a tool (vis-video-pipelines/ffmpeg; 3d-* / imaging citing Blender Cycles).
 Decisions:
   - Don't copy third-party tool skills into the workspace (upstream-maintained → license/zombie risk; tool-bound stubs are useless without the tool). Instead: declare the dependency + detect/degrade. CV authored natively (better integrated) rather than imported.
   - Capability detection is surface-agnostic: MCP detected by tool-name pattern in the agent's own surface; CLI by `command -v`. Absent dependency → degrade/block/route, never silent-fail.
   - Vision's primary purpose here = SEE/critique our visual work (VLM screenshot critique, SSIM/diff regression, segment/detect to verify, Legion render + fly-through assessment) — "measure or describe what you see, don't assert it."
+  - `requires` = "drives the tool when run," not "mentions it." Optionality is expressed via the capability's `fallback: degrade`, not by omitting the declaration.
 Pending resolved:
   - Consolidated the 16-PR refactor stack onto `main` by fast-forward; closed #2–#16 as merged-by-ff (#1 auto-merged) and deleted all 16 refactor/* branches (no zombie PRs/branches).
   - "Do all slash skills trigger only from the new workspace?" — yes; rebuilt the stale `/snds:*` plugin so it serves new-workspace content.
   - "Any internal non-Anthropic skills worth merging?" — no copies; built the detection mechanism + brought in 4 as dependency-declared skills.
+  - "External skills inventory" deferred item — CLOSED: redundant for what we rebuilt (install commands already in capability-registry); the one real gap (Figma Dev Mode workflows) was brought in instead.
+  - Capability-consistency follow-up — DONE: full-workspace audit, wired the genuine tool-driving skills, codified the drives-not-mentions rule.
 Project status changes:
-  - Workspace skills: 233 → 242 (vision domain + 3 tool skills + figma binding). Gate suite 5 → 6 (added validate-capabilities). All green.
+  - Workspace skills: 233 → 246 (vision domain + 3 tool skills + 4 Figma Dev Mode spokes + figma bindings). Capabilities 5 → 6 (added blender-mcp); 12 skill requirements wired. Gate suite 5 → 6 (validate-capabilities). All green.
 Next:
   - Per-machine: `claude plugin marketplace update snds-local && claude plugin install snds@snds-local` (then restart) to pick up plugin v0.2.0.
-  - Optional (deferred, not selected): "external skills installed" inventory in skill-ecosystem-and-mcp-servers.md; promoting vision↔QA peers to hard/governed_by edges if auto-load during QA/render work is wanted.
+  - Optional (deferred, not selected): promoting vision↔QA peers to hard/governed_by edges if auto-load during QA/render work is wanted.
 --- END BLOCK ---
 
 ---

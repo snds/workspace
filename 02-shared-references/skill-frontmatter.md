@@ -66,6 +66,16 @@ versa (`09-tools/validate-capabilities.py`).
 This keeps skills portable — the same `requires: [figma-mcp]` works on Claude Code, Cursor, or any
 MCP client, because *how* to detect/install lives in one surface-agnostic place.
 
+**Declare it only where the skill *drives* the tool.** `requires` is for skills whose execution
+**invokes** the MCP/CLI (e.g. `figma-canvas-designer` calls `use_figma`; `reference-video-review` runs
+ffmpeg). It is **not** for: lenses/hubs that orchestrate or merely reference a tool (`design-engineer`,
+the `figma` hub, `/qa`), Plugin-API skills that run *inside* the host app rather than via an MCP the agent
+calls (`figma-component-generation`, `figma-variable-creation`), or methodology/theory skills that mention
+a tool as one option among many (`vis-video-pipelines` discussing ffmpeg; `3d-*` skills citing Blender
+Cycles). When a tool is *optional* to a skill that does drive it, still declare it and let the capability's
+`fallback: degrade` express the optional path (e.g. `vfx-volumetrics` → `blender-mcp`, degrading to
+procedural).
+
 ## Examples
 
 **Foundation** (`design-foundations/SKILL.md`):
