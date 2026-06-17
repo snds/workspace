@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 242,
+    "total": 246,
     "by_tier": {
       "cross-cutting": 25,
       "foundation": 22,
       "hub": 40,
-      "spoke": 155
+      "spoke": 159
     }
   },
   "skills": {
@@ -1085,7 +1085,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:fdb6e09d3b0c6c0682c5fd97d34b0a9ec54a071c5aeaee71190d11100a33f4b5"
+      "hash": "sha256:71ed44749ca97374cdc884844cf1a35f759b4a9bf7cf3d742bff4914cde92947"
     },
     "figma-api-router": {
       "path": "03-skills/figma-api-router/SKILL.md",
@@ -1125,6 +1125,35 @@
       ],
       "hash": "sha256:bb526a8b4f7e7ac316224a73cac84b40dfccdee8f1cfdd0a9ae23f714aead1da"
     },
+    "figma-code-connect": {
+      "path": "03-skills/figma-code-connect/SKILL.md",
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "figma",
+      "prerequisites": [
+        "figma"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "code connect",
+        "figma.ts",
+        "component mapping",
+        "dev mode code",
+        "map figma props",
+        "connect component",
+        "figma code connect",
+        "publish code connect"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "figma-mcp"
+      ],
+      "hash": "sha256:83842cdfd8f50eadaba9b1e85fb49e54de134ca1a390d175b9369b275431d96b"
+    },
     "figma-component-generation": {
       "path": "03-skills/figma-component-generation/SKILL.md",
       "tier": "spoke",
@@ -1142,6 +1171,93 @@
       ],
       "requires": [],
       "hash": "sha256:d283d2cd25702a71f24afebe0d740826f2a07e4f7af9e89af68158b5618289a8"
+    },
+    "figma-design-specs": {
+      "path": "03-skills/figma-design-specs/SKILL.md",
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "figma",
+      "prerequisites": [
+        "figma"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "figma spec",
+        "design spec",
+        "prd from figma",
+        "design handoff doc",
+        "document this design",
+        "figma to spec",
+        "implementation spec",
+        "dev handoff spec"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "figma-mcp"
+      ],
+      "hash": "sha256:e581cf7ffcca873173aa59673dba5ca5f8d03cfedba1a7d0961bf721770fbc00"
+    },
+    "figma-design-to-code": {
+      "path": "03-skills/figma-design-to-code/SKILL.md",
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "figma",
+      "prerequisites": [
+        "figma"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "implement design",
+        "figma to code",
+        "build this component from figma",
+        "generate code from figma",
+        "design to code",
+        "1:1 fidelity",
+        "figma url implement",
+        "dev mode handoff"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "figma-mcp"
+      ],
+      "hash": "sha256:ac4f06aba23826f4064bfc09b280c4da9049f885c03b43a968c42cad9efbcb7c"
+    },
+    "figma-diagramming": {
+      "path": "03-skills/figma-diagramming/SKILL.md",
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "figma",
+      "prerequisites": [
+        "figma"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "figjam diagram",
+        "generate diagram",
+        "mermaid to figma",
+        "flowchart in figma",
+        "architecture diagram",
+        "sequence diagram",
+        "user flow diagram",
+        "process map figjam"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "figma-mcp"
+      ],
+      "hash": "sha256:eaf233490e6d47a8f8119683cdb89ca8e9bd00b1ada83225a243fab15e646e4f"
     },
     "figma-ds-generation-pipeline": {
       "path": "03-skills/figma-ds-generation-pipeline/SKILL.md",
@@ -5208,10 +5324,30 @@
       "figma",
       "figma-canvas-designer"
     ],
+    "figma-code-connect": [
+      "design-foundations",
+      "figma",
+      "figma-code-connect"
+    ],
     "figma-component-generation": [
       "design-foundations",
       "figma",
       "figma-component-generation"
+    ],
+    "figma-design-specs": [
+      "design-foundations",
+      "figma",
+      "figma-design-specs"
+    ],
+    "figma-design-to-code": [
+      "design-foundations",
+      "figma",
+      "figma-design-to-code"
+    ],
+    "figma-diagramming": [
+      "design-foundations",
+      "figma",
+      "figma-diagramming"
     ],
     "figma-ds-generation-pipeline": [
       "design-foundations",

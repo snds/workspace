@@ -130,4 +130,4 @@ Thin by design: the figma-* skills + Figma MCP hold the depth.
 
 ## Related
 - foundation → [[design-foundations]]
-- spoke → [[figma-api-router]] · [[figma-canvas-designer]] · [[figma-component-generation]] · [[figma-ds-generation-pipeline]] · [[figma-error-troubleshooting]] · [[figma-mcp-tool-usage]] · [[figma-modes-for-variants]] · [[figma-plugin]] · [[figma-plugin-dev]] · [[figma-source-audit]] · [[figma-style-binding]] · [[figma-variable-creation]]
+- spoke → [[figma-api-router]] · [[figma-canvas-designer]] · [[figma-code-connect]] · [[figma-component-generation]] · [[figma-design-specs]] · [[figma-design-to-code]] · [[figma-diagramming]] · [[figma-ds-generation-pipeline]] · [[figma-error-troubleshooting]] · [[figma-mcp-tool-usage]] · [[figma-modes-for-variants]] · [[figma-plugin]] · [[figma-plugin-dev]] · [[figma-source-audit]] · [[figma-style-binding]] · [[figma-variable-creation]]

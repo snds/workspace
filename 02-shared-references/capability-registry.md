@@ -32,7 +32,7 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
       },
       "fallback": "degrade",
       "fallback_note": "Proceed without live Figma data: ask the user to paste the frame/spec or export assets, and work from those instead of the canvas.",
-      "powers": ["figma-canvas-designer"]
+      "powers": ["figma-canvas-designer", "figma-design-to-code", "figma-code-connect", "figma-design-specs", "figma-diagramming"]
     },
     "agent-browser": {
       "kind": "cli",
@@ -102,9 +102,11 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
 
 ## Per-capability notes
 
-- **figma-mcp** — powers [[figma-canvas-designer]]. Already present on most Claude surfaces; degrade
-  cleanly to paste-the-spec when absent. The Figma *plugin* API ([[figma-plugin-dev]]) is a separate
-  path and does **not** depend on this MCP.
+- **figma-mcp** — powers the Figma Dev Mode workflow spokes: [[figma-canvas-designer]] (author on canvas),
+  [[figma-design-to-code]] (design→code), [[figma-code-connect]] (component→snippet mapping),
+  [[figma-design-specs]] (design→spec/PRD), [[figma-diagramming]] (Mermaid→FigJam). Already present on most
+  Claude surfaces; degrade cleanly to paste-the-spec/export-assets when absent. The Figma *plugin* API
+  ([[figma-plugin-dev]]) is a separate path and does **not** depend on this MCP.
 - **agent-browser** — powers [[web-automation]]. The CLI ships its own usage docs (`agent-browser
   skills get core`); the workspace skill is the *when/why*, the CLI is the *how*.
 - **ffmpeg / yt-dlp** — power [[reference-video-review]]. ffmpeg is the hard dependency (frames);
