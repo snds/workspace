@@ -24,6 +24,17 @@ you read this.
 
 If you worked on multiple machines today, run `/reconcile` to merge the session blocks into one day entry.
 
+## 📋 Open tasks
+
+Items tagged `#task` across the vault, soonest due first. Add one anywhere with `- [ ] something #task`.
+
+```tasks
+not done
+sort by due
+limit 25
+short mode
+```
+
 ## Navigation shortcuts
 
 - **Command palette:** `⌘P` / `Ctrl+P`
