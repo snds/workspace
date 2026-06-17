@@ -32,7 +32,19 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
       },
       "fallback": "degrade",
       "fallback_note": "Proceed without live Figma data: ask the user to paste the frame/spec or export assets, and work from those instead of the canvas.",
-      "powers": ["figma-canvas-designer", "figma-design-to-code", "figma-code-connect", "figma-design-specs", "figma-diagramming"]
+      "powers": ["figma-canvas-designer", "figma-design-to-code", "figma-code-connect", "figma-design-specs", "figma-diagramming", "figma-mcp-tool-usage", "figma-source-audit"]
+    },
+    "blender-mcp": {
+      "kind": "mcp",
+      "provides": "Drive Blender headlessly — author/sim geometry, bake density to VDB/3D-texture, render viewport/thumbnails — for hero 3D/VFX assets that procedural generation can't art-direct.",
+      "detect": { "method": "mcp-tool-present", "match": "mcp__*Blender*__*" },
+      "install": {
+        "claude-code": "Run Blender with the MCP add-on (ahujasid/blender-mcp) enabled + connected, then `claude mcp add` it (see 08-knowledge/cross-domain/skill-ecosystem-and-mcp-servers).",
+        "generic": "Install the Blender MCP add-on (ahujasid/blender-mcp), enable it in Blender, and connect your MCP client."
+      },
+      "fallback": "degrade",
+      "fallback_note": "No Blender → use procedural generation (fBm/curl noise) for the volume/asset, or ask the user to supply a baked VDB/3D-texture. Procedural is the default path anyway, so this degrades cleanly.",
+      "powers": ["vfx-volumetrics"]
     },
     "agent-browser": {
       "kind": "cli",

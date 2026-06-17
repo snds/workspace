@@ -7,7 +7,8 @@ tier: spoke
 domain: design
 hub: figma
 prerequisites: [figma]
-spec_version: "2.0"
+requires: [figma-mcp]
+spec_version: "2.1"
 ---
 
 # Figma MCP Tool Usage

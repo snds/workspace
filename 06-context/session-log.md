@@ -25,6 +25,33 @@ Date: 2026-06-16
 Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
 Surface: Claude Code (Mac desktop app)
 Project(s):
+  - Obsidian vault setup (workspace tooling — not a 07-projects project).
+Artifacts:
+  - .obsidian/plugins/* — installed 11 community plugins: Tasks, Calendar (stable 1.5.10), QuickAdd, Linter, Image Converter, Homepage, PDF++, Banners, Charts, Tag Wrangler, Outliner. (machine-local; .obsidian is gitignored)
+  - .obsidian/daily-notes.json — core Daily Notes pointed at 05-artifacts/active/daily, format YYYY-MM-DD (so Calendar targets the real daily folder).
+  - .obsidian/plugins/homepage/data.json — open _HOME on startup + refresh Dataview.
+  - .obsidian/plugins/obsidian-tasks-plugin/data.json — global filter #task (+ removeGlobalFilter), default query sort by due.
+  - .obsidian/plugins/quickadd/data.json — added "📥 Quick Capture → Today" capture command (appends "- HH:mm {text}" to today's daily note).
+  - .obsidian/plugins/obsidian-linter/data.json — format-on-save, idempotent whitespace rules only; ignores 00-bootstrap/templates, 05-artifacts/archive, .obsidian.
+  - _HOME.md — added "## 📋 Open tasks" Tasks widget (already auto-committed by obsidian-git: 8e0a901).
+Decisions:
+  - Tasks global filter = #task so existing plain `- [ ]` checklists aren't all swept into Tasks queries; only #task items are managed. Reversible in Settings → Tasks.
+  - Linter restricted to whitespace rules (no YAML/heading/content rules) to avoid noisy diffs on the git-tracked vault.
+  - Installed Calendar stable 1.5.10 (repo "latest" is a calendar-beta BRAT build that won't load under the `calendar` id).
+  - Did NOT auto-configure Image Converter (no data.json yet; complex/version-specific schema → corruption risk). Left at defaults; manual toggle documented.
+  - .obsidian is gitignored → this plugin set + configs are LOCAL to CS-K746DRWXY1. Other machines won't get them via git; re-install there to match.
+Pending added:
+  - Optional: Settings → Image Converter → enable auto-convert pasted images to WebP (~85% quality) to keep the git vault lean.
+  - Verify QuickAdd "📥 Quick Capture → Today" on first run; assign a hotkey if desired.
+Next:
+  - In-app sanity check: Homepage opens _HOME, Calendar opens daily notes in 05-artifacts/active/daily, Quick Capture lands in today's note.
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
+Date: 2026-06-16
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Surface: Claude Code (Mac desktop app)
+Project(s):
   - Portable workspace — post-consolidation follow-ups (skill library, tooling, capability layer). Continuation of the same-day refactor session below.
 Artifacts:
   Plugin refresh:

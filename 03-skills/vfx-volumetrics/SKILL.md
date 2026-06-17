@@ -15,7 +15,8 @@ hub: threejs-vfx-atmosphere
 domain: game
 prerequisites: [threejs-vfx-atmosphere, img-vfx]
 surfaces: ["*"]
-spec_version: "2.0"
+requires: [blender-mcp]
+spec_version: "2.1"
 ---
 
 # VFX — Volumetrics

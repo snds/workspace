@@ -14,11 +14,12 @@ description: >
   visual QA", "Figma generation review", "design-engineer audit", "spec gap",
   "state coverage", "variant audit", "shadcn parity in Figma".
 aliases: [figma-source-audit]
-spec_version: "2.0"
+spec_version: "2.1"
 tier: spoke
 domain: design
 hub: figma
 prerequisites: [figma]
+requires: [figma-mcp]
 ---
 
 # Figma source-audit — methodology
