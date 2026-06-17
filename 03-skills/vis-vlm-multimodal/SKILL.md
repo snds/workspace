@@ -62,4 +62,4 @@ then spend a generative call only on the candidates that matter. For video, samp
 ## Related
 - foundation → [[data-foundations]]
 - hub → [[vision-foundations]]
-- peer ↔ [[vis-segmentation]]
+- peer ↔ [[vis-segmentation]] · [[visual-qa-toolkit]] · [[visual-qa-game-design]] · [[reference-video-review]] · [[img-cinematography]]

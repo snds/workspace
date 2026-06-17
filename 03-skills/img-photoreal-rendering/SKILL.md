@@ -56,4 +56,4 @@ path-tracing for cinematics/stills. Match real reference; conserve energy; tonem
 
 ## Related
 - hub → [[imaging-foundations]]
-- peer ↔ [[img-optics-light]] · [[img-vfx]]
+- peer ↔ [[img-optics-light]] · [[img-vfx]] · [[vis-classical-opencv]]

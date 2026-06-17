@@ -1408,7 +1408,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:1922ccec381efcc4c0b345e9b0d5e215546988ce25adcf033b4956a6ad286dc8"
+      "hash": "sha256:6caf0ec7c63d6a49f0edacbdc194713e73152b218d66d5383be8cdaf83b8a4bf"
     },
     "found-typography": {
       "path": "03-skills/found-typography/SKILL.md",
@@ -2189,7 +2189,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:df7b8b464bc080037385d4c0d4e94f91c81638d0cf3ee5f390fa9d51919bf8b6"
+      "hash": "sha256:7e9e7e21c9c93e97d551762ada15f8a4ad541ec9812806dffee35ce4d7d2e80c"
     },
     "img-optics-light": {
       "path": "03-skills/img-optics-light/SKILL.md",
@@ -2284,7 +2284,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:eed0e19c11e7156b6445bbc754a1f965f8e8fb54f81893c6d222d11645cf31e3"
+      "hash": "sha256:327afe09dc2a702015dae084ef7032dfa3e591152a22732dc499da927f4a4596"
     },
     "img-vfx": {
       "path": "03-skills/img-vfx/SKILL.md",
@@ -2605,7 +2605,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:16c8679d2b61c8dfdaf077ee1cd271f351782a142b411d58beae48cad3c549b9"
+      "hash": "sha256:1c0c7931978ba91d57b9602f5e991fc5acbb72a27f17b003910e21e87e22a027"
     },
     "lead-graphic-designer": {
       "path": "03-skills/lead-graphic-designer/SKILL.md",
@@ -2844,7 +2844,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:bb187ebefd728f38cbc240efb79ec1b37b4623f06ce31bb6492de742ad7fdc75"
+      "hash": "sha256:80fa686fb7f9ad71d74795ba032e8bba0e16bb5c089c13161a62a168c9f754a5"
     },
     "legion-narrative-design": {
       "path": "03-skills/legion-narrative-design/SKILL.md",
@@ -3520,7 +3520,7 @@
         "ffmpeg",
         "yt-dlp"
       ],
-      "hash": "sha256:e6ab05daeb3c3b9ec9fa543d3a00295e32cfa04b2245686ae4bdf6a610a0d594"
+      "hash": "sha256:d6ab21be355725cf6a17fe2de4594bdb3e961d74759c94feb808d777b71d6d94"
     },
     "sci-astro-objects": {
       "path": "03-skills/sci-astro-objects/SKILL.md",
@@ -4521,7 +4521,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:65bd758c4dc2c84be45951fe8ab4d355f0d28a7acc076fbb690b133f7f680b57"
+      "hash": "sha256:eb03ab29fe68cae9c7a1600eeba163abe8c94c343710bddd725f69eed498a24f"
     },
     "vis-detection-tracking": {
       "path": "03-skills/vis-detection-tracking/SKILL.md",
@@ -4559,7 +4559,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:4ce66e9a197e55e5fc026fa4c1efe37b4cccbaad883cc59e9e0f93639600007c"
+      "hash": "sha256:e47aca01e742252b0d5ce288332ed9c288706b5a2a3162051e595538bcb29da8"
     },
     "vis-segmentation": {
       "path": "03-skills/vis-segmentation/SKILL.md",
@@ -4592,7 +4592,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:138b6197b2c91f96d3277ffc8c286862330bd7d9e42ead03766b840e0f989234"
+      "hash": "sha256:6a8220a2f9e806c168e43b4bfa0aacec9cb011e68070b85724624fdc35f6b67a"
     },
     "vis-video-pipelines": {
       "path": "03-skills/vis-video-pipelines/SKILL.md",
@@ -4631,7 +4631,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:b1a2959135c4e38b15bd648fcfab5293ff8e3af626ac0bcd72cfd222e7af88c3"
+      "hash": "sha256:45c17968bdd3333d89034fdfd23e68b8a7720c6a2cf11f41c7756c87d8cf5902"
     },
     "vis-vlm-multimodal": {
       "path": "03-skills/vis-vlm-multimodal/SKILL.md",
@@ -4665,7 +4665,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:cac176ec3f73624a3822e27f9557253dc9e5fd04d5081332b23ab3312b58bfc9"
+      "hash": "sha256:e98ba1040b058970599801ac0cbde9eeeb42375215bfa7ddccea541804b96c23"
     },
     "vision-foundations": {
       "path": "03-skills/vision-foundations/SKILL.md",
@@ -4697,7 +4697,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:c892110e9c82df07d999c685cf047d206aa40e159436cf80cde941db603c50a2"
+      "hash": "sha256:610e254756d259d345a8176dd0ddcd27c0bd359948883a308f1ab394ea7af57d"
     },
     "visual-qa-accessibility": {
       "path": "03-skills/visual-qa-accessibility/SKILL.md",
@@ -4745,7 +4745,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:07e15967a21581ac112ccc10fa01cdb5b396aeb70f362562352800b6cf9d0d69"
+      "hash": "sha256:8f33cae6af703dcc4fb6f65b4de48f69d7d713d7e44142710dc205c3a45564d9"
     },
     "visual-qa-graphic-design": {
       "path": "03-skills/visual-qa-graphic-design/SKILL.md",
@@ -4793,7 +4793,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:a528f80d6ab7ddf00d997eeda7f1ed89d55de7d24f350060bf77f8be10dc0cf1"
+      "hash": "sha256:f5521695389b935dc5d2e593f906681ff47efad9e1b57cc6ebc0c7290ae0191b"
     },
     "visual-qa-ui-design": {
       "path": "03-skills/visual-qa-ui-design/SKILL.md",
@@ -4809,7 +4809,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:656bfbe0617494b1b4adabad961638efeb86d405d08b55c5b997238d054a607f"
+      "hash": "sha256:a2e7c69a715003c698ffe41a218e858d35601853b7bd804baa01bfaf90b9c9d6"
     },
     "visual-qa-usability": {
       "path": "03-skills/visual-qa-usability/SKILL.md",

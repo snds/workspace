@@ -62,4 +62,4 @@ and right-size the model (nano/small for edge). The tracker is cheap; the detect
 ## Related
 - foundation → [[sci-probability-stochastic]]
 - hub → [[vision-foundations]]
-- peer ↔ [[vis-classical-opencv]] · [[vis-segmentation]] · [[vis-video-pipelines]]
+- peer ↔ [[vis-classical-opencv]] · [[vis-segmentation]] · [[vis-video-pipelines]] · [[visual-qa-game-design]]

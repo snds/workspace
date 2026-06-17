@@ -153,3 +153,4 @@ This hub includes six deep-dive references:
 ## Related
 - foundation → [[game-foundations]] · [[science-foundations]]
 - spoke → [[game-scale-traversal]] · [[glsl-shader-architect]] · [[threejs-materials-master]] · [[threejs-vfx-atmosphere]] · [[webgpu-advanced-rendering]]
+- peer ↔ [[vision-foundations]]

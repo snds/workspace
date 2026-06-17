@@ -85,6 +85,29 @@ Vision systems fail in socially loaded ways: dataset bias (skin tone, geography)
 and **over-trusted outputs** (a confident wrong box). Face recognition, demographic inference, and
 tracking carry real harm — gate them on consent and necessity, and report confidence honestly.
 
+## Seeing the work — vision as a visual-QA / render-assessment instrument
+The highest-value use of this domain here isn't a shipped CV product — it's letting the agent **actually
+see, articulate, and critique the visual work we make together**, then troubleshoot it. Vision is the
+machine-seeing half of the review loop; the heuristic/human half is [[lead-visual-qa]] + the
+[[visual-qa-toolkit]] (still-image craft lens: [last-mile craft](01-frameworks/05-last-mile-craft-framework.md)).
+Reach for these techniques to turn "it looks off" into a specific, checkable observation:
+
+- **Look at it and say what's wrong** — feed a screenshot/render to a VLM ([[vis-vlm-multimodal]]) for a
+  grounded critique (layout, hierarchy, contrast, artifacts), pairing with [[visual-qa-ui-design]] /
+  [[visual-qa-game-design]]. The fastest path from pixels to articulate feedback.
+- **Did it change / does it match the reference?** — pixel diff, **SSIM**, histogram/edge comparison
+  ([[vis-classical-opencv]]) for visual-regression and reference-matching ([[visual-qa-toolkit]],
+  [[img-photoreal-rendering]]).
+- **Is every element present and placed right?** — detect/segment UI components or scene objects
+  ([[vis-detection-tracking]], [[vis-segmentation]]) to verify composition and catch missing/misaligned parts.
+- **Assess motion + render quality in Legion** — extract frames ([[reference-video-review]]), then
+  critique the fly-through, lighting, and composition against intent ([[lead-game-developer]],
+  [[img-cinematography]], [[game-scale-traversal]]). The CV read complements the
+  [[threejs-galaxy-visualization]] gotchas and the [[legion-galaxy-playbook]] recipe.
+
+Principle: **measure or describe what you see, don't assert it.** A VLM critique, an SSIM number, or a
+segmented overlay is evidence; "looks good" is not.
+
 ## Related
 - spoke → [[vis-classical-opencv]] · [[vis-detection-tracking]] · [[vis-segmentation]] · [[vis-video-pipelines]] · [[vis-vlm-multimodal]]
-- peer ↔ [[imaging-foundations]] · [[science-foundations]] · [[data-foundations]]
+- peer ↔ [[imaging-foundations]] · [[science-foundations]] · [[data-foundations]] · [[found-perception]] · [[lead-visual-qa]] · [[lead-game-developer]]

@@ -18,6 +18,13 @@ Framework — it replaces Claude's baseline visual inspection (which is unreliab
 for pixel-level measurements) with deterministic, verifiable analysis that
 produces annotated images and structured findings.
 
+> **Pairs with the vision domain (machine seeing).** This toolkit is the *deterministic measurement*
+> half (SSIM, Δe, contrast, alignment). For *semantic* seeing — "look at this screenshot/render and
+> tell me what's wrong" — reach for [[vision-foundations]]: VLM critique ([[vis-vlm-multimodal]]),
+> region/element analysis ([[vis-segmentation]], [[vis-detection-tracking]]), and richer image
+> comparison ([[vis-classical-opencv]]). Use both: measure with the toolkit, *see + articulate* with
+> vision. For assessing Legion renders/fly-throughs, add [[reference-video-review]] + [[lead-game-developer]].
+
 ## When to use this skill
 
 Load this skill when the session involves measuring an image against a design
@@ -360,3 +367,4 @@ visual-qa-toolkit/
 ## Related
 - hub → [[lead-visual-qa]]
 - spoke → [[reference-video-review]]
+- peer ↔ [[vis-vlm-multimodal]] · [[vis-classical-opencv]]

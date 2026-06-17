@@ -54,4 +54,4 @@ reserve heavy promptable models for offline or interactive use.
 
 ## Related
 - hub → [[vision-foundations]]
-- peer ↔ [[vis-detection-tracking]] · [[vis-vlm-multimodal]]
+- peer ↔ [[vis-detection-tracking]] · [[vis-vlm-multimodal]] · [[visual-qa-ui-design]]

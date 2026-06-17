@@ -62,4 +62,4 @@ model is quietly wrong. A CV system without monitoring is a CV system you no lon
 ## Related
 - foundation → [[data-foundations]]
 - hub → [[vision-foundations]]
-- peer ↔ [[vis-detection-tracking]]
+- peer ↔ [[vis-detection-tracking]] · [[reference-video-review]]

@@ -59,4 +59,4 @@ lighting. Hand the *semantic* questions ("is this a defect / a person / a tumor"
 ## Related
 - foundation → [[sci-linear-algebra]]
 - hub → [[vision-foundations]]
-- peer ↔ [[vis-detection-tracking]]
+- peer ↔ [[vis-detection-tracking]] · [[visual-qa-toolkit]] · [[img-photoreal-rendering]]

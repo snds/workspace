@@ -44,4 +44,4 @@ Trust the eye as the final validator.
 
 ## Related
 - hub → [[design-foundations]]
-- peer ↔ [[found-hierarchy]] · [[found-composition]]
+- peer ↔ [[found-hierarchy]] · [[found-composition]] · [[vision-foundations]]

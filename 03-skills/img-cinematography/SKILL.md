@@ -49,4 +49,4 @@ and trailer shots all draw on this.
 
 ## Related
 - hub → [[imaging-foundations]]
-- peer ↔ [[img-photography]] · [[img-vfx]]
+- peer ↔ [[img-photography]] · [[img-vfx]] · [[vis-vlm-multimodal]]
