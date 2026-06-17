@@ -25,6 +25,41 @@ Date: 2026-06-16
 Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
 Surface: Claude Code (Mac desktop app)
 Project(s):
+  - Portable workspace — post-consolidation follow-ups (skill library, tooling, capability layer). Continuation of the same-day refactor session below.
+Artifacts:
+  Plugin refresh:
+    - 09-tools/build-local-skill-plugin.py → v0.2.0 + de-Drive docstring; rebuilt the snds-local `/snds:*` plugin from the portable checkout (18 hubs, content decoupled from Drive/DC). Runtime cache refresh is a per-machine CLI step.
+  New `vision` domain (computer vision / spatial-ML) — authored natively, NOT copied from the third-party CV skills in ~/.claude:
+    - 03-skills/vision-foundations (foundation: image-as-signal, CV task taxonomy, conv/attention, training/eval/deploy, ethics, + a "Seeing the work" section).
+    - Spokes: vis-classical-opencv, vis-detection-tracking, vis-segmentation, vis-vlm-multimodal, vis-video-pipelines. Wired to science (math) + data (ML/eval) foundations.
+  Capability-detection contract (full, portable):
+    - frontmatter `requires: [<cap-id>]` (spec v2.1; carried into the registry by build-registry) + 02-shared-references/capability-registry.md (canonical JSON: kind/detect/install/fallback) + preflight protocol in AGENTS.md + 01-frameworks/08 + 09-tools/validate-capabilities.py + .github/workflows/capability-validator.yml.
+  Tool skills brought in behind the contract (dependency-declared, not vendor forks):
+    - figma-canvas-designer → requires figma-mcp; web-automation (new) → agent-browser; reference-video-review (new, spoke of visual-qa-toolkit) → ffmpeg+yt-dlp; ai-video-generation (new) → inference-belt.
+  Vision↔assessment cross-links:
+    - 12 reciprocal peer pairs connecting vision to visual-QA / game / imaging so CV is the agent's "seeing" instrument; visual-qa-toolkit gained a "pairs with the vision domain" note.
+Decisions:
+  - Don't copy third-party tool skills into the workspace (upstream-maintained → license/zombie risk; tool-bound stubs are useless without the tool). Instead: declare the dependency + detect/degrade. CV authored natively (better integrated) rather than imported.
+  - Capability detection is surface-agnostic: MCP detected by tool-name pattern in the agent's own surface; CLI by `command -v`. Absent dependency → degrade/block/route, never silent-fail.
+  - Vision's primary purpose here = SEE/critique our visual work (VLM screenshot critique, SSIM/diff regression, segment/detect to verify, Legion render + fly-through assessment) — "measure or describe what you see, don't assert it."
+Pending resolved:
+  - Consolidated the 16-PR refactor stack onto `main` by fast-forward; closed #2–#16 as merged-by-ff (#1 auto-merged) and deleted all 16 refactor/* branches (no zombie PRs/branches).
+  - "Do all slash skills trigger only from the new workspace?" — yes; rebuilt the stale `/snds:*` plugin so it serves new-workspace content.
+  - "Any internal non-Anthropic skills worth merging?" — no copies; built the detection mechanism + brought in 4 as dependency-declared skills.
+Project status changes:
+  - Workspace skills: 233 → 242 (vision domain + 3 tool skills + figma binding). Gate suite 5 → 6 (added validate-capabilities). All green.
+Next:
+  - Per-machine: `claude plugin marketplace update snds-local && claude plugin install snds@snds-local` (then restart) to pick up plugin v0.2.0.
+  - Optional (deferred, not selected): "external skills installed" inventory in skill-ecosystem-and-mcp-servers.md; promoting vision↔QA peers to hard/governed_by edges if auto-load during QA/render work is wanted.
+--- END BLOCK ---
+
+---
+
+--- SESSION BLOCK ---
+Date: 2026-06-16
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Surface: Claude Code (Mac desktop app)
+Project(s):
   - Workspace refactor → portable, surface/device/LLM-agnostic, foundation-driven agent workspace. Canonical copy at github.com/snds/workspace (Drive original `claude-workspace-system` untouched).
 Artifacts: (the full 16-PR stack — all now consolidated onto `main` by fast-forward)
   Standards + portable contract:
