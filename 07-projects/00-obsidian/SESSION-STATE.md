@@ -2,6 +2,8 @@
 
 _Last updated: 2026-04-25 — checkpoint (post-restructure)_
 
+> **Superseded (2026-06-17):** the workspace has since migrated off Google Drive — sync is now git (Obsidian reads the vault), source of truth is the git checkout. This checkpoint predates that migration; treat any Google Drive / Desktop Commander mention below as historical — never as current sync or a place to find workspace state.
+
 ---
 
 ## Current state (rewritten atomically — no stale fields)
@@ -16,17 +18,17 @@ _Last updated: 2026-04-25 — checkpoint (post-restructure)_
 - **Dev server**: n/a
 - **Build process**: n/a
 - **Test runner**: n/a
-- **Other**: Google Drive for Desktop syncing in background
+- **Other**: none (git is the sync layer; Obsidian vault open)
 
 ### VCS state
 - **Branch**: `master` (pre-first-commit)
-- **Remote**: `origin → https://github.com/snds/claude-workspace-system`
+- **Remote**: `origin → https://github.com/snds/workspace`
 - **Last commit**: none — repo just initialized
 - **Uncommitted changes**: yes — entire system layer is staged for the first commit
 - **Test state at last check**: n/a
 
 ### Active tooling / MCP bridges
-- **Desktop Commander**: live (used during 2026-04-23 build of integration)
+- **Filesystem access**: native (Claude Code)
 - **Other MCP connections**: per-session in Claude Code
 
 ### Configuration in use
@@ -45,8 +47,8 @@ _Last updated: 2026-04-25 — checkpoint (post-restructure)_
 - **What's needed to resume**: just `cd` into workspace root, run `git status` to see staged state, then commit + push
 
 ### Known state of external dependencies
-- **GitHub repo**: `snds/claude-workspace-system` (private) — created, remote configured, no commits yet
-- **Drive sync**: active, all three machines (Personal MacBook still unverified post-2026-04-23)
+- **GitHub repo**: `snds/workspace` (private) — created, remote configured, no commits yet
+- **Sync**: git is the sync layer (the Drive-era sync was removed 2026-06-17)
 
 ---
 

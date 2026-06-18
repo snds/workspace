@@ -17,7 +17,7 @@ is the source of truth; the plain filesystem is the I/O layer. The same files se
 - **Any other agent** (Cursor, Perplexity, a generic MCP client) enters via [AGENTS.md](AGENTS.md).
 
 Whatever Obsidian sees, you see. Whatever you write, Obsidian sees on next focus. Nothing here requires
-Google Drive or Desktop Commander — read and write ordinary files; git is the sync layer.
+Google Drive or a vendor-specific file bridge — read and write ordinary files; git is the sync layer.
 
 ---
 

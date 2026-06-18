@@ -248,7 +248,7 @@ def install_git_and_gh(os_name: str) -> None:
 
 
 def git_clone_or_pull(workspace: Path, repo_url: str) -> None:
-    step("Syncing claude-workspace-system Git repo")
+    step("Syncing workspace Git repo")
     git_dir = workspace / ".git"
     if git_dir.exists():
         info("Git repo already initialized here.")

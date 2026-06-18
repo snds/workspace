@@ -1,7 +1,7 @@
 ---
 tags: [workspace, infrastructure, claude-code, obsidian, git, drive, ssh, github, multi-identity, sync-monitoring]
 created: 2026-04-28
-updated: 2026-05-07
+updated: 2026-06-17
 status: stable
 confidence: high
 sources: [session-log 2026-04-23, session-log 2026-04-25, session-log 2026-04-27, session-log 2026-05-07]
@@ -13,13 +13,15 @@ related_projects: [00-obsidian]
 
 How the Claude Workspace system was built, why it was built that way, and what we learned building it. This is the "why" behind the setup — the skills tell you how to use it.
 
+> **Status (2026-06-17): migrated off Google Drive.** The workspace is now a plain git checkout — git is the sync layer and the source of truth, with Obsidian as a vault reader (see [CLAUDE.md](../../CLAUDE.md) → Paths and memory `decision-portable-workspace-refactor`). Sections below that describe Google Drive sync, `My Drive` paths, or the legacy `claude-workspace-system` repo are retained as **historical learnings from the Drive era**, not current operations. Do not look to Google Drive for any workspace state, context, or sync.
+
 ---
 
 ## The Core Topology (and Why It's This Way)
 
-The workspace has three consumers reading the same filesystem: **Obsidian**, **Claude Code**, and **Claude Desktop** (via Desktop Commander). The architectural decision was to use the **filesystem as the contract** — no API bridge, no sync layer, just shared files on Google Drive.
+The workspace has several consumers reading the same filesystem: **Obsidian**, **Claude Code**, and other agents (Cursor, a generic MCP client). The architectural decision was to use the **filesystem as the contract** — no API bridge, just plain files that git syncs across machines.
 
-**Why this works:** Drive for Desktop syncs files to all machines. Claude Code can read/write local files. Claude Desktop can do the same via Desktop Commander. Obsidian reads the vault. No translation layer needed.
+**Why this works:** git syncs the tracked files to all machines. Claude Code reads/writes local files; Obsidian reads the same vault; any other agent reads the same ordinary files. No translation layer needed.
 
 **The critical insight about deployment location:** The integration's deployed files (CLAUDE.md, `.claude/`, `.obsidian/`, MOCs) live at the **workspace root** — not inside a project subfolder. This is because:
 - Claude Code finds CLAUDE.md by walking parents from the CWD
@@ -30,15 +32,14 @@ Early sessions put these in `07-projects/00-obsidian/` thinking that was "the pr
 
 ---
 
-## Git + Drive: Layered Sync Strategy
+## Git Sync Strategy
 
-These two systems serve different roles and are deliberately layered, not alternatives:
+Git is the single sync + source-of-truth layer (Drive is no longer in the picture — see the status banner above). What crosses machines is exactly what git tracks; everything else is machine-local:
 
 | Layer | System | What It Covers |
 |-------|--------|---------------|
-| File sync (all content) | Google Drive for Desktop | Everything — binaries, images, all formats |
-| Version control (system layer only) | Git → GitHub | CLAUDE.md, .claude/, .obsidian/, 00-bootstrap/, 01-frameworks/, 02-shared-references/, 03-skills/, 04-preferences/, 06-context/, MOCs |
-| Excluded from Git | .gitignore | 05-artifacts/, most of 07-projects/ |
+| Version control + cross-machine sync | Git → GitHub | CLAUDE.md, .claude/, .obsidian/, 00-bootstrap/, 01-frameworks/, 02-shared-references/, 03-skills/, 04-preferences/, 06-context/, MOCs, whitelisted 07-projects/ |
+| Machine-local (not synced) | .gitignore | 05-artifacts/, most of 07-projects/, .claude/state/, daily notes |
 
 **The .gitignore strategy:** Uses `*` (ignore everything) then explicit `!directory/` whitelist entries. This means adding a new section to git requires explicitly adding it to the whitelist. The gitignore IS the source of truth — the session-end dispatcher uses `git add -A` safely because of this.
 
@@ -79,7 +80,7 @@ All Claude Code lifecycle events route through a single Python file: `.claude/ho
 
 ## Multi-Machine Context
 
-Multiple machines, all consuming the same Drive-synced workspace:
+Multiple machines, all consuming the same git-synced workspace:
 
 | Hostname | Label | OS |
 |----------|-------|----|

@@ -5,7 +5,7 @@ _Last updated: 2026-06-16_
 
 > **Platform note (2026-06-16):** the workspace itself was refactored to be portable, git-native, and
 > LLM/surface/device-agnostic, then consolidated onto `main` at `github.com/snds/workspace` (16-PR stack,
-> all five validators green). The git checkout — not Google Drive / Desktop Commander — is now the source
+> all five validators green). The git checkout — not Google Drive — is now the source
 > of truth. Day-to-day contribution rules live in [01-frameworks/08-workspace-contribution-framework.md](01-frameworks/08-workspace-contribution-framework.md) + [AGENTS.md](../AGENTS.md). See memory `decision-portable-workspace-refactor`. The project pending items below are unchanged.
 
 ---
@@ -53,7 +53,6 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 - [ ] **Populate `team-practices-and-decisions.md`.** Fills in passively as decisions surface; not a discrete task. Scaffold lives at `01-frameworks/team-practices-and-decisions.md`.
 - [ ] **TanStack Table inline editing reference implementation.** Live artifact for design-dev handoff. No recent traction; resurface when handoff need arises.
 - [ ] **Greenfield PLM SaaS redesign architecture exploration.** Vite/React SPA + TanStack Query stack; monorepo direction. Exploratory; no near-term deadline.
-- [ ] **Verify DC writes on Personal MacBook.** Only machine unconfirmed this cycle. Cheap to run on next Voyager-2.local session; don't actively pursue.
 - [ ] **Seed SESSION-STATE.md for 03-omni, 12-MCS, 15-DavinciRemake.** Pre-seed deferred — create on demand when each project is next active.
 
 ### Recently resolved (prune at next /optimize)
@@ -72,7 +71,7 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 
 ### Claude Workspace Infrastructure
 **Status:** Active — knowledge vault layer live (2026-04-29)
-**Summary:** Multi-session workspace with cross-device context sync via Desktop Commander + Google Drive. Workspace root is **also an Obsidian vault and a Claude Code working directory** — three consumers reading the same filesystem. Hooks-based hands-off session lifecycle (SessionStart loads context, SessionEnd commits + pushes). Five frameworks (2026-04-21) + SESSION-STATE per-project template. 194-skill hub/spoke network (2026-04-28). 08-knowledge/ vault layer with three-tier surfacing system (2026-04-29).
+**Summary:** Multi-session workspace with cross-device context sync via Obsidian + Git. Workspace root is **also an Obsidian vault and a Claude Code working directory** — three consumers reading the same filesystem. Hooks-based hands-off session lifecycle (SessionStart loads context, SessionEnd commits + pushes). Five frameworks (2026-04-21) + SESSION-STATE per-project template. 194-skill hub/spoke network (2026-04-28). 08-knowledge/ vault layer with three-tier surfacing system (2026-04-29).
 
 **Layered additions across recent cycles:**
 - **2026-04-25 (topology cleanup):** Restored deployed-vs-project distinction. The integration's deployed files (CLAUDE.md, dotfiles, MOCs, `.claude/`, `.obsidian/`) live at workspace root where the consuming tools expect them. Installer + Obsidian templates + integration architecture doc consolidated into existing `00-bootstrap/`. Project workspace `07-projects/00-obsidian/` now holds SESSION-STATE.md + README.md only — design history, not deployment. `.gitignore` rewritten to track only the system layer + the 00-obsidian project. Dispatcher's session-end commit simplified to `git add -A` (gitignore is now the source of truth).
@@ -81,7 +80,7 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 
 **Project folder:** `07-projects/00-obsidian/` — populated 2026-04-25 with SESSION-STATE.md + README.md.
 
-**Git remote:** `https://github.com/snds/claude-workspace-system` (private). Initialized 2026-04-25; first commit pushed to `main` 2026-04-25.
+**Git remote:** `https://github.com/snds/workspace` (private). Initialized 2026-04-25; first commit pushed to `main` 2026-04-25.
 
 **Next:** Smoke-test installer on Mac. Decide Python binary strategy. Then act on 2026-04-21 audit findings and seed remaining SESSION-STATE files.
 

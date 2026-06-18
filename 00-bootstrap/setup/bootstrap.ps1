@@ -1,14 +1,14 @@
 # One-liner bootstrap for Windows PowerShell.
 # Usage:
-#   $env:CLAUDE_WORKSPACE_REPO="git@github.com:snds/claude-workspace-system.git"
-#   iwr https://raw.githubusercontent.com/snds/claude-workspace-system/main/00-bootstrap/setup/bootstrap.ps1 | iex
+#   $env:CLAUDE_WORKSPACE_REPO="git@github.com:snds/workspace.git"
+#   iwr https://raw.githubusercontent.com/snds/workspace/main/00-bootstrap/setup/bootstrap.ps1 | iex
 
 $ErrorActionPreference = "Stop"
 
 if (-not $env:CLAUDE_WORKSPACE_REPO) {
     Write-Host "Set CLAUDE_WORKSPACE_REPO to your private repo URL before running:" -ForegroundColor Yellow
-    Write-Host '  $env:CLAUDE_WORKSPACE_REPO="git@github.com:snds/claude-workspace-system.git"'
-    Write-Host "  iwr https://raw.githubusercontent.com/snds/claude-workspace-system/main/00-bootstrap/setup/bootstrap.ps1 | iex"
+    Write-Host '  $env:CLAUDE_WORKSPACE_REPO="git@github.com:snds/workspace.git"'
+    Write-Host "  iwr https://raw.githubusercontent.com/snds/workspace/main/00-bootstrap/setup/bootstrap.ps1 | iex"
     exit 1
 }
 

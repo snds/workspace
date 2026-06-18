@@ -48,6 +48,6 @@ native `/snds:<name>` slash commands. Claude-specific ergonomics; optional.
 
 ---
 
-These tools assume only a git checkout + Python 3 — no Google Drive, no Desktop Commander.
+These tools assume only a git checkout + Python 3 — no Google Drive, no vendor-specific file bridge.
 The retired Drive-sync monitors (`drive-audit.py`, `drive-monitor.py`) live in `_archive/`
 with provenance in `_archive/ARCHIVE-LOG.md`.

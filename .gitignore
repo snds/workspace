@@ -122,7 +122,7 @@
 # Daily notes — local to each machine
 05-artifacts/active/daily/
 
-# Google Drive metadata + virtual shortcuts (not real bytes; git can't read them)
+# Cloud-storage virtual shortcuts + metadata (not real bytes; git can't read them)
 **/desktop.ini
 **/.DS_Store
 **/*.gdoc
@@ -146,7 +146,7 @@
 **/__pycache__/
 **/*.pyc
 
-# macOS custom folder-icon files (Google Drive / Finder create these in every
+# macOS custom folder-icon files (Finder / cloud-sync tools create these in every
 # folder; they pollute git status and block `git pull --rebase` every session).
 Icon?
 **/Icon?

@@ -398,7 +398,7 @@ What it captures:
 - **Machine and environment.** Which machine (`Voyager-2.local`, `seansands.local`, Windows desktop), which OS context.
 - **Active servers and processes.** Dev servers, ports, build processes, database or API endpoints in use.
 - **Branch and VCS state.** Which branch was checked out, which commit, last-known test state.
-- **Active tooling and MCP bridges.** What MCP connections were live this session (Desktop Commander, Playwright, Figma plugin), what worked, what didn't.
+- **Active tooling and MCP bridges.** What MCP connections were live this session (filesystem MCP, Playwright, Figma plugin), what worked, what didn't.
 - **Configuration in use.** Which config files were active (per-project QA configs, design token versions, framework configs).
 - **Open work and paused threads.** What was actively in progress when the session ended, what was undecided, what was pending.
 - **Known state of external dependencies.** Staging environment version, API version, asset pipeline state at last check.

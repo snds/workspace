@@ -9,8 +9,8 @@ _Last updated: 2026-06-14 20:45 — checkpoint (wsx skill command + full end-to-
 ### Environment
 - **Machine**: `Voyager-2.local` (Personal MacBook Pro)
 - **OS context**: macOS (Darwin 25.5.0)
-- **Workspace root**: `/Users/snds/My Drive/Claude Workspace`
-- **Project root**: `/Users/snds/My Drive/Claude Workspace/07-projects/18-bootstrap-generator`
+- **Workspace root**: the workspace checkout (the dir containing `AGENTS.md`) — resolve by walking up; no hardcoded path
+- **Project root**: `<workspace-root>/07-projects/18-bootstrap-generator`
 
 ### Active servers and processes
 - **Dev server**: not running
@@ -18,14 +18,14 @@ _Last updated: 2026-06-14 20:45 — checkpoint (wsx skill command + full end-to-
 - **Test runner**: manual smoke test — **green**. Full end-to-end dogfood (persona "Maya Okafor"): init → profile (19 fields) → 5-skill hub/spoke network via `wsx skill add` → emit all (11 files) → lint clean → verify passed; privacy wall verified (no personal-context leak into emitted adapters; `personal.md` gitignored).
 
 ### VCS state
-- **Branch**: `main` (workspace repo `claude-workspace-system`)
+- **Branch**: `main` (workspace repo `snds/workspace`)
 - **Last commit**: README v1 delivery — see git log
 - **Uncommitted changes**: agnostic README + SPEC tweaks + new `generator/` (CLI) + `brain/` + `DEVELOPING.md`
 - **Test state at last check**: **passing** — `wsx init · profile set/get · emit all · lint · verify · session` run clean; `py_compile` clean; schemas valid JSON
 - **Tracking note**: this project is **git-tracked** (whitelisted in `.gitignore`), unlike most `07-projects/` folders. Intentional — the generator should be the workspace's first non-gdrive-coupled, version-controlled project. Eventual destination per SPEC §9: a standalone `wsx` CLI repo, extractable from this folder's history.
 
 ### Active tooling / MCP bridges
-- **Desktop Commander**: not connected (Claude Code session)
+- **Filesystem access**: native (Claude Code)
 - **Figma MCP**: not applicable
 - **Other MCP connections**: none required for spec phase
 

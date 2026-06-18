@@ -40,7 +40,7 @@ the installed binaries live where they have to.
 - Five `/`-command skills (`today`, `session-end`, `reconcile`, `new-project`, `framework-check`)
 - Obsidian vault config: 7 community plugins + custom hotkeys + graph + theme
 - Five Obsidian MOCs at workspace root (`_HOME`, `_PROJECTS`, `_SKILLS`, `_FRAMEWORKS`, `_CONTEXT`) with Dataview queries
-- Git-tracked system layer via `claude-workspace-system` repo on GitHub
+- Git-tracked system layer via `snds/workspace` repo on GitHub
 
 ## Provenance
 

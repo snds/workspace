@@ -832,7 +832,7 @@ def ensure_local_gitdir() -> None:
 
     Override the default store path with the CLAUDE_WORKSPACE_GIT_STORE env var.
     """
-    default_store = Path.home() / ".git-stores" / "claude-workspace-system"
+    default_store = Path.home() / ".git-stores" / "workspace"
     store = Path(os.environ.get("CLAUDE_WORKSPACE_GIT_STORE", str(default_store)))
     expected = f"gitdir: {store.as_posix()}\n"
 

@@ -10,7 +10,7 @@ session-handshake skill is `03-skills/workspace-bootstrap/SKILL.md`. This file d
 A long-lived, **portable** personal operating environment for design, engineering, product, data, and
 game work. It is simultaneously a git repository (the source of truth), an Obsidian vault, and an agent
 workspace. Any capable model — not one vendor's — can enter and work here by reading
-[AGENTS.md](../AGENTS.md). Nothing depends on Google Drive or Desktop Commander: read and write ordinary
+[AGENTS.md](../AGENTS.md). Nothing depends on Google Drive or a vendor-specific file bridge: read and write ordinary
 files; git is the sync layer.
 
 ## Folder structure

@@ -4,7 +4,7 @@
 > engineering, product, data, and game work. It is simultaneously a git repository (the
 > source of truth), an Obsidian vault, and an agent workspace. Any capable model — not just
 > one vendor's — can enter, orient, and work here by following the universal contract below.
-> Nothing here depends on Google Drive, Desktop Commander, or a specific assistant.
+> Nothing here depends on Google Drive, a vendor-specific file bridge, or a specific assistant.
 
 ## Start here (read in order)
 - [AGENTS.md](AGENTS.md): the universal agent contract — folder semantics, read order, the skill

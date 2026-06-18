@@ -11,7 +11,7 @@ It is intentionally:
   - stdlib-only (no PyYAML) — runs on any machine with Python 3, no install step;
   - deterministic — no wall-clock timestamp in the output, so `--check` can detect
     drift in CI by regenerating and diffing;
-  - portable — knows nothing about Google Drive, Desktop Commander, or any one LLM.
+  - portable — knows nothing about Google Drive, a file-sync bridge, or any one LLM.
 
 Usage:
   python3 09-tools/build-registry.py            # regenerate the registry, print a summary

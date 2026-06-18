@@ -21,6 +21,24 @@ Keep entries concise. This is a handoff log, not a journal.
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-06-17
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Surface: Claude Code (Mac desktop app)
+Project(s):
+  - Workspace infrastructure — Google Drive decommission cleanup (not a 07-projects project).
+Artifacts:
+  - Scrubbed stale Google Drive references from active docs (workspace-infrastructure.md migration banner + git-sync rewrite; project-context, 00-obsidian & 18-bootstrap SESSION-STATEs, visual-qa README, skills-vs-slash, .gitignore). Affirmations, historical record, and _archive left intact.
+  - Repo rename legacy `claude-workspace-system` → canonical `snds/workspace` in active setup scripts (bootstrap.sh/.ps1, setup.py), 00-obsidian README/SESSION-STATE, project-context, 18-bootstrap SESSION-STATE. (Live remote was already snds/workspace.)
+  - Removed Desktop Commander refs → filesystem MCP / native: _session-state-template, contract docs (CLAUDE.md, llms.txt, BOOTSTRAP.md, 09-tools README + build-registry.py, workspace-bootstrap SKILL.md, last-mile-craft), 6 project SESSION-STATE tooling lines.
+  - dispatcher.py: legacy gitdir-store default name → workspace. .claude/settings.local.json (machine-local): stripped 29 stale legacy-gitdir/Drive permission grants. Removed stale snds-local 0.1.0 plugin cache (Drive-triggering workspace-bootstrap remnant; 0.2.0 install is clean).
+Decisions:
+  - Google Drive fully decommissioned as the workspace; the git checkout is the source of truth, git is the sync layer, Obsidian reads the vault. Agent memory updated (workspace-no-longer-on-gdrive). Kept historical / archive / struck-through mentions as the migration paper trail.
+Next:
+  - If `anthropic-skills:*` skills still surface in a future session, restart Claude Code (regenerate via 08-tools/build-local-skill-plugin.py + reinstall if needed) — phantom from the removed cache.
+
+---
+
+--- SESSION BLOCK ---
 Date: 2026-06-16
 Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
 Surface: Claude Code (Mac desktop app)

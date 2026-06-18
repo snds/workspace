@@ -23,7 +23,7 @@ The session handshake. Loads workspace context at session start so any agent —
 Perplexity, a generic MCP client, or a human — orients identically. This skill is the **operational
 how-to**; the **contract** it executes is [[AGENTS]] (universal) + framework 08's *portable session
 protocol* ([[08-workspace-contribution-framework]]). It assumes only a git checkout and a filesystem —
-**no Google Drive, no Desktop Commander, no vendor-specific mechanism.**
+**no Google Drive, no vendor-specific mechanism.**
 
 ## Boot sequence (runs silently; one status line at the end)
 

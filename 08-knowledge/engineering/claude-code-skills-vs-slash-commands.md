@@ -60,10 +60,10 @@ Commands then appear namespaced as `/<plugin>:<skill>`.
 
 ## Gotchas
 
-- **Keep the plugin OUTSIDE Google Drive** (`~/.claude/local-plugins/...`). Drive mangles
-  symlinks and chokes on spaces in paths; committing duplicate skill copies into the vault
+- **Keep the plugin OUTSIDE the workspace checkout** (`~/.claude/local-plugins/...`). `~/.claude`
+  is machine-local and not version-controlled; committing duplicate skill copies into the vault
   invites drift. Generate a copy-mirror per machine instead and keep the source dir canonical.
-- **`~/.claude` isn't Drive-synced** — only the generator script syncs via the vault repo.
+- **`~/.claude` isn't version-controlled** — only the generator script ships via the workspace repo.
   Each machine must run the generator + the two `claude plugin` commands itself.
 - **Plugin/menu changes need a Claude Code restart** to take effect.
 - **Don't flood the menu** — wrap only operational *hub* entry points, not spoke/reference

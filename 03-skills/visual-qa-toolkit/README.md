@@ -25,7 +25,7 @@ available to any Python script on the machine.
 
 ### Option B — virtual environment
 
-Keep the venv outside the GDrive sync path so you don't sync ~200MB of wheels:
+Keep the venv outside the workspace checkout (e.g. `~/.venvs/`) so you don't version ~200MB of wheels:
 
 ```bash
 python3 -m venv ~/.venvs/visual-qa-toolkit
