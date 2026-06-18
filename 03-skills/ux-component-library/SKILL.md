@@ -16,14 +16,18 @@ description: >
   user need. Also trigger on "which component", "what pattern", "how should this work",
   "design this screen", "build this layout", "put this in Figma", component audits, and any
   enterprise/product UI decision. This is the default component-reasoning lens — if the topic
-  touches a UI element, pattern, screen, or component name, use it. Complements snds:lead-ux-designer,
+  touches a UI element, pattern, screen, or component name, use it. Also covers authoring and
+  documenting components *as data* (anatomy/props/states/examples), code-only props in Figma, the
+  token taxonomy & purposeful-vs-aesthetic naming, DESIGN.md authoring + linting + gap-detection,
+  AI-ready / agentic design-system setup, and A2UI catalog integration. Complements snds:lead-ux-designer,
   snds:lead-ui-designer, snds:design-engineer, snds:ds-advisor, and snds:figma-canvas-designer.
 aliases: [ux-component-library]
 tier: spoke
 domain: design
 hub: lead-ux-designer
 prerequisites: [lead-ux-designer]
-spec_version: "2.0"
+framework: "09-component-and-pattern-framework"
+spec_version: "2.1"
 ---
 
 # UX Component Library & Pattern Framework
@@ -40,7 +44,33 @@ and Figma. Built from a complete read-through of the **ux-components.com** datas
 - **Decision frameworks, naming-divergence lessons, design-system philosophies, universal
   accessibility laws, and application playbooks** →
   [`references/cross-system-patterns.md`](references/cross-system-patterns.md)
+- **Authoring components *as data*** — anatomy/props/states/examples, the 3-bucket prop model,
+  code-only props in Figma, the 8-section spec, the canonical state model →
+  [`references/component-authoring.md`](references/component-authoring.md)
+- **Tokens & naming** — the Namespace→Object→Base→Modifier grammar, purposeful-vs-aesthetic
+  naming, the 9 authoring principles, DTCG → [`references/tokens-and-naming.md`](references/tokens-and-naming.md)
+- **AI-ready & agentic setup** — the AI-ready checklist, 3-tier agent context, DESIGN.md
+  authoring + lint + gap-detection, AI doc-generation, A2UI integration →
+  [`references/ai-ready-design-systems.md`](references/ai-ready-design-systems.md)
 - A **live MCP** (`ux-components`) for current, queryable specifics.
+
+## The framework & the delivery system
+
+This skill is the **procedural / workflow layer** of a five-part system governed by the
+**Component & Pattern Framework** ([[09-component-and-pattern-framework]], workspace `01-frameworks/`)
+— the *why* (universal schema, taxonomy, laws). The layers, and when to reach for each:
+
+| Layer | Use it for |
+|---|---|
+| **Framework** (the hub) | the durable *why* — schema, taxonomy, decision trees, cross-cutting laws |
+| **This skill** (procedure) | *how to operate* — run the trees, author/document components, the playbooks |
+| **`ux-components` MCP** | per-component data on demand (intent/states/anatomy/aliases) |
+| **`DESIGN.md`** | a project's portable *visual identity* (tokens + brand prose) |
+| **`AGENTS.md` + lint** | enforcement (import-don't-reimplement, a11y, honor DESIGN.md) |
+
+Wolosin's rule governs the split: *context is intent* — deliver the right intent, at the right
+moment, in the right form. Heavy per-component depth stays **on demand** (MCP); the durable why
+stays in the **framework**; only the lean visual snapshot lives in **`DESIGN.md`**.
 
 ## How to use it (read order)
 
@@ -95,6 +125,26 @@ Use when you need current or exhaustive data; use the static refs for fast reaso
   for code mapping.
 - **Auditing UI:** see §7.3 — check lowest-intensity correctness, the state matrix, semantics
   (is the "menu" really a Select? the "toggle" really a Switch?), and naming drift.
+- **Authoring / documenting a component (as data):** see `component-authoring.md` — define it once
+  as `anatomy / props / default / variants / examples`; tag every prop Figma-only / shared / code-only;
+  model states as separate concerns (`state` enum `rest|hover|active|focus` + booleans + `validation`);
+  carry code-only props in the hidden `Code only props` Figma layer; harvest examples from an
+  `Examples` section. Write the 8-section spec (how to make) separately from usage guidelines (how to use).
+- **Naming tokens & components:** see `tokens-and-naming.md` — assemble names from the
+  Namespace→Object→Base→Modifier grammar; default to **purposeful** over aesthetic naming; never mix
+  both into one enum; promote tokens outward only after reuse; keep components on the semantic layer.
+- **Authoring a DESIGN.md (and the gap-detection protocol):** see `ai-ready-design-systems.md` §3 +
+  framework §12a — when UI work starts on a project with no visual-identity anchor, run detect→judge→act
+  and **self-prompt** to author one from real tokens (never invent); specific reference > adjectives;
+  negative constraints are first-class; lint with `npx @google/design.md lint`; keep it lean and defer
+  component semantics to the framework + MCP.
+- **Making a system AI-ready / agentic:** see `ai-ready-design-systems.md` §1–2, §4 — score against the
+  4-pillar checklist; ship `*.meta.json` per component; JSON over prose; AI drafts docs, humans verify
+  (the Overview→Usage→Variants→Behaviors→A11y→Content→TL;DR template).
+- **Integrating A2UI:** see `ai-ready-design-systems.md` §6 — project the canonical taxonomy into an
+  A2UI **catalog**, serve component definitions + `instructions` from the MCP, and style the renderer
+  from DESIGN.md tokens (A2UI has no token system of its own). Note coverage gaps (combobox, popover,
+  toast… have no basic-catalog equivalent).
 
 ## Critical caution: names lie, behavior doesn't
 
@@ -114,4 +164,6 @@ Data Table, Tree View, Rating. The dataset also does NOT model Command Palette, 
 Resizable, dedicated Drawer/Multi-select/Video — compose from the nearest primitive and note the gap.
 
 ## Related
+- framework (the hub / *why*) → [[09-component-and-pattern-framework]]
 - hub → [[lead-ux-designer]]
+- pairs with → [[figma-canvas-designer]], [[design-engineer]], [[ds-advisor]]

@@ -1,7 +1,7 @@
 # Project Context — Sean Sands
 _Authoritative source: this file (06-context/project-context.md)_
 _Written by any agent — the git checkout is the source of truth._
-_Last updated: 2026-06-16_
+_Last updated: 2026-06-18_
 
 > **Platform note (2026-06-16):** the workspace itself was refactored to be portable, git-native, and
 > LLM/surface/device-agnostic, then consolidated onto `main` at `github.com/snds/workspace` (16-PR stack,
@@ -16,6 +16,7 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 
 ### Active (next actions)
 
+- [ ] **Load the evolved `ux-component-library` v2.1 on this + other machines.** The **Component & Pattern Framework (#09)** shipped 2026-06-18 — a 5-layer DS context system (framework hub + skill + `ux-components` MCP + `DESIGN.md` + `AGENTS.md`). New/changed: `01-frameworks/09-component-and-pattern-framework.md`, evolved skill + 3 references, `02-shared-references/ds-agents-binding.md`, and the A2UI canonical catalog (`02-shared-references/a2ui/`). The plugin cache still holds v0.2.0 — **restart Claude Code** or rerun `09-tools/build-local-skill-plugin.py` + `claude plugin install snds@snds-local`. C8 `DESIGN.md` + `AGENTS.md` written locally in `c8-plm/` (separate repo). Optional follow-ups: validate the A2UI catalog with A2UI's conformance tooling; build a CDS renderer mapping catalog variants → `--sem-*`; A/B-evaluate a C8 screen. See memory `component-pattern-framework-system`.
 - [ ] **Review + merge the 4 centric-ui Radix color-system PRs (#64–67).** Based off the dev branch `feat/figma-repo-sync-plugin`. Merge order: **#64 tokens → #65 components → #67 harness** (consume the new tokens); **#66 generator** independent. Working basis = local combined branch `feat/radix-color-system`.
 - [x] ~~**Mirror the Radix token architecture in figma-repo-sync-plugin `foundations.ts`.**~~ Done 2026-06-04 (Build 11.4.10, commit `2f88837` on `feat/radix-color-system`). Generator-driven (`scripts/sync-palette.mjs` → checked-in `src/palette.generated.ts`); `Foundations / Primitives` (single mode) + `Foundations / Semantics/<axis>`; self-healing migration (retire legacy + sweepUnseeded + split-brain resolve); shade→step binding. Dropped Tailwind shades + Radix hue-alpha from Figma (kept in CSS/TOKEN_PALETTE), kept all 24 families + overlays. Verified clean on a real main-branch regen (0 PIN-FAILURE). 460 tests. Detail in memory `project_figma-repo-sync-token-architecture`.
 - [ ] **Push `feat/radix-color-system` + open/refresh the figma-repo-sync-plugin PR.** Unpushed commits: `2f88837` (plugin Build 11.4.10), `5ed5274` (caution Badge/Button variants), `7d9dc15` (cds-* → semantic codemod), + the earlier Radix color-system work. Company repo — team review, **no self-merge**. After merge, regen the Figma library.

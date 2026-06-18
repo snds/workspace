@@ -3,13 +3,13 @@
 _Workspace: `01-frameworks/`_
 _Last updated: 2026-06-08_
 
-Eight top-level operating documents that govern how design, collaboration, research, craft, QA, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. Not project-gated. Not domain-gated. They're the portable layer that stays consistent even when the specific work shifts.
+Nine top-level documents that govern how design, **components & patterns**, collaboration, research, craft, QA, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. Eight are cross-domain operating lenses; **#09 is the design-domain hub** for components and patterns. They're the portable layer that stays consistent even when the specific work shifts.
 
 This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all eight full documents.
 
 ---
 
-## The eight frameworks
+## The nine frameworks
 
 | # | Framework | Answers |
 |---|---|---|
@@ -21,6 +21,7 @@ This README is the orientation layer. Load it when you need to know which framew
 | 06 | **QA Operating Model** | How do we frame QA outcomes against target-user expectations on first delivery? |
 | 07 | **Integration & Review Framework** | How do we land work so it merges cleanly and reviews well? |
 | 08 | **Workspace Contribution Framework** | How/when/where/what/why do we edit the workspace itself? |
+| 09 | **Component & Pattern Framework** | What is each component for, when do I reach for it, and how do they compose? |
 
 ---
 
@@ -34,7 +35,8 @@ This README is the orientation layer. Load it when you need to know which framew
 |---|---|
 | Creative direction, aesthetic reasoning, visual identity | 01 |
 | IA, interaction decisions, pattern choice, expertise design | 01, 02 |
-| Design system work, component audit, triage | 01, 02, 05, 06 |
+| Design system work, component audit, triage | 01, 02, 05, 06, 09 |
+| Component/pattern choice, composition, the component schema, DESIGN.md | 09 (+ 01, 02) |
 | Difficult conversation, pushback, shared disagreement memory | 03 |
 | Evidence threshold, confidence tier, advocacy calibration | 04 |
 | Design review, visual QA, handoff, finishing audit | 01, 02, 05, 06 |
@@ -162,6 +164,20 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 - Portable session protocol: tool-neutral session-start reads and session-end writes (no hook dependency).
 - Never rename a `SKILL.md` (add `aliases`); never hand-edit generated files.
 
+### 09 — Component & Pattern Framework
+
+**Core conviction.** A design system is a body of *intent*, not a kit of parts. Every component is a structured unit of intent — understood against one universal 18-facet schema (identity, intent, context, semantics, anatomy, states, variants, behavior, content, visual decisions, tokens, composition, a11y, governance…), organized by the *question it answers* (9 categories), governed by invariant laws, and delivered to humans, design tools, and AI agents in the right form at the right moment. *"Context is not documentation. Context is intent."*
+
+**When to invoke.** Any component or pattern decision — which component, when, why, how composed; component documentation/schema; the cross-system naming problem; design tokens; the AI-legible / `DESIGN.md` layer; or auditing a UI against the lowest-intensity and state-completeness bars. The design-domain hub the "design-system work" context row routes into.
+
+**Key operating habits.**
+- Name the *question* (9 categories) → run the decision tree → pull per-component detail from the `ux-components` MCP.
+- Behavior is invariant; names are not — resolve any name to its canonical behavior first.
+- Lowest-intensity component that works; one primary action per section; cover every state.
+- Document every component against the universal schema; intent travels with the component.
+- Delivery layers: this framework (the why) · `ux-component-library` skill (procedure) · `ux-components` MCP (per-component data) · `DESIGN.md` (visual identity) · `AGENTS.md` + lint (enforcement).
+- Run the `DESIGN.md` gap-detection / self-prompting protocol when UI work starts on a project with no visual-identity anchor.
+
 ---
 
 ## How they interconnect
@@ -207,6 +223,7 @@ The seven frameworks are layered, not parallel. They're listed in the order they
 - **05 → all.** Convention drift and craft failures feed back into whichever upstream framework the issue surfaces from — research signal, IA failure, aesthetic drift.
 - **07 ⟂ all.** Integration & Review is orthogonal to the content frameworks: whatever framework produced the work, #07 governs how it's partitioned and landed so review stays cheap. It fires at the boundary where work crosses from *done* to *merged* — and is the only framework whose audience is the reviewer, not the artifact.
 - **08 ⟂ all.** Workspace Contribution is the other orthogonal meta-layer: whatever the work, #08 governs *where it gets written and how* — the routing map, per-layer add/extend rules, the memory and archive protocols, and the portable session protocol. It fires whenever a change touches the workspace's own structure (skills, frameworks, references, context, memory, knowledge), not a project deliverable.
+- **09 ⟂ all.** Component & Pattern Framework is the design-domain hub: orthogonal to the operating lenses (01–08), it loads for any component/pattern work and routes *out* to the `ux-component-library` skill, the `ux-components` MCP, `DESIGN.md`, and `AGENTS.md` enforcement. Where 02 decides *which pattern/metaphor*, 09 supplies the component-level *what / when / why / how-composed*.
 
 ---
 
@@ -224,10 +241,10 @@ The seven frameworks are layered, not parallel. They're listed in the order they
 
 ## Notes for LLMs loading this README
 
-**Token budget guidance.** The seven frameworks total ~1,700 lines of markdown. This README runs ~250 lines and captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For branching, PR, or consolidation work, load #07.
+**Token budget guidance.** The nine frameworks total ~2,100 lines of markdown. This README runs ~285 lines and captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For branching, PR, or consolidation work, load #07.
 
 **When the README isn't enough.** The compressed summaries preserve the *what* but not the *why* — the examples, the canon references, the tier descriptions with thresholds, the principle-to-check translations. Any serious reasoning task in the framework's domain should load the full document.
 
-**Updates.** Framework numbering is stable (01–08). Any future framework additions should extend the sequence (09, 10, etc.) or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly.
+**Updates.** Framework numbering is stable (01–09). Any future framework additions should extend the sequence (10, 11, etc.) or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly.
 
 **Operational state.** This folder is static reference. Operational continuity between sessions lives in per-project `SESSION-STATE.md` files (see framework 05's Operational State section for the spec) and in `../06-context/session-log.md` for cross-project session logs.

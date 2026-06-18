@@ -21,6 +21,29 @@ Keep entries concise. This is a handoff log, not a journal.
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-06-18
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Surface: Claude Code (Mac desktop app)
+Project(s):
+  - Component & Pattern Framework system (workspace contribution + Centric C8 PLM example).
+Artifacts:
+  - 01-frameworks/09-component-and-pattern-framework.md — NEW top-level framework (#09): universal 18-facet component schema, 9-category taxonomy, decision trees, compose-together model, cross-cutting laws (with citable rationale), naming divergence, lineages, AI-legible layer (§11) + A2UI (§11a), DESIGN.md protocol + gap-detection/self-prompting (§12a), playbooks, operating model, resource canon.
+  - 03-skills/ux-component-library/ — evolved skill (SKILL.md → spec_version 2.1, framework pointer, delivery-system map, new working modes) + 3 references: component-authoring.md (components/props/states/examples as data), tokens-and-naming.md (taxonomy grammar + purposeful naming), ai-ready-design-systems.md (AI-ready checklist · DESIGN.md authoring · A2UI).
+  - 02-shared-references/ds-agents-binding.md — reusable AGENTS.md binding (routing + always-on rules + trust levels).
+  - 02-shared-references/a2ui/ — canonical-catalog.json (29-component A2UI catalog projecting the taxonomy; JSON valid, union resolves) + README.md (full 62→A2UI mapping: ~17 basic / ~16 added / ~17 composed / ~12 gaps; DESIGN.md→CSS-var theming seam).
+  - 00-README.md + _FRAMEWORKS.md — indexed framework #09; brought the stale MOC current (7→9). skills.registry.json regenerated.
+  - [outside workspace, local only] c8-plm/DESIGN.md — real C8 visual-identity from CDS tokens (lints 0 errors); c8-plm/AGENTS.md — tailored C8 binding.
+Decisions:
+  - Five-layer DS context system (framework hub + skill + ux-components MCP + DESIGN.md + AGENTS.md), organized by Wolosin's intent model. DESIGN.md stays LEAN (visual identity only); component depth on demand via MCP — the configuration Atlassian's field test found beats a monolithic DESIGN.md.
+  - Evolve ux-component-library rather than add a new skill; C8 PLM as the worked DESIGN.md example from real tokens; A2UI = complementary runtime layer (payload on A2A/MCP) this system supplies the Catalog + intent + tokens to.
+Pending resolved:
+  - Advances "Add framework-layer pointers to key skills" (ux-component-library now references framework #09).
+Next:
+  - Restart Claude Code (or reinstall snds@snds-local) to load ux-component-library v2.1 with the new references live in the plugin cache.
+  - Optional: validate the A2UI catalog with A2UI's conformance tooling; build a CDS renderer mapping catalog variants → --sem-* tokens; A/B-evaluate a C8 screen.
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
 Date: 2026-06-17
 Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
 Surface: Claude Code (Mac desktop app)

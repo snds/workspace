@@ -4376,7 +4376,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:84fe76636b5506db2e0575800de131fe3675564fe9bf4f8b7e0ecd428a6f2b21"
+      "hash": "sha256:b0cc9c3c5cda7617d53f5f19f9adcbb499cafea5117c4c184fe648419fb87988"
     },
     "ux-data-visualization": {
       "path": "03-skills/ux-data-visualization/SKILL.md",
@@ -5040,7 +5040,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:7c1b6a1219aa79edf0368010147e5a84d206f05a0feedeece69e27d4cdc338a7"
+      "hash": "sha256:6d1471249d4c22b0d2acfbdf94a647b39ae23a1545352a68ab933f2fb1b6e5a9"
     }
   },
   "load_chains": {

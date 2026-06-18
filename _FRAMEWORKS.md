@@ -5,12 +5,13 @@ tags: [moc, frameworks]
 
 # Frameworks
 
-Seven operating frameworks that sit **above** any project-specific skill. They govern design,
-collaboration, research, craft, QA, and integration decisions across the entire workspace.
+Nine top-level frameworks that sit **above** any project-specific skill. They govern design,
+components, collaboration, research, craft, QA, integration, and workspace-contribution decisions
+across the entire workspace. Eight are cross-domain operating lenses; #09 is the design-domain hub.
 
 Orientation: [[01-frameworks/00-README|00-README]] — compressed summaries and when each framework applies.
 
-## The seven
+## The nine
 
 1. **[[01-frameworks/01-aesthetic-lens|Aesthetic Lens]]** — philosophical ground, visual/aesthetic judgment
 2. **[[01-frameworks/02-ui-ux-operational-framework|UI/UX Operational Framework]]** — operational decisions for interface + experience
@@ -19,6 +20,8 @@ Orientation: [[01-frameworks/00-README|00-README]] — compressed summaries and 
 5. **[[01-frameworks/05-last-mile-craft-framework|Last-Mile Craft Framework]]** — finishing discipline, augmented perception
 6. **[[01-frameworks/06-qa-operating-model|QA Operating Model]]** — target-user expectations as the QA bar on first delivery
 7. **[[01-frameworks/07-integration-and-review-framework|Integration & Review Framework]]** — branching, PRs, and consolidation partitioned for easy review
+8. **[[01-frameworks/08-workspace-contribution-framework|Workspace Contribution Framework]]** — how/when/where/what/why to edit the workspace itself
+9. **[[01-frameworks/09-component-and-pattern-framework|Component & Pattern Framework]]** — what each component is for, when to use it, how they compose; the universal component schema and the AI-legible / `DESIGN.md` layer
 
 ## Supporting docs
 
@@ -27,7 +30,7 @@ Orientation: [[01-frameworks/00-README|00-README]] — compressed summaries and 
 
 ## Running work through the frameworks
 
-In Claude Code, invoke `/framework-check` to run the current work through all seven as a
+In Claude Code, invoke `/framework-check` to run the current work through the operating frameworks as a
 structured critique. Output is ephemeral (not saved unless Sean saves it).
 
 ## Framework ↔ skill alignment

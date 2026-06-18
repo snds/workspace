@@ -1,0 +1,454 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://snds.design/a2ui/canonical/v1/catalog.json",
+  "title": "Canonical Component Catalog",
+  "description": "An A2UI catalog projecting the Component & Pattern Framework's 62-component taxonomy. Extends A2UI's Basic Catalog with the high-value canonical components it lacks (Select, Combobox, Switch, Badge, Tag, Alert, Toast, Tooltip, Popover, Accordion, Table, Avatar, Spinner, EmptyState). Component descriptions carry canonical intent + when-to-use/avoid (sourced from the ux-components MCP); styling is renderer-controlled and themed from a project's DESIGN.md.",
+  "catalogId": "https://snds.design/a2ui/canonical/v1/catalog.json",
+  "instructions": "Build UI by mapping a user need to a category (9 categories = 9 questions: Action=do, Form=collect, Navigation=go/command, Feedback=tell, Data=show, Layout=group, Overlay=temporary surface, Disclosure=hide-until-asked, Content=media), then pick the lowest-intensity component that works.\n\nRULES: (1) Use Row/Column/List for layout (flexbox-style: justify, align, weight). (2) Exactly ONE Button variant:'primary' per section. (3) Single-choice by option count: ChoicePicker mutuallyExclusive for 2-5; Select for 5-15; Combobox for >15 or unknown name. (4) Binary by timing: Switch = applies instantly; a form CheckBox/ChoicePicker = submitted later. (5) Messaging escalation, lowest rung first: Toast (ignorable) -> Alert (persistent inline) -> Modal (blocking). (6) Overlays: Tooltip for plain text, Popover the moment content is interactive, Modal when it must block. (7) Every data view needs the async triad: Spinner (loading) -> content -> EmptyState (no data) -> Alert (error). (8) Resolve any component name to its canonical behavior before using it; names differ across systems, behavior does not.\n\nACCESSIBILITY (non-negotiable): every input has a label; icon-only controls set accessibility.label; never rely on color alone (pair status with icon/text); meet WCAG 2.2 AA.\n\nSTYLING: do not specify colors or sizes inline. Styling is renderer-controlled and themed from the project's DESIGN.md tokens (CSS variables) — pass only semantic hints via the `variant` enums.",
+  "components": {
+    "Text": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Content. Display text. Prefer dedicated components over Markdown for structured content.",
+          "properties": {
+            "component": { "const": "Text" },
+            "text": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString", "description": "The text to display." },
+            "variant": { "type": "string", "enum": ["display", "heading", "body", "caption"], "default": "body", "description": "Type role. Hierarchy comes from role, not inline size." },
+            "weight": { "type": "number", "description": "Flex-grow within a Row/Column." }
+          },
+          "required": ["component", "text"]
+        }
+      ]
+    },
+    "Icon": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Content/Icon. A symbol for labeling or wayfinding. Decorative icons must be hidden from AT; meaningful icons need an accessibility label.",
+          "properties": {
+            "component": { "const": "Icon" },
+            "name": { "type": "string", "description": "Icon identifier from the renderer's icon set (e.g. lucide name)." }
+          },
+          "required": ["component", "name"]
+        }
+      ]
+    },
+    "Image": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Content/Image. Responsive image. Alt text required (accessibility.label) unless purely decorative.",
+          "properties": {
+            "component": { "const": "Image" },
+            "url": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString", "description": "Image source URL." },
+            "fit": { "type": "string", "enum": ["cover", "contain", "fill"], "default": "cover" }
+          },
+          "required": ["component", "url"]
+        }
+      ]
+    },
+    "Row": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Layout. Horizontal flex container.",
+          "properties": {
+            "component": { "const": "Row" },
+            "children": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ChildList" },
+            "justify": { "type": "string", "enum": ["start", "center", "end", "spaceBetween", "spaceAround", "spaceEvenly", "stretch"] },
+            "align": { "type": "string", "enum": ["start", "center", "end", "stretch"] },
+            "weight": { "type": "number" }
+          },
+          "required": ["component", "children"]
+        }
+      ]
+    },
+    "Column": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Layout. Vertical flex container.",
+          "properties": {
+            "component": { "const": "Column" },
+            "children": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ChildList" },
+            "justify": { "type": "string", "enum": ["start", "center", "end", "spaceBetween", "spaceAround", "spaceEvenly", "stretch"] },
+            "align": { "type": "string", "enum": ["start", "center", "end", "stretch"] },
+            "weight": { "type": "number" }
+          },
+          "required": ["component", "children"]
+        }
+      ]
+    },
+    "List": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Data Display/List. Vertical collection, one meaningful column per row. For multi-column relational data use Table.",
+          "properties": {
+            "component": { "const": "List" },
+            "children": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ChildList" }
+          },
+          "required": ["component", "children"]
+        }
+      ]
+    },
+    "Card": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Layout/Card. Bounded surface grouping content about ONE subject. Do not nest cards >1 deep.",
+          "properties": {
+            "component": { "const": "Card" },
+            "child": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentId" }
+          },
+          "required": ["component", "child"]
+        }
+      ]
+    },
+    "Divider": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Layout/Separator. Thin divider. Prefer whitespace; use sparingly.",
+          "properties": { "component": { "const": "Divider" } },
+          "required": ["component"]
+        }
+      ]
+    },
+    "Button": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Action/Button. Triggers a user-initiated action; label is a verb. NOT for navigation. One 'primary' per section.",
+          "properties": {
+            "component": { "const": "Button" },
+            "child": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentId", "description": "A Text label, or an Icon for an icon-only button (which then REQUIRES accessibility.label)." },
+            "variant": { "type": "string", "enum": ["primary", "secondary", "ghost", "destructive"], "default": "secondary", "description": "Hierarchy. 'destructive' for irreversible/delete actions (confirm via a Modal)." },
+            "action": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/Action" }
+          },
+          "required": ["component", "child"]
+        }
+      ]
+    },
+    "TextField": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Form/Input. Single- or multi-line text. Pair with a visible label. Validate on blur.",
+          "properties": {
+            "component": { "const": "TextField" },
+            "label": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" },
+            "variant": { "type": "string", "enum": ["shortText", "longText", "number", "obscured", "search"], "default": "shortText", "description": "longText = Textarea; obscured = password; search = Search input." }
+          },
+          "required": ["component", "label"]
+        }
+      ]
+    },
+    "Select": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Form/Select (ADDED — no basic-catalog equivalent). Closed dropdown, choose exactly one from a fixed list of ~5-15. Above 15 or unknown-name use Combobox; for 2-5 visible use ChoicePicker.",
+          "properties": {
+            "component": { "const": "Select" },
+            "label": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" },
+            "options": { "type": "array", "items": { "type": "object", "properties": { "label": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" }, "value": { "type": "string" } }, "required": ["label", "value"] } }
+          },
+          "required": ["component", "label", "options"]
+        }
+      ]
+    },
+    "Combobox": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Form/Combobox (ADDED). Text input + filterable list. Use when options >15-20 or the user may not know the exact name. Supports async; always show an empty state.",
+          "properties": {
+            "component": { "const": "Combobox" },
+            "label": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" },
+            "multiple": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicBoolean", "description": "If true, selected values render as removable Chips." },
+            "options": { "type": "array", "items": { "type": "object", "properties": { "label": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" }, "value": { "type": "string" } }, "required": ["label", "value"] } }
+          },
+          "required": ["component", "label"]
+        }
+      ]
+    },
+    "ChoicePicker": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/Checkable" },
+        { "type": "object", "description": "Canonical: Form/Radio Group + Checkbox group. Select from a fully-visible small set (2-5). variant mutuallyExclusive = Radio Group; multipleSelection = Checkbox group. Above 5 use Select.",
+          "properties": {
+            "component": { "const": "ChoicePicker" },
+            "label": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" },
+            "variant": { "type": "string", "enum": ["mutuallyExclusive", "multipleSelection"], "default": "mutuallyExclusive" },
+            "options": { "type": "array", "items": { "type": "object", "properties": { "label": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" }, "value": { "type": "string" } }, "required": ["label", "value"] } }
+          },
+          "required": ["component", "options"]
+        }
+      ]
+    },
+    "Switch": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/Checkable" },
+        { "type": "object", "description": "Canonical: Form/Switch (ADDED). Instant-effect binary toggle (role=switch). Use only when the change applies immediately (e.g. a setting); for form-submitted booleans use ChoicePicker. Label the feature, not the state.",
+          "properties": {
+            "component": { "const": "Switch" },
+            "label": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" },
+            "action": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/Action" }
+          },
+          "required": ["component", "label"]
+        }
+      ]
+    },
+    "Slider": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/Checkable" },
+        { "type": "object", "description": "Canonical: Form/Slider. Pick a numeric value by dragging when relative position matters more than the exact number. For precision pair with a number TextField.",
+          "properties": {
+            "component": { "const": "Slider" },
+            "label": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" },
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          },
+          "required": ["component"]
+        }
+      ]
+    },
+    "DateTimeInput": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/Checkable" },
+        { "type": "object", "description": "Canonical: Form/Date Picker + Time Picker. Select a date and/or time. For relative ranges ('last 7 days') use a Select instead.",
+          "properties": {
+            "component": { "const": "DateTimeInput" },
+            "label": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" },
+            "variant": { "type": "string", "enum": ["date", "time", "dateTime"], "default": "date" }
+          },
+          "required": ["component", "label"]
+        }
+      ]
+    },
+    "Tabs": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Navigation/Tabs. Switch between parallel views sharing one region; all labels visible, one panel at a time. Not for sequential steps (use a stepper flow) or cross-view comparison.",
+          "properties": {
+            "component": { "const": "Tabs" },
+            "children": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ChildList" }
+          },
+          "required": ["component", "children"]
+        }
+      ]
+    },
+    "Accordion": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Disclosure/Accordion (ADDED). Stacked collapsible sections under labeled headers. Use to compact long pages; not for simultaneous comparison or always-critical info.",
+          "properties": {
+            "component": { "const": "Accordion" },
+            "variant": { "type": "string", "enum": ["single", "multiple"], "default": "single", "description": "single = one section open at a time." },
+            "children": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ChildList" }
+          },
+          "required": ["component", "children"]
+        }
+      ]
+    },
+    "Table": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Data Display/Table (ADDED). 2D grid where cross-column relationships matter. Bind rows from the data model. For a single meaningful column use List; don't reflexively default to a table.",
+          "properties": {
+            "component": { "const": "Table" },
+            "columns": { "type": "array", "items": { "type": "object", "properties": { "header": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" }, "path": { "type": "string", "description": "JSON-Pointer into each row object." } }, "required": ["header", "path"] } },
+            "rows": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicValue", "description": "A data-bound array of row objects." }
+          },
+          "required": ["component", "columns", "rows"]
+        }
+      ]
+    },
+    "Avatar": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Data Display/Avatar (ADDED). Visual identity: image -> initials -> icon fallback. Never expose a broken image.",
+          "properties": {
+            "component": { "const": "Avatar" },
+            "url": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" },
+            "name": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString", "description": "Used for initials fallback and the accessible name." }
+          },
+          "required": ["component", "name"]
+        }
+      ]
+    },
+    "Badge": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Data Display/Badge (ADDED). Compact count/status indicator annotating another element. Never color alone; cap counts at 99+. For removable textual tokens use Tag.",
+          "properties": {
+            "component": { "const": "Badge" },
+            "text": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" },
+            "variant": { "type": "string", "enum": ["neutral", "success", "warning", "danger", "info"], "default": "neutral" }
+          },
+          "required": ["component", "text"]
+        }
+      ]
+    },
+    "Tag": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Data Display/Tag + Chip (ADDED). Compact textual label, often removable (a selected filter, a token). For numeric/status use Badge.",
+          "properties": {
+            "component": { "const": "Tag" },
+            "text": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" },
+            "removable": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicBoolean" },
+            "action": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/Action", "description": "Fired on remove, if removable." }
+          },
+          "required": ["component", "text"]
+        }
+      ]
+    },
+    "Alert": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Feedback/Alert (ADDED). Persistent inline message tied to nearby content. Escalation: Toast (ignorable) < Alert (persistent) < Modal (blocking) — use the lowest rung.",
+          "properties": {
+            "component": { "const": "Alert" },
+            "child": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentId" },
+            "variant": { "type": "string", "enum": ["info", "success", "warning", "error"], "default": "info" }
+          },
+          "required": ["component", "child", "variant"]
+        }
+      ]
+    },
+    "Toast": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Feedback/Toast (ADDED). Ephemeral, auto-dismissing confirmation in a viewport corner. Non-critical only; never for errors that require acknowledgment (use Alert/Modal).",
+          "properties": {
+            "component": { "const": "Toast" },
+            "text": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" },
+            "variant": { "type": "string", "enum": ["info", "success", "error"], "default": "info" }
+          },
+          "required": ["component", "text"]
+        }
+      ]
+    },
+    "Spinner": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Feedback/Spinner (ADDED). Indeterminate loading. Appear by ~300ms; for known duration use a progress indicator; for initial page load prefer a skeleton. Part of the async triad with EmptyState + Alert(error).",
+          "properties": {
+            "component": { "const": "Spinner" },
+            "label": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" }
+          },
+          "required": ["component"]
+        }
+      ]
+    },
+    "EmptyState": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Feedback/Empty State (ADDED). What users see when there is no content — explains why and what to do next. Distinct from loading (Spinner) and error (Alert).",
+          "properties": {
+            "component": { "const": "EmptyState" },
+            "title": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" },
+            "description": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" },
+            "child": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentId", "description": "Optional primary action (a Button)." }
+          },
+          "required": ["component", "title"]
+        }
+      ]
+    },
+    "Modal": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Overlay/Dialog + Alert Dialog. Modal surface for a focused, blocking task. variant 'confirm' = an Alert Dialog for irreversible/destructive decisions. Traps focus; returns focus on close.",
+          "properties": {
+            "component": { "const": "Modal" },
+            "child": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentId" },
+            "variant": { "type": "string", "enum": ["dialog", "confirm"], "default": "dialog" }
+          },
+          "required": ["component", "child"]
+        }
+      ]
+    },
+    "Popover": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Overlay/Popover (ADDED). Non-modal floating panel anchored to a trigger; rich/interactive content that must NOT block the page. For plain text use Tooltip; for a focused blocking task use Modal.",
+          "properties": {
+            "component": { "const": "Popover" },
+            "trigger": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentId" },
+            "child": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentId" }
+          },
+          "required": ["component", "trigger", "child"]
+        }
+      ]
+    },
+    "Tooltip": {
+      "type": "object",
+      "allOf": [
+        { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentCommon" },
+        { "type": "object", "description": "Canonical: Overlay/Tooltip (ADDED). Tiny plain-text label on hover/focus; never interactive, never essential. Primary tool for naming icon-only buttons. If content is interactive, use a Popover.",
+          "properties": {
+            "component": { "const": "Tooltip" },
+            "trigger": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/ComponentId" },
+            "text": { "$ref": "https://a2ui.org/specification/v1_0/common_types.json#/$defs/DynamicString" }
+          },
+          "required": ["component", "trigger", "text"]
+        }
+      ]
+    }
+  },
+  "functions": {
+    "required": { "type": "object", "description": "Value is not null/empty.", "returnType": "boolean", "properties": { "call": { "const": "required" }, "args": { "type": "object", "properties": { "value": {} }, "required": ["value"] } }, "required": ["call", "args"] },
+    "email": { "type": "object", "description": "Value is a valid email.", "returnType": "boolean", "properties": { "call": { "const": "email" }, "args": { "type": "object", "properties": { "value": {} }, "required": ["value"] } }, "required": ["call", "args"] },
+    "length": { "type": "object", "description": "String length within [min,max].", "returnType": "boolean", "properties": { "call": { "const": "length" }, "args": { "type": "object", "properties": { "value": {}, "min": { "type": "number" }, "max": { "type": "number" } }, "required": ["value"] } }, "required": ["call", "args"] },
+    "openUrl": { "type": "object", "description": "Open a URL (client-only).", "returnType": "null", "callableFrom": "clientOnly", "properties": { "call": { "const": "openUrl" }, "args": { "type": "object", "properties": { "url": { "type": "string" } }, "required": ["url"] } }, "required": ["call", "args"] }
+  },
+  "$defs": {
+    "anyComponent": {
+      "description": "Discriminated union over every component in this catalog.",
+      "discriminator": { "propertyName": "component" },
+      "oneOf": [
+        { "$ref": "#/components/Text" }, { "$ref": "#/components/Icon" }, { "$ref": "#/components/Image" },
+        { "$ref": "#/components/Row" }, { "$ref": "#/components/Column" }, { "$ref": "#/components/List" },
+        { "$ref": "#/components/Card" }, { "$ref": "#/components/Divider" }, { "$ref": "#/components/Button" },
+        { "$ref": "#/components/TextField" }, { "$ref": "#/components/Select" }, { "$ref": "#/components/Combobox" },
+        { "$ref": "#/components/ChoicePicker" }, { "$ref": "#/components/Switch" }, { "$ref": "#/components/Slider" },
+        { "$ref": "#/components/DateTimeInput" }, { "$ref": "#/components/Tabs" }, { "$ref": "#/components/Accordion" },
+        { "$ref": "#/components/Table" }, { "$ref": "#/components/Avatar" }, { "$ref": "#/components/Badge" },
+        { "$ref": "#/components/Tag" }, { "$ref": "#/components/Alert" }, { "$ref": "#/components/Toast" },
+        { "$ref": "#/components/Spinner" }, { "$ref": "#/components/EmptyState" }, { "$ref": "#/components/Modal" },
+        { "$ref": "#/components/Popover" }, { "$ref": "#/components/Tooltip" }
+      ]
+    },
+    "anyFunction": {
+      "description": "Discriminated union over every function in this catalog.",
+      "discriminator": { "propertyName": "call" },
+      "oneOf": [
+        { "$ref": "#/functions/required" }, { "$ref": "#/functions/email" },
+        { "$ref": "#/functions/length" }, { "$ref": "#/functions/openUrl" }
+      ]
+    }
+  }
+}
