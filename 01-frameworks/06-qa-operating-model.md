@@ -28,7 +28,7 @@ The framework runs **before** I report. Outputs that haven't passed through it s
 
 ---
 
-## The five operating defaults
+## The six operating defaults
 
 These are not aspirations. They are pre-output gates that fire without prompting.
 
@@ -95,6 +95,15 @@ First delivery is **rarely 100%** of what Sean needs. Most of our work together 
 - **Surface what needs the next pass** in the report — don't bury follow-ups in a "by the way."
 - **Don't optimize for "ship-ready" verdicts.** Optimize for accurate verdicts. A truthful "5 of 25" beats a generous "8 of 25" because it directs the next iteration correctly.
 - **Don't ask "is this good enough?" — ask "what's the next refinement?"** The answer to the first is almost always no; the answer to the second is actionable.
+
+### 6. Adversarial verification — refute before you report, probe before you fix
+
+A finding that *looks* right on a render is a **hypothesis, not a fact**. Two failure modes recur and both were hit this session:
+
+- **Downscaled-render illusions.** A variant-set / category render is heavily downscaled; at that resolution you cannot reliably distinguish "solid disc" from "ring," read a 1px caret, or confirm an icon glyph. Three "confirmed" visual findings turned out FALSE — Slider thumbs (identical; a track-fill illusion), Carousel arrows ("empty," but glyphs were present), Toggle Group container ("filled vs. outline," actually a pressed-toggle illusion) — each caught **only** by a structural probe of the node tree.
+- **Plausible-but-wrong findings.** A finding can be internally coherent yet misread the artifact (counting a Focus row as a Disabled row).
+
+So: **(a)** treat every non-trivial finding as refutable — default to "not real" until substantiated; **(b)** for any finding derived from a render, **probe the structure** (actual node tree / bound values) before acting, *especially* before a destructive fix — probing is far cheaper than un-doing a wrong fix; **(c)** in a fan-out review, give verifiers a skeptical, refute-first prompt and require independent confirmation; **(d)** when the tooling can't be trusted in parallel (e.g. a single live design-tool connection, or API congestion), **serialize and verify** rather than fan out — a wrong fast answer costs more than a slow correct one.
 
 ---
 
