@@ -21,6 +21,24 @@ Keep entries concise. This is a handoff log, not a journal.
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-06-20
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Surface: Claude Code (Mac desktop app)
+Project(s):
+  - figma-repo-sync-plugin — transliterated centric-ui Figma library finalized + DS authoring laws codified.
+Artifacts:
+  - **Figma library (file o6o1ZuGHxDow2vHLuYXT6X) finalized & fully conformant.** Mode-first architecture pass: Button untangled (42 physical variants → 7 State variants × 11 intent **modes**; 17 orphaned icon instances reunified via swapComponent; Label boolean; Default=primary); Badge confirmed already mode-ready; Progress status→mode (new `Progress — Status` collection); Avatar size→mode (`Avatar — Sizes` sm/md/lg, width/height bound, badge on MAX constraints). Alert/Toast kept physical (per-tone icons — correct). **Total tokenization ~100%** across all 4 pages — added half-step tokens (`space-0-5/1-5/2-5/3-5`, `radius-xs/-6`) + a `transparent` color token; bound zeros/blanks. Fixed 43 inverted icons (glyph→label color). Earlier in session: Pagination ellipsis→more_horiz, Toggle Group Type axis, Slider Error+value-tooltip, Combobox/Date Picker State axes, Drawer/Accordion slots, Alert Icon/Dismiss booleans, Calendar range, Breadcrumb ellipsis, Mode Selector→Toggle instances, spacing/radius token sweeps, menu-item inset, Hover Card position variants. Depth-aware relayout: zero overlaps/spills, subs grouped with parents, canon/additions separated.
+  - 01-frameworks/09-component-and-pattern-framework.md — added **§8e** (mode-first variant architecture + total-tokenization authoring laws: variable→mode, presence→boolean, structure→variant; decide-mechanism-first; reuse existing collections; size-mode mechanics; per-tone-icon exception).
+  - 01-frameworks/06-qa-operating-model.md — added **6th operating default**: adversarial verification + render-skepticism (probe node tree before fixing; serialize under congestion). 3 "confirmed" findings this session were false positives caught only by probing.
+  - Memory (in ~/.claude, not git): ds-figma-surface-conventions (rules: icon=label *color*, radius families, input-trigger state, mode-first, total tokenization), figma-cli-authoring-techniques (slots/modes/relayout/icon-swap/orphan-recovery/orchestration), MEMORY.md index.
+  - 07-projects/09-figma-repo-sync-plugin/finalization-synthesis.md — capstone (gitignored, local): gold-library target, authoring patterns to encode, automation targets, finalization checklist.
+Pending / next:
+  - Plugin finalization (see finalization-synthesis.md §5): switch foundation identity to `setSharedPluginData` (cross-tool convergence); expose `scaffoldFoundations()` CLI; generator should emit mode-first + total-tokenization by construction + an unbound-value lint gate; land codebase-punch-list deltas (Badge sm/rounded CVA, Button intent/variant axis in code, the 23 Base-UI component additions); add Code Connect.
+  - **REVOKE the Figma PAT** (still open from 2026-06-04).
+
+---
+
+--- SESSION BLOCK ---
 Date: 2026-06-18
 Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
 Surface: Claude Code (Mac desktop app)
