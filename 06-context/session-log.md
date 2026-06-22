@@ -21,6 +21,112 @@ Keep entries concise. This is a handoff log, not a journal.
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-06-22
+Agent: Claude Opus 4.8
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s):
+  - Centric VMS Design System — centric-ui Figma library ("Centric SaaS PLM — Design System", fileKey o6o1ZuGHxDow2vHLuYXT6X). Multi-area tweaks across Components + Base UI Additions (+ Features/Layout/Cover). All work is in Figma, not workspace files.
+Artifacts (Figma):
+  - Typography: new Body + UI style categories + paragraph-spacing; `Foundations / Semantics / Typography Roles` collection (96 role tokens); 21 variable-bound text styles (every property incl. numeric fontWeight + paragraphSpacing → role → semantic → primitive); remapped ~1,117 text nodes file-wide (Material Symbols glyphs correctly excluded).
+  - Token binding: comprehensive — every real spacing/gap/radius/border value across ALL pages + instances (incl. the new slots + demo content); added border-width-3, line-height (xtight/xloose/2xloose), paragraph-spacing tokens. Colors/stroke-weights already ~100% bound (per-side strokeWeight verified).
+  - Canon (8): Card footer slot→hug; Collapsible trigger→fill; Scroll Area viewport→SLOT; Badge mode-first (Size/Shape→modes, states physical); Avatar/Badge status→modes (8→2 variants); Sidebar Menu Button +Focus; Tabs TabsList→slot + Trigger states (10 variants); Form Field label/message boolean visibility toggles + 14 feature/layout instance rewires.
+  - Additions: 8 slot refactors (Menubar/NavMenu/ToggleGroup/Radio/Breadcrumb/Accordion/Carousel/Drawer-existing); Drawer-Top padding; Date Picker (popover Left&Right + nested-Calendar stroke hidden + slot padding); Combobox (Left&Right + items FILL); Calendar Day Position mode (range rounding); NavMenu Trigger +Focus / Link +Focused; Slider thumb fill fix + _Slider/Thumb subcomponent (10 variants) NOW CONSUMED by the Slider; _Avatar/Badge icon→INSTANCE_SWAP (per-status glyphs + preferred values).
+  - Fixes: Avatar—Sizes duplicate-mode bug (now md/sm/lg, correct values, 0 instances affected); canvas overlap cleanup.
+  - [Claude memory, ~/.claude] ds-figma-surface-conventions.md Rule 14 + MEMORY.md index — FLOATING elements absolute @ logical spot + constraints, host sized to its logical element, clipsContent off → never inflate host bbox (even boolean-toggled; surfaced by the slider-thumb value tooltip).
+Decisions:
+  - Mode-first variant architecture confirmed (color/size/status → modes; presence → booleans; structure → physical variants).
+  - Two text categories: UI (non-wrapping control text, Regular+Medium) vs Body (wrapping, Regular+Strong, paragraph-spacing). Default body = 14.
+  - Floating elements ALWAYS absolutely positioned with constraints (durable rule saved to memory).
+  - Off-scale one-offs left as documented exceptions: radius-10 (Avatar shape), spacing-3 (Features), Cover gaps 89/104, Avatar "AB" 21px, stat "350" 44px, pre-existing _Calendar/Day↔Calendar 8px overlap.
+Pending added:
+  - PUBLISH the centric-ui library — Sean's manual Figma action (Assets panel → Publish; the Plugin API can't publish). Consuming files then pick up the new text styles, Typography Roles + mode collections, border-width-3/paragraph-spacing tokens, and _Slider/Thumb.
+  - Optional polish: relocate _Slider/Thumb into the Slider section; resolve the pre-existing _Calendar/Day↔Calendar 8px overlap (needs a category relayout).
+Next:
+  - Sean publishes the library.
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
+Date: 2026-06-22
+Agent: Claude Opus 4.8
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s):
+  - 09-figma-repo-sync-plugin — branch-staleness investigation → PIVOT to `main` as the base.
+Decisions:
+  - Investigated catching `feat/radix-color-system` up to `main`. Dry-run merge = 22 conflicts (plugin engine auto-merged clean), but discovered the team ALREADY re-landed the radix work onto `main` via merged consolidate PRs (#82 design-tokens, #83 generator-scripts, #84 figma-plugin). `main` is fresh: plugin @ 11.4.18 + radix --sem- tokens + tsconfig/eslint plugin-excludes.
+  - Therefore `feat/radix-color-system` is a SUPERSEDED 8-week-stale mega-branch. ABANDONED the catch-up merge (threw away the worktree); work moves to `main`.
+Artifacts:
+  - Closed PR #120 (tsconfig exclude) — redundant; main already has it (+eslint ignore). Deleted its branch.
+  - Rebased the 4 foundational PRs onto `main` + re-targeted bases: #116 transparent (→main), #117 shared-plugin-data (→#116 stacked), #118 Badge size/shape (→main), #119 Alert (→main). All force-pushed. Plugin files were byte-identical main↔branch (clean rebase); Badge layered onto main's cds-token badge (token-agnostic); badge/alert eslint+prettier clean.
+  - Removed throwaway worktree + dead `merge/radix-catchup-main` branch.
+Key findings:
+  - main reintroduced ~150 cds- refs in new code the branch's codemod never saw → cds→semantic usage migration is INCOMPLETE on main (separate follow-up codemod).
+  - `caution` is still an OPEN team PR (#87 → main); main lacks --sem-caution + Badge caution until it merges (soft dep for Alert/Badge caution).
+Pending resolved:
+  - "Catch up with main" — resolved by pivoting (main is already current; no painful merge needed).
+Project status changes:
+  - 09-figma-repo-sync-plugin base: `feat/radix-color-system` (dead) → `main` (fresh). 4 PRs rebased; #120 closed.
+Next:
+  - Quick wins on main (ScrollArea placed=0; mode-first header comment). Then Type→booleans lever + tokenization sweep + lint gate as one componentGenerator.ts pass. Watch #87 (caution) for the Alert/Badge caution dependency.
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
+Date: 2026-06-22
+Agent: Claude Opus 4.8
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s):
+  - 09-figma-repo-sync-plugin — foundational fixes EXECUTED + opened as PRs (centric-ui repo).
+Decisions (locked w/ Sean):
+  - migration=hard-break+re-export · namespace=figmaReposync · Base-UI scope=Alert full + 22 phased · Badge data-chip=4px (rounded-sm, tokenized) · DESIGN.md=fresh + section in AGENTS.md · diagnostics flip=after ScrollArea+idempotency.
+Artifacts (4 PRs on cpes-software/centric-ui, base feat/radix-color-system; NO self-merge):
+  - PR #116 feat/figma-transparent-token — Figma-supplied `transparent` base primitive (sync-palette inject + genRGBA alpha fix). Build 11.4.19.
+  - PR #117 feat/figma-shared-plugin-data (stacked on #116) — foundation identity → shared `figmaReposync` (6 sites, shared-first read); align+commit 2 MCP seed scripts (dsb→figmaReposync, leaf→token-name, RUN_ID→SEED_RUN_ID env); seed:export/seed:build; scripts/README. Build 11.4.20.
+  - PR #118 feat/ui-badge-data-chip — Badge size(sm)+shape(rounded) axes (additive).
+  - PR #119 feat/ui-alert-component — alert.tsx (Base-UI div+cva, soft-tint incl. caution).
+Key correction (verified in code):
+  - Mode-first lever is NARROW: Button/Badge intent/size already MODES, State correctly PHYSICAL; ONLY Type (icon presence) is wrongly physical → B1 = Type→booleans (keep State physical). Reconciler's "rip out physical variants" was an over-reach.
+  - Forward-compat design: foundational fixes deliberately avoid componentGenerator.ts so the later Type→booleans + tokenization sweep + lint gate land in ONE engine pass.
+Verification:
+  - Plugin PRs (#116/#117): plugin `npm run check` + 468/468 tests + build. App PRs (#118/#119): eslint + prettier clean, file-level type-clean.
+Pending added:
+  - App `tsconfig.json` has no `exclude` → `tsc` swallows the plugin's .ts (~977 figma/Variable errors). Spawned a background task to add `exclude: ["figma-repo-sync-plugin"]`.
+Next:
+  - Quick wins (ScrollArea placed=0 fix; correct the mode-first header comment). Then plan/execute the Type→booleans lever (B1) + tokenization sweep (B2) + lint gate (C) as one engine pass. The big feat/radix-color-system→main PR is Sean's call.
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
+Date: 2026-06-22
+Agent: Claude Opus 4.8
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s):
+  - 09-figma-repo-sync-plugin — finalization planning (code-grounded).
+Artifacts:
+  - 07-projects/09-figma-repo-sync-plugin/next-steps-plan.md — NEW. Grounded next-steps plan + status table for closing the gap between the hand-built gold Figma library and what the plugin generates. Produced by a 6-reader code audit + reconciler against the ACTUAL code (Build 11.4.18), not the stale docs (11.4.10 era).
+  - 07-projects/09-figma-repo-sync-plugin/SESSION-STATE.md — rewritten atomically to the current baseline (was 2026-06-03 / 11.4.x split-brain saga).
+Decisions:
+  - Plan finalization off code ground-truth, not docs: a workflow fanned 6 Explore readers across foundations.ts / componentGenerator.ts / componentVariables.ts / centric-ui ui/ / Code Connect / SESSION-STATE, then a reconciler sequenced the work.
+  - Execution order set with Sean: (1) update project state → (2) lock 6 gating decisions → (3) bottom-up foundational/scaffold fixes (forward-compatible & unobtrusive to the later generation rework) → (4) quick wins → (5) plan the Button/Badge mode-first lever.
+Key findings (corrections to the docs):
+  - Convergence is HALF-BUILT but DIVERGENT: 2 untracked MCP-seed scripts use a 'dsb' shared-data namespace; foundations.ts uses private keys; target 'figmaReposync' exists in neither.
+  - Button + Badge are the LEAST mode-first components (still physical variants via combineAsVariants + expandSetWithStateAxis), despite the generator header claiming mode-first. This is the biggest lever.
+  - Total tokenization ~70–80% (raw literals remain; 'transparent' token missing). Lint gate is passive (never blocks); zero runtime convention validators.
+  - Codebase: Button+caution done; Badge needs size/shape; alert.tsx absent; all 23 Base-UI additions missing. Code Connect: zero infra. centric-ui/AGENTS.md is generic, not a DS binding; no DESIGN.md.
+Pending resolved:
+  - SESSION-STATE branch-404 blocker confirmed RESOLVED (now feat/radix-color-system, pushed, 0 ahead).
+Pending added:
+  - 6 gating decisions to lock (migration policy / namespace / Base-UI scope / Badge radius / DESIGN.md provenance / diagnostics-flip timing).
+Project status changes:
+  - 09-figma-repo-sync-plugin: stale-doc baseline → code-grounded plan; SESSION-STATE current as of Build 11.4.18.
+Next:
+  - Lock the 6 decisions, then start the bottom-up foundational fixes (convergence/scaffold), planned to keep the later generation-pathway rework unobtrusive.
+--- END BLOCK ---
+
+---
+
+--- SESSION BLOCK ---
 Date: 2026-06-18
 Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
 Surface: Claude Code (Mac desktop app)
