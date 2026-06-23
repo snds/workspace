@@ -14,18 +14,31 @@ resolves the workspace root as the checkout it lives in (the tree containing `AG
 
 ### 2. Fresh machine — nothing installed yet
 
+The repo is **public**, so grabbing it needs no login. Everything clones into a permanent
+checkout at `~/Projects/Workspace` by default (override with the `CLAUDE_WORKSPACE_DIR` env var).
+
+**One-click (download one file, double-click):**
+
+- **macOS** — download [`bootstrap.command`](bootstrap.command) and double-click. First run,
+  macOS Gatekeeper may block it: right-click → **Open** → **Open** (or `xattr -d com.apple.quarantine bootstrap.command`).
+- **Windows** — download [`bootstrap.bat`](bootstrap.bat) and double-click. First run, SmartScreen
+  may warn: **More info** → **Run anyway**.
+- **Linux** — use the one-liner below (double-click behavior is desktop-dependent).
+
+**One-liner (terminal):**
+
 ```bash
 # macOS / Linux
-export CLAUDE_WORKSPACE_REPO="git@github.com:snds/workspace.git"
 curl -fsSL https://raw.githubusercontent.com/snds/workspace/main/00-bootstrap/setup/bootstrap.sh | bash
 ```
 ```powershell
 # Windows PowerShell
-$env:CLAUDE_WORKSPACE_REPO="git@github.com:snds/workspace.git"
-iwr https://raw.githubusercontent.com/snds/workspace/main/00-bootstrap/setup/bootstrap.ps1 | iex
+iwr -useb https://raw.githubusercontent.com/snds/workspace/main/00-bootstrap/setup/bootstrap.ps1 | iex
 ```
 
-The script clones the workspace repo, installs tooling, and wires Obsidian.
+Each one grabs the repo into a permanent checkout, installs tooling, wires Obsidian, and opens the
+vault — non-destructively (if the folder already exists it updates instead of clobbering). You only
+need auth to **push** changes later: run `gh auth login` once.
 
 ## What it installs
 

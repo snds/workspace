@@ -113,6 +113,9 @@
 # Obsidian plugin runtime data — auto-modified while Obsidian is open, not user-authored
 .obsidian/core-plugins.json
 .obsidian/plugins/*/data.json
+# …except obsidian-git's config — tracked so git-sync behavior is identical on every device
+# (portable: basePath/gitDir are empty, no machine-specific paths). Expect occasional churn.
+!.obsidian/plugins/obsidian-git/data.json
 
 # Obsidian plugin binaries — installed by setup.py, not versioned
 .obsidian/plugins/*/main.js
