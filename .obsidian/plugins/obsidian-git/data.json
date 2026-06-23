@@ -3,10 +3,10 @@
   "autoCommitMessage": "vault backup: {{date}}",
   "commitMessageScript": "",
   "commitDateFormat": "YYYY-MM-DD HH:mm:ss",
-  "autoSaveInterval": 10,
+  "autoSaveInterval": 0,
   "autoPushInterval": 0,
   "autoPullInterval": 0,
-  "autoPullOnBoot": true,
+  "autoPullOnBoot": false,
   "autoCommitOnlyStaged": false,
   "disablePush": false,
   "pullBeforePush": true,
@@ -15,11 +15,11 @@
   "disablePopupsForNoChanges": false,
   "listChangedFilesInMessageBody": false,
   "showStatusBar": true,
-  "updateSubmodules": false,
-  "syncMethod": "rebase",
+  "updateSubmodules": true,
+  "syncMethod": "merge",
   "mergeStrategy": "none",
   "customMessageOnAutoBackup": false,
-  "autoBackupAfterFileChange": true,
+  "autoBackupAfterFileChange": false,
   "treeStructure": false,
   "refreshSourceControl": true,
   "basePath": "",
@@ -63,5 +63,7 @@
     "ignoreWhitespace": false,
     "lastShownAuthorDisplay": "initials",
     "lastShownDateTimeFormatOptions": "date"
-  }
+  },
+  "_comment": "Seed config. Obsidian Git writes to this file on first save; changes from the UI will persist.",
+  "gitReady": true
 }
