@@ -118,6 +118,7 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 - Four tiers: Intent (pre-design) → Construction (during authoring) → Finishing (pre-handoff) → Post-ship audit.
 - Ten craft categories: typography, spacing/rhythm/grid, color/contrast, component anatomy, token usage, icon systems, interaction/motion, accessibility, copy/voice, code-level craft.
 - Enforcement distributed across four surfaces: Claude's reliable authoring, Claude's perception (baseline + augmented), human perception, tooling. Name which surface is enforcing what.
+- **Perception integrity (non-negotiable precondition):** never judge fine visual detail from a downsampled image. Capture at native resolution — zoom the subject so the artifact fills the frame, or read the frame back in 1:1 native chunks — and name the resolution judged at before claiming fixed/gone/matching. A thumbnail is a locator, never a verdict. Method in the standalone `native-visual-eval` skill (no hub dependency).
 - Augmented perception via Pillow/NumPy/OpenCV/scikit-image closes pixel-level gaps — used at specific moments, not as constant background.
 - Every delivery produces an enforcement handoff artifact: enforced / reviewed / needs your eyes / should be tooling.
 - Operational state persists across sessions via `SESSION-STATE.md` (per-project).

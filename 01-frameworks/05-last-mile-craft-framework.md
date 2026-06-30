@@ -316,6 +316,18 @@ What I unreliably catch or miss:
 
 I should name this honestly in review outputs rather than claim a generalized "I reviewed it and it looks good." When reviewing with you, I'll distinguish between what I'm confident about and what warrants your eyes.
 
+### 2.5 — Perception integrity: capture at native resolution (non-negotiable precondition)
+
+**Top-level directive. Before any of the perception above can be trusted, the pixels must be real. Never judge fine visual detail from a downsampled image. Capture at native resolution; if the subject is larger than one truthful view, capture it in 1:1 native blocks and read each. Any scaled / fit-to-window / thumbnail output is a *locator only* — never a verdict.**
+
+This applies to *all* visual work — design QA, game/3D renders, shader and dither artifacts, reference art, photography, data-viz, OCR-able text — not just design finishing. It is the precondition to both baseline perception (#2) and augmented perception (#3): a measurement or a judgment is only as truthful as the pixels it runs on.
+
+Why it's non-negotiable: downscaling is a low-pass filter. It erases exactly the high-frequency detail the judgment depends on — banding, grain, dither, aliasing, edge sharpness, sub-pixel alignment, small text, contrast at thin features — and it erases it *invisibly*, so the scaled image looks clean **because the resample hid the defect**. The screenshot/preview tooling routinely hands back a scaled frame (often ~800 px); trusting it has produced confidently-wrong "it's fixed" calls that the human caught at native resolution in a single glance. A shipped change is not a verified change; a good-looking thumbnail is not verification.
+
+The discipline, in one line: **treat scaled output as a locator, then get true native pixels — zoom the subject so the artifact fills the frame, or read the frame back in 1:1 native chunks — and name the resolution you judged at before claiming anything is fixed, gone, or matching.**
+
+The operational method (same-tick canvas/WebGL readback, the zoom-the-subject technique, the chunk-and-Read loop, the static-asset crop rule) lives in the standalone **`native-visual-eval`** skill — load it on its own; it carries **no visual-QA-hub dependency**, so the discipline is always cheap to invoke for the lot of visual work we do. Once native pixels are in hand, hand off to augmented perception (#3) to measure and to `lead-visual-qa` to judge.
+
 ### 3. Claude's augmented perception (code-based visual analysis)
 
 My environment includes Pillow, NumPy, OpenCV, scikit-image, and Matplotlib. That means I can augment raw perception with computer-vision tooling that measures, compares, and visualizes — producing instrumented analysis that closes much of the perceptual gap.
@@ -439,6 +451,7 @@ How this framework shows up in our work:
 
 - **Tier-naming during craft work.** When we're in construction mode vs. finishing mode vs. audit mode, I name it so we know what discipline applies.
 - **Category-aware review.** When we're reviewing work, I surface which of the ten categories are in scope and which checks apply.
+- **Native-resolution capture first.** Before judging any fine visual detail, I capture at native resolution — zooming the subject so the artifact fills the frame, or reading the frame back in 1:1 native chunks — and I name the resolution I judged at before claiming anything is fixed, gone, or matching. A scaled thumbnail is a locator, never a verdict (the `native-visual-eval` skill carries the method; no hub needed).
 - **Perception honesty.** When reviewing visually, I distinguish between what I'm confident about (baseline perception), what I've measured (augmented perception), and what needs your eyes (human perception).
 - **Augmented perception as a deliberate tool.** I reach for code-based visual analysis at specific moments — pre-handoff audits, subtle-issue verification, visual regression, accessibility pre-checks, deliberate review passes — not as a constant background check.
 - **Enforcement handoff artifact.** At the end of design-engineered work, I produce the structured handoff artifact described above, making the enforcement boundary explicit.
@@ -460,6 +473,7 @@ This framework is the meta-layer. Tactical execution lives in the skill network.
 - **`variable-icon-font-architect`** — icon system construction. Owns the tactical execution of icon and variable font last-mile discipline.
 - **`figma-plugin-dev`** — tooling-level craft. When we're building plugins that enforce last-mile discipline automatically, this skill runs the build.
 - **`workspace-bootstrap`** — session continuity. Extended (in scope for tomorrow) to load `SESSION-STATE.md` automatically and maintain operational state across sessions.
+- **`native-visual-eval`** — the implementation surface for enforcement mechanism #2.5 above: the perception-integrity precondition. Same-tick canvas/WebGL readback, the zoom-the-subject technique, the 1:1 chunk-and-Read loop, the static-asset crop rule. Standalone — no visual-QA-hub dependency — so the discipline is always cheap to invoke. Capture native here *before* measuring with `visual-qa-toolkit` or judging with `lead-visual-qa`.
 - **`visual-qa-toolkit`** — the implementation surface for enforcement mechanism #3 above. Ten standalone Python scripts, starter configs for default/Centric/Legion contexts, a consolidated-report runner, and annotated-image outputs. Makes augmented perception a standing capability rather than ad-hoc code each time.
 
 When a framework-level observation surfaces something tactical, I point to the skill. When a skill-level execution surfaces something that's actually a principle worth codifying, I flag it for inclusion in the framework during a future pass.

@@ -268,4 +268,4 @@ identify the most critical visual deviations.
 
 ## Related
 - spoke → [[visual-qa-accessibility]] · [[visual-qa-architecture]] · [[visual-qa-game-design]] · [[visual-qa-graphic-design]] · [[visual-qa-interior-design]] · [[visual-qa-toolkit]] · [[visual-qa-ui-design]] · [[visual-qa-usability]] · [[visual-qa-ux-design]]
-- peer ↔ [[vision-foundations]]
+- peer ↔ [[vision-foundations]] · [[native-visual-eval]]

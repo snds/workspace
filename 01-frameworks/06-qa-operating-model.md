@@ -74,6 +74,8 @@ For any artifact that has an external reference (shadcn docs, Storybook, design 
 
 This protocol fires anytime a reference exists. If a reference doesn't exist, say so explicitly rather than substituting personal judgment.
 
+**Native resolution is the precondition — reference or not.** Steps 1–2 above assume real pixels. The screenshot/preview tooling routinely returns a *scaled* frame (often ~800 px), and a resample erases exactly the detail a finishing-tier check looks for (banding, grain, aliasing, edge sharpness, sub-pixel alignment). This applies to *any* runtime visual being judged — a render, a shader/dither artifact, a generated frame — not only external-reference comparison. Get true native pixels first: **zoom the subject so the artifact fills the frame, or read the frame back in 1:1 native chunks and inspect each**, then judge. The standalone `native-visual-eval` skill carries the method (same-tick canvas/WebGL readback, the chunk-and-Read loop) with no visual-QA-hub dependency.
+
 ### 4. Critical-eye pre-output gate — run every delivery
 
 Before reporting an outcome — audit verdict, grade, claim of correctness, "looks right" — pass it through:
@@ -82,6 +84,7 @@ Before reporting an outcome — audit verdict, grade, claim of correctness, "loo
 - **Coverage check.** Have I evaluated every visible asset (parents, subs, variants, modes, states)? Or did I sample?
 - **Composition check.** Is sub-anatomy actually instanced inside parents, or am I grading on silhouette? (The Avatar trick — circular outline ≠ Avatar component.)
 - **Reference check.** Have I compared at meaningful zoom against the source, not from memory?
+- **Resolution check.** Did I judge at *native* resolution — subject zoomed to fill the frame, or the frame read back in 1:1 native chunks — or did I trust a downsampled thumbnail? A scaled screenshot is a locator, never a verdict; "fixed / gone / matches" claimed off a thumbnail is unverified. (Method: `native-visual-eval`.)
 - **Honesty check.** Have I marked iteration-needed items as needing iteration, rather than over-grading toward "ship-ready" to seem productive?
 - **Skill check.** Did I load the right skills, or am I freestyling on intuition?
 

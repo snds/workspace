@@ -367,4 +367,4 @@ visual-qa-toolkit/
 ## Related
 - hub → [[lead-visual-qa]]
 - spoke → [[reference-video-review]]
-- peer ↔ [[vis-vlm-multimodal]] · [[vis-classical-opencv]]
+- peer ↔ [[vis-vlm-multimodal]] · [[vis-classical-opencv]] · [[native-visual-eval]]

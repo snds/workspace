@@ -10,9 +10,9 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 246,
+    "total": 247,
     "by_tier": {
-      "cross-cutting": 25,
+      "cross-cutting": 26,
       "foundation": 22,
       "hub": 40,
       "spoke": 159
@@ -2964,7 +2964,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:80fa686fb7f9ad71d74795ba032e8bba0e16bb5c089c13161a62a168c9f754a5"
+      "hash": "sha256:0627ddd9a4cc053d1573a192ce64ec2b12755a7afabb8a14e1adcc7cf519c058"
     },
     "legion-narrative-design": {
       "path": "03-skills/legion-narrative-design/SKILL.md",
@@ -3392,6 +3392,45 @@
       "requires": [],
       "hash": "sha256:bdd118bb2888cbc99a0c4cb320f772c856d1695c43a10879322acec46fa8b360"
     },
+    "native-visual-eval": {
+      "path": "03-skills/native-visual-eval/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "quality",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "visual-qa-toolkit",
+        "lead-visual-qa",
+        "reference-video-review"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "native resolution",
+        "high-res screenshot",
+        "downsample",
+        "downscaled",
+        "capture and chunk",
+        "1:1 pixels",
+        "canvas readback",
+        "preservedrawingbuffer",
+        "banding",
+        "aliasing",
+        "grain",
+        "dither",
+        "moire",
+        "zoom in",
+        "full res",
+        "pixel-level",
+        "retina",
+        "screenshot looks low-res"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "hash": "sha256:0eb2afdcc2bfdd622b84560391aad2276dffd6c4d16c14c8b1f7d42d7ca4b5dd"
+    },
     "omni-project": {
       "path": "03-skills/omni-project/SKILL.md",
       "tier": "hub",
@@ -3640,7 +3679,7 @@
         "ffmpeg",
         "yt-dlp"
       ],
-      "hash": "sha256:d6ab21be355725cf6a17fe2de4594bdb3e961d74759c94feb808d777b71d6d94"
+      "hash": "sha256:a98fb10fd84cbdeee4bff9f3cdb84d61aab15d487cbc62944b5312d198cde9b4"
     },
     "sci-astro-objects": {
       "path": "03-skills/sci-astro-objects/SKILL.md",
@@ -4915,7 +4954,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:f5521695389b935dc5d2e593f906681ff47efad9e1b57cc6ebc0c7290ae0191b"
+      "hash": "sha256:e3c6c6b8c77c6c34678506062b96506dcd89de8523dd500f23faff22b22ab61f"
     },
     "visual-qa-ui-design": {
       "path": "03-skills/visual-qa-ui-design/SKILL.md",
@@ -5841,6 +5880,9 @@
       "design-foundations",
       "lead-motion-designer",
       "motion-transitions"
+    ],
+    "native-visual-eval": [
+      "native-visual-eval"
     ],
     "omni-project": [
       "omni-project"

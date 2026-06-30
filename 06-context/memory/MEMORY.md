@@ -12,5 +12,7 @@ New entry: copy `_template.md`, fill it in, add a line below.
 ## Entries
 
 - [[fact-workspace-repos]] — `fact` · the two workspace repos; `snds/workspace` is canonical going forward.
+- [[fact-unraid-server]] — `fact` · Sean's Unraid home server: how to reach it (LAN / key / sandbox) + what runs on it.
+- [[feedback-infra-ip-disclosure]] — `feedback` · internal/LAN IPs OK to record; external/WAN IP never (the real attack surface).
 - [[decision-portable-workspace-refactor]] — `decision` · why the workspace became portable, git-native, LLM-agnostic.
 - [[relational-context]] — `feedback` · the working-relationship texture, in the agent's voice, carried across sessions (lives at `../relational-context.md`).
