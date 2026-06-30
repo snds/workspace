@@ -21,6 +21,33 @@ Keep entries concise. This is a handoff log, not a journal.
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-06-30
+Agent: Claude Opus 4.8
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): Workspace foundations — framework migration (#10) + brain /optimize audit
+Artifacts:
+  - 01-frameworks/10-perception-integrity.md — NEW top-level framework #10 "Perception Integrity": cross-cutting native-resolution precondition to ALL visual evaluation (design QA, game/3D, shaders, photography, data-viz). Principle here; method stays in the native-visual-eval skill.
+Decisions:
+  - Promoted perception integrity from Last-Mile Craft §2.5 to standalone framework #10 (it governs all visual work, not just design finishing). Named "Perception Integrity" — principle in framework, method in native-visual-eval skill.
+  - Framework set is now ten (01–10): nine cross-domain operating lenses + #09 the design-domain hub. Embedded copies (#05 §2.5, #06 Resolution check + reference protocol, README #05 bullet) slimmed to pointers; #05/#06 kept reading-complete.
+  - Workspace-wide framework-count enumerations updated to ten (00-README full pass, _FRAMEWORKS, _HOME, CLAUDE.md, BOOTSTRAP, brain.mdc); CLAUDE.md + brain.mdc also gained the previously-missing #09.
+  - /framework-check expanded 5→10 (six core lenses always-run; situational lenses 07–10 gated by domain) — autonomous scope call, flagged for Sean to confirm.
+Pending resolved:
+  - Build visual-qa-toolkit skill — found already built + registered (2026-06-30 /optimize); docs flipped from "being built" to built.
+Other changes:
+  - /optimize full audit (first since 2026-04-27): 9 findings (P0 1 · P1 4 · P2 4), 7 fixed, logged to audit-log.md. P0 = validate-workspace was RED (memory file unlisted in MEMORY.md) → fixed, all three validators green.
+  - native-visual-eval + lead-visual-qa surfaced in _SKILLS.md Visual QA cluster; _HOME skill count 60+→280+; new-project default frameworks five→ten.
+Next:
+  - Confirm /framework-check 5→10 gating model matches intent.
+  - Refresh the opt-out optimize/SKILL.md stale "5 framework files (01–05)" read-list next time that skill is edited.
+Deferred push:
+  - 3 local commits (764ac03, 25509d0, + this session) NOT pushed — origin/main diverged with a1c1925 (Work MacBook Pro "externalize local memory to workspace"). Sean to handle the merge. True conflict set (5 files): session-log.md, MEMORY.md, project-context.md (additive — keep both) + CLAUDE.md, 01-frameworks/05-last-mile-craft-framework.md (both edited content — review). Suggested: `git pull --no-rebase`, resolve keeping both sides for the additive files, re-run the 3 validators, push.
+--- END BLOCK ---
+
+---
+
+--- SESSION BLOCK ---
 Date: 2026-06-22
 Agent: Claude Opus 4.8
 Surface: Claude Code (Mac desktop app)

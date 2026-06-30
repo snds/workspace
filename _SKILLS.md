@@ -30,7 +30,7 @@ LIMIT 60
 - **Figma:** [[03-skills/figma-canvas-designer/SKILL|figma-canvas-designer]], [[03-skills/figma-plugin-dev/SKILL|figma-plugin-dev]]
 - **Legion game:** [[03-skills/legion-project/SKILL|legion-project]] → [[03-skills/lead-game-designer/SKILL|lead-game-designer]] / [[03-skills/lead-art-director/SKILL|lead-art-director]] / [[03-skills/lead-game-developer/SKILL|lead-game-developer]]
 - **Icon fonts:** [[03-skills/variable-icon-font-architect/SKILL|variable-icon-font-architect]] + math spokes
-- **Visual QA:** [[03-skills/visual-qa-toolkit/SKILL|visual-qa-toolkit]] (being built)
+- **Visual QA:** [[03-skills/native-visual-eval/SKILL|native-visual-eval]] (native-resolution capture — the precondition; framework #10's method) + [[03-skills/visual-qa-toolkit/SKILL|visual-qa-toolkit]] (instrumented measurement) + [[03-skills/lead-visual-qa/SKILL|lead-visual-qa]] (judgment)
 - **Workspace mgmt:** [[03-skills/workspace-bootstrap/SKILL|workspace-bootstrap]]
 
 ## `.claude/skills/` — Claude Code slash commands

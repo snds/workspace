@@ -1,7 +1,7 @@
 # Project Context — Sean Sands
 _Authoritative source: this file (06-context/project-context.md)_
 _Written by any agent — the git checkout is the source of truth._
-_Last updated: 2026-06-18_
+_Last updated: 2026-06-30_
 
 > **Platform note (2026-06-16):** the workspace itself was refactored to be portable, git-native, and
 > LLM/surface/device-agnostic, then consolidated onto `main` at `github.com/snds/workspace` (16-PR stack,
@@ -32,7 +32,7 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 - [ ] **Seed `07-projects/04-claude-figma-plugin/SESSION-STATE.md`.** Active project; bring it up to parity with the four seeded on 2026-04-21. Remaining seeds (03-omni, 12-MCS, 15-DavinciRemake) are deferred until those projects are next touched.
 - [ ] **Act on Opus 4.7+ skill audit findings.** Report at `05-artifacts/active/skill-network-audit_opus-4.7_2026-04-21.md`. Five prioritized findings; the highest-leverage is extracting ~200 lines of design theory from `ds-advisor` and routing it to the Aesthetic Lens + Last-Mile Craft frameworks, plus resolving `ds-advisor` / `design-engineer` trigger overlap.
 - [ ] **Add framework-layer pointers to key skills.** The six highest-leverage skills (`workspace-bootstrap`, `ds-advisor`, `design-engineer`, `figma-canvas-designer`, `variable-icon-font-architect`, `lead-art-director`) should reference the relevant frameworks on demand. Pattern documented in the audit report. Bundle with the audit-findings session.
-- [ ] **Build `visual-qa-toolkit` skill.** Dedicated session. Ten scripts, configs, report templates, runner, and skill documentation. Scope captured in the Last-Mile Craft framework's "Augmented perception" section.
+- [x] ~~**Build `visual-qa-toolkit` skill.**~~ Done (observed built 2026-06-30 /optimize) — `03-skills/visual-qa-toolkit/` ships the ten scripts, `configs/` (default/Centric/Legion), `qa-suite.py` runner, `tests/`, README; registered in `skills.registry.json`. Paired with the new `native-visual-eval` skill (native-resolution capture, now framework #10) which runs *before* it.
 - [ ] **Data table cell anatomy + state matrix.** Text and numeric cell types first. Part of the PLM data table documentation project (90 tables audited).
 - [ ] **Component Set Manager — bulk export finalization + filename template UI.** Figma plugin.
 - [ ] **Open centric-ui PR #2 (component stories).** 22 component + 3 feature stories staged; held until [centric-ui#34](https://github.com/cpes-software/centric-ui/pull/34) merges so the PR diff is clean.
@@ -215,9 +215,9 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 
 ### AI-Powered Design Assessment — Exploratory
 **Status:** Research / exploratory
-**Summary:** Bridging visual audit (component assessment) and code generation tools for enterprise PLM. Goal: reduce manual transcription between design tools and dev handoff. Connects to the planned `visual-qa-toolkit` skill (to be built in dedicated session).
+**Summary:** Bridging visual audit (component assessment) and code generation tools for enterprise PLM. Goal: reduce manual transcription between design tools and dev handoff. Connects to the `visual-qa-toolkit` skill (instrumented-perception layer, now built) and `native-visual-eval` (native-resolution precondition, framework #10).
 
-**Next:** Build `visual-qa-toolkit` as the instrumented-perception layer.
+**Next:** Apply the visual-QA stack (`native-visual-eval` → `visual-qa-toolkit` → `lead-visual-qa`) against a real PLM component-assessment pass.
 
 ---
 

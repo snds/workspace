@@ -89,7 +89,7 @@ Ten top-level frameworks govern all project work. They sit **above** any skill.
 Compressed summaries: **[01-frameworks/00-README.md](01-frameworks/00-README.md)** — read this first.
 Team practices: **[01-frameworks/team-practices-and-decisions.md](01-frameworks/team-practices-and-decisions.md)**.
 
-Use `/framework-check` to run current work through all six as a critique pass.
+Use `/framework-check` to run current work through the operating frameworks (the six core lenses always; situational lenses 07–10 when the work touches their domain) as a critique pass.
 
 **Always-load for QA work:** any task signalling audit, review, critique, refinement, clean-up, iteration, alignment, or last-mile finish loads framework #06 *before* doing anything else. The pre-output gate in #06 is non-negotiable.
 
@@ -142,7 +142,7 @@ Slash-command workflows native to Claude Code. Small, focused, invocable by `/na
 - **`/session-end`** — write session block, update project-context, commit, push
 - **`/reconcile`** — merge session blocks from multiple machines
 - **`/new-project`** — scaffold `07-projects/NN-name/` with SESSION-STATE template
-- **`/framework-check`** — critique current work through the five frameworks
+- **`/framework-check`** — critique current work through the ten operating frameworks (core always, situational when relevant)
 - **`/optimize`** — workspace audit: stale items, contradictions, drift, consolidation; logs to `06-context/audit-log.md`
 
 ---

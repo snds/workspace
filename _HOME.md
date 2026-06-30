@@ -12,7 +12,7 @@ you read this.
 
 - [[_FRAMEWORKS|Frameworks]] — the ten that govern every project
 - [[_CONTEXT|Context]] — who, what, where, when (role, preferences, sessions, artifacts)
-- [[_SKILLS|Skills]] — 60+ skill library, hub and spokes
+- [[_SKILLS|Skills]] — 280+ skill library, hub and spokes
 - [[_PROJECTS|Projects]] — active work across all domains
 - [[_CHEATSHEET|Cheatsheet]] — slash commands, trigger phrases, Obsidian shortcuts
 

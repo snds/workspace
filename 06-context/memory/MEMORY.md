@@ -15,4 +15,5 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[fact-unraid-server]] — `fact` · Sean's Unraid home server: how to reach it (LAN / key / sandbox) + what runs on it.
 - [[feedback-infra-ip-disclosure]] — `feedback` · internal/LAN IPs OK to record; external/WAN IP never (the real attack surface).
 - [[decision-portable-workspace-refactor]] — `decision` · why the workspace became portable, git-native, LLM-agnostic.
+- [[decision-commercial-data-licensing]] — `decision` · default to commercially-usable data/asset sources; quarantine + reconcile non-commercial (CC-BY-NC) sources.
 - [[relational-context]] — `feedback` · the working-relationship texture, in the agent's voice, carried across sessions (lives at `../relational-context.md`).

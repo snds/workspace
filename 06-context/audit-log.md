@@ -34,7 +34,38 @@ _The dispatcher reads the most recent date from this file to decide whether to s
 
 ## Entries
 
-## 2026-04-27 — Windows Desktop
+## 2026-06-30 — Personal MacBook Pro
+
+**Scope:** full (frameworks · MOCs · context · `.claude` skills · bootstrap · settings; stable docs grep-checked). Run immediately after the #10 Perception Integrity framework migration.
+**Findings:** 9 — P0: 1 · P1: 4 · P2: 4
+**Skipped (opt-out `audit_skip: true`):** `_CHEATSHEET.md`, `08-knowledge/cross-domain/workflow-patterns.md`, `.claude/skills/optimize/SKILL.md` (note: carries stale "5 framework files" read-list text), `06-context/session-log.md`.
+
+**P0 (workflow-breaking):**
+- `validate-workspace.py` RED — `decision-commercial-data-licensing.md` not listed in `06-context/memory/MEMORY.md`.
+
+**P1 (friction):**
+- `visual-qa-toolkit` fully built + registered but documented as "(being built)/planned" in `_SKILLS.md` + `project-context.md` (×3).
+- `/framework-check` ran only 5 of 10 frameworks post-migration (ignored #06 always-load + #10 cross-cutting).
+- `CLAUDE.md` self-contradicted on `/framework-check` count ("all six" vs "the five frameworks").
+- New `native-visual-eval` skill (framework #10's method) absent from `_SKILLS.md` Visual QA cluster.
+
+**P2 (polish):**
+- `new-project/SKILL.md` "default: all five" frameworks → ten.
+- `_HOME.md` "60+ skill library" understated (286 SKILL.md dirs).
+- Framework preamble sibling-lists — reviewed, **not drift** (deliberate cumulative convention; #10 conforms).
+- `_HOME` vs `_MOC` dual front-door — reviewed, **deliberate** (daily dashboard vs structural map; already cross-linked).
+
+**Fixes applied this run:**
+- P0: added `decision-commercial-data-licensing` row to `MEMORY.md` (gate now green).
+- P1: flipped `visual-qa-toolkit` → built in `_SKILLS.md` + closed pending item + updated AI-Design-Assessment project summary/next in `project-context.md`; added `native-visual-eval` + `lead-visual-qa` to `_SKILLS.md` Visual QA cluster; expanded `/framework-check` to ten (six core always + four situational gated by domain) in its SKILL.md; reconciled both `CLAUDE.md` references.
+- P2: `new-project` default → all ten; `_HOME` → "280+ skill library".
+- All three validators green (workspace · links · integrity).
+
+**Carried forward:**
+- `/framework-check` scope expansion (5→10) was decided autonomously (six core always-run, 07–10 situational). Flagged for Sean to confirm the gating model matches intent.
+- The opt-out `optimize/SKILL.md` Step-1 read list still says "the 5 framework files (01–05)" — not editable under its own `audit_skip`, but worth a manual refresh next time that skill is touched.
+
+
 
 **Scope:** full
 **Findings:** 9 — P0: 1 · P1: 5 · P2: 3
