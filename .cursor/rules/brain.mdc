@@ -69,9 +69,10 @@ Before committing, run: `build-registry.py` → `build-related.py` → `validate
 `validate-links.py` → `validate-workspace.py` (CI runs them too). A write that fails a gate isn't finished.
 
 ## Frameworks, skills, conventions
-- **Frameworks (8):** see [`01-frameworks/00-README.md`](../../01-frameworks/00-README.md) for compressed
+- **Frameworks (10):** see [`01-frameworks/00-README.md`](../../01-frameworks/00-README.md) for compressed
   summaries — Aesthetic Lens, UI/UX Operational, Collaboration & Critique, Research & Evidence, Last-Mile
-  Craft, QA Operating Model, Integration & Review, and **Workspace Contribution** (governs editing the workspace).
+  Craft, QA Operating Model, Integration & Review, **Workspace Contribution** (governs editing the workspace),
+  **Component & Pattern** (design-domain hub), and **Perception Integrity** (native-resolution precondition to all visual evaluation).
 - **Skills:** `03-skills/` (hub/spoke). Don't bulk-load — route per AGENTS.md and read `load_chains` from the
   registry. `.claude/skills/` are Claude Code slash commands (not available in Cursor).
 - **Conventions:** artifacts `context_descriptor_vN.N_YYYY-MM-DD.ext` (never overwrite — increment);

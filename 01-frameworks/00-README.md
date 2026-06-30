@@ -1,15 +1,15 @@
 # Frameworks — Overview and Navigation
 
 _Workspace: `01-frameworks/`_
-_Last updated: 2026-06-08_
+_Last updated: 2026-06-30_
 
-Nine top-level documents that govern how design, **components & patterns**, collaboration, research, craft, QA, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. Eight are cross-domain operating lenses; **#09 is the design-domain hub** for components and patterns. They're the portable layer that stays consistent even when the specific work shifts.
+Ten top-level documents that govern how design, **components & patterns**, collaboration, research, craft, QA, **perception integrity**, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. Nine are cross-domain operating lenses; **#09 is the design-domain hub** for components and patterns. They're the portable layer that stays consistent even when the specific work shifts.
 
-This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all eight full documents.
+This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all ten full documents.
 
 ---
 
-## The nine frameworks
+## The ten frameworks
 
 | # | Framework | Answers |
 |---|---|---|
@@ -22,12 +22,13 @@ This README is the orientation layer. Load it when you need to know which framew
 | 07 | **Integration & Review Framework** | How do we land work so it merges cleanly and reviews well? |
 | 08 | **Workspace Contribution Framework** | How/when/where/what/why do we edit the workspace itself? |
 | 09 | **Component & Pattern Framework** | What is each component for, when do I reach for it, and how do they compose? |
+| 10 | **Perception Integrity** | Are the pixels I'm judging real? |
 
 ---
 
 ## Recommended reading order
 
-**First pass (01–06).** Read in numerical order. They build on each other — Aesthetic Lens sets the philosophical ground, UI/UX lays operational structure on top, Collaboration and Research govern how the work gets produced and justified, Last-Mile governs the finishing layer that ties it all together, and the QA Operating Model frames every audit / review / iteration outcome against target-user expectations. Frameworks 07 (integration) and 08 (contribution) are orthogonal meta-layers — load them when landing work or editing the workspace itself.
+**First pass (01–06).** Read in numerical order. They build on each other — Aesthetic Lens sets the philosophical ground, UI/UX lays operational structure on top, Collaboration and Research govern how the work gets produced and justified, Last-Mile governs the finishing layer that ties it all together, and the QA Operating Model frames every audit / review / iteration outcome against target-user expectations. Frameworks 07 (integration) and 08 (contribution) are orthogonal meta-layers — load them when landing work or editing the workspace itself. Framework 09 (component & pattern) is the design-domain hub — load it for any component/pattern work. Framework 10 (perception integrity) is the cross-cutting precondition to *all* visual evaluation — it fires the moment a fine visual detail is in question, in any domain.
 
 **By context (once familiar).** Load only what's relevant:
 
@@ -39,10 +40,12 @@ This README is the orientation layer. Load it when you need to know which framew
 | Component/pattern choice, composition, the component schema, DESIGN.md | 09 (+ 01, 02) |
 | Difficult conversation, pushback, shared disagreement memory | 03 |
 | Evidence threshold, confidence tier, advocacy calibration | 04 |
-| Design review, visual QA, handoff, finishing audit | 01, 02, 05, 06 |
-| Iteration, refinement, clean-up, alignment work | 06 (always), then 05 |
+| Design review, visual QA, handoff, finishing audit | 01, 02, 05, 06, 10 |
+| Iteration, refinement, clean-up, alignment work | 06 (always), then 05, 10 |
+| Judging any fine visual detail — render, screenshot, artifact, reference, asset | 10 (always) |
+| Game / 3D / shader / render review (Legion) | 01, 05, 10 |
 | Game art direction (Legion) | 01, 05 |
-| Icon / variable font system | 01, 05 |
+| Icon / variable font system | 01, 05, 10 |
 | Architectural or interior reference | 01, 05 |
 | Branching, PRs, merging, multi-branch consolidation | 07 |
 | Editing the workspace itself — skills, frameworks, memory, archive, structure | 08 |
@@ -118,7 +121,7 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 - Four tiers: Intent (pre-design) → Construction (during authoring) → Finishing (pre-handoff) → Post-ship audit.
 - Ten craft categories: typography, spacing/rhythm/grid, color/contrast, component anatomy, token usage, icon systems, interaction/motion, accessibility, copy/voice, code-level craft.
 - Enforcement distributed across four surfaces: Claude's reliable authoring, Claude's perception (baseline + augmented), human perception, tooling. Name which surface is enforcing what.
-- **Perception integrity (non-negotiable precondition):** never judge fine visual detail from a downsampled image. Capture at native resolution — zoom the subject so the artifact fills the frame, or read the frame back in 1:1 native chunks — and name the resolution judged at before claiming fixed/gone/matching. A thumbnail is a locator, never a verdict. Method in the standalone `native-visual-eval` skill (no hub dependency).
+- **Perception integrity (non-negotiable precondition) — now its own framework, [#10](#10--perception-integrity):** never judge fine visual detail from a downsampled image; capture at native resolution and name the resolution judged at before claiming fixed/gone/matching. Promoted out of #05 because it's cross-cutting beyond craft. Method in the standalone `native-visual-eval` skill (no hub dependency).
 - Augmented perception via Pillow/NumPy/OpenCV/scikit-image closes pixel-level gaps — used at specific moments, not as constant background.
 - Every delivery produces an enforcement handoff artifact: enforced / reviewed / needs your eyes / should be tooling.
 - Operational state persists across sessions via `SESSION-STATE.md` (per-project).
@@ -179,11 +182,25 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 - Delivery layers: this framework (the why) · `ux-component-library` skill (procedure) · `ux-components` MCP (per-component data) · `DESIGN.md` (visual identity) · `AGENTS.md` + lint (enforcement).
 - Run the `DESIGN.md` gap-detection / self-prompting protocol when UI work starts on a project with no visual-identity anchor.
 
+### 10 — Perception Integrity
+
+**Core conviction.** A visual judgment is only as truthful as the pixels it runs on. Never judge fine visual detail from a downsampled image — capture at native resolution (zoom the subject so the artifact fills the frame, or read the frame back in 1:1 native chunks) and state the pixel dimensions judged at before claiming anything is fixed, gone, matching, or clean. A thumbnail is a locator, never a verdict. It is the precondition to baseline perception, augmented perception, human review, and reference comparison alike.
+
+**When to invoke.** The instant a fine visual detail is in question, in *any* domain — design QA, game/3D renders, shader and dither artifacts, reference art, photography, data-viz, OCR-able text. Steps aside only for gross locator questions (where is it, is it on screen, overall layout) a thumbnail answers honestly.
+
+**Key operating habits.**
+- Native-resolution capture before any fine-detail call; thumbnail as locator, never verdict.
+- State the number — pixel dimensions + effective scale — before "fixed / gone / matches / clean". No number → not verified.
+- PNG (lossless) before judging banding/edges, so the codec isn't mistaken for the render.
+- Read the app's *real* composited frame (composer, not raw `renderer.render`).
+- Capture native first → measure with `visual-qa-toolkit` → judge with `lead-visual-qa`.
+- Method lives in the standalone `native-visual-eval` skill (no visual-QA-hub dependency).
+
 ---
 
 ## How they interconnect
 
-The seven frameworks are layered, not parallel. They're listed in the order they compose:
+The core operating lenses (01–06) are layered, not parallel — they compose in numerical order (diagrammed below). The remaining frameworks (07–10) are orthogonal meta-layers that fire across whatever the core produces. They're listed in the order they compose:
 
 ```
                      ┌─────────────────────────────┐
@@ -224,7 +241,8 @@ The seven frameworks are layered, not parallel. They're listed in the order they
 - **05 → all.** Convention drift and craft failures feed back into whichever upstream framework the issue surfaces from — research signal, IA failure, aesthetic drift.
 - **07 ⟂ all.** Integration & Review is orthogonal to the content frameworks: whatever framework produced the work, #07 governs how it's partitioned and landed so review stays cheap. It fires at the boundary where work crosses from *done* to *merged* — and is the only framework whose audience is the reviewer, not the artifact.
 - **08 ⟂ all.** Workspace Contribution is the other orthogonal meta-layer: whatever the work, #08 governs *where it gets written and how* — the routing map, per-layer add/extend rules, the memory and archive protocols, and the portable session protocol. It fires whenever a change touches the workspace's own structure (skills, frameworks, references, context, memory, knowledge), not a project deliverable.
-- **09 ⟂ all.** Component & Pattern Framework is the design-domain hub: orthogonal to the operating lenses (01–08), it loads for any component/pattern work and routes *out* to the `ux-component-library` skill, the `ux-components` MCP, `DESIGN.md`, and `AGENTS.md` enforcement. Where 02 decides *which pattern/metaphor*, 09 supplies the component-level *what / when / why / how-composed*.
+- **09 ⟂ all.** Component & Pattern Framework is the design-domain hub: orthogonal to the operating lenses (01–08, 10), it loads for any component/pattern work and routes *out* to the `ux-component-library` skill, the `ux-components` MCP, `DESIGN.md`, and `AGENTS.md` enforcement. Where 02 decides *which pattern/metaphor*, 09 supplies the component-level *what / when / why / how-composed*.
+- **10 ⟂ all (and *beneath* 05/06).** Perception Integrity is the cross-cutting precondition to every visual judgment: orthogonal to all the others because it applies wherever a render, frame, or image asset is assessed — design, game/3D, shaders, photography, data-viz — but it sits *underneath* 05 and 06 specifically, because their perception surfaces (baseline + augmented in 05, the Resolution check in 06's gate) are only trustworthy on real pixels. 05 says *measure it*; 06 says *against the right bar*; 10 says *on native pixels, or it isn't verified*. Routes *out* to the standalone `native-visual-eval` skill (no hub dependency) for method.
 
 ---
 
@@ -242,10 +260,10 @@ The seven frameworks are layered, not parallel. They're listed in the order they
 
 ## Notes for LLMs loading this README
 
-**Token budget guidance.** The nine frameworks total ~2,100 lines of markdown. This README runs ~285 lines and captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For branching, PR, or consolidation work, load #07.
+**Token budget guidance.** The ten frameworks total ~2,250 lines of markdown. This README runs ~300 lines and captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For any fine visual-detail judgment, load #10 (it's short, and its `native-visual-eval` skill carries no hub dependency). For branching, PR, or consolidation work, load #07.
 
 **When the README isn't enough.** The compressed summaries preserve the *what* but not the *why* — the examples, the canon references, the tier descriptions with thresholds, the principle-to-check translations. Any serious reasoning task in the framework's domain should load the full document.
 
-**Updates.** Framework numbering is stable (01–09). Any future framework additions should extend the sequence (10, 11, etc.) or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly.
+**Updates.** Framework numbering is stable (01–10). Any future framework additions should extend the sequence (11, 12, etc.) or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly. (#10 Perception Integrity was added 2026-06-30 by exactly this process — promoted from Last-Mile Craft §2.5 to a first-class cross-cutting framework.)
 
 **Operational state.** This folder is static reference. Operational continuity between sessions lives in per-project `SESSION-STATE.md` files (see framework 05's Operational State section for the spec) and in `../06-context/session-log.md` for cross-project session logs.

@@ -73,7 +73,7 @@ This ritual costs ~150 tokens per session start in exchange for cross-surface co
 
 ## Frameworks (the operating layer)
 
-Eight top-level frameworks govern all project work. They sit **above** any skill.
+Ten top-level frameworks govern all project work. They sit **above** any skill.
 
 - **[01-frameworks/01-aesthetic-lens.md](01-frameworks/01-aesthetic-lens.md)** — philosophical ground, visual/aesthetic judgment
 - **[01-frameworks/02-ui-ux-operational-framework.md](01-frameworks/02-ui-ux-operational-framework.md)** — UX/UI operational decisions
@@ -83,6 +83,8 @@ Eight top-level frameworks govern all project work. They sit **above** any skill
 - **[01-frameworks/06-qa-operating-model.md](01-frameworks/06-qa-operating-model.md)** — target-user QA lens, default skill loading, reference-comparison protocol, iteration-default mindset
 - **[01-frameworks/07-integration-and-review-framework.md](01-frameworks/07-integration-and-review-framework.md)** — branching, PRs, merge order, reviewable diffs
 - **[01-frameworks/08-workspace-contribution-framework.md](01-frameworks/08-workspace-contribution-framework.md)** — how/when/where/what/why to edit the workspace itself; routing map, memory + archive protocols
+- **[01-frameworks/09-component-and-pattern-framework.md](01-frameworks/09-component-and-pattern-framework.md)** — design-domain hub: what each component is for, when to reach for it, how they compose; the universal schema + AI-legible / `DESIGN.md` layer
+- **[01-frameworks/10-perception-integrity.md](01-frameworks/10-perception-integrity.md)** — cross-cutting precondition to all visual evaluation: never judge fine visual detail from a downsampled image; capture at native resolution, state the pixels judged at
 
 Compressed summaries: **[01-frameworks/00-README.md](01-frameworks/00-README.md)** — read this first.
 Team practices: **[01-frameworks/team-practices-and-decisions.md](01-frameworks/team-practices-and-decisions.md)**.

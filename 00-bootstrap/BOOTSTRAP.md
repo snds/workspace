@@ -18,7 +18,7 @@ files; git is the sync layer.
 ```
 AGENTS.md            universal contract · llms.txt  machine entry · CLAUDE/CURSOR/PERPLEXITY.md  adapters
 00-bootstrap/        this getting-started + setup
-01-frameworks/       operating models (01–08; 08 governs editing the workspace itself)
+01-frameworks/       operating models (01–10; 08 governs editing the workspace itself, 10 is the native-resolution perception precondition)
 02-shared-references/ standards: ontology + routing map, frontmatter spec, epistemic/artifact standards
 03-skills/           skill library + skills.registry.json (generated graph)
 04-preferences/      behavioral defaults
