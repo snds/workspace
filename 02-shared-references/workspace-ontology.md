@@ -62,7 +62,13 @@ Consult before any write. Mirrored (compressed) in [[AGENTS]] and expanded with 
 | A durable standard / spec / vocabulary | `02-shared-references/` | additive |
 | Why a structural choice was made | `06-context/memory/` (`type: decision`) | decision record |
 | A generated deliverable | `05-artifacts/` | versioned, never overwrite |
+| An actual repo / codebase / non-Figma working file or asset | the platform-relative `Projects/` dir (resolve to the local checkout per device) | never inside this workspace; never hardcode the path |
 | Something being retired | `_archive/` + `ARCHIVE-LOG.md` | tombstone + provenance |
+
+> **Externalize everything.** Nothing durable lives in an agent's private/internal memory (Claude
+> Code's `.claude` store, a Chat/Design session, any per-tool memory) — it routes to one of the rows
+> above. The only thing an agent keeps internally is a pointer back here. This is an [[AGENTS]] Core
+> rule; rationale in [[decision-externalize-everything-to-workspace]].
 
 ## Foundations: when a domain earns one
 

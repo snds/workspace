@@ -55,4 +55,58 @@ Bare `border-*` utilities default to `currentColor` (the dark text) in Tailwind 
 gray default. Add the shadcn-standard `@layer base { * { border-color: var(--color-border) } }`
 or dividers/footers render as the text color.
 
-See memory `project_centric-ui-radix-palette`, `feedback_radix-step-apca-governs-color`.
+## 6. Applying it — role → Radix step → use-class (the application layer)
+
+When a color looks wrong or fails contrast, **diagnose by role → Radix step → use-class → pick
+the token at that step in the element's own hue stack.** Never nudge a hand-authored hex. The
+centric-ui foundation is a full **Radix 12-step** system (every hue — Zinc/neutral, Blue/primary,
+Red, Green, Orange, Cyan, Yellow — has steps 1–12 in Light+Dark, plus alpha `A{n}` stacks).
+
+**Contrast standard: APCA (Lc) is PRIMARY; WCAG 2.x AA is the FALLBACK** only when an APCA target
+can't be met. Evaluate every text/icon-on-surface pair with APCA's polarity-aware Lc (rough use
+targets: ~Lc 90 body, 75 content, 60 large/headline, 45 large-bold + non-text/UI, 30 spot/disabled)
+— not WCAG ratios. APCA is directional: dark-on-light ≠ light-on-dark; pick the foreground polarity
+yielding the higher |Lc|.
+
+**Step → role → use-class:**
+- **1–2** app/subtle backgrounds (FILL only): `background`=Zinc1, `card`/`popover`=white→Zinc2.
+- **3** component surface (FILL): `muted`/`secondary`=Zinc3; soft status bg = hue3.
+- **4** hover surface (FILL): `accent`=Zinc4 (neutral hover, NOT brand).
+- **5** active/selected surface (FILL): `selected`=Blue5 (tinted, never the solid).
+- **6–8** borders/separators (BORDER/RING only, never a fill): `border`=Zinc6 (subtle), `input`=Zinc7
+  (**control border — THE INPUT TRAP: `input` is the input's border, never its fill; an input's fill
+  is `card`/`background`**), Zinc8 = hover/high-contrast edge.
+- **9–10** solids (FILL of CTAs/status/toggles + focus-ring stroke): `primary`=Blue10, `ring`=Blue9,
+  `destructive`=Red9, `success`=Green9, `warning`=Orange9, `info`=Cyan9, `caution`=Yellow9.
+- **11** secondary text (TEXT): `muted-foreground`=Zinc11.
+- **12** primary text (TEXT): `foreground`=Zinc12.
+
+**Use-class gate (catches most bugs):** fills come from steps 1–5 and 9–10; borders/rings from 6–8
+(focus ring = step-9 accent stroke); text from 11–12. A token used outside its class IS the bug
+(e.g. a Select painted with `input`/Zinc7 = a step-7 border token used as a fill → swap fill to
+`card`, keep Zinc7 as the 1px edge).
+
+**On-solid foreground is CONTRAST-DRIVEN (APCA Lc), not fixed-white** (the `*-foreground` token):
+for each step-9 solid, choose white vs the hue's dark step (12 light / 1 dark) by whichever yields
+the higher APCA Lc. Bright 9s (Yellow→`caution`, Orange→`warning`, Cyan→`info`) tend to need dark;
+dark 9s (Blue/Red/Green) keep white. **Re-derive per hue with APCA — don't assume.**
+
+**Soft variants** = step-3 tint surface + step-11 text by default (`destructive-soft-foreground`=Red11);
+bump text to 12 only where APCA on that hue's 11-over-3 misses. Text on tinted surfaces (steps 2–5,
+e.g. `selected`=Blue5): verify with APCA, 11→12 only where required.
+
+**Dark mode:** re-resolve by STEP, not hex; keep alpha tokens alpha (`border-subtle`=ZincA4 — never
+flatten); preserve elevation order bg < card < popover per mode.
+
+**Known/by-design:** steps 6–7 borders are intentionally subtle (step 8 for a hard edge); the
+resting `input` border is flagged for a deliberate decision (subtle aesthetic vs APCA/WCAG-1.4.11
+non-text target). **NOTE — a 2026-06 WCAG-ratio pass that pushed `warning-/info-foreground` to dark
+and `*-soft-foreground`/`selected-foreground` to step 12 was REVERTED at Sean's request; originals
+restored (foregrounds=`inverted`/white, soft=step 11, selected=Blue 11). Any future corrections must
+be re-derived under APCA-primary, WCAG-fallback.**
+
+This application layer is the operational complement to decision §3 (APCA as governance): §3 says
+*don't mutate primitives*; this section says *how to select the right token at the semantic layer*.
+
+Related: [[figma-ds-surface-authoring]] · [[enterprise-saas-design-patterns]]. (Migrated from local
+memory `radix-context-step-color-rules`; supersedes the old `feedback_radix-step-apca-governs-color`.)

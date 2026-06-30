@@ -194,6 +194,10 @@ Resolve from `hostname` at boot. Never ask, never carry forward.
 - Never modify `00-bootstrap/templates/` content without asking.
 - Never rename files without asking — Obsidian links will break silently.
 - Never commit `05-artifacts/` or most of `07-projects/` — see `.gitignore`.
+- **Never store durable content in Claude Code's local/private memory.** Externalize everything to the
+  workspace at its correct layer per the [AGENTS.md](AGENTS.md) "Externalize everything" Core rule and
+  the [routing map](02-shared-references/workspace-ontology.md). The local `.claude` memory holds only
+  a single pointer back to the workspace — nothing else.
 
 ---
 

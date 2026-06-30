@@ -346,6 +346,55 @@ Invocation is context-dependent. When the work is in my reach (uploaded images, 
 
 For full invocation patterns, config structure, exit code semantics, and per-check details, load the `visual-qa-toolkit` skill directly.
 
+### 3a. Full-result high-resolution review (the no-spot-check rule)
+
+Before calling **any** visual-outcome task done — Figma canvas, generated UI, sticker sheets,
+anything rendered — do a **high-resolution review of the WHOLE deliverable**, not a spot-check of a
+few representative items. Structural/numeric verification (sizes unchanged, props present,
+`sizeKept:true`) does **not** catch visual problems: overflow collisions, clipping, mis-pinned
+constraints, z-order, alignment drift. Absolute-positioned overlays (dropdowns, pickers, editors,
+inline-edit fields that regain their fill) overflow far beyond their host's bounding box and
+silently collide with neighbors even when every element's *layout* size is unchanged. (Measured on a
+real miss: rich-text editor overflowed 778px, date picker ~395px, enum lists ~260px — colliding with
+adjacent rows the structural checks all passed.)
+
+Four operating rules:
+- **Render the full result at sufficient resolution to actually SEE problems** — per-section /
+  per-region if large; cap each image so it stays legible. Spot-checking 3 of 26 sections is how real
+  collisions ship.
+- **Broaden the review context — don't tunnel on the literal ask.** Scan the WHOLE frame for ANY
+  defect, not just the one being fixed: labels overlaid by a neighbor's overflow, mis-pinned
+  constraints, double-padding, clipped glyphs, alignment drift, z-order. Fixing exactly what was
+  asked while missing an obvious adjacent issue in the same view is a recurring failure.
+- **Question parameters that "look off" — context is king (surface-agnostic).** When spacing/size/
+  position looks wrong, investigate the *parameter* behind it (a `min`/`max` width/height, fixed
+  dimension, hardcoded margin, `clip`, constraint) and ask *why it exists and whether it should* —
+  judged against how SIBLING content is built. A value needed on one element is often unnecessary or
+  over-scoped on a peer. Never evaluate a value in isolation; only in the context of the surrounding
+  output.
+- **Precision over global blunt fixes.** Reserve space PER ELEMENT (per-item `minHeight` = content +
+  *that* item's measured overflow) so only the elements that need room get it — never set a region's
+  gap to the region's MAX overflow. When overlays overflow, MEASURE the overflow programmatically
+  (scan each item's descendants for max bottom/right beyond its layout box) and size spacing to
+  exactly clear it. Don't band-aid with `paddingBottom`; own the gap via a container's `itemSpacing`.
+
+**Recursively, and before presenting — never make the user the QA loop.** Run this review on the
+**full subtree** after *every* compose/edit, not just at the end: walk the nested structure AND
+screenshot at adequate resolution (structure and pixels each hide different failures), propagating the
+checks through nested instances and localized sub-elements (defects hide several levels deep — an
+instance inside an instance inside a card). Fix internally; present only verified results. Shipping a
+composition and waiting for the user to catch sizing/clipping/nesting problems burns tokens and their
+time — the user must not be the QA loop. When something must stay imperfect, say so explicitly rather
+than letting them find it. **Clip-content cropping is a named must-catch:** content sliced by an
+ancestor's `clipsContent` toggle (text cut mid-line, images sliced, values ending abruptly) must be
+flagged before declaring any visual done — the fix is either structural (let the container/element
+hug/grow, or adjust the constraint) or a deliberate truncation decision, never silent slicing.
+
+This pairs with §3 (augmented perception supplies the measurement) and with framework #06's
+pre-output gate (reference-comparison protocol). See knowledge `[[figma-ds-surface-authoring]]`
+(floats are absolute + constrained → don't inflate the host bbox, but DO overflow visually; the
+clip-content fix procedure and the `resize()`→FIXED gotcha).
+
 ### 4. Human perception (yours)
 
 What remains yours, and what should be explicitly called out in review outputs:

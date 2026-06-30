@@ -21,6 +21,31 @@ Keep entries concise. This is a handoff log, not a journal.
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-06-30
+Agent: Claude Opus 4.8
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s):
+  - Workspace contribution — migrated ALL durable content out of Claude Code's local/private memory into the portable workspace, and installed a standing "externalize everything" rule.
+Decisions:
+  - Standing directive (set by Sean): keep NOTHING durable in any agent's private memory; everything routes to the workspace (or the platform `Projects` dir for repos/working files). The only internal memory is a pointer back. Rationale: `06-context/memory/decision-externalize-everything-to-workspace.md`.
+  - Cross-surface persistence via the universal contract: encoded as an AGENTS.md Core rule + ontology routing row + llms.txt + CLAUDE.md, so Claude Code / Chat / Design + any future agent inherit it.
+  - Routing per the workspace-ontology map; consolidation = merge into existing knowledge entries where they fit; the two Centric efforts → `07-projects/02-centricPLM/context/`.
+Artifacts (new):
+  - `08-knowledge/design/figma-ds-surface-authoring.md` — DS Figma surface authoring conventions (surface/overlay rules + build-from-real-components + transliteration + clip-content).
+  - `08-knowledge/engineering/figma-cli-authoring.md` — figma-cli Yolo/CDP connect / branch-target / author.
+  - `06-context/memory/decision-externalize-everything-to-workspace.md` + `decision-component-pattern-framework-system.md`.
+  - `07-projects/02-centricPLM/context/{cell-indicators-pilot,toolbar-context-architecture}.md` (project-local, gitignored).
+Artifacts (extended):
+  - knowledge: `radix-derived-color-system` (§6 role→step→use-class), `figma-plugin-patterns` (§15–17 MS-icon/section-coords/headless-MCP); frameworks #05 (§3a full-result high-res review + recursive-before-presenting QA) + #02 (control placement by scope of effect); `04-preferences` (side-chat handback); `AGENTS.md`/`CLAUDE.md`/`llms.txt`/`workspace-ontology.md` (externalize rule); knowledge `_INDEX.md` + memory `MEMORY.md` indices.
+Migration:
+  - 19 local memories relocated (17 + 2 a concurrent session added mid-task); "Drive is dead" memory retired (already covered by `decision-portable-workspace-refactor` + `fact-workspace-repos`). Local `.claude` memory reduced to one pointer (`externalize-to-workspace.md`). Link validator green (246 skills, 0 warnings).
+Next:
+  - A concurrent session was active in the same memory dir — if it writes more local memories, re-run the externalize routing for those.
+  - `00-bootstrap/setup/README.md` had an orphaned (non-this-session) change left uncommitted for Sean to reconcile; the 2026-06-22 figma-repo-sync-plugin block below was previously uncommitted and is included here to preserve it.
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
 Date: 2026-06-22
 Agent: Claude Opus 4.8
 Surface: Claude Code (Mac desktop app)
@@ -44,6 +69,32 @@ Pending added:
   - Optional polish: relocate _Slider/Thumb into the Slider section; resolve the pre-existing _Calendar/Day↔Calendar 8px overlap (needs a category relayout).
 Next:
   - Sean publishes the library.
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
+Date: 2026-06-22
+Agent: Claude Opus 4.8
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s):
+  - 09-figma-repo-sync-plugin — engine pass executed regen-in-the-loop (B2 tokenization + B1 Type→booleans).
+Decisions:
+  - Regen-in-the-loop (Option A): implement a slice → Sean regens in Figma + confirms → next slice. Used throughout B2 + B1.
+  - 7 B1 decisions locked (icon-only fold-into-master, prop names, fixed padding, badge gating, cornerRadius-9999 auto, avatar -8 sanctioned, spec grid omit).
+  - S6 (square icon render) DEFERRED — Figma can't bind width per-mode-conditionally (square icon cells force FIXED width → clip text); follow-up = separate icon-button or padding-tune.
+Artifacts (PRs on cpes-software/centric-ui, stacked, no self-merge):
+  - PR #122 B2 tokenization (transparent token bind + zero→space-0 + recursive geometry-binding pass `bindGeometryRecursively`). Verified. Build 11.4.23.
+  - PR #124 B1 Type→booleans — Button + Badge now State-only ComponentSets with boolean icon-presence props; iconNode + 4-clones deleted; State expansion kept. Net −287 lines. Verified (both regens). Build 11.4.29.
+  - engine-pass-plan.md (NEW) — code-grounded 3-track plan.
+Key findings/fixes:
+  - B2 first cut was patchy (only applyFrameStyling bound; 131 literal sites) → fixed with a recursive post-assembly geometry pass (binds equal-valued tokens → render-safe).
+  - B1 boolean-prop regression: slim block deleted the "Leading content"/"Trailing content" props the hasIconAxis block creates → fixed (removed the carried-over Type-era deletes).
+  - False DIRTY-START on State-only sets (legitimate State=Default base miscounted) → fixed.
+  - The 7,952 "get undefined" log lines are Figma-internal LoAF perf instrumentation, not plugin errors.
+Pending added:
+  - C lint gate (last engine-pass track); S6 square-icon follow-up.
+Next:
+  - C lint gate (passive scanner → blocking + convention validators). Then S6 follow-up + the deferred items.
 --- END BLOCK ---
 
 --- SESSION BLOCK ---
