@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# ws-bootstrap/cursor v2 — emits {"continue":true,"additional_context":...}
+# ws-bootstrap/cursor v2 — sessionStart hook. Contract verified 2026-07-06 against
+# cursor.com/docs/hooks: stdin JSON, stdout {"additional_context": "..."} injected
+# into the conversation's initial system context. Fire-and-forget. User-global
+# registration lives at ~/.cursor/hooks.json (doctor-managed).
 WS="$HOME/Projects/workspace"
 RULES="$(cat "$WS/00-bootstrap/dist/RULES.txt" 2>/dev/null | tr '\n' ' ')"
 if [ -f "$WS/AGENTS.md" ]; then
@@ -9,4 +12,4 @@ if [ -f "$WS/AGENTS.md" ]; then
 else
   CTX="[ws-bootstrap/cursor] Workspace missing at $WS. Open with [workspace: UNREACHABLE · checkout missing]. Remote: github.com/snds/workspace. Rules: $RULES"
 fi
-python3 -c 'import json,sys;print(json.dumps({"continue":True,"additional_context":sys.argv[1]}))' "$CTX" 2>/dev/null || printf '{"continue": true}\n'
+python3 -c 'import json,sys;print(json.dumps({"additional_context":sys.argv[1]}))' "$CTX" 2>/dev/null || printf '{}\n'

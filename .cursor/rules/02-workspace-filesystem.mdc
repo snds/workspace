@@ -10,9 +10,11 @@ globs: ["**/03-skills/**", "**/06-context/**", "**/00-bootstrap/**", "**/01-fram
 The workspace is a plain git checkout. Resolve its root as the directory containing `AGENTS.md`;
 read and write ordinary files there. No cloud-drive mount, no symlink alias.
 
-Available to all models in Cursor; per `01-agent-controller.mdc`, only Claude writes.
+Available to all models in Cursor. Per `01-agent-controller.mdc`, **any capable agent may write** —
+every write must pass that file's write-quality gates (quality, intent integrity, cross-link
+continuity, no zombies).
 
-## Claude — allowed without confirmation
+## Any agent — allowed without confirmation
 
 - Read any workspace file to answer context questions
 - Write artifacts to `05-artifacts/active/` (naming convention required)
@@ -20,7 +22,7 @@ Available to all models in Cursor; per `01-agent-controller.mdc`, only Claude wr
 - Update skills in `03-skills/` when explicitly requested
 - Run `09-tools/compile-cursor-rules.py` to sync compiled outputs
 
-## Claude — requires user confirmation
+## Any agent — requires user confirmation
 
 - Modifying `01-frameworks/` or `04-preferences/user-preferences.md`
 - Modifying any file in `00-bootstrap/`
