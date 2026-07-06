@@ -1,0 +1,3 @@
+- Figma work uses real library components, never hand-built shapes.
+- Durable context/learnings/decisions are written to the workspace, never to local agent memory.
+- Employer repos (c8/*) never receive personal-workspace content, and workspace content is never pasted into employer surfaces.

@@ -162,7 +162,33 @@ Switch intent/size on an instance with `node.setExplicitVariableModeForCollectio
 The one non-bindable gap is link's **underline** — `textDecoration` can't be a variable/mode, so
 apply it as a per-instance label override when link mode is used.
 
-## 11. Probe structure before "fixing" render-ambiguous findings
+## 11. `use_figma` MCP as the branch-safe fallback when the CDP daemon flakes
+
+When the figma-cli daemon enters its flaky state (eval returns NOTHING even for scripts with
+top-level try/catch, `verify`/`exportAsync` hang, `daemon restart` doesn't recover), the Figma
+Dev-Mode MCP `use_figma` tool is a **fully viable, branch-safe alternate write path** (validated
+2026-07-02 on the C8 cell-indicators branch):
+
+- **Branch targeting:** pass the **branchKey as the `fileKey`** (`…/design/:fileKey/branch/:branchKey/…`
+  → use `:branchKey`). Verify with the guard pattern before ANY write: branch-only node resolves,
+  main-only node does NOT (`getNodeByIdAsync` both, check `!!`).
+- **It sees and edits the live branch doc** (multiplayer-synced server session). The old caveat
+  ("MCP renders from cloud, can't see fresh local CDP edits") applies to `get_screenshot`/
+  `get_metadata` on *unsynced local* edits — `use_figma`'s own edits are in ITS session, and
+  **inline `await node.screenshot()` sees them immediately** → build + visually verify in ONE call,
+  no separate flaky render step. The inline screenshot alone catches real bugs (pale token,
+  wrong text node) that the blind CLI path missed for whole cycles.
+- **Different failure surface:** scripts are atomic (error → nothing applied), errors come BACK
+  as messages (no silent daemon swallowing). Follow the figma-use skill rules: no IIFE wrapper,
+  top-level await/return, ≤1 `setCurrentPageAsync` per call, small incremental steps, return all IDs.
+- **Gotchas that carry over from CLI work:** 005 icon keys may be plain COMPONENT keys —
+  `importComponentSetByKeyAsync` fails, fall back to `importComponentByKeyAsync`. And
+  `findOne(n=>n.type==='TEXT')` on a cell instance hits the **hidden Label/Helper** inside the
+  nested Text field, not the visible value — a "successful" `characters=` write changes nothing
+  visible. Target the visible node explicitly (walk ancestors for `visible!==false`, or match the
+  current placeholder characters).
+
+## 12. Probe structure before "fixing" render-ambiguous findings
 
 Twice a confident visual finding was a FALSE POSITIVE caught only by a structural probe: "Slider
 thumbs differ" was a track-fill perception artifact (all thumbs are identical 16px frames);

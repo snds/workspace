@@ -22,7 +22,12 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-WORKSPACE_ROOT = Path(os.environ.get("CLAUDE_PROJECT_DIR", Path.cwd()))
+_project_dir = os.environ.get("CLAUDE_PROJECT_DIR")
+if not _project_dir:
+    # Not invoked by Claude Code from a project checkout (stray copy, mis-registered
+    # hook). Abort silently rather than treating an arbitrary cwd as the workspace.
+    sys.exit(0)
+WORKSPACE_ROOT = Path(_project_dir)
 CONTEXT_DIR = WORKSPACE_ROOT / "06-context"
 SESSION_LOG = CONTEXT_DIR / "session-log.md"
 PROJECT_CONTEXT = CONTEXT_DIR / "project-context.md"
@@ -71,6 +76,12 @@ TRIGGER_WORDS = {
     "centricsymbols": "03-skills/variable-icon-font-architect/SKILL.md",
     "omni": "03-skills/omni-project/SKILL.md",
     "figma plugin": "03-skills/figma-plugin-dev/SKILL.md",
+    "figma": "03-skills/figma-canvas-designer/SKILL.md + 03-skills/design-engineer/SKILL.md — real-library-components rule",
+    "design system": "03-skills/ds-advisor/SKILL.md + design-engineer",
+    "component": "03-skills/design-engineer/SKILL.md",
+    "variant": "03-skills/design-engineer/SKILL.md",
+    "mockup": "03-skills/figma-canvas-designer/SKILL.md",
+    "wireframe": "03-skills/figma-canvas-designer/SKILL.md",
 }
 
 # Knowledge hints: topic keywords → relevant 08-knowledge/ entry paths.
@@ -92,6 +103,12 @@ KNOWLEDGE_HINTS = {
     "session end": "08-knowledge/cross-domain/workflow-patterns.md",
     "optimize": "08-knowledge/cross-domain/workflow-patterns.md",
     "audit_skip": "08-knowledge/cross-domain/workflow-patterns.md",
+    "figma": "08-knowledge/design/figma-ds-surface-authoring.md",
+    "component": "08-knowledge/design/figma-ds-surface-authoring.md",
+    "variant": "08-knowledge/design/figma-ds-surface-authoring.md",
+    "design system": "08-knowledge/design/figma-ds-surface-authoring.md",
+    "mockup": "08-knowledge/design/figma-ds-surface-authoring.md",
+    "wireframe": "08-knowledge/design/figma-ds-surface-authoring.md",
 }
 
 

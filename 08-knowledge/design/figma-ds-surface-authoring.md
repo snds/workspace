@@ -102,6 +102,27 @@ the component gains the missing prop.
    "AUTO"` (or HUG) resets height to FIXED → multi-line content then clips. Set sizing modes last, or
    re-assert HUG after resize.
 
+7b. **Clip-content stays OFF by default — never enable it unless absolutely necessary (STANDING RULE,
+   Sean 2026-06-30).** On every frame, component, and **component SET**, leave `clipsContent=false`.
+   Clipping silently cuts off the exact things DS cells depend on overflowing: indicator/effect
+   overlays, dropdowns/popovers, focus rings, drop shadows. **Critically, a component-SET frame with
+   `clipsContent=true` does NOT auto-grow and HIDES any newly-added variant** (cost a real debugging
+   cycle when a 4th `.cell/indicator` variant rendered invisibly until the set was resized). The only
+   legitimate exceptions are narrow and deliberate: true image/media **CROP** frames, and intentional
+   dense-grid truncation (Rule 7a step 3). Default construction = clip OFF; when building or auditing,
+   treat any `clipsContent=true` as a smell to justify or clear. Sweep is cheap — recurse the tree and
+   set `clipsContent=false` wherever true (skip genuine image-crop frames). This is the default-OFF
+   companion to 7a's detect-and-fix procedure.
+
+7c. **Indicators/badges that can land on a variable background need a contrast backing (halo).** A small
+   status dot/ring (e.g. a cell corner indicator) reads fine on a plain/white cell but loses contrast on
+   image thumbnails, hover tints, or colored chips (light-on-light, color-on-busy). Give the mark a white
+   **halo backing disc** (mark + ~3–4px, placed *behind* it) plus a faint drop shadow (≈0.14 alpha, r1.5)
+   — the avatar-status-dot pattern: near-invisible on white at real cell scale, legible on any surface.
+   **Prefer ONE shared treatment** (refactor the indicator component) over forking an image-only variant —
+   avoids divergence and covers tints/chips for free. Judge it at REAL cell scale, not a high-zoom preview
+   (zoom exaggerates the halo/shadow). Validated on C8 cell corner indicators over refmap-image Filled photos.
+
 8. **Oriented overlays (Tooltip, Hover Card) need a variant per required position** (Top/Right/
    Bottom/Left ± align). The **caret/arrow's halfway point must sit flush with the parent
    container's boundary** — use absolute positioning for the caret (Figma has no negative padding).
