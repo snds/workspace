@@ -5028,11 +5028,11 @@
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "bootstrap",
-        "resume",
-        "new session",
+        "workspace-bootstrap",
+        "reload the workspace",
+        "run the handshake",
+        "ritual missing",
         "load context",
-        "get started",
         "reconcile sessions",
         "legion"
       ],
@@ -5040,7 +5040,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:6d1471249d4c22b0d2acfbdf94a647b39ae23a1545352a68ab933f2fb1b6e5a9"
+      "hash": "sha256:3e950822c762b32b382e381d0782ce972ccdc1c1c65ff3c1103e0aa285e96cf4"
     }
   },
   "load_chains": {
