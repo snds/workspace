@@ -2,7 +2,7 @@
 
 _Location: `01-frameworks/team-practices-and-decisions.md`_
 _Maintainer: Sean Sands_
-_Last updated: [YYYY-MM-DD when edited]_
+_Last updated: 2026-07-05_
 
 A layered reference for code-level craft and design-engineering conventions, organized so that *which* team I'm on and *when* a practice was adopted are both surfaceable. Read by the Last-Mile Craft Framework (section: Code-level craft) as the authoritative source for team-specific conventions that override or extend the general best-practices baseline.
 
@@ -105,9 +105,11 @@ _Stack-agnostic. Applies to any language, framework, or vendor — the mechanism
 - No raw values at the component authoring layer.
 - Exceptions documented explicitly, not tolerated silently.
 
-### Accessibility
+### Iconography
 
-- Semantic HTML first. ARIA supplements, doesn't replace, semantic structure.
+- Default to **Google Material Symbols** for app/product UI icons — never hand-roll SVG icon paths for standard iconography. (Bespoke variable-icon-font work — e.g. CentricSymbols — is a distinct craft exercise, not the default for app product work; see Last-Mile Craft Framework §Icon and imagery systems.)
+- **Self-host** the variable font (bundle it into the build; no runtime CDN) so the surface works offline. Expose **one** reusable `Icon` component that owns the variable axes (`opsz`, `wght`, `FILL`, `GRAD`), tracks optical size to the rendered size, and inherits `currentColor`; consumers reach for symbols by name.
+- Icon-to-text alignment (cap height, x-height, baseline) is explicit, per the craft framework.
 - Hit targets ≥ 24×24px (WCAG 2.2 minimum); ≥ 44×44px for touch-primary contexts.
 - Focus indicators visible and distinct from hover.
 - Focus order logical. Keyboard navigation complete.
