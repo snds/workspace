@@ -119,7 +119,7 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 - DocMode uses `useSyncExternalStore` (avoids `setState`-in-`useEffect`).
 - Storybook iframe theme sync via `preview-head.html` URL-globals parser + dark-mode body bg override (centric-ui's `@theme inline` bakes light values for CDS gray utilities, so dark mode only works through `--sem-*`).
 
-**Cross-session memory:** [`project_ds_docs_admin_todos.md`](file:///Users/sean.sands/.claude/projects/-Users-sean-sands-projects-cpes-software/memory/project_ds_docs_admin_todos.md) tracks open admin tasks (CODEOWNERS, required status check, deployment).
+**Admin tasks** (CODEOWNERS, required status check, deployment) are tracked as Pending Items in this file — migrated out of Claude Code local memory 2026-06-30; see memory `decision-externalize-everything-to-workspace`.
 
 **2026-06-02 — Radix-derived color system:** re-architected the centric-ui color foundation onto **Radix Colors as source of truth** (values, 12-step context semantics, contrast) with a Tailwind-class compatibility layer (nearest-OKLCh-L aliases), APCA-as-governance (selection/audit, not primitive mutation), centric-blue replacing Radix blue, and brand-aware semantic hue assignment (info→cyan, warning→orange — no semantic context collides with the brand; collision rule ported from OMNI). New `--sem-selected` (Radix step 5) for active/selected vs neutral `accent` (hover). Built a Palette Review Storybook harness (25 components, before/after × light/dark, flagging) to drive the review. Shipped as 4 PRs (#64–67). Details in memory `project_centric-ui-radix-palette`; generator lives at `~/projects/cpes-software/centric-ui/scripts/generate-color-palette/`.
 
