@@ -186,6 +186,25 @@ the component gains the missing prop.
     the element on resize — a corner badge left at `{MIN,MIN}` slides to mid-cell when the column
     widens.
 
+15. **FILL absorbs surplus, never deficit — every FILL region carries an explicit `minWidth` equal
+    to its content minimum (STANDING RULE, Sean 2026-07-06: "avoid such overlap at all costs").**
+    A `layoutSizingHorizontal=FILL` child (spacer, flexible label region, space-between half) shrinks
+    toward zero when its parent's fixed width leaves less room than the child's content needs; with
+    `clipsContent=false` the content then silently overflows and **overlaps the adjacent sibling**
+    (with clip ON it silently truncates — Rule 7a/7b). Auto-layout prevents sibling overlap only
+    while every child's minimum is respected. Three obligations: (a) **authoring** — when building a
+    component, set `minWidth` on every FILL region to its content minimum (for text anchors like a
+    selection count, size to the max realistic string, e.g. "9,999 Selected"; anchors never
+    truncate); (b) **consuming** — a FIXED resize of an instance must never go below
+    Σ(children minimums + paddings + gaps); if the target width is smaller, **fold the content
+    first, then shrink the frame** — the frame follows the content, never compresses it; (c)
+    **detecting** — `minWidth` is NOT overridable on instance children, so a consumer cannot patch
+    a library gap locally: sweep for it (`layoutGrow>0 || FILL` where content bbox > frame bbox →
+    flag) and file the fix against the library component. *(Concrete miss: the CDS FloatingToolbar
+    Figma component authors its `context` count region as bare FILL with no minWidth; fixed-width
+    instances on the C8-99959 collapse board compressed it to 1–42px against 81px of text, sliding
+    "12 Selected" under the controls frame — caught by Sean, fed into CDS-1247 as a component ask.)*
+
 ## C. Code→Figma transliteration judgment calls
 
 1. **Focus states must use a focus token.** Use the `ring` (focus) color for the focus indicator

@@ -21,6 +21,29 @@ Keep entries concise. This is a handoff log, not a journal.
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-07-06
+Agent: Claude Fable 5
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s): 02-centricPLM (C8-99959 floating toolbar) · workspace bootstrap v2
+Artifacts:
+  - workspace-bootstrap-durability-plan_v2.0_2026-07-06.md — red-teamed layered bootstrap plan (05-artifacts, local-only)
+  - floating-toolbar_ticket-drafts_v1.1_2026-07-06.md — POSTED: C8-99959 comment 3565642 · CDS-1247 comment 3565643 · CDS-1388 filed + linked (Relates → CDS-1247)
+  - Figma "Floating Toolbar — Responsive Collapse" board (toolbar file, node 3543-69658) — bug repro, 4-state collapse ladder on real CDS components, GTIN empty states A/B, FILL-overlap fix
+Decisions:
+  - Bootstrap v2 SHIPPED, all phases: deterministic layers L1–L4 + SessionEnd audit + launchd doctor (4h+login); ritual token frozen ABI; Cursor sessionStart gate PASSED (user-global ~/.cursor/hooks.json confirmed); snds plugin 0.3.0 ships the hook. See [[decision-bootstrap-v2-guarantee]].
+  - C8-99959 design decision posted: bar always fits its owning pane; anchor-pinned collapse ladder (Roomy/Medium/Narrow/Floor); pane-measured breakpoints; expanded surfaces on the escape layer; slot contract {full, compact, priority, minWidth} → CDS-1247 asks.
+  - Figma FILL-deficit standing rule: FILL absorbs surplus never deficit; explicit minWidth on every FILL region (library-side — minWidth is NOT overridable on instance children); fold content first, frame follows → figma-ds-surface-authoring rule 15.
+Pending added:
+  - Paste BEACON.md into 4 chat surfaces, then workspace-doctor --ack-chat
+  - Curate 00-bootstrap/dist/beacon-repos.txt (candidates: design-system, open-design)
+Next:
+  - Restart Claude Code to activate snds plugin 0.3.0 hook layer
+  - Watch ~/.claude/ws-state/audit.log for MISS lines over the first week
+  - Follow up CDS-1247 asks + CDS-1388 with the CDS team
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
 Date: 2026-06-30
 Agent: Claude Opus 4.8
 Surface: Claude Code (Mac desktop app)
