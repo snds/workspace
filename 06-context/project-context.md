@@ -1,7 +1,7 @@
 # Project Context — Sean Sands
 _Authoritative source: this file (06-context/project-context.md)_
 _Written by any agent — the git checkout is the source of truth._
-_Last updated: 2026-06-30_
+_Last updated: 2026-07-07_
 
 > **Platform note (2026-06-16):** the workspace itself was refactored to be portable, git-native, and
 > LLM/surface/device-agnostic, then consolidated onto `main` at `github.com/snds/workspace` (16-PR stack,
@@ -40,7 +40,7 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 - [ ] **Open centric-ui PR #2 (component stories).** 22 component + 3 feature stories staged; held until [centric-ui#34](https://github.com/cpes-software/centric-ui/pull/34) merges so the PR diff is clean.
 - [ ] **Mark `lint, types, build` as required status check on ds-docs `main`.** CI is green on [ds-docs#1](https://github.com/cpes-software/ds-docs/pull/1); update branch protection via `gh api repos/cpes-software/ds-docs/branches/main/protection` once that PR merges.
 - [ ] **Add `.github/CODEOWNERS` to ds-docs.** Sean to provide the reviewer-per-path list; Claude opens a follow-up PR.
-- [ ] **Wire up production deployment for ds-docs.** Vercel suggested (Next.js auto-detect); set `NEXT_PUBLIC_STORYBOOK_URL` to the deployed Storybook URL so embeds work in prod.
+- [ ] **Wire up production deployment for ds-docs.** Vercel suggested (Next.js auto-detect); set `NEXT_PUBLIC_STORYBOOK_URL` to the deployed Storybook URL so embeds work in prod. Also swap the 28 hardcoded `localhost:6006` Storybook links that [ds-docs#3](https://github.com/cpes-software/ds-docs/pull/3) ships (PageHero chips + home page) once the URL exists. Added 2026-07-07.
 - [x] ~~**Move `~/drive-sync-tools/{drive-audit,drive-monitor}.py` into `08-tools/`.**~~ Done 2026-05-07 — moved into `08-tools/`, whitelisted in `.gitignore`, README added; symlinks at `~/drive-sync-tools/` preserve the original path.
 - [x] ~~**Author `00-bootstrap/setup/setup-identity.sh`.**~~ Done 2026-05-07 — generates both ed25519 keys, writes `~/.ssh/config`, prints pubkeys with paste targets, verifies both `ssh -T`, optionally installs the gitconfig templates. Idempotent.
 - [x] ~~**Author `~/.gitconfig` template with `[includeIf "gitdir:..."]` blocks.**~~ Done 2026-05-07 — `00-bootstrap/setup/gitconfig.template` (global, with includeIf blocks) + `gitconfig.personal.template` + `gitconfig.work.template`. Routes identity by `~/personal/**` and `~/work/**`. Workspace stays on repo-local config.
@@ -104,17 +104,20 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 ---
 
 ### Centric VMS Design System (`centric-ui` + `ds-docs`)
-**Status:** Active — two PRs in flight
+**Status:** Active — four PRs in flight (2026-07-07)
 **Summary:** React 19 / Vite 7 / Tailwind 4 / shadcn-style component library for the Centric VMS platform. Repo: [cpes-software/centric-ui](https://github.com/cpes-software/centric-ui) (private). 2026-04-29: scaffolded Storybook 10 with foundation stories and split component stories into a separate PR. Stood up [cpes-software/ds-docs](https://github.com/cpes-software/ds-docs) (private, Next.js + Fumadocs) as the curated narrative layer; embeds Storybook stories via custom `<StorybookEmbed>` MDX block. Seeded with 8 foundations + 22 components (Design / Code tabs) + 4 patterns. Persistent design/code mode toggle + native foundation layouts + token-level dogfooding.
 
 **Live PRs:**
 - [centric-ui #34](https://github.com/cpes-software/centric-ui/pull/34) — Storybook setup + foundation stories. Awaiting review.
 - [ds-docs #1](https://github.com/cpes-software/ds-docs/pull/1) — LICENSE + CI workflow. CI green; awaiting merge.
+- [ds-docs #2](https://github.com/cpes-software/ds-docs/pull/2) — security deps: next 16.2.4→16.2.10 (13 GHSAs), postcss override, npm audit clean. Stacked on #1; opened 2026-07-07.
+- [ds-docs #3](https://github.com/cpes-software/ds-docs/pull/3) — changelog hub + PageHero/KeyFacts/UseCases blocks + content sweep (the formerly-uncommitted local WIP, fixed forward to green CI). Stacked on #1; opened 2026-07-07.
 
 **Branch protection on ds-docs `main`:** require PR + 1 review + linear history + conversation resolution; force-push and deletion blocked; admin bypass enabled.
 
 **Stack quirks worth remembering:**
-- ESLint pinned to `^9.39.3` (10.x breaks `eslint-config-next@16`).
+- ESLint pinned to `^9.39.3` (10.x breaks `eslint-config-next@16` — still unresolved upstream, vercel/next.js#91702).
+- next hard-pins its nested `postcss` to 8.4.31 even at 16.2.10 → `overrides.next.postcss ^8.5.10` in package.json clears the audit; remove when next bumps its pin. npm quirk: overrides don't retro-apply to existing lockfile entries — delete the nested entry from package-lock + node_modules, then reinstall.
 - ContentTabs uses `@radix-ui/react-tabs` directly (Fumadocs's wrapper omits `value`/`onValueChange`).
 - DocMode uses `useSyncExternalStore` (avoids `setState`-in-`useEffect`).
 - Storybook iframe theme sync via `preview-head.html` URL-globals parser + dark-mode body bg override (centric-ui's `@theme inline` bakes light values for CDS gray utilities, so dark mode only works through `--sem-*`).
@@ -123,7 +126,7 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 
 **2026-06-02 — Radix-derived color system:** re-architected the centric-ui color foundation onto **Radix Colors as source of truth** (values, 12-step context semantics, contrast) with a Tailwind-class compatibility layer (nearest-OKLCh-L aliases), APCA-as-governance (selection/audit, not primitive mutation), centric-blue replacing Radix blue, and brand-aware semantic hue assignment (info→cyan, warning→orange — no semantic context collides with the brand; collision rule ported from OMNI). New `--sem-selected` (Radix step 5) for active/selected vs neutral `accent` (hover). Built a Palette Review Storybook harness (25 components, before/after × light/dark, flagging) to drive the review. Shipped as 4 PRs (#64–67). Details in memory `project_centric-ui-radix-palette`; generator lives at `~/projects/cpes-software/centric-ui/scripts/generate-color-palette/`.
 
-**Next:** Sean reviews the two open PRs. After ds-docs#1 merges → mark CI status check required. After centric-ui#34 merges → open PR #2 with the staged component stories. Review/merge the Radix color-system PRs #64–67 (tokens→components→harness).
+**Next:** Sean assigns reviewers on ds-docs #2 + #3 (2026-07-07). ds-docs merge order **#1 → #2 → #3** (CI only triggers on PRs targeting main, so #2/#3 checks appear after #1 merges and GitHub retargets them). After ds-docs#1 merges → mark CI status check required. After centric-ui#34 merges → open the centric-ui PR with the staged component stories. Review/merge the Radix color-system PRs #64–67 (tokens→components→harness).
 
 ---
 

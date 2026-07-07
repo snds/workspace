@@ -21,6 +21,26 @@ Keep entries concise. This is a handoff log, not a journal.
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-07-07
+Agent: Claude Fable 5
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s): Centric VMS Design System — ds-docs security dependency update + parked changelog work shipped as PRs
+Artifacts:
+  - ds-docs PR #2 (chore/deps-security) — next 16.2.4→16.2.10 (clears all 13 GHSAs incl. 8.6 SSRF + 8.1 middleware bypass), eslint-config-next lockstep, overrides.next.postcss ^8.5.10, transitive audit fixes. npm audit 0 vulns; lint/types/build green.
+  - ds-docs PR #3 (feat/changelog-hub) — the parked changelog system (hub rows + native-dialog article view, feed.json/llms.txt API routes, notification opt-in, sidebar indicator) + PageHero/KeyFacts/UseCases blocks + ~40-page content sweep. 6 CI errors + a useSearchParams prerender failure fixed forward; verified in-browser against the prod build (dialog open/close/deep-link, API url field, zero console errors).
+Decisions:
+  - next 16.2.10 (latest 16.2.x) still hard-pins nested postcss 8.4.31 (GHSA-qx2v-qp2m-jg93) → npm `overrides` is the only clean fix; REMOVE the override when next bumps its pin. Quirk: overrides don't retro-apply to existing lockfile entries — delete the nested package-lock entry + node_modules copy, then reinstall.
+  - Fixed the parked changelog WIP forward to green rather than pushing a red PR; fixes follow repo idiom (useSyncExternalStore over setState-in-effect, Suspense-scoped useSearchParams so /docs/changelog statically prerenders).
+  - Both PRs stacked on chore/license-ci (#1) because it carries the ESLint-9 pin. ds-docs CI only triggers on PRs targeting main → checks appear once #1 merges and GitHub auto-retargets. Merge order: #1 → #2 → #3.
+Pending added:
+  - ds-docs PR #3 ships 28 hardcoded localhost:6006 Storybook links (PageHero chips + home page) — swap when NEXT_PUBLIC_STORYBOOK_URL + deployment land (folded into the existing deployment pending item).
+Next:
+  - Sean assigns reviewers on ds-docs #2 + #3; merge #1 first.
+  - After #1 merges: mark `lint, types, build` required status check (existing pending item), then CODEOWNERS + deployment todos.
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
 Date: 2026-07-06
 Agent: Claude Fable 5
 Surface: Claude Code (Mac desktop app)
