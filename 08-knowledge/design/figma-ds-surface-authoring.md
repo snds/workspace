@@ -205,6 +205,29 @@ the component gains the missing prop.
     instances on the C8-99959 collapse board compressed it to 1–42px against 81px of text, sliding
     "12 Selected" under the controls frame — caught by Sean, fed into CDS-1247 as a component ask.)*
 
+16. **In-flow boolean-toggled utility rows (icon clusters, trailing indicators) — HUG both axes,
+    plus a row-level boolean.** When a component carries a cluster of boolean-toggled elements that
+    must RESERVE SPACE dynamically (e.g. header sort/filter icons that shrink the label when shown),
+    build it as an **in-flow auto-layout row** at the end of the content flow — NOT absolute — so a
+    FILL sibling absorbs the space when icons appear (and End-aligned content abuts the icons instead
+    of being overlapped). Three obligations: (a) the row is **HUG × HUG** so all-hidden children
+    collapse it to zero — an in-flow row left at FIXED width renders a ghost gap when its children
+    are off (⚠ gotcha: converting an ABSOLUTE frame to in-flow via `layoutPositioning='AUTO'`
+    RETAINS its FIXED sizing — re-assert HUG after the conversion); (b) expose a **row-level boolean**
+    (e.g. `Indicators`) bound to the row's own visibility, **DEFAULT OFF** — STANDING RULE (Sean,
+    2026-07-07): *any frame whose children are all visibility-off must itself carry a boolean
+    property, set off by default* — a hidden wrapper can never ghost, and one honest kill-switch
+    beats N implicit ones. Consequence: demos/stickers that flip an inner boolean (e.g. `Sorted`)
+    must also flip the wrapper boolean on. Exemption: load-bearing placeholder regions whose
+    footprint IS the content (refmap image empty-state drop target renders its glyph and defines
+    the hit area — evaluated and exempt); (c) after ANY `layoutMode` conversion on the component
+    root, **re-assert every absolute overlay's geometry** (size to the variant + constraints
+    STRETCH/STRETCH) — conversions silently distort absolute children (the header v2 `active-tint`
+    rendered 3× cell height until re-asserted). Header-label typography note: header labels wrap to
+    **max 3 lines** then ellipsis (`textTruncation='ENDING'`, `maxLines=3`) — longer attribute
+    names shorten at the schema level. Validated on `cell/header (v2)`; all-cells audit 2026-07-07
+    found no other violations (own-tree and instance-wrapper passes).
+
 ## C. Code→Figma transliteration judgment calls
 
 1. **Focus states must use a focus token.** Use the `ring` (focus) color for the focus indicator
