@@ -8,7 +8,7 @@ description: >
   swiftui, ios, xcode, observable, async await, actor, human interface guidelines,
   testflight, app store, UIKit.
 aliases: [mobile-ios-swiftui]
-triggers: [swift, swiftui, ios, xcode, observable, async await, actor, human interface guidelines, testflight, app store, uikit]
+triggers: [swift, swiftui, ios, xcode, observable macro, observableobject, async await, actor, human interface guidelines, testflight, app store, uikit]
 tier: spoke
 hub: lead-frontend-engineer
 domain: engineering

@@ -8,7 +8,7 @@ description: >
   figure ground, visual perception, pre-attentive, visual weight, optical
   adjustment, proximity, similarity, closure.
 aliases: [found-perception]
-triggers: [gestalt, figure ground, visual perception, pre-attentive, visual weight, optical adjustment, proximity, similarity, closure, continuity]
+triggers: [gestalt, figure ground, visual perception, pre-attentive, visual weight, optical adjustment, proximity, similarity, gestalt closure, continuity]
 tier: foundation
 hub: design-foundations
 domain: design

@@ -8,7 +8,7 @@ description: >
   android, jetpack compose, coroutines, flow, viewmodel, clean architecture, material 3,
   gradle, play store, KMP.
 aliases: [mobile-android-kotlin]
-triggers: [kotlin, android, jetpack compose, coroutines, flow, viewmodel, clean architecture, material 3, gradle, play store, kmp]
+triggers: [kotlin, android, jetpack compose, coroutines, kotlin flow, viewmodel, clean architecture, material 3, gradle, play store, kmp]
 tier: spoke
 hub: lead-frontend-engineer
 domain: engineering

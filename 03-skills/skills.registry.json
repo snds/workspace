@@ -535,7 +535,7 @@
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "design",
+        "design foundations",
         "visual design",
         "ui",
         "ux",
@@ -553,7 +553,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:ecb666970353663774ec72759721efb4365f579f7d8cf786d72e4e13fb7facf2"
+      "hash": "sha256:cda8774658759b9e89f4abb20cc5eb712fe856c7bfb75b33f66af2722789b608"
     },
     "devops-ci-cd": {
       "path": "03-skills/devops-ci-cd/SKILL.md",
@@ -1566,14 +1566,14 @@
         "optical adjustment",
         "proximity",
         "similarity",
-        "closure",
+        "gestalt closure",
         "continuity"
       ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "hash": "sha256:6caf0ec7c63d6a49f0edacbdc194713e73152b218d66d5383be8cdaf83b8a4bf"
+      "hash": "sha256:50819b7db55b5bf58d2cb5806d9df1190e29eb1abcc6ced18040f4cd04a1a5cc"
     },
     "found-typography": {
       "path": "03-skills/found-typography/SKILL.md",
@@ -1906,7 +1906,7 @@
         "player experience",
         "game balance",
         "progression",
-        "flow",
+        "flow state",
         "mechanics",
         "feedback loop",
         "player agency"
@@ -1915,7 +1915,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:63da47c443bc705def52e467fe80c652aedefbf5901dbeae5aa27ea8aa5e6091"
+      "hash": "sha256:740208b87461f98d88bc67bafb80b7e526a6658afb6b4656db0855f0f9a138ea"
     },
     "game-scale-traversal": {
       "path": "03-skills/game-scale-traversal/SKILL.md",
@@ -2467,7 +2467,7 @@
         "simulation",
         "fluid",
         "smoke",
-        "fire",
+        "fire effect",
         "volumetrics",
         "god rays",
         "atmospheric scattering",
@@ -2481,7 +2481,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:974acaa75d7333cf6104d0580c81aaa554e686184e90e3a025512dfd7f165dc0"
+      "hash": "sha256:2ebe1f10b3e22a8da4d74917bb76f852f570dc71758dc377d7ac5981746afcac"
     },
     "infod-dashboard-patterns": {
       "path": "03-skills/infod-dashboard-patterns/SKILL.md",
@@ -3189,7 +3189,7 @@
         "android",
         "jetpack compose",
         "coroutines",
-        "flow",
+        "kotlin flow",
         "viewmodel",
         "clean architecture",
         "material 3",
@@ -3201,7 +3201,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:6eb451dc6cdfb657c731dc3bbb1028b34992d78f119726233325df0223870760"
+      "hash": "sha256:89cbbfb67bbf5b524ace06ffa452c9136319c2e931c67fec46cc9e6407fecac2"
     },
     "mobile-ios-swiftui": {
       "path": "03-skills/mobile-ios-swiftui/SKILL.md",
@@ -3219,7 +3219,8 @@
         "swiftui",
         "ios",
         "xcode",
-        "observable",
+        "observable macro",
+        "observableobject",
         "async await",
         "actor",
         "human interface guidelines",
@@ -3231,7 +3232,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:955ee55a146f737d9e53479254c7b8fea65145f693a253b1d1fe7907807562a8"
+      "hash": "sha256:7ad41f889ad18949e6bdbb0bde361c302791799f909dbc0292f3b430af522937"
     },
     "mobile-platform-craft": {
       "path": "03-skills/mobile-platform-craft/SKILL.md",
@@ -4023,7 +4024,7 @@
         "lockfile",
         "secrets",
         "secret management",
-        "vault",
+        "hashicorp vault",
         "ci/cd security",
         "access token",
         "dependabot",
@@ -4033,7 +4034,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:ef7e1836c128f9eb1da139eb352d8edcae0b943a80668487f9cf4938aa3ca61b"
+      "hash": "sha256:ca8a423f0f22479991d5bae676b15544a87009018e3f697cd4fb701b028dbaad"
     },
     "sec-threat-modeling": {
       "path": "03-skills/sec-threat-modeling/SKILL.md",
@@ -4763,7 +4764,7 @@
         "anchor free",
         "nms",
         "non max suppression",
-        "map",
+        "mean average precision",
         "iou",
         "multi object tracking",
         "tracking",
@@ -4779,7 +4780,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:e47aca01e742252b0d5ce288332ed9c288706b5a2a3162051e595538bcb29da8"
+      "hash": "sha256:657fff49957c93207359d14fc2126930d0ff02edf2fa3f10394c497e426a818c"
     },
     "vis-segmentation": {
       "path": "03-skills/vis-segmentation/SKILL.md",
@@ -5087,7 +5088,7 @@
         "headless browser",
         "agent-browser",
         "cdp",
-        "click through",
+        "click through the",
         "log in",
         "fill form",
         "infinite scroll",
@@ -5102,7 +5103,7 @@
       "requires": [
         "agent-browser"
       ],
-      "hash": "sha256:54ebe5f8c63aaa7e8390f3db90b2751a156f35510f414c3f80b3a2d26b8d4991"
+      "hash": "sha256:61fe67b3bbee95aa66c9e1cfb87df93f935159ade871e262e6769a1075f43fe9"
     },
     "webgpu-advanced-rendering": {
       "path": "03-skills/webgpu-advanced-rendering/SKILL.md",

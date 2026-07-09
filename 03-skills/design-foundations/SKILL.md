@@ -8,7 +8,7 @@ description: >
   Triggers whenever design, visual, UI, UX, layout, color, type, composition,
   hierarchy, or aesthetic judgment is in play.
 aliases: [design-foundations]
-triggers: [design, visual design, ui, ux, layout, color, typography, composition, hierarchy, contrast, gestalt, aesthetic, design critique]
+triggers: [design foundations, visual design, ui, ux, layout, color, typography, composition, hierarchy, contrast, gestalt, aesthetic, design critique]
 tier: foundation
 domain: design
 surfaces: ["*"]

@@ -8,7 +8,7 @@ description: >
   or its spokes. Triggers: game design, core loop, game feel, player experience,
   game balance, progression, flow, mechanics.
 aliases: [game-foundations]
-triggers: [game design, core loop, game feel, player experience, game balance, progression, flow, mechanics, feedback loop, player agency]
+triggers: [game design, core loop, game feel, player experience, game balance, progression, flow state, mechanics, feedback loop, player agency]
 tier: foundation
 domain: game
 surfaces: ["*"]
