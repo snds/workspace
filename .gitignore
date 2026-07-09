@@ -87,6 +87,11 @@
 !07-projects/18-bootstrap-generator/
 !07-projects/18-bootstrap-generator/**
 
+# Track the workspace-brain project — standing home for workspace-subject sessions;
+# cross-machine continuity is its entire point (framework #08, 2026-07-09).
+!07-projects/19-workspace-brain/
+!07-projects/19-workspace-brain/**
+
 # ---- Still ignored, even inside tracked folders ----
 
 # Per-user permission grants (machine-local; never share)

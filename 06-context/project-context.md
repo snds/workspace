@@ -233,6 +233,15 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 
 ---
 
+### Workspace Brain
+**Status:** Active
+**Summary:** Standing home for sessions whose subject is the workspace itself (validation, fix, migration, infrastructure). Established 2026-07-09 per the workspace-work project-home rule in framework #08 (FX-13); git-tracked for cross-machine continuity.
+**Folder:** `07-projects/19-workspace-brain/`
+**Triggers:** workspace brain, workspace fix, workspace validation
+**Next:** Complete the FX-1..FX-14 fix session (Phases E–F), then re-run the validation harness and compare scorecards.
+
+---
+
 ## Design System — Current State
 
 **System:** Centric PLM internal DS

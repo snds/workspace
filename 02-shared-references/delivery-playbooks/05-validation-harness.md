@@ -60,6 +60,10 @@ invented, here's what the system did with it, here's why that's what you asked f
 > 2. We pushed it through the exact same path real articles travel.
 > 3. The queue stayed empty — the article was turned away at the source check.
 
+**Illustrate, don't narrate** — evidence defaults to a visual (anatomy diagram, highlighted
+diff, lit-up segment) with prose demoted to captions. *(Sean-approved amendment, 2026-07-09 —
+validated by the artifact-name-checker v1.1 visual-first evidence pattern.)*
+
 ### 3. Non-destructive by construction
 
 The board always runs on invented sample data in a sealed sandbox, with a permanently visible
@@ -93,6 +97,8 @@ requires a command line, the apparatus has already failed its target user.
   check ("not checked here: speed under heavy load, real email delivery, sources behind
   logins"). An always-green board claiming total coverage is decoration, not validation.
   This is [[06-qa-operating-model]]'s honesty check made structural.
+- **The two-read rule:** any board element needing a third read has failed its audience.
+  *(Sean-approved amendment, 2026-07-09.)*
 
 ---
 
@@ -132,6 +138,9 @@ requires a command line, the apparatus has already failed its target user.
 6. **Deliver with the gate.** Run the pre-delivery gate
    ([[02-shared-references/delivery-playbooks/README|Delivery Playbooks README]]); in
    `centric-engineering`, confirm the engineer-facing evidence exists independently of the board.
+7. **Fit check.** On first open, ask Sean whether the board answers at a glance; run
+   refinement questions; iterate as a versioned artifact. *(Sean-approved amendment,
+   2026-07-09.)*
 
 ## Anti-patterns
 

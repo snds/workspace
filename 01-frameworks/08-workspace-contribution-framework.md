@@ -134,6 +134,11 @@ Each layer: what belongs · when to add vs. extend · what never goes here · th
 - **Belongs:** per-project deliverables, local context, `SESSION-STATE.md`.
 - **Never:** workspace-global policy (push that up to frameworks/shared-references).
 - **How:** scaffold via the project template; keep local context local.
+- **Workspace-work project home (2026-07-09):** sessions whose *subject is the workspace
+  itself* (validation, fix, migration, infrastructure sessions) use the standing
+  `07-projects/19-workspace-brain/` — SESSION-STATE + Live handoff like any project — or
+  explicitly declare "no project home — session-log only" in their first checkpoint.
+  Workspace sessions without either have no continuity carrier between agents.
 
 ### `05-artifacts/` — generated outputs
 - **How:** versioned `context_descriptor_vN.N_YYYY-MM-DD.ext`; never overwrite — increment.

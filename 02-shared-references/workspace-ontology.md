@@ -73,6 +73,9 @@ Consult before any write. Mirrored (compressed) in [[AGENTS]] and expanded with 
 | Why a structural choice was made | `06-context/memory/` (`type: decision`) | decision record |
 | A generated deliverable | `05-artifacts/` | versioned, never overwrite |
 | An actual repo / codebase / non-Figma working file or asset | the platform-relative `Projects/` dir (resolve to the local checkout per device) | never inside this workspace; never hardcode the path |
+| Machine-local agent config (`~/.claude`, `~/.cursor` — per-device) | owned by `00-bootstrap/` (canonical copies in `dist/`, installed/verified by the doctor); per-machine install state recorded as a `06-context/memory/` fact | never hand-edit the installed copy — change `dist/`, rerun the doctor |
+| Hook / adapter code (`.claude/hooks/`, surface shims) | versioned in-workspace at its consumption path; canonical machine-layer copies + install notes in `00-bootstrap/` | edit in-workspace; machine layer flows through `dist/` + doctor |
+| Environment / bootstrap logic (installers, doctors, beacons) | `00-bootstrap/` | doctor (`00-bootstrap/doctor/`) is the verifier; keep idempotent |
 | Something being retired | `_archive/` + `ARCHIVE-LOG.md` | tombstone + provenance |
 
 > **Externalize everything.** Nothing durable lives in an agent's private/internal memory (Claude

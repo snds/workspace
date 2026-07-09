@@ -92,11 +92,19 @@ When entering the workspace without prior context, read in this order:
 1. [llms.txt](llms.txt) — machine entry point
 2. `AGENTS.md` (this file)
 3. `03-skills/skills.registry.json` — the skill graph (for routing + load order)
-4. [workspace-ontology.md](02-shared-references/workspace-ontology.md) — vocabulary + routing map
-5. Root helper files such as `_HOME.md`, `_CONTEXT.md`, `_FRAMEWORKS.md`, `_SKILLS.md`
-6. `06-context/` — durable context + memory (`memory/MEMORY.md` index)
-7. Shared references in `02-shared-references/` and preferences in `04-preferences/` when relevant
-8. Project-local context files for the active project; skill files when performing specialized work
+4. [08-knowledge/_INDEX.md](08-knowledge/_INDEX.md) — the knowledge-vault index. Match the
+   task's vocabulary against each entry's `Triggers:` list and read matched entries BEFORE
+   domain work — they carry hard-won constraints that are in neither skills nor context.
+5. [workspace-ontology.md](02-shared-references/workspace-ontology.md) — vocabulary + routing map
+6. Delivery playbooks, in their own load order: resolve the context profile FIRST
+   ([00-context-profiles.md](02-shared-references/delivery-playbooks/00-context-profiles.md)),
+   then the audience contract (01), then the medium playbook the request's own words imply
+   (02 diagrams · 03 data/charts · 04 documents/specs · 05 Proofboard) — see
+   [delivery-playbooks/README.md](02-shared-references/delivery-playbooks/README.md)
+7. Root helper files such as `_HOME.md`, `_CONTEXT.md`, `_FRAMEWORKS.md`, `_SKILLS.md`
+8. `06-context/` — durable context + memory (`memory/MEMORY.md` index)
+9. Shared references in `02-shared-references/` and preferences in `04-preferences/` when relevant
+10. Project-local context files for the active project; skill files when performing specialized work
 
 If a task is clearly project-scoped, move to the nearest project root and read local context immediately after these workspace files.
 
