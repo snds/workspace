@@ -1,6 +1,12 @@
 # Artifact Registry
 <!-- Auto-maintained by Claude. Updated after each task. -->
-<!-- Last updated: 2026-07-09 | Session: Delivery playbooks (Audience & Evidence system) shipped -->
+<!-- Last updated: 2026-07-09 | Session: Workspace fix session (FX-1..FX-14 applied) -->
+
+## Workspace Brain — 07-projects/19-workspace-brain/ (git-tracked)
+
+### 19-workspace-brain/ (README.md + SESSION-STATE.md + notes/)
+- **Purpose**: Standing project home for workspace-subject sessions (validation, fix, migration, infrastructure) per the framework #08 project-home rule (FX-13). Git-tracked — cross-machine continuity is its point.
+- **Last modified**: 2026-07-09 — scaffolded during the fix session; SESSION-STATE carries the FX-1..FX-14 live handoff; registered in project-context.md; routed via dispatcher (`workspace brain` / `workspace fix` / `workspace validation`).
 
 ## Delivery Playbooks — 02-shared-references/delivery-playbooks/
 

@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-07-09 16:00 — checkpoint (mid fix-session, Phase D)_
+_Last updated: 2026-07-09 16:20 — wrap-up (fix session complete, Phases A–F)_
 
 ---
 
@@ -8,14 +8,14 @@ _Last updated: 2026-07-09 16:00 — checkpoint (mid fix-session, Phase D)_
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Applying validation findings FX-1..FX-14 per `05-artifacts/active/workspace_fix-session-prompt_v1.0_2026-07-09.md` (Sean's sign-off). Phases A–C done; D in progress.
-- **Working set**: `.claude/hooks/dispatcher.py` · `03-skills/*/SKILL.md` triggers · `08-knowledge/_INDEX.md` · `02-shared-references/delivery-playbooks/05-validation-harness.md` · `AGENTS.md` · `02-shared-references/workspace-ontology.md` · framework #08 · `~/.claude` machine layer.
-- **Last action**: FX-9/8/10/13 edits applied; scaffolding this project (FX-13) — by Claude Fable 5 · Claude Code (Mac desktop app) · Personal MacBook Pro.
-- **Next action**: Commit Phase D; then Phase E (FX-11 knowledge refresh, FX-7 context profiles in all SESSION-STATEs, audit-log entry); then Phase F (FX-14 + deferred items).
-- **Open decisions**: relocation targets for stray `/Users/snds/CLAUDE.md` + `AGENTS.md` (Phase F — needs Sean's confirm).
-- **Blocked on**: live parent-dir acceptance test — machine OAuth stale (401); Sean must re-login via Claude Desktop, then any session from `~/Projects` verifies via `~/.claude/ws-state/audit.log`.
-- **In-flight / do-not-touch**: nothing uncommitted beyond the current phase's files at each checkpoint.
-- **Agent thread**: `Claude Fable 5 / Claude Code / Personal MBP (2026-07-09): fix session FX-1..FX-14; next = Phase E`.
+- **Current focus**: Fix session COMPLETE — all FX-1..FX-14 committed or explicitly deferred (per-FX outcomes + shas: audit-log 2026-07-09 entry). Awaiting Sean's three confirms + harness re-run.
+- **Working set**: nothing in flight; the fix(FX-n) commit series `3729472..870d992` + session-end commit is the record.
+- **Last action**: /session-end run (session block, registry check, commit+push) — by Claude Fable 5 · Claude Code (Mac desktop app) · Personal MacBook Pro.
+- **Next action**: After Sean re-logs Claude Desktop (OAuth), re-run the validation harness (`05-artifacts/active/workspace_validation-session-prompt_v1.0_2026-07-09.md`) and compare scorecards; the first parent-dir session doubles as the live boot test (check `~/.claude/ws-state/audit.log`).
+- **Open decisions**: (1) spine-file relocation — `~/CLAUDE.md` + `~/AGENTS.md` are byte-identical to `~/.project-spine/exports/` copies, remove/relocate on confirm; (2) 14-variable-icon-font-generator profile (provisional `centric-engineering`); (3) FX-16 ritual-token ABI approach.
+- **Blocked on**: Sean — OAuth re-login + the three confirms above.
+- **In-flight / do-not-touch**: nothing.
+- **Agent thread**: `Claude Fable 5 / Claude Code / Personal MBP (2026-07-09): FX-1..FX-14 applied A–F; next = Sean confirms + harness re-run`.
 
 ### Environment
 - **Context profile**: `personal-solo` — declared in the fix-session prompt; this workspace, `github.com/snds/workspace`.

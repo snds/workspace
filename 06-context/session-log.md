@@ -20,6 +20,38 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-09 — Workspace fix session: FX-1..FX-14 applied (machine layer, dispatcher, triggers, standards, knowledge)
+
+--- SESSION BLOCK ---
+Date: 2026-07-09
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 19-workspace-brain (new standing home, FX-13) — applied validation findings FX-1..FX-14 per Sean's sign-off prompt; launched from the workspace ROOT; project dispatcher fired at boot (the fix prompt's first test, passed).
+Artifacts:
+  - (none in 05-artifacts — deliverables are the fix(FX-n) commit series 3729472..870d992 + audit-log per-FX outcomes)
+Decisions:
+  - ~/.claude/CLAUDE.md is now the doctor-managed beacon; the 12.6KB pre-beacon global standards backed up machine-locally, externalization = FX-15 (pending).
+  - Workspace-work sessions get a standing project home: 07-projects/19-workspace-brain (git-tracked; framework #08 rule).
+  - Single-source rule: dispatcher curated tables own cross-source routes; CLAUDE.md/workflow-patterns tables are illustrative mirrors.
+  - Trigger-routes.md extraction deferred (authority just consolidated in dispatcher; don't churn twice in one day).
+  - Bare `hooks` trigger deliberately NOT added to hooks-contract (React-hooks collision) — deviation from report FX-11 wording, per FX-3's own principle.
+Pending added:
+  - Machine-layer installs on Work MBPs + Windows (incl. one verified post-migration Windows session).
+  - Validation-harness re-run to compare scorecards (pre-req: Claude Desktop re-login — OAuth 401 blocked the live headless acceptance test).
+  - FX-15 externalize pre-beacon global design standards into the workspace.
+  - FX-16 reconcile ritual-token ABI ([workspace: LOADED …]) with the CLAUDE.md ✓-ritual (in-workspace sessions otherwise log MISS).
+  - FX-8 deferred half: tool-neutral trigger-routes.md extraction.
+Pending resolved:
+  - Run the workspace fix session (FX-1..FX-14) — all 14 committed or explicitly deferred; per-FX outcomes + shas in audit-log 2026-07-09 entry.
+Project status changes:
+  - 19-workspace-brain: (new) → Active.
+Next:
+  - Sean: re-login Claude Desktop (OAuth), confirm 14-variable-icon-font-generator profile (provisional centric-engineering), confirm spine-file relocation (~/CLAUDE.md + ~/AGENTS.md byte-identical to ~/.project-spine/exports/), then harness re-run.
+--- END BLOCK ---
+
+---
+
 ### 2026-07-09 — Workspace validation session: six-phase harness + adversarial pass
 
 --- SESSION BLOCK ---
