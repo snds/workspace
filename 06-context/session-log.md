@@ -21,6 +21,31 @@ Keep entries concise. This is a handoff log, not a journal.
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-07-09 (DORMANT SESSION CLOSED — work performed 2026-06-10 -> 06-11; the 02-centricPLM blocks below already continued this thread through July. Read those for current state; this block is the historical record of the founding audit/plan/Figma work.)
+Agent: Claude Fable 5
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s): 05-C8-PLM / 17-data table — Dojo table audit -> TanStack parity -> migration plan -> Figma D0 state variants (Tables branch `Mvspja56GC0x6myay0b9FM`)
+Artifacts: (since migrated to 05-artifacts/active/)
+  - c8_dojo-table-feature-audit_v1.0_2026-06-10.md — 76 features / 16 groups + 10 activation mechanisms (XML view defs ~70%); 2,477 `<View xsi:type="Table">` across 47 module XMLs
+  - c8_table-surface-traversal_v1.0_2026-06-10.md — per-module distribution (top 7 = 63%), surface-type breakdown, reproducible greps
+  - c8_tanstack-parity-analysis_v1.0->v1.2 — v1.2 = 8-agent re-audit vs CDS 2.0.0-develop-80: 17 covered / 31 partial / 28 missing; 12 consolidated asks + verified OSS subcomponent matrix
+  - c8_table-migration-plan_v1.0->v1.2 + c8_table-migration-dashboard_v1.0/v1.1 — design/eng split, 1-designer critical path, Gantt w/ design-needed-by milestones, Jira-ready tickets, item->ticket coverage matrix
+  - Figma (branch): D0 proposal page (6 create-state cards + decisions + RAT-1 frames) · 6 State values (Error, Inline Edit - Error, Save Failed, Saving, Read-only, Skipped (Bulk)) propagated to 24 cell sets (~138 variants), incl. Sean's pattern adjustments (helper padding, helper-off on Read-only/Skipped, disabled bg)
+Decisions:
+  - CDS DataTable (TanStack v8) = settled migration target; `manual*` server-mode flags = highest-leverage CDS ask; XML view-def->ColumnDef adapter = the migration lever for 2,477 views
+  - Create-vs-ratify split: 11 of D0's 18 "missing" cell states already render in CDS code -> RAT-1 ratify pass paired with pilot; only 6 states were draw-work
+  - TableOld = behavioral spec, NOT source to port (dnd-kit 6.3.1 maintenance-only -> pragmatic-drag-and-drop); OSS verified: write-excel-file (exceljs frozen 2023), papaparse, Playwright page.pdf() server-side, Standard Schema validators; NO TanStack clipboard/fill ecosystem package exists — DS-owned build
+  - Figma variants built the file's own way (nested library-instance switches: Text field Error/Error+Focus/Type=Read-only, Helper text Type=Error, 005 progress_activity + edit_off, color/background/disabled). Library gaps surfaced -> 003 asks: Error+Focus + Read-only equivalents on date/reference/enum field masters; Filled+isDisabled Text field combo
+  - Layout-normalization pass REVERTED at Sean's direction: canvas geometry is authored content (rows not columns; variant spacing deliberately clears abs-positioned overflows; set widths encode decisions). Recovery = restore-from-main via branch-preserved GUIDs. Standing rule: snapshot x/y/w/h before ANY bulk geometry change; ask the organizing principle, never infer it
+Pending added (as of this session's close — check newer blocks for supersession):
+  - Branch review/merge of D0 proposal + 24-set rollout; Sean re-spaces the added variants himself
+  - D0 delta remainder + token-binding verification on cell components; charts keep/kill gate pending SPK-E3 telemetry; Jira import draft from plan v1.2
+Next:
+  - None new — the cell-indicators and cell-system-marathon blocks below are the live continuation of this thread
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
 Date: 2026-07-09 (session ran 2026-07-07 → 07-09; canvas/doc edits auto-committed at exit as 0cbfc3f/46d1166)
 Agent: Claude Fable 5
 Surface: Claude Code (Mac desktop app)
