@@ -158,20 +158,24 @@ operational state (template at [01-frameworks/_session-state-template.md](01-fra
 2026-07-08 the hook matches from THREE sources at runtime — (1) `triggers:` in SKILL.md
 frontmatter via `skills.registry.json`, (2) `Triggers:` lists on `08-knowledge/_INDEX.md`
 entry lines, (3) the dispatcher's small curated tables — so declaring a trigger at the source
-is enough; no dispatcher edit needed. Illustrative routes (not exhaustive):
+is enough; no dispatcher edit needed. **Single-source rule:** the dispatcher's curated tables
+are the ONLY authority for cross-source routes; skill/knowledge triggers live only in their
+frontmatter/`_INDEX` lines — tables like the one below are illustrative mirrors, never edited
+to *create* a route. Illustrative routes (not exhaustive):
 
 | Trigger | Loads |
 |---|---|
+| `audit`, `review`, `critique`, `qa pass`, `refine` | `01-frameworks/06-qa-operating-model.md` — pre-output gate, load BEFORE the work |
 | `legion`, `the game`, `bobiverse` | `03-skills/legion-project/SKILL.md` + appropriate hub |
 | `centric`, `PLM`, `data table` | Design system context, Ark UI notes, cell anatomy WIP |
-| `validation`, `warning`, `status color`, `contrast`, `a11y` | foundations-first route: `design-foundations` + `found-color` + `a11y-visual` + `uid-color-for-ui`, then the target system's own tokens |
+| `field validation`, `validation state`, `warning`, `status color`, `contrast`, `a11y` | foundations-first route: `design-foundations` + `found-color` + `a11y-visual` + `uid-color-for-ui`, then the target system's own tokens |
 | `icon font`, `centricsymbols`, `variable axis` | `variable-icon-font-architect` + math spokes |
 | `figma plugin`, `plugin dev` | `figma-plugin-dev` |
 | `omni` | `omni-project` |
 | `diagram`, `flowchart`, `user journey`, `how does it work`, `show me the steps`, `walkthrough` | `02-shared-references/delivery-playbooks/` — context profile (00) first, then `02-diagrams-and-flows.md` |
 | `proofboard`, `validation harness`, `context profile` | `02-shared-references/delivery-playbooks/` (05 = Proofboard standard, 00 = profiles) |
 | `explain this to`, `explain like`, `eli5`, `present to` | `02-shared-references/delivery-playbooks/01-audience-contract.md` — forward test + three altitudes |
-| `chart`, `write a spec`, `write a report` | `02-shared-references/delivery-playbooks/` (03 = data/charts, 04 = documents/specs) |
+| `chart`, `write a spec`, `write a report`, `validation report`, `full report` | `02-shared-references/delivery-playbooks/` (03 = data/charts, 04 = documents/specs) |
 
 **Figma write gate:** the first `use_figma` call per session is intercepted by a `PreToolUse`
 hook that injects the design-judgment gate (target-system fidelity, foundational color/a11y

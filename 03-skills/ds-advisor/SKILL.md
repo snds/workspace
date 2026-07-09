@@ -13,7 +13,7 @@ description: >
   systems thinking, design process, or the relationship between design and engineering,
   use it.
 aliases: [ds-advisor]
-triggers: [design system, design systems, component audit, token architecture, design token, design tokens, semantic token, status color, variant coverage, state coverage, component anatomy, design handoff]
+triggers: [design system, design systems, PLM, component audit, token architecture, design token, design tokens, semantic token, status color, variant coverage, state coverage, component anatomy, design handoff]
 spec_version: "2.0"
 tier: hub
 domain: design

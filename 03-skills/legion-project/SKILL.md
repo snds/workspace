@@ -14,6 +14,7 @@ description: >
   lead-game-developer) based on the topic. If the topic is unclear, load lead-game-designer
   as the default.
 aliases: [legion-project]
+triggers: [the game]
 spec_version: "2.0"
 tier: hub
 domain: game

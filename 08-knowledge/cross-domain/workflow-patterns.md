@@ -86,13 +86,14 @@ The `UserPromptSubmit` hook loads context automatically when certain words appea
 
 | Trigger words | What loads |
 |--------------|-----------|
+| `audit`, `review`, `critique`, `qa pass`, `refine` | `01-frameworks/06-qa-operating-model.md` — pre-output gate, BEFORE the work |
 | `legion`, `the game`, `bobiverse` | `legion-project` skill + relevant sub-hub |
 | `centric`, `PLM`, `data table` | Centric DS context, Ark UI notes |
 | `icon font`, `centricsymbols`, `variable axis` | `variable-icon-font-architect` skill |
 | `figma plugin`, `plugin dev` | `figma-plugin-dev` skill |
 | `omni` | `omni-project` skill |
 
-This is defined in the dispatcher's `handle_user_prompt()`. Since 2026-07-08 the dispatcher also matches triggers at runtime from `skills.registry.json` (skill frontmatter `triggers:`) and from `Triggers:` lists on `08-knowledge/_INDEX.md` entry lines — so declaring a trigger at the source is enough; only curated cross-source routes still live in the dispatcher's static tables.
+This is defined in the dispatcher's `handle_user_prompt()`. Since 2026-07-08 the dispatcher also matches triggers at runtime from `skills.registry.json` (skill frontmatter `triggers:`) and from `Triggers:` lists on `08-knowledge/_INDEX.md` entry lines — so declaring a trigger at the source is enough; only curated cross-source routes still live in the dispatcher's static tables. **Single-source rule (2026-07-09):** the dispatcher's curated tables are the only authority for cross-source routes; skill and knowledge triggers are declared solely in SKILL.md frontmatter / `_INDEX.md` lines, and mirror tables (this one, CLAUDE.md's) are illustrative — reconcile them TO the sources, never the other way.
 
 ---
 

@@ -697,6 +697,7 @@
       "triggers": [
         "design system",
         "design systems",
+        "PLM",
         "component audit",
         "token architecture",
         "design token",
@@ -712,7 +713,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:056438e7b1434ab5078c7fd5b0363bade781d217955d2114d71d0f70f0c006a8"
+      "hash": "sha256:2e67ae1d3f7ed5067ac59334c533536758b6dc1ed951bcaabd3a8b688b762fc0"
     },
     "ds-bi-platforms": {
       "path": "03-skills/ds-bi-platforms/SKILL.md",
@@ -1407,12 +1408,14 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "plugin dev"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "hash": "sha256:976a63b12fdb0c4139e6bdfb8f8024ab75ec48c5213b67b1dcce727dfd5677f1"
+      "hash": "sha256:59461f98b73fe231958dfba3a6917dc2b1c5d25671d7398813cd69022ef71154"
     },
     "figma-source-audit": {
       "path": "03-skills/figma-source-audit/SKILL.md",
@@ -3042,12 +3045,14 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "the game"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "hash": "sha256:b3e48ea9ff8285241b46b595028599ecd0b28737f7fe161dc44f85669cbf332d"
+      "hash": "sha256:cab0990b8f2496932982d05fa99985b5c3ff060fa1df8672e9ce84c0bce517df"
     },
     "material-symbols-project": {
       "path": "03-skills/material-symbols-project/SKILL.md",
@@ -4630,12 +4635,15 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "variable axis",
+        "variable axes"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "hash": "sha256:7e7123158cd8b56403381fe8fb957c299759745d861e8328d4636acff76002e2"
+      "hash": "sha256:2c372c726da247480b6f1af0a78f60852f66eccd76ea9bac4afcbb2e23fdac9f"
     },
     "vfx-particle-systems": {
       "path": "03-skills/vfx-particle-systems/SKILL.md",

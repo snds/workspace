@@ -15,6 +15,7 @@ description: >
   debugging variable icon font masters.
 hub: lead-type-designer
 aliases: [variable-icon-font-architect]
+triggers: [variable axis, variable axes]
 spec_version: "2.0"
 tier: hub
 domain: design
