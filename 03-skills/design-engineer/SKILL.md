@@ -14,6 +14,7 @@ description: >
   UI for componentization opportunities. If the topic involves components, tokens,
   design systems, Figma, or frontend implementation — use this skill.
 aliases: [design-engineer]
+triggers: [design engineer, component architecture, component api, figma component, component variants, componentization, design system code]
 spec_version: "2.0"
 tier: hub
 domain: design

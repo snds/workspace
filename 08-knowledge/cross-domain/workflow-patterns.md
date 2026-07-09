@@ -64,7 +64,7 @@ The optimize skill reads this flag and excludes the file from analysis. First us
 
 When there are two files for the same skill — one at `03-skills/skill-name.md` (loose) and one at `03-skills/skill-name/SKILL.md` (canonical) — the directory version is always authoritative. The loose file is a legacy artifact from an earlier era of the skill system.
 
-The skills-manifest.json always points to the directory SKILL.md. The manifest is the single source of truth for the canonical location of every skill.
+The skill graph is generated: each `SKILL.md`'s frontmatter is the source of truth, compiled into `03-skills/skills.registry.json` by `09-tools/build-registry.py`. The registry is the canonical machine index of every skill's location, tier, triggers, and load chain. (Historical note: the Drive-era `skills-manifest.json` was archived 2026-06-16.)
 
 ---
 
@@ -92,7 +92,7 @@ The `UserPromptSubmit` hook loads context automatically when certain words appea
 | `figma plugin`, `plugin dev` | `figma-plugin-dev` skill |
 | `omni` | `omni-project` skill |
 
-This is defined in the dispatcher's `handle_user_prompt_submit()`. Adding new triggers requires editing the dispatcher directly.
+This is defined in the dispatcher's `handle_user_prompt()`. Since 2026-07-08 the dispatcher also matches triggers at runtime from `skills.registry.json` (skill frontmatter `triggers:`) and from `Triggers:` lists on `08-knowledge/_INDEX.md` entry lines — so declaring a trigger at the source is enough; only curated cross-source routes still live in the dispatcher's static tables.
 
 ---
 

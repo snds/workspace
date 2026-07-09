@@ -80,7 +80,7 @@ Ten top-level frameworks govern all project work. They sit **above** any skill.
 - **[01-frameworks/03-collaboration-and-critique-framework.md](01-frameworks/03-collaboration-and-critique-framework.md)** — conduct, critique, handoff
 - **[01-frameworks/04-research-and-evidence-framework.md](01-frameworks/04-research-and-evidence-framework.md)** — epistemology, evidence standards
 - **[01-frameworks/05-last-mile-craft-framework.md](01-frameworks/05-last-mile-craft-framework.md)** — finishing discipline, augmented perception
-- **[01-frameworks/06-qa-operating-model.md](01-frameworks/06-qa-operating-model.md)** — target-user QA lens, default skill loading, reference-comparison protocol, iteration-default mindset
+- **[01-frameworks/06-qa-operating-model.md](01-frameworks/06-qa-operating-model.md)** — target-user QA lens, default skill loading, reference-comparison protocol, iteration-default mindset, system-context fidelity (work within the target DS; backlog its gaps)
 - **[01-frameworks/07-integration-and-review-framework.md](01-frameworks/07-integration-and-review-framework.md)** — branching, PRs, merge order, reviewable diffs
 - **[01-frameworks/08-workspace-contribution-framework.md](01-frameworks/08-workspace-contribution-framework.md)** — how/when/where/what/why to edit the workspace itself; routing map, memory + archive protocols
 - **[01-frameworks/09-component-and-pattern-framework.md](01-frameworks/09-component-and-pattern-framework.md)** — design-domain hub: what each component is for, when to reach for it, how they compose; the universal schema + AI-legible / `DESIGN.md` layer
@@ -154,12 +154,17 @@ Slash-command workflows native to Claude Code. Small, focused, invocable by `/na
 Active projects live in `07-projects/NN-name/`. Each carries a `SESSION-STATE.md` with the
 operational state (template at [01-frameworks/_session-state-template.md](01-frameworks/_session-state-template.md)).
 
-**Trigger words** route context automatically (handled by the `UserPromptSubmit` hook):
+**Trigger words** route context automatically (handled by the `UserPromptSubmit` hook). Since
+2026-07-08 the hook matches from THREE sources at runtime — (1) `triggers:` in SKILL.md
+frontmatter via `skills.registry.json`, (2) `Triggers:` lists on `08-knowledge/_INDEX.md`
+entry lines, (3) the dispatcher's small curated tables — so declaring a trigger at the source
+is enough; no dispatcher edit needed. Illustrative routes (not exhaustive):
 
 | Trigger | Loads |
 |---|---|
 | `legion`, `the game`, `bobiverse` | `03-skills/legion-project/SKILL.md` + appropriate hub |
 | `centric`, `PLM`, `data table` | Design system context, Ark UI notes, cell anatomy WIP |
+| `validation`, `warning`, `status color`, `contrast`, `a11y` | foundations-first route: `design-foundations` + `found-color` + `a11y-visual` + `uid-color-for-ui`, then the target system's own tokens |
 | `icon font`, `centricsymbols`, `variable axis` | `variable-icon-font-architect` + math spokes |
 | `figma plugin`, `plugin dev` | `figma-plugin-dev` |
 | `omni` | `omni-project` |
@@ -167,6 +172,10 @@ operational state (template at [01-frameworks/_session-state-template.md](01-fra
 | `proofboard`, `validation harness`, `context profile` | `02-shared-references/delivery-playbooks/` (05 = Proofboard standard, 00 = profiles) |
 | `explain this to`, `explain like`, `eli5`, `present to` | `02-shared-references/delivery-playbooks/01-audience-contract.md` — forward test + three altitudes |
 | `chart`, `write a spec`, `write a report` | `02-shared-references/delivery-playbooks/` (03 = data/charts, 04 = documents/specs) |
+
+**Figma write gate:** the first `use_figma` call per session is intercepted by a `PreToolUse`
+hook that injects the design-judgment gate (target-system fidelity, foundational color/a11y
+checks, backlog-the-gaps) and then lets the retried call through.
 
 Current active projects and their status: **[06-context/project-context.md](06-context/project-context.md)**.
 
@@ -202,6 +211,10 @@ Resolve from `hostname` at boot. Never ask, never carry forward.
 - Never modify `00-bootstrap/templates/` content without asking.
 - Never rename files without asking — Obsidian links will break silently.
 - Never commit `05-artifacts/` or most of `07-projects/` — see `.gitignore`.
+- **Never store durable content in Claude Code's local/private memory.** Externalize everything to the
+  workspace at its correct layer per the [AGENTS.md](AGENTS.md) "Externalize everything" Core rule and
+  the [routing map](02-shared-references/workspace-ontology.md). The local `.claude` memory holds only
+  a single pointer back to the workspace — nothing else.
 
 ---
 
@@ -216,7 +229,8 @@ Resolve from `hostname` at boot. Never ask, never carry forward.
 
 ## Session lifecycle
 
-1. **Start** — `SessionStart` hook loads context + the skill registry + current date. If resuming a
+1. **Start** — `SessionStart` hook loads context + current date (trigger routing reads the skill
+   registry per-prompt; on compact/resume the hook re-injects a compact re-orientation block). If resuming a
    project, read its `SESSION-STATE.md` **Live handoff** block to pick up where the last agent left off.
 2. **Work** — use tools freely. Default to reading context files before claiming to know something.
    Keep the Live handoff block current as you go.

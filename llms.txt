@@ -25,6 +25,10 @@
   `session-log` entry. See AGENTS.md → "Multi-agent continuity & handoff". A new agent needs no adapter.
 - Before editing the workspace, consult the routing map and the contribution framework
   ([01-frameworks/08-workspace-contribution-framework.md](01-frameworks/08-workspace-contribution-framework.md)).
+- **Externalize everything.** Keep nothing durable in your own private/internal memory — every
+  learning, decision, project note, and asset routes to a workspace layer (or the platform `Projects`
+  dir for actual repos/working files) per the routing map. This is an AGENTS.md Core rule; the only
+  thing any agent keeps internally is a pointer back here.
 
 ## Contracts + specs
 - [skill-frontmatter.md](02-shared-references/skill-frontmatter.md): the SKILL.md frontmatter v2 spec.

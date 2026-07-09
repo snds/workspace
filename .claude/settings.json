@@ -13,6 +13,18 @@
         ]
       }
     ],
+    "PreToolUse": [
+      {
+        "matcher": "mcp__.*use_figma.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/dispatcher.py\" pre-tool",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [

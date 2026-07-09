@@ -1,16 +1,17 @@
 ---
 name: workspace-bootstrap
 description: >
-  The session handshake — loads workspace context at the start of every session,
-  on any device, surface, or model. Trigger immediately and silently whenever a
-  conversation begins or the user says "let's get started", "resume", "continuing
-  from", "pick up where we left off", "new session", "I'm back", "let's work on",
-  or asks to load context. Run before any other skill. Also trigger on "reconcile
-  sessions", "end of day sync", "merge sessions". Also trigger on "legion",
-  "Legion", "my game", "game project" — load workspace context then the Legion
-  skill set.
+  The session handshake — the operational how-to for loading workspace context.
+  Since bootstrap v2 (2026-07-06) the AUTOMATIC trigger is the harness: the
+  ws-bootstrap SessionStart hooks + the ~/.claude/CLAUDE.md beacon inject the
+  load protocol deterministically on every new/resumed/compacted session. Run
+  this skill as the MANUAL re-trigger: when Sean says "/workspace-bootstrap",
+  "reload the workspace", "run the handshake", when the ritual line
+  ([workspace: LOADED …]) is missing from the session, or on a surface with no
+  hook layer. Also run for "reconcile sessions", "end of day sync", "merge
+  sessions", and as the load step after a "legion" / project trigger.
 aliases: [workspace-bootstrap]
-triggers: [bootstrap, resume, new session, load context, get started, reconcile sessions, legion]
+triggers: [workspace-bootstrap, reload the workspace, run the handshake, ritual missing, load context, reconcile sessions, legion]
 tier: cross-cutting
 domain: workspace
 surfaces: ["*"]

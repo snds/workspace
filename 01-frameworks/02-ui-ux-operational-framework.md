@@ -128,6 +128,32 @@ Before defaulting to a table:
 - Never *hide* things behind permissions that should be visible for context.
 - Test the "role transition" — when someone moves from novice to expert, does the interface grow with them, or does it require re-learning?
 
+### Control placement by scope of effect
+
+Place — and evaluate the placement of — every actionable control by the **scope of effect** it has
+and the **user intent** behind it, not by where it visually fits, which surface has room, or what it
+resembles. Contextual or visual similarity between controls does not imply equivalent intent.
+App-global affordances belong to global chrome; page/object-wide affordances to the page surface;
+region/section affordances to that region; item/row/selection affordances to that element. Two
+corollaries must *both* hold:
+
+- **Don't merge by appearance.** Two controls that look alike but act at different scopes stay
+  visually/spatially distinct and scope-signposted — never collapsed into one just because they share
+  a form factor.
+- **Don't fragment by surface.** The same intent reimplemented across several surfaces gets unified
+  into one primitive, bound to scope — not rebuilt per location.
+
+Placement-by-resemblance produces three failures: cognitive load (learning which of two
+identical-looking controls does what), wrong-scope mistakes (acting on the object when they meant the
+row), and false consolidation (merging by look breaks intent). Review checklist, per control: (1)
+What is its scope of effect? [global / page-or-object / region-section / item-row / current-selection].
+(2) Does its placement match that scope? (3) Where it resembles another control, is the *intent* the
+same or only the form factor? (4) Is the scope made *visible* (label, grouping, position,
+containment), or must the user infer it? **Corollary for repeated elements** (e.g. multiple tables on
+one page): a scope-bound control must bind to the *specific* instance it affects and stay attached to
+it — a shared/hoisted control cannot disambiguate which instance it acts on; containment becomes the
+primary scope signpost. (Generalized from the Centric PLM toolbar/table work; context-independent.)
+
 ---
 
 ## Governance for scaled coherence

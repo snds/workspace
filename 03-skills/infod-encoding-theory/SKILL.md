@@ -13,7 +13,7 @@ hub: lead-information-designer
 aliases: [infod-encoding-theory]
 tier: spoke
 domain: design
-prerequisites: [lead-information-designer]
+prerequisites: [lead-information-designer, found-color]
 spec_version: "2.0"
 ---
 

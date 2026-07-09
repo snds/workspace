@@ -13,6 +13,7 @@ description: >
   semantic HTML, low vision design, zoom support, text scaling, relative units, reflow,
   color as information.
 aliases: [a11y-visual]
+triggers: [contrast, color contrast, color blindness, color vision deficiency, cvd, wcag, apca, focus indicator, screen reader, alt text, legibility, non-text contrast, low vision, color as information]
 tier: cross-cutting
 domain: accessibility
 spec_version: "2.0"
@@ -136,6 +137,13 @@ significantly more accurate at predicting whether text is actually readable:
 **Current recommendation**: Meet WCAG 1.4.3 (required) and verify with APCA (best
 practice). Use Lc (lightness contrast) ≥ 60 for body text, ≥ 45 for large/bold text,
 ≥ 30 for UI elements as APCA starting targets.
+
+**Tier note (2026-07-08)**: the values above are the accessibility FLOOR — the bare
+minimum any delivered artifact must meet. Working *targets* for comfortable reading sit
+higher: see the APCA threshold table in `design-engineer/references/visual-design-theory.md`
+(Lc 75 preferred body, Lc 90 small/critical text — the "happy middle," barring real
+concerns). Stricter targets in [[radix-derived-color-system]] (~Lc 90 body) are
+Radix-scale-specific and apply only to Radix-derived palettes.
 
 **Tools**: APCA Contrast Calculator (apcalc.github.io), Polypane, Stark.
 

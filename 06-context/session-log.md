@@ -43,6 +43,80 @@ Next:
 --- END BLOCK ---
 
 --- SESSION BLOCK ---
+Date: 2026-07-08
+Agent: Claude Fable 5
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s): Claude Workspace Infrastructure — post-mortem of the C8 cell-validation failure → trigger/dispatch layer rebuilt, foundational color/UX/a11y routing wired, self-healing added
+Artifacts:
+  - 06-context/audit-log.md — 2026-07-08 audit entry (14 findings: 4 P0 / 6 P1 / 4 P2; fixes + carry-forwards; resets the 72-day staleness)
+  - .claude/hooks/dispatcher.py — hookEventName fix (null → payloads were SILENTLY dropped; whole context layer was dark); runtime trigger matching from skills.registry.json + _INDEX.md Triggers lines (word-boundary); foundational vocabulary (validation/warning/status color/contrast/a11y → foundations-first route); compact/resume re-orientation injection; stale-audit escalation (>2x threshold); once-per-session use_figma PreToolUse design-judgment gate; session-end registry auto-regen
+  - .claude/settings.json — PreToolUse hook registered (matcher mcp__.*use_figma.*)
+  - 01-frameworks/06-qa-operating-model.md — sixth operating default "System-context fidelity" + Accessibility check in the pre-output gate (judgment-framed, not prescriptive)
+  - 03-skills — triggers: declared on ds-advisor / design-engineer / figma-canvas-designer / visual-qa-toolkit / a11y-visual / uid-color-for-ui; narrowed sec-supply-chain `token` + sec-authn-authz `session`; infod-encoding-theory +found-color prereq; registry regenerated (246 skills, --check green)
+  - 09-tools/validate-workspace.py — new KNOWLEDGE COVERAGE check; _INDEX.md research section indexed (5 entries); `figma-plugin-patterns 2.md` conflict copy archived w/ ARCHIVE-LOG provenance
+  - 08-knowledge/engineering/claude-code-hooks-contract.md — NEW: hook payload contract gotchas (hookEventName, PreToolUse deny-as-injection, SessionStart source)
+  - 02-shared-references/ds-agents-binding.md + CLAUDE.md + 3 knowledge docs — system-fidelity rule mirrored; stale claims fixed (skills-manifest, handle_user_prompt_submit, 08-tools, "mirrors TRIGGER_WORDS", "loads the skill registry")
+Decisions:
+  - Root cause of the cell-validation failure: every carrier of the foundations was advisory, stale, empty, or dropped — dispatcher emitted hookEventName:null (harness silently drops the payload), trigger tables frozen vs registry/_INDEX, zero triggers on applied design skills, no gate at use_figma. Fixed at all four layers; the exact failing prompt now routes to the foundations chain (verified by replay).
+  - Foundations are DS-independent (Sean): baseline = design-foundations → found-color → a11y-visual → uid-color-for-ui, loaded BEFORE any system-specific rules; [[radix-derived-color-system]] is a system-specific application layer — scoped with a note, never generalized to non-Radix systems (e.g. C8).
+  - System-context fidelity codified (framework #06 default 6 + ds-agents-binding + gate): resolve within the target DS's own tokens/DESIGN.md/libraries; token gaps → backlog while the prompt's problem still gets solved now; a11y compliance is never deferred (per lead-accessibility-architect).
+  - Gates prompt judgment, not rules (Sean correction): no prescriptive palette rules — full-color full-bleed surfaces with foreground text/icons are legitimate when the implementation holds up; the non-negotiable is VERIFICATION (APCA/WCAG pairing checks, CVD redundancy). Worked examples are emblematic, not rulesets.
+  - APCA guidance is a deliberate TIER, not a contradiction (Sean): a11y-visual = accessibility floor (bare minimum) · design-engineer table = working target ("happy middle") · radix entry = Radix-scale-specific (the 12-step scale is tuned to reach it; Radix-generated palettes inherit it). Cross-linked tier notes in all three files.
+Pending added:
+  - C8/CDS semantic status-token gap (warning tint/stroke; orange accent border as documented interim) — flesh out status/context semantic tokens, raise as CDS ask
+  - 2026-07-08 audit carry-forwards (b)–(f): remaining a11y-skill triggers decision, CVD prevalence alignment, artifact-registry line-number tables, doctor conflict-copy sweep, research/research double-nesting
+Pending resolved:
+  - Workspace audit staleness (72 days) — audit-log entry 2026-07-08; carry-forward (a) APCA floors resolved per Sean's tiering
+Next:
+  - Watch the next real design session for gate + trigger behavior in the wild (the resume re-orientation already fired live this session)
+  - Decide carry-forward (b): frontmatter triggers for ux-accessibility / fe-accessibility / visual-qa-accessibility / lead-accessibility-architect / gd-color-theory / infod-encoding-theory (deferred to avoid over-firing)
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
+Date: 2026-07-07
+Agent: Claude Fable 5
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s): Centric VMS Design System — ds-docs security dependency update + parked changelog work shipped as PRs
+Artifacts:
+  - ds-docs PR #2 (chore/deps-security) — next 16.2.4→16.2.10 (clears all 13 GHSAs incl. 8.6 SSRF + 8.1 middleware bypass), eslint-config-next lockstep, overrides.next.postcss ^8.5.10, transitive audit fixes. npm audit 0 vulns; lint/types/build green.
+  - ds-docs PR #3 (feat/changelog-hub) — the parked changelog system (hub rows + native-dialog article view, feed.json/llms.txt API routes, notification opt-in, sidebar indicator) + PageHero/KeyFacts/UseCases blocks + ~40-page content sweep. 6 CI errors + a useSearchParams prerender failure fixed forward; verified in-browser against the prod build (dialog open/close/deep-link, API url field, zero console errors).
+Decisions:
+  - next 16.2.10 (latest 16.2.x) still hard-pins nested postcss 8.4.31 (GHSA-qx2v-qp2m-jg93) → npm `overrides` is the only clean fix; REMOVE the override when next bumps its pin. Quirk: overrides don't retro-apply to existing lockfile entries — delete the nested package-lock entry + node_modules copy, then reinstall.
+  - Fixed the parked changelog WIP forward to green rather than pushing a red PR; fixes follow repo idiom (useSyncExternalStore over setState-in-effect, Suspense-scoped useSearchParams so /docs/changelog statically prerenders).
+  - Both PRs stacked on chore/license-ci (#1) because it carries the ESLint-9 pin. ds-docs CI only triggers on PRs targeting main → checks appear once #1 merges and GitHub auto-retargets. Merge order: #1 → #2 → #3.
+Pending added:
+  - ds-docs PR #3 ships 28 hardcoded localhost:6006 Storybook links (PageHero chips + home page) — swap when NEXT_PUBLIC_STORYBOOK_URL + deployment land (folded into the existing deployment pending item).
+Next:
+  - Sean assigns reviewers on ds-docs #2 + #3; merge #1 first.
+  - After #1 merges: mark `lint, types, build` required status check (existing pending item), then CODEOWNERS + deployment todos.
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
+Date: 2026-07-06
+Agent: Claude Fable 5
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s): 02-centricPLM (C8-99959 floating toolbar) · workspace bootstrap v2
+Artifacts:
+  - workspace-bootstrap-durability-plan_v2.0_2026-07-06.md — red-teamed layered bootstrap plan (05-artifacts, local-only)
+  - floating-toolbar_ticket-drafts_v1.1_2026-07-06.md — POSTED: C8-99959 comment 3565642 · CDS-1247 comment 3565643 · CDS-1388 filed + linked (Relates → CDS-1247)
+  - Figma "Floating Toolbar — Responsive Collapse" board (toolbar file, node 3543-69658) — bug repro, 4-state collapse ladder on real CDS components, GTIN empty states A/B, FILL-overlap fix
+Decisions:
+  - Bootstrap v2 SHIPPED, all phases: deterministic layers L1–L4 + SessionEnd audit + launchd doctor (4h+login); ritual token frozen ABI; Cursor sessionStart gate PASSED (user-global ~/.cursor/hooks.json confirmed); snds plugin 0.3.0 ships the hook. See [[decision-bootstrap-v2-guarantee]].
+  - C8-99959 design decision posted: bar always fits its owning pane; anchor-pinned collapse ladder (Roomy/Medium/Narrow/Floor); pane-measured breakpoints; expanded surfaces on the escape layer; slot contract {full, compact, priority, minWidth} → CDS-1247 asks.
+  - Figma FILL-deficit standing rule: FILL absorbs surplus never deficit; explicit minWidth on every FILL region (library-side — minWidth is NOT overridable on instance children); fold content first, frame follows → figma-ds-surface-authoring rule 15.
+Pending added:
+  - Paste BEACON.md into 4 chat surfaces, then workspace-doctor --ack-chat
+  - Curate 00-bootstrap/dist/beacon-repos.txt (candidates: design-system, open-design)
+Next:
+  - Restart Claude Code to activate snds plugin 0.3.0 hook layer
+  - Watch ~/.claude/ws-state/audit.log for MISS lines over the first week
+  - Follow up CDS-1247 asks + CDS-1388 with the CDS team
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
 Date: 2026-06-30
 Agent: Claude Opus 4.8
 Machine: Personal MacBook Pro
@@ -70,6 +144,30 @@ Deferred push:
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-06-30
+Agent: Claude Opus 4.8
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s):
+  - Workspace contribution — migrated ALL durable content out of Claude Code's local/private memory into the portable workspace, and installed a standing "externalize everything" rule.
+Decisions:
+  - Standing directive (set by Sean): keep NOTHING durable in any agent's private memory; everything routes to the workspace (or the platform `Projects` dir for repos/working files). The only internal memory is a pointer back. Rationale: `06-context/memory/decision-externalize-everything-to-workspace.md`.
+  - Cross-surface persistence via the universal contract: encoded as an AGENTS.md Core rule + ontology routing row + llms.txt + CLAUDE.md, so Claude Code / Chat / Design + any future agent inherit it.
+  - Routing per the workspace-ontology map; consolidation = merge into existing knowledge entries where they fit; the two Centric efforts → `07-projects/02-centricPLM/context/`.
+Artifacts (new):
+  - `08-knowledge/design/figma-ds-surface-authoring.md` — DS Figma surface authoring conventions (surface/overlay rules + build-from-real-components + transliteration + clip-content).
+  - `08-knowledge/engineering/figma-cli-authoring.md` — figma-cli Yolo/CDP connect / branch-target / author.
+  - `06-context/memory/decision-externalize-everything-to-workspace.md` + `decision-component-pattern-framework-system.md`.
+  - `07-projects/02-centricPLM/context/{cell-indicators-pilot,toolbar-context-architecture}.md` (project-local, gitignored).
+Artifacts (extended):
+  - knowledge: `radix-derived-color-system` (§6 role→step→use-class), `figma-plugin-patterns` (§15–17 MS-icon/section-coords/headless-MCP); frameworks #05 (§3a full-result high-res review + recursive-before-presenting QA) + #02 (control placement by scope of effect); `04-preferences` (side-chat handback); `AGENTS.md`/`CLAUDE.md`/`llms.txt`/`workspace-ontology.md` (externalize rule); knowledge `_INDEX.md` + memory `MEMORY.md` indices.
+Migration:
+  - 19 local memories relocated (17 + 2 a concurrent session added mid-task); "Drive is dead" memory retired (already covered by `decision-portable-workspace-refactor` + `fact-workspace-repos`). Local `.claude` memory reduced to one pointer (`externalize-to-workspace.md`). Link validator green (246 skills, 0 warnings).
+Next:
+  - A concurrent session was active in the same memory dir — if it writes more local memories, re-run the externalize routing for those.
+  - `00-bootstrap/setup/README.md` had an orphaned (non-this-session) change left uncommitted for Sean to reconcile; the 2026-06-22 figma-repo-sync-plugin block below was previously uncommitted and is included here to preserve it.
+--- END BLOCK ---
+--- SESSION BLOCK ---
 Date: 2026-06-22
 Agent: Claude Opus 4.8
 Surface: Claude Code (Mac desktop app)
@@ -93,6 +191,32 @@ Pending added:
   - Optional polish: relocate _Slider/Thumb into the Slider section; resolve the pre-existing _Calendar/Day↔Calendar 8px overlap (needs a category relayout).
 Next:
   - Sean publishes the library.
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
+Date: 2026-06-22
+Agent: Claude Opus 4.8
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s):
+  - 09-figma-repo-sync-plugin — engine pass executed regen-in-the-loop (B2 tokenization + B1 Type→booleans).
+Decisions:
+  - Regen-in-the-loop (Option A): implement a slice → Sean regens in Figma + confirms → next slice. Used throughout B2 + B1.
+  - 7 B1 decisions locked (icon-only fold-into-master, prop names, fixed padding, badge gating, cornerRadius-9999 auto, avatar -8 sanctioned, spec grid omit).
+  - S6 (square icon render) DEFERRED — Figma can't bind width per-mode-conditionally (square icon cells force FIXED width → clip text); follow-up = separate icon-button or padding-tune.
+Artifacts (PRs on cpes-software/centric-ui, stacked, no self-merge):
+  - PR #122 B2 tokenization (transparent token bind + zero→space-0 + recursive geometry-binding pass `bindGeometryRecursively`). Verified. Build 11.4.23.
+  - PR #124 B1 Type→booleans — Button + Badge now State-only ComponentSets with boolean icon-presence props; iconNode + 4-clones deleted; State expansion kept. Net −287 lines. Verified (both regens). Build 11.4.29.
+  - engine-pass-plan.md (NEW) — code-grounded 3-track plan.
+Key findings/fixes:
+  - B2 first cut was patchy (only applyFrameStyling bound; 131 literal sites) → fixed with a recursive post-assembly geometry pass (binds equal-valued tokens → render-safe).
+  - B1 boolean-prop regression: slim block deleted the "Leading content"/"Trailing content" props the hasIconAxis block creates → fixed (removed the carried-over Type-era deletes).
+  - False DIRTY-START on State-only sets (legitimate State=Default base miscounted) → fixed.
+  - The 7,952 "get undefined" log lines are Figma-internal LoAF perf instrumentation, not plugin errors.
+Pending added:
+  - C lint gate (last engine-pass track); S6 square-icon follow-up.
+Next:
+  - C lint gate (passive scanner → blocking + convention validators). Then S6 follow-up + the deferred items.
 --- END BLOCK ---
 
 --- SESSION BLOCK ---

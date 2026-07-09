@@ -40,6 +40,9 @@ Drop the block below into a project's root `AGENTS.md` (and/or `.cursor/rules`, 
   self-prompt to author one from real tokens (never invent values).
 - Accessibility is non-negotiable: visible labels, focus management + return, correct ARIA roles,
   component-specific keyboard patterns, no color-alone, WCAG 2.2 AA.
+- Work WITHIN this project's system: if it lacks a token/feature you need, derive minimally inside
+  its constraints and record the gap (backlog / Known Gaps / DDR) — never import another design
+  system's conventions to fill it. Token gaps are backloggable; a11y compliance is never deferred.
 
 **Trust levels:**
 - Deterministic (trust): MCP data, DESIGN.md tokens, Code Connect mappings, lint output.

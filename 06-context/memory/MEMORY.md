@@ -15,5 +15,8 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[fact-unraid-server]] — `fact` · Sean's Unraid home server: how to reach it (LAN / key / sandbox) + what runs on it.
 - [[feedback-infra-ip-disclosure]] — `feedback` · internal/LAN IPs OK to record; external/WAN IP never (the real attack surface).
 - [[decision-portable-workspace-refactor]] — `decision` · why the workspace became portable, git-native, LLM-agnostic.
-- [[decision-commercial-data-licensing]] — `decision` · default to commercially-usable data/asset sources; quarantine + reconcile non-commercial (CC-BY-NC) sources.
+- [[decision-externalize-everything-to-workspace]] — `decision` · standing directive: all durable content lives in the workspace (or the platform Projects dir), never in an agent's private memory; encoded as an AGENTS.md Core rule for cross-surface reach.
+- [[decision-component-pattern-framework-system]] — `decision` · why the 5-layer component & pattern context system was built (framework #09 + skill + MCP + DESIGN.md + AGENTS binding) and where its outputs live.
+- [[decision-bootstrap-v2-guarantee]] — `decision` · the workspace handshake is guaranteed by deterministic harness layers (hooks + beacon + audit + launchd doctor), not model discretion; ritual token is frozen ABI.
+- [[decision-commercial-data-licensing]] — `decision` · default to commercially-licensable data/asset sources for all projects; non-commercial sources (e.g. Gaia DR3) only when uniquely needed — isolate, mark, reconcile later.
 - [[relational-context]] — `feedback` · the working-relationship texture, in the agent's voice, carried across sessions (lives at `../relational-context.md`).

@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# ws-audit v2 — SessionEnd hook. OK only if an ASSISTANT message contains the ritual
+# token (hook-injected context cannot fake an OK). One-exchange sessions (headless -p,
+# subagents) log SKIP, not MISS. Crash/SIGKILL sessions log nothing — the doctor
+# canary covers that class, not this script.
+set -u
+STATE="$HOME/.claude/ws-state"; mkdir -p "$STATE"
+INPUT="$(cat 2>/dev/null || true)"
+jget() { printf '%s' "$INPUT" | sed -n "s/.*\"$1\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" | head -1; }
+TP="$(jget transcript_path)"; SID="$(jget session_id)"; CWD="$(jget cwd)"
+LOG="$STATE/audit.log"; TS=$(date +%Y-%m-%dT%H:%M:%S)
+[ -f "$TP" ] || { echo "$TS SKIP ${SID:-?} no-transcript" >> "$LOG"; exit 0; }
+xcode-select -p >/dev/null 2>&1 || { echo "$TS SKIP ${SID:-?} no-clt" >> "$LOG"; exit 0; }
+python3 - "$TP" <<'PY' >/dev/null 2>&1; R=$?
+import json, sys
+prompts, ok = 0, False
+for line in open(sys.argv[1], encoding="utf-8", errors="replace"):
+    try: e = json.loads(line)
+    except Exception: continue
+    m = e.get("message") or {}
+    role = m.get("role") or e.get("type")
+    if role == "user" and not e.get("isMeta"): prompts += 1
+    if role == "assistant" and "workspace: LOADED" in json.dumps(m.get("content", "")): ok = True
+sys.exit(0 if ok else (2 if prompts <= 1 else 1))
+PY
+case $R in
+  0) echo "$TS OK   ${SID:-?} cwd=${CWD:-?}" >> "$LOG" ;;
+  2) echo "$TS SKIP ${SID:-?} one-shot"      >> "$LOG" ;;
+  1) echo "$TS MISS ${SID:-?} cwd=${CWD:-?}" >> "$LOG" ;;
+  *) echo "$TS SKIP ${SID:-?} parse-error"   >> "$LOG" ;;
+esac
+exit 0

@@ -1,0 +1,6 @@
+# beacon-repos.txt — one absolute path per line: PERSONAL repos whose CLAUDE.md
+# should carry the WORKSPACE-BEACON (cloud-session coverage). NEVER list employer
+# repos (c8/*, cpes-software/*). The doctor checks each listed repo and separately
+# reports unlisted git repos under ~/Projects as candidates — curate deliberately.
+# Cursor note (2026-07-06 gate): hook layer pending verification; User Rules beacon
+# is the primary Cursor mechanism until the gate passes.

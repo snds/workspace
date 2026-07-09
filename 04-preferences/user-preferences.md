@@ -44,6 +44,14 @@ cross-framework DS strategy (Vue, React, React Native, Angular).
 - Avoid "This isn't X, it's Y" constructions
 - No emojis by default
 
+## Side Detours — Injection Handback
+When a conversation branches into a **side-chat or "by the way" detour** (a tangent off the main
+task), at the END of that detour produce a succinct, clearly-labeled **one-paragraph "injection"
+prompt** — the kind that could be pasted straight into the main task window — summarizing the outcome
+and what it means for the main work, then resume the main task with that outcome folded in. Sean runs
+a main task alongside side detours; without an explicit handback, the detour's result gets lost on
+return to the main thread. Applies to all detours, going forward.
+
 ## Platform Defaults
 - Primary: macOS
 - Additional platforms only when requested (additive, not instead-of)

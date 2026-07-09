@@ -11,6 +11,7 @@ description: >
   owns the design decisions. Token architecture that encodes these decisions lives
   in ds-advisor. Part of the lead-ui-designer hub skill network.
 aliases: [uid-color-for-ui]
+triggers: [status color, status colors, semantic color, semantic colors, validation state, error color, warning color, dark mode color, colorblind-safe, color palette, ui color]
 tier: spoke
 domain: design
 hub: lead-ui-designer

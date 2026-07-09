@@ -67,7 +67,7 @@ HUBS = [
 
 MARKETPLACE_NAME = "snds-local"
 PLUGIN_NAME = "snds"  # command prefix -> /snds:<skill>
-PLUGIN_VERSION = "0.2.0"  # bumped post-refactor so reinstall refreshes the runtime cache
+PLUGIN_VERSION = "0.3.0"  # 0.3.0: ships the ws-bootstrap SessionStart hook (bootstrap layer L4)
 
 # --- Paths ------------------------------------------------------------------
 
@@ -105,6 +105,15 @@ def main() -> int:
         # Copy the whole skill dir (SKILL.md + any supporting files/scripts).
         shutil.copytree(src, dst, ignore=shutil.ignore_patterns(".git", "__pycache__"))
         copied.append(h)
+
+    # Plugin hooks — L4 of the bootstrap guarantee. Points at the WORKSPACE copy of
+    # the SessionStart script (different failure surface from ~/.claude/hooks/);
+    # dedup vs the user-scope registration is the script's own atomic marker.
+    hooks_src = WORKSPACE_ROOT / "00-bootstrap" / "dist" / "plugin-hooks.json"
+    if hooks_src.exists():
+        hooks_dir = PLUGIN_DIR / "hooks"
+        hooks_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(hooks_src, hooks_dir / "hooks.json")
 
     # Plugin manifest.
     plugin_manifest = {

@@ -44,6 +44,15 @@ The workspace is both a knowledge base and an execution environment.
 - **Portable-first.** No mechanism here may depend on a single vendor, device, surface, or cloud
   drive. The git checkout is the source of truth; the plain filesystem is the I/O layer. Any capable
   agent must be able to work here by reading this contract — nothing else required.
+- **Externalize everything; keep nothing durable in private memory.** No durable content — learnings,
+  insights, workflows, decisions, project context, assets — may live inside any single agent's
+  private/internal memory (Claude Code's `.claude` memory, a Chat profile, a Design session, a
+  per-tool store). Route every durable thing to the workspace at its correct layer per the
+  [routing map](02-shared-references/workspace-ontology.md). **Actual repos, codebases, and non-Figma
+  working files/assets** go to the platform-relative `Projects` directory (resolve to the local
+  checkout per device; never hardcode a path, never store them inside this portable workspace). The
+  only thing an agent keeps internally is a *pointer* back here. Rationale + full routing:
+  [decision-externalize-everything-to-workspace](06-context/memory/decision-externalize-everything-to-workspace.md).
 - **Adapters, not forks.** Tool-specific files (`CLAUDE.md`, `CURSOR.md`, `PERPLEXITY.md`) describe
   only how that tool executes this contract. They never hold logic the contract lacks, and no tool is
   privileged over another.
