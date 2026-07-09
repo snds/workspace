@@ -1,10 +1,10 @@
 ---
 tags: [workflow, process, patterns, audit, session-management]
 created: 2026-04-28
-updated: 2026-04-28
+updated: 2026-07-09
 status: stable
 confidence: high
-sources: [session-log 2026-04-27, audit-log 2026-04-27]
+sources: [session-log 2026-04-27, audit-log 2026-04-27, session-log 2026-07-09]
 related_skills: [workspace-bootstrap]
 related_projects: [00-obsidian]
 ---
@@ -102,3 +102,23 @@ This is defined in the dispatcher's `handle_user_prompt()`. Since 2026-07-08 the
 When two sessions happen on different machines the same day (e.g., morning on Windows, afternoon on Mac), both sessions write their own blocks to the session log independently. `/reconcile` merges them into a single coherent entry in chronological order.
 
 **The pattern that works:** End each session with its own block written. Don't try to write a combined block retrospectively — that loses the per-machine context. The reconcile skill does the merge.
+
+---
+
+## Re-verify HEAD at Phase/Audit Boundaries
+
+Concurrent machines move the tree. A long structured session (validation, audit, multi-phase
+fix) must re-run `git log -1` at every phase boundary and re-base any claim that depends on
+tree state. The 2026-07-09 validation session missed a mid-session reconcile (`066edac`,
+13:58) and didn't notice until its adversarial pass — findings drafted against the boot-time
+tree were stale. Freshness is asserted per phase, not per session.
+
+---
+
+## Version Register at >2 Artifacts
+
+The moment a session produces more than two artifacts, write a version register
+(`{context}_version-register_vN.N_date.md` in `05-artifacts/active/`) listing each artifact,
+version, and status (current / superseded). Per [[artifact-standards]] §3 — the 2026-07-09
+validation session skipped it at three artifacts and the reviewer caught it. The register is
+what lets a later session tell which of several same-day versions is authoritative.

@@ -9,6 +9,7 @@ _Last updated: 2026-04-25 — checkpoint (post-restructure)_
 ## Current state (rewritten atomically — no stale fields)
 
 ### Environment
+- **Context profile**: `personal-solo` — this workspace (00-context-profiles.md Examples row); direct commits expected.
 - **Machine**: `Enterprise` (Windows Desktop)
 - **OS context**: Windows 11 Pro 10.0.26200
 - **Workspace root**: ``

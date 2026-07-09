@@ -34,6 +34,34 @@ _The dispatcher reads the most recent date from this file to decide whether to s
 
 ## Entries
 
+## 2026-07-09 — Structured validation session (six phases, adversarial pass)
+
+- Scope: hooks/boot, triggers, context profiles, audience/medium playbooks, Proofboard, path efficiency.
+- Verdicts: boot FAIL · triggers FAIL · resolution PASS · audience PARTIAL · medium PARTIAL · Proofboard PASS · path PARTIAL.
+- Headline defects (live): parent-dir launch = silent context loss (fix built in 00-bootstrap/dist, uninstalled);
+  trigger layer floods 15-line cap, knowledge hints truncated; ritual "Last session" month-stale (SESSION BLOCK
+  unparsed); #06 has no audit-class trigger carrier; HEAD moved mid-session unnoticed (reconcile 066edac).
+- Report: 05-artifacts/active/workspace_validation-report_v1.0_2026-07-09.md (fix list FX-1..FX-14, proposed only).
+- Approved during session: Proofboard standard amendments (illustrate-don't-narrate · two-read rule · fit-check step) — pending codification (FX-9).
+- Artifacts: session-lifecycle flow SVG v1.0 · artifact-name-checker v1.0+v1.1 (proofboard) · this report · version register.
+
+**Per-FX outcomes (fix session, same day — Personal MacBook Pro, sign-off prompt `workspace_fix-session-prompt_v1.0_2026-07-09.md`):**
+- FX-1 ✅ `3729472` — v2 machine layer installed (doctor); Drive-era shims retired; brain-path fixed; install-state memory fact. Live parent-dir test deferred (stale OAuth, 401) — offline handler runs green; audit-log canary verifies next real session.
+- FX-2 ✅ `faa2ce9` — tiered emit (curated → knowledge → registry → index), per-tier caps 8/4/6/4, dedupe by target; knowledge hints survive (evidence in commit).
+- FX-3 ✅ `faa2ce9` (dispatcher half) + `c3f4ab7` (sources) — `validation`→`field validation`/`validation state`; 10 bare-word triggers narrowed; registry regenerated clean.
+- FX-4 ✅ `faa2ce9` + `3f83842` — audit/review/critique/qa pass/refine → framework #06, mandate rows emit first; mirror tables carry the row.
+- FX-5 ✅ `faa2ce9` + `cf1f001` — parser reads `--- SESSION BLOCK ---` (Date/Project(s)); /session-end writes `###` headings (belt+braces). Parser tests pass incl. real log → 2026-07-09.
+- FX-6 ✅ `3f83842` — `the game`/`PLM`/`variable axis`/`plugin dev` declared at owning skills; tables reconciled; single-source rule added; 4/4 routing PASS.
+- FX-7 ✅ (this commit) — `Context profile:` populated in all 8 SESSION-STATEs (+ 19-workspace-brain). 14-variable-icon-font-generator is PROVISIONAL `centric-engineering` (fail-safe most-restrictive) — Sean to confirm. Note: 6 of 8 files are gitignored (machine-local by design).
+- FX-8 ✅ `537effa` — AGENTS.md read order gains `_INDEX.md` + delivery-playbooks load order. Tool-neutral `trigger-routes.md` extraction DEFERRED (authority just consolidated in dispatcher; pending item).
+- FX-9 ✅ `537effa` — three Sean-approved Proofboard amendments codified verbatim (two-read rule placed under Trust mechanisms; no "Quality bar" section exists).
+- FX-10 ✅ `537effa` — three ontology routing rows (machine-local config · hook/adapter code · bootstrap logic).
+- FX-11 ✅ (this commit) — workspace-infrastructure refreshed (post-rebuild event list + machine layer; Drive-era clone procedure quarantined HISTORICAL); hooks-contract triggers broadened (`userpromptsubmit`, `hook didn't fire`, `claude hooks`, `hook dispatcher` — bare `hooks` NOT added, would collide with React hooks; deviation per FX-3 principle); workflow-patterns gains "Re-verify HEAD at phase boundaries" + "Version register at >2 artifacts".
+- FX-12 ✅ `faa2ce9` — `validation report`/`full report` → 04-documents-and-specs; verified on the P1-11 failing phrase.
+- FX-13 ✅ `537effa` — project-home rule in framework #08; standing `07-projects/19-workspace-brain/` scaffolded, tracked, registered, routed.
+- FX-14 ◐ Phase F — home-dir spine relocation proposed to Sean (confirm target repo); dist shim hardcoded-path fix; Work MBP/Windows installs + harness re-run added as pending items.
+- FX-15 (new, guardrail 5) — pre-beacon `~/.claude/CLAUDE.md` global standards (12.6KB) backed up at `~/.claude/_retired/CLAUDE.pre-beacon-2026-07-09.md`; content not yet externalized to the workspace — pending item.
+
 ## 2026-07-08 — Work MacBook Pro (main, going forward)
 
 **Scope:** focused — trigger/dispatch layer, foundational color/UX/a11y routing, self-healing infrastructure. Prompted by the cell-validation failure (full-chroma status backgrounds authored without the foundational color/a11y baseline). Full analysis in-session; three Explore-agent sweeps covered 01-frameworks + 02-shared-references + 04-preferences, all 246 skills, and 08-knowledge + hooks + tools.

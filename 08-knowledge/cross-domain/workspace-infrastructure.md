@@ -1,12 +1,12 @@
 ---
 tags: [workspace, infrastructure, claude-code, obsidian, git, drive, ssh, github, multi-identity, sync-monitoring]
 created: 2026-04-28
-updated: 2026-06-17
+updated: 2026-07-09
 status: stable
 confidence: high
-sources: [session-log 2026-04-23, session-log 2026-04-25, session-log 2026-04-27, session-log 2026-05-07]
+sources: [session-log 2026-04-23, session-log 2026-04-25, session-log 2026-04-27, session-log 2026-05-07, session-log 2026-07-09]
 related_skills: [workspace-bootstrap]
-related_projects: [00-obsidian]
+related_projects: [00-obsidian, 19-workspace-brain]
 ---
 
 # Workspace Infrastructure — Accumulated Learnings
@@ -66,11 +66,28 @@ Git is the single sync + source-of-truth layer (Drive is no longer in the pictur
 
 All Claude Code lifecycle events route through a single Python file: `.claude/hooks/dispatcher.py`.
 
-**Events handled:**
-- `SessionStart` — loads context (project-context.md + session-log.md), runs worktree cleanup, surfaces notices
-- `UserPromptSubmit` — trigger-word routing (loads relevant skills/context for "legion", "centric", "icon font", etc.)
+**Events handled (post-rebuild list, current as of 2026-07-09):**
+- `SessionStart` — pre-parsed ritual data + context heads + knowledge index; heals gitdir pointer
+  and exec bits; worktree cleanup; on `source: compact|resume` injects a compact re-orientation
+  block instead (skills discipline + knowledge index)
+- `UserPromptSubmit` — trigger routing from THREE sources at runtime (dispatcher curated tables,
+  `skills.registry.json` frontmatter triggers, `_INDEX.md` `Triggers:` lines), emitted in tiered
+  order curated → knowledge → registry → index with per-tier caps and dedupe-by-target (FX-2)
+- `PreToolUse` (matcher `use_figma`) — the Figma design-judgment gate: first call per session is
+  denied once with the loaded-lens checklist; the retry passes
 - `Stop` — stages session-log changes
-- `SessionEnd` — safety-check then `git add -A`, commit, push
+- `SessionEnd` — safety-check then `git add -A`, commit, push; regenerates the skills registry
+  first when any SKILL.md changed
+
+**The machine layer (bootstrap v2, built 2026-07-08, installed per machine):** the workspace
+dispatcher only fires when the session's cwd is the workspace. `00-bootstrap/dist/` ships
+user-scope shims (`workspace-sessionstart/reassert/audit.sh`) + a beacon `~/.claude/CLAUDE.md`
++ a launchd doctor (4h cadence); `00-bootstrap/doctor/workspace-doctor.sh` installs and
+self-repairs all of it. Parent-dir / any-cwd launches get workspace context from THIS layer.
+Per-machine install state: memory fact `fact-machine-layer-installs`.
+
+**Delivery contract:** every injected payload's `hookEventName` must equal the event name
+exactly or the harness silently drops it — see [[claude-code-hooks-contract]].
 
 **Python binary strategy:** The dispatcher must be called with `python3` (not `python`) because macOS typically doesn't have a bare `python` binary. Windows uses a `python3.bat` shim installed by the setup script. `.claude/settings.json` calls `python3` explicitly.
 
@@ -175,7 +192,13 @@ Personal clones use `git@github.com:snds/...`, work clones use `git@github-work:
 - Remote URL routes through `github.com` alias = personal SSH key
 - Result: even when used from a Centric work laptop, every commit is unambiguously personal — no risk of work email leaking into the public-ish snds repo log.
 
-**Workspace clone procedure (fresh machine).** `.git` in the workspace is a pointer file — `gitdir: ~/.git-stores/claude-workspace-system`. To populate that gitdir without re-downloading the working tree (Drive already has it):
+**HISTORICAL — Drive-era workspace clone procedure (superseded 2026-06-16; kept for archaeology only).**
+Do NOT use this on a fresh machine. The current procedure is a plain `git clone` of
+`snds/workspace` (one-liner + double-click installers in `00-bootstrap/`), then
+`00-bootstrap/doctor/workspace-doctor.sh` for the machine layer. The block below predates the
+migration: `.git` in the Drive-era workspace was a pointer file — `gitdir:
+~/.git-stores/claude-workspace-system` — populated without re-downloading the working tree
+(Drive already had it):
 ```
 git clone --no-checkout \
   --separate-git-dir=~/.git-stores/claude-workspace-system \

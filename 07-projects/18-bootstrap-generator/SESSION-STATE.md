@@ -7,6 +7,7 @@ _Last updated: 2026-06-14 20:45 — checkpoint (wsx skill command + full end-to-
 ## Current state (rewritten atomically — no stale fields)
 
 ### Environment
+- **Context profile**: `personal-solo` — personal git-native tooling, snds repos (00-context-profiles.md Examples row: this workspace family).
 - **Machine**: `Voyager-2.local` (Personal MacBook Pro)
 - **OS context**: macOS (Darwin 25.5.0)
 - **Workspace root**: the workspace checkout (the dir containing `AGENTS.md`) — resolve by walking up; no hardcoded path
