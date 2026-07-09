@@ -1,5 +1,5 @@
 # User Preferences — Sean Sands
-**Last updated:** 2026-03-06
+**Last updated:** 2026-07-09
 
 ---
 
@@ -26,7 +26,10 @@ cross-framework DS strategy (Vue, React, React Native, Angular).
 - No supporting documentation or meta-commentary unless asked
 - Tables, specs, briefs — use that format directly, no preamble
 - Code: inline comments on non-obvious behavior; skip boilerplate explanation
-- Target audience: UX/product designer, not a developer
+- Target audience: UX/product designer, not a developer — operationalized in
+  `02-shared-references/delivery-playbooks/` (2026-07-09): resolve the context profile
+  first (context is king), then audience contract, then the medium playbook the request's
+  own words imply. Code-heavy work ships with a Proofboard (validation harness).
 
 ## Terminology
 - Design system terms: tokens, variants, states, anatomy, slot, tier, alias,

@@ -1,6 +1,18 @@
 # Artifact Registry
 <!-- Auto-maintained by Claude. Updated after each task. -->
-<!-- Last updated: 2026-06-04 | Session: Six-hub operation-grammar set completed (/qa + 5 siblings) -->
+<!-- Last updated: 2026-07-09 | Session: Delivery playbooks (Audience & Evidence system) shipped -->
+
+## Delivery Playbooks — 02-shared-references/delivery-playbooks/
+
+### delivery-playbooks/ (7 files: README + 00–05)
+- **Size**: ~7 files, ~600 lines total
+- **Purpose**: Canonical standards for HOW work is delivered — context profiles (whose work / who reviews: `personal-solo` / `centric-engineering` / `centric-design`, resolution order, fail-safe), audience contract (designer-first, forward test, three-altitude model), medium playbooks (diagrams/flows, data/charts, documents/specs), and the Proofboard validation-harness standard (plain-english contracts, show-me evidence, sandboxed sample data — Sean verifies code-heavy work without reading code).
+- **Last modified**: 2026-07-09 — v1 created. Enforcement wired: dispatcher `TRIGGER_WORDS`, CLAUDE.md (section + trigger rows), framework #06 pre-output gate (context & medium check), SESSION-STATE template (`Context profile` field), user-preferences pointer. Founding anti-example: the Media Sentinel workflow-diagram-as-HTML-page failure.
+- **Related pending**: "Context is King — workspace foundation refinements" backlog item in project-context.md (generalize profile resolution to every session surface).
+
+### workspace_validation-session-prompt_v1.0_2026-07-09.md — 05-artifacts/active/ (local only, gitignored)
+- **Purpose**: 6-phase test prompt validating the delivery-playbooks system in a fresh session — boot/trigger verification, context-resolution drills (incl. a deliberately unresolvable trap), audience/medium binding, a full Proofboard loop, adversarial path-walk (token-waste audit, trigger gaps, unexercised-path desk-check), scorecard. Fixed checkpoint-report format; stops for Sean's confirmation at every phase.
+- **Last modified**: 2026-07-09 — v1.0 created. Not synced (05-artifacts gitignored) — copy manually to run from another machine; bump version + re-run after the "Context is King" backlog item lands.
 
 ## Skill Ecosystem & Trigger System — 05-artifacts/active/ + 03-skills/
 

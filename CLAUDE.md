@@ -91,6 +91,8 @@ Team practices: **[01-frameworks/team-practices-and-decisions.md](01-frameworks/
 
 Use `/framework-check` to run current work through the operating frameworks (the six core lenses always; situational lenses 07–10 when the work touches their domain) as a critique pass.
 
+**Delivery playbooks (context is king).** How work is *delivered* — whose work it is, who reads it, what medium, how it's proven — is governed by [02-shared-references/delivery-playbooks/](02-shared-references/delivery-playbooks/README.md). Load order: `00-context-profiles.md` resolves FIRST (declared profiles `personal-solo` / `centric-engineering` / `centric-design`; resolution: Sean's word → project declaration → repo remote → ask; fail-safe = most restrictive). Then the audience contract (designer-first, forward test) and the medium playbook the request's own words imply (a diagram request is only satisfiable by a diagram). Code-heavy work ships with a **Proofboard** (`05-validation-harness.md`) — plain-english contracts, show-me evidence, sandboxed sample data — so Sean can verify without reading code. The pre-delivery gate is wired into framework #06's pre-output gate.
+
 **Always-load for QA work:** any task signalling audit, review, critique, refinement, clean-up, iteration, alignment, or last-mile finish loads framework #06 *before* doing anything else. The pre-output gate in #06 is non-negotiable.
 
 ---
@@ -161,6 +163,10 @@ operational state (template at [01-frameworks/_session-state-template.md](01-fra
 | `icon font`, `centricsymbols`, `variable axis` | `variable-icon-font-architect` + math spokes |
 | `figma plugin`, `plugin dev` | `figma-plugin-dev` |
 | `omni` | `omni-project` |
+| `diagram`, `flowchart`, `user journey`, `how does it work`, `show me the steps`, `walkthrough` | `02-shared-references/delivery-playbooks/` — context profile (00) first, then `02-diagrams-and-flows.md` |
+| `proofboard`, `validation harness`, `context profile` | `02-shared-references/delivery-playbooks/` (05 = Proofboard standard, 00 = profiles) |
+| `explain this to`, `explain like`, `eli5`, `present to` | `02-shared-references/delivery-playbooks/01-audience-contract.md` — forward test + three altitudes |
+| `chart`, `write a spec`, `write a report` | `02-shared-references/delivery-playbooks/` (03 = data/charts, 04 = documents/specs) |
 
 Current active projects and their status: **[06-context/project-context.md](06-context/project-context.md)**.
 

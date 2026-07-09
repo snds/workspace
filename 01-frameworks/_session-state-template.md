@@ -43,6 +43,7 @@ _Last updated: [YYYY-MM-DD HH:MM] — [update reason: rolling | checkpoint | wra
 - **Agent thread**: [last few handoffs, newest first — e.g. `Claude/Claude Code → Cursor (2026-06-16): wired registry; next = cross-links`]
 
 ### Environment
+- **Context profile**: [`personal-solo` | `centric-engineering` | `centric-design` (+ `visibility: public` if applicable) — declared per `02-shared-references/delivery-playbooks/00-context-profiles.md`; governs repo conduct, delivery voice, and evidence target]
 - **Machine**: [e.g. `seansands.local` (work Mac) | `Voyager-2.local` (personal Mac) | `Enterprise` (Windows desktop)]
 - **OS context**: [e.g. macOS 14.4 / Windows 11 / Bazzite 40]
 - **Workspace root**: [the git checkout root — the directory containing `AGENTS.md`]

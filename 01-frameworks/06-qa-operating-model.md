@@ -80,6 +80,7 @@ This protocol fires anytime a reference exists. If a reference doesn't exist, sa
 
 Before reporting an outcome — audit verdict, grade, claim of correctness, "looks right" — pass it through:
 
+- **Context & medium check (fires first — the target user below is derived from it).** Whose work is this and who reviews it — is the context profile resolved and cited (`personal-solo` / `centric-engineering` / `centric-design`)? And is the delivery medium what the request's own words imply — a diagram request satisfied by a diagram, in the reader's notation and vocabulary? This is the delivery-playbooks gate (`02-shared-references/delivery-playbooks/`) firing inside this one; profiles, the audience contract (forward test, three altitudes), and the medium playbooks live there.
 - **Target-user check.** Would the senior DS designer accept this finding as authoritative, or would they push back the way Sean has?
 - **Coverage check.** Have I evaluated every visible asset (parents, subs, variants, modes, states)? Or did I sample?
 - **Composition check.** Is sub-anatomy actually instanced inside parents, or am I grading on silhouette? (The Avatar trick — circular outline ≠ Avatar component.)

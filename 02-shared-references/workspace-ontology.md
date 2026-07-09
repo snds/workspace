@@ -40,6 +40,16 @@ answers the one question every contributor (human or LLM) must answer before wri
 - **preference** (`04-preferences/`) — stable, *deliberately set* behavioral defaults (tone, format,
   terminology). Changed only on an explicit user signal.
 
+### Delivery vocabulary (context, audience, medium, evidence)
+Defined in `02-shared-references/delivery-playbooks/` ([[02-shared-references/delivery-playbooks/README|README]]):
+- **context profile** — the declared fact of who owns/reviews a piece of work (`personal-solo` /
+  `centric-engineering` / `centric-design`). Resolves **before** any delivery or repo action; never
+  guessed. Spec + resolution order: [[00-context-profiles]].
+- **forward test** · **three altitudes** · **Proofboard** — the audience bar (forwardable without
+  translation), the explanation model (plain english → how it works → full detail, caveats at the top),
+  and the visual validation harness for code-heavy work. See [[01-audience-contract]] and
+  [[05-validation-harness]].
+
 ### Edge types (cross-links)
 `foundation` (load-before, precedence) · `hub` · `spoke` · `applies-in` · `governed-by` · `peer` ·
 `encodes-into`. Only `foundation →` carries load precedence; the rest are navigational. All edges are

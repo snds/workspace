@@ -137,7 +137,7 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 - Target-user lens loads FIRST — surface, user type, skill level, implied intent — before grading begins.
 - Skill baseline triplet (`ds-advisor` + `design-engineer` + `figma-canvas-designer`) loads proactively; Sean shouldn't have to name skills.
 - Reference-comparison protocol fires without prompting: browser zoom, high-res capture, Figma deep-zoom — match the inspection altitude to the finishing-tier check.
-- Critical-eye pre-output gate before every report: target-user check, coverage check, composition-before-footprint check, reference check, honesty check, skill check.
+- Critical-eye pre-output gate before every report: context & medium check (profile resolved + cited, medium matches the request's words — `02-shared-references/delivery-playbooks/`; fires first), target-user check, coverage check, composition-before-footprint check, reference check, resolution check (#10), honesty check, skill check.
 - Iteration-default mindset: first delivery is round one; explicit next-pass scope in every outcome.
 - No curated subsets — every component, every variant, every asset.
 - Accurate grades over generous grades.

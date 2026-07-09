@@ -54,6 +54,15 @@ The workspace is both a knowledge base and an execution environment.
   truth for the skill graph; `03-skills/skills.registry.json` is generated from it, never hand-edited.
 - Favor idempotent updates, deterministic naming, and reviewable diffs.
 - Before writing anything, consult the routing map in [workspace-ontology.md](02-shared-references/workspace-ontology.md).
+- **Context is king — resolve the context profile before any repo action or delivery.** Who owns the
+  work and who reviews it is a *declared fact*, never a guess:
+  [00-context-profiles.md](02-shared-references/delivery-playbooks/00-context-profiles.md). This
+  workspace itself is `personal-solo` (direct commits + the session-end commit are expected). Employer
+  repos (`centric-engineering`) are the opposite: **no auto-commit, no self-merge, no direct pushes —
+  branch → PR → human engineer review.** Resolution: Sean's explicit word → project declaration → repo
+  remote (`git remote -v`) → stop and ask. Unresolvable = act under the most restrictive profile. The
+  commit/push steps in the handoff protocol below apply to the workspace repo and other
+  `personal-solo` repos only — never generalize them to employer repos.
 
 ---
 
@@ -88,7 +97,7 @@ If a task is clearly project-scoped, move to the nearest project root and read l
 
 - `00-bootstrap/` — bootstrap docs, setup, adapters, environment logic
 - `01-frameworks/` — reusable frameworks, methods, and operating models (incl. the contribution framework that governs edits to this workspace)
-- `02-shared-references/` — durable standards: ontology + routing map, frontmatter spec, reasoning/artifact standards
+- `02-shared-references/` — durable standards: ontology + routing map, frontmatter spec, reasoning/artifact standards, delivery playbooks (`delivery-playbooks/` — context profiles, audience contract, medium playbooks, the Proofboard validation-harness standard)
 - `03-skills/` — reusable capabilities; `skills.registry.json` is the generated skill graph (source of truth = each `SKILL.md` frontmatter)
 - `04-preferences/` — stable, deliberately set behavioral defaults
 - `05-artifacts/` — generated outputs, active artifacts

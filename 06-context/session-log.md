@@ -21,6 +21,28 @@ Keep entries concise. This is a handoff log, not a journal.
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-07-09
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): Workspace foundations — Audience & Evidence system (delivery playbooks + context profiles + Proofboard standard)
+Artifacts:
+  - 02-shared-references/delivery-playbooks/ — NEW 7-file standard: README (pre-delivery gate: context → audience → translation → medium), 00-context-profiles (context is king — declared profiles, resolution order, fail-safe), 01-audience-contract (forward test, jargon rule, three altitudes w/ caveats-at-top), 02–04 medium playbooks (diagrams/flows · data/charts · documents/specs; Media Sentinel HTML-page failure preserved as founding anti-example), 05-validation-harness (Proofboard: contract register, show-me evidence, sandbox, failure gallery, honesty strip).
+  - 05-artifacts/active/workspace_validation-session-prompt_v1.0_2026-07-09.md — 6-phase validation test prompt with checkpoint/confirmation loops + adversarial path-walk (token-waste audit, trigger gaps, unexercised-path desk-check). Local only — 05-artifacts is gitignored; copy before use on another machine.
+Decisions:
+  - Context is king = layer zero of delivery: profiles are DECLARED facts (`personal-solo` / `centric-engineering` / `centric-design`, + `visibility: public` flag), never per-task guesses. Resolution: Sean's word → project declaration → repo remote → stop and ask; fail-safe = most restrictive. Citing rule: name the profile when acting on it.
+  - Placement: shared-reference playbooks now; framework #11 later only if earned (3+ consumers rule). Enforcement wired into 8 surfaces: AGENTS.md core rules, CLAUDE.md (section + trigger rows), dispatcher TRIGGER_WORDS (16 entries), #06 pre-output gate (context & medium check fires FIRST, ahead of target-user), frameworks 00-README, workspace-ontology delivery vocabulary, SESSION-STATE template `Context profile` field, user-preferences pointer.
+  - Proofboard = definition of done for code-heavy work ("Sean verified it without reading code"). Must render REAL tests (no hand-authored theater), carry a failure gallery + honesty strip; per-profile meaning: personal-solo → board IS the review; centric-engineering → board alongside (never instead of) engineer evidence.
+  - Adversarial review as closing gate (Sean's directive): independent agent, 12 findings — 11 fixed, 1 accepted (`diagram` trigger noise). Headline lesson: first pass was "Claude-shaped, not workspace-shaped" — AGENTS.md (entry point for all other agents, whose handoff protocol instructs commit+push) now carries the profile rule and scopes commit/push to personal-solo repos only.
+Pending added:
+  - "Context is King — workspace foundation refinements" (top of Active) — generalize profile resolution to every session surface: ritual, hooks, all 8 SESSION-STATE files, memory routing, skill loading.
+Next:
+  - Sean runs the validation session prompt in a fresh session (phases 0–5 → scorecard); re-run after the backlog item lands to compare.
+  - Populate `Context profile` in all 8 SESSION-STATE files + create a Media Sentinel project entry (until then, repo remote is the only mechanical resolver — fail-safe carries the rest).
+  - Optional: extract the Proofboard build procedure from 05-validation-harness.md into a 03-skills skill.
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
 Date: 2026-06-30
 Agent: Claude Opus 4.8
 Machine: Personal MacBook Pro

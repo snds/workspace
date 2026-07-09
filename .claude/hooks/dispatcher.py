@@ -71,6 +71,22 @@ TRIGGER_WORDS = {
     "centricsymbols": "03-skills/variable-icon-font-architect/SKILL.md",
     "omni": "03-skills/omni-project/SKILL.md",
     "figma plugin": "03-skills/figma-plugin-dev/SKILL.md",
+    "diagram": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
+    "flowchart": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
+    "user journey": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
+    "how does it work": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
+    "show me the steps": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
+    "walkthrough": "02-shared-references/delivery-playbooks/README.md — pre-delivery gate: context, audience, translation, medium",
+    "proofboard": "02-shared-references/delivery-playbooks/05-validation-harness.md",
+    "validation harness": "02-shared-references/delivery-playbooks/05-validation-harness.md",
+    "context profile": "02-shared-references/delivery-playbooks/00-context-profiles.md",
+    "explain this to": "02-shared-references/delivery-playbooks/01-audience-contract.md — forward test + three-altitude model",
+    "explain like": "02-shared-references/delivery-playbooks/01-audience-contract.md — forward test + three-altitude model",
+    "eli5": "02-shared-references/delivery-playbooks/01-audience-contract.md — forward test + three-altitude model",
+    "present to": "02-shared-references/delivery-playbooks/01-audience-contract.md — forward test + three-altitude model",
+    "chart": "02-shared-references/delivery-playbooks/03-data-and-charts.md — audience layer on top of the dataviz skill",
+    "write a spec": "02-shared-references/delivery-playbooks/04-documents-and-specs.md — structure serves the second reader",
+    "write a report": "02-shared-references/delivery-playbooks/04-documents-and-specs.md — structure serves the second reader",
 }
 
 # Knowledge hints: topic keywords → relevant 08-knowledge/ entry paths.
