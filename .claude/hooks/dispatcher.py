@@ -928,7 +928,8 @@ def build_reorientation_context(machine: str, now: datetime, source: str) -> str
     summarized away — re-inject the load discipline and the knowledge index so
     mid-session work doesn't decay into freestyling (the 2026-07-08 failure mode)."""
     knowledge_index = read_head(KNOWLEDGE_INDEX, 60)
-    return f"""# Workspace re-orientation (context was {source}ed)
+    source_label = {"compact": "compacted", "resume": "resumed"}.get(source, source)
+    return f"""# Workspace re-orientation (context was {source_label})
 
 **Machine:** {machine} · **Date:** {now.strftime('%Y-%m-%d %H:%M %Z')}
 

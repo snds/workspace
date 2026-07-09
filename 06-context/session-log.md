@@ -21,6 +21,37 @@ Keep entries concise. This is a handoff log, not a journal.
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-07-08
+Agent: Claude Fable 5
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s): Claude Workspace Infrastructure — post-mortem of the C8 cell-validation failure → trigger/dispatch layer rebuilt, foundational color/UX/a11y routing wired, self-healing added
+Artifacts:
+  - 06-context/audit-log.md — 2026-07-08 audit entry (14 findings: 4 P0 / 6 P1 / 4 P2; fixes + carry-forwards; resets the 72-day staleness)
+  - .claude/hooks/dispatcher.py — hookEventName fix (null → payloads were SILENTLY dropped; whole context layer was dark); runtime trigger matching from skills.registry.json + _INDEX.md Triggers lines (word-boundary); foundational vocabulary (validation/warning/status color/contrast/a11y → foundations-first route); compact/resume re-orientation injection; stale-audit escalation (>2x threshold); once-per-session use_figma PreToolUse design-judgment gate; session-end registry auto-regen
+  - .claude/settings.json — PreToolUse hook registered (matcher mcp__.*use_figma.*)
+  - 01-frameworks/06-qa-operating-model.md — sixth operating default "System-context fidelity" + Accessibility check in the pre-output gate (judgment-framed, not prescriptive)
+  - 03-skills — triggers: declared on ds-advisor / design-engineer / figma-canvas-designer / visual-qa-toolkit / a11y-visual / uid-color-for-ui; narrowed sec-supply-chain `token` + sec-authn-authz `session`; infod-encoding-theory +found-color prereq; registry regenerated (246 skills, --check green)
+  - 09-tools/validate-workspace.py — new KNOWLEDGE COVERAGE check; _INDEX.md research section indexed (5 entries); `figma-plugin-patterns 2.md` conflict copy archived w/ ARCHIVE-LOG provenance
+  - 08-knowledge/engineering/claude-code-hooks-contract.md — NEW: hook payload contract gotchas (hookEventName, PreToolUse deny-as-injection, SessionStart source)
+  - 02-shared-references/ds-agents-binding.md + CLAUDE.md + 3 knowledge docs — system-fidelity rule mirrored; stale claims fixed (skills-manifest, handle_user_prompt_submit, 08-tools, "mirrors TRIGGER_WORDS", "loads the skill registry")
+Decisions:
+  - Root cause of the cell-validation failure: every carrier of the foundations was advisory, stale, empty, or dropped — dispatcher emitted hookEventName:null (harness silently drops the payload), trigger tables frozen vs registry/_INDEX, zero triggers on applied design skills, no gate at use_figma. Fixed at all four layers; the exact failing prompt now routes to the foundations chain (verified by replay).
+  - Foundations are DS-independent (Sean): baseline = design-foundations → found-color → a11y-visual → uid-color-for-ui, loaded BEFORE any system-specific rules; [[radix-derived-color-system]] is a system-specific application layer — scoped with a note, never generalized to non-Radix systems (e.g. C8).
+  - System-context fidelity codified (framework #06 default 6 + ds-agents-binding + gate): resolve within the target DS's own tokens/DESIGN.md/libraries; token gaps → backlog while the prompt's problem still gets solved now; a11y compliance is never deferred (per lead-accessibility-architect).
+  - Gates prompt judgment, not rules (Sean correction): no prescriptive palette rules — full-color full-bleed surfaces with foreground text/icons are legitimate when the implementation holds up; the non-negotiable is VERIFICATION (APCA/WCAG pairing checks, CVD redundancy). Worked examples are emblematic, not rulesets.
+  - APCA guidance is a deliberate TIER, not a contradiction (Sean): a11y-visual = accessibility floor (bare minimum) · design-engineer table = working target ("happy middle") · radix entry = Radix-scale-specific (the 12-step scale is tuned to reach it; Radix-generated palettes inherit it). Cross-linked tier notes in all three files.
+Pending added:
+  - C8/CDS semantic status-token gap (warning tint/stroke; orange accent border as documented interim) — flesh out status/context semantic tokens, raise as CDS ask
+  - 2026-07-08 audit carry-forwards (b)–(f): remaining a11y-skill triggers decision, CVD prevalence alignment, artifact-registry line-number tables, doctor conflict-copy sweep, research/research double-nesting
+Pending resolved:
+  - Workspace audit staleness (72 days) — audit-log entry 2026-07-08; carry-forward (a) APCA floors resolved per Sean's tiering
+Next:
+  - Watch the next real design session for gate + trigger behavior in the wild (the resume re-orientation already fired live this session)
+  - Decide carry-forward (b): frontmatter triggers for ux-accessibility / fe-accessibility / visual-qa-accessibility / lead-accessibility-architect / gd-color-theory / infod-encoding-theory (deferred to avoid over-firing)
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
 Date: 2026-07-07
 Agent: Claude Fable 5
 Surface: Claude Code (Mac desktop app)
