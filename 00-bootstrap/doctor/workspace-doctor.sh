@@ -2,7 +2,17 @@
 # workspace-doctor v2. Modes: default report+repair · --quick (repairs only, <1s) ·
 # --check (report only, exit 1 on drift) · --quiet · --ack · --ack-chat
 set -u
-WS="$HOME/Projects/workspace"; DIST="$WS/00-bootstrap/dist"
+# Resolve the workspace root (FX-14 — no hardcoded path): brain-path file first,
+# then candidate list; AGENTS.md presence is the test.
+WS=""
+for _c in "$(cat "$HOME/.claude/workspace-brain-path" 2>/dev/null | head -1)" \
+          "$HOME/Projects/Workspace" "$HOME/Projects/workspace" "$HOME/projects/workspace"; do
+  [ -n "$_c" ] && [ -f "$_c/AGENTS.md" ] && WS="$_c" && break
+done
+[ -n "$WS" ] || WS="$HOME/Projects/workspace"
+DIST="$WS/00-bootstrap/dist"
+# Self-heal the pointer so every other consumer resolves the same root.
+printf '%s\n' "$WS" > "$HOME/.claude/workspace-brain-path" 2>/dev/null
 STATE="$HOME/.claude/ws-state"; mkdir -p "$STATE"; LOG="$STATE/audit.log"
 # Seed the audit log at install so the canary can tell "just installed" from
 # "hooks dead" (fresh-install false-positive found in live Phase-1 testing).

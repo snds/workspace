@@ -1,7 +1,7 @@
 {
   "hooks": {
     "SessionStart": [
-      { "hooks": [ { "type": "command", "command": "$HOME/Projects/workspace/00-bootstrap/dist/workspace-sessionstart.sh", "timeout": 15 } ] }
+      { "hooks": [ { "type": "command", "command": "$HOME/.claude/hooks/workspace-sessionstart.sh", "timeout": 15 } ] }
     ]
   }
 }

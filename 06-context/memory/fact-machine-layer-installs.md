@@ -20,3 +20,15 @@ at `066edac`) must be installed **per machine**. State as known:
 Install = run `00-bootstrap/doctor/workspace-doctor.sh` on that machine, then retire any
 Drive-era `~/.claude/hooks/*.sh` + their `settings.json` registrations, refresh
 `~/.claude/workspace-brain-path`. Update this table when a machine's state changes.
+
+## Per-OS brain location (FX-14)
+
+The authoritative pointer on every machine is `~/.claude/workspace-brain-path` (one line,
+absolute path; doctor self-heals it on every run). Shims resolve brain-path first, then the
+candidate list, testing for `AGENTS.md`:
+
+| OS | Expected checkout |
+|---|---|
+| macOS (all Macs) | `~/Projects/Workspace` (case-insensitive APFS also accepts `workspace`) |
+| Windows (`Enterprise`) | not yet installed post-migration — location TBD at install time (record here); shims are bash and need the Windows install route first |
+

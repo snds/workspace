@@ -4,7 +4,7 @@
   <key>Label</key><string>design.snds.workspace-doctor</string>
   <key>ProgramArguments</key><array>
     <string>/bin/bash</string><string>-lc</string>
-    <string>"$HOME/Projects/workspace/00-bootstrap/doctor/workspace-doctor.sh" --quiet</string>
+    <string>WS="$(cat "$HOME/.claude/workspace-brain-path" 2>/dev/null)"; [ -f "$WS/AGENTS.md" ] || WS="$HOME/Projects/Workspace"; [ -f "$WS/AGENTS.md" ] || WS="$HOME/Projects/workspace"; "$WS/00-bootstrap/doctor/workspace-doctor.sh" --quiet</string>
   </array>
   <key>RunAtLoad</key><true/>
   <key>StartInterval</key><integer>14400</integer>

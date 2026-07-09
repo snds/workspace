@@ -2,7 +2,14 @@
 # ws-reassert v2 — UserPromptSubmit hook. Silent on the happy path.
 # State lives in ~/.claude/ws-state (survives TMPDIR purges — no false late-repairs).
 set -u
-WS="$HOME/Projects/workspace"
+# Resolve the workspace root (FX-14 — no hardcoded path): brain-path file first,
+# then candidate list; AGENTS.md presence is the test.
+WS=""
+for _c in "$(cat "$HOME/.claude/workspace-brain-path" 2>/dev/null | head -1)" \
+          "$HOME/Projects/Workspace" "$HOME/Projects/workspace" "$HOME/projects/workspace"; do
+  [ -n "$_c" ] && [ -f "$_c/AGENTS.md" ] && WS="$_c" && break
+done
+[ -n "$WS" ] || WS="$HOME/Projects/workspace"
 STATE="$HOME/.claude/ws-state"; mkdir -p "$STATE"
 SID="$(cat 2>/dev/null | sed -n 's/.*"session_id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)"
 [ -n "$SID" ] || exit 0    # cannot identify the session -> fail open, never false-alarm
