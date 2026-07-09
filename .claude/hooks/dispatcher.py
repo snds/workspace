@@ -85,7 +85,18 @@ FOUNDATION_ROUTE = (
     "backloggable; a11y compliance is not deferrable — the delivered artifact must pass now."
 )
 
+# NOTE: insertion order IS emission priority — under the per-tier cap (FX-2), rows
+# earlier in this dict win. Mandate rows (framework #06 pre-output gate) come first:
+# CLAUDE.md requires them loaded "before doing anything else" for audit-class work.
 TRIGGER_WORDS = {
+    # Audit-class carrier (2026-07-09, FX-4): CLAUDE.md mandates framework #06 for any
+    # audit/review/critique/refinement work, but no trigger carried it — the mandate
+    # was un-fired on the one session that WAS an audit. Pre-output gate loads FIRST.
+    "audit": "01-frameworks/06-qa-operating-model.md — pre-output gate: load BEFORE the work",
+    "review": "01-frameworks/06-qa-operating-model.md — pre-output gate: load BEFORE the work",
+    "critique": "01-frameworks/06-qa-operating-model.md — pre-output gate: load BEFORE the work",
+    "qa pass": "01-frameworks/06-qa-operating-model.md — pre-output gate: load BEFORE the work",
+    "refine": "01-frameworks/06-qa-operating-model.md — pre-output gate: load BEFORE the work",
     "legion": "03-skills/legion-project/SKILL.md + appropriate hub (lead-game-designer / lead-art-director / lead-game-developer)",
     "bobiverse": "03-skills/legion-project/SKILL.md",
     "centric": "Centric PLM project context — see 06-context/project-context.md; ds-advisor hub",
@@ -102,7 +113,10 @@ TRIGGER_WORDS = {
     "wireframe": "03-skills/figma-canvas-designer/SKILL.md",
     # Foundational color / UX-of-color / a11y vocabulary (2026-07-08, added after the
     # cell-validation failure: none of these words routed anywhere before).
-    "validation": FOUNDATION_ROUTE,
+    # `validation` narrowed to two-word phrases 2026-07-09 (FX-3): the bare word
+    # collided with Proofboard/validation-harness talk and misrouted it to color/a11y.
+    "field validation": FOUNDATION_ROUTE,
+    "validation state": FOUNDATION_ROUTE,
     "invalid": FOUNDATION_ROUTE,
     "warning": FOUNDATION_ROUTE,
     "error state": FOUNDATION_ROUTE,
@@ -138,6 +152,8 @@ TRIGGER_WORDS = {
     "chart": "02-shared-references/delivery-playbooks/03-data-and-charts.md — audience layer on top of the dataviz skill",
     "write a spec": "02-shared-references/delivery-playbooks/04-documents-and-specs.md — structure serves the second reader",
     "write a report": "02-shared-references/delivery-playbooks/04-documents-and-specs.md — structure serves the second reader",
+    "validation report": "02-shared-references/delivery-playbooks/04-documents-and-specs.md — structure serves the second reader",
+    "full report": "02-shared-references/delivery-playbooks/04-documents-and-specs.md — structure serves the second reader",
 }
 
 # Knowledge hints: topic keywords → relevant 08-knowledge/ entry paths.
@@ -373,12 +389,21 @@ def _describe_git_state() -> str:
 
 
 def _parse_last_session_entry(path: Path) -> str:
-    """Return 'YYYY-MM-DD — title' from the first entry under '## Session Entries' in session-log.md."""
+    """Return 'YYYY-MM-DD — title' from the first entry under '## Session Entries' in session-log.md.
+
+    Understands BOTH entry shapes (FX-5, 2026-07-09 — the heading-only parser showed a
+    month-stale "last session" on every boot once newer entries were bare blocks):
+    - '### YYYY-MM-DD — title' headings (preferred; /session-end writes one per block)
+    - bare '--- SESSION BLOCK ---' blocks (title recovered from Date: + Project(s): lines)
+    Whichever shape appears first below '## Session Entries' (newest-first log) wins.
+    """
     if not path.exists():
         return ""
     try:
         with path.open("r", encoding="utf-8", errors="replace") as f:
             in_entries = False
+            in_block = False
+            block_date = ""
             for line in f:
                 if line.startswith("## Session Entries"):
                     in_entries = True
@@ -388,6 +413,24 @@ def _parse_last_session_entry(path: Path) -> str:
                 m = re.match(r"^### (\d{4}-\d{2}-\d{2})\s+[—-]\s+(.+?)\s*$", line)
                 if m:
                     return f"{m.group(1)} — {m.group(2)}"
+                if line.strip() == "--- SESSION BLOCK ---":
+                    in_block = True
+                    block_date = ""
+                    continue
+                if in_block:
+                    dm = re.match(r"^Date:\s*(\d{4}-\d{2}-\d{2})\s*$", line)
+                    if dm:
+                        block_date = dm.group(1)
+                        continue
+                    pm = re.match(r"^Project\(s\):\s*(.+?)\s*$", line)
+                    if pm and block_date:
+                        title = pm.group(1)
+                        if len(title) > 100:
+                            title = title[:99].rstrip() + "…"
+                        return f"{block_date} — {title}"
+                    if line.strip() == "--- END BLOCK ---":
+                        # Malformed block (no Date:/Project(s):) — keep scanning.
+                        in_block = False
     except Exception:
         pass
     return ""
@@ -1059,7 +1102,27 @@ def _knowledge_index_hits(prompt: str) -> list[tuple[str, str]]:
     return hits
 
 
-MAX_TRIGGER_LINES = 15  # cap injected hint lines; foundations + most-specific first
+# Per-tier caps (FX-2, 2026-07-09). The old single global cap (15 lines, emit order
+# skill → registry → knowledge → index) let a flood of registry matches truncate the
+# curated knowledge hints away — the highest-value tier lost to the noisiest one.
+# Curated tiers now emit FIRST and every tier keeps its own budget; a hot tier can
+# no longer starve the others.
+TIER_CAPS = {
+    "curated trigger": 8,
+    "knowledge hint": 4,
+    "registry trigger": 6,
+    "index trigger": 4,
+}
+
+# Extracts the first workspace-relative .md path in a hint — the dedupe key. Hints
+# from different tiers pointing at the same file (e.g. a curated row and a registry
+# row both routing to design-engineer/SKILL.md) collapse to the first occurrence.
+_HINT_TARGET_RE = re.compile(r"\d{2}-[\w./-]+\.md")
+
+
+def _hint_target_key(hint: str) -> str:
+    m = _HINT_TARGET_RE.search(hint)
+    return m.group(0) if m else hint
 
 
 def handle_user_prompt(payload: dict) -> None:
@@ -1073,18 +1136,32 @@ def handle_user_prompt(payload: dict) -> None:
     ]
     registry_hits = _registry_trigger_hits(prompt)
     index_hits = _knowledge_index_hits(prompt)
-    if not (skill_hits or knowledge_hits or registry_hits or index_hits):
+    tiers = [
+        ("curated trigger", skill_hits),
+        ("knowledge hint", knowledge_hits),
+        ("registry trigger", registry_hits),
+        ("index trigger", index_hits),
+    ]
+    if not any(hits for _, hits in tiers):
         return
     lines = ["# Project trigger detected", ""]
     seen: set[str] = set()
-    for trigger, hint in [*skill_hits, *registry_hits, *knowledge_hits, *index_hits]:
-        if hint in seen:
-            continue
-        seen.add(hint)
-        lines.append(f"- **`{trigger}`** → {hint}")
-        if len(lines) - 2 >= MAX_TRIGGER_LINES:
-            lines.append(f"- _(further matches truncated at {MAX_TRIGGER_LINES})_")
-            break
+    for tier_name, hits in tiers:
+        cap = TIER_CAPS[tier_name]
+        emitted = 0
+        dropped = 0
+        for trigger, hint in hits:
+            key = _hint_target_key(hint)
+            if key in seen:
+                continue
+            if emitted >= cap:
+                dropped += 1
+                continue
+            seen.add(key)
+            lines.append(f"- **`{trigger}`** → {hint}")
+            emitted += 1
+        if dropped:
+            lines.append(f"- _(+{dropped} more {tier_name} match(es) dropped — per-tier cap {cap})_")
     lines += [
         "",
         "_Load the matched skills per the AGENTS.md precedence algorithm (foundation-first) "
