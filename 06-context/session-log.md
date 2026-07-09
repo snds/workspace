@@ -46,6 +46,33 @@ Next:
 --- END BLOCK ---
 
 --- SESSION BLOCK ---
+Date: 2026-07-09
+Agent: Claude Opus 4.8
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s): c8-plm — Dojo data table → CDS DataTable migration (rollout strategy + code-grounded triage)
+Artifacts (05-artifacts/active/, gitignored — referenced by name; filenames carry 2026-06-23 from the working turns):
+  - c8_table-migration-dashboard_v1.2_2026-06-23.html — manager briefing: exec summary, wedge strategy, four-wave rollout, engineering readiness, FAQ (10 Q&A). Re-anchored ALL dates to a program start of the week of 7 Jul 2026 (+22d from v1.1's 06-15 anchor); Gantt rebuilt Jul–Nov + a rollout-waves lane. Extends (does not overwrite) the v1.1 dashboard.
+  - c8_table-rollout-strategy_v1.0_2026-06-23.md — prose companion: wedge logic, four-wave rollout with named cohorts, A/B + quality-gate mechanism, interlock with the 12-asks plan, risks/caveats, DDR DS-2026-001, asks of leadership.
+  - c8_table-footprint-scan_v1.0_2026-06-23.py — stdlib XML scanner over all 54 WebAccess module XMLs; scores every table view by gap-feature footprint → tier.
+  - c8_table-footprint_v1.0_2026-06-23.csv — 2,591 views scored (tier, signals, read_only, pure_read, top7, file:line). Wave-1 worklist = filter tier=1, pure_read=True.
+  - c8_table-footprint-summary_v1.0_2026-06-23.md — rollup.
+Key findings (code-verified against ~/Projects/c8-plm/c8-full):
+  - 1,521 of 2,591 table views (59%) are Tier-1 — read-only, no inline edit, no row CRUD, not switchboard/gallery/matrix → migrate on CDS-covered features alone. 1,388 are pure-read (no row actions); 928 Tier-1 views sit in the top-7 modules = the high-traffic A/B pool.
+  - Per-view complexity drivers: row CRUD 907, inline edit 245, switchboard/gallery 117, matrix headers 116. Tier 2 = 828 (32%), Tier 3 = 242 (9%).
+  - LOAD-BEARING: a single default toolbar is defined once at csi/table/Widget.js:409 (print, Export{Excel×3,PDF}, columns, gallery-toggle, charts, sort, filter, quickSearch, pageSize, suspend) and applies to EVERY table — 0 non-empty <Toolbar Plugins> and 0 pluginsOmit across all 2,591 views. So filter/export/charts are a converter-level capability + a scoping decision, NOT per-view blockers; the per-view tiers correctly order by data/interaction complexity.
+Decisions:
+  - DS-2026-001 — sequence the migration by structural footprint; lead with Tier-1 + a curated toolbar; defer full export/charts/filter-bar parity to a central toolbar workstream. Rationale: 59% of views are structurally trivial, the toolbar is uniform/central, the converter is the real lever (harden on low-risk surfaces), and the flag-based A/B + rollback is already proven by the shipped Bulk Edit consumer.
+  - Never-overwrite honored: dashboard → v1.2 (v1.1 retained on file); strategy + scanner are new v1.0s.
+Pending added:
+  - Open offer: fold the real scan numbers into dashboard v1.2 (e.g. swap a metric to "1,521 ready day one (59%)" + add the default-toolbar insight) so the visual and the data agree.
+  - Sample-verify the top Cohort-A/B picks in a running instance before locking the A/B — "feature-light" is XML-declared, not runtime-proven (flags/ACL can add behavior).
+  - Separate audit for the DataSheet stack (50 views, csi/datasheet) — out of the table scanner's scope.
+Next:
+  - Await Sean's call on folding scan numbers into the dashboard; then verify the Cohort-A pilot shortlist (pure-read MemoryTables + small-module tables) live before the first A/B.
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
 Date: 2026-07-09 (session ran 2026-07-07 → 07-09; canvas/doc edits auto-committed at exit as 0cbfc3f/46d1166)
 Agent: Claude Fable 5
 Surface: Claude Code (Mac desktop app)
