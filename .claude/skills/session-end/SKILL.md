@@ -64,6 +64,13 @@ One line per entry. Omit empty sections.
 Append the block under `## Session Entries` in `06-context/session-log.md`.
 **Newest-first** — insert at the top of the section, not the bottom.
 
+**Always write a heading line above the block** (belt-and-braces for the boot parser,
+which understands both shapes but headings are cheaper and render in Obsidian):
+
+```
+### {YYYY-MM-DD} — {short session title}
+```
+
 ### Step 3 — Update project-context.md (only if needed)
 
 Apply pending adds/resolves and project status changes. Skip if no changes.
