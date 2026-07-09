@@ -12,6 +12,7 @@ New entry: copy `_template.md`, fill it in, add a line below.
 ## Entries
 
 - [[fact-workspace-repos]] — `fact` · the two workspace repos; `snds/workspace` is canonical going forward.
+- [[fact-machine-layer-installs]] — `fact` · per-machine install state of the bootstrap-v2 hooks/doctor layer (Personal MBP ✅ 2026-07-09; both Work MBPs + Windows pending).
 - [[fact-unraid-server]] — `fact` · Sean's Unraid home server: how to reach it (LAN / key / sandbox) + what runs on it.
 - [[feedback-infra-ip-disclosure]] — `feedback` · internal/LAN IPs OK to record; external/WAN IP never (the real attack surface).
 - [[decision-portable-workspace-refactor]] — `decision` · why the workspace became portable, git-native, LLM-agnostic.
