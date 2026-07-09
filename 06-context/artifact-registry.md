@@ -349,6 +349,12 @@
 - **Purpose**: Privacy audit: external connection registry, metadata API payloads, anonymity-preserving patterns
 - **Last modified**: 2026-03-07 — Initial creation
 
+## centricPLM — 07-projects/02-centricPLM/context/ (gitignored)
+
+### cell-indicators-pilot.md
+- **Purpose**: Authoritative running state of the C8 data-table cell-indicator system (Figma branch `cell-indicators`): DS sourcing rules, cell architecture, code-validated indicator matrix (GROUNDED/ADD-VIZ/FUTURE tiers), two-tier editability model, read-only lock+tint three-scope system, worst-case density demo, node IDs, and open Sean sign-offs.
+- **Last modified**: 2026-07-02 — worst-case scattered-locks demo + tooling gotchas appended
+
 ## figma-repo-sync-plugin — 07-projects/09-figma-repo-sync-plugin/docs/ (gitignored)
 
 ### 2026-05-22-color-pipeline-refactor-plan.md

@@ -21,6 +21,58 @@ Keep entries concise. This is a handoff log, not a journal.
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-07-09 (session ran 2026-07-07 → 07-09; canvas/doc edits auto-committed at exit as 0cbfc3f/46d1166)
+Agent: Claude Fable 5
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s): 02-centricPLM — C8 cell system marathon: drag-to-fill + fill-range, CDS keyboard docs, mode→physical migration (Align + Validation axes), header v2, Jabili validation treatment, CVD options, dense 24px study
+Artifacts:
+  - 07-projects/02-centricPLM/context/cell-indicators-pilot.md — 10 new dated blocks; THE session record (node ids, findings, open decisions)
+  - 08-knowledge/design/figma-ds-surface-authoring.md — rule 16 (in-flow utility rows · hidden-content wrappers = default-OFF boolean · overlay geometry re-assert) + variables/modes mechanics
+  - Interactive artifact (primary deliverable per Sean): https://claude.ai/code/artifact/f05e65c1-727d-4858-aac5-6df153cad62b — migration plan / 29-set matrix / alignment grid / playground
+  - Figma Tables file: .cell/drag-to-fill + drag-to-fill-range sets; Align axis on 4 sets (+56 var); Validation axis pattern on single-line (63 var, Jabili treatment); cell/header (v2) 36 var + sticker sheet; Documentation page (DataTable keyboard doc, decision matrix); ~8 demo/evidence boards
+Decisions:
+  - Sean: modes-as-variants REJECTED for alignment and validation → physical variants; standing rule = recolor→mode · show/hide→boolean · structure/style/alignment→physical · type-fixed→static · 003-blocked→additive-only library ask
+  - Sean: explicit default modes on every variant root, never Auto (mirrors to instances; healed a live checkbox left-align regression)
+  - Sean: read-only = color-only (fontStyle is a dead channel in instances — 79 bindings purged); wrapper rule = any all-hidden-children frame carries a default-OFF boolean; header labels wrap max 3 lines then ellipsis
+  - Jabili (via Sean): entry validation = form treatment as-is (TF Error/Error+Focus); display validation = pale status surface + 2px severity border; warning border = orange accent interim (no warning token — CDS-WIP interface/status/* exists, adopt later)
+  - Vision-evaluation doctrine: severity mode alone rendered 0 pixels (boolean-gated) and Warning amber failed 3:1 — machine-vision permutation testing is now the verification bar; test-the-override before filing library asks (two "locked internals" walls broke under direct testing)
+Pending added:
+  - Validation rollout decisions (Sean): CVD redundancy option A/B/C; entry-error weight parity; Error+Focus severity-over-focus 003 ask; then axis rollout to ~25 sets (+~520 var; refmap 105 — prune?); Cell Value modes verdict outstanding
+  - Re-run c8 legacy-indicator asset extraction (agent lost to process exit) → build before/after indicator boards per cell type
+  - Dense 24px floors → 003 asks: TF wrapper structural trim, small checkbox box, Small chips + single-row truncation; target 24 vs 26/28 pending team
+  - Housekeeping batch still open: KPI parked-frame instance check; Invalid-boolean → Validation-axis instance migration + collection deprecation after rollout
+Next:
+  - Sean reviews the artifact decision points → treatment sign-offs → scripted Validation-axis rollout; header v1→v2 instance migration plan; P3 Active-axis demotion after
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
+Date: 2026-07-09
+Agent: Claude Fable 5
+Surface: Claude Code (Mac desktop app)
+Machine: Work MacBook Pro (main) (CS-K746DRWXY1)
+Project(s): 02-centricPLM — C8 data-table cell-indicator system (Figma branch `cell-indicators`; long-running session 2026-06-29 → 07-02, closed 07-09)
+Artifacts:
+  - 07-projects/02-centricPLM/context/cell-indicators-pilot.md — full pilot state: validation matrix, editability model, read-only system, worst-case demo (gitignored, on-disk)
+  - 08-knowledge/engineering/figma-cli-authoring.md — §11 `use_figma` MCP as branch-safe fallback (committed via the 07-08 sweep)
+  - 08-knowledge/design/figma-ds-surface-authoring.md — §7b clip-content-OFF standing rule, §7c indicator halo pattern (committed via the 07-08 sweep)
+  - Figma (branch): 4-variant CVD corner set w/ halos · sticker board regrouped by grounding tiers + legend · `.cell/indicator-lock` + three-scope read-only demos · real-table + in-context Views demos w/ leading utility gutter · worst-case scattered-locks board (A locks / B tint-only)
+Decisions:
+  - All 11 indicators code-validated on 3 axes (model/rendered/usage) → tiers GROUNDED / ADD-VIZ / FUTURE; future-forward retained (Recent, AI); Inherited dropped (only expression-override exists = Computed "Overridden" struck-ƒx)
+  - Computed OFF booleans, KPI (icon-status conflict), email/phone/link/barcode; ON text enums (AQL usage)
+  - Read-only = lock + tint at MATCHED scope (cell / row / column-header), values stay full-contrast — replaces italic+muted (team noise concern); tooltips reason-differentiated via server AttributeEditability.Reason
+  - Editability is two-tier (column-uniform + per-node) — per-cell locks within editable columns are real and common; hypothesis refuted
+  - Row-lock lives in a leading utility-gutter column (flush-left tables have no outside gutter; precedent = Views toggle column)
+  - Legibility = layered system: tooltip as primary teacher + contextual legend + hybrid dot→glyph-on-hover
+  - Standing rules: clipsContent OFF by default everywhere; indicators on variable backgrounds get a white halo backing
+Pending added:
+  - Sean sign-offs: lock-vs-italic propagation to the 26 cell sets · enum-chip Computed keep/drop · worst-case density rule (always-lock / tint-only / density-adaptive)
+  - Clean 005 icon board for the dot-vs-icon corner call (fix edit/refresh glyph fill; source a chat/comment glyph) · nested `Status` exposure parked until designers ask
+Next:
+  - On sign-off: propagate the lock read-only treatment (replace the `Cell Value` Read-only mode), componentize the utility gutter + `cell/header` `Locked` prop, then the icon board
+--- END BLOCK ---
+
+--- SESSION BLOCK ---
 Date: 2026-07-09
 Agent: Claude Fable 5
 Machine: Personal MacBook Pro

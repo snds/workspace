@@ -228,6 +228,23 @@ the component gains the missing prop.
     names shorten at the schema level. Validated on `cell/header (v2)`; all-cells audit 2026-07-07
     found no other violations (own-tree and instance-wrapper passes).
 
+17. **Variables & modes — the mechanics that decide mode vs boolean vs physical (empirically
+    verified 2026-07-07/09, C8 Tables).** (a) Per-instance mode flips re-resolve ONLY **color/paint
+    bindings and visibility booleans** — both cross nested library-instance boundaries. STRING
+    `fontStyle` bindings NEVER re-resolve inside instances (dead channel); enum props (text-align,
+    auto-layout alignment) can't bind at all → structure/style/alignment = physical variants.
+    (b) **Stamp the semantic default mode on every VARIANT ROOT** — never ship Auto: an unset
+    instance resolves through its PLACEMENT chain to the collection's first mode (not the main's
+    context); variant-root explicits mirror onto non-overridden instances, fresh and retroactively;
+    set-frame explicits do NOT propagate. (c) **Paint-level `opacity` is IGNORED on variable-bound
+    fills at render** — never build tints as bound-color-at-alpha; design real pale surface values/
+    tokens. (d) **Test the override before filing a library ask**: nested text accepts
+    `textAutoResize`/`layoutSizing FILL`/`textTruncation` overrides, and nested frames accept
+    alignment-enum overrides — two assumed-locked walls broke under direct probes. (e) Verification
+    bar for any mode/state surface: machine-vision permutation testing on rendered pixels (a
+    checksum diff proved "working" what designers correctly saw as dead — the severity mode rendered
+    0 px without its gating boolean).
+
 ## C. Code→Figma transliteration judgment calls
 
 1. **Focus states must use a focus token.** Use the `ring` (focus) color for the focus indicator
