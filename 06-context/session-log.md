@@ -20,6 +20,33 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-09 — Workspace validation session: six-phase harness + adversarial pass
+
+--- SESSION BLOCK ---
+Date: 2026-07-09
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): Workspace validation — structured six-phase test of hooks, context profiles, delivery playbooks, Proofboard standard. Launched from ~/Projects (workspace PARENT) — deliberately consequential: no workspace hook fired all session.
+Artifacts:
+  - 05-artifacts/active/workspace_validation-report_v1.0_2026-07-09.md — scorecard (boot FAIL · triggers FAIL · resolution PASS · audience PARTIAL · medium PARTIAL · Proofboard PASS · path PARTIAL), findings register P0×4/P1×9/P2×5, fix list FX-1..FX-14 (proposed only), honesty strip.
+  - 05-artifacts/active/workspace_fix-session-prompt_v1.0_2026-07-09.md — Sean's sign-off prompt to apply FX-1..FX-14; launch from the workspace ROOT; Phase A = machine-layer doctor install.
+  - 05-artifacts/active/workspace_session-lifecycle-flow_v1.0_2026-07-09.svg — manager-ready lifecycle flow (Phase 2 medium test; 4 defects caught by native-render check).
+  - 05-artifacts/active/workspace_artifact-name-checker_v1.0 + v1.1_2026-07-09.html — Proofboard test artifact; v1.1 visual-first evidence pattern APPROVED as the standard.
+  - 05-artifacts/active/workspace_version-register_v1.0_2026-07-09.md
+Decisions:
+  - Proofboard standard gains three Sean-approved amendments (codification = FX-9): illustrate-don't-narrate · two-read rule · fit-check step in the build procedure.
+  - Live defects confirmed by execution: parent-dir launch = silent context loss (dist v2 built at 066edac but uninstalled on this machine); current dispatcher floods the 15-line hint cap and truncates KNOWLEDGE_HINTS; ritual "Last session" month-stale (SESSION BLOCK format unparsed — this entry carries a ### heading so the current parser can read it); framework #06 has no audit-class trigger carrier; HEAD moved mid-session (reconcile 066edac, 13:58) unnoticed until the adversarial pass.
+  - Adversarial method validated: independent subagent beat the author — 4 material unconfessed findings (HEAD drift, current-tree truncation, skipped version register, incomplete path log).
+  - Knowledge harvest deliberately deferred to the fix session (FX-11) to honor this session's propose-only contract.
+Pending added:
+  - Run the workspace fix session (FX-1..FX-14) — prompt at 05-artifacts/active/workspace_fix-session-prompt_v1.0_2026-07-09.md.
+Next:
+  - Fix session from the workspace root (Phase A first), then re-run the validation harness prompt and compare scorecards.
+--- END BLOCK ---
+
+---
+
 --- SESSION BLOCK ---
 Date: 2026-07-09 (DORMANT SESSION CLOSED — work performed 2026-06-10 -> 06-11; the 02-centricPLM blocks below already continued this thread through July. Read those for current state; this block is the historical record of the founding audit/plan/Figma work.)
 Agent: Claude Fable 5
