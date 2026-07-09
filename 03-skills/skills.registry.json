@@ -234,12 +234,27 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "contrast",
+        "color contrast",
+        "color blindness",
+        "color vision deficiency",
+        "cvd",
+        "wcag",
+        "apca",
+        "focus indicator",
+        "screen reader",
+        "alt text",
+        "legibility",
+        "non-text contrast",
+        "low vision",
+        "color as information"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "hash": "sha256:162370aeb9a770372079b00ffe855036795dea6789a63d4f59ab1d299d806758"
+      "hash": "sha256:ba87a7c33c43ee6f2a85b7c0c6136d02454523f43641f0410d02dcbe2337fce6"
     },
     "ai-video-generation": {
       "path": "03-skills/ai-video-generation/SKILL.md",
@@ -495,12 +510,20 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "design engineer",
+        "component architecture",
+        "component api",
+        "figma component",
+        "component variants",
+        "componentization",
+        "design system code"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "hash": "sha256:44e2ecd92dbf268d26fe297d6f4bf50006321a06e4e9622455f5bcaf2ebada66"
+      "hash": "sha256:595542c069f34bde4bc479127a3c2a6db0db56ebd01d33375feb89d322040c67"
     },
     "design-foundations": {
       "path": "03-skills/design-foundations/SKILL.md",
@@ -671,12 +694,25 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "design system",
+        "design systems",
+        "component audit",
+        "token architecture",
+        "design token",
+        "design tokens",
+        "semantic token",
+        "status color",
+        "variant coverage",
+        "state coverage",
+        "component anatomy",
+        "design handoff"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "hash": "sha256:8ad454f012b1940aaea837d83369b3966bc267f3c1fd9073b4c5aa71ffad672f"
+      "hash": "sha256:056438e7b1434ab5078c7fd5b0363bade781d217955d2114d71d0f70f0c006a8"
     },
     "ds-bi-platforms": {
       "path": "03-skills/ds-bi-platforms/SKILL.md",
@@ -1116,14 +1152,23 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "figma canvas",
+        "canvas design",
+        "screen design",
+        "mock up",
+        "mockup",
+        "wireframe",
+        "design in figma",
+        "lay out a page"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [
         "figma-mcp"
       ],
-      "hash": "sha256:bb526a8b4f7e7ac316224a73cac84b40dfccdee8f1cfdd0a9ae23f714aead1da"
+      "hash": "sha256:2db3584441b9da05d8fe9ae58e2d7f84d5a231768107aaa7b8a29812a2e2f0c9"
     },
     "figma-code-connect": {
       "path": "03-skills/figma-code-connect/SKILL.md",
@@ -2480,7 +2525,8 @@
       "domain": "design",
       "hub": "lead-information-designer",
       "prerequisites": [
-        "lead-information-designer"
+        "lead-information-designer",
+        "found-color"
       ],
       "related": [],
       "governed_by": [],
@@ -2490,7 +2536,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:e9a82f1213617a8baca029628788a66a937620eaccb602505da5183813bbb02c"
+      "hash": "sha256:ca3c69d3864ee3f7eec17db21241c66c99f190dd3bc99af5397c12ca44723e48"
     },
     "infod-narrative-design": {
       "path": "03-skills/infod-narrative-design/SKILL.md",
@@ -3905,7 +3951,8 @@
         "oauth",
         "oidc",
         "jwt",
-        "session",
+        "session management",
+        "session hijacking",
         "rbac",
         "abac",
         "access control",
@@ -3918,7 +3965,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:78bcc87ba6c1142abd8b3801a6ac7f511e27c693312f59e915412fde84c69e89"
+      "hash": "sha256:496d9e1df61d1b89ed9227493585ffb138f3ddbb015e19b657d22e5be7e94aa0"
     },
     "sec-supply-chain": {
       "path": "03-skills/sec-supply-chain/SKILL.md",
@@ -3939,7 +3986,7 @@
         "secret management",
         "vault",
         "ci/cd security",
-        "token",
+        "access token",
         "dependabot",
         "typosquatting"
       ],
@@ -3947,7 +3994,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:6d92c158ee3b57bdd5e5e004b50fe20d144e75086a3ada950a29e9ba4f3a51e5"
+      "hash": "sha256:ef7e1836c128f9eb1da139eb352d8edcae0b943a80668487f9cf4938aa3ca61b"
     },
     "sec-threat-modeling": {
       "path": "03-skills/sec-threat-modeling/SKILL.md",
@@ -4209,12 +4256,24 @@
         "a11y-visual"
       ],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "status color",
+        "status colors",
+        "semantic color",
+        "semantic colors",
+        "validation state",
+        "error color",
+        "warning color",
+        "dark mode color",
+        "colorblind-safe",
+        "color palette",
+        "ui color"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "hash": "sha256:d458a286a5e44558ff2d954b6c0f4fc2a7843b6f988138ec4a936d6b472ea08f"
+      "hash": "sha256:f7252dd88e90f2fa5e47a8a21011a6939c0e0717ced2f5bf2f464c5bd0eb97c6"
     },
     "uid-iconography": {
       "path": "03-skills/uid-iconography/SKILL.md",
@@ -4910,12 +4969,20 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "visual qa",
+        "pixel diff",
+        "visual regression",
+        "screenshot audit",
+        "design qa",
+        "qa audit",
+        "color-blindness check"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "hash": "sha256:f5521695389b935dc5d2e593f906681ff47efad9e1b57cc6ebc0c7290ae0191b"
+      "hash": "sha256:27a3871c3c59be6a7976ebdd5f7f60ddd64d242e8c3abed2df9210b3992c4a57"
     },
     "visual-qa-ui-design": {
       "path": "03-skills/visual-qa-ui-design/SKILL.md",
@@ -5628,6 +5695,7 @@
     ],
     "infod-encoding-theory": [
       "design-foundations",
+      "found-color",
       "lead-information-designer",
       "infod-encoding-theory"
     ],

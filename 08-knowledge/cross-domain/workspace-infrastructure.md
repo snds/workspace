@@ -134,7 +134,7 @@ When a fresh machine is added (new laptop, loaner swap, reset device), Google Dr
 - Bytes complete long before files complete — Drive prioritizes large files first, leaving the long tail of small files for last. Watch *file* count, not byte progress, as the gating signal.
 - Drive strips macOS executable bits in transit on at least some script files (`dispatcher.py` mode `100755` → `100644`). After sync, `chmod +x` any tracked scripts that need it. Diff-detect with `git diff --raw` to see mode changes.
 
-**Tooling:** `~/drive-sync-tools/{drive-audit,drive-monitor}.py` (planned: move into `08-tools/`). Single-pass scan, top-level breakdown, monitor auto-exits when 0 placeholders + on-disk size stable for 2 ticks.
+**Tooling:** `~/drive-sync-tools/{drive-audit,drive-monitor}.py` (moved into `09-tools/`). Single-pass scan, top-level breakdown, monitor auto-exits when 0 placeholders + on-disk size stable for 2 ticks.
 
 ---
 

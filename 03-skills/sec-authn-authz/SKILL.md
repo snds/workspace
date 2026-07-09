@@ -5,10 +5,10 @@ description: >
   OIDC, JWT pitfalls), the authn/authz distinction, RBAC vs. ABAC, least privilege, and the
   common failure modes (broken access control, IDOR, missing function-level checks). Use when
   building login, sessions, API auth, permissions, or multi-tenant access. Triggers:
-  authentication, authorization, oauth, oidc, jwt, session, rbac, abac, access control, idor,
+  authentication, authorization, oauth, oidc, jwt, session management, session hijacking, rbac, abac, access control, idor,
   least privilege, sso, mfa.
 aliases: [sec-authn-authz]
-triggers: [authentication, authorization, oauth, oidc, jwt, session, rbac, abac, access control, idor, least privilege, sso, mfa]
+triggers: [authentication, authorization, oauth, oidc, jwt, session management, session hijacking, rbac, abac, access control, idor, least privilege, sso, mfa]
 tier: cross-cutting
 hub: lead-security-architect
 domain: security

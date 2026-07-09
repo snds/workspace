@@ -258,6 +258,13 @@ thresholds:
 | Lc 75 | Preferred for body text, columns of running text. Comfortable extended reading. |
 | Lc 90 | Preferred for critical body text, small text (< 16px), thin fonts. Maximum readability. |
 
+**Tier note (2026-07-08)**: read this table as the *working target* — the "happy middle"
+for design-engineering decisions, barring real concerns. The accessibility floor (bare
+minimum) is [[a11y-visual]]'s Lc >= 60 body / >= 45 large-bold / >= 30 UI. The stricter
+targets in [[radix-derived-color-system]] (~Lc 90 body / 75 content) are Radix-scale-specific:
+the 12-step scale is tuned to reach them and Radix-generated palettes inherit them — do not
+generalize them outside Radix-derived systems.
+
 **Key APCA differences from WCAG 2.x:**
 - **Polarity-aware.** Dark text on light background and light text on dark
   background produce different Lc values for the same color pair, because

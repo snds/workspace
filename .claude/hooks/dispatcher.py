@@ -37,6 +37,7 @@ CLAUDE_VERSION_PIN = STATE_DIR / "claude-version"
 DESYNC_NOTICE = STATE_DIR / "desync-notice.md"
 KNOWLEDGE_DIR = WORKSPACE_ROOT / "08-knowledge"
 KNOWLEDGE_INDEX = KNOWLEDGE_DIR / "_INDEX.md"
+SKILLS_REGISTRY = WORKSPACE_ROOT / "03-skills" / "skills.registry.json"
 
 CLAUDE_CODE_CHANGELOG_URL = "https://github.com/anthropics/claude-code/releases"
 AUDIT_STALE_DAYS = 14
@@ -67,11 +68,28 @@ HOSTNAME_MAP = {
     "Enterprise": "Windows Desktop",
 }
 
+# Foundational design route — fires on UI status/validation/color/a11y vocabulary.
+# The baseline is design-system-AGNOSTIC (design-foundations + found-color + a11y-visual);
+# system-specific token rules (Radix, Tailwind, centric-ui) apply ONLY when the target
+# system actually uses that system. Missing tokens/features in the target system are
+# noted to the backlog (project-context.md Pending Items), never solved by importing
+# another system's conventions.
+FOUNDATION_ROUTE = (
+    "FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md "
+    "+ 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md "
+    "(system-agnostic color/UX/a11y baseline). "
+    "Then resolve within the TARGET design system's OWN tokens/variables (read its DESIGN.md / "
+    "connected Figma libraries); if the target system lacks a needed token, derive minimally "
+    "within its constraints and add the gap to the backlog — do not import another system's "
+    "conventions (e.g. Radix steps) into a system that doesn't use them. Token gaps are "
+    "backloggable; a11y compliance is not deferrable — the delivered artifact must pass now."
+)
+
 TRIGGER_WORDS = {
     "legion": "03-skills/legion-project/SKILL.md + appropriate hub (lead-game-designer / lead-art-director / lead-game-developer)",
     "bobiverse": "03-skills/legion-project/SKILL.md",
     "centric": "Centric PLM project context — see 06-context/project-context.md; ds-advisor hub",
-    "data table": "Data table cell anatomy work — cross-reference 06-context/artifact-registry.md",
+    "data table": "Data table cell anatomy work — cross-reference 06-context/artifact-registry.md; knowledge: 08-knowledge/design/enterprise-saas-design-patterns.md",
     "icon font": "03-skills/variable-icon-font-architect/SKILL.md + math spokes",
     "centricsymbols": "03-skills/variable-icon-font-architect/SKILL.md",
     "omni": "03-skills/omni-project/SKILL.md",
@@ -82,6 +100,26 @@ TRIGGER_WORDS = {
     "variant": "03-skills/design-engineer/SKILL.md",
     "mockup": "03-skills/figma-canvas-designer/SKILL.md",
     "wireframe": "03-skills/figma-canvas-designer/SKILL.md",
+    # Foundational color / UX-of-color / a11y vocabulary (2026-07-08, added after the
+    # cell-validation failure: none of these words routed anywhere before).
+    "validation": FOUNDATION_ROUTE,
+    "invalid": FOUNDATION_ROUTE,
+    "warning": FOUNDATION_ROUTE,
+    "error state": FOUNDATION_ROUTE,
+    "status color": FOUNDATION_ROUTE,
+    "status colors": FOUNDATION_ROUTE,
+    "semantic token": FOUNDATION_ROUTE,
+    "semantic tokens": FOUNDATION_ROUTE,
+    "a11y": FOUNDATION_ROUTE,
+    "accessibility": FOUNDATION_ROUTE,
+    "contrast": FOUNDATION_ROUTE,
+    "legibility": FOUNDATION_ROUTE,
+    "legible": FOUNDATION_ROUTE,
+    "wcag": FOUNDATION_ROUTE,
+    "apca": FOUNDATION_ROUTE,
+    "color blind": FOUNDATION_ROUTE,
+    "color-blind": FOUNDATION_ROUTE,
+    "cvd": FOUNDATION_ROUTE,
 }
 
 # Knowledge hints: topic keywords → relevant 08-knowledge/ entry paths.
@@ -120,11 +158,17 @@ def read_stdin_json() -> dict:
         return {}
 
 
-def emit_context(text: str) -> None:
-    """Inject additional context into the session (SessionStart / UserPromptSubmit only)."""
+def emit_context(text: str, event_name: str) -> None:
+    """Inject additional context into the session (SessionStart / UserPromptSubmit only).
+
+    `event_name` MUST be the exact hook event name ("SessionStart" / "UserPromptSubmit").
+    A null/missing hookEventName fails harness-side validation and the whole payload —
+    including additionalContext — is silently dropped (observed 2026-07-08; this was
+    the delivery defect that dark-launched the entire context layer).
+    """
     payload = {
         "hookSpecificOutput": {
-            "hookEventName": None,
+            "hookEventName": event_name,
             "additionalContext": text,
         }
     }
@@ -415,6 +459,16 @@ def _check_audit_staleness() -> str:
         days = (now_utc - last_audit).days
         if days < AUDIT_STALE_DAYS:
             return ""
+        if days >= AUDIT_STALE_DAYS * 2:
+            # Escalation tier: the plain nag was ignored for 72 days once (2026-07-08)
+            # and the un-audited drift contributed to a real failure. Past 2x the
+            # threshold, the notice demands scheduling, not just awareness.
+            return (
+                f"P0 — workspace audit is {days} days overdue (threshold: {AUDIT_STALE_DAYS} days). "
+                f"Un-audited drift has caused real failures before (see audit-log 2026-07-08). "
+                f"Propose running `/optimize` THIS session before starting new work, and say so "
+                f"explicitly in your first reply — do not let this notice pass silently."
+            )
         return (
             f"Workspace audit is stale — last audit was {days} days ago "
             f"(threshold: {AUDIT_STALE_DAYS} days). Run `/optimize` to review the brain "
@@ -867,7 +921,48 @@ def ensure_local_gitdir() -> None:
 # ---------- Handlers ----------
 
 
+def build_reorientation_context(machine: str, now: datetime, source: str) -> str:
+    """Compact re-orientation block for compact/resume session starts.
+
+    Compaction is exactly the moment the boot-time foundations injection gets
+    summarized away — re-inject the load discipline and the knowledge index so
+    mid-session work doesn't decay into freestyling (the 2026-07-08 failure mode)."""
+    knowledge_index = read_head(KNOWLEDGE_INDEX, 60)
+    return f"""# Workspace re-orientation (context was {source}ed)
+
+**Machine:** {machine} · **Date:** {now.strftime('%Y-%m-%d %H:%M %Z')}
+
+Standing discipline (unchanged by compaction):
+- Load skills per the AGENTS.md precedence algorithm — triggers → load chain, foundation-first.
+- Foundational color/UX/a11y baseline (system-agnostic): `03-skills/design-foundations/SKILL.md`,
+  `03-skills/found-color/SKILL.md`, `03-skills/a11y-visual/SKILL.md`.
+- When authoring inside a specific design system, resolve within THAT system's own
+  tokens/variables (read its DESIGN.md / connected libraries). Missing tokens/features go to
+  the backlog (`06-context/project-context.md` → Pending Items); never import another
+  system's conventions into a system that doesn't use them.
+- QA pre-output gate: `01-frameworks/06-qa-operating-model.md` — runs before any deliverable,
+  including canvas writes.
+
+## Knowledge vault index (08-knowledge/_INDEX.md)
+Read the relevant entry before continuing domain work.
+```
+{knowledge_index}
+```
+"""
+
+
 def handle_session_start(payload: dict) -> None:
+    now = datetime.now().astimezone()
+    machine = resolve_machine_label()
+    source = (payload.get("source") or "startup").lower()
+
+    # Post-compaction / resume: the original boot injection is gone or stale in the
+    # summarized context. Re-inject a compact re-orientation block and skip the
+    # filesystem side effects (healing/cleanup already ran at true startup).
+    if source in ("compact", "resume"):
+        emit_context(build_reorientation_context(machine, now, source), "SessionStart")
+        return
+
     ensure_local_gitdir()
     _ensure_executable_bits()
     # Auto-clean stale Drive-resident worktrees whose branches are fully merged.
@@ -881,31 +976,174 @@ def handle_session_start(payload: dict) -> None:
             cleaned, skipped = _cleanup_stale_worktrees()
         except Exception as exc:
             sys.stderr.write(f"[session-start] worktree cleanup error: {exc}\n")
-    now = datetime.now().astimezone()
-    machine = resolve_machine_label()
-    emit_context(build_session_start_context(machine, now, cleaned, skipped))
+    emit_context(build_session_start_context(machine, now, cleaned, skipped), "SessionStart")
+
+
+def _term_matches(term: str, prompt: str) -> bool:
+    """Word-boundary match of a (possibly multiword) trigger term against the
+    lowercased prompt. Boundary-anchored so short triggers like `ui` don't fire
+    inside words like `build` or `guide`."""
+    return re.search(r"(?<!\w)" + re.escape(term.lower()) + r"(?!\w)", prompt) is not None
+
+
+def _registry_trigger_hits(prompt: str) -> list[tuple[str, str]]:
+    """Match skill `triggers` declared in skills.registry.json — the machine graph
+    generated from SKILL.md frontmatter. This is the same graph AGENTS.md's loading
+    precedence algorithm routes by; reading it here makes the deterministic hook
+    layer honor it instead of a hand-synced mirror table. Hints include the
+    foundation-first load chain so ancestors load before the skill itself."""
+    try:
+        data = json.loads(SKILLS_REGISTRY.read_text(encoding="utf-8", errors="replace"))
+    except Exception:
+        return []
+    skills = data.get("skills", {})
+    chains = data.get("load_chains", {})
+    hits: list[tuple[str, str]] = []
+    for name, rec in skills.items():
+        for term in rec.get("triggers", []) or []:
+            if _term_matches(str(term), prompt):
+                chain = chains.get(name) or [name]
+                path_hint = " → ".join(f"03-skills/{n}/SKILL.md" for n in chain)
+                hits.append((str(term), f"skill `{name}` (load chain, foundation-first): {path_hint}"))
+                break  # one hit per skill
+    return hits
+
+
+def _knowledge_index_hits(prompt: str) -> list[tuple[str, str]]:
+    """Match trigger terms declared inline on 08-knowledge/_INDEX.md entry lines
+    (the `Triggers: \\`a\\`, \\`b\\`` convention). The index is the single source of
+    truth — entries gain routing the moment their index line declares triggers,
+    with no dispatcher edit required."""
+    if not KNOWLEDGE_INDEX.exists():
+        return []
+    hits: list[tuple[str, str]] = []
+    try:
+        for line in KNOWLEDGE_INDEX.read_text(encoding="utf-8", errors="replace").splitlines():
+            m = re.match(r"^-\s+\[\[([^\]]+)\]\]", line.strip())
+            if not m:
+                continue
+            name = m.group(1)
+            tm = re.search(r"[Tt]riggers:\s*(.+)$", line)
+            if not tm:
+                continue
+            for term in re.findall(r"`([^`]+)`", tm.group(1)):
+                if _term_matches(term, prompt):
+                    found = sorted(KNOWLEDGE_DIR.glob(f"*/{name}.md"))
+                    target = (
+                        str(found[0].relative_to(WORKSPACE_ROOT)) if found
+                        else f"08-knowledge (entry [[{name}]] — see _INDEX.md)"
+                    )
+                    hits.append((term, f"knowledge: read `{target}` before proceeding"))
+                    break  # one hit per entry
+    except Exception:
+        return []
+    return hits
+
+
+MAX_TRIGGER_LINES = 15  # cap injected hint lines; foundations + most-specific first
 
 
 def handle_user_prompt(payload: dict) -> None:
     prompt = (payload.get("prompt") or "").lower()
     if not prompt:
         return
-    skill_hits = [(trigger, skill) for trigger, skill in TRIGGER_WORDS.items() if trigger in prompt]
-    knowledge_hits = [(kw, path) for kw, path in KNOWLEDGE_HINTS.items() if kw in prompt]
-    if not skill_hits and not knowledge_hits:
+    skill_hits = [(t, s) for t, s in TRIGGER_WORDS.items() if _term_matches(t, prompt)]
+    knowledge_hits = [
+        (kw, f"knowledge: read `{path}` before proceeding")
+        for kw, path in KNOWLEDGE_HINTS.items() if _term_matches(kw, prompt)
+    ]
+    registry_hits = _registry_trigger_hits(prompt)
+    index_hits = _knowledge_index_hits(prompt)
+    if not (skill_hits or knowledge_hits or registry_hits or index_hits):
         return
     lines = ["# Project trigger detected", ""]
-    seen_skills: set[str] = set()
-    for trigger, skill in skill_hits:
-        if skill not in seen_skills:
-            lines.append(f"- **`{trigger}`** → skill: {skill}")
-            seen_skills.add(skill)
-    seen_knowledge: set[str] = set()
-    for kw, path in knowledge_hits:
-        if path not in seen_knowledge:
-            lines.append(f"- **`{kw}`** → knowledge: read `{path}` before proceeding")
-            seen_knowledge.add(path)
-    emit_context("\n".join(lines))
+    seen: set[str] = set()
+    for trigger, hint in [*skill_hits, *registry_hits, *knowledge_hits, *index_hits]:
+        if hint in seen:
+            continue
+        seen.add(hint)
+        lines.append(f"- **`{trigger}`** → {hint}")
+        if len(lines) - 2 >= MAX_TRIGGER_LINES:
+            lines.append(f"- _(further matches truncated at {MAX_TRIGGER_LINES})_")
+            break
+    lines += [
+        "",
+        "_Load the matched skills per the AGENTS.md precedence algorithm (foundation-first) "
+        "and read matched knowledge entries BEFORE acting. When authoring inside a specific "
+        "design system, resolve within that system's own tokens; backlog its gaps._",
+    ]
+    emit_context("\n".join(lines), "UserPromptSubmit")
+
+
+# Tool names that put pixels on a canvas Sean will inspect. First call per session
+# is denied once with the design-judgment gate below; the retry passes. This is the
+# only layer immune to session length and compaction — every advisory layer above it
+# (boot injection, prompt triggers, skill descriptions) is skippable under execution
+# momentum, and on 2026-07-08 all of them were skipped at once.
+FIGMA_WRITE_TOOL_PATTERN = re.compile(r"use_figma", re.IGNORECASE)
+FIGMA_GATE_STATE_DIR = STATE_DIR / "figma-gate"
+FIGMA_GATE_TTL_DAYS = 7
+
+FIGMA_GATE_TEXT = """FIGMA DESIGN-JUDGMENT GATE (fires ONCE per session — after reading this, simply re-issue the exact same tool call and it will proceed).
+
+This gate prompts skill-loading and judgment. It is NOT a ruleset — design decisions are
+made in context, by you, through the right lenses.
+
+1. LOAD THE LENS (if not already loaded): 03-skills/design-foundations/SKILL.md +
+   03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md +
+   03-skills/uid-color-for-ui/SKILL.md — the system-agnostic color/UX/a11y baseline.
+2. TARGET SYSTEM FIRST. Identify the design system this file/library belongs to. Read its
+   DESIGN.md (if the project has one), its connected Figma libraries, and its variable
+   collections. Select tokens by their object context (fill vs border vs text scope).
+   Don't import another system's conventions (Radix steps, Tailwind shades, shadcn slots)
+   into a system that doesn't use them.
+3. DESIGN WITH JUDGMENT; VERIFY A11Y. Palette, emphasis, and composition choices — including
+   full-color, full-bleed surfaces carrying text or icons — are legitimate whenever the
+   implementation makes sense from a UI/UX/a11y perspective. What is non-negotiable is
+   verification, not any fixed palette rule: every foreground/background pairing is
+   legibility-checked (APCA preferred, WCAG AA fallback), and status meaning never rides
+   on color alone (CVD redundancy).
+4. TOKEN GAPS GO TO THE BACKLOG; WORK CONTINUES. If the target system lacks something you
+   need, derive minimally within its constraints — e.g. the right semantic token, detached
+   to control opacity when that is the system's only lever (an emblematic example, not a
+   rule) — and note the gap in 06-context/project-context.md -> Pending Items. A11y
+   compliance itself is never deferred: what ships now must pass now.
+5. VERIFY AFTER WRITE at meaningful zoom (screenshot), per the pre-output gate in
+   01-frameworks/06-qa-operating-model.md."""
+
+
+def _prune_gate_markers() -> None:
+    """Drop gate markers older than the TTL so .claude/state/ doesn't accumulate."""
+    try:
+        cutoff = datetime.now(timezone.utc).timestamp() - FIGMA_GATE_TTL_DAYS * 86400
+        for f in FIGMA_GATE_STATE_DIR.iterdir():
+            if f.is_file() and f.stat().st_mtime < cutoff:
+                f.unlink()
+    except Exception:
+        pass
+
+
+def handle_pre_tool(payload: dict) -> None:
+    tool = payload.get("tool_name") or ""
+    if not FIGMA_WRITE_TOOL_PATTERN.search(tool):
+        return  # no output = proceed normally
+    session = payload.get("session_id") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    marker = FIGMA_GATE_STATE_DIR / re.sub(r"[^A-Za-z0-9_.-]", "_", str(session))
+    if marker.exists():
+        return  # gate already shown this session — allow silently
+    try:
+        FIGMA_GATE_STATE_DIR.mkdir(parents=True, exist_ok=True)
+        marker.write_text(datetime.now(timezone.utc).isoformat() + "\n", encoding="utf-8")
+        _prune_gate_markers()
+    except Exception:
+        return  # if state can't be written, never wedge the session in a deny loop
+    print(json.dumps({
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": FIGMA_GATE_TEXT,
+        }
+    }))
 
 
 def handle_stop(payload: dict) -> None:
@@ -963,6 +1201,21 @@ def handle_session_end(payload: dict) -> None:
         if not status:
             sys.stderr.write("[session-end] no changes to commit\n")
             return
+        # Self-heal: if any SKILL.md changed this session, regenerate the skills
+        # registry BEFORE staging so the auto-commit never ships a stale graph.
+        # (Previously only GitHub CI's `build-registry.py --check` caught this,
+        # after the stale registry was already pushed.)
+        if "SKILL.md" in git("status", "--porcelain", "--", "03-skills").stdout:
+            builder = WORKSPACE_ROOT / "09-tools" / "build-registry.py"
+            if builder.exists():
+                reg = subprocess.run(
+                    [sys.executable, str(builder)],
+                    capture_output=True, text=True, cwd=str(WORKSPACE_ROOT),
+                )
+                if reg.returncode != 0:
+                    sys.stderr.write(f"[session-end] registry regeneration failed: {reg.stderr}\n")
+                else:
+                    sys.stderr.write("[session-end] regenerated skills.registry.json (SKILL.md changed)\n")
         # .gitignore is the source of truth for what's tracked. Add everything
         # not ignored — covers all system-layer paths plus the 00-obsidian project.
         git("add", "-A")
@@ -997,6 +1250,7 @@ def handle_session_end(payload: dict) -> None:
 HANDLERS = {
     "session-start": handle_session_start,
     "user-prompt": handle_user_prompt,
+    "pre-tool": handle_pre_tool,
     "stop": handle_stop,
     "session-end": handle_session_end,
 }

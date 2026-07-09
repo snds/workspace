@@ -28,7 +28,7 @@ The framework runs **before** I report. Outputs that haven't passed through it s
 
 ---
 
-## The five operating defaults
+## The six operating defaults
 
 These are not aspirations. They are pre-output gates that fire without prompting.
 
@@ -82,8 +82,9 @@ Before reporting an outcome — audit verdict, grade, claim of correctness, "loo
 - **Coverage check.** Have I evaluated every visible asset (parents, subs, variants, modes, states)? Or did I sample?
 - **Composition check.** Is sub-anatomy actually instanced inside parents, or am I grading on silhouette? (The Avatar trick — circular outline ≠ Avatar component.)
 - **Reference check.** Have I compared at meaningful zoom against the source, not from memory?
+- **Accessibility check.** Is every foreground/background pairing legibility-verified (APCA preferred, WCAG AA fallback)? Does any status meaning ride on color alone (CVD)? Full-color, full-bleed surfaces with foreground text/icons are legitimate when the implementation holds up from a UI/UX/a11y perspective — the check is that foregrounds are *verified* legible, not that any palette pattern is avoided. This check applies to *authored* artifacts (canvas writes, code) as much as to audits — a delivery that fails it isn't ready to show.
 - **Honesty check.** Have I marked iteration-needed items as needing iteration, rather than over-grading toward "ship-ready" to seem productive?
-- **Skill check.** Did I load the right skills, or am I freestyling on intuition?
+- **Skill check.** Did I load the right skills, or am I freestyling on intuition? For any color/UI/a11y decision, the system-agnostic baseline (`design-foundations` → `found-color` → `a11y-visual` → `uid-color-for-ui`) loads before any system-specific rules.
 
 If any check fails, the outcome isn't ready to report. Fix it, then report.
 
@@ -95,6 +96,32 @@ First delivery is **rarely 100%** of what Sean needs. Most of our work together 
 - **Surface what needs the next pass** in the report — don't bury follow-ups in a "by the way."
 - **Don't optimize for "ship-ready" verdicts.** Optimize for accurate verdicts. A truthful "5 of 25" beats a generous "8 of 25" because it directs the next iteration correctly.
 - **Don't ask "is this good enough?" — ask "what's the next refinement?"** The answer to the first is almost always no; the answer to the second is actionable.
+
+### 6. System-context fidelity — resolve inside the target system; backlog its gaps
+
+Added 2026-07-08 after a cell-validation session applied conventions from outside the target
+design system (and skipped the foundational color/a11y baseline entirely).
+
+- **Foundations are independent of any design system.** How color is used in a UI, the UX
+  implications of that color, and its accessibility implications hold *before and regardless of*
+  Radix, Tailwind, Material, or the C8/CDS token set. Load the agnostic baseline first
+  (`design-foundations` → `found-color` → `a11y-visual` → `uid-color-for-ui`); system-specific
+  rules (e.g. the Radix step semantics in [[radix-derived-color-system]]) apply **only when the
+  target system actually uses that system**.
+- **Identify the target system before authoring.** Read its DESIGN.md, its connected Figma
+  libraries, and its variable collections; select tokens by the object context they're scoped
+  for (fill vs border vs text). The system's own vocabulary is the palette — not the nearest
+  familiar convention.
+- **When the target system doesn't specify something, work within its constraints anyway.**
+  Derive minimally from what exists (e.g. the correct semantic token for an error context,
+  detached to control opacity when that is the only lever the system offers) — and record the
+  missing token/feature as a gap: project backlog (`06-context/project-context.md` → Pending
+  Items), the project's ds-context "Known Gaps," or a DDR per [[ds-advisor]]. The prompt's
+  problem still gets solved *now*; the gap gets fixed *later, upstream*.
+- **The asymmetry that keeps this honest:** token/feature gaps are backloggable; accessibility
+  compliance is not. The artifact delivered today must be legible (APCA/WCAG-verified) and
+  CVD-safe today, whatever the token situation. (Per `lead-accessibility-architect`: a11y
+  belongs in acceptance criteria, not a backlog.)
 
 ---
 

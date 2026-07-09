@@ -68,6 +68,12 @@ targets: ~Lc 90 body, 75 content, 60 large/headline, 45 large-bold + non-text/UI
 — not WCAG ratios. APCA is directional: dark-on-light ≠ light-on-dark; pick the foreground polarity
 yielding the higher |Lc|.
 
+**Scope (2026-07-08):** these Lc targets are **Radix-scale-specific** — the 12-step scale is tuned
+to reach them, and a palette *generated to Radix metrics* should hold itself to the same bar (that's
+the point of deriving from Radix). They are NOT the general floor. Outside Radix-derived systems:
+bare minimum = [[a11y-visual]]'s APCA floors (Lc ≥ 60 body / 45 large-bold / 30 UI); working target
+("happy middle") = the design-engineer threshold table (`design-engineer/references/visual-design-theory.md`).
+
 **Step → role → use-class:**
 - **1–2** app/subtle backgrounds (FILL only): `background`=Zinc1, `card`/`popover`=white→Zinc2.
 - **3** component surface (FILL): `muted`/`secondary`=Zinc3; soft status bg = hue3.

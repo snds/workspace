@@ -1,7 +1,7 @@
 ---
 tags: [knowledge-vault, index]
 created: 2026-04-28
-updated: 2026-06-04
+updated: 2026-07-08
 ---
 
 # Knowledge Vault — Index
@@ -44,7 +44,13 @@ _No entries yet._
 
 ## Research
 
-_No entries yet._
+_Raw research syntheses live in `research/research/` (note: double-nested dir — flagged 2026-07-08, do not move without checking Obsidian links)._
+
+- [[glsl-shader-programming]] — GLSL shader programming reference for WebGL/Three.js (2026-06)
+- [[threejs-materials-deep-dive]] — Three.js PBR materials system complete reference (2026-06)
+- [[threejs-postprocessing-vfx]] — Three.js post-processing, particles, VFX pipelines (2026-06)
+- [[threejs-showcases-techniques]] — Award-winning Three.js showcases + production techniques (2026-06)
+- [[webgpu-tsl-deep-dive]] — WebGPU, Three.js TSL & WebGPURenderer deep dive (2026-06)
 
 ## Cross-Domain
 

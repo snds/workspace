@@ -8,7 +8,7 @@ description: >
   pipeline. Triggers: supply chain, dependency, SBOM, provenance, lockfile, secrets, secret
   management, vault, CI/CD security, token, dependabot, typosquatting.
 aliases: [sec-supply-chain]
-triggers: [supply chain, dependency, sbom, provenance, lockfile, secrets, secret management, vault, ci/cd security, token, dependabot, typosquatting]
+triggers: [supply chain, dependency, sbom, provenance, lockfile, secrets, secret management, vault, ci/cd security, access token, dependabot, typosquatting]
 tier: cross-cutting
 hub: lead-security-architect
 domain: security
