@@ -20,6 +20,27 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+--- SESSION BLOCK ---
+Date: 2026-07-09
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): MediaSentinel — Phase 9 "The Librarian" (plan → 9.0/9.1/9.1c built+deployed) + perf fences + music UI
+Artifacts:
+  - MediaSentinel repo (main, ~12 commits): docs/librarian-plan.md (Phase 9 plan + §15a operator briefs); librarian/ package (identity spine, resolve ladder, discography audit); metadata/ clients (MusicBrainz identity, AcoustID, iTunes, Deezer, Discogs, NetCache); perf throttle stack (container caps 8cpu/6g, proc.polite nice/ionice, worker caps, NDJSON streaming); music wall metrics + multi-disc merge + artist view + location-aware wall/list toggle; Apple-library sync (JXA exporter + launchd on this Mac + POST /api/apple-library) + diff-aware artwork backfill.
+  - Signal-flow artifact: https://claude.ai/code/artifact/cda6cd6e-722e-4185-86e6-13202f9d4b85
+Decisions:
+  - Identity doctrine: evidence families A–E, tiers T0–T4, tags verified never trusted, missing data ≠ disagreement, entity only at ≥T3, T4 gated on 9.4 refute pass.
+  - Streaming co-mingling: anchored artist matching (≥2 album anchors) + per-album MB arbitration; genres are soft flags.
+  - Apple personal library: Mac-side export (no Apple auth); MusicKit user-token flow is the paid upgrade path; web-token bootstrap rejected (ToS/fragility).
+  - Unraid host freeze root-caused (unfenced container + 366MB rich print_json); fences now structural.
+Pending added:
+  - Build unified priority work queue (POST /api/evaluate, preemption via file-unit granularity) then era-aware series identity (WLIIA Carey/Tyler era map + manual override) — briefs in librarian-plan §15a.
+  - Wanted-list dedupe/kind filter; deploy-script readiness wait; 9.1b Discogs concordance + goldens; Newznab music searches.
+Next:
+  - New session: check resolve-tranche-1 + artwork backfill results on the box, then work queue → era map (session-start prompt provided in chat).
+--- END BLOCK ---
+
 ### 2026-07-09 — Fix-session continuation: FX-15/16 done, spine files removed, acceptance test + harness re-run GREEN
 
 --- SESSION BLOCK ---
