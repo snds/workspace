@@ -79,12 +79,14 @@ if [ "$QUICK" -eq 0 ]; then
   # 5. Personal-repo beacons + discovery of unlisted repos
   while IFS= read -r repo; do
     case "$repo" in ''|'#'*) continue;; *"/c8"*) continue;; esac
-    grep -q "WORKSPACE-BEACON" "$repo/CLAUDE.md" 2>/dev/null || flag "DRIFT: beacon missing in $repo/CLAUDE.md"
+    [ -d "$repo" ] || continue   # listed on another machine; not present here
+    grep -q "WORKSPACE-BEACON" "$repo/CLAUDE.md" 2>/dev/null || flag "DRIFT: beacon missing in $repo/CLAUDE.md — run 00-bootstrap/beacon-enroll.sh $repo"
   done < "$DIST/beacon-repos.txt" 2>/dev/null
   for d in "$HOME/Projects"/*/; do d="${d%/}"
     case "$d" in "$WS"|*c8*) continue;; esac
     [ -d "$d/.git" ] || continue
-    grep -qxF "$d" "$DIST/beacon-repos.txt" 2>/dev/null || say "NOTE: $d is a git repo not in beacon-repos.txt — add it (cloud-session coverage) or ignore"
+    grep -q "^$d" "$DIST/beacon-repos.ignore.txt" 2>/dev/null && continue   # deliberate skip, recorded
+    grep -qxF "$d" "$DIST/beacon-repos.txt" 2>/dev/null || say "NOTE: $d is a git repo not enrolled for cloud beacons — run 00-bootstrap/beacon-enroll.sh --sweep --apply (classifies personal vs employer itself)"
   done
 
   # 6. CANARY — independent of the hook subsystem: sessions ran but audit log is silent?

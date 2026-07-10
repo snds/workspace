@@ -4,3 +4,9 @@
 # reports unlisted git repos under ~/Projects as candidates — curate deliberately.
 # Cursor note (2026-07-06 gate): hook layer pending verification; User Rules beacon
 # is the primary Cursor mechanism until the gate passes.
+/Users/snds/Projects/Davinci
+/Users/snds/Projects/Legion
+/Users/snds/Projects/MediaSentinel
+/Users/snds/Projects/Nexus
+/Users/snds/Projects/SNDS
+/Users/snds/Projects/Zuora
