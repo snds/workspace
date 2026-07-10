@@ -1,10 +1,10 @@
 ---
 tags: [claude-code, hooks, infrastructure]
 created: 2026-07-08
-updated: 2026-07-08
+updated: 2026-07-09
 status: stable
 confidence: high
-sources: [session-log 2026-07-08, dispatcher rebuild + Claude Code docs verification]
+sources: [session-log 2026-07-08, dispatcher rebuild + Claude Code docs verification, session-log 2026-07-09 (fix session)]
 related_skills: [workspace-bootstrap]
 related_projects: [Claude Workspace Infrastructure]
 ---
@@ -35,6 +35,12 @@ an unknown period because of #1 — no error is ever surfaced.
    context that compaction just destroyed; the dispatcher emits a compact
    re-orientation block there instead of the full boot payload.
 5. **Matchers are regex** and match MCP tool names (e.g. `mcp__.*use_figma.*`).
+6. **Transcript gotcha: tool results ride USER-role messages.** In the session `.jsonl`,
+   every tool result is an entry with `message.role == "user"` whose content list contains
+   `{"type": "tool_result"}` blocks. Anything that counts "user prompts" from a transcript
+   (audit scripts, one-shot detection) MUST exclude those blocks, or any tool-using
+   headless run looks multi-prompt. Found 2026-07-09: the machine layer's SessionEnd audit
+   logged false MISSes for `claude -p` runs until `workspace-audit.sh` learned this filter.
 
 Consumer: `.claude/hooks/dispatcher.py` (uses all five). Related: [[workspace-infrastructure]],
 [[knowledge-vault-design]] (trigger-routing tiers), audit-log 2026-07-08.

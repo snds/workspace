@@ -10,10 +10,10 @@ _Last updated: 2026-07-09 16:20 — wrap-up (fix session complete, Phases A–F)
 
 - **Current focus**: Fix session COMPLETE — all FX-1..FX-14 committed or explicitly deferred (per-FX outcomes + shas: audit-log 2026-07-09 entry). Awaiting Sean's three confirms + harness re-run.
 - **Working set**: nothing in flight; the fix(FX-n) commit series `3729472..870d992` + session-end commit is the record.
-- **Last action**: /session-end run (session block, registry check, commit+push) — by Claude Fable 5 · Claude Code (Mac desktop app) · Personal MacBook Pro.
-- **Next action**: After Sean re-logs Claude Desktop (OAuth), re-run the validation harness (`05-artifacts/active/workspace_validation-session-prompt_v1.0_2026-07-09.md`) and compare scorecards; the first parent-dir session doubles as the live boot test (check `~/.claude/ws-state/audit.log`).
-- **Open decisions**: (1) spine-file relocation — `~/CLAUDE.md` + `~/AGENTS.md` are byte-identical to `~/.project-spine/exports/` copies, remove/relocate on confirm; (2) 14-variable-icon-font-generator profile (provisional `centric-engineering`); (3) FX-16 ritual-token ABI approach.
-- **Blocked on**: Sean — OAuth re-login + the three confirms above.
+- **Last action**: Full thread CLOSED — FX-1..FX-16 done, acceptance test + harness re-run GREEN (report v2.0), beacon coverage complete (helper `00-bootstrap/beacon-enroll.sh`, six repos enrolled), audit false-MISS fix — by Claude Fable 5 · Claude Code (Mac desktop app) · Personal MacBook Pro.
+- **Next action**: Work MBP doctor install (carries Cursor + Perplexity beacon pastes + the enroll helper); Windows install route; Legion beacon rides its next branch push.
+- **Open decisions**: none in flight.
+- **Blocked on**: nothing — remaining items are machine-bound (Work MBP / Windows).
 - **In-flight / do-not-touch**: nothing.
 - **Agent thread**: `Claude Fable 5 / Claude Code / Personal MBP (2026-07-09): FX-1..FX-14 applied A–F; next = Sean confirms + harness re-run`.
 

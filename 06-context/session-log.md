@@ -20,6 +20,32 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-09 — Beacon coverage closed: enroll helper shipped, six repos beaconed, audit false-MISS fix
+
+--- SESSION BLOCK ---
+Date: 2026-07-09
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 19-workspace-brain (final stretch of the fix-session thread) — beacon coverage + machine-layer hardening.
+Artifacts:
+  - 00-bootstrap/beacon-enroll.sh — new helper: one-command personal-repo beacon enrollment; mechanical personal/employer classification per the context-profile resolution order; --sweep/--apply/--commit; employer repos refused + recorded in beacon-repos.ignore.txt.
+Decisions:
+  - Beacon-paste split (Sean): claude.ai surfaces done + acked on Personal MBP; Cursor + Perplexity ride the Work MBP doctor-install session (ack state is per-machine, so nothing is lost).
+  - Enrollment stays human-gated only for UNKNOWN classifications; personal/employer resolve mechanically by remote — the doctor's nag now names the helper command (the nag IS the memory aid).
+  - Legion's beacon committed on its in-flight feature branch, deliberately unpushed (never publish Sean's WIP branch).
+Pending resolved:
+  - Curate beacon-repos.txt (six repos enrolled: Davinci/Legion/MediaSentinel/Nexus/SNDS/Zuora — all personal by remote; five pushed).
+  - claude.ai half of the beacon-paste item (pasted + acked by Sean; doctor verified clean).
+Next:
+  - Legion beacon reaches GitHub when `fix/gas-volume-halffloat-banding` pushes (or ask Claude to cherry-pick onto main).
+  - Work MBP doctor install (pending item) now also delivers beacon-enroll.sh via git.
+--- END BLOCK ---
+
+---
+
+### 2026-07-09 — MediaSentinel: Phase 9 "The Librarian" built + deployed (9.0/9.1/9.1c), perf fences, music UI
+
 --- SESSION BLOCK ---
 Date: 2026-07-09
 Agent: Claude Fable 5
