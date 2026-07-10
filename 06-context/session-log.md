@@ -20,6 +20,32 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-09 — Fix-session continuation: FX-15/16 done, spine files removed, acceptance test + harness re-run GREEN
+
+--- SESSION BLOCK ---
+Date: 2026-07-09
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 19-workspace-brain — same-session continuation on Sean's go-aheads.
+Artifacts:
+  - workspace_validation-report_v2.0_2026-07-09.md — post-fix compare scorecard (both v1.0 FAILs → PASS by execution)
+  - workspace_version-register_v1.1_2026-07-09.md — supersedes v1.0
+Decisions:
+  - 14-variable-icon-font-generator profile = centric-design (Sean: code-based but generates design assets).
+  - Home-dir spine files removed on Sean's confirm (byte-identical copies retained in ~/.project-spine/exports/).
+  - FX-16 resolved as option A: ABI line is the ritual block's first line (CLAUDE.md + brain.mdc).
+  - Harness re-run right-sized: fresh headless Phases 0–1 + carried-forward PASSes, honesty strip says so.
+Pending resolved:
+  - FX-15 (standards externalized: preferences + davinci-ds-boilerplate + nexus-monorepo-playbook, indexed).
+  - FX-16 (ritual ABI). Harness re-run. Live Phase-A acceptance test (GREEN — note: CLI auth is separate from Desktop; `claude login` was the missing step).
+Next:
+  - Sean: paste beacon into 4 chat surfaces + --ack-chat (steps given in-session); machine installs on Work MBP/Windows when at those machines.
+  - Residuals R1–R3 in report v2.0 — none actionable now.
+--- END BLOCK ---
+
+---
+
 ### 2026-07-09 — Workspace fix session: FX-1..FX-14 applied (machine layer, dispatcher, triggers, standards, knowledge)
 
 --- SESSION BLOCK ---
