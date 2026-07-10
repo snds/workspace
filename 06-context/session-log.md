@@ -36,8 +36,7 @@ Decisions:
     -> localStorage fallback. localStorage demoted; committed files are the durable save.
   - Root cause of "LAB save doesn't persist": seed was missing from the galaxy preset, so saved
     looks regenerated structurally different. Fixed (seed in snapshot/apply/revert).
-Pending:
-  - Sean: merge PR #145 (texture provenance) and PR #146 (settings/persistence).
+Pending: (resolved 2026-07-10 — both PRs merged to main on Sean's go-ahead; main green 205/205)
 --- END BLOCK ---
 
 ---
