@@ -45,6 +45,7 @@ invoked headless), read them explicitly before answering substantive questions.
 Render it as a markdown block, exactly this shape, before any other response:
 
 ```
+[workspace: LOADED · {branch}@{short-sha} · {YYYY-MM-DD} · via:{project-hook | user-hook | prompt-hook}/{startup | resume | compact}]
 **✓ Workspace loaded** — {Machine label} · {YYYY-MM-DD HH:MM TZ}
 
 - **Surface:** {Claude Code (Mac desktop app) | Claude Code (Windows desktop app) | Cursor | VS Code | iOS | etc. — best inference from environment}
@@ -59,6 +60,10 @@ What's on the agenda today?
 ```
 
 Rules:
+- **The first line is the machine-ABI ritual token** (`[workspace: LOADED · …]`) — frozen ABI per
+  memory `decision-bootstrap-v2-guarantee`; the machine layer's SessionEnd audit greps assistant
+  output for `workspace: LOADED` and logs a MISS without it (FX-16, 2026-07-09). The `via:` layer
+  comes from the hook that injected context (in-workspace = `project-hook`).
 - Pull data from the SessionStart hook's injected context (`06-context/project-context.md` head + `06-context/session-log.md` head). If a field can't be determined, omit that line rather than guess.
 - Limit "Active projects" to those with `SESSION-STATE.md` files in `07-projects/*/`. List all of them, not a curated subset.
 - If the session is in a worktree (branch starts with `claude/`), append `· worktree: <name>` to the Git line so Sean knows.

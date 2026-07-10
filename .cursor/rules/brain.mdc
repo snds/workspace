@@ -27,6 +27,7 @@ Before responding to the first message in a new Cursor session:
 
 **Step 2 — Output the session-start summary:**
 ```
+[workspace: LOADED · {branch}@{short-sha} · {YYYY-MM-DD} · via:cursor-rule]
 **✓ Workspace loaded** — {Machine label} · {YYYY-MM-DD HH:MM}
 
 - **Surface:** Cursor · **Model:** {active model}
