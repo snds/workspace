@@ -20,6 +20,28 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-10 — Legion: tabbed settings + committed save-as-default persistence (PR #146 open)
+
+--- SESSION BLOCK ---
+Date: 2026-07-10
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 13-legion
+Artifacts:
+  - Legion PR #146 (OPEN) — tabbed CONFIG panel (DISPLAY/KEYBOARD/CREDITS, typeface hidden) +
+    dev write-back endpoint: Save now writes committed src/config/*.json defaults
+Decisions:
+  - Persistence model: code defaults -> committed JSON overlay (written by Save via dev endpoint)
+    -> localStorage fallback. localStorage demoted; committed files are the durable save.
+  - Root cause of "LAB save doesn't persist": seed was missing from the galaxy preset, so saved
+    looks regenerated structurally different. Fixed (seed in snapshot/apply/revert).
+Pending:
+  - Sean: merge PR #145 (texture provenance) and PR #146 (settings/persistence).
+--- END BLOCK ---
+
+---
+
 ### 2026-07-10 — Legion: Sol texture provenance verified (PR #145 open)
 
 --- SESSION BLOCK ---
