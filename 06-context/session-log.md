@@ -20,6 +20,34 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-09 — Legion: physical galaxy default + credits/positions/drift/system-focus epic (PRs #141–#144)
+
+--- SESSION BLOCK ---
+Date: 2026-07-09
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 13-legion
+Artifacts:
+  - Legion PR #141 — physical galaxy = default disc (half-float gas blur) + trackpad zoom fix
+  - Legion PR #142 — data-sources attribution registry + Settings CREDITS section
+  - Legion PR #143 — 3,066 real HYG systems at true x-y-z + galactic drift on the sim clock
+  - Legion PR #144 — system focus + lazy loading (Sol playable from the sector, load hidden in zoom)
+  - 13-legion/SESSION-STATE.md — Live handoff block rewritten (July 9)
+Decisions:
+  - Licensing (extends decision-commercial-data-licensing): Gaia DR3 confirmed CC BY-NC 3.0 IGO —
+    attribution alone is NOT sufficient for commercial use; recorded NOT SHIPPED in the in-app
+    registry. HYG v3.8 (CC BY-SA 4.0) remains the shipped base.
+  - Drift clock unified: disc shader + system markers share one galactic-time clock; LAB warp
+    slider demoted to a preview offset.
+Pending:
+  - Sol planet textures have NO recorded provenance (flagged UNVERIFIED in the credits registry) —
+    must be resolved before any public release.
+  - Gaia-mary map UX (labels, region box, grid, course plotting) now unblocked — next Legion focus.
+--- END BLOCK ---
+
+---
+
 ### 2026-07-09 — Beacon coverage closed: enroll helper shipped, six repos beaconed, audit false-MISS fix
 
 --- SESSION BLOCK ---
