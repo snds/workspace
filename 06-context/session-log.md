@@ -20,6 +20,27 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-10 — Legion: Sol texture provenance verified (PR #145 open)
+
+--- SESSION BLOCK ---
+Date: 2026-07-10
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 13-legion
+Artifacts:
+  - Legion PR #145 (OPEN, awaiting merge) — data-sources.ts split into 3 texture entries + public/textures/sol/NOTICE.txt
+Decisions:
+  - Provenance method accepted: embedded PDS/XMP metadata + MD5 + pixel correlation vs candidate downloads.
+  - 10 files = Solar System Scope CC BY 4.0 (commercial OK); 4 = USGS Voyager-Galileo mosaics (public domain);
+    titan/phobos/deimos stay UNVERIFIED (candidates are NC-licensed) with replace-before-release guidance.
+Pending:
+  - Sean: merge PR #145 (self-merge was permission-gated this session).
+  - Replace titan/phobos/deimos (USGS mosaics or procedural) before any public release.
+--- END BLOCK ---
+
+---
+
 ### 2026-07-09 — Legion: physical galaxy default + credits/positions/drift/system-focus epic (PRs #141–#144)
 
 --- SESSION BLOCK ---
