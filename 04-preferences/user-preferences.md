@@ -44,6 +44,24 @@ cross-framework DS strategy (Vue, React, React Native, Angular).
 - Avoid "This isn't X, it's Y" constructions
 - No emojis by default
 
+## Working Principles (DS / design-engineering work)
+_Migrated 2026-07-09 from the machine-local `~/.claude/CLAUDE.md` (FX-15) — these are standing
+defaults, applied without being re-asked._
+
+- **Be comprehensive and proactive, not reactive.** When a domain has a known standard (design
+  systems, accessibility, docs IA), apply the WHOLE standard up front — never a piecemeal slice
+  that waits to be corrected.
+- **Audit, don't guess.** For "what should X look like," benchmark mature references first
+  (e.g. Carbon/Atlassian/Polaris for DS) and synthesize commonalities, then build to that.
+- **Document/define EVERYTHING, not just what's currently consumed.** Full primitive ramps, full
+  type scale, all semantics, all variants — even if the demo only uses some.
+- **Preserve identity; never destroy.** Refactor by aliasing/updating in place (tokens,
+  components, files). Re-aliasing must preserve values (no visual drift) unless change is the goal.
+- **Verify, keep the gate green.** Run typecheck·test·lint after each change; verify UI via SSR
+  markup + live screenshots, not assumption. Be honest about gaps/tradeoffs — name them.
+- **Assess visuals at NATIVE resolution — always.** Canonical home:
+  `01-frameworks/10-perception-integrity.md` (framework #10); this line is a pointer, not a fork.
+
 ## Side Detours — Injection Handback
 When a conversation branches into a **side-chat or "by the way" detour** (a tangent off the main
 task), at the END of that detour produce a succinct, clearly-labeled **one-paragraph "injection"
