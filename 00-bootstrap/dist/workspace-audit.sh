@@ -19,7 +19,15 @@ for line in open(sys.argv[1], encoding="utf-8", errors="replace"):
     except Exception: continue
     m = e.get("message") or {}
     role = m.get("role") or e.get("type")
-    if role == "user" and not e.get("isMeta"): prompts += 1
+    if role == "user" and not e.get("isMeta"):
+        # Tool results ride user-role messages in the transcript; counting them
+        # made every tool-using headless one-shot look multi-prompt -> false MISS
+        # (found 2026-07-09: four claude -p runs logged MISS under the one-shot
+        # exemption). Count only human prompts.
+        c = m.get("content")
+        if isinstance(c, list) and any(isinstance(b, dict) and b.get("type") == "tool_result" for b in c):
+            continue
+        prompts += 1
     if role == "assistant" and "workspace: LOADED" in json.dumps(m.get("content", "")): ok = True
 sys.exit(0 if ok else (2 if prompts <= 1 else 1))
 PY
