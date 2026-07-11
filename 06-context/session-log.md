@@ -20,6 +20,34 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-11 — Legion: procedural-worlds Step 0 — star+planet physical data contract (PR #157 open)
+
+--- SESSION BLOCK ---
+Date: 2026-07-11
+Agent: Claude Opus 4.8
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 13-legion
+Artifacts:
+  - Legion PR #157 (OPEN, awaiting owner — not self-merged) — branch feat/worlds-data-prep.
+    Extends the GENERATED body records with the physical fields the star + planet renderers read,
+    so feat/worlds-star and feat/worlds-planet never edit the same data file. Pure data, no rendering.
+    STAR (StellarParams): spectralType, massSolar, radiusSolar, luminositySolar, tempK, ageGyr,
+    activity — derived deterministically; real B−V drives tempK. PLANET (GenPlanet): type, massEarth,
+    radiusEarth, insolation, isGasGiant, hasRings, per-body seed. tsc clean, 1364 vitest pass.
+Decisions:
+  - Independent RNG streams for the physical fields (seedKey|starphys, seedKey|planet|i) so the
+    existing planet/belt layout is byte-unchanged (belts.test untouched, green).
+  - Kept coarse teffK/lumSun (drive HZ/snow-line determinism) alongside render-facing
+    tempK/luminositySolar — avoided a churny rename cascade; distinction documented in the interface.
+  - Curated home stars (star-catalog.ts) left authoritative/untouched — only generated bodies filled.
+Handoff: baton to feat/worlds-star (plan S1) — see SESSION-STATE Live handoff (2026-07-11).
+Pending: PR #157 merge (owner). Do NOT branch feat/worlds-star or feat/worlds-planet until it lands
+  on main (shared base for both parallel workstreams).
+--- END BLOCK ---
+
+---
+
 ### 2026-07-10 — Legion: tabbed settings + committed save-as-default persistence (PR #146 open)
 
 --- SESSION BLOCK ---
