@@ -3,13 +3,13 @@
 _Workspace: `01-frameworks/`_
 _Last updated: 2026-06-30_
 
-Ten top-level documents that govern how design, **components & patterns**, collaboration, research, craft, QA, **perception integrity**, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. Nine are cross-domain operating lenses; **#09 is the design-domain hub** for components and patterns. They're the portable layer that stays consistent even when the specific work shifts.
+Eleven top-level documents that govern how design, **components & patterns**, collaboration, research, craft, QA, **perception integrity**, **anticipatory failure analysis**, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. Ten are cross-domain operating lenses; **#09 is the design-domain hub** for components and patterns. They're the portable layer that stays consistent even when the specific work shifts.
 
-This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all ten full documents.
+This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all eleven full documents.
 
 ---
 
-## The ten frameworks
+## The eleven frameworks
 
 | # | Framework | Answers |
 |---|---|---|
@@ -23,12 +23,13 @@ This README is the orientation layer. Load it when you need to know which framew
 | 08 | **Workspace Contribution Framework** | How/when/where/what/why do we edit the workspace itself? |
 | 09 | **Component & Pattern Framework** | What is each component for, when do I reach for it, and how do they compose? |
 | 10 | **Perception Integrity** | Are the pixels I'm judging real? |
+| 11 | **Anticipatory Failure Analysis** | How will this fail, and would I catch it — before I propose it or call it done? |
 
 ---
 
 ## Recommended reading order
 
-**First pass (01–06).** Read in numerical order. They build on each other — Aesthetic Lens sets the philosophical ground, UI/UX lays operational structure on top, Collaboration and Research govern how the work gets produced and justified, Last-Mile governs the finishing layer that ties it all together, and the QA Operating Model frames every audit / review / iteration outcome against target-user expectations. Frameworks 07 (integration) and 08 (contribution) are orthogonal meta-layers — load them when landing work or editing the workspace itself. Framework 09 (component & pattern) is the design-domain hub — load it for any component/pattern work. Framework 10 (perception integrity) is the cross-cutting precondition to *all* visual evaluation — it fires the moment a fine visual detail is in question, in any domain.
+**First pass (01–06).** Read in numerical order. They build on each other — Aesthetic Lens sets the philosophical ground, UI/UX lays operational structure on top, Collaboration and Research govern how the work gets produced and justified, Last-Mile governs the finishing layer that ties it all together, and the QA Operating Model frames every audit / review / iteration outcome against target-user expectations. Frameworks 07 (integration) and 08 (contribution) are orthogonal meta-layers — load them when landing work or editing the workspace itself. Framework 09 (component & pattern) is the design-domain hub — load it for any component/pattern work. Framework 10 (perception integrity) is the cross-cutting precondition to *all* visual evaluation — it fires the moment a fine visual detail is in question, in any domain. Framework 11 (anticipatory failure analysis) is the input-time twin of 06 — it fires *before* a technique with a visible failure surface is proposed or built, and again at the done-boundary before "ready for review."
 
 **By context (once familiar).** Load only what's relevant:
 
@@ -43,7 +44,8 @@ This README is the orientation layer. Load it when you need to know which framew
 | Design review, visual QA, handoff, finishing audit | 01, 02, 05, 06, 10 |
 | Iteration, refinement, clean-up, alignment work | 06 (always), then 05, 10 |
 | Judging any fine visual detail — render, screenshot, artifact, reference, asset | 10 (always) |
-| Game / 3D / shader / render review (Legion) | 01, 05, 10 |
+| About to propose/build a technique with a visible failure surface (shader, post-process, render, generator, layout) | 11 (always), then 10 |
+| Game / 3D / shader / render review (Legion) | 01, 05, 10, 11 |
 | Game art direction (Legion) | 01, 05 |
 | Icon / variable font system | 01, 05, 10 |
 | Architectural or interior reference | 01, 05 |
@@ -196,11 +198,24 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 - Capture native first → measure with `visual-qa-toolkit` → judge with `lead-visual-qa`.
 - Method lives in the standalone `native-visual-eval` skill (no visual-QA-hub dependency).
 
+### 11 — Anticipatory Failure Analysis
+
+**Core conviction.** If I know a technique's classic failure mode, the time to say so is *before* I reach for it — not after Sean finds the artifact. A "classic symptom" narrated only once it's visible is knowledge that arrived one step too late. The workspace was verification-biased: every prior gate fired at *output* time, so failure-mode knowledge stayed latent until a symptom triggered its recall. This framework forces it to be retrieved *by technique-name at planning time* and externalized into a ledger. Find the bug before Sean does.
+
+**When to invoke.** The moment work with a visible failure surface begins — before proposing an approach, and again at the done-boundary before "complete / ready for review." Shaders, post-process chains, volumetrics, dither, materials, tonemappers, bloom, procedural generators, particles, motion curves, layout, colour treatment — any domain. Steps aside for work with no visible failure surface.
+
+**Key operating habits.**
+- Run the Pre-Mortem Pass: name the technique → consult the [Visual Failure-Mode Ledger](../08-knowledge/cross-domain/visual-failure-mode-ledger.md) (write the entry if none exists) → argue *against* my own plan (oppositional/red-team) → derive plain-English acceptance criteria from the reference figures (machine vision) → build → prove against those criteria at native resolution.
+- References become falsifiable criteria, not impressions — fetch the article/plate, read its figures native-res, write down what "correct" demands *before* building.
+- Prove at the done-boundary: native capture + criteria met/not-met + unmet items surfaced as next-pass scope. The criteria + before/after crops are the Proofboard.
+- Self-improving loop: every bug Sean catches that I missed becomes a ledger row at session-end; every new technique researched writes its entry.
+- Input-time twin of #06, runs on #10's native pixels, uses #04's evidence tiers. Method in the standalone `failure-mode-premortem` skill (no hub dependency).
+
 ---
 
 ## How they interconnect
 
-The core operating lenses (01–06) are layered, not parallel — they compose in numerical order (diagrammed below). The remaining frameworks (07–10) are orthogonal meta-layers that fire across whatever the core produces. They're listed in the order they compose:
+The core operating lenses (01–06) are layered, not parallel — they compose in numerical order (diagrammed below). The remaining frameworks (07–11) are orthogonal meta-layers that fire across whatever the core produces. They're listed in the order they compose:
 
 ```
                      ┌─────────────────────────────┐
@@ -243,6 +258,7 @@ The core operating lenses (01–06) are layered, not parallel — they compose i
 - **08 ⟂ all.** Workspace Contribution is the other orthogonal meta-layer: whatever the work, #08 governs *where it gets written and how* — the routing map, per-layer add/extend rules, the memory and archive protocols, and the portable session protocol. It fires whenever a change touches the workspace's own structure (skills, frameworks, references, context, memory, knowledge), not a project deliverable.
 - **09 ⟂ all.** Component & Pattern Framework is the design-domain hub: orthogonal to the operating lenses (01–08, 10), it loads for any component/pattern work and routes *out* to the `ux-component-library` skill, the `ux-components` MCP, `DESIGN.md`, and `AGENTS.md` enforcement. Where 02 decides *which pattern/metaphor*, 09 supplies the component-level *what / when / why / how-composed*.
 - **10 ⟂ all (and *beneath* 05/06).** Perception Integrity is the cross-cutting precondition to every visual judgment: orthogonal to all the others because it applies wherever a render, frame, or image asset is assessed — design, game/3D, shaders, photography, data-viz — but it sits *underneath* 05 and 06 specifically, because their perception surfaces (baseline + augmented in 05, the Resolution check in 06's gate) are only trustworthy on real pixels. 05 says *measure it*; 06 says *against the right bar*; 10 says *on native pixels, or it isn't verified*. Routes *out* to the standalone `native-visual-eval` skill (no hub dependency) for method.
+- **11 ⟂ all (and *before* 05/06).** Anticipatory Failure Analysis is the input-time twin of #06: orthogonal to the content frameworks because it applies wherever work has a visible failure surface — UI, DS craft, game/3D, shaders, VFX, data-viz, generated imagery, motion — but it fires *at the front* of the work, before a technique is proposed, and again at the done-boundary. #06 frames the target and grades at output time; #11 anticipates the failure at input time and proves its absence against the reference. It runs *on* #10's native pixels and *with* #04's evidence tiers. Routes *out* to the standalone `failure-mode-premortem` skill and the [Visual Failure-Mode Ledger](../08-knowledge/cross-domain/visual-failure-mode-ledger.md).
 
 ---
 
@@ -260,10 +276,10 @@ The core operating lenses (01–06) are layered, not parallel — they compose i
 
 ## Notes for LLMs loading this README
 
-**Token budget guidance.** The ten frameworks total ~2,250 lines of markdown. This README runs ~300 lines and captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For any fine visual-detail judgment, load #10 (it's short, and its `native-visual-eval` skill carries no hub dependency). For branching, PR, or consolidation work, load #07.
+**Token budget guidance.** The eleven frameworks total ~2,500 lines of markdown. This README runs ~330 lines and captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For any fine visual-detail judgment, load #10 (it's short, and its `native-visual-eval` skill carries no hub dependency). Before proposing or building any technique with a visible failure surface, load #11 (its `failure-mode-premortem` skill also carries no hub dependency). For branching, PR, or consolidation work, load #07.
 
 **When the README isn't enough.** The compressed summaries preserve the *what* but not the *why* — the examples, the canon references, the tier descriptions with thresholds, the principle-to-check translations. Any serious reasoning task in the framework's domain should load the full document.
 
-**Updates.** Framework numbering is stable (01–10). Any future framework additions should extend the sequence (11, 12, etc.) or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly. (#10 Perception Integrity was added 2026-06-30 by exactly this process — promoted from Last-Mile Craft §2.5 to a first-class cross-cutting framework.)
+**Updates.** Framework numbering is stable (01–11). Any future framework additions should extend the sequence (12, 13, etc.) or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly. (#10 Perception Integrity was added 2026-06-30, and #11 Anticipatory Failure Analysis on 2026-07-14, by exactly this process — each a first-class cross-cutting framework.)
 
 **Operational state.** This folder is static reference. Operational continuity between sessions lives in per-project `SESSION-STATE.md` files (see framework 05's Operational State section for the spec) and in `../06-context/session-log.md` for cross-project session logs.

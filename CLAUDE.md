@@ -78,7 +78,7 @@ This ritual costs ~150 tokens per session start in exchange for cross-surface co
 
 ## Frameworks (the operating layer)
 
-Ten top-level frameworks govern all project work. They sit **above** any skill.
+Eleven top-level frameworks govern all project work. They sit **above** any skill.
 
 - **[01-frameworks/01-aesthetic-lens.md](01-frameworks/01-aesthetic-lens.md)** — philosophical ground, visual/aesthetic judgment
 - **[01-frameworks/02-ui-ux-operational-framework.md](01-frameworks/02-ui-ux-operational-framework.md)** — UX/UI operational decisions
@@ -90,11 +90,12 @@ Ten top-level frameworks govern all project work. They sit **above** any skill.
 - **[01-frameworks/08-workspace-contribution-framework.md](01-frameworks/08-workspace-contribution-framework.md)** — how/when/where/what/why to edit the workspace itself; routing map, memory + archive protocols
 - **[01-frameworks/09-component-and-pattern-framework.md](01-frameworks/09-component-and-pattern-framework.md)** — design-domain hub: what each component is for, when to reach for it, how they compose; the universal schema + AI-legible / `DESIGN.md` layer
 - **[01-frameworks/10-perception-integrity.md](01-frameworks/10-perception-integrity.md)** — cross-cutting precondition to all visual evaluation: never judge fine visual detail from a downsampled image; capture at native resolution, state the pixels judged at
+- **[01-frameworks/11-anticipatory-failure-analysis.md](01-frameworks/11-anticipatory-failure-analysis.md)** — input-time twin of #06: before proposing/building any technique with a visible failure surface, anticipate its classic failure modes (consult the Visual Failure-Mode Ledger), argue against your own plan, derive acceptance criteria from the reference figures, and prove the result at native resolution before "ready for review"; find the bug before Sean does
 
 Compressed summaries: **[01-frameworks/00-README.md](01-frameworks/00-README.md)** — read this first.
 Team practices: **[01-frameworks/team-practices-and-decisions.md](01-frameworks/team-practices-and-decisions.md)**.
 
-Use `/framework-check` to run current work through the operating frameworks (the six core lenses always; situational lenses 07–10 when the work touches their domain) as a critique pass.
+Use `/framework-check` to run current work through the operating frameworks (the six core lenses always; situational lenses 07–11 when the work touches their domain) as a critique pass.
 
 **Delivery playbooks (context is king).** How work is *delivered* — whose work it is, who reads it, what medium, how it's proven — is governed by [02-shared-references/delivery-playbooks/](02-shared-references/delivery-playbooks/README.md). Load order: `00-context-profiles.md` resolves FIRST (declared profiles `personal-solo` / `centric-engineering` / `centric-design`; resolution: Sean's word → project declaration → repo remote → ask; fail-safe = most restrictive). Then the audience contract (designer-first, forward test) and the medium playbook the request's own words imply (a diagram request is only satisfiable by a diagram). Code-heavy work ships with a **Proofboard** (`05-validation-harness.md`) — plain-english contracts, show-me evidence, sandboxed sample data — so Sean can verify without reading code. The pre-delivery gate is wired into framework #06's pre-output gate.
 
@@ -149,7 +150,7 @@ Slash-command workflows native to Claude Code. Small, focused, invocable by `/na
 - **`/session-end`** — write session block, update project-context, commit, push
 - **`/reconcile`** — merge session blocks from multiple machines
 - **`/new-project`** — scaffold `07-projects/NN-name/` with SESSION-STATE template
-- **`/framework-check`** — critique current work through the ten operating frameworks (core always, situational when relevant)
+- **`/framework-check`** — critique current work through the eleven operating frameworks (core always, situational when relevant)
 - **`/optimize`** — workspace audit: stale items, contradictions, drift, consolidation; logs to `06-context/audit-log.md`
 
 ---

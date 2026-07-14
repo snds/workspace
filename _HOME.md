@@ -10,7 +10,7 @@ you read this.
 
 ## Operating layer
 
-- [[_FRAMEWORKS|Frameworks]] — the ten that govern every project
+- [[_FRAMEWORKS|Frameworks]] — the eleven that govern every project
 - [[_CONTEXT|Context]] — who, what, where, when (role, preferences, sessions, artifacts)
 - [[_SKILLS|Skills]] — 280+ skill library, hub and spokes
 - [[_PROJECTS|Projects]] — active work across all domains
@@ -67,7 +67,7 @@ WHERE file.name = "project-context"
 - **`.claude/`** — Claude Code config, hooks, slash-command skills. Don't edit in Obsidian; it's ignored.
 - **`.obsidian/`** — Vault config. Also ignored.
 - **`00-bootstrap/`** — Getting-started + setup. Contract lives in `AGENTS.md`.
-- **`01-frameworks/`** — The ten operating frameworks (08 governs editing the workspace itself; 10 is the native-resolution perception-integrity precondition).
+- **`01-frameworks/`** — The eleven operating frameworks (08 governs editing the workspace itself; 10 is the native-resolution perception-integrity precondition; 11 is the anticipatory failure/pre-mortem lens).
 - **`02-shared-references/`** — Standards: ontology + routing map, frontmatter spec, reasoning/artifact standards.
 - **`03-skills/`** — Skill library (hub/spoke). Graph in `skills.registry.json` (generated from frontmatter).
 - **`04-preferences/`** — User preferences file (how Sean wants to collaborate).

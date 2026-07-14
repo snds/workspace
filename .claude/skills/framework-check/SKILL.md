@@ -1,6 +1,6 @@
 ---
 name: framework-check
-description: Runs current work through the ten operating frameworks as a structured critique pass — the six core lenses always, plus the situational lenses (Integration, Workspace Contribution, Component & Pattern, Perception Integrity) when the work touches their domain. Invoked as /framework-check.
+description: Runs current work through the eleven operating frameworks as a structured critique pass — the six core lenses always, plus the situational lenses (Integration, Workspace Contribution, Component & Pattern, Perception Integrity, Anticipatory Failure Analysis) when the work touches their domain. Invoked as /framework-check.
 ---
 
 # /framework-check — Multi-framework critique
@@ -28,7 +28,7 @@ Confirm the target before critiquing.
 
 ### Step 2 — Load frameworks
 
-`01-frameworks/00-README.md` carries compressed summaries of all ten — read it first if you
+`01-frameworks/00-README.md` carries compressed summaries of all eleven — read it first if you
 need the quick version, then load the full files for the lenses in scope.
 
 **Core lenses — always read (or verify already loaded):**
@@ -44,6 +44,7 @@ need the quick version, then load the full files for the lenses in scope.
 - `01-frameworks/08-workspace-contribution-framework.md` — the target *is* a change to the workspace itself (a skill, framework, memory, reference, MOC).
 - `01-frameworks/09-component-and-pattern-framework.md` — any component/pattern decision, component docs/schema, tokens, the AI-legible / `DESIGN.md` layer.
 - `01-frameworks/10-perception-integrity.md` — any judgment of fine visual detail (a render, screenshot, artifact, reference, image asset).
+- `01-frameworks/11-anticipatory-failure-analysis.md` — the target proposes or builds a technique with a visible failure surface (shader, post-process, render, generator, layout, motion), or claims a visual is "ready"/"matches the reference".
 
 (If a core file is missing, flag it and continue with the rest.)
 
@@ -87,8 +88,8 @@ Output exactly this structure. One paragraph per framework, not more:
 ## Situational lenses
 
 {Include a block here ONLY for each situational lens (07 Integration · 08 Workspace
-Contribution · 09 Component & Pattern · 10 Perception Integrity) whose domain the target
-touches — same Values / Sees here / Flags shape. List the rest on a single line:
+Contribution · 09 Component & Pattern · 10 Perception Integrity · 11 Anticipatory Failure
+Analysis) whose domain the target touches — same Values / Sees here / Flags shape. List the rest on a single line:
 "**Not applicable:** 07 Integration, 08 Workspace Contribution (target isn't repo-bound
 or a workspace edit)." If none apply, replace this whole section with that one line.}
 
@@ -112,7 +113,7 @@ decide whether to save, act, or discard.
 ## Notes
 
 - **Keep it short.** Six core one-paragraph critiques + only the situational lenses
-  that apply + one cross-tension paragraph + one next-action line. Don't run all ten
+  that apply + one cross-tension paragraph + one next-action line. Don't run all eleven
   by reflex — the situational gating is what keeps it on one screen.
 - **Avoid hedging.** If a framework has nothing useful to say about the target,
   say "No specific flag — target is outside this framework's scope." Don't

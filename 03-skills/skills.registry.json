@@ -10,9 +10,9 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 247,
+    "total": 248,
     "by_tier": {
-      "cross-cutting": 26,
+      "cross-cutting": 27,
       "foundation": 22,
       "hub": 40,
       "spoke": 159
@@ -941,6 +941,45 @@
       ],
       "requires": [],
       "hash": "sha256:dca70c2906c81584470493d7b41365a764d540c6773ef8c9e0e05552d5dff246"
+    },
+    "failure-mode-premortem": {
+      "path": "03-skills/failure-mode-premortem/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "quality",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "native-visual-eval",
+        "visual-qa-toolkit",
+        "lead-visual-qa",
+        "reference-video-review"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "pre-mortem",
+        "premortem",
+        "failure mode",
+        "what could go wrong",
+        "before we build",
+        "red team",
+        "oppositional",
+        "classic symptom",
+        "common issue",
+        "avoidable",
+        "will this band",
+        "acceptance criteria",
+        "reference comparison",
+        "ready for review",
+        "pitfall ledger",
+        "anticipate bugs",
+        "find the bug first"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "hash": "sha256:02344a158b2bef14db1acae407cf1153f5987225e2691c030354e1f0a5df2c16"
     },
     "fe-accessibility": {
       "path": "03-skills/fe-accessibility/SKILL.md",
@@ -5385,6 +5424,9 @@
     ],
     "eng-foundations": [
       "eng-foundations"
+    ],
+    "failure-mode-premortem": [
+      "failure-mode-premortem"
     ],
     "fe-accessibility": [
       "eng-foundations",

@@ -63,6 +63,7 @@ _Raw research syntheses live in `research/research/` (note: double-nested dir �
 - [[workflow-patterns]] — Stale-content review, 3-bucket pending structure, audit_skip, session-end habits, trigger-word loading (2026-04-28)
 - [[knowledge-vault-design]] — Why three surfacing tiers exist, why entries ≠ skills, how to extend the system (2026-04-29)
 - [[skill-ecosystem-and-mcp-servers]] — Evaluation of skills.sh + mcpmarket.com: the three buckets (tool integrations / already-covered / genuine gaps), what we added (science math+physics, mobile, security), dedup decisions, attribution convention, recommended MCP servers (Blender for Legion, Postgres). Triggers: `mcpmarket`, `skills.sh`, `mcp server`, `blender`, `add skills`, `skill library` (2026-06-16)
+- [[visual-failure-mode-ledger]] — The externalized memory behind framework #11 Anticipatory Failure Analysis + the `failure-mode-premortem` skill: technique-keyed rows (symptom · visible tell · root cause · prevention · how-to-detect · ref/tier) for how visual techniques classically fail and how to catch them in a frame. Domain-agnostic; seeded from Legion rendering; grows via the self-improving loop. Triggers: `pre-mortem`, `failure mode`, `what could go wrong`, `classic symptom`, `banding`, `dither crawl`, `bloom ring`, `acceptance criteria`, `ready for review`, `pitfall ledger` (2026-07-14)
 
 ---
 

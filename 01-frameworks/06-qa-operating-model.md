@@ -156,6 +156,7 @@ What this framework does **not** change:
 - **#03 Collaboration & Critique** — the *how we work* layer; this framework asks *am I advocating from the user's position or from my own?*
 - **#04 Research & Evidence** — the *what we know* layer; this framework asks *what's the evidence that the bar was met, not just claimed*.
 - **#05 Last-Mile Craft** — the *how we finish* layer; this framework asks *did we frame the finishing target correctly in the first place*.
+- **#11 Anticipatory Failure Analysis** — the *input-time twin*. This framework (#06) is the originating lens at output time — it frames the target and grades before I report. #11 fires *earlier*: before I propose or build a technique with a visible failure surface, it anticipates the technique's classic failure modes (via the Visual Failure-Mode Ledger), argues against the plan, and derives acceptance criteria from the reference — then proves the result at the done-boundary. #06's reference-comparison and Reference/Resolution/Honesty checks are what #11's acceptance step *runs*, pulled forward so they shape the build instead of only grading it. #06 before I report; #11 before I propose and before I call done.
 
 Skills referenced in default #2 (ds-advisor, design-engineer, figma-canvas-designer, etc.) carry the tactical execution. This framework just ensures they're loaded.
 
