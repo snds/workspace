@@ -251,6 +251,22 @@ Next:
 ---
 
 --- SESSION BLOCK ---
+Date: 2026-07-15
+Agent: Claude Opus 4.8 (1M context)
+Machine: Work MacBook Pro
+Surface: Cursor (Claude Code VS Code extension)
+Project(s): Employer design-system migration (cpes-software) — prototype → design system
+Decisions:
+  - Directionality locked (Sean): the prototype is the spec only; all build work lands in the design system — reuse shipped components → extend → author net-new only if genuinely novel. Nothing is built in the prototype.
+  - Migration is reuse-and-extend, not a rebuild (most of the prototype maps onto components engineering already ships; little is net-new).
+  - Employer detail stays in the employer repo — this workspace log holds only a continuity pointer (separation rule); nothing employer-confidential is mirrored here.
+Next:
+  - Resume the migration build once backend access is provisioned; the full plan, deliverables, and current status live in the employer repo.
+--- END BLOCK ---
+
+---
+
+--- SESSION BLOCK ---
 Date: 2026-07-09 (DORMANT SESSION CLOSED — work performed 2026-06-10 -> 06-11; the 02-centricPLM blocks below already continued this thread through July. Read those for current state; this block is the historical record of the founding audit/plan/Figma work.)
 Agent: Claude Fable 5
 Surface: Claude Code (Mac desktop app)
