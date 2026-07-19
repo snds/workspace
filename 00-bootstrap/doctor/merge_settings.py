@@ -3,7 +3,13 @@
 Deep-merge fragment into target. Dicts merge recursively; list items append only if
 not already present (exact match); existing scalars ALWAYS win (never override the
 user's values). Aborts without writing on any parse error. Backs up, writes atomically.
-Exit 0 = merged or nothing to do; nonzero = aborted, target untouched."""
+Exit 0 = a merge was written; 3 = no-op (nothing changed); other nonzero = aborted,
+target untouched.
+
+0 and 3 MUST stay distinct: the caller only invokes this when the registration guard
+has already failed, so "no change made" means the merge could not fix the problem
+(e.g. `hooks` is a list or scalar rather than a dict, so merge() falls through). The
+old contract collapsed both into 0, and the doctor reported a REPAIRED it never did."""
 import json, os, shutil, sys, tempfile, time
 
 
@@ -31,7 +37,7 @@ def main():
     before = json.dumps(target, sort_keys=True)
     merged = merge(target, frag)
     if json.dumps(merged, sort_keys=True) == before:
-        return
+        sys.exit(3)                               # no-op -> caller must not claim success
     if os.path.exists(target_path):
         shutil.copy2(target_path, f"{target_path}.bak-{time.strftime('%Y%m%d%H%M%S')}")
     fd, tmp = tempfile.mkstemp(dir=os.path.dirname(os.path.abspath(target_path)))

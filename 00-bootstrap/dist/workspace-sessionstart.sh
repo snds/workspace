@@ -14,7 +14,10 @@ done
 [ -n "$WS" ] || WS="$HOME/Projects/workspace"
 STATE="$HOME/.claude/ws-state"; mkdir -p "$STATE"
 INPUT="$(cat 2>/dev/null || true)"
-jget() { printf '%s' "$INPUT" | sed -n "s/.*\"$1\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" | head -1; }
+# grep -o + head -1 takes the FIRST match. The old greedy `.*` sed anchored to the
+# LAST occurrence, so a nested "source"/"cwd" (e.g. inside a meta object) silently
+# won — mis-routing the in-workspace test at L52 and double-injecting the bootstrap.
+jget() { printf '%s' "$INPUT" | grep -o "\"$1\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" | head -1 | sed "s/.*:[[:space:]]*\"//; s/\"$//"; }
 SID="$(jget session_id)"; SRC="$(jget source)"; CWD="$(jget cwd)"
 [ -n "$SRC" ] || SRC=startup
 
@@ -46,7 +49,9 @@ fi
 BRANCH=$(git -C "$LIVE" branch --show-current 2>/dev/null || echo '?')
 SHA=$(git -C "$LIVE" rev-parse --short HEAD 2>/dev/null || echo '?')
 TODAY=$(date +%Y-%m-%d)
-MISSES=$(awk '/ ACK$/{n=0} / MISS /{n++} END{print n+0}' "$STATE/audit.log" 2>/dev/null)
+# Rotation-proof MISS count: the ACK boundary is a timestamp in $STATE/ack-mark,
+# not a log line (log rotation used to discard it — see workspace-doctor.sh --ack).
+MISSES=$(awk -v m="$(cat "$STATE/ack-mark" 2>/dev/null)" '/ MISS /{ if ($1 "" > m "") n++ } END{print n+0}' "$STATE/audit.log" 2>/dev/null)
 
 # In-workspace: defer to the project hook ONLY if it is verifiably registered.
 if [ "$LIVE" != "$WS" ] || { [ -n "$CWD" ] && case "$CWD" in "$WS"|"$WS"/*) true;; *) false;; esac; }; then

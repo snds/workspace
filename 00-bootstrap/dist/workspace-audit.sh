@@ -6,17 +6,29 @@
 set -u
 STATE="$HOME/.claude/ws-state"; mkdir -p "$STATE"
 INPUT="$(cat 2>/dev/null || true)"
-jget() { printf '%s' "$INPUT" | sed -n "s/.*\"$1\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" | head -1; }
+# grep -o + head -1 takes the FIRST match. The old sed used a greedy `.*` prefix,
+# which anchored to the LAST occurrence: a nested/repeated key (e.g. a "source"
+# inside a meta object) silently won over the real top-level one.
+jget() { printf '%s' "$INPUT" | grep -o "\"$1\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" | head -1 | sed "s/.*:[[:space:]]*\"//; s/\"$//"; }
 TP="$(jget transcript_path)"; SID="$(jget session_id)"; CWD="$(jget cwd)"
 LOG="$STATE/audit.log"; TS=$(date +%Y-%m-%dT%H:%M:%S)
 [ -f "$TP" ] || { echo "$TS SKIP ${SID:-?} no-transcript" >> "$LOG"; exit 0; }
-xcode-select -p >/dev/null 2>&1 || { echo "$TS SKIP ${SID:-?} no-clt" >> "$LOG"; exit 0; }
+# Gate on the ACTUAL dependency (python3), not the Xcode CLT. The old gate made
+# the audit wholly inert on Linux (no xcode-select binary at all) and on any Mac
+# using Homebrew/pyenv python without CLT installed — the workspace is explicitly
+# cross-platform, so that silently disabled this layer on entire machines.
+command -v python3 >/dev/null 2>&1 || { echo "$TS SKIP ${SID:-?} no-python3" >> "$LOG"; exit 0; }
 python3 - "$TP" <<'PY' >/dev/null 2>&1; R=$?
 import json, sys
 prompts, ok = 0, False
 for line in open(sys.argv[1], encoding="utf-8", errors="replace"):
     try: e = json.loads(line)
     except Exception: continue
+    # Subagent/sidechain turns are a DIFFERENT agent's output — they must not
+    # satisfy (or count against) the parent session's ritual. Verified 2026-07-19:
+    # 6 sidechain assistant messages across the transcript corpus carry the token,
+    # each of which would have flipped its parent session to a false OK.
+    if e.get("isSidechain"): continue
     m = e.get("message") or {}
     role = m.get("role") or e.get("type")
     if role == "user" and not e.get("isMeta"):
