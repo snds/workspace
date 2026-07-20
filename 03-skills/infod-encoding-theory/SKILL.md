@@ -330,4 +330,5 @@ what to notice and why. Route to `infod-narrative-design` for annotation strateg
 - Ware, Colin — *Information Visualization: Perception for Design* (4th ed., 2020)
 
 ## Related
+- foundation → [[found-color]]
 - hub → [[lead-information-designer]]
