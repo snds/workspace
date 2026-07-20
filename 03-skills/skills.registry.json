@@ -1536,7 +1536,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:0b9b5d1b0aada3993f3335de2cf3f60947de4d020461c932e238272a37fe55c1"
+      "hash": "sha256:c39b6763a3c719333c694e594a4d6ab7841ba404d4b7f1d6867018bf5a508c55"
     },
     "found-composition": {
       "path": "03-skills/found-composition/SKILL.md",
@@ -2578,7 +2578,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:ca3c69d3864ee3f7eec17db21241c66c99f190dd3bc99af5397c12ca44723e48"
+      "hash": "sha256:eb53c6cf3de50a0fb8c48739e287a2cfafad91acd2b2df462779e2552f22b328"
     },
     "infod-narrative-design": {
       "path": "03-skills/infod-narrative-design/SKILL.md",
@@ -4519,7 +4519,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:b0cc9c3c5cda7617d53f5f19f9adcbb499cafea5117c4c184fe648419fb87988"
+      "hash": "sha256:bed5b934d3e20a771525e7c294bd1b7d09c2826cc61709e87a3ecfb526bc7b24"
     },
     "ux-data-visualization": {
       "path": "03-skills/ux-data-visualization/SKILL.md",
