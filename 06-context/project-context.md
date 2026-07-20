@@ -180,6 +180,26 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 
 ---
 
+### SaaS PLM Knowledge Base (`knowledge-discovery`)
+**Status:** Active — reference / consumed (cloned 2026-07-20)
+**Repo:** [saas-plm-analysis/knowledge-discovery](https://github.com/saas-plm-analysis/knowledge-discovery) (private, org-owned)
+**Local path:** `<Projects>/saas-plm-analysis/knowledge-discovery` — outside this workspace per the "codebases live in Projects" core rule. Full detail in memory [[reference-saas-plm-knowledge-discovery]].
+**Summary:** Centric's cross-role knowledge base for the new SaaS PLM platform — legacy C8 domain
+extraction mapped to target SaaS configuration, plus PM requirements, UX research, UI specs, engineering
+architecture, ADRs, and a machine-consumed `ai-knowledge/` layer (patterns, legacy→new mappings, golden
+examples, decision log). Agent-aware: its own `AGENTS.md` domain taxonomy, an `INDEX.md` in each of 62
+directories (open the local INDEX before loading leaf files — the repo's own rule), 8 `.cursor/rules`, and
+4 `.cursor/skills`.
+
+**Why it matters here:** it is the employer-side domain source of truth that sits underneath the
+`centric-ui` / VMS design-system work. `ui/design-system/` and `ux/` overlap Sean's DS threads directly —
+cross-read them, never copy content across the personal/employer boundary in either direction.
+
+**Next:** [Set when first substantively used — likely cross-reading `ui/specs` + `ux/flows` against the
+centric-ui component work, and the `ai-knowledge/mappings` layer against the C8→SaaS migration threads.]
+
+---
+
 ### Centric UX Research (Multi-Vertical)
 **Status:** Active — research / analysis
 **Summary:** User research across Fashion, Food, and Product Engineering verticals to derive scalable workflow models. FigJam boards and enterprise persona sets as recent deliverables.
