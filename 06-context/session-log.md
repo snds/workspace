@@ -20,6 +20,61 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-20 — centric-ui local-against-cloud-dev stood up; PRs #116/#117 landed; credential-scoping + chain-order contract fixes
+
+--- SESSION BLOCK ---
+Date: 2026-07-20
+Agent: Claude Opus 4.8
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): Centric VMS Design System (centric-ui), Workspace Brain, saas-plm knowledge base
+Artifacts:
+  - `06-context/memory/feedback-credential-scoping.md` — Centric-laptop credential rule (05c997d)
+  - `06-context/memory/reference-saas-plm-knowledge-discovery.md` + project-context entry (61251f9)
+  - `08-knowledge/engineering/centric-ui-local-against-cloud-dev.md` — the three cloud-dev traps (c73418d)
+  - Contract fix across 7 files: build-related now precedes build-registry (7239d16, 1752d03)
+  - centric-ui PR #179 (OPEN) — dev-proxy cloud routing + env-example/API-key corrections
+  - Cloned `saas-plm-analysis/knowledge-discovery` → `<Projects>/saas-plm-analysis/` (503MB, main)
+Decisions:
+  - Cloud dev over Docker Compose for now: Docker not installed and 5 prereqs missing (2 needing
+    other people's tokens); cloud dev works today with one command. Revisit when the JFrog token is
+    being requested anyway, or if backend _data_ needs reshaping (cloud dev is shared — don't).
+  - centric-ui worktree `centric-ui-main` created on `main`; the figma branch was 826 files / 77
+    commits stale, so reviewing UI from it would mislead.
+  - #117 build tag set to 11.4.34 (not a copy of #116's 11.4.33) so the two bundles stay
+    distinguishable in the UI header — validated once #116 squash-landed 11.4.33 on main.
+  - Keycloak redirect-URI three-way disagreement (realm=3000, vite=8082, example=5173) documented
+    in PR #179, deliberately NOT decided — belongs to whoever owns the VMS realm.
+Pending added:
+  - VMS realm owner to decide redirect URI: allow 8082, or change examples to 3000 (PR #179 item 3).
+  - `workflow-service` has no cloud dev hostname (DNS 000, not 401) — BE must expose it or name it.
+  - centric-ui PR #179 needs reviewers (Alex Myronov natural for the proxy half — extends his #160).
+  - Two abandoned centric-ui SHAs (ec04737, 86651f0) carrying `hello@snds.design` remain reachable
+    by direct URL until GitHub GC; purging needs a Support request (draft offered, not written).
+  - SSH to github.com:22 timing out on this network all session — all pushes went over HTTPS.
+    Fix if it persists: route Host github.com / github-work via ssh.github.com:443.
+Pending resolved:
+  - PRs #116 + #117 — conflicts resolved (buildInfo.ts build-tag only, both times) and both merged.
+  - Employer design-system migration: backend access provisioned and now working end-to-end.
+Project status changes:
+  - Centric VMS Design System: blocked-on-backend-access → unblocked, local FE running against cloud dev.
+Corrections worth remembering (agent self-audit):
+  - Committed two merge commits to an employer repo as `hello@snds.design` by passing explicit
+    `-c user.*` flags that overrode an already-correct repo-local config, then reported it as a
+    footnote instead of fixing it immediately. Rewritten + force-pushed; rule recorded in
+    [[feedback-credential-scoping]]. Workspace repo on this machine repointed to the `github-work`
+    SSH alias + Centric identity.
+  - Read a git diff backwards and confidently told Sean the header fix was on `main` when the
+    reverse was true. Verify diff direction by reading both files, not by reasoning about `-`/`+`.
+  - Twice reported `exit=$?` that was actually `tail`'s status, masking a real failure.
+Next:
+  - Assign reviewers on centric-ui PR #179; raise the redirect-URI question with the VMS realm owner.
+  - Resume the DS migration build now that the backend is reachable — quick-win reuses first.
+  - Optional: Docker Compose setup when the JFrog token is being requested for something else.
+--- END BLOCK ---
+
+---
+
 ### 2026-07-11 — Legion: procedural-worlds Step 0 — star+planet physical data contract (PR #157 open)
 
 --- SESSION BLOCK ---
