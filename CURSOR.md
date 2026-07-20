@@ -31,8 +31,9 @@ algorithm, the routing map — lives in AGENTS.md and is not duplicated here._
   project's Live handoff block + load the skills the task needs from the registry before acting. See
   `.cursor/rules/brain.mdc` → "Dynamic model switching" and [AGENTS.md](AGENTS.md) → "Multi-agent continuity".
 - **Writing is open to any model, behind the write-quality gates** (quality ≥ standard · intent integrity ·
-  cross-link continuity · no zombies). Run `build-registry.py` → `build-related.py` → `validate-integrity.py`
-  → `validate-links.py` → `validate-workspace.py` before committing. See [AGENTS.md](AGENTS.md) →
+  cross-link continuity · no zombies). Run `build-related.py` → `build-registry.py` → `validate-integrity.py`
+  → `validate-links.py` → `validate-workspace.py` before committing (registry last of the two builders — it
+  hashes the files `build-related` rewrites). See [AGENTS.md](AGENTS.md) →
   "Write-quality gates" and `.cursor/rules/01-agent-controller.mdc`.
 
 Other adapters: [CLAUDE.md](CLAUDE.md) · [PERPLEXITY.md](PERPLEXITY.md).

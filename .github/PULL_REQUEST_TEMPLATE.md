@@ -30,5 +30,5 @@
 <!-- Rough +/- lines. Flag if a foundation extracted duplication out of specialty spokes. -->
 
 ## Verification
-- [ ] Ran `build-registry.py` → `build-related.py` → `validate-integrity.py` → `validate-links.py` → `validate-workspace.py` (all green)
+- [ ] Ran `build-related.py` → `build-registry.py` → `validate-integrity.py` → `validate-links.py` → `validate-workspace.py` (all green — registry *after* related; it hashes what related rewrites)
 <!-- Plus any spot checks: a load-chain trace, Obsidian graph, etc. -->

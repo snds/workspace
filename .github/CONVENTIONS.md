@@ -59,5 +59,9 @@ regenerate + repoint; never leave orphaned/superseded-but-live/stub files). Full
 - `validate-links.py` — dangling + reciprocity on the typed `## Related` graph.
 - `validate-workspace.py` — archive provenance + memory-index coverage.
 
-Before committing any change: `build-registry.py` → `build-related.py` → `validate-integrity.py` →
+Before committing any change: `build-related.py` → `build-registry.py` → `validate-integrity.py` →
 `validate-links.py` → `validate-workspace.py`. CI runs all five.
+
+`build-registry` must run **after** `build-related`: the registry stores a content hash per skill, and
+`build-related` rewrites `## Related` blocks inside SKILL.md. Registry-first commits stale hashes and CI
+fails on `registry-drift` / `capability-validator`.

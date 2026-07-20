@@ -23,7 +23,7 @@ Full rationale + the universal version of these gates: [AGENTS.md](../../AGENTS.
    no data, context, or intent was silently dropped. Preserve meaning unless deliberately superseding (gate 4).
 3. **Cross-link continuity** — when you change a file, update **every** related/cross-linked file
    (frontmatter edges, `## Related`, foundations, MOCs, knowledge refs, prose mentions). Then regenerate
-   (`build-registry.py`, `build-related.py`) and run the validators. A change that orphans a reference is
+   (`build-related.py`, then `build-registry.py` — in that order) and run the validators. A change that orphans a reference is
    **incomplete**, not done.
 4. **No zombies — archive-or-regenerate** — if a change is so dramatic the old file no longer makes sense,
    do **not** leave it stale or half-updated. **Archive** it with provenance (`_archive/` + `ARCHIVE-LOG.md`),
@@ -33,8 +33,9 @@ Full rationale + the universal version of these gates: [AGENTS.md](../../AGENTS.
 ## Enforcement (run before you commit — CI runs them too)
 
 ```
-python3 09-tools/build-registry.py        # regenerate the graph from frontmatter
-python3 09-tools/build-related.py         # regenerate reciprocal cross-links
+python3 09-tools/build-related.py         # regenerate reciprocal cross-links (rewrites SKILL.md bodies)
+python3 09-tools/build-registry.py        # regenerate the graph from frontmatter — MUST follow build-related,
+                                          #   it hashes the SKILL.md content build-related just rewrote
 python3 09-tools/validate-integrity.py    # quality + cross-link continuity + anti-zombie
 python3 09-tools/validate-links.py        # dangling + reciprocity
 python3 09-tools/validate-workspace.py    # archive provenance + memory index

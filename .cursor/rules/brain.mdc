@@ -66,8 +66,10 @@ write-quality gates** (see `01-agent-controller.mdc` and AGENTS.md → "Write-qu
 3. **Cross-link continuity** — update every related/cross-linked file; regenerate + validate.
 4. **No zombies** — if a change is dramatic, archive the old (with provenance) + regenerate + repoint.
 
-Before committing, run: `build-registry.py` → `build-related.py` → `validate-integrity.py` →
+Before committing, run: `build-related.py` → `build-registry.py` → `validate-integrity.py` →
 `validate-links.py` → `validate-workspace.py` (CI runs them too). A write that fails a gate isn't finished.
+Keep `build-registry` after `build-related` — the registry hashes SKILL.md content that `build-related`
+rewrites, so the reverse order commits stale hashes and CI fails on registry drift.
 
 ## Frameworks, skills, conventions
 - **Frameworks (10):** see [`01-frameworks/00-README.md`](../../01-frameworks/00-README.md) for compressed

@@ -46,9 +46,18 @@ including a mid-task dynamic model swap in Cursor — must clear four gates:
    dramatic the old file no longer makes sense, archive it with provenance, generate the replacement, and
    repoint all cross-links. Never leave an orphaned, superseded-but-live, half-updated, or stub file.
 
-Run before commit (CI mirrors these): `build-registry.py` → `build-related.py` → `validate-integrity.py`
+Run before commit (CI mirrors these): `build-related.py` → `build-registry.py` → `validate-integrity.py`
 → `validate-links.py` → `validate-workspace.py`. Gate 2 is partly semantic — the authoring agent + PR review
 own it; the rest is machine-checked. Mirrored, compressed, in [[AGENTS]] → "Write-quality gates".
+
+**Why `build-related` runs first.** It rewrites the `## Related` block *inside* SKILL.md files;
+`build-registry` records a content hash per skill. Build the registry first and any file `build-related`
+subsequently touches carries a stale hash, so the committed registry is already drifted — CI fails with
+`registry-drift` and `capability-validator` even though the chain was "run as documented". The coupling is
+one-directional (`build-related` writes what `build-registry` reads), so ordering alone closes it. If a
+future generator also mutates SKILL.md content, it belongs *before* `build-registry` too — or the chain
+needs a run-to-fixpoint loop. Discovered 2026-07-20 when a Related-block refresh to `found-color`,
+`infod-encoding-theory` and `ux-component-library` drifted exactly those three hashes.
 
 ---
 
