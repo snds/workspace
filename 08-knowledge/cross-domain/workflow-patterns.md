@@ -122,3 +122,9 @@ The moment a session produces more than two artifacts, write a version register
 version, and status (current / superseded). Per [[artifact-standards]] §3 — the 2026-07-09
 validation session skipped it at three artifacts and the reviewer caught it. The register is
 what lets a later session tell which of several same-day versions is authoritative.
+
+## Multi-agent verify: report the verdict, not the pass/fail count
+
+When a workflow maps units then adversarially verifies them, the CONFIRMED/ADJUSTED/REFUTED
+label is sampling noise — see [[adversarial-verify-label-volatility]]. Report the stable mapped
+verdict and treat the verify pass as a convergence check; never headline a confirmed/adjusted count.

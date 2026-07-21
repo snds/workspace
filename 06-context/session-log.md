@@ -20,6 +20,40 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-21 — SaaS PLM prototype → centric-ui gap audit re-run; PR #1 refreshed for Olga's review
+
+--- SESSION BLOCK ---
+Date: 2026-07-21
+Agent: Claude Opus 4.8 (1M context)
+Machine: Work MacBook Pro
+Surface: Cursor (Claude Code extension)
+Project(s): Employer design-system migration (cpes-software/saas-plm-prototype → centric-ui)
+  — deliverables live in the employer repo, NOT mirrored here (separation rule); this block
+  records only the fact of the work + the PR reference.
+Decisions:
+  - Re-ran the FULL multi-agent gap audit (not a delta pass): Olga's shadcn/Radix migration
+    invalidated the prior audit's "hand-rolled" premise, so every verdict was re-derived from
+    current source on both repos rather than carried forward.
+  - Report verification as "two independent adversarial passes; identical rung + difficulty on
+    all carried units" instead of a confirmed/adjusted count — the count proved a sampling
+    artifact (swung 8/19/6 → 17/16/0 across two passes while every unit's resolution + difficulty
+    stayed identical). Captured as knowledge [[adversarial-verify-label-volatility]].
+  - Updated PR #1 in place (rebased onto current main) to preserve Olga's review thread rather
+    than opening a fresh PR. Committed as the Centric account; PR review by Olga, no self-merge.
+  - Fixed a render bug pre-delivery: raw `<table>`/`<DataTable>` in the data broke the gap-map
+    matrix (innerHTML) and would mis-render on GitHub — escaped injected fields + the markdown.
+Pending resolved:
+  - Employer DS-migration gap report re-run: done — plan + interactive gap map refreshed, new
+    per-unit detail appendix added, PR #1 updated, replied to Olga's CHANGES_REQUESTED review.
+Pending added:
+  - Await Olga's re-review of saas-plm-prototype PR #1 before resuming the migration build.
+  - Prototype repo left checked out on `docs/centric-ui-migration-plan` (not `main`) — switch back when convenient.
+Next:
+  - On Olga's sign-off: resume the DS migration build, quick-win reuses first (per the refreshed plan).
+--- END BLOCK ---
+
+---
+
 ### 2026-07-20 — centric-ui local-against-cloud-dev stood up; PRs #116/#117 landed; credential-scoping + chain-order contract fixes
 
 --- SESSION BLOCK ---
