@@ -16,6 +16,7 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[fact-unraid-server]] — `fact` · Sean's Unraid home server: how to reach it (LAN / key / sandbox) + what runs on it.
 - [[feedback-infra-ip-disclosure]] — `feedback` · internal/LAN IPs OK to record; external/WAN IP never (the real attack surface).
 - [[feedback-credential-scoping]] — `feedback` · on the Centric laptop every repo action uses Centric credentials — including the personal workspace repo, where the Centric account is a contributor; never override repo-local git config.
+- [[feedback-visual-qa-evidence-in-prs]] — `feedback` · every visual PR (tokens/primitives/spacing/layout/colour) commits its A/B before/after/heatmap evidence into the PR and embeds a board; the reviewer judges in the PR, not by pulling the branch. Proofboard for visual work.
 - [[reference-saas-plm-knowledge-discovery]] — `reference` · Centric's cross-role SaaS PLM knowledge base (`saas-plm-analysis/knowledge-discovery`); local path, its AGENTS.md/INDEX.md navigation contract, and how it relates to this workspace.
 - [[decision-portable-workspace-refactor]] — `decision` · why the workspace became portable, git-native, LLM-agnostic.
 - [[decision-externalize-everything-to-workspace]] — `decision` · standing directive: all durable content lives in the workspace (or the platform Projects dir), never in an agent's private memory; encoded as an AGENTS.md Core rule for cross-surface reach.
