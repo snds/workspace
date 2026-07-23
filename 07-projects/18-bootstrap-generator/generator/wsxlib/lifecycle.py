@@ -187,6 +187,10 @@ def compact(root: Path) -> int:
     log = log_path.read_text(encoding="utf-8")
     frags = sorted(p for p in frag_dir.glob("*.md") if p.name != "README.md")
     if not frags:
+        # No fragments to fold, but still bound the log if it has grown large.
+        n = _archive_old_blocks(log_path)
+        if n:
+            print(f"✓ compact: archived {n} old block(s) → session-log-archive.md (token-frugal).")
         return 0
     sid_re = _re.compile(r"^SessionID:\s*(\S+)", _re.MULTILINE)
     date_re = _re.compile(r"^Date:\s*(\d{4}-\d{2}-\d{2})", _re.MULTILINE)
@@ -215,9 +219,58 @@ def compact(root: Path) -> int:
         log_path.write_text(log, encoding="utf-8")
         for f, _t, _d in new:
             f.unlink()
-    if new or folded:
-        print(f"✓ compact: folded {len(new)} new, dropped {folded} already-folded session fragment(s).")
+    archived = _archive_old_blocks(log_path)
+    if new or folded or archived:
+        msg = f"✓ compact: folded {len(new)} new, dropped {folded} already-folded fragment(s)."
+        if archived:
+            msg += f" Archived {archived} old block(s) → session-log-archive.md (token-frugal)."
+        print(msg)
     return 0
+
+
+# Token frugality: keep the LIVE session log small (~48 KB ≈ 12k tokens of the
+# newest work); older blocks move to session-log-archive.md, read only on demand.
+# Bounds the log's read cost at O(1) instead of O(sessions). Content-preserving.
+_LIVE_BUDGET_BYTES = 48000
+
+
+def _archive_old_blocks(log_path: Path) -> int:
+    text = log_path.read_text(encoding="utf-8")
+    marker = "## Session Entries"
+    idx = text.find(marker)
+    if idx == -1:
+        return 0
+    body_start = idx + len(marker)
+    head, body = text[:body_start], text[body_start:]
+    if len(body.encode("utf-8")) <= _LIVE_BUDGET_BYTES:
+        return 0
+    first = body.find("\n### ")
+    if first == -1:
+        return 0
+    lead, blocks_text = body[:first], body[first:]
+    blocks = [b for b in _re.split(r"(?=\n### )", blocks_text) if b.strip()]
+    kept, kept_bytes, cut = [], 0, []
+    for b in blocks:
+        if not cut and kept_bytes + len(b.encode("utf-8")) <= _LIVE_BUDGET_BYTES:
+            kept.append(b); kept_bytes += len(b.encode("utf-8"))
+        else:
+            cut.append(b)
+    if not cut:
+        return 0
+    pointer = ("\n\n> _Older entries archived to [session-log-archive.md]"
+               "(session-log-archive.md) to keep this file cheap to read. "
+               "Ask to see it only if you need older history._\n")
+    log_path.write_text(head + pointer + lead + "".join(kept), encoding="utf-8")
+    arch = log_path.with_name("session-log-archive.md")
+    prior = arch.read_text(encoding="utf-8") if arch.exists() else (
+        "# Session Log — Archive\n\n_Older session blocks, moved out of session-log.md "
+        "to keep the live log token-cheap. Newest archived first._\n\n## Session Entries\n")
+    ai = prior.find(marker)
+    if ai == -1:
+        prior = prior.rstrip() + f"\n\n{marker}\n"; ai = prior.find(marker)
+    at = ai + len(marker)
+    arch.write_text(prior[:at] + "\n" + "".join(cut) + prior[at:], encoding="utf-8")
+    return len(cut)
 
 
 # ----------------------------------------------------------------- session ---

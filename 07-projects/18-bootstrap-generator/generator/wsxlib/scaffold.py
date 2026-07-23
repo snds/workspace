@@ -251,6 +251,10 @@ rigor is the product — keep it.
 
 _Starter. Edit to fit {{identity.name}}._
 
+- **Token frugality is a #1 priority.** This workspace must never cost more tokens
+  than the value it adds. Read frugally — the top of a log, not the whole file;
+  older history is archived and read only on demand. Load a skill only when its
+  trigger fires. Prefer the smallest sufficient context.
 - Lead with the answer; context after.
 - Make uncertainty explicit; name tradeoffs and rejected alternatives.
 - Verify before claiming done.
