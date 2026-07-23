@@ -1,6 +1,6 @@
 # SESSION-STATE — Portable Bootstrap Generator
 
-_Last updated: 2026-07-22 20:10 — checkpoint (per-domain expertise calibration + use_context; validated end-to-end for a colleague — VALIDATION.md proofboard; earlier this session: two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
+_Last updated: 2026-07-22 20:30 — checkpoint (self-perpetuating authoring framework + `wsx remote` hosting step; earlier this session: expertise calibration + validation, two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
 
 ---
 
@@ -36,7 +36,7 @@ _Last updated: 2026-07-22 20:10 — checkpoint (per-domain expertise calibration
 - **CLI language decision**: **Python 3, zero runtime dependencies** (incl. own minimal YAML in `wsxlib/yamlio.py`) — matches the README's "no extra installs" promise and the workspace's python3 tooling convention.
 
 ### Open work and paused threads
-- **Currently in progress**: **VALIDATED end-to-end and ready for a colleague to test.** The whole `wsx` command surface is stub-free, the Resolver is a composite builder, and skills are now written at a **per-domain expertise altitude**. `VALIDATION.md` is a colleague-facing proofboard. As of 2026-07-22: Path A is turn-key (registered auto-triggering brain; skeletons `wsx lint` enforces are enriched); the **Resolver** does plan-driven pull/patch/generate **+ composite** (skills that fuse the person's judgment with distilled industry-leading references, cited via an author-voice `## Sources` block; `--cache-refs` pins them); **`wsx search`** gives two-track discovery (skill registries + reference anchors, pluggable catalog); and the **MCP runtime** is a runnable zero-dep stdio server. Full loop — `init → interview → search → profile → resolve → emit {all} → lint → verify` — runs and is dogfooded. Remaining work is enhancement (hooks, template externalization, richer registry indexes), not missing commands.
+- **Currently in progress**: **VALIDATED, colleague-ready, and self-sufficient after hand-off.** The `wsx` surface is stub-free (12 commands), the Resolver is a composite builder, skills write at a per-domain expertise altitude, every workspace ships a **supreme `frameworks/skill-authoring.md`** so the owner keeps the rigor for anything they build later, and **`wsx remote`** settles where the workspace lives on free hosting. `VALIDATION.md` is the proofboard. As of 2026-07-22: Path A is turn-key (registered auto-triggering brain; skeletons `wsx lint` enforces are enriched); the **Resolver** does plan-driven pull/patch/generate **+ composite** (skills that fuse the person's judgment with distilled industry-leading references, cited via an author-voice `## Sources` block; `--cache-refs` pins them); **`wsx search`** gives two-track discovery (skill registries + reference anchors, pluggable catalog); and the **MCP runtime** is a runnable zero-dep stdio server. Full loop — `init → interview → search → profile → resolve → emit {all} → lint → verify` — runs and is dogfooded. Remaining work is enhancement (hooks, template externalization, richer registry indexes), not missing commands.
 - **Pending questions**: ship-as decision (SPEC §9) — standalone `wsx` repo split, deferred (folder extracts cleanly from git history when ready).
 - **Blocked on**: nothing.
 - **What's needed to resume** (next phases):
@@ -54,6 +54,27 @@ _Last updated: 2026-07-22 20:10 — checkpoint (per-domain expertise calibration
 ## Session history (append-only)
 
 _Newest first._
+
+### 2026-07-22 20:30 — checkpoint (self-perpetuating authoring framework + `wsx remote` hosting)
+
+**Focus this session** (continued): Sean's "single addition" to reach completion — (a) a top-level default framework in the *generated* workspace that supersedes the surface's native "build a skill" so the owner keeps this generator's rigor forever, and (b) a step that asks **where the workspace should live**, recommending free hosting.
+**Machine**: `Voyager-2.local` (Personal MacBook Pro)
+**Stopped because**: both built + dogfooded + validated; docs + VALIDATION.md updated; committed.
+
+**(A) Supreme authoring framework** (`scaffold.py` + `adapters.py`): every generated workspace now ships **`frameworks/skill-authoring.md`** (~100 lines) — a governing doc that **SUPERSEDES the LLM/surface's native skill-builder**. It encodes the generator's rigor for post-hand-off authoring of skills/hubs/spokes/frameworks/playbooks: pick the unit, set the **altitude from per-domain expertise**, **two-track source (skills + references) and cite in the person's voice**, write the sectioned skeleton, **reconcile triggers**, and pass an **acceptance checklist** — with a `wsx` fast-path when present and an identical manual path when not. All four emitted adapters (CLAUDE.md, AGENTS.md, Cursor rule, context pack) carry a **SUPREME RULE** pointing to it, so any surface routes "build me a skill" through it. `frameworks/00-README.md` lists it first.
+
+**(B) `wsx remote` — where it lives** (`lifecycle.py` + `cli.py`): bare `wsx remote` recommends **free** homes (private **GitHub** repo, **GitLab**, **Codeberg**, or **local-only**) and explains the flow; `wsx remote <url>` sets the git remote **and** records `transport.remote`. `wsx init` now prompts the hosting decision; `wsx sync`'s no-remote note points at it. **We never create accounts/repos** — the person makes an empty repo, `wsx` wires it, `wsx sync` pushes. Brain: interview M0 asks the hosting question with the free recs; synthesis maps `transport.remote`; SKILL.md cheat-sheet + closing report walk the owner through it and remind them new skills go through the authoring framework.
+
+**Dogfood/validation**: fresh init prompts hosting + ships `skill-authoring.md`; `emit all` → CLAUDE.md carries the SUPREME rule (all 4 adapters reference the framework); `wsx remote` lists 4 free options; `wsx remote <url>` wires origin + records `transport.remote`; `verify` green. Command surface now 12: `init·profile·emit·doctor·lint·verify·sync·resolve·remote·search·session·skill`.
+
+**Decisions made**:
+- **The framework is instructional-first** (works on any surface, `wsx`-optional) so a portable workspace keeps the rigor even where the CLI isn't installed.
+- **Supremacy is stated in every adapter**, not just the framework file, so the native skill-builder is actually overridden wherever the owner works.
+- **Hosting: recommend + wire, never provision** — account/repo creation is the user's (and off-limits to the agent); `wsx remote` handles only the mechanical wiring.
+
+**Next resumption needs**: the product is complete for the colleague test. Pure enhancement remains — real registry search indexes, MCP hooks, externalize scaffold templates (the framework/authoring doc is now another good candidate to externalize).
+
+---
 
 ### 2026-07-22 20:10 — checkpoint (per-domain expertise calibration + validated for colleague)
 

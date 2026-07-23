@@ -54,9 +54,11 @@ fundamentals bore an expert, shorthand strands a beginner — so this is the cor
 | **Nothing from an unvetted source installs silently.** | A skill from an unvetted directory (`skills.sh`) is *refused* unless you've audited it. ✓ |
 | **It works with more than one AI.** | Emits Claude Code, a universal MCP server (Cursor/Codex/Claude Desktop), Cursor rules, AGENTS.md, and a tool-less context pack. `emit all` → 10 files. ✓ |
 | **A stranger can't accidentally ship a half-built workspace.** | `wsx lint` fails on un-enriched skeletons and missing citations; `wsx verify` re-checks that every pinned item still matches its pin. ✓ (the two lint flags in the run above are this gate working) |
+| **The rigor keeps working after the generator is done.** Anything you build later — a new skill, hub, framework, or playbook — carries the same discipline. | Every workspace ships `frameworks/skill-authoring.md`, a supreme rule that **supersedes your AI's native skill-builder**; the emitted CLAUDE.md / AGENTS.md / Cursor rule / pack all point to it. ✓ |
+| **You choose where it lives, on free hosting.** | `wsx remote` recommends a private GitHub/GitLab/Codeberg repo (or local-only) and wires it; you create your own repo, `wsx` never touches your accounts. ✓ |
 
 Every claim here was produced by running the tool — not asserted. The commands are
-`init · profile · emit · resolve · search · lint · verify · session · sync · doctor · skill`.
+`init · profile · emit · resolve · search · lint · verify · session · sync · remote · doctor · skill`.
 
 ---
 
