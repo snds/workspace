@@ -35,7 +35,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:3da657838ba28c94ba5fdb9a681c7fac0e0c704e16ca1b5c98a7b42df6a79fbb"
+      "hash": "sha256:8989d5994a60c9e44189338914bfe47dbe74d68ae61e639cd157c0ec7170df71"
     },
     "3d-lighting-rendering": {
       "path": "03-skills/3d-lighting-rendering/SKILL.md",

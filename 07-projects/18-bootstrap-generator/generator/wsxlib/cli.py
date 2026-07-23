@@ -16,7 +16,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from . import adapters, core, lifecycle, resolver, scaffold, search, skills
+from . import adapters, core, lifecycle, resolver, scaffold, scan, search, skills
 
 
 # profile fields that are lists — `set` splits these on commas (and accepts [a, b] form).
@@ -136,6 +136,11 @@ def cmd_search(a):
     return search.search(core.require_workspace(), a.query, kind=a.kind, source=a.source)
 
 
+def cmd_scan(a):
+    # scan is environment-level — it works with or without a workspace.
+    return scan.scan(core.find_workspace_root(), as_json=a.json, write=a.write)
+
+
 def cmd_lint(a):
     return 1 if lifecycle.lint(core.require_workspace()) else 0
 
@@ -231,6 +236,11 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("--cache-refs", action="store_true",
                     help="for composite skills, fetch + pin + cache each reference URL for offline provenance")
     pr.set_defaults(fn=cmd_resolve)
+
+    psc = sub.add_parser("scan", help="detect your installed agents, MCP servers, and local LLMs")
+    psc.add_argument("--json", action="store_true", help="machine-readable output")
+    psc.add_argument("--write", action="store_true", help="save to context/scan.json (inside a workspace)")
+    psc.set_defaults(fn=cmd_scan)
 
     prm = sub.add_parser("remote", help="set/show where the workspace lives (git remote) + hosting tips")
     prm.add_argument("url", nargs="?", default="", help="git remote URL (omit to see recommendations)")
