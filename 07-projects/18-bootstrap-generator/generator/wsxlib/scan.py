@@ -133,6 +133,25 @@ def _tilde(p: Path) -> str:
     return s.replace(str(HOME), "~", 1) if s.startswith(str(HOME)) else s
 
 
+# When nothing is detected, recommend a surface BEFORE the interview — the generator
+# leans on the chosen assistant for the interview, synthesis, and composite authoring,
+# so a capable one directly yields a better workspace. Prioritized best-outcome-first.
+RECOMMENDED_SURFACES = [
+    ("Claude Code", "recommended — the fully-tested path here; richest setup and best "
+     "authoring quality", "the Claude desktop app, or https://claude.com/claude-code"),
+    ("Cursor", "a popular AI code editor; reads AGENTS.md + MCP out of the box",
+     "https://cursor.com"),
+    ("A frontier chat + AGENTS.md/pack", "Claude, ChatGPT, or Gemini in the browser — "
+     "drive it with the emitted AGENTS.md or context pack", "your existing account"),
+    ("A local model (Ollama)", "fully private, zero token cost — but a frontier model "
+     "produces noticeably richer skills; best as a complement", "https://ollama.com"),
+]
+
+
+def _needs_setup(agents: list, local: list) -> bool:
+    return not agents and not local
+
+
 def _suggest(agents: list, local: list) -> dict:
     """Advisory pre-fill for surfaces/models — the brain confirms with the user."""
     order = ["claude-code", "cursor", "codex", "gemini", "copilot", "windsurf", "aider", "continue"]
@@ -157,12 +176,15 @@ def scan(root: Path | None, as_json: bool = False, write: bool = False) -> int:
     mcp = _detect_mcp()
     local = _detect_local_llms()
     report = {"agents": agents, "mcp": mcp, "local_llms": local,
+              "needs_setup": _needs_setup(agents, local),
               "suggested": _suggest(agents, local)}
 
     if as_json:
         print(json.dumps(report, indent=2))
     else:
         _print_human(agents, mcp, local, report["suggested"])
+        if report["needs_setup"]:
+            _print_recommendation()
 
     if write and root is not None:
         out = root / "context" / "scan.json"
@@ -205,6 +227,24 @@ def _print_human(agents: list, mcp: dict, local: list, sugg: dict) -> None:
     print(f"  model tier      : {sugg['models.tier'] or '(ask the user)'}"
           f"{'  · offline-capable' if sugg['models.offline'] else ''}")
     print("\nThese are YOUR tools/accounts. Bring your own tokens; the generator supplies none.")
+
+
+def _print_recommendation() -> None:
+    print("\n" + "─" * 68)
+    print("⚠  No AI assistant or local model detected on this machine.")
+    print("   The generator uses your assistant to do the heavy lifting — the")
+    print("   interview, the synthesis, and authoring your skills. For the best")
+    print("   possible workspace, set one up FIRST, then re-run `wsx scan`:")
+    print()
+    for i, (name, why, where) in enumerate(RECOMMENDED_SURFACES, 1):
+        print(f"   {i}. {name} — {why}")
+        print(f"      → {where}")
+    print()
+    print("   A capable frontier model (Claude, etc.) gives the richest result; a")
+    print("   local model works and is fully private. Either way it's YOUR account.")
+    print("   (No assistant at all? You can still scaffold a starter workspace with")
+    print("   `wsx init` and grow it once you've set one up.)")
+    print("─" * 68)
 
 
 def _rel(p: Path, root: Path) -> str:
