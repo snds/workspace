@@ -144,6 +144,29 @@ def verify(root: Path) -> int:
             print(f"  ✗ missing canonical file: {rel}")
             fails += 1
 
+    # 3a. SAFETY: never let a declared-but-unimplemented security property stand. A
+    # person who sets encrypt:true may believe personal.md is encrypted at rest — it is
+    # not; it is only gitignored. Say so loudly rather than imply a guarantee we don't keep.
+    if prof.get("privacy", {}).get("encrypt"):
+        print("  ⚠ privacy.encrypt is true, but wsx implements NO vault encryption.")
+        print("    Gitignoring a file is not encryption. `context/personal.md` is excluded")
+        print("    from git and from every emitted adapter, and that is all. For real")
+        print("    at-rest protection use FileVault/BitLocker or an encrypted volume.")
+
+    # 3b. Declared vs. actual transport: profile.transport.remote is just a recorded
+    # string; only `wsx remote <url>` configures git. If they disagree the person thinks
+    # their work is backed up when nothing can push.
+    declared = str(prof.get("transport", {}).get("remote", "") or "").strip()
+    if declared:
+        r = core.git(root, "remote", "get-url", "origin", check=False, capture=True)
+        actual = (r.stdout or "").strip()
+        if not actual:
+            print(f"  ⚠ profile declares a remote ({declared}) but git has none configured —")
+            print(f"    nothing can sync. Wire it: wsx remote {declared}")
+        elif actual != declared:
+            print(f"  ⚠ remote mismatch — profile says {declared}, git says {actual}.")
+            print(f"    Reconcile with: wsx remote {actual or declared}")
+
     # 4. pinned content still matches its pin — pulled skills (byte-identical, read-only)
     #    and any cached composite references. Both must stay verifiable/re-fetchable.
     man = core.load_manifest(root)

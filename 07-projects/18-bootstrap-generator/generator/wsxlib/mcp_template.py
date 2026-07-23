@@ -118,15 +118,34 @@ def tool_session_start(args: dict) -> str:
 
 
 def tool_session_end(args: dict) -> str:
+    """Record the session as a conflict-free FRAGMENT — never by appending to the
+    shared log. Two devices appending to one file is exactly the merge conflict the
+    fragment model exists to prevent, and the log is newest-first so an append would
+    also land in the wrong order. `wsx compact` folds fragments in (deduping on
+    SessionID) at the next session start/end.
+    """
     summary = (args.get("summary") or "").strip()
-    log = WS / "context" / "session-log.md"
-    block = "\\n### " + _stamp() + " — session (via MCP)\\n\\n" + (summary or "(no summary provided)") + "\\n"
+    now = datetime.now(timezone.utc).astimezone()
+    sid = now.strftime("%Y-%m-%d-%H%M%S") + "-mcp"
+    frag_dir = WS / "context" / "sessions"
     try:
-        with log.open("a", encoding="utf-8") as f:
-            f.write(block)
-        return "session block appended to " + str(log.relative_to(WS))
+        frag_dir.mkdir(parents=True, exist_ok=True)
+        frag = frag_dir / (sid + ".md")
+        frag.write_text(
+            "### " + now.strftime("%Y-%m-%d") + " — session (via MCP)\\n\\n"
+            "SessionID: " + sid + "\\n"
+            "--- SESSION BLOCK ---\\n"
+            "Date: " + now.strftime("%Y-%m-%d") + "\\n"
+            "Stamp: " + _stamp() + "\\n"
+            "Surface: MCP client\\n"
+            "Summary: " + (summary or "(no summary provided)") + "\\n"
+            "--- END BLOCK ---\\n",
+            encoding="utf-8",
+        )
+        return ("session recorded as fragment context/sessions/" + sid + ".md "
+                "(conflict-free). Run `wsx compact` to fold it into session-log.md.")
     except OSError as e:
-        return "error writing session log: " + str(e)
+        return "error writing session fragment: " + str(e)
 
 
 def tool_reconcile(args: dict) -> str:

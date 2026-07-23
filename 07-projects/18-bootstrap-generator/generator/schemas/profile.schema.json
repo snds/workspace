@@ -103,8 +103,14 @@
     "privacy": {
       "type": "object",
       "properties": {
-        "personal_local_only": { "type": "boolean" },
-        "encrypt": { "type": "boolean" }
+        "personal_local_only": {
+          "type": "boolean",
+          "description": "walled personal context: context/personal.md is gitignored, excluded from every emitted adapter, and never read unless explicitly asked. IMPLEMENTED."
+        },
+        "encrypt": {
+          "type": "boolean",
+          "description": "NOT IMPLEMENTED — declares an intent only. There is no vault-level encryption in wsx today; gitignoring a file is NOT encryption. Setting this true does not protect anything. `wsx verify` warns if it is true so nobody relies on a guarantee that does not exist. For real at-rest protection use full-disk encryption (FileVault/BitLocker) or an encrypted volume."
+        }
       }
     },
     "imports": {
