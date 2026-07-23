@@ -56,9 +56,10 @@ fundamentals bore an expert, shorthand strands a beginner — so this is the cor
 | **A stranger can't accidentally ship a half-built workspace.** | `wsx lint` fails on un-enriched skeletons and missing citations; `wsx verify` re-checks that every pinned item still matches its pin. ✓ (the two lint flags in the run above are this gate working) |
 | **The rigor keeps working after the generator is done.** Anything you build later — a new skill, hub, framework, or playbook — carries the same discipline. | Every workspace ships `frameworks/skill-authoring.md`, a supreme rule that **supersedes your AI's native skill-builder**; the emitted CLAUDE.md / AGENTS.md / Cursor rule / pack all point to it. ✓ |
 | **You choose where it lives, on free hosting.** | `wsx remote` recommends a private GitHub/GitLab/Codeberg repo (or local-only) and wires it; you create your own repo, `wsx` never touches your accounts. ✓ |
+| **It runs on *your* tools and *your* tokens — never the author's.** The generator has no API key and makes no model calls; it drives whatever AI you already run (or a local model, fully private at zero token cost). | `wsx scan` detects your installed agents, MCP servers (names only — never keys), and local LLMs, and pre-fills the setup. The engine is zero-API by construction. ✓ |
 
 Every claim here was produced by running the tool — not asserted. The commands are
-`init · profile · emit · resolve · search · lint · verify · session · sync · remote · doctor · skill`.
+`init · scan · profile · emit · resolve · search · lint · verify · session · sync · remote · doctor · skill`.
 
 ---
 

@@ -80,6 +80,7 @@ everything structural goes through `wsx`:
 
 | Step | Command |
 |---|---|
+| Detect their stack (run first) | `wsx scan` (or `wsx scan --json`) — agents, MCP, local LLMs |
 | Scaffold the workspace | `wsx init <dir> --name "<name>"` |
 | Write profile fields | `wsx profile set contexts.work.role="…" surfaces.agents="claude,cursor" …` |
 | GENERATE a skill | `wsx skill add <name> --kind hub\|spoke --hub <hub> --triggers "a,b,c" --desc "…"` |
@@ -121,10 +122,12 @@ Open warmly and in plain language. Cover, briefly:
      **local-only and is never synced.**
    - You choose the separation level (walled vs. blended) and whether to encrypt.
    - Nothing leaves your machine except what you explicitly emit and sync.
-4. **The agnostic promise.** "This isn't locked to any one AI. I'll default to
-   the most-tested path, but I can also set you up for Cursor, Copilot/Codex,
-   Gemini, or a plain context pack — it speaks open standards (AGENTS.md, MCP,
-   the Agent Skills format)."
+4. **The agnostic promise + bring-your-own-tokens.** "This isn't locked to any one
+   AI. I'll default to the most-tested path, but I can also set you up for Cursor,
+   Copilot/Codex, Gemini, or a plain context pack — it speaks open standards
+   (AGENTS.md, MCP, the Agent Skills format). And it runs on **your** assistant and
+   **your** account — the generator itself has no API key and makes no model calls;
+   if you run a local model, this can be fully private and cost no tokens at all."
 
 Then ask if they're ready to start. Don't scaffold anything yet.
 
@@ -136,8 +139,10 @@ Read **`brain/interview.md`** and run the six movements. Don't paraphrase the
 questions from memory — that doc is the canonical script with the example menus
 and the progressive-depth logic. Summary of what each movement is *for*:
 
-- **M0 — Surfaces & infra:** AI assistant(s) + models, machines, offline needs,
-  current sync, existing assets to import. → emit targets, transport, capability tier.
+- **M0 — Surfaces & infra:** **start with `wsx scan`** to detect their installed
+  agents, MCP integrations, and local LLMs, then confirm rather than ask cold; plus
+  machines, offline needs, where the workspace should live (`wsx remote`), and
+  existing assets to import. → emit targets, transport, capability tier.
 - **M1 — Work context:** role/domain, recurring deliverables, fixed constraints,
   standards, where time is lost. → work hubs/spokes + work project-context.
 - **M2 — Professional craft:** deep expertise, active growth, north-star

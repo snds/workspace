@@ -184,7 +184,22 @@ workspace hold a staff-level-expert work life *and* a hobbyist side of life with
 Don't force a clean split if they hesitate — "mixed" is the safe, common default. This read biases
 which movements you go deep on and the `lifecycle.separation` you'll propose in M5.
 
-**Sample questions** (open → menu → escape hatch):
+**Scan first, then confirm — don't ask cold.** Before the surface questions, run **`wsx scan`**
+(or `wsx scan --json` for machine output). It detects what's already on this machine — installed
+agentic tools (Claude Code, Cursor, Codex, Gemini, Copilot, Windsurf, Aider, Continue), configured
+**MCP integrations** (server names only — it never reads keys), and **local LLMs** (Ollama, LM
+Studio, Jan on localhost). Present what it found and **confirm rather than interrogate**: *"Looks
+like you've got Claude Code and Cursor set up, and a local model running — want me to target those?"*
+Use the scan's `suggested` block to pre-fill `surfaces.primary`, `surfaces.agents[]`, and
+`models.tier`; let the person correct it. If the scan finds nothing (or can't run), fall back to the
+open questions below.
+
+> **Bring-your-own-tokens — say it plainly.** This generator has **no API key and makes no model
+> calls** of its own; it drives *your* tools and *your* accounts. If a **local model** is running,
+> highlight it — that path is fully private and costs no tokens at all. Nothing here is billed to
+> anyone but the person, on their own assistant.
+
+**Sample questions** (open → menu → escape hatch — the fallback when scan finds nothing):
 
 - *"Let's start easy — when you want help from an AI, what do you actually open? For example, maybe
   the Claude app, ChatGPT in a browser, Copilot inside your code editor, something on your phone, or

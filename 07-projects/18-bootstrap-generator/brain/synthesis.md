@@ -89,6 +89,7 @@ Each row: the movement that surfaces it, the profile field it sets, and the synt
 
 | Heard | Field | Synthesis judgment |
 |---|---|---|
+| _(from `wsx scan`)_ detected agents / MCP / local LLMs | `surfaces.*`, `models.*` | Pre-fill from the scan's `suggested` block, then confirm with the person — don't ask cold. A detected **local LLM** implies `models.tier: small-local` (or `mixed`) and `models.offline: true`. The generator uses the person's own tools/tokens — never its own API. |
 | "This is for work / personal / a bit of both" | `use_context` | `professional` \| `personal` \| `mixed`. Weights which movements to deepen and the `lifecycle.separation` default. When unsure, `mixed` (the common, safe case). |
 | "I mostly use Claude / Cursor / Copilot…" | `surfaces.primary` | The one they *live in* becomes primary; it gets the richest adapter. |
 | Every assistant named | `surfaces.agents[]` | Each named assistant is an **emit target** (`claude-code`, `cursor`, `agents-md`, `mcp`, `pack`). Primary is always included. Dedupe. |

@@ -1,6 +1,6 @@
 # SESSION-STATE — Portable Bootstrap Generator
 
-_Last updated: 2026-07-22 20:30 — checkpoint (self-perpetuating authoring framework + `wsx remote` hosting step; earlier this session: expertise calibration + validation, two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
+_Last updated: 2026-07-22 20:50 — checkpoint (`wsx scan` — detect the user's own agents/MCP/local-LLMs + BYO-tokens; earlier this session: authoring framework, `wsx remote`, expertise calibration, two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
 
 ---
 
@@ -36,7 +36,7 @@ _Last updated: 2026-07-22 20:30 — checkpoint (self-perpetuating authoring fram
 - **CLI language decision**: **Python 3, zero runtime dependencies** (incl. own minimal YAML in `wsxlib/yamlio.py`) — matches the README's "no extra installs" promise and the workspace's python3 tooling convention.
 
 ### Open work and paused threads
-- **Currently in progress**: **VALIDATED, colleague-ready, and self-sufficient after hand-off.** The `wsx` surface is stub-free (12 commands), the Resolver is a composite builder, skills write at a per-domain expertise altitude, every workspace ships a **supreme `frameworks/skill-authoring.md`** so the owner keeps the rigor for anything they build later, and **`wsx remote`** settles where the workspace lives on free hosting. `VALIDATION.md` is the proofboard. As of 2026-07-22: Path A is turn-key (registered auto-triggering brain; skeletons `wsx lint` enforces are enriched); the **Resolver** does plan-driven pull/patch/generate **+ composite** (skills that fuse the person's judgment with distilled industry-leading references, cited via an author-voice `## Sources` block; `--cache-refs` pins them); **`wsx search`** gives two-track discovery (skill registries + reference anchors, pluggable catalog); and the **MCP runtime** is a runnable zero-dep stdio server. Full loop — `init → interview → search → profile → resolve → emit {all} → lint → verify` — runs and is dogfooded. Remaining work is enhancement (hooks, template externalization, richer registry indexes), not missing commands.
+- **Currently in progress**: **VALIDATED, colleague-ready, self-sufficient, and BYO-tokens.** The `wsx` surface is stub-free (**13 commands**), the Resolver is a composite builder, skills write at a per-domain expertise altitude, every workspace ships a supreme `frameworks/skill-authoring.md`, `wsx remote` settles free hosting, and **`wsx scan`** detects the user's own agents/MCP/local-LLMs to pre-fill setup — reinforcing that the generator has **no API key and makes no model calls** (runs on the user's own tools/account; a local model is fully private, zero token cost). `VALIDATION.md` is the proofboard. As of 2026-07-22: Path A is turn-key (registered auto-triggering brain; skeletons `wsx lint` enforces are enriched); the **Resolver** does plan-driven pull/patch/generate **+ composite** (skills that fuse the person's judgment with distilled industry-leading references, cited via an author-voice `## Sources` block; `--cache-refs` pins them); **`wsx search`** gives two-track discovery (skill registries + reference anchors, pluggable catalog); and the **MCP runtime** is a runnable zero-dep stdio server. Full loop — `init → interview → search → profile → resolve → emit {all} → lint → verify` — runs and is dogfooded. Remaining work is enhancement (hooks, template externalization, richer registry indexes), not missing commands.
 - **Pending questions**: ship-as decision (SPEC §9) — standalone `wsx` repo split, deferred (folder extracts cleanly from git history when ready).
 - **Blocked on**: nothing.
 - **What's needed to resume** (next phases):
@@ -54,6 +54,29 @@ _Last updated: 2026-07-22 20:30 — checkpoint (self-perpetuating authoring fram
 ## Session history (append-only)
 
 _Newest first._
+
+### 2026-07-22 20:50 — checkpoint (`wsx scan` — detect the user's own stack + BYO-tokens)
+
+**Focus this session** (continued): Sean asked whether the generator scans for installed agentic tools / MCP / local-LLMs and lets users bring their own tokens — not tied to his API or to using Claude unless the user has their own account. **Answer given first**: token/account isolation was *already* guaranteed (the `wsx` engine has zero API calls / no key — verified by grep; the "brain" is whatever agent the user already runs). The gap was **detection + explicit selection**. He chose "full scan + select"; built it.
+
+**Built — `wsx scan`** (`generator/wsxlib/scan.py`, zero-dep):
+- **agents** — PATH binaries + known config dirs for Claude Code, Cursor, Codex, Gemini, Copilot, Windsurf, Aider, Continue; each maps to its emit target.
+- **mcp** — reads standard MCP configs (`claude_desktop_config.json`, `.cursor/mcp.json`, `~/.claude.json`) and extracts **server NAMES ONLY** — never the `env`/values (which can hold API keys). **Security-verified**: written `scan.json` has 0 secret-bearing content.
+- **local_llms** — probes localhost (Ollama :11434, LM Studio :1234, Jan :1337) with a 0.5s timeout; a local model ⇒ fully offline, zero token cost.
+- Suggests `surfaces.*`/`models.*` pre-fill (brain confirms); `--json` for the brain, `--write` saves `context/scan.json`. Works with or without a workspace.
+
+**Dogfooded on this real machine**: detected **Claude Code** (PATH) + **Cursor** (config), the MCP server **`figma-desktop`** by name only (no secrets), no local LLM running, suggested primary=claude-code/tier=frontier. `--json` clean; `--write` safe.
+
+**Wired into the brain + BYO note**: interview M0 now **scans first, then confirms** (don't ask cold) and states BYO-tokens plainly; SKILL.md Phase 0 (agnostic + BYO promise), Phase 1, and cheat-sheet updated; synthesis maps scan→surfaces/models. BYO-tokens line added to the generated-workspace README template, `VALIDATION.md` (new contract row), and DEVELOPING.
+
+**Decisions made**:
+- **Detection reads names only, never secrets** — the one real risk (MCP `env` API keys) is designed out; verified.
+- **Scan suggests, brain confirms** — no silent auto-config; the person always sees and can override.
+- **BYO-tokens is stated everywhere the user looks** (interview, workspace README, proofboard) because it's a trust property, not a feature footnote.
+
+**Next resumption needs**: still just enhancement — real registry search indexes, MCP hooks, externalize scaffold templates (now including the authoring framework + BYO README). Command surface is 13 and stub-free.
+
+---
 
 ### 2026-07-22 20:30 — checkpoint (self-perpetuating authoring framework + `wsx remote` hosting)
 
