@@ -1,6 +1,6 @@
 ---
 name: session-end
-description: End-of-session protocol. Writes Session Block to session-log.md, updates project-context.md, runs skills sync, commits and pushes to Git. Invoked as /session-end or triggered by "end of session"/"wrap up"/"done for today".
+description: End-of-session protocol. Writes the Session Block as a fragment (06-context/sessions/<id>.md; compaction folds it into session-log.md), updates project-context.md, runs skills sync, commits and pushes to Git. Invoked as /session-end or triggered by "end of session"/"wrap up"/"done for today".
 ---
 
 # /session-end — Close out the session cleanly
