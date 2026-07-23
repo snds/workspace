@@ -1,6 +1,6 @@
 # SESSION-STATE — Portable Bootstrap Generator
 
-_Last updated: 2026-07-22 21:00 — checkpoint (`wsx scan` surface-recommendation gate: pause + recommend an LLM/surface when none detected, best-outcome-first; earlier this session: scan/BYO-tokens, authoring framework, `wsx remote`, expertise calibration, two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
+_Last updated: 2026-07-22 21:20 — checkpoint (permission-free `launch.py` + per-OS distribution zips + notarization prep; earlier this session: scan gate + BYO-tokens, authoring framework, `wsx remote`, expertise calibration, two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
 
 ---
 
@@ -54,6 +54,27 @@ _Last updated: 2026-07-22 21:00 — checkpoint (`wsx scan` surface-recommendatio
 ## Session history (append-only)
 
 _Newest first._
+
+### 2026-07-22 21:20 — checkpoint (permission-free launcher + per-OS distribution zips)
+
+**Focus**: Sean asked for zipped generator packages (mac/win/linux) with a **permission-independent executable** — prior exec scripts always tripped the macOS exec-bit/Gatekeeper flag. **Constraint added mid-task**: must suit a *non-technical* user; open to the $99 Apple cert but hoping for an existing-cert open-source route.
+
+**Honest finding given first**: there is **no** unsigned double-click path on macOS that avoids Gatekeeper — and no way to borrow someone else's notarized wrapper for an arbitrary script. The "already has the cert" answer *in spirit* is the user's **own AI app** (Claude/Cursor, already notarized) or Python.org's signed installer. Sean chose the **free path (A + C + launch.py)**; I prepped the $99 pipeline for later.
+
+**Built**:
+- **`launch.py`** — the permission-free launcher: run as `python3 launch.py`, so **no exec bit** and **nothing for Gatekeeper/SmartScreen** to block (it invokes `wsx` via `python <script>` too — no file in the tool needs to be executable). Fixed stdout line-buffering so prompts read in the right order. `start.command`/`.sh`/`.bat` now just delegate to it.
+- **`package.py`** → `dist/wsx-generator-{macos,windows,linux}.zip` (~117 KB each). Each is a self-contained `wsx-generator/` with the tool + `launch.py` + the OS launcher + a plain-language **START-HERE.txt** that leads with the zero-permission path (open in your AI app → "set up my workspace"), then double-click (right-click→Open on mac / SmartScreen Run-anyway on win), then `python3 launch.py`. Excludes SESSION-STATE, junk, test workspaces. `dist/` gitignored.
+- **`packaging/`** — the optional $99 notarized path, drop-in for later: `make-macos-app.sh` (builds a `.app`), `sign-notarize.sh` (codesign→notarytool→staple from env/keychain creds — no secrets in repo), `macos-notarization.md` (walkthrough).
+
+**Validated end-to-end**: extracted the mac zip fresh, ran `python3 launch.py` with piped answers → scaffolded a workspace (CLAUDE.md + skill-authoring.md present), scan showed the stack, correct output ordering. `make-macos-app.sh` builds a valid bundle (plist lints OK).
+
+**Zips are at**: `07-projects/18-bootstrap-generator/dist/` (gitignored; regenerate anytime with `python3 package.py`).
+
+**Decisions**: (1) permission-independence = "invoke a trusted interpreter on a data file," never ship an executable — the durable fix. (2) For a non-technical user the AI-app path (A) dominates and is $0/permission-free; the launcher is the no-AI fallback. (3) $99 notarization is prepped but not required.
+
+**Next**: the auto-sync/working-tree-reset hook fix (Sean queued it as the next task).
+
+---
 
 ### 2026-07-22 21:00 — checkpoint (surface-recommendation gate when none detected)
 
