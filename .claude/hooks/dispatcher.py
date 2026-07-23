@@ -1350,6 +1350,40 @@ def _stage_session_scope(payload: dict) -> str:
     return "scoped"
 
 
+def _push_with_retry(attempts: int = 3) -> bool:
+    """Push, integrating any commits another machine pushed first — safely.
+
+    On a non-fast-forward rejection: `git pull --rebase` (autostash is pinned OFF, so
+    it REFUSES over a dirty tree rather than stashing — see _ensure_drive_safe_git_config).
+    Union-merge (session-log.md/audit-log.md) auto-resolves during the rebase; a real
+    conflict in a structured file (project-context.md) aborts the rebase and is left
+    for a deliberate /reconcile — never auto-guessed. In every failure path the local
+    commit is SAFE (committed, just not yet pushed); a later clean session-end or
+    /reconcile carries it up. Idempotent + non-lossy.
+    """
+    for _ in range(attempts):
+        push = git("push")
+        if push.returncode == 0:
+            return True
+        err = ((push.stderr or "") + (push.stdout or "")).lower()
+        if not any(s in err for s in ("non-fast-forward", "fetch first", "rejected", "behind")):
+            sys.stderr.write(f"[session-end] push failed (not a race): {push.stderr.strip()}\n")
+            return False
+        # Remote moved. Integrate it by rebasing our commit on top.
+        pull = git("pull", "--rebase")
+        if pull.returncode != 0:
+            git("rebase", "--abort", check=False)  # no-op if not mid-rebase
+            sys.stderr.write(
+                "[session-end] push deferred: remote moved and the local tree/rebase "
+                "isn't clean (a concurrent session's edits, or a structured-file "
+                "conflict). Your commit is safe locally; it will sync on a later clean "
+                "session-end or `/reconcile`.\n")
+            return False
+        # Rebased cleanly (union/fragment files merged automatically) — retry push.
+    sys.stderr.write("[session-end] push still racing after retries; commit is safe locally.\n")
+    return False
+
+
 def handle_session_end(payload: dict) -> None:
     if not in_git_repo():
         sys.stderr.write("[session-end] not a git repo; skipping commit/push\n")
@@ -1427,12 +1461,10 @@ def handle_session_end(payload: dict) -> None:
         sys.stderr.write(f"[session-end] commit failed: {commit.stderr}\n")
         return
 
-    # Push if a remote is configured. Silent success, verbose failure.
+    # Push if a remote is configured — safely, idempotently, non-lossily.
     remote = git("remote").stdout.strip()
     if remote:
-        push = git("push")
-        if push.returncode != 0:
-            sys.stderr.write(f"[session-end] push failed: {push.stderr}\n")
+        _push_with_retry()
 
     # Opportunistic cleanup of OTHER stale worktrees. Skips the current one
     # (git refuses self-removal); next session-start in the canonical workspace
