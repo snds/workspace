@@ -269,6 +269,19 @@ Reusable expertise the AI loads **only when relevant**. Organized as **hubs**
 Run `wsx lint` to check for trigger overlaps. The interview + resolver populate
 this folder; it starts empty.
 """,
+    ".gitattributes": """# Line endings: text is LF, Windows scripts CRLF.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.png binary
+*.jpg binary
+*.pdf binary
+
+# Concurrent-session safety: the append-only session log uses git's built-in
+# `union` merge driver. If two devices/sessions append the same day, git keeps
+# BOTH sides (no conflict, no lost entry) instead of erroring. Compaction re-sorts.
+context/session-log.md merge=union
+""",
     ".obsidian/app.json": """{
   "alwaysUpdateLinks": true,
   "newLinkFormat": "shortest",
@@ -328,6 +341,11 @@ def init(dest: str, name: str = "you", handle: str = "you",
     if do_git:
         if not (root / ".git").exists():
             core.git(root, "init", "-q", check=False)
+        # Pin the safe multi-device default: never auto-stash on rebase/pull, so a
+        # `git pull --rebase` over a dirty working tree REFUSES rather than stashing
+        # and risking a stranded stash on a pop conflict. Protects a live editing
+        # session from the cross-device sync (see `wsx sync`).
+        core.git(root, "config", "rebase.autoStash", "false", check=False)
         core.git(root, "add", "-A", check=False)
         core.git(root, "commit", "-q", "-m", "wsx init: scaffold workspace", check=False)
 

@@ -185,23 +185,42 @@ def session(root: Path, sub: str) -> int:
 
 # -------------------------------------------------------------------- sync ---
 def sync(root: Path) -> int:
+    """Safe multi-device sync. Never rebases over a live editing session (a dirty
+    tree defers, work stays local); integrates a moved remote by rebasing (the
+    session log union-merges); retries the push. Non-lossy + idempotent."""
     if not core.has_remote(root):
         print("note: no git remote configured — nothing to sync yet.")
         print("      run `wsx remote` for free hosting options (GitHub/GitLab/Codeberg),")
         print("      then `wsx remote <url>` to wire it.")
         return 0
+
+    # Guard: never pull --rebase over uncommitted changes (autostash is off, so git
+    # would refuse anyway — this is the friendly, explicit version).
+    dirty = core.git(root, "status", "--porcelain", check=False, capture=True).stdout.strip()
+    if dirty:
+        print("⚠ uncommitted changes present — not pulling (won't rebase over live work).")
+        print("  commit first (your AI does this at session end), then `wsx sync` again.")
+        return 0
+
     print("syncing via git…")
-    pull = core.git(root, "pull", "--rebase", "--autostash", check=False, capture=True)
-    if pull.returncode != 0:
-        print(pull.stderr.strip())
-        print("✗ pull failed — resolve manually, then `wsx sync` again")
-        return 1
-    push = core.git(root, "push", check=False, capture=True)
-    if push.returncode != 0:
-        print(push.stderr.strip())
-        return 1
-    print("✓ synced (pull --rebase + push)")
-    return 0
+    for _ in range(3):
+        push = core.git(root, "push", check=False, capture=True)
+        if push.returncode == 0:
+            print("✓ synced (push)")
+            return 0
+        err = ((push.stderr or "") + (push.stdout or "")).lower()
+        if not any(s in err for s in ("non-fast-forward", "fetch first", "rejected", "behind")):
+            print(push.stderr.strip() or "✗ push failed")
+            return 1
+        # Remote moved — rebase our commits on top (autostash off; tree is clean).
+        pull = core.git(root, "pull", "--rebase", check=False, capture=True)
+        if pull.returncode != 0:
+            core.git(root, "rebase", "--abort", check=False)
+            print("✗ remote moved and the rebase hit a conflict in a structured file.")
+            print("  your commits are safe locally. Ask your AI to `/reconcile`, then `wsx sync`.")
+            return 1
+    print("⚠ push still racing after retries; your commits are safe locally — try `wsx sync` again.")
+    return 1
 
 
 # ------------------------------------------------------------------ remote ---
