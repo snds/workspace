@@ -550,7 +550,12 @@ def vendor_cli(root: Path) -> list:
     import shutil
 
     src = Path(__file__).resolve().parent           # …/generator/wsxlib
-    dst = root / ".wsx" / "wsxlib"
+    dst = (root / ".wsx" / "wsxlib").resolve()
+    # If we ARE the vendored copy (the person ran `python3 wsx.py upgrade` from their own
+    # workspace), there is nothing to copy — self-copy raises SameFileError. Refreshing
+    # the vendored CLI is done by running upgrade from a newer generator.
+    if src == dst:
+        return []
     dst.mkdir(parents=True, exist_ok=True)
     written = []
     for f in sorted(src.glob("*.py")):

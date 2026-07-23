@@ -245,6 +245,13 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
     cm.write_text(claude_md, encoding="utf-8")
     written.append(cm)
 
+    # A self-repair skill, so the person never needs a command line. Opening THIS folder
+    # and saying "update my workspace" is enough — the assistant drives the vendored CLI.
+    maint = root / ".claude" / "skills" / "workspace-maintenance" / "SKILL.md"
+    maint.parent.mkdir(parents=True, exist_ok=True)
+    maint.write_text(_MAINTENANCE_SKILL, encoding="utf-8")
+    written.append(maint)
+
     # mirror skills into .claude/skills/<name>/SKILL.md so Claude Code discovers them.
     # A pulled skill stays byte-identical to its pin on disk; its owner's deltas live
     # in a sibling overlay.md, so we compose (pulled base + overlay) into the mirror —
@@ -262,6 +269,67 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
 
     _record(root, manifest, "claude-code", written)
     return written
+
+
+_MAINTENANCE_SKILL = '''---
+name: workspace-maintenance
+description: >-
+  Repair, update, or health-check THIS workspace. Use whenever the person says
+  "update my workspace", "upgrade my workspace", "fix my workspace", "something's
+  wrong with my workspace", "check my workspace", "is my workspace set up right",
+  or reports that files/links/settings look stale or contradictory. Drives the
+  workspace's own vendored `wsx` CLI — the person never needs a command line.
+triggers:
+  - update my workspace
+  - upgrade my workspace
+  - fix my workspace
+  - check my workspace
+  - workspace health
+  - something is wrong with my workspace
+---
+
+# Workspace maintenance — you drive the tools, not the person
+
+This workspace ships its own CLI at `wsx.py` (vendored under `.wsx/`), so everything
+below runs **here**, with no install and no PATH setup. **Run these yourself** — the
+person should never be asked to open a terminal or paste a command.
+
+## The repair pass (run in this order)
+
+```bash
+python3 wsx.py doctor            # environment: python, git, git identity
+python3 wsx.py upgrade           # add missing pieces, repair stale generated content, first commit
+python3 wsx.py emit all          # recompile the AI adapter files from the canonical source
+python3 wsx.py health            # orphan notes, #stale/aging claims, dangling typed edges
+python3 wsx.py lint              # skills: unfilled skeletons, trigger overlaps
+```
+
+`upgrade` is **non-destructive** — it never overwrites anything the person wrote. It adds
+missing scaffold, regenerates the derived layer (HOME, indexes, `context/profile.md`),
+repairs known-stale generated lines, and lands a first git commit if the repo has none.
+
+## Then interpret the output for them, in plain language
+
+Report **what changed and what it means**, not raw tool output. Specifically:
+
+- **`doctor` says git identity is not set** → this is why nothing is being saved to
+  history. Ask them for the name and email they want on their work, then run
+  `git config --global user.name "…"` and `git config --global user.email "…"` **for
+  them**, and re-run `python3 wsx.py upgrade` so the first commit lands.
+- **`health` lists orphan notes** → offer to link each from its natural parent, or archive
+  it. Never delete.
+- **`health`/`lint` flag stale or unfinished content** → offer to fix; get a yes first.
+- **No git remote yet** → `python3 wsx.py remote` explains the free options; they create the
+  empty repo, you wire it with `python3 wsx.py remote <url>` then `python3 wsx.py sync`.
+
+## Ground rules
+
+- Never ask the person to run a command. You have the tools; use them.
+- Never read `context/personal.md` unless they explicitly ask.
+- The canonical source is `context/` + `skills/`; files under `adapters/`, `AGENTS.md`,
+  `CLAUDE.md`, `HOME.md`, and the `_INDEX.md` files are **generated** — fix the source and
+  re-run `emit`, never hand-edit the output.
+'''
 
 
 # ------------------------------------------------------------------- cursor ---
