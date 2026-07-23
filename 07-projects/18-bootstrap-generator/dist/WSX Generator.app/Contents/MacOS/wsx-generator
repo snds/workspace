@@ -1,9 +1,0 @@
-#!/bin/bash
-DIR="$(cd "$(dirname "$0")/../Resources/payload" && pwd)"
-# Launch in Terminal so the interactive prompts are visible.
-osascript <<OSA
-tell application "Terminal"
-  activate
-  do script "python3 " & quoted form of "$DIR/launch.py"
-end tell
-OSA

@@ -92,6 +92,10 @@
 # Track the portable bootstrap generator — pilot for git-native (non-gdrive) projects.
 !07-projects/18-bootstrap-generator/
 !07-projects/18-bootstrap-generator/**
+# …but NOT its build artifacts (the `**` whitelist above would otherwise re-include
+# them despite the project's own .gitignore). dist/ = generated zips + .app bundle.
+07-projects/18-bootstrap-generator/dist/
+07-projects/18-bootstrap-generator/**/__pycache__/
 
 # Track the workspace-brain project — standing home for workspace-subject sessions;
 # cross-machine continuity is its entire point (framework #08, 2026-07-09).
