@@ -1,6 +1,6 @@
 # SESSION-STATE — Portable Bootstrap Generator
 
-_Last updated: 2026-07-22 19:05 — checkpoint (Resolver Phase 2 built: wsx resolve = plan-driven fetch/pin/namespace/overlay + trust gate; earlier this session: turn-key Path A)_
+_Last updated: 2026-07-22 19:15 — checkpoint (emit mcp built: runnable zero-dep MCP runtime; earlier this session: Resolver Phase 2 + turn-key Path A → no command-surface stubs remain)_
 
 ---
 
@@ -36,12 +36,12 @@ _Last updated: 2026-07-22 19:05 — checkpoint (Resolver Phase 2 built: wsx reso
 - **CLI language decision**: **Python 3, zero runtime dependencies** (incl. own minimal YAML in `wsxlib/yamlio.py`) — matches the README's "no extra installs" promise and the workspace's python3 tooling convention.
 
 ### Open work and paused threads
-- **Currently in progress**: Phase 0 + Phase 1 + on-ramp + a **working end-to-end loop**. Added `wsx skill add/list/reindex` (the Resolver GENERATE hand). Dogfooded the whole brain→wsx loop *manually* (Path A) on a persona — it produces a complete, AI-ready workspace. `brain/SKILL.md` now carries a concrete `wsx` command cheat-sheet so any AI can drive it. Not yet auto-invoked as a registered skill; generated skills are stubs the brain enriches.
+- **Currently in progress**: the whole `wsx` command surface is **stub-free** end-to-end. As of 2026-07-22: Path A is turn-key (the brain is a registered auto-triggering skill; generated skills come out as sectioned skeletons `wsx lint` enforces are enriched); the **Resolver** is built (`wsx resolve` = plan-driven pull/patch/generate with pin+read-only+namespace+trust-gate); and the **MCP runtime** is built (`wsx emit mcp` writes a runnable zero-dep stdio server). The full loop — `init → interview → profile → resolve → emit {all} → lint → verify` — runs and is dogfooded. Remaining work is enhancement (registry search/discovery, hooks, template externalization), not missing commands.
 - **Pending questions**: ship-as decision (SPEC §9) — standalone `wsx` repo split, deferred (folder extracts cleanly from git history when ready).
 - **Blocked on**: nothing.
 - **What's needed to resume** (next phases):
   1. **Resolver (Phase 2)** — **DONE (2026-07-22).** `wsx resolve` is built (`resolver.py`): reads an approved `context/skill-plan.json` and executes PULL (fetch → pin byte-identical `0o444` → namespace `skills/pulled-<registry>-<name>/` → register), PULL+PATCH (pull + editable sibling `overlay.md`, composed into the emitted Claude-Code skill), and GENERATE (delegates to `skill add`). Enforces the unvetted-registry trust gate (`skills.sh`/community refused unless `audited`/`--allow-unvetted`), pin-drift safety (`--update`), idempotency, reindex-safety (pulled records preserved), and pin-integrity in `wsx verify`. Fetch supports `http(s)`/`file`/local (offline-testable). *Remaining Resolver polish: assigned-trigger override for pulled skills is via overlay (Claude-Code composition wired; other surfaces base-only).*
-  2. **`emit mcp`** — currently a stub; build the `workspace-mcp` server (SPEC §5). **Now the single biggest remaining stub.**
+  2. **`emit mcp`** — **DONE (2026-07-22).** `wsx emit mcp` writes a self-contained, **zero-dep stdio MCP server** (`adapters/mcp/server.py`) that serves the live workspace to any MCP client, plus a ready-to-paste `mcp.json` (absolute path filled in) + README. Tools: `context_load` (walled — personal excluded unless `include_personal:true`), `skills_search`, `skills_load` (overlay-composed), `session_start`, `session_end` (appends a log block), `reconcile` (CLI-only note). Server is portable (stdlib-only, discovers its own workspace root; `WSX_WORKSPACE` override). Dogfooded by driving real JSON-RPC (initialize → tools/list → each tool). **No command-surface stubs remain.**
   3. **Make Path A turn-key** — **DONE (2026-07-22).** The brain is now a registered skill at `.claude/skills/bootstrap-gen/SKILL.md` (generator root) that auto-triggers on "set up my workspace" (verified live: Claude Code discovered + registered it on write) and points to the canonical `brain/SKILL.md`. `wsx skill add` now writes a **sectioned skeleton** (`--kind hub|spoke`) instead of a flat stub, and `wsx lint` **fails** on any generated skill still carrying `_(…)_` prompts or the skeleton banner — so a workspace can't be called done with empty skills. `brain/SKILL.md` Phase 3 now mandates enrichment + `reindex`. *Out of scope by design: a headless automated loop — the brain narrates and gates each step interactively.*
   4. **Externalize templates** — move the embedded `scaffold.py` `TEMPLATES` dict into `generator/templates/` files.
   5. **Polish (minor):** reconcile `brain/synthesis.md` worked-example values with schema enums (`lifecycle.continuity` is boolean in schema but `session-log` in the example; `automation` enum is minimal/standard/full but example uses `assisted`; `schema_version=1` vs `"0.2"`). Non-breaking (CLI doesn't enforce enums), but tidy for consistency.
@@ -54,6 +54,30 @@ _Last updated: 2026-07-22 19:05 — checkpoint (Resolver Phase 2 built: wsx reso
 ## Session history (append-only)
 
 _Newest first._
+
+### 2026-07-22 19:15 — checkpoint (emit mcp: the universal MCP runtime, built)
+
+**Focus this session** (continued): after the Resolver (block below), built the last remaining stub — `wsx emit mcp`, the universal runtime.
+**Machine**: `Voyager-2.local` (Personal MacBook Pro)
+**Stopped because**: server is runnable + dogfooded over real JSON-RPC; docs reconciled; committed.
+
+**What `emit mcp` produces** (new `generator/wsxlib/mcp_template.py` holds the server source; `adapters.emit_mcp` writes it out): into `adapters/mcp/` —
+- **`server.py`** — a **self-contained, zero-dependency (stdlib-only) stdio MCP server** (JSON-RPC 2.0, newline-delimited, protocol `2024-11-05`). Deliberately does **not** import `wsxlib`: the generated workspace is portable and must run without the generator installed. It discovers its own workspace root from its file location (`…/adapters/mcp/server.py` → `parents[2]`), overridable via `WSX_WORKSPACE`.
+- **`mcp.json`** — a copy-paste client config with the server's **absolute path already filled in** (Claude Desktop / Cursor / any MCP client).
+- **`README.md`** — how to register + the degradation ladder (MCP → `wsx` CLI → context pack).
+
+**Tools exposed**: `context_load` (canonical context; **personal walled** — excluded unless `include_personal:true`), `skills_search` (by name/hub/trigger from the manifest), `skills_load` (composes pulled+patched overlays, mirroring `wsx emit`), `session_start` (boot summary + context), `session_end` (appends a session block to the log), `reconcile` (honest CLI-only note).
+
+**Dogfood (real MCP traffic, not a mock)**: piped a full handshake through the emitted server — `initialize` (→ correct protocolVersion/serverInfo/tools capability), `notifications/initialized` (no response, correct), `tools/list` (all 6), and `tools/call` for each tool. Verified: context loads, search finds a skill, skills_load returns the body, **the privacy wall holds** (personal excluded by default, loads on opt-in), `session_end` actually appends to the log, unknown tool → JSON-RPC `-32601`, and the `WSX_WORKSPACE` override works. `emit all` + `verify` green; the old stub note is gone.
+
+**Decisions made**:
+- **Server is emitted, self-contained, stdlib-only** — portability over DRY; the workspace can't depend on the generator being present.
+- **Tool names use underscores** (`context_load`, not `context.load`) for broad client-name-validation compatibility; SPEC's dotted names map 1:1.
+- **Privacy wall enforced at the tool boundary**: `context_load` excludes any `personal` section unless the caller opts in — the same wall the file adapters honor.
+
+**Next resumption needs**: with the command surface stub-free, remaining work is *enhancement*, not gaps — a registry **search/discovery** layer for the Resolver (brain currently supplies exact urls), MCP **hooks** on the claude-code adapter, externalizing scaffold templates, and the `synthesis.md` enum reconciliation.
+
+---
 
 ### 2026-07-22 19:05 — checkpoint (Resolver Phase 2: wsx resolve built)
 

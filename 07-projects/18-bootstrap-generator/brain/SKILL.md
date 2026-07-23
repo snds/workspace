@@ -95,8 +95,9 @@ Notes: list-valued profile fields (`surfaces.agents`, `contexts.professional.cra
 `contexts.personal.interests`, `preferences.banned`, `imports`) take comma-separated
 values. `wsx resolve` (PULL/PATCH from a registry, per an approved `skill-plan.json`)
 is **built** — it fetches, pins (read-only), namespaces, and registers. `wsx emit mcp`
-is still a **stub**; the file-based adapters (`claude-code`/`agents-md`/`cursor`/`pack`)
-are the emit paths. Lost? `wsx doctor` says where you are and what to run next.
+is **built** too — it writes a runnable, zero-dep stdio MCP server (the universal
+runtime) alongside the file adapters (`claude-code`/`agents-md`/`cursor`/`pack`). Lost?
+`wsx doctor` says where you are and what to run next.
 
 ---
 
