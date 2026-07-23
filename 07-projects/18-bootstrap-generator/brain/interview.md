@@ -191,8 +191,19 @@ agentic tools (Claude Code, Cursor, Codex, Gemini, Copilot, Windsurf, Aider, Con
 Studio, Jan on localhost). Present what it found and **confirm rather than interrogate**: *"Looks
 like you've got Claude Code and Cursor set up, and a local model running — want me to target those?"*
 Use the scan's `suggested` block to pre-fill `surfaces.primary`, `surfaces.agents[]`, and
-`models.tier`; let the person correct it. If the scan finds nothing (or can't run), fall back to the
-open questions below.
+`models.tier`; let the person correct it.
+
+> **If the scan reports `needs_setup` (no agent AND no local model), pause here — don't push into
+> the interview on a weak footing.** The generator leans on the chosen assistant to do the heavy
+> lifting (this interview, the synthesis, and authoring the composite skills), so a capable surface
+> directly determines how good the workspace turns out. **Recommend one before continuing**, best
+> outcome first: **Claude Code** (recommended — the fully-tested path), then Cursor, a frontier chat
+> driven by the emitted `AGENTS.md`/pack, or a local model (Ollama — fully private, but a frontier
+> model gives noticeably richer skills). Help them pick and get set up, then have them re-run
+> `wsx scan` and continue with the detected surface. Only if they *insist* on proceeding with
+> nothing set up: fall back to the mechanical path (`wsx init` scaffolds a real starter workspace),
+> and tell them plainly the guided parts will be limited until they add a surface. Never silently
+> continue a degraded interview.
 
 > **Bring-your-own-tokens — say it plainly.** This generator has **no API key and makes no model
 > calls** of its own; it drives *your* tools and *your* accounts. If a **local model** is running,

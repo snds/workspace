@@ -140,9 +140,13 @@ questions from memory — that doc is the canonical script with the example menu
 and the progressive-depth logic. Summary of what each movement is *for*:
 
 - **M0 — Surfaces & infra:** **start with `wsx scan`** to detect their installed
-  agents, MCP integrations, and local LLMs, then confirm rather than ask cold; plus
-  machines, offline needs, where the workspace should live (`wsx remote`), and
-  existing assets to import. → emit targets, transport, capability tier.
+  agents, MCP integrations, and local LLMs, then confirm rather than ask cold. **If
+  scan returns `needs_setup` (nothing found), pause and recommend setting up a surface
+  first** — the generator uses that assistant for the heavy lifting, so a capable one
+  (Claude Code recommended) gives the best workspace; help them pick, re-scan, then
+  continue (only fall back to a mechanical `wsx init` starter if they insist). Plus
+  machines, offline needs, where the workspace should live (`wsx remote`), and existing
+  assets to import. → emit targets, transport, capability tier.
 - **M1 — Work context:** role/domain, recurring deliverables, fixed constraints,
   standards, where time is lost. → work hubs/spokes + work project-context.
 - **M2 — Professional craft:** deep expertise, active growth, north-star

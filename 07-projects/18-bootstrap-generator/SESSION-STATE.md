@@ -1,6 +1,6 @@
 # SESSION-STATE — Portable Bootstrap Generator
 
-_Last updated: 2026-07-22 20:50 — checkpoint (`wsx scan` — detect the user's own agents/MCP/local-LLMs + BYO-tokens; earlier this session: authoring framework, `wsx remote`, expertise calibration, two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
+_Last updated: 2026-07-22 21:00 — checkpoint (`wsx scan` surface-recommendation gate: pause + recommend an LLM/surface when none detected, best-outcome-first; earlier this session: scan/BYO-tokens, authoring framework, `wsx remote`, expertise calibration, two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
 
 ---
 
@@ -54,6 +54,19 @@ _Last updated: 2026-07-22 20:50 — checkpoint (`wsx scan` — detect the user's
 ## Session history (append-only)
 
 _Newest first._
+
+### 2026-07-22 21:00 — checkpoint (surface-recommendation gate when none detected)
+
+**Focus** (continued): Sean — if a user has no LLM set up, recommend selecting a surface/LLM **before** the interview, so the generator can leverage it for the heavy lifting → best outcome.
+**Machine**: `Voyager-2.local`. **Stopped because**: gate built + both branches dogfooded; committed.
+
+**Built**: `wsx scan` now computes **`needs_setup`** (no agent AND no local model) and prints a prioritized **RECOMMENDATION** block — Claude Code (recommended) → Cursor → frontier chat + AGENTS.md/pack → local Ollama — each with the *why* and an install pointer, plus the honest note that a frontier model yields richer skills and that a bare `wsx init` starter is the fallback. **Brain gate**: interview M0 + SKILL.md Phase 1 now **pause on `needs_setup`**, recommend a surface, help the person set one up and re-scan, and only fall back to the mechanical path if they insist — never silently run a degraded interview.
+
+**Dogfood**: real machine → `needs_setup=false` (Claude Code present), no gate; simulated empty stack → the full recommendation block fires. `py_compile` clean.
+
+**Decision**: the generator's output quality is bounded by the assistant driving it, so "pick a capable surface first" is a *gate*, not a suggestion — but it degrades gracefully (mechanical scaffold) rather than blocking.
+
+---
 
 ### 2026-07-22 20:50 — checkpoint (`wsx scan` — detect the user's own stack + BYO-tokens)
 
