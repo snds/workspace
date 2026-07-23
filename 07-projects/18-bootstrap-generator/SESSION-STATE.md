@@ -1,6 +1,6 @@
 # SESSION-STATE — Portable Bootstrap Generator
 
-_Last updated: 2026-07-22 19:40 — checkpoint (two-track sourcing: composite skills cite distilled industry-leading references + `wsx search` discovery; earlier this session: emit mcp, Resolver Phase 2, turn-key Path A)_
+_Last updated: 2026-07-22 20:10 — checkpoint (per-domain expertise calibration + use_context; validated end-to-end for a colleague — VALIDATION.md proofboard; earlier this session: two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
 
 ---
 
@@ -36,7 +36,7 @@ _Last updated: 2026-07-22 19:40 — checkpoint (two-track sourcing: composite sk
 - **CLI language decision**: **Python 3, zero runtime dependencies** (incl. own minimal YAML in `wsxlib/yamlio.py`) — matches the README's "no extra installs" promise and the workspace's python3 tooling convention.
 
 ### Open work and paused threads
-- **Currently in progress**: the whole `wsx` command surface is **stub-free** end-to-end, and the Resolver is now a **composite builder**, not just a skill fetcher. As of 2026-07-22: Path A is turn-key (registered auto-triggering brain; skeletons `wsx lint` enforces are enriched); the **Resolver** does plan-driven pull/patch/generate **+ composite** (skills that fuse the person's judgment with distilled industry-leading references, cited via an author-voice `## Sources` block; `--cache-refs` pins them); **`wsx search`** gives two-track discovery (skill registries + reference anchors, pluggable catalog); and the **MCP runtime** is a runnable zero-dep stdio server. Full loop — `init → interview → search → profile → resolve → emit {all} → lint → verify` — runs and is dogfooded. Remaining work is enhancement (hooks, template externalization, richer registry indexes), not missing commands.
+- **Currently in progress**: **VALIDATED end-to-end and ready for a colleague to test.** The whole `wsx` command surface is stub-free, the Resolver is a composite builder, and skills are now written at a **per-domain expertise altitude**. `VALIDATION.md` is a colleague-facing proofboard. As of 2026-07-22: Path A is turn-key (registered auto-triggering brain; skeletons `wsx lint` enforces are enriched); the **Resolver** does plan-driven pull/patch/generate **+ composite** (skills that fuse the person's judgment with distilled industry-leading references, cited via an author-voice `## Sources` block; `--cache-refs` pins them); **`wsx search`** gives two-track discovery (skill registries + reference anchors, pluggable catalog); and the **MCP runtime** is a runnable zero-dep stdio server. Full loop — `init → interview → search → profile → resolve → emit {all} → lint → verify` — runs and is dogfooded. Remaining work is enhancement (hooks, template externalization, richer registry indexes), not missing commands.
 - **Pending questions**: ship-as decision (SPEC §9) — standalone `wsx` repo split, deferred (folder extracts cleanly from git history when ready).
 - **Blocked on**: nothing.
 - **What's needed to resume** (next phases):
@@ -54,6 +54,31 @@ _Last updated: 2026-07-22 19:40 — checkpoint (two-track sourcing: composite sk
 ## Session history (append-only)
 
 _Newest first._
+
+### 2026-07-22 20:10 — checkpoint (per-domain expertise calibration + validated for colleague)
+
+**Focus this session** (continued): per Sean's steer — the generator must determine **use-context** (personal/professional/mixed) and prioritize the user's **level of knowledge/seniority/time-in-industry, per skillset** (his example: hobbyist in game design/3D, staff-level expert UX). Then drive to a **validated final output** a colleague can test.
+**Machine**: `Voyager-2.local` (Personal MacBook Pro)
+**Stopped because**: feature built + validated end-to-end mirroring the exact mixed-expertise case; VALIDATION.md written; committed.
+
+**The core insight built in**: expertise is **per-domain, a separate axis from energy** — the same person is routinely an expert in one craft and a hobbyist in another, and each skill must be written at the altitude for *its* domain.
+- **Schema**: `use_context` (personal/professional/mixed) + `expertise{}` (per-domain `{level, seniority?, years?}`).
+- **`wsx skill add --level {hobbyist,intermediate,advanced,expert} --seniority`** shapes the skeleton: hobbyist → teaching tone + a **"Foundations to learn"** section; expert → assumes fluency, adds **"Judgment calls & edge cases"** and (with seniority) **"Setting the bar & leading"**. Recorded in front matter + manifest; passed through `wsx resolve` plan entries.
+- **Brain**: interview §4a (level ≠ energy, per-domain), M0 settles `use_context` first, M1 seniority, M2 per-craft level; synthesis maps to `use_context`+`expertise{}`; resolver/SKILL read `profile.expertise{}` per domain to set `--level`.
+- **Bonus**: reconciled the long-standing brain↔schema drift (`schema_version` → "0.2"; `lifecycle.continuity` boolean; `automation` minimal/standard/full).
+
+**VALIDATED (persona "Priya Nair" — staff UX expert + game/3D hobbyist, mixed)**: one profile → the **same person's** two skills emit at **opposite altitudes** — `ux-research` (expert/staff: "do NOT re-explain fundamentals… capture THEIR judgment", + Judgment/Leadership sections, + cited Sources from a composite reference) vs `game-design` (hobbyist: "TEACH: define jargon, explain the why", + Foundations to learn). Full pipeline green: `init → profile(use_context+expertise) → resolve --cache-refs → emit all (10 files) → verify passed → lint` (lint correctly flags the un-enriched skeletons — the gate working). On-ramp confirmed: registered `bootstrap-gen` skill, `start.*` scripts, `wsx doctor`. Wrote **`VALIDATION.md`** — a colleague-facing proofboard (plain-English contracts + evidence + run instructions).
+
+**⚠ Incident (recovered)**: mid-session a workspace sync/auto-commit reset the working tree to HEAD, discarding my uncommitted expertise edits (all but synthesis.md). Re-applied every change from memory, re-validated, and **committed immediately** in two locked commits (`code`, then `brain`). Lesson: commit each coherent unit promptly; the auto-commit hook can rewrite history / reset the tree under a long turn.
+
+**Decisions made**:
+- **Level is per-domain and separate from energy** — the load-bearing model choice; a global rating would misfit the common expert-in-one/hobbyist-in-another person.
+- **Altitude is enforced structurally** (different skeleton sections + a front-matter `level`), not left to prose discipline.
+- **Delivered a proofboard, not just code** — the colleague can verify the guarantees without reading Python (workspace delivery-playbook convention).
+
+**Next resumption needs**: genuinely just enhancement now — real registry search indexes, MCP hooks on the claude-code adapter, externalize scaffold templates. The product is colleague-testable today.
+
+---
 
 ### 2026-07-22 19:40 — checkpoint (two-track sourcing: composite skills from references + `wsx search`)
 
