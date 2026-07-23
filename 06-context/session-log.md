@@ -23,6 +23,30 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-23 — workspace-doctor pass + /optimize brain audit
+
+SessionID: 2026-07-23-voyager-q9m4
+--- SESSION BLOCK ---
+Date: 2026-07-23
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 19-workspace-brain (workspace meta — doctor + audit)
+Summary: Ran workspace-doctor (all layers healthy) and acknowledged 19 stale SessionStart MISSes (12 from out-of-scope MediaSentinel, rest old/resolved workspace sessions — recent tail all OK). Then ran a full /optimize brain audit: 7 findings (P0:0, P1:2, P2:5), 6 fixed, machinery confirmed clean.
+Decisions:
+  - The 19 bootstrap MISSes were benign (majority from a non-workspace repo where the ritual doesn't apply; workspace sessions since are all OK) → ack to reset the baseline rather than chase them.
+Pending resolved:
+  - 2026-07-08 audit carry-forward (f): flattened `08-knowledge/research/research/` → `research/` (6 git mv, `_INDEX.md` updated; wikilinks basename-resolved so unaffected).
+  - project-context Active Projects now matches the SESSION-STATE set: added "Portable Bootstrap Generator (wsx)" (18) + "CDS Figma–Code Audit" (16) blocks.
+  - Pruned 22 resolved `[x]` pending-items → archived to session-log-archive.md; live Active bucket = 36 clean next-actions.
+  - Removed stale `_archive/figma-plugin-patterns 2.md` (diff-confirmed strict subset of engineering/figma-plugin-patterns.md).
+  - `_Last updated:` bumped 2026-07-15 → 2026-07-23. Audit logged to audit-log.md (clears the 14-day stale nudge).
+Pending added:
+  - Doctor-sweep generalization for `* 2.md` conflict-copies (item (e)) — one instance cleaned, generalized sweep still open.
+Next:
+  - Sean-owned (external): REVOKE the 2026-06-04 Figma PAT; GitHub Support request to purge the two centric-ui SHAs carrying the personal email.
+--- END BLOCK ---
+
+
 ### 2026-07-23 — Bootstrap generator hardening + workspace multi-session/token-frugality resilience
 
 SessionID: 2026-07-23-voyager-k7x2

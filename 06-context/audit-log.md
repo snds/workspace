@@ -34,6 +34,37 @@ _The dispatcher reads the most recent date from this file to decide whether to s
 
 ## Entries
 
+## 2026-07-23 — Personal MacBook Pro
+
+**Scope:** full (CLAUDE.md/AGENTS.md frameworks, MOCs, project-context, session-log head, `08-knowledge/_INDEX`, `workflow-patterns`, settings/hooks, filesystem drift sweeps)
+**Findings:** 7 total — P0: 0, P1: 2, P2: 5
+
+**P0 (workflow-breaking):**
+- none — machinery clean: hooks/settings/launchd/beacons healthy (doctor confirmed), no tracked `.DS_Store`/`desktop.ini`, no fossils.
+
+**P1 (friction):**
+- `18-bootstrap-generator` (primary focus of the last ~week, ~26 commits) had a `SESSION-STATE.md` but no entry in project-context "Active Projects".
+- `16-CDS Figma-Code Audit` likewise had a `SESSION-STATE.md` but no project-context entry.
+
+**P2 (polish):**
+- `project-context.md` `_Last updated:` stale (2026-07-15 vs real 07-23).
+- Resolved-item clutter: 22 crossed-off `[x]` items across the Active + Recently-resolved buckets (three-bucket model says prune at /optimize).
+- `08-knowledge/research/research/` double-nesting (carry-forward item (f), unresolved since 2026-07-08).
+- `_archive/figma-plugin-patterns 2.md` — stale conflict-copy (strict older subset of `engineering/figma-plugin-patterns.md`).
+- Aging open hygiene items surfaced (not drift): REVOKE Figma PAT (2026-06-04); purge two centric-ui SHAs with personal email (2026-07-20).
+
+**Fixes applied this run:**
+- Added "Portable Bootstrap Generator (`wsx`)" + "CDS Figma–Code Audit" blocks to project-context Active Projects (P1 1,2).
+- Bumped `_Last updated:` → 2026-07-23 (P2 3).
+- Pruned 22 resolved `[x]` pending-items → archived to `session-log-archive.md` under "Pruned resolved pending-items — 2026-07-23"; live Active bucket now 36 next-actions (P2 4).
+- Flattened `research/research/` → `research/` (git mv 6 files); updated `_INDEX.md` reference; Obsidian `[[wikilinks]]` unaffected (basename-resolved) (P2 5).
+- Removed the stale `_archive/figma-plugin-patterns 2.md` after diff-confirming it's a strict subset (P2 6).
+- Updated the 2026-07-08 carry-forward item (e)/(f) to reflect the above.
+
+**Carried forward:**
+- Doctor-sweep generalization for `* 2.md` conflict-copies (item (e)) — one instance cleaned, the generalized sweep still open.
+- Hygiene item #7 left for Sean (external services): REVOKE the Figma PAT; GitHub Support request to purge the two personal-email SHAs.
+
 ## 2026-07-09 — Structured validation session (six phases, adversarial pass)
 
 - Scope: hooks/boot, triggers, context profiles, audience/medium playbooks, Proofboard, path efficiency.

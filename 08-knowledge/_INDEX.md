@@ -51,7 +51,7 @@ _No entries yet._
 
 ## Research
 
-_Raw research syntheses live in `research/research/` (note: double-nested dir — flagged 2026-07-08, do not move without checking Obsidian links)._
+_Raw research syntheses live in `research/` (double-nesting flattened 2026-07-23)._
 
 - [[glsl-shader-programming]] — GLSL shader programming reference for WebGL/Three.js (2026-06)
 - [[threejs-materials-deep-dive]] — Three.js PBR materials system complete reference (2026-06)
