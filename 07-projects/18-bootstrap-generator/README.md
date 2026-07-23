@@ -134,7 +134,7 @@ Syncing a folder across devices with Git is genuinely **the most technical part 
 
 ## How to get started
 
-> **The one thing that trips everyone up:** *this folder is the **generator** — the tool itself. It builds a **separate** workspace folder for you.* So don't run things inside this folder expecting your notes to appear here — your workspace is a brand-new folder the tool creates (e.g. `~/Documents/my-workspace`).
+> **The one thing that trips everyone up:** *this folder is the **generator** — the tool itself. It builds a **separate** workspace folder for you.* So don't run things inside this folder expecting your notes to appear here — your workspace is a brand-new folder the tool creates (e.g. `~/Documents/Projects/Workspace`).
 
 First, the two things you need (details in [What you'll need](#what-youll-need-first)): an **AI assistant** (Claude recommended) and **[Obsidian](https://obsidian.md)** — plus **[GitHub Desktop](https://github.com/apps/desktop)** if you want sync. Then pick the path that fits you. They all produce the same thing.
 
@@ -155,7 +155,7 @@ You don't type anything technical — your AI runs the tool for you.
 ### Path C — One command (if a terminal doesn't scare you)
 From **inside this generator folder**:
 ```bash
-python3 generator/bin/wsx init ~/Documents/my-workspace --name "Your Name"
+python3 generator/bin/wsx init ~/Documents/Projects/Workspace --name "Your Name"
 ```
 Stuck or unsure what to do next? Run `python3 generator/bin/wsx doctor` — it tells you where you are and the exact next step.
 

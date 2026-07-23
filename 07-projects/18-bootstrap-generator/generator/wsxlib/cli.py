@@ -192,7 +192,7 @@ def _welcome() -> int:
     print("  • Easiest — open this folder in your AI (Claude Code, Cursor, …) and say:")
     print('        "set up my workspace"')
     print("  • By hand — create your workspace folder:")
-    print('        wsx init ~/Documents/my-workspace --name "Your Name"')
+    print('        wsx init ~/Documents/Projects/Workspace --name "Your Name"')
     print("\nRun  wsx doctor  to check your setup, or  wsx -h  for all commands.")
     return 0
 

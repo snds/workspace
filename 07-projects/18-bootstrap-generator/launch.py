@@ -66,8 +66,13 @@ def main() -> int:
         print("  history. Get it free from https://desktop.github.com , then re-run for")
         print("  sync. Continuing without it.\n")
 
-    # Where + who
-    default_dest = str(Path.home() / "Documents" / "my-workspace")
+    # Where + who. Default to Documents/Projects/Workspace: keeping it under
+    # Documents means iCloud/OneDrive/Time Machine back it up automatically, and a
+    # "Projects" folder gives every future project (this workspace included) one home.
+    default_dest = str(Path.home() / "Documents" / "Projects" / "Workspace")
+    print("Tip: the default puts your workspace in Documents/Projects/Workspace —")
+    print("     Documents is auto-backed-up (iCloud/OneDrive/Time Machine), and")
+    print("     'Projects' becomes the home for all your projects.\n")
     dest = ask("Where should your workspace live?", default_dest)
     dest = str(Path(dest).expanduser())
     name = ask("Your name (for the workspace):", "you")

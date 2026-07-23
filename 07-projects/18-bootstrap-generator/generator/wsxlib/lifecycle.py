@@ -35,7 +35,7 @@ def doctor() -> int:
     else:
         print("  workspace : — none here (this is the GENERATOR, not a workspace)\n")
         print("  The generator BUILDS a separate workspace folder. To create yours:")
-        print('    wsx init ~/Documents/my-workspace --name "Your Name"')
+        print('    wsx init ~/Documents/Projects/Workspace --name "Your Name"')
         print("  …or just open this folder in your AI assistant and say:")
         print('    "set up my workspace"')
     return 0

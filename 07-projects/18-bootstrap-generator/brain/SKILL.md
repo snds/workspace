@@ -81,7 +81,7 @@ everything structural goes through `wsx`:
 | Step | Command |
 |---|---|
 | Detect their stack (run first) | `wsx scan` (or `wsx scan --json`) — agents, MCP, local LLMs |
-| Scaffold the workspace | `wsx init <dir> --name "<name>"` |
+| Scaffold the workspace | `wsx init <dir> --name "<name>"` (recommend `~/Documents/Projects/Workspace`) |
 | Write profile fields | `wsx profile set contexts.work.role="…" surfaces.agents="claude,cursor" …` |
 | GENERATE a skill | `wsx skill add <name> --kind hub\|spoke --hub <hub> --triggers "a,b,c" --desc "…"` |
 | Enrich a skill body | (author the skeleton's sections in prose) then `wsx skill reindex` |
@@ -165,10 +165,14 @@ Ask explicitly where two contexts bleed together — those overlaps are the
 highest-value skills, so don't let them fall through the gaps between movements.
 
 When the interview is substantively complete, scaffold the neutral workspace so
-the profile has a home:
+the profile has a home. **Recommend the default location** unless they prefer
+elsewhere: `~/Documents/Projects/Workspace` — under Documents so iCloud / OneDrive /
+Time Machine back it up automatically (a free second backup on top of git), and
+inside a `Projects` folder that becomes the single home for all their future
+projects (this workspace is just the first):
 
 ```
-wsx init
+wsx init ~/Documents/Projects/Workspace --name "<name>"
 ```
 
 This creates the neutral workspace, the Obsidian vault, and `git init`. It is
