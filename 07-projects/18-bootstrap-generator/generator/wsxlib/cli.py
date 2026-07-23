@@ -112,7 +112,12 @@ def cmd_profile(a):
             key = key.strip()
             _set_dotted(prof, key, _coerce_for(key, raw.strip()))
         core.save_profile(root, prof)
+        # Rebuild everything derived from the profile, or the human-readable mirror
+        # silently disagrees with the machine source (the classic drift bug).
+        from . import moc
+        moc.write_mocs(root)
         print(f"✓ updated {len(a.rest)} field(s) in context/profile.yaml")
+        print("  regenerated context/profile.md + HOME.md from the new values.")
         return 0
     raise SystemExit("error: profile expects get|set")
 

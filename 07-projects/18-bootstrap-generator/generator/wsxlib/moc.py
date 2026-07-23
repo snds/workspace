@@ -179,6 +179,66 @@ def write_home(root: Path) -> Path:
     return out
 
 
+# ----------------------------------------------------------- profile mirror ---
+def write_profile_mirror(root: Path) -> Path:
+    """Regenerate `context/profile.md` — the human-readable MIRROR of profile.yaml.
+
+    This must be GENERATED, never rendered-once: it was previously stamped out at
+    `wsx init` from the *default* profile and then never refreshed, so the moment the
+    interview ran `wsx profile set surfaces.primary=…` the mirror disagreed with the
+    machine source (profile.yaml said cursor, profile.md still said claude). Any file
+    that restates profile.yaml has to be rebuilt whenever the profile changes.
+    """
+    prof = core.load_profile(root)
+
+    def g(*path, default=""):
+        cur = prof
+        for p in path:
+            if not isinstance(cur, dict) or p not in cur:
+                return default
+            cur = cur[p]
+        if isinstance(cur, list):
+            return ", ".join(str(x) for x in cur) or default
+        return cur if cur not in (None, "") else default
+
+    name = g("identity", "name", default="you")
+    lines = [
+        "# Profile (human-readable)",
+        "",
+        _BANNER,
+        "",
+        "> The machine-readable source of truth is **[profile.yaml](profile.yaml)** in this",
+        "> folder. The AI reads that; this note is a friendly mirror for you — it is rebuilt",
+        "> from the YAML on every `wsx profile set` / `emit` / `upgrade`, so it can't drift.",
+        "",
+        f"- **Name:** {name}",
+        f"- **Primary AI assistant:** {g('surfaces', 'primary', default='(unset)')}",
+        f"- **Emit targets:** {g('surfaces', 'agents', default='(unset)')}",
+        f"- **Machines:** {g('surfaces', 'machines', default='(unset)')}",
+        f"- **Model tier:** {g('models', 'tier', default='(unset)')}"
+        f"{' · offline-capable' if prof.get('models', {}).get('offline') else ''}",
+        f"- **Separation:** {g('lifecycle', 'separation', default='walled')} (work / personal kept apart)",
+        f"- **Where it lives:** {g('transport', 'remote', default='(local only — see `wsx remote`)')}",
+        "",
+        "## Contexts",
+        f"- **Work:** {g('contexts', 'work', 'role', default='(unspecified)')}",
+        f"- **Professional crafts:** {g('contexts', 'professional', 'crafts', default='(unspecified)')}",
+        f"- **Personal:** {'private (walled, local-only)' if prof.get('contexts', {}).get('personal', {}).get('private', True) else 'blended'}",
+        "",
+        "## Preferences",
+        f"- **Tone:** {g('preferences', 'tone', default='(unspecified)')}",
+        f"- **Audience:** {g('preferences', 'audience', default='(unspecified)')}",
+        f"- **Verbosity:** {g('preferences', 'verbosity', default='(unspecified)')}",
+        "",
+        "Back to [[HOME]].",
+    ]
+    out = root / "context" / "profile.md"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+    return out
+
+
 def write_mocs(root: Path) -> list:
     """Regenerate the whole connective layer. Returns the files written."""
-    return [write_home(root), write_skills_index(root), write_projects_index(root)]
+    return [write_home(root), write_skills_index(root), write_projects_index(root),
+            write_profile_mirror(root)]

@@ -363,6 +363,8 @@ def _print_human(agents: list, mcp: dict, local: list, sugg: dict) -> None:
     if chat:
         for a in chat:
             print(f"  ✓ {a['name']}  (found via {a['via']} → `wsx emit pack`)")
+        print("  → these CANNOT open a folder on this computer. Don't point them at a path —")
+        print("    run `wsx emit pack`, then paste/upload `adapters/context-pack.md` instead.")
     else:
         print("  — none detected (ChatGPT, Claude, Perplexity, …).")
 

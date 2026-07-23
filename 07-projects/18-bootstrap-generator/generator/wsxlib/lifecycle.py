@@ -21,6 +21,21 @@ def doctor() -> int:
     git = shutil.which("git")
     if git:
         print(f"  git       : ✓ {git}")
+        # A missing identity makes every `git commit` fail — silently, unless we say so.
+        # This is the #1 reason a fresh workspace ends up with zero commits.
+        import subprocess
+        def _cfg(key):
+            r = subprocess.run(["git", "config", "--get", key], text=True,
+                               capture_output=True, check=False)
+            return (r.stdout or "").strip()
+        who, mail = _cfg("user.name"), _cfg("user.email")
+        if who and mail:
+            print(f"  git id    : ✓ {who} <{mail}>")
+        else:
+            print("  git id    : ⚠ not set — commits may fail, or be recorded under a")
+            print("                guessed name. Set it once so your history is yours:")
+            print('                git config --global user.name  "Your Name"')
+            print('                git config --global user.email "you@example.com"')
     else:
         print("  git       : ✗ not found — install GitHub Desktop "
               "(https://github.com/apps/desktop) for sync + history")

@@ -84,15 +84,9 @@ projects/**/__pycache__/
 **/.DS_Store
 Icon?
 """,
-    "context/profile.md": """# Profile (human-readable)
-
-> The machine-readable source of truth is **profile.yaml** in this folder.
-> The AI reads that; this note is a friendly mirror for you.
-
-- **Name:** {{identity.name}}
-- **Primary AI assistant:** {{surfaces.primary}}
-- **Separation:** {{lifecycle.separation}} (work / personal kept apart)
-""",
+    # NOTE: context/profile.md is deliberately NOT a static template — it is a GENERATED
+    # mirror of profile.yaml (moc.write_profile_mirror), rebuilt on every `profile set` /
+    # `emit` / `upgrade`. Rendering it once here is what let it drift out of sync.
     "context/project-context.md": """# Project Context — {{identity.name}}
 
 _Authoritative source for active projects and pending items._
@@ -152,9 +146,11 @@ _The handful of facts an AI must never re-derive. Deliberately tiny (~a screenfu
 it's cheap to load every session; everything else is one hop away via [[HOME]]. Keep
 this current and prune ruthlessly — if it grows past a screen, it's doing too much._
 
-- **Who:** {{identity.name}} — primary assistant: {{surfaces.primary}}.
+- **Who:** {{identity.name}}. Current surfaces, model tier, and preferences live in
+  [profile](profile.md) (regenerated from `profile.yaml` — always trust those two over
+  anything restated elsewhere).
 - **Workspace root:** the folder holding this vault (`manifest.json` + [[HOME]]).
-- **Separation:** {{lifecycle.separation}} — personal context is local/walled unless opted in.
+- **Separation:** personal context is local/walled unless you opted in (see [profile](profile.md)).
 - **Top priority:** _(the single most important thing right now — the interview seeds this.)_
 - **Where things are:** `context/` who you are · `skills/` expertise · `frameworks/`
   principles · `projects/` per-project docs · [[HOME]] the index.
@@ -485,6 +481,15 @@ def init(dest: str, name: str = "you", handle: str = "you",
     for m in moc.write_mocs(root):
         written.append(str(m.relative_to(root)))
 
+    # Vendor the CLI into the workspace so it can always drive itself — on this machine
+    # and on every machine it syncs to. Without this the workspace is inert: every
+    # framework says `wsx emit/lint/sync` but there's no wsx to run (a real tester hit
+    # exactly this). Zero-dep + stdlib-only, so a copy is portable and self-sufficient.
+    for v in vendor_cli(root):
+        written.append(v)
+
+    committed = False
+    git_hint = ""
     if do_git:
         if not (root / ".git").exists():
             core.git(root, "init", "-q", check=False)
@@ -495,9 +500,88 @@ def init(dest: str, name: str = "you", handle: str = "you",
         core.git(root, "config", "rebase.autoStash", "false", check=False)
         core.git(root, "add", "-A", check=False)
         core.git(root, "commit", "-q", "-m", "wsx init: scaffold workspace", check=False)
+        committed, git_hint = _commit_ok(root)
 
     print(f"✓ wsx workspace scaffolded at {root}")
-    print(f"  {len(written)} files · vault + git{' (committed)' if do_git else ''}")
-    print("  next: run the interview (the brain) to fill in profile.yaml, then `wsx emit`.")
+    if do_git:
+        print(f"  {len(written)} files · vault + git"
+              f"{' (committed)' if committed else ' (NOT committed — see below)'}")
+    else:
+        print(f"  {len(written)} files · vault (no git)")
+    print(f"  self-contained CLI vendored → run it from the workspace: python3 wsx.py doctor")
+    if do_git and not committed:
+        print("\n⚠  git did not record a first commit. Your files are safe on disk, but")
+        print("   nothing is version-controlled yet. Fix it with:")
+        print(git_hint)
+        print("   then:  cd " + str(root) + " && git add -A && git commit -m \"wsx init\"")
+    print("\n  next: run the interview (the brain) to fill in profile.yaml, then `wsx emit`.")
     print("  decide where it lives (GitHub/GitLab/Codeberg/local) → `wsx remote` for options.")
     return root
+
+
+def _commit_ok(root: Path):
+    """Did a commit actually land? Returns (ok, remediation_hint).
+
+    `git commit` is run with check=False, so a failure is silent — and the most common
+    cause on a non-engineer's machine is simply that git has no identity configured.
+    Claiming '(committed)' when nothing was committed is the worst possible outcome:
+    the person believes they have history and backups when they have neither.
+    """
+    r = core.git(root, "rev-list", "--count", "HEAD", check=False, capture=True)
+    if r.returncode == 0 and (r.stdout or "").strip().isdigit() \
+            and int(r.stdout.strip()) > 0:
+        return True, ""
+    name = core.git(root, "config", "--get", "user.name", check=False, capture=True)
+    email = core.git(root, "config", "--get", "user.email", check=False, capture=True)
+    if not (name.stdout or "").strip() or not (email.stdout or "").strip():
+        return False, ('   git config --global user.name  "Your Name"\n'
+                       '   git config --global user.email "you@example.com"')
+    return False, "   (run `git status` in the workspace to see what git is objecting to)"
+
+
+# --------------------------------------------------------------- vendored CLI ---
+def vendor_cli(root: Path) -> list:
+    """Copy the wsx CLI into `<workspace>/.wsx/` + write a `wsx.py` launcher.
+
+    Makes the generated workspace SELF-SUFFICIENT: `python3 wsx.py <cmd>` works from the
+    workspace root on any machine, with no install and no knowledge of where the
+    generator folder lives — and it travels with the workspace through git.
+    """
+    import shutil
+
+    src = Path(__file__).resolve().parent           # …/generator/wsxlib
+    dst = root / ".wsx" / "wsxlib"
+    dst.mkdir(parents=True, exist_ok=True)
+    written = []
+    for f in sorted(src.glob("*.py")):
+        shutil.copy2(f, dst / f.name)
+        written.append(f".wsx/wsxlib/{f.name}")
+    launcher = root / "wsx.py"
+    launcher.write_text(_LAUNCHER, encoding="utf-8")
+    written.append("wsx.py")
+    return written
+
+
+_LAUNCHER = '''#!/usr/bin/env python3
+"""wsx — run this workspace's own vendored CLI.
+
+    python3 wsx.py doctor        # where am I, what should I run next
+    python3 wsx.py health        # graph hygiene: orphans, stale claims, dangling edges
+    python3 wsx.py emit all      # recompile the AI adapter files
+    python3 wsx.py upgrade       # non-destructive corrective pass
+    python3 wsx.py sync          # commit + push
+
+This launcher and `.wsx/` are vendored copies, so the workspace is self-sufficient:
+no install, no PATH, and it keeps working on every machine you sync it to. Refresh the
+vendored copy any time with `wsx upgrade` from a newer generator.
+"""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent / ".wsx"))
+
+from wsxlib.cli import main  # noqa: E402
+
+if __name__ == "__main__":
+    sys.exit(main())
+'''

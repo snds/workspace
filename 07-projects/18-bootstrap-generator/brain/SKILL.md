@@ -358,6 +358,12 @@ wsx emit mcp           # the universal MCP runtime (lights up many frontends at 
 wsx emit pack          # tool-less, pasteable context pack (degradation backstop)
 ```
 
+**If any of their assistants is chat-only** (ChatGPT, Perplexity, Gemini in a browser — `wsx
+scan` labels these `chat` → surface `pack`), say so plainly: those cannot open a folder on
+their computer, so pointing them at a path will always fail. `wsx emit pack` is the answer —
+they paste or upload `adapters/context-pack.md`. Tell them this *before* they try, and re-run
+`wsx emit pack` whenever the workspace changes so the pasted copy stays current.
+
 Adapters are **generated, never hand-edited.** They compile from the one
 canonical source (`triggers`/`description` are the single source each adapter
 translates). If an adapter looks wrong, fix the canonical brain and re-emit — do

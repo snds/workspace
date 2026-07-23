@@ -22,7 +22,8 @@ from . import core, moc, scaffold
 
 # Generated files that upgrade always (re)writes — safe because they are derived
 # from disk, never hand-authored.
-_REGENERATED = ["HOME.md", "skills/_INDEX.md", "projects/_INDEX.md"]
+_REGENERATED = ["HOME.md", "skills/_INDEX.md", "projects/_INDEX.md",
+                "context/profile.md"]  # mirror of profile.yaml — must never be stale
 
 
 def upgrade(root: Path, dry_run: bool = False) -> int:
@@ -41,8 +42,12 @@ def upgrade(root: Path, dry_run: bool = False) -> int:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(core.render(content, ctx), encoding="utf-8")
 
+    # Refresh the vendored CLI so an older workspace becomes self-sufficient too
+    # (and picks up new commands like `health`). Always safe: it's generated code.
+    vendored = []
     if not dry_run:
         moc.write_mocs(root)
+        vendored = scaffold.vendor_cli(root)
 
     verb = "would add" if dry_run else "added"
     print(f"wsx upgrade — corrective pass{'  (dry-run — nothing written)' if dry_run else ''}\n")
@@ -56,6 +61,10 @@ def upgrade(root: Path, dry_run: bool = False) -> int:
     print(f"\n  {reverb} the connective MOC layer (reconnects the Obsidian graph):")
     for rel in _REGENERATED:
         print(f"    ~ {rel}")
+    print(f"\n  {reverb} the vendored CLI so this workspace can drive itself:")
+    print(f"    ~ wsx.py + .wsx/wsxlib/  ({len(vendored) or 'refreshed'} file(s))"
+          if not dry_run else "    ~ wsx.py + .wsx/wsxlib/")
+    print("      → run it here:  python3 wsx.py doctor")
     print(f"\n  kept {len(kept)} existing file(s) untouched (non-destructive).")
     if dry_run:
         print("\n  → run `wsx upgrade` (no --dry-run) to apply.")

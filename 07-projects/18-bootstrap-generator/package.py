@@ -39,18 +39,34 @@ BYO = ("Your data stays yours: this tool has NO API key and never calls an AI mo
        "itself — it runs on your own AI app and account. A local model (Ollama) is\n"
        "fully private and free.\n")
 
+# The #1 tester failure: pointing a CHAT-ONLY assistant (ChatGPT, Perplexity, Gemini in
+# a browser) at a folder. Those have no filesystem access — the request can never
+# succeed, and the assistant will just ask for a zip. Say so plainly, up front.
+WHICH_AI = """WHICH AI CAN DO THIS?  (read this first — it saves an hour)
+
+  ✅ CAN open this folder and build for you:
+       • Claude Desktop (includes Claude Code)  https://claude.ai/download  (recommended)
+       • Cursor                                 https://cursor.com
+     Open this folder in one of those and type:   set up my workspace
+
+  ⚠️  ChatGPT, Perplexity, and Gemini in a browser CANNOT open folders on your
+     computer. There is nothing to "point" them at — asking them to read a path
+     like /Users/you/Documents/... will always fail. That is expected, not a bug.
+     To use those, hand them the portable context pack instead:
+       1. Build your workspace with Claude or Cursor (above).
+       2. In the workspace, run:   python3 wsx.py emit pack
+       3. Paste or upload  adapters/context-pack.md  into the chat.
+"""
+
 START = {
     "macos": f"""START HERE — Bootstrap Generator (macOS)
 =========================================
 
+{WHICH_AI}
 EASIEST — no setup, nothing to allow:
-  1. Open THIS folder in your AI assistant app (Claude Desktop, or Cursor).
+  1. Open THIS folder in Claude Desktop or Cursor (see above).
   2. Type:   set up my workspace
   It interviews you and builds everything. Done.
-
-No AI app yet? Get one (free to start):
-  • Claude:  https://claude.ai/download    (recommended)
-  • Cursor:  https://cursor.com
 
 Prefer to just create the starter folder yourself?
   Option 1 — double-click:
@@ -65,14 +81,11 @@ Prefer to just create the starter folder yourself?
     "windows": f"""START HERE — Bootstrap Generator (Windows)
 ===========================================
 
+{WHICH_AI}
 EASIEST — no setup, nothing to allow:
-  1. Open THIS folder in your AI assistant app (Claude, or Cursor).
+  1. Open THIS folder in Claude or Cursor (see above).
   2. Type:   set up my workspace
   It interviews you and builds everything. Done.
-
-No AI app yet? Get one (free to start):
-  • Claude:  https://claude.ai/download    (recommended)
-  • Cursor:  https://cursor.com
 
 Prefer to just create the starter folder yourself?
   • Double-click  start.bat
@@ -86,8 +99,9 @@ Prefer to just create the starter folder yourself?
     "linux": f"""START HERE — Bootstrap Generator (Linux)
 =========================================
 
+{WHICH_AI}
 EASIEST — no setup:
-  Open THIS folder in your AI assistant and type:   set up my workspace
+  Open THIS folder in Claude or Cursor (see above) and type:   set up my workspace
 
 Or create the starter folder yourself — in a terminal in this folder:
   python3 launch.py

@@ -104,16 +104,24 @@ Here's the shopping list:
 - *Prefer the terminal? The standalone command-line version lives at [Claude Code overview](https://code.claude.com/docs/en/overview) · [install & requirements](https://code.claude.com/docs/en/setup).*
 - **Cost:** Claude Code is included in Claude's paid plans — the entry **Pro** plan is about **$20/month** (~$17/month billed annually) as of mid-2026. Check [current pricing](https://claude.com/pricing). *You do **not** need to install "Node.js"; the recommended setup doesn't require it.*
 
-**Also works with other AI agents.** Because your workspace follows open standards, the generator can produce the right "adapter" for whatever assistant you prefer:
+**Also works with other AI agents.** Because your workspace follows open standards, the generator can produce the right "adapter" for whatever assistant you prefer.
 
-| Your AI assistant | How it connects | Notes |
+> ⚠️ **First, the distinction that trips everyone up.** Assistants come in two kinds:
+>
+> - **Folder-capable** (Claude Desktop, Cursor, Copilot, the CLIs) — these can *open this folder*, read your files, and create new ones. Point them at the folder and say **"set up my workspace."**
+> - **Chat-only** (**ChatGPT**, Perplexity, Gemini *in a browser*) — these have **no access to files on your computer.** Asking them to read `/Users/you/Documents/…` will *always* fail; they'll ask you to upload a zip. That's expected, not a bug.
+>
+> To use a chat-only assistant: build the workspace with a folder-capable one first, then run `python3 wsx.py emit pack` and **paste or upload `adapters/context-pack.md`** into the chat. That file is the portable, self-contained version of your brain.
+
+| Your AI assistant | Can it read your folder? | How it connects |
 |---|---|---|
-| **[Claude](https://claude.com/download)** ⭐ *recommended* | Native skill + `AGENTS.md` + MCP | Smoothest, fully tested path. |
-| **[Cursor](https://cursor.com)** | `AGENTS.md` + `.cursor/rules` + MCP | Popular AI code editor. |
-| **[GitHub Copilot](https://github.com/features/copilot)** | `AGENTS.md` | Works in many editors. |
-| **[OpenAI Codex CLI](https://github.com/openai/codex)** | `AGENTS.md` | Open-source; free to run (needs your own API access). |
-| **[Google Gemini CLI](https://github.com/google-gemini/gemini-cli)** | `AGENTS.md` + MCP | Open-source; generous free tier. |
-| *…and 20+ more* | `AGENTS.md` | See the [full list at agents.md](https://agents.md). |
+| **[Claude](https://claude.com/download)** ⭐ *recommended* | ✅ Yes | Native skill + `AGENTS.md` + MCP — smoothest, fully tested path. |
+| **[Cursor](https://cursor.com)** | ✅ Yes | `AGENTS.md` + `.cursor/rules` + MCP. Popular AI code editor. |
+| **[GitHub Copilot](https://github.com/features/copilot)** | ✅ Yes | `AGENTS.md`. Works in many editors. |
+| **[OpenAI Codex CLI](https://github.com/openai/codex)** | ✅ Yes | `AGENTS.md`. Open-source; free to run (needs your own API access). |
+| **[Google Gemini CLI](https://github.com/google-gemini/gemini-cli)** | ✅ Yes | `AGENTS.md` + MCP. Open-source; generous free tier. |
+| **ChatGPT · Perplexity · Gemini (browser)** | ❌ **No** | Paste/upload the context pack (`wsx emit pack`). Cannot open folders. |
+| *…and 20+ more* | ✅ Yes | `AGENTS.md` — see the [full list at agents.md](https://agents.md). |
 
 *Cost varies by assistant: Claude needs a paid plan (~$20/mo); some open-source agents (Gemini CLI, Codex CLI) are free to run but use your own API key. Pick whichever suits you — the folder works the same.* *(🚧 The non-Claude adapters are part of what's still being built — see [Status](#status--whats-next).)*
 
