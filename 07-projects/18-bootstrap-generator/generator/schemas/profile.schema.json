@@ -16,6 +16,24 @@
         "handle": { "type": "string" }
       }
     },
+    "use_context": {
+      "type": "string",
+      "enum": ["personal", "professional", "mixed"],
+      "description": "What this workspace is FOR. Determined early; prioritizes everything downstream — which hubs are primary, walled-vs-blended separation, tone. 'mixed' = both, kept in their walls."
+    },
+    "expertise": {
+      "type": "object",
+      "description": "Per-DOMAIN skill level — NOT a single global rating. The same person is often a hobbyist in one area and a staff-level expert in another; each generated skill is written at the altitude for ITS domain. Keyed by domain slug.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "level": { "type": "string", "enum": ["hobbyist", "intermediate", "advanced", "expert"] },
+          "seniority": { "type": "string", "description": "e.g. 'staff', 'principal', 'lead' — when the domain is professional and it matters" },
+          "years": { "type": "integer", "description": "time in the domain, when relevant" },
+          "note": { "type": "string", "description": "any nuance about their standing in this domain" }
+        }
+      }
+    },
     "surfaces": {
       "type": "object",
       "description": "Which AI tools to emit for. 'primary' is the recommended/default surface.",

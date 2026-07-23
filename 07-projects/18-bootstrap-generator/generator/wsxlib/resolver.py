@@ -269,6 +269,8 @@ def _generate_one(root: Path, e: dict, cache_refs: bool = False) -> str:
             source="generated",
             title=e.get("title", ""),
             kind=e.get("kind", "spoke"),
+            level=e.get("level", "intermediate"),
+            seniority=e.get("seniority", ""),
         )
     elif not refs:
         print(f"  · {name}: already exists — left as-is (enrich in place)")

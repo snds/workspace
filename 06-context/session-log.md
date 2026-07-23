@@ -20,6 +20,45 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-22 — Legion: planet rendering — biomes, climate, night-lights, living weather, lab UX
+
+--- SESSION BLOCK ---
+Date: 2026-07-22
+Agent: Claude Opus 4.8
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 13-legion (Legion repo — separate git checkout at ~/Projects/Legion)
+Summary: Long continuous planet-renderer session. ~22 PRs (#163–#184) all merged to main + deployed to GitHub Pages (final commit 24040e5, Pages 200). Work spanned five threads: living weather, biome/climate physics, settlement-realistic night lights, ice/snow, and lab UX — plus research docs and a systemic World-dials control model.
+Decisions:
+  - Cyclones are ocean-gated on the CPU (macroHeight+warpDir sample) — no hurricanes over land; storm swirls scaled down (continent-sized was wrong); large cloud-free regions added; near-imperceptible animation.
+  - Climate moisture is a SIGNED additive FIELD (base + aridBelts/rainShadow/orographic/continental/altitudeDry/patchiness), never a product chain (collapses to zero). Temperature = cubic insolation fit to Earth MAT − lapse×altitude.
+  - Biome palette authored DARK (pine, ~half brightness); ocean ramp made bare ground (was itself green, bleeding through). Earth-calibrated albedo desert:forest ≈ 3:1 (not 10:1). Tundra can read green.
+  - Night lights = habitability field (coast/lowland/fertile/livable × cold/capNear/arid penalties, floor at trace) → density → threshold on high-freq snoise for light SHAPE; sparse (not zero) near ice caps and in large deserts; tendrils/clusters.
+  - Ice: snowCover() albedo overlay (no mass), sea-ice paler/bluer than land glacier, terrain normals show through ice, multi-scale uneven cap margins (lobes/bays/altitude/current asymmetry).
+  - Lightning: emissive flicker on cloud shell + surface under-glow, cyclone eyewalls + periodic cell grid gated by density.
+  - Systemic World dials (variants.ts): via(lo,mid,hi,t) piecewise-lerp anchored 0.5=Earth; offset/manual-edit-preservation model (masterValues/applyOffsets/LIMITS). Old sliders preserved for revert.
+  - Bake parity via single finishHeight() path; simplex fbm3 detail (not value noise); featherEdges to kill margin step-seams. Canyons added to macro.
+  - Stars-through-planets fixed: starfield materials transparent:false (was in transparent pass, drawing after opaque geometry). Ledger A-06.
+  - Lab controls fully live (killed Rebuild delay); camera.setViewOffset pans subject clear of docked panel; VIEW section adds auto-rotate toggle + arrow-key nudge.
+  - launch.json: legion (dev/5173) + legion-preview (preview/4173) detected and saved.
+Artifacts (Legion repo):
+  - docs/giants-moons-rings-research.md — ice/gas giants, rings as any-archetype feature, moons/satellites per archetype, binary planets, habitable giant-moons, super-earths.
+  - docs/labs-blackhole-star-nebula-requirements.md — lab requirements for black-hole / solar / nebula-nursery labs.
+  - docs/planet-lab-parameter-reference.md — parameter reference for the planet lab.
+Ledger (workspace, committed earlier this session): visual-failure-mode-ledger A-06 (transparent-flag defeats draw-first backdrop), P-05 recurrence note (bake value-noise), P-06 (differential-rotation smear), P-07 (hard edit-margins step-seam).
+Pending resolved:
+  - Cyclones-over-land, low cloud resolution, over-animated clouds, stars-through-planets, baked blockiness/step-seams, polar desertification, city-light blobs, storms flashing on live-slider ticks (refreshParams was wiping storm state), biome sage-not-pine.
+Carry-forward (unresolved / not-yet-built):
+  - Ephemeral cloud/LOD hexagon artifact — user confirmed cloud-layer (matching cloud shadow), then said it vanished; could not reproduce. Needs seed + repro conditions. NO fix shipped.
+  - Lightning never verified in a still frame (automation rAF throttle) — needs live-motion capture.
+  - Biome-height decouple (bh from plateMacro, not baked vHeight) was applied on a WRONG diagnosis (thought hexagon was a biome seam) — decide whether to keep.
+  - Sun/star, nebula, black-hole labs specced not built; ice/gas-giant material split; giant rings/moons features.
+Next:
+  - NEXT SESSION theme (user pre-announced): "a new set of adversarially checked skills to help us improve engine performance at close zoom levels and more." Await the skills, then apply to close-zoom perf.
+--- END BLOCK ---
+
+---
+
 ### 2026-07-21 — SaaS PLM prototype → centric-ui gap audit re-run; PR #1 refreshed for Olga's review
 
 --- SESSION BLOCK ---
@@ -105,8 +144,6 @@ Next:
   - Assign reviewers on centric-ui PR #179; raise the redirect-URI question with the VMS realm owner.
   - Resume the DS migration build now that the backend is reachable — quick-win reuses first.
   - Optional: Docker Compose setup when the JFrog token is being requested for something else.
---- END BLOCK ---
-
 ---
 
 ### 2026-07-11 — Legion: procedural-worlds Step 0 — star+planet physical data contract (PR #157 open)

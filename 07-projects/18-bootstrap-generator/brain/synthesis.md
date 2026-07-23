@@ -358,9 +358,10 @@ imports: []
 ### 8.4 The `wsx` plan that produced it (excerpt)
 
 ```bash
-wsx profile set schema_version=1
+wsx profile set schema_version="0.2"
 wsx profile set identity.name="Maya Okafor"
 wsx profile set identity.handle=maya-okafor
+wsx profile set use_context=mixed
 wsx profile set surfaces.primary=claude-code
 wsx profile set surfaces.agents="claude-code,cursor"
 wsx profile set surfaces.machines="personal-macbook,work-laptop,iphone"
@@ -368,15 +369,18 @@ wsx profile set models.tier=frontier
 wsx profile set contexts.work.role="Senior product designer, fintech"
 wsx profile set contexts.work.summary="Owns the design system and ships payment flows for a fintech app. Holds WCAG AA with no exceptions. Loses time re-deriving token decisions and re-writing the same accessibility notes on every design-to-dev handoff."
 wsx profile set contexts.professional.crafts="design-systems,typography"
+wsx profile set expertise.design-systems.level=expert expertise.design-systems.seniority=staff expertise.design-systems.years=11
+wsx profile set expertise.typography.level=advanced
 wsx profile set contexts.personal.private=true
 wsx profile set contexts.personal.interests="bread-baking,japanese-language-learning"
+wsx profile set expertise.bread-baking.level=hobbyist
 wsx profile set preferences.tone="peer, direct, no hedging"
 wsx profile set preferences.verbosity=balanced
 wsx profile set preferences.audience=team
 wsx profile set preferences.banned="emoji,marketing-voice"
-wsx profile set lifecycle.continuity=session-log
+wsx profile set lifecycle.continuity=true
 wsx profile set lifecycle.separation=walled
-wsx profile set lifecycle.automation=assisted
+wsx profile set lifecycle.automation=standard
 wsx profile set privacy.personal_local_only=true
 wsx profile set privacy.encrypt=true
 # verify round-trip, then lint

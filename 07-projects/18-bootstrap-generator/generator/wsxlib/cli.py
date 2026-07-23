@@ -159,7 +159,8 @@ def cmd_doctor(a):
 def cmd_skill(a):
     root = core.require_workspace()
     if a.skill_cmd == "add":
-        return skills.add(root, a.name, a.desc, a.triggers, a.hub, a.source, a.title, a.kind)
+        return skills.add(root, a.name, a.desc, a.triggers, a.hub, a.source, a.title, a.kind,
+                          a.level, a.seniority)
     if a.skill_cmd == "list":
         return skills.list_skills(root)
     if a.skill_cmd == "reindex":
@@ -247,6 +248,12 @@ def build_parser() -> argparse.ArgumentParser:
     ska.add_argument("--hub", default="", help="hub this belongs to (defaults to its own name)")
     ska.add_argument("--kind", default="spoke", choices=["hub", "spoke"],
                      help="hub (an orchestrator with spokes) or spoke (a focused skill); shapes the skeleton")
+    ska.add_argument("--level", default="intermediate",
+                     choices=["hobbyist", "intermediate", "advanced", "expert"],
+                     help="the person's expertise IN THIS DOMAIN — sets the skill's altitude "
+                          "(hobbyist teaches fundamentals; expert assumes fluency + captures judgment)")
+    ska.add_argument("--seniority", default="",
+                     help="e.g. 'staff', 'principal' — adds a leadership/setting-the-bar frame for experts")
     ska.add_argument("--source", default="generated", choices=["generated", "pulled", "pulled+patched"])
     ska.add_argument("--title", default="", help="display title for the body heading")
     sksub.add_parser("list", help="list registered skills, grouped by hub")
