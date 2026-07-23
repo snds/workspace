@@ -138,9 +138,26 @@ def _agents_md_body(root: Path, profile: dict) -> str:
         "when its trigger fires; prefer the smallest sufficient context.",
         "",
         "## Context files (read the head, not the whole file)",
+        "- `context/CRITICAL_FACTS.md` — **read this FIRST every session**: the tiny, always-",
+        "  loaded hot cache of facts never to re-derive. Everything else is one hop from `HOME.md`.",
         "- `context/project-context.md` — active projects + pending items (skim the top).",
         "- `context/session-log.md` — recent session history; **bounded** (older blocks are",
         "  in `context/session-log-archive.md`, read only on demand).",
+        "- `context/decisions/` — ADRs: why the meaningful choices were made (read on demand).",
+        "- `context/conventions.md` — note conventions (typed edges, freshness, the preamble).",
+        "- `projects/<name>/PROJECT.md` — per-project documentation & context (overview, where",
+        "  the code lives, live handoff, decisions). Read the relevant one before working on a",
+        "  project; the code itself lives in that project's own repo, not in this vault.",
+        "- `HOME.md` — the vault's linked front door (index of everything).",
+        "",
+        "## Note conventions (keep the graph connected + trustworthy)",
+        "- **Link generously** with `[[wikilinks]]`; for typed relationships use a `relations:`",
+        "  front-matter block (`builds-on`/`relates-to`/`contradicts`/`refutes`/`exemplifies`).",
+        "- **Freshness:** every claim is *timeless* (a principle), *dated* (`as of YYYY-MM`), or",
+        "  a *pointer* (link to a live source). Tag anything past its horizon `#stale`.",
+        "- **Open durable notes with a `## For future agent`** block (TL;DR + key claims + as-of).",
+        "- Record a real choice as an ADR in `context/decisions/` (copy `_TEMPLATE.md`).",
+        "- Run `wsx health` to catch orphans, stale claims, and dangling typed edges.",
         "",
         "## Session end (multi-device safe)",
         "Record your session as a **fragment**: write your block to",
@@ -188,13 +205,27 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
         "Load a skill only when its trigger fires; prefer the smallest sufficient context.",
         "",
         "## Session start & end (multi-device safe)",
-        "At session start, skim the top of `context/project-context.md` and",
-        "`context/session-log.md` for the active work. Respect the privacy wall: never read",
-        "`context/personal.md` unless explicitly asked.",
+        "At session start, read `context/CRITICAL_FACTS.md` FIRST (the tiny always-on hot",
+        "cache), then skim the top of `context/project-context.md` and `context/session-log.md`",
+        "for the active work. Respect the privacy wall: never read `context/personal.md`",
+        "unless explicitly asked.",
         "At session **end**, record what happened as a **fragment** — write your Session",
         "Block to `context/sessions/{date}-{short-id}.md` with a `SessionID:` line (never",
         "edit the shared `session-log.md` directly), then run `wsx compact` to fold it in",
         "and `wsx sync` to push. Disjoint fragment files never collide across your devices.",
+        "",
+        "## Projects (per-project documentation)",
+        "Each project has a docs folder at `projects/<name>/PROJECT.md` (overview, where the",
+        "code lives, live handoff, decisions) — read the relevant one before working on that",
+        "project. The code and assets live in the project's own repo, not this vault. Start",
+        "any browse from `HOME.md`, the linked front door.",
+        "",
+        "## Note conventions",
+        "Keep the vault a connected, trustworthy graph: link with `[[wikilinks]]` (typed",
+        "`relations:` for builds-on/refutes/etc.); mark every claim *timeless* / *dated*",
+        "(`as of YYYY-MM`) / *pointer* and tag stale ones `#stale`; open durable notes with a",
+        "`## For future agent` block; record real choices as ADRs in `context/decisions/`.",
+        "See `context/conventions.md`; run `wsx health` to catch orphans + drift.",
         "",
         "## Preferences",
         f"- Tone: {profile.get('preferences', {}).get('tone', '') or '(unspecified)'}",
@@ -356,9 +387,12 @@ ADAPTERS = {
 
 def emit(root: Path, target: str, profile: dict, manifest: dict) -> list:
     if target == "all":
+        from . import moc
         written = []
         for name in ("claude-code", "agents-md", "cursor", "pack", "mcp"):
             written += ADAPTERS[name](root, profile, manifest)
+        # Refresh the connective MOC layer so the vault graph reflects current skills.
+        written += moc.write_mocs(root)
         return written
     if target not in ADAPTERS:
         raise SystemExit(

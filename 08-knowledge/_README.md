@@ -59,8 +59,15 @@ confidence: high | medium | low | speculative
 sources: [optional list of refs or session dates]
 related_skills: [skill-name, ...]
 related_projects: [project-name, ...]
+relations: {}   # optional typed edges — builds-on / relates-to / contradicts / refutes / exemplifies
 ---
 ```
+
+Open the body with a **`## For future agent`** retrieval block (TL;DR + key claims + as-of),
+per [vault-graph-conventions](../02-shared-references/vault-graph-conventions.md). Write each
+claim as **timeless / dated / pointer** ([epistemic-standards](../02-shared-references/epistemic-standards.md) §2)
+and tag anything past its horizon `#stale`. Use the `relations:` typed edges — especially
+`refutes` — so a superseded finding is *marked*, not silently left to mislead.
 
 **Status meanings:**
 - `working` — actively being refined; treat as provisional

@@ -8,7 +8,10 @@ description: >-
   AI workspace / second brain from scratch, run the guided interview, or drive the
   `wsx` generator. Trigger on "set up my workspace", "bootstrap my workspace", "set
   up my second brain", "build my second brain", "generate my AI workspace", "build
-  my skill network", "interview me", or "run the bootstrap generator".
+  my skill network", "interview me", or "run the bootstrap generator". ALSO handles
+  updating/upgrading/fixing an EXISTING workspace ("update my workspace", "upgrade my
+  workspace", "help me update my workspace") — it locates the vault and runs a
+  non-destructive corrective pass rather than re-interviewing.
 triggers:
   - set up my workspace
   - bootstrap my workspace
@@ -18,6 +21,11 @@ triggers:
   - build my skill network
   - interview me
   - run the bootstrap generator
+  - update my workspace
+  - upgrade my workspace
+  - help me update my workspace
+  - fix my workspace
+  - course-correct my workspace
 ---
 
 # bootstrap-gen — auto-load entry

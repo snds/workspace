@@ -7,7 +7,11 @@
   wsx emit <target>              compile canonical -> adapter
                                  (claude-code | agents-md | cursor | mcp | pack | all)
   wsx lint                       validate skills + manifest, report trigger overlaps
+  wsx health                     vault graph hygiene: orphans, stale claims, dangling edges
   wsx verify                     dry-run load per target
+  wsx project new|list           per-project documentation folders (docs, not code)
+  wsx upgrade [--dry-run]        corrective pass: add missing scaffold + reconnect graph
+  wsx scan [--find-workspaces]   detect your stack (+ locate existing workspaces to update)
   wsx session start|end|reconcile
   wsx sync                       git pull --rebase + push
 """
@@ -16,7 +20,8 @@ from __future__ import annotations
 import argparse
 import sys
 
-from . import adapters, core, lifecycle, resolver, scaffold, scan, search, skills
+from . import (adapters, core, health, lifecycle, projects, resolver, scaffold,
+               scan, search, skills, upgrade)
 
 
 # profile fields that are lists — `set` splits these on commas (and accepts [a, b] form).
@@ -138,11 +143,16 @@ def cmd_search(a):
 
 def cmd_scan(a):
     # scan is environment-level — it works with or without a workspace.
-    return scan.scan(core.find_workspace_root(), as_json=a.json, write=a.write)
+    return scan.scan(core.find_workspace_root(), as_json=a.json, write=a.write,
+                     find_ws=a.find_workspaces)
 
 
 def cmd_lint(a):
     return 1 if lifecycle.lint(core.require_workspace()) else 0
+
+
+def cmd_health(a):
+    return 1 if health.health(core.require_workspace()) else 0
 
 
 def cmd_verify(a):
@@ -179,6 +189,19 @@ def cmd_skill(a):
     if a.skill_cmd == "reindex":
         return skills.reindex(root)
     raise SystemExit("error: skill expects add|list|reindex")
+
+
+def cmd_project(a):
+    root = core.require_workspace()
+    if a.project_cmd == "new":
+        return projects.new(root, a.name, a.title)
+    if a.project_cmd == "list":
+        return projects.list_projects(root)
+    raise SystemExit("error: project expects new|list")
+
+
+def cmd_upgrade(a):
+    return upgrade.upgrade(core.require_workspace(), dry_run=a.dry_run)
 
 
 def _welcome() -> int:
@@ -226,6 +249,7 @@ def build_parser() -> argparse.ArgumentParser:
     for name, fn, helptext in [
         ("doctor", cmd_doctor, "check your environment + what to do next"),
         ("lint", cmd_lint, "validate skills + manifest"),
+        ("health", cmd_health, "vault graph hygiene: orphans, stale claims, dangling edges"),
         ("verify", cmd_verify, "dry-run load per target"),
         ("sync", cmd_sync, "safe multi-device git sync (rebase + retry)"),
         ("compact", cmd_compact, "fold session fragments into the session log (idempotent)"),
@@ -245,6 +269,8 @@ def build_parser() -> argparse.ArgumentParser:
     psc = sub.add_parser("scan", help="detect your installed agents, MCP servers, and local LLMs")
     psc.add_argument("--json", action="store_true", help="machine-readable output")
     psc.add_argument("--write", action="store_true", help="save to context/scan.json (inside a workspace)")
+    psc.add_argument("--find-workspaces", action="store_true",
+                     help="also search common locations for existing workspaces to update/upgrade")
     psc.set_defaults(fn=cmd_scan)
 
     prm = sub.add_parser("remote", help="set/show where the workspace lives (git remote) + hosting tips")
@@ -282,6 +308,18 @@ def build_parser() -> argparse.ArgumentParser:
     sksub.add_parser("list", help="list registered skills, grouped by hub")
     sksub.add_parser("reindex", help="rebuild manifest skill index from disk")
     psk.set_defaults(fn=cmd_skill)
+
+    ppr = sub.add_parser("project", help="per-project documentation folders (docs, not code)")
+    prsub = ppr.add_subparsers(dest="project_cmd", required=True)
+    pra = prsub.add_parser("new", help="scaffold projects/<name>/ (PROJECT.md + notes/)")
+    pra.add_argument("name", help='project name, e.g. "My Side Project"')
+    pra.add_argument("--title", default="", help="display title (defaults to name)")
+    prsub.add_parser("list", help="list project documentation folders")
+    ppr.set_defaults(fn=cmd_project)
+
+    pu = sub.add_parser("upgrade", help="corrective pass: add missing scaffold + reconnect the graph")
+    pu.add_argument("--dry-run", action="store_true", help="preview the plan without writing")
+    pu.set_defaults(fn=cmd_upgrade)
 
     return p
 

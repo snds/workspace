@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from . import core, yamlio
+from . import core, moc, yamlio
 
 
 def _title(name: str) -> str:
@@ -118,7 +118,9 @@ def _skeleton_spoke(title: str, desc: str, hub: str, level: str, seniority: str)
         "## Anti-patterns to avoid\n\n"
         "- _(the specific mistakes this person has learned to stop making)_\n\n"
         "## Related\n\n"
-        f"- **Hub:** `{hub}`\n"
+        # Real relative links → the Obsidian graph draws edges (a code span would not).
+        f"- **Hub:** [{hub}](../{hub}/SKILL.md)\n"
+        "- **All skills:** [index](../_INDEX.md)\n"
         "- **See also:** _(sibling spokes this composes with — run `wsx skill list`)_\n"
     )
 
@@ -145,6 +147,7 @@ def _skeleton_hub(title: str, desc: str, name: str, level: str, seniority: str) 
         "## Anti-patterns to avoid\n\n"
         "- _(domain-wide mistakes to steer every spoke away from)_\n\n"
         "## Related\n\n"
+        "- **All skills:** [index](../_INDEX.md)\n"
         "- **Spokes:** run `wsx skill list` to see this hub's members.\n"
     )
 
@@ -181,6 +184,7 @@ def add(root: Path, name: str, desc: str, triggers, hub: str,
     man = core.load_manifest(root)
     man.setdefault("skills", {})[name] = _record(root, name)
     core.save_manifest(root, man)
+    moc.write_mocs(root)  # relink HOME + skills index so the new skill joins the graph
     sen = f"/{seniority}" if seniority else ""
     print(f"✓ {kind} '{name}' created  [hub: {fm['hub']}]  ({source}, {level}{sen}, {len(trg)} trigger(s))")
     print(f"  skeleton written at {level} altitude — enrich the body, then: wsx skill reindex")
@@ -203,6 +207,7 @@ def reindex(root: Path) -> int:
             rebuilt[name] = _record(root, name)
     man["skills"] = rebuilt
     core.save_manifest(root, man)
+    moc.write_mocs(root)  # keep HOME + skills index in sync with disk
     print(f"✓ reindexed {len(rebuilt)} skill(s) into manifest.json")
     return 0
 

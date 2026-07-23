@@ -25,6 +25,7 @@ Google Drive or a vendor-specific file bridge — read and write ordinary files;
 
 When starting a non-trivial task, read (in this order):
 
+0. **[06-context/CRITICAL_FACTS.md](06-context/CRITICAL_FACTS.md)** — read FIRST: the tiny always-loaded hot cache of facts never to re-derive (who/where/the walls/freshness)
 1. **[06-context/role-and-context.md](06-context/role-and-context.md)** — who Sean is, his work, specializations
 2. **[06-context/project-context.md](06-context/project-context.md)** — active projects + pending items (authoritative)
 3. **[06-context/session-log.md](06-context/session-log.md)** — recent session entries, newest-first
@@ -152,6 +153,7 @@ Slash-command workflows native to Claude Code. Small, focused, invocable by `/na
 - **`/new-project`** — scaffold `07-projects/NN-name/` with SESSION-STATE template
 - **`/framework-check`** — critique current work through the eleven operating frameworks (core always, situational when relevant)
 - **`/optimize`** — workspace audit: stale items, contradictions, drift, consolidation; logs to `06-context/audit-log.md`
+- **`/health`** — vault graph hygiene (deterministic): orphan notes, `#stale`/aging claims, dangling typed edges (`09-tools/vault-health.py` + `validate-links.py`). Narrower than `/optimize`; run it inside one.
 
 ---
 

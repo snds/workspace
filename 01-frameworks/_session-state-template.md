@@ -33,6 +33,7 @@ _Last updated: [YYYY-MM-DD HH:MM] — [update reason: rolling | checkpoint | wra
 > agent (Claude, Cursor, Perplexity, a local model, a human) picks up *exactly here*. Keep it current,
 > not just at session end. Rewrite atomically — no stale fields.
 
+- **TL;DR (for future agent)**: [one line — what this project is + where it stands right now]
 - **Current focus**: [the one thing being worked on right now]
 - **Working set**: [files/areas currently in play — where the next agent should look]
 - **Last action**: [what was just done] — by [Agent · Surface · Machine]

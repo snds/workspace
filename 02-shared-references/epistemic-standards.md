@@ -62,6 +62,23 @@ Say so explicitly. "Best available evidence" is a valid framing. "Common practic
 is not evidence — it may be common because it's correct, or common because it's
 never been questioned. Distinguish between the two.
 
+### The three-state freshness rule (for anything written into the vault)
+
+Every durable claim recorded in the workspace is **exactly one of three states** — and it
+should be *written* as that state, so its shelf life is legible at a glance:
+
+- **Timeless** — a decision, principle, or definition that doesn't expire. No date needed.
+- **Dated** — a volatile or empirical fact (a version, a benchmark, a team convention, a
+  "currently X"). Mark it `as of YYYY-MM` (+ source). It carries its own expiry.
+- **Pointer** — defer to a live source via a link; **don't restate** it (the source is the
+  truth; a copy just rots out of sync).
+
+A dated claim past its horizon (or one that can no longer be verified) gets the **`#stale`**
+tag → re-check, refute, or archive. This is what stops the vault quietly rotting into
+confidently-wrong facts. `/health` surfaces `#stale` tags and aging `as of` dates; the typed-edge
+`refutes` relation (see [vault-graph-conventions](vault-graph-conventions.md)) is how a
+superseded claim is *marked* superseded rather than left to mislead.
+
 ---
 
 ## 3. Rationale Must Be Concise AND Complete

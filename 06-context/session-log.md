@@ -23,6 +23,44 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-23 — bootstrap-generator colleague-feedback pass + obsidian-second-brain learnings (both trees)
+
+SessionID: 2026-07-23-voyager-558e3d
+--- SESSION BLOCK ---
+Date: 2026-07-23
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 18-bootstrap-generator; workspace foundation (frameworks/context/knowledge/tools)
+Summary: Acted on colleague feedback for the `wsx` generator (detect ChatGPT/all LLM tools; connect the emitted graph; add a project-docs dir; corrective pass for existing workspaces), then folded ALL learnings from a review of github.com/eugeniughelbur/obsidian-second-brain into BOTH the generator and Sean's live workspace, plus workspace auto-discovery. Rebuilt the per-OS distribution zips. Closed the /health-spawned orphan task.
+
+Artifacts:
+  - generator/wsxlib/moc.py — NEW: Maps-of-Content link layer (HOME + skills/projects indexes) that reconnects the emitted vault graph (root cause: every skill file is SKILL.md, so hub/framework refs were code-spans/bold, never links)
+  - generator/wsxlib/projects.py — NEW: `wsx project new|list` — per-project DOCUMENTATION folders (docs/context only, not code/assets) + Dataview-ready board.md
+  - generator/wsxlib/upgrade.py — NEW: `wsx upgrade [--dry-run]` — non-destructive corrective pass over an existing workspace (adds missing scaffold + regenerates MOC layer; never clobbers hand-edits; idempotent)
+  - generator/wsxlib/health.py — NEW: `wsx health` — vault graph hygiene (orphans, #stale/aging `as of`, dangling typed edges)
+  - generator/wsxlib/scan.py — expanded detection (coding agents + chat/desktop apps incl. ChatGPT via macOS .app + editor-ext globs; more local LLMs) + `--find-workspaces` OS discovery
+  - generator/wsxlib/scaffold.py, adapters.py, skills.py, cli.py — CRITICAL_FACTS/conventions/decisions scaffolds, adapter guidance (read CRITICAL_FACTS first + note conventions), hub-linking skeletons, wiring
+  - brain/SKILL.md + .claude/skills/bootstrap-gen/SKILL.md — "update an existing workspace" branch (triggers: update/upgrade/fix/course-correct my workspace) → scan --find-workspaces → confirm → wsx upgrade → re-emit → health, WITHOUT re-interviewing
+  - dist/wsx-generator-{macos,windows,linux}.zip — rebuilt (~143 KB each); verified from a clean extract (new commands + brain branch present, init→project→emit→health clean)
+  - 06-context/CRITICAL_FACTS.md — NEW: tiny always-loaded hot cache; wired as CLAUDE.md load-order item 0
+  - 02-shared-references/vault-graph-conventions.md — NEW: typed `relations:` (epistemic graph, knowledge/memory) + `## For future agent` preamble
+  - 02-shared-references/nightly-maintenance-recipe.md — NEW: opt-in report-first maintenance routine
+  - 09-tools/vault-health.py — NEW: epistemic-graph hygiene (complements validate-links.py which owns the skill graph); whitelisted in .gitignore
+  - .claude/skills/health/SKILL.md — NEW: /health command
+  - epistemic-standards.md §2, framework #04/#08, memory/_template.md, 08-knowledge/_README.md, _session-state-template.md — freshness rule + typed edges + preamble folded in
+Decisions:
+  - Two distinct graphs, kept uncrossed: the epistemic `relations:` vocabulary (builds-on/relates-to/contradicts/refutes/exemplifies) governs knowledge/memory notes; the existing skill `## Related` graph (foundation/hub/peer/governed-by, validated by validate-links.py) is untouched. Unifying them is a deliberately deferred, separate reconciliation.
+  - `wsx upgrade` is non-destructive and applies by default (--dry-run to preview) — creates only missing scaffold + regenerates the generated MOC layer; never overwrites hand-edited files (Sean's call).
+  - The MOC link layer (not per-skill renaming) is the fix for the disconnected graph, since Claude Code requires every skill file be named SKILL.md — path-correct relative links (root-relative from HOME, dir-relative from indexes) draw the Obsidian edges.
+  - vault-health orphans/aging are advisory; #stale + dangling typed edges gate the exit code, so a scheduled run can fail on real integrity issues.
+Pending resolved:
+  - /health-spawned orphan task: linked ds-agents-binding.md from framework #09 (its enforcement layer) and 06-research-and-design-artifacts.md from the delivery-playbooks README (Load order + File map); vault-health now 0 orphans.
+Next:
+  - Colleague to test the rebuilt zips; feed back.
+  - Optional/deferred: unify the two typed-edge vocabularies; wire CRITICAL_FACTS into the SessionStart hook injection; generator template externalization (scaffold TEMPLATES → files).
+--- END BLOCK ---
+
+
 ### 2026-07-23 — workspace-doctor pass + /optimize brain audit
 
 SessionID: 2026-07-23-voyager-q9m4

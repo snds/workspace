@@ -9,7 +9,9 @@ description: >-
   CLI. Trigger on "bootstrap my workspace", "set up my second brain", "generate
   my AI workspace", "build my skill network", "interview me", "run the bootstrap
   generator", or any request to scaffold a personalized AI workspace from
-  scratch.
+  scratch. ALSO handles updating/upgrading an EXISTING workspace ("update my
+  workspace", "upgrade my workspace", "help me fix my workspace") — it locates the
+  existing vault and runs a non-destructive corrective pass.
 triggers:
   - set up my workspace
   - bootstrap my workspace
@@ -19,6 +21,11 @@ triggers:
   - build my skill network
   - interview me
   - run the bootstrap generator
+  - update my workspace
+  - upgrade my workspace
+  - help me update my workspace
+  - fix my workspace
+  - course-correct my workspace
 domain: meta
 role: orchestrator
 hub: bootstrap-generator
@@ -47,6 +54,35 @@ their substance here:
 - `brain/interview.md` — the six movements M0–M5, every question + example menu.
 - `brain/synthesis.md` — how to turn interview answers into a `profile.yaml`.
 - `brain/resolver.md` — pull / patch / generate decision rules + overlap reconciliation.
+
+---
+
+## First: NEW workspace, or UPDATE an existing one?
+
+Two entry paths. Read the person's ask before choosing:
+
+- **"Set up / bootstrap / generate my workspace"** → this is a **new build**. Continue to
+  Phase 0 below and run the full interview.
+- **"Update / upgrade / fix / course-correct my workspace"** → they likely already have
+  one. **Do NOT re-interview.** Run the corrective path:
+
+  1. **Find it.** If the current directory is already a workspace (`wsx doctor` says so),
+     use it. Otherwise **locate it**: `python3 <generator>/bin/wsx scan --find-workspaces`
+     searches the usual homes (`~/Documents`, `~/Projects`, an Obsidian iCloud vault, …)
+     and lists every workspace it finds with its name + skill count. If several turn up,
+     **show the list and ask which one**; if exactly one, name it and confirm; if none,
+     ask where it lives (or offer a fresh `wsx init`).
+  2. **Preview.** From inside that workspace, run `wsx upgrade --dry-run` and show the plan
+     in plain language — what missing scaffold it will add, and that it will regenerate the
+     connective index/MOC layer (this is the fix that reconnects a disconnected Obsidian
+     graph). Reassure them it is **non-destructive**: it never overwrites their hand-edited
+     notes or skills.
+  3. **Apply** on a yes: `wsx upgrade`. Then refresh the AI adapters (`wsx emit all`) and
+     run a hygiene pass (`wsx health` for orphans/stale/dangling edges, `wsx lint` for
+     skills). Report what changed, and point them at anything `health` flags.
+
+  Only drop into the interview if the person actually wants to *add* new capabilities
+  (then it's the normal resolve → review-gate → emit loop, not a full re-interview).
 
 ## Operating rules (hold these across every phase)
 
@@ -81,14 +117,18 @@ everything structural goes through `wsx`:
 | Step | Command |
 |---|---|
 | Detect their stack (run first) | `wsx scan` (or `wsx scan --json`) — agents, MCP, local LLMs |
+| **Find an existing workspace to update** | `wsx scan --find-workspaces` — locates vaults in the usual homes |
 | Scaffold the workspace | `wsx init <dir> --name "<name>"` (recommend `~/Documents/Projects/Workspace`) |
+| **Update/upgrade an existing workspace** | `wsx upgrade [--dry-run]` — non-destructive: add missing scaffold + reconnect the graph |
 | Write profile fields | `wsx profile set contexts.work.role="…" surfaces.agents="claude,cursor" …` |
 | GENERATE a skill | `wsx skill add <name> --kind hub\|spoke --hub <hub> --triggers "a,b,c" --desc "…"` |
 | Enrich a skill body | (author the skeleton's sections in prose) then `wsx skill reindex` |
+| Add a project's docs folder | `wsx project new "<name>"` — docs & context only (not the code) |
 | Search for sources | `wsx search "<capability>"` (skills + reference anchors) |
 | PULL / PATCH / COMPOSITE | author `context/skill-plan.json` (see brain/resolver.md), then `wsx resolve` |
 | List / re-index skills | `wsx skill list` · `wsx skill reindex` |
 | Check trigger overlaps | `wsx lint` |
+| Graph hygiene (orphans, stale, dangling edges) | `wsx health` |
 | Emit for their surface(s) | `wsx emit claude-code` (or `agents-md` / `cursor` / `pack` / `all`) |
 | Final check | `wsx verify` |
 | Choose where it lives | `wsx remote` (free-host options) → `wsx remote <url>` |

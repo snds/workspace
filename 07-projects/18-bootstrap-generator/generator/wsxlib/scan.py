@@ -25,32 +25,75 @@ from pathlib import Path
 
 HOME = Path.home()
 
-# Known agentic tools: a PATH binary and/or a config dir signals "installed".
-# `surface` maps to the wsx emit target that fits the tool.
+# macOS app bundles live here; Windows/Linux fall back to bins + config paths.
+APP_DIRS = [Path("/Applications"), HOME / "Applications"]
+# VS Code / Cursor extension roots — where editor-embedded agents (Cline, Roo, Cody) install.
+EXT_DIRS = [HOME / ".vscode/extensions", HOME / ".vscode-insiders/extensions",
+            HOME / ".cursor/extensions", HOME / ".windsurf/extensions"]
+
+# Known agentic tools. A PATH binary, a config dir, a macOS .app, or an installed
+# editor extension signals "installed". `surface` maps to the wsx emit target that
+# fits the tool; `kind` is coding (drives files) vs chat (paste a context pack).
+#   coding agents  → read AGENTS.md / native config / MCP  → surface = that target
+#   chat/desktop   → no file-reading → surface = pack (paste `wsx emit pack`)
 AGENTS = [
-    {"id": "claude-code", "name": "Claude Code", "bins": ["claude"],
+    # --- coding agents (read files / MCP) ---------------------------------------
+    {"id": "claude-code", "name": "Claude Code", "kind": "coding", "bins": ["claude"],
      "paths": ["~/.claude", "~/.claude.json"], "surface": "claude-code"},
-    {"id": "cursor", "name": "Cursor", "bins": ["cursor"],
-     "paths": ["~/.cursor", "/Applications/Cursor.app"], "surface": "cursor"},
-    {"id": "codex", "name": "OpenAI Codex CLI", "bins": ["codex"],
+    {"id": "cursor", "name": "Cursor", "kind": "coding", "bins": ["cursor"],
+     "paths": ["~/.cursor"], "apps": ["Cursor.app"], "surface": "cursor"},
+    {"id": "codex", "name": "OpenAI Codex CLI", "kind": "coding", "bins": ["codex"],
      "paths": ["~/.codex"], "surface": "agents-md"},
-    {"id": "gemini", "name": "Gemini CLI", "bins": ["gemini"],
+    {"id": "gemini", "name": "Gemini CLI", "kind": "coding", "bins": ["gemini"],
      "paths": ["~/.gemini"], "surface": "agents-md"},
-    {"id": "copilot", "name": "GitHub Copilot", "bins": ["copilot"],
+    {"id": "copilot", "name": "GitHub Copilot CLI", "kind": "coding", "bins": ["copilot"],
      "paths": ["~/.config/github-copilot"], "surface": "agents-md"},
-    {"id": "windsurf", "name": "Windsurf", "bins": ["windsurf"],
-     "paths": ["/Applications/Windsurf.app", "~/.codeium"], "surface": "agents-md"},
-    {"id": "aider", "name": "Aider", "bins": ["aider"], "paths": [], "surface": "agents-md"},
-    {"id": "continue", "name": "Continue", "bins": [], "paths": ["~/.continue"], "surface": "mcp"},
+    {"id": "windsurf", "name": "Windsurf", "kind": "coding", "bins": ["windsurf"],
+     "paths": ["~/.codeium"], "apps": ["Windsurf.app"], "surface": "agents-md"},
+    {"id": "zed", "name": "Zed", "kind": "coding", "bins": ["zed"],
+     "paths": ["~/.config/zed"], "apps": ["Zed.app"], "surface": "agents-md"},
+    {"id": "aider", "name": "Aider", "kind": "coding", "bins": ["aider"],
+     "paths": ["~/.aider"], "surface": "agents-md"},
+    {"id": "amazon-q", "name": "Amazon Q Developer", "kind": "coding", "bins": ["q"],
+     "paths": ["~/.aws/amazonq"], "surface": "agents-md"},
+    {"id": "continue", "name": "Continue", "kind": "coding", "bins": [],
+     "paths": ["~/.continue"], "exts": ["continue.continue"], "surface": "mcp"},
+    {"id": "cline", "name": "Cline", "kind": "coding", "bins": [],
+     "exts": ["saoudrizwan.claude-dev"], "surface": "mcp"},
+    {"id": "roo", "name": "Roo Code", "kind": "coding", "bins": [],
+     "exts": ["rooveterinaryinc.roo-cline"], "surface": "mcp"},
+    {"id": "cody", "name": "Sourcegraph Cody", "kind": "coding", "bins": ["cody"],
+     "exts": ["sourcegraph.cody-ai"], "surface": "mcp"},
+    # --- chat / desktop apps (no file-reading → paste a context pack) ------------
+    {"id": "chatgpt", "name": "ChatGPT (desktop)", "kind": "chat", "bins": ["chatgpt"],
+     "paths": ["~/Library/Application Support/com.openai.chat"],
+     "apps": ["ChatGPT.app"], "surface": "pack"},
+    {"id": "claude-desktop", "name": "Claude (desktop)", "kind": "chat", "bins": [],
+     "paths": ["~/Library/Application Support/Claude"],
+     "apps": ["Claude.app"], "surface": "pack"},
+    {"id": "perplexity", "name": "Perplexity (desktop)", "kind": "chat", "bins": [],
+     "apps": ["Perplexity.app"], "surface": "pack"},
+    {"id": "copilot-app", "name": "Microsoft Copilot (desktop)", "kind": "chat", "bins": [],
+     "apps": ["Copilot.app", "Microsoft Copilot.app"], "surface": "pack"},
+    {"id": "msty", "name": "Msty", "kind": "chat", "bins": [],
+     "apps": ["Msty.app"], "surface": "pack"},
+    {"id": "cherry-studio", "name": "Cherry Studio", "kind": "chat", "bins": [],
+     "apps": ["Cherry Studio.app"], "surface": "pack"},
 ]
 
-# Local model servers, by their well-known localhost OpenAI-ish endpoints.
+# Local model servers, by their well-known localhost OpenAI-ish endpoints. Kept to
+# DISTINCTIVE ports (avoid 8000/8080 which collide with unrelated dev servers, to
+# not false-positive a running app as a local LLM).
 LOCAL_LLMS = [
     {"id": "ollama", "name": "Ollama", "url": "http://localhost:11434/api/tags",
      "list_key": "models", "name_field": "name"},
     {"id": "lmstudio", "name": "LM Studio", "url": "http://localhost:1234/v1/models",
      "list_key": "data", "name_field": "id"},
     {"id": "jan", "name": "Jan", "url": "http://localhost:1337/v1/models",
+     "list_key": "data", "name_field": "id"},
+    {"id": "gpt4all", "name": "GPT4All", "url": "http://localhost:4891/v1/models",
+     "list_key": "data", "name_field": "id"},
+    {"id": "textgen", "name": "Text-Generation-WebUI", "url": "http://localhost:5000/v1/models",
      "list_key": "data", "name_field": "id"},
 ]
 
@@ -66,14 +109,42 @@ def _exists(paths) -> bool:
     return any(Path(p).expanduser().exists() for p in paths)
 
 
+def _app_exists(apps) -> bool:
+    """macOS-only: is any of these .app bundles installed?"""
+    if not apps or sys.platform != "darwin":
+        return False
+    return any((d / a).exists() for a in apps for d in APP_DIRS)
+
+
+def _ext_exists(exts) -> bool:
+    """Is any editor extension id installed (dir name starts with the publisher.id)?"""
+    if not exts:
+        return False
+    for d in EXT_DIRS:
+        if not d.is_dir():
+            continue
+        try:
+            names = [p.name.lower() for p in d.iterdir()]
+        except OSError:
+            continue
+        for e in exts:
+            if any(n.startswith(e.lower()) for n in names):
+                return True
+    return False
+
+
 def _detect_agents() -> list:
     found = []
     for a in AGENTS:
-        hit_bin = _which(a["bins"]) if a["bins"] else None
-        hit_path = _exists(a["paths"]) if a["paths"] else False
-        if hit_bin or hit_path:
-            found.append({"id": a["id"], "name": a["name"], "surface": a["surface"],
-                          "via": "PATH" if hit_bin else "config"})
+        hit_bin = _which(a["bins"]) if a.get("bins") else None
+        hit_path = _exists(a["paths"]) if a.get("paths") else False
+        hit_app = _app_exists(a.get("apps"))
+        hit_ext = _ext_exists(a.get("exts"))
+        if hit_bin or hit_path or hit_app or hit_ext:
+            via = ("PATH" if hit_bin else "app" if hit_app
+                   else "extension" if hit_ext else "config")
+            found.append({"id": a["id"], "name": a["name"], "kind": a.get("kind", "coding"),
+                          "surface": a["surface"], "via": via})
     return found
 
 
@@ -153,36 +224,116 @@ def _needs_setup(agents: list, local: list) -> bool:
 
 
 def _suggest(agents: list, local: list) -> dict:
-    """Advisory pre-fill for surfaces/models — the brain confirms with the user."""
-    order = ["claude-code", "cursor", "codex", "gemini", "copilot", "windsurf", "aider", "continue"]
-    ranked = sorted(agents, key=lambda a: order.index(a["id"]) if a["id"] in order else 99)
+    """Advisory pre-fill for surfaces/models — the brain confirms with the user.
+
+    Prefer a coding agent (drives files directly) as the primary surface; a chat-only
+    app (ChatGPT/Perplexity/…) still counts, but its best delivery is a pasted pack.
+    """
+    order = ["claude-code", "cursor", "codex", "gemini", "copilot", "windsurf", "zed",
+             "aider", "amazon-q", "continue", "cline", "roo", "cody"]
+    coding = [a for a in agents if a.get("kind", "coding") == "coding"]
+    chat = [a for a in agents if a.get("kind") == "chat"]
+    ranked = sorted(coding, key=lambda a: order.index(a["id"]) if a["id"] in order else 99)
     surfaces = []
-    for a in ranked:
+    for a in ranked + chat:
         if a["surface"] not in surfaces:
             surfaces.append(a["surface"])
-    tier = "frontier" if ranked else ("small-local" if local else "")
-    if ranked and local:
+    if ranked:
+        primary = ranked[0]["surface"]
+    elif chat:
+        primary = "pack"
+    elif local:
+        primary = "mcp"
+    else:
+        primary = ""
+    tier = "frontier" if (ranked or chat) else ("small-local" if local else "")
+    if (ranked or chat) and local:
         tier = "mixed"
     return {
-        "surfaces.primary": ranked[0]["surface"] if ranked else ("mcp" if local else ""),
+        "surfaces.primary": primary,
         "surfaces.agents": surfaces or (["mcp"] if local else []),
         "models.tier": tier,
-        "models.offline": bool(local and not ranked),
+        "models.offline": bool(local and not ranked and not chat),
     }
 
 
-def scan(root: Path | None, as_json: bool = False, write: bool = False) -> int:
+# ---------------------------------------------------------- workspace discovery ---
+# Common places a wsx workspace tends to live. Searched shallowly (bounded depth) so
+# "help me update my workspace" can OFFER the existing one instead of asking cold.
+def _search_roots() -> list:
+    roots = [HOME / d for d in ("Documents", "Projects", "projects", "obsidian",
+                                "Obsidian", "vaults", "Vaults", "Desktop", "Notes")]
+    roots.append(HOME)
+    # Obsidian's iCloud vault location (macOS)
+    roots.append(HOME / "Library/Mobile Documents/iCloud~md~obsidian/Documents")
+    return [r for r in roots if r.is_dir()]
+
+
+_SKIP_WALK = {".git", "node_modules", "Library", ".Trash", ".cache", "venv", ".venv",
+              "__pycache__", "dist", "build", "target", ".obsidian"}
+
+
+def _is_workspace(d: Path) -> dict | None:
+    """A wsx workspace = a dir with manifest.json + context/. Returns a summary or None."""
+    man = d / "manifest.json"
+    if not (man.exists() and (d / "context").is_dir()):
+        return None
+    info = {"path": _tilde(d), "name": d.name, "skills": 0, "generator": "",
+            "has_git": (d / ".git").exists()}
+    try:
+        data = json.loads(man.read_text(encoding="utf-8"))
+        info["generator"] = data.get("generator", "")
+        info["name"] = data.get("workspace", {}).get("name", d.name)
+        info["skills"] = len(data.get("skills", {}) or {})
+    except (OSError, json.JSONDecodeError):
+        pass
+    return info
+
+
+def find_workspaces(max_depth: int = 3) -> list:
+    """Shallow-walk the common roots for wsx workspaces. Deduped, best-effort."""
+    found, seen = [], set()
+    for base in _search_roots():
+        base = base.resolve()
+        # bounded BFS so we never crawl the whole disk
+        stack = [(base, 0)]
+        while stack:
+            d, depth = stack.pop()
+            hit = _is_workspace(d)
+            if hit and str(d) not in seen:
+                seen.add(str(d))
+                found.append(hit)
+                continue  # don't descend into a workspace
+            if depth >= max_depth:
+                continue
+            try:
+                for child in d.iterdir():
+                    if child.is_dir() and child.name not in _SKIP_WALK \
+                            and not child.name.startswith("."):
+                        stack.append((child, depth + 1))
+            except (OSError, PermissionError):
+                continue
+    found.sort(key=lambda w: (-w["skills"], w["path"]))
+    return found
+
+
+def scan(root: Path | None, as_json: bool = False, write: bool = False,
+         find_ws: bool = False) -> int:
     agents = _detect_agents()
     mcp = _detect_mcp()
     local = _detect_local_llms()
     report = {"agents": agents, "mcp": mcp, "local_llms": local,
               "needs_setup": _needs_setup(agents, local),
               "suggested": _suggest(agents, local)}
+    if find_ws:
+        report["workspaces"] = find_workspaces()
 
     if as_json:
         print(json.dumps(report, indent=2))
     else:
         _print_human(agents, mcp, local, report["suggested"])
+        if find_ws:
+            _print_workspaces(report["workspaces"])
         if report["needs_setup"]:
             _print_recommendation()
 
@@ -198,12 +349,22 @@ def _print_human(agents: list, mcp: dict, local: list, sugg: dict) -> None:
     print("wsx scan — detecting YOUR agentic stack (nothing here uses the generator's")
     print("API or any key; it drives the tools and accounts you already have).\n")
 
-    print("AI coding tools:")
-    if agents:
-        for a in agents:
+    coding = [a for a in agents if a.get("kind", "coding") == "coding"]
+    chat = [a for a in agents if a.get("kind") == "chat"]
+
+    print("AI coding tools (drive the workspace files directly):")
+    if coding:
+        for a in coding:
             print(f"  ✓ {a['name']}  (found via {a['via']} → emits `{a['surface']}`)")
     else:
         print("  — none detected on PATH or in the usual config locations.")
+
+    print("\nChat / desktop assistants (no file access → paste a context pack):")
+    if chat:
+        for a in chat:
+            print(f"  ✓ {a['name']}  (found via {a['via']} → `wsx emit pack`)")
+    else:
+        print("  — none detected (ChatGPT, Claude, Perplexity, …).")
 
     print("\nMCP integrations (server names only — no keys/values are read):")
     if mcp:
@@ -219,7 +380,8 @@ def _print_human(agents: list, mcp: dict, local: list, sugg: dict) -> None:
             print(f"  ✓ {l['name']}: {models}")
         print("  → a local model runs fully offline at zero token cost — your data never leaves.")
     else:
-        print("  — none responding (Ollama :11434, LM Studio :1234, Jan :1337).")
+        print("  — none responding (Ollama :11434, LM Studio :1234, Jan :1337, "
+              "GPT4All :4891, TextGen :5000).")
 
     print("\nSuggested (the interview will confirm with you, and you can override):")
     print(f"  primary surface : {sugg['surfaces.primary'] or '(ask the user)'}")
@@ -227,6 +389,18 @@ def _print_human(agents: list, mcp: dict, local: list, sugg: dict) -> None:
     print(f"  model tier      : {sugg['models.tier'] or '(ask the user)'}"
           f"{'  · offline-capable' if sugg['models.offline'] else ''}")
     print("\nThese are YOUR tools/accounts. Bring your own tokens; the generator supplies none.")
+
+
+def _print_workspaces(workspaces: list) -> None:
+    print("\nExisting workspaces found (to update one, `cd` into it → `wsx upgrade`):")
+    if not workspaces:
+        print("  — none found in the usual places. If you have one elsewhere, `cd` into")
+        print("    it and run `wsx upgrade`; or `wsx init <dir>` to make a new one.")
+        return
+    for w in workspaces:
+        tag = "" if w["generator"] == "wsx" else "  (not wsx-generated?)"
+        git = "git" if w["has_git"] else "no-git"
+        print(f"  ✓ {w['name']}  → {w['path']}  ({w['skills']} skill(s), {git}){tag}")
 
 
 def _print_recommendation() -> None:

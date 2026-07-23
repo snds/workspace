@@ -36,6 +36,8 @@ audience, medium, and evidence from it.
    - [[02-diagrams-and-flows]] — workflow / flow / journey / "how does it work" requests
    - [[03-data-and-charts]] — data, results, comparisons, metrics
    - [[04-documents-and-specs]] — specs, briefs, reports, decision records
+   - [[06-research-and-design-artifacts]] — a named UX-research/product artifact (user journey,
+     JTBD, service blueprint, user story, use case, user flow, persona, …): *which* one and *how* to author it
 4. **[[05-validation-harness]]** — for any code-heavy or back-of-house work: the Proofboard
    standard (how Sean verifies the work without reading code).
 
@@ -70,6 +72,7 @@ If any check fails, the deliverable isn't ready.
 | [[03-data-and-charts]] | Chart and data delivery — routes to the `dataviz` standard |
 | [[04-documents-and-specs]] | Document mediums — routes to [[artifact-standards]] |
 | [[05-validation-harness]] | The Proofboard: visual, non-destructive verification for code-heavy work |
+| [[06-research-and-design-artifacts]] | UX-research/product artifact selector + authoring contract (journey, JTBD, blueprint, story, use case, flow, persona) |
 
 ---
 

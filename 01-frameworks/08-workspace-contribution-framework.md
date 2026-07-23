@@ -63,6 +63,22 @@ future generator also mutates SKILL.md content, it belongs *before* `build-regis
 needs a run-to-fixpoint loop. Discovered 2026-07-20 when a Related-block refresh to `found-color`,
 `infod-encoding-theory` and `ux-component-library` drifted exactly those three hashes.
 
+### Graph & freshness conventions (knowledge/memory notes)
+
+Two lightweight conventions keep the **epistemic** graph (knowledge entries + `memory/` — distinct
+from the skill `## Related` graph) connected and trustworthy. Full spec:
+[[vault-graph-conventions]] and [[epistemic-standards]] §2.
+
+- **Typed edges** — a `relations:` frontmatter map (`builds-on` / `relates-to` / `contradicts` /
+  `refutes` / `exemplifies`) on knowledge/decision notes. `refutes` is how a superseded claim gets
+  *marked* superseded, not silently left live. (Skills keep their own richer `## Related` graph — don't cross them.)
+- **Freshness** — every durable claim is *timeless* / *dated* (`as of YYYY-MM`) / *pointer*; past-horizon
+  or unverifiable → `#stale`.
+- **Retrieval preamble** — durable notes open with a `## For future agent` block (TL;DR + key claims + as-of).
+- **Check it:** `/health` (→ `09-tools/vault-health.py`) reports orphans, `#stale`/aging claims, and
+  dangling typed edges. Run it periodically and inside `/optimize`; it can be automated via the
+  opt-in [[nightly-maintenance-recipe]].
+
 ---
 
 ## The routing map (the WHERE)
