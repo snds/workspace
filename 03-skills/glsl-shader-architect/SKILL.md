@@ -152,3 +152,4 @@ Comprehensive implementation guides available in:
 ## Related
 - foundation → [[imaging-foundations]] · [[science-foundations]]
 - hub → [[lead-game-developer]]
+- peer ↔ [[atmospheric-scattering-and-clouds]] · [[planetary-terrain-lod]] · [[stellar-and-relativistic-hero-bodies]]

@@ -914,5 +914,27 @@ gltf-transform join model.glb model-joined.glb
 | `3d-lighting-rendering` | Lightmap UV generation and bake quality settings live at the pipeline stage |
 | `anthropic-skills:threejs-materials-master` | Three.js material configuration after glTF import — loading GLBs, assigning textures, configuring tone mapping |
 
+## Blender → Web Automation & Volumetric Bakes (bpy)
+
+The scriptable, batch side of the pipeline — and the **3D-texture / VDB bake path** the volumetric
+renderers depend on. (Harvested from the `blender-web-pipeline` marketplace skill, which is the reference
+implementation for bpy export automation; folded here rather than added as a duplicate spoke.)
+
+- **bpy batch export.** Drive Blender headless (`blender --background --python export.py`) to export a
+  directory of `.blend` files to GLB with consistent settings — Draco on, `+Y`-up, applied transforms,
+  KTX2 textures — then pipe through `gltf-transform optimize`. Scriptable = reproducible; no per-asset
+  hand-clicking. Author the export HDA/script once, run it in CI.
+- **Density bake → 3D texture (the volumetric bridge).** [[vfx-volumetrics]] and
+  [[atmospheric-scattering-and-clouds]] consume **baked 3D scalar fields**, not meshes: author a hero
+  nebula / cloud shape in Blender, bake its density to **OpenVDB** or a **tiled 3D texture** (slice atlas),
+  and load it in Three.js as a `Data3DTexture` for the raymarch's low-frequency shape (high-frequency detail
+  stays procedural). This is the Blender-MCP path the [[legion-galaxy-playbook]] uses; automate the bake so
+  a shape edit re-exports without manual steps.
+- **Cloud noise bake.** The Perlin-Worley base + Worley detail volumes that
+  [[atmospheric-scattering-and-clouds]] needs are best **baked offline to a 3D texture** (128³ base) and
+  shipped compressed, not synthesized at runtime — bandwidth, not ALU, is the cloud bottleneck.
+- **Capability:** requires the `blender-mcp` capability (degrades to hand-export if absent) — see
+  [[skill-ecosystem-and-mcp-servers]].
+
 ## Related
 - hub → [[lead-3d-designer]]

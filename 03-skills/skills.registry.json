@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 248,
+    "total": 252,
     "by_tier": {
       "cross-cutting": 27,
       "foundation": 22,
       "hub": 40,
-      "spoke": 159
+      "spoke": 163
     }
   },
   "skills": {
@@ -35,7 +35,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:be9e0a60bc147b38afaf77319982dac6cc97a13e9a8a893f2eb53cfaa8e4f312"
+      "hash": "sha256:3da657838ba28c94ba5fdb9a681c7fac0e0c704e16ca1b5c98a7b42df6a79fbb"
     },
     "3d-lighting-rendering": {
       "path": "03-skills/3d-lighting-rendering/SKILL.md",
@@ -288,6 +288,50 @@
         "inference-belt"
       ],
       "hash": "sha256:0d6776c8f750b6ed1b419b99b029b55022eae0a7f208e33a8180096732ca7e4d"
+    },
+    "atmospheric-scattering-and-clouds": {
+      "path": "03-skills/atmospheric-scattering-and-clouds/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "lead-game-developer",
+      "prerequisites": [
+        "realtime-render-performance-90fps",
+        "vfx-volumetrics"
+      ],
+      "related": [
+        "glsl-shader-architect",
+        "planetary-terrain-lod",
+        "threejs-vfx-atmosphere"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "atmospheric scattering",
+        "rayleigh",
+        "mie",
+        "hillaire",
+        "sky atmosphere",
+        "aerial perspective",
+        "transmittance lut",
+        "multiple scattering",
+        "volumetric clouds",
+        "nubis",
+        "cloud shadows",
+        "perlin-worley",
+        "henyey-greenstein",
+        "ocean rendering",
+        "fft ocean",
+        "tessendorf",
+        "gerstner",
+        "planetary atmosphere",
+        "terminator",
+        "night side"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "hash": "sha256:68fc6fd5590de1a472fd11c29f6dce94f90ca17c4a663c655c0515e9365c7632"
     },
     "be-api-design": {
       "path": "03-skills/be-api-design/SKILL.md",
@@ -1990,7 +2034,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:5734cc11a9b6666abd789ff73d6d410e875c3b943536736660063668b03dad78"
+      "hash": "sha256:e3c7278adec392252de504dba2e60a82e7740dd2696d3dfe2654b9d812a1ed32"
     },
     "gd-brand-identity": {
       "path": "03-skills/gd-brand-identity/SKILL.md",
@@ -2173,7 +2217,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:a65b6b0a251a66f53a0a73fe1b62ba1f804b280445a0f37f47270b0020a9c064"
+      "hash": "sha256:84654b4f684ec6ba25d93f56c62d39ef3815b1802ffb732c236ec3bd81e87c47"
     },
     "google-fonts-scraper": {
       "path": "03-skills/google-fonts-scraper/SKILL.md",
@@ -2813,7 +2857,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:1c0c7931978ba91d57b9602f5e991fc5acbb72a27f17b003910e21e87e22a027"
+      "hash": "sha256:b4ced16253ec0612c730b46ab4806dcd4cbea5ef5efe96e9c094a08474249b3b"
     },
     "lead-graphic-designer": {
       "path": "03-skills/lead-graphic-designer/SKILL.md",
@@ -3538,6 +3582,45 @@
       "requires": [],
       "hash": "sha256:557b19d0209c5f6fc391148f419949fef6d3074e3c8ee71ed289adcc71e4b4e1"
     },
+    "planetary-terrain-lod": {
+      "path": "03-skills/planetary-terrain-lod/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "lead-game-developer",
+      "prerequisites": [
+        "realtime-render-performance-90fps"
+      ],
+      "related": [
+        "glsl-shader-architect",
+        "game-scale-traversal",
+        "atmospheric-scattering-and-clouds"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "planetary terrain",
+        "planet surface",
+        "cube-sphere",
+        "cube sphere",
+        "quadtree lod",
+        "cdlod",
+        "chunked lod",
+        "geometry clipmaps",
+        "terrain lod",
+        "heightfield",
+        "displacement",
+        "procedural planet",
+        "triplanar",
+        "horizon culling",
+        "ridged multifractal",
+        "terrain morph"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "hash": "sha256:8ec9b3f9e46317ea66361a40d143de92f5ca59116ce74bcdf8e123294fdf93f4"
+    },
     "pm-competitive-intelligence": {
       "path": "03-skills/pm-competitive-intelligence/SKILL.md",
       "tier": "spoke",
@@ -3723,6 +3806,50 @@
       "requires": [],
       "hash": "sha256:22c547d50acc7ee5740451347ba624d823263845060c2831ac768255ad5a7363"
     },
+    "realtime-render-performance-90fps": {
+      "path": "03-skills/realtime-render-performance-90fps/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "lead-game-developer",
+      "prerequisites": [
+        "webgpu-advanced-rendering",
+        "game-scale-traversal"
+      ],
+      "related": [
+        "glsl-shader-architect",
+        "threejs-vfx-atmosphere"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "90fps",
+        "90 fps",
+        "frame budget",
+        "frame time",
+        "taau",
+        "temporal upsampling",
+        "temporal anti-aliasing",
+        "dynamic resolution scaling",
+        "drs",
+        "gpu profiling",
+        "timestamp query",
+        "reversed-z",
+        "depth precision",
+        "df64",
+        "double precision emulation",
+        "hi-z occlusion culling",
+        "gpu-driven rendering",
+        "indirect draw",
+        "shader-f16",
+        "webgpu performance",
+        "overdraw"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "hash": "sha256:9bbb89aa74119ca15ca555db3fe7a3eed5fbf587433faa1e39a02c0a44b26d21"
+    },
     "redesign": {
       "path": "03-skills/redesign/SKILL.md",
       "tier": "hub",
@@ -3803,7 +3930,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:1d26fd59e25c98e8325431418666d42210bec2c175e027deb1c3c0f207cecaa2"
+      "hash": "sha256:46bd4662433241d5a9500b1d009d18aea70dd519aaf830df73cc9c3b69761da0"
     },
     "sci-astro-structures": {
       "path": "03-skills/sci-astro-structures/SKILL.md",
@@ -4127,6 +4254,51 @@
       "requires": [],
       "hash": "sha256:984040dca569e5e4a04c61f3d5d073fb30418b2fdfc5d3b1d61e2dd99834a58a"
     },
+    "stellar-and-relativistic-hero-bodies": {
+      "path": "03-skills/stellar-and-relativistic-hero-bodies/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "lead-game-developer",
+      "prerequisites": [
+        "realtime-render-performance-90fps",
+        "sci-astro-objects",
+        "vfx-volumetrics"
+      ],
+      "related": [
+        "glsl-shader-architect",
+        "vfx-particle-systems",
+        "atmospheric-scattering-and-clouds"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "star surface",
+        "photosphere",
+        "granulation",
+        "limb darkening",
+        "starspot",
+        "corona",
+        "prominence",
+        "blackbody color",
+        "black hole",
+        "gravitational lensing",
+        "geodesic raymarch",
+        "schwarzschild",
+        "kerr",
+        "accretion disk",
+        "relativistic beaming",
+        "doppler redshift",
+        "photon ring",
+        "einstein ring",
+        "hero body",
+        "stellar rendering"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "hash": "sha256:a3fdf8be4d52447621e22925d6f80aa448ce90ef6378ddc7bce81e7e2bb04a0c"
+    },
     "svg-font-extraction": {
       "path": "03-skills/svg-font-extraction/SKILL.md",
       "tier": "hub",
@@ -4180,7 +4352,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:1c46b54c056da275fda848bb46f9e51eac1f479aba9c9f5496431b2e35963f23"
+      "hash": "sha256:481ea8a09d5d97e9665eada1a664c950322603c667dbbfad24084d1e60d8d107"
     },
     "type": {
       "path": "03-skills/type/SKILL.md",
@@ -4716,7 +4888,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:2fefb92db7cdb733d080c18bcd833f695657e82b76a4531c0e2c0df198af1564"
+      "hash": "sha256:1aa787b9e71d1b74ef31ee4a9d8d5fb1693a55a411a5021e9c4f6a79797a2191"
     },
     "vfx-volumetrics": {
       "path": "03-skills/vfx-volumetrics/SKILL.md",
@@ -4751,7 +4923,7 @@
       "requires": [
         "blender-mcp"
       ],
-      "hash": "sha256:e1bd8920031ed4474db43f6f669ae8977f506c55571b0810d510f50ca4b65060"
+      "hash": "sha256:1d566143342075832820e7830dfd9c2200ccd9b72cbb6a2f00a19de2d349972b"
     },
     "vis-classical-opencv": {
       "path": "03-skills/vis-classical-opencv/SKILL.md",
@@ -5170,7 +5342,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:3155355259ed62da321e96b7bda16a16a9f6ca3f1cbe308cfcba727ccb73f808"
+      "hash": "sha256:1641d331e169e639ba06830681d6701dbea9539a0057d09b0c22df4d0bac4aed"
     },
     "workspace-bootstrap": {
       "path": "03-skills/workspace-bootstrap/SKILL.md",
@@ -5259,6 +5431,19 @@
     ],
     "ai-video-generation": [
       "ai-video-generation"
+    ],
+    "atmospheric-scattering-and-clouds": [
+      "game-foundations",
+      "imaging-foundations",
+      "img-vfx",
+      "science-foundations",
+      "lead-game-developer",
+      "game-scale-traversal",
+      "threejs-vfx-atmosphere",
+      "vfx-volumetrics",
+      "webgpu-advanced-rendering",
+      "realtime-render-performance-90fps",
+      "atmospheric-scattering-and-clouds"
     ],
     "be-api-design": [
       "eng-foundations",
@@ -6006,6 +6191,16 @@
     "omni-project": [
       "omni-project"
     ],
+    "planetary-terrain-lod": [
+      "game-foundations",
+      "imaging-foundations",
+      "science-foundations",
+      "lead-game-developer",
+      "game-scale-traversal",
+      "webgpu-advanced-rendering",
+      "realtime-render-performance-90fps",
+      "planetary-terrain-lod"
+    ],
     "pm-competitive-intelligence": [
       "product-foundations",
       "lead-product-manager",
@@ -6050,6 +6245,15 @@
     "qa": [
       "design-foundations",
       "qa"
+    ],
+    "realtime-render-performance-90fps": [
+      "game-foundations",
+      "imaging-foundations",
+      "science-foundations",
+      "lead-game-developer",
+      "game-scale-traversal",
+      "webgpu-advanced-rendering",
+      "realtime-render-performance-90fps"
     ],
     "redesign": [
       "design-foundations",
@@ -6109,6 +6313,20 @@
     ],
     "skill-placement": [
       "skill-placement"
+    ],
+    "stellar-and-relativistic-hero-bodies": [
+      "game-foundations",
+      "imaging-foundations",
+      "img-vfx",
+      "science-foundations",
+      "lead-game-developer",
+      "game-scale-traversal",
+      "sci-astro-objects",
+      "threejs-vfx-atmosphere",
+      "vfx-volumetrics",
+      "webgpu-advanced-rendering",
+      "realtime-render-performance-90fps",
+      "stellar-and-relativistic-hero-bodies"
     ],
     "svg-font-extraction": [
       "svg-font-extraction"

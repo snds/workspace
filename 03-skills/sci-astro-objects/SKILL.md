@@ -58,4 +58,4 @@ storms, **rings** = particle fields → render as [[vfx-particle-systems]]/insta
 ## Related
 - foundation → [[science-foundations]]
 - hub → [[science-foundations]]
-- peer ↔ [[sci-astro-structures]]
+- peer ↔ [[sci-astro-structures]] · [[stellar-and-relativistic-hero-bodies]]

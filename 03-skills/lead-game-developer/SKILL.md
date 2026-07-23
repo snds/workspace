@@ -152,5 +152,5 @@ This hub includes six deep-dive references:
 
 ## Related
 - foundation → [[game-foundations]] · [[science-foundations]]
-- spoke → [[game-scale-traversal]] · [[glsl-shader-architect]] · [[threejs-materials-master]] · [[threejs-vfx-atmosphere]] · [[webgpu-advanced-rendering]]
+- spoke → [[atmospheric-scattering-and-clouds]] · [[game-scale-traversal]] · [[glsl-shader-architect]] · [[planetary-terrain-lod]] · [[realtime-render-performance-90fps]] · [[stellar-and-relativistic-hero-bodies]] · [[threejs-materials-master]] · [[threejs-vfx-atmosphere]] · [[webgpu-advanced-rendering]]
 - peer ↔ [[vision-foundations]]
