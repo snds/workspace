@@ -256,6 +256,17 @@ _Starter. Edit to fit {{identity.name}}._
 - Verify before claiming done.
 - Respect the privacy wall: personal context stays local unless opted in.
 """,
+    "context/sessions/README.md": """# Session fragments — conflict-free across devices
+
+Each session records its block to its **own file** here
+(`<date>-<time>.md`, with a `SessionID:` line) instead of editing the shared
+`../session-log.md`. Disjoint files can't collide, so any number of sessions on any
+number of devices/surfaces record in parallel with **zero merge conflicts**.
+
+`wsx compact` folds fragments into `../session-log.md` (newest-first) and removes
+them — **idempotent** (dedupes by SessionID) and **self-healing** (safe to re-run,
+runs at `wsx session start`/`end` and `wsx sync`). Git history keeps every fragment.
+""",
     "skills/README.md": """# Skills
 
 Reusable expertise the AI loads **only when relevant**. Organized as **hubs**

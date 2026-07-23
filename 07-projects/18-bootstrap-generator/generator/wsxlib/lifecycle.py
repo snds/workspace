@@ -158,23 +158,80 @@ def verify(root: Path) -> int:
     return fails
 
 
+# --------------------------------------------------------------- compaction ---
+import re as _re
+
+
+def compact(root: Path) -> int:
+    """Fold context/sessions/*.md fragments into context/session-log.md, newest-first,
+    idempotently (dedupe by the SessionID marker). Same conflict-free model the
+    generator's own workspace uses: sessions write disjoint fragment files (no merge
+    conflicts across devices/sessions), and this folds them into the readable log."""
+    log_path = root / "context" / "session-log.md"
+    frag_dir = root / "context" / "sessions"
+    if not log_path.exists() or not frag_dir.is_dir():
+        return 0
+    log = log_path.read_text(encoding="utf-8")
+    frags = sorted(p for p in frag_dir.glob("*.md") if p.name != "README.md")
+    if not frags:
+        return 0
+    sid_re = _re.compile(r"^SessionID:\s*(\S+)", _re.MULTILINE)
+    date_re = _re.compile(r"^Date:\s*(\d{4}-\d{2}-\d{2})", _re.MULTILINE)
+    new, folded = [], 0
+    for f in frags:
+        text = f.read_text(encoding="utf-8").strip()
+        if not text:
+            f.unlink(); continue
+        m = sid_re.search(text)
+        marker = m.group(1) if m else text.splitlines()[0]
+        if marker and marker in log:
+            f.unlink(); folded += 1  # already folded elsewhere — drop the dup
+        else:
+            new.append((f, text, (date_re.search(text) or [None, "0000-00-00"])[1] if date_re.search(text) else "0000-00-00"))
+    if new:
+        new.sort(key=lambda t: (t[2], t[0].name), reverse=True)
+        block = "\n\n".join(t[1] for t in new) + "\n\n"
+        marker = "## Session Entries"
+        idx = log.find(marker)
+        if idx == -1:
+            log = log.rstrip() + f"\n\n{marker}\n\n---\n\n" + block
+        else:
+            sep = log.find("\n---", idx)
+            at = (log.find("\n", sep + 1) + 1) if sep != -1 else idx + len(marker) + 1
+            log = log[:at] + "\n" + block + log[at:]
+        log_path.write_text(log, encoding="utf-8")
+        for f, _t, _d in new:
+            f.unlink()
+    if new or folded:
+        print(f"✓ compact: folded {len(new)} new, dropped {folded} already-folded session fragment(s).")
+    return 0
+
+
 # ----------------------------------------------------------------- session ---
 def session(root: Path, sub: str) -> int:
-    log = root / "context" / "session-log.md"
     if sub == "start":
+        compact(root)  # fold any pending fragments before the AI reads the log
         print(f"session started {core.now_stamp()} — context loaded from {root}")
         return 0
     if sub == "end":
-        block = (
-            f"\n--- SESSION BLOCK ---\n"
+        # Write a conflict-free FRAGMENT (not a direct append to the shared log), then
+        # fold it. Disjoint files → no cross-device/session merge conflicts.
+        sid = f"{core.today()}-{core.now_stamp().split()[1].replace(':', '')}"
+        frag_dir = root / "context" / "sessions"
+        frag_dir.mkdir(parents=True, exist_ok=True)
+        frag = frag_dir / f"{sid}.md"
+        frag.write_text(
+            f"### {core.today()} — session\n\n"
+            f"SessionID: {sid}\n"
+            f"--- SESSION BLOCK ---\n"
             f"Date: {core.today()}\n"
             f"Stamp: {core.now_stamp()}\n"
-            f"Summary: (fill in)\n"
-            f"--- END BLOCK ---\n"
+            f"Summary: (your AI fills this in)\n"
+            f"--- END BLOCK ---\n",
+            encoding="utf-8",
         )
-        with log.open("a", encoding="utf-8") as fh:
-            fh.write(block)
-        print(f"✓ session block appended to {log.relative_to(root)}")
+        compact(root)
+        print(f"✓ session recorded as a fragment and folded into context/session-log.md")
         return 0
     if sub == "reconcile":
         print("note: reconcile merges Session Blocks from concurrent machines — "

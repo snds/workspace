@@ -157,6 +157,10 @@ def cmd_sync(a):
     return lifecycle.sync(core.require_workspace())
 
 
+def cmd_compact(a):
+    return lifecycle.compact(core.require_workspace())
+
+
 def cmd_remote(a):
     return lifecycle.remote(core.require_workspace(), a.url or "")
 
@@ -223,7 +227,8 @@ def build_parser() -> argparse.ArgumentParser:
         ("doctor", cmd_doctor, "check your environment + what to do next"),
         ("lint", cmd_lint, "validate skills + manifest"),
         ("verify", cmd_verify, "dry-run load per target"),
-        ("sync", cmd_sync, "git pull --rebase + push"),
+        ("sync", cmd_sync, "safe multi-device git sync (rebase + retry)"),
+        ("compact", cmd_compact, "fold session fragments into the session log (idempotent)"),
     ]:
         sp = sub.add_parser(name, help=helptext)
         sp.set_defaults(fn=fn)
