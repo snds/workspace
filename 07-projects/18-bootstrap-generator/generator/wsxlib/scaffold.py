@@ -330,4 +330,5 @@ def init(dest: str, name: str = "you", handle: str = "you",
     print(f"✓ wsx workspace scaffolded at {root}")
     print(f"  {len(written)} files · vault + git{' (committed)' if do_git else ''}")
     print("  next: run the interview (the brain) to fill in profile.yaml, then `wsx emit`.")
+    print("  decide where it lives (GitHub/GitLab/Codeberg/local) → `wsx remote` for options.")
     return root

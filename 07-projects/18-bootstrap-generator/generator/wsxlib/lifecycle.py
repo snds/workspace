@@ -186,8 +186,9 @@ def session(root: Path, sub: str) -> int:
 # -------------------------------------------------------------------- sync ---
 def sync(root: Path) -> int:
     if not core.has_remote(root):
-        print("note: no git remote configured — nothing to sync. "
-              "Add one with GitHub Desktop or `git remote add origin <url>`.")
+        print("note: no git remote configured — nothing to sync yet.")
+        print("      run `wsx remote` for free hosting options (GitHub/GitLab/Codeberg),")
+        print("      then `wsx remote <url>` to wire it.")
         return 0
     print("syncing via git…")
     pull = core.git(root, "pull", "--rebase", "--autostash", check=False, capture=True)
@@ -200,6 +201,55 @@ def sync(root: Path) -> int:
         print(push.stderr.strip())
         return 1
     print("✓ synced (pull --rebase + push)")
+    return 0
+
+
+# ------------------------------------------------------------------ remote ---
+_HOSTING = """where should this workspace live? (it's a git repo — pick a home so it
+syncs across your machines and is backed up). Recommended, all free:
+
+  • GitHub — a **private** repo (github.com/new → set Private). Most common; free
+      private repos. Best if you already have an account.
+  • GitLab (gitlab.com) — free private repos too; a good GitHub alternative.
+  • Codeberg (codeberg.org) — free, community-run, no-tracking; nice for personal.
+  • Local-only — no host at all; it just lives on this machine (you can add a
+      remote later). Fine for a purely personal, single-machine setup.
+
+Create an EMPTY repo (no README) on your chosen host, copy its URL, then run:
+  wsx remote <url>        # e.g. wsx remote git@github.com:you/workspace.git
+  wsx sync                # pushes your workspace up
+
+Nothing is created for you — you own the account and the repo; wsx just wires it."""
+
+
+def remote(root: Path, url: str = "") -> int:
+    """Set (or show) the workspace's git remote, and record it in the profile.
+    With no url, print the free-hosting recommendations."""
+    if not url:
+        if core.has_remote(root):
+            r = core.git(root, "remote", "get-url", "origin", check=False, capture=True)
+            print(f"remote 'origin' → {r.stdout.strip()}")
+            print("change it with `wsx remote <url>`; push with `wsx sync`.")
+        else:
+            print(_HOSTING)
+        return 0
+
+    # add or update origin
+    if core.has_remote(root):
+        core.git(root, "remote", "set-url", "origin", url, check=False)
+        verb = "updated"
+    else:
+        core.git(root, "remote", "add", "origin", url, check=False)
+        verb = "set"
+
+    # record intent in the profile so adapters/brain know where it lives
+    prof = core.load_profile(root)
+    prof.setdefault("transport", {})["type"] = "git"
+    prof["transport"]["remote"] = url
+    core.save_profile(root, prof)
+
+    print(f"✓ remote 'origin' {verb} → {url}")
+    print("  next: `wsx sync` to push your workspace up.")
     return 0
 
 

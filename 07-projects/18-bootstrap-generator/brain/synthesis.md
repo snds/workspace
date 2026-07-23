@@ -95,7 +95,7 @@ Each row: the movement that surfaces it, the profile field it sets, and the synt
 | Their machines (laptop, work laptop, phone) | `surfaces.machines[]` | Normalize to short labels. Presence of a **work machine** is a signal for walled separation (§4). A phone signals "needs a no-terminal path." |
 | Model access ("Pro plan", "local Llama", "frontier") | `models.tier` | `frontier` if they have on-demand strong models; `small-local` if local/limited; `mixed` if both. Tier drives capability tiering (SPEC §5): frontier → full on-demand network; small-local → pre-flattened pack of 8–15 highest-value skills. |
 | "I need it to work on a plane / offline" | `models.offline` | `true` triggers the offline snapshot (a flattened context pack) at emit time. |
-| How they sync today (Drive, git, nothing) | `transport.type` / `transport.remote` | Default `git`. If they have a repo, capture `remote`. If they actively refuse cloud sync, `transport.type: local-only` and leave `remote: ""`. |
+| How they sync today + **where the workspace should live** (GitHub/GitLab/Codeberg/local) | `transport.type` / `transport.remote` | Default `git`. Recommend a **free private repo** (GitHub, else GitLab/Codeberg) as the home; capture the URL if they have one → `transport.remote`. Local-only ⇒ leave `remote: ""`. The person creates the empty repo themselves; the mechanical hand wires it after emit: `wsx remote <url>` then `wsx sync`. |
 | "I already have notes / a vault / docs…" | `imports[]` | Each importable asset is recorded as a path/URL + a short note on what it is. The brain does **not** read or move them here — `wsx` imports them later; synthesis only registers intent. |
 
 ### M1 — Work context → `contexts.work`

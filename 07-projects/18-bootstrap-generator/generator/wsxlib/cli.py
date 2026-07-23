@@ -152,6 +152,10 @@ def cmd_sync(a):
     return lifecycle.sync(core.require_workspace())
 
 
+def cmd_remote(a):
+    return lifecycle.remote(core.require_workspace(), a.url or "")
+
+
 def cmd_doctor(a):
     return lifecycle.doctor()
 
@@ -227,6 +231,10 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("--cache-refs", action="store_true",
                     help="for composite skills, fetch + pin + cache each reference URL for offline provenance")
     pr.set_defaults(fn=cmd_resolve)
+
+    prm = sub.add_parser("remote", help="set/show where the workspace lives (git remote) + hosting tips")
+    prm.add_argument("url", nargs="?", default="", help="git remote URL (omit to see recommendations)")
+    prm.set_defaults(fn=cmd_remote)
 
     pse = sub.add_parser("search", help="find sources (skill registries + reference anchors)")
     pse.add_argument("query", nargs="?", default="", help="capability to search for")

@@ -209,6 +209,14 @@ which movements you go deep on and the `lifecycle.separation` you'll propose in 
   `imports[]`. Don't ingest content now; just register intent.
 - Light touch on sync: do they already use Git, Dropbox, iCloud, nothing? This informs
   `transport.type` (default to git with an Obsidian human layer per spec).
+- **Ask where the workspace should live** (sets `transport.remote`). It's a git repo, so it
+  wants a home to sync across machines and back up. Recommend **free** options, in plain terms:
+  *"Your workspace is a private git repo — where should it live so it syncs and is backed up?
+  Most people use a **private GitHub repo** (free); **GitLab** or **Codeberg** work the same and
+  are also free; or keep it **local-only** on this machine for now. Which sounds right?"* Capture
+  the choice; if they pick a host, note the URL if they have one. **You never create the account
+  or repo** — that's theirs to make (an empty repo on their chosen host); afterward the mechanical
+  hand wires it: `wsx remote <url>` then `wsx sync`. Local-only ⇒ leave `transport.remote` empty.
 
 **Populates:** `identity{name, handle}` · `surfaces{primary, agents[], machines[]}` ·
 `models{tier, offline}` · `transport{type, remote}` · `imports[]`.

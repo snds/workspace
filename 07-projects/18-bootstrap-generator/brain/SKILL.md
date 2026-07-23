@@ -90,6 +90,7 @@ everything structural goes through `wsx`:
 | Check trigger overlaps | `wsx lint` |
 | Emit for their surface(s) | `wsx emit claude-code` (or `agents-md` / `cursor` / `pack` / `all`) |
 | Final check | `wsx verify` |
+| Choose where it lives | `wsx remote` (free-host options) → `wsx remote <url>` |
 | (later) commit / sync | `wsx sync` |
 
 Notes: list-valued profile fields (`surfaces.agents`, `contexts.professional.crafts`,
@@ -326,8 +327,13 @@ Then give the person a short, honest closing report:
   posture, which surface(s) were emitted.
 - **What `verify` and `lint` found:** green, or specific issues. If lint reports a
   leftover trigger overlap, return to the reconciliation step — don't ship it.
-- **How to use it:** open the vault in Obsidian, the workspace is a git repo
-  (`wsx sync` to pull/push), session continuity via `wsx session start|end`.
+- **How to use it:** open the vault in Obsidian; the workspace is a git repo.
+  **Settle where it lives** — walk them through `wsx remote` (free options: a private
+  GitHub/GitLab/Codeberg repo, or local-only); they create the empty repo, then
+  `wsx remote <url>` + `wsx sync` pushes it. Session continuity via `wsx session start|end`.
+- **Growing it later:** anything they build next — a new skill, hub, framework, or
+  playbook — goes through `frameworks/skill-authoring.md` (emitted into their workspace),
+  which carries this same rigor and supersedes their AI's native skill-builder.
 - **Honest status notes:** anything pulled from an unvetted registry, any target
   emitted as a thin fallback, anything deferred. This system is early — say so.
 
