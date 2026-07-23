@@ -193,6 +193,12 @@ Current active projects and their status: **[06-context/project-context.md](06-c
 
 ## Conventions
 
+### Token frugality (a #1 priority)
+This brain must never cost more tokens than the value it adds. Read the **top** of a
+log, never a whole growing file (session-log.md is bounded by archival; older history
+is in `06-context/session-log-archive.md`, read only on demand). Load a skill only
+when its trigger fires; prefer the smallest sufficient context.
+
 ### File naming
 - Artifacts: `context_descriptor_vN.N_YYYY-MM-DD.ext`
 - Never overwrite — increment version. Minor = iterative, major = structural.
