@@ -6,8 +6,16 @@ description: Merges Session Blocks from multiple concurrent sessions (different 
 # /reconcile — Cross-machine session merge
 
 When Sean works on multiple machines in the same day, each session writes its own
-Session Block. This skill merges them into a single day entry for the session log
-and a coherent update to project context, then commits both.
+Session Block. This skill merges them into a coherent update, then commits.
+
+> **Most of this is now automatic.** Sessions write **fragments**
+> (`06-context/sessions/<id>.md`), `09-tools/compact-sessions.py` folds them into
+> `session-log.md` idempotently (at session-start/end), and `session-log.md`/
+> `audit-log.md` are **union-merged** so concurrent appends never conflict. So the
+> **session-log half rarely needs manual reconciliation** — run compaction and it's
+> done. This skill's remaining job is the **structured `project-context.md`** merge
+> (pending items, decisions, project statuses), which is *not* auto-merged on purpose,
+> so genuine conflicts get flagged for a human, never silently guessed.
 
 ## Trigger phrases
 
@@ -16,14 +24,17 @@ and a coherent update to project context, then commits both.
 
 ## Protocol
 
-### Step 1 — Pull latest
+### Step 1 — Pull latest, then compact
 
 ```bash
-git pull --rebase
+git pull --rebase          # autostash is pinned OFF: refuses over a dirty tree (safe)
+python3 09-tools/compact-sessions.py   # fold any pending session fragments
 ```
 
-If there are merge conflicts (unlikely with our scope, but possible), stop and
-surface them. Don't auto-resolve context files.
+`pull --rebase` won't run over uncommitted changes (commit or stash first — your
+work is never stashed/stranded). Union-merge auto-resolves session-log/audit-log
+conflicts. If a **structured** file (`project-context.md`) conflicts, stop and
+surface it — don't auto-resolve context files.
 
 ### Step 2 — Identify blocks to merge
 
