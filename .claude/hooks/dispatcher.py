@@ -1263,6 +1263,51 @@ def handle_pre_tool(payload: dict) -> None:
     }))
 
 
+_EDIT_TOOLS = {"Edit", "Write", "MultiEdit", "NotebookEdit", "Update"}
+SESSIONS_DIR = WORKSPACE_ROOT / "06-context" / "sessions"
+
+
+def _session_touch_file(session_id: str) -> Path:
+    safe = re.sub(r"[^A-Za-z0-9._-]", "-", session_id)[:80]
+    return SESSIONS_DIR / f"{safe}.touched"
+
+
+def _rel_to_workspace(p: str) -> str | None:
+    """Return the workspace-relative path if p is inside the workspace, else None."""
+    try:
+        rp = Path(p).resolve()
+        return str(rp.relative_to(WORKSPACE_ROOT))
+    except (ValueError, OSError):
+        return None
+
+
+def handle_post_tool(payload: dict) -> None:
+    """Record files THIS session edited, so session-end can scope its commit to them
+    (never sweeping a concurrent session's in-flight edits). Append-only per session
+    → conflict-free. Transient (*.touched is gitignored)."""
+    if (payload.get("tool_name") or "") not in _EDIT_TOOLS:
+        return
+    session_id = payload.get("session_id")
+    if not session_id:
+        return  # no id → session-end falls back to `git add -A`
+    ti = payload.get("tool_input") or {}
+    fp = ti.get("file_path") or ti.get("notebook_path") or ti.get("path")
+    if not fp:
+        return
+    rel = _rel_to_workspace(fp)
+    if not rel:
+        return  # edit outside the workspace — not ours to commit
+    try:
+        SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+        tf = _session_touch_file(session_id)
+        existing = set(tf.read_text(encoding="utf-8").splitlines()) if tf.exists() else set()
+        if rel not in existing:
+            with tf.open("a", encoding="utf-8") as f:
+                f.write(rel + "\n")
+    except OSError:
+        pass  # tracking is best-effort; never disrupt a tool call
+
+
 def handle_stop(payload: dict) -> None:
     # Light-touch. No-op unless session-log.md was modified in the last turn —
     # then stage it so the session-end commit captures it cleanly.
@@ -1271,6 +1316,38 @@ def handle_stop(payload: dict) -> None:
     r = git("diff", "--name-only", "--", "06-context/session-log.md")
     if r.stdout.strip():
         git("add", "06-context/session-log.md")
+
+
+# Paths every session-end must stage regardless of tool tracking (the reconciled
+# log, fragment add/removal, and a possibly-regenerated registry).
+_SCOPE_ALWAYS = ["06-context/session-log.md", "06-context/sessions",
+                 "03-skills/skills.registry.json"]
+
+
+def _stage_session_scope(payload: dict) -> str:
+    """Stage this session's changes. Returns 'scoped' when a PostToolUse touch-list
+    exists (commit limited to this session's files), else 'all' (blanket `git add -A`
+    fallback, backward compatible). Scoping is what keeps concurrent sessions from
+    committing each other's in-flight work."""
+    session_id = payload.get("session_id")
+    touched: list[str] = []
+    if session_id:
+        tf = _session_touch_file(session_id)
+        if tf.exists():
+            touched = [ln.strip() for ln in tf.read_text(encoding="utf-8").splitlines() if ln.strip()]
+    if not touched:
+        git("add", "-A")
+        return "all"
+    # Stage add/mod/del for exactly this session's paths + the always-staged set.
+    # Per-path + check=False so one stale pathspec never aborts the whole stage.
+    for path in touched + _SCOPE_ALWAYS:
+        git("add", "-A", "--", path, check=False)
+    try:
+        tf = _session_touch_file(session_id)
+        tf.unlink()  # consume the touch-list; it's transient + gitignored
+    except OSError:
+        pass
+    return "scoped"
 
 
 def handle_session_end(payload: dict) -> None:
@@ -1336,10 +1413,14 @@ def handle_session_end(payload: dict) -> None:
                     sys.stderr.write(f"[session-end] registry regeneration failed: {reg.stderr}\n")
                 else:
                     sys.stderr.write("[session-end] regenerated skills.registry.json (SKILL.md changed)\n")
-        # .gitignore is the source of truth for what's tracked. Add everything
-        # not ignored — covers all system-layer paths plus the 00-obsidian project.
-        git("add", "-A")
+        # Stage this session's work. If we tracked which files THIS session edited
+        # (PostToolUse), scope the commit to exactly those (+ the reconciled log and
+        # fragment churn) so a CONCURRENT session's in-flight edits are never swept
+        # into our commit. Otherwise fall back to `git add -A` (backward compatible).
+        scope = _stage_session_scope(payload)
         msg = f"session: auto-commit from {machine} @ {stamp}"
+        if scope == "scoped":
+            msg += " (scoped)"
 
     commit = git("commit", "-m", msg)
     if commit.returncode != 0:
@@ -1371,6 +1452,7 @@ HANDLERS = {
     "session-start": handle_session_start,
     "user-prompt": handle_user_prompt,
     "pre-tool": handle_pre_tool,
+    "post-tool": handle_post_tool,
     "stop": handle_stop,
     "session-end": handle_session_end,
 }
