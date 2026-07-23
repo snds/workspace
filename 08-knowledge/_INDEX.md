@@ -1,7 +1,7 @@
 ---
 tags: [knowledge-vault, index]
 created: 2026-04-28
-updated: 2026-07-08
+updated: 2026-07-23
 ---
 
 # Knowledge Vault — Index
@@ -64,6 +64,7 @@ _Raw research syntheses live in `research/research/` (note: double-nested dir �
 - [[figma-source-audit-patterns]] — Five source shapes; state-coverage taxonomy; recurring gaps observed in the centric-ui Figma library (sizing, variants, composition, properties, variables, indicators); per-component recommendations table (2026-05-08)
 - [[figma-component-composition-from-react]] — Compound generation two-layer model (outer story-driven, inner JSX-anatomy); Figma INSTANCE constraints; variant/independent/INSTANCE_SWAP decision matrix; shadcn conventions (2026-05-07)
 - [[workspace-infrastructure]] — Git-native workspace infrastructure: hook dispatcher (5 events, three-source tiered trigger routing), bootstrap-v2 machine layer (dist shims + doctor + beacon, per-machine installs), multi-machine topology, multi-identity GitHub; Drive-era learnings quarantined as historical (2026-07-09)
+- [[multi-session-workspace-resilience]] — Conflict-free multi-session/device/surface workspace: per-session fragments + union-merge logs + idempotent compaction + scoped commit + safe push-retry (autostash pinned OFF); token frugality via bounded/archived logs (O(1) read cost). Diagnostic lessons: autostash=false is the safety pin; rebase re-hashing is cosmetic not lossy; diagnose before hardening. Triggers: `multi-session`, `concurrent session`, `cross-machine sync`, `session-log`, `git pull rebase`, `autostash`, `token frugality`, `session fragment`, `compaction`, `workspace resilience` (2026-07-23)
 - [[workflow-patterns]] — Stale-content review, 3-bucket pending structure, audit_skip, session-end habits, trigger-word loading (2026-04-28)
 - [[adversarial-verify-label-volatility]] — In a map→adversarially-verify multi-agent audit, the per-unit CONFIRMED/ADJUSTED/REFUTED label is sampling noise, not signal: two passes over identical mapped units swung 8/19/6 → 17/16/0 while every unit's rung + difficulty stayed identical. Report the stable mapped verdict ("two passes agreed on rung+difficulty; flags were refinements not reversals"), never a confirmed/adjusted count; aggregate k≥3 or gate on the correction diff for a durable pass/fail; independently hand-check load-bearing claims. Triggers: `adversarial verify`, `multi-agent audit`, `verification pass`, `confirmed adjusted refuted`, `refuted`, `judge panel`, `verify volatility`, `report the verdict` (2026-07-21)
 - [[knowledge-vault-design]] — Why three surfacing tiers exist, why entries ≠ skills, how to extend the system (2026-04-29)

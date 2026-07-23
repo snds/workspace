@@ -23,6 +23,42 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-23 — Bootstrap generator hardening + workspace multi-session/token-frugality resilience
+
+SessionID: 2026-07-23-voyager-k7x2
+--- SESSION BLOCK ---
+Date: 2026-07-23
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 18-bootstrap-generator (major) + workspace system-layer (concurrency, token-frugality, framework contract)
+Summary: Resumed and largely completed the portable bootstrap generator, then hardened THIS workspace for multi-session/multi-device/multi-surface use and token frugality, and propagated every change back into the generator so users get parity. ~26 commits, all gates green, three distribution zips rebuilt.
+Artifacts:
+  - 07-projects/18-bootstrap-generator/generator/wsxlib/{resolver,search,scan,mcp_template}.py — new: Resolver (pull/patch/generate/composite), source discovery, agent/MCP/local-LLM detection, zero-dep stdio MCP server
+  - 07-projects/18-bootstrap-generator/{launch.py,package.py,packaging/} — permission-free launcher (python3 launch.py; no exec-bit/Gatekeeper) + per-OS zip packager + Apple notarization pipeline (prep)
+  - 07-projects/18-bootstrap-generator/VALIDATION.md — colleague-facing proofboard
+  - 07-projects/18-bootstrap-generator/dist/*.zip — macOS/Windows/Linux packages (gitignored; regen via package.py)
+  - 09-tools/compact-sessions.py — new: idempotent session-fragment compaction + log archival
+  - 06-context/session-log-archive.md — new: bounded-log archive (live log 200KB→27KB)
+Decisions:
+  - Expertise is PER-DOMAIN (a separate axis from energy): the same person can be a staff-expert in one craft and a hobbyist in another; each generated skill is written at ITS domain's altitude (hobbyist teaches; expert captures judgment). Schema gained use_context + expertise{}.
+  - Resolver is a COMPOSITE builder, not just a skill fetcher: two-track sourcing (skill registries + industry-leading references), cite in the person's voice, never copy — grounded in our own skill-ecosystem knowledge that authored-from-reference beats a shallow pull.
+  - Permission-independence = invoke a trusted interpreter on a data file (python3 launch.py), never ship an executable; unsigned macOS double-click can't dodge Gatekeeper without the $99 cert (pipeline prepped, not required). Recommend ~/Documents/Projects/Workspace (Documents → iCloud/backup).
+  - BYO-tokens is architectural: the generator has no API key and makes no model calls; it runs on the user's own agent/account (wsx scan detects the stack; reads MCP server NAMES only, never secrets). If none detected, gate + recommend a surface before the interview.
+  - Multi-session model: conflict-free per-session FRAGMENTS + union-merge logs + idempotent compaction + scoped commit (never sweep a concurrent session's WIP) + safe push-retry (autostash pinned OFF → never rebases a dirty tree). Diagnosis first: the auto-sync was non-destructive (re-hashing is cosmetic); hardened the safe defaults.
+  - Token frugality is a #1 priority (workspace + generator): bounded/archived logs (O(1) read cost, not O(sessions)), read log heads not whole files, keep auto-loaded files terse. Stated in AGENTS.md core rules, framework 08 principle #6, CLAUDE.md, and every emitted adapter.
+Pending resolved:
+  - Bootstrap-generator command surface is stub-free (14 cmds); Resolver, emit mcp, turn-key Path A, expertise calibration, hosting, scan+gate, packaging all done + dogfooded.
+  - Reconciled the long-standing brain↔schema drift (schema_version "0.2"; lifecycle continuity boolean; automation minimal/standard/full).
+  - session-log.md bounded via archival; framework contract (AGENTS.md, fw08) updated to the fragment/frugal model.
+Pending added:
+  - Deeper wsx doctor self-heal for generated workspaces (re-emit stale adapters, verify .gitattributes) — optional polish.
+  - A registry search/discovery index layer (brain currently supplies exact skill urls).
+  - Externalize the generator's embedded scaffold templates (incl. the authoring framework + BYO README).
+Next:
+  - Optional: the doctor-self-heal polish, or drive the generator through a real colleague test.
+--- END BLOCK ---
+
+
 ### 2026-07-22 — Game-dev perf doctrine + 4 hero-body rendering skills (Legion-driven)
 
 --- SESSION BLOCK ---
