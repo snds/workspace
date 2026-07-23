@@ -88,6 +88,34 @@ question and watch what happens: a hub will keep giving; a spoke will resolve.
 Record this read as you go — it directly shapes how many `contexts.professional.crafts[]` and work
 hubs you propose, and it is the primary input to the Resolver's later GENERATE-vs-PULL bias.
 
+### 4a. Expertise LEVEL is a separate axis from energy — and it is per-domain
+
+Energy tells you *how much a domain matters to them* (hub vs. spoke). It does **not** tell you *how
+good they are at it*. These are different axes and you must read both:
+
+- A person can be a **high-energy hobbyist** — they light up about game design or 3D rendering, have
+  opinions, could talk for an hour — yet are genuinely a beginner in skill. High energy, low level.
+- A person can be a **low-key deep expert** — a staff-level practitioner who answers evenly because
+  it's second nature. Modest energy, top level.
+
+**Crucially, level is per-domain, never a single global rating.** The same person is routinely a
+**staff-level expert in one area and a hobbyist in another** — a principal UX designer who dabbles in
+woodworking; a senior engineer learning to paint. Capture a level *for each domain that becomes a
+skill*, on a simple scale — **hobbyist · intermediate · advanced · expert** — plus **seniority**
+(staff, principal, lead…) and rough **years** where the domain is professional and it matters.
+
+This read is load-bearing: it sets the **altitude** each generated skill is written at. A hobbyist
+skill *teaches* — defines jargon, explains the why, scaffolds the steps, points to foundations. An
+expert skill assumes fluency, skips the fundamentals entirely, and captures *their* judgment, edge
+cases, and (if senior) how they set the bar for others. The wrong altitude makes a skill useless:
+fundamentals bore an expert; peer-level shorthand strands a beginner.
+
+Don't ask "rate yourself 1–5" (people are bad at it). Infer level from how they talk — *do they
+casually reference advanced technique and where the field is wrong (expert), or ask what things mean
+(hobbyist)?* — and confirm lightly: *"Would you say you're more finding your feet here, or is this
+one you go deep on / do professionally?"* Record it per domain; it flows to `profile.expertise{}` and
+becomes each skill's `--level`.
+
 ### 5. The three contexts are a Venn, not three boxes
 
 Work, professional craft, and personal life **overlap on purpose**. Treat them as three
@@ -123,10 +151,10 @@ exactly what a generic pulled skill can't capture, so they bias toward GENERATE 
 
 | # | Friendly name | Listens for | Populates in `profile.yaml` |
 |---|---|---|---|
-| **M0** | Tools & devices | surfaces, models, machines, offline, imports | `identity`, `surfaces`, `models`, `transport`, `imports` |
-| **M1** | Your work | role, deliverables, constraints, time-sinks | `contexts.work` (+ work hubs/spokes) |
-| **M2** | Professional craft | deep expertise, growth, north-star standards | `contexts.professional.crafts[]` (+ `lead-*` hubs) |
-| **M3** | Personal life | dream builds, hobbies, life admin, learning | `contexts.personal` (private) |
+| **M0** | Tools & devices | **use-context (work/personal/mix)**, surfaces, models, machines, offline, imports | `use_context`, `identity`, `surfaces`, `models`, `transport`, `imports` |
+| **M1** | Your work | role, **seniority**, deliverables, constraints, time-sinks | `contexts.work`, `expertise{}` (+ work hubs/spokes) |
+| **M2** | Professional craft | deep expertise, **level per domain**, growth, north-star standards | `contexts.professional.crafts[]`, `expertise{}` (+ `lead-*` hubs) |
+| **M3** | Personal life | dream builds, hobbies (**often hobbyist-level**), life admin, learning | `contexts.personal`, `expertise{}` (private) |
 | **M4** | Preferences | tone, verbosity, audience, anti-patterns, posture | `preferences` |
 | **M5** | Lifecycle & ambition | continuity, separation, automation, privacy | `lifecycle`, `privacy` |
 
@@ -141,7 +169,20 @@ set`.
 machines, whether they need to work offline, how they currently sync anything, and what existing
 notes or files they'd want to bring in. This is the warm-up — concrete, low-stakes, easy to answer —
 and it directly determines which adapters you emit, what transport to set up, and which capability
-tier to plan for.
+tier to plan for. It also settles one framing question that **prioritizes everything after it.**
+
+**Settle the use-context first (populates `use_context`).** Before the tools, ask what this
+workspace is *for*, because the answer reorders the whole interview:
+
+- *"Before anything else — is this workspace mainly for your **work**, for your **personal life**,
+  or a **blend of both**? There's no wrong answer; it just tells me where to spend our time."*
+
+Map the answer to `use_context`: **professional** (weight M1/M2, work hubs lead, blended separation
+is fine), **personal** (weight M3, personal hubs lead, walled + local-only by default), or **mixed**
+(both matter — keep them in their walls; this is the common case, and it's what lets a single
+workspace hold a staff-level-expert work life *and* a hobbyist side of life without them bleeding).
+Don't force a clean split if they hesitate — "mixed" is the safe, common default. This read biases
+which movements you go deep on and the `lifecycle.separation` you'll propose in M5.
 
 **Sample questions** (open → menu → escape hatch):
 
@@ -181,7 +222,9 @@ tier to plan for.
 
 **Intent.** Understand what they're paid to do, the shape of their week, the constraints that don't
 move, the standards they're held to, and — critically — **where time leaks.** Recurring deliverables
-become candidate work hubs/spokes; time-sinks are the highest-leverage automation targets.
+become candidate work hubs/spokes; time-sinks are the highest-leverage automation targets. Note their
+**seniority** here (staff, principal, lead, director…) — it feeds `expertise{}` for the work domain
+and, for senior people, tells the generated skills to operate at a peer/leadership altitude (§4a).
 
 **Sample questions:**
 
@@ -228,6 +271,13 @@ hubs**: the opinionated domain leads with their own spoke networks. This movemen
 > the first, best seeds for the Resolver's **reference track**: they become the `references[]` on a
 > composite skill, letting you build something grounded in *their* definition of great plus the
 > industry-leading guidance around it — not a generic pull. (See `brain/resolver.md` → two-track sourcing.)
+>
+> **Record a level for each craft (per §4a).** As each professional craft surfaces, settle its
+> `expertise{}` entry — **level** (hobbyist/intermediate/advanced/expert), **seniority** (staff,
+> principal, lead…) and rough **years** if it's their day-job discipline. This is where the true
+> experts live, so most M2 crafts land at `advanced`/`expert` — but confirm rather than assume, and
+> keep it per-domain: a person can be an expert in their core craft and only intermediate in an
+> adjacent one. The level sets the skill's altitude (its `--level`).
 
 **Sample questions:**
 

@@ -184,7 +184,10 @@ wsx profile get    # read it back and show the person the saved profile
 The profile shape (the seam interface `wsx` consumes):
 
 ```
-schema_version · identity{name,handle} · surfaces{primary,agents[],machines[]}
+schema_version · identity{name,handle}
+· use_context{personal|professional|mixed}
+· expertise{ <domain>: {level, seniority?, years?} }   # per-domain, not global
+· surfaces{primary,agents[],machines[]}
 · models{tier,offline} · transport{type,remote}
 · contexts{ work{role,summary}, professional{crafts[]},
             personal{private,interests[]} }
@@ -220,6 +223,14 @@ Then make the match decision (this is *your* judgment; fetch/pin/cite is `wsx`'s
   canonical skill, grounded in the person's judgment **and** the references you found,
   with a `references[]` list so `wsx resolve` cites them. A composite that doesn't
   cite is unfinished (`wsx lint` fails it).
+
+**Set each skill's altitude from `profile.expertise{}`.** Expertise is **per-domain** — the
+same person is often an `expert` (staff-level) in their core craft and a `hobbyist` in a
+side interest. For every generate/composite entry, read the person's level *for that domain*
+and pass `level` (+ `seniority`) in the plan: a hobbyist skill is scaffolded to *teach*
+fundamentals; an expert skill assumes fluency and captures their judgment/edge-cases (and, if
+senior, how they set the bar). Getting the altitude right per domain is what makes a skill land
+rather than bore or strand them.
 
 Bias: **pull** for generic, well-trodden domains; **adapt** at roughly 70% match;
 **generate-composite** for the person's unique judgment, proprietary work, personal

@@ -37,10 +37,12 @@ Two hard rules govern everything below:
 Synthesis fills exactly this shape. It is the seam the CLI consumes — no field the CLI doesn't know about, no field left structurally absent (unknowns are written as explicit defaults or `null`, never silently dropped).
 
 ```yaml
-schema_version: 1
+schema_version: "0.2"  # set by the tool, not the interview
 identity:
   name: ""             # M0/M4
   handle: ""           # M0 — derived if not given (see §3)
+use_context: ""        # M0 — personal | professional | mixed (prioritizes everything after)
+expertise: {}          # M1/M2/M3 — per-DOMAIN level, keyed by slug: {level, seniority?, years?}
 surfaces:
   primary: ""          # M0 — the assistant they live in
   agents: []           # M0 — every assistant to emit for
@@ -66,9 +68,9 @@ preferences:
   audience: ""         # M4 — who the output is usually for
   banned: []           # M4 — anti-patterns to never produce
 lifecycle:
-  continuity: ""       # M5 — session-log | daily-note | none
+  continuity: true     # M5 — do sessions pick up where the last left off? (boolean)
   separation: ""       # M5 — walled | blended
-  automation: ""       # M5 — manual | assisted | auto
+  automation: ""       # M5 — minimal | standard | full
 privacy:
   personal_local_only: true   # M5 — derived with separation (see §4)
   encrypt: false              # M5
@@ -87,6 +89,7 @@ Each row: the movement that surfaces it, the profile field it sets, and the synt
 
 | Heard | Field | Synthesis judgment |
 |---|---|---|
+| "This is for work / personal / a bit of both" | `use_context` | `professional` \| `personal` \| `mixed`. Weights which movements to deepen and the `lifecycle.separation` default. When unsure, `mixed` (the common, safe case). |
 | "I mostly use Claude / Cursor / Copilot…" | `surfaces.primary` | The one they *live in* becomes primary; it gets the richest adapter. |
 | Every assistant named | `surfaces.agents[]` | Each named assistant is an **emit target** (`claude-code`, `cursor`, `agents-md`, `mcp`, `pack`). Primary is always included. Dedupe. |
 | Their machines (laptop, work laptop, phone) | `surfaces.machines[]` | Normalize to short labels. Presence of a **work machine** is a signal for walled separation (§4). A phone signals "needs a no-terminal path." |
@@ -108,6 +111,12 @@ Each row: the movement that surfaces it, the profile field it sets, and the synt
 |---|---|---|
 | Deep expertise; craft pursued *outside* the employer; north-star standards | `contexts.professional.crafts[]` | Each distinct craft where the person shows **expertise-with-opinions** becomes a craft entry and a candidate **`lead-*` hub** (e.g. `lead-ux-designer`). **Energy is the hub-vs-spoke signal:** a craft they're merely dabbling in is recorded as a single spoke under a broader hub; a craft they have strong, opinionated standards in becomes a hub with 4–8 spokes. Synthesis records the craft; the Resolver (§6) decides pull/adapt/generate per craft. |
 
+### Expertise level (M1/M2/M3) → `expertise{}` — a separate axis, per domain
+
+| Heard | Field | Synthesis judgment |
+|---|---|---|
+| How good they are **in each domain** — casual references to advanced technique vs. asking what things mean; "I do this professionally" vs. "I'm just learning" | `expertise.<slug>` | For **every domain that becomes a skill**, write `{ level, seniority?, years? }`. `level` ∈ hobbyist/intermediate/advanced/expert. **This is per-domain and independent of energy** (§4a of the interview): the same person is often `expert`+`staff` in their day-job craft and `hobbyist` in a side interest. Seniority (staff/principal/lead) rides the professional domains. This map sets each skill's **`--level`** at resolve time, which sets its writing altitude — so getting it right per domain is what makes a skill land instead of bore or strand the person. |
+
 ### M3 — Personal context → `contexts.personal.interests[]`
 
 | Heard | Field | Synthesis judgment |
@@ -127,9 +136,9 @@ Each row: the movement that surfaces it, the profile field it sets, and the synt
 
 | Heard | Field | Synthesis judgment |
 |---|---|---|
-| "I want it to remember where we left off" | `lifecycle.continuity` | `session-log`, `daily-note`, or `none`. Drives whether `wsx session start/end` writes history. |
+| "I want it to remember where we left off" | `lifecycle.continuity` | Boolean — `true` if sessions should pick up where the last left off (drives whether `wsx session start/end` writes history), else `false`. |
 | Walled vs blended work/personal | `lifecycle.separation` + the policy in §4 | `walled` or `blended`. **This single answer is load-bearing** — it sets three things at once (§4). |
-| How much automation they want | `lifecycle.automation` | `manual`, `assisted`, or `auto` — how aggressively `wsx session`/`sync` run without asking. |
+| How much automation they want | `lifecycle.automation` | `minimal`, `standard`, or `full` — how aggressively `wsx session`/`sync` run without asking. |
 | Privacy / encryption appetite | `privacy.encrypt`, `privacy.personal_local_only` | See §4. |
 
 ---
@@ -156,9 +165,9 @@ A field can be unknown because it wasn't reached, the person deferred, or M3 was
 | `preferences.verbosity` | `balanced` | Middle of the ramp. |
 | `preferences.audience` | `"self"` | Most second-brain output is for the owner first. |
 | `preferences.banned` | `[]` | Don't invent prohibitions the person didn't state. |
-| `lifecycle.continuity` | `session-log` | Continuity is the headline feature; default it on. |
+| `lifecycle.continuity` | `true` | Continuity is the headline feature; default it on. |
 | `lifecycle.separation` | `walled` | Safer default (§4). Blend is an explicit opt-in. |
-| `lifecycle.automation` | `assisted` | Acts on routine ops but confirms anything destructive — matches "ask before changing privacy." |
+| `lifecycle.automation` | `standard` | Acts on routine ops but confirms anything destructive — matches "ask before changing privacy." |
 | `privacy.personal_local_only` | `true` | Derived with separation; defaults locked-down. |
 | `privacy.encrypt` | `false` | Offered, never imposed; local-only already covers most of the risk. |
 | `imports` | `[]` | Only what the person pointed at. |
@@ -207,9 +216,10 @@ Synthesis does not produce a YAML file. It produces an ordered **plan of `wsx pr
 **Address syntax.** Dotted paths address nested keys; `[]` appends to a list; lists of scalars may be set in one call with a comma-separated value (the CLI validates and splits). Strings with spaces are quoted.
 
 ```bash
-wsx profile set schema_version=1
+wsx profile set schema_version="0.2"
 wsx profile set identity.name="Maya Okafor"
 wsx profile set identity.handle=maya-okafor
+wsx profile set use_context=mixed
 wsx profile set surfaces.primary=claude-code
 wsx profile set surfaces.agents="claude-code,cursor"
 wsx profile set surfaces.machines="personal-laptop,phone"
@@ -221,12 +231,16 @@ wsx profile set contexts.work.summary="Owns the design system and ships flows fo
 wsx profile set contexts.professional.crafts="design-systems,typography"
 wsx profile set contexts.personal.private=true
 wsx profile set contexts.personal.interests="bread-baking,japanese-language-learning"
+# expertise is per-domain — expert in her craft, hobbyist in a side interest:
+wsx profile set expertise.design-systems.level=expert expertise.design-systems.seniority=staff expertise.design-systems.years=11
+wsx profile set expertise.typography.level=advanced
+wsx profile set expertise.bread-baking.level=hobbyist
 wsx profile set preferences.tone="peer, direct, no hedging"
 wsx profile set preferences.verbosity=balanced
 wsx profile set preferences.banned="emoji,marketing-voice"
-wsx profile set lifecycle.continuity=session-log
+wsx profile set lifecycle.continuity=true
 wsx profile set lifecycle.separation=walled
-wsx profile set lifecycle.automation=assisted
+wsx profile set lifecycle.automation=standard
 wsx profile set privacy.personal_local_only=true
 wsx profile set privacy.encrypt=false
 ```
@@ -313,10 +327,15 @@ A short fictional persona, run through synthesis end to end.
 ### 8.3 Resulting `profile.yaml`
 
 ```yaml
-schema_version: 1
+schema_version: "0.2"
 identity:
   name: "Maya Okafor"
   handle: "maya-okafor"
+use_context: "mixed"
+expertise:
+  design-systems: { level: "expert", seniority: "staff", years: 11 }
+  typography: { level: "advanced" }
+  bread-baking: { level: "hobbyist" }
 surfaces:
   primary: "claude-code"
   agents: ["claude-code", "cursor"]
@@ -346,9 +365,9 @@ preferences:
   audience: "team"
   banned: ["emoji", "marketing-voice"]
 lifecycle:
-  continuity: "session-log"
+  continuity: true
   separation: "walled"
-  automation: "assisted"
+  automation: "standard"
 privacy:
   personal_local_only: true
   encrypt: true

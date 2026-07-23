@@ -230,6 +230,7 @@ The plan the brain hands over is a **JSON file** (the brain authors it as its de
     { "name": "a11y-audit", "source": "composite",
       "hub": "lead-frontend", "kind": "spoke", "triggers": ["a11y", "wcag"],
       "desc": "Audit a UI for WCAG 2.2 AA conformance.",
+      "level": "expert", "seniority": "staff",
       "references": [
         { "title": "WCAG 2.2", "url": "https://www.w3.org/TR/WCAG22/",
           "publisher": "W3C", "note": "normative standard" },
@@ -240,7 +241,7 @@ The plan the brain hands over is a **JSON file** (the brain authors it as its de
 }
 ```
 
-Per-entry fields: `name`, `source` (`pulled` | `pulled+patched` | `generated` | `composite`); for pulls also `registry`, `url` (the fetch source — `http(s)://`, `file://`, or a local path), and optional `license` / `trust`; for generates/composites, `desc` + `kind` (`hub` | `spoke`). A **`references[]`** list (`title`, optional `url` / `publisher` / `note`) turns any generate into a **composite** — `wsx resolve` cites them (and, with `--cache-refs`, pins them). `hub` and `triggers` carry the brain's hub assignment and **reconciled** triggers. **`audited: true` is mandatory on any entry from an unvetted registry** (`skills.sh`, community) — `wsx resolve` refuses it otherwise.
+Per-entry fields: `name`, `source` (`pulled` | `pulled+patched` | `generated` | `composite`); for pulls also `registry`, `url` (the fetch source — `http(s)://`, `file://`, or a local path), and optional `license` / `trust`; for generates/composites, `desc` + `kind` (`hub` | `spoke`). A **`references[]`** list (`title`, optional `url` / `publisher` / `note`) turns any generate into a **composite** — `wsx resolve` cites them (and, with `--cache-refs`, pins them). Each generate/composite also carries **`level`** (`hobbyist`/`intermediate`/`advanced`/`expert`) and optional **`seniority`** — read from the person's `profile.expertise{}` for *this* domain — which set the skill's **writing altitude** (a hobbyist skill teaches; an expert skill assumes fluency and captures judgment). `hub` and `triggers` carry the brain's hub assignment and **reconciled** triggers. **`audited: true` is mandatory on any entry from an unvetted registry** (`skills.sh`, community) — `wsx resolve` refuses it otherwise.
 
 Then, after the review gate below passes, run it once:
 
