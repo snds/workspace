@@ -59,17 +59,38 @@ Draft using the Session Block format (see template below). Base it on:
 
 One line per entry. Omit empty sections.
 
-### Step 2 — Write to session-log.md
+### Step 2 — Write a session FRAGMENT (not the shared log directly)
 
-Append the block under `## Session Entries` in `06-context/session-log.md`.
-**Newest-first** — insert at the top of the section, not the bottom.
+To stay collision-free across concurrent sessions/machines/surfaces, **do NOT edit
+`session-log.md` by hand.** Write your block to its own fragment file:
 
-**Always write a heading line above the block** (belt-and-braces for the boot parser,
-which understands both shapes but headings are cheaper and render in Obsidian):
+```
+06-context/sessions/{YYYY-MM-DD}-{machine-slug}-{short-random}.md
+```
+
+- `machine-slug`: lowercase, e.g. `voyager`, `work`, `enterprise` (from the machine label).
+- `short-random`: any unique 4–6 char token so two same-day sessions never collide.
+
+The fragment is your Session Block plus a **`SessionID:` line** matching the filename
+stem (the compactor dedupes on it). Write a `### heading` above it too:
 
 ```
 ### {YYYY-MM-DD} — {short session title}
+
+SessionID: {YYYY-MM-DD}-{machine-slug}-{short-random}
+--- SESSION BLOCK ---
+Date: {YYYY-MM-DD}
+Machine: {machine label}
+Surface: {surface}
+Project(s): …
+Summary: …
+--- END BLOCK ---
 ```
+
+That's it — disjoint files can't conflict. `09-tools/compact-sessions.py` folds the
+fragment into `session-log.md` (newest-first, idempotent) at session-end and the next
+session-start; you don't touch the shared log. (If `06-context/sessions/` doesn't
+exist yet on an older checkout, fall back to prepending under `## Session Entries`.)
 
 ### Step 3 — Update project-context.md (only if needed)
 

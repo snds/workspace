@@ -689,6 +689,19 @@ def _read_desync_notice() -> str:
         return ""
 
 
+def _compact_session_fragments() -> None:
+    """Fold 06-context/sessions/*.md fragments into session-log.md (idempotent).
+    Non-fatal: session maintenance must never break a session start."""
+    tool = WORKSPACE_ROOT / "09-tools" / "compact-sessions.py"
+    if not tool.exists():
+        return
+    try:
+        subprocess.run([sys.executable, str(tool), "--quiet"],
+                       cwd=str(WORKSPACE_ROOT), capture_output=True, text=True, timeout=20)
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"[session-start] session compaction skipped: {exc}\n")
+
+
 def _ensure_drive_safe_git_config() -> None:
     """Set conservative stat-cache config to reduce Drive flakiness, and pin
     rebase.autoStash off so the cross-machine auto-sync can never stash-and-strand
@@ -1032,6 +1045,9 @@ def handle_session_start(payload: dict) -> None:
 
     ensure_local_gitdir()
     _ensure_executable_bits()
+    # Fold any per-session fragments into session-log.md before the boot-read below,
+    # so this session opens with the latest reconciled history. Idempotent + safe.
+    _compact_session_fragments()
     # Auto-clean stale Drive-resident worktrees whose branches are fully merged.
     # Runs only when this session is in the canonical workspace root (not inside a
     # worktree itself) — that's the natural moment to clean the prior session's
@@ -1263,6 +1279,9 @@ def handle_session_end(payload: dict) -> None:
         return
 
     _ensure_drive_safe_git_config()
+    # Fold this session's fragment into session-log.md so the commit below captures
+    # the reconciled log (and the fragment's removal) atomically. Idempotent.
+    _compact_session_fragments()
 
     machine = resolve_machine_label()
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
