@@ -121,6 +121,24 @@ def verify(root: Path) -> int:
             print(f"  ✗ missing canonical file: {rel}")
             fails += 1
 
+    # 4. pulled skills still match their pin (a read-only pull must stay byte-identical)
+    man = core.load_manifest(root)
+    pinned = [(n, r) for n, r in man.get("skills", {}).items() if r.get("pin")]
+    ok = 0
+    for name, rec in pinned:
+        f = root / rec.get("path", "")
+        if not f.exists():
+            print(f"  ✗ {name}: pinned skill missing on disk ({rec.get('path')})")
+            fails += 1
+        elif core.sha256_file(f) != rec["pin"]:
+            print(f"  ✗ {name}: on-disk content diverged from its pin — a pulled skill "
+                  "must stay byte-identical (patch via overlay, or `wsx resolve --update`)")
+            fails += 1
+        else:
+            ok += 1
+    if pinned:
+        print(f"  ✓ {ok}/{len(pinned)} pulled skill(s) match their pin")
+
     print("✓ verify passed" if fails == 0 else f"verify found {fails} failure(s)")
     return fails
 
@@ -170,19 +188,5 @@ def sync(root: Path) -> int:
     return 0
 
 
-# ----------------------------------------------------------------- resolve ---
-def resolve(root: Path) -> int:
-    """STUB (honest): the mechanical half of the Resolver (fetch + pin pulled skills).
-
-    The brain's judgment (pull/adapt/generate, hub assignment, overlap reconciliation)
-    lives in brain/resolver.md. This command will fetch + pin skills the brain selected.
-    Not yet implemented — it currently reports the plan location and exits cleanly.
-    """
-    plan = root / "context" / "skill-plan.md"
-    print("🚧 wsx resolve is a stub (see SPEC §4 + brain/resolver.md).")
-    if plan.exists():
-        print(f"   found a skill plan at {plan.relative_to(root)} — fetch/pin not yet wired.")
-    else:
-        print("   no skill-plan.md yet — the brain produces one (capability → source → hub → triggers)")
-        print("   and shows it as a review gate before anything installs.")
-    return 0
+# resolve lives in resolver.py now (the mechanical half of the Resolver: fetch,
+# pin, namespace, scaffold overlays, register). cli.cmd_resolve calls it directly.

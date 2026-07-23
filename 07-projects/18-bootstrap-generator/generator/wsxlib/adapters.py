@@ -164,11 +164,19 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
     cm.write_text(claude_md, encoding="utf-8")
     written.append(cm)
 
-    # mirror skills into .claude/skills/<name>/SKILL.md so Claude Code discovers them
+    # mirror skills into .claude/skills/<name>/SKILL.md so Claude Code discovers them.
+    # A pulled skill stays byte-identical to its pin on disk; its owner's deltas live
+    # in a sibling overlay.md, so we compose (pulled base + overlay) into the mirror —
+    # never back into the read-only source.
     for name_, sk in core.iter_skills(root):
+        text = sk.read_text(encoding="utf-8")
+        overlay = sk.parent / "overlay.md"
+        if overlay.exists():
+            _, ov_body = core.parse_frontmatter(overlay)
+            text = f"{text.rstrip()}\n\n---\n\n## House overlay (your deltas)\n\n{ov_body.strip()}\n"
         dst = root / ".claude" / "skills" / name_ / "SKILL.md"
         dst.parent.mkdir(parents=True, exist_ok=True)
-        dst.write_text(sk.read_text(encoding="utf-8"), encoding="utf-8")
+        dst.write_text(text, encoding="utf-8")
         written.append(dst)
 
     _record(root, manifest, "claude-code", written)

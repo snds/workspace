@@ -16,7 +16,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from . import adapters, core, lifecycle, scaffold, skills
+from . import adapters, core, lifecycle, resolver, scaffold, skills
 
 
 # profile fields that are lists — `set` splits these on commas (and accepts [a, b] form).
@@ -127,7 +127,9 @@ def cmd_emit(a):
 
 
 def cmd_resolve(a):
-    return lifecycle.resolve(core.require_workspace())
+    return resolver.resolve(core.require_workspace(),
+                            plan_path=a.plan, update=a.update,
+                            allow_unvetted=a.allow_unvetted)
 
 
 def cmd_lint(a):
@@ -205,13 +207,19 @@ def build_parser() -> argparse.ArgumentParser:
 
     for name, fn, helptext in [
         ("doctor", cmd_doctor, "check your environment + what to do next"),
-        ("resolve", cmd_resolve, "fetch + pin pulled skills (stub)"),
         ("lint", cmd_lint, "validate skills + manifest"),
         ("verify", cmd_verify, "dry-run load per target"),
         ("sync", cmd_sync, "git pull --rebase + push"),
     ]:
         sp = sub.add_parser(name, help=helptext)
         sp.set_defaults(fn=fn)
+
+    pr = sub.add_parser("resolve", help="execute an approved skill plan (fetch + pin + register)")
+    pr.add_argument("--plan", default=None, help="path to the plan JSON (default: context/skill-plan.json)")
+    pr.add_argument("--update", action="store_true", help="bump the pin when an upstream skill changed")
+    pr.add_argument("--allow-unvetted", action="store_true",
+                    help="permit pulls from unvetted registries (skills.sh/community) not marked audited")
+    pr.set_defaults(fn=cmd_resolve)
 
     ps = sub.add_parser("session", help="lifecycle file ops")
     ps.add_argument("action", choices=["start", "end", "reconcile"])

@@ -168,6 +168,48 @@ The seam is strict. The brain produces a fully-decided plan; `wsx resolve` execu
 
 The brain invokes `wsx resolve` **once**, with the approved plan as input. It does not fetch, pin, namespace, or write anything itself — if a step is mechanical, it belongs to `wsx`.
 
+### The machine plan — `context/skill-plan.json`
+
+The plan the brain hands over is a **JSON file** (the brain authors it as its decision record, the same way it writes prose context notes; every *structural* effect that follows — skill dirs, pins, the manifest — is `wsx`'s to make). One object per capability, in a top-level `skills[]`:
+
+```json
+{
+  "skills": [
+    { "name": "a11y-audit", "source": "pulled",
+      "registry": "anthropics/skills", "url": "https://…/SKILL.md",
+      "hub": "lead-frontend", "triggers": ["a11y", "wcag"],
+      "license": "MIT", "trust": "trusted anchor" },
+
+    { "name": "react-house-style", "source": "pulled+patched",
+      "registry": "agentskills.io", "url": "https://…/SKILL.md",
+      "hub": "lead-frontend", "triggers": ["react"] },
+
+    { "name": "zine-layout", "source": "pulled",
+      "registry": "skills.sh", "url": "https://…/SKILL.md",
+      "hub": "lead-graphic", "triggers": ["zine"], "audited": true },
+
+    { "name": "internal-plm", "source": "generated",
+      "hub": "work", "kind": "spoke", "triggers": ["plm"],
+      "desc": "Our proprietary PLM data-table workflow." }
+  ]
+}
+```
+
+Per-entry fields: `name`, `source` (`pulled` | `pulled+patched` | `generated`); for pulls also `registry`, `url` (the fetch source — `http(s)://`, `file://`, or a local path), and optional `license` / `trust`; for generates, `desc` + `kind` (`hub` | `spoke`). `hub` and `triggers` carry the brain's hub assignment and **reconciled** triggers. **`audited: true` is mandatory on any entry from an unvetted registry** (`skills.sh`, community) — `wsx resolve` refuses it otherwise.
+
+Then, after the review gate below passes, run it once:
+
+```
+wsx resolve                 # executes context/skill-plan.json
+wsx resolve --plan <file>   # point at a plan elsewhere
+wsx resolve --update        # bump the pin when an upstream skill has changed
+wsx resolve --allow-unvetted# permit unvetted pulls not marked audited (use sparingly)
+```
+
+`wsx resolve` fetches + **pins** each pull (stored byte-identical, `0o444` read-only under `skills/pulled-<registry>-<name>/`), scaffolds an editable `overlay.md` beside each PULL+PATCH, delegates each GENERATE to the `wsx skill add` skeleton, and registers every skill (with pin, registry, provenance, and the assigned hub/triggers) into `manifest.json`. It is idempotent: an unchanged pull is a no-op; a changed upstream is **skipped with a visible warning** until you pass `--update`. Afterwards, `wsx verify` re-checks that every pinned skill still matches its pin.
+
+> **Note on pulled-skill triggers.** A pulled skill is byte-identical to upstream, so the emitted surface routes on *its* front-matter triggers. To override or add triggers for a pulled skill, put them in its **overlay** — never edit the pulled file. (Overlay→surface composition is wired for the recommended Claude-Code path; treat other surfaces as base-only for now.)
+
 ---
 
 ## The review gate — the skill plan

@@ -1,6 +1,6 @@
 # SESSION-STATE — Portable Bootstrap Generator
 
-_Last updated: 2026-07-22 18:45 — checkpoint (turn-key Path A: registered auto-triggering brain skill + enriched skill skeletons + lint anti-stub gate)_
+_Last updated: 2026-07-22 19:05 — checkpoint (Resolver Phase 2 built: wsx resolve = plan-driven fetch/pin/namespace/overlay + trust gate; earlier this session: turn-key Path A)_
 
 ---
 
@@ -40,20 +40,44 @@ _Last updated: 2026-07-22 18:45 — checkpoint (turn-key Path A: registered auto
 - **Pending questions**: ship-as decision (SPEC §9) — standalone `wsx` repo split, deferred (folder extracts cleanly from git history when ready).
 - **Blocked on**: nothing.
 - **What's needed to resume** (next phases):
-  1. **Resolver (Phase 2)** — implement `wsx resolve` (currently a stub): registry fetch + pin + namespace; wire the skill-plan review gate.
-  2. **`emit mcp`** — currently a stub; build the `workspace-mcp` server (SPEC §5).
+  1. **Resolver (Phase 2)** — **DONE (2026-07-22).** `wsx resolve` is built (`resolver.py`): reads an approved `context/skill-plan.json` and executes PULL (fetch → pin byte-identical `0o444` → namespace `skills/pulled-<registry>-<name>/` → register), PULL+PATCH (pull + editable sibling `overlay.md`, composed into the emitted Claude-Code skill), and GENERATE (delegates to `skill add`). Enforces the unvetted-registry trust gate (`skills.sh`/community refused unless `audited`/`--allow-unvetted`), pin-drift safety (`--update`), idempotency, reindex-safety (pulled records preserved), and pin-integrity in `wsx verify`. Fetch supports `http(s)`/`file`/local (offline-testable). *Remaining Resolver polish: assigned-trigger override for pulled skills is via overlay (Claude-Code composition wired; other surfaces base-only).*
+  2. **`emit mcp`** — currently a stub; build the `workspace-mcp` server (SPEC §5). **Now the single biggest remaining stub.**
   3. **Make Path A turn-key** — **DONE (2026-07-22).** The brain is now a registered skill at `.claude/skills/bootstrap-gen/SKILL.md` (generator root) that auto-triggers on "set up my workspace" (verified live: Claude Code discovered + registered it on write) and points to the canonical `brain/SKILL.md`. `wsx skill add` now writes a **sectioned skeleton** (`--kind hub|spoke`) instead of a flat stub, and `wsx lint` **fails** on any generated skill still carrying `_(…)_` prompts or the skeleton banner — so a workspace can't be called done with empty skills. `brain/SKILL.md` Phase 3 now mandates enrichment + `reindex`. *Out of scope by design: a headless automated loop — the brain narrates and gates each step interactively.*
   4. **Externalize templates** — move the embedded `scaffold.py` `TEMPLATES` dict into `generator/templates/` files.
   5. **Polish (minor):** reconcile `brain/synthesis.md` worked-example values with schema enums (`lifecycle.continuity` is boolean in schema but `session-log` in the example; `automation` enum is minimal/standard/full but example uses `assisted`; `schema_version=1` vs `"0.2"`). Non-breaking (CLI doesn't enforce enums), but tidy for consistency.
 
 ### Known state of external dependencies
-- **Registries to wire (Resolver, §4)**: skills.sh, anthropics/skills, agentskills.io, community, user imports — none integrated yet (Phase 2).
+- **Registries (Resolver, §4)**: the fetch mechanism is **built and pluggable** — `wsx resolve` pulls from any `http(s)`/`file`/local `url` given in the plan, with per-registry trust handled by the `audited` gate (unvetted `skills.sh`/community refused by default). No registry is *hardcoded*; the brain names the registry + url per skill. Not yet done: a registry *search/discovery* layer (the brain currently supplies exact skill urls rather than querying a directory index).
 
 ---
 
 ## Session history (append-only)
 
 _Newest first._
+
+### 2026-07-22 19:05 — checkpoint (Resolver Phase 2: wsx resolve built)
+
+**Focus this session** (continued): after turn-key Path A (block below), built the biggest remaining capability — the Resolver's mechanical hand, `wsx resolve`.
+**Machine**: `Voyager-2.local` (Personal MacBook Pro)
+**Stopped because**: resolve is built + dogfooded across every path; docs reconciled; ready to commit.
+
+**What `wsx resolve` does** (new `generator/wsxlib/resolver.py`, ~230 lines, zero-dep): reads an approved **machine plan** `context/skill-plan.json` (the brain's decision record — one object per capability: `name`, `source`, for pulls `registry`+`url`, assigned `hub`/`triggers`; unvetted registries need `"audited": true`) and executes the mechanical half only:
+- **PULL** → fetch (`http(s)`/`file`/local path — offline-testable) → **pin** to a content hash, stored **byte-identical** and `0o444` **read-only** → **namespace** under `skills/pulled-<registry>-<name>/` (collision-proof, provenance-obvious, flows through existing emit/lint) → register in `manifest.json` (pin, registry, url, read_only, assigned hub/triggers).
+- **PULL+PATCH** → pull + scaffold an **editable sibling `overlay.md`**; `emit claude-code` **composes** `pulled base + overlay` into the mirrored skill (verified: overlay lands in the mirror, never in the read-only source).
+- **GENERATE** → delegates to `wsx skill add` (the enriched skeleton).
+
+**Invariants enforced (all dogfooded green)**: trust gate (`skills.sh`/community **refused** unless `audited` or `--allow-unvetted` — verified refuse→allow); pin-drift safety (changed upstream **skipped** with a warning until `--update` re-pins — verified); idempotency (unchanged pull = no-op); read-only `0o444` + pin==file-bytes (verified); **reindex-safety** (fixed a latent bug: `wsx skill reindex` would have clobbered resolver-owned pin/registry fields — now it preserves pulled/patched records); **pin-integrity in `wsx verify`** (new check catches a tampered pulled file — verified with a tamper test).
+
+**Wiring**: `resolver.py` new; `cli.py` gives `resolve` its own parser (`--plan`/`--update`/`--allow-unvetted`); old `lifecycle.resolve` stub removed; `skills.reindex` preserves pulled records; `lifecycle.verify` gains the pin check; `adapters.emit_claude_code` composes overlays.
+
+**Decisions made**:
+- **Plan is JSON, brain-authored, wsx-executed**: the plan is the brain's decision record (like its prose notes); every *structural* effect (dirs, pins, manifest) is `wsx`'s. Keeps the seam clean.
+- **Namespace by folder name** (`pulled-<registry>-<name>`) rather than a separate subtree — so pulled skills flow through the existing one-level `iter_skills`/emit/lint pipeline unchanged, while provenance stays obvious.
+- **Pin = byte-identical**; assigned hub/triggers live in the manifest, overrides go in the overlay — never edit a pulled file. Pulled skills therefore route on their *upstream* front-matter triggers on non-composed surfaces; overlay composition is wired for the recommended Claude-Code path (documented honestly).
+
+**Next resumption needs**: `emit mcp` (SPEC §5) is now the single biggest stub. Then minor polish: a registry *search/discovery* layer (brain currently supplies exact urls), externalize scaffold templates, reconcile `brain/synthesis.md` example values with schema enums.
+
+---
 
 ### 2026-07-22 18:45 — checkpoint (turn-key Path A: registered brain skill + enriched skeletons + lint gate)
 

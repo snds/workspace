@@ -117,9 +117,21 @@ def add(root: Path, name: str, desc: str, triggers, hub: str,
 
 def reindex(root: Path) -> int:
     man = core.load_manifest(root)
-    man["skills"] = {name: _record(root, name) for name, _ in core.iter_skills(root)}
+    prior = man.get("skills", {})
+    rebuilt = {}
+    for name, _ in core.iter_skills(root):
+        old = prior.get(name, {})
+        # Pulled/patched records are owned by `wsx resolve` (pin, registry, url,
+        # read_only, pulled_at, the brain-assigned hub/triggers) — none of which live
+        # in the upstream file's front matter. Rebuilding from disk would strip them,
+        # so preserve the resolver's record verbatim; only generated skills reindex.
+        if old.get("source") in ("pulled", "pulled+patched"):
+            rebuilt[name] = old
+        else:
+            rebuilt[name] = _record(root, name)
+    man["skills"] = rebuilt
     core.save_manifest(root, man)
-    print(f"✓ reindexed {len(man['skills'])} skill(s) into manifest.json")
+    print(f"✓ reindexed {len(rebuilt)} skill(s) into manifest.json")
     return 0
 
 

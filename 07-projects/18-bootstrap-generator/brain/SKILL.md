@@ -84,6 +84,7 @@ everything structural goes through `wsx`:
 | Write profile fields | `wsx profile set contexts.work.role="…" surfaces.agents="claude,cursor" …` |
 | GENERATE a skill | `wsx skill add <name> --kind hub\|spoke --hub <hub> --triggers "a,b,c" --desc "…"` |
 | Enrich a skill body | (author the skeleton's sections in prose) then `wsx skill reindex` |
+| PULL / PATCH skills | author `context/skill-plan.json` (see brain/resolver.md), then `wsx resolve` |
 | List / re-index skills | `wsx skill list` · `wsx skill reindex` |
 | Check trigger overlaps | `wsx lint` |
 | Emit for their surface(s) | `wsx emit claude-code` (or `agents-md` / `cursor` / `pack` / `all`) |
@@ -92,9 +93,10 @@ everything structural goes through `wsx`:
 
 Notes: list-valued profile fields (`surfaces.agents`, `contexts.professional.crafts`,
 `contexts.personal.interests`, `preferences.banned`, `imports`) take comma-separated
-values. `wsx resolve` (PULL from a registry) and `wsx emit mcp` are **stubs** today —
-for now, **GENERATE** skills with `wsx skill add` and emit the file-based adapters.
-Lost? `wsx doctor` says where you are and what to run next.
+values. `wsx resolve` (PULL/PATCH from a registry, per an approved `skill-plan.json`)
+is **built** — it fetches, pins (read-only), namespaces, and registers. `wsx emit mcp`
+is still a **stub**; the file-based adapters (`claude-code`/`agents-md`/`cursor`/`pack`)
+are the emit paths. Lost? `wsx doctor` says where you are and what to run next.
 
 ---
 
@@ -242,14 +244,21 @@ orchestrator with spokes and `--kind spoke` for a focused skill.
 - the trigger map after reconciliation (who owns what),
 - anything unvetted, flagged clearly.
 
-Get an explicit **go-ahead.** Only then run the mechanical half:
+Get an explicit **go-ahead.** Only then write the approved plan as
+`context/skill-plan.json` (the machine format is in **brain/resolver.md** — one
+object per capability: `name`, `source`, and for pulls `registry` + `url`, plus the
+assigned `hub`/`triggers`; unvetted registries need `"audited": true`) and run the
+mechanical half once:
 
 ```
-wsx resolve    # fetch + pin pulled skills per the approved plan
+wsx resolve    # fetch + pin (read-only) pulled skills, scaffold overlays, register
 ```
 
-Generated skills are authored as canonical markdown in `skills/`; patched skills
-get a sibling overlay; pulled skills are pinned read-only and namespaced.
+Generated skills are authored as canonical markdown in `skills/`; patched skills get
+a sibling editable `overlay.md` (composed into the emitted Claude-Code skill); pulled
+skills are pinned read-only and namespaced under `skills/pulled-<registry>-<name>/`.
+Then enrich every GENERATED skill (below) and, for pulled skills, put any trigger or
+rule overrides in the overlay — never edit a pulled file.
 
 ---
 
