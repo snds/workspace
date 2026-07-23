@@ -690,14 +690,16 @@ def _read_desync_notice() -> str:
 
 
 def _ensure_drive_safe_git_config() -> None:
-    """Set conservative stat-cache config to reduce Drive flakiness.
-
-    Not load-bearing — Tier 1's content-hash fallback is the actual safety net —
-    but a small reduction in surface area for stat-cache false positives.
+    """Set conservative stat-cache config to reduce Drive flakiness, and pin
+    rebase.autoStash off so the cross-machine auto-sync can never stash-and-strand
+    a live editing session's uncommitted work (a dirty-tree `pull --rebase` refuses
+    instead). Not load-bearing — the content-hash fallback is the real safety net —
+    but it keeps the safe default from drifting if a global config ever flips it.
     """
     if not in_git_repo():
         return
-    for key, value in [("core.checkStat", "minimal"), ("core.trustctime", "false")]:
+    for key, value in [("core.checkStat", "minimal"), ("core.trustctime", "false"),
+                       ("rebase.autoStash", "false")]:
         try:
             existing = git("config", "--local", "--get", key).stdout.strip()
             if existing != value:

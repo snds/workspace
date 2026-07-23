@@ -44,8 +44,13 @@ if [[ -d "$TARGET/.git" ]]; then
   git -C "$TARGET" remote set-url origin "$REPO_URL" 2>/dev/null || git -C "$TARGET" remote add origin "$REPO_URL"
   git -C "$TARGET" fetch origin "$BRANCH"
   git -C "$TARGET" checkout "$BRANCH" 2>/dev/null || git -C "$TARGET" checkout -b "$BRANCH" --track "origin/$BRANCH"
-  git -C "$TARGET" pull --rebase origin "$BRANCH"
-  ok "Updated to latest origin/$BRANCH"
+  # Never rebase over a live editing session — skip the pull if the tree is dirty.
+  if [ -n "$(git -C "$TARGET" status --porcelain 2>/dev/null)" ]; then
+    say "⚠ Uncommitted changes present — skipping auto-pull to protect your work. Commit, then re-run."
+  else
+    git -C "$TARGET" pull --rebase origin "$BRANCH"
+    ok "Updated to latest origin/$BRANCH"
+  fi
 elif [[ -e "$TARGET" && -n "$(ls -A "$TARGET" 2>/dev/null)" ]]; then
   # (b) Folder exists, non-empty, but NOT a git repo (e.g. brought in by Obsidian Sync).
   #     Adopt the history WITHOUT touching local files — never clobbers, never fails on conflicts.

@@ -252,6 +252,14 @@ def git_clone_or_pull(workspace: Path, repo_url: str) -> None:
     git_dir = workspace / ".git"
     if git_dir.exists():
         info("Git repo already initialized here.")
+        # Never rebase over a live editing session. If the tree is dirty, skip the
+        # pull rather than error/strand work — the user commits, then re-syncs.
+        dirty = run(["git", "-C", str(workspace), "status", "--porcelain"],
+                    check=False, capture=True)
+        if getattr(dirty, "stdout", "").strip():
+            warn("Uncommitted changes present — skipping auto-pull to protect your work.")
+            warn("Commit (or stash) first, then re-run to sync from remote.")
+            return
         run(["git", "-C", str(workspace), "pull", "--rebase"], check=False, capture=False)
         ok("Pulled latest from remote")
         return
