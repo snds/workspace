@@ -62,6 +62,11 @@ The workspace is both a knowledge base and an execution environment.
 - Keep human-readable markdown and machine-readable manifests aligned. Frontmatter is the source of
   truth for the skill graph; `03-skills/skills.registry.json` is generated from it, never hand-edited.
 - Favor idempotent updates, deterministic naming, and reviewable diffs.
+- **Token frugality is a #1 priority.** This brain must never cost more tokens than the value it adds.
+  Read the **head** of a log, never a whole growing file (`session-log.md` is bounded by archival; older
+  history is in `session-log-archive.md`, read only on demand). Load a skill only when its trigger fires;
+  prefer the smallest sufficient context. When editing an **auto-loaded** file (this contract, `CLAUDE.md`,
+  a `.cursor` rule), keep additions terse — every line there is a recurring per-session cost.
 - Before writing anything, consult the routing map in [workspace-ontology.md](02-shared-references/workspace-ontology.md).
 - **Context is king — resolve the context profile before any repo action or delivery.** Who owns the
   work and who reviews it is a *declared fact*, never a guess:
@@ -293,7 +298,8 @@ context store; it updates the shared one so the next agent inherits an unbroken 
 | State | Holds | Cadence |
 |---|---|---|
 | Active project `SESSION-STATE.md` (its **Live handoff** block) | "pick up exactly here": current focus, working set, last action, next action, open decisions, blocked-on, in-flight/do-not-touch | updated **continuously** + at every handoff |
-| `06-context/session-log.md` | chronological history, newest-first, each block attributed | appended at handoff / session end |
+| `06-context/sessions/<id>.md` fragment | this session's block (a disjoint file per session) | written at session end; compaction folds it into `session-log.md` |
+| `06-context/session-log.md` (+ `session-log-archive.md`) | chronological history, newest-first, attributed; **bounded** (old blocks archived) | folded from fragments; read the **head** only |
 | `06-context/memory/` | durable, non-project facts + decisions | when a durable fact emerges |
 
 ### Handoff protocol (tool-neutral — every agent follows this)
@@ -302,10 +308,12 @@ context store; it updates the shared one so the next agent inherits an unbroken 
    state from scratch or assume a fresh project.
 2. **While working** — keep the Live handoff block current as the situation changes (focus, working set,
    decisions). It is the baton, not a journal.
-3. **On handoff / pause / end** — rewrite the Live handoff block (atomically, no stale fields) and append a
-   session-log entry. Leave the next agent a clean "next action."
-4. **Concurrent edits** — if two agents touched the same project in parallel, run the reconcile protocol
-   (`/reconcile` or the merge steps in the bootstrap skill) to merge into one thread; flag genuine conflicts.
+3. **On handoff / pause / end** — rewrite the Live handoff block (atomically, no stale fields) and write your
+   session block as a **fragment** (`06-context/sessions/<id>.md` with a `SessionID:` line) — not a direct
+   append to `session-log.md`. Compaction folds it in. Leave the next agent a clean "next action."
+4. **Concurrent edits** — disjoint fragments + the `merge=union` log rarely conflict now, so concurrent
+   sessions/machines/surfaces mostly reconcile automatically (compaction at session-start/end). `/reconcile`
+   remains for the structured `project-context.md` merge, which is flagged for a human, never auto-guessed.
 
 ### Two handoff modes
 - **Boundary handoff (tool → tool):** a session ends in one tool and resumes in another — driven by the

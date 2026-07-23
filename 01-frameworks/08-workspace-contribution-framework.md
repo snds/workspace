@@ -26,6 +26,10 @@ below.
 4. **Portable-first.** Nothing you add may require one vendor, device, or cloud drive. If a mechanism
    only works in one tool, it belongs in that tool's adapter, not the shared layers.
 5. **Smallest correct change.** Right altitude, right layer, minimal blast radius, reviewable in one sitting.
+6. **Token frugality (a #1 priority).** The workspace must never cost more tokens than the value it adds.
+   Structure state so it's read cheaply — bounded, append-only logs that **archive** rather than grow (never
+   a whole growing file); load skills only on trigger. Be especially terse in **auto-loaded** files (the
+   contract, `CLAUDE.md`, `.cursor` rules): every line there is a recurring per-session cost, so earn it.
 
 ---
 
@@ -204,9 +208,11 @@ CI (`archive-provenance`) fails if a file under `_archive/` has no matching `ARC
 How any agent opens and closes a working session here, with **no dependency on tool hooks**. A tool
 adapter (e.g. a Claude hook) may automate this, but the protocol is the contract.
 
-**Session start — read (and inherit the thread):**
+**Session start — read (and inherit the thread), frugally:**
 1. `llms.txt` → `AGENTS.md` (contract) → `03-skills/skills.registry.json` (skill graph).
-2. `06-context/`: `role-and-context`, `project-context`, head of `session-log`, `memory/MEMORY.md`.
+2. `06-context/`: `role-and-context`, `project-context` (head), **head of `session-log`** (it's bounded;
+   old blocks are in `session-log-archive.md`, read only on demand), `memory/MEMORY.md`. Never read a whole
+   growing log — token frugality is a #1 priority.
 3. The active project's `SESSION-STATE.md` — **read the Live handoff block first**; you now hold the same
    context the previous agent had. Identify yourself (Agent · Surface · Machine) for attribution.
 
@@ -217,12 +223,16 @@ baton. Record durable insights/facts in the moment (knowledge/memory), not just 
 **On handoff / pause (mid-project, not just at the end) — pass the baton:**
 1. Rewrite the **Live handoff block** atomically: current focus, working set, last action (attributed),
    next action, open decisions, blocked-on, in-flight/do-not-touch; prepend an Agent-thread line.
-2. Append a session-log entry (attributed) if meaningful work landed.
+2. Write a session block as a **fragment** (`06-context/sessions/<id>.md` with a `SessionID:` line) if
+   meaningful work landed — not a direct append to `session-log.md`. Compaction folds it in.
 3. Commit so the next agent — on any tool — inherits an unbroken thread. This is what makes a multi-agent
    project one contract instead of N. See [[AGENTS]] → "Multi-agent continuity & handoff".
 
 **Session end — write:**
-1. Append a session block to `06-context/session-log.md` (stamped Agent · Surface · Machine).
+1. Write your session block as a **fragment** in `06-context/sessions/` (a disjoint file per session,
+   stamped Agent · Surface · Machine, with a `SessionID:` line). Disjoint fragments never collide across
+   concurrent sessions/machines/surfaces; compaction folds them into `session-log.md` and archives old
+   blocks. **Do not hand-edit `session-log.md`** (append-only, `merge=union`, bounded by archival).
 2. Apply any project status / pending changes to `06-context/project-context.md`.
 3. Update the active project's `SESSION-STATE.md` (incl. the Live handoff block).
 4. If a generated artifact changed (frontmatter edited), regenerate `skills.registry.json` + Related blocks.
