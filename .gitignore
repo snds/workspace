@@ -58,6 +58,11 @@
 !06-context/
 !06-context/**
 
+# Transient per-session files (regenerated each session; machine-local, not shared).
+# The .md session fragments and the README ARE tracked — only these are ignored.
+06-context/sessions/*.touched
+06-context/sessions/*.alive
+
 # Archive (retired files + provenance ledger). Tracked so provenance is auditable.
 !_archive/
 !_archive/**
