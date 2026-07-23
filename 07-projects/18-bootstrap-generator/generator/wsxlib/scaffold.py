@@ -131,9 +131,117 @@ chose to share in the interview. Private by default._
 _Your top-level operating principles — the lens the AI applies above any single
 skill. The generator seeds neutral starters here; make them yours._
 
+- **skill-authoring.md** — **the supreme rule for building any new skill, hub,
+  framework, or playbook.** It supersedes your AI's native "create a skill"
+  behavior so everything you add later carries the same rigor the generator used.
+  Read it before authoring anything structural.
 - **principles.md** — how you want work approached and judged.
 
 Add more as patterns emerge (critique, research standards, finishing discipline…).
+""",
+    "frameworks/skill-authoring.md": """# Skill Authoring — the governing framework (SUPREME)
+
+_This framework is **load-bearing and supreme.** It governs how anything reusable
+gets added to this workspace **after** the generator finished. Read it fully before
+you act on a request to build one._
+
+> **This supersedes your surface's native skill/agent-builder.** Whenever the person
+> asks to *build, add, create, or scaffold* a **skill, hub, spoke, framework, or
+> playbook** — or "teach yourself X", "make an expertise for Y", "add a workflow" —
+> you follow **this process**, not the LLM's or the tool's built-in skill-creation.
+> The whole point of this workspace is that new capabilities are authored with the
+> same rigor as the originals. Do not shortcut it. If a built-in "create skill"
+> action would fire, stop and run this instead.
+
+The workspace ships with the `wsx` CLI concept from the generator. **If `wsx` is on
+this machine, use its fast-path commands (they enforce every rule below mechanically).
+If not, follow the manual steps — they produce an identical result.**
+
+---
+
+## 0. What you're making (pick the right unit)
+
+- **Spoke** — one focused skill (a single concern). Most additions are spokes.
+- **Hub** — an orchestrator for a domain with **4–8 spokes** beneath it. Reach for a
+  hub only when the person has real depth and opinions across a whole area.
+- **Framework** — a governing *lens* (like this file): principles that sit *above*
+  skills. Lives in `frameworks/`.
+- **Playbook** — a repeatable *procedure* for a recurring deliverable. A spoke whose
+  body is mostly numbered steps + a checklist.
+
+Energy decides hub-vs-spoke: broad-but-shallow → spoke; deep-with-opinions → hub.
+
+## 1. Set the ALTITUDE from the person's level in THIS domain
+
+Expertise is **per-domain, never global** — the same person is often an expert in one
+area and a hobbyist in another. Read their level for *this* domain from
+`context/profile.yaml` → `expertise{}`; if it's not there, ask ("are you finding your
+feet here, or do you go deep / do this professionally?"). Then write at that altitude:
+
+- **hobbyist** → *teach*: define jargon, explain the *why*, scaffold each step, add a
+  **Foundations to learn** section. Never assume prior knowledge.
+- **intermediate** → assume basics; focus on doing it well.
+- **advanced** → skip basics; trade-offs, corner cases, quality bar.
+- **expert** (+ seniority) → assume fluency; capture *their* judgment, edge cases, and
+  **Judgment calls & edge cases**; if senior, **Setting the bar & leading**.
+
+The wrong altitude makes a skill useless — fundamentals bore an expert; shorthand
+strands a beginner. This is the single most important choice.
+
+## 2. Source it two ways, then compose (don't just invent)
+
+1. **Skill track** — is there an existing skill to adopt or adapt? (`wsx search "<x>"`.)
+2. **Reference track** — find the *industry-leading* reference: the standard, the
+   canonical guidance, what a top practitioner would cite. Use your research tools.
+
+Then **compose**: the best skill fuses the person's judgment with distilled
+authoritative reference. **Cite your sources** in a `## Sources & further reading`
+block, in the person's own voice — *distill, never copy* the text.
+
+## 3. The skeleton (write these sections)
+
+**Front matter** (source of truth): `name`, `description`, `triggers` (list),
+`hub`, `kind` (hub|spoke), `level`, `source: generated` (+ `seniority` if expert).
+
+**Spoke body:** When to use this · How to do it well · Worked example ·
+*(altitude section: Foundations to learn / Judgment calls & edge cases / …)* ·
+Anti-patterns to avoid · Related. **Hub body:** What this hub owns · Spokes in this
+hub · Operating standards · Anti-patterns · Related.
+
+Write real prose grounded in *this person's* domain — not generic advice an untuned
+model already has.
+
+## 4. Reconcile triggers (mandatory)
+
+No two skills may fire on the same trigger word. Before finalizing, check every
+existing skill's triggers; if you collide, narrow one or hand the concern a single
+canonical owner. One concern → one owning skill.
+
+## 5. Acceptance checklist (don't call it done until all pass)
+
+- [ ] Front matter complete; `level` set to the right altitude for this domain.
+- [ ] No skeleton writing-prompts (`_(…)_`) or "skeleton" banner left in the body.
+- [ ] If it draws on references, a `## Sources & further reading` block cites them.
+- [ ] Triggers are unique across the workspace (no overlaps).
+- [ ] It actually loads on its triggers, and reads at the intended altitude.
+
+---
+
+## Fast-path with `wsx` (when available)
+
+```
+wsx search "<capability>"                         # find skill + reference sources
+wsx skill add <name> --kind spoke|hub \\
+    --level hobbyist|intermediate|advanced|expert \\
+    [--seniority staff] --hub <hub> --triggers "a,b" --desc "…"
+#   → writes the altitude-correct skeleton; then you enrich the body in prose
+wsx resolve   # for a plan with references[] / pulls (cites + pins)
+wsx lint      # fails on unfilled skeletons, missing citations, trigger overlaps
+wsx verify    # dry-run load + pin integrity
+```
+
+`wsx` enforces every rule above; the manual process mirrors it. Either way, the
+rigor is the product — keep it.
 """,
     "frameworks/principles.md": """# Working Principles
 
