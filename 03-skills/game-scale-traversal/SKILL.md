@@ -52,7 +52,7 @@ A near plane at 1 m and far plane at light-years destroys the depth buffer (z-fi
   [[planetary-terrain-lod]] (cube-sphere quadtree + CDLOD, per-patch-origin as the terrain-side extension of
   floating origin); atmosphere/cloud/ocean → [[atmospheric-scattering-and-clouds]]; star + black hole →
   [[stellar-and-relativistic-hero-bodies]]. The close-zoom **90 FPS budget, temporal upsampling (TAAU/DRS),
-  origin-shift-as-history-invalidation, and df64** discipline live in [[realtime-render-performance-90fps]].
+  origin-shift-as-history-invalidation, and df64** discipline live in [[realtime-render-performance]].
 
 ## The cinematic zoom camera
 A great flythrough is *directed*, not a linear lerp ([[img-cinematography]] + [[motion-3d-spatial]]):
@@ -64,4 +64,4 @@ A great flythrough is *directed*, not a linear lerp ([[img-cinematography]] + [[
 
 ## Related
 - hub → [[lead-game-developer]]
-- peer ↔ [[motion-3d-spatial]] · [[vfx-particle-systems]] · [[planetary-terrain-lod]] · [[realtime-render-performance-90fps]]
+- peer ↔ [[motion-3d-spatial]] · [[vfx-particle-systems]] · [[planetary-terrain-lod]] · [[realtime-render-performance]]

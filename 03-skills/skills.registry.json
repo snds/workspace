@@ -35,7 +35,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:8989d5994a60c9e44189338914bfe47dbe74d68ae61e639cd157c0ec7170df71"
+      "hash": "sha256:1c1f386aaaf24acdc28c56ed66a69ec89c6a3b705931fd1a32fa8900a9bbf6fd"
     },
     "3d-lighting-rendering": {
       "path": "03-skills/3d-lighting-rendering/SKILL.md",
@@ -295,7 +295,7 @@
       "domain": "game",
       "hub": "lead-game-developer",
       "prerequisites": [
-        "realtime-render-performance-90fps",
+        "realtime-render-performance",
         "vfx-volumetrics"
       ],
       "related": [
@@ -331,7 +331,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:68fc6fd5590de1a472fd11c29f6dce94f90ca17c4a663c655c0515e9365c7632"
+      "hash": "sha256:7bbbff318b2585d5c9e3d23004d2db43f7d65d3b483eb95694a12779273fbcb6"
     },
     "be-api-design": {
       "path": "03-skills/be-api-design/SKILL.md",
@@ -2001,7 +2001,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:740208b87461f98d88bc67bafb80b7e526a6658afb6b4656db0855f0f9a138ea"
+      "hash": "sha256:fba318abe63398cf3c9c92e69e712f5df5296b6110ecd0242b0913d86fecbc33"
     },
     "game-scale-traversal": {
       "path": "03-skills/game-scale-traversal/SKILL.md",
@@ -2034,7 +2034,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:e3c7278adec392252de504dba2e60a82e7740dd2696d3dfe2654b9d812a1ed32"
+      "hash": "sha256:69b05484c12f11c5b0343b01975fbac27ea71df64aaf9d32830cb0e9f6b3384f"
     },
     "gd-brand-identity": {
       "path": "03-skills/gd-brand-identity/SKILL.md",
@@ -2857,7 +2857,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:b4ced16253ec0612c730b46ab4806dcd4cbea5ef5efe96e9c094a08474249b3b"
+      "hash": "sha256:c4caa064875ae68f47a97ca925459a5a467a64cbcdf0566667a97b462d4fe705"
     },
     "lead-graphic-designer": {
       "path": "03-skills/lead-graphic-designer/SKILL.md",
@@ -3588,7 +3588,7 @@
       "domain": "game",
       "hub": "lead-game-developer",
       "prerequisites": [
-        "realtime-render-performance-90fps"
+        "realtime-render-performance"
       ],
       "related": [
         "glsl-shader-architect",
@@ -3619,7 +3619,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:8ec9b3f9e46317ea66361a40d143de92f5ca59116ce74bcdf8e123294fdf93f4"
+      "hash": "sha256:d414773174ce0bf0e3174bd1e3435c80decbf90cc91de01b10579471d29dd200"
     },
     "pm-competitive-intelligence": {
       "path": "03-skills/pm-competitive-intelligence/SKILL.md",
@@ -3806,8 +3806,8 @@
       "requires": [],
       "hash": "sha256:22c547d50acc7ee5740451347ba624d823263845060c2831ac768255ad5a7363"
     },
-    "realtime-render-performance-90fps": {
-      "path": "03-skills/realtime-render-performance-90fps/SKILL.md",
+    "realtime-render-performance": {
+      "path": "03-skills/realtime-render-performance/SKILL.md",
       "tier": "spoke",
       "domain": "game",
       "hub": "lead-game-developer",
@@ -3822,10 +3822,21 @@
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "90fps",
-        "90 fps",
+        "frame rate",
+        "framerate",
+        "60fps",
+        "120fps",
         "frame budget",
         "frame time",
+        "frame pacing",
+        "input latency",
+        "input lag",
+        "input delay",
+        "frame cap",
+        "fps cap",
+        "vsync",
+        "refresh rate",
+        "responsiveness",
         "taau",
         "temporal upsampling",
         "temporal anti-aliasing",
@@ -3848,7 +3859,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:9bbb89aa74119ca15ca555db3fe7a3eed5fbf587433faa1e39a02c0a44b26d21"
+      "hash": "sha256:d6847707bd0580a8685599b2e2f15f8d104c9f19ed0d1f37ca56308507d995bc"
     },
     "redesign": {
       "path": "03-skills/redesign/SKILL.md",
@@ -4260,7 +4271,7 @@
       "domain": "game",
       "hub": "lead-game-developer",
       "prerequisites": [
-        "realtime-render-performance-90fps",
+        "realtime-render-performance",
         "sci-astro-objects",
         "vfx-volumetrics"
       ],
@@ -4297,7 +4308,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:a3fdf8be4d52447621e22925d6f80aa448ce90ef6378ddc7bce81e7e2bb04a0c"
+      "hash": "sha256:8d601a9d2be3930d4bfc44f2ce09ce2f73f7e87fe755e724f3a204627423cb39"
     },
     "svg-font-extraction": {
       "path": "03-skills/svg-font-extraction/SKILL.md",
@@ -5342,7 +5353,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:1641d331e169e639ba06830681d6701dbea9539a0057d09b0c22df4d0bac4aed"
+      "hash": "sha256:a79bd27cb349b368d2fefb33c9445afc0ebcd0379dfb3a0e72cc4e5cbc8d77a6"
     },
     "workspace-bootstrap": {
       "path": "03-skills/workspace-bootstrap/SKILL.md",
@@ -5442,7 +5453,7 @@
       "threejs-vfx-atmosphere",
       "vfx-volumetrics",
       "webgpu-advanced-rendering",
-      "realtime-render-performance-90fps",
+      "realtime-render-performance",
       "atmospheric-scattering-and-clouds"
     ],
     "be-api-design": [
@@ -6198,7 +6209,7 @@
       "lead-game-developer",
       "game-scale-traversal",
       "webgpu-advanced-rendering",
-      "realtime-render-performance-90fps",
+      "realtime-render-performance",
       "planetary-terrain-lod"
     ],
     "pm-competitive-intelligence": [
@@ -6246,14 +6257,14 @@
       "design-foundations",
       "qa"
     ],
-    "realtime-render-performance-90fps": [
+    "realtime-render-performance": [
       "game-foundations",
       "imaging-foundations",
       "science-foundations",
       "lead-game-developer",
       "game-scale-traversal",
       "webgpu-advanced-rendering",
-      "realtime-render-performance-90fps"
+      "realtime-render-performance"
     ],
     "redesign": [
       "design-foundations",
@@ -6325,7 +6336,7 @@
       "threejs-vfx-atmosphere",
       "vfx-volumetrics",
       "webgpu-advanced-rendering",
-      "realtime-render-performance-90fps",
+      "realtime-render-performance",
       "stellar-and-relativistic-hero-bodies"
     ],
     "svg-font-extraction": [

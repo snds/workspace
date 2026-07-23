@@ -117,7 +117,7 @@ Entities are containers of components. A Factory Building entity is composed of 
 Systems don't call each other directly—they use events. A production update broadcasts an event and UI listens. Less brittle, easier to extend.
 
 ### 4. Performance-First Architecture
-Game code must run at 60 FPS in a browser. Early decisions about pooling, spatial hashing, and rendering prevent rewrites later.
+**60 FPS is the floor, not the goal** — and it must hold on the weakest supported hardware. Render **uncapped by default** (higher FPS buys both smoother motion *and* lower input latency, both felt); expose an **optional user frame cap** in settings so players can hand budget back to other engine work (simulation, AI, streaming) or cut power/heat/battery. Treat **input latency** as a co-equal target to frame rate — a game can hit 60 FPS and still feel laggy. Early decisions about pooling, spatial hashing, frames-in-flight, and rendering prevent rewrites later. The full budget / latency / temporal / precision spine lives in [[realtime-render-performance]].
 
 ### 5. Web-First Design
 Leverage the browser: IndexedDB for saves, WebSockets for multiplayer, WebGPU for next-gen graphics, graceful fallback to WebGL.
@@ -152,5 +152,5 @@ This hub includes six deep-dive references:
 
 ## Related
 - foundation → [[game-foundations]] · [[science-foundations]]
-- spoke → [[atmospheric-scattering-and-clouds]] · [[game-scale-traversal]] · [[glsl-shader-architect]] · [[planetary-terrain-lod]] · [[realtime-render-performance-90fps]] · [[stellar-and-relativistic-hero-bodies]] · [[threejs-materials-master]] · [[threejs-vfx-atmosphere]] · [[webgpu-advanced-rendering]]
+- spoke → [[atmospheric-scattering-and-clouds]] · [[game-scale-traversal]] · [[glsl-shader-architect]] · [[planetary-terrain-lod]] · [[realtime-render-performance]] · [[stellar-and-relativistic-hero-bodies]] · [[threejs-materials-master]] · [[threejs-vfx-atmosphere]] · [[webgpu-advanced-rendering]]
 - peer ↔ [[vision-foundations]]

@@ -20,6 +20,38 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-22 — Game-dev perf doctrine + 4 hero-body rendering skills (Legion-driven)
+
+--- SESSION BLOCK ---
+Date: 2026-07-22
+Agent: Claude Opus 4.8
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 13-legion (workspace skill/knowledge augmentation in service of Legion rendering)
+Summary: Augmented the game-dev 3D skill network toward SpaceEngine-class hero-body fidelity. Ran a 16-agent research workflow (5 pillars → adversarial verify → synthesis, ~1.08M tokens, 156 web fetches) → master dossier; authored 4 new spoke skills; then generalized the performance requirement into a project-wide doctrine. Registry 248 → 252; all gates green (registry/related/links/integrity).
+Decisions:
+  - 4 new lead-game-developer spokes from the adversarially-verified dossier: planetary-terrain-lod, atmospheric-scattering-and-clouds, stellar-and-relativistic-hero-bodies, realtime-render-performance. Load-chain: foundations → hub → perf-spine → body skills (verified).
+  - Honest verdicts baked in (not hype): real in-browser budget ~8–9 ms not 11.1; planet+star hit high FPS on desktop dGPU (60+DRS on integrated); black hole = scripted slow-camera hero moment, zero interactive-game precedent; WebGPU has no mesh/tessellation/VRS/fp64 → compute+indirect only; TAAU is a co-dev bet that fails on motion-vector-less content.
+  - Generalized performance into a project-wide DOCTRINE (not Legion/90fps-specific): 60 FPS floor (not goal), uncapped by default (higher = smoother + lower latency), optional user frame cap in settings to reallocate GPU / cut power, input latency co-equal. Installed in game-foundations (new "Performance + responsiveness" principle) + lead-game-developer (principle #4). Renamed realtime-render-performance-90fps → realtime-render-performance (git mv; 12 files re-pointed).
+  - Marketplace harvest verdict: ~90% duplicative; workspace's new skills supersede the marketplace rendering skills (anthropic-skills:threejs-* are exact dupes). Folded the one additive item (blender-web-pipeline bpy + 3D-texture/VDB-bake path) into 3d-asset-pipeline rather than a duplicate spoke.
+Artifacts:
+  - 08-knowledge/game-dev/legion-hero-body-rendering-research.md — master research dossier (cited, adversarially verified; §5 skill blueprint)
+  - 08-knowledge/game-dev/legion-planet-surface-rendering.md — Legion planet-shader hard-won patterns (hex-artifact fix, ±0.08 treeline threshold, snow/ice, flashing-storm bug, GLSL reserved-word `active`)
+  - 03-skills/{planetary-terrain-lod,atmospheric-scattering-and-clouds,stellar-and-relativistic-hero-bodies,realtime-render-performance}/SKILL.md — 4 new spokes
+Pending resolved:
+  - Deduplicated 3d-asset-pipeline/SKILL.md (merge artifact — whole body was duplicated); merged section-by-section, no content lost, fixed a meters-vs-cm contradiction.
+Pending added:
+  - Implement the 4 new skills against the live Legion repo (src/render/planet/, src/render/) — reconcile planetary-terrain-lod with the existing quadtree renderer.
+  - Wire realtime-render-performance's frame-cap setting + input-latency pipeline into Legion's engine loop.
+  - Flashing-storm bug: capture a repro seed next time it appears (precision/state-sync suspect).
+Deferred commits:
+  - 07-projects/18-bootstrap-generator/launch.py — untracked, owned by bootstrap-generator work (not this session).
+Next:
+  - Begin Legion-side implementation of the terrain LOD + atmosphere spokes against src/render/.
+--- END BLOCK ---
+
+---
+
 ### 2026-07-22 — Legion: planet rendering — biomes, climate, night-lights, living weather, lab UX
 
 --- SESSION BLOCK ---

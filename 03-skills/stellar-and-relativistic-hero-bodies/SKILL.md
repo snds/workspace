@@ -13,7 +13,7 @@ triggers: [star surface, photosphere, granulation, limb darkening, starspot, cor
 tier: spoke
 hub: lead-game-developer
 domain: game
-prerequisites: [realtime-render-performance-90fps, sci-astro-objects, vfx-volumetrics]
+prerequisites: [realtime-render-performance, sci-astro-objects, vfx-volumetrics]
 related: [glsl-shader-architect, vfx-particle-systems, atmospheric-scattering-and-clouds]
 surfaces: ["*"]
 spec_version: "2.0"
@@ -25,7 +25,7 @@ The astrophysical rendering of the two exotic hero bodies. Grouped because both 
 physically-driven, procedurally-shaded, and both **live or die on temporal/coverage strategy** at close
 zoom. Pulls physical parameters (Teff, spectral class, ISCO, metric) from [[sci-astro-objects]] (that skill
 owns the astrophysics; this owns the *rendering*), reuses [[vfx-volumetrics]] machinery, and rides the frame
-spine of [[realtime-render-performance-90fps]].
+spine of [[realtime-render-performance]].
 
 ## Scope and Domain Boundary
 - **This skill:** star photosphere/corona rendering **and** black-hole/relativistic lensing rendering.
@@ -33,7 +33,7 @@ spine of [[realtime-render-performance-90fps]].
 - → Generic nebula/participating-media raymarch: [[vfx-volumetrics]] (this owns the **new** ray-sphere
   corona integrator and the geodesic raymarcher).
 - → Planetary atmosphere / clouds / ocean: [[atmospheric-scattering-and-clouds]].
-- → Frame budget, temporal-history, tonemap tradeoffs: [[realtime-render-performance-90fps]].
+- → Frame budget, temporal-history, tonemap tradeoffs: [[realtime-render-performance]].
 
 ---
 

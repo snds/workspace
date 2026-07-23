@@ -12,7 +12,7 @@ triggers: [planetary terrain, planet surface, cube-sphere, cube sphere, quadtree
 tier: spoke
 hub: lead-game-developer
 domain: game
-prerequisites: [realtime-render-performance-90fps]
+prerequisites: [realtime-render-performance]
 related: [glsl-shader-architect, game-scale-traversal, atmospheric-scattering-and-clouds]
 surfaces: ["*"]
 spec_version: "2.0"
@@ -21,7 +21,7 @@ spec_version: "2.0"
 # Planetary Terrain LOD — cube-sphere surface, orbit → near-surface
 
 Seamless planet terrain at SpaceEngine fidelity, holding 90 FPS at hero-close zoom. Owns the planet's
-geometry and surface detail; sits on the frame-budget spine ([[realtime-render-performance-90fps]]) and
+geometry and surface detail; sits on the frame-budget spine ([[realtime-render-performance]]) and
 extends the floating-origin precision spine of [[game-scale-traversal]] to the terrain patch.
 
 ## Scope and Domain Boundary
@@ -29,7 +29,7 @@ extends the floating-origin precision spine of [[game-scale-traversal]] to the t
   noise + triplanar shading, horizon culling, per-patch precision.
 - → Floating origin / log-Z / reversed-Z *spine*: [[game-scale-traversal]] owns it; this owns the
   **terrain-side per-patch-origin extension**.
-- → Frame budget, TAAU, DRS, df64 hazard: [[realtime-render-performance-90fps]].
+- → Frame budget, TAAU, DRS, df64 hazard: [[realtime-render-performance]].
 - → Atmosphere shell, cloud deck, ocean composited onto the terrain: [[atmospheric-scattering-and-clouds]].
 - → Noise math *primitives*: [[glsl-shader-architect]]; this owns their **band-limited-per-LOD terrain
   application**. **Not** volumetrics.
@@ -68,7 +68,7 @@ runtime octaves reintroduce (they scale with screen coverage; the naive bake the
   from the gradient for free, avoiding ~5 finite-difference evals *and* cross-boundary normal seams.
 - **Band-limit octaves per LOD** (4–6 far, 12–16 near) so each patch only synthesizes frequencies its grid
   can represent. Band-limiting alone does **not** fix specular/material-boundary shimmer — you still need
-  TAA (see [[realtime-render-performance-90fps]]).
+  TAA (see [[realtime-render-performance]]).
 - **Triplanar procedural material blend** driven by slope / altitude / latitude — no polar-UV singularity.
 - Exploit **`shader-f16`** for noise accumulation and **subgroups** for reductions (both shipped 2026;
   feature-detect).

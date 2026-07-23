@@ -49,14 +49,14 @@ silhouettes stars behind it from any angle — this is the *only* correct dust s
 environment. A physically-based camera (EV, subtle DOF on arrival) per [[img-photography]] sells it.
 
 **6 — Hero bodies (close-zoom fidelity now has dedicated skills).** The one-liners below are the *galaxy-view*
-placeholders; the SpaceEngine-class **close-zoom** rendering of each hero body — and the 90 FPS budget it
-demands — is now owned by four spokes authored from the [[legion-hero-body-rendering-research]] dossier:
+placeholders; the SpaceEngine-class **close-zoom** rendering of each hero body — and the demanding frame budget it
+requires (60 FPS floor, pushing higher) — is now owned by four spokes authored from the [[legion-hero-body-rendering-research]] dossier:
 - **Planet surface** → [[planetary-terrain-lod]] (cube-sphere quadtree + CDLOD, bake-on-subdivision height/normal);
   Legion-specific traps in [[legion-planet-surface-rendering]].
 - **Atmosphere / clouds / ocean** → [[atmospheric-scattering-and-clouds]] (Hillaire LUT sky, bespoke WGSL clouds).
 - **Star + black hole** → [[stellar-and-relativistic-hero-bodies]] (baked photosphere + corona; per-pixel
   geodesic lensing — a scripted hero moment, not a free-fly default).
-- **Frame budget / temporal / precision** → [[realtime-render-performance-90fps]].
+- **Frame budget / temporal / precision** → [[realtime-render-performance]].
 
 Galaxy-view placeholders (still valid far away): black holes = lensing post-shader + Doppler-beamed disk
 ([[sci-astro-objects]]); gas-giant rings = instanced particle fields ([[vfx-particle-systems]]); atmospheres
@@ -68,11 +68,14 @@ visibility toggles — #4), **per-focused-object framing scale** (#5), an **arc-
 (constant *perceived* speed), focus-pull + slerp orientation ([[img-cinematography]], [[game-scale-traversal]]),
 and **orbital-state-reconstruction handoff** back to the orbital camera (#11). Gate velocity streaks hard (#12).
 
-## Performance budget (galaxy view: target 60 fps · hero close-zoom: target 90 fps)
-> **Two regimes.** This budget covers the *galaxy flythrough* (many particles/volumes, 60 fps). The
-> *close-zoom hero body* is a different regime with a stricter 90 fps target and a different bottleneck
-> (fill-rate + procedural-ALU + temporal disocclusion, not draw calls) — and the honest in-browser budget is
-> **~8–9 ms, not 11.1 ms**. See [[realtime-render-performance-90fps]] and the per-body frame-budget table in
+## Performance budget (60 FPS floor · uncapped above · low input latency)
+> **Doctrine (project-wide, not galaxy-specific):** 60 FPS is the *floor*, not the target — render uncapped
+> by default (higher = smoother + lower latency), treat input latency as co-equal, and let players set an
+> optional frame cap to reallocate the GPU or save power. Full spine: [[realtime-render-performance]].
+> **Two regimes here:** the *galaxy flythrough* (many particles/volumes) holds 60+ comfortably; the
+> *close-zoom hero body* is the demanding regime — it pushes for the highest frame rate the hardware allows
+> (90+ on a desktop dGPU) against a different bottleneck (fill-rate + procedural-ALU + temporal disocclusion,
+> not draw calls), with only ~8–9 ms of real in-browser GPU budget at 90 FPS. Per-body frame-budget table in
 > [[legion-hero-body-rendering-research]].
 
 - **Particles** on the GPU (WebGPU compute or GPGPU ping-pong — [[vfx-particle-systems]], [[webgpu-advanced-rendering]]);

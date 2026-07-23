@@ -7,7 +7,7 @@ confidence: high
 sources:
   - "workflow:legion-fidelity-research — 16 agents, 5-pillar web research + adversarial verification, 2026-07-22 (1.08M tokens, 156 web tool-uses)"
   - "Hillaire 2020 (scalable sky/atmosphere); Bruneton 2008/2020; Strugar CDLOD 2010; Schneider Nubis 2015/2022; James/Thorne 2015 (DNGR); Reed depth-precision 2015; Tessendorf ocean"
-related_skills: [planetary-terrain-lod, atmospheric-scattering-and-clouds, stellar-and-relativistic-hero-bodies, realtime-render-performance-90fps, game-scale-traversal, webgpu-advanced-rendering, glsl-shader-architect, vfx-volumetrics, sci-astro-objects]
+related_skills: [planetary-terrain-lod, atmospheric-scattering-and-clouds, stellar-and-relativistic-hero-bodies, realtime-render-performance, game-scale-traversal, webgpu-advanced-rendering, glsl-shader-architect, vfx-volumetrics, sci-astro-objects]
 related_projects: [13-legion]
 ---
 
@@ -15,7 +15,7 @@ related_projects: [13-legion]
 > `legion-fidelity-research` workflow (5 parallel pillar deep-dives → per-claim skeptic verification →
 > synthesis; 2026-07-22). It is the **authoring source** for four new spoke skills —
 > [[planetary-terrain-lod]], [[atmospheric-scattering-and-clouds]], [[stellar-and-relativistic-hero-bodies]],
-> [[realtime-render-performance-90fps]]. Claims that did **not** survive review are quarantined in the
+> [[realtime-render-performance]]. Claims that did **not** survive review are quarantined in the
 > Appendix; do not author them as fact. Every budget figure is a *planning estimate pending
 > `timestamp-query` measurement on target hardware* (framework #06 Proofboard obligation).
 
@@ -23,6 +23,14 @@ related_projects: [13-legion]
 
 **Target:** SpaceEngine-class fidelity on a single hero body (planet surface, star photosphere, or black hole) at very close zoom, holding a 90 FPS / 11.1 ms frame in a Three.js + WebGPU (WebGPURenderer + TSL / WGSL compute) browser target.
 **Status:** Synthesis of five verified pillar dossiers, filtered through adversarial review. Where the optimistic dossier claim did not survive review, this document states the honest verdict. **This is the authoring source for four new workspace spoke skills (§5).**
+
+> **Doctrine note (added 2026-07-22, after this study).** The workspace performance *doctrine* generalized
+> beyond this dossier: **60 FPS is the floor (never the goal); render uncapped by default because higher FPS
+> buys both smoothness and lower input latency; offer players an optional frame cap to reallocate the GPU or
+> save power; and minimize input latency as a co-equal target** — see [[realtime-render-performance]]. The
+> **90 FPS** figure used throughout below was this study's *close-zoom hero-body stress goal* — the hardest
+> case, aligned with "aim higher" — **not** the minimum bar. Read the numbers here as the demanding-case
+> budget, not the floor.
 
 ---
 
@@ -302,13 +310,13 @@ All four are **spokes** hanging off `legion-project` and the existing hubs. They
 - **Key techniques it must teach — stellar:** granulation **baked to an animated object-space cube-map** + **hybrid runtime detail octaves at hero-close** (correct the naive bake thesis); physical limb darkening from a Teff table; **blackbody LUT with chromaticity separated from exposure**, ≥16-bit, wide gamut; **corona as a genuinely new full-coverage additive raymarch pass** (ray-sphere + 1/r), re-engineered to ≤2 ms with screen-coverage-adaptive steps + blue-noise + billboard fallback; **bake-spike frame-variance** as a worst-frame hazard; faculae; star-as-light-source + descending IBL re-render; ACES-hue / AgX-desaturation tonemap tradeoff; event-gated prominences/flares. **Relativistic:** per-pixel Schwarzschild geodesic, **prefer analytic elliptic-integral deflection**; adaptive stepping; Doppler beaming + gravitational redshift together; **footprint-driven env-map MIP** for ring AA; **tile-classified variable-resolution** (ring annulus super-res); the **broken-temporal-reprojection-at-the-photon-ring** reality; **no-fp64 precision risk**; skybox-only-lensing limit; Kerr as a **3–5× scripted tier**; the honest "scripted slow-camera hero moment, not free-fly default" verdict.
 - **Prerequisites:** `sci-astro-objects`, `webgpu-advanced-rendering`, `glsl-shader-architect`, `vfx-volumetrics`.
 
-### (d) `realtime-render-performance-90fps`
+### (d) `realtime-render-performance`
 - **Scope:** the cross-cutting performance/precision/temporal discipline that all three body skills depend on — the frame-budget spine. Owns TAAU/DRS, GPU-driven culling, depth precision, df64, profiling, and the WebGPU capability map.
 - **Domain boundary:** the **foundation** skill the other three sit on; it owns *how to hold the frame*, they own *what to render*. Overlaps `webgpu-advanced-rendering` but is narrower and Legion-specific: this one owns the **90 FPS budget methodology, temporal-upsampling reality, and precision spine**, while webgpu-advanced-rendering owns general API mechanics. Extends `game-scale-traversal`'s precision spine with the temporal/DRS interaction (origin-shift-as-history-invalidation).
 - **Key techniques it must teach:** reversed-Z + `depth32float`; floating origin with **origin-shift = full history invalidation + Hi-Z skip**; GPU frustum cull + compaction + `drawIndexedIndirect` (deprioritized at close zoom); hand-rolled Hi-Z min-reduction; **TAAU as a co-development bet** (immature TAAUNode, MV-less-content failure) + FSR2 reactive/disocclusion masks as a real fork; **separate temporal histories for beauty / volumetrics / geodesics**; app-level DRS with hysteresis; **`shader-f16`** for procedural shading; **df64 with the compiler-reassociation hazard + per-backend validation**; log-depth-per-fragment early-Z loss (no in-browser conservative-depth) + depth cascades; `timestamp-query` profiling + CPU fallback; the **~8–9 ms real in-browser budget**, 90 Hz-panel / thermal-throttle reality; the dead-path exclusion list (mesh shaders, VRS, sparse textures, guaranteed MDI, ML upscalers).
 - **Prerequisites:** `webgpu-advanced-rendering`, `game-scale-traversal`.
 
-**Skill graph:** `(d) realtime-render-performance-90fps` is foundation for `(a)`, `(b)`, `(c)`. `(a)` and `(b)` compose (terrain ↔ atmosphere/ocean). `(c)` stands alongside them as the exotic-body branch. All four load-chain up through `legion-project` → `lead-game-developer`.
+**Skill graph:** `(d) realtime-render-performance` is foundation for `(a)`, `(b)`, `(c)`. `(a)` and `(b)` compose (terrain ↔ atmosphere/ocean). `(c)` stands alongside them as the exotic-body branch. All four load-chain up through `legion-project` → `lead-game-developer`.
 
 ---
 

@@ -47,5 +47,15 @@ Engagement lives in the channel between boredom (too easy) and anxiety (too hard
 as the player improves. Balance, difficulty curves, and progression exist to keep challenge tracking
 skill. Tune against the *target player*, not the designer's mastery.
 
+## Performance + responsiveness (is game feel)
+A game is a real-time conversation with the player, so **performance IS game feel** — not a technical
+afterthought layered on later. Two axes, both felt: **frame rate** (smoothness) and **input-to-photon
+latency** (responsiveness). They are independent — a game can be smooth yet feel laggy, or responsive yet
+stutter. The shared doctrine across design, code, and art: **60 FPS is the floor (never the goal); render
+uncapped by default because higher FPS buys both smoothness and lower latency; offer players an optional
+frame cap to reallocate the machine to other work or save power; and minimize input latency as a co-equal
+target.** The principle is the "experience in the player's head" root applied to time — the engineering
+that delivers it lives in [[realtime-render-performance]].
+
 ## Related
 - applies-in ← [[lead-art-director]] · [[lead-game-designer]] · [[lead-game-developer]]

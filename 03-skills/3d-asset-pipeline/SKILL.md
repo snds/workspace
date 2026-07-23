@@ -479,7 +479,7 @@ useGLTF.preload('/assets/ship.glb')
   combine with `THREE.LOD`. Draco on the glTF cuts initial download significantly.
 - **Planetary-scale note**: `THREE.LOD`'s raw-distance switching is for props. Astronomical-scale
   hero bodies use angular-size LOD and the precision/temporal spine of [[game-scale-traversal]] /
-  [[realtime-render-performance-90fps]] — not this component.
+  [[realtime-render-performance]] — not this component.
 
 ### Unreal Engine Import (FBX)
 

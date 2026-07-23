@@ -219,7 +219,7 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 **Summary:** Interstellar hard sci-fi game inspired by The Bobiverse. Factory management × 4X strategy × RTS × narrative core. Tech stack: Three.js + WebGPU (TypeScript + GLSL).
 **Code home:** `/Users/snds/Projects/Legion` → `https://github.com/snds/legion` (private). Extracted from workspace on 2026-05-11; design refs (Reference/, Screenshots/, Video/, Visual-Development/, docs/) remain in workspace at `07-projects/13-legion/` alongside SESSION-STATE.md.
 
-**Skill set (8 skills):** `legion-project` (foundation) + `lead-game-designer` / `lead-art-director` / `lead-game-developer` (hubs) + `threejs-materials-master` / `glsl-shader-architect` / `threejs-vfx-atmosphere` / `webgpu-advanced-rendering` (specialty spokes).
+**Skill set (12 skills):** `legion-project` (foundation) + `lead-game-designer` / `lead-art-director` / `lead-game-developer` (hubs) + `threejs-materials-master` / `glsl-shader-architect` / `threejs-vfx-atmosphere` / `webgpu-advanced-rendering` + the 2026-07-22 hero-body spokes `realtime-render-performance` / `planetary-terrain-lod` / `atmospheric-scattering-and-clouds` / `stellar-and-relativistic-hero-bodies` (specialty spokes). Also leans on `game-scale-traversal`, `vfx-volumetrics`, `vfx-particle-systems`, `sci-astro-objects`.
 
 **V1 Systems (minimum viable):** Exploration, factory building, resource economy, RTS combat, Bob clone mechanics, tutorial flow.
 
@@ -227,7 +227,7 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 
 **Planet-renderer state (as of 2026-07-22):** Planet material hardened end-to-end (PRs #163–#184, all merged + deployed to Pages). Living weather (CPU cyclone lifecycle, ocean-gated, bounded shear); biome/climate as signed additive moisture field + Earth-MAT temperature; Earth-calibrated dark biome palette; settlement-realistic night lights (habitability field); ice/snow overlays with uneven cap margins; storm lightning; systemic World dials (offset/manual-edit-preserving) over the raw sliders; bake parity via one finishHeight() path. Stars-through-planets bug fixed (ledger A-06). Full detail + carry-forward in SESSION-STATE.md.
 
-**Next:** Awaiting user's pre-announced "adversarially checked skills to improve engine performance at close zoom levels" — next session takes delivery of those, then profiles/optimizes the planet material at close zoom. (Longer arc still: galaxy-scale viz → system-scale gameplay per V1 scope; procedural-worlds `feat/worlds-star` S1 baton also still open — see SESSION-STATE 2026-07-11 block.)
+**Next:** ✅ **Delivered 2026-07-22** — the adversarially-checked performance/fidelity skills landed: 4 new hero-body spokes + a **project-wide performance doctrine** (60 FPS floor, uncapped by default, optional user frame cap, input latency co-equal) + the [[legion-hero-body-rendering-research]] master dossier + [[legion-planet-surface-rendering]] hard-won patterns. **Now:** implement against `src/render/` — reconcile `planetary-terrain-lod` with the existing quadtree renderer; wire `realtime-render-performance`'s frame-cap setting + input-latency pipeline into the engine loop; then profile/optimize the planet material at close zoom. (Longer arc still: galaxy-scale viz → system-scale gameplay per V1 scope; procedural-worlds `feat/worlds-star` S1 baton also still open — see SESSION-STATE 2026-07-11 block.)
 
 ---
 

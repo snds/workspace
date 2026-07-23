@@ -12,7 +12,7 @@ triggers: [atmospheric scattering, rayleigh, mie, hillaire, sky atmosphere, aeri
 tier: spoke
 hub: lead-game-developer
 domain: game
-prerequisites: [realtime-render-performance-90fps, vfx-volumetrics]
+prerequisites: [realtime-render-performance, vfx-volumetrics]
 related: [glsl-shader-architect, planetary-terrain-lod, threejs-vfx-atmosphere]
 surfaces: ["*"]
 spec_version: "2.0"
@@ -23,7 +23,7 @@ spec_version: "2.0"
 Physically-based sky, cloud, and ocean rendering on a planet, correct from the surface **and** from orbit,
 at 90 FPS. The planet-facing counterpart to the stellar volumetrics in
 [[stellar-and-relativistic-hero-bodies]]; composites onto [[planetary-terrain-lod]] and rides the frame
-spine of [[realtime-render-performance-90fps]].
+spine of [[realtime-render-performance]].
 
 ## Scope and Domain Boundary
 - **This skill:** breathable-atmosphere scattering, cloud decks + their temporal reconstruction, water,
@@ -32,7 +32,7 @@ spine of [[realtime-render-performance-90fps]].
   pipeline and its WebGPU gaps).
 - → Terrain it composites onto: [[planetary-terrain-lod]] (consumes the aerial-perspective froxel).
 - → Stellar corona / photosphere: [[stellar-and-relativistic-hero-bodies]].
-- → Frame budget, half-res + temporal reconstruction reality: [[realtime-render-performance-90fps]].
+- → Frame budget, half-res + temporal reconstruction reality: [[realtime-render-performance]].
 
 ## The honest priority: atmosphere is cheap, clouds are where 90 FPS breaks
 The scattering half (Hillaire) is genuinely cheap and correctly prioritized — it is **not** the bottleneck.

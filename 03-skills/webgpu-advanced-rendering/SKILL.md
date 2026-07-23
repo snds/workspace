@@ -267,4 +267,4 @@ if (navigator.gpu) {
 ## Related
 - foundation → [[imaging-foundations]] · [[science-foundations]]
 - hub → [[lead-game-developer]]
-- peer ↔ [[realtime-render-performance-90fps]]
+- peer ↔ [[realtime-render-performance]]
