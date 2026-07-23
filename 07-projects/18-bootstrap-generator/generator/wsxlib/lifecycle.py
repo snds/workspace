@@ -158,6 +158,19 @@ def verify(root: Path) -> int:
     return fails
 
 
+# ------------------------------------------------------------- self-healing ---
+def ensure_safe_git(root: Path) -> None:
+    """Idempotently re-assert the safe multi-device git defaults, healing drift if a
+    global config or another tool ever flipped them. Cheap; run before any sync."""
+    try:
+        cur = core.git(root, "config", "--local", "--get", "rebase.autoStash",
+                       check=False, capture=True).stdout.strip()
+        if cur != "false":
+            core.git(root, "config", "--local", "rebase.autoStash", "false", check=False)
+    except Exception:
+        pass
+
+
 # --------------------------------------------------------------- compaction ---
 import re as _re
 
@@ -210,6 +223,7 @@ def compact(root: Path) -> int:
 # ----------------------------------------------------------------- session ---
 def session(root: Path, sub: str) -> int:
     if sub == "start":
+        ensure_safe_git(root)  # self-heal safe git defaults each session
         compact(root)  # fold any pending fragments before the AI reads the log
         print(f"session started {core.now_stamp()} — context loaded from {root}")
         return 0
@@ -245,6 +259,7 @@ def sync(root: Path) -> int:
     """Safe multi-device sync. Never rebases over a live editing session (a dirty
     tree defers, work stays local); integrates a moved remote by rebasing (the
     session log union-merges); retries the push. Non-lossy + idempotent."""
+    ensure_safe_git(root)  # self-heal the safe defaults before touching the remote
     if not core.has_remote(root):
         print("note: no git remote configured — nothing to sync yet.")
         print("      run `wsx remote` for free hosting options (GitHub/GitLab/Codeberg),")
