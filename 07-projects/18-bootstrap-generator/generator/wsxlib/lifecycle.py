@@ -49,13 +49,23 @@ def lint(root: Path) -> int:
     skills = list(core.iter_skills(root))
 
     for name, sk in skills:
-        fm, _ = core.parse_frontmatter(sk)
+        fm, body = core.parse_frontmatter(sk)
         if not fm.get("name"):
             print(f"  ✗ {name}: missing 'name' in front matter")
             problems += 1
         if not str(fm.get("description", "")).strip():
             print(f"  ✗ {name}: missing 'description' in front matter")
             problems += 1
+        # un-enriched skeleton: the brain must replace the `_(…)_` writing prompts
+        # (and drop the skeleton banner) before shipping. Pulled skills are exempt —
+        # they arrive finished from a registry, not from our skeleton.
+        if fm.get("source", "generated") == "generated":
+            prompts = body.count("_(")
+            if "skeleton —" in body or prompts:
+                detail = f"{prompts} unfilled prompt(s)" if prompts else "skeleton banner still present"
+                print(f"  ⚠ {name}: un-enriched skeleton — {detail}; "
+                      "fill the body, then `wsx skill reindex`")
+                problems += 1
         for t in core.skill_triggers(fm):
             trigger_owners.setdefault(t, []).append(name)
 

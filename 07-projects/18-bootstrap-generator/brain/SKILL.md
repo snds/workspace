@@ -11,8 +11,10 @@ description: >-
   generator", or any request to scaffold a personalized AI workspace from
   scratch.
 triggers:
+  - set up my workspace
   - bootstrap my workspace
   - set up my second brain
+  - build my second brain
   - generate my AI workspace
   - build my skill network
   - interview me
@@ -80,7 +82,8 @@ everything structural goes through `wsx`:
 |---|---|
 | Scaffold the workspace | `wsx init <dir> --name "<name>"` |
 | Write profile fields | `wsx profile set contexts.work.role="…" surfaces.agents="claude,cursor" …` |
-| GENERATE a skill | `wsx skill add <name> --hub <hub> --triggers "a,b,c" --desc "…"` |
+| GENERATE a skill | `wsx skill add <name> --kind hub\|spoke --hub <hub> --triggers "a,b,c" --desc "…"` |
+| Enrich a skill body | (author the skeleton's sections in prose) then `wsx skill reindex` |
 | List / re-index skills | `wsx skill list` · `wsx skill reindex` |
 | Check trigger overlaps | `wsx lint` |
 | Emit for their surface(s) | `wsx emit claude-code` (or `agents-md` / `cursor` / `pack` / `all`) |
@@ -219,6 +222,18 @@ Once every domain has a decision, assign each skill to a hub, register its
 triggers, then do the **MANDATORY overlap reconciliation**: dedupe overlapping
 triggers and name a single canonical owner per concern. No two skills may claim
 the same trigger.
+
+**Enrich, never ship stubs.** `wsx skill add` lays down a *sectioned skeleton*
+(When to use / How to do it well / Worked example / Anti-patterns / Related for a
+spoke; What this hub owns / Spokes / Operating standards for a hub). That skeleton
+is a form, not a finished skill — it's full of `_(…)_` writing prompts under a
+`> **… skeleton —` banner. For **every GENERATED skill**, replace those prompts with
+real prose grounded in *this person's* judgment and domain (the reusable know-how an
+untuned model wouldn't have), delete the skeleton banner, then run `wsx skill reindex`
+so the manifest hash tracks the enriched body. `wsx lint` now **fails** on any
+generated skill that still carries a `_(…)_` prompt or the banner — treat that the
+way you treat a trigger overlap: a blocker, not a detail. Use `--kind hub` for an
+orchestrator with spokes and `--kind spoke` for a focused skill.
 
 **Now present the skill-plan REVIEW GATE.** Lay out the full plan in plain terms:
 

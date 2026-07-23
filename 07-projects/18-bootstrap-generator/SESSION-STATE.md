@@ -1,6 +1,6 @@
 # SESSION-STATE — Portable Bootstrap Generator
 
-_Last updated: 2026-06-14 20:45 — checkpoint (wsx skill command + full end-to-end dogfood test)_
+_Last updated: 2026-07-22 18:45 — checkpoint (turn-key Path A: registered auto-triggering brain skill + enriched skill skeletons + lint anti-stub gate)_
 
 ---
 
@@ -42,7 +42,7 @@ _Last updated: 2026-06-14 20:45 — checkpoint (wsx skill command + full end-to-
 - **What's needed to resume** (next phases):
   1. **Resolver (Phase 2)** — implement `wsx resolve` (currently a stub): registry fetch + pin + namespace; wire the skill-plan review gate.
   2. **`emit mcp`** — currently a stub; build the `workspace-mcp` server (SPEC §5).
-  3. **Make Path A turn-key** — the brain runs end-to-end *manually* today (dogfooded ✓) and `SKILL.md` has the command cheat-sheet; remaining: register it as an auto-loaded skill/plugin so "set up my workspace" triggers it without a nudge, and have it enrich generated skill bodies (not just stubs).
+  3. **Make Path A turn-key** — **DONE (2026-07-22).** The brain is now a registered skill at `.claude/skills/bootstrap-gen/SKILL.md` (generator root) that auto-triggers on "set up my workspace" (verified live: Claude Code discovered + registered it on write) and points to the canonical `brain/SKILL.md`. `wsx skill add` now writes a **sectioned skeleton** (`--kind hub|spoke`) instead of a flat stub, and `wsx lint` **fails** on any generated skill still carrying `_(…)_` prompts or the skeleton banner — so a workspace can't be called done with empty skills. `brain/SKILL.md` Phase 3 now mandates enrichment + `reindex`. *Out of scope by design: a headless automated loop — the brain narrates and gates each step interactively.*
   4. **Externalize templates** — move the embedded `scaffold.py` `TEMPLATES` dict into `generator/templates/` files.
   5. **Polish (minor):** reconcile `brain/synthesis.md` worked-example values with schema enums (`lifecycle.continuity` is boolean in schema but `session-log` in the example; `automation` enum is minimal/standard/full but example uses `assisted`; `schema_version=1` vs `"0.2"`). Non-breaking (CLI doesn't enforce enums), but tidy for consistency.
 
@@ -54,6 +54,29 @@ _Last updated: 2026-06-14 20:45 — checkpoint (wsx skill command + full end-to-
 ## Session history (append-only)
 
 _Newest first._
+
+### 2026-07-22 18:45 — checkpoint (turn-key Path A: registered brain skill + enriched skeletons + lint gate)
+
+**Focus this session**: Resume the generator; close the "Make Path A turn-key" gap (next-resume item #3) so a stranger — not just someone who knows the commands — can actually build their own workspace.
+**Machine**: `Voyager-2.local` (Personal MacBook Pro)
+**Stopped because**: both halves built + dogfooded green; ready to commit.
+
+**Verified reality first** (checkpoint was 5 weeks stale): the whole `wsx` loop still runs green — `init → profile → skill add → emit all → verify` pass; folder is git-tracked + clean; `emit mcp`/`resolve` still honest stubs. Earlier "failures" in testing were bad command grammar, not the tool.
+
+**(a) Auto-trigger — the brain is now a registered skill.** Created `.claude/skills/bootstrap-gen/SKILL.md` at the generator root: a thin **pointer skill** (rich `description` + `triggers`) that loads the canonical `brain/SKILL.md` (kept as single source; `../../../brain/SKILL.md` resolves). Added "set up my workspace" + "build my second brain" to the brain's triggers. **Proof**: Claude Code discovered and registered `bootstrap-gen` live the moment the file was written (directory-scoped to the project) — so a plain *"set up my workspace"* now routes to the brain with no file-naming nudge. Git tracks it via the `!07-projects/18-bootstrap-generator/**` whitelist; no conflict with the workspace-root session (nested `.claude` isn't loaded by the root project).
+
+**(b) Enriched skill bodies — no more flat stubs.** Rewrote `wsx skill add` (`skills.py`): writes a **sectioned skeleton** with `_(…)_` writing prompts — spoke (When to use / How to do it well / Worked example / Anti-patterns / Related) vs hub (What this hub owns / Spokes / Operating standards) via a new `--kind hub|spoke` flag; hubs get `role: orchestrator`. Added a mechanical **anti-stub gate** to `wsx lint`: any `source: generated` skill still carrying `_(…)_` prompts or the skeleton banner now **fails** lint (pulled skills exempt). Updated `brain/SKILL.md` Phase 3 to mandate enrichment → `reindex`, and the cheat-sheet for `--kind`.
+
+**Dogfood**: fresh workspace, hub+spoke via `skill add` → inspected skeletons (read well) → `emit all` mirrors skills into `.claude/skills/` → `verify` green → `lint` fails on stubs (exit 1), passes once a skill is enriched (confirmed by hand-filling one). `py_compile` clean.
+
+**Decisions made**:
+- **Pointer skill, not relocation**: keep the canonical brain in `brain/` (referenced by SPEC/DEVELOPING); the registered skill is a thin loader. Reversible; avoids duplication/drift. Follow-up option: promote `brain/` to be the skill home for a fully self-contained distribution.
+- **Enrichment enforced by the tool, not just discipline**: `lint` is the gate, matching how it already treats trigger overlaps — turn-key honesty ("can't ship blank skills").
+- **Headless automated loop stays out of scope**: the interactive, gated brain is the intended UX.
+
+**Next resumption needs**: Resolver PULL (`wsx resolve`, Phase 2) + `emit mcp` (SPEC §5) remain the two big stubs. Minor: reconcile `brain/synthesis.md` worked-example values with schema enums; finish externalizing scaffold templates.
+
+---
 
 ### 2026-06-14 20:45 — checkpoint (wsx skill command + end-to-end dogfood test)
 

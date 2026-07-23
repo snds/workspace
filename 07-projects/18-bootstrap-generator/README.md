@@ -141,10 +141,10 @@ First, the two things you need (details in [What you'll need](#what-youll-need-f
 ### Path A — Easiest: let your AI do it ⭐ recommended
 You don't type anything technical — your AI runs the tool for you.
 1. **Open this generator folder in your AI assistant.** In Claude Code: open the folder (or run `claude` from inside it). In Cursor: open the folder.
-2. **Say:** *"Read `brain/SKILL.md` and set up my workspace for me."* (If your AI already has the skill loaded, just *"set up my workspace"* works.)
+2. **Say:** *"set up my workspace."* In Claude Code the generator ships as a registered skill, so that phrase alone triggers it — no need to name any file. *(On other assistants, or if it doesn't catch, nudge it: "Read `brain/SKILL.md` and set up my workspace for me.")*
 3. Your AI **interviews you** (see [below](#what-the-interview-covers)), then creates your workspace and tells you where it is.
 
-*(🚧 The guided interview is **early** — your AI may need the nudge above to follow `brain/SKILL.md`. If it stalls, use Path B; it always works.)*
+*(🚧 The guided interview is **early**. In Claude Code the trigger is wired; elsewhere the nudge above always works. If it stalls, use Path B — it never depends on the AI.)*
 
 ### Path B — One double-click (no AI, nothing to type)
 1. **macOS:** double-click **`start.command`**. *(The first time, macOS may say "unidentified developer" — right-click the file → **Open** → **Open**. Just once.)*
@@ -167,7 +167,7 @@ A friendly conversation in **five parts** — suggested gently, and you skip any
 - **Browse it:** open your **new** workspace folder in **[Obsidian](https://obsidian.md)**.
 - **Use it:** open that folder in your AI assistant — and it already knows you. Every session adds to your second brain.
 
-> 🚧 **Honest status.** Paths B and C **work today** — they create a real, AI-ready workspace folder right now. The fully *guided* interview (Path A automatically filling in your profile and skills) is **early**, so for the moment it may hand you a mostly-empty starter that you and your AI grow into, rather than a fully populated one. That's the next thing being built.
+> 🚧 **Honest status.** Paths B and C **work today** — they create a real, AI-ready workspace folder right now. Path A now **auto-triggers in Claude Code** (the generator is a registered skill), and generated skills come out as *guided skeletons* — sectioned forms your AI fills with your actual know-how, not empty stubs (the tool refuses to call a workspace done while those forms are still blank). Still early: some registry features (pulling ready-made community skills, the MCP runtime) are not built yet, so parts of a fresh workspace are things you and your AI grow into. That's the next thing being built.
 
 ---
 
