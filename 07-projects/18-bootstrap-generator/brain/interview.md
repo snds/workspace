@@ -223,6 +223,12 @@ if no one paid them, where they have a north-star sense of "great." These become
 hubs**: the opinionated domain leads with their own spoke networks. This movement is where most true
 *hubs* come from, because it's where people have the most accumulated judgment.
 
+> **Capture the north-stars as references.** When they name whose work is "the bar," a standard they
+> hold to, a canonical text, or a source they'd cite — **write it down.** Those named exemplars are
+> the first, best seeds for the Resolver's **reference track**: they become the `references[]` on a
+> composite skill, letting you build something grounded in *their* definition of great plus the
+> industry-leading guidance around it — not a generic pull. (See `brain/resolver.md` → two-track sourcing.)
+
 **Sample questions:**
 
 - *"Setting the day job aside for a second — what are you genuinely good at, the kind of thing people

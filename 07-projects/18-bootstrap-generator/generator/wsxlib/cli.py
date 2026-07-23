@@ -16,7 +16,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from . import adapters, core, lifecycle, resolver, scaffold, skills
+from . import adapters, core, lifecycle, resolver, scaffold, search, skills
 
 
 # profile fields that are lists — `set` splits these on commas (and accepts [a, b] form).
@@ -129,7 +129,11 @@ def cmd_emit(a):
 def cmd_resolve(a):
     return resolver.resolve(core.require_workspace(),
                             plan_path=a.plan, update=a.update,
-                            allow_unvetted=a.allow_unvetted)
+                            allow_unvetted=a.allow_unvetted, cache_refs=a.cache_refs)
+
+
+def cmd_search(a):
+    return search.search(core.require_workspace(), a.query, kind=a.kind, source=a.source)
 
 
 def cmd_lint(a):
@@ -219,7 +223,16 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("--update", action="store_true", help="bump the pin when an upstream skill changed")
     pr.add_argument("--allow-unvetted", action="store_true",
                     help="permit pulls from unvetted registries (skills.sh/community) not marked audited")
+    pr.add_argument("--cache-refs", action="store_true",
+                    help="for composite skills, fetch + pin + cache each reference URL for offline provenance")
     pr.set_defaults(fn=cmd_resolve)
+
+    pse = sub.add_parser("search", help="find sources (skill registries + reference anchors)")
+    pse.add_argument("query", nargs="?", default="", help="capability to search for")
+    pse.add_argument("--kind", default="all", choices=["all", "skill", "reference"],
+                     help="limit to skill registries or reference anchors")
+    pse.add_argument("--source", default=None, help="limit to one source id from the catalog")
+    pse.set_defaults(fn=cmd_search)
 
     ps = sub.add_parser("session", help="lifecycle file ops")
     ps.add_argument("action", choices=["start", "end", "reconcile"])

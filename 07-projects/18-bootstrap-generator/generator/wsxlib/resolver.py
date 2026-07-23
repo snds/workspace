@@ -75,8 +75,10 @@ def _is_unvetted(registry: str) -> bool:
     return any(u in reg for u in UNVETTED)
 
 
-def _pull_one(root: Path, e: dict, idx: dict, update: bool, allow_unvetted: bool) -> str:
-    """Execute one PULL / PULL+PATCH entry. Returns a status word for the tally."""
+def _pull_one(root: Path, e: dict, update: bool, allow_unvetted: bool) -> str:
+    """Execute one PULL / PULL+PATCH entry. Returns a status word for the tally.
+    Self-contained: load-modify-saves the manifest so it composes cleanly with the
+    generate/composite handlers (which persist their own records too)."""
     name = e["name"]
     registry = e.get("registry", "")
     source_url = e.get("url") or e.get("source_url") or ""
@@ -96,6 +98,9 @@ def _pull_one(root: Path, e: dict, idx: dict, update: bool, allow_unvetted: bool
     ns = _ns_name(registry, name)
     sk_dir = root / "skills" / ns
     sk = sk_dir / "SKILL.md"
+
+    man = core.load_manifest(root)
+    idx = man.setdefault("skills", {})
 
     # pin-drift guard: a remote skill changing under the person's feet is a
     # deliberate, visible bump — never a silent mutation.
@@ -149,6 +154,7 @@ def _pull_one(root: Path, e: dict, idx: dict, update: bool, allow_unvetted: bool
         status = "patched"
 
     idx[ns] = rec
+    core.save_manifest(root, man)
     flag = "  ⚠ UNVETTED — audited" if _is_unvetted(registry) else ""
     extra = " + overlay scaffolded" if patched else ""
     print(f"  ✓ {verb} {name} → {ns}  [{registry or 'local'}]  pin {pin[7:19]}…{extra}{flag}")
@@ -172,27 +178,123 @@ def _overlay_skeleton(name: str, hub: str) -> str:
     )
 
 
-def _generate_one(root: Path, e: dict) -> str:
-    """A GENERATE entry — delegate to the already-built `wsx skill add` skeleton hand."""
+_SOURCES_OPEN = "<!-- wsx:sources -->"
+_SOURCES_CLOSE = "<!-- /wsx:sources -->"
+
+
+def _render_sources_block(refs: list) -> str:
+    """The attribution block for a composite skill. Workspace convention: author in
+    our own voice, cite the source, never copy (08-knowledge/…/skill-ecosystem)."""
+    lines = [
+        _SOURCES_OPEN,
+        "## Sources & further reading",
+        "",
+        "_Synthesized in this workspace's own voice from the authoritative references",
+        "below — distilled guidance and best practice, not copied text._",
+        "",
+    ]
+    for r in refs:
+        title = r.get("title") or r.get("url") or "untitled source"
+        bits = [f"- **{title}**"]
+        if r.get("publisher"):
+            bits.append(f" — {r['publisher']}")
+        if r.get("url"):
+            bits.append(f" · <{r['url']}>")
+        if r.get("note"):
+            bits.append(f" _({r['note']})_")
+        lines.append("".join(bits))
+    lines += ["", _SOURCES_CLOSE, ""]
+    return "\n".join(lines)
+
+
+def _inject_sources(sk: Path, refs: list) -> None:
+    """Idempotently place the Sources block at the end of a skill body, between
+    markers — replacing an existing block, never clobbering the brain's prose."""
+    if not refs:
+        return
+    text = sk.read_text(encoding="utf-8")
+    block = _render_sources_block(refs)
+    i, j = text.find(_SOURCES_OPEN), text.find(_SOURCES_CLOSE)
+    if i != -1 and j != -1:
+        text = text[:i] + block + text[j + len(_SOURCES_CLOSE):].lstrip("\n")
+    else:
+        text = text.rstrip() + "\n\n" + block
+    sk.write_text(text, encoding="utf-8")
+
+
+def _cache_references(root: Path, name: str, refs: list) -> None:
+    """Opt-in (--cache-refs): fetch each reference URL, pin it, and cache a snapshot
+    under skills/<name>/references/ (read-only) for verifiable, dated provenance.
+    Records the pin + cached path back onto each ref dict."""
+    ref_dir = root / "skills" / name / "references"
+    for r in refs:
+        url = r.get("url")
+        if not url:
+            continue
+        try:
+            data = _fetch(url, base=root / "context")
+        except (urllib.error.URLError, OSError, ValueError) as ex:
+            r["cache_error"] = str(ex)
+            print(f"    ⚠ {name}: could not cache reference {url} — {ex}")
+            continue
+        ref_dir.mkdir(parents=True, exist_ok=True)
+        ext = ".html" if b"<html" in data[:2048].lower() else ".txt"
+        dst = ref_dir / (_slug(r.get("title") or url) + ext)
+        if dst.exists():
+            dst.chmod(0o644)
+        dst.write_bytes(data)
+        dst.chmod(0o444)
+        r["pin"] = _sha256_bytes(data)
+        r["cached"] = f"skills/{name}/references/{dst.name}"
+        r["retrieved"] = core.now_stamp()
+
+
+def _generate_one(root: Path, e: dict, cache_refs: bool = False) -> str:
+    """A GENERATE / COMPOSITE entry. Delegates the skeleton to `wsx skill add`, then —
+    if the plan carries references[] — cites them (author-voice Sources block, optional
+    cache+pin). A composite skill = the person's judgment + distilled authoritative
+    reference; per our own skill-ecosystem knowledge, that's the highest-value kind."""
     name = e["name"]
+    refs = e.get("references") or []
+    composite = bool(refs) or e.get("source") == "composite"
     sk = root / "skills" / name / "SKILL.md"
-    if sk.exists():
+
+    fresh = not sk.exists()
+    if fresh:
+        skills.add(
+            root, name,
+            desc=e.get("desc", e.get("description", f"{name} (generated).")),
+            triggers=e.get("triggers", []),
+            hub=e.get("hub", ""),
+            source="generated",
+            title=e.get("title", ""),
+            kind=e.get("kind", "spoke"),
+        )
+    elif not refs:
         print(f"  · {name}: already exists — left as-is (enrich in place)")
         return "skipped"
-    skills.add(
-        root, name,
-        desc=e.get("desc", e.get("description", f"{name} (generated).")),
-        triggers=e.get("triggers", []),
-        hub=e.get("hub", ""),
-        source="generated",
-        title=e.get("title", ""),
-        kind=e.get("kind", "spoke"),
-    )
+
+    if composite:
+        if cache_refs:
+            _cache_references(root, name, refs)
+        _inject_sources(sk, refs)
+        # stamp the manifest record as composite + carry the citations
+        man = core.load_manifest(root)
+        rec = man.setdefault("skills", {}).get(name)
+        if rec is not None:
+            rec["composite"] = True
+            rec["references"] = refs
+            core.save_manifest(root, man)
+        cached = sum(1 for r in refs if r.get("cached"))
+        note = f", {cached} cached+pinned" if cached else ""
+        print(f"  ✓ composite {name}: {len(refs)} reference(s) cited{note}"
+              + ("" if fresh else " (updated citations)"))
+        return "composite" if fresh else "recited"
     return "generated"
 
 
-def resolve(root: Path, plan_path: str | None = None,
-            update: bool = False, allow_unvetted: bool = False) -> int:
+def resolve(root: Path, plan_path: str | None = None, update: bool = False,
+            allow_unvetted: bool = False, cache_refs: bool = False) -> int:
     """Execute an approved skill plan: fetch+pin PULLs, scaffold PATCH overlays,
     delegate GENERATEs, and register everything into manifest.json. Returns non-zero
     if any entry was refused (so callers/CI can gate on a clean resolve)."""
@@ -216,10 +318,10 @@ def resolve(root: Path, plan_path: str | None = None,
         print(f"{_rel(plan_file, root)} has no skills[] — nothing to resolve.")
         return 0
 
-    man = core.load_manifest(root)
-    idx = man.setdefault("skills", {})
-    tally = {"pulled": 0, "patched": 0, "generated": 0,
-             "unchanged": 0, "skipped": 0, "refused": 0}
+    # Each handler load-modify-saves the manifest itself (so generate/composite and
+    # pull compose cleanly); resolve() does NOT hold a stale copy across the loop.
+    tally = {"pulled": 0, "patched": 0, "generated": 0, "composite": 0,
+             "recited": 0, "unchanged": 0, "skipped": 0, "refused": 0}
 
     print(f"resolving {len(entries)} skill(s) from {_rel(plan_file, root)} …")
     for e in entries:
@@ -228,17 +330,15 @@ def resolve(root: Path, plan_path: str | None = None,
             print(f"  ✗ entry missing 'name' or 'source': {e!r}")
             tally["refused"] += 1
             continue
-        if src == "generated":
-            status = _generate_one(root, e)
+        if src in ("generated", "composite"):
+            status = _generate_one(root, e, cache_refs=cache_refs)
         elif src in ("pulled", "pulled+patched"):
-            status = _pull_one(root, e, idx, update, allow_unvetted)
+            status = _pull_one(root, e, update, allow_unvetted)
         else:
             print(f"  ✗ {name}: unknown source '{src}' "
-                  "(want pulled | pulled+patched | generated)")
+                  "(want pulled | pulled+patched | generated | composite)")
             status = "refused"
         tally[status] += 1
-
-    core.save_manifest(root, man)
 
     summary = ", ".join(f"{v} {k}" for k, v in tally.items() if v)
     print(f"✓ resolve: {summary or 'nothing to do'}")

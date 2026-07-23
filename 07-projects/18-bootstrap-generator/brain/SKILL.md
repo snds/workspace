@@ -84,7 +84,8 @@ everything structural goes through `wsx`:
 | Write profile fields | `wsx profile set contexts.work.role="…" surfaces.agents="claude,cursor" …` |
 | GENERATE a skill | `wsx skill add <name> --kind hub\|spoke --hub <hub> --triggers "a,b,c" --desc "…"` |
 | Enrich a skill body | (author the skeleton's sections in prose) then `wsx skill reindex` |
-| PULL / PATCH skills | author `context/skill-plan.json` (see brain/resolver.md), then `wsx resolve` |
+| Search for sources | `wsx search "<capability>"` (skills + reference anchors) |
+| PULL / PATCH / COMPOSITE | author `context/skill-plan.json` (see brain/resolver.md), then `wsx resolve` |
 | List / re-index skills | `wsx skill list` · `wsx skill reindex` |
 | Check trigger overlaps | `wsx lint` |
 | Emit for their surface(s) | `wsx emit claude-code` (or `agents-md` / `cursor` / `pack` / `all`) |
@@ -93,8 +94,9 @@ everything structural goes through `wsx`:
 
 Notes: list-valued profile fields (`surfaces.agents`, `contexts.professional.crafts`,
 `contexts.personal.interests`, `preferences.banned`, `imports`) take comma-separated
-values. `wsx resolve` (PULL/PATCH from a registry, per an approved `skill-plan.json`)
-is **built** — it fetches, pins (read-only), namespaces, and registers. `wsx emit mcp`
+values. `wsx search` finds sources (skills + reference anchors); `wsx resolve`
+(PULL/PATCH/GENERATE/COMPOSITE, per an approved `skill-plan.json`) is **built** — it
+fetches, pins (read-only), namespaces, cites references, and registers. `wsx emit mcp`
 is **built** too — it writes a runnable, zero-dep stdio MCP server (the universal
 runtime) alongside the file adapters (`claude-code`/`agents-md`/`cursor`/`pack`). Lost?
 `wsx doctor` says where you are and what to run next.
@@ -199,17 +201,31 @@ offending field with the person, and re-run `wsx profile set` — never hand-edi
 
 ## Phase 3 — Resolver + the skill-plan REVIEW GATE
 
-Read **`brain/resolver.md`**. For each capability/domain the interview surfaced,
-make the match decision (this is *your* judgment; the fetch/pin is `wsx`'s job):
+Read **`brain/resolver.md`**. For each capability/domain the interview surfaced, run
+**two-track sourcing** before deciding (both searches, every capability):
+
+1. **Skill track:** `wsx search --kind skill "<capability>"` — is there a ready-made
+   skill to PULL or ADAPT?
+2. **Reference track:** find the *industry-leading* reference — the standard, the
+   canonical guidance, what a top practitioner would cite — using your own research
+   tools (web search/fetch, or the `deep-research` skill for depth). `wsx search
+   --kind reference` lists any configured anchors, but the real finding is yours.
+
+Then make the match decision (this is *your* judgment; fetch/pin/cite is `wsx`'s job):
 
 - **STRONG match → PULL.** Pin + namespace it. Pulled skills are **read-only**.
 - **PARTIAL match → PULL + PATCH.** Patches live in a sibling overlay; **never
   edit the pulled skill** itself.
-- **NONE / proprietary / personal IP → GENERATE** a new canonical skill.
+- **NONE / proprietary / personal IP / thin match → GENERATE-COMPOSITE** a new
+  canonical skill, grounded in the person's judgment **and** the references you found,
+  with a `references[]` list so `wsx resolve` cites them. A composite that doesn't
+  cite is unfinished (`wsx lint` fails it).
 
 Bias: **pull** for generic, well-trodden domains; **adapt** at roughly 70% match;
-**generate** for the person's unique judgment, proprietary work, and personal
-projects.
+**generate-composite** for the person's unique judgment, proprietary work, personal
+projects, and anywhere distilling authoritative reference beats a shallow pull — which,
+in practice, is most high-value domains. The goal isn't "is there a skill?" but "**what
+is the best possible skill for this person, from everything available?**"
 
 Registries are pluggable sources, each with its own trust profile — state these
 honestly when you cite a source:

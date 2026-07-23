@@ -47,6 +47,8 @@ def lint(root: Path) -> int:
     problems = 0
     trigger_owners: dict[str, list] = {}
     skills = list(core.iter_skills(root))
+    man = core.load_manifest(root)
+    recs = man.get("skills", {})
 
     for name, sk in skills:
         fm, body = core.parse_frontmatter(sk)
@@ -66,6 +68,13 @@ def lint(root: Path) -> int:
                 print(f"  ⚠ {name}: un-enriched skeleton — {detail}; "
                       "fill the body, then `wsx skill reindex`")
                 problems += 1
+        # composite skills must cite: if the manifest records references, the body
+        # must carry the Sources block (the attribution the citations are for).
+        rec = recs.get(name, {})
+        if rec.get("references") and "wsx:sources" not in body and "Sources & further reading" not in body:
+            print(f"  ⚠ {name}: composite skill has {len(rec['references'])} recorded "
+                  "reference(s) but no Sources block — re-run `wsx resolve` to cite them")
+            problems += 1
         for t in core.skill_triggers(fm):
             trigger_owners.setdefault(t, []).append(name)
 
@@ -76,7 +85,6 @@ def lint(root: Path) -> int:
             problems += 1
 
     # manifest sanity
-    man = core.load_manifest(root)
     if man.get("schema_version") != "0.2":
         print(f"  ⚠ manifest schema_version is {man.get('schema_version')!r} (expected '0.2')")
         problems += 1
@@ -121,23 +129,30 @@ def verify(root: Path) -> int:
             print(f"  ✗ missing canonical file: {rel}")
             fails += 1
 
-    # 4. pulled skills still match their pin (a read-only pull must stay byte-identical)
+    # 4. pinned content still matches its pin — pulled skills (byte-identical, read-only)
+    #    and any cached composite references. Both must stay verifiable/re-fetchable.
     man = core.load_manifest(root)
-    pinned = [(n, r) for n, r in man.get("skills", {}).items() if r.get("pin")]
+    pins = []  # (label, path, pin)
+    for name, rec in man.get("skills", {}).items():
+        if rec.get("pin"):
+            pins.append((name, rec.get("path", ""), rec["pin"]))
+        for ref in rec.get("references", []):
+            if ref.get("pin") and ref.get("cached"):
+                pins.append((f"{name}:ref", ref["cached"], ref["pin"]))
     ok = 0
-    for name, rec in pinned:
-        f = root / rec.get("path", "")
+    for label, rel, pin in pins:
+        f = root / rel
         if not f.exists():
-            print(f"  ✗ {name}: pinned skill missing on disk ({rec.get('path')})")
+            print(f"  ✗ {label}: pinned content missing on disk ({rel})")
             fails += 1
-        elif core.sha256_file(f) != rec["pin"]:
-            print(f"  ✗ {name}: on-disk content diverged from its pin — a pulled skill "
-                  "must stay byte-identical (patch via overlay, or `wsx resolve --update`)")
+        elif core.sha256_file(f) != pin:
+            print(f"  ✗ {label}: on-disk content diverged from its pin — pinned content "
+                  "must stay byte-identical (patch via overlay, or re-run `wsx resolve --update`)")
             fails += 1
         else:
             ok += 1
-    if pinned:
-        print(f"  ✓ {ok}/{len(pinned)} pulled skill(s) match their pin")
+    if pins:
+        print(f"  ✓ {ok}/{len(pins)} pinned item(s) (pulled skills + cached refs) match their pin")
 
     print("✓ verify passed" if fails == 0 else f"verify found {fails} failure(s)")
     return fails

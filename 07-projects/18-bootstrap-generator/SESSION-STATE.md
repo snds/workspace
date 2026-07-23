@@ -1,6 +1,6 @@
 # SESSION-STATE — Portable Bootstrap Generator
 
-_Last updated: 2026-07-22 19:15 — checkpoint (emit mcp built: runnable zero-dep MCP runtime; earlier this session: Resolver Phase 2 + turn-key Path A → no command-surface stubs remain)_
+_Last updated: 2026-07-22 19:40 — checkpoint (two-track sourcing: composite skills cite distilled industry-leading references + `wsx search` discovery; earlier this session: emit mcp, Resolver Phase 2, turn-key Path A)_
 
 ---
 
@@ -36,7 +36,7 @@ _Last updated: 2026-07-22 19:15 — checkpoint (emit mcp built: runnable zero-de
 - **CLI language decision**: **Python 3, zero runtime dependencies** (incl. own minimal YAML in `wsxlib/yamlio.py`) — matches the README's "no extra installs" promise and the workspace's python3 tooling convention.
 
 ### Open work and paused threads
-- **Currently in progress**: the whole `wsx` command surface is **stub-free** end-to-end. As of 2026-07-22: Path A is turn-key (the brain is a registered auto-triggering skill; generated skills come out as sectioned skeletons `wsx lint` enforces are enriched); the **Resolver** is built (`wsx resolve` = plan-driven pull/patch/generate with pin+read-only+namespace+trust-gate); and the **MCP runtime** is built (`wsx emit mcp` writes a runnable zero-dep stdio server). The full loop — `init → interview → profile → resolve → emit {all} → lint → verify` — runs and is dogfooded. Remaining work is enhancement (registry search/discovery, hooks, template externalization), not missing commands.
+- **Currently in progress**: the whole `wsx` command surface is **stub-free** end-to-end, and the Resolver is now a **composite builder**, not just a skill fetcher. As of 2026-07-22: Path A is turn-key (registered auto-triggering brain; skeletons `wsx lint` enforces are enriched); the **Resolver** does plan-driven pull/patch/generate **+ composite** (skills that fuse the person's judgment with distilled industry-leading references, cited via an author-voice `## Sources` block; `--cache-refs` pins them); **`wsx search`** gives two-track discovery (skill registries + reference anchors, pluggable catalog); and the **MCP runtime** is a runnable zero-dep stdio server. Full loop — `init → interview → search → profile → resolve → emit {all} → lint → verify` — runs and is dogfooded. Remaining work is enhancement (hooks, template externalization, richer registry indexes), not missing commands.
 - **Pending questions**: ship-as decision (SPEC §9) — standalone `wsx` repo split, deferred (folder extracts cleanly from git history when ready).
 - **Blocked on**: nothing.
 - **What's needed to resume** (next phases):
@@ -47,13 +47,42 @@ _Last updated: 2026-07-22 19:15 — checkpoint (emit mcp built: runnable zero-de
   5. **Polish (minor):** reconcile `brain/synthesis.md` worked-example values with schema enums (`lifecycle.continuity` is boolean in schema but `session-log` in the example; `automation` enum is minimal/standard/full but example uses `assisted`; `schema_version=1` vs `"0.2"`). Non-breaking (CLI doesn't enforce enums), but tidy for consistency.
 
 ### Known state of external dependencies
-- **Registries (Resolver, §4)**: the fetch mechanism is **built and pluggable** — `wsx resolve` pulls from any `http(s)`/`file`/local `url` given in the plan, with per-registry trust handled by the `audited` gate (unvetted `skills.sh`/community refused by default). No registry is *hardcoded*; the brain names the registry + url per skill. Not yet done: a registry *search/discovery* layer (the brain currently supplies exact skill urls rather than querying a directory index).
+- **Sources (Resolver, §4)**: fetch is **built and pluggable** — `wsx resolve` pulls from any `http(s)`/`file`/local `url`; per-registry trust via the `audited` gate (unvetted refused by default). **`wsx search`** now provides the discovery layer over a pluggable catalog (`context/sources.json` or a built-in default) across **two source kinds**: `skill-registry` (fetch + filter a JSON `index_url` when present, else point at the homepage) and `reference` (industry-leading standards/guidance — found by the brain's own research, listed honestly). Enhancement remaining: real registry index endpoints (the built-in registries currently have no stable machine index, so `wsx search` points at their homepages until a `sources.json` supplies one).
 
 ---
 
 ## Session history (append-only)
 
 _Newest first._
+
+### 2026-07-22 19:40 — checkpoint (two-track sourcing: composite skills from references + `wsx search`)
+
+**Focus this session** (continued): reframe the Resolver from a *skill fetcher* into a *composite builder*, per Sean's steer — "the resolver should not be beholden just to skill-library sources; the interview should look for industry-leading reference, guidance, best-practices to create the best possible composite skill."
+**Machine**: `Voyager-2.local` (Personal MacBook Pro)
+**Stopped because**: composite + search built + dogfooded across all source types; brain reframed; docs reconciled; ready to commit.
+
+**Grounding**: our own `08-knowledge/cross-domain/skill-ecosystem-and-mcp-servers.md` already proved the thesis — the highest-value skills we ever built (math/physics substrate, security, imaging foundations) were **synthesized from authoritative reference**, because the directories "wrap engines and tools — none teach the substrate beneath them." And it set the attribution convention: author in our own voice + cite, **never copy**.
+
+**Built — composite skills (`generator/wsxlib/resolver.py`)**:
+- Plan entries gain **`references[]`** (`title`, optional `url`/`publisher`/`note`) and a new `source: "composite"` (also: any `generated` entry with references). `wsx resolve` writes an idempotent, marker-delimited **`## Sources & further reading`** block into the skill in the person's own voice, records the citations in the manifest (`composite: true` + `references[]`), and with **`--cache-refs`** fetches + pins + caches each reference URL read-only under `skills/<name>/references/`.
+- **Enforcement**: `wsx lint` fails a composite skill whose references are recorded but whose body has no Sources block; `wsx verify`'s pin-integrity now also covers cached references.
+
+**Built — `wsx search` (`generator/wsxlib/search.py`)**: the discovery layer for **two-track sourcing**. Pluggable catalog (`context/sources.json` override, else a built-in default) across two kinds — `skill-registry` (fetch + filter a JSON `index_url`; print candidates + a paste-ready plan fragment; no-index sources point at the homepage; unvetted flagged) and `reference` (list anchors + the honest "reference discovery is your own research" note). Offline-testable via `file://`/local `index_url`.
+
+**Brain reframed (two-track sourcing)**: `brain/resolver.md` — funnel is now PULL / PULL+PATCH / **GENERATE-COMPOSITE**; added the "Two-track sourcing" section (skill registries via `wsx search` + industry-leading references via the brain's own research/`deep-research`), the composite mandate + attribution convention. `brain/SKILL.md` Phase 3 + cheat-sheet updated. `brain/interview.md` M2 now says: when the person names their north-stars ("whose work is the bar?"), capture them as reference seeds for composite skills.
+
+**Fixed a real correctness bug (found by dogfooding composite)**: `wsx resolve` loaded the manifest once and did a final blanket `save_manifest`, **clobbering** records that `_generate_one`/`skills.add` wrote to disk independently (only pulls survived, via the shared in-memory dict; masked earlier because I always ran `reindex` after). Fix: each handler now load-modify-saves its own manifest changes; `resolve()` no longer holds/saves a stale copy. Verified: a mixed pull/patch/generate/composite plan now persists **all four** records correctly.
+
+**Dogfood**: mixed 4-source plan → manifest has all 4 with correct records; `--cache-refs` caches+pins a `file://` reference (read-only); `verify` shows pins for pulled skills **and** cached refs; both lint gates fire (un-enriched skeleton; composite-missing-sources); `wsx search` filters a real local index and lists the default catalog honestly. `py_compile` clean.
+
+**Decisions made**:
+- **Composite = the default aspiration**, not an edge case: per our knowledge entry, authoring-from-reference beats a shallow pull for most high-value domains.
+- **`wsx` cites; the brain distills**: the mechanical hand records/pins/injects the Sources block; synthesizing references into prose (never copying) stays the brain's job — enforced by lint.
+- **Reference *finding* is the brain's research, not a faked `wsx` API**: `wsx search` handles machine-indexed skill registries deterministically and is honest that reference discovery uses the brain's web tools.
+
+**Next resumption needs**: all enhancement now — real registry index endpoints (built-ins have no stable machine index yet), MCP hooks on the claude-code adapter, externalize scaffold templates, reconcile `synthesis.md` example values with schema enums.
+
+---
 
 ### 2026-07-22 19:15 — checkpoint (emit mcp: the universal MCP runtime, built)
 
