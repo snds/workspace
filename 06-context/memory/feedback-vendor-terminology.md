@@ -29,5 +29,13 @@ domain vocabulary.
 **Why:** it's an attribution error, not a style nit — calling our work "vendored" credits an external
 paid party for something we made. **How to apply:** before writing "vendor/vendored" about anything
 technical, check: is it literally something we pay an external party for? If not, use adopt / copy in
-/ reuse / dependency / shim. Corrected twice (the Base UI "vendor" tag on the alignment page, then the
-"vendored" palette in Phase 1b) — reach for the accurate verb the first time.
+/ reuse / dependency / shim. Corrected **three times** (the Base UI "vendor" tag on the alignment page;
+the "vendored" palette in Phase 1b; then the bootstrap-generator's own `wsx` CLI copied into each
+generated workspace, 2026-07-23) — reach for the accurate verb the first time.
+
+**Highest-risk moment (from the third correction):** naming a *function or directory* after the wrong
+word propagates it everywhere — `vendor_cli()` put "vendored" into user-facing CLI output, an emitted
+launcher docstring, a shipped skill, and the distribution zips before anyone read it. Get the noun
+right at the API boundary, not just in prose. The accurate framing for that case: **our own CLI,
+copied into the workspace** so it is self-contained (`copy_cli()`, "copied-in CLI", "self-contained
+copy") — nothing external, nothing paid for.
