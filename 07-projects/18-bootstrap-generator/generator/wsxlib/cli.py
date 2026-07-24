@@ -112,12 +112,21 @@ def cmd_profile(a):
             key = key.strip()
             _set_dotted(prof, key, _coerce_for(key, raw.strip()))
         core.save_profile(root, prof)
-        # Rebuild everything derived from the profile, or the human-readable mirror
-        # silently disagrees with the machine source (the classic drift bug).
+        # Rebuild EVERYTHING derived from the profile. The mirror was only half of it:
+        # the emitted adapters (AGENTS.md / CLAUDE.md / cursor rules / pack) also embed
+        # profile values (role, tone, audience, separation), and the AI treats those as
+        # authoritative — so a stale adapter silently instructs it with the old identity.
         from . import moc
         moc.write_mocs(root)
         print(f"✓ updated {len(a.rest)} field(s) in context/profile.yaml")
         print("  regenerated context/profile.md + HOME.md from the new values.")
+        man = core.load_manifest(root)
+        targets = [t for t in man.get("emitted", {}) if t in adapters.ADAPTERS]
+        if targets:
+            for t in targets:
+                adapters.ADAPTERS[t](root, prof, man)
+            print(f"  re-emitted {len(targets)} adapter target(s) so they can't go stale: "
+                  f"{', '.join(sorted(targets))}")
         return 0
     raise SystemExit("error: profile expects get|set")
 
@@ -178,6 +187,11 @@ def cmd_compact(a):
 
 def cmd_remote(a):
     return lifecycle.remote(core.require_workspace(), a.url or "")
+
+
+def cmd_identity(a):
+    return lifecycle.identity(core.require_workspace(), a.name or "", a.email or "",
+                              set_global=a.global_)
 
 
 def cmd_doctor(a):
@@ -281,6 +295,13 @@ def build_parser() -> argparse.ArgumentParser:
     prm = sub.add_parser("remote", help="set/show where the workspace lives (git remote) + hosting tips")
     prm.add_argument("url", nargs="?", default="", help="git remote URL (omit to see recommendations)")
     prm.set_defaults(fn=cmd_remote)
+
+    pid = sub.add_parser("identity", help="set/show the git author identity for commits")
+    pid.add_argument("--name", default="", help='author name, e.g. "Ada Lovelace"')
+    pid.add_argument("--email", default="", help='author email, e.g. "ada@example.com"')
+    pid.add_argument("--global", dest="global_", action="store_true",
+                     help="set as the default for ALL repos (default: this workspace only)")
+    pid.set_defaults(fn=cmd_identity)
 
     pse = sub.add_parser("search", help="find sources (skill registries + reference anchors)")
     pse.add_argument("query", nargs="?", default="", help="capability to search for")

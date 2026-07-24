@@ -33,9 +33,8 @@ def doctor() -> int:
             print(f"  git id    : ✓ {who} <{mail}>")
         else:
             print("  git id    : ⚠ not set — commits may fail, or be recorded under a")
-            print("                guessed name. Set it once so your history is yours:")
-            print('                git config --global user.name  "Your Name"')
-            print('                git config --global user.email "you@example.com"')
+            print("                guessed name. Set it so your history is yours:")
+            print('                wsx identity --name "Your Name" --email "you@example.com"')
     else:
         print("  git       : ✗ not found — install GitHub Desktop "
               "(https://github.com/apps/desktop) for sync + history")
@@ -144,14 +143,16 @@ def verify(root: Path) -> int:
             print(f"  ✗ missing canonical file: {rel}")
             fails += 1
 
-    # 3a. SAFETY: never let a declared-but-unimplemented security property stand. A
-    # person who sets encrypt:true may believe personal.md is encrypted at rest — it is
-    # not; it is only gitignored. Say so loudly rather than imply a guarantee we don't keep.
-    if prof.get("privacy", {}).get("encrypt"):
-        print("  ⚠ privacy.encrypt is true, but wsx implements NO vault encryption.")
-        print("    Gitignoring a file is not encryption. `context/personal.md` is excluded")
-        print("    from git and from every emitted adapter, and that is all. For real")
-        print("    at-rest protection use FileVault/BitLocker or an encrypted volume.")
+    # 3a. LEGACY: `privacy.encrypt` was removed — it promised protection wsx never
+    # implemented. Older profiles still carry it; flag until `wsx upgrade` strips it.
+    if "encrypt" in (prof.get("privacy") or {}):
+        on = bool(prof["privacy"]["encrypt"])
+        print("  ⚠ legacy `privacy.encrypt` found in profile.yaml — this field was REMOVED")
+        print("    because wsx implements no vault encryption (gitignoring is not encryption).")
+        if on:
+            print("    It is set to TRUE: your personal notes were never encrypted, only")
+            print("    gitignored. Use FileVault/BitLocker for real at-rest protection.")
+        print("    Run `wsx upgrade` to remove the field.")
 
     # 3b. Declared vs. actual transport: profile.transport.remote is just a recorded
     # string; only `wsx remote <url>` configures git. If they disagree the person thinks
@@ -386,6 +387,65 @@ def sync(root: Path) -> int:
     return 1
 
 
+# ---------------------------------------------------------------- identity ---
+def identity(root: Path, name: str = "", email: str = "", set_global: bool = False) -> int:
+    """Set (or show) the git author identity used to sign this workspace's commits.
+
+    Defaults to **repo-local** so we never silently rewrite the person's global git
+    config — the least invasive thing that still makes commits work. `--global` is
+    opt-in for someone who has no identity anywhere (a fresh machine).
+
+    Without an identity, every `git commit` fails, which is the single most common
+    reason a freshly-generated workspace ends up with zero commits.
+    """
+    def _get(scope):
+        args = ["config"] + (["--global"] if scope == "global" else ["--local"])
+        who = core.git(root, *args, "--get", "user.name", check=False, capture=True)
+        mail = core.git(root, *args, "--get", "user.email", check=False, capture=True)
+        return (who.stdout or "").strip(), (mail.stdout or "").strip()
+
+    if not name and not email:
+        ln, le = _get("local")
+        gn, ge = _get("global")
+        eff_n, eff_e = (ln or gn), (le or ge)
+        print("git author identity — who your commits are signed as\n")
+        print(f"  this workspace : {ln + ' <' + le + '>' if ln and le else '(not set)'}")
+        print(f"  global default : {gn + ' <' + ge + '>' if gn and ge else '(not set)'}")
+        if eff_n and eff_e:
+            print(f"\n  ✓ effective    : {eff_n} <{eff_e}> — commits will work.")
+        else:
+            print("\n  ✗ No usable identity — commits will FAIL and nothing gets saved to history.")
+            print("    Set one (applies to this workspace only):")
+            print('      wsx identity --name "Your Name" --email "you@example.com"')
+            print("    Add --global to make it the default for all your repos.")
+        print("\n  Tip: the email can be anything you control. If you push to GitHub and want")
+        print("  commits linked to your account without publishing a personal address, use")
+        print("  your GitHub noreply address (Settings → Emails → 'Keep my email private').")
+        return 0
+
+    if not name or not email:
+        raise SystemExit("error: provide BOTH --name and --email "
+                         '(e.g. wsx identity --name "Ada L" --email "ada@example.com")')
+
+    scope = ["--global"] if set_global else ["--local"]
+    where = "globally (all repos)" if set_global else "for this workspace"
+    core.git(root, "config", *scope, "user.name", name, check=False)
+    core.git(root, "config", *scope, "user.email", email, check=False)
+    print(f"✓ git identity set {where}: {name} <{email}>")
+
+    # If the repo has no commits yet, this was almost certainly the blocker — finish the job.
+    r = core.git(root, "rev-list", "--count", "HEAD", check=False, capture=True)
+    if r.returncode != 0 or not (r.stdout or "").strip().isdigit() or int(r.stdout.strip()) == 0:
+        core.git(root, "add", "-A", check=False)
+        core.git(root, "commit", "-q", "-m", "wsx: initial commit of the workspace", check=False)
+        r2 = core.git(root, "rev-list", "--count", "HEAD", check=False, capture=True)
+        if (r2.stdout or "").strip().isdigit() and int(r2.stdout.strip()) > 0:
+            print("  → this workspace had no commits; created the first one. Your work is versioned.")
+        else:
+            print("  ⚠ still could not commit — run `git status` here to see why.")
+    return 0
+
+
 # ------------------------------------------------------------------ remote ---
 _HOSTING = """where should this workspace live? (it's a git repo — pick a home so it
 syncs across your machines and is backed up). Recommended, all free:
@@ -416,6 +476,16 @@ def remote(root: Path, url: str = "") -> int:
             print(_HOSTING)
         return 0
 
+    # Guard: without a git repo there is nothing to attach a remote to. Recording the
+    # URL in the profile anyway would MANUFACTURE the declared-vs-actual drift that
+    # `wsx verify`/`upgrade` exist to catch — and tell the person their work is backed
+    # up when nothing can push.
+    if not (root / ".git").exists():
+        print("✗ this workspace is not a git repository yet, so a remote can't be attached.")
+        print("  create the repo first:  git init   (or re-run `wsx init` without --no-git)")
+        print("  then: wsx identity --name \"…\" --email \"…\"  and  wsx remote <url>")
+        return 1
+
     # add or update origin
     if core.has_remote(root):
         core.git(root, "remote", "set-url", "origin", url, check=False)
@@ -424,7 +494,16 @@ def remote(root: Path, url: str = "") -> int:
         core.git(root, "remote", "add", "origin", url, check=False)
         verb = "set"
 
-    # record intent in the profile so adapters/brain know where it lives
+    # VERIFY before claiming success or recording it. git may refuse a malformed URL.
+    check = core.git(root, "remote", "get-url", "origin", check=False, capture=True)
+    actual = (check.stdout or "").strip()
+    if actual != url:
+        print(f"✗ git did not accept that remote (it reports: {actual or 'none'}).")
+        print("  Nothing was recorded — the profile still reflects reality.")
+        print("  Check the URL and try again, e.g. https://github.com/<you>/<repo>.git")
+        return 1
+
+    # record intent in the profile ONLY once git agrees
     prof = core.load_profile(root)
     prof.setdefault("transport", {})["type"] = "git"
     prof["transport"]["remote"] = url

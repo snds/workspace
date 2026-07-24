@@ -25,9 +25,17 @@ def default_profile(name: str = "you", handle: str = "you") -> dict:
             "professional": {"crafts": []},
             "personal": {"private": True, "interests": []},
         },
+        # Per-domain expertise sets each generated skill's ALTITUDE. Every emitted
+        # adapter instructs the AI to read this key, so it must exist from the start —
+        # an instruction pointing at an absent key is the same class of defect as a
+        # promise with no implementation. The interview populates it per domain.
+        "expertise": {},
         "preferences": {"tone": "", "verbosity": "", "audience": "", "banned": []},
         "lifecycle": {"continuity": True, "separation": "walled", "automation": "standard"},
-        "privacy": {"personal_local_only": True, "encrypt": False},
+        # NOTE: there is deliberately no `encrypt` field. wsx implements no vault
+        # encryption; offering the option promised a guarantee we never kept. At-rest
+        # protection belongs to the OS (FileVault/BitLocker/LUKS).
+        "privacy": {"personal_local_only": True},
         "imports": [],
     }
 
@@ -196,6 +204,34 @@ human reading:
     - **As of:** YYYY-MM · **Status:** current | aging | stale
 
 Token-frugal by design: read this block, then decide whether to read the rest.
+""",
+    "knowledge/README.md": """# Knowledge — what you've learned that outlives a session
+
+_Accumulated **domain insight**: validated patterns, hard-won constraints, working
+theories, research synthesis. Distinct from its neighbours — keep the boundary crisp:_
+
+| Content | Home |
+|---|---|
+| How to *do* something (reusable procedure) | `skills/` |
+| Why a **choice** was made | `context/decisions/` (ADRs) |
+| What *happened* in a session | `context/session-log.md` |
+| Current state of a project | `projects/<name>/PROJECT.md` |
+| **What you've learned** and why it matters | **here** |
+
+Write an entry when a session produces something durable: a constraint discovered the
+hard way, a pattern that proved out, research worth not repeating. One file per insight.
+
+**Format** — follow [conventions](../context/conventions.md): open with a
+`## For future agent` block (TL;DR · key claims · as-of), mark every claim *timeless /
+dated / pointer*, and use typed `relations:` edges (especially `refutes`, so a
+superseded finding is marked rather than left to mislead). Back to [[HOME]].
+""",
+    "knowledge/_INDEX.md": """# Knowledge — index
+
+_One line per entry so an assistant can decide what to read without opening everything.
+Add a line whenever you add an entry. Back to [[HOME]]._
+
+_(no entries yet — write one when a session produces a durable insight.)_
 """,
     "context/decisions/README.md": """# Decisions (ADRs)
 
@@ -513,7 +549,6 @@ def init(dest: str, name: str = "you", handle: str = "you",
         print("\n⚠  git did not record a first commit. Your files are safe on disk, but")
         print("   nothing is version-controlled yet. Fix it with:")
         print(git_hint)
-        print("   then:  cd " + str(root) + " && git add -A && git commit -m \"wsx init\"")
     print("\n  next: run the interview (the brain) to fill in profile.yaml, then `wsx emit`.")
     print("  decide where it lives (GitHub/GitLab/Codeberg/local) → `wsx remote` for options.")
     return root
@@ -534,8 +569,8 @@ def _commit_ok(root: Path):
     name = core.git(root, "config", "--get", "user.name", check=False, capture=True)
     email = core.git(root, "config", "--get", "user.email", check=False, capture=True)
     if not (name.stdout or "").strip() or not (email.stdout or "").strip():
-        return False, ('   git config --global user.name  "Your Name"\n'
-                       '   git config --global user.email "you@example.com"')
+        return False, ('   wsx identity --name "Your Name" --email "you@example.com"\n'
+                       '   (sets it for this workspace only, then makes the first commit)')
     return False, "   (run `git status` in the workspace to see what git is objecting to)"
 
 
@@ -564,7 +599,26 @@ def vendor_cli(root: Path) -> list:
     launcher = root / "wsx.py"
     launcher.write_text(_LAUNCHER, encoding="utf-8")
     written.append("wsx.py")
+    # Windows rarely has a `python3` command (it's `python`, or the `py` launcher), so
+    # every "python3 wsx.py …" instruction dead-ends there. Ship a .cmd shim that tries
+    # both, giving Windows users the identical `wsx <command>` surface.
+    cmd = root / "wsx.cmd"
+    cmd.write_text(_LAUNCHER_CMD, encoding="utf-8")
+    written.append("wsx.cmd")
     return written
+
+
+_LAUNCHER_CMD = """@echo off
+REM wsx — Windows launcher for this workspace's own vendored CLI.
+REM Usage:  wsx doctor   ·   wsx health   ·   wsx upgrade   ·   wsx emit all
+setlocal
+where py >nul 2>nul && (py -3 "%~dp0wsx.py" %* & exit /b %errorlevel%)
+where python >nul 2>nul && (python "%~dp0wsx.py" %* & exit /b %errorlevel%)
+where python3 >nul 2>nul && (python3 "%~dp0wsx.py" %* & exit /b %errorlevel%)
+echo Python was not found. Install it from https://www.python.org/downloads/
+echo and tick "Add Python to PATH", then run this again.
+exit /b 1
+"""
 
 
 _LAUNCHER = '''#!/usr/bin/env python3

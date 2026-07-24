@@ -1,36 +1,66 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://bootstrap-gen/schemas/profile.schema.json",
-  "title": "profile.yaml — the person (brain↔hands seam)",
+  "title": "profile.yaml \u2014 the person (brain\u2194hands seam)",
   "description": "Produced/edited by the brain via `wsx profile set`; consumed by wsx. Stored as YAML in context/profile.yaml within the constrained subset wsxlib/yamlio.py supports (nested maps, scalars, inline flow lists).",
   "type": "object",
-  "required": ["schema_version", "identity", "surfaces", "transport", "contexts", "lifecycle", "privacy"],
+  "required": [
+    "schema_version",
+    "identity",
+    "surfaces",
+    "transport",
+    "contexts",
+    "lifecycle",
+    "privacy"
+  ],
   "additionalProperties": true,
   "properties": {
-    "schema_version": { "type": "string", "const": "0.2" },
+    "schema_version": {
+      "type": "string",
+      "const": "0.2"
+    },
     "identity": {
       "type": "object",
-      "required": ["name", "handle"],
+      "required": [
+        "name",
+        "handle"
+      ],
       "properties": {
-        "name": { "type": "string" },
-        "handle": { "type": "string" }
+        "name": {
+          "type": "string"
+        },
+        "handle": {
+          "type": "string"
+        }
       }
-    },
-    "use_context": {
-      "type": "string",
-      "enum": ["personal", "professional", "mixed"],
-      "description": "What this workspace is FOR. Determined early; prioritizes everything downstream — which hubs are primary, walled-vs-blended separation, tone. 'mixed' = both, kept in their walls."
     },
     "expertise": {
       "type": "object",
-      "description": "Per-DOMAIN skill level — NOT a single global rating. The same person is often a hobbyist in one area and a staff-level expert in another; each generated skill is written at the altitude for ITS domain. Keyed by domain slug.",
+      "description": "Per-DOMAIN skill level \u2014 NOT a single global rating. The same person is often a hobbyist in one area and a staff-level expert in another; each generated skill is written at the altitude for ITS domain. Keyed by domain slug.",
       "additionalProperties": {
         "type": "object",
         "properties": {
-          "level": { "type": "string", "enum": ["hobbyist", "intermediate", "advanced", "expert"] },
-          "seniority": { "type": "string", "description": "e.g. 'staff', 'principal', 'lead' — when the domain is professional and it matters" },
-          "years": { "type": "integer", "description": "time in the domain, when relevant" },
-          "note": { "type": "string", "description": "any nuance about their standing in this domain" }
+          "level": {
+            "type": "string",
+            "enum": [
+              "hobbyist",
+              "intermediate",
+              "advanced",
+              "expert"
+            ]
+          },
+          "seniority": {
+            "type": "string",
+            "description": "e.g. 'staff', 'principal', 'lead' \u2014 when the domain is professional and it matters"
+          },
+          "years": {
+            "type": "integer",
+            "description": "time in the domain, when relevant"
+          },
+          "note": {
+            "type": "string",
+            "description": "any nuance about their standing in this domain"
+          }
         }
       }
     },
@@ -38,23 +68,59 @@
       "type": "object",
       "description": "Which AI tools to emit for. 'primary' is the recommended/default surface.",
       "properties": {
-        "primary": { "type": "string", "examples": ["claude", "cursor", "codex", "gemini"] },
-        "agents": { "type": "array", "items": { "type": "string" } },
-        "machines": { "type": "array", "items": { "type": "string" } }
+        "primary": {
+          "type": "string",
+          "examples": [
+            "claude",
+            "cursor",
+            "codex",
+            "gemini"
+          ]
+        },
+        "agents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "machines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "models": {
       "type": "object",
       "properties": {
-        "tier": { "type": "string", "enum": ["frontier", "mid", "small-local"] },
-        "offline": { "type": "boolean" }
+        "tier": {
+          "type": "string",
+          "enum": [
+            "frontier",
+            "mid",
+            "small-local"
+          ]
+        },
+        "offline": {
+          "type": "boolean"
+        }
       }
     },
     "transport": {
       "type": "object",
       "properties": {
-        "type": { "type": "string", "enum": ["git", "local"] },
-        "remote": { "type": "string", "description": "git remote URL, or empty" }
+        "type": {
+          "type": "string",
+          "enum": [
+            "git",
+            "local"
+          ]
+        },
+        "remote": {
+          "type": "string",
+          "description": "git remote URL, or empty"
+        }
       }
     },
     "contexts": {
@@ -64,21 +130,38 @@
         "work": {
           "type": "object",
           "properties": {
-            "role": { "type": "string" },
-            "summary": { "type": "string" }
+            "role": {
+              "type": "string"
+            },
+            "summary": {
+              "type": "string"
+            }
           }
         },
         "professional": {
           "type": "object",
           "properties": {
-            "crafts": { "type": "array", "items": { "type": "string" } }
+            "crafts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         },
         "personal": {
           "type": "object",
           "properties": {
-            "private": { "type": "boolean", "description": "true ⇒ local-only, never synced" },
-            "interests": { "type": "array", "items": { "type": "string" } }
+            "private": {
+              "type": "boolean",
+              "description": "true \u21d2 local-only, never synced"
+            },
+            "interests": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         }
       }
@@ -86,18 +169,45 @@
     "preferences": {
       "type": "object",
       "properties": {
-        "tone": { "type": "string" },
-        "verbosity": { "type": "string" },
-        "audience": { "type": "string" },
-        "banned": { "type": "array", "items": { "type": "string" }, "description": "anti-patterns to avoid" }
+        "tone": {
+          "type": "string"
+        },
+        "verbosity": {
+          "type": "string"
+        },
+        "audience": {
+          "type": "string"
+        },
+        "banned": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "anti-patterns to avoid"
+        }
       }
     },
     "lifecycle": {
       "type": "object",
       "properties": {
-        "continuity": { "type": "boolean" },
-        "separation": { "type": "string", "enum": ["walled", "blended"] },
-        "automation": { "type": "string", "enum": ["minimal", "standard", "full"] }
+        "continuity": {
+          "type": "boolean"
+        },
+        "separation": {
+          "type": "string",
+          "enum": [
+            "walled",
+            "blended"
+          ]
+        },
+        "automation": {
+          "type": "string",
+          "enum": [
+            "minimal",
+            "standard",
+            "full"
+          ]
+        }
       }
     },
     "privacy": {
@@ -105,17 +215,15 @@
       "properties": {
         "personal_local_only": {
           "type": "boolean",
-          "description": "walled personal context: context/personal.md is gitignored, excluded from every emitted adapter, and never read unless explicitly asked. IMPLEMENTED."
-        },
-        "encrypt": {
-          "type": "boolean",
-          "description": "NOT IMPLEMENTED — declares an intent only. There is no vault-level encryption in wsx today; gitignoring a file is NOT encryption. Setting this true does not protect anything. `wsx verify` warns if it is true so nobody relies on a guarantee that does not exist. For real at-rest protection use full-disk encryption (FileVault/BitLocker) or an encrypted volume."
+          "description": "walled personal context: context/personal.md is gitignored, excluded from every emitted adapter, and never read unless explicitly asked. IMPLEMENTED \u2014 this is the privacy guarantee wsx actually keeps. There is deliberately NO `encrypt` field: wsx implements no vault encryption, and offering the option promised protection it never delivered. For at-rest protection use full-disk encryption (FileVault / BitLocker / LUKS)."
         }
       }
     },
     "imports": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "existing repos / skill libraries / docs to learn from"
     }
   }

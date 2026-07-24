@@ -380,7 +380,7 @@ different: you suggest and invite; you never push, and "skip" is always a comple
   Venn-center find.
 
 **Populates:** `contexts.personal{private, interests[]}`. Default `private: true`. Sensitive items
-flagged here directly inform `privacy.personal_local_only` and `privacy.encrypt` in M5.
+flagged here directly inform `privacy.personal_local_only` in M5.
 
 > If the person skips this movement entirely, that is a valid and respected outcome. Record
 > `contexts.personal.interests: []` and move on with zero friction.
@@ -428,8 +428,9 @@ forward to `lifecycle.automation` in M5.
 
 **Intent.** Decide how the workspace persists and protects itself: session continuity (should each
 session remember the last?), how walled-off work and personal should be, how much automation they
-want, and their privacy/encryption posture. This produces the lifecycle adapter, the
-context-separation policy, and the gitignore/encryption rules.
+want, and their privacy posture. This produces the lifecycle adapter, the
+context-separation policy, and the gitignore rules. (wsx implements no encryption —
+never offer it.)
 
 **Sample questions:**
 
@@ -443,22 +444,32 @@ context-separation policy, and the gitignore/encryption rules.
   background, or do you want to stay in the loop and approve things? For example, 'fully automatic,'
   'automatic but tell me,' 'ask me each time' — or wherever you're comfortable."*
 - *"How private is this, really? For example, is any of it sensitive enough that it should stay only
-  on your machine, or be encrypted, or never get synced anywhere — or is none of it that sensitive?"*
+  on your machine and never get synced anywhere — or is none of it that sensitive?"*
+  **Never offer encryption.** wsx implements none, and asking the question implies it does. If they
+  raise it themselves, answer straight: *"This tool doesn't encrypt anything — I'd be lying if I
+  said it did. What it does guarantee is that your personal notes stay out of git and out of every
+  file the AI reads. For actual at-rest encryption, turn on FileVault (Mac) or BitLocker (Windows) —
+  that protects the whole disk, including this folder."*
 
 **Depth / branch probes:**
 
+- **Git authorship (ask when sync/history comes up):** *"When your work gets saved to its
+  history, what name and email should it be signed with?"* Git refuses to commit without
+  one, so this is not optional plumbing — it is the difference between a workspace that
+  saves and one that silently doesn't. Set it with `wsx identity --name "…" --email "…"`
+  (workspace-only by default). Offer the GitHub noreply address if they don't want a
+  personal email in public commits.
 - Continuity answer → `lifecycle.continuity` (and whether session-log/reconcile are active).
 - Separation answer → `lifecycle.separation`. **Default to walled** for anyone who mentioned a work
   machine in M0 (per spec decision #4); confirm rather than assume. A walled setup means personal
   context is local-only and a one-word trigger pulls it in on demand.
 - Automation answer → `lifecycle.automation`, cross-checked against the M4 ask-vs-proceed read; if
   they conflict, reflect the tension back and let them resolve it.
-- Privacy answer → `privacy{personal_local_only, encrypt}`. Anything flagged sensitive in M3 should
-  bias these toward protective defaults. If they want encryption, note it; `wsx` handles the
-  mechanics later.
+- Privacy answer → `privacy{personal_local_only}`. Anything flagged sensitive in M3 should bias this
+  toward protective defaults. **There is no `encrypt` field** — it was removed because wsx never
+  implemented it. Point at full-disk encryption instead; never imply the tool provides crypto.
 
-**Populates:** `lifecycle{continuity, separation, automation}` · `privacy{personal_local_only,
-encrypt}`.
+**Populates:** `lifecycle{continuity, separation, automation}` · `privacy{personal_local_only}`.
 
 ---
 
@@ -523,7 +534,7 @@ contexts:
   personal:     { private, interests[] }   # M3  (private: true by default)
 preferences: { tone, verbosity, audience, banned[] }   # M4
 lifecycle:   { continuity, separation, automation }    # M5
-privacy:     { personal_local_only, encrypt }          # M5
+privacy:     { personal_local_only }                   # M5 (no encrypt field — wsx has no crypto)
 imports:     [ ... ]                 # M0
 ```
 

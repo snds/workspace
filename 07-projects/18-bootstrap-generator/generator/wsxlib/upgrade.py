@@ -66,7 +66,49 @@ def _migrate_separation(root: Path, dry_run: bool):
             "baked `Separation:` value → replaced with a pointer to the profile")
 
 
-MIGRATIONS = [_migrate_critical_facts, _migrate_separation]
+def _migrate_drop_encrypt(root: Path, dry_run: bool):
+    """Remove the `privacy.encrypt` field. It was never implemented — the interview
+    even ASKED for it and said wsx would handle it — so anyone who answered "yes" has
+    been carrying a false guarantee. Strip it and say so plainly; at-rest protection is
+    the OS's job (FileVault/BitLocker/LUKS), not this tool's."""
+    prof = core.load_profile(root)
+    priv = prof.get("privacy")
+    if not isinstance(priv, dict) or "encrypt" not in priv:
+        return None
+    was_on = bool(priv.get("encrypt"))
+    if not dry_run:
+        priv.pop("encrypt", None)
+        core.save_profile(root, prof)
+    why = ("removed `privacy.encrypt` — wsx never implemented vault encryption, so this "
+           "field promised protection it did not provide")
+    if was_on:
+        why += (". IT WAS SET TO TRUE: your personal notes were NEVER encrypted — only "
+                "gitignored. Turn on full-disk encryption (FileVault/BitLocker) if you "
+                "want at-rest protection")
+    return ("context/profile.yaml", why)
+
+
+def _reconcile_remote(root: Path, dry_run: bool):
+    """profile.transport.remote is only a recorded string; `wsx remote` is what actually
+    configures git. If the profile declares one and git has none, the person believes
+    their work is backed up while nothing can push. Wire it — that's plainly intended."""
+    if not (root / ".git").exists():
+        return None
+    declared = str(core.load_profile(root).get("transport", {}).get("remote", "") or "").strip()
+    if not declared:
+        return None
+    r = core.git(root, "remote", "get-url", "origin", check=False, capture=True)
+    if (r.stdout or "").strip():
+        return None  # already configured
+    if not dry_run:
+        core.git(root, "remote", "add", "origin", declared, check=False)
+    return ("git remote",
+            f"profile declared {declared} but git had none configured → wired it "
+            "(run `wsx sync` to push)")
+
+
+MIGRATIONS = [_migrate_critical_facts, _migrate_separation,
+              _migrate_drop_encrypt, _reconcile_remote]
 
 
 def _bootstrap_git(root: Path, dry_run: bool):
@@ -85,10 +127,10 @@ def _bootstrap_git(root: Path, dry_run: bool):
     ok, hint = scaffold._commit_ok(root)
     if ok:
         return ("git", "repository had NO commits — created the first one (your work is now versioned)")
-    return ("git", "repository has NO commits and git has no identity configured. "
-                   "Ask the person for their name + email, then run:\n"
-                   f"{hint}\n      then: git -C \"{root}\" add -A && "
-                   "git -C . commit -m \"wsx: initial commit\"")
+    return ("git", "repository has NO commits because git has no author identity. "
+                   "Ask the person what name + email to sign their commits with, then run:\n"
+                   '      wsx identity --name "<their name>" --email "<their email>"\n'
+                   "      (workspace-only by default; it makes the first commit for you)")
 
 # Generated files that upgrade always (re)writes — safe because they are derived
 # from disk, never hand-authored.

@@ -22,7 +22,12 @@ _EXEMPT_NAMES = {"HOME.md", "README.md", "_INDEX.md", "_TEMPLATE.md",
                  "CRITICAL_FACTS.md", "index.md",
                  "AGENTS.md", "CLAUDE.md",  # generated adapters, not vault notes
                  "personal.md"}  # walled — intentionally unlinked when private
-_SKIP_DIRS = {".git", ".obsidian", "adapters", ".claude", ".cursor"}
+# Only CANONICAL vault content participates in the graph. This is an ALLOWLIST on
+# purpose: generated adapter output (adapters/, .claude/, .cursor/, .agents/, .wsx/, and
+# whatever a future or older build emits) is not vault content, and denylisting known
+# names means the next stray generated folder silently reappears as a pile of phantom
+# "orphan notes". Allowlisting the canonical roots excludes all of them automatically.
+_CANONICAL_DIRS = ("context", "skills", "frameworks", "projects", "knowledge")
 
 _WIKILINK = re.compile(r"\[\[([^\]|#]+)")
 _MDLINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
@@ -32,10 +37,18 @@ _STALE_MONTHS = 12  # a dated claim older than this is flagged "aging"
 
 
 def _iter_notes(root: Path):
-    for p in root.rglob("*.md"):
-        if any(part in _SKIP_DIRS for part in p.relative_to(root).parts):
-            continue
+    """Canonical vault notes only: root-level notes + the canonical dirs. Any path
+    segment starting with '.' is skipped, so dot-directories never leak in."""
+    for p in sorted(root.glob("*.md")):
         yield p
+    for d in _CANONICAL_DIRS:
+        base = root / d
+        if not base.is_dir():
+            continue
+        for p in sorted(base.rglob("*.md")):
+            if any(part.startswith(".") for part in p.relative_to(root).parts):
+                continue
+            yield p
 
 
 def _basename_index(notes: list) -> dict:
