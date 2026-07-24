@@ -24,8 +24,9 @@ replaces, `validate-links.py` (which owns the **skill** `## Related` graph).
 ### Step 1 — Run the validators (deterministic; no judgment)
 
 ```bash
-python3 09-tools/vault-health.py       # epistemic layer: orphans · #stale · aging · dangling relations
-python3 09-tools/validate-links.py     # skill graph: dangling / reciprocity / foundation
+python3 09-tools/vault-health.py         # epistemic layer: orphans · #stale · aging · dangling relations
+python3 09-tools/validate-links.py       # skill graph: dangling / reciprocity / foundation
+python3 09-tools/check-terminology.py    # recorded word rules from 06-context/memory/
 ```
 
 `vault-health.py` scopes to `06-context/memory`, `08-knowledge`, `02-shared-references` and
@@ -48,6 +49,10 @@ For each finding, decide the disposition — don't just relay the script output:
   parent — a MOC, a framework, an `_INDEX`), or it's dead (move to an `_archive/` subfolder — never
   delete). A shared-reference reached only via markdown-path links from a framework is *not* an
   orphan (the script counts both link styles).
+- **Terminology violation** (error) → a recorded word rule from `06-context/memory/` was broken.
+  Fix the wording; the rule's own memory entry (cited in the output) gives the correct term. If the
+  hit is legitimate — domain vocabulary, or a historical/immutable file — don't reword it; add the
+  exemption to `check-terminology.py` instead, so the rule stays high-precision.
 
 ### Step 3 — Apply only with sign-off, and log
 

@@ -89,7 +89,7 @@ The portable default for design-engineered work. Applies absent active-layer ove
 _Stack-agnostic. Applies to any language, framework, or vendor — the mechanism matters, not the tools._
 
 - Separation of concerns is the default, not the exception. Before editing, ask **which layer owns this concern.** Behavior, appearance, and product ergonomics are three different owners; a change belongs to exactly one of them.
-- When building on third-party or generated code, keep a **regenerable boundary**: the upstream/vendored layer stays unmodified so updates flow in cleanly. Customization lives in adjacent layers, never in the layer you don't own.
+- When building on third-party or generated code, keep a **regenerable boundary**: the upstream layer stays unmodified so updates flow in cleanly. Customization lives in adjacent layers, never in the layer you don't own.
 - Three roles, non-overlapping:
   - **Upstream / base** — owns behavior and structure. Regenerable; never hand-edited.
   - **Presentation / theme** — owns appearance. Applied through the upstream layer's stable extension points (variables, slots, hooks, data contracts), never by editing it.
