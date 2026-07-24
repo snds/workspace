@@ -81,6 +81,36 @@ def _outbound(note: Path, root: Path, by_name: dict) -> set:
     return targets
 
 
+def _relations_by_kind(text: str) -> dict:
+    """Parse the `relations:` front-matter block into {kind: [target-basenames]}.
+
+    Enables the two checks OSB's contradiction model implies: an OPEN contradiction
+    (two notes both live and in tension) and an INEFFECTIVE refutation (a note is
+    refuted by another, but was never marked superseded/#stale — so the wrong claim
+    is still presented as current, which is the failure the vocabulary exists to stop).
+    """
+    if not text.startswith("---"):
+        return {}
+    end = text.find("\n---", 3)
+    if end == -1:
+        return {}
+    m = re.search(r"^relations:\s*\n?(.*?)(?=^\S|\Z)", text[3:end], re.MULTILINE | re.DOTALL)
+    if not m:
+        return {}
+    out: dict = {}
+    for line in m.group(1).splitlines():
+        km = re.match(r"\s*([a-z-]+)\s*:\s*(.*)$", line)
+        if not km:
+            continue
+        targets = [t.strip().split("/")[-1].lower() for t in _WIKILINK.findall(km.group(2))]
+        if targets:
+            out.setdefault(km.group(1), []).extend(targets)
+    return out
+
+
+_SUPERSEDED = re.compile(r"status:\s*superseded|#stale", re.IGNORECASE)
+
+
 def _relations_targets(text: str) -> list:
     """Pull `[[x]]` targets out of a `relations:` front-matter block (best-effort)."""
     if not text.startswith("---"):
@@ -101,7 +131,9 @@ def health(root: Path) -> int:
     resolved = {p.resolve(): p for p in notes}
 
     inbound = {p.resolve(): 0 for p in notes}
-    dangling = []  # (note, relation-target-name)
+    dangling = []      # (note, relation-target-name)
+    contradictions = []  # (note, target) — both live, tension unresolved
+    ineffective = []   # (refuter, refuted) — refuted note never marked superseded
     for p in notes:
         for t in _outbound(p, root, by_name):
             if t in inbound:
@@ -113,6 +145,18 @@ def health(root: Path) -> int:
         for name in _relations_targets(text):
             if name not in by_name:
                 dangling.append((p, name))
+        kinds = _relations_by_kind(text)
+        for name in kinds.get("contradicts", []):
+            if name in by_name:
+                contradictions.append((p, name))
+        for name in kinds.get("refutes", []):
+            for tgt in by_name.get(name, []):
+                try:
+                    ttext = tgt.read_text(encoding="utf-8")
+                except OSError:
+                    continue
+                if not _SUPERSEDED.search(ttext):
+                    ineffective.append((p, tgt))
 
     orphans, stale_tagged, aging = [], [], []
     now = datetime.now(timezone.utc)
@@ -167,8 +211,19 @@ def health(root: Path) -> int:
         print(f"  ✗ {len(dangling)} dangling typed edge(s) — `relations:` points at a missing note:")
         for p, name in dangling[:20]:
             print(f"      · {rel(p)} → [[{name}]] (no such note)")
+    if ineffective:
+        problems += len(ineffective)
+        print(f"  ✗ {len(ineffective)} refutation(s) that never took effect — the refuted note is")
+        print("    still presented as current (mark it `status: superseded` or `#stale`):")
+        for p, tgt in ineffective[:20]:
+            print(f"      · {rel(p)} refutes {rel(tgt)} — but {tgt.name} is not marked superseded")
     if not problems:
-        print("  ✓ no #stale tags and no dangling typed edges.")
+        print("  ✓ no #stale tags, no dangling typed edges, no unapplied refutations.")
+    if contradictions:
+        print(f"  ⚠ {len(contradictions)} open contradiction(s) — both notes are live and in")
+        print("    tension. Resolve, or make one `refutes` the other:")
+        for p, name in contradictions[:20]:
+            print(f"      · {rel(p)} contradicts [[{name}]]")
 
     print(f"\n{'✓ health clean' if problems == 0 else f'health found {problems} integrity issue(s)'} "
           f"across {len(notes)} note(s).")

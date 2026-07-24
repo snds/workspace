@@ -145,6 +145,8 @@ def _agents_md_body(root: Path, profile: dict) -> str:
         "  in `context/session-log-archive.md`, read only on demand).",
         "- `context/decisions/` — ADRs: why the meaningful choices were made (read on demand).",
         "- `context/conventions.md` — note conventions (typed edges, freshness, the preamble).",
+        "- `knowledge/` — durable domain insight (patterns, constraints, research). Read the",
+        "  index before substantive domain work; propose an entry when a session yields one.",
         "- `projects/<name>/PROJECT.md` — per-project documentation & context (overview, where",
         "  the code lives, live handoff, decisions). Read the relevant one before working on a",
         "  project; the code itself lives in that project's own repo, not in this vault.",
@@ -245,6 +247,50 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
     cm.write_text(claude_md, encoding="utf-8")
     written.append(cm)
 
+    # Hooks make context loading GUARANTEED rather than advisory. Without them the AI
+    # only reads CRITICAL_FACTS if it chooses to obey CLAUDE.md; with them the harness
+    # injects it every session. Read-only + local by design (see the script's header).
+    hook = root / ".claude" / "hooks" / "session-start.py"
+    hook.parent.mkdir(parents=True, exist_ok=True)
+    hook.write_text(_SESSION_START_HOOK, encoding="utf-8")
+    hook.chmod(0o755)
+    written.append(hook)
+
+    settings = root / ".claude" / "settings.json"
+    # Merge, never clobber: the person may have their own settings/hooks here.
+    existing = {}
+    if settings.exists():
+        try:
+            existing = json.loads(settings.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            existing = {}
+    # `python3` alone dead-ends on Windows (it's `python` / the `py` launcher there), and
+    # a workspace syncs across machines — so the command must degrade. `||` is honoured by
+    # both POSIX shells and cmd.exe, so the first interpreter that exists wins.
+    _h = "\"$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.py\""
+    cmd = f"python3 {_h} || python {_h}"
+    hooks_cfg = existing.setdefault("hooks", {})
+    entries = hooks_cfg.get("SessionStart", [])
+
+    # Drop every entry that invokes OUR hook, then add exactly one back. Matching on a
+    # substring of json.dumps() does NOT work (it escapes the quotes in the command), so
+    # an earlier version appended a duplicate on every emit and the hook fired N times.
+    # Rebuilding structurally is idempotent AND self-heals workspaces that accumulated
+    # duplicates. Entries the person added themselves are preserved untouched.
+    def _is_ours(entry):
+        if not isinstance(entry, dict):
+            return False
+        for h in entry.get("hooks", []) or []:
+            if isinstance(h, dict) and "session-start.py" in str(h.get("command", "")):
+                return True
+        return False
+
+    kept_entries = [e for e in entries if not _is_ours(e)]
+    kept_entries.append({"hooks": [{"type": "command", "command": cmd}]})
+    hooks_cfg["SessionStart"] = kept_entries
+    settings.write_text(json.dumps(existing, indent=2) + "\n", encoding="utf-8")
+    written.append(settings)
+
     # A self-repair skill, so the person never needs a command line. Opening THIS folder
     # and saying "update my workspace" is enough — the assistant drives the vendored CLI.
     maint = root / ".claude" / "skills" / "workspace-maintenance" / "SKILL.md"
@@ -269,6 +315,71 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
 
     _record(root, manifest, "claude-code", written)
     return written
+
+
+_SESSION_START_HOOK = '''#!/usr/bin/env python3
+"""SessionStart hook — inject this workspace's hot context at the top of every session.
+
+WHAT IT DOES: reads a few local markdown files and prints them, so the assistant starts
+with your critical facts and current work instead of a cold context.
+
+WHAT IT DOES NOT DO: it makes no network calls, writes nothing, runs nothing else, and
+NEVER reads `context/personal.md` (the walled private note). It is read-only and local.
+Delete `.claude/settings.json` (or this file) to turn it off.
+
+Token-frugal on purpose: the hot cache in full, then only the HEAD of the growing logs.
+"""
+import sys
+from pathlib import Path
+
+WS = Path(__file__).resolve().parents[2]
+HEAD_LINES = 40          # never dump a whole growing log
+
+
+def head(rel, n=HEAD_LINES, whole=False):
+    f = WS / rel
+    if not f.exists():
+        return ""
+    try:
+        text = f.read_text(encoding="utf-8")
+    except OSError:
+        return ""
+    if whole:
+        return text.strip()
+    lines = text.splitlines()
+    out = "\\n".join(lines[:n]).strip()
+    if len(lines) > n:
+        out += f"\\n\\n_…(head only — open `{rel}` for the rest)_"
+    return out
+
+
+def main():
+    parts = ["# Workspace context (auto-loaded)", ""]
+    crit = head("context/CRITICAL_FACTS.md", whole=True)
+    if crit:
+        parts += ["## Critical facts — never re-derive these", "", crit, ""]
+    proj = head("context/project-context.md")
+    if proj:
+        parts += ["## Current work (head of project-context.md)", "", proj, ""]
+    log = head("context/session-log.md", n=25)
+    if log:
+        parts += ["## Recent sessions (head)", "", log, ""]
+    parts += [
+        "## Standing rules",
+        "- Read frugally: heads of logs, not whole files. Load a skill only when its trigger fires.",
+        "- Privacy wall: never read `context/personal.md` unless explicitly asked.",
+        "- Start any browse from `HOME.md`. Adapters (`AGENTS.md`, `CLAUDE.md`, `_INDEX.md`)",
+        "  are GENERATED — edit the canonical source and re-run `wsx emit`.",
+        "- Record a real choice as an ADR in `context/decisions/`; a durable insight in `knowledge/`.",
+        "",
+    ]
+    sys.stdout.write("\\n".join(parts))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+'''
 
 
 _MAINTENANCE_SKILL = '''---
@@ -312,10 +423,13 @@ repairs known-stale generated lines, and lands a first git commit if the repo ha
 
 Report **what changed and what it means**, not raw tool output. Specifically:
 
-- **`doctor` says git identity is not set** → this is why nothing is being saved to
-  history. Ask them for the name and email they want on their work, then run
-  `git config --global user.name "…"` and `git config --global user.email "…"` **for
-  them**, and re-run `python3 wsx.py upgrade` so the first commit lands.
+- **`doctor` or `upgrade` says git identity is not set** → this is why nothing is being
+  saved to history. Ask them: *"What name and email should your saved work be signed
+  with?"* then run it **for them**:
+  `python3 wsx.py identity --name "…" --email "…"`
+  That sets it for this workspace only (not their global git config) and makes the first
+  commit. If they don't want a personal address in public commits, suggest their GitHub
+  noreply address (Settings → Emails → *Keep my email private*).
 - **`health` lists orphan notes** → offer to link each from its natural parent, or archive
   it. Never delete.
 - **`health`/`lint` flag stale or unfinished content** → offer to fix; get a yes first.

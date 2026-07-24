@@ -42,7 +42,18 @@ def doctor() -> int:
     print(f"  here      : {here}")
     root = core.find_workspace_root()
     if root:
-        print(f"  workspace : ✓ {root}\n")
+        print(f"  workspace : ✓ {root}")
+        vf = root / ".wsx" / "VERSION"
+        if vf.exists():
+            from . import __version__ as _cur
+            vend = vf.read_text(encoding="utf-8").strip()
+            same = (vend == _cur)
+            print(f"  wsx (here): {'✓' if same else '⚠'} vendored v{vend}"
+                  + ("" if same else f" — generator is v{_cur}; the vendored copy cannot"))
+            if not same:
+                print("                update itself. Re-run `wsx upgrade` from the newer")
+                print("                generator folder to refresh it.")
+        print()
         print("  You're inside a workspace. Useful next:")
         print("    wsx verify            # check it's healthy")
         print("    wsx emit claude-code  # make it AI-ready")
@@ -340,10 +351,73 @@ def session(root: Path, sub: str) -> int:
         print(f"✓ session recorded as a fragment and folded into context/session-log.md")
         return 0
     if sub == "reconcile":
-        print("note: reconcile merges Session Blocks from concurrent machines — "
-              "not yet implemented (see SPEC). No changes made.")
-        return 0
+        return reconcile(root)
     raise SystemExit("error: session expects start|end|reconcile")
+
+
+# --------------------------------------------------------------- reconcile ---
+def reconcile(root: Path) -> int:
+    """Repair the session log after concurrent machines merged into it.
+
+    The fragment model prevents *conflicts*, but the `union` merge driver on
+    session-log.md deliberately keeps BOTH sides of a concurrent append — which can
+    leave the same SessionID twice and the blocks out of newest-first order. This is
+    the cleanup for exactly that: fold pending fragments, drop duplicate SessionIDs
+    (keeping the first), re-sort newest-first. Content-preserving and idempotent.
+    """
+    compact(root)  # fold any pending fragments first
+    log_path = root / "context" / "session-log.md"
+    if not log_path.exists():
+        print("note: no session-log.md yet — nothing to reconcile.")
+        return 0
+
+    text = log_path.read_text(encoding="utf-8")
+    marker = "## Session Entries"
+    idx = text.find(marker)
+    if idx == -1:
+        print("note: session-log.md has no '## Session Entries' section — nothing to reconcile.")
+        return 0
+
+    head_txt = text[:idx + len(marker)]
+    body = text[idx + len(marker):]
+    first = body.find("\n### ")
+    if first == -1:
+        print("✓ reconcile: no session blocks yet — nothing to do.")
+        return 0
+    lead, blocks_text = body[:first], body[first:]
+    blocks = [b for b in _re.split(r"(?=\n### )", blocks_text) if b.strip()]
+
+    sid_re = _re.compile(r"^SessionID:\s*(\S+)", _re.MULTILINE)
+    date_re = _re.compile(r"^Date:\s*(\d{4}-\d{2}-\d{2})", _re.MULTILINE)
+
+    seen, kept, dupes = set(), [], 0
+    for b in blocks:
+        m = sid_re.search(b)
+        sid = m.group(1) if m else None
+        if sid and sid in seen:
+            dupes += 1
+            continue
+        if sid:
+            seen.add(sid)
+        d = date_re.search(b)
+        kept.append(((d.group(1) if d else "0000-00-00"), b))
+
+    order_before = [b for _, b in kept]
+    kept.sort(key=lambda t: t[0], reverse=True)   # newest-first
+    resorted = [b for _, b in kept] != order_before
+
+    if not dupes and not resorted:
+        print(f"✓ reconcile: {len(kept)} block(s), no duplicates, already newest-first.")
+        return 0
+
+    log_path.write_text(head_txt + lead + "".join(b for _, b in kept), encoding="utf-8")
+    bits = []
+    if dupes:
+        bits.append(f"removed {dupes} duplicate block(s) (same SessionID from a merge)")
+    if resorted:
+        bits.append("re-sorted newest-first")
+    print(f"✓ reconcile: {'; '.join(bits)}. {len(kept)} block(s) kept — no content lost.")
+    return 0
 
 
 # -------------------------------------------------------------------- sync ---
