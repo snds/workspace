@@ -169,6 +169,9 @@ def write_home(root: Path) -> Path:
         lines.append("- _(none yet — `wsx project new <name>`.)_")
     lines += [
         "",
+        "## [Knowledge](knowledge/README.md)",
+        "- [Index](knowledge/_INDEX.md) — durable insight: validated patterns, constraints, research.",
+        "",
         "## Adapters (generated — never hand-edit)",
         "AI-tool-specific files compiled from the canonical workspace. Re-run `wsx emit`.",
         "See `adapters/`, plus root `AGENTS.md` / `CLAUDE.md` and `.cursor/`.",

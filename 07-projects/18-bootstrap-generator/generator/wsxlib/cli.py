@@ -10,6 +10,7 @@
   wsx health                     vault graph hygiene: orphans, stale claims, dangling edges
   wsx verify                     dry-run load per target
   wsx project new|list           per-project documentation folders (docs, not code)
+  wsx archive <path> [--reason]  retire a note with provenance (never delete)
   wsx upgrade [--dry-run]        corrective pass: add missing scaffold + reconnect graph
   wsx scan [--find-workspaces]   detect your stack (+ locate existing workspaces to update)
   wsx session start|end|reconcile
@@ -20,8 +21,8 @@ from __future__ import annotations
 import argparse
 import sys
 
-from . import (adapters, core, health, lifecycle, projects, resolver, scaffold,
-               scan, search, skills, upgrade)
+from . import (adapters, archive, core, health, lifecycle, projects, resolver,
+               scaffold, scan, search, skills, upgrade)
 
 
 # profile fields that are lists — `set` splits these on commas (and accepts [a, b] form).
@@ -219,6 +220,10 @@ def cmd_project(a):
     raise SystemExit("error: project expects new|list")
 
 
+def cmd_archive(a):
+    return archive.archive(core.require_workspace(), a.path, a.reason)
+
+
 def cmd_upgrade(a):
     return upgrade.upgrade(core.require_workspace(), dry_run=a.dry_run)
 
@@ -342,6 +347,11 @@ def build_parser() -> argparse.ArgumentParser:
     pra.add_argument("--title", default="", help="display title (defaults to name)")
     prsub.add_parser("list", help="list project documentation folders")
     ppr.set_defaults(fn=cmd_project)
+
+    par = sub.add_parser("archive", help="retire a note with provenance (never delete)")
+    par.add_argument("path", help="path to the note, relative to the workspace")
+    par.add_argument("--reason", default="", help="why it is being retired")
+    par.set_defaults(fn=cmd_archive)
 
     pu = sub.add_parser("upgrade", help="corrective pass: add missing scaffold + reconnect the graph")
     pu.add_argument("--dry-run", action="store_true", help="preview the plan without writing")

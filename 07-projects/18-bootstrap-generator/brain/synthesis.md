@@ -73,7 +73,6 @@ lifecycle:
   automation: ""       # M5 — minimal | standard | full
 privacy:
   personal_local_only: true   # M5 — derived with separation (see §4)
-  encrypt: false              # M5
 imports: []            # M0 — existing assets to bring in
 ```
 
@@ -140,7 +139,7 @@ Each row: the movement that surfaces it, the profile field it sets, and the synt
 | "I want it to remember where we left off" | `lifecycle.continuity` | Boolean — `true` if sessions should pick up where the last left off (drives whether `wsx session start/end` writes history), else `false`. |
 | Walled vs blended work/personal | `lifecycle.separation` + the policy in §4 | `walled` or `blended`. **This single answer is load-bearing** — it sets three things at once (§4). |
 | How much automation they want | `lifecycle.automation` | `minimal`, `standard`, or `full` — how aggressively `wsx session`/`sync` run without asking. |
-| Privacy / encryption appetite | `privacy.encrypt`, `privacy.personal_local_only` | See §4. |
+| Privacy appetite | `privacy.personal_local_only` | See §4. No encryption field — wsx implements none. |
 
 ---
 
@@ -170,7 +169,7 @@ A field can be unknown because it wasn't reached, the person deferred, or M3 was
 | `lifecycle.separation` | `walled` | Safer default (§4). Blend is an explicit opt-in. |
 | `lifecycle.automation` | `standard` | Acts on routine ops but confirms anything destructive — matches "ask before changing privacy." |
 | `privacy.personal_local_only` | `true` | Derived with separation; defaults locked-down. |
-| `privacy.encrypt` | `false` | Offered, never imposed; local-only already covers most of the risk. |
+| _(no `privacy.encrypt`)_ | — | Removed: wsx implements no vault encryption. Point at FileVault/BitLocker instead. |
 | `imports` | `[]` | Only what the person pointed at. |
 
 `schema_version` is **never** unknown — it's set by the tool, not the interview, and gates how `wsx` reads the file across versions.
@@ -184,7 +183,7 @@ The single walled-vs-blended answer in M5 sets **three** independent mechanisms.
 ```
 M5 separation answer ─┬─▶ contexts.personal.private   (the in-profile flag)
                       ├─▶ privacy.personal_local_only  (the never-sync rule)
-                      └─▶ separation policy            (file layout + gitignore + encryption offer)
+                      └─▶ separation policy            (file layout + gitignore)
 ```
 
 **If `walled` (the default):**
@@ -193,7 +192,7 @@ M5 separation answer ─┬─▶ contexts.personal.private   (the in-profile fl
 - **File layout:** work / professional / personal context live in **separate files** (SPEC decision #4). The personal file is the one that's gated.
 - **Gitignore policy:** `wsx init` writes a `.gitignore` that **excludes the personal context file(s) from the repo entirely**, so `transport.type: git` never pushes them. Personal context is local-only — present on the machine, absent from every remote and every sync.
 - **On-demand pull:** a one-word trigger pulls personal context into a session when the person explicitly asks (SPEC decision #4) — walled does not mean unreachable, it means not-synced and not-default-loaded.
-- **Encryption:** if `privacy.encrypt = true`, synthesis records that the personal file should be written through `wsx`'s at-rest encryption (offered in the confirm gate for anyone walled).
+- **Encryption:** wsx provides NONE — never record or imply it. The walled guarantee is: `context/personal.md` is gitignored and excluded from every emitted adapter. If at-rest protection comes up, point at full-disk encryption (FileVault/BitLocker/LUKS).
 
 **If `blended`:**
 
@@ -243,7 +242,6 @@ wsx profile set lifecycle.continuity=true
 wsx profile set lifecycle.separation=walled
 wsx profile set lifecycle.automation=standard
 wsx profile set privacy.personal_local_only=true
-wsx profile set privacy.encrypt=false
 ```
 
 **Contract the brain relies on (CLI-owned):**
@@ -290,7 +288,7 @@ Before a single `wsx` write, synthesis plays back a plain-language summary and w
 
 - **Who I heard you are** — name, role, the one-paragraph work summary, the crafts that became hubs.
 - **What I'll set up** — surfaces/adapters to emit, model tier, continuity + automation level.
-- **Your privacy posture, stated plainly** — walled or blended, what syncs vs. stays local, encryption on/off — with the explicit "your personal notes *will* / *will not* sync" sentence.
+- **Your privacy posture, stated plainly** — walled or blended, what syncs vs. stays local (wsx does not encrypt; say so if asked) — with the explicit "your personal notes *will* / *will not* sync" sentence.
 - **The skill plan** — which capabilities will be pulled (and from where, with trust notes), which adapted, which generated fresh.
 - **Anything I defaulted** — every field that fell back to §3, flagged so the person can correct it now.
 
@@ -314,12 +312,12 @@ A short fictional persona, run through synthesis end to end.
 >
 > **Preferences:** talk to her **like a peer, no hedging**; **no emoji**, **no marketing voice**; output is usually for **her team**.
 >
-> **Lifecycle:** wants it to **remember where we left off**; **walled** work/personal; happy for it to **act on routine stuff but ask before anything destructive**; interested in **encrypting** the personal notes.
+> **Lifecycle:** wants it to **remember where we left off**; **walled** work/personal; happy for it to **act on routine stuff but ask before anything destructive**; wants the personal notes kept off any sync.
 
 ### 8.2 Synthesis decisions
 
 - Two emit targets (`claude-code` primary, `cursor`); `mcp` is available later but not asked-for, so not added now.
-- A **work machine present + explicit "off my work laptop"** ⇒ `separation: walled`, `personal.private: true`, `personal_local_only: true`, and `encrypt: true` (she opted in). The personal context file will be **gitignored**.
+- A **work machine present + explicit "off my work laptop"** ⇒ `separation: walled`, `personal.private: true`, `personal_local_only: true`, The personal context file will be **gitignored** and excluded from every emitted adapter (wsx does not encrypt; full-disk encryption is the answer if she wants at-rest protection).
 - **Design systems** and **typography** show expertise-with-opinions ⇒ each a **hub candidate** (`lead-ds`, `lead-type-designer`). **Motion** is a dabble ⇒ a single spoke, not a hub.
 - Resolver intent (for the confirm gate, resolved in the next step): design-systems and typography are well-trodden ⇒ **PULL** strong registry skills + **PATCH** Maya's "WCAG-AA-no-exceptions" and token-decision standards as an overlay; the payments-flow specifics and her personal projects ⇒ **GENERATE**.
 - M3 finances/health were skipped ⇒ simply absent. `interests` holds only what she gave.
@@ -371,7 +369,6 @@ lifecycle:
   automation: "standard"
 privacy:
   personal_local_only: true
-  encrypt: true
 imports: []
 ```
 
@@ -402,7 +399,6 @@ wsx profile set lifecycle.continuity=true
 wsx profile set lifecycle.separation=walled
 wsx profile set lifecycle.automation=standard
 wsx profile set privacy.personal_local_only=true
-wsx profile set privacy.encrypt=true
 # verify round-trip, then lint
 wsx profile get
 wsx lint

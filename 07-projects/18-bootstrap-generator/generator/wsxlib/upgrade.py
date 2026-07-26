@@ -154,12 +154,12 @@ def upgrade(root: Path, dry_run: bool = False) -> int:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(core.render(content, ctx), encoding="utf-8")
 
-    # Refresh the vendored CLI so an older workspace becomes self-sufficient too
+    # Refresh the copied-in CLI so an older workspace becomes self-sufficient too
     # (and picks up new commands like `health`). Always safe: it's generated code.
-    vendored = []
+    copied = []
     if not dry_run:
         moc.write_mocs(root)
-        vendored = scaffold.vendor_cli(root)
+        copied = scaffold.copy_cli(root)
 
     # Repair known-broken generated content + land a first commit if there is none.
     repairs = [r for r in (m(root, dry_run) for m in MIGRATIONS) if r]
@@ -177,8 +177,8 @@ def upgrade(root: Path, dry_run: bool = False) -> int:
     print(f"\n  {reverb} the connective MOC layer (reconnects the Obsidian graph):")
     for rel in _REGENERATED:
         print(f"    ~ {rel}")
-    print(f"\n  {reverb} the vendored CLI so this workspace can drive itself:")
-    print(f"    ~ wsx.py + .wsx/wsxlib/  ({len(vendored) or 'refreshed'} file(s))"
+    print(f"\n  {reverb} the copied-in CLI so this workspace can drive itself:")
+    print(f"    ~ wsx.py + .wsx/wsxlib/  ({len(copied) or 'refreshed'} file(s))"
           if not dry_run else "    ~ wsx.py + .wsx/wsxlib/")
     print("      → run it here:  python3 wsx.py doctor")
     rverb = "would repair" if dry_run else "repaired"

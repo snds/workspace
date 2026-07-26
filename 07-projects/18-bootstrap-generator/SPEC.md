@@ -36,7 +36,7 @@ Six adaptive movements (M0–M5; folded into five friendly "parts" for the user-
 - **M2 — Professional craft:** deep expertise, active growth, north-star standards, craft done outside the employer. → the `lead-*` hubs.
 - **M3 — Personal context (guide & suggest):** dream builds, hobbies, life admin (financial planning, taxes, health, language), creative pursuits, learning goals. → private personal context.
 - **M4 — Operating preferences:** tone/verbosity, audience, code-vs-prose, banned anti-patterns, ask-vs-proceed posture. → user-preferences + offline snapshot.
-- **M5 — Lifecycle & ambition:** session continuity, walled/blended separation, automation level, privacy/encryption. → lifecycle adapter + separation + gitignore/encryption policy.
+- **M5 — Lifecycle & ambition:** session continuity, walled/blended separation, automation level, privacy posture. → lifecycle adapter + separation + gitignore policy.
 
 ## 3. Profile Manifest
 
@@ -100,7 +100,7 @@ wsx sync                 git pull/push (or chosen transport)
 
 ## 8. Standing risks
 
-Format churn → adapters thin, never hand-edited. Library trust → vet/pin/namespace, pulled read-only. Privacy → personal context local-only + gitignored, `private` ⇒ never synced, encryption offered. Model variance → capability tiering.
+Format churn → adapters thin, never hand-edited. Library trust → vet/pin/namespace, pulled read-only. Privacy → personal context local-only + gitignored, `private` ⇒ never synced and never emitted. NO encryption is implemented or offered (that would promise protection wsx cannot keep); at-rest protection is the OS's job. Model variance → capability tiering.
 
 ## 9. Ship-as (last open choice)
 

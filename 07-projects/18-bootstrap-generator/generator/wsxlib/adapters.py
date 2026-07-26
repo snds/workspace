@@ -292,7 +292,7 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
     written.append(settings)
 
     # A self-repair skill, so the person never needs a command line. Opening THIS folder
-    # and saying "update my workspace" is enough — the assistant drives the vendored CLI.
+    # and saying "update my workspace" is enough — the assistant drives the copied-in CLI.
     maint = root / ".claude" / "skills" / "workspace-maintenance" / "SKILL.md"
     maint.parent.mkdir(parents=True, exist_ok=True)
     maint.write_text(_MAINTENANCE_SKILL, encoding="utf-8")
@@ -389,7 +389,7 @@ description: >-
   "update my workspace", "upgrade my workspace", "fix my workspace", "something's
   wrong with my workspace", "check my workspace", "is my workspace set up right",
   or reports that files/links/settings look stale or contradictory. Drives the
-  workspace's own vendored `wsx` CLI — the person never needs a command line.
+  workspace's own copy of the `wsx` CLI — the person never needs a command line.
 triggers:
   - update my workspace
   - upgrade my workspace
@@ -401,7 +401,7 @@ triggers:
 
 # Workspace maintenance — you drive the tools, not the person
 
-This workspace ships its own CLI at `wsx.py` (vendored under `.wsx/`), so everything
+This workspace ships its own copy of the CLI at `wsx.py` (under `.wsx/`), so everything
 below runs **here**, with no install and no PATH setup. **Run these yourself** — the
 person should never be asked to open a terminal or paste a command.
 

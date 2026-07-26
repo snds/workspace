@@ -48,8 +48,8 @@ def doctor() -> int:
             from . import __version__ as _cur
             vend = vf.read_text(encoding="utf-8").strip()
             same = (vend == _cur)
-            print(f"  wsx (here): {'✓' if same else '⚠'} vendored v{vend}"
-                  + ("" if same else f" — generator is v{_cur}; the vendored copy cannot"))
+            print(f"  wsx (here): {'✓' if same else '⚠'} CLI copy v{vend}"
+                  + ("" if same else f" — generator is v{_cur}; this copy cannot"))
             if not same:
                 print("                update itself. Re-run `wsx upgrade` from the newer")
                 print("                generator folder to refresh it.")

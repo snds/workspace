@@ -131,6 +131,7 @@ everything structural goes through `wsx`:
 | Graph hygiene (orphans, stale, dangling edges) | `wsx health` |
 | Emit for their surface(s) | `wsx emit claude-code` (or `agents-md` / `cursor` / `pack` / `all`) |
 | Final check | `wsx verify` |
+| Set who commits are signed as | `wsx identity` (show) → `wsx identity --name "…" --email "…"` |
 | Choose where it lives | `wsx remote` (free-host options) → `wsx remote <url>` |
 | (later) commit / sync | `wsx sync` |
 
@@ -160,7 +161,9 @@ Open warmly and in plain language. Cover, briefly:
    - Personal context is **walled by default.** Work, professional, and personal
      live in separate files. Anything you mark personal-private stays
      **local-only and is never synced.**
-   - You choose the separation level (walled vs. blended) and whether to encrypt.
+   - You choose the separation level (walled vs. blended). **This tool does not encrypt
+     anything** — never imply it does; walled means gitignored + never emitted. For at-rest
+     protection point at FileVault/BitLocker.
    - Nothing leaves your machine except what you explicitly emit and sync.
 4. **The agnostic promise + bring-your-own-tokens.** "This isn't locked to any one
    AI. I'll default to the most-tested path, but I can also set you up for Cursor,
@@ -197,8 +200,8 @@ and the progressive-depth logic. Summary of what each movement is *for*:
 - **M4 — Operating preferences:** tone/verbosity, audience, code-vs-prose, banned
   anti-patterns, ask-vs-proceed posture. → user-preferences + offline snapshot.
 - **M5 — Lifecycle & ambition:** session continuity, walled vs. blended
-  separation, automation level, privacy/encryption. → lifecycle adapter +
-  separation + gitignore/encryption policy.
+  separation, automation level, privacy posture. → lifecycle adapter +
+  separation + gitignore policy.
 
 **Mine the overlaps.** Work / professional / personal deliberately form a Venn.
 Ask explicitly where two contexts bleed together — those overlaps are the
@@ -247,7 +250,7 @@ schema_version · identity{name,handle}
             personal{private,interests[]} }
 · preferences{tone,verbosity,audience,banned[]}
 · lifecycle{continuity,separation,automation}
-· privacy{personal_local_only,encrypt} · imports[]
+· privacy{personal_local_only} · imports[]
 ```
 
 If the schema rejects the write, surface the validation error plainly, fix the
@@ -386,6 +389,13 @@ Then give the person a short, honest closing report:
   posture, which surface(s) were emitted.
 - **What `verify` and `lint` found:** green, or specific issues. If lint reports a
   leftover trigger overlap, return to the reconciliation step — don't ship it.
+- **Git authorship — settle this, don't skip it.** Run `wsx identity`. If it reports no
+  usable identity, **commits silently fail and nothing is ever saved to history** — the
+  most common way a fresh workspace ends up empty. Ask them plainly: *"What name and
+  email should your saved work be signed with?"* then run
+  `wsx identity --name "…" --email "…"` (workspace-only by default; it also makes the
+  first commit). If they'd rather not publish a personal address on GitHub, mention the
+  GitHub noreply address (Settings → Emails → *Keep my email private*).
 - **How to use it:** open the vault in Obsidian; the workspace is a git repo.
   **Settle where it lives** — walk them through `wsx remote` (free options: a private
   GitHub/GitLab/Codeberg repo, or local-only); they create the empty repo, then

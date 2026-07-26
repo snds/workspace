@@ -204,6 +204,17 @@ human reading:
     - **As of:** YYYY-MM · **Status:** current | aging | stale
 
 Token-frugal by design: read this block, then decide whether to read the rest.
+
+## 4. Never delete — archive with provenance
+
+Deleting a note silently breaks every inbound link and destroys the reason it existed.
+A stale note is a problem; a vanished one is a mystery. Retire notes instead:
+
+    wsx archive <path> --reason "superseded by X"
+
+That moves it to `_archive/` (mirroring its original path) and stamps `archived_on` /
+`archived_from` / `archived_reason` on it, then tells you which notes still link to it.
+Git keeps the full history either way — archiving keeps it *findable*.
 """,
     "knowledge/README.md": """# Knowledge — what you've learned that outlives a session
 
@@ -517,11 +528,11 @@ def init(dest: str, name: str = "you", handle: str = "you",
     for m in moc.write_mocs(root):
         written.append(str(m.relative_to(root)))
 
-    # Vendor the CLI into the workspace so it can always drive itself — on this machine
+    # Copy the CLI into the workspace so it can always drive itself — on this machine
     # and on every machine it syncs to. Without this the workspace is inert: every
     # framework says `wsx emit/lint/sync` but there's no wsx to run (a real tester hit
     # exactly this). Zero-dep + stdlib-only, so a copy is portable and self-sufficient.
-    for v in vendor_cli(root):
+    for v in copy_cli(root):
         written.append(v)
 
     committed = False
@@ -544,7 +555,7 @@ def init(dest: str, name: str = "you", handle: str = "you",
               f"{' (committed)' if committed else ' (NOT committed — see below)'}")
     else:
         print(f"  {len(written)} files · vault (no git)")
-    print(f"  self-contained CLI vendored → run it from the workspace: python3 wsx.py doctor")
+    print(f"  self-contained CLI copied in → run it from the workspace: python3 wsx.py doctor")
     if do_git and not committed:
         print("\n⚠  git did not record a first commit. Your files are safe on disk, but")
         print("   nothing is version-controlled yet. Fix it with:")
@@ -574,8 +585,8 @@ def _commit_ok(root: Path):
     return False, "   (run `git status` in the workspace to see what git is objecting to)"
 
 
-# --------------------------------------------------------------- vendored CLI ---
-def vendor_cli(root: Path) -> list:
+# ------------------------------------------------------------ CLI copy-in ---
+def copy_cli(root: Path) -> list:
     """Copy the wsx CLI into `<workspace>/.wsx/` + write a `wsx.py` launcher.
 
     Makes the generated workspace SELF-SUFFICIENT: `python3 wsx.py <cmd>` works from the
@@ -586,9 +597,9 @@ def vendor_cli(root: Path) -> list:
 
     src = Path(__file__).resolve().parent           # …/generator/wsxlib
     dst = (root / ".wsx" / "wsxlib").resolve()
-    # If we ARE the vendored copy (the person ran `python3 wsx.py upgrade` from their own
+    # If we ARE the copy (the person ran `python3 wsx.py upgrade` from their own
     # workspace), there is nothing to copy — self-copy raises SameFileError. Refreshing
-    # the vendored CLI is done by running upgrade from a newer generator.
+    # this copy is done by running upgrade from a newer generator.
     if src == dst:
         return []
     dst.mkdir(parents=True, exist_ok=True)
@@ -596,6 +607,12 @@ def vendor_cli(root: Path) -> list:
     for f in sorted(src.glob("*.py")):
         shutil.copy2(f, dst / f.name)
         written.append(f".wsx/wsxlib/{f.name}")
+    # Stamp the version so the staleness is VISIBLE. This copy cannot update
+    # itself (it IS the running code), so without this a workspace could silently run
+    # an old CLI forever. `wsx doctor` surfaces it.
+    from . import __version__ as _v
+    (dst.parent / "VERSION").write_text(_v + "\n", encoding="utf-8")
+    written.append(".wsx/VERSION")
     launcher = root / "wsx.py"
     launcher.write_text(_LAUNCHER, encoding="utf-8")
     written.append("wsx.py")
@@ -609,7 +626,7 @@ def vendor_cli(root: Path) -> list:
 
 
 _LAUNCHER_CMD = """@echo off
-REM wsx — Windows launcher for this workspace's own vendored CLI.
+REM wsx — Windows launcher for this workspace's own copy of the CLI.
 REM Usage:  wsx doctor   ·   wsx health   ·   wsx upgrade   ·   wsx emit all
 setlocal
 where py >nul 2>nul && (py -3 "%~dp0wsx.py" %* & exit /b %errorlevel%)
@@ -622,7 +639,7 @@ exit /b 1
 
 
 _LAUNCHER = '''#!/usr/bin/env python3
-"""wsx — run this workspace's own vendored CLI.
+"""wsx — run this workspace's own copy of the CLI.
 
     python3 wsx.py doctor        # where am I, what should I run next
     python3 wsx.py health        # graph hygiene: orphans, stale claims, dangling edges
@@ -630,9 +647,9 @@ _LAUNCHER = '''#!/usr/bin/env python3
     python3 wsx.py upgrade       # non-destructive corrective pass
     python3 wsx.py sync          # commit + push
 
-This launcher and `.wsx/` are vendored copies, so the workspace is self-sufficient:
+This launcher and `.wsx/` are self-contained copies, so the workspace is self-sufficient:
 no install, no PATH, and it keeps working on every machine you sync it to. Refresh the
-vendored copy any time with `wsx upgrade` from a newer generator.
+this copy any time with `wsx upgrade` from a newer generator.
 """
 import sys
 from pathlib import Path
