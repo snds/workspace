@@ -453,6 +453,15 @@ never offer it.)
 
 **Depth / branch probes:**
 
+- **Context — personal or work-governed?** Ask early (M0): *"Is this workspace just for
+  you, or is it governed by an employer's rules?"* → `profile.context` = `personal-solo`
+  (auto-commit/push are fine) or `work` (employer-governed: NEVER auto-push — branch → PR →
+  review). If unclear, default to the more restrictive `work` and confirm. This gates every
+  git side-effect downstream.
+- **Work AND personal repos?** If they have both, keep GitHub auth NON-OVERLAPPING: one
+  identity per scope, told apart by SSH host-alias (`wsx ssh-setup`), each work repo mapped
+  with `wsx remote <url> --scope work` under a *different* email. Never one identity across
+  both — the tool refuses it, and a personal email in an employer repo is a real leak.
 - **Git authorship (ask when sync/history comes up):** *"When your work gets saved to its
   history, what name and email should it be signed with?"* Git refuses to commit without
   one, so this is not optional plumbing — it is the difference between a workspace that

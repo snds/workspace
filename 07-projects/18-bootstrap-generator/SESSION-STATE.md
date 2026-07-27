@@ -19,6 +19,36 @@ Sean's workspace: `06-context/CRITICAL_FACTS.md` (real content, wired as load-or
 
 ---
 
+## v0.2 roadmap (12 asks → 7 phases; plan approved 2026-07-27)
+
+Plan file: `~/.claude/plans/valiant-toasting-pumpkin.md`. Phased, low-risk first, sign-off between
+phases. Locked decisions: ingestion = consent+quarantine+scan; project adoption = reference-in-place
+(move optional); GitHub = mirror the SSH-alias + repo-local model; auto-push = personal-solo ONLY.
+
+- **Phase 1 — GitHub work/personal dual-auth + first push (asks 8–11): ✅ DONE 2026-07-27.**
+  New `gitscope.py`. `profile.context` = personal-solo|work (gates every side-effect; migration
+  retro-adds it). Remote→scope→identity map in `context/remotes.json` (JSON sidecar — `yamlio`
+  can't round-trip a list of maps). `wsx remote <url> --scope personal|work` refuses one identity
+  spanning both scopes / one URL across scopes (non-overlap enforced). `wsx ssh-setup` appends SSH
+  host-aliases (`github.com`/`github-work`), never overwrites, idempotent. `wsx identity --scope`
+  applies **repo-local** name/email (never global, never `-c user.*` — the documented leak vector).
+  `wsx push` finalizes auth with first commit+push, **gated to personal-solo** (work refuses →
+  branch/PR/review). `wsx collab <account>` prints (never runs) the `gh` command to add a work
+  account to the private personal repo. `sync` now signs by scope. Brain close-out + interview
+  updated to capture context/scope and drive the new flow. All guards + gates tested; zips rebuilt.
+- **Phase 2 — examine-before-interview / additive augmentation (ask 12): ✅ DONE 2026-07-27.**
+  New `examine.py` (READ-ONLY). `wsx examine [--json]` maps each interview movement (M0–M5) to the
+  profile fields it fills and reports answered vs still-pertinent (so the brain asks ONLY the gaps,
+  never re-asks), plus missing scaffold, the hub/spoke/project inventory (don't re-propose), and
+  broken connections (orphans/dangling — reuses `health` helpers quietly). Apply is `wsx upgrade`
+  (non-destructive) + targeted `wsx profile set`. Verified additive: on a partial+degraded vault,
+  augmentation preserved the answered profile, a user note, and its `refutes` edge verbatim while
+  restoring HOME + knowledge scaffold. Brain "update existing workspace" branch now examines FIRST,
+  asks only pertinent movements, augments additively. Optional-empty M3/banned don't count as gaps.
+- Phase 3 — session-end generalization (ask 5): NEXT. Phase 4 — project adoption (asks 3,4).
+- Phase 5 — per-tool memory bridge + multi-agent (asks 6,7). Phase 6 — consent-gated ingestion
+  (ask 1). Phase 7 — self-wiring, generator-independent (ask 2).
+
 ## Current state (rewritten atomically — no stale fields)
 
 ### Environment

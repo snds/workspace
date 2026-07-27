@@ -19,6 +19,14 @@ def default_profile(name: str = "you", handle: str = "you") -> dict:
         "identity": {"name": name, "handle": handle},
         "surfaces": {"primary": "claude", "agents": ["claude"], "machines": ["this-machine"]},
         "models": {"tier": "frontier", "offline": False},
+        # `context` gates every side-effect that could cross the work/personal wall.
+        # personal-solo = the person's own vault (auto-commit/push are fine); work =
+        # employer-governed (branch → PR → review, NEVER auto-push). Fail-safe when
+        # unknown is the most restrictive (work); the interview sets it explicitly.
+        "context": "personal-solo",
+        # `remote` is the vault's own (personal) origin. The remote → scope → identity MAP
+        # that keeps work/personal auth non-overlapping lives in context/remotes.json (JSON,
+        # not here — profile.yaml's minimal serializer can't round-trip a list of maps).
         "transport": {"type": "git", "remote": ""},
         "contexts": {
             "work": {"role": "", "summary": ""},

@@ -107,6 +107,11 @@
         }
       }
     },
+    "context": {
+      "type": "string",
+      "enum": ["personal-solo", "work"],
+      "description": "Governs the work/personal wall. personal-solo = the person's own vault; auto-commit/push are fine. work = employer-governed; NEVER auto-push (branch → PR → human review). Resolution order: person's word → project declaration → `git remote -v` → ask. Fail-safe when unknown = 'work' (most restrictive)."
+    },
     "transport": {
       "type": "object",
       "properties": {
@@ -119,7 +124,7 @@
         },
         "remote": {
           "type": "string",
-          "description": "git remote URL, or empty"
+          "description": "the vault's own git remote URL (personal scope), or empty. The full remote → scope → identity map lives in context/remotes.json (JSON, so it can hold structured entries profile.yaml's minimal serializer cannot)."
         }
       }
     },

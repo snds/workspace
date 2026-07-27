@@ -63,26 +63,29 @@ Two entry paths. Read the person's ask before choosing:
 
 - **"Set up / bootstrap / generate my workspace"** → this is a **new build**. Continue to
   Phase 0 below and run the full interview.
-- **"Update / upgrade / fix / course-correct my workspace"** → they likely already have
-  one. **Do NOT re-interview.** Run the corrective path:
+- **"Update / upgrade / fix / augment my workspace"** or **anyone who already HAS a
+  workspace** → **do NOT re-interview from scratch.** Examine first, then augment additively:
 
-  1. **Find it.** If the current directory is already a workspace (`wsx doctor` says so),
-     use it. Otherwise **locate it**: `python3 <generator>/bin/wsx scan --find-workspaces`
-     searches the usual homes (`~/Documents`, `~/Projects`, an Obsidian iCloud vault, …)
-     and lists every workspace it finds with its name + skill count. If several turn up,
-     **show the list and ask which one**; if exactly one, name it and confirm; if none,
-     ask where it lives (or offer a fresh `wsx init`).
-  2. **Preview.** From inside that workspace, run `wsx upgrade --dry-run` and show the plan
-     in plain language — what missing scaffold it will add, and that it will regenerate the
-     connective index/MOC layer (this is the fix that reconnects a disconnected Obsidian
-     graph). Reassure them it is **non-destructive**: it never overwrites their hand-edited
-     notes or skills.
-  3. **Apply** on a yes: `wsx upgrade`. Then refresh the AI adapters (`wsx emit all`) and
-     run a hygiene pass (`wsx health` for orphans/stale/dangling edges, `wsx lint` for
-     skills). Report what changed, and point them at anything `health` flags.
-
-  Only drop into the interview if the person actually wants to *add* new capabilities
-  (then it's the normal resolve → review-gate → emit loop, not a full re-interview).
+  1. **Find it.** If the current dir is a workspace (`wsx doctor` says so), use it. Otherwise
+     `python3 <generator>/bin/wsx scan --find-workspaces` lists workspaces in the usual homes.
+     Several → show the list, ask which; one → confirm; none → ask, or offer `wsx init`.
+  2. **Examine before asking anything.** Run `wsx examine` (add `--json` if you want to parse
+     it). It reports, read-only: which interview movements (M0–M5) are **already answered** vs
+     still **pertinent**, what scaffold is missing, the existing hub/spoke/project inventory,
+     and any broken connections. **This is what makes augmentation additive** — you ask ONLY the
+     pertinent movements and never re-ask what's already there, and you never re-propose skills
+     or projects that already exist.
+  3. **Ask only the pertinent movements** (from examine's readout), in the normal suggestive
+     style. Skip the complete ones — at most *confirm* them in one line ("Still Cursor as your
+     main assistant?"). Write new answers with `wsx profile set …` (additive — it only sets the
+     keys you pass).
+  4. **Repair + augment structure.** Show `wsx upgrade --dry-run` in plain language (missing
+     scaffold it will add; the MOC/index layer it will regenerate to reconnect the graph),
+     stress it is **non-destructive** (never overwrites hand-edited notes/skills, preserves every
+     existing link and typed edge — it repairs dangling ones, it doesn't delete). On a yes:
+     `wsx upgrade` → `wsx emit all` → `wsx health` + `wsx lint`. Report what changed.
+  5. Only run the **resolver** loop (search → review-gate → resolve → emit) if they want to
+     *add new capabilities*. Everything pre-existing stays.
 
 ## Operating rules (hold these across every phase)
 
@@ -132,7 +135,9 @@ everything structural goes through `wsx`:
 | Emit for their surface(s) | `wsx emit claude-code` (or `agents-md` / `cursor` / `pack` / `all`) |
 | Final check | `wsx verify` |
 | Set who commits are signed as | `wsx identity` (show) → `wsx identity --name "…" --email "…"` |
-| Choose where it lives | `wsx remote` (free-host options) → `wsx remote <url>` |
+| Choose where it lives | `wsx remote` (free-host options); map it: `wsx remote <url> --scope personal --name "…" --email "…"` |
+| Finalize GitHub auth | `wsx push` (first commit + push; personal-solo only) |
+| Work/personal separation | `wsx ssh-setup` · `wsx remote <url> --scope work …` · `wsx collab <account>` |
 | (later) commit / sync | `wsx sync` |
 
 Notes: list-valued profile fields (`surfaces.agents`, `contexts.professional.crafts`,
@@ -389,17 +394,25 @@ Then give the person a short, honest closing report:
   posture, which surface(s) were emitted.
 - **What `verify` and `lint` found:** green, or specific issues. If lint reports a
   leftover trigger overlap, return to the reconciliation step — don't ship it.
-- **Git authorship — settle this, don't skip it.** Run `wsx identity`. If it reports no
-  usable identity, **commits silently fail and nothing is ever saved to history** — the
-  most common way a fresh workspace ends up empty. Ask them plainly: *"What name and
-  email should your saved work be signed with?"* then run
-  `wsx identity --name "…" --email "…"` (workspace-only by default; it also makes the
-  first commit). If they'd rather not publish a personal address on GitHub, mention the
-  GitHub noreply address (Settings → Emails → *Keep my email private*).
-- **How to use it:** open the vault in Obsidian; the workspace is a git repo.
-  **Settle where it lives** — walk them through `wsx remote` (free options: a private
-  GitHub/GitLab/Codeberg repo, or local-only); they create the empty repo, then
-  `wsx remote <url>` + `wsx sync` pushes it. Session continuity via `wsx session start|end`.
+- **Git authorship + where it lives — settle this, don't skip it.** Run `wsx identity`;
+  if it reports no usable identity, **commits silently fail and nothing is ever saved** —
+  the most common way a fresh workspace ends up empty. Then wire the home:
+  1. They create an **empty PRIVATE** repo on their host (GitHub/GitLab/Codeberg), no README.
+  2. Map it as their personal remote — this also sets the repo-local identity:
+     `wsx remote <url> --scope personal --name "…" --email "…"` (offer the GitHub **noreply**
+     address so a personal email never lands in public commits).
+  3. **Finalize the auth by actually pushing:** `wsx push` lands the first commit and pushes,
+     which is what proves their GitHub auth works. If it fails it says exactly why (create the
+     empty repo / run `wsx ssh-setup`), never a false success.
+- **Work vs personal — only if they have both.** If any of their repos are employer/work,
+  keep the two worlds **non-overlapping**: `wsx ssh-setup` scaffolds SSH host-aliases
+  (`github.com` personal, `github-work` work); map each work repo with
+  `wsx remote <url> --scope work --name "…" --email "…"` (a *different* identity — the tool
+  refuses to let one identity span both scopes). **Work scope never auto-pushes** (branch →
+  PR → review). If their workspace repo is private and they want a work machine to keep it
+  updated, `wsx collab <work-account>` prints the one command to add that account as a
+  collaborator on the personal repo — they run it; work repos are never synced into personal.
+- **How to use it:** open the vault in Obsidian; session continuity via `wsx session start|end`.
 - **Growing it later:** anything they build next — a new skill, hub, framework, or
   playbook — goes through `frameworks/skill-authoring.md` (emitted into their workspace),
   which carries this same rigor and supersedes their AI's native skill-builder.

@@ -107,8 +107,23 @@ def _reconcile_remote(root: Path, dry_run: bool):
             "(run `wsx sync` to push)")
 
 
+def _migrate_add_context(root: Path, dry_run: bool):
+    """Older profiles predate `context` (personal-solo | work), which now gates every
+    work/personal side-effect. Add it explicitly (a lone existing vault is personal-solo)
+    so scope resolution isn't left to a silent default."""
+    prof = core.load_profile(root)
+    if prof.get("context"):
+        return None
+    if not dry_run:
+        prof["context"] = "personal-solo"
+        core.save_profile(root, prof)
+    return ("context/profile.yaml",
+            "added `context: personal-solo` — governs the work/personal wall (auto-push, "
+            "adapter tone). Change to `work` for an employer-governed workspace.")
+
+
 MIGRATIONS = [_migrate_critical_facts, _migrate_separation,
-              _migrate_drop_encrypt, _reconcile_remote]
+              _migrate_drop_encrypt, _reconcile_remote, _migrate_add_context]
 
 
 def _bootstrap_git(root: Path, dry_run: bool):

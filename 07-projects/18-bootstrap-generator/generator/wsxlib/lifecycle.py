@@ -432,6 +432,17 @@ def sync(root: Path) -> int:
         print("      then `wsx remote <url>` to wire it.")
         return 0
 
+    # Sign this repo's commits with the RIGHT identity for its scope (repo-local, from the
+    # map) so a work repo never gets pushed under a personal identity, or vice versa.
+    from . import gitscope
+    prof = core.load_profile(root)
+    scope = gitscope.resolve_scope(root, prof)
+    if scope == "work" and prof.get("context", "personal-solo") != "work":
+        print("⚠ this repo resolves to WORK scope — sync won't push it.")
+        print("  Employer repos go branch → PR → human review, not a tool-driven push.")
+        return 1
+    gitscope.apply_repo_identity(root, prof, scope)  # no-op if nothing mapped
+
     # Guard: never pull --rebase over uncommitted changes (autostash is off, so git
     # would refuse anyway — this is the friendly, explicit version).
     dirty = core.git(root, "status", "--porcelain", check=False, capture=True).stdout.strip()

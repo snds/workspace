@@ -11,8 +11,14 @@
   wsx verify                     dry-run load per target
   wsx project new|list           per-project documentation folders (docs, not code)
   wsx archive <path> [--reason]  retire a note with provenance (never delete)
+  wsx examine [--json]           read-only: what an existing workspace still needs (augment additively)
   wsx upgrade [--dry-run]        corrective pass: add missing scaffold + reconnect graph
   wsx scan [--find-workspaces]   detect your stack (+ locate existing workspaces to update)
+  wsx remote <url> --scope …     map a remote → scope → identity (work/personal, non-overlapping)
+  wsx identity --scope …         apply the mapped repo-local identity for a scope
+  wsx ssh-setup                  scaffold SSH host-aliases for work/personal keys (append-only)
+  wsx push                       finalize a fresh workspace: first commit + push (personal-solo only)
+  wsx collab <account>           grant a work account access to your PRIVATE workspace repo
   wsx session start|end|reconcile
   wsx sync                       git pull --rebase + push
 """
@@ -21,8 +27,8 @@ from __future__ import annotations
 import argparse
 import sys
 
-from . import (adapters, archive, core, health, lifecycle, projects, resolver,
-               scaffold, scan, search, skills, upgrade)
+from . import (adapters, archive, core, examine, gitscope, health, lifecycle,
+               projects, resolver, scaffold, scan, search, skills, upgrade)
 
 
 # profile fields that are lists — `set` splits these on commas (and accepts [a, b] form).
@@ -187,12 +193,41 @@ def cmd_compact(a):
 
 
 def cmd_remote(a):
-    return lifecycle.remote(core.require_workspace(), a.url or "")
+    root = core.require_workspace()
+    # `wsx remote <url> --scope …` records the remote→scope→identity map (keeps
+    # work/personal non-overlapping) AND wires origin for the personal vault repo.
+    if getattr(a, "scope", None):
+        if not a.url:
+            raise SystemExit("error: --scope needs a URL (wsx remote <url> --scope personal …)")
+        rc = gitscope.map_remote(root, a.url, a.scope, a.name or "", a.email or "",
+                                 host_alias=a.host_alias or "")
+        if rc == 0 and a.scope == "personal":
+            lifecycle.remote(root, a.url)  # set origin for the vault's own repo
+        return rc
+    return lifecycle.remote(root, a.url or "")
 
 
 def cmd_identity(a):
-    return lifecycle.identity(core.require_workspace(), a.name or "", a.email or "",
-                              set_global=a.global_)
+    root = core.require_workspace()
+    if getattr(a, "scope", None):
+        prof = core.load_profile(root)
+        ok, who = gitscope.apply_repo_identity(root, prof, a.scope)
+        print(f"✓ repo-local identity for '{a.scope}' scope → {who}" if ok else f"✗ {who}")
+        return 0 if ok else 1
+    return lifecycle.identity(root, a.name or "", a.email or "", set_global=a.global_)
+
+
+def cmd_push(a):
+    return gitscope.first_push(core.require_workspace())
+
+
+def cmd_ssh_setup(a):
+    return gitscope.ssh_setup()
+
+
+def cmd_collab(a):
+    return gitscope.add_collaborator(core.require_workspace(), a.account,
+                                     repo_url=a.repo or "", permission=a.permission)
 
 
 def cmd_doctor(a):
@@ -222,6 +257,12 @@ def cmd_project(a):
 
 def cmd_archive(a):
     return archive.archive(core.require_workspace(), a.path, a.reason)
+
+
+def cmd_examine(a):
+    # examine works on a non-wsx path too (foreign-workspace mode), so it does NOT
+    # require_workspace — it resolves and dispatches itself.
+    return examine.run(a.path or ".", as_json=a.json)
 
 
 def cmd_upgrade(a):
@@ -297,16 +338,39 @@ def build_parser() -> argparse.ArgumentParser:
                      help="also search common locations for existing workspaces to update/upgrade")
     psc.set_defaults(fn=cmd_scan)
 
-    prm = sub.add_parser("remote", help="set/show where the workspace lives (git remote) + hosting tips")
+    prm = sub.add_parser("remote", help="set/show the vault remote, or map a remote → scope → identity")
     prm.add_argument("url", nargs="?", default="", help="git remote URL (omit to see recommendations)")
+    # Passing --scope turns this into a MAPPING (remote→scope→identity), which keeps
+    # work/personal auth non-overlapping. Without it, behaves as before (show/set origin).
+    prm.add_argument("--scope", choices=["personal", "work"], default=None,
+                     help="map this URL to a scope + identity (keeps work/personal separate)")
+    prm.add_argument("--name", default="", help="repo-local author name (with --scope)")
+    prm.add_argument("--email", default="", help="repo-local author email — a GitHub noreply address avoids publishing a personal one (with --scope)")
+    prm.add_argument("--host-alias", dest="host_alias", default="",
+                     help="SSH host alias (defaults: personal=github.com, work=github-work)")
     prm.set_defaults(fn=cmd_remote)
 
     pid = sub.add_parser("identity", help="set/show the git author identity for commits")
     pid.add_argument("--name", default="", help='author name, e.g. "Ada Lovelace"')
     pid.add_argument("--email", default="", help='author email, e.g. "ada@example.com"')
+    pid.add_argument("--scope", choices=["personal", "work"],
+                     help="apply the mapped identity for this scope to THIS repo (repo-local)")
     pid.add_argument("--global", dest="global_", action="store_true",
                      help="set as the default for ALL repos (default: this workspace only)")
     pid.set_defaults(fn=cmd_identity)
+
+    ppush = sub.add_parser("push", help="finalize a fresh workspace: first commit + push (personal-solo only)")
+    ppush.set_defaults(fn=cmd_push)
+
+    pssh = sub.add_parser("ssh-setup", help="scaffold SSH host-aliases for work/personal GitHub keys (append-only)")
+    pssh.set_defaults(fn=cmd_ssh_setup)
+
+    pcol = sub.add_parser("collab", help="grant a work account access to your PRIVATE workspace repo (you-authorized)")
+    pcol.add_argument("account", help="the GitHub username to grant access to")
+    pcol.add_argument("--repo", default="", help="repo URL (defaults to the workspace's own remote)")
+    pcol.add_argument("--permission", default="push", choices=["pull", "push", "admin"],
+                      help="access level (default: push)")
+    pcol.set_defaults(fn=cmd_collab)
 
     pse = sub.add_parser("search", help="find sources (skill registries + reference anchors)")
     pse.add_argument("query", nargs="?", default="", help="capability to search for")
@@ -352,6 +416,11 @@ def build_parser() -> argparse.ArgumentParser:
     par.add_argument("path", help="path to the note, relative to the workspace")
     par.add_argument("--reason", default="", help="why it is being retired")
     par.set_defaults(fn=cmd_archive)
+
+    pex = sub.add_parser("examine", help="read-only: what an existing workspace needs (interview coverage + gaps)")
+    pex.add_argument("path", nargs="?", default=".", help="workspace path (default: current dir; works on foreign layouts too)")
+    pex.add_argument("--json", action="store_true", help="machine-readable output for the brain")
+    pex.set_defaults(fn=cmd_examine)
 
     pu = sub.add_parser("upgrade", help="corrective pass: add missing scaffold + reconnect the graph")
     pu.add_argument("--dry-run", action="store_true", help="preview the plan without writing")

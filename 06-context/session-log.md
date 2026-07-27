@@ -23,6 +23,37 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-07-27 — bootstrap-generator v0.2: dual-auth + examine; roadmap reshaped to "richer default"
+
+SessionID: 2026-07-27-voyager-8a4d9d
+--- SESSION BLOCK ---
+Date: 2026-07-27
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 18-bootstrap-generator
+Summary: Kicked off generator v0.2 (12 colleague/Olga asks → 7 phases, planned in EnterPlanMode with 4 locked decisions). Built + tested + shipped Phase 1 (GitHub work/personal dual-auth) and Phase 2 (examine-before-interview, incl. a foreign-workspace mode). Then Sean redirected the whole direction: the generator's DEFAULT should become his comprehensive workspace model (numbered taxonomy + frameworks + memory system + shared-references + the automation), kept simple to USE (automate everything, modularize complexity) — plus a full restructure migration for existing wsx workspaces. Roadmap reshaped accordingly; paused before R1 to checkpoint.
+
+Artifacts:
+  - generator/wsxlib/gitscope.py — NEW: work/personal GitHub separation. remote→scope→identity map in context/remotes.json (JSON sidecar; yamlio can't round-trip a list of maps). Non-overlap guards (one identity per scope; one URL per scope). SSH host-alias scaffold (append-only, idempotent). Repo-local identity ONLY (never global, never `-c user.*` — the documented leak vector). first_push gated to personal-solo (work refuses → branch/PR). collab prints (never runs) the gh command.
+  - generator/wsxlib/examine.py — NEW: read-only. wsx examine maps interview movements (M0–M5) → profile fields → answered vs pertinent (ask only gaps), missing scaffold, inventory, broken connections. PLUS foreign-workspace mode (examine <path>) that maps a non-wsx layout onto the wsx concepts. Tested live on Sean's own workspace: 6/6 concept coverage, correctly judged as exceeding the generator.
+  - generator/wsxlib/{cli,lifecycle,scaffold,upgrade}.py, schemas/profile.schema.json — profile.context (personal-solo|work) gates side-effects (+ migration retro-adds it); sync signs by scope; CLI wires remote --scope / identity --scope / push / ssh-setup / collab / examine.
+  - brain/SKILL.md + interview.md — update-existing-workspace branch now EXAMINES first, asks only pertinent movements, augments additively; close-out drives the dual-auth + first-push flow; interview captures context/scope + dual-scope non-overlap.
+  - DEVELOPING.md — module list + command table for the new surface.
+  - dist/*.zip — rebuilt each phase (gitignored; not committed).
+Decisions:
+  - v0.2 locked (with Sean): ingestion = consent+quarantine+scan; project adoption = reference-in-place (move optional); GitHub = mirror the SSH-alias + repo-local model; auto-push = personal-solo ONLY; delivery = phased, sign-off between phases.
+  - MAJOR REDIRECT (2026-07-27): generator default → Sean's comprehensive model (#2), but comprehensiveness in the WORKSPACE not the user's effort (automate, prompt-only-when-necessary, modularize complex parts). Existing wsx workspaces get a FULL RESTRUCTURE migration into the numbered layout. Constraint: neutral scaffolding only — never Sean's actual content (wall intact).
+  - The automation/scripts/processes ARE in scope for the port, neutrally. Clean because triggers/routes are frontmatter/registry-declared (Sean's own single-source rule) → the machinery is data-driven off the person's OWN workspace, zero hardcoded content. Excluded: curated trigger tables (legion/centric), machine labels, employer profiles, Figma gate, snds plugin naming.
+  - remotes.json chosen over profile.yaml for the remote map (structured data; minimal yamlio can't serialize a list of maps).
+Pending resolved:
+  - Phase 2 tested on Sean's real workspace (his explicit ask) — foreign-examine works, verdict honest.
+Next:
+  - R1 — richer neutral scaffold + numbered taxonomy as the generator default (rewire moc/adapters/health/wire/examine to new dirs; port the automation neutrally, core vs optional per Sean's modularization). Then R2 — full restructure migration (dry-run + backup + rewire + verify + rollback; highest-risk op). Then fold in P3 session-end / P4 project-adoption / P5 tool-memory-bridge+multi-agent / P6 ingestion / P7 self-wiring.
+  - Retune examine_foreign verdict for the new direction (thinner foreign → offer migrate-up; exceeds-target → still "don't downgrade").
+  - Full reshaped plan: ~/.claude/plans/valiant-toasting-pumpkin.md (living design doc).
+--- END BLOCK ---
+
+
 ### 2026-07-23 — bootstrap-generator colleague-feedback pass + obsidian-second-brain learnings (both trees)
 
 SessionID: 2026-07-23-voyager-558e3d
