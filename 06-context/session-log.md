@@ -21,7 +21,105 @@ Keep entries concise. This is a handoff log, not a journal.
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
 
+> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
+
+
 ---
+
+### 2026-07-27 (pt.2) — upgrade-safety, thin adapter, and captured voice/tone prefs
+
+SessionID: 2026-07-27-voyager-upgtest
+--- SESSION BLOCK ---
+Date: 2026-07-27
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 18-bootstrap-generator, (workspace: 04-preferences)
+Summary: After v0.2 feature-complete, ran a copy-test of `wsx upgrade` against a full copy of
+  ~/Projects/Workspace (801M, discarded) to find what it would do to a rich hand-built vault.
+  Cataloged the negative outcomes and fixed them, then built the thin adapter, then captured
+  Sean's real communication preferences.
+Artifacts:
+  - generator A (upgrade safety, commit b9252a5): A1 registry.build never clobbers a foreign
+    skills.registry.json (writes .wsx.json alongside); A2 no fabricated placeholder profile;
+    A3 build-related no longer auto-edits skills on a foreign vault (gated on the foreign flag
+    captured BEFORE copy_cli creates .wsx/); A4 upgrade detects a not-wsx-generated rich vault
+    and REFUSES (mirrors examine's don't-downgrade; --force overrides).
+  - generator B (thin adapter, commit 6699bf0): new adapter.py + `wsx adapter [path]` maps a
+    foreign vault's folders→wsx concepts (.wsx/adapter.json, reference mode) + copies the CLI.
+    core.find_workspace_root recognizes an adapted vault. REFERENCE-MODE guards: upgrade refuses,
+    adapters.emit refuses, moc.write_mocs builds only registry.wsx.json, wire is additive-only —
+    so wsx never overwrites _HOME.md/AGENTS.md/CLAUDE.md/registry. Read-only tools (examine/health) work.
+  - generator addendum (commit 1a005c2): voice/tone is now first-class — scaffold preferences
+    template gains Voice + "Never do these" + Teaching-altitude sections; CLAUDE.md/AGENTS.md +
+    the bridge pointer point every LLM at preferences/user-preferences.md as governing.
+  - 04-preferences/user-preferences.md (commit 230a340): captured Sean's real prefs — anti-patterns
+    (incl. the "honest assessment" tell), sociable-professional voice w/ practicality + light
+    sarcasm (never over-index), thorough-when-it-matters, design-relative teaching + optional-source rule.
+Decisions:
+  - Do NOT run `wsx upgrade` on Sean's real vault — examine says it exceeds the model; upgrade
+    would downgrade/clobber. The right path is the reference-mode adapter, not upgrade.
+  - The copy-test found the real defects (registry clobber CRITICAL, junk profile, skill edits,
+    HOME collision, scaffold clutter). Fixed all; --force is the only way to scaffold a foreign vault.
+Pending resolved:
+  - "Correct upgrade's negative outcomes so it's safe on an existing vault" — done (A).
+  - "wsx thin adapter as a map for the future" — done (B).
+  - "Help me create a profile + interactive voice/tone that adjusts all LLMs" — prefs captured +
+    generator mechanism built. (Full `wsx profile init` from-context flow still TODO.)
+Next:
+  - Optional: `wsx adapter ~/Projects/Workspace` to run wsx read-only tooling on the real vault
+    (drops a .wsx/ into the repo — Sean's call). Build `wsx profile init` (reconstruct a full
+    profile from existing context). Colleague/Olga re-test of v0.2 + the adapter path.
+--- END BLOCK ---
+
+### 2026-07-27 — bootstrap-generator v0.2 COMPLETE (R1, R2, P3–P7 + tester-driven additions)
+
+SessionID: 2026-07-27-voyager-p7done
+--- SESSION BLOCK ---
+Date: 2026-07-27
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 18-bootstrap-generator
+Summary: Shipped the ENTIRE v0.2 roadmap for the bootstrap generator (wsx) — the generator's
+  default target is now Sean's comprehensive model, kept effortless to use, with a hard "never
+  break an existing workspace" guarantee. 14 commits, all phases built + tested (fresh-init) +
+  committed. R1: numbered-taxonomy default (00–09) + memory system + neutral automation port
+  (trigger-router hook, registry, build-related, SessionEnd audit) via a single-source layout.py
+  resolver (numbered-canonical, flat-fallback). R2: flat→numbered migration with a baseline-diff
+  broken-reference GATE (auto-rollback, change ledger) + build-related path-link fix. P3:
+  session-end that generalizes (harvest→knowledge, update every PROJECT.md, open-threads) +
+  emitted session-end skill. P4: `project adopt` reference-in-place (repo files never copied;
+  --move/--import-docs). P5: per-tool memory bridge (extract→quarantine, point→re-anchor) +
+  multi-agent SessionIDs (Agent·Surface·Machine·pid). P6: consent-gated ingestion + secretscan
+  (block credentials before a PUBLIC repo). P7: `wsx wire` self-wiring off a wiring-intent
+  registry, generator-independent. Plus tester-driven: identity anchor + cross-session auto-orient
+  (Olga's two confusions), command cheat sheet + self-sufficiency, `wsx diagnose [--fix]`
+  error-reporting/correction with full reference-integrity traversal, and a find-workspaces
+  cloud-walk fix.
+Artifacts:
+  - 07-projects/18-bootstrap-generator/generator/wsxlib/ — NEW: layout · registry · related · tools ·
+    restructure · diagnose · commands · secretscan · ingest · bridges · gitscope · examine · wire (13
+    new modules) + ~16 rewired (adapters/scaffold/moc/core/health/upgrade/lifecycle/projects/…).
+  - dist/*.zip rebuilt each phase (gitignored; not committed).
+  - Generator commits: 60a4ac4 → 1d2b4f1 (14). Working tree clean.
+Decisions:
+  - Hard requirement (Sean): running the generator against an existing workspace must NOT break it —
+    enforced by a baseline-diff broken-reference gate (restructure + diagnose --fix), auto-rollback,
+    change ledger. Proven to fire on a simulated break.
+  - Repos are REFERENCED, never copied into the (public) vault — the employer/public-repo wall; ingest
+    secret-scans + blocks credentials; nothing auto-committed.
+  - Testing discipline: verify CLI changes on a FRESH init (or after `wsx upgrade`), never a reused
+    instance — the copied `.wsx` CLI goes stale and masks fixes/regressions (cost hours as a phantom "hang").
+Pending resolved:
+  - v0.2 roadmap (all 7 phases + the ingestion/adoption/dual-auth/self-wiring asks) — DONE.
+Project status changes:
+  - 18-bootstrap-generator: v0.2 phases 1–2 (dual-auth + examine) → v0.2 FEATURE-COMPLETE (R1,R2,P3–P7).
+Next:
+  - Colleague/Olga re-test of the full v0.2 (esp. bridge point for auto-orient, restructure on a real
+    flat vault, ingest on a real notes folder). Possible follow-ups: bump __version__ so diagnose's
+    stale-copy check has a signal; consider health scanning wired extras. Ship-as decision (SPEC §9)
+    still deferred (standalone wsx repo extract).
+--- END BLOCK ---
+
 
 ### 2026-07-27 — bootstrap-generator v0.2: dual-auth + examine; roadmap reshaped to "richer default"
 
@@ -477,38 +575,6 @@ Pending resolved:
 Next:
   - Sean: paste beacon into 4 chat surfaces + --ack-chat (steps given in-session); machine installs on Work MBP/Windows when at those machines.
   - Residuals R1–R3 in report v2.0 — none actionable now.
---- END BLOCK ---
-
----
-
-### 2026-07-09 — Workspace fix session: FX-1..FX-14 applied (machine layer, dispatcher, triggers, standards, knowledge)
-
---- SESSION BLOCK ---
-Date: 2026-07-09
-Agent: Claude Fable 5
-Machine: Personal MacBook Pro
-Surface: Claude Code (Mac desktop app)
-Project(s): 19-workspace-brain (new standing home, FX-13) — applied validation findings FX-1..FX-14 per Sean's sign-off prompt; launched from the workspace ROOT; project dispatcher fired at boot (the fix prompt's first test, passed).
-Artifacts:
-  - (none in 05-artifacts — deliverables are the fix(FX-n) commit series 3729472..870d992 + audit-log per-FX outcomes)
-Decisions:
-  - ~/.claude/CLAUDE.md is now the doctor-managed beacon; the 12.6KB pre-beacon global standards backed up machine-locally, externalization = FX-15 (pending).
-  - Workspace-work sessions get a standing project home: 07-projects/19-workspace-brain (git-tracked; framework #08 rule).
-  - Single-source rule: dispatcher curated tables own cross-source routes; CLAUDE.md/workflow-patterns tables are illustrative mirrors.
-  - Trigger-routes.md extraction deferred (authority just consolidated in dispatcher; don't churn twice in one day).
-  - Bare `hooks` trigger deliberately NOT added to hooks-contract (React-hooks collision) — deviation from report FX-11 wording, per FX-3's own principle.
-Pending added:
-  - Machine-layer installs on Work MBPs + Windows (incl. one verified post-migration Windows session).
-  - Validation-harness re-run to compare scorecards (pre-req: Claude Desktop re-login — OAuth 401 blocked the live headless acceptance test).
-  - FX-15 externalize pre-beacon global design standards into the workspace.
-  - FX-16 reconcile ritual-token ABI ([workspace: LOADED …]) with the CLAUDE.md ✓-ritual (in-workspace sessions otherwise log MISS).
-  - FX-8 deferred half: tool-neutral trigger-routes.md extraction.
-Pending resolved:
-  - Run the workspace fix session (FX-1..FX-14) — all 14 committed or explicitly deferred; per-FX outcomes + shas in audit-log 2026-07-09 entry.
-Project status changes:
-  - 19-workspace-brain: (new) → Active.
-Next:
-  - Sean: re-login Claude Desktop (OAuth), confirm 14-variable-icon-font-generator profile (provisional centric-engineering), confirm spine-file relocation (~/CLAUDE.md + ~/AGENTS.md byte-identical to ~/.project-spine/exports/), then harness re-run.
 --- END BLOCK ---
 
 ---
