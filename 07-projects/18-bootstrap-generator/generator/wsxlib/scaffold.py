@@ -391,9 +391,25 @@ you edit by hand). Back to [[HOME]]._
 - **Lead with:** the answer first, context after.
 - **Avoid:** {{preferences.banned}}
 
-## Communication
-_(How you want explanations shaped — depth, examples, formatting, what to skip. The
-interview seeds this; expand it in your own words.)_
+## Voice
+_How you actually want it to sound. Be specific — this is what stops every LLM (this one and
+the others you use) from defaulting to a generic assistant voice. Examples to react to:_
+- _Sociable & professional? Dry & direct? Warm? Room for light humor/sarcasm — or none?_
+- _Should it match tone to context, or hold one register? "Never over-index on any one tone" is valid._
+- _Verbosity: terse/answer-first, or thorough-when-it-matters?_
+
+## Never do these (the things that quietly annoy you)
+_Your explicit "stop it" list. Common LLM tics to keep or cut:_
+- _Flattery / sycophancy ("Great question!"), filler preambles ("Certainly!", "I'd be happy to…")_
+- _Unsolicited recaps (restating your prompt, summarizing what it just did)_
+- _Hedging / over-qualifying instead of committing; over-apologizing; over-explaining the obvious_
+- _Moralizing or unsolicited caveats on benign work; forced positivity / emoji_
+- _(Add your own — the oddly specific ones matter most.)_
+
+## Teaching altitude
+_When a result is outside your expertise, how should it be explained? Relate it to a domain you
+DO own (an analogy to your field), give the plain version first, or point you to a good source as
+an optional read? Name your expert domains vs. your learner domains so it calibrates._
 
 ## Working style
 _(How you want work approached: how much to confirm before acting, when to show options

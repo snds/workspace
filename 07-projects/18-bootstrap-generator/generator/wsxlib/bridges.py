@@ -119,6 +119,8 @@ def _pointer_block(root: Path) -> str:
         f"cache), then skim the TOP of `{c}/project-context.md` + `{c}/session-log.md` for the",
         f"active work, and follow the vault's `{front}`. Keep it light — heads of logs, not whole",
         "files (the vault is token-frugal by rule).",
+        f"**Voice:** honor `{lay.name('preferences')}/user-preferences.md` — its Voice + \"Never do",
+        f"these\" list is how {name} wants to be spoken to, in every reply (not a generic default).",
         f"**Privacy wall:** never read `{c}/personal.md` unless {name} explicitly asks.",
         f"When {name} says \"workspace\", \"second brain\", \"micro-brain\", \"my notes\", or asks to",
         "gather/recall across their work, that means **this vault** — resolve it here, NOT a",
