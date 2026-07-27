@@ -262,13 +262,39 @@ def _suggest(agents: list, local: list) -> dict:
 # ---------------------------------------------------------- workspace discovery ---
 # Common places a wsx workspace tends to live. Searched shallowly (bounded depth) so
 # "help me update my workspace" can OFFER the existing one instead of asking cold.
+def _cloud_roots() -> list:
+    """Per-OS cloud-sync folders — LOCALLY-SYNCED ONLY (real files on disk; we never touch
+    the network). macOS keeps modern providers under ~/Library/CloudStorage; classic paths
+    live at the home root; Windows/Linux use env vars + home-root dirs."""
+    import os
+    roots = []
+    cs = HOME / "Library" / "CloudStorage"          # macOS: GoogleDrive-*, OneDrive-*, Dropbox
+    if cs.is_dir():
+        roots += [p for p in cs.iterdir() if p.is_dir()]
+    for d in ("Google Drive", "GoogleDrive", "OneDrive", "Dropbox",
+              "Library/Mobile Documents/com~apple~CloudDocs"):     # iCloud Drive (macOS)
+        roots.append(HOME / d)
+    for env in ("OneDrive", "OneDriveConsumer", "OneDriveCommercial"):  # Windows
+        v = os.environ.get(env)
+        if v:
+            roots.append(Path(v))
+    return roots
+
+
 def _search_roots() -> list:
     roots = [HOME / d for d in ("Documents", "Projects", "projects", "obsidian",
                                 "Obsidian", "vaults", "Vaults", "Desktop", "Notes")]
     roots.append(HOME)
     # Obsidian's iCloud vault location (macOS)
     roots.append(HOME / "Library/Mobile Documents/iCloud~md~obsidian/Documents")
-    return [r for r in roots if r.is_dir()]
+    roots += _cloud_roots()
+    # de-dupe (preserve order) — cloud roots can overlap home dirs
+    seen, out = set(), []
+    for r in roots:
+        if r.is_dir() and r not in seen:
+            seen.add(r)
+            out.append(r)
+    return out
 
 
 _SKIP_WALK = {".git", "node_modules", "Library", ".Trash", ".cache", "venv", ".venv",

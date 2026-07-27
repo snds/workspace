@@ -167,8 +167,25 @@ phases. Locked decisions: ingestion = consent+quarantine+scan; project adoption 
   REFUSES + redirects to diagnose/upgrade/restructure (never clobbers); a foreign workspace → examine.
   Maintenance skill now leads with `diagnose`. Fixed a `#stale` false-positive (COMMANDS.md exempted
   from the graph). Green; zips; terminology clean.
-- Then fold in against the richer target: P6 consent-gated ingestion (ask 1),
-  P7 self-wiring, generator-independent (ask 2).
+- **P6 — consent-gated ingestion (ask 1): ✅ DONE 2026-07-27.** New `secretscan.py` (the GATE:
+  OpenAI/Anthropic/AWS/GCP/GitHub/Slack/Stripe/Twilio/SendGrid keys, private-key blocks, JWTs, and
+  env-style secret assignments → **block**; public/WAN IPs → **review**; placeholders + private IPs
+  ignored; matches redacted; **safe-by-default** — a false positive over-quarantines, a false negative
+  is unacceptable) + new `ingest.py` + `wsx ingest discover|<path> [--apply]`. Flow: **discover**
+  (top-level-only scan of Documents/Desktop/Projects/note-vaults + per-OS **cloud-sync roots** —
+  locally-synced only, NO deep crawl so an online-only cloud folder can't hang it) → name a source →
+  **read-only copy to `.wsx/quarantine/ingest/`** (gitignored) → **secret-scan (block hits — never
+  staged)** → **classify** (project → reference-in-place `adopt` PROPOSAL, never copied; knowledge;
+  framework-candidate by content/name hints; raw) → PLAN → **`--apply` promotes only the safe docs**
+  into `<knowledge|frameworks>/ingested/` (provenance + review banner + a reachable `_INDEX.md`; won't
+  collide with scaffold; idempotent). Nothing enters git until the person reviews + `sync`s. Doubly
+  consent-gated (name the source, then `--apply`). scan._search_roots extended with cloud roots.
+  **Verify (exact plan fixture): planted API key + a note + a project folder → key caught & quarantined
+  (0 hits anywhere in the vault), note→knowledge, principles→framework-candidate, folder→project
+  proposal (app.py NOT copied), nothing auto-committed; green; discover 0.1s; zips + clean-extract ship
+  secretscan+ingest; terminology clean.** (Gotcha noted: a reused test workspace runs its STALE `.wsx`
+  copy — always test ingest changes on a FRESH init or after `wsx upgrade`.)
+- Then: P7 self-wiring, generator-independent (ask 2) — the last phase.
 
 ## Current state (rewritten atomically — no stale fields)
 

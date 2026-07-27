@@ -34,6 +34,8 @@ GROUPS = [
         ("python3 wsx.py skill add <name> --kind spoke|hub …", "create a skill skeleton, then enrich it"),
         ("python3 wsx.py project new \"<name>\"", "a per-project documentation folder"),
         ("python3 wsx.py project adopt <path>", "adopt an EXISTING repo/folder — reference-in-place"),
+        ("python3 wsx.py ingest discover", "where your scattered notes/projects could come from (read-only)"),
+        ("python3 wsx.py ingest <path> [--apply]", "pull outside content in — secret-scanned, consent-gated"),
         ("python3 wsx.py search \"<topic>\"", "find skill + reference sources for a new capability"),
         ("python3 wsx.py scan", "detect installed AI tools / MCP servers / local LLMs"),
     ]),

@@ -51,6 +51,8 @@ generator/
     tools.py              # writes the 09-tools scripts (build-registry/build-related/validate/check-terminology)
     projects.py           # `wsx project new|list|adopt` — per-project docs; adopt references an existing repo/folder in place (--move, --import-docs)
     bridges.py            # `wsx bridge list|extract|point` — per-tool memory: extract other AI tools' memory → .wsx/quarantine/ (read-only, gitignored); point them back at the workspace (idempotent pointer)
+    secretscan.py         # the ingestion GATE — API-key/token/private-key/JWT/env-assignment (block) + WAN-IP (review) patterns; redacts matches; safe-by-default
+    ingest.py             # `wsx ingest discover|<path> [--apply]` — consent-gated: discover (top-level, no deep crawl) → quarantine + secret-scan (block) → classify (project/knowledge/framework) → propose → promote only safe docs on --apply
     upgrade.py            # `wsx upgrade` — non-destructive corrective pass (adds missing scaffold, weaves the Related graph)
     restructure.py        # `wsx restructure` — flat→numbered migration; dry-run default, backup+ledger, baseline-diff broken-ref GATE (auto-rollback), --rollback
     diagnose.py           # `wsx diagnose [--fix]` — report problems in an EXISTING workspace + traverse ALL refs (typed edges + md-links + Dataview) to confirm they resolve; --fix applies safe non-destructive corrections with a before/after break-audit

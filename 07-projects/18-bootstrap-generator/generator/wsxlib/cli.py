@@ -11,6 +11,7 @@
   wsx verify                     dry-run load per target
   wsx project new|list|adopt     per-project docs (adopt = reference an EXISTING repo/folder in place)
   wsx bridge list|extract|point  connect other AI tools: read their memory (→ quarantine) · point them here
+  wsx ingest [discover|<path>]   consent-gated ingestion of outside notes/projects (secret-scanned; --apply to promote)
   wsx archive <path> [--reason]  retire a note with provenance (never delete)
   wsx examine [--json]           read-only: what an existing workspace still needs (augment additively)
   wsx diagnose [--fix]           report problems in an EXISTING workspace; --fix applies the safe corrections
@@ -32,8 +33,8 @@ import argparse
 import sys
 
 from . import (adapters, archive, bridges, commands, core, diagnose, examine, gitscope,
-               health, lifecycle, projects, resolver, restructure, scaffold, scan, search,
-               skills, upgrade)
+               health, ingest, lifecycle, projects, resolver, restructure, scaffold, scan,
+               search, skills, upgrade)
 
 
 # profile fields that are lists — `set` splits these on commas (and accepts [a, b] form).
@@ -280,6 +281,11 @@ def cmd_bridge(a):
     return bridges.run(core.require_workspace(), a.bridge_cmd, tool=getattr(a, "tool", "") or "")
 
 
+def cmd_ingest(a):
+    return ingest.run(core.require_workspace(), path=getattr(a, "path", "") or "",
+                      apply=getattr(a, "apply", False))
+
+
 def cmd_archive(a):
     return archive.archive(core.require_workspace(), a.path, a.reason)
 
@@ -474,6 +480,14 @@ def build_parser() -> argparse.ArgumentParser:
     brp = brsub.add_parser("point", help="write a workspace pointer into a tool's own config")
     brp.add_argument("tool", nargs="?", default="", help="one tool id (default: all installed)")
     pbr.set_defaults(fn=cmd_bridge)
+
+    pin = sub.add_parser("ingest",
+                         help="consent-gated ingestion: pull outside notes/projects in, secret-scanned")
+    pin.add_argument("path", nargs="?", default="",
+                     help="a folder to stage (omit or 'discover' to list where content could come from)")
+    pin.add_argument("--apply", action="store_true",
+                     help="promote the SAFE, classified docs (secret-bearing files are never promoted)")
+    pin.set_defaults(fn=cmd_ingest)
 
     par = sub.add_parser("archive", help="retire a note with provenance (never delete)")
     par.add_argument("path", help="path to the note, relative to the workspace")
