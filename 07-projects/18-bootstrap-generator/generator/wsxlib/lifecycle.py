@@ -6,7 +6,7 @@ import shutil
 import sys
 from pathlib import Path
 
-from . import adapters, core, yamlio
+from . import adapters, core, layout, yamlio
 
 
 # ------------------------------------------------------------------ doctor ---
@@ -149,7 +149,8 @@ def verify(root: Path) -> int:
             fails += 1
 
     # 3. required canonical files exist
-    for rel in ("context/project-context.md", "context/session-log.md", "manifest.json"):
+    _c = layout.of(root).name("context")
+    for rel in (f"{_c}/project-context.md", f"{_c}/session-log.md", "manifest.json"):
         if not (root / rel).exists():
             print(f"  ✗ missing canonical file: {rel}")
             fails += 1
@@ -230,8 +231,8 @@ def compact(root: Path) -> int:
     idempotently (dedupe by the SessionID marker). Same conflict-free model the
     generator's own workspace uses: sessions write disjoint fragment files (no merge
     conflicts across devices/sessions), and this folds them into the readable log."""
-    log_path = root / "context" / "session-log.md"
-    frag_dir = root / "context" / "sessions"
+    log_path = layout.of(root).dir("context") / "session-log.md"
+    frag_dir = layout.of(root).dir("context") / "sessions"
     if not log_path.exists() or not frag_dir.is_dir():
         return 0
     log = log_path.read_text(encoding="utf-8")
@@ -334,7 +335,7 @@ def session(root: Path, sub: str) -> int:
         # Write a conflict-free FRAGMENT (not a direct append to the shared log), then
         # fold it. Disjoint files → no cross-device/session merge conflicts.
         sid = f"{core.today()}-{core.now_stamp().split()[1].replace(':', '')}"
-        frag_dir = root / "context" / "sessions"
+        frag_dir = layout.of(root).dir("context") / "sessions"
         frag_dir.mkdir(parents=True, exist_ok=True)
         frag = frag_dir / f"{sid}.md"
         frag.write_text(
@@ -366,7 +367,7 @@ def reconcile(root: Path) -> int:
     (keeping the first), re-sort newest-first. Content-preserving and idempotent.
     """
     compact(root)  # fold any pending fragments first
-    log_path = root / "context" / "session-log.md"
+    log_path = layout.of(root).dir("context") / "session-log.md"
     if not log_path.exists():
         print("note: no session-log.md yet — nothing to reconcile.")
         return 0
