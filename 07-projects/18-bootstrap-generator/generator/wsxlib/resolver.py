@@ -28,7 +28,17 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-from . import core, skills, yamlio
+from . import core, layout, skills, yamlio
+
+
+def _sk(root: Path) -> str:
+    """The skills dir NAME in use for this workspace (numbered or flat)."""
+    return layout.of(root).name("skills")
+
+
+def _ctx(root: Path) -> Path:
+    """The context dir PATH — the base for resolving file:// fetches in a plan."""
+    return layout.of(root).dir("context")
 
 # Registries with no official vetting — a match here must be audited by the brain
 # before install. Matched case-insensitively against the plan entry's `registry`.
@@ -96,7 +106,7 @@ def _pull_one(root: Path, e: dict, update: bool, allow_unvetted: bool) -> str:
         return "refused"
 
     ns = _ns_name(registry, name)
-    sk_dir = root / "skills" / ns
+    sk_dir = root / _sk(root) / ns
     sk = sk_dir / "SKILL.md"
 
     man = core.load_manifest(root)
@@ -106,7 +116,7 @@ def _pull_one(root: Path, e: dict, update: bool, allow_unvetted: bool) -> str:
     # deliberate, visible bump — never a silent mutation.
     prior = idx.get(ns, {})
     try:
-        data = _fetch(source_url, base=root / "context")
+        data = _fetch(source_url, base=_ctx(root))
     except (urllib.error.URLError, OSError, ValueError) as ex:
         print(f"  ✗ {name}: fetch failed ({source_url}) — {ex}")
         return "refused"
@@ -128,7 +138,7 @@ def _pull_one(root: Path, e: dict, update: bool, allow_unvetted: bool) -> str:
     sk.chmod(0o444)      # read-only: a pulled skill is immutable; patch via overlay
 
     rec = {
-        "path": f"skills/{ns}/SKILL.md",
+        "path": f"{_sk(root)}/{ns}/SKILL.md",
         "hub": e.get("hub", "") or ns,
         "kind": e.get("kind", "spoke"),
         "triggers": e.get("triggers", []),
@@ -150,7 +160,7 @@ def _pull_one(root: Path, e: dict, update: bool, allow_unvetted: bool) -> str:
         overlay = sk_dir / "overlay.md"
         if not overlay.exists():
             overlay.write_text(_overlay_skeleton(name, e.get("hub", "")), encoding="utf-8")
-            rec["overlay"] = f"skills/{ns}/overlay.md"
+            rec["overlay"] = f"{_sk(root)}/{ns}/overlay.md"
         status = "patched"
 
     idx[ns] = rec
@@ -226,13 +236,13 @@ def _cache_references(root: Path, name: str, refs: list) -> None:
     """Opt-in (--cache-refs): fetch each reference URL, pin it, and cache a snapshot
     under skills/<name>/references/ (read-only) for verifiable, dated provenance.
     Records the pin + cached path back onto each ref dict."""
-    ref_dir = root / "skills" / name / "references"
+    ref_dir = root / _sk(root) / name / "references"
     for r in refs:
         url = r.get("url")
         if not url:
             continue
         try:
-            data = _fetch(url, base=root / "context")
+            data = _fetch(url, base=_ctx(root))
         except (urllib.error.URLError, OSError, ValueError) as ex:
             r["cache_error"] = str(ex)
             print(f"    ⚠ {name}: could not cache reference {url} — {ex}")
@@ -245,7 +255,7 @@ def _cache_references(root: Path, name: str, refs: list) -> None:
         dst.write_bytes(data)
         dst.chmod(0o444)
         r["pin"] = _sha256_bytes(data)
-        r["cached"] = f"skills/{name}/references/{dst.name}"
+        r["cached"] = f"{_sk(root)}/{name}/references/{dst.name}"
         r["retrieved"] = core.now_stamp()
 
 
@@ -257,7 +267,7 @@ def _generate_one(root: Path, e: dict, cache_refs: bool = False) -> str:
     name = e["name"]
     refs = e.get("references") or []
     composite = bool(refs) or e.get("source") == "composite"
-    sk = root / "skills" / name / "SKILL.md"
+    sk = root / _sk(root) / name / "SKILL.md"
 
     fresh = not sk.exists()
     if fresh:
@@ -300,7 +310,7 @@ def resolve(root: Path, plan_path: str | None = None, update: bool = False,
     """Execute an approved skill plan: fetch+pin PULLs, scaffold PATCH overlays,
     delegate GENERATEs, and register everything into manifest.json. Returns non-zero
     if any entry was refused (so callers/CI can gate on a clean resolve)."""
-    plan_file = Path(plan_path) if plan_path else root / "context" / "skill-plan.json"
+    plan_file = Path(plan_path) if plan_path else _ctx(root) / "skill-plan.json"
     if not plan_file.exists():
         print(f"no skill plan at {_rel(plan_file, root)}.")
         print("The brain writes one after the review gate — a JSON file shaped like:")

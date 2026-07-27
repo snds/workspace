@@ -1,6 +1,6 @@
 # SESSION-STATE — Portable Bootstrap Generator
 
-_Last updated: 2026-07-23 — checkpoint (colleague-feedback pass: broader `wsx scan` detection incl. ChatGPT/desktop chat apps, connective **MOC layer** so the emitted vault graph is no longer islands, `projects/` per-project documentation tree + `wsx project`, and `wsx upgrade` corrective pass for already-generated workspaces; earlier: permission-free `launch.py` + per-OS zips, scan gate + BYO-tokens, authoring framework, `wsx remote`, expertise calibration, two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
+_Last updated: 2026-07-27 — v0.2 R1 shipped (numbered taxonomy as the generator DEFAULT + neutral automation port); earlier: colleague-feedback pass ( broader `wsx scan` detection incl. ChatGPT/desktop chat apps, connective **MOC layer** so the emitted vault graph is no longer islands, `projects/` per-project documentation tree + `wsx project`, and `wsx upgrade` corrective pass for already-generated workspaces; earlier: permission-free `launch.py` + per-OS zips, scan gate + BYO-tokens, authoring framework, `wsx remote`, expertise calibration, two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
 
 ### 2026-07-23 — colleague feedback (four asks, all built + dogfooded)
 
@@ -45,9 +45,32 @@ phases. Locked decisions: ingestion = consent+quarantine+scan; project adoption 
   augmentation preserved the answered profile, a user note, and its `refutes` edge verbatim while
   restoring HOME + knowledge scaffold. Brain "update existing workspace" branch now examines FIRST,
   asks only pertinent movements, augments additively. Optional-empty M3/banned don't count as gaps.
-- Phase 3 — session-end generalization (ask 5): NEXT. Phase 4 — project adoption (asks 3,4).
-- Phase 5 — per-tool memory bridge + multi-agent (asks 6,7). Phase 6 — consent-gated ingestion
-  (ask 1). Phase 7 — self-wiring, generator-independent (ask 2).
+- **R1 — richer neutral scaffold + numbered taxonomy as the default: ✅ DONE 2026-07-27.**
+  New `layout.py` = the taxonomy source of truth (logical→numbered map; `Layout` resolver is
+  numbered-canonical, flat-fallback so legacy workspaces keep working until R2; `remap()` routes
+  template keys). `wsx init` now scaffolds the numbered comprehensive model: `01-frameworks`
+  `02-shared-references` (epistemic-standards) `03-skills` `04-preferences` (user-preferences,
+  promoted from profile) `06-context` (+ **memory system**: typed fact/decision/feedback/reference
+  `_TEMPLATE` + `MEMORY.md` index) `07-projects` `08-knowledge` `09-tools`. `00-bootstrap`/
+  `05-artifacts` are OPTIONAL (not scaffolded). Every module rewired through `layout` (16 files);
+  adapters resolve dir tokens at emit via a lookbehind-guarded substitution (protects `.claude/skills/`);
+  emitted MCP server + hooks detect layout at RUNTIME (survive R2). **Automation ported neutrally,
+  data-driven off frontmatter (zero hardcoded content):** `registry.py`→`skills.registry.json`;
+  UserPromptSubmit **trigger-router** hook (auto-surfaces skills/knowledge on their own declared
+  triggers); **SessionEnd audit** hook; `related.py` build-related (typed `## Related` from hub graph,
+  marker-delimited idempotent); `09-tools/{build-registry,build-related,validate,check-terminology}.py`.
+  Excluded per privacy wall: Sean's trigger tables, machine labels, employer profiles, Figma gate,
+  snds naming. `examine_foreign` verdict retuned (thinner→migrate-up; exceeds→don't-downgrade).
+  **Tested:** py_compile clean; init→emit→verify/health/lint GREEN on fresh numbered AND legacy-flat
+  (upgrade adds pieces at flat paths, no numbered siblings, hand-note preserved); router/build-related/
+  validate/session-audit all functional on both layouts + idempotent; 3 zips rebuilt + clean-extract
+  smoke green (numbered taxonomy, tools, hooks, registry); Sean's `check-terminology.py` clean (no
+  "vendored"); examine verdicts correct on Sean's real vault (exceeds) and a thin fixture (migrate-up).
+- R2 — full restructure migration for existing flat workspaces (dry-run + backup to `_archive/` +
+  link/adapter/hook rewiring + post-migration verify/health + rollback; idempotent). HIGHEST-RISK op — NEXT.
+- Then fold in against the richer target: P3 session-end (ask 5), P4 project adoption (asks 3,4),
+  P5 per-tool memory bridge + multi-agent (asks 6,7), P6 consent-gated ingestion (ask 1),
+  P7 self-wiring, generator-independent (ask 2).
 
 ## Current state (rewritten atomically — no stale fields)
 

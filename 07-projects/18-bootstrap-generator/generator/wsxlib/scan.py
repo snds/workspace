@@ -21,6 +21,8 @@ import shutil
 import sys
 import urllib.error
 import urllib.request
+
+from . import layout
 from pathlib import Path
 
 HOME = Path.home()
@@ -274,9 +276,9 @@ _SKIP_WALK = {".git", "node_modules", "Library", ".Trash", ".cache", "venv", ".v
 
 
 def _is_workspace(d: Path) -> dict | None:
-    """A wsx workspace = a dir with manifest.json + context/. Returns a summary or None."""
+    """A wsx workspace = a dir with manifest.json + the context dir (numbered OR flat)."""
     man = d / "manifest.json"
-    if not (man.exists() and (d / "context").is_dir()):
+    if not (man.exists() and layout.has_workspace_dirs(d)):
         return None
     info = {"path": _tilde(d), "name": d.name, "skills": 0, "generator": "",
             "has_git": (d / ".git").exists()}
@@ -338,7 +340,7 @@ def scan(root: Path | None, as_json: bool = False, write: bool = False,
             _print_recommendation()
 
     if write and root is not None:
-        out = root / "context" / "scan.json"
+        out = layout.of(root).dir("context") / "scan.json"
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
         print(f"\n✓ wrote {_rel(out, root)} — the interview reads this to pre-fill your setup.")

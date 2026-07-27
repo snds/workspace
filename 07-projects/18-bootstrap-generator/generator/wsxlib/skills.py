@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from . import core, moc, yamlio
+from . import core, layout, moc, yamlio
 
 
 def _title(name: str) -> str:
@@ -17,10 +17,11 @@ def _title(name: str) -> str:
 
 
 def _record(root: Path, name: str) -> dict:
-    sk = root / "skills" / name / "SKILL.md"
+    sd = layout.of(root).name("skills")
+    sk = root / sd / name / "SKILL.md"
     fm, _ = core.parse_frontmatter(sk)
     rec = {
-        "path": f"skills/{name}/SKILL.md",
+        "path": f"{sd}/{name}/SKILL.md",
         "hub": fm.get("hub", ""),
         "kind": fm.get("kind", "spoke"),
         "level": fm.get("level", "intermediate"),
@@ -155,7 +156,7 @@ def _skeleton_hub(title: str, desc: str, name: str, level: str, seniority: str) 
 def add(root: Path, name: str, desc: str, triggers, hub: str,
         source: str = "generated", title: str = "", kind: str = "spoke",
         level: str = "intermediate", seniority: str = "") -> int:
-    sk = root / "skills" / name / "SKILL.md"
+    sk = root / layout.of(root).name("skills") / name / "SKILL.md"
     if sk.exists():
         raise SystemExit(f"error: skill '{name}' already exists ({sk.relative_to(root)})")
     if level not in LEVELS:

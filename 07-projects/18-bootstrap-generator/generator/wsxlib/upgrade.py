@@ -19,7 +19,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import core, moc, scaffold
+from . import core, layout, moc, scaffold
 
 
 # --------------------------------------------------------------- migrations ---
@@ -31,7 +31,7 @@ def _migrate_critical_facts(root: Path, dry_run: bool):
     """Old CRITICAL_FACTS.md baked `primary assistant: <value>` in at init time, so it
     silently contradicted profile.yaml the moment the interview set the real surface.
     Replace that one line with the pointer form (no duplicated volatile state)."""
-    f = root / "context" / "CRITICAL_FACTS.md"
+    f = layout.of(root).dir("context") / "CRITICAL_FACTS.md"
     if not f.exists():
         return None
     text = f.read_text(encoding="utf-8")
@@ -50,7 +50,7 @@ def _migrate_critical_facts(root: Path, dry_run: bool):
 
 def _migrate_separation(root: Path, dry_run: bool):
     """Same class of bug on the Separation line (baked value, never refreshed)."""
-    f = root / "context" / "CRITICAL_FACTS.md"
+    f = layout.of(root).dir("context") / "CRITICAL_FACTS.md"
     if not f.exists():
         return None
     text = f.read_text(encoding="utf-8")
@@ -148,23 +148,29 @@ def _bootstrap_git(root: Path, dry_run: bool):
                    "      (workspace-only by default; it makes the first commit for you)")
 
 # Generated files that upgrade always (re)writes — safe because they are derived
-# from disk, never hand-authored.
-_REGENERATED = ["HOME.md", "skills/_INDEX.md", "projects/_INDEX.md",
-                "context/profile.md"]  # mirror of profile.yaml — must never be stale
+# from disk, never hand-authored. Names resolved per workspace (numbered/flat).
+def _regenerated(root: Path) -> list:
+    lay = layout.of(root)
+    return ["HOME.md", f"{lay.name('skills')}/_INDEX.md",
+            f"{lay.name('projects')}/_INDEX.md",
+            f"{lay.name('context')}/profile.md"]  # mirror of profile.yaml — never stale
 
 
 def upgrade(root: Path, dry_run: bool = False) -> int:
     prof = core.load_profile(root)
+    lay = layout.of(root)
     ctx = dict(prof)
     ctx["date"] = core.today()
+    ctx["dir"] = lay.names()  # {{dir.X}} placeholders resolve for this workspace
 
     added, kept = [], []
     for rel, content in scaffold.TEMPLATES.items():
-        target = root / rel
+        dest_rel = layout.remap(lay, rel)  # flat workspace -> add at its flat path
+        target = root / dest_rel
         if target.exists():
-            kept.append(rel)
+            kept.append(dest_rel)
             continue
-        added.append(rel)
+        added.append(dest_rel)
         if not dry_run:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(core.render(content, ctx), encoding="utf-8")
@@ -175,6 +181,7 @@ def upgrade(root: Path, dry_run: bool = False) -> int:
     if not dry_run:
         moc.write_mocs(root)
         copied = scaffold.copy_cli(root)
+        scaffold.tools.write_tools(root)  # add the 09-tools scripts if missing
 
     # Repair known-broken generated content + land a first commit if there is none.
     repairs = [r for r in (m(root, dry_run) for m in MIGRATIONS) if r]
@@ -190,7 +197,7 @@ def upgrade(root: Path, dry_run: bool = False) -> int:
         print("  scaffold complete — no missing files.")
     reverb = "would regenerate" if dry_run else "regenerated"
     print(f"\n  {reverb} the connective MOC layer (reconnects the Obsidian graph):")
-    for rel in _REGENERATED:
+    for rel in _regenerated(root):
         print(f"    ~ {rel}")
     print(f"\n  {reverb} the copied-in CLI so this workspace can drive itself:")
     print(f"    ~ wsx.py + .wsx/wsxlib/  ({len(copied) or 'refreshed'} file(s))"

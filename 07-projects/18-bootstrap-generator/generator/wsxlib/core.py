@@ -15,7 +15,7 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import yamlio
+from . import layout, yamlio
 
 GEN_ROOT = Path(__file__).resolve().parent.parent  # the generator/ dir
 SCHEMAS = GEN_ROOT / "schemas"
@@ -23,10 +23,10 @@ SCHEMAS = GEN_ROOT / "schemas"
 
 # ---------------------------------------------------------------- workspace ---
 def find_workspace_root(start: str | None = None) -> Path | None:
-    """Walk up from `start` (or cwd) to the nearest wsx workspace."""
+    """Walk up from `start` (or cwd) to the nearest wsx workspace (numbered OR flat)."""
     p = Path(start or os.getcwd()).resolve()
     for cand in [p, *p.parents]:
-        if (cand / "manifest.json").exists() and (cand / "context").is_dir():
+        if (cand / "manifest.json").exists() and layout.has_workspace_dirs(cand):
             return cand
     return None
 
@@ -71,7 +71,7 @@ def render(text: str, ctx: dict) -> str:
 
 # ----------------------------------------------------------------- profile ---
 def profile_path(root: Path) -> Path:
-    return root / "context" / "profile.yaml"
+    return layout.of(root).dir("context") / "profile.yaml"
 
 
 def load_profile(root: Path) -> dict:
@@ -99,8 +99,8 @@ def save_manifest(root: Path, man: dict) -> None:
 
 # -------------------------------------------------------------------- skills ---
 def iter_skills(root: Path):
-    """Yield (name, SKILL.md Path) for each skill folder under skills/."""
-    sdir = root / "skills"
+    """Yield (name, SKILL.md Path) for each skill folder under the skills dir."""
+    sdir = layout.of(root).dir("skills")
     if not sdir.is_dir():
         return
     for d in sorted(sdir.iterdir()):

@@ -13,12 +13,31 @@ NEVER included in emitted output — it stays local.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
-from . import core
+from . import core, layout
 
 # context notes included in agnostic emits (personal.md is excluded when walled)
 _PUBLIC_CONTEXT = ["project-context.md", "session-log.md", "relational.md"]
+
+# Emitted prose is authored with the FLAT dir tokens (`context/`, `skills/`, …) for
+# readability; `_resolve_dirs` rewrites them to the workspace's actual dir names at emit
+# time (numbered on a fresh vault, flat on a legacy one). The negative lookbehind means a
+# reference like `.claude/skills/` — preceded by `/` — is left untouched; only a bare
+# `skills/` (start of a path segment in prose) is rewritten.
+_DIR_TOKENS = ("context", "skills", "frameworks", "knowledge", "projects",
+               "shared", "preferences")
+
+
+def _resolve_dirs(root: Path, text: str) -> str:
+    lay = layout.of(root)
+    for key in _DIR_TOKENS:
+        name = lay.name(key)
+        if name == key:            # flat workspace — the token is already correct
+            continue
+        text = re.sub(r"(?<![\w./-])" + re.escape(key) + r"/", name + "/", text)
+    return text
 
 
 def _read(root: Path, rel: str) -> str:
@@ -26,19 +45,31 @@ def _read(root: Path, rel: str) -> str:
     return f.read_text(encoding="utf-8") if f.exists() else ""
 
 
+def _hook_is_ours(entry, fname: str) -> bool:
+    """True if a settings.json hook entry invokes our emitted hook script `fname`."""
+    if not isinstance(entry, dict):
+        return False
+    for h in entry.get("hooks", []) or []:
+        if isinstance(h, dict) and fname in str(h.get("command", "")):
+            return True
+    return False
+
+
 def gather(root: Path, profile: dict, include_personal: bool = False):
     """Collect the canonical material for emission."""
     walled = bool(profile.get("contexts", {}).get("personal", {}).get("private", True))
+    lay = layout.of(root)
     notes = []
     for rel in _PUBLIC_CONTEXT:
-        body = _read(root, f"context/{rel}")
+        body = _read(root, f"{lay.name('context')}/{rel}")
         if body.strip():
             notes.append((rel, body))
     if include_personal and not walled:
-        body = _read(root, "context/personal.md")
+        body = _read(root, f"{lay.name('context')}/personal.md")
         if body.strip():
             notes.append(("personal.md", body))
     skills = []
+    sk_dir = lay.name("skills")
     for name, sk in core.iter_skills(root):
         fm, _body = core.parse_frontmatter(sk)
         skills.append({
@@ -46,7 +77,7 @@ def gather(root: Path, profile: dict, include_personal: bool = False):
             "description": str(fm.get("description", "")).strip(),
             "triggers": core.skill_triggers(fm),
             "hub": fm.get("hub", ""),
-            "path": f"skills/{name}/SKILL.md",
+            "path": f"{sk_dir}/{name}/SKILL.md",
         })
     return {"walled": walled, "notes": notes, "skills": skills}
 
@@ -109,7 +140,7 @@ def emit_pack(root: Path, profile: dict, manifest: dict) -> list:
         parts += [f"## {rel}", "", b, ""]
     out = root / "adapters" / "context-pack.md"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text("\n".join(parts) + "\n", encoding="utf-8")
+    out.write_text(_resolve_dirs(root, "\n".join(parts) + "\n"), encoding="utf-8")
     _record(root, manifest, "pack", [out])
     return [out]
 
@@ -183,7 +214,7 @@ def _agents_md_body(root: Path, profile: dict) -> str:
 
 def emit_agents_md(root: Path, profile: dict, manifest: dict) -> list:
     out = root / "AGENTS.md"
-    out.write_text(_agents_md_body(root, profile), encoding="utf-8")
+    out.write_text(_resolve_dirs(root, _agents_md_body(root, profile)), encoding="utf-8")
     _record(root, manifest, "agents-md", [out])
     return [out]
 
@@ -244,17 +275,29 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
         _skill_index_md(g["skills"]),
     ]) + "\n"
     cm = root / "CLAUDE.md"
-    cm.write_text(claude_md, encoding="utf-8")
+    cm.write_text(_resolve_dirs(root, claude_md), encoding="utf-8")
     written.append(cm)
 
-    # Hooks make context loading GUARANTEED rather than advisory. Without them the AI
-    # only reads CRITICAL_FACTS if it chooses to obey CLAUDE.md; with them the harness
-    # injects it every session. Read-only + local by design (see the script's header).
-    hook = root / ".claude" / "hooks" / "session-start.py"
-    hook.parent.mkdir(parents=True, exist_ok=True)
-    hook.write_text(_SESSION_START_HOOK, encoding="utf-8")
-    hook.chmod(0o755)
-    written.append(hook)
+    # Hooks make the workspace's automation GUARANTEED rather than advisory. Without them
+    # the AI only obeys CLAUDE.md if it chooses to; with them the harness runs them every
+    # time. All three are read-only + local + fail-silent (see each script's header):
+    #   SessionStart      → inject the hot context (CRITICAL_FACTS + heads of the logs)
+    #   UserPromptSubmit  → surface skills/knowledge whose OWN triggers match the prompt
+    #   SessionEnd        → audit that the session was recorded before it ends
+    hook_files = {
+        "session-start.py": _SESSION_START_HOOK,
+        "user-prompt-submit.py": _TRIGGER_ROUTER_HOOK,
+        "session-end.py": _SESSION_END_HOOK,
+    }
+    for fname, body in hook_files.items():
+        hk = root / ".claude" / "hooks" / fname
+        hk.parent.mkdir(parents=True, exist_ok=True)
+        # session-start bakes in dir names for readability; the other two detect layout at
+        # runtime (so they survive an R2 restructure without a re-emit).
+        text = _resolve_dirs(root, body) if fname == "session-start.py" else body
+        hk.write_text(text, encoding="utf-8")
+        hk.chmod(0o755)
+        written.append(hk)
 
     settings = root / ".claude" / "settings.json"
     # Merge, never clobber: the person may have their own settings/hooks here.
@@ -264,30 +307,24 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
             existing = json.loads(settings.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
             existing = {}
-    # `python3` alone dead-ends on Windows (it's `python` / the `py` launcher there), and
-    # a workspace syncs across machines — so the command must degrade. `||` is honoured by
-    # both POSIX shells and cmd.exe, so the first interpreter that exists wins.
-    _h = "\"$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.py\""
-    cmd = f"python3 {_h} || python {_h}"
     hooks_cfg = existing.setdefault("hooks", {})
-    entries = hooks_cfg.get("SessionStart", [])
-
-    # Drop every entry that invokes OUR hook, then add exactly one back. Matching on a
-    # substring of json.dumps() does NOT work (it escapes the quotes in the command), so
-    # an earlier version appended a duplicate on every emit and the hook fired N times.
-    # Rebuilding structurally is idempotent AND self-heals workspaces that accumulated
-    # duplicates. Entries the person added themselves are preserved untouched.
-    def _is_ours(entry):
-        if not isinstance(entry, dict):
-            return False
-        for h in entry.get("hooks", []) or []:
-            if isinstance(h, dict) and "session-start.py" in str(h.get("command", "")):
-                return True
-        return False
-
-    kept_entries = [e for e in entries if not _is_ours(e)]
-    kept_entries.append({"hooks": [{"type": "command", "command": cmd}]})
-    hooks_cfg["SessionStart"] = kept_entries
+    # event -> our hook script. Rebuilt structurally on every emit: drop any entry that
+    # invokes OUR script, add exactly one back. Matching a json.dumps() substring does NOT
+    # work (it escapes quotes), which is what made an earlier build fire the hook N times.
+    # This is idempotent AND self-heals a workspace that accumulated duplicates; entries
+    # the person added themselves are preserved untouched.
+    wiring = {"SessionStart": "session-start.py",
+              "UserPromptSubmit": "user-prompt-submit.py",
+              "SessionEnd": "session-end.py"}
+    for event, fname in wiring.items():
+        # `python3` alone dead-ends on Windows (it's `python` / the `py` launcher there),
+        # and a workspace syncs across machines — so the command must degrade. `||` is
+        # honoured by both POSIX shells and cmd.exe: the first interpreter that exists wins.
+        _h = f"\"$CLAUDE_PROJECT_DIR/.claude/hooks/{fname}\""
+        cmd = f"python3 {_h} || python {_h}"
+        kept = [e for e in hooks_cfg.get(event, []) if not _hook_is_ours(e, fname)]
+        kept.append({"hooks": [{"type": "command", "command": cmd}]})
+        hooks_cfg[event] = kept
     settings.write_text(json.dumps(existing, indent=2) + "\n", encoding="utf-8")
     written.append(settings)
 
@@ -295,7 +332,7 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
     # and saying "update my workspace" is enough — the assistant drives the copied-in CLI.
     maint = root / ".claude" / "skills" / "workspace-maintenance" / "SKILL.md"
     maint.parent.mkdir(parents=True, exist_ok=True)
-    maint.write_text(_MAINTENANCE_SKILL, encoding="utf-8")
+    maint.write_text(_resolve_dirs(root, _MAINTENANCE_SKILL), encoding="utf-8")
     written.append(maint)
 
     # mirror skills into .claude/skills/<name>/SKILL.md so Claude Code discovers them.
@@ -374,6 +411,145 @@ def main():
         "",
     ]
     sys.stdout.write("\\n".join(parts))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+'''
+
+
+_TRIGGER_ROUTER_HOOK = '''#!/usr/bin/env python3
+"""UserPromptSubmit hook — surface skills/knowledge whose OWN triggers match the prompt.
+
+DATA-DRIVEN, NOT HARDCODED: it reads this workspace's `skills.registry.json` (generated
+from every skill's front matter) and the knowledge index. A skill routes on the triggers
+it declares — there is no built-in routing table, so this works for anyone's workspace.
+
+Read-only, local, no network. On ANY error it stays silent and prints nothing, so it can
+never block or corrupt a prompt. Output (matched pointers) is added to the model's context.
+"""
+import json
+import re
+import sys
+from pathlib import Path
+
+WS = Path(__file__).resolve().parents[2]
+
+
+def _dir(logical):
+    _NUM = {"skills": "03-skills", "knowledge": "08-knowledge"}
+    num = _NUM.get(logical, logical)
+    if (WS / num).is_dir():
+        return num
+    if (WS / logical).is_dir():
+        return logical
+    return num
+
+
+def _registry():
+    f = WS / _dir("skills") / "skills.registry.json"
+    try:
+        return json.loads(f.read_text(encoding="utf-8")).get("skills", [])
+    except Exception:
+        return []
+
+
+def _knowledge_triggers():
+    """Index lines like `- [entry](path) — … · Triggers: a, b` declare their own triggers."""
+    f = WS / _dir("knowledge") / "_INDEX.md"
+    out = []
+    try:
+        text = f.read_text(encoding="utf-8")
+    except OSError:
+        return out
+    for line in text.splitlines():
+        m = re.search(r"[Tt]riggers?:\\s*(.+)$", line)
+        if not m:
+            continue
+        trg = [t.strip().lower() for t in re.split(r"[,;]", m.group(1)) if t.strip()]
+        lm = re.search(r"\\[([^\\]]+)\\]\\(([^)]+)\\)", line)
+        if trg:
+            out.append((lm.group(1) if lm else line.strip(),
+                        lm.group(2) if lm else "", trg))
+    return out
+
+
+def _match(prompt, triggers):
+    p = prompt.lower()
+    return [t for t in triggers if t and t in p]
+
+
+def main():
+    try:
+        data = json.load(sys.stdin)
+    except Exception:
+        return 0
+    prompt = str(data.get("prompt") or data.get("user_prompt") or "")
+    if not prompt.strip():
+        return 0
+    hits = []
+    for s in _registry():
+        m = _match(prompt, [t.lower() for t in s.get("triggers", [])])
+        if m:
+            hits.append(("skill", s.get("name", ""), s.get("path", ""), m))
+    for label, path, trg in _knowledge_triggers():
+        m = _match(prompt, trg)
+        if m:
+            hits.append(("knowledge", label, path, m))
+    if not hits:
+        return 0
+    lines = ["# Workspace router — relevant to this prompt", ""]
+    for kind, name, path, m in hits:
+        where = f" -> `{path}`" if path else ""
+        lines.append(f"- **{kind}: {name}**{where} (matched: {', '.join(sorted(set(m)))})")
+    lines += ["", "_Load the matched skill(s) before answering; read matched knowledge first._"]
+    sys.stdout.write("\\n".join(lines))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+'''
+
+
+_SESSION_END_HOOK = '''#!/usr/bin/env python3
+"""SessionEnd hook — audit that this session got recorded before it ends.
+
+Checks for a session fragment under <context>/sessions/ dated today. If none exists, it
+reminds you to run the close-out (write a fragment, then `wsx compact` + `wsx sync`) so the
+work is saved and folded into the log. Read-only, local, never blocks. Neutral — no
+hardcoded identity; it detects the workspace layout (numbered or flat) at runtime.
+"""
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+WS = Path(__file__).resolve().parents[2]
+
+
+def _dir(logical):
+    _NUM = {"context": "06-context"}
+    num = _NUM.get(logical, logical)
+    if (WS / num).is_dir():
+        return num
+    if (WS / logical).is_dir():
+        return logical
+    return num
+
+
+def main():
+    ctx = _dir("context")
+    frag_dir = WS / ctx / "sessions"
+    today = datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%d")
+    if frag_dir.is_dir() and any(today in p.name for p in frag_dir.glob("*.md")):
+        return 0  # a fragment for today exists — the session was recorded
+    sys.stdout.write(
+        "# Session audit\\n\\n"
+        "No session fragment was recorded today. Before finishing, write your Session\\n"
+        f"Block to `{ctx}/sessions/<date>-<id>.md` (with a `SessionID:` line), then run\\n"
+        "`wsx compact` and `wsx sync` so the work is saved and folded into the log.\\n"
+    )
     return 0
 
 
@@ -473,7 +649,7 @@ def emit_cursor(root: Path, profile: dict, manifest: dict) -> list:
         "## Skills",
         _skill_index_md(g["skills"]),
     ]) + "\n"
-    rule.write_text(body, encoding="utf-8")
+    rule.write_text(_resolve_dirs(root, body), encoding="utf-8")
     written.append(rule)
     # Cursor also reads AGENTS.md — emit it too for a complete agnostic setup.
     written += emit_agents_md(root, profile, manifest)
@@ -569,12 +745,14 @@ ADAPTERS = {
 
 def emit(root: Path, target: str, profile: dict, manifest: dict) -> list:
     if target == "all":
-        from . import moc
+        from . import moc, tools
         written = []
         for name in ("claude-code", "agents-md", "cursor", "pack", "mcp"):
             written += ADAPTERS[name](root, profile, manifest)
-        # Refresh the connective MOC layer so the vault graph reflects current skills.
+        # Refresh the connective MOC layer (incl. skills.registry.json) + ensure the
+        # 09-tools scripts exist, so the vault graph + automation reflect current skills.
         written += moc.write_mocs(root)
+        written += tools.write_tools(root)
         return written
     if target not in ADAPTERS:
         raise SystemExit(

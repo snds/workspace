@@ -20,7 +20,7 @@ import json
 import re
 from pathlib import Path
 
-from . import core, health, scaffold
+from . import core, health, layout, scaffold
 
 # Each interview movement → the profile fields it populates. `optional` fields don't
 # count against "pertinent" (personal interests and banned-list may be deliberately empty).
@@ -87,9 +87,13 @@ def _movement_status(prof: dict) -> list:
 
 
 def _missing_scaffold(root: Path) -> list:
-    # dict.fromkeys de-dupes while preserving order (some extras also live in TEMPLATES).
-    expected = dict.fromkeys(list(scaffold.TEMPLATES.keys()) + [
-        "HOME.md", "skills/_INDEX.md", "projects/_INDEX.md", "knowledge/README.md"])
+    # TEMPLATES keys are canonical (numbered); remap each to the dir actually in use so a
+    # legacy flat workspace isn't reported as missing everything. dict.fromkeys de-dupes.
+    lay = layout.of(root)
+    S, P, K = lay.name("skills"), lay.name("projects"), lay.name("knowledge")
+    expected = dict.fromkeys(
+        [layout.remap(lay, k) for k in scaffold.TEMPLATES.keys()]
+        + ["HOME.md", f"{S}/_INDEX.md", f"{P}/_INDEX.md", f"{K}/README.md"])
     return [rel for rel in expected if not (root / rel).exists()]
 
 
@@ -101,7 +105,7 @@ def _inventory(root: Path) -> dict:
             hubs += 1
         else:
             spokes += 1
-    pdir = root / "projects"
+    pdir = layout.of(root).dir("projects")
     projects = [d.name for d in pdir.iterdir()
                 if pdir.is_dir() and d.is_dir() and not d.name.startswith((".", "_"))] if pdir.is_dir() else []
     return {"hubs": hubs, "spokes": spokes, "projects": projects}
@@ -222,21 +226,31 @@ def examine_foreign(root: Path, as_json: bool = False) -> int:
           f"{'✓' if is_git else '·'} git repo")
     print(f"  {total_md} markdown files total.")
 
+    # The wsx DEFAULT is now a comprehensive model (numbered taxonomy, frameworks, memory
+    # system, shared-references, automation). So the verdict compares this foreign vault to
+    # THAT richer target: a vault that meets/exceeds it should not be downgraded; a thinner
+    # one is offered a migrate-UP, never a flattening.
+    rich = coverage == len(_CONCEPTS) and total_md >= 40 and "skills" in present
     print("\nVerdict:")
-    if coverage == len(_CONCEPTS):
-        print("  This workspace already implements every wsx concept — and, being hand-built,")
-        print("  very likely exceeds the wsx scaffold (richer frameworks, a real skill network,")
-        print("  a memory system). wsx has nothing structural to add; running `wsx upgrade` here")
-        print("  would try to impose a SIMPLER layout, which would be a downgrade. Don't.")
-        print("  If you want wsx tooling on it, the right path is a thin adapter that maps these")
-        print("  existing folders to the wsx concepts — a future capability, not today's upgrade.")
+    if rich:
+        print("  This workspace meets — and, being hand-built, likely EXCEEDS — the comprehensive")
+        print("  wsx model (frameworks, a real skill network, a memory system). wsx has nothing")
+        print("  structural to add; `wsx upgrade`/`restructure` here would risk imposing a simpler")
+        print("  shape, i.e. a downgrade. Don't. If you want wsx tooling on it, the right path is a")
+        print("  thin adapter mapping these existing folders to the wsx concepts — a future capability.")
     elif coverage >= 3:
-        print(f"  Partial match ({coverage}/{len(_CONCEPTS)}). Missing concepts: {', '.join(missing)}.")
-        print("  These could be adopted as NEW folders without touching what exists — but confirm")
-        print("  first; a foreign workspace may cover them under a different name wsx didn't detect.")
+        print(f"  Comparable but partial ({coverage}/{len(_CONCEPTS)} concepts; ~{total_md} notes).")
+        if missing:
+            print(f"  Not detected: {', '.join(missing)} (may exist here under a name wsx didn't match).")
+        print("  Two honest options, your call — nothing is imposed:")
+        print("    • Adopt the missing pieces additively as NEW folders alongside what exists, or")
+        print("    • MIGRATE UP to the full wsx model (numbered taxonomy + memory + automation):")
+        print("      `wsx init` a fresh rich workspace and bring this content in.")
     else:
-        print("  Little overlap with the wsx model. This may be a plain notes folder rather than a")
-        print("  structured workspace; consider `wsx init` for a fresh vault and migrate content in.")
+        print(f"  Thinner than the wsx default ({coverage}/{len(_CONCEPTS)} concepts). The generator")
+        print("  now scaffolds a comprehensive model well beyond this — so the useful move is to")
+        print("  MIGRATE UP: `wsx init` a rich workspace and migrate your content into it, rather")
+        print("  than bolt concepts onto a loose notes folder.")
     return 0
 
 

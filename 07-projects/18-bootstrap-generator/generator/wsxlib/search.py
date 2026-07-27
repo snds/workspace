@@ -17,7 +17,7 @@ import json
 import urllib.error
 from pathlib import Path
 
-from . import core
+from . import core, layout
 from .resolver import _fetch, _is_unvetted
 
 # Built-in default catalog. Registries without a stable machine index carry
@@ -42,7 +42,7 @@ DEFAULT_SOURCES = [
 
 
 def _catalog(root: Path) -> list:
-    f = root / "context" / "sources.json"
+    f = layout.of(root).dir("context") / "sources.json"
     if f.exists():
         try:
             data = json.loads(f.read_text(encoding="utf-8"))

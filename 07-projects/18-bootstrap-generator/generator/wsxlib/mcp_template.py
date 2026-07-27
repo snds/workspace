@@ -32,11 +32,28 @@ WS = Path(os.environ.get("WSX_WORKSPACE") or Path(__file__).resolve().parents[2]
 PROTOCOL_VERSION = "2024-11-05"
 SERVER_INFO = {"name": "workspace-mcp", "version": "0.2"}
 
+
+def _dir(logical):
+    """Resolve a logical dir to the name actually in use: the numbered taxonomy
+    (06-context, 03-skills) if present, else the legacy flat name. Keeps this server
+    correct whether the workspace was generated numbered or migrated later."""
+    _NUM = {"context": "06-context", "skills": "03-skills"}
+    num = _NUM.get(logical, logical)
+    if (WS / num).is_dir():
+        return num
+    if (WS / logical).is_dir():
+        return logical
+    return num
+
+
+CTX = _dir("context")
+SKILLS = _dir("skills")
+
 # The canonical boot context. Personal context is walled — loaded only on opt-in.
 CORE_CONTEXT = [
-    "context/profile.md",
-    "context/project-context.md",
-    "context/session-log.md",
+    CTX + "/profile.md",
+    CTX + "/project-context.md",
+    CTX + "/session-log.md",
 ]
 
 
@@ -101,7 +118,7 @@ def tool_skills_load(args: dict) -> str:
     name = args.get("name", "")
     if not name:
         return "error: skills_load needs a 'name'"
-    d = WS / "skills" / name
+    d = WS / SKILLS / name
     sk = d / "SKILL.md"
     if not sk.exists():
         return "(no skill named " + repr(name) + " — try skills_search)"
@@ -127,7 +144,7 @@ def tool_session_end(args: dict) -> str:
     summary = (args.get("summary") or "").strip()
     now = datetime.now(timezone.utc).astimezone()
     sid = now.strftime("%Y-%m-%d-%H%M%S") + "-mcp"
-    frag_dir = WS / "context" / "sessions"
+    frag_dir = WS / CTX / "sessions"
     try:
         frag_dir.mkdir(parents=True, exist_ok=True)
         frag = frag_dir / (sid + ".md")
@@ -142,7 +159,7 @@ def tool_session_end(args: dict) -> str:
             "--- END BLOCK ---\\n",
             encoding="utf-8",
         )
-        return ("session recorded as fragment context/sessions/" + sid + ".md "
+        return ("session recorded as fragment " + CTX + "/sessions/" + sid + ".md "
                 "(conflict-free). Run `wsx compact` to fold it into session-log.md.")
     except OSError as e:
         return "error writing session fragment: " + str(e)

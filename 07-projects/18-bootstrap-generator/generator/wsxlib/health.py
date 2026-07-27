@@ -17,9 +17,12 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
+from . import layout
+
 # Notes that are intentionally not link targets (roots, indexes, templates, boilerplate).
 _EXEMPT_NAMES = {"HOME.md", "README.md", "_INDEX.md", "_TEMPLATE.md",
-                 "CRITICAL_FACTS.md", "index.md",
+                 "CRITICAL_FACTS.md", "index.md", "MEMORY.md",
+                 "profile.md",  # generated mirror of profile.yaml
                  "AGENTS.md", "CLAUDE.md",  # generated adapters, not vault notes
                  "personal.md"}  # walled — intentionally unlinked when private
 # Only CANONICAL vault content participates in the graph. This is an ALLOWLIST on
@@ -27,7 +30,14 @@ _EXEMPT_NAMES = {"HOME.md", "README.md", "_INDEX.md", "_TEMPLATE.md",
 # whatever a future or older build emits) is not vault content, and denylisting known
 # names means the next stray generated folder silently reappears as a pile of phantom
 # "orphan notes". Allowlisting the canonical roots excludes all of them automatically.
-_CANONICAL_DIRS = ("context", "skills", "frameworks", "projects", "knowledge")
+# The logical set is fixed; the on-disk NAMES are resolved per workspace (numbered/flat).
+_CANONICAL_KEYS = ("context", "skills", "frameworks", "projects", "knowledge",
+                   "shared", "preferences")
+
+
+def _canonical_dirs(root: Path) -> tuple:
+    lay = layout.of(root)
+    return tuple(lay.name(k) for k in _CANONICAL_KEYS)
 
 _WIKILINK = re.compile(r"\[\[([^\]|#]+)")
 _MDLINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
@@ -41,7 +51,7 @@ def _iter_notes(root: Path):
     segment starting with '.' is skipped, so dot-directories never leak in."""
     for p in sorted(root.glob("*.md")):
         yield p
-    for d in _CANONICAL_DIRS:
+    for d in _canonical_dirs(root):
         base = root / d
         if not base.is_dir():
             continue

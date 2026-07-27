@@ -42,16 +42,20 @@ generator/
     __init__.py
     cli.py                # argparse dispatch (the command surface)
     core.py               # paths, profile/manifest I/O, render, git, skill iteration
+    layout.py             # THE taxonomy source of truth — logical→numbered dir map + Layout resolver (numbered-canonical, flat-fallback) + remap()
     yamlio.py             # minimal zero-dep YAML for the profile.yaml subset
-    scaffold.py           # `wsx init` + the embedded neutral templates (TEMPLATES dict)
-    moc.py                # Maps of Content — HOME + skills/projects indexes (the graph's link layer)
+    scaffold.py           # `wsx init` + the embedded neutral templates (TEMPLATES dict, numbered keys + {{dir.X}} placeholders)
+    moc.py                # Maps of Content — HOME + skills/projects indexes + registry (the graph's link layer)
+    registry.py           # skills.registry.json — machine index from skill front matter (the trigger-router reads it)
+    related.py            # build-related — typed `## Related` graph woven from the hub front matter (marker-delimited, idempotent)
+    tools.py              # writes the 09-tools scripts (build-registry/build-related/validate/check-terminology)
     projects.py           # `wsx project new|list` — per-project documentation folders (docs, not code)
     upgrade.py            # `wsx upgrade` — non-destructive corrective pass over an existing workspace
     health.py             # `wsx health` — vault graph hygiene (orphans, stale claims, dangling edges)
     scan.py               # `wsx scan` — detect agents/chat apps/MCP/local LLMs (+ --find-workspaces)
     gitscope.py           # work/personal GitHub separation — remote→scope→identity map, ssh aliases, first-push
-    examine.py            # `wsx examine` — read-only augmentation readout (interview coverage + gaps) for an existing vault
-    adapters.py           # all emit targets + the ADAPTERS registry
+    examine.py            # `wsx examine` — read-only augmentation readout (interview coverage + gaps); foreign-vault mode w/ migrate-up verdict
+    adapters.py           # all emit targets + the ADAPTERS registry + the 3 Claude hooks (session-start, trigger-router, session-end audit)
     lifecycle.py          # lint · verify · session · sync · resolve
   schemas/
     profile.schema.json   # documents profile.yaml (the seam)
@@ -72,10 +76,15 @@ DEVELOPING.md             # this file
 SESSION-STATE.md          # current working state / progress log
 
 # Not in this repo — what `wsx init` + `wsx emit` GENERATE into a *user's* workspace:
-#   context/  skills/  frameworks/  projects/  manifest.json  .obsidian/  (canonical)
-#     context/CRITICAL_FACTS.md  conventions.md  decisions/   (hot-cache + note conventions + ADRs)
-#   HOME.md  skills/_INDEX.md  projects/_INDEX.md                (generated MOC/link layer)
-#   adapters/  + tool-native:  .claude/  AGENTS.md  .cursor/   (generated, never hand-edited)
+#   NUMBERED TAXONOMY (the default): 01-frameworks/ 02-shared-references/ 03-skills/
+#     04-preferences/ 06-context/ 07-projects/ 08-knowledge/ 09-tools/  manifest.json .obsidian/
+#     06-context/{CRITICAL_FACTS.md, conventions.md, decisions/, memory/}  (hot-cache + ADRs + typed memory)
+#     02-shared-references/epistemic-standards.md · 04-preferences/user-preferences.md
+#   HOME.md  03-skills/_INDEX.md  03-skills/skills.registry.json  07-projects/_INDEX.md   (generated MOC/link layer)
+#   09-tools/{build-registry,build-related,validate,check-terminology}.py                 (workspace's own automation)
+#   adapters/ + tool-native: .claude/{hooks,skills,settings.json}  AGENTS.md  .cursor/    (generated, never hand-edited)
+#   (00-bootstrap/ and 05-artifacts/ are OPTIONAL modules — not scaffolded by default.)
+#   Legacy FLAT workspaces (context/ skills/ …) keep working via layout fallback; R2 restructures them up.
 ```
 
 A few placement rules to keep the seam clean:

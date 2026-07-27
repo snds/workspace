@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from . import core, layout, moc
+from . import core, layout, moc, tools
 
 
 def default_profile(name: str = "you", handle: str = "you") -> dict:
@@ -695,6 +695,11 @@ def init(dest: str, name: str = "you", handle: str = "you",
     # exactly this). Zero-dep + stdlib-only, so a copy is portable and self-sufficient.
     for v in copy_cli(root):
         written.append(v)
+
+    # The workspace's own maintenance/validation scripts (09-tools) — data-driven off
+    # the person's frontmatter/registry, no hardcoded content.
+    for t in tools.write_tools(root):
+        written.append(str(t.relative_to(root)))
 
     committed = False
     git_hint = ""

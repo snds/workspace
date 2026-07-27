@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from . import core, moc
+from . import core, layout, moc
 
 
 def _slug(name: str) -> str:
@@ -71,7 +71,7 @@ _NOTES_README = ("# Notes\n\n_Freeform project notes, specs, and research (markd
                  "project's own repo).\n")
 
 
-def _board_md(title: str, slug: str) -> str:
+def _board_md(title: str, slug: str, pjdir: str = "projects") -> str:
     """A lightweight kanban. Uses Dataview if the plugin is installed; otherwise the
     plain checklists below are a perfectly good fallback (no plugin required)."""
     return "\n".join([
@@ -83,19 +83,19 @@ def _board_md(title: str, slug: str) -> str:
         "",
         "## Doing",
         "```dataview",
-        f'TASK FROM "projects/{slug}" WHERE contains(tags, "#status/doing")',
+        f'TASK FROM "{pjdir}/{slug}" WHERE contains(tags, "#status/doing")',
         "```",
         "- [ ] _(a task in progress)_ #status/doing",
         "",
         "## To do",
         "```dataview",
-        f'TASK FROM "projects/{slug}" WHERE contains(tags, "#status/todo")',
+        f'TASK FROM "{pjdir}/{slug}" WHERE contains(tags, "#status/todo")',
         "```",
         "- [ ] _(a queued task)_ #status/todo",
         "",
         "## Done",
         "```dataview",
-        f'TASK FROM "projects/{slug}" WHERE contains(tags, "#status/done")',
+        f'TASK FROM "{pjdir}/{slug}" WHERE contains(tags, "#status/done")',
         "```",
         "- [x] _(a finished task)_ #status/done",
         "",
@@ -104,23 +104,24 @@ def _board_md(title: str, slug: str) -> str:
 
 def new(root: Path, name: str, title: str = "") -> int:
     slug = _slug(name)
-    pdir = root / "projects" / slug
+    pj = layout.of(root).name("projects")
+    pdir = root / pj / slug
     if pdir.exists():
         raise SystemExit(f"error: project '{slug}' already exists ({pdir.relative_to(root)})")
     disp = title or name.strip() or slug
     (pdir / "notes").mkdir(parents=True, exist_ok=True)
     (pdir / "PROJECT.md").write_text(_project_md(disp, slug, core.today()), encoding="utf-8")
-    (pdir / "board.md").write_text(_board_md(disp, slug), encoding="utf-8")
+    (pdir / "board.md").write_text(_board_md(disp, slug, pj), encoding="utf-8")
     (pdir / "notes" / "README.md").write_text(_NOTES_README, encoding="utf-8")
     moc.write_mocs(root)  # relink HOME + projects index
-    print(f"✓ project '{slug}' created  (projects/{slug}/)")
+    print(f"✓ project '{slug}' created  ({pj}/{slug}/)")
     print("  documentation only — point PROJECT.md at the code repo; don't copy code in.")
-    print("  fill in PROJECT.md, then it shows up in projects/_INDEX.md and HOME.md.")
+    print(f"  fill in PROJECT.md, then it shows up in {pj}/_INDEX.md and HOME.md.")
     return 0
 
 
 def list_projects(root: Path) -> int:
-    pdir = root / "projects"
+    pdir = layout.of(root).dir("projects")
     found = []
     if pdir.is_dir():
         for d in sorted(pdir.iterdir()):

@@ -25,7 +25,7 @@ import json
 import shutil
 from pathlib import Path
 
-from . import core
+from . import core, layout
 
 SSH_CONFIG = Path.home() / ".ssh" / "config"
 
@@ -35,7 +35,7 @@ SSH_CONFIG = Path.home() / ".ssh" / "config"
 # profile.yaml's deliberately-minimal serializer can't round-trip a list of maps
 # (it stringifies them). Kept git-tracked so it syncs across the person's machines.
 def _map_path(root: Path) -> Path:
-    return root / "context" / "remotes.json"
+    return layout.of(root).dir("context") / "remotes.json"
 
 
 def _load_map(root: Path) -> list:
