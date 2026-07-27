@@ -51,6 +51,7 @@ generator/
     tools.py              # writes the 09-tools scripts (build-registry/build-related/validate/check-terminology)
     projects.py           # `wsx project new|list` — per-project documentation folders (docs, not code)
     upgrade.py            # `wsx upgrade` — non-destructive corrective pass over an existing workspace
+    restructure.py        # `wsx restructure` — migrate a legacy FLAT workspace up to the numbered taxonomy (dry-run default; backup + rewire + verify + rollback)
     health.py             # `wsx health` — vault graph hygiene (orphans, stale claims, dangling edges)
     scan.py               # `wsx scan` — detect agents/chat apps/MCP/local LLMs (+ --find-workspaces)
     gitscope.py           # work/personal GitHub separation — remote→scope→identity map, ssh aliases, first-push

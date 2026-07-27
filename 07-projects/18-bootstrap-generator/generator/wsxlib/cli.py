@@ -13,6 +13,7 @@
   wsx archive <path> [--reason]  retire a note with provenance (never delete)
   wsx examine [--json]           read-only: what an existing workspace still needs (augment additively)
   wsx upgrade [--dry-run]        corrective pass: add missing scaffold + reconnect graph
+  wsx restructure [--apply]      migrate a legacy FLAT workspace up to the numbered taxonomy (dry-run default; --rollback to undo)
   wsx scan [--find-workspaces]   detect your stack (+ locate existing workspaces to update)
   wsx remote <url> --scope …     map a remote → scope → identity (work/personal, non-overlapping)
   wsx identity --scope …         apply the mapped repo-local identity for a scope
@@ -28,7 +29,7 @@ import argparse
 import sys
 
 from . import (adapters, archive, core, examine, gitscope, health, lifecycle,
-               projects, resolver, scaffold, scan, search, skills, upgrade)
+               projects, resolver, restructure, scaffold, scan, search, skills, upgrade)
 
 
 # profile fields that are lists — `set` splits these on commas (and accepts [a, b] form).
@@ -269,6 +270,11 @@ def cmd_upgrade(a):
     return upgrade.upgrade(core.require_workspace(), dry_run=a.dry_run)
 
 
+def cmd_restructure(a):
+    return restructure.restructure(core.require_workspace(),
+                                   apply=a.apply, rollback=a.rollback)
+
+
 def _welcome() -> int:
     import os
     root = core.find_workspace_root()
@@ -425,6 +431,14 @@ def build_parser() -> argparse.ArgumentParser:
     pu = sub.add_parser("upgrade", help="corrective pass: add missing scaffold + reconnect the graph")
     pu.add_argument("--dry-run", action="store_true", help="preview the plan without writing")
     pu.set_defaults(fn=cmd_upgrade)
+
+    prs = sub.add_parser("restructure",
+                         help="migrate a legacy FLAT workspace up to the numbered taxonomy")
+    prs.add_argument("--apply", action="store_true",
+                     help="actually perform the migration (default is a dry-run preview)")
+    prs.add_argument("--rollback", action="store_true",
+                     help="undo the most recent restructure, restoring the flat layout from backup")
+    prs.set_defaults(fn=cmd_restructure)
 
     return p
 

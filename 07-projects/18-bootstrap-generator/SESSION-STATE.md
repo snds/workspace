@@ -64,10 +64,25 @@ phases. Locked decisions: ingestion = consent+quarantine+scan; project adoption 
   **Tested:** py_compile clean; init→emit→verify/health/lint GREEN on fresh numbered AND legacy-flat
   (upgrade adds pieces at flat paths, no numbered siblings, hand-note preserved); router/build-related/
   validate/session-audit all functional on both layouts + idempotent; 3 zips rebuilt + clean-extract
-  smoke green (numbered taxonomy, tools, hooks, registry); Sean's `check-terminology.py` clean (no
-  "vendored"); examine verdicts correct on Sean's real vault (exceeds) and a thin fixture (migrate-up).
-- R2 — full restructure migration for existing flat workspaces (dry-run + backup to `_archive/` +
-  link/adapter/hook rewiring + post-migration verify/health + rollback; idempotent). HIGHEST-RISK op — NEXT.
+  smoke green (numbered taxonomy, tools, hooks, registry); Sean's `check-terminology.py` clean (used
+  copy-in / copied-in, not the reserved vendor-as-verb term); examine verdicts correct on Sean's real
+  vault (exceeds) and a thin fixture (migrate-up).
+- **R2 — full restructure migration for existing flat workspaces: ✅ DONE 2026-07-27.**
+  New `restructure.py` + `wsx restructure` (the highest-risk op, built defensively). **Dry-run by
+  DEFAULT** (`--apply` required to write). On apply: snapshots the flat dirs + changed config to
+  `_archive/pre-restructure-<stamp>/` (+ `migration.json`); moves each flat dir → numbered via
+  `shutil.move` then `git add -A` (git records them as RENAMES — history follows); reindexes the
+  manifest (skill paths → numbered); rewrites hand-authored **md-link targets** segment-by-segment
+  (handles `../skills/…` cross-dir relatives; protects `.claude/skills/` and other generated dirs;
+  wikilinks are basename-resolved so untouched) + `.gitignore`/`.gitattributes`; runs `upgrade` to
+  fill the new-core dirs a flat vault lacked; re-emits every adapter/hook/index/registry; then
+  **verify + health**, with **automatic rollback if verify fails**. `--rollback` restores the flat
+  layout from the backup. **Idempotent** (no-op on an already-numbered vault); **refuses** if both
+  flat+numbered forms of a dir coexist (ambiguous). Tested end-to-end on a git flat fixture with a
+  hand-authored note (typed `relates-to` edge + a `../skills/…` cross-dir md-link): dry-run previews
+  and writes nothing; apply → numbered, links/manifest/dotfiles/adapters/hooks/registry all rewired,
+  typed edge preserved, 26 git renames, verify GREEN; re-run is a no-op; rollback restores flat + relinks
+  + verify GREEN. Zips rebuilt + clean-extract exposes `restructure`. check-terminology clean.
 - Then fold in against the richer target: P3 session-end (ask 5), P4 project adoption (asks 3,4),
   P5 per-tool memory bridge + multi-agent (asks 6,7), P6 consent-gated ingestion (ask 1),
   P7 self-wiring, generator-independent (ask 2).
