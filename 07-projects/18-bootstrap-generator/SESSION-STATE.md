@@ -117,7 +117,20 @@ phases. Locked decisions: ingestion = consent+quarantine+scan; project adoption 
   leads CORE_CONTEXT). Overridable per the user's explicit direction. Tested: anchor present + name-
   interpolated across all 8 surfaces; MCP `session_start` surfaces it; verify/health/lint green; zips
   rebuilt; terminology clean.
-- Then fold in against the richer target: P4 project adoption (asks 3,4),
+- **P4 — adopt existing projects, reference-in-place (asks 3,4): ✅ DONE 2026-07-27.**
+  `wsx project adopt <path> [--move] [--import-docs]` (projects.py). Default **reference-in-place**:
+  detects git repo (remote/branch) or plain folder, scans stack/README/docs (skipping build+vcs
+  noise), writes/updates a marker-delimited **adoption record** in `PROJECT.md` pointing at where the
+  code lives — **a git repo's files are NEVER copied** into the (public) vault (reference-only, honoring
+  the employer/public-repo wall). `--import-docs` copies a **plain** folder's loose docs into `notes/`
+  with provenance headers and **skips secret-like files** (`.env`/`.pem`/`id_rsa`/…); refused for git
+  repos. `--move` git-aware-relocates the project to sit **beside** the vault (keeps the vault a clean
+  git citizen), `.git` intact. **Idempotent** (re-adopt refreshes the record + skips already-imported
+  docs, no dupes). Registers in the projects MOC + HOME. **Tested:** git repo (0 files copied,
+  remote/branch/stack captured, import refused) · plain folder (docs imported, `.env` skipped,
+  provenance) · idempotent re-adopt (notes stable, 1 adoption block) · `--move` (relocated beside vault
+  w/ .git) · verify/health/lint green · zips + clean-extract adopt works · terminology clean.
+- Then fold in against the richer target:
   P5 per-tool memory bridge + multi-agent (asks 6,7), P6 consent-gated ingestion (ask 1),
   P7 self-wiring, generator-independent (ask 2).
 

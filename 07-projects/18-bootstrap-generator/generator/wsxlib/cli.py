@@ -9,7 +9,7 @@
   wsx lint                       validate skills + manifest, report trigger overlaps
   wsx health                     vault graph hygiene: orphans, stale claims, dangling edges
   wsx verify                     dry-run load per target
-  wsx project new|list           per-project documentation folders (docs, not code)
+  wsx project new|list|adopt     per-project docs (adopt = reference an EXISTING repo/folder in place)
   wsx archive <path> [--reason]  retire a note with provenance (never delete)
   wsx examine [--json]           read-only: what an existing workspace still needs (augment additively)
   wsx upgrade [--dry-run]        corrective pass: add missing scaffold + reconnect graph
@@ -257,7 +257,10 @@ def cmd_project(a):
         return projects.new(root, a.name, a.title)
     if a.project_cmd == "list":
         return projects.list_projects(root)
-    raise SystemExit("error: project expects new|list")
+    if a.project_cmd == "adopt":
+        return projects.adopt(root, a.path, move=a.move, import_docs=a.import_docs,
+                              title=a.title or "")
+    raise SystemExit("error: project expects new|list|adopt")
 
 
 def cmd_archive(a):
@@ -427,6 +430,14 @@ def build_parser() -> argparse.ArgumentParser:
     pra.add_argument("name", help='project name, e.g. "My Side Project"')
     pra.add_argument("--title", default="", help="display title (defaults to name)")
     prsub.add_parser("list", help="list project documentation folders")
+    pad = prsub.add_parser("adopt",
+                           help="adopt an EXISTING project (repo or folder) — reference-in-place")
+    pad.add_argument("path", help="path to the existing project directory")
+    pad.add_argument("--title", default="", help="display title (defaults to the folder name)")
+    pad.add_argument("--move", action="store_true",
+                     help="physically move the project to sit beside the vault (code stays out of the vault)")
+    pad.add_argument("--import-docs", dest="import_docs", action="store_true",
+                     help="copy a PLAIN folder's loose docs into notes/ (ignored for git repos; skips secrets)")
     ppr.set_defaults(fn=cmd_project)
 
     par = sub.add_parser("archive", help="retire a note with provenance (never delete)")
