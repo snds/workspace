@@ -53,6 +53,8 @@ generator/
     bridges.py            # `wsx bridge list|extract|point` — per-tool memory: extract other AI tools' memory → .wsx/quarantine/ (read-only, gitignored); point them back at the workspace (idempotent pointer)
     upgrade.py            # `wsx upgrade` — non-destructive corrective pass (adds missing scaffold, weaves the Related graph)
     restructure.py        # `wsx restructure` — flat→numbered migration; dry-run default, backup+ledger, baseline-diff broken-ref GATE (auto-rollback), --rollback
+    diagnose.py           # `wsx diagnose [--fix]` — report problems in an EXISTING workspace + traverse ALL refs (typed edges + md-links + Dataview) to confirm they resolve; --fix applies safe non-destructive corrections with a before/after break-audit
+    commands.py           # ONE source of truth for the command cheat sheet → `wsx help` + generated COMMANDS.md
     restructure.py        # `wsx restructure` — migrate a legacy FLAT workspace up to the numbered taxonomy (dry-run default; backup + rewire + verify + rollback)
     health.py             # `wsx health` — vault graph hygiene (orphans, stale claims, dangling edges)
     scan.py               # `wsx scan` — detect agents/chat apps/MCP/local LLMs (+ --find-workspaces)

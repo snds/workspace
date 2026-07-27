@@ -13,6 +13,8 @@
   wsx bridge list|extract|point  connect other AI tools: read their memory (→ quarantine) · point them here
   wsx archive <path> [--reason]  retire a note with provenance (never delete)
   wsx examine [--json]           read-only: what an existing workspace still needs (augment additively)
+  wsx diagnose [--fix]           report problems in an EXISTING workspace; --fix applies the safe corrections
+  wsx help                       the command cheat sheet (also written to COMMANDS.md)
   wsx upgrade [--dry-run]        corrective pass: add missing scaffold + reconnect graph
   wsx restructure [--apply]      migrate a legacy FLAT workspace up to the numbered taxonomy (dry-run default; --rollback to undo)
   wsx scan [--find-workspaces]   detect your stack (+ locate existing workspaces to update)
@@ -29,8 +31,9 @@ from __future__ import annotations
 import argparse
 import sys
 
-from . import (adapters, archive, bridges, core, examine, gitscope, health, lifecycle,
-               projects, resolver, restructure, scaffold, scan, search, skills, upgrade)
+from . import (adapters, archive, bridges, commands, core, diagnose, examine, gitscope,
+               health, lifecycle, projects, resolver, restructure, scaffold, scan, search,
+               skills, upgrade)
 
 
 # profile fields that are lists — `set` splits these on commas (and accepts [a, b] form).
@@ -236,6 +239,15 @@ def cmd_collab(a):
                                      repo_url=a.repo or "", permission=a.permission)
 
 
+def cmd_help(a):
+    print(commands.help_text())
+    return 0
+
+
+def cmd_diagnose(a):
+    return diagnose.diagnose(core.require_workspace(), fix=a.fix)
+
+
 def cmd_doctor(a):
     return lifecycle.doctor()
 
@@ -303,7 +315,8 @@ def _welcome() -> int:
     print('        "set up my workspace"')
     print("  • By hand — create your workspace folder:")
     print('        wsx init ~/Documents/Projects/Workspace --name "Your Name"')
-    print("\nRun  wsx doctor  to check your setup, or  wsx -h  for all commands.")
+    print("\nRun  wsx doctor  to check your setup  ·  wsx help  for the command cheat sheet")
+    print("(in a workspace, the full reference is COMMANDS.md).")
     return 0
 
 
@@ -329,7 +342,14 @@ def build_parser() -> argparse.ArgumentParser:
     pe.add_argument("target", help="claude-code | agents-md | cursor | mcp | pack | all")
     pe.set_defaults(fn=cmd_emit)
 
+    pdg = sub.add_parser("diagnose",
+                         help="report problems in an EXISTING workspace (+ --fix the safe ones)")
+    pdg.add_argument("--fix", action="store_true",
+                     help="apply the safe, non-destructive corrections (upgrade + emit + reindex)")
+    pdg.set_defaults(fn=cmd_diagnose)
+
     for name, fn, helptext in [
+        ("help", cmd_help, "the command cheat sheet (also written to COMMANDS.md)"),
         ("doctor", cmd_doctor, "check your environment + what to do next"),
         ("lint", cmd_lint, "validate skills + manifest"),
         ("health", cmd_health, "vault graph hygiene: orphans, stale claims, dangling edges"),

@@ -23,6 +23,7 @@ from . import layout
 _EXEMPT_NAMES = {"HOME.md", "README.md", "_INDEX.md", "_TEMPLATE.md",
                  "CRITICAL_FACTS.md", "index.md", "MEMORY.md",
                  "profile.md",  # generated mirror of profile.yaml
+                 "COMMANDS.md",  # generated command cheat sheet, not a vault note
                  "AGENTS.md", "CLAUDE.md",  # generated adapters, not vault notes
                  "personal.md"}  # walled — intentionally unlinked when private
 # Only CANONICAL vault content participates in the graph. This is an ALLOWLIST on

@@ -686,9 +686,28 @@ def build_manifest(name: str) -> dict:
 
 def init(dest: str, name: str = "you", handle: str = "you",
          do_git: bool = True, force: bool = False) -> Path:
+    from . import examine  # local: examine imports scaffold, so avoid a module-load cycle
     root = Path(dest).resolve()
-    if root.exists() and any(root.iterdir()) and not force:
-        raise SystemExit(f"error: {root} is not empty (use --force to scaffold anyway)")
+    # Never scaffold over something that's already a workspace — that would clobber the
+    # person's content. Detect it and redirect to the SAFE, non-destructive paths instead
+    # of the blunt "not empty" error. `--force` is only for genuinely-unrelated dirs.
+    if root.exists() and not force:
+        if (root / "manifest.json").exists() and layout.has_workspace_dirs(root):
+            raise SystemExit(
+                f"error: {root} is ALREADY a wsx workspace — `init` would clobber it.\n"
+                "       Run one of these instead (all non-destructive):\n"
+                "         wsx diagnose            # report what (if anything) it needs\n"
+                "         wsx diagnose --fix      # apply the safe corrections\n"
+                "         wsx upgrade             # add missing scaffold + reconnect the graph\n"
+                "         wsx restructure         # (if flat) migrate up to the numbered layout")
+        if examine._looks_like_workspace(root):
+            raise SystemExit(
+                f"error: {root} looks like an EXISTING (non-wsx) workspace.\n"
+                "       `wsx examine {0}` gives a read-only readout first; don't `init` over it."
+                .format(root))
+        if any(root.iterdir()):
+            raise SystemExit(f"error: {root} is not empty (use --force to scaffold anyway, "
+                             "or point init at a new/empty dir)")
     root.mkdir(parents=True, exist_ok=True)
 
     prof = default_profile(name=name, handle=handle)
@@ -799,6 +818,16 @@ def copy_cli(root: Path) -> list:
     for f in sorted(src.glob("*.py")):
         shutil.copy2(f, dst / f.name)
         written.append(f".wsx/wsxlib/{f.name}")
+    # Copy EVERY generator asset the CLI could reference, not just the code — so a command
+    # that reads e.g. the JSON schemas keeps working from the standalone `.wsx` copy. The
+    # workspace must be self-sufficient for any command it advertises (no generator needed).
+    schemas_src = src.parent / "schemas"
+    if schemas_src.is_dir():
+        sdst = dst.parent / "schemas"
+        sdst.mkdir(parents=True, exist_ok=True)
+        for sf in sorted(schemas_src.glob("*.json")):
+            shutil.copy2(sf, sdst / sf.name)
+            written.append(f".wsx/schemas/{sf.name}")
     # Stamp the version so the staleness is VISIBLE. This copy cannot update
     # itself (it IS the running code), so without this a workspace could silently run
     # an old CLI forever. `wsx doctor` surfaces it.

@@ -692,14 +692,18 @@ person should never be asked to open a terminal or paste a command.
 ## The repair pass (run in this order)
 
 ```bash
+python3 wsx.py diagnose          # REPORT everything wrong/stale in this workspace, each with a fix
+python3 wsx.py diagnose --fix    # apply the SAFE, non-destructive corrections (upgrade+emit+reindex)
 python3 wsx.py doctor            # environment: python, git, git identity
-python3 wsx.py upgrade           # add missing pieces, repair stale generated content, first commit
-python3 wsx.py emit all          # recompile the AI adapter files from the canonical source
 python3 wsx.py health            # orphan notes, #stale/aging claims, dangling typed edges
 python3 wsx.py lint              # skills: unfilled skeletons, trigger overlaps
 ```
 
-`upgrade` is **non-destructive** — it never overwrites anything the person wrote. It adds
+Start with **`diagnose`** — it's the one-shot readout for an existing workspace (layout,
+scaffold, graph, integrity, adapters, git, self-sufficiency). `diagnose --fix` applies only
+what's safe and leaves anything needing judgment (a dangling link, a migration, a missing
+remote) clearly flagged for you to handle. `upgrade` (which `--fix` runs) is **non-destructive**
+— it never overwrites anything the person wrote. It adds
 missing scaffold, regenerates the derived layer (HOME, indexes, `context/profile.md`),
 repairs known-stale generated lines, and lands a first git commit if the repo has none.
 

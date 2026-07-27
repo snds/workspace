@@ -183,6 +183,10 @@ def write_home(root: Path) -> Path:
         f"## [Knowledge]({K}/README.md)",
         f"- [Index]({K}/_INDEX.md) — durable insight: validated patterns, constraints, research.",
         "",
+        "## Running it yourself",
+        "- [Command cheat sheet](COMMANDS.md) — every `wsx` command (run `python3 wsx.py <cmd>`).",
+        "  You rarely need it — your AI drives the tools — but it's here if you or an LLM want to.",
+        "",
         "## Adapters (generated — never hand-edit)",
         "AI-tool-specific files compiled from the canonical workspace. Re-run `wsx emit`.",
         "See `adapters/`, plus root `AGENTS.md` / `CLAUDE.md` and `.cursor/`.",
@@ -254,6 +258,6 @@ def write_profile_mirror(root: Path) -> Path:
 
 def write_mocs(root: Path) -> list:
     """Regenerate the whole connective layer. Returns the files written."""
-    from . import registry  # local import: registry -> core/layout, no cycle via moc
+    from . import commands, registry  # local import: no cycle via moc
     return [write_home(root), write_skills_index(root), write_projects_index(root),
-            write_profile_mirror(root), registry.build(root)]
+            write_profile_mirror(root), registry.build(root), commands.write(root)]
