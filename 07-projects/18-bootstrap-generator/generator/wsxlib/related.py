@@ -18,6 +18,9 @@ from . import core, layout
 _START = "<!-- wsx:related:start -->"
 _END = "<!-- wsx:related:end -->"
 _BLOCK = re.compile(re.escape(_START) + r".*?" + re.escape(_END), re.DOTALL)
+# A `## Related` heading that is NOT inside our markers = hand-authored. We must never
+# clobber or duplicate it, so a skill carrying one is left entirely untouched.
+_HEADING = re.compile(r"^##+\s+Related\b", re.MULTILINE)
 
 
 def _rows(root: Path) -> list:
@@ -66,21 +69,32 @@ def _related_block(row: dict, rows: list) -> str:
 
 
 def build(root: Path) -> list:
-    """Refresh the `## Related` block in every skill. Returns the files changed."""
+    """Refresh the `## Related` block in every skill. Returns the files changed.
+
+    Skills with a hand-authored `## Related` (no wsx markers) are left untouched — logged
+    in `build.skipped` — so the tool never clobbers or duplicates the person's own section."""
     rows = _rows(root)
-    changed = []
+    changed, skipped = [], []
     for row in rows:
         sk = row["path"]
         text = sk.read_text(encoding="utf-8")
         block = _related_block(row, rows)
         if _BLOCK.search(text):
             new = _BLOCK.sub(lambda _m: block, text)
+        elif _HEADING.search(text):
+            # Hand-authored `## Related` present — never touch it (no duplicate, no clobber).
+            skipped.append(sk.relative_to(root))
+            continue
         else:
             new = text.rstrip() + "\n\n" + block + "\n"
         if new != text:
             sk.write_text(new, encoding="utf-8")
             changed.append(sk.relative_to(root))
+    build.skipped = skipped  # surfaced by callers that want to report it
     return changed
+
+
+build.skipped = []  # type: ignore[attr-defined]
 
 
 def run(root: Path) -> int:
@@ -94,4 +108,6 @@ def run(root: Path) -> int:
           f"under {lay.name('skills')}/.")
     for c in changed:
         print(f"  ~ {c}")
+    for s in getattr(build, "skipped", []):
+        print(f"  · left {s} untouched (hand-authored `## Related`)")
     return 0

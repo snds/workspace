@@ -72,17 +72,25 @@ phases. Locked decisions: ingestion = consent+quarantine+scan; project adoption 
   DEFAULT** (`--apply` required to write). On apply: snapshots the flat dirs + changed config to
   `_archive/pre-restructure-<stamp>/` (+ `migration.json`); moves each flat dir → numbered via
   `shutil.move` then `git add -A` (git records them as RENAMES — history follows); reindexes the
-  manifest (skill paths → numbered); rewrites hand-authored **md-link targets** segment-by-segment
-  (handles `../skills/…` cross-dir relatives; protects `.claude/skills/` and other generated dirs;
-  wikilinks are basename-resolved so untouched) + `.gitignore`/`.gitattributes`; runs `upgrade` to
-  fill the new-core dirs a flat vault lacked; re-emits every adapter/hook/index/registry; then
-  **verify + health**, with **automatic rollback if verify fails**. `--rollback` restores the flat
-  layout from the backup. **Idempotent** (no-op on an already-numbered vault); **refuses** if both
-  flat+numbered forms of a dir coexist (ambiguous). Tested end-to-end on a git flat fixture with a
-  hand-authored note (typed `relates-to` edge + a `../skills/…` cross-dir md-link): dry-run previews
-  and writes nothing; apply → numbered, links/manifest/dotfiles/adapters/hooks/registry all rewired,
-  typed edge preserved, 26 git renames, verify GREEN; re-run is a no-op; rollback restores flat + relinks
-  + verify GREEN. Zips rebuilt + clean-extract exposes `restructure`. check-terminology clean.
+  manifest (skill paths → numbered); rewrites **every path-encoding reference** segment-by-segment —
+  md-link/image-embed targets (incl. `../skills/…` cross-dir relatives) AND **Dataview `FROM "dir/…"`
+  queries** (the gap caught in review: project `board.md` kanban queries; protects `.claude/skills/`
+  and other generated dirs; wikilinks/typed-edges are basename-resolved so untouched) +
+  `.gitignore`/`.gitattributes`; runs `upgrade` to fill the new-core dirs a flat vault lacked;
+  re-emits every adapter/hook/index/registry; then **verify + health**.
+  **HARD-REQUIREMENT GATE (Sean's "must not break AT ALL"):** it snapshots every functional reference
+  BEFORE touching anything and re-resolves them all AFTER; a baseline-diff flags any reference broken
+  ONLY post-rewire → **auto-rollback, applies nothing**. A full **change ledger** lands in
+  `migration.json` (dirs moved · files rewritten · pre-existing-broken vs breaks-introduced=[]).
+  `--rollback` restores flat from backup. **Idempotent** (no-op on numbered); **refuses** ambiguous
+  flat+numbered coexistence. Also fixed this turn: `build-related` now emits **resolving path-links**
+  (`[x](../x/SKILL.md)`) not dead `[[SKILL]]` wikilinks, is wired into `upgrade` so existing vaults
+  GAIN the typed graph, and **skips any hand-authored `## Related`** (never clobbers/duplicates).
+  **Proven:** flat fixture WITH a project board → `FROM "projects/x"`→`FROM "07-projects/x"`,
+  cross-dir md-links rewired, hand-`## Related` untouched, typed edge preserved, git renames, verify/
+  health GREEN, ledger `breaks_introduced: []`; the gate directly demonstrated to FIRE + roll back on a
+  simulated break; rollback restores flat + board query + verify GREEN; re-run no-op. Zips rebuilt;
+  clean-extract exposes `restructure`; check-terminology clean.
 - Then fold in against the richer target: P3 session-end (ask 5), P4 project adoption (asks 3,4),
   P5 per-tool memory bridge + multi-agent (asks 6,7), P6 consent-gated ingestion (ask 1),
   P7 self-wiring, generator-independent (ask 2).

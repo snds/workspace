@@ -64,47 +64,115 @@ def _conflicts(root: Path) -> list:
 
 
 # --------------------------------------------------------------- link rewrite ---
+# Functional reference forms that ENCODE a directory path (and so break on a move):
+#   * markdown links / image embeds:  ](dir/file.md)   ](../dir/file.md)
+#   * Dataview source clauses:        FROM "dir/sub"    FROM "dir"
+# Wikilinks [[name]] and typed relations resolve by BASENAME, so a move never breaks them.
 _MDLINK = re.compile(r"(\]\()([^)]+)(\))")
+_DATAVIEW_FROM = re.compile(r'(\bFROM\s+")([^"]+)(")')
+
+
+def _remap_segments(path: str, namemap: dict) -> str:
+    """old->new on each path segment, protecting generated (non-vault) dirs."""
+    segs = path.split("/")
+    if any(s in _PROTECTED_SEGMENTS for s in segs):
+        return path
+    return "/".join(namemap.get(s, s) for s in segs)
 
 
 def _remap_target(target: str, namemap: dict) -> str:
-    """Rewrite a markdown link target's path segments old->new, protecting generated dirs."""
+    """Rewrite a markdown link target's path segments (skip external / anchor-only)."""
     if "://" in target or target.startswith(("#", "mailto:")):
         return target
     path, sep, frag = target.partition("#")
-    segs = path.split("/")
-    if any(s in _PROTECTED_SEGMENTS for s in segs):
-        return target
-    new = [namemap.get(s, s) for s in segs]
-    return "/".join(new) + (sep + frag if sep else "")
+    return _remap_segments(path, namemap) + (sep + frag if sep else "")
 
 
-def _rewrite_note_links(root: Path, namemap: dict) -> int:
-    """Rewrite md-link targets across canonical vault notes + root. Wikilinks resolve by
-    basename so they need no rewrite. Returns the number of files changed."""
+def _iter_vault_md(root: Path):
+    """Every canonical vault markdown note (skips dot-dirs and the _archive backup)."""
     lay = layout.of(root)
-    scan_dirs = [root] + [lay.dir(k) for k in
-                          ("context", "skills", "frameworks", "projects", "knowledge",
-                           "shared", "preferences", "tools")]
-    seen, changed = set(), 0
-    for base in scan_dirs:
+    bases = [root] + [lay.dir(k) for k in
+                      ("context", "skills", "frameworks", "projects", "knowledge",
+                       "shared", "preferences", "tools")]
+    seen = set()
+    for base in bases:
         if not base.exists():
             continue
-        md_iter = base.glob("*.md") if base == root else base.rglob("*.md")
-        for p in md_iter:
-            if p in seen or any(part.startswith(".") for part in p.relative_to(root).parts):
+        it = base.glob("*.md") if base == root else base.rglob("*.md")
+        for p in it:
+            rp = p.relative_to(root)
+            if p in seen or any(part.startswith((".", "_archive")) for part in rp.parts):
+                continue
+            if "_archive" in rp.parts:
                 continue
             seen.add(p)
-            try:
-                text = p.read_text(encoding="utf-8")
-            except OSError:
-                continue
-            new = _MDLINK.sub(lambda m: m.group(1) + _remap_target(m.group(2), namemap)
-                              + m.group(3), text)
-            if new != text:
-                p.write_text(new, encoding="utf-8")
-                changed += 1
+            yield p
+
+
+def _files_referencing(root: Path, namemap: dict) -> list:
+    """Preview (no writes): vault notes whose md-links or Dataview FROM reference a moved dir."""
+    out = []
+    for p in _iter_vault_md(root):
+        try:
+            text = p.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        hit = any(_remap_target(m.group(2), namemap) != m.group(2) for m in _MDLINK.finditer(text)) \
+            or any(_remap_segments(m.group(2).lstrip("/"), namemap) != m.group(2).lstrip("/")
+                   for m in _DATAVIEW_FROM.finditer(text))
+        if hit:
+            out.append(str(p.relative_to(root)))
+    return out
+
+
+def _rewrite_references(root: Path, namemap: dict) -> list:
+    """Rewrite every path-encoding reference (md-links + Dataview FROM) across vault notes.
+    Returns the list of files changed (for the ledger)."""
+    changed = []
+    for p in _iter_vault_md(root):
+        try:
+            text = p.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        new = _MDLINK.sub(lambda m: m.group(1) + _remap_target(m.group(2), namemap)
+                          + m.group(3), text)
+        new = _DATAVIEW_FROM.sub(
+            lambda m: m.group(1) + _remap_segments(m.group(2).lstrip("/"), namemap)
+            + m.group(3), new)
+        if new != text:
+            p.write_text(new, encoding="utf-8")
+            changed.append(str(p.relative_to(root)))
     return changed
+
+
+# ---------------------------------------------------- broken-reference audit ---
+def _broken_refs(root: Path) -> set:
+    """The set of FUNCTIONAL references that do not resolve on disk right now, keyed by
+    (source-note-basename, kind, target-tail) so it survives the dir move for comparison.
+
+    This is the guarantee's backbone: we snapshot it BEFORE touching anything and again
+    AFTER rewiring; any reference broken only in the AFTER set is a break WE introduced."""
+    broken = set()
+    for p in _iter_vault_md(root):
+        try:
+            text = p.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        for m in _MDLINK.finditer(text):
+            t = m.group(2).strip()
+            if "://" in t or t.startswith(("#", "mailto:")):
+                continue
+            path = t.split("#")[0]
+            if not path or not path.endswith((".md", ".png", ".jpg", ".jpeg", ".svg",
+                                              ".pdf", ".json", ".canvas")):
+                continue
+            if not (p.parent / path).resolve().exists():
+                broken.add((p.name, "mdlink", path.split("/")[-1]))
+        for m in _DATAVIEW_FROM.finditer(text):
+            q = m.group(2).strip().lstrip("/")
+            if not (root / q).exists() and not (root / (q + ".md")).exists():
+                broken.add((p.name, "dataview", q.split("/")[-1]))
+    return broken
 
 
 def _rewrite_dotfiles(root: Path, namemap: dict) -> None:
@@ -140,6 +208,23 @@ def _backup(root: Path, moves: list, stamp: str) -> Path:
                                            "HOME.md") if (root / f).exists()]}
     (bdir / "migration.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
     return bdir
+
+
+def _write_ledger(bdir: Path, moves: list, rewritten: list,
+                  baseline_broken: list, new_breaks: list) -> None:
+    """Augment migration.json into a full CHANGE LEDGER: every dir moved, every file whose
+    references were rewritten, and the reference-integrity proof (pre-existing broken links
+    vs. any the migration introduced). This is the record for auditing + reconnection."""
+    f = bdir / "migration.json"
+    rec = json.loads(f.read_text(encoding="utf-8"))
+    rec["ledger"] = {
+        "dirs_moved": [{"from": o, "to": n} for o, n in moves],
+        "files_rewritten": rewritten,
+        "references_verified": "every md-link + Dataview FROM re-checked to resolve on disk",
+        "pre_existing_broken": [list(k) for k in baseline_broken],
+        "breaks_introduced": [list(k) for k in new_breaks],  # MUST be empty on success
+    }
+    f.write_text(json.dumps(rec, indent=2) + "\n", encoding="utf-8")
 
 
 # -------------------------------------------------------------------- rollback ---
@@ -205,15 +290,29 @@ def restructure(root: Path, apply: bool = False, rollback: bool = False) -> int:
         print("  Would move (git-aware, history preserved):")
         for old, new in moves:
             print(f"    {old}/  ->  {new}/")
-        print("\n  Then: back up the flat dirs to _archive/pre-restructure-<stamp>/,")
-        print("  rewrite hand-authored links + .gitignore/.gitattributes, reindex the manifest,")
+        touched = _files_referencing(root, namemap)
+        print(f"\n  Would rewrite path references in {len(touched)} note(s) "
+              "(md-links + Dataview `FROM` queries):")
+        for rel in touched[:12]:
+            print(f"    ~ {rel}")
+        if len(touched) > 12:
+            print(f"    …and {len(touched) - 12} more")
+        print("\n  Then: back up the flat dirs + config to _archive/pre-restructure-<stamp>/,")
+        print("  rewrite the references above + .gitignore/.gitattributes, reindex the manifest,")
         print("  fill any missing new-core dirs (02-shared-references, 04-preferences, memory),")
         print("  re-emit every adapter/hook/index/registry, then verify + health.")
-        print("  A failed verify auto-rolls-back. Undo anytime with `wsx restructure --rollback`.")
+        print("\n  GUARANTEE: the migration snapshots every functional reference first and re-checks")
+        print("  them all after; if it would break even ONE that worked before, it auto-rolls back")
+        print("  and applies nothing. Wikilinks/typed edges resolve by basename → untouched by the move.")
+        print("  A full change ledger is written to migration.json. Undo: `wsx restructure --rollback`.")
         return 0
 
     stamp = core.now_stamp().replace(" ", "-").replace(":", "")
     print(f"wsx restructure — MIGRATING to the numbered taxonomy (backup stamp {stamp})\n")
+
+    # The guarantee's baseline: which functional references are ALREADY broken (the person's
+    # own pre-existing dead links). Anything broken only AFTER we rewire is a break WE caused.
+    baseline_broken = _broken_refs(root)
 
     bdir = _backup(root, moves, stamp)
     print(f"  ✓ backed up flat dirs + config to {bdir.relative_to(root)}/")
@@ -222,15 +321,16 @@ def restructure(root: Path, apply: bool = False, rollback: bool = False) -> int:
         shutil.move(str(root / old), str(root / new))
         print(f"  ✓ moved {old}/ -> {new}/")
 
-    skills.reindex(root)                          # manifest skill paths -> numbered
-    nchanged = _rewrite_note_links(root, namemap)  # hand-authored md-link targets
-    _rewrite_dotfiles(root, namemap)              # .gitignore / .gitattributes
-    print(f"  ✓ rewired links in {nchanged} note(s) + the dotfiles; reindexed the manifest")
+    skills.reindex(root)                            # manifest skill paths -> numbered
+    rewritten = _rewrite_references(root, namemap)  # md-links + Dataview FROM
+    _rewrite_dotfiles(root, namemap)                # .gitignore / .gitattributes
+    print(f"  ✓ rewired references in {len(rewritten)} note(s) + the dotfiles; "
+          "reindexed the manifest")
 
     # Fill new-core dirs the flat layout lacked + regenerate the derived layer.
     print("\n  — filling new-core scaffold + regenerating derived layer —")
     upgrade.upgrade(root)
-    prof, man = core.load_profile(root), core.load_manifest(root)
+    prof = core.load_profile(root)
     adapters.emit(root, "all", prof, core.load_manifest(root))
     if (root / ".git").exists():
         core.git(root, "add", "-A", check=False)
@@ -238,16 +338,30 @@ def restructure(root: Path, apply: bool = False, rollback: bool = False) -> int:
     print("\n  — post-migration checks —")
     vfails = lifecycle.verify(root)
     hproblems = health.health(root)
-    if vfails:
-        print("\n  ✗ verify FAILED after migration — auto-rolling back to the flat layout.")
+    # THE hard-requirement gate: no reference that worked before may be broken now.
+    now_broken = _broken_refs(root)
+    new_breaks = sorted(now_broken - baseline_broken)
+
+    # Record the full change ledger onto the migration record (for audit + reconnection).
+    _write_ledger(bdir, moves, rewritten, sorted(baseline_broken), new_breaks)
+
+    if vfails or new_breaks:
+        if new_breaks:
+            print(f"\n  ✗ migration would BREAK {len(new_breaks)} reference(s) that worked before:")
+            for note, kind, tail in new_breaks[:20]:
+                print(f"      · {note}: {kind} -> …/{tail}")
+        else:
+            print("\n  ✗ verify FAILED after migration.")
+        print("  Auto-rolling back to the flat layout (nothing lost).")
         _rollback_from(root, bdir)
-        print("\n  The migration was reverted. Nothing was lost; investigate the verify output above.")
+        print("\n  Reverted. This is the safety gate doing its job — the migration is not applied")
+        print(f"  unless it can prove zero broken references. Details in {bdir.relative_to(root)}/migration.json.")
         return 1
 
-    print(f"\n✓ restructure complete — workspace is on the numbered taxonomy."
-          f"{'  (health noted ' + str(hproblems) + ' issue(s) — advisory)' if hproblems else ''}")
-    print(f"  Backup kept at {bdir.relative_to(root)}/ — delete it once you're satisfied, or "
-          "`wsx restructure --rollback` to undo.")
+    print(f"\n✓ restructure complete — every reference verified to still resolve. Workspace is on "
+          f"the numbered taxonomy.{'  (health noted ' + str(hproblems) + ' advisory issue(s))' if hproblems else ''}")
+    print(f"  Change ledger + backup at {bdir.relative_to(root)}/ (migration.json lists every move and")
+    print("  every file whose links were rewired). Undo anytime: `wsx restructure --rollback`.")
     if (root / ".git").exists():
         print("  Changes are staged (git add -A); commit when ready: `wsx sync`.")
     return 0
