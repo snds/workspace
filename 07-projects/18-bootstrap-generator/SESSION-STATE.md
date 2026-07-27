@@ -105,6 +105,18 @@ phases. Locked decisions: ingestion = consent+quarantine+scan; project adoption 
   record behavior too. **Tested:** both branches (open project → lists its handoff; none → open-threads),
   attributed block folds correctly, green on fresh numbered AND legacy flat (open-threads + skill resolve
   to the right dir), zips rebuilt + clean-extract ships the skill, check-terminology clean.
+- **Identity anchor (pre-P4, from Olga's live confusion): ✅ DONE 2026-07-27.** Olga asked her
+  Claude "are you connected to my 2nd-brain workspace?" and it hedged — surfacing the enterprise
+  connectors (Notion/Confluence/Drive/Slack/…) as "the second brain" instead of her generated vault.
+  Fix: every workspace now **asserts its own identity** so any tool/LLM binds "workspace / second
+  brain / 2nd brain / micro-brain / my notes / my vault / gather across my work" to **THIS vault by
+  default**, never a commercial connector unless the user explicitly names one. Neutral
+  `_identity_anchor(profile)` injected near the top of CLAUDE.md · AGENTS.md · .cursor rule ·
+  context-pack, into the always-injected `CRITICAL_FACTS.md` (new workspaces) + the SessionStart hook
+  standing-rules, the README front-door, and the emitted MCP server's boot context (CRITICAL_FACTS now
+  leads CORE_CONTEXT). Overridable per the user's explicit direction. Tested: anchor present + name-
+  interpolated across all 8 surfaces; MCP `session_start` surfaces it; verify/health/lint green; zips
+  rebuilt; terminology clean.
 - Then fold in against the richer target: P4 project adoption (asks 3,4),
   P5 per-tool memory bridge + multi-agent (asks 6,7), P6 consent-gated ingestion (ask 1),
   P7 self-wiring, generator-independent (ask 2).

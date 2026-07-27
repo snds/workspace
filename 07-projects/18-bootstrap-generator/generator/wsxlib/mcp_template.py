@@ -50,7 +50,10 @@ CTX = _dir("context")
 SKILLS = _dir("skills")
 
 # The canonical boot context. Personal context is walled — loaded only on opt-in.
+# CRITICAL_FACTS leads: it carries the identity anchor (this vault IS the person's
+# "workspace"/"second brain") + the facts never to re-derive.
 CORE_CONTEXT = [
+    CTX + "/CRITICAL_FACTS.md",
     CTX + "/profile.md",
     CTX + "/project-context.md",
     CTX + "/session-log.md",
