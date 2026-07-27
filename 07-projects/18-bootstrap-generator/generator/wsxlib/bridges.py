@@ -103,16 +103,26 @@ def _pointer_block(root: Path) -> str:
     prof = core.load_profile(root)
     name = str(prof.get("identity", {}).get("name", "you"))
     lay = layout.of(root)
+    c = lay.name("context")
     front = "CLAUDE.md" if (root / "CLAUDE.md").exists() else "AGENTS.md"
+    # Prescriptive but token-FRUGAL: the whole point of a global pointer is that it loads
+    # every session/window (even outside the vault), so it must orient WITHOUT itself being
+    # expensive. It names the hot-cache + the frugal read order + the privacy wall — the
+    # exact "auto-orient at session start" behavior, not just a location.
     return "\n".join([
         _POINTER_START,
-        f"## {name}'s workspace / second brain — read it first",
+        f"## {name}'s workspace / second brain — orient here at session start",
         f"{name}'s personal **workspace** (second brain / micro-brain / knowledge base) lives at:",
         f"  `{root}`",
-        f"When {name} refers to their \"workspace\", \"second brain\", \"micro-brain\", \"my notes\",",
-        "or asks to gather/recall across their work, that means **this vault** — start at",
-        f"`{root}/HOME.md` and `{root}/{front}`. Do NOT assume a commercial connector "
-        "(Notion/Confluence/Drive/Slack/…) unless explicitly named.",
+        "**At the start of every session/window, orient from it** (do this on your own — don't",
+        f"wait to be asked): read `{root}/{c}/CRITICAL_FACTS.md` FIRST (the tiny always-on hot",
+        f"cache), then skim the TOP of `{c}/project-context.md` + `{c}/session-log.md` for the",
+        f"active work, and follow the vault's `{front}`. Keep it light — heads of logs, not whole",
+        "files (the vault is token-frugal by rule).",
+        f"**Privacy wall:** never read `{c}/personal.md` unless {name} explicitly asks.",
+        f"When {name} says \"workspace\", \"second brain\", \"micro-brain\", \"my notes\", or asks to",
+        "gather/recall across their work, that means **this vault** — resolve it here, NOT a",
+        "commercial connector (Notion/Confluence/Drive/Slack/…) unless explicitly named.",
         _POINTER_END,
     ]) + "\n"
 

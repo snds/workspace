@@ -720,6 +720,24 @@ Report **what changed and what it means**, not raw tool output. Specifically:
 - **No git remote yet** → `python3 wsx.py remote` explains the free options; they create the
   empty repo, you wire it with `python3 wsx.py remote <url>` then `python3 wsx.py sync`.
 
+## Make every session auto-orient (cross-window, so they never have to nudge you)
+
+By default a NEW window that isn't already inside this folder starts cold — the vault's own
+`CLAUDE.md` only loads once you're working inside it. The fix is a one-time pointer in each
+tool's GLOBAL config (e.g. `~/.claude/CLAUDE.md`), which loads on every session everywhere:
+
+```bash
+python3 wsx.py bridge list             # which AI tools are installed + their status
+python3 wsx.py bridge point            # write the workspace pointer into each tool's global config
+```
+
+`bridge point` is idempotent and append-only (marker-delimited — it never clobbers their own
+global rules). After it runs, any Claude Code / Codex / Gemini session — even outside this
+folder — orients from the vault on its own (reads `CRITICAL_FACTS.md`, skims the logs, respects
+the privacy wall). Offer this whenever the person says they have to remind you to look at their
+workspace / second brain each time. (Cursor/ChatGPT/claude.ai have no global file — `bridge list`
+shows which are `manual`; for those, guide them per `bridge point`'s notes.)
+
 ## Ground rules
 
 - Never ask the person to run a command. You have the tools; use them.
