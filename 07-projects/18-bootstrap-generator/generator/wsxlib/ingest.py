@@ -90,10 +90,10 @@ def _is_cloud(r: Path) -> bool:
 
 def discover(root: Path) -> int:
     print("wsx ingest discover — where your content could come from (read-only; nothing copied)\n")
-    # HOME itself is too broad (→ ~/Library etc.); its note-likely subdirs + cloud-sync roots
-    # are already in _search_roots. We only read the TOP level here — no deep crawl — so even
+    # note-likely subdirs + per-OS cloud-sync roots (ingest_roots), minus HOME itself (too
+    # broad → ~/Library etc.). We only read the TOP level of each — no deep crawl — so even
     # an online-only cloud folder can't stall this.
-    roots = [r for r in scan._search_roots() if r != Path.home()]
+    roots = [r for r in scan.ingest_roots() if r != Path.home()]
     if not roots:
         print("  (no common content locations found.)")
         return 0

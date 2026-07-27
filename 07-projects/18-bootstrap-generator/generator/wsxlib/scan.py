@@ -281,20 +281,33 @@ def _cloud_roots() -> list:
     return roots
 
 
-def _search_roots() -> list:
-    roots = [HOME / d for d in ("Documents", "Projects", "projects", "obsidian",
-                                "Obsidian", "vaults", "Vaults", "Desktop", "Notes")]
-    roots.append(HOME)
-    # Obsidian's iCloud vault location (macOS)
-    roots.append(HOME / "Library/Mobile Documents/iCloud~md~obsidian/Documents")
-    roots += _cloud_roots()
-    # de-dupe (preserve order) — cloud roots can overlap home dirs
+def _dedupe_dirs(roots: list) -> list:
     seen, out = set(), []
     for r in roots:
         if r.is_dir() and r not in seen:
             seen.add(r)
             out.append(r)
     return out
+
+
+def _search_roots() -> list:
+    """Roots for finding wsx WORKSPACES (bounded BFS). Deliberately conservative — NO cloud
+    roots here: `find_workspaces` descends these (depth-limited), and walking a large
+    online-only cloud folder would make `scan --find-workspaces` slow. Cloud-sync roots are
+    added only for INGEST discovery (`ingest_roots`), which is top-level-only."""
+    roots = [HOME / d for d in ("Documents", "Projects", "projects", "obsidian",
+                                "Obsidian", "vaults", "Vaults", "Desktop", "Notes")]
+    roots.append(HOME)
+    # Obsidian's iCloud vault location (macOS)
+    roots.append(HOME / "Library/Mobile Documents/iCloud~md~obsidian/Documents")
+    return _dedupe_dirs(roots)
+
+
+def ingest_roots() -> list:
+    """Roots for INGEST discovery: the workspace roots PLUS per-OS cloud-sync folders
+    (locally-synced only). `ingest.discover` reads only the TOP level of each, so including
+    cloud folders here is safe (no deep crawl, no hydration)."""
+    return _dedupe_dirs(_search_roots() + _cloud_roots())
 
 
 _SKIP_WALK = {".git", "node_modules", "Library", ".Trash", ".cache", "venv", ".venv",
