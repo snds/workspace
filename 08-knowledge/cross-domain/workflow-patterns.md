@@ -1,12 +1,12 @@
 ---
 tags: [workflow, process, patterns, audit, session-management]
 created: 2026-04-28
-updated: 2026-07-09
+updated: 2026-07-27
 status: stable
 confidence: high
-sources: [session-log 2026-04-27, audit-log 2026-04-27, session-log 2026-07-09]
+sources: [session-log 2026-04-27, audit-log 2026-04-27, session-log 2026-07-09, session-log 2026-07-27]
 related_skills: [workspace-bootstrap]
-related_projects: [00-obsidian]
+related_projects: [00-obsidian, 18-bootstrap-generator]
 ---
 
 # Workflow Patterns — What We've Learned Works
@@ -128,3 +128,36 @@ what lets a later session tell which of several same-day versions is authoritati
 When a workflow maps units then adversarially verifies them, the CONFIRMED/ADJUSTED/REFUTED
 label is sampling noise — see [[adversarial-verify-label-volatility]]. Report the stable mapped
 verdict and treat the verify pass as a convergence check; never headline a confirmed/adjusted count.
+
+## Self-contained tool copies go stale — test a FRESH generation, not a reused instance
+
+A portable artifact that ships **its own copy** of the engine that built it (the wsx generator
+copies its whole CLI into each workspace's `.wsx/`, so `python3 wsx.py <cmd>` runs with no
+generator present) buys real independence — but that copy is **frozen at generation time**. When
+you edit the source and then "verify the fix" by running the copied CLI in a **reused** instance,
+you are testing OLD code: a fix looks un-exercised (false pass) and a regression stays hidden
+(false pass). The v0.2 bootstrap sessions burned hours on a "hang" that was purely a stale `.wsx`
+copy running the pre-fix code. **Rule:** any change to CLI/tool behaviour is verified on a **fresh
+generation** (or after the tool's own refresh command, e.g. `wsx upgrade`), never a reused
+instance — and a fresh-init command-surface sweep (every command timed) is cheap insurance that
+catches init-only regressions AND machine-specific hangs (e.g. an `os.walk` over an online-only
+cloud folder) that a reused instance masks.
+
+## Prove "non-destructive", don't claim it — baseline-diff integrity gate
+
+Before a structural mutation (moving dirs, rewriting links, a "corrective pass"), snapshot every
+**functional reference** that resolves today (md-links, Dataview `FROM`, typed edges); after the
+mutation, re-resolve them all; a reference broken **only** in the after-set is a break YOU caused →
+**auto-rollback and apply nothing**. Pre-existing broken links (the user's own) don't block. This
+turned wsx's `restructure`/`diagnose` from "trust me, it's non-destructive" into a checkable
+guarantee — and it caught a real gap (Dataview `FROM "projects/x"` queries that a naive md-link
+rewriter missed). Corollary: a graph checker that only counts INBOUND links (orphans) misses BROKEN
+OUTBOUND targets — verify outbound references resolve, separately.
+
+## Ingesting outside content into a PUBLIC repo: consent + quarantine + scan, never auto-promote
+
+To pull scattered notes/projects into a public workspace safely: read-only copy to a **gitignored
+quarantine** first, **secret-scan** it (block on any credential-class hit — safe-by-default, a false
+positive over-quarantines a note, a false negative leaks a key), then classify and **promote only on
+explicit approval**; a git repo is **referenced in place, never copied in** (its files, incl. a stray
+`.env`, never enter the vault). Two consent gates (name the source, then `--apply`) + the scan gate.
