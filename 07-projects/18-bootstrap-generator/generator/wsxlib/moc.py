@@ -141,6 +141,7 @@ def write_home(root: Path) -> Path:
         f"- [Profile]({C}/profile.md) — who you are (machine source: `{C}/profile.yaml`).",
         f"- [Project context]({C}/project-context.md) — active projects + pending items.",
         f"- [Session log]({C}/session-log.md) — recent session history (newest first).",
+        f"- [Open threads]({C}/open-threads.md) — non-project loose ends the close-out carries forward.",
         f"- [Memory]({C}/memory/MEMORY.md) — typed atomic facts/decisions/feedback the AI must never re-derive.",
         f"- [Decisions]({C}/decisions/README.md) — ADRs: why the meaningful choices were made.",
         f"- [Conventions]({C}/conventions.md) — typed edges · freshness · the note preamble.",

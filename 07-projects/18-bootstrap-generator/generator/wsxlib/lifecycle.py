@@ -325,17 +325,40 @@ def _archive_old_blocks(log_path: Path) -> int:
 
 
 # ----------------------------------------------------------------- session ---
-def session(root: Path, sub: str) -> int:
+def _open_projects(root: Path) -> list:
+    """Names of projects that have a PROJECT.md (a live handoff to keep current)."""
+    pdir = layout.of(root).dir("projects")
+    if not pdir.is_dir():
+        return []
+    return sorted(d.name for d in pdir.iterdir()
+                  if d.is_dir() and not d.name.startswith((".", "_"))
+                  and (d / "PROJECT.md").exists())
+
+
+def session(root: Path, sub: str, summary: str = "", next_: str = "",
+            machine: str = "", surface: str = "", agent: str = "",
+            project: str = "") -> int:
     if sub == "start":
         ensure_safe_git(root)  # self-heal safe git defaults each session
         compact(root)  # fold any pending fragments before the AI reads the log
         print(f"session started {core.now_stamp()} — context loaded from {root}")
         return 0
     if sub == "end":
-        # Write a conflict-free FRAGMENT (not a direct append to the shared log), then
-        # fold it. Disjoint files → no cross-device/session merge conflicts.
+        import socket
+        lay = layout.of(root)
+        cdir = lay.dir("context")
+        # Attribution stamp (Agent · Surface · Machine) so a multi-agent, multi-device log
+        # stays legible. Machine defaults to the hostname; agent/surface come from the
+        # caller (the session-end skill passes them) since they can't be detected reliably.
+        machine = machine or socket.gethostname()
+        surface = surface or "unknown"
+        agent = agent or "unknown"
+        projects = _open_projects(root)
+        proj_line = project or (", ".join(projects) if projects else "(none)")
+        # A conflict-free FRAGMENT (never a direct append to the shared log): disjoint files
+        # can't collide across devices/sessions. The block mirrors the readable log shape.
         sid = f"{core.today()}-{core.now_stamp().split()[1].replace(':', '')}"
-        frag_dir = layout.of(root).dir("context") / "sessions"
+        frag_dir = cdir / "sessions"
         frag_dir.mkdir(parents=True, exist_ok=True)
         frag = frag_dir / f"{sid}.md"
         frag.write_text(
@@ -344,12 +367,31 @@ def session(root: Path, sub: str) -> int:
             f"--- SESSION BLOCK ---\n"
             f"Date: {core.today()}\n"
             f"Stamp: {core.now_stamp()}\n"
-            f"Summary: (your AI fills this in)\n"
+            f"Machine: {machine}\n"
+            f"Surface: {surface}\n"
+            f"Agent: {agent}\n"
+            f"Project(s): {proj_line}\n"
+            f"Summary: {summary or '(fill this in — what happened, in 1–3 lines)'}\n"
+            f"Artifacts: {'(files touched)' if not summary else '—'}\n"
+            f"Decisions: (durable choices — also capture as memory/ADR if load-bearing)\n"
+            f"Knowledge: (generalizable insight harvested → 08-knowledge/, or '—')\n"
+            f"Next: {next_ or '(the next action to resume from)'}\n"
             f"--- END BLOCK ---\n",
             encoding="utf-8",
         )
         compact(root)
-        print(f"✓ session recorded as a fragment and folded into context/session-log.md")
+        print(f"✓ session recorded as a fragment (stamped {agent} · {surface} · {machine}) "
+              f"and folded into {lay.name('context')}/session-log.md")
+        # Surface the judgment work the close-out skill still owns, so nothing is dropped.
+        if projects:
+            print("\n  Open projects — update each PROJECT.md live-handoff before you finish:")
+            for p in projects:
+                print(f"    · {lay.name('projects')}/{p}/PROJECT.md")
+        else:
+            print(f"\n  No active project — capture any loose ends in "
+                  f"{lay.name('context')}/open-threads.md so they carry forward.")
+        print(f"  Harvest any generalizable insight into {lay.name('knowledge')}/ "
+              "(a pattern, a hard-won constraint), then `wsx sync`.")
         return 0
     if sub == "reconcile":
         return reconcile(root)

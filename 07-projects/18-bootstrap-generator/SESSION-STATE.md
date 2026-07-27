@@ -91,7 +91,21 @@ phases. Locked decisions: ingestion = consent+quarantine+scan; project adoption 
   health GREEN, ledger `breaks_introduced: []`; the gate directly demonstrated to FIRE + roll back on a
   simulated break; rollback restores flat + board query + verify GREEN; re-run no-op. Zips rebuilt;
   clean-extract exposes `restructure`; check-terminology clean.
-- Then fold in against the richer target: P3 session-end (ask 5), P4 project adoption (asks 3,4),
+- **P3 — session-end that generalizes + saves everywhere (ask 5): ✅ DONE 2026-07-27.**
+  `lifecycle.session("end")` now writes an **attributed** fragment — Agent · Surface · Machine
+  (hostname default) · Project(s) — with a richer block (Summary/Artifacts/Decisions/Knowledge/Next)
+  via new `wsx session end --summary/--next/--surface/--agent/--project`; folds it via `compact`; and
+  **surfaces the judgment work still owed**: lists every open `PROJECT.md` handoff to update, or points
+  to `open-threads.md` when no project is active, plus the knowledge-harvest reminder. New scaffold
+  `06-context/open-threads.md` (non-project loose ends; HOME-linked; added to legacy vaults by `upgrade`).
+  Emitted **session-end SKILL** (`.claude/skills/session-end/`, triggers "wrap up"/"done for today"/…) —
+  the neutral 8-step close-out: harvest generalizable insight → `knowledge/`, update every open project
+  handoff, loose ends → `open-threads.md`, record durable decisions → memory/ADR, then `wsx session end`
+  + `sync`. AGENTS.md/CLAUDE.md session-end prose enriched so agnostic surfaces get the generalize-then-
+  record behavior too. **Tested:** both branches (open project → lists its handoff; none → open-threads),
+  attributed block folds correctly, green on fresh numbered AND legacy flat (open-threads + skill resolve
+  to the right dir), zips rebuilt + clean-extract ships the skill, check-terminology clean.
+- Then fold in against the richer target: P4 project adoption (asks 3,4),
   P5 per-tool memory bridge + multi-agent (asks 6,7), P6 consent-gated ingestion (ask 1),
   P7 self-wiring, generator-independent (ask 2).
 

@@ -588,6 +588,19 @@ _Starter. Edit to fit {{identity.name}}._
 - Verify before claiming done.
 - Respect the privacy wall: personal context stays local unless opted in.
 """,
+    "06-context/open-threads.md": """# Open threads — loose ends not tied to a project
+
+_Non-project context to carry forward: half-finished ideas, questions to revisit, things
+you told the AI that don't belong to any one project. The session-end close-out writes here
+when no project is active, so nothing falls through the cracks. Prune as you resolve them.
+Back to [[HOME]]._
+
+## Active threads
+_(none yet — the close-out adds items here when there's no active project to hold them.)_
+
+## Parked / someday
+_(none yet)_
+""",
     "06-context/sessions/README.md": """# Session fragments — conflict-free across devices
 
 Each session records its block to its **own file** here

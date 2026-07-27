@@ -182,7 +182,11 @@ def cmd_verify(a):
 
 
 def cmd_session(a):
-    return lifecycle.session(core.require_workspace(), a.action)
+    return lifecycle.session(
+        core.require_workspace(), a.action,
+        summary=getattr(a, "summary", "") or "", next_=getattr(a, "next", "") or "",
+        machine=getattr(a, "machine", "") or "", surface=getattr(a, "surface", "") or "",
+        agent=getattr(a, "agent", "") or "", project=getattr(a, "project", "") or "")
 
 
 def cmd_sync(a):
@@ -385,8 +389,15 @@ def build_parser() -> argparse.ArgumentParser:
     pse.add_argument("--source", default=None, help="limit to one source id from the catalog")
     pse.set_defaults(fn=cmd_search)
 
-    ps = sub.add_parser("session", help="lifecycle file ops")
+    ps = sub.add_parser("session", help="lifecycle file ops (start · end · reconcile)")
     ps.add_argument("action", choices=["start", "end", "reconcile"])
+    # `end` writes an attributed session fragment; the session-end skill passes these.
+    ps.add_argument("--summary", default="", help="one-line session summary (end)")
+    ps.add_argument("--next", default="", help="the next action to resume from (end)")
+    ps.add_argument("--machine", default="", help="machine label (end; default: hostname)")
+    ps.add_argument("--surface", default="", help="AI surface, e.g. claude-code/cursor (end)")
+    ps.add_argument("--agent", default="", help="agent/model identity (end)")
+    ps.add_argument("--project", default="", help="project(s) this session touched (end)")
     ps.set_defaults(fn=cmd_session)
 
     psk = sub.add_parser("skill", help="create / list / reindex skills")

@@ -192,11 +192,13 @@ def _agents_md_body(root: Path, profile: dict) -> str:
         "- Record a real choice as an ADR in `context/decisions/` (copy `_TEMPLATE.md`).",
         "- Run `wsx health` to catch orphans, stale claims, and dangling typed edges.",
         "",
-        "## Session end (multi-device safe)",
-        "Record your session as a **fragment**: write your block to",
-        "`context/sessions/{date}-{short-id}.md` with a `SessionID:` line (never edit the",
-        "shared `session-log.md`), then run `wsx compact` and `wsx sync`. Disjoint fragment",
-        "files never collide across devices/sessions/surfaces.",
+        "## Session end (generalize, then record — multi-device safe)",
+        "Don't just write a summary. First **harvest** any generalizable insight into",
+        "`knowledge/`, **update every open `projects/<name>/PROJECT.md` live-handoff**, and if",
+        "no project is active put loose ends in `context/open-threads.md`. Then record the",
+        "session with `wsx session end` (stamps Agent · Surface · Machine, writes a conflict-free",
+        "`context/sessions/{date}-{id}.md` fragment, and folds it into `session-log.md`). Finally",
+        "`wsx sync`. Disjoint fragment files never collide across devices/sessions/surfaces.",
         "",
         "## Specialized skills",
         _skill_index_md(g["skills"]),
@@ -242,10 +244,11 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
         "cache), then skim the top of `context/project-context.md` and `context/session-log.md`",
         "for the active work. Respect the privacy wall: never read `context/personal.md`",
         "unless explicitly asked.",
-        "At session **end**, record what happened as a **fragment** — write your Session",
-        "Block to `context/sessions/{date}-{short-id}.md` with a `SessionID:` line (never",
-        "edit the shared `session-log.md` directly), then run `wsx compact` to fold it in",
-        "and `wsx sync` to push. Disjoint fragment files never collide across your devices.",
+        "At session **end**, follow the **session-end** skill (auto-loads on \"wrap up\" /",
+        "\"done for today\"): harvest generalizable insight into `knowledge/`, update every open",
+        "`projects/<name>/PROJECT.md` handoff (or `context/open-threads.md` if no project), then",
+        "`wsx session end` writes an attributed (Agent · Surface · Machine) conflict-free fragment",
+        "and folds it into `session-log.md`; finish with `wsx sync`. Fragments never collide across devices.",
         "",
         "## Projects (per-project documentation)",
         "Each project has a docs folder at `projects/<name>/PROJECT.md` (overview, where the",
@@ -334,6 +337,13 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
     maint.parent.mkdir(parents=True, exist_ok=True)
     maint.write_text(_resolve_dirs(root, _MAINTENANCE_SKILL), encoding="utf-8")
     written.append(maint)
+
+    # The close-out skill: harvest insight → knowledge, update project handoffs, record
+    # loose ends, write the attributed fragment. The judgment half of `wsx session end`.
+    send = root / ".claude" / "skills" / "session-end" / "SKILL.md"
+    send.parent.mkdir(parents=True, exist_ok=True)
+    send.write_text(_resolve_dirs(root, _SESSION_END_SKILL), encoding="utf-8")
+    written.append(send)
 
     # mirror skills into .claude/skills/<name>/SKILL.md so Claude Code discovers them.
     # A pulled skill stays byte-identical to its pin on disk; its owner's deltas live
@@ -555,6 +565,78 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+'''
+
+
+_SESSION_END_SKILL = '''---
+name: session-end
+description: >-
+  Close out a work session so nothing is lost and the next session (on any device, any
+  AI) can resume cleanly. Use when the person says "end of session", "wrap up", "done for
+  today", "save my work", "let's stop here", or asks to record/checkpoint the session.
+  You drive the tools — the person never runs a command.
+triggers:
+  - end of session
+  - end session
+  - wrap up
+  - done for today
+  - save my work
+  - checkpoint the session
+  - let's stop here
+---
+
+# Session close-out — harvest, save everywhere, then record
+
+Run this when a work session ends. The goal: **nothing generalizable is lost, every open
+project can be resumed, and the session is recorded with attribution.** Do the judgment
+steps yourself, then let `wsx` do the mechanical write. Never ask the person to type a command.
+
+## 1. Harvest generalizable insight → `knowledge/`
+Did this session produce something durable — a pattern that worked, a hard-won constraint,
+a piece of research worth not repeating? If so, write ONE entry per insight in
+`knowledge/`, following `context/conventions.md` (open with `## For future agent`; mark
+each claim timeless / dated / pointer; use typed `relations:` edges). If nothing durable
+came up, skip — don't manufacture filler.
+
+## 2. Update EVERY open project's live handoff
+For each project with a `projects/<name>/PROJECT.md`, update its **live handoff**: what
+changed this session, the current state, and the single next action to resume from. A
+future agent should be able to pick up from that block alone. (`wsx session end` lists the
+open projects for you.)
+
+## 3. No active project? Capture loose ends in `context/open-threads.md`
+If the session wasn't tied to a project, put anything worth carrying forward — an
+unfinished idea, a question to revisit, a decision you're still weighing — into
+`context/open-threads.md` so it isn't stranded in a fragment.
+
+## 4. Record durable decisions
+A load-bearing choice belongs in `context/memory/` (atomic) and/or an ADR in
+`context/decisions/` — not just the session summary. Do this for anything you'd be annoyed
+to see silently reversed later.
+
+## 5. Write the attributed session fragment (mechanical)
+Now record the session. Pass what you know; `wsx` stamps the machine and folds it in:
+
+```bash
+python3 wsx.py session end \\
+  --summary "<1–3 lines: what happened>" \\
+  --next "<the next action to resume from>" \\
+  --surface "<claude-code | cursor | …>" --agent "<model/agent>" \\
+  --project "<project(s) touched, or omit>"
+```
+
+This writes a conflict-free fragment (`context/sessions/<id>.md`) with Agent · Surface ·
+Machine, then `compact` folds it into `context/session-log.md` (newest-first). Disjoint
+fragments never collide across your devices or parallel agents.
+
+## 6. Sync
+Finally, `python3 wsx.py sync` to commit + push (if a remote is set).
+
+## Ground rules
+- You run the tools; the person never opens a terminal.
+- Respect the privacy wall: never surface `context/personal.md` unless asked.
+- Steps 1–4 are judgment (you do them); step 5 is the mechanical record. Don't skip 1–4
+  and just write a bare summary — the point is that insight and handoffs are saved too.
 '''
 
 
