@@ -154,6 +154,19 @@ guarantee — and it caught a real gap (Dataview `FROM "projects/x"` queries tha
 rewriter missed). Corollary: a graph checker that only counts INBOUND links (orphans) misses BROKEN
 OUTBOUND targets — verify outbound references resolve, separately.
 
+## A generator meeting a RICHER existing artifact: reference-mode adapter, not "upgrade"
+
+When a tool that scaffolds/normalizes is pointed at an artifact that already EXCEEDS its own
+model (wsx `upgrade` vs. a hand-built vault), "bring it up to the scaffold" is a downgrade:
+it clobbers a richer registry, fabricates placeholder identity, edits hand-authored files,
+and adds generic scaffold on top of better-organized content. The right move is a **thin
+adapter** — map the artifact's existing structure to the tool's concepts and operate in
+**reference mode** (read/analyze, never overwrite). Validated by literally running the
+destructive path on a *copy* first (801M vault, discarded) to catalog every negative outcome
+before writing a line of fix — the copy-test is the cheapest way to make a scary operation
+safe. Also: capture the "foreign" verdict BEFORE the tool mutates anything (e.g. before it
+drops its own `.wsx/`), or the guard flips mid-run and the protection silently fails.
+
 ## Ingesting outside content into a PUBLIC repo: consent + quarantine + scan, never auto-promote
 
 To pull scattered notes/projects into a public workspace safely: read-only copy to a **gitignored
