@@ -19,7 +19,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import core, layout, moc, scaffold
+from . import core, layout, moc, related, scaffold
 
 
 # --------------------------------------------------------------- migrations ---
@@ -178,10 +178,15 @@ def upgrade(root: Path, dry_run: bool = False) -> int:
     # Refresh the copied-in CLI so an older workspace becomes self-sufficient too
     # (and picks up new commands like `health`). Always safe: it's generated code.
     copied = []
+    related_changed = []
     if not dry_run:
         moc.write_mocs(root)
         copied = scaffold.copy_cli(root)
         scaffold.tools.write_tools(root)  # add the 09-tools scripts if missing
+        # Actively wire existing skills into the new typed `## Related` graph (idempotent,
+        # marker-delimited — only ever rewrites its own block). This is how an already-built
+        # workspace GAINS the connectivity infrastructure, not just avoids breaking.
+        related_changed = related.build(root)
 
     # Repair known-broken generated content + land a first commit if there is none.
     repairs = [r for r in (m(root, dry_run) for m in MIGRATIONS) if r]
@@ -203,6 +208,17 @@ def upgrade(root: Path, dry_run: bool = False) -> int:
     print(f"    ~ wsx.py + .wsx/wsxlib/  ({len(copied) or 'refreshed'} file(s))"
           if not dry_run else "    ~ wsx.py + .wsx/wsxlib/")
     print("      → run it here:  python3 wsx.py doctor")
+    gverb = "would weave" if dry_run else "wove"
+    print(f"\n  {gverb} the typed `## Related` graph across skills (path-links, hub-derived):")
+    if dry_run:
+        print("    ~ each skill's marker-delimited Related block (idempotent)")
+    elif related_changed:
+        for c in related_changed[:8]:
+            print(f"    ~ {c}")
+        if len(related_changed) > 8:
+            print(f"    …and {len(related_changed) - 8} more")
+    else:
+        print("    ~ up to date (no changes).")
     rverb = "would repair" if dry_run else "repaired"
     if repairs:
         print(f"\n  {rverb} known-stale generated content (your own writing untouched):")

@@ -30,6 +30,15 @@ def _rows(root: Path) -> list:
     return rows
 
 
+def _link(name: str) -> str:
+    """A PATH-based markdown link to a sibling skill, relative to the current skill's dir.
+
+    Every skill file is `SKILL.md`, so a `[[name]]` wikilink is ambiguous and does NOT
+    resolve in Obsidian (there is no `name.md`). A relative path link both resolves AND
+    draws the graph edge — the same reason the MOC layer uses path links for skills."""
+    return f"[{name}](../{name}/SKILL.md)"
+
+
 def _related_block(row: dict, rows: list) -> str:
     hub = row["hub"]
     members = [r for r in rows if r["hub"] == hub and r["name"] != row["name"]]
@@ -39,19 +48,19 @@ def _related_block(row: dict, rows: list) -> str:
         if spokes:
             lines.append("Spokes in this hub:")
             for s in sorted(spokes, key=lambda r: r["name"]):
-                lines.append(f"- [[{s['name']}]]")
+                lines.append(f"- {_link(s['name'])}")
         else:
             lines.append("_(no spokes yet under this hub.)_")
     else:
         hub_row = next((r for r in rows if r["name"] == hub and r["kind"] == "hub"), None)
         if hub_row:
-            lines.append(f"Hub: [[{hub}]]")
+            lines.append(f"Hub: {_link(hub)}")
         sibs = [r for r in members if r["kind"] != "hub"]
         if sibs:
             lines.append("")
             lines.append("Sibling spokes:")
             for s in sorted(sibs, key=lambda r: r["name"]):
-                lines.append(f"- [[{s['name']}]]")
+                lines.append(f"- {_link(s['name'])}")
     lines.append(_END)
     return "\n".join(lines)
 
