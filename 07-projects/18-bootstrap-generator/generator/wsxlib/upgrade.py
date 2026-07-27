@@ -111,6 +111,10 @@ def _migrate_add_context(root: Path, dry_run: bool):
     """Older profiles predate `context` (personal-solo | work), which now gates every
     work/personal side-effect. Add it explicitly (a lone existing vault is personal-solo)
     so scope resolution isn't left to a silent default."""
+    # Only touch an EXISTING profile — never conjure one. On a hand-built vault with no
+    # profile.yaml, creating a stub here is what fabricated a junk profile in the test.
+    if not core.profile_path(root).exists():
+        return None
     prof = core.load_profile(root)
     if prof.get("context"):
         return None
@@ -156,7 +160,31 @@ def _regenerated(root: Path) -> list:
             f"{lay.name('context')}/profile.md"]  # mirror of profile.yaml — never stale
 
 
-def upgrade(root: Path, dry_run: bool = False) -> int:
+def _is_wsx_generated(root: Path) -> bool:
+    """A wsx-set-up workspace always has a profile.yaml (init writes it) or the copied CLI.
+    Absence of both on a content-rich vault means it's a HAND-BUILT foreign vault — `upgrade`
+    must not treat it as a wsx workspace to 'bring up to scaffold' (that's the downgrade
+    `examine` warns about)."""
+    return core.profile_path(root).exists() or (root / ".wsx" / "wsxlib").is_dir()
+
+
+def upgrade(root: Path, dry_run: bool = False, force: bool = False) -> int:
+    # Foreign-vault guard (A4). A rich hand-built vault that wsx didn't generate should NOT
+    # be scaffold-dumped / skill-edited. Refuse by default; `--force` overrides for someone
+    # who truly wants the scaffold. Mirrors examine's "exceeds the model — don't downgrade".
+    from . import examine
+    foreign = not _is_wsx_generated(root)
+    if foreign and examine._looks_like_workspace(root) and not force:
+        print("wsx upgrade — REFUSED: this looks like a hand-built vault wsx did NOT generate\n")
+        print("  It has no wsx profile, and (per `wsx examine`) likely EQUALS or EXCEEDS the wsx")
+        print("  model. Running the full corrective pass here would add generic scaffold, fabricate")
+        print("  a placeholder profile, and edit your own skill files — a downgrade, not an upgrade.")
+        print("\n  Safer paths:")
+        print("    wsx examine <path>     read-only readout (what, if anything, is missing)")
+        print("    wsx adapter <path>     map your existing folders to wsx concepts (no scaffolding)")
+        print("    wsx upgrade --force    override, if you REALLY want the scaffold added (not advised)")
+        return 0
+
     prof = core.load_profile(root)
     lay = layout.of(root)
     ctx = dict(prof)
@@ -183,10 +211,12 @@ def upgrade(root: Path, dry_run: bool = False) -> int:
         moc.write_mocs(root)
         copied = scaffold.copy_cli(root)
         scaffold.tools.write_tools(root)  # add the 09-tools scripts if missing
-        # Actively wire existing skills into the new typed `## Related` graph (idempotent,
-        # marker-delimited — only ever rewrites its own block). This is how an already-built
-        # workspace GAINS the connectivity infrastructure, not just avoids breaking.
-        related_changed = related.build(root)
+        # Weave the typed `## Related` graph across skills — but ONLY on a wsx-generated
+        # workspace. Use the `foreign` flag captured at the TOP (before copy_cli created
+        # `.wsx/`, which would otherwise flip the check): on a foreign vault (reached via
+        # --force) we must never auto-edit the person's hand-authored SKILL.md files.
+        if not foreign:
+            related_changed = related.build(root)
 
     # Repair known-broken generated content + land a first commit if there is none.
     repairs = [r for r in (m(root, dry_run) for m in MIGRATIONS) if r]

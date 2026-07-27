@@ -302,7 +302,8 @@ def cmd_examine(a):
 
 
 def cmd_upgrade(a):
-    return upgrade.upgrade(core.require_workspace(), dry_run=a.dry_run)
+    return upgrade.upgrade(core.require_workspace(), dry_run=a.dry_run,
+                           force=getattr(a, "force", False))
 
 
 def cmd_restructure(a):
@@ -507,6 +508,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     pu = sub.add_parser("upgrade", help="corrective pass: add missing scaffold + reconnect the graph")
     pu.add_argument("--dry-run", action="store_true", help="preview the plan without writing")
+    pu.add_argument("--force", action="store_true",
+                    help="override the foreign-vault guard (add scaffold to a hand-built vault — not advised)")
     pu.set_defaults(fn=cmd_upgrade)
 
     prs = sub.add_parser("restructure",

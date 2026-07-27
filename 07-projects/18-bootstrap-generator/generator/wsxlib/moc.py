@@ -218,6 +218,10 @@ def write_profile_mirror(root: Path) -> Path:
     machine source (profile.yaml said cursor, profile.md still said claude). Any file
     that restates profile.yaml has to be rebuilt whenever the profile changes.
     """
+    # No profile.yaml → this isn't a wsx-set-up vault; do NOT fabricate a placeholder
+    # profile.md (that injected junk identity into a hand-built vault in the upgrade test).
+    if not core.profile_path(root).exists():
+        return None
     prof = core.load_profile(root)
 
     def g(*path, default=""):
@@ -268,7 +272,9 @@ def write_profile_mirror(root: Path) -> Path:
 
 
 def write_mocs(root: Path) -> list:
-    """Regenerate the whole connective layer. Returns the files written."""
+    """Regenerate the whole connective layer. Returns the files written (None entries — e.g.
+    a skipped profile mirror on a profile-less vault — are dropped)."""
     from . import commands, registry  # local import: no cycle via moc
-    return [write_home(root), write_skills_index(root), write_projects_index(root),
-            write_profile_mirror(root), registry.build(root), commands.write(root)]
+    out = [write_home(root), write_skills_index(root), write_projects_index(root),
+           write_profile_mirror(root), registry.build(root), commands.write(root)]
+    return [p for p in out if p is not None]
