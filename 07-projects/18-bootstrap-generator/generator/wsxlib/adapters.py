@@ -875,6 +875,15 @@ ADAPTERS = {
 
 
 def emit(root: Path, target: str, profile: dict, manifest: dict) -> list:
+    # REFERENCE MODE: on an adapter-mapped foreign vault, the person's AGENTS.md/CLAUDE.md/
+    # .cursor rules are hand-authored — wsx must never regenerate over them. Refuse.
+    from . import adapter
+    if adapter.is_adapted(root):
+        print("wsx emit — SKIPPED: this vault is adapter-mapped (reference mode). Your")
+        print("  AGENTS.md/CLAUDE.md/.cursor files are hand-authored; wsx won't overwrite them.")
+        print("  (To add wsx-governed guidance without clobbering, use the profile/preferences")
+        print("  injection, which writes a bounded marker-delimited section.)")
+        return []
     if target == "all":
         from . import moc, tools
         written = []

@@ -164,7 +164,11 @@ def _is_wsx_generated(root: Path) -> bool:
     """A wsx-set-up workspace always has a profile.yaml (init writes it) or the copied CLI.
     Absence of both on a content-rich vault means it's a HAND-BUILT foreign vault — `upgrade`
     must not treat it as a wsx workspace to 'bring up to scaffold' (that's the downgrade
-    `examine` warns about)."""
+    `examine` warns about). An ADAPTED vault (`.wsx/adapter.json`) is explicitly foreign even
+    though `wsx adapter` copied the CLI into `.wsx/`."""
+    from . import adapter
+    if adapter.is_adapted(root):
+        return False
     return core.profile_path(root).exists() or (root / ".wsx" / "wsxlib").is_dir()
 
 
@@ -172,9 +176,9 @@ def upgrade(root: Path, dry_run: bool = False, force: bool = False) -> int:
     # Foreign-vault guard (A4). A rich hand-built vault that wsx didn't generate should NOT
     # be scaffold-dumped / skill-edited. Refuse by default; `--force` overrides for someone
     # who truly wants the scaffold. Mirrors examine's "exceeds the model — don't downgrade".
-    from . import examine
+    from . import adapter, examine
     foreign = not _is_wsx_generated(root)
-    if foreign and examine._looks_like_workspace(root) and not force:
+    if foreign and (adapter.is_adapted(root) or examine._looks_like_workspace(root)) and not force:
         print("wsx upgrade — REFUSED: this looks like a hand-built vault wsx did NOT generate\n")
         print("  It has no wsx profile, and (per `wsx examine`) likely EQUALS or EXCEEDS the wsx")
         print("  model. Running the full corrective pass here would add generic scaffold, fabricate")

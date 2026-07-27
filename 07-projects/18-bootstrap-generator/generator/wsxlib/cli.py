@@ -14,6 +14,7 @@
   wsx ingest [discover|<path>]   consent-gated ingestion of outside notes/projects (secret-scanned; --apply to promote)
   wsx archive <path> [--reason]  retire a note with provenance (never delete)
   wsx examine [--json]           read-only: what an existing workspace still needs (augment additively)
+  wsx adapter [<path>]           map a HAND-BUILT vault to wsx concepts (reference mode — no scaffolding/clobbering)
   wsx diagnose [--fix]           report problems in an EXISTING workspace; --fix applies the safe corrections
   wsx help                       the command cheat sheet (also written to COMMANDS.md)
   wsx wire                       self-wire: connect any unexpected dir/orphan/un-indexed skill (generator-independent)
@@ -33,9 +34,9 @@ from __future__ import annotations
 import argparse
 import sys
 
-from . import (adapters, archive, bridges, commands, core, diagnose, examine, gitscope,
-               health, ingest, lifecycle, projects, resolver, restructure, scaffold, scan,
-               search, skills, upgrade, wire)
+from . import (adapter, adapters, archive, bridges, commands, core, diagnose, examine,
+               gitscope, health, ingest, lifecycle, projects, resolver, restructure, scaffold,
+               scan, search, skills, upgrade, wire)
 
 
 # profile fields that are lists — `set` splits these on commas (and accepts [a, b] form).
@@ -295,6 +296,12 @@ def cmd_archive(a):
     return archive.archive(core.require_workspace(), a.path, a.reason)
 
 
+def cmd_adapter(a):
+    from pathlib import Path as _P
+    root = _P(a.path or ".").resolve()
+    return adapter.create(root) if getattr(a, "refresh", False) else adapter.run(root)
+
+
 def cmd_examine(a):
     # examine works on a non-wsx path too (foreign-workspace mode), so it does NOT
     # require_workspace — it resolves and dispatches itself.
@@ -500,6 +507,12 @@ def build_parser() -> argparse.ArgumentParser:
     par.add_argument("path", help="path to the note, relative to the workspace")
     par.add_argument("--reason", default="", help="why it is being retired")
     par.set_defaults(fn=cmd_archive)
+
+    pad2 = sub.add_parser("adapter",
+                          help="map a HAND-BUILT vault to wsx concepts (reference mode; no scaffolding)")
+    pad2.add_argument("path", nargs="?", default="", help="path to the vault (default: current dir)")
+    pad2.add_argument("--refresh", action="store_true", help="re-detect + rewrite the concept map")
+    pad2.set_defaults(fn=cmd_adapter)
 
     pex = sub.add_parser("examine", help="read-only: what an existing workspace needs (interview coverage + gaps)")
     pex.add_argument("path", nargs="?", default=".", help="workspace path (default: current dir; works on foreign layouts too)")

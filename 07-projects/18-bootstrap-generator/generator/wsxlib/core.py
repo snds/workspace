@@ -23,10 +23,13 @@ SCHEMAS = GEN_ROOT / "schemas"
 
 # ---------------------------------------------------------------- workspace ---
 def find_workspace_root(start: str | None = None) -> Path | None:
-    """Walk up from `start` (or cwd) to the nearest wsx workspace (numbered OR flat)."""
+    """Walk up from `start` (or cwd) to the nearest workspace: a wsx-generated one
+    (`manifest.json`) OR a hand-built vault adapted via `wsx adapter` (`.wsx/adapter.json`).
+    Either way it must have the marker content dir (numbered OR flat)."""
     p = Path(start or os.getcwd()).resolve()
     for cand in [p, *p.parents]:
-        if (cand / "manifest.json").exists() and layout.has_workspace_dirs(cand):
+        marked = (cand / "manifest.json").exists() or (cand / ".wsx" / "adapter.json").exists()
+        if marked and layout.has_workspace_dirs(cand):
             return cand
     return None
 

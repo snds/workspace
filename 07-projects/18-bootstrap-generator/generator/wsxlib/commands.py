@@ -45,6 +45,7 @@ GROUPS = [
         ("python3 wsx.py upgrade", "non-destructive corrective pass (adds missing pieces, reconnects the graph)"),
         ("python3 wsx.py restructure --apply", "migrate a legacy flat layout → numbered (dry-run by default; --rollback)"),
         ("python3 wsx.py examine", "read-only: what this workspace still needs"),
+        ("python3 wsx.py adapter <path>", "bring wsx tooling to a HAND-BUILT vault safely (reference mode)"),
         ("python3 wsx.py archive <path> --reason \"…\"", "retire a note with provenance (never delete)"),
     ]),
     ("Hosting & identity (git)", [

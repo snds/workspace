@@ -107,9 +107,29 @@ def _ensure_trackable(root: Path, d: Path) -> bool:
 
 # ----------------------------------------------------------------------- wire ---
 def wire(root: Path) -> int:
-    from . import adapters, moc, skills
+    from . import adapter, adapters, moc, skills
+    # REFERENCE MODE: on an adapter-mapped foreign vault, wire's job (regenerate the derived
+    # layer + re-emit adapters) would overwrite hand-authored content. Do only the ADDITIVE,
+    # non-colliding part — give any unanticipated dir an _INDEX so its notes are reachable —
+    # and skip HOME/index/adapter regeneration.
+    adapted = adapter.is_adapted(root)
     lay = layout.of(root)
     changed = {"indexed": [], "trackable": [], "extras": []}
+    if adapted:
+        extras = discover_extras(root)
+        for d in extras:
+            if _ensure_index(d):
+                changed["indexed"].append(f"{d.name}/_INDEX.md")
+            if _ensure_trackable(root, d):
+                changed["trackable"].append(d.name)
+        print(f"wsx wire — reference mode (adapter-mapped vault): additive wiring only\n")
+        if extras:
+            print(f"  indexed {len(changed['indexed'])} unanticipated dir(s); whitelisted "
+                  f"{len(changed['trackable'])}. Your HOME/adapters are left untouched.")
+        else:
+            print("  nothing loose. (Your HOME, indexes, and adapters are hand-authored — wsx")
+            print("  won't regenerate them in reference mode.)")
+        return 0
 
     # 1. discovery — unanticipated content dirs → wire per the "other" intent.
     extras = discover_extras(root)

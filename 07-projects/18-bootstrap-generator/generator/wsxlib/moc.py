@@ -273,8 +273,14 @@ def write_profile_mirror(root: Path) -> Path:
 
 def write_mocs(root: Path) -> list:
     """Regenerate the whole connective layer. Returns the files written (None entries — e.g.
-    a skipped profile mirror on a profile-less vault — are dropped)."""
-    from . import commands, registry  # local import: no cycle via moc
+    a skipped profile mirror on a profile-less vault — are dropped).
+
+    REFERENCE MODE: on an adapter-mapped foreign vault the person's HOME / indexes / adapters
+    are hand-authored and authoritative — wsx must not overwrite them. We only build the
+    non-colliding, wsx-owned registry (as `.wsx.json`), nothing else."""
+    from . import adapter, commands, registry  # local import: no cycle via moc
+    if adapter.is_adapted(root):
+        return [registry.build(root)]
     out = [write_home(root), write_skills_index(root), write_projects_index(root),
            write_profile_mirror(root), registry.build(root), commands.write(root)]
     return [p for p in out if p is not None]
