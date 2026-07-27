@@ -55,8 +55,9 @@ generator/
     ingest.py             # `wsx ingest discover|<path> [--apply]` — consent-gated: discover (top-level, no deep crawl) → quarantine + secret-scan (block) → classify (project/knowledge/framework) → propose → promote only safe docs on --apply
     upgrade.py            # `wsx upgrade` — non-destructive corrective pass (adds missing scaffold, weaves the Related graph)
     restructure.py        # `wsx restructure` — flat→numbered migration; dry-run default, backup+ledger, baseline-diff broken-ref GATE (auto-rollback), --rollback
-    diagnose.py           # `wsx diagnose [--fix]` — report problems in an EXISTING workspace + traverse ALL refs (typed edges + md-links + Dataview) to confirm they resolve; --fix applies safe non-destructive corrections with a before/after break-audit
+    diagnose.py           # `wsx diagnose [--fix]` — report problems in an EXISTING workspace + traverse ALL refs (typed edges + md-links + Dataview) to confirm they resolve; --fix applies safe non-destructive corrections (incl. wire) with a before/after break-audit
     commands.py           # ONE source of truth for the command cheat sheet → `wsx help` + generated COMMANDS.md
+    wire.py               # `wsx wire` — discovery-driven self-wiring off a declarative INTENT registry: connect any unanticipated content dir (HOME 'Other areas' + _INDEX + git-trackable), un-indexed skills; generalizes moc/emit; idempotent; runs off the copied-in .wsx CLI (no generator needed)
     restructure.py        # `wsx restructure` — migrate a legacy FLAT workspace up to the numbered taxonomy (dry-run default; backup + rewire + verify + rollback)
     health.py             # `wsx health` — vault graph hygiene (orphans, stale claims, dangling edges)
     scan.py               # `wsx scan` — detect agents/chat apps/MCP/local LLMs (+ --find-workspaces)

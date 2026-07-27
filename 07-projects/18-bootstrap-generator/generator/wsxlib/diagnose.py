@@ -156,6 +156,17 @@ def _check_emitted(root: Path) -> list:
     return [_finding("ok", "adapters", "adapter files present.")]
 
 
+def _check_wiring(root: Path) -> list:
+    """Unanticipated content dirs whose notes aren't wired in yet (no _INDEX → orphaned)."""
+    from . import wire
+    unwired = [d.name for d in wire.discover_extras(root) if not (d / "_INDEX.md").exists()]
+    if unwired:
+        return [_finding("warn", "wiring",
+                         f"{len(unwired)} unanticipated content dir(s) not wired in: {', '.join(unwired[:5])}.",
+                         "`wsx wire` connects them (HOME + an index + git-trackable)")]
+    return [_finding("ok", "wiring", "all content dirs are wired into the graph.")]
+
+
 def _check_cli_copy(root: Path) -> list:
     ver = root / ".wsx" / "VERSION"
     if not (root / ".wsx" / "wsxlib").is_dir() or not (root / "wsx.py").exists():
@@ -196,7 +207,7 @@ _CHECKS = [
     ("scaffold", _check_scaffold), ("integrity", _check_integrity),
     ("skills", _check_manifest_drift), ("adapters", _check_emitted),
     ("graph", _check_graph), ("references", _check_references),
-    ("self-sufficiency", _check_cli_copy), ("git", _check_git),
+    ("wiring", _check_wiring), ("self-sufficiency", _check_cli_copy), ("git", _check_git),
 ]
 
 
@@ -211,12 +222,13 @@ def collect(root: Path) -> list:
 def _apply_fix(root: Path) -> None:
     """Non-destructive corrections only: add missing scaffold + regenerate derived +
     refresh the copied CLI (upgrade), reindex the manifest, then re-emit adapters."""
-    from . import adapters, skills, upgrade
+    from . import adapters, skills, upgrade, wire
     print("\n— applying SAFE corrections (non-destructive: nothing hand-authored is overwritten) —\n")
     upgrade.upgrade(root)
     skills.reindex(root)
     prof = core.load_profile(root)
     adapters.emit(root, "all", prof, core.load_manifest(root))
+    wire.wire(root)  # discovery-driven: index + link + git-track any unanticipated dir
     print("\n— re-checking —")
 
 

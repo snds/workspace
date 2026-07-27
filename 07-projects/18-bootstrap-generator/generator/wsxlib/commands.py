@@ -41,6 +41,7 @@ GROUPS = [
     ]),
     ("Maintain & migrate", [
         ("python3 wsx.py diagnose", "report what's wrong/stale in this workspace (add --fix for the safe corrections)"),
+        ("python3 wsx.py wire", "connect anything loose — an unexpected dir, orphan notes, an un-indexed skill"),
         ("python3 wsx.py upgrade", "non-destructive corrective pass (adds missing pieces, reconnects the graph)"),
         ("python3 wsx.py restructure --apply", "migrate a legacy flat layout → numbered (dry-run by default; --rollback)"),
         ("python3 wsx.py examine", "read-only: what this workspace still needs"),

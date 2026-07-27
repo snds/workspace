@@ -185,7 +185,31 @@ phases. Locked decisions: ingestion = consent+quarantine+scan; project adoption 
   proposal (app.py NOT copied), nothing auto-committed; green; discover 0.1s; zips + clean-extract ship
   secretscan+ingest; terminology clean.** (Gotcha noted: a reused test workspace runs its STALE `.wsx`
   copy — always test ingest changes on a FRESH init or after `wsx upgrade`.)
-- Then: P7 self-wiring, generator-independent (ask 2) — the last phase.
+- **P7 — self-wiring, generator-independent (ask 2): ✅ DONE 2026-07-27. FINAL PHASE.** New `wire.py`
+  + `wsx wire`: a discovery-driven pass over a declarative **wiring-intent registry** (`INTENT`:
+  dir-kind → {home, index, registry, trackable}). It finds anything loose — **unanticipated top-level
+  content dirs** the taxonomy doesn't own, un-indexed skills, dirs accidentally gitignored — and wires
+  each to every destination the registry implies: gives it an `_INDEX.md` (notes reachable), links it
+  from a discovery-driven **HOME "Other areas"** section (moc.write_home now calls `wire.discover_extras`),
+  adds a `!<dir>/` **gitignore whitelist** negation if it was ignored, reindexes skills, and re-emits
+  all adapters/hooks/tools. Idempotent; runs off the **copied-in `.wsx` CLI with NO generator present**.
+  Wired into `diagnose` (reports unwired dirs; `--fix` runs wire). **Verify (exact plan fixture): an
+  unexpected `10-research/` with a note → wire linked it from HOME + created its `_INDEX` + (when the
+  dir was gitignored) whitelisted it; re-run a no-op; green; generator-independent (`.wsx/wsxlib/wire.py`);
+  clean-extract self-wires; fresh-init sweep clean (worst 0.17s); terminology clean.**
+
+## ✅ v0.2 ROADMAP COMPLETE (2026-07-27)
+All 7 phases shipped + tested + committed: **R1** (numbered taxonomy default + neutral automation),
+**R2** (flat→numbered migration w/ zero-broken-ref gate), **P3** (session-end generalization),
+**P4** (project adopt reference-in-place), **P5** (per-tool memory bridge + multi-agent SessionIDs),
+**P6** (consent-gated ingestion + secret-scan), **P7** (self-wiring). Plus tester-driven additions:
+**identity anchor** (Olga's connector-confusion), **cross-session auto-orient** (Olga's "ask every
+time"), **command cheat sheet + self-sufficiency** (schemas copied in), **diagnose** (error-reporting
++ correction for existing workspaces, full reference-integrity traversal), and the **find-workspaces
+cloud-walk fix**. Discipline established: test CLI changes on a FRESH init (or after `wsx upgrade`),
+never a reused workspace (stale `.wsx` copy masks fixes/regressions).
+Commits: R1 60a4ac4 · R2 758dc63 · R2-harden 6b5b71b · P3 c1cfb60 · anchor 53a9e88 · P4 187c644 ·
+P5 64fec3a · P5-followup fc3f1d8 · cheatsheet+diagnose 4fbaeb1 · P6 01f330b · find-ws 8acd0fc · P7 (this).
 
 ## Current state (rewritten atomically — no stale fields)
 

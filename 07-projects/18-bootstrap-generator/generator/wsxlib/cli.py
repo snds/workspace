@@ -16,6 +16,7 @@
   wsx examine [--json]           read-only: what an existing workspace still needs (augment additively)
   wsx diagnose [--fix]           report problems in an EXISTING workspace; --fix applies the safe corrections
   wsx help                       the command cheat sheet (also written to COMMANDS.md)
+  wsx wire                       self-wire: connect any unexpected dir/orphan/un-indexed skill (generator-independent)
   wsx upgrade [--dry-run]        corrective pass: add missing scaffold + reconnect graph
   wsx restructure [--apply]      migrate a legacy FLAT workspace up to the numbered taxonomy (dry-run default; --rollback to undo)
   wsx scan [--find-workspaces]   detect your stack (+ locate existing workspaces to update)
@@ -34,7 +35,7 @@ import sys
 
 from . import (adapters, archive, bridges, commands, core, diagnose, examine, gitscope,
                health, ingest, lifecycle, projects, resolver, restructure, scaffold, scan,
-               search, skills, upgrade)
+               search, skills, upgrade, wire)
 
 
 # profile fields that are lists — `set` splits these on commas (and accepts [a, b] form).
@@ -249,6 +250,10 @@ def cmd_diagnose(a):
     return diagnose.diagnose(core.require_workspace(), fix=a.fix)
 
 
+def cmd_wire(a):
+    return wire.wire(core.require_workspace())
+
+
 def cmd_doctor(a):
     return lifecycle.doctor()
 
@@ -357,6 +362,7 @@ def build_parser() -> argparse.ArgumentParser:
     for name, fn, helptext in [
         ("help", cmd_help, "the command cheat sheet (also written to COMMANDS.md)"),
         ("doctor", cmd_doctor, "check your environment + what to do next"),
+        ("wire", cmd_wire, "connect anything loose (unexpected dirs, orphan notes, un-indexed skills)"),
         ("lint", cmd_lint, "validate skills + manifest"),
         ("health", cmd_health, "vault graph hygiene: orphans, stale claims, dangling edges"),
         ("verify", cmd_verify, "dry-run load per target"),

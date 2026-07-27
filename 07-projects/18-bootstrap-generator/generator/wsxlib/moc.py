@@ -183,6 +183,17 @@ def write_home(root: Path) -> Path:
         f"## [Knowledge]({K}/README.md)",
         f"- [Index]({K}/_INDEX.md) — durable insight: validated patterns, constraints, research.",
         "",
+    ]
+    # Discovery-driven: link any UNANTICIPATED content dir so it's never stranded off the graph.
+    from . import wire  # local import: wire -> moc, avoid a module-load cycle
+    extras = wire.discover_extras(root)
+    if extras:
+        lines.append("## Other areas")
+        for d in extras:
+            target = f"{d.name}/_INDEX.md" if (d / "_INDEX.md").exists() else d.name
+            lines.append(f"- [{d.name}]({target}) — wired in by `wsx wire`.")
+        lines.append("")
+    lines += [
         "## Running it yourself",
         "- [Command cheat sheet](COMMANDS.md) — every `wsx` command (run `python3 wsx.py <cmd>`).",
         "  You rarely need it — your AI drives the tools — but it's here if you or an LLM want to.",
