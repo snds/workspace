@@ -10,6 +10,7 @@
   wsx health                     vault graph hygiene: orphans, stale claims, dangling edges
   wsx verify                     dry-run load per target
   wsx project new|list|adopt     per-project docs (adopt = reference an EXISTING repo/folder in place)
+  wsx bridge list|extract|point  connect other AI tools: read their memory (→ quarantine) · point them here
   wsx archive <path> [--reason]  retire a note with provenance (never delete)
   wsx examine [--json]           read-only: what an existing workspace still needs (augment additively)
   wsx upgrade [--dry-run]        corrective pass: add missing scaffold + reconnect graph
@@ -28,7 +29,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from . import (adapters, archive, core, examine, gitscope, health, lifecycle,
+from . import (adapters, archive, bridges, core, examine, gitscope, health, lifecycle,
                projects, resolver, restructure, scaffold, scan, search, skills, upgrade)
 
 
@@ -263,6 +264,10 @@ def cmd_project(a):
     raise SystemExit("error: project expects new|list|adopt")
 
 
+def cmd_bridge(a):
+    return bridges.run(core.require_workspace(), a.bridge_cmd, tool=getattr(a, "tool", "") or "")
+
+
 def cmd_archive(a):
     return archive.archive(core.require_workspace(), a.path, a.reason)
 
@@ -439,6 +444,16 @@ def build_parser() -> argparse.ArgumentParser:
     pad.add_argument("--import-docs", dest="import_docs", action="store_true",
                      help="copy a PLAIN folder's loose docs into notes/ (ignored for git repos; skips secrets)")
     ppr.set_defaults(fn=cmd_project)
+
+    pbr = sub.add_parser("bridge",
+                         help="connect other AI tools: list · extract their memory · point them here")
+    brsub = pbr.add_subparsers(dest="bridge_cmd", required=True)
+    brsub.add_parser("list", help="show your AI tools + memory/pointer status")
+    bre = brsub.add_parser("extract", help="copy a tool's memory into read-only quarantine")
+    bre.add_argument("tool", nargs="?", default="", help="one tool id (default: all installed)")
+    brp = brsub.add_parser("point", help="write a workspace pointer into a tool's own config")
+    brp.add_argument("tool", nargs="?", default="", help="one tool id (default: all installed)")
+    pbr.set_defaults(fn=cmd_bridge)
 
     par = sub.add_parser("archive", help="retire a note with provenance (never delete)")
     par.add_argument("path", help="path to the note, relative to the workspace")

@@ -325,6 +325,24 @@ def _archive_old_blocks(log_path: Path) -> int:
 
 
 # ----------------------------------------------------------------- session ---
+def _sid_token(s: str, n: int = 8) -> str:
+    """A short filesystem-safe token from a free-text field (surface/machine)."""
+    keep = "".join(c if c.isalnum() else "-" for c in str(s).lower()).strip("-")
+    return keep[:n] or "x"
+
+
+def _session_id(agent: str, surface: str, machine: str) -> str:
+    """SessionID namespaced per Agent·Surface·Machine (+ pid) so PARALLEL agents write
+    DISJOINT fragment files — two agents ending in the same second never collide. The
+    fragment model's conflict-freedom depends on this uniqueness."""
+    import hashlib
+    import os
+    base = f"{core.today()}-{core.now_stamp().split()[1].replace(':', '')}"
+    tag = "-".join(t for t in (_sid_token(surface), _sid_token(machine)) if t and t != "x")
+    uniq = hashlib.sha1(f"{agent}|{surface}|{machine}|{os.getpid()}".encode()).hexdigest()[:6]
+    return f"{base}-{tag}-{uniq}" if tag else f"{base}-{uniq}"
+
+
 def _open_projects(root: Path) -> list:
     """Names of projects that have a PROJECT.md (a live handoff to keep current)."""
     pdir = layout.of(root).dir("projects")
@@ -356,8 +374,8 @@ def session(root: Path, sub: str, summary: str = "", next_: str = "",
         projects = _open_projects(root)
         proj_line = project or (", ".join(projects) if projects else "(none)")
         # A conflict-free FRAGMENT (never a direct append to the shared log): disjoint files
-        # can't collide across devices/sessions. The block mirrors the readable log shape.
-        sid = f"{core.today()}-{core.now_stamp().split()[1].replace(':', '')}"
+        # can't collide across devices/sessions/parallel agents. The block mirrors the log shape.
+        sid = _session_id(agent, surface, machine)
         frag_dir = cdir / "sessions"
         frag_dir.mkdir(parents=True, exist_ok=True)
         frag = frag_dir / f"{sid}.md"

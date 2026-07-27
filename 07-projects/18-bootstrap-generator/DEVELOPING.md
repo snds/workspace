@@ -50,6 +50,7 @@ generator/
     related.py            # build-related — typed `## Related` graph woven from the hub front matter (marker-delimited, idempotent)
     tools.py              # writes the 09-tools scripts (build-registry/build-related/validate/check-terminology)
     projects.py           # `wsx project new|list|adopt` — per-project docs; adopt references an existing repo/folder in place (--move, --import-docs)
+    bridges.py            # `wsx bridge list|extract|point` — per-tool memory: extract other AI tools' memory → .wsx/quarantine/ (read-only, gitignored); point them back at the workspace (idempotent pointer)
     upgrade.py            # `wsx upgrade` — non-destructive corrective pass (adds missing scaffold, weaves the Related graph)
     restructure.py        # `wsx restructure` — flat→numbered migration; dry-run default, backup+ledger, baseline-diff broken-ref GATE (auto-rollback), --rollback
     restructure.py        # `wsx restructure` — migrate a legacy FLAT workspace up to the numbered taxonomy (dry-run default; backup + rewire + verify + rollback)

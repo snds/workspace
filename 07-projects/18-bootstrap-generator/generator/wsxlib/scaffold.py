@@ -108,6 +108,10 @@ private at zero token cost. `wsx scan` shows what's set up on this machine._
 .claude/logs/
 .claude/state/
 
+# Bridge quarantine — UNTRUSTED memory extracted from other AI tools. Never track it:
+# it hasn't been secret-scanned or consented into the vault (that's the ingestion pass).
+.wsx/quarantine/
+
 # OS noise
 .DS_Store
 **/.DS_Store

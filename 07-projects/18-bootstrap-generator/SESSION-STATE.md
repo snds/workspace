@@ -130,8 +130,24 @@ phases. Locked decisions: ingestion = consent+quarantine+scan; project adoption 
   remote/branch/stack captured, import refused) · plain folder (docs imported, `.env` skipped,
   provenance) · idempotent re-adopt (notes stable, 1 adoption block) · `--move` (relocated beside vault
   w/ .git) · verify/health/lint green · zips + clean-extract adopt works · terminology clean.
-- Then fold in against the richer target:
-  P5 per-tool memory bridge + multi-agent (asks 6,7), P6 consent-gated ingestion (ask 1),
+- **P5 — per-tool memory bridge + multi-agent accommodation (asks 6,7): ✅ DONE 2026-07-27.**
+  New `bridges.py` + `wsx bridge list|extract|point` over a per-tool registry (Claude Code, Codex,
+  Gemini, Cursor, Copilot, Windsurf, Continue, Cline, Roo, Aider, ChatGPT/Claude-desktop, Perplexity),
+  reusing `scan` detection. **extract** copies a tool's own memory/instructions into
+  `.wsx/quarantine/<tool>/` **read-only + manifest** — gitignored, never promoted (the consent-gated
+  ingestion pass scans/classifies it later); **skips secret-like files** (`.env`/`token`/`.key`/…) and
+  non-text. **point** writes an **idempotent, marker-delimited workspace pointer** into a tool's OWN
+  global config (`~/.claude/CLAUDE.md`, etc.) so it re-anchors here on every session — reinforcing the
+  identity anchor beyond the vault dir; tools without a safe global config get honest guidance. Never
+  clobbers; only writes when the tool's config dir exists. **Multi-agent:** `SessionID` now namespaced
+  per **Agent·Surface·Machine (+ pid)** so parallel agents write DISJOINT fragment files (proven: two
+  concurrent processes with identical agent/surface/machine at the same second → distinct SessionIDs;
+  two parallel `session end` both fold, 0 loss). The always-on re-anchor contract (alwaysApply cursor
+  rule + CLAUDE.md + hooks + MCP + identity anchor + bridge pointer) covers dynamic model swaps.
+  `.wsx/quarantine/` gitignored in the scaffold. **Tested** with a FAKE HOME (never touched real
+  configs): extract stages memory + skips `.env`; point is idempotent (1 block after 2 runs) + preserves
+  existing content; green; zips + clean-extract; terminology clean.
+- Then fold in against the richer target: P6 consent-gated ingestion (ask 1),
   P7 self-wiring, generator-independent (ask 2).
 
 ## Current state (rewritten atomically — no stale fields)
