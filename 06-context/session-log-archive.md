@@ -4,6 +4,80 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-07-09 — Beacon coverage closed: enroll helper shipped, six repos beaconed, audit false-MISS fix
+
+--- SESSION BLOCK ---
+Date: 2026-07-09
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 19-workspace-brain (final stretch of the fix-session thread) — beacon coverage + machine-layer hardening.
+Artifacts:
+  - 00-bootstrap/beacon-enroll.sh — new helper: one-command personal-repo beacon enrollment; mechanical personal/employer classification per the context-profile resolution order; --sweep/--apply/--commit; employer repos refused + recorded in beacon-repos.ignore.txt.
+Decisions:
+  - Beacon-paste split (Sean): claude.ai surfaces done + acked on Personal MBP; Cursor + Perplexity ride the Work MBP doctor-install session (ack state is per-machine, so nothing is lost).
+  - Enrollment stays human-gated only for UNKNOWN classifications; personal/employer resolve mechanically by remote — the doctor's nag now names the helper command (the nag IS the memory aid).
+  - Legion's beacon committed on its in-flight feature branch, deliberately unpushed (never publish Sean's WIP branch).
+Pending resolved:
+  - Curate beacon-repos.txt (six repos enrolled: Davinci/Legion/MediaSentinel/Nexus/SNDS/Zuora — all personal by remote; five pushed).
+  - claude.ai half of the beacon-paste item (pasted + acked by Sean; doctor verified clean).
+Next:
+  - Legion beacon reaches GitHub when `fix/gas-volume-halffloat-banding` pushes (or ask Claude to cherry-pick onto main).
+  - Work MBP doctor install (pending item) now also delivers beacon-enroll.sh via git.
+--- END BLOCK ---
+
+---
+
+### 2026-07-09 — MediaSentinel: Phase 9 "The Librarian" built + deployed (9.0/9.1/9.1c), perf fences, music UI
+
+--- SESSION BLOCK ---
+Date: 2026-07-09
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): MediaSentinel — Phase 9 "The Librarian" (plan → 9.0/9.1/9.1c built+deployed) + perf fences + music UI
+Artifacts:
+  - MediaSentinel repo (main, ~12 commits): docs/librarian-plan.md (Phase 9 plan + §15a operator briefs); librarian/ package (identity spine, resolve ladder, discography audit); metadata/ clients (MusicBrainz identity, AcoustID, iTunes, Deezer, Discogs, NetCache); perf throttle stack (container caps 8cpu/6g, proc.polite nice/ionice, worker caps, NDJSON streaming); music wall metrics + multi-disc merge + artist view + location-aware wall/list toggle; Apple-library sync (JXA exporter + launchd on this Mac + POST /api/apple-library) + diff-aware artwork backfill.
+  - Signal-flow artifact: https://claude.ai/code/artifact/cda6cd6e-722e-4185-86e6-13202f9d4b85
+Decisions:
+  - Identity doctrine: evidence families A–E, tiers T0–T4, tags verified never trusted, missing data ≠ disagreement, entity only at ≥T3, T4 gated on 9.4 refute pass.
+  - Streaming co-mingling: anchored artist matching (≥2 album anchors) + per-album MB arbitration; genres are soft flags.
+  - Apple personal library: Mac-side export (no Apple auth); MusicKit user-token flow is the paid upgrade path; web-token bootstrap rejected (ToS/fragility).
+  - Unraid host freeze root-caused (unfenced container + 366MB rich print_json); fences now structural.
+Pending added:
+  - Build unified priority work queue (POST /api/evaluate, preemption via file-unit granularity) then era-aware series identity (WLIIA Carey/Tyler era map + manual override) — briefs in librarian-plan §15a.
+  - Wanted-list dedupe/kind filter; deploy-script readiness wait; 9.1b Discogs concordance + goldens; Newznab music searches.
+Next:
+  - New session: check resolve-tranche-1 + artwork backfill results on the box, then work queue → era map (session-start prompt provided in chat).
+--- END BLOCK ---
+
+### 2026-07-09 — Fix-session continuation: FX-15/16 done, spine files removed, acceptance test + harness re-run GREEN
+
+--- SESSION BLOCK ---
+Date: 2026-07-09
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 19-workspace-brain — same-session continuation on Sean's go-aheads.
+Artifacts:
+  - workspace_validation-report_v2.0_2026-07-09.md — post-fix compare scorecard (both v1.0 FAILs → PASS by execution)
+  - workspace_version-register_v1.1_2026-07-09.md — supersedes v1.0
+Decisions:
+  - 14-variable-icon-font-generator profile = centric-design (Sean: code-based but generates design assets).
+  - Home-dir spine files removed on Sean's confirm (byte-identical copies retained in ~/.project-spine/exports/).
+  - FX-16 resolved as option A: ABI line is the ritual block's first line (CLAUDE.md + brain.mdc).
+  - Harness re-run right-sized: fresh headless Phases 0–1 + carried-forward PASSes, honesty strip says so.
+Pending resolved:
+  - FX-15 (standards externalized: preferences + davinci-ds-boilerplate + nexus-monorepo-playbook, indexed).
+  - FX-16 (ritual ABI). Harness re-run. Live Phase-A acceptance test (GREEN — note: CLI auth is separate from Desktop; `claude login` was the missing step).
+Next:
+  - Sean: paste beacon into 4 chat surfaces + --ack-chat (steps given in-session); machine installs on Work MBP/Windows when at those machines.
+  - Residuals R1–R3 in report v2.0 — none actionable now.
+--- END BLOCK ---
+
+---
+
+
 ### 2026-07-09 — Workspace fix session: FX-1..FX-14 applied (machine layer, dispatcher, triggers, standards, knowledge)
 
 --- SESSION BLOCK ---

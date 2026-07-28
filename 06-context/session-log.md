@@ -24,7 +24,101 @@ Keep entries concise. This is a handoff log, not a journal.
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
 
+> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
+
+
 ---
+
+### 2026-07-28 — Component contracts & schemas: framework §5a, portable model v0.2, SaaS DataTable plan
+
+SessionID: 2026-07-28-csk746-contracts
+
+--- SESSION BLOCK ---
+Date: 2026-07-28
+Agent: Claude Opus 5 (1M context)
+Machine: Work MacBook Pro
+Surface: Cursor (Claude Code extension)
+Project(s): Design-system foundations (framework #09 + knowledge/reference layer); SaaS PLM prototype
+  DataTable → TanStack replacement (employer — cpes-software/saas-plm-prototype; deliverables land in
+  the employer repo, NOT mirrored here per the separation rule)
+Artifacts:
+  - saas-proto_datatable-contract-plan_v1.0_2026-07-28.md — DataTable contract skeleton, three-phase
+    testimony→contract→signatories shape, per-phase gating criteria, TanStack boundary (machine-local,
+    05-artifacts is gitignored)
+Decisions:
+  - Adopted the contract/schema layer from Nathan Curtis (2026-07-28) + 4 peer sources: a description
+    informs, a contract ARBITRATES; Figma is a signatory, not the source; version schema and spec
+    separately. Seven principles restated as pass/fail GATES.
+  - Framework #09 gains §5a (the contract layer) rather than a new framework — it is a specialization
+    of the existing 18-facet schema, not a peer to it. Facets 1–17 inform; facet 18 arbitrates.
+  - §8d state model corrected: separating interaction/configuration/validation/selection was necessary
+    but insufficient — every state must also be classified browser-driven (hover/active/focus →
+    pseudo-class, OMITTED from the props interface) vs consumer-controlled (disabled/selected/expanded
+    → ARIA, in the interface). One classification drives both styling and API surface.
+  - C8 dgrid→TanStack work DEMOTED to supplementary for all SaaS SMB work (Sean's call). A legacy
+    feature inventory is testimony too; a contract derived from it can only specify a re-creation.
+    Roles retained: pitfall ledger · effort calibrator · parity horizon, consulted AFTER the draft.
+    Gate: every feature cites a user job, UX spec, or canon pattern.
+  - Growth horizon (Sean's call): SMB is the ENTRY POINT, not the ceiling. Scope down, don't shape
+    down — SMB sets the spec, the enterprise horizon sets the schema. Operative rule: MODEL THE AXIS,
+    SHIP ONE VALUE ON IT. Capability and entitlement stay orthogonal (tier boundaries move — the Figma
+    variable-mode-limits pattern), so packaging never goes in a component contract.
+  - Scoped OUT deliberately: no generator, no differ, no ADR log for the table migration — the
+    mid-size capacity trap ("both need it, the middle and the top; only one can run it").
+Knowledge written:
+  - 08-knowledge/design/component-contracts-and-schemas.md — definitions, the seven gates as tests,
+    investment gate, L0–L4 ladder, the wider field (Curtis/Specs · Vallaure/DS Contracts · Morales
+    Achiardi · Pitre · Onori/DSDS) + reconciliations, techniques worth stealing, §8 replacement rule,
+    §9 growth-horizon rule, standing rules. Indexed with 22 triggers.
+  - 02-shared-references/component-contract-schema.md — portable model v0.2: constitution (type–schema
+    symmetry · no runtime logic · stable API), typed model, state classification, variant-delta
+    layering + resolution algorithm, invalidPropConfigurations, $binding/$ref/$extensions conventions,
+    neutrality recipes, verification L1–L6 (incl. three-way differ), declared-heuristic rule, ADR
+    template, adoption path, format landscape.
+Pending added:
+  - SaaS PLM prototype DataTable contract → TanStack replacement (full context + first three moves in
+    project-context.md). Survey @ 6380a26: 16 files render `<table>` across 11,784 lines; MaterialsTable
+    1,320 lines / 20+ props; 2 aria-* and 0 role=/tabIndex across the six core table files; no
+    virtualization, no pagination, zero table tests.
+Deferred commits:
+  - .claude/hooks/dispatcher.py · 02-shared-references/delivery-playbooks/README.md ·
+    03-skills/pm-discovery-research/SKILL.md · 03-skills/ux-interaction-design/SKILL.md ·
+    03-skills/skills.registry.json — pre-existing dirty files, NOT from this session; left for their
+    owning session (see Step 7.5 note below).
+Next:
+  - Table work, in order: (1) classify all 16 `<table>` surfaces as component/recipe/snowflake/
+    not-a-table; (2) pin the 6 load-bearing behaviors with tests against the CURRENT implementation
+    (after the port, "equivalent" stops being testable); (3) author datatable.contract.yaml resolving
+    every feature's state `owner` and every §6.4 headroom axis. Only then start the port.
+  - Feature list derives from saas-plm-analysis/knowledge-discovery (ux/flows, ui/specs) + SMB jobs +
+    the pattern canon — cross-read, never copy across the employer boundary.
+--- END BLOCK ---
+
+---
+
+### 2026-07-28 — /doctor triage + workspace-doctor MISS ack (Work MBP main)
+
+SessionID: 2026-07-28-csk746-doctor
+
+--- SESSION BLOCK ---
+Date: 2026-07-28
+Machine: Work MacBook Pro
+Surface: Claude Code CLI
+Project(s): Workspace machine-layer maintenance
+Decisions:
+  - /doctor MCP connectors (claude.ai HyperFrames by HeyGen, Microsoft 365) left as-is — unauthenticated but harmless OAuth connectors; not authenticating or disconnecting (Sean's call).
+  - Beacon-enroll NOTEs left untouched: Projects/workspace = case-mismatch false positive (repo flags itself); Projects/design-system = employer (bitbucket/centricsoftware) → must stay OUT per standing rule; Projects/open-design = non-personal org (github.com/nexu-io) → needs classification before any enrollment.
+Actions:
+  - workspace-doctor --check on Work MBP main (CS-K746DRWXY1): all layers healthy, zero drift (hooks, settings.json, launchd timer, managed dist files).
+  - Acked 13 historical MISSes (chaos canary + 2026-07-09 FX-session employer/parent-dir/headless runs + pre-0fb7c15 ritual/ABI mismatch). ack-mark=2026-07-28T08:34:56; re-check clean.
+Pending added:
+  - Optional: record Projects/design-system + Projects/open-design in 00-bootstrap/dist/beacon-repos.ignore.txt to silence recurring doctor NOTEs (or enroll open-design if personal).
+Next:
+  - Other machines (Work MBP loaner, Windows Enterprise): run workspace-doctor + machine-layer installs per existing pending item.
+--- END BLOCK ---
+
+---
+
 
 ### 2026-07-27 (pt.2) — upgrade-safety, thin adapter, and captured voice/tone prefs
 
@@ -321,91 +415,7 @@ Next:
 
 ---
 
-### 2026-07-28 — Component contracts & schemas: framework §5a, portable model v0.2, SaaS DataTable plan
 
---- SESSION BLOCK ---
-Date: 2026-07-28
-Agent: Claude Opus 5 (1M context)
-Machine: Work MacBook Pro
-Surface: Cursor (Claude Code extension)
-Project(s): Design-system foundations (framework #09 + knowledge/reference layer); SaaS PLM prototype
-  DataTable → TanStack replacement (employer — cpes-software/saas-plm-prototype; deliverables land in
-  the employer repo, NOT mirrored here per the separation rule)
-Artifacts:
-  - saas-proto_datatable-contract-plan_v1.0_2026-07-28.md — DataTable contract skeleton, three-phase
-    testimony→contract→signatories shape, per-phase gating criteria, TanStack boundary (machine-local,
-    05-artifacts is gitignored)
-Decisions:
-  - Adopted the contract/schema layer from Nathan Curtis (2026-07-28) + 4 peer sources: a description
-    informs, a contract ARBITRATES; Figma is a signatory, not the source; version schema and spec
-    separately. Seven principles restated as pass/fail GATES.
-  - Framework #09 gains §5a (the contract layer) rather than a new framework — it is a specialization
-    of the existing 18-facet schema, not a peer to it. Facets 1–17 inform; facet 18 arbitrates.
-  - §8d state model corrected: separating interaction/configuration/validation/selection was necessary
-    but insufficient — every state must also be classified browser-driven (hover/active/focus →
-    pseudo-class, OMITTED from the props interface) vs consumer-controlled (disabled/selected/expanded
-    → ARIA, in the interface). One classification drives both styling and API surface.
-  - C8 dgrid→TanStack work DEMOTED to supplementary for all SaaS SMB work (Sean's call). A legacy
-    feature inventory is testimony too; a contract derived from it can only specify a re-creation.
-    Roles retained: pitfall ledger · effort calibrator · parity horizon, consulted AFTER the draft.
-    Gate: every feature cites a user job, UX spec, or canon pattern.
-  - Growth horizon (Sean's call): SMB is the ENTRY POINT, not the ceiling. Scope down, don't shape
-    down — SMB sets the spec, the enterprise horizon sets the schema. Operative rule: MODEL THE AXIS,
-    SHIP ONE VALUE ON IT. Capability and entitlement stay orthogonal (tier boundaries move — the Figma
-    variable-mode-limits pattern), so packaging never goes in a component contract.
-  - Scoped OUT deliberately: no generator, no differ, no ADR log for the table migration — the
-    mid-size capacity trap ("both need it, the middle and the top; only one can run it").
-Knowledge written:
-  - 08-knowledge/design/component-contracts-and-schemas.md — definitions, the seven gates as tests,
-    investment gate, L0–L4 ladder, the wider field (Curtis/Specs · Vallaure/DS Contracts · Morales
-    Achiardi · Pitre · Onori/DSDS) + reconciliations, techniques worth stealing, §8 replacement rule,
-    §9 growth-horizon rule, standing rules. Indexed with 22 triggers.
-  - 02-shared-references/component-contract-schema.md — portable model v0.2: constitution (type–schema
-    symmetry · no runtime logic · stable API), typed model, state classification, variant-delta
-    layering + resolution algorithm, invalidPropConfigurations, $binding/$ref/$extensions conventions,
-    neutrality recipes, verification L1–L6 (incl. three-way differ), declared-heuristic rule, ADR
-    template, adoption path, format landscape.
-Pending added:
-  - SaaS PLM prototype DataTable contract → TanStack replacement (full context + first three moves in
-    project-context.md). Survey @ 6380a26: 16 files render `<table>` across 11,784 lines; MaterialsTable
-    1,320 lines / 20+ props; 2 aria-* and 0 role=/tabIndex across the six core table files; no
-    virtualization, no pagination, zero table tests.
-Deferred commits:
-  - .claude/hooks/dispatcher.py · 02-shared-references/delivery-playbooks/README.md ·
-    03-skills/pm-discovery-research/SKILL.md · 03-skills/ux-interaction-design/SKILL.md ·
-    03-skills/skills.registry.json — pre-existing dirty files, NOT from this session; left for their
-    owning session (see Step 7.5 note below).
-Next:
-  - Table work, in order: (1) classify all 16 `<table>` surfaces as component/recipe/snowflake/
-    not-a-table; (2) pin the 6 load-bearing behaviors with tests against the CURRENT implementation
-    (after the port, "equivalent" stops being testable); (3) author datatable.contract.yaml resolving
-    every feature's state `owner` and every §6.4 headroom axis. Only then start the port.
-  - Feature list derives from saas-plm-analysis/knowledge-discovery (ux/flows, ui/specs) + SMB jobs +
-    the pattern canon — cross-read, never copy across the employer boundary.
---- END BLOCK ---
-
----
-
-### 2026-07-28 — /doctor triage + workspace-doctor MISS ack (Work MBP main)
-
---- SESSION BLOCK ---
-Date: 2026-07-28
-Machine: Work MacBook Pro
-Surface: Claude Code CLI
-Project(s): Workspace machine-layer maintenance
-Decisions:
-  - /doctor MCP connectors (claude.ai HyperFrames by HeyGen, Microsoft 365) left as-is — unauthenticated but harmless OAuth connectors; not authenticating or disconnecting (Sean's call).
-  - Beacon-enroll NOTEs left untouched: Projects/workspace = case-mismatch false positive (repo flags itself); Projects/design-system = employer (bitbucket/centricsoftware) → must stay OUT per standing rule; Projects/open-design = non-personal org (github.com/nexu-io) → needs classification before any enrollment.
-Actions:
-  - workspace-doctor --check on Work MBP main (CS-K746DRWXY1): all layers healthy, zero drift (hooks, settings.json, launchd timer, managed dist files).
-  - Acked 13 historical MISSes (chaos canary + 2026-07-09 FX-session employer/parent-dir/headless runs + pre-0fb7c15 ritual/ABI mismatch). ack-mark=2026-07-28T08:34:56; re-check clean.
-Pending added:
-  - Optional: record Projects/design-system + Projects/open-design in 00-bootstrap/dist/beacon-repos.ignore.txt to silence recurring doctor NOTEs (or enroll open-design if personal).
-Next:
-  - Other machines (Work MBP loaner, Windows Enterprise): run workspace-doctor + machine-layer installs per existing pending item.
---- END BLOCK ---
-
----
 
 ### 2026-07-21 — SaaS PLM prototype → centric-ui gap audit re-run; PR #1 refreshed for Olga's review
 
@@ -588,79 +598,6 @@ Pending:
   - Sol planet textures have NO recorded provenance (flagged UNVERIFIED in the credits registry) —
     must be resolved before any public release.
   - Gaia-mary map UX (labels, region box, grid, course plotting) now unblocked — next Legion focus.
---- END BLOCK ---
-
----
-
-### 2026-07-09 — Beacon coverage closed: enroll helper shipped, six repos beaconed, audit false-MISS fix
-
---- SESSION BLOCK ---
-Date: 2026-07-09
-Agent: Claude Fable 5
-Machine: Personal MacBook Pro
-Surface: Claude Code (Mac desktop app)
-Project(s): 19-workspace-brain (final stretch of the fix-session thread) — beacon coverage + machine-layer hardening.
-Artifacts:
-  - 00-bootstrap/beacon-enroll.sh — new helper: one-command personal-repo beacon enrollment; mechanical personal/employer classification per the context-profile resolution order; --sweep/--apply/--commit; employer repos refused + recorded in beacon-repos.ignore.txt.
-Decisions:
-  - Beacon-paste split (Sean): claude.ai surfaces done + acked on Personal MBP; Cursor + Perplexity ride the Work MBP doctor-install session (ack state is per-machine, so nothing is lost).
-  - Enrollment stays human-gated only for UNKNOWN classifications; personal/employer resolve mechanically by remote — the doctor's nag now names the helper command (the nag IS the memory aid).
-  - Legion's beacon committed on its in-flight feature branch, deliberately unpushed (never publish Sean's WIP branch).
-Pending resolved:
-  - Curate beacon-repos.txt (six repos enrolled: Davinci/Legion/MediaSentinel/Nexus/SNDS/Zuora — all personal by remote; five pushed).
-  - claude.ai half of the beacon-paste item (pasted + acked by Sean; doctor verified clean).
-Next:
-  - Legion beacon reaches GitHub when `fix/gas-volume-halffloat-banding` pushes (or ask Claude to cherry-pick onto main).
-  - Work MBP doctor install (pending item) now also delivers beacon-enroll.sh via git.
---- END BLOCK ---
-
----
-
-### 2026-07-09 — MediaSentinel: Phase 9 "The Librarian" built + deployed (9.0/9.1/9.1c), perf fences, music UI
-
---- SESSION BLOCK ---
-Date: 2026-07-09
-Agent: Claude Fable 5
-Machine: Personal MacBook Pro
-Surface: Claude Code (Mac desktop app)
-Project(s): MediaSentinel — Phase 9 "The Librarian" (plan → 9.0/9.1/9.1c built+deployed) + perf fences + music UI
-Artifacts:
-  - MediaSentinel repo (main, ~12 commits): docs/librarian-plan.md (Phase 9 plan + §15a operator briefs); librarian/ package (identity spine, resolve ladder, discography audit); metadata/ clients (MusicBrainz identity, AcoustID, iTunes, Deezer, Discogs, NetCache); perf throttle stack (container caps 8cpu/6g, proc.polite nice/ionice, worker caps, NDJSON streaming); music wall metrics + multi-disc merge + artist view + location-aware wall/list toggle; Apple-library sync (JXA exporter + launchd on this Mac + POST /api/apple-library) + diff-aware artwork backfill.
-  - Signal-flow artifact: https://claude.ai/code/artifact/cda6cd6e-722e-4185-86e6-13202f9d4b85
-Decisions:
-  - Identity doctrine: evidence families A–E, tiers T0–T4, tags verified never trusted, missing data ≠ disagreement, entity only at ≥T3, T4 gated on 9.4 refute pass.
-  - Streaming co-mingling: anchored artist matching (≥2 album anchors) + per-album MB arbitration; genres are soft flags.
-  - Apple personal library: Mac-side export (no Apple auth); MusicKit user-token flow is the paid upgrade path; web-token bootstrap rejected (ToS/fragility).
-  - Unraid host freeze root-caused (unfenced container + 366MB rich print_json); fences now structural.
-Pending added:
-  - Build unified priority work queue (POST /api/evaluate, preemption via file-unit granularity) then era-aware series identity (WLIIA Carey/Tyler era map + manual override) — briefs in librarian-plan §15a.
-  - Wanted-list dedupe/kind filter; deploy-script readiness wait; 9.1b Discogs concordance + goldens; Newznab music searches.
-Next:
-  - New session: check resolve-tranche-1 + artwork backfill results on the box, then work queue → era map (session-start prompt provided in chat).
---- END BLOCK ---
-
-### 2026-07-09 — Fix-session continuation: FX-15/16 done, spine files removed, acceptance test + harness re-run GREEN
-
---- SESSION BLOCK ---
-Date: 2026-07-09
-Agent: Claude Fable 5
-Machine: Personal MacBook Pro
-Surface: Claude Code (Mac desktop app)
-Project(s): 19-workspace-brain — same-session continuation on Sean's go-aheads.
-Artifacts:
-  - workspace_validation-report_v2.0_2026-07-09.md — post-fix compare scorecard (both v1.0 FAILs → PASS by execution)
-  - workspace_version-register_v1.1_2026-07-09.md — supersedes v1.0
-Decisions:
-  - 14-variable-icon-font-generator profile = centric-design (Sean: code-based but generates design assets).
-  - Home-dir spine files removed on Sean's confirm (byte-identical copies retained in ~/.project-spine/exports/).
-  - FX-16 resolved as option A: ABI line is the ritual block's first line (CLAUDE.md + brain.mdc).
-  - Harness re-run right-sized: fresh headless Phases 0–1 + carried-forward PASSes, honesty strip says so.
-Pending resolved:
-  - FX-15 (standards externalized: preferences + davinci-ds-boilerplate + nexus-monorepo-playbook, indexed).
-  - FX-16 (ritual ABI). Harness re-run. Live Phase-A acceptance test (GREEN — note: CLI auth is separate from Desktop; `claude login` was the missing step).
-Next:
-  - Sean: paste beacon into 4 chat surfaces + --ack-chat (steps given in-session); machine installs on Work MBP/Windows when at those machines.
-  - Residuals R1–R3 in report v2.0 — none actionable now.
 --- END BLOCK ---
 
 ---
