@@ -109,3 +109,7 @@ The data table work specifically involves migrating away from Dojo's `dgrid` tow
 - Dojo/dgrid legacy → `fw-dojo`
 - TanStack Table implementation → `fe-data-visualization`
 - Framework 02 (UX Operational) + Framework 05 (Last-Mile Craft) for component spec work
+- **Component *contracts*** (a table/component being replaced, or two implementations disagreeing) →
+  [[component-contracts-and-schemas]] (the seven gates + the investment gate) +
+  [[component-contract-schema]] (the portable model) + framework #09 §5a. A replacement is the
+  cheapest moment to buy a contract, because the contract *is* the definition of "equivalent."

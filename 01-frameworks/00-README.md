@@ -174,13 +174,14 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 
 **Core conviction.** A design system is a body of *intent*, not a kit of parts. Every component is a structured unit of intent — understood against one universal 18-facet schema (identity, intent, context, semantics, anatomy, states, variants, behavior, content, visual decisions, tokens, composition, a11y, governance…), organized by the *question it answers* (9 categories), governed by invariant laws, and delivered to humans, design tools, and AI agents in the right form at the right moment. *"Context is not documentation. Context is intent."*
 
-**When to invoke.** Any component or pattern decision — which component, when, why, how composed; component documentation/schema; the cross-system naming problem; design tokens; the AI-legible / `DESIGN.md` layer; or auditing a UI against the lowest-intensity and state-completeness bars. The design-domain hub the "design-system work" context row routes into.
+**When to invoke.** Any component or pattern decision — which component, when, why, how composed; component documentation/schema; component **contracts** (§5a — whenever more than one implementation depends on the answer, or an implementation is being replaced); the cross-system naming problem; design tokens; the AI-legible / `DESIGN.md` layer; or auditing a UI against the lowest-intensity and state-completeness bars. The design-domain hub the "design-system work" context row routes into.
 
 **Key operating habits.**
 - Name the *question* (9 categories) → run the decision tree → pull per-component detail from the `ux-components` MCP.
 - Behavior is invariant; names are not — resolve any name to its canonical behavior first.
 - Lowest-intensity component that works; one primary action per section; cover every state.
 - Document every component against the universal schema; intent travels with the component.
+- **Run the arbitration test before calling anything a spec** (§5a): if a human must adjudicate when implementations disagree, it is a _description_, not a contract. Contracts clear seven gates — well-typed · normalized · independent · verifiable · deterministic · efficient · evolvable. Tool exports are **testimony** until transformed; check the investment gate before building one.
 - Delivery layers: this framework (the why) · `ux-component-library` skill (procedure) · `ux-components` MCP (per-component data) · `DESIGN.md` (visual identity) · `AGENTS.md` + lint (enforcement).
 - Run the `DESIGN.md` gap-detection / self-prompting protocol when UI work starts on a project with no visual-identity anchor.
 

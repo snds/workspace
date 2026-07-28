@@ -321,6 +321,71 @@ Next:
 
 ---
 
+### 2026-07-28 — Component contracts & schemas: framework §5a, portable model v0.2, SaaS DataTable plan
+
+--- SESSION BLOCK ---
+Date: 2026-07-28
+Agent: Claude Opus 5 (1M context)
+Machine: Work MacBook Pro
+Surface: Cursor (Claude Code extension)
+Project(s): Design-system foundations (framework #09 + knowledge/reference layer); SaaS PLM prototype
+  DataTable → TanStack replacement (employer — cpes-software/saas-plm-prototype; deliverables land in
+  the employer repo, NOT mirrored here per the separation rule)
+Artifacts:
+  - saas-proto_datatable-contract-plan_v1.0_2026-07-28.md — DataTable contract skeleton, three-phase
+    testimony→contract→signatories shape, per-phase gating criteria, TanStack boundary (machine-local,
+    05-artifacts is gitignored)
+Decisions:
+  - Adopted the contract/schema layer from Nathan Curtis (2026-07-28) + 4 peer sources: a description
+    informs, a contract ARBITRATES; Figma is a signatory, not the source; version schema and spec
+    separately. Seven principles restated as pass/fail GATES.
+  - Framework #09 gains §5a (the contract layer) rather than a new framework — it is a specialization
+    of the existing 18-facet schema, not a peer to it. Facets 1–17 inform; facet 18 arbitrates.
+  - §8d state model corrected: separating interaction/configuration/validation/selection was necessary
+    but insufficient — every state must also be classified browser-driven (hover/active/focus →
+    pseudo-class, OMITTED from the props interface) vs consumer-controlled (disabled/selected/expanded
+    → ARIA, in the interface). One classification drives both styling and API surface.
+  - C8 dgrid→TanStack work DEMOTED to supplementary for all SaaS SMB work (Sean's call). A legacy
+    feature inventory is testimony too; a contract derived from it can only specify a re-creation.
+    Roles retained: pitfall ledger · effort calibrator · parity horizon, consulted AFTER the draft.
+    Gate: every feature cites a user job, UX spec, or canon pattern.
+  - Growth horizon (Sean's call): SMB is the ENTRY POINT, not the ceiling. Scope down, don't shape
+    down — SMB sets the spec, the enterprise horizon sets the schema. Operative rule: MODEL THE AXIS,
+    SHIP ONE VALUE ON IT. Capability and entitlement stay orthogonal (tier boundaries move — the Figma
+    variable-mode-limits pattern), so packaging never goes in a component contract.
+  - Scoped OUT deliberately: no generator, no differ, no ADR log for the table migration — the
+    mid-size capacity trap ("both need it, the middle and the top; only one can run it").
+Knowledge written:
+  - 08-knowledge/design/component-contracts-and-schemas.md — definitions, the seven gates as tests,
+    investment gate, L0–L4 ladder, the wider field (Curtis/Specs · Vallaure/DS Contracts · Morales
+    Achiardi · Pitre · Onori/DSDS) + reconciliations, techniques worth stealing, §8 replacement rule,
+    §9 growth-horizon rule, standing rules. Indexed with 22 triggers.
+  - 02-shared-references/component-contract-schema.md — portable model v0.2: constitution (type–schema
+    symmetry · no runtime logic · stable API), typed model, state classification, variant-delta
+    layering + resolution algorithm, invalidPropConfigurations, $binding/$ref/$extensions conventions,
+    neutrality recipes, verification L1–L6 (incl. three-way differ), declared-heuristic rule, ADR
+    template, adoption path, format landscape.
+Pending added:
+  - SaaS PLM prototype DataTable contract → TanStack replacement (full context + first three moves in
+    project-context.md). Survey @ 6380a26: 16 files render `<table>` across 11,784 lines; MaterialsTable
+    1,320 lines / 20+ props; 2 aria-* and 0 role=/tabIndex across the six core table files; no
+    virtualization, no pagination, zero table tests.
+Deferred commits:
+  - .claude/hooks/dispatcher.py · 02-shared-references/delivery-playbooks/README.md ·
+    03-skills/pm-discovery-research/SKILL.md · 03-skills/ux-interaction-design/SKILL.md ·
+    03-skills/skills.registry.json — pre-existing dirty files, NOT from this session; left for their
+    owning session (see Step 7.5 note below).
+Next:
+  - Table work, in order: (1) classify all 16 `<table>` surfaces as component/recipe/snowflake/
+    not-a-table; (2) pin the 6 load-bearing behaviors with tests against the CURRENT implementation
+    (after the port, "equivalent" stops being testable); (3) author datatable.contract.yaml resolving
+    every feature's state `owner` and every §6.4 headroom axis. Only then start the port.
+  - Feature list derives from saas-plm-analysis/knowledge-discovery (ux/flows, ui/specs) + SMB jobs +
+    the pattern canon — cross-read, never copy across the employer boundary.
+--- END BLOCK ---
+
+---
+
 ### 2026-07-28 — /doctor triage + workspace-doctor MISS ack (Work MBP main)
 
 --- SESSION BLOCK ---
