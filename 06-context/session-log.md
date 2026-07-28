@@ -321,6 +321,27 @@ Next:
 
 ---
 
+### 2026-07-28 — /doctor triage + workspace-doctor MISS ack (Work MBP main)
+
+--- SESSION BLOCK ---
+Date: 2026-07-28
+Machine: Work MacBook Pro
+Surface: Claude Code CLI
+Project(s): Workspace machine-layer maintenance
+Decisions:
+  - /doctor MCP connectors (claude.ai HyperFrames by HeyGen, Microsoft 365) left as-is — unauthenticated but harmless OAuth connectors; not authenticating or disconnecting (Sean's call).
+  - Beacon-enroll NOTEs left untouched: Projects/workspace = case-mismatch false positive (repo flags itself); Projects/design-system = employer (bitbucket/centricsoftware) → must stay OUT per standing rule; Projects/open-design = non-personal org (github.com/nexu-io) → needs classification before any enrollment.
+Actions:
+  - workspace-doctor --check on Work MBP main (CS-K746DRWXY1): all layers healthy, zero drift (hooks, settings.json, launchd timer, managed dist files).
+  - Acked 13 historical MISSes (chaos canary + 2026-07-09 FX-session employer/parent-dir/headless runs + pre-0fb7c15 ritual/ABI mismatch). ack-mark=2026-07-28T08:34:56; re-check clean.
+Pending added:
+  - Optional: record Projects/design-system + Projects/open-design in 00-bootstrap/dist/beacon-repos.ignore.txt to silence recurring doctor NOTEs (or enroll open-design if personal).
+Next:
+  - Other machines (Work MBP loaner, Windows Enterprise): run workspace-doctor + machine-layer installs per existing pending item.
+--- END BLOCK ---
+
+---
+
 ### 2026-07-21 — SaaS PLM prototype → centric-ui gap audit re-run; PR #1 refreshed for Olga's review
 
 --- SESSION BLOCK ---
