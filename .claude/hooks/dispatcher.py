@@ -698,6 +698,26 @@ def _write_desync_notice(state: dict, staged_count: int) -> None:
         pass
 
 
+def _check_linear_lanes() -> str:
+    """Open Agent Engine lane preflight for THIS surface — '' when healthy (the common case).
+
+    Deterministic and cheap: filesystem + MCP-config inspection, no network, no credentials.
+    Delegates to 00-bootstrap/doctor/linear-lanes.py so Cursor and any other surface run the
+    same check. Fails silent — a broken detector must never block a session start.
+    """
+    script = WORKSPACE_ROOT / "00-bootstrap" / "doctor" / "linear-lanes.py"
+    if not script.is_file():
+        return ""
+    try:
+        out = subprocess.run(
+            [sys.executable, str(script), "--notice", "--surface", "claude-code"],
+            capture_output=True, text=True, timeout=5,
+        )
+    except Exception:
+        return ""
+    return out.stdout.strip()
+
+
 def _read_desync_notice() -> str:
     """Return a one-line summary of the last desync notice for SessionStart, or ''."""
     if not DESYNC_NOTICE.exists():
@@ -868,6 +888,7 @@ def build_session_start_context(
     version_notice = _check_claude_version_change()
     audit_notice = _check_audit_staleness()
     desync_notice = _read_desync_notice()
+    lanes_notice = _check_linear_lanes()
 
     project_lines = "\n".join(f"  - {name}: {summary}" for name, summary in projects) or "  (none found)"
 
@@ -878,6 +899,8 @@ def build_session_start_context(
         notices.append(f"⚠ {audit_notice}")
     if desync_notice:
         notices.append(f"⚠ {desync_notice}")
+    if lanes_notice:
+        notices.append(f"⚠ {lanes_notice}")
     worktree_notice = _format_worktree_cleanup_notice(
         cleaned_worktrees or [], skipped_worktrees or []
     )

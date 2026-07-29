@@ -10,9 +10,9 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 252,
+    "total": 253,
     "by_tier": {
-      "cross-cutting": 27,
+      "cross-cutting": 28,
       "foundation": 22,
       "hub": 40,
       "spoke": 163
@@ -3582,6 +3582,38 @@
       "requires": [],
       "hash": "sha256:557b19d0209c5f6fc391148f419949fef6d3074e3c8ee71ed289adcc71e4b4e1"
     },
+    "open-agent-engine": {
+      "path": "03-skills/open-agent-engine/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "workspace-bootstrap"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "open engine",
+        "agent engine",
+        "agent queue",
+        "run the queue",
+        "queue runner",
+        "agent ledger",
+        "agent receipts",
+        "claim a task",
+        "agent todo",
+        "agent needs input",
+        "status ledger"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "linear-mcp"
+      ],
+      "hash": "sha256:97b092016bb15b547aaffba783c9b4f6f8e5ac6ee3ab5ae9eb1d7ba792ee40e0"
+    },
     "planetary-terrain-lod": {
       "path": "03-skills/planetary-terrain-lod/SKILL.md",
       "tier": "spoke",
@@ -5361,7 +5393,9 @@
       "domain": "workspace",
       "hub": null,
       "prerequisites": [],
-      "related": [],
+      "related": [
+        "open-agent-engine"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [
@@ -5377,7 +5411,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:3e950822c762b32b382e381d0782ce972ccdc1c1c65ff3c1103e0aa285e96cf4"
+      "hash": "sha256:71b418c694b82a62cb706fbacb53b767c1b2e3270f988db9923796e11be56150"
     }
   },
   "load_chains": {
@@ -6201,6 +6235,9 @@
     ],
     "omni-project": [
       "omni-project"
+    ],
+    "open-agent-engine": [
+      "open-agent-engine"
     ],
     "planetary-terrain-lod": [
       "game-foundations",

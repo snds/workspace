@@ -14,6 +14,7 @@ aliases: [workspace-bootstrap]
 triggers: [workspace-bootstrap, reload the workspace, run the handshake, ritual missing, load context, reconcile sessions, legion]
 tier: cross-cutting
 domain: workspace
+related: [open-agent-engine]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -132,3 +133,4 @@ refactor · AI-Powered Design Assessment · **Legion** (hard-SF game; Three.js +
 
 ## Related
 - peer ↔ [[skill-placement]]
+- peer ↔ [[open-agent-engine]]

@@ -46,6 +46,20 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
       "fallback_note": "No Blender → use procedural generation (fBm/curl noise) for the volume/asset, or ask the user to supply a baked VDB/3D-texture. Procedural is the default path anyway, so this degrades cleanly.",
       "powers": ["vfx-volumetrics"]
     },
+    "linear-mcp": {
+      "kind": "mcp",
+      "provides": "Read and write a Linear workspace — list/create issues, move statuses, apply labels, and comment. The transport for the Open Agent Engine queue, ledger, and receipts.",
+      "detect": { "method": "mcp-tool-present", "match": "mcp__*linear*__*" },
+      "install": {
+        "claude-code": "One server per lane, user-scoped so the runner works from any directory: `claude mcp add --transport sse linear-<lane> https://mcp.linear.app/sse --scope user`, then `/mcp` to complete OAuth. Multiple Linear workspaces need SEPARATE auth contexts — Linear scopes one MCP connection to one workspace, so run each through `mcp-remote` with its own config dir: `MCP_REMOTE_CONFIG_DIR=~/.mcp-auth/linear-<lane> npx mcp-remote https://mcp.linear.app/mcp`.",
+        "cursor": "Settings → MCP → Add server → `https://mcp.linear.app/sse`; repeat per workspace with a distinct server name. For two workspaces use the mcp-remote command form with a per-lane `MCP_REMOTE_CONFIG_DIR` env var, same as Claude Code.",
+        "generic": "Point any MCP client at https://mcp.linear.app/mcp (or /mcp/readonly for read-only reach) and complete the OAuth flow with the account that should read and update agent issues. One connection binds to one workspace.",
+        "no-mcp": "No MCP on this surface: use the HTTP transport instead — POST https://api.linear.app/graphql with header `Authorization: <LINEAR_API_KEY from the environment>`. Equivalent capability, one extra credential to manage. See [[open-agent-engine]] → Transport."
+      },
+      "fallback": "degrade",
+      "fallback_note": "MCP is the preferred transport, not a requirement. The engine needs only four operations (query / create / update issue, read+update comment by id), so degrade to the HTTP transport: POST https://api.linear.app/graphql with an API key READ FROM THE ENVIRONMENT (LINEAR_API_KEY). Never accept a key pasted into the conversation and never write one into a workspace file. If no key is present in the environment, say so and stop — do not ask for one. Final floor: the loop is runnable by hand in the tracker's web UI, so a surface with neither transport still has a path. Tell the user which transport is in use; a receipt written over HTTP is identical to one written over MCP.",
+      "powers": ["open-agent-engine"]
+    },
     "agent-browser": {
       "kind": "cli",
       "provides": "Chromium browser automation over CDP — accessibility-tree snapshots, clicks/typing, scraping JS-heavy pages.",
@@ -125,6 +139,18 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
   procedural path is the default, so absence degrades to fBm/curl-noise generation. The many *generic*
   Blender mentions across `3d-*` / `imaging-*` skills are theory/reference (Blender as an industry DCC),
   not MCP-driving, and correctly carry no `requires`.
+- **linear-mcp** — powers [[open-agent-engine]] (the queue, ledger, and receipts). **One connection = one
+  Linear workspace:** per Linear's docs, "reconnecting alone does not switch the workspace within an existing
+  auth session, [so] each workspace needs its own separate authentication context." That constraint is the
+  feature — it makes Open Agent Engine's lane isolation structural rather than a discipline, so a runner
+  authed to one lane physically cannot read another. Register user-scoped (not project-scoped) so the runner
+  fires from any directory, including repos outside this workspace. A read-only endpoint
+  (`/mcp/readonly`) and a `read`-only OAuth scope exist when a lane should observe without write reach.
+  **`degrade`, not `block`, because MCP is a preferred transport rather than a hard dependency** — the
+  engine needs four operations, and the GraphQL endpoint provides the same four to any agent with a shell
+  or HTTP. The tradeoff is a credential: MCP's OAuth keeps the key out of the agent entirely, whereas the
+  HTTP path needs `LINEAR_API_KEY` in the environment. Prefer MCP wherever it exists; never manufacture a
+  key to avoid an install. The portability floor below both is a human running the loop in the web UI.
 - **agent-browser** — powers [[web-automation]]. The CLI ships its own usage docs (`agent-browser
   skills get core`); the workspace skill is the *when/why*, the CLI is the *how*.
 - **ffmpeg / yt-dlp** — power [[reference-video-review]]. ffmpeg is the hard dependency (frames);
