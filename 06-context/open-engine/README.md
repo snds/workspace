@@ -78,10 +78,18 @@ that has not been deliberately set up cannot run the employer lane.
 
 ## Lane isolation
 
-Each lane binds to its own tracker workspace with its own MCP auth context. Linear scopes one MCP
-connection to one workspace, so a runner authed to `personal` **cannot see** `c8`, and vice versa.
-That isolation is structural, not a rule the agent is trusted to follow. See [[capability-registry]]
-→ `linear-mcp`.
+Each lane binds to its own tracker workspace with its own MCP auth context (a per-server
+`MCP_REMOTE_CONFIG_DIR`). Linear scopes one MCP connection to one workspace, so the `personal`
+connection **cannot read** `c8`, and vice versa. That much is structural, not a rule the agent is
+trusted to follow. See [[capability-registry]] → `linear-mcp`.
+
+**Connection-level isolation is not runner-level isolation.** Both servers are registered at **user
+scope** on this machine — which is exactly what the manifest above expects — so *every* Claude Code
+session here binds both and can write to either. Verified 2026-07-29: both connected in one session,
+each with its own auth dir, both writable. With a human in the loop, the remaining wall is the agent's
+judgment, and that is acceptable. **Unattended it is not:** a scheduled or headless runner must be
+launched with only its own lane's server present (`--strict-mcp-config` plus a one-server
+`--mcp-config`). Full reasoning: [[open-agent-engine]] → Lanes.
 
 If a lane is not named in the invocation and more than one is configured, **ask** — never guess.
 

@@ -35,9 +35,21 @@ second source of truth and breaks [[AGENTS]] → "Externalize everything".
 ## Lanes
 
 A **lane** binds one tracker workspace to one agent code, one status ledger, and one
-[context profile](../../02-shared-references/delivery-playbooks/00-context-profiles.md). Lanes are
-isolated at the tool layer — each tracker workspace needs its own MCP auth context, so a runner
-authed to one lane cannot read or write another.
+[context profile](../../02-shared-references/delivery-playbooks/00-context-profiles.md).
+
+**What isolation actually guarantees — and what it does not.** Each lane's *connection* is scoped to
+one tracker workspace by its own auth context, so the `personal` connection genuinely cannot read the
+employer workspace. That much is structural. But a **runner** is isolated only if that lane's server
+is the *only* one bound to its process. Register both lanes at user scope — which is the normal
+desktop setup, and what the machine manifest expects — and every session on that machine holds write
+access to both. The wall between lanes is then the agent's judgment, not the tool layer.
+
+That distinction is tolerable with a human watching and **not** tolerable unattended. So: **any
+scheduled or headless runner must be launched lane-scoped**, with only its own lane's MCP server
+present (on Claude Code: `--strict-mcp-config` plus an `--mcp-config` naming that one server). A
+scheduled runner holding both lanes' credentials is the failure this whole design exists to prevent,
+arriving through the back door. Verified 2026-07-29: both Linear servers connected simultaneously in
+one session, each with its own `MCP_REMOTE_CONFIG_DIR`, both writable.
 
 Resolve lanes at runtime; **never hard-code an instance into this skill**:
 
