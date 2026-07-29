@@ -33,7 +33,12 @@ audience, medium, and evidence from it.
 1. **[[00-context-profiles]]** — resolve whose work this is and who reviews it. Always first.
 2. **[[01-audience-contract]]** — derive the reader, voice, and explanation altitude.
 3. **The medium playbook the request's own words imply:**
-   - [[02-diagrams-and-flows]] — workflow / flow / journey / "how does it work" requests
+   - [[06-research-and-design-artifacts]] — **which** research/design artifact the request needs
+     (JTBD, persona, journey map, service blueprint, user story, use case, user flow) + the
+     order-of-operations + the authoring rules. Load this FIRST when the request names or implies
+     any of those; it is the selector that routes on to the notation/medium below.
+   - [[02-diagrams-and-flows]] — the visual notation/medium rules once the artifact is chosen (or a
+     plain "workflow / flow / diagram / how does it work" request)
    - [[03-data-and-charts]] — data, results, comparisons, metrics
    - [[04-documents-and-specs]] — specs, briefs, reports, decision records
    - [[06-research-and-design-artifacts]] — a named UX-research/product artifact (user journey,

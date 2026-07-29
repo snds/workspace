@@ -3655,7 +3655,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:951ca371fecb1eb24e73b248d4085ccb01a2662590b26d8e57055879e33ffc79"
+      "hash": "sha256:8ae396754307c37a30c5071dd0648ec32209c5970fb2283ebd2f1f7e258bf54d"
     },
     "pm-enterprise-gtm": {
       "path": "03-skills/pm-enterprise-gtm/SKILL.md",
@@ -4774,7 +4774,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:30587fff57c5dd0d26bd962c118d23cbde04ce821a90bcf66fb97f09df30a690"
+      "hash": "sha256:f564d36b3168a805d195683d9e2915e9e506eedf0102df4ebc54a747cd781ed4"
     },
     "ux-performance-perception": {
       "path": "03-skills/ux-performance-perception/SKILL.md",

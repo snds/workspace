@@ -85,6 +85,14 @@ FOUNDATION_ROUTE = (
     "backloggable; a11y compliance is not deferrable — the delivered artifact must pass now."
 )
 
+ARTIFACT_ROUTE = (
+    "02-shared-references/delivery-playbooks/06-research-and-design-artifacts.md — SELECT the right "
+    "research/design artifact (JTBD/persona/journey map/service blueprint/user story/use case/user "
+    "flow) via its selection guide, respect the order-of-operations, and AUTHOR to the rules: spell "
+    "everything out (no cryptic code/ticket references), define every domain term in plain English, "
+    "persona-anchor at the user level, service-design altitude at the system level. Context profile first."
+)
+
 # NOTE: insertion order IS emission priority — under the per-tier cap (FX-2), rows
 # earlier in this dict win. Mandate rows (framework #06 pre-output gate) come first:
 # CLAUDE.md requires them loaded "before doing anything else" for audit-class work.
@@ -141,9 +149,27 @@ TRIGGER_WORDS = {
     # Resolve the context profile (00-context-profiles.md) before acting on any of these.
     "diagram": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
     "flowchart": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
-    "user journey": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
     "how does it work": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
     "show me the steps": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
+    # Research & design artifact selection (2026-07-21) — pick the RIGHT artifact + author it plain.
+    "user journey": ARTIFACT_ROUTE,
+    "journey map": ARTIFACT_ROUTE,
+    "customer journey": ARTIFACT_ROUTE,
+    "experience map": ARTIFACT_ROUTE,
+    "jtbd": ARTIFACT_ROUTE,
+    "jobs to be done": ARTIFACT_ROUTE,
+    "jobs-to-be-done": ARTIFACT_ROUTE,
+    "service blueprint": ARTIFACT_ROUTE,
+    "service design": ARTIFACT_ROUTE,
+    "user story": ARTIFACT_ROUTE,
+    "user stories": ARTIFACT_ROUTE,
+    "use case": ARTIFACT_ROUTE,
+    "use cases": ARTIFACT_ROUTE,
+    "user flow": ARTIFACT_ROUTE,
+    "task flow": ARTIFACT_ROUTE,
+    "site map": ARTIFACT_ROUTE,
+    "persona": ARTIFACT_ROUTE,
+    "which artifact": ARTIFACT_ROUTE,
     "walkthrough": "02-shared-references/delivery-playbooks/README.md — pre-delivery gate: context, audience, translation, medium",
     "proofboard": "02-shared-references/delivery-playbooks/05-validation-harness.md",
     "validation harness": "02-shared-references/delivery-playbooks/05-validation-harness.md",
