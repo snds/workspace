@@ -1,7 +1,7 @@
 ---
 tags: [workspace, infrastructure, claude-code, obsidian, git, drive, ssh, github, multi-identity, sync-monitoring]
 created: 2026-04-28
-updated: 2026-07-09
+updated: 2026-07-30
 status: stable
 confidence: high
 sources: [session-log 2026-04-23, session-log 2026-04-25, session-log 2026-04-27, session-log 2026-05-07, session-log 2026-07-09]
@@ -154,6 +154,43 @@ When a fresh machine is added (new laptop, loaner swap, reset device), Google Dr
 **Tooling:** `~/drive-sync-tools/{drive-audit,drive-monitor}.py` (moved into `09-tools/`). Single-pass scan, top-level breakdown, monitor auto-exits when 0 placeholders + on-disk size stable for 2 ticks.
 
 ---
+
+## Headless Claude Code — what actually scopes a session, and what only looks like it does
+
+_Dated 2026-07-30. Established by direct probe while scoping an unattended queue runner for
+[[open-agent-engine]]; the runner was rejected on the strength of these findings._
+
+**`--strict-mcp-config` + `--mcp-config <file>` genuinely scopes MCP.** A session launched with a
+one-server config sees that server and nothing else — not other registered servers, not user-scope
+ones. Probed directly: `SERVERS: linear-personal` / `C8_PRESENT: no`. This is the mechanism that
+restores per-lane isolation, which user-scope MCP registration otherwise gives away (every ordinary
+session on a machine binds *every* registered server).
+
+**`--allowed-tools` does NOT restrict built-ins — it only grants.** This is the trap. A session
+launched with `--allowed-tools "mcp__linear-personal"` still reported:
+
+```
+BASH: yes   EDIT: yes
+TOOLS: Agent, AskUserQuestion, Bash, Edit, Read, ScheduleWakeup, Skill, ToolSearch,
+       Workflow, Write (+ deferred: CronCreate, RemoteTrigger, …)
+```
+
+The naming invites the opposite reading. **Consequence for any unattended agent that reads untrusted
+input** — issue bodies, tickets, email, scraped pages: allow-listing an MCP server does not take away
+its shell. "Anyone who can write to that input source" becomes "anyone who can run commands on this
+machine." Restriction needs `--tools` (explicit available set) or `--disallowed-tools` (denial); both
+exist, neither is verified here. **Deny, don't allow.**
+
+**`mcp-remote` has cold-start latency, and the failure is silent.** A headless session can begin
+before its MCP server finishes connecting, and then honestly reports "no MCP tools are currently
+available." Nothing errors. For any programmatic queue/tracker check this is indistinguishable from
+"nothing to do" — the same shape as the `auth-incomplete` bug in `linear-lanes.py`: **a failure
+wearing success's clothes.** Any headless integration must gate on tools-loaded and emit a distinct
+sentinel when they are not, so "could not see it" and "nothing there" never share a log line.
+
+Interactive sessions appear unaffected — MCP tools were present in the deferred-tool list at session
+start — but that is an observation, not a guarantee, and it is why the engine's session-start ritual
+skips its line silently rather than reporting an empty queue when the transport is missing.
 
 ## Multi-Identity GitHub on a Single Machine
 

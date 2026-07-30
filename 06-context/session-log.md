@@ -30,7 +30,65 @@ Keep entries concise. This is a handoff log, not a journal.
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
 
+> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
+
+
 ---
+
+### 2026-07-30 — Unlock AI review; Open Engine close-out and a withdrawn runner
+
+SessionID: 2026-07-30-work-oe3f
+--- SESSION BLOCK ---
+Date: 2026-07-30
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): 19-workspace-brain
+Summary: Read Nate B. Jones' Unlock AI property end to end, adopted Open Engine as a workspace-governed skill with two isolated Linear lanes, then closed out a third parallel pass — building a scheduled runner, discovering a concurrent session had already rejected one, testing that rejection, and finding it correct.
+Artifacts:
+  - 03-skills/open-agent-engine/SKILL.md — the engine procedure (authored earlier this thread; extended here with verified isolation evidence and the cold-start rule)
+  - 00-bootstrap/doctor/linear-lanes.py — deterministic lane preflight, wired into session-start Notices
+  - 06-context/open-engine/{README,personal}.md — lane index + canonical machine→lane manifest
+  - 08-knowledge/cross-domain/workspace-infrastructure.md — new section "Headless Claude Code"
+Decisions:
+  - Scheduled runner WITHDRAWN. Built lane-scoped with --strict-mcp-config, then found commit 4dee209 had already scoped and rejected one; tested its central objection and it held.
+  - Deny, don't allow. Any future unattended runner is gated on --tools / --disallowed-tools; --allowed-tools is not a restriction mechanism.
+  - Session-start token trim SUPERSEDED, not merely deferred — project-context.md is now the substance store and each ^pc-NN anchor is the sole pointer for a Linear issue, so trimming is a per-item graduate → repoint → remove migration.
+  - Two lanes over one shared Linear workspace; isolation is structural (per-lane MCP auth context), and the c8 lane is movement-only.
+Pending resolved:
+  - Open Engine build — complete. Both lanes live, four smoke tests passed, five validators green.
+Next:
+  - Unchanged from the prior pass: review personal:SEA-11, decide personal:SEA-32, give ^pc-07/^pc-11 machine-local homes, resolve lane ambiguity on ^pc-30/^pc-41.
+  - Unrelated and pre-existing: 3 un-acknowledged bootstrap MISSes (two from centric-ui sessions) — run workspace-doctor.sh.
+--- END BLOCK ---
+
+## Findings worth keeping (detail behind the Decisions above)
+
+**`--allowed-tools` grants; it does not restrict.** A session launched with
+`--allowed-tools "mcp__linear-personal"` still reported `Bash`, `Edit`, `Write`, `Agent`,
+`CronCreate`, `RemoteTrigger`. The naming invites the opposite reading, and I read it the wrong way
+while building. Since issue bodies are untrusted input by the engine's own rule, an unattended runner
+built that way turns "anyone who can write to that board" into "anyone who can run commands on this
+laptop." Full detail: [[workspace-infrastructure]] → "Headless Claude Code".
+
+**`--strict-mcp-config` does isolate.** Probed: `SERVERS: linear-personal` / `C8_PRESENT: no`. The
+other lane is absent, not merely unused. This is now evidence under a claim the docs previously
+asserted.
+
+**`mcp-remote` cold start is a silent-failure path.** A headless session can begin before its server
+connects and honestly report "no MCP tools available" — indistinguishable from an empty queue. Same
+shape as the `auth-incomplete` bug in the detector: a failure wearing success's clothes. The ritual
+now distinguishes absent / not-yet-connected / empty.
+
+**Two detector bugs found by testing against reality rather than assumption:** `validate-integrity`
+resolves wikilinks against *git-tracked* files (a new skill is unaddressable until `git add -N`), and
+the `provisioned` check matched the bare word `PENDING` in prose — including the lane config's own
+status banner, so a fully-provisioned lane reported `not-provisioned`.
+
+**Process note.** Three sessions worked this subsystem concurrently. Two independently designed a
+scheduled runner and reached opposite conclusions; one `git add -A` swept another session's staged
+work into the wrong commit. The engine's own session-boundary discipline is the fix, and `/reconcile`
+existed for exactly this — worth invoking *before* parallel passes, not only after.
+
 
 ### 2026-07-30 — Open Agent Engine: provisioned, smoke-tested, wired to the rituals, backlog migrated
 
@@ -534,57 +592,4 @@ Next:
   - On Olga's sign-off: resume the DS migration build, quick-win reuses first (per the refreshed plan).
 --- END BLOCK ---
 
----
-
-### 2026-07-20 — centric-ui local-against-cloud-dev stood up; PRs #116/#117 landed; credential-scoping + chain-order contract fixes
-
---- SESSION BLOCK ---
-Date: 2026-07-20
-Agent: Claude Opus 4.8
-Machine: Work MacBook Pro
-Surface: Cursor
-Project(s): Centric VMS Design System (centric-ui), Workspace Brain, saas-plm knowledge base
-Artifacts:
-  - `06-context/memory/feedback-credential-scoping.md` — Centric-laptop credential rule (05c997d)
-  - `06-context/memory/reference-saas-plm-knowledge-discovery.md` + project-context entry (61251f9)
-  - `08-knowledge/engineering/centric-ui-local-against-cloud-dev.md` — the three cloud-dev traps (c73418d)
-  - Contract fix across 7 files: build-related now precedes build-registry (7239d16, 1752d03)
-  - centric-ui PR #179 (OPEN) — dev-proxy cloud routing + env-example/API-key corrections
-  - Cloned `saas-plm-analysis/knowledge-discovery` → `<Projects>/saas-plm-analysis/` (503MB, main)
-Decisions:
-  - Cloud dev over Docker Compose for now: Docker not installed and 5 prereqs missing (2 needing
-    other people's tokens); cloud dev works today with one command. Revisit when the JFrog token is
-    being requested anyway, or if backend _data_ needs reshaping (cloud dev is shared — don't).
-  - centric-ui worktree `centric-ui-main` created on `main`; the figma branch was 826 files / 77
-    commits stale, so reviewing UI from it would mislead.
-  - #117 build tag set to 11.4.34 (not a copy of #116's 11.4.33) so the two bundles stay
-    distinguishable in the UI header — validated once #116 squash-landed 11.4.33 on main.
-  - Keycloak redirect-URI three-way disagreement (realm=3000, vite=8082, example=5173) documented
-    in PR #179, deliberately NOT decided — belongs to whoever owns the VMS realm.
-Pending added:
-  - VMS realm owner to decide redirect URI: allow 8082, or change examples to 3000 (PR #179 item 3).
-  - `workflow-service` has no cloud dev hostname (DNS 000, not 401) — BE must expose it or name it.
-  - centric-ui PR #179 needs reviewers (Alex Myronov natural for the proxy half — extends his #160).
-  - Two abandoned centric-ui SHAs (ec04737, 86651f0) carrying `hello@snds.design` remain reachable
-    by direct URL until GitHub GC; purging needs a Support request (draft offered, not written).
-  - SSH to github.com:22 timing out on this network all session — all pushes went over HTTPS.
-    Fix if it persists: route Host github.com / github-work via ssh.github.com:443.
-Pending resolved:
-  - PRs #116 + #117 — conflicts resolved (buildInfo.ts build-tag only, both times) and both merged.
-  - Employer design-system migration: backend access provisioned and now working end-to-end.
-Project status changes:
-  - Centric VMS Design System: blocked-on-backend-access → unblocked, local FE running against cloud dev.
-Corrections worth remembering (agent self-audit):
-  - Committed two merge commits to an employer repo as `hello@snds.design` by passing explicit
-    `-c user.*` flags that overrode an already-correct repo-local config, then reported it as a
-    footnote instead of fixing it immediately. Rewritten + force-pushed; rule recorded in
-    [[feedback-credential-scoping]]. Workspace repo on this machine repointed to the `github-work`
-    SSH alias + Centric identity.
-  - Read a git diff backwards and confidently told Sean the header fix was on `main` when the
-    reverse was true. Verify diff direction by reading both files, not by reasoning about `-`/`+`.
-  - Twice reported `exit=$?` that was actually `tail`'s status, masking a real failure.
-Next:
-  - Assign reviewers on centric-ui PR #179; raise the redirect-URI question with the VMS realm owner.
-  - Resume the DS migration build now that the backend is reachable — quick-win reuses first.
-  - Optional: Docker Compose setup when the JFrog token is being requested for something else.
 ---

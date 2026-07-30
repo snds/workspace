@@ -51,6 +51,16 @@ scheduled runner holding both lanes' credentials is the failure this whole desig
 arriving through the back door. Verified 2026-07-29: both Linear servers connected simultaneously in
 one session, each with its own `MCP_REMOTE_CONFIG_DIR`, both writable.
 
+**Both halves of that are now evidenced, 2026-07-30.** A strict-scoped probe reported
+`SERVERS: linear-personal` / `C8_PRESENT: no` — the other lane is genuinely *absent*, not merely
+unused, so `--strict-mcp-config` does restore lane isolation. But scoping MCP is not sandboxing:
+**`--allowed-tools` grants, it does not restrict.** A session launched with
+`--allowed-tools "mcp__linear-personal"` still held `Bash`, `Edit`, `Write`, `Agent` and
+`CronCreate`. Since issue bodies are untrusted input by this engine's own rule, any unattended runner
+built this way is a prompt-injection path to a shell. Real restriction needs `--tools` or
+`--disallowed-tools`. **Deny, don't allow** — and that is a precondition of an unattended runner, not
+a polish item. Full findings: [[workspace-infrastructure]] → "Headless Claude Code".
+
 Resolve lanes at runtime; **never hard-code an instance into this skill**:
 
 1. Read the lane index: `06-context/open-engine/README.md`.
@@ -294,6 +304,12 @@ Rules that keep this cheap and honest:
   say nothing about it. Stage 1 already reports that in `## Notices`; do not duplicate it.
 - If the MCP transport is absent, skip the whole line silently. A missing engine line must never be
   read as an empty queue — that is why the counts are always lane-qualified when present.
+- **Absent and not-yet-connected are different, and the second one lies.** `mcp-remote` has cold-start
+  latency: a session can begin before its server finishes connecting, and the honest answer at that
+  moment is "no MCP tools available" — which looks exactly like "no tools configured." Observed
+  2026-07-30 in a headless run. So confirm the lane's tools are actually loaded before counting; if
+  they are not, **skip the line, never report `clean`.** Reporting an empty queue you could not see is
+  the one output this line must never produce.
 
 ### Orphaned claims — what session start uniquely catches
 
