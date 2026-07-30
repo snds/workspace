@@ -107,6 +107,51 @@ issue ids are **not unique across lanes** — `SEA-5` is hello-world here and th
 on `c8`. Inside one tracker context disambiguates; anywhere else — session logs, handoff notes,
 conversation — **qualify the id with its lane** (`personal:SEA-5`, `c8:SEA-5`).
 
+## Migrated items — project-context.md → this lane (2026-07-30)
+
+23 items migrated from `06-context/project-context.md` → Pending Items. **Nothing was deleted there
+and nothing may be**: each issue's only pointer is its anchor, so removing the anchored text would
+orphan the issue. `project-context.md` is now the substance store for these.
+
+| Anchor | Issue | Item |
+|---|---|---|
+| `^pc-02` | `personal:SEA-9` | Silence the two beacon-enroll NOTEs |
+| `^pc-03` | `personal:SEA-10` | Machine-layer installs on remaining machines |
+| `^pc-04` | `personal:SEA-11` | Tool-neutral trigger-routes reference |
+| `^pc-09` | `personal:SEA-12` | SSH to github.com:22 timing out |
+| `^pc-10` | `personal:SEA-13` | "Context is King" foundation refinements |
+| `^pc-12` | `personal:SEA-14` | 2026-07-08 audit carry-forwards (b–e) |
+| `^pc-13` | `personal:SEA-15` | Beacon paste — Cursor + Perplexity |
+| `^pc-14` | `personal:SEA-16` | Load ux-component-library v2.1 |
+| `^pc-19` | `personal:SEA-17` | REVOKE the Figma PAT (Urgent) |
+| `^pc-20` | `personal:SEA-18` | Install the snds@snds-local plugin |
+| `^pc-21` | `personal:SEA-19` | Refresh the trigger cheatsheet |
+| `^pc-22` | `personal:SEA-20` | design-system-ops overlap reconciliation |
+| `^pc-23` | `personal:SEA-21` | Document the six-hub grammar |
+| `^pc-24` | `personal:SEA-22` | Seed SESSION-STATE for 04-claude-figma-plugin |
+| `^pc-25` | `personal:SEA-23` | Opus 4.7+ skill-audit findings |
+| `^pc-26` | `personal:SEA-24` | Framework pointers in six skills |
+| `^pc-35` | `personal:SEA-25` | Section D reference DS deep reads |
+| `^pc-36` | `personal:SEA-26` | Section B audit (18 patterns) |
+| `^pc-37` | `personal:SEA-27` | Graduate 28 pattern entries |
+| `^pc-38` | `personal:SEA-28` | Stream C re-audit (due 2027-07-01) |
+| `^pc-39` | `personal:SEA-29` | Re-privatize workspace-repo author email |
+| `^pc-40` | `personal:SEA-30` | Populate team-practices-and-decisions |
+| `^pc-43` | `personal:SEA-31` | Seed SESSION-STATE for 03/12/15 |
+
+**The collision hazard, live:** `personal:SEA-9` is the beacon-NOTE item; `c8:SEA-9` is a centric-ui
+PR. Same bare id, different lanes, different work. This table is why every id above is qualified.
+
+**Not migrated, and why** — 5 items remain only in `project-context.md`:
+
+| Anchor | Reason |
+|---|---|
+| `^pc-07` | `c8`, no valid pointer. Its substance is an internal hostname + a DNS finding; putting either on the employer board is exactly the infra detail movement-only forbids. Needs a machine-local home first. |
+| `^pc-11` | `c8`, no valid pointer. Reasoning plus a named colleague's directive exist only in `project-context.md`, and neither may be written to that board. |
+| `^pc-30` | **Lane ambiguous.** 103 characters with no indication whether the plugin is Sean's own or employer tooling. Guessing the lane on a movement-only boundary is the one thing the skill says never to do. |
+| `^pc-41` | Lane ambiguous *and* no pointer. |
+| `^pc-42` | `c8`, no valid pointer — exploratory, no artifact to reference. |
+
 ## Optional standing skills
 
 Directory issue: none (not used)
