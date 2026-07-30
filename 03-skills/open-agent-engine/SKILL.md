@@ -67,6 +67,22 @@ This is the global-process / local-facts split: **procedure lives here, instance
 lane config.** If you find yourself wanting to add a team name, issue id, or project detail to *this
 file*, that is the signal it belongs in the lane config instead.
 
+### ⚠ Issue ids are not unique across lanes
+
+Team keys are per-workspace, so two lanes can — and here do — use the same one. Observed 2026-07-29:
+both lanes are keyed `SEA`, which makes `SEA-5` the hello-world test on one lane and the
+substance-refusal test on the other. A bare id is therefore **ambiguous everywhere except inside the
+connection that resolved it.**
+
+- **Inside a lane** (a tool call, an issue body, a comment) the bare id is correct — the connection
+  disambiguates it.
+- **Everywhere else** — ledgers, session blocks, handoff notes, commit messages, chat with Sean —
+  qualify it: `personal:SEA-5`, `c8:SEA-5`.
+- **Never resolve a bare id against whichever connection happens to be at hand.** On a machine where
+  both lanes are registered at user scope, a mis-resolved id is a cross-lane read, and on a
+  movement-only lane a mis-resolved *write* is a boundary breach. If an id arrives without a lane and
+  the lane is not obvious from context, **ask** — do not infer it from which lane you used last.
+
 ## Transport (surface-agnostic)
 
 **The receipts are the interoperability contract, not the transport.** Two agents on different
@@ -243,6 +259,66 @@ Local context: <engine version>; <lane>
 Optional skills: <none or skill-id@version subscribed>
 Notes: <none or short blocker>
 ```
+
+## Ritual integration — the session is the heartbeat
+
+**The trigger for this engine is a session boundary, not a clock.** Decided 2026-07-29 after scoping
+a scheduled runner and rejecting it: a timer only helps when work must progress while the human is
+away, and it burns tokens confirming an empty queue the rest of the time. A session start, by
+contrast, is the one moment a human is reliably present — which is exactly when a hold can be
+answered. Unattended scheduling stays *authorized* but unbuilt; see the lane config.
+
+### At session start — read, report, never act
+
+One query per provisioned lane. Filter on the lane's label, ask for `id`/`title`/`status` only, and
+count locally — one call, not one per status:
+
+```
+list_issues(label: "agent-instructions", fields: ["id","title","status"], limit: 50)
+```
+
+Fold the counts into the session-start ritual as a single line, lane-qualified:
+
+```
+- **Engine:** personal — 2 hold · 3 queued · c8 — clean
+```
+
+Rules that keep this cheap and honest:
+
+- **Silent when the queue is empty.** No line at all — not "0 items".
+- **A queued item is not silence.** If anything sits in `Agent Todo`, say so; items rotting unseen is
+  the failure this engine exists to fix, and a clock is not what catches it.
+- **Report only. Never claim at session start.** Claiming is work; the ritual is orientation. Sean
+  decides what gets picked up.
+- Skip a lane that is unprovisioned, unauthenticated, or whose config still carries `PENDING` — and
+  say nothing about it. Stage 1 already reports that in `## Notices`; do not duplicate it.
+- If the MCP transport is absent, skip the whole line silently. A missing engine line must never be
+  read as an empty queue — that is why the counts are always lane-qualified when present.
+
+### Orphaned claims — what session start uniquely catches
+
+An issue in `Agent Working` at session start means a previous run claimed the lock and never released
+it: the session died, the machine slept, or the process was killed mid-task. **The claim lock has no
+timeout** — nothing frees it but a later run noticing. This is the one failure mode only a
+session-boundary read surfaces, and it is invisible to the stage-1 script.
+
+On finding one: do **not** silently re-claim it, and do not assume it is dead — a concurrent session
+on another surface may genuinely hold it. Report it as `1 claimed` on the engine line, then ask. Once
+Sean confirms it is orphaned, leave a comment recording the orphaned claim and the last known safe
+step, return the issue to `Agent Todo`, and let a later run re-claim it cleanly. Releasing a lock
+someone else still holds is worse than leaving it held.
+
+### At session end — file what didn't finish
+
+`/session-end` writes the prose handoff; the engine turns the *actionable* residue into claimable
+work. For each unfinished next action worth surviving the session, create one `Agent Todo` issue,
+**pointer-shaped** — title plus a reference to where the substance lives, never the substance itself
+(this applies on every lane, not just movement-only ones; see the rule at the top of this file).
+Then release any claim this session still holds, and update the ledger heartbeat in place.
+
+The discipline that makes this worth doing: **a next action recorded only as prose in a handoff block
+has no status, no owner, and no way to ever be declared dead.** That is how a pending list reaches
+forty items. An issue has all three.
 
 ## Boundaries
 

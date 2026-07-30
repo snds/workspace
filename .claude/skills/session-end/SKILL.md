@@ -121,6 +121,32 @@ related_projects: [project-name]
 ---
 ```
 
+### Step 5.5 — File the residue into the agent queue (if a lane is provisioned)
+
+The Session Block records what happened; the **Open Agent Engine** turns what *didn't* happen into
+claimable work. Skip this step entirely if no lane is provisioned — check
+`06-context/open-engine/README.md` for the lane index, and `python3 00-bootstrap/doctor/linear-lanes.py`
+for live state.
+
+For each `Next:` item worth surviving the session, create one `Agent Todo` issue in the correct lane:
+
+- **Pointer-shaped, always.** Title plus a reference to where the substance lives — never the substance
+  itself. This holds on every lane, not just movement-only ones; a queue that accumulates content
+  becomes a second source of truth.
+- **Set `state` explicitly.** Never rely on the tracker's create-default; an issue that lands outside
+  `Agent Todo` is invisible to every future run.
+- **Lane-qualify ids** in the Session Block (`personal:SEA-12`), never bare — team keys collide across
+  lanes.
+- **Release any claim this session still holds.** An issue left in `Agent Working` at session end is an
+  orphaned lock with no timeout; nothing frees it but a later run noticing.
+- **Update the ledger heartbeat in place** — same comment id, never a second comment.
+
+Then reference the filed ids from the Session Block's `Next:` lines instead of restating the work. A
+next action recorded only as prose has no status, no owner, and no way to be declared dead — which is
+how a pending list reaches forty items.
+
+Full procedure: `03-skills/open-agent-engine/SKILL.md` → "Ritual integration".
+
 ### Step 6 — Regenerate the skill registry
 
 If any `SKILL.md` frontmatter changed this session, run

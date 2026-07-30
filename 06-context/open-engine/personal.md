@@ -76,8 +76,31 @@ deploy · credentials · billing · deletion outside the archive protocol), and 
 all still hold. **An unattended run is not a broader-permission run.**
 
 The same grant covers the `c8` lane, with the standing recommendation that its substance-refusal test
-pass first — which it now has (2026-07-29). **No scheduled runner exists yet**; standing one up is
-separate work, and `Automation state` stays `manual-required` until it does.
+pass first — which it now has (2026-07-29).
+
+**Decision 2026-07-29: no timer. The session boundary is the heartbeat.** A scheduled runner was
+scoped and rejected on three findings, in order of weight:
+
+1. **Cloud routines cannot reach Linear.** They run with no local files, no local env, and no
+   `~/.mcp-auth`; their only MCP comes from claude.ai connectors, and Linear is not among the
+   connected ones. A cloud routine was never an option.
+2. **A local runner with full autonomy is a prompt-injection path to a shell.** Issue bodies are
+   untrusted input by this engine's own rule, and an unattended process reading them while holding
+   Bash and git turns "anyone who can write to that board" into "anyone who can run commands on this
+   laptop". Acute on the `c8` lane, whose workspace could one day be administered by a Centric tenant.
+3. **A timer buys nothing here.** Its only value is progressing work while the human is away; Sean
+   works interactively as the sole human on the main runtime, so hourly runs would mostly burn tokens
+   confirming an empty queue.
+
+What replaced it: the engine reads at **session start** (report-only, silent when empty) and files
+residue at **session end**. The human is present exactly when a hold can be answered, so unattended
+execution is not needed to make holds resolvable. Wired into `CLAUDE.md`'s session-start ritual and
+`/session-end` Step 5.5; procedure in [[open-agent-engine]] → Ritual integration.
+
+**The authorization above stays on record**, unexercised. If a real need for unattended progress
+appears (most likely cross-machine handoff), it can be switched on without re-litigating — but it
+**must** be lane-scoped (`--strict-mcp-config` + a one-server `--mcp-config`), and finding 2 should be
+re-read first. `Automation` reads `session rituals`, not `manual` and not `scheduled`.
 
 **⚠️ Identifier collision across lanes.** Both lanes' workspaces auto-created a team keyed `SEA`, so
 issue ids are **not unique across lanes** — `SEA-5` is hello-world here and the substance-refusal test

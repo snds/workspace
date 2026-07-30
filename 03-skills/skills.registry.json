@@ -3612,7 +3612,7 @@
       "requires": [
         "linear-mcp"
       ],
-      "hash": "sha256:34c74f2a58ad94f38bf8b7ccb2870b5023a709be5bd66b27ab8f6fffeaf06106"
+      "hash": "sha256:d0a1d4feb9e16b3d4b799deaa407bb6d37ef76bfc95150f48427b7cf1823fd32"
     },
     "planetary-terrain-lod": {
       "path": "03-skills/planetary-terrain-lod/SKILL.md",

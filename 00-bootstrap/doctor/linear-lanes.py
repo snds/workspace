@@ -126,7 +126,10 @@ def inspect(root: Path, manifest: dict, surfaces: list[str], as_machine: str | N
         where = [s for s in surfaces if server in reg[s]]
         state = {
             "config_present": cfg.is_file(),
-            "provisioned": cfg.is_file() and "PENDING" not in cfg.read_text(encoding="utf-8"),
+            # Match the backticked FIELD form only. A bare "PENDING" also appears in prose
+            # (status banners, the runner's own refuse-while-PENDING rule), and matching that
+            # reported a fully-provisioned lane as not-provisioned — observed on c8, 2026-07-29.
+            "provisioned": cfg.is_file() and "`PENDING`" not in cfg.read_text(encoding="utf-8"),
             "registered_on": where,
             "auth": auth_state(spec["auth_dir"]),
         }

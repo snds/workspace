@@ -52,6 +52,7 @@ Render it as a markdown block, exactly this shape, before any other response:
 - **Surface:** {Claude Code (Mac desktop app) | Claude Code (Windows desktop app) | Cursor | VS Code | iOS | etc. — best inference from environment}
 - **Last session:** {YYYY-MM-DD} — {one-line title from session-log.md}
 - **Pending:** {N} items → see [06-context/project-context.md](06-context/project-context.md)
+- **Engine:** {lane} — {N hold · N queued · N claimed} · {lane} — clean   ← omit this line entirely when every lane's queue is empty
 - **Active projects ({N}):**
   - **{folder-name}** ({last-updated date}) — {first-line title from latest SESSION-STATE.md entry}
   - ...
@@ -72,6 +73,7 @@ Rules:
 - If `06-context/role-and-context.md` or related context files weren't injected by the hook (e.g., headless invocation), read them via the Read tool first, THEN output the ritual.
 - After the ritual block, respond to the user's message normally.
 - **If the SessionStart context contains a `## Notices` section, render those notices as bulleted warnings AT THE TOP of the ritual block (above the ✓ Workspace loaded line) so they're impossible to miss.** Notices include things like Claude Code version changes since last session and stale workspace audits.
+- **Engine line:** one label-filtered `list_issues` per _provisioned_ lane (id/title/status only), counted locally. **Omit the line entirely when every queue is empty**, and omit it silently if the MCP transport is absent — a missing line must never read as "empty". Report only; never claim at session start. An issue in `Agent Working` is an **orphaned claim** — surface it and ask, never silently re-claim. Procedure: [[open-agent-engine]] → Ritual integration.
 
 This ritual costs ~150 tokens per session start in exchange for cross-surface continuity and reliable confirmation that the brain loaded.
 
