@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-07-30 07:55 PDT — Cursor multi-agent / multi-model hardening pass_
+_Last updated: 2026-07-30 — two parallel passes landed: Cursor multi-agent hardening + Open Agent Engine live with the backlog migrated_
 
 ---
 
@@ -8,14 +8,14 @@ _Last updated: 2026-07-30 07:55 PDT — Cursor multi-agent / multi-model hardeni
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: **Cursor multi-agent / multi-model hardening — DONE for this pass.** Trigger-routes shared source, Cursor hooks (preCompact/sessionEnd/subagentStop), `.cursor/agents/` hubs, BEACON in User Rules, compile-cursor-rules archived, adapters/SURFACES/workspaces refreshed.
-- **Working set**: uncommitted Cursor-adapter + trigger-routes + hooks/agents + adapter docs (this session). Open Agent Engine remains live from prior sessions.
-- **Last action (2026-07-30):** Implemented the Cursor review recommendations end-to-end. By Composer · Cursor · Work MBP.
-- **Next action:** Commit when Sean asks; optionally run full `workspace-doctor.sh` (Claude hook layer + launchd) to clear remaining ^pc-03 partial; add `~/.cursor/mcp.json` from `00-bootstrap/templates/cursor-mcp.json.example` if Linear/Figma needed in Cursor.
-- **Open decisions:** none for this pass.
+- **Current focus**: two parallel passes both landed 2026-07-30 — **Cursor multi-agent hardening** (trigger-routes shared source, Cursor hooks, `.cursor/agents/` hubs, BEACON in User Rules, compile-cursor-rules archived, adapters/SURFACES/workspaces refreshed) and the **Open Agent Engine**, now live on both lanes, all four smoke tests passed, wired into the session rituals, with 38 of 43 backlog items migrated. Both are committed and pushed.
+- **Working set**: clean. Nothing uncommitted.
+- **Last action (2026-07-30):** Migrated 38 of 43 `project-context.md` pending items into the engine pointer-shaped, then closed the session: knowledge entry harvested, fragments folded. By Claude Opus 5 · Cursor (Claude Code extension) · Work MBP — running alongside the Composer pass, which committed separately as `2e3e10f`.
+- **Next action:** (1) Review `personal:SEA-11` — trigger-routes is delivered and committed, sitting in `Agent Review` solely because it moved single-source authority from `dispatcher.py` to `trigger-routes.json` and deserves one look. (2) Decide `personal:SEA-32` — a seventh status vs a priority-aware claim rule. (3) Give `^pc-07` / `^pc-11` machine-local homes so they can be filed without writing substance to the employer board; resolve the lane ambiguity on `^pc-30` / `^pc-41`. (4) Optionally run full `workspace-doctor.sh` to clear the remaining `^pc-03` partial.
+- **Open decisions:** `personal:SEA-32` — the six statuses have no "someday" bucket and the claim rule is priority-blind, so a deferred item gets claimed ahead of newer work. Harmless while runs are human-triggered and report-only; real the moment anything is unattended.
 - **Blocked on:** nothing.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config (`07-projects/02-centricPLM/open-engine.local.md` — gitignored).
-- **Agent thread**: `Composer / Cursor / Work MBP (2026-07-30): Cursor multi-agent hardening shipped; next = commit on request`.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config (`07-projects/02-centricPLM/open-engine.local.md` — gitignored). **Do not delete anchored items from `project-context.md`** — each `^pc-NN` is the sole pointer for a Linear issue; deleting one orphans it. That file is now the substance store.
+- **Agent thread**: `Composer / Cursor / Work MBP (2026-07-30): Cursor multi-agent hardening shipped` → `Claude Opus 5 / Cursor (Claude Code) / Work MBP (2026-07-30): engine live + backlog migrated; next = review SEA-11, decide SEA-32`.
 
 
 ### Environment

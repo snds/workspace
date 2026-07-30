@@ -4,6 +4,105 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-07-11 — Legion: procedural-worlds Step 0 — star+planet physical data contract (PR #157 open)
+
+--- SESSION BLOCK ---
+Date: 2026-07-11
+Agent: Claude Opus 4.8
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 13-legion
+Artifacts:
+  - Legion PR #157 (OPEN, awaiting owner — not self-merged) — branch feat/worlds-data-prep.
+    Extends the GENERATED body records with the physical fields the star + planet renderers read,
+    so feat/worlds-star and feat/worlds-planet never edit the same data file. Pure data, no rendering.
+    STAR (StellarParams): spectralType, massSolar, radiusSolar, luminositySolar, tempK, ageGyr,
+    activity — derived deterministically; real B−V drives tempK. PLANET (GenPlanet): type, massEarth,
+    radiusEarth, insolation, isGasGiant, hasRings, per-body seed. tsc clean, 1364 vitest pass.
+Decisions:
+  - Independent RNG streams for the physical fields (seedKey|starphys, seedKey|planet|i) so the
+    existing planet/belt layout is byte-unchanged (belts.test untouched, green).
+  - Kept coarse teffK/lumSun (drive HZ/snow-line determinism) alongside render-facing
+    tempK/luminositySolar — avoided a churny rename cascade; distinction documented in the interface.
+  - Curated home stars (star-catalog.ts) left authoritative/untouched — only generated bodies filled.
+Handoff: baton to feat/worlds-star (plan S1) — see SESSION-STATE Live handoff (2026-07-11).
+Pending: PR #157 merge (owner). Do NOT branch feat/worlds-star or feat/worlds-planet until it lands
+  on main (shared base for both parallel workstreams).
+--- END BLOCK ---
+
+---
+
+### 2026-07-10 — Legion: tabbed settings + committed save-as-default persistence (PR #146 open)
+
+--- SESSION BLOCK ---
+Date: 2026-07-10
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 13-legion
+Artifacts:
+  - Legion PR #146 (OPEN) — tabbed CONFIG panel (DISPLAY/KEYBOARD/CREDITS, typeface hidden) +
+    dev write-back endpoint: Save now writes committed src/config/*.json defaults
+Decisions:
+  - Persistence model: code defaults -> committed JSON overlay (written by Save via dev endpoint)
+    -> localStorage fallback. localStorage demoted; committed files are the durable save.
+  - Root cause of "LAB save doesn't persist": seed was missing from the galaxy preset, so saved
+    looks regenerated structurally different. Fixed (seed in snapshot/apply/revert).
+Pending: (resolved 2026-07-10 — both PRs merged to main on Sean's go-ahead; main green 205/205)
+--- END BLOCK ---
+
+---
+
+### 2026-07-10 — Legion: Sol texture provenance verified (PR #145 open)
+
+--- SESSION BLOCK ---
+Date: 2026-07-10
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 13-legion
+Artifacts:
+  - Legion PR #145 (OPEN, awaiting merge) — data-sources.ts split into 3 texture entries + public/textures/sol/NOTICE.txt
+Decisions:
+  - Provenance method accepted: embedded PDS/XMP metadata + MD5 + pixel correlation vs candidate downloads.
+  - 10 files = Solar System Scope CC BY 4.0 (commercial OK); 4 = USGS Voyager-Galileo mosaics (public domain);
+    titan/phobos/deimos stay UNVERIFIED (candidates are NC-licensed) with replace-before-release guidance.
+Pending:
+  - Sean: merge PR #145 (self-merge was permission-gated this session).
+  - Replace titan/phobos/deimos (USGS mosaics or procedural) before any public release.
+--- END BLOCK ---
+
+---
+
+### 2026-07-09 — Legion: physical galaxy default + credits/positions/drift/system-focus epic (PRs #141–#144)
+
+--- SESSION BLOCK ---
+Date: 2026-07-09
+Agent: Claude Fable 5
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 13-legion
+Artifacts:
+  - Legion PR #141 — physical galaxy = default disc (half-float gas blur) + trackpad zoom fix
+  - Legion PR #142 — data-sources attribution registry + Settings CREDITS section
+  - Legion PR #143 — 3,066 real HYG systems at true x-y-z + galactic drift on the sim clock
+  - Legion PR #144 — system focus + lazy loading (Sol playable from the sector, load hidden in zoom)
+  - 13-legion/SESSION-STATE.md — Live handoff block rewritten (July 9)
+Decisions:
+  - Licensing (extends decision-commercial-data-licensing): Gaia DR3 confirmed CC BY-NC 3.0 IGO —
+    attribution alone is NOT sufficient for commercial use; recorded NOT SHIPPED in the in-app
+    registry. HYG v3.8 (CC BY-SA 4.0) remains the shipped base.
+  - Drift clock unified: disc shader + system markers share one galactic-time clock; LAB warp
+    slider demoted to a preview offset.
+Pending:
+  - Sol planet textures have NO recorded provenance (flagged UNVERIFIED in the credits registry) —
+    must be resolved before any public release.
+  - Gaia-mary map UX (labels, region box, grid, course plotting) now unblocked — next Legion focus.
+--- END BLOCK ---
+
+---
+
+
 ### 2026-07-09 — Beacon coverage closed: enroll helper shipped, six repos beaconed, audit false-MISS fix
 
 --- SESSION BLOCK ---
