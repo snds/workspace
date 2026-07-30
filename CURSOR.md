@@ -1,39 +1,63 @@
 # Cursor Adapter
 
 _The **Cursor adapter** over the universal contract in [AGENTS.md](AGENTS.md). It describes only how
-Cursor executes that contract. The contract itself — folder semantics, read order, the skill loading
-algorithm, the routing map — lives in AGENTS.md and is not duplicated here._
+Cursor executes that contract. Folder semantics, read order, skill loading, routing map, and
+multi-agent handoff live in AGENTS.md — not duplicated here._
 
 ## How Cursor executes the contract
 
-- **Canonical rule file:** `.cursor/rules/brain.mdc` (`alwaysApply: true`) is loaded into every Cursor
-  session in this folder. It is the Cursor-canonical override for the session-start protocol. If both
-  this file and `brain.mdc` are present, follow `brain.mdc` for Cursor-specific mechanics; defer to
+- **Canonical always-on rule:** `.cursor/rules/brain.mdc` (`alwaysApply: true`) injects the contract
+  framing into every request for every model. Write gates: `.cursor/rules/01-agent-controller.mdc`.
+  If both this file and `brain.mdc` are present, follow `brain.mdc` for Cursor mechanics; defer to
   [AGENTS.md](AGENTS.md) for everything else.
-- **Workspace root:** resolve to the directory containing `AGENTS.md` (this checkout). No cloud-drive
-  mount detection.
-- **Context:** read `06-context/` (role, project-context, session-log head, `memory/MEMORY.md`) and
-  `04-preferences/user-preferences.md` at session start, per the portable session protocol in
-  [framework 08](01-frameworks/08-workspace-contribution-framework.md).
-- **Skills:** Cursor does not have Claude's slash-command skills. Load skills as documents per the
-  precedence algorithm in [AGENTS.md](AGENTS.md): route by `triggers`/`description`, then read the
-  `load_chains` ancestors (foundation→hub→spoke) from `03-skills/skills.registry.json`.
-- **Continuity (multi-agent):** on entry, read the active project's `SESSION-STATE.md` **Live handoff**
-  block to pick up exactly where the previous agent (Claude, Perplexity, a human…) left off; on
-  handoff/pause/end, update it + append an attributed `session-log` entry. Cursor is one participant in a
-  single unified thread — see [AGENTS.md](AGENTS.md) → "Multi-agent continuity & handoff".
+- **Workspace root:** open **this checkout** (the folder containing `AGENTS.md`), or a
+  `00-bootstrap/workspaces/*.code-workspace` file with **Brain as the first folder**. Opening a
+  parent (`~/Projects`) alone does not attach `brain.mdc` — use **move agent to workspace root** or
+  reopen via the `.code-workspace` file.
+- **Context:** read `06-context/` (role, project-context head, session-log head, `memory/MEMORY.md`)
+  and `04-preferences/user-preferences.md` at session start per framework 08.
+- **Skills:** Cursor has no Claude slash commands. Route via
+  [trigger-routes.md](02-shared-references/trigger-routes.md) (curated) then
+  `03-skills/skills.registry.json` (`load_chains`, foundation→hub→spoke). Project Task agents live in
+  `.cursor/agents/` and encode the same load chains.
+- **Continuity:** on entry, read the active project's `SESSION-STATE.md` **Live handoff**; on
+  handoff/pause/end, update it + write a `06-context/sessions/<id>.md` fragment (not a direct
+  `session-log.md` append). Stamp `Agent · Surface · Machine`.
+
+## Hooks (Cursor-native)
+
+| Layer | Location | Events |
+|---|---|---|
+| User-global (doctor-managed) | `~/.cursor/hooks.json` ← `00-bootstrap/dist/cursor-hooks.json` | `sessionStart` (+ mirrors of project events when installed) |
+| Project (repo) | `.cursor/hooks.json` | `preCompact`, `sessionEnd`, `subagentStop` |
+
+- **sessionStart** — injects root + ritual ABI `[workspace: LOADED · … · via:cursor-hook]`.
+- **preCompact** — re-anchor reminder (compaction survival; Claude's prompt-reassert analogue).
+- **sessionEnd** — nudge Live handoff + session fragment.
+- **subagentStop** — nudge parent to fold Task results into the baton.
+
+Scripts: `.cursor/hooks/*.sh` (project) and `00-bootstrap/dist/cursor-*.sh` (installed by doctor).
+Fail-open. Structured-output / subagent turns skip the ritual line (see BEACON exemption).
+
+## Dynamic model switching + parallel agents
+
+- **Model swap mid-task:** no session boundary. `alwaysApply` re-injects rules; **re-anchor** — re-read
+  Live handoff + load skills for the task before acting. Chat history is shared; workspace state is not.
+- **Parallel Task / subagents:** write **session fragments** only; one agent owns Live handoff updates
+  at a time. Do not race-append `session-log.md`. Prefer `.cursor/agents/*` so workers load the skill graph.
+- **Employer repos:** resolve context profile first — `centric-engineering` = branch → PR → human review;
+  never auto-commit/push from a Cursor agent.
 
 ## Capabilities / limits
 
-- No `.claude/hooks` — the session-start/-end rituals are executed by reading/following the protocol,
-  not by a hook. `.cursor/rules/*.mdc` provide the always-on framing (re-injected for every model).
-- **Dynamic model switching:** when you swap the active model mid-task, re-anchor on your turn — re-read the
-  project's Live handoff block + load the skills the task needs from the registry before acting. See
-  `.cursor/rules/brain.mdc` → "Dynamic model switching" and [AGENTS.md](AGENTS.md) → "Multi-agent continuity".
-- **Writing is open to any model, behind the write-quality gates** (quality ≥ standard · intent integrity ·
-  cross-link continuity · no zombies). Run `build-related.py` → `build-registry.py` → `validate-integrity.py`
-  → `validate-links.py` → `validate-workspace.py` before committing (registry last of the two builders — it
-  hashes the files `build-related` rewrites). See [AGENTS.md](AGENTS.md) →
-  "Write-quality gates" and `.cursor/rules/01-agent-controller.mdc`.
+- Writes are open to any model behind the write-quality gates (see `01-agent-controller.mdc` /
+  AGENTS.md). Before commit: `build-related.py` → `build-registry.py` → `build-trigger-routes.py` →
+  validators (integrity → links → workspace).
+- **User Rules beacon:** paste `00-bootstrap/dist/BEACON.md` into Cursor Settings → Rules (fallback when
+  hooks miss). Doctor nags until `workspace-doctor.sh --ack-chat`.
+- **MCP:** configure in Cursor Settings → MCP (or `~/.cursor/mcp.json`). See
+  [capability-registry.md](02-shared-references/capability-registry.md) for per-surface install.
+  Linear lanes / Figma are not assumed present until configured on this machine.
+- `.claude/skills/` slash commands are Claude-only; use `.cursor/agents/` + registry instead.
 
 Other adapters: [CLAUDE.md](CLAUDE.md) · [PERPLEXITY.md](PERPLEXITY.md).

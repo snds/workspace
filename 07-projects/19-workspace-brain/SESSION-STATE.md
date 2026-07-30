@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-07-29 17:05 PDT — Open Agent Engine COMPLETE: both lanes live, all four smoke tests passed, validators green_
+_Last updated: 2026-07-30 07:55 PDT — Cursor multi-agent / multi-model hardening pass_
 
 ---
 
@@ -8,16 +8,15 @@ _Last updated: 2026-07-29 17:05 PDT — Open Agent Engine COMPLETE: both lanes l
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: **Open Agent Engine — DONE.** Both lanes live and verified, all four smoke tests passed, detector reports `ok` on both, all five validators green. Remaining work is Sean-side Linear settings plus optional extras; nothing is half-built.
-- **Working set** (uncommitted, 11 entries): `03-skills/open-agent-engine/SKILL.md` (new) · `00-bootstrap/doctor/linear-lanes.py` (new, untracked) · `06-context/open-engine/{README,personal}.md` (new) · `07-projects/02-centricPLM/open-engine.local.md` (new, **gitignored by design**) · edits to `02-shared-references/capability-registry.md`, `03-skills/workspace-bootstrap/SKILL.md`, `09-tools/build-local-skill-plugin.py`, `_SKILLS.md`, `.claude/hooks/dispatcher.py`, and this file.
-- **Last action**: Closed out the punch list — fixed the detector's `PENDING` false positive (it matched the word in prose, including the config's own status banner, so a fully-provisioned `c8` reported `not-provisioned`; now matches the backticked field form only, with a regression test proving a real placeholder still trips it), cleared the stale c8 banner, and added the cross-lane id-collision rule to the skill. Verified via Linear that `personal:SEA-7` and `c8:SEA-5` both reached `Agent Done` — **all four smoke tests passed.** By Claude Opus 5 · Claude Code (VS Code extension) · Work MacBook Pro.
-- **Next action**: commit the ritual-integration edits (below). Both earlier Sean-side follow-ups are **closed**: auto-close-stale-issues is OFF on both workspaces (done by Sean), and the scheduled runner is **decided against** — see Open decisions.
-- **Open decisions**: none. Two settled 2026-07-29: (1) unattended scheduled runs AUTHORIZED via the `SEA-8` hold, relaxing nothing else — but left **unexercised**; (2) **no timer — the session boundary is the heartbeat.** A scheduled runner was scoped and rejected on three findings: cloud routines cannot reach Linear (no local `~/.mcp-auth`, and Linear is not a connected claude.ai connector); a local runner with full autonomy makes untrusted issue bodies an input to a process holding Bash + git, i.e. a prompt-injection path to a shell, sharpest on the `c8` lane whose board could one day be admin-controlled; and a timer only buys progress-while-absent, which is not how Sean works. Replaced by session-start read (report-only, silent when empty) + session-end filing. Rationale recorded in the personal lane config under "Unattended execution".
-- **Blocked on**: nothing. (The Bash-tool `EACCES` failure that blocked the previous session is gone — git, validators, and `linear-lanes.py` all run.)
-- **In-flight / do-not-touch**: the uncommitted working set. Do **not** `git add` the c8 lane config; it is gitignored deliberately (`git check-ignore -q 07-projects/02-centricPLM/open-engine.local.md`).
-- **⚠️ Cross-lane hazard**: both lanes' teams are keyed `SEA`, so issue ids collide — `SEA-5` is hello-world on `personal` and the substance-refusal test on `c8`. Always qualify outside the tracker (`personal:SEA-5`, `c8:SEA-5`). **Now recorded in the skill** (Lanes → "Issue ids are not unique across lanes") as well as both lane configs.
-- **⚠️ Isolation caveat**: connection-level isolation is real (each lane's auth context reaches one workspace only), but **runner-level isolation is not** — both servers are user-scoped, so every session on this machine can write to either. Acceptable with a human watching; **not** acceptable unattended. See the skill → Lanes.
-- **Agent thread**: `Claude Opus 5 / Claude Code (VS Code) / Work MBP (2026-07-29): punch list closed, all 4 smoke tests passed, validators green; next = commit`.
+- **Current focus**: **Cursor multi-agent / multi-model hardening — DONE for this pass.** Trigger-routes shared source, Cursor hooks (preCompact/sessionEnd/subagentStop), `.cursor/agents/` hubs, BEACON in User Rules, compile-cursor-rules archived, adapters/SURFACES/workspaces refreshed.
+- **Working set**: uncommitted Cursor-adapter + trigger-routes + hooks/agents + adapter docs (this session). Open Agent Engine remains live from prior sessions.
+- **Last action (2026-07-30):** Implemented the Cursor review recommendations end-to-end. By Composer · Cursor · Work MBP.
+- **Next action:** Commit when Sean asks; optionally run full `workspace-doctor.sh` (Claude hook layer + launchd) to clear remaining ^pc-03 partial; add `~/.cursor/mcp.json` from `00-bootstrap/templates/cursor-mcp.json.example` if Linear/Figma needed in Cursor.
+- **Open decisions:** none for this pass.
+- **Blocked on:** nothing.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config (`07-projects/02-centricPLM/open-engine.local.md` — gitignored).
+- **Agent thread**: `Composer / Cursor / Work MBP (2026-07-30): Cursor multi-agent hardening shipped; next = commit on request`.
+
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.

@@ -37,9 +37,16 @@ entry) and memory-index coverage (every `06-context/memory/` entry is listed in 
 python3 09-tools/validate-workspace.py
 ```
 
-## compile-cursor-rules.py
+## build-trigger-routes.py
 
-Compiles workspace context into `AGENTS.md` for non-Claude tools. `--watch` for file-watch mode.
+Generates `02-shared-references/trigger-routes.md` from curated
+`trigger-routes.json` + hub/foundation/cross-cutting triggers in the skill registry.
+Claude's dispatcher loads the same JSON; Cursor and other agents read the markdown.
+
+```
+python3 09-tools/build-trigger-routes.py
+python3 09-tools/build-trigger-routes.py --check
+```
 
 ## build-local-skill-plugin.py
 

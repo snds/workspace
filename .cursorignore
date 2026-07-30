@@ -1,0 +1,21 @@
+# Cursor file indexing exclusions
+# These paths are excluded from Cursor's code search, skill indexing, and context loading.
+
+# Stale Claude Code git worktrees — full workspace copies, cause duplicate skill discovery
+07-projects/*/.claude/worktrees/
+
+# Large generated/binary directories
+**/node_modules/
+**/.next/
+**/.nuxt/
+**/dist/
+**/build/
+**/.cache/
+
+# Archive — superseded versions, not relevant to active work
+_archive/
+03-skills/_archive/
+05-artifacts/archive/
+
+# Obsidian internal
+.obsidian/

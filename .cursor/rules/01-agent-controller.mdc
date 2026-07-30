@@ -1,45 +1,27 @@
 ---
-description: Write policy for the workspace — any capable agent may write, behind hard quality/integrity/continuity gates. Loaded always.
+description: Write policy — any capable agent may write, behind quality/integrity/continuity gates.
 alwaysApply: true
 ---
 
-# Write Policy — gated, not gated-by-identity
+# Write Policy
 
-## Any capable agent may read AND write.
+Any model may modify this workspace **if every write clears the gates** in
+[AGENTS.md](../../AGENTS.md) → "Write-quality gates":
 
-Writing is **no longer restricted to Claude.** Any model (Cursor's Claude/GPT/Gemini, a local model,
-a human) may modify the workspace — *provided every write passes the write-quality gates below.*
-Correctness is enforced by **deterministic validation + CI**, not by which model holds the pen. This is
-what makes dynamic, mid-task agent switching (Cursor swapping models) feel like **one unified contract**.
+1. **Quality** ≥ workspace standard (no stubs/TODOs/unfilled tokens; established structure + voice).
+2. **Intent integrity** — no silent data/context/intent loss.
+3. **Cross-link continuity** — update related files; regenerate; validate.
+4. **No zombies** — archive + regenerate + repoint; never leave superseded stubs.
 
-Full rationale + the universal version of these gates: [AGENTS.md](../../AGENTS.md) → "Write-quality gates".
-
-## The write-quality gates (every write, every agent)
-
-1. **Quality** — output must **meet or exceed** the workspace's documentation standard: complete (no
-   stubs, TODOs, or unfilled template tokens), in the file's established structure and voice, with valid
-   frontmatter. Follow `01-frameworks/05-last-mile-craft-framework.md` + `06-qa-operating-model.md`.
-2. **Intent integrity (no loss)** — read the file and understand its intent *before* editing; after, verify
-   no data, context, or intent was silently dropped. Preserve meaning unless deliberately superseding (gate 4).
-3. **Cross-link continuity** — when you change a file, update **every** related/cross-linked file
-   (frontmatter edges, `## Related`, foundations, MOCs, knowledge refs, prose mentions). Then regenerate
-   (`build-related.py`, then `build-registry.py` — in that order) and run the validators. A change that orphans a reference is
-   **incomplete**, not done.
-4. **No zombies — archive-or-regenerate** — if a change is so dramatic the old file no longer makes sense,
-   do **not** leave it stale or half-updated. **Archive** it with provenance (`_archive/` + `ARCHIVE-LOG.md`),
-   **generate** the replacement, and **repoint** all cross-links. Never leave an orphaned, superseded-but-live,
-   or stub file.
-
-## Enforcement (run before you commit — CI runs them too)
+Before commit:
 
 ```
-python3 09-tools/build-related.py         # regenerate reciprocal cross-links (rewrites SKILL.md bodies)
-python3 09-tools/build-registry.py        # regenerate the graph from frontmatter — MUST follow build-related,
-                                          #   it hashes the SKILL.md content build-related just rewrote
-python3 09-tools/validate-integrity.py    # quality + cross-link continuity + anti-zombie
-python3 09-tools/validate-links.py        # dangling + reciprocity
-python3 09-tools/validate-workspace.py    # archive provenance + memory index
+python3 09-tools/build-related.py
+python3 09-tools/build-registry.py
+python3 09-tools/build-trigger-routes.py
+python3 09-tools/validate-integrity.py
+python3 09-tools/validate-links.py
+python3 09-tools/validate-workspace.py
 ```
 
-If any gate fails, the write is not finished. Gate 2 (intent) is partly semantic — CI can't fully judge it;
-that's on the authoring agent and PR review. Everything else is machine-checked.
+(`build-registry` after `build-related` — registry hashes SKILL.md bodies that related rewrites.)

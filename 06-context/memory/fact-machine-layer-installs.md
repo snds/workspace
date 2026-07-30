@@ -12,10 +12,10 @@ at `066edac`) must be installed **per machine**. State as known:
 
 | Machine | Installed | Date | Notes |
 |---|---|---|---|
-| Personal MacBook Pro (`Voyager-2.local`) | ✅ yes | 2026-07-09 | Fix session FX-1. Doctor run clean; Drive-era `resolve-skills-symlink.sh` + `workspace-bootstrap.sh` retired to `~/.claude/hooks/_retired/`; their `settings.json` registrations removed; `~/.claude/CLAUDE.md` → managed beacon (pre-beacon global-standards file backed up at `~/.claude/_retired/CLAUDE.pre-beacon-2026-07-09.md`); `workspace-brain-path` → `/Users/snds/Projects/Workspace`; launchd agent loaded. Live parent-dir acceptance test **GREEN** (2026-07-09, after `claude login` — note: CLI auth is separate from the Desktop app's): fresh `~/Projects` session received shim context with live sha, correct ritual line, and planted trigger `figma-cli branch targeting` resolved via AGENTS.md read order → `_INDEX.md` → `figma-cli-authoring.md`. |
-| Work MacBook Pro (main, `CS-K746DRWXY1`) | ❌ no | — | Runnable only there — pending item. |
+| Personal MacBook Pro (`Voyager-2.local`) | ✅ yes | 2026-07-09 | Fix session FX-1. Doctor run clean; Drive-era hooks retired; beacon CLAUDE.md; launchd loaded. Parent-dir acceptance test GREEN. |
+| Work MacBook Pro (main, `CS-K746DRWXY1`) | 🟡 partial | 2026-07-30 | Cursor layer present: `~/.cursor/hooks.json` + `cursor-sessionstart/reassert/sessionend/subagent-stop` shims installed from dist (2026-07-30 Cursor multi-agent pass). `~/.claude/workspace-brain-path` → `/Users/sean.sands/Projects/Workspace`. User Rules BEACON pasted 2026-07-30. Full `workspace-doctor.sh` + Claude SessionStart/reassert/audit + launchd still need a dedicated doctor run + `--ack-chat` (carry-over from ^pc-03). |
 | Work MacBook Pro (loaner, `CS-KQ23N94M0W`) | ❌ no | — | Pending; machine may be returned. |
-| Windows Desktop (`Enterprise`) | ❌ no | — | Doctor is bash/launchd (macOS); Windows path needs its own install route + one verified post-migration session (validation report P1-13). |
+| Windows Desktop (`Enterprise`) | ❌ no | — | Doctor is bash/launchd (macOS); Windows path needs its own install route + one verified post-migration session. |
 
 Install = run `00-bootstrap/doctor/workspace-doctor.sh` on that machine, then retire any
 Drive-era `~/.claude/hooks/*.sh` + their `settings.json` registrations, refresh
@@ -31,4 +31,3 @@ candidate list, testing for `AGENTS.md`:
 |---|---|
 | macOS (all Macs) | `~/Projects/Workspace` (case-insensitive APFS also accepts `workspace`) |
 | Windows (`Enterprise`) | not yet installed post-migration — location TBD at install time (record here); shims are bash and need the Windows install route first |
-

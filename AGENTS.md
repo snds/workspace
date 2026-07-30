@@ -97,19 +97,22 @@ When entering the workspace without prior context, read in this order:
 1. [llms.txt](llms.txt) — machine entry point
 2. `AGENTS.md` (this file)
 3. `03-skills/skills.registry.json` — the skill graph (for routing + load order)
-4. [08-knowledge/_INDEX.md](08-knowledge/_INDEX.md) — the knowledge-vault index. Match the
+4. [trigger-routes.md](02-shared-references/trigger-routes.md) — curated high-leverage
+   trigger → load hints (shared by Claude dispatcher + Cursor/other agents); then fall through
+   to the registry algorithm
+5. [08-knowledge/_INDEX.md](08-knowledge/_INDEX.md) — the knowledge-vault index. Match the
    task's vocabulary against each entry's `Triggers:` list and read matched entries BEFORE
    domain work — they carry hard-won constraints that are in neither skills nor context.
-5. [workspace-ontology.md](02-shared-references/workspace-ontology.md) — vocabulary + routing map
-6. Delivery playbooks, in their own load order: resolve the context profile FIRST
+6. [workspace-ontology.md](02-shared-references/workspace-ontology.md) — vocabulary + routing map
+7. Delivery playbooks, in their own load order: resolve the context profile FIRST
    ([00-context-profiles.md](02-shared-references/delivery-playbooks/00-context-profiles.md)),
    then the audience contract (01), then the medium playbook the request's own words imply
    (02 diagrams · 03 data/charts · 04 documents/specs · 05 Proofboard) — see
    [delivery-playbooks/README.md](02-shared-references/delivery-playbooks/README.md)
-7. Root helper files such as `_HOME.md`, `_CONTEXT.md`, `_FRAMEWORKS.md`, `_SKILLS.md`
-8. `06-context/` — durable context + memory (`memory/MEMORY.md` index)
-9. Shared references in `02-shared-references/` and preferences in `04-preferences/` when relevant
-10. Project-local context files for the active project; skill files when performing specialized work
+8. Root helper files such as `_HOME.md`, `_CONTEXT.md`, `_FRAMEWORKS.md`, `_SKILLS.md`
+9. `06-context/` — durable context + memory (`memory/MEMORY.md` index)
+10. Shared references in `02-shared-references/` and preferences in `04-preferences/` when relevant
+11. Project-local context files for the active project; skill files when performing specialized work
 
 If a task is clearly project-scoped, move to the nearest project root and read local context immediately after these workspace files.
 
@@ -153,9 +156,13 @@ Skills are discoverable by both humans and machines through one generated graph:
 
 1. `03-skills/skills.registry.json` — the machine graph (tiers, prerequisites, related, triggers,
    precomputed `load_chains`). Generated from frontmatter by `09-tools/build-registry.py`.
-2. Each `03-skills/<name>/SKILL.md` — the skill itself; its frontmatter is the source of truth.
+2. [trigger-routes.json](02-shared-references/trigger-routes.json) (+ generated
+   [trigger-routes.md](02-shared-references/trigger-routes.md)) — curated high-leverage routes
+   shared by the Claude dispatcher and non-Claude agents. Regenerate markdown with
+   `09-tools/build-trigger-routes.py`.
+3. Each `03-skills/<name>/SKILL.md` — the skill itself; its frontmatter is the source of truth.
    Spec: [skill-frontmatter.md](02-shared-references/skill-frontmatter.md).
-3. `_SKILLS.md` and per-domain MOCs — human navigation.
+4. `_SKILLS.md` and per-domain MOCs — human navigation.
 
 Each skill's frontmatter exposes: `name`, `description` (routing prose), `triggers`, `tier`
 (`foundation`/`hub`/`spoke`/`cross-cutting`), `hub`, `prerequisites`, `related`, `governed_by`,

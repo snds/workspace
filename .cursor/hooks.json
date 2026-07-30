@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "hooks": {
+    "preCompact": [
+      { "command": ".cursor/hooks/cursor-reassert.sh" }
+    ],
+    "sessionEnd": [
+      { "command": ".cursor/hooks/cursor-sessionend.sh" }
+    ],
+    "subagentStop": [
+      { "command": ".cursor/hooks/cursor-subagent-stop.sh" }
+    ]
+  }
+}

@@ -1,16 +1,14 @@
 {
-  "_comment": "Figma plugin development — Brain + Claude Figma plugin + Component Set Manager + figma CLI test. Open from VS Code or Cursor: File → Open Workspace from File... → pick this.",
+  "_comment": "Figma plugin development — Brain + Claude Figma plugin + Component Set Manager + figma-repo-sync. Brain must be first so Cursor loads .cursor/rules/.",
   "folders": [
     { "path": "../..", "name": "Brain" },
     { "path": "../../07-projects/04-claude-figma-plugin", "name": "Claude Figma Plugin" },
     { "path": "../../07-projects/12-MCS", "name": "Component Set Manager" },
-    { "path": "../../07-projects/09-figmaCLI-test", "name": "Figma CLI test" }
+    { "path": "../../07-projects/09-figma-repo-sync-plugin", "name": "figma-repo-sync-plugin" }
   ],
   "settings": {
     "files.exclude": {
-      "04-artifacts": true,
-      "05-version-registers": true,
-      "08-tools": true,
+      "05-artifacts/archive": true,
       "07-projects/00-obsidian": true,
       "07-projects/01-mediaservices": true,
       "07-projects/02-centricPLM": true,
@@ -25,6 +23,10 @@
       "07-projects/13-legion": true,
       "07-projects/14-variable-icon-font-generator": true,
       "07-projects/15-DavinciRemake": true,
+      "07-projects/16-CDS Figma-Code Audit": true,
+      "07-projects/17-data table": true,
+      "07-projects/18-bootstrap-generator": true,
+      "07-projects/19-workspace-brain": true,
       "07-projects/plans": true,
       "07-projects/todos": true
     }

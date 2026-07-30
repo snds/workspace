@@ -11,6 +11,8 @@
   loading-precedence algorithm, and the bootstrap-on-a-checkout protocol.
 - [skills.registry.json](03-skills/skills.registry.json): machine-readable skill graph (tiers,
   prerequisites, cross-references, triggers, precomputed load chains). Generated from frontmatter.
+- [trigger-routes.md](02-shared-references/trigger-routes.md): curated high-leverage trigger →
+  load hints (Cursor / non-Claude friendly; same JSON the Claude dispatcher loads).
 - [workspace-ontology.md](02-shared-references/workspace-ontology.md): vocabulary + the
   "where does this belong?" routing map. Read before writing anything.
 

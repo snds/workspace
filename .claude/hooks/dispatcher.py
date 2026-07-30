@@ -68,122 +68,31 @@ HOSTNAME_MAP = {
     "Enterprise": "Windows Desktop",
 }
 
-# Foundational design route — fires on UI status/validation/color/a11y vocabulary.
-# The baseline is design-system-AGNOSTIC (design-foundations + found-color + a11y-visual);
-# system-specific token rules (Radix, Tailwind, centric-ui) apply ONLY when the target
-# system actually uses that system. Missing tokens/features in the target system are
-# noted to the backlog (project-context.md Pending Items), never solved by importing
-# another system's conventions.
-FOUNDATION_ROUTE = (
-    "FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md "
-    "+ 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md "
-    "(system-agnostic color/UX/a11y baseline). "
-    "Then resolve within the TARGET design system's OWN tokens/variables (read its DESIGN.md / "
-    "connected Figma libraries); if the target system lacks a needed token, derive minimally "
-    "within its constraints and add the gap to the backlog — do not import another system's "
-    "conventions (e.g. Radix steps) into a system that doesn't use them. Token gaps are "
-    "backloggable; a11y compliance is not deferrable — the delivered artifact must pass now."
-)
+# Curated trigger → load-hint map. Source of truth:
+# 02-shared-references/trigger-routes.json (also rendered to trigger-routes.md for
+# non-Claude agents). Insertion order IS emission priority — under the per-tier cap
+# (FX-2), earlier rows win. Mandate rows (framework #06) come first.
+TRIGGER_ROUTES_JSON = WORKSPACE_ROOT / "02-shared-references" / "trigger-routes.json"
 
-ARTIFACT_ROUTE = (
-    "02-shared-references/delivery-playbooks/06-research-and-design-artifacts.md — SELECT the right "
-    "research/design artifact (JTBD/persona/journey map/service blueprint/user story/use case/user "
-    "flow) via its selection guide, respect the order-of-operations, and AUTHOR to the rules: spell "
-    "everything out (no cryptic code/ticket references), define every domain term in plain English, "
-    "persona-anchor at the user level, service-design altitude at the system level. Context profile first."
-)
 
-# NOTE: insertion order IS emission priority — under the per-tier cap (FX-2), rows
-# earlier in this dict win. Mandate rows (framework #06 pre-output gate) come first:
-# CLAUDE.md requires them loaded "before doing anything else" for audit-class work.
-TRIGGER_WORDS = {
-    # Audit-class carrier (2026-07-09, FX-4): CLAUDE.md mandates framework #06 for any
-    # audit/review/critique/refinement work, but no trigger carried it — the mandate
-    # was un-fired on the one session that WAS an audit. Pre-output gate loads FIRST.
-    "audit": "01-frameworks/06-qa-operating-model.md — pre-output gate: load BEFORE the work",
-    "review": "01-frameworks/06-qa-operating-model.md — pre-output gate: load BEFORE the work",
-    "critique": "01-frameworks/06-qa-operating-model.md — pre-output gate: load BEFORE the work",
-    "qa pass": "01-frameworks/06-qa-operating-model.md — pre-output gate: load BEFORE the work",
-    "refine": "01-frameworks/06-qa-operating-model.md — pre-output gate: load BEFORE the work",
-    "legion": "03-skills/legion-project/SKILL.md + appropriate hub (lead-game-designer / lead-art-director / lead-game-developer)",
-    "bobiverse": "03-skills/legion-project/SKILL.md",
-    "centric": "Centric PLM project context — see 06-context/project-context.md; ds-advisor hub",
-    "data table": "Data table cell anatomy work — cross-reference 06-context/artifact-registry.md; knowledge: 08-knowledge/design/enterprise-saas-design-patterns.md",
-    "icon font": "03-skills/variable-icon-font-architect/SKILL.md + math spokes",
-    "centricsymbols": "03-skills/variable-icon-font-architect/SKILL.md",
-    "omni": "03-skills/omni-project/SKILL.md",
-    "workspace brain": "07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff",
-    "workspace fix": "07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff",
-    "workspace validation": "07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff",
-    "figma plugin": "03-skills/figma-plugin-dev/SKILL.md",
-    "figma": "03-skills/figma-canvas-designer/SKILL.md + 03-skills/design-engineer/SKILL.md — real-library-components rule",
-    "design system": "03-skills/ds-advisor/SKILL.md + design-engineer",
-    "component": "03-skills/design-engineer/SKILL.md",
-    "variant": "03-skills/design-engineer/SKILL.md",
-    "mockup": "03-skills/figma-canvas-designer/SKILL.md",
-    "wireframe": "03-skills/figma-canvas-designer/SKILL.md",
-    # Foundational color / UX-of-color / a11y vocabulary (2026-07-08, added after the
-    # cell-validation failure: none of these words routed anywhere before).
-    # `validation` narrowed to two-word phrases 2026-07-09 (FX-3): the bare word
-    # collided with Proofboard/validation-harness talk and misrouted it to color/a11y.
-    "field validation": FOUNDATION_ROUTE,
-    "validation state": FOUNDATION_ROUTE,
-    "invalid": FOUNDATION_ROUTE,
-    "warning": FOUNDATION_ROUTE,
-    "error state": FOUNDATION_ROUTE,
-    "status color": FOUNDATION_ROUTE,
-    "status colors": FOUNDATION_ROUTE,
-    "semantic token": FOUNDATION_ROUTE,
-    "semantic tokens": FOUNDATION_ROUTE,
-    "a11y": FOUNDATION_ROUTE,
-    "accessibility": FOUNDATION_ROUTE,
-    "contrast": FOUNDATION_ROUTE,
-    "legibility": FOUNDATION_ROUTE,
-    "legible": FOUNDATION_ROUTE,
-    "wcag": FOUNDATION_ROUTE,
-    "apca": FOUNDATION_ROUTE,
-    "color blind": FOUNDATION_ROUTE,
-    "color-blind": FOUNDATION_ROUTE,
-    "cvd": FOUNDATION_ROUTE,
-    # Delivery playbooks — context is king / audience / medium / evidence (2026-07-09).
-    # Resolve the context profile (00-context-profiles.md) before acting on any of these.
-    "diagram": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
-    "flowchart": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
-    "how does it work": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
-    "show me the steps": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
-    # Research & design artifact selection (2026-07-21) — pick the RIGHT artifact + author it plain.
-    "user journey": ARTIFACT_ROUTE,
-    "journey map": ARTIFACT_ROUTE,
-    "customer journey": ARTIFACT_ROUTE,
-    "experience map": ARTIFACT_ROUTE,
-    "jtbd": ARTIFACT_ROUTE,
-    "jobs to be done": ARTIFACT_ROUTE,
-    "jobs-to-be-done": ARTIFACT_ROUTE,
-    "service blueprint": ARTIFACT_ROUTE,
-    "service design": ARTIFACT_ROUTE,
-    "user story": ARTIFACT_ROUTE,
-    "user stories": ARTIFACT_ROUTE,
-    "use case": ARTIFACT_ROUTE,
-    "use cases": ARTIFACT_ROUTE,
-    "user flow": ARTIFACT_ROUTE,
-    "task flow": ARTIFACT_ROUTE,
-    "site map": ARTIFACT_ROUTE,
-    "persona": ARTIFACT_ROUTE,
-    "which artifact": ARTIFACT_ROUTE,
-    "walkthrough": "02-shared-references/delivery-playbooks/README.md — pre-delivery gate: context, audience, translation, medium",
-    "proofboard": "02-shared-references/delivery-playbooks/05-validation-harness.md",
-    "validation harness": "02-shared-references/delivery-playbooks/05-validation-harness.md",
-    "context profile": "02-shared-references/delivery-playbooks/00-context-profiles.md",
-    "explain this to": "02-shared-references/delivery-playbooks/01-audience-contract.md — forward test + three-altitude model",
-    "explain like": "02-shared-references/delivery-playbooks/01-audience-contract.md — forward test + three-altitude model",
-    "eli5": "02-shared-references/delivery-playbooks/01-audience-contract.md — forward test + three-altitude model",
-    "present to": "02-shared-references/delivery-playbooks/01-audience-contract.md — forward test + three-altitude model",
-    "chart": "02-shared-references/delivery-playbooks/03-data-and-charts.md — audience layer on top of the dataviz skill",
-    "write a spec": "02-shared-references/delivery-playbooks/04-documents-and-specs.md — structure serves the second reader",
-    "write a report": "02-shared-references/delivery-playbooks/04-documents-and-specs.md — structure serves the second reader",
-    "validation report": "02-shared-references/delivery-playbooks/04-documents-and-specs.md — structure serves the second reader",
-    "full report": "02-shared-references/delivery-playbooks/04-documents-and-specs.md — structure serves the second reader",
-}
+def _load_trigger_words() -> dict:
+    """Load curated routes from JSON; expand $TEMPLATE refs. Empty dict if missing."""
+    try:
+        data = json.loads(TRIGGER_ROUTES_JSON.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    templates = data.get("templates") or {}
+    routes = data.get("routes") or {}
+    out = {}
+    for trigger, hint in routes.items():
+        if isinstance(hint, str) and hint.startswith("$") and hint[1:] in templates:
+            out[trigger] = templates[hint[1:]]
+        else:
+            out[trigger] = hint
+    return out
+
+
+TRIGGER_WORDS = _load_trigger_words()
 
 # Knowledge hints: topic keywords → relevant 08-knowledge/ entry paths.
 # When a prompt matches, the entry path is surfaced alongside any skill hint
