@@ -20,22 +20,64 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
-
-> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
-
-
-> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
-
-
-> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
-
-
-> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
-
-
 ---
 
-### 2026-07-30 — SaaS PLM DataTable: plan reviewed, premise overturned, table vendored + comparison lab live
+### 2026-07-30 — SaaS PLM: global density model + pill/chip shapes (PR #13 for Olga)
+
+SessionID: 2026-07-30-work-density01
+--- SESSION BLOCK ---
+Date: 2026-07-30
+Agent: Composer / Auto
+Surface: Cursor
+Machine: Work MacBook Pro (main, CS-K746DRWXY1)
+Project(s): SaaS PLM prototype (employer — `centric-engineering` profile)
+Summary: Shipped a user-controllable Compact/Normal/Spacious density axis (header toggle, localStorage, FOUC boot) across chrome, tables, forms, and radius. Softened the ladder one mode (Compact = old Normal / centric h-8). Added shape rules so density doesn't collapse meaning: checkbox `--radius-check` + circle variant (card grids default circle); pill vs chip via half-rate `--radius-chip` (4/6/8); `ds:check` guards for primitive call sites, glyphs, and chips. Committed the full working tree (density + prior DataTable foundation/token-lab) and opened PR #13 for Olga.
+Artifacts:
+  - Employer PR: https://github.com/cpes-software/saas-plm-prototype/pull/13 (`feat/global-density` @ `240a767`)
+  - Employer: `src/styles/density.css`, `src/app/lib/density.ts`, `DensityToggle`, `SheetFooter`, Badge/Checkbox/StatusPill/TypeTag/ChipMultiSelect shape work, `design-system.rules.json` + `ds-core` lint/tests
+  - Docs in employer repo only: `DESIGN-SYSTEM.md`, `PROJECT-NOTES.md`, `AGENTS.md` / `CLAUDE.md` / `MIGRATION-TO-CENTRIC-UI.md` / `CENTRIC-UI-SYNC.md` (C14 ROW_DENSITY note)
+Decisions:
+  - Default density = Normal (one step softer than original prototype); Centric's 32px reference lives in Compact.
+  - Checkbox glyphs stay 4px off-ladder; opt-in `shape="circle"`; `CardSelectControl` defaults to circle (all card grids).
+  - Pill = `rounded-full`; chip = `--radius-chip` half-rate ladder — ChipMultiSelect `pill`/`linkPill` made real capsules.
+  - Never put density scale on a primitive via `className` (call-site rule); add a `cva` size/shape instead.
+Pending added:
+  - Olga review of PR #13 (density feel across modes; card circles; pills vs chips; sheet CTAs)
+Pending resolved:
+  - Prior "review + commit/PR employer DataTable branch" — folded into the same PR #13 push (density-led framing)
+Next:
+  - Olga reviews/merges #13
+  - Deepen Materials LandingDataTable domain cells if still needed post-merge
+  - Lift density axis + shape tokens into centric-ui when ready; ROW_DENSITY sync (C14)
+--- END SESSION BLOCK ---
+
+### 2026-07-30 — SaaS PLM DataTable: Layer A+B visual parity (LandingDataTable + Materials lab)
+
+SessionID: 2026-07-30-work-dt02
+--- SESSION BLOCK ---
+Date: 2026-07-30
+Machine: Work MacBook Pro (main)
+Surface: Cursor
+Project(s): SaaS PLM prototype (employer — `centric-engineering` profile)
+Summary: Brought `@centric/data-table` visual parity through Layer A (lab recipe) and Layer B (shared `LandingDataTable`). Actions column stays in the DOM for a11y; recipe CSS hides its chrome; floating Edit/Remove pill on hover/focus. Lab now switches Seasons | Materials (Materials = subset stress, not full 21-prop port).
+Artifacts:
+  - Employer: `src/app/features/landingDataTable/` (`LandingDataTable`, column helpers, recipe CSS); `src/table-lab.tsx` rewired; `table-lab.css` removed (recipe lives with the wrapper)
+  - `05-artifacts/active/saas-proto_datatable-visual-parity-plan_v1.0_2026-07-30.md` — A+B marked complete
+  - Repo `PROJECT-NOTES.md` + `CENTRIC-UI-SYNC.md` (actions-header a11y finding)
+Decisions:
+  - Floating Edit+Remove is the landing actions pattern; package actions column kept for semantics; `⋮` returns only as overflow past two actions.
+  - Materials lab starts as a representative subset; full domain cells are a follow-on, not a TanStack fork.
+  - Prefer nested system components (`StatusPill`, `InlineEditText`, `TypeTag`, `TableRowActions`) over table-local chrome.
+Learnings:
+  - Transparent borders (not `border: 0`) preserve sticky offsets on the actions column.
+  - Package `DataTableRowActionsHeaderCell` has contradictory `aria-hidden` + `sr-only` — upstream finding, do not patch the copy.
+Next:
+  - Review + commit/PR employer branch (never auto-commit)
+  - Deepen Materials domain cells on the recipe
+  - Layer C = file/send upstream findings; WP-0 memo still unsent
+--- END SESSION BLOCK ---
+
+### 2026-07-30 — SaaS PLM DataTable: plan reviewed, premise overturned, table copied in + comparison lab live
 
 SessionID: 2026-07-30-work-dt01
 --- SESSION BLOCK ---
@@ -43,15 +85,15 @@ Date: 2026-07-30
 Machine: Work MacBook Pro (main)
 Surface: Claude Code (VS Code extension)
 Project(s): SaaS PLM prototype / centric-ui (employer — `centric-engineering` profile)
-Summary: Reviewed the DataTable contract plan against live source in three checkouts. Every survey number verified exactly (16 files / 11,784 lines / 2 aria / 0 role / 21 props), but the plan's premise was stale — `@centric/data-table` already ships in centric-ui `main` (TanStack v8 + react-virtual, ~19k lines, tested). Sean initially chose "contract arbitrates, proto consolidates", then **reversed it**: the goal is migratable parity, so the prototype should consume centric-ui's table as closely as possible, dependencies included. Vendored the package byte-identical, added a `~` alias so copies need no edits, and built a side-by-side comparison lab. Caught a runtime crash the build could not see.
+Summary: Reviewed the DataTable contract plan against live source in three checkouts. Every survey number verified exactly (16 files / 11,784 lines / 2 aria / 0 role / 21 props), but the plan's premise was stale — `@centric/data-table` already ships in centric-ui `main` (TanStack v8 + react-virtual, ~19k lines, tested). Sean initially chose "contract arbitrates, proto consolidates", then **reversed it**: the goal is migratable parity, so the prototype should consume centric-ui's table as closely as possible, dependencies included. Copied the package in byte-identical, added a `~` alias so copies need no edits, and built a side-by-side comparison lab. Caught a runtime crash the build could not see.
 Artifacts:
   - `05-artifacts/active/saas-proto_datatable-implementation-plan_v1.0_2026-07-28.md` — review + 9 work packages (SUPERSEDED in part by the reversal below; WP-0 findings still stand)
   - `05-artifacts/active/saas-proto_datatable-wp0-alignment-memo_v1.0_2026-07-28.md` — send-ready memo, **not sent**
-  - Employer repo (uncommitted, branch `feat/datatable-centric-ui-foundation`): `CENTRIC-UI-SYNC.md`, 6 copied primitives, 166-file vendored `src/app/features/dataTable/`, `src/table-lab.tsx` + `table-lab.html`
+  - Employer repo (uncommitted, branch `feat/datatable-centric-ui-foundation`): `CENTRIC-UI-SYNC.md`, 6 copied primitives, 166-file local copy of `src/app/features/dataTable/`, `src/table-lab.tsx` + `table-lab.html`
 Decisions:
   - **Reversal (Sean):** prototype DOES take TanStack and centric-ui's deps. "Either we consume what they have or we duplicate it" — zero issue with the table + supporting deps being the prototype's dependencies. Supersedes the 2026-07-28 "proto never adopts TanStack" call and its `no @tanstack/*` tripwire.
   - Prototype stays a separate repo for now — freedom over zero-drift; manual sync accepted until the move into centric-ui.
-  - Sync strategy: **byte-identical copies + a `~` → `src/app` alias**, so re-syncing is `cp` with no per-file port. Vendored tree excluded from `ds:check` for the same reason `components/ui/` is.
+  - Sync strategy: **byte-identical copies + a `~` → `src/app` alias**, so re-syncing is `cp` with no per-file port. Copied tree excluded from `ds:check` for the same reason `components/ui/` is.
 Learnings:
   - `@centric/data-table` is **not standalone** — it reaches into its host app's `~/components/ui/*` and `~/lib/*` 41 times. Consuming the table means adopting the foundation under it.
   - lingui is **runtime-only** here (no macros, inline English in `<Trans message>`), so no Vite plugin, no CLI, no catalogs. Earlier claim that it was a heavy build-time system was wrong.
