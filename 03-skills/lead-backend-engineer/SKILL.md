@@ -282,3 +282,4 @@ default). Rigor model: [[13-domain-rigor-stack]]. Trust boundaries are owned by
 ## Related
 - foundation → [[eng-foundations]]
 - spoke → [[be-api-design]] · [[be-auth-patterns]] · [[be-caching-performance]] · [[be-data-modeling]] · [[be-integration-patterns]] · [[be-relational-db]] · [[be-security-posture]] · [[be-service-architecture]]
+- peer ↔ [[arch-guild]]

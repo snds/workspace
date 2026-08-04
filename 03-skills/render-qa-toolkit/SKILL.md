@@ -226,4 +226,5 @@ render-qa-toolkit/
 
 ## Related
 - hub → [[realtime-visual-craft]]
+- peer ↔ [[realtime-visual-craft]]
 - peer ↔ [[visual-qa-toolkit]] · [[native-visual-eval]] · [[failure-mode-premortem]] · [[reference-video-review]] · [[realtime-render-performance]] · [[interactive-capture-eval]] · [[lead-visual-qa]] · [[visual-qa-photoreal-rendering]] · [[lead-game-developer]] · [[legion-project]] · [[rendering-guild]]

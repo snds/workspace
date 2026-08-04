@@ -22,4 +22,5 @@ Canonical depth: `~/.agents/skills/job-application-optimizer/SKILL.md`.
 
 ## Related
 - hub → [[career-ops-job-search]]
+- peer ↔ [[career-ops-job-search]]
 - peer ↔ [[job-search-strategist]]

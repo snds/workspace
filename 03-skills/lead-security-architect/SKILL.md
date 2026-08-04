@@ -170,5 +170,7 @@ implying a scan ran.
 ## Related
 - foundation → [[eng-foundations]]
 - spoke → [[sec-appsec-owasp]] · [[sec-authn-authz]] · [[sec-supply-chain]] · [[sec-threat-modeling]]
+- peer ↔ [[eng]]
+- peer ↔ [[arch-guild]]
 - peer ↔ [[lead-accessibility-architect]]
 - peer ↔ [[be-security-posture]]

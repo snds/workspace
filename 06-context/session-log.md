@@ -23,7 +23,40 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
+
+> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
+
 ---
+
+### 2026-08-03 — Domain rigor stack hardening
+
+SessionID: 2026-08-03-voyager-r7k2
+--- SESSION BLOCK ---
+Date: 2026-08-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Project(s): Workspace (skill hubs / domain rigor)
+Summary: Encoded five-layer domain rigor stack (#13) and shipped L1–L5 hardening across hubs/spokes outside the parallel photoreal session; measurement toolkits + reciprocity/capability follow-ups landed.
+Artifacts:
+  - 01-frameworks/13-domain-rigor-stack.md — reusable L1–L5 contribution mechanism
+  - 01-frameworks/14-engineering-operating-model.md — eng L1 gates
+  - 01-frameworks/15-analysis-operating-model.md — analysis L1 gates
+  - 01-frameworks/16-security-operating-model.md — security L1 gates
+  - 03-skills/a11y-audit-toolkit + fe-perf-harness — break measurement monoculture
+  - Command hubs: eng, arch-guild, process-plugins, design-system-ops; career hub = job-search-strategist
+Decisions:
+  - Domain rigor is a five-layer stack (ops model → command hub → measurement → load chain → multi-voice + doctrine precedence), not UI/UX-only.
+  - Plugin skills defer to AGENTS.md / frameworks; frontmatter `defers_to` + `rigor_role` are first-class.
+  - Contested photoreal/3D/game surface (Framework #12, img-photoreal*, legion-*, 08-knowledge/research|game-dev) owned by parallel session — do not collide.
+  - Career: hub = job-search-strategist; spokes wrap ~/.agents/skills mirrors.
+Pending resolved:
+  - Specialist/rigor gap evaluation across Workspace hubs (execute comprehensively, including former leave-alones).
+  - Measurement monoculture: a11y toolkit, FE perf harness, /qa lenses motion|dataviz|type|security.
+Next:
+  - Spot-check career routing docs vs hub = job-search-strategist if a session touches job search.
+  - Use Framework #13 as the gate when adding or hardening any new domain skill cluster.
+--- END BLOCK ---
+
 
 ### 2026-08-03 — Realtime photoreal rigor stack (#12)
 
@@ -554,41 +587,5 @@ Pending added:
   - Doctor-sweep generalization for `* 2.md` conflict-copies (item (e)) — one instance cleaned, generalized sweep still open.
 Next:
   - Sean-owned (external): REVOKE the 2026-06-04 Figma PAT; GitHub Support request to purge the two centric-ui SHAs carrying the personal email.
---- END BLOCK ---
-
-
-### 2026-07-23 — Bootstrap generator hardening + workspace multi-session/token-frugality resilience
-
-SessionID: 2026-07-23-voyager-k7x2
---- SESSION BLOCK ---
-Date: 2026-07-23
-Machine: Personal MacBook Pro
-Surface: Claude Code (Mac desktop app)
-Project(s): 18-bootstrap-generator (major) + workspace system-layer (concurrency, token-frugality, framework contract)
-Summary: Resumed and largely completed the portable bootstrap generator, then hardened THIS workspace for multi-session/multi-device/multi-surface use and token frugality, and propagated every change back into the generator so users get parity. ~26 commits, all gates green, three distribution zips rebuilt.
-Artifacts:
-  - 07-projects/18-bootstrap-generator/generator/wsxlib/{resolver,search,scan,mcp_template}.py — new: Resolver (pull/patch/generate/composite), source discovery, agent/MCP/local-LLM detection, zero-dep stdio MCP server
-  - 07-projects/18-bootstrap-generator/{launch.py,package.py,packaging/} — permission-free launcher (python3 launch.py; no exec-bit/Gatekeeper) + per-OS zip packager + Apple notarization pipeline (prep)
-  - 07-projects/18-bootstrap-generator/VALIDATION.md — colleague-facing proofboard
-  - 07-projects/18-bootstrap-generator/dist/*.zip — macOS/Windows/Linux packages (gitignored; regen via package.py)
-  - 09-tools/compact-sessions.py — new: idempotent session-fragment compaction + log archival
-  - 06-context/session-log-archive.md — new: bounded-log archive (live log 200KB→27KB)
-Decisions:
-  - Expertise is PER-DOMAIN (a separate axis from energy): the same person can be a staff-expert in one craft and a hobbyist in another; each generated skill is written at ITS domain's altitude (hobbyist teaches; expert captures judgment). Schema gained use_context + expertise{}.
-  - Resolver is a COMPOSITE builder, not just a skill fetcher: two-track sourcing (skill registries + industry-leading references), cite in the person's voice, never copy — grounded in our own skill-ecosystem knowledge that authored-from-reference beats a shallow pull.
-  - Permission-independence = invoke a trusted interpreter on a data file (python3 launch.py), never ship an executable; unsigned macOS double-click can't dodge Gatekeeper without the $99 cert (pipeline prepped, not required). Recommend ~/Documents/Projects/Workspace (Documents → iCloud/backup).
-  - BYO-tokens is architectural: the generator has no API key and makes no model calls; it runs on the user's own agent/account (wsx scan detects the stack; reads MCP server NAMES only, never secrets). If none detected, gate + recommend a surface before the interview.
-  - Multi-session model: conflict-free per-session FRAGMENTS + union-merge logs + idempotent compaction + scoped commit (never sweep a concurrent session's WIP) + safe push-retry (autostash pinned OFF → never rebases a dirty tree). Diagnosis first: the auto-sync was non-destructive (re-hashing is cosmetic); hardened the safe defaults.
-  - Token frugality is a #1 priority (workspace + generator): bounded/archived logs (O(1) read cost, not O(sessions)), read log heads not whole files, keep auto-loaded files terse. Stated in AGENTS.md core rules, framework 08 principle #6, CLAUDE.md, and every emitted adapter.
-Pending resolved:
-  - Bootstrap-generator command surface is stub-free (14 cmds); Resolver, emit mcp, turn-key Path A, expertise calibration, hosting, scan+gate, packaging all done + dogfooded.
-  - Reconciled the long-standing brain↔schema drift (schema_version "0.2"; lifecycle continuity boolean; automation minimal/standard/full).
-  - session-log.md bounded via archival; framework contract (AGENTS.md, fw08) updated to the fragment/frugal model.
-Pending added:
-  - Deeper wsx doctor self-heal for generated workspaces (re-emit stale adapters, verify .gitattributes) — optional polish.
-  - A registry search/discovery index layer (brain currently supplies exact skill urls).
-  - Externalize the generator's embedded scaffold templates (incl. the authoring framework + BYO README).
-Next:
-  - Optional: the doctor-self-heal polish, or drive the generator through a real colleague test.
 --- END BLOCK ---
 

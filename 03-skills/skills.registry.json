@@ -922,7 +922,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:595542c069f34bde4bc479127a3c2a6db0db56ebd01d33375feb89d322040c67"
+      "hash": "sha256:55e5e43acb2b5ef30ce568050d4e5a2d6a61696ae1bb012821a0f47f31004435"
     },
     "design-foundations": {
       "path": "03-skills/design-foundations/SKILL.md",
@@ -1168,7 +1168,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:2e67ae1d3f7ed5067ac59334c533536758b6dc1ed951bcaabd3a8b688b762fc0"
+      "hash": "sha256:410d1564348b6749ec279ea0646a38aeb234d1c721ef7b59560a5bcf4cb057f2"
     },
     "ds-bi-platforms": {
       "path": "03-skills/ds-bi-platforms/SKILL.md",
@@ -1784,7 +1784,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:f61e59c5ae4ab6d39f492fa1c82e25a5db253d79fc0e50203c64c082d5ea9f3b"
+      "hash": "sha256:a9629a486d498943c59e973de28a6ceb38560d962c27af7731eeca44ef0f2772"
     },
     "figma-api-router": {
       "path": "03-skills/figma-api-router/SKILL.md",
@@ -3523,7 +3523,7 @@
         "framework-13"
       ],
       "rigor_role": "load-chain",
-      "hash": "sha256:87d5cfda9324dbc5781fe18a942f9ad3f0c88dcdbe19cbe755caeac3bd6976dc"
+      "hash": "sha256:08797ccbbc68f771a09718c0266c019cc9d68b146b7642b50e07dd7ac51947f8"
     },
     "job-search-strategist": {
       "path": "03-skills/job-search-strategist/SKILL.md",
@@ -3631,7 +3631,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:0c9b6277bfd96c0237c1758f249ac0ee34bc3508bd13db5c8645f507bc89b449"
+      "hash": "sha256:3fd4086190dc97ed6941f5621d979c1f130c96d756afbc1b0cd4be292b41abc4"
     },
     "lead-data-scientist": {
       "path": "03-skills/lead-data-scientist/SKILL.md",
@@ -3692,7 +3692,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:5956ba62b98a68003a6aa90380ec8389552a3ca95f9a5220fa7525156bad34e0"
+      "hash": "sha256:ae481944d94b9955815667ed81733faf70b8ecf20da86bad6dba7f489085070f"
     },
     "lead-game-designer": {
       "path": "03-skills/lead-game-designer/SKILL.md",
@@ -3949,7 +3949,7 @@
         "framework-13"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:c882cb2c0bacc4798bc1dd4b52134f956ff388f4ff9ba9b702837ea08dde5e61"
+      "hash": "sha256:f16a6bcc61629049263b70fee423da557af09695ea8c92bbf91becbb6c7eeba8"
     },
     "lead-technical-digital-artist": {
       "path": "03-skills/lead-technical-digital-artist/SKILL.md",
@@ -4077,7 +4077,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:ff41e523884b02906724d9d0ccbebd9930225f20d702c5f7c605b6183fb8c519"
+      "hash": "sha256:6f0222634cba88d257c16dc9f573d67734e35db905623836672950acd6c9514b"
     },
     "legion-narrative-design": {
       "path": "03-skills/legion-narrative-design/SKILL.md",
@@ -5150,7 +5150,7 @@
       ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:d31e9ef93a8cb9d6cfc1bb2d81a6513dc438a6608750dd10dbcdc9664248e799"
+      "hash": "sha256:482e7a5992df979885e06fcf5a77f41fd8d93e2292deb41cf6481527799b0bcc"
     },
     "rendering-guild": {
       "path": "03-skills/rendering-guild/SKILL.md",
@@ -5465,12 +5465,14 @@
       "surfaces": [
         "*"
       ],
-      "requires": [],
+      "requires": [
+        "semgrep"
+      ],
       "defers_to": [
         "framework-16"
       ],
       "rigor_role": "load-chain",
-      "hash": "sha256:faa2d6f41bbc86e9b73b0fff41256a807fb088e60adbbd388d815266cab64a6d"
+      "hash": "sha256:1186453b3a9731908df741844b662a8cc9c6ec984ece70f51cf21ed50b4d18b0"
     },
     "sec-authn-authz": {
       "path": "03-skills/sec-authn-authz/SKILL.md",
@@ -5562,12 +5564,15 @@
       "surfaces": [
         "*"
       ],
-      "requires": [],
+      "requires": [
+        "gitleaks",
+        "syft"
+      ],
       "defers_to": [
         "framework-16"
       ],
       "rigor_role": "load-chain",
-      "hash": "sha256:55783fefe66030f5a06cd94c7dd7a6d7b5bd62e8771d5456612d0325c2cfebe4"
+      "hash": "sha256:a989c7e2d135c38da5ca43c7b9ef72b0fb1e5fd90f22bb2d933920dcb8cf2cf8"
     },
     "sec-threat-modeling": {
       "path": "03-skills/sec-threat-modeling/SKILL.md",

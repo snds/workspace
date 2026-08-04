@@ -20,6 +20,7 @@ prerequisites: [lead-security-architect]
 related: [be-security-posture, be-api-design, fe-api-integration, sec-threat-modeling, sec-authn-authz, sec-supply-chain]
 domain: security
 surfaces: ["*"]
+requires: [semgrep]
 defers_to: [framework-16]
 rigor_role: load-chain
 spec_version: "2.2"

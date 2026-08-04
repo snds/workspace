@@ -20,6 +20,7 @@ prerequisites: [lead-security-architect]
 related: [devops-ci-cd, be-security-posture, devops-release-engineering, sec-threat-modeling, sec-authn-authz, sec-appsec-owasp]
 domain: security
 surfaces: ["*"]
+requires: [gitleaks, syft]
 defers_to: [framework-16]
 rigor_role: load-chain
 spec_version: "2.2"
