@@ -355,4 +355,6 @@ Before identity or permission work is ready for review, all of the following are
   means the model has a gap.
 
 ## Related
+- hub → [[lead-security-architect]]
+- governs → [[be-api-design]]
 - peer ↔ [[sec-threat-modeling]] · [[sec-appsec-owasp]] · [[sec-supply-chain]]

@@ -12,10 +12,10 @@
   "counts": {
     "total": 279,
     "by_tier": {
-      "cross-cutting": 33,
+      "cross-cutting": 34,
       "foundation": 22,
       "hub": 47,
-      "spoke": 177
+      "spoke": 176
     }
   },
   "skills": {
@@ -4065,7 +4065,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:b29632560fe1fdfe8276221f9f66e9df321efac37480ca8d531af69a94f68195"
+      "hash": "sha256:9bbfee334b8a3132b459b6b5aa31ca40030e05fdc938a5afa3f1241aa350ba45"
     },
     "legion-narrative-design": {
       "path": "03-skills/legion-narrative-design/SKILL.md",
@@ -5041,7 +5041,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:5a89cfc3171d099f4ad1d43cabcbd2467403d9d96b774b3f0b2c831292a82b8e"
+      "hash": "sha256:2d16c5479ad76534aa6ca498d8f5aa618ddbada7fa1e2b1cf6be5fb01c966454"
     },
     "redesign": {
       "path": "03-skills/redesign/SKILL.md",
@@ -5458,7 +5458,7 @@
         "framework-16"
       ],
       "rigor_role": "load-chain",
-      "hash": "sha256:b0bf7764a2f1c814b91a4981a791b92f5ba8a15c0dd86499431644e3102f5520"
+      "hash": "sha256:faa2d6f41bbc86e9b73b0fff41256a807fb088e60adbbd388d815266cab64a6d"
     },
     "sec-authn-authz": {
       "path": "03-skills/sec-authn-authz/SKILL.md",
@@ -5507,7 +5507,7 @@
         "framework-16"
       ],
       "rigor_role": "load-chain",
-      "hash": "sha256:d79125b48e3d21b6913612561ef622f1eca487b74cb595a644d89088984e75ab"
+      "hash": "sha256:88895ec52c5baced6bf365b93d4b5b4918d7c7d7fee3ee0414f44382e0f3683e"
     },
     "sec-supply-chain": {
       "path": "03-skills/sec-supply-chain/SKILL.md",
@@ -5518,9 +5518,11 @@
         "lead-security-architect"
       ],
       "related": [
-        "be-security-posture",
         "devops-ci-cd",
+        "be-security-posture",
+        "devops-release-engineering",
         "sec-threat-modeling",
+        "sec-authn-authz",
         "sec-appsec-owasp"
       ],
       "governed_by": [],
@@ -5529,37 +5531,31 @@
         "supply chain",
         "dependency",
         "sbom",
-        "cyclonedx",
-        "spdx",
         "provenance",
         "slsa",
         "sigstore",
-        "artifact signing",
         "lockfile",
+        "pinning",
         "secrets",
         "secret management",
-        "secret scanning",
         "hashicorp vault",
         "secret rotation",
         "ci/cd security",
-        "oidc federation",
         "access token",
         "dependabot",
         "typosquatting",
-        "leaked credential"
+        "postinstall",
+        "artifact signing"
       ],
       "surfaces": [
         "*"
       ],
-      "requires": [
-        "gitleaks",
-        "syft"
-      ],
+      "requires": [],
       "defers_to": [
         "framework-16"
       ],
-      "rigor_role": "measurement",
-      "hash": "sha256:6d4cb0987ad79ab7fbd664d5de29c8c12006cecf7d8cdeb72dbc25642b3ab5b1"
+      "rigor_role": "load-chain",
+      "hash": "sha256:db167f4b45c530e7be0888f4c5aa05634dbd47c57d3a8804e1b55f9a23d55cfe"
     },
     "sec-threat-modeling": {
       "path": "03-skills/sec-threat-modeling/SKILL.md",
@@ -6709,33 +6705,32 @@
     },
     "visual-qa-dataviz": {
       "path": "03-skills/visual-qa-dataviz/SKILL.md",
-      "tier": "spoke",
+      "tier": "cross-cutting",
       "domain": "quality",
       "hub": "lead-visual-qa",
-      "prerequisites": [
-        "lead-visual-qa"
-      ],
-      "related": [
-        "infod-encoding-theory",
-        "fe-data-visualization",
-        "ux-data-visualization",
-        "qa"
-      ],
+      "prerequisites": [],
+      "related": [],
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "dataviz qa",
+        "chart review",
         "chart audit",
-        "dashboard qa",
-        "encoding integrity"
+        "dataviz qa",
+        "graph review",
+        "data table review",
+        "dashboard review",
+        "misleading axis",
+        "series contrast",
+        "legend review",
+        "kpi tile review"
       ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
-      "rigor_role": "multi-voice",
-      "hash": "sha256:5b1fae1ebc4b74540aa6e548dd2355e33f90b0fedec63b1c4526fcd5de757e2e"
+      "rigor_role": null,
+      "hash": "sha256:ca0d87c89e74ffc10c808fdf45bcb33df0781fad292b65734f9728af72adcf07"
     },
     "visual-qa-game-design": {
       "path": "03-skills/visual-qa-game-design/SKILL.md",

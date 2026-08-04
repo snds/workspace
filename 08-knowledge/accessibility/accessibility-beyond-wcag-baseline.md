@@ -9,7 +9,7 @@ related_skills: [lead-accessibility-architect, a11y-visual, a11y-cognitive, a11y
 related_projects: []
 relations:
   builds-on: ["[[radix-derived-color-system]]"]
-  relates-to: ["[[enterprise-saas-design-patterns]]", "[[figma-ds-surface-authoring]]"]
+  relates-to: ["[[a11y-measurement-vs-judgment]]", "[[enterprise-saas-design-patterns]]", "[[figma-ds-surface-authoring]]"]
 ---
 
 # Accessibility baseline: WCAG is the floor, and the automated pass is a small part of it
@@ -38,6 +38,9 @@ relations:
 Accessibility was covered by a deep skill network with nothing in the vault, so each engagement
 restarted from first principles and re-litigated the same three arguments (is WCAG enough, is the
 scan enough, whose layer owns contrast). This note settles them on the workspace's terms.
+
+[[a11y-measurement-vs-judgment]] is the companion routing note: which toolkit measures what, and why
+an axe-clean result is not an accessibility verdict. This note is the substance behind that split.
 
 ---
 

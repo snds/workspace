@@ -46,6 +46,8 @@ than it appeared. In both cases the contract existed, was load-bearing, and was 
 
 This note names the shared rule so the next boundary gets it up front. It is `working` because the
 two source entries are validated but this generalization has not yet been tested on new work.
+[[14-engineering-operating-model]] holds the framework-level ordering and done-gates; this note holds
+the specific evidence and the failure shapes to watch for.
 
 ---
 

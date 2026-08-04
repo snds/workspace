@@ -4,20 +4,23 @@ created: 2026-08-03
 updated: 2026-08-03
 status: working
 confidence: medium
-sources: [03-skills/sec-threat-modeling/SKILL.md, 03-skills/lead-security-architect/SKILL.md, 08-knowledge/engineering/centric-ui-local-against-cloud-dev.md, 08-knowledge/engineering/silent-degradation-in-fenced-layers.md, AGENTS.md]
+sources: [03-skills/sec-threat-modeling/SKILL.md, 03-skills/lead-security-architect/SKILL.md, 01-frameworks/16-security-operating-model.md, 08-knowledge/engineering/centric-ui-local-against-cloud-dev.md, 08-knowledge/engineering/silent-degradation-in-fenced-layers.md, AGENTS.md]
 related_skills: [lead-security-architect, sec-threat-modeling, sec-authn-authz, sec-appsec-owasp, sec-supply-chain, be-security-posture, be-auth-patterns]
 related_projects: []
 relations:
   builds-on: ["[[centric-ui-local-against-cloud-dev]]"]
-  relates-to: ["[[silent-degradation-in-fenced-layers]]", "[[contracts-first-delivery]]"]
+  exemplifies: ["[[16-security-operating-model]]"]
+  relates-to: ["[[security-pipeline-baseline]]", "[[silent-degradation-in-fenced-layers]]", "[[contracts-first-delivery]]"]
 ---
 
 # Threat model before controls: name the asset, the adversary, and the accepted risk first
 
 ## For future agent
-- **TL;DR:** the workspace position on security work. Controls chosen before the asset and adversary
-  are named are guesses that look like diligence. Write the **asset and adversary contract** first,
-  enumerate threats per trust boundary, then choose controls, and **write down what you accepted**.
+- **TL;DR:** the reasoning behind the first stage of [[security-pipeline-baseline]]'s
+  threat-model → build → scan → monitor pipeline ([[16-security-operating-model]]). Controls chosen
+  before the asset and adversary are named are guesses that look like diligence. Write the **asset
+  and adversary contract** first, enumerate threats per trust boundary, then choose controls, and
+  **write down what you accepted**.
 - **Key claims:**
   - *Timeless:* a control with no named threat cannot be evaluated, tuned, or removed, so it
     accumulates forever and nobody knows which ones are load-bearing.
@@ -40,6 +43,10 @@ relations:
 conversations began at the control layer ("should we add rate limiting", "do we need CSP") with no
 stated position on what we are protecting or from whom. Answering control questions before that is
 settled produces defensible-sounding decisions that cannot be revisited.
+
+[[16-security-operating-model]] owns the pipeline and the done-gates; [[security-pipeline-baseline]]
+is the one-line routing reminder. This note is the depth behind the first stage: how to write the
+contract, and the specific failure shapes already observed here.
 
 ---
 

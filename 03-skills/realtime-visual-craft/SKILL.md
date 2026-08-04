@@ -124,5 +124,5 @@ Match-and-refuse. If you are about to do any of these, stop and rewrite the plan
 ---
 
 ## Related
-- spoke → [[adapter-unity-hdrp]] · [[adapter-unreal]] · [[adapter-webgpu-three]] · [[bake-orchestration]] · [[dynamic-gi-production]] · [[gpu-capture-tooling]] · [[shadow-quality-craft]] · [[virtual-texturing-ops]]
+- spoke → [[adapter-unity-hdrp]] · [[adapter-unreal]] · [[adapter-webgpu-three]] · [[bake-orchestration]] · [[dynamic-gi-production]] · [[gpu-capture-tooling]] · [[render-qa-toolkit]] · [[shadow-quality-craft]] · [[virtual-texturing-ops]]
 - peer ↔ [[lead-visual-qa]] · [[interactive-capture-eval]] · [[render-qa-toolkit]] · [[native-visual-eval]] · [[reference-video-review]] · [[visual-qa-photoreal-rendering]] · [[rendering-guild]] · [[failure-mode-premortem]] · [[realtime-render-performance]] · [[imaging-foundations]] · [[lead-game-developer]] · [[legion-project]] · [[lead-3d-designer]]

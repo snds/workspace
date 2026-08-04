@@ -328,4 +328,6 @@ Before application-security work is ready for review:
   so never treat its clean pass as a done-gate.
 
 ## Related
+- hub → [[lead-security-architect]]
+- governs → [[be-api-design]] · [[fe-api-integration]]
 - peer ↔ [[sec-threat-modeling]] · [[sec-authn-authz]] · [[sec-supply-chain]]

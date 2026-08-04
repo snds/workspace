@@ -1,273 +1,343 @@
 ---
 name: sec-supply-chain
 description: >
-  Software supply-chain and secrets security for enterprise B2B SaaS. Owns dependency risk and
-  intake policy (typosquatting, malicious updates, transitive blast radius), pinning and lockfile
-  integrity, SBOM (CycloneDX/SPDX) and provenance, artifact signing and verified attestation
-  (Sigstore, SLSA levels), secrets management and rotation, secret scanning, and CI/CD pipeline
-  hardening (short-lived federated tokens, pinned actions, ephemeral runners, protected
-  environments). Use when adding or upgrading a dependency, handling credentials, generating an
-  SBOM, responding to a leaked key, or securing a build and release pipeline. Triggers: supply
-  chain, dependency, SBOM, provenance, SLSA, sigstore, signing, lockfile, secrets, secret
-  management, vault, rotation, CI/CD security, OIDC, access token, dependabot, typosquatting.
+  Software supply-chain, secrets, and build-pipeline security for enterprise B2B SaaS.
+  Owns the dependency intake gate (what a new dependency must earn), pinning and
+  reproducible installs, vulnerability response with reachability triage and expiring
+  waivers, SBOM and provenance as customer-facing evidence, the six-stage secret
+  lifecycle plus the leaked-credential runbook, the secret-sprawl inventory, pipeline
+  identity (federated short-lived credentials over static keys), and third-party risk
+  inside the product itself. Use when adding or upgrading dependencies, handling
+  credentials, wiring release automation, or answering a customer security questionnaire.
+  Triggers: supply chain, dependency, sbom, provenance, slsa, sigstore, lockfile, pinning,
+  secrets, secret management, vault, secret rotation, ci/cd security, access token,
+  dependabot, typosquatting, postinstall.
 aliases: [sec-supply-chain]
-triggers: [supply chain, dependency, sbom, cyclonedx, spdx, provenance, slsa, sigstore, artifact signing, lockfile, secrets, secret management, secret scanning, hashicorp vault, secret rotation, ci/cd security, oidc federation, access token, dependabot, typosquatting, leaked credential]
+triggers: [supply chain, dependency, sbom, provenance, slsa, sigstore, lockfile, pinning, secrets, secret management, hashicorp vault, secret rotation, ci/cd security, access token, dependabot, typosquatting, postinstall, artifact signing]
 tier: cross-cutting
 hub: lead-security-architect
 prerequisites: [lead-security-architect]
-related: [be-security-posture, devops-ci-cd, sec-threat-modeling, sec-appsec-owasp]
+related: [devops-ci-cd, be-security-posture, devops-release-engineering, sec-threat-modeling, sec-authn-authz, sec-appsec-owasp]
 domain: security
 surfaces: ["*"]
-requires: [gitleaks, syft]
 defers_to: [framework-16]
-rigor_role: measurement
+rigor_role: load-chain
 spec_version: "2.2"
 ---
 
 # Security: Supply Chain and Secrets
 
-Most of the code you ship is someone else's, and most breaches start with a credential that should never
-have been reachable. This spoke owns both, plus the pipeline that joins them, because in practice they
-fail together: a compromised dependency runs in CI, and CI holds the credentials.
+Most of the code you ship was written by strangers, and most of the credentials that could end your
+company are not in your source tree. This spoke owns both, plus the pipeline that joins them, because
+a build system holds deploy credentials and therefore is a production system.
 
-Three convictions frame everything below.
-
-1. **Every dependency is code you execute with your own privileges.** Installing a package is a trust
-   decision, and it is transitive.
-2. **A leaked credential is a when, not an if.** Design for fast detection and fast rotation rather than
-   for perfect secrecy.
-3. **CI/CD is production.** It can deploy, it holds deploy credentials, and it runs untrusted code from
-   pull requests. Treat it as the high-value target it is.
-
-Backend-specific mechanics (tool comparison tables, concrete rotation Lambda patterns, SOC 2 evidence
-mapping) are in [[be-security-posture]]; pipeline construction is in [[devops-ci-cd]]. Governed by
-[[lead-security-architect]] and gated by [[16-security-operating-model]].
+It carries stage 3 of [[16-security-operating-model]] ("scan in CI") and the credential half of stage
+2. Governed by [[lead-security-architect]]. Tool commands and audit-evidence formatting live in
+[[be-security-posture]]; pipeline implementation, caching, and workflow structure live in
+[[devops-ci-cd]]. This spoke owns the **policy and the gates**: what may enter, what must be proven,
+and what happens when a credential leaks.
 
 ---
 
-## Dependencies are attack surface
+## The supply-chain threat model
 
-### The risk classes
+Seven distinct threats, each needing a different control. Treating "dependency risk" as one thing is
+why most programs stop at a vulnerability scanner and miss the rest.
 
-| Risk | Mechanism | Signal to look for |
+| Threat | What it looks like | Primary control |
 |---|---|---|
-| **Known vulnerability** | A published CVE in a package you depend on, often transitively | Scanner findings, advisory feeds |
-| **Typosquatting** | A package named to be confused with a real one | Name similarity, low download count, recent creation |
-| **Malicious update** | A legitimate package's new version ships hostile code, via a compromised or sold maintainer account | Sudden maintainer change, new install scripts, new network calls, unexplained new dependencies |
-| **Dependency confusion** | A public package shadows your internal package name because the resolver prefers the public registry | Internal package names that are unclaimed publicly |
-| **Abandonment** | No maintainer, so vulnerabilities are never fixed | Last release age, open issue backlog, single maintainer |
-| **Protestware or license change** | Deliberate behaviour change or a license flip that makes continued use untenable | Release notes, license diffs |
-| **Build-time execution** | Install scripts and build plugins run arbitrary code on developer machines and in CI | Presence of post-install hooks |
+| Known vulnerability in a dependency | A CVE lands in something you already ship | Continuous scanning plus a patch SLA |
+| Malicious package | Typosquat, a name an AI tool hallucinated and someone registered, a look-alike scoped package | Intake gate, lockfile review, private registry allowlist |
+| Compromised maintainer or hijacked release | A trusted package publishes a malicious version | Pinning, delayed adoption for non-security upgrades, provenance verification |
+| Install-time execution | A lifecycle or build script runs on every developer machine and CI runner | Disable install scripts by default, allowlist the few that need them |
+| Build-system compromise | The pipeline is modified, or a workflow is tricked into running attacker code with secrets | Pipeline identity, protected triggers, ephemeral runners, review-gated workflow changes |
+| Artifact tampering | The deployed artifact is not the one that was built and tested | Immutable artifacts addressed by digest, signing plus verification at deploy |
+| Transitive opacity | You cannot answer what you actually ship | SBOM generated at release and stored where it can be queried |
 
-### Intake policy
+Model these against your own pipeline in [[sec-threat-modeling]] when the pipeline changes. A new
+release path is a new trust boundary.
 
-Adding a dependency is a decision with a security cost, and it deserves a moment of scrutiny
-proportional to what it can reach. Before adding one, answer:
+---
 
-- **What does it pull in transitively?** The direct dependency is not the attack surface; the resolved
-  tree is. A package with 200 transitive dependencies is 200 trust decisions.
-- **Is it maintained?** Recent releases, more than one maintainer, responsive to security reports.
-- **Is the name right?** Check character-by-character against the package you intended, and check that
-  you reached it from official documentation rather than from a search result.
-- **Does it run at install time?** Install hooks execute before any of your code does.
-- **Could this be a few lines instead?** A one-function utility is rarely worth a permanent trust
-  relationship and a permanent update obligation.
-- **Is the internal name claimed?** For private packages, claim the name on the public registry or scope
-  it, so dependency confusion is not available.
+## Dependency intake
 
-Record the decision for anything non-trivial. "Why is this here?" is the question that makes dependency
-pruning possible two years later.
+Adding a dependency is granting arbitrary code your process privileges, your environment variables,
+and your network access. It deserves a decision, not a reflex.
 
-### Pinning and lockfile integrity
+| Question | Disqualifier |
+|---|---|
+| Does this earn its place, or is it a few lines of our own code? | A trivial utility with a large transitive tree |
+| Is it maintained? Recent releases, responsive issues, more than one maintainer | Abandoned, or a single maintainer with no succession |
+| How large is the transitive tree, and what is in it? | A tree you cannot skim, or one that duplicates existing dependencies |
+| Does the name match exactly what the documentation says? | Any doubt at all, especially for a name a tool suggested rather than a human chose |
+| Does it run install-time scripts? | Scripts with no stated reason |
+| Is the license compatible with how you ship? | Copyleft in a distributed client, or an unclear license |
+| Does the publisher provide provenance or signed releases? | Not a blocker today, but a strong tiebreaker |
+| Can it be scoped narrowly, for example to build time only? | A build tool that lands in the runtime dependency set |
 
-Reproducible installs are the baseline control, and they are frequently undermined by using the wrong
-install command in CI.
+Practices that make the gate hold:
 
-- **Commit the lockfile.** For applications, always. It is the record of exactly what was resolved.
-- **Install from the lockfile in CI**, with the command that fails when the lockfile is inconsistent
-  with the manifest rather than silently updating it.
-- **Verify integrity hashes.** Lockfiles carry them; the install must check them.
-- **Pin by digest where the ecosystem supports it**, particularly container base images and CI actions.
-  A mutable tag is not a pin: the same tag can point at different content tomorrow.
-- **Pin known-bad exclusions explicitly.** When a transitive dependency has a vulnerability you cannot
-  immediately upgrade past, pin the safe version with a comment carrying the CVE reference and a
-  resolution date. This is a temporary control with an expiry, not a fix.
+- **Review the lockfile diff, not just the manifest.** One added line in the manifest can add dozens
+  of packages, which is where the risk actually arrives.
+- **Disable install scripts by default** in the package manager configuration, and allowlist the
+  handful that genuinely need them.
+- **Prefer a delay on non-security upgrades.** Most malicious releases are discovered and pulled
+  within days, so lagging slightly on convenience upgrades is a real control.
+- **Proxy public registries through an internal one** where the organization supports it, so you gain
+  caching, allowlisting, and scanning before a package is reachable.
+- **Verify any package name a code-generation tool produced.** Registering names that AI tools
+  hallucinate is an active technique, and the failure mode is that the install simply works.
 
-### Scanning policy
+---
 
-A scanner without a policy produces a dashboard nobody reads. Decide, and write down:
+## Pinning and reproducible installs
 
-- **What blocks.** Severity threshold for failing a build, typically Critical and High for anything
-  reachable from production code.
-- **What the exception process is.** CVE reference, justification, compensating control, owner, and
-  resolution date. Time-boxed, and the box actually expires.
-- **What the patching SLA is.** A common enterprise baseline: Critical and High within 30 days of
-  disclosure, Medium within 90, Low at the next scheduled release. Customer contracts and SOC 2
-  expectations often set this for you.
-- **Whether reachability matters.** A vulnerability in a dev-only or unreachable code path is real but
-  lower priority. Distinguishing them is what stops alert fatigue, and it must be a documented judgment,
-  not a silent dismissal.
+The install must produce the same bytes on a developer machine, in CI, and in the release job.
+Anything else means the artifact you tested is not the artifact you shipped.
+
+| Ecosystem | Committed lock | Verifying install |
+|---|---|---|
+| npm and compatible | `package-lock.json` | `npm ci`, never `npm install` in CI |
+| Python | A hash-pinned requirements file, or a `uv` or Poetry lock | `pip install --require-hashes`, or the tool's own locked sync |
+| Go | `go.sum` | `go mod verify`, and `GOFLAGS=-mod=readonly` |
+| Rust | `Cargo.lock`, committed for binaries | `cargo build --locked` |
+| Containers | Base images referenced by digest | Rebuild and compare, never rely on a moving tag |
+| CI actions and plugins | Third-party actions pinned to a full commit SHA | A policy check that fails on tag references |
+
+Additional rules:
+
+- **No floating references anywhere**: not `latest`, not a major-version range on a build-critical
+  tool, not a branch reference for an action.
+- **A temporary version pin needs a comment** naming the advisory and the date you intend to remove
+  it, so the pin cannot quietly become permanent.
+- **Lockfile changes are reviewed by a human.** An automated upgrade bot may open the pull request; it
+  may not merge without review on anything that changes the tree.
+
+---
+
+## Vulnerability response
+
+Scanning is the easy part. The value is in triage that neither ignores real risk nor blocks the team
+on unreachable noise.
+
+| Severity on a shipped surface | Patch target | Gate behavior |
+|---|---|---|
+| Critical | Days, with an out-of-band release if needed | Blocks the build |
+| High | Two weeks | Blocks the build |
+| Medium | The next scheduled release, within about 90 days | Warns, tracked with an owner |
+| Low | Next convenient upgrade cycle | Tracked only |
+
+**Reachability triage before effort.** Ask, in order: is the vulnerable package in the runtime
+dependency set or only in build tooling, is the vulnerable code path reachable from our own calls, and
+does exploitation require an input we accept? A high-severity CVE in a build-only dependency is real
+but not urgent; the same CVE on a request path is. Record the reasoning, because the next person will
+ask the same question.
+
+**Waivers are records, not silences.** A waiver names the finding, the reason, the accepting owner,
+the compensating control if any, and an expiry date. An expired waiver fails the build. There is no
+permanent waiver, and a waiver is never a global rule disable.
+
+**Zero-day drill.** When a widely-publicized advisory lands, three questions decide your day: do we
+ship this component anywhere, in which versions and services, and how fast can we release. If the
+answers require investigation rather than a query, the SBOM below is the fix.
 
 ---
 
 ## SBOM and provenance
 
-### SBOM
+An SBOM is not paperwork. It is the query surface that answers the three zero-day questions in minutes
+and the artifact enterprise procurement increasingly requires.
 
-An SBOM is a machine-readable inventory of every component in a build. It matters for two reasons: it is
-increasingly a procurement requirement in enterprise sales and government contracting, and it is what
-lets you answer "are we affected?" in hours rather than weeks when the next widely-used library has a
-critical vulnerability.
+- **Generate at release, from the build**, not by re-resolving dependencies afterwards. An SBOM
+  produced separately describes a different tree than the one you shipped.
+- **Store it where it can be queried across releases**, so a new advisory can be matched against
+  every version still running in production or at a customer.
+- **Attach it to the release artifact** and keep it for as long as the version is supported.
+- **CycloneDX or SPDX**, chosen for the consumer: format mechanics and generation commands are in
+  [[be-security-posture]].
 
-- **CycloneDX** is the pragmatic default: JSON, strong tooling, designed with vulnerability analysis in
-  mind.
-- **SPDX** is the ISO-standardized option and is generally preferred where license compliance is the
-  driver.
+Provenance is the next rung and increasingly expected in enterprise deals:
 
-Generate the SBOM **as part of the release pipeline, from the built artifact**, not by re-reading the
-manifest afterwards. An SBOM produced from source can differ from what actually shipped, which defeats
-its purpose. Attach it to the release, and store it somewhere queryable so new advisories can be matched
-against historical releases rather than only against `main`.
+- **Sign artifacts and verify at deploy.** An unverified signature is decoration; the gate is the
+  verification step in the deploy path.
+- **Emit build provenance** that records which source commit, which builder, and which inputs
+  produced the artifact, so a tampered artifact fails verification rather than merely looking odd.
+- **Know your maturity level and state it plainly** in questionnaires: scripted builds, then
+  provenance generated by the build platform, then non-falsifiable provenance with a hardened builder.
+  Claiming a level you cannot evidence is worse than claiming a lower one.
 
-Preflight the `syft` capability before generating one; if it is absent, follow the registry's fallback
-rather than claiming an SBOM exists.
+---
 
-### Provenance and signing
+## The secret lifecycle
 
-An SBOM says what is inside. **Provenance** says where it came from and that it has not been altered
-since. The two together are what a customer's security review is actually asking about.
+Six stages. A gap at any one of them is the gap that gets exploited.
 
-| Control | What it establishes |
+| Stage | Requirement |
 |---|---|
-| **Artifact signing** (Sigstore/cosign, or ecosystem-native signing) | This artifact was produced by us and has not been modified |
-| **Build provenance attestation** | This artifact was built from this commit, by this workflow, in this environment |
-| **Verification at deploy** | The thing being deployed is one we actually built, refusing anything unsigned or unverifiable |
+| Create | Generated with a cryptographic random source, adequate length, scoped to one consumer and one purpose |
+| Store | In a managed secrets store, encrypted at rest, access controlled and access logged; never in source, never in an image layer, never in a wiki or ticket |
+| Distribute | Injected at runtime, not baked into artifacts; the application reads it from the store or the platform, not from a repository |
+| Use | Held in memory only, never logged, never in an error payload, never echoed to a support tool or an LLM prompt |
+| Rotate | On a schedule, and instantly on suspicion; dual-read overlap so rotation is not an outage |
+| Revoke | Immediate, with a known propagation time, and rehearsed at least once |
 
-The **SLSA** levels are a useful ladder for naming where you are and what the next rung buys, rather than
-a badge to collect: from scripted builds, to a hosted build service producing signed provenance, to
-hardened, non-falsifiable provenance. Name your current level in the threat model and name the specific
-threat the next level would close.
+**Prefer credentials that cannot be stolen usefully.** Ranked best to worst: a federated workload
+identity with no stored secret, a dynamically issued short-lived credential, a managed static secret
+with automated rotation, a manually rotated static secret. Every step down that list adds an incident
+you will eventually have.
 
-The rule that makes signing worth anything: **verification must be enforced at deploy time.** Signing
-artifacts nobody verifies is bookkeeping. The control is the refusal.
+**The leaked-credential runbook.** Order matters, and it is counterintuitive under pressure.
 
----
-
-## Secrets
-
-### The rule
-
-Secrets never enter source control. Not in code, not in config, not in comments, not in commit messages,
-not in test fixtures, not in a `.env` that gets committed once, and never in anything shipped to a
-browser. Anything in a client bundle is public by construction.
-
-Once a secret reaches history, **assume it is compromised**. Rewriting history is cleanup, not
-remediation; rotation is remediation. The clone that already exists on someone's laptop, or in a CI cache,
-or in a fork, is not affected by your rewrite.
-
-### Where secrets live
-
-Preference order for enterprise B2B SaaS:
-
-1. **Cloud-native secrets manager** for production on a single cloud, with strict access policy and an
-   audit trail.
-2. **A dedicated secrets manager or vault** for multi-cloud, on-premise, or when you need dynamic
-   short-lived credentials.
-3. **Platform-managed secrets** where a PaaS owns injection, accepting reduced rotation control.
-4. **Environment variables** for local development. Not for production sensitive credentials: they leak
-   into process listings, child processes, crash dumps, and logs.
-
-Best of all is **no stored secret**: workload identity or federated short-lived credentials, where the
-platform mints a credential per execution and nothing durable exists to leak.
-
-### Rotation
-
-Rotation is only a real control if it can be performed under load without an outage, which requires
-overlapping validity.
-
-1. **Add** the new secret version alongside the old, and update the consumer to accept both.
-2. **Switch** the primary to the new version, keeping the old accepted while the change propagates.
-3. **Revoke** the old version once no traffic uses it, then remove the dual-read path.
-
-Two consequences worth designing for up front: **every secret needs a documented rotation path before it
-ships** (the runbook entry is part of the stage-4 gate), and **rotation should be rehearsed**, because an
-untested rotation procedure discovered during an incident is not a control.
-
-Scope each secret to a single consumer. A credential shared across services cannot be rotated without
-coordinating every consumer, which is precisely why shared credentials are never rotated in practice.
-
-### Secret scanning
-
-Run it in two places, because they catch different things:
-
-- **Pre-commit**, on staged changes, to stop the leak before it exists. Use `gitleaks` for this; preflight
-  the capability first and fall back per the registry if it is absent.
-- **In CI, over history**, to catch what bypassed the hook and what was committed before the hook existed.
-
-Extend the default rule sets with patterns for your own credential formats, since generic entropy rules
-will not recognise your API key shape. And wire up **provider-side push protection and revocation
-webhooks** where available; the fastest remediation path for a leaked cloud or provider key is the
-provider revoking it automatically.
-
-### When a secret leaks
-
-The order matters, and the instinct to clean up first is the wrong one.
-
-1. **Rotate or revoke** the credential. First, before anything else.
-2. **Assess reach**: what did it grant, and for how long was it exposed?
-3. **Look for use**: audit logs for that credential over the whole exposure window, not just since
-   discovery.
-4. **Close the path** that allowed it: the missing hook, the unscanned file type, the process gap.
-5. **Then** clean history, and record the incident with a timeline.
+1. **Rotate first, investigate second.** The credential is compromised the moment it is exposed;
+   nobody gets to argue about whether the repository was private.
+2. **Revoke the old value** and confirm it now fails.
+3. **Determine exposure window and blast radius**: what the credential could reach, and what it did
+   reach, from access logs.
+4. **Look for use**, not just for exposure. Absence of evidence in logs you never enabled is not
+   absence of use.
+5. **Purge where feasible**, but treat git history rewriting as cleanup, never as remediation.
+6. **Fix the path that leaked it**, which is usually a missing scanner, a logging default, or a
+   convenience workflow.
+7. **Record it** as a threat-model delta and, if it revealed a durable lesson, a knowledge entry.
 
 ---
 
-## CI/CD is production
+## Where secrets actually leak
 
-The pipeline can deploy to production, holds credentials for production, and on many projects executes
-code from untrusted pull requests. That combination makes it the highest-leverage target in the system
-and the one most often left unmodelled.
+Scanning source is table stakes. These are the paths that leak credentials in practice, and each needs
+an owner:
 
-| Control | The rule | The threat it closes |
+- **Git history**, including deleted files, old branches, and commits in forks.
+- **CI logs**, where masking fails on transformed values such as base64 or JSON-embedded secrets.
+- **Client bundles and mobile binaries**, where any "private" key shipped to a device is public.
+- **Error trackers and observability tools**, which capture request bodies, headers, and environment
+  by default.
+- **Infrastructure state files**, which store resource attributes including generated credentials in
+  plaintext unless the backend is encrypted and access controlled.
+- **Notebooks, scratch scripts, and local `.env` files** that get committed or shared.
+- **Support and admin tooling** that renders a raw credential rather than a masked reference.
+- **Screenshots and pasted logs in tickets and chat**, which no scanner covers.
+- **LLM prompts and agent context**, where an environment dump or a config file becomes part of a
+  request to a third party. Treat any agent context as an egress path.
+
+Run secret detection in two places, because they catch different things: pre-commit on staged changes
+to stop the leak, and in CI over full history to find what already happened. Verified-only mode keeps
+the signal usable.
+
+---
+
+## The pipeline is production
+
+The build system can deploy, so it is at least as sensitive as the environment it deploys to.
+
+- **Federated identity instead of stored cloud keys.** The pipeline exchanges a short-lived
+  workflow-scoped token for cloud credentials, so there is nothing to steal at rest. This is the
+  single highest-value change most teams can make.
+- **Separate build credentials from deploy credentials.** A build job needs registry write; it does
+  not need production database access.
+- **Scope per job, per environment.** Production secrets belong to a protected environment with
+  required approvals, not to the repository's general secret set.
+- **Never expose secrets to untrusted-contributor triggers.** Workflows that check out and run code
+  from a fork while holding write-scoped credentials are the classic pipeline compromise, so keep
+  those jobs secretless and split any privileged step into a separate, gated workflow.
+- **Pin third-party actions and plugins to a commit SHA**, and review changes to workflow files with
+  the same seriousness as changes to authorization code, because they are equivalent in power.
+- **Ephemeral runners.** A reused runner carries the previous job's leftovers, including cached
+  credentials and poisoned tool caches. Self-hosted runners handling untrusted code need isolation
+  per job.
+- **Protect the cache.** Build and dependency caches are writable by jobs and read by later builds,
+  which makes them a persistence mechanism if a lower-trust branch can write what a release job reads.
+- **Two-person control on release**, with the deploy path requiring an approval that the requester
+  cannot grant themselves.
+
+Workflow structure, caching mechanics, and gate configuration belong to [[devops-ci-cd]] and
+[[devops-release-engineering]]; the policy above is the part that does not change with the vendor.
+
+---
+
+## Third-party risk inside the product
+
+Supply chain is not only your build. It is anything executing in your customer's session or your
+runtime.
+
+- **Browser third-party scripts.** Analytics, chat widgets, and tag managers execute with full access
+  to your authenticated page. Minimize them, load them with integrity checks where the vendor
+  supports it, constrain them with CSP, and remember that a tag manager grants whoever holds its
+  credentials the ability to inject script into your product.
+- **Customer-installed integrations and OAuth apps.** Once you have a marketplace, third parties hold
+  tokens into customer tenants. Scope grants narrowly, show customers what is installed and what it
+  can reach, and make revocation self-service.
+- **AI model and data provenance.** For product features built on models, record which model version,
+  which provider, and what data leaves your boundary. Enterprise questionnaires now ask, and contracts
+  increasingly forbid training on customer data.
+- **Sub-processor obligations.** Every vendor that processes customer data usually must be disclosed,
+  and adding one is a contractual event, not only an engineering one. Check before you introduce a new
+  data-handling dependency.
+
+---
+
+## Verification and evidence
+
+What must exist to call stage 3 complete, and what is retained as audit evidence:
+
+| In CI, per pull request | In the release artifact | Retained |
 |---|---|---|
-| **Federated short-lived tokens** | Use OIDC to exchange a workflow identity for a scoped, minutes-long cloud credential. No long-lived static keys in CI | A stolen CI secret granting indefinite production access |
-| **Least-privilege job permissions** | Default the pipeline's token to read-only and grant write per job that needs it | A compromised build step pushing code, packages, or releases |
-| **Pin actions and images by digest** | Third-party CI actions are dependencies that run with your pipeline's privileges | A mutable tag on a popular action being repointed at hostile code |
-| **No secrets in untrusted contexts** | Workflows triggered by forked pull requests get no secrets and no write permissions | An attacker opening a PR that exfiltrates your credentials |
-| **Ephemeral runners** | Fresh environment per job; never reuse a runner that ran untrusted code | Cache and workspace poisoning between jobs |
-| **Protected environments** | Production deploys require approval and are restricted to protected branches | A direct push or a rogue workflow reaching production |
-| **Isolate build from publish** | The job that builds does not hold publishing credentials; publishing is a separate, gated step | Arbitrary build code reaching the registry |
-| **Audit the pipeline** | Workflow changes are reviewed like production code, because they are | A quiet workflow edit adding an exfiltration step |
-| **Guard cache and artifacts** | Treat caches as untrusted input; scope keys so one job cannot poison another | Cache poisoning as a persistence mechanism |
+| Dependency scan on the changed tree, gating on high and critical | SBOM for the exact build | Scan results and dispositions for the audit period |
+| Secret scan on the diff, with full-history scanning on a schedule | Signature and provenance attestation | Waiver register with owners and expiries |
+| Lockfile consistency check, failing on drift | Immutable digest reference | Rotation records for managed secrets |
+| Container and infrastructure configuration scan where applicable | Verified base image digests | Deploy approvals and pipeline run logs |
+| Action and plugin pinning policy check | Release notes naming the security-relevant upgrades | Access reviews for pipeline and secret-store permissions |
 
-The recurring self-inflicted wound: **a pipeline change is a production change** and often bypasses the
-review rigor applied to application code. A workflow file edit that adds a step with access to secrets
-deserves the same scrutiny as a change to the authentication handler.
+Audit-evidence framing for compliance conversations lives in [[be-security-posture]].
 
 ---
 
-## Review checklist
+## Done-gates
 
-Run against any diff that adds a dependency, touches a credential, or changes the pipeline.
+Before supply-chain or credential work is ready for review:
 
-- [ ] New dependencies: transitive tree reviewed, name verified, maintenance checked, install hooks noted.
-- [ ] Lockfile committed and updated; CI installs from the lockfile with integrity verification.
-- [ ] Container base images and CI actions pinned by digest, not by mutable tag.
-- [ ] Dependency scan passes the severity policy, or the exception has a CVE reference, justification,
-      owner, and resolution date.
-- [ ] SBOM generated from the built artifact and attached to the release.
-- [ ] Release artifacts signed, and verification is enforced at deploy rather than merely available.
-- [ ] Secret scanning runs pre-commit locally and over history in CI, both blocking.
-- [ ] No new secret appears in source, fixtures, config, client bundle, log, or error path.
-- [ ] Every new secret has a named owner, a single consumer scope, a storage location, and a documented
-      rotation path in the runbook.
-- [ ] CI credentials are federated and short-lived; no long-lived static cloud keys remain.
-- [ ] Pipeline token permissions default to read-only, with write granted per job.
-- [ ] Workflows triggered by forked pull requests receive no secrets and no write permissions.
-- [ ] Production deployment is gated by approval and restricted to protected branches.
-- [ ] Scanner results recorded with tool, version, and ruleset, so "it was clean" stays checkable.
+- New dependencies passed the **intake questions**, and the **lockfile diff was reviewed**, not just
+  the manifest.
+- Installs are **reproducible and verifying**, with nothing floating and third-party automation pinned
+  by digest or SHA.
+- Scanners **gate on high and critical** for the changed surface, and every finding has a disposition
+  with an owner and, if waived, an **expiry**.
+- **SBOM generation is part of the release job**, not a side script, and the artifact is addressable
+  by digest.
+- Every new credential has a **named store, scope, expiry, rotation method, and revocation path**, and
+  no static secret was added where a federated identity was available.
+- **Secret detection covers the diff and the history**, and no secret appears in logs, bundles, state
+  files, or agent context.
+- Pipeline changes were reviewed as **privileged changes**, with no secret reachable from an
+  untrusted-contributor trigger.
+- Anything accepted rather than fixed is in the **accepted-risk register** with a review trigger, per
+  [[sec-threat-modeling]].
+
+---
+
+## Absolute bans
+
+- A secret committed to source control, an image layer, a client bundle, or a ticket.
+- Long-lived cloud keys in CI where federated identity is available.
+- Merging an automated dependency upgrade without a human reviewing the lockfile diff.
+- Disabling a scanner, or applying a global suppression, to turn a build green.
+- A waiver with no owner or no expiry.
+- Deploying an artifact that was not built by the pipeline, or one whose signature is not verified.
+- Running untrusted contributor code in a job that holds write-scoped credentials.
+- Treating a git history rewrite as remediation for a leaked credential.
+
+---
+
+## Defers-to
+
+- **Framework [[16-security-operating-model]] wins** on pipeline order, done-gates, and bans.
+- **Implementation depth defers outward**: tool commands and compliance evidence to
+  [[be-security-posture]], workflow and gate mechanics to [[devops-ci-cd]], release and rollback
+  process to [[devops-release-engineering]]. Identity for humans and services is
+  [[sec-authn-authz]]; exploit classes in your own code are [[sec-appsec-owasp]].
+- **Scanners and the Cursor `review-security` plugin detect; this spoke decides.** Their output enters
+  the triage and waiver rules above, and their silence is not evidence about maintainer compromise,
+  pipeline permissions, or secret sprawl outside the repository.
 
 ## Related
-- hub → [[lead-security-architect]]
-- governs → [[devops-ci-cd]]
 - peer ↔ [[sec-threat-modeling]] · [[sec-authn-authz]] · [[sec-appsec-owasp]]
