@@ -20,7 +20,40 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
+
+> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
+
 ---
+
+### 2026-08-03 — Realtime photoreal rigor stack (#12)
+
+SessionID: 2026-08-03-voyager-b505c2
+--- SESSION BLOCK ---
+Date: 2026-08-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Project(s): Workspace (skills/frameworks); Legion (consumer contracts only)
+Artifacts:
+  - 01-frameworks/12-realtime-photoreal-operational-framework.md — triple done-gate + movie-level northstar ops
+  - 03-skills/realtime-visual-craft/ — Impeccable-shaped command hub + RENDER/BUDGET/NORTHSTAR templates
+  - 03-skills/render-qa-toolkit/ — frame/motion/still measurement suite (Legion ?perfcapture config)
+  - 03-skills/interactive-capture-eval/, visual-qa-photoreal-rendering/, rendering-guild/ — motion capture + photoreal QA + guild
+  - 03-skills/{dynamic-gi,shadow-quality,virtual-texturing,bake-orchestration,gpu-capture,adapter-*}/ — AAA spokes + engine adapters
+  - Legion RENDER.md / BUDGET.md / NORTHSTAR.md + docs/render-acceptance-harness.md — project consumer contracts
+Decisions:
+  - Multi-engine principles with thin Unreal/Unity adapters (1B); full rigor stack in one program (2B)
+  - Legion is test platform only — skills stay in Workspace
+  - Evaluation requires still grid + flythrough frame-by-frame + measured ms; low-res/still-only verdicts banned
+  - Movie-level fidelity gated by named NORTHSTAR stills/videos/game examples
+Pending resolved:
+  - Workspace photoreal connective tissue (framework #12 + command hub + measurement + guild + adapters)
+  - Legion contracts landed on main (dcd9abb)
+Next:
+  - Run a live Legion acceptance pass on official poses + flythroughs in native Chrome (not IDE-browser alone)
+  - Sign concrete northstar file paths into Legion NORTHSTAR.md as captures are approved
+  - Optional: register Open Agent Engine personal lane when MCP is available (skipped this session — not-registered)
+--- END BLOCK ---
+
 
 ### 2026-07-30 — SaaS PLM: global density model + pill/chip shapes (PR #13 for Olga)
 
@@ -559,110 +592,3 @@ Next:
   - Optional: the doctor-self-heal polish, or drive the generator through a real colleague test.
 --- END BLOCK ---
 
-
-### 2026-07-22 — Game-dev perf doctrine + 4 hero-body rendering skills (Legion-driven)
-
---- SESSION BLOCK ---
-Date: 2026-07-22
-Agent: Claude Opus 4.8
-Machine: Personal MacBook Pro
-Surface: Claude Code (Mac desktop app)
-Project(s): 13-legion (workspace skill/knowledge augmentation in service of Legion rendering)
-Summary: Augmented the game-dev 3D skill network toward SpaceEngine-class hero-body fidelity. Ran a 16-agent research workflow (5 pillars → adversarial verify → synthesis, ~1.08M tokens, 156 web fetches) → master dossier; authored 4 new spoke skills; then generalized the performance requirement into a project-wide doctrine. Registry 248 → 252; all gates green (registry/related/links/integrity).
-Decisions:
-  - 4 new lead-game-developer spokes from the adversarially-verified dossier: planetary-terrain-lod, atmospheric-scattering-and-clouds, stellar-and-relativistic-hero-bodies, realtime-render-performance. Load-chain: foundations → hub → perf-spine → body skills (verified).
-  - Honest verdicts baked in (not hype): real in-browser budget ~8–9 ms not 11.1; planet+star hit high FPS on desktop dGPU (60+DRS on integrated); black hole = scripted slow-camera hero moment, zero interactive-game precedent; WebGPU has no mesh/tessellation/VRS/fp64 → compute+indirect only; TAAU is a co-dev bet that fails on motion-vector-less content.
-  - Generalized performance into a project-wide DOCTRINE (not Legion/90fps-specific): 60 FPS floor (not goal), uncapped by default (higher = smoother + lower latency), optional user frame cap in settings to reallocate GPU / cut power, input latency co-equal. Installed in game-foundations (new "Performance + responsiveness" principle) + lead-game-developer (principle #4). Renamed realtime-render-performance-90fps → realtime-render-performance (git mv; 12 files re-pointed).
-  - Marketplace harvest verdict: ~90% duplicative; workspace's new skills supersede the marketplace rendering skills (anthropic-skills:threejs-* are exact dupes). Folded the one additive item (blender-web-pipeline bpy + 3D-texture/VDB-bake path) into 3d-asset-pipeline rather than a duplicate spoke.
-Artifacts:
-  - 08-knowledge/game-dev/legion-hero-body-rendering-research.md — master research dossier (cited, adversarially verified; §5 skill blueprint)
-  - 08-knowledge/game-dev/legion-planet-surface-rendering.md — Legion planet-shader hard-won patterns (hex-artifact fix, ±0.08 treeline threshold, snow/ice, flashing-storm bug, GLSL reserved-word `active`)
-  - 03-skills/{planetary-terrain-lod,atmospheric-scattering-and-clouds,stellar-and-relativistic-hero-bodies,realtime-render-performance}/SKILL.md — 4 new spokes
-Pending resolved:
-  - Deduplicated 3d-asset-pipeline/SKILL.md (merge artifact — whole body was duplicated); merged section-by-section, no content lost, fixed a meters-vs-cm contradiction.
-Pending added:
-  - Implement the 4 new skills against the live Legion repo (src/render/planet/, src/render/) — reconcile planetary-terrain-lod with the existing quadtree renderer.
-  - Wire realtime-render-performance's frame-cap setting + input-latency pipeline into Legion's engine loop.
-  - Flashing-storm bug: capture a repro seed next time it appears (precision/state-sync suspect).
-Deferred commits:
-  - 07-projects/18-bootstrap-generator/launch.py — untracked, owned by bootstrap-generator work (not this session).
-Next:
-  - Begin Legion-side implementation of the terrain LOD + atmosphere spokes against src/render/.
---- END BLOCK ---
-
----
-
-### 2026-07-22 — Legion: planet rendering — biomes, climate, night-lights, living weather, lab UX
-
---- SESSION BLOCK ---
-Date: 2026-07-22
-Agent: Claude Opus 4.8
-Machine: Personal MacBook Pro
-Surface: Claude Code (Mac desktop app)
-Project(s): 13-legion (Legion repo — separate git checkout at ~/Projects/Legion)
-Summary: Long continuous planet-renderer session. ~22 PRs (#163–#184) all merged to main + deployed to GitHub Pages (final commit 24040e5, Pages 200). Work spanned five threads: living weather, biome/climate physics, settlement-realistic night lights, ice/snow, and lab UX — plus research docs and a systemic World-dials control model.
-Decisions:
-  - Cyclones are ocean-gated on the CPU (macroHeight+warpDir sample) — no hurricanes over land; storm swirls scaled down (continent-sized was wrong); large cloud-free regions added; near-imperceptible animation.
-  - Climate moisture is a SIGNED additive FIELD (base + aridBelts/rainShadow/orographic/continental/altitudeDry/patchiness), never a product chain (collapses to zero). Temperature = cubic insolation fit to Earth MAT − lapse×altitude.
-  - Biome palette authored DARK (pine, ~half brightness); ocean ramp made bare ground (was itself green, bleeding through). Earth-calibrated albedo desert:forest ≈ 3:1 (not 10:1). Tundra can read green.
-  - Night lights = habitability field (coast/lowland/fertile/livable × cold/capNear/arid penalties, floor at trace) → density → threshold on high-freq snoise for light SHAPE; sparse (not zero) near ice caps and in large deserts; tendrils/clusters.
-  - Ice: snowCover() albedo overlay (no mass), sea-ice paler/bluer than land glacier, terrain normals show through ice, multi-scale uneven cap margins (lobes/bays/altitude/current asymmetry).
-  - Lightning: emissive flicker on cloud shell + surface under-glow, cyclone eyewalls + periodic cell grid gated by density.
-  - Systemic World dials (variants.ts): via(lo,mid,hi,t) piecewise-lerp anchored 0.5=Earth; offset/manual-edit-preservation model (masterValues/applyOffsets/LIMITS). Old sliders preserved for revert.
-  - Bake parity via single finishHeight() path; simplex fbm3 detail (not value noise); featherEdges to kill margin step-seams. Canyons added to macro.
-  - Stars-through-planets fixed: starfield materials transparent:false (was in transparent pass, drawing after opaque geometry). Ledger A-06.
-  - Lab controls fully live (killed Rebuild delay); camera.setViewOffset pans subject clear of docked panel; VIEW section adds auto-rotate toggle + arrow-key nudge.
-  - launch.json: legion (dev/5173) + legion-preview (preview/4173) detected and saved.
-Artifacts (Legion repo):
-  - docs/giants-moons-rings-research.md — ice/gas giants, rings as any-archetype feature, moons/satellites per archetype, binary planets, habitable giant-moons, super-earths.
-  - docs/labs-blackhole-star-nebula-requirements.md — lab requirements for black-hole / solar / nebula-nursery labs.
-  - docs/planet-lab-parameter-reference.md — parameter reference for the planet lab.
-Ledger (workspace, committed earlier this session): visual-failure-mode-ledger A-06 (transparent-flag defeats draw-first backdrop), P-05 recurrence note (bake value-noise), P-06 (differential-rotation smear), P-07 (hard edit-margins step-seam).
-Pending resolved:
-  - Cyclones-over-land, low cloud resolution, over-animated clouds, stars-through-planets, baked blockiness/step-seams, polar desertification, city-light blobs, storms flashing on live-slider ticks (refreshParams was wiping storm state), biome sage-not-pine.
-Carry-forward (unresolved / not-yet-built):
-  - Ephemeral cloud/LOD hexagon artifact — user confirmed cloud-layer (matching cloud shadow), then said it vanished; could not reproduce. Needs seed + repro conditions. NO fix shipped.
-  - Lightning never verified in a still frame (automation rAF throttle) — needs live-motion capture.
-  - Biome-height decouple (bh from plateMacro, not baked vHeight) was applied on a WRONG diagnosis (thought hexagon was a biome seam) — decide whether to keep.
-  - Sun/star, nebula, black-hole labs specced not built; ice/gas-giant material split; giant rings/moons features.
-Next:
-  - NEXT SESSION theme (user pre-announced): "a new set of adversarially checked skills to help us improve engine performance at close zoom levels and more." Await the skills, then apply to close-zoom perf.
---- END BLOCK ---
-
----
-
-
-
-### 2026-07-21 — SaaS PLM prototype → centric-ui gap audit re-run; PR #1 refreshed for Olga's review
-
---- SESSION BLOCK ---
-Date: 2026-07-21
-Agent: Claude Opus 4.8 (1M context)
-Machine: Work MacBook Pro
-Surface: Cursor (Claude Code extension)
-Project(s): Employer design-system migration (cpes-software/saas-plm-prototype → centric-ui)
-  — deliverables live in the employer repo, NOT mirrored here (separation rule); this block
-  records only the fact of the work + the PR reference.
-Decisions:
-  - Re-ran the FULL multi-agent gap audit (not a delta pass): Olga's shadcn/Radix migration
-    invalidated the prior audit's "hand-rolled" premise, so every verdict was re-derived from
-    current source on both repos rather than carried forward.
-  - Report verification as "two independent adversarial passes; identical rung + difficulty on
-    all carried units" instead of a confirmed/adjusted count — the count proved a sampling
-    artifact (swung 8/19/6 → 17/16/0 across two passes while every unit's resolution + difficulty
-    stayed identical). Captured as knowledge [[adversarial-verify-label-volatility]].
-  - Updated PR #1 in place (rebased onto current main) to preserve Olga's review thread rather
-    than opening a fresh PR. Committed as the Centric account; PR review by Olga, no self-merge.
-  - Fixed a render bug pre-delivery: raw `<table>`/`<DataTable>` in the data broke the gap-map
-    matrix (innerHTML) and would mis-render on GitHub — escaped injected fields + the markdown.
-Pending resolved:
-  - Employer DS-migration gap report re-run: done — plan + interactive gap map refreshed, new
-    per-unit detail appendix added, PR #1 updated, replied to Olga's CHANGES_REQUESTED review.
-Pending added:
-  - Await Olga's re-review of saas-plm-prototype PR #1 before resuming the migration build.
-  - Prototype repo left checked out on `docs/centric-ui-migration-plan` (not `main`) — switch back when convenient.
-Next:
-  - On Olga's sign-off: resume the DS migration build, quick-win reuses first (per the refreshed plan).
---- END BLOCK ---
-
----
