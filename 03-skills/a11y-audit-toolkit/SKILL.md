@@ -21,9 +21,11 @@ triggers: [accessibility audit, a11y audit, axe, axe-core, pa11y, lighthouse acc
 tier: cross-cutting
 domain: accessibility
 hub: lead-accessibility-architect
+related: [visual-qa-toolkit, visual-qa-accessibility, fe-accessibility, a11y-legal-compliance, fe-perf-harness, qa]
 requires: [axe-cli, pa11y, lighthouse]
+rigor_role: measurement
 surfaces: ["*"]
-spec_version: "2.1"
+spec_version: "2.2"
 ---
 
 # a11y Audit Toolkit

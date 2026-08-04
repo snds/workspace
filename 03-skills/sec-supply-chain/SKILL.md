@@ -340,4 +340,6 @@ Before supply-chain or credential work is ready for review:
   pipeline permissions, or secret sprawl outside the repository.
 
 ## Related
+- hub → [[lead-security-architect]]
+- governs → [[devops-ci-cd]]
 - peer ↔ [[sec-threat-modeling]] · [[sec-authn-authz]] · [[sec-appsec-owasp]]

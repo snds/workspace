@@ -21,8 +21,10 @@ triggers: [chart review, chart audit, dataviz qa, graph review, data table revie
 tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
+related: [infod-encoding-theory, fe-data-visualization, ux-data-visualization, qa]
+rigor_role: multi-voice
 surfaces: ["*"]
-spec_version: "2.0"
+spec_version: "2.2"
 ---
 
 # Visual QA — Data Visualization
@@ -169,4 +171,4 @@ token gaps to [[ds-advisor]], and accessibility failures to [[visual-qa-accessib
 
 ## Related
 - hub → [[lead-visual-qa]]
-- peer ↔ [[infod-encoding-theory]]
+- peer ↔ [[infod-encoding-theory]] · [[qa]]

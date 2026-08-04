@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 279,
+    "total": 280,
     "by_tier": {
-      "cross-cutting": 34,
+      "cross-cutting": 36,
       "foundation": 22,
       "hub": 47,
-      "spoke": 176
+      "spoke": 175
     }
   },
   "skills": {
@@ -165,7 +165,14 @@
       "domain": "accessibility",
       "hub": "lead-accessibility-architect",
       "prerequisites": [],
-      "related": [],
+      "related": [
+        "visual-qa-toolkit",
+        "visual-qa-accessibility",
+        "fe-accessibility",
+        "a11y-legal-compliance",
+        "fe-perf-harness",
+        "qa"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [
@@ -193,8 +200,8 @@
         "lighthouse"
       ],
       "defers_to": [],
-      "rigor_role": null,
-      "hash": "sha256:bcef3cfed011cdd23e67b3d5fef45e3f7ee57a7c730da02837595eab1af54e64"
+      "rigor_role": "measurement",
+      "hash": "sha256:23fbbbeb416bd31df389c24dc8b5499800276d6e523a3c0a3d01d50a1953d745"
     },
     "a11y-auditory": {
       "path": "03-skills/a11y-auditory/SKILL.md",
@@ -1669,7 +1676,12 @@
       "prerequisites": [
         "lead-frontend-engineer"
       ],
-      "related": [],
+      "related": [
+        "fe-performance",
+        "a11y-audit-toolkit",
+        "motion-performance",
+        "ux-performance-perception"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [
@@ -1691,8 +1703,8 @@
         "lighthouse"
       ],
       "defers_to": [],
-      "rigor_role": null,
-      "hash": "sha256:60d3f43252d1017eabace21509ff6d96f63cf071d7d8b8b41ea2d9812aa3e664"
+      "rigor_role": "measurement",
+      "hash": "sha256:24974bf8b81944a4928c2f2d67ba5ade215dede2bf7c6ae13105c585d681032b"
     },
     "fe-performance": {
       "path": "03-skills/fe-performance/SKILL.md",
@@ -1712,7 +1724,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:b170319229171e1a891ecd108a1f47830a46196ddeaf6077699b4894f05799f6"
+      "hash": "sha256:d5343457148d394da96648955e663b849f8dac762a4c1bce550103c49910b8c0"
     },
     "fe-state-management": {
       "path": "03-skills/fe-state-management/SKILL.md",
@@ -3363,7 +3375,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:eb53c6cf3de50a0fb8c48739e287a2cfafad91acd2b2df462779e2552f22b328"
+      "hash": "sha256:5b40db1f85e144003e8b7b848ab889b9e59473060834ead2e82cbefc3fe40c31"
     },
     "infod-narrative-design": {
       "path": "03-skills/infod-narrative-design/SKILL.md",
@@ -3578,7 +3590,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:d2fb8aaf2ab633fface631d7b048182a37cb6294c5cbbdbe5e21e1987800df5e"
+      "hash": "sha256:1cc576a5f3d1d7680297d6c5044a5aab160d3ec3d8d293388cb05b7842baae59"
     },
     "lead-art-director": {
       "path": "03-skills/lead-art-director/SKILL.md",
@@ -3680,7 +3692,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:4d7691535a627d9c016da404109791a38273cd40e48aa505770ee351ad7f4186"
+      "hash": "sha256:5956ba62b98a68003a6aa90380ec8389552a3ca95f9a5220fa7525156bad34e0"
     },
     "lead-game-designer": {
       "path": "03-skills/lead-game-designer/SKILL.md",
@@ -4065,7 +4077,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:9bbfee334b8a3132b459b6b5aa31ca40030e05fdc938a5afa3f1241aa350ba45"
+      "hash": "sha256:ff41e523884b02906724d9d0ccbebd9930225f20d702c5f7c605b6183fb8c519"
     },
     "legion-narrative-design": {
       "path": "03-skills/legion-narrative-design/SKILL.md",
@@ -4436,7 +4448,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:6011badbefcfe85a5a2199c2532f99d5396c80cb7f7eb485e441997110d0885d"
+      "hash": "sha256:481c5b13d16b6fab82274d95629cb41e7552d1b9e32da10e5e2856bf3e496ba2"
     },
     "motion-choreography": {
       "path": "03-skills/motion-choreography/SKILL.md",
@@ -4476,7 +4488,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:43bfbefd519e98485d276624822146a3da89dd5399130ed1a57b9b41b59d466f"
+      "hash": "sha256:131b67487135be6492dfaf4925b798c8b1497d884d6e02712fd2054393aac650"
     },
     "motion-principles": {
       "path": "03-skills/motion-principles/SKILL.md",
@@ -4924,7 +4936,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:cfcbdc62f524d5184cfc0e99eb5e7b131d0b9346b98b3ea363f7cdfbb0139233"
+      "hash": "sha256:bbc3702271eb042e02bbe452dac2a1f8a90b89474c642ce1a1f43354384a901f"
     },
     "realtime-render-performance": {
       "path": "03-skills/realtime-render-performance/SKILL.md",
@@ -5555,7 +5567,7 @@
         "framework-16"
       ],
       "rigor_role": "load-chain",
-      "hash": "sha256:db167f4b45c530e7be0888f4c5aa05634dbd47c57d3a8804e1b55f9a23d55cfe"
+      "hash": "sha256:55783fefe66030f5a06cd94c7dd7a6d7b5bd62e8771d5456612d0325c2cfebe4"
     },
     "sec-threat-modeling": {
       "path": "03-skills/sec-threat-modeling/SKILL.md",
@@ -6044,7 +6056,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:6c0f9a34ddc939a7b86118aa06ba42445c3a93835436d4258c89eac22ac9b70b"
+      "hash": "sha256:5568507fe02db159d7b1c8c84aa956a869ce71a79cf09eec95cc82f1af0fe3e6"
     },
     "uid-visual-critique": {
       "path": "03-skills/uid-visual-critique/SKILL.md",
@@ -6709,7 +6721,12 @@
       "domain": "quality",
       "hub": "lead-visual-qa",
       "prerequisites": [],
-      "related": [],
+      "related": [
+        "infod-encoding-theory",
+        "fe-data-visualization",
+        "ux-data-visualization",
+        "qa"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [
@@ -6729,8 +6746,8 @@
       ],
       "requires": [],
       "defers_to": [],
-      "rigor_role": null,
-      "hash": "sha256:ca0d87c89e74ffc10c808fdf45bcb33df0781fad292b65734f9728af72adcf07"
+      "rigor_role": "multi-voice",
+      "hash": "sha256:cbb1938df107cca252f041c50ccef7d4c519188036a825d993a21fb90986ab5f"
     },
     "visual-qa-game-design": {
       "path": "03-skills/visual-qa-game-design/SKILL.md",
@@ -6788,12 +6805,10 @@
     },
     "visual-qa-motion": {
       "path": "03-skills/visual-qa-motion/SKILL.md",
-      "tier": "spoke",
+      "tier": "cross-cutting",
       "domain": "quality",
       "hub": "lead-visual-qa",
-      "prerequisites": [
-        "lead-visual-qa"
-      ],
+      "prerequisites": [],
       "related": [
         "motion-performance",
         "motion-accessibility",
@@ -6804,9 +6819,18 @@
       "governs": [],
       "triggers": [
         "motion qa",
+        "motion review",
+        "animation review",
         "animation audit",
         "jank review",
-        "reduced motion qa"
+        "janky animation",
+        "transition review",
+        "reduced motion qa",
+        "reduced motion audit",
+        "animation feel",
+        "motion critique",
+        "stutter",
+        "dropped frames review"
       ],
       "surfaces": [
         "*"
@@ -6814,7 +6838,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": "multi-voice",
-      "hash": "sha256:53ff9627c3cf5b1b7a1d1869efe4807974bed253d7e73c89426391edf05781e1"
+      "hash": "sha256:e57c18e2070387b6db573c46a7eb31fe0904b9eee87aa5d0f942b063d9468412"
     },
     "visual-qa-photoreal-rendering": {
       "path": "03-skills/visual-qa-photoreal-rendering/SKILL.md",
@@ -6887,7 +6911,42 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:8af51262d6cbb729f9656bab41c07e70a317575ad9950b89eee9cf5c923a264c"
+      "hash": "sha256:3e28e186d620e123ff19f085e3b855912e1a26f913945f7e220538dcc252ef99"
+    },
+    "visual-qa-type": {
+      "path": "03-skills/visual-qa-type/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "quality",
+      "hub": "lead-visual-qa",
+      "prerequisites": [],
+      "related": [
+        "uid-type-for-screens",
+        "type-spacing-metrics",
+        "visual-qa-toolkit",
+        "qa"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "typography review",
+        "type qa",
+        "rendered type",
+        "font loading shift",
+        "fout",
+        "foit",
+        "synthetic bold",
+        "tabular figures",
+        "text truncation review",
+        "hyphenation review",
+        "punctuation quality"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": "multi-voice",
+      "hash": "sha256:4aca4dfbc3edfecb120c97eda18bf6473fc79a6c743320b67b6a0e3987f20422"
     },
     "visual-qa-ui-design": {
       "path": "03-skills/visual-qa-ui-design/SKILL.md",
@@ -8346,6 +8405,11 @@
       "design-foundations",
       "lead-visual-qa",
       "visual-qa-toolkit"
+    ],
+    "visual-qa-type": [
+      "design-foundations",
+      "lead-visual-qa",
+      "visual-qa-type"
     ],
     "visual-qa-ui-design": [
       "design-foundations",

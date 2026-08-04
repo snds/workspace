@@ -6,9 +6,13 @@ description: >-
   interface — a screenshot, a Storybook story, a live page or dev server, a Figma
   export, a component, or a working-tree diff. Covers visual craft (alignment,
   spacing, contrast, color drift, typography, grid, icon/state consistency),
-  accessibility (WCAG), usability/heuristics, UX flows, and graphic-design quality.
+  accessibility (WCAG, structural/ARIA), usability/heuristics, UX flows,
+  graphic-design quality, motion (jank, reduced-motion, feel), data visualization
+  (chart/table encoding), rendered type, and security posture.
   Trigger on "qa this", "audit this screen", "review this UI", "critique this
-  component", "check the contrast/spacing", "is this accessible", "compare design vs
+  component", "check the contrast/spacing", "is this accessible", "run an
+  accessibility audit", "is this animation janky", "review this chart", "audit this
+  endpoint for security", "compare design vs
   build", "what's wrong with this page", or any request to evaluate an interface
   against a standard. Also the explicit entry point for the `/qa` operation grammar
   (`/qa <verb> <target> [--modifiers]`). This is the canonical owner of UI-evaluation
@@ -84,7 +88,7 @@ phrasing is mapped to it.
 
 ### Modifiers
 
-- `--lens ui|ux|a11y|usability|graphic|game|motion|dataviz|type|security` — which discipline spoke leads. **Auto-detected** from the target/intent when omitted (e.g. "contrast"/"screen reader" → `a11y`; "flow"/"onboarding" → `ux`; "chart encoding" → `dataviz`; "jank"/"easing" → `motion`). Multiple allowed.
+- `--lens ui|ux|a11y|usability|graphic|game|motion|dataviz|type|security` — which discipline spoke leads. **Auto-detected** from the target/intent when omitted (e.g. "contrast"/"screen reader" → `a11y`; "flow"/"onboarding" → `ux`; "chart encoding" → `dataviz`; "jank"/"easing" → `motion`; "font loading"/"tabular figures" → `type`; "injection"/"authz" → `security`). Multiple allowed.
 - `--level a|aa|aaa` — WCAG conformance target for `a11y` (default `aa`).
 - `--theme light|dark` — which theme to evaluate; for stories, audit both if omitted and the project ships both.
 - `--live` — use the impeccable browser bridge for live-page work (see "Live mode").
@@ -106,7 +110,7 @@ lens that needs measurement.
 | `game` | `visual-qa-game-design` | for Legion / game UI |
 | `motion` | `visual-qa-motion` | `motion-performance` (frame budget); reduced-motion via `motion-accessibility` |
 | `dataviz` | `visual-qa-dataviz` | `infod-encoding-theory`; toolkit for contrast on series colors |
-| `type` | `lead-type-designer` / type spokes | `visual-qa-toolkit` typography scripts when present |
+| `type` | `visual-qa-type` | `visual-qa-toolkit` (`qa_typography.py` — measured type metrics); `uid-type-for-screens` for scale/hierarchy intent, `lead-type-designer` only for font-file work |
 | `security` | `lead-security-architect` | `sec-*` + framework #16 (not a visual lens — routes sideways) |
 | *(strategy/prioritization across findings)* | `lead-visual-qa` | always available for `triage` |
 
@@ -114,6 +118,11 @@ Instrumented measurement (contrast, SSIM, Δe, alignment, icon/state consistency
 **always** routed through `visual-qa-toolkit` rather than eyeballed — that is the
 toolkit's whole reason to exist. Structural a11y automation routes through
 `a11y-audit-toolkit`. Read each toolkit's protocol for input handling.
+
+Two adjacent measurements are **not** `/qa` lenses and route sideways rather than being
+judged here: page-load and Core Web Vitals budgets → [[fe-perf-harness]]; animation frame
+budgets → `motion-performance` (with `visual-qa-motion` holding the judgment). A lens that
+has an instrument should use it; a lens that doesn't should say so in the report.
 
 ## Disambiguation — who owns what (the precision contract)
 
@@ -201,3 +210,5 @@ Storybook QA audit**. Once proven, the same wrapper shape generates the sibling 
 
 ## Related
 - foundation → [[design-foundations]]
+- peer ↔ [[eng]] · [[design-system-ops]]
+- peer ↔ [[visual-qa-motion]] · [[visual-qa-dataviz]] · [[visual-qa-type]]

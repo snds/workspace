@@ -43,7 +43,7 @@ to the current question. The hub contains enough context to triage and route.
 | Skill | Domain | Trigger When |
 |-------|--------|-------------|
 | `fe-component-architecture` | Component API design, headless UI, composability, design system implementation, controlled/uncontrolled patterns, slots, compound components | Component API design, headless primitives (Radix, Ark UI, React Aria), DS token consumption, breaking change discipline, polymorphic components, ref forwarding |
-| `fe-perf-harness` | CWV/Lighthouse budget harness (measurement) | Perf CI, budget gate, Lighthouse JSON |
+| `fe-perf-harness` | CWV/Lighthouse budget harness (measurement): how the number is produced, what a budget means, how it gates CI, and how it degrades when no runner exists | Perf CI, budget gate, Lighthouse JSON/LHCI, lab vs field, "why does LCP move between runs" |
 | `fe-performance` | Core Web Vitals, bundle optimization, rendering strategies (CSR/SSR/SSG/streaming), code splitting, image/font optimization, perceived performance | LCP/INP/CLS regressions, bundle size, code splitting strategy, SSR vs. CSR decision, performance budgets in CI, runtime profiling |
 | `fe-state-management` | App state architecture, server state vs. client state, optimistic updates, form state, TanStack Query, Pinia, Zustand, Jotai | State architecture decision, TanStack Query patterns, optimistic UI, form validation at scale, cache invalidation, URL state |
 | `fe-data-visualization` | Charting libraries, table rendering (TanStack Table), virtualization, large dataset handling, dashboards, cross-filter interactions | Chart library selection, table with sorting/filtering/grouping, virtual scrolling, data-dense rendering, dashboard composition |

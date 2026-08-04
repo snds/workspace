@@ -271,5 +271,5 @@ identify the most critical visual deviations.
 
 ## Related
 - foundation → [[design-foundations]]
-- spoke → [[visual-qa-accessibility]] · [[visual-qa-architecture]] · [[visual-qa-dataviz]] · [[visual-qa-game-design]] · [[visual-qa-graphic-design]] · [[visual-qa-interior-design]] · [[visual-qa-motion]] · [[visual-qa-photoreal-rendering]] · [[visual-qa-toolkit]] · [[visual-qa-ui-design]] · [[visual-qa-usability]] · [[visual-qa-ux-design]]
+- spoke → [[visual-qa-accessibility]] · [[visual-qa-architecture]] · [[visual-qa-dataviz]] · [[visual-qa-game-design]] · [[visual-qa-graphic-design]] · [[visual-qa-interior-design]] · [[visual-qa-motion]] · [[visual-qa-photoreal-rendering]] · [[visual-qa-toolkit]] · [[visual-qa-type]] · [[visual-qa-ui-design]] · [[visual-qa-usability]] · [[visual-qa-ux-design]]
 - peer ↔ [[vision-foundations]] · [[native-visual-eval]] · [[interactive-capture-eval]] · [[realtime-visual-craft]] · [[rendering-guild]]

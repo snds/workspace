@@ -21,9 +21,11 @@ tier: spoke
 domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
+related: [fe-performance, a11y-audit-toolkit, motion-performance, ux-performance-perception]
 requires: [lighthouse]
+rigor_role: measurement
 surfaces: ["*"]
-spec_version: "2.1"
+spec_version: "2.2"
 ---
 
 # fe-perf-harness
@@ -212,10 +214,22 @@ fe-perf-harness/
 ├── SKILL.md                        # This file
 ├── scripts/
 │   └── fe_perf_budget.py           # Stdlib budget assertion CLI (median-aware)
-└── configs/
-    └── default.budget.json         # Starting budget; copy next to the project and tune
+├── configs/
+│   └── default.budget.json         # Starting budget; copy next to the project and tune
+└── tests/
+    └── lhr-sample.json             # Lighthouse-shaped fixture (self-test, no runner needed)
+```
+
+Self-test — proves the assertion path with no Lighthouse installed. The fixture deliberately
+breaches three budgets and sits inside the warn band on three more, so a correct run reports
+`fail 3 · warn 3 · pass 8` and exits 1:
+
+```bash
+python3 03-skills/fe-perf-harness/scripts/fe_perf_budget.py \
+  --report 03-skills/fe-perf-harness/tests/lhr-sample.json \
+  --budget 03-skills/fe-perf-harness/configs/default.budget.json
 ```
 
 ## Related
 - hub → [[lead-frontend-engineer]]
-- peer ↔ [[fe-performance]] · [[a11y-audit-toolkit]]
+- peer ↔ [[fe-performance]] · [[a11y-audit-toolkit]] · [[motion-performance]]
