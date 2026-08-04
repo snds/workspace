@@ -13,6 +13,7 @@ description: >
 aliases: [lead-information-architect]
 tier: hub
 domain: design
+prerequisites: [design-foundations]
 spec_version: "2.0"
 ---
 
@@ -229,5 +230,25 @@ This hub and its spoke network operate at staff/principal IC depth. That means:
 - Donna Spencer, card sorting methodology
 - Bob Bailey / Jared Spool, first-click testing research
 
+
+---
+
+## Execution protocol (Domain Rigor L2)
+
+Governed by [[13-domain-rigor-stack]]. Domain L1: see framework table in that doc.
+
+1. Name the decision and success criteria before specialty work.
+2. Load foundation → this hub → only the 1–2 spokes needed.
+3. Prefer measurement (`audit`) over vibes when claiming compliance.
+4. Apply sideways lenses (a11y, security, visual QA) when the surface warrants.
+5. Stop at done-gates: contract/artifact + evidence + refuse absolute bans.
+6. Record durable insight in `08-knowledge/` when a pattern will recur.
+
+### Absolute bans
+- Shipping specialty advice that contradicts the domain operating framework
+- Loading all spokes eagerly
+- Declaring "done" without the L1 done-gate artifacts for this domain
+
 ## Related
+- foundation → [[design-foundations]]
 - spoke → [[ia-content-strategy]] · [[ia-enterprise-complexity]] · [[ia-mental-models]] · [[ia-navigation-systems]] · [[ia-research-methods]] · [[ia-search-findability]] · [[ia-taxonomy-classification]]

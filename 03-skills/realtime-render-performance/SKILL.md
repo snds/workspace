@@ -15,7 +15,7 @@ tier: spoke
 hub: lead-game-developer
 domain: game
 prerequisites: [webgpu-advanced-rendering, game-scale-traversal]
-related: [glsl-shader-architect, threejs-vfx-atmosphere]
+related: [glsl-shader-architect, threejs-vfx-atmosphere, render-qa-toolkit]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -156,4 +156,4 @@ sampling input at frame start · DRS oscillation without hysteresis · render bu
 
 ## Related
 - hub → [[lead-game-developer]]
-- peer ↔ [[webgpu-advanced-rendering]] · [[game-scale-traversal]]
+- peer ↔ [[webgpu-advanced-rendering]] · [[game-scale-traversal]] · [[render-qa-toolkit]] · [[realtime-visual-craft]] · [[rendering-guild]] · [[visual-qa-photoreal-rendering]] · [[imaging-foundations]] · [[legion-project]]

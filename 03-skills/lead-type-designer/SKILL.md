@@ -276,6 +276,58 @@ rigor in service of the reading experience. Not the reverse.
 - Google Fonts Knowledge — practical design principles (fonts.google.com/knowledge)
 - Variable fonts specification (OpenType 1.8+)
 
+
+---
+
+## Execution protocol (Domain Rigor L2)
+
+Domain L1: [[02-ui-ux-operational-framework]] for systematic decisions, with
+[[01-aesthetic-lens]] as the judgment ground and [[05-last-mile-craft-framework]] for the finishing
+tier. Rigor model: [[13-domain-rigor-stack]]. Every letterform verdict runs on native pixels
+([[10-perception-integrity]]) because this domain's defects are sub-pixel by nature. The `/type`
+hub is the command surface.
+
+1. **Name the reading situation**: language and script coverage, size range, medium (print, screen,
+   signage), and whether this is text or display. Text type and display type do not share
+   constraints.
+2. **Fix the metrics before the shapes**: UPM, x-height, cap height, ascender and descender,
+   overshoot, stem widths, and the vertical metrics the platform will use for line height.
+3. **Build the control characters first** (n, o, H, O and their diagonals) so the skeleton, contrast
+   axis, and optical corrections are settled before the alphabet multiplies the decision.
+4. **Load narrowly**: `design-foundations`, this hub, then the one or two `type-*` spokes in scope.
+   Icon-font work routes to [[variable-icon-font-architect]], which is a sub-hub with its own
+   network.
+5. **Space as you draw**, not after. Spacing and fitting are as much of the design as the
+   letterforms, and retrofitting spacing to finished outlines is the expensive path.
+6. **Proof in continuous text at the intended size**, not in a glyph grid. A specimen of isolated
+   letters hides the rhythm problems that reading exposes.
+7. **Test the interpolation** for variable faces: compatible point structures, instances checked at
+   the extremes and at intermediate masters, not just the designed ends.
+8. **Run the production pass**: kerning coverage, OpenType feature behavior, hinting or screen
+   rendering check, and vertical metrics verified in the target environments.
+
+### Done-gates
+- Metrics and vertical metrics documented, and consistent across every style in the family.
+- Spacing and kerning proofed in running text at the smallest intended size, not only large.
+- Character set complete for the declared language coverage, with diacritic placement checked per
+  script rather than copied from Latin defaults ([[type-multi-script]]).
+- Variable axes interpolate cleanly at intermediate instances, with compatible outlines and named
+  instances that make sense to a user.
+- OpenType features behave as specified in a real layout engine, including the interaction between
+  features that both apply.
+- Screen rendering verified at target sizes on the platforms that matter; print proofed on the
+  actual stock where relevant.
+- Legibility and contrast hold at the smallest delivered size, judged at native resolution
+  ([[10-perception-integrity]]).
+
+### Absolute bans
+- Faux styling: mathematically stretched, sheared, or emboldened outlines standing in for a drawn
+  weight or italic.
+- Judging spacing, fitting, or curve quality from a downsampled screenshot or a compressed preview.
+- Shipping an incomplete character set as if it covered a script, or a diacritic system inherited
+  from Latin onto a script that does not work that way.
+- Interpolating between incompatible outlines and calling the intermediate instances designed.
+
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[type-classification-history]] · [[type-letterform-construction]] · [[type-multi-script]] · [[type-opentype-text]] · [[type-spacing-metrics]] · [[type-typesetting]] · [[type-variable-text]] · [[variable-icon-font-architect]]

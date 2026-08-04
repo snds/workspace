@@ -246,6 +246,61 @@ is a human judgment that requires rehearsal, iteration, and critique.
 - GSAP documentation (greensock.com/docs)
 - Framer Motion documentation (framer.com/motion)
 
+
+---
+
+## Execution protocol (Domain Rigor L2)
+
+Domain L1: [[02-ui-ux-operational-framework]] for the interaction decisions, with
+[[01-aesthetic-lens]] for felt quality. Rigor model: [[13-domain-rigor-stack]]. Motion is temporal,
+so a still frame is never proof: judge recorded playback, and judge fine detail at native
+resolution ([[10-perception-integrity]], [[11-anticipatory-failure-analysis]]). Implementation is
+the [[motion]] hub; this hub owns direction.
+
+1. **Name what the motion has to do**: orient (where did this come from), respond (the system heard
+   you), explain (how these things relate), or express (brand character). Motion with no job is
+   decoration and should be cut.
+2. **Place it in the spatial model** before choosing values: where the element is understood to
+   live, so the direction, origin, and transform read as consistent with the interface's geometry.
+3. **Set the timing brief**: duration band, easing character, and stagger logic, tied to the
+   distance travelled and the weight implied. Load `motion-principles` or `motion-choreography` for
+   the values.
+4. **Load narrowly**: `design-foundations`, this hub, then the one or two `motion-*` spokes in
+   scope.
+5. **Design the reduced-motion variant in the same pass**, not as a later accommodation. It is a
+   designed state with the same communicative job.
+6. **Specify what is animated in engineering terms**: transform and opacity by default, with any
+   layout-affecting property called out as a deliberate exception and its cost acknowledged.
+7. **Rehearse it in context**, in the real interface at real data density, repeatedly. Motion that
+   delights once can annoy at the fiftieth repetition, which is the enterprise reality.
+8. **Prove it from playback**: recorded capture reviewed frame by frame plus a measured frame
+   budget ([[motion-performance]]), then hand the spec to [[motion]] or
+   [[lead-frontend-engineer]] with tokens, not adjectives.
+
+### Done-gates
+- Every motion has a stated job and a duration and easing chosen against it, expressed as motion
+  tokens the design system can hold rather than per-instance values.
+- Spatial logic consistent: entrances, exits, and transitions agree with where elements live in the
+  interface model.
+- Reduced-motion variant specified for every animation, satisfying the intent without the vestibular
+  risk ([[motion-accessibility]]).
+- Flash and photosensitivity thresholds respected (WCAG 2.3.1), and no essential meaning carried by
+  motion alone.
+- Frame budget measured on the target device class, with the animated properties named. Compositor
+  properties by default; exceptions justified.
+- Proven from recorded playback at the delivered frame rate, not from a still or a description, and
+  reviewed at native resolution for the fine detail.
+- Repetition-tested at realistic frequency for the surface.
+
+### Absolute bans
+- Shipping motion whose only justification is that it looked good in isolation.
+- Animating layout properties (width, height, top, left) on a hot path without a named reason and a
+  measured cost.
+- Treating reduced-motion as an afterthought, or satisfying it by disabling the feedback the
+  animation was carrying.
+- Claiming motion quality or smoothness from a still frame or from feel alone when a capture and a
+  frame budget are available.
+
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[motion-3d-spatial]] · [[motion-accessibility]] · [[motion-choreography]] · [[motion-performance]] · [[motion-principles]] · [[motion-tooling]] · [[motion-transitions]]

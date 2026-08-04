@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!--
+  Fixture for the degraded path (stdlib static checks). Every defect below is
+  deliberate; it exists so `a11y_audit.py --html-file` can be verified without
+  a runner installed. Expected static findings: missing lang, blocked zoom,
+  img without alt, unnamed button, unlabelled input, duplicate id, heading
+  jump, iframe without title, positive tabindex, table without th, no <main>.
+-->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>Fixture page</title>
+</head>
+<body>
+  <h1>Quarterly report</h1>
+
+  <img src="chart.png">
+
+  <h3>Revenue by region</h3>
+
+  <form>
+    <input type="text" id="q" name="q">
+    <label for="range">Date range</label>
+    <select id="range" name="range">
+      <option>Last 30 days</option>
+    </select>
+    <button type="submit"><span aria-hidden="true">&#8594;</span></button>
+  </form>
+
+  <a href="/details" tabindex="3">Details</a>
+  <a href="">Empty link text</a>
+
+  <table>
+    <tr><td>North</td><td>1,240</td></tr>
+    <tr><td>South</td><td>980</td></tr>
+  </table>
+
+  <iframe src="embed.html"></iframe>
+
+  <div id="q">Duplicate of the input id</div>
+</body>
+</html>

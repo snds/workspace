@@ -20,6 +20,7 @@ description: >
 aliases: [lead-accessibility-architect]
 tier: hub
 domain: accessibility
+prerequisites: [design-foundations]
 spec_version: "2.0"
 ---
 
@@ -252,6 +253,26 @@ When reviewing or specifying design work through this lens:
 - W3C ARIA Authoring Practices Guide
 - Deque axe-core accessibility engine
 
+
+---
+
+## Execution protocol (Domain Rigor L2)
+
+Governed by [[13-domain-rigor-stack]]. Domain L1: see framework table in that doc.
+
+1. Name the decision and success criteria before specialty work.
+2. Load foundation → this hub → only the 1–2 spokes needed.
+3. Prefer measurement (`audit`) over vibes when claiming compliance.
+4. Apply sideways lenses (a11y, security, visual QA) when the surface warrants.
+5. Stop at done-gates: contract/artifact + evidence + refuse absolute bans.
+6. Record durable insight in `08-knowledge/` when a pattern will recur.
+
+### Absolute bans
+- Shipping specialty advice that contradicts the domain operating framework
+- Loading all spokes eagerly
+- Declaring "done" without the L1 done-gate artifacts for this domain
+
 ## Related
-- spoke → [[a11y-assistive-tech]] · [[a11y-auditory]] · [[a11y-cognitive]] · [[a11y-legal-compliance]] · [[a11y-motor-physical]] · [[a11y-neurodiversity]]
+- foundation → [[design-foundations]]
+- spoke → [[a11y-assistive-tech]] · [[a11y-audit-toolkit]] · [[a11y-auditory]] · [[a11y-cognitive]] · [[a11y-legal-compliance]] · [[a11y-motor-physical]] · [[a11y-neurodiversity]]
 - peer ↔ [[lead-security-architect]]

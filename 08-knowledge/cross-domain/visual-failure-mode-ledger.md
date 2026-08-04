@@ -5,7 +5,7 @@ updated: 2026-07-14
 status: working
 confidence: high
 sources: [framework 11-anticipatory-failure-analysis, framework 10-perception-integrity, skill failure-mode-premortem]
-related_skills: [failure-mode-premortem, native-visual-eval, visual-qa-toolkit, lead-visual-qa, threejs-materials-master, glsl-shader-architect, threejs-vfx-atmosphere]
+related_skills: [failure-mode-premortem, native-visual-eval, visual-qa-toolkit, render-qa-toolkit, lead-visual-qa, threejs-materials-master, glsl-shader-architect, threejs-vfx-atmosphere]
 related_projects: [13-legion]
 domain_agnostic: true
 ---
@@ -63,6 +63,8 @@ Each row: **Symptom** (what's wrong) · **Visible tell** (how it looks at native
 | ID | Technique / stage | Symptom | Visible tell | Root cause | Prevention | Detect | Ref/tier |
 |----|----|----|----|----|----|----|----|
 | **Z-01** | Judging any fine detail from a preview/screenshot tool | False "fixed / clean" | Thumbnail looks clean; native crop shows the defect still there | Downsampling is a low-pass filter that hides high-frequency defects | Never claim fixed/gone/matches from a scaled view — capture native first (#10) | State the pixel dimensions judged at; a number, not "I zoomed in" | Framework #10; evidenced |
+| **Z-02** | Still-only QA for camera / LOD / temporal / scale features | Motion defects ship | Looks fine on one frame; crawls, pops, or swims in play | Temporal failure modes are invisible in a single still | Require recorded flythrough + frame-by-frame review (`interactive-capture-eval`); still-only is an automatic fail for motion-sensitive work (#12) | Ask: was a video path reviewed? If not, incomplete | Framework #12; industry-supported |
+| **Z-03** | Movie-level "photoreal" claim without named northstar | Unfalsifiable pass | "Looks cinematic" with no reference still/video/game example | No Literal/Spirit contract against concrete assets | Require `NORTHSTAR.md` rows before `shape`; match protocol uses those assets | Is there a named path/URL for the northstar? | Framework #12; expert-judgment |
 
 ---
 

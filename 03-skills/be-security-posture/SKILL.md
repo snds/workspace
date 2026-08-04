@@ -701,5 +701,14 @@ intentional security design, not just reactive patching.
 | Legal/regulatory compliance beyond SOC 2 (GDPR, HIPAA) | `a11y-legal-compliance` |
 | Accessibility and security overlap in UI/form design | `a11y-legal-compliance` |
 
+## Doctrine precedence
+
+This spoke is **implementation depth, not the gate**. The security discipline's doctrine, pipeline, and
+done-gates live in [[16-security-operating-model]] and its hub [[lead-security-architect]]; whether a
+control is required, and whether the work is finished, is decided there. This spoke is authoritative on
+backend mechanics: the concrete header values, rate-limiter parameters, rotation phases, and SOC 2
+evidence tables above. Where the two appear to conflict, the framework and the hub win.
+
 ## Related
 - hub → [[lead-backend-engineer]]
+- peer ↔ [[lead-security-architect]]

@@ -233,6 +233,52 @@ scaling is a distraction from the real work.
 | Event instrumentation for metrics | `pm-metrics-analytics` |
 | Integration ecosystem and iPaaS strategy | `pm-platform-api` |
 
+
+---
+
+## Execution protocol (Domain Rigor L2)
+
+Domain L1: [[14-engineering-operating-model]] (contracts first, reversible always, observable by
+default). Rigor model: [[13-domain-rigor-stack]]. Trust boundaries are owned by
+[[16-security-operating-model]]. Operation surface: [[eng]].
+
+1. **Write the change contract** before code: what contract changes, who the callers are, the
+   reversibility class (reversible / one-way / destructive), and what will prove it worked.
+2. **Shape the interface first** — schema, endpoint, event payload, or module boundary — with an
+   explicit error taxonomy and stability guarantee. ADR when the decision is structural.
+3. **Load narrowly**: `eng-foundations`, this hub, then the one or two `be-*` spokes the change
+   actually needs. Add `lead-security-architect` whenever a trust boundary moves.
+4. **Implement behind the boundary**, validating at every trust edge and scoping every new query
+   path, cache key, and background job by tenant.
+5. **Verify against the contract**: tests on the trust-critical paths, the migration rehearsed at
+   production data volume, SLO impact measured under representative load rather than locally.
+6. **Convene [[arch-guild]]** for structural or hard-to-reverse decisions, and close with its
+   mandatory measurable validation criteria.
+7. **Ship with the way back written**: expand and contract across separate deploys, flag or canary
+   sized to the blast radius, alerts on the new failure mode before traffic arrives.
+8. **Observe after deploy** and cite the evidence level actually reached (#14 §4, production
+   telemetry down to "it should work"). Never round the level up. Route durable lessons to
+   `08-knowledge/engineering/`.
+
+### Done-gates
+- Contract specified in machine-readable form where the stack supports it, with error taxonomy,
+  idempotency (or an idempotency key) on mutations, and stated pagination, limits, and timeouts.
+- Migration safety: expand and contract, batched and resumable backfill, lock and blast radius
+  stated for the largest affected table under live traffic, and a written down path.
+- Multi-tenant scoping verified on every new data access path, not assumed from the ORM.
+- Authorization enforced server-side at the data-access layer, with a threat-model delta whenever
+  a boundary was added or moved ([[16-security-operating-model]]).
+- Rollback story named before deploy, and at least one observable signal for the new path.
+
+### Absolute bans
+- Add-and-drop in one migration, or any schema change with no down path and no written reason a
+  revert is impossible.
+- "Tests later" on auth, tenancy, payment, or data-deletion paths.
+- Errors swallowed into healthy-looking defaults (empty catch, bare `except: pass`, discarded
+  rejections, ignored non-zero exits).
+- A latency or throughput number measured against a seed database and reported as production
+  behavior.
+
 ## Related
 - foundation → [[eng-foundations]]
 - spoke → [[be-api-design]] · [[be-auth-patterns]] · [[be-caching-performance]] · [[be-data-modeling]] · [[be-integration-patterns]] · [[be-relational-db]] · [[be-security-posture]] · [[be-service-architecture]]

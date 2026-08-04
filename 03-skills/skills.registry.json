@@ -1,7 +1,7 @@
 {
   "$schema": "./skills.registry.schema.json",
   "registry_version": "1.0",
-  "spec_version": "2.0",
+  "spec_version": "2.2",
   "generated_from": "frontmatter",
   "tier_rank": {
     "foundation": 0,
@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 253,
+    "total": 279,
     "by_tier": {
-      "cross-cutting": 28,
+      "cross-cutting": 33,
       "foundation": 22,
-      "hub": 40,
-      "spoke": 163
+      "hub": 47,
+      "spoke": 177
     }
   },
   "skills": {
@@ -35,6 +35,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:1c1f386aaaf24acdc28c56ed66a69ec89c6a3b705931fd1a32fa8900a9bbf6fd"
     },
     "3d-lighting-rendering": {
@@ -54,6 +56,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:32c4eea962639447ac218c9fb4efbd1780c30bf0d8d92b5bb331ef56cb93940c"
     },
     "3d-materials-shading": {
@@ -73,6 +77,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:91c35a428255b0fe07419e48871edc135f4d276e1e87672011363912acccc043"
     },
     "3d-modeling-fundamentals": {
@@ -91,6 +97,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:96aae59828a41d5092d971d19ee61ab2bb3d65c2b965f1cb6da81a5f882022a4"
     },
     "3d-rigging-animation": {
@@ -109,6 +117,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:4cbd7ed429918c67fdb964cc4a1adfbef7ea73331dfe57eeb71b1bbb237e604c"
     },
     "3d-spatial-design-for-games": {
@@ -127,6 +137,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:008a14b22b26c0e8eca81c5b9d38257bce4d1a0cf16d19f74c6d30ea8752dc10"
     },
     "a11y-assistive-tech": {
@@ -143,7 +155,46 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:eed591fbe1670a61b6e1631d0b3c5edfaad94b4f6945fabd97bca0dde1543ecc"
+    },
+    "a11y-audit-toolkit": {
+      "path": "03-skills/a11y-audit-toolkit/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "accessibility",
+      "hub": "lead-accessibility-architect",
+      "prerequisites": [],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "accessibility audit",
+        "a11y audit",
+        "axe",
+        "axe-core",
+        "pa11y",
+        "lighthouse accessibility",
+        "wcag violations",
+        "aria audit",
+        "accessible name",
+        "keyboard audit",
+        "focus order audit",
+        "screen reader audit",
+        "vpat evidence",
+        "accessibility ci"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "axe-cli",
+        "pa11y",
+        "lighthouse"
+      ],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:bcef3cfed011cdd23e67b3d5fef45e3f7ee57a7c730da02837595eab1af54e64"
     },
     "a11y-auditory": {
       "path": "03-skills/a11y-auditory/SKILL.md",
@@ -159,6 +210,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:b577722ba10175a74d9975ea0ce81777e2d68dfc0361db30529a1669c80bf10d"
     },
     "a11y-cognitive": {
@@ -175,6 +228,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:e3302a3540a906b102fa5af1d5eaa25bbc89087fa62265cb8f1d38db75e275f2"
     },
     "a11y-legal-compliance": {
@@ -191,6 +246,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:b16273f51dd250e6f6f00c6d592f1f02f40b922323be79597e9792f8d88397b7"
     },
     "a11y-motor-physical": {
@@ -207,6 +264,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:71dec5d4d8bdc3f2514520a6742484384131cba281339587fe48c2bcefd86078"
     },
     "a11y-neurodiversity": {
@@ -223,6 +282,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:6848f419ec80e221f7ab76e628655944eaacc699a071bc003ec0d0c5e518a702"
     },
     "a11y-visual": {
@@ -254,15 +315,174 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:ba87a7c33c43ee6f2a85b7c0c6136d02454523f43641f0410d02dcbe2337fce6"
+    },
+    "adapter-unity-hdrp": {
+      "path": "03-skills/adapter-unity-hdrp/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "realtime-visual-craft",
+      "prerequisites": [],
+      "related": [
+        "realtime-visual-craft",
+        "img-photoreal-rendering",
+        "dynamic-gi-production",
+        "bake-orchestration",
+        "adapter-webgpu-three",
+        "adapter-unreal"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "unity hdrp",
+        "adapter unity",
+        "adaptive probe volume",
+        "apv",
+        "hdrp volume",
+        "unity volume framework",
+        "unity northstar",
+        "hdrp gi",
+        "unity lightmap bake"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:d1a12327a9da21c6a640c2655eed73d5e693c341ea4b1eee466050ff67b0950a"
+    },
+    "adapter-unreal": {
+      "path": "03-skills/adapter-unreal/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "realtime-visual-craft",
+      "prerequisites": [],
+      "related": [
+        "realtime-visual-craft",
+        "img-photoreal-rendering",
+        "dynamic-gi-production",
+        "shadow-quality-craft",
+        "bake-orchestration",
+        "adapter-webgpu-three"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "unreal adapter",
+        "unreal lumen",
+        "nanite",
+        "virtual shadow maps",
+        "vsm unreal",
+        "movie render queue",
+        "mrq",
+        "ue5 reference",
+        "unreal northstar",
+        "unreal engine gi"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:ef321d1d5d902b59d4e3b0694821528810cdf8248a5306544a07358e42b6ab8b"
+    },
+    "adapter-webgpu-three": {
+      "path": "03-skills/adapter-webgpu-three/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "realtime-visual-craft",
+      "prerequisites": [],
+      "related": [
+        "webgpu-advanced-rendering",
+        "threejs-materials-master",
+        "threejs-vfx-atmosphere",
+        "realtime-visual-craft",
+        "realtime-render-performance",
+        "dynamic-gi-production",
+        "gpu-capture-tooling"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "adapter webgpu",
+        "three webgpu adapter",
+        "webgpu three",
+        "tsl post order",
+        "effectcomposer tonemap",
+        "bloom before tonemap",
+        "perfcapture",
+        "logarithmic depth buffer",
+        "renderer readback",
+        "three.js webgpu"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:23bffcf0a53471735cd2bbcc7377912cb7d77b548c5d489f67fc6936d53b2c95"
+    },
+    "adobe-app-builder": {
+      "path": "03-skills/adobe-app-builder/SKILL.md",
+      "tier": "hub",
+      "domain": "engineering",
+      "hub": null,
+      "prerequisites": [
+        "eng-foundations"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "adobe app builder",
+        "app builder",
+        "aio cli",
+        "aio app init",
+        "aio app deploy",
+        "adobe i/o runtime",
+        "runtime action",
+        "adobe developer console",
+        "experience cloud extension",
+        "aem ui extension",
+        "asset compute worker",
+        "adobe i/o events",
+        "api mesh",
+        "adobe io state",
+        "adobe io files"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "aio-cli"
+      ],
+      "defers_to": [
+        "framework-13",
+        "framework-14",
+        "framework-16",
+        "eng-foundations"
+      ],
+      "rigor_role": "command-hub",
+      "hash": "sha256:607bc66514a38a310307705fdfa4835be8cabc7c7916e5a7841e5c5c26ceebc6"
     },
     "ai-video-generation": {
       "path": "03-skills/ai-video-generation/SKILL.md",
       "tier": "cross-cutting",
       "domain": "imaging",
       "hub": null,
-      "prerequisites": [],
-      "related": [],
+      "prerequisites": [
+        "imaging-foundations"
+      ],
+      "related": [
+        "img-cinematography",
+        "img-photography",
+        "reference-video-review"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [
@@ -287,7 +507,48 @@
       "requires": [
         "inference-belt"
       ],
-      "hash": "sha256:0d6776c8f750b6ed1b419b99b029b55022eae0a7f208e33a8180096732ca7e4d"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:7a20401660cc44f87175bbc708d2ec2700d59d13eb6e6394678643fdc2bfabed"
+    },
+    "arch-guild": {
+      "path": "03-skills/arch-guild/SKILL.md",
+      "tier": "hub",
+      "domain": "engineering",
+      "hub": null,
+      "prerequisites": [
+        "eng-foundations"
+      ],
+      "related": [
+        "eng",
+        "lead-backend-engineer",
+        "lead-frontend-engineer",
+        "lead-devops-engineer",
+        "lead-security-architect"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "arch guild",
+        "architecture review",
+        "multi-voice review",
+        "dijkstra",
+        "lamport",
+        "knuth",
+        "engineering guild"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-14",
+        "framework-13",
+        "framework-16",
+        "eng-foundations"
+      ],
+      "rigor_role": "multi-voice",
+      "hash": "sha256:b6286a10ed4c769cb28e80ad3acc8e334edf82988c722d23c2429737ff0f445a"
     },
     "atmospheric-scattering-and-clouds": {
       "path": "03-skills/atmospheric-scattering-and-clouds/SKILL.md",
@@ -331,7 +592,48 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:7bbbff318b2585d5c9e3d23004d2db43f7d65d3b483eb95694a12779273fbcb6"
+    },
+    "bake-orchestration": {
+      "path": "03-skills/bake-orchestration/SKILL.md",
+      "tier": "spoke",
+      "domain": "imaging",
+      "hub": "realtime-visual-craft",
+      "prerequisites": [],
+      "related": [
+        "3d-lighting-rendering",
+        "3d-asset-pipeline",
+        "dynamic-gi-production",
+        "adapter-webgpu-three",
+        "adapter-unreal",
+        "adapter-unity-hdrp"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "lightmap bake",
+        "probe bake",
+        "bake orchestration",
+        "bake pipeline",
+        "lightmap atlas",
+        "lightmap pack",
+        "gltf lightmap",
+        "irradiance bake",
+        "gpulightmass",
+        "cycles bake",
+        "apv bake",
+        "lightmap uv",
+        "bake to three"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:d582c0ac3932e5436c519c5f80ad296ded990e0b386ea63401e10f627c670999"
     },
     "be-api-design": {
       "path": "03-skills/be-api-design/SKILL.md",
@@ -352,6 +654,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:6d7bde40e5550251354d38ee658719d5f50bb39d2559ec2cd8b7762750a11a04"
     },
     "be-auth-patterns": {
@@ -370,6 +674,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:91c836d4b8edd5bb79f271ac16a03700d05cbd3e9156bcf165ab8e8a262b49e2"
     },
     "be-caching-performance": {
@@ -388,6 +694,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:d978ae44745b36c20f4bb4902d3634a5900f2ce3ab683ccef7622e47a4a30ecb"
     },
     "be-data-modeling": {
@@ -406,6 +714,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:2aa0e38f2e050d7c1defc369531d9e40ff37c8517a0fe3153cda8aa553dc6164"
     },
     "be-integration-patterns": {
@@ -424,6 +734,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:0fe6679b58ed69f7782ea369bd8f726a87f8e41dd0d384b4097d5cb350efd75e"
     },
     "be-relational-db": {
@@ -442,6 +754,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:bedc8d707e93f127d45dbbb3e630ca683f15fe252b1970999dbd58c5b293ffac"
     },
     "be-security-posture": {
@@ -460,7 +774,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:bfa3d40f3ee851ff1f204031a96fc320c490651634e322ce314aba25c5309c4f"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:ed1b07e080e8bd8e9af3f7156f109ffe036376adf9533211be633392fb82c14e"
     },
     "be-service-architecture": {
       "path": "03-skills/be-service-architecture/SKILL.md",
@@ -478,7 +794,31 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:5f2e63759f78028f866a47d93d44952daff65662617c24165d2400c804fa710d"
+    },
+    "career-ops-job-search": {
+      "path": "03-skills/career-ops-job-search/SKILL.md",
+      "tier": "spoke",
+      "domain": "career",
+      "hub": "job-search-strategist",
+      "prerequisites": [
+        "job-search-strategist"
+      ],
+      "related": [
+        "job-application-optimizer"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": "[career-ops, career ops, job search automation, scan portals, portal scanner,",
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:b5be202f83e28d4f7b181f4df71db7ee2970f7dbae46ff0baaf0232d37b27fb2"
     },
     "centric-ui-storybook": {
       "path": "03-skills/centric-ui-storybook/SKILL.md",
@@ -496,6 +836,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:3058194ed6b0752ec3437a3af6205ea553a7c967cf76102b6b594c677c0087d6"
     },
     "centric-ui-workflow": {
@@ -514,6 +856,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:59c8f602686a18156fbbf6d0404ecdcb6ef7da27836259cfbec1b312d6024937"
     },
     "data-foundations": {
@@ -541,6 +885,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:fe6d3d68a3aff66fe2c3118f9accc6f580a29e632f3536c7bb27849bbdc7f743"
     },
     "design-engineer": {
@@ -567,6 +913,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:595542c069f34bde4bc479127a3c2a6db0db56ebd01d33375feb89d322040c67"
     },
     "design-foundations": {
@@ -597,7 +945,47 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:cda8774658759b9e89f4abb20cc5eb712fe856c7bfb75b33f66af2722789b608"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:9a4482e2fc4a59ef0bbd379d403e0938529637b18094ef568e2284ce586d93d2"
+    },
+    "design-system-ops": {
+      "path": "03-skills/design-system-ops/SKILL.md",
+      "tier": "hub",
+      "domain": "design",
+      "hub": null,
+      "prerequisites": [
+        "design-foundations"
+      ],
+      "related": [
+        "ds-advisor",
+        "design-engineer",
+        "ux-component-library",
+        "figma",
+        "qa"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "design system ops",
+        "token audit",
+        "drift detection",
+        "ds governance",
+        "system health",
+        "deprecation plan"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-09",
+        "framework-13",
+        "ds-advisor",
+        "design-engineer"
+      ],
+      "rigor_role": "command-hub",
+      "hash": "sha256:f25b5b56e0bf794902aeb4806f13100add9903849f890da1ca85577770038cc4"
     },
     "devops-ci-cd": {
       "path": "03-skills/devops-ci-cd/SKILL.md",
@@ -617,6 +1005,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:023d47d879ed29cea55318277f272355137c4e39cce78510cca85854a85180f1"
     },
     "devops-container-orchestration": {
@@ -635,6 +1025,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:77ecd93804126d52a44730f3f9508599ab2d997460c85f1a78d093f9fae5f6c6"
     },
     "devops-cost-optimization": {
@@ -653,6 +1045,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:31d4b597f65dd7d6553fab9a1a599cb2c164950aa9029ea66fe3052bc6782fb8"
     },
     "devops-infrastructure-as-code": {
@@ -671,6 +1065,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:b52f8f2120b7304e2608de25dc5fcf7c3f265739c28f21dddd7ddc4a54054565"
     },
     "devops-observability": {
@@ -689,6 +1085,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:142c427c7621e8fd13ce64bb47fd7c460b8926c6ad9040b8861349df76329b64"
     },
     "devops-release-engineering": {
@@ -707,6 +1105,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:2b663684e1679ad763fa9d71e4f488aa7575a8ff18cbf5e19bffd7084c762ec3"
     },
     "ds": {
@@ -725,6 +1125,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:32bf1076f5986d450119cc446048d13b9e735f9bdb4ee4d3392fa837c4ed7a2b"
     },
     "ds-advisor": {
@@ -757,6 +1159,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:2e67ae1d3f7ed5067ac59334c533536758b6dc1ed951bcaabd3a8b688b762fc0"
     },
     "ds-bi-platforms": {
@@ -775,6 +1179,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:bf7229220de66fd37208223b9d93b2f341864ccfcadbd8fabc70b75c229583f0"
     },
     "ds-data-engineering": {
@@ -793,6 +1199,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:5e2d48330e3daf5d24ab4eda795196d06447aeea3d6c51bc22ff1e88270233b5"
     },
     "ds-data-governance": {
@@ -811,6 +1219,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:1bf8c265a3d59b6e84d1fa442997e7bc7fea4e69c7510e653255011bb4ddb3db"
     },
     "ds-executive-storytelling": {
@@ -829,6 +1239,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:9216e0bcc4ef48076a2a755a53ff8f028a0f321f9f0ad051f114df819b5535f0"
     },
     "ds-experimentation": {
@@ -847,6 +1259,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:1e8b349dc771e9aec53ca8a63041027d0ae759ee5ab40a1804629c8618903eb6"
     },
     "ds-forecasting": {
@@ -865,6 +1279,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:ac7897d64e09c35aa2181d692bf767e373e0b18d2266dbddb98127d41ccb1331"
     },
     "ds-generation-pipeline": {
@@ -883,6 +1299,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:a7273400d1bb322ef6e27bbcac721f5ca135979bf962fcf7313549e380b9690c"
     },
     "ds-ml-engineering": {
@@ -901,6 +1319,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:002e170f74901eba43319a0b06fadec621c4b8e44727b70c04555e777a6fe39b"
     },
     "ds-nlp-llm": {
@@ -919,6 +1339,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:3ac7209e14f5be17574765f3664267217d5da4495f7b735d10f4e651c4c2afdb"
     },
     "ds-product-analytics": {
@@ -937,6 +1359,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:4968e37c5c63fd10894bb7fb451b3fc36eca85d77690d30e401076e9ef530c46"
     },
     "ds-prompt-engineering": {
@@ -955,7 +1379,90 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:42183b1e03d6a1e5a522f18b7b3d767d471bad5bed276228faf9cbec6d231050"
+    },
+    "dynamic-gi-production": {
+      "path": "03-skills/dynamic-gi-production/SKILL.md",
+      "tier": "spoke",
+      "domain": "imaging",
+      "hub": "realtime-visual-craft",
+      "prerequisites": [],
+      "related": [
+        "img-photoreal-rendering",
+        "realtime-render-performance",
+        "adapter-webgpu-three",
+        "adapter-unreal",
+        "adapter-unity-hdrp",
+        "bake-orchestration",
+        "shadow-quality-craft"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "ddgi",
+        "ssgi",
+        "restir",
+        "probe volume",
+        "irradiance volume",
+        "dynamic gi",
+        "global illumination bake",
+        "bake vs dynamic",
+        "lumen",
+        "apv",
+        "light probe grid",
+        "irradiance probes",
+        "screen space gi",
+        "probe atlas"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:c772b9123db94cb560b5299168d89b6ff7150d6ad24578d2bbed88fd44dd0df7"
+    },
+    "eng": {
+      "path": "03-skills/eng/SKILL.md",
+      "tier": "hub",
+      "domain": "engineering",
+      "hub": null,
+      "prerequisites": [
+        "eng-foundations"
+      ],
+      "related": [
+        "lead-frontend-engineer",
+        "lead-backend-engineer",
+        "lead-devops-engineer",
+        "lead-mobile-engineer",
+        "lead-security-architect",
+        "arch-guild"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "eng",
+        "engineering delivery",
+        "shape contract",
+        "ship service",
+        "harden auth",
+        "rollback plan",
+        "architecture review"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-14",
+        "framework-16",
+        "framework-13",
+        "eng-foundations"
+      ],
+      "rigor_role": "command-hub",
+      "hash": "sha256:de96da31612760c4f7a74f115445aa30112316bb95262a3c76be0f722a478d4a"
     },
     "eng-foundations": {
       "path": "03-skills/eng-foundations/SKILL.md",
@@ -984,7 +1491,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:dca70c2906c81584470493d7b41365a764d540c6773ef8c9e0e05552d5dff246"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:373d278635e9665e5cfe5c6e352ff0eac467ee169fe21c66437a57bd6256250e"
     },
     "failure-mode-premortem": {
       "path": "03-skills/failure-mode-premortem/SKILL.md",
@@ -996,7 +1505,10 @@
         "native-visual-eval",
         "visual-qa-toolkit",
         "lead-visual-qa",
-        "reference-video-review"
+        "reference-video-review",
+        "render-qa-toolkit",
+        "interactive-capture-eval",
+        "realtime-visual-craft"
       ],
       "governed_by": [],
       "governs": [],
@@ -1023,7 +1535,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:02344a158b2bef14db1acae407cf1153f5987225e2691c030354e1f0a5df2c16"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:7d75a2a14cbe96ee1e0c20eb08f63b61be653247d60526b9bc9fbd0a12784076"
     },
     "fe-accessibility": {
       "path": "03-skills/fe-accessibility/SKILL.md",
@@ -1041,6 +1555,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:c38aa34394b51be51a9d1aba34ca8c62772355565a34a49b925fd1eca824744f"
     },
     "fe-api-integration": {
@@ -1061,6 +1577,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:acefa5ea823c4db160f3ac941d04416487d14329de2942f417346474ed42a634"
     },
     "fe-component-architecture": {
@@ -1079,6 +1597,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:ec0400961cdc67eca5d761d3ce2de32ddb66fffa95d9424544eb3fa495d5501e"
     },
     "fe-data-visualization": {
@@ -1097,6 +1617,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:d3cf8a00188f7a88b4aff37ba0b9c1f3f16c265681943977469367165eacdc78"
     },
     "fe-design-tokens": {
@@ -1115,6 +1637,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:3bb1488670fefb9c75a6fe19dab46db30e9b113673a04096b09fc2b5cfe04f70"
     },
     "fe-i18n": {
@@ -1133,7 +1657,42 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:0b34635420f1c35f45b24c283d6a337bc1df923fa4de5c38aae8ca5cc53647aa"
+    },
+    "fe-perf-harness": {
+      "path": "03-skills/fe-perf-harness/SKILL.md",
+      "tier": "spoke",
+      "domain": "engineering",
+      "hub": "lead-frontend-engineer",
+      "prerequisites": [
+        "lead-frontend-engineer"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "lighthouse ci",
+        "lhci",
+        "performance budget",
+        "web vitals ci",
+        "core web vitals gate",
+        "perf budget",
+        "bundle size budget",
+        "lab vs field",
+        "crux",
+        "performance regression gate"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "lighthouse"
+      ],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:60d3f43252d1017eabace21509ff6d96f63cf071d7d8b8b41ea2d9812aa3e664"
     },
     "fe-performance": {
       "path": "03-skills/fe-performance/SKILL.md",
@@ -1151,6 +1710,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:b170319229171e1a891ecd108a1f47830a46196ddeaf6077699b4894f05799f6"
     },
     "fe-state-management": {
@@ -1169,6 +1730,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:34ba1068a04cb920fa8a3a33699b6e43876de0e1b34a5836d04f6a96b1755979"
     },
     "fe-testing": {
@@ -1187,6 +1750,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:b51192b070286ad1c31455baf179c59148f431b662ff87fb0103c35ece32e84d"
     },
     "figma": {
@@ -1205,7 +1770,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:71ed44749ca97374cdc884844cf1a35f759b4a9bf7cf3d742bff4914cde92947"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:f61e59c5ae4ab6d39f492fa1c82e25a5db253d79fc0e50203c64c082d5ea9f3b"
     },
     "figma-api-router": {
       "path": "03-skills/figma-api-router/SKILL.md",
@@ -1223,6 +1790,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:2a12a5c98fdbfb3be1633b08d145f58b8fe033d15120ff8aec9ae3fd113f0663"
     },
     "figma-canvas-designer": {
@@ -1252,6 +1821,8 @@
       "requires": [
         "figma-mcp"
       ],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:2db3584441b9da05d8fe9ae58e2d7f84d5a231768107aaa7b8a29812a2e2f0c9"
     },
     "figma-code-connect": {
@@ -1281,6 +1852,8 @@
       "requires": [
         "figma-mcp"
       ],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:83842cdfd8f50eadaba9b1e85fb49e54de134ca1a390d175b9369b275431d96b"
     },
     "figma-component-generation": {
@@ -1299,6 +1872,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:d283d2cd25702a71f24afebe0d740826f2a07e4f7af9e89af68158b5618289a8"
     },
     "figma-design-specs": {
@@ -1328,6 +1903,8 @@
       "requires": [
         "figma-mcp"
       ],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:e581cf7ffcca873173aa59673dba5ca5f8d03cfedba1a7d0961bf721770fbc00"
     },
     "figma-design-to-code": {
@@ -1357,6 +1934,8 @@
       "requires": [
         "figma-mcp"
       ],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:ac4f06aba23826f4064bfc09b280c4da9049f885c03b43a968c42cad9efbcb7c"
     },
     "figma-diagramming": {
@@ -1386,7 +1965,12 @@
       "requires": [
         "figma-mcp"
       ],
-      "hash": "sha256:eaf233490e6d47a8f8119683cdb89ca8e9bd00b1ada83225a243fab15e646e4f"
+      "defers_to": [
+        "framework-13",
+        "figma"
+      ],
+      "rigor_role": null,
+      "hash": "sha256:1a7694172520041fc8c405933309a128b918d856771ede2d56b60a9141cd6081"
     },
     "figma-ds-generation-pipeline": {
       "path": "03-skills/figma-ds-generation-pipeline/SKILL.md",
@@ -1404,6 +1988,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:99269edbf99173e454f77b4679cf68b5adab5857046360c116dd33cdc4b0152b"
     },
     "figma-error-troubleshooting": {
@@ -1422,6 +2008,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:d0e79a4b7ee6fbadd4bd7f9f088f18cccb2c106f6a430c1f6c078f5fccd5ddc4"
     },
     "figma-mcp-tool-usage": {
@@ -1442,6 +2030,8 @@
       "requires": [
         "figma-mcp"
       ],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:e1216f5f538ed51262e972b36410fb661124171a5ae804168dcc38a7c9842b76"
     },
     "figma-modes-for-variants": {
@@ -1460,6 +2050,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:631747c76d2c57626ce9b4cbd9bf0bbca53716ed158bbb5eb8458aedd641be8c"
     },
     "figma-plugin": {
@@ -1478,6 +2070,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:dec5deac2ee9c52dbced6939e844c21fce38d0f43a460bf4f32edec6e04c813a"
     },
     "figma-plugin-dev": {
@@ -1498,6 +2092,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:59461f98b73fe231958dfba3a6917dc2b1c5d25671d7398813cd69022ef71154"
     },
     "figma-source-audit": {
@@ -1518,6 +2114,8 @@
       "requires": [
         "figma-mcp"
       ],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:7b41e076fd8dfe1d5403dd12615e4bc1401368a97112e3b7e0e9b02e619e4e3a"
     },
     "figma-style-binding": {
@@ -1536,6 +2134,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:3950883ec97b573b87778687d5401d53ce6e34dcb2e51b15ca9a499ad3ea9385"
     },
     "figma-variable-creation": {
@@ -1554,6 +2154,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:3ed46f24d3f3e6b54f45b9a06c01b06be1cedee1de40514354a57cd4390fa618"
     },
     "found-color": {
@@ -1580,6 +2182,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:c39b6763a3c719333c694e594a4d6ab7841ba404d4b7f1d6867018bf5a508c55"
     },
     "found-composition": {
@@ -1607,6 +2211,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:ef360aa7035d220b1b8cb65d8dc910064e920c52ad74f92e61b2b3cce177605c"
     },
     "found-hierarchy": {
@@ -1632,6 +2238,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:0c2cd19113b2540d83873abca1ee1f4310e6acd98f4e26121601bb6f2aec5d10"
     },
     "found-perception": {
@@ -1659,6 +2267,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:50819b7db55b5bf58d2cb5806d9df1190e29eb1abcc6ced18040f4cd04a1a5cc"
     },
     "found-typography": {
@@ -1686,6 +2296,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:e1d7b34544cab1417d63af1d4574fd413fea9a6f3f74a3f61dd3ffbeeb72b43f"
     },
     "fw-angular": {
@@ -1704,6 +2316,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:0a0b1a94a0e7f82452733a0335803578edcdf00ec37fcf0b09c7458b0721a7e4"
     },
     "fw-bootstrap": {
@@ -1722,6 +2336,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:50149b2afbfc272178962445de3ac270368755f9b2456c0df488b21bd72ad996"
     },
     "fw-carbon": {
@@ -1740,6 +2356,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:fbf3570ded949970f39d928fe63c80e203e918469075a8aa86c3337348969c0b"
     },
     "fw-css-modules": {
@@ -1758,6 +2376,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:101828d43cf9c422666098641bca0e4875f58e35529552781b1614d60a4eb9eb"
     },
     "fw-dojo": {
@@ -1776,6 +2396,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:03c24f6a2fa011a50f3aa24734f41a122212ab264cc241038c66eda01eeeb98f"
     },
     "fw-lightning": {
@@ -1794,6 +2416,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:ae01e63a26fbe36d698910a78861342c1377b0203319f386bd580de84172aee0"
     },
     "fw-radix-colors": {
@@ -1812,6 +2436,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:b86587f7b9bf34b7b3d00336de993959686ca24691ce2ab95c1768de83141e9d"
     },
     "fw-radix-primitives": {
@@ -1830,6 +2456,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:a77f79c3c6234a8ed86eed95b9ca7a8d3d44129ee19c92c6a17186d20f8ba5eb"
     },
     "fw-react": {
@@ -1848,6 +2476,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:7938a862a4d7e9d7c0b94c6ef13569d1318a08f6e46a9092df4473729e97463f"
     },
     "fw-react-aria": {
@@ -1866,6 +2496,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:b3b1b45bd66884203c556638221961227b73542a819ffe361c42513070bacf9c"
     },
     "fw-shadcn": {
@@ -1884,6 +2516,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:48abeb1ceb76303abf6b7198f12a4eeaf2a31fdacc35308f79fe3d8a11544cda"
     },
     "fw-storybook": {
@@ -1902,6 +2536,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:12b9bfdd7a1f71883c6518bc8e2b27d829c3308541f19d6c304662dba8971b8a"
     },
     "fw-svelte": {
@@ -1920,6 +2556,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:dc4f2577f0f5d79b45efc2a188d01737c902e9ae60f73a25c1ba8195ca02aa71"
     },
     "fw-tailwind-css": {
@@ -1938,6 +2576,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:5ab226854427d6bcc357b6e3ee4b3104aeb7bd6c5156e02cc3f35c36c14b907f"
     },
     "fw-vue": {
@@ -1956,6 +2596,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:748a6d0884fe4298025041c82260457e9c62084082d5f2614e13ae22d4b2e6ea"
     },
     "fw-web-components": {
@@ -1974,6 +2616,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:abe1ced2821b61b772f433c1aa02aea1da9a4e66f4ea5b533bd8abe77f427fb5"
     },
     "game-foundations": {
@@ -2001,6 +2645,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:fba318abe63398cf3c9c92e69e712f5df5296b6110ecd0242b0913d86fecbc33"
     },
     "game-scale-traversal": {
@@ -2034,6 +2680,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:69b05484c12f11c5b0343b01975fbac27ea71df64aaf9d32830cb0e9f6b3384f"
     },
     "gd-brand-identity": {
@@ -2052,6 +2700,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:4c6933b9cd26f69a872c38a1a6a808aca689ca18dc2bc23636c86fdb1f081a03"
     },
     "gd-color-theory": {
@@ -2073,6 +2723,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:22d29db531e007f31f0883bd9d7cb521b7d7e9f55180639fa03995fa34c5bc1e"
     },
     "gd-grid-and-layout": {
@@ -2091,6 +2743,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:9acb0f81009b25a9b87eaef310f5e80b51a5b2767b7e0db0b468d3653b5c501b"
     },
     "gd-image-composition": {
@@ -2109,6 +2763,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:072f6ea5d6de7f43c07275767bf58e4e79ed69fb71bdd2731175c854076c3608"
     },
     "gd-print-production": {
@@ -2127,6 +2783,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:783908908c826df5148693a5656a0fa5084280039214e204f8d33ffcbb2b63e9"
     },
     "gd-typography": {
@@ -2145,6 +2803,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:3e7244432625b9ee49e51f76144afe7bcd805fe66674e00d1d5f9aeed7d28f58"
     },
     "gd-visual-communication": {
@@ -2163,6 +2823,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:2d8916f3da9cee21e53dd6f78d6dc7a1955c2250357c237b3b1750dbd5417606"
     },
     "gen-manifest": {
@@ -2181,6 +2843,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:8e614c006460e2dd93ce391c76a08a61ba47ca68debda3e3535fe408a91d389a"
     },
     "github-guardrails": {
@@ -2197,6 +2861,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:e11db44170a1165761e43f263ca98f35962a38bf84bf818fac69693d6d4383e0"
     },
     "glsl-shader-architect": {
@@ -2217,6 +2883,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:84654b4f684ec6ba25d93f56c62d39ef3815b1802ffb732c236ec3bd81e87c47"
     },
     "google-fonts-scraper": {
@@ -2233,6 +2901,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:213d5bd40830f465aaf10fbde1dcb58615c60e5fb298fe35ba7fb8b77fcfa574"
     },
     "google-fonts-web-scraping": {
@@ -2249,7 +2919,46 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:6d35e079be869608b548964d2a604bb63458bbeaa15d03152e0ddd91556b5b3b"
+    },
+    "gpu-capture-tooling": {
+      "path": "03-skills/gpu-capture-tooling/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "realtime-visual-craft",
+      "prerequisites": [],
+      "related": [
+        "realtime-render-performance",
+        "render-qa-toolkit",
+        "interactive-capture-eval",
+        "adapter-webgpu-three",
+        "shadow-quality-craft"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "timestamp query",
+        "gpu timer",
+        "gpu profiling",
+        "renderdoc",
+        "pix capture",
+        "metal frame capture",
+        "perfcapture",
+        "pass timing",
+        "frame capture",
+        "gpu capture",
+        "webgpu timestamp",
+        "performance capture"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:6f32eac9d61c96ee11d405588433e6344ed6880f68272c4d64e1452526753b7a"
     },
     "ia-content-strategy": {
       "path": "03-skills/ia-content-strategy/SKILL.md",
@@ -2267,6 +2976,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:adea1f0b26c1aa7a5ac7cc04b4150a7699d8bf0f79b72d51237ef00af1a460d8"
     },
     "ia-enterprise-complexity": {
@@ -2285,6 +2996,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:f1632e2a0c07b81006ea9ea45c5cf106b650b92100d17589e3759780233789d2"
     },
     "ia-mental-models": {
@@ -2303,6 +3016,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:c9c0356091a18ea9496361306e82a64bda268db86fd3f3f0be57c70e6d283edc"
     },
     "ia-navigation-systems": {
@@ -2321,6 +3036,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:91f754eac0d80cda3015d6c66cdf1c5aad2c2f329d8f13670f1d5adaffaa7e65"
     },
     "ia-research-methods": {
@@ -2339,6 +3056,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:20595599f8c9132ae2e9c3cb4bc99f0337d27876efafde138cbc6183d386d1de"
     },
     "ia-search-findability": {
@@ -2357,6 +3076,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:c87fef34bc546fe62d748a6a5ee517679095e8906c38b97cbf760c6172271765"
     },
     "ia-taxonomy-classification": {
@@ -2375,6 +3096,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:f73550ae42e0e3751583ed2c385f3839200e591382bd8dac98395eeba5d66a53"
     },
     "imaging-foundations": {
@@ -2409,7 +3132,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:ad9058e811b4402a64b0b52488bc1868d4a976da5216c41c2786fd9fdd23b6a5"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:74bd75c95b59a1c85202d6165106336e8f5ab4d6fd70143c9074bccfe758e2c7"
     },
     "img-cinematography": {
       "path": "03-skills/img-cinematography/SKILL.md",
@@ -2440,6 +3165,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:7e9e7e21c9c93e97d551762ada15f8a4ad541ec9812806dffee35ce4d7d2e80c"
     },
     "img-optics-light": {
@@ -2470,6 +3197,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:c645ddec209a6d645a18d559209786ce37a5514f242823456b60f3aad5e1a711"
     },
     "img-photography": {
@@ -2502,6 +3231,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:dc75e06173703fd419258534fb92b2da023c2b7df0eed1164a59cfc356398cb7"
     },
     "img-photoreal-rendering": {
@@ -2535,6 +3266,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:327afe09dc2a702015dae084ef7032dfa3e591152a22732dc499da927f4a4596"
     },
     "img-vfx": {
@@ -2567,6 +3300,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:2ebe1f10b3e22a8da4d74917bb76f852f570dc71758dc377d7ac5981746afcac"
     },
     "infod-dashboard-patterns": {
@@ -2585,6 +3320,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:7757c13582ab1b5cabba7fa4ff31059dce4ea0ab33a328d5513b6b0eb489b7e1"
     },
     "infod-design-system-patterns": {
@@ -2603,6 +3340,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:64fe002aed6f5e5d58899929b749f6d91fdddfe1041c344d61393b965447370b"
     },
     "infod-encoding-theory": {
@@ -2622,6 +3361,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:eb53c6cf3de50a0fb8c48739e287a2cfafad91acd2b2df462779e2552f22b328"
     },
     "infod-narrative-design": {
@@ -2640,6 +3381,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:6da0f7dea81b247ad76328cd6493ca67223934a200b309a65c1fb5f3e890b225"
     },
     "infod-network-graphs": {
@@ -2658,6 +3401,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:d8458ba55489f69bdad7fc11b9b7d03ee1dbd66ef0f1c9d216d494b3642f355c"
     },
     "infod-spatial-maps": {
@@ -2676,6 +3421,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:b591b395759657ee7365a5bebe780f421b3395d3bbac4066afd944ef63191f08"
     },
     "infod-statistical-viz": {
@@ -2694,7 +3441,104 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:af73534629efcca542d52ed38bb0be7aa6ba1cc065bcfdca6dca52a1babbb1ee"
+    },
+    "interactive-capture-eval": {
+      "path": "03-skills/interactive-capture-eval/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "quality",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "native-visual-eval",
+        "reference-video-review",
+        "render-qa-toolkit",
+        "realtime-visual-craft",
+        "lead-visual-qa",
+        "visual-qa-photoreal-rendering",
+        "failure-mode-premortem"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "interactive capture",
+        "flythrough capture",
+        "record path",
+        "extract frames",
+        "ffmpeg frames",
+        "motion qa",
+        "frame-by-frame",
+        "interaction path",
+        "camera path review",
+        "judge motion first",
+        "lossless capture",
+        "native recording"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:7eff578d7426057725f7944508ecd8c748c317de51b886fc255d97c58b8de2f5"
+    },
+    "job-application-optimizer": {
+      "path": "03-skills/job-application-optimizer/SKILL.md",
+      "tier": "spoke",
+      "domain": "career",
+      "hub": "career-ops-job-search",
+      "prerequisites": [
+        "career-ops-job-search"
+      ],
+      "related": [
+        "career-ops-job-search",
+        "job-search-strategist"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "job application optimizer",
+        "resume tailor",
+        "cover letter"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-13"
+      ],
+      "rigor_role": "load-chain",
+      "hash": "sha256:87d5cfda9324dbc5781fe18a942f9ad3f0c88dcdbe19cbe755caeac3bd6976dc"
+    },
+    "job-search-strategist": {
+      "path": "03-skills/job-search-strategist/SKILL.md",
+      "tier": "hub",
+      "domain": "career",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "career-ops-job-search",
+        "job-application-optimizer"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "job search strategy",
+        "career positioning",
+        "target companies"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-13"
+      ],
+      "rigor_role": "load-chain",
+      "hash": "sha256:1e84e71ede005b122cf351c6eab6d35f518d2aece88b0d8a07ee48d6c40694ab"
     },
     "lead-3d-designer": {
       "path": "03-skills/lead-3d-designer/SKILL.md",
@@ -2712,14 +3556,18 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:947cd1ef54546ba639195a71cf4eb808cdd676af98bbfd5e18a69bcbf0913c05"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:9298bff0369a73bad63b5047efd5f9769a77f959a1b3b7d56ec99572adc8cfce"
     },
     "lead-accessibility-architect": {
       "path": "03-skills/lead-accessibility-architect/SKILL.md",
       "tier": "hub",
       "domain": "accessibility",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "design-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -2728,7 +3576,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:a3d82c09e841c6b7ffdbcb49cf90f10f1b53b5acfca8ce6957ee5c096e8b9166"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:d2fb8aaf2ab633fface631d7b048182a37cb6294c5cbbdbe5e21e1987800df5e"
     },
     "lead-art-director": {
       "path": "03-skills/lead-art-director/SKILL.md",
@@ -2747,6 +3597,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:e8b434284bac1a7080f5dc56a08fefeac2b8b892b7bf77ddc736caa47f803994"
     },
     "lead-backend-engineer": {
@@ -2765,7 +3617,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:c4293be17cc53309f9a2165862c8bab7264f42a4f2f36621aceae9aa8b3d63dc"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:0c9b6277bfd96c0237c1758f249ac0ee34bc3508bd13db5c8645f507bc89b449"
     },
     "lead-data-scientist": {
       "path": "03-skills/lead-data-scientist/SKILL.md",
@@ -2784,7 +3638,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:1f83d06b3c226fe53c09faec8280f08cd9381efe37698020976b2448eea6176e"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:b49ec5290f07f7709d1d0045339490fa25d6eeb14eea77f68b52d12e9dc355ea"
     },
     "lead-devops-engineer": {
       "path": "03-skills/lead-devops-engineer/SKILL.md",
@@ -2802,7 +3658,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:1f4f2059c29e342a7c272923fda29d8d1d8de4c9ef14125cfd6e51a4beab43c0"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:6b20582789c3611186ce764239f0f47177170f8db37e53f8d984077301409d61"
     },
     "lead-frontend-engineer": {
       "path": "03-skills/lead-frontend-engineer/SKILL.md",
@@ -2820,7 +3678,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:9f2e0782f3c1de6a96892fd1fb98e8938914c4507024cf2c4833724dcf6dc8b5"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:4d7691535a627d9c016da404109791a38273cd40e48aa505770ee351ad7f4186"
     },
     "lead-game-designer": {
       "path": "03-skills/lead-game-designer/SKILL.md",
@@ -2838,6 +3698,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:8c17e60a08247ad4a2e104783ef8a756666e52b31ad6c4ee3bcc5b36f850372b"
     },
     "lead-game-developer": {
@@ -2857,7 +3719,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:c4caa064875ae68f47a97ca925459a5a467a64cbcdf0566667a97b462d4fe705"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:857c297b235c6957efe53ed0c35afbaacb547bafbd7889ea89c6aea098114903"
     },
     "lead-graphic-designer": {
       "path": "03-skills/lead-graphic-designer/SKILL.md",
@@ -2875,15 +3739,23 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:c9fa27e0768631046061c3d6751df0ba74eb4d9ebfb209fa8d22fa51e7daa743"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:5e9a1662af78691a473364c78f3446721e22a22067fc49468c896ade8a31d714"
     },
     "lead-icon-artist": {
       "path": "03-skills/lead-icon-artist/SKILL.md",
       "tier": "hub",
       "domain": "design",
       "hub": null,
-      "prerequisites": [],
-      "related": [],
+      "prerequisites": [
+        "design-foundations"
+      ],
+      "related": [
+        "lead-vector-designer",
+        "lead-technical-digital-artist",
+        "variable-icon-font-architect"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [],
@@ -2891,14 +3763,18 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:021509742e209a41eaa9393250aefdadf6330b4bdc41aa5947711bde7bb690e4"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:3e5c0ede4a1685c2cba63b22bce588113052d4feece50cb010ce5c27c7ab929d"
     },
     "lead-information-architect": {
       "path": "03-skills/lead-information-architect/SKILL.md",
       "tier": "hub",
       "domain": "design",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "design-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -2907,7 +3783,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:40605a7fb1f3a797fc5510cf5614e249905ee9c19b896d3eb4f70a08c1ad2c3a"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:4873d237c055318b5c3a0a552a651d37c40f10d243d0bc2486150329fc2d2db7"
     },
     "lead-information-designer": {
       "path": "03-skills/lead-information-designer/SKILL.md",
@@ -2925,7 +3803,54 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:810d767d260af0889c7a5e0b4c2e7f96a1f432564786a0e4c0ac72fb8552c1c0"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:dddf75c06a6ea741323dbdfb3113ee5afb5e09a884ff96e731748ef7848dfd4c"
+    },
+    "lead-mobile-engineer": {
+      "path": "03-skills/lead-mobile-engineer/SKILL.md",
+      "tier": "hub",
+      "domain": "engineering",
+      "hub": null,
+      "prerequisites": [
+        "eng-foundations"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "mobile engineering",
+        "mobile app",
+        "ios app",
+        "android app",
+        "react native",
+        "expo",
+        "swiftui",
+        "jetpack compose",
+        "kotlin android",
+        "native vs cross-platform",
+        "app lifecycle",
+        "offline first",
+        "cold start",
+        "testflight",
+        "play console",
+        "store review",
+        "mobile performance",
+        "push notifications",
+        "deep linking"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-13",
+        "framework-14",
+        "framework-16",
+        "eng-foundations"
+      ],
+      "rigor_role": "command-hub",
+      "hash": "sha256:661cdc52ce76fde97d28fde0506f6c5bd2b0ba5a0873c34540e979eae4d9b462"
     },
     "lead-motion-designer": {
       "path": "03-skills/lead-motion-designer/SKILL.md",
@@ -2943,7 +3868,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:7a7fd671d64cbc958edefe1549118fb397d2d08ddf5295fa864b9c4255e5314c"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:2277fedad77fda02713a6096b2325531c91ede0fdf4724d7579c06f02de95e2d"
     },
     "lead-product-manager": {
       "path": "03-skills/lead-product-manager/SKILL.md",
@@ -2961,7 +3888,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:b880e93fc7e7a8030e9edbfcc48ecd48c37240d1adcaef513f1fbe1609c7fcfb"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:b02cd44f56b3d4e13c1d6d738a1e151c68b191bd73d157a7e1d8d25dcf3a3c56"
     },
     "lead-security-architect": {
       "path": "03-skills/lead-security-architect/SKILL.md",
@@ -2971,7 +3900,12 @@
       "prerequisites": [
         "eng-foundations"
       ],
-      "related": [],
+      "related": [
+        "be-security-posture",
+        "lead-accessibility-architect",
+        "lead-backend-engineer",
+        "devops-ci-cd"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [
@@ -2988,21 +3922,36 @@
         "csrf",
         "xss",
         "ssrf",
-        "least privilege"
+        "least privilege",
+        "security review",
+        "security audit",
+        "fail closed",
+        "tenant isolation"
       ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "hash": "sha256:4afb5e41bde9a82f4c03b409ae6f97b3e82ef8fe89cabb8e428028c885303926"
+      "defers_to": [
+        "framework-16",
+        "framework-13"
+      ],
+      "rigor_role": "command-hub",
+      "hash": "sha256:c882cb2c0bacc4798bc1dd4b52134f956ff388f4ff9ba9b702837ea08dde5e61"
     },
     "lead-technical-digital-artist": {
       "path": "03-skills/lead-technical-digital-artist/SKILL.md",
       "tier": "hub",
       "domain": "design",
       "hub": null,
-      "prerequisites": [],
-      "related": [],
+      "prerequisites": [
+        "design-foundations"
+      ],
+      "related": [
+        "lead-icon-artist",
+        "lead-vector-designer",
+        "variable-icon-font-architect"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [],
@@ -3010,7 +3959,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:147ab0dbd972b8a923e0e116741937335fa923ae8dea94eb670408e6d211f5dc"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:3797857aecb0e367ee50f17e5b462c858a6c307380a8746ff0a3867f2572588e"
     },
     "lead-type-designer": {
       "path": "03-skills/lead-type-designer/SKILL.md",
@@ -3028,7 +3979,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:2e1aff50ef3f81d075cedd4ac86ba24e463c0d10961ccb770b34ccf5fe16fb61"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:354cc313c2c23e947b9c793169ce8344b54059ab2aa62eac22f48596227b5c0c"
     },
     "lead-ui-designer": {
       "path": "03-skills/lead-ui-designer/SKILL.md",
@@ -3046,6 +3999,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:17975235e6523665780685732094ea58a022fb90d7e71fc14f344c2a453c10cc"
     },
     "lead-ux-designer": {
@@ -3064,6 +4019,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:7eef376525be4b4f77191fb0dcb1362b98db5cbee26a9e32345c32248f2d4426"
     },
     "lead-vector-designer": {
@@ -3071,8 +4028,14 @@
       "tier": "hub",
       "domain": "design",
       "hub": null,
-      "prerequisites": [],
-      "related": [],
+      "prerequisites": [
+        "design-foundations"
+      ],
+      "related": [
+        "lead-icon-artist",
+        "lead-technical-digital-artist",
+        "variable-icon-font-architect"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [],
@@ -3080,14 +4043,18 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:d9c0e584f4d86c757e2b6a9483c357e4696a506d35c6b52b9734373587ea4770"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:02453f0f59a9846edbfce72bc59c424bc164626c7335ee1826e86d9238c37caa"
     },
     "lead-visual-qa": {
       "path": "03-skills/lead-visual-qa/SKILL.md",
       "tier": "hub",
       "domain": "quality",
       "hub": null,
-      "prerequisites": [],
+      "prerequisites": [
+        "design-foundations"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
@@ -3096,7 +4063,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:0627ddd9a4cc053d1573a192ce64ec2b12755a7afabb8a14e1adcc7cf519c058"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:b29632560fe1fdfe8276221f9f66e9df321efac37480ca8d531af69a94f68195"
     },
     "legion-narrative-design": {
       "path": "03-skills/legion-narrative-design/SKILL.md",
@@ -3114,6 +4083,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:4f68b038c140d31a37f7c4870cd1cf3aded137c861f966cf2da5d9d4be59e86b"
     },
     "legion-project": {
@@ -3135,7 +4106,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:cab0990b8f2496932982d05fa99985b5c3ff060fa1df8672e9ce84c0bce517df"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:ea2db6d1d1d9ce330233b4371d672472fcacc3ef92d036c1cd94ef51cfa33613"
     },
     "material-symbols-project": {
       "path": "03-skills/material-symbols-project/SKILL.md",
@@ -3151,6 +4124,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:d74a8a78c8c09b07461a4f2c436ae428bf8c6553d315340b6bd4fe77780ddef7"
     },
     "material-symbols-suite": {
@@ -3169,6 +4144,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:d739da1e79c397b86c908a8a9d3b0e574032255420812d055ac9e9eec7e4faa6"
     },
     "material-symbols-svg-export": {
@@ -3187,6 +4164,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:563596394ea5ea0d399ab5d6a464d7e3365d37b1ae93a33df41d49b559f12bb0"
     },
     "math-bezier-spline-theory": {
@@ -3205,6 +4184,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:5309d337791bc1ec28913f2f5fb2ad5e8573d153bd3efb917ec7b3a6da92a4e1"
     },
     "math-computational-geometry": {
@@ -3223,6 +4204,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:93b60c4a30fa98bc0380ee55a0400e6e31ef4796cda26719d7af04c58eab4b17"
     },
     "math-interpolation-designspace": {
@@ -3241,6 +4224,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:2edb8974ff8dcc164f9903c151d3c8910055647b4eb82651882c489f5a0bef01"
     },
     "math-optical-optimization": {
@@ -3259,15 +4244,17 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:1541c8f389fa353891e293f69e53594b9d12438d96076548178fbd870fec1d9b"
     },
     "mobile-android-kotlin": {
       "path": "03-skills/mobile-android-kotlin/SKILL.md",
       "tier": "spoke",
       "domain": "engineering",
-      "hub": "lead-frontend-engineer",
+      "hub": "lead-mobile-engineer",
       "prerequisites": [
-        "lead-frontend-engineer"
+        "lead-mobile-engineer"
       ],
       "related": [],
       "governed_by": [],
@@ -3289,15 +4276,17 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:89cbbfb67bbf5b524ace06ffa452c9136319c2e931c67fec46cc9e6407fecac2"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:3cf34776192fe64d4c7795e273e47e25d98c7a76fa685b026b35544c5653ba99"
     },
     "mobile-ios-swiftui": {
       "path": "03-skills/mobile-ios-swiftui/SKILL.md",
       "tier": "spoke",
       "domain": "engineering",
-      "hub": "lead-frontend-engineer",
+      "hub": "lead-mobile-engineer",
       "prerequisites": [
-        "lead-frontend-engineer"
+        "lead-mobile-engineer"
       ],
       "related": [],
       "governed_by": [],
@@ -3320,15 +4309,17 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:7ad41f889ad18949e6bdbb0bde361c302791799f909dbc0292f3b430af522937"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:fdd07a1b254c52c2b82bd8f3d62e4487c6f5207b6c9553dc356972cf5af7905b"
     },
     "mobile-platform-craft": {
       "path": "03-skills/mobile-platform-craft/SKILL.md",
       "tier": "spoke",
       "domain": "engineering",
-      "hub": "lead-frontend-engineer",
+      "hub": "lead-mobile-engineer",
       "prerequisites": [
-        "lead-frontend-engineer"
+        "lead-mobile-engineer"
       ],
       "related": [],
       "governed_by": [
@@ -3351,15 +4342,17 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:a6b03d2140a6b397bf883ae85d0c3b9304256f7ba9d190fd92fde2000c086981"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:014ac3762ed7fce16aa6a55a7c1fa7f44d643295404f19e23fb6235bc3824596"
     },
     "mobile-react-native": {
       "path": "03-skills/mobile-react-native/SKILL.md",
       "tier": "spoke",
       "domain": "engineering",
-      "hub": "lead-frontend-engineer",
+      "hub": "lead-mobile-engineer",
       "prerequisites": [
-        "lead-frontend-engineer"
+        "lead-mobile-engineer"
       ],
       "related": [],
       "governed_by": [],
@@ -3380,7 +4373,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:a767e2e6c1dda7500b28fd41829853fddb3eb51bb3efaa2687ac30bf6e5d186a"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:121330ce0aea9ec0dfdda4caf67174f0aeada5d1f656074dbe975a9984fd15e1"
     },
     "motion": {
       "path": "03-skills/motion/SKILL.md",
@@ -3398,6 +4393,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:8aae1c9886f97a139f48cb451aa5946cb9787015f1f8c2584c7ae52cbc3cd0e3"
     },
     "motion-3d-spatial": {
@@ -3417,6 +4414,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:c956bae1ed8ba6c5738e9cd8658779cc8f3233e0de0132ef47a406017dc77b3d"
     },
     "motion-accessibility": {
@@ -3435,6 +4434,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:6011badbefcfe85a5a2199c2532f99d5396c80cb7f7eb485e441997110d0885d"
     },
     "motion-choreography": {
@@ -3453,6 +4454,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:3a067bf09521e179feb7c3b4cd3240f6dc7180464c52882a593c78afde1db6d3"
     },
     "motion-performance": {
@@ -3471,6 +4474,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:43bfbefd519e98485d276624822146a3da89dd5399130ed1a57b9b41b59d466f"
     },
     "motion-principles": {
@@ -3489,6 +4494,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:c3595d017e34030ccf31cfe64b55cddeb8ed41392d9137c8a43a316b54edc16c"
     },
     "motion-tooling": {
@@ -3507,6 +4514,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:12cb66cac4e5c36d2bc001f08d1a9576fac3fc3ad6304f5c15cb143cd810b288"
     },
     "motion-transitions": {
@@ -3525,6 +4534,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:bdd118bb2888cbc99a0c4cb320f772c856d1695c43a10879322acec46fa8b360"
     },
     "native-visual-eval": {
@@ -3536,7 +4547,8 @@
       "related": [
         "visual-qa-toolkit",
         "lead-visual-qa",
-        "reference-video-review"
+        "reference-video-review",
+        "render-qa-toolkit"
       ],
       "governed_by": [],
       "governs": [],
@@ -3564,7 +4576,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:0eb2afdcc2bfdd622b84560391aad2276dffd6c4d16c14c8b1f7d42d7ca4b5dd"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:c8afce3b6e98eaeb2a7e01ba014562065dba570a5b6b9487836bb0603424b51d"
     },
     "omni-project": {
       "path": "03-skills/omni-project/SKILL.md",
@@ -3580,6 +4594,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:557b19d0209c5f6fc391148f419949fef6d3074e3c8ee71ed289adcc71e4b4e1"
     },
     "open-agent-engine": {
@@ -3612,6 +4628,8 @@
       "requires": [
         "linear-mcp"
       ],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:e980b5ac28c37b7f2e931e9d0e9c10ca339775a377995d8448014fa3ed017bcb"
     },
     "planetary-terrain-lod": {
@@ -3651,6 +4669,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:d414773174ce0bf0e3174bd1e3435c80decbf90cc91de01b10579471d29dd200"
     },
     "pm-competitive-intelligence": {
@@ -3669,6 +4689,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:3bc95bc7120f9f3f4a159a5ee82a7b27698c862e133e204367273ad71d4e7fb0"
     },
     "pm-discovery-research": {
@@ -3687,6 +4709,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:8ae396754307c37a30c5071dd0648ec32209c5970fb2283ebd2f1f7e258bf54d"
     },
     "pm-enterprise-gtm": {
@@ -3705,6 +4729,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:62ad9e8583827e4ba5da8d1efe30bd1ef1d4fe1128d01ae49fee535c49f8c4f4"
     },
     "pm-metrics-analytics": {
@@ -3723,6 +4749,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:25950873369d3e89d9ab5c90a087e16f4657cb15507e58cdf04f55f40a5d9786"
     },
     "pm-platform-api": {
@@ -3741,6 +4769,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:465dcd23f09083f013086dc7dfd2c52c8134508f47abe9f7522a605830cca5fe"
     },
     "pm-roadmap-strategy": {
@@ -3759,6 +4789,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:253e13b69b453211849bbc2803c26f7e0317be9bd5583a3c6abe5b8d82eba71b"
     },
     "pm-stakeholder-comms": {
@@ -3777,7 +4809,57 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:c3f42efdac5e6ed020e8ec32bab31c99a829d65911141ef54864a40c38faf1e5"
+    },
+    "process-plugins": {
+      "path": "03-skills/process-plugins/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "engineering",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "eng",
+        "eng-foundations",
+        "arch-guild",
+        "github-guardrails",
+        "skill-placement"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "tdd",
+        "test driven development",
+        "write the test first",
+        "red green refactor",
+        "verification before completion",
+        "am i done",
+        "unslop",
+        "pstack",
+        "superpowers",
+        "writing plans",
+        "executing plans",
+        "systematic debugging",
+        "brainstorming",
+        "git worktree",
+        "finishing a branch",
+        "writing skills",
+        "subagent driven development"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-06",
+        "framework-07",
+        "framework-08",
+        "framework-11",
+        "framework-13"
+      ],
+      "rigor_role": "multi-voice",
+      "hash": "sha256:aefed079c162e8703eb98d01c0dd08b2ce5ca0dd85073137684758c89dcd67d8"
     },
     "product-foundations": {
       "path": "03-skills/product-foundations/SKILL.md",
@@ -3802,6 +4884,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:cedddf3a2a5f420ebf6934dd7950950749bf1db33f544d8904719cea276f7664"
     },
     "python-cross-platform-gui": {
@@ -3818,6 +4902,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:b28de6e91c5ac95c48d1402acc21380dd6d31e20480ed4c2546dda3fd7fb94d4"
     },
     "qa": {
@@ -3836,7 +4922,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:22c547d50acc7ee5740451347ba624d823263845060c2831ac768255ad5a7363"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:cfcbdc62f524d5184cfc0e99eb5e7b131d0b9346b98b3ea363f7cdfbb0139233"
     },
     "realtime-render-performance": {
       "path": "03-skills/realtime-render-performance/SKILL.md",
@@ -3849,7 +4937,8 @@
       ],
       "related": [
         "glsl-shader-architect",
-        "threejs-vfx-atmosphere"
+        "threejs-vfx-atmosphere",
+        "render-qa-toolkit"
       ],
       "governed_by": [],
       "governs": [],
@@ -3891,7 +4980,68 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:d6847707bd0580a8685599b2e2f15f8d104c9f19ed0d1f37ca56308507d995bc"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:0045d75d897610db9b7aac735259d31f26fe005902994d406af296c9d48a3265"
+    },
+    "realtime-visual-craft": {
+      "path": "03-skills/realtime-visual-craft/SKILL.md",
+      "tier": "hub",
+      "domain": "game",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "imaging-foundations",
+        "realtime-render-performance",
+        "native-visual-eval",
+        "interactive-capture-eval",
+        "reference-video-review",
+        "visual-qa-photoreal-rendering",
+        "rendering-guild",
+        "failure-mode-premortem",
+        "lead-visual-qa",
+        "lead-game-developer",
+        "dynamic-gi-production",
+        "shadow-quality-craft",
+        "virtual-texturing-ops",
+        "bake-orchestration",
+        "gpu-capture-tooling",
+        "adapter-webgpu-three",
+        "adapter-unreal",
+        "adapter-unity-hdrp"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "photoreal",
+        "photorealism",
+        "realtime craft",
+        "realtime visual",
+        "flythrough",
+        "fly-through",
+        "northstar",
+        "render contract",
+        "RENDER.md",
+        "BUDGET.md",
+        "NORTHSTAR.md",
+        "cinematic look",
+        "movie-level",
+        "match the reference",
+        "frame budget qa",
+        "still grid",
+        "motion fidelity",
+        "interactive capture",
+        "craft photoreal",
+        "harden render",
+        "polish render"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:5a89cfc3171d099f4ad1d43cabcbd2467403d9d96b774b3f0b2c831292a82b8e"
     },
     "redesign": {
       "path": "03-skills/redesign/SKILL.md",
@@ -3909,6 +5059,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:868fa19ae2aa6c534d5b5f654b6280ac89890752115f9e1f438909397551d241"
     },
     "reference-video-review": {
@@ -3940,7 +5092,91 @@
         "ffmpeg",
         "yt-dlp"
       ],
-      "hash": "sha256:a98fb10fd84cbdeee4bff9f3cdb84d61aab15d487cbc62944b5312d198cde9b4"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:4dcfa7d0dfab4e79adbc2bfa90622953cba462c2ae8c27f3559c75ed46dda25d"
+    },
+    "render-qa-toolkit": {
+      "path": "03-skills/render-qa-toolkit/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "quality",
+      "hub": "realtime-visual-craft",
+      "prerequisites": [],
+      "related": [
+        "visual-qa-toolkit",
+        "native-visual-eval",
+        "failure-mode-premortem",
+        "reference-video-review",
+        "realtime-render-performance",
+        "interactive-capture-eval",
+        "realtime-visual-craft",
+        "lead-visual-qa",
+        "visual-qa-photoreal-rendering"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "render qa",
+        "perfcapture",
+        "frame budget",
+        "pass attribution",
+        "native grid",
+        "false color exposure",
+        "temporal delta",
+        "shimmer",
+        "flythrough qa",
+        "motion stress",
+        "render ssim",
+        "ledger detect",
+        "gpu ms"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "ffmpeg"
+      ],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:d31e9ef93a8cb9d6cfc1bb2d81a6513dc438a6608750dd10dbcdc9664248e799"
+    },
+    "rendering-guild": {
+      "path": "03-skills/rendering-guild/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "game",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "realtime-visual-craft",
+        "visual-qa-photoreal-rendering",
+        "realtime-render-performance",
+        "imaging-foundations",
+        "failure-mode-premortem",
+        "interactive-capture-eval",
+        "native-visual-eval",
+        "lead-visual-qa"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "rendering guild",
+        "convene guild",
+        "render guild",
+        "light td",
+        "material td",
+        "shadow td",
+        "look vs budget",
+        "photoreal deliberation",
+        "guild review render",
+        "validator criteria"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:b625257a60ee8764dbc31776765bc28a6d07297d37d5c565fbd65fcace49690c"
     },
     "sci-astro-objects": {
       "path": "03-skills/sci-astro-objects/SKILL.md",
@@ -3973,6 +5209,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:46bd4662433241d5a9500b1d009d18aea70dd519aaf830df73cc9c3b69761da0"
     },
     "sci-astro-structures": {
@@ -4007,6 +5245,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:a326d7c48273709b626ec64afca2d390aadd8aa82e504ee5797a20e728fc9cf6"
     },
     "sci-linear-algebra": {
@@ -4037,6 +5277,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:315b298c64dfd1ad57345f55296fece221d8464a88c08e7a2f6d415f78eb99c0"
     },
     "sci-numerical-methods": {
@@ -4067,6 +5309,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:6e0081e576ec061d99b8ffe87c2d808b44fe2cfe0a13ff811a8bd18909dd9249"
     },
     "sci-physics-simulation": {
@@ -4099,6 +5343,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:d009939850684410c64a7d6af650767ff7c7582842c162d3e3ea4e2fbf031294"
     },
     "sci-probability-stochastic": {
@@ -4129,6 +5375,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:0c6c0beec6a1953cb0db5bc3c7859ec5d6d3294687a06edb28b002c686c52493"
     },
     "science-foundations": {
@@ -4160,15 +5408,26 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:ee8d3ccdc2d1f008a5d0a73df44cfd188b0792df19d17d896d3ba93eea5f7edc"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:f8db6995096f242a42c69b04aba45f7d0a0690ca28e63401b1946e0146eb24c2"
     },
     "sec-appsec-owasp": {
       "path": "03-skills/sec-appsec-owasp/SKILL.md",
       "tier": "cross-cutting",
       "domain": "security",
       "hub": "lead-security-architect",
-      "prerequisites": [],
-      "related": [],
+      "prerequisites": [
+        "lead-security-architect"
+      ],
+      "related": [
+        "be-security-posture",
+        "be-api-design",
+        "fe-api-integration",
+        "sec-threat-modeling",
+        "sec-authn-authz",
+        "sec-supply-chain"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [
@@ -4182,21 +5441,40 @@
         "output encoding",
         "content security policy",
         "sanitization",
-        "secure sdlc"
+        "secure sdlc",
+        "deserialization",
+        "file upload",
+        "path traversal",
+        "xxe",
+        "sast",
+        "dast",
+        "csv injection"
       ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "hash": "sha256:e5777fcb98730444cbc6cc0f93a0cb23c9693cf14ebb0056eb1db2ddb4d7f2e4"
+      "defers_to": [
+        "framework-16"
+      ],
+      "rigor_role": "load-chain",
+      "hash": "sha256:b0bf7764a2f1c814b91a4981a791b92f5ba8a15c0dd86499431644e3102f5520"
     },
     "sec-authn-authz": {
       "path": "03-skills/sec-authn-authz/SKILL.md",
       "tier": "cross-cutting",
       "domain": "security",
       "hub": "lead-security-architect",
-      "prerequisites": [],
-      "related": [],
+      "prerequisites": [
+        "lead-security-architect"
+      ],
+      "related": [
+        "be-auth-patterns",
+        "be-security-posture",
+        "sec-threat-modeling",
+        "sec-appsec-owasp",
+        "sec-supply-chain"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [
@@ -4209,71 +5487,161 @@
         "session hijacking",
         "rbac",
         "abac",
+        "rebac",
         "access control",
         "idor",
         "least privilege",
         "sso",
-        "mfa"
+        "scim",
+        "mfa",
+        "impersonation",
+        "tenant scope",
+        "permission model",
+        "service account"
       ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "hash": "sha256:496d9e1df61d1b89ed9227493585ffb138f3ddbb015e19b657d22e5be7e94aa0"
+      "defers_to": [
+        "framework-16"
+      ],
+      "rigor_role": "load-chain",
+      "hash": "sha256:d79125b48e3d21b6913612561ef622f1eca487b74cb595a644d89088984e75ab"
     },
     "sec-supply-chain": {
       "path": "03-skills/sec-supply-chain/SKILL.md",
       "tier": "cross-cutting",
       "domain": "security",
       "hub": "lead-security-architect",
-      "prerequisites": [],
-      "related": [],
+      "prerequisites": [
+        "lead-security-architect"
+      ],
+      "related": [
+        "be-security-posture",
+        "devops-ci-cd",
+        "sec-threat-modeling",
+        "sec-appsec-owasp"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [
         "supply chain",
         "dependency",
         "sbom",
+        "cyclonedx",
+        "spdx",
         "provenance",
+        "slsa",
+        "sigstore",
+        "artifact signing",
         "lockfile",
         "secrets",
         "secret management",
+        "secret scanning",
         "hashicorp vault",
+        "secret rotation",
         "ci/cd security",
+        "oidc federation",
         "access token",
         "dependabot",
-        "typosquatting"
+        "typosquatting",
+        "leaked credential"
       ],
       "surfaces": [
         "*"
       ],
-      "requires": [],
-      "hash": "sha256:ca8a423f0f22479991d5bae676b15544a87009018e3f697cd4fb701b028dbaad"
+      "requires": [
+        "gitleaks",
+        "syft"
+      ],
+      "defers_to": [
+        "framework-16"
+      ],
+      "rigor_role": "measurement",
+      "hash": "sha256:6d4cb0987ad79ab7fbd664d5de29c8c12006cecf7d8cdeb72dbc25642b3ab5b1"
     },
     "sec-threat-modeling": {
       "path": "03-skills/sec-threat-modeling/SKILL.md",
       "tier": "cross-cutting",
       "domain": "security",
       "hub": "lead-security-architect",
-      "prerequisites": [],
-      "related": [],
+      "prerequisites": [
+        "lead-security-architect"
+      ],
+      "related": [
+        "be-security-posture",
+        "sec-authn-authz",
+        "sec-appsec-owasp",
+        "sec-supply-chain"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [
         "threat model",
         "stride",
+        "pasta",
         "attack tree",
         "trust boundary",
         "data flow diagram",
         "attack surface",
         "risk assessment",
-        "abuse case"
+        "abuse case",
+        "dread",
+        "security design review",
+        "tenant isolation",
+        "blast radius",
+        "accepted risk"
       ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "hash": "sha256:2fa73da905d6a9ed8b1695d23d07337dcbf83728056750ed8b0bbd5d19b9f1b8"
+      "defers_to": [
+        "framework-16"
+      ],
+      "rigor_role": "measurement",
+      "hash": "sha256:d76a553422cf1c8076ddb8ad96c97fd71862795a63b5befe8d1c36b92f23d537"
+    },
+    "shadow-quality-craft": {
+      "path": "03-skills/shadow-quality-craft/SKILL.md",
+      "tier": "spoke",
+      "domain": "imaging",
+      "hub": "realtime-visual-craft",
+      "prerequisites": [],
+      "related": [
+        "img-photoreal-rendering",
+        "interactive-capture-eval",
+        "dynamic-gi-production",
+        "realtime-render-performance",
+        "adapter-webgpu-three"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "csm",
+        "cascaded shadow",
+        "cascade shadow",
+        "pcss",
+        "contact hardening",
+        "vsm",
+        "variance shadow",
+        "shadow bias",
+        "shadow acne",
+        "peter panning",
+        "cascade swimming",
+        "rt shadows",
+        "ray traced shadows",
+        "soft shadows",
+        "shadow map"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:cd5d857415eb003d18a7f7e3181d02d83c0480b1a47fc307b8b4434a32766230"
     },
     "skill-placement": {
       "path": "03-skills/skill-placement/SKILL.md",
@@ -4295,6 +5663,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:984040dca569e5e4a04c61f3d5d073fb30418b2fdfc5d3b1d61e2dd99834a58a"
     },
     "stellar-and-relativistic-hero-bodies": {
@@ -4340,6 +5710,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:8d601a9d2be3930d4bfc44f2ce09ce2f73f7e87fe755e724f3a204627423cb39"
     },
     "svg-font-extraction": {
@@ -4356,6 +5728,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:98ed05a3953055206091b4e2577834244751ce43c9719f7e9fdc8decce173613"
     },
     "threejs-materials-master": {
@@ -4376,6 +5750,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:3857fa740d7c45f07067375830322400a913cfb428c6b76cf8122b4b5cc4fd8d"
     },
     "threejs-vfx-atmosphere": {
@@ -4395,6 +5771,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:481ea8a09d5d97e9665eada1a664c950322603c667dbbfad24084d1e60d8d107"
     },
     "type": {
@@ -4413,6 +5791,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:44424ceeaa06f794313f96cfe28fe1d960d56d3f7d3091a1e87150ed98bf3d93"
     },
     "type-classification-history": {
@@ -4431,6 +5811,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:6b6255a6293893cf602a39e706cc9e2ff0260e862d03ca632e47dd6dcec83375"
     },
     "type-letterform-construction": {
@@ -4449,6 +5831,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:a7db094aadb080ea427e71e977a1cb39f53b96ce82faa7d37d6e1ba777c09249"
     },
     "type-multi-script": {
@@ -4467,6 +5851,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:4488c0dd99cd5e91e9db2521fc4c134b7b9676b64ee203a0c662e55cbdf56b7f"
     },
     "type-opentype-text": {
@@ -4485,6 +5871,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:67bcf271723b3be911dee45ac79ab9b63265cae9936fc1bde45e634e96e22bad"
     },
     "type-spacing-metrics": {
@@ -4503,6 +5891,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:de23cf64917fecc1c763eb0d371ab3f983375ac8f3efd6b29f513217b88cdc35"
     },
     "type-typesetting": {
@@ -4521,6 +5911,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:65708f047b6d8d2883ce917b234897fe316f8ef47f5e88ec271e51d25b54073e"
     },
     "type-variable-text": {
@@ -4539,6 +5931,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:82661ee48bac0b301fc862e14a18c6e8bd6555b417927476b46bbd68b130fa3a"
     },
     "uid-color-for-ui": {
@@ -4572,6 +5966,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:f7252dd88e90f2fa5e47a8a21011a6939c0e0717ced2f5bf2f464c5bd0eb97c6"
     },
     "uid-iconography": {
@@ -4590,6 +5986,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:53e228c5d58da35dfe56309f24db33e24bd9e07bbfb287d9063a28b0e182248f"
     },
     "uid-spatial-composition": {
@@ -4608,6 +6006,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:711c39c2a444d8e322ce8be019f7078051d2a35a540a221e597c1ddab47c0e8b"
     },
     "uid-surface-depth": {
@@ -4626,6 +6026,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:1a405adc1655c01acd57785387d03982c00c303bacb9acac787aa103e9439d0a"
     },
     "uid-type-for-screens": {
@@ -4644,6 +6046,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:6c0f9a34ddc939a7b86118aa06ba42445c3a93835436d4258c89eac22ac9b70b"
     },
     "uid-visual-critique": {
@@ -4662,6 +6066,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:3e725298bd3502c1f9514f006454c687d53ef529d62f638fb01534db57ed67e3"
     },
     "uid-visual-system": {
@@ -4680,6 +6086,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:8a86ca4e5e57f1669ff4c82540daeea6dab2ed163fe3a747e1bdd3d4c9bb975f"
     },
     "ux-accessibility": {
@@ -4698,6 +6106,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:30e592ea92356769224da8b558a7bc1695e7685da84cb44cbfc002bb40259546"
     },
     "ux-ai-product-design": {
@@ -4716,6 +6126,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:8bf93d65d00bc7e940c68945a204cf26068709def3f0809035dfdd5535927a73"
     },
     "ux-component-library": {
@@ -4734,6 +6146,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:bed5b934d3e20a771525e7c294bd1b7d09c2826cc61709e87a3ecfb526bc7b24"
     },
     "ux-data-visualization": {
@@ -4752,6 +6166,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:0a701ede9413cede34e1750dac28487d0b411adbf7fc8d5afeb3a1abf6dcaab7"
     },
     "ux-design-systems": {
@@ -4770,6 +6186,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:0c25c0ada8db0e9ac2a3ec34d40a49b0041c0c2f97e155a64d2ac18b0e6a55ca"
     },
     "ux-information-architecture": {
@@ -4788,6 +6206,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:2f40a66ffffd178aab4a11f9f5ecf91df5a04ed2ebfe079f6b7f30c0ca64b834"
     },
     "ux-interaction-design": {
@@ -4806,6 +6226,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:f564d36b3168a805d195683d9e2915e9e506eedf0102df4ebc54a747cd781ed4"
     },
     "ux-performance-perception": {
@@ -4824,6 +6246,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:d52196c5dc22e6a72cececaeb244abed410aff1eef78fb2bbfe815f2b6cd58ce"
     },
     "ux-research-synthesis": {
@@ -4842,6 +6266,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:8bb1fef58b2887ef7c13202b08a813cd87cf82ca39d6e263c95d10f50856bf70"
     },
     "ux-service-design": {
@@ -4860,6 +6286,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:8c80064c2faedf5758dfe6c32a6437771db7aa66f8bc578b490954eb33761012"
     },
     "ux-writing": {
@@ -4878,6 +6306,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:caab27599aca19c638cfa5c1bda5ec192773f5fbbb6c2f88192a906b18c54380"
     },
     "variable-icon-font-architect": {
@@ -4886,7 +6316,11 @@
       "domain": "design",
       "hub": "lead-type-designer",
       "prerequisites": [],
-      "related": [],
+      "related": [
+        "lead-icon-artist",
+        "lead-vector-designer",
+        "lead-technical-digital-artist"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [
@@ -4897,7 +6331,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:2c372c726da247480b6f1af0a78f60852f66eccd76ea9bac4afcbb2e23fdac9f"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:e93c73fa4b6d05d17c8dd8b7214d8c971efe4dc292a699a0e8ab51c04a134bf6"
     },
     "vfx-particle-systems": {
       "path": "03-skills/vfx-particle-systems/SKILL.md",
@@ -4931,6 +6367,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:1aa787b9e71d1b74ef31ee4a9d8d5fb1693a55a411a5021e9c4f6a79797a2191"
     },
     "vfx-volumetrics": {
@@ -4966,7 +6404,46 @@
       "requires": [
         "blender-mcp"
       ],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:1d566143342075832820e7830dfd9c2200ccd9b72cbb6a2f00a19de2d349972b"
+    },
+    "virtual-texturing-ops": {
+      "path": "03-skills/virtual-texturing-ops/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "realtime-visual-craft",
+      "prerequisites": [],
+      "related": [
+        "planetary-terrain-lod",
+        "3d-asset-pipeline",
+        "realtime-render-performance",
+        "adapter-webgpu-three",
+        "adapter-unreal"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "virtual texturing",
+        "virtual texture",
+        "sparse texture",
+        "texture streaming",
+        "page table",
+        "residency budget",
+        "texel density",
+        "megatexture",
+        "sampler feedback",
+        "texture thrash",
+        "tile streaming",
+        "vt feedback"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:3c68e1e3f034a55aac55249552261acbba41479606c57355417cb9e13aefa0fc"
     },
     "vis-classical-opencv": {
       "path": "03-skills/vis-classical-opencv/SKILL.md",
@@ -5004,6 +6481,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:eb03ab29fe68cae9c7a1600eeba163abe8c94c343710bddd725f69eed498a24f"
     },
     "vis-detection-tracking": {
@@ -5042,6 +6521,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:657fff49957c93207359d14fc2126930d0ff02edf2fa3f10394c497e426a818c"
     },
     "vis-segmentation": {
@@ -5075,6 +6556,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:6a8220a2f9e806c168e43b4bfa0aacec9cb011e68070b85724624fdc35f6b67a"
     },
     "vis-video-pipelines": {
@@ -5114,6 +6597,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:45c17968bdd3333d89034fdfd23e68b8a7720c6a2cf11f41c7756c87d8cf5902"
     },
     "vis-vlm-multimodal": {
@@ -5148,6 +6633,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:e98ba1040b058970599801ac0cbde9eeeb42375215bfa7ddccea541804b96c23"
     },
     "vision-foundations": {
@@ -5180,7 +6667,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:610e254756d259d345a8176dd0ddcd27c0bd359948883a308f1ab394ea7af57d"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:5588a54f12c7b992a86ab025a4616de39191e048349820546fecd38fb149f854"
     },
     "visual-qa-accessibility": {
       "path": "03-skills/visual-qa-accessibility/SKILL.md",
@@ -5196,6 +6685,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:df761e29523b0c6d7ae58652894e47dcc0c8ecce72803bd0b101785749b2addc"
     },
     "visual-qa-architecture": {
@@ -5212,7 +6703,39 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:8141d403092f66db9db244386c7cf21fc29967cb8baf5aec0c11312f30218378"
+    },
+    "visual-qa-dataviz": {
+      "path": "03-skills/visual-qa-dataviz/SKILL.md",
+      "tier": "spoke",
+      "domain": "quality",
+      "hub": "lead-visual-qa",
+      "prerequisites": [
+        "lead-visual-qa"
+      ],
+      "related": [
+        "infod-encoding-theory",
+        "fe-data-visualization",
+        "ux-data-visualization",
+        "qa"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "dataviz qa",
+        "chart audit",
+        "dashboard qa",
+        "encoding integrity"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": "multi-voice",
+      "hash": "sha256:5b1fae1ebc4b74540aa6e548dd2355e33f90b0fedec63b1c4526fcd5de757e2e"
     },
     "visual-qa-game-design": {
       "path": "03-skills/visual-qa-game-design/SKILL.md",
@@ -5228,7 +6751,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:8f33cae6af703dcc4fb6f65b4de48f69d7d713d7e44142710dc205c3a45564d9"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:a75607f3c69f5a5a1a645edc4db1a253b85ef11021b1b4ca2ee9b2054286a49c"
     },
     "visual-qa-graphic-design": {
       "path": "03-skills/visual-qa-graphic-design/SKILL.md",
@@ -5244,6 +6769,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:2e90c9b052b612bdf7905c55a0b7cb97403d3ef2c215c13779fa9cbb90b5fb95"
     },
     "visual-qa-interior-design": {
@@ -5260,7 +6787,86 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:189cf11db6a8caac1d67753d2258b8c151336bcd4b57190378f799fd8aa76f7b"
+    },
+    "visual-qa-motion": {
+      "path": "03-skills/visual-qa-motion/SKILL.md",
+      "tier": "spoke",
+      "domain": "quality",
+      "hub": "lead-visual-qa",
+      "prerequisites": [
+        "lead-visual-qa"
+      ],
+      "related": [
+        "motion-performance",
+        "motion-accessibility",
+        "motion-principles",
+        "qa"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "motion qa",
+        "animation audit",
+        "jank review",
+        "reduced motion qa"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": "multi-voice",
+      "hash": "sha256:53ff9627c3cf5b1b7a1d1869efe4807974bed253d7e73c89426391edf05781e1"
+    },
+    "visual-qa-photoreal-rendering": {
+      "path": "03-skills/visual-qa-photoreal-rendering/SKILL.md",
+      "tier": "spoke",
+      "domain": "quality",
+      "hub": "lead-visual-qa",
+      "prerequisites": [
+        "native-visual-eval"
+      ],
+      "related": [
+        "visual-qa-game-design",
+        "interactive-capture-eval",
+        "reference-video-review",
+        "realtime-visual-craft",
+        "rendering-guild",
+        "failure-mode-premortem",
+        "imaging-foundations",
+        "realtime-render-performance"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "photoreal qa",
+        "photoreal review",
+        "lighting review",
+        "material review",
+        "fresnel",
+        "grazing angle",
+        "energy conservation",
+        "gi quality",
+        "shadow cascade",
+        "tonemap",
+        "bloom artifact",
+        "post artifact",
+        "motion tell",
+        "taa ghosting",
+        "dither crawl",
+        "volumetric banding",
+        "cinematic lighting"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:42438a1bddab847e93dee7f3a7c37d9126f3548000cfcb780df3ca154b3d9f59"
     },
     "visual-qa-toolkit": {
       "path": "03-skills/visual-qa-toolkit/SKILL.md",
@@ -5284,7 +6890,9 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:8e69936fc1c3617606024b57fc60445c79084c82679e078133c4bf5d8870222a"
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:8af51262d6cbb729f9656bab41c07e70a317575ad9950b89eee9cf5c923a264c"
     },
     "visual-qa-ui-design": {
       "path": "03-skills/visual-qa-ui-design/SKILL.md",
@@ -5300,6 +6908,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:a2e7c69a715003c698ffe41a218e858d35601853b7bd804baa01bfaf90b9c9d6"
     },
     "visual-qa-usability": {
@@ -5316,6 +6926,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:9a39690c36cd3040b8d8eae982aa80be0b999cc92321bc0cc8f547c037b3bbec"
     },
     "visual-qa-ux-design": {
@@ -5332,6 +6944,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:36fdaca12f6e130580028ecc8e3ed56b36b9ba29e08f924b42a100e519c441ea"
     },
     "web-automation": {
@@ -5365,6 +6979,8 @@
       "requires": [
         "agent-browser"
       ],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:61fe67b3bbee95aa66c9e1cfb87df93f935159ade871e262e6769a1075f43fe9"
     },
     "webgpu-advanced-rendering": {
@@ -5385,6 +7001,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:a79bd27cb349b368d2fefb33c9445afc0ebcd0379dfb3a0e72cc4e5cbc8d77a6"
     },
     "workspace-bootstrap": {
@@ -5411,6 +7029,8 @@
         "*"
       ],
       "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
       "hash": "sha256:71b418c694b82a62cb706fbacb53b767c1b2e3270f988db9923796e11be56150"
     }
   },
@@ -5448,34 +7068,66 @@
       "3d-spatial-design-for-games"
     ],
     "a11y-assistive-tech": [
+      "design-foundations",
       "lead-accessibility-architect",
       "a11y-assistive-tech"
     ],
+    "a11y-audit-toolkit": [
+      "design-foundations",
+      "lead-accessibility-architect",
+      "a11y-audit-toolkit"
+    ],
     "a11y-auditory": [
+      "design-foundations",
       "lead-accessibility-architect",
       "a11y-auditory"
     ],
     "a11y-cognitive": [
+      "design-foundations",
       "lead-accessibility-architect",
       "a11y-cognitive"
     ],
     "a11y-legal-compliance": [
+      "design-foundations",
       "lead-accessibility-architect",
       "a11y-legal-compliance"
     ],
     "a11y-motor-physical": [
+      "design-foundations",
       "lead-accessibility-architect",
       "a11y-motor-physical"
     ],
     "a11y-neurodiversity": [
+      "design-foundations",
       "lead-accessibility-architect",
       "a11y-neurodiversity"
     ],
     "a11y-visual": [
       "a11y-visual"
     ],
+    "adapter-unity-hdrp": [
+      "realtime-visual-craft",
+      "adapter-unity-hdrp"
+    ],
+    "adapter-unreal": [
+      "realtime-visual-craft",
+      "adapter-unreal"
+    ],
+    "adapter-webgpu-three": [
+      "realtime-visual-craft",
+      "adapter-webgpu-three"
+    ],
+    "adobe-app-builder": [
+      "eng-foundations",
+      "adobe-app-builder"
+    ],
     "ai-video-generation": [
+      "imaging-foundations",
       "ai-video-generation"
+    ],
+    "arch-guild": [
+      "eng-foundations",
+      "arch-guild"
     ],
     "atmospheric-scattering-and-clouds": [
       "game-foundations",
@@ -5489,6 +7141,10 @@
       "webgpu-advanced-rendering",
       "realtime-render-performance",
       "atmospheric-scattering-and-clouds"
+    ],
+    "bake-orchestration": [
+      "realtime-visual-craft",
+      "bake-orchestration"
     ],
     "be-api-design": [
       "eng-foundations",
@@ -5530,6 +7186,10 @@
       "lead-backend-engineer",
       "be-service-architecture"
     ],
+    "career-ops-job-search": [
+      "job-search-strategist",
+      "career-ops-job-search"
+    ],
     "centric-ui-storybook": [
       "design-foundations",
       "design-engineer",
@@ -5549,6 +7209,10 @@
     ],
     "design-foundations": [
       "design-foundations"
+    ],
+    "design-system-ops": [
+      "design-foundations",
+      "design-system-ops"
     ],
     "devops-ci-cd": [
       "eng-foundations",
@@ -5652,6 +7316,14 @@
       "lead-data-scientist",
       "ds-prompt-engineering"
     ],
+    "dynamic-gi-production": [
+      "realtime-visual-craft",
+      "dynamic-gi-production"
+    ],
+    "eng": [
+      "eng-foundations",
+      "eng"
+    ],
     "eng-foundations": [
       "eng-foundations"
     ],
@@ -5687,6 +7359,11 @@
       "eng-foundations",
       "lead-frontend-engineer",
       "fe-i18n"
+    ],
+    "fe-perf-harness": [
+      "eng-foundations",
+      "lead-frontend-engineer",
+      "fe-perf-harness"
     ],
     "fe-performance": [
       "eng-foundations",
@@ -5952,31 +7629,42 @@
     "google-fonts-web-scraping": [
       "google-fonts-web-scraping"
     ],
+    "gpu-capture-tooling": [
+      "realtime-visual-craft",
+      "gpu-capture-tooling"
+    ],
     "ia-content-strategy": [
+      "design-foundations",
       "lead-information-architect",
       "ia-content-strategy"
     ],
     "ia-enterprise-complexity": [
+      "design-foundations",
       "lead-information-architect",
       "ia-enterprise-complexity"
     ],
     "ia-mental-models": [
+      "design-foundations",
       "lead-information-architect",
       "ia-mental-models"
     ],
     "ia-navigation-systems": [
+      "design-foundations",
       "lead-information-architect",
       "ia-navigation-systems"
     ],
     "ia-research-methods": [
+      "design-foundations",
       "lead-information-architect",
       "ia-research-methods"
     ],
     "ia-search-findability": [
+      "design-foundations",
       "lead-information-architect",
       "ia-search-findability"
     ],
     "ia-taxonomy-classification": [
+      "design-foundations",
       "lead-information-architect",
       "ia-taxonomy-classification"
     ],
@@ -6039,11 +7727,23 @@
       "lead-information-designer",
       "infod-statistical-viz"
     ],
+    "interactive-capture-eval": [
+      "interactive-capture-eval"
+    ],
+    "job-application-optimizer": [
+      "job-search-strategist",
+      "career-ops-job-search",
+      "job-application-optimizer"
+    ],
+    "job-search-strategist": [
+      "job-search-strategist"
+    ],
     "lead-3d-designer": [
       "design-foundations",
       "lead-3d-designer"
     ],
     "lead-accessibility-architect": [
+      "design-foundations",
       "lead-accessibility-architect"
     ],
     "lead-art-director": [
@@ -6082,14 +7782,20 @@
       "lead-graphic-designer"
     ],
     "lead-icon-artist": [
+      "design-foundations",
       "lead-icon-artist"
     ],
     "lead-information-architect": [
+      "design-foundations",
       "lead-information-architect"
     ],
     "lead-information-designer": [
       "design-foundations",
       "lead-information-designer"
+    ],
+    "lead-mobile-engineer": [
+      "eng-foundations",
+      "lead-mobile-engineer"
     ],
     "lead-motion-designer": [
       "design-foundations",
@@ -6104,6 +7810,7 @@
       "lead-security-architect"
     ],
     "lead-technical-digital-artist": [
+      "design-foundations",
       "lead-technical-digital-artist"
     ],
     "lead-type-designer": [
@@ -6119,9 +7826,11 @@
       "lead-ux-designer"
     ],
     "lead-vector-designer": [
+      "design-foundations",
       "lead-vector-designer"
     ],
     "lead-visual-qa": [
+      "design-foundations",
       "lead-visual-qa"
     ],
     "legion-narrative-design": [
@@ -6172,22 +7881,22 @@
     ],
     "mobile-android-kotlin": [
       "eng-foundations",
-      "lead-frontend-engineer",
+      "lead-mobile-engineer",
       "mobile-android-kotlin"
     ],
     "mobile-ios-swiftui": [
       "eng-foundations",
-      "lead-frontend-engineer",
+      "lead-mobile-engineer",
       "mobile-ios-swiftui"
     ],
     "mobile-platform-craft": [
       "eng-foundations",
-      "lead-frontend-engineer",
+      "lead-mobile-engineer",
       "mobile-platform-craft"
     ],
     "mobile-react-native": [
       "eng-foundations",
-      "lead-frontend-engineer",
+      "lead-mobile-engineer",
       "mobile-react-native"
     ],
     "motion": [
@@ -6284,6 +7993,9 @@
       "lead-product-manager",
       "pm-stakeholder-comms"
     ],
+    "process-plugins": [
+      "process-plugins"
+    ],
     "product-foundations": [
       "product-foundations"
     ],
@@ -6303,14 +8015,25 @@
       "webgpu-advanced-rendering",
       "realtime-render-performance"
     ],
+    "realtime-visual-craft": [
+      "realtime-visual-craft"
+    ],
     "redesign": [
       "design-foundations",
       "redesign"
     ],
     "reference-video-review": [
+      "design-foundations",
       "lead-visual-qa",
       "visual-qa-toolkit",
       "reference-video-review"
+    ],
+    "render-qa-toolkit": [
+      "realtime-visual-craft",
+      "render-qa-toolkit"
+    ],
+    "rendering-guild": [
+      "rendering-guild"
     ],
     "sci-astro-objects": [
       "science-foundations",
@@ -6358,6 +8081,10 @@
       "eng-foundations",
       "lead-security-architect",
       "sec-threat-modeling"
+    ],
+    "shadow-quality-craft": [
+      "realtime-visual-craft",
+      "shadow-quality-craft"
     ],
     "skill-placement": [
       "skill-placement"
@@ -6546,6 +8273,10 @@
       "threejs-vfx-atmosphere",
       "vfx-volumetrics"
     ],
+    "virtual-texturing-ops": [
+      "realtime-visual-craft",
+      "virtual-texturing-ops"
+    ],
     "vis-classical-opencv": [
       "science-foundations",
       "sci-linear-algebra",
@@ -6576,38 +8307,63 @@
       "vision-foundations"
     ],
     "visual-qa-accessibility": [
+      "design-foundations",
       "lead-visual-qa",
       "visual-qa-accessibility"
     ],
     "visual-qa-architecture": [
+      "design-foundations",
       "lead-visual-qa",
       "visual-qa-architecture"
     ],
+    "visual-qa-dataviz": [
+      "design-foundations",
+      "lead-visual-qa",
+      "visual-qa-dataviz"
+    ],
     "visual-qa-game-design": [
+      "design-foundations",
       "lead-visual-qa",
       "visual-qa-game-design"
     ],
     "visual-qa-graphic-design": [
+      "design-foundations",
       "lead-visual-qa",
       "visual-qa-graphic-design"
     ],
     "visual-qa-interior-design": [
+      "design-foundations",
       "lead-visual-qa",
       "visual-qa-interior-design"
     ],
+    "visual-qa-motion": [
+      "design-foundations",
+      "lead-visual-qa",
+      "visual-qa-motion"
+    ],
+    "visual-qa-photoreal-rendering": [
+      "design-foundations",
+      "lead-visual-qa",
+      "native-visual-eval",
+      "visual-qa-photoreal-rendering"
+    ],
     "visual-qa-toolkit": [
+      "design-foundations",
       "lead-visual-qa",
       "visual-qa-toolkit"
     ],
     "visual-qa-ui-design": [
+      "design-foundations",
       "lead-visual-qa",
       "visual-qa-ui-design"
     ],
     "visual-qa-usability": [
+      "design-foundations",
       "lead-visual-qa",
       "visual-qa-usability"
     ],
     "visual-qa-ux-design": [
+      "design-foundations",
       "lead-visual-qa",
       "visual-qa-ux-design"
     ],

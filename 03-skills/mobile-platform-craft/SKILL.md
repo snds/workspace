@@ -11,9 +11,9 @@ description: >
 aliases: [mobile-platform-craft]
 triggers: [native vs cross-platform, flutter, offline first, app lifecycle, mobile performance, battery, push notifications, permissions, deep linking, app store submission]
 tier: spoke
-hub: lead-frontend-engineer
+hub: lead-mobile-engineer
 domain: engineering
-prerequisites: [lead-frontend-engineer]
+prerequisites: [lead-mobile-engineer]
 governed_by: [a11y-motor-physical]
 surfaces: ["*"]
 spec_version: "2.0"
@@ -46,6 +46,6 @@ Permissions are privacy-gated and revocable — request in context, degrade grac
 review (Apple/Google), versioning, staged rollout, and crash/ANR monitoring.
 
 ## Related
-- hub → [[lead-frontend-engineer]]
+- hub → [[lead-mobile-engineer]]
 - governed-by → [[a11y-motor-physical]]
 - peer ↔ [[mobile-react-native]] · [[mobile-ios-swiftui]] · [[mobile-android-kotlin]]

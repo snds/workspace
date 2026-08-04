@@ -94,11 +94,13 @@ Eleven top-level frameworks govern all project work. They sit **above** any skil
 - **[01-frameworks/09-component-and-pattern-framework.md](01-frameworks/09-component-and-pattern-framework.md)** — design-domain hub: what each component is for, when to reach for it, how they compose; the universal schema + AI-legible / `DESIGN.md` layer
 - **[01-frameworks/10-perception-integrity.md](01-frameworks/10-perception-integrity.md)** — cross-cutting precondition to all visual evaluation: never judge fine visual detail from a downsampled image; capture at native resolution, state the pixels judged at
 - **[01-frameworks/11-anticipatory-failure-analysis.md](01-frameworks/11-anticipatory-failure-analysis.md)** — input-time twin of #06: before proposing/building any technique with a visible failure surface, anticipate its classic failure modes (consult the Visual Failure-Mode Ledger), argue against your own plan, derive acceptance criteria from the reference figures, and prove the result at native resolution before "ready for review"; find the bug before Sean does
+- **[01-frameworks/12-realtime-photoreal-operational-framework.md](01-frameworks/12-realtime-photoreal-operational-framework.md)** — realtime photoreal ops: technique ladder, budget-first allocation, **triple done-gate** (native still grid + motion/flythrough frame-by-frame + measured ms), movie-level northstars; command surface `realtime-visual-craft`
+- **[01-frameworks/13-domain-rigor-stack.md](01-frameworks/13-domain-rigor-stack.md)** — meta-stack every domain hub must instantiate (L1–L5)
 
 Compressed summaries: **[01-frameworks/00-README.md](01-frameworks/00-README.md)** — read this first.
 Team practices: **[01-frameworks/team-practices-and-decisions.md](01-frameworks/team-practices-and-decisions.md)**.
 
-Use `/framework-check` to run current work through the operating frameworks (the six core lenses always; situational lenses 07–11 when the work touches their domain) as a critique pass.
+Use `/framework-check` to run current work through the operating frameworks (the six core lenses always; situational lenses 07–16 when the work touches their domain) as a critique pass.
 
 **Delivery playbooks (context is king).** How work is *delivered* — whose work it is, who reads it, what medium, how it's proven — is governed by [02-shared-references/delivery-playbooks/](02-shared-references/delivery-playbooks/README.md). Load order: `00-context-profiles.md` resolves FIRST (declared profiles `personal-solo` / `centric-engineering` / `centric-design`; resolution: Sean's word → project declaration → repo remote → ask; fail-safe = most restrictive). Then the audience contract (designer-first, forward test) and the medium playbook the request's own words imply (a diagram request is only satisfiable by a diagram). Code-heavy work ships with a **Proofboard** (`05-validation-harness.md`) — plain-english contracts, show-me evidence, sandboxed sample data — so Sean can verify without reading code. The pre-delivery gate is wired into framework #06's pre-output gate.
 
@@ -137,11 +139,18 @@ The skill library. **You don't auto-load these** — load per the precedence alg
 foundation-first). The machine graph is `03-skills/skills.registry.json` (generated from frontmatter
 by `09-tools/build-registry.py` — not a Drive sync). Hub skills to know about:
 
-- **Design / DS:** `ds-advisor`, `design-engineer`, `figma-canvas-designer`, `figma-plugin-dev`
-- **Legion (game):** `legion-project` → `lead-game-designer` / `lead-art-director` / `lead-game-developer`
+- **Design / DS:** `ds-advisor`, `design-engineer`, `design-system-ops`, `figma-canvas-designer`, `figma-plugin-dev`
+- **Engineering:** `/eng` → `lead-frontend-engineer` / `lead-backend-engineer` / `lead-devops-engineer` / `lead-mobile-engineer`; multi-voice via `arch-guild`
+- **Security:** `lead-security-architect` → `sec-*` (framework #16)
+- **Accessibility:** `lead-accessibility-architect` → `a11y-*` + `a11y-audit-toolkit`
+- **Analysis / DS / PM:** framework #15 → `lead-data-scientist` / `lead-product-manager`
+- **Legion (game):** `legion-project` → `lead-game-designer` / `lead-art-director` / `lead-game-developer`; photoreal/perf → `#12` + `realtime-visual-craft` (+ project `RENDER.md` / `BUDGET.md` / `NORTHSTAR.md`)
 - **Icon fonts:** `variable-icon-font-architect` + math/vector/geometry spokes
-- **Visual QA:** `visual-qa-toolkit` + discipline-specific spokes
+- **Visual QA:** `/qa` + `visual-qa-toolkit` + `a11y-audit-toolkit` + discipline spokes; realtime renders → `render-qa-toolkit` + `interactive-capture-eval` + `visual-qa-photoreal-rendering` + `rendering-guild`
+- **Realtime photoreal:** `realtime-visual-craft` (hub) — do **not** let Cursor plugin marketing-3D Three.js skills override Workspace doctrine when this spine is loaded
+- **Career:** `career-ops-job-search` / `job-search-strategist` / `job-application-optimizer` (wrappers)
 - **Workspace mgmt:** `workspace-bootstrap`
+- **Skill authoring:** always load [13-domain-rigor-stack](01-frameworks/13-domain-rigor-stack.md) before creating/improving hubs
 
 Full list: `ls 03-skills/`. Each directory has a `SKILL.md` whose frontmatter defines its graph edges.
 
@@ -153,7 +162,7 @@ Slash-command workflows native to Claude Code. Small, focused, invocable by `/na
 - **`/session-end`** — write session block, update project-context, commit, push
 - **`/reconcile`** — merge session blocks from multiple machines
 - **`/new-project`** — scaffold `07-projects/NN-name/` with SESSION-STATE template
-- **`/framework-check`** — critique current work through the eleven operating frameworks (core always, situational when relevant)
+- **`/framework-check`** — critique current work through the operating frameworks (core always, situational when relevant; includes #13–#16 when skill/eng/analysis/security work)
 - **`/optimize`** — workspace audit: stale items, contradictions, drift, consolidation; logs to `06-context/audit-log.md`
 - **`/health`** — vault graph hygiene (deterministic): orphan notes, `#stale`/aging claims, dangling typed edges (`09-tools/vault-health.py` + `validate-links.py`). Narrower than `/optimize`; run it inside one.
 
@@ -177,6 +186,7 @@ to *create* a route. Illustrative routes (not exhaustive):
 |---|---|
 | `audit`, `review`, `critique`, `qa pass`, `refine` | `01-frameworks/06-qa-operating-model.md` — pre-output gate, load BEFORE the work |
 | `legion`, `the game`, `bobiverse` | `03-skills/legion-project/SKILL.md` + appropriate hub |
+| `photoreal`, `flythrough`, `frame budget`, `northstar`, `RENDER.md` | `#12` + `realtime-visual-craft` (+ `render-qa-toolkit` / `interactive-capture-eval` as needed) |
 | `centric`, `PLM`, `data table` | Design system context, Ark UI notes, cell anatomy WIP |
 | `field validation`, `validation state`, `warning`, `status color`, `contrast`, `a11y` | foundations-first route: `design-foundations` + `found-color` + `a11y-visual` + `uid-color-for-ui`, then the target system's own tokens |
 | `icon font`, `centricsymbols`, `variable axis` | `variable-icon-font-architect` + math spokes |

@@ -10,6 +10,8 @@ aliases: [ai-video-generation]
 triggers: [ai video, text to video, image to video, animate image, generate video, video generation, veo, seedance, wan, lipsync, video upscale, b-roll, motion concept, ai animation]
 tier: cross-cutting
 domain: imaging
+prerequisites: [imaging-foundations]
+related: [img-cinematography, img-photography, reference-video-review]
 surfaces: ["*"]
 requires: [inference-belt]
 spec_version: "2.1"
@@ -44,3 +46,7 @@ cheap (a fast model / low res) to lock composition, then spend on the final rend
 4. Save outputs as artifacts; note the model + prompt so a render is reproducible.
 
 For *reviewing* reference footage rather than generating, see [[reference-video-review]].
+
+## Related
+- foundation → [[imaging-foundations]]
+- peer ↔ [[reference-video-review]]

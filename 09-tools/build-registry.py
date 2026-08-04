@@ -36,7 +36,7 @@ SKILLS_DIR = WORKSPACE_ROOT / "03-skills"
 REGISTRY_PATH = SKILLS_DIR / "skills.registry.json"
 
 REGISTRY_VERSION = "1.0"        # shape of skills.registry.json
-SPEC_VERSION = "2.0"            # frontmatter contract version
+SPEC_VERSION = "2.2"            # frontmatter contract version (2.2 = defers_to / rigor_role)
 
 # Load order: smaller rank loads first. Used for deterministic tie-breaking.
 TIER_RANK = {"foundation": 0, "hub": 1, "spoke": 2, "cross-cutting": 3, None: 4}
@@ -45,8 +45,9 @@ TIER_RANK = {"foundation": 0, "hub": 1, "spoke": 2, "cross-cutting": 3, None: 4}
 # stored here (it's token-heavy and already lives in the SKILL.md, which is the
 # zero-cost routing surface in the system prompt).
 LIST_KEYS = {"aliases", "triggers", "prerequisites", "related",
-             "governed_by", "governs", "surfaces", "requires"}
-SCALAR_KEYS = {"name", "hub", "tier", "domain", "spec_version", "pinned_version"}
+             "governed_by", "governs", "surfaces", "requires", "defers_to"}
+SCALAR_KEYS = {"name", "hub", "tier", "domain", "spec_version", "pinned_version",
+               "rigor_role"}
 
 
 # ---- minimal frontmatter parser -------------------------------------------
@@ -150,6 +151,8 @@ def read_skills():
             "triggers": fm.get("triggers", []),
             "surfaces": fm.get("surfaces", ["*"]),
             "requires": fm.get("requires", []),
+            "defers_to": fm.get("defers_to", []),
+            "rigor_role": fm.get("rigor_role"),
             "hash": compute_hash(skill_md),
             "dir": dir_name,
         }
@@ -268,6 +271,8 @@ def build():
             "triggers": rec["triggers"],
             "surfaces": rec["surfaces"],
             "requires": rec["requires"],
+            "defers_to": rec.get("defers_to", []),
+            "rigor_role": rec.get("rigor_role"),
             "hash": rec["hash"],
         }
         if not errors:

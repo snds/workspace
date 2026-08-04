@@ -1,0 +1,79 @@
+# ────────────────────────────────────────────────────────────────────
+# Default config for the render-qa-toolkit.
+# Safe starting point for realtime / photoreal render measurement.
+# ────────────────────────────────────────────────────────────────────
+
+project_name: Default
+
+# enabled_checks:
+#   - frame_budget
+#   - pass_attribution
+#   - native_grid
+#   - histogram_hdr
+#   - false_color_exposure
+#   - temporal_delta
+#   - motion_stress
+#   - reference_match
+#   - video_extract
+#   - ledger_detect
+
+frame_budget:
+  budget_ms: 16.67          # 60 Hz theoretical floor
+  real_budget_ms: 14.0      # practical GPU budget after compositor (~60 fps)
+  use_real_budget: true
+  warn_pct: 0.85
+
+pass_attribution:
+  top_n: 10
+  flag_share_pct: 0.35
+
+native_grid:
+  tile_size: 512
+  min_native_width: 1280
+  min_native_height: 720
+  downsample_warn_width: 800
+  write_tiles: true
+  write_montage: true
+
+histogram_hdr:
+  clip_low_pct: 0.5
+  clip_high_pct: 0.5
+  bins: 256
+  write_histogram_image: true
+
+false_color_exposure:
+  overlay_alpha: 0.55
+
+temporal_delta:
+  shimmer_mad_threshold: 8.0
+  spike_mad_threshold: 18.0
+  resize_to_first: true
+  write_delta_preview: true
+
+motion_stress:
+  peak_mad_threshold: 20.0
+  group_mean_threshold: 12.0
+  resize_to_first: true
+
+reference_match:
+  reference_path: null
+  ssim_threshold: 0.90
+  rgb_mad_threshold: 18.0
+  pixel_diff_threshold: 30
+  min_region_area: 400
+  dilation_iterations: 3
+  overlay_alpha: 0.5
+  compute_lab_mad: true
+
+video_extract:
+  fps: 2
+  pattern: frame_%04d.png
+  start_sec: null
+  duration_sec: null
+  extra_vf: ""
+
+ledger_detect:
+  banding_grad_bins: 32
+  banding_edge_density_min: 0.04
+  clip_pct_min: 1.0
+  jpeg_block_score_min: 0.15

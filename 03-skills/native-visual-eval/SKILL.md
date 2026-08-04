@@ -20,7 +20,7 @@ aliases: [native-visual-eval]
 triggers: [native resolution, high-res screenshot, downsample, downscaled, capture and chunk, 1:1 pixels, canvas readback, preservedrawingbuffer, banding, aliasing, grain, dither, moire, zoom in, full res, pixel-level, retina, screenshot looks low-res]
 tier: cross-cutting
 domain: quality
-related: [visual-qa-toolkit, lead-visual-qa, reference-video-review]
+related: [visual-qa-toolkit, lead-visual-qa, reference-video-review, render-qa-toolkit]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -217,4 +217,4 @@ always, for everything"* and the QA Operating Model's *"a 1024-px thumbnail is n
 ---
 
 ## Related
-- peer ↔ [[visual-qa-toolkit]] · [[lead-visual-qa]] · [[reference-video-review]]
+- peer ↔ [[visual-qa-toolkit]] · [[lead-visual-qa]] · [[reference-video-review]] · [[render-qa-toolkit]] · [[interactive-capture-eval]] · [[realtime-visual-craft]] · [[rendering-guild]] · [[visual-qa-photoreal-rendering]]

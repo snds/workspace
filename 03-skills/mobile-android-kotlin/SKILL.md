@@ -10,9 +10,9 @@ description: >
 aliases: [mobile-android-kotlin]
 triggers: [kotlin, android, jetpack compose, coroutines, kotlin flow, viewmodel, clean architecture, material 3, gradle, play store, kmp]
 tier: spoke
-hub: lead-frontend-engineer
+hub: lead-mobile-engineer
 domain: engineering
-prerequisites: [lead-frontend-engineer]
+prerequisites: [lead-mobile-engineer]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -42,5 +42,5 @@ The activity/fragment + lifecycle-aware components model governs state survival 
 death — `SavedStateHandle`). Build with Gradle; ship via Play Console (app bundles, staged rollout).
 
 ## Related
-- hub → [[lead-frontend-engineer]]
+- hub → [[lead-mobile-engineer]]
 - peer ↔ [[mobile-react-native]] · [[mobile-ios-swiftui]] · [[mobile-platform-craft]]

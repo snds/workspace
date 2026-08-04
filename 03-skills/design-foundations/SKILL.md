@@ -51,5 +51,5 @@ load all five for a narrow question.
 
 ## Related
 - spoke → [[found-color]] · [[found-composition]] · [[found-hierarchy]] · [[found-perception]] · [[found-typography]]
-- applies-in ← [[design-engineer]] · [[ds]] · [[ds-advisor]] · [[ds-generation-pipeline]] · [[figma]] · [[gen-manifest]] · [[lead-3d-designer]] · [[lead-graphic-designer]] · [[lead-information-designer]] · [[lead-motion-designer]] · [[lead-type-designer]] · [[lead-ui-designer]] · [[lead-ux-designer]] · [[motion]] · [[qa]] · [[redesign]] · [[type]]
+- applies-in ← [[design-engineer]] · [[design-system-ops]] · [[ds]] · [[ds-advisor]] · [[ds-generation-pipeline]] · [[figma]] · [[gen-manifest]] · [[lead-3d-designer]] · [[lead-accessibility-architect]] · [[lead-graphic-designer]] · [[lead-icon-artist]] · [[lead-information-architect]] · [[lead-information-designer]] · [[lead-motion-designer]] · [[lead-technical-digital-artist]] · [[lead-type-designer]] · [[lead-ui-designer]] · [[lead-ux-designer]] · [[lead-vector-designer]] · [[lead-visual-qa]] · [[motion]] · [[qa]] · [[redesign]] · [[type]]
 - peer ↔ [[imaging-foundations]]

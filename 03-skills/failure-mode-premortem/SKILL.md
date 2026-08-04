@@ -21,7 +21,7 @@ aliases: [failure-mode-premortem, visual-pre-mortem, anticipatory-failure-analys
 triggers: [pre-mortem, premortem, failure mode, what could go wrong, before we build, red team, oppositional, classic symptom, common issue, avoidable, will this band, acceptance criteria, reference comparison, ready for review, pitfall ledger, anticipate bugs, find the bug first]
 tier: cross-cutting
 domain: quality
-related: [native-visual-eval, visual-qa-toolkit, lead-visual-qa, reference-video-review]
+related: [native-visual-eval, visual-qa-toolkit, lead-visual-qa, reference-video-review, render-qa-toolkit, interactive-capture-eval, realtime-visual-craft]
 surfaces: ["*"]
 spec_version: "1.0"
 ---
@@ -127,6 +127,9 @@ No pre-mortem output to state → the claim of "ready" isn't verified.
 
 ## Pairing
 
-Capture native first (`native-visual-eval`) → measure (`visual-qa-toolkit`) → judge (`lead-visual-qa`),
+Capture native first (`native-visual-eval`) → measure (`visual-qa-toolkit` / `render-qa-toolkit`) → judge (`lead-visual-qa`),
 framed by the target user (#06). This skill is what runs *before* all of them (steps 1–4) and what closes
 the loop *after* them (step 6). It is the operational teeth of framework #11.
+
+## Related
+- peer ↔ [[render-qa-toolkit]] · [[interactive-capture-eval]] · [[realtime-visual-craft]] · [[rendering-guild]] · [[visual-qa-photoreal-rendering]]

@@ -18,7 +18,7 @@ description: >-
   redesign + live in-browser variant iteration). Not for building components, writing
   tokens, Figma authoring, or backend work.
 user-invocable: true
-argument-hint: "[audit|critique|triage|inventory|spec] [target: screenshot|story|url|figma|component|diff|selection] [--lens ui|ux|a11y|usability|graphic|game] [--level a|aa|aaa] [--theme light|dark] [--live] [--out <path>]"
+argument-hint: "[audit|critique|triage|inventory|spec] [target: screenshot|story|url|figma|component|diff|selection] [--lens ui|ux|a11y|usability|graphic|game|motion|dataviz|type|security] [--level a|aa|aaa] [--theme light|dark] [--live] [--out <path>]"
 license: Apache-2.0
 metadata:
   hub: true
@@ -84,7 +84,7 @@ phrasing is mapped to it.
 
 ### Modifiers
 
-- `--lens ui|ux|a11y|usability|graphic|game` — which discipline spoke leads. **Auto-detected** from the target/intent when omitted (e.g. "contrast"/"screen reader" → `a11y`; "flow"/"onboarding" → `ux`). Multiple allowed.
+- `--lens ui|ux|a11y|usability|graphic|game|motion|dataviz|type|security` — which discipline spoke leads. **Auto-detected** from the target/intent when omitted (e.g. "contrast"/"screen reader" → `a11y`; "flow"/"onboarding" → `ux`; "chart encoding" → `dataviz`; "jank"/"easing" → `motion`). Multiple allowed.
 - `--level a|aa|aaa` — WCAG conformance target for `a11y` (default `aa`).
 - `--theme light|dark` — which theme to evaluate; for stories, audit both if omitted and the project ships both.
 - `--live` — use the impeccable browser bridge for live-page work (see "Live mode").
@@ -100,16 +100,20 @@ lens that needs measurement.
 |---|---|---|
 | `ui` | `visual-qa-ui-design` | `visual-qa-toolkit` (alignment, spacing, typography, grid) |
 | `ux` | `visual-qa-ux-design` | `visual-qa-usability` for heuristics |
-| `a11y` | `visual-qa-accessibility` | `visual-qa-toolkit` (contrast, color-vision) |
+| `a11y` | `visual-qa-accessibility` | `visual-qa-toolkit` (contrast, color-vision) + **`a11y-audit-toolkit`** (axe/pa11y/structural) |
 | `usability` | `visual-qa-usability` | — |
 | `graphic` | `visual-qa-graphic-design` | `visual-qa-toolkit` (color Δe, palette drift) |
 | `game` | `visual-qa-game-design` | for Legion / game UI |
+| `motion` | `visual-qa-motion` | `motion-performance` (frame budget); reduced-motion via `motion-accessibility` |
+| `dataviz` | `visual-qa-dataviz` | `infod-encoding-theory`; toolkit for contrast on series colors |
+| `type` | `lead-type-designer` / type spokes | `visual-qa-toolkit` typography scripts when present |
+| `security` | `lead-security-architect` | `sec-*` + framework #16 (not a visual lens — routes sideways) |
 | *(strategy/prioritization across findings)* | `lead-visual-qa` | always available for `triage` |
 
 Instrumented measurement (contrast, SSIM, Δe, alignment, icon/state consistency) is
 **always** routed through `visual-qa-toolkit` rather than eyeballed — that is the
-toolkit's whole reason to exist. Read its protocol for input handling (it asks for
-paths; it never hunts the filesystem).
+toolkit's whole reason to exist. Structural a11y automation routes through
+`a11y-audit-toolkit`. Read each toolkit's protocol for input handling.
 
 ## Disambiguation — who owns what (the precision contract)
 

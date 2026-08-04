@@ -1,0 +1,4 @@
+_fixtures/
+_qa-out/
+__pycache__/
+scripts/__pycache__/
