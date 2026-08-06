@@ -150,6 +150,7 @@ Full list: `ls 03-skills/`. Each directory has a `SKILL.md` whose frontmatter de
 Slash-command workflows native to Claude Code. Small, focused, invocable by `/name`:
 
 - **`/today`** — daily note: yesterday's pending → today's priorities → project statuses
+- **`/handback`** — end a side chat / detour; write `06-context/side-chat-inbox.md` for the parent (not a session-end)
 - **`/session-end`** — write session block, update project-context, commit, push
 - **`/reconcile`** — merge session blocks from multiple machines
 - **`/new-project`** — scaffold `07-projects/NN-name/` with SESSION-STATE template

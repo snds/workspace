@@ -53,6 +53,21 @@ python3 09-tools/build-trigger-routes.py --check
 Mirrors curated hubs from `03-skills/` into a local Claude Code plugin so they appear as
 native `/snds:<name>` slash commands. Claude-specific ergonomics; optional.
 
+## check-terminology.py
+
+Enforces recorded word rules from `06-context/memory/feedback-*.md` (currently no active
+regex rules after the 2026-07-30 vendor-term correction).
+
+## side-chat-handback.py
+
+Helpers for [[side-chat-handback]]: `--status`, `--clip-from-inbox`, `--mark-consumed`, `--path`.
+The agent authors `06-context/side-chat-inbox.md`; this script does clipboard + status flips.
+
+```
+python3 09-tools/side-chat-handback.py --status
+python3 09-tools/side-chat-handback.py --clip-from-inbox
+```
+
 ---
 
 These tools assume only a git checkout + Python 3 — no Google Drive, no vendor-specific file bridge.

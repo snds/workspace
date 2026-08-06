@@ -63,6 +63,8 @@
 # The .md session fragments and the README ARE tracked — only these are ignored.
 06-context/sessions/*.touched
 06-context/sessions/*.alive
+# Ephemeral side-chat → parent inbox (one pending slot; see side-chat-handback skill)
+06-context/side-chat-inbox.md
 
 # Archive (retired files + provenance ledger). Tracked so provenance is auditable.
 !_archive/
@@ -86,6 +88,7 @@
 !09-tools/compact-sessions.py
 !09-tools/vault-health.py
 !09-tools/check-terminology.py
+!09-tools/side-chat-handback.py
 
 # Track only the 00-obsidian integration project; other projects stay local.
 !07-projects/

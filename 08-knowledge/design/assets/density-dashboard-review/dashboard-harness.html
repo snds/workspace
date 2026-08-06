@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en" data-density="normal">
+<head>
+  <meta charset="utf-8" />
+  <title>Dashboard density harness (mirrors centric-ui construction)</title>
+  <style>
+    /* Minimal semantic tokens so the layout reads like the app */
+    :root {
+      --spacing: 0.25rem;
+      --background: #f4f4f5;
+      --foreground: #18181b;
+      --card: #fff;
+      --border: #e4e4e7;
+      --muted: #f4f4f5;
+      --muted-foreground: #71717a;
+      --destructive: #dc2626;
+      --sidebar: #fff;
+      --sidebar-border: #e4e4e7;
+      --sidebar-accent: #f4f4f5;
+      --sidebar-selected: #e4e4e7;
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font: 14px/1.4 ui-sans-serif, system-ui, sans-serif;
+      background: var(--background);
+      color: var(--foreground);
+    }
+
+    /* ── density.css (ported verbatim for control/radius ladder) ── */
+    :root,
+    :root[data-density='normal'] {
+      --density-control-h: 2.25rem;
+      --density-control-h-sm: 2rem;
+      --density-control-h-xs: 1.75rem;
+      --density-control-h-lg: 2.5rem;
+      --density-control-px: 0.75rem;
+      --density-control-px-input: 0.875rem;
+      --density-cell-pad-y: 0.75rem;
+      --density-head-pad-y: 0.75rem;
+      --density-menu-item-py: 0.5rem;
+      --density-tab-py: 0.75rem;
+      --density-chrome-gap: 0.75rem;
+      --density-sidebar-item-py: 0.5rem;
+      --density-header-h: 4rem;
+      --density-row-height: 52;
+      --density-field-gap: 1.25rem;
+      --radius-xxs: calc(var(--spacing) * 0.5);
+      --radius-xs: calc(var(--spacing) * 1);
+      --radius-sm: calc(var(--spacing) * 2);
+      --radius-md: calc(var(--spacing) * 3);
+      --radius-lg: calc(var(--spacing) * 4);
+      --radius-xl: calc(var(--spacing) * 5);
+    }
+    :root[data-density='compact'] {
+      --density-control-h: 2rem;
+      --density-control-h-sm: 1.75rem;
+      --density-control-h-xs: 1.5rem;
+      --density-control-h-lg: 2.25rem;
+      --density-control-px: 0.625rem;
+      --density-control-px-input: 0.75rem;
+      --density-cell-pad-y: 0.375rem;
+      --density-head-pad-y: 0.5rem;
+      --density-menu-item-py: 0.375rem;
+      --density-tab-py: 0.5rem;
+      --density-chrome-gap: 0.5rem;
+      --density-sidebar-item-py: 0.375rem;
+      --density-header-h: 3.5rem;
+      --density-row-height: 40;
+      --density-field-gap: 0.75rem;
+      --radius-xxs: calc(var(--spacing) * 0.5);
+      --radius-xs: calc(var(--spacing) * 0.5);
+      --radius-sm: calc(var(--spacing) * 1);
+      --radius-md: calc(var(--spacing) * 2);
+      --radius-lg: calc(var(--spacing) * 3);
+      --radius-xl: calc(var(--spacing) * 4);
+    }
+    :root[data-density='spacious'] {
+      --density-control-h: 2.5rem;
+      --density-control-h-sm: 2.25rem;
+      --density-control-h-xs: 2rem;
+      --density-control-h-lg: 2.75rem;
+      --density-control-px: 0.875rem;
+      --density-control-px-input: 1rem;
+      --density-cell-pad-y: 1rem;
+      --density-head-pad-y: 1rem;
+      --density-menu-item-py: 0.625rem;
+      --density-tab-py: 1rem;
+      --density-chrome-gap: 1rem;
+      --density-sidebar-item-py: 0.75rem;
+      --density-header-h: 4.5rem;
+      --density-row-height: 64;
+      --density-field-gap: 1.75rem;
+      --radius-xxs: calc(var(--spacing) * 1);
+      --radius-xs: calc(var(--spacing) * 2);
+      --radius-sm: calc(var(--spacing) * 3);
+      --radius-md: calc(var(--spacing) * 4);
+      --radius-lg: calc(var(--spacing) * 5);
+      --radius-xl: calc(var(--spacing) * 6);
+    }
+
+    .shell { display: grid; grid-template-columns: 256px 1fr; min-height: 100vh; }
+    .app-header {
+      height: var(--density-header-h);
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 16px; border-bottom: 1px solid var(--border); background: var(--card);
+    }
+    .search {
+      height: var(--density-control-h);
+      width: 280px; border: 1px solid var(--border); border-radius: var(--radius-md);
+      padding: 0 var(--density-control-px-input); background: var(--muted);
+    }
+    .btn {
+      height: var(--density-control-h);
+      padding: 0 var(--density-control-px);
+      border: 1px solid var(--border); border-radius: var(--radius-md);
+      background: var(--card); display: inline-flex; align-items: center; gap: 6px;
+      font: inherit;
+    }
+    .icon-btn {
+      width: var(--density-control-h); height: var(--density-control-h);
+      border-radius: var(--radius-md); border: 1px solid var(--border);
+      display: grid; place-items: center; background: var(--card);
+    }
+    .sidebar {
+      border-right: 1px solid var(--sidebar-border); background: var(--sidebar);
+      padding: 12px; display: flex; flex-direction: column; gap: 4px;
+    }
+    .nav {
+      height: var(--density-control-h);
+      padding: var(--density-sidebar-item-py) 8px;
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav.active { background: var(--sidebar-selected); font-weight: 600; }
+    .main { display: flex; flex-direction: column; min-width: 0; }
+    .page { flex: 1; overflow: auto; }
+
+    /* CURRENT dashboard construction (hardcoded offenders marked) */
+    .page-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: var(--density-chrome-gap);
+      padding: 2rem 2rem 1.5rem; /* px-8 pt-8 pb-6 — FROZEN */
+    }
+    .page-header h1 { margin: 0; font-size: 1.5rem; }
+    .page-header p { margin: 0.25rem 0 0; color: var(--muted-foreground); font-size: 0.875rem; }
+
+    /* Grid: ROW_HEIGHT=40, marginY=24 — FROZEN footprints */
+    .grid {
+      padding: 1.5rem; /* p-6 frozen */
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: 168px 552px 168px; /* h=3 / h=9 / h=3 with ROW_HEIGHT 40 + margin 24 */
+      gap: 24px 16px; /* GRID_MARGIN */
+    }
+    .kpi-strip {
+      grid-column: 1 / -1;
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; /* gap-4 frozen */
+    }
+    .kpi {
+      height: 100%;
+      border: 1px solid var(--border); background: var(--card);
+      border-radius: var(--radius-md);
+      padding: 1rem; /* p-4 frozen */
+      display: flex; flex-direction: column; gap: 0.75rem; /* gap-3 frozen */
+    }
+    .kpi-icon {
+      width: var(--density-control-h); height: var(--density-control-h);
+      border-radius: var(--radius-sm);
+      background: #dbeafe; color: #1d4ed8;
+      display: grid; place-items: center; font-size: 12px;
+    }
+    .kpi .value { font-size: 1.875rem; font-weight: 600; line-height: 1; }
+    .kpi .label { font-size: 0.875rem; font-weight: 500; }
+    .kpi .meta { font-size: 0.75rem; color: var(--muted-foreground); }
+
+    .panel {
+      height: 100%; overflow: hidden;
+      border: 1px solid var(--border); background: var(--card);
+      border-radius: var(--radius-md);
+      display: flex; flex-direction: column;
+    }
+    .panel-h {
+      padding: 1rem; /* p-4 frozen */
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+    }
+    .attn {
+      display: flex; gap: var(--density-chrome-gap);
+      padding: 1rem; /* p-4 frozen */
+      border-top: 1px solid var(--border);
+    }
+    .attn:first-child { border-top: 0; }
+    .thumb { width: 2.5rem; height: 2.5rem; border-radius: var(--radius-md); background: var(--muted); flex-shrink: 0; } /* size-10 frozen */
+    .act {
+      display: flex; gap: 0.75rem; /* gap-3 frozen */
+      padding: var(--density-cell-pad-y) 1rem; /* py tokenized, px-4 frozen */
+      border-top: 1px solid var(--border);
+    }
+    .act:first-child { border-top: 0; }
+    .qa-row {
+      grid-column: 1 / -1;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; /* gap-4 frozen */
+    }
+    .qa {
+      height: 100%;
+      border: 1px solid var(--border); background: var(--card);
+      border-radius: var(--radius-md);
+      padding: 1.25rem; /* p-5 frozen */
+      display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    .qa-icon {
+      width: 2.75rem; height: 2.75rem; /* size-11 frozen */
+      border-radius: var(--radius-lg);
+      background: var(--foreground); color: var(--card);
+      display: grid; place-items: center;
+    }
+
+    /* Idealized: same layout but surfaces consume density chrome/field/cell tokens */
+    .grid.ideal {
+      padding: var(--density-field-gap);
+      gap: var(--density-field-gap) var(--density-chrome-gap);
+      /* Scale row track with --density-row-height instead of frozen 40 */
+      --rh: calc(var(--density-row-height) * 1px);
+      --my: var(--density-field-gap);
+      grid-template-rows:
+        calc(3 * var(--rh) + 2 * var(--my))
+        calc(9 * var(--rh) + 8 * var(--my))
+        calc(3 * var(--rh) + 2 * var(--my));
+    }
+    .ideal .page-header { padding: var(--density-field-gap) calc(var(--density-field-gap) * 1.5); }
+    .ideal .kpi { padding: var(--density-cell-pad-y) var(--density-control-px-input); gap: var(--density-chrome-gap); }
+    .ideal .panel-h { padding: var(--density-head-pad-y) var(--density-control-px-input); }
+    .ideal .attn { padding: var(--density-cell-pad-y) var(--density-control-px-input); }
+    .ideal .thumb { width: calc(var(--density-control-h) + 0.5rem); height: calc(var(--density-control-h) + 0.5rem); }
+    .ideal .qa { padding: var(--density-cell-pad-y) var(--density-control-px-input); gap: var(--density-chrome-gap); }
+    .ideal .qa-icon { width: var(--density-control-h-lg); height: var(--density-control-h-lg); }
+
+    .banner {
+      position: sticky; top: 0; z-index: 5;
+      display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+      padding: 8px 12px; background: #18181b; color: #fff; font-size: 12px;
+    }
+    .banner button {
+      background: #3f3f46; color: #fff; border: 0; border-radius: 6px;
+      padding: 4px 10px; cursor: pointer;
+    }
+    .banner button.on { background: #2563eb; }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .col-label {
+      padding: 8px 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+      text-transform: uppercase; background: #e4e4e7; border-bottom: 1px solid var(--border);
+    }
+    .metrics {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px; opacity: 0.85; margin-left: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="banner">
+    <strong>Density harness</strong>
+    <button data-d="compact">Compact</button>
+    <button data-d="normal" class="on">Normal</button>
+    <button data-d="spacious">Spacious</button>
+    <span class="metrics" id="metrics"></span>
+  </div>
+  <div class="cols">
+    <div>
+      <div class="col-label">Current construction (hardcoded page/grid/card pads)</div>
+      <div class="shell">
+        <aside class="sidebar" id="side-current">
+          <div class="nav active">Home</div>
+          <div class="nav">Styles</div>
+          <div class="nav">Materials</div>
+          <div class="nav">Documents</div>
+          <div class="nav">Workflow</div>
+        </aside>
+        <div class="main">
+          <div class="app-header">
+            <div class="icon-btn">PLM</div>
+            <input class="search" value="Search…" readonly />
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <button class="btn">Edit Dashboard</button>
+              <div class="icon-btn">Aa</div>
+            </div>
+          </div>
+          <div class="page">
+            <header class="page-header">
+              <div>
+                <h1>Welcome back, Sean</h1>
+                <p>Here's what's happening with your products today</p>
+              </div>
+              <button class="btn">Edit Dashboard</button>
+            </header>
+            <div class="grid">
+              <div class="kpi-strip">
+                <div class="kpi"><div class="kpi-icon">▣</div><div class="value">128</div><div class="label">Styles</div><div class="meta">Season AW 2027</div></div>
+                <div class="kpi"><div class="kpi-icon">▣</div><div class="value">64</div><div class="label">Materials</div><div class="meta">Season AW 2027</div></div>
+                <div class="kpi"><div class="kpi-icon">▣</div><div class="value">12</div><div class="label">Attention</div><div class="meta">Season AW 2027</div></div>
+                <div class="kpi"><div class="kpi-icon">▣</div><div class="value">9</div><div class="label">Samples</div><div class="meta">Season AW 2027</div></div>
+                <div class="kpi"><div class="kpi-icon">▣</div><div class="value">4</div><div class="label">PO</div><div class="meta">Season AW 2027</div></div>
+                <div class="kpi"><div class="kpi-icon">▣</div><div class="value">21</div><div class="label">Docs</div><div class="meta">Season AW 2027</div></div>
+              </div>
+              <section class="panel">
+                <div class="panel-h">Needs Attention</div>
+                <div class="attn"><div class="thumb"></div><div><strong>Style Alpha</strong><div style="color:var(--destructive);font-size:13px;margin-top:4px">Missing BOM</div></div></div>
+                <div class="attn"><div class="thumb"></div><div><strong>Material Beta</strong><div style="color:var(--destructive);font-size:13px;margin-top:4px">Overdue sample</div></div></div>
+                <div class="attn"><div class="thumb"></div><div><strong>Style Gamma</strong><div style="color:var(--destructive);font-size:13px;margin-top:4px">Awaiting color</div></div></div>
+              </section>
+              <section class="panel">
+                <div class="panel-h">Recent Activity</div>
+                <div class="act"><div>⏱</div><div><strong>Updated Style Alpha</strong><div style="color:var(--muted-foreground);font-size:12px">2h ago</div></div></div>
+                <div class="act"><div>⏱</div><div><strong>Created Material Beta</strong><div style="color:var(--muted-foreground);font-size:12px">Yesterday</div></div></div>
+                <div class="act"><div>⏱</div><div><strong>Uploaded tech pack</strong><div style="color:var(--muted-foreground);font-size:12px">2d ago</div></div></div>
+                <div class="act"><div>⏱</div><div><strong>Changed stage</strong><div style="color:var(--muted-foreground);font-size:12px">3d ago</div></div></div>
+              </section>
+              <div class="qa-row">
+                <div class="qa"><div class="qa-icon">＋</div><div><strong>Create New Material</strong><div style="color:var(--muted-foreground);font-size:12px">Add a new material</div></div></div>
+                <div class="qa"><div class="qa-icon">＋</div><div><strong>Create New Style</strong><div style="color:var(--muted-foreground);font-size:12px">Design a new style</div></div></div>
+                <div class="qa"><div class="qa-icon">＋</div><div><strong>Create New Request</strong><div style="color:var(--muted-foreground);font-size:12px">Request quotes</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="col-label">Idealized (page/grid/cards consume density tokens)</div>
+      <div class="shell">
+        <aside class="sidebar">
+          <div class="nav active">Home</div>
+          <div class="nav">Styles</div>
+          <div class="nav">Materials</div>
+          <div class="nav">Documents</div>
+          <div class="nav">Workflow</div>
+        </aside>
+        <div class="main">
+          <div class="app-header">
+            <div class="icon-btn">PLM</div>
+            <input class="search" value="Search…" readonly />
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <button class="btn">Edit Dashboard</button>
+              <div class="icon-btn">Aa</div>
+            </div>
+          </div>
+          <div class="page ideal">
+            <header class="page-header">
+              <div>
+                <h1>Welcome back, Sean</h1>
+                <p>Here's what's happening with your products today</p>
+              </div>
+              <button class="btn">Edit Dashboard</button>
+            </header>
+            <div class="grid ideal">
+              <div class="kpi-strip">
+                <div class="kpi"><div class="kpi-icon">▣</div><div class="value">128</div><div class="label">Styles</div><div class="meta">Season AW 2027</div></div>
+                <div class="kpi"><div class="kpi-icon">▣</div><div class="value">64</div><div class="label">Materials</div><div class="meta">Season AW 2027</div></div>
+                <div class="kpi"><div class="kpi-icon">▣</div><div class="value">12</div><div class="label">Attention</div><div class="meta">Season AW 2027</div></div>
+                <div class="kpi"><div class="kpi-icon">▣</div><div class="value">9</div><div class="label">Samples</div><div class="meta">Season AW 2027</div></div>
+                <div class="kpi"><div class="kpi-icon">▣</div><div class="value">4</div><div class="label">PO</div><div class="meta">Season AW 2027</div></div>
+                <div class="kpi"><div class="kpi-icon">▣</div><div class="value">21</div><div class="label">Docs</div><div class="meta">Season AW 2027</div></div>
+              </div>
+              <section class="panel">
+                <div class="panel-h">Needs Attention</div>
+                <div class="attn"><div class="thumb"></div><div><strong>Style Alpha</strong><div style="color:var(--destructive);font-size:13px;margin-top:4px">Missing BOM</div></div></div>
+                <div class="attn"><div class="thumb"></div><div><strong>Material Beta</strong><div style="color:var(--destructive);font-size:13px;margin-top:4px">Overdue sample</div></div></div>
+                <div class="attn"><div class="thumb"></div><div><strong>Style Gamma</strong><div style="color:var(--destructive);font-size:13px;margin-top:4px">Awaiting color</div></div></div>
+              </section>
+              <section class="panel">
+                <div class="panel-h">Recent Activity</div>
+                <div class="act"><div>⏱</div><div><strong>Updated Style Alpha</strong><div style="color:var(--muted-foreground);font-size:12px">2h ago</div></div></div>
+                <div class="act"><div>⏱</div><div><strong>Created Material Beta</strong><div style="color:var(--muted-foreground);font-size:12px">Yesterday</div></div></div>
+                <div class="act"><div>⏱</div><div><strong>Uploaded tech pack</strong><div style="color:var(--muted-foreground);font-size:12px">2d ago</div></div></div>
+                <div class="act"><div>⏱</div><div><strong>Changed stage</strong><div style="color:var(--muted-foreground);font-size:12px">3d ago</div></div></div>
+              </section>
+              <div class="qa-row">
+                <div class="qa"><div class="qa-icon">＋</div><div><strong>Create New Material</strong><div style="color:var(--muted-foreground);font-size:12px">Add a new material</div></div></div>
+                <div class="qa"><div class="qa-icon">＋</div><div><strong>Create New Style</strong><div style="color:var(--muted-foreground);font-size:12px">Design a new style</div></div></div>
+                <div class="qa"><div class="qa-icon">＋</div><div><strong>Create New Request</strong><div style="color:var(--muted-foreground);font-size:12px">Request quotes</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const metrics = document.getElementById('metrics');
+    const setDensity = (d) => {
+      document.documentElement.setAttribute('data-density', d);
+      document.querySelectorAll('.banner button[data-d]').forEach((b) => {
+        b.classList.toggle('on', b.dataset.d === d);
+      });
+      const cs = getComputedStyle(document.documentElement);
+      const nav = document.querySelector('.nav');
+      const kpi = document.querySelector('.kpi');
+      const act = document.querySelector('.act');
+      const header = document.querySelector('.app-header');
+      const r = (el) => el ? Math.round(el.getBoundingClientRect().height) : '—';
+      metrics.textContent =
+        `control ${cs.getPropertyValue('--density-control-h').trim()} · ` +
+        `header ${r(header)} · nav ${r(nav)} · kpi pad ${getComputedStyle(kpi).paddingTop} · ` +
+        `activity py ${getComputedStyle(act).paddingTop} · radius-md ${cs.getPropertyValue('--radius-md').trim()}`;
+    };
+    document.querySelectorAll('.banner button[data-d]').forEach((b) => {
+      b.addEventListener('click', () => setDensity(b.dataset.d));
+    });
+    setDensity('normal');
+  </script>
+</body>
+</html>

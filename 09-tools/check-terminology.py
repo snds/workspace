@@ -36,21 +36,11 @@ SKIP_NAMES = {"session-log.md", "session-log-archive.md", "audit-log.md",
               "MEMORY.md"}  # the memory INDEX names each rule by its own term
 SKIP_STEM_PREFIX = ("feedback-",)  # a rule's own memory entry defines the term
 
-RULES = [
-    {
-        "id": "vendor-as-verb",
-        # Verb/adjective forms are the misuse: "vendored", "vendoring", "vendor_cli".
-        # The NOUN forms ("vendor-neutral", "vendor formats", supply-chain "vendors")
-        # are legitimate and deliberately not matched.
-        "pattern": re.compile(r"\bvendor(?:ed|ing)\b|\bvendor_[a-z]", re.IGNORECASE),
-        "allow": re.compile(
-            r"vendor-provided|vendor-neutral|vendor-specific|cloud-vendor", re.IGNORECASE),
-        "message": ('"vendor/vendored" is reserved for PAID external services/work. Our own '
-                    'code copied between repos is: adopt · copy in · reuse · port · mirror. '
-                    'An open-source dependency is a dependency. A local shim is a shim.'),
-        "source": "06-context/memory/feedback-vendor-terminology.md",
-    },
-]
+# Rules in force. The previous `vendor-as-verb` ban (paid-for only) was retired 2026-07-30 —
+# engineering "vendored" (= external code copied into our tree) is correct; see
+# `06-context/memory/feedback-vendor-terminology.md`. Remaining attribution concern
+# (don't call *our* bespoke code vendored) is judgment, not a regex — not enforced here.
+RULES = []
 
 
 def _files():

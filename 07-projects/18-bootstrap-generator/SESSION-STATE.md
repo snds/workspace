@@ -64,9 +64,10 @@ phases. Locked decisions: ingestion = consent+quarantine+scan; project adoption 
   **Tested:** py_compile clean; init→emit→verify/health/lint GREEN on fresh numbered AND legacy-flat
   (upgrade adds pieces at flat paths, no numbered siblings, hand-note preserved); router/build-related/
   validate/session-audit all functional on both layouts + idempotent; 3 zips rebuilt + clean-extract
-  smoke green (numbered taxonomy, tools, hooks, registry); Sean's `check-terminology.py` clean (used
-  copy-in / copied-in, not the reserved vendor-as-verb term); examine verdicts correct on Sean's real
-  vault (exceeds) and a thin fixture (migrate-up).
+  smoke green (numbered taxonomy, tools, hooks, registry); Sean's `check-terminology.py` clean
+  (used copy-in / copied-in for *our* CLI — still correct after the 2026-07-30 vendor-term
+  correction; engineering "vendored" is for external code in-tree, not self-owned tooling);
+  examine verdicts correct on Sean's real vault (exceeds) and a thin fixture (migrate-up).
 - **R2 — full restructure migration for existing flat workspaces: ✅ DONE 2026-07-27.**
   New `restructure.py` + `wsx restructure` (the highest-risk op, built defensively). **Dry-run by
   DEFAULT** (`--apply` required to write). On apply: snapshots the flat dirs + changed config to

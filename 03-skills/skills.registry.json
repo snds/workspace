@@ -10,9 +10,9 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 253,
+    "total": 254,
     "by_tier": {
-      "cross-cutting": 28,
+      "cross-cutting": 29,
       "foundation": 22,
       "hub": 40,
       "spoke": 163
@@ -4275,6 +4275,34 @@
       "requires": [],
       "hash": "sha256:2fa73da905d6a9ed8b1695d23d07337dcbf83728056750ed8b0bbd5d19b9f1b8"
     },
+    "side-chat-handback": {
+      "path": "03-skills/side-chat-handback/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "workspace-bootstrap",
+        "open-agent-engine"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "handback",
+        "/handback",
+        "end side chat",
+        "close side chat",
+        "hand this back",
+        "hand back",
+        "injection for the main chat",
+        "side chat done"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "hash": "sha256:e90ceddc17cab8cd7ea7a8cd296acaccad7594cdf713af89a4491b5d4c3f0635"
+    },
     "skill-placement": {
       "path": "03-skills/skill-placement/SKILL.md",
       "tier": "cross-cutting",
@@ -6358,6 +6386,9 @@
       "eng-foundations",
       "lead-security-architect",
       "sec-threat-modeling"
+    ],
+    "side-chat-handback": [
+      "side-chat-handback"
     ],
     "skill-placement": [
       "skill-placement"

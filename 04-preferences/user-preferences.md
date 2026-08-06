@@ -1,5 +1,5 @@
 # User Preferences — Sean Sands
-**Last updated:** 2026-07-27
+**Last updated:** 2026-07-30
 
 ---
 
@@ -93,11 +93,17 @@ defaults, applied without being re-asked._
 
 ## Side Detours — Injection Handback
 When a conversation branches into a **side-chat or "by the way" detour** (a tangent off the main
-task), at the END of that detour produce a succinct, clearly-labeled **one-paragraph "injection"
-prompt** — the kind that could be pasted straight into the main task window — summarizing the outcome
-and what it means for the main work, then resume the main task with that outcome folded in. Sean runs
-a main task alongside side detours; without an explicit handback, the detour's result gets lost on
-return to the main thread. Applies to all detours, going forward.
+task), **close it with the handback skill** — do not ask Sean to copy/paste into the parent.
+
+- **Side chat end:** run [[side-chat-handback]] (`/handback`, "end side chat", "hand this back").
+  It writes `06-context/side-chat-inbox.md` (`status: pending`) with a one-paragraph **For the
+  parent** note + on-disk pointers. Optional clipboard. Not a `/session-end`.
+- **Parent pickup:** before continuing substantive work, if that inbox exists and is `pending`,
+  read it, fold **For the parent** in, then mark `consumed` (or delete the file).
+- Open Engine only when the detour left *claimable* leftover work — continuity alone stays in the
+  inbox (desk sticky, not a board ticket).
+
+Full protocol: `03-skills/side-chat-handback/SKILL.md`.
 
 ## Platform Defaults
 - Primary: macOS

@@ -30,6 +30,11 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `workspace brain` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
 | `workspace fix` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
 | `workspace validation` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
+| `handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
+| `/handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
+| `end side chat` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
+| `close side chat` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
+| `hand this back` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
 | `figma plugin` | 03-skills/figma-plugin-dev/SKILL.md |
 | `figma` | 03-skills/figma-canvas-designer/SKILL.md + 03-skills/design-engineer/SKILL.md — real-library-components rule |
 | `design system` | 03-skills/ds-advisor/SKILL.md + design-engineer |
@@ -134,9 +139,10 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `sec-authn-authz` | cross-cutting | `authentication`, `authorization`, `oauth`, `oidc`, `jwt`, `session management` (+8) | `eng-foundations` → `lead-security-architect` → `sec-authn-authz` |
 | `sec-supply-chain` | cross-cutting | `supply chain`, `dependency`, `sbom`, `provenance`, `lockfile`, `secrets` (+6) | `eng-foundations` → `lead-security-architect` → `sec-supply-chain` |
 | `sec-threat-modeling` | cross-cutting | `threat model`, `stride`, `attack tree`, `trust boundary`, `data flow diagram`, `attack surface` (+2) | `eng-foundations` → `lead-security-architect` → `sec-threat-modeling` |
+| `side-chat-handback` | cross-cutting | `handback`, `/handback`, `end side chat`, `close side chat`, `hand this back`, `hand back` (+2) | `side-chat-handback` |
 | `skill-placement` | cross-cutting | `create a skill`, `generate skill`, `make a skill`, `new skill`, `skill placement` | `skill-placement` |
 | `visual-qa-toolkit` | cross-cutting | `visual qa`, `pixel diff`, `visual regression`, `screenshot audit`, `design qa`, `qa audit` (+1) | `lead-visual-qa` → `visual-qa-toolkit` |
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 76 · Registry rows: 40_
+_Curated routes: 81 · Registry rows: 41_

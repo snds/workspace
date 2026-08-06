@@ -305,6 +305,7 @@ context store; it updates the shared one so the next agent inherits an unbroken 
 | State | Holds | Cadence |
 |---|---|---|
 | Active project `SESSION-STATE.md` (its **Live handoff** block) | "pick up exactly here": current focus, working set, last action, next action, open decisions, blocked-on, in-flight/do-not-touch | updated **continuously** + at every handoff |
+| `06-context/side-chat-inbox.md` | mid-session side-chat → parent continuity (one pending paragraph + pointers) | written by `/handback` / [[side-chat-handback]]; parent marks `consumed`. Gitignored. Not a session-end. |
 | `06-context/sessions/<id>.md` fragment | this session's block (a disjoint file per session) | written at session end; compaction folds it into `session-log.md` |
 | `06-context/session-log.md` (+ `session-log-archive.md`) | chronological history, newest-first, attributed; **bounded** (old blocks archived) | folded from fragments; read the **head** only |
 | `06-context/memory/` | durable, non-project facts + decisions | when a durable fact emerges |

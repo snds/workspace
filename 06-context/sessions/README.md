@@ -28,3 +28,10 @@ Summary: …
 
 Transient per-session files (`*.touched`, `*.alive`) are gitignored — only `*.md`
 fragments and this README are tracked.
+
+## Not this folder — side-chat handback
+
+Sibling-thread continuity (side chat → parent, mid-session) uses
+`../side-chat-inbox.md`, not a fragment here. See `03-skills/side-chat-handback/SKILL.md`
+(`/handback`). That inbox is gitignored and overwritten per handback; fragments remain the
+durable session-record path.

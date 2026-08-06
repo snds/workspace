@@ -1,7 +1,7 @@
 ---
 tags: [knowledge-vault, engineering, centric-ui, cloud-dev, debugging]
 created: 2026-07-20
-updated: 2026-07-20
+updated: 2026-08-05
 ---
 
 # Running centric-ui locally against the cloud dev backend
@@ -70,12 +70,12 @@ table in `vite.config.ts` is the only thing deciding where requests land.** Sett
 
 That table has two helpers: `localServiceProxy(port)` (hardcoded localhost) and
 `cloudOrLocalServiceProxy(cloudBaseUrl, port)` (cloud when the env var is set, else the local port). As of
-2026-07-20 the cloud-capable one is applied only to `document-service` and `flavour-provisioning` — the
-latter added with the helper itself in #160 (2026-07-10) for that feature alone. **`record-service`,
-`schema-registry-service` and `workflow-service` remain localhost-only**, so cloud dev is structurally
-impossible for the three services that matter most until they are converted. Swapping them to
-`cloudOrLocalServiceProxy` is non-breaking — each still falls back to its compose port when the env var is
-unset.
+2026-07-20 the cloud-capable one was applied only to `document-service` and `flavour-provisioning`.
+**As of 2026-08-05:** `record-service` and `schema-registry-service` also use
+`cloudOrLocalServiceProxy` (env → cloud; unset → compose ports 9012 / 9011). Without that, Flavour
+provisioning **Tenant inventory** (live record-service probes + schema registry list) returned wall-to-wall
+**HTTP 502** whenever Docker wasn’t running — Vite proxied to dead `127.0.0.1:9011/9012`.
+`workflow-service` remains localhost-only (and still has no usable cloud hostname — see below).
 
 **Path shape is NOT the problem** (worth recording, because it looks like it is): production's
 `server.mjs` proxies these same routes with **no `pathRewrite`** — only `/keycloak-admin` rewrites. The
@@ -98,9 +98,14 @@ one, so candidates can be tested in seconds without credentials:
 
 `localhost` only — `127.0.0.1` is rejected even on the accepted port (PKCE is origin-specific, and
 `app/config/keycloak.ts` normalises `127.0.0.1` → `localhost` for exactly this reason). Leave
-`VITE_KEYCLOAK_REDIRECT_URI` **unset** so it derives from the browser origin, and run the dev server on
-the accepted port: `PORT=3000 npm run dev -- --port 3000` (`scripts/run-dev.mjs` passes argv through to
-`react-router dev`; `PORT` additionally steers its port-cleanup step).
+`VITE_KEYCLOAK_REDIRECT_URI` **unset** so it derives from the browser origin.
+
+**As of 2026-08-05:** `scripts/run-dev.mjs` + `vite.config.ts` auto-bind **port 3000** when
+`VITE_KEYCLOAK_URL` points at `*.centricsoftware.io` (cloud). Local-compose Keycloak still defaults
+to **8082**. Re-probed the same day: `:3000` → HTTP 302 (accepted), `:8082` → `Invalid parameter:
+redirect_uri`. This machine has **no Docker**, so the local-compose Keycloak (which registers 8082)
+cannot be started here — cloud client admin must add `http://localhost:8082/*` before `:8082` works
+against cloud VMS. Override with explicit `PORT` / `--port` when needed.
 
 ---
 
