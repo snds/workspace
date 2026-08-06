@@ -1,7 +1,7 @@
 ---
 tags: [workspace, infrastructure, claude-code, obsidian, git, drive, ssh, github, multi-identity, sync-monitoring]
 created: 2026-04-28
-updated: 2026-07-30
+updated: 2026-08-05
 status: stable
 confidence: high
 sources: [session-log 2026-04-23, session-log 2026-04-25, session-log 2026-04-27, session-log 2026-05-07, session-log 2026-07-09]
@@ -70,9 +70,12 @@ All Claude Code lifecycle events route through a single Python file: `.claude/ho
 - `SessionStart` — pre-parsed ritual data + context heads + knowledge index; heals gitdir pointer
   and exec bits; worktree cleanup; on `source: compact|resume` injects a compact re-orientation
   block instead (skills discipline + knowledge index)
-- `UserPromptSubmit` — trigger routing from THREE sources at runtime (dispatcher curated tables,
+- `UserPromptSubmit` — trigger routing from Layer 0 (dispatcher curated tables,
   `skills.registry.json` frontmatter triggers, `_INDEX.md` `Triggers:` lines), emitted in tiered
-  order curated → knowledge → registry → index with per-tier caps and dedupe-by-target (FX-2)
+  order curated → knowledge → registry → index with per-tier caps and dedupe-by-target (FX-2).
+  When Layer 0 yields fewer than 2 unique targets, a Layer-1 **lexical fallback** runs
+  `09-tools/vault-retrieve.py --cached` (cap 2) and appends path hints. SessionStart refreshes
+  the FTS index so the cached hot path stays current.
 - `PreToolUse` (matcher `use_figma`) — the Figma design-judgment gate: first call per session is
   denied once with the loaded-lens checklist; the retry passes
 - `Stop` — stages session-log changes

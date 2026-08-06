@@ -19,7 +19,8 @@ multi-agent handoff live in AGENTS.md — not duplicated here._
 - **Skills:** Cursor has no Claude slash commands. Route via
   [trigger-routes.md](02-shared-references/trigger-routes.md) (curated) then
   `03-skills/skills.registry.json` (`load_chains`, foundation→hub→spoke). Project Task agents live in
-  `.cursor/agents/` and encode the same load chains.
+  `.cursor/agents/` and encode the same load chains. When triggers miss, lexical fallback:
+  `python3 09-tools/vault-retrieve.py "<query>"` (paths + TL;DRs; does not replace Layer 0).
 - **Continuity:** on entry, read the active project's `SESSION-STATE.md` **Live handoff**; on
   handoff/pause/end, update it + write a `06-context/sessions/<id>.md` fragment (not a direct
   `session-log.md` append). Stamp `Agent · Surface · Machine`.

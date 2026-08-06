@@ -69,3 +69,20 @@ announces itself.
 `/health` (workspace) and `wsx health` (generated workspaces) flag **orphan notes** (nothing
 links to them), **dangling typed edges** (`relations:` pointing at a missing note), and **stale
 claims** (`#stale` tags or `as of` dates past horizon). Run it as part of `/optimize`.
+
+## Retrieving it
+
+Trigger routing (Layer 0) is still the high-precision hot path. When vocabulary misses, use
+Layer-1 lexical retrieval:
+
+```
+python3 09-tools/vault-retrieve.py "<free text>"
+```
+
+It FTS-searches frameworks / references / skills / preferences / memory / knowledge, prefers
+`## For future agent` TL;DRs as snippets, and can one-hop expand via `relations:` and skill
+`## Related`. Index is machine-local (`.claude/state/vault-retrieve/`), rebuilt from git.
+
+**Claude Code wiring:** SessionStart refreshes the index; UserPromptSubmit runs
+`--cached` as a fallback tier only when Layer 0 under-fires (< 2 unique targets), cap 2.
+**Cursor / other surfaces:** call the CLI on demand (no prompt-hook equivalent).
