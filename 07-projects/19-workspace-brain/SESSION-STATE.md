@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-07-30 — two parallel passes landed: Cursor multi-agent hardening + Open Agent Engine live with the backlog migrated_
+_Last updated: 2026-08-05 — Layer-1 vault-retrieve shipped + dispatcher lexical fallback wired_
 
 ---
 
@@ -8,30 +8,28 @@ _Last updated: 2026-07-30 — two parallel passes landed: Cursor multi-agent har
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: two parallel passes both landed 2026-07-30 — **Cursor multi-agent hardening** (trigger-routes shared source, Cursor hooks, `.cursor/agents/` hubs, BEACON in User Rules, compile-cursor-rules archived, adapters/SURFACES/workspaces refreshed) and the **Open Agent Engine**, now live on both lanes, all four smoke tests passed, wired into the session rituals, with 38 of 43 backlog items migrated. Both are committed and pushed.
-- **Working set**: clean. Nothing uncommitted.
-- **Last action (2026-07-30):** A third parallel pass closed out: a scheduled runner was built and then **withdrawn** on discovering `4dee209` had already scoped and rejected one — and on testing, that rejection was right. Two verified findings folded into the skill, and a "Headless Claude Code" section added to [[workspace-infrastructure]]. By Claude Opus 5 · Cursor (Claude Code extension) · Work MBP. *Prior action:* migrated 38 of 43 `project-context.md` items into the engine pointer-shaped, fragments folded.
-- **Unattended runner — precondition, not a polish item.** `--strict-mcp-config` genuinely isolates a lane (probed: `SERVERS: linear-personal` / `C8_PRESENT: no`), but **`--allowed-tools` grants rather than restricts** — a session scoped to one MCP server still held `Bash`, `Edit`, `Write`, `Agent`, `CronCreate`. Since issue bodies are untrusted input, any unattended runner built that way is a prompt-injection path to a shell. Real restriction needs `--tools` / `--disallowed-tools` (both exist, neither verified). If scheduling is ever revisited, that is the gate.
-- **Next action:** (1) Review `personal:SEA-11` — trigger-routes is delivered and committed, sitting in `Agent Review` solely because it moved single-source authority from `dispatcher.py` to `trigger-routes.json` and deserves one look. (2) Decide `personal:SEA-32` — a seventh status vs a priority-aware claim rule. (3) Give `^pc-07` / `^pc-11` machine-local homes so they can be filed without writing substance to the employer board; resolve the lane ambiguity on `^pc-30` / `^pc-41`. (4) Optionally run full `workspace-doctor.sh` to clear the remaining `^pc-03` partial.
-- **Open decisions:** `personal:SEA-32` — the six statuses have no "someday" bucket and the claim rule is priority-blind, so a deferred item gets claimed ahead of newer work. Harmless while runs are human-triggered and report-only; real the moment anything is unattended.
+- **Current focus**: Layer-1 lexical vault retrieval is live — `09-tools/vault-retrieve.py` (stdlib FTS5) plus Claude dispatcher fallback when Layer 0 under-fires. Feature commit `55b9f2a`.
+- **Working set**: session-end fragment + this baton update (then commit/push).
+- **Last action (2026-08-05):** Built `vault-retrieve.py` (chunked FTS, graph expand, `--cached`); whitelisted in `.gitignore`; wired SessionStart index refresh + UserPromptSubmit lexical tier (min 2 Layer-0 targets, cap 2). Documented in ontology, vault-graph-conventions, infrastructure, README, CURSOR.md. By Cursor Grok 4.5 · Cursor · Personal MBP.
+- **Unattended runner — precondition, not a polish item.** Unchanged from 2026-07-30: `--allowed-tools` grants rather than restricts; real restriction needs `--tools` / `--disallowed-tools` before any scheduled runner.
+- **Next action:** (1) Smoke the fallback in a live Claude Code session (SessionStart rebuild + paraphrase under-fire inject). (2) Optional golden-set eval before any dense/embedding Layer 2. (3) Prior queue still open: review `personal:SEA-11`; decide `personal:SEA-32`; machine-local homes for `^pc-07` / `^pc-11`.
+- **Open decisions:** `personal:SEA-32` (someday bucket vs priority-aware claim). Whether dense retrieval earns a capability-registry entry (default: no until lexical gaps are measured).
 - **Blocked on:** nothing.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config (`07-projects/02-centricPLM/open-engine.local.md` — gitignored). **Do not delete anchored items from `project-context.md`** — each `^pc-NN` is the sole pointer for a Linear issue; deleting one orphans it. That file is now the substance store.
-- **Agent thread**: `Composer / Cursor / Work MBP (2026-07-30): Cursor multi-agent hardening shipped` → `Claude Opus 5 / Cursor (Claude Code) / Work MBP (2026-07-30): engine live + backlog migrated; next = review SEA-11, decide SEA-32`.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config (`07-projects/02-centricPLM/open-engine.local.md` — gitignored). **Do not delete anchored items from `project-context.md`**.
+- **Agent thread**: `… → Claude Opus 5 / Cursor (Claude Code) / Work MBP (2026-07-30): engine live` → `Cursor Grok 4.5 / Cursor / Personal MBP (2026-08-05): vault-retrieve + lexical fallback shipped @ 55b9f2a`.
 
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
-- **Machine**: `CS-K746DRWXY1` (Work MacBook Pro, main)
+- **Machine**: `Voyager-2.local` (Personal MacBook Pro) this session; Work MBP remains the other primary.
 - **OS context**: macOS (Darwin 25.5.0)
-- **Workspace root**: `/Users/sean.sands/Projects/Workspace`
-- **Project root**: `/Users/sean.sands/Projects/Workspace/07-projects/19-workspace-brain`
+- **Workspace root**: resolve via nearest `AGENTS.md` (this checkout)
+- **Project root**: `07-projects/19-workspace-brain`
 
 ### VCS state
-- **Branch**: `main` @ `d252cda`, in sync with `origin/main`
-- **Committed + pushed 2026-07-29**: `8d42b36` (the engine — skill, lane index, personal config, detector, dispatcher wiring) and `d252cda` (the lane-isolation correction). The c8 lane config was correctly excluded from both — it stays gitignored.
-- **Uncommitted**: the ritual-integration edits only — `CLAUDE.md` (engine line in the session-start ritual), `.claude/skills/session-end/SKILL.md` (Step 5.5), `03-skills/open-agent-engine/SKILL.md` (Ritual integration section), `06-context/open-engine/personal.md` (the no-timer decision), plus the regenerated registry and this file.
-- **Note for concurrent sessions**: an earlier revision of this block reported 11 uncommitted entries at `c775341` and "nothing committed yet". That was accurate when written and is now superseded — verify against `git log` rather than this block if the two disagree.
-- **Test state at last check (2026-07-29 17:05)**: all five green — `validate-integrity` 617 files · `validate-links` 253 skills · `validate-capabilities` 7 caps / 13 requirements · `validate-workspace` · `vault-health` 0 errors across 82 notes. `linear-lanes.py` compiles; both lanes report `ok`, `--check` exits 0.
+- **Branch**: `main` @ `55b9f2a` (vault-retrieve feature; ahead of origin until session push)
+- **Uncommitted at baton write**: this SESSION-STATE + session fragment only
+- **Test state at last check (2026-08-05):** vault-retrieve rebuild ~610 docs; simulated dispatcher — rich Layer 0 skips lexical; under-fire paraphrase emits ≤2 lexical hints. Full validator suite not re-run this session.
 
 ### Open work and paused threads
 - **Currently in progress**: nothing. Open Agent Engine is complete on both the workspace side and the Linear side, and now wired into the session rituals (session-start read, session-end filing).
@@ -47,6 +45,21 @@ _Last updated: 2026-07-30 — two parallel passes landed: Cursor multi-agent har
 ---
 
 ## Session history (append-only)
+
+### 2026-08-05 — checkpoint (Layer-1 vault retrieve)
+
+**Focus this session**: Enrich workspace tooling with Layer-1 RAG (lexical FTS) + wire dispatcher fallback.
+**Machine**: Personal MacBook Pro (`Voyager-2.local`) · Cursor Grok 4.5 · Cursor
+**Stopped because**: Sean ended session after feature commit.
+
+**Accomplishments**:
+- `09-tools/vault-retrieve.py` — stdlib FTS5 index/query, graph expand, `--cached` hot path
+- Dispatcher: SessionStart rebuild; UserPromptSubmit lexical fallback when Layer 0 < 2 unique targets (cap 2)
+- Docs: ontology, vault-graph-conventions, infrastructure, README, CURSOR.md
+- Feature committed as `55b9f2a`
+
+**Next resumption needs**:
+- Live Claude Code smoke of the fallback; optional golden-set before dense Layer 2
 
 ### 2026-07-29 17:05 — checkpoint (Open Agent Engine complete)
 

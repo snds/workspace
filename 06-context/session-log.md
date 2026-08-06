@@ -28,6 +28,36 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-08-05 — Layer-1 vault retrieve + dispatcher fallback
+
+SessionID: 2026-08-05-voyager-5d6242
+--- SESSION BLOCK ---
+Date: 2026-08-05
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.5
+Project(s): 19-workspace-brain
+Summary: Shipped Layer-1 lexical vault retrieval (`09-tools/vault-retrieve.py`, stdlib FTS5) and wired it as a capped Claude dispatcher fallback when Layer 0 under-fires; Cursor gets CLI-on-demand only.
+Artifacts:
+  - 09-tools/vault-retrieve.py — FTS index/rebuild/query + graph expand; machine-local `.claude/state/vault-retrieve/`
+  - .claude/hooks/dispatcher.py — SessionStart index refresh; UserPromptSubmit lexical tier (min 2 Layer-0 targets, cap 2, `--cached`)
+Decisions:
+  - Triggers stay primary; lexical is gap-fill only (not a peer flood on every prompt)
+  - Index personal vault layers only — no `07-projects/` / employer surfaces
+  - Cursor has no prompt-hook equivalent → document CLI; do not fake a dispatcher tier there
+Pending added:
+  - Optional: golden-set eval of trigger misses vs lexical baseline
+  - Optional: dense/embedding path as capability-registry entry with degrade→lexical
+Pending resolved:
+  - (none from prior baton; this session was additive tooling)
+Next:
+  - Prove lexical fallback in a live Claude Code session (SessionStart rebuild + under-fire inject)
+  - Optionally design dense Layer 2 only after golden-set shows lexical gaps worth the capability
+  - Prior baton still open: review personal:SEA-11; decide personal:SEA-32
+Git: 55b9f2a (feature) + this session commit
+--- END BLOCK ---
+
+
 ### 2026-08-03 — Domain rigor stack hardening
 
 SessionID: 2026-08-03-voyager-r7k2
