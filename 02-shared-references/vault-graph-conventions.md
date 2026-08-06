@@ -84,5 +84,6 @@ It FTS-searches frameworks / references / skills / preferences / memory / knowle
 `## Related`. Index is machine-local (`.claude/state/vault-retrieve/`), rebuilt from git.
 
 **Claude Code wiring:** SessionStart refreshes the index; UserPromptSubmit runs
-`--cached` as a fallback tier only when Layer 0 under-fires (< 2 unique targets), cap 2.
+`--cached` (stopwords + OR min-overlap) only when Layer 0 under-fires
+(< 2 unique targets), cap 2. Golden set: `python3 09-tools/vault-retrieve.py --eval`.
 **Cursor / other surfaces:** call the CLI on demand (no prompt-hook equivalent).

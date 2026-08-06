@@ -1137,8 +1137,9 @@ def _lexical_fallback_hits(prompt: str, limit: int = LEXICAL_FALLBACK_LIMIT) -> 
     """Query vault-retrieve --cached. Returns (path, hint) pairs. Fail-open."""
     if not LEXICAL_TOOL.exists() or not prompt.strip():
         return []
-    # Skip trivially short / non-substantive prompts (acks, yes/no).
-    if len(re.findall(r"[A-Za-z0-9]{3,}", prompt)) < 2:
+    # Skip short/ack prompts. Stopwords + OR min-overlap live in vault-retrieve;
+    # this is only a cheap pre-gate before the subprocess.
+    if len(re.findall(r"[A-Za-z0-9]{4,}", prompt)) < 2:
         return []
     try:
         proc = subprocess.run(

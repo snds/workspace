@@ -1,0 +1,88 @@
+{
+  "spec_version": "1",
+  "description": "Golden set for Layer-1 lexical vault retrieval. expect_any = path substrings; at least one hit path must contain one. expect_empty = no hits (or dispatcher should skip).",
+  "cases": [
+    {
+      "id": "contracts-paraphrase",
+      "query": "name the contract in plain english before writing the code",
+      "mode": "cli",
+      "expect_any": ["contracts-first-delivery"]
+    },
+    {
+      "id": "silent-fence",
+      "query": "fence that returns None hides breakage",
+      "mode": "cli",
+      "expect_any": ["silent-degradation-in-fenced-layers"]
+    },
+    {
+      "id": "externalize",
+      "query": "don't keep durable facts only inside the model memory",
+      "mode": "cli",
+      "expect_any": ["decision-externalize-everything-to-workspace"]
+    },
+    {
+      "id": "multi-session",
+      "query": "how do we keep multi agent sessions from colliding on the log",
+      "mode": "cli",
+      "expect_any": [
+        "multi-session-workspace-resilience",
+        "08-workspace-contribution-framework",
+        "compact-sessions"
+      ]
+    },
+    {
+      "id": "multimodal-rag",
+      "query": "clip style image text search multimodal rag",
+      "mode": "cli",
+      "expect_any": ["vis-vlm-multimodal"]
+    },
+    {
+      "id": "vault-graph-preamble",
+      "query": "for future agent retrieval preamble typed relations",
+      "mode": "cli",
+      "expect_any": ["vault-graph-conventions"]
+    },
+    {
+      "id": "open-engine-isolation",
+      "query": "connection isolation is not runner isolation for agent queue",
+      "mode": "cli",
+      "expect_any": ["agent-work-queue-boundaries", "open-agent-engine"]
+    },
+    {
+      "id": "externalize-titleish",
+      "query": "externalize everything durable to the workspace",
+      "mode": "cli",
+      "expect_any": ["decision-externalize-everything-to-workspace", "CRITICAL_FACTS"]
+    },
+    {
+      "id": "dispatch-silent-fence",
+      "query": "fence that returns None hides breakage",
+      "mode": "dispatch",
+      "expect_any": ["silent-degradation-in-fenced-layers"]
+    },
+    {
+      "id": "dispatch-isolation",
+      "query": "connection isolation is not runner isolation for agent queues",
+      "mode": "dispatch",
+      "expect_any": ["agent-work-queue-boundaries", "open-agent-engine"]
+    },
+    {
+      "id": "neg-procedural-chatter",
+      "query": "Lets do the items that are left for this",
+      "mode": "dispatch",
+      "expect_empty": true
+    },
+    {
+      "id": "neg-ack",
+      "query": "ok thanks",
+      "mode": "dispatch",
+      "expect_empty": true
+    },
+    {
+      "id": "neg-vague",
+      "query": "what about the other thing",
+      "mode": "dispatch",
+      "expect_empty": true
+    }
+  ]
+}

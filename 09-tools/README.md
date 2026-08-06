@@ -70,13 +70,16 @@ python3 09-tools/vault-retrieve.py --rebuild
 python3 09-tools/vault-retrieve.py --check
 python3 09-tools/vault-retrieve.py "token frugal" --json
 python3 09-tools/vault-retrieve.py "…" --cached   # query only; no rebuild
+python3 09-tools/vault-retrieve.py "…" --strict   # AND-only (dispatcher hot path)
+python3 09-tools/vault-retrieve.py --eval         # golden set (exit 1 on FAIL)
 ```
 
 Auto-rebuilds when the corpus fingerprint drifts (unless `--cached`). Stdlib-only (sqlite3 FTS5).
+Stopwords + `--strict` keep procedural chatter from OR-matching noise.
 
-Claude Code: SessionStart runs `--rebuild --quiet`; UserPromptSubmit uses `--cached` as a
-Layer-1 fallback when Layer 0 triggers yield fewer than 2 unique targets (cap 2). Cursor and
-other surfaces call this CLI on demand.
+Claude Code: SessionStart runs `--rebuild --quiet`; UserPromptSubmit uses
+`--cached` (stopwords + OR min-overlap; no graph expand) when Layer 0 yields
+fewer than 2 unique targets (cap 2). Cursor and other surfaces call the CLI on demand.
 
 ## vault-health.py
 

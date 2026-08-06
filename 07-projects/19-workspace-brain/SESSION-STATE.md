@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-08-05 — Layer-1 vault-retrieve shipped + dispatcher lexical fallback wired_
+_Last updated: 2026-08-05 — vault-retrieve golden-set green; dense Layer 2 deferred_
 
 ---
 
@@ -8,15 +8,15 @@ _Last updated: 2026-08-05 — Layer-1 vault-retrieve shipped + dispatcher lexica
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Layer-1 lexical vault retrieval is live — `09-tools/vault-retrieve.py` (stdlib FTS5) plus Claude dispatcher fallback when Layer 0 under-fires. Feature commit `55b9f2a`.
-- **Working set**: session-end fragment + this baton update (then commit/push).
-- **Last action (2026-08-05):** Built `vault-retrieve.py` (chunked FTS, graph expand, `--cached`); whitelisted in `.gitignore`; wired SessionStart index refresh + UserPromptSubmit lexical tier (min 2 Layer-0 targets, cap 2). Documented in ontology, vault-graph-conventions, infrastructure, README, CURSOR.md. By Cursor Grok 4.5 · Cursor · Personal MBP.
-- **Unattended runner — precondition, not a polish item.** Unchanged from 2026-07-30: `--allowed-tools` grants rather than restricts; real restriction needs `--tools` / `--disallowed-tools` before any scheduled runner.
-- **Next action:** (1) Smoke the fallback in a live Claude Code session (SessionStart rebuild + paraphrase under-fire inject). (2) Optional golden-set eval before any dense/embedding Layer 2. (3) Prior queue still open: review `personal:SEA-11`; decide `personal:SEA-32`; machine-local homes for `^pc-07` / `^pc-11`.
-- **Open decisions:** `personal:SEA-32` (someday bucket vs priority-aware claim). Whether dense retrieval earns a capability-registry entry (default: no until lexical gaps are measured).
+- **Current focus**: Layer-1 vault retrieval **closed out** for this thread — golden set 13/13, dispatcher smoke green, dense Layer 2 deferred ([[decision-defer-dense-vault-retrieval]]).
+- **Working set**: golden fixture + stopword/OR hardening + decision memory (commit next).
+- **Last action (2026-08-05 evening):** Added `vault-retrieve.golden.json` + `--eval`; stopwords + OR min-overlap; dispatcher stays `--cached` (not AND-only `--strict`); SessionStart refresh + under-fire/rich/chatter smokes passed in-process. By Cursor Grok 4.5 · Cursor · Personal MBP.
+- **Unattended runner — precondition, not a polish item.** Unchanged: need `--tools` / `--disallowed-tools` before any scheduled runner.
+- **Next action:** (1) Machine-local homes for `^pc-07` / `^pc-11`; resolve lane ambiguity on `^pc-30` / `^pc-41`. (2) Reopen dense retrieval only if `vault-retrieve.py --eval` fails on real paraphrase gaps.
+- **Open decisions:** none from the SEA-11 / SEA-32 pair — both closed 2026-08-05 (`Someday` status chosen; skill updated to seven statuses).
 - **Blocked on:** nothing.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config (`07-projects/02-centricPLM/open-engine.local.md` — gitignored). **Do not delete anchored items from `project-context.md`**.
-- **Agent thread**: `… → Claude Opus 5 / Cursor (Claude Code) / Work MBP (2026-07-30): engine live` → `Cursor Grok 4.5 / Cursor / Personal MBP (2026-08-05): vault-retrieve + lexical fallback shipped @ 55b9f2a`.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` items from `project-context.md`**.
+- **Agent thread**: `… → vault-retrieve shipped @ 55b9f2a` → `Cursor Grok 4.5 / Cursor / Personal MBP (2026-08-05): golden-set 13/13 + dense deferred`.
 
 
 ### Environment

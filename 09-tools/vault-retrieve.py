@@ -510,7 +510,27 @@ def cached_db(root: Path) -> Path | None:
 
 # ---- query -----------------------------------------------------------------
 
-def _query_terms(raw: str) -> list[str]:
+# Dropped from FTS queries so procedural chatter ("lets do the items left")
+# cannot OR-match random notes on "left"/"items"/"this".
+STOPWORDS = {
+    "a", "an", "the", "and", "or", "but", "if", "then", "else", "when", "where",
+    "what", "which", "who", "whom", "how", "why", "is", "are", "was", "were",
+    "be", "been", "being", "have", "has", "had", "do", "does", "did", "doing",
+    "to", "of", "in", "on", "at", "for", "from", "by", "with", "as", "into",
+    "about", "over", "after", "before", "between", "out", "up", "down", "off",
+    "this", "that", "these", "those", "it", "its", "we", "you", "they", "them",
+    "our", "your", "their", "my", "me", "i", "he", "she", "his", "her",
+    "not", "no", "nor", "so", "than", "too", "very", "just", "also", "only",
+    "can", "could", "should", "would", "will", "may", "might", "must",
+    "let", "lets", "let's", "please", "thanks", "thank", "ok", "okay", "yes",
+    "nope", "here", "there", "now", "next", "last", "left", "right", "still",
+    "more", "some", "any", "all", "each", "every", "other", "another",
+    "thing", "things", "item", "items", "stuff", "work", "need", "needs",
+    "want", "get", "got", "make", "made", "use", "using", "used",
+}
+
+
+def _query_terms(raw: str, *, drop_stopwords: bool = True) -> list[str]:
     phrases = re.findall(r'"([^"]+)"', raw)
     rest = re.sub(r'"[^"]+"', " ", raw)
     parts: list[str] = []
@@ -520,9 +540,19 @@ def _query_terms(raw: str) -> list[str]:
             parts.append('"' + p.replace('"', "") + '"')
     for t in re.findall(r"[A-Za-z0-9_./+-]{2,}", rest):
         safe = re.sub(r"[^\w./+-]", "", t)
-        if safe:
-            parts.append(safe)
+        if not safe:
+            continue
+        if drop_stopwords and safe.lower() in STOPWORDS:
+            continue
+        if drop_stopwords and len(safe) < 3:
+            continue
+        parts.append(safe)
     return parts
+
+
+def contentful_terms(raw: str) -> list[str]:
+    """Bare contentful tokens (no phrases) for overlap checks / gates."""
+    return [t for t in _query_terms(raw) if not t.startswith('"')]
 
 
 def fts_query(raw: str, joiner: str = " AND ") -> str:
@@ -556,6 +586,11 @@ def snippet_for(kind: str, heading: str, body: str, query: str) -> str:
     return (prefix + flat)[:280]
 
 
+def _term_overlap(text: str, terms: list[str]) -> int:
+    low = text.lower()
+    return sum(1 for t in terms if t.lower() in low)
+
+
 def retrieve(
     root: Path,
     query: str,
@@ -563,13 +598,20 @@ def retrieve(
     expand: bool = True,
     quiet: bool = False,
     cached: bool = False,
+    strict: bool = False,
 ) -> list[dict]:
+    """Retrieve ranked paths.
+
+    strict=True (dispatcher hot path): AND-only, no OR fill — avoids single-term
+    noise when procedural prompts under-fire Layer 0.
+    """
     if cached:
         db_path = cached_db(root)
         if db_path is None:
             return []
     else:
         db_path = ensure_fresh(root, quiet=quiet)
+    terms = contentful_terms(query)
     fts_and = fts_query(query, " AND ")
     if not fts_and:
         return []
@@ -593,9 +635,20 @@ def retrieve(
             except sqlite3.OperationalError:
                 return []
 
-        def _absorb(rows: list, via: str, score_pad: float, into: dict[str, dict]) -> None:
+        def _absorb(
+            rows: list,
+            via: str,
+            score_pad: float,
+            into: dict[str, dict],
+            *,
+            min_overlap: int = 0,
+        ) -> None:
             for r in rows:
                 path = r["path"]
+                if min_overlap and terms:
+                    blob = f"{r['title']} {r['heading']} {r['body'][:800]}"
+                    if _term_overlap(blob, terms) < min_overlap:
+                        continue
                 bonus = LAYER_BONUS.get(r["layer"], 0.0)
                 if r["kind"] == "preamble":
                     bonus += 0.15
@@ -617,13 +670,14 @@ def retrieve(
                         "via": via,
                     }
 
-        # Keep AND hits; fill remaining slots from OR (don't discard strict matches).
+        # Keep AND hits; optionally fill from OR (interactive CLI only).
         best: dict[str, dict] = {}
         _absorb(_run(fts_and), "fts", 0.0, best)
-        if len(best) < limit:
+        if not strict and len(best) < limit and len(terms) >= 2:
             fts_or = fts_query(query, " OR ")
             if fts_or and fts_or != fts_and:
-                _absorb(_run(fts_or), "fts-or", 0.4, best)
+                # OR hits must still overlap ≥2 contentful terms.
+                _absorb(_run(fts_or), "fts-or", 0.4, best, min_overlap=2)
 
         ranked = sorted(best.values(), key=lambda x: x["score"])[:limit]
 
@@ -716,6 +770,58 @@ def cmd_check(root: Path) -> int:
     return 0 if fresh else 1
 
 
+def run_eval(root: Path, golden_path: Path, quiet: bool = False) -> int:
+    """Run the golden set. Exit 0 iff all cases pass."""
+    ensure_fresh(root, quiet=quiet)
+    data = json.loads(golden_path.read_text(encoding="utf-8"))
+    cases = data.get("cases") or []
+    passed = failed = 0
+    lines: list[str] = []
+    for case in cases:
+        cid = case.get("id", "?")
+        query = case.get("query", "")
+        mode = case.get("mode", "cli")
+        # dispatch ≈ dispatcher hot path: no graph expand, OR allowed w/ overlap
+        # strict = AND-only (optional probe; not the default hot path)
+        strict = mode == "strict"
+        expand = mode == "cli" and not case.get("no_expand", False)
+        hits = retrieve(
+            root,
+            query,
+            limit=int(case.get("limit", 6)),
+            expand=expand,
+            quiet=True,
+            strict=strict,
+        )
+        paths = [h["path"] for h in hits]
+        expect_empty = bool(case.get("expect_empty"))
+        expect_any = case.get("expect_any") or []
+        ok = False
+        detail = ""
+        if expect_empty:
+            ok = len(paths) == 0
+            detail = "hits=" + (",".join(paths[:3]) if paths else "∅")
+        else:
+            ok = any(any(sub in p for p in paths) for sub in expect_any)
+            detail = f"want_any={expect_any} got={paths[:4]}"
+        if ok:
+            passed += 1
+            lines.append(f"  PASS  {cid}")
+        else:
+            failed += 1
+            lines.append(f"  FAIL  {cid}  ({detail})")
+    total = passed + failed
+    print(f"vault-retrieve --eval: {passed}/{total} passed")
+    for line in lines:
+        print(line)
+    if failed:
+        print(
+            "_Dense Layer 2 is not justified by this suite until lexical FAIL "
+            "cases are paraphrase gaps that stopwords/strict cannot fix._"
+        )
+    return 0 if failed == 0 else 1
+
+
 def format_text(hits: list[dict]) -> str:
     if not hits:
         return "vault-retrieve: no matches."
@@ -752,6 +858,18 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Query only; never rebuild (empty if index missing/incompatible)",
     )
+    ap.add_argument(
+        "--strict",
+        action="store_true",
+        help="AND-only (no OR fill). Used by the dispatcher hot path.",
+    )
+    ap.add_argument(
+        "--eval",
+        nargs="?",
+        const="09-tools/vault-retrieve.golden.json",
+        metavar="GOLDEN.json",
+        help="Run golden-set eval (default: 09-tools/vault-retrieve.golden.json)",
+    )
     ap.add_argument("--json", action="store_true", help="JSON output")
     ap.add_argument("--paths-only", action="store_true", help="Print paths only")
     ap.add_argument("--quiet", action="store_true", help="Suppress rebuild chatter")
@@ -766,6 +884,14 @@ def main(argv: list[str] | None = None) -> int:
         return rebuild(root, quiet=args.quiet)
     if args.check:
         return cmd_check(root)
+    if args.eval is not None:
+        golden = Path(args.eval)
+        if not golden.is_absolute():
+            golden = root / golden
+        if not golden.exists():
+            print(f"vault-retrieve: golden file missing: {golden}", file=sys.stderr)
+            return 2
+        return run_eval(root, golden, quiet=args.quiet)
     if not args.query:
         ap.print_help()
         return 2
@@ -777,6 +903,7 @@ def main(argv: list[str] | None = None) -> int:
         expand=not args.no_expand,
         quiet=args.quiet,
         cached=args.cached,
+        strict=args.strict,
     )
     if args.paths_only:
         for h in hits:
