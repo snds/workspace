@@ -1,5 +1,6 @@
 ---
 title: LCARS Generative Interface
+aliases: [20-lcars-generative-interface]
 type: project
 status: Planning
 triggers: [lcars, generative lcars, okudagram, scene ir]
