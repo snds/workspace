@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-08-05 — vault-retrieve golden-set green; dense Layer 2 deferred_
+_Last updated: 2026-08-07 — first harness-map landed (Cursor + workspace-core); stamp written_
 
 ---
 
@@ -8,28 +8,28 @@ _Last updated: 2026-08-05 — vault-retrieve golden-set green; dense Layer 2 def
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Substack enrichments **absorbed** — Nate harness ops + Curtis DS ops knowledge; skills/frameworks/adapters patched. Harness-map / mission-fit live. No fake `harness-map.stamp` until a real map runs.
-- **Working set**: `08-knowledge/cross-domain/nate-jones-harness-enrichments.md`, `08-knowledge/design/nathan-curtis-ds-ops-substack.md`, patches to optimize / open-agent-engine / harness-map / mission-fit / workspace-bootstrap / fw06 / Proofboard / CURSOR+CLAUDE adapters.
-- **Last action (2026-08-07):** Merged `origin/main` (vault-retrieve) + harness commit pushed; absorbed all enrichment brief landings. By Cursor Grok 4.5 · Cursor · Work MBP.
-- **Unattended runner — precondition, not a polish item.** Unchanged: need `--tools` / `--disallowed-tools` before any scheduled runner.
-- **Next action:** First **`/harness-map`** on Cursor+workspace-core (writes stamp). Optional: mission-fit on one unreliable job. Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
-- **Open decisions:** Whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat).
-- **Blocked on:** nothing.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` items from `project-context.md`**.
-- **Agent thread**: `… → merge @ 0a97511` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-07): enrichments absorbed`.
+- **Current focus**: First **harness-map** complete (read-only). Report + stamp live. Approve numbered recs before any clean.
+- **Working set**: `07-projects/19-workspace-brain/reports/harness-map_v1.0_2026-08-07.md`, `harness-map.stamp`, WIP commit `97bb259` (session-log compaction + Figma density knowledge).
+- **Last action (2026-08-07):** Finalized stashed WIP + committed; ran `/harness-map` (Cursor + workspace-core); wrote stamp. By Cursor Grok 4.5 · Cursor · Work MBP.
+- **Unattended runner — precondition, not a polish item.** Unchanged: need `--tools` / `--disallowed-tools` before any scheduled runner (map rec #6).
+- **Next action:** Sean approve harness-map recs (esp. **#1** index orphans → green `validate-workspace`, **#2** project-context shrink). Optional: [[mission-fit]] on one unreliable “done”. Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
+- **Open decisions:** Whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat). How aggressively to thin Cursor always-on duplication (map rec #3).
+- **Blocked on:** nothing for mapping; cleans blocked on Sean approval of recommendation numbers.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` items from `project-context.md`**. Do not auto-apply harness-map retires.
+- **Agent thread**: `… → enrichments @ 2388c3b` → `WIP @ 97bb259` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-07): harness-map v1.0 + stamp`.
 
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
-- **Machine**: `Voyager-2.local` (Personal MacBook Pro) this session; Work MBP remains the other primary.
-- **OS context**: macOS (Darwin 25.5.0)
+- **Machine**: Work MacBook Pro (`CS-K746DRWXY1`) this session; Personal MBP remains the other primary.
+- **OS context**: macOS (Darwin 25.6.0)
 - **Workspace root**: resolve via nearest `AGENTS.md` (this checkout)
 - **Project root**: `07-projects/19-workspace-brain`
 
 ### VCS state
-- **Branch**: `main` @ `55b9f2a` (vault-retrieve feature; ahead of origin until session push)
-- **Uncommitted at baton write**: this SESSION-STATE + session fragment only
-- **Test state at last check (2026-08-05):** vault-retrieve rebuild ~610 docs; simulated dispatcher — rich Layer 0 skips lexical; under-fire paraphrase emits ≤2 lexical hints. Full validator suite not re-run this session.
+- **Branch**: `main` @ `97bb259` (ahead of origin until map/handoff commit + push)
+- **Uncommitted at baton write**: harness-map report + stamp + this SESSION-STATE
+- **Test state at last check (2026-08-07):** integrity + links green; **`validate-workspace` FAILED** (9 INDEX/MEMORY orphans — map rec #1).
 
 ### Open work and paused threads
 - **Currently in progress**: nothing. Open Agent Engine is complete on both the workspace side and the Linear side, and now wired into the session rituals (session-start read, session-end filing).
