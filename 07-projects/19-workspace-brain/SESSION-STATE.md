@@ -8,15 +8,15 @@ _Last updated: 2026-08-07 — harness-map recs #1–#3 + #6 applied; stamp live_
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Harness-map recommendations **applied** (#1 index orphans, #2 project-context thin + detail/registry split, #3 CLAUDE/Cursor always-on point-not-paste, #6 unattended hard gate). #4/#5/#7/#8 left as Keep/Probation (no clean).
-- **Working set**: `project-context.md` stubs + `project-context-detail.md` + `project-registry.md`; `09-tools/check-unattended-runner-gate.py`; thinned `CLAUDE.md`; report `harness-map_v1.0_2026-08-07.md`.
-- **Last action (2026-08-07):** Applied map recs; validate; commit; push. By Cursor Grok 4.5 · Cursor · Work MBP.
+- **Current focus**: Harness-map cycle **closed** — #1–#3+#6 applied; #4/#5/#7/#8 accepted standing (Sean 2026-08-07). CI green on `e2d28eb`.
+- **Working set**: report `harness-map_v1.0_2026-08-07.md` (all 8 recs dispositioned); thin project-context; unattended gate.
+- **Last action (2026-08-07):** Accepted remaining Keep/Probation recs into the map; confirmed email CI failures were pre-fix INDEX orphans (fixed by #1). By Cursor Grok 4.5 · Cursor · Work MBP.
 - **Unattended runner — precondition now a hard check.** `check-unattended-runner-gate.py --require` before any schedule; still no timer by decision.
-- **Next action:** Optional mission-fit on one unreliable “done”. Push done this turn. Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
+- **Next action:** Optional mission-fit on one unreliable “done”. Retest #5 on next plugin publish; revisit #8 ~2026-09-07. Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
 - **Open decisions:** Whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat).
 - **Blocked on:** nothing.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`.
-- **Agent thread**: `… → map @ e4dbc4c` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-07): apply harness-map #1–#3+#6 + push`.
+- **Agent thread**: `… → apply @ e2d28eb` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-07): map cycle closed + CI triage`.
 
 
 ### Environment

@@ -26,7 +26,8 @@ status: map-only — no clean applied
 
 This run is **read-only**. No deletions, merges, or always-on edits were applied.
 
-> **Applied 2026-08-07 (same day):** recs **#1** (INDEX/MEMORY orphans), **#2** (project-context stubs + detail/registry), **#3** (CLAUDE.md thin + Cursor always-on pointer), **#6** (`check-unattended-runner-gate.py`). Left as Keep/Probation: #4, #5, #7, #8.
+> **Applied 2026-08-07 (same day):** recs **#1** (INDEX/MEMORY orphans), **#2** (project-context stubs + detail/registry), **#3** (CLAUDE.md thin + Cursor always-on pointer), **#6** (`check-unattended-runner-gate.py`).
+> **Accepted standing 2026-08-07 (Sean):** **#4** Keep · **#5** Probation (retest on next plugin publish) · **#7** Load later/Keep · **#8** Probation (revisit ~2026-09-07). No further clean for this map cycle.
 
 ---
 
@@ -155,35 +156,35 @@ Approve by number before any clean. Map-only until then.
 - **Rollback:** Restore prior rule text / adapter size.
 
 ### 4 — Keep harness-map / mission-fit on-demand (do not always-load)
-- **Disposition:** Keep
+- **Disposition:** Keep — **accepted standing 2026-08-07**
 - **Owner:** `03-skills/harness-map`, `03-skills/mission-fit` + stamp/Notice hooks
 - **Rationale:** Matches token-frugality + Nate “map before clean / don’t always-run full audit.” Stamp now exists; Notice only after >30d.
 - **Risk:** None if left on-demand.
 - **Rollback:** N/A
 
 ### 5 — Probation: full skill-description budget on surfaces that list all skills
-- **Disposition:** Probation
+- **Disposition:** Probation — **accepted 2026-08-07**; retest on next `build-local-skill-plugin` publish
 - **Owner:** marketplace / plugin packaging (`build-local-skill-plugin.py`), Cursor agent skill lists
 - **Rationale:** ~194k desc chars is fine for registry lookup; if a surface truncates or floods context with the catalog, quality drops without an obvious local culprit.
 - **Risk:** Low to leave; measure on next plugin publish.
 - **Rollback:** N/A until a change is made.
 
 ### 6 — Turn unattended-runner tool scoping into a hard check before any schedule
-- **Disposition:** Turn into check
+- **Disposition:** Turn into check — **applied 2026-08-07** (`09-tools/check-unattended-runner-gate.py`)
 - **Owner:** Open Engine runner docs + Claude/`claude` CLI flags; baton precondition
 - **Rationale:** Authority widening without tool fence = remote-execution class risk (already in knowledge `agent-work-queue-boundaries`).
 - **Risk:** High if ignored; low if blocked until check exists.
 - **Rollback:** Keep runners manual.
 
 ### 7 — Load later: specialist frameworks (#05–#11) stay behind QA/delivery triggers
-- **Disposition:** Load later / Keep
+- **Disposition:** Load later / Keep — **accepted standing 2026-08-07**
 - **Owner:** `01-frameworks/` + curated routes (`audit`/`review` → fw06, etc.)
 - **Rationale:** Compact execution core is Outcome / Context / Authority / Acceptance; long protocols must not ride every Cursor turn.
 - **Risk:** Low.
 - **Rollback:** N/A
 
 ### 8 — Retire only after probation: duplicate trigger synonyms that add no new load_chain
-- **Disposition:** Probation → possible One home in `trigger-routes.json`
+- **Disposition:** Probation → possible One home in `trigger-routes.json` — **accepted 2026-08-07**; revisit ~2026-09-07
 - **Owner:** `02-shared-references/trigger-routes.json`
 - **Rationale:** Many curated rows intentionally alias the same load (good UX). Cull only proven zero-value duplicates after a month of Notice-quiet operation — not “because long.”
 - **Risk:** Medium if aggressive (missed triggers).
