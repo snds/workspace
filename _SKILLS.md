@@ -31,7 +31,7 @@ LIMIT 60
 - **Legion game:** [[03-skills/legion-project/SKILL|legion-project]] → [[03-skills/lead-game-designer/SKILL|lead-game-designer]] / [[03-skills/lead-art-director/SKILL|lead-art-director]] / [[03-skills/lead-game-developer/SKILL|lead-game-developer]]
 - **Icon fonts:** [[03-skills/variable-icon-font-architect/SKILL|variable-icon-font-architect]] + math spokes
 - **Visual QA:** [[03-skills/native-visual-eval/SKILL|native-visual-eval]] (native-resolution capture — the precondition; framework #10's method) + [[03-skills/visual-qa-toolkit/SKILL|visual-qa-toolkit]] (instrumented measurement) + [[03-skills/lead-visual-qa/SKILL|lead-visual-qa]] (judgment)
-- **Workspace mgmt:** [[03-skills/workspace-bootstrap/SKILL|workspace-bootstrap]] (session handshake) + [[03-skills/side-chat-handback/SKILL|side-chat-handback]] (`/handback` — side chat → parent inbox) + [[03-skills/open-agent-engine/SKILL|open-agent-engine]] (work movement — queue, ledger, receipts; lanes in [[06-context/open-engine/README|open-engine]])
+- **Workspace mgmt:** [[03-skills/workspace-bootstrap/SKILL|workspace-bootstrap]] (session handshake) + [[03-skills/side-chat-handback/SKILL|side-chat-handback]] (`/handback` — side chat → parent inbox) + [[03-skills/open-agent-engine/SKILL|open-agent-engine]] (work movement — queue, ledger, receipts; lanes in [[06-context/open-engine/README|open-engine]]) + [[03-skills/harness-map/SKILL|harness-map]] (map the AI setup before cleaning) + [[03-skills/mission-fit/SKILL|mission-fit]] (jobs vs harness; false-success checks before trusting `done`)
 
 ## `.claude/skills/` — Claude Code slash commands
 

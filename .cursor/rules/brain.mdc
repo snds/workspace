@@ -24,7 +24,11 @@ Before the first reply in a new session:
    `02-shared-references/trigger-routes.md` (curated head) → `06-context/` (role, project-context head,
    session-log head, `memory/MEMORY.md`). Active project: read `SESSION-STATE.md` **Live handoff** first.
    Also run the side-chat inbox check above.
-2. Emit the ritual:
+2. **Notices (optional, top of ritual):** if
+   `07-projects/19-workspace-brain/reports/harness-map.stamp` exists and its `date:` is **>30 days**
+   old, warn once: harness map stale → `/harness-map` when convenient (not a blocker). **Silent if
+   the stamp is missing** (no nag before the first map). Same pattern as Claude's SessionStart Notices.
+3. Emit the ritual:
 ```
 [workspace: LOADED · {branch}@{short-sha} · {YYYY-MM-DD} · via:cursor-rule]
 **✓ Workspace loaded** — {Machine} · {YYYY-MM-DD HH:MM}

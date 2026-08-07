@@ -30,6 +30,13 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `workspace brain` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
 | `workspace fix` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
 | `workspace validation` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
+| `harness map` | 03-skills/harness-map/SKILL.md — map always-on / routed / enforcement before cleaning; read-only first |
+| `map the harness` | 03-skills/harness-map/SKILL.md — map always-on / routed / enforcement before cleaning; read-only first |
+| `clean my harness` | 03-skills/harness-map/SKILL.md — map always-on / routed / enforcement before cleaning; read-only first |
+| `ai harness audit` | 03-skills/harness-map/SKILL.md — map always-on / routed / enforcement before cleaning; read-only first |
+| `mission fit` | 03-skills/mission-fit/SKILL.md — outcome/access/quality/evidence/supervision before trusting done; blocked ≠ substitute |
+| `false success` | 03-skills/mission-fit/SKILL.md — outcome/access/quality/evidence/supervision before trusting done; blocked ≠ substitute |
+| `trust done` | 03-skills/mission-fit/SKILL.md — outcome/access/quality/evidence/supervision before trusting done; blocked ≠ substitute |
 | `handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
 | `/handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
 | `end side chat` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
@@ -133,6 +140,8 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `a11y-visual` | cross-cutting | `contrast`, `color contrast`, `color blindness`, `color vision deficiency`, `cvd`, `wcag` (+8) | `a11y-visual` |
 | `ai-video-generation` | cross-cutting | `ai video`, `text to video`, `image to video`, `animate image`, `generate video`, `video generation` (+8) | `ai-video-generation` |
 | `failure-mode-premortem` | cross-cutting | `pre-mortem`, `premortem`, `failure mode`, `what could go wrong`, `before we build`, `red team` (+11) | `failure-mode-premortem` |
+| `harness-map` | cross-cutting | `harness map`, `map the harness`, `clean my harness`, `clean my ai harness`, `ai harness audit`, `what's shaping the agent` (+2) | `harness-map` |
+| `mission-fit` | cross-cutting | `mission fit`, `mission-fit`, `false success`, `false-success`, `can this agent finish`, `trust done` (+3) | `mission-fit` |
 | `native-visual-eval` | cross-cutting | `native resolution`, `high-res screenshot`, `downsample`, `downscaled`, `capture and chunk`, `1:1 pixels` (+12) | `native-visual-eval` |
 | `open-agent-engine` | cross-cutting | `open engine`, `agent engine`, `agent queue`, `run the queue`, `queue runner`, `agent ledger` (+5) | `open-agent-engine` |
 | `sec-appsec-owasp` | cross-cutting | `owasp`, `injection`, `sql injection`, `xss`, `csrf`, `ssrf` (+5) | `eng-foundations` → `lead-security-architect` → `sec-appsec-owasp` |
@@ -145,4 +154,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 81 · Registry rows: 41_
+_Curated routes: 88 · Registry rows: 43_

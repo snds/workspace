@@ -59,6 +59,26 @@ Draft using the Session Block format (see template below). Base it on:
 
 One line per entry. Omit empty sections.
 
+### Step 1.5 — Consequential evidence line (false-success hygiene)
+
+If this session claimed **consequential** completion — employer push/PR merge ask, Figma
+library publish, external send, credential/billing change, delete/destructive data, or any
+side effect outside the chat — add **one** `Evidence:` line to the Session Block:
+
+```
+Evidence:
+  - {what was verified} @ {owning system / path / PR / node / issue} — {verified | unverified | blocked}
+```
+
+Rules:
+- Prefer a **read-back from the owning system** (diff+CI, opened file, published library, tracker
+  receipt) over the agent's own closing sentence. See [[mission-fit]].
+- If access was missing and the honest status was blocked, write `blocked` — never dress a
+  substitute as verified.
+- **Omit the whole `Evidence:` section** when the session had no consequential side effects
+  (ordinary docs/skills edits inside this workspace do not require it).
+- Do **not** run a full `/mission-fit` audit here — one line of continuity only.
+
 ### Step 2 — Write a session FRAGMENT (not the shared log directly)
 
 To stay collision-free across concurrent sessions/machines/surfaces, **do NOT edit
@@ -234,6 +254,9 @@ Artifacts:
   - {filename_vN.N_YYYY-MM-DD.ext} — {one-line description}
 Decisions:
   - {decision made, rationale in one line}
+Evidence:
+  - {consequential claim} @ {owning system} — {verified | unverified | blocked}
+  ← omit entire Evidence: section when no consequential side effects
 Pending added:
   - {new item}
 Pending resolved:

@@ -10,9 +10,9 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 254,
+    "total": 256,
     "by_tier": {
-      "cross-cutting": 29,
+      "cross-cutting": 31,
       "foundation": 22,
       "hub": 40,
       "spoke": 163
@@ -2251,6 +2251,36 @@
       "requires": [],
       "hash": "sha256:6d35e079be869608b548964d2a604bb63458bbeaa15d03152e0ddd91556b5b3b"
     },
+    "harness-map": {
+      "path": "03-skills/harness-map/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "mission-fit",
+        "workspace-bootstrap",
+        "open-agent-engine",
+        "side-chat-handback"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "harness map",
+        "map the harness",
+        "clean my harness",
+        "clean my ai harness",
+        "ai harness audit",
+        "what's shaping the agent",
+        "harness audit",
+        "harness crud"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "hash": "sha256:d2bae26fa12e1d5a6a3f1ea0b8f1cb0b5c74ea4d44561bcd17686bd95039f1ca"
+    },
     "ia-content-strategy": {
       "path": "03-skills/ia-content-strategy/SKILL.md",
       "tier": "spoke",
@@ -3261,6 +3291,36 @@
       "requires": [],
       "hash": "sha256:1541c8f389fa353891e293f69e53594b9d12438d96076548178fbd870fec1d9b"
     },
+    "mission-fit": {
+      "path": "03-skills/mission-fit/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "harness-map",
+        "open-agent-engine",
+        "workspace-bootstrap"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "mission fit",
+        "mission-fit",
+        "false success",
+        "false-success",
+        "can this agent finish",
+        "trust done",
+        "audit this job",
+        "agent lied",
+        "blocked not done"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "hash": "sha256:cf15e8208faab6738e9fa4552b5a9d68c4c4fbd91094247ab22e293da0b54e58"
+    },
     "mobile-android-kotlin": {
       "path": "03-skills/mobile-android-kotlin/SKILL.md",
       "tier": "spoke",
@@ -3589,7 +3649,10 @@
       "hub": null,
       "prerequisites": [],
       "related": [
-        "workspace-bootstrap"
+        "workspace-bootstrap",
+        "harness-map",
+        "mission-fit",
+        "side-chat-handback"
       ],
       "governed_by": [],
       "governs": [],
@@ -3612,7 +3675,7 @@
       "requires": [
         "linear-mcp"
       ],
-      "hash": "sha256:e980b5ac28c37b7f2e931e9d0e9c10ca339775a377995d8448014fa3ed017bcb"
+      "hash": "sha256:8a4a0ae8904cf3793e807c497a79ac1adc234528190e6dbc64553133d2d568b4"
     },
     "planetary-terrain-lod": {
       "path": "03-skills/planetary-terrain-lod/SKILL.md",
@@ -4283,7 +4346,8 @@
       "prerequisites": [],
       "related": [
         "workspace-bootstrap",
-        "open-agent-engine"
+        "open-agent-engine",
+        "harness-map"
       ],
       "governed_by": [],
       "governs": [],
@@ -4301,7 +4365,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:e90ceddc17cab8cd7ea7a8cd296acaccad7594cdf713af89a4491b5d4c3f0635"
+      "hash": "sha256:5e74973c7c8adface68545c852eb2aba716c7289e82c7f9f10ba5e9594c55f4f"
     },
     "skill-placement": {
       "path": "03-skills/skill-placement/SKILL.md",
@@ -5422,7 +5486,10 @@
       "hub": null,
       "prerequisites": [],
       "related": [
-        "open-agent-engine"
+        "open-agent-engine",
+        "harness-map",
+        "mission-fit",
+        "side-chat-handback"
       ],
       "governed_by": [],
       "governs": [],
@@ -5439,7 +5506,7 @@
         "*"
       ],
       "requires": [],
-      "hash": "sha256:71b418c694b82a62cb706fbacb53b767c1b2e3270f988db9923796e11be56150"
+      "hash": "sha256:fcdd3d55caf8a9cbc7782ecc9abf656835ecb20eb8d6ed29fb16fcd9fb8da4ba"
     }
   },
   "load_chains": {
@@ -5980,6 +6047,9 @@
     "google-fonts-web-scraping": [
       "google-fonts-web-scraping"
     ],
+    "harness-map": [
+      "harness-map"
+    ],
     "ia-content-strategy": [
       "lead-information-architect",
       "ia-content-strategy"
@@ -6197,6 +6267,9 @@
       "lead-type-designer",
       "variable-icon-font-architect",
       "math-optical-optimization"
+    ],
+    "mission-fit": [
+      "mission-fit"
     ],
     "mobile-android-kotlin": [
       "eng-foundations",

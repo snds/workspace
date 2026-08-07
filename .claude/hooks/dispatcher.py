@@ -32,6 +32,9 @@ CONTEXT_DIR = WORKSPACE_ROOT / "06-context"
 SESSION_LOG = CONTEXT_DIR / "session-log.md"
 PROJECT_CONTEXT = CONTEXT_DIR / "project-context.md"
 AUDIT_LOG = CONTEXT_DIR / "audit-log.md"
+HARNESS_MAP_STAMP = (
+    WORKSPACE_ROOT / "07-projects" / "19-workspace-brain" / "reports" / "harness-map.stamp"
+)
 STATE_DIR = WORKSPACE_ROOT / ".claude" / "state"
 CLAUDE_VERSION_PIN = STATE_DIR / "claude-version"
 DESYNC_NOTICE = STATE_DIR / "desync-notice.md"
@@ -41,6 +44,7 @@ SKILLS_REGISTRY = WORKSPACE_ROOT / "03-skills" / "skills.registry.json"
 
 CLAUDE_CODE_CHANGELOG_URL = "https://github.com/anthropics/claude-code/releases"
 AUDIT_STALE_DAYS = 14
+HARNESS_MAP_STALE_DAYS = 30  # Notice only after a first map exists (stamp present)
 
 # Files where session edits reliably land. When the auto-commit's broad `git add -A`
 # would risk committing phantom or stale deletions, the session-end hook falls back
@@ -477,6 +481,32 @@ def _check_audit_staleness() -> str:
         return ""
 
 
+def _check_harness_map_staleness() -> str:
+    """Return a notice if the last harness-map is older than HARNESS_MAP_STALE_DAYS.
+
+    Silent when the stamp is missing — no nag before the first map (see harness-map skill).
+    Stamp path: 07-projects/19-workspace-brain/reports/harness-map.stamp
+    """
+    if not HARNESS_MAP_STAMP.exists():
+        return ""
+    try:
+        text = HARNESS_MAP_STAMP.read_text(encoding="utf-8", errors="replace")
+        m = re.search(r"^date:\s*(\d{4})-(\d{2})-(\d{2})\b", text, re.MULTILINE)
+        if not m:
+            return ""
+        last = datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)), tzinfo=timezone.utc)
+        days = (datetime.now(timezone.utc) - last).days
+        if days < HARNESS_MAP_STALE_DAYS:
+            return ""
+        return (
+            f"Harness map is stale — last map was {days} days ago "
+            f"(threshold: {HARNESS_MAP_STALE_DAYS} days). Run `/harness-map` when convenient "
+            f"(read-only; not a blocker for ordinary work)."
+        )
+    except Exception:
+        return ""
+
+
 def _classify_worktree_state() -> dict:
     """Inspect `git status --porcelain` for conditions that make `git add -A` unsafe.
 
@@ -796,6 +826,7 @@ def build_session_start_context(
     git_state = _describe_git_state()
     version_notice = _check_claude_version_change()
     audit_notice = _check_audit_staleness()
+    harness_map_notice = _check_harness_map_staleness()
     desync_notice = _read_desync_notice()
     lanes_notice = _check_linear_lanes()
 
@@ -806,6 +837,8 @@ def build_session_start_context(
         notices.append(f"⚠ {version_notice}")
     if audit_notice:
         notices.append(f"⚠ {audit_notice}")
+    if harness_map_notice:
+        notices.append(f"⚠ {harness_map_notice}")
     if desync_notice:
         notices.append(f"⚠ {desync_notice}")
     if lanes_notice:

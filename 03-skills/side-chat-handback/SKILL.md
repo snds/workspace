@@ -19,7 +19,7 @@ triggers:
   - side chat done
 tier: cross-cutting
 domain: workspace
-related: [workspace-bootstrap, open-agent-engine]
+related: [workspace-bootstrap, open-agent-engine, harness-map]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -172,3 +172,8 @@ Wired in: `.cursor/rules/brain.mdc`, `04-preferences/user-preferences.md`, and t
 - Pasting the full detour transcript into the inbox — handback is a paragraph + pointers.
 - Filing every handback as an Open Engine issue — over-tracking; inbox is enough for continuity.
 - Calling our own bespoke edits "vendored" in the handback prose — see [[feedback-vendor-terminology]].
+
+## Related
+- peer ↔ [[workspace-bootstrap]]
+- peer ↔ [[open-agent-engine]]
+- peer ↔ [[harness-map]]
