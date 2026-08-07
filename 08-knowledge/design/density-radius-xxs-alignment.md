@@ -109,6 +109,72 @@ Pagination Hover used a Button instance at Size=`lg` → state-layer `Button/Siz
 
 Also: Tabs Hover body+layer → `control-radius/sm`. *(Error/Focus rings briefly added on Input Error, Toggle, Radio, OTP, etc. were **reverted 2026-08-06** — those variants already define focus without a separate `[ring]`.)*
 
+### Control density audit (2026-08-06)
+
+Dead alias `VariableID:64:2862` (deleted radius; Focus variants already on `control-radius/sm`) rebound on `_Radio/Item`, `_NavMenu/Trigger`, `_Menu/Item` rows, Slider/`_Slider/Thumb` value chips → **`control-radius/sm`**.
+
+Also at component/mode level:
+- `Button / Size` `paddingX` → `padding-x/sm|md`; `gap` → `gap/sm` (was raw 10/6)
+- `Badge / Size` `padding-y` Small → `space/0-5`
+- Input/Textarea pad-X → `padding-x/input`
+- `_OTP/Slot` w/h → `control-height/lg`
+- `_Dialog/Close` / `_Sheet/Close` w/h → `control-height/md`
+- `_Select/Item` / `_Radio/Item` minH → `control-height/sm`; Nav/Menubar triggers minH → `control-height/md`
+- Slider tracks `radius/sm` → `radius/full`
+
+Left intentional: Badge HUG+pad (no fixed height); Slider root 24px track well; Switch/`Avatar` size collections still literal geometry.
+
+### Figma-only construction tokens (`[figma-only][sync:ignore]`)
+
+Prefix in the variable **description** so token sync skips them. Not product CSS tokens — Figma cannot express `calc()` / sibling-relative overlay position.
+
+| Token | Why Figma-only |
+|---|---|
+| `focus-ring-offset` | Nest gap companion; code prefers `--focus-ring-offset` + calc |
+| `focus-ring-radius/sm\|md` | Precomputed `control-radius + offset` |
+| `Button/Select/Badge … radiusRing` | Component-mode aliases → focus-ring-radius |
+| `Day/top-*` / `Day/bottom-*` (`Calendar / Radii`) | Per-corner range masks |
+| `toggle-group/inset` (`VariableID:463:26`) | Shell↔item pad/gap = **2** (nest companion) |
+| `toggle-group/item-radius` (`VariableID:463:25`) | = `control-radius/md − 2` → **6/10/14** (C/N/S) |
+| `Toggle Group / Item` `Item/*` corners | Position masks (`standalone` / `h-*` / `v-*`) |
+| `popover/offset-y` (`VariableID:456:25`) | Spacer height = `control-height/md + 4` → **36 / 40 / 44**. Absolute `[popover-anchor]` + `[popover-offset]` + in-flow Popover (Date Picker, Combobox, Nav Menu; Menubar also uses `[popover-pad-clear]`=`space-1`). Code: `top:100%` + margin |
+
+### Field-anchored overlay radii (2026-08-06)
+
+Standing rule (also in [[figma-ds-surface-authoring]] §B.0 / B.10a): **when in doubt, Density-bind** spacing/padding/radii/sizing. Panels that sit with a parent field/control must share that trigger’s `control-radius/*` rung — usually **`md`** for Input/Select default.
+
+| Overlay | Binding |
+|---|---|
+| Popover, `_Select/Content` | Already `control-radius/md` |
+| Calendar Single/Range, Command, Dropdown Menu, Context Menu | Was `sm` → **`control-radius/md`** |
+| Tooltip | Stays `sm` (small chrome, not a field twin) |
+| Dialog / Drawer | Radii ladder (`radius/xl`, …) — not field-paired |
+
+### Calendar / `_Calendar/Day` (2026-08-06)
+
+Days were FIXED 34 + `minHeight` 34 + pad-Y only — not density-square. Now:
+- Cleared all min/max W/H on Day + Calendar tree
+- Day **width = height = `control-height/md`** (C/N/S → 32/36/40, always square)
+- Day padding all sides → `padding-y/xs`
+- Calendar shell → `padding-x/md` + `padding-y/xl`; header/grid → `padding-y/xs` / `gap/xs`
+- Weekday cells width → `control-height/md` (column align), height HUG + `padding-y/xs`
+
+### Toggle Group nested radii + field height (2026-08-06)
+
+Was: shell + items both `control-radius/sm`, shell hugged ~32 (not field-tall) → pinched nest next to Input/Button.
+
+| Part | Binding |
+|---|---|
+| Shell corners | `control-radius/md` (`VariableID:285:42`) |
+| Shell height (Horizontal) | `control-height/md` (`VariableID:285:28`) → 32/36/40 |
+| Shell pad + item gap | `toggle-group/inset` = 2 |
+| Item corners | `Toggle Group / Item` modes → `Item/*` (`VariableID:465:26–29`) |
+| Nested end-cap radius | `toggle-group/item-radius` = md−2 → 6/10/14 |
+| Mid / shared edges | `radius/none` |
+| Standalone Toggle | mode `standalone` → still `control-radius/sm` (unchanged look) |
+
+Horizontal items `FILL` height (inner = md−4). Vertical items height → `control-height/md`; corner modes `v-first|middle|last`. Stickersheet 12 instances reset; Density C/N/S rows verified.
+
 ### Code approach
 
 Prefer live calc (true parametric):

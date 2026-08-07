@@ -1,10 +1,10 @@
 ---
 tags: [design-systems, figma, authoring, surfaces, tokens, transliteration, accessibility]
 created: 2026-06-30
-updated: 2026-06-30
+updated: 2026-08-06
 status: stable
 confidence: high
-sources: [centric-ui Figma library authoring sessions 2026-06; migrated from local memory ds-figma-surface-conventions / transliteration-focus-and-positioning / figma-use-linked-library-components]
+sources: [centric-ui Figma library authoring sessions 2026-06; density/overlay construction 2026-08; field adornment optical inset + Icon Button audit 2026-08-06; migrated from local memory ds-figma-surface-conventions / transliteration-focus-and-positioning / figma-use-linked-library-components]
 related_skills: [figma-canvas-designer, design-engineer, ds-advisor, figma-plugin-dev]
 related_projects: [centric-ui VMS DS, 02-centricPLM]
 ---
@@ -53,6 +53,17 @@ the component gains the missing prop.
 
 ## B. Surface & overlay construction conventions
 
+0. **Density-awareness is the default (STANDING RULE, Sean 2026-08-06).** When binding
+   spacing, padding, gap, radius, height/width, or type on controls and their overlays, prefer
+   **`Foundations / Semantics / Density`** tokens (`control-height/*`, `control-radius/*`,
+   `padding-x/*`, `padding-y/*`, `gap/*`, `type-size/*`, `popover/offset-y`, …) over raw
+   primitives or a Density-unaware Radii/Spacing alias — **especially when in doubt.** Control
+   chrome must keep working under a Density-only mode pin (Compact/Normal/Spacious) without also
+   pinning Radii. General surface radius (cards, dialogs) may still use the Radii ladder
+   (`radius/xxs…4xl`); field-adjacent overlays follow Rule 10a. Figma-only construction tokens
+   (focus-ring radii, `popover/offset-y`, Calendar Day corner masks) carry
+   `[figma-only][sync:ignore]` in their descriptions — do not export them as product CSS.
+
 1. **Separators are edge-to-edge by default.** A header/footer separator — or a border *used
    as* a separator — bleeds to the container's edge. Mechanism: the content **slot carries 0
    horizontal padding**; each content block carries its OWN side inset; separators/borders span
@@ -61,12 +72,25 @@ the component gains the missing prop.
    as a **full-width transparent wrapper** (separators bleed) with the **highlight/bg on an
    inset INNER frame**. Net: separators bleed full-width *and* the item state stays inset.
 
-2. **Use spacing tokens — but don't snap blindly.** Bind gaps/paddings/item-spacing to the
-   semantic `space-*` variables (4=space-1 … 32=space-8) via `node.setBoundVariable('paddingLeft'|…|'itemSpacing'|'counterAxisSpacing', variable)` (binding the existing value = zero visual change). The scale is 4-based and skips Tailwind half-steps; several off-scale px values are legitimate, not arbitrary, and must NOT be snapped: `6`/`10` are blessed (canon Button `gap=6`, `paddingX=10`); `6`=py-1.5, `10`=px-2.5, `2`=0.5, `14`=3.5 match coded intent; leave *derived* values (Pagination `py=7` centers to 32px; grip-dot `itemSpacing=3`). Only snap a genuine deviation from code (Menubar trigger `py=3` → shadcn `py-1`=4 → snap then bind). Skip binding `0` and negative item-spacing (intentional overlap). **The Tailwind half-steps now have tokens**: `space-0-5`=2, `space-1-5`=6, `space-2-5`=10, `space-3-5`=14 (dash-decimal because `.` is invalid in Figma var names) — bind spacing half-steps to these. Radius uses the density-modeled `radius/xxs…4xl` ladder (not a literal 6px radius token). Net: ~100% bound across all pages with zero visual change.
+2. **Use spacing tokens — but don't snap blindly.** Prefer Density `padding-*` / `gap-*` on
+   controls; fall back to semantic `space-*` where Density has no role token. Bind via
+   `node.setBoundVariable('paddingLeft'|…|'itemSpacing'|'counterAxisSpacing', variable)`.
+   Half-steps: `space-0-5`=2, `space-1-5`=6, `space-2-5`=10, `space-3-5`=14. Button Size modes
+   resolve `paddingX`/`gap` through Density (`padding-x/sm|md`, `gap/sm`) — do not reintroduce
+   raw 10/6 literals. Skip binding `0` and intentional negative item-spacing. Radii: controls →
+   Density `control-radius/*`; general surfaces → density-modeled `radius/xxs…4xl` ladder.
 
 3. **Popovers/dropdowns that are part of a parent component are absolutely positioned** so the
    open panel does NOT grow the parent's bounding box. Pair with a **BOOLEAN component property
    bound to a component-specific variable** to toggle visibility (open/closed).
+   **Density-aware offset (2026-08-06):** Figma cannot bind absolute `y` or express
+   `top:100% + gap`. Use absolute `[popover-anchor]` → in-flow `[popover-offset]` (height =
+   Density `popover/offset-y` = `control-height/md + 4`) → panel. Keeps a constant **4px** gap
+   under Compact/Normal/Spacious (`space-1`). Token is `[figma-only][sync:ignore]`; code uses
+   `top:100%` + margin. Menubar adds `[popover-pad-clear]` (`Spacing/space-1`) above the offset
+   when the bar pads the trigger. **Selection hygiene:** lock `[popover-offset]` /
+   `[popover-pad-clear]` (`locked=true`); keep the panel frontmost under the anchor; put
+   `[popover-anchor]` behind the field/trigger so deep-select prefers the control chrome.
 
 4. **Icons must match their label — glyph AND color.** (a) *Glyph*: audit every popover/menu/
    list item — pick the semantically correct Material Symbol (the placeholder `more_horiz` on a
@@ -132,11 +156,30 @@ the component gains the missing prop.
    are one width). Never leave a nested component at an arbitrary fixed size mismatching siblings.
 
 10. **Corner-radius has two families.** *Control-family* (buttons, inputs, OTP slots, calendar
-    day cells, pagination items, toggles) round to a **control token — `radius-md`/8** (canon
-    controls use 8/12, never 6), bound to the Radii variable. *Inset-row-highlight* (menu-item
-    highlight, radio-row selection surface) keep **6px** (paired with Rule 1's inset wrapper).
-    Classify each element into one of the two families rather than snapping globally. `cornerRadius`
-    binds via the 4 corner fields; `strokeWeight` is NOT bound in this DS (canon binds 0% of it).
+    day cells, pagination items, toggles, **field-adjacent panels**) → Density
+    **`control-radius/sm|md`** (literals 4/8/12 and 8/12/16 across C/N/S — not Radii aliases).
+    Default Input/Select/Button → **`control-radius/md`**; Size=sm / compact chrome →
+    **`control-radius/sm`**. *Inset-row-highlight* (menu-item highlight, radio-row selection)
+    stays a tighter inset radius (paired with Rule 1's inset wrapper). Bind via the four corner
+    fields. Focus rings use `[figma-only]` `focus-ring-radius/*` (= control-radius + offset).
+
+10a. **Field-anchored overlays match the trigger's control radius (STANDING RULE, 2026-08-06).**
+    Any dropdown/popover/list/calendar that visually belongs to a parent field or control must
+    use the **same Density `control-radius/*` rung as that trigger** — usually `md` next to
+    Input / Select default / Popover / `_Select/Content`. Do **not** leave the panel on
+    `control-radius/sm` (or a Radii `radius/*` alias) when the field is `md`; the mismatch reads
+    as a broken nest. Validated fixes: Calendar, Command, Dropdown Menu, Context Menu →
+    `control-radius/md` to align with Input/Popover/Select content. Tooltips stay `sm` (small
+    floating chrome, not a field panel twin). Modals (Dialog/Drawer) stay on the Radii ladder
+    (`radius/xl`, etc.) — not field-paired.
+
+10b. **Toggle Group nests like a field next to Button/Input (2026-08-06).** Parent shell →
+    Density **`control-radius/md`** + **`control-height/md`** (horizontal); inset/gap →
+    `[figma-only]` `toggle-group/inset` (=2). Items use **`Toggle Group / Item`** modes
+    (`standalone` | `h-*` | `v-*`) bound to `Item/top-*|bottom-*` — group end-caps resolve
+    `toggle-group/item-radius` (= md−2 → 6/10/14 C/N/S), shared edges → `radius/none`.
+    Standalone Toggle stamps mode `standalone` → still **`control-radius/sm`**. Slot consumers:
+    set the Item mode on each Toggle instance (do not leave Auto).
 
 11. **Input-trigger composites get a full State axis.** Any component whose trigger is an Input
     (Combobox, Date Picker, search fields) exposes `State=Default/Focus/Error/Disabled` as a
@@ -245,6 +288,32 @@ the component gains the missing prop.
     checksum diff proved "working" what designers correctly saw as dead — the severity mode rendered
     0 px without its gating boolean).
 
+18. **Field adornment optical edge inset (STANDING RULE, 2026-08-06).** Text/placeholder
+    content keeps Density **`padding-x/input`**. Trailing **Icon Button** adornments (Combobox /
+    Input clear) must **not** sit inside another full `padding-x/input` — ghost buttons read as
+    their glyph, so the control chrome goes to the field edge and the glyph lands ~`iconOnlyPaddingX`
+    in. Validated Input construction:
+    - Root: `paddingLeft = padding-x/input`, `paddingRight = space/0`, `itemSpacing = space/2`,
+      height → `control-height/md` FIXED. Clear Size → **sm** (32 / icon 16).
+    - `[trailing-cluster]`: `[end-pad]` (width `space/1-5` = 6) + Clear, **−10** itemSpacing.
+      Text-only right inset = gap 8 + end-pad 6 = **14** (`padding-x/input`). Trailing on: Clear
+      flush to the field edge (glyph ~10px in). Negative spacing = sanctioned optical overlap
+      (Rule 13 exception).
+    - Leading bare icons stay at content inset (`padding-x/input`). Select chevron (no Icon Button
+      chrome): `paddingLeft = padding-x/input`, `paddingRight = gap/xs`. Textarea: symmetric
+      `padding-x/input`.
+
+19. **Icon-only → Icon Button; icon size tracks control Size (STANDING RULE, 2026-08-06).**
+    Any icon-only interactive control uses the library **`Icon Button`** (`350:2877`, wraps real
+    `Button` + `Button / Layout = icon-only`), never a textless `Button` or a bare glyph with a
+    hit target hacked via padding. Preserve Variant / Size / State when swapping. Icon glyph size
+    comes from **`Button / Size`.`iconSize`** (xs=12 / sm=16 / default=20 / lg=20) — pick the Size
+    mode so the glyph fills the optical weight of the surface (field clear / toast dismiss →
+    **sm** in a `control-height/md` field; dialog/sheet close → **default**). Tiny 12px glyphs in
+    ≥28px targets are a smell. Intentional bare exceptions: expanders/chevrons inside Select
+    triggers, menu/command leading icons, status glyphs, decorative marks, pagination page
+    **labeled** Buttons, ellipsis gap markers.
+
 ## C. Code→Figma transliteration judgment calls
 
 1. **Focus states must use a focus token.** Use the `ring` (focus) color for the focus indicator
@@ -272,7 +341,9 @@ distort their parents); these were repeated manual-build mistakes worth preventi
 (f) check double padding + correct slot fill/hug; (g) delete empty spacer frames; (h) give oriented
 overlays position variants with boundary-flush carets; (i) make EVERY floating element absolute at
 its logical spot with explicit constraints + `clipsContent=false`; (j) upgrade focus to the `ring`
-token; (k) keep other values code-faithful and verify by sight.
+token; (k) keep other values code-faithful and verify by sight; (l) field trailing Icon Buttons use
+`gap/xs` edge inset (Rule 18), not `padding-x/input`; (m) icon-only actions → `Icon Button` with
+Size-matched `iconSize` (Rule 19).
 
 Related: [[radix-derived-color-system]] · [[figma-plugin-patterns]] · [[figma-cli-authoring]] ·
 framework #05 §3a (full-result high-res review) · component & pattern framework #09.

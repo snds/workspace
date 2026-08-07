@@ -1,7 +1,7 @@
 ---
 tags: [design-system, figma, tokens, density, component-tokens, modes]
 created: 2026-07-31
-updated: 2026-07-31
+updated: 2026-08-06
 status: stable
 confidence: high
 sources: [session 2026-07-31-work-figma-density, Figma o6o1ZuGHxDow2vHLuYXT6X]
@@ -57,9 +57,9 @@ used in product chrome breathe with shell Density automatically.
 
 ## Component collection recipe
 
-1. Name: `Component / Axis` (e.g. `Button / Size`, `Calendar / Radii`, `Sidebar / Surface`).
+1. Name: `Component / Axis` (e.g. `Button / Size`, `Calendar / Radii`, `Toggle Group / Item`, `Sidebar / Surface`).
 2. Modes = the **instance** axis only (or a single `Value` mode when the shell has one appearance).
-3. Variable names = short property paths (`height`, `fontSize`, `Day/top-left`, `background`).
+3. Variable names = short property paths (`height`, `fontSize`, `Day/top-left`, `Item/top-left`, `background`).
 4. Every mode value **aliases** a semantic or density token — no raw numbers when a scale exists.
 5. Bind component masters to the component vars (not past them to semantics), so the Size/State
    mode pin actually drives the node.

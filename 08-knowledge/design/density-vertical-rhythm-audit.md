@@ -351,6 +351,10 @@ on shells after `swapComponent`.
 identity; `ghost/danger` for deletes; `ghost/secondary` otherwise; xs for dismiss/clear/compact,
 sm for row/toolbar. Reset `scaleFactor` 0.8→1 on swap (carried from scaled feature frames).
 
+**Follow-up (2026-08-06):** Field clear / Toast+Alert dismiss bumped **xs→sm** (16px glyph in 32
+surface). Carousel prev/next swapped from bare chevrons → Icon Button sm. Canonical rules now in
+[[figma-ds-surface-authoring]] §§18–19 (field adornment `gap/xs` edge + icon-only → Icon Button).
+
 | Host | Icons | Notes |
 |------|-------|-------|
 | Input (×4 states) | close | Clear — xs |
@@ -429,12 +433,21 @@ node opacity 1. Full architecture: [[interaction-state-semantics]].
 **Lesson:** a name-regex probe is not an inspection. Enumerate children and read every paint before
 declaring something missing.
 
+## COMPONENT_SET bounds after density growth — 2026-08-06
+
+Variant **components** may HUG correctly while the parent **COMPONENT_SET** stays FIXED/`layoutMode: NONE` and clips (`clipsContent` + height < max child bottom). Density-taller children (e.g. Calendar after Day square fix) overflow the set chrome even when variants themselves are fine.
+
+**Fix at set level** (match Button-style sets: no auto-layout on the set): `resizeWithoutConstraints` to `contentExtent + existing pad` (usually `min child x/y`), clear leftover `minHeight`/`maxHeight` with `null`, prefer `clipsContent = false` once fitted. Do **not** hug Icon Button / focus-ring overflows (~2–4px intentional). Stickersheet Compact calendars at ~270 vs Normal master ~300 are density-mode, not a set bug.
+
+Applied: Calendar `64:3184` 660×326→674×380; also Carousel, Date Picker, `_Tabs/Trigger` width, Toggle width.
+
 ## Recommended repair rules
 
 1. **Row / nav / cell / day / page-control:** either bind **height** to `control-height/*`, or switch to **HUG** and bind **pad-Y** to `padding-y/*` (inner wrapper ok, as Menu Item).
 2. Do **not** rely on CENTER alone for vertical rhythm under Density.
 3. Keep Button-style pad-Y=0 only when height is Density-backed.
 4. Leave explicit Density mode on **app/chrome** frames (like Example density); keep component masters on Auto.
+5. After density child growth, **refit COMPONENT_SET bounds** (see above) — variant HUG alone does not expand the set frame.
 
 ## Related
 
