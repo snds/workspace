@@ -24,4 +24,5 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[decision-component-pattern-framework-system]] — `decision` · why the 5-layer component & pattern context system was built (framework #09 + skill + MCP + DESIGN.md + AGENTS binding) and where its outputs live.
 - [[decision-bootstrap-v2-guarantee]] — `decision` · the workspace handshake is guaranteed by deterministic harness layers (hooks + beacon + audit + launchd doctor), not model discretion; ritual token is frozen ABI.
 - [[decision-commercial-data-licensing]] — `decision` · default to commercially-licensable data/asset sources for all projects; non-commercial sources (e.g. Gaia DR3) only when uniquely needed — isolate, mark, reconcile later.
+- [[decision-defer-dense-vault-retrieval]] — `decision` · defer embedding/dense Layer-2 vault retrieval until `vault-retrieve.py --eval` shows paraphrase gaps lexical cannot fix (13/13 green 2026-08-05).
 - [[relational-context]] — `feedback` · the working-relationship texture, in the agent's voice, carried across sessions (lives at `../relational-context.md`).

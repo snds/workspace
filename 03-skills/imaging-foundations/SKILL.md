@@ -54,10 +54,11 @@ Three.js + WebGPU** — the techniques transfer; only the approximations change.
 - Lighting/materials → [[3d-lighting-rendering]], [[3d-materials-shading]], [[threejs-materials-master]]
 - Shaders + GPU rendering → [[glsl-shader-architect]], [[webgpu-advanced-rendering]]
 - Effects/atmosphere → [[threejs-vfx-atmosphere]] · camera motion → [[motion-3d-spatial]]
+- Realtime photoreal ops → [[realtime-visual-craft]] (framework #12) · adapters → [[adapter-webgpu-three]] · [[adapter-unreal]] · [[adapter-unity-hdrp]]
 - The game → [[legion-project]]
 - Physics of light pairs with → [[science-foundations]] ([[img-optics-light]] is the shared boundary)
 
 ## Related
 - spoke → [[img-cinematography]] · [[img-optics-light]] · [[img-photography]] · [[img-photoreal-rendering]] · [[img-vfx]]
-- applies-in ← [[3d-lighting-rendering]] · [[3d-materials-shading]] · [[glsl-shader-architect]] · [[lead-art-director]] · [[legion-project]] · [[motion-3d-spatial]] · [[threejs-materials-master]] · [[threejs-vfx-atmosphere]] · [[webgpu-advanced-rendering]]
-- peer ↔ [[design-foundations]] · [[science-foundations]] · [[vision-foundations]]
+- applies-in ← [[3d-lighting-rendering]] · [[3d-materials-shading]] · [[ai-video-generation]] · [[glsl-shader-architect]] · [[lead-art-director]] · [[legion-project]] · [[motion-3d-spatial]] · [[threejs-materials-master]] · [[threejs-vfx-atmosphere]] · [[webgpu-advanced-rendering]]
+- peer ↔ [[design-foundations]] · [[science-foundations]] · [[vision-foundations]] · [[realtime-render-performance]] · [[visual-qa-photoreal-rendering]] · [[rendering-guild]] · [[realtime-visual-craft]]

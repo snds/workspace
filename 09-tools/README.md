@@ -68,6 +68,38 @@ python3 09-tools/side-chat-handback.py --status
 python3 09-tools/side-chat-handback.py --clip-from-inbox
 ```
 
+## vault-retrieve.py
+
+Layer-1 lexical retrieval over the personal vault (FTS5). Complements Layer-0 trigger
+routing when vocabulary misses. Indexes frameworks, shared references, skills,
+preferences, memory, and knowledge. Returns ranked paths + short snippets (prefers
+each note's `## For future agent` TL;DR). Optional one-hop expand via knowledge
+`relations:` and skill `## Related`. Index is machine-local under
+`.claude/state/vault-retrieve/` (already gitignored); rebuildable from git. Does
+**not** index `07-projects/` or employer surfaces.
+
+```
+python3 09-tools/vault-retrieve.py "contracts first delivery"
+python3 09-tools/vault-retrieve.py "session fragment" --limit 6
+python3 09-tools/vault-retrieve.py --rebuild
+python3 09-tools/vault-retrieve.py --check
+python3 09-tools/vault-retrieve.py "token frugal" --json
+python3 09-tools/vault-retrieve.py "…" --cached   # query only; no rebuild
+python3 09-tools/vault-retrieve.py "…" --strict   # AND-only (dispatcher hot path)
+python3 09-tools/vault-retrieve.py --eval         # golden set (exit 1 on FAIL)
+```
+
+Auto-rebuilds when the corpus fingerprint drifts (unless `--cached`). Stdlib-only (sqlite3 FTS5).
+Stopwords + `--strict` keep procedural chatter from OR-matching noise.
+
+Claude Code: SessionStart runs `--rebuild --quiet`; UserPromptSubmit uses
+`--cached` (stopwords + OR min-overlap; no graph expand) when Layer 0 yields
+fewer than 2 unique targets (cap 2). Cursor and other surfaces call the CLI on demand.
+
+## vault-health.py
+
+Epistemic-graph hygiene: stale claims, dangling `relations:` edges, orphan notes.
+See the module docstring; pairs with [[vault-graph-conventions]].
 ---
 
 These tools assume only a git checkout + Python 3 — no Google Drive, no vendor-specific file bridge.

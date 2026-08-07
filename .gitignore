@@ -87,6 +87,8 @@
 !09-tools/build-local-skill-plugin.py
 !09-tools/compact-sessions.py
 !09-tools/vault-health.py
+!09-tools/vault-retrieve.py
+!09-tools/vault-retrieve.golden.json
 !09-tools/check-terminology.py
 !09-tools/side-chat-handback.py
 

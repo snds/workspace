@@ -896,6 +896,8 @@ If the session produces a durable insight, add or update the entry at session en
 _Full context: `06-context/project-context.md`, `06-context/session-log.md`,_
 _`06-context/role-and-context.md`, `04-preferences/user-preferences.md`._
 _Frameworks: `01-frameworks/00-README.md`._
+_Lexical fallback (when triggers miss): `python3 09-tools/vault-retrieve.py \"…\"` —_
+_FTS over vault; paths + TL;DRs. Layer 0 triggers still win on exact routes._
 _The mandatory session-start ritual format is in CLAUDE.md — render it before responding._
 """
 
@@ -1019,6 +1021,8 @@ Read the relevant entry before continuing domain work.
 ```
 {knowledge_index}
 ```
+
+_Lexical fallback: `python3 09-tools/vault-retrieve.py \"…\"` (Layer 0 triggers still win)._
 """
 
 
@@ -1039,6 +1043,8 @@ def handle_session_start(payload: dict) -> None:
     # Fold any per-session fragments into session-log.md before the boot-read below,
     # so this session opens with the latest reconciled history. Idempotent + safe.
     _compact_session_fragments()
+    # Refresh the lexical FTS index so UserPromptSubmit --cached queries stay current.
+    _refresh_vault_retrieve_index()
     # Auto-clean stale Drive-resident worktrees whose branches are fully merged.
     # Runs only when this session is in the canonical workspace root (not inside a
     # worktree itself) — that's the natural moment to clean the prior session's
@@ -1124,7 +1130,14 @@ TIER_CAPS = {
     "knowledge hint": 4,
     "registry trigger": 6,
     "index trigger": 4,
+    "lexical fallback": 2,
 }
+
+# Run FTS only when Layer-0 unique targets fall below this. Keeps triggers primary
+# and avoids paying lexical cost (and noise) on well-routed prompts.
+LEXICAL_FALLBACK_MIN = 2
+LEXICAL_FALLBACK_LIMIT = 2
+LEXICAL_TOOL = WORKSPACE_ROOT / "09-tools" / "vault-retrieve.py"
 
 # Extracts the first workspace-relative .md path in a hint — the dedupe key. Hints
 # from different tiers pointing at the same file (e.g. a curated row and a registry
@@ -1137,8 +1150,76 @@ def _hint_target_key(hint: str) -> str:
     return m.group(0) if m else hint
 
 
+def _refresh_vault_retrieve_index() -> None:
+    """Keep the lexical index fresh at SessionStart. Non-fatal."""
+    if not LEXICAL_TOOL.exists():
+        return
+    try:
+        subprocess.run(
+            [sys.executable, str(LEXICAL_TOOL), "--rebuild", "--quiet"],
+            cwd=str(WORKSPACE_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"[session-start] vault-retrieve rebuild skipped: {exc}\n")
+
+
+def _lexical_fallback_hits(prompt: str, limit: int = LEXICAL_FALLBACK_LIMIT) -> list[tuple[str, str]]:
+    """Query vault-retrieve --cached. Returns (path, hint) pairs. Fail-open."""
+    if not LEXICAL_TOOL.exists() or not prompt.strip():
+        return []
+    # Skip short/ack prompts. Stopwords + OR min-overlap live in vault-retrieve;
+    # this is only a cheap pre-gate before the subprocess.
+    if len(re.findall(r"[A-Za-z0-9]{4,}", prompt)) < 2:
+        return []
+    try:
+        proc = subprocess.run(
+            [
+                sys.executable,
+                str(LEXICAL_TOOL),
+                prompt.strip(),
+                "--cached",
+                "--json",
+                "--quiet",
+                "--no-expand",
+                "--limit",
+                str(limit),
+            ],
+            cwd=str(WORKSPACE_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=8,
+        )
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"[user-prompt] vault-retrieve skipped: {exc}\n")
+        return []
+    if proc.returncode not in (0, 1) or not proc.stdout.strip():
+        return []
+    try:
+        data = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return []
+    out: list[tuple[str, str]] = []
+    for hit in data.get("hits") or []:
+        path = hit.get("path") or ""
+        if not path.endswith(".md"):
+            continue
+        snip = (hit.get("snippet") or hit.get("title") or "").strip()
+        snip = re.sub(r"\s+", " ", snip)
+        if len(snip) > 140:
+            snip = snip[:137] + "…"
+        hint = f"lexical: read `{path}` before proceeding"
+        if snip:
+            hint += f" — {snip}"
+        out.append((path, hint))
+    return out
+
+
 def handle_user_prompt(payload: dict) -> None:
-    prompt = (payload.get("prompt") or "").lower()
+    raw_prompt = payload.get("prompt") or ""
+    prompt = raw_prompt.lower()
     if not prompt:
         return
     skill_hits = [(t, s) for t, s in TRIGGER_WORDS.items() if _term_matches(t, prompt)]
@@ -1154,9 +1235,9 @@ def handle_user_prompt(payload: dict) -> None:
         ("registry trigger", registry_hits),
         ("index trigger", index_hits),
     ]
-    if not any(hits for _, hits in tiers):
-        return
-    lines = ["# Project trigger detected", ""]
+    layer0_any = any(hits for _, hits in tiers)
+
+    lines: list[str] = []
     seen: set[str] = set()
     for tier_name, hits in tiers:
         cap = TIER_CAPS[tier_name]
@@ -1174,13 +1255,45 @@ def handle_user_prompt(payload: dict) -> None:
             emitted += 1
         if dropped:
             lines.append(f"- _(+{dropped} more {tier_name} match(es) dropped — per-tier cap {cap})_")
-    lines += [
+
+    # Layer 1: lexical FTS only when Layer 0 under-fires (gap fill, not a peer flood).
+    if len(seen) < LEXICAL_FALLBACK_MIN:
+        lex_cap = TIER_CAPS["lexical fallback"]
+        lex_emitted = 0
+        for path, hint in _lexical_fallback_hits(raw_prompt, limit=LEXICAL_FALLBACK_LIMIT):
+            key = _hint_target_key(hint) or path
+            if key in seen:
+                continue
+            if lex_emitted >= lex_cap:
+                break
+            seen.add(key)
+            lines.append(f"- **`lexical`** → {hint}")
+            lex_emitted += 1
+        if lex_emitted:
+            lines.append(
+                f"- _(lexical fallback — Layer 0 had {len(seen) - lex_emitted} unique target(s); "
+                f"cap {lex_cap}. CLI: `python3 09-tools/vault-retrieve.py \"…\"`)_"
+            )
+
+    if not lines:
+        return
+
+    header = (
+        "# Project trigger detected"
+        if layer0_any
+        else "# Vault lexical fallback"
+    )
+    body = [
+        header,
+        "",
+        *lines,
         "",
         "_Load the matched skills per the AGENTS.md precedence algorithm (foundation-first) "
         "and read matched knowledge entries BEFORE acting. When authoring inside a specific "
-        "design system, resolve within that system's own tokens; backlog its gaps._",
+        "design system, resolve within that system's own tokens; backlog its gaps. "
+        "Layer 0 triggers outrank lexical hints on conflict._",
     ]
-    emit_context("\n".join(lines), "UserPromptSubmit")
+    emit_context("\n".join(body), "UserPromptSubmit")
 
 
 # Tool names that put pixels on a canvas Sean will inspect. First call per session

@@ -108,6 +108,59 @@ Reach for these techniques to turn "it looks off" into a specific, checkable obs
 Principle: **measure or describe what you see, don't assert it.** A VLM critique, an SSIM number, or a
 segmented overlay is evidence; "looks good" is not.
 
+## Execution protocol
+
+Vision work is analysis work, so it runs the analysis pipeline from
+[#15 Analysis Operating Model](../../01-frameworks/15-analysis-operating-model.md): question →
+method → validity → decision. The vision-specific ordering:
+
+1. **Name the task and the output shape** (classify / detect / segment / track / reconstruct /
+   describe). If the output shape is unclear, the task is not yet defined and no model choice is
+   meaningful.
+2. **Write the dataset contract** before touching a model: source and licence, capture conditions,
+   class definitions with edge cases, annotation protocol, expected class balance, and what a
+   "hard" example looks like. Ambiguous class definitions produce label noise that no architecture
+   recovers from.
+3. **Split before you look.** Define train / validation / test by *group* (scene, subject, camera,
+   session), not by frame, and check for near-duplicate leakage. Freeze the test set; it is the
+   thing you are allowed to be surprised by exactly once.
+4. **Pick the metric the task is graded on** (mAP at the relevant IoU, mIoU or Dice, PR-AUC under
+   imbalance, MOTA/IDF1 for identity) and the operating point (which precision/recall trade the
+   consumer of this system actually needs).
+5. **Baseline first**: pretrained weights, minimal fine-tune, no augmentation tricks. This is the
+   number every later change is judged against, and it is often good enough.
+6. **Iterate on data before architecture.** Augmentation encodes the invariances you claimed in
+   step 2; relabelling the confused classes usually beats swapping backbones.
+7. **Read the failures, not just the aggregate.** Confusion matrix, per-class precision/recall, and
+   a wall of false positives and false negatives at native resolution
+   ([#10 Perception Integrity](../../01-frameworks/10-perception-integrity.md)).
+8. **Measure deployment cost on the target** (latency, memory, power) and the accuracy actually
+   lost to quantization or export, on your data.
+
+## Done-gates
+
+Do not report a vision result as working until all of these hold. Any that cannot hold gets stated
+as an unmet gate, not rounded up.
+
+- **Dataset contract exists and is honoured.** Class definitions, annotation protocol, and split
+  policy are written down; the split is group-aware and leakage-checked.
+- **The test set was used once, at the end.** A number produced by repeatedly tuning against the
+  test set is a training metric wearing the test set's name.
+- **Metric matches the task and the operating point is named.** A single mean with no per-class
+  breakdown is not an evaluation.
+- **Failure modes enumerated with examples.** Small objects, rare classes, one lighting condition,
+  motion blur, occlusion, domain shift: each either measured or explicitly out of scope. This is
+  [#11 Anticipatory Failure Analysis](../../01-frameworks/11-anticipatory-failure-analysis.md)
+  applied to a model instead of a shader.
+- **Validated on the deployment distribution**, not only the benchmark. If that data does not
+  exist yet, say so; it is the top risk, not a footnote.
+- **Confidence reported honestly.** A confident wrong box is the characteristic harm of this
+  domain. Calibration and the abstain path are part of the result.
+- **When vision is used as a QA instrument** (the section above), the measurement path is named and
+  the pixels are native. A VLM's prose critique is `critique`; SSIM, a pixel diff, or a detection
+  overlay is `audit`. Per [#13 Domain Rigor Stack](../../01-frameworks/13-domain-rigor-stack.md),
+  do not label judgment as measurement.
+
 ## Related
 - spoke → [[vis-classical-opencv]] · [[vis-detection-tracking]] · [[vis-segmentation]] · [[vis-video-pipelines]] · [[vis-vlm-multimodal]]
 - peer ↔ [[imaging-foundations]] · [[science-foundations]] · [[data-foundations]] · [[found-perception]] · [[lead-visual-qa]] · [[lead-game-developer]]

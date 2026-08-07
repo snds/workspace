@@ -4,6 +4,151 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-07-23 — Bootstrap generator hardening + workspace multi-session/token-frugality resilience
+
+SessionID: 2026-07-23-voyager-k7x2
+--- SESSION BLOCK ---
+Date: 2026-07-23
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 18-bootstrap-generator (major) + workspace system-layer (concurrency, token-frugality, framework contract)
+Summary: Resumed and largely completed the portable bootstrap generator, then hardened THIS workspace for multi-session/multi-device/multi-surface use and token frugality, and propagated every change back into the generator so users get parity. ~26 commits, all gates green, three distribution zips rebuilt.
+Artifacts:
+  - 07-projects/18-bootstrap-generator/generator/wsxlib/{resolver,search,scan,mcp_template}.py — new: Resolver (pull/patch/generate/composite), source discovery, agent/MCP/local-LLM detection, zero-dep stdio MCP server
+  - 07-projects/18-bootstrap-generator/{launch.py,package.py,packaging/} — permission-free launcher (python3 launch.py; no exec-bit/Gatekeeper) + per-OS zip packager + Apple notarization pipeline (prep)
+  - 07-projects/18-bootstrap-generator/VALIDATION.md — colleague-facing proofboard
+  - 07-projects/18-bootstrap-generator/dist/*.zip — macOS/Windows/Linux packages (gitignored; regen via package.py)
+  - 09-tools/compact-sessions.py — new: idempotent session-fragment compaction + log archival
+  - 06-context/session-log-archive.md — new: bounded-log archive (live log 200KB→27KB)
+Decisions:
+  - Expertise is PER-DOMAIN (a separate axis from energy): the same person can be a staff-expert in one craft and a hobbyist in another; each generated skill is written at ITS domain's altitude (hobbyist teaches; expert captures judgment). Schema gained use_context + expertise{}.
+  - Resolver is a COMPOSITE builder, not just a skill fetcher: two-track sourcing (skill registries + industry-leading references), cite in the person's voice, never copy — grounded in our own skill-ecosystem knowledge that authored-from-reference beats a shallow pull.
+  - Permission-independence = invoke a trusted interpreter on a data file (python3 launch.py), never ship an executable; unsigned macOS double-click can't dodge Gatekeeper without the $99 cert (pipeline prepped, not required). Recommend ~/Documents/Projects/Workspace (Documents → iCloud/backup).
+  - BYO-tokens is architectural: the generator has no API key and makes no model calls; it runs on the user's own agent/account (wsx scan detects the stack; reads MCP server NAMES only, never secrets). If none detected, gate + recommend a surface before the interview.
+  - Multi-session model: conflict-free per-session FRAGMENTS + union-merge logs + idempotent compaction + scoped commit (never sweep a concurrent session's WIP) + safe push-retry (autostash pinned OFF → never rebases a dirty tree). Diagnosis first: the auto-sync was non-destructive (re-hashing is cosmetic); hardened the safe defaults.
+  - Token frugality is a #1 priority (workspace + generator): bounded/archived logs (O(1) read cost, not O(sessions)), read log heads not whole files, keep auto-loaded files terse. Stated in AGENTS.md core rules, framework 08 principle #6, CLAUDE.md, and every emitted adapter.
+Pending resolved:
+  - Bootstrap-generator command surface is stub-free (14 cmds); Resolver, emit mcp, turn-key Path A, expertise calibration, hosting, scan+gate, packaging all done + dogfooded.
+  - Reconciled the long-standing brain↔schema drift (schema_version "0.2"; lifecycle continuity boolean; automation minimal/standard/full).
+  - session-log.md bounded via archival; framework contract (AGENTS.md, fw08) updated to the fragment/frugal model.
+Pending added:
+  - Deeper wsx doctor self-heal for generated workspaces (re-emit stale adapters, verify .gitattributes) — optional polish.
+  - A registry search/discovery index layer (brain currently supplies exact skill urls).
+  - Externalize the generator's embedded scaffold templates (incl. the authoring framework + BYO README).
+Next:
+  - Optional: the doctor-self-heal polish, or drive the generator through a real colleague test.
+--- END BLOCK ---
+
+
+
+### 2026-07-22 — Game-dev perf doctrine + 4 hero-body rendering skills (Legion-driven)
+
+--- SESSION BLOCK ---
+Date: 2026-07-22
+Agent: Claude Opus 4.8
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 13-legion (workspace skill/knowledge augmentation in service of Legion rendering)
+Summary: Augmented the game-dev 3D skill network toward SpaceEngine-class hero-body fidelity. Ran a 16-agent research workflow (5 pillars → adversarial verify → synthesis, ~1.08M tokens, 156 web fetches) → master dossier; authored 4 new spoke skills; then generalized the performance requirement into a project-wide doctrine. Registry 248 → 252; all gates green (registry/related/links/integrity).
+Decisions:
+  - 4 new lead-game-developer spokes from the adversarially-verified dossier: planetary-terrain-lod, atmospheric-scattering-and-clouds, stellar-and-relativistic-hero-bodies, realtime-render-performance. Load-chain: foundations → hub → perf-spine → body skills (verified).
+  - Honest verdicts baked in (not hype): real in-browser budget ~8–9 ms not 11.1; planet+star hit high FPS on desktop dGPU (60+DRS on integrated); black hole = scripted slow-camera hero moment, zero interactive-game precedent; WebGPU has no mesh/tessellation/VRS/fp64 → compute+indirect only; TAAU is a co-dev bet that fails on motion-vector-less content.
+  - Generalized performance into a project-wide DOCTRINE (not Legion/90fps-specific): 60 FPS floor (not goal), uncapped by default (higher = smoother + lower latency), optional user frame cap in settings to reallocate GPU / cut power, input latency co-equal. Installed in game-foundations (new "Performance + responsiveness" principle) + lead-game-developer (principle #4). Renamed realtime-render-performance-90fps → realtime-render-performance (git mv; 12 files re-pointed).
+  - Marketplace harvest verdict: ~90% duplicative; workspace's new skills supersede the marketplace rendering skills (anthropic-skills:threejs-* are exact dupes). Folded the one additive item (blender-web-pipeline bpy + 3D-texture/VDB-bake path) into 3d-asset-pipeline rather than a duplicate spoke.
+Artifacts:
+  - 08-knowledge/game-dev/legion-hero-body-rendering-research.md — master research dossier (cited, adversarially verified; §5 skill blueprint)
+  - 08-knowledge/game-dev/legion-planet-surface-rendering.md — Legion planet-shader hard-won patterns (hex-artifact fix, ±0.08 treeline threshold, snow/ice, flashing-storm bug, GLSL reserved-word `active`)
+  - 03-skills/{planetary-terrain-lod,atmospheric-scattering-and-clouds,stellar-and-relativistic-hero-bodies,realtime-render-performance}/SKILL.md — 4 new spokes
+Pending resolved:
+  - Deduplicated 3d-asset-pipeline/SKILL.md (merge artifact — whole body was duplicated); merged section-by-section, no content lost, fixed a meters-vs-cm contradiction.
+Pending added:
+  - Implement the 4 new skills against the live Legion repo (src/render/planet/, src/render/) — reconcile planetary-terrain-lod with the existing quadtree renderer.
+  - Wire realtime-render-performance's frame-cap setting + input-latency pipeline into Legion's engine loop.
+  - Flashing-storm bug: capture a repro seed next time it appears (precision/state-sync suspect).
+Deferred commits:
+  - 07-projects/18-bootstrap-generator/launch.py — untracked, owned by bootstrap-generator work (not this session).
+Next:
+  - Begin Legion-side implementation of the terrain LOD + atmosphere spokes against src/render/.
+--- END BLOCK ---
+
+---
+
+### 2026-07-22 — Legion: planet rendering — biomes, climate, night-lights, living weather, lab UX
+
+--- SESSION BLOCK ---
+Date: 2026-07-22
+Agent: Claude Opus 4.8
+Machine: Personal MacBook Pro
+Surface: Claude Code (Mac desktop app)
+Project(s): 13-legion (Legion repo — separate git checkout at ~/Projects/Legion)
+Summary: Long continuous planet-renderer session. ~22 PRs (#163–#184) all merged to main + deployed to GitHub Pages (final commit 24040e5, Pages 200). Work spanned five threads: living weather, biome/climate physics, settlement-realistic night lights, ice/snow, and lab UX — plus research docs and a systemic World-dials control model.
+Decisions:
+  - Cyclones are ocean-gated on the CPU (macroHeight+warpDir sample) — no hurricanes over land; storm swirls scaled down (continent-sized was wrong); large cloud-free regions added; near-imperceptible animation.
+  - Climate moisture is a SIGNED additive FIELD (base + aridBelts/rainShadow/orographic/continental/altitudeDry/patchiness), never a product chain (collapses to zero). Temperature = cubic insolation fit to Earth MAT − lapse×altitude.
+  - Biome palette authored DARK (pine, ~half brightness); ocean ramp made bare ground (was itself green, bleeding through). Earth-calibrated albedo desert:forest ≈ 3:1 (not 10:1). Tundra can read green.
+  - Night lights = habitability field (coast/lowland/fertile/livable × cold/capNear/arid penalties, floor at trace) → density → threshold on high-freq snoise for light SHAPE; sparse (not zero) near ice caps and in large deserts; tendrils/clusters.
+  - Ice: snowCover() albedo overlay (no mass), sea-ice paler/bluer than land glacier, terrain normals show through ice, multi-scale uneven cap margins (lobes/bays/altitude/current asymmetry).
+  - Lightning: emissive flicker on cloud shell + surface under-glow, cyclone eyewalls + periodic cell grid gated by density.
+  - Systemic World dials (variants.ts): via(lo,mid,hi,t) piecewise-lerp anchored 0.5=Earth; offset/manual-edit-preservation model (masterValues/applyOffsets/LIMITS). Old sliders preserved for revert.
+  - Bake parity via single finishHeight() path; simplex fbm3 detail (not value noise); featherEdges to kill margin step-seams. Canyons added to macro.
+  - Stars-through-planets fixed: starfield materials transparent:false (was in transparent pass, drawing after opaque geometry). Ledger A-06.
+  - Lab controls fully live (killed Rebuild delay); camera.setViewOffset pans subject clear of docked panel; VIEW section adds auto-rotate toggle + arrow-key nudge.
+  - launch.json: legion (dev/5173) + legion-preview (preview/4173) detected and saved.
+Artifacts (Legion repo):
+  - docs/giants-moons-rings-research.md — ice/gas giants, rings as any-archetype feature, moons/satellites per archetype, binary planets, habitable giant-moons, super-earths.
+  - docs/labs-blackhole-star-nebula-requirements.md — lab requirements for black-hole / solar / nebula-nursery labs.
+  - docs/planet-lab-parameter-reference.md — parameter reference for the planet lab.
+Ledger (workspace, committed earlier this session): visual-failure-mode-ledger A-06 (transparent-flag defeats draw-first backdrop), P-05 recurrence note (bake value-noise), P-06 (differential-rotation smear), P-07 (hard edit-margins step-seam).
+Pending resolved:
+  - Cyclones-over-land, low cloud resolution, over-animated clouds, stars-through-planets, baked blockiness/step-seams, polar desertification, city-light blobs, storms flashing on live-slider ticks (refreshParams was wiping storm state), biome sage-not-pine.
+Carry-forward (unresolved / not-yet-built):
+  - Ephemeral cloud/LOD hexagon artifact — user confirmed cloud-layer (matching cloud shadow), then said it vanished; could not reproduce. Needs seed + repro conditions. NO fix shipped.
+  - Lightning never verified in a still frame (automation rAF throttle) — needs live-motion capture.
+  - Biome-height decouple (bh from plateMacro, not baked vHeight) was applied on a WRONG diagnosis (thought hexagon was a biome seam) — decide whether to keep.
+  - Sun/star, nebula, black-hole labs specced not built; ice/gas-giant material split; giant rings/moons features.
+Next:
+  - NEXT SESSION theme (user pre-announced): "a new set of adversarially checked skills to help us improve engine performance at close zoom levels and more." Await the skills, then apply to close-zoom perf.
+--- END BLOCK ---
+
+---
+
+
+
+### 2026-07-21 — SaaS PLM prototype → centric-ui gap audit re-run; PR #1 refreshed for Olga's review
+
+--- SESSION BLOCK ---
+Date: 2026-07-21
+Agent: Claude Opus 4.8 (1M context)
+Machine: Work MacBook Pro
+Surface: Cursor (Claude Code extension)
+Project(s): Employer design-system migration (cpes-software/saas-plm-prototype → centric-ui)
+  — deliverables live in the employer repo, NOT mirrored here (separation rule); this block
+  records only the fact of the work + the PR reference.
+Decisions:
+  - Re-ran the FULL multi-agent gap audit (not a delta pass): Olga's shadcn/Radix migration
+    invalidated the prior audit's "hand-rolled" premise, so every verdict was re-derived from
+    current source on both repos rather than carried forward.
+  - Report verification as "two independent adversarial passes; identical rung + difficulty on
+    all carried units" instead of a confirmed/adjusted count — the count proved a sampling
+    artifact (swung 8/19/6 → 17/16/0 across two passes while every unit's resolution + difficulty
+    stayed identical). Captured as knowledge [[adversarial-verify-label-volatility]].
+  - Updated PR #1 in place (rebased onto current main) to preserve Olga's review thread rather
+    than opening a fresh PR. Committed as the Centric account; PR review by Olga, no self-merge.
+  - Fixed a render bug pre-delivery: raw `<table>`/`<DataTable>` in the data broke the gap-map
+    matrix (innerHTML) and would mis-render on GitHub — escaped injected fields + the markdown.
+Pending resolved:
+  - Employer DS-migration gap report re-run: done — plan + interactive gap map refreshed, new
+    per-unit detail appendix added, PR #1 updated, replied to Olga's CHANGES_REQUESTED review.
+Pending added:
+  - Await Olga's re-review of saas-plm-prototype PR #1 before resuming the migration build.
+  - Prototype repo left checked out on `docs/centric-ui-migration-plan` (not `main`) — switch back when convenient.
+Next:
+  - On Olga's sign-off: resume the DS migration build, quick-win reuses first (per the refreshed plan).
+--- END BLOCK ---
+
+---
+
+
 ### 2026-07-20 — centric-ui local-against-cloud-dev stood up; PRs #116/#117 landed; credential-scoping + chain-order contract fixes
 
 --- SESSION BLOCK ---

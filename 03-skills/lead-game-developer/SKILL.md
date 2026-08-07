@@ -153,4 +153,4 @@ This hub includes six deep-dive references:
 ## Related
 - foundation → [[game-foundations]] · [[science-foundations]]
 - spoke → [[atmospheric-scattering-and-clouds]] · [[game-scale-traversal]] · [[glsl-shader-architect]] · [[planetary-terrain-lod]] · [[realtime-render-performance]] · [[stellar-and-relativistic-hero-bodies]] · [[threejs-materials-master]] · [[threejs-vfx-atmosphere]] · [[webgpu-advanced-rendering]]
-- peer ↔ [[vision-foundations]]
+- peer ↔ [[vision-foundations]] · [[realtime-visual-craft]] · [[rendering-guild]] · [[render-qa-toolkit]]

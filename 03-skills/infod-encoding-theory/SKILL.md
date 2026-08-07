@@ -332,3 +332,4 @@ what to notice and why. Route to `infod-narrative-design` for annotation strateg
 ## Related
 - foundation → [[found-color]]
 - hub → [[lead-information-designer]]
+- peer ↔ [[visual-qa-dataviz]]

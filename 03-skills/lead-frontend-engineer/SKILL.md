@@ -43,6 +43,7 @@ to the current question. The hub contains enough context to triage and route.
 | Skill | Domain | Trigger When |
 |-------|--------|-------------|
 | `fe-component-architecture` | Component API design, headless UI, composability, design system implementation, controlled/uncontrolled patterns, slots, compound components | Component API design, headless primitives (Radix, Ark UI, React Aria), DS token consumption, breaking change discipline, polymorphic components, ref forwarding |
+| `fe-perf-harness` | CWV/Lighthouse budget harness (measurement): how the number is produced, what a budget means, how it gates CI, and how it degrades when no runner exists | Perf CI, budget gate, Lighthouse JSON/LHCI, lab vs field, "why does LCP move between runs" |
 | `fe-performance` | Core Web Vitals, bundle optimization, rendering strategies (CSR/SSR/SSG/streaming), code splitting, image/font optimization, perceived performance | LCP/INP/CLS regressions, bundle size, code splitting strategy, SSR vs. CSR decision, performance budgets in CI, runtime profiling |
 | `fe-state-management` | App state architecture, server state vs. client state, optimistic updates, form state, TanStack Query, Pinia, Zustand, Jotai | State architecture decision, TanStack Query patterns, optimistic UI, form validation at scale, cache invalidation, URL state |
 | `fe-data-visualization` | Charting libraries, table rendering (TanStack Table), virtualization, large dataset handling, dashboards, cross-filter interactions | Chart library selection, table with sorting/filtering/grouping, virtual scrolling, data-dense rendering, dashboard composition |
@@ -246,6 +247,34 @@ for design-layer decisions. Route to `fe-testing` for axe-core integration in CI
 | Svelte-specific patterns (stores, transitions) | `fw-svelte` |
 | Dojo legacy code, Dijit widgets, dgrid, AMD modules, migration off Dojo | `fw-dojo` |
 
+### FE → Mobile
+
+Native and cross-platform app work moved to its own hub: `lead-mobile-engineer` owns the
+`mobile-*` spokes (iOS/SwiftUI, Android/Kotlin, React Native, platform craft) because the device
+constraints, OS-owned lifecycle, and store release path are not web concerns. Route there for app
+targets; stay here for anything that runs in a browser.
+
+
+---
+
+## Execution protocol (Domain Rigor L2)
+
+Governed by [[13-domain-rigor-stack]]. Domain L1: see framework table in that doc.
+
+1. Name the decision and success criteria before specialty work.
+2. Load foundation → this hub → only the 1–2 spokes needed.
+3. Prefer measurement (`audit`) over vibes when claiming compliance.
+4. Apply sideways lenses (a11y, security, visual QA) when the surface warrants.
+5. Stop at done-gates: contract/artifact + evidence + refuse absolute bans.
+6. Record durable insight in `08-knowledge/` when a pattern will recur.
+
+### Absolute bans
+- Shipping specialty advice that contradicts the domain operating framework
+- Loading all spokes eagerly
+- Declaring "done" without the L1 done-gate artifacts for this domain
+
 ## Related
 - foundation → [[eng-foundations]]
-- spoke → [[fe-accessibility]] · [[fe-api-integration]] · [[fe-component-architecture]] · [[fe-data-visualization]] · [[fe-design-tokens]] · [[fe-i18n]] · [[fe-performance]] · [[fe-state-management]] · [[fe-testing]] · [[fw-angular]] · [[fw-bootstrap]] · [[fw-carbon]] · [[fw-css-modules]] · [[fw-dojo]] · [[fw-lightning]] · [[fw-radix-colors]] · [[fw-radix-primitives]] · [[fw-react]] · [[fw-react-aria]] · [[fw-shadcn]] · [[fw-storybook]] · [[fw-svelte]] · [[fw-tailwind-css]] · [[fw-vue]] · [[fw-web-components]] · [[mobile-android-kotlin]] · [[mobile-ios-swiftui]] · [[mobile-platform-craft]] · [[mobile-react-native]]
+- spoke → [[fe-accessibility]] · [[fe-api-integration]] · [[fe-component-architecture]] · [[fe-data-visualization]] · [[fe-design-tokens]] · [[fe-i18n]] · [[fe-perf-harness]] · [[fe-performance]] · [[fe-state-management]] · [[fe-testing]] · [[fw-angular]] · [[fw-bootstrap]] · [[fw-carbon]] · [[fw-css-modules]] · [[fw-dojo]] · [[fw-lightning]] · [[fw-radix-colors]] · [[fw-radix-primitives]] · [[fw-react]] · [[fw-react-aria]] · [[fw-shadcn]] · [[fw-storybook]] · [[fw-svelte]] · [[fw-tailwind-css]] · [[fw-vue]] · [[fw-web-components]]
+- peer ↔ [[arch-guild]]
+- peer ↔ [[lead-mobile-engineer]]

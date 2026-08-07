@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-07-30 — two parallel passes landed: Cursor multi-agent hardening + Open Agent Engine live with the backlog migrated_
+_Last updated: 2026-08-05 — vault-retrieve golden-set green; dense Layer 2 deferred_
 
 ---
 
@@ -8,30 +8,28 @@ _Last updated: 2026-07-30 — two parallel passes landed: Cursor multi-agent har
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Harness hygiene + Substack enrichment landed — `harness-map` / `mission-fit` skills live; enrichment brief + thin ritual hooks (stamp Notice, session-end `Evidence:`) finished. No fake `harness-map.stamp` until a real map runs.
-- **Working set**: `03-skills/{harness-map,mission-fit}/`, `.claude/skills/{harness-map,mission-fit,session-end}/`, `.claude/hooks/dispatcher.py`, `.cursor/rules/brain.mdc`, `CLAUDE.md`, `07-projects/19-workspace-brain/reports/` (brief + README stamp convention).
-- **Last action (2026-08-07):** Persisted `reports/substack-enrichment-brief_v1.0_2026-08-07.md` (pointers only); verified/finished ritual hooks (dispatcher Notice, Cursor Notice, stamp protocol in harness-map, session-end Evidence 1.5); cross-linked ritual thinness in both skills. By Cursor Grok 4.5 · Cursor · Work MBP.
-- **Unattended runner — precondition, not a polish item.** `--strict-mcp-config` isolates a lane, but **`--allowed-tools` grants rather than restricts** — see prior note. Unchanged.
-- **Next action:** Sean chooses — (A) first **harness-map** on Cursor+workspace-core → land report + write `harness-map.stamp`, or (B) absorb one enrichment pull (skill one-job test / maintenance loop → `/optimize`, or token saver → ritual trim). Then optional mission-fit on one unreliable job. Still open from prior: review `personal:SEA-11`; decide `personal:SEA-32`; machine-local homes for `^pc-07` / `^pc-11`.
-- **Open decisions:** Whether Mission Fit recommendations should auto-mint Open Engine Todos (default in skill: only when claimable work must survive the chat). `personal:SEA-32` someday-bucket still open.
+- **Current focus**: Merge of Personal MBP vault-retrieve closeout + Work MBP harness hygiene — `harness-map` / `mission-fit` live; enrichment brief landed; absorbing Substack enrichments next. No fake `harness-map.stamp` until a real map runs.
+- **Working set**: `03-skills/{harness-map,mission-fit}/`, ritual hooks (dispatcher Notice, session-end `Evidence:`), `reports/substack-enrichment-brief_v1.0_2026-08-07.md`, plus vault-retrieve / Someday status from `origin/main`.
+- **Last action (2026-08-07):** Committed harness skills + ritual hooks; merging `origin/main` (vault-retrieve + Someday). By Cursor Grok 4.5 · Cursor · Work MBP. *Prior (Personal MBP 2026-08-05):* vault-retrieve golden-set 13/13; dense Layer 2 deferred.
+- **Unattended runner — precondition, not a polish item.** `--strict-mcp-config` isolates a lane, but **`--allowed-tools` grants rather than restricts** — need `--tools` / `--disallowed-tools` before any scheduled runner.
+- **Next action:** Absorb Substack enrichment pulls into skills/knowledge; then first **harness-map** (writes stamp). Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
+- **Open decisions:** Whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat). SEA-11 / SEA-32 closed on Personal MBP (`Someday` status chosen).
 - **Blocked on:** nothing.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config (`07-projects/02-centricPLM/open-engine.local.md` — gitignored). **Do not delete anchored items from `project-context.md`**.
-- **Agent thread**: `… → Cursor Grok 4.5 / Cursor / Work MBP (2026-08-07): enrichment brief + ritual hooks finished`.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config (`07-projects/02-centricPLM/open-engine.local.md` — gitignored). **Do not delete anchored `^pc-NN` items from `project-context.md`**.
+- **Agent thread**: `… → vault-retrieve @ 55b9f2a / Personal MBP` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-07): harness skills + merge + enrichment absorb`.
 
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
-- **Machine**: `CS-K746DRWXY1` (Work MacBook Pro, main)
+- **Machine**: `Voyager-2.local` (Personal MacBook Pro) this session; Work MBP remains the other primary.
 - **OS context**: macOS (Darwin 25.5.0)
-- **Workspace root**: `/Users/sean.sands/Projects/Workspace`
-- **Project root**: `/Users/sean.sands/Projects/Workspace/07-projects/19-workspace-brain`
+- **Workspace root**: resolve via nearest `AGENTS.md` (this checkout)
+- **Project root**: `07-projects/19-workspace-brain`
 
 ### VCS state
-- **Branch**: `main` @ `d252cda`, in sync with `origin/main`
-- **Committed + pushed 2026-07-29**: `8d42b36` (the engine — skill, lane index, personal config, detector, dispatcher wiring) and `d252cda` (the lane-isolation correction). The c8 lane config was correctly excluded from both — it stays gitignored.
-- **Uncommitted**: the ritual-integration edits only — `CLAUDE.md` (engine line in the session-start ritual), `.claude/skills/session-end/SKILL.md` (Step 5.5), `03-skills/open-agent-engine/SKILL.md` (Ritual integration section), `06-context/open-engine/personal.md` (the no-timer decision), plus the regenerated registry and this file.
-- **Note for concurrent sessions**: an earlier revision of this block reported 11 uncommitted entries at `c775341` and "nothing committed yet". That was accurate when written and is now superseded — verify against `git log` rather than this block if the two disagree.
-- **Test state at last check (2026-07-29 17:05)**: all five green — `validate-integrity` 617 files · `validate-links` 253 skills · `validate-capabilities` 7 caps / 13 requirements · `validate-workspace` · `vault-health` 0 errors across 82 notes. `linear-lanes.py` compiles; both lanes report `ok`, `--check` exits 0.
+- **Branch**: `main` @ `55b9f2a` (vault-retrieve feature; ahead of origin until session push)
+- **Uncommitted at baton write**: this SESSION-STATE + session fragment only
+- **Test state at last check (2026-08-05):** vault-retrieve rebuild ~610 docs; simulated dispatcher — rich Layer 0 skips lexical; under-fire paraphrase emits ≤2 lexical hints. Full validator suite not re-run this session.
 
 ### Open work and paused threads
 - **Currently in progress**: nothing. Open Agent Engine is complete on both the workspace side and the Linear side, and now wired into the session rituals (session-start read, session-end filing).
@@ -47,6 +45,21 @@ _Last updated: 2026-07-30 — two parallel passes landed: Cursor multi-agent har
 ---
 
 ## Session history (append-only)
+
+### 2026-08-05 — checkpoint (Layer-1 vault retrieve)
+
+**Focus this session**: Enrich workspace tooling with Layer-1 RAG (lexical FTS) + wire dispatcher fallback.
+**Machine**: Personal MacBook Pro (`Voyager-2.local`) · Cursor Grok 4.5 · Cursor
+**Stopped because**: Sean ended session after feature commit.
+
+**Accomplishments**:
+- `09-tools/vault-retrieve.py` — stdlib FTS5 index/query, graph expand, `--cached` hot path
+- Dispatcher: SessionStart rebuild; UserPromptSubmit lexical fallback when Layer 0 < 2 unique targets (cap 2)
+- Docs: ontology, vault-graph-conventions, infrastructure, README, CURSOR.md
+- Feature committed as `55b9f2a`
+
+**Next resumption needs**:
+- Live Claude Code smoke of the fallback; optional golden-set before dense Layer 2
 
 ### 2026-07-29 17:05 — checkpoint (Open Agent Engine complete)
 

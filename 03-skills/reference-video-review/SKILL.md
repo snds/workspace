@@ -48,4 +48,4 @@ keep the extracted frames as artifacts so the review is reproducible.
 
 ## Related
 - hub → [[visual-qa-toolkit]]
-- peer ↔ [[vis-vlm-multimodal]] · [[vis-video-pipelines]] · [[native-visual-eval]]
+- peer ↔ [[vis-vlm-multimodal]] · [[vis-video-pipelines]] · [[native-visual-eval]] · [[ai-video-generation]] · [[render-qa-toolkit]] · [[interactive-capture-eval]] · [[realtime-visual-craft]] · [[visual-qa-photoreal-rendering]]

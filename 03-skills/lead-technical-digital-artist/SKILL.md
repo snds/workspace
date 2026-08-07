@@ -16,6 +16,8 @@ description: >
 aliases: [lead-technical-digital-artist]
 tier: hub
 domain: design
+prerequisites: [design-foundations]
+related: [lead-icon-artist, lead-vector-designer, variable-icon-font-architect]
 spec_version: "2.0"
 ---
 
@@ -360,3 +362,7 @@ exactly as designed."
    or out-of-tolerance Hausdorff distance from the source SVG, flag it
    visually (render a comparison) rather than just logging a warning.
    Designers respond to visual evidence, not log files.
+
+## Related
+- foundation → [[design-foundations]]
+- peer ↔ [[lead-icon-artist]] · [[lead-vector-designer]] · [[variable-icon-font-architect]]

@@ -150,6 +150,26 @@ Project-local overrides should be interpreted narrowly and should not silently r
 
 ---
 
+## Doctrine precedence (skills vs plugins)
+
+When workspace doctrine and an installed plugin skill disagree, resolve in this order — **highest wins**:
+
+1. **Workspace frameworks** (`01-frameworks/`, especially #06 QA, #08 contribution, #11 failure analysis, **#13 Domain Rigor Stack**, and domain L1s #02 / #12 / #14 / #15 / #16)
+2. **Workspace skills** (`03-skills/`) — including thin **wrapper** hubs that own triggers, bans, and routing
+3. **Installed plugin skills** (Cursor/Claude marketplaces: design-skillstack, impeccable, arch-guild, pstack, superpowers, adobe, etc.)
+
+Plugin depth is welcome. It must not silently override workspace done-gates, absolute bans, or measurement rules. Prefer the three-way contract used by `/qa` and `/motion`: workspace **wrapper** owns vocabulary + refuse cases; plugin **base** owns technique depth; never reimplement the base inside the vault.
+
+Skills may declare `defers_to: [<skill-or-framework>]` in frontmatter (and/or a Defers-to section in the body) when they wrap or overlap a plugin. See [skill-frontmatter.md](02-shared-references/skill-frontmatter.md) and [13-domain-rigor-stack.md](01-frameworks/13-domain-rigor-stack.md).
+
+---
+
+## Domain rigor (five-layer stack)
+
+Any new or materially improved skill hub/spoke/addendum must satisfy the **Domain Rigor Stack** ([13-domain-rigor-stack.md](01-frameworks/13-domain-rigor-stack.md)): L1 operating model, L2 command/contract surface, L3 measurement, L4 foundation→hub→spoke load chain, L5 multi-voice + doctrine routing. Instantiation varies by domain; omitting an intent is a defect. Native "create a skill" flows that skip this checklist are insufficient — follow #13's authoring algorithm.
+
+---
+
 ## Skills discovery contract
 
 Skills are discoverable by both humans and machines through one generated graph:

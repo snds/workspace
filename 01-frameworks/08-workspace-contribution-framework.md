@@ -130,14 +130,25 @@ Each layer: what belongs · when to add vs. extend · what never goes here · th
   principle. Decide tier (`foundation`/`hub`/`spoke`/`cross-cutting`) up front.
 - **Never:** rename a `SKILL.md` file/dir (add `aliases`); duplicate a skill per agent (extend
   frontmatter); restate in a spoke the principle its foundation owns.
-- **How:** author from `00-bootstrap/templates/skill.md` (frontmatter v2 + typed `## Related`); then
-  `python3 09-tools/build-registry.py`; ensure cross-links are reciprocal. CI gates both.
+- **How:** author from `00-bootstrap/templates/skill.md` (frontmatter v2.2 + typed `## Related`);
+  clear the [[13-domain-rigor-stack]] acceptance checklist (L1–L5 intents) before calling the
+  cluster done; then `python3 09-tools/build-related.py` → `build-registry.py`; ensure cross-links
+  are reciprocal. CI gates both.
+- **Domain rigor (mandatory):** knowledge-only hubs are incomplete. Every domain cluster needs an
+  operating model (L1), command/contract surface (L2), measurement path for audits (L3), intact
+  foundation→hub→spoke chain (L4), and multi-voice + doctrine precedence (L5). Instantiation varies
+  by domain — see #13. Prefer connective tissue over adding volume to already-deep spokes.
+- **Plugin wrappers:** if marketplace/plugin skills supply technique depth, add a thin workspace
+  hub that owns triggers, bans, and `defers_to`; do not fork plugin bodies into the vault. Doctrine
+  order: frameworks > workspace skills > plugins ([[AGENTS]]).
 - **External tools:** if a skill needs an MCP server or CLI, declare `requires: [<capability-id>]` and
   register the capability in `02-shared-references/capability-registry.md` (detection + install +
   fallback). Don't hard-code tool paths or install steps in the skill. The agent **preflights** the
   capability before use ([[AGENTS]] → "Capability preflight") and degrades/blocks/routes if it's
   absent on the current surface — so the skill stays portable across surfaces that may or may not have
   the tool. `09-tools/validate-capabilities.py` enforces the contract (no dangling ids, reciprocity).
+- **Unreachable packs:** a directory under `03-skills/` without a root `SKILL.md` is incomplete —
+  wire it (wrapper hub) or archive it. Never leave a half-integrated vendored tree.
 
 ### `04-preferences/` — behavioral defaults
 - **Belongs:** stable, deliberately chosen defaults — tone, format, terminology, conventions.

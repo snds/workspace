@@ -117,7 +117,7 @@ orphan the issue. `project-context.md` is now the substance store for these.
 |---|---|---|
 | `^pc-02` | `personal:SEA-9` | Silence the two beacon-enroll NOTEs |
 | `^pc-03` | `personal:SEA-10` | Machine-layer installs on remaining machines |
-| `^pc-04` | `personal:SEA-11` | Tool-neutral trigger-routes reference |
+| `^pc-04` | `personal:SEA-11` | Tool-neutral trigger-routes reference — **closed 2026-08-05** (accepted; substance already Done in vault) |
 | `^pc-09` | `personal:SEA-12` | SSH to github.com:22 timing out |
 | `^pc-10` | `personal:SEA-13` | "Context is King" foundation refinements |
 | `^pc-12` | `personal:SEA-14` | 2026-07-08 audit carry-forwards (b–e) |
@@ -179,19 +179,22 @@ answerable by creating something. The skill's stage-2 section carries this as th
 ## Setup checklist
 
 - [x] Linear workspace created (2026-07-29)
-- [x] **Six statuses created (2026-07-29)** — `Standing` (backlog) · `Agent Todo` (unstarted) ·
+- [x] **Seven statuses (2026-07-29 + `Someday` 2026-08-05)** — `Standing` (backlog) · `Someday`
+      (deferred, not claimable; board may read `Some day`) · `Agent Todo` (unstarted) ·
       `Agent Working` (started) · `Agent Needs Input` (started) · `Agent Review` (started) ·
       `Agent Done` (**completed**, verified live: `completedAt` populates on transition). Created by
       hand in Linear → team `SEA` → Settings → Workflow → **Issue statuses**; the MCP has no
       status-creation operation. `Agent Review` is deliberately **not** completed — it means "done,
       but a human must judge", and a completed status would close the issue out of the human's view.
-      **Sean renamed the five defaults rather than adding alongside** (`Todo`→`Agent Todo`,
-      `In Progress`→`Agent Working`, `In Review`→`Agent Needs Input`, `Backlog`→`Standing`,
-      `Done`→`Agent Done`) and added `Agent Review` new. Consequences, all accepted: this team now
-      speaks only the engine's vocabulary, so ordinary personal work would have to borrow it; state
-      *history* is relabelled retroactively (an issue created before the rename reads as having
-      started in `Standing`); and `SEA-1`–`SEA-4`, Linear's onboarding seeds, now sit in `Agent Todo`
-      — harmless, since the runner filters on label + title marker, and proven so during smoke test 1.
+      `Someday` is also not completed (parking lot). **Sean renamed the five defaults rather than
+      adding alongside** (`Todo`→`Agent Todo`, `In Progress`→`Agent Working`,
+      `In Review`→`Agent Needs Input`, `Backlog`→`Standing`, `Done`→`Agent Done`), added
+      `Agent Review` new (2026-07-29), then added `Someday` / `Some day` on both lane boards
+      (2026-08-05 — closes `personal:SEA-32`). Consequences, all accepted: this team now speaks only
+      the engine's vocabulary, so ordinary personal work would have to borrow it; state *history* is
+      relabelled retroactively (an issue created before the rename reads as having started in
+      `Standing`); and `SEA-1`–`SEA-4`, Linear's onboarding seeds, now sit in `Agent Todo` — harmless,
+      since the runner filters on label + title marker, and proven so during smoke test 1.
 - [x] `agent-instructions` label created and applied to a test issue (`SEA-5`, `SEA-6`)
 - [x] Team + project created; ids recorded above — **deviation:** the lane originally suggested a
       dedicated `Agent Engine` team, but the MCP cannot create teams either. The workspace's default

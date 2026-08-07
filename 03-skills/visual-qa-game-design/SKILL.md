@@ -276,4 +276,4 @@ Game feel is the tactile quality of interaction. Visually evaluate:
 
 ## Related
 - hub → [[lead-visual-qa]]
-- peer ↔ [[vis-vlm-multimodal]] · [[vis-detection-tracking]]
+- peer ↔ [[vis-vlm-multimodal]] · [[vis-detection-tracking]] · [[visual-qa-photoreal-rendering]]

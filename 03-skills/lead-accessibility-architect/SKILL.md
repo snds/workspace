@@ -20,6 +20,7 @@ description: >
 aliases: [lead-accessibility-architect]
 tier: hub
 domain: accessibility
+prerequisites: [design-foundations]
 spec_version: "2.0"
 ---
 
@@ -53,6 +54,7 @@ question. The hub itself contains enough context to triage and route.
 | `a11y-neurodiversity` | Autism spectrum, sensory processing, predictability, sensory overload, executive function | Autism design, sensory sensitivity, prefers-reduced-motion, ambient animation, predictable navigation |
 | `a11y-legal-compliance` | WCAG 2.1/2.2/3.0, ADA, EN 301 549, EAA, Section 508, audit methodology, VPAT | Legal requirements, compliance audit, WCAG success criteria, VPAT, conformance reporting, prioritization |
 | `a11y-assistive-tech` | Screen reader internals, AT testing protocols, switch scanning, eye tracking, AT market landscape, ARIA implementation | Screen reader behavior, ARIA roles/states/properties, testing protocol, AT market share, Dragon NaturallySpeaking |
+| `a11y-audit-toolkit` | Instrumented structural audit (measurement): axe-core / pa11y / Lighthouse runners, findings normalized to one schema, manual-checklist degrade path, CI exit codes | "run an accessibility audit", axe, pa11y, WCAG violations, ARIA/name/role/label audit, keyboard-and-focus-order audit, accessibility CI gate, VPAT evidence |
 
 ### Spoke Loading Protocol
 
@@ -173,6 +175,11 @@ They cannot find:
 Manual testing and user testing with disabled participants are non-negotiable
 for a genuinely accessible product.
 
+Run the automated half through [[a11y-audit-toolkit]] rather than by hand: it drives whichever
+runner the surface has, normalizes findings to one schema, and when no runner exists it emits a
+WCAG manual checklist and exits degraded instead of reporting a clean page. Pixel-level checks
+(contrast ratios, color-vision simulation) stay with [[visual-qa-toolkit]].
+
 ### Disability Is Contextual
 
 The social model of disability recognizes that disability is the interaction
@@ -252,6 +259,26 @@ When reviewing or specifying design work through this lens:
 - W3C ARIA Authoring Practices Guide
 - Deque axe-core accessibility engine
 
+
+---
+
+## Execution protocol (Domain Rigor L2)
+
+Governed by [[13-domain-rigor-stack]]. Domain L1: see framework table in that doc.
+
+1. Name the decision and success criteria before specialty work.
+2. Load foundation → this hub → only the 1–2 spokes needed.
+3. Prefer measurement (`audit`) over vibes when claiming compliance.
+4. Apply sideways lenses (a11y, security, visual QA) when the surface warrants.
+5. Stop at done-gates: contract/artifact + evidence + refuse absolute bans.
+6. Record durable insight in `08-knowledge/` when a pattern will recur.
+
+### Absolute bans
+- Shipping specialty advice that contradicts the domain operating framework
+- Loading all spokes eagerly
+- Declaring "done" without the L1 done-gate artifacts for this domain
+
 ## Related
-- spoke → [[a11y-assistive-tech]] · [[a11y-auditory]] · [[a11y-cognitive]] · [[a11y-legal-compliance]] · [[a11y-motor-physical]] · [[a11y-neurodiversity]]
+- foundation → [[design-foundations]]
+- spoke → [[a11y-assistive-tech]] · [[a11y-audit-toolkit]] · [[a11y-auditory]] · [[a11y-cognitive]] · [[a11y-legal-compliance]] · [[a11y-motor-physical]] · [[a11y-neurodiversity]]
 - peer ↔ [[lead-security-architect]]

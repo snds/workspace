@@ -17,10 +17,12 @@ description: >
   architectural renders, generated imagery) as a natural final-step review.
   Hub skill — routes to visual-qa-graphic-design, visual-qa-ux-design,
   visual-qa-ui-design, visual-qa-accessibility, visual-qa-usability,
-  visual-qa-game-design, visual-qa-architecture, visual-qa-interior-design.
+  visual-qa-game-design, visual-qa-photoreal-rendering, visual-qa-architecture,
+  visual-qa-interior-design, visual-qa-dataviz, visual-qa-motion.
 aliases: [lead-visual-qa]
 tier: hub
 domain: quality
+prerequisites: [design-foundations]
 spec_version: "2.0"
 ---
 
@@ -210,6 +212,7 @@ config structure, and output conventions.
 | `visual-qa-accessibility` | Contrast, target size, cognitive load | Any evaluation touching inclusion, WCAG compliance, readable typography for all users, sensory/motor accessibility |
 | `visual-qa-usability` | Task completion, learnability, error prevention | Reviewing whether a visual design enables users to accomplish their goals efficiently and without frustration |
 | `visual-qa-game-design` | Art style, HUD, level readability, game feel | Evaluating game UI, in-world visuals, level art composition, animation, visual feedback for game mechanics |
+| `visual-qa-photoreal-rendering` | Energy, GI, materials, shadows, tonemap, motion tells | Movie-level / northstar photoreal QA; still grid + flythrough frame-by-frame; distinct from gameplay readability |
 | `visual-qa-architecture` | Scale, proportion, material, site context | Reviewing architectural renders, exterior/structural visualizations, building proportions, material accuracy |
 | `visual-qa-interior-design` | Space, furnishing, lighting, material, style | Reviewing interior renders, space planning, finish accuracy, lighting simulation, furniture proportion |
 
@@ -267,5 +270,7 @@ identify the most critical visual deviations.
    is a remediation. Deliver remediations, not observations.
 
 ## Related
-- spoke → [[visual-qa-accessibility]] · [[visual-qa-architecture]] · [[visual-qa-game-design]] · [[visual-qa-graphic-design]] · [[visual-qa-interior-design]] · [[visual-qa-toolkit]] · [[visual-qa-ui-design]] · [[visual-qa-usability]] · [[visual-qa-ux-design]]
-- peer ↔ [[vision-foundations]] · [[native-visual-eval]]
+- foundation → [[design-foundations]]
+- spoke → [[visual-qa-accessibility]] · [[visual-qa-architecture]] · [[visual-qa-dataviz]] · [[visual-qa-game-design]] · [[visual-qa-graphic-design]] · [[visual-qa-interior-design]] · [[visual-qa-motion]] · [[visual-qa-photoreal-rendering]] · [[visual-qa-toolkit]] · [[visual-qa-type]] · [[visual-qa-ui-design]] · [[visual-qa-usability]] · [[visual-qa-ux-design]]
+- peer ↔ [[render-qa-toolkit]]
+- peer ↔ [[vision-foundations]] · [[native-visual-eval]] · [[interactive-capture-eval]] · [[realtime-visual-craft]] · [[rendering-guild]]

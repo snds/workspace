@@ -1,0 +1,123 @@
+# ════════════════════════════════════════════════════════════════════
+# EXAMPLE CONFIG — Legion realtime planet / continuum measurement
+#
+# Illustrative thresholds for Legion's ?perfcapture harness and flythrough
+# QA. Contains placeholder official-pose URL patterns; author a project-
+# owned config for production gates. Legion is the first consumer of
+# ?perfcapture JSON through this toolkit.
+# ════════════════════════════════════════════════════════════════════
+
+project_name: Legion
+
+# ── Official pose / capture URL patterns (placeholders) ─────────────
+# Paste ?perfcapture JSON from the browser console / window.__perfCapture.
+# Example capture URL (document as official pose when locked):
+#
+#   ?lab=planet&perfcapture&au=0.8&w=1280&h=720&dpr=2
+#
+# Continuum A/B:
+#   ?lab=planet&engine=continuum&perfcapture&au=0.8&w=1280&h=720&dpr=2
+#
+# Star composite floor:
+#   ?demo=star&perfcapture=composite&au=0.8&w=1280&h=720&dpr=2
+#
+# Approach / fill worst case (omit &au= to keep low-orbit):
+#   ?demo=approach&perfcapture&w=1280&h=720&dpr=2
+#
+# Pass breakdown (live rolling medians):
+#   ?lab=planet&perfcapture=passes&au=0.8&w=1280&h=720&dpr=2
+
+official_poses:
+  - id: lab-0.8au
+    url_pattern: "?lab=planet&perfcapture&au=0.8&w=1280&h=720&dpr=2"
+    notes: "Legacy planet lab HUD baseline @ 0.8 AU"
+  - id: lab-continuum-0.8au
+    url_pattern: "?lab=planet&engine=continuum&perfcapture&au=0.8&w=1280&h=720&dpr=2"
+    notes: "Continuum engine A/B at same pose"
+  - id: star-0.8au
+    url_pattern: "?demo=star&perfcapture=composite&au=0.8&w=1280&h=720&dpr=2"
+    notes: "Procedural star composite floor"
+  - id: approach-low
+    url_pattern: "?demo=approach&perfcapture&w=1280&h=720&dpr=2"
+    notes: "True-scale close orbit — fill worst case"
+
+# Flythrough notes (triple done-gate B — motion evidence)
+flythrough:
+  required_axes:
+    - move
+    - look
+    - roll
+    - zoom_scale_traversal
+  stress_labels:
+    - lod_swap
+    - floating_origin
+    - approach_surface
+    - cloud_deck
+  notes: >
+    Still-only approval is an automatic fail for TAA / volumetrics / dither /
+    cascades / LOD / continuum approach. Record the path, extract frames
+    (video_extract), then temporal_delta + motion_stress on labeled peaks.
+    Review dense samples at stress points frame-by-frame.
+
+frame_budget:
+  # 60 fps ≈ 16.67 ms theoretical; real in-browser GPU budget ~14–15 ms.
+  budget_ms: 16.67
+  real_budget_ms: 14.0
+  use_real_budget: true
+  warn_pct: 0.80
+
+pass_attribution:
+  top_n: 12
+  flag_share_pct: 0.30
+
+native_grid:
+  tile_size: 512
+  # Match official pose backing store intent (1280×720 @ dpr=2 → often 2560×1440 readback)
+  min_native_width: 1280
+  min_native_height: 720
+  downsample_warn_width: 800
+  write_tiles: true
+  write_montage: true
+
+histogram_hdr:
+  clip_low_pct: 0.4
+  clip_high_pct: 0.4
+  bins: 256
+  write_histogram_image: true
+
+false_color_exposure:
+  overlay_alpha: 0.55
+
+temporal_delta:
+  shimmer_mad_threshold: 7.0
+  spike_mad_threshold: 16.0
+  resize_to_first: true
+  write_delta_preview: true
+
+motion_stress:
+  peak_mad_threshold: 18.0
+  group_mean_threshold: 10.0
+  resize_to_first: true
+
+reference_match:
+  reference_path: null   # user supplies northstar still path
+  ssim_threshold: 0.88   # animated/procedural scenes — slightly looser
+  rgb_mad_threshold: 22.0
+  pixel_diff_threshold: 32
+  min_region_area: 500
+  dilation_iterations: 4
+  overlay_alpha: 0.5
+  compute_lab_mad: true
+
+video_extract:
+  fps: 4                 # denser sampling for flythrough stress
+  pattern: frame_%04d.png
+  start_sec: null
+  duration_sec: null
+  extra_vf: ""
+
+ledger_detect:
+  banding_grad_bins: 32
+  banding_edge_density_min: 0.035
+  clip_pct_min: 0.8
+  jpeg_block_score_min: 0.12

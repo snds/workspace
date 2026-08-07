@@ -1,0 +1,95 @@
+{
+  "lighthouseVersion": "12.2.1",
+  "requestedUrl": "http://localhost:4173/orders",
+  "finalUrl": "http://localhost:4173/orders",
+  "fetchTime": "2026-08-03T18:22:41.902Z",
+  "configSettings": {
+    "formFactor": "desktop",
+    "throttlingMethod": "simulate",
+    "screenEmulation": { "width": 1350, "height": 940, "deviceScaleFactor": 1, "mobile": false }
+  },
+  "categories": {
+    "performance": { "id": "performance", "title": "Performance", "score": 0.82 },
+    "accessibility": { "id": "accessibility", "title": "Accessibility", "score": 1.0 },
+    "best-practices": { "id": "best-practices", "title": "Best Practices", "score": 0.92 },
+    "seo": { "id": "seo", "title": "SEO", "score": 0.91 }
+  },
+  "audits": {
+    "largest-contentful-paint": {
+      "id": "largest-contentful-paint",
+      "title": "Largest Contentful Paint",
+      "score": 0.71,
+      "numericValue": 2380,
+      "numericUnit": "millisecond",
+      "displayValue": "2.4 s"
+    },
+    "first-contentful-paint": {
+      "id": "first-contentful-paint",
+      "title": "First Contentful Paint",
+      "score": 0.9,
+      "numericValue": 1420,
+      "numericUnit": "millisecond",
+      "displayValue": "1.4 s"
+    },
+    "cumulative-layout-shift": {
+      "id": "cumulative-layout-shift",
+      "title": "Cumulative Layout Shift",
+      "score": 1.0,
+      "numericValue": 0.041,
+      "numericUnit": "unitless",
+      "displayValue": "0.041"
+    },
+    "total-blocking-time": {
+      "id": "total-blocking-time",
+      "title": "Total Blocking Time",
+      "score": 0.44,
+      "numericValue": 318,
+      "numericUnit": "millisecond",
+      "displayValue": "320 ms"
+    },
+    "speed-index": {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "score": 0.88,
+      "numericValue": 2910,
+      "numericUnit": "millisecond",
+      "displayValue": "2.9 s"
+    },
+    "server-response-time": {
+      "id": "server-response-time",
+      "title": "Initial server response time was short",
+      "score": 1.0,
+      "numericValue": 214,
+      "numericUnit": "millisecond",
+      "displayValue": "Root document took 210 ms"
+    },
+    "interactive": {
+      "id": "interactive",
+      "title": "Time to Interactive",
+      "score": 0.79,
+      "numericValue": 3640,
+      "numericUnit": "millisecond",
+      "displayValue": "3.6 s"
+    },
+    "resource-summary": {
+      "id": "resource-summary",
+      "title": "Keep request counts low and transfer sizes small",
+      "score": null,
+      "scoreDisplayMode": "informative",
+      "details": {
+        "type": "table",
+        "items": [
+          { "resourceType": "total", "label": "Total", "requestCount": 74, "transferSize": 1268992 },
+          { "resourceType": "script", "label": "Script", "requestCount": 21, "transferSize": 411648 },
+          { "resourceType": "stylesheet", "label": "Stylesheet", "requestCount": 4, "transferSize": 61440 },
+          { "resourceType": "font", "label": "Font", "requestCount": 3, "transferSize": 145408 },
+          { "resourceType": "image", "label": "Image", "requestCount": 32, "transferSize": 214016 },
+          { "resourceType": "document", "label": "Document", "requestCount": 1, "transferSize": 18432 },
+          { "resourceType": "other", "label": "Other", "requestCount": 13, "transferSize": 418048 },
+          { "resourceType": "media", "label": "Media", "requestCount": 0, "transferSize": 0 },
+          { "resourceType": "third-party", "label": "Third-party", "requestCount": 9, "transferSize": 302080 }
+        ]
+      }
+    }
+  }
+}

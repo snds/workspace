@@ -14,6 +14,8 @@ description: >
 aliases: [lead-vector-designer]
 tier: hub
 domain: design
+prerequisites: [design-foundations]
+related: [lead-icon-artist, lead-technical-digital-artist, variable-icon-font-architect]
 spec_version: "2.0"
 ---
 
@@ -241,3 +243,7 @@ in the abstract.
 5. **Evaluate at final output, not at authoring zoom.** Paths are authored at
    high magnification but consumed at 20–48px. Always ground construction
    decisions in how the icon will render at its smallest target size.
+
+## Related
+- foundation → [[design-foundations]]
+- peer ↔ [[lead-icon-artist]] · [[lead-technical-digital-artist]] · [[variable-icon-font-architect]]

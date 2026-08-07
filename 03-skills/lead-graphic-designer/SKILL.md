@@ -252,6 +252,51 @@ discipline that made all of this possible.
 - ISO 12647 (process color for offset printing)
 - PDF/X standards: ISO 15930
 
+
+---
+
+## Execution protocol (Domain Rigor L2)
+
+Domain L1: [[02-ui-ux-operational-framework]] for systematic decisions, with
+[[01-aesthetic-lens]] as the judgment ground and [[05-last-mile-craft-framework]] as the finishing
+layer. Rigor model: [[13-domain-rigor-stack]]. Evaluation of a rendered result runs through
+[[10-perception-integrity]] and the `/qa` graphic lens.
+
+1. **Name what this has to communicate**, to whom, in what medium, at what viewing distance. Form
+   follows communication, so the brief is the constraint set.
+2. **Fix the constraints deliberately**: format, palette, type system, grid, and the one thing that
+   must be seen first. Constraints are the work, not a limitation on it.
+3. **Build the hierarchy structurally** (scale, weight, position, space) before any decorative
+   move. If the hierarchy only works because of color, it does not work.
+4. **Load narrowly**: `design-foundations`, this hub, then the one or two `gd-*` spokes in scope.
+5. **Set the mathematical relationships** (scale ratio, grid, optical spacing) so proportion is
+   authored rather than eyeballed, then let the eye override the math where the eye is right.
+6. **Test at real size and in context**, including the smallest and the largest reproduction the
+   work will get.
+7. **Run the craft pass**: optical alignment, spacing rhythm, contrast, consistency of the system
+   across every asset in the set, not a curated subset.
+8. **Verify at native resolution** before calling it finished, and state the pixels judged at.
+
+### Done-gates
+- The communication goal is stated and the design can be defended against it, not only against
+  taste.
+- Hierarchy survives desaturation and squint tests: structure carries it, color reinforces it.
+- The system is consistent across the whole set (every size, format, and variant), since
+  consistency is a property of the system rather than of one artifact.
+- Type and color decisions are named (families, scale, palette roles) rather than ad hoc, so the
+  work can be extended by someone else.
+- Production-ready per medium: bleed, trim, color space, resolution, and file format correct for
+  print or screen ([[gd-print-production]]).
+- Contrast and legibility verified at delivered size, with accessibility applied where the piece
+  carries functional information.
+- Fine-detail claims made at native resolution ([[10-perception-integrity]]).
+
+### Absolute bans
+- Ornament that carries no communicative load, added because the composition felt empty.
+- Distorting or restyling type outside its designed axes (stretching, faux bold, faux italic).
+- Judging or approving a fine visual detail from a downsampled or compressed preview.
+- Shipping a partial set (some sizes, some variants) as if the system were complete.
+
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[gd-brand-identity]] · [[gd-color-theory]] · [[gd-grid-and-layout]] · [[gd-image-composition]] · [[gd-print-production]] · [[gd-typography]] · [[gd-visual-communication]]

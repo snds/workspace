@@ -18,7 +18,7 @@ domain: workspace
 related: [workspace-bootstrap, harness-map, mission-fit, side-chat-handback]
 requires: [linear-mcp]
 surfaces: ["*"]
-spec_version: "2.1"
+spec_version: "2.2"
 ---
 
 # Open Agent Engine
@@ -119,7 +119,7 @@ Any transport providing those four works. In preference order:
    and the honest fallback when a surface has neither of the above. A queue a human can run is a
    queue that never blocks on tooling.
 
-**The tracker is a lane-level choice, not a property of this skill.** The six statuses, the title
+**The tracker is a lane-level choice, not a property of this skill.** The seven statuses, the title
 contract, and the receipts map onto Linear, Jira, GitHub Issues, Notion, or a local markdown queue.
 Swapping the tracker means editing one lane config, not this file. Keep the discipline when the
 surface changes: a queue without receipts is a prettier inbox.
@@ -182,22 +182,29 @@ standing wall, and it cannot be delegated to a script. Checks 1–2 are pure pre
 degrades to a first-write gate on an empty board, which is why the **first** write of a lane's life is
 always the cheapest, most disposable object you can make.
 
-## The six statuses
+## The seven statuses
 
 | Status | Meaning |
 |---|---|
 | `Standing` | Durable setup, ledger, routing map, SOPs. Never closed. |
+| `Someday` | Deferred / parking lot. **Not claimable.** (Board label may read `Some day`.) |
 | `Agent Todo` | Finite assigned work waiting for the target operator's agent. |
 | `Agent Working` | **The claim lock.** Moving here is the lock; `AGENT CLAIMED` is the receipt. |
 | `Agent Needs Input` | Paused — waiting on a tracker answer (`BLOCKED`) or a human-thread answer (`HUMAN HOLD`). |
 | `Agent Review` | Complete, but a human must judge, QA, or approve it. |
 | `Agent Done` | Complete, receipted, no review needed. Completed category. |
 
+**Claim eligibility:** only `Agent Todo` is pickable. `Someday` is never claimed, never auto-promoted,
+and never counted as queue pressure at session-start. A human moves `Someday` → `Agent Todo` when the
+work should become live. (Chose a seventh status over a priority-aware claim rule — `personal:SEA-32`,
+2026-08-05.)
+
 Two tracker-neutral invariants when mapping these onto a tracker's own category model: **`Agent Done`
 must sit in whatever that tracker calls closed/completed** — the runner keys completion off the
 category, not the name — and **`Agent Review` must not**, because it means "finished, but a human must
 judge", and a closed status drops it out of the human's active view, which is the one place it needs
-to be. The concrete per-tracker mapping belongs in the lane config, not here.
+to be. `Someday` is also **not** completed (it is deferred, not finished). The concrete per-tracker
+mapping belongs in the lane config, not here.
 
 ## The routing contract
 
@@ -246,7 +253,8 @@ One run = one heartbeat. Manual, or scheduled by the runtime.
    → finish → stop.
 7. **Delegated follow-up** — leave `AGENT FOLLOW-UP` on any delegated issue whose state changed.
 8. Otherwise claim the **oldest eligible** `Agent Todo` issue: correct label, title marker, and
-   agent-code bracket. Move to `Agent Working`, leave `AGENT CLAIMED`, then **re-read the issue**.
+   agent-code bracket. **Never claim `Someday`.** Move to `Agent Working`, leave `AGENT CLAIMED`,
+   then **re-read the issue**.
 9. Do only the scoped work. Finish into `Agent Done` (no judgment needed) or `Agent Review` (judgment
    needed), with `AGENT DONE` either way.
 10. Update the ledger with the outcome for that issue id. **Stop after exactly one task issue.**
