@@ -180,6 +180,15 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8â
 
 ---
 
+### LCARS Generative Interface
+**Status:** Planning
+**Summary:** LLM-forward adaptive LCARS console/shell â€” natural-language intent + combadge role context recomposes legal Okudagram surfaces via typed Scene IR; immutable constitution; v1 hybrid recipes with plumbing toward v2 dynamic topology; data-first 3D viewports; APCA primary contrast with WCAG AA fallback.
+**Folder:** `07-projects/20-lcars-generative-interface/`
+**Triggers:** lcars, generative lcars, okudagram, scene ir
+**Next:** Sean reviews `SPEC.md`; on approval, write the implementation plan and keep SESSION-STATE Live handoff current. Code will live in the platform `Projects` directory, not inside this vault.
+
+---
+
 ### Workspace Brain
 **Status:** Active
 **Summary:** Standing home for sessions whose subject is the workspace itself (validation, fix, migration, infrastructure). Established 2026-07-09 per the workspace-work project-home rule in framework #08 (FX-13); git-tracked for cross-machine continuity.

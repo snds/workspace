@@ -30,6 +30,10 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `workspace brain` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
 | `workspace fix` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
 | `workspace validation` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
+| `lcars` | 07-projects/20-lcars-generative-interface/ — read SESSION-STATE.md Live handoff then SPEC.md |
+| `generative lcars` | 07-projects/20-lcars-generative-interface/ — read SESSION-STATE.md Live handoff then SPEC.md |
+| `okudagram` | 07-projects/20-lcars-generative-interface/ — read SESSION-STATE.md Live handoff then SPEC.md |
+| `scene ir` | 07-projects/20-lcars-generative-interface/ — read SESSION-STATE.md Live handoff then SPEC.md |
 | `harness map` | 03-skills/harness-map/SKILL.md — map always-on / routed / enforcement before cleaning; read-only first |
 | `map the harness` | 03-skills/harness-map/SKILL.md — map always-on / routed / enforcement before cleaning; read-only first |
 | `clean my harness` | 03-skills/harness-map/SKILL.md — map always-on / routed / enforcement before cleaning; read-only first |
@@ -173,4 +177,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 92 · Registry rows: 58_
+_Curated routes: 96 · Registry rows: 58_

@@ -2,6 +2,12 @@
 <!-- Auto-maintained by Claude. Updated after each task. -->
 <!-- Last updated: 2026-07-09 | Session: Workspace fix session (FX-1..FX-14 applied) -->
 
+## LCARS Generative Interface — 07-projects/20-lcars-generative-interface/ (git-tracked)
+
+### 20-lcars-generative-interface/ (README.md + SESSION-STATE.md + SPEC.md + notes/)
+- **Purpose**: Project home for the generative LCARS interface (design → plan → implementation pointers). Spec captures constitution-first Scene IR architecture, combadge roles, APCA+AA, data-first 3D viewports.
+- **Last modified**: 2026-08-07 — scaffolded from Cursor Cloud Agent design session; status Planning pending Sean's SPEC review.
+
 ## Workspace Brain — 07-projects/19-workspace-brain/ (git-tracked)
 
 ### 19-workspace-brain/ (README.md + SESSION-STATE.md + notes/)
