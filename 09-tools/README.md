@@ -58,6 +58,18 @@ native `/snds:<name>` slash commands. Claude-specific ergonomics; optional.
 Enforces recorded word rules from `06-context/memory/feedback-*.md` (currently no active
 regex rules after the 2026-07-30 vendor-term correction).
 
+## check-unattended-runner-gate.py
+
+Hard gate for Open Engine scheduled / headless runners (harness-map #6). Idle exit 0 unless
+`UNATTENDED_RUNNER=1` or `--require`; then demands `OPEN_ENGINE_TOOLS`,
+`OPEN_ENGINE_DISALLOWED_TOOLS` (Bash/Edit/Write/Agent/CronCreate), and `OPEN_ENGINE_STRICT_MCP=1`.
+
+```
+python3 09-tools/check-unattended-runner-gate.py
+UNATTENDED_RUNNER=1 OPEN_ENGINE_TOOLS='…' OPEN_ENGINE_DISALLOWED_TOOLS='Bash,Edit,Write,Agent,CronCreate' \
+  OPEN_ENGINE_STRICT_MCP=1 python3 09-tools/check-unattended-runner-gate.py --require
+```
+
 ## side-chat-handback.py
 
 Helpers for [[side-chat-handback]]: `--status`, `--clip-from-inbox`, `--mark-consumed`, `--path`.

@@ -27,7 +27,7 @@ When starting a non-trivial task, read (in this order):
 
 0. **[06-context/CRITICAL_FACTS.md](06-context/CRITICAL_FACTS.md)** — read FIRST: the tiny always-loaded hot cache of facts never to re-derive (who/where/the walls/freshness)
 1. **[06-context/role-and-context.md](06-context/role-and-context.md)** — who Sean is, his work, specializations
-2. **[06-context/project-context.md](06-context/project-context.md)** — active projects + pending items (authoritative)
+2. **[06-context/project-context.md](06-context/project-context.md)** — pending stubs + `^pc-NN` (authoritative queue); long substance in `project-context-detail.md`; project narratives in `project-registry.md` (load on demand)
 3. **[06-context/session-log.md](06-context/session-log.md)** — recent session entries, newest-first
 4. **[06-context/artifact-registry.md](06-context/artifact-registry.md)** — structural index of known files
 5. **[04-preferences/user-preferences.md](04-preferences/user-preferences.md)** — communication style, tone
@@ -84,196 +84,31 @@ fight it with always-on specialist method. See [[nate-jones-harness-enrichments]
 
 ---
 
-## Frameworks (the operating layer)
+## Frameworks, skills, knowledge, conventions (one home)
 
-Eleven top-level frameworks govern all project work. They sit **above** any skill.
+Standing law and folder semantics live in **[AGENTS.md](AGENTS.md)** — do not restate them here
+(harness-map rec #3). Load on demand:
 
-- **[01-frameworks/01-aesthetic-lens.md](01-frameworks/01-aesthetic-lens.md)** — philosophical ground, visual/aesthetic judgment
-- **[01-frameworks/02-ui-ux-operational-framework.md](01-frameworks/02-ui-ux-operational-framework.md)** — UX/UI operational decisions
-- **[01-frameworks/03-collaboration-and-critique-framework.md](01-frameworks/03-collaboration-and-critique-framework.md)** — conduct, critique, handoff
-- **[01-frameworks/04-research-and-evidence-framework.md](01-frameworks/04-research-and-evidence-framework.md)** — epistemology, evidence standards
-- **[01-frameworks/05-last-mile-craft-framework.md](01-frameworks/05-last-mile-craft-framework.md)** — finishing discipline, augmented perception
-- **[01-frameworks/06-qa-operating-model.md](01-frameworks/06-qa-operating-model.md)** — target-user QA lens, default skill loading, reference-comparison protocol, iteration-default mindset, system-context fidelity (work within the target DS; backlog its gaps)
-- **[01-frameworks/07-integration-and-review-framework.md](01-frameworks/07-integration-and-review-framework.md)** — branching, PRs, merge order, reviewable diffs
-- **[01-frameworks/08-workspace-contribution-framework.md](01-frameworks/08-workspace-contribution-framework.md)** — how/when/where/what/why to edit the workspace itself; routing map, memory + archive protocols
-- **[01-frameworks/09-component-and-pattern-framework.md](01-frameworks/09-component-and-pattern-framework.md)** — design-domain hub: what each component is for, when to reach for it, how they compose; the universal schema + AI-legible / `DESIGN.md` layer
-- **[01-frameworks/10-perception-integrity.md](01-frameworks/10-perception-integrity.md)** — cross-cutting precondition to all visual evaluation: never judge fine visual detail from a downsampled image; capture at native resolution, state the pixels judged at
-- **[01-frameworks/11-anticipatory-failure-analysis.md](01-frameworks/11-anticipatory-failure-analysis.md)** — input-time twin of #06: before proposing/building any technique with a visible failure surface, anticipate its classic failure modes (consult the Visual Failure-Mode Ledger), argue against your own plan, derive acceptance criteria from the reference figures, and prove the result at native resolution before "ready for review"; find the bug before Sean does
-- **[01-frameworks/12-realtime-photoreal-operational-framework.md](01-frameworks/12-realtime-photoreal-operational-framework.md)** — realtime photoreal ops: technique ladder, budget-first allocation, **triple done-gate** (native still grid + motion/flythrough frame-by-frame + measured ms), movie-level northstars; command surface `realtime-visual-craft`
-- **[01-frameworks/13-domain-rigor-stack.md](01-frameworks/13-domain-rigor-stack.md)** — meta-stack every domain hub must instantiate (L1–L5)
+- Frameworks → [01-frameworks/00-README.md](01-frameworks/00-README.md) (+ `/framework-check`)
+- Delivery / Proofboard / context profiles → [02-shared-references/delivery-playbooks/](02-shared-references/delivery-playbooks/)
+- Skill routing → [trigger-routes.md](02-shared-references/trigger-routes.md) + `03-skills/skills.registry.json`
+- Knowledge → [08-knowledge/_INDEX.md](08-knowledge/_INDEX.md) before domain work
+- QA always-load → framework #06 before audit/review/critique/refine work
 
-Compressed summaries: **[01-frameworks/00-README.md](01-frameworks/00-README.md)** — read this first.
-Team practices: **[01-frameworks/team-practices-and-decisions.md](01-frameworks/team-practices-and-decisions.md)**.
+### `.claude/skills/` — Claude Code slash workflows only
 
-Use `/framework-check` to run current work through the operating frameworks (the six core lenses always; situational lenses 07–16 when the work touches their domain) as a critique pass.
+- `/today` · `/handback` · `/session-end` · `/reconcile` · `/new-project`
+- `/framework-check` · `/optimize` · `/health` · `/harness-map` · `/mission-fit`
 
-**Delivery playbooks (context is king).** How work is *delivered* — whose work it is, who reads it, what medium, how it's proven — is governed by [02-shared-references/delivery-playbooks/](02-shared-references/delivery-playbooks/README.md). Load order: `00-context-profiles.md` resolves FIRST (declared profiles `personal-solo` / `centric-engineering` / `centric-design`; resolution: Sean's word → project declaration → repo remote → ask; fail-safe = most restrictive). Then the audience contract (designer-first, forward test) and the medium playbook the request's own words imply (a diagram request is only satisfiable by a diagram). Code-heavy work ships with a **Proofboard** (`05-validation-harness.md`) — plain-english contracts, show-me evidence, sandboxed sample data — so Sean can verify without reading code. The pre-delivery gate is wired into framework #06's pre-output gate.
+### Claude-only gates
 
-**Always-load for QA work:** any task signalling audit, review, critique, refinement, clean-up, iteration, alignment, or last-mile finish loads framework #06 *before* doing anything else. The pre-output gate in #06 is non-negotiable.
+- **Figma write gate:** first `use_figma` per session → PreToolUse design-judgment inject, then retry.
+- **Machine labels** (session blocks): `Voyager-2.local`→Personal MBP · `seansands.local` /
+  `CS-KQ23N94M0W` / `CS-K746DRWXY1`→Work MBP · `Enterprise`→Windows.
 
----
+## Paths + lifecycle (Claude execution)
 
-## Knowledge Vault
-
-Accumulated domain insights that outlive individual sessions: `08-knowledge/`. Distinct from
-skills (operational how-to) and context (session/project state). Entries cover what was
-actually learned from real work — validated patterns, working theories, research synthesis.
-
-- **[08-knowledge/_README.md](08-knowledge/_README.md)** — conventions, entry format, when to read/write
-- **[08-knowledge/_INDEX.md](08-knowledge/_INDEX.md)** — navigable index of all entries
-
-Subdirectories: `design/`, `engineering/`, `data-science/`, `game-dev/`, `research/`, `cross-domain/`.
-
-Claude should propose writing a knowledge entry when a session produces a durable insight.
-
-**Before substantive domain work:** check `08-knowledge/_INDEX.md` (loaded at session start)
-for a relevant entry and read it before diving in. The `UserPromptSubmit` hook surfaces a
-reminder automatically when trigger words match — follow it. Don't skip this step: the entries
-capture hard-won constraints and decisions that aren't in the skills or session log.
-
----
-
-## Skills
-
-Two skill systems, intentionally separate.
-
-### `03-skills/` — the full hub/spoke network
-
-The skill library. **You don't auto-load these** — load per the precedence algorithm in
-[AGENTS.md](AGENTS.md) (route by `triggers`/`description`, then load the `load_chains` ancestors
-foundation-first). The machine graph is `03-skills/skills.registry.json` (generated from frontmatter
-by `09-tools/build-registry.py` — not a Drive sync). Hub skills to know about:
-
-- **Design / DS:** `ds-advisor`, `design-engineer`, `design-system-ops`, `figma-canvas-designer`, `figma-plugin-dev`
-- **Engineering:** `/eng` → `lead-frontend-engineer` / `lead-backend-engineer` / `lead-devops-engineer` / `lead-mobile-engineer`; multi-voice via `arch-guild`
-- **Security:** `lead-security-architect` → `sec-*` (framework #16)
-- **Accessibility:** `lead-accessibility-architect` → `a11y-*` + `a11y-audit-toolkit`
-- **Analysis / DS / PM:** framework #15 → `lead-data-scientist` / `lead-product-manager`
-- **Legion (game):** `legion-project` → `lead-game-designer` / `lead-art-director` / `lead-game-developer`; photoreal/perf → `#12` + `realtime-visual-craft` (+ project `RENDER.md` / `BUDGET.md` / `NORTHSTAR.md`)
-- **Icon fonts:** `variable-icon-font-architect` + math/vector/geometry spokes
-- **Visual QA:** `/qa` + `visual-qa-toolkit` + `a11y-audit-toolkit` + discipline spokes; realtime renders → `render-qa-toolkit` + `interactive-capture-eval` + `visual-qa-photoreal-rendering` + `rendering-guild`
-- **Realtime photoreal:** `realtime-visual-craft` (hub) — do **not** let Cursor plugin marketing-3D Three.js skills override Workspace doctrine when this spine is loaded
-- **Career:** `career-ops-job-search` / `job-search-strategist` / `job-application-optimizer` (wrappers)
-- **Workspace mgmt:** `workspace-bootstrap`
-- **Skill authoring:** always load [13-domain-rigor-stack](01-frameworks/13-domain-rigor-stack.md) before creating/improving hubs
-
-Full list: `ls 03-skills/`. Each directory has a `SKILL.md` whose frontmatter defines its graph edges.
-
-### `.claude/skills/` — Claude Code workflow skills
-
-Slash-command workflows native to Claude Code. Small, focused, invocable by `/name`:
-
-- **`/today`** — daily note: yesterday's pending → today's priorities → project statuses
-- **`/handback`** — end a side chat / detour; write `06-context/side-chat-inbox.md` for the parent (not a session-end)
-- **`/session-end`** — write session block, update project-context, commit, push
-- **`/reconcile`** — merge session blocks from multiple machines
-- **`/new-project`** — scaffold `07-projects/NN-name/` with SESSION-STATE template
-- **`/framework-check`** — critique current work through the operating frameworks (core always, situational when relevant; includes #13–#16 when skill/eng/analysis/security work)
-- **`/optimize`** — workspace audit: stale items, contradictions, drift, consolidation; logs to `06-context/audit-log.md`
-- **`/health`** — vault graph hygiene (deterministic): orphan notes, `#stale`/aging claims, dangling typed edges (`09-tools/vault-health.py` + `validate-links.py`). Narrower than `/optimize`; run it inside one.
-
----
-
-## Projects
-
-Active projects live in `07-projects/NN-name/`. Each carries a `SESSION-STATE.md` with the
-operational state (template at [01-frameworks/_session-state-template.md](01-frameworks/_session-state-template.md)).
-
-**Trigger words** route context automatically (handled by the `UserPromptSubmit` hook). Since
-2026-07-08 the hook matches from THREE sources at runtime — (1) `triggers:` in SKILL.md
-frontmatter via `skills.registry.json`, (2) `Triggers:` lists on `08-knowledge/_INDEX.md`
-entry lines, (3) the dispatcher's small curated tables — so declaring a trigger at the source
-is enough; no dispatcher edit needed. **Single-source rule:** the dispatcher's curated tables
-are the ONLY authority for cross-source routes; skill/knowledge triggers live only in their
-frontmatter/`_INDEX` lines — tables like the one below are illustrative mirrors, never edited
-to *create* a route. Illustrative routes (not exhaustive):
-
-| Trigger | Loads |
-|---|---|
-| `audit`, `review`, `critique`, `qa pass`, `refine` | `01-frameworks/06-qa-operating-model.md` — pre-output gate, load BEFORE the work |
-| `legion`, `the game`, `bobiverse` | `03-skills/legion-project/SKILL.md` + appropriate hub |
-| `photoreal`, `flythrough`, `frame budget`, `northstar`, `RENDER.md` | `#12` + `realtime-visual-craft` (+ `render-qa-toolkit` / `interactive-capture-eval` as needed) |
-| `centric`, `PLM`, `data table` | Design system context, Ark UI notes, cell anatomy WIP |
-| `field validation`, `validation state`, `warning`, `status color`, `contrast`, `a11y` | foundations-first route: `design-foundations` + `found-color` + `a11y-visual` + `uid-color-for-ui`, then the target system's own tokens |
-| `icon font`, `centricsymbols`, `variable axis` | `variable-icon-font-architect` + math spokes |
-| `figma plugin`, `plugin dev` | `figma-plugin-dev` |
-| `omni` | `omni-project` |
-| `diagram`, `flowchart`, `user journey`, `how does it work`, `show me the steps`, `walkthrough` | `02-shared-references/delivery-playbooks/` — context profile (00) first, then `02-diagrams-and-flows.md` |
-| `proofboard`, `validation harness`, `context profile` | `02-shared-references/delivery-playbooks/` (05 = Proofboard standard, 00 = profiles) |
-| `explain this to`, `explain like`, `eli5`, `present to` | `02-shared-references/delivery-playbooks/01-audience-contract.md` — forward test + three altitudes |
-| `chart`, `write a spec`, `write a report`, `validation report`, `full report` | `02-shared-references/delivery-playbooks/` (03 = data/charts, 04 = documents/specs) |
-
-**Figma write gate:** the first `use_figma` call per session is intercepted by a `PreToolUse`
-hook that injects the design-judgment gate (target-system fidelity, foundational color/a11y
-checks, backlog-the-gaps) and then lets the retried call through.
-
-Current active projects and their status: **[06-context/project-context.md](06-context/project-context.md)**.
-
----
-
-## Conventions
-
-### Token frugality (a #1 priority)
-This brain must never cost more tokens than the value it adds. Read the **top** of a
-log, never a whole growing file (session-log.md is bounded by archival; older history
-is in `06-context/session-log-archive.md`, read only on demand). Load a skill only
-when its trigger fires; prefer the smallest sufficient context.
-
-### File naming
-- Artifacts: `context_descriptor_vN.N_YYYY-MM-DD.ext`
-- Never overwrite — increment version. Minor = iterative, major = structural.
-- Sessions write to `05-artifacts/active/`; archive moves to `05-artifacts/archive/`.
-
-### Markdown + Obsidian
-- Use `[[wikilinks]]` for internal connections — the graph view depends on them.
-- YAML frontmatter on any note that has metadata (status, tags, date, links).
-- Tags: lowercase, hyphenated (`#data-tables`, `#session-log`).
-- Tasks: `- [ ]` open, `- [x]` done. Daily notes surface open tasks automatically.
-
-### Machine labels (used in session blocks)
-Resolve from `hostname` at boot. Never ask, never carry forward.
-
-| Hostname | Label |
-|---|---|
-| `Voyager-2.local` | Personal MacBook Pro |
-| `seansands.local` | Work MacBook Pro |
-| `CS-KQ23N94M0W` | Work MacBook Pro (loaner) |
-| `CS-K746DRWXY1` | Work MacBook Pro (main, going forward) |
-| `Enterprise` | Windows Desktop |
-
-### Never do
-- Never delete notes — move to `_archive/` subfolders.
-- Never overwrite artifacts — increment version.
-- Never modify `00-bootstrap/templates/` content without asking.
-- Never rename files without asking — Obsidian links will break silently.
-- Never commit `05-artifacts/` or most of `07-projects/` — see `.gitignore`.
-- **Never store durable content in Claude Code's local/private memory.** Externalize everything to the
-  workspace at its correct layer per the [AGENTS.md](AGENTS.md) "Externalize everything" Core rule and
-  the [routing map](02-shared-references/workspace-ontology.md). The local `.claude` memory holds only
-  a single pointer back to the workspace — nothing else.
-
----
-
-## Paths
-
-- **Workspace root:** the directory containing `AGENTS.md` (this checkout). Resolve by walking up to
-  it — no hardcoded paths, no cloud-drive mount detection.
-- **Git remote:** `snds/workspace` on GitHub (the canonical portable workspace). The legacy Drive-based
-  original (`claude-workspace-system`) is separate and untouched — see `06-context/memory/fact-workspace-repos.md`.
-
----
-
-## Session lifecycle
-
-1. **Start** — `SessionStart` hook loads context + current date (trigger routing reads the skill
-   registry per-prompt; on compact/resume the hook re-injects a compact re-orientation block). If resuming a
-   project, read its `SESSION-STATE.md` **Live handoff** block to pick up where the last agent left off.
-2. **Work** — use tools freely. Default to reading context files before claiming to know something.
-   Keep the Live handoff block current as you go.
-3. **End / handoff** — `/session-end` writes the attributed session block, updates the Live handoff block,
-   commits, pushes. Hook catches stray exits.
-
-**Multi-agent continuity:** Claude is one participant in a single unified thread — the same contract and
-shared state apply to Cursor, Perplexity, other models, and a human. See
-[AGENTS.md](AGENTS.md) → "Multi-agent continuity & handoff". For the full session-end protocol, see
-[.claude/skills/session-end/SKILL.md](.claude/skills/session-end/SKILL.md).
+- **Root:** nearest ancestor with `AGENTS.md`. **Remote:** `snds/workspace`.
+- **Start** — SessionStart injects context; resume via project **Live handoff**.
+- **End** — `/session-end` fragment + baton; see [.claude/skills/session-end/SKILL.md](.claude/skills/session-end/SKILL.md).
+- Continuity contract: [AGENTS.md](AGENTS.md) → Multi-agent continuity & handoff.

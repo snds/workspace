@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-08-07 — first harness-map landed (Cursor + workspace-core); stamp written_
+_Last updated: 2026-08-07 — harness-map recs #1–#3 + #6 applied; stamp live_
 
 ---
 
@@ -8,15 +8,15 @@ _Last updated: 2026-08-07 — first harness-map landed (Cursor + workspace-core)
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: First **harness-map** complete (read-only). Report + stamp live. Approve numbered recs before any clean.
-- **Working set**: `07-projects/19-workspace-brain/reports/harness-map_v1.0_2026-08-07.md`, `harness-map.stamp`, WIP commit `97bb259` (session-log compaction + Figma density knowledge).
-- **Last action (2026-08-07):** Finalized stashed WIP + committed; ran `/harness-map` (Cursor + workspace-core); wrote stamp. By Cursor Grok 4.5 · Cursor · Work MBP.
-- **Unattended runner — precondition, not a polish item.** Unchanged: need `--tools` / `--disallowed-tools` before any scheduled runner (map rec #6).
-- **Next action:** Sean approve harness-map recs (esp. **#1** index orphans → green `validate-workspace`, **#2** project-context shrink). Optional: [[mission-fit]] on one unreliable “done”. Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
-- **Open decisions:** Whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat). How aggressively to thin Cursor always-on duplication (map rec #3).
-- **Blocked on:** nothing for mapping; cleans blocked on Sean approval of recommendation numbers.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` items from `project-context.md`**. Do not auto-apply harness-map retires.
-- **Agent thread**: `… → enrichments @ 2388c3b` → `WIP @ 97bb259` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-07): harness-map v1.0 + stamp`.
+- **Current focus**: Harness-map recommendations **applied** (#1 index orphans, #2 project-context thin + detail/registry split, #3 CLAUDE/Cursor always-on point-not-paste, #6 unattended hard gate). #4/#5/#7/#8 left as Keep/Probation (no clean).
+- **Working set**: `project-context.md` stubs + `project-context-detail.md` + `project-registry.md`; `09-tools/check-unattended-runner-gate.py`; thinned `CLAUDE.md`; report `harness-map_v1.0_2026-08-07.md`.
+- **Last action (2026-08-07):** Applied map recs; validate; commit; push. By Cursor Grok 4.5 · Cursor · Work MBP.
+- **Unattended runner — precondition now a hard check.** `check-unattended-runner-gate.py --require` before any schedule; still no timer by decision.
+- **Next action:** Optional mission-fit on one unreliable “done”. Push done this turn. Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
+- **Open decisions:** Whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat).
+- **Blocked on:** nothing.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`.
+- **Agent thread**: `… → map @ e4dbc4c` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-07): apply harness-map #1–#3+#6 + push`.
 
 
 ### Environment
@@ -27,9 +27,9 @@ _Last updated: 2026-08-07 — first harness-map landed (Cursor + workspace-core)
 - **Project root**: `07-projects/19-workspace-brain`
 
 ### VCS state
-- **Branch**: `main` @ `97bb259` (ahead of origin until map/handoff commit + push)
-- **Uncommitted at baton write**: harness-map report + stamp + this SESSION-STATE
-- **Test state at last check (2026-08-07):** integrity + links green; **`validate-workspace` FAILED** (9 INDEX/MEMORY orphans — map rec #1).
+- **Branch**: `main` (push this session)
+- **Uncommitted at baton write**: harness-map apply set (pre-commit)
+- **Test state at last check (2026-08-07):** integrity + links + workspace validators expected green after INDEX/MEMORY fix.
 
 ### Open work and paused threads
 - **Currently in progress**: nothing. Open Agent Engine is complete on both the workspace side and the Linear side, and now wired into the session rituals (session-start read, session-end filing).

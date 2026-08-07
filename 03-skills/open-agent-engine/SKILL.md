@@ -61,6 +61,21 @@ built this way is a prompt-injection path to a shell. Real restriction needs `--
 `--disallowed-tools`. **Deny, don't allow** — and that is a precondition of an unattended runner, not
 a polish item. Full findings: [[workspace-infrastructure]] → "Headless Claude Code".
 
+### Unattended runner hard gate (harness-map #6)
+
+Prose above is not enforcement. Before any scheduled / headless / cron launch:
+
+```sh
+UNATTENDED_RUNNER=1 \
+OPEN_ENGINE_TOOLS='mcp__linear-personal' \
+OPEN_ENGINE_DISALLOWED_TOOLS='Bash,Edit,Write,Agent,CronCreate' \
+OPEN_ENGINE_STRICT_MCP=1 \
+  python3 09-tools/check-unattended-runner-gate.py --require
+```
+
+Exit `1` → **do not start the runner**. Wire this as the first step of any launchd/cron unit.
+Interactive sessions leave `UNATTENDED_RUNNER` unset; the gate idles exit `0`.
+
 Resolve lanes at runtime; **never hard-code an instance into this skill**:
 
 1. Read the lane index: `06-context/open-engine/README.md`.

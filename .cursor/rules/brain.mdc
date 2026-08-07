@@ -8,6 +8,11 @@ alwaysApply: true
 Portable multi-agent workspace. Contract: [AGENTS.md](../../AGENTS.md). This rule is `alwaysApply:true`
 so every model in Cursor inherits it.
 
+**Always-on set on Cursor (harness-map #3):** `AGENTS.md` (via this rule + User Rules beacon) +
+this file + `01-agent-controller.mdc`. Do **not** treat `CLAUDE.md` as Cursor standing law — it is
+the Claude Code adapter (ritual format + slash skills). If Cursor injects it anyway, prefer
+`AGENTS.md` + this rule on conflict.
+
 ## Side-chat inbox (every parent turn)
 
 Before continuing substantive work in a **parent / main** thread: if
@@ -21,7 +26,8 @@ session-end. Skill: `03-skills/side-chat-handback/SKILL.md`.
 Before the first reply in a new session:
 
 1. Root = directory containing `AGENTS.md`. Read: `AGENTS.md` → `03-skills/skills.registry.json` →
-   `02-shared-references/trigger-routes.md` (curated head) → `06-context/` (role, project-context head,
+   `02-shared-references/trigger-routes.md` (curated head) → `06-context/` (role, **project-context
+   stubs only** — not `project-context-detail.md` / `project-registry.md` unless the task needs them —
    session-log head, `memory/MEMORY.md`). Active project: read `SESSION-STATE.md` **Live handoff** first.
    Also run the side-chat inbox check above.
 2. **Notices (optional, top of ritual):** if

@@ -9,12 +9,15 @@ multi-agent handoff live in AGENTS.md — not duplicated here._
 - **Canonical always-on rule:** `.cursor/rules/brain.mdc` (`alwaysApply: true`) injects the contract
   framing into every request for every model. Write gates: `.cursor/rules/01-agent-controller.mdc`.
   If both this file and `brain.mdc` are present, follow `brain.mdc` for Cursor mechanics; defer to
-  [AGENTS.md](AGENTS.md) for everything else.
+  [AGENTS.md](AGENTS.md) for everything else. **One home (harness-map #3):** do not paste standing law
+  into User Rules beyond the thin BEACON; do not treat [CLAUDE.md](CLAUDE.md) as Cursor always-on
+  (Claude adapter only — ritual + slash skills).
 - **Workspace root:** open **this checkout** (the folder containing `AGENTS.md`), or a
   `00-bootstrap/workspaces/*.code-workspace` file with **Brain as the first folder**. Opening a
   parent (`~/Projects`) alone does not attach `brain.mdc` — use **move agent to workspace root** or
   reopen via the `.code-workspace` file.
-- **Context:** read `06-context/` (role, project-context head, session-log head, `memory/MEMORY.md`)
+- **Context:** read `06-context/` (role, **project-context stubs** only at start — detail/registry
+  on demand, session-log head, `memory/MEMORY.md`)
   and `04-preferences/user-preferences.md` at session start per framework 08.
 - **Skills:** Cursor has no Claude slash commands. Route via
   [trigger-routes.md](02-shared-references/trigger-routes.md) (curated) then

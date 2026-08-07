@@ -90,6 +90,7 @@
 !09-tools/vault-retrieve.py
 !09-tools/vault-retrieve.golden.json
 !09-tools/check-terminology.py
+!09-tools/check-unattended-runner-gate.py
 !09-tools/side-chat-handback.py
 
 # Track only the 00-obsidian integration project; other projects stay local.

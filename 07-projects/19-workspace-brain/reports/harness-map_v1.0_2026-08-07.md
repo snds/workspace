@@ -26,6 +26,8 @@ status: map-only — no clean applied
 
 This run is **read-only**. No deletions, merges, or always-on edits were applied.
 
+> **Applied 2026-08-07 (same day):** recs **#1** (INDEX/MEMORY orphans), **#2** (project-context stubs + detail/registry), **#3** (CLAUDE.md thin + Cursor always-on pointer), **#6** (`check-unattended-runner-gate.py`). Left as Keep/Probation: #4, #5, #7, #8.
+
 ---
 
 ## 2. System map

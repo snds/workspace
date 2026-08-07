@@ -97,6 +97,11 @@ residue at **session end**. The human is present exactly when a hold can be answ
 execution is not needed to make holds resolvable. Wired into `CLAUDE.md`'s session-start ritual and
 `/session-end` Step 5.5; procedure in [[open-agent-engine]] → Ritual integration.
 
+**Hard gate before any future timer (2026-08-07 harness-map #6):**
+`python3 09-tools/check-unattended-runner-gate.py --require` with
+`UNATTENDED_RUNNER=1`, `OPEN_ENGINE_TOOLS`, `OPEN_ENGINE_DISALLOWED_TOOLS` (must deny
+Bash/Edit/Write/Agent/CronCreate), and `OPEN_ENGINE_STRICT_MCP=1`. Exit 1 → do not launch.
+
 **The authorization above stays on record**, unexercised. If a real need for unattended progress
 appears (most likely cross-machine handoff), it can be switched on without re-litigating — but it
 **must** be lane-scoped (`--strict-mcp-config` + a one-server `--mcp-config`), and finding 2 should be

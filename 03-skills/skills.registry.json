@@ -4709,7 +4709,7 @@
       ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:b5abbfd3c82514bf839558d8830e8d0985333c0fc9b97765edf6d17ba7ab4649"
+      "hash": "sha256:52f5f13f03a3ed17e927702d506631737cc217a2dc080f963365cbde89f3dfb5"
     },
     "planetary-terrain-lod": {
       "path": "03-skills/planetary-terrain-lod/SKILL.md",
