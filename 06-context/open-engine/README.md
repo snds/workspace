@@ -13,6 +13,11 @@ Resolve a lane here first; never hard-code an instance into the skill.
 
 Engine version: **v1**
 
+Issue trackers are viable agent infrastructure when they support claim locks, explicit
+statuses, receipts, and pointer-shaped bodies — the bet this engine makes on Linear lanes
+([issue-trackers-as-infra](https://natesnewsletter.substack.com/p/issue-trackers-agent-infrastructure);
+see [[nate-jones-harness-enrichments]] §12).
+
 | Lane | Config | Tracked | Profile | Movement-only |
 |---|---|---|---|---|
 | `personal` | [personal.md](personal.md) | ✅ in git | `personal-solo` | no |

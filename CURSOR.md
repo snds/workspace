@@ -61,4 +61,11 @@ Fail-open. Structured-output / subagent turns skip the ritual line (see BEACON e
   Linear lanes / Figma are not assumed present until configured on this machine.
 - `.claude/skills/` slash commands are Claude-only; use `.cursor/agents/` + registry instead.
 
+## Surface posture
+
+Cursor tends **steer-heavy** (always-on `brain.mdc`, multi-model swaps, parent owns the
+baton; Task agents are workers). Claude Code tends **dispatch-heavy** (hooks + slash
+skills + SessionStart injection). Same model + different harness can dominate outcomes —
+map posture in [[harness-map]]; see [[nate-jones-harness-enrichments]] §11.
+
 Other adapters: [CLAUDE.md](CLAUDE.md) · [PERPLEXITY.md](PERPLEXITY.md).

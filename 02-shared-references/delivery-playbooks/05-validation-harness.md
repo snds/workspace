@@ -27,6 +27,10 @@ offered afterward. What "proven" means varies by profile ([[00-context-profiles]
 | `centric-engineering` | Sean's own validation before the PR opens — built **alongside**, never instead of, the tests / CI / PR quality engineers require. |
 | `centric-design` | Rarely code-heavy — but any code-backed analysis feeding a leadership deliverable still gets a board, so the deliverable's claims stay verifiable. |
 
+_Model bakeoffs / cheaper-model adoption use the same spirit: validator + manifest + fixtures,
+not vibes ([[nate-jones-harness-enrichments]] §7). Design-asset "looks fine" is not done —
+Figma component tests are a design-side Proofboard ([[nathan-curtis-ds-ops-substack]])._
+
 _Terms: **PR** (pull request) — a proposed change packaged up for someone else to review before it
 can land. **CI** — the automated checks that run on every proposed change._
 

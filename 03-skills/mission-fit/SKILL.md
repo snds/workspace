@@ -231,11 +231,15 @@ Always-on rituals do **not** run Mission Fit. They only:
   adds one `Evidence:` line (verified / unverified / blocked). That is continuity hygiene,
   not a five-check audit — invoke this skill when the job needs a real fit pass.
 
+Judge layer: the producing agent is never sole witness for what may leave the building —
+see [[nate-jones-harness-enrichments]] §3/§10 and framework #06 Judge check.
+
 ## Provenance
 
 - Nate B. Jones — *AI Agent False Success* (2026-08-07) + Mission Fit guide  
 - Evidence backdrop: arXiv [2606.09863](https://arxiv.org/abs/2606.09863) (*From Confident Closing to Silent Failure*) — false success common; LLM judges weak without state  
 - Localized 2026-08-07 for `snds/workspace`: Proofboard, capability registry, Open Engine, context profiles, archive-not-delete
+- Enrichments absorbed: [[nate-jones-harness-enrichments]]
 
 ## Related
 - peer ↔ [[harness-map]]

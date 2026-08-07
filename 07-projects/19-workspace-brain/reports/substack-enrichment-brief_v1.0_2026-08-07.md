@@ -1,13 +1,18 @@
 ---
 title: Substack enrichment brief — Nate Jones + Nathan Curtis
 date: 2026-08-07
-status: active
+status: absorbed
+absorbed: 2026-08-07
 tags: [workspace-brain, harness, enrichment, nate-jones, nathan-curtis]
 ---
 
 # Substack enrichment brief (v1.0)
 
 Pointers and landing suggestions only. **No paywalled bodies** — titles, URLs, one-line why, and where each idea should land in this workspace.
+
+**Status 2026-08-07:** **Absorbed** into [[nate-jones-harness-enrichments]] +
+[[nathan-curtis-ds-ops-substack]] and the skill/framework patches listed there. Keep this
+file as the provenance index; do not re-paste article bodies.
 
 ## Auth / limits
 

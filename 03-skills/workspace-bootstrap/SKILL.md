@@ -131,6 +131,14 @@ refactor · AI-Powered Design Assessment · **Legion** (hard-SF game; Three.js +
 
 **Artifacts:** `context_descriptor_vN.N_YYYY-MM-DD.ext` — never overwrite; increment version.
 
+## Token diet (session-start)
+
+Token frugality is a #1 priority ([[AGENTS]]). Session-start loads **heads** and the ritual —
+not specialist manuals, full skill catalogs, or evaluation protocols. Prefer trigger →
+`load_chains` over preload. If the setup feels heavier than a fresh chat, run
+[[harness-map]] (on demand) rather than growing always-on prose. Preloading large plugin /
+skill catalogs is a known cost trap — see [[nate-jones-harness-enrichments]] §6.
+
 ## Related
 - peer ↔ [[skill-placement]]
 - peer ↔ [[open-agent-engine]]

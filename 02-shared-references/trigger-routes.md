@@ -37,6 +37,10 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `mission fit` | 03-skills/mission-fit/SKILL.md — outcome/access/quality/evidence/supervision before trusting done; blocked ≠ substitute |
 | `false success` | 03-skills/mission-fit/SKILL.md — outcome/access/quality/evidence/supervision before trusting done; blocked ≠ substitute |
 | `trust done` | 03-skills/mission-fit/SKILL.md — outcome/access/quality/evidence/supervision before trusting done; blocked ≠ substitute |
+| `configuration collapse` | 08-knowledge/design/nathan-curtis-ds-ops-substack.md — slots over prop sprawl; AI-ready composition |
+| `figma slots` | 08-knowledge/design/nathan-curtis-ds-ops-substack.md — slots over prop sprawl; AI-ready composition |
+| `maintenance loop` | 08-knowledge/cross-domain/nate-jones-harness-enrichments.md + .claude/skills/optimize/SKILL.md |
+| `skill one-job` | 08-knowledge/cross-domain/nate-jones-harness-enrichments.md — keep/rewrite/remove imported skills |
 | `handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
 | `/handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
 | `end side chat` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
@@ -169,4 +173,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 88 · Registry rows: 58_
+_Curated routes: 92 · Registry rows: 58_

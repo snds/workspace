@@ -208,11 +208,18 @@ mapping belongs in the lane config, not here.
 
 ## The routing contract
 
+- **One-minute shape test (before creating work):** chat vs **one** agent vs **team** vs
+  **nothing**. Default the smallest shape that can produce evidence. Don't spin a queue
+  item for a one-shot answer; don't use a chat when claim/receipt continuity is required.
+  See [[nate-jones-harness-enrichments]] §8.
 - **Label:** exactly `agent-instructions` — the runner filters on this spelling.
 - **Title:** `[agent instructions][<agent-code>][task] <outcome>`. The second bracket scopes pickup to
   one runtime. `[all agents]` applies to every runtime **within that lane only**.
 - **Assignee:** the human who owns the target agent — never yourself when routing to someone else's
   runtime.
+- **Owner stamp (recurring jobs):** name the human owner, runtime, touch boundary, who
+  supervises `done`, and kill/pause condition — on the issue or Live handoff, pointer-shaped.
+  Orphan agents without owners are a governance failure ([ai-agent-ownership](https://natesnewsletter.substack.com/p/ai-agent-ownership)).
 - **Status:** set it **explicitly** on create — never rely on the tracker's default. A tracker's
   default is a property of the board, not of your intent, and it drifts when statuses are renamed or
   reordered. An issue that silently lands outside `Agent Todo` is invisible to every future run, and

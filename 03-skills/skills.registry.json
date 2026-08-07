@@ -3002,7 +3002,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:d2bae26fa12e1d5a6a3f1ea0b8f1cb0b5c74ea4d44561bcd17686bd95039f1ca"
+      "hash": "sha256:3dde8b6175965216b0fe6c9d2900d7c25c4e41821faa995219fa8d42cdb32636"
     },
     "ia-content-strategy": {
       "path": "03-skills/ia-content-strategy/SKILL.md",
@@ -4322,7 +4322,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:cf15e8208faab6738e9fa4552b5a9d68c4c4fbd91094247ab22e293da0b54e58"
+      "hash": "sha256:fc3c6aabe372331ce48da0a14352f583ef66130ec8540dc0af5713862884643a"
     },
     "mobile-android-kotlin": {
       "path": "03-skills/mobile-android-kotlin/SKILL.md",
@@ -4709,7 +4709,7 @@
       ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:5c5f1c9ead3d4e7d6e3a6f46c0a7ea9b541faa4f00313b67364be594f039170c"
+      "hash": "sha256:b5abbfd3c82514bf839558d8830e8d0985333c0fc9b97765edf6d17ba7ab4649"
     },
     "planetary-terrain-lod": {
       "path": "03-skills/planetary-terrain-lod/SKILL.md",
@@ -7191,7 +7191,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:fcdd3d55caf8a9cbc7782ecc9abf656835ecb20eb8d6ed29fb16fcd9fb8da4ba"
+      "hash": "sha256:8848755bb74ecd7a626018acffa01e84162901f08da6073d827b371e9dae4304"
     }
   },
   "load_chains": {

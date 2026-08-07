@@ -77,6 +77,11 @@ Rules:
 
 This ritual costs ~150 tokens per session start in exchange for cross-surface continuity and reliable confirmation that the brain loaded.
 
+**Surface posture:** Claude Code is **dispatch-heavy** (hooks inject context; slash skills
+route work). Cursor is more **steer-heavy**. Prefer the posture the surface exposes — don't
+fight it with always-on specialist method. See [[nate-jones-harness-enrichments]] §11 and
+[[harness-map]].
+
 ---
 
 ## Frameworks (the operating layer)

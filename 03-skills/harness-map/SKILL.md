@@ -231,10 +231,18 @@ Always-on rituals do **not** load this skill. They only:
 - **Session-end `Evidence:` line** — one optional line on consequential `done` claims
   (see `/session-end`); full five-check audits remain [[mission-fit]] on demand.
 
+### Control-layer appendix (when recommending autonomy widening)
+
+Before proposing "let the agent run further," confirm the ship checklist beyond the model:
+tools · data reach · permissions · quality bar · proof path · supervision · stop conditions
+([[nate-jones-harness-enrichments]] §4). Missing any → disposition **Turn into check** or
+**blocked**, not more prose.
+
 ## Provenance
 
 - Nate B. Jones — *The AI Harness Audit* (2026-07-15) + Clean My AI Harness guide  
 - Localized 2026-08-07 for `snds/workspace`: portable contract, registry `load_chains`, multi-surface adapters, archive-not-delete, Proofboard + Open Engine as existing enforcement/receipt layers
+- Enrichments absorbed: [[nate-jones-harness-enrichments]]
 
 ## Related
 - peer ↔ [[mission-fit]]

@@ -73,8 +73,15 @@ Look for the following classes of issue. Mark each finding with priority and con
 
 **Duplication / consolidation opportunities:**
 - Same information stated in multiple files (could be canonical in one + linked from others)
-- Multiple skills doing nearly the same thing
+- Multiple skills doing nearly the same thing — apply the **skill one-job test**: keep /
+  rewrite / remove against *Sean's* judgment for one clear job (imported skills often
+  encode someone else's process; see [[nate-jones-harness-enrichments]])
 - Repeated boilerplate in SKILL.md files that could be a shared snippet
+
+**Agent maintenance loop (seven surfaces — run when harness feels heavy):**
+Job · diet · memory · tools · reach · proof · value. Pair with [[harness-map]]
+dispositions (Keep / One home / Load later / Turn into check / Probation / Retire).
+See [[nate-jones-harness-enrichments]] §5.
 
 **Gaps:**
 - Mentioned but unimplemented (e.g., "we will build X" — never built)

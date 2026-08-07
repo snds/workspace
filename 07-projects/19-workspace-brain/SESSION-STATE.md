@@ -8,15 +8,15 @@ _Last updated: 2026-08-05 — vault-retrieve golden-set green; dense Layer 2 def
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Merge of Personal MBP vault-retrieve closeout + Work MBP harness hygiene — `harness-map` / `mission-fit` live; enrichment brief landed; absorbing Substack enrichments next. No fake `harness-map.stamp` until a real map runs.
-- **Working set**: `03-skills/{harness-map,mission-fit}/`, ritual hooks (dispatcher Notice, session-end `Evidence:`), `reports/substack-enrichment-brief_v1.0_2026-08-07.md`, plus vault-retrieve / Someday status from `origin/main`.
-- **Last action (2026-08-07):** Committed harness skills + ritual hooks; merging `origin/main` (vault-retrieve + Someday). By Cursor Grok 4.5 · Cursor · Work MBP. *Prior (Personal MBP 2026-08-05):* vault-retrieve golden-set 13/13; dense Layer 2 deferred.
-- **Unattended runner — precondition, not a polish item.** `--strict-mcp-config` isolates a lane, but **`--allowed-tools` grants rather than restricts** — need `--tools` / `--disallowed-tools` before any scheduled runner.
-- **Next action:** Absorb Substack enrichment pulls into skills/knowledge; then first **harness-map** (writes stamp). Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
-- **Open decisions:** Whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat). SEA-11 / SEA-32 closed on Personal MBP (`Someday` status chosen).
+- **Current focus**: Substack enrichments **absorbed** — Nate harness ops + Curtis DS ops knowledge; skills/frameworks/adapters patched. Harness-map / mission-fit live. No fake `harness-map.stamp` until a real map runs.
+- **Working set**: `08-knowledge/cross-domain/nate-jones-harness-enrichments.md`, `08-knowledge/design/nathan-curtis-ds-ops-substack.md`, patches to optimize / open-agent-engine / harness-map / mission-fit / workspace-bootstrap / fw06 / Proofboard / CURSOR+CLAUDE adapters.
+- **Last action (2026-08-07):** Merged `origin/main` (vault-retrieve) + harness commit pushed; absorbed all enrichment brief landings. By Cursor Grok 4.5 · Cursor · Work MBP.
+- **Unattended runner — precondition, not a polish item.** Unchanged: need `--tools` / `--disallowed-tools` before any scheduled runner.
+- **Next action:** First **`/harness-map`** on Cursor+workspace-core (writes stamp). Optional: mission-fit on one unreliable job. Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
+- **Open decisions:** Whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat).
 - **Blocked on:** nothing.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config (`07-projects/02-centricPLM/open-engine.local.md` — gitignored). **Do not delete anchored `^pc-NN` items from `project-context.md`**.
-- **Agent thread**: `… → vault-retrieve @ 55b9f2a / Personal MBP` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-07): harness skills + merge + enrichment absorb`.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` items from `project-context.md`**.
+- **Agent thread**: `… → merge @ 0a97511` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-07): enrichments absorbed`.
 
 
 ### Environment
