@@ -30,6 +30,10 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `workspace brain` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
 | `workspace fix` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
 | `workspace validation` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
+| `lcars` | 07-projects/20-lcars-generative-interface/ — read SESSION-STATE.md Live handoff then SPEC.md |
+| `generative lcars` | 07-projects/20-lcars-generative-interface/ — read SESSION-STATE.md Live handoff then SPEC.md |
+| `okudagram` | 07-projects/20-lcars-generative-interface/ — read SESSION-STATE.md Live handoff then SPEC.md |
+| `scene ir` | 07-projects/20-lcars-generative-interface/ — read SESSION-STATE.md Live handoff then SPEC.md |
 | `figma plugin` | 03-skills/figma-plugin-dev/SKILL.md |
 | `figma` | 03-skills/figma-canvas-designer/SKILL.md + 03-skills/design-engineer/SKILL.md — real-library-components rule |
 | `design system` | 03-skills/ds-advisor/SKILL.md + design-engineer |
@@ -120,23 +124,38 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `sci-probability-stochastic` | foundation | `probability`, `distribution`, `random`, `rng`, `seed`, `sampling` (+7) | `science-foundations` → `sci-probability-stochastic` |
 | `science-foundations` | foundation | `math`, `physics`, `linear algebra`, `vector`, `matrix`, `quaternion` (+8) | `science-foundations` |
 | `vision-foundations` | foundation | `computer vision`, `machine vision`, `image classification`, `object detection`, `image segmentation`, `feature extraction` (+9) | `vision-foundations` |
+| `adobe-app-builder` | hub | `adobe app builder`, `app builder`, `aio cli`, `aio app init`, `aio app deploy`, `adobe i/o runtime` (+9) | `eng-foundations` → `adobe-app-builder` |
+| `arch-guild` | hub | `arch guild`, `architecture review`, `multi-voice review`, `dijkstra`, `lamport`, `knuth` (+1) | `eng-foundations` → `arch-guild` |
 | `design-engineer` | hub | `design engineer`, `component architecture`, `component api`, `figma component`, `component variants`, `componentization` (+1) | `design-foundations` → `design-engineer` |
+| `design-system-ops` | hub | `design system ops`, `token audit`, `drift detection`, `ds governance`, `system health`, `deprecation plan` | `design-foundations` → `design-system-ops` |
 | `ds-advisor` | hub | `design system`, `design systems`, `PLM`, `component audit`, `token architecture`, `design token` (+7) | `design-foundations` → `ds-advisor` |
-| `lead-security-architect` | hub | `security`, `appsec`, `threat model`, `authentication`, `authorization`, `oauth` (+8) | `eng-foundations` → `lead-security-architect` |
+| `eng` | hub | `eng`, `engineering delivery`, `shape contract`, `ship service`, `harden auth`, `rollback plan` (+1) | `eng-foundations` → `eng` |
+| `job-search-strategist` | hub | `job search strategy`, `career positioning`, `target companies` | `job-search-strategist` |
+| `lead-mobile-engineer` | hub | `mobile engineering`, `mobile app`, `ios app`, `android app`, `react native`, `expo` (+13) | `eng-foundations` → `lead-mobile-engineer` |
+| `lead-security-architect` | hub | `security`, `appsec`, `threat model`, `authentication`, `authorization`, `oauth` (+12) | `eng-foundations` → `lead-security-architect` |
 | `legion-project` | hub | `the game` | `imaging-foundations` → `science-foundations` → `legion-project` |
+| `realtime-visual-craft` | hub | `photoreal`, `photorealism`, `realtime craft`, `realtime visual`, `flythrough`, `fly-through` (+15) | `realtime-visual-craft` |
 | `variable-icon-font-architect` | hub | `variable axis`, `variable axes` | `design-foundations` → `lead-type-designer` → `variable-icon-font-architect` |
+| `a11y-audit-toolkit` | cross-cutting | `accessibility audit`, `a11y audit`, `axe`, `axe-core`, `pa11y`, `lighthouse accessibility` (+8) | `design-foundations` → `lead-accessibility-architect` → `a11y-audit-toolkit` |
 | `a11y-visual` | cross-cutting | `contrast`, `color contrast`, `color blindness`, `color vision deficiency`, `cvd`, `wcag` (+8) | `a11y-visual` |
-| `ai-video-generation` | cross-cutting | `ai video`, `text to video`, `image to video`, `animate image`, `generate video`, `video generation` (+8) | `ai-video-generation` |
+| `ai-video-generation` | cross-cutting | `ai video`, `text to video`, `image to video`, `animate image`, `generate video`, `video generation` (+8) | `imaging-foundations` → `ai-video-generation` |
 | `failure-mode-premortem` | cross-cutting | `pre-mortem`, `premortem`, `failure mode`, `what could go wrong`, `before we build`, `red team` (+11) | `failure-mode-premortem` |
+| `interactive-capture-eval` | cross-cutting | `interactive capture`, `flythrough capture`, `record path`, `extract frames`, `ffmpeg frames`, `motion qa` (+6) | `interactive-capture-eval` |
 | `native-visual-eval` | cross-cutting | `native resolution`, `high-res screenshot`, `downsample`, `downscaled`, `capture and chunk`, `1:1 pixels` (+12) | `native-visual-eval` |
 | `open-agent-engine` | cross-cutting | `open engine`, `agent engine`, `agent queue`, `run the queue`, `queue runner`, `agent ledger` (+5) | `open-agent-engine` |
-| `sec-appsec-owasp` | cross-cutting | `owasp`, `injection`, `sql injection`, `xss`, `csrf`, `ssrf` (+5) | `eng-foundations` → `lead-security-architect` → `sec-appsec-owasp` |
-| `sec-authn-authz` | cross-cutting | `authentication`, `authorization`, `oauth`, `oidc`, `jwt`, `session management` (+8) | `eng-foundations` → `lead-security-architect` → `sec-authn-authz` |
-| `sec-supply-chain` | cross-cutting | `supply chain`, `dependency`, `sbom`, `provenance`, `lockfile`, `secrets` (+6) | `eng-foundations` → `lead-security-architect` → `sec-supply-chain` |
-| `sec-threat-modeling` | cross-cutting | `threat model`, `stride`, `attack tree`, `trust boundary`, `data flow diagram`, `attack surface` (+2) | `eng-foundations` → `lead-security-architect` → `sec-threat-modeling` |
+| `process-plugins` | cross-cutting | `tdd`, `test driven development`, `write the test first`, `red green refactor`, `verification before completion`, `am i done` (+11) | `process-plugins` |
+| `render-qa-toolkit` | cross-cutting | `render qa`, `perfcapture`, `frame budget`, `pass attribution`, `native grid`, `false color exposure` (+7) | `realtime-visual-craft` → `render-qa-toolkit` |
+| `rendering-guild` | cross-cutting | `rendering guild`, `convene guild`, `render guild`, `light td`, `material td`, `shadow td` (+4) | `rendering-guild` |
+| `sec-appsec-owasp` | cross-cutting | `owasp`, `injection`, `sql injection`, `xss`, `csrf`, `ssrf` (+12) | `eng-foundations` → `lead-security-architect` → `sec-appsec-owasp` |
+| `sec-authn-authz` | cross-cutting | `authentication`, `authorization`, `oauth`, `oidc`, `jwt`, `session management` (+14) | `eng-foundations` → `lead-security-architect` → `sec-authn-authz` |
+| `sec-supply-chain` | cross-cutting | `supply chain`, `dependency`, `sbom`, `provenance`, `slsa`, `sigstore` (+12) | `eng-foundations` → `lead-security-architect` → `sec-supply-chain` |
+| `sec-threat-modeling` | cross-cutting | `threat model`, `stride`, `pasta`, `attack tree`, `trust boundary`, `data flow diagram` (+8) | `eng-foundations` → `lead-security-architect` → `sec-threat-modeling` |
 | `skill-placement` | cross-cutting | `create a skill`, `generate skill`, `make a skill`, `new skill`, `skill placement` | `skill-placement` |
-| `visual-qa-toolkit` | cross-cutting | `visual qa`, `pixel diff`, `visual regression`, `screenshot audit`, `design qa`, `qa audit` (+1) | `lead-visual-qa` → `visual-qa-toolkit` |
+| `visual-qa-dataviz` | cross-cutting | `chart review`, `chart audit`, `dataviz qa`, `graph review`, `data table review`, `dashboard review` (+4) | `design-foundations` → `lead-visual-qa` → `visual-qa-dataviz` |
+| `visual-qa-motion` | cross-cutting | `motion qa`, `motion review`, `animation review`, `animation audit`, `jank review`, `janky animation` (+7) | `design-foundations` → `lead-visual-qa` → `visual-qa-motion` |
+| `visual-qa-toolkit` | cross-cutting | `visual qa`, `pixel diff`, `visual regression`, `screenshot audit`, `design qa`, `qa audit` (+1) | `design-foundations` → `lead-visual-qa` → `visual-qa-toolkit` |
+| `visual-qa-type` | cross-cutting | `typography review`, `type qa`, `rendered type`, `font loading shift`, `fout`, `foit` (+5) | `design-foundations` → `lead-visual-qa` → `visual-qa-type` |
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 76 · Registry rows: 40_
+_Curated routes: 80 · Registry rows: 55_

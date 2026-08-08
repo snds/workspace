@@ -107,6 +107,11 @@
 !07-projects/19-workspace-brain/
 !07-projects/19-workspace-brain/**
 
+# Track the LCARS generative interface project — design SPEC + session continuity
+# (2026-08-07). Implementation code stays in the platform Projects directory.
+!07-projects/20-lcars-generative-interface/
+!07-projects/20-lcars-generative-interface/**
+
 # ---- Still ignored, even inside tracked folders ----
 
 # Per-user permission grants (machine-local; never share)
