@@ -10,7 +10,7 @@ project: "[[20-lcars-generative-interface]]"
 # LCARS Generative Interface Design
 
 **Date:** 2026-08-07  
-**Status:** Approved for implementation (2026-08-07)  
+**Status:** Approved — v1 implemented (app repo)  
 **Visual standard:** Star Trek TNG-era LCARS (Michael Okuda / Okudagram language)
 
 ## Summary
