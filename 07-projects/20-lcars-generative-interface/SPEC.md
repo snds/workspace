@@ -1,6 +1,6 @@
 ---
 title: LCARS Generative Interface Design
-status: draft
+status: approved
 version: 0.1
 date: 2026-08-07
 tags: [lcars, generative-ui, scene-ir, okudagram, spec]
@@ -10,7 +10,7 @@ project: "[[20-lcars-generative-interface]]"
 # LCARS Generative Interface Design
 
 **Date:** 2026-08-07  
-**Status:** Draft for review  
+**Status:** Approved for implementation (2026-08-07)  
 **Visual standard:** Star Trek TNG-era LCARS (Michael Okuda / Okudagram language)
 
 ## Summary

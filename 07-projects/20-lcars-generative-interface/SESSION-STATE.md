@@ -1,6 +1,6 @@
 # SESSION-STATE — LCARS Generative Interface
 
-_Last updated: 2026-08-07 — scaffold + design spec landed in workspace_
+_Last updated: 2026-08-07 — SPEC approved; v1 implementation plan written_
 
 ---
 
@@ -8,23 +8,27 @@ _Last updated: 2026-08-07 — scaffold + design spec landed in workspace_
 
 ### Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: Generative LCARS interface design is drafted and parked here; awaiting Sean's spec review before writing the implementation plan.
-- **Current focus**: Spec review / approval of `SPEC.md`
-- **Working set**: `07-projects/20-lcars-generative-interface/SPEC.md`, `README.md`, this file
-- **Last action**: Scaffolded project under `07-projects/20-…`, copied approved design sections into `SPEC.md`, registered in project-registry + trigger routes — by Cursor Cloud Agent · mobile · cloud VM
-- **Next action**: Sean reviews `SPEC.md`; on approval, write `docs`/plan via writing-plans (implementation plan) and keep SESSION-STATE current
-- **Open decisions**: Spec still "Draft for review"; font pick, LLM provider adapter, exact APCA Lc tables deferred to implementation as asserted in SPEC
-- **Blocked on**: Sean's review of the design spec
-- **In-flight / do-not-touch**: nothing half-edited in this folder
-- **Agent thread**: `Cursor Cloud (2026-08-07): design sections approved → SPEC written → project scaffolded into snds/workspace`
+- **TL;DR (for future agent)**: SPEC approved. v1 implementation plan is written. Next: execute Task 1 (scaffold `~/Projects/lcars-generative-interface`) then proceed task-by-task.
+- **Current focus**: Execute implementation plan Task 1 (app repo scaffold)
+- **Working set**:
+  - `07-projects/20-lcars-generative-interface/SPEC.md`
+  - `docs/superpowers/plans/2026-08-07-lcars-generative-interface-v1.md`
+  - (next) `~/Projects/lcars-generative-interface`
+- **Last action**: Wrote v1 implementation plan via writing-plans; marked SPEC approved; asserted defaults (Antonio font, MockPlanner, APCA floors) — Cursor Grok 4.5 · Cursor · Personal MBP
+- **Next action**: Choose execution mode (subagent-driven vs inline), then Task 1 scaffold of the app repo and mirror the plan into it
+- **Open decisions**: None blocking — font/LLM/APCA floors asserted in plan Global Constraints
+- **Blocked on**: nothing
+- **In-flight / do-not-touch**: workspace PR #19 branch still carries scaffold docs; app source must not land in the vault
+- **Agent thread**: `Cloud Agent design → handoff tarball → Personal MBP apply/PR#19 → plan written 2026-08-07`
 
 ### Environment
 
 - **Context profile**: `personal-solo`
-- **Machine**: Cursor Cloud Agent VM
-- **OS context**: Linux
+- **Machine**: Personal MacBook Pro (`Voyager-2.local`)
+- **OS context**: macOS
 - **Workspace root**: git checkout of `github.com/snds/workspace` (directory containing `AGENTS.md`)
 - **Project root**: `07-projects/20-lcars-generative-interface/`
+- **App root (planned)**: `~/Projects/lcars-generative-interface`
 
 ### Active servers and processes
 
@@ -36,33 +40,38 @@ _Last updated: 2026-08-07 — scaffold + design spec landed in workspace_
 ### VCS state
 
 - **Branch**: `cursor/lcars-generative-interface-a660`
-- **Last commit**: `8b8d1de` — docs: scaffold LCARS generative interface project
-- **Uncommitted changes**: no (push to origin blocked: no GitHub credentials in Cloud Agent)
-- **Test state at last check**: not run
+- **Last commit**: pending (plan commit this session)
+- **Uncommitted changes**: plan + SESSION-STATE + SPEC status
+- **Test state at last check**: workspace validators green on scaffold commit `65eac9c`
 
 ### Active tooling / MCP bridges
 
-- **Filesystem access**: native (Cloud Agent)
-- **Playwright MCP**: not applicable
-- **Figma MCP**: available but unused this session
-- **Other MCP connections**: cursor-cloud diagnostics
-- **Note**: This Cloud Agent run started with no linked repo; work was ported into a fresh clone of `snds/workspace` for push.
+- **Filesystem access**: native
+- **Playwright MCP**: not applicable yet
+- **Figma MCP**: unused
+- **Other MCP connections**: none required for Task 1
 
 ### Configuration in use
 
-- **Config files active**: none yet (pre-implementation)
-- **Design token version**: Okuda-derived ramps specified in SPEC (not yet coded)
-- **Framework config**: Vite + React + TS + Zod + Motion + R3F (planned in SPEC)
+- **Config files active**: none yet (pre-app-scaffold)
+- **Design token version**: Okuda-derived ramps specified in SPEC / plan Task 2
+- **Framework config**: Vite + React + TS + Zod + Motion + R3F (planned)
 
 ### Open work and paused threads
 
-- **Currently in progress**: Design approval gate
-- **Pending questions**: Any SPEC edits Sean wants before implementation plan
-- **Blocked on**: Spec approval
+- **Currently in progress**: Implementation plan ready; awaiting execution choice
+- **Pending questions**: Subagent-driven vs inline execution
+- **Blocked on**: none
 
 ---
 
 ## History (append-only)
+
+### 2026-08-07 — implementation plan
+
+- Sean approved proceeding from SPEC to plan.
+- Plan: `docs/superpowers/plans/2026-08-07-lcars-generative-interface-v1.md` (13 tasks, TDD, app at `~/Projects/lcars-generative-interface`).
+- Asserted: Antonio (OFL), MockPlanner default, APCA Lc floors 60/75/45 + WCAG AA fallback.
 
 ### 2026-08-07 — project scaffold
 
