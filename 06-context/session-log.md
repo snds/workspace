@@ -22,6 +22,41 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-08-10 — Harness-map cycle closed + CI triage
+
+SessionID: 2026-08-10-work-hmclose
+--- SESSION BLOCK ---
+Date: 2026-08-10
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.5
+Project(s): 19-workspace-brain
+Summary: Closed the harness-map cycle — applied #1–#3+#6, accepted #4/#5/#7/#8 standing; triaged email CI failures (INDEX/MEMORY orphans, fixed by #1); main green and pushed through `6b92c1a`.
+Artifacts:
+  - 07-projects/19-workspace-brain/reports/harness-map_v1.0_2026-08-07.md — map + stamp + applied/accepted dispositions
+  - 07-projects/19-workspace-brain/reports/harness-map.stamp — first real stamp (2026-08-07)
+  - 06-context/project-context-detail.md — graduated pending substance
+  - 06-context/project-registry.md — Active Projects narratives (load later)
+  - 09-tools/check-unattended-runner-gate.py — unattended runner hard gate
+Decisions:
+  - Apply harness-map #1–#3+#6; leave #4 Keep, #5/#8 Probation, #7 Load later/Keep as standing (Sean ack).
+  - Retest #5 on next plugin publish; revisit #8 ~2026-09-07.
+Evidence:
+  - workspace CI all green after apply @ github.com/snds/workspace actions on e2d28eb — verified
+  - prior workspace-integrity failures (runs 31190694022, 31191199865) = INDEX/MEMORY orphans — verified fixed by #1
+Pending added: (none)
+Pending resolved:
+  - Harness-map first-run + stamp (was next action on baton)
+Project status changes:
+  - 19-workspace-brain: harness-map cycle closed; baton points at optional mission-fit + probation retests
+Next:
+  - Optional: mission-fit on one unreliable “done”
+  - Retest harness-map #5 on next build-local-skill-plugin publish
+  - Revisit harness-map #8 (~2026-09-07)
+  - Still open from prior baton: ^pc-07 / ^pc-11 homes; lane ambiguity ^pc-30 / ^pc-41
+--- END BLOCK ---
+
+
 ### 2026-08-05 — Layer-1 vault retrieve + dispatcher fallback
 
 SessionID: 2026-08-05-voyager-5d6242

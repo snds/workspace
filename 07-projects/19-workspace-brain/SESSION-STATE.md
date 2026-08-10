@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-08-07 — harness-map recs #1–#3 + #6 applied; stamp live_
+_Last updated: 2026-08-10 — session-end; harness-map cycle closed; CI green_
 
 ---
 
@@ -8,15 +8,15 @@ _Last updated: 2026-08-07 — harness-map recs #1–#3 + #6 applied; stamp live_
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Harness-map cycle **closed** — #1–#3+#6 applied; #4/#5/#7/#8 accepted standing (Sean 2026-08-07). CI green on `e2d28eb`.
-- **Working set**: report `harness-map_v1.0_2026-08-07.md` (all 8 recs dispositioned); thin project-context; unattended gate.
-- **Last action (2026-08-07):** Accepted remaining Keep/Probation recs into the map; confirmed email CI failures were pre-fix INDEX orphans (fixed by #1). By Cursor Grok 4.5 · Cursor · Work MBP.
-- **Unattended runner — precondition now a hard check.** `check-unattended-runner-gate.py --require` before any schedule; still no timer by decision.
-- **Next action:** Optional mission-fit on one unreliable “done”. Retest #5 on next plugin publish; revisit #8 ~2026-09-07. Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
+- **Current focus**: Idle after harness-map cycle close. Optional follow-ups only (mission-fit; #5/#8 probation retests).
+- **Working set**: `harness-map_v1.0_2026-08-07.md` + stamp; thin `project-context.md` + detail/registry; `check-unattended-runner-gate.py`.
+- **Last action (2026-08-10):** `/session-end` — fragment `2026-08-10-work-hmclose`; CI triage noted (orphans → fixed). By Cursor Grok 4.5 · Cursor · Work MBP.
+- **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
+- **Next action:** Optional [[mission-fit]] on one unreliable “done”. Retest #5 on next plugin publish; revisit #8 ~2026-09-07. Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
 - **Open decisions:** Whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat).
 - **Blocked on:** nothing.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`.
-- **Agent thread**: `… → apply @ e2d28eb` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-07): map cycle closed + CI triage`.
+- **Agent thread**: `… → close @ 6b92c1a` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-10): session-end`.
 
 
 ### Environment
@@ -27,9 +27,9 @@ _Last updated: 2026-08-07 — harness-map recs #1–#3 + #6 applied; stamp live_
 - **Project root**: `07-projects/19-workspace-brain`
 
 ### VCS state
-- **Branch**: `main` (push this session)
-- **Uncommitted at baton write**: harness-map apply set (pre-commit)
-- **Test state at last check (2026-08-07):** integrity + links + workspace validators expected green after INDEX/MEMORY fix.
+- **Branch**: `main` @ session-end commit (push with session fragment)
+- **Uncommitted at baton write**: session fragment + this SESSION-STATE only
+- **Test state at last check (2026-08-07→10):** CI green on `e2d28eb` (all four workflows); map closeout `6b92c1a` pushed.
 
 ### Open work and paused threads
 - **Currently in progress**: nothing. Open Agent Engine is complete on both the workspace side and the Linear side, and now wired into the session rituals (session-start read, session-end filing).
