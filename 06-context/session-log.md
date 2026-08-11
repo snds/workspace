@@ -25,6 +25,22 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-08-11 — cui ViewToolbar bg-card consistency
+
+SessionID: 2026-08-11-work-a7c2e1
+--- SESSION BLOCK ---
+Date: 2026-08-11
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): centric-ui (employer)
+Summary: Materials ViewToolbar used bg-background (darker) via single-toolbar flag; switched all collection toolbars to bg-card to match Material Colours / Samples. Pushed follow-up commit to PR #284.
+Evidence:
+  - PR updated @ https://github.com/cpes-software/centric-ui/pull/284 — verified
+Next:
+  - Review/merge https://github.com/cpes-software/centric-ui/pull/284
+--- END BLOCK ---
+
+
 ### 2026-08-11 — cui data-table landing parity + sticky actions
 
 SessionID: 2026-08-11-work-40891f
