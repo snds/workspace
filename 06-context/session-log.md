@@ -20,7 +20,31 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
+
+> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
+
 ---
+
+### 2026-08-11 — cui data-table landing parity + sticky actions
+
+SessionID: 2026-08-11-work-40891f
+--- SESSION BLOCK ---
+Date: 2026-08-11
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): centric-ui (employer)
+Summary: Finished Materials landing table parity work in `@centric/data-table`: decoupled sticky row actions into spacer + float host (fixes stacked hover wash), restored package header border/pad, wired landing density to global Compact/Normal/Spacious, stripped fighting landing CSS. Opened PR.
+Evidence:
+  - PR opened @ https://github.com/cpes-software/centric-ui/pull/284 — verified
+Decisions:
+  - Sticky actions: in-flow spacer (wash + width) + zero-width sticky float host (pill only)
+  - Landing tables follow global app density; non-landing BO tables keep view-config density
+  - Header separator/height owned by package, not Materials recipe; radii deferred post density-merge
+Next:
+  - Review/merge https://github.com/cpes-software/centric-ui/pull/284
+  - After merge: revisit table shell radii if still off vs demo
+--- END BLOCK ---
+
 
 ### 2026-08-11 — Local centric-service stack for UI API auth
 
@@ -583,58 +607,3 @@ Next:
 --- END SESSION BLOCK ---
 
 ---
-
-### 2026-07-30 — Unlock AI review; Open Engine close-out and a withdrawn runner
-
-SessionID: 2026-07-30-work-oe3f
---- SESSION BLOCK ---
-Date: 2026-07-30
-Machine: Work MacBook Pro
-Surface: Cursor
-Project(s): 19-workspace-brain
-Summary: Read Nate B. Jones' Unlock AI property end to end, adopted Open Engine as a workspace-governed skill with two isolated Linear lanes, then closed out a third parallel pass — building a scheduled runner, discovering a concurrent session had already rejected one, testing that rejection, and finding it correct.
-Artifacts:
-  - 03-skills/open-agent-engine/SKILL.md — the engine procedure (authored earlier this thread; extended here with verified isolation evidence and the cold-start rule)
-  - 00-bootstrap/doctor/linear-lanes.py — deterministic lane preflight, wired into session-start Notices
-  - 06-context/open-engine/{README,personal}.md — lane index + canonical machine→lane manifest
-  - 08-knowledge/cross-domain/workspace-infrastructure.md — new section "Headless Claude Code"
-Decisions:
-  - Scheduled runner WITHDRAWN. Built lane-scoped with --strict-mcp-config, then found commit 4dee209 had already scoped and rejected one; tested its central objection and it held.
-  - Deny, don't allow. Any future unattended runner is gated on --tools / --disallowed-tools; --allowed-tools is not a restriction mechanism.
-  - Session-start token trim SUPERSEDED, not merely deferred — project-context.md is now the substance store and each ^pc-NN anchor is the sole pointer for a Linear issue, so trimming is a per-item graduate → repoint → remove migration.
-  - Two lanes over one shared Linear workspace; isolation is structural (per-lane MCP auth context), and the c8 lane is movement-only.
-Pending resolved:
-  - Open Engine build — complete. Both lanes live, four smoke tests passed, five validators green.
-Next:
-  - Unchanged from the prior pass: review personal:SEA-11, decide personal:SEA-32, give ^pc-07/^pc-11 machine-local homes, resolve lane ambiguity on ^pc-30/^pc-41.
-  - Unrelated and pre-existing: 3 un-acknowledged bootstrap MISSes (two from centric-ui sessions) — run workspace-doctor.sh.
---- END BLOCK ---
-
-## Findings worth keeping (detail behind the Decisions above)
-
-**`--allowed-tools` grants; it does not restrict.** A session launched with
-`--allowed-tools "mcp__linear-personal"` still reported `Bash`, `Edit`, `Write`, `Agent`,
-`CronCreate`, `RemoteTrigger`. The naming invites the opposite reading, and I read it the wrong way
-while building. Since issue bodies are untrusted input by the engine's own rule, an unattended runner
-built that way turns "anyone who can write to that board" into "anyone who can run commands on this
-laptop." Full detail: [[workspace-infrastructure]] → "Headless Claude Code".
-
-**`--strict-mcp-config` does isolate.** Probed: `SERVERS: linear-personal` / `C8_PRESENT: no`. The
-other lane is absent, not merely unused. This is now evidence under a claim the docs previously
-asserted.
-
-**`mcp-remote` cold start is a silent-failure path.** A headless session can begin before its server
-connects and honestly report "no MCP tools available" — indistinguishable from an empty queue. Same
-shape as the `auth-incomplete` bug in the detector: a failure wearing success's clothes. The ritual
-now distinguishes absent / not-yet-connected / empty.
-
-**Two detector bugs found by testing against reality rather than assumption:** `validate-integrity`
-resolves wikilinks against *git-tracked* files (a new skill is unaddressable until `git add -N`), and
-the `provisioned` check matched the bare word `PENDING` in prose — including the lane config's own
-status banner, so a fully-provisioned lane reported `not-provisioned`.
-
-**Process note.** Three sessions worked this subsystem concurrently. Two independently designed a
-scheduled runner and reached opposite conclusions; one `git add -A` swept another session's staged
-work into the wrong commit. The engine's own session-boundary discipline is the fix, and `/reconcile`
-existed for exactly this — worth invoking *before* parallel passes, not only after.
-
