@@ -22,6 +22,38 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-08-11 — Local centric-service stack for UI API auth
+
+SessionID: 2026-08-11-work-localstack
+--- SESSION BLOCK ---
+Date: 2026-08-11
+Agent: Cursor Grok 4.5
+Surface: Cursor
+Machine: Work MacBook Pro (CS-K746DRWXY1)
+Project(s): centric-ui (employer), centric-service
+Artifacts:
+  - ~/Projects/cpes-software/centric-service — cloned
+  - ~/Projects/cpes-software/platform-golden-verticals — cloned (sibling for volume-mode flavours)
+  - centric-ui `.env.local` / `.env.compose.local` — local compose creds (`DUMMY-123`, provisioner `cpes-record-service`)
+  - centric-ui `vite.config.ts` — `server.host: true` (IPv4+IPv6; fixes ERR_CONNECTION_REFUSED -102)
+  - Colima Docker runtime (20GB / 6 CPU) — Docker Desktop cask install blocked on sudo
+Decisions:
+  - Local stack path (Leanne): compose + `npm run dev`, not Cursor-hosted server.
+  - Local Keycloak user `test`/`test` (realm VMS, org test-org) is fine for FE work.
+  - Flavour provisioner unauthorized was wrong API identity (`cpes-admin-portal`+cloud key); use `cpes-record-service`+`DUMMY-123` locally.
+Pending added:
+  - Colima memory pressure: Keycloak OOM (exit 137) → nginx 502; may need to stop LocalStack/OpenSearch-dashboards when idle.
+  - Golden provisioner poller can hang after JWT expiry (`status=unknown`); volume-mode sibling checkout is the reliable local source.
+  - `gh auth` token invalid on this machine; GHCR pull still needs PAT/`gh auth login` if not building `centric-service:local`.
+Pending resolved:
+  - Unauthorized API / no local backend — stack up; login + provisioner identity fixed for local compose.
+Next:
+  - Keep UI via terminal: `cd ~/Projects/cpes-software/centric-ui && npm run dev` (agents' nohup sessions die).
+  - If Keycloak 502 again: `docker start keycloak` (or compose up keycloak) after OOM.
+  - Optional: trim compose services / bump Colima RAM further to stop Keycloak OOMs.
+--- END BLOCK ---
+
+
 ### 2026-08-10 — Harness-map cycle closed + CI triage
 
 SessionID: 2026-08-10-work-hmclose
