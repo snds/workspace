@@ -1,0 +1,10 @@
+# Core (required): the engine refuses to run without these
+numpy>=1.24
+Pillow>=10.0
+
+# Optional accelerators (identical results, faster connected-components)
+# scipy>=1.11
+# opencv-python-headless>=4.8
+
+# Video decode for `vqa motion --video` is ffmpeg (system binary, not pip):
+#   macOS: brew install ffmpeg · Linux: apt-get install ffmpeg · Windows: winget install Gyan.FFmpeg

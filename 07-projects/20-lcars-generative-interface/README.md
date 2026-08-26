@@ -2,6 +2,7 @@
 title: LCARS Generative Interface
 type: project
 status: Implementing
+aliases: [20-lcars-generative-interface]
 triggers: [lcars, generative lcars, okudagram, scene ir]
 frameworks: [aesthetic-lens, ui-ux-operational, research-and-evidence, qa-operating-model]
 created: 2026-08-07

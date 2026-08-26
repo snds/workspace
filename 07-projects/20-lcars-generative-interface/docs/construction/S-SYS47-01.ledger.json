@@ -1,0 +1,115 @@
+{
+  "engine": "vqa/1.0",
+  "cuespec": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/S-SYS47-01.cuespec.json",
+  "runs": [
+    {
+      "time": "2026-08-26T11:04:06",
+      "build": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/captures/S-SYS47-01_build_v2.png",
+      "verdict": "partial",
+      "score": 0.5,
+      "measured_pass": 8,
+      "measured_total": 16,
+      "coverage": 0.8421,
+      "mean_margin": -5.8177,
+      "capture": "unverified",
+      "failing_cues": [
+        {
+          "id": 1,
+          "name": "Canvas aspect 16:9",
+          "margin": -87.0317
+        },
+        {
+          "id": 3,
+          "name": "Inter-element gutter 8px native",
+          "margin": -0.9861
+        },
+        {
+          "id": 4,
+          "name": "Header bar interior fill",
+          "margin": -6.7391
+        },
+        {
+          "id": 6,
+          "name": "Header bar thickness at ML",
+          "margin": -1.5134
+        },
+        {
+          "id": 7,
+          "name": "Left header elbow structure",
+          "margin": -1.0
+        },
+        {
+          "id": 12,
+          "name": "Hero MSD matches reference region",
+          "margin": -0.3661
+        },
+        {
+          "id": 14,
+          "name": "Mid pill cluster under schematic",
+          "margin": 0.6119
+        },
+        {
+          "id": 17,
+          "name": "Accent orange coverage",
+          "margin": -0.0007
+        }
+      ],
+      "note": "build v2",
+      "movement": "baseline",
+      "flags": []
+    },
+    {
+      "time": "2026-08-26T11:04:06",
+      "build": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/captures/S-SYS47-01_build_v3.png",
+      "verdict": "partial",
+      "score": 0.8125,
+      "measured_pass": 13,
+      "measured_total": 16,
+      "coverage": 0.8421,
+      "mean_margin": 0.4707,
+      "capture": "unverified",
+      "failing_cues": [
+        {
+          "id": 12,
+          "name": "Hero MSD matches reference region",
+          "margin": -0.6098
+        },
+        {
+          "id": 15,
+          "name": "Footer data band density",
+          "margin": 0.7183
+        },
+        {
+          "id": 16,
+          "name": "Silhouette chip bottom-right",
+          "margin": -0.15
+        }
+      ],
+      "note": "build v3 (composite-guided refine)",
+      "newly_passing": [
+        1,
+        14,
+        17,
+        3,
+        4,
+        6,
+        7
+      ],
+      "newly_failing": [
+        15,
+        16
+      ],
+      "movement": "improved",
+      "flags": [
+        "cues newly failing: [15, 16]"
+      ]
+    }
+  ],
+  "status": {
+    "runs": 2,
+    "best_score": 0.8125,
+    "last_movement": "improved",
+    "stalled": false,
+    "done": false
+  }
+}
