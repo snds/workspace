@@ -15,14 +15,17 @@ results are identical on every machine and in CI.
 """
 from __future__ import annotations
 
+import json
 import math
+import struct
+import sys
 import tempfile
 from pathlib import Path
 from typing import Optional
 
 import numpy as np
 
-from . import _core, compare, interact, motion, perceive, prove
+from . import _core, compare, flip_metric, geometry, interact, judge, mesh, motion, perceive, prove, saliency
 from ._core import from_array, save_image, write_json
 
 SEED = 47
@@ -417,6 +420,188 @@ def run_calibration(out_dir: Optional[str | Path] = None, keep_images: bool = Fa
     add("perceive", "ledger_C09_clean", "no C-09 flag on clean",
         f"flags={[f['ledger'] for f in pc_clean['ledger_flags']]}", not c09_clean)
 
+    # Capture: missing renderer is a warning, not unverified (LCARS manifests)
+    cap = prove.run_prove(out / "clean.png", spec_path)
+    add("capture_gate", "missing_renderer_is_warning",
+        "verified + renderer warning",
+        f"{cap['capture']['status']} warnings={cap['capture'].get('warnings')}",
+        cap["capture"]["status"] == "verified"
+        and any("renderer" in w for w in cap["capture"].get("warnings", [])))
+
+    # Uncued residuals are named on the summary without flipping a clean matches
+    res_spec = base_cuespec()
+    res_spec["default_altitude"] = "A"
+    res_spec["uncued_residuals"] = [
+        {"id": "hole", "zone": "test zone", "note": "named hole"}
+    ]
+    res_path = out / "residuals.cuespec.json"
+    write_json(res_spec, res_path)
+    res_payload = prove.run_prove(out / "clean.png", res_path)
+    add("residuals", "named_on_summary", "matches + residual listed",
+        f"verdict={res_payload['summary']['verdict']} n={len(res_payload['summary']['uncued_residuals'])}",
+        res_payload["summary"]["verdict"] == "matches"
+        and res_payload["summary"]["uncued_residuals"][0]["id"] == "hole"
+        and res_payload["summary"]["altitudes_in_contract"] == ["A"])
+
+    # Optional DreamSim: skip or pass, never a hard error
+    opt_spec = base_cuespec()
+    opt_spec["cues"].append({
+        "id": "dreamsim_opt", "name": "optional dreamsim",
+        "probe": "dreamsim_region", "optional": True,
+        "rect": [0.2, 0.05, 0.4, 0.1],
+        "asset": "clean.png",
+        "asset_rect": [0.2, 0.05, 0.4, 0.1],
+        "max": 0.5,
+    })
+    opt_path = out / "optional.cuespec.json"
+    write_json(opt_spec, opt_path)
+    opt_payload = prove.run_prove(out / "clean.png", opt_path)
+    ds = {c["id"]: c for c in opt_payload["cues"]}["dreamsim_opt"]
+    add("optional", "dreamsim_skip_or_pass",
+        "skipped or pass (optional)",
+        ds["status"],
+        ds["status"] in ("skipped", "pass")
+        and opt_payload["summary"]["verdict"] == "matches")
+
+    # FLIP-lite: identical ~0, chroma defect higher
+    clean_rgb = render_base("clean")
+    same = flip_metric.flip_map(clean_rgb, clean_rgb)
+    shifted_fill = flip_metric.flip_map(clean_rgb, render_base("fill_shift"))
+    add("flip", "identical", "mean < 0.02", same["mean"], same["mean"] < 0.02)
+    add("flip", "fill_shift_worse", "mean higher than identical",
+        f"{shifted_fill['mean']} vs {same['mean']}",
+        shifted_fill["mean"] > same["mean"] + 0.005)
+
+    # Saliency: pills carry more mass than an empty black patch
+    sal = saliency.spectral_residual(_core.luma(clean_rgb))
+    mass_pills = saliency.region_mass(sal, (290, 350, 660, 70))
+    mass_empty = saliency.region_mass(sal, (40, 250, 200, 80))
+    add("saliency", "structure_over_empty",
+        "pill-row mass > empty patch",
+        f"{mass_pills['mass_fraction']} vs {mass_empty['mass_fraction']}",
+        mass_pills["mass_fraction"] > mass_empty["mass_fraction"])
+
+    # Mesh: valid triangle passes; NaN accessor fails closed
+    valid_gltf, nan_gltf = _triangle_buffers(out)
+    valid_audit = mesh.audit(valid_gltf)
+    nan_audit = mesh.audit(nan_gltf)
+    add("mesh", "valid_triangle", "pass", valid_audit["status"],
+        valid_audit["status"] == "pass")
+    add("mesh", "nan_fails_closed", "fail",
+        f"{nan_audit['status']} errors={nan_audit['errors']}",
+        nan_audit["status"] == "fail" and nan_audit["errors"])
+
+    # Geometry: two shifted views pass; one view errors (never a 3D pass)
+    geo_a, geo_b = out / "geo_a.png", out / "geo_b.png"
+    save_image(clean_rgb, geo_a)
+    save_image(compare._shift(clean_rgb, 2, 1), geo_b)
+    geo_ok = geometry.consistency([str(geo_a), str(geo_b)])
+    geo_one = geometry.consistency([str(geo_a)])
+    add("geometry", "two_views", "pass", geo_ok["status"], geo_ok["status"] == "pass")
+    add("geometry", "one_view_is_error", "error", geo_one["status"],
+        geo_one["status"] == "error")
+
+    # Input-to-photon: pill appears at inject_frame
+    pdir = out / "photon"
+    pdir.mkdir(exist_ok=True)
+    for i in range(12):
+        img = _canvas()
+        _fill_rect(img, 40, 40, 1200, 30, HEADER)
+        if i >= 6:
+            _fill_pill(img, 400, 340, 160, 48, PILL)
+        save_image(np.clip(img, 0, 255).astype(np.uint8), pdir / f"f_{i:03d}.png")
+    photon_payload = motion.analyze_motion(
+        frames_dir=str(pdir),
+        spec={"photon": {"inject_frame": 6, "min_changed_fraction": 0.001,
+                         "max_latency_frames": 1}},
+    )
+    add("photon", "first_change", "latency_frames == 0",
+        photon_payload.get("photon"),
+        photon_payload.get("photon", {}).get("latency_frames") == 0
+        and all(v["status"] == "pass" for v in photon_payload["verdicts"]
+                if v["check"] == "input_to_photon"))
+
+    # Labeled tracks run (NCC floor)
+    tdir = out / "motion_clean"
+    track_payload = motion.analyze_motion(
+        frames_dir=str(tdir),
+        spec={**MOTION_SPEC, "track_points": [[180, 364]]},
+    )
+    add("motion", "tracks_ncc", "1 tracked point",
+        track_payload.get("tracks"),
+        (track_payload.get("tracks") or {}).get("n_points") == 1)
+
+    # Critic cannot override a pixel fail
+    critic_cmd = [sys.executable, "-c", "print('{\"verdict\":\"pass\"}')"]
+    step_dead_c = interact.verify_step(
+        {"name": "dead+critic-pass", "before": str(b_p), "after": str(b_p),
+         "expect": "change", "region": region, "critic": {"command": critic_cmd}},
+        out)
+    add("interact", "critic_cannot_override_pixel_fail", "fail",
+        step_dead_c["status"], step_dead_c["status"] == "fail")
+
+    # VLM-judge protocol: two families agree; order-inconsistent pair discarded
+    (out / "judge_yes.py").write_text(
+        "import json\nprint(json.dumps({'verdict':'yes'}))\n", encoding="utf-8"
+    )
+    (out / "judge_flip.py").write_text(
+        "import json, os\n"
+        "print(json.dumps({'verdict': 'yes' if os.environ.get('VQA_JUDGE_ORDER')=='ab' else 'no'}))\n",
+        encoding="utf-8",
+    )
+    judge_ok = {
+        "spec": "vqa-judge/1", "altitude": "D", "prompt": "match?",
+        "reference": "clean.png", "candidate": "clean.png",
+        "judges": [
+            {"family": "alpha", "command": [sys.executable, str(out / "judge_yes.py")]},
+            {"family": "beta", "command": [sys.executable, str(out / "judge_yes.py")]},
+        ],
+    }
+    jpath = out / "judge_ok.json"
+    write_json(judge_ok, jpath)
+    j_ok = judge.run_judge(jpath)
+    add("judge", "two_families_agree", "yes", j_ok["verdict"], j_ok["verdict"] == "yes")
+    judge_bad = {
+        "spec": "vqa-judge/1", "altitude": "D", "prompt": "match?",
+        "reference": "clean.png", "candidate": "clean.png",
+        "judges": [
+            {"family": "alpha", "command": [sys.executable, str(out / "judge_flip.py")]},
+            {"family": "beta", "command": [sys.executable, str(out / "judge_flip.py")]},
+        ],
+    }
+    jpath2 = out / "judge_bad.json"
+    write_json(judge_bad, jpath2)
+    j_bad = judge.run_judge(jpath2)
+    add("judge", "inconsistent_discarded", "discarded", j_bad["verdict"],
+        j_bad["verdict"] == "discarded")
+
+    # play-prove sibling CLI
+    (out / "sim.py").write_text(
+        "import json\n"
+        "print(json.dumps({'win_rate':0.52,'avg':10.0,'stddev':1.2,'n':80,"
+        "'strategy_shares':{'a':0.34,'b':0.33,'c':0.33}}))\n",
+        encoding="utf-8",
+    )
+    pp_spec = {
+        "spec": "play-prove/1",
+        "adapter": {"command": [sys.executable, str(out / "sim.py")]},
+        "assert": {
+            "win_rate": {"min": 0.4, "max": 0.6},
+            "no_dominant_strategy": {"max_share": 0.5},
+        },
+    }
+    pp_path = out / "play.json"
+    write_json(pp_spec, pp_path)
+    play_cli = Path(__file__).resolve().parents[2] / "play-prove" / "playprove.py"
+    import subprocess
+    proc = subprocess.run(
+        [sys.executable, str(play_cli), "prove", str(pp_path)],
+        capture_output=True, text=True, check=False,
+    )
+    add("playprove", "balanced_sim", "pass exit 0",
+        f"exit={proc.returncode} {(proc.stdout or '')[:120]}",
+        proc.returncode == 0 and '"verdict": "pass"' in proc.stdout)
+
     misses = [r for r in rows if not r["ok"]]
     detectors = sorted({r["detector"] for r in rows})
     per_detector = {
@@ -465,3 +650,38 @@ def _calib_md(report: dict) -> str:
         "",
     ]
     return "\n".join(lines)
+
+
+def _triangle_buffers(out: Path) -> tuple:
+    """Write a valid glTF triangle and a NaN-corrupted twin."""
+    import base64
+    positions = struct.pack("<9f", 0, 0, 0, 1, 0, 0, 0, 1, 0)
+    indices = struct.pack("<3H", 0, 1, 2)
+    raw = positions + indices + b"\x00\x00"
+    uri = "data:application/octet-stream;base64," + base64.b64encode(raw).decode("ascii")
+    doc = {
+        "asset": {"version": "2.0"},
+        "scene": 0,
+        "scenes": [{"nodes": [0]}],
+        "nodes": [{"mesh": 0}],
+        "meshes": [{"primitives": [{"attributes": {"POSITION": 0}, "indices": 1}]}],
+        "accessors": [
+            {"bufferView": 0, "componentType": 5126, "count": 3, "type": "VEC3",
+             "max": [1, 1, 0], "min": [0, 0, 0]},
+            {"bufferView": 1, "componentType": 5123, "count": 3, "type": "SCALAR"},
+        ],
+        "bufferViews": [
+            {"buffer": 0, "byteOffset": 0, "byteLength": 36},
+            {"buffer": 0, "byteOffset": 36, "byteLength": 6},
+        ],
+        "buffers": [{"byteLength": len(raw), "uri": uri}],
+    }
+    valid = out / "tri.gltf"
+    write_json(doc, valid)
+    nan_raw = struct.pack("<9f", 0, 0, 0, float("nan"), 0, 0, 0, 1, 0) + indices + b"\x00\x00"
+    nan_uri = "data:application/octet-stream;base64," + base64.b64encode(nan_raw).decode("ascii")
+    nan_doc = json.loads(json.dumps(doc))
+    nan_doc["buffers"] = [{"byteLength": len(nan_raw), "uri": nan_uri}]
+    nan_path = out / "tri_nan.gltf"
+    write_json(nan_doc, nan_path)
+    return valid, nan_path

@@ -15,6 +15,7 @@ on:
       - "06-context/memory/**"
       - "09-tools/validate-workspace.py"
       - "09-tools/validate-integrity.py"
+      - "09-tools/test-validators.py"
   pull_request:
     paths:
       - "**/*.md"
@@ -22,6 +23,7 @@ on:
       - "06-context/memory/**"
       - "09-tools/validate-workspace.py"
       - "09-tools/validate-integrity.py"
+      - "09-tools/test-validators.py"
 
 jobs:
   check:
@@ -35,3 +37,5 @@ jobs:
         run: python3 09-tools/validate-workspace.py
       - name: Write-quality + cross-link continuity + anti-zombie
         run: python3 09-tools/validate-integrity.py
+      - name: Negative fixtures (validators must refuse planted defects)
+        run: python3 09-tools/test-validators.py

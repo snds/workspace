@@ -31,6 +31,8 @@ phantom claims (an agent reporting an effect no pixel shows).
 from __future__ import annotations
 
 import json
+import os
+import subprocess
 from pathlib import Path
 from typing import Optional
 
@@ -109,6 +111,18 @@ def verify_step(step: dict, spec_dir: Path, out_dir: Optional[Path] = None,
         reasons=reasons,
     )
 
+    critic = step.get("critic")
+    if critic:
+        result["critic"] = _run_critic(critic, step, spec_dir, pixel_status=result["status"])
+        # Pixel gate is hard. Critic cannot override a pixel fail.
+        if result["status"] == "fail":
+            result["critic"]["override"] = "ignored — pixel gate failed"
+        elif result["critic"].get("verdict") == "fail":
+            result["status"] = "fail"
+            result["reasons"] = result["reasons"] + [
+                f"critic failed: {result['critic'].get('note', '')}"
+            ]
+
     if out_dir and reasons:
         vis = before.rgb.copy()
         vis[mask] = np.asarray([255, 0, 80], dtype=np.uint8)
@@ -119,6 +133,37 @@ def verify_step(step: dict, spec_dir: Path, out_dir: Optional[Path] = None,
 
 def _slug(name: str) -> str:
     return "".join(c if c.isalnum() else "-" for c in name.lower())[:48].strip("-")
+
+
+def _run_critic(critic: dict, step: dict, spec_dir: Path, pixel_status: str) -> dict:
+    """
+    Optional learned/VLM critic on top of the pixel gate.
+    Command stdout: JSON {verdict: pass|fail, note}.
+    """
+    cmd = list(critic.get("command") or [])
+    if not cmd:
+        return {"status": "error", "note": "critic.command missing"}
+    env = {
+        **os.environ,
+        "VQA_INTERACT_BEFORE": str(step.get("before", "")),
+        "VQA_INTERACT_AFTER": str(step.get("after", "")),
+        "VQA_INTERACT_PIXEL": pixel_status,
+    }
+    proc = subprocess.run(
+        cmd, capture_output=True, text=True, check=False,
+        env=env, cwd=str(spec_dir),
+    )
+    if proc.returncode != 0:
+        return {"status": "error", "verdict": "fail",
+                "note": f"critic exit {proc.returncode}: {(proc.stderr or '')[-300:]}"}
+    try:
+        payload = json.loads(proc.stdout.strip().splitlines()[-1])
+    except Exception as exc:
+        return {"status": "error", "verdict": "fail", "note": f"critic stdout not JSON: {exc}"}
+    verdict = str(payload.get("verdict", "")).lower()
+    if verdict not in ("pass", "fail"):
+        return {"status": "error", "verdict": "fail", "note": f"critic verdict not pass|fail: {verdict!r}"}
+    return {"status": "ok", "verdict": verdict, "note": payload.get("note", "")}
 
 
 def run_interact(spec_path: str | Path, out_dir: Optional[str | Path] = None) -> dict:

@@ -50,9 +50,11 @@ including a mid-task dynamic model swap in Cursor — must clear four gates:
    dramatic the old file no longer makes sense, archive it with provenance, generate the replacement, and
    repoint all cross-links. Never leave an orphaned, superseded-but-live, half-updated, or stub file.
 
-Run before commit (CI mirrors these): `build-related.py` → `build-registry.py` → `validate-integrity.py`
-→ `validate-links.py` → `validate-workspace.py`. Gate 2 is partly semantic — the authoring agent + PR review
-own it; the rest is machine-checked. Mirrored, compressed, in [[AGENTS]] → "Write-quality gates".
+**Embedded, not commit-only.** Done on a vault write means the relevant validators ran in this session, not only that files were saved. Commit/CI is the backstop. After a skill, knowledge, or framework edit, run the chain before claiming complete:
+
+`build-related.py` → `build-registry.py` → `validate-integrity.py` → `validate-links.py` → `validate-workspace.py`.
+
+CI mirrors these. Gate 2 is partly semantic — the authoring agent + PR review own it; the rest is machine-checked. Mirrored, compressed, in [[AGENTS]] → "Write-quality gates". Negative fixtures: `python3 09-tools/test-validators.py`.
 
 **Why `build-related` runs first.** It rewrites the `## Related` block *inside* SKILL.md files;
 `build-registry` records a content hash per skill. Build the registry first and any file `build-related`

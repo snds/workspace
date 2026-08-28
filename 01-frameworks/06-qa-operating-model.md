@@ -59,6 +59,8 @@ For QA / visual / design / interaction work, load these without being asked:
 | `figma-implement-design` / `figma-code-connect` — design ↔ code bridge |
 | `variable-icon-font-architect` — anywhere icon glyphs / fonts are in scope |
 | `computer-vision-expert` / `visual-qa-toolkit` — pixel-level instrumented analysis |
+| `visual-prove-engine` — contract-level measured verdicts: cuespec prove, build ranking, motion/interaction checks, improvement ledger. Reports metric altitude (A–G); Literal defaults to A |
+| `play-prove` — headless simulation/balance (win-rate, no dominant strategy). Sibling of prove-engine; not a screenshot gate |
 | `agent-browser` — browser-driven reference comparison |
 
 Sean should not have to name skills to get the lens. If a task naturally implies a skill, load it.
@@ -74,6 +76,8 @@ For any artifact that has an external reference (shadcn docs, Storybook, design 
 
 This protocol fires anytime a reference exists. If a reference doesn't exist, say so explicitly rather than substituting personal judgment.
 
+**Metric altitude (framework #06 + prove engine).** A visual contract names the rung it measures (A pixel through G feel; [[perception-critique-stack]]). Literal UI defaults to A (+ B FLIP for photoreal). A `matches` at A does not cover B–G. Name `uncued_residuals` rather than letting a 16/16 cuespec silence holes.
+
 **Native resolution is the precondition — reference or not (framework #10).** Steps 1–2 above assume real pixels. The screenshot/preview tooling routinely returns a *scaled* frame (often ~800 px), and a resample erases exactly the detail a finishing-tier check looks for (banding, grain, aliasing, edge sharpness, sub-pixel alignment). This applies to *any* runtime visual being judged — a render, a shader/dither artifact, a generated frame — not only external-reference comparison. Get true native pixels first: **zoom the subject so the artifact fills the frame, or read the frame back in 1:1 native chunks and inspect each**, then judge. This is [#10 Perception Integrity](10-perception-integrity.md); the standalone `native-visual-eval` skill carries the method (same-tick canvas/WebGL readback, the chunk-and-Read loop) with no visual-QA-hub dependency.
 
 ### 4. Critical-eye pre-output gate — run every delivery
@@ -88,6 +92,7 @@ Before reporting an outcome — audit verdict, grade, claim of correctness, "loo
 - **Resolution check.** Did I judge at *native* resolution — subject zoomed to fill the frame, or the frame read back in 1:1 native chunks — or did I trust a downsampled thumbnail? A scaled screenshot is a locator, never a verdict; "fixed / gone / matches" claimed off a thumbnail is unverified. This is framework [#10 Perception Integrity](10-perception-integrity.md) firing inside the gate (principle + verification gate there; method in the `native-visual-eval` skill).
 - **Accessibility check.** Is every foreground/background pairing legibility-verified (APCA preferred, WCAG AA fallback)? Does any status meaning ride on color alone (CVD)? Full-color, full-bleed surfaces with foreground text/icons are legitimate when the implementation holds up from a UI/UX/a11y perspective — the check is that foregrounds are *verified* legible, not that any palette pattern is avoided. This check applies to *authored* artifacts (canvas writes, code) as much as to audits — a delivery that fails it isn't ready to show.
 - **Honesty check.** Have I marked iteration-needed items as needing iteration, rather than over-grading toward "ship-ready" to seem productive?
+- **Detector check.** Name the independent detector that ran (validator, test, SSIM/Δe, Proofboard, native crop, `vqa prove` cuespec report). If none ran, say so and do not use verified / matches / done language. For visual work with a reference contract, `visual-prove-engine` is the default detector: a Matches claim cites its prove artifact, and cues it records as *attested* stay attested in my report too.
 - **Skill check.** Did I load the right skills, or am I freestyling on intuition? For any color/UI/a11y decision, the system-agnostic baseline (`design-foundations` → `found-color` → `a11y-visual` → `uid-color-for-ui`) loads before any system-specific rules.
 
 If any check fails, the outcome isn't ready to report. Fix it, then report.
@@ -140,7 +145,8 @@ The structure of a QA report:
 3. **Root-cause grouping.** Defects clustered by mechanism, not by component — that's where the fix lives.
 4. **Reference comparison.** What I compared against, at what zoom, what I saw. Annotated where helpful.
 5. **Next-pass scope.** What the next iteration round addresses, sequenced by leverage.
-6. **Skill / tool gaps.** If the framework needed a capability I didn't have (e.g. browser-zoom-and-capture for a particular reference site), name it so the gap closes.
+6. **Detector.** What independent check ran, or `none (judgment only)`.
+7. **Skill / tool gaps.** If the framework needed a capability I didn't have (e.g. browser-zoom-and-capture for a particular reference site), name it so the gap closes.
 
 What this framework does **not** change:
 

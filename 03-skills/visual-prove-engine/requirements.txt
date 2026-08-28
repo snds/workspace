@@ -6,5 +6,9 @@ Pillow>=10.0
 # scipy>=1.11
 # opencv-python-headless>=4.8
 
-# Video decode for `vqa motion --video` is ffmpeg (system binary, not pip):
-#   macOS: brew install ffmpeg · Linux: apt-get install ffmpeg · Windows: winget install Gyan.FFmpeg
+# Optional (honest degrade; never required for Literal A)
+# flip-evaluator>=1.0          # nvidia-flip; else flip-lite
+# dreamsim + torch             # Spirit/NVS only
+# pytesseract                  # plus system tesseract
+# gltf-validator               # npm i -g; else stdlib parser
+# vggt                         # geometry; else phase-correlation on >=2 views

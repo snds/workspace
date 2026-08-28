@@ -1,7 +1,7 @@
 ---
 tags: [knowledge-vault, index]
 created: 2026-04-28
-updated: 2026-07-28
+updated: 2026-08-28
 ---
 
 # Knowledge Vault — Index
@@ -78,6 +78,8 @@ _Raw research syntheses live in `research/` (double-nesting flattened 2026-07-23
 - [[threejs-postprocessing-vfx]] — Three.js post-processing, particles, VFX pipelines (2026-06)
 - [[threejs-showcases-techniques]] — Award-winning Three.js showcases + production techniques (2026-06)
 - [[webgpu-tsl-deep-dive]] — WebGPU, Three.js TSL & WebGPURenderer deep dive (2026-06)
+- [[agentic-error-correction-foundations]] — **Independent measurement is the correction primitive.** Same-model self-critique is not error correction. Field map of loop types (Self-Refine / Reflexion / CRITIC / sampling / debate) narrowed onto this workspace's existing gates; workstream detector registry; honesty bound that unexpected results cannot be fully removed, only made detectable, non-silent, and non-repeatable. Mechanical close 2026-08-26: #06 detector check, embedded prove/validate, negative fixtures, observable routing skips, `/optimize` seven-surface ECC. Triggers: `error correction`, `verification loop`, `agent reliability`, `generate-verify`, `self-correct`, `self-refine`, `reflexion`, `unexpected results`, `done-claim`, `independent detector` (2026-08-26)
+- [[perception-critique-stack]] — **The field is a metric ladder, not a better SSIM.** Pixel/structure (our prove engine) → psychovisual HVS maps (NVIDIA FLIP, Butteraugli) → mid-level learned (DreamSim) → no-reference aesthetic (Q-Align) → geometric/3D-native (VGGT, glTF auditor; Chamfer and CLIP-IQA lie) → process critics (VisCritic on top of `vqa interact`) → simulation/feel/balance (input-to-photon, CoTracker jerk, AutoSim, MCTS). VLMs fail first-fixation hierarchy; GPU goldens are not byte-stable; Literal UI stays on the pixel rung. Course corrections 1–12 plus a no-weights first slice. Triggers: `DreamSim`, `FLIP metric`, `VGGT`, `3D QA`, `mesh quality`, `game feel`, `input latency`, `saliency`, `VisCritic`, `glTF validator`, `playtest agent`, `novel view synthesis`, `perceptual metric`, `machine vision QA` (2026-08-28)
 
 ## Cross-Domain
 
@@ -90,6 +92,8 @@ _Raw research syntheses live in `research/` (double-nesting flattened 2026-07-23
 - [[knowledge-vault-design]] — Why three surfacing tiers exist, why entries ≠ skills, how to extend the system (2026-04-29)
 - [[skill-ecosystem-and-mcp-servers]] — Evaluation of skills.sh + mcpmarket.com: the three buckets (tool integrations / already-covered / genuine gaps), what we added (science math+physics, mobile, security), dedup decisions, attribution convention, recommended MCP servers (Blender for Legion, Postgres). Triggers: `mcpmarket`, `skills.sh`, `mcp server`, `blender`, `add skills`, `skill library` (2026-06-16)
 - [[visual-failure-mode-ledger]] — The externalized memory behind framework #11 Anticipatory Failure Analysis + the `failure-mode-premortem` skill: technique-keyed rows (symptom · visible tell · root cause · prevention · how-to-detect · ref/tier) for how visual techniques classically fail and how to catch them in a frame. Domain-agnostic; seeded from Legion rendering; grows via the self-improving loop. Triggers: `pre-mortem`, `failure mode`, `what could go wrong`, `classic symptom`, `banding`, `dither crawl`, `bloom ring`, `acceptance criteria`, `ready for review`, `pitfall ledger` (2026-07-14)
+- [[visual-reference-replication-findings]] — Adversarial diagnosis: agents fail Literal UI recreation via VLM-as-measurement, Spirit-as-done, no Construction IR, unused prove gates. Justifies skill `visual-reference-replication` + ledger C-03…C-08 / Z-04–05. Triggers: `literal match`, `recreate this screen`, `inspired by rejected`, `construction ir` (2026-08-09)
+- [[measured-visual-verdicts]] — The four conditions for a trustworthy visual verdict, each violated by the manual pipeline it replaced and caught on real data the day [[visual-prove-engine]] ran: cues **measured never declared** (LCARS claimed 15/16, measurement found 13/16 and refuted a claimed-pass silhouette at 0.0 foreground); thresholds **derived from scouting the reference** with the judging probes (the manual >= 0.85 SSIM demand was unattainable: the reference itself scores 0.338 in that rect); detector reliability **proven by planted-defect calibration** (32 cases, zero miss / zero false-fire; caught 4 engine bugs including phantom jerk from settle-tail centroid jitter and global-metric blindness to local defects); ledgers **cue-granular** so `newly_failing` surfaces inside an aggregate win (v2→v3 improved 0.50→0.81 while regressing 2 cues). Plus: rank agreement as external validity check; capture manifest as part of the verdict. Triggers: `measured verdict`, `prove this build`, `cuespec`, `visual prove`, `self-attested`, `planted defects`, `calibration suite`, `improvement ledger`, `newly failing`, `rank builds`, `visual regression gate` (2026-08-26)
 
 ---
 

@@ -79,8 +79,75 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
         "windows": "winget install Gyan.FFmpeg"
       },
       "fallback": "block",
-      "fallback_note": "Frame extraction / transcode has no portable fallback — surface the install command and stop.",
-      "powers": ["reference-video-review", "render-qa-toolkit"]
+      "fallback_note": "Frame extraction / transcode has no portable fallback — surface the install command and stop. For visual-prove-engine specifically, only the `vqa motion --video` input path needs it; a pre-extracted `--frames` directory works without ffmpeg.",
+      "powers": ["reference-video-review", "render-qa-toolkit", "visual-prove-engine"]
+    },
+    "python-imaging": {
+      "kind": "cli",
+      "provides": "NumPy + Pillow in the active python3 — array math and PNG decode/encode, the substrate for deterministic pixel measurement.",
+      "detect": { "method": "shell", "probe": "python3 -c 'import numpy, PIL'" },
+      "install": {
+        "any": "python3 -m pip install numpy Pillow",
+        "macos": "python3 -m pip install numpy Pillow",
+        "linux": "python3 -m pip install numpy Pillow",
+        "windows": "python3 -m pip install numpy Pillow"
+      },
+      "fallback": "block",
+      "fallback_note": "Pixel measurement cannot be reproduced by narrative inspection — that substitution is the exact failure the engine exists to prevent. Surface the install command and stop; never emit an unmeasured verdict as if measured.",
+      "powers": ["visual-prove-engine"]
+    },
+    "nvidia-flip": {
+      "kind": "cli",
+      "provides": "NVIDIA FLIP (flip_evaluator) — viewing-distance-aware HVS error maps for render-vs-reference.",
+      "detect": { "method": "shell", "probe": "python3 -c 'import flip_evaluator'" },
+      "install": { "any": "python3 -m pip install flip-evaluator" },
+      "fallback": "degrade",
+      "fallback_note": "vqa compare / flip_region fall back to flip-lite (CSF + HyAB + edges) and record backend: flip-lite. Never silent. SSIM+Δe remain. Do not treat flip-lite as nvidia-flip.",
+      "powers": ["visual-prove-engine"]
+    },
+    "dreamsim": {
+      "kind": "cli",
+      "provides": "DreamSim mid-level perceptual distance (torch) for Spirit / novel-view / same-object questions.",
+      "detect": { "method": "shell", "probe": "python3 -c 'import dreamsim, torch'" },
+      "install": { "any": "python3 -m pip install dreamsim torch" },
+      "fallback": "degrade",
+      "fallback_note": "dreamsim_region skips if the cue is optional, else errors. Never a Literal gutter substitute. Foreground-biased: matching heroes can hide chrome diffs.",
+      "powers": ["visual-prove-engine"]
+    },
+    "gltf-validator": {
+      "kind": "cli",
+      "provides": "Khronos glTF-Validator CLI for Error-level mesh/asset audit.",
+      "detect": { "method": "shell", "probe": "command -v gltf-validator" },
+      "install": {
+        "any": "npm i -g gltf-validator",
+        "macos": "npm i -g gltf-validator",
+        "linux": "npm i -g gltf-validator"
+      },
+      "fallback": "degrade",
+      "fallback_note": "vqa mesh uses the engine's stdlib glTF parser (NaN accessors, buffer overruns, illegal types) and still fail-closes on Error. Official validator is preferred when present.",
+      "powers": ["visual-prove-engine"]
+    },
+    "tesseract": {
+      "kind": "cli",
+      "provides": "Tesseract OCR (CLI or pytesseract) for measuring currently attested strings.",
+      "detect": { "method": "shell", "probe": "command -v tesseract" },
+      "install": {
+        "macos": "brew install tesseract",
+        "linux": "sudo apt-get install -y tesseract-ocr",
+        "windows": "winget install UB-Mannheim.TesseractOCR"
+      },
+      "fallback": "degrade",
+      "fallback_note": "ocr_text skips if optional, else errors. Never silently pass a title/string cue. Keep attest for identity until OCR is actually run.",
+      "powers": ["visual-prove-engine"]
+    },
+    "geometric-foundation-model": {
+      "kind": "cli",
+      "provides": "VGGT or DUSt3R for multi-view geometric consistency (pose/pointmap) on pinned orbits.",
+      "detect": { "method": "shell", "probe": "python3 -c 'import vggt'" },
+      "install": { "any": "python3 -m pip install vggt  # or the DUSt3R environment documented upstream" },
+      "fallback": "degrade",
+      "fallback_note": "vqa geometry still requires >=2 views and measures pairwise phase-correlation. A single still is never a 3D pass. Missing VGGT is recorded; do not invent a reconstructed mesh.",
+      "powers": ["visual-prove-engine"]
     },
     "yt-dlp": {
       "kind": "cli",
@@ -242,9 +309,26 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
   key to avoid an install. The portability floor below both is a human running the loop in the web UI.
 - **agent-browser** — powers [[web-automation]]. The CLI ships its own usage docs (`agent-browser
   skills get core`); the workspace skill is the *when/why*, the CLI is the *how*.
-- **ffmpeg / yt-dlp** — power [[reference-video-review]] and [[render-qa-toolkit]] (`qa_video_extract`).
-  ffmpeg is the hard dependency (frames); yt-dlp is only needed to fetch remote video
-  (reference-video-review). render-qa-toolkit expects a local file for extract.
+- **ffmpeg / yt-dlp** — power [[reference-video-review]] and [[render-qa-toolkit]] (`qa_video_extract`),
+  plus [[visual-prove-engine]]'s `vqa motion --video` decode path. ffmpeg is the hard dependency
+  (frames); yt-dlp is only needed to fetch remote video (reference-video-review). render-qa-toolkit
+  expects a local file for extract; visual-prove-engine accepts a pre-extracted `--frames` directory
+  as the no-ffmpeg path.
+- **python-imaging** — powers [[visual-prove-engine]] (all probes, perception, comparison, motion,
+  calibration). Blocks rather than degrades: a "measured" verdict produced without measurement is the
+  self-attestation failure mode the engine replaces, so absence stops the step and surfaces
+  `python3 -m pip install numpy Pillow`. SciPy/OpenCV are optional accelerators detected at runtime
+  by `vqa doctor`, never required.
+- **nvidia-flip** — powers [[visual-prove-engine]] `flip_region` / `vqa compare`. Degrades to flip-lite
+  (numpy CSF + HyAB + edges) with an explicit `backend` field. Absence is never silent.
+- **dreamsim** — powers [[visual-prove-engine]] `dreamsim_region` (Spirit / NVS). Degrades: optional cues
+  skip, required cues error. Not a Literal gutter metric; foreground-biased.
+- **gltf-validator** — powers [[visual-prove-engine]] `vqa mesh`. Degrades to the stdlib parser, which
+  still fail-closes on NaN accessors and illegal glTF. Official validator is preferred.
+- **tesseract** — powers [[visual-prove-engine]] `ocr_text`. Degrades: optional skip / required error.
+  Attested strings stay attested until OCR actually runs.
+- **geometric-foundation-model** — powers [[visual-prove-engine]] `vqa geometry`. Degrades to
+  phase-correlation across ≥2 pinned views. A single still is not a 3D pass.
 - **inference-belt** — powers [[ai-video-generation]]. Account + cost involved; always confirm with
   the user before spending a generation call.
 - **axe-cli / pa11y / lighthouse** — the accessibility + performance measurement runners. `axe-cli`,

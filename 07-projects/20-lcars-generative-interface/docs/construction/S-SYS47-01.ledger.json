@@ -103,13 +103,51 @@
       "flags": [
         "cues newly failing: [15, 16]"
       ]
+    },
+    {
+      "time": "2026-08-26T16:48:51",
+      "build": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/captures/S-SYS47-01_build_v4.png",
+      "verdict": "partial",
+      "score": 1.0,
+      "measured_pass": 16,
+      "measured_total": 16,
+      "coverage": 0.8421,
+      "mean_margin": 0.6038,
+      "capture": "unverified",
+      "failing_cues": [],
+      "note": "v4: DPR-2 native capture, srcset 1x/2x plates, msd crop trimmed to y1390 (clipped pill-top strip removed), mid band recomposed (ticks + title band + 5987 chip)",
+      "newly_passing": [
+        12,
+        15,
+        16
+      ],
+      "newly_failing": [],
+      "movement": "improved",
+      "flags": []
+    },
+    {
+      "time": "2026-08-26T16:50:49",
+      "build": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/captures/S-SYS47-01_build_v4.png",
+      "verdict": "matches",
+      "score": 1.0,
+      "measured_pass": 16,
+      "measured_total": 16,
+      "coverage": 0.8421,
+      "mean_margin": 0.6038,
+      "capture": "verified",
+      "failing_cues": [],
+      "note": "v4 verified capture: manifest + reduced-motion freeze; DPR-2 native; msd crop trim; mid band recomposed",
+      "newly_passing": [],
+      "newly_failing": [],
+      "movement": "flat",
+      "flags": []
     }
   ],
   "status": {
-    "runs": 2,
-    "best_score": 0.8125,
-    "last_movement": "improved",
+    "runs": 4,
+    "best_score": 1.0,
+    "last_movement": "flat",
     "stalled": false,
-    "done": false
+    "done": true
   }
 }

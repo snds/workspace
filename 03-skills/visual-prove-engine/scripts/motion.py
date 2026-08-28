@@ -146,6 +146,12 @@ def analyze_motion(
     }
 
     payload["verdicts"] = _motion_verdicts(payload, spec)
+    if spec.get("photon"):
+        payload["photon"] = _input_to_photon(frames, spec["photon"])
+        payload["verdicts"].extend(_photon_verdicts(payload["photon"], spec["photon"]))
+    if spec.get("track_points"):
+        payload["tracks"] = _labeled_tracks(frames, spec["track_points"], spec)
+        payload["verdicts"].extend(_track_verdicts(payload["tracks"], spec))
     if out_dir:
         write_json(payload, Path(out_dir) / "motion.json")
     return payload
@@ -284,4 +290,122 @@ def _motion_verdicts(payload: dict, spec: dict) -> list:
     timing = payload.get("timing", {})
     if timing.get("status") == "ok" and "max_jank_per_second" in spec:
         check("jank_per_second", timing["jank_per_second"], spec["max_jank_per_second"])
+    return verdicts
+
+
+def _ncc_search(prev: np.ndarray, nxt: np.ndarray, x: float, y: float, patch: int = 7, radius: int = 24):
+    """NCC template match. Floor for CoTracker/TAPIR."""
+    h, w = prev.shape[:2]
+    p = patch // 2
+    xi, yi = int(round(x)), int(round(y))
+    x0, x1 = max(0, xi - p), min(w, xi + p + 1)
+    y0, y1 = max(0, yi - p), min(h, yi + p + 1)
+    templ = luma(prev[y0:y1, x0:x1])
+    if templ.size < 4:
+        return x, y, 0.0
+    best, bx, by = -2.0, xi, yi
+    for ny in range(max(p, yi - radius), min(h - p, yi + radius + 1)):
+        for nx in range(max(p, xi - radius), min(w - p, xi + radius + 1)):
+            crop = luma(nxt[ny - p: ny + p + 1, nx - p: nx + p + 1])
+            if crop.shape != templ.shape:
+                continue
+            a = templ - templ.mean()
+            b = crop - crop.mean()
+            denom = float(np.sqrt((a * a).sum() * (b * b).sum())) + 1e-9
+            ncc = float((a * b).sum() / denom)
+            if ncc > best:
+                best, bx, by = ncc, nx, ny
+    return float(bx), float(by), best
+
+
+def _labeled_tracks(frames: list, points: list, spec: dict) -> dict:
+    backend = "ncc"
+    try:
+        import cotracker  # noqa: F401
+        backend = "cotracker-unavailable-runtime"  # import presence only; NCC remains the measured path
+    except Exception:
+        pass
+    tracks = [[(float(p[0]), float(p[1]))] for p in points]
+    scores = [[] for _ in points]
+    for i in range(1, len(frames)):
+        for t, pts in enumerate(tracks):
+            x, y = pts[-1]
+            nx, ny, ncc = _ncc_search(frames[i - 1], frames[i], x, y)
+            pts.append((nx, ny))
+            scores[t].append(ncc)
+    jerks = []
+    diag = math.hypot(frames[0].shape[1], frames[0].shape[0])
+    for pts in tracks:
+        arr = np.asarray(pts)
+        if len(arr) < 4:
+            continue
+        vel = np.diff(arr, axis=0) / diag
+        acc = np.diff(vel, axis=0)
+        jerk = np.diff(acc, axis=0)
+        jerks.append(float(np.sqrt((jerk ** 2).sum(axis=1).mean())) if len(jerk) else 0.0)
+    return {
+        "backend": backend,
+        "n_points": len(points),
+        "jerk_rms_mean": round(float(np.mean(jerks)) if jerks else 0.0, 6),
+        "mean_ncc": round(float(np.mean([s for row in scores for s in row])) if scores else 0.0, 4),
+        "points": [[list(map(lambda v: round(v, 2), xy)) for xy in t] for t in tracks],
+    }
+
+
+def _input_to_photon(frames: list, photon: dict) -> dict:
+    """Frame index of first pixel change after injected input."""
+    inject = int(photon.get("inject_frame", 0))
+    threshold = float(photon.get("min_changed_fraction", 0.002))
+    region = photon.get("region")
+    baseline = frames[max(0, inject - 1)] if inject > 0 else frames[0]
+    first = None
+    for i in range(inject, len(frames)):
+        mask = change_mask(baseline, frames[i], threshold_de=float(photon.get("change_de", 4.0)))
+        if region:
+            x, y, w, h = denorm_rect_local(region, frames[i].shape[1], frames[i].shape[0])
+            frac = float(mask[y:y + h, x:x + w].mean()) if w and h else float(mask.mean())
+        else:
+            frac = float(mask.mean())
+        if frac >= threshold:
+            first = i
+            break
+    latency = None if first is None else first - inject
+    return {
+        "inject_frame": inject,
+        "first_change_frame": first,
+        "latency_frames": latency,
+        "measured": first is not None,
+        "note": None if first is not None else "no pixel change after inject within sequence",
+    }
+
+
+def denorm_rect_local(rect_frac, width, height):
+    return _core.denorm_rect(rect_frac, width, height)
+
+
+def _photon_verdicts(photon: dict, spec: dict) -> list:
+    verdicts = []
+    if "max_latency_frames" in spec:
+        lat = photon.get("latency_frames")
+        ok = lat is not None and lat <= int(spec["max_latency_frames"])
+        verdicts.append({
+            "check": "input_to_photon",
+            "value": lat,
+            "limit": spec["max_latency_frames"],
+            "status": "pass" if ok else "fail",
+        })
+    return verdicts
+
+
+def _track_verdicts(tracks: dict, spec: dict) -> list:
+    verdicts = []
+    if "max_track_jerk_rms" in spec:
+        val = tracks["jerk_rms_mean"]
+        ok = val <= float(spec["max_track_jerk_rms"])
+        verdicts.append({
+            "check": "track_jerk_rms",
+            "value": val,
+            "limit": spec["max_track_jerk_rms"],
+            "status": "pass" if ok else "fail",
+        })
     return verdicts

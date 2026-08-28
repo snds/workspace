@@ -60,6 +60,12 @@ def relations_targets(text):
     return [t.split("/")[-1].lower() for t in WIKILINK.findall(m.group(1))] if m else []
 
 
+def dangling_relations(text, known_stems):
+    """Return relation targets whose stem is not in known_stems (lowercase)."""
+    known = {s.lower() for s in known_stems}
+    return [name for name in relations_targets(text) if name not in known]
+
+
 def main():
     strict = "--strict" in sys.argv
     all_notes = list(md_files(LINK_SOURCES))
@@ -110,9 +116,8 @@ def main():
             months = (now.year - y) * 12 + (now.month - mo)
             if months >= STALE_MONTHS:
                 aging.append((rel, f"{y:04d}-{mo:02d}", months))
-        for name in relations_targets(text):
-            if name not in by_name:
-                dangling.append((rel, name))
+        for name in dangling_relations(text, by_name):
+            dangling.append((rel, name))
         if inbound.get(p.resolve(), 0) == 0:
             orphans.append(rel)
 

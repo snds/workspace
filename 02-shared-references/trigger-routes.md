@@ -30,10 +30,33 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `workspace brain` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
 | `workspace fix` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
 | `workspace validation` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
-| `lcars` | 07-projects/20-lcars-generative-interface/ — read SESSION-STATE.md Live handoff then SPEC.md |
-| `generative lcars` | 07-projects/20-lcars-generative-interface/ — read SESSION-STATE.md Live handoff then SPEC.md |
-| `okudagram` | 07-projects/20-lcars-generative-interface/ — read SESSION-STATE.md Live handoff then SPEC.md |
-| `scene ir` | 07-projects/20-lcars-generative-interface/ — read SESSION-STATE.md Live handoff then SPEC.md |
+| `error correction` | 08-knowledge/research/agentic-error-correction-foundations.md + 07-projects/19-workspace-brain/SESSION-STATE.md — independent measurement or refuse the done-claim; do not add a … |
+| `verification loop` | 08-knowledge/research/agentic-error-correction-foundations.md + 01-frameworks/06-qa-operating-model.md + 01-frameworks/11-anticipatory-failure-analysis.md — loops need an indepe… |
+| `agent reliability` | 08-knowledge/research/agentic-error-correction-foundations.md + 07-projects/19-workspace-brain/ — workstream detector registry |
+| `generate-verify` | 08-knowledge/research/agentic-error-correction-foundations.md — generation-verification gap; same-model critique is polish |
+| `self-correct` | 08-knowledge/research/agentic-error-correction-foundations.md — Self-Refine is not a prove-gate |
+| `lcars` | 07-projects/20-lcars-generative-interface/ — SESSION-STATE.md → docs/program-thesis.md → NORTHSTAR.md → docs/visual-replication-requirements.md → SPEC.md; Literal pack proof loa… |
+| `generative lcars` | 07-projects/20-lcars-generative-interface/ — SESSION-STATE.md → docs/program-thesis.md → NORTHSTAR.md → docs/visual-replication-requirements.md → SPEC.md; Literal pack proof loa… |
+| `okudagram` | 07-projects/20-lcars-generative-interface/ — SESSION-STATE.md → docs/program-thesis.md → NORTHSTAR.md → docs/visual-replication-requirements.md → SPEC.md; Literal pack proof loa… |
+| `system pack` | 03-skills/visual-reference-replication/SKILL.md + 07-projects/20-lcars-generative-interface/docs/program-thesis.md — pipeline vs pack separation |
+| `scene ir` | 07-projects/20-lcars-generative-interface/ — SESSION-STATE.md Live handoff → NORTHSTAR.md → SPEC.md |
+| `literal match` | 03-skills/visual-reference-replication/SKILL.md + native-visual-eval + visual-prove-engine — Construction IR before code; Literal prove-gate runs `vqa prove` |
+| `prove this build` | 03-skills/visual-prove-engine/SKILL.md — cuespec + measured/attested split; verdicts come from probes, never prose |
+| `cuespec` | 03-skills/visual-prove-engine/SKILL.md — author from reference scouting; record derivation in _provenance |
+| `measured verdict` | 03-skills/visual-prove-engine/SKILL.md + 08-knowledge/cross-domain/measured-visual-verdicts.md — four conditions for a trustworthy visual verdict |
+| `rank builds` | 03-skills/visual-prove-engine/SKILL.md — `vqa compare` closeness ranking + `vqa score` improvement ledger |
+| `visual regression gate` | 03-skills/visual-prove-engine/SKILL.md — `vqa score --enforce` exits non-zero on regression |
+| `jank` | 03-skills/visual-prove-engine/SKILL.md — `vqa motion` stutter/flicker/settle + vsync timing with timestamps |
+| `play-prove` | 03-skills/play-prove/SKILL.md — headless simulation/balance (altitude G); not a vqa subcommand |
+| `dominant strategy` | 03-skills/play-prove/SKILL.md — no_dominant_strategy assertion on adapter metrics |
+| `flip metric` | 03-skills/visual-prove-engine/SKILL.md — altitude B; `vqa compare` + flip_region; degrades to flip-lite |
+| `gltf validator` | 03-skills/visual-prove-engine/SKILL.md — `vqa mesh`; fail closed on Error |
+| `input-to-photon` | 03-skills/visual-prove-engine/SKILL.md — `vqa motion` photon spec; first pixel change after inject |
+| `recreate this screen` | 03-skills/visual-reference-replication/SKILL.md — lock Literal; northstar + IR + cue matrix before implement |
+| `match this reference` | 03-skills/visual-reference-replication/SKILL.md — lock Literal; refuse VLM prose as measurement |
+| `construction ir` | 03-skills/visual-reference-replication/reference/construction-ir.md + SKILL.md |
+| `inspired by` | If user rejects inspired-by: load visual-reference-replication (Literal). Do not continue Spirit vibe-match as done. |
+| `farce` | 07-projects/20-lcars-generative-interface/NORTHSTAR.md + 03-skills/visual-reference-replication/SKILL.md — treat as Literal recreation demand |
 | `figma plugin` | 03-skills/figma-plugin-dev/SKILL.md |
 | `figma` | 03-skills/figma-canvas-designer/SKILL.md + 03-skills/design-engineer/SKILL.md — real-library-components rule |
 | `design system` | 03-skills/ds-advisor/SKILL.md + design-engineer |
@@ -151,6 +174,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `sec-supply-chain` | cross-cutting | `supply chain`, `dependency`, `sbom`, `provenance`, `slsa`, `sigstore` (+12) | `eng-foundations` → `lead-security-architect` → `sec-supply-chain` |
 | `sec-threat-modeling` | cross-cutting | `threat model`, `stride`, `pasta`, `attack tree`, `trust boundary`, `data flow diagram` (+8) | `eng-foundations` → `lead-security-architect` → `sec-threat-modeling` |
 | `skill-placement` | cross-cutting | `create a skill`, `generate skill`, `make a skill`, `new skill`, `skill placement` | `skill-placement` |
+| `visual-prove-engine` | cross-cutting | `prove this build`, `cuespec`, `measured verdict`, `visual prove`, `rank builds`, `improvement ledger` (+7) | `design-foundations` → `lead-visual-qa` → `visual-prove-engine` |
 | `visual-qa-dataviz` | cross-cutting | `chart review`, `chart audit`, `dataviz qa`, `graph review`, `data table review`, `dashboard review` (+4) | `design-foundations` → `lead-visual-qa` → `visual-qa-dataviz` |
 | `visual-qa-motion` | cross-cutting | `motion qa`, `motion review`, `animation review`, `animation audit`, `jank review`, `janky animation` (+7) | `design-foundations` → `lead-visual-qa` → `visual-qa-motion` |
 | `visual-qa-toolkit` | cross-cutting | `visual qa`, `pixel diff`, `visual regression`, `screenshot audit`, `design qa`, `qa audit` (+1) | `design-foundations` → `lead-visual-qa` → `visual-qa-toolkit` |
@@ -158,4 +182,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 80 · Registry rows: 55_
+_Curated routes: 103 · Registry rows: 56_

@@ -7,9 +7,12 @@ Subcommands:
   verify-capture  — validate a capture PNG against its *.capture.json manifest
   perceive        — pixel-derived region inventory + shape grammar + ledger flags
   prove           — run a declarative cuespec against a build capture
-  compare         — reference vs build(s): registration, SSIM, delta-E, ranking
-  motion          — frame-sequence smoothness/stutter/flicker/easing analysis
+  compare         — reference vs build(s): registration, SSIM, FLIP, delta-E, ranking
+  motion          — frame-sequence smoothness/stutter/flicker/easing + tracks/photon
   interact        — verify declared action-effects between state captures
+  mesh            — glTF/GLB audit (fail closed on Error)
+  geometry        — geometric consistency across >=2 pinned views
+  judge           — cross-model VLM Spirit/Intent protocol (never Literal)
   score           — append a prove result to an improvement-loop ledger
   calibrate       — self-test: planted defects + clean fixtures, FP/FN report
 
@@ -25,7 +28,7 @@ from pathlib import Path
 SKILL_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SKILL_DIR))
 
-from scripts import _core, calibrate, compare, interact, motion, perceive, prove, trajectory  # noqa: E402
+from scripts import _core, calibrate, compare, geometry, interact, judge, mesh, motion, perceive, prove, trajectory  # noqa: E402
 
 
 def _print(payload: dict) -> None:
@@ -98,6 +101,30 @@ def cmd_interact(args) -> int:
     return 0 if payload["verdict"] == "pass" else 1
 
 
+def cmd_mesh(args) -> int:
+    payload = mesh.audit(args.asset)
+    _print(payload)
+    return 0 if payload["status"] == "pass" else 1
+
+
+def cmd_geometry(args) -> int:
+    payload = geometry.consistency(args.views, min_peak=args.min_peak, min_ssim=args.min_ssim)
+    _print(payload)
+    if payload["status"] == "error":
+        return 2
+    return 0 if payload["status"] == "pass" else 1
+
+
+def cmd_judge(args) -> int:
+    payload = judge.run_judge(args.spec, out_dir=args.output)
+    _print(payload)
+    if payload["verdict"] in ("yes",):
+        return 0
+    if payload["verdict"] in ("no", "split", "discarded"):
+        return 1
+    return 2
+
+
 def cmd_score(args) -> int:
     result = trajectory.record_score(
         args.ledger, getattr(args, "from"), note=args.note or "",
@@ -161,6 +188,18 @@ def main(argv=None) -> int:
     p.add_argument("spec")
     p.add_argument("--output")
 
+    p = sub.add_parser("mesh", help="audit a glTF/GLB asset (fail closed on Error)")
+    p.add_argument("asset")
+
+    p = sub.add_parser("geometry", help="geometric consistency across pinned views")
+    p.add_argument("views", nargs="+", help=">=2 image paths (orbit or stereo)")
+    p.add_argument("--min-peak", type=float, default=0.08)
+    p.add_argument("--min-ssim", type=float, default=0.25)
+
+    p = sub.add_parser("judge", help="cross-model VLM Spirit/Intent protocol")
+    p.add_argument("spec")
+    p.add_argument("--output")
+
     p = sub.add_parser("score", help="append a prove run to an improvement ledger")
     p.add_argument("--ledger", required=True)
     p.add_argument("--from", dest="from", required=True, help="prove.json path")
@@ -182,6 +221,9 @@ def main(argv=None) -> int:
         "compare": cmd_compare,
         "motion": cmd_motion,
         "interact": cmd_interact,
+        "mesh": cmd_mesh,
+        "geometry": cmd_geometry,
+        "judge": cmd_judge,
         "score": cmd_score,
         "calibrate": cmd_calibrate,
     }

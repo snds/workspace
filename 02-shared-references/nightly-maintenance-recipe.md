@@ -40,5 +40,7 @@ bootstrap-generator feedback pass (2026-07-23)._
 
 - **Report, don't rewrite.** Automation folds/rebuilds/commits; it does not make epistemic judgments
   (refuting a claim, archiving an orphan). Those wait for a human-in-the-loop `/health` pass.
+  The judgment-heavy cousin is `/optimize` (seven-surface system ECC). This recipe does not
+  replace it.
 - **Respect the walls.** Never touch `06-context/personal.md` beyond git; never push employer content.
 - **Idempotent + non-lossy.** Every step is safe to re-run; nothing here deletes a note (archive-only).

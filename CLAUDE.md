@@ -81,7 +81,7 @@ This ritual costs ~150 tokens per session start in exchange for cross-surface co
 
 ## Frameworks (the operating layer)
 
-Eleven top-level frameworks govern all project work. They sit **above** any skill.
+Sixteen top-level frameworks govern all project work. They sit **above** any skill.
 
 - **[01-frameworks/01-aesthetic-lens.md](01-frameworks/01-aesthetic-lens.md)** — philosophical ground, visual/aesthetic judgment
 - **[01-frameworks/02-ui-ux-operational-framework.md](01-frameworks/02-ui-ux-operational-framework.md)** — UX/UI operational decisions
@@ -96,6 +96,9 @@ Eleven top-level frameworks govern all project work. They sit **above** any skil
 - **[01-frameworks/11-anticipatory-failure-analysis.md](01-frameworks/11-anticipatory-failure-analysis.md)** — input-time twin of #06: before proposing/building any technique with a visible failure surface, anticipate its classic failure modes (consult the Visual Failure-Mode Ledger), argue against your own plan, derive acceptance criteria from the reference figures, and prove the result at native resolution before "ready for review"; find the bug before Sean does
 - **[01-frameworks/12-realtime-photoreal-operational-framework.md](01-frameworks/12-realtime-photoreal-operational-framework.md)** — realtime photoreal ops: technique ladder, budget-first allocation, **triple done-gate** (native still grid + motion/flythrough frame-by-frame + measured ms), movie-level northstars; command surface `realtime-visual-craft`
 - **[01-frameworks/13-domain-rigor-stack.md](01-frameworks/13-domain-rigor-stack.md)** — meta-stack every domain hub must instantiate (L1–L5)
+- **[01-frameworks/14-engineering-operating-model.md](01-frameworks/14-engineering-operating-model.md)** — FE/BE/DevOps/mobile done-gates
+- **[01-frameworks/15-analysis-operating-model.md](01-frameworks/15-analysis-operating-model.md)** — question → valid method → decision
+- **[01-frameworks/16-security-operating-model.md](01-frameworks/16-security-operating-model.md)** — threat-model → build → scan → monitor
 
 Compressed summaries: **[01-frameworks/00-README.md](01-frameworks/00-README.md)** — read this first.
 Team practices: **[01-frameworks/team-practices-and-decisions.md](01-frameworks/team-practices-and-decisions.md)**.

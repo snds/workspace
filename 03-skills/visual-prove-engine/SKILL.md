@@ -21,8 +21,8 @@ triggers: [prove this build, cuespec, measured verdict, visual prove, rank build
 tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
-related: [visual-qa-toolkit, render-qa-toolkit, native-visual-eval, interactive-capture-eval, visual-reference-replication, reference-video-review]
-requires: [python-imaging, ffmpeg]
+related: [visual-qa-toolkit, render-qa-toolkit, native-visual-eval, interactive-capture-eval, visual-reference-replication, reference-video-review, play-prove]
+requires: [python-imaging, ffmpeg, nvidia-flip, dreamsim, gltf-validator, tesseract, geometric-foundation-model]
 spec_version: "2.1"
 ---
 
@@ -52,13 +52,16 @@ same probes the calibration suite validates.
 
 | Command | What it does |
 |---|---|
-| `vqa doctor` | Dependency + degradation report (numpy/Pillow required; scipy/OpenCV accelerate; ffmpeg only for `--video`) |
-| `vqa verify-capture IMG` | Validate a capture manifest (viewport, DPR, freeze state) |
+| `vqa doctor` | Dependency + degradation report (numpy/Pillow required; scipy/OpenCV accelerate; ffmpeg only for `--video`; FLIP/DreamSim/OCR/glTF/VGGT degrade honestly) |
+| `vqa verify-capture IMG` | Validate a capture manifest (viewport, DPR, freeze state). Missing `renderer` / `rng_frozen` is a **warning**, not unverified |
 | `vqa perceive IMG` | Structure-independent inventory: regions, shapes, palette, background, plus ledger failure-mode detectors (banding, blowout, illegal shapes) |
-| `vqa prove BUILD CUESPEC` | Run a cuespec, emit `*.prove.json` + `*.prove.md` with measured/attested split |
-| `vqa compare REF BUILD...` | Register (phase correlation), SSIM + delta-E maps, rank candidates by closeness |
-| `vqa motion --frames DIR\|--video F` | Duplicate/stutter, flicker, trajectory smoothness (speed/accel/jerk, overshoot, settle), vsync jank with timestamps |
-| `vqa interact SPEC` | Action-effect verification: expected pixel change happened in region, no side effects elsewhere, catches dead controls and phantom claims |
+| `vqa prove BUILD CUESPEC` | Run a cuespec, emit `*.prove.json` + `*.prove.md` with measured/attested split, altitude coverage, uncued residuals |
+| `vqa compare REF BUILD...` | Register (phase correlation), SSIM + FLIP + delta-E maps, rank candidates by closeness |
+| `vqa motion --frames DIR\|--video F` | Duplicate/stutter, flicker, trajectory smoothness, optional labeled tracks (NCC floor) + input-to-photon |
+| `vqa interact SPEC` | Action-effect verification. Optional critic cannot override a pixel fail |
+| `vqa mesh ASSET` | glTF/GLB audit; fail closed on Error. Prefers gltf-validator; stdlib parser otherwise |
+| `vqa geometry IMG IMG...` | Geometric consistency across ≥2 pinned views. A single still is not a 3D pass |
+| `vqa judge SPEC` | Cross-model VLM Spirit/Intent protocol (two families, A/B swap, discard inconsistent). Never Literal |
 | `vqa score --ledger L --from PROVE` | Append run to improvement ledger; movement = improved/regressed/flat; `--enforce` exits non-zero on regression (rollback gate) |
 | `vqa calibrate` | Self-test: synthesizes a scene with planted defects + known-good variants, requires every detector to catch every defect with zero false fires |
 
@@ -97,9 +100,30 @@ cue matrix (silhouette chip). Ledger: `S-SYS47-01.ledger.md` in the same directo
 
 Core probes run on numpy + Pillow alone. SciPy/OpenCV accelerate connected-components
 when present (identical results, faster). `--video` needs ffmpeg; without it, supply
-`--frames`. `vqa doctor` reports the active tier; reports embed it so a verdict can
-never silently depend on an absent tool.
+`--frames`. FLIP prefers `flip_evaluator` and otherwise uses flip-lite. DreamSim, OCR,
+gltf-validator, and VGGT are optional: missing backends skip optional cues or error
+required ones — never a silent pass. `vqa doctor` reports the active tier; reports
+embed it so a verdict can never silently depend on an absent tool.
+
+## Metric altitudes (measured, 2026-08-28)
+
+A cue names an altitude (`A`–`G`); the prove summary lists which altitudes were in
+the contract. Literal UI defaults to **A**. A `matches` at A is not coverage of B–G.
+Field map: [[perception-critique-stack]].
+
+| Alt | Question | Surface |
+|---|---|---|
+| A Pixel | this hex / gutter / count / crop | existing probes + `ocr_text` |
+| B HVS | would a human see a difference | `flip_region`, `vqa compare` FLIP |
+| C Mid-level | same layout / pose / object | `dreamsim_region` (optional), `saliency_region` |
+| D Aesthetic | good without a twin | `vqa judge` (Spirit/Intent only; never Literal) |
+| E Geometry/3D | shape / asset valid | `vqa mesh`, `geometric_consistency` (≥2 views) |
+| F Process | did the action cause the change | `vqa interact` (+ optional critic; pixel gate wins) |
+| G Feel/sim | does it play / feel | `vqa motion` tracks + photon; sibling [[play-prove]] |
+
+Do not: replace this engine with a VLM; use CLIP-IQA as a 3D done-metric; treat a
+16/16 cuespec as covering named `uncued_residuals`; fake a 3D pass from one still.
 
 ## Related
 - hub → [[lead-visual-qa]]
-- peer ↔ [[visual-qa-toolkit]] · [[render-qa-toolkit]] · [[native-visual-eval]] · [[interactive-capture-eval]] · [[visual-reference-replication]] · [[reference-video-review]]
+- peer ↔ [[visual-qa-toolkit]] · [[render-qa-toolkit]] · [[native-visual-eval]] · [[interactive-capture-eval]] · [[visual-reference-replication]] · [[reference-video-review]] · [[play-prove]]

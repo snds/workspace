@@ -1,7 +1,7 @@
 # Frameworks — Overview and Navigation
 
 _Workspace: `01-frameworks/`_
-_Last updated: 2026-08-03_
+_Last updated: 2026-08-28_
 
 Sixteen top-level documents that govern how design, **components & patterns**, collaboration, research, craft, QA, **perception integrity**, **anticipatory failure analysis**, **realtime photoreal operations**, **domain rigor for every skill hub**, **engineering / analysis / security operations**, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. **#09 is the design-domain hub** for components and patterns; **#13 is the meta-stack** every other domain must instantiate. They're the portable layer that stays consistent even when the specific work shifts.
 
@@ -149,7 +149,7 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 - Target-user lens loads FIRST — surface, user type, skill level, implied intent — before grading begins.
 - Skill baseline triplet (`ds-advisor` + `design-engineer` + `figma-canvas-designer`) loads proactively; Sean shouldn't have to name skills.
 - Reference-comparison protocol fires without prompting: browser zoom, high-res capture, Figma deep-zoom — match the inspection altitude to the finishing-tier check.
-- Critical-eye pre-output gate before every report: context & medium check (profile resolved + cited, medium matches the request's words — `02-shared-references/delivery-playbooks/`; fires first), target-user check, coverage check, composition-before-footprint check, reference check, resolution check (#10), accessibility check (APCA/WCAG legibility + no color-alone meaning), honesty check, skill check.
+- Critical-eye pre-output gate before every report: context & medium check (profile resolved + cited, medium matches the request's words — `02-shared-references/delivery-playbooks/`; fires first), target-user check, coverage check, composition-before-footprint check, reference check, resolution check (#10), accessibility check (APCA/WCAG legibility + no color-alone meaning), honesty check, detector check (name the independent check or refuse verified-voice), skill check.
 - Iteration-default mindset: first delivery is round one; explicit next-pass scope in every outcome.
 - No curated subsets — every component, every variant, every asset.
 - Accurate grades over generous grades.
@@ -301,7 +301,7 @@ The core operating lenses (01–06) are layered, not parallel — they compose i
 
 ## Notes for LLMs loading this README
 
-**Token budget guidance.** The twelve frameworks total substantial markdown. This README captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For any fine visual-detail judgment, load #10 (it's short, and its `native-visual-eval` skill carries no hub dependency). Before proposing or building any technique with a visible failure surface, load #11 (its `failure-mode-premortem` skill also carries no hub dependency). For realtime 3D / photoreal / frame-budget / flythrough work, load #12 (its `realtime-visual-craft` skill is the command surface). For branching, PR, or consolidation work, load #07.
+**Token budget guidance.** The sixteen frameworks total substantial markdown. This README captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For any fine visual-detail judgment, load #10 (it's short, and its `native-visual-eval` skill carries no hub dependency). Before proposing or building any technique with a visible failure surface, load #11 (its `failure-mode-premortem` skill also carries no hub dependency). For realtime 3D / photoreal / frame-budget / flythrough work, load #12 (its `realtime-visual-craft` skill is the command surface). For branching, PR, or consolidation work, load #07.
 
 **When the README isn't enough.** The compressed summaries preserve the *what* but not the *why* — the examples, the canon references, the tier descriptions with thresholds, the principle-to-check translations. Any serious reasoning task in the framework's domain should load the full document.
 

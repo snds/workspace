@@ -58,9 +58,12 @@ regenerate + repoint; never leave orphaned/superseded-but-live/stub files). Full
   no superseded-but-live, no unfilled scaffold/stub tokens, thin-doc smells (`--strict` to fail on warnings).
 - `validate-links.py` — dangling + reciprocity on the typed `## Related` graph.
 - `validate-workspace.py` — archive provenance + memory-index coverage.
+- `test-validators.py` — negative fixtures: each detector must refuse a planted defect.
 
 Before committing any change: `build-related.py` → `build-registry.py` → `validate-integrity.py` →
-`validate-links.py` → `validate-workspace.py`. CI runs all five.
+`validate-links.py` → `validate-workspace.py`. CI runs all five. Done on a write means the
+relevant validators ran this session, not only that files were saved. When changing a
+validator, also run `python3 09-tools/test-validators.py` (negative fixtures; CI runs them).
 
 `build-registry` must run **after** `build-related`: the registry stores a content hash per skill, and
 `build-related` rewrites `## Related` blocks inside SKILL.md. Registry-first commits stale hashes and CI

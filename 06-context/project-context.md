@@ -259,8 +259,8 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8â
 **Status:** Active
 **Summary:** Standing home for sessions whose subject is the workspace itself (validation, fix, migration, infrastructure). Established 2026-07-09 per the workspace-work project-home rule in framework #08 (FX-13); git-tracked for cross-machine continuity.
 **Folder:** `07-projects/19-workspace-brain/`
-**Triggers:** workspace brain, workspace fix, workspace validation
-**Next:** Complete the FX-1..FX-14 fix session (Phases Eâ€“F), then re-run the validation harness and compare scorecards.
+**Triggers:** workspace brain, workspace fix, workspace validation, error correction, verification loop
+**Next:** Error-correction mechanical close landed 2026-08-26 (#06 detector check, embedded prove/validate, `test-validators.py`, observable routing skips, `/optimize` seven-surface ECC). Watch whether producing paths still skip. Do not start a parallel agent framework.
 
 ---
 

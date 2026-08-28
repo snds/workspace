@@ -21,7 +21,7 @@ from typing import Any, Optional
 import numpy as np
 from PIL import Image
 
-ENGINE_VERSION = "vqa/1.0"
+ENGINE_VERSION = "vqa/1.1"
 
 # ── Optional dependencies ────────────────────────────────────
 
@@ -40,15 +40,63 @@ def deps_report() -> dict:
     """Which optional deps are present, and what degrades without them."""
     import shutil
 
+    flip_nvidia = False
+    try:
+        import flip_evaluator  # noqa: F401
+        flip_nvidia = True
+    except Exception:
+        pass
+    dreamsim = False
+    try:
+        import dreamsim  # noqa: F401
+        import torch  # noqa: F401
+        dreamsim = True
+    except Exception:
+        pass
+    tesseract = shutil.which("tesseract") is not None
+    try:
+        import pytesseract  # noqa: F401
+        tesseract = True
+    except Exception:
+        pass
+    gltf_validator = shutil.which("gltf-validator") is not None
+    vggt = False
+    try:
+        import vggt  # noqa: F401
+        vggt = True
+    except Exception:
+        pass
+
+    degraded = []
+    if cv2 is None and _ndimage is None:
+        degraded.append(
+            "connected-components falls back to pure python (slow on >2MP; inputs are downscaled for labeling)"
+        )
+    if cv2 is None:
+        degraded.append("optical flow (motion jerk via flow) unavailable; frame-delta jerk still runs")
+    if not flip_nvidia:
+        degraded.append("FLIP uses flip-lite (CSF+HyAB+edges), not nvidia-flip")
+    if not dreamsim:
+        degraded.append("DreamSim unavailable — dreamsim_region skips if optional, else errors")
+    if not tesseract:
+        degraded.append("OCR unavailable — ocr_text skips if optional, else errors")
+    if not gltf_validator:
+        degraded.append("gltf-validator absent — mesh audit uses stdlib parser (still fail-closed on NaN)")
+    if not vggt:
+        degraded.append("VGGT/DUSt3R absent — geometric_consistency uses phase-correlation only; never a single-still 3D pass")
+
     return {
         "numpy": True,
         "pillow": True,
         "cv2": cv2 is not None,
         "scipy": _ndimage is not None,
         "ffmpeg": shutil.which("ffmpeg") is not None,
-        "degraded": [] if (cv2 is not None or _ndimage is not None) else [
-            "connected-components falls back to pure python (slow on >2MP; inputs are downscaled for labeling)"
-        ] + ([] if cv2 is not None else ["optical flow (motion jerk via flow) unavailable; frame-delta jerk still runs"]),
+        "nvidia_flip": flip_nvidia,
+        "dreamsim": dreamsim,
+        "tesseract": tesseract,
+        "gltf_validator": gltf_validator,
+        "vggt": vggt,
+        "degraded": degraded,
     }
 
 
@@ -326,6 +374,9 @@ def foreground_mask(rgb: np.ndarray, background, tol_de: float = 6.0) -> np.ndar
 # ── Capture manifest ─────────────────────────────────────────
 
 CAPTURE_REQUIRED = ("viewport", "dpr", "format")
+# Optional provenance. Missing values are warnings, not unverified.
+# Existing LCARS manifests without `renderer` must stay verified.
+CAPTURE_WARN_FIELDS = ("renderer", "rng_frozen")
 
 
 def find_manifest(image_path: Path) -> Optional[Path]:
@@ -343,7 +394,9 @@ def verify_capture(image_path: str | Path, manifest_path: Optional[str | Path] =
     missing manifest — unverified is a first-class, reportable state.
     """
     image_path = Path(image_path)
-    result: dict[str, Any] = {"image": str(image_path), "status": "unverified", "reasons": []}
+    result: dict[str, Any] = {
+        "image": str(image_path), "status": "unverified", "reasons": [], "warnings": [],
+    }
     if not image_path.exists():
         result["reasons"].append("image missing")
         return result
@@ -378,6 +431,17 @@ def verify_capture(image_path: str | Path, manifest_path: Optional[str | Path] =
         result["reasons"].append("manifest declares non-png capture")
     if not manifest.get("frozen", False):
         result["reasons"].append("animations/clock not declared frozen (motion smear risk in stills)")
+    if "renderer" not in manifest:
+        result["warnings"].append(
+            "manifest has no renderer (swiftshader|metal|vulkan|webgl|...) — "
+            "GPU goldens are not byte-stable; missing renderer is a warning, not unverified"
+        )
+    else:
+        result["renderer"] = manifest.get("renderer")
+    if "rng_frozen" not in manifest:
+        result["warnings"].append("manifest has no rng_frozen declaration")
+    else:
+        result["rng_frozen"] = manifest.get("rng_frozen")
     if not result["reasons"]:
         result["status"] = "verified"
         result["meta"] = {k: manifest.get(k) for k in ("url", "commit", "tool", "time") if k in manifest}
@@ -399,6 +463,9 @@ class CueResult:
     margin: Optional[float] = None  # >0 inside tolerance, <0 outside (normalized)
     note: str = ""
     evidence: list = field(default_factory=list)
+    altitude: str = "A"
+    optional: bool = False
+    degraded: bool = False
 
     def to_dict(self) -> dict:
         return {
@@ -413,16 +480,28 @@ class CueResult:
             "margin": self.margin,
             "note": self.note,
             "evidence": self.evidence,
+            "altitude": self.altitude,
+            "optional": self.optional,
+            "degraded": self.degraded,
         }
 
 
-def summarize_cues(results: list, capture_status: str, min_coverage: float = 0.8) -> dict:
-    measured = [r for r in results if r.measured]
+def summarize_cues(
+    results: list,
+    capture_status: str,
+    min_coverage: float = 0.8,
+    uncued_residuals: Optional[list] = None,
+    required_altitudes: Optional[list] = None,
+) -> dict:
+    # Optional skips do not count toward coverage (they are not in the contract).
+    contract = [r for r in results if not (r.status == "skipped" and r.optional)]
+    skipped = [r for r in results if r.status == "skipped"]
+    measured = [r for r in contract if r.measured]
     measured_pass = [r for r in measured if r.status == "pass"]
     measured_fail = [r for r in measured if r.status == "fail"]
-    errors = [r for r in results if r.status == "error"]
-    attested = [r for r in results if r.status == "attested"]
-    total = len(results)
+    errors = [r for r in contract if r.status == "error"]
+    attested = [r for r in contract if r.status == "attested"]
+    total = len(contract)
     coverage = (len(measured) / total) if total else 0.0
     score = (len(measured_pass) / len(measured)) if measured else 0.0
     reasons = []
@@ -443,6 +522,29 @@ def summarize_cues(results: list, capture_status: str, min_coverage: float = 0.8
     if verdict == "matches" and capture_status != "verified":
         verdict = "partial"
         reasons.append("capture unverified — matches verdict requires a verified capture manifest")
+    altitudes_in_contract = sorted({r.altitude for r in contract if r.altitude})
+    altitude_coverage = {}
+    for alt in altitudes_in_contract:
+        at = [r for r in contract if r.altitude == alt]
+        m_at = [r for r in at if r.measured]
+        altitude_coverage[alt] = {
+            "cues": len(at),
+            "measured": len(m_at),
+            "pass": sum(1 for r in m_at if r.status == "pass"),
+            "fail": sum(1 for r in m_at if r.status == "fail"),
+        }
+    if required_altitudes:
+        missing_req = [a for a in required_altitudes if a not in altitudes_in_contract]
+        if missing_req:
+            reasons.append(f"required altitudes not in contract: {missing_req}")
+            if verdict == "matches":
+                verdict = "partial"
+    residuals = list(uncued_residuals or [])
+    if residuals:
+        reasons.append(
+            f"{len(residuals)} uncued residual(s) named — matches at contracted altitudes "
+            "does not cover these zones"
+        )
     margins = [r.margin for r in measured if r.margin is not None]
     return {
         "verdict": verdict,
@@ -453,10 +555,14 @@ def summarize_cues(results: list, capture_status: str, min_coverage: float = 0.8
         "measured_fail": len(measured_fail),
         "attested": len(attested),
         "errors": len(errors),
+        "skipped_optional": sum(1 for r in skipped if r.optional),
         "coverage": round(coverage, 4),
         "score": round(score, 4),
         "mean_margin": round(float(np.mean(margins)), 4) if margins else None,
         "capture": capture_status,
+        "altitudes_in_contract": altitudes_in_contract,
+        "altitude_coverage": altitude_coverage,
+        "uncued_residuals": residuals,
     }
 
 

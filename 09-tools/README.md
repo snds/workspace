@@ -37,6 +37,19 @@ entry) and memory-index coverage (every `06-context/memory/` entry is listed in 
 python3 09-tools/validate-workspace.py
 ```
 
+## test-validators.py
+
+Negative fixtures for the detectors. The live-tree validators only see a healthy
+checkout; a broken detector looks green forever. This harness plants small broken
+trees and asserts each checker refuses them.
+
+```
+python3 09-tools/test-validators.py
+```
+
+CI: `.github/workflows/validator-fixtures.yml`. Run this after changing a
+`validate-*.py` or `vault-health.py`.
+
 ## build-trigger-routes.py
 
 Generates `02-shared-references/trigger-routes.md` from curated

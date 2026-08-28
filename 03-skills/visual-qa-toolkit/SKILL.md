@@ -25,6 +25,11 @@ produces annotated images and structured findings.
 > region/element analysis ([[vis-segmentation]], [[vis-detection-tracking]]), and richer image
 > comparison ([[vis-classical-opencv]]). Use both: measure with the toolkit, *see + articulate* with
 > vision. For assessing Legion renders/fly-throughs, add [[reference-video-review]] + [[lead-game-developer]].
+> For contract-level **verdicts** (prove a build against a reference cuespec, rank builds, track an
+> improvement ledger, motion/interaction checks), route to [[visual-prove-engine]] — this toolkit is
+> its single-metric depth layer, not its verdict layer. Metric altitudes beyond SSIM/Δe (FLIP,
+> DreamSim, saliency, 3D-native) are mapped in [[perception-critique-stack]]; do not treat this
+> toolkit's SSIM as covering those.
 
 ## When to use this skill
 
@@ -370,3 +375,4 @@ visual-qa-toolkit/
 - spoke → [[reference-video-review]]
 - peer ↔ [[vis-vlm-multimodal]] · [[vis-classical-opencv]] · [[native-visual-eval]] · [[render-qa-toolkit]]
 - peer ↔ [[a11y-audit-toolkit]] · [[visual-qa-type]]
+- peer ↔ [[visual-prove-engine]]

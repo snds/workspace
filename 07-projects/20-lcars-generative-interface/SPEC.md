@@ -17,6 +17,8 @@ project: "[[20-lcars-generative-interface]]"
 
 Build an LLM-forward adaptive console/shell that answers natural-language queries and workflows by **recomposing an LCARS surface**, not by hosting a chat transcript. Every pixel is drawn by a deterministic renderer from a typed Scene IR. A hybrid planner ships in v1 (curated recipes + model-filled modules). The same plumbing must support v2 dynamic topology. Nothing may render unless it passes an immutable LCARS constitution.
 
+**Program framing (2026-08-09):** LCARS is the first **system pack** and the hard fidelity proof (concept, context, intent, aesthetic). The Scene IR → constitution → renderer pipeline is meant to stay transferable to other surfaces/aesthetics once LCARS is faithfully proven. See `docs/program-thesis.md` and `NORTHSTAR.md`.
+
 Primary use: research / baseline workspace, role-biased for engineer, physician, physicist, operations, security, and executive profiles. Voice and typed input both feed one intent pipeline.
 
 ## Goals

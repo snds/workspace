@@ -34,6 +34,45 @@ _The dispatcher reads the most recent date from this file to decide whether to s
 
 ## Entries
 
+## 2026-08-28 — Personal MacBook Pro
+
+**Scope:** full seven-surface ECC after landing perception-critique-stack course corrections 1–12 (prove engine vqa/1.1 + play-prove). Foundation reads sampled; `audit_skip` honored.
+**Findings:** 7 total — P0: 0, P1: 4, P2: 3
+
+**P0 (workflow-breaking):**
+- none. Probes green: `validate-links`, `build-registry --check`, `validate-workspace`, `vault-health`, `build-trigger-routes --check`, `test-validators.py` 10/10, write-quality chain, `validate-capabilities` 20/29, `vqa calibrate` 48/48.
+
+**P1 (friction):**
+- Open Engine personal lane `not-registered` on Voyager-2.local (session-start notice). Run `python3 00-bootstrap/doctor/linear-lanes.py` or register MCP.
+- Uncompacted session fragment `06-context/sessions/2026-08-26-voyager-b7191a1.md` (Looney Tunes / MediaSentinel). Compaction is `/session-end`, not this pass.
+- Dormant `SESSION-STATE.md` batons past 30 days: `00-obsidian` (2026-04-25), `18-bootstrap-generator` (2026-07-27). Not active work; left in place.
+- `project-context.md` still ~41 anchored `^pc-NN` items; `_Last updated` 2026-07-30. Do not delete anchors. Engine migration of this list remains deferred.
+
+**P2 (polish):**
+- `/optimize` Step 1 still described a five-file framework core (fixed this run).
+- `01-frameworks/00-README.md` token-budget line still said "twelve frameworks" after the set grew to sixteen (fixed this run).
+- `CLAUDE.md` said "Eleven" frameworks while listing 01–13 and omitting 14–16 (fixed this run).
+
+**Fixes applied this run:**
+- Prove engine `vqa/1.1`: cue altitudes, FLIP, saliency, OCR, mesh, geometry, DreamSim degrade, interact critic, tracks, input-to-photon, VLM-judge protocol, capture `renderer` warning, uncued residuals.
+- New sibling skill `play-prove` (altitude G).
+- LCARS `S-SYS47-01.cuespec.json`: `default_altitude: A` + four named `uncued_residuals`.
+- Capability registry: nvidia-flip, dreamsim, gltf-validator, tesseract, geometric-foundation-model.
+- Framework #06 altitude paragraph; trigger routes; CI path includes `play-prove`.
+- Corrected sixteen-vs-twelve in `00-README.md` and optimize skill read-list; `CLAUDE.md` "Eleven" → Sixteen and added #14–#16 pointers.
+- Rewrote Live handoff on `19-workspace-brain` and `20-lcars-generative-interface`.
+
+**Carried forward:**
+- Open Engine personal-lane registration on this machine.
+- Compact `2026-08-26-voyager-b7191a1` at next `/session-end`.
+- Doctor-sweep generalization for `* 2.md` conflict-copies (open since 2026-07-08).
+- Hygiene still with Sean: REVOKE Figma PAT; GitHub Support purge of two personal-email SHAs.
+- Do not auto-enable nightly maintenance from this audit.
+
+**Skipped (opt-out `audit_skip: true`):** `_CHEATSHEET.md`, `08-knowledge/cross-domain/workflow-patterns.md` (the skill documents the flag; the two files carry it).
+
+---
+
 ## 2026-07-23 — Personal MacBook Pro
 
 **Scope:** full (CLAUDE.md/AGENTS.md frameworks, MOCs, project-context, session-log head, `08-knowledge/_INDEX`, `workflow-patterns`, settings/hooks, filesystem drift sweeps)

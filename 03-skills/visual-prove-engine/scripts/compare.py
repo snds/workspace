@@ -80,6 +80,9 @@ def compare_pair(
     de = delta_e_map(ref.rgb, work)
     tiles = _tile_scores(ssim_map, tile)
 
+    from . import flip_metric
+    flip = flip_metric.flip_map(ref.rgb, work)
+
     payload = {
         "label": label,
         "reference": str(ref.path) if ref.path else None,
@@ -89,6 +92,13 @@ def compare_pair(
         "aspect_delta": round(float(aspect_delta), 4),
         "registration": {"dy": dy, "dx": dx},
         "ssim": round(ssim_mean, 4),
+        "flip": {
+            "mean": flip["mean"],
+            "median": flip["median"],
+            "mad": flip["mad"],
+            "p95": flip["p95"],
+            "backend": flip["backend"],
+        },
         "delta_e": {
             "mean": round(float(de.mean()), 2),
             "p95": round(float(np.percentile(de, 95)), 2),
@@ -155,7 +165,7 @@ def compare_rank(
 ) -> dict:
     """
     Compare several builds against one reference and rank them.
-    Composite closeness = mean(SSIM, 1 - clipped mean delta-E / 25).
+    Composite closeness = mean(SSIM, 1 - clipped mean delta-E / 25, 1 - FLIP mean).
     Used for improvement verification: a later build must not rank below
     an earlier accepted one.
     """
@@ -164,7 +174,12 @@ def compare_rank(
     for bp in build_paths:
         build = load_image(bp)
         m = compare_pair(ref, build, out_dir=out_dir, label=Path(bp).stem)
-        closeness = float(np.mean([m["ssim"], 1.0 - min(m["delta_e"]["mean"], 25.0) / 25.0]))
+        flip_mean = float((m.get("flip") or {}).get("mean", 0.0))
+        closeness = float(np.mean([
+            m["ssim"],
+            1.0 - min(m["delta_e"]["mean"], 25.0) / 25.0,
+            1.0 - min(flip_mean, 1.0),
+        ]))
         m["closeness"] = round(closeness, 4)
         entries.append(m)
     ranked = sorted(entries, key=lambda e: e["closeness"], reverse=True)
@@ -173,7 +188,9 @@ def compare_rank(
         "reference": str(Path(reference_path).resolve()),
         "ranking": [
             {"rank": i + 1, "build": e["build"], "closeness": e["closeness"],
-             "ssim": e["ssim"], "delta_e_mean": e["delta_e"]["mean"]}
+             "ssim": e["ssim"], "delta_e_mean": e["delta_e"]["mean"],
+             "flip_mean": (e.get("flip") or {}).get("mean"),
+             "flip_backend": (e.get("flip") or {}).get("backend")}
             for i, e in enumerate(ranked)
         ],
         "detail": entries,

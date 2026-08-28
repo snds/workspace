@@ -29,32 +29,37 @@ KNOWLEDGE_DIR = ROOT / "08-knowledge"
 KNOWLEDGE_INDEX = KNOWLEDGE_DIR / "_INDEX.md"
 
 
-def check_archive(errors):
-    if not ARCHIVE.exists():
+def check_archive(errors, archive=None, archive_log=None, root=None):
+    archive = ARCHIVE if archive is None else archive
+    archive_log = ARCHIVE_LOG if archive_log is None else archive_log
+    root = ROOT if root is None else root
+    if not archive.exists():
         return
-    log_text = ARCHIVE_LOG.read_text(encoding="utf-8") if ARCHIVE_LOG.exists() else ""
+    log_text = archive_log.read_text(encoding="utf-8") if archive_log.exists() else ""
     if not log_text:
         errors.append("_archive/ exists but ARCHIVE-LOG.md is missing")
         return
-    for f in sorted(ARCHIVE.rglob("*")):
-        if f.is_dir() or f == ARCHIVE_LOG:
+    for f in sorted(archive.rglob("*")):
+        if f.is_dir() or f == archive_log:
             continue
         if f.name.startswith("."):
             continue
         # a file is "covered" if its name or relative path appears in the ledger
-        rel = f.relative_to(ROOT).as_posix()
+        rel = f.relative_to(root).as_posix()
         if f.name not in log_text and rel not in log_text:
             errors.append(f"archived file has no ARCHIVE-LOG entry: {rel}")
 
 
-def check_memory(errors):
-    if not MEMORY_DIR.exists():
+def check_memory(errors, memory_dir=None, memory_index=None):
+    memory_dir = MEMORY_DIR if memory_dir is None else memory_dir
+    memory_index = MEMORY_INDEX if memory_index is None else memory_index
+    if not memory_dir.exists():
         return
-    if not MEMORY_INDEX.exists():
+    if not memory_index.exists():
         errors.append("06-context/memory/ exists but MEMORY.md index is missing")
         return
-    index_text = MEMORY_INDEX.read_text(encoding="utf-8")
-    for f in sorted(MEMORY_DIR.glob("*.md")):
+    index_text = memory_index.read_text(encoding="utf-8")
+    for f in sorted(memory_dir.glob("*.md")):
         if f.name in ("MEMORY.md", "_template.md"):
             continue
         stem = f.stem
@@ -62,21 +67,24 @@ def check_memory(errors):
             errors.append(f"memory not listed in MEMORY.md: 06-context/memory/{f.name}")
 
 
-def check_knowledge(errors):
-    if not KNOWLEDGE_DIR.exists():
+def check_knowledge(errors, knowledge_dir=None, knowledge_index=None, root=None):
+    knowledge_dir = KNOWLEDGE_DIR if knowledge_dir is None else knowledge_dir
+    knowledge_index = KNOWLEDGE_INDEX if knowledge_index is None else knowledge_index
+    root = ROOT if root is None else root
+    if not knowledge_dir.exists():
         return
-    if not KNOWLEDGE_INDEX.exists():
+    if not knowledge_index.exists():
         errors.append("08-knowledge/ exists but _INDEX.md is missing")
         return
-    index_text = KNOWLEDGE_INDEX.read_text(encoding="utf-8")
-    for f in sorted(KNOWLEDGE_DIR.rglob("*.md")):
+    index_text = knowledge_index.read_text(encoding="utf-8")
+    for f in sorted(knowledge_dir.rglob("*.md")):
         if f.name in ("_INDEX.md", "_README.md") or f.name.startswith("."):
             continue
-        rel_parts = f.relative_to(KNOWLEDGE_DIR).parts
+        rel_parts = f.relative_to(knowledge_dir).parts
         if "_archive" in rel_parts:
             continue
         if f.stem not in index_text and f.name not in index_text:
-            errors.append(f"knowledge entry not listed in _INDEX.md: {f.relative_to(ROOT).as_posix()}")
+            errors.append(f"knowledge entry not listed in _INDEX.md: {f.relative_to(root).as_posix()}")
 
 
 def main():

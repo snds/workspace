@@ -54,9 +54,18 @@ def run_prove(
     background = hex_to_rgb(spec["background"]) if spec.get("background") else None
     ctx = ProbeContext(img, Path(spec["_dir"]), background=background)
 
-    results: list[CueResult] = [run_cue(cue, ctx) for cue in spec["cues"]]
+    default_alt = spec.get("default_altitude", "A")
+    results: list[CueResult] = []
+    for cue in spec["cues"]:
+        c = dict(cue)
+        c.setdefault("altitude", default_alt)
+        results.append(run_cue(c, ctx))
     summary = summarize_cues(
-        results, capture["status"], min_coverage=float(spec.get("min_coverage", 0.8))
+        results,
+        capture["status"],
+        min_coverage=float(spec.get("min_coverage", 0.8)),
+        uncued_residuals=spec.get("uncued_residuals") or [],
+        required_altitudes=spec.get("required_altitudes"),
     )
 
     payload = {
@@ -94,6 +103,7 @@ def to_markdown(payload: dict) -> str:
         f"- Capture: **{payload['capture']['status']}**"
         + (f" ({'; '.join(payload['capture']['reasons'])})" if payload["capture"]["reasons"] else ""),
         f"- Generated: {payload['generated']} by {payload['engine']}",
+        f"- Altitudes in contract: {', '.join(s.get('altitudes_in_contract') or ['A'])}",
         "",
         f"## Verdict: **{s['verdict'].upper()}**",
         "",
@@ -102,15 +112,20 @@ def to_markdown(payload: dict) -> str:
         f"- Measured coverage: {s['coverage']:.0%} · score: {s['score']:.2f}"
         + (f" · mean margin: {s['mean_margin']}" if s.get("mean_margin") is not None else ""),
     ]
+    warns = payload.get("capture", {}).get("warnings") or []
+    for w in warns:
+        lines.append(f"- Capture warning: {w}")
     for r in payload.get("summary", {}).get("verdict_reasons", []):
         lines.append(f"- {r}")
-    lines += ["", "| # | Cue | Probe | Status | Value | Target | Margin |", "|---|---|---|---|---|---|---|"]
+    lines += ["", "| # | Cue | Probe | Alt | Status | Value | Target | Margin |",
+              "|---|---|---|---|---|---|---|---|"]
     for c in payload["cues"]:
         val = c["value"]
         if isinstance(val, dict):
-            val = ", ".join(f"{k}={v}" for k, v in val.items())
+            val = ", ".join(f"{k}={v}" for k, v in list(val.items())[:6])
         lines.append(
-            f"| {c['id']} | {c['name']} | `{c['probe']}` | {_STATUS_ICON.get(c['status'], c['status'])} "
+            f"| {c['id']} | {c['name']} | `{c['probe']}` | {c.get('altitude', 'A')} "
+            f"| {_STATUS_ICON.get(c['status'], c['status'])} "
             f"| {val if val is not None else ''} | {c['target'] if c['target'] is not None else ''} "
             f"| {c['margin'] if c['margin'] is not None else ''} |"
         )
@@ -119,6 +134,16 @@ def to_markdown(payload: dict) -> str:
         lines += ["", "## Notes", ""]
         for c in notes:
             lines.append(f"- **{c['id']} {c['name']}**: {c['note']}")
+    residuals = s.get("uncued_residuals") or []
+    if residuals:
+        lines += ["", "## Uncued residuals", ""]
+        lines.append("Named holes in the cue net. A matches verdict does not cover these.")
+        lines.append("")
+        for r in residuals:
+            if isinstance(r, dict):
+                lines.append(f"- **{r.get('id', '?')}** ({r.get('zone', '')}): {r.get('note', '')}")
+            else:
+                lines.append(f"- {r}")
     lines += [
         "",
         "---",

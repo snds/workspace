@@ -83,7 +83,7 @@ Output exactly this structure. One paragraph per framework, not more:
 ### QA Operating Model
 - **Values:** ...
 - **Sees here:** ...
-- **Flags:** ...
+- **Flags:** ... (name the independent detector that ran, or `none (judgment only)`)
 
 ## Situational lenses
 
@@ -120,3 +120,6 @@ decide whether to save, act, or discard.
   manufacture critique to fill space.
 - **Cite framework sections** when the critique draws on a specific part.
   Example: "(04-research-and-evidence-framework.md §Median Persona)".
+- **QA detector.** When the QA lens reports a verdict, Flags must name the independent
+  detector that ran, or write `none (judgment only)`. Verified / matches / done language
+  without a named detector is a failed #06 gate.

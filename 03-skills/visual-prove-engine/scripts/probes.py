@@ -14,6 +14,12 @@ Probe registry (cuespec `probe` field):
   region_absent     — inverse of region_present
   count_regions     — connected foreground components within a rect
   ssim_region       — SSIM of a rect crop vs an asset image
+  flip_region       — FLIP (or flip-lite) mean error of a rect crop vs an asset
+  dreamsim_region   — DreamSim distance vs an asset (Spirit / NVS; optional)
+  saliency_region   — spectral-residual mass inside a rect
+  ocr_text          — recognized string vs expected (optional without tesseract)
+  mesh_asset        — glTF/GLB audit (fail closed on Error)
+  geometric_consistency — >=2 pinned views; never a single-still 3D pass
   shape_class       — perceive-classified shape of the dominant region in a rect
   gradient_smooth   — banding score of a ramp region (ledger A-01)
   attest            — explicitly unmeasured human/code attestation (never counts as measured)
@@ -49,6 +55,28 @@ from ._core import (
     ssim,
 )
 
+PROBE_DEFAULT_ALTITUDE = {
+    "aspect": "A",
+    "color_at": "A",
+    "region_color": "A",
+    "band_thickness": "A",
+    "band_edge": "A",
+    "gutter": "A",
+    "region_present": "A",
+    "region_absent": "A",
+    "count_regions": "A",
+    "ssim_region": "A",
+    "shape_class": "A",
+    "gradient_smooth": "A",
+    "attest": "A",
+    "ocr_text": "A",
+    "flip_region": "B",
+    "dreamsim_region": "C",
+    "saliency_region": "C",
+    "mesh_asset": "E",
+    "geometric_consistency": "E",
+}
+
 
 class ProbeContext:
     """Everything a probe may need. Built once per prove run."""
@@ -77,12 +105,23 @@ class ProbeContext:
 
 
 def _res(cue: dict, **kw) -> CueResult:
+    kw.setdefault(
+        "altitude",
+        cue.get("altitude") or PROBE_DEFAULT_ALTITUDE.get(cue.get("probe"), "A"),
+    )
+    kw.setdefault("optional", bool(cue.get("optional", False)))
     return CueResult(
         id=cue.get("id"),
         name=cue.get("name", str(cue.get("id"))),
         probe=cue.get("probe", "?"),
         **kw,
     )
+
+
+def _skip_or_error(cue: dict, reason: str, degraded: bool = True) -> CueResult:
+    if cue.get("optional", False):
+        return _res(cue, status="skipped", measured=False, note=reason, degraded=degraded)
+    return _res(cue, status="error", measured=False, note=reason, degraded=degraded)
 
 
 def _scale_px(cue: dict, px: float, build_h: int) -> float:
@@ -438,6 +477,167 @@ def probe_attest(cue: dict, ctx: ProbeContext) -> CueResult:
     )
 
 
+def _crop_vs_asset(cue: dict, ctx: ProbeContext):
+    rect = denorm_rect(cue["rect"], ctx.img.width, ctx.img.height)
+    region = crop(ctx.img.rgb, rect)
+    asset_path = ctx.resolve(cue["asset"])
+    if not asset_path.exists():
+        return None, None, f"asset missing: {asset_path}"
+    asset = _core.load_image(asset_path)
+    asset_rgb = asset.rgb
+    if "asset_rect" in cue:
+        asset_rgb = crop(asset_rgb, denorm_rect(cue["asset_rect"], asset.width, asset.height))
+    asset_rgb = resize_rgb(asset_rgb, region.shape[1], region.shape[0])
+    return region, asset_rgb, None
+
+
+def probe_flip_region(cue: dict, ctx: ProbeContext) -> CueResult:
+    from . import flip_metric
+    region, asset_rgb, err = _crop_vs_asset(cue, ctx)
+    if err:
+        return _res(cue, status="error", measured=False, note=err)
+    result = flip_metric.flip_map(asset_rgb, region)
+    max_mean = float(cue.get("max_mean", 0.15))
+    mean = result["mean"]
+    margin = 1.0 - mean / max_mean if max_mean > 0 else (1.0 if mean == 0 else -1.0)
+    return _res(
+        cue,
+        status="pass" if mean <= max_mean else "fail",
+        measured=True,
+        value={"mean": mean, "median": result["median"], "mad": result["mad"],
+               "p95": result["p95"], "backend": result["backend"]},
+        target=f"mean<={max_mean}",
+        tolerance=None,
+        margin=round(float(margin), 4),
+        degraded=result["backend"] != "nvidia-flip",
+        note=f"FLIP backend {result['backend']}",
+    )
+
+
+def probe_dreamsim_region(cue: dict, ctx: ProbeContext) -> CueResult:
+    from . import midlevel
+    region, asset_rgb, err = _crop_vs_asset(cue, ctx)
+    if err:
+        return _res(cue, status="error", measured=False, note=err)
+    dist = midlevel.distance(region, asset_rgb)
+    if dist is None:
+        return _skip_or_error(
+            cue,
+            "DreamSim/torch unavailable — not a Literal gutter metric; "
+            "install dreamsim to measure Spirit/NVS similarity",
+        )
+    max_dist = float(cue.get("max", 0.25))
+    margin = 1.0 - dist / max_dist if max_dist > 0 else (1.0 if dist == 0 else -1.0)
+    return _res(
+        cue,
+        status="pass" if dist <= max_dist else "fail",
+        measured=True,
+        value=round(dist, 4),
+        target=f"<={max_dist}",
+        tolerance=None,
+        margin=round(float(margin), 4),
+        note="DreamSim is foreground-biased; chrome-frame diffs can hide",
+    )
+
+
+def probe_saliency_region(cue: dict, ctx: ProbeContext) -> CueResult:
+    from . import saliency
+    rect = denorm_rect(cue["rect"], ctx.img.width, ctx.img.height)
+    sal = saliency.spectral_residual(luma(ctx.img.rgb))
+    mass = saliency.region_mass(sal, rect)
+    min_mass = float(cue.get("min_mass", 0.05))
+    value = mass["mass_fraction"]
+    margin = (value - min_mass) / max(1e-9, 1.0 - min_mass)
+    return _res(
+        cue,
+        status="pass" if value >= min_mass else "fail",
+        measured=True,
+        value=mass,
+        target=f"mass_fraction>={min_mass}",
+        tolerance=None,
+        margin=round(float(margin), 4),
+        note="spectral-residual floor (edge-biased); not UEyes gaze",
+    )
+
+
+def probe_ocr_text(cue: dict, ctx: ProbeContext) -> CueResult:
+    from . import ocr_probe
+    if "rect" in cue:
+        rect = denorm_rect(cue["rect"], ctx.img.width, ctx.img.height)
+        region = crop(ctx.img.rgb, rect)
+    else:
+        region = ctx.img.rgb
+    text = ocr_probe.read_text(region, lang=str(cue.get("lang", "eng")))
+    if text is None:
+        return _skip_or_error(cue, "tesseract/pytesseract unavailable — text not measured")
+    expect = str(cue.get("expect") or cue.get("target") or "")
+    if not expect:
+        return _res(cue, status="error", measured=False, note="ocr_text requires expect/target")
+    got = " ".join(text.split())
+    want = " ".join(expect.split())
+    ok = want.lower() in got.lower() if cue.get("contains", True) else got.lower() == want.lower()
+    return _res(
+        cue,
+        status="pass" if ok else "fail",
+        measured=True,
+        value=got,
+        target=want,
+        tolerance=None,
+        margin=1.0 if ok else -1.0,
+    )
+
+
+def probe_mesh_asset(cue: dict, ctx: ProbeContext) -> CueResult:
+    from . import mesh
+    asset_path = ctx.resolve(cue["asset"])
+    report = mesh.audit(asset_path)
+    ok = report["status"] == "pass"
+    return _res(
+        cue,
+        status="pass" if ok else "fail",
+        measured=True,
+        value={"errors": report["errors"], "stats": report["stats"], "backend": report["backend"]},
+        target="no Error-level mesh issues",
+        tolerance=None,
+        margin=1.0 if ok else -1.0,
+        degraded=not str(report["backend"]).startswith("gltf-validator"),
+        note=f"mesh backend {report['backend']}",
+    )
+
+
+def probe_geometric_consistency(cue: dict, ctx: ProbeContext) -> CueResult:
+    from . import geometry
+    views = cue.get("views") or []
+    resolved = []
+    for v in views:
+        p = ctx.resolve(v)
+        resolved.append(str(p))
+    if len(resolved) < 2:
+        return _res(
+            cue, status="error", measured=False,
+            note="geometric_consistency needs >=2 pinned views; a single still is not a 3D pass",
+        )
+    report = geometry.consistency(
+        resolved,
+        min_peak=float(cue.get("min_peak", 0.08)),
+        min_ssim=float(cue.get("min_ssim", 0.25)),
+    )
+    if report["status"] == "error":
+        return _res(cue, status="error", measured=False, note=report.get("note", "geometry error"))
+    ok = report["status"] == "pass"
+    return _res(
+        cue,
+        status="pass" if ok else "fail",
+        measured=True,
+        value=report,
+        target=f"pairwise peak>={cue.get('min_peak', 0.08)} and ssim>={cue.get('min_ssim', 0.25)}",
+        tolerance=None,
+        margin=1.0 if ok else -1.0,
+        degraded="vggt" not in report.get("backend", ""),
+        note=f"geometry backend {report.get('backend')}",
+    )
+
+
 PROBES: dict = {
     "aspect": probe_aspect,
     "color_at": probe_color_at,
@@ -449,6 +649,12 @@ PROBES: dict = {
     "region_absent": probe_region_absent,
     "count_regions": probe_count_regions,
     "ssim_region": probe_ssim_region,
+    "flip_region": probe_flip_region,
+    "dreamsim_region": probe_dreamsim_region,
+    "saliency_region": probe_saliency_region,
+    "ocr_text": probe_ocr_text,
+    "mesh_asset": probe_mesh_asset,
+    "geometric_consistency": probe_geometric_consistency,
     "shape_class": probe_shape_class,
     "gradient_smooth": probe_gradient_smooth,
     "attest": probe_attest,
