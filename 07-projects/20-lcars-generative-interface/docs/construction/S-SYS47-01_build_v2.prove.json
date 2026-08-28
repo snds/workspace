@@ -1,0 +1,369 @@
+{
+  "engine": "vqa/1.0",
+  "cuespec": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/S-SYS47-01.cuespec.json",
+  "northstar": "S-SYS47-01",
+  "build": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/captures/S-SYS47-01_build_v2.png",
+  "capture": {
+    "image": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/captures/S-SYS47-01_build_v2.png",
+    "status": "unverified",
+    "reasons": [
+      "no capture manifest (*.capture.json) \u2014 provenance unknown"
+    ],
+    "width": 2106,
+    "height": 2116,
+    "format": "png"
+  },
+  "generated": "2026-08-26T11:03:54",
+  "summary": {
+    "verdict": "partial",
+    "verdict_reasons": [
+      "8 measured cue(s) failing"
+    ],
+    "cues_total": 19,
+    "measured_total": 16,
+    "measured_pass": 8,
+    "measured_fail": 8,
+    "attested": 3,
+    "errors": 0,
+    "coverage": 0.8421,
+    "score": 0.5,
+    "mean_margin": -5.8177,
+    "capture": "unverified"
+  },
+  "cues": [
+    {
+      "id": 1,
+      "name": "Canvas aspect 16:9",
+      "probe": "aspect",
+      "status": "fail",
+      "measured": true,
+      "value": 0.9953,
+      "target": 1.7778,
+      "tolerance": "\u00b10.50%",
+      "margin": -87.0317,
+      "note": "canvas 2106x2116",
+      "evidence": []
+    },
+    {
+      "id": 2,
+      "name": "Background pure black",
+      "probe": "color_at",
+      "status": "pass",
+      "measured": true,
+      "value": {
+        "hex": "#000000",
+        "delta_e": 0.0,
+        "at_px": [
+          8,
+          1058
+        ]
+      },
+      "target": "#000000",
+      "tolerance": "delta_e<=2.0",
+      "margin": 1.0,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 3,
+      "name": "Inter-element gutter 8px native",
+      "probe": "gutter",
+      "status": "fail",
+      "measured": true,
+      "value": {
+        "mode_px": 2,
+        "gap_count": 2134
+      },
+      "target": 7.8,
+      "tolerance": "\u00b12.9px",
+      "margin": -0.9861,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 4,
+      "name": "Header bar interior fill",
+      "probe": "color_at",
+      "status": "fail",
+      "measured": true,
+      "value": {
+        "hex": "#000000",
+        "delta_e": 61.91,
+        "at_px": [
+          768,
+          193
+        ]
+      },
+      "target": "#4881b5",
+      "tolerance": "delta_e<=8.0",
+      "margin": -6.7391,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 5,
+      "name": "Header elbow drop fill",
+      "probe": "color_at",
+      "status": "pass",
+      "measured": true,
+      "value": {
+        "hex": "#5D8EBD",
+        "delta_e": 4.04,
+        "at_px": [
+          932,
+          176
+        ]
+      },
+      "target": "#4c8fc1",
+      "tolerance": "delta_e<=8.0",
+      "margin": 0.4944,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 6,
+      "name": "Header bar thickness at ML",
+      "probe": "band_thickness",
+      "status": "fail",
+      "measured": true,
+      "value": {
+        "px": 152.0,
+        "runs_found": 1
+      },
+      "target": 122.5,
+      "tolerance": "\u00b111.8px",
+      "margin": -1.5134,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 7,
+      "name": "Left header elbow structure",
+      "probe": "shape_class",
+      "status": "fail",
+      "measured": true,
+      "value": {
+        "shape": "bar",
+        "corner_radii": {
+          "tl": 0.0,
+          "tr": 0.0,
+          "bl": 0.0,
+          "br": 0.0
+        },
+        "open_quadrant": null
+      },
+      "target": [
+        "complex",
+        "elbow"
+      ],
+      "tolerance": null,
+      "margin": -1.0,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 8,
+      "name": "Right header elbow present",
+      "probe": "region_present",
+      "status": "pass",
+      "measured": true,
+      "value": {
+        "fraction": 0.408,
+        "rect_px": [
+          1158,
+          42,
+          526,
+          339
+        ]
+      },
+      "target": "present >= 0.21",
+      "tolerance": null,
+      "margin": 0.198,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 9,
+      "name": "Title string SYSTEM 47",
+      "probe": "attest",
+      "status": "attested",
+      "measured": false,
+      "value": null,
+      "target": null,
+      "tolerance": null,
+      "margin": null,
+      "note": "text identity needs OCR (optional dep); peach registry color is measured by cue 10",
+      "evidence": []
+    },
+    {
+      "id": 10,
+      "name": "Registry peach text present",
+      "probe": "region_present",
+      "status": "pass",
+      "measured": true,
+      "value": {
+        "fraction": 0.006,
+        "rect_px": [
+          1053,
+          0,
+          1053,
+          423
+        ]
+      },
+      "target": "present >= 0.004",
+      "tolerance": null,
+      "margin": 0.002,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 11,
+      "name": "Hero MSD occupies center band",
+      "probe": "region_present",
+      "status": "pass",
+      "measured": true,
+      "value": {
+        "fraction": 0.3206,
+        "rect_px": [
+          526,
+          317,
+          1053,
+          1164
+        ]
+      },
+      "target": "present >= 0.19",
+      "tolerance": null,
+      "margin": 0.1306,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 12,
+      "name": "Hero MSD matches reference region",
+      "probe": "ssim_region",
+      "status": "fail",
+      "measured": true,
+      "value": 0.3169,
+      "target": ">=0.5",
+      "tolerance": null,
+      "margin": -0.3661,
+      "note": "asset S-SYS47-01.png resized to 1053x1164",
+      "evidence": []
+    },
+    {
+      "id": 13,
+      "name": "Callout column right of MSD",
+      "probe": "count_regions",
+      "status": "pass",
+      "measured": true,
+      "value": 79,
+      "target": "[25, 110]",
+      "tolerance": null,
+      "margin": 1.0,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 14,
+      "name": "Mid pill cluster under schematic",
+      "probe": "count_regions",
+      "status": "fail",
+      "measured": true,
+      "value": 2,
+      "target": "[15, 80]",
+      "tolerance": null,
+      "margin": 0.6119,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 15,
+      "name": "Footer data band density",
+      "probe": "count_regions",
+      "status": "pass",
+      "measured": true,
+      "value": 44,
+      "target": "[40, 180]",
+      "tolerance": null,
+      "margin": 1.0,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 16,
+      "name": "Silhouette chip bottom-right",
+      "probe": "region_present",
+      "status": "pass",
+      "measured": true,
+      "value": {
+        "fraction": 0.2668,
+        "rect_px": [
+          1643,
+          1820,
+          421,
+          254
+        ]
+      },
+      "target": "present >= 0.15",
+      "tolerance": null,
+      "margin": 0.1168,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 17,
+      "name": "Accent orange coverage",
+      "probe": "region_present",
+      "status": "fail",
+      "measured": true,
+      "value": {
+        "fraction": 0.0,
+        "rect_px": [
+          0,
+          0,
+          2106,
+          2116
+        ]
+      },
+      "target": "present >= 0.0007",
+      "tolerance": null,
+      "margin": -0.0007,
+      "note": "",
+      "evidence": []
+    },
+    {
+      "id": 18,
+      "name": "Chrome locked under motion",
+      "probe": "attest",
+      "status": "attested",
+      "measured": false,
+      "value": null,
+      "target": null,
+      "tolerance": null,
+      "margin": null,
+      "note": "single-still prove; verify with `vqa motion` on a frame sequence",
+      "evidence": []
+    },
+    {
+      "id": 19,
+      "name": "Programmatic emission via Scene IR",
+      "probe": "attest",
+      "status": "attested",
+      "measured": false,
+      "value": null,
+      "target": null,
+      "tolerance": null,
+      "margin": null,
+      "note": "code-level fact, not pixel-measurable",
+      "evidence": []
+    }
+  ],
+  "deps": {
+    "numpy": true,
+    "pillow": true,
+    "cv2": true,
+    "scipy": true,
+    "ffmpeg": true,
+    "degraded": []
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "northstarId": "S-SYS47-01",
+  "sourcePath": "/Users/snds/My Drive/Creative/Reference/Star Trek/LCARS/LCARS-videos/003 - System47： Enterprise-E Schematics • 1-Hour Loop in 4K  [from ver. 2.5.01] [6mTleQJn1Cc].mkv",
+  "sourceFrame": "t=30s",
+  "capture": {
+    "width": 3840,
+    "height": 2160,
+    "dpr": 1,
+    "format": "png",
+    "path": "docs/construction/captures/S-SYS47-01.png"
+  },
+  "gutterPx": 8,
+  "background": {
+    "hex": "#000000",
+    "lab": [0, 0, 0],
+    "sample": [20, 20]
+  },
+  "contentBBox": [63, 87, 3765, 1989],
+  "frame": [
+    {
+      "id": "rail.header.left",
+      "kind": "rail",
+      "bbox": [63, 85, 1860, 174],
+      "thickness": 114,
+      "note": "Left header elbow band; thickness measured at x=800 as y=85–199 (114px). Center drop at x=1600 y=147–259 (112px).",
+      "radii": { "tl": "≈ thickness", "tr": 0, "br": 0, "bl": 0 },
+      "joins": ["elbow.header.left.drop"],
+      "fillSample": { "hex": "#4f93ca", "rgb": [79, 147, 202], "xy": [900, 150] },
+      "geometry": "constant-thickness-arc"
+    },
+    {
+      "id": "rail.header.right",
+      "kind": "rail",
+      "bbox": [1980, 85, 1785, 174],
+      "thickness": 114,
+      "note": "Mirrored right header; NCC label zone toward outer end.",
+      "joins": ["elbow.header.right.drop"],
+      "fillSample": { "hex": "#4c8fc1", "rgb": [76, 143, 193], "xy": [1700, 180] },
+      "geometry": "constant-thickness-arc"
+    },
+    {
+      "id": "band.footer",
+      "kind": "band",
+      "bbox": [63, 1760, 3702, 229],
+      "thickness": null,
+      "joins": [],
+      "fillSample": { "hex": "#d4dfe8", "rgb": [212, 223, 232], "xy": [900, 1900] }
+    }
+  ],
+  "segments": [
+    {
+      "id": "label.system47",
+      "parent": "rail.header.left",
+      "bbox": [90, 100, 400, 80],
+      "fillSample": { "hex": "#4f96c9", "rgb": [79, 150, 201], "xy": [150, 140] },
+      "label": "SYSTEM 47",
+      "labelAlign": "start",
+      "role": "status"
+    },
+    {
+      "id": "label.ncc",
+      "parent": "rail.header.right",
+      "bbox": [3200, 100, 500, 80],
+      "fillSample": { "hex": "#f4c285", "rgb": [244, 194, 133], "xy": [3600, 140] },
+      "label": "NCC-1701-E",
+      "labelAlign": "end",
+      "role": "status"
+    }
+  ],
+  "modules": [
+    {
+      "id": "mod.schematic.msd",
+      "kind": "schematic",
+      "bbox": [480, 280, 2920, 1400],
+      "z": 1,
+      "props": {
+        "view": "enterprise-e-side-profile-msd",
+        "callouts": [
+          "ENVIRONMENTAL SUPPORT / DECK 12",
+          "SECONDARY BRIDGE / DECK 14",
+          "PRIMARY NAVIGATIONAL DEFLECTOR & LONG-RANGE SENSOR ARRAY",
+          "SECONDARY / EMH SICKBAY / DECK 16",
+          "HOLODECK 3 / DECK 19",
+          "MAIN ENGINEERING ROOM / DECKS 16"
+        ],
+        "title": "MAIN DEFLECTOR DISH / TORPEDO LAUNCHER"
+      }
+    },
+    {
+      "id": "mod.mid.pills",
+      "kind": "pillCluster",
+      "bbox": [520, 1500, 600, 80],
+      "z": 2,
+      "props": { "labels": ["422 123", "55 88", "76/81"] }
+    },
+    {
+      "id": "mod.footer.grid",
+      "kind": "readout",
+      "bbox": [63, 1760, 3100, 229],
+      "z": 1,
+      "props": {
+        "samples": ["4594-1661", "80223.98", "VER 2.5.01", "11.30/AM"]
+      }
+    },
+    {
+      "id": "mod.chip.silhouette",
+      "kind": "schematic",
+      "bbox": [3180, 1780, 540, 205],
+      "z": 2,
+      "props": { "view": "mini-silhouette" }
+    }
+  ],
+  "typeSpecimens": [
+    {
+      "text": "SYSTEM 47",
+      "approxSizePx": 64,
+      "case": "upper",
+      "weight": 700,
+      "tracking": "ultra-condensed",
+      "colorSample": { "hex": "#4f96c9", "xy": [150, 140] }
+    },
+    {
+      "text": "NCC-1701-E",
+      "approxSizePx": 56,
+      "case": "upper",
+      "weight": 700,
+      "tracking": "ultra-condensed",
+      "colorSample": { "hex": "#f4c285", "xy": [3600, 140] }
+    }
+  ],
+  "assets": [
+    {
+      "id": "asset.msd",
+      "type": "raster",
+      "sourceCrop": [419, 270, 2980, 1120],
+      "status": "traced",
+      "note": "Native crop from t30s still. 2026-08-26: height 1210 -> 1120 (bottom y1390): the wider crop leaked 50px of mid-band pill tops into the plate and the build printed a clipped pill strip under the schematic; schematic texture ends at ref y1387, mid band starts y1430. x419 from vqa scout template match.",
+      "path": "public/northstars/S-SYS47-01/asset_msd.png"
+    },
+    {
+      "id": "asset.header",
+      "type": "raster",
+      "sourceCrop": [60, 80, 3720, 180],
+      "status": "traced",
+      "path": "public/northstars/S-SYS47-01/asset_header.png"
+    },
+    {
+      "id": "asset.footer",
+      "type": "raster",
+      "sourceCrop": [60, 1760, 3720, 240],
+      "status": "traced",
+      "path": "public/northstars/S-SYS47-01/asset_footer.png"
+    },
+    {
+      "id": "asset.silhouette",
+      "type": "raster",
+      "sourceCrop": [3180, 1780, 540, 205],
+      "status": "traced",
+      "path": "public/northstars/S-SYS47-01/asset_silhouette.png"
+    }
+  ],
+  "motion": [
+    {
+      "target": "mod.footer.grid",
+      "behavior": "greebleTick",
+      "periodMs": 280,
+      "locked": ["rail.header.left", "rail.header.right", "mod.schematic.msd"]
+    }
+  ],
+  "fills": {
+    "headerBlue": { "hex": "#4f93ca", "rgb": [79, 147, 202], "xy": [900, 150] },
+    "headerBlueDeep": { "hex": "#4c8fc1", "rgb": [76, 143, 193], "xy": [1700, 180] },
+    "titleBlue": { "hex": "#4f96c9", "rgb": [79, 150, 201], "xy": [150, 140] },
+    "nccPeach": { "hex": "#f4c285", "rgb": [244, 194, 133], "xy": [3600, 140] },
+    "accentOrangeCluster": { "hex": "#d07800", "rgb": [208, 120, 0], "note": "top orange cluster mode from full-frame scan" },
+    "footerLight": { "hex": "#d4dfe8", "rgb": [212, 223, 232], "xy": [900, 1900] }
+  },
+  "ratios": {
+    "headerThicknessAtX800": 114,
+    "headerThicknessAtX800_over_height": 0.0528,
+    "gutterPx": 8,
+    "gutter_over_width": 0.00208,
+    "contentWidth": 3702,
+    "contentHeight": 1902
+  },
+  "openQuestions": [
+    "SVG path-trace of MSD to replace raster asset_msd",
+    "Exact elbow outer radius in px (need curve fit on drop)",
+    "Pill fill samples at accurate mid-row coords"
+  ]
+}

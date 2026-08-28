@@ -55,7 +55,9 @@ stutter. The shared doctrine across design, code, and art: **60 FPS is the floor
 uncapped by default because higher FPS buys both smoothness and lower latency; offer players an optional
 frame cap to reallocate the machine to other work or save power; and minimize input latency as a co-equal
 target.** The principle is the "experience in the player's head" root applied to time — the engineering
-that delivers it lives in [[realtime-render-performance]].
+that delivers it lives in [[realtime-render-performance]]. Measurement of feel (input-to-photon,
+track jerk, headless balance simulation) is not a screenshot problem; see
+[[perception-critique-stack]] altitude G.
 
 ## Related
 - applies-in ← [[lead-art-director]] · [[lead-game-designer]] · [[lead-game-developer]]

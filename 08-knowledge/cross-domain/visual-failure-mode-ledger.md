@@ -1,12 +1,12 @@
 ---
 tags: [cross-domain, failure-modes, visual, rendering, shaders, qa, pre-mortem, knowledge-vault]
 created: 2026-07-14
-updated: 2026-07-14
+updated: 2026-08-09
 status: working
 confidence: high
 sources: [framework 11-anticipatory-failure-analysis, framework 10-perception-integrity, skill failure-mode-premortem]
-related_skills: [failure-mode-premortem, native-visual-eval, visual-qa-toolkit, render-qa-toolkit, lead-visual-qa, threejs-materials-master, glsl-shader-architect, threejs-vfx-atmosphere]
-related_projects: [13-legion]
+related_skills: [failure-mode-premortem, native-visual-eval, visual-qa-toolkit, render-qa-toolkit, lead-visual-qa, visual-reference-replication, threejs-materials-master, glsl-shader-architect, threejs-vfx-atmosphere]
+related_projects: [13-legion, 20-lcars-generative-interface]
 domain_agnostic: true
 ---
 
@@ -45,6 +45,13 @@ Each row: **Symptom** (what's wrong) · **Visible tell** (how it looks at native
 |----|----|----|----|----|----|----|----|
 | **C-01** | Foreground text/icon on full-bleed image or gradient | Illegible in the worst region | Text disappears over a light or busy patch of the image | Contrast verified against an average, not the worst-case local background | Verify APCA (preferred) / WCAG AA against the *worst* local region; add scrim/plate if needed | Sample the foreground vs its local background at the hardest point; run APCA — don't eyeball | Framework #06 a11y check; evidenced |
 | **C-02** | Status/meaning carried by color | CVD users lose the signal | Two states distinguishable only by hue (red/green) | Meaning rides on color alone | Add a non-color channel (icon, label, shape); simulate CVD | Run a deuteranopia/protanopia sim (`visual-qa-toolkit`); is the state still readable? | #06 a11y check; evidenced |
+| **C-03** | VLM / chat image description as geometry source | Confident wrong layout, color, or type | Hex that never appears in the still; invented gutters; miscounted spine segments; wrong elbow family | Model narrates a plausible UI instead of measuring pixels; prose becomes the "spec" | Transcribe a Construction IR from native probes first (`visual-reference-replication`); sample Lab/hex with tools; ban inventing sizes from description | Diff IR vs still: if a claim has no probe/tool citation, treat as fiction | LCARS craft pass 2026-08; evidenced |
+| **C-04** | Spirit / "inspired by" accepted under a Literal brief | Soft lookalike ships as done | Same tropes (colored bars, black field, condensed caps) but different frame graph, densities, radii | Fidelity contract never locked to Literal; vibe match substituted for cue matrix | Name Literal in NORTHSTAR; write falsifiable cues; prove with native side-by-side + measurement | Overlay / SSIM / ratio checks fail while team still says "reads as LCARS" | LCARS craft pass 2026-08; evidenced |
+| **C-05** | Code-first UI without Construction IR | Chrome invented in CSS, then reverse-rationalized | Generic grid "shell" that cannot name which reference elbow/spine it copies | Jumped to components before region graph + segment inventory | No Literal UI commit until IR JSON + cue matrix exist for the named still | Ask for `northstarId` + IR path; absence = incomplete | `visual-reference-replication`; evidenced |
+| **C-06** | Secondary constraint rewrites northstar authority | Tokens/density/a11y reshape the look away from the still | Palette drifts to "safer" hues; gutters thicken; density collapses; elbows become rounded cards | APCA floors, module caps, or token sheets silently override measured samples without ADR | Keep northstar samples as authority; record deliberate deltas in an ADR; a11y plates may add chrome, not recolor the frame | Δe / ratio vs sampled northstar exceeds cue budget with no ADR | LCARS token retune 2026-08; evidenced |
+| **C-07** | Placeholder geometry shipped as reference asset | Hand-waved SVG / emoji / stock as "schematic" | Silhouette that does not match the traced crop; wrong deck count; wrong aspect | Asset invented from memory instead of `sourceCrop` trace | IR `assets[].status` must be `traced` before Literal pass; placeholders labeled in UI/code | IoU / visual_diff vs source crop; unlabeled placeholder = Fail | LCARS schematics pass; evidenced |
+| **C-08** | Constant-thickness elbow faked with box-radius | L-corner reads as a rounded rectangle join | Outer arc OK-ish; inner corner wrong; bar thickness varies through the bend | CSS `border-radius` on a filled rect ≠ Okuda elbow extrusion | IR marks `geometry: constant-thickness-arc`; implement with path/mask or dedicated elbow primitive | Native crop of inner + outer corner against still | Okudagram grammar; industry + evidenced |
+| **C-09** | Single-corner “card” radius as LCARS chrome | Content blocks with one rounded corner + three sharp | Looks like a SaaS card with a decorative radius, not Okudagram | Agent defaulted to `border-radius` on one corner for “LCARS flavor” | Legal shapes only: **pill** (both ends round), **bar/segment** (all sharp), **elbow** (constant-thickness L). Ban single-corner cards | Scan for `border-radius` with only one non-zero corner on non-elbow modules | Sean annotation on S-SYS47-01 footer 2026-08-09; evidenced |
 
 ## P · Procedural generation (terrain / planets / worlds)
 
@@ -65,6 +72,8 @@ Each row: **Symptom** (what's wrong) · **Visible tell** (how it looks at native
 | **Z-01** | Judging any fine detail from a preview/screenshot tool | False "fixed / clean" | Thumbnail looks clean; native crop shows the defect still there | Downsampling is a low-pass filter that hides high-frequency defects | Never claim fixed/gone/matches from a scaled view — capture native first (#10) | State the pixel dimensions judged at; a number, not "I zoomed in" | Framework #10; evidenced |
 | **Z-02** | Still-only QA for camera / LOD / temporal / scale features | Motion defects ship | Looks fine on one frame; crawls, pops, or swims in play | Temporal failure modes are invisible in a single still | Require recorded flythrough + frame-by-frame review (`interactive-capture-eval`); still-only is an automatic fail for motion-sensitive work (#12) | Ask: was a video path reviewed? If not, incomplete | Framework #12; industry-supported |
 | **Z-03** | Movie-level "photoreal" claim without named northstar | Unfalsifiable pass | "Looks cinematic" with no reference still/video/game example | No Literal/Spirit contract against concrete assets | Require `NORTHSTAR.md` rows before `shape`; match protocol uses those assets | Is there a named path/URL for the northstar? | Framework #12; expert-judgment |
+| **Z-04** | Unused measurement stack while claiming visual done | "Tests green / looks better" as acceptance | Unit tests pass; no SSIM/Δe/alignment/cue matrix vs northstar | Measurement skills exist but were never the done-gate | Literal done = cue matrix + native prove (`visual-qa-toolkit` / equivalent) | Ask for evidence paths; green Vitest alone ≠ visual match | LCARS craft pass 2026-08; evidenced |
+| **Z-05** | Thumbnail / locator screenshot used as Literal verdict | False match or false "fixed" | Chat thumbnail "looks close"; native crop shows gutter/radius/type misses | Same as Z-01 applied to replication briefs | `native-visual-eval` before any Literal claim | State capture dimensions; refuse verdict from fit-to-window | Framework #10 + LCARS; evidenced |
 
 ---
 

@@ -35,6 +35,10 @@ findings — the measurement half of framework [#12 Realtime Photoreal Operation
 > - [[failure-mode-premortem]] + [Visual Failure-Mode Ledger](../../08-knowledge/cross-domain/visual-failure-mode-ledger.md) — technique failure modes
 > - [[lead-visual-qa]] / [[visual-qa-photoreal-rendering]] — semantic judgment after measurement
 
+Northstar still-match: SSIM is the no-torch floor. Graphics-native difference maps are NVIDIA
+FLIP ([[perception-critique-stack]]); prefer FLIP (plus MAD under GPU variance) when the
+capability is present. Do not MD5 framebuffer goldens across hardware.
+
 **Legion** is the first consumer of `?perfcapture` JSON through this toolkit. Paste console /
 `window.__perfCapture` output into a file the user provides — never invent paths.
 
@@ -228,3 +232,4 @@ render-qa-toolkit/
 - hub → [[realtime-visual-craft]]
 - peer ↔ [[realtime-visual-craft]]
 - peer ↔ [[visual-qa-toolkit]] · [[native-visual-eval]] · [[failure-mode-premortem]] · [[reference-video-review]] · [[realtime-render-performance]] · [[interactive-capture-eval]] · [[lead-visual-qa]] · [[visual-qa-photoreal-rendering]] · [[lead-game-developer]] · [[legion-project]] · [[rendering-guild]]
+- peer ↔ [[visual-prove-engine]]

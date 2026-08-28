@@ -82,15 +82,46 @@ def addressable_names(all_files):
     return names
 
 
-def resolves(target, names):
+def resolves(target, names, root=None):
     """A wikilink resolves by basename/alias/dir-name OR as a path-form link to an existing file."""
     if target in names:
         return True
+    root = ROOT if root is None else root
     # path-form: [[06-context/project-context]] or [[03-skills/foo/SKILL]] (+ implied .md), or with ext
     for cand in (target, target + ".md"):
-        if (ROOT / cand).is_file():
+        if (root / cand).is_file():
             return True
     return False
+
+
+def wikilink_targets(text):
+    """Real wikilink targets in prose (fenced + inline code stripped)."""
+    scan = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
+    scan = re.sub(r"`[^`\n]*`", "", scan)
+    out = []
+    for raw in WIKILINK.findall(scan):
+        tgt = raw.split("|")[0].split("#")[0].strip()
+        if tgt and not tgt.startswith("<"):
+            out.append(tgt)
+    return out
+
+
+def dangling_wikilinks(rel, text, names, root=None):
+    """Return error strings for wikilinks that do not resolve."""
+    root = ROOT if root is None else root
+    errors = []
+    for tgt in wikilink_targets(text):
+        if not resolves(tgt, names, root=root):
+            errors.append(f"{rel}: dangling wikilink [[{tgt}]]")
+    return errors
+
+
+def skill_name_dir_error(rel, dir_name, text):
+    """Return an error string if frontmatter name != directory, else None."""
+    m = re.search(r"^name:\s*(\S+)", text, re.MULTILINE)
+    if m and m.group(1).strip() != dir_name:
+        return f"{rel}: frontmatter name `{m.group(1).strip()}` != dir `{dir_name}`"
+    return None
 
 
 def main():
@@ -108,9 +139,9 @@ def main():
 
         # 1. name == dir for skills (the curated library only; project sub-skills are out of scope)
         if p.name == "SKILL.md" and rel.startswith("03-skills/") and "/_archive/" not in rel:
-            m = re.search(r"^name:\s*(\S+)", text, re.MULTILINE)
-            if m and m.group(1).strip() != p.parent.name:
-                errors.append(f"{rel}: frontmatter name `{m.group(1).strip()}` != dir `{p.parent.name}`")
+            err = skill_name_dir_error(rel, p.parent.name, text)
+            if err:
+                errors.append(err)
 
         # 3. superseded_by must be archived; target must exist
         sm = SUPERSEDED_RE.search(text)
@@ -128,15 +159,7 @@ def main():
             continue
 
         # 2. wikilink resolution (cross-link continuity / anti-zombie-reference)
-        # Strip fenced + inline code first — wikilinks shown as code examples aren't real links.
-        scan = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
-        scan = re.sub(r"`[^`\n]*`", "", scan)
-        for raw in WIKILINK.findall(scan):
-            tgt = raw.split("|")[0].split("#")[0].strip()
-            if not tgt or tgt.startswith("<"):   # skip scaffold placeholders (templates already excluded)
-                continue
-            if not resolves(tgt, names):
-                errors.append(f"{rel}: dangling wikilink [[{tgt}]]")
+        errors.extend(dangling_wikilinks(rel, text, names))
 
         # authoring-quality checks only for the curated layers
         authored = rel.startswith(("03-skills/", "01-frameworks/", "02-shared-references/"))

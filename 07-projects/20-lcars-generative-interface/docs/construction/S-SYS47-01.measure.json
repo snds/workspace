@@ -1,0 +1,105 @@
+{
+  "capture": {
+    "width": 3840,
+    "height": 2160,
+    "dpr": 1,
+    "format": "png",
+    "sourceFrame": "t30s",
+    "path": "docs/construction/captures/S-SYS47-01.png"
+  },
+  "contentBBox": [
+    63,
+    87,
+    3765,
+    1989
+  ],
+  "gutterPx_header_median": 8,
+  "gutterPx_header_mode": [
+    8,
+    5
+  ],
+  "header": {
+    "L": {
+      "x": 600,
+      "y0": 88,
+      "thickness": 16,
+      "color": [
+        101,
+        201,
+        251
+      ]
+    },
+    "ML": {
+      "x": 1400,
+      "y0": 135,
+      "thickness": 125,
+      "color": [
+        71,
+        128,
+        180
+      ]
+    },
+    "MR": {
+      "x": 2400,
+      "y0": 85,
+      "thickness": 115,
+      "color": [
+        73,
+        127,
+        180
+      ]
+    },
+    "R": {
+      "x": 3200,
+      "y0": 298,
+      "thickness": 15,
+      "color": [
+        86,
+        86,
+        86
+      ]
+    }
+  },
+  "footerTop": 282,
+  "footerHeight": 1723,
+  "mainApprox": [
+    124,
+    262
+  ],
+  "fills": {
+    "headerBlue": {
+      "hex": "#65c9fb",
+      "rgb": [
+        101,
+        201,
+        251
+      ]
+    },
+    "headerBlueR": {
+      "hex": "#565656",
+      "rgb": [
+        86,
+        86,
+        86
+      ]
+    },
+    "accentOrange": {
+      "hex": "#eea244",
+      "rgb": [
+        238,
+        162,
+        68
+      ],
+      "n": 78
+    },
+    "schematicBlue": {
+      "hex": "#4b8cbe",
+      "rgb": [
+        75,
+        140,
+        190
+      ],
+      "n": 2264
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "dpr": 2,
+  "format": "png",
+  "frozen": true,
+  "url": "http://127.0.0.1:5175/?northstar=S-SYS47-01&capture=1",
+  "tool": "playwright-chromium",
+  "time": "2026-08-26T23:50:31.063Z"
+}

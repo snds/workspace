@@ -45,13 +45,9 @@ def load_capabilities():
     return data.get("capabilities", {}), prose
 
 
-def main():
+def check_contract(caps, skills, prose):
+    """Return (errors, warnings) for the capability/skill contract."""
     errors, warnings = [], []
-    caps, prose = load_capabilities()
-    reg = json.loads(SKILLS_REG.read_text(encoding="utf-8"))
-    skills = reg["skills"]
-
-    # 1. capability shape
     for cid, c in caps.items():
         missing = REQUIRED_FIELDS - set(c)
         if missing:
@@ -73,7 +69,6 @@ def main():
         if cid not in prose:
             warnings.append(f"capability '{cid}' is not documented in prose (only in the JSON block)")
 
-    # 2. skill requires -> capability, with reciprocity
     for name, s in skills.items():
         for rid in s.get("requires", []) or []:
             if rid not in caps:
@@ -83,13 +78,21 @@ def main():
                     f"reciprocity: skill '{name}' requires '{rid}' but '{rid}'.powers does not list '{name}'"
                 )
 
-    # 3. reciprocity the other way: powers -> that skill must declare requires
     for cid, c in caps.items():
         for p in c.get("powers", []):
             if p in skills and cid not in (skills[p].get("requires", []) or []):
                 errors.append(
                     f"reciprocity: '{cid}'.powers lists '{p}' but skill '{p}' does not require '{cid}'"
                 )
+    return errors, warnings
+
+
+def main():
+    errors, warnings = [], []
+    caps, prose = load_capabilities()
+    reg = json.loads(SKILLS_REG.read_text(encoding="utf-8"))
+    skills = reg["skills"]
+    errors, warnings = check_contract(caps, skills, prose)
 
     for w in warnings:
         print(f"  ⚠ {w}", file=sys.stderr)

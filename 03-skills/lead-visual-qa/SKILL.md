@@ -52,6 +52,10 @@ These contracts are not mutually exclusive and often stack. A UI component
 might need to satisfy **literal** (matches the approved comp), **standard**
 (WCAG AA contrast), and **intent** (users can complete the action) simultaneously.
 
+**Literal contract:** load [[visual-reference-replication]] and run its prove-gate.
+Native side-by-side plus at least one instrumented check are part of the review,
+not a later `/verify`. Spirit heuristic review is not a Literal done-claim.
+
 ---
 
 ## Delta Analysis Framework
@@ -200,6 +204,17 @@ project-specific artifacts.
 See `visual-qa-toolkit/SKILL.md` for full invocation details, per-check inputs,
 config structure, and output conventions.
 
+### Contract-level verdicts: `visual-prove-engine`
+
+When the deliverable is a *verdict* rather than a finding list (does this build
+match its reference contract; did this iteration improve; did that click actually
+change the screen), route to [[visual-prove-engine]]. It runs a declarative cuespec
+against build pixels, splits measured cues from attestations, ranks builds against
+a reference, analyzes frame sequences for stutter/flicker/settle, and keeps an
+improvement ledger that flags regressions even inside an aggregate win. A verdict
+this hub reports as Matches under a Literal contract must cite a prove artifact,
+not inspection prose.
+
 ---
 
 ## Spoke Routing Table
@@ -271,6 +286,6 @@ identify the most critical visual deviations.
 
 ## Related
 - foundation → [[design-foundations]]
-- spoke → [[visual-qa-accessibility]] · [[visual-qa-architecture]] · [[visual-qa-dataviz]] · [[visual-qa-game-design]] · [[visual-qa-graphic-design]] · [[visual-qa-interior-design]] · [[visual-qa-motion]] · [[visual-qa-photoreal-rendering]] · [[visual-qa-toolkit]] · [[visual-qa-type]] · [[visual-qa-ui-design]] · [[visual-qa-usability]] · [[visual-qa-ux-design]]
+- spoke → [[visual-prove-engine]] · [[visual-qa-accessibility]] · [[visual-qa-architecture]] · [[visual-qa-dataviz]] · [[visual-qa-game-design]] · [[visual-qa-graphic-design]] · [[visual-qa-interior-design]] · [[visual-qa-motion]] · [[visual-qa-photoreal-rendering]] · [[visual-qa-toolkit]] · [[visual-qa-type]] · [[visual-qa-ui-design]] · [[visual-qa-usability]] · [[visual-qa-ux-design]] · [[visual-reference-replication]]
 - peer ↔ [[render-qa-toolkit]]
 - peer ↔ [[vision-foundations]] · [[native-visual-eval]] · [[interactive-capture-eval]] · [[realtime-visual-craft]] · [[rendering-guild]]

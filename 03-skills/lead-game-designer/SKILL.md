@@ -20,6 +20,7 @@ tier: hub
 domain: game
 spec_version: "2.0"
 prerequisites: [game-foundations]
+related: [play-prove]
 ---
 
 # Lead Game Designer
@@ -127,3 +128,4 @@ You are not the implementer. You are the architect and thinking partner. Clarity
 
 ## Related
 - foundation → [[game-foundations]]
+- spoke → [[play-prove]]

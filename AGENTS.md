@@ -389,9 +389,12 @@ human), and they are what let dynamic multi-agent work stay one coherent contrac
    **archive** it with provenance (`_archive/` + `ARCHIVE-LOG.md`), **generate** the replacement, and
    **repoint** all cross-links. Never leave an orphaned, superseded-but-live, half-updated, or stub file.
 
-**Enforcement (run before commit; CI runs them too):** `build-related.py` → `build-registry.py` →
+**Embedded, not commit-only.** Done on a vault write means the relevant validators ran in this session,
+not only that files were saved. Commit/CI is the backstop.
+
+**Enforcement (run before claiming the write complete; CI runs them too):** `build-related.py` → `build-registry.py` →
 `validate-integrity.py` (quality + cross-link continuity + anti-zombie) → `validate-links.py` →
-`validate-workspace.py`. **Order matters: `build-related` rewrites `## Related` blocks inside SKILL.md
+`validate-workspace.py`. Negative fixtures: `python3 09-tools/test-validators.py`. **Order matters: `build-related` rewrites `## Related` blocks inside SKILL.md
 files, and `build-registry` stores a content hash per skill — so the registry must be built _after_ the
 files it hashes are final.** Running registry-first leaves stale hashes whenever `build-related` changes
 anything, which CI catches as `registry-drift` / `capability-validator` failures (observed 2026-07-20).

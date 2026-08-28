@@ -22,8 +22,9 @@ multi-agent handoff live in AGENTS.md — not duplicated here._
 - **Skills:** Cursor has no Claude slash commands. Route via
   [trigger-routes.md](02-shared-references/trigger-routes.md) (curated) then
   `03-skills/skills.registry.json` (`load_chains`, foundation→hub→spoke). Project Task agents live in
-  `.cursor/agents/` and encode the same load chains. When triggers miss, lexical fallback:
-  `python3 09-tools/vault-retrieve.py "<query>"` (paths + TL;DRs; does not replace Layer 0).
+  `.cursor/agents/` and encode the same load chains. When triggers miss, run
+  `python3 09-tools/vault-retrieve.py "<query>"` or say that Layer 0 missed.
+  Empty retrieve or a failed CLI is not "nothing in the vault."
 - **Continuity:** on entry, read the active project's `SESSION-STATE.md` **Live handoff**; on
   handoff/pause/end, update it + write a `06-context/sessions/<id>.md` fragment (not a direct
   `session-log.md` append). Stamp `Agent · Surface · Machine`.
@@ -56,7 +57,8 @@ Fail-open. Structured-output / subagent turns skip the ritual line (see BEACON e
 
 - Writes are open to any model behind the write-quality gates (see `01-agent-controller.mdc` /
   AGENTS.md). Before commit: `build-related.py` → `build-registry.py` → `build-trigger-routes.py` →
-  validators (integrity → links → workspace).
+  validators (integrity → links → workspace). Done on a write means those
+  validators ran this session. Negative fixtures: `python3 09-tools/test-validators.py`.
 - **User Rules beacon:** paste `00-bootstrap/dist/BEACON.md` into Cursor Settings → Rules (fallback when
   hooks miss). Doctor nags until `workspace-doctor.sh --ack-chat`.
 - **MCP:** configure in Cursor Settings → MCP (or `~/.cursor/mcp.json`). See

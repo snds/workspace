@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 283,
+    "total": 286,
     "by_tier": {
-      "cross-cutting": 39,
+      "cross-cutting": 40,
       "foundation": 22,
       "hub": 47,
-      "spoke": 175
+      "spoke": 177
     }
   },
   "skills": {
@@ -954,7 +954,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:9a4482e2fc4a59ef0bbd379d403e0938529637b18094ef568e2284ce586d93d2"
+      "hash": "sha256:f9cde276a3c46b2dfac4e4a9a3a37c141457e757cf82b673afe00c9de6945b17"
     },
     "design-system-ops": {
       "path": "03-skills/design-system-ops/SKILL.md",
@@ -2659,7 +2659,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:fba318abe63398cf3c9c92e69e712f5df5296b6110ecd0242b0913d86fecbc33"
+      "hash": "sha256:a74e99c07005ec50d2c414318fba88b2017dd0f4971ea0a82e1c1979e8b0c00d"
     },
     "game-scale-traversal": {
       "path": "03-skills/game-scale-traversal/SKILL.md",
@@ -3526,7 +3526,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:7eff578d7426057725f7944508ecd8c748c317de51b886fc255d97c58b8de2f5"
+      "hash": "sha256:505fcdbf6ccb17852734a7c5cfe7ca96ecb8037eb31191d5e1cc04a48b4401e7"
     },
     "job-application-optimizer": {
       "path": "03-skills/job-application-optimizer/SKILL.md",
@@ -3734,7 +3734,9 @@
       "prerequisites": [
         "game-foundations"
       ],
-      "related": [],
+      "related": [
+        "play-prove"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [],
@@ -3744,7 +3746,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:8c17e60a08247ad4a2e104783ef8a756666e52b31ad6c4ee3bcc5b36f850372b"
+      "hash": "sha256:fd0a427ed34171c8c5c78109fe0b3be959432a58cc6b338ae0481b230d0df5be"
     },
     "lead-game-developer": {
       "path": "03-skills/lead-game-developer/SKILL.md",
@@ -4109,7 +4111,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:6f0222634cba88d257c16dc9f573d67734e35db905623836672950acd6c9514b"
+      "hash": "sha256:4b5eb5ad3e74d1552a40ff0246225ff99eaca881a32ebda2adda171621a394d8"
     },
     "legion-narrative-design": {
       "path": "03-skills/legion-narrative-design/SKILL.md",
@@ -4654,7 +4656,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:c8afce3b6e98eaeb2a7e01ba014562065dba570a5b6b9487836bb0603424b51d"
+      "hash": "sha256:79823855a0c06bb979641eb2a0d285c82c66ecf597ee071b51d878243fb463c2"
     },
     "omni-project": {
       "path": "03-skills/omni-project/SKILL.md",
@@ -4751,6 +4753,38 @@
       "defers_to": [],
       "rigor_role": null,
       "hash": "sha256:d414773174ce0bf0e3174bd1e3435c80decbf90cc91de01b10579471d29dd200"
+    },
+    "play-prove": {
+      "path": "03-skills/play-prove/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "lead-game-designer",
+      "prerequisites": [],
+      "related": [
+        "visual-prove-engine",
+        "visual-qa-motion",
+        "realtime-render-performance"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "play-prove",
+        "headless playtest",
+        "win-rate",
+        "dominant strategy",
+        "balance simulation",
+        "autosim",
+        "mcts playtest",
+        "simulation prove",
+        "playtest agent"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": "measurement",
+      "hash": "sha256:2d6c3fde1dd321a95250e985fd3cc3b1f10c93f366c12aabf2b6c55037f0808c"
     },
     "pm-competitive-intelligence": {
       "path": "03-skills/pm-competitive-intelligence/SKILL.md",
@@ -5173,7 +5207,7 @@
       ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:4dcfa7d0dfab4e79adbc2bfa90622953cba462c2ae8c27f3559c75ed46dda25d"
+      "hash": "sha256:23b78a39b595e84b8f35084955b9062d5fe87d4cf97ef204460dbe837b88141d"
     },
     "render-qa-toolkit": {
       "path": "03-skills/render-qa-toolkit/SKILL.md",
@@ -5217,7 +5251,7 @@
       ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:482e7a5992df979885e06fcf5a77f41fd8d93e2292deb41cf6481527799b0bcc"
+      "hash": "sha256:68b4148101c7a6d54f5ad09794ea3f3278b68f14156c465fac9817471a26eb72"
     },
     "rendering-guild": {
       "path": "03-skills/rendering-guild/SKILL.md",
@@ -6782,6 +6816,54 @@
       "rigor_role": null,
       "hash": "sha256:5588a54f12c7b992a86ab025a4616de39191e048349820546fecd38fb149f854"
     },
+    "visual-prove-engine": {
+      "path": "03-skills/visual-prove-engine/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "quality",
+      "hub": "lead-visual-qa",
+      "prerequisites": [],
+      "related": [
+        "visual-qa-toolkit",
+        "render-qa-toolkit",
+        "native-visual-eval",
+        "interactive-capture-eval",
+        "visual-reference-replication",
+        "reference-video-review",
+        "play-prove"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "prove this build",
+        "cuespec",
+        "measured verdict",
+        "visual prove",
+        "rank builds",
+        "improvement ledger",
+        "visual trajectory",
+        "jank check",
+        "frame sequence analysis",
+        "action-effect",
+        "planted defects",
+        "visual calibration",
+        "self-critical visual"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "python-imaging",
+        "ffmpeg",
+        "nvidia-flip",
+        "dreamsim",
+        "gltf-validator",
+        "tesseract",
+        "geometric-foundation-model"
+      ],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:2d0402acf783abbe75bd1a63e7e5e2f4d7b218e14c2a508eaf35b05609ef1a29"
+    },
     "visual-qa-accessibility": {
       "path": "03-skills/visual-qa-accessibility/SKILL.md",
       "tier": "cross-cutting",
@@ -7014,7 +7096,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:3e28e186d620e123ff19f085e3b855912e1a26f913945f7e220538dcc252ef99"
+      "hash": "sha256:49cb4164cefb450b2caaa40190d42b93fb75deea8ce595fb91b66a6381106111"
     },
     "visual-qa-type": {
       "path": "03-skills/visual-qa-type/SKILL.md",
@@ -7104,6 +7186,49 @@
       "defers_to": [],
       "rigor_role": null,
       "hash": "sha256:36fdaca12f6e130580028ecc8e3ed56b36b9ba29e08f924b42a100e519c441ea"
+    },
+    "visual-reference-replication": {
+      "path": "03-skills/visual-reference-replication/SKILL.md",
+      "tier": "spoke",
+      "domain": "quality",
+      "hub": "lead-visual-qa",
+      "prerequisites": [
+        "design-foundations",
+        "native-visual-eval"
+      ],
+      "related": [
+        "visual-qa-toolkit",
+        "reference-video-review",
+        "lead-visual-qa",
+        "design-engineer",
+        "realtime-visual-craft",
+        "visual-prove-engine"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "literal match",
+        "recreate this screen",
+        "match this reference",
+        "design transcription",
+        "construction ir",
+        "pixel accurate ui",
+        "okudagram recreation",
+        "lcars recreation",
+        "inspired by rejected",
+        "northstar literal",
+        "reference teardown",
+        "visual replication",
+        "system pack",
+        "systemic recreation"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:1002561c5dd4b083e23b3ef92ef0ecda974058f0514db9e23f072011d71dbeb6"
     },
     "web-automation": {
       "path": "03-skills/web-automation/SKILL.md",
@@ -8124,6 +8249,11 @@
       "realtime-render-performance",
       "planetary-terrain-lod"
     ],
+    "play-prove": [
+      "game-foundations",
+      "lead-game-designer",
+      "play-prove"
+    ],
     "pm-competitive-intelligence": [
       "product-foundations",
       "lead-product-manager",
@@ -8475,6 +8605,11 @@
     "vision-foundations": [
       "vision-foundations"
     ],
+    "visual-prove-engine": [
+      "design-foundations",
+      "lead-visual-qa",
+      "visual-prove-engine"
+    ],
     "visual-qa-accessibility": [
       "design-foundations",
       "lead-visual-qa",
@@ -8540,6 +8675,12 @@
       "design-foundations",
       "lead-visual-qa",
       "visual-qa-ux-design"
+    ],
+    "visual-reference-replication": [
+      "design-foundations",
+      "lead-visual-qa",
+      "native-visual-eval",
+      "visual-reference-replication"
     ],
     "web-automation": [
       "web-automation"

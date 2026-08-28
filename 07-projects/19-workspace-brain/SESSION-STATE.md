@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-08-10 — session-end; harness-map cycle closed; CI green_
+_Last updated: 2026-08-28 — prove engine vqa/1.1 + play-prove merged to main; calibrate 48/48_
 
 ---
 
@@ -8,15 +8,16 @@ _Last updated: 2026-08-10 — session-end; harness-map cycle closed; CI green_
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Idle after harness-map cycle close. Optional follow-ups only (mission-fit; #5/#8 probation retests).
-- **Working set**: `harness-map_v1.0_2026-08-07.md` + stamp; thin `project-context.md` + detail/registry; `check-unattended-runner-gate.py`.
-- **Last action (2026-08-10):** `/session-end` — fragment `2026-08-10-work-hmclose`; CI triage noted (orphans → fixed). By Cursor Grok 4.5 · Cursor · Work MBP.
-- **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Optional [[mission-fit]] on one unreliable “done”. Retest #5 on next plugin publish; revisit #8 ~2026-09-07. Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
-- **Open decisions:** Whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat).
-- **Blocked on:** nothing.
+- **TL;DR (for future agent)**: Independent measurement or refuse the done-claim, now including the metric ladder. `visual-prove-engine` is `vqa/1.1` (prove/compare/motion/interact/mesh/geometry/judge/score/calibrate): altitudes A–G, FLIP beside SSIM, optional DreamSim, saliency+OCR, glTF mesh fail-closed, geometric consistency on ≥2 views, interact critic cannot override a pixel fail, tracks + input-to-photon, capture `renderer` warning (not unverified). Sibling [[play-prove]] is altitude G (win-rate / no dominant strategy), not a `vqa` subcommand. Calibration **48/48**. Knowledge: [[perception-critique-stack]] + [[measured-visual-verdicts]]. A VLM description is testimony, not measurement; Literal stays on A. Harness-map cycle closed 2026-08-10.
+- **Current focus**: Ordinary visual work should load altitudes from the cuespec. `/optimize` ran 2026-08-28.
+- **Working set**: `03-skills/visual-prove-engine/`; `03-skills/play-prove/`; `08-knowledge/research/perception-critique-stack.md`; `harness-map_v1.0_2026-08-07.md` + stamp.
+- **Last action (2026-08-28):** Implemented course corrections 1–12, ran `/optimize`, merging to `main`. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt. Need `--tools` / `--disallowed-tools` before any scheduled runner.
+- **Next action:** Next visual session uses `vqa prove` (and `play-prove` when the question is feel/balance). Optional [[mission-fit]] on one unreliable done. Retest harness-map #5 on next plugin publish; revisit #8 ~2026-09-07.
+- **Open decisions:** knowledge-only vs later `agent-verification-loop` skill if skips persist; whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat). Capture manifests without `renderer` stay **verified** with a warning (LCARS v4).
+- **Blocked on:** nothing for the course-correction landing. Open Engine personal lane still `not-registered` on this machine (optimize P1). Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`.
-- **Agent thread**: `… → close @ 6b92c1a` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-10): session-end`.
+- **Agent thread**: `… → close @ 6b92c1a` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-10): session-end` → `Cursor Grok 4.6 / Cursor / Personal MBP (2026-08-28): vqa/1.1 + play-prove + /optimize`.
 
 
 ### Environment
@@ -27,24 +28,56 @@ _Last updated: 2026-08-10 — session-end; harness-map cycle closed; CI green_
 - **Project root**: `07-projects/19-workspace-brain`
 
 ### VCS state
-- **Branch**: `main` @ session-end commit (push with session fragment)
-- **Uncommitted at baton write**: session fragment + this SESSION-STATE only
-- **Test state at last check (2026-08-07→10):** CI green on `e2d28eb` (all four workflows); map closeout `6b92c1a` pushed.
+- **Branch**: `main` (merge of `cursor/lcars-generative-interface-a660`)
+- **Uncommitted at baton write**: none after this merge
+- **Test state at last check (2026-08-28):** merged tree green — integrity/links (286 skills)/workspace/capabilities (20 caps, 29 wirings), `test-validators.py` 10/10, `vqa calibrate` 48/48.
 
 ### Open work and paused threads
-- **Currently in progress**: nothing. Open Agent Engine is complete on both the workspace side and the Linear side, and now wired into the session rituals (session-start read, session-end filing).
+- **Currently in progress**: error-correction items 1–5 landed; watch for skip-after-close.
+- **Paused (unchanged)**: Open Agent Engine ritual integration still wants an ordinary-session proof; dense Layer-2 retrieval stays deferred ([[decision-defer-dense-vault-retrieval]]).
 - **The engine's next real test is its first ordinary session** — does the session-start line appear only when it should, and does `/session-end` file residue pointer-shaped rather than pasting prose into issues? Neither has run outside the session that built them.
 - **The migration Sean deferred**: `project-context.md` carries **43 open items** (38 "Active"), some stamped as far back as early July and others un-stamped and older. That list is the queue this engine was built to replace, and moving it is the point at which the engine stops being scaffolding. Deliberately deferred until the ritual integration has proven itself over a week of real sessions. Not a bulk copy — most items _are_ substance, so each needs a pointer-shaped home first. Side benefit when it happens: it also fixes the ~21.6k-token session-start footprint already queued below.
 - **Remaining `PENDING` fields**: none. Both lane configs fully provisioned.
 - **Pending questions**: none.
-- **Blocked on**: nothing.
+- **Blocked on**: nothing for the error-correction P-items. Open Engine itself is unblocked.
 - **Sean-side follow-ups** (not blocking): disable Linear auto-close-stale-issues on both workspaces; optionally build the lane-scoped scheduled runner.
-- **Queued from the site review** (separate from Open Engine): trim the ~21.6k-token session-start footprint (`project-context.md` line 19 alone is ~1,490 tokens inside a head-60 read); add negative fixtures to the five validators; fold the seven-surface Agent Maintenance Loop into `/optimize`.
-- **What's needed to resume**: read `03-skills/open-agent-engine/SKILL.md` → "Preflight", then `06-context/open-engine/README.md`, then the lane config. Run `python3 00-bootstrap/doctor/linear-lanes.py` for live state.
+- **Queued from the site review** (separate from Open Engine): trim the ~21.6k-token session-start footprint (`project-context.md` line 19 alone is ~1,490 tokens inside a head-60 read). Negative fixtures and `/optimize` seven-surface loop landed 2026-08-26.
+- **What's needed to resume**: error-correction → read `notes/error-correction-research_2026-08-26.md` + the knowledge entry. Engine → `03-skills/open-agent-engine/SKILL.md` Preflight, then `06-context/open-engine/README.md`. Run `python3 00-bootstrap/doctor/linear-lanes.py` for live lane state.
 
 ---
 
 ## Session history (append-only)
+
+### 2026-08-26 — checkpoint (error-correction items 1–5)
+
+**Focus this session**: Land honesty-check, embedded prove/validate, negative fixtures, observable routing skips, and `/optimize` as system ECC.
+**Machine**: Personal MacBook Pro (`Voyager-2.local`) · Cursor Grok 4.6 · Cursor
+**Stopped because**: items 1–5 implemented; next is ordinary-work watch, not more protocol.
+
+**Accomplishments**:
+- #06 detector check + report Detector line; 00-README compressed gate list
+- Literal prove embedded in `visual-reference-replication` + `lead-visual-qa`; vault writes embed validators in AGENTS/#08
+- `09-tools/test-validators.py` + CI `validator-fixtures.yml`
+- Dispatcher routing-coverage note when Layer 0 under-fires on a real prompt
+- `/optimize` Step 1.6 seven-surface maintenance loop
+
+**Next resumption needs**:
+- Watch skip-after-close. Commit reliability files separately from LCARS dirt.
+
+### 2026-08-26 — checkpoint (error-correction research)
+
+**Focus this session**: Broad→narrow research on error correction, looping structures, and foundations that reduce unexpected LLM results, mapped onto this workspace.
+**Machine**: Personal MacBook Pro (`Voyager-2.local`) · Cursor Grok 4.6 · Cursor
+**Stopped because**: dossier landed; next step is Sean's pick, not more survey.
+
+**Accomplishments**:
+- Field map by *signal source* (self-critique vs tool/environment vs independent-model vs sampling vs human)
+- Honesty bound: surprises cannot be fully removed; they can be detectable, non-silent, non-repeatable
+- Workstream detector registry against existing gates
+- Durable entry: `08-knowledge/research/agentic-error-correction-foundations.md`
+
+**Next resumption needs**:
+- Sean picks from `notes/error-correction-research_2026-08-26.md`
 
 ### 2026-08-05 — checkpoint (Layer-1 vault retrieve)
 
@@ -111,7 +144,7 @@ _Last updated: 2026-08-10 — session-end; harness-map cycle closed; CI green_
 
 **Next resumption needs**:
 - Stage 2 identity verification **before any write**, then boards, ledgers, and the four smoke tests (hello-world, blocked-resume, human-hold, plus substance-refusal on c8).
-- Unrelated but queued from the site review: trim the ~21.6k-token session-start footprint (`project-context.md` line 19 alone is ~1,490 tokens inside a head-60 read), add negative fixtures to the five validators, and fold the seven-surface maintenance loop into `/optimize`.
+- Unrelated but queued from the site review: trim the ~21.6k-token session-start footprint (`project-context.md` line 19 alone is ~1,490 tokens inside a head-60 read). Negative fixtures and `/optimize` seven-surface loop landed 2026-08-26.
 
 ### 2026-07-09 16:00 — checkpoint
 

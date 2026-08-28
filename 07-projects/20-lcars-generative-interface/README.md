@@ -1,8 +1,8 @@
 ---
 title: LCARS Generative Interface
-aliases: [20-lcars-generative-interface]
 type: project
-status: Planning
+status: Implementing
+aliases: [20-lcars-generative-interface]
 triggers: [lcars, generative lcars, okudagram, scene ir]
 frameworks: [aesthetic-lens, ui-ux-operational, research-and-evidence, qa-operating-model]
 created: 2026-08-07
@@ -19,4 +19,4 @@ LLM-forward adaptive console/shell that recomposes **TNG-era LCARS** surfaces fr
 
 ## For future agent
 
-Read `SESSION-STATE.md` Live handoff first, then `SPEC.md`. Do not invent chrome outside the constitution. Spec is draft-for-review until Sean confirms; next step after approval is the implementation plan.
+Read `SESSION-STATE.md` Live handoff first, then `SPEC.md`, then the v1 plan at `docs/superpowers/plans/2026-08-07-lcars-generative-interface-v1.md`. Do not invent chrome outside the constitution. App code lives in `~/Projects/lcars-generative-interface`, not this vault.

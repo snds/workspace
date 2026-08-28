@@ -181,11 +181,11 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 ---
 
 ### LCARS Generative Interface
-**Status:** Planning
-**Summary:** LLM-forward adaptive LCARS console/shell — natural-language intent + combadge role context recomposes legal Okudagram surfaces via typed Scene IR; immutable constitution; v1 hybrid recipes with plumbing toward v2 dynamic topology; data-first 3D viewports; APCA primary contrast with WCAG AA fallback.
+**Status:** Implementing — S-SYS47-01 Literal prove in progress
+**Summary:** LLM-forward adaptive LCARS console/shell — natural-language intent + combadge role context recomposes legal Okudagram surfaces via typed Scene IR; immutable constitution; v1 hybrid recipes with plumbing toward v2 dynamic topology; data-first 3D viewports; APCA primary contrast with WCAG AA fallback. App at https://github.com/snds/LCARS.
 **Folder:** `07-projects/20-lcars-generative-interface/`
-**Triggers:** lcars, generative lcars, okudagram, scene ir
-**Next:** Sean reviews `SPEC.md`; on approval, write the implementation plan and keep SESSION-STATE Live handoff current. Code will live in the platform `Projects` directory, not inside this vault.
+**Triggers:** lcars, generative lcars, okudagram, scene ir, literal match, construction ir
+**Next:** Measure the four named uncued residuals on S-SYS47-01 (left rail, mid-band geometry, navy sweep, timestamp), then build to them. App lives in the platform `Projects` directory, not this vault.
 
 ---
 
@@ -193,8 +193,8 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 **Status:** Active
 **Summary:** Standing home for sessions whose subject is the workspace itself (validation, fix, migration, infrastructure). Established 2026-07-09 per the workspace-work project-home rule in framework #08 (FX-13); git-tracked for cross-machine continuity.
 **Folder:** `07-projects/19-workspace-brain/`
-**Triggers:** workspace brain, workspace fix, workspace validation
-**Next:** Complete the FX-1..FX-14 fix session (Phases E–F), then re-run the validation harness and compare scorecards.
+**Triggers:** workspace brain, workspace fix, workspace validation, error correction, verification loop
+**Next:** Prove-engine vqa/1.1 + play-prove landed 2026-08-28. Watch whether producing paths still skip independent detectors. Optional: [[mission-fit]] on one unreliable done. Do not start a parallel agent framework.
 
 ---
 

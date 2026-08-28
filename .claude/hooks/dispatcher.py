@@ -21,6 +21,7 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import NamedTuple
 
 _project_dir = os.environ.get("CLAUDE_PROJECT_DIR")
 if not _project_dir:
@@ -1166,14 +1167,20 @@ def _refresh_vault_retrieve_index() -> None:
         sys.stderr.write(f"[session-start] vault-retrieve rebuild skipped: {exc}\n")
 
 
-def _lexical_fallback_hits(prompt: str, limit: int = LEXICAL_FALLBACK_LIMIT) -> list[tuple[str, str]]:
-    """Query vault-retrieve --cached. Returns (path, hint) pairs. Fail-open."""
-    if not LEXICAL_TOOL.exists() or not prompt.strip():
-        return []
-    # Skip short/ack prompts. Stopwords + OR min-overlap live in vault-retrieve;
-    # this is only a cheap pre-gate before the subprocess.
+class LexicalFallback(NamedTuple):
+    hits: list[tuple[str, str]]
+    status: str  # ok | empty | skipped-short | skipped-empty-prompt | tool-missing | failed
+    detail: str
+
+
+def _lexical_fallback(prompt: str, limit: int = LEXICAL_FALLBACK_LIMIT) -> LexicalFallback:
+    """Query vault-retrieve --cached. Fail-observable: empty/error is a named status, not silence."""
+    if not prompt.strip():
+        return LexicalFallback([], "skipped-empty-prompt", "")
     if len(re.findall(r"[A-Za-z0-9]{4,}", prompt)) < 2:
-        return []
+        return LexicalFallback([], "skipped-short", "")
+    if not LEXICAL_TOOL.exists():
+        return LexicalFallback([], "tool-missing", str(LEXICAL_TOOL))
     try:
         proc = subprocess.run(
             [
@@ -1194,13 +1201,15 @@ def _lexical_fallback_hits(prompt: str, limit: int = LEXICAL_FALLBACK_LIMIT) -> 
         )
     except Exception as exc:  # noqa: BLE001
         sys.stderr.write(f"[user-prompt] vault-retrieve skipped: {exc}\n")
-        return []
-    if proc.returncode not in (0, 1) or not proc.stdout.strip():
-        return []
+        return LexicalFallback([], "failed", str(exc))
+    if proc.returncode not in (0, 1):
+        return LexicalFallback([], "failed", f"exit {proc.returncode}")
+    if not proc.stdout.strip():
+        return LexicalFallback([], "failed", "empty-stdout")
     try:
         data = json.loads(proc.stdout)
     except json.JSONDecodeError:
-        return []
+        return LexicalFallback([], "failed", "bad-json")
     out: list[tuple[str, str]] = []
     for hit in data.get("hits") or []:
         path = hit.get("path") or ""
@@ -1214,7 +1223,14 @@ def _lexical_fallback_hits(prompt: str, limit: int = LEXICAL_FALLBACK_LIMIT) -> 
         if snip:
             hint += f" — {snip}"
         out.append((path, hint))
-    return out
+    if not out:
+        return LexicalFallback([], "empty", "")
+    return LexicalFallback(out, "ok", "")
+
+
+def _lexical_fallback_hits(prompt: str, limit: int = LEXICAL_FALLBACK_LIMIT) -> list[tuple[str, str]]:
+    """Compat wrapper: hits only. Prefer `_lexical_fallback` when status matters."""
+    return _lexical_fallback(prompt, limit=limit).hits
 
 
 def handle_user_prompt(payload: dict) -> None:
@@ -1257,32 +1273,56 @@ def handle_user_prompt(payload: dict) -> None:
             lines.append(f"- _(+{dropped} more {tier_name} match(es) dropped — per-tier cap {cap})_")
 
     # Layer 1: lexical FTS only when Layer 0 under-fires (gap fill, not a peer flood).
+    # Under-fire on a real prompt must never look like "nothing matched."
     if len(seen) < LEXICAL_FALLBACK_MIN:
-        lex_cap = TIER_CAPS["lexical fallback"]
-        lex_emitted = 0
-        for path, hint in _lexical_fallback_hits(raw_prompt, limit=LEXICAL_FALLBACK_LIMIT):
-            key = _hint_target_key(hint) or path
-            if key in seen:
-                continue
-            if lex_emitted >= lex_cap:
-                break
-            seen.add(key)
-            lines.append(f"- **`lexical`** → {hint}")
-            lex_emitted += 1
-        if lex_emitted:
-            lines.append(
-                f"- _(lexical fallback — Layer 0 had {len(seen) - lex_emitted} unique target(s); "
-                f"cap {lex_cap}. CLI: `python3 09-tools/vault-retrieve.py \"…\"`)_"
-            )
+        layer0_n = len(seen)
+        lex = _lexical_fallback(raw_prompt, limit=LEXICAL_FALLBACK_LIMIT)
+        if lex.status not in ("skipped-short", "skipped-empty-prompt"):
+            lex_cap = TIER_CAPS["lexical fallback"]
+            lex_emitted = 0
+            for path, hint in lex.hits:
+                key = _hint_target_key(hint) or path
+                if key in seen:
+                    continue
+                if lex_emitted >= lex_cap:
+                    break
+                seen.add(key)
+                lines.append(f"- **`lexical`** → {hint}")
+                lex_emitted += 1
+            if lex_emitted:
+                lines.append(
+                    f"- _(lexical fallback — Layer 0 had {layer0_n} unique target(s); "
+                    f"cap {lex_cap}. CLI: `python3 09-tools/vault-retrieve.py \"…\"`)_"
+                )
+            elif lex.status == "empty":
+                lines.append(
+                    f"- _(routing skip — Layer 0 under-fired ({layer0_n} unique). "
+                    f"Lexical fallback ran: 0 hits. Do not treat this as no vault entry. "
+                    f"CLI: `python3 09-tools/vault-retrieve.py \"…\"`)_"
+                )
+            elif lex.status == "tool-missing":
+                lines.append(
+                    f"- _(routing skip — Layer 0 under-fired ({layer0_n} unique). "
+                    f"Lexical fallback skipped: vault-retrieve.py missing. "
+                    f"Do not treat this skip as no match.)_"
+                )
+            elif lex.status == "failed":
+                lines.append(
+                    f"- _(routing skip — Layer 0 under-fired ({layer0_n} unique). "
+                    f"Lexical fallback FAILED ({lex.detail or 'error'}). "
+                    f"Do not treat this skip as no match.)_"
+                )
 
     if not lines:
         return
 
-    header = (
-        "# Project trigger detected"
-        if layer0_any
-        else "# Vault lexical fallback"
-    )
+    lex_hit = any("**`lexical`**" in ln for ln in lines)
+    if layer0_any:
+        header = "# Project trigger detected"
+    elif lex_hit:
+        header = "# Vault lexical fallback"
+    else:
+        header = "# Routing coverage note"
     body = [
         header,
         "",
