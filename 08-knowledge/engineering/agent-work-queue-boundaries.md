@@ -1,7 +1,7 @@
 ---
 tags: [knowledge-vault, engineering, agent-ops, mcp, security]
 created: 2026-07-30
-updated: 2026-07-30
+updated: 2026-09-02
 status: working
 confidence: high
 sources: [session 2026-07-29/30 — Open Agent Engine build, two isolated Linear lanes]
@@ -38,9 +38,7 @@ Registration is not authentication, and authentication is not *pointing at the r
 connection that OAuth'd into the wrong workspace passes every file-based check and then writes to the
 wrong board.
 
-But on a **fresh, empty tenant there may be nothing readable that identifies it.** On Linear the org
-slug appears only on object URLs (issues, projects, documents, comments) — `get_user`, `get_team`,
-and `list_teams` all omit it, and the server publishes no MCP resources. Zero objects, zero proof.
+But on a **fresh, empty tenant there may be nothing readable that identifies it.** On Linear that was true in 2026-07: the org slug appeared only on object URLs (`get_user` / `get_team` / `list_teams` omitted it). **As of 2026-09-02 the Linear MCP exposes `get_workspace`, which returns the workspace `url` (slug included)** — Stage 2 check 3 is a read when that tool exists. Keep the first-write gate as the fallback if a transport still omits the slug. Zero readable identity, zero proof.
 
 So identity verification degrades to a **first-write gate**: create the cheapest, most disposable
 object you can, read its returned URL, assert the tenant, and only then perform a second write. Which

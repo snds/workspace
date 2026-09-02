@@ -164,6 +164,16 @@ Subscribed: none
 
 ## Verification record
 
+**Stage 2 — workspace identity, 2026-09-02 (Cursor Grok 4.6 · Cursor · Personal MBP `Voyager-2.local`).**
+
+| Check | Evidence | Verdict |
+|---|---|---|
+| Account | `get_user("me")` → `hello@snds.design`, user `92d3f2ac…`, admin | ✅ matches the declared `Account` |
+| Distinctness | this machine expects `personal` only — `linear-c8` is not registered (correct). User/team ids match the 2026-07-29 Work MBP record | ✅ no second lane to collapse into |
+| Workspace | `get_workspace` → `https://linear.app/snds` (slug `snds`) | ✅ matches; Linear now exposes the slug on a read, so no first-write gate was needed |
+
+**Transport this session.** Cursor `~/.cursor/mcp.json` server `linear-personal` via mcp-remote; tokens in `~/.mcp-auth/linear-personal`. Doctor: `ok`. Query verified: `list_issue_statuses` (seven engine statuses live; board label `Some Day`) + `list_issues` Agent Todo.
+
 **Stage 2 — workspace identity, 2026-07-29 (Claude Opus 5 · Claude Code · Work MBP `CS-K746DRWXY1`).**
 
 | Check | Evidence | Verdict |

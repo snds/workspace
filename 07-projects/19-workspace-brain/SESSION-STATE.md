@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-02 — Legion Continuum landed; PR #17 merged; copilot integrity skip_
+_Last updated: 2026-09-02 — Open Engine personal lane ok on Voyager-2.local Cursor_
 
 ---
 
@@ -8,14 +8,14 @@ _Last updated: 2026-09-02 — Legion Continuum landed; PR #17 merged; copilot in
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: Constitutions + graph crosslinking + Cursor canvas copies are on `main`. Legion Continuum WIP is on `snds/legion` `064e363` (canvases `4bee94c`; capture dumps gitignored). Workspace PR #17 merged (`9221e54`): §8e mode-first + QA #6 system-context + #7 adversarial. Integrity skips vendored `copilot/` example wikilinks only (`b62058d`).
-- **Current focus**: Session closing. Next: register Open Engine personal lane, or a domain pack / `ds-source-watch --fetch` / `vqa prove`.
-- **Working set**: [[09-tools/validate-integrity.py]]; [[09-tools/cursor-externalize.py]]; [[domain-constitutions]]; Legion repo `scripts/legion-accept.mjs`.
-- **Last action (2026-09-02):** Session-end after Legion commit + PR #17 merge + copilot integrity skip. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **TL;DR (for future agent)**: Constitutions + graph crosslinking + Cursor canvas copies are on `main`. Legion Continuum is on `snds/legion` `064e363`. PR #17 merged. Integrity skips vendored `copilot/` only. **Open Engine personal lane is `ok` on this Cursor** (`linear-personal` → `hello@snds.design` / `linear.app/snds`). Do not register `linear-c8` here.
+- **Current focus**: Open Engine personal lane enrolled. Next real work uses a domain constitution pack, or `ds-source-watch --fetch`, or `vqa prove`.
+- **Working set**: [[open-agent-engine]]; [[06-context/open-engine/personal.md]]; `~/.cursor/mcp.json` (machine-local).
+- **Last action (2026-09-02):** Registered Cursor `linear-personal` via mcp-remote; Stage 2 identity passed. Cursor Grok 4.6 / Cursor / Personal MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** `python3 00-bootstrap/doctor/linear-lanes.py` (personal lane not-registered). Optional: refresh Obsidian graph. Then a domain pack, `python3 09-tools/ds-source-watch.py --fetch`, or `vqa prove`.
+- **Next action:** Domain pack on the next real job-context task (not a replay of this housekeeping). Or `python3 09-tools/ds-source-watch.py --fetch`, or `vqa prove`.
 - **Open decisions:** Product/data/security constitutions still `mapped` only. YAML still hand-authored.
-- **Blocked on:** Open Engine personal lane still `not-registered` on this machine. Machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
+- **Blocked on:** Open Engine personal lane is **ok** on this machine (Cursor `linear-personal`, identity `hello@snds.design` / `linear.app/snds`). Machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs.** Copilot pack is tracked (`copilot/` + relative `.claude` wrappers); do not convert wrappers back to absolute paths.
 - **Agent thread**: `… → (2026-09-02): Cursor canvas externalize` → `(2026-09-02): Legion Continuum commit + PR #17 + copilot integrity skip`.
 
