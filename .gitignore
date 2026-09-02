@@ -28,6 +28,10 @@
 !_CONTEXT.md
 !_CHEATSHEET.md
 
+# Copilot skill pack (Claude slash wrappers point here via relative symlinks)
+!copilot/
+!copilot/**
+
 !.claude/
 !.claude/**
 
