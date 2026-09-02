@@ -288,7 +288,9 @@ MOTION_EXPECTATIONS = {
 # ── Calibration run ──────────────────────────────────────────
 
 def run_calibration(out_dir: Optional[str | Path] = None, keep_images: bool = False) -> dict:
-    out = Path(out_dir) if out_dir else Path(tempfile.mkdtemp(prefix="vqa_calib_"))
+    # Resolve now: interact.verify_step prefixes spec_dir onto relative paths.
+    # A cwd-relative --output would otherwise double-join (observed 2026-09-02).
+    out = Path(out_dir).expanduser().resolve() if out_dir else Path(tempfile.mkdtemp(prefix="vqa_calib_"))
     out.mkdir(parents=True, exist_ok=True)
     rows = []
 

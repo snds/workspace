@@ -57,7 +57,12 @@ def verify_step(step: dict, spec_dir: Path, out_dir: Optional[Path] = None,
                 threshold_de: float = 4.0) -> dict:
     def resolve(rel):
         q = Path(rel).expanduser()
-        return q if q.is_absolute() else spec_dir / q
+        if q.is_absolute():
+            return q
+        # Already a cwd-relative path that exists (calibrate used to pass these).
+        if q.exists():
+            return q
+        return spec_dir / q
 
     before = load_image(resolve(step["before"]))
     after = load_image(resolve(step["after"]))

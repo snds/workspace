@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-02 — Open Engine personal lane ok on Voyager-2.local Cursor_
+_Last updated: 2026-09-02 — vqa calibrate relative-output patch on main_
 
 ---
 
@@ -8,12 +8,12 @@ _Last updated: 2026-09-02 — Open Engine personal lane ok on Voyager-2.local Cu
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: Constitutions + graph crosslinking + Cursor canvas copies are on `main`. Legion Continuum is on `snds/legion` `064e363`. PR #17 merged. Integrity skips vendored `copilot/` only. **Open Engine personal lane is `ok` on this Cursor** (`linear-personal` → `hello@snds.design` / `linear.app/snds`). Do not register `linear-c8` here.
-- **Current focus**: Open Engine personal lane enrolled. Next real work uses a domain constitution pack, or `ds-source-watch --fetch`, or `vqa prove`.
-- **Working set**: [[open-agent-engine]]; [[06-context/open-engine/personal.md]]; `~/.cursor/mcp.json` (machine-local).
-- **Last action (2026-09-02):** Registered Cursor `linear-personal` via mcp-remote; Stage 2 identity passed. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **TL;DR (for future agent)**: Constitutions + graph crosslinking + Cursor canvas copies are on `main`. Legion Continuum is on `snds/legion` `064e363`. Open Engine personal lane is `ok` on this Cursor. Visual-qa prove path ran this session: `vqa calibrate` 48/48 (`vqa/1.1`); LCARS `S-SYS47-01` v4 16/16 measured with 4 named uncued residuals. **Relative `--output` double-join is fixed** in `calibrate.py` + `interact.py`.
+- **Current focus**: Prove path done. Patch landing on `main`. No substantive Legion work this thread.
+- **Working set**: [[visual-prove-engine]] `scripts/calibrate.py`, `scripts/interact.py`.
+- **Last action (2026-09-02):** Landed vqa relative-output patch on `main`. Cursor Grok 4.6 / Cursor / Personal MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Domain pack on the next real job-context task (not a replay of this housekeeping). Or `python3 09-tools/ds-source-watch.py --fetch`, or `vqa prove`.
+- **Next action:** Stop, or pick new work. Do not start Legion Continuum in this thread.
 - **Open decisions:** Product/data/security constitutions still `mapped` only. YAML still hand-authored.
 - **Blocked on:** Open Engine personal lane is **ok** on this machine (Cursor `linear-personal`, identity `hello@snds.design` / `linear.app/snds`). Machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs.** Copilot pack is tracked (`copilot/` + relative `.claude` wrappers); do not convert wrappers back to absolute paths.
@@ -29,7 +29,7 @@ _Last updated: 2026-09-02 — Open Engine personal lane ok on Voyager-2.local Cu
 ### VCS state
 - **Branch**: `main` @ session-end commit (this fragment)
 - **Uncommitted at baton write**: session fragment + this baton only
-- **Test state at last check (2026-09-02):** `validate-integrity` 785 md / 0 errors; `test-validators.py` 11/11; links + workspace green. `vqa calibrate` 48/48 still the last prove-engine number (2026-08-28).
+- **Test state at last check (2026-09-02):** `vqa doctor` core ok (numpy/Pillow/cv2/scipy/ffmpeg); FLIP/DreamSim/OCR/gltf-validator/VGGT degraded honestly. `vqa calibrate` **48/48** (`vqa/1.1`). LCARS `S-SYS47-01` v4 `vqa prove` 16/16 measured, capture verified, 4 named uncued residuals.
 
 ### Open work and paused threads
 - **Currently in progress**: error-correction items 1–5 landed; watch for skip-after-close.
