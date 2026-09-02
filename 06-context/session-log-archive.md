@@ -4,6 +4,36 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-07-30 — SaaS PLM: global density model + pill/chip shapes (PR #13 for Olga)
+
+SessionID: 2026-07-30-work-density01
+--- SESSION BLOCK ---
+Date: 2026-07-30
+Agent: Composer / Auto
+Surface: Cursor
+Machine: Work MacBook Pro (main, CS-K746DRWXY1)
+Project(s): SaaS PLM prototype (employer — `centric-engineering` profile)
+Summary: Shipped a user-controllable Compact/Normal/Spacious density axis (header toggle, localStorage, FOUC boot) across chrome, tables, forms, and radius. Softened the ladder one mode (Compact = old Normal / centric h-8). Added shape rules so density doesn't collapse meaning: checkbox `--radius-check` + circle variant (card grids default circle); pill vs chip via half-rate `--radius-chip` (4/6/8); `ds:check` guards for primitive call sites, glyphs, and chips. Committed the full working tree (density + prior DataTable foundation/token-lab) and opened PR #13 for Olga.
+Artifacts:
+  - Employer PR: https://github.com/cpes-software/saas-plm-prototype/pull/13 (`feat/global-density` @ `240a767`)
+  - Employer: `src/styles/density.css`, `src/app/lib/density.ts`, `DensityToggle`, `SheetFooter`, Badge/Checkbox/StatusPill/TypeTag/ChipMultiSelect shape work, `design-system.rules.json` + `ds-core` lint/tests
+  - Docs in employer repo only: `DESIGN-SYSTEM.md`, `PROJECT-NOTES.md`, `AGENTS.md` / `CLAUDE.md` / `MIGRATION-TO-CENTRIC-UI.md` / `CENTRIC-UI-SYNC.md` (C14 ROW_DENSITY note)
+Decisions:
+  - Default density = Normal (one step softer than original prototype); Centric's 32px reference lives in Compact.
+  - Checkbox glyphs stay 4px off-ladder; opt-in `shape="circle"`; `CardSelectControl` defaults to circle (all card grids).
+  - Pill = `rounded-full`; chip = `--radius-chip` half-rate ladder — ChipMultiSelect `pill`/`linkPill` made real capsules.
+  - Never put density scale on a primitive via `className` (call-site rule); add a `cva` size/shape instead.
+Pending added:
+  - Olga review of PR #13 (density feel across modes; card circles; pills vs chips; sheet CTAs)
+Pending resolved:
+  - Prior "review + commit/PR employer DataTable branch" — folded into the same PR #13 push (density-led framing)
+Next:
+  - Olga reviews/merges #13
+  - Deepen Materials LandingDataTable domain cells if still needed post-merge
+  - Lift density axis + shape tokens into centric-ui when ready; ROW_DENSITY sync (C14)
+--- END SESSION BLOCK ---
+
+
 ### 2026-07-30 — SaaS PLM DataTable: Layer A+B visual parity (LandingDataTable + Materials lab)
 
 SessionID: 2026-07-30-work-dt02

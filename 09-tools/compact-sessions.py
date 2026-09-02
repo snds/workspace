@@ -159,10 +159,17 @@ def _archive_old_blocks(log_path: Path) -> int:
             cut.append(b)
     if not cut:
         return 0
-    # Live log: head + pointer + lead + kept blocks.
-    archive_path = log_path.with_name("session-log-archive.md")
+    # Drop leftover copies of the archive pointer from `lead` so re-archival
+    # does not stack the same blockquote (observed 2026-09-02: five copies).
+    lead = re.sub(
+        r"(?:\n*> _Older entries archived to \[session-log-archive\.md\].*?(?=\n\n|\n---|\Z))+",
+        "",
+        lead,
+        flags=re.DOTALL,
+    )
     pointer = ("\n\n> _Older entries archived to " "[session-log-archive.md](session-log-archive.md)"
                " to keep this file cheap to read. Ask to see it only if you need history._\n")
+    archive_path = log_path.with_name("session-log-archive.md")
     log_path.write_text(head + pointer + lead + "".join(kept), encoding="utf-8")
     # Archive: prepend the freshly-cut batch (stays newest-first overall).
     prior = archive_path.read_text(encoding="utf-8") if archive_path.exists() else (

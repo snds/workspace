@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-02 — graph crosslinking + Cursor canvases copied into git_
+_Last updated: 2026-09-02 — Legion Continuum landed; PR #17 merged; copilot integrity skip_
 
 ---
 
@@ -8,16 +8,16 @@ _Last updated: 2026-09-02 — graph crosslinking + Cursor canvases copied into g
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: Constitutions + Obsidian graph crosslinking are in the working tree. Cursor canvases now have git-tracked copies under `07-projects/…/canvases/`; sync with `python3 09-tools/cursor-externalize.py` at every Cursor session-end. Legion canvases belong in the Legion repo (`docs/canvases/` on disk this session, not committed there).
-- **Current focus**: Session closing. Next after push: use a domain pack on real work, or `ds-source-watch --fetch`, or `vqa prove`.
-- **Working set**: [[_MOC]]; [[_PROJECTS]]; [[09-tools/cursor-externalize.py]]; [[domain-constitutions]]; [[00-bootstrap/OBSIDIAN-SETUP]].
-- **Last action (2026-09-02):** Externalized 8 Cursor canvases into the vault; wired session-end. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **TL;DR (for future agent)**: Constitutions + graph crosslinking + Cursor canvas copies are on `main`. Legion Continuum WIP is on `snds/legion` `064e363` (canvases `4bee94c`; capture dumps gitignored). Workspace PR #17 merged (`9221e54`): §8e mode-first + QA #6 system-context + #7 adversarial. Integrity skips vendored `copilot/` example wikilinks only (`b62058d`).
+- **Current focus**: Session closing. Next: register Open Engine personal lane, or a domain pack / `ds-source-watch --fetch` / `vqa prove`.
+- **Working set**: [[09-tools/validate-integrity.py]]; [[09-tools/cursor-externalize.py]]; [[domain-constitutions]]; Legion repo `scripts/legion-accept.mjs`.
+- **Last action (2026-09-02):** Session-end after Legion commit + PR #17 merge + copilot integrity skip. Cursor Grok 4.6 / Cursor / Personal MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** After this commit lands: refresh Obsidian graph. Optional: commit Legion `docs/canvases/` in the Legion repo. Then a domain pack on real work, or `python3 09-tools/ds-source-watch.py --fetch`, or `vqa prove`.
+- **Next action:** `python3 00-bootstrap/doctor/linear-lanes.py` (personal lane not-registered). Optional: refresh Obsidian graph. Then a domain pack, `python3 09-tools/ds-source-watch.py --fetch`, or `vqa prove`.
 - **Open decisions:** Product/data/security constitutions still `mapped` only. YAML still hand-authored.
 - **Blocked on:** Open Engine personal lane still `not-registered` on this machine. Machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs.** Do not commit carved LCARS SWF dumps or Copilot skill copies unless Sean asks.
-- **Agent thread**: `… → (2026-09-02): other-domain constitutions` → `(2026-09-02): Obsidian graph crosslinking` → `(2026-09-02): Cursor canvas externalize + session-end`.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs.** Copilot pack is tracked (`copilot/` + relative `.claude` wrappers); do not convert wrappers back to absolute paths.
+- **Agent thread**: `… → (2026-09-02): Cursor canvas externalize` → `(2026-09-02): Legion Continuum commit + PR #17 + copilot integrity skip`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
@@ -27,9 +27,9 @@ _Last updated: 2026-09-02 — graph crosslinking + Cursor canvases copied into g
 - **Project root**: `07-projects/19-workspace-brain`
 
 ### VCS state
-- **Branch**: `main` @ session-end commit (push with this fragment)
-- **Uncommitted at baton write**: this session-end (constitutions + graph + canvases); do not add SWF dumps, Copilot skill copies, or `.cursor/settings.json`
-- **Test state at last check (2026-08-28):** merged tree green — integrity/links/workspace/capabilities, `test-validators.py` 10/10, `vqa calibrate` 48/48. Re-run write-quality chain on this persist.
+- **Branch**: `main` @ session-end commit (this fragment)
+- **Uncommitted at baton write**: session fragment + this baton only
+- **Test state at last check (2026-09-02):** `validate-integrity` 785 md / 0 errors; `test-validators.py` 11/11; links + workspace green. `vqa calibrate` 48/48 still the last prove-engine number (2026-08-28).
 
 ### Open work and paused threads
 - **Currently in progress**: error-correction items 1–5 landed; watch for skip-after-close.
@@ -46,6 +46,21 @@ _Last updated: 2026-09-02 — graph crosslinking + Cursor canvases copied into g
 ---
 
 ## Session history (append-only)
+
+### 2026-09-02 — Legion Continuum + PR #17 + copilot skip (session-end)
+
+**Focus this session**: Land remaining Legion Continuum WIP; resolve then merge workspace PR #17; skip vendored Copilot example wikilinks in integrity.
+**Machine**: Personal MacBook Pro (`Voyager-2.local`) · Cursor Grok 4.6 · Cursor
+**Stopped because**: Sean asked to end session.
+
+**Accomplishments**:
+- Legion `064e363` + canvases `4bee94c` on `origin/main`; `refs/` and `.tmp-*` gitignored
+- PR #17 merged (`9221e54`): §8e + QA defaults #6 and #7
+- Integrity `copilot/` skip (`b62058d`); vault notes still gated
+
+**Next resumption needs**:
+- Open Engine personal lane still not-registered on this machine
+- Domain pack / `ds-source-watch --fetch` / `vqa prove` when Sean wants real work
 
 ### 2026-09-02 — session-end
 

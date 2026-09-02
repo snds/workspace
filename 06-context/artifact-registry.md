@@ -1,6 +1,6 @@
 # Artifact Registry
 <!-- Auto-maintained by Claude. Updated after each task. -->
-<!-- Last updated: 2026-09-02 | Session: graph crosslinking + cursor canvas externalize -->
+<!-- Last updated: 2026-09-02 | Session: Legion Continuum commit + PR #17 + copilot integrity skip -->
 
 ## LCARS Generative Interface — 07-projects/20-lcars-generative-interface/ (git-tracked)
 
@@ -12,7 +12,7 @@
 
 ### 19-workspace-brain/ (README.md + SESSION-STATE.md + notes/ + reports/ + canvases/)
 - **Purpose**: Standing project home for workspace-subject sessions (validation, fix, migration, infrastructure) per the framework #08 project-home rule (FX-13). Git-tracked — cross-machine continuity is its point. `canvases/` holds copies of Cursor `.canvas.tsx` files (live path remains `~/.cursor/projects/…`).
-- **Last modified**: 2026-09-02 — graph crosslinking + Cursor canvas externalize; constitutions already on this tree.
+- **Last modified**: 2026-09-02 — session-end after Legion Continuum land + PR #17 merge + copilot integrity skip.
 
 ## Delivery Playbooks — 02-shared-references/delivery-playbooks/
 
