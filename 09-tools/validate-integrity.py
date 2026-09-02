@@ -19,8 +19,8 @@ Checks:
   5. STUB MARKERS   — TODO/TBD/FIXME/PLACEHOLDER in those same files.                           [warning]
   6. THIN DOCS      — a skill whose description is < 40 chars (quality-bar smell).              [warning]
 
-Templates and _archive/ are excluded from authoring checks (they legitimately hold placeholders /
-historical content). Stdlib-only.
+Templates, _archive/, and vendored `copilot/` docs are excluded from authoring / wikilink
+checks (placeholders, history, and third-party example syntax). Stdlib-only.
 
 Usage:
   python3 09-tools/validate-integrity.py            # report; exit 1 on any error
@@ -48,8 +48,11 @@ def is_template(p: Path) -> bool:
             or n.endswith("-template.md") or "templates/" in p.as_posix())
 
 def excluded_from_scan(rel: str) -> bool:
+    # copilot/ is a vendored pack (example [[Note Name]] syntax, not vault notes).
+    # Do not skip .claude/skills/* — those are our slash wrappers; tracked bodies live under copilot/.
     return ("/_archive/" in rel or rel.startswith("_archive/") or rel.endswith("session-log.md")
-            or "node_modules/" in rel or "07-projects/18-bootstrap-generator/" in rel)
+            or "node_modules/" in rel or "07-projects/18-bootstrap-generator/" in rel
+            or rel.startswith("copilot/"))
 
 
 def tracked_markdown():

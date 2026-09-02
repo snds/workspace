@@ -28,6 +28,19 @@ python3 09-tools/validate-links.py            # report; exit 1 on any error
 python3 09-tools/validate-links.py --strict   # also fail on warnings
 ```
 
+## validate-integrity.py
+
+Write-quality + cross-link continuity: skill `name` == dir, every `[[wikilink]]` in tracked
+markdown resolves, no superseded-but-live files, no unfilled scaffold tokens. Skips `_archive/`,
+templates, `session-log.md`, the bootstrap-generator tree, and vendored `copilot/` (third-party
+example `[[Note Name]]` syntax, not vault notes). Does **not** skip `.claude/skills/` wrappers
+or anything under `03-skills/` / `08-knowledge/`.
+
+```
+python3 09-tools/validate-integrity.py            # report; exit 1 on any error
+python3 09-tools/validate-integrity.py --strict   # also fail on warnings
+```
+
 ## validate-workspace.py
 
 Governance integrity: archive provenance (every `_archive/` file has an `ARCHIVE-LOG.md`

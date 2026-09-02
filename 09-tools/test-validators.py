@@ -117,6 +117,14 @@ class TestValidatorFixtures(unittest.TestCase):
         )
         self.assertTrue(any("zz-fixture-ghost-note-xyz" in e for e in errs), errs)
 
+    def test_integrity_skips_vendored_copilot_not_vault(self):
+        vi = load("validate-integrity")
+        self.assertTrue(vi.excluded_from_scan("copilot/skills/obsidian-markdown/SKILL.md"))
+        self.assertTrue(vi.excluded_from_scan("copilot/skills/obsidian-markdown/references/EMBEDS.md"))
+        self.assertFalse(vi.excluded_from_scan("03-skills/qa/SKILL.md"))
+        self.assertFalse(vi.excluded_from_scan("08-knowledge/design/centric-plm-design-system.md"))
+        self.assertFalse(vi.excluded_from_scan(".claude/skills/session-end/SKILL.md"))
+
     def test_integrity_rejects_name_dir_mismatch(self):
         vi = load("validate-integrity")
         err = vi.skill_name_dir_error(
