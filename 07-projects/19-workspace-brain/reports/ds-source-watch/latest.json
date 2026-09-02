@@ -1,0 +1,146 @@
+{
+  "checked_at": "2026-09-02T04:37:25Z",
+  "registry": "02-shared-references/ds-source-watch.json",
+  "sources": {
+    "dsds-home": {
+      "ok": true,
+      "status": 200,
+      "etag": "\"2043de77bd90b2c3f44ee5a16c9e74ea-ssl\"",
+      "last_modified": null,
+      "hash": "2d0e1820bf94b17b",
+      "bytes": 10397,
+      "error": null,
+      "url": "https://designsystemdocspec.org"
+    },
+    "dsds-schema": {
+      "ok": true,
+      "status": 200,
+      "etag": "\"8e189dadc2232a86f8933b1deee73c01-ssl\"",
+      "last_modified": null,
+      "hash": "c05ec46179022be0",
+      "bytes": 80714,
+      "error": null,
+      "url": "https://designsystemdocspec.org/schema"
+    },
+    "onori-dsds-post": {
+      "ok": true,
+      "status": 200,
+      "etag": "\"92b1b2cc24fd708257a53a790631e3c2-ssl\"",
+      "last_modified": null,
+      "hash": "ef584412be821691",
+      "bytes": 54254,
+      "error": null,
+      "url": "https://pjonori.blog/posts/design-system-doc-spec/"
+    },
+    "dsds-github": {
+      "ok": true,
+      "status": 200,
+      "etag": "W/\"5e5c1e2659fa69f4c892454aaa88ed02\"",
+      "last_modified": null,
+      "hash": "b723d2bcf9bbdbeb",
+      "bytes": 403647,
+      "error": null,
+      "url": "https://github.com/somerandomdude/design-system-documentation-schema"
+    },
+    "grokking-agentic": {
+      "ok": true,
+      "status": 200,
+      "etag": null,
+      "last_modified": null,
+      "hash": "07ccfa88feb10253",
+      "bytes": 228879,
+      "error": null,
+      "url": "https://grokkingthesystemdesign.com/guides/agentic-system-design/"
+    },
+    "awesome-agentic": {
+      "ok": true,
+      "status": 200,
+      "etag": "\"81816fb6ebed67aaf8a3e34c07fdf76f395b91e093368b8d6ab5c3ec84369e09\"",
+      "last_modified": null,
+      "hash": "efff4288a81dbafe",
+      "bytes": 8550,
+      "error": null,
+      "url": "https://raw.githubusercontent.com/gtzheng/Awesome-Agentic-System-Design/main/README.md"
+    },
+    "alireza-2026": {
+      "ok": true,
+      "status": 200,
+      "etag": "\"32d02822dbd2048804b3d5693a6dea5aba2cf62f925018be316ceec5fe0e998e\"",
+      "last_modified": null,
+      "hash": "9d001ecc8973b581",
+      "bytes": 10083,
+      "error": null,
+      "url": "https://raw.githubusercontent.com/alirezadir/Agentic-AI-Systems/main/03_system_design/2026-agentic-ai-system-design.md"
+    },
+    "ai-created-ui": {
+      "ok": true,
+      "status": 200,
+      "etag": "\"22a056d88d1cd4d138d4a37dd61aeac9\"",
+      "last_modified": null,
+      "hash": "f85b5a90f50ada14",
+      "bytes": 432637,
+      "error": null,
+      "url": "https://ui.ai-created.com"
+    },
+    "curtis-contracts": {
+      "ok": true,
+      "status": 200,
+      "etag": null,
+      "last_modified": null,
+      "hash": "377a4d184fbf6761",
+      "bytes": 194276,
+      "error": null,
+      "url": "https://nathanacurtis.substack.com/p/component-contracts-and-schemas"
+    },
+    "curtis-collapse": {
+      "ok": true,
+      "status": 200,
+      "etag": null,
+      "last_modified": null,
+      "hash": "17ff8f86c6280a8a",
+      "bytes": 252219,
+      "error": null,
+      "url": "https://nathanacurtis.substack.com/p/configuration-collapse"
+    },
+    "curtis-feed": {
+      "ok": true,
+      "status": 200,
+      "etag": null,
+      "last_modified": null,
+      "hash": "6af78ae9404edfc6",
+      "bytes": 67493,
+      "error": null,
+      "url": "https://nathanacurtis.substack.com"
+    },
+    "anthropic-effective-agents": {
+      "ok": true,
+      "status": 200,
+      "etag": null,
+      "last_modified": null,
+      "hash": "1445567079328daa",
+      "bytes": 211314,
+      "error": null,
+      "url": "https://www.anthropic.com/engineering/building-effective-agents"
+    },
+    "mcp-spec": {
+      "ok": true,
+      "status": 200,
+      "etag": null,
+      "last_modified": null,
+      "hash": "0aeb05eb246c7e23",
+      "bytes": 286471,
+      "error": null,
+      "url": "https://modelcontextprotocol.io/specification/2025-06-18"
+    },
+    "a2a-announce": {
+      "ok": true,
+      "status": 200,
+      "etag": null,
+      "last_modified": null,
+      "hash": "561228f538e82617",
+      "bytes": 69331,
+      "error": null,
+      "url": "https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/"
+    }
+  }
+}

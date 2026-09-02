@@ -125,6 +125,19 @@ fewer than 2 unique targets (cap 2). Cursor and other surfaces call the CLI on d
 
 Epistemic-graph hygiene: stale claims, dangling `relations:` edges, orphan notes.
 See the module docstring; pairs with [[vault-graph-conventions]].
+
+## ds-source-watch.py
+
+Fetches the curated DS / agentic source list in `02-shared-references/ds-source-watch.json`
+and diffs content hashes. Report-first: never edits ontology. `--check` is the
+`/optimize` probe (no network). `--fetch` updates the snapshot under
+`07-projects/19-workspace-brain/reports/ds-source-watch/`. See [[ds-source-watch]].
+
+```
+python3 09-tools/ds-source-watch.py --check
+python3 09-tools/ds-source-watch.py --fetch
+```
+
 ---
 
 These tools assume only a git checkout + Python 3 — no Google Drive, no vendor-specific file bridge.

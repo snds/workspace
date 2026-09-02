@@ -31,6 +31,8 @@ relations:
     - "[[13-domain-rigor-stack]]"
     - "[[06-qa-operating-model]]"
     - "[[11-anticipatory-failure-analysis]]"
+  relates-to:
+    - "[[agentic-ds-context-model]]"
 ---
 
 # Agentic error correction: foundations for a second brain that refuses surprise

@@ -17,6 +17,10 @@ links:
 
 *The foundational lens for understanding, choosing, documenting, and composing **every component and pattern** a design system needs — and for making that understanding legible to humans, design tools, and AI agents alike. Where [[01-aesthetic-lens|Aesthetic Lens]] answers "why does this feel right?" and [[02-ui-ux-operational-framework|UI/UX Operational]] answers "how do we decide systematically?", this framework answers: **"what is each component **for**, when do I reach for it, why, and how do they work best together?"** It sits at the top tier, above any project-specific skill, and is the design-domain hub the README's "design-system work → 01, 02, 05, 06" row has been routing toward.*
 
+**Audience:** `for: all` on invariants and laws. Method decisions that are not style values
+(APCA/role-scale color, overlay emphasis, one-light elevation) live in
+[[idempotent-design-decisions]]. The DSDS 0.20 view of this framework is [[dsds-constitution]].
+
 ---
 
 ## The core conviction

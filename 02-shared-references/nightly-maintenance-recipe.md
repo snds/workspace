@@ -25,6 +25,8 @@ bootstrap-generator feedback pass (2026-07-23)._
    **not** auto-fix content — that needs judgment (`/health` with sign-off).
 3. **Rebuild indexes** — `build-related.py` → `build-registry.py` → `validate-integrity.py` →
    `validate-links.py` → `validate-workspace.py` (the standard chain; order matters — see framework #08).
+3b. **DS source freshness (optional)** — `python3 09-tools/ds-source-watch.py --check`. If P1,
+   leave a pointer; do **not** `--fetch` from nightly (network + judgment).
 4. **Commit + sync** — if clean, commit the mechanical updates and push (the session/auto-commit model
    already does this; the routine just guarantees a daily floor).
 

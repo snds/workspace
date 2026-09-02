@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 286,
+    "total": 287,
     "by_tier": {
       "cross-cutting": 40,
       "foundation": 22,
       "hub": 47,
-      "spoke": 177
+      "spoke": 178
     }
   },
   "skills": {
@@ -1168,7 +1168,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:410d1564348b6749ec279ea0646a38aeb234d1c721ef7b59560a5bcf4cb057f2"
+      "hash": "sha256:9fcc0096256fec70e4abb036ec9a3bdd8e74da3cb5802afc3635a2bd753ef10d"
     },
     "ds-bi-platforms": {
       "path": "03-skills/ds-bi-platforms/SKILL.md",
@@ -1389,6 +1389,40 @@
       "defers_to": [],
       "rigor_role": null,
       "hash": "sha256:42183b1e03d6a1e5a522f18b7b3d767d471bad5bed276228faf9cbec6d231050"
+    },
+    "ds-source-watch": {
+      "path": "03-skills/ds-source-watch/SKILL.md",
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "ds-advisor",
+      "prerequisites": [
+        "ds-advisor"
+      ],
+      "related": [
+        "design-system-ops",
+        "harness-map"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "source watch",
+        "ds source watch",
+        "latest ds thinking",
+        "refresh ds ontology",
+        "refresh ds sources",
+        "pj onori",
+        "onori"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "ds-advisor",
+        "framework-09"
+      ],
+      "rigor_role": "measurement",
+      "hash": "sha256:46caee320a6bfe2e74adf95fae1944e4c291c574975ca1db2f34c669cdcb6185"
     },
     "dynamic-gi-production": {
       "path": "03-skills/dynamic-gi-production/SKILL.md",
@@ -7600,6 +7634,11 @@
       "science-foundations",
       "lead-data-scientist",
       "ds-prompt-engineering"
+    ],
+    "ds-source-watch": [
+      "design-foundations",
+      "ds-advisor",
+      "ds-source-watch"
     ],
     "dynamic-gi-production": [
       "realtime-visual-craft",

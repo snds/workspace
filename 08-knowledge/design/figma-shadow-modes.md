@@ -4,6 +4,9 @@ status: living
 updated: 2026-08-05
 figma_file: o6o1ZuGHxDow2vHLuYXT6X
 related: [token-spec-page, density-radius-xxs-alignment, cross-surface-token-parity]
+relations:
+  exemplifies:
+    - "[[idempotent-design-decisions]]"
 ---
 
 # Figma shadow modes — single style, elevation modes

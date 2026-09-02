@@ -7,6 +7,9 @@ confidence: high
 sources: [session-log 2026-06-02, centric-ui Radix palette re-architecture]
 related_skills: [ds-advisor, design-engineer, figma-repo-sync-plugin]
 related_projects: [centric-ui VMS DS, figma-repo-sync-plugin]
+relations:
+  exemplifies:
+    - "[[idempotent-design-decisions]]"
 ---
 
 # Radix-derived color system — validated architecture

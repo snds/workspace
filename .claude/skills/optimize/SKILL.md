@@ -62,6 +62,7 @@ This workspace's seven surfaces:
 5. **Triggers / routing** — `python3 09-tools/build-trigger-routes.py --check`. Under-fire on a real prompt must be visible (dispatcher routing-coverage note, or Cursor says Layer 0 missed). Silence is not "nothing matched."
 6. **Validators** — `python3 09-tools/test-validators.py` plus the write-quality chain (`build-related` → `build-registry` → integrity → links → workspace)
 7. **Handoff** — Active-project `SESSION-STATE.md` Live handoff `_Last updated` older than 30 days; uncompacted session fragments in `06-context/sessions/`
+8. **DS source watch** — `python3 09-tools/ds-source-watch.py --check` (no network). P1 if the snapshot is missing or older than 30 days. Do **not** `--fetch` during `/optimize` unless Sean asked. Fetch + judgment is the `ds-source-watch` skill.
 
 Probe failures are P0 until the detector is green or the finding is triaged. Do not
 treat a green live-tree validator as proof the detector still has teeth; that is

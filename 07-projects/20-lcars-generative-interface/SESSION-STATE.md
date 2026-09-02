@@ -13,7 +13,7 @@ _Last updated: 2026-08-28 — cuespec names uncued residuals; prove engine vqa/1
 - **Working set**:
   - App: `sys47-literal.ts` + `renderers.css` (pinned plates + mid-band rules) + `SchematicPanel.tsx` (`assetSrcset`) + `scripts/capture-sys47.mjs` (DPR 2 + manifest) + re-cropped `public/northstars/S-SYS47-01/asset_msd{,@0.5x}.png`
   - Vault: cuespec (live contract + `uncued_residuals`), `*_build_v4.prove.{json,md}`, `S-SYS47-01.ledger.{json,md}`, `captures/S-SYS47-01_build_v4.png` + `.capture.json`, `03-skills/visual-prove-engine/` vqa/1.1, `03-skills/play-prove/`
-- **Last action**: Implemented perception-critique-stack course corrections 1–12 (engine + play-prove + LCARS residuals) and ran `/optimize`. Cursor Grok 4.6 / Cursor / Personal MBP
+- **Last action**: Course corrections 1–12 + `/optimize` merged to workspace `main` (`0f4228a`, 2026-08-28). Session-end 2026-09-02. Cursor Grok 4.6 / Cursor / Personal MBP
 - **Next action**: add measured cues for the four named residuals, then build to them; optional OCR on SYSTEM 47 / timestamp when tesseract is present
 - **Open decisions**: "Matches Literal" is measured within the 19-cue A-altitude contract. The residuals are named, not closed. Coverage remains 0.8421 (3 attested).
 - **Blocked on**: nothing for the course-correction landing; Ruffle/JPEXS still needs approve if motion track resumes
@@ -39,8 +39,8 @@ _Last updated: 2026-08-28 — cuespec names uncued residuals; prove engine vqa/1
 ### VCS state
 
 - **Branch (app)**: `cursor/lcars-generative-interface-a660` (verify with `git status` in app)
-- **Vault**: expect uncommitted skill/knowledge/project docs from 2026-08-09
-- **Test state at last check**: craft pass had tests green; green tests ≠ Literal match
+- **Vault**: `main` @ `0f4228a` (prove-engine + construction contract). SWF dumps remain local untracked.
+- **Test state at last check**: `vqa calibrate` 48/48 on merge; green tests ≠ residual coverage
 
 ### Active tooling / MCP bridges
 

@@ -4,6 +4,38 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-07-30 — SaaS PLM DataTable: plan reviewed, premise overturned, table copied in + comparison lab live
+
+SessionID: 2026-07-30-work-dt01
+--- SESSION BLOCK ---
+Date: 2026-07-30
+Machine: Work MacBook Pro (main)
+Surface: Claude Code (VS Code extension)
+Project(s): SaaS PLM prototype / centric-ui (employer — `centric-engineering` profile)
+Summary: Reviewed the DataTable contract plan against live source in three checkouts. Every survey number verified exactly (16 files / 11,784 lines / 2 aria / 0 role / 21 props), but the plan's premise was stale — `@centric/data-table` already ships in centric-ui `main` (TanStack v8 + react-virtual, ~19k lines, tested). Sean initially chose "contract arbitrates, proto consolidates", then **reversed it**: the goal is migratable parity, so the prototype should consume centric-ui's table as closely as possible, dependencies included. Copied the package in byte-identical, added a `~` alias so copies need no edits, and built a side-by-side comparison lab. Caught a runtime crash the build could not see.
+Artifacts:
+  - `05-artifacts/active/saas-proto_datatable-implementation-plan_v1.0_2026-07-28.md` — review + 9 work packages (SUPERSEDED in part by the reversal below; WP-0 findings still stand)
+  - `05-artifacts/active/saas-proto_datatable-wp0-alignment-memo_v1.0_2026-07-28.md` — send-ready memo, **not sent**
+  - Employer repo (uncommitted, branch `feat/datatable-centric-ui-foundation`): `CENTRIC-UI-SYNC.md`, 6 copied primitives, 166-file local copy of `src/app/features/dataTable/`, `src/table-lab.tsx` + `table-lab.html`
+Decisions:
+  - **Reversal (Sean):** prototype DOES take TanStack and centric-ui's deps. "Either we consume what they have or we duplicate it" — zero issue with the table + supporting deps being the prototype's dependencies. Supersedes the 2026-07-28 "proto never adopts TanStack" call and its `no @tanstack/*` tripwire.
+  - Prototype stays a separate repo for now — freedom over zero-drift; manual sync accepted until the move into centric-ui.
+  - Sync strategy: **byte-identical copies + a `~` → `src/app` alias**, so re-syncing is `cp` with no per-file port. Copied tree excluded from `ds:check` for the same reason `components/ui/` is.
+Learnings:
+  - `@centric/data-table` is **not standalone** — it reaches into its host app's `~/components/ui/*` and `~/lib/*` 41 times. Consuming the table means adopting the foundation under it.
+  - lingui is **runtime-only** here (no macros, inline English in `<Trans message>`), so no Vite plugin, no CLI, no catalogs. Earlier claim that it was a heavy build-time system was wrong.
+  - lucide 0.487 → 1.x verified additive: **106 icons checked, 0 missing.** date-fns 3→4 fixed a *pre-existing* peer break with `@base-ui/react`.
+  - **The build is not proof in this repo.** Build passed green while the lab rendered blank — nuqs needs a framework adapter. Only a real browser load found it. nuqs 2.9.3 does ship `adapters/react-router/v8`.
+  - Upstream finding: centric-ui's own `FilterOptionSearchInput.tsx:36` uses `h-9 rounded-md` — off the centric control scale. Recorded, not patched.
+Next:
+  - Employer branch is **uncommitted and unpushed** — review, then commit/PR (branch → PR → human review; never auto-commit).
+  - Put `MaterialsTable` (21 props) through the lab — the hard case where real differences will show.
+  - Revisit the contract's role: with one implementation, it becomes a requirements/acceptance doc, not an arbitration artifact.
+--- END SESSION BLOCK ---
+
+---
+
+
 ### 2026-07-30 — Unlock AI review; Open Engine close-out and a withdrawn runner
 
 SessionID: 2026-07-30-work-oe3f

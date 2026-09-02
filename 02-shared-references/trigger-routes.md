@@ -64,6 +64,12 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `mission fit` | 03-skills/mission-fit/SKILL.md — outcome/access/quality/evidence/supervision before trusting done; blocked ≠ substitute |
 | `false success` | 03-skills/mission-fit/SKILL.md — outcome/access/quality/evidence/supervision before trusting done; blocked ≠ substitute |
 | `trust done` | 03-skills/mission-fit/SKILL.md — outcome/access/quality/evidence/supervision before trusting done; blocked ≠ substitute |
+| `source watch` | 03-skills/ds-source-watch/SKILL.md — fetch curated DS/agentic sources; report-first, never auto-edit ontology |
+| `ds source watch` | 03-skills/ds-source-watch/SKILL.md — fetch curated DS/agentic sources; report-first, never auto-edit ontology |
+| `latest ds thinking` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/dsds/dsds-constitution.md |
+| `refresh ds ontology` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/idempotent-design-decisions.md |
+| `onori` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/dsds/dsds-constitution.md |
+| `pj onori` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/dsds/dsds-constitution.md |
 | `configuration collapse` | 08-knowledge/design/nathan-curtis-ds-ops-substack.md — slots over prop sprawl; AI-ready composition |
 | `figma slots` | 08-knowledge/design/nathan-curtis-ds-ops-substack.md — slots over prop sprawl; AI-ready composition |
 | `maintenance loop` | 08-knowledge/cross-domain/nate-jones-harness-enrichments.md + .claude/skills/optimize/SKILL.md |
@@ -193,6 +199,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `sec-threat-modeling` | cross-cutting | `threat model`, `stride`, `pasta`, `attack tree`, `trust boundary`, `data flow diagram` (+8) | `eng-foundations` → `lead-security-architect` → `sec-threat-modeling` |
 | `side-chat-handback` | cross-cutting | `handback`, `/handback`, `end side chat`, `close side chat`, `hand this back`, `hand back` (+2) | `side-chat-handback` |
 | `skill-placement` | cross-cutting | `create a skill`, `generate skill`, `make a skill`, `new skill`, `skill placement` | `skill-placement` |
+| `visual-prove-engine` | cross-cutting | `prove this build`, `cuespec`, `measured verdict`, `visual prove`, `rank builds`, `improvement ledger` (+7) | `design-foundations` → `lead-visual-qa` → `visual-prove-engine` |
 | `visual-qa-dataviz` | cross-cutting | `chart review`, `chart audit`, `dataviz qa`, `graph review`, `data table review`, `dashboard review` (+4) | `design-foundations` → `lead-visual-qa` → `visual-qa-dataviz` |
 | `visual-qa-motion` | cross-cutting | `motion qa`, `motion review`, `animation review`, `animation audit`, `jank review`, `janky animation` (+7) | `design-foundations` → `lead-visual-qa` → `visual-qa-motion` |
 | `visual-qa-toolkit` | cross-cutting | `visual qa`, `pixel diff`, `visual regression`, `screenshot audit`, `design qa`, `qa audit` (+1) | `design-foundations` → `lead-visual-qa` → `visual-qa-toolkit` |
@@ -200,4 +207,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 119 · Registry rows: 58_
+_Curated routes: 125 · Registry rows: 59_

@@ -1,7 +1,7 @@
 ---
 tags: [design-systems, components, contracts, schema, specs, governance, ai-context, tokens]
 created: 2026-07-28
-updated: 2026-07-28
+updated: 2026-09-01
 status: validated
 confidence: high
 sources:
@@ -10,9 +10,12 @@ sources:
   - "Christine Vallaure — *Design system contracts: the component lives in neither Figma nor code*"
   - "Christian Morales Achiardi — *Design systems are contracts, not libraries* (giorris.dev)"
   - "TJ Pitre / Southleft — *Use AI to Need Less AI*"
-  - "PJ Onori — **DSDS**, Design System Documentation Spec v0.15.2 (designsystemdocspec.org)"
+  - "PJ Onori — **DSDS**, Design System Documentation Spec v0.15.2 (designsystemdocspec.org); shape update to v0.20.0 recorded 2026-09-01"
 related_skills: [ds-advisor, design-engineer, ux-component-library, design-system-ops]
 related_projects: [02-centricPLM, 09-figma-repo-sync-plugin, centric-ui]
+relations:
+  relates-to:
+    - "[[agentic-ds-context-model]]"
 ---
 
 # Component contracts and schemas — the arbitration layer above component documentation
@@ -304,25 +307,42 @@ cost framing (~1 second and zero tokens per component for deterministic extracti
 ~100k tokens for an agentic pass) and the call to **converge on shared formats** rather than each team
 building its own pipeline.
 
-### 6d. PJ Onori — **DSDS** (Design System Documentation Spec, v0.15.2)
-**Adds the missing half of the stack, and it is a different layer than everything above.** DSDS models
-**documentation as data**: 6 entity types (components, design tokens, themes, foundations, patterns,
-guides) × **17 typed `kind` blocks** (anatomy, api, checklist, design-specifications, interactions,
-states, variants · accessibility, content, guidelines, imports, motion, principles, scale, sections,
-steps, use-cases). Principles: portability, one unified source for humans *and* parsers *and* agents,
-and scalability. *"DSDS has strong opinions, but it doesn't force them on you."*
+### 6d. PJ Onori — **DSDS** (Design System Documentation Spec)
 
-**The mapping onto our own framework is exact and worth remembering:**
+**Adds the missing half of the stack, and it is a different layer than everything above.** DSDS models
+**documentation as data**. Principles still hold: portability, one unified source for humans *and*
+parsers *and* agents, and scalability. *"DSDS has strong opinions, but it doesn't force them on you."*
+Documentation only — if a better source of truth exists (DTCG values, CEM/specs, Storybook, Figma),
+DSDS links rather than restating.
+
+**Shape as of 0.20.0 (fetched 2026-09-01).** The 2026-07-28 note described **v0.15.2**: 6 entity types
+(components, tokens, themes, foundations, patterns, guides) × 17 typed `kind` blocks (anatomy, api,
+checklist, design-specifications, interactions, states, variants, …). That description is historical.
+0.20.0 collapsed it:
+
+| 0.15.2 | 0.20.0 |
+|---|---|
+| 6 entity types | 5 well-known kinds: `system`, `component`, `token`, `theme`, `entry` (+ namespaced custom) |
+| 17 typed kind blocks | 3 section kinds (`guidelines`, `definitions`, `steps`) + generic `section` + `freeform` |
+| One implied audience | `for: human \| agent \| all` on every section |
+| Foundations / patterns / guides as first-class kinds | Those become `entry` or `shared[]` |
+
+Component-specific fields moved *out* of generic section kinds: `sourceFiles`, `specs` (CEM or
+equivalent), `traits` (boolean vs enum), `combos` (must / must-not pairing), `imports`. `$extensions`
+remains the escape hatch.
+
+**The mapping onto our own framework is still exact:**
 
 | Our layer | Its machine-readable form |
 |---|---|
-| Framework #09 **facets 1–17** (documentation) | **DSDS** |
+| Framework #09 **facets 1–17** (documentation) | **DSDS** (0.20 document as a *view*, not a second schema) |
 | Framework #09 **facet 18** (the arbitration record) | **Specs / DS Contracts** |
 | Token values | **DTCG** |
 
-So the three formats are **complements, not competitors** — a distinction easy to miss when they all
-call themselves "design system as data." If we ever want facets 1–17 as data rather than prose, adopt
-DSDS rather than inventing a shape.
+So the formats are **complements, not competitors** — a distinction easy to miss when they all
+call themselves "design system as data." If we want facets 1–17 as data rather than prose, adopt
+DSDS rather than inventing a shape. Projection, audience stamps, and `combos` encoding:
+[[agentic-ds-context-model]].
 
 ### 6e. The contract boundary — the one thing everyone agrees to leave OUT
 
@@ -545,3 +565,6 @@ growth, whenever it arrives. Ship narrow; keep the shape wide.
 - [[radix-derived-color-system]] · [[figma-tailwind-token-pipeline]] — token-layer precedent for
   "one theme-control point" (Gate 2 applied to tokens)
 - [[adversarial-verify-label-volatility]] — why verification design matters more than verifier volume
+- [[agentic-ds-context-model]] — 2026-09-01 remap onto DSDS 0.20 + agentic harness specs; three-graph rule
+- [[dsds-constitution]] — project-independent DSDS 0.20 view (combos + `for:` stamps)
+- [[idempotent-design-decisions]] — standing methods; not a contract and not style values

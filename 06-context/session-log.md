@@ -23,7 +23,92 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
+
+> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
+
 ---
+
+### 2026-09-02 — Ontology and knowledge graphs for agents
+
+SessionID: 2026-09-02-voyager-ontkg
+--- SESSION BLOCK ---
+Date: 2026-09-02
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain (teaching; no project files changed)
+Summary: Explained ontology (shared types and legal relations) vs knowledge graph (typed facts in that vocabulary), and how agents use classify → traverse → constrain → write-back instead of dumping similar text. Mapped the same split onto this vault: workspace-ontology + skill frontmatter as schema; registry load_chains, routing map, and epistemic `relations:` as the graphs; retrieval finds candidates, types decide what may act.
+Decisions:
+  - Career-ops trigger on the letter `i` treated as a misfire; did not load job-search skills
+Next:
+  - Sean picks a follow-up if wanted: walk one vault decision through the graph; contrast ontology+graph vs RAG/skills/memory; or sketch a domain graph (PLM / LCARS / tokens) on top of the workspace ontology
+--- END BLOCK ---
+
+### 2026-09-02 — Prove-engine merge close + DSDS persist
+
+SessionID: 2026-09-02-voyager-e4f1a
+--- SESSION BLOCK ---
+Date: 2026-09-02
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain, 20-lcars-generative-interface
+Summary: Closed the prove-engine thread (vqa/1.1 altitudes A–G, play-prove, /optimize, LCARS uncued residuals) already merged to main as 0f4228a. Persisted the 2026-09-01 project-independent DSDS constitution + ds-source-watch landing that was still sitting staged. Folded the 2026-08-26 Looney Tunes fragment into session-log.
+Artifacts:
+  - 03-skills/visual-prove-engine/ vqa/1.1 + 03-skills/play-prove/ (on main via 54a2efe / 0f4228a)
+  - 02-shared-references/dsds/dsds-constitution.md + workspace-ds-constitution.dsds.yaml
+  - 02-shared-references/idempotent-design-decisions.md + 03-skills/ds-source-watch/ + 09-tools/ds-source-watch.py
+Decisions:
+  - Personal-solo merge to main, not a PR; SWF dumps stay untracked
+  - DS constitution is project-independent; projects extend it, they do not fork it
+Evidence:
+  - prove-engine merge @ github.com/snds/workspace main 0f4228a — verified
+Pending resolved:
+  - Prove-engine course corrections 1–12 + /optimize landed on origin/main
+Next:
+  - Run `python3 09-tools/ds-source-watch.py --fetch` when the first snapshot should be judged
+  - LCARS: add measured cues for the four named uncued residuals, then build to them
+--- END BLOCK ---
+
+
+### 2026-08-26 — Looney Tunes loudness analysis + full subtitle coverage
+
+SessionID: 2026-08-26-voyager-b7191a1
+--- SESSION BLOCK ---
+Date: 2026-08-26
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Claude Fable 5
+Project(s): 01-mediaservices
+Summary: Measured EBU R128 loudness for all 2,919 Looney Tunes files plus watched reference titles; derived a -21.9 LUFS reference target and a -6.6 dB best nominal gain for the set Plex actually plays. Found the real problem is spread, not level: Plex prefers the unmanaged dump folder for 1,035 of 1,064 episodes (15.1 dB p10-p90 spread) while the Sonarr-managed twins are already leveled (1.7 dB spread, nominal -7.4 dB). Separately closed the subtitle gap on played copies: 781 sidecars placed (721 copied from managed twins, 46 extracted from embedded tracks, 14 subgen/whisper), final audit 1,064/1,064 covered, 0 uncovered.
+Artifacts:
+  - Server /mnt/user/appdata/media-sentinel/loudness/ — results.jsonl (2,919 measurements), summary.json, gains.csv (per-file clip-safe gains), plex-preferred.json (episode → played file map), subtitle-sync-journal.txt (781-line delete-list of every sidecar placed)
+  - Canvas looney-tunes-loudness.canvas.tsx (Cursor, MediaSentinel project) — full analysis
+  - MediaSentinel repo scratch/loudness-scan.py + scratch/loudness-analyze.py (gitignored scratch)
+Decisions:
+  - Loudness fix recommendation: point Plex at the managed copies (MediaSentinel dedupe path) then apply one nominal gain of -7.4 dB, instead of per-file gain edits on 1,871 dump files
+  - Subtitle quality order enforced: human sidecar > extracted embedded > whisper; nothing overwritten, every placement journaled for reversal
+  - subgen used only for the 14 episodes with no human-made source anywhere
+Pending added:
+  - User decision: adopt dedupe-to-managed recommendation vs per-file gains from gains.csv
+  - If dedupe chosen: run MediaSentinel duplicate adjudication on the two Looney Tunes folders
+Pending resolved:
+  - (none from prior baton)
+Next:
+  - Await user's pick on the loudness remediation path; gains.csv is ready either way
+Git: MediaSentinel repo untouched (scratch/ + docs/ only, uncommitted); workspace this commit
+--- END BLOCK ---
+
+---
+
+## Evening continuation: consolidation executed
+
+Looney Tunes consolidated to the single Sonarr folder (1,062 files, Plex rebuilt show as ratingKey 40463, zero dupes, 100% subs, loudness leveled). The Orville / Firefly / 12 Monkeys duplicate folders resolved by MediaSentinel adjudication; 16 empty leftover folders deleted.
+
+Incident: 184 quality-upgrade source files destroyed (ffmpeg `.part` format-inference failure followed by an unconditional graveyard sweep). Library not degraded; upgrade list saved to `lost-upgrades.json` for Sonarr re-grab. Lessons journaled in project SESSION-STATE: explicit `-f` on temp outputs, sweeps gate on zero errors, review decisions before deletions, smoke-test destructive batches.
+
+Repo: parser fix (4-digit year-seasons, S00 specials) and grouping fix (yearless names merge into sole year variant) with tests; suite 578 green, uncommitted.
+
 
 ### 2026-08-11 — cui ViewToolbar bg-card consistency
 
@@ -592,34 +677,3 @@ Next:
   - Deepen Materials domain cells on the recipe
   - Layer C = file/send upstream findings; WP-0 memo still unsent
 --- END SESSION BLOCK ---
-
-### 2026-07-30 — SaaS PLM DataTable: plan reviewed, premise overturned, table copied in + comparison lab live
-
-SessionID: 2026-07-30-work-dt01
---- SESSION BLOCK ---
-Date: 2026-07-30
-Machine: Work MacBook Pro (main)
-Surface: Claude Code (VS Code extension)
-Project(s): SaaS PLM prototype / centric-ui (employer — `centric-engineering` profile)
-Summary: Reviewed the DataTable contract plan against live source in three checkouts. Every survey number verified exactly (16 files / 11,784 lines / 2 aria / 0 role / 21 props), but the plan's premise was stale — `@centric/data-table` already ships in centric-ui `main` (TanStack v8 + react-virtual, ~19k lines, tested). Sean initially chose "contract arbitrates, proto consolidates", then **reversed it**: the goal is migratable parity, so the prototype should consume centric-ui's table as closely as possible, dependencies included. Copied the package in byte-identical, added a `~` alias so copies need no edits, and built a side-by-side comparison lab. Caught a runtime crash the build could not see.
-Artifacts:
-  - `05-artifacts/active/saas-proto_datatable-implementation-plan_v1.0_2026-07-28.md` — review + 9 work packages (SUPERSEDED in part by the reversal below; WP-0 findings still stand)
-  - `05-artifacts/active/saas-proto_datatable-wp0-alignment-memo_v1.0_2026-07-28.md` — send-ready memo, **not sent**
-  - Employer repo (uncommitted, branch `feat/datatable-centric-ui-foundation`): `CENTRIC-UI-SYNC.md`, 6 copied primitives, 166-file local copy of `src/app/features/dataTable/`, `src/table-lab.tsx` + `table-lab.html`
-Decisions:
-  - **Reversal (Sean):** prototype DOES take TanStack and centric-ui's deps. "Either we consume what they have or we duplicate it" — zero issue with the table + supporting deps being the prototype's dependencies. Supersedes the 2026-07-28 "proto never adopts TanStack" call and its `no @tanstack/*` tripwire.
-  - Prototype stays a separate repo for now — freedom over zero-drift; manual sync accepted until the move into centric-ui.
-  - Sync strategy: **byte-identical copies + a `~` → `src/app` alias**, so re-syncing is `cp` with no per-file port. Copied tree excluded from `ds:check` for the same reason `components/ui/` is.
-Learnings:
-  - `@centric/data-table` is **not standalone** — it reaches into its host app's `~/components/ui/*` and `~/lib/*` 41 times. Consuming the table means adopting the foundation under it.
-  - lingui is **runtime-only** here (no macros, inline English in `<Trans message>`), so no Vite plugin, no CLI, no catalogs. Earlier claim that it was a heavy build-time system was wrong.
-  - lucide 0.487 → 1.x verified additive: **106 icons checked, 0 missing.** date-fns 3→4 fixed a *pre-existing* peer break with `@base-ui/react`.
-  - **The build is not proof in this repo.** Build passed green while the lab rendered blank — nuqs needs a framework adapter. Only a real browser load found it. nuqs 2.9.3 does ship `adapters/react-router/v8`.
-  - Upstream finding: centric-ui's own `FilterOptionSearchInput.tsx:36` uses `h-9 rounded-md` — off the centric control scale. Recorded, not patched.
-Next:
-  - Employer branch is **uncommitted and unpushed** — review, then commit/PR (branch → PR → human review; never auto-commit).
-  - Put `MaterialsTable` (21 props) through the lab — the hard case where real differences will show.
-  - Revisit the contract's role: with one implementation, it becomes a requirements/acceptance doc, not an arbitration artifact.
---- END SESSION BLOCK ---
-
----

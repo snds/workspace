@@ -5,6 +5,7 @@ created: 2026-06-17
 links:
   - "[[09-component-and-pattern-framework]]"
   - "[[ux-component-library]]"
+  - "[[idempotent-design-decisions]]"
 ---
 
 # Design-System `AGENTS.md` Binding
@@ -43,6 +44,10 @@ Drop the block below into a project's root `AGENTS.md` (and/or `.cursor/rules`, 
 - Work WITHIN this project's system: if it lacks a token/feature you need, derive minimally inside
   its constraints and record the gap (backlog / Known Gaps / DDR) — never import another design
   system's conventions to fill it. Token gaps are backloggable; a11y compliance is never deferred.
+- Standing *methods* (not this project's look) — see workspace `idempotent-design-decisions`:
+  APCA governs pairings and must not mutate curated primitives; interaction/emphasis is an overlay
+  on the existing fill; elevation is one implied light (geometry by step, opacity by theme).
+- Contrast: APCA (Lc) is the pairing target; WCAG 2.2 AA is the legal fallback. No color-alone.
 
 **Trust levels:**
 - Deterministic (trust): MCP data, DESIGN.md tokens, Code Connect mappings, lint output.

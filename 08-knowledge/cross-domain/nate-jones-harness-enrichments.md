@@ -9,6 +9,9 @@ sources:
   - natesnewsletter.substack.com (authenticated scan 2026-08-07)
 related_skills: [harness-map, mission-fit, open-agent-engine, workspace-bootstrap]
 related_projects: [19-workspace-brain]
+relations:
+  relates-to:
+    - "[[agentic-ds-context-model]]"
 ---
 
 # Nate Jones harness enrichments — absorbed into this workspace

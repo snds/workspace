@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-08-28 — prove engine vqa/1.1 + play-prove merged to main; calibrate 48/48_
+_Last updated: 2026-09-02 — session-end; prove-engine on main; DSDS + source-watch persisted_
 
 ---
 
@@ -8,29 +8,29 @@ _Last updated: 2026-08-28 — prove engine vqa/1.1 + play-prove merged to main; 
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: Independent measurement or refuse the done-claim, now including the metric ladder. `visual-prove-engine` is `vqa/1.1` (prove/compare/motion/interact/mesh/geometry/judge/score/calibrate): altitudes A–G, FLIP beside SSIM, optional DreamSim, saliency+OCR, glTF mesh fail-closed, geometric consistency on ≥2 views, interact critic cannot override a pixel fail, tracks + input-to-photon, capture `renderer` warning (not unverified). Sibling [[play-prove]] is altitude G (win-rate / no dominant strategy), not a `vqa` subcommand. Calibration **48/48**. Knowledge: [[perception-critique-stack]] + [[measured-visual-verdicts]]. A VLM description is testimony, not measurement; Literal stays on A. Harness-map cycle closed 2026-08-10.
-- **Current focus**: Ordinary visual work should load altitudes from the cuespec. `/optimize` ran 2026-08-28.
-- **Working set**: `03-skills/visual-prove-engine/`; `03-skills/play-prove/`; `08-knowledge/research/perception-critique-stack.md`; `harness-map_v1.0_2026-08-07.md` + stamp.
-- **Last action (2026-08-28):** Implemented course corrections 1–12, ran `/optimize`, merging to `main`. Cursor Grok 4.6 / Cursor / Personal MBP.
-- **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt. Need `--tools` / `--disallowed-tools` before any scheduled runner.
-- **Next action:** Next visual session uses `vqa prove` (and `play-prove` when the question is feel/balance). Optional [[mission-fit]] on one unreliable done. Retest harness-map #5 on next plugin publish; revisit #8 ~2026-09-07.
-- **Open decisions:** knowledge-only vs later `agent-verification-loop` skill if skips persist; whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat). Capture manifests without `renderer` stay **verified** with a warning (LCARS v4).
-- **Blocked on:** nothing for the course-correction landing. Open Engine personal lane still `not-registered` on this machine (optimize P1). Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
+- **TL;DR (for future agent)**: DS constitution is project-independent. Three graphs still must not mix. Standing *methods* (not style) live in [[idempotent-design-decisions]]: APCA/role-scale color, overlay emphasis, one-light elevation. Values stay in the target system. DSDS 0.20 view + combos: [[dsds-constitution]]. Source review is `ds-source-watch` (report-first). Prove-engine baton unchanged (`vqa/1.1`, Literal on A).
+- **Current focus**: First `--fetch` of ds-source-watch + Sean's judgment on any changed sources. Projects extend the constitution; they do not fork it.
+- **Working set**: [[idempotent-design-decisions]]; [[dsds-constitution]] + YAML; `03-skills/ds-source-watch/`; `09-tools/ds-source-watch.py`; [[agentic-ds-context-model]].
+- **Last action (2026-09-02):** `/session-end`. Prove-engine merge already on origin/main (`0f4228a`). Persisting DSDS constitution + source-watch. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt. Need `--tools` / `--disallowed-tools` before any scheduled runner. Source-watch `--fetch` is on-demand, not a cron.
+- **Next action:** Run `python3 09-tools/ds-source-watch.py --fetch` when you want the first snapshot judged. Or return to `vqa prove` on visual work. Retest harness-map #5 on next plugin publish; revisit #8 ~2026-09-07.
+- **Open decisions:** Whether a later generator should emit the DSDS YAML from vault files (YAML is hand-authored today). knowledge-only vs later `agent-verification-loop` skill if skips persist; Mission Fit auto-mint (default: only when claimable work must survive the chat).
+- **Blocked on:** nothing for this landing. Open Engine personal lane still `not-registered` on this machine (optimize P1). Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`.
-- **Agent thread**: `… → close @ 6b92c1a` → `Cursor Grok 4.5 / Cursor / Work MBP (2026-08-10): session-end` → `Cursor Grok 4.6 / Cursor / Personal MBP (2026-08-28): vqa/1.1 + play-prove + /optimize`.
+- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Personal MBP (2026-08-28): vqa/1.1 merge 0f4228a` → `(2026-09-01): DS ontology remap + constitution + source watch` → `(2026-09-02): session-end`.
 
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
-- **Machine**: Work MacBook Pro (`CS-K746DRWXY1`) this session; Personal MBP remains the other primary.
-- **OS context**: macOS (Darwin 25.6.0)
+- **Machine**: Personal MacBook Pro (`Voyager-2.local`) this session; Work MBP remains the other primary.
+- **OS context**: macOS (Darwin 25.5.0)
 - **Workspace root**: resolve via nearest `AGENTS.md` (this checkout)
 - **Project root**: `07-projects/19-workspace-brain`
 
 ### VCS state
-- **Branch**: `main` (merge of `cursor/lcars-generative-interface-a660`)
-- **Uncommitted at baton write**: none after this merge
-- **Test state at last check (2026-08-28):** merged tree green — integrity/links (286 skills)/workspace/capabilities (20 caps, 29 wirings), `test-validators.py` 10/10, `vqa calibrate` 48/48.
+- **Branch**: `main` @ session-end commit (push with this fragment)
+- **Uncommitted at baton write**: session fragment + this SESSION-STATE + DSDS/source-watch persist
+- **Test state at last check (2026-08-28):** merged tree green — integrity/links/workspace/capabilities, `test-validators.py` 10/10, `vqa calibrate` 48/48. Re-run write-quality chain on this persist.
 
 ### Open work and paused threads
 - **Currently in progress**: error-correction items 1–5 landed; watch for skip-after-close.
@@ -47,6 +47,33 @@ _Last updated: 2026-08-28 — prove engine vqa/1.1 + play-prove merged to main; 
 ---
 
 ## Session history (append-only)
+
+### 2026-09-02 — session-end
+
+**Focus this session**: Close the prove-engine merge thread; persist DSDS constitution + ds-source-watch.
+**Machine**: Personal MacBook Pro (`Voyager-2.local`) · Cursor Grok 4.6 · Cursor
+**Stopped because**: Sean asked to end session.
+
+**Accomplishments**:
+- Prove-engine vqa/1.1 + play-prove + LCARS residuals merged to origin/main (`0f4228a`)
+- DSDS constitution + idempotent method decisions + source-watch skill/script persisted
+- Looney Tunes 2026-08-26 fragment folded into session-log
+
+**Next resumption needs**:
+- `python3 09-tools/ds-source-watch.py --fetch` when Sean wants the first snapshot judged
+
+### 2026-08-28 — checkpoint (prove engine vqa/1.1)
+
+**Focus this session**: Course corrections 1–12 from perception-critique-stack; `/optimize`; commit and merge.
+**Machine**: Personal MacBook Pro (`Voyager-2.local`) · Cursor Grok 4.6 · Cursor
+**Stopped because**: merge landed; session-end deferred to 2026-09-02.
+
+**Accomplishments**:
+- Prove engine altitudes A–G, FLIP, fail-closed mesh/geometry, play-prove, named uncued residuals
+- Calibrate 48/48; merge commit `0f4228a` on `main`
+
+**Next resumption needs**:
+- Visual work uses `vqa prove`; LCARS residuals still unmeasured
 
 ### 2026-08-26 — checkpoint (error-correction items 1–5)
 

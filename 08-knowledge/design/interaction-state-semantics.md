@@ -7,6 +7,9 @@ confidence: high
 sources: [session 2026-07-31 Figma density/interaction work, Centric SaaS PLM DS o6o1ZuGHxDow2vHLuYXT6X]
 related_skills: [ds-advisor, design-engineer, lead-ux-designer]
 related_projects: [Centric SaaS PLM Design System, centric-ui]
+relations:
+  exemplifies:
+    - "[[idempotent-design-decisions]]"
 ---
 
 # Interaction state semantics — the overlay model

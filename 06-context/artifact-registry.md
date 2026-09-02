@@ -1,18 +1,18 @@
 # Artifact Registry
 <!-- Auto-maintained by Claude. Updated after each task. -->
-<!-- Last updated: 2026-07-09 | Session: Workspace fix session (FX-1..FX-14 applied) -->
+<!-- Last updated: 2026-09-02 | Session: prove-engine merge close + DSDS persist -->
 
 ## LCARS Generative Interface — 07-projects/20-lcars-generative-interface/ (git-tracked)
 
-### 20-lcars-generative-interface/ (README.md + SESSION-STATE.md + SPEC.md + notes/)
-- **Purpose**: Project home for the generative LCARS interface (design → plan → implementation pointers). Spec captures constitution-first Scene IR architecture, combadge roles, APCA+AA, data-first 3D viewports.
-- **Last modified**: 2026-08-07 — scaffolded from Cursor Cloud Agent design session; status Planning pending Sean's SPEC review.
+### 20-lcars-generative-interface/ (README.md + SESSION-STATE.md + SPEC.md + docs/construction/)
+- **Purpose**: Project home for the generative LCARS interface (design → plan → implementation pointers). Spec captures constitution-first Scene IR architecture, combadge roles, APCA+AA, data-first 3D viewports. Construction pack holds cuespec, IR, prove reports, and captures for S-SYS47-01.
+- **Last modified**: 2026-08-28 — Literal prove v4 + named uncued residuals; prove-engine vqa/1.1 on `main` (`0f4228a`).
 
 ## Workspace Brain — 07-projects/19-workspace-brain/ (git-tracked)
 
-### 19-workspace-brain/ (README.md + SESSION-STATE.md + notes/)
+### 19-workspace-brain/ (README.md + SESSION-STATE.md + notes/ + reports/)
 - **Purpose**: Standing project home for workspace-subject sessions (validation, fix, migration, infrastructure) per the framework #08 project-home rule (FX-13). Git-tracked — cross-machine continuity is its point.
-- **Last modified**: 2026-07-09 — scaffolded during the fix session; SESSION-STATE carries the FX-1..FX-14 live handoff; registered in project-context.md; routed via dispatcher (`workspace brain` / `workspace fix` / `workspace validation`).
+- **Last modified**: 2026-09-02 — DSDS constitution + `reports/ds-source-watch/latest.json`; SESSION-STATE baton current.
 
 ## Delivery Playbooks — 02-shared-references/delivery-playbooks/
 

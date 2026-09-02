@@ -55,6 +55,20 @@ Defined in `02-shared-references/delivery-playbooks/` ([[02-shared-references/de
 `encodes-into`. Only `foundation →` carries load precedence; the rest are navigational. All edges are
 **reciprocal** (CI-enforced).
 
+### Three graphs (do not cross)
+1. **Skill-load** — `## Related` on skills (`foundation` / `hub` / `spoke` / `governed-by` / …).
+2. **Epistemic** — `relations:` on knowledge and decisions (`builds-on` / `refutes` / …).
+3. **DS artifact** — DSDS 0.20 entries (`system` / `component` / `token` / `theme` / `entry` / `shared`).
+   Portable view: [[dsds-constitution]]. Do not mix edge vocabularies.
+
+### Idempotent design decisions (method, not style)
+A **design method** that stays true if the brand, framework, or repo changes. Not a hex, radius,
+or typeface. Canonical: [[idempotent-design-decisions]] (APCA/role-scale color, overlay emphasis,
+one-light elevation). A project's `DESIGN.md` still owns look. When a target system lacks a token
+the method needs, derive inside *its* grammar and backlog the gap — do not import another system's
+values. Audience stamps (`for: human | agent | all`) live on DSDS sections and on
+`## For future agent` blocks; see [[vault-graph-conventions]].
+
 ## The routing map — "where does this belong?"
 
 Consult before any write. Mirrored (compressed) in [[AGENTS]] and expanded with rationale in
@@ -70,6 +84,8 @@ Consult before any write. Mirrored (compressed) in [[AGENTS]] and expanded with 
 | A reusable "when X, do Y" capability | `03-skills/<name>/SKILL.md` | frontmatter v2 + `## Related` |
 | A cross-cutting method / lens / operating model | `01-frameworks/` | new framework only if 3+ consumers |
 | A durable standard / spec / vocabulary | `02-shared-references/` | additive |
+| A standing design *method* (not a project's look) | `02-shared-references/idempotent-design-decisions.md` + DSDS `shared[]` | method here; values in the target system |
+| A portable DS documentation view | `02-shared-references/dsds/` (DSDS 0.20) | view of facets 1–17; not a contract |
 | Why a structural choice was made | `06-context/memory/` (`type: decision`) | decision record |
 | A generated deliverable | `05-artifacts/` | versioned, never overwrite |
 | An actual repo / codebase / non-Figma working file or asset | the platform-relative `Projects/` dir (resolve to the local checkout per device) | never inside this workspace; never hardcode the path |

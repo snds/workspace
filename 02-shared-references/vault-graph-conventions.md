@@ -17,6 +17,7 @@ a pile of loosely-linked notes. Companion to the freshness rule in
   open with a **`## For future agent`** retrieval block. Both are optional-but-encouraged on
   knowledge entries and decisions; skip them on ephemeral logs.
 - **As of:** 2026-07 · **Status:** current
+- **Audience:** `for: agent`
 
 ---
 
@@ -61,6 +62,15 @@ with a short block written **for the next agent's retrieval**, not for human rea
 Token-frugal by design (the workspace's #1 priority): an agent reads this block, then decides
 whether the rest is worth the tokens. It also front-loads the recency markers so stale content
 announces itself.
+
+**Audience stamp (DSDS 0.20 `for:`).** Add one line when the note is durable:
+
+- `**Audience:** for: agent` — retrieval / routing / anti-hallucination notes
+- `**Audience:** for: all` — laws, floors, invariants (humans and agents)
+- Omit or `for: human` — narrative rationale (agents may still read it)
+
+Do not bulk-rewrite the vault. Stamp notes as they are touched. The machine-readable
+projection of these stamps is [[dsds-constitution]].
 
 ---
 
