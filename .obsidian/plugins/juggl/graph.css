@@ -1,0 +1,43 @@
+/* Juggl node colors — keep hues in sync with .obsidian/graph.json.
+   Later rules win. YAML `title` is the readable label; skills already
+   overwrite Cytoscape `name` with frontmatter `name:`. */
+
+node[path ^= "00-bootstrap/"] { background-color: #64748B; }
+node[path ^= "01-frameworks/"] { background-color: #8B5CF6; }
+node[path ^= "02-shared-references/"] { background-color: #6366F1; }
+node[path ^= "03-skills/"] { background-color: #FB923C; }
+node[path ^= "04-preferences/"] { background-color: #FB7185; }
+node[path ^= "05-artifacts/"] { background-color: #94A3B8; }
+node[path ^= "06-context/"] { background-color: #FBBF24; }
+node[path ^= "07-projects/"] { background-color: #38BDF8; }
+node[path ^= "08-knowledge/"] { background-color: #C084FC; }
+node[path ^= "09-tools/"] { background-color: #84CC16; }
+
+node[path ^= "03-skills/found-"],
+node[path *= "-foundations/"] { background-color: #F97316; }
+node[path ^= "03-skills/lead-"] { background-color: #3B82F6; }
+node[path ^= "03-skills/ux-"],
+node[path ^= "03-skills/uid-"] { background-color: #22D3EE; }
+node[path ^= "03-skills/a11y-"],
+node[path ^= "03-skills/visual-qa-"] { background-color: #E879F9; }
+
+node[path $= "SESSION-STATE.md"] { background-color: #4ADE80; }
+
+node[path $= "AGENTS.md"],
+node[path $= "CLAUDE.md"],
+node[path $= "CURSOR.md"],
+node[path $= "PERPLEXITY.md"],
+node[path $= "llms.txt"] { background-color: #EF4444; }
+
+node[path $= "_HOME.md"],
+node[path $= "_MOC.md"],
+node[path $= "_INDEX.md"],
+node[path $= "_SKILLS.md"],
+node[path $= "_PROJECTS.md"],
+node[path $= "_CONTEXT.md"],
+node[path $= "_FRAMEWORKS.md"],
+node[path $= "_CHEATSHEET.md"] { background-color: #2DD4BF; }
+
+node[title] {
+  label: data(title);
+}

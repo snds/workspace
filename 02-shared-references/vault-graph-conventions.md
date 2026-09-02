@@ -49,8 +49,9 @@ superseded claim is *marked* superseded instead of silently lingering.
 > contexts ([[domain-constitutions]]). They coexist; do not mix edge vocabularies.
 
 Obsidian Graph View is a fourth picture: it only draws markdown `[[wikilinks]]` (and markdown
-hrefs to `.md` files). Dataview is not an edge. `SKILL.md` / `SESSION-STATE.md` stems collide
-unless path-qualified. Expected satellite islands are listed in [[00-bootstrap/OBSIDIAN-SETUP]].
+hrefs to `.md` files). Dataview is not an edge. Native Graph labels are filename stems, so
+`SKILL.md` / `SESSION-STATE.md` collide unless you hover the path. Juggl is the alias-label
+view (YAML `name` / `title`). Color groups + filter recipes: [[00-bootstrap/OBSIDIAN-SETUP]].
 
 ## 2. The `## For future agent` preamble
 

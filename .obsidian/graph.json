@@ -1,6 +1,6 @@
 {
   "collapse-filter": false,
-  "search": "-file:LICENSE -file:CHANGELOG -file:README -path:_archive -file:desktop -file:.DS_Store -file:Thumbs",
+  "search": "-file:LICENSE -file:CHANGELOG -file:README -path:_archive -file:desktop -file:.DS_Store -file:Thumbs -path:copilot -path:03-skills/design-system-ops/skills",
   "showTags": true,
   "showAttachments": true,
   "hideUnresolved": false,
@@ -8,24 +8,17 @@
   "collapse-color-groups": false,
   "colorGroups": [
     {
-      "query": "file:\"CLAUDE.md\"",
+      "query": "file:\"_HOME.md\" OR file:\"_MOC.md\" OR file:\"_INDEX.md\" OR file:\"_SKILLS.md\" OR file:\"_PROJECTS.md\" OR file:\"_CONTEXT.md\" OR file:\"_FRAMEWORKS.md\" OR file:\"_CHEATSHEET.md\" OR tag:#moc",
+      "color": {
+        "a": 1,
+        "rgb": 3003583
+      }
+    },
+    {
+      "query": "file:\"AGENTS.md\" OR file:\"CLAUDE.md\" OR file:\"CURSOR.md\" OR file:\"PERPLEXITY.md\" OR file:\"llms.txt\"",
       "color": {
         "a": 1,
         "rgb": 15680580
-      }
-    },
-    {
-      "query": "tag:#moc",
-      "color": {
-        "a": 1,
-        "rgb": 2282478
-      }
-    },
-    {
-      "query": "path:\"01-frameworks/\"",
-      "color": {
-        "a": 1,
-        "rgb": 10980346
       }
     },
     {
@@ -36,10 +29,31 @@
       }
     },
     {
-      "query": "path:\"06-context/\"",
+      "query": "path:\"03-skills/found-\" OR path:\"-foundations/\"",
       "color": {
         "a": 1,
-        "rgb": 16436245
+        "rgb": 16347926
+      }
+    },
+    {
+      "query": "path:\"03-skills/lead-\"",
+      "color": {
+        "a": 1,
+        "rgb": 3900150
+      }
+    },
+    {
+      "query": "path:\"03-skills/ux-\" OR path:\"03-skills/uid-\"",
+      "color": {
+        "a": 1,
+        "rgb": 2282478
+      }
+    },
+    {
+      "query": "path:\"03-skills/a11y-\" OR path:\"03-skills/visual-qa-\"",
+      "color": {
+        "a": 1,
+        "rgb": 15235577
       }
     },
     {
@@ -50,30 +64,79 @@
       }
     },
     {
-      "query": "path:\"03-skills/found-\" OR path:\"-foundations/\"",
+      "query": "path:\"08-knowledge/\"",
       "color": {
         "a": 1,
-        "rgb": 16755200
+        "rgb": 12616956
       }
     },
     {
-      "query": "path:\"03-skills/lead-\"",
+      "query": "path:\"01-frameworks/\"",
       "color": {
         "a": 1,
-        "rgb": 3447003
+        "rgb": 9133302
       }
     },
     {
-      "query": "path:\"03-skills/a11y-\" OR path:\"03-skills/visual-qa-\"",
+      "query": "path:\"02-shared-references/\"",
       "color": {
         "a": 1,
-        "rgb": 15277667
+        "rgb": 6514417
+      }
+    },
+    {
+      "query": "path:\"00-bootstrap/\"",
+      "color": {
+        "a": 1,
+        "rgb": 6583435
+      }
+    },
+    {
+      "query": "path:\"06-context/\"",
+      "color": {
+        "a": 1,
+        "rgb": 16498468
+      }
+    },
+    {
+      "query": "path:\"07-projects/\"",
+      "color": {
+        "a": 1,
+        "rgb": 3718648
+      }
+    },
+    {
+      "query": "path:\"04-preferences/\"",
+      "color": {
+        "a": 1,
+        "rgb": 16478597
+      }
+    },
+    {
+      "query": "path:\"05-artifacts/\"",
+      "color": {
+        "a": 1,
+        "rgb": 9741240
+      }
+    },
+    {
+      "query": "path:\"09-tools/\"",
+      "color": {
+        "a": 1,
+        "rgb": 8702998
+      }
+    },
+    {
+      "query": "path:\"03-skills/\"",
+      "color": {
+        "a": 1,
+        "rgb": 16096779
       }
     }
   ],
   "collapse-display": false,
   "showArrow": true,
-  "textFadeMultiplier": 0.5,
+  "textFadeMultiplier": 0.2,
   "nodeSizeMultiplier": 1,
   "lineSizeMultiplier": 1,
   "collapse-forces": false,

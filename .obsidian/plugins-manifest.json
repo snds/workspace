@@ -36,6 +36,11 @@
       "id": "periodic-notes",
       "repo": "liamcain/obsidian-periodic-notes",
       "description": "Daily/weekly/monthly notes with templating. Powers /today scheduling."
+    },
+    {
+      "id": "juggl",
+      "repo": "HEmile/juggl",
+      "description": "Local graph with YAML name/title labels (SKILL.md stems stay colliding in native Graph)."
     }
   ]
 }

@@ -1,4 +1,5 @@
 ---
+title: Knowledge vault index
 tags: [knowledge-vault, index]
 created: 2026-04-28
 updated: 2026-09-02

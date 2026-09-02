@@ -1,6 +1,6 @@
 # Workspace + Obsidian — Setup & Architecture
 
-_Last updated: 2026-06-16_
+_Last updated: 2026-09-02_
 
 The workspace doubles as an Obsidian vault. One folder on disk serves several consumers simultaneously;
 the **git checkout is the source of truth** and the plain filesystem is the contract. The universal
@@ -80,9 +80,18 @@ Obsidian Graph is **not** the skill-load graph and **not** Dataview.
 - **Stem collisions.** Many files are named `SKILL.md`, `SESSION-STATE.md`, or `README.md`. Bare
   `[[SESSION-STATE]]` cannot resolve. Path-qualify: `[[07-projects/19-workspace-brain/SESSION-STATE]]`.
   Skills resolve as `[[design-foundations]]` because each hub/spoke sets YAML `aliases:` (and
-  `aliases` only apply when frontmatter parses).
+  `aliases` only apply when frontmatter parses). Native Graph still labels those nodes `SKILL`.
+  **Juggl** (`HEmile/juggl`) reads YAML `name` / `title` as the node label, so a skill shows as
+  `design-foundations` and a map shows as `Skills` / `Knowledge vault index`. Open via command
+  palette: "Juggl: Open local graph" from the note you care about. Global Graph stays the nebula.
+- **Color groups (first match wins).** Source of truth: `.obsidian/graph.json`. Specific queries
+  (maps, skill families) come **before** the `file:SKILL.md` catch-all. Juggl colors live in
+  `.obsidian/plugins/juggl/graph.css` and should stay in the same hue set.
+- **Search filter (paste into Graph search to hide noise):**
+  `-file:LICENSE -file:CHANGELOG -file:README -path:_archive -file:desktop -file:.DS_Store -file:Thumbs -path:copilot -path:03-skills/design-system-ops/skills`
+  Maps only: `file:_HOME OR file:_MOC OR file:_INDEX OR file:_SKILLS OR file:_PROJECTS OR file:_CONTEXT OR file:_FRAMEWORKS OR file:_CHEATSHEET OR tag:#moc`
 - **Expected remaining islands (do not star-link these into the ontology):**
-  - `copilot/` prompt copies
+  - `copilot/` prompt copies (filtered from Graph)
   - `.superpowers/` SDD task briefs
   - vendored trees (React Native dump, figma-cli docs, nested `design-system-ops/commands/`)
   - generated `05-artifacts/` session dumps
