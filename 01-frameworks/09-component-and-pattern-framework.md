@@ -460,6 +460,25 @@ Every component must resolve each of these. The defaults below are the cross-sys
 
 > The full state matrix per component is the build/QA gate. Run it through [[06-qa-operating-model|QA Operating Model]] — no curated subsets; every component, every variant, every state.
 
+### 8e. Variant architecture & total tokenization (the authoring laws)
+
+These two laws govern *how a component is constructed* in any variable-capable tool (Figma variables/modes, DTCG, code themes). They are non-negotiable and apply **wherever possible**.
+
+**1 — Mode-first variant architecture.** A component's *varying primitives* — intent/tone colors, size, density — belong in **variable modes** on a component-scoped collection (`Button — Variant`, `Button — Sizes`, `Avatar — Sizes`, `… — Badge`), **not** in physical variants. Bind each part to role tokens (`background/*`, `foreground/*`, `border/*`, `ring/*`; `height`, `paddingX`, `gap`, `radius`, `iconSize`) that resolve **per mode**; switching the instance's mode re-themes/re-sizes it. Decide each axis with this litmus, in order:
+- Can a **variable** carry the value (a color or number)? → **mode + role token**.
+- Is it the **presence/absence** of a part (icon, label, badge, shortcut, close)? → **boolean property** bound to layer `visible`.
+- Is it genuinely different **structure** (different layers/anatomy) or a **non-bindable** property (e.g. a link's underline — `textDecoration` can't be a variable)? → **physical variant** (the *only* justified use).
+
+This collapses combinatorial explosions: an intent×state Button is **7 state variants × N intent modes**, not 6×7 = 42 physical variants; the same role tokens then give free light/dark/brand theming on the same machinery. Physical-variant intent duplicates a mode system and is a defect to refactor. **Decide the axis mechanism (mode / boolean / variant) BEFORE authoring, and reuse existing infrastructure** — check for a component-scoped collection first (a `Button — Variant` with 11 ready modes existed while the component was nonetheless built as 42 physical variants — pure rework). `width`/`height` *are* variable-bindable, so size→mode is valid; just put any absolutely-positioned child on MAX/MAX constraints so it tracks the resize. The exception that *keeps* a physical variant: a tone whose variants carry **distinct icon glyphs** (Alert/Toast info/triangle/check) — an instance-swap can't be a mode, so the variant correctly bundles color + glyph. *(Plan note: modes/collection are plan-capped — Enterprise allows 40. If a collection genuinely needs more modes than the file's tier allows, that — not aesthetics — is the signal to split components into separate library files, §3.)*
+
+**2 — Total tokenization (no raw values, ever).** Every property that *can* bind to a variable **must**: fills, strokes, stroke-weight, corner radius, padding, gap/item-spacing, font size / line-height / letter-spacing. This explicitly includes **zero and blank** values — they are not exempt:
+- padding/gap `0` → `space-0` · radius `0` → `radius-none` · stroke-weight `0` → `border-width-0`
+- a transparent fill/stroke → the **`transparent`** color token (a bound zero-alpha paint), **never** an empty paint array.
+
+A raw literal anywhere is a defect to be bound. If a parameter type lacks a "0 / none / transparent" helper token, **create it** (primitive value ← semantic alias) rather than leaving the value raw — never work around a missing token with a hardcode. Sanctioned exceptions, which must be *noted*, not silently left: tool **chrome** (Figma section backgrounds/borders — organizational, not design) and deliberate **negative** values (e.g. an avatar group's −8 item-spacing overlap) for which no token can exist.
+
+> Both laws are enforced at the [[05-last-mile-craft-framework|last-mile]] gate and audited by [[06-qa-operating-model|QA]]: a component is not "done" until its primitives are mode-driven, its optional parts are booleans, physical variants exist only for true structure, and **100% of bindable values resolve to tokens** (zeros and blanks included).
+
 ---
 
 ## 9. The naming problem — names lie, behavior doesn't

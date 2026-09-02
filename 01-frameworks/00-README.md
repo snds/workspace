@@ -152,6 +152,8 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 - Reference-comparison protocol fires without prompting: browser zoom, high-res capture, Figma deep-zoom — match the inspection altitude to the finishing-tier check.
 - Critical-eye pre-output gate before every report: context & medium check (profile resolved + cited, medium matches the request's words — `02-shared-references/delivery-playbooks/`; fires first), target-user check, coverage check, composition-before-footprint check, reference check, resolution check (#10), accessibility check (APCA/WCAG legibility + no color-alone meaning), honesty check, detector check (name the independent check or refuse verified-voice), skill check.
 - Iteration-default mindset: first delivery is round one; explicit next-pass scope in every outcome.
+- System-context fidelity: resolve inside the target system's own tokens; backlog its gaps (a11y is not backloggable).
+- Adversarial verification: a render finding is a hypothesis — probe structure before reporting or fixing.
 - No curated subsets — every component, every variant, every asset.
 - Accurate grades over generous grades.
 
