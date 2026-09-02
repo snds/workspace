@@ -58,16 +58,18 @@ Defined in `02-shared-references/delivery-playbooks/` ([[02-shared-references/de
 ### Three graphs (do not cross)
 1. **Skill-load** — `## Related` on skills (`foundation` / `hub` / `spoke` / `governed-by` / …).
 2. **Epistemic** — `relations:` on knowledge and decisions (`builds-on` / `refutes` / …).
-3. **DS artifact** — DSDS 0.20 entries (`system` / `component` / `token` / `theme` / `entry` / `shared`).
-   Portable view: [[dsds-constitution]]. Do not mix edge vocabularies.
+3. **Domain artifact** — documentation-as-data for a job context. Design-systems uses DSDS 0.20
+   (`system` / `component` / `token` / `theme` / `entry` / `shared`) at [[dsds-constitution]].
+   Other job contexts use `domain-constitution/1.0` at [[domain-constitutions]] (same intents;
+   do not force DSDS token/theme kinds onto engines or datasets). Do not mix edge vocabularies.
 
-### Idempotent design decisions (method, not style)
-A **design method** that stays true if the brand, framework, or repo changes. Not a hex, radius,
-or typeface. Canonical: [[idempotent-design-decisions]] (APCA/role-scale color, overlay emphasis,
-one-light elevation). A project's `DESIGN.md` still owns look. When a target system lacks a token
-the method needs, derive inside *its* grammar and backlog the gap — do not import another system's
-values. Audience stamps (`for: human | agent | all`) live on DSDS sections and on
-`## For future agent` blocks; see [[vault-graph-conventions]].
+### Idempotent methods (method, not style)
+A **method** that stays true if the brand, engine, repo, or study changes. Not a hex, radius,
+engine version, or dataset path. Design-systems canonical: [[idempotent-design-decisions]]
+(APCA/role-scale color, overlay emphasis, one-light elevation). Other domains keep methods in
+their `dc-*.yaml` `shared[]` ([[constitution-spec]]). A project's `DESIGN.md` / `RENDER.md` /
+ADR still owns values and look. Audience stamps (`for: human | agent | all`) live on
+constitution sections and on `## For future agent` blocks; see [[vault-graph-conventions]].
 
 ## The routing map — "where does this belong?"
 
@@ -86,8 +88,10 @@ Consult before any write. Mirrored (compressed) in [[AGENTS]] and expanded with 
 | A durable standard / spec / vocabulary | `02-shared-references/` | additive |
 | A standing design *method* (not a project's look) | `02-shared-references/idempotent-design-decisions.md` + DSDS `shared[]` | method here; values in the target system |
 | A portable DS documentation view | `02-shared-references/dsds/` (DSDS 0.20) | view of facets 1–17; not a contract |
+| A job-context constitution (UX, eng, game, vision, …) | `02-shared-references/domain-constitutions/` | methods + complements; not project values; spec [[constitution-spec]] |
 | Why a structural choice was made | `06-context/memory/` (`type: decision`) | decision record |
 | A generated deliverable | `05-artifacts/` | versioned, never overwrite |
+| A Cursor canvas (`.canvas.tsx`) | git-tracked copy under the owning `07-projects/…/canvases/`; live file stays in `~/.cursor/projects/<slug>/canvases/` | `python3 09-tools/cursor-externalize.py` at session-end; do not treat Cursor's folder as the only copy |
 | An actual repo / codebase / non-Figma working file or asset | the platform-relative `Projects/` dir (resolve to the local checkout per device) | never inside this workspace; never hardcode the path |
 | Machine-local agent config (`~/.claude`, `~/.cursor` — per-device) | owned by `00-bootstrap/` (canonical copies in `dist/`, installed/verified by the doctor); per-machine install state recorded as a `06-context/memory/` fact | never hand-edit the installed copy — change `dist/`, rerun the doctor |
 | Hook / adapter code (`.claude/hooks/`, surface shims) | versioned in-workspace at its consumption path; canonical machine-layer copies + install notes in `00-bootstrap/` | edit in-workspace; machine layer flows through `dist/` + doctor |

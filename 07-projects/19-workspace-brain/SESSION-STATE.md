@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-02 — session-end; prove-engine on main; DSDS + source-watch persisted_
+_Last updated: 2026-09-02 — graph crosslinking + Cursor canvases copied into git_
 
 ---
 
@@ -8,17 +8,16 @@ _Last updated: 2026-09-02 — session-end; prove-engine on main; DSDS + source-w
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: DS constitution is project-independent. Three graphs still must not mix. Standing *methods* (not style) live in [[idempotent-design-decisions]]: APCA/role-scale color, overlay emphasis, one-light elevation. Values stay in the target system. DSDS 0.20 view + combos: [[dsds-constitution]]. Source review is `ds-source-watch` (report-first). Prove-engine baton unchanged (`vqa/1.1`, Literal on A).
-- **Current focus**: First `--fetch` of ds-source-watch + Sean's judgment on any changed sources. Projects extend the constitution; they do not fork it.
-- **Working set**: [[idempotent-design-decisions]]; [[dsds-constitution]] + YAML; `03-skills/ds-source-watch/`; `09-tools/ds-source-watch.py`; [[agentic-ds-context-model]].
-- **Last action (2026-09-02):** `/session-end`. Prove-engine merge already on origin/main (`0f4228a`). Persisting DSDS constitution + source-watch. Cursor Grok 4.6 / Cursor / Personal MBP.
-- **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt. Need `--tools` / `--disallowed-tools` before any scheduled runner. Source-watch `--fetch` is on-demand, not a cron.
-- **Next action:** Run `python3 09-tools/ds-source-watch.py --fetch` when you want the first snapshot judged. Or return to `vqa prove` on visual work. Retest harness-map #5 on next plugin publish; revisit #8 ~2026-09-07.
-- **Open decisions:** Whether a later generator should emit the DSDS YAML from vault files (YAML is hand-authored today). knowledge-only vs later `agent-verification-loop` skill if skips persist; Mission Fit auto-mint (default: only when claimable work must survive the chat).
-- **Blocked on:** nothing for this landing. Open Engine personal lane still `not-registered` on this machine (optimize P1). Still open: machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`.
-- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Personal MBP (2026-08-28): vqa/1.1 merge 0f4228a` → `(2026-09-01): DS ontology remap + constitution + source watch` → `(2026-09-02): session-end`.
-
+- **TL;DR (for future agent)**: Constitutions + Obsidian graph crosslinking are in the working tree. Cursor canvases now have git-tracked copies under `07-projects/…/canvases/`; sync with `python3 09-tools/cursor-externalize.py` at every Cursor session-end. Legion canvases belong in the Legion repo (`docs/canvases/` on disk this session, not committed there).
+- **Current focus**: Session closing. Next after push: use a domain pack on real work, or `ds-source-watch --fetch`, or `vqa prove`.
+- **Working set**: [[_MOC]]; [[_PROJECTS]]; [[09-tools/cursor-externalize.py]]; [[domain-constitutions]]; [[00-bootstrap/OBSIDIAN-SETUP]].
+- **Last action (2026-09-02):** Externalized 8 Cursor canvases into the vault; wired session-end. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
+- **Next action:** After this commit lands: refresh Obsidian graph. Optional: commit Legion `docs/canvases/` in the Legion repo. Then a domain pack on real work, or `python3 09-tools/ds-source-watch.py --fetch`, or `vqa prove`.
+- **Open decisions:** Product/data/security constitutions still `mapped` only. YAML still hand-authored.
+- **Blocked on:** Open Engine personal lane still `not-registered` on this machine. Machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs.** Do not commit carved LCARS SWF dumps or Copilot skill copies unless Sean asks.
+- **Agent thread**: `… → (2026-09-02): other-domain constitutions` → `(2026-09-02): Obsidian graph crosslinking` → `(2026-09-02): Cursor canvas externalize + session-end`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
@@ -29,7 +28,7 @@ _Last updated: 2026-09-02 — session-end; prove-engine on main; DSDS + source-w
 
 ### VCS state
 - **Branch**: `main` @ session-end commit (push with this fragment)
-- **Uncommitted at baton write**: session fragment + this SESSION-STATE + DSDS/source-watch persist
+- **Uncommitted at baton write**: this session-end (constitutions + graph + canvases); do not add SWF dumps, Copilot skill copies, or `.cursor/settings.json`
 - **Test state at last check (2026-08-28):** merged tree green — integrity/links/workspace/capabilities, `test-validators.py` 10/10, `vqa calibrate` 48/48. Re-run write-quality chain on this persist.
 
 ### Open work and paused threads

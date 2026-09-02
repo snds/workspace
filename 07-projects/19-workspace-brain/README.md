@@ -21,4 +21,5 @@ either use this project's `SESSION-STATE.md` + Live handoff, or explicitly decla
 - Origin: the 2026-07-09 validation session (`workspace_validation-report_v1.0_2026-07-09.md`,
   finding P2-16) and the same-day fix session (FX-1..FX-14).
 - Notes live in `notes/`; operational state in `SESSION-STATE.md`.
+- Cursor canvas copies (git-tracked): `canvases/` — live files stay in `~/.cursor/projects/…`; sync with `python3 09-tools/cursor-externalize.py`.
 - 2026-08-26 research thread: [[agentic-error-correction-foundations]] + `notes/error-correction-research_2026-08-26.md`. Mechanical close (items 1–5) landed the same day.

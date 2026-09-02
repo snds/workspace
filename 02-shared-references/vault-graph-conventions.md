@@ -8,8 +8,8 @@ status: active
 
 _Two conventions that keep the vault a **connected, retrieval-friendly graph** rather than
 a pile of loosely-linked notes. Companion to the freshness rule in
-[epistemic-standards](epistemic-standards.md) §2 and the routing map in
-[workspace-ontology](workspace-ontology.md). Adopted 2026-07-23 (borrowed from the
+[[epistemic-standards]] §2 and the routing map in
+[[workspace-ontology]]. Adopted 2026-07-23 (borrowed from the
 `obsidian-second-brain` prior art during the bootstrap-generator feedback pass)._
 
 ## For future agent
@@ -40,12 +40,17 @@ relationship carries meaning (knowledge entries, `memory/decision-*`, framework 
 don't bother on session logs or daily notes. `refutes` is especially load-bearing: it's how a
 superseded claim is *marked* superseded instead of silently lingering.
 
-> **Scope — two distinct graphs, don't cross them.** Skills already have their own richer typed
+> **Scope — three distinct graphs, don't cross them.** (1) Skills already have their own richer typed
 > graph in the `## Related` block (`foundation`/`applies-in`, `hub`/`spoke`, `peer`, `governed-by`/
-> `governs`, `encodes-into`), validated by [validate-links.py](../09-tools/validate-links.py). That
-> is the **skill-dependency** graph — leave it exactly as it is. This `relations:` frontmatter is the
-> **epistemic** graph over *knowledge entries and decisions* (what builds on / refutes what). They
-> coexist: skills → `## Related`; knowledge/memory → `relations:`.
+> `governs`, `encodes-into`), validated by `09-tools/validate-links.py`. That
+> is the **skill-load** graph — leave it exactly as it is. (2) This `relations:` frontmatter is the
+> **epistemic** graph over *knowledge entries and decisions*. (3) The **domain artifact** graph is
+> DSDS 0.20 for design-systems ([[dsds-constitution]]) and `domain-constitution/1.0` for other job
+> contexts ([[domain-constitutions]]). They coexist; do not mix edge vocabularies.
+
+Obsidian Graph View is a fourth picture: it only draws markdown `[[wikilinks]]` (and markdown
+hrefs to `.md` files). Dataview is not an edge. `SKILL.md` / `SESSION-STATE.md` stems collide
+unless path-qualified. Expected satellite islands are listed in [[00-bootstrap/OBSIDIAN-SETUP]].
 
 ## 2. The `## For future agent` preamble
 
@@ -70,7 +75,8 @@ announces itself.
 - Omit or `for: human` — narrative rationale (agents may still read it)
 
 Do not bulk-rewrite the vault. Stamp notes as they are touched. The machine-readable
-projection of these stamps is [[dsds-constitution]].
+projection of these stamps is [[dsds-constitution]] for design-systems and
+[[domain-constitutions]] for other job contexts.
 
 ---
 

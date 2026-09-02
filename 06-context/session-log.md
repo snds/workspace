@@ -26,7 +26,41 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
+
+> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
+
 ---
+
+### 2026-09-02 — Domain constitutions, graph crosslinking, Cursor canvas externalize
+
+SessionID: 2026-09-02-voyager-g4x9k2
+--- SESSION BLOCK ---
+Date: 2026-09-02
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain, 20-lcars-generative-interface, 01-mediaservices (canvas copies only)
+Summary: Generalized DS constitution rigor to other job contexts (`domain-constitution/1.0`, 10 YAML packs). Fixed Obsidian graph islands that were Dataview-without-edges plus colliding stems (not a missing ontology). Copied 8 Cursor canvases from `~/.cursor/projects/` into git-tracked `07-projects/…/canvases/` and wired `cursor-externalize.py` into session-end so this runs every Cursor close.
+Artifacts:
+  - 02-shared-references/domain-constitutions/ (spec, domains.yaml, 10 dc-*.yaml, index)
+  - 08-knowledge/cross-domain/agentic-domain-constitutions.md
+  - 09-tools/cursor-externalize.py
+  - 07-projects/19-workspace-brain/canvases/ (domain-constitutions, ds-agentic-ontology, perception-critique-stack, skill-hub-rigor-audit)
+  - 07-projects/20-lcars-generative-interface/canvases/lcars-replication-gap.canvas.tsx
+  - 07-projects/01-mediaservices/canvases/ (looney-tunes-loudness, duplicate-scan-outcome, authoritative-delete-list)
+Decisions:
+  - Cursor live canvases stay in `~/.cursor/projects/` (IDE compile path); vault copies are the portable source of truth.
+  - Legion canvases belong in the Legion repo, not snds/workspace. Copied to Legion/docs/canvases/ on disk; not committed there.
+  - Do not star-link Copilot, .superpowers, or vendored command trees into the Obsidian graph.
+Pending added: none
+Pending resolved: none
+Next:
+  - Refresh Obsidian graph (orphans off). Remaining islands should be vendor/Copilot/artifact.
+  - Optional: commit Legion `docs/canvases/` in the Legion repo.
+  - Use a domain pack on real work, or `python3 09-tools/ds-source-watch.py --fetch`, or `vqa prove`.
+  - Open Engine personal lane still not-registered on this machine (`python3 00-bootstrap/doctor/linear-lanes.py`).
+--- END BLOCK ---
+
 
 ### 2026-09-02 — Ontology and knowledge graphs for agents
 
@@ -650,30 +684,4 @@ Next:
   - Olga reviews/merges #13
   - Deepen Materials LandingDataTable domain cells if still needed post-merge
   - Lift density axis + shape tokens into centric-ui when ready; ROW_DENSITY sync (C14)
---- END SESSION BLOCK ---
-
-### 2026-07-30 — SaaS PLM DataTable: Layer A+B visual parity (LandingDataTable + Materials lab)
-
-SessionID: 2026-07-30-work-dt02
---- SESSION BLOCK ---
-Date: 2026-07-30
-Machine: Work MacBook Pro (main)
-Surface: Cursor
-Project(s): SaaS PLM prototype (employer — `centric-engineering` profile)
-Summary: Brought `@centric/data-table` visual parity through Layer A (lab recipe) and Layer B (shared `LandingDataTable`). Actions column stays in the DOM for a11y; recipe CSS hides its chrome; floating Edit/Remove pill on hover/focus. Lab now switches Seasons | Materials (Materials = subset stress, not full 21-prop port).
-Artifacts:
-  - Employer: `src/app/features/landingDataTable/` (`LandingDataTable`, column helpers, recipe CSS); `src/table-lab.tsx` rewired; `table-lab.css` removed (recipe lives with the wrapper)
-  - `05-artifacts/active/saas-proto_datatable-visual-parity-plan_v1.0_2026-07-30.md` — A+B marked complete
-  - Repo `PROJECT-NOTES.md` + `CENTRIC-UI-SYNC.md` (actions-header a11y finding)
-Decisions:
-  - Floating Edit+Remove is the landing actions pattern; package actions column kept for semantics; `⋮` returns only as overflow past two actions.
-  - Materials lab starts as a representative subset; full domain cells are a follow-on, not a TanStack fork.
-  - Prefer nested system components (`StatusPill`, `InlineEditText`, `TypeTag`, `TableRowActions`) over table-local chrome.
-Learnings:
-  - Transparent borders (not `border: 0`) preserve sticky offsets on the actions column.
-  - Package `DataTableRowActionsHeaderCell` has contradictory `aria-hidden` + `sr-only` — upstream finding, do not patch the copy.
-Next:
-  - Review + commit/PR employer branch (never auto-commit)
-  - Deepen Materials domain cells on the recipe
-  - Layer C = file/send upstream findings; WP-0 memo still unsent
 --- END SESSION BLOCK ---

@@ -1,18 +1,18 @@
 # Artifact Registry
 <!-- Auto-maintained by Claude. Updated after each task. -->
-<!-- Last updated: 2026-09-02 | Session: prove-engine merge close + DSDS persist -->
+<!-- Last updated: 2026-09-02 | Session: graph crosslinking + cursor canvas externalize -->
 
 ## LCARS Generative Interface — 07-projects/20-lcars-generative-interface/ (git-tracked)
 
-### 20-lcars-generative-interface/ (README.md + SESSION-STATE.md + SPEC.md + docs/construction/)
-- **Purpose**: Project home for the generative LCARS interface (design → plan → implementation pointers). Spec captures constitution-first Scene IR architecture, combadge roles, APCA+AA, data-first 3D viewports. Construction pack holds cuespec, IR, prove reports, and captures for S-SYS47-01.
-- **Last modified**: 2026-08-28 — Literal prove v4 + named uncued residuals; prove-engine vqa/1.1 on `main` (`0f4228a`).
+### 20-lcars-generative-interface/ (README.md + SESSION-STATE.md + SPEC.md + docs/construction/ + canvases/)
+- **Purpose**: Project home for the generative LCARS interface (design → plan → implementation pointers). Spec captures constitution-first Scene IR architecture, combadge roles, APCA+AA, data-first 3D viewports. Construction pack holds cuespec, IR, prove reports, and captures for S-SYS47-01. `canvases/` holds the Cursor `lcars-replication-gap` copy.
+- **Last modified**: 2026-09-02 — vault docs wikilinks + canvas copy; prove v4 still the Literal baton.
 
 ## Workspace Brain — 07-projects/19-workspace-brain/ (git-tracked)
 
-### 19-workspace-brain/ (README.md + SESSION-STATE.md + notes/ + reports/)
-- **Purpose**: Standing project home for workspace-subject sessions (validation, fix, migration, infrastructure) per the framework #08 project-home rule (FX-13). Git-tracked — cross-machine continuity is its point.
-- **Last modified**: 2026-09-02 — DSDS constitution + `reports/ds-source-watch/latest.json`; SESSION-STATE baton current.
+### 19-workspace-brain/ (README.md + SESSION-STATE.md + notes/ + reports/ + canvases/)
+- **Purpose**: Standing project home for workspace-subject sessions (validation, fix, migration, infrastructure) per the framework #08 project-home rule (FX-13). Git-tracked — cross-machine continuity is its point. `canvases/` holds copies of Cursor `.canvas.tsx` files (live path remains `~/.cursor/projects/…`).
+- **Last modified**: 2026-09-02 — graph crosslinking + Cursor canvas externalize; constitutions already on this tree.
 
 ## Delivery Playbooks — 02-shared-references/delivery-playbooks/
 

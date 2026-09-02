@@ -9,6 +9,9 @@ domain: design
 
 # Material Symbols Project Conventions
 
+This suite is the Material Symbols *automation* path (export, scrape, Figma plugin).
+Interpolation-safe variable icon fonts live in [[variable-icon-font-architect]].
+
 ---
 
 ## Epistemic Standards

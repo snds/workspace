@@ -131,6 +131,11 @@ Surfaces' native "create a skill" flows are **insufficient** if they skip this a
 
 Update this table when a cluster gains or loses a layer.
 
+Job-context constitutions (standing methods, complements, combos) live in
+[[domain-constitutions]]. They document L1-L5; they do not replace them. DSDS 0.20
+is the design-systems instance. Other domains use `domain-constitution/1.0`
+([[constitution-spec]]).
+
 ---
 
 ## Relationship to other frameworks
@@ -163,4 +168,6 @@ Update this table when a cluster gains or loses a layer.
 - [[16-security-operating-model]]
 - [[skill-frontmatter]]
 - [[capability-registry]]
+- [[domain-constitutions]]
+- [[constitution-spec]]
 - [[AGENTS]]

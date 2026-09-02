@@ -48,6 +48,23 @@ you the **session signature**: `{Machine label} / {Surface}` — e.g. `Work MacB
 
 ## Protocol
 
+### Step 0.5 — Externalize Cursor-local context (Cursor surface only)
+
+Cursor canvases and other durable chat artifacts live under `~/.cursor/projects/` until copied.
+That folder is **not** this git tree; Cursor will not compile vault copies.
+
+```
+python3 09-tools/cursor-externalize.py
+```
+
+Copies `.canvas.tsx` into git-tracked `07-projects/…/canvases/` (workspace-brain, LCARS,
+MediaSentinel). Skips Legion (belongs in the Legion repo). Commit the copies with the
+session. Do **not** copy agent-transcripts, MCP caches, or `~/.cursor` plugin state into the vault.
+
+If this session produced a durable fact that only exists in Cursor/claude-mem private memory,
+route it per [[workspace-ontology]] / [[decision-externalize-everything-to-workspace]] before
+writing the Session Block.
+
 ### Step 1 — Generate Session Block
 
 Draft using the Session Block format (see template below). Base it on:
@@ -279,6 +296,7 @@ Omit any section with no content. Keep entries to one line.
 
 When running in Cursor (detected via surface detection or `brain.mdc` context):
 
+- **Step 0.5** — run `python3 09-tools/cursor-externalize.py` (canvases → vault copies).
 - **Step 6** — run `python3 09-tools/build-registry.py` from the terminal if skills changed.
 - **Skip the SessionEnd hook reference** — hooks are Claude Code only.
 - **Read/write files via the filesystem**; use the terminal for git.

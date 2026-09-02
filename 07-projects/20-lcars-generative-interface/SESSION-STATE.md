@@ -2,6 +2,16 @@
 
 _Last updated: 2026-08-28 — cuespec names uncued residuals; prove engine vqa/1.1 (altitudes A–G)_
 
+## Vault docs (this project)
+
+- [[07-projects/20-lcars-generative-interface/README|project README]]
+- [[07-projects/20-lcars-generative-interface/docs/runtime-exe-assessment|runtime-exe-assessment]]
+- [[07-projects/20-lcars-generative-interface/docs/construction/runtime-swf/README|runtime-swf README]]
+- [[07-projects/20-lcars-generative-interface/docs/visual-replication-requirements|visual-replication-requirements]]
+- [[07-projects/20-lcars-generative-interface/docs/program-thesis|program-thesis]]
+- [[07-projects/20-lcars-generative-interface/docs/vector-msd-1701d-mk4|vector-msd-1701d-mk4]]
+- [[07-projects/20-lcars-generative-interface/docs/content-groups|content-groups]]
+
 ---
 
 ## Current state (rewritten atomically — no stale fields)

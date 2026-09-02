@@ -138,6 +138,17 @@ python3 09-tools/ds-source-watch.py --check
 python3 09-tools/ds-source-watch.py --fetch
 ```
 
+## cursor-externalize.py
+
+Copies Cursor-local `.canvas.tsx` files from `~/.cursor/projects/*/canvases/` into
+git-tracked `07-projects/…/canvases/`. Cursor still compiles only the live path.
+Run on every Cursor session-end. `--check` exits 1 on drift.
+
+```
+python3 09-tools/cursor-externalize.py
+python3 09-tools/cursor-externalize.py --check
+```
+
 ---
 
 These tools assume only a git checkout + Python 3 — no Google Drive, no vendor-specific file bridge.

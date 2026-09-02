@@ -13,22 +13,22 @@ This README is the orientation layer. Load it when you need to know which framew
 
 | # | Framework | Answers |
 |---|---|---|
-| 01 | **Aesthetic Lens** | Why does this feel right? |
-| 02 | **UI/UX Operational Framework** | How do we systematically decide about hierarchy, interaction, and metaphor? |
-| 03 | **Collaboration and Critique Framework** | How do we work together? |
-| 04 | **Research and Evidence Framework** | What do we know, and how do we know it? |
-| 05 | **Last-Mile Craft Framework** | How do we finish well? |
-| 06 | **QA Operating Model** | How do we frame QA outcomes against target-user expectations on first delivery? |
-| 07 | **Integration & Review Framework** | How do we land work so it merges cleanly and reviews well? |
-| 08 | **Workspace Contribution Framework** | How/when/where/what/why do we edit the workspace itself? |
-| 09 | **Component & Pattern Framework** | What is each component for, when do I reach for it, and how do they compose? |
-| 10 | **Perception Integrity** | Are the pixels I'm judging real? |
-| 11 | **Anticipatory Failure Analysis** | How will this fail, and would I catch it — before I propose it or call it done? |
-| 12 | **Realtime Photoreal Operational Framework** | How do we choose techniques, allocate frame budget, and prove movie-level fidelity under camera interaction? |
-| 13 | **Domain Rigor Stack** | How does every skill hub realize evaluate→measure→route→refuse-shallow-overrides? |
-| 14 | **Engineering Operating Model** | How do we shape, verify, and ship FE/BE/DevOps/mobile work with done-gates? |
-| 15 | **Analysis Operating Model** | How do we go from question → valid method → decision without narrative theater? |
-| 16 | **Security Operating Model** | How do we threat-model, build, scan, and monitor so security is a quality dimension? |
+| 01 | **[[01-frameworks/01-aesthetic-lens|Aesthetic Lens]]** | Why does this feel right? |
+| 02 | **[[01-frameworks/02-ui-ux-operational-framework|UI/UX Operational Framework]]** | How do we systematically decide about hierarchy, interaction, and metaphor? |
+| 03 | **[[01-frameworks/03-collaboration-and-critique-framework|Collaboration and Critique Framework]]** | How do we work together? |
+| 04 | **[[01-frameworks/04-research-and-evidence-framework|Research and Evidence Framework]]** | What do we know, and how do we know it? |
+| 05 | **[[01-frameworks/05-last-mile-craft-framework|Last-Mile Craft Framework]]** | How do we finish well? |
+| 06 | **[[01-frameworks/06-qa-operating-model|QA Operating Model]]** | How do we frame QA outcomes against target-user expectations on first delivery? |
+| 07 | **[[01-frameworks/07-integration-and-review-framework|Integration & Review Framework]]** | How do we land work so it merges cleanly and reviews well? |
+| 08 | **[[01-frameworks/08-workspace-contribution-framework|Workspace Contribution Framework]]** | How/when/where/what/why do we edit the workspace itself? |
+| 09 | **[[01-frameworks/09-component-and-pattern-framework|Component & Pattern Framework]]** | What is each component for, when do I reach for it, and how do they compose? |
+| 10 | **[[01-frameworks/10-perception-integrity|Perception Integrity]]** | Are the pixels I'm judging real? |
+| 11 | **[[01-frameworks/11-anticipatory-failure-analysis|Anticipatory Failure Analysis]]** | How will this fail, and would I catch it — before I propose it or call it done? |
+| 12 | **[[01-frameworks/12-realtime-photoreal-operational-framework|Realtime Photoreal Operational Framework]]** | How do we choose techniques, allocate frame budget, and prove movie-level fidelity under camera interaction? |
+| 13 | **[[01-frameworks/13-domain-rigor-stack|Domain Rigor Stack]]** | How does every skill hub realize evaluate→measure→route→refuse-shallow-overrides? |
+| 14 | **[[01-frameworks/14-engineering-operating-model|Engineering Operating Model]]** | How do we shape, verify, and ship FE/BE/DevOps/mobile work with done-gates? |
+| 15 | **[[01-frameworks/15-analysis-operating-model|Analysis Operating Model]]** | How do we go from question → valid method → decision without narrative theater? |
+| 16 | **[[01-frameworks/16-security-operating-model|Security Operating Model]]** | How do we threat-model, build, scan, and monitor so security is a quality dimension? |
 
 ---
 
@@ -53,6 +53,7 @@ This README is the orientation layer. Load it when you need to know which framew
 | Game / 3D / shader / render review (any project; Legion as testbed) | 01, 05, **12**, 10, 11 |
 | Realtime photoreal, frame budget, flythrough / camera QA | **12**, 10, 11 (then imaging + `realtime-visual-craft`) |
 | Adding/improving any skill hub, spoke, command surface, or plugin wrapper | **13** (always), then #08 |
+| Job-context ontology / standing methods (UX, eng, game, vision, …) | **13** + `02-shared-references/domain-constitutions/` |
 | FE / BE / DevOps / mobile engineering delivery | **14**, 06, 11, 16 (when trust boundaries) |
 | Data science, experiments, analytics, PM evidence | **15**, 04 |
 | Security, threat model, auth, supply chain, AppSec | **16**, 14, 11 |
@@ -235,11 +236,35 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 - Absolute bans: still-only for temporal features; thumbnail verdicts; energy-breaking fill; frag log-depth as default.
 - Command surface: `realtime-visual-craft`. Method in framework #12 + that skill.
 
+### 13 — Domain Rigor Stack
+
+**Core conviction.** Knowledge without enforcement is advice. A domain is ready only when agents can decide, measure, route, and refuse shallow overrides.
+
+**When to invoke.** Creating or expanding any foundation, hub, spoke, command surface, or plugin wrapper. Job-context methods: [[domain-constitutions]].
+
+### 14 — Engineering Operating Model
+
+**Core conviction.** Contracts first, reversible always, observable by default.
+
+**When to invoke.** FE / BE / DevOps / mobile delivery. Done-gates live here; `eng-foundations` stays first principles.
+
+### 15 — Analysis Operating Model
+
+**Core conviction.** An analysis is a decision instrument, not a demonstration. Question and decision owner before method; validity before story.
+
+**When to invoke.** Data science, experiments, analytics, PM evidence. Runs with #04.
+
+### 16 — Security Operating Model
+
+**Core conviction.** Threat-model at design time, verify continuously, fail closed.
+
+**When to invoke.** Trust boundaries, auth, supply chain, AppSec. Runs with #14 and #11.
+
 ---
 
 ## How they interconnect
 
-The core operating lenses (01–06) are layered, not parallel — they compose in numerical order (diagrammed below). The remaining frameworks (07–12) are orthogonal meta-layers that fire across whatever the core produces. They're listed in the order they compose:
+The core operating lenses (01–06) are layered, not parallel — they compose in numerical order (diagrammed below). The remaining frameworks (07–16) are orthogonal meta-layers that fire across whatever the core produces. They're listed in the order they compose:
 
 ```
                      ┌─────────────────────────────┐
@@ -282,20 +307,25 @@ The core operating lenses (01–06) are layered, not parallel — they compose i
 - **08 ⟂ all.** Workspace Contribution is the other orthogonal meta-layer: whatever the work, #08 governs *where it gets written and how* — the routing map, per-layer add/extend rules, the memory and archive protocols, and the portable session protocol. It fires whenever a change touches the workspace's own structure (skills, frameworks, references, context, memory, knowledge), not a project deliverable.
 - **09 ⟂ all.** Component & Pattern Framework is the design-domain hub: orthogonal to the operating lenses (01–08, 10), it loads for any component/pattern work and routes *out* to the `ux-component-library` skill, the `ux-components` MCP, `DESIGN.md`, and `AGENTS.md` enforcement. Where 02 decides *which pattern/metaphor*, 09 supplies the component-level *what / when / why / how-composed*.
 - **10 ⟂ all (and *beneath* 05/06).** Perception Integrity is the cross-cutting precondition to every visual judgment: orthogonal to all the others because it applies wherever a render, frame, or image asset is assessed — design, game/3D, shaders, photography, data-viz — but it sits *underneath* 05 and 06 specifically, because their perception surfaces (baseline + augmented in 05, the Resolution check in 06's gate) are only trustworthy on real pixels. 05 says *measure it*; 06 says *against the right bar*; 10 says *on native pixels, or it isn't verified*. Routes *out* to the standalone `native-visual-eval` skill (no hub dependency) for method.
-- **11 ⟂ all (and *before* 05/06).** Anticipatory Failure Analysis is the input-time twin of #06: orthogonal to the content frameworks because it applies wherever work has a visible failure surface — UI, DS craft, game/3D, shaders, VFX, data-viz, generated imagery, motion — but it fires *at the front* of the work, before a technique is proposed, and again at the done-boundary. #06 frames the target and grades at output time; #11 anticipates the failure at input time and proves its absence against the reference. It runs *on* #10's native pixels and *with* #04's evidence tiers. Routes *out* to the standalone `failure-mode-premortem` skill and the [Visual Failure-Mode Ledger](../08-knowledge/cross-domain/visual-failure-mode-ledger.md).
+- **11 ⟂ all (and *before* 05/06).** Anticipatory Failure Analysis is the input-time twin of #06: orthogonal to the content frameworks because it applies wherever work has a visible failure surface — UI, DS craft, game/3D, shaders, VFX, data-viz, generated imagery, motion — but it fires *at the front* of the work, before a technique is proposed, and again at the done-boundary. #06 frames the target and grades at output time; #11 anticipates the failure at input time and proves its absence against the reference. It runs *on* #10's native pixels and *with* #04's evidence tiers. Routes *out* to the standalone `failure-mode-premortem` skill and the [[visual-failure-mode-ledger]].
 - **12 ⟂ all (game/3D/render domain ops).** Realtime Photoreal Operational Framework is the decision pipeline for technique selection, frame-budget allocation, and the **triple done-gate** (native still grid + motion/interaction video + measured ms) against movie-level northstars. It runs *on* #10 and *with* #11; look judgment still uses #01/#05. Routes *out* to `realtime-visual-craft`, `render-qa-toolkit`, `interactive-capture-eval`, `visual-qa-photoreal-rendering`, `rendering-guild`.
+- **13 ⟂ all (skill-cluster meta).** [[01-frameworks/13-domain-rigor-stack|Domain Rigor Stack]] is the evaluate→measure→route→refuse checklist every hub instantiates. Job-context methods live in [[domain-constitutions]], not as a sixth schema.
+- **14 ⟂ all (engineering delivery).** [[01-frameworks/14-engineering-operating-model|Engineering Operating Model]] is contracts-first FE/BE/DevOps/mobile done-gates. Runs with #06, #11, and #16 at trust boundaries.
+- **15 ⟂ all (analysis).** [[01-frameworks/15-analysis-operating-model|Analysis Operating Model]] is question → valid method → decision. Runs with #04.
+- **16 ⟂ all (security).** [[01-frameworks/16-security-operating-model|Security Operating Model]] is threat-model, scan, fail closed. Runs with #14 and #11.
 
 ---
 
 ## Also in this folder
 
-- `_migration-audit-notes_2026-04-21.md` — Preservation-biased token-optimization audit from the migration session. Tracks what was cut, what was considered but preserved, and why. Useful reference if future passes need to see the editing rationale.
+- [[01-frameworks/_migration-audit-notes_2026-04-21|_migration-audit-notes]] — Preservation-biased token-optimization audit from the migration session. Tracks what was cut, what was considered but preserved, and why. Useful reference if future passes need to see the editing rationale.
 
 ## Related workspace docs
 
-- `../02-shared-references/epistemic-standards.md` — core epistemic obligations (surface assumptions, verify sources, name alternatives). Load when beginning non-trivial reasoning.
-- `../02-shared-references/artifact-standards.md` — deliverable obligations (naming, versioning, no overwrites). Load when producing or receiving any file.
-- `../03-skills/` — the tactical execution layer. Frameworks hold the principles; skills do the work. See each framework's "Relationship to existing skills" section for the specific mapping.
+- [[epistemic-standards]] — core epistemic obligations (surface assumptions, verify sources, name alternatives). Load when beginning non-trivial reasoning.
+- [[artifact-standards]] — deliverable obligations (naming, versioning, no overwrites). Load when producing or receiving any file.
+- [[_SKILLS]] — the tactical execution layer. Frameworks hold the principles; skills do the work. See each framework's "Relationship to existing skills" section for the specific mapping.
+- [[domain-constitutions]] · [[constitution-spec]] — job-context methods (not project values).
 
 ---
 
@@ -305,6 +335,6 @@ The core operating lenses (01–06) are layered, not parallel — they compose i
 
 **When the README isn't enough.** The compressed summaries preserve the *what* but not the *why* — the examples, the canon references, the tier descriptions with thresholds, the principle-to-check translations. Any serious reasoning task in the framework's domain should load the full document.
 
-**Updates.** Framework numbering is stable (01–12). Any future framework additions should extend the sequence (13, etc.) or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly. (#10 Perception Integrity was added 2026-06-30, #11 Anticipatory Failure Analysis on 2026-07-14, and #12 Realtime Photoreal Operational on 2026-08-03, by exactly this process — each a first-class cross-cutting framework.)
+**Updates.** Framework numbering is stable (01–16). Any future framework additions should extend the sequence or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly. (#10 Perception Integrity was added 2026-06-30, #11 Anticipatory Failure Analysis on 2026-07-14, #12 Realtime Photoreal Operational on 2026-08-03, #13–#16 in the 2026-08 domain-ops pass.)
 
 **Operational state.** This folder is static reference. Operational continuity between sessions lives in per-project `SESSION-STATE.md` files (see framework 05's Operational State section for the spec) and in `../06-context/session-log.md` for cross-project session logs.

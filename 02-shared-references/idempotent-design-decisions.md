@@ -48,6 +48,10 @@ compliance is not.
 Routing: durable standard → this file. Validated how-to → `08-knowledge/design/`.
 Project look → that project's `DESIGN.md`. See [[workspace-ontology]].
 
+Other job contexts (UX, engineering, game, vision, …) do **not** belong in this
+file. Their methods live in `02-shared-references/domain-constitutions/dc-*.yaml`
+([[constitution-spec]]).
+
 ---
 
 ## 1. Radix-shaped color, APCA as governance

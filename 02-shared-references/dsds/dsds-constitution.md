@@ -52,3 +52,6 @@ Hand-authored for now. If a generator is added later, this YAML is the emit targ
 and the vault files above remain the source. Never the reverse.
 
 Review upstream spec drift with the `ds-source-watch` skill.
+
+Sibling packs for other job contexts (same intents, not DSDS kinds):
+[[domain-constitutions]]. Spec: [[constitution-spec]].

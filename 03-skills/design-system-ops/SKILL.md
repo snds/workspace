@@ -22,6 +22,7 @@ spec_version: "2.2"
 
 **Wrapper (L2)** over the vendored pack in this directory (`skills/`, `commands/`,
 `knowledge-notes/`). Owns triggers and doctrine. Nested skills hold procedure depth.
+Pack landing page: [[03-skills/design-system-ops/README|design-system-ops README]].
 
 ## Owns vs defers
 

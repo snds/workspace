@@ -12,7 +12,7 @@ _Last updated: 2026-07-30_
 |---|---|---|---|---|
 | **Claude Code (CLI)** | Walks up parents from CWD → `CLAUDE.md` + `.claude/` | Anthropic | Full dispatcher + slash skills + SessionStart/End | Cleanest brain integration for workspace mutation. |
 | **Claude Code (desktop, Code tab)** | Same, plus per-session worktree under `.claude/worktrees/` | Anthropic | Yes — state on worktree branch until merged | Prefer CLI for canonical continuity. |
-| **Cursor** | `.cursor/rules/*.mdc` on **first** workspace folder + project/user hooks | Cursor models (Claude/GPT/Gemini/…) | `sessionStart` (user) · `preCompact`/`sessionEnd`/`subagentStop` (project) · `.cursor/agents/` | Open Brain first or use `*.code-workspace`. Adapter: [CURSOR.md](../CURSOR.md). |
+| **Cursor** | `.cursor/rules/*.mdc` on **first** workspace folder + project/user hooks | Cursor models (Claude/GPT/Gemini/…) | `sessionStart` (user) · `preCompact`/`sessionEnd`/`subagentStop` (project) · `.cursor/agents/` | Open Brain first or use `*.code-workspace`. Adapter: [[CURSOR]]. |
 | **VS Code** + Claude Code ext | Same as CLI | Anthropic | Yes | IDE UI over the CLI hooks. |
 | **VS Code** + Copilot | `.github/copilot-instructions.md` | OpenAI | No | Not set up. |
 | **Obsidian** | Folder = vault | n/a | n/a | Navigation, graph, daily notes. |
@@ -36,7 +36,7 @@ claude
 1. **File → Open Workspace from File…** → `00-bootstrap/workspaces/*.code-workspace` (Brain first), **or** open the workspace folder itself.
 2. Confirm `.cursor/rules/brain.mdc` is active (Rules / agent context).
 3. Optional: paste `00-bootstrap/dist/BEACON.md` into **Cursor Settings → Rules** (User Rules) as hook fallback; then `workspace-doctor.sh --ack-chat`.
-4. MCP (Figma, Linear, …): Settings → MCP — see [capability-registry.md](../02-shared-references/capability-registry.md).
+4. MCP (Figma, Linear, …): Settings → MCP — see [[capability-registry]].
 
 Do **not** open only `~/Projects` as the root if you need brain rules — attach the checkout first.
 

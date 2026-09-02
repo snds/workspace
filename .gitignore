@@ -94,6 +94,7 @@
 !09-tools/side-chat-handback.py
 !09-tools/test-validators.py
 !09-tools/ds-source-watch.py
+!09-tools/cursor-externalize.py
 
 # Track only the 00-obsidian integration project; other projects stay local.
 !07-projects/
@@ -117,6 +118,11 @@
 # (2026-08-07). Implementation code stays in the platform Projects directory.
 !07-projects/20-lcars-generative-interface/
 !07-projects/20-lcars-generative-interface/**
+
+# MediaSentinel is otherwise git-local; track only Cursor canvas copies.
+!07-projects/01-mediaservices/
+!07-projects/01-mediaservices/canvases/
+!07-projects/01-mediaservices/canvases/**
 
 # ---- Still ignored, even inside tracked folders ----
 

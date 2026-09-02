@@ -31,6 +31,8 @@ it matters in our specific context*.
 
 ## Structure
 
+Index: [[08-knowledge/_INDEX]]. This file: [[08-knowledge/_README]].
+
 ```
 08-knowledge/
   _README.md          ← this file
@@ -64,8 +66,8 @@ relations: {}   # optional typed edges — builds-on / relates-to / contradicts 
 ```
 
 Open the body with a **`## For future agent`** retrieval block (TL;DR + key claims + as-of),
-per [vault-graph-conventions](../02-shared-references/vault-graph-conventions.md). Write each
-claim as **timeless / dated / pointer** ([epistemic-standards](../02-shared-references/epistemic-standards.md) §2)
+per [[vault-graph-conventions]]. Write each
+claim as **timeless / dated / pointer** ([[epistemic-standards]] §2)
 and tag anything past its horizon `#stale`. Use the `relations:` typed edges — especially
 `refutes` — so a superseded finding is *marked*, not silently left to mislead.
 

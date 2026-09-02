@@ -6,7 +6,7 @@ title: Workspace Map of Content
 # 🗺️ Workspace — Map of Content
 
 The layered index of the whole workspace. Start here in Obsidian. Machine entry point for agents is
-[[llms]] → [[AGENTS]]; the routing map for *where things go* is [[workspace-ontology]].
+`llms.txt` → [[AGENTS]]; the routing map for *where things go* is [[workspace-ontology]].
 
 ## Layers (the skill graph)
 
@@ -55,15 +55,20 @@ SORT file.name ASC
 - **Design** → [[design-foundations]] → [[lead-ui-designer]] · [[lead-graphic-designer]] · [[lead-ux-designer]] · [[lead-type-designer]] · [[lead-motion-designer]] · [[lead-information-designer]] · [[lead-3d-designer]]
 - **Engineering** → [[eng-foundations]] → [[lead-frontend-engineer]] · [[lead-backend-engineer]] · [[lead-devops-engineer]]
 - **Product** → [[product-foundations]] → [[lead-product-manager]]
-- **Data** → [[data-foundations]] → [[lead-data-scientist]]
+- **Data / science** → [[data-foundations]] · [[science-foundations]] → [[lead-data-scientist]]
 - **Game** → [[game-foundations]] → [[lead-game-designer]] · [[lead-game-developer]] · [[lead-art-director]]
+- **Imaging** → [[imaging-foundations]]
+- **Vision** → [[vision-foundations]]
+- **Visual QA** → [[lead-visual-qa]] · [[visual-qa-toolkit]]
+- **Job-context constitutions** → [[domain-constitutions]] · [[constitution-spec]] · [[dsds-constitution]]
 
 ## Other maps
 - [[_HOME]] — daily front door · [[_SKILLS]] — full skill list · [[_FRAMEWORKS]] — operating frameworks
 - [[_CONTEXT]] — role/project/session/memory · [[_PROJECTS]] — projects · [[_CHEATSHEET]] — quick reference
+- [[00-bootstrap/BOOTSTRAP|BOOTSTRAP]] · [[00-bootstrap/OBSIDIAN-SETUP|OBSIDIAN-SETUP]] · [[00-bootstrap/SURFACES|SURFACES]]
 
 ## The system layer
 - **Contract:** [[AGENTS]] (universal) · adapters [[CLAUDE]] · [[CURSOR]] · [[PERPLEXITY]]
 - **Governance:** [[08-workspace-contribution-framework]] (how/when/where/what/why to edit) · [[workspace-ontology]] (routing map)
 - **Generated graph:** `03-skills/skills.registry.json` ← `09-tools/build-registry.py` + `build-related.py`
-- **Memory:** [[MEMORY]] · **Archive:** `_archive/ARCHIVE-LOG.md`
+- **Memory:** [[06-context/memory/MEMORY|MEMORY]] · **Archive:** [[_archive/ARCHIVE-LOG|ARCHIVE-LOG]]

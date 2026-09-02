@@ -1,0 +1,81 @@
+# Architecture and interior  -  built environment, not game kits.
+# No dedicated architecture L1 or lead hub. Methods from #01 and visual-qa-architecture.
+schemaVersion: "domain-constitution/1.0"
+id: architecture
+name: Architecture and interior
+status: authored
+l1:
+  - 01-aesthetic-lens
+foundation: design-foundations
+leads: []
+measurement:
+  - visual-qa-architecture
+  - visual-qa-interior-design
+command: []
+complements:
+  values: "Drawings, BIM, named materials, site photos. Live in the project, not the vault."
+  meaning: "This constitution + #01 (authored constraint, material honesty, human scale) + visual-qa-architecture / visual-qa-interior-design."
+  arbitration: "Human scale, structural plausibility, and site context can refuse a render that merely looks expensive. There is no typed contract schema yet; do not pretend DSDS kinds apply."
+  look: "Project brief. Wright/Swiss/Hadid are through-lines in #01, not a mandated style."
+  runtime: "Not software. Construction documents and renders are deliverables, not a runtime catalog."
+graphs:
+  skillLoad: "design-foundations → visual-qa-architecture | visual-qa-interior-design (lenses under lead-visual-qa). 3D craft for stills may load lead-3d-designer."
+  epistemic: "08-knowledge/ (thin; do not stuff Legion environments here)"
+  artifact: "this file"
+shared:
+  - id: shared-scale
+    name: Human scale and massing
+    for: all
+    items:
+      - id: human-scale-reference
+        statement: "Proportion is meaningless without a human scale reference. Entourage, doors (~2.1m), floor-to-floor, and vehicles must be plausible together."
+        level: must
+      - id: structural-rhythm
+        statement: "Facade bay rhythm, floor-line legibility, and height-to-width should reflect structural logic, not random glazing."
+        level: should
+      - id: material-honesty
+        statement: "Materials and assemblies should read as what they are. Fake structure and impossible spans fail even when the lighting is pretty."
+        level: must
+      - id: site-context
+        statement: "The building sits in a site. A hero object floating on a white void is not an architectural verdict unless the brief is explicitly abstract."
+        level: must
+  - id: shared-split
+    name: Interior vs exterior vs game
+    for: agent
+    items:
+      - id: threshold-split
+        statement: "Exterior massing, envelope, and site are architecture. Inside-the-room finish and furnishing are interior. Apply both at the threshold."
+        level: must
+      - id: not-game-env
+        statement: "Game and interactive environments route to the imaging constitution (3d-spatial-design-for-games) and the game constitution (pacing, readable silhouettes). Do not grade a spaceship kit with facade-bay rules."
+        level: must-not
+      - id: native-pixels
+        statement: "Renders are judged at native resolution (#10). Lighting simulation claims require more than a single beauty still if time-of-day or sun angle is the claim."
+        level: must
+entries:
+  - id: system
+    kind: system
+    name: Architecture constitution
+    for: agent
+    notes: "Authored without a lead-architect hub. #13 would call a fake hub an orphan. Depth today is QA lenses + #01. Built-work beyond visualization is out of vault skill coverage; say so rather than invent law."
+  - id: visualization
+    kind: entry
+    name: Architectural visualization
+    notes: "PBR correctness, glazing, entourage, sections/elevations/axo as communication. Imaging constitution still owns light-transport method when the deliverable is a physically based render."
+combos:
+  - id: scale-vs-hero
+    must: [human-scale-reference, site-context]
+    mustNot: []
+    why: "Monumental massing without scale cues is illustration, and it still needs the illustration constitution's communication job named."
+  - id: domain-vs-game
+    must: [threshold-split]
+    mustNot: [not-game-env]
+    why: "The overlap is real at 'environment design' in the user's list. The split is the constitution."
+refuse:
+  - "Inventing lead-architect and an architecture-foundations hub from this file alone. 3+ sibling hubs must re-derive the same principle first (ontology rule)."
+  - "Using this pack as Legion station-interior law. That is imaging + game + art direction."
+  - "Calling a midjourney exterior an architectural decision without scale, structure, or site."
+watch: []
+notes:
+  for: agent
+  - "If Sean starts a real architecture project, promote: named L2 contract (brief), measurement beyond the QA spoke, and only then consider a hub."

@@ -922,7 +922,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:55e5e43acb2b5ef30ce568050d4e5a2d6a61696ae1bb012821a0f47f31004435"
+      "hash": "sha256:2747f12c1026033e26532ba9b5fcff8ce6720e7331a18df360ed9fd9a22f1ea1"
     },
     "design-foundations": {
       "path": "03-skills/design-foundations/SKILL.md",
@@ -992,7 +992,7 @@
         "design-engineer"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:f25b5b56e0bf794902aeb4806f13100add9903849f890da1ca85577770038cc4"
+      "hash": "sha256:28a0d99dbe9c89ebc573817e03ac4a5f49594f289b1b82e2fc93edb184a5a110"
     },
     "devops-ci-cd": {
       "path": "03-skills/devops-ci-cd/SKILL.md",
@@ -4206,7 +4206,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:d74a8a78c8c09b07461a4f2c436ae428bf8c6553d315340b6bd4fe77780ddef7"
+      "hash": "sha256:23bacc52c361f4e7e5bdb27763d5e0e1e0e3f5f29ded00cbb263e57e64880308"
     },
     "material-symbols-suite": {
       "path": "03-skills/material-symbols-suite/SKILL.md",
@@ -7130,7 +7130,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:49cb4164cefb450b2caaa40190d42b93fb75deea8ce595fb91b66a6381106111"
+      "hash": "sha256:514cedb13819d01f86339ce26dfe2c294f8b204a51805c2a9de49ddcba3646de"
     },
     "visual-qa-type": {
       "path": "03-skills/visual-qa-type/SKILL.md",

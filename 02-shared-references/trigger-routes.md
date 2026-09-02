@@ -70,6 +70,13 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `refresh ds ontology` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/idempotent-design-decisions.md |
 | `onori` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/dsds/dsds-constitution.md |
 | `pj onori` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/dsds/dsds-constitution.md |
+| `domain constitution` | 02-shared-references/domain-constitutions/domain-constitutions.md + constitution-spec.md - job-context methods/complements; DSDS only for design-systems |
+| `domain constitutions` | 02-shared-references/domain-constitutions/domain-constitutions.md + 08-knowledge/cross-domain/agentic-domain-constitutions.md |
+| `job context ontology` | 02-shared-references/domain-constitutions/constitution-spec.md + domain-constitutions.md |
+| `ux ontology` | 02-shared-references/domain-constitutions/dc-ux-ui.yaml + 03-skills/design-foundations/SKILL.md |
+| `game constitution` | 02-shared-references/domain-constitutions/dc-game.yaml + 03-skills/game-foundations/SKILL.md |
+| `machine vision ontology` | 02-shared-references/domain-constitutions/dc-vision.yaml + 03-skills/vision-foundations/SKILL.md |
+| `visual qa constitution` | 02-shared-references/domain-constitutions/dc-visual-qa.yaml + 03-skills/visual-prove-engine/SKILL.md |
 | `configuration collapse` | 08-knowledge/design/nathan-curtis-ds-ops-substack.md — slots over prop sprawl; AI-ready composition |
 | `figma slots` | 08-knowledge/design/nathan-curtis-ds-ops-substack.md — slots over prop sprawl; AI-ready composition |
 | `maintenance loop` | 08-knowledge/cross-domain/nate-jones-harness-enrichments.md + .claude/skills/optimize/SKILL.md |
@@ -207,4 +214,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 125 · Registry rows: 59_
+_Curated routes: 132 · Registry rows: 59_

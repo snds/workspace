@@ -4,6 +4,33 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-07-30 — SaaS PLM DataTable: Layer A+B visual parity (LandingDataTable + Materials lab)
+
+SessionID: 2026-07-30-work-dt02
+--- SESSION BLOCK ---
+Date: 2026-07-30
+Machine: Work MacBook Pro (main)
+Surface: Cursor
+Project(s): SaaS PLM prototype (employer — `centric-engineering` profile)
+Summary: Brought `@centric/data-table` visual parity through Layer A (lab recipe) and Layer B (shared `LandingDataTable`). Actions column stays in the DOM for a11y; recipe CSS hides its chrome; floating Edit/Remove pill on hover/focus. Lab now switches Seasons | Materials (Materials = subset stress, not full 21-prop port).
+Artifacts:
+  - Employer: `src/app/features/landingDataTable/` (`LandingDataTable`, column helpers, recipe CSS); `src/table-lab.tsx` rewired; `table-lab.css` removed (recipe lives with the wrapper)
+  - `05-artifacts/active/saas-proto_datatable-visual-parity-plan_v1.0_2026-07-30.md` — A+B marked complete
+  - Repo `PROJECT-NOTES.md` + `CENTRIC-UI-SYNC.md` (actions-header a11y finding)
+Decisions:
+  - Floating Edit+Remove is the landing actions pattern; package actions column kept for semantics; `⋮` returns only as overflow past two actions.
+  - Materials lab starts as a representative subset; full domain cells are a follow-on, not a TanStack fork.
+  - Prefer nested system components (`StatusPill`, `InlineEditText`, `TypeTag`, `TableRowActions`) over table-local chrome.
+Learnings:
+  - Transparent borders (not `border: 0`) preserve sticky offsets on the actions column.
+  - Package `DataTableRowActionsHeaderCell` has contradictory `aria-hidden` + `sr-only` — upstream finding, do not patch the copy.
+Next:
+  - Review + commit/PR employer branch (never auto-commit)
+  - Deepen Materials domain cells on the recipe
+  - Layer C = file/send upstream findings; WP-0 memo still unsent
+--- END SESSION BLOCK ---
+
+
 ### 2026-07-30 — SaaS PLM DataTable: plan reviewed, premise overturned, table copied in + comparison lab live
 
 SessionID: 2026-07-30-work-dt01

@@ -10,7 +10,7 @@ you read this.
 
 ## Operating layer
 
-- [[_FRAMEWORKS|Frameworks]] — the eleven that govern every project
+- [[_FRAMEWORKS|Frameworks]] — the sixteen that govern every project
 - [[_CONTEXT|Context]] — who, what, where, when (role, preferences, sessions, artifacts)
 - [[_SKILLS|Skills]] — 280+ skill library, hub and spokes
 - [[_PROJECTS|Projects]] — active work across all domains

@@ -1,0 +1,133 @@
+# Machine registry of job-context constitutions.
+# Human index: domain-constitutions.md
+# Spec: constitution-spec.md
+# Do not hand-edit status without updating the matching YAML or removing it.
+schemaVersion: "domain-constitution-registry/1.0"
+updated: "2026-09-02"
+spec: constitution-spec.md
+instances:
+  - id: design-systems
+    name: Design systems
+    status: canonical
+    schema: DSDS 0.20.0
+    instance: ../dsds/workspace-ds-constitution.dsds.yaml
+    companion: ../dsds/dsds-constitution.md
+    l1: [09-component-and-pattern-framework]
+    foundation: design-foundations
+    leads: [ds-advisor, design-engineer]
+    measurement: [visual-prove-engine, a11y-audit-toolkit]
+    command: [qa, ds]
+  - id: ux-ui
+    name: UX / UI / visual / interaction
+    status: authored
+    instance: dc-ux-ui.yaml
+    l1: [02-ui-ux-operational-framework, 01-aesthetic-lens]
+    foundation: design-foundations
+    leads: [lead-ux-designer, lead-ui-designer, lead-information-architect]
+    measurement: [visual-prove-engine, a11y-audit-toolkit]
+    command: [qa]
+  - id: motion
+    name: Motion design
+    status: authored
+    instance: dc-motion.yaml
+    l1: [02-ui-ux-operational-framework]
+    foundation: design-foundations
+    leads: [lead-motion-designer]
+    measurement: [visual-prove-engine, visual-qa-motion]
+    command: [motion, qa]
+  - id: research
+    name: User research
+    status: authored
+    instance: dc-research.yaml
+    l1: [04-research-and-evidence-framework, 15-analysis-operating-model]
+    foundation: product-foundations
+    leads: [lead-ux-designer]
+    measurement: []
+    command: []
+    notes: "Qualitative/mixed-method owned by ux-research-synthesis. Stats/experiments owned by #15 + lead-data-scientist."
+  - id: engineering
+    name: Front-end and back-end engineering
+    status: authored
+    instance: dc-engineering.yaml
+    l1: [14-engineering-operating-model]
+    foundation: eng-foundations
+    leads: [lead-frontend-engineer, lead-backend-engineer, lead-devops-engineer, lead-mobile-engineer]
+    measurement: [fe-perf-harness, a11y-audit-toolkit]
+    command: [eng]
+  - id: game
+    name: Game design, development, and engines
+    status: authored
+    instance: dc-game.yaml
+    l1: [12-realtime-photoreal-operational-framework]
+    foundation: game-foundations
+    leads: [lead-game-designer, lead-game-developer]
+    measurement: [play-prove, visual-prove-engine]
+    command: []
+  - id: imaging
+    name: 3D modelling, environment, photoreal
+    status: authored
+    instance: dc-imaging.yaml
+    l1: [12-realtime-photoreal-operational-framework]
+    foundation: imaging-foundations
+    leads: [lead-3d-designer, lead-art-director]
+    measurement: [render-qa-toolkit, visual-prove-engine]
+    command: [realtime-visual-craft]
+  - id: vision
+    name: Machine vision
+    status: authored
+    instance: dc-vision.yaml
+    l1: [15-analysis-operating-model]
+    foundation: vision-foundations
+    leads: []
+    measurement: [visual-prove-engine]
+    command: []
+    notes: "No lead-vision hub. Foundation + vis-* spokes. L1 is #15."
+  - id: visual-qa
+    name: Visual QA
+    status: authored
+    instance: dc-visual-qa.yaml
+    l1: [06-qa-operating-model, 10-perception-integrity]
+    foundation: design-foundations
+    leads: [lead-visual-qa]
+    measurement: [visual-prove-engine, visual-qa-toolkit, render-qa-toolkit]
+    command: [qa]
+  - id: illustration
+    name: Illustration and graphic design
+    status: authored
+    instance: dc-illustration.yaml
+    l1: [01-aesthetic-lens]
+    foundation: design-foundations
+    leads: [lead-graphic-designer, lead-art-director]
+    measurement: [visual-qa-graphic-design]
+    command: []
+  - id: architecture
+    name: Architecture and interior
+    status: authored
+    instance: dc-architecture.yaml
+    l1: [01-aesthetic-lens]
+    foundation: design-foundations
+    leads: []
+    measurement: [visual-qa-architecture, visual-qa-interior-design]
+    command: []
+    notes: "No dedicated architecture L1 or hub. Methods from #01 + visual-qa-architecture. Game environments route to imaging + game."
+  - id: product
+    name: Product management
+    status: mapped
+    l1: [15-analysis-operating-model]
+    foundation: product-foundations
+    leads: [lead-product-manager]
+    notes: "Mapped only. Promote when methods are extracted without restating the hub."
+  - id: data
+    name: Data science and analytics
+    status: mapped
+    l1: [15-analysis-operating-model]
+    foundation: data-foundations
+    leads: [lead-data-scientist]
+    notes: "Mapped only. experiment-validity-baseline is the epistemic seed."
+  - id: security
+    name: Security
+    status: mapped
+    l1: [16-security-operating-model]
+    foundation: eng-foundations
+    leads: [lead-security-architect]
+    notes: "Mapped only. Cross-cutting lens on engineering; not a sibling of visual QA."

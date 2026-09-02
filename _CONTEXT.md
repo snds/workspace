@@ -7,7 +7,7 @@ tags: [moc, context]
 
 Everything Claude needs to know before acting. All files in `06-context/`.
 
-## The four context files
+## The context files
 
 | File | Purpose | Who writes |
 |---|---|---|
@@ -16,6 +16,7 @@ Everything Claude needs to know before acting. All files in `06-context/`.
 | [[06-context/project-context]] | Active projects + pending items (authoritative) | Claude (via `/session-end`) |
 | [[06-context/session-log]] | Session blocks, newest-first | Claude (via `/session-end`) |
 | [[06-context/artifact-registry]] | Structural index of project files | Claude (via `/session-end` write 4) |
+| [[06-context/memory/MEMORY]] | Durable non-project facts + decisions index | Claude (when a durable fact emerges) |
 
 ## Recent session entries
 

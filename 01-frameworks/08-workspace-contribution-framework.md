@@ -264,8 +264,10 @@ baton. Record durable insights/facts in the moment (knowledge/memory), not just 
    blocks. **Do not hand-edit `session-log.md`** (append-only, `merge=union`, bounded by archival).
 2. Apply any project status / pending changes to `06-context/project-context.md`.
 3. Update the active project's `SESSION-STATE.md` (incl. the Live handoff block).
-4. If a generated artifact changed (frontmatter edited), regenerate `skills.registry.json` + Related blocks.
-5. Commit + push reviewable diffs.
+4. On Cursor: `python3 09-tools/cursor-externalize.py` so live `~/.cursor/projects/*/canvases/` copies
+   land in git-tracked project folders (Cursor will not compile the vault copies).
+5. If a generated artifact changed (frontmatter edited), regenerate `skills.registry.json` + Related blocks.
+6. Commit + push reviewable diffs.
 
 **Concurrent agents.** If two agents touched the same project in parallel, run the reconcile protocol to
 merge their session blocks + handoff state into one thread; flag genuine conflicts rather than overwriting.

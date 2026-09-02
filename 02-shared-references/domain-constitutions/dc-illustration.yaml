@@ -1,0 +1,82 @@
+# Illustration and graphic design  -  communication craft.
+# Screen application is ux-ui. Motion still needs composed frames. 3D look is imaging.
+schemaVersion: "domain-constitution/1.0"
+id: illustration
+name: Illustration and graphic design
+status: authored
+l1:
+  - 01-aesthetic-lens
+foundation: design-foundations
+leads:
+  - lead-graphic-designer
+  - lead-art-director
+measurement:
+  - visual-qa-graphic-design
+command: []
+complements:
+  values: "Palette, typefaces, marks, print specs, illustration files. Live in the brand or project."
+  meaning: "This constitution + #01 through-lines + lead-graphic-designer first principles. Context-free perception/type/composition stay in design-foundations."
+  arbitration: "Does the form communicate the message. A form that communicates poorly is not beautiful. Print production constraints (CMYK, bleed) are medium floors, not style."
+  look: "Project identity. Warmth is a home base in #01, not a directive. Palette serves intent."
+  runtime: "Press, PDF, or exported asset. Not a design-system token file unless the mark is being encoded into a DS."
+graphs:
+  skillLoad: "design-foundations → lead-graphic-designer → graphic spokes ; illustration direction sits on this hub ; game identity also via lead-art-director"
+  epistemic: "08-knowledge/design/ when a graphic method is validated"
+  artifact: "this file"
+shared:
+  - id: shared-communication
+    name: Aesthetic and functional are one value
+    for: all
+    items:
+      - id: communicates-or-fails
+        statement: "Every decision is simultaneously aesthetic and functional. A form that communicates poorly is not beautiful. A message without craft is not effective."
+        level: must
+      - id: print-informs-screen
+        statement: "UI, UX, motion, type, and design systems inherit grid, hierarchy, color theory, and composition from graphic craft. They adapt for the medium; they do not replace the principles."
+        level: must
+      - id: earned-density
+        statement: "Density must be earned. Ornament that does not carry structural or informational weight is rejected by default (#01)."
+        level: must
+      - id: inevitability
+        statement: "Prefer the choice that feels inevitable under the stated constraints over novelty for its own sake."
+        level: should
+  - id: shared-illustration
+    name: Illustration direction
+    for: all
+    items:
+      - id: narrative-job
+        statement: "Illustration has a communication job (explain, tone, identify, spatialize). Style is in service of that job, not a Pinterest default."
+        level: must
+      - id: medium-floors
+        statement: "Print gamut, bleed, line weight at size, and color-vision-safe encoding are floors. Do not author hairline detail that dies at the intended viewing distance."
+        level: must
+      - id: not-a-ui-kit
+        statement: "Do not treat an illustration style guide as a component library. Encoding into a DS is a ds-advisor job after the mark is resolved."
+        level: must-not
+entries:
+  - id: system
+    kind: system
+    name: Graphic / illustration constitution
+    for: agent
+    notes: "Upstream visual source for other design hubs. When a downstream discipline departs from these principles, that departure is provisional and must be named."
+  - id: identity
+    kind: entry
+    name: Visual identity
+    notes: "Marks, type, color, and illustration systems. Game faction language routes through lead-art-director with these principles still in force."
+combos:
+  - id: craft-vs-message
+    must: [communicates-or-fails, earned-density]
+    mustNot: [not-a-ui-kit]
+    why: "Pretty noise is a failed graphic object. A sticker sheet of unused marks is not a system."
+  - id: medium-vs-principle
+    must: [print-informs-screen, medium-floors]
+    mustNot: []
+    why: "CMYK is not a reason to invent new gestalt. It is a gamut constraint on the same principles."
+refuse:
+  - "Inventing a separate 'visual design' constitution that duplicates design-foundations."
+  - "Using illustration to hide broken IA or unreadable UI."
+  - "Copying a film still's grade into print without a production path."
+watch: []
+notes:
+  for: agent
+  - "No dedicated illustration L1. #01 plus this file is the honest stack. Promote only if 3+ hubs start re-deriving the same illustration-only law."

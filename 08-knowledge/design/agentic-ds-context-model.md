@@ -1,7 +1,7 @@
 ---
 tags: [design-systems, ontology, knowledge-graph, context-model, agentic, dsds, harness]
 created: 2026-09-01
-updated: 2026-09-01
+updated: 2026-09-02
 status: working
 confidence: medium
 sources:
@@ -21,6 +21,8 @@ relations:
     - "[[agentic-error-correction-foundations]]"
     - "[[nate-jones-harness-enrichments]]"
     - "[[idempotent-design-decisions]]"
+    - "[[agentic-domain-constitutions]]"
+    - "[[domain-constitutions]]"
 ---
 
 # Agentic design-system context model
@@ -30,9 +32,9 @@ agentic specs. The operating claim: keep the intent model; project documentation
 do not invent a sixth schema.
 
 ## For future agent
-- **TL;DR:** Three graphs (skill load, epistemic, DSDS artifact) + four intent types + a named
-  harness loop. DSDS is the portable *documentation* view of facets 1–17. The contract schema
-  still arbitrates. DESIGN.md stays lean visual identity.
+- **TL;DR:** Three graphs (skill load, epistemic, domain artifact) + four intent types + a named
+  harness loop. DSDS is the portable *documentation* view of facets 1–17 for design-systems.
+  Other job contexts use [[domain-constitutions]]. The contract schema still arbitrates. DESIGN.md stays lean visual identity.
 - **Key claims:**
   - Complements, not competitors: DTCG = values · DSDS = meaning/usage · contract = arbitration ·
     DESIGN.md = look · A2UI = agent-to-UI wire format. (timeless, given those specs)
@@ -113,8 +115,9 @@ before inventing new pairing prose.
 L0 Harness            request → policy → context builder → act → eval → human gate
 L1 Profile + route    who owns / reviews; where a write belongs
 L2 Intent delivery    Wolosin four types → five delivery artifacts
-L3 Three graphs       skill load · epistemic · DSDS artifact   (do not cross)
-L4 Schema stack       DTCG · DSDS · contract · DESIGN.md · A2UI catalog
+L3 Three graphs       skill load · epistemic · domain artifact   (do not cross)
+L4 Schema stack       values · meaning · arbitration · look · runtime
+                      (DS: DTCG · DSDS · contract · DESIGN.md · A2UI)
 L5 Memory             short = session/working · long = knowledge/memory · shared = Live handoff
 L6 AgentOps           validators, vqa, trust levels; later: cost/task, approval rate, traces
 ```
@@ -134,6 +137,9 @@ Worth doing:
 4. Composition `combos` live in the DSDS constitution, sourced from framework #09 §7.
 5. Review upstream sources with [[ds-source-watch]] (report-first; never auto-edit ontology).
 6. Keep [[component-contract-schema]] as facet-18 arbitration.
+7. Same rigor for other job contexts: [[domain-constitutions]] / [[constitution-spec]]
+   (authored 2026-09-02). DSDS stays the DS instance; do not clone DSDS kinds onto
+   engines or datasets.
 
 Refuse:
 
@@ -158,4 +164,6 @@ Coverage bars on that canvas are a 2026-09-01 judgment, not a measured benchmark
 - [[agentic-error-correction-foundations]] — independent measurement vs self-critique
 - [[idempotent-design-decisions]] — standing methods (not style)
 - [[dsds-constitution]] — DSDS 0.20 constitution view
+- [[agentic-domain-constitutions]] — same remap across job contexts
+- [[domain-constitutions]] — UX, motion, research, eng, game, imaging, vision, VQA, …
 - `ds-source-watch` skill — upstream source review (report-first)
