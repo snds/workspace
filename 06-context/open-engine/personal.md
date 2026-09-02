@@ -1,7 +1,7 @@
 ---
 tags: [context, open-engine, agent-ops, lane]
 created: 2026-07-29
-status: provisioning
+status: operational
 aliases: [open-engine-personal]
 ---
 
@@ -10,12 +10,9 @@ aliases: [open-engine-personal]
 Instance config for the personal-solo lane. Procedure lives in [[open-agent-engine]] — do not restate
 it here. This file answers only *which instance*.
 
-> **Status: PROVISIONING (2026-07-29).** Stage-2 identity verification passed and the board is built
-> — team, project, label, ledger, and the first `AGENT STATUS` comment all exist. **One blocking
-> human step remains: the six engine statuses.** The Linear MCP exposes no status-creation operation
-> (`list_issue_statuses` / `get_issue_status` only), so they must be created in Linear's team
-> settings by hand. Until they exist, no queue run is valid and the smoke tests cannot execute — the
-> runner must refuse to run.
+> **Status: OPERATIONAL (2026-09-02).** Board, seven statuses, and Stage-2 identity are live on this
+> Cursor (`linear-personal` → `hello@snds.design` / `linear.app/snds`). Smoke tests 2–3 (blocked-resume,
+> human-hold) are still mid-flight on `SEA-7` / `SEA-8`. Do not register `linear-c8` on this machine.
 
 ## Binding
 
@@ -182,10 +179,10 @@ Subscribed: none
 | Distinctness | this lane user `92d3f2ac…` / team `87d16edc…`; the other lane returns a different user id **and** a different team id. Linear user records are per-workspace, so this proves two different orgs | ✅ lanes cannot collapse onto one destination |
 | Workspace | first created object returned `https://linear.app/snds/issue/SEA-5/…` | ✅ slug `snds` matches |
 
-**Why the slug needed a write.** No Linear MCP read exposes the org slug — `get_user`, `get_team`,
-and `list_teams` all omit it; the slug-bearing `url` exists only on projects, issues, documents, and
-comments; and the server publishes no MCP resources. On an empty board the check is therefore only
-answerable by creating something. The skill's stage-2 section carries this as the first-write gate.
+**Why the slug needed a write (2026-07-29).** At that time no Linear MCP *read* exposed the org slug —
+`get_user`, `get_team`, and `list_teams` all omit it. The 2026-09-02 Cursor enroll used `get_workspace`,
+which now returns `https://linear.app/snds`. First-write remains the fallback if a transport still omits
+the slug.
 
 **Transport.** All four required operations verified live: query (`list_issues`), create
 (`save_issue`), update incl. status-write (`save_issue` Backlog → Todo on `SEA-5`), and comment
