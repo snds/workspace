@@ -149,7 +149,14 @@ Generate two variants from the *same* DESIGN.md/token contract (so they differ o
 
 **Net:** A2UI owns the *wire format + streaming/data-binding/security*; this system owns the *components, semantics, and tokens* A2UI omits. Complementary layers. **Caveats:** spec unstable (3 concurrent families); only `accessibility.label/description` (no roles/states/anatomy taxonomy — the MCP fills this); no DTCG/Code-Connect/`design.md` references in-repo; catalog authoring is on you.
 
-## 7. Relationships
+## 7. Expressiveness (CI is the contract)
+
+`DESIGN.md` and this checklist are testimony: they raise the odds an agent stays on-system.
+They do not refuse off-system values. Typed tokens, lint, and CI do. See
+[[llm-safe-design-system-expressiveness]]. A growing `eslint-disable` list is a design-system
+bug, not an authoring failure.
+
+## 8. Relationships
 - **Up:** framework [[09-component-and-pattern-framework]] §11 (AI-legible layer), §12 (DESIGN.md), §16 (A2UI).
 - **Across:** `component-authoring.md` (the `meta.json` record), `tokens-and-naming.md` (DESIGN.md frontmatter = token export).
 - **Out:** `AGENTS.md` binding (framework §14) — the always-on rules + MCP pointer + trust levels this architecture needs.

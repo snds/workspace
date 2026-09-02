@@ -11,7 +11,7 @@ description: >
   owns the design decisions. Token architecture that encodes these decisions lives
   in ds-advisor. Part of the lead-ui-designer hub skill network.
 aliases: [uid-color-for-ui]
-triggers: [status color, status colors, semantic color, semantic colors, validation state, error color, warning color, dark mode color, colorblind-safe, color palette, ui color]
+triggers: [status color, status colors, semantic color, semantic colors, validation state, error color, warning color, dark mode color, dark-mode palette, colorblind-safe, color palette, ui color, contrast-color]
 tier: spoke
 domain: design
 hub: lead-ui-designer
@@ -204,6 +204,17 @@ light mode guarantees dark mode passes. Common failures:
 - Muted text that barely passed in light mode fails in dark mode
 - Success green that was readable on white is too dark on a dark card
 - Disabled state colors that disappear entirely
+
+### CSS pairing: `contrast-color()` (experimental)
+
+Native CSS `contrast-color()` currently returns black or white only. That is not a
+design-system text role. Map the result onto **your** text tokens with `if()` +
+`@property`, or Lea Verou's `--contrast-color()` polyfill, then verify with APCA.
+This is a pairing helper. It does **not** replace APCA governance
+([[radix-derived-color-system]]) and it does not live in `found-color` (screen pairing
+stays here). Browser support is incomplete; keep a token fallback.
+
+Source: Dave Rupert, *contrast-color() with custom design tokens* (2026-01).
 
 ---
 

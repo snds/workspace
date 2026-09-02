@@ -7,6 +7,10 @@
       "env": {
         "MCP_REMOTE_CONFIG_DIR": "/Users/YOU/.mcp-auth/linear-personal"
       }
+    },
+    "designparser": {
+      "command": "npx",
+      "args": ["-y", "designparser-mcp"]
     }
   }
 }

@@ -109,7 +109,8 @@ When the user asks to add or improve skills in a domain:
 3. **Prefer connective tissue over volume.** If spokes are already deep, invest in L1–L3 and linkage, not more prose.
 4. **Wrapper before plugin depth.** If a Cursor/Claude plugin already holds technique depth, author a thin workspace hub that owns triggers, bans, and routing; do not fork the plugin into the vault.
 5. **Measure before declaring audit.** Add or extend an L3 toolkit before marketing a new `--lens` or "security audit" claim.
-6. **Run the acceptance checklist.** Then `build-related.py` → `build-registry.py` → validators.
+6. **Contrast examples.** High-judgment skills need at least one bad / good / why block, not a feature dump.
+7. **Run the acceptance checklist.** Then `build-related.py` → `build-registry.py` → `build-trigger-routes.py` → `evaluate-skill-routing.py` → validators. New or changed triggers must pass the routing corpus (ordinary prose must not load a skill via `a` / `I`).
 
 Surfaces' native "create a skill" flows are **insufficient** if they skip this algorithm. Point them here.
 

@@ -147,6 +147,11 @@ Radix-scale-specific and apply only to Radix-derived palettes.
 
 **Tools**: APCA Contrast Calculator (apcalc.github.io), Polypane, Stark.
 
+**CSS pairing (not a substitute):** native `contrast-color()` returns black/white only.
+Map onto semantic text tokens and still measure APCA. See [[uid-color-for-ui]]
+"CSS pairing" and Dave Rupert's 2026-01 note. Do not treat a passing `contrast-color()`
+as an accessibility claim.
+
 ### Common Contrast Anti-Patterns
 
 - Placeholder text with insufficient contrast (often fails 4.5:1 because "it's not

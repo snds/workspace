@@ -10,9 +10,9 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 287,
+    "total": 288,
     "by_tier": {
-      "cross-cutting": 40,
+      "cross-cutting": 41,
       "foundation": 22,
       "hub": 47,
       "spoke": 178
@@ -324,7 +324,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:ba87a7c33c43ee6f2a85b7c0c6136d02454523f43641f0410d02dcbe2337fce6"
+      "hash": "sha256:b5206a4ad83fa1b491c8855abe85085d64d2e3af69a311061d3ff58d7c919355"
     },
     "adapter-unity-hdrp": {
       "path": "03-skills/adapter-unity-hdrp/SKILL.md",
@@ -818,14 +818,31 @@
       ],
       "governed_by": [],
       "governs": [],
-      "triggers": "[career-ops, career ops, job search automation, scan portals, portal scanner,",
+      "triggers": [
+        "career-ops",
+        "career ops",
+        "job search automation",
+        "scan portals",
+        "portal scanner",
+        "batch evaluate",
+        "batch offers",
+        "offer scoring",
+        "offer grade",
+        "application tracker",
+        "pipeline status",
+        "generate cv pdf",
+        "ats pdf",
+        "job search dashboard",
+        "linkedin outreach",
+        "company research report"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:b5be202f83e28d4f7b181f4df71db7ee2970f7dbae46ff0baaf0232d37b27fb2"
+      "hash": "sha256:c03377803a6c9bd5bc8074057b6eeb06dd1338becf6e4b932b317f9a0a62d9be"
     },
     "centric-ui-storybook": {
       "path": "03-skills/centric-ui-storybook/SKILL.md",
@@ -914,7 +931,9 @@
         "figma component",
         "component variants",
         "componentization",
-        "design system code"
+        "design system code",
+        "llm-safe",
+        "off-system"
       ],
       "surfaces": [
         "*"
@@ -922,7 +941,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:2747f12c1026033e26532ba9b5fcff8ce6720e7331a18df360ed9fd9a22f1ea1"
+      "hash": "sha256:b7598508c38a5420d44aabef99257a9257f6fa66afb2e847a09614ae90c922da"
     },
     "design-foundations": {
       "path": "03-skills/design-foundations/SKILL.md",
@@ -954,7 +973,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:f9cde276a3c46b2dfac4e4a9a3a37c141457e757cf82b673afe00c9de6945b17"
+      "hash": "sha256:96bb52084782aeb233259ac1fb823b08d3ee5d36b960976001843fab68c8e32e"
     },
     "design-system-ops": {
       "path": "03-skills/design-system-ops/SKILL.md",
@@ -976,10 +995,13 @@
       "triggers": [
         "design system ops",
         "token audit",
+        "audit my tokens",
         "drift detection",
         "ds governance",
         "system health",
-        "deprecation plan"
+        "deprecation plan",
+        "theme audit",
+        "docs coverage"
       ],
       "surfaces": [
         "*"
@@ -992,7 +1014,45 @@
         "design-engineer"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:28a0d99dbe9c89ebc573817e03ac4a5f49594f289b1b82e2fc93edb184a5a110"
+      "hash": "sha256:eb73743fbff7be5e561b0a9f194fee5ccd9559c1b9951e6e627cf846c0ff1ff1"
+    },
+    "designparser": {
+      "path": "03-skills/designparser/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "design",
+      "hub": null,
+      "prerequisites": [
+        "design-foundations"
+      ],
+      "related": [
+        "lead-ui-designer",
+        "lead-ux-designer",
+        "qa",
+        "a11y-visual"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "designparser",
+        "designparser rules",
+        "what rules apply",
+        "suggest_rules_for_context",
+        "evaluate_design"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "designparser-mcp"
+      ],
+      "defers_to": [
+        "framework-06",
+        "framework-13",
+        "a11y-visual",
+        "uid-color-for-ui"
+      ],
+      "rigor_role": "measurement",
+      "hash": "sha256:8dd8ed6057e62ea568d11852e08038ae1c0bda0e916f388b5fe90c04c59ba7ac"
     },
     "devops-ci-cd": {
       "path": "03-skills/devops-ci-cd/SKILL.md",
@@ -4094,14 +4154,17 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "challenge this",
+        "tear this apart"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:7eef376525be4b4f77191fb0dcb1362b98db5cbee26a9e32345c32248f2d4426"
+      "hash": "sha256:e054900c6ce5742e6522e74983d3f2fae9f715159749322b415fe4f35fd979f9"
     },
     "lead-vector-designer": {
       "path": "03-skills/lead-vector-designer/SKILL.md",
@@ -5071,7 +5134,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:bbc3702271eb042e02bbe452dac2a1f8a90b89474c642ce1a1f43354384a901f"
+      "hash": "sha256:afa6426cd02c843938f7a8fbd33b80ac2c04e8bcfa58d95ada086d4f9af19893"
     },
     "realtime-render-performance": {
       "path": "03-skills/realtime-render-performance/SKILL.md",
@@ -5844,7 +5907,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:984040dca569e5e4a04c61f3d5d073fb30418b2fdfc5d3b1d61e2dd99834a58a"
+      "hash": "sha256:76b9a5409cf5a3a89676f6872890539425e011cbb966e6b50325a313610df3a9"
     },
     "stellar-and-relativistic-hero-bodies": {
       "path": "03-skills/stellar-and-relativistic-hero-bodies/SKILL.md",
@@ -6137,9 +6200,11 @@
         "error color",
         "warning color",
         "dark mode color",
+        "dark-mode palette",
         "colorblind-safe",
         "color palette",
-        "ui color"
+        "ui color",
+        "contrast-color"
       ],
       "surfaces": [
         "*"
@@ -6147,7 +6212,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:f7252dd88e90f2fa5e47a8a21011a6939c0e0717ced2f5bf2f464c5bd0eb97c6"
+      "hash": "sha256:546dafade4e7e716e79f77f10e46a292f770ec63c06214164189402eb156bd0c"
     },
     "uid-iconography": {
       "path": "03-skills/uid-iconography/SKILL.md",
@@ -6360,14 +6425,18 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "what else moves",
+        "need a new component",
+        "system fit"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:0c25c0ada8db0e9ac2a3ec34d40a49b0041c0c2f97e155a64d2ac18b0e6a55ca"
+      "hash": "sha256:cdceb2f00fa653f9cb04ea178d93395dbead5d290c40bb15d2ac46ee76134bed"
     },
     "ux-information-architecture": {
       "path": "03-skills/ux-information-architecture/SKILL.md",
@@ -6400,14 +6469,18 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "state sweep",
+        "state-sweep",
+        "missing states"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:f564d36b3168a805d195683d9e2915e9e506eedf0102df4ebc54a747cd781ed4"
+      "hash": "sha256:ebd7024d9127fe6bccc4b130cfb7c235759d4704385db40bac7428b7fb592b35"
     },
     "ux-performance-perception": {
       "path": "03-skills/ux-performance-perception/SKILL.md",
@@ -6440,14 +6513,18 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "who is this for",
+        "designing this for",
+        "do we know enough"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:8bb1fef58b2887ef7c13202b08a813cd87cf82ca39d6e263c95d10f50856bf70"
+      "hash": "sha256:791571e841240e5864d9dbbc46ee66aeeb81f54dd8ba4cb265d1884ebcb2b0c8"
     },
     "ux-service-design": {
       "path": "03-skills/ux-service-design/SKILL.md",
@@ -7532,6 +7609,10 @@
     "design-system-ops": [
       "design-foundations",
       "design-system-ops"
+    ],
+    "designparser": [
+      "design-foundations",
+      "designparser"
     ],
     "devops-ci-cd": [
       "eng-foundations",

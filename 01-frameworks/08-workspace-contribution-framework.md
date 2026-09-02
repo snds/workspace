@@ -52,7 +52,7 @@ including a mid-task dynamic model swap in Cursor — must clear four gates:
 
 **Embedded, not commit-only.** Done on a vault write means the relevant validators ran in this session, not only that files were saved. Commit/CI is the backstop. After a skill, knowledge, or framework edit, run the chain before claiming complete:
 
-`build-related.py` → `build-registry.py` → `validate-integrity.py` → `validate-links.py` → `validate-workspace.py`.
+`build-related.py` → `build-registry.py` → `build-trigger-routes.py` → `evaluate-skill-routing.py` → `validate-integrity.py` → `validate-links.py` → `validate-workspace.py`.
 
 CI mirrors these. Gate 2 is partly semantic — the authoring agent + PR review own it; the rest is machine-checked. Mirrored, compressed, in [[AGENTS]] → "Write-quality gates". Negative fixtures: `python3 09-tools/test-validators.py`.
 

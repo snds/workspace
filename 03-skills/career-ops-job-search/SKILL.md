@@ -11,9 +11,7 @@ description: >
   canonical agent skill and states the real preconditions (external repo, Node, Playwright, Go,
   Claude Code slash commands). Spoke of job-search-strategist.
 aliases: [career-ops-job-search, career-ops]
-triggers: [career-ops, career ops, job search automation, scan portals, portal scanner,
-  batch evaluate, batch offers, offer scoring, offer grade, application tracker, pipeline status,
-  generate cv pdf, ats pdf, job search dashboard, linkedin outreach, company research report]
+triggers: [career-ops, career ops, job search automation, scan portals, portal scanner, batch evaluate, batch offers, offer scoring, offer grade, application tracker, pipeline status, generate cv pdf, ats pdf, job search dashboard, linkedin outreach, company research report]
 tier: spoke
 domain: career
 hub: job-search-strategist

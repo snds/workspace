@@ -14,7 +14,7 @@ description: >
   UI for componentization opportunities. If the topic involves components, tokens,
   design systems, Figma, or frontend implementation — use this skill.
 aliases: [design-engineer]
-triggers: [design engineer, component architecture, component api, figma component, component variants, componentization, design system code]
+triggers: [design engineer, component architecture, component api, figma component, component variants, componentization, design system code, llm-safe, off-system]
 spec_version: "2.0"
 tier: hub
 domain: design
@@ -109,6 +109,15 @@ Component (scoped)      →  button.color.background, button.spacing.padding-x, 
   global primitives directly into component styles.
 - When a semantic token doesn't exist for a needed value, propose one — don't
   skip the tier.
+
+### LLM-safe expressiveness
+
+Docs and `CLAUDE.md` raise the probability that an agent stays on-system. They are
+not a guarantee. Encode the decisions that matter as types, lint, and CI. Off-system
+values (raw hex, arbitrary Tailwind, a second `dark:` pass, growing `eslint-disable`)
+must be **inexpressible**, not discouraged. A missing token is a backlog item, not a
+bypass. Doctrine: [[llm-safe-design-system-expressiveness]]. Do not import Polar's
+StyleX/`Box` stack as workspace law; the product repo chooses the mechanism.
 
 ---
 

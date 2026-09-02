@@ -393,6 +393,7 @@ human), and they are what let dynamic multi-agent work stay one coherent contrac
 not only that files were saved. Commit/CI is the backstop.
 
 **Enforcement (run before claiming the write complete; CI runs them too):** `build-related.py` → `build-registry.py` →
+`build-trigger-routes.py` → `evaluate-skill-routing.py` →
 `validate-integrity.py` (quality + cross-link continuity + anti-zombie) → `validate-links.py` →
 `validate-workspace.py`. Negative fixtures: `python3 09-tools/test-validators.py`. **Order matters: `build-related` rewrites `## Related` blocks inside SKILL.md
 files, and `build-registry` stores a content hash per skill — so the registry must be built _after_ the

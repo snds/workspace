@@ -36,6 +36,7 @@ AUDIT_LOG = CONTEXT_DIR / "audit-log.md"
 HARNESS_MAP_STAMP = (
     WORKSPACE_ROOT / "07-projects" / "19-workspace-brain" / "reports" / "harness-map.stamp"
 )
+SKILL_ROUTING_EVAL = WORKSPACE_ROOT / "09-tools" / "evaluate-skill-routing.py"
 STATE_DIR = WORKSPACE_ROOT / ".claude" / "state"
 CLAUDE_VERSION_PIN = STATE_DIR / "claude-version"
 DESYNC_NOTICE = STATE_DIR / "desync-notice.md"
@@ -508,6 +509,50 @@ def _check_harness_map_staleness() -> str:
         return ""
 
 
+def _check_skill_routing_harness() -> str:
+    """If the routing graph drifted, run the adversarial corpus. Fail-open.
+
+    Silent when the stamp is current and last result is pass. Not a daemon:
+    session start + write-quality gate + /health + /optimize + live --utterance.
+    """
+    if not SKILL_ROUTING_EVAL.exists():
+        return ""
+    try:
+        stale = subprocess.run(
+            [sys.executable, str(SKILL_ROUTING_EVAL), "--stale"],
+            cwd=WORKSPACE_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=8,
+        )
+        if stale.returncode == 0:
+            return ""
+        check = subprocess.run(
+            [sys.executable, str(SKILL_ROUTING_EVAL), "--check"],
+            cwd=WORKSPACE_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=20,
+        )
+        if check.returncode == 0:
+            subprocess.run(
+                [sys.executable, str(SKILL_ROUTING_EVAL)],
+                cwd=WORKSPACE_ROOT,
+                capture_output=True,
+                text=True,
+                timeout=20,
+            )
+            return ""
+        summary = (check.stdout or check.stderr or "routing corpus failed").strip().splitlines()
+        head = summary[0] if summary else "routing corpus failed"
+        return (
+            f"Skill-routing harness failed — {head}. "
+            "Run `python3 09-tools/evaluate-skill-routing.py` (not a blocker)."
+        )
+    except Exception:
+        return ""
+
+
 def _classify_worktree_state() -> dict:
     """Inspect `git status --porcelain` for conditions that make `git add -A` unsafe.
 
@@ -828,6 +873,7 @@ def build_session_start_context(
     version_notice = _check_claude_version_change()
     audit_notice = _check_audit_staleness()
     harness_map_notice = _check_harness_map_staleness()
+    routing_notice = _check_skill_routing_harness()
     desync_notice = _read_desync_notice()
     lanes_notice = _check_linear_lanes()
 
@@ -840,6 +886,8 @@ def build_session_start_context(
         notices.append(f"⚠ {audit_notice}")
     if harness_map_notice:
         notices.append(f"⚠ {harness_map_notice}")
+    if routing_notice:
+        notices.append(f"⚠ {routing_notice}")
     if desync_notice:
         notices.append(f"⚠ {desync_notice}")
     if lanes_notice:
@@ -1081,8 +1129,16 @@ def _registry_trigger_hits(prompt: str) -> list[tuple[str, str]]:
     chains = data.get("load_chains", {})
     hits: list[tuple[str, str]] = []
     for name, rec in skills.items():
-        for term in rec.get("triggers", []) or []:
-            if _term_matches(str(term), prompt):
+        raw = rec.get("triggers", []) or []
+        if isinstance(raw, str):
+            # A stored string is one term, never a character iterable.
+            # (Wrapped YAML flow lists used to land here and made `a` a trigger.)
+            raw = [raw]
+        for term in raw:
+            term = str(term).strip()
+            if len(term) < 2:
+                continue
+            if _term_matches(term, prompt):
                 chain = chains.get(name) or [name]
                 path_hint = " → ".join(f"03-skills/{n}/SKILL.md" for n in chain)
                 hits.append((str(term), f"skill `{name}` (load chain, foundation-first): {path_hint}"))

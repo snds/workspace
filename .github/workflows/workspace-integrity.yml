@@ -16,6 +16,10 @@ on:
       - "09-tools/validate-workspace.py"
       - "09-tools/validate-integrity.py"
       - "09-tools/test-validators.py"
+      - "09-tools/evaluate-skill-routing.py"
+      - "02-shared-references/skill-routing-cases.jsonl"
+      - "02-shared-references/trigger-routes.json"
+      - "03-skills/skills.registry.json"
   pull_request:
     paths:
       - "**/*.md"
@@ -24,6 +28,10 @@ on:
       - "09-tools/validate-workspace.py"
       - "09-tools/validate-integrity.py"
       - "09-tools/test-validators.py"
+      - "09-tools/evaluate-skill-routing.py"
+      - "02-shared-references/skill-routing-cases.jsonl"
+      - "02-shared-references/trigger-routes.json"
+      - "03-skills/skills.registry.json"
 
 jobs:
   check:
@@ -37,5 +45,7 @@ jobs:
         run: python3 09-tools/validate-workspace.py
       - name: Write-quality + cross-link continuity + anti-zombie
         run: python3 09-tools/validate-integrity.py
+      - name: Adversarial skill-routing corpus
+        run: python3 09-tools/evaluate-skill-routing.py --check
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py

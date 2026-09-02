@@ -27,6 +27,7 @@ replaces, `validate-links.py` (which owns the **skill** `## Related` graph).
 python3 09-tools/vault-health.py         # epistemic layer: orphans · #stale · aging · dangling relations
 python3 09-tools/validate-links.py       # skill graph: dangling / reciprocity / foundation
 python3 09-tools/check-terminology.py    # recorded word rules from 06-context/memory/
+python3 09-tools/evaluate-skill-routing.py --check   # Layer 0 corpus + stopword trigger lint
 ```
 
 `vault-health.py` scopes to `06-context/memory`, `08-knowledge`, `02-shared-references` and

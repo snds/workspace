@@ -100,9 +100,24 @@ def parse_frontmatter(text):
         key = key.strip()
         rest = rest.strip()
 
-        if rest.startswith("[") and rest.endswith("]"):
-            data[key] = _parse_flow_list(rest)
-            i += 1
+        if rest.startswith("["):
+            if rest.endswith("]"):
+                data[key] = _parse_flow_list(rest)
+                i += 1
+                continue
+            # Wrapped flow list: `key: [a, b,\n  c]`
+            chunks = [rest]
+            j = i + 1
+            while j < len(body):
+                chunks.append(body[j].strip())
+                if "]" in body[j]:
+                    data[key] = _parse_flow_list(" ".join(chunks))
+                    i = j + 1
+                    break
+                j += 1
+            else:
+                data[key] = _strip_scalar(rest)
+                i += 1
             continue
         if rest in (">", "|", ">-", "|-", "") :
             # block scalar or block list: consume indented continuation lines

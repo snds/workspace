@@ -137,6 +137,24 @@
     "write a spec": "02-shared-references/delivery-playbooks/04-documents-and-specs.md \u2014 structure serves the second reader",
     "write a report": "02-shared-references/delivery-playbooks/04-documents-and-specs.md \u2014 structure serves the second reader",
     "validation report": "02-shared-references/delivery-playbooks/04-documents-and-specs.md \u2014 structure serves the second reader",
-    "full report": "02-shared-references/delivery-playbooks/04-documents-and-specs.md \u2014 structure serves the second reader"
+    "full report": "02-shared-references/delivery-playbooks/04-documents-and-specs.md \u2014 structure serves the second reader",
+    "challenge this": "03-skills/lead-ux-designer/SKILL.md \u2014 challenge the premise before screens",
+    "tear this apart": "03-skills/lead-ux-designer/SKILL.md \u2014 challenge the premise before screens",
+    "what else moves": "03-skills/ux-design-systems/SKILL.md \u2014 ripple: confirmed vs possible; contained / shared / cross-journey / foundational",
+    "state sweep": "03-skills/ux-interaction-design/SKILL.md \u2014 sweep by transition, not checklist",
+    "missing states": "03-skills/ux-interaction-design/SKILL.md \u2014 sweep by transition, not checklist",
+    "system fit": "03-skills/ux-design-systems/SKILL.md \u2014 reuse \u2192 compose \u2192 extend \u2192 create \u2192 feature-local",
+    "need a new component": "03-skills/ux-design-systems/SKILL.md \u2014 system-fit ladder before a new primitive",
+    "design system ops": "03-skills/design-system-ops/SKILL.md \u2014 ops hub (token/theme/docs/drift); strategy stays on ds-advisor",
+    "theme audit": "03-skills/design-system-ops/SKILL.md \u2014 vendored theme-audit via the wrapper",
+    "docs coverage": "03-skills/design-system-ops/SKILL.md \u2014 vendored docs-coverage via the wrapper",
+    "undocumented components": "03-skills/design-system-ops/SKILL.md \u2014 docs-coverage",
+    "llm-safe": "08-knowledge/design/llm-safe-design-system-expressiveness.md + 03-skills/design-engineer/SKILL.md \u2014 CI is the contract; do not import StyleX",
+    "contrast-color": "$FOUNDATION_ROUTE",
+    "skill routing": "09-tools/evaluate-skill-routing.py \u2014 adversarial Layer 0 corpus; --utterance to probe a live miss",
+    "routing harness": "09-tools/evaluate-skill-routing.py \u2014 run when the graph changed, after skill authoring, or a prompt mis-routed",
+    "designparser": "03-skills/designparser/SKILL.md \u2014 call suggest_rules_for_context; do not vendor rules",
+    "what rules apply": "03-skills/designparser/SKILL.md \u2014 suggest_rules_for_context on the current design task",
+    "evaluate_design": "03-skills/designparser/SKILL.md \u2014 checklist only; /qa still owns measured verdicts"
   }
 }

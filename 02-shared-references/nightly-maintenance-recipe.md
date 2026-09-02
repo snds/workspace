@@ -23,7 +23,8 @@ bootstrap-generator feedback pass (2026-07-23)._
 2. **Graph hygiene** — `python3 09-tools/vault-health.py` (report orphans, `#stale`/aging claims,
    dangling typed edges) + `python3 09-tools/validate-links.py` (skill graph). Surface findings; do
    **not** auto-fix content — that needs judgment (`/health` with sign-off).
-3. **Rebuild indexes** — `build-related.py` → `build-registry.py` → `validate-integrity.py` →
+3. **Rebuild indexes** — `build-related.py` → `build-registry.py` → `build-trigger-routes.py` →
+   `evaluate-skill-routing.py` → `validate-integrity.py` →
    `validate-links.py` → `validate-workspace.py` (the standard chain; order matters — see framework #08).
 3b. **DS source freshness (optional)** — `python3 09-tools/ds-source-watch.py --check`. If P1,
    leave a pointer; do **not** `--fetch` from nightly (network + judgment).

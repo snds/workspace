@@ -28,6 +28,8 @@ The rule of threes is low enough to act on genuine signal but high enough to fil
 
 Five tiers, highest to lowest confidence. Each tier has a clear threshold, a clear advocacy posture, and a clear challenge posture.
 
+**Claim labels (complementary, not a replacement):** when tagging a single claim's shape, also use **known** / **inferred** / **assumed** / **unknown** / **conflicted**. These do not change advocacy posture. The five tiers below still govern how hard you push. Do not invent personas or run research theater to fill a gap; name it ([[ux-research-synthesis]]).
+
 ### Tier 1 — Evidenced
 **Threshold:** Rule of threes met — three or more independent evidentiary justifications, or three or more users independently surfacing the same issue.
 

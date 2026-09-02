@@ -84,6 +84,8 @@ tokens**, not as a reason to mutate the primitive ramp. Consequences that keep c
   against one universal number.
 - Route foundations-first when this comes up: [[design-foundations]] then [[found-color]] then
   [[a11y-visual]] then [[uid-color-for-ui]], and only then the target system's own tokens.
+- Native CSS `contrast-color()` is a pairing helper onto those semantic text tokens. It is not
+  an accessibility claim and it does not replace APCA. See [[uid-color-for-ui]].
 
 ## Perception integrity applies here too
 

@@ -184,6 +184,53 @@ class TestValidatorFixtures(unittest.TestCase):
         dang = vh.dangling_relations(text, known_stems={"other"})
         self.assertEqual(dang, ["ghost-note"])
 
+    def test_registry_parses_wrapped_flow_list(self):
+        br = load("build-registry")
+        fm = br.parse_frontmatter(
+            "---\nname: wrap\ntriggers: [foo, bar,\n  baz]\n---\n"
+        )
+        self.assertEqual(fm.get("triggers"), ["foo", "bar", "baz"])
+
+    def test_routing_string_triggers_are_not_characters(self):
+        ev = load("evaluate-skill-routing")
+        self.assertEqual(
+            ev._as_terms("[career-ops, career ops, portal scanner,"),
+            ["career-ops", "career ops", "portal scanner"],
+        )
+        self.assertEqual(ev._as_terms("single"), ["single"])
+
+    def test_routing_lint_rejects_stopword_trigger(self):
+        ev = load("evaluate-skill-routing")
+        original = ev.load_registry
+        ev.load_registry = lambda: {"fake-skill": ["a", "ok"]}
+        try:
+            errors = ev.lint_triggers()
+        finally:
+            ev.load_registry = original
+        self.assertTrue(any("stopword" in e and "fake-skill" in e for e in errors), errors)
+
+    def test_routing_detects_missing_expected_skill(self):
+        ev = load("evaluate-skill-routing")
+        errors = ev.eval_case(
+            {
+                "id": "planted-miss",
+                "utterance": "hello world with no skill words",
+                "expect_skills": ["does-not-exist-skill"],
+            }
+        )
+        self.assertTrue(any("does-not-exist-skill" in e for e in errors), errors)
+
+    def test_routing_article_does_not_load_career_ops(self):
+        ev = load("evaluate-skill-routing")
+        errors = ev.eval_case(
+            {
+                "id": "article-a",
+                "utterance": "continually run whenever it makes the most sense during a session",
+                "forbid_skills": ["career-ops-job-search", "job-search-strategist"],
+            }
+        )
+        self.assertEqual(errors, [])
+
 
 if __name__ == "__main__":
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestValidatorFixtures)

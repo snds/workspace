@@ -13,13 +13,15 @@ description: >
   or any design problem in a data-dense, power-user, or high-cognitive-load interface.
   Also trigger on: "how should this work", "what's the right pattern for", "is this UX
   good", "how do enterprise users think about X", "what loading state should I use",
-  "how do I design for X constraint", or any question that requires reasoning about
-  design decisions against technical, data, or organizational constraints.
+  "how do I design for X constraint", "challenge this", "tear this apart", or any
+  question that requires reasoning about design decisions against technical, data,
+  or organizational constraints.
 aliases: [lead-ux-designer]
+triggers: [challenge this, tear this apart]
 tier: hub
 domain: design
 prerequisites: [design-foundations]
-spec_version: "2.0"
+spec_version: "2.1"
 ---
 
 # Lead UX Designer
@@ -44,11 +46,11 @@ The hub contains enough to triage and route. Spokes provide the deep domain know
 | Skill | Domain | Trigger When |
 |-------|--------|-------------|
 | `ux-information-architecture` | Navigation systems, IA for complex enterprise apps, wayfinding, mental models, content organization | Navigation structure questions, sidebar vs. top nav decisions, breadcrumbs, multi-role access patterns, card sorting, tree testing, "where does this live?" |
-| `ux-interaction-design` | Complex workflow design, multi-step flows, form patterns, error states, edge cases, micro-interactions | Form design, wizard patterns, validation, bulk editing, undo/redo, save states, edge case inventory, feedback loops, optimistic UI |
+| `ux-interaction-design` | Complex workflow design, multi-step flows, form patterns, error states, edge cases, micro-interactions | Form design, wizard patterns, validation, bulk editing, undo/redo, save states, state sweep / missing states, feedback loops, optimistic UI |
 | `ux-data-visualization` | Chart selection, dashboard design, data density, readable tables, encoding data visually | Choosing a chart type, dashboard layout, table column design, sparklines, color in data viz, cross-filter interactions, "how do I show X data" |
 | `ux-performance-perception` | Perceived performance UX, loading states, skeleton screens, optimistic UI, latency design | Loading state decisions, skeleton screen design, long-running operations, background jobs, how to handle slow API responses, what to show while waiting |
-| `ux-design-systems` | Component design decisions, variant/state coverage, pattern library, behavior specification — NOT token architecture | Component variant coverage, state enumeration, behavior contracts, pattern vs. component distinction, handoff annotation, component API surface |
-| `ux-research-synthesis` | Mixed-method research, synthesis for complex enterprise problems, insight-to-design pipeline | Research method selection, enterprise interview dynamics, affinity diagramming, JTBD analysis, insight-to-requirement pipeline, assumption mapping |
+| `ux-design-systems` | Component design decisions, variant/state coverage, pattern library, behavior specification — NOT token architecture | Component variant coverage, system-fit (reuse → compose → extend → create → feature-local), ripple ("what else moves?"), behavior contracts, pattern vs. component distinction |
+| `ux-research-synthesis` | Mixed-method research, synthesis for complex enterprise problems, insight-to-design pipeline | Research method selection, "who is this for", anti-ceremony grounding, affinity diagramming, JTBD analysis, insight-to-requirement pipeline, assumption mapping |
 | `ux-accessibility` | Inclusive design, WCAG at the design layer, cognitive load, keyboard navigation design, color/contrast | WCAG requirements, focus management, keyboard nav design, color contrast, error message standards, cognitive load reduction, prefers-reduced-motion |
 | `ux-writing` | Microcopy, error message architecture, empty state copy, label design, voice and tone, plain language, content style guides, alert copy, writing for data-dense interfaces | Error message writing, empty state copy, label wording, voice/tone guidelines, validation copy, notification copy, column header labeling |
 | `ux-ai-product-design` | UX for AI/LLM-powered features — probabilistic output design, human-in-the-loop patterns, AI disclosure, streaming UX, trust calibration, prompt surface design | AI confidence visualization, when to auto-apply vs. suggest, streaming loading states, AI error states, thumbs up/down feedback, AI disclosure, prompt UI |
@@ -62,11 +64,12 @@ Identify 1–2 spokes directly relevant to the question. Rarely load 3.
 Common routing patterns:
 
 - **Navigation or IA question**: `ux-information-architecture`
-- **Form, workflow, or edge case design**: `ux-interaction-design`
+- **Challenge the premise / tear this apart**: stay on this hub first (Process defaults below)
+- **Form, workflow, or edge case design / state sweep**: `ux-interaction-design`
 - **Chart, dashboard, or table design**: `ux-data-visualization`
 - **Loading states, skeletons, slow operations**: `ux-performance-perception`
-- **Component variants, states, behavior spec**: `ux-design-systems` (+ `ds-advisor` for tokens)
-- **Research method, synthesis, insight pipeline**: `ux-research-synthesis`
+- **Component variants, system-fit, what else moves**: `ux-design-systems` (+ `ds-advisor` for tokens)
+- **Research method, who is this for, do we know enough**: `ux-research-synthesis`
 - **WCAG, keyboard, focus, contrast**: `ux-accessibility`
 - **System-level design review**: load spokes incrementally as each domain is addressed
 
@@ -137,6 +140,18 @@ The time between user action and data display is designed, not defaulted. A spin
 is not a loading state — it is a placeholder for a missing design decision. Each
 category of wait (initial load, background refresh, user-triggered action, long
 operation) requires its own explicitly designed treatment.
+
+---
+
+## Process defaults (before screens)
+
+These fire from language. Intensity matches the user's words, not a ceremony checklist.
+
+1. **Challenge before draw.** If the ask is "challenge this", "tear this apart", or the premise is load-bearing, test the premise before any screen. What would have to be true? What evidence do we have? What happens if we do nothing?
+2. **Ripple.** "If we change this, what else moves?" Route to `ux-design-systems`. Separate confirmed from possible. Scale: contained / shared / cross-journey / foundational.
+3. **State sweep by transition.** "What states am I missing?" Route to `ux-interaction-design`. Walk each user/system action, not a five-row checklist (the five states stay the minimum set).
+4. **System-fit ladder.** "Does this need a new component?" Route to `ux-design-systems`. Order: reuse → compose → extend → create → feature-local. `feature-local` is a valid answer; it is not a failed component.
+5. **Anti-ceremony grounding.** "Who is this for?" Route to `ux-research-synthesis`. Do not invent personas or run research theater. Name the gap.
 
 ---
 

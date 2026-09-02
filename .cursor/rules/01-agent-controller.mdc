@@ -19,6 +19,7 @@ Before commit:
 python3 09-tools/build-related.py
 python3 09-tools/build-registry.py
 python3 09-tools/build-trigger-routes.py
+python3 09-tools/evaluate-skill-routing.py
 python3 09-tools/validate-integrity.py
 python3 09-tools/validate-links.py
 python3 09-tools/validate-workspace.py

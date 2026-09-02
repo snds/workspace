@@ -115,6 +115,38 @@
       "owners": ["Google"],
       "affects": ["agentic", "harness"],
       "why": "Agent-to-agent transport. Distinct from A2UI payload."
+    },
+    {
+      "id": "polar-orbit-llm-safe",
+      "name": "Polar — Building an LLM safe design system",
+      "url": "https://polar.sh/blog/orbit-llm-safe-design-system",
+      "owners": ["Polar"],
+      "affects": ["specs", "agentic"],
+      "why": "Docs are probabilities; CI is the contract. Author in decisions, not values. Do not auto-adopt StyleX."
+    },
+    {
+      "id": "polar-orbit-adr-0004",
+      "name": "Polar ADR-0004 — Frontend UI is authored with Orbit Box and design tokens",
+      "url": "https://handbook.polar.sh/engineering-and-design/frontend/architecture-decision-records-adrs/adr-0004-frontend-ui-is-authored-with-orbit-box-and-design-tokens",
+      "owners": ["Polar"],
+      "affects": ["specs"],
+      "why": "Companion ADR to the Orbit post. Mechanism is Polar-internal."
+    },
+    {
+      "id": "rupert-contrast-color-tokens",
+      "name": "Dave Rupert — contrast-color() with custom design tokens",
+      "url": "https://daverupert.com/2026/01/contrast-color-with-custom-design-tokens/",
+      "owners": ["Dave Rupert"],
+      "affects": ["specs"],
+      "why": "Native contrast-color() is black/white only; map onto DS text tokens. Pairing helper, not APCA substitute."
+    },
+    {
+      "id": "designparser-mcp",
+      "name": "designparser-mcp — design rules as MCP tools",
+      "url": "https://github.com/designparser/designparser-mcp",
+      "owners": ["designparser"],
+      "affects": ["specs"],
+      "why": "77 evidence-backed rules via MCP. Call, do not vendor. Rule content is not a republishable dataset."
     }
   ]
 }

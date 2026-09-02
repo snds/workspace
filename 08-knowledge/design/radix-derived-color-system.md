@@ -1,7 +1,7 @@
 ---
 tags: [design-systems, color, radix, tailwind, apca, tokens]
 created: 2026-06-02
-updated: 2026-06-02
+updated: 2026-09-02
 status: working
 confidence: high
 sources: [session-log 2026-06-02, centric-ui Radix palette re-architecture]
@@ -10,6 +10,8 @@ related_projects: [centric-ui VMS DS, figma-repo-sync-plugin]
 relations:
   exemplifies:
     - "[[idempotent-design-decisions]]"
+  relates-to:
+    - "[[llm-safe-design-system-expressiveness]]"
 ---
 
 # Radix-derived color system — validated architecture
@@ -31,6 +33,11 @@ Radix step). Then `bg-green-500` resolves to the Radix-derived value that *looks
 Tailwind green-500. Devs keep their mental model; the values are Radix.
 
 ## 3. APCA is GOVERNANCE, not a primitive mutator
+CSS `contrast-color()` (Dave Rupert, 2026-01) can pick a contrasting foreground in CSS, but
+today it returns black or white only. Map that result onto **semantic text tokens**, then
+still measure APCA. It is a pairing helper, not a substitute for this section. Screen pairing
+lives on [[uid-color-for-ui]]; do not put CSS recipes in `found-color`.
+
 APCA (the WCAG-3-draft perceptual contrast model) is the better legibility standard — but
 enforcing it by *mutating primitives* (nudging a step's L until text passes) breaks Radix's
 curated perceptual balance and muddies hues. Instead: trust Radix's values; apply APCA at

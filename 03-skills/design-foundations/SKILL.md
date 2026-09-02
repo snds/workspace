@@ -12,7 +12,7 @@ triggers: [design foundations, visual design, ui, ux, layout, color, typography,
 tier: foundation
 domain: design
 surfaces: ["*"]
-spec_version: "2.0"
+spec_version: "2.1"
 ---
 
 # Design Foundations
@@ -31,6 +31,15 @@ This foundation loads **before** the discipline hub and the specialty spoke. Any
 the chain `design-foundations → <discipline hub> → <specialty spoke>` (a color spoke also pulls in
 [[found-color]] first). The five foundation spokes are loaded individually as the topic requires — don't
 load all five for a narrow question.
+
+## DesignParser (call on every design task)
+
+Before drawing or critiquing, preflight `designparser-mcp` ([[capability-registry]]).
+If present: `suggest_rules_for_context` with one sentence (medium + surface +
+constraint). Cite rule IDs. Then continue this foundation → hub → spoke.
+Workspace doctrine wins on conflict (APCA-as-governance, #06, #13, target-system
+tokens). If absent: degrade — say the lookup was skipped and continue. Protocol:
+[[designparser]]. Do not paste the rule corpus into the vault.
 
 ## The five foundations
 
@@ -51,5 +60,5 @@ load all five for a narrow question.
 
 ## Related
 - spoke → [[found-color]] · [[found-composition]] · [[found-hierarchy]] · [[found-perception]] · [[found-typography]]
-- applies-in ← [[design-engineer]] · [[design-system-ops]] · [[ds]] · [[ds-advisor]] · [[ds-generation-pipeline]] · [[figma]] · [[gen-manifest]] · [[lead-3d-designer]] · [[lead-accessibility-architect]] · [[lead-graphic-designer]] · [[lead-icon-artist]] · [[lead-information-architect]] · [[lead-information-designer]] · [[lead-motion-designer]] · [[lead-technical-digital-artist]] · [[lead-type-designer]] · [[lead-ui-designer]] · [[lead-ux-designer]] · [[lead-vector-designer]] · [[lead-visual-qa]] · [[motion]] · [[qa]] · [[redesign]] · [[type]] · [[visual-reference-replication]]
+- applies-in ← [[design-engineer]] · [[design-system-ops]] · [[designparser]] · [[ds]] · [[ds-advisor]] · [[ds-generation-pipeline]] · [[figma]] · [[gen-manifest]] · [[lead-3d-designer]] · [[lead-accessibility-architect]] · [[lead-graphic-designer]] · [[lead-icon-artist]] · [[lead-information-architect]] · [[lead-information-designer]] · [[lead-motion-designer]] · [[lead-technical-digital-artist]] · [[lead-type-designer]] · [[lead-ui-designer]] · [[lead-ux-designer]] · [[lead-vector-designer]] · [[lead-visual-qa]] · [[motion]] · [[qa]] · [[redesign]] · [[type]] · [[visual-reference-replication]]
 - peer ↔ [[imaging-foundations]]

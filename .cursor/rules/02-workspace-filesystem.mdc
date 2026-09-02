@@ -14,7 +14,7 @@ Root = directory containing `AGENTS.md`. Plain filesystem I/O. Any capable agent
 - Write artifacts to `05-artifacts/active/` (naming convention)
 - Update `06-context/project-context.md`, session fragments, `artifact-registry.md`
 - Update skills in `03-skills/` when explicitly requested
-- Regenerate: `build-related.py` → `build-registry.py` → `build-trigger-routes.py`
+- Regenerate: `build-related.py` → `build-registry.py` → `build-trigger-routes.py` → `evaluate-skill-routing.py`
 
 ## Requires user confirmation
 

@@ -59,7 +59,7 @@ Fail-open. Structured-output / subagent turns skip the ritual line (see BEACON e
 
 - Writes are open to any model behind the write-quality gates (see `01-agent-controller.mdc` /
   AGENTS.md). Before commit: `build-related.py` → `build-registry.py` → `build-trigger-routes.py` →
-  validators (integrity → links → workspace). Done on a write means those
+  `evaluate-skill-routing.py` → validators (integrity → links → workspace). Done on a write means those
   validators ran this session. Negative fixtures: `python3 09-tools/test-validators.py`.
 - **User Rules beacon:** paste `00-bootstrap/dist/BEACON.md` into Cursor Settings → Rules (fallback when
   hooks miss). Doctor nags until `workspace-doctor.sh --ack-chat`.

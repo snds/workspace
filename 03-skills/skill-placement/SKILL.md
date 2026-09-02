@@ -36,9 +36,10 @@ Drive, no `/mnt/skills` copy, no manual sync. See [[skill-frontmatter]] and
 
 4. **Cross-link reciprocally.** Every `## Related` edge must be mirrored on the other skill
    (`foundation→` ⟺ `applies-in←`; `peer↔` both ways).
-5. **Regenerate the graph:** `python3 09-tools/build-registry.py` (fails on cycles/dangling).
+5. **Regenerate the graph:** `python3 09-tools/build-related.py` then `python3 09-tools/build-registry.py` (fails on cycles/dangling). Then `python3 09-tools/build-trigger-routes.py`.
 6. **Validate:** `python3 09-tools/validate-links.py` — no dangling/non-reciprocal links.
-7. **Commit** the new `SKILL.md` + the regenerated `03-skills/skills.registry.json` together.
+7. **Routing harness:** `python3 09-tools/evaluate-skill-routing.py`. Layer 0 must hit the new triggers. Ordinary prose with `a` / `I` must not load a job-search or other stopword skill. Probe a live miss with `--utterance "…"`.
+8. **Commit** the new `SKILL.md` + the regenerated `03-skills/skills.registry.json` together.
 
 ## Hard rules
 - Never rename a `SKILL.md` file/dir later (breaks loader paths + wikilinks) — add `aliases`.

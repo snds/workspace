@@ -74,6 +74,26 @@ python3 09-tools/build-trigger-routes.py
 python3 09-tools/build-trigger-routes.py --check
 ```
 
+## evaluate-skill-routing.py
+
+Adversarial Layer 0 harness. Replays curated utterances in
+`02-shared-references/skill-routing-cases.jsonl` against the same word-boundary
+match the dispatcher uses (curated routes + registry triggers + `_INDEX.md`
+triggers). Lints stopword / too-short triggers. Not a daemon: run at session
+start when the stamp is stale, after skill / trigger-routes / corpus edits,
+from `/health` and `/optimize` surface 5, after skill authoring, and mid-session
+with `--utterance` when a prompt mis-routes.
+
+```
+python3 09-tools/evaluate-skill-routing.py              # run corpus; write stamp on pass
+python3 09-tools/evaluate-skill-routing.py --check      # CI / write-gate; no stamp write
+python3 09-tools/evaluate-skill-routing.py --lint
+python3 09-tools/evaluate-skill-routing.py --stale
+python3 09-tools/evaluate-skill-routing.py --utterance "…"
+```
+
+Stamp: `07-projects/19-workspace-brain/reports/skill-routing-harness.stamp`.
+
 ## build-local-skill-plugin.py
 
 Mirrors curated hubs from `03-skills/` into a local Claude Code plugin so they appear as

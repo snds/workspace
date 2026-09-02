@@ -196,6 +196,9 @@ Method:   <toolkit checks run | heuristics applied | live findings>
 4. **Acquire the target**: screenshot upload / render story / Figma export / live
    bridge as appropriate.
 5. **Run** the spoke procedure + toolkit checks. Prefer measured over eyeballed.
+   After the target is in hand, also `evaluate_design` via [[designparser]] when
+   `designparser-mcp` is present (checklist + rule IDs). That is testimony, not a
+   measured `/qa` score — do not substitute it for toolkit probes.
 6. **Emit** the shared report format. Write to `--out` if given.
 7. **Hand off** if the verb implies change (`spec` → design-engineer) or generative
    work (`--live` polish → impeccable).

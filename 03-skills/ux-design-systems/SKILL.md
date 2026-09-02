@@ -15,11 +15,12 @@ description: >
   decisions in a design system. Token architecture, Figma ops, and DS strategy live
   in `ds-advisor` — route there for those topics.
 aliases: [ux-design-systems]
+triggers: [what else moves, need a new component, system fit]
 tier: spoke
 domain: design
 hub: lead-ux-designer
 prerequisites: [lead-ux-designer]
-spec_version: "2.0"
+spec_version: "2.1"
 ---
 
 # UX — Design Systems (Component Behavior Layer)
@@ -42,8 +43,34 @@ for implementation).
 
 ## Component Design Decision Framework
 
-Before creating a component, run it through the necessity test. Most unnecessary
-components come from skipping this step.
+Before creating a component, climb the system-fit ladder, then run the necessity test.
+Most unnecessary components come from skipping these steps.
+
+### System-fit ladder
+
+Decide the *kind* of change before the API. Stop at the first rung that works.
+
+| Rung | Meaning | When |
+|---|---|---|
+| **Reuse** | An existing component already does this | Same behavior, same contract |
+| **Compose** | Slot or nest existing components | New arrangement, no new primitive |
+| **Extend** | Add a variant, slot, or token-backed option | Real extra case, same object |
+| **Create** | New published component | Reusable in 3+ contexts with one behavior |
+| **Feature-local** | Stay in the feature. Do not promote | One-off. Valid. Not a failed component |
+
+`feature-local` is the missing word in most "should this be a component?" debates. Promoting
+a one-off to the system to look tidy creates the next deprecation.
+
+### Ripple
+
+When the user asks "if we change this, what else moves?", answer before drawing.
+
+1. **Confirmed** vs **possible**. Do not flatten guesses into a dependency list.
+2. Scale: **contained** (this instance) / **shared** (every consumer of this component) /
+   **cross-journey** (another flow's contract) / **foundational** (token, density, or
+   behavior that many components inherit).
+3. Foundational ripples are a hand-off to `ds-advisor` (tokens/strategy) or
+   `design-engineer` (implementation), not a silent redesign here.
 
 ### Necessity test
 

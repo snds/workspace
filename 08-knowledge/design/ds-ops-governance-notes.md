@@ -1,7 +1,7 @@
 ---
 tags: [design, design-system, governance, tokens, operations, drift]
 created: 2026-08-03
-updated: 2026-08-03
+updated: 2026-09-02
 status: working
 confidence: medium
 sources: [03-skills/design-system-ops/SKILL.md, 03-skills/design-system-ops/knowledge-notes/, 01-frameworks/09-component-and-pattern-framework.md, 01-frameworks/06-qa-operating-model.md, AGENTS.md]
@@ -9,7 +9,7 @@ related_skills: [design-system-ops, ds-advisor, design-engineer, ux-component-li
 related_projects: []
 relations:
   builds-on: ["[[radix-derived-color-system]]", "[[figma-tailwind-token-pipeline]]"]
-  relates-to: ["[[centric-plm-design-system]]", "[[enterprise-saas-design-patterns]]", "[[figma-ds-surface-authoring]]"]
+  relates-to: ["[[centric-plm-design-system]]", "[[enterprise-saas-design-patterns]]", "[[figma-ds-surface-authoring]]", "[[llm-safe-design-system-expressiveness]]"]
 ---
 
 # Design system ops: the workspace position on governance
@@ -60,6 +60,12 @@ no cadence. The workspace splits it accordingly:
 
 Ops audits **against** strategy. It does not set strategy. When an audit finding implies a strategy
 change, that is a hand-off to [[ds-advisor]], not a unilateral fix.
+
+Vendored method added 2026-09-02 (upstream 2026-08-22): `theme-audit` (mode coverage +
+component-tier propagation) and `docs-coverage` (code as SSOT vs Storybook/docs). Grammar rows
+live on the [[design-system-ops]] wrapper. Do not promote pack `knowledge-notes/` over this
+note. Expressiveness / "CI is the contract" lives in [[llm-safe-design-system-expressiveness]],
+not in the ops pack.
 
 ## Token architecture: what we already know
 

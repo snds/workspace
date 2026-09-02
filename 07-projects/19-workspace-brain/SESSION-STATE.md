@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-02 — session-end: Open Engine enroll, visual-qa prove, branch prune_
+_Last updated: 2026-09-02 — UX process fold-ins + ds-ops sync + adversarial routing harness_
 
 ---
 
@@ -8,16 +8,16 @@ _Last updated: 2026-09-02 — session-end: Open Engine enroll, visual-qa prove, 
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: Open Engine personal lane is `ok` on this Cursor (`linear-personal` → `hello@snds.design` / `linear.app/snds`). Visual-qa prove path ran: `vqa calibrate` 48/48 (`vqa/1.1`); relative `--output` double-join fixed (`7a40df5`); LCARS S-SYS47-01 v4 16/16 measured with 4 named uncued residuals. Merged leftover branches pruned on personal `snds/*` clones. Legion Continuum remains `snds/legion` `064e363`. Do not register `linear-c8` here.
-- **Current focus**: Session closing. No substantive Legion work this thread.
-- **Working set**: [[open-agent-engine]]; [[visual-prove-engine]]; [[dc-visual-qa.yaml]].
-- **Last action (2026-09-02):** Session-end after Open Engine enroll + vqa prove + branch prune. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **TL;DR (for future agent)**: Source-review fold-ins landed except Specs 2 (deferred). DesignParser is now the on-chain rule lookup: [[designparser]] + `designparser-mcp` capability; `design-foundations` calls `suggest_rules_for_context` on every design task. Do not vendor the rule corpus. Open Engine personal lane still `ok` on this Cursor. Legion Continuum remains `snds/legion` `064e363`. Do not register `linear-c8` here.
+- **Current focus**: DesignParser MCP wired into the design load chain.
+- **Working set**: [[designparser]]; [[design-foundations]]; `02-shared-references/capability-registry.md`.
+- **Last action (2026-09-02):** Added DesignParser capability + wrapper + foundation call contract. Cursor Grok 4.6 / Cursor / Personal MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Pick new work. Optional: Davinci leftover unique branches; Legion `feat/scale-unification`.
+- **Next action:** Commit when Sean asks. Optional later: Specs 2 capability; product-repo ESLint for off-token Tailwind.
 - **Open decisions:** Product/data/security constitutions still `mapped` only. YAML still hand-authored.
 - **Blocked on:** Machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs.** Copilot pack is tracked (`copilot/` + relative `.claude` wrappers); do not convert wrappers back to absolute paths.
-- **Agent thread**: `… → (2026-09-02): Legion Continuum + PR #17 + copilot skip` → `(2026-09-02): Open Engine enroll + visual-qa prove + branch prune`.
+- **Agent thread**: `… → (2026-09-02): UX fold-ins + routing harness` → `(2026-09-02): DesignParser on the design chain`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.

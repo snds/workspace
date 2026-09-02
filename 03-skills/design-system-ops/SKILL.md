@@ -4,10 +4,11 @@ description: >-
   Design system operations command hub — token audits, drift detection, governance,
   deprecation, system health, stakeholder briefs. Use when running a design system
   (not merely consuming one): "audit tokens", "drift check", "DS governance",
-  "deprecation plan", "system health". Wraps the vendored skills/commands in this
-  directory. Not for component authoring (design-engineer) or DS strategy (ds-advisor).
+  "deprecation plan", "system health", "theme audit", "docs coverage". Wraps the
+  vendored skills/commands in this directory. Not for component authoring
+  (design-engineer) or DS strategy (ds-advisor).
 aliases: [design-system-ops]
-triggers: [design system ops, token audit, drift detection, ds governance, system health, deprecation plan]
+triggers: [design system ops, token audit, audit my tokens, drift detection, ds governance, system health, deprecation plan, theme audit, docs coverage]
 tier: hub
 domain: design
 prerequisites: [design-foundations]
@@ -15,7 +16,7 @@ related: [ds-advisor, design-engineer, ux-component-library, figma, qa]
 defers_to: [framework-09, framework-13, ds-advisor, design-engineer]
 rigor_role: command-hub
 surfaces: ["*"]
-spec_version: "2.2"
+spec_version: "2.3"
 ---
 
 # Design System Ops — Operations Hub
@@ -43,11 +44,13 @@ Pack landing page: [[03-skills/design-system-ops/README|design-system-ops README
 | Verb / command | Nested entry |
 |---|---|
 | `token-audit` | `commands/token-audit.md` → `skills/token-audit` |
+| `theme-audit` | `commands/theme-audit.md` → `skills/theme-audit` |
+| `docs-coverage` | `commands/docs-coverage.md` → `skills/docs-coverage` |
 | `drift-check` | `commands/drift-check.md` |
 | `system-health` | `commands/system-health.md` |
 | `governance-review` | `commands/governance-review.md` |
 | `component-audit` | `commands/component-audit.md` |
-| `full-diagnostic` | `commands/full-diagnostic.md` |
+| `full-diagnostic` | `commands/full-diagnostic.md` (five-skill core; add theme/docs when those surfaces exist) |
 
 Prefer the command file's instructions; do not paste entire nested skills into context unless needed.
 

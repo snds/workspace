@@ -16,6 +16,7 @@ related_projects: [02-centricPLM, 09-figma-repo-sync-plugin, centric-ui]
 relations:
   relates-to:
     - "[[agentic-ds-context-model]]"
+    - "[[llm-safe-design-system-expressiveness]]"
 ---
 
 # Component contracts and schemas — the arbitration layer above component documentation

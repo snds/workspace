@@ -14,11 +14,12 @@ description: >
   "how do I handle N selected items", "what's the feedback for this action", or any
   question about the detailed behavioral design of an interface.
 aliases: [ux-interaction-design]
+triggers: [state sweep, state-sweep, missing states]
 tier: spoke
 domain: design
 hub: lead-ux-designer
 prerequisites: [lead-ux-designer]
-spec_version: "2.0"
+spec_version: "2.1"
 ---
 
 # UX — Interaction Design
@@ -276,7 +277,20 @@ punish repeat users. All transitions must have a `prefers-reduced-motion` fallba
 
 ## Edge Case Inventory
 
-A feature design is incomplete without all five states documented:
+A feature design is incomplete without all five states documented. Use the table as the
+**minimum set**, then sweep **by transition**, not by checklist.
+
+### State sweep (by transition)
+
+Walk every user action and every system action. For each edge, ask what the UI is *now*
+and what it becomes. Name the ones you cannot draw yet.
+
+1. List the actions (user + system), not the screens.
+2. For each action: start state → end state → failure/partial/timeout variants.
+3. Mark each transition **confirmed** (we have the contract) or **possible** (guess).
+4. The five rows below are the floor. Partials and in-flight replacements are the usual miss.
+
+If the user said "state sweep" or "what states am I missing?", do this before adding screens.
 
 | State | Description | Design requirement |
 |-------|-------------|-------------------|

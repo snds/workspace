@@ -98,6 +98,7 @@
 !09-tools/side-chat-handback.py
 !09-tools/test-validators.py
 !09-tools/ds-source-watch.py
+!09-tools/evaluate-skill-routing.py
 !09-tools/cursor-externalize.py
 
 # Track only the 00-obsidian integration project; other projects stay local.

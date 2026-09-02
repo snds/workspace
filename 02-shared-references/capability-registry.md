@@ -259,6 +259,19 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
       "fallback": "block",
       "fallback_note": "Every Console, init, deploy, and log path on App Builder runs through the CLI — there is no portable substitute. Surface the install + `aio login` steps and stop rather than hand-editing generated config or clicking through the Developer Console UI.",
       "powers": ["adobe-app-builder"]
+    },
+    "designparser-mcp": {
+      "kind": "mcp",
+      "provides": "DesignParser — 77 evidence-backed design rules as read-only MCP tools (suggest_rules_for_context, evaluate_design, get_rule, search, list).",
+      "detect": { "method": "mcp-tool-present", "match": "*suggest_rules_for_context*" },
+      "install": {
+        "claude-code": "claude mcp add --scope user --transport stdio designparser -- npx -y designparser-mcp",
+        "cursor": "Add to ~/.cursor/mcp.json: command `npx`, args `[\"-y\", \"designparser-mcp\"]`. Reload MCP. Template: `00-bootstrap/templates/cursor-mcp.json.example`.",
+        "generic": "Run `npx -y designparser-mcp` as an MCP stdio server and connect the client."
+      },
+      "fallback": "degrade",
+      "fallback_note": "Continue with design-foundations + the hub/spoke. Say the DesignParser lookup was skipped. Do not invent rule IDs. Do not vendor the upstream rules/ tree into this checkout.",
+      "powers": ["designparser"]
     }
   }
 }
@@ -354,6 +367,11 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
   Blocks rather than degrades: without it there is no way to reach the Developer Console,
   initialize a project, deploy actions, or read Runtime logs. The `appbuilder-*` plugin skills
   assume the latest CLI, which is what exposes the non-interactive Console commands.
+- **designparser-mcp** — powers [[designparser]]. `npx -y designparser-mcp` (stdio, no
+  secrets). Called from [[design-foundations]] on every design chain via
+  `suggest_rules_for_context`. Degrades: design work continues; the lookup is skipped
+  and named. Rule content is © designparser — use in work, do not republish as a
+  vault dataset. Workspace contrast / QA / token doctrine still wins on conflict.
 
 ## Adding a capability
 

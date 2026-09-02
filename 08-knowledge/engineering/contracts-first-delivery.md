@@ -10,7 +10,7 @@ related_projects: []
 relations:
   builds-on: ["[[silent-degradation-in-fenced-layers]]", "[[centric-ui-local-against-cloud-dev]]"]
   exemplifies: ["[[14-engineering-operating-model]]"]
-  relates-to: ["[[experiment-validity-baseline]]", "[[threat-model-before-controls]]", "[[workflow-patterns]]"]
+  relates-to: ["[[experiment-validity-baseline]]", "[[threat-model-before-controls]]", "[[workflow-patterns]]", "[[llm-safe-design-system-expressiveness]]"]
 ---
 
 # Contracts-first delivery: name the contract in plain english before writing the code

@@ -15,11 +15,12 @@ description: >
   about generating or making sense of evidence about user behavior and needs in an
   enterprise context.
 aliases: [ux-research-synthesis]
+triggers: [who is this for, designing this for, do we know enough]
 tier: spoke
 domain: design
 hub: lead-ux-designer
 prerequisites: [lead-ux-designer]
-spec_version: "2.0"
+spec_version: "2.1"
 ---
 
 # UX — Research Synthesis
@@ -31,6 +32,18 @@ Does not own: statistical experiment design (→ `ds-experimentation`), product 
 instrumentation (→ `ds-product-analytics`), IA-specific research methods like card
 sorting and tree testing (documented in `ux-information-architecture`). This spoke
 owns the qualitative and mixed-method research layer that informs design decisions.
+
+## Anti-ceremony grounding
+
+If the user asks "who is this for?" or "do we know enough?", answer with evidence labels,
+not a persona workshop.
+
+- Do **not** invent personas to fill a blank. A named gap is more useful than a fake user.
+- Do **not** run research theater (a survey that cannot answer the question, a journey map
+  with no observed journey) to look like process happened.
+- Label each claim: **known** / **inferred** / **assumed** / **unknown** / **conflicted**.
+  These describe the claim's shape. Advocacy posture still follows
+  [[04-research-and-evidence-framework]]'s five tiers. Do not replace those tiers.
 
 ---
 

@@ -68,7 +68,7 @@ See [1-INSTALL.md](1-INSTALL.md) for the full guide with entry points by use cas
 
 | Category | Skills | What they do |
 |----------|--------|-------------|
-| **Audit** | token-audit, component-audit, system-health, drift-detection, naming-audit, figma-variable-audit, codebase-index, system-benchmark | Understand what you actually have |
+| **Audit** | token-audit, theme-audit, docs-coverage, component-audit, system-health, drift-detection, naming-audit, figma-variable-audit, codebase-index, system-benchmark | Understand what you actually have |
 | **Govern** | contribution-workflow, deprecation-process, decision-record, change-communication, backlog-generator, version-bump-advisor, release-retrospective, governance-encoder, session-memory, codemod-generator, triage | Run the system as infrastructure |
 | **Document** | ai-component-description, pattern-documentation, token-documentation, usage-guidelines, component-decision-tree, context-engine-builder, metadata-schema-generator | Make the system legible to humans and machines |
 | **Validate** | design-to-code-check, accessibility-per-component, token-compliance, schema-validator, component-api-validator, cicd-integration | Verify quality before it ships |
@@ -78,7 +78,7 @@ See [1-INSTALL.md](1-INSTALL.md) for the full guide with entry points by use cas
 
 | Agent | What it chains | When to use it |
 |-------|---------------|----------------|
-| `/full-diagnostic` | 5 audit skills with cross-skill synthesis | Quarterly review or inheriting a system |
+| `/full-diagnostic` | 5 core audit skills + theme-audit / docs-coverage when those surfaces exist | Quarterly review or inheriting a system |
 | `/release-check` | Design-to-code, accessibility, token compliance, AI description, usage guidelines, change communication | Before shipping any component |
 | `/governance-review` | Adoption report, drift detection, stakeholder brief | Monthly or quarterly governance cadence |
 | `/migration` | Token audit, naming audit, migration plan, codemod generation, communication | Planning a major migration |

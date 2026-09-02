@@ -34,6 +34,9 @@ Before the first reply in a new session:
    `07-projects/19-workspace-brain/reports/harness-map.stamp` exists and its `date:` is **>30 days**
    old, warn once: harness map stale → `/harness-map` when convenient (not a blocker). **Silent if
    the stamp is missing** (no nag before the first map). Same pattern as Claude's SessionStart Notices.
+   If `skill-routing-harness.stamp` is missing or `python3 09-tools/evaluate-skill-routing.py --stale`
+   fails, run the evaluator and surface FAIL (silent on pass). Not a daemon; also run after skill /
+   trigger-routes / corpus edits, on a live mis-route (`--utterance`), and from `/health` + `/optimize`.
 3. Emit the ritual:
 ```
 [workspace: LOADED · {branch}@{short-sha} · {YYYY-MM-DD} · via:cursor-rule]

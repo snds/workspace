@@ -59,9 +59,11 @@ regenerate + repoint; never leave orphaned/superseded-but-live/stub files). Full
 - `validate-links.py` — dangling + reciprocity on the typed `## Related` graph.
 - `validate-workspace.py` — archive provenance + memory-index coverage.
 - `test-validators.py` — negative fixtures: each detector must refuse a planted defect.
+- `evaluate-skill-routing.py` — adversarial Layer 0 corpus + stopword trigger lint (`--check` in CI).
 
-Before committing any change: `build-related.py` → `build-registry.py` → `validate-integrity.py` →
-`validate-links.py` → `validate-workspace.py`. CI runs all five. Done on a write means the
+Before committing any change: `build-related.py` → `build-registry.py` → `build-trigger-routes.py` →
+`evaluate-skill-routing.py` → `validate-integrity.py` →
+`validate-links.py` → `validate-workspace.py`. CI runs these. Done on a write means the
 relevant validators ran this session, not only that files were saved. When changing a
 validator, also run `python3 09-tools/test-validators.py` (negative fixtures; CI runs them).
 

@@ -59,7 +59,7 @@ This workspace's seven surfaces:
 2. **Frameworks / contract** — judgment vs `AGENTS.md` and `01-frameworks/00-README.md` (drift, contradiction)
 3. **Knowledge** — `python3 09-tools/validate-workspace.py` (index coverage) plus `python3 09-tools/vault-health.py`
 4. **Context / memory** — pending items vs `session-log.md` head; `MEMORY.md` coverage (workspace validator already probes this)
-5. **Triggers / routing** — `python3 09-tools/build-trigger-routes.py --check`. Under-fire on a real prompt must be visible (dispatcher routing-coverage note, or Cursor says Layer 0 missed). Silence is not "nothing matched."
+5. **Triggers / routing** — `python3 09-tools/build-trigger-routes.py --check` and `python3 09-tools/evaluate-skill-routing.py --check`. Under-fire on a real prompt must be visible (dispatcher routing-coverage note, or Cursor says Layer 0 missed). Silence is not "nothing matched." A stopword / article false-positive is a P0 on the trigger or the description-fallback path.
 6. **Validators** — `python3 09-tools/test-validators.py` plus the write-quality chain (`build-related` → `build-registry` → integrity → links → workspace)
 7. **Handoff** — Active-project `SESSION-STATE.md` Live handoff `_Last updated` older than 30 days; uncompacted session fragments in `06-context/sessions/`
 8. **DS source watch** — `python3 09-tools/ds-source-watch.py --check` (no network). P1 if the snapshot is missing or older than 30 days. Do **not** `--fetch` during `/optimize` unless Sean asked. Fetch + judgment is the `ds-source-watch` skill.

@@ -23,6 +23,7 @@ relations:
     - "[[idempotent-design-decisions]]"
     - "[[agentic-domain-constitutions]]"
     - "[[domain-constitutions]]"
+    - "[[llm-safe-design-system-expressiveness]]"
 ---
 
 # Agentic design-system context model
