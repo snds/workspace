@@ -1,0 +1,104 @@
+# UX / UI / visual / interaction  -  project-independent methods.
+# Visual principles that are true in every medium live in design-foundations.
+# Token values and look live in the target DESIGN.md. Do not copy hex here.
+schemaVersion: "domain-constitution/1.0"
+id: ux-ui
+name: UX / UI / visual / interaction
+status: authored
+l1:
+  - 02-ui-ux-operational-framework
+  - 01-aesthetic-lens
+foundation: design-foundations
+leads:
+  - lead-ux-designer
+  - lead-ui-designer
+  - lead-information-architect
+measurement:
+  - visual-prove-engine
+  - a11y-audit-toolkit
+command:
+  - qa
+complements:
+  values: "Target product copy, IA labels, and DESIGN.md tokens. Not this file."
+  meaning: "This constitution + framework #02. Screen application of design-foundations."
+  arbitration: "component-contract-schema when the object is a component. Research confidence tiers when the object is a claim about users."
+  look: "Project DESIGN.md. Graphic first principles from lead-graphic-designer, not a second visual language."
+  runtime: "Implemented UI / A2UI catalog. Not the ontology."
+graphs:
+  skillLoad: "design-foundations → lead-ux-designer | lead-ui-designer | lead-information-architect → ux-* / uid-* / ia-*"
+  epistemic: "08-knowledge/design/"
+  artifact: "this file"
+shared:
+  - id: shared-context-first
+    name: Context shapes the pattern
+    for: all
+    items:
+      - id: metaphor-before-pattern
+        statement: "Name the job (role, task, phase, expertise) before reaching for a table, form, card, wizard, or dashboard."
+        level: must
+      - id: interrogate-on-friction
+        statement: "Interrogate a pattern when users work around it, when density is unmanageable, or when one pattern is used for radically different tasks. Pragmatism is allowed when the pattern already serves the need."
+        level: must
+      - id: universal-pattern-is-wrong-somewhere
+        statement: "A single interaction model doing all the work is an IA failure upstream, not a component win."
+        level: must-not
+      - id: water-to-horse
+        statement: "Surface information where the user already is. Do not make them travel to it for the next decision."
+        level: must
+  - id: shared-three-layers
+    name: IA, interaction, visual hierarchy
+    for: all
+    items:
+      - id: ia-sequences
+        statement: "Map entry → decision → action → outcome. Primary information is what is needed for the next decision. Secondary is context. Tertiary is available, not competing."
+        level: must
+      - id: minimum-necessary-interaction
+        statement: "Design the minimum necessary interaction for the common task. Expert shortcuts must not break the model for everyone else."
+        level: must
+      - id: visual-expresses-priority
+        statement: "Visual weight expresses task priority. Motion and color are feedback, not decoration."
+        level: must
+      - id: eye-outranks-math
+        statement: "Optical adjustment beats measured equality. Contrast is the engine of hierarchy. Evaluate in context, never in isolation."
+        level: must
+  - id: shared-stay-in-system
+    name: Stay in the target system
+    for: agent
+    items:
+      - id: foundation-route
+        statement: "When authoring inside a design system, resolve within that system's own tokens. Derive the smallest step inside its grammar and backlog the gap. Do not import another system's values."
+        level: must
+      - id: a11y-not-deferrable
+        statement: "Token gaps are backloggable. Accessibility compliance is not."
+        level: must
+entries:
+  - id: system
+    kind: system
+    name: Screen-design constitution
+    for: agent
+    notes: "UI owns aesthetic judgment for screens. UX owns behavior and flow. IA owns findability and taxonomy. DS owns encoding into tokens and components. Do not merge those hubs into one dump."
+  - id: interaction-model
+    kind: entry
+    name: Interaction model
+    for: all
+    notes: "Happy path in 3–4 interactions for the typical user. Failure recovery is a first-class path. Adaptation by expertise is allowed; a second product for experts is not the default."
+combos:
+  - id: pattern-vs-job
+    must: [metaphor-before-pattern]
+    mustNot: [universal-pattern-is-wrong-somewhere]
+    why: "Inherit a table because the last screen used one is the failure #02 exists to catch."
+  - id: tokens-vs-a11y
+    must: [foundation-route, a11y-not-deferrable]
+    mustNot: []
+    why: "Stay in system does not waive contrast, labels, or focus."
+refuse:
+  - "A general-purpose 'UI agent' role that skips the named hub."
+  - "Always-loaded dump of every ux-* and uid-* spoke."
+  - "Importing another system's hex, radii, or typefaces into a target DS."
+  - "Treating visual-foundations as a separate constitution. design-foundations already owns context-free visual law."
+  - "Calling a survey a usability test, or analytics a research synthesis (route to research constitution)."
+watch:
+  - https://www.w3.org/WAI/ARIA/apg/
+notes:
+  for: agent
+  - "Load design-foundations, then one hub, then one spoke. Cross to ds-advisor only when encoding into a system."

@@ -56,4 +56,4 @@ Read the **depth buffer** so volumes occlude/are-occluded correctly; composite i
 ## Related
 - foundation → [[img-vfx]]
 - hub → [[threejs-vfx-atmosphere]]
-- peer ↔ [[vfx-particle-systems]] · [[sci-astro-structures]]
+- peer ↔ [[vfx-particle-systems]] · [[sci-astro-structures]] · [[atmospheric-scattering-and-clouds]] · [[stellar-and-relativistic-hero-bodies]]

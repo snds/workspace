@@ -316,6 +316,12 @@ What I unreliably catch or miss:
 
 I should name this honestly in review outputs rather than claim a generalized "I reviewed it and it looks good." When reviewing with you, I'll distinguish between what I'm confident about and what warrants your eyes.
 
+### 2.5 — Perception integrity: capture at native resolution (now framework #10)
+
+**Precondition to everything in this section: before any perception can be trusted, the pixels must be real.** Never judge fine visual detail from a downsampled image — capture at native resolution (zoom the subject so the artifact fills the frame, or read the frame back in 1:1 native chunks) and name the resolution judged at before claiming anything is fixed, gone, or matching. A scaled / fit-to-window / thumbnail output is a *locator only*, never a verdict. This underwrites both baseline perception (#2) and augmented perception (#3): a measurement or a judgment is only as truthful as the pixels it runs on.
+
+This discipline has been **promoted to its own top-level framework — [#10 Perception Integrity](10-perception-integrity.md)** — because it is cross-cutting beyond last-mile craft: it governs *all* visual evaluation (design QA, game/3D renders, shader and dither artifacts, reference art, photography, data-viz, OCR-able text), not just design finishing. The principle, the failure mode, the method-by-surface, and the verification gate live there; the operational mechanics live in the standalone **`native-visual-eval`** skill (no visual-QA-hub dependency). Capture native there *first*, then hand off to augmented perception (#3) to measure and to `lead-visual-qa` to judge.
+
 ### 3. Claude's augmented perception (code-based visual analysis)
 
 My environment includes Pillow, NumPy, OpenCV, scikit-image, and Matplotlib. That means I can augment raw perception with computer-vision tooling that measures, compares, and visualizes — producing instrumented analysis that closes much of the perceptual gap.
@@ -345,6 +351,55 @@ This capability is implemented as the `visual-qa-toolkit` skill at `03-skills/vi
 Invocation is context-dependent. When the work is in my reach (uploaded images, accessible URLs, MCP-bridged dev servers), I invoke directly and analyze the output in-session. When the work is batch, local-machine-only, or outside my reach, you invoke locally and bring me the relevant findings as text. Either mode preserves the value of instrumented perception while keeping token costs reasonable.
 
 For full invocation patterns, config structure, exit code semantics, and per-check details, load the `visual-qa-toolkit` skill directly.
+
+### 3a. Full-result high-resolution review (the no-spot-check rule)
+
+Before calling **any** visual-outcome task done — Figma canvas, generated UI, sticker sheets,
+anything rendered — do a **high-resolution review of the WHOLE deliverable**, not a spot-check of a
+few representative items. Structural/numeric verification (sizes unchanged, props present,
+`sizeKept:true`) does **not** catch visual problems: overflow collisions, clipping, mis-pinned
+constraints, z-order, alignment drift. Absolute-positioned overlays (dropdowns, pickers, editors,
+inline-edit fields that regain their fill) overflow far beyond their host's bounding box and
+silently collide with neighbors even when every element's *layout* size is unchanged. (Measured on a
+real miss: rich-text editor overflowed 778px, date picker ~395px, enum lists ~260px — colliding with
+adjacent rows the structural checks all passed.)
+
+Four operating rules:
+- **Render the full result at sufficient resolution to actually SEE problems** — per-section /
+  per-region if large; cap each image so it stays legible. Spot-checking 3 of 26 sections is how real
+  collisions ship.
+- **Broaden the review context — don't tunnel on the literal ask.** Scan the WHOLE frame for ANY
+  defect, not just the one being fixed: labels overlaid by a neighbor's overflow, mis-pinned
+  constraints, double-padding, clipped glyphs, alignment drift, z-order. Fixing exactly what was
+  asked while missing an obvious adjacent issue in the same view is a recurring failure.
+- **Question parameters that "look off" — context is king (surface-agnostic).** When spacing/size/
+  position looks wrong, investigate the *parameter* behind it (a `min`/`max` width/height, fixed
+  dimension, hardcoded margin, `clip`, constraint) and ask *why it exists and whether it should* —
+  judged against how SIBLING content is built. A value needed on one element is often unnecessary or
+  over-scoped on a peer. Never evaluate a value in isolation; only in the context of the surrounding
+  output.
+- **Precision over global blunt fixes.** Reserve space PER ELEMENT (per-item `minHeight` = content +
+  *that* item's measured overflow) so only the elements that need room get it — never set a region's
+  gap to the region's MAX overflow. When overlays overflow, MEASURE the overflow programmatically
+  (scan each item's descendants for max bottom/right beyond its layout box) and size spacing to
+  exactly clear it. Don't band-aid with `paddingBottom`; own the gap via a container's `itemSpacing`.
+
+**Recursively, and before presenting — never make the user the QA loop.** Run this review on the
+**full subtree** after *every* compose/edit, not just at the end: walk the nested structure AND
+screenshot at adequate resolution (structure and pixels each hide different failures), propagating the
+checks through nested instances and localized sub-elements (defects hide several levels deep — an
+instance inside an instance inside a card). Fix internally; present only verified results. Shipping a
+composition and waiting for the user to catch sizing/clipping/nesting problems burns tokens and their
+time — the user must not be the QA loop. When something must stay imperfect, say so explicitly rather
+than letting them find it. **Clip-content cropping is a named must-catch:** content sliced by an
+ancestor's `clipsContent` toggle (text cut mid-line, images sliced, values ending abruptly) must be
+flagged before declaring any visual done — the fix is either structural (let the container/element
+hug/grow, or adjust the constraint) or a deliberate truncation decision, never silent slicing.
+
+This pairs with §3 (augmented perception supplies the measurement) and with framework #06's
+pre-output gate (reference-comparison protocol). See knowledge `[[figma-ds-surface-authoring]]`
+(floats are absolute + constrained → don't inflate the host bbox, but DO overflow visually; the
+clip-content fix procedure and the `resize()`→FIXED gotcha).
 
 ### 4. Human perception (yours)
 
@@ -439,6 +494,7 @@ How this framework shows up in our work:
 
 - **Tier-naming during craft work.** When we're in construction mode vs. finishing mode vs. audit mode, I name it so we know what discipline applies.
 - **Category-aware review.** When we're reviewing work, I surface which of the ten categories are in scope and which checks apply.
+- **Native-resolution capture first (per framework #10).** Before judging any fine visual detail, I capture at native resolution and name the resolution I judged at before claiming anything is fixed, gone, or matching — a scaled thumbnail is a locator, never a verdict. The principle and the verification gate live in [#10 Perception Integrity](10-perception-integrity.md); the method in the `native-visual-eval` skill (no hub needed).
 - **Perception honesty.** When reviewing visually, I distinguish between what I'm confident about (baseline perception), what I've measured (augmented perception), and what needs your eyes (human perception).
 - **Augmented perception as a deliberate tool.** I reach for code-based visual analysis at specific moments — pre-handoff audits, subtle-issue verification, visual regression, accessibility pre-checks, deliberate review passes — not as a constant background check.
 - **Enforcement handoff artifact.** At the end of design-engineered work, I produce the structured handoff artifact described above, making the enforcement boundary explicit.
@@ -460,6 +516,7 @@ This framework is the meta-layer. Tactical execution lives in the skill network.
 - **`variable-icon-font-architect`** — icon system construction. Owns the tactical execution of icon and variable font last-mile discipline.
 - **`figma-plugin-dev`** — tooling-level craft. When we're building plugins that enforce last-mile discipline automatically, this skill runs the build.
 - **`workspace-bootstrap`** — session continuity. Extended (in scope for tomorrow) to load `SESSION-STATE.md` automatically and maintain operational state across sessions.
+- **`native-visual-eval`** — the implementation surface for the perception-integrity precondition (§2.5 above, now its own framework [#10](10-perception-integrity.md)). Same-tick canvas/WebGL readback, the zoom-the-subject technique, the 1:1 chunk-and-Read loop, the static-asset crop rule. Standalone — no visual-QA-hub dependency — so the discipline is always cheap to invoke. Capture native here *before* measuring with `visual-qa-toolkit` or judging with `lead-visual-qa`.
 - **`visual-qa-toolkit`** — the implementation surface for enforcement mechanism #3 above. Ten standalone Python scripts, starter configs for default/Centric/Legion contexts, a consolidated-report runner, and annotated-image outputs. Makes augmented perception a standing capability rather than ad-hoc code each time.
 
 When a framework-level observation surfaces something tactical, I point to the skill. When a skill-level execution surfaces something that's actually a principle worth codifying, I flag it for inclusion in the framework during a future pass.

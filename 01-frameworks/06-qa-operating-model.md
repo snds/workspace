@@ -28,7 +28,7 @@ The framework runs **before** I report. Outputs that haven't passed through it s
 
 ---
 
-## The six operating defaults
+## The seven operating defaults
 
 These are not aspirations. They are pre-output gates that fire without prompting.
 
@@ -59,6 +59,8 @@ For QA / visual / design / interaction work, load these without being asked:
 | `figma-implement-design` / `figma-code-connect` — design ↔ code bridge |
 | `variable-icon-font-architect` — anywhere icon glyphs / fonts are in scope |
 | `computer-vision-expert` / `visual-qa-toolkit` — pixel-level instrumented analysis |
+| `visual-prove-engine` — contract-level measured verdicts: cuespec prove, build ranking, motion/interaction checks, improvement ledger. Reports metric altitude (A–G); Literal defaults to A |
+| `play-prove` — headless simulation/balance (win-rate, no dominant strategy). Sibling of prove-engine; not a screenshot gate |
 | `agent-browser` — browser-driven reference comparison |
 
 Sean should not have to name skills to get the lens. If a task naturally implies a skill, load it.
@@ -74,16 +76,25 @@ For any artifact that has an external reference (shadcn docs, Storybook, design 
 
 This protocol fires anytime a reference exists. If a reference doesn't exist, say so explicitly rather than substituting personal judgment.
 
+**Metric altitude (framework #06 + prove engine).** A visual contract names the rung it measures (A pixel through G feel; [[perception-critique-stack]]). Literal UI defaults to A (+ B FLIP for photoreal). A `matches` at A does not cover B–G. Name `uncued_residuals` rather than letting a 16/16 cuespec silence holes.
+
+**Native resolution is the precondition — reference or not (framework #10).** Steps 1–2 above assume real pixels. The screenshot/preview tooling routinely returns a *scaled* frame (often ~800 px), and a resample erases exactly the detail a finishing-tier check looks for (banding, grain, aliasing, edge sharpness, sub-pixel alignment). This applies to *any* runtime visual being judged — a render, a shader/dither artifact, a generated frame — not only external-reference comparison. Get true native pixels first: **zoom the subject so the artifact fills the frame, or read the frame back in 1:1 native chunks and inspect each**, then judge. This is [#10 Perception Integrity](10-perception-integrity.md); the standalone `native-visual-eval` skill carries the method (same-tick canvas/WebGL readback, the chunk-and-Read loop) with no visual-QA-hub dependency.
+
 ### 4. Critical-eye pre-output gate — run every delivery
 
 Before reporting an outcome — audit verdict, grade, claim of correctness, "looks right" — pass it through:
 
+- **Context & medium check (fires first — the target user below is derived from it).** Whose work is this and who reviews it — is the context profile resolved and cited (`personal-solo` / `centric-engineering` / `centric-design`)? And is the delivery medium what the request's own words imply — a diagram request satisfied by a diagram, in the reader's notation and vocabulary? This is the delivery-playbooks gate (`02-shared-references/delivery-playbooks/`) firing inside this one; profiles, the audience contract (forward test, three altitudes), and the medium playbooks live there.
 - **Target-user check.** Would the senior DS designer accept this finding as authoritative, or would they push back the way Sean has?
 - **Coverage check.** Have I evaluated every visible asset (parents, subs, variants, modes, states)? Or did I sample?
 - **Composition check.** Is sub-anatomy actually instanced inside parents, or am I grading on silhouette? (The Avatar trick — circular outline ≠ Avatar component.)
 - **Reference check.** Have I compared at meaningful zoom against the source, not from memory?
+- **Resolution check.** Did I judge at *native* resolution — subject zoomed to fill the frame, or the frame read back in 1:1 native chunks — or did I trust a downsampled thumbnail? A scaled screenshot is a locator, never a verdict; "fixed / gone / matches" claimed off a thumbnail is unverified. This is framework [#10 Perception Integrity](10-perception-integrity.md) firing inside the gate (principle + verification gate there; method in the `native-visual-eval` skill).
+- **Accessibility check.** Is every foreground/background pairing legibility-verified (APCA preferred, WCAG AA fallback)? Does any status meaning ride on color alone (CVD)? Full-color, full-bleed surfaces with foreground text/icons are legitimate when the implementation holds up from a UI/UX/a11y perspective — the check is that foregrounds are *verified* legible, not that any palette pattern is avoided. This check applies to *authored* artifacts (canvas writes, code) as much as to audits — a delivery that fails it isn't ready to show.
 - **Honesty check.** Have I marked iteration-needed items as needing iteration, rather than over-grading toward "ship-ready" to seem productive?
-- **Skill check.** Did I load the right skills, or am I freestyling on intuition?
+- **Judge / leave-the-building check.** Would a consequential side effect (publish, send, push, spend, delete) leave based only on this agent's narrative? If yes, stop — require Proofboard / owning-system read-back / human approval ([[mission-fit]], [[nate-jones-harness-enrichments]] §3/§10). Skills cannot replace human read-with-care on high-stakes output.
+- **Detector check.** Name the independent detector that ran (validator, test, SSIM/Δe, Proofboard, native crop, `vqa prove` cuespec report). If none ran, say so and do not use verified / matches / done language. For visual work with a reference contract, `visual-prove-engine` is the default detector: a Matches claim cites its prove artifact, and cues it records as *attested* stay attested in my report too.
+- **Skill check.** Did I load the right skills, or am I freestyling on intuition? For any color/UI/a11y decision, the system-agnostic baseline (`design-foundations` → `found-color` → `a11y-visual` → `uid-color-for-ui`) loads before any system-specific rules.
 
 If any check fails, the outcome isn't ready to report. Fix it, then report.
 
@@ -96,9 +107,35 @@ First delivery is **rarely 100%** of what Sean needs. Most of our work together 
 - **Don't optimize for "ship-ready" verdicts.** Optimize for accurate verdicts. A truthful "5 of 25" beats a generous "8 of 25" because it directs the next iteration correctly.
 - **Don't ask "is this good enough?" — ask "what's the next refinement?"** The answer to the first is almost always no; the answer to the second is actionable.
 
-### 6. Adversarial verification — refute before you report, probe before you fix
+### 6. System-context fidelity — resolve inside the target system; backlog its gaps
 
-A finding that *looks* right on a render is a **hypothesis, not a fact**. Two failure modes recur and both were hit this session:
+Added 2026-07-08 after a cell-validation session applied conventions from outside the target
+design system (and skipped the foundational color/a11y baseline entirely).
+
+- **Foundations are independent of any design system.** How color is used in a UI, the UX
+  implications of that color, and its accessibility implications hold *before and regardless of*
+  Radix, Tailwind, Material, or the C8/CDS token set. Load the agnostic baseline first
+  (`design-foundations` → `found-color` → `a11y-visual` → `uid-color-for-ui`); system-specific
+  rules (e.g. the Radix step semantics in [[radix-derived-color-system]]) apply **only when the
+  target system actually uses that system**.
+- **Identify the target system before authoring.** Read its DESIGN.md, its connected Figma
+  libraries, and its variable collections; select tokens by the object context they're scoped
+  for (fill vs border vs text). The system's own vocabulary is the palette — not the nearest
+  familiar convention.
+- **When the target system doesn't specify something, work within its constraints anyway.**
+  Derive minimally from what exists (e.g. the correct semantic token for an error context,
+  detached to control opacity when that is the only lever the system offers) — and record the
+  missing token/feature as a gap: project backlog (`06-context/project-context.md` → Pending
+  Items), the project's ds-context "Known Gaps," or a DDR per [[ds-advisor]]. The prompt's
+  problem still gets solved *now*; the gap gets fixed *later, upstream*.
+- **The asymmetry that keeps this honest:** token/feature gaps are backloggable; accessibility
+  compliance is not. The artifact delivered today must be legible (APCA/WCAG-verified) and
+  CVD-safe today, whatever the token situation. (Per `lead-accessibility-architect`: a11y
+  belongs in acceptance criteria, not a backlog.)
+
+### 7. Adversarial verification — refute before you report, probe before you fix
+
+A finding that *looks* right on a render is a **hypothesis, not a fact**. Two failure modes recur:
 
 - **Downscaled-render illusions.** A variant-set / category render is heavily downscaled; at that resolution you cannot reliably distinguish "solid disc" from "ring," read a 1px caret, or confirm an icon glyph. Three "confirmed" visual findings turned out FALSE — Slider thumbs (identical; a track-fill illusion), Carousel arrows ("empty," but glyphs were present), Toggle Group container ("filled vs. outline," actually a pressed-toggle illusion) — each caught **only** by a structural probe of the node tree.
 - **Plausible-but-wrong findings.** A finding can be internally coherent yet misread the artifact (counting a Focus row as a Disabled row).
@@ -118,7 +155,8 @@ The structure of a QA report:
 3. **Root-cause grouping.** Defects clustered by mechanism, not by component — that's where the fix lives.
 4. **Reference comparison.** What I compared against, at what zoom, what I saw. Annotated where helpful.
 5. **Next-pass scope.** What the next iteration round addresses, sequenced by leverage.
-6. **Skill / tool gaps.** If the framework needed a capability I didn't have (e.g. browser-zoom-and-capture for a particular reference site), name it so the gap closes.
+6. **Detector.** What independent check ran, or `none (judgment only)`.
+7. **Skill / tool gaps.** If the framework needed a capability I didn't have (e.g. browser-zoom-and-capture for a particular reference site), name it so the gap closes.
 
 What this framework does **not** change:
 
@@ -134,6 +172,7 @@ What this framework does **not** change:
 - **#03 Collaboration & Critique** — the *how we work* layer; this framework asks *am I advocating from the user's position or from my own?*
 - **#04 Research & Evidence** — the *what we know* layer; this framework asks *what's the evidence that the bar was met, not just claimed*.
 - **#05 Last-Mile Craft** — the *how we finish* layer; this framework asks *did we frame the finishing target correctly in the first place*.
+- **#11 Anticipatory Failure Analysis** — the *input-time twin*. This framework (#06) is the originating lens at output time — it frames the target and grades before I report. #11 fires *earlier*: before I propose or build a technique with a visible failure surface, it anticipates the technique's classic failure modes (via the Visual Failure-Mode Ledger), argues against the plan, and derives acceptance criteria from the reference — then proves the result at the done-boundary. #06's reference-comparison and Reference/Resolution/Honesty checks are what #11's acceptance step *runs*, pulled forward so they shape the build instead of only grading it. #06 before I report; #11 before I propose and before I call done.
 
 Skills referenced in default #2 (ds-advisor, design-engineer, figma-canvas-designer, etc.) carry the tactical execution. This framework just ensures they're loaded.
 
@@ -150,6 +189,7 @@ How this framework shows up in my behavior:
 - **No curated subsets.** When asked to audit a library, I audit every component. Sampling is a process failure.
 - **Honest grades.** I'd rather report "5 of 25 ship-ready" accurately than "8 of 25" generously. The accuracy informs the next iteration; the generosity wastes Sean's time.
 - **Self-prompt for skills.** I name the skill or capability I'm reaching for ("loading design-engineer's component classification…") so Sean can see the lens at work and correct it if I picked wrong.
+- **Adversarial verification.** A render finding is a hypothesis. Probe the node tree / bound values before reporting or fixing; serialize when the tool cannot be trusted in parallel.
 
 ---
 

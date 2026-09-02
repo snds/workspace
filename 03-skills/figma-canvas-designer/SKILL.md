@@ -13,6 +13,7 @@ description: >
   or code generation), use this skill. Do NOT use for Figma plugin development
   (TypeScript, bundling, Plugin API code) — defer to figma-plugin-dev instead.
 aliases: [figma-canvas-designer]
+triggers: [figma canvas, canvas design, screen design, mock up, mockup, wireframe, design in figma, lay out a page]
 spec_version: "2.1"
 tier: spoke
 domain: design

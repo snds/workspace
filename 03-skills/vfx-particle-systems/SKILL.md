@@ -56,4 +56,4 @@ over age) carry most of the visual character.
 ## Related
 - foundation → [[img-vfx]]
 - hub → [[threejs-vfx-atmosphere]]
-- peer ↔ [[vfx-volumetrics]] · [[game-scale-traversal]]
+- peer ↔ [[vfx-volumetrics]] · [[game-scale-traversal]] · [[stellar-and-relativistic-hero-bodies]]

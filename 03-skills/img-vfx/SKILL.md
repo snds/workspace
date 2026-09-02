@@ -8,7 +8,7 @@ description: >
   particles, particle system, simulation, fluid, smoke, fire, volumetrics, god rays,
   atmospheric scattering, compositing, bloom, dissolve, trail, emitter.
 aliases: [img-vfx]
-triggers: [vfx, particles, particle system, simulation, fluid, smoke, fire, volumetrics, god rays, atmospheric scattering, compositing, bloom, dissolve, trail, emitter]
+triggers: [vfx, particles, particle system, simulation, fluid, smoke, fire effect, volumetrics, god rays, atmospheric scattering, compositing, bloom, dissolve, trail, emitter]
 tier: foundation
 hub: imaging-foundations
 domain: imaging

@@ -1,0 +1,120 @@
+{
+  "spec_version": "1.0",
+  "description": "Upstream sources that can change the workspace DS ontology, graphs, DSDS constitution, context model, or agentic implementation engineering. Reviewed by 09-tools/ds-source-watch.py. Report-first: never auto-edit ontology from a fetch.",
+  "stale_days": 30,
+  "snapshot": "07-projects/19-workspace-brain/reports/ds-source-watch/latest.json",
+  "sources": [
+    {
+      "id": "dsds-home",
+      "name": "DSDS — Design System Documentation Spec",
+      "url": "https://designsystemdocspec.org",
+      "owners": ["PJ Onori"],
+      "affects": ["dsds", "ontology", "specs"],
+      "why": "Schema shape for documentation-as-data. 0.20 collapsed 0.15.2 kinds."
+    },
+    {
+      "id": "dsds-schema",
+      "name": "DSDS schema reference",
+      "url": "https://designsystemdocspec.org/schema",
+      "owners": ["PJ Onori"],
+      "affects": ["dsds", "specs"],
+      "why": "Entry kinds, section kinds, for:, combos, traits."
+    },
+    {
+      "id": "onori-dsds-post",
+      "name": "PJ Onori — I’m making a spec for design system documentation",
+      "url": "https://pjonori.blog/posts/design-system-doc-spec/",
+      "owners": ["PJ Onori"],
+      "affects": ["dsds", "specs"],
+      "why": "Original rationale for DSDS. Useful when the spec site is terse."
+    },
+    {
+      "id": "dsds-github",
+      "name": "DSDS GitHub",
+      "url": "https://github.com/somerandomdude/design-system-documentation-schema",
+      "owners": ["PJ Onori"],
+      "affects": ["dsds", "specs"],
+      "why": "Repo + releases. If 404, try designsystemdocspec org; record the redirect."
+    },
+    {
+      "id": "grokking-agentic",
+      "name": "Grokking — Agentic System Design",
+      "url": "https://grokkingthesystemdesign.com/guides/agentic-system-design/",
+      "owners": ["Naeem Ul Haq"],
+      "affects": ["context", "harness"],
+      "why": "Roles, goals, memory tiers, tool contracts, control flow."
+    },
+    {
+      "id": "awesome-agentic",
+      "name": "Awesome Agentic System Design",
+      "url": "https://raw.githubusercontent.com/gtzheng/Awesome-Agentic-System-Design/main/README.md",
+      "owners": ["gtzheng"],
+      "affects": ["harness", "context"],
+      "why": "Index of MCP/A2A/ANP papers and industry guides."
+    },
+    {
+      "id": "alireza-2026",
+      "name": "2026 Agentic AI System Design Update",
+      "url": "https://raw.githubusercontent.com/alirezadir/Agentic-AI-Systems/main/03_system_design/2026-agentic-ai-system-design.md",
+      "owners": ["Alireza Dirafzoon"],
+      "affects": ["harness", "context", "agentic"],
+      "why": "Context engineering, AgentOps, MCP vs A2A, evals, cost."
+    },
+    {
+      "id": "ai-created-ui",
+      "name": "@ai-created/ui",
+      "url": "https://ui.ai-created.com",
+      "owners": ["AI-Created"],
+      "affects": ["specs", "context"],
+      "why": "Living coded DS + same-pass doc discipline + product UX as contract."
+    },
+    {
+      "id": "curtis-contracts",
+      "name": "Nathan Curtis — Component Contracts and Schemas",
+      "url": "https://nathanacurtis.substack.com/p/component-contracts-and-schemas",
+      "owners": ["Nathan Curtis"],
+      "affects": ["specs", "ontology"],
+      "why": "Description vs contract vs schema vs spec; seven gates."
+    },
+    {
+      "id": "curtis-collapse",
+      "name": "Nathan Curtis — Configuration Collapse",
+      "url": "https://nathanacurtis.substack.com/p/configuration-collapse",
+      "owners": ["Nathan Curtis"],
+      "affects": ["specs", "ontology"],
+      "why": "Slots over prop sprawl; AI-ready composition grammar."
+    },
+    {
+      "id": "curtis-feed",
+      "name": "Nathan Curtis Substack index",
+      "url": "https://nathanacurtis.substack.com",
+      "owners": ["Nathan Curtis"],
+      "affects": ["ontology", "specs"],
+      "why": "Active public DS ops stream. Treat new posts as testimony until absorbed."
+    },
+    {
+      "id": "anthropic-effective-agents",
+      "name": "Anthropic — Building effective agents",
+      "url": "https://www.anthropic.com/engineering/building-effective-agents",
+      "owners": ["Anthropic"],
+      "affects": ["harness", "agentic"],
+      "why": "Workflows vs agents; when not to add autonomy."
+    },
+    {
+      "id": "mcp-spec",
+      "name": "Model Context Protocol specification",
+      "url": "https://modelcontextprotocol.io/specification/2025-06-18",
+      "owners": ["Anthropic", "MCP"],
+      "affects": ["agentic", "harness"],
+      "why": "Agent-to-tool / agent-to-context protocol."
+    },
+    {
+      "id": "a2a-announce",
+      "name": "Google — Agent2Agent protocol",
+      "url": "https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/",
+      "owners": ["Google"],
+      "affects": ["agentic", "harness"],
+      "why": "Agent-to-agent transport. Distinct from A2UI payload."
+    }
+  ]
+}

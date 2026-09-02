@@ -57,5 +57,5 @@ position, or label. (Specific contrast *thresholds* and the audit gate are gover
 
 ## Related
 - hub → [[design-foundations]]
-- applies-in ← [[gd-color-theory]] · [[uid-color-for-ui]]
+- applies-in ← [[gd-color-theory]] · [[infod-encoding-theory]] · [[uid-color-for-ui]]
 - peer ↔ [[found-hierarchy]]

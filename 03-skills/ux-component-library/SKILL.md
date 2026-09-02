@@ -164,6 +164,4 @@ Data Table, Tree View, Rating. The dataset also does NOT model Command Palette, 
 Resizable, dedicated Drawer/Multi-select/Video — compose from the nearest primitive and note the gap.
 
 ## Related
-- framework (the hub / *why*) → [[09-component-and-pattern-framework]]
 - hub → [[lead-ux-designer]]
-- pairs with → [[figma-canvas-designer]], [[design-engineer]], [[ds-advisor]]

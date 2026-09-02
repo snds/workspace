@@ -10,9 +10,9 @@ description: >
 aliases: [mobile-react-native]
 triggers: [react native, expo, eas, react navigation, expo router, native module, jsi, hermes, flashlist, mobile react]
 tier: spoke
-hub: lead-frontend-engineer
+hub: lead-mobile-engineer
 domain: engineering
-prerequisites: [lead-frontend-engineer]
+prerequisites: [lead-mobile-engineer]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -21,7 +21,8 @@ spec_version: "2.0"
 
 For a web/React developer crossing into mobile. The component model transfers; the runtime, navigation,
 and platform realities do not. Foundations (complexity, contracts, testing) come from [[eng-foundations]]
-via [[lead-frontend-engineer]]; this spoke owns the RN-specific application.
+via [[lead-mobile-engineer]]; this spoke owns the RN-specific application. Web-runtime concerns stay
+with [[lead-frontend-engineer]].
 
 ## The runtime is not the browser
 RN renders to *native* views via JSI (the modern replacement for the async bridge) on the Hermes engine —
@@ -46,5 +47,5 @@ Build/Submit** + store review + OTA updates for JS-only changes — a fundamenta
 than web deploys.
 
 ## Related
-- hub → [[lead-frontend-engineer]]
+- hub → [[lead-mobile-engineer]]
 - peer ↔ [[mobile-ios-swiftui]] · [[mobile-android-kotlin]] · [[mobile-platform-craft]]

@@ -26,6 +26,10 @@ below.
 4. **Portable-first.** Nothing you add may require one vendor, device, or cloud drive. If a mechanism
    only works in one tool, it belongs in that tool's adapter, not the shared layers.
 5. **Smallest correct change.** Right altitude, right layer, minimal blast radius, reviewable in one sitting.
+6. **Token frugality (a #1 priority).** The workspace must never cost more tokens than the value it adds.
+   Structure state so it's read cheaply — bounded, append-only logs that **archive** rather than grow (never
+   a whole growing file); load skills only on trigger. Be especially terse in **auto-loaded** files (the
+   contract, `CLAUDE.md`, `.cursor` rules): every line there is a recurring per-session cost, so earn it.
 
 ---
 
@@ -46,9 +50,36 @@ including a mid-task dynamic model swap in Cursor — must clear four gates:
    dramatic the old file no longer makes sense, archive it with provenance, generate the replacement, and
    repoint all cross-links. Never leave an orphaned, superseded-but-live, half-updated, or stub file.
 
-Run before commit (CI mirrors these): `build-registry.py` → `build-related.py` → `validate-integrity.py`
-→ `validate-links.py` → `validate-workspace.py`. Gate 2 is partly semantic — the authoring agent + PR review
-own it; the rest is machine-checked. Mirrored, compressed, in [[AGENTS]] → "Write-quality gates".
+**Embedded, not commit-only.** Done on a vault write means the relevant validators ran in this session, not only that files were saved. Commit/CI is the backstop. After a skill, knowledge, or framework edit, run the chain before claiming complete:
+
+`build-related.py` → `build-registry.py` → `validate-integrity.py` → `validate-links.py` → `validate-workspace.py`.
+
+CI mirrors these. Gate 2 is partly semantic — the authoring agent + PR review own it; the rest is machine-checked. Mirrored, compressed, in [[AGENTS]] → "Write-quality gates". Negative fixtures: `python3 09-tools/test-validators.py`.
+
+**Why `build-related` runs first.** It rewrites the `## Related` block *inside* SKILL.md files;
+`build-registry` records a content hash per skill. Build the registry first and any file `build-related`
+subsequently touches carries a stale hash, so the committed registry is already drifted — CI fails with
+`registry-drift` and `capability-validator` even though the chain was "run as documented". The coupling is
+one-directional (`build-related` writes what `build-registry` reads), so ordering alone closes it. If a
+future generator also mutates SKILL.md content, it belongs *before* `build-registry` too — or the chain
+needs a run-to-fixpoint loop. Discovered 2026-07-20 when a Related-block refresh to `found-color`,
+`infod-encoding-theory` and `ux-component-library` drifted exactly those three hashes.
+
+### Graph & freshness conventions (knowledge/memory notes)
+
+Two lightweight conventions keep the **epistemic** graph (knowledge entries + `memory/` — distinct
+from the skill `## Related` graph) connected and trustworthy. Full spec:
+[[vault-graph-conventions]] and [[epistemic-standards]] §2.
+
+- **Typed edges** — a `relations:` frontmatter map (`builds-on` / `relates-to` / `contradicts` /
+  `refutes` / `exemplifies`) on knowledge/decision notes. `refutes` is how a superseded claim gets
+  *marked* superseded, not silently left live. (Skills keep their own richer `## Related` graph — don't cross them.)
+- **Freshness** — every durable claim is *timeless* / *dated* (`as of YYYY-MM`) / *pointer*; past-horizon
+  or unverifiable → `#stale`.
+- **Retrieval preamble** — durable notes open with a `## For future agent` block (TL;DR + key claims + as-of).
+- **Check it:** `/health` (→ `09-tools/vault-health.py`) reports orphans, `#stale`/aging claims, and
+  dangling typed edges. Run it periodically and inside `/optimize`; it can be automated via the
+  opt-in [[nightly-maintenance-recipe]].
 
 ---
 
@@ -101,14 +132,25 @@ Each layer: what belongs · when to add vs. extend · what never goes here · th
   principle. Decide tier (`foundation`/`hub`/`spoke`/`cross-cutting`) up front.
 - **Never:** rename a `SKILL.md` file/dir (add `aliases`); duplicate a skill per agent (extend
   frontmatter); restate in a spoke the principle its foundation owns.
-- **How:** author from `00-bootstrap/templates/skill.md` (frontmatter v2 + typed `## Related`); then
-  `python3 09-tools/build-registry.py`; ensure cross-links are reciprocal. CI gates both.
+- **How:** author from `00-bootstrap/templates/skill.md` (frontmatter v2.2 + typed `## Related`);
+  clear the [[13-domain-rigor-stack]] acceptance checklist (L1–L5 intents) before calling the
+  cluster done; then `python3 09-tools/build-related.py` → `build-registry.py`; ensure cross-links
+  are reciprocal. CI gates both.
+- **Domain rigor (mandatory):** knowledge-only hubs are incomplete. Every domain cluster needs an
+  operating model (L1), command/contract surface (L2), measurement path for audits (L3), intact
+  foundation→hub→spoke chain (L4), and multi-voice + doctrine precedence (L5). Instantiation varies
+  by domain — see #13. Prefer connective tissue over adding volume to already-deep spokes.
+- **Plugin wrappers:** if marketplace/plugin skills supply technique depth, add a thin workspace
+  hub that owns triggers, bans, and `defers_to`; do not fork plugin bodies into the vault. Doctrine
+  order: frameworks > workspace skills > plugins ([[AGENTS]]).
 - **External tools:** if a skill needs an MCP server or CLI, declare `requires: [<capability-id>]` and
   register the capability in `02-shared-references/capability-registry.md` (detection + install +
   fallback). Don't hard-code tool paths or install steps in the skill. The agent **preflights** the
   capability before use ([[AGENTS]] → "Capability preflight") and degrades/blocks/routes if it's
   absent on the current surface — so the skill stays portable across surfaces that may or may not have
   the tool. `09-tools/validate-capabilities.py` enforces the contract (no dangling ids, reciprocity).
+- **Unreachable packs:** a directory under `03-skills/` without a root `SKILL.md` is incomplete —
+  wire it (wrapper hub) or archive it. Never leave a half-integrated vendored tree.
 
 ### `04-preferences/` — behavioral defaults
 - **Belongs:** stable, deliberately chosen defaults — tone, format, terminology, conventions.
@@ -134,6 +176,11 @@ Each layer: what belongs · when to add vs. extend · what never goes here · th
 - **Belongs:** per-project deliverables, local context, `SESSION-STATE.md`.
 - **Never:** workspace-global policy (push that up to frameworks/shared-references).
 - **How:** scaffold via the project template; keep local context local.
+- **Workspace-work project home (2026-07-09):** sessions whose *subject is the workspace
+  itself* (validation, fix, migration, infrastructure sessions) use the standing
+  `07-projects/19-workspace-brain/` — SESSION-STATE + Live handoff like any project — or
+  explicitly declare "no project home — session-log only" in their first checkpoint.
+  Workspace sessions without either have no continuity carrier between agents.
 
 ### `05-artifacts/` — generated outputs
 - **How:** versioned `context_descriptor_vN.N_YYYY-MM-DD.ext`; never overwrite — increment.
@@ -190,9 +237,11 @@ CI (`archive-provenance`) fails if a file under `_archive/` has no matching `ARC
 How any agent opens and closes a working session here, with **no dependency on tool hooks**. A tool
 adapter (e.g. a Claude hook) may automate this, but the protocol is the contract.
 
-**Session start — read (and inherit the thread):**
+**Session start — read (and inherit the thread), frugally:**
 1. `llms.txt` → `AGENTS.md` (contract) → `03-skills/skills.registry.json` (skill graph).
-2. `06-context/`: `role-and-context`, `project-context`, head of `session-log`, `memory/MEMORY.md`.
+2. `06-context/`: `role-and-context`, `project-context` (head), **head of `session-log`** (it's bounded;
+   old blocks are in `session-log-archive.md`, read only on demand), `memory/MEMORY.md`. Never read a whole
+   growing log — token frugality is a #1 priority.
 3. The active project's `SESSION-STATE.md` — **read the Live handoff block first**; you now hold the same
    context the previous agent had. Identify yourself (Agent · Surface · Machine) for attribution.
 
@@ -203,16 +252,22 @@ baton. Record durable insights/facts in the moment (knowledge/memory), not just 
 **On handoff / pause (mid-project, not just at the end) — pass the baton:**
 1. Rewrite the **Live handoff block** atomically: current focus, working set, last action (attributed),
    next action, open decisions, blocked-on, in-flight/do-not-touch; prepend an Agent-thread line.
-2. Append a session-log entry (attributed) if meaningful work landed.
+2. Write a session block as a **fragment** (`06-context/sessions/<id>.md` with a `SessionID:` line) if
+   meaningful work landed — not a direct append to `session-log.md`. Compaction folds it in.
 3. Commit so the next agent — on any tool — inherits an unbroken thread. This is what makes a multi-agent
    project one contract instead of N. See [[AGENTS]] → "Multi-agent continuity & handoff".
 
 **Session end — write:**
-1. Append a session block to `06-context/session-log.md` (stamped Agent · Surface · Machine).
+1. Write your session block as a **fragment** in `06-context/sessions/` (a disjoint file per session,
+   stamped Agent · Surface · Machine, with a `SessionID:` line). Disjoint fragments never collide across
+   concurrent sessions/machines/surfaces; compaction folds them into `session-log.md` and archives old
+   blocks. **Do not hand-edit `session-log.md`** (append-only, `merge=union`, bounded by archival).
 2. Apply any project status / pending changes to `06-context/project-context.md`.
 3. Update the active project's `SESSION-STATE.md` (incl. the Live handoff block).
-4. If a generated artifact changed (frontmatter edited), regenerate `skills.registry.json` + Related blocks.
-5. Commit + push reviewable diffs.
+4. On Cursor: `python3 09-tools/cursor-externalize.py` so live `~/.cursor/projects/*/canvases/` copies
+   land in git-tracked project folders (Cursor will not compile the vault copies).
+5. If a generated artifact changed (frontmatter edited), regenerate `skills.registry.json` + Related blocks.
+6. Commit + push reviewable diffs.
 
 **Concurrent agents.** If two agents touched the same project in parallel, run the reconcile protocol to
 merge their session blocks + handoff state into one thread; flag genuine conflicts rather than overwriting.

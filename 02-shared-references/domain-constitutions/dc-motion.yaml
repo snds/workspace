@@ -1,0 +1,87 @@
+# Motion design  -  methods, not library versions.
+# Implementation routing lives in /motion. Direction lives in lead-motion-designer.
+schemaVersion: "domain-constitution/1.0"
+id: motion
+name: Motion design
+status: authored
+l1:
+  - 02-ui-ux-operational-framework
+foundation: design-foundations
+leads:
+  - lead-motion-designer
+measurement:
+  - visual-prove-engine
+  - visual-qa-motion
+command:
+  - motion
+  - qa
+complements:
+  values: "Duration tokens, easing tokens, and library choice in the target system or motion-tooling. Not this file."
+  meaning: "This constitution + motion-principles / motion-transitions / motion-choreography / motion-accessibility / motion-performance."
+  arbitration: "prefers-reduced-motion is a floor. Frame-budget and compositor-layer rules are refuse cases. vqa motion for stutter/flicker."
+  look: "Project DESIGN.md and brand motion character. Disney's 12 are adapted, not a style."
+  runtime: "GSAP, Framer Motion, CSS, Lottie, Rive, R3F. Wrapper owns routing; libraries own depth."
+graphs:
+  skillLoad: "design-foundations → lead-motion-designer → motion-* ; implementation hub motion wraps plugin libraries"
+  epistemic: "08-knowledge/design/ (when motion findings land)"
+  artifact: "this file"
+shared:
+  - id: shared-purpose
+    name: Motion is feedback
+    for: all
+    items:
+      - id: purposeful-not-decorative
+        statement: "Motion communicates state change, spatial relationship, or causality. If it does none of those, omit it."
+        level: must
+      - id: compose-then-animate
+        statement: "A frame must be composed before it is animated. Motion does not rescue a broken hierarchy."
+        level: must
+      - id: reduced-motion-floor
+        statement: "Honor prefers-reduced-motion. Provide a non-motion equivalent for essential feedback. Vestibular safety is not optional polish."
+        level: must
+      - id: compositor-budget
+        statement: "Interface motion targets compositor-only properties at 60fps. Jank is a functional defect."
+        level: must
+  - id: shared-principles
+    name: Principles adapted for UI
+    for: all
+    items:
+      - id: easing-matches-weight
+        statement: "Easing and duration match perceived weight and travel. Ease-out for enter, ease-in for exit, unless a spring is the named model."
+        level: should
+      - id: no-cargo-cult-squash
+        statement: "Do not apply theatrical squash-and-stretch to dense enterprise chrome. The 12 principles are a vocabulary, not a mandate to entertain."
+        level: must-not
+      - id: stagger-is-choreography
+        statement: "Multi-element motion is sequenced (choreography). Independent looping ornaments on every cell are noise."
+        level: must
+entries:
+  - id: system
+    kind: system
+    name: Motion constitution
+    for: agent
+    notes: "Direction = lead-motion-designer. Implementation = /motion wrapper. Judgment = /qa + visual-qa-motion. Do not judge an animation by reading the library code."
+  - id: prove
+    kind: entry
+    name: Motion prove
+    for: agent
+    notes: "vqa motion for stutter, flicker, teleport, input-to-photon. A single still is not a motion pass."
+combos:
+  - id: a11y-vs-character
+    must: [reduced-motion-floor, purposeful-not-decorative]
+    mustNot: [no-cargo-cult-squash]
+    why: "Brand character never waives vestibular safety or turns every table row into a bounce."
+  - id: still-vs-motion
+    must: [compositor-budget]
+    mustNot: []
+    why: "Still-only approval of TAA, volumetrics, or page transitions is an automatic fail (see imaging + visual-qa)."
+refuse:
+  - "Implementing motion by pasting a library demo without naming the state it communicates."
+  - "Skipping prefers-reduced-motion because the motion is 'subtle'."
+  - "Declaring 60fps from a screenshot."
+  - "Loading every motion-* spoke for a single easing question."
+watch:
+  - https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html
+notes:
+  for: agent
+  - "Plugin library skills are depth behind the /motion wrapper. The wrapper owns triggers and bans."

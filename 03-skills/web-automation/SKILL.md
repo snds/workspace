@@ -8,7 +8,7 @@ description: >
   competitive teardown, and end-to-end UI checks. Triggers: browser automation, scrape, headless
   browser, agent-browser, CDP, click through, log in to, fill form, infinite scroll, SPA, JS-rendered.
 aliases: [web-automation]
-triggers: [browser automation, scrape, web scraping, headless browser, agent-browser, cdp, click through, log in, fill form, infinite scroll, spa, js-rendered, dynamic page, accessibility tree snapshot]
+triggers: [browser automation, scrape, web scraping, headless browser, agent-browser, cdp, click through the, log in, fill form, infinite scroll, spa, js-rendered, dynamic page, accessibility tree snapshot]
 tier: cross-cutting
 domain: engineering
 surfaces: ["*"]

@@ -2,18 +2,24 @@
 title: Component & Pattern Framework
 tags: [framework, design-systems, components, patterns, tokens, accessibility, ai-context]
 created: 2026-06-17
-updated: 2026-06-17
+updated: 2026-07-28
 links:
   - "[[01-aesthetic-lens]]"
   - "[[02-ui-ux-operational-framework]]"
   - "[[05-last-mile-craft-framework]]"
   - "[[06-qa-operating-model]]"
   - "[[ux-component-library]]"
+  - "[[component-contracts-and-schemas]]"
+  - "[[component-contract-schema]]"
 ---
 
 # Component & Pattern Framework
 
 *The foundational lens for understanding, choosing, documenting, and composing **every component and pattern** a design system needs — and for making that understanding legible to humans, design tools, and AI agents alike. Where [[01-aesthetic-lens|Aesthetic Lens]] answers "why does this feel right?" and [[02-ui-ux-operational-framework|UI/UX Operational]] answers "how do we decide systematically?", this framework answers: **"what is each component **for**, when do I reach for it, why, and how do they work best together?"** It sits at the top tier, above any project-specific skill, and is the design-domain hub the README's "design-system work → 01, 02, 05, 06" row has been routing toward.*
+
+**Audience:** `for: all` on invariants and laws. Method decisions that are not style values
+(APCA/role-scale color, overlay emphasis, one-light elevation) live in
+[[idempotent-design-decisions]]. The DSDS 0.20 view of this framework is [[dsds-constitution]].
 
 ---
 
@@ -23,7 +29,7 @@ links:
 
 This framework treats every component as a **structured unit of intent** documented against one universal schema, organized by the *question it answers*, governed by a small set of invariant laws, and delivered to whoever needs it — a designer, a Figma file, or an AI agent — in the right form at the right moment. The throughline, borrowed from Diana Wolosin's *Intent-Driven Context for AI Design Systems*: **"Context is not documentation. Context is intent."**
 
-> **Reading order.** §1 sets the mental model and the delivery system. §2 the invariants. §3–4 the structure (layers + taxonomy). **§5 is the heart — the Universal Component Schema.** §6–7 are *how to choose* and *how to compose*. §8 the cross-cutting laws (with the citable rationale). §9–10 naming and lineages. §11–12 the AI-legible layer and the `DESIGN.md` protocol. §13 playbooks. §14 the operating model. §15 the resource canon. Appendices: the 62-component quick reference, the blank schema + JSON, and the canonical-vs-alias map.
+> **Reading order.** §1 sets the mental model and the delivery system. §2 the invariants. §3–4 the structure (layers + taxonomy). **§5 is the heart — the Universal Component Schema**, and **§5a is its arbitration layer — contracts, schemas, and the seven gates** (read it the moment more than one implementation depends on the answer). §6–7 are *how to choose* and *how to compose*. §8 the cross-cutting laws (with the citable rationale). §9–10 naming and lineages. §11–12 the AI-legible layer and the `DESIGN.md` protocol. §13 playbooks. §14 the operating model. §15 the resource canon. Appendices: the 62-component quick reference, the blank schema + JSON, and the canonical-vs-alias map.
 
 ---
 
@@ -183,6 +189,171 @@ A11y          role=button; focus-visible ring ≥3:1; disabled explained; min ta
 DoD           all 6 states; one-primary check; a11y name on icon-only; tokens bound; loading non-interactive.
 Governance    status: stable · v: 2.x · owner: DS · code: import { Button } from "@ds/button".
 ```
+
+---
+
+## 5a. The contract layer — when the schema has to *arbitrate*
+
+§5 gives you a **documentation** schema: 18 facets that make understanding a component repeatable.
+That is the right tool when a human is the consumer. It is the wrong tool the moment two
+implementations disagree and nobody can settle it without a meeting. That is the contract layer.
+
+**The four words, kept straight** (Nathan Curtis, *Component Contracts and Schemas*, 2026-07):
+
+| Term | What it is | What it does |
+|---|---|---|
+| **Description** | records decisions for a reader | it **informs** |
+| **Contract** | centralizes intent so it can be implemented, verified and evolved across implementations | it **arbitrates** |
+| **Schema** | the model a contract is written in — types, hierarchies, relationships | what a contract *can* say |
+| **Spec** | an instance authored against that schema | what a contract *does* say |
+
+> **A description informs. A contract arbitrates.**
+> **The arbitration test:** when two implementations disagree, does this artifact settle it *without a
+> human in the room?* If not, call it a description and stop over-claiming.
+
+**A contract is a multi-party agreement.** React, iOS, Android, Web Components — **and Figma** — are
+all *parties* to it. No platform owns it; each signs it and abides by it through its implementation.
+This is the framework's most consequential correction to common practice: **Figma is a signatory, not
+the source.** A definition extracted untransformed from one party's point of view is **testimony, not a
+contract** — extraction is step one, the transform to a neutral model is what makes it binding (§11
+already asks for the code binding; this asks for the *neutralizing* step before it).
+
+**Version two things, separately.** The spec's *content* (there's a `Button` with a `size` prop) and
+the schema *model* (a `Component` has `Props`) are versioned on independent tracks, and implementing a
+contract depends on both. This is what makes "the contract is wrong" computable rather than arguable.
+
+### The seven gates
+
+Run any candidate contract through all seven. Failing several means it is a description in a
+contract's clothes — which is fine, as long as nothing downstream is relying on it to arbitrate.
+
+| # | Gate | The test that decides it |
+|---|---|---|
+| 1 | **Well-typed** over loosely formed | Can you author an invalid value and have it survive? Closed enums, declared units, typed elements. States implied by naming (`button-primary-hover`) are unverifiable. |
+| 2 | **Normalized** over redundant | Grep the decision — more than one authoritative location fails. *A self-contradicting artifact cannot arbitrate anything.* Don't write drift-guarding rules; remove the redundancy. |
+| 3 | **Independent** over platform-biased | Could an iOS engineer implement this without knowing Figma? `start`/`end` not `left`/`right`; edges not `constraints`; numbers not numeric strings. |
+| 4 | **Verifiable** over readable | Two levels: *is it a valid spec?* and *is it precisely implemented?* **A format where nothing is invalid is a format where nothing is verifiable. Reading is review, not verification.** |
+| 5 | **Deterministic** over inferred | Generate twice, diff → must be empty. *Inference I configure, not inference I hope for.* **Deterministic compilation isn't the goal — it's evidence the contract is good.** |
+| 6 | **Efficient** over expensive to keep true | Not the cost of building it — the cost of *keeping it true*. **A rotted contract is worse than no contract at all, because people trust contracts.** |
+| 7 | **Evolvable** over merely flexible | Can a consumer diff schema N against N−1 and opt in when ready? ADRs are the machinery. **A contract that can't change dies; a contract that changes without governance was never a contract.** |
+
+Two working tests worth memorizing:
+
+- **The deletion test (Gate 4).** For any load-bearing prose sentence — *"depth is achieved through
+  tonal layers rather than heavy shadows"* — try deleting it. **If deleting it changes the contract,
+  that sentence was bearing too much load** and the decision belongs in the typed model.
+- **The boundary trap (Gates 4+5).** A validated extract stops being strict the moment a downstream
+  consumer reads a markdown rendering that an LLM already smoothed. The verification data got stuck at
+  the boundary and **every consumer after it is inferring from inference.**
+
+### Where the contract sits in the system
+
+Two framings from the wider field (2026-07) that sharpen §5a's place in this framework:
+
+- **Contracts are the *interconnections*.** In Meadows' terms a system is elements + interconnections +
+  purpose. **Components and tokens are elements; contracts are the interconnections.** Teams that build
+  only elements watch their systems decay, because the relationships were never made explicit and so
+  degrade silently. The derivation runs **articulated purpose → standards & definitions → required
+  behavior → contracts → components** — *"building from articulation downward produces durable systems;
+  building from components upward produces libraries."* (Morales Achiardi)
+- **The neutral-third rule.** The contract is a third artifact, and **Figma and code are never allowed
+  to update each other directly** — changes land in the contract, are reviewed like code, then both
+  regenerate, with a differ proving they still agree. (Vallaure)
+- **Authority is the ability to refuse.** *"Authority belongs to whatever layer can refuse
+  deterministically, not whatever layer instructs loudest. A model can be talked around. A schema
+  can't."* (Pitre) — which is why `AGENTS.md` prose and skill rules *instruct*; only schema validation in
+  CI *enforces*. Use AI for the one-time authoring judgment; use determinism for the recurring
+  enforcement.
+
+### What a contract must NOT absorb
+
+A contract that swallows everything becomes unverifiable and rots. The line everyone in the field draws:
+
+| In | Out |
+|---|---|
+| Required **outcome** ("focus returns to the trigger") | The **technique** (how the trap is built) |
+| Keyboard **map**, token bindings, a11y **floors** | Interaction **craft** — drag physics, typeahead tuning, easing, CSS craftsmanship |
+| **Composition** examples (which slots hold what) | **Usage** examples ("what makes a good pricing card") |
+| Which prop configurations are **invalid** | Whether the component was the **wrong choice** |
+
+**Outcome vs technique** is the load-bearing distinction. And the corollary that keeps this framework
+intact: **a contract tells you what *our* Dialog is; it never tells you that you wanted a Sheet.** §4,
+§6 and §7 — the taxonomy, the *which one?* trees, and composition — are judgment layers above the
+contract and are not replaced by it.
+
+### The format landscape (they are layers, not rivals)
+
+| Layer | Format | Maps to |
+|---|---|---|
+| token values | **DTCG** | §3's three-tier token model |
+| **component decisions** (the contract) | **Specs** (EightShapes) · **DS Contracts** (Southleft) | **facet 18** (§5) |
+| **documentation as data** | **DSDS** (v0.15.2 — 6 entity types × 17 typed blocks) | **facets 1–17** (§5) |
+
+Easy to miss, because all three call themselves "design system as data." If facets 1–17 are ever wanted
+as data rather than prose, adopt DSDS rather than inventing a shape.
+
+### The investment gate — when *not* to build one
+
+Contracts are infrastructure; below break-even they are pure cost. **25 simple components on one
+platform, changing rarely → markdown is the right answer, don't spend on this.** Build when
+multiplicity (components × implementations × change-frequency) has outrun human vigilance, when
+arbitration is already needed, when you are **replacing an implementation** and need a definition of
+"equivalent" (the cheapest, highest-value entry point), or when agents are building from the artifact.
+The payoff to expect: scripts generating **80–90% of the code before agents start**, leaving inference
+for the last strides rather than foundation-up construction.
+
+> **On replacement work, one rule prevents the common failure.** A legacy implementation's feature
+> inventory is **testimony too** — a faithful record of what one party built, under constraints that may
+> no longer apply, for a user who may not be the new user. **A contract derived from a legacy feature
+> list can only ever specify a re-creation.** Derive *articulation-downward* (purpose → required
+> behavior → contract → components) from the product's own intent, the target user's jobs, and the
+> lineage-neutral canon in §6/§7. Demote prior migration analysis to **pitfall ledger · effort
+> calibrator · parity horizon**, consulted *after* the draft exists — reading it first anchors the
+> draft. Gate: **every feature cites its provenance; "the old system has it" is not provenance.**
+> Detail: [[component-contracts-and-schemas]] §8.
+
+> **And the opposite failure, which is the more expensive one: scope down, don't shape down.** When a
+> product targets an entry segment (SMB, self-serve, one vertical) with a known horizon beyond it, the
+> entry workflows are the **foundation the richer processes extend**, not a simplified fork — smaller
+> organizations routinely aspire to enterprise practice, because adopting it is how they grow. The
+> mechanism is the schema/spec split already in §5a: **the schema carries the horizon, the spec carries
+> today's segment**, and they are separately versioned for exactly this. Gate 7 is what this protects —
+> *growth that forces a MAJOR schema break was a design failure committed years earlier.*
+> **The operative rule: model the axis, ship one value on it.** Declaring an axis costs ~nothing;
+> adding one later breaks every consumer. Depth *values* grow cheaply; missing *concepts* don't.
+> Corollaries: record decisions **not** to build (`enabled: false` + rationale) rather than omitting
+> them, and **keep capability and entitlement orthogonal** — tier boundaries move, so packaging must
+> never be encoded in a component contract. Detail: [[component-contracts-and-schemas]] §9.
+
+### How this composes with the rest of the framework
+
+- **§5's 18 facets are the documentation schema; the typed subset that arbitrates is the contract.**
+  Facet 18 (the machine-readable intent record) is already contract-shaped — promote anything
+  load-bearing from 1–17 into it, and delete what fails the deletion test.
+- **§12 `DESIGN.md` is prose-first by design** — correct for visual identity (framing context), and
+  structurally incapable of arbitrating component decisions. The §12 "when it is *not* the right tool"
+  list is a Gate-4 consequence, not a stylistic preference.
+- **§11's MCP record is canon, not contract.** It answers *what a Dialog is across 68 systems*; it does
+  not decide what *our* Dialog is. Keep the two roles separate or the canon becomes an un-owned
+  pseudo-contract.
+- **§8d's state model is Gates 1+2 already applied** — separated interaction enum / configuration
+  booleans / validation enum / selection is the template for how the remaining facets should be typed.
+
+**Depth:** the portable model — the schema constitution, the **variant-delta layering model**,
+**state classification (browser-driven vs consumer-controlled)**, `invalidPropConfigurations`, the
+`$binding`/`$ref`/`$extensions` conventions, verification levels L1–L6 (including the three-way
+differ), the extract→transform boundary, the declared-heuristic rule, the ADR template and the adoption
+path — lives in [component-contract-schema.md](../02-shared-references/component-contract-schema.md).
+The gate-by-gate rubric, the wider field with its reconciliations, and where our own stack currently
+fails the gates live in [[component-contracts-and-schemas]].
+
+> **One technique worth surfacing here because it corrects §8d.** Our state model separates interaction
+> / configuration / validation / selection — necessary, but it never said *who causes* each state.
+> Classify every state as **browser-driven** (`hover`, `active`, `focus` — the app never sets them, so
+> they are pseudo-class selectors and are **omitted from the props interface**) or
+> **consumer-controlled** (`disabled`, `readonly`, `checked`, `expanded`, `pressed`, `selected` — ARIA/
+> attribute selectors, **in the interface**). One classification drives both the styling output and the
+> API surface, and it kills the most common component-API bug in the field: shipping a `hover` prop.
 
 ---
 
@@ -490,7 +661,7 @@ Designer / agent has a UI need
 **The synthesis sources** — what each uniquely contributes.
 
 - **UX Components dataset / `ux-components` MCP** (ux-components.com) — the 62-component × 68-system canon; intent, states, anatomy, 1,900+ name mappings. The live data layer of this system.
-- **EightShapes / Nathan Curtis** (medium.com/eightshapes-llc, @nathanacurtis) — the **8-section component spec** (Anatomy · Properties · Layout & Spacing · Behavior · Accessibility · Motion · Component Tokens · Version History) and spec-vs-guidelines split; the **"as data"** series (*Components / Examples as Data*); **code-only props in Figma** (the hidden-layer mechanism); **the canonical state model** (*The Sorry State of States*); **purposeful-vs-aesthetic naming**; the **reimagined token taxonomy** (the Namespace→Object→Base→Modifier grammar); and **many-core-libraries** governance.
+- **EightShapes / Nathan Curtis** (medium.com/eightshapes-llc, @nathanacurtis, nathanacurtis.substack.com) — the **8-section component spec** (Anatomy · Properties · Layout & Spacing · Behavior · Accessibility · Motion · Component Tokens · Version History) and spec-vs-guidelines split; the **"as data"** series (*Components / Examples as Data*); **code-only props in Figma** (the hidden-layer mechanism); **the canonical state model** (*The Sorry State of States*); **purposeful-vs-aesthetic naming**; the **reimagined token taxonomy** (the Namespace→Object→Base→Modifier grammar); **many-core-libraries** governance; and — the basis of §5a — ***Component Contracts and Schemas*** (2026-07): description-vs-contract, schema-vs-spec, the seven gates (well-typed · normalized · independent · verifiable · deterministic · efficient · evolvable), *testimony vs contract*, and ADRs as the evolution machinery.
 - **W3C Design Tokens (DTCG)** (designtokens.org) — the token JSON contract: `$value`/`$type`, `{group.token}` aliasing, composite types. The substrate beneath tokens, `DESIGN.md`, and Figma variables.
 - **Brad Frost — Atomic Design** (atomicdesign.bradfrost.com) — atoms→molecules→organisms→templates→pages; the reuse gradient (components / recipes / snowflakes).
 - **The Component Gallery** (component.gallery) — descriptive cross-system synonym dictionary ("also known as"); ~60 types, 90+ systems.
@@ -563,4 +734,5 @@ A11y · Definition-of-Done · Governance
 - **Above:** [[01-aesthetic-lens]] (why it feels right) and [[02-ui-ux-operational-framework]] (how to decide systematically) sit over this; this framework is the *component-and-pattern* specialization they route into.
 - **Beside:** [[05-last-mile-craft-framework]] (the finishing discipline that enforces the state matrix and token usage) and [[06-qa-operating-model]] (the target-user QA bar — no curated subsets).
 - **Below (delivery):** the [[ux-component-library]] skill (procedure), the `ux-components` MCP (per-component data), `DESIGN.md` (visual identity), and `AGENTS.md` + lint (enforcement). This framework is the hub they all point back to.
-- **Companion references** (in the [[ux-component-library]] skill): `component-authoring.md` (components/props/states/examples *as data*), `tokens-and-naming.md` (the taxonomy grammar + purposeful naming), `ai-ready-design-systems.md` (AI-ready checklist · DESIGN.md authoring + gap-detection · A2UI). The reusable `AGENTS.md` binding lives at `02-shared-references/ds-agents-binding.md`; the worked `DESIGN.md` at `c8-plm/DESIGN.md`.
+- **Companion references** (in the [[ux-component-library]] skill): `component-authoring.md` (components/props/states/examples *as data*), `tokens-and-naming.md` (the taxonomy grammar + purposeful naming), `ai-ready-design-systems.md` (AI-ready checklist · DESIGN.md authoring + gap-detection · A2UI). The reusable `AGENTS.md` binding lives at [[ds-agents-binding]] (`02-shared-references/ds-agents-binding.md`); the worked `DESIGN.md` at `c8-plm/DESIGN.md`.
+- **The contract layer (§5a):** the portable model (v0.2), verification levels L1–L6, the extract→transform boundary, the ADR template and the adoption path live at [component-contract-schema.md](../02-shared-references/component-contract-schema.md); the gate rubric, the investment gate, the maturity ladder and where our own stack currently fails the gates live at [[component-contracts-and-schemas]].

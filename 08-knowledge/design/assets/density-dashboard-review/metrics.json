@@ -1,0 +1,365 @@
+{
+  "compact": {
+    "tokens": {
+      "controlH": "2rem",
+      "cellPadY": "0.375rem",
+      "chromeGap": "0.5rem",
+      "fieldGap": "0.75rem",
+      "headerH": "3.5rem",
+      "rowHeight": "40",
+      "radiusMd": "calc(0.25rem * 2)",
+      "sidebarPy": "0.375rem"
+    },
+    "current": {
+      "appHeader": {
+        "h": 56,
+        "w": 544,
+        "top": 71
+      },
+      "nav": {
+        "h": 32,
+        "w": 231,
+        "top": 83
+      },
+      "pageHeader": {
+        "padT": "32px",
+        "padB": "24px",
+        "gap": "8px",
+        "radius": "0px"
+      },
+      "kpi": {
+        "h": 202,
+        "w": 86,
+        "top": 265,
+        "padT": "16px",
+        "padB": "16px",
+        "gap": "12px",
+        "radius": "8px"
+      },
+      "attn": {
+        "padT": "16px",
+        "padB": "16px",
+        "gap": "8px",
+        "radius": "0px"
+      },
+      "act": {
+        "padT": "6px",
+        "padB": "6px",
+        "gap": "12px",
+        "radius": "0px"
+      },
+      "qa": {
+        "padT": "20px",
+        "padB": "20px",
+        "gap": "12px",
+        "radius": "8px"
+      },
+      "qaIcon": {
+        "h": 44,
+        "w": 44,
+        "top": 1054
+      },
+      "thumb": {
+        "h": 40,
+        "w": 40,
+        "top": 527
+      },
+      "gridH": {
+        "h": 984,
+        "w": 544,
+        "top": 241
+      },
+      "kpiStripH": {
+        "h": 168,
+        "w": 496,
+        "top": 265
+      }
+    },
+    "ideal": {
+      "pageHeader": {
+        "padT": "12px",
+        "padB": "12px",
+        "gap": "8px",
+        "radius": "0px"
+      },
+      "kpi": {
+        "h": 170,
+        "w": 78,
+        "top": 221,
+        "padT": "6px",
+        "padB": "6px",
+        "gap": "8px",
+        "radius": "8px"
+      },
+      "attn": {
+        "padT": "6px",
+        "padB": "6px",
+        "gap": "8px",
+        "radius": "0px"
+      },
+      "qa": {
+        "padT": "6px",
+        "padB": "6px",
+        "gap": "8px",
+        "radius": "8px"
+      },
+      "qaIcon": {
+        "h": 36,
+        "w": 36,
+        "top": 852
+      },
+      "gridH": {
+        "h": 792,
+        "w": 544,
+        "top": 209
+      },
+      "kpiStripH": {
+        "h": 144,
+        "w": 520,
+        "top": 221
+      }
+    }
+  },
+  "normal": {
+    "tokens": {
+      "controlH": "2.25rem",
+      "cellPadY": "0.75rem",
+      "chromeGap": "0.75rem",
+      "fieldGap": "1.25rem",
+      "headerH": "4rem",
+      "rowHeight": "52",
+      "radiusMd": "calc(0.25rem * 3)",
+      "sidebarPy": "0.5rem"
+    },
+    "current": {
+      "appHeader": {
+        "h": 64,
+        "w": 544,
+        "top": 71
+      },
+      "nav": {
+        "h": 36,
+        "w": 231,
+        "top": 83
+      },
+      "pageHeader": {
+        "padT": "32px",
+        "padB": "24px",
+        "gap": "12px",
+        "radius": "0px"
+      },
+      "kpi": {
+        "h": 206,
+        "w": 86,
+        "top": 273,
+        "padT": "16px",
+        "padB": "16px",
+        "gap": "12px",
+        "radius": "12px"
+      },
+      "attn": {
+        "padT": "16px",
+        "padB": "16px",
+        "gap": "12px",
+        "radius": "0px"
+      },
+      "act": {
+        "padT": "12px",
+        "padB": "12px",
+        "gap": "12px",
+        "radius": "0px"
+      },
+      "qa": {
+        "padT": "20px",
+        "padB": "20px",
+        "gap": "12px",
+        "radius": "12px"
+      },
+      "qaIcon": {
+        "h": 44,
+        "w": 44,
+        "top": 1062
+      },
+      "thumb": {
+        "h": 40,
+        "w": 40,
+        "top": 535
+      },
+      "gridH": {
+        "h": 984,
+        "w": 544,
+        "top": 249
+      },
+      "kpiStripH": {
+        "h": 168,
+        "w": 496,
+        "top": 273
+      }
+    },
+    "ideal": {
+      "pageHeader": {
+        "padT": "20px",
+        "padB": "20px",
+        "gap": "12px",
+        "radius": "0px"
+      },
+      "kpi": {
+        "h": 198,
+        "w": 82,
+        "top": 253,
+        "padT": "12px",
+        "padB": "12px",
+        "gap": "12px",
+        "radius": "12px"
+      },
+      "attn": {
+        "padT": "12px",
+        "padB": "12px",
+        "gap": "12px",
+        "radius": "0px"
+      },
+      "qa": {
+        "padT": "12px",
+        "padB": "12px",
+        "gap": "12px",
+        "radius": "12px"
+      },
+      "qaIcon": {
+        "h": 40,
+        "w": 40,
+        "top": 1130
+      },
+      "gridH": {
+        "h": 1100,
+        "w": 544,
+        "top": 233
+      },
+      "kpiStripH": {
+        "h": 196,
+        "w": 504,
+        "top": 253
+      }
+    }
+  },
+  "spacious": {
+    "tokens": {
+      "controlH": "2.5rem",
+      "cellPadY": "1rem",
+      "chromeGap": "1rem",
+      "fieldGap": "1.75rem",
+      "headerH": "4.5rem",
+      "rowHeight": "64",
+      "radiusMd": "calc(0.25rem * 4)",
+      "sidebarPy": "0.75rem"
+    },
+    "current": {
+      "appHeader": {
+        "h": 72,
+        "w": 544,
+        "top": 71
+      },
+      "nav": {
+        "h": 40,
+        "w": 231,
+        "top": 83
+      },
+      "pageHeader": {
+        "padT": "32px",
+        "padB": "24px",
+        "gap": "16px",
+        "radius": "0px"
+      },
+      "kpi": {
+        "h": 210,
+        "w": 86,
+        "top": 281,
+        "padT": "16px",
+        "padB": "16px",
+        "gap": "12px",
+        "radius": "16px"
+      },
+      "attn": {
+        "padT": "16px",
+        "padB": "16px",
+        "gap": "16px",
+        "radius": "0px"
+      },
+      "act": {
+        "padT": "16px",
+        "padB": "16px",
+        "gap": "12px",
+        "radius": "0px"
+      },
+      "qa": {
+        "padT": "20px",
+        "padB": "20px",
+        "gap": "12px",
+        "radius": "16px"
+      },
+      "qaIcon": {
+        "h": 44,
+        "w": 44,
+        "top": 1070
+      },
+      "thumb": {
+        "h": 40,
+        "w": 40,
+        "top": 543
+      },
+      "gridH": {
+        "h": 984,
+        "w": 544,
+        "top": 257
+      },
+      "kpiStripH": {
+        "h": 168,
+        "w": 496,
+        "top": 281
+      }
+    },
+    "ideal": {
+      "pageHeader": {
+        "padT": "28px",
+        "padB": "28px",
+        "gap": "16px",
+        "radius": "0px"
+      },
+      "kpi": {
+        "h": 248,
+        "w": 86,
+        "top": 304,
+        "padT": "16px",
+        "padB": "16px",
+        "gap": "16px",
+        "radius": "16px"
+      },
+      "attn": {
+        "padT": "16px",
+        "padB": "16px",
+        "gap": "16px",
+        "radius": "0px"
+      },
+      "qa": {
+        "padT": "16px",
+        "padB": "16px",
+        "gap": "16px",
+        "radius": "16px"
+      },
+      "qaIcon": {
+        "h": 44,
+        "w": 44,
+        "top": 1425
+      },
+      "gridH": {
+        "h": 1408,
+        "w": 544,
+        "top": 276
+      },
+      "kpiStripH": {
+        "h": 248,
+        "w": 488,
+        "top": 304
+      }
+    }
+  }
+}

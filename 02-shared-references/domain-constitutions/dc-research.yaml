@@ -1,0 +1,83 @@
+# User research  -  confidence and method, not a recap of last study's quotes.
+# Statistical experiments live under #15 / data-foundations, not here.
+schemaVersion: "domain-constitution/1.0"
+id: research
+name: User research
+status: authored
+l1:
+  - 04-research-and-evidence-framework
+  - 15-analysis-operating-model
+foundation: product-foundations
+leads:
+  - lead-ux-designer
+measurement: []
+command: []
+complements:
+  values: "Recordings, notes, quotes, survey items, and participant identities. Stay in the project, never in this file."
+  meaning: "This constitution + framework #04 confidence tiers + ux-research-synthesis method selection."
+  arbitration: "Named confidence tier. A claim without a tier is preference, not evidence. Quantitative claims inherit #15 validity gates."
+  look: "Not applicable. Research artifacts follow delivery-playbooks research/design artifact rules."
+  runtime: "Not applicable. Synthesis outputs feed UX/product decisions; they are not a shipped model."
+graphs:
+  skillLoad: "product-foundations + design-foundations → lead-ux-designer → ux-research-synthesis ; IA methods on ia-research-methods ; stats on lead-data-scientist"
+  epistemic: "08-knowledge/ (research findings as knowledge only when durable and de-identified)"
+  artifact: "this file"
+shared:
+  - id: shared-threshold
+    name: Evidence threshold
+    for: all
+    items:
+      - id: rule-of-threes
+        statement: "Three or more independent evidentiary justifications, or three or more users independently surfacing the same issue, is the working bar for 'enough evidence' on most decisions."
+        level: must
+      - id: name-the-tier
+        statement: "Every research-backed recommendation names its confidence tier (evidenced / industry-supported / single high-value / expert judgment / preference) and calibrates advocacy to that tier."
+        level: must
+      - id: method-matches-question
+        statement: "The method must answer the question asked. A survey does not explain why. Analytics without a decision owner is decoration. Usability tests find problems in a flow; they do not prove product value."
+        level: must
+      - id: no-fake-certainty
+        statement: "Do not report preference or a sample of one as 'users said' without the tier. Expert judgment is allowed when named as such."
+        level: must-not
+  - id: shared-split
+    name: Research vs analysis
+    for: agent
+    items:
+      - id: qualitative-here
+        statement: "Interviews, contextual inquiry, usability protocols, JTBD, affinity, insight-to-requirement live on ux-research-synthesis."
+        level: must
+      - id: quantitative-there
+        statement: "A/B tests, significance, power, causal identification live under framework #15 and data-foundations. Do not run a t-test inside a UX spoke and call it research synthesis."
+        level: must
+      - id: question-before-method
+        statement: "If a number will change a decision, inherit analysis gates: decision owner, falsifiable frame, validity before narrative."
+        level: must
+entries:
+  - id: system
+    kind: system
+    name: Research constitution
+    for: agent
+    notes: "No dedicated research hub. Depth is a spoke of lead-ux-designer plus #04. That is enough connective tissue; do not invent lead-researcher."
+  - id: artifacts
+    kind: entry
+    name: Research artifacts
+    for: all
+    notes: "Select JTBD / persona / journey / blueprint via delivery-playbooks. Spell terms out. Persona-anchor at the user level."
+combos:
+  - id: tier-vs-advocacy
+    must: [name-the-tier, rule-of-threes]
+    mustNot: [no-fake-certainty]
+    why: "Full-strength challenge is for Tier 1. Preference dressed as evidence is the failure #04 exists to catch."
+  - id: method-vs-question
+    must: [method-matches-question]
+    mustNot: []
+    why: "Mismatched methods produce data that looks useful and does not answer the question."
+refuse:
+  - "Inventing a sixth confidence language. Use #04's five tiers."
+  - "Treating three quotes from one workshop as three independent users."
+  - "Using research as a weapon to skip #02 pattern interrogation or #14 feasibility."
+  - "Storing identifiable participant data in the portable vault."
+watch: []
+notes:
+  for: agent
+  - "Measurement cell is empty on purpose. Research 'audit' is protocol + named tier, not a scanner. Calling it audit without artifacts is critique."

@@ -58,4 +58,4 @@ explicit and recoverable rather than assuming success.
   [[lead-devops-engineer]] — build, deploy, operate.
 
 ## Related
-- applies-in ← [[lead-backend-engineer]] · [[lead-devops-engineer]] · [[lead-frontend-engineer]] · [[lead-security-architect]]
+- applies-in ← [[adobe-app-builder]] · [[arch-guild]] · [[eng]] · [[lead-backend-engineer]] · [[lead-devops-engineer]] · [[lead-frontend-engineer]] · [[lead-mobile-engineer]] · [[lead-security-architect]]

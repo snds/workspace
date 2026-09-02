@@ -104,16 +104,24 @@ Here's the shopping list:
 - *Prefer the terminal? The standalone command-line version lives at [Claude Code overview](https://code.claude.com/docs/en/overview) · [install & requirements](https://code.claude.com/docs/en/setup).*
 - **Cost:** Claude Code is included in Claude's paid plans — the entry **Pro** plan is about **$20/month** (~$17/month billed annually) as of mid-2026. Check [current pricing](https://claude.com/pricing). *You do **not** need to install "Node.js"; the recommended setup doesn't require it.*
 
-**Also works with other AI agents.** Because your workspace follows open standards, the generator can produce the right "adapter" for whatever assistant you prefer:
+**Also works with other AI agents.** Because your workspace follows open standards, the generator can produce the right "adapter" for whatever assistant you prefer.
 
-| Your AI assistant | How it connects | Notes |
+> ⚠️ **First, the distinction that trips everyone up.** Assistants come in two kinds:
+>
+> - **Folder-capable** (Claude Desktop, Cursor, Copilot, the CLIs) — these can *open this folder*, read your files, and create new ones. Point them at the folder and say **"set up my workspace."**
+> - **Chat-only** (**ChatGPT**, Perplexity, Gemini *in a browser*) — these have **no access to files on your computer.** Asking them to read `/Users/you/Documents/…` will *always* fail; they'll ask you to upload a zip. That's expected, not a bug.
+>
+> To use a chat-only assistant: build the workspace with a folder-capable one first, then run `python3 wsx.py emit pack` and **paste or upload `adapters/context-pack.md`** into the chat. That file is the portable, self-contained version of your brain.
+
+| Your AI assistant | Can it read your folder? | How it connects |
 |---|---|---|
-| **[Claude](https://claude.com/download)** ⭐ *recommended* | Native skill + `AGENTS.md` + MCP | Smoothest, fully tested path. |
-| **[Cursor](https://cursor.com)** | `AGENTS.md` + `.cursor/rules` + MCP | Popular AI code editor. |
-| **[GitHub Copilot](https://github.com/features/copilot)** | `AGENTS.md` | Works in many editors. |
-| **[OpenAI Codex CLI](https://github.com/openai/codex)** | `AGENTS.md` | Open-source; free to run (needs your own API access). |
-| **[Google Gemini CLI](https://github.com/google-gemini/gemini-cli)** | `AGENTS.md` + MCP | Open-source; generous free tier. |
-| *…and 20+ more* | `AGENTS.md` | See the [full list at agents.md](https://agents.md). |
+| **[Claude](https://claude.com/download)** ⭐ *recommended* | ✅ Yes | Native skill + `AGENTS.md` + MCP — smoothest, fully tested path. |
+| **[Cursor](https://cursor.com)** | ✅ Yes | `AGENTS.md` + `.cursor/rules` + MCP. Popular AI code editor. |
+| **[GitHub Copilot](https://github.com/features/copilot)** | ✅ Yes | `AGENTS.md`. Works in many editors. |
+| **[OpenAI Codex CLI](https://github.com/openai/codex)** | ✅ Yes | `AGENTS.md`. Open-source; free to run (needs your own API access). |
+| **[Google Gemini CLI](https://github.com/google-gemini/gemini-cli)** | ✅ Yes | `AGENTS.md` + MCP. Open-source; generous free tier. |
+| **ChatGPT · Perplexity · Gemini (browser)** | ❌ **No** | Paste/upload the context pack (`wsx emit pack`). Cannot open folders. |
+| *…and 20+ more* | ✅ Yes | `AGENTS.md` — see the [full list at agents.md](https://agents.md). |
 
 *Cost varies by assistant: Claude needs a paid plan (~$20/mo); some open-source agents (Gemini CLI, Codex CLI) are free to run but use your own API key. Pick whichever suits you — the folder works the same.* *(🚧 The non-Claude adapters are part of what's still being built — see [Status](#status--whats-next).)*
 
@@ -134,17 +142,17 @@ Syncing a folder across devices with Git is genuinely **the most technical part 
 
 ## How to get started
 
-> **The one thing that trips everyone up:** *this folder is the **generator** — the tool itself. It builds a **separate** workspace folder for you.* So don't run things inside this folder expecting your notes to appear here — your workspace is a brand-new folder the tool creates (e.g. `~/Documents/my-workspace`).
+> **The one thing that trips everyone up:** *this folder is the **generator** — the tool itself. It builds a **separate** workspace folder for you.* So don't run things inside this folder expecting your notes to appear here — your workspace is a brand-new folder the tool creates (e.g. `~/Documents/Projects/Workspace`).
 
 First, the two things you need (details in [What you'll need](#what-youll-need-first)): an **AI assistant** (Claude recommended) and **[Obsidian](https://obsidian.md)** — plus **[GitHub Desktop](https://github.com/apps/desktop)** if you want sync. Then pick the path that fits you. They all produce the same thing.
 
 ### Path A — Easiest: let your AI do it ⭐ recommended
 You don't type anything technical — your AI runs the tool for you.
 1. **Open this generator folder in your AI assistant.** In Claude Code: open the folder (or run `claude` from inside it). In Cursor: open the folder.
-2. **Say:** *"Read `brain/SKILL.md` and set up my workspace for me."* (If your AI already has the skill loaded, just *"set up my workspace"* works.)
+2. **Say:** *"set up my workspace."* In Claude Code the generator ships as a registered skill, so that phrase alone triggers it — no need to name any file. *(On other assistants, or if it doesn't catch, nudge it: "Read `brain/SKILL.md` and set up my workspace for me.")*
 3. Your AI **interviews you** (see [below](#what-the-interview-covers)), then creates your workspace and tells you where it is.
 
-*(🚧 The guided interview is **early** — your AI may need the nudge above to follow `brain/SKILL.md`. If it stalls, use Path B; it always works.)*
+*(🚧 The guided interview is **early**. In Claude Code the trigger is wired; elsewhere the nudge above always works. If it stalls, use Path B — it never depends on the AI.)*
 
 ### Path B — One double-click (no AI, nothing to type)
 1. **macOS:** double-click **`start.command`**. *(The first time, macOS may say "unidentified developer" — right-click the file → **Open** → **Open**. Just once.)*
@@ -155,7 +163,7 @@ You don't type anything technical — your AI runs the tool for you.
 ### Path C — One command (if a terminal doesn't scare you)
 From **inside this generator folder**:
 ```bash
-python3 generator/bin/wsx init ~/Documents/my-workspace --name "Your Name"
+python3 generator/bin/wsx init ~/Documents/Projects/Workspace --name "Your Name"
 ```
 Stuck or unsure what to do next? Run `python3 generator/bin/wsx doctor` — it tells you where you are and the exact next step.
 
@@ -167,7 +175,7 @@ A friendly conversation in **five parts** — suggested gently, and you skip any
 - **Browse it:** open your **new** workspace folder in **[Obsidian](https://obsidian.md)**.
 - **Use it:** open that folder in your AI assistant — and it already knows you. Every session adds to your second brain.
 
-> 🚧 **Honest status.** Paths B and C **work today** — they create a real, AI-ready workspace folder right now. The fully *guided* interview (Path A automatically filling in your profile and skills) is **early**, so for the moment it may hand you a mostly-empty starter that you and your AI grow into, rather than a fully populated one. That's the next thing being built.
+> 🚧 **Honest status.** Paths B and C **work today** — they create a real, AI-ready workspace folder right now. Path A now **auto-triggers in Claude Code** (the generator is a registered skill), and generated skills come out as *guided skeletons* — sectioned forms your AI fills with your actual know-how, not empty stubs (the tool refuses to call a workspace done while those forms are still blank). Still early: some registry features (pulling ready-made community skills, the MCP runtime) are not built yet, so parts of a fresh workspace are things you and your AI grow into. That's the next thing being built.
 
 ---
 

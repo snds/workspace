@@ -14,9 +14,7 @@
   "copilot",
   "flexplorer",
   "numerals",
-  "link-favicon",
   "obsidian-style-settings",
-  "mermaid-tools",
   "obsidian-tasks-plugin",
   "calendar",
   "quickadd",
@@ -27,5 +25,6 @@
   "obsidian-banners",
   "obsidian-charts",
   "tag-wrangler",
-  "obsidian-outliner"
+  "obsidian-outliner",
+  "smart-connections"
 ]

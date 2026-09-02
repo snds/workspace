@@ -15,6 +15,8 @@ description: >
 aliases: [lead-icon-artist]
 tier: hub
 domain: design
+prerequisites: [design-foundations]
+related: [lead-vector-designer, lead-technical-digital-artist, variable-icon-font-architect]
 spec_version: "2.0"
 ---
 
@@ -329,3 +331,7 @@ skills — exists to serve the design decisions made here.
    circular center counter sized for opsz=20 legibility, FILL=1 as solid
    silhouette with counter preserved as cutout" gives downstream skills the
    clarity they need.
+
+## Related
+- foundation → [[design-foundations]]
+- peer ↔ [[lead-vector-designer]] · [[lead-technical-digital-artist]] · [[variable-icon-font-architect]]

@@ -37,6 +37,14 @@ and the Code Connect bridge between design and code. It is a **wrapper**: it own
 vocabulary, verb dispatch, and target parsing, then delegates depth to the figma-* skill
 family and the Figma MCP server. It never duplicates a base's knowledge.
 
+Rigor obligations come from [#13 Domain Rigor Stack](../../01-frameworks/13-domain-rigor-stack.md):
+this hub is the figma cluster's L2 command surface, the figma-* spokes and the MCP are the depth
+(L3/L4), and **doctrine precedence holds** — workspace frameworks and skills outrank the installed
+Figma plugin skills, which supply mechanics only. Component and token *decisions* stay governed by
+[#09 Component & Pattern](../../01-frameworks/09-component-and-pattern-framework.md) and `/ds`; an
+`audit` claim here needs a measurement path (variable/style/component inspection), not an
+impression.
+
 > **Mandatory pre-step.** The figma-* skills gate the MCP tools. Load the matching skill
 > *before* calling its tool: `figma-use` before `use_figma`; `figma-generate-diagram`
 > before `generate_diagram`; `figma-generate-library` for library builds;
@@ -131,3 +139,4 @@ Thin by design: the figma-* skills + Figma MCP hold the depth.
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[figma-api-router]] · [[figma-canvas-designer]] · [[figma-code-connect]] · [[figma-component-generation]] · [[figma-design-specs]] · [[figma-design-to-code]] · [[figma-diagramming]] · [[figma-ds-generation-pipeline]] · [[figma-error-troubleshooting]] · [[figma-mcp-tool-usage]] · [[figma-modes-for-variants]] · [[figma-plugin]] · [[figma-plugin-dev]] · [[figma-source-audit]] · [[figma-style-binding]] · [[figma-variable-creation]]
+- peer ↔ [[design-system-ops]]

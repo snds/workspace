@@ -1,0 +1,89 @@
+# Machine vision  -  recover structure from images.
+# Imaging forms images. This constitution understands them.
+# VLMs are describe/reason tools, not Literal measurement.
+schemaVersion: "domain-constitution/1.0"
+id: vision
+name: Machine vision
+status: authored
+l1:
+  - 15-analysis-operating-model
+foundation: vision-foundations
+leads: []
+measurement:
+  - visual-prove-engine
+command: []
+complements:
+  values: "Weights, datasets, camera serials, training runs. Live in the ML repo or data store, not the vault."
+  meaning: "This constitution + vision-foundations task taxonomy + vis-* spokes."
+  arbitration: "Dataset contract, frozen test split, task-correct metric, operating point. #15 validity before narrative. Prove-engine for pixel Literal; VLMs never own Literal."
+  look: "Not a visual-identity concern. Failure galleries are evidence, not mood boards."
+  runtime: "Exported model (ONNX/TensorRT/CoreML) and its latency budget. A model that misses the budget does not exist."
+graphs:
+  skillLoad: "vision-foundations → vis-classical-opencv | vis-detection-tracking | vis-segmentation | vis-video-pipelines | vis-vlm-multimodal ; math via science-foundations ; data via data-foundations"
+  epistemic: "08-knowledge/ (perception-critique-stack, measured-visual-verdicts)"
+  artifact: "this file"
+shared:
+  - id: shared-task
+    name: Name the task first
+    for: all
+    items:
+      - id: output-shape
+        statement: "Name the task and output shape before choosing a model: classify / detect / segment / track / reconstruct / describe. Mismatching task to output is the primary design error."
+        level: must
+      - id: signal-not-picture
+        statement: "A pixel grid is a sampled, quantized projection. Resolution, bit depth, color space, and codec artifacts change what can be recovered."
+        level: must
+      - id: dataset-contract
+        statement: "Write the dataset contract before touching a model: source, licence, capture conditions, class definitions with edge cases, annotation protocol, balance, what 'hard' looks like."
+        level: must
+      - id: split-before-look
+        statement: "Split train/val/test by group (scene, subject, camera, session), not by adjacent frames. Freeze the test set. Near-duplicate leakage is a validity fail."
+        level: must
+  - id: shared-eval
+    name: Metric and deployment
+    for: all
+    items:
+      - id: metric-matches-task
+        statement: "Detection uses mAP at the relevant IoU. Segmentation uses mIoU/Dice. Imbalanced classify uses PR-AUC. Tracking uses identity (MOTA/IDF1), not boxes alone."
+        level: must
+      - id: inspect-failures
+        statement: "Always inspect failure cases visually. Aggregate metrics hide systematic blind spots."
+        level: must
+      - id: domain-shift
+        statement: "Validate on this camera and this lighting. Train-set accuracy is not deployment evidence."
+        level: must
+      - id: vlm-not-literal
+        statement: "A VLM critique is attested description. It does not count toward a Literal Matches verdict. Pixel/structure prove stays on instrumented probes."
+        level: must-not
+entries:
+  - id: system
+    kind: system
+    name: Vision constitution
+    for: agent
+    notes: "No lead-vision hub. That is honest. Foundation + five spokes is the cluster. Do not invent a hub to look complete (#13 no orphan hubs)."
+  - id: seeing-our-work
+    kind: entry
+    name: Vision as review instrument
+    notes: "Highest-value use here is seeing and checking visual work (detect/segment UI or scene, classical compare, VLM grounded critique). Pair with visual-qa constitution. Measure or describe; do not assert."
+combos:
+  - id: task-vs-model
+    must: [output-shape, dataset-contract]
+    mustNot: []
+    why: "Architecture choice is meaningless until the output shape and labels are defined."
+  - id: literal-vs-vlm
+    must: [inspect-failures]
+    mustNot: [vlm-not-literal]
+    why: "perception-critique-stack: Literal UI stays on the pixel rung."
+  - id: split-vs-leakage
+    must: [split-before-look, domain-shift]
+    mustNot: []
+    why: "A leaked test set is a fake done-gate."
+refuse:
+  - "Training from scratch by default when transfer is the workspace default."
+  - "Reporting a single mean mAP as 'the model works' with no per-class or failure gallery."
+  - "Using vision to justify surveillance or demographic inference without consent and necessity (foundation ethics gate)."
+  - "Declaring Literal match from vis-vlm-multimodal prose."
+watch: []
+notes:
+  for: agent
+  - "Execution order is #15 then vision-specific steps in vision-foundations. Load data-foundations when labels or experiments appear."

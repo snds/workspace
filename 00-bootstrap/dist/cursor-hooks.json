@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      { "command": "$HOME/.claude/hooks/cursor-sessionstart.sh" }
+    ],
+    "preCompact": [
+      { "command": "$HOME/.claude/hooks/cursor-reassert.sh" }
+    ],
+    "sessionEnd": [
+      { "command": "$HOME/.claude/hooks/cursor-sessionend.sh" }
+    ],
+    "subagentStop": [
+      { "command": "$HOME/.claude/hooks/cursor-subagent-stop.sh" }
+    ]
+  }
+}

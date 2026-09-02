@@ -40,9 +40,9 @@ A write-only vault is a graveyard. The challenge is getting entries *read* at th
 
 ### Tier 2: UserPromptSubmit — Trigger-word hints
 **Problem solved:** "I know the knowledge exists but didn't remember to check before answering."
-**Mechanism:** `KNOWLEDGE_HINTS` dict in `dispatcher.py` mirrors `TRIGGER_WORDS`. When a prompt contains domain keywords ("legion", "centric", "icon font"), the hook injects a per-entry reminder *before Claude responds*.
+**Mechanism:** the dispatcher matches prompts against (a) a small curated `KNOWLEDGE_HINTS` dict, and — since 2026-07-08 — (b) the `Triggers:` lists declared on `08-knowledge/_INDEX.md` entry lines, parsed at runtime. When a prompt matches, the hook injects a per-entry reminder *before Claude responds*.
 **Why it fires before Claude responds:** The `UserPromptSubmit` hook runs between the user's message and Claude's response. This is the only hook with the right timing to intercept and add context before work begins.
-**Why mirrors TRIGGER_WORDS:** The same keywords that load skills are the same keywords that indicate domain work is beginning. Reusing the trigger list means no separate maintenance burden.
+**Why _INDEX.md is the source:** an entry's routing lives on the same line that indexes it, so adding an entry and adding its triggers is one edit — no separately-maintained mirror table to drift (the pre-2026-07-08 hand-synced dicts DID drift, which contributed to a real failure; see audit-log 2026-07-08).
 
 ### Tier 3: CLAUDE.md rule — Explicit instruction
 **Problem solved:** "The trigger word wasn't in the prompt but the work is clearly in a domain with a knowledge entry."
@@ -68,8 +68,8 @@ The one exception: if a pattern from a knowledge entry is validated enough to be
 **Adding a new knowledge entry:**
 1. Create the file in the right `08-knowledge/{domain}/` subdirectory
 2. Add its line to `08-knowledge/_INDEX.md`
-3. Add its keyword(s) to `KNOWLEDGE_HINTS` in `dispatcher.py`
-4. If there's also a skill to load, add to `TRIGGER_WORDS` too
+3. Put a `Triggers: `keyword`, `keyword`` list on its `_INDEX.md` line — the dispatcher parses these at runtime (no dispatcher edit needed)
+4. If there's also a skill to load, declare `triggers:` in that skill's frontmatter and regenerate the registry
 
 **Adding a new domain subdirectory:**
 1. Create the directory with a `_README.md` stub (just frontmatter + one-liner)

@@ -1,0 +1,72 @@
+# ────────────────────────────────────────────────────────────────────
+# Default config for the a11y-audit-toolkit.
+# Safe starting point: WCAG 2.2 AA + best-practice rules, gate on
+# blocker/major. Copy this and tune per project — keep project-specific
+# configs with the project, not in this folder.
+#
+# Parsed by a YAML *subset* loader (stdlib-only): comments, `key: value`
+# scalars, nested mappings by indent, flow lists `[a, b]`, and block lists
+# of scalars. Anchors, multi-line scalars, and lists of mappings are not
+# supported and will raise rather than be silently ignored.
+# ────────────────────────────────────────────────────────────────────
+
+project_name: Default
+
+# Conformance target. Also filters the degraded-path MANUAL_CHECKLIST:
+# `a` keeps Level A items, `aa` adds AA, `aaa` adds AAA.
+level: aa
+
+# Include the runner's non-WCAG best-practice rules (axe `best-practice`
+# tag; pa11y warnings + notices). Useful in review, noisy as a hard gate.
+include_best_practices: true
+
+# ─── Runners ────────────────────────────────────────────────────────
+# Tried in `prefer` order; the first one present wins. A runner counts as
+# present if its binary is on PATH or the package is already cached for
+# `npx --no-install` (nothing is ever installed implicitly). If a present
+# runner errors, the toolkit notes it and falls through to the next one.
+runner:
+  prefer: [axe, pa11y, lighthouse]
+  timeout_seconds: 120
+  npx_fallback: true
+  # Escape hatch for runner-specific flags (e.g. auth, viewport, chrome
+  # options). Appended verbatim to that runner's argv.
+  extra_args:
+    axe: []
+    pa11y: []
+    lighthouse: []
+
+# ─── Severity gating ────────────────────────────────────────────────
+# Severities are normalized into the /qa vocabulary before gating:
+#   axe        critical → blocker · serious → major · moderate → minor · minor → nit
+#   pa11y      error → major · warning → minor · notice → nit
+#   lighthouse score 0 & weight ≥ 7 → blocker · score 0 → major · partial → minor
+# Exit 1 when any finding at these severities survives the excludes.
+severity:
+  fail_on: [blocker, major]
+
+# ─── Excludes ───────────────────────────────────────────────────────
+# Rule ids to drop (use the runner's own id, e.g. `color-contrast`,
+# `region`, `WCAG2AA.Principle1.Guideline1_4.1_4_3.G18.Fail`) and selector
+# substrings to drop (third-party embeds you don't own). Every exclusion is
+# a documented decision — record why in the project's own config.
+exclude:
+  rules: []
+  selectors: []
+
+# ─── Degraded path (no runner available) ────────────────────────────
+# static_checks: run the stdlib HTML checks over the served markup
+#   (--html-file always; --url only with fetch_url/--fetch-url).
+# fetch_url: opt in to one HTTP GET of --url for those static checks.
+#   Off by default so a degraded run makes no network request by surprise.
+degraded:
+  static_checks: true
+  fetch_url: false
+
+# ─── Report ─────────────────────────────────────────────────────────
+# max_findings_per_rule keeps a single failing pattern repeated across 400
+# table cells from burying everything else; the count of suppressed items
+# is reported as `truncated_findings`. Set 0 for no cap.
+report:
+  format: markdown
+  max_findings_per_rule: 5

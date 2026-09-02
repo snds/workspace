@@ -14,6 +14,7 @@ description: >
   lead-game-developer) based on the topic. If the topic is unclear, load lead-game-designer
   as the default.
 aliases: [legion-project]
+triggers: [the game]
 spec_version: "2.0"
 tier: hub
 domain: game
@@ -184,8 +185,19 @@ Load that file when discussing:
 **Project Owner**: Sean Sands (Principal Product Designer, enthusiast-level game dev)
 **Current Focus**: V1 prototype — exploration, factory, RTS combat, basic Bob mechanics
 **Technology**: Three.js + WebGPU (TypeScript + GLSL)
-**Last Updated**: 2026-03-27
+**Last Updated**: 2026-08-03
+
+## Photoreal / performance contracts (Legion repo)
+
+Visual and frame work loads Workspace **#12** + `realtime-visual-craft`. Project-local contracts (not skills):
+
+- `RENDER.md` — look doctrine, official interaction paths
+- `BUDGET.md` — 60fps floor, official `?perfcapture` poses
+- `NORTHSTAR.md` — movie / SpaceEngine / signed baselines
+
+Triple done-gate: native still grid + flythrough frame-by-frame + measured ms. Plugin marketing-3D skills are API lookup only.
 
 ## Related
 - foundation → [[imaging-foundations]] · [[science-foundations]]
 - spoke → [[legion-narrative-design]]
+- peer ↔ [[realtime-visual-craft]] · [[realtime-render-performance]] · [[adapter-webgpu-three]] · [[render-qa-toolkit]] · [[interactive-capture-eval]]

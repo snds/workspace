@@ -1,0 +1,391 @@
+# DSDS 0.20 view of the workspace design-system constitution.
+# Project-independent. Values live in DTCG / a project's DESIGN.md.
+# Arbitration lives in 02-shared-references/component-contract-schema.md.
+# Do not hand-copy token hex into this file.
+schemaVersion: "0.20.0"
+name: Workspace Design System Constitution
+$schema: https://designsystemdocspec.org/v0.20.0/dsds.bundled.yaml
+refs:
+  - href: https://designsystemdocspec.org
+    rel: external-link
+    role: Schema home
+  - href: ../idempotent-design-decisions.md
+    rel: file
+    role: Standing design methods
+  - href: ../../01-frameworks/09-component-and-pattern-framework.md
+    rel: file
+    role: Framing context
+  - href: ../ds-agents-binding.md
+    rel: file
+    role: Always-on constraints
+  - href: ../component-contract-schema.md
+    rel: file
+    role: Arbitration schema (facet 18)
+shared:
+  - id: shared-a11y-floors
+    name: Shared accessibility floors
+    description: Cross-cutting a11y rules stated once and referenced from every entry they apply to.
+    refs:
+      - href: ../../03-skills/a11y-visual/SKILL.md
+        rel: file
+      - href: https://www.w3.org/WAI/ARIA/apg/
+        rel: external-link
+    sections:
+      - kind: guidelines
+        for: all
+        items:
+          - id: visible-label
+            statement: Every input has a visible label associated via for/id. Placeholder is never a label.
+            level: must
+          - id: focus-return
+            statement: Modal overlays trap focus and return it to the trigger on close.
+            level: must
+          - id: no-color-alone
+            statement: Color never carries meaning without text, iconography, or native semantics.
+            level: must
+          - id: icon-accessible-name
+            statement: Icon-only controls have an accessible name (aria-label or Tooltip).
+            level: must
+          - id: visible-focus
+            statement: A visible focus indicator is always present and distinguishable from selected.
+            level: must
+          - id: min-target
+            statement: Interactive targets meet at least 44 by 44 pt unless a documented density exception still meets the platform floor.
+            level: must
+          - id: apca-primary
+            statement: Text and icon pairings are tested with APCA first; WCAG 2.2 AA is the legal fallback, not the design target.
+            level: must
+  - id: shared-color-governance
+    name: Radix-shaped color, APCA as governance
+    description: Method for role-scale color. Not a palette. Values stay in the target system.
+    refs:
+      - href: ../idempotent-design-decisions.md
+        rel: file
+        role: Method
+      - href: ../../08-knowledge/design/radix-derived-color-system.md
+        rel: file
+        role: Validated how-to
+    sections:
+      - kind: guidelines
+        for: all
+        items:
+          - id: role-scale
+            statement: Treat a 12-step scale as roles (fill / edge / text), not as a Tailwind-style lightness midpoint.
+            level: must
+          - id: apca-governs-pairings
+            statement: APCA governs semantic pairings. Do not mutate curated primitives to chase a ratio.
+            level: must-not
+          - id: use-class
+            statement: Diagnose a bad color by role, step, and use-class, then pick a token in that element's own hue stack.
+            level: must
+          - id: brand-owns-hue
+            statement: Status roles must not collide with brand hue. Shift the status role, not the brand.
+            level: must
+          - id: hover-is-not-selected
+            statement: Hover-accent and selected are different roles. Do not bind them to the same token.
+            level: must-not
+          - id: no-foreign-hex
+            statement: Do not copy another system's hex or step numbers into a target DS. Import the method only.
+            level: must-not
+      - kind: guidelines
+        for: agent
+        items:
+          - id: stay-in-target-tokens
+            statement: When the target system lacks a pairing token, derive the smallest step inside its grammar and backlog the gap. Do not import Radix or C8 values by name.
+            level: must
+  - id: shared-overlay-emphasis
+    name: Overlay emphasis
+    description: Interaction and emphasis are composited modifiers over the existing fill.
+    refs:
+      - href: ../idempotent-design-decisions.md
+        rel: file
+      - href: ../../08-knowledge/design/interaction-state-semantics.md
+        rel: file
+    sections:
+      - kind: guidelines
+        for: all
+        items:
+          - id: overlay-not-swap
+            statement: Hover, pressed, selected, and emphasis (solid dim, tint wash, inverse lift, gradient, or other modifier) paint over the base fill. The base token does not swap.
+            level: must
+          - id: separate-state-concerns
+            statement: Model interaction, disabled/readonly, validation, and selected as separate concerns. Do not cram them into one enum.
+            level: must
+          - id: no-hover-per-variant
+            statement: Do not author a unique background/hover token per variant times theme times status.
+            level: must-not
+          - id: modifier-not-second-language
+            statement: A gradient or other emphasis modifier is still a modifier of the existing fill, not a second visual language.
+            level: must-not
+  - id: shared-one-light-elevation
+    name: One-light elevation
+    description: Realistic light model. Geometry is the elevation step. Opacity is a theme axis.
+    refs:
+      - href: ../idempotent-design-decisions.md
+        rel: file
+      - href: ../../08-knowledge/design/figma-shadow-modes.md
+        rel: file
+        role: One instance of the method
+    sections:
+      - kind: guidelines
+        for: all
+        items:
+          - id: one-light
+            statement: One implied key light (top-down unless the product explicitly authors otherwise). Larger and blurrier means higher.
+            level: must
+          - id: geometry-vs-opacity
+            statement: Bind elevation geometry and theme opacity separately.
+            level: must
+          - id: dark-tonal-lift
+            statement: On dark surfaces, pair shadows with tonal surface lift. Do not deepen shadows as the only dark-mode strategy.
+            level: must
+          - id: no-foreign-drop-values
+            statement: Do not copy another product's drop-1/2/3 values into a target DS.
+            level: must-not
+          - id: no-colored-default-shadow
+            statement: Colored or multi-direction shadows are not default UI elevation.
+            level: must-not
+entries:
+  - id: workspace-ds-constitution
+    kind: system
+    name: Workspace Design System Constitution
+    description: Project-independent operating model for design-system work in this vault.
+    purpose: Keep intent, documentation, arbitration, and look in separate layers so agents load the right form at the right moment.
+    metadata:
+      status:
+        status: stable
+      tags: [constitution, ontology, agentic]
+    refs:
+      - href: ../../08-knowledge/design/agentic-ds-context-model.md
+        rel: file
+        role: Remap and source comparison
+    sections:
+      - kind: definitions
+        for: all
+        items:
+          - id: complements
+            statement: DTCG owns token values. DSDS owns meaning and usage. The contract schema owns arbitration. DESIGN.md owns portable look. A2UI owns the agent-to-UI wire format.
+          - id: three-graphs
+            statement: Skill-load, epistemic relations, and this DSDS artifact graph are three graphs. Do not mix their edge vocabularies.
+          - id: intent-types
+            statement: Framing lives in framework 09. Workflow lives in the ux-component-library skill. Guidelines live in MCP plus this document. Constraints live in AGENTS.md plus DESIGN.md.
+      - kind: guidelines
+        for: agent
+        items:
+          - id: on-demand-depth
+            statement: Do not load this whole file plus every component record at once. Use shared laws always-on; pull component entries and MCP records on demand.
+            level: must
+          - id: dsd-is-not-contract
+            statement: If two implementations disagree, this document informs. The contract schema arbitrates.
+            level: must
+          - id: no-monolith
+            statement: Do not collapse this constitution into a project's DESIGN.md.
+            level: must-not
+  - id: composition-laws
+    kind: entry
+    name: Composition laws
+    description: How components combine. Goal-driven patterns, not a widget catalog.
+    purpose: Name the pairing and escalation rules so agents compose instead of forking.
+    metadata:
+      status:
+        status: stable
+      tags: [composition]
+    related:
+      - to: shared-a11y-floors
+        rel: depends-on
+    refs:
+      - href: ../../01-frameworks/09-component-and-pattern-framework.md
+        rel: file
+        role: Section 7
+    sections:
+      - kind: guidelines
+        for: all
+        items:
+          - id: compose-from-primitives
+            statement: Compose from nearest primitives. Do not fork a new widget when Combobox plus Chips or two Calendars in a Popover will do.
+            level: must
+          - id: semantic-family
+            statement: Nesting does not change a component's contract. A menu inside a toolbar is still menu semantics.
+            level: must
+          - id: one-overlay
+            statement: One overlay layer at a time. Nested Popovers or Dialogs escalate to a page or a Sheet.
+            level: must-not
+          - id: lowest-intensity
+            statement: Pick the lowest-intensity component that works. Whitespace before Separator. Toast before Dialog. Tooltip before Popover.
+            level: must
+          - id: one-primary
+            statement: Exactly one primary Button per logical section.
+            level: must
+          - id: async-triad
+            statement: Every data view has loading, empty, and error, not only the happy path.
+            level: must
+      - kind: guidelines
+        for: agent
+        items:
+          - id: escalate-on-evidence
+            statement: Climb an escalation ladder only one rung, and only on evidence (list length, sort/filter need, interactive tooltip content, urgency).
+            level: must
+    combos:
+      - subject: button
+        level: must-not
+        items: [link]
+        note: Button is for in-page actions. Navigation uses link. Do not style a link as the sole primary Button and also use it as routing.
+      - subject: button.primary
+        level: must-not
+        items: [button.primary]
+        note: Two primary-styled buttons on one section fail the one-primary law.
+      - subject: toast
+        level: should
+        items: [alert-dialog]
+        note: Reversible outcomes use Toast plus Undo. Irreversible outcomes use Alert Dialog. Do not use both for the same decision.
+      - subject: tooltip
+        level: must-not
+        items: [interactive-content]
+        note: If the content is interactive, escalate to Popover. Tooltip is not a form.
+      - subject: select
+        level: should
+        items: [combobox]
+        note: Escalate Select to Combobox when the list grows past about 15 or needs type-ahead.
+      - subject: table
+        level: should
+        items: [data-table]
+        note: Escalate Table to Data Table when sort, filter, or pagination is required.
+      - subject: overlay
+        level: must-not
+        items: [overlay]
+        note: Do not nest overlay surfaces. Escalate to Sheet or a page.
+      - subject: input
+        level: must
+        items: [label]
+        note: Every input pairs with a visible label.
+      - subject: status
+        level: must
+        items: [text-or-icon]
+        note: Status color must pair with text or icon. Color-alone fails shared-a11y-floors.
+      - subject: combobox
+        level: should
+        items: [chip]
+        note: Multi-select is Combobox plus Chips, not a new widget.
+      - subject: data-view
+        level: must
+        items: [skeleton, empty-state, alert]
+        note: The async triad. Every data view must compose loading, empty, and error.
+      - subject: fill
+        level: must-not
+        items: [hover-substitute]
+        note: Interaction is an overlay on the existing fill, not a swapped background token. See shared-overlay-emphasis.
+      - subject: primitive-scale
+        level: must-not
+        items: [apca-mutated-step]
+        note: APCA may not warp a curated primitive. See shared-color-governance.
+      - subject: elevation-geometry
+        level: must
+        items: [theme-opacity]
+        note: Geometry and theme opacity are a required pair and must stay separately bound. See shared-one-light-elevation.
+  - id: escalation-ladders
+    kind: entry
+    name: Escalation ladders
+    description: When one component graduates to another.
+    purpose: Stop agents from jumping two rungs or inventing a parallel control.
+    extends:
+      - to: composition-laws
+        rel: extends
+    sections:
+      - kind: definitions
+        for: all
+        items:
+          - id: select-to-combobox
+            statement: Select becomes Combobox when the list grows past about 15 or needs type-ahead.
+          - id: table-to-data-table
+            statement: Table becomes Data Table when it needs sort, filter, or pagination.
+          - id: tooltip-to-popover
+            statement: Tooltip becomes Popover when content becomes interactive.
+          - id: toast-to-alert-to-banner-to-dialog
+            statement: Toast to Alert to Banner to Alert Dialog as urgency and persistence rise.
+          - id: collapsible-to-accordion
+            statement: Collapsible becomes Accordion when one section becomes many.
+      - kind: guidelines
+        for: agent
+        items:
+          - id: one-rung
+            statement: Climb only one rung at a time, and only on evidence.
+            level: must
+  - id: button
+    kind: component
+    name: Button
+    description: Primary mechanism for user-initiated in-page actions. Label is a verb.
+    purpose: Change state. Not navigation.
+    related:
+      - to: composition-laws
+        rel: depends-on
+    refs:
+      - to: shared-a11y-floors
+        rel: depends-on
+      - to: shared-overlay-emphasis
+        rel: depends-on
+    sections:
+      - kind: guidelines
+        for: all
+        items:
+          - id: button-not-link
+            statement: Use Button for in-page actions. Use Link for navigation.
+            level: must
+          - id: one-primary-button
+            statement: Exactly one primary Button per logical section.
+            level: must
+    traits:
+      - kind: enum
+        name: variant
+        values: [primary, secondary, ghost, destructive]
+      - kind: enum
+        name: size
+        values: [sm, md, lg]
+      - kind: boolean
+        name: disabled
+    combos:
+      - subject: button
+        level: must-not
+        items: ["{link}"]
+        note: Navigation is Link, not Button.
+  - id: link
+    kind: component
+    name: Link
+    description: Navigates to a URL or in-app route.
+    purpose: Get the user somewhere. Not an in-page state change.
+    related:
+      - to: button
+        rel: alternative-to
+    sections:
+      - kind: guidelines
+        for: all
+        items:
+          - id: link-not-button
+            statement: If the control only changes in-page state, use Button.
+            level: must
+  - id: overlay-family
+    kind: entry
+    name: Overlay family
+    description: Temporary surfaces above the page. Tooltip, Hover Card, Popover, Dialog, Alert Dialog, Sheet.
+    purpose: Keep overlay intensity on the lowest rung that works.
+    refs:
+      - to: shared-a11y-floors#focus-return
+        rel: depends-on
+    sections:
+      - kind: guidelines
+        for: all
+        items:
+          - id: lowest-overlay
+            statement: Tooltip before Popover before Dialog before Sheet. Escalate only when the simpler surface fails.
+            level: must
+          - id: no-primary-content-in-overlay
+            statement: Overlays are temporary. Do not build primary content into one.
+            level: must-not
+$extensions:
+  com.snds.workspace:
+    projection_of:
+      - 01-frameworks/09-component-and-pattern-framework.md
+      - 02-shared-references/idempotent-design-decisions.md
+      - 02-shared-references/ds-agents-binding.md
+    not_a_contract: true
+    generated: false
+    as_of: "2026-09"

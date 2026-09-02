@@ -15,3 +15,12 @@
 *.jpg binary
 *.pdf binary
 *.ico binary
+
+# --- Concurrent-session safety: append-only logs use git's built-in `union` merge
+# driver. On a rebase/merge conflict, git keeps BOTH sides (no manual resolution,
+# no lost session block); compaction/reconcile dedups + re-sorts afterward. This
+# turns the #1 cross-session collision (everyone prepending to session-log.md) into
+# a non-event. Do NOT apply union to structured files (project-context.md) — there
+# it would corrupt sections; those reconcile deliberately.
+06-context/session-log.md merge=union
+06-context/audit-log.md merge=union

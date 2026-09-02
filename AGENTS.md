@@ -44,6 +44,15 @@ The workspace is both a knowledge base and an execution environment.
 - **Portable-first.** No mechanism here may depend on a single vendor, device, surface, or cloud
   drive. The git checkout is the source of truth; the plain filesystem is the I/O layer. Any capable
   agent must be able to work here by reading this contract — nothing else required.
+- **Externalize everything; keep nothing durable in private memory.** No durable content — learnings,
+  insights, workflows, decisions, project context, assets — may live inside any single agent's
+  private/internal memory (Claude Code's `.claude` memory, a Chat profile, a Design session, a
+  per-tool store). Route every durable thing to the workspace at its correct layer per the
+  [routing map](02-shared-references/workspace-ontology.md). **Actual repos, codebases, and non-Figma
+  working files/assets** go to the platform-relative `Projects` directory (resolve to the local
+  checkout per device; never hardcode a path, never store them inside this portable workspace). The
+  only thing an agent keeps internally is a *pointer* back here. Rationale + full routing:
+  [decision-externalize-everything-to-workspace](06-context/memory/decision-externalize-everything-to-workspace.md).
 - **Adapters, not forks.** Tool-specific files (`CLAUDE.md`, `CURSOR.md`, `PERPLEXITY.md`) describe
   only how that tool executes this contract. They never hold logic the contract lacks, and no tool is
   privileged over another.
@@ -53,7 +62,21 @@ The workspace is both a knowledge base and an execution environment.
 - Keep human-readable markdown and machine-readable manifests aligned. Frontmatter is the source of
   truth for the skill graph; `03-skills/skills.registry.json` is generated from it, never hand-edited.
 - Favor idempotent updates, deterministic naming, and reviewable diffs.
+- **Token frugality is a #1 priority.** This brain must never cost more tokens than the value it adds.
+  Read the **head** of a log, never a whole growing file (`session-log.md` is bounded by archival; older
+  history is in `session-log-archive.md`, read only on demand). Load a skill only when its trigger fires;
+  prefer the smallest sufficient context. When editing an **auto-loaded** file (this contract, `CLAUDE.md`,
+  a `.cursor` rule), keep additions terse — every line there is a recurring per-session cost.
 - Before writing anything, consult the routing map in [workspace-ontology.md](02-shared-references/workspace-ontology.md).
+- **Context is king — resolve the context profile before any repo action or delivery.** Who owns the
+  work and who reviews it is a *declared fact*, never a guess:
+  [00-context-profiles.md](02-shared-references/delivery-playbooks/00-context-profiles.md). This
+  workspace itself is `personal-solo` (direct commits + the session-end commit are expected). Employer
+  repos (`centric-engineering`) are the opposite: **no auto-commit, no self-merge, no direct pushes —
+  branch → PR → human engineer review.** Resolution: Sean's explicit word → project declaration → repo
+  remote (`git remote -v`) → stop and ask. Unresolvable = act under the most restrictive profile. The
+  commit/push steps in the handoff protocol below apply to the workspace repo and other
+  `personal-solo` repos only — never generalize them to employer repos.
 
 ---
 
@@ -74,11 +97,22 @@ When entering the workspace without prior context, read in this order:
 1. [llms.txt](llms.txt) — machine entry point
 2. `AGENTS.md` (this file)
 3. `03-skills/skills.registry.json` — the skill graph (for routing + load order)
-4. [workspace-ontology.md](02-shared-references/workspace-ontology.md) — vocabulary + routing map
-5. Root helper files such as `_HOME.md`, `_CONTEXT.md`, `_FRAMEWORKS.md`, `_SKILLS.md`
-6. `06-context/` — durable context + memory (`memory/MEMORY.md` index)
-7. Shared references in `02-shared-references/` and preferences in `04-preferences/` when relevant
-8. Project-local context files for the active project; skill files when performing specialized work
+4. [trigger-routes.md](02-shared-references/trigger-routes.md) — curated high-leverage
+   trigger → load hints (shared by Claude dispatcher + Cursor/other agents); then fall through
+   to the registry algorithm
+5. [08-knowledge/_INDEX.md](08-knowledge/_INDEX.md) — the knowledge-vault index. Match the
+   task's vocabulary against each entry's `Triggers:` list and read matched entries BEFORE
+   domain work — they carry hard-won constraints that are in neither skills nor context.
+6. [workspace-ontology.md](02-shared-references/workspace-ontology.md) — vocabulary + routing map
+7. Delivery playbooks, in their own load order: resolve the context profile FIRST
+   ([00-context-profiles.md](02-shared-references/delivery-playbooks/00-context-profiles.md)),
+   then the audience contract (01), then the medium playbook the request's own words imply
+   (02 diagrams · 03 data/charts · 04 documents/specs · 05 Proofboard) — see
+   [delivery-playbooks/README.md](02-shared-references/delivery-playbooks/README.md)
+8. Root helper files such as `_HOME.md`, `_CONTEXT.md`, `_FRAMEWORKS.md`, `_SKILLS.md`
+9. `06-context/` — durable context + memory (`memory/MEMORY.md` index)
+10. Shared references in `02-shared-references/` and preferences in `04-preferences/` when relevant
+11. Project-local context files for the active project; skill files when performing specialized work
 
 If a task is clearly project-scoped, move to the nearest project root and read local context immediately after these workspace files.
 
@@ -88,7 +122,7 @@ If a task is clearly project-scoped, move to the nearest project root and read l
 
 - `00-bootstrap/` — bootstrap docs, setup, adapters, environment logic
 - `01-frameworks/` — reusable frameworks, methods, and operating models (incl. the contribution framework that governs edits to this workspace)
-- `02-shared-references/` — durable standards: ontology + routing map, frontmatter spec, reasoning/artifact standards
+- `02-shared-references/` — durable standards: ontology + routing map, frontmatter spec, reasoning/artifact standards, delivery playbooks (`delivery-playbooks/` — context profiles, audience contract, medium playbooks, the Proofboard validation-harness standard)
 - `03-skills/` — reusable capabilities; `skills.registry.json` is the generated skill graph (source of truth = each `SKILL.md` frontmatter)
 - `04-preferences/` — stable, deliberately set behavioral defaults
 - `05-artifacts/` — generated outputs, active artifacts
@@ -116,15 +150,39 @@ Project-local overrides should be interpreted narrowly and should not silently r
 
 ---
 
+## Doctrine precedence (skills vs plugins)
+
+When workspace doctrine and an installed plugin skill disagree, resolve in this order — **highest wins**:
+
+1. **Workspace frameworks** (`01-frameworks/`, especially #06 QA, #08 contribution, #11 failure analysis, **#13 Domain Rigor Stack**, and domain L1s #02 / #12 / #14 / #15 / #16)
+2. **Workspace skills** (`03-skills/`) — including thin **wrapper** hubs that own triggers, bans, and routing
+3. **Installed plugin skills** (Cursor/Claude marketplaces: design-skillstack, impeccable, arch-guild, pstack, superpowers, adobe, etc.)
+
+Plugin depth is welcome. It must not silently override workspace done-gates, absolute bans, or measurement rules. Prefer the three-way contract used by `/qa` and `/motion`: workspace **wrapper** owns vocabulary + refuse cases; plugin **base** owns technique depth; never reimplement the base inside the vault.
+
+Skills may declare `defers_to: [<skill-or-framework>]` in frontmatter (and/or a Defers-to section in the body) when they wrap or overlap a plugin. See [skill-frontmatter.md](02-shared-references/skill-frontmatter.md) and [13-domain-rigor-stack.md](01-frameworks/13-domain-rigor-stack.md).
+
+---
+
+## Domain rigor (five-layer stack)
+
+Any new or materially improved skill hub/spoke/addendum must satisfy the **Domain Rigor Stack** ([13-domain-rigor-stack.md](01-frameworks/13-domain-rigor-stack.md)): L1 operating model, L2 command/contract surface, L3 measurement, L4 foundation→hub→spoke load chain, L5 multi-voice + doctrine routing. Instantiation varies by domain; omitting an intent is a defect. Native "create a skill" flows that skip this checklist are insufficient — follow #13's authoring algorithm.
+
+---
+
 ## Skills discovery contract
 
 Skills are discoverable by both humans and machines through one generated graph:
 
 1. `03-skills/skills.registry.json` — the machine graph (tiers, prerequisites, related, triggers,
    precomputed `load_chains`). Generated from frontmatter by `09-tools/build-registry.py`.
-2. Each `03-skills/<name>/SKILL.md` — the skill itself; its frontmatter is the source of truth.
+2. [trigger-routes.json](02-shared-references/trigger-routes.json) (+ generated
+   [trigger-routes.md](02-shared-references/trigger-routes.md)) — curated high-leverage routes
+   shared by the Claude dispatcher and non-Claude agents. Regenerate markdown with
+   `09-tools/build-trigger-routes.py`.
+3. Each `03-skills/<name>/SKILL.md` — the skill itself; its frontmatter is the source of truth.
    Spec: [skill-frontmatter.md](02-shared-references/skill-frontmatter.md).
-3. `_SKILLS.md` and per-domain MOCs — human navigation.
+4. `_SKILLS.md` and per-domain MOCs — human navigation.
 
 Each skill's frontmatter exposes: `name`, `description` (routing prose), `triggers`, `tier`
 (`foundation`/`hub`/`spoke`/`cross-cutting`), `hub`, `prerequisites`, `related`, `governed_by`,
@@ -267,7 +325,9 @@ context store; it updates the shared one so the next agent inherits an unbroken 
 | State | Holds | Cadence |
 |---|---|---|
 | Active project `SESSION-STATE.md` (its **Live handoff** block) | "pick up exactly here": current focus, working set, last action, next action, open decisions, blocked-on, in-flight/do-not-touch | updated **continuously** + at every handoff |
-| `06-context/session-log.md` | chronological history, newest-first, each block attributed | appended at handoff / session end |
+| `06-context/side-chat-inbox.md` | mid-session side-chat → parent continuity (one pending paragraph + pointers) | written by `/handback` / [[side-chat-handback]]; parent marks `consumed`. Gitignored. Not a session-end. |
+| `06-context/sessions/<id>.md` fragment | this session's block (a disjoint file per session) | written at session end; compaction folds it into `session-log.md` |
+| `06-context/session-log.md` (+ `session-log-archive.md`) | chronological history, newest-first, attributed; **bounded** (old blocks archived) | folded from fragments; read the **head** only |
 | `06-context/memory/` | durable, non-project facts + decisions | when a durable fact emerges |
 
 ### Handoff protocol (tool-neutral — every agent follows this)
@@ -276,10 +336,12 @@ context store; it updates the shared one so the next agent inherits an unbroken 
    state from scratch or assume a fresh project.
 2. **While working** — keep the Live handoff block current as the situation changes (focus, working set,
    decisions). It is the baton, not a journal.
-3. **On handoff / pause / end** — rewrite the Live handoff block (atomically, no stale fields) and append a
-   session-log entry. Leave the next agent a clean "next action."
-4. **Concurrent edits** — if two agents touched the same project in parallel, run the reconcile protocol
-   (`/reconcile` or the merge steps in the bootstrap skill) to merge into one thread; flag genuine conflicts.
+3. **On handoff / pause / end** — rewrite the Live handoff block (atomically, no stale fields) and write your
+   session block as a **fragment** (`06-context/sessions/<id>.md` with a `SessionID:` line) — not a direct
+   append to `session-log.md`. Compaction folds it in. Leave the next agent a clean "next action."
+4. **Concurrent edits** — disjoint fragments + the `merge=union` log rarely conflict now, so concurrent
+   sessions/machines/surfaces mostly reconcile automatically (compaction at session-start/end). `/reconcile`
+   remains for the structured `project-context.md` merge, which is flagged for a human, never auto-guessed.
 
 ### Two handoff modes
 - **Boundary handoff (tool → tool):** a session ends in one tool and resumes in another — driven by the
@@ -327,9 +389,16 @@ human), and they are what let dynamic multi-agent work stay one coherent contrac
    **archive** it with provenance (`_archive/` + `ARCHIVE-LOG.md`), **generate** the replacement, and
    **repoint** all cross-links. Never leave an orphaned, superseded-but-live, half-updated, or stub file.
 
-**Enforcement (run before commit; CI runs them too):** `build-registry.py` → `build-related.py` →
+**Embedded, not commit-only.** Done on a vault write means the relevant validators ran in this session,
+not only that files were saved. Commit/CI is the backstop.
+
+**Enforcement (run before claiming the write complete; CI runs them too):** `build-related.py` → `build-registry.py` →
 `validate-integrity.py` (quality + cross-link continuity + anti-zombie) → `validate-links.py` →
-`validate-workspace.py`. Gate 2 is partly semantic — CI can't fully judge intent; that's the authoring agent
+`validate-workspace.py`. Negative fixtures: `python3 09-tools/test-validators.py`. **Order matters: `build-related` rewrites `## Related` blocks inside SKILL.md
+files, and `build-registry` stores a content hash per skill — so the registry must be built _after_ the
+files it hashes are final.** Running registry-first leaves stale hashes whenever `build-related` changes
+anything, which CI catches as `registry-drift` / `capability-validator` failures (observed 2026-07-20).
+Gate 2 is partly semantic — CI can't fully judge intent; that's the authoring agent
 + PR review. Everything else is machine-checked. See framework 08 for the per-layer detail.
 
 ---

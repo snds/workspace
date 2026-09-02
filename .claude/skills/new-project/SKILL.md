@@ -23,7 +23,7 @@ Ask Sean (or accept as arguments):
 - **One-line summary**
 - **Initial status** (default: `Planning`)
 - **Trigger words** (optional — for the UserPromptSubmit hook to route to this project)
-- **Associated frameworks** (default: all five — can narrow later)
+- **Associated frameworks** (default: all eleven — can narrow later)
 
 ### Step 2 — Resolve next NN
 

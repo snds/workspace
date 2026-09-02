@@ -1,0 +1,93 @@
+# Visual QA  -  target-user expectations, real pixels, measured verdicts.
+# Heuristic critique (lead-visual-qa) and instrumented prove (visual-prove-engine) are complements.
+schemaVersion: "domain-constitution/1.0"
+id: visual-qa
+name: Visual QA
+status: authored
+l1:
+  - 06-qa-operating-model
+  - 10-perception-integrity
+foundation: design-foundations
+leads:
+  - lead-visual-qa
+measurement:
+  - visual-prove-engine
+  - visual-qa-toolkit
+  - render-qa-toolkit
+command:
+  - qa
+complements:
+  values: "The artifact under test (Figma, screenshot, render, mesh). Not copied into this file."
+  meaning: "This constitution + #06 target-user lens + #10 native pixels + perception-critique-stack altitudes."
+  arbitration: "cuespec + instrumented probes. Attestations are recorded and never count toward Matches. Literal stays on altitude A."
+  look: "Northstar / reference named in the contract. Spirit and Intent may use judge protocol; they still cannot override a pixel fail on Literal work."
+  runtime: "Capture provenance (*.capture.json). Missing capture manifest → unverified even if cues pass."
+graphs:
+  skillLoad: "design-foundations → lead-visual-qa → visual-qa-* discipline spokes ; prove-engine is cross-cutting measurement"
+  epistemic: "08-knowledge/cross-domain/ (measured-visual-verdicts, visual-failure-mode-ledger, perception-critique-stack)"
+  artifact: "this file"
+shared:
+  - id: shared-bar
+    name: The bar is the consumer
+    for: all
+    items:
+      - id: target-user-first
+        statement: "Name the surface, the consumer, and the bar before grading. Technical correctness that fails the designer-of-designers bar is debris."
+        level: must
+      - id: native-pixels
+        statement: "Never judge fine visual detail from a downsampled or fit-to-window image. State the pixel dimensions judged. A thumbnail is a locator, never a verdict."
+        level: must
+      - id: lossless-capture
+        statement: "Capture/save PNG before judging banding or edges. JPEG blocking is not a render defect."
+        level: must
+      - id: audit-means-measure
+        statement: "If the claim is audit, there is an L3 path. Judgment without measurement is critique. Both are valid; the words are not interchangeable."
+        level: must
+  - id: shared-prove
+    name: Measured vs attested
+    for: all
+    items:
+      - id: measured-never-declared
+        statement: "A cue passes only if a probe sampled pixels against a contract derived from the reference. Agent or human declarations are attestations."
+        level: must
+      - id: literal-on-a
+        statement: "Literal UI recreation stays on pixel/structure (altitude A). VLMs, DreamSim, and aesthetic scorers do not promote a Literal fail to a pass."
+        level: must
+      - id: calibrate-detectors
+        statement: "Detector trust comes from planted-defect calibration, not from a green run on the current build."
+        level: must
+      - id: cue-granular-ledger
+        statement: "Improvement ledgers report newly_failing cues even when the aggregate score rose."
+        level: must
+entries:
+  - id: system
+    kind: system
+    name: Visual QA constitution
+    for: agent
+    notes: "Discipline spokes (ui, ux, graphic, motion, game, photoreal, architecture, interior, dataviz, a11y, usability) are lenses. They do not replace prove-engine on Literal claims."
+  - id: altitudes
+    kind: entry
+    name: Perception-critique stack
+    notes: "A pixel/structure → B psychovisual (FLIP) → C mid-level learned → D no-reference aesthetic → E geometric/3D → F process critics → G simulation/feel (play-prove). Pick the rung the contract named."
+combos:
+  - id: thumbnail-vs-finish
+    must: [native-pixels, lossless-capture]
+    mustNot: []
+    why: "Downscaling is a low-pass filter that hides the defect the judgment depends on."
+  - id: critique-vs-audit
+    must: [audit-means-measure, target-user-first]
+    mustNot: []
+    why: "#06 and #13: audit without measurement is a vocabulary lie."
+  - id: literal-vs-spirit
+    must: [literal-on-a, measured-never-declared]
+    mustNot: []
+    why: "Spirit/Intent judge protocol exists. It is not Literal. 'Inspired by' is not a Matches verdict."
+refuse:
+  - "Done-claims from code inspection while pixels disagree."
+  - "Same-model self-critique as the prove-gate (agentic-error-correction-foundations)."
+  - "Using architecture or interior lenses on a game kit without loading imaging + game constitutions."
+  - "Always-loading every visual-qa-* spoke."
+watch: []
+notes:
+  for: agent
+  - "Framework #11 (failure-mode premortem) fires before proposing a technique with a visible failure surface, and again at the done boundary."

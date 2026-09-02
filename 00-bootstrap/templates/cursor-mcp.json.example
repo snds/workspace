@@ -1,0 +1,11 @@
+{
+  "_comment": "Example Cursor MCP config. Copy to ~/.cursor/mcp.json and fill credentials. See 02-shared-references/capability-registry.md for per-server install notes. Do not commit secrets.",
+  "mcpServers": {
+    "figma": {
+      "_comment": "Cursor → Settings → MCP → add Figma Dev Mode MCP, or use the official Figma MCP URL for your plan."
+    },
+    "linear-personal": {
+      "_comment": "Settings → MCP → Add server → https://mcp.linear.app/sse (personal lane). For two Linear workspaces use mcp-remote with distinct MCP_REMOTE_CONFIG_DIR per lane — see 00-bootstrap/doctor/linear-lanes.py and capability-registry.md."
+    }
+  }
+}

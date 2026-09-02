@@ -1,18 +1,20 @@
 ---
 name: workspace-bootstrap
 description: >
-  The session handshake — loads workspace context at the start of every session,
-  on any device, surface, or model. Trigger immediately and silently whenever a
-  conversation begins or the user says "let's get started", "resume", "continuing
-  from", "pick up where we left off", "new session", "I'm back", "let's work on",
-  or asks to load context. Run before any other skill. Also trigger on "reconcile
-  sessions", "end of day sync", "merge sessions". Also trigger on "legion",
-  "Legion", "my game", "game project" — load workspace context then the Legion
-  skill set.
+  The session handshake — the operational how-to for loading workspace context.
+  Since bootstrap v2 (2026-07-06) the AUTOMATIC trigger is the harness: the
+  ws-bootstrap SessionStart hooks + the ~/.claude/CLAUDE.md beacon inject the
+  load protocol deterministically on every new/resumed/compacted session. Run
+  this skill as the MANUAL re-trigger: when Sean says "/workspace-bootstrap",
+  "reload the workspace", "run the handshake", when the ritual line
+  ([workspace: LOADED …]) is missing from the session, or on a surface with no
+  hook layer. Also run for "reconcile sessions", "end of day sync", "merge
+  sessions", and as the load step after a "legion" / project trigger.
 aliases: [workspace-bootstrap]
-triggers: [bootstrap, resume, new session, load context, get started, reconcile sessions, legion]
+triggers: [workspace-bootstrap, reload the workspace, run the handshake, ritual missing, load context, reconcile sessions, legion]
 tier: cross-cutting
 domain: workspace
+related: [open-agent-engine, harness-map, mission-fit, side-chat-handback]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -129,5 +131,17 @@ refactor · AI-Powered Design Assessment · **Legion** (hard-SF game; Three.js +
 
 **Artifacts:** `context_descriptor_vN.N_YYYY-MM-DD.ext` — never overwrite; increment version.
 
+## Token diet (session-start)
+
+Token frugality is a #1 priority ([[AGENTS]]). Session-start loads **heads** and the ritual —
+not specialist manuals, full skill catalogs, or evaluation protocols. Prefer trigger →
+`load_chains` over preload. If the setup feels heavier than a fresh chat, run
+[[harness-map]] (on demand) rather than growing always-on prose. Preloading large plugin /
+skill catalogs is a known cost trap — see [[nate-jones-harness-enrichments]] §6.
+
 ## Related
 - peer ↔ [[skill-placement]]
+- peer ↔ [[open-agent-engine]]
+- peer ↔ [[harness-map]]
+- peer ↔ [[mission-fit]]
+- peer ↔ [[side-chat-handback]]

@@ -1,0 +1,459 @@
+[
+  {
+    "folder": "MSD_Sovereign Class",
+    "exe_size": 707711,
+    "streams": 5,
+    "files": [
+      {
+        "i": 0,
+        "kind": "pe",
+        "size": 62976,
+        "path": "/tmp/lcars-msd-extract/MSD_Sovereign_Class/00_pe.exe",
+        "pe_hits": []
+      },
+      {
+        "i": 1,
+        "kind": "pe-upx",
+        "size": 334848,
+        "path": "/tmp/lcars-msd-extract/MSD_Sovereign_Class/01_pe-upx.exe",
+        "pe_hits": []
+      },
+      {
+        "i": 2,
+        "kind": "swf",
+        "size": 108145,
+        "path": "/tmp/lcars-msd-extract/MSD_Sovereign_Class/02_swf.swf",
+        "swf_sig": "CWS",
+        "swf_ver": 8,
+        "declared_len": 166317,
+        "decompressed": 166317,
+        "how": "CWS->FWS",
+        "fws": "/tmp/lcars-msd-extract/MSD_Sovereign_Class/02_FWS.swf",
+        "str_count": 428,
+        "interesting": [
+          "LCARS Title Font"
+        ],
+        "frame_rate": 12.0,
+        "frame_count": 1,
+        "tags": {
+          "End": 1,
+          "ShowFrame": 1,
+          "DefineShape": 25,
+          "SetBackgroundColor": 1,
+          "DefineText": 34,
+          "DefineSound": 1,
+          "Tag15": 1,
+          "DefineBitsJPEG2": 2,
+          "DefineShape2": 12,
+          "PlaceObject2": 58,
+          "DefineShape3": 4,
+          "DefineEditText": 184,
+          "DefineSprite": 50,
+          "FrameLabel": 1,
+          "Tag45": 1,
+          "DefineMorphShape": 3,
+          "FileAttributes": 1,
+          "Tag73": 2,
+          "DefineFont3": 2,
+          "DefineShape4": 31,
+          "Tag84": 17
+        },
+        "has_vector_shapes": true,
+        "has_bitmaps": true,
+        "has_actionscript": false,
+        "has_sprites": true,
+        "has_morph": true
+      },
+      {
+        "i": 3,
+        "kind": "ini",
+        "size": 2101,
+        "path": "/tmp/lcars-msd-extract/MSD_Sovereign_Class/03_ini.ini",
+        "text": "[Set]\r\nStetchImage=0\r\nRandomImage=1\r\nPlayMusic=1\r\nRandomMusic=0\r\nImageInterval=4\r\nBackgroundColor=0\r\nEffectSpeed=4\r\nLoopMusic=1\r\nAllowReverseTransition=0\r\nClearOldImage=0\r\nMouseMove=1\r\nShowSplash=1\r\nSplashImage=C:\\Program Files (x86)\\2Flyer\\Screensaver Pro\\sample\\2flyer.jpg\r\nuseeffects=59,58,70,69,82,83,81,80,84,85,6,5,23,22,7,8,14,15,31,32,113,112,111,110,114,115,116,65,66,76,77,100,102,101,103,106,107,104,105,67,68,78,79,108,109,86,88,87,89,93,91,92,90,96,97,94,95,98,99,16,17,33,34,123,124,125,126,60,61,71,72,63,62,73,74,75,64,11,12,28,29,53,54,55,57,24,25,45,44,46,43,117,118,127,129,128,133,132,131,130,135,134,142,143,144,\r\nVideoSize=1\r\nVideoDownloadTime=60\r\nImageSize=0\r\nImageSequence=1\r\nFlashSequence=0\r\nVideoSequence=0\r\nWebSequence=0\r\nEffectSpeed2=3\r\nPicturePath=F:\\My web flashes\\LCARS"
+      },
+      {
+        "i": 4,
+        "kind": "ico",
+        "size": 2238,
+        "path": "/tmp/lcars-msd-extract/MSD_Sovereign_Class/04_ico.ico"
+      }
+    ]
+  },
+  {
+    "folder": "MSD Dauntless",
+    "exe_size": 640242,
+    "streams": 5,
+    "files": [
+      {
+        "i": 0,
+        "kind": "pe",
+        "size": 62976,
+        "path": "/tmp/lcars-msd-extract/MSD_Dauntless/00_pe.exe",
+        "pe_hits": []
+      },
+      {
+        "i": 1,
+        "kind": "pe-upx",
+        "size": 334848,
+        "path": "/tmp/lcars-msd-extract/MSD_Dauntless/01_pe-upx.exe",
+        "pe_hits": []
+      },
+      {
+        "i": 2,
+        "kind": "swf",
+        "size": 40709,
+        "path": "/tmp/lcars-msd-extract/MSD_Dauntless/02_swf.swf",
+        "swf_sig": "CWS",
+        "swf_ver": 8,
+        "declared_len": 46996,
+        "decompressed": 46996,
+        "how": "CWS->FWS",
+        "fws": "/tmp/lcars-msd-extract/MSD_Dauntless/02_FWS.swf",
+        "str_count": 57,
+        "interesting": [
+          "LCARS Title Font"
+        ],
+        "frame_rate": 12.0,
+        "frame_count": 1,
+        "tags": {
+          "End": 1,
+          "ShowFrame": 1,
+          "DefineShape": 11,
+          "SetBackgroundColor": 1,
+          "DefineText": 60,
+          "DefineSound": 1,
+          "Tag15": 1,
+          "DefineBitsJPEG2": 1,
+          "PlaceObject2": 68,
+          "DefineShape3": 2,
+          "DefineSprite": 10,
+          "Tag45": 1,
+          "FileAttributes": 1,
+          "Tag73": 2,
+          "DefineFont3": 2,
+          "DefineShape4": 4
+        },
+        "has_vector_shapes": true,
+        "has_bitmaps": true,
+        "has_actionscript": false,
+        "has_sprites": true,
+        "has_morph": false
+      },
+      {
+        "i": 3,
+        "kind": "ini",
+        "size": 2101,
+        "path": "/tmp/lcars-msd-extract/MSD_Dauntless/03_ini.ini",
+        "text": "[Set]\r\nStetchImage=0\r\nRandomImage=1\r\nPlayMusic=1\r\nRandomMusic=0\r\nImageInterval=4\r\nBackgroundColor=0\r\nEffectSpeed=4\r\nLoopMusic=1\r\nAllowReverseTransition=0\r\nClearOldImage=0\r\nMouseMove=1\r\nShowSplash=1\r\nSplashImage=C:\\Program Files (x86)\\2Flyer\\Screensaver Pro\\sample\\2flyer.jpg\r\nuseeffects=59,58,70,69,82,83,81,80,84,85,6,5,23,22,7,8,14,15,31,32,113,112,111,110,114,115,116,65,66,76,77,100,102,101,103,106,107,104,105,67,68,78,79,108,109,86,88,87,89,93,91,92,90,96,97,94,95,98,99,16,17,33,34,123,124,125,126,60,61,71,72,63,62,73,74,75,64,11,12,28,29,53,54,55,57,24,25,45,44,46,43,117,118,127,129,128,133,132,131,130,135,134,142,143,144,\r\nVideoSize=1\r\nVideoDownloadTime=60\r\nImageSize=0\r\nImageSequence=1\r\nFlashSequence=0\r\nVideoSequence=0\r\nWebSequence=0\r\nEffectSpeed2=3\r\nPicturePath=F:\\My web flashes\\LCARS"
+      },
+      {
+        "i": 4,
+        "kind": "ico",
+        "size": 2238,
+        "path": "/tmp/lcars-msd-extract/MSD_Dauntless/04_ico.ico"
+      }
+    ]
+  },
+  {
+    "folder": "MSD Defiant",
+    "exe_size": 658553,
+    "streams": 5,
+    "files": [
+      {
+        "i": 0,
+        "kind": "pe",
+        "size": 62976,
+        "path": "/tmp/lcars-msd-extract/MSD_Defiant/00_pe.exe",
+        "pe_hits": []
+      },
+      {
+        "i": 1,
+        "kind": "pe-upx",
+        "size": 334848,
+        "path": "/tmp/lcars-msd-extract/MSD_Defiant/01_pe-upx.exe",
+        "pe_hits": []
+      },
+      {
+        "i": 2,
+        "kind": "swf",
+        "size": 59239,
+        "path": "/tmp/lcars-msd-extract/MSD_Defiant/02_swf.swf",
+        "swf_sig": "CWS",
+        "swf_ver": 8,
+        "declared_len": 112765,
+        "decompressed": 112765,
+        "how": "CWS->FWS",
+        "fws": "/tmp/lcars-msd-extract/MSD_Defiant/02_FWS.swf",
+        "str_count": 225,
+        "interesting": [
+          "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/1.1/\"><dc:title>LCARS Defiant MSD</dc:title></rdf:Description></rdf:RDF>",
+          "LCARS Title Font"
+        ],
+        "frame_rate": 12.0,
+        "frame_count": 1,
+        "tags": {
+          "End": 1,
+          "ShowFrame": 1,
+          "DefineShape": 4,
+          "SetBackgroundColor": 1,
+          "DefineText": 172,
+          "DefineSound": 1,
+          "Tag15": 1,
+          "DefineShape2": 2,
+          "PlaceObject2": 82,
+          "DefineEditText": 154,
+          "DefineSprite": 8,
+          "Tag45": 1,
+          "FileAttributes": 1,
+          "Tag73": 3,
+          "Tag74": 13,
+          "DefineFont3": 3,
+          "Tag77": 1,
+          "DefineShape4": 6
+        },
+        "has_vector_shapes": true,
+        "has_bitmaps": false,
+        "has_actionscript": false,
+        "has_sprites": true,
+        "has_morph": false
+      },
+      {
+        "i": 3,
+        "kind": "ini",
+        "size": 2093,
+        "path": "/tmp/lcars-msd-extract/MSD_Defiant/03_ini.ini",
+        "text": "[Set]\r\nStetchImage=0\r\nRandomImage=1\r\nPlayMusic=1\r\nRandomMusic=0\r\nImageInterval=4\r\nBackgroundColor=0\r\nEffectSpeed=4\r\nLoopMusic=1\r\nAllowReverseTransition=0\r\nClearOldImage=0\r\nMouseMove=1\r\nShowSplash=1\r\nSplashImage=C:\\Program Files (x86)\\2Flyer\\Screensaver Pro\\sample\\2flyer.jpg\r\nuseeffects=59,58,70,69,82,83,81,80,84,85,6,5,23,22,7,8,14,15,31,32,113,112,111,110,114,115,116,65,66,76,77,100,102,101,103,106,107,104,105,67,68,78,79,108,109,86,88,87,89,93,91,92,90,96,97,94,95,98,99,16,17,33,34,123,124,125,126,60,61,71,72,63,62,73,74,75,64,11,12,28,29,53,54,55,57,24,25,45,44,46,43,117,118,127,129,128,133,132,131,130,135,134,142,143,144,\r\nVideoSize=1\r\nVideoDownloadTime=60\r\nImageSize=0\r\nImageSequence=1\r\nFlashSequence=0\r\nVideoSequence=0\r\nWebSequence=0\r\nEffectSpeed2=3\r\nPicturePath=F:\\My web flashes\\LCARS"
+      },
+      {
+        "i": 4,
+        "kind": "ico",
+        "size": 2238,
+        "path": "/tmp/lcars-msd-extract/MSD_Defiant/04_ico.ico"
+      }
+    ]
+  },
+  {
+    "folder": "MSD Defiant Main Bridge",
+    "exe_size": 662148,
+    "streams": 5,
+    "files": [
+      {
+        "i": 0,
+        "kind": "pe",
+        "size": 62976,
+        "path": "/tmp/lcars-msd-extract/MSD_Defiant_Main_Bridge/00_pe.exe",
+        "pe_hits": []
+      },
+      {
+        "i": 1,
+        "kind": "pe-upx",
+        "size": 334848,
+        "path": "/tmp/lcars-msd-extract/MSD_Defiant_Main_Bridge/01_pe-upx.exe",
+        "pe_hits": []
+      },
+      {
+        "i": 2,
+        "kind": "swf",
+        "size": 62575,
+        "path": "/tmp/lcars-msd-extract/MSD_Defiant_Main_Bridge/02_swf.swf",
+        "swf_sig": "CWS",
+        "swf_ver": 8,
+        "declared_len": 75852,
+        "decompressed": 75852,
+        "how": "CWS->FWS",
+        "fws": "/tmp/lcars-msd-extract/MSD_Defiant_Main_Bridge/02_FWS.swf",
+        "str_count": 98,
+        "interesting": [
+          "LCARS Title Font"
+        ],
+        "frame_rate": 12.0,
+        "frame_count": 1,
+        "tags": {
+          "End": 1,
+          "ShowFrame": 1,
+          "DefineShape": 14,
+          "SetBackgroundColor": 1,
+          "DefineText": 85,
+          "DefineSound": 1,
+          "Tag15": 1,
+          "DefineShape2": 1,
+          "PlaceObject2": 5,
+          "DefineShape3": 2,
+          "DefineSprite": 12,
+          "Tag45": 1,
+          "DefineMorphShape": 2,
+          "FileAttributes": 1,
+          "Tag73": 2,
+          "Tag74": 32,
+          "DefineFont3": 2,
+          "DefineShape4": 4
+        },
+        "has_vector_shapes": true,
+        "has_bitmaps": false,
+        "has_actionscript": false,
+        "has_sprites": true,
+        "has_morph": true
+      },
+      {
+        "i": 3,
+        "kind": "ini",
+        "size": 2141,
+        "path": "/tmp/lcars-msd-extract/MSD_Defiant_Main_Bridge/03_ini.ini",
+        "text": "[Set]\r\nStetchImage=0\r\nRandomImage=1\r\nPlayMusic=1\r\nRandomMusic=0\r\nImageInterval=4\r\nBackgroundColor=0\r\nEffectSpeed=4\r\nLoopMusic=1\r\nAllowReverseTransition=0\r\nClearOldImage=0\r\nMouseMove=1\r\nShowSplash=1\r\nSplashImage=C:\\Program Files (x86)\\2Flyer\\Screensaver Pro\\sample\\2flyer.jpg\r\nuseeffects=59,58,70,69,82,83,81,80,84,85,6,5,23,22,7,8,14,15,31,32,113,112,111,110,114,115,116,65,66,76,77,100,102,101,103,106,107,104,105,67,68,78,79,108,109,86,88,87,89,93,91,92,90,96,97,94,95,98,99,16,17,33,34,123,124,125,126,60,61,71,72,63,62,73,74,75,64,11,12,28,29,53,54,55,57,24,25,45,44,46,43,117,118,127,129,128,133,132,131,130,135,134,142,143,144,\r\nVideoSize=1\r\nVideoDownloadTime=60\r\nImageSize=0\r\nImageSequence=1\r\nFlashSequence=0\r\nVideoSequence=0\r\nWebSequence=0\r\nEffectSpeed2=3\r\nPicturePath=F:\\My web flashes\\LCARS"
+      },
+      {
+        "i": 4,
+        "kind": "ico",
+        "size": 2238,
+        "path": "/tmp/lcars-msd-extract/MSD_Defiant_Main_Bridge/04_ico.ico"
+      }
+    ]
+  },
+  {
+    "folder": "MSD Prometheus",
+    "exe_size": 643348,
+    "streams": 5,
+    "files": [
+      {
+        "i": 0,
+        "kind": "pe",
+        "size": 62976,
+        "path": "/tmp/lcars-msd-extract/MSD_Prometheus/00_pe.exe",
+        "pe_hits": []
+      },
+      {
+        "i": 1,
+        "kind": "pe-upx",
+        "size": 334848,
+        "path": "/tmp/lcars-msd-extract/MSD_Prometheus/01_pe-upx.exe",
+        "pe_hits": []
+      },
+      {
+        "i": 2,
+        "kind": "swf",
+        "size": 43801,
+        "path": "/tmp/lcars-msd-extract/MSD_Prometheus/02_swf.swf",
+        "swf_sig": "CWS",
+        "swf_ver": 8,
+        "declared_len": 66839,
+        "decompressed": 66839,
+        "how": "CWS->FWS",
+        "fws": "/tmp/lcars-msd-extract/MSD_Prometheus/02_FWS.swf",
+        "str_count": 64,
+        "interesting": [
+          "LCARS Title Font"
+        ],
+        "frame_rate": 10.0,
+        "frame_count": 1,
+        "tags": {
+          "End": 1,
+          "ShowFrame": 1,
+          "DefineShape": 24,
+          "SetBackgroundColor": 1,
+          "DefineText": 168,
+          "DefineSound": 1,
+          "Tag15": 1,
+          "DefineShape2": 1,
+          "PlaceObject2": 145,
+          "DefineShape3": 1,
+          "DefineSprite": 24,
+          "Tag45": 1,
+          "FileAttributes": 1,
+          "Tag73": 2,
+          "DefineFont3": 2,
+          "DefineShape4": 4
+        },
+        "has_vector_shapes": true,
+        "has_bitmaps": false,
+        "has_actionscript": false,
+        "has_sprites": true,
+        "has_morph": false
+      },
+      {
+        "i": 3,
+        "kind": "ini",
+        "size": 2116,
+        "path": "/tmp/lcars-msd-extract/MSD_Prometheus/03_ini.ini",
+        "text": "[Set]\r\nStetchImage=0\r\nRandomImage=1\r\nPlayMusic=1\r\nRandomMusic=0\r\nImageInterval=4\r\nBackgroundColor=0\r\nEffectSpeed=4\r\nLoopMusic=1\r\nAllowReverseTransition=0\r\nClearOldImage=0\r\nMouseMove=1\r\nShowSplash=1\r\nSplashImage=C:\\Program Files (x86)\\2Flyer\\Screensaver Pro\\sample\\2flyer.jpg\r\nuseeffects=59,58,70,69,82,83,81,80,84,85,6,5,23,22,7,8,14,15,31,32,113,112,111,110,114,115,116,65,66,76,77,100,102,101,103,106,107,104,105,67,68,78,79,108,109,86,88,87,89,93,91,92,90,96,97,94,95,98,99,16,17,33,34,123,124,125,126,60,61,71,72,63,62,73,74,75,64,11,12,28,29,53,54,55,57,24,25,45,44,46,43,117,118,127,129,128,133,132,131,130,135,134,142,143,144,\r\nVideoSize=1\r\nVideoDownloadTime=60\r\nImageSize=0\r\nImageSequence=1\r\nFlashSequence=0\r\nVideoSequence=0\r\nWebSequence=0\r\nEffectSpeed2=3\r\nPicturePath=F:\\My web flashes\\LCARS"
+      },
+      {
+        "i": 4,
+        "kind": "ico",
+        "size": 2238,
+        "path": "/tmp/lcars-msd-extract/MSD_Prometheus/04_ico.ico"
+      }
+    ]
+  },
+  {
+    "folder": "lcars_USS_Enterprise_Galaxy_Class_MSD",
+    "exe_size": 627144,
+    "streams": 5,
+    "files": [
+      {
+        "i": 0,
+        "kind": "pe",
+        "size": 62976,
+        "path": "/tmp/lcars-msd-extract/lcars_USS_Enterprise_Galaxy_Class_MSD/00_pe.exe",
+        "pe_hits": []
+      },
+      {
+        "i": 1,
+        "kind": "pe-upx",
+        "size": 334848,
+        "path": "/tmp/lcars-msd-extract/lcars_USS_Enterprise_Galaxy_Class_MSD/01_pe-upx.exe",
+        "pe_hits": []
+      },
+      {
+        "i": 2,
+        "kind": "swf",
+        "size": 27430,
+        "path": "/tmp/lcars-msd-extract/lcars_USS_Enterprise_Galaxy_Class_MSD/02_swf.swf",
+        "swf_sig": "CWS",
+        "swf_ver": 10,
+        "declared_len": 31696,
+        "decompressed": 31696,
+        "how": "CWS->FWS",
+        "fws": "/tmp/lcars-msd-extract/lcars_USS_Enterprise_Galaxy_Class_MSD/02_FWS.swf",
+        "str_count": 46,
+        "interesting": [
+          "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"> <rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"> <xmp:CreatorTool>Adobe Flash CS4 Professional</xmp:CreatorTool> <xmp:CreateDate>2010-10-16T06:25:19+01:00</xmp:CreateDate> <xmp:MetadataDate>2010-10-18T17:41:16+01:00</xmp:MetadataDate> <xmp:ModifyDate>2010-10-18T17:41:16+01:00</xmp:ModifyDate> </rdf:Description> <rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"> <dc:format>application/x-shockwave-flash</dc:format> </rdf:Description> <rdf:Description rdf:about=\"\" xmlns:xmpMM=\"http://ns.adobe.com/xap/1.0/mm/\" xmlns:stRef=\"http://ns.adobe.com/xap/1.0/sType/ResourceRef#\"> <xmpMM:DerivedFrom rdf:parseType=\"Resource\"> <stRef:instanceID>xmp.iid:B136906AE6D8DF11AB1DECBEE60F2AB2</stRef:instanceID> <stRef:documentID>xmp.did:B136906AE6D8DF11AB1DECBEE60F2AB2</stRef:documentID> <stRef:originalDocumentID>xmp.did:B136906AE6D8DF11AB1DECBEE60F2AB2</stRef:originalDocumentID> </xmpMM:DerivedFrom> <xmpMM:DocumentID>xmp.did:31CCA886D6DADF11A68BBFFF81ECD202</xmpMM:DocumentID> <xmpMM:InstanceID>xmp.iid:31CCA886D6DADF11A68BBFFF81ECD202</xmpMM:InstanceID> <xmpMM:OriginalDocumentID>xmp.did:B136906AE6D8DF11AB1DECBEE60F2AB2</xmpMM:OriginalDocumentID> </rdf:Description> </rdf:RDF> "
+        ],
+        "frame_rate": 12.0,
+        "frame_count": 1,
+        "tags": {
+          "End": 1,
+          "ShowFrame": 1,
+          "DefineShape": 3,
+          "SetBackgroundColor": 1,
+          "DefineText": 51,
+          "PlaceObject2": 106,
+          "DefineSprite": 3,
+          "FileAttributes": 1,
+          "Tag73": 1,
+          "DefineFont3": 1,
+          "Tag77": 1,
+          "DefineShape4": 1,
+          "Tag88": 1
+        },
+        "has_vector_shapes": true,
+        "has_bitmaps": false,
+        "has_actionscript": false,
+        "has_sprites": true,
+        "has_morph": false
+      },
+      {
+        "i": 3,
+        "kind": "ini",
+        "size": 2170,
+        "path": "/tmp/lcars-msd-extract/lcars_USS_Enterprise_Galaxy_Class_MSD/03_ini.ini",
+        "text": "[Set]\r\nStetchImage=0\r\nRandomImage=1\r\nPlayMusic=1\r\nRandomMusic=0\r\nImageInterval=4\r\nBackgroundColor=0\r\nEffectSpeed=4\r\nLoopMusic=1\r\nAllowReverseTransition=0\r\nClearOldImage=0\r\nMouseMove=1\r\nShowSplash=1\r\nSplashImage=C:\\Program Files (x86)\\2Flyer\\Screensaver Pro\\sample\\2flyer.jpg\r\nuseeffects=59,58,70,69,82,83,81,80,84,85,6,5,23,22,7,8,14,15,31,32,113,112,111,110,114,115,116,65,66,76,77,100,102,101,103,106,107,104,105,67,68,78,79,108,109,86,88,87,89,93,91,92,90,96,97,94,95,98,99,16,17,33,34,123,124,125,126,60,61,71,72,63,62,73,74,75,64,11,12,28,29,53,54,55,57,24,25,45,44,46,43,117,118,127,129,128,133,132,131,130,135,134,142,143,144,\r\nVideoSize=1\r\nVideoDownloadTime=60\r\nImageSize=0\r\nImageSequence=1\r\nFlashSequence=0\r\nVideoSequence=0\r\nWebSequence=0\r\nEffectSpeed2=3\r\nPicturePath=F:\\My web flashes\\LCARS"
+      },
+      {
+        "i": 4,
+        "kind": "ico",
+        "size": 2238,
+        "path": "/tmp/lcars-msd-extract/lcars_USS_Enterprise_Galaxy_Class_MSD/04_ico.ico"
+      }
+    ]
+  }
+]

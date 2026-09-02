@@ -1,6 +1,6 @@
 ---
 name: optimize
-description: Workspace audit. Reviews CLAUDE.md, frameworks, MOCs, context files, skills for stale items, contradictions, drift, and consolidation opportunities. Outputs a prioritized punch list (P0/P1/P2) and applies fixes only with sign-off. Logs to 06-context/audit-log.md. Invoked as /optimize or triggered by "audit the brain" / "workflow audit".
+description: Workspace audit. Reviews CLAUDE.md, frameworks, MOCs, context files, skills for stale items, contradictions, drift, and consolidation opportunities. Runs a seven-surface system maintenance loop (skill graph, contract, knowledge, memory, routing, validators, handoff): deterministic probes first, then judgment. Distinct from per-task prove-gates. Outputs a prioritized punch list (P0/P1/P2) and applies fixes only with sign-off. Logs to 06-context/audit-log.md. Invoked as /optimize or triggered by "audit the brain" / "workflow audit" / "system error correction".
 ---
 
 # /optimize — Brain audit
@@ -13,7 +13,7 @@ description: Workspace audit. Reviews CLAUDE.md, frameworks, MOCs, context files
 
 ## Why this exists
 
-The brain accumulates entropy: pending items get done but stay listed; docs reference paths that move; skills overlap; MOCs link to deleted notes; conventions drift between CLAUDE.md and individual SKILL.md files. Without periodic review, the friction grows quietly until something breaks. This skill is the deliberate rebalancing pass.
+The brain accumulates entropy: pending items get done but stay listed; docs reference paths that move; skills overlap; MOCs link to deleted notes; conventions drift between CLAUDE.md and individual SKILL.md files. Without periodic review, the friction grows quietly until something breaks. This skill is the deliberate rebalancing pass: **system-level error correction** (drift of the vault), distinct from per-task generate-verify loops (#06 detector check, Literal prove-gate).
 
 ## Protocol
 
@@ -24,7 +24,7 @@ Default scope is **full**: read all the foundation files listed below. If user s
 **Full-scope reads (in this order):**
 
 1. `CLAUDE.md` — primary context
-2. `01-frameworks/00-README.md` + the 5 framework files (`01-aesthetic-lens.md` through `05-last-mile-craft-framework.md`)
+2. `01-frameworks/00-README.md` + the numbered frameworks it lists (sixteen as of 2026-08; do not assume the old five-file core set)
 3. `01-frameworks/team-practices-and-decisions.md`
 4. `06-context/role-and-context.md`
 5. `06-context/project-context.md` (full file)
@@ -46,6 +46,31 @@ Before scanning, build a skip-list. Any markdown file whose YAML frontmatter con
 Use `Grep` for `audit_skip: true` across the workspace and resolve the matched file paths. Examples of legitimate opt-out rationales: cross-context personal reference files, scratch notes Sean intentionally keeps loose, drafts in flux.
 
 Do not invent your own opt-outs and do not skip files without the explicit frontmatter flag.
+
+### Step 1.6 — Seven-surface maintenance loop (system ECC)
+
+How the *brain* error-corrects itself. Distinct from per-task prove-gates. Run the
+deterministic probes first (do not skip). Then Step 2 applies judgment on top of
+the probe output.
+
+This workspace's seven surfaces:
+
+1. **Skill graph** — `python3 09-tools/validate-links.py` and `python3 09-tools/build-registry.py --check`
+2. **Frameworks / contract** — judgment vs `AGENTS.md` and `01-frameworks/00-README.md` (drift, contradiction)
+3. **Knowledge** — `python3 09-tools/validate-workspace.py` (index coverage) plus `python3 09-tools/vault-health.py`
+4. **Context / memory** — pending items vs `session-log.md` head; `MEMORY.md` coverage (workspace validator already probes this)
+5. **Triggers / routing** — `python3 09-tools/build-trigger-routes.py --check`. Under-fire on a real prompt must be visible (dispatcher routing-coverage note, or Cursor says Layer 0 missed). Silence is not "nothing matched."
+6. **Validators** — `python3 09-tools/test-validators.py` plus the write-quality chain (`build-related` → `build-registry` → integrity → links → workspace)
+7. **Handoff** — Active-project `SESSION-STATE.md` Live handoff `_Last updated` older than 30 days; uncompacted session fragments in `06-context/sessions/`
+8. **DS source watch** — `python3 09-tools/ds-source-watch.py --check` (no network). P1 if the snapshot is missing or older than 30 days. Do **not** `--fetch` during `/optimize` unless Sean asked. Fetch + judgment is the `ds-source-watch` skill.
+
+Probe failures are P0 until the detector is green or the finding is triaged. Do not
+treat a green live-tree validator as proof the detector still has teeth; that is
+what `test-validators.py` is for.
+
+The opt-in cron cousin is `02-shared-references/nightly-maintenance-recipe.md`
+(fold / heal / rebuild). `/optimize` stays human-in-the-loop judgment. Do not
+auto-enable nightly from this skill.
 
 ### Step 2 — Run the checks
 
@@ -73,8 +98,15 @@ Look for the following classes of issue. Mark each finding with priority and con
 
 **Duplication / consolidation opportunities:**
 - Same information stated in multiple files (could be canonical in one + linked from others)
-- Multiple skills doing nearly the same thing
+- Multiple skills doing nearly the same thing — apply the **skill one-job test**: keep /
+  rewrite / remove against *Sean's* judgment for one clear job (imported skills often
+  encode someone else's process; see [[nate-jones-harness-enrichments]])
 - Repeated boilerplate in SKILL.md files that could be a shared snippet
+
+**Agent maintenance loop (seven surfaces — run when harness feels heavy):**
+Job · diet · memory · tools · reach · proof · value. Pair with [[harness-map]]
+dispositions (Keep / One home / Load later / Turn into check / Probation / Retire).
+See [[nate-jones-harness-enrichments]] §5.
 
 **Gaps:**
 - Mentioned but unimplemented (e.g., "we will build X" — never built)
@@ -176,6 +208,8 @@ If carried-forward findings include things that ought to become real pending ite
 - Doesn't archive without confirmation
 - Doesn't second-guess deliberate stylistic choices in user-authored content
 - Doesn't audit project-internal artifacts (`05-artifacts/`, `07-projects/<project>/<work-files>`) — those have their own per-project review cadence; this is meta-level only
+- Doesn't replace per-task prove-gates (Literal prove, #06 detector check, Proofboard). Those fire inside producing work.
+- Doesn't auto-enable the nightly recipe. That remains opt-in.
 
 ## Tone
 

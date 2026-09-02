@@ -53,6 +53,56 @@ the specialty (engine code, GLSL, a training loop) owns the application. Distinc
 - Real-time rendering math → [[webgpu-advanced-rendering]], [[glsl-shader-architect]], [[threejs-materials-master]]
 - ML / statistics math → [[lead-data-scientist]] (pairs with [[data-foundations]] for the reasoning layer)
 
+## When the science spokes apply
+
+Load a spoke when the work turns on the math being *right*, not when the math is merely present.
+The test: would a wrong sign, a bad basis, an unstable step, or a mis-specified distribution
+produce a result that still looks plausible? If yes, load the spoke.
+
+| Situation | Spoke | The thing that goes silently wrong |
+|---|---|---|
+| Transforms, camera/world/object spaces, rotations, projections, bases | [[sci-linear-algebra]] | Composing in the wrong order or space; gimbal and quaternion normalization drift |
+| Time-stepping, interpolation, root finding, accumulation over many frames | [[sci-numerical-methods]] | Precision loss and instability that look like a physics bug |
+| Rigid bodies, collision response, constraints, forces | [[sci-physics-simulation]] | Energy gain or tunnelling from a variable timestep or a bad integrator |
+| Sampling, noise, Monte Carlo, procedural generation, anything with a seed | [[sci-probability-stochastic]] | Correlated or unseeded randomness that cannot be reproduced or debugged |
+| Astrophysical scale, orbits, stellar/structure properties | [[sci-astro-objects]] · [[sci-astro-structures]] | Unit and scale errors that survive because nothing on screen contradicts them |
+
+Skip the spokes for arithmetic that is obviously right, for a one-line lerp, or when the real
+question is aesthetic. Do not restate these principles inside a spoke: the spoke owns the medium,
+this foundation owns the why.
+
+## Validity done-gates
+
+Math and simulation results are analysis results, so they clear the validity gates of
+[#15 Analysis Operating Model](../../01-frameworks/15-analysis-operating-model.md) before being
+reported as correct:
+
+- **Units and spaces declared.** Every quantity states its unit and its coordinate space or basis.
+  An unlabelled number is not a result. Scale errors are the most common defect in this domain and
+  the hardest to see.
+- **Stability and error characterized, not assumed.** Name the integrator or scheme, its stability
+  condition, and the timestep or tolerance actually used. "It looks stable at 60 FPS" is not a
+  stability claim.
+- **Determinism reproducible.** Seeded RNG, fixed simulation timestep, and a stated seed or
+  configuration, so the same input produces the same output on another machine. A result that
+  cannot be re-run is an anecdote.
+- **Sanity checks against a closed form or conservation law.** Compare to an analytic solution, a
+  conserved quantity (energy, momentum, mass, probability summing to one), or a limiting case with
+  a known answer. At least one independent check, always.
+- **Convergence shown where it matters.** If the answer depends on step size, sample count, or
+  resolution, show that it converges (or state the residual error you are accepting).
+- **Floating-point assumptions surfaced.** Where equality, subtraction of near-equal values, or
+  large dynamic range is involved, say how it is handled rather than trusting the default.
+- **Uncertainty reported for stochastic results.** A Monte Carlo number without a variance or
+  interval is half a result.
+
+Visual consequences of the math (a render, a simulation frame, a plot) still clear
+[#10 Perception Integrity](../../01-frameworks/10-perception-integrity.md) at native resolution and
+[#11 Anticipatory Failure Analysis](../../01-frameworks/11-anticipatory-failure-analysis.md) before
+the technique is proposed. Framework
+[#13 Domain Rigor Stack](../../01-frameworks/13-domain-rigor-stack.md) is why these gates are
+written down here rather than assumed.
+
 ## Related
 - spoke → [[sci-astro-objects]] · [[sci-astro-structures]] · [[sci-linear-algebra]] · [[sci-numerical-methods]] · [[sci-physics-simulation]] · [[sci-probability-stochastic]]
 - applies-in ← [[glsl-shader-architect]] · [[lead-data-scientist]] · [[lead-game-developer]] · [[legion-project]] · [[sci-astro-objects]] · [[sci-astro-structures]] · [[threejs-materials-master]] · [[webgpu-advanced-rendering]]

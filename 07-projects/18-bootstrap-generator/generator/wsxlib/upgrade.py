@@ -1,0 +1,269 @@
+"""`wsx upgrade` — a corrective pass over an ALREADY-generated workspace.
+
+People generated workspaces before newer scaffold pieces existed (a `projects/`
+tree, the connective MOC/index layer, `frameworks/skill-authoring.md`, the
+multi-device `.gitattributes`/session-fragment setup). This brings an existing
+workspace up to the current shape — **non-destructively**:
+
+  * MISSING scaffold files are created (projects/README.md, sessions/README.md, …).
+  * The GENERATED MOC layer (HOME.md, skills/_INDEX.md, projects/_INDEX.md) is
+    always regenerated — this is what reconnects a previously-islanded graph.
+  * Hand-editable files that already exist are left EXACTLY as they are (never
+    clobbered). Your prose, skills, and edits are safe.
+
+Applies immediately (the user's chosen default); pass `--dry-run` to preview the
+plan without writing anything.
+"""
+from __future__ import annotations
+
+import re
+from pathlib import Path
+
+from . import core, layout, moc, related, scaffold
+
+
+# --------------------------------------------------------------- migrations ---
+# "Non-destructive" must not mean "leaves known-broken content in place". A migration
+# repairs a SPECIFIC, generator-authored line that we know is wrong, surgically —
+# everything the person wrote themselves is untouched. Each is idempotent.
+
+def _migrate_critical_facts(root: Path, dry_run: bool):
+    """Old CRITICAL_FACTS.md baked `primary assistant: <value>` in at init time, so it
+    silently contradicted profile.yaml the moment the interview set the real surface.
+    Replace that one line with the pointer form (no duplicated volatile state)."""
+    f = layout.of(root).dir("context") / "CRITICAL_FACTS.md"
+    if not f.exists():
+        return None
+    text = f.read_text(encoding="utf-8")
+    pat = re.compile(r"^- \*\*Who:\*\*.*primary assistant:.*$", re.MULTILINE)
+    if not pat.search(text):
+        return None
+    name = str(core.load_profile(root).get("identity", {}).get("name", "you"))
+    new = (f"- **Who:** {name}. Current surfaces, model tier, and preferences live in\n"
+           "  [profile](profile.md) (regenerated from `profile.yaml` — always trust those two\n"
+           "  over anything restated elsewhere).")
+    if not dry_run:
+        f.write_text(pat.sub(new, text, count=1), encoding="utf-8")
+    return ("context/CRITICAL_FACTS.md",
+            "stale `primary assistant:` line contradicted profile.yaml → replaced with a pointer")
+
+
+def _migrate_separation(root: Path, dry_run: bool):
+    """Same class of bug on the Separation line (baked value, never refreshed)."""
+    f = layout.of(root).dir("context") / "CRITICAL_FACTS.md"
+    if not f.exists():
+        return None
+    text = f.read_text(encoding="utf-8")
+    pat = re.compile(r"^- \*\*Separation:\*\* (?!personal context is local/walled unless you opted in)"
+                     r".*$", re.MULTILINE)
+    if not pat.search(text):
+        return None
+    new = ("- **Separation:** personal context is local/walled unless you opted in "
+           "(see [profile](profile.md)).")
+    if not dry_run:
+        f.write_text(pat.sub(new, text, count=1), encoding="utf-8")
+    return ("context/CRITICAL_FACTS.md",
+            "baked `Separation:` value → replaced with a pointer to the profile")
+
+
+def _migrate_drop_encrypt(root: Path, dry_run: bool):
+    """Remove the `privacy.encrypt` field. It was never implemented — the interview
+    even ASKED for it and said wsx would handle it — so anyone who answered "yes" has
+    been carrying a false guarantee. Strip it and say so plainly; at-rest protection is
+    the OS's job (FileVault/BitLocker/LUKS), not this tool's."""
+    prof = core.load_profile(root)
+    priv = prof.get("privacy")
+    if not isinstance(priv, dict) or "encrypt" not in priv:
+        return None
+    was_on = bool(priv.get("encrypt"))
+    if not dry_run:
+        priv.pop("encrypt", None)
+        core.save_profile(root, prof)
+    why = ("removed `privacy.encrypt` — wsx never implemented vault encryption, so this "
+           "field promised protection it did not provide")
+    if was_on:
+        why += (". IT WAS SET TO TRUE: your personal notes were NEVER encrypted — only "
+                "gitignored. Turn on full-disk encryption (FileVault/BitLocker) if you "
+                "want at-rest protection")
+    return ("context/profile.yaml", why)
+
+
+def _reconcile_remote(root: Path, dry_run: bool):
+    """profile.transport.remote is only a recorded string; `wsx remote` is what actually
+    configures git. If the profile declares one and git has none, the person believes
+    their work is backed up while nothing can push. Wire it — that's plainly intended."""
+    if not (root / ".git").exists():
+        return None
+    declared = str(core.load_profile(root).get("transport", {}).get("remote", "") or "").strip()
+    if not declared:
+        return None
+    r = core.git(root, "remote", "get-url", "origin", check=False, capture=True)
+    if (r.stdout or "").strip():
+        return None  # already configured
+    if not dry_run:
+        core.git(root, "remote", "add", "origin", declared, check=False)
+    return ("git remote",
+            f"profile declared {declared} but git had none configured → wired it "
+            "(run `wsx sync` to push)")
+
+
+def _migrate_add_context(root: Path, dry_run: bool):
+    """Older profiles predate `context` (personal-solo | work), which now gates every
+    work/personal side-effect. Add it explicitly (a lone existing vault is personal-solo)
+    so scope resolution isn't left to a silent default."""
+    # Only touch an EXISTING profile — never conjure one. On a hand-built vault with no
+    # profile.yaml, creating a stub here is what fabricated a junk profile in the test.
+    if not core.profile_path(root).exists():
+        return None
+    prof = core.load_profile(root)
+    if prof.get("context"):
+        return None
+    if not dry_run:
+        prof["context"] = "personal-solo"
+        core.save_profile(root, prof)
+    return ("context/profile.yaml",
+            "added `context: personal-solo` — governs the work/personal wall (auto-push, "
+            "adapter tone). Change to `work` for an employer-governed workspace.")
+
+
+MIGRATIONS = [_migrate_critical_facts, _migrate_separation,
+              _migrate_drop_encrypt, _reconcile_remote, _migrate_add_context]
+
+
+def _bootstrap_git(root: Path, dry_run: bool):
+    """A repo with ZERO commits is the silent failure mode from `wsx init` on a machine
+    with no git identity: files exist, nothing is versioned, nothing can sync. Land the
+    first commit if we can; if git has no identity, say exactly what's needed."""
+    if not (root / ".git").exists():
+        return None
+    r = core.git(root, "rev-list", "--count", "HEAD", check=False, capture=True)
+    if r.returncode == 0 and (r.stdout or "").strip().isdigit() and int(r.stdout.strip()) > 0:
+        return None  # history exists — nothing to do
+    if dry_run:
+        return ("git", "repository has NO commits — would create the first one")
+    core.git(root, "add", "-A", check=False)
+    core.git(root, "commit", "-q", "-m", "wsx: initial commit of the workspace", check=False)
+    ok, hint = scaffold._commit_ok(root)
+    if ok:
+        return ("git", "repository had NO commits — created the first one (your work is now versioned)")
+    return ("git", "repository has NO commits because git has no author identity. "
+                   "Ask the person what name + email to sign their commits with, then run:\n"
+                   '      wsx identity --name "<their name>" --email "<their email>"\n'
+                   "      (workspace-only by default; it makes the first commit for you)")
+
+# Generated files that upgrade always (re)writes — safe because they are derived
+# from disk, never hand-authored. Names resolved per workspace (numbered/flat).
+def _regenerated(root: Path) -> list:
+    lay = layout.of(root)
+    return ["HOME.md", f"{lay.name('skills')}/_INDEX.md",
+            f"{lay.name('projects')}/_INDEX.md",
+            f"{lay.name('context')}/profile.md"]  # mirror of profile.yaml — never stale
+
+
+def _is_wsx_generated(root: Path) -> bool:
+    """A wsx-set-up workspace always has a profile.yaml (init writes it) or the copied CLI.
+    Absence of both on a content-rich vault means it's a HAND-BUILT foreign vault — `upgrade`
+    must not treat it as a wsx workspace to 'bring up to scaffold' (that's the downgrade
+    `examine` warns about). An ADAPTED vault (`.wsx/adapter.json`) is explicitly foreign even
+    though `wsx adapter` copied the CLI into `.wsx/`."""
+    from . import adapter
+    if adapter.is_adapted(root):
+        return False
+    return core.profile_path(root).exists() or (root / ".wsx" / "wsxlib").is_dir()
+
+
+def upgrade(root: Path, dry_run: bool = False, force: bool = False) -> int:
+    # Foreign-vault guard (A4). A rich hand-built vault that wsx didn't generate should NOT
+    # be scaffold-dumped / skill-edited. Refuse by default; `--force` overrides for someone
+    # who truly wants the scaffold. Mirrors examine's "exceeds the model — don't downgrade".
+    from . import adapter, examine
+    foreign = not _is_wsx_generated(root)
+    if foreign and (adapter.is_adapted(root) or examine._looks_like_workspace(root)) and not force:
+        print("wsx upgrade — REFUSED: this looks like a hand-built vault wsx did NOT generate\n")
+        print("  It has no wsx profile, and (per `wsx examine`) likely EQUALS or EXCEEDS the wsx")
+        print("  model. Running the full corrective pass here would add generic scaffold, fabricate")
+        print("  a placeholder profile, and edit your own skill files — a downgrade, not an upgrade.")
+        print("\n  Safer paths:")
+        print("    wsx examine <path>     read-only readout (what, if anything, is missing)")
+        print("    wsx adapter <path>     map your existing folders to wsx concepts (no scaffolding)")
+        print("    wsx upgrade --force    override, if you REALLY want the scaffold added (not advised)")
+        return 0
+
+    prof = core.load_profile(root)
+    lay = layout.of(root)
+    ctx = dict(prof)
+    ctx["date"] = core.today()
+    ctx["dir"] = lay.names()  # {{dir.X}} placeholders resolve for this workspace
+
+    added, kept = [], []
+    for rel, content in scaffold.TEMPLATES.items():
+        dest_rel = layout.remap(lay, rel)  # flat workspace -> add at its flat path
+        target = root / dest_rel
+        if target.exists():
+            kept.append(dest_rel)
+            continue
+        added.append(dest_rel)
+        if not dry_run:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(core.render(content, ctx), encoding="utf-8")
+
+    # Refresh the copied-in CLI so an older workspace becomes self-sufficient too
+    # (and picks up new commands like `health`). Always safe: it's generated code.
+    copied = []
+    related_changed = []
+    if not dry_run:
+        moc.write_mocs(root)
+        copied = scaffold.copy_cli(root)
+        scaffold.tools.write_tools(root)  # add the 09-tools scripts if missing
+        # Weave the typed `## Related` graph across skills — but ONLY on a wsx-generated
+        # workspace. Use the `foreign` flag captured at the TOP (before copy_cli created
+        # `.wsx/`, which would otherwise flip the check): on a foreign vault (reached via
+        # --force) we must never auto-edit the person's hand-authored SKILL.md files.
+        if not foreign:
+            related_changed = related.build(root)
+
+    # Repair known-broken generated content + land a first commit if there is none.
+    repairs = [r for r in (m(root, dry_run) for m in MIGRATIONS) if r]
+    git_note = _bootstrap_git(root, dry_run)
+
+    verb = "would add" if dry_run else "added"
+    print(f"wsx upgrade — corrective pass{'  (dry-run — nothing written)' if dry_run else ''}\n")
+    if added:
+        print(f"  {verb} {len(added)} missing scaffold file(s):")
+        for rel in added:
+            print(f"    + {rel}")
+    else:
+        print("  scaffold complete — no missing files.")
+    reverb = "would regenerate" if dry_run else "regenerated"
+    print(f"\n  {reverb} the connective MOC layer (reconnects the Obsidian graph):")
+    for rel in _regenerated(root):
+        print(f"    ~ {rel}")
+    print(f"\n  {reverb} the copied-in CLI so this workspace can drive itself:")
+    print(f"    ~ wsx.py + .wsx/wsxlib/  ({len(copied) or 'refreshed'} file(s))"
+          if not dry_run else "    ~ wsx.py + .wsx/wsxlib/")
+    print("      → run it here:  python3 wsx.py doctor")
+    gverb = "would weave" if dry_run else "wove"
+    print(f"\n  {gverb} the typed `## Related` graph across skills (path-links, hub-derived):")
+    if dry_run:
+        print("    ~ each skill's marker-delimited Related block (idempotent)")
+    elif related_changed:
+        for c in related_changed[:8]:
+            print(f"    ~ {c}")
+        if len(related_changed) > 8:
+            print(f"    …and {len(related_changed) - 8} more")
+    else:
+        print("    ~ up to date (no changes).")
+    rverb = "would repair" if dry_run else "repaired"
+    if repairs:
+        print(f"\n  {rverb} known-stale generated content (your own writing untouched):")
+        for rel, why in repairs:
+            print(f"    ✎ {rel} — {why}")
+    if git_note:
+        print(f"\n  git:\n    • {git_note[1]}")
+
+    print(f"\n  kept {len(kept)} existing file(s) untouched (non-destructive).")
+    if dry_run:
+        print("\n  → run `wsx upgrade` (no --dry-run) to apply.")
+    else:
+        print("\n  next: `wsx lint` and `wsx emit all` to refresh the AI adapters.")
+    return 0

@@ -97,3 +97,22 @@ directories (workspace root, worktrees under `.claude/worktrees/`, project
 folders under `07-projects/`), **MCPs should almost always be `--scope user`**.
 The exception: project-specific MCPs that should travel with a particular
 project's git repo — use `--scope project` and check `.mcp.json` into VCS.
+
+## The cost of `--scope user`, added 2026-07-30
+
+The advice above is right for convenience and has a security consequence worth
+naming: **user scope means every session on the machine binds every server.**
+
+That is harmless for single-tenant tools. It is *not* harmless when two servers
+point at **different tenants of the same product** under different identities —
+e.g. a personal and an employer workspace of the same tracker. Per-server auth
+(`MCP_REMOTE_CONFIG_DIR`) genuinely scopes what each *connection* can read, but
+user-scope registration means one process holds both, so the separation between
+them is the agent's judgment rather than the tool layer. Verified 2026-07-29:
+both connected in one session, both writable.
+
+With a human in the loop that is acceptable. For **anything scheduled or
+headless it is not** — launch those with `--strict-mcp-config` plus a
+one-server `--mcp-config` so only the intended tenant exists in the process.
+
+Full reasoning and six sibling constraints: [[agent-work-queue-boundaries]].

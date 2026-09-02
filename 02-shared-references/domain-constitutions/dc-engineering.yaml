@@ -1,0 +1,122 @@
+# Front-end and back-end engineering  -  contracts, not stack versions.
+# React/Postgres/K8s releases are values. Idempotency and rollback are methods.
+schemaVersion: "domain-constitution/1.0"
+id: engineering
+name: Front-end and back-end engineering
+status: authored
+l1:
+  - 14-engineering-operating-model
+foundation: eng-foundations
+leads:
+  - lead-frontend-engineer
+  - lead-backend-engineer
+  - lead-devops-engineer
+  - lead-mobile-engineer
+measurement:
+  - fe-perf-harness
+  - a11y-audit-toolkit
+command:
+  - eng
+complements:
+  values: "Stack, library versions, schema contents, hex in CSS. Live in the repo."
+  meaning: "This constitution + eng-foundations + framework #14 pipeline."
+  arbitration: "Named contract (OpenAPI, event schema, component props, ADR). Tests and SLOs refuse. Security #16 refuses at trust boundaries."
+  look: "DESIGN.md / DS tokens consumed, not reimplemented. UI look is not an engineering constitution concern except as DS compliance."
+  runtime: "Deployed services, clients, and mobile binaries. Observability is part of done, not a sequel."
+graphs:
+  skillLoad: "eng-foundations → lead-frontend-engineer | lead-backend-engineer | lead-devops-engineer | lead-mobile-engineer → fe-* / be-* / devops-*"
+  epistemic: "08-knowledge/ (contracts-first-delivery, silent-degradation-in-fenced-layers)"
+  artifact: "this file"
+shared:
+  - id: shared-three-properties
+    name: Deliverable properties
+    for: all
+    items:
+      - id: contracts-first
+        statement: "Anything crossing a boundary is a contract with inputs, outputs, error taxonomy, and stability. Write it before the implementation, or discover it from a caller's incident."
+        level: must
+      - id: observable
+        statement: "If a behavior matters, it emits a log, metric, or span a stranger can use at 2am. Silent degradation is banned."
+        level: must
+      - id: reversible
+        statement: "Every change names its way back before deploy. Silently escalating reversible work to one-way or destructive is a defect."
+        level: must
+      - id: validate-at-boundary
+        statement: "Trust nothing from outside the boundary. Fail loudly at the edge; degrade gracefully in the core only when the degrade is observable."
+        level: must
+  - id: shared-pipeline
+    name: Shape → implement → verify → ship → observe
+    for: all
+    items:
+      - id: skip-named
+        statement: "Skipping a #14 stage is allowed only by naming which one and why."
+        level: must
+      - id: tests-are-not-production
+        statement: "'The tests pass' is a different claim from 'it behaves correctly in production.' Both are stages, not finishes."
+        level: must
+      - id: cache-invalidation
+        statement: "A cache without an explicit staleness budget is a latent incident. Every governing param is in the cache key."
+        level: must
+  - id: shared-fe
+    name: UI surface gates
+    for: all
+    items:
+      - id: consume-ds
+        statement: "Frontend consumes design-system tokens and components. Gaps route back to the system. Local one-off restyles are not delivery."
+        level: must
+      - id: every-state
+        statement: "Loading, empty, partial, error, offline or degraded, and permission-denied are implemented, not only the happy path."
+        level: must
+      - id: a11y-code
+        statement: "Keyboard, focus, semantics, labels, automated checks on the touched surface, plus a hand keyboard pass. Automated checks are necessary and never sufficient."
+        level: must
+  - id: shared-be
+    name: Data and API gates
+    for: all
+    items:
+      - id: additive-contracts
+        statement: "Public contracts are additive-first. Breaking changes carry a version and a deprecation window."
+        level: must
+      - id: expand-contract
+        statement: "Schema migrations expand and contract in separate deploys. Never add a replacement and drop the original in one migration."
+        level: must
+      - id: authz-server-side
+        statement: "Authorization is enforced at the data access layer, never only by hiding a control in the UI."
+        level: must
+entries:
+  - id: system
+    kind: system
+    name: Engineering constitution
+    for: agent
+    notes: "FE and BE share shared[]. They diverge in entries. DevOps and mobile inherit the three properties and add their own done-gates from #14."
+  - id: frontend
+    kind: entry
+    name: Frontend
+    notes: "Spokes: fe-component-architecture, fe-performance, fe-state-management, fe-data-visualization, fe-api-integration, fe-accessibility, fe-testing, fe-i18n, fe-design-tokens, fe-perf-harness."
+  - id: backend
+    kind: entry
+    name: Backend
+    notes: "Spokes: be-relational-db, be-api-design, be-service-architecture, be-auth-patterns, be-caching-performance, be-integration-patterns, be-data-modeling."
+combos:
+  - id: contract-vs-impl
+    must: [contracts-first, reversible]
+    mustNot: []
+    why: "Implementation without a named contract and a rollback story is hoping."
+  - id: fence-vs-silence
+    must: [observable, validate-at-boundary]
+    mustNot: []
+    why: "A fence that returns None erases empty vs broken. See silent-degradation-in-fenced-layers."
+  - id: ds-vs-one-off
+    must: [consume-ds, every-state]
+    mustNot: []
+    why: "A pixel-perfect happy path that reimplements the button is not frontend delivery."
+refuse:
+  - "Calling 'it works locally' done."
+  - "Fix-forward with no written path as the rollback story."
+  - "Authz only in the client."
+  - "Perf or a11y 'audit' without the named harness."
+  - "Loading every fe-* and be-* spoke for a single endpoint change."
+watch: []
+notes:
+  for: agent
+  - "Context profile: employer repos are branch → PR → human review. Workspace itself is personal-solo. Do not generalize auto-commit."

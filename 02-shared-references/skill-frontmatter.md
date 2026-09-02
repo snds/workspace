@@ -6,8 +6,8 @@ status: canonical
 
 # Skill Frontmatter Spec — v2
 
-> **v2.1** adds the optional `requires:` field (external-tool capability dependencies). Backward
-> compatible — skills without it are unaffected.
+> **v2.1** adds optional `requires:` (capability dependencies). **v2.2** adds optional `defers_to:`
+> (doctrine / plugin precedence edges). Backward compatible — skills without them are unaffected.
 
 Every `03-skills/<name>/SKILL.md` opens with a YAML frontmatter block. These keys are
 the **single source of truth** for the skill graph: `09-tools/build-registry.py` reads
@@ -37,7 +37,9 @@ ordered or cross-linked until migrated.
 | `governs` | list | cross-cutting skills | Inverse of `governed_by`. |
 | `surfaces` | list | optional | Where the skill is valid. Default `["*"]`. Use e.g. `["claude-code","mcp"]` for tool-specific skills. |
 | `requires` | list | tool-dependent skills | Capability ids ([[capability-registry]]) for external tools (MCP servers / CLIs) the skill needs. The agent **preflights** these before use — see "Capability requirements" below. |
-| `spec_version` | string | optional | Frontmatter contract version. Stamp `"2.0"` (or `"2.1"` if using `requires`). |
+| `defers_to` | list | wrappers / overlaps | Names of workspace skills or framework ids (`framework-13`, `qa`, `eng-foundations`, …) that win on conflict. Used by plugin wrappers and overlapping spokes so shallow marketplace skills cannot override doctrine. Pair with a body **Defers-to** section when human-readable detail is needed. |
+| `rigor_role` | enum | optional | Which Domain Rigor Stack layer this skill primarily realizes: `operating-model` \| `command-hub` \| `measurement` \| `load-chain` \| `multi-voice`. Informational; see [[13-domain-rigor-stack]]. |
+| `spec_version` | string | optional | Frontmatter contract version. Stamp `"2.0"`; `"2.1"` if using `requires`; `"2.2"` if using `defers_to` / `rigor_role`. |
 | `pinned_version` | string | rare | Keep as-is on framework skills (`fw-*`). Orthogonal to loading. |
 
 ## Load-precedence rule
@@ -150,9 +152,29 @@ Relation vocabulary: `foundation` · `hub` · `spoke` · `applies-in` · `govern
 checked by `.github/workflows/link-validator.yml`. Only `foundation →` carries load precedence;
 the rest are navigational.
 
+## Doctrine edges (`defers_to`)
+
+When a skill wraps a plugin or overlaps another owner, declare who wins:
+
+```yaml
+defers_to: [framework-13, qa, design-foundations]
+spec_version: "2.2"
+```
+
+Resolution order for conflicts is fixed in [[AGENTS]] → "Doctrine precedence": frameworks >
+workspace skills > plugins. `defers_to` makes the edge explicit for wrappers (e.g. `/motion`,
+`arch-guild`, `process-plugins`, Figma Defers-to skills).
+
+## Domain rigor
+
+New hubs and material expansions must clear the acceptance checklist in
+[[13-domain-rigor-stack]] (L1–L5). Prefer connective tissue (operating model, command hub,
+measurement, linkage) over adding volume to already-deep spokes.
+
 ## Rules
 
 - **Never rename a `SKILL.md` file or its directory** without re-pointing every loader path and
   wikilink — 200+ files hardcode `03-skills/<name>/SKILL.md`. Add `aliases` instead.
 - After editing frontmatter, run `python3 09-tools/build-registry.py` (or let CI catch the drift).
 - `prerequisites` is a DAG: no cycles. The generator hard-fails on a cycle or a dangling reference.
+- Hubs must declare `prerequisites` (usually a `*-foundations`). Orphan hubs fail Domain Rigor L4.

@@ -128,6 +128,32 @@ Before defaulting to a table:
 - Never *hide* things behind permissions that should be visible for context.
 - Test the "role transition" — when someone moves from novice to expert, does the interface grow with them, or does it require re-learning?
 
+### Control placement by scope of effect
+
+Place — and evaluate the placement of — every actionable control by the **scope of effect** it has
+and the **user intent** behind it, not by where it visually fits, which surface has room, or what it
+resembles. Contextual or visual similarity between controls does not imply equivalent intent.
+App-global affordances belong to global chrome; page/object-wide affordances to the page surface;
+region/section affordances to that region; item/row/selection affordances to that element. Two
+corollaries must *both* hold:
+
+- **Don't merge by appearance.** Two controls that look alike but act at different scopes stay
+  visually/spatially distinct and scope-signposted — never collapsed into one just because they share
+  a form factor.
+- **Don't fragment by surface.** The same intent reimplemented across several surfaces gets unified
+  into one primitive, bound to scope — not rebuilt per location.
+
+Placement-by-resemblance produces three failures: cognitive load (learning which of two
+identical-looking controls does what), wrong-scope mistakes (acting on the object when they meant the
+row), and false consolidation (merging by look breaks intent). Review checklist, per control: (1)
+What is its scope of effect? [global / page-or-object / region-section / item-row / current-selection].
+(2) Does its placement match that scope? (3) Where it resembles another control, is the *intent* the
+same or only the form factor? (4) Is the scope made *visible* (label, grouping, position,
+containment), or must the user infer it? **Corollary for repeated elements** (e.g. multiple tables on
+one page): a scope-bound control must bind to the *specific* instance it affects and stay attached to
+it — a shared/hoisted control cannot disambiguate which instance it acts on; containment becomes the
+primary scope signpost. (Generalized from the Centric PLM toolbar/table work; context-independent.)
+
 ---
 
 ## Governance for scaled coherence
@@ -162,3 +188,75 @@ Every interaction should feel like the designer understood the user's actual pro
 - Not static. Evidence from research, usage data, or direct user feedback should feed back into both frameworks over time.
 
 It's the *how* that carries across projects, so IA and interaction thinking stay coherent even when the product shifts.
+
+---
+
+## Full IA pipeline (operational)
+
+*Layer 1 above says what information architecture is for. This section says how it gets produced and when it is finished: an ordered pipeline with named artifacts and done-gates, so "the IA is done" stops being an opinion. It is the L1 operating detail for the IA discipline under [#13 Domain Rigor Stack](13-domain-rigor-stack.md), executed by `lead-information-architect` and its `ia-*` spokes. Additive to everything above, not a replacement.*
+
+### The ordering rule
+
+**Research before model, model before taxonomy, taxonomy before navigation, navigation before validation, and all of it before visual design.** Each stage is a hypothesis the next stage depends on. Skipping a stage does not remove it, it just moves the cost to a findability failure after ship, where correction is most expensive. Visual fidelity applied to an unvalidated structure makes the wrong structure look credible.
+
+### The five stages
+
+| Stage | Intent | Artifact | Done-gate |
+|---|---|---|---|
+| **1 · Research** | Learn who navigates, for which tasks, over what content | Role and task inventory, content inventory or audit, search-log and support-ticket review | Tasks named per role with frequency and stakes; content inventoried rather than assumed; existing failure evidence collected |
+| **2 · Mental model** | Capture how users already think about this domain, in their words | Conceptual model, user vocabulary list, divergence map against the organization's model | The conceptual model is written down, the user-versus-org vocabulary gaps are explicit, and the divergences are decided rather than discovered later |
+| **3 · Taxonomy** | Define the categories, facets, and vocabulary that structure the content | Facet dimensions, controlled vocabulary with definitions, polyhierarchy and collision rules, governance owner | Every term has one definition and a home; facets are orthogonal; a named owner and process exist for adding terms |
+| **4 · Navigation** | Express the structure as reachable, labeled paths | Sitemap or structure map, label set, navigation tiers (primary, secondary, contextual, utility), search integration point, role variations | Every task from stage 1 has a path; labels use user task language; depth is bounded and justified; role-based differences resolved rather than duplicated |
+| **5 · Validation** | Prove the structure works for the people who did not design it | Tree test, card sort, or first-click results, plus post-ship analytics plan | Success rates and first-click accuracy measured on the proposed structure; failures traced to a stage and fixed there, not patched in the UI |
+
+### Stage detail worth naming
+
+- **Research** ([[ia-research-methods]]) names the decision the research serves, then distinguishes findability failures from discoverability failures before proposing a fix, because they have different solutions (clear labels and search versus contextual paths and empty states that reveal capability).
+- **Mental model** ([[ia-mental-models]]) work is where enterprise IA usually fails silently: the organization's internal structure feels obvious to the people who built it, and shipping it as navigation is the single most common cause of "users search instead of navigate." Map how users group and name concepts before imposing structure.
+- **Taxonomy** ([[ia-taxonomy-classification]]) covers controlled vocabulary, polyhierarchy rules, and synonym policy, and it has downstream engineering consequences: hierarchy depth and polyhierarchy support determine the storage pattern (adjacency list, nested set, closure table). Decide taxonomy and data model together, not in sequence.
+- **Navigation** ([[ia-navigation-systems]]) labels are structure. A correctly placed item with an unfamiliar label is an item that does not exist. Primary, secondary, and utility tiers, progressive disclosure, and role-aware navigation are decided here; label comprehension is validated at stage 5, never asserted at stage 4.
+- **Validation** ([[ia-research-methods]], [[ia-search-findability]]) treats search and browse together and does not end at launch. Zero-result query rate, search-then-abandon rate, and the navigation-versus-search ratio are ongoing IA quality metrics; instrument them so the structure keeps reporting on itself.
+
+### Two threads that run through every stage
+
+- **Content strategy alignment** ([[ia-content-strategy]]): what content actually exists, what is orphaned, and who owns it. A taxonomy for content nobody maintains fails on its own schedule.
+- **Enterprise complexity** ([[ia-enterprise-complexity]]): multi-product suites, multi-role access, and localization of structure. These change the answer at stages 3 and 4 rather than arriving after them.
+
+### Gates that apply across stages
+
+- Mental-model evidence is cited (or explicitly named Tier 4 intuition per [#04](04-research-and-evidence-framework.md)) before the taxonomy is frozen.
+- Labels are tested or borrowed from user language, never invented in a vacuum.
+- Navigation depth is justified, and "everything in the mega-menu" is rejected without evidence.
+- Success metrics are named up front: task completion, time-to-object, search exit rate.
+- Changes land with a migration story for existing users: redirects, synonyms, and training or release notes. An IA change with no migration path breaks the fluency of the users who relied on the old structure.
+
+### Absolute bans
+
+- **Navigation designed before the conceptual model exists.** Structure invented at the nav layer encodes the org chart by default.
+- **Organizational or system language in navigation labels** where the user's task language exists ("Administration" for what a user calls "Settings").
+- **IA reorganized from stakeholder preference alone**, or validated only by internal stakeholders. Team consensus is not evidence; a tree test with real users is. Name the evidence tier per [#04](04-research-and-evidence-framework.md).
+- **Duplicate labels for different destinations.** Two identical labels guarantee a wrong turn no matter how correct the tree is.
+- **High-fidelity visual design over an unvalidated structure**, which converts a cheap correction into an expensive one.
+- **A taxonomy with no governance owner.** Uncontrolled vocabularies drift into synonyms and duplicate categories within one release cycle.
+- **One IA declared correct for all roles.** Multi-role products need role-resolved structure, not an averaged compromise that serves nobody.
+- **Depth as the answer to growth.** High-frequency tasks buried four clicks deep with no progressive disclosure means the problem is upstream classification, not the menu component.
+
+### Routing
+
+| Question | Load |
+|---|---|
+| The full pipeline, discipline depth, theoretical lineage | `lead-information-architect` (hub) |
+| Card sorting, tree testing, first-click protocols, IA heuristics | `ia-research-methods` |
+| Mental model mapping, conceptual design, gulf theory | `ia-mental-models` |
+| Facets, controlled vocabulary, ontology, taxonomy governance | `ia-taxonomy-classification` |
+| Navigation patterns, wayfinding, label strategy | `ia-navigation-systems` |
+| Search UX, faceted filtering, findability | `ia-search-findability` |
+| Content types, content modeling, editorial workflow | `ia-content-strategy` |
+| Multi-role, multi-product, admin versus end-user structure | `ia-enterprise-complexity` |
+| Practical IA inside a UX sprint (not deep theory) | `lead-ux-designer` → `ux-information-architecture` |
+| Quantitative validation, navigation path and search analytics | `ds-product-analytics` under [#15](15-analysis-operating-model.md) |
+| Taxonomy storage pattern, content model to schema | `be-data-modeling` under [#14](14-engineering-operating-model.md) |
+
+Load 1 to 2 spokes for the stage in play, never the whole network. The pipeline is the contract; the spokes carry the method.
+
+Governed by [[13-domain-rigor-stack]]; measurement here pairs with research methods and analytics ([[lead-information-architect]] plus `ds-product-analytics`), not only visual QA.

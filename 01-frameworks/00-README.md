@@ -1,33 +1,40 @@
 # Frameworks — Overview and Navigation
 
 _Workspace: `01-frameworks/`_
-_Last updated: 2026-06-08_
+_Last updated: 2026-08-28_
 
-Nine top-level documents that govern how design, **components & patterns**, collaboration, research, craft, QA, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. Eight are cross-domain operating lenses; **#09 is the design-domain hub** for components and patterns. They're the portable layer that stays consistent even when the specific work shifts.
+Sixteen top-level documents that govern how design, **components & patterns**, collaboration, research, craft, QA, **perception integrity**, **anticipatory failure analysis**, **realtime photoreal operations**, **domain rigor for every skill hub**, **engineering / analysis / security operations**, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. **#09 is the design-domain hub** for components and patterns; **#13 is the meta-stack** every other domain must instantiate. They're the portable layer that stays consistent even when the specific work shifts.
 
-This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all eight full documents.
+This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all sixteen full documents.
 
 ---
 
-## The nine frameworks
+## The sixteen frameworks
 
 | # | Framework | Answers |
 |---|---|---|
-| 01 | **Aesthetic Lens** | Why does this feel right? |
-| 02 | **UI/UX Operational Framework** | How do we systematically decide about hierarchy, interaction, and metaphor? |
-| 03 | **Collaboration and Critique Framework** | How do we work together? |
-| 04 | **Research and Evidence Framework** | What do we know, and how do we know it? |
-| 05 | **Last-Mile Craft Framework** | How do we finish well? |
-| 06 | **QA Operating Model** | How do we frame QA outcomes against target-user expectations on first delivery? |
-| 07 | **Integration & Review Framework** | How do we land work so it merges cleanly and reviews well? |
-| 08 | **Workspace Contribution Framework** | How/when/where/what/why do we edit the workspace itself? |
-| 09 | **Component & Pattern Framework** | What is each component for, when do I reach for it, and how do they compose? |
+| 01 | **[[01-frameworks/01-aesthetic-lens|Aesthetic Lens]]** | Why does this feel right? |
+| 02 | **[[01-frameworks/02-ui-ux-operational-framework|UI/UX Operational Framework]]** | How do we systematically decide about hierarchy, interaction, and metaphor? |
+| 03 | **[[01-frameworks/03-collaboration-and-critique-framework|Collaboration and Critique Framework]]** | How do we work together? |
+| 04 | **[[01-frameworks/04-research-and-evidence-framework|Research and Evidence Framework]]** | What do we know, and how do we know it? |
+| 05 | **[[01-frameworks/05-last-mile-craft-framework|Last-Mile Craft Framework]]** | How do we finish well? |
+| 06 | **[[01-frameworks/06-qa-operating-model|QA Operating Model]]** | How do we frame QA outcomes against target-user expectations on first delivery? |
+| 07 | **[[01-frameworks/07-integration-and-review-framework|Integration & Review Framework]]** | How do we land work so it merges cleanly and reviews well? |
+| 08 | **[[01-frameworks/08-workspace-contribution-framework|Workspace Contribution Framework]]** | How/when/where/what/why do we edit the workspace itself? |
+| 09 | **[[01-frameworks/09-component-and-pattern-framework|Component & Pattern Framework]]** | What is each component for, when do I reach for it, and how do they compose? |
+| 10 | **[[01-frameworks/10-perception-integrity|Perception Integrity]]** | Are the pixels I'm judging real? |
+| 11 | **[[01-frameworks/11-anticipatory-failure-analysis|Anticipatory Failure Analysis]]** | How will this fail, and would I catch it — before I propose it or call it done? |
+| 12 | **[[01-frameworks/12-realtime-photoreal-operational-framework|Realtime Photoreal Operational Framework]]** | How do we choose techniques, allocate frame budget, and prove movie-level fidelity under camera interaction? |
+| 13 | **[[01-frameworks/13-domain-rigor-stack|Domain Rigor Stack]]** | How does every skill hub realize evaluate→measure→route→refuse-shallow-overrides? |
+| 14 | **[[01-frameworks/14-engineering-operating-model|Engineering Operating Model]]** | How do we shape, verify, and ship FE/BE/DevOps/mobile work with done-gates? |
+| 15 | **[[01-frameworks/15-analysis-operating-model|Analysis Operating Model]]** | How do we go from question → valid method → decision without narrative theater? |
+| 16 | **[[01-frameworks/16-security-operating-model|Security Operating Model]]** | How do we threat-model, build, scan, and monitor so security is a quality dimension? |
 
 ---
 
 ## Recommended reading order
 
-**First pass (01–06).** Read in numerical order. They build on each other — Aesthetic Lens sets the philosophical ground, UI/UX lays operational structure on top, Collaboration and Research govern how the work gets produced and justified, Last-Mile governs the finishing layer that ties it all together, and the QA Operating Model frames every audit / review / iteration outcome against target-user expectations. Frameworks 07 (integration) and 08 (contribution) are orthogonal meta-layers — load them when landing work or editing the workspace itself.
+**First pass (01–06).** Read in numerical order. They build on each other — Aesthetic Lens sets the philosophical ground, UI/UX lays operational structure on top, Collaboration and Research govern how the work gets produced and justified, Last-Mile governs the finishing layer that ties it all together, and the QA Operating Model frames every audit / review / iteration outcome against target-user expectations. Frameworks 07 (integration) and 08 (contribution) are orthogonal meta-layers — load them when landing work or editing the workspace itself. Framework 09 (component & pattern) is the design-domain hub — load it for any component/pattern work. Framework 10 (perception integrity) is the cross-cutting precondition to *all* visual evaluation — it fires the moment a fine visual detail is in question, in any domain. Framework 11 (anticipatory failure analysis) is the input-time twin of 06 — it fires *before* a technique with a visible failure surface is proposed or built, and again at the done-boundary before "ready for review."
 
 **By context (once familiar).** Load only what's relevant:
 
@@ -39,13 +46,22 @@ This README is the orientation layer. Load it when you need to know which framew
 | Component/pattern choice, composition, the component schema, DESIGN.md | 09 (+ 01, 02) |
 | Difficult conversation, pushback, shared disagreement memory | 03 |
 | Evidence threshold, confidence tier, advocacy calibration | 04 |
-| Design review, visual QA, handoff, finishing audit | 01, 02, 05, 06 |
-| Iteration, refinement, clean-up, alignment work | 06 (always), then 05 |
-| Game art direction (Legion) | 01, 05 |
-| Icon / variable font system | 01, 05 |
+| Design review, visual QA, handoff, finishing audit | 01, 02, 05, 06, 10 |
+| Iteration, refinement, clean-up, alignment work | 06 (always), then 05, 10 |
+| Judging any fine visual detail — render, screenshot, artifact, reference, asset | 10 (always) |
+| About to propose/build a technique with a visible failure surface (shader, post-process, render, generator, layout) | 11 (always), then 10 |
+| Game / 3D / shader / render review (any project; Legion as testbed) | 01, 05, **12**, 10, 11 |
+| Realtime photoreal, frame budget, flythrough / camera QA | **12**, 10, 11 (then imaging + `realtime-visual-craft`) |
+| Adding/improving any skill hub, spoke, command surface, or plugin wrapper | **13** (always), then #08 |
+| Job-context ontology / standing methods (UX, eng, game, vision, …) | **13** + `02-shared-references/domain-constitutions/` |
+| FE / BE / DevOps / mobile engineering delivery | **14**, 06, 11, 16 (when trust boundaries) |
+| Data science, experiments, analytics, PM evidence | **15**, 04 |
+| Security, threat model, auth, supply chain, AppSec | **16**, 14, 11 |
+| Game art direction (Legion) | 01, 05, 12 |
+| Icon / variable font system | 01, 05, 10 |
 | Architectural or interior reference | 01, 05 |
 | Branching, PRs, merging, multi-branch consolidation | 07 |
-| Editing the workspace itself — skills, frameworks, memory, archive, structure | 08 |
+| Editing the workspace itself — skills, frameworks, memory, archive, structure | 08 (+ **13** for skill clusters) |
 | Full design-engineered delivery | 01–07 |
 
 ---
@@ -118,6 +134,7 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 - Four tiers: Intent (pre-design) → Construction (during authoring) → Finishing (pre-handoff) → Post-ship audit.
 - Ten craft categories: typography, spacing/rhythm/grid, color/contrast, component anatomy, token usage, icon systems, interaction/motion, accessibility, copy/voice, code-level craft.
 - Enforcement distributed across four surfaces: Claude's reliable authoring, Claude's perception (baseline + augmented), human perception, tooling. Name which surface is enforcing what.
+- **Perception integrity (non-negotiable precondition) — now its own framework, [#10](#10--perception-integrity):** never judge fine visual detail from a downsampled image; capture at native resolution and name the resolution judged at before claiming fixed/gone/matching. Promoted out of #05 because it's cross-cutting beyond craft. Method in the standalone `native-visual-eval` skill (no hub dependency).
 - Augmented perception via Pillow/NumPy/OpenCV/scikit-image closes pixel-level gaps — used at specific moments, not as constant background.
 - Every delivery produces an enforcement handoff artifact: enforced / reviewed / needs your eyes / should be tooling.
 - Operational state persists across sessions via `SESSION-STATE.md` (per-project).
@@ -133,8 +150,10 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 - Target-user lens loads FIRST — surface, user type, skill level, implied intent — before grading begins.
 - Skill baseline triplet (`ds-advisor` + `design-engineer` + `figma-canvas-designer`) loads proactively; Sean shouldn't have to name skills.
 - Reference-comparison protocol fires without prompting: browser zoom, high-res capture, Figma deep-zoom — match the inspection altitude to the finishing-tier check.
-- Critical-eye pre-output gate before every report: target-user check, coverage check, composition-before-footprint check, reference check, honesty check, skill check.
+- Critical-eye pre-output gate before every report: context & medium check (profile resolved + cited, medium matches the request's words — `02-shared-references/delivery-playbooks/`; fires first), target-user check, coverage check, composition-before-footprint check, reference check, resolution check (#10), accessibility check (APCA/WCAG legibility + no color-alone meaning), honesty check, detector check (name the independent check or refuse verified-voice), skill check.
 - Iteration-default mindset: first delivery is round one; explicit next-pass scope in every outcome.
+- System-context fidelity: resolve inside the target system's own tokens; backlog its gaps (a11y is not backloggable).
+- Adversarial verification: a render finding is a hypothesis — probe structure before reporting or fixing.
 - No curated subsets — every component, every variant, every asset.
 - Accurate grades over generous grades.
 
@@ -168,21 +187,86 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 
 **Core conviction.** A design system is a body of *intent*, not a kit of parts. Every component is a structured unit of intent — understood against one universal 18-facet schema (identity, intent, context, semantics, anatomy, states, variants, behavior, content, visual decisions, tokens, composition, a11y, governance…), organized by the *question it answers* (9 categories), governed by invariant laws, and delivered to humans, design tools, and AI agents in the right form at the right moment. *"Context is not documentation. Context is intent."*
 
-**When to invoke.** Any component or pattern decision — which component, when, why, how composed; component documentation/schema; the cross-system naming problem; design tokens; the AI-legible / `DESIGN.md` layer; or auditing a UI against the lowest-intensity and state-completeness bars. The design-domain hub the "design-system work" context row routes into.
+**When to invoke.** Any component or pattern decision — which component, when, why, how composed; component documentation/schema; component **contracts** (§5a — whenever more than one implementation depends on the answer, or an implementation is being replaced); the cross-system naming problem; design tokens; the AI-legible / `DESIGN.md` layer; or auditing a UI against the lowest-intensity and state-completeness bars. The design-domain hub the "design-system work" context row routes into.
 
 **Key operating habits.**
 - Name the *question* (9 categories) → run the decision tree → pull per-component detail from the `ux-components` MCP.
 - Behavior is invariant; names are not — resolve any name to its canonical behavior first.
 - Lowest-intensity component that works; one primary action per section; cover every state.
 - Document every component against the universal schema; intent travels with the component.
+- **Run the arbitration test before calling anything a spec** (§5a): if a human must adjudicate when implementations disagree, it is a _description_, not a contract. Contracts clear seven gates — well-typed · normalized · independent · verifiable · deterministic · efficient · evolvable. Tool exports are **testimony** until transformed; check the investment gate before building one.
 - Delivery layers: this framework (the why) · `ux-component-library` skill (procedure) · `ux-components` MCP (per-component data) · `DESIGN.md` (visual identity) · `AGENTS.md` + lint (enforcement).
 - Run the `DESIGN.md` gap-detection / self-prompting protocol when UI work starts on a project with no visual-identity anchor.
+
+### 10 — Perception Integrity
+
+**Core conviction.** A visual judgment is only as truthful as the pixels it runs on. Never judge fine visual detail from a downsampled image — capture at native resolution (zoom the subject so the artifact fills the frame, or read the frame back in 1:1 native chunks) and state the pixel dimensions judged at before claiming anything is fixed, gone, matching, or clean. A thumbnail is a locator, never a verdict. It is the precondition to baseline perception, augmented perception, human review, and reference comparison alike.
+
+**When to invoke.** The instant a fine visual detail is in question, in *any* domain — design QA, game/3D renders, shader and dither artifacts, reference art, photography, data-viz, OCR-able text. Steps aside only for gross locator questions (where is it, is it on screen, overall layout) a thumbnail answers honestly.
+
+**Key operating habits.**
+- Native-resolution capture before any fine-detail call; thumbnail as locator, never verdict.
+- State the number — pixel dimensions + effective scale — before "fixed / gone / matches / clean". No number → not verified.
+- PNG (lossless) before judging banding/edges, so the codec isn't mistaken for the render.
+- Read the app's *real* composited frame (composer, not raw `renderer.render`).
+- Capture native first → measure with `visual-qa-toolkit` → judge with `lead-visual-qa`.
+- Method lives in the standalone `native-visual-eval` skill (no visual-QA-hub dependency).
+
+### 11 — Anticipatory Failure Analysis
+
+**Core conviction.** If I know a technique's classic failure mode, the time to say so is *before* I reach for it — not after Sean finds the artifact. A "classic symptom" narrated only once it's visible is knowledge that arrived one step too late. The workspace was verification-biased: every prior gate fired at *output* time, so failure-mode knowledge stayed latent until a symptom triggered its recall. This framework forces it to be retrieved *by technique-name at planning time* and externalized into a ledger. Find the bug before Sean does.
+
+**When to invoke.** The moment work with a visible failure surface begins — before proposing an approach, and again at the done-boundary before "complete / ready for review." Shaders, post-process chains, volumetrics, dither, materials, tonemappers, bloom, procedural generators, particles, motion curves, layout, colour treatment — any domain. Steps aside for work with no visible failure surface.
+
+**Key operating habits.**
+- Run the Pre-Mortem Pass: name the technique → consult the [Visual Failure-Mode Ledger](../08-knowledge/cross-domain/visual-failure-mode-ledger.md) (write the entry if none exists) → argue *against* my own plan (oppositional/red-team) → derive plain-English acceptance criteria from the reference figures (machine vision) → build → prove against those criteria at native resolution.
+- References become falsifiable criteria, not impressions — fetch the article/plate, read its figures native-res, write down what "correct" demands *before* building.
+- Prove at the done-boundary: native capture + criteria met/not-met + unmet items surfaced as next-pass scope. The criteria + before/after crops are the Proofboard.
+- Self-improving loop: every bug Sean catches that I missed becomes a ledger row at session-end; every new technique researched writes its entry.
+- Input-time twin of #06, runs on #10's native pixels, uses #04's evidence tiers. Method in the standalone `failure-mode-premortem` skill (no hub dependency).
+
+### 12 — Realtime Photoreal Operational Framework
+
+**Core conviction.** Photorealism is a budgeted approximation of light transport, judged in motion as much as in stills. Movie-level northstars gate fidelity; still-only QA is insufficient; low-res imagery is a locator, never a verdict.
+
+**When to invoke.** Realtime 3D / game / shader / lighting / material / post / LOD / scale-traversal work; any claim that a scene matches film or AAA/northstar game reference.
+
+**Key operating habits.**
+- Fidelity contract + named `NORTHSTAR.md` before technique selection.
+- Technique ladder with named cheats; budget the frame in `BUDGET.md` first.
+- **Triple done-gate:** native still grid (#10) + recorded flythrough frame-by-frame + measured ms along poses/paths.
+- Absolute bans: still-only for temporal features; thumbnail verdicts; energy-breaking fill; frag log-depth as default.
+- Command surface: `realtime-visual-craft`. Method in framework #12 + that skill.
+
+### 13 — Domain Rigor Stack
+
+**Core conviction.** Knowledge without enforcement is advice. A domain is ready only when agents can decide, measure, route, and refuse shallow overrides.
+
+**When to invoke.** Creating or expanding any foundation, hub, spoke, command surface, or plugin wrapper. Job-context methods: [[domain-constitutions]].
+
+### 14 — Engineering Operating Model
+
+**Core conviction.** Contracts first, reversible always, observable by default.
+
+**When to invoke.** FE / BE / DevOps / mobile delivery. Done-gates live here; `eng-foundations` stays first principles.
+
+### 15 — Analysis Operating Model
+
+**Core conviction.** An analysis is a decision instrument, not a demonstration. Question and decision owner before method; validity before story.
+
+**When to invoke.** Data science, experiments, analytics, PM evidence. Runs with #04.
+
+### 16 — Security Operating Model
+
+**Core conviction.** Threat-model at design time, verify continuously, fail closed.
+
+**When to invoke.** Trust boundaries, auth, supply chain, AppSec. Runs with #14 and #11.
 
 ---
 
 ## How they interconnect
 
-The seven frameworks are layered, not parallel. They're listed in the order they compose:
+The core operating lenses (01–06) are layered, not parallel — they compose in numerical order (diagrammed below). The remaining frameworks (07–16) are orthogonal meta-layers that fire across whatever the core produces. They're listed in the order they compose:
 
 ```
                      ┌─────────────────────────────┐
@@ -223,28 +307,36 @@ The seven frameworks are layered, not parallel. They're listed in the order they
 - **05 → all.** Convention drift and craft failures feed back into whichever upstream framework the issue surfaces from — research signal, IA failure, aesthetic drift.
 - **07 ⟂ all.** Integration & Review is orthogonal to the content frameworks: whatever framework produced the work, #07 governs how it's partitioned and landed so review stays cheap. It fires at the boundary where work crosses from *done* to *merged* — and is the only framework whose audience is the reviewer, not the artifact.
 - **08 ⟂ all.** Workspace Contribution is the other orthogonal meta-layer: whatever the work, #08 governs *where it gets written and how* — the routing map, per-layer add/extend rules, the memory and archive protocols, and the portable session protocol. It fires whenever a change touches the workspace's own structure (skills, frameworks, references, context, memory, knowledge), not a project deliverable.
-- **09 ⟂ all.** Component & Pattern Framework is the design-domain hub: orthogonal to the operating lenses (01–08), it loads for any component/pattern work and routes *out* to the `ux-component-library` skill, the `ux-components` MCP, `DESIGN.md`, and `AGENTS.md` enforcement. Where 02 decides *which pattern/metaphor*, 09 supplies the component-level *what / when / why / how-composed*.
+- **09 ⟂ all.** Component & Pattern Framework is the design-domain hub: orthogonal to the operating lenses (01–08, 10), it loads for any component/pattern work and routes *out* to the `ux-component-library` skill, the `ux-components` MCP, `DESIGN.md`, and `AGENTS.md` enforcement. Where 02 decides *which pattern/metaphor*, 09 supplies the component-level *what / when / why / how-composed*.
+- **10 ⟂ all (and *beneath* 05/06).** Perception Integrity is the cross-cutting precondition to every visual judgment: orthogonal to all the others because it applies wherever a render, frame, or image asset is assessed — design, game/3D, shaders, photography, data-viz — but it sits *underneath* 05 and 06 specifically, because their perception surfaces (baseline + augmented in 05, the Resolution check in 06's gate) are only trustworthy on real pixels. 05 says *measure it*; 06 says *against the right bar*; 10 says *on native pixels, or it isn't verified*. Routes *out* to the standalone `native-visual-eval` skill (no hub dependency) for method.
+- **11 ⟂ all (and *before* 05/06).** Anticipatory Failure Analysis is the input-time twin of #06: orthogonal to the content frameworks because it applies wherever work has a visible failure surface — UI, DS craft, game/3D, shaders, VFX, data-viz, generated imagery, motion — but it fires *at the front* of the work, before a technique is proposed, and again at the done-boundary. #06 frames the target and grades at output time; #11 anticipates the failure at input time and proves its absence against the reference. It runs *on* #10's native pixels and *with* #04's evidence tiers. Routes *out* to the standalone `failure-mode-premortem` skill and the [[visual-failure-mode-ledger]].
+- **12 ⟂ all (game/3D/render domain ops).** Realtime Photoreal Operational Framework is the decision pipeline for technique selection, frame-budget allocation, and the **triple done-gate** (native still grid + motion/interaction video + measured ms) against movie-level northstars. It runs *on* #10 and *with* #11; look judgment still uses #01/#05. Routes *out* to `realtime-visual-craft`, `render-qa-toolkit`, `interactive-capture-eval`, `visual-qa-photoreal-rendering`, `rendering-guild`.
+- **13 ⟂ all (skill-cluster meta).** [[01-frameworks/13-domain-rigor-stack|Domain Rigor Stack]] is the evaluate→measure→route→refuse checklist every hub instantiates. Job-context methods live in [[domain-constitutions]], not as a sixth schema.
+- **14 ⟂ all (engineering delivery).** [[01-frameworks/14-engineering-operating-model|Engineering Operating Model]] is contracts-first FE/BE/DevOps/mobile done-gates. Runs with #06, #11, and #16 at trust boundaries.
+- **15 ⟂ all (analysis).** [[01-frameworks/15-analysis-operating-model|Analysis Operating Model]] is question → valid method → decision. Runs with #04.
+- **16 ⟂ all (security).** [[01-frameworks/16-security-operating-model|Security Operating Model]] is threat-model, scan, fail closed. Runs with #14 and #11.
 
 ---
 
 ## Also in this folder
 
-- `_migration-audit-notes_2026-04-21.md` — Preservation-biased token-optimization audit from the migration session. Tracks what was cut, what was considered but preserved, and why. Useful reference if future passes need to see the editing rationale.
+- [[01-frameworks/_migration-audit-notes_2026-04-21|_migration-audit-notes]] — Preservation-biased token-optimization audit from the migration session. Tracks what was cut, what was considered but preserved, and why. Useful reference if future passes need to see the editing rationale.
 
 ## Related workspace docs
 
-- `../02-shared-references/epistemic-standards.md` — core epistemic obligations (surface assumptions, verify sources, name alternatives). Load when beginning non-trivial reasoning.
-- `../02-shared-references/artifact-standards.md` — deliverable obligations (naming, versioning, no overwrites). Load when producing or receiving any file.
-- `../03-skills/` — the tactical execution layer. Frameworks hold the principles; skills do the work. See each framework's "Relationship to existing skills" section for the specific mapping.
+- [[epistemic-standards]] — core epistemic obligations (surface assumptions, verify sources, name alternatives). Load when beginning non-trivial reasoning.
+- [[artifact-standards]] — deliverable obligations (naming, versioning, no overwrites). Load when producing or receiving any file.
+- [[_SKILLS]] — the tactical execution layer. Frameworks hold the principles; skills do the work. See each framework's "Relationship to existing skills" section for the specific mapping.
+- [[domain-constitutions]] · [[constitution-spec]] — job-context methods (not project values).
 
 ---
 
 ## Notes for LLMs loading this README
 
-**Token budget guidance.** The nine frameworks total ~2,100 lines of markdown. This README runs ~285 lines and captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For branching, PR, or consolidation work, load #07.
+**Token budget guidance.** The sixteen frameworks total substantial markdown. This README captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For any fine visual-detail judgment, load #10 (it's short, and its `native-visual-eval` skill carries no hub dependency). Before proposing or building any technique with a visible failure surface, load #11 (its `failure-mode-premortem` skill also carries no hub dependency). For realtime 3D / photoreal / frame-budget / flythrough work, load #12 (its `realtime-visual-craft` skill is the command surface). For branching, PR, or consolidation work, load #07.
 
 **When the README isn't enough.** The compressed summaries preserve the *what* but not the *why* — the examples, the canon references, the tier descriptions with thresholds, the principle-to-check translations. Any serious reasoning task in the framework's domain should load the full document.
 
-**Updates.** Framework numbering is stable (01–09). Any future framework additions should extend the sequence (10, 11, etc.) or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly.
+**Updates.** Framework numbering is stable (01–16). Any future framework additions should extend the sequence or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly. (#10 Perception Integrity was added 2026-06-30, #11 Anticipatory Failure Analysis on 2026-07-14, #12 Realtime Photoreal Operational on 2026-08-03, #13–#16 in the 2026-08 domain-ops pass.)
 
 **Operational state.** This folder is static reference. Operational continuity between sessions lives in per-project `SESSION-STATE.md` files (see framework 05's Operational State section for the spec) and in `../06-context/session-log.md` for cross-project session logs.

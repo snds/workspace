@@ -9,14 +9,23 @@ description: >-
   CLI. Trigger on "bootstrap my workspace", "set up my second brain", "generate
   my AI workspace", "build my skill network", "interview me", "run the bootstrap
   generator", or any request to scaffold a personalized AI workspace from
-  scratch.
+  scratch. ALSO handles updating/upgrading an EXISTING workspace ("update my
+  workspace", "upgrade my workspace", "help me fix my workspace") — it locates the
+  existing vault and runs a non-destructive corrective pass.
 triggers:
+  - set up my workspace
   - bootstrap my workspace
   - set up my second brain
+  - build my second brain
   - generate my AI workspace
   - build my skill network
   - interview me
   - run the bootstrap generator
+  - update my workspace
+  - upgrade my workspace
+  - help me update my workspace
+  - fix my workspace
+  - course-correct my workspace
 domain: meta
 role: orchestrator
 hub: bootstrap-generator
@@ -45,6 +54,38 @@ their substance here:
 - `brain/interview.md` — the six movements M0–M5, every question + example menu.
 - `brain/synthesis.md` — how to turn interview answers into a `profile.yaml`.
 - `brain/resolver.md` — pull / patch / generate decision rules + overlap reconciliation.
+
+---
+
+## First: NEW workspace, or UPDATE an existing one?
+
+Two entry paths. Read the person's ask before choosing:
+
+- **"Set up / bootstrap / generate my workspace"** → this is a **new build**. Continue to
+  Phase 0 below and run the full interview.
+- **"Update / upgrade / fix / augment my workspace"** or **anyone who already HAS a
+  workspace** → **do NOT re-interview from scratch.** Examine first, then augment additively:
+
+  1. **Find it.** If the current dir is a workspace (`wsx doctor` says so), use it. Otherwise
+     `python3 <generator>/bin/wsx scan --find-workspaces` lists workspaces in the usual homes.
+     Several → show the list, ask which; one → confirm; none → ask, or offer `wsx init`.
+  2. **Examine before asking anything.** Run `wsx examine` (add `--json` if you want to parse
+     it). It reports, read-only: which interview movements (M0–M5) are **already answered** vs
+     still **pertinent**, what scaffold is missing, the existing hub/spoke/project inventory,
+     and any broken connections. **This is what makes augmentation additive** — you ask ONLY the
+     pertinent movements and never re-ask what's already there, and you never re-propose skills
+     or projects that already exist.
+  3. **Ask only the pertinent movements** (from examine's readout), in the normal suggestive
+     style. Skip the complete ones — at most *confirm* them in one line ("Still Cursor as your
+     main assistant?"). Write new answers with `wsx profile set …` (additive — it only sets the
+     keys you pass).
+  4. **Repair + augment structure.** Show `wsx upgrade --dry-run` in plain language (missing
+     scaffold it will add; the MOC/index layer it will regenerate to reconnect the graph),
+     stress it is **non-destructive** (never overwrites hand-edited notes/skills, preserves every
+     existing link and typed edge — it repairs dangling ones, it doesn't delete). On a yes:
+     `wsx upgrade` → `wsx emit all` → `wsx health` + `wsx lint`. Report what changed.
+  5. Only run the **resolver** loop (search → review-gate → resolve → emit) if they want to
+     *add new capabilities*. Everything pre-existing stays.
 
 ## Operating rules (hold these across every phase)
 
@@ -78,20 +119,35 @@ everything structural goes through `wsx`:
 
 | Step | Command |
 |---|---|
-| Scaffold the workspace | `wsx init <dir> --name "<name>"` |
+| Detect their stack (run first) | `wsx scan` (or `wsx scan --json`) — agents, MCP, local LLMs |
+| **Find an existing workspace to update** | `wsx scan --find-workspaces` — locates vaults in the usual homes |
+| Scaffold the workspace | `wsx init <dir> --name "<name>"` (recommend `~/Documents/Projects/Workspace`) |
+| **Update/upgrade an existing workspace** | `wsx upgrade [--dry-run]` — non-destructive: add missing scaffold + reconnect the graph |
 | Write profile fields | `wsx profile set contexts.work.role="…" surfaces.agents="claude,cursor" …` |
-| GENERATE a skill | `wsx skill add <name> --hub <hub> --triggers "a,b,c" --desc "…"` |
+| GENERATE a skill | `wsx skill add <name> --kind hub\|spoke --hub <hub> --triggers "a,b,c" --desc "…"` |
+| Enrich a skill body | (author the skeleton's sections in prose) then `wsx skill reindex` |
+| Add a project's docs folder | `wsx project new "<name>"` — docs & context only (not the code) |
+| Search for sources | `wsx search "<capability>"` (skills + reference anchors) |
+| PULL / PATCH / COMPOSITE | author `context/skill-plan.json` (see brain/resolver.md), then `wsx resolve` |
 | List / re-index skills | `wsx skill list` · `wsx skill reindex` |
 | Check trigger overlaps | `wsx lint` |
+| Graph hygiene (orphans, stale, dangling edges) | `wsx health` |
 | Emit for their surface(s) | `wsx emit claude-code` (or `agents-md` / `cursor` / `pack` / `all`) |
 | Final check | `wsx verify` |
+| Set who commits are signed as | `wsx identity` (show) → `wsx identity --name "…" --email "…"` |
+| Choose where it lives | `wsx remote` (free-host options); map it: `wsx remote <url> --scope personal --name "…" --email "…"` |
+| Finalize GitHub auth | `wsx push` (first commit + push; personal-solo only) |
+| Work/personal separation | `wsx ssh-setup` · `wsx remote <url> --scope work …` · `wsx collab <account>` |
 | (later) commit / sync | `wsx sync` |
 
 Notes: list-valued profile fields (`surfaces.agents`, `contexts.professional.crafts`,
 `contexts.personal.interests`, `preferences.banned`, `imports`) take comma-separated
-values. `wsx resolve` (PULL from a registry) and `wsx emit mcp` are **stubs** today —
-for now, **GENERATE** skills with `wsx skill add` and emit the file-based adapters.
-Lost? `wsx doctor` says where you are and what to run next.
+values. `wsx search` finds sources (skills + reference anchors); `wsx resolve`
+(PULL/PATCH/GENERATE/COMPOSITE, per an approved `skill-plan.json`) is **built** — it
+fetches, pins (read-only), namespaces, cites references, and registers. `wsx emit mcp`
+is **built** too — it writes a runnable, zero-dep stdio MCP server (the universal
+runtime) alongside the file adapters (`claude-code`/`agents-md`/`cursor`/`pack`). Lost?
+`wsx doctor` says where you are and what to run next.
 
 ---
 
@@ -110,12 +166,16 @@ Open warmly and in plain language. Cover, briefly:
    - Personal context is **walled by default.** Work, professional, and personal
      live in separate files. Anything you mark personal-private stays
      **local-only and is never synced.**
-   - You choose the separation level (walled vs. blended) and whether to encrypt.
+   - You choose the separation level (walled vs. blended). **This tool does not encrypt
+     anything** — never imply it does; walled means gitignored + never emitted. For at-rest
+     protection point at FileVault/BitLocker.
    - Nothing leaves your machine except what you explicitly emit and sync.
-4. **The agnostic promise.** "This isn't locked to any one AI. I'll default to
-   the most-tested path, but I can also set you up for Cursor, Copilot/Codex,
-   Gemini, or a plain context pack — it speaks open standards (AGENTS.md, MCP,
-   the Agent Skills format)."
+4. **The agnostic promise + bring-your-own-tokens.** "This isn't locked to any one
+   AI. I'll default to the most-tested path, but I can also set you up for Cursor,
+   Copilot/Codex, Gemini, or a plain context pack — it speaks open standards
+   (AGENTS.md, MCP, the Agent Skills format). And it runs on **your** assistant and
+   **your** account — the generator itself has no API key and makes no model calls;
+   if you run a local model, this can be fully private and cost no tokens at all."
 
 Then ask if they're ready to start. Don't scaffold anything yet.
 
@@ -127,8 +187,14 @@ Read **`brain/interview.md`** and run the six movements. Don't paraphrase the
 questions from memory — that doc is the canonical script with the example menus
 and the progressive-depth logic. Summary of what each movement is *for*:
 
-- **M0 — Surfaces & infra:** AI assistant(s) + models, machines, offline needs,
-  current sync, existing assets to import. → emit targets, transport, capability tier.
+- **M0 — Surfaces & infra:** **start with `wsx scan`** to detect their installed
+  agents, MCP integrations, and local LLMs, then confirm rather than ask cold. **If
+  scan returns `needs_setup` (nothing found), pause and recommend setting up a surface
+  first** — the generator uses that assistant for the heavy lifting, so a capable one
+  (Claude Code recommended) gives the best workspace; help them pick, re-scan, then
+  continue (only fall back to a mechanical `wsx init` starter if they insist). Plus
+  machines, offline needs, where the workspace should live (`wsx remote`), and existing
+  assets to import. → emit targets, transport, capability tier.
 - **M1 — Work context:** role/domain, recurring deliverables, fixed constraints,
   standards, where time is lost. → work hubs/spokes + work project-context.
 - **M2 — Professional craft:** deep expertise, active growth, north-star
@@ -139,18 +205,22 @@ and the progressive-depth logic. Summary of what each movement is *for*:
 - **M4 — Operating preferences:** tone/verbosity, audience, code-vs-prose, banned
   anti-patterns, ask-vs-proceed posture. → user-preferences + offline snapshot.
 - **M5 — Lifecycle & ambition:** session continuity, walled vs. blended
-  separation, automation level, privacy/encryption. → lifecycle adapter +
-  separation + gitignore/encryption policy.
+  separation, automation level, privacy posture. → lifecycle adapter +
+  separation + gitignore policy.
 
 **Mine the overlaps.** Work / professional / personal deliberately form a Venn.
 Ask explicitly where two contexts bleed together — those overlaps are the
 highest-value skills, so don't let them fall through the gaps between movements.
 
 When the interview is substantively complete, scaffold the neutral workspace so
-the profile has a home:
+the profile has a home. **Recommend the default location** unless they prefer
+elsewhere: `~/Documents/Projects/Workspace` — under Documents so iCloud / OneDrive /
+Time Machine back it up automatically (a free second backup on top of git), and
+inside a `Projects` folder that becomes the single home for all their future
+projects (this workspace is just the first):
 
 ```
-wsx init
+wsx init ~/Documents/Projects/Workspace --name "<name>"
 ```
 
 This creates the neutral workspace, the Obsidian vault, and `git init`. It is
@@ -176,13 +246,16 @@ wsx profile get    # read it back and show the person the saved profile
 The profile shape (the seam interface `wsx` consumes):
 
 ```
-schema_version · identity{name,handle} · surfaces{primary,agents[],machines[]}
+schema_version · identity{name,handle}
+· use_context{personal|professional|mixed}
+· expertise{ <domain>: {level, seniority?, years?} }   # per-domain, not global
+· surfaces{primary,agents[],machines[]}
 · models{tier,offline} · transport{type,remote}
 · contexts{ work{role,summary}, professional{crafts[]},
             personal{private,interests[]} }
 · preferences{tone,verbosity,audience,banned[]}
 · lifecycle{continuity,separation,automation}
-· privacy{personal_local_only,encrypt} · imports[]
+· privacy{personal_local_only} · imports[]
 ```
 
 If the schema rejects the write, surface the validation error plainly, fix the
@@ -193,17 +266,39 @@ offending field with the person, and re-run `wsx profile set` — never hand-edi
 
 ## Phase 3 — Resolver + the skill-plan REVIEW GATE
 
-Read **`brain/resolver.md`**. For each capability/domain the interview surfaced,
-make the match decision (this is *your* judgment; the fetch/pin is `wsx`'s job):
+Read **`brain/resolver.md`**. For each capability/domain the interview surfaced, run
+**two-track sourcing** before deciding (both searches, every capability):
+
+1. **Skill track:** `wsx search --kind skill "<capability>"` — is there a ready-made
+   skill to PULL or ADAPT?
+2. **Reference track:** find the *industry-leading* reference — the standard, the
+   canonical guidance, what a top practitioner would cite — using your own research
+   tools (web search/fetch, or the `deep-research` skill for depth). `wsx search
+   --kind reference` lists any configured anchors, but the real finding is yours.
+
+Then make the match decision (this is *your* judgment; fetch/pin/cite is `wsx`'s job):
 
 - **STRONG match → PULL.** Pin + namespace it. Pulled skills are **read-only**.
 - **PARTIAL match → PULL + PATCH.** Patches live in a sibling overlay; **never
   edit the pulled skill** itself.
-- **NONE / proprietary / personal IP → GENERATE** a new canonical skill.
+- **NONE / proprietary / personal IP / thin match → GENERATE-COMPOSITE** a new
+  canonical skill, grounded in the person's judgment **and** the references you found,
+  with a `references[]` list so `wsx resolve` cites them. A composite that doesn't
+  cite is unfinished (`wsx lint` fails it).
+
+**Set each skill's altitude from `profile.expertise{}`.** Expertise is **per-domain** — the
+same person is often an `expert` (staff-level) in their core craft and a `hobbyist` in a
+side interest. For every generate/composite entry, read the person's level *for that domain*
+and pass `level` (+ `seniority`) in the plan: a hobbyist skill is scaffolded to *teach*
+fundamentals; an expert skill assumes fluency and captures their judgment/edge-cases (and, if
+senior, how they set the bar). Getting the altitude right per domain is what makes a skill land
+rather than bore or strand them.
 
 Bias: **pull** for generic, well-trodden domains; **adapt** at roughly 70% match;
-**generate** for the person's unique judgment, proprietary work, and personal
-projects.
+**generate-composite** for the person's unique judgment, proprietary work, personal
+projects, and anywhere distilling authoritative reference beats a shallow pull — which,
+in practice, is most high-value domains. The goal isn't "is there a skill?" but "**what
+is the best possible skill for this person, from everything available?**"
 
 Registries are pluggable sources, each with its own trust profile — state these
 honestly when you cite a source:
@@ -220,6 +315,18 @@ triggers, then do the **MANDATORY overlap reconciliation**: dedupe overlapping
 triggers and name a single canonical owner per concern. No two skills may claim
 the same trigger.
 
+**Enrich, never ship stubs.** `wsx skill add` lays down a *sectioned skeleton*
+(When to use / How to do it well / Worked example / Anti-patterns / Related for a
+spoke; What this hub owns / Spokes / Operating standards for a hub). That skeleton
+is a form, not a finished skill — it's full of `_(…)_` writing prompts under a
+`> **… skeleton —` banner. For **every GENERATED skill**, replace those prompts with
+real prose grounded in *this person's* judgment and domain (the reusable know-how an
+untuned model wouldn't have), delete the skeleton banner, then run `wsx skill reindex`
+so the manifest hash tracks the enriched body. `wsx lint` now **fails** on any
+generated skill that still carries a `_(…)_` prompt or the banner — treat that the
+way you treat a trigger overlap: a blocker, not a detail. Use `--kind hub` for an
+orchestrator with spokes and `--kind spoke` for a focused skill.
+
 **Now present the skill-plan REVIEW GATE.** Lay out the full plan in plain terms:
 
 - the hubs and their spokes,
@@ -227,14 +334,21 @@ the same trigger.
 - the trigger map after reconciliation (who owns what),
 - anything unvetted, flagged clearly.
 
-Get an explicit **go-ahead.** Only then run the mechanical half:
+Get an explicit **go-ahead.** Only then write the approved plan as
+`context/skill-plan.json` (the machine format is in **brain/resolver.md** — one
+object per capability: `name`, `source`, and for pulls `registry` + `url`, plus the
+assigned `hub`/`triggers`; unvetted registries need `"audited": true`) and run the
+mechanical half once:
 
 ```
-wsx resolve    # fetch + pin pulled skills per the approved plan
+wsx resolve    # fetch + pin (read-only) pulled skills, scaffold overlays, register
 ```
 
-Generated skills are authored as canonical markdown in `skills/`; patched skills
-get a sibling overlay; pulled skills are pinned read-only and namespaced.
+Generated skills are authored as canonical markdown in `skills/`; patched skills get
+a sibling editable `overlay.md` (composed into the emitted Claude-Code skill); pulled
+skills are pinned read-only and namespaced under `skills/pulled-<registry>-<name>/`.
+Then enrich every GENERATED skill (below) and, for pulled skills, put any trigger or
+rule overrides in the overlay — never edit a pulled file.
 
 ---
 
@@ -251,6 +365,12 @@ wsx emit cursor        # .cursor/ rules + AGENTS.md
 wsx emit mcp           # the universal MCP runtime (lights up many frontends at once)
 wsx emit pack          # tool-less, pasteable context pack (degradation backstop)
 ```
+
+**If any of their assistants is chat-only** (ChatGPT, Perplexity, Gemini in a browser — `wsx
+scan` labels these `chat` → surface `pack`), say so plainly: those cannot open a folder on
+their computer, so pointing them at a path will always fail. `wsx emit pack` is the answer —
+they paste or upload `adapters/context-pack.md`. Tell them this *before* they try, and re-run
+`wsx emit pack` whenever the workspace changes so the pasted copy stays current.
 
 Adapters are **generated, never hand-edited.** They compile from the one
 canonical source (`triggers`/`description` are the single source each adapter
@@ -274,8 +394,28 @@ Then give the person a short, honest closing report:
   posture, which surface(s) were emitted.
 - **What `verify` and `lint` found:** green, or specific issues. If lint reports a
   leftover trigger overlap, return to the reconciliation step — don't ship it.
-- **How to use it:** open the vault in Obsidian, the workspace is a git repo
-  (`wsx sync` to pull/push), session continuity via `wsx session start|end`.
+- **Git authorship + where it lives — settle this, don't skip it.** Run `wsx identity`;
+  if it reports no usable identity, **commits silently fail and nothing is ever saved** —
+  the most common way a fresh workspace ends up empty. Then wire the home:
+  1. They create an **empty PRIVATE** repo on their host (GitHub/GitLab/Codeberg), no README.
+  2. Map it as their personal remote — this also sets the repo-local identity:
+     `wsx remote <url> --scope personal --name "…" --email "…"` (offer the GitHub **noreply**
+     address so a personal email never lands in public commits).
+  3. **Finalize the auth by actually pushing:** `wsx push` lands the first commit and pushes,
+     which is what proves their GitHub auth works. If it fails it says exactly why (create the
+     empty repo / run `wsx ssh-setup`), never a false success.
+- **Work vs personal — only if they have both.** If any of their repos are employer/work,
+  keep the two worlds **non-overlapping**: `wsx ssh-setup` scaffolds SSH host-aliases
+  (`github.com` personal, `github-work` work); map each work repo with
+  `wsx remote <url> --scope work --name "…" --email "…"` (a *different* identity — the tool
+  refuses to let one identity span both scopes). **Work scope never auto-pushes** (branch →
+  PR → review). If their workspace repo is private and they want a work machine to keep it
+  updated, `wsx collab <work-account>` prints the one command to add that account as a
+  collaborator on the personal repo — they run it; work repos are never synced into personal.
+- **How to use it:** open the vault in Obsidian; session continuity via `wsx session start|end`.
+- **Growing it later:** anything they build next — a new skill, hub, framework, or
+  playbook — goes through `frameworks/skill-authoring.md` (emitted into their workspace),
+  which carries this same rigor and supersedes their AI's native skill-builder.
 - **Honest status notes:** anything pulled from an unvetted registry, any target
   emitted as a thin fallback, anything deferred. This system is early — say so.
 

@@ -46,6 +46,20 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
       "fallback_note": "No Blender → use procedural generation (fBm/curl noise) for the volume/asset, or ask the user to supply a baked VDB/3D-texture. Procedural is the default path anyway, so this degrades cleanly.",
       "powers": ["vfx-volumetrics"]
     },
+    "linear-mcp": {
+      "kind": "mcp",
+      "provides": "Read and write a Linear workspace — list/create issues, move statuses, apply labels, and comment. The transport for the Open Agent Engine queue, ledger, and receipts.",
+      "detect": { "method": "mcp-tool-present", "match": "mcp__*linear*__*" },
+      "install": {
+        "claude-code": "One server per lane, user-scoped so the runner works from any directory: `claude mcp add --transport sse linear-<lane> https://mcp.linear.app/sse --scope user`, then `/mcp` to complete OAuth. Multiple Linear workspaces need SEPARATE auth contexts — Linear scopes one MCP connection to one workspace, so run each through `mcp-remote` with its own config dir: `MCP_REMOTE_CONFIG_DIR=~/.mcp-auth/linear-<lane> npx mcp-remote https://mcp.linear.app/mcp`.",
+        "cursor": "Settings → MCP → Add server → `https://mcp.linear.app/sse`; repeat per workspace with a distinct server name. For two workspaces use the mcp-remote command form with a per-lane `MCP_REMOTE_CONFIG_DIR` env var, same as Claude Code.",
+        "generic": "Point any MCP client at https://mcp.linear.app/mcp (or /mcp/readonly for read-only reach) and complete the OAuth flow with the account that should read and update agent issues. One connection binds to one workspace.",
+        "no-mcp": "No MCP on this surface: use the HTTP transport instead — POST https://api.linear.app/graphql with header `Authorization: <LINEAR_API_KEY from the environment>`. Equivalent capability, one extra credential to manage. See [[open-agent-engine]] → Transport."
+      },
+      "fallback": "degrade",
+      "fallback_note": "MCP is the preferred transport, not a requirement. The engine needs only four operations (query / create / update issue, read+update comment by id), so degrade to the HTTP transport: POST https://api.linear.app/graphql with an API key READ FROM THE ENVIRONMENT (LINEAR_API_KEY). Never accept a key pasted into the conversation and never write one into a workspace file. If no key is present in the environment, say so and stop — do not ask for one. Final floor: the loop is runnable by hand in the tracker's web UI, so a surface with neither transport still has a path. Tell the user which transport is in use; a receipt written over HTTP is identical to one written over MCP.",
+      "powers": ["open-agent-engine"]
+    },
     "agent-browser": {
       "kind": "cli",
       "provides": "Chromium browser automation over CDP — accessibility-tree snapshots, clicks/typing, scraping JS-heavy pages.",
@@ -65,8 +79,75 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
         "windows": "winget install Gyan.FFmpeg"
       },
       "fallback": "block",
-      "fallback_note": "Frame extraction / transcode has no portable fallback — surface the install command and stop.",
-      "powers": ["reference-video-review"]
+      "fallback_note": "Frame extraction / transcode has no portable fallback — surface the install command and stop. For visual-prove-engine specifically, only the `vqa motion --video` input path needs it; a pre-extracted `--frames` directory works without ffmpeg.",
+      "powers": ["reference-video-review", "render-qa-toolkit", "visual-prove-engine"]
+    },
+    "python-imaging": {
+      "kind": "cli",
+      "provides": "NumPy + Pillow in the active python3 — array math and PNG decode/encode, the substrate for deterministic pixel measurement.",
+      "detect": { "method": "shell", "probe": "python3 -c 'import numpy, PIL'" },
+      "install": {
+        "any": "python3 -m pip install numpy Pillow",
+        "macos": "python3 -m pip install numpy Pillow",
+        "linux": "python3 -m pip install numpy Pillow",
+        "windows": "python3 -m pip install numpy Pillow"
+      },
+      "fallback": "block",
+      "fallback_note": "Pixel measurement cannot be reproduced by narrative inspection — that substitution is the exact failure the engine exists to prevent. Surface the install command and stop; never emit an unmeasured verdict as if measured.",
+      "powers": ["visual-prove-engine"]
+    },
+    "nvidia-flip": {
+      "kind": "cli",
+      "provides": "NVIDIA FLIP (flip_evaluator) — viewing-distance-aware HVS error maps for render-vs-reference.",
+      "detect": { "method": "shell", "probe": "python3 -c 'import flip_evaluator'" },
+      "install": { "any": "python3 -m pip install flip-evaluator" },
+      "fallback": "degrade",
+      "fallback_note": "vqa compare / flip_region fall back to flip-lite (CSF + HyAB + edges) and record backend: flip-lite. Never silent. SSIM+Δe remain. Do not treat flip-lite as nvidia-flip.",
+      "powers": ["visual-prove-engine"]
+    },
+    "dreamsim": {
+      "kind": "cli",
+      "provides": "DreamSim mid-level perceptual distance (torch) for Spirit / novel-view / same-object questions.",
+      "detect": { "method": "shell", "probe": "python3 -c 'import dreamsim, torch'" },
+      "install": { "any": "python3 -m pip install dreamsim torch" },
+      "fallback": "degrade",
+      "fallback_note": "dreamsim_region skips if the cue is optional, else errors. Never a Literal gutter substitute. Foreground-biased: matching heroes can hide chrome diffs.",
+      "powers": ["visual-prove-engine"]
+    },
+    "gltf-validator": {
+      "kind": "cli",
+      "provides": "Khronos glTF-Validator CLI for Error-level mesh/asset audit.",
+      "detect": { "method": "shell", "probe": "command -v gltf-validator" },
+      "install": {
+        "any": "npm i -g gltf-validator",
+        "macos": "npm i -g gltf-validator",
+        "linux": "npm i -g gltf-validator"
+      },
+      "fallback": "degrade",
+      "fallback_note": "vqa mesh uses the engine's stdlib glTF parser (NaN accessors, buffer overruns, illegal types) and still fail-closes on Error. Official validator is preferred when present.",
+      "powers": ["visual-prove-engine"]
+    },
+    "tesseract": {
+      "kind": "cli",
+      "provides": "Tesseract OCR (CLI or pytesseract) for measuring currently attested strings.",
+      "detect": { "method": "shell", "probe": "command -v tesseract" },
+      "install": {
+        "macos": "brew install tesseract",
+        "linux": "sudo apt-get install -y tesseract-ocr",
+        "windows": "winget install UB-Mannheim.TesseractOCR"
+      },
+      "fallback": "degrade",
+      "fallback_note": "ocr_text skips if optional, else errors. Never silently pass a title/string cue. Keep attest for identity until OCR is actually run.",
+      "powers": ["visual-prove-engine"]
+    },
+    "geometric-foundation-model": {
+      "kind": "cli",
+      "provides": "VGGT or DUSt3R for multi-view geometric consistency (pose/pointmap) on pinned orbits.",
+      "detect": { "method": "shell", "probe": "python3 -c 'import vggt'" },
+      "install": { "any": "python3 -m pip install vggt  # or the DUSt3R environment documented upstream" },
+      "fallback": "degrade",
+      "fallback_note": "vqa geometry still requires >=2 views and measures pairwise phase-correlation. A single still is never a 3D pass. Missing VGGT is recorded; do not invent a reconstructed mesh.",
+      "powers": ["visual-prove-engine"]
     },
     "yt-dlp": {
       "kind": "cli",
@@ -89,6 +170,95 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
       "fallback": "block",
       "fallback_note": "Hosted generation needs the belt CLI + an authenticated account — no local fallback. Surface the install + login steps and stop.",
       "powers": ["ai-video-generation"]
+    },
+    "axe-cli": {
+      "kind": "cli",
+      "provides": "Deque axe-core accessibility engine over a headless browser — structural WCAG violations (roles, labels, names, landmarks, order) with rule ids, impact, WCAG tags, and CSS selectors.",
+      "detect": { "method": "shell", "probe": "command -v axe || npx --no-install @axe-core/cli --version" },
+      "install": {
+        "any": "npm i -g @axe-core/cli   # or run per-invocation: npx @axe-core/cli <url>",
+        "macos": "npm i -g @axe-core/cli",
+        "linux": "npm i -g @axe-core/cli",
+        "windows": "npm i -g @axe-core/cli"
+      },
+      "fallback": "degrade",
+      "fallback_note": "No axe → try pa11y, then Lighthouse's accessibility category. With no runner at all, a11y-audit-toolkit emits its MANUAL_CHECKLIST (exit 2, degraded) plus stdlib static HTML checks; findings are then human-confirmed, never reported as automated evidence.",
+      "powers": ["a11y-audit-toolkit"]
+    },
+    "pa11y": {
+      "kind": "cli",
+      "provides": "pa11y accessibility runner (HTML_CodeSniffer or axe engine) — WCAG 2.x issue codes per success criterion, with selector and context, plus JSON/CI reporters.",
+      "detect": { "method": "shell", "probe": "command -v pa11y || npx --no-install pa11y --version" },
+      "install": {
+        "any": "npm i -g pa11y   # or per-invocation: npx pa11y <url>"
+      },
+      "fallback": "degrade",
+      "fallback_note": "Second-choice runner behind axe — its WCAG-code output is useful for conformance reporting. Absent, a11y-audit-toolkit falls through to Lighthouse, then the MANUAL_CHECKLIST degraded path.",
+      "powers": ["a11y-audit-toolkit"]
+    },
+    "lighthouse": {
+      "kind": "cli",
+      "provides": "Google Lighthouse — lab audit of a URL producing a JSON report: performance metrics (LCP, TBT, CLS, SI, FCP), category scores, resource-size details, and an accessibility category backed by axe-core.",
+      "detect": { "method": "shell", "probe": "command -v lighthouse || npx --no-install lighthouse --version" },
+      "install": {
+        "any": "npm i -g lighthouse   # CI: npm i -D @lhci/cli && npx lhci autorun"
+      },
+      "fallback": "degrade",
+      "fallback_note": "No Lighthouse → fe-perf-harness can still assert budgets against any Lighthouse-shaped JSON produced elsewhere (LHCI runner, PageSpeed Insights API export, a hosted CI step); with no report at all it reports INCONCLUSIVE (exit 2) rather than passing. For a11y-audit-toolkit it is the third-choice runner behind axe and pa11y.",
+      "powers": ["a11y-audit-toolkit", "fe-perf-harness"]
+    },
+    "gitleaks": {
+      "kind": "cli",
+      "provides": "Secret scanning over a working tree, staged changes, or full git history — provider-format and entropy rules producing findings with file, line, commit, rule id, and the matched secret's fingerprint.",
+      "detect": { "method": "shell", "probe": "command -v gitleaks" },
+      "install": {
+        "macos": "brew install gitleaks",
+        "linux": "brew install gitleaks   # or download the release binary from github.com/gitleaks/gitleaks/releases",
+        "windows": "winget install gitleaks.gitleaks"
+      },
+      "fallback": "degrade",
+      "fallback_note": "Without gitleaks, scan the diff for the high-confidence provider formats you can name (AWS key ids, private-key headers, `Bearer` literals, connection strings with inline passwords) and say the check was pattern-based. A history-wide entropy scan is not reproducible by hand, so the claim 'no secrets in history' must not be made — report the secret-scan gate as DEGRADED and name the install command.",
+      "powers": ["sec-supply-chain"]
+    },
+    "syft": {
+      "kind": "cli",
+      "provides": "SBOM generation (CycloneDX or SPDX) from a built artifact — container image, directory, or archive — enumerating components with versions, licenses, and purls.",
+      "detect": { "method": "shell", "probe": "command -v syft" },
+      "install": {
+        "macos": "brew install syft",
+        "linux": "brew install syft   # or: curl -sSfL https://get.anchore.io/syft | sh -s -- -b /usr/local/bin",
+        "windows": "winget install Anchore.Syft"
+      },
+      "fallback": "block",
+      "fallback_note": "An SBOM re-read from the manifest can differ from what actually shipped, which defeats its purpose, so there is no acceptable substitute. Surface the install command and stop rather than producing a manifest-derived list and calling it an SBOM.",
+      "powers": ["sec-supply-chain"]
+    },
+    "semgrep": {
+      "kind": "cli",
+      "provides": "Static analysis over source with pattern rules — injection, unsafe deserialization, missing authorization, hardcoded credentials, and framework-specific security rules, reported per finding with rule id, severity, and file/line.",
+      "detect": { "method": "shell", "probe": "command -v semgrep" },
+      "install": {
+        "macos": "brew install semgrep",
+        "linux": "pipx install semgrep   # or: python3 -m pip install semgrep",
+        "windows": "pipx install semgrep"
+      },
+      "fallback": "degrade",
+      "fallback_note": "Without semgrep there is no automated SAST path, so the `audit` verb cannot claim one. Fall back to the per-class review checklist in sec-appsec-owasp, read the enforcement point in the diff by hand, and label the result `critique` (judgment) rather than `audit` (measurement) per framework 13.",
+      "powers": ["sec-appsec-owasp"]
+    },
+    "aio-cli": {
+      "kind": "cli",
+      "provides": "Adobe I/O CLI (`aio`) — Developer Console project/workspace/API management, App Builder init, action deploy/invoke, and Runtime logs.",
+      "detect": { "method": "shell", "probe": "command -v aio" },
+      "install": {
+        "any": "npm install -g @adobe/aio-cli   # then: aio login",
+        "macos": "npm install -g @adobe/aio-cli",
+        "linux": "npm install -g @adobe/aio-cli",
+        "windows": "npm install -g @adobe/aio-cli"
+      },
+      "fallback": "block",
+      "fallback_note": "Every Console, init, deploy, and log path on App Builder runs through the CLI — there is no portable substitute. Surface the install + `aio login` steps and stop rather than hand-editing generated config or clicking through the Developer Console UI.",
+      "powers": ["adobe-app-builder"]
     }
   }
 }
@@ -125,12 +295,65 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
   procedural path is the default, so absence degrades to fBm/curl-noise generation. The many *generic*
   Blender mentions across `3d-*` / `imaging-*` skills are theory/reference (Blender as an industry DCC),
   not MCP-driving, and correctly carry no `requires`.
+- **linear-mcp** — powers [[open-agent-engine]] (the queue, ledger, and receipts). **One connection = one
+  Linear workspace:** per Linear's docs, "reconnecting alone does not switch the workspace within an existing
+  auth session, [so] each workspace needs its own separate authentication context." That constraint is the
+  feature — it makes Open Agent Engine's lane isolation structural rather than a discipline, so a runner
+  authed to one lane physically cannot read another. Register user-scoped (not project-scoped) so the runner
+  fires from any directory, including repos outside this workspace. A read-only endpoint
+  (`/mcp/readonly`) and a `read`-only OAuth scope exist when a lane should observe without write reach.
+  **`degrade`, not `block`, because MCP is a preferred transport rather than a hard dependency** — the
+  engine needs four operations, and the GraphQL endpoint provides the same four to any agent with a shell
+  or HTTP. The tradeoff is a credential: MCP's OAuth keeps the key out of the agent entirely, whereas the
+  HTTP path needs `LINEAR_API_KEY` in the environment. Prefer MCP wherever it exists; never manufacture a
+  key to avoid an install. The portability floor below both is a human running the loop in the web UI.
 - **agent-browser** — powers [[web-automation]]. The CLI ships its own usage docs (`agent-browser
   skills get core`); the workspace skill is the *when/why*, the CLI is the *how*.
-- **ffmpeg / yt-dlp** — power [[reference-video-review]]. ffmpeg is the hard dependency (frames);
-  yt-dlp is only needed to fetch remote video.
+- **ffmpeg / yt-dlp** — power [[reference-video-review]] and [[render-qa-toolkit]] (`qa_video_extract`),
+  plus [[visual-prove-engine]]'s `vqa motion --video` decode path. ffmpeg is the hard dependency
+  (frames); yt-dlp is only needed to fetch remote video (reference-video-review). render-qa-toolkit
+  expects a local file for extract; visual-prove-engine accepts a pre-extracted `--frames` directory
+  as the no-ffmpeg path.
+- **python-imaging** — powers [[visual-prove-engine]] (all probes, perception, comparison, motion,
+  calibration). Blocks rather than degrades: a "measured" verdict produced without measurement is the
+  self-attestation failure mode the engine replaces, so absence stops the step and surfaces
+  `python3 -m pip install numpy Pillow`. SciPy/OpenCV are optional accelerators detected at runtime
+  by `vqa doctor`, never required.
+- **nvidia-flip** — powers [[visual-prove-engine]] `flip_region` / `vqa compare`. Degrades to flip-lite
+  (numpy CSF + HyAB + edges) with an explicit `backend` field. Absence is never silent.
+- **dreamsim** — powers [[visual-prove-engine]] `dreamsim_region` (Spirit / NVS). Degrades: optional cues
+  skip, required cues error. Not a Literal gutter metric; foreground-biased.
+- **gltf-validator** — powers [[visual-prove-engine]] `vqa mesh`. Degrades to the stdlib parser, which
+  still fail-closes on NaN accessors and illegal glTF. Official validator is preferred.
+- **tesseract** — powers [[visual-prove-engine]] `ocr_text`. Degrades: optional skip / required error.
+  Attested strings stay attested until OCR actually runs.
+- **geometric-foundation-model** — powers [[visual-prove-engine]] `vqa geometry`. Degrades to
+  phase-correlation across ≥2 pinned views. A single still is not a 3D pass.
 - **inference-belt** — powers [[ai-video-generation]]. Account + cost involved; always confirm with
   the user before spending a generation call.
+- **axe-cli / pa11y / lighthouse** — the accessibility + performance measurement runners. `axe-cli`,
+  `pa11y`, and `lighthouse` power [[a11y-audit-toolkit]], which tries them **in that preference order**
+  and normalizes whichever one is present into a single finding schema; `lighthouse` additionally powers
+  [[fe-perf-harness]] (Core Web Vitals / budget assertion). All three are Node CLIs, so the probe accepts
+  either a global binary or a cached `npx --no-install` package — the toolkit shells out to `npx` only when
+  the package is already available locally, never triggering a silent install. All degrade rather than
+  block: a11y work falls through axe → pa11y → Lighthouse → MANUAL_CHECKLIST (exit 2), and budget work
+  falls back to asserting against a Lighthouse-shaped JSON report produced elsewhere.
+- **gitleaks / syft / semgrep** — the security measurement path behind the `audit` verb in
+  [[lead-security-architect]] and the stage-3 scan gate in [[16-security-operating-model]]. `gitleaks`
+  (secret scan) and `syft` (SBOM) power [[sec-supply-chain]]; `semgrep` (SAST) powers
+  [[sec-appsec-owasp]]. Their fallbacks differ deliberately, because what an absent tool costs differs:
+  `gitleaks` degrades to a named-pattern scan of the diff and the gate reports DEGRADED, since a
+  history-wide entropy scan cannot honestly be reproduced by hand; `semgrep` degrades to the per-class
+  review checklist and the result must be labelled `critique` rather than `audit`; `syft` **blocks**,
+  because an SBOM re-derived from the manifest can differ from what shipped and a wrong SBOM is worse
+  than a missing one. All three are surface-independent binaries, so the same probe works on any
+  machine, and none of them may be reported as having run when it did not.
+- **aio-cli** — powers [[adobe-app-builder]]. Node CLI, installed globally; `aio login` is a
+  separate step and its session expires, so an authentication failure is not a missing install.
+  Blocks rather than degrades: without it there is no way to reach the Developer Console,
+  initialize a project, deploy actions, or read Runtime logs. The `appbuilder-*` plugin skills
+  assume the latest CLI, which is what exposes the non-interactive Console commands.
 
 ## Adding a capability
 

@@ -1,0 +1,105 @@
+# 3D modelling, environment art, photoreal look-dev.
+# Engine APIs are adapters. Light transport and topology are methods.
+schemaVersion: "domain-constitution/1.0"
+id: imaging
+name: 3D modelling, environment, photoreal
+status: authored
+l1:
+  - 12-realtime-photoreal-operational-framework
+foundation: imaging-foundations
+leads:
+  - lead-3d-designer
+  - lead-art-director
+measurement:
+  - render-qa-toolkit
+  - visual-prove-engine
+command:
+  - realtime-visual-craft
+complements:
+  values: "Mesh densities, texture sets, Unreal/Unity/Blender/Three.js versions, Legion materials. Live in the DCC or game repo."
+  meaning: "This constitution + imaging-foundations + #12 technique ladder and triple done-gate."
+  arbitration: "Named fidelity contract (Literal / Spirit / Standard / Intent) in RENDER.md / NORTHSTAR.md. Native-resolution stills + motion + frame budget. A thumbnail is not a verdict."
+  look: "NORTHSTAR.md and art direction. Palette is diegetic for game worlds (#01)."
+  runtime: "Renderer and engine adapter (adapter-webgpu-three, adapter-unreal, adapter-unity-hdrp). Principles stay here."
+graphs:
+  skillLoad: "imaging-foundations → lead-3d-designer → 3d-* ; art direction via lead-art-director ; shaders route off-hub to glsl-shader-architect"
+  epistemic: "08-knowledge/ (legion rendering entries exemplify; visual-failure-mode-ledger is cross-domain)"
+  artifact: "this file"
+shared:
+  - id: shared-light
+    name: It is all light transport
+    for: all
+    items:
+      - id: name-the-cheat
+        statement: "Every realtime technique names what it cheats on in the rendering equation, what frame time it buys, and how fidelity is verified under camera motion."
+        level: must
+      - id: linear-in-display-out
+        statement: "Compute in linear/HDR. Tonemap and encode at the end. Flat or blown-out frames are color-management bugs until proven otherwise."
+        level: must
+      - id: cheapest-rung
+        statement: "Climb the #12 technique ladder only as far as the fidelity contract requires. Direct light + correct materials, then AO, then IBL, then probes, then dynamic GI, then hero-path tracing."
+        level: must
+      - id: vague-adjectives
+        statement: "Reject 'cinematic', 'AAA', or 'photoreal' at shape time unless NORTHSTAR.md names stills/clips and Literal vs Spirit per reference."
+        level: must-not
+  - id: shared-craft
+    name: Modelling and environment craft
+    for: all
+    items:
+      - id: topology-serves-deform-or-lod
+        statement: "Topology serves deformation, baking, or LOD. Decorative polycount is not craft."
+        level: must
+      - id: pbr-authored
+        statement: "Materials are authored PBR (energy-aware). Do not paint lighting into albedo to fake GI the renderer already owns."
+        level: must
+      - id: texel-and-scale
+        statement: "Texel density and world scale are consistent across a kit. Modular kits share a grid. Human-readable silhouettes beat microscopic noise at gameplay distance."
+        level: must
+      - id: lod-is-a-contract
+        statement: "LOD and impostors are part of the asset contract, not a ship-day surprise. vqa mesh fails closed on glTF Error."
+        level: must
+  - id: shared-done
+    name: Triple done-gate
+    for: all
+    items:
+      - id: still-native
+        statement: "Still fidelity at native resolution (chunk 1:1 if needed). #10 applies."
+        level: must
+      - id: motion-gate
+        statement: "Motion-sensitive work (TAA, volumetrics, dither, cascades, scale traversal) requires recorded camera paths. Still-only approval is an automatic fail."
+        level: must
+      - id: budget-measured
+        statement: "Worst-frame and/or pass ms from a harness, not an FPS overlay vibe. 60 FPS is the floor. Input-to-photon is co-equal."
+        level: must
+entries:
+  - id: system
+    kind: system
+    name: Imaging constitution
+    for: agent
+    notes: "3d-designer owns craft (model, shade, light, rig, environment kit, pipeline). Art director owns identity + technical-art code. Game designer owns whether the space plays. Do not collapse those."
+  - id: environment
+    kind: entry
+    name: Environment design
+    notes: "Spoke 3d-spatial-design-for-games. Diegetic lighting and materials. Environmental storytelling is readable function, not ornament (#01 earned density)."
+combos:
+  - id: cheat-vs-northstar
+    must: [name-the-cheat, cheapest-rung]
+    mustNot: [vague-adjectives]
+    why: "A named cheat plus a named northstar is a contract. A mood board adjective is not."
+  - id: albedo-vs-light
+    must: [pbr-authored, linear-in-display-out]
+    mustNot: []
+    why: "Baked lighting in the albedo fights the renderer and the constitution."
+  - id: still-vs-flythrough
+    must: [still-native, motion-gate, budget-measured]
+    mustNot: []
+    why: "All three gates. A single screenshot report is incomplete."
+refuse:
+  - "Judging finish from a fit-to-window preview."
+  - "Copying Unreal marketplace look-dev as law into a Three.js project (method only)."
+  - "Calling a geometry pass from one still a 3D prove (vqa geometry needs ≥2 pinned views)."
+  - "Treating built-environment architecture QA as a substitute for game kit scale."
+watch: []
+notes:
+  for: agent
+  - "design-foundations still loads for composition and hierarchy in frame. imaging-foundations owns why the pixels are light."

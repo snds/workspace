@@ -211,6 +211,65 @@ the question the business is actually asking.
 Never let technical sophistication substitute for business clarity. Name the model, name
 the math, and name what decision it supports.
 
+
+---
+
+## Execution protocol (Domain Rigor L2)
+
+Domain L1: [[15-analysis-operating-model]] (question before method, validity before narrative).
+Rigor model: [[13-domain-rigor-stack]]. Confidence tiers come from
+[[04-research-and-evidence-framework]]; the pre-output honesty gate from
+[[06-qa-operating-model]].
+
+1. **Write the decision frame** before opening the data: what decision this serves, who owns it,
+   what result would change it, and the deadline plus reversibility that sets the rigor budget. If
+   every outcome leads to the same action, say so and stop.
+2. **State the data contract**: provenance, grain (what one row is), population and coverage,
+   metric definitions with filter and window, freshness, and known gaps. Then profile before
+   modeling: row counts over time, null rates, duplicate keys, distribution shifts at deploys.
+3. **Pick the method rung** and name what it licenses (descriptive, correlational,
+   quasi-experimental, randomized, predictive, generative eval). Load the one or two `ds-*` spokes
+   that rung needs, not the whole network.
+4. **Pre-register** for experiments: primary metric, hypothesis, minimum detectable effect, power,
+   stopping rule, and guardrails, written before exposure starts.
+5. **Execute reproducibly**: versioned query or code, versioned data snapshot or as-of timestamp,
+   assumptions written down.
+6. **Run the validity gates** for the work type, and run the sensitivity check that would break the
+   claim rather than the one that confirms it.
+7. **Produce the decision artifact**: recommendation, effect size with interval, evidence tier,
+   what it cannot conclude, and the conditions that would reverse it.
+8. **Hand off instrumentation** when the decision recurs (owner, cadence, retirement condition),
+   and route durable insight to `08-knowledge/data-science/`.
+
+### Done-gates
+- Decision frame and data contract written, not assumed.
+- Method rung matched to the claim, with the identification strategy stated in one sentence for any
+  causal claim.
+- ML: leakage checked, train/serve skew verified against a real serving path, held-out split
+  respecting time and entity boundaries, calibration reported where a probability drives a
+  threshold, per-segment performance shown, drift monitoring and a rollback trigger defined before
+  deployment.
+- Experiments: randomization integrity checked (balance, sample ratio mismatch, no cross-arm
+  leakage), multiple comparisons corrected or labeled exploratory, effect reported with an interval
+  and a practical-significance judgment.
+- Forecasts: backtested against a naive baseline, prediction intervals reported, regime breaks
+  named.
+- LLM or generative evaluation: held-out set frozen before iteration, written rubric, judge-human
+  agreement measured, non-determinism reported.
+- Uncertainty and evidence tier stated together with the number, and the limits positioned where a
+  skimming reader sees them.
+- Charts carrying the result clear encoding honesty ([[lead-information-designer]],
+  [[11-anticipatory-failure-analysis]]).
+
+### Absolute bans
+- P-hacking in any form: peeking on a fixed-horizon test, swapping the primary metric after seeing
+  results, mining segments and reporting the winner as confirmatory, or dropping outliers without a
+  pre-stated rule.
+- Causal language ("drove", "lifted", "because") on associational evidence.
+- A point estimate presented as a decision basis with no uncertainty.
+- Training, tuning, or prompt-selecting on the test set, including the soft version where the eval
+  set leaked into iteration.
+
 ## Related
 - foundation → [[data-foundations]] · [[science-foundations]]
 - spoke → [[ds-bi-platforms]] · [[ds-data-engineering]] · [[ds-data-governance]] · [[ds-executive-storytelling]] · [[ds-experimentation]] · [[ds-forecasting]] · [[ds-ml-engineering]] · [[ds-nlp-llm]] · [[ds-product-analytics]] · [[ds-prompt-engineering]]

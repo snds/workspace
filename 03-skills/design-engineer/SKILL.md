@@ -14,6 +14,7 @@ description: >
   UI for componentization opportunities. If the topic involves components, tokens,
   design systems, Figma, or frontend implementation — use this skill.
 aliases: [design-engineer]
+triggers: [design engineer, component architecture, component api, figma component, component variants, componentization, design system code]
 spec_version: "2.0"
 tier: hub
 domain: design
@@ -287,15 +288,15 @@ Load on demand — not at session start. Read the spoke when the task requires i
 |---|---|
 | **`08-knowledge/design/enterprise-saas-design-patterns.md`** | **Auto-loads on enterprise SaaS / PLM layout work.** 28-pattern catalog from the 2026-05-12 Mobbin audit; cross-pattern primitive spine (StatusPill, Drawer, TypedFieldEditor, ActivityItem, RelationChip, Stepper, PropertiesRail, KeyboardShortcutMenu + 7 AI-provenance primitives); when-to-build-X decision routing; token vocabulary (density / status / cell-state / drawer-size); AI provenance discipline checklist; anti-patterns. Read this **first** when composing any enterprise-record-shaped layout. |
 | Stack-selection gate — `figma-ds-generation-pipeline/SKILL.md` § "Step 0: Stack Selection" | **Before any Figma canvas generation or plugin task.** Presents stack selection (defaults: shadcn + Radix UI colors + Tailwind CSS) and collects brand primary hex, gray family, Tailwind version, dark mode preference. Must run before `figma-generate-library`, `figma-generate-design`, `figma-canvas-designer`, or any `use_figma` workflow that creates visual content. |
-| `references/figma-authoring.md` | Creating or refactoring Figma components, styles, variables, slots, component sets. The "how to build it in Figma" reference. |
-| `references/figma-plugin-api.md` | Writing or debugging Figma plugin code. TypeScript patterns, API quirks, sandbox constraints. |
-| `references/ds-strategy.md` | Triage, audits, DDRs, context discovery, stakeholder communication, governance. |
-| `references/token-architecture.md` | Token naming, tier mapping, DTCG format, Style Dictionary config, Figma variable structure. |
-| `references/component-patterns.md` | Component anatomy, variant matrices, state contracts, accessibility patterns, cross-framework API alignment. |
-| `references/react-components.md` | DS-grade React implementation patterns, prop design, composition, testing, documentation. |
-| `references/design-critique.md` | Design critique, heuristic evaluation, DS compliance review, design-to-code alignment. Structured evaluation frameworks with severity ratings and mitigation paths. Load when reviewing any design artifact for quality. |
-| `references/visual-design-theory.md` | Gestalt principles, visual hierarchy, color theory, typography, spacing/rhythm. The *why* behind visual decisions. Load when evaluating visual quality or grounding a recommendation in perceptual principles. |
-| `references/engineering-fundamentals.md` | Separation of concerns, abstraction, DRY/KISS/YAGNI, component architecture, state, API design, DX, testing, performance. The *why* behind engineering decisions. Load when the developer lens needs first-principles grounding. |
+| [[03-skills/design-engineer/references/figma-authoring|figma-authoring]] | Creating or refactoring Figma components, styles, variables, slots, component sets. The "how to build it in Figma" reference. |
+| [[03-skills/design-engineer/references/figma-plugin-api|figma-plugin-api]] | Writing or debugging Figma plugin code. TypeScript patterns, API quirks, sandbox constraints. |
+| [[03-skills/design-engineer/references/ds-strategy|ds-strategy]] | Triage, audits, DDRs, context discovery, stakeholder communication, governance. |
+| [[03-skills/design-engineer/references/token-architecture|token-architecture]] | Token naming, tier mapping, DTCG format, Style Dictionary config, Figma variable structure. Path-qualified: `token-architecture` collides vault-wide. |
+| [[03-skills/design-engineer/references/component-patterns|component-patterns]] | Component anatomy, variant matrices, state contracts, accessibility patterns, cross-framework API alignment. |
+| [[03-skills/design-engineer/references/react-components|react-components]] | DS-grade React implementation patterns, prop design, composition, testing, documentation. |
+| [[03-skills/design-engineer/references/design-critique|design-critique]] | Design critique, heuristic evaluation, DS compliance review, design-to-code alignment. Structured evaluation frameworks with severity ratings and mitigation paths. Load when reviewing any design artifact for quality. |
+| [[03-skills/design-engineer/references/visual-design-theory|visual-design-theory]] | Gestalt principles, visual hierarchy, color theory, typography, spacing/rhythm. The *why* behind visual decisions. Load when evaluating visual quality or grounding a recommendation in perceptual principles. |
+| [[03-skills/design-engineer/references/engineering-fundamentals|engineering-fundamentals]] | Separation of concerns, abstraction, DRY/KISS/YAGNI, component architecture, state, API design, DX, testing, performance. The *why* behind engineering decisions. Load when the developer lens needs first-principles grounding. |
 
 ### Framework spoke skills (load the skill relevant to the target stack)
 
@@ -415,3 +416,4 @@ be immediately usable without a terminal.
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[centric-ui-storybook]] · [[centric-ui-workflow]]
+- peer ↔ [[design-system-ops]]

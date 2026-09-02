@@ -177,3 +177,4 @@ See `/references/particle-and-atmosphere.md` for:
 - foundation → [[imaging-foundations]]
 - hub → [[lead-game-developer]]
 - spoke → [[vfx-particle-systems]] · [[vfx-volumetrics]]
+- peer ↔ [[atmospheric-scattering-and-clouds]]

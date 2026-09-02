@@ -4,13 +4,13 @@ _Last updated: 2026-06-16_
 
 The workspace doubles as an Obsidian vault. One folder on disk serves several consumers simultaneously;
 the **git checkout is the source of truth** and the plain filesystem is the contract. The universal
-agent contract is [AGENTS.md](../AGENTS.md); this doc covers the Obsidian-specific layer.
+agent contract is [[AGENTS]]; this doc covers the Obsidian-specific layer.
 
 ## Consumers of the same folder
 
 - **Obsidian** — note-taking UI, graph view, templates, plugins. Reads everything.
 - **Claude Code** — reads `CLAUDE.md` + `.claude/` config; a `SessionStart` hook automates the boot reads.
-- **Any other agent** (Cursor, Perplexity, a generic MCP client, a human) — enters via [AGENTS.md](../AGENTS.md).
+- **Any other agent** (Cursor, Perplexity, a generic MCP client, a human) — enters via [[AGENTS]].
 
 No sync bridge, no cloud drive, no API layer. Whatever Obsidian sees, every agent sees. Git is the sync
 and history layer across machines.
@@ -40,7 +40,7 @@ hook injects `06-context/*` heads; slash commands (`/today`, `/session-end`, `/r
 `/framework-check`) come from `.claude/skills/`; `SessionEnd` commits + pushes. These are Claude-adapter
 ergonomics — the workspace works without them (the portable session protocol in framework 08 covers it).
 
-**Any other agent** — reads `llms.txt` → `AGENTS.md` → `03-skills/skills.registry.json`, then follows the
+**Any other agent** — reads `llms.txt` → [[AGENTS]] → `03-skills/skills.registry.json`, then follows the
 loading-precedence algorithm. No hooks required.
 
 ## Sync topology
@@ -49,7 +49,7 @@ loading-precedence algorithm. No hooks required.
   `.gitignore` tracks the system layer (whitelist by folder); see it for what's tracked.
 - **Cross-machine:** `git clone` anywhere — no cloud-drive mount, no per-machine `.git` relocation. (The
   legacy Drive-based original needed `.git` moved off Drive to avoid `desktop.ini` corruption; that
-  workaround is obsolete here — see `06-context/memory/fact-workspace-repos.md`.)
+  workaround is obsolete here — see [[fact-workspace-repos]]).
 
 ## New-machine setup
 
@@ -70,3 +70,22 @@ test `python3 .claude/hooks/dispatcher.py session-start < /dev/null`.
 
 **Registry/links CI failing:** run `python3 09-tools/build-registry.py` and `python3 09-tools/validate-links.py`
 locally; commit the regenerated `skills.registry.json`.
+
+## Graph view (why islands exist)
+
+Obsidian Graph is **not** the skill-load graph and **not** Dataview.
+
+- **Dataview `LIST` / `TABLE` does not create edges.** `_PROJECTS.md` tables can look complete while
+  project `SESSION-STATE.md` files still sit as islands. Use the static Graph index on [[_PROJECTS]].
+- **Stem collisions.** Many files are named `SKILL.md`, `SESSION-STATE.md`, or `README.md`. Bare
+  `[[SESSION-STATE]]` cannot resolve. Path-qualify: `[[07-projects/19-workspace-brain/SESSION-STATE]]`.
+  Skills resolve as `[[design-foundations]]` because each hub/spoke sets YAML `aliases:` (and
+  `aliases` only apply when frontmatter parses).
+- **Expected remaining islands (do not star-link these into the ontology):**
+  - `copilot/` prompt copies
+  - `.superpowers/` SDD task briefs
+  - vendored trees (React Native dump, figma-cli docs, nested `design-system-ops/commands/`)
+  - generated `05-artifacts/` session dumps
+- YAML constitutions (`dc-*.yaml`) are not graph nodes. Markdown indexes are: [[domain-constitutions]].
+
+See also [[vault-graph-conventions]] (typed epistemic edges vs skill `## Related` vs domain artifacts).

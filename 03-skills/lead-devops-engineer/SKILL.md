@@ -210,6 +210,51 @@ For the twelve-factor model in the context of service design, see `be-service-ar
 | Performance budgets enforced in CI | `devops-ci-cd` + `fe-performance` |
 | Edge caching strategy | `fe-performance` |
 
+
+---
+
+## Execution protocol (Domain Rigor L2)
+
+Domain L1: [[14-engineering-operating-model]], whose stage 4 (ship with rollback) and stage 5
+(observe and operate) this hub owns end to end. Rigor model: [[13-domain-rigor-stack]]. Platform
+security posture defers to [[16-security-operating-model]]. Operation surface: [[eng]] (`ship`).
+
+1. **Name the change class** before touching the platform: config, artifact, infrastructure, or
+   data. Each has a different way back, and the way back is chosen now, not at incident time.
+2. **Treat the platform as a product**: identify the consuming team, the paved road you are
+   offering, and the escape hatch for the case the road does not cover.
+3. **Load narrowly**: `eng-foundations`, this hub, then the one or two `devops-*` spokes in scope.
+4. **Change infrastructure through code**, reviewed and versioned, with a plan applied and read
+   before it is executed. Drift is the defect, not the workaround.
+5. **Instrument before rollout**: dashboards and alerts for the new failure mode exist and have
+   been seen to fire, so the first signal is not a customer.
+6. **Roll out progressively** (canary, percentage, region by region) sized to the blast radius,
+   with the abort condition stated in advance.
+7. **Verify the rollback path**, ideally by exercising it. An untested rollback is a hypothesis.
+8. **Close the loop**: SLO and error-budget impact, cost delta, runbook updated, and durable
+   lessons routed to `08-knowledge/engineering/`.
+
+### Done-gates
+- Rollback named and either rehearsed or documented as one command, per
+  [[14-engineering-operating-model]].
+- Deploy artifacts immutable and traceable to a commit; every configuration value versioned like
+  code. No hand-edited production infrastructure.
+- Observability sufficient for a stranger at 2am: symptom-level alerts users would feel, not only
+  process-health checks, plus a runbook entry naming the first three things to check.
+- SLO and error-budget impact stated, with the SLI the change touches named.
+- Every new external dependency carries a timeout, a retry policy, and a defined degrade behavior.
+- Cost delta estimated for anything that scales with traffic or storage.
+- Secrets sourced from a manager, rotatable without redeploying unrelated services, and absent from
+  git and CI logs ([[16-security-operating-model]]).
+
+### Absolute bans
+- Change production untraceably: a manual console edit, unversioned config, or a deploy that maps
+  to no commit.
+- Ship without a rollback story: no flag, no previous artifact, no restore plan, no written
+  fix-forward.
+- Roll out a risky change to 100 percent at once because the pipeline makes it easy.
+- Silence an alert or widen an SLO to make a dashboard green instead of fixing the cause.
+
 ## Related
 - foundation → [[eng-foundations]]
 - spoke → [[devops-ci-cd]] · [[devops-container-orchestration]] · [[devops-cost-optimization]] · [[devops-infrastructure-as-code]] · [[devops-observability]] · [[devops-release-engineering]]

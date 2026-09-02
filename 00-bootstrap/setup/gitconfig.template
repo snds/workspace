@@ -8,6 +8,13 @@
 [pull]
 	rebase = false
 
+[rebase]
+	# NEVER auto-stash on rebase/pull. With this off, a `git pull --rebase` over a
+	# dirty working tree REFUSES (safe) instead of stashing your uncommitted work and
+	# risking a stranded stash on a pop conflict. This protects a live editing session
+	# from the cross-machine auto-sync. Do not enable autoStash for the workspace.
+	autoStash = false
+
 [push]
 	default = current
 

@@ -325,13 +325,69 @@ evaluative (testing solutions). Most teams are inverted.
 
 ---
 
+## From Discovery to Requirements — User Stories & Use Cases
+
+Discovery produces jobs and opportunities; those must become buildable requirements. Two artifacts do
+that, at different levels of detail. Do not confuse them, and do not write both for everything.
+(Selection + authoring rules for the whole artifact chain: [[06-research-and-design-artifacts]].)
+
+### User story — the default
+
+A **short, plain-language statement of what one user wants and why it matters** — deliberately
+lightweight. Its true nature (uxcam): *"a placeholder for a conversation, not a specification."*
+
+**Template:** *"As a [named persona], I want [observable action], so that [benefit the user values]."*
+- Anchor it to a **named persona** ("As Priya, the supply-chain coordinator…"), not "as a user".
+- Add **3–7 acceptance criteria** — testable conditions agreed *before* the sprint, usually
+  *Given [context], When [action], Then [outcome].*
+- Pass **INVEST**: Independent · Negotiable · Valuable · Estimable · Small (fits one sprint) · Testable.
+- Size heuristic: *"if it doesn't fit on a postcard, it doesn't belong in a story."*
+
+Ground every story in observed behaviour, not speculation. Never skip the acceptance criteria — a
+story without them is an intention with no definition of done. Each story should trace back to a job
+(JTBD) and, ideally, a moment on the journey map.
+
+### Use case — only when complexity earns it
+
+A **structured, step-by-step specification** of how an actor and the system interact to reach a goal,
+*including everything that can go differently*. Its whole value is the **alternate flows** — uxcam:
+*"the value of a use case was the alternate flows, not the main flow."*
+
+**Structure:** Title (imperative goal) · Primary actor · Secondary actors · Pre-conditions · **Main
+flow** (numbered steps, present tense) · **Alternate flows** (numbered branches — errors, exceptions,
+edge paths) · Post-conditions.
+
+**Write one only when** the feature has **5+ meaningful alternate flows**, **multiple/third-party
+actors**, **regulatory documentation** needs, a **distributed team** (conversation is expensive), or a
+**high cost of a missed path** (money, health, security). Otherwise a story is enough. Don't write use
+cases for everything; don't leave alternate flows trapped in conversation.
+
+### How they chain
+
+`Research → JTBD → persona → journey map → user story (what to build) → use case (only the complex
+ones, to nail the alternate flows) → user flow / UI → build (against the use case) → QA (against the
+acceptance criteria).` Default to **story-first, use-case-to-elaborate**; some teams invert this to
+fix foundational system behaviour first — treat sequence as context-dependent. Format is a per-feature
+tool choice, not an identity: match the artifact to the feature's real complexity.
+
+### The plain-English rule
+
+Both artifacts are read by engineers, QA, and stakeholders who don't share the domain's jargon.
+**Spell everything out and define insider terms in context** — e.g. write "a lab-dip (a dyed fabric
+swatch a mill sends to approve the exact colour before bulk)", not a bare "lab-dip" or a reference
+code. A requirement a reader can't understand cold is not a requirement.
+
+---
+
 ## Cross-Hub References
 
+- **Which requirement/research artifact to produce + how to author it** → [[06-research-and-design-artifacts]]
 - **Experiment design / statistical validation** → `ds-experimentation`: when
   qualitative discovery points to a hypothesis suitable for quantitative testing
 - **Translating opportunity findings into a roadmap** → `pm-roadmap-strategy`
 - **Communicating research findings to executives** → `pm-stakeholder-comms`
 - **Competitive discoveries from interviews** → `pm-competitive-intelligence`
+- **UX side of the same research + journey/blueprint authoring** → `ux-research-synthesis`, `ux-service-design`
 
 ## Related
 - hub → [[lead-product-manager]]

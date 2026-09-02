@@ -1,6 +1,30 @@
 # Artifact Registry
 <!-- Auto-maintained by Claude. Updated after each task. -->
-<!-- Last updated: 2026-06-04 | Session: Six-hub operation-grammar set completed (/qa + 5 siblings) -->
+<!-- Last updated: 2026-09-02 | Session: graph crosslinking + cursor canvas externalize -->
+
+## LCARS Generative Interface — 07-projects/20-lcars-generative-interface/ (git-tracked)
+
+### 20-lcars-generative-interface/ (README.md + SESSION-STATE.md + SPEC.md + docs/construction/ + canvases/)
+- **Purpose**: Project home for the generative LCARS interface (design → plan → implementation pointers). Spec captures constitution-first Scene IR architecture, combadge roles, APCA+AA, data-first 3D viewports. Construction pack holds cuespec, IR, prove reports, and captures for S-SYS47-01. `canvases/` holds the Cursor `lcars-replication-gap` copy.
+- **Last modified**: 2026-09-02 — vault docs wikilinks + canvas copy; prove v4 still the Literal baton.
+
+## Workspace Brain — 07-projects/19-workspace-brain/ (git-tracked)
+
+### 19-workspace-brain/ (README.md + SESSION-STATE.md + notes/ + reports/ + canvases/)
+- **Purpose**: Standing project home for workspace-subject sessions (validation, fix, migration, infrastructure) per the framework #08 project-home rule (FX-13). Git-tracked — cross-machine continuity is its point. `canvases/` holds copies of Cursor `.canvas.tsx` files (live path remains `~/.cursor/projects/…`).
+- **Last modified**: 2026-09-02 — graph crosslinking + Cursor canvas externalize; constitutions already on this tree.
+
+## Delivery Playbooks — 02-shared-references/delivery-playbooks/
+
+### delivery-playbooks/ (7 files: README + 00–05)
+- **Size**: ~7 files, ~600 lines total
+- **Purpose**: Canonical standards for HOW work is delivered — context profiles (whose work / who reviews: `personal-solo` / `centric-engineering` / `centric-design`, resolution order, fail-safe), audience contract (designer-first, forward test, three-altitude model), medium playbooks (diagrams/flows, data/charts, documents/specs), and the Proofboard validation-harness standard (plain-english contracts, show-me evidence, sandboxed sample data — Sean verifies code-heavy work without reading code).
+- **Last modified**: 2026-07-09 — v1 created. Enforcement wired: dispatcher `TRIGGER_WORDS`, CLAUDE.md (section + trigger rows), framework #06 pre-output gate (context & medium check), SESSION-STATE template (`Context profile` field), user-preferences pointer. Founding anti-example: the Media Sentinel workflow-diagram-as-HTML-page failure.
+- **Related pending**: "Context is King — workspace foundation refinements" backlog item in project-context.md (generalize profile resolution to every session surface).
+
+### workspace_validation-session-prompt_v1.0_2026-07-09.md — 05-artifacts/active/ (local only, gitignored)
+- **Purpose**: 6-phase test prompt validating the delivery-playbooks system in a fresh session — boot/trigger verification, context-resolution drills (incl. a deliberately unresolvable trap), audience/medium binding, a full Proofboard loop, adversarial path-walk (token-waste audit, trigger gaps, unexercised-path desk-check), scorecard. Fixed checkpoint-report format; stops for Sean's confirmation at every phase.
+- **Last modified**: 2026-07-09 — v1.0 created. Not synced (05-artifacts gitignored) — copy manually to run from another machine; bump version + re-run after the "Context is King" backlog item lands.
 
 ## Skill Ecosystem & Trigger System — 05-artifacts/active/ + 03-skills/
 
@@ -336,6 +360,12 @@
 - **Size**: ~408 lines | 20 KB
 - **Purpose**: Privacy audit: external connection registry, metadata API payloads, anonymity-preserving patterns
 - **Last modified**: 2026-03-07 — Initial creation
+
+## centricPLM — 07-projects/02-centricPLM/context/ (gitignored)
+
+### cell-indicators-pilot.md
+- **Purpose**: Authoritative running state of the C8 data-table cell-indicator system (Figma branch `cell-indicators`): DS sourcing rules, cell architecture, code-validated indicator matrix (GROUNDED/ADD-VIZ/FUTURE tiers), two-tier editability model, read-only lock+tint three-scope system, worst-case density demo, node IDs, and open Sean sign-offs.
+- **Last modified**: 2026-07-02 — worst-case scattered-locks demo + tooling gotchas appended
 
 ## figma-repo-sync-plugin — 07-projects/09-figma-repo-sync-plugin/docs/ (gitignored)
 

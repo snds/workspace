@@ -34,8 +34,170 @@ _The dispatcher reads the most recent date from this file to decide whether to s
 
 ## Entries
 
+## 2026-08-28 — Personal MacBook Pro
+
+**Scope:** full seven-surface ECC after landing perception-critique-stack course corrections 1–12 (prove engine vqa/1.1 + play-prove). Foundation reads sampled; `audit_skip` honored.
+**Findings:** 7 total — P0: 0, P1: 4, P2: 3
+
+**P0 (workflow-breaking):**
+- none. Probes green: `validate-links`, `build-registry --check`, `validate-workspace`, `vault-health`, `build-trigger-routes --check`, `test-validators.py` 10/10, write-quality chain, `validate-capabilities` 20/29, `vqa calibrate` 48/48.
+
+**P1 (friction):**
+- Open Engine personal lane `not-registered` on Voyager-2.local (session-start notice). Run `python3 00-bootstrap/doctor/linear-lanes.py` or register MCP.
+- Uncompacted session fragment `06-context/sessions/2026-08-26-voyager-b7191a1.md` (Looney Tunes / MediaSentinel). Compaction is `/session-end`, not this pass.
+- Dormant `SESSION-STATE.md` batons past 30 days: `00-obsidian` (2026-04-25), `18-bootstrap-generator` (2026-07-27). Not active work; left in place.
+- `project-context.md` still ~41 anchored `^pc-NN` items; `_Last updated` 2026-07-30. Do not delete anchors. Engine migration of this list remains deferred.
+
+**P2 (polish):**
+- `/optimize` Step 1 still described a five-file framework core (fixed this run).
+- `01-frameworks/00-README.md` token-budget line still said "twelve frameworks" after the set grew to sixteen (fixed this run).
+- `CLAUDE.md` said "Eleven" frameworks while listing 01–13 and omitting 14–16 (fixed this run).
+
+**Fixes applied this run:**
+- Prove engine `vqa/1.1`: cue altitudes, FLIP, saliency, OCR, mesh, geometry, DreamSim degrade, interact critic, tracks, input-to-photon, VLM-judge protocol, capture `renderer` warning, uncued residuals.
+- New sibling skill `play-prove` (altitude G).
+- LCARS `S-SYS47-01.cuespec.json`: `default_altitude: A` + four named `uncued_residuals`.
+- Capability registry: nvidia-flip, dreamsim, gltf-validator, tesseract, geometric-foundation-model.
+- Framework #06 altitude paragraph; trigger routes; CI path includes `play-prove`.
+- Corrected sixteen-vs-twelve in `00-README.md` and optimize skill read-list; `CLAUDE.md` "Eleven" → Sixteen and added #14–#16 pointers.
+- Rewrote Live handoff on `19-workspace-brain` and `20-lcars-generative-interface`.
+
+**Carried forward:**
+- Open Engine personal-lane registration on this machine.
+- Compact `2026-08-26-voyager-b7191a1` at next `/session-end`.
+- Doctor-sweep generalization for `* 2.md` conflict-copies (open since 2026-07-08).
+- Hygiene still with Sean: REVOKE Figma PAT; GitHub Support purge of two personal-email SHAs.
+- Do not auto-enable nightly maintenance from this audit.
+
+**Skipped (opt-out `audit_skip: true`):** `_CHEATSHEET.md`, `08-knowledge/cross-domain/workflow-patterns.md` (the skill documents the flag; the two files carry it).
+
+---
+
+## 2026-07-23 — Personal MacBook Pro
+
+**Scope:** full (CLAUDE.md/AGENTS.md frameworks, MOCs, project-context, session-log head, `08-knowledge/_INDEX`, `workflow-patterns`, settings/hooks, filesystem drift sweeps)
+**Findings:** 7 total — P0: 0, P1: 2, P2: 5
+
+**P0 (workflow-breaking):**
+- none — machinery clean: hooks/settings/launchd/beacons healthy (doctor confirmed), no tracked `.DS_Store`/`desktop.ini`, no fossils.
+
+**P1 (friction):**
+- `18-bootstrap-generator` (primary focus of the last ~week, ~26 commits) had a `SESSION-STATE.md` but no entry in project-context "Active Projects".
+- `16-CDS Figma-Code Audit` likewise had a `SESSION-STATE.md` but no project-context entry.
+
+**P2 (polish):**
+- `project-context.md` `_Last updated:` stale (2026-07-15 vs real 07-23).
+- Resolved-item clutter: 22 crossed-off `[x]` items across the Active + Recently-resolved buckets (three-bucket model says prune at /optimize).
+- `08-knowledge/research/research/` double-nesting (carry-forward item (f), unresolved since 2026-07-08).
+- `_archive/figma-plugin-patterns 2.md` — stale conflict-copy (strict older subset of `engineering/figma-plugin-patterns.md`).
+- Aging open hygiene items surfaced (not drift): REVOKE Figma PAT (2026-06-04); purge two centric-ui SHAs with personal email (2026-07-20).
+
+**Fixes applied this run:**
+- Added "Portable Bootstrap Generator (`wsx`)" + "CDS Figma–Code Audit" blocks to project-context Active Projects (P1 1,2).
+- Bumped `_Last updated:` → 2026-07-23 (P2 3).
+- Pruned 22 resolved `[x]` pending-items → archived to `session-log-archive.md` under "Pruned resolved pending-items — 2026-07-23"; live Active bucket now 36 next-actions (P2 4).
+- Flattened `research/research/` → `research/` (git mv 6 files); updated `_INDEX.md` reference; Obsidian `[[wikilinks]]` unaffected (basename-resolved) (P2 5).
+- Removed the stale `_archive/figma-plugin-patterns 2.md` after diff-confirming it's a strict subset (P2 6).
+- Updated the 2026-07-08 carry-forward item (e)/(f) to reflect the above.
+
+**Carried forward:**
+- Doctor-sweep generalization for `* 2.md` conflict-copies (item (e)) — one instance cleaned, the generalized sweep still open.
+- Hygiene item #7 left for Sean (external services): REVOKE the Figma PAT; GitHub Support request to purge the two personal-email SHAs.
+
+## 2026-07-09 — Structured validation session (six phases, adversarial pass)
+
+- Scope: hooks/boot, triggers, context profiles, audience/medium playbooks, Proofboard, path efficiency.
+- Verdicts: boot FAIL · triggers FAIL · resolution PASS · audience PARTIAL · medium PARTIAL · Proofboard PASS · path PARTIAL.
+- Headline defects (live): parent-dir launch = silent context loss (fix built in 00-bootstrap/dist, uninstalled);
+  trigger layer floods 15-line cap, knowledge hints truncated; ritual "Last session" month-stale (SESSION BLOCK
+  unparsed); #06 has no audit-class trigger carrier; HEAD moved mid-session unnoticed (reconcile 066edac).
+- Report: 05-artifacts/active/workspace_validation-report_v1.0_2026-07-09.md (fix list FX-1..FX-14, proposed only).
+- Approved during session: Proofboard standard amendments (illustrate-don't-narrate · two-read rule · fit-check step) — pending codification (FX-9).
+- Artifacts: session-lifecycle flow SVG v1.0 · artifact-name-checker v1.0+v1.1 (proofboard) · this report · version register.
+
+**Per-FX outcomes (fix session, same day — Personal MacBook Pro, sign-off prompt `workspace_fix-session-prompt_v1.0_2026-07-09.md`):**
+- FX-1 ✅ `3729472` — v2 machine layer installed (doctor); Drive-era shims retired; brain-path fixed; install-state memory fact. Live parent-dir test deferred (stale OAuth, 401) — offline handler runs green; audit-log canary verifies next real session.
+- FX-2 ✅ `faa2ce9` — tiered emit (curated → knowledge → registry → index), per-tier caps 8/4/6/4, dedupe by target; knowledge hints survive (evidence in commit).
+- FX-3 ✅ `faa2ce9` (dispatcher half) + `c3f4ab7` (sources) — `validation`→`field validation`/`validation state`; 10 bare-word triggers narrowed; registry regenerated clean.
+- FX-4 ✅ `faa2ce9` + `3f83842` — audit/review/critique/qa pass/refine → framework #06, mandate rows emit first; mirror tables carry the row.
+- FX-5 ✅ `faa2ce9` + `cf1f001` — parser reads `--- SESSION BLOCK ---` (Date/Project(s)); /session-end writes `###` headings (belt+braces). Parser tests pass incl. real log → 2026-07-09.
+- FX-6 ✅ `3f83842` — `the game`/`PLM`/`variable axis`/`plugin dev` declared at owning skills; tables reconciled; single-source rule added; 4/4 routing PASS.
+- FX-7 ✅ (this commit) — `Context profile:` populated in all 8 SESSION-STATEs (+ 19-workspace-brain). 14-variable-icon-font-generator is PROVISIONAL `centric-engineering` (fail-safe most-restrictive) — Sean to confirm. Note: 6 of 8 files are gitignored (machine-local by design).
+- FX-8 ✅ `537effa` — AGENTS.md read order gains `_INDEX.md` + delivery-playbooks load order. Tool-neutral `trigger-routes.md` extraction DEFERRED (authority just consolidated in dispatcher; pending item).
+- FX-9 ✅ `537effa` — three Sean-approved Proofboard amendments codified verbatim (two-read rule placed under Trust mechanisms; no "Quality bar" section exists).
+- FX-10 ✅ `537effa` — three ontology routing rows (machine-local config · hook/adapter code · bootstrap logic).
+- FX-11 ✅ (this commit) — workspace-infrastructure refreshed (post-rebuild event list + machine layer; Drive-era clone procedure quarantined HISTORICAL); hooks-contract triggers broadened (`userpromptsubmit`, `hook didn't fire`, `claude hooks`, `hook dispatcher` — bare `hooks` NOT added, would collide with React hooks; deviation per FX-3 principle); workflow-patterns gains "Re-verify HEAD at phase boundaries" + "Version register at >2 artifacts".
+- FX-12 ✅ `faa2ce9` — `validation report`/`full report` → 04-documents-and-specs; verified on the P1-11 failing phrase.
+- FX-13 ✅ `537effa` — project-home rule in framework #08; standing `07-projects/19-workspace-brain/` scaffolded, tracked, registered, routed.
+- FX-14 ◐ Phase F — home-dir spine relocation proposed to Sean (confirm target repo); dist shim hardcoded-path fix; Work MBP/Windows installs + harness re-run added as pending items.
+- FX-15 (new, guardrail 5) — pre-beacon `~/.claude/CLAUDE.md` global standards (12.6KB) backed up at `~/.claude/_retired/CLAUDE.pre-beacon-2026-07-09.md`; content not yet externalized to the workspace — pending item.
+
+## 2026-07-08 — Work MacBook Pro (main, going forward)
+
+**Scope:** focused — trigger/dispatch layer, foundational color/UX/a11y routing, self-healing infrastructure. Prompted by the cell-validation failure (full-chroma status backgrounds authored without the foundational color/a11y baseline). Full analysis in-session; three Explore-agent sweeps covered 01-frameworks + 02-shared-references + 04-preferences, all 246 skills, and 08-knowledge + hooks + tools.
+**Findings:** 14 — P0: 4 · P1: 6 · P2: 4
+
+**P0 (workflow-breaking):**
+- `emit_context` emitted `hookEventName: null` — harness validation silently dropped ALL dispatcher context injections (SessionStart context + trigger hints). The whole deterministic context layer was dark.
+- Dispatcher trigger tables hand-maintained and frozen (~April/May): registry `triggers:` (50 skills) and `_INDEX.md` trigger lists never consulted; the failing prompt matched ZERO triggers (replayed empirically).
+- No `triggers:` frontmatter on ANY applied design/a11y skill (ds-advisor, design-engineer, a11y-visual, uid-color-for-ui, …) — the AGENTS.md precedence algorithm's primary key was empty for the entire design domain.
+- No enforcement at the point of risk: `use_figma` writes had no design-judgment gate; frameworks/knowledge purely advisory and skippable under execution momentum.
+
+**P1 (friction):**
+- Foundational color/UX/a11y baseline exists (design-foundations → found-color → a11y-visual → uid-color-for-ui, with governs/governed_by edges) but nothing routed to it; system-specific rules ([[radix-derived-color-system]]) were the only color content surfacing.
+- "Work within the target system; backlog its gaps" existed in ds-advisor (Known Gaps/DDR) but at no framework tier and at no enforcement point.
+- Framework #06 pre-output gate had no accessibility check; #06 triggers only on QA-signal words, missing authoring tasks.
+- Registry regeneration only enforced in GitHub CI — local auto-commit could push a stale registry.
+- `08-knowledge/_INDEX.md` had no validator: 5 research entries unindexed; `figma-plugin-patterns 2.md` Drive-conflict duplicate untracked; `updated:` stale.
+- Stale docs claiming dead behavior: skills-manifest.json "single source of truth", `handle_user_prompt_submit()`, "KNOWLEDGE_HINTS mirrors TRIGGER_WORDS", `08-tools/`, CLAUDE.md "SessionStart loads the skill registry".
+
+**P2 (polish):**
+- APCA body-text floor inconsistent (a11y-visual Lc 60 vs design-engineer Lc 75 vs radix entry Lc 90); CVD prevalence numbers drift across 4 skills.
+- `infod-encoding-theory` re-derived OKLCH/CVD without `found-color` prerequisite.
+- `sec-supply-chain` trigger `token` over-broad (collided with design-token vocabulary).
+- artifact-registry line-number tables mirror gitignored files (unvalidatable).
+
+**Fixes applied this run:**
+- dispatcher.py: correct `hookEventName` per event (restores context delivery); runtime trigger matching from `skills.registry.json` + `_INDEX.md` `Triggers:` lines (word-boundary, deduped, capped); foundational vocabulary (validation/warning/status color/contrast/a11y/…) → foundations-first route; compact/resume re-orientation injection; stale-audit escalation tier (>2× threshold); once-per-session `use_figma` PreToolUse design-judgment gate (registered in settings.json); session-end registry regeneration when SKILL.md changed.
+- `triggers:` declared on ds-advisor, design-engineer, figma-canvas-designer, visual-qa-toolkit, a11y-visual, uid-color-for-ui; `sec-supply-chain` `token`→`access token`; `infod-encoding-theory` +`found-color` prereq; registry regenerated (246 skills, --check green).
+- Framework #06: sixth operating default "System-context fidelity" (foundations independent of any DS; resolve within the target system; token gaps → backlog, a11y never deferred) + Accessibility check added to the pre-output gate; ds-agents-binding.md mirrors the rule; CLAUDE.md routing/lifecycle text corrected.
+- validate-workspace.py: KNOWLEDGE COVERAGE check added; _INDEX.md research section indexed + dated; conflict duplicate archived with ARCHIVE-LOG provenance. All validators green.
+
+**Carried forward:**
+- See the consolidated 2026-07-08 pending item in project-context.md: APCA canon reconciliation (needs sign-off), remaining a11y-skill triggers (deliberately deferred), CVD prevalence alignment, artifact-registry line tables, doctor conflict-copy sweep, research/ double-nesting.
+
 ## 2026-04-27 — Windows Desktop
 
+## 2026-06-30 — Personal MacBook Pro
+
+**Scope:** full (frameworks · MOCs · context · `.claude` skills · bootstrap · settings; stable docs grep-checked). Run immediately after the #10 Perception Integrity framework migration.
+**Findings:** 9 — P0: 1 · P1: 4 · P2: 4
+**Skipped (opt-out `audit_skip: true`):** `_CHEATSHEET.md`, `08-knowledge/cross-domain/workflow-patterns.md`, `.claude/skills/optimize/SKILL.md` (note: carries stale "5 framework files" read-list text), `06-context/session-log.md`.
+
+**P0 (workflow-breaking):**
+- `validate-workspace.py` RED — `decision-commercial-data-licensing.md` not listed in `06-context/memory/MEMORY.md`.
+
+**P1 (friction):**
+- `visual-qa-toolkit` fully built + registered but documented as "(being built)/planned" in `_SKILLS.md` + `project-context.md` (×3).
+- `/framework-check` ran only 5 of 10 frameworks post-migration (ignored #06 always-load + #10 cross-cutting).
+- `CLAUDE.md` self-contradicted on `/framework-check` count ("all six" vs "the five frameworks").
+- New `native-visual-eval` skill (framework #10's method) absent from `_SKILLS.md` Visual QA cluster.
+
+**P2 (polish):**
+- `new-project/SKILL.md` "default: all five" frameworks → ten.
+- `_HOME.md` "60+ skill library" understated (286 SKILL.md dirs).
+- Framework preamble sibling-lists — reviewed, **not drift** (deliberate cumulative convention; #10 conforms).
+- `_HOME` vs `_MOC` dual front-door — reviewed, **deliberate** (daily dashboard vs structural map; already cross-linked).
+
+**Fixes applied this run:**
+- P0: added `decision-commercial-data-licensing` row to `MEMORY.md` (gate now green).
+- P1: flipped `visual-qa-toolkit` → built in `_SKILLS.md` + closed pending item + updated AI-Design-Assessment project summary/next in `project-context.md`; added `native-visual-eval` + `lead-visual-qa` to `_SKILLS.md` Visual QA cluster; expanded `/framework-check` to ten (six core always + four situational gated by domain) in its SKILL.md; reconciled both `CLAUDE.md` references.
+- P2: `new-project` default → all ten; `_HOME` → "280+ skill library".
+- All three validators green (workspace · links · integrity).
+
+**Carried forward:**
+- `/framework-check` scope expansion (5→10) was decided autonomously (six core always-run, 07–10 situational). Flagged for Sean to confirm the gating model matches intent.
+- The opt-out `optimize/SKILL.md` Step-1 read list still says "the 5 framework files (01–05)" — not editable under its own `audit_skip`, but worth a manual refresh next time that skill is touched.
 **Scope:** full
 **Findings:** 9 — P0: 1 · P1: 5 · P2: 3
 

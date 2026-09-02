@@ -8,11 +8,11 @@ description: >
   swiftui, ios, xcode, observable, async await, actor, human interface guidelines,
   testflight, app store, UIKit.
 aliases: [mobile-ios-swiftui]
-triggers: [swift, swiftui, ios, xcode, observable, async await, actor, human interface guidelines, testflight, app store, uikit]
+triggers: [swift, swiftui, ios, xcode, observable macro, observableobject, async await, actor, human interface guidelines, testflight, app store, uikit]
 tier: spoke
-hub: lead-frontend-engineer
+hub: lead-mobile-engineer
 domain: engineering
-prerequisites: [lead-frontend-engineer]
+prerequisites: [lead-mobile-engineer]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -42,5 +42,5 @@ Xcode project/workspace, signing + provisioning profiles, **TestFlight** for bet
 signing/provisioning model is the usual first-week wall — understand certificates, identifiers, profiles.
 
 ## Related
-- hub → [[lead-frontend-engineer]]
+- hub → [[lead-mobile-engineer]]
 - peer ↔ [[mobile-react-native]] · [[mobile-android-kotlin]] · [[mobile-platform-craft]]

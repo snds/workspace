@@ -1,10 +1,10 @@
 ---
 tags: [design-system, centric, plm, tokens, components, data-tables, ark-ui]
 created: 2026-04-28
-updated: 2026-04-28
+updated: 2026-07-31
 status: stable
 confidence: high
-sources: [project-context 2026-04-28, session-state 02-centricPLM, role-and-context]
+sources: [project-context 2026-04-28, session-state 02-centricPLM, role-and-context, session 2026-07-31-work-figma-density]
 related_skills: [ds-advisor, design-engineer, fe-component-architecture, fw-dojo]
 related_projects: [02-centricPLM]
 ---
@@ -102,6 +102,65 @@ The data table work specifically involves migrating away from Dojo's `dgrid` tow
 
 ---
 
+## Density as a Semantic Variable-Mode System (Figma library, 2026-07-31)
+
+Learned building the `Centric SaaS PLM - Design System` Figma library (file `o6o1ZuGHxDow2vHLuYXT6X` —
+a distinct, newer library from the files listed above). This is the reusable pattern, not a one-off.
+
+**Density belongs in the semantic layer as its own mode-set collection — not baked per component.**
+- `Foundations / Semantics / Density` with modes **Normal (default) / Compact / Spacious**. Tokens:
+  `control-height/*`, `padding-x/*`, `padding-y/*`, `gap/*`, `control-radius/*`, `container/*`,
+  `icon-size/*` (xs/sm/md/lg — Material Symbol **fontSize** is the real lever; see
+  `density-vertical-rhythm-audit.md`), `avatar-size/*` (sm/md/lg diameter; `Avatar / Size`.`size`
+  aliases these so Size × Density compose). Per-instance icon size uses collection **`Icon / Size`**
+  (modes default/xs/sm/lg/control) — masters bind `fontSize` → `size`; instances set an explicit mode.
+  Nested swappable icons on parents must use **`INSTANCE_SWAP` props** (not bare nested swaps) —
+  otherwise `resetOverrides` wipes icon identity. Icon-only controls: Button + `Button / Layout` =
+  `icon-only` (not a separate Icon Button component).
+- Each density token **aliases an existing Spacing/Radii semantic variable per mode** (never a raw
+  number). Pin **Normal to the current values** so the refactor is value-identical — zero visual drift
+  is what makes it safe to apply to a near-publish library.
+- **Two composable axes.** A component's own `Size` variant (xs/sm/md/lg) and the ambient Density mode
+  are independent. Re-point the component `Size` collections (Button/Select height+radius) *at* the
+  density tokens so Size and Density multiply instead of fighting.
+
+**Applying it without breaking instances:**
+- Rebind structural props (heights, radii, vertical padding, gaps, container insets) to density tokens
+  on **non-instance nodes only** (walk up the parent chain; skip anything inside an `INSTANCE`) — masters
+  change, instances inherit. Match by *resolved px* → density token so Normal stays put.
+- Breathe **container insets (16/24) on all sides**, but keep **control horizontal padding (8/10/12) fixed** —
+  fluid horizontal control padding reads as sloppy; vertical rhythm + container breathing carries density.
+- Keep Density and Colors on **Auto** for component masters, subcomponents, and nested instances.
+  Set the collection defaults to **Normal** and **Light** for uncontextualized library previews; set an
+  explicit context mode only on an app/chrome, page, feature, or audit shell. Nested components must
+  inherit that shell so one Compact/Dark decision propagates through the whole composition. Use
+  `clearExplicitVariableModeForCollection` to remove accidental context pins. Component-scoped axes
+  (Size, Variant, State, Calendar position) remain explicit where the component API requires them.
+
+**Collection hygiene that generalized:**
+- An **alias-only intermediate collection is dead weight.** A "Typography Roles" layer whose every
+  variable was a 1:1 alias into semantic Typography added a hop and bought nothing — text styles were
+  bound to Roles, Roles pointed at semantics. Fix: rebind each style field *directly* to the semantic
+  token the role aliased, verify no other node references the layer, then delete it. (21 styles ×
+  6 fields = 126 rebinds; collection removed clean.)
+- **Naming:** normalize collection names to spaced `Component / Axis` (` — ` → ` / `), singular axis
+  words (`Sizes` → `Size`). Renaming collections/variables is **id-safe** (bindings are by id).
+- **Semantic scale names use slash groups** (done 2026-07-31, before any Style Dictionary export):
+  `font-size/4xl`, `space/4`, `radius/md`, `border-width/1` — Figma folders by type; Style Dictionary
+  can map `/` → nested JSON (`fontSize.4xl`) or CSS vars (`--font-size-4xl`) without a rename pass.
+  Same pattern already used by Density (`control-height/md`).
+- **Semantic colors** (2026-07-31): category folders for intent —
+  `surface/*`, `action/*`, `status/*`, `chrome/*`, `sidebar/*` (54 tokens). Examples:
+  `action/primary/foreground`, `status/destructive/soft/foreground`, `chrome/border/subtle`.
+  Style Dictionary should strip the category prefix for shadcn CSS parity
+  (`action/primary` → `--primary`) or emit nested CSS vars — pick one mapping rule and stick to it.
+- **CDS bridge removed** (same session): 42 `cds/{hue}/{step}` tokens deleted from Figma after
+  cataloging Light/Dark → Radix maps. Zero Figma consumers. Catalog for the centric-ui migration:
+  [[cds-to-radix-color-map]]. Do not recreate CDS steps in Figma; migrate code to intent tokens.
+- **Instance vs context token method** (same session): [[figma-component-token-axes]] —
+  Density/Color = shell context; Size/Variant = instance; compose via aliases. Pilot:
+  `control-font-size/*` + `Sidebar / Surface`.
+
 ## What Loads When Working on This Project
 
 - Strategic/governance work → `ds-advisor`
@@ -109,3 +168,7 @@ The data table work specifically involves migrating away from Dojo's `dgrid` tow
 - Dojo/dgrid legacy → `fw-dojo`
 - TanStack Table implementation → `fe-data-visualization`
 - Framework 02 (UX Operational) + Framework 05 (Last-Mile Craft) for component spec work
+- **Component *contracts*** (a table/component being replaced, or two implementations disagreeing) →
+  [[component-contracts-and-schemas]] (the seven gates + the investment gate) +
+  [[component-contract-schema]] (the portable model) + framework #09 §5a. A replacement is the
+  cheapest moment to buy a contract, because the contract *is* the definition of "equivalent."

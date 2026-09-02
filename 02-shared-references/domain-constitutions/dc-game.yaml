@@ -1,0 +1,93 @@
+# Game design, development, and engines.
+# Engine choice and version are values. Loop, agency, feel, and prove are methods.
+# Legion is a test platform, not the owner of this doctrine.
+schemaVersion: "domain-constitution/1.0"
+id: game
+name: Game design, development, and engines
+status: authored
+l1:
+  - 12-realtime-photoreal-operational-framework
+foundation: game-foundations
+leads:
+  - lead-game-designer
+  - lead-game-developer
+measurement:
+  - play-prove
+  - visual-prove-engine
+command: []
+complements:
+  values: "Unity / Unreal / Godot / Three.js version, scene graphs, content numbers. Live in the game repo."
+  meaning: "This constitution + game-foundations. Look-dev methods that are light-transport live in the imaging constitution."
+  arbitration: "play-prove specs for balance (altitude G). Pixel Literal stays on visual-prove-engine. A screenshot cannot prove feel."
+  look: "NORTHSTAR.md / RENDER.md / art direction. lead-art-director owns visual identity; this file owns play."
+  runtime: "The engine and build. Adapters translate. Principles do not."
+graphs:
+  skillLoad: "game-foundations → lead-game-designer | lead-game-developer ; visual craft also inherits design-foundations and imaging-foundations"
+  epistemic: "08-knowledge/ (legion-* is exemplification, not law)"
+  artifact: "this file"
+shared:
+  - id: shared-player
+    name: Player experience first
+    for: all
+    items:
+      - id: experience-in-the-head
+        statement: "The game is the experience in the player's head, not the systems on disk. Correct-but-not-fun is not done."
+        level: must
+      - id: core-loop-first
+        statement: "Tune the smallest action → feedback → reward loop until it is satisfying alone. Meta-loops do not rescue a dead second-by-second loop."
+        level: must
+      - id: meaningful-choice
+        statement: "Choices have distinct options, legible consequences, and real trade-offs. A dominant strategy is a button, not agency."
+        level: must
+      - id: feedback-is-feel
+        statement: "Game feel is immediate, legible, proportional feedback (timing, weight, audio, animation, state). Performance and input-to-photon are feel, not a later optimization pass."
+        level: must
+      - id: flow-tracks-skill
+        statement: "Balance against the target player, not the designer's mastery. Challenge tracks skill."
+        level: must
+  - id: shared-engine
+    name: Engines are values
+    for: agent
+    items:
+      - id: engine-not-law
+        statement: "Do not encode an engine version, plugin, or Legion-specific class name as constitution law. Import the method. Leave the adapter in the project."
+        level: must-not
+      - id: spec-then-code
+        statement: "Design intent and a playable spec precede architecture fashion. ECS vs not is a contract decision with callers, not a default."
+        level: must
+entries:
+  - id: system
+    kind: system
+    name: Game constitution
+    for: agent
+    notes: "Design hub owns how it should play. Developer hub owns how it runs on the web/engine. Art direction and 3D craft are imaging + illustration/art, loaded when look is the job."
+  - id: balance-prove
+    kind: entry
+    name: Play prove
+    notes: "play-prove/1 + adapter JSON. Assert win_rate, spread, no_dominant_strategy. Adapter failure is an error, never a pass."
+  - id: environment-split
+    kind: entry
+    name: Environment design split
+    notes: "Level intent and pacing = this constitution + lead-game-designer. Modular kit, scale, LOD, diegetic materials = imaging constitution + 3d-spatial-design-for-games. Built-world architecture QA = architecture constitution only for real buildings, not game spaces."
+combos:
+  - id: loop-vs-content
+    must: [core-loop-first, experience-in-the-head]
+    mustNot: []
+    why: "More content on a dead loop is not design."
+  - id: feel-vs-screenshot
+    must: [feedback-is-feel]
+    mustNot: [engine-not-law]
+    why: "A beauty still is imaging evidence. Feel needs play-prove and/or motion prove."
+  - id: agency-vs-dominant
+    must: [meaningful-choice]
+    mustNot: []
+    why: "play-prove no_dominant_strategy is the measurement form of this combo."
+refuse:
+  - "Declaring fun from a VLM caption of a screenshot."
+  - "Making Legion's NASA-industrial look into game-design law."
+  - "Shipping a mechanic because it is technically elegant and the player cannot parse the trade-off."
+  - "Using architecture-constitution massing rules as a substitute for game scale and readable silhouettes."
+watch: []
+notes:
+  for: agent
+  - "Framework #12 is L1 for look-dev under camera. Gameplay L1 is game-foundations plus this file. Load both when a flythrough is also a balance claim."

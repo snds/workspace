@@ -15,6 +15,8 @@ description: >
   debugging variable icon font masters.
 hub: lead-type-designer
 aliases: [variable-icon-font-architect]
+triggers: [variable axis, variable axes]
+related: [lead-icon-artist, lead-vector-designer, lead-technical-digital-artist]
 spec_version: "2.0"
 tier: hub
 domain: design
@@ -202,3 +204,4 @@ own design-forward directive; the hub enforces this as a network-wide principle.
 ## Related
 - hub → [[lead-type-designer]]
 - spoke → [[math-bezier-spline-theory]] · [[math-computational-geometry]] · [[math-interpolation-designspace]] · [[math-optical-optimization]]
+- peer ↔ [[lead-icon-artist]] · [[lead-vector-designer]] · [[lead-technical-digital-artist]]

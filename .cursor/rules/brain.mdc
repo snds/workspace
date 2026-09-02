@@ -1,83 +1,69 @@
 ---
-description: Always-on workspace contract for Cursor — loaded into every request, for every model. Carries continuity across dynamic model switches.
+description: Always-on workspace contract for Cursor — every request, every model. Continuity across dynamic model switches.
 alwaysApply: true
 ---
 
-# Workspace brain — Cursor context
+# Workspace brain — Cursor
 
-This folder is a portable, multi-agent workspace: an Obsidian vault, a Claude Code working directory, and a
-shared design+engineering knowledge base. One filesystem (the git checkout), many consumers. The universal
-contract is [AGENTS.md](../../AGENTS.md); this rule is the Cursor adapter over it.
+Portable multi-agent workspace. Contract: [AGENTS.md](../../AGENTS.md). This rule is `alwaysApply:true`
+so every model in Cursor inherits it.
 
-**This rule is `alwaysApply:true`, so Cursor injects it into every request regardless of which model is
-active.** That is the mechanism that keeps continuity intact when you swap models mid-task (see "Dynamic
-model switching" below). Whatever model you are, you follow this contract.
+**Always-on set on Cursor (harness-map #3):** `AGENTS.md` (via this rule + User Rules beacon) +
+this file + `01-agent-controller.mdc`. Do **not** treat `CLAUDE.md` as Cursor standing law — it is
+the Claude Code adapter (ritual format + slash skills). If Cursor injects it anyway, prefer
+`AGENTS.md` + this rule on conflict.
 
-## Session Start Protocol
+## Side-chat inbox (every parent turn)
 
-Before responding to the first message in a new Cursor session:
+Before continuing substantive work in a **parent / main** thread: if
+`06-context/side-chat-inbox.md` exists and frontmatter `status` is `pending`, read it first, fold
+**For the parent** into the reply (or act on it), then set `status: consumed` or delete the file.
+Written by `/handback` / [[side-chat-handback]] from a side chat — no copy/paste required. Not a
+session-end. Skill: `03-skills/side-chat-handback/SKILL.md`.
 
-**Step 1 — Read context from the checkout.** Resolve the workspace root as the directory containing
-`AGENTS.md`. Use paths relative to it — never a hardcoded `/Users/<name>/` or cloud-drive path. Read:
-- `AGENTS.md` (the contract) → `03-skills/skills.registry.json` (the skill graph)
-- `06-context/role-and-context.md`, `06-context/project-context.md` (first 100 lines),
-  `06-context/session-log.md` (first 20 lines), `06-context/memory/MEMORY.md`
-- For active projects: list `07-projects/`, then read each `{subdir}/SESSION-STATE.md` directly (do not
-  glob — most of `07-projects/` is gitignored). **Read the `🤝 Live handoff` block first** to inherit the thread.
+## Session start
 
-**Step 2 — Output the session-start summary:**
+Before the first reply in a new session:
+
+1. Root = directory containing `AGENTS.md`. Read: `AGENTS.md` → `03-skills/skills.registry.json` →
+   `02-shared-references/trigger-routes.md` (curated head) → `06-context/` (role, **project-context
+   stubs only** — not `project-context-detail.md` / `project-registry.md` unless the task needs them —
+   session-log head, `memory/MEMORY.md`). Active project: read `SESSION-STATE.md` **Live handoff** first.
+   Also run the side-chat inbox check above.
+2. **Notices (optional, top of ritual):** if
+   `07-projects/19-workspace-brain/reports/harness-map.stamp` exists and its `date:` is **>30 days**
+   old, warn once: harness map stale → `/harness-map` when convenient (not a blocker). **Silent if
+   the stamp is missing** (no nag before the first map). Same pattern as Claude's SessionStart Notices.
+3. Emit the ritual:
 ```
-**✓ Workspace loaded** — {Machine label} · {YYYY-MM-DD HH:MM}
-
-- **Surface:** Cursor · **Model:** {active model}
-- **Last session:** {YYYY-MM-DD} — {one-line from session-log.md}
-- **Pending:** {N} → see 06-context/project-context.md
-- **Active projects ({N}):**
-  - **{folder}** — {one-line from its Live handoff / SESSION-STATE.md}
-
+[workspace: LOADED · {branch}@{short-sha} · {YYYY-MM-DD} · via:cursor-rule]
+**✓ Workspace loaded** — {Machine} · {YYYY-MM-DD HH:MM}
+- **Surface:** Cursor · **Model:** {model}
+- **Last session:** {date} — {one-line}
+- **Pending:** {N} → 06-context/project-context.md
+- **Active:** {project} — {Live handoff one-liner}
 What's on the agenda?
 ```
-Machine labels: `Voyager-2.local`→Personal MacBook Pro · `seansands.local`/`CS-KQ23N94M0W`/`CS-K746DRWXY1`→Work
-MacBook Pro · `Enterprise`→Windows Desktop. **Step 3** — then respond normally. Don't skip the ritual; it's
-the confirmation that context loaded.
+Machines: `Voyager-2.local`→Personal MBP · `CS-K746DRWXY1`/`CS-KQ23N94M0W`/`seansands.local`→Work MBP ·
+`Enterprise`→Windows.
 
-## Dynamic model switching (mid-conversation)
+## Model swap / resume
 
-Cursor lets you swap the active model mid-task. There is **no session boundary** when that happens, so:
-- This rule + the contract are re-injected for the **new** model automatically (that's `alwaysApply`).
-- All state lives in **files** (the Live handoff baton, `skills.registry.json`, the skills themselves) —
-  read on demand, not held in the model.
-- **Your obligation when you may have just become the active model (or are resuming): re-anchor first.**
-  Re-read the active project's `SESSION-STATE.md` Live handoff block and load the skills the task needs (route
-  by `triggers`/`description`, then read the `load_chains` ancestors foundation→hub→spoke). The chat history
-  is shared, but the workspace state must be re-read from files — don't assume the previous model's loaded
-  context is yours. This is what makes a model swap feel like one unified thread. See AGENTS.md →
-  "Multi-agent continuity & handoff".
-- On a meaningful change or before yielding, **update the Live handoff block** (attributed `Cursor · {model}`)
-  so the next model/agent inherits cleanly.
+Re-anchor: re-read Live handoff + load skills (`trigger-routes` / registry `load_chains`) before acting.
+Update Live handoff on meaningful change (`Cursor · {model}`).
 
-## Writing — any model may write, behind the gates
+## Parallel Task agents
 
-Writing is **not** restricted to Claude. Any model in Cursor may write, **provided every write clears the
-write-quality gates** (see `01-agent-controller.mdc` and AGENTS.md → "Write-quality gates"):
-1. **Quality** ≥ the workspace standard (no stubs/TODOs/unfilled tokens; established structure + voice).
-2. **Intent integrity** — no data/context/intent loss on edit.
-3. **Cross-link continuity** — update every related/cross-linked file; regenerate + validate.
-4. **No zombies** — if a change is dramatic, archive the old (with provenance) + regenerate + repoint.
+Prefer `.cursor/agents/*`. Workers skip the ritual. Parent owns Live handoff; workers write
+`06-context/sessions/` fragments only — never race-append `session-log.md`.
 
-Before committing, run: `build-registry.py` → `build-related.py` → `validate-integrity.py` →
-`validate-links.py` → `validate-workspace.py` (CI runs them too). A write that fails a gate isn't finished.
+## Writes
 
-## Frameworks, skills, conventions
-- **Frameworks (8):** see [`01-frameworks/00-README.md`](../../01-frameworks/00-README.md) for compressed
-  summaries — Aesthetic Lens, UI/UX Operational, Collaboration & Critique, Research & Evidence, Last-Mile
-  Craft, QA Operating Model, Integration & Review, and **Workspace Contribution** (governs editing the workspace).
-- **Skills:** `03-skills/` (hub/spoke). Don't bulk-load — route per AGENTS.md and read `load_chains` from the
-  registry. `.claude/skills/` are Claude Code slash commands (not available in Cursor).
-- **Conventions:** artifacts `context_descriptor_vN.N_YYYY-MM-DD.ext` (never overwrite — increment);
-  `[[wikilinks]]` for internal links (the graph + integrity check depend on them); never delete — archive to
-  `_archive/` with provenance; never rename a `SKILL.md` (add `aliases`); never hand-edit generated files.
+Any model may write behind the gates in `01-agent-controller.mdc` / AGENTS.md. Never run the retired
+`compile-cursor-rules.py` (archived — it would overwrite AGENTS.md).
 
-## Cross-context note
-Sean works across personal (snds.design) and employer (Centric) contexts in this one workspace. Use
-`07-projects/<project>/` for separation; don't mix Centric-specific decisions into general workspace artifacts.
+## Skills & conventions
+
+Route skills; don't bulk-load. Artifacts: `context_descriptor_vN.N_YYYY-MM-DD.ext`. `[[wikilinks]]`.
+Archive don't delete. Never rename `SKILL.md` (use `aliases`). Never hand-edit generated files
+(`skills.registry.json`, `trigger-routes.md`).

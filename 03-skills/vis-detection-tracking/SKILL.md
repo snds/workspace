@@ -8,7 +8,7 @@ description: >
   objects in images or video." Triggers: object detection, YOLO, RT-DETR, bounding box, NMS, mAP,
   IoU, anchor, tracking, multi-object tracking, ByteTrack, SORT, Kalman, re-identification.
 aliases: [vis-detection-tracking, object-detection, mot]
-triggers: [object detection, yolo, rt-detr, detr, bounding box, anchor free, nms, non max suppression, map, iou, multi object tracking, tracking, bytetrack, sort, deepsort, kalman filter, hungarian, re-identification, counting]
+triggers: [object detection, yolo, rt-detr, detr, bounding box, anchor free, nms, non max suppression, mean average precision, iou, multi object tracking, tracking, bytetrack, sort, deepsort, kalman filter, hungarian, re-identification, counting]
 tier: spoke
 hub: vision-foundations
 domain: vision

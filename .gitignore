@@ -28,11 +28,16 @@
 !_CONTEXT.md
 !_CHEATSHEET.md
 
+# Copilot skill pack (Claude slash wrappers point here via relative symlinks)
+!copilot/
+!copilot/**
+
 !.claude/
 !.claude/**
 
 !.cursor/
 !.cursor/**
+!.cursorignore
 
 !.obsidian/
 !.obsidian/**
@@ -58,6 +63,13 @@
 !06-context/
 !06-context/**
 
+# Transient per-session files (regenerated each session; machine-local, not shared).
+# The .md session fragments and the README ARE tracked — only these are ignored.
+06-context/sessions/*.touched
+06-context/sessions/*.alive
+# Ephemeral side-chat → parent inbox (one pending slot; see side-chat-handback skill)
+06-context/side-chat-inbox.md
+
 # Archive (retired files + provenance ledger). Tracked so provenance is auditable.
 !_archive/
 !_archive/**
@@ -75,8 +87,18 @@
 !09-tools/validate-workspace.py
 !09-tools/validate-integrity.py
 !09-tools/validate-capabilities.py
-!09-tools/compile-cursor-rules.py
+!09-tools/build-trigger-routes.py
 !09-tools/build-local-skill-plugin.py
+!09-tools/compact-sessions.py
+!09-tools/vault-health.py
+!09-tools/vault-retrieve.py
+!09-tools/vault-retrieve.golden.json
+!09-tools/check-terminology.py
+!09-tools/check-unattended-runner-gate.py
+!09-tools/side-chat-handback.py
+!09-tools/test-validators.py
+!09-tools/ds-source-watch.py
+!09-tools/cursor-externalize.py
 
 # Track only the 00-obsidian integration project; other projects stay local.
 !07-projects/
@@ -86,6 +108,25 @@
 # Track the portable bootstrap generator — pilot for git-native (non-gdrive) projects.
 !07-projects/18-bootstrap-generator/
 !07-projects/18-bootstrap-generator/**
+# …but NOT its build artifacts (the `**` whitelist above would otherwise re-include
+# them despite the project's own .gitignore). dist/ = generated zips + .app bundle.
+07-projects/18-bootstrap-generator/dist/
+07-projects/18-bootstrap-generator/**/__pycache__/
+
+# Track the workspace-brain project — standing home for workspace-subject sessions;
+# cross-machine continuity is its entire point (framework #08, 2026-07-09).
+!07-projects/19-workspace-brain/
+!07-projects/19-workspace-brain/**
+
+# Track the LCARS generative interface project — design SPEC + session continuity
+# (2026-08-07). Implementation code stays in the platform Projects directory.
+!07-projects/20-lcars-generative-interface/
+!07-projects/20-lcars-generative-interface/**
+
+# MediaSentinel is otherwise git-local; track only Cursor canvas copies.
+!07-projects/01-mediaservices/
+!07-projects/01-mediaservices/canvases/
+!07-projects/01-mediaservices/canvases/**
 
 # ---- Still ignored, even inside tracked folders ----
 
@@ -113,6 +154,9 @@
 # Obsidian plugin runtime data — auto-modified while Obsidian is open, not user-authored
 .obsidian/core-plugins.json
 .obsidian/plugins/*/data.json
+# …except obsidian-git's config — tracked so git-sync behavior is identical on every device
+# (portable: basePath/gitDir are empty, no machine-specific paths). Expect occasional churn.
+!.obsidian/plugins/obsidian-git/data.json
 
 # Obsidian plugin binaries — installed by setup.py, not versioned
 .obsidian/plugins/*/main.js

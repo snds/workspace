@@ -1,12 +1,12 @@
 ---
 tags: [workspace, infrastructure, claude-code, obsidian, git, drive, ssh, github, multi-identity, sync-monitoring]
 created: 2026-04-28
-updated: 2026-06-17
+updated: 2026-08-05
 status: stable
 confidence: high
-sources: [session-log 2026-04-23, session-log 2026-04-25, session-log 2026-04-27, session-log 2026-05-07]
+sources: [session-log 2026-04-23, session-log 2026-04-25, session-log 2026-04-27, session-log 2026-05-07, session-log 2026-07-09]
 related_skills: [workspace-bootstrap]
-related_projects: [00-obsidian]
+related_projects: [00-obsidian, 19-workspace-brain]
 ---
 
 # Workspace Infrastructure — Accumulated Learnings
@@ -66,11 +66,31 @@ Git is the single sync + source-of-truth layer (Drive is no longer in the pictur
 
 All Claude Code lifecycle events route through a single Python file: `.claude/hooks/dispatcher.py`.
 
-**Events handled:**
-- `SessionStart` — loads context (project-context.md + session-log.md), runs worktree cleanup, surfaces notices
-- `UserPromptSubmit` — trigger-word routing (loads relevant skills/context for "legion", "centric", "icon font", etc.)
+**Events handled (post-rebuild list, current as of 2026-07-09):**
+- `SessionStart` — pre-parsed ritual data + context heads + knowledge index; heals gitdir pointer
+  and exec bits; worktree cleanup; on `source: compact|resume` injects a compact re-orientation
+  block instead (skills discipline + knowledge index)
+- `UserPromptSubmit` — trigger routing from Layer 0 (dispatcher curated tables,
+  `skills.registry.json` frontmatter triggers, `_INDEX.md` `Triggers:` lines), emitted in tiered
+  order curated → knowledge → registry → index with per-tier caps and dedupe-by-target (FX-2).
+  When Layer 0 yields fewer than 2 unique targets, a Layer-1 **lexical fallback** runs
+  `09-tools/vault-retrieve.py --cached` (cap 2) and appends path hints. SessionStart refreshes
+  the FTS index so the cached hot path stays current.
+- `PreToolUse` (matcher `use_figma`) — the Figma design-judgment gate: first call per session is
+  denied once with the loaded-lens checklist; the retry passes
 - `Stop` — stages session-log changes
-- `SessionEnd` — safety-check then `git add -A`, commit, push
+- `SessionEnd` — safety-check then `git add -A`, commit, push; regenerates the skills registry
+  first when any SKILL.md changed
+
+**The machine layer (bootstrap v2, built 2026-07-08, installed per machine):** the workspace
+dispatcher only fires when the session's cwd is the workspace. `00-bootstrap/dist/` ships
+user-scope shims (`workspace-sessionstart/reassert/audit.sh`) + a beacon `~/.claude/CLAUDE.md`
++ a launchd doctor (4h cadence); `00-bootstrap/doctor/workspace-doctor.sh` installs and
+self-repairs all of it. Parent-dir / any-cwd launches get workspace context from THIS layer.
+Per-machine install state: memory fact `fact-machine-layer-installs`.
+
+**Delivery contract:** every injected payload's `hookEventName` must equal the event name
+exactly or the harness silently drops it — see [[claude-code-hooks-contract]].
 
 **Python binary strategy:** The dispatcher must be called with `python3` (not `python`) because macOS typically doesn't have a bare `python` binary. Windows uses a `python3.bat` shim installed by the setup script. `.claude/settings.json` calls `python3` explicitly.
 
@@ -134,9 +154,46 @@ When a fresh machine is added (new laptop, loaner swap, reset device), Google Dr
 - Bytes complete long before files complete — Drive prioritizes large files first, leaving the long tail of small files for last. Watch *file* count, not byte progress, as the gating signal.
 - Drive strips macOS executable bits in transit on at least some script files (`dispatcher.py` mode `100755` → `100644`). After sync, `chmod +x` any tracked scripts that need it. Diff-detect with `git diff --raw` to see mode changes.
 
-**Tooling:** `~/drive-sync-tools/{drive-audit,drive-monitor}.py` (planned: move into `08-tools/`). Single-pass scan, top-level breakdown, monitor auto-exits when 0 placeholders + on-disk size stable for 2 ticks.
+**Tooling:** `~/drive-sync-tools/{drive-audit,drive-monitor}.py` (moved into `09-tools/`). Single-pass scan, top-level breakdown, monitor auto-exits when 0 placeholders + on-disk size stable for 2 ticks.
 
 ---
+
+## Headless Claude Code — what actually scopes a session, and what only looks like it does
+
+_Dated 2026-07-30. Established by direct probe while scoping an unattended queue runner for
+[[open-agent-engine]]; the runner was rejected on the strength of these findings._
+
+**`--strict-mcp-config` + `--mcp-config <file>` genuinely scopes MCP.** A session launched with a
+one-server config sees that server and nothing else — not other registered servers, not user-scope
+ones. Probed directly: `SERVERS: linear-personal` / `C8_PRESENT: no`. This is the mechanism that
+restores per-lane isolation, which user-scope MCP registration otherwise gives away (every ordinary
+session on a machine binds *every* registered server).
+
+**`--allowed-tools` does NOT restrict built-ins — it only grants.** This is the trap. A session
+launched with `--allowed-tools "mcp__linear-personal"` still reported:
+
+```
+BASH: yes   EDIT: yes
+TOOLS: Agent, AskUserQuestion, Bash, Edit, Read, ScheduleWakeup, Skill, ToolSearch,
+       Workflow, Write (+ deferred: CronCreate, RemoteTrigger, …)
+```
+
+The naming invites the opposite reading. **Consequence for any unattended agent that reads untrusted
+input** — issue bodies, tickets, email, scraped pages: allow-listing an MCP server does not take away
+its shell. "Anyone who can write to that input source" becomes "anyone who can run commands on this
+machine." Restriction needs `--tools` (explicit available set) or `--disallowed-tools` (denial); both
+exist, neither is verified here. **Deny, don't allow.**
+
+**`mcp-remote` has cold-start latency, and the failure is silent.** A headless session can begin
+before its MCP server finishes connecting, and then honestly reports "no MCP tools are currently
+available." Nothing errors. For any programmatic queue/tracker check this is indistinguishable from
+"nothing to do" — the same shape as the `auth-incomplete` bug in `linear-lanes.py`: **a failure
+wearing success's clothes.** Any headless integration must gate on tools-loaded and emit a distinct
+sentinel when they are not, so "could not see it" and "nothing there" never share a log line.
+
+Interactive sessions appear unaffected — MCP tools were present in the deferred-tool list at session
+start — but that is an observation, not a guarantee, and it is why the engine's session-start ritual
+skips its line silently rather than reporting an empty queue when the transport is missing.
 
 ## Multi-Identity GitHub on a Single Machine
 
@@ -175,7 +232,13 @@ Personal clones use `git@github.com:snds/...`, work clones use `git@github-work:
 - Remote URL routes through `github.com` alias = personal SSH key
 - Result: even when used from a Centric work laptop, every commit is unambiguously personal — no risk of work email leaking into the public-ish snds repo log.
 
-**Workspace clone procedure (fresh machine).** `.git` in the workspace is a pointer file — `gitdir: ~/.git-stores/claude-workspace-system`. To populate that gitdir without re-downloading the working tree (Drive already has it):
+**HISTORICAL — Drive-era workspace clone procedure (superseded 2026-06-16; kept for archaeology only).**
+Do NOT use this on a fresh machine. The current procedure is a plain `git clone` of
+`snds/workspace` (one-liner + double-click installers in `00-bootstrap/`), then
+`00-bootstrap/doctor/workspace-doctor.sh` for the machine layer. The block below predates the
+migration: `.git` in the Drive-era workspace was a pointer file — `gitdir:
+~/.git-stores/claude-workspace-system` — populated without re-downloading the working tree
+(Drive already had it):
 ```
 git clone --no-checkout \
   --separate-git-dir=~/.git-stores/claude-workspace-system \

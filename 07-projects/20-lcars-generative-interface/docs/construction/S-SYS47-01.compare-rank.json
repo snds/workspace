@@ -1,0 +1,201 @@
+{
+  "engine": "vqa/1.0",
+  "reference": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/captures/S-SYS47-01.png",
+  "ranking": [
+    {
+      "rank": 1,
+      "build": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/captures/S-SYS47-01_build_v3.png",
+      "closeness": 0.2637,
+      "ssim": 0.4387,
+      "delta_e_mean": 22.78
+    },
+    {
+      "rank": 2,
+      "build": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/captures/S-SYS47-01_build_v2.png",
+      "closeness": 0.2069,
+      "ssim": 0.4137,
+      "delta_e_mean": 25.16
+    }
+  ],
+  "detail": [
+    {
+      "label": "S-SYS47-01_build_v2",
+      "reference": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/captures/S-SYS47-01.png",
+      "build": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/captures/S-SYS47-01_build_v2.png",
+      "ref_size": [
+        3840,
+        2160
+      ],
+      "build_size": [
+        2106,
+        2116
+      ],
+      "aspect_delta": 0.4402,
+      "registration": {
+        "dy": -32,
+        "dx": 32
+      },
+      "ssim": 0.4137,
+      "delta_e": {
+        "mean": 25.16,
+        "p95": 83.84,
+        "max": 117.91,
+        "frac_over_10": 0.4841
+      },
+      "worst_tiles": [
+        {
+          "tile": [
+            2,
+            7
+          ],
+          "ssim": 0.1167
+        },
+        {
+          "tile": [
+            3,
+            3
+          ],
+          "ssim": 0.1178
+        },
+        {
+          "tile": [
+            2,
+            4
+          ],
+          "ssim": 0.1342
+        },
+        {
+          "tile": [
+            2,
+            6
+          ],
+          "ssim": 0.151
+        },
+        {
+          "tile": [
+            2,
+            5
+          ],
+          "ssim": 0.1535
+        },
+        {
+          "tile": [
+            2,
+            1
+          ],
+          "ssim": 0.1563
+        },
+        {
+          "tile": [
+            3,
+            2
+          ],
+          "ssim": 0.1742
+        },
+        {
+          "tile": [
+            3,
+            1
+          ],
+          "ssim": 0.1816
+        }
+      ],
+      "warning": "aspect mismatch 0.995 vs 1.778 \u2014 build was stretched to reference dims; treat global metrics as degraded",
+      "artifacts": [
+        "/tmp/vqa-lcars-rank/S-SYS47-01_build_v2_deltaE_heat.png",
+        "/tmp/vqa-lcars-rank/S-SYS47-01_build_v2_ssim_inv.png",
+        "/tmp/vqa-lcars-rank/S-SYS47-01_build_v2_side_by_side.png"
+      ],
+      "closeness": 0.2069
+    },
+    {
+      "label": "S-SYS47-01_build_v3",
+      "reference": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/captures/S-SYS47-01.png",
+      "build": "/Users/snds/Projects/Workspace/07-projects/20-lcars-generative-interface/docs/construction/captures/S-SYS47-01_build_v3.png",
+      "ref_size": [
+        3840,
+        2160
+      ],
+      "build_size": [
+        1920,
+        1080
+      ],
+      "aspect_delta": 0.0,
+      "registration": {
+        "dy": 32,
+        "dx": -20
+      },
+      "ssim": 0.4387,
+      "delta_e": {
+        "mean": 22.78,
+        "p95": 79.61,
+        "max": 119.6,
+        "frac_over_10": 0.4604
+      },
+      "worst_tiles": [
+        {
+          "tile": [
+            2,
+            2
+          ],
+          "ssim": 0.0786
+        },
+        {
+          "tile": [
+            2,
+            5
+          ],
+          "ssim": 0.1081
+        },
+        {
+          "tile": [
+            2,
+            1
+          ],
+          "ssim": 0.1088
+        },
+        {
+          "tile": [
+            2,
+            4
+          ],
+          "ssim": 0.1147
+        },
+        {
+          "tile": [
+            5,
+            1
+          ],
+          "ssim": 0.1224
+        },
+        {
+          "tile": [
+            5,
+            0
+          ],
+          "ssim": 0.124
+        },
+        {
+          "tile": [
+            2,
+            6
+          ],
+          "ssim": 0.1271
+        },
+        {
+          "tile": [
+            4,
+            1
+          ],
+          "ssim": 0.1273
+        }
+      ],
+      "artifacts": [
+        "/tmp/vqa-lcars-rank/S-SYS47-01_build_v3_deltaE_heat.png",
+        "/tmp/vqa-lcars-rank/S-SYS47-01_build_v3_ssim_inv.png",
+        "/tmp/vqa-lcars-rank/S-SYS47-01_build_v3_side_by_side.png"
+      ],
+      "closeness": 0.2637
+    }
+  ]
+}

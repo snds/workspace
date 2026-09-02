@@ -12,12 +12,32 @@ NEVER included in emitted output — it stays local.
 """
 from __future__ import annotations
 
+import json
+import re
 from pathlib import Path
 
-from . import core
+from . import core, layout
 
 # context notes included in agnostic emits (personal.md is excluded when walled)
 _PUBLIC_CONTEXT = ["project-context.md", "session-log.md", "relational.md"]
+
+# Emitted prose is authored with the FLAT dir tokens (`context/`, `skills/`, …) for
+# readability; `_resolve_dirs` rewrites them to the workspace's actual dir names at emit
+# time (numbered on a fresh vault, flat on a legacy one). The negative lookbehind means a
+# reference like `.claude/skills/` — preceded by `/` — is left untouched; only a bare
+# `skills/` (start of a path segment in prose) is rewritten.
+_DIR_TOKENS = ("context", "skills", "frameworks", "knowledge", "projects",
+               "shared", "preferences")
+
+
+def _resolve_dirs(root: Path, text: str) -> str:
+    lay = layout.of(root)
+    for key in _DIR_TOKENS:
+        name = lay.name(key)
+        if name == key:            # flat workspace — the token is already correct
+            continue
+        text = re.sub(r"(?<![\w./-])" + re.escape(key) + r"/", name + "/", text)
+    return text
 
 
 def _read(root: Path, rel: str) -> str:
@@ -25,19 +45,31 @@ def _read(root: Path, rel: str) -> str:
     return f.read_text(encoding="utf-8") if f.exists() else ""
 
 
+def _hook_is_ours(entry, fname: str) -> bool:
+    """True if a settings.json hook entry invokes our emitted hook script `fname`."""
+    if not isinstance(entry, dict):
+        return False
+    for h in entry.get("hooks", []) or []:
+        if isinstance(h, dict) and fname in str(h.get("command", "")):
+            return True
+    return False
+
+
 def gather(root: Path, profile: dict, include_personal: bool = False):
     """Collect the canonical material for emission."""
     walled = bool(profile.get("contexts", {}).get("personal", {}).get("private", True))
+    lay = layout.of(root)
     notes = []
     for rel in _PUBLIC_CONTEXT:
-        body = _read(root, f"context/{rel}")
+        body = _read(root, f"{lay.name('context')}/{rel}")
         if body.strip():
             notes.append((rel, body))
     if include_personal and not walled:
-        body = _read(root, "context/personal.md")
+        body = _read(root, f"{lay.name('context')}/personal.md")
         if body.strip():
             notes.append(("personal.md", body))
     skills = []
+    sk_dir = lay.name("skills")
     for name, sk in core.iter_skills(root):
         fm, _body = core.parse_frontmatter(sk)
         skills.append({
@@ -45,7 +77,7 @@ def gather(root: Path, profile: dict, include_personal: bool = False):
             "description": str(fm.get("description", "")).strip(),
             "triggers": core.skill_triggers(fm),
             "hub": fm.get("hub", ""),
-            "path": f"skills/{name}/SKILL.md",
+            "path": f"{sk_dir}/{name}/SKILL.md",
         })
     return {"walled": walled, "notes": notes, "skills": skills}
 
@@ -65,6 +97,27 @@ def _identity(profile: dict) -> str:
     return str(profile.get("identity", {}).get("name", "you"))
 
 
+def _identity_anchor(profile: dict) -> str:
+    """The naming anchor: bind 'workspace' / 'second brain' / 'micro-brain' / … to THIS
+    vault by default, so an assistant doesn't resolve those words to a commercial connector
+    (Notion/Confluence/Drive/Slack/…). Neutral, per-workspace; overridden only when the
+    person explicitly names an external tool. Placed near the top of every adapter."""
+    name = _identity(profile)
+    return "\n".join([
+        "## This workspace IS your second brain — resolve the term here",
+        f"This directory is {name}'s personal **workspace**: a *second brain / micro-brain /",
+        "knowledge base* that is an Obsidian vault + git repo, wired into your AI. When",
+        f"{name} says **\"workspace\", \"second brain\", \"2nd brain\", \"micro-brain\", \"my brain\",",
+        "\"my notes\", \"my vault\", \"my knowledge base\"** — or asks you to *gather / pull /",
+        "search / remember across my work* — they mean **THIS vault**, and you resolve that",
+        "**here first**. Do **not** assume they mean Notion, Confluence, Google Drive, Box, Slack,",
+        "Gong, Linear, Asana, a GitHub/MCP connector, or any other app **unless they explicitly",
+        "name it**. This vault is the default home for that language; a connector is used only on",
+        "explicit request. If both this vault and a named external source apply, prefer this vault",
+        "unless told otherwise.",
+    ]) + "\n"
+
+
 def _record(root: Path, manifest: dict, target: str, files: list):
     rel = [str(Path(f).relative_to(root)) for f in files]
     manifest.setdefault("emitted", {})[target] = {"files": rel, "at": core.now_stamp()}
@@ -81,6 +134,7 @@ def emit_pack(root: Path, profile: dict, manifest: dict) -> list:
         f"_Separation: {profile.get('lifecycle', {}).get('separation', 'walled')} "
         f"(personal context {'excluded' if g['walled'] else 'included'})._",
         "",
+        _identity_anchor(profile),
         "## Who you're working with",
         "",
         f"- Name: {_identity(profile)}",
@@ -90,12 +144,25 @@ def emit_pack(root: Path, profile: dict, manifest: dict) -> list:
         "## Specialized skills available",
         "",
         _skill_index_md(g["skills"]),
+        "## Building new skills — supreme rule",
+        "",
+        "To add any skill, hub, framework, or playbook, follow the process in this",
+        "workspace's `frameworks/skill-authoring.md`: it supersedes native skill-creation —",
+        "set the altitude from the person's per-domain expertise, source from skills +",
+        "references and cite, reconcile triggers, and pass the acceptance checklist.",
+        "",
     ]
+    # Token frugality: the pack is meant to be pasted into a chat, so cap each note
+    # to its most useful head instead of dumping whole (possibly huge) context files.
+    NOTE_CAP = 4000  # chars ≈ 1k tokens per note
     for rel, body in g["notes"]:
-        parts += [f"## {rel}", "", body.strip(), ""]
+        b = body.strip()
+        if len(b) > NOTE_CAP:
+            b = b[:NOTE_CAP].rstrip() + f"\n\n_…(truncated for token frugality — open `{rel}` for the rest)_"
+        parts += [f"## {rel}", "", b, ""]
     out = root / "adapters" / "context-pack.md"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text("\n".join(parts) + "\n", encoding="utf-8")
+    out.write_text(_resolve_dirs(root, "\n".join(parts) + "\n"), encoding="utf-8")
     _record(root, manifest, "pack", [out])
     return [out]
 
@@ -111,6 +178,7 @@ def _agents_md_body(root: Path, profile: dict) -> str:
         "Generated by `wsx emit agents-md` — do not hand-edit; edit the canonical",
         "workspace (context/, skills/) and re-emit.",
         "",
+        _identity_anchor(profile),
         "## About",
         f"- Name: {name}",
         f"- Role: {profile.get('contexts', {}).get('work', {}).get('role', '') or '(unspecified)'}",
@@ -118,12 +186,56 @@ def _agents_md_body(root: Path, profile: dict) -> str:
         f"- Separation: {profile.get('lifecycle', {}).get('separation', 'walled')} "
         "(personal context is local-only and not described here).",
         "",
-        "## Context files (read these)",
-        "- `context/project-context.md` — active projects + pending items.",
-        "- `context/session-log.md` — recent session history.",
+        "## How to communicate with " + name,
+        "**Read `preferences/user-preferences.md` and honor it in every reply — especially its",
+        f"Voice and its \"Never do these\" list.** That file, not a generic assistant default, is how",
+        f"{name} wants to be spoken to. (Machine copy: `profile.yaml` → `preferences`.)",
+        "",
+        "## Token frugality — a top priority",
+        "This workspace must never cost more tokens than the value it adds. Read the TOP",
+        "(most recent) of the context files — never a whole growing log. Load a skill only",
+        "when its trigger fires; prefer the smallest sufficient context.",
+        "",
+        "## Context files (read the head, not the whole file)",
+        "- `context/CRITICAL_FACTS.md` — **read this FIRST every session**: the tiny, always-",
+        "  loaded hot cache of facts never to re-derive. Everything else is one hop from `HOME.md`.",
+        "- `context/project-context.md` — active projects + pending items (skim the top).",
+        "- `context/session-log.md` — recent session history; **bounded** (older blocks are",
+        "  in `context/session-log-archive.md`, read only on demand).",
+        "- `context/decisions/` — ADRs: why the meaningful choices were made (read on demand).",
+        "- `context/conventions.md` — note conventions (typed edges, freshness, the preamble).",
+        "- `knowledge/` — durable domain insight (patterns, constraints, research). Read the",
+        "  index before substantive domain work; propose an entry when a session yields one.",
+        "- `projects/<name>/PROJECT.md` — per-project documentation & context (overview, where",
+        "  the code lives, live handoff, decisions). Read the relevant one before working on a",
+        "  project; the code itself lives in that project's own repo, not in this vault.",
+        "- `HOME.md` — the vault's linked front door (index of everything).",
+        "",
+        "## Note conventions (keep the graph connected + trustworthy)",
+        "- **Link generously** with `[[wikilinks]]`; for typed relationships use a `relations:`",
+        "  front-matter block (`builds-on`/`relates-to`/`contradicts`/`refutes`/`exemplifies`).",
+        "- **Freshness:** every claim is *timeless* (a principle), *dated* (`as of YYYY-MM`), or",
+        "  a *pointer* (link to a live source). Tag anything past its horizon `#stale`.",
+        "- **Open durable notes with a `## For future agent`** block (TL;DR + key claims + as-of).",
+        "- Record a real choice as an ADR in `context/decisions/` (copy `_TEMPLATE.md`).",
+        "- Run `wsx health` to catch orphans, stale claims, and dangling typed edges.",
+        "",
+        "## Session end (generalize, then record — multi-device safe)",
+        "Don't just write a summary. First **harvest** any generalizable insight into",
+        "`knowledge/`, **update every open `projects/<name>/PROJECT.md` live-handoff**, and if",
+        "no project is active put loose ends in `context/open-threads.md`. Then record the",
+        "session with `wsx session end` (stamps Agent · Surface · Machine, writes a conflict-free",
+        "`context/sessions/{date}-{id}.md` fragment, and folds it into `session-log.md`). Finally",
+        "`wsx sync`. Disjoint fragment files never collide across devices/sessions/surfaces.",
         "",
         "## Specialized skills",
         _skill_index_md(g["skills"]),
+        "## Building skills, hubs, frameworks, or playbooks — SUPREME RULE",
+        "When asked to build/add any skill, hub, framework, or playbook, follow",
+        "`frameworks/skill-authoring.md` — it SUPERSEDES any native skill-creation. Set the",
+        "altitude from the person's per-domain level (`profile.yaml` → `expertise`), source from",
+        "skills + references and cite, reconcile triggers, and pass the acceptance checklist.",
+        "",
         "## Conventions",
         "- Respect the privacy wall: never read or surface `context/personal.md`.",
         "- Keep changes small and verified.",
@@ -132,7 +244,7 @@ def _agents_md_body(root: Path, profile: dict) -> str:
 
 def emit_agents_md(root: Path, profile: dict, manifest: dict) -> list:
     out = root / "AGENTS.md"
-    out.write_text(_agents_md_body(root, profile), encoding="utf-8")
+    out.write_text(_resolve_dirs(root, _agents_md_body(root, profile)), encoding="utf-8")
     _record(root, manifest, "agents-md", [out])
     return [out]
 
@@ -148,31 +260,504 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
         "",
         "_Generated by `wsx emit claude-code`. Canonical source: context/ + skills/._",
         "",
-        "## Session start",
-        "At session start, read `context/project-context.md` and `context/session-log.md`",
-        "so you already know the active work. Respect the privacy wall: never read",
-        "`context/personal.md` unless explicitly asked.",
+        _identity_anchor(profile),
+        "## Token frugality — a top priority",
+        "This workspace must never cost the person MORE tokens than the value it adds.",
+        "Read **frugally**: the TOP (most recent) of `context/project-context.md` and",
+        "`context/session-log.md` is enough to orient — do NOT read whole logs. Older",
+        "history lives in `session-log-archive.md`; open it only if a task truly needs it.",
+        "Load a skill only when its trigger fires; prefer the smallest sufficient context.",
         "",
-        "## Preferences",
-        f"- Tone: {profile.get('preferences', {}).get('tone', '') or '(unspecified)'}",
-        f"- Audience: {profile.get('preferences', {}).get('audience', '') or '(unspecified)'}",
+        "## Session start & end (multi-device safe)",
+        "At session start, read `context/CRITICAL_FACTS.md` FIRST (the tiny always-on hot",
+        "cache), then skim the top of `context/project-context.md` and `context/session-log.md`",
+        "for the active work. Respect the privacy wall: never read `context/personal.md`",
+        "unless explicitly asked.",
+        "At session **end**, follow the **session-end** skill (auto-loads on \"wrap up\" /",
+        "\"done for today\"): harvest generalizable insight into `knowledge/`, update every open",
+        "`projects/<name>/PROJECT.md` handoff (or `context/open-threads.md` if no project), then",
+        "`wsx session end` writes an attributed (Agent · Surface · Machine) conflict-free fragment",
+        "and folds it into `session-log.md`; finish with `wsx sync`. Fragments never collide across devices.",
+        "",
+        "## Projects (per-project documentation)",
+        "Each project has a docs folder at `projects/<name>/PROJECT.md` (overview, where the",
+        "code lives, live handoff, decisions) — read the relevant one before working on that",
+        "project. The code and assets live in the project's own repo, not this vault. Start",
+        "any browse from `HOME.md`, the linked front door.",
+        "",
+        "## Note conventions",
+        "Keep the vault a connected, trustworthy graph: link with `[[wikilinks]]` (typed",
+        "`relations:` for builds-on/refutes/etc.); mark every claim *timeless* / *dated*",
+        "(`as of YYYY-MM`) / *pointer* and tag stale ones `#stale`; open durable notes with a",
+        "`## For future agent` block; record real choices as ADRs in `context/decisions/`.",
+        "See `context/conventions.md`; run `wsx health` to catch orphans + drift.",
+        "",
+        "## How to communicate with " + name,
+        f"- Tone: {profile.get('preferences', {}).get('tone', '') or '(unspecified)'}"
+        f" · Audience: {profile.get('preferences', {}).get('audience', '') or '(unspecified)'}",
+        "- **Read `preferences/user-preferences.md` and honor it — especially its Voice and its",
+        f"  \"Never do these\" list. That file governs HOW you talk to {name}; follow it in every",
+        "  reply, not just when asked.** (Its machine copy is `profile.yaml` → `preferences`.)",
+        "",
+        "## Building skills, hubs, frameworks, or playbooks — SUPREME RULE",
+        "When asked to build/add/create any skill, hub, spoke, framework, or playbook,",
+        "**follow `frameworks/skill-authoring.md` — it SUPERSEDES your native skill-creation.**",
+        "Set the altitude from the person's per-domain level (`profile.yaml` → `expertise`),",
+        "source from skills + references and cite, reconcile triggers, and pass the acceptance",
+        "checklist before calling it done. Do not use a built-in skill-builder instead.",
         "",
         "## Skills (load on demand)",
         _skill_index_md(g["skills"]),
     ]) + "\n"
     cm = root / "CLAUDE.md"
-    cm.write_text(claude_md, encoding="utf-8")
+    cm.write_text(_resolve_dirs(root, claude_md), encoding="utf-8")
     written.append(cm)
 
-    # mirror skills into .claude/skills/<name>/SKILL.md so Claude Code discovers them
+    # Hooks make the workspace's automation GUARANTEED rather than advisory. Without them
+    # the AI only obeys CLAUDE.md if it chooses to; with them the harness runs them every
+    # time. All three are read-only + local + fail-silent (see each script's header):
+    #   SessionStart      → inject the hot context (CRITICAL_FACTS + heads of the logs)
+    #   UserPromptSubmit  → surface skills/knowledge whose OWN triggers match the prompt
+    #   SessionEnd        → audit that the session was recorded before it ends
+    hook_files = {
+        "session-start.py": _SESSION_START_HOOK,
+        "user-prompt-submit.py": _TRIGGER_ROUTER_HOOK,
+        "session-end.py": _SESSION_END_HOOK,
+    }
+    for fname, body in hook_files.items():
+        hk = root / ".claude" / "hooks" / fname
+        hk.parent.mkdir(parents=True, exist_ok=True)
+        # session-start bakes in dir names for readability; the other two detect layout at
+        # runtime (so they survive an R2 restructure without a re-emit).
+        text = _resolve_dirs(root, body) if fname == "session-start.py" else body
+        hk.write_text(text, encoding="utf-8")
+        hk.chmod(0o755)
+        written.append(hk)
+
+    settings = root / ".claude" / "settings.json"
+    # Merge, never clobber: the person may have their own settings/hooks here.
+    existing = {}
+    if settings.exists():
+        try:
+            existing = json.loads(settings.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            existing = {}
+    hooks_cfg = existing.setdefault("hooks", {})
+    # event -> our hook script. Rebuilt structurally on every emit: drop any entry that
+    # invokes OUR script, add exactly one back. Matching a json.dumps() substring does NOT
+    # work (it escapes quotes), which is what made an earlier build fire the hook N times.
+    # This is idempotent AND self-heals a workspace that accumulated duplicates; entries
+    # the person added themselves are preserved untouched.
+    wiring = {"SessionStart": "session-start.py",
+              "UserPromptSubmit": "user-prompt-submit.py",
+              "SessionEnd": "session-end.py"}
+    for event, fname in wiring.items():
+        # `python3` alone dead-ends on Windows (it's `python` / the `py` launcher there),
+        # and a workspace syncs across machines — so the command must degrade. `||` is
+        # honoured by both POSIX shells and cmd.exe: the first interpreter that exists wins.
+        _h = f"\"$CLAUDE_PROJECT_DIR/.claude/hooks/{fname}\""
+        cmd = f"python3 {_h} || python {_h}"
+        kept = [e for e in hooks_cfg.get(event, []) if not _hook_is_ours(e, fname)]
+        kept.append({"hooks": [{"type": "command", "command": cmd}]})
+        hooks_cfg[event] = kept
+    settings.write_text(json.dumps(existing, indent=2) + "\n", encoding="utf-8")
+    written.append(settings)
+
+    # A self-repair skill, so the person never needs a command line. Opening THIS folder
+    # and saying "update my workspace" is enough — the assistant drives the copied-in CLI.
+    maint = root / ".claude" / "skills" / "workspace-maintenance" / "SKILL.md"
+    maint.parent.mkdir(parents=True, exist_ok=True)
+    maint.write_text(_resolve_dirs(root, _MAINTENANCE_SKILL), encoding="utf-8")
+    written.append(maint)
+
+    # The close-out skill: harvest insight → knowledge, update project handoffs, record
+    # loose ends, write the attributed fragment. The judgment half of `wsx session end`.
+    send = root / ".claude" / "skills" / "session-end" / "SKILL.md"
+    send.parent.mkdir(parents=True, exist_ok=True)
+    send.write_text(_resolve_dirs(root, _SESSION_END_SKILL), encoding="utf-8")
+    written.append(send)
+
+    # mirror skills into .claude/skills/<name>/SKILL.md so Claude Code discovers them.
+    # A pulled skill stays byte-identical to its pin on disk; its owner's deltas live
+    # in a sibling overlay.md, so we compose (pulled base + overlay) into the mirror —
+    # never back into the read-only source.
     for name_, sk in core.iter_skills(root):
+        text = sk.read_text(encoding="utf-8")
+        overlay = sk.parent / "overlay.md"
+        if overlay.exists():
+            _, ov_body = core.parse_frontmatter(overlay)
+            text = f"{text.rstrip()}\n\n---\n\n## House overlay (your deltas)\n\n{ov_body.strip()}\n"
         dst = root / ".claude" / "skills" / name_ / "SKILL.md"
         dst.parent.mkdir(parents=True, exist_ok=True)
-        dst.write_text(sk.read_text(encoding="utf-8"), encoding="utf-8")
+        dst.write_text(text, encoding="utf-8")
         written.append(dst)
 
     _record(root, manifest, "claude-code", written)
     return written
+
+
+_SESSION_START_HOOK = '''#!/usr/bin/env python3
+"""SessionStart hook — inject this workspace's hot context at the top of every session.
+
+WHAT IT DOES: reads a few local markdown files and prints them, so the assistant starts
+with your critical facts and current work instead of a cold context.
+
+WHAT IT DOES NOT DO: it makes no network calls, writes nothing, runs nothing else, and
+NEVER reads `context/personal.md` (the walled private note). It is read-only and local.
+Delete `.claude/settings.json` (or this file) to turn it off.
+
+Token-frugal on purpose: the hot cache in full, then only the HEAD of the growing logs.
+"""
+import sys
+from pathlib import Path
+
+WS = Path(__file__).resolve().parents[2]
+HEAD_LINES = 40          # never dump a whole growing log
+
+
+def head(rel, n=HEAD_LINES, whole=False):
+    f = WS / rel
+    if not f.exists():
+        return ""
+    try:
+        text = f.read_text(encoding="utf-8")
+    except OSError:
+        return ""
+    if whole:
+        return text.strip()
+    lines = text.splitlines()
+    out = "\\n".join(lines[:n]).strip()
+    if len(lines) > n:
+        out += f"\\n\\n_…(head only — open `{rel}` for the rest)_"
+    return out
+
+
+def main():
+    parts = ["# Workspace context (auto-loaded)", ""]
+    crit = head("context/CRITICAL_FACTS.md", whole=True)
+    if crit:
+        parts += ["## Critical facts — never re-derive these", "", crit, ""]
+    proj = head("context/project-context.md")
+    if proj:
+        parts += ["## Current work (head of project-context.md)", "", proj, ""]
+    log = head("context/session-log.md", n=25)
+    if log:
+        parts += ["## Recent sessions (head)", "", log, ""]
+    parts += [
+        "## Standing rules",
+        "- **\"workspace\" / \"second brain\" / \"micro-brain\" / \"my notes\" = THIS vault.** Resolve those",
+        "  words here first; don't assume a commercial connector (Notion/Confluence/Drive/Slack/…) unless named.",
+        "- Read frugally: heads of logs, not whole files. Load a skill only when its trigger fires.",
+        "- Privacy wall: never read `context/personal.md` unless explicitly asked.",
+        "- Start any browse from `HOME.md`. Adapters (`AGENTS.md`, `CLAUDE.md`, `_INDEX.md`)",
+        "  are GENERATED — edit the canonical source and re-run `wsx emit`.",
+        "- Record a real choice as an ADR in `context/decisions/`; a durable insight in `knowledge/`.",
+        "",
+    ]
+    sys.stdout.write("\\n".join(parts))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+'''
+
+
+_TRIGGER_ROUTER_HOOK = '''#!/usr/bin/env python3
+"""UserPromptSubmit hook — surface skills/knowledge whose OWN triggers match the prompt.
+
+DATA-DRIVEN, NOT HARDCODED: it reads this workspace's `skills.registry.json` (generated
+from every skill's front matter) and the knowledge index. A skill routes on the triggers
+it declares — there is no built-in routing table, so this works for anyone's workspace.
+
+Read-only, local, no network. On ANY error it stays silent and prints nothing, so it can
+never block or corrupt a prompt. Output (matched pointers) is added to the model's context.
+"""
+import json
+import re
+import sys
+from pathlib import Path
+
+WS = Path(__file__).resolve().parents[2]
+
+
+def _dir(logical):
+    _NUM = {"skills": "03-skills", "knowledge": "08-knowledge"}
+    num = _NUM.get(logical, logical)
+    if (WS / num).is_dir():
+        return num
+    if (WS / logical).is_dir():
+        return logical
+    return num
+
+
+def _registry():
+    f = WS / _dir("skills") / "skills.registry.json"
+    try:
+        return json.loads(f.read_text(encoding="utf-8")).get("skills", [])
+    except Exception:
+        return []
+
+
+def _knowledge_triggers():
+    """Index lines like `- [entry](path) — … · Triggers: a, b` declare their own triggers."""
+    f = WS / _dir("knowledge") / "_INDEX.md"
+    out = []
+    try:
+        text = f.read_text(encoding="utf-8")
+    except OSError:
+        return out
+    for line in text.splitlines():
+        m = re.search(r"[Tt]riggers?:\\s*(.+)$", line)
+        if not m:
+            continue
+        trg = [t.strip().lower() for t in re.split(r"[,;]", m.group(1)) if t.strip()]
+        lm = re.search(r"\\[([^\\]]+)\\]\\(([^)]+)\\)", line)
+        if trg:
+            out.append((lm.group(1) if lm else line.strip(),
+                        lm.group(2) if lm else "", trg))
+    return out
+
+
+def _match(prompt, triggers):
+    p = prompt.lower()
+    return [t for t in triggers if t and t in p]
+
+
+def main():
+    try:
+        data = json.load(sys.stdin)
+    except Exception:
+        return 0
+    prompt = str(data.get("prompt") or data.get("user_prompt") or "")
+    if not prompt.strip():
+        return 0
+    hits = []
+    for s in _registry():
+        m = _match(prompt, [t.lower() for t in s.get("triggers", [])])
+        if m:
+            hits.append(("skill", s.get("name", ""), s.get("path", ""), m))
+    for label, path, trg in _knowledge_triggers():
+        m = _match(prompt, trg)
+        if m:
+            hits.append(("knowledge", label, path, m))
+    if not hits:
+        return 0
+    lines = ["# Workspace router — relevant to this prompt", ""]
+    for kind, name, path, m in hits:
+        where = f" -> `{path}`" if path else ""
+        lines.append(f"- **{kind}: {name}**{where} (matched: {', '.join(sorted(set(m)))})")
+    lines += ["", "_Load the matched skill(s) before answering; read matched knowledge first._"]
+    sys.stdout.write("\\n".join(lines))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+'''
+
+
+_SESSION_END_HOOK = '''#!/usr/bin/env python3
+"""SessionEnd hook — audit that this session got recorded before it ends.
+
+Checks for a session fragment under <context>/sessions/ dated today. If none exists, it
+reminds you to run the close-out (write a fragment, then `wsx compact` + `wsx sync`) so the
+work is saved and folded into the log. Read-only, local, never blocks. Neutral — no
+hardcoded identity; it detects the workspace layout (numbered or flat) at runtime.
+"""
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+WS = Path(__file__).resolve().parents[2]
+
+
+def _dir(logical):
+    _NUM = {"context": "06-context"}
+    num = _NUM.get(logical, logical)
+    if (WS / num).is_dir():
+        return num
+    if (WS / logical).is_dir():
+        return logical
+    return num
+
+
+def main():
+    ctx = _dir("context")
+    frag_dir = WS / ctx / "sessions"
+    today = datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%d")
+    if frag_dir.is_dir() and any(today in p.name for p in frag_dir.glob("*.md")):
+        return 0  # a fragment for today exists — the session was recorded
+    sys.stdout.write(
+        "# Session audit\\n\\n"
+        "No session fragment was recorded today. Before finishing, write your Session\\n"
+        f"Block to `{ctx}/sessions/<date>-<id>.md` (with a `SessionID:` line), then run\\n"
+        "`wsx compact` and `wsx sync` so the work is saved and folded into the log.\\n"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+'''
+
+
+_SESSION_END_SKILL = '''---
+name: session-end
+description: >-
+  Close out a work session so nothing is lost and the next session (on any device, any
+  AI) can resume cleanly. Use when the person says "end of session", "wrap up", "done for
+  today", "save my work", "let's stop here", or asks to record/checkpoint the session.
+  You drive the tools — the person never runs a command.
+triggers:
+  - end of session
+  - end session
+  - wrap up
+  - done for today
+  - save my work
+  - checkpoint the session
+  - let's stop here
+---
+
+# Session close-out — harvest, save everywhere, then record
+
+Run this when a work session ends. The goal: **nothing generalizable is lost, every open
+project can be resumed, and the session is recorded with attribution.** Do the judgment
+steps yourself, then let `wsx` do the mechanical write. Never ask the person to type a command.
+
+## 1. Harvest generalizable insight → `knowledge/`
+Did this session produce something durable — a pattern that worked, a hard-won constraint,
+a piece of research worth not repeating? If so, write ONE entry per insight in
+`knowledge/`, following `context/conventions.md` (open with `## For future agent`; mark
+each claim timeless / dated / pointer; use typed `relations:` edges). If nothing durable
+came up, skip — don't manufacture filler.
+
+## 2. Update EVERY open project's live handoff
+For each project with a `projects/<name>/PROJECT.md`, update its **live handoff**: what
+changed this session, the current state, and the single next action to resume from. A
+future agent should be able to pick up from that block alone. (`wsx session end` lists the
+open projects for you.)
+
+## 3. No active project? Capture loose ends in `context/open-threads.md`
+If the session wasn't tied to a project, put anything worth carrying forward — an
+unfinished idea, a question to revisit, a decision you're still weighing — into
+`context/open-threads.md` so it isn't stranded in a fragment.
+
+## 4. Record durable decisions
+A load-bearing choice belongs in `context/memory/` (atomic) and/or an ADR in
+`context/decisions/` — not just the session summary. Do this for anything you'd be annoyed
+to see silently reversed later.
+
+## 5. Write the attributed session fragment (mechanical)
+Now record the session. Pass what you know; `wsx` stamps the machine and folds it in:
+
+```bash
+python3 wsx.py session end \\
+  --summary "<1–3 lines: what happened>" \\
+  --next "<the next action to resume from>" \\
+  --surface "<claude-code | cursor | …>" --agent "<model/agent>" \\
+  --project "<project(s) touched, or omit>"
+```
+
+This writes a conflict-free fragment (`context/sessions/<id>.md`) with Agent · Surface ·
+Machine, then `compact` folds it into `context/session-log.md` (newest-first). Disjoint
+fragments never collide across your devices or parallel agents.
+
+## 6. Sync
+Finally, `python3 wsx.py sync` to commit + push (if a remote is set).
+
+## Ground rules
+- You run the tools; the person never opens a terminal.
+- Respect the privacy wall: never surface `context/personal.md` unless asked.
+- Steps 1–4 are judgment (you do them); step 5 is the mechanical record. Don't skip 1–4
+  and just write a bare summary — the point is that insight and handoffs are saved too.
+'''
+
+
+_MAINTENANCE_SKILL = '''---
+name: workspace-maintenance
+description: >-
+  Repair, update, or health-check THIS workspace. Use whenever the person says
+  "update my workspace", "upgrade my workspace", "fix my workspace", "something's
+  wrong with my workspace", "check my workspace", "is my workspace set up right",
+  or reports that files/links/settings look stale or contradictory. Drives the
+  workspace's own copy of the `wsx` CLI — the person never needs a command line.
+triggers:
+  - update my workspace
+  - upgrade my workspace
+  - fix my workspace
+  - check my workspace
+  - workspace health
+  - something is wrong with my workspace
+---
+
+# Workspace maintenance — you drive the tools, not the person
+
+This workspace ships its own copy of the CLI at `wsx.py` (under `.wsx/`), so everything
+below runs **here**, with no install and no PATH setup. **Run these yourself** — the
+person should never be asked to open a terminal or paste a command.
+
+## The repair pass (run in this order)
+
+```bash
+python3 wsx.py diagnose          # REPORT everything wrong/stale in this workspace, each with a fix
+python3 wsx.py diagnose --fix    # apply the SAFE, non-destructive corrections (upgrade+emit+reindex)
+python3 wsx.py doctor            # environment: python, git, git identity
+python3 wsx.py health            # orphan notes, #stale/aging claims, dangling typed edges
+python3 wsx.py lint              # skills: unfilled skeletons, trigger overlaps
+```
+
+Start with **`diagnose`** — it's the one-shot readout for an existing workspace (layout,
+scaffold, graph, integrity, adapters, git, self-sufficiency). `diagnose --fix` applies only
+what's safe and leaves anything needing judgment (a dangling link, a migration, a missing
+remote) clearly flagged for you to handle. `upgrade` (which `--fix` runs) is **non-destructive**
+— it never overwrites anything the person wrote. It adds
+missing scaffold, regenerates the derived layer (HOME, indexes, `context/profile.md`),
+repairs known-stale generated lines, and lands a first git commit if the repo has none.
+
+## Then interpret the output for them, in plain language
+
+Report **what changed and what it means**, not raw tool output. Specifically:
+
+- **`doctor` or `upgrade` says git identity is not set** → this is why nothing is being
+  saved to history. Ask them: *"What name and email should your saved work be signed
+  with?"* then run it **for them**:
+  `python3 wsx.py identity --name "…" --email "…"`
+  That sets it for this workspace only (not their global git config) and makes the first
+  commit. If they don't want a personal address in public commits, suggest their GitHub
+  noreply address (Settings → Emails → *Keep my email private*).
+- **`health` lists orphan notes** → offer to link each from its natural parent, or archive
+  it. Never delete.
+- **`health`/`lint` flag stale or unfinished content** → offer to fix; get a yes first.
+- **No git remote yet** → `python3 wsx.py remote` explains the free options; they create the
+  empty repo, you wire it with `python3 wsx.py remote <url>` then `python3 wsx.py sync`.
+
+## Make every session auto-orient (cross-window, so they never have to nudge you)
+
+By default a NEW window that isn't already inside this folder starts cold — the vault's own
+`CLAUDE.md` only loads once you're working inside it. The fix is a one-time pointer in each
+tool's GLOBAL config (e.g. `~/.claude/CLAUDE.md`), which loads on every session everywhere:
+
+```bash
+python3 wsx.py bridge list             # which AI tools are installed + their status
+python3 wsx.py bridge point            # write the workspace pointer into each tool's global config
+```
+
+`bridge point` is idempotent and append-only (marker-delimited — it never clobbers their own
+global rules). After it runs, any Claude Code / Codex / Gemini session — even outside this
+folder — orients from the vault on its own (reads `CRITICAL_FACTS.md`, skims the logs, respects
+the privacy wall). Offer this whenever the person says they have to remind you to look at their
+workspace / second brain each time. (Cursor/ChatGPT/claude.ai have no global file — `bridge list`
+shows which are `manual`; for those, guide them per `bridge point`'s notes.)
+
+## Ground rules
+
+- Never ask the person to run a command. You have the tools; use them.
+- Never read `context/personal.md` unless they explicitly ask.
+- The canonical source is `context/` + `skills/`; files under `adapters/`, `AGENTS.md`,
+  `CLAUDE.md`, `HOME.md`, and the `_INDEX.md` files are **generated** — fix the source and
+  re-run `emit`, never hand-edit the output.
+'''
 
 
 # ------------------------------------------------------------------- cursor ---
@@ -189,13 +774,21 @@ def emit_cursor(root: Path, profile: dict, manifest: dict) -> list:
         "",
         f"# {_identity(profile)}'s workspace",
         "",
-        "Read `context/project-context.md` and `context/session-log.md` for active work.",
+        _identity_anchor(profile),
+        "Token frugality is a top priority: skim the TOP of `context/project-context.md`",
+        "and `context/session-log.md` (bounded; history in `session-log-archive.md` on demand)",
+        "— never read a whole growing log. Load a skill only when its trigger fires.",
+        "Record sessions as fragments in `context/sessions/` then `wsx compact`.",
         "Never read `context/personal.md` (private, walled).",
+        "",
+        "To build any skill/hub/framework/playbook, follow `frameworks/skill-authoring.md`",
+        "(SUPERSEDES native skill-creation): altitude from per-domain expertise, source +",
+        "cite, reconcile triggers, pass the acceptance checklist.",
         "",
         "## Skills",
         _skill_index_md(g["skills"]),
     ]) + "\n"
-    rule.write_text(body, encoding="utf-8")
+    rule.write_text(_resolve_dirs(root, body), encoding="utf-8")
     written.append(rule)
     # Cursor also reads AGENTS.md — emit it too for a complete agnostic setup.
     written += emit_agents_md(root, profile, manifest)
@@ -205,21 +798,79 @@ def emit_cursor(root: Path, profile: dict, manifest: dict) -> list:
 
 # ---------------------------------------------------------------------- mcp ---
 def emit_mcp(root: Path, profile: dict, manifest: dict) -> list:
-    """STUB (honest): scaffolds the planned workspace-mcp server. Not yet runnable."""
+    """Emit the universal runtime: a self-contained, zero-dep stdio MCP server that
+    serves the live workspace (context/, skills/, manifest.json) to any MCP client.
+    One server lights up Cursor + Codex + Claude Desktop + local frontends (SPEC §5).
+    """
+    from . import mcp_template
+
     out_dir = root / "adapters" / "mcp"
     out_dir.mkdir(parents=True, exist_ok=True)
+    written = []
+
+    server = out_dir / "server.py"
+    server.write_text(mcp_template.SERVER_PY, encoding="utf-8")
+    server.chmod(0o755)
+    written.append(server)
+
+    # copy-paste client config, with the absolute path already filled in
+    cfg = out_dir / "mcp.json"
+    config = {
+        "mcpServers": {
+            "workspace": {
+                "command": "python3",
+                "args": [str(server.resolve())],
+                "env": {},
+            }
+        }
+    }
+    cfg.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
+    written.append(cfg)
+
     readme = out_dir / "README.md"
-    readme.write_text(
-        "# workspace-mcp (planned)\n\n"
-        "🚧 Stub. The universal MCP runtime is part of SPEC §5 and not yet built.\n\n"
-        "Planned tools: `context.load`, `skills.search`, `skills.load`, "
-        "`session.start`, `session.end`, `reconcile`.\n\n"
-        "Until this lands, use `wsx emit pack` or `wsx emit agents-md` for non-Claude tools.\n",
-        encoding="utf-8",
-    )
-    _record(root, manifest, "mcp", [readme])
-    print("note: 'mcp' target is a stub — see SPEC §5. Emitted a placeholder only.")
-    return [readme]
+    readme.write_text(_mcp_readme(server), encoding="utf-8")
+    written.append(readme)
+
+    _record(root, manifest, "mcp", written)
+    return written
+
+
+def _mcp_readme(server: Path) -> str:
+    return "\n".join([
+        "# workspace-mcp — the universal runtime",
+        "",
+        "_Generated by `wsx emit mcp`. A zero-dependency (stdlib-only) MCP server that",
+        "serves this workspace to any MCP client over stdio. One server, many frontends._",
+        "",
+        "## Tools",
+        "",
+        "- **context_load** — load canonical context (profile, project-context, session-log).",
+        "  Personal context is walled: excluded unless `include_personal: true`.",
+        "- **skills_search** — search the skill network by name, hub, or trigger.",
+        "- **skills_load** — load a skill's full `SKILL.md` (overlays composed in).",
+        "- **session_start** — boot summary + context.",
+        "- **session_end** — append a session block to the log.",
+        "- **reconcile** — cross-machine reconcile (CLI-only for now).",
+        "",
+        "## Register it",
+        "",
+        "The generated `mcp.json` already has the absolute path filled in. Point your",
+        "client at it:",
+        "",
+        "- **Claude Desktop** — merge `mcp.json`'s `mcpServers` into",
+        "  `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS).",
+        "- **Cursor** — add the same block to `.cursor/mcp.json` or your global Cursor MCP config.",
+        "- **Any MCP client** — run `python3 " + server.name + "` as a stdio server from this dir.",
+        "",
+        "The server finds this workspace from its own path; override with the",
+        "`WSX_WORKSPACE` environment variable if you relocate it.",
+        "",
+        "## Degradation ladder",
+        "",
+        "MCP (this) → the `wsx` CLI → a pasteable context pack (`wsx emit pack`). Each rung",
+        "works without the one above it.",
+        "",
+    ])
 
 
 ADAPTERS = {
@@ -232,10 +883,24 @@ ADAPTERS = {
 
 
 def emit(root: Path, target: str, profile: dict, manifest: dict) -> list:
+    # REFERENCE MODE: on an adapter-mapped foreign vault, the person's AGENTS.md/CLAUDE.md/
+    # .cursor rules are hand-authored — wsx must never regenerate over them. Refuse.
+    from . import adapter
+    if adapter.is_adapted(root):
+        print("wsx emit — SKIPPED: this vault is adapter-mapped (reference mode). Your")
+        print("  AGENTS.md/CLAUDE.md/.cursor files are hand-authored; wsx won't overwrite them.")
+        print("  (To add wsx-governed guidance without clobbering, use the profile/preferences")
+        print("  injection, which writes a bounded marker-delimited section.)")
+        return []
     if target == "all":
+        from . import moc, tools
         written = []
         for name in ("claude-code", "agents-md", "cursor", "pack", "mcp"):
             written += ADAPTERS[name](root, profile, manifest)
+        # Refresh the connective MOC layer (incl. skills.registry.json) + ensure the
+        # 09-tools scripts exist, so the vault graph + automation reflect current skills.
+        written += moc.write_mocs(root)
+        written += tools.write_tools(root)
         return written
     if target not in ADAPTERS:
         raise SystemExit(

@@ -1,0 +1,8 @@
+# render-qa-toolkit dependencies
+# Same family as visual-qa-toolkit; opencv headless (no GUI) for CI / server use.
+
+Pillow>=10.0.0
+numpy>=1.24.0
+opencv-python-headless>=4.8.0
+scikit-image>=0.22.0
+PyYAML>=6.0

@@ -1,0 +1,51 @@
+name: validator-fixtures
+
+# Negative fixtures: each detector must refuse a planted defect.
+# The live-tree validators only see a healthy checkout; this job is the teeth.
+# See 09-tools/test-validators.py and AGENTS.md → "Write-quality gates".
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "09-tools/validate-*.py"
+      - "09-tools/vault-health.py"
+      - "09-tools/test-validators.py"
+      - "03-skills/visual-prove-engine/**"
+      - "03-skills/play-prove/**"
+      - ".github/workflows/validator-fixtures.yml"
+  pull_request:
+    paths:
+      - "09-tools/validate-*.py"
+      - "09-tools/vault-health.py"
+      - "09-tools/test-validators.py"
+      - "03-skills/visual-prove-engine/**"
+      - "03-skills/play-prove/**"
+      - ".github/workflows/validator-fixtures.yml"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Negative fixtures (validators must refuse planted defects)
+        run: python3 09-tools/test-validators.py
+
+  # Same contract for the visual detectors: every planted visual defect must be
+  # caught and every clean/noise-only variant must stay quiet, or the engine's
+  # verdicts cannot be trusted. See 03-skills/visual-prove-engine/SKILL.md.
+  # play-prove is exercised inside `vqa calibrate` (sibling CLI, altitude G).
+  vqa-calibration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install measurement substrate
+        run: python3 -m pip install numpy Pillow
+      - name: Visual prove engine calibration (planted defects, zero miss / zero false-fire)
+        run: python3 03-skills/visual-prove-engine/vqa.py calibrate

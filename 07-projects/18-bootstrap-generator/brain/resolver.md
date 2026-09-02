@@ -19,7 +19,34 @@ The brain calls `wsx resolve` once, at the end, with the approved plan. It never
 
 ---
 
-## The funnel: PULL → PULL+PATCH → GENERATE
+## Two-track sourcing (search skills AND references)
+
+A skill sourced only from other skill libraries inherits their ceiling. The best
+skills this generator can build are **composites** — the person's own judgment, fused
+with **distilled industry-leading reference**: standards, authoritative guidance,
+best-practice, seminal texts, north-star exemplars. This workspace's own history proves
+it: the highest-value skills we ever authored (the math/physics substrate under the
+rendering engines, the security and imaging foundations) came from *synthesizing
+authoritative reference*, because the skill directories "wrap engines and tools —
+**none teach the substrate beneath them.**"
+
+So for **every capability**, run two searches in parallel before deciding:
+
+1. **Skill track — registries.** `wsx search --kind skill "<capability>"` queries the
+   configured skill registries (below) for a ready-made skill to PULL or PULL+PATCH.
+2. **Reference track — the wider world.** Seek the *industry-leading* reference for the
+   capability using your own research tools (web search / fetch, or the `deep-research`
+   harness for anything deep). What is the normative standard, the canonical text, the
+   guidance a top practitioner would cite? `wsx search --kind reference` lists any
+   configured reference anchors, but the real finding here is yours to do.
+
+Then compose. The funnel below still decides *skill provenance*, but a GENERATE is now
+a **GENERATE-COMPOSITE**: authored in the person's voice, grounded in the references you
+found, and **citing them**. Even a PULL can be lifted by references added through its
+overlay. The bar is not "is there a skill for this?" but "**what is the best possible
+skill for this person, from everything available?**"
+
+## The funnel: PULL → PULL+PATCH → GENERATE-COMPOSITE
 
 For each capability, walk it through three gates in order. Stop at the first that fits.
 
@@ -59,22 +86,30 @@ capability
 
 **What happens:** the brain records `source: pull`, plus a sibling **overlay** describing the deltas (added triggers, overridden rules, house-style notes). `wsx resolve` pulls and pins the upstream skill **read-only**, then scaffolds the overlay **next to it, never inside it**. The pulled skill stays pristine and re-fetchable; the patch is a separate, owned artifact. See [Patches live in an overlay](#patches-live-in-an-overlay).
 
-### GENERATE — nothing fits, or it's uniquely theirs
+### GENERATE-COMPOSITE — author it, grounded in references
 
-**When:** no registry has a real match, **or** the capability is the person's own IP, judgment, or a personal project — the things that make their assistant *theirs* rather than a generic install. Their employer's internal standards, the way they specifically run a craft, their named side projects, household-specific life admin. Pulling a stranger's approximation here is worse than useless; it imports someone else's opinions into the person's most personal surface.
+**When:** no registry has a strong-enough match, **or** the capability is the person's own IP, judgment, or a personal project — the things that make their assistant *theirs* rather than a generic install. Their employer's internal standards, the way they specifically run a craft, their named side projects, household-specific life admin. Pulling a stranger's approximation here is worse than useless; it imports someone else's opinions into the person's most personal surface. But GENERATE does **not** mean "author from nothing" — it means author from **the person's judgment + the best external reference you can find**, then cite it.
 
-**Decision heuristic — choose GENERATE when:**
-- The capability encodes the person's **unique IP or judgment** — proprietary process, hard-won opinions, a signature method.
-- It's a **personal project** or life-admin domain with no meaningful public analogue.
+**Decision heuristic — choose GENERATE-COMPOSITE when:**
+- The capability encodes the person's **unique IP or judgment** — proprietary process, hard-won opinions, a signature method — *or*
+- A public skill exists but is thin, and the **authoritative references** (the standard, the canonical guidance) would let you author something better than any pulled skill, *or*
+- It's a **personal project** or life-admin domain with no good skill analogue, *or*
 - Registry search returns nothing close (below the ~70% ADAPT floor), or every candidate is license-encumbered or untrusted.
 
-**What happens:** the brain authors a fresh **canonical** skill (markdown + frontmatter, in the canonical format) grounded in what the interview captured. `wsx resolve` scaffolds the skill directory under the canonical `skills/` tree (owned, editable — not read-only, since it's the person's own). Generated skills are the workspace's first-class citizens; pulled and patched ones orbit them.
+**What happens:** the brain authors a fresh **canonical** skill (markdown + frontmatter) grounded in what the interview captured *and* in the reference-track findings. The plan entry carries a `references[]` list (title, url, publisher, note). `wsx resolve`:
+- scaffolds the skill under the owned, editable `skills/` tree (not read-only — it's the person's own),
+- writes a cited **`## Sources & further reading`** block from `references[]`, in the person's own voice (`_Synthesized … from the authoritative references below — not copied text._`),
+- optionally (with `--cache-refs`) fetches + pins + caches each reference for verifiable, dated provenance.
+
+The brain then fills the body by **distilling** those references into the person's context — never copying them. `wsx lint` **fails** a composite skill whose references are recorded but whose body carries no Sources block: a composite that doesn't cite is unfinished.
+
+> **Attribution convention (workspace-wide):** author in your own voice with v2 frontmatter, cite the source, **never copy** its text or structure. "Extract from the author what's necessary" — then write it as this person's skill.
 
 ### One-line bias summary
 
-> **PULL** for generic, well-trodden domains · **ADAPT** at the ~70% mark · **GENERATE** for the person's unique IP, judgment, and personal projects.
+> **PULL** for generic, well-trodden domains · **ADAPT** at the ~70% mark · **GENERATE-COMPOSITE** — the person's IP/judgment fused with distilled industry-leading reference, cited — for everything where authoring beats a shallow pull (which, in practice, is most high-value domains).
 
-When genuinely torn between two gates, prefer the one that keeps the person's distinctiveness in **owned** files: ADAPT over a strained PULL, GENERATE over a strained ADAPT.
+When genuinely torn between two gates, prefer the one that keeps the person's distinctiveness in **owned** files, and reach for the reference track to lift whatever you build: ADAPT over a strained PULL, GENERATE-COMPOSITE over a strained ADAPT.
 
 ---
 
@@ -167,6 +202,60 @@ The seam is strict. The brain produces a fully-decided plan; `wsx resolve` execu
 - **Register** the de-conflicted triggers and hub assignments into `manifest.json` (the routing index).
 
 The brain invokes `wsx resolve` **once**, with the approved plan as input. It does not fetch, pin, namespace, or write anything itself — if a step is mechanical, it belongs to `wsx`.
+
+### The machine plan — `context/skill-plan.json`
+
+The plan the brain hands over is a **JSON file** (the brain authors it as its decision record, the same way it writes prose context notes; every *structural* effect that follows — skill dirs, pins, the manifest — is `wsx`'s to make). One object per capability, in a top-level `skills[]`:
+
+```json
+{
+  "skills": [
+    { "name": "a11y-audit", "source": "pulled",
+      "registry": "anthropics/skills", "url": "https://…/SKILL.md",
+      "hub": "lead-frontend", "triggers": ["a11y", "wcag"],
+      "license": "MIT", "trust": "trusted anchor" },
+
+    { "name": "react-house-style", "source": "pulled+patched",
+      "registry": "agentskills.io", "url": "https://…/SKILL.md",
+      "hub": "lead-frontend", "triggers": ["react"] },
+
+    { "name": "zine-layout", "source": "pulled",
+      "registry": "skills.sh", "url": "https://…/SKILL.md",
+      "hub": "lead-graphic", "triggers": ["zine"], "audited": true },
+
+    { "name": "internal-plm", "source": "generated",
+      "hub": "work", "kind": "spoke", "triggers": ["plm"],
+      "desc": "Our proprietary PLM data-table workflow." },
+
+    { "name": "a11y-audit", "source": "composite",
+      "hub": "lead-frontend", "kind": "spoke", "triggers": ["a11y", "wcag"],
+      "desc": "Audit a UI for WCAG 2.2 AA conformance.",
+      "level": "expert", "seniority": "staff",
+      "references": [
+        { "title": "WCAG 2.2", "url": "https://www.w3.org/TR/WCAG22/",
+          "publisher": "W3C", "note": "normative standard" },
+        { "title": "ARIA Authoring Practices Guide", "url": "https://www.w3.org/WAI/ARIA/apg/",
+          "publisher": "W3C" }
+      ] }
+  ]
+}
+```
+
+Per-entry fields: `name`, `source` (`pulled` | `pulled+patched` | `generated` | `composite`); for pulls also `registry`, `url` (the fetch source — `http(s)://`, `file://`, or a local path), and optional `license` / `trust`; for generates/composites, `desc` + `kind` (`hub` | `spoke`). A **`references[]`** list (`title`, optional `url` / `publisher` / `note`) turns any generate into a **composite** — `wsx resolve` cites them (and, with `--cache-refs`, pins them). Each generate/composite also carries **`level`** (`hobbyist`/`intermediate`/`advanced`/`expert`) and optional **`seniority`** — read from the person's `profile.expertise{}` for *this* domain — which set the skill's **writing altitude** (a hobbyist skill teaches; an expert skill assumes fluency and captures judgment). `hub` and `triggers` carry the brain's hub assignment and **reconciled** triggers. **`audited: true` is mandatory on any entry from an unvetted registry** (`skills.sh`, community) — `wsx resolve` refuses it otherwise.
+
+Then, after the review gate below passes, run it once:
+
+```
+wsx resolve                 # executes context/skill-plan.json
+wsx resolve --plan <file>   # point at a plan elsewhere
+wsx resolve --update        # bump the pin when an upstream skill has changed
+wsx resolve --allow-unvetted# permit unvetted pulls not marked audited (use sparingly)
+wsx resolve --cache-refs    # also fetch + pin + cache each composite's references
+```
+
+`wsx resolve` fetches + **pins** each pull (stored byte-identical, `0o444` read-only under `skills/pulled-<registry>-<name>/`), scaffolds an editable `overlay.md` beside each PULL+PATCH, delegates each GENERATE to the `wsx skill add` skeleton, and registers every skill (with pin, registry, provenance, and the assigned hub/triggers) into `manifest.json`. It is idempotent: an unchanged pull is a no-op; a changed upstream is **skipped with a visible warning** until you pass `--update`. Afterwards, `wsx verify` re-checks that every pinned skill still matches its pin.
+
+> **Note on pulled-skill triggers.** A pulled skill is byte-identical to upstream, so the emitted surface routes on *its* front-matter triggers. To override or add triggers for a pulled skill, put them in its **overlay** — never edit the pulled file. (Overlay→surface composition is wired for the recommended Claude-Code path; treat other surfaces as base-only for now.)
 
 ---
 

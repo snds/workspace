@@ -21,20 +21,31 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import NamedTuple
 
-WORKSPACE_ROOT = Path(os.environ.get("CLAUDE_PROJECT_DIR", Path.cwd()))
+_project_dir = os.environ.get("CLAUDE_PROJECT_DIR")
+if not _project_dir:
+    # Not invoked by Claude Code from a project checkout (stray copy, mis-registered
+    # hook). Abort silently rather than treating an arbitrary cwd as the workspace.
+    sys.exit(0)
+WORKSPACE_ROOT = Path(_project_dir)
 CONTEXT_DIR = WORKSPACE_ROOT / "06-context"
 SESSION_LOG = CONTEXT_DIR / "session-log.md"
 PROJECT_CONTEXT = CONTEXT_DIR / "project-context.md"
 AUDIT_LOG = CONTEXT_DIR / "audit-log.md"
+HARNESS_MAP_STAMP = (
+    WORKSPACE_ROOT / "07-projects" / "19-workspace-brain" / "reports" / "harness-map.stamp"
+)
 STATE_DIR = WORKSPACE_ROOT / ".claude" / "state"
 CLAUDE_VERSION_PIN = STATE_DIR / "claude-version"
 DESYNC_NOTICE = STATE_DIR / "desync-notice.md"
 KNOWLEDGE_DIR = WORKSPACE_ROOT / "08-knowledge"
 KNOWLEDGE_INDEX = KNOWLEDGE_DIR / "_INDEX.md"
+SKILLS_REGISTRY = WORKSPACE_ROOT / "03-skills" / "skills.registry.json"
 
 CLAUDE_CODE_CHANGELOG_URL = "https://github.com/anthropics/claude-code/releases"
 AUDIT_STALE_DAYS = 14
+HARNESS_MAP_STALE_DAYS = 30  # Notice only after a first map exists (stamp present)
 
 # Files where session edits reliably land. When the auto-commit's broad `git add -A`
 # would risk committing phantom or stale deletions, the session-end hook falls back
@@ -62,16 +73,31 @@ HOSTNAME_MAP = {
     "Enterprise": "Windows Desktop",
 }
 
-TRIGGER_WORDS = {
-    "legion": "03-skills/legion-project/SKILL.md + appropriate hub (lead-game-designer / lead-art-director / lead-game-developer)",
-    "bobiverse": "03-skills/legion-project/SKILL.md",
-    "centric": "Centric PLM project context — see 06-context/project-context.md; ds-advisor hub",
-    "data table": "Data table cell anatomy work — cross-reference 06-context/artifact-registry.md",
-    "icon font": "03-skills/variable-icon-font-architect/SKILL.md + math spokes",
-    "centricsymbols": "03-skills/variable-icon-font-architect/SKILL.md",
-    "omni": "03-skills/omni-project/SKILL.md",
-    "figma plugin": "03-skills/figma-plugin-dev/SKILL.md",
-}
+# Curated trigger → load-hint map. Source of truth:
+# 02-shared-references/trigger-routes.json (also rendered to trigger-routes.md for
+# non-Claude agents). Insertion order IS emission priority — under the per-tier cap
+# (FX-2), earlier rows win. Mandate rows (framework #06) come first.
+TRIGGER_ROUTES_JSON = WORKSPACE_ROOT / "02-shared-references" / "trigger-routes.json"
+
+
+def _load_trigger_words() -> dict:
+    """Load curated routes from JSON; expand $TEMPLATE refs. Empty dict if missing."""
+    try:
+        data = json.loads(TRIGGER_ROUTES_JSON.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    templates = data.get("templates") or {}
+    routes = data.get("routes") or {}
+    out = {}
+    for trigger, hint in routes.items():
+        if isinstance(hint, str) and hint.startswith("$") and hint[1:] in templates:
+            out[trigger] = templates[hint[1:]]
+        else:
+            out[trigger] = hint
+    return out
+
+
+TRIGGER_WORDS = _load_trigger_words()
 
 # Knowledge hints: topic keywords → relevant 08-knowledge/ entry paths.
 # When a prompt matches, the entry path is surfaced alongside any skill hint
@@ -92,6 +118,12 @@ KNOWLEDGE_HINTS = {
     "session end": "08-knowledge/cross-domain/workflow-patterns.md",
     "optimize": "08-knowledge/cross-domain/workflow-patterns.md",
     "audit_skip": "08-knowledge/cross-domain/workflow-patterns.md",
+    "figma": "08-knowledge/design/figma-ds-surface-authoring.md",
+    "component": "08-knowledge/design/figma-ds-surface-authoring.md",
+    "variant": "08-knowledge/design/figma-ds-surface-authoring.md",
+    "design system": "08-knowledge/design/figma-ds-surface-authoring.md",
+    "mockup": "08-knowledge/design/figma-ds-surface-authoring.md",
+    "wireframe": "08-knowledge/design/figma-ds-surface-authoring.md",
 }
 
 
@@ -103,11 +135,17 @@ def read_stdin_json() -> dict:
         return {}
 
 
-def emit_context(text: str) -> None:
-    """Inject additional context into the session (SessionStart / UserPromptSubmit only)."""
+def emit_context(text: str, event_name: str) -> None:
+    """Inject additional context into the session (SessionStart / UserPromptSubmit only).
+
+    `event_name` MUST be the exact hook event name ("SessionStart" / "UserPromptSubmit").
+    A null/missing hookEventName fails harness-side validation and the whole payload —
+    including additionalContext — is silently dropped (observed 2026-07-08; this was
+    the delivery defect that dark-launched the entire context layer).
+    """
     payload = {
         "hookSpecificOutput": {
-            "hookEventName": None,
+            "hookEventName": event_name,
             "additionalContext": text,
         }
     }
@@ -294,12 +332,21 @@ def _describe_git_state() -> str:
 
 
 def _parse_last_session_entry(path: Path) -> str:
-    """Return 'YYYY-MM-DD — title' from the first entry under '## Session Entries' in session-log.md."""
+    """Return 'YYYY-MM-DD — title' from the first entry under '## Session Entries' in session-log.md.
+
+    Understands BOTH entry shapes (FX-5, 2026-07-09 — the heading-only parser showed a
+    month-stale "last session" on every boot once newer entries were bare blocks):
+    - '### YYYY-MM-DD — title' headings (preferred; /session-end writes one per block)
+    - bare '--- SESSION BLOCK ---' blocks (title recovered from Date: + Project(s): lines)
+    Whichever shape appears first below '## Session Entries' (newest-first log) wins.
+    """
     if not path.exists():
         return ""
     try:
         with path.open("r", encoding="utf-8", errors="replace") as f:
             in_entries = False
+            in_block = False
+            block_date = ""
             for line in f:
                 if line.startswith("## Session Entries"):
                     in_entries = True
@@ -309,6 +356,24 @@ def _parse_last_session_entry(path: Path) -> str:
                 m = re.match(r"^### (\d{4}-\d{2}-\d{2})\s+[—-]\s+(.+?)\s*$", line)
                 if m:
                     return f"{m.group(1)} — {m.group(2)}"
+                if line.strip() == "--- SESSION BLOCK ---":
+                    in_block = True
+                    block_date = ""
+                    continue
+                if in_block:
+                    dm = re.match(r"^Date:\s*(\d{4}-\d{2}-\d{2})\s*$", line)
+                    if dm:
+                        block_date = dm.group(1)
+                        continue
+                    pm = re.match(r"^Project\(s\):\s*(.+?)\s*$", line)
+                    if pm and block_date:
+                        title = pm.group(1)
+                        if len(title) > 100:
+                            title = title[:99].rstrip() + "…"
+                        return f"{block_date} — {title}"
+                    if line.strip() == "--- END BLOCK ---":
+                        # Malformed block (no Date:/Project(s):) — keep scanning.
+                        in_block = False
     except Exception:
         pass
     return ""
@@ -398,10 +463,46 @@ def _check_audit_staleness() -> str:
         days = (now_utc - last_audit).days
         if days < AUDIT_STALE_DAYS:
             return ""
+        if days >= AUDIT_STALE_DAYS * 2:
+            # Escalation tier: the plain nag was ignored for 72 days once (2026-07-08)
+            # and the un-audited drift contributed to a real failure. Past 2x the
+            # threshold, the notice demands scheduling, not just awareness.
+            return (
+                f"P0 — workspace audit is {days} days overdue (threshold: {AUDIT_STALE_DAYS} days). "
+                f"Un-audited drift has caused real failures before (see audit-log 2026-07-08). "
+                f"Propose running `/optimize` THIS session before starting new work, and say so "
+                f"explicitly in your first reply — do not let this notice pass silently."
+            )
         return (
             f"Workspace audit is stale — last audit was {days} days ago "
             f"(threshold: {AUDIT_STALE_DAYS} days). Run `/optimize` to review the brain "
             f"for stale items, contradictions, drift, and consolidation opportunities."
+        )
+    except Exception:
+        return ""
+
+
+def _check_harness_map_staleness() -> str:
+    """Return a notice if the last harness-map is older than HARNESS_MAP_STALE_DAYS.
+
+    Silent when the stamp is missing — no nag before the first map (see harness-map skill).
+    Stamp path: 07-projects/19-workspace-brain/reports/harness-map.stamp
+    """
+    if not HARNESS_MAP_STAMP.exists():
+        return ""
+    try:
+        text = HARNESS_MAP_STAMP.read_text(encoding="utf-8", errors="replace")
+        m = re.search(r"^date:\s*(\d{4})-(\d{2})-(\d{2})\b", text, re.MULTILINE)
+        if not m:
+            return ""
+        last = datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)), tzinfo=timezone.utc)
+        days = (datetime.now(timezone.utc) - last).days
+        if days < HARNESS_MAP_STALE_DAYS:
+            return ""
+        return (
+            f"Harness map is stale — last map was {days} days ago "
+            f"(threshold: {HARNESS_MAP_STALE_DAYS} days). Run `/harness-map` when convenient "
+            f"(read-only; not a blocker for ordinary work)."
         )
     except Exception:
         return ""
@@ -537,6 +638,26 @@ def _write_desync_notice(state: dict, staged_count: int) -> None:
         pass
 
 
+def _check_linear_lanes() -> str:
+    """Open Agent Engine lane preflight for THIS surface — '' when healthy (the common case).
+
+    Deterministic and cheap: filesystem + MCP-config inspection, no network, no credentials.
+    Delegates to 00-bootstrap/doctor/linear-lanes.py so Cursor and any other surface run the
+    same check. Fails silent — a broken detector must never block a session start.
+    """
+    script = WORKSPACE_ROOT / "00-bootstrap" / "doctor" / "linear-lanes.py"
+    if not script.is_file():
+        return ""
+    try:
+        out = subprocess.run(
+            [sys.executable, str(script), "--notice", "--surface", "claude-code"],
+            capture_output=True, text=True, timeout=5,
+        )
+    except Exception:
+        return ""
+    return out.stdout.strip()
+
+
 def _read_desync_notice() -> str:
     """Return a one-line summary of the last desync notice for SessionStart, or ''."""
     if not DESYNC_NOTICE.exists():
@@ -554,15 +675,30 @@ def _read_desync_notice() -> str:
         return ""
 
 
-def _ensure_drive_safe_git_config() -> None:
-    """Set conservative stat-cache config to reduce Drive flakiness.
+def _compact_session_fragments() -> None:
+    """Fold 06-context/sessions/*.md fragments into session-log.md (idempotent).
+    Non-fatal: session maintenance must never break a session start."""
+    tool = WORKSPACE_ROOT / "09-tools" / "compact-sessions.py"
+    if not tool.exists():
+        return
+    try:
+        subprocess.run([sys.executable, str(tool), "--quiet"],
+                       cwd=str(WORKSPACE_ROOT), capture_output=True, text=True, timeout=20)
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"[session-start] session compaction skipped: {exc}\n")
 
-    Not load-bearing — Tier 1's content-hash fallback is the actual safety net —
-    but a small reduction in surface area for stat-cache false positives.
+
+def _ensure_drive_safe_git_config() -> None:
+    """Set conservative stat-cache config to reduce Drive flakiness, and pin
+    rebase.autoStash off so the cross-machine auto-sync can never stash-and-strand
+    a live editing session's uncommitted work (a dirty-tree `pull --rebase` refuses
+    instead). Not load-bearing — the content-hash fallback is the real safety net —
+    but it keeps the safe default from drifting if a global config ever flips it.
     """
     if not in_git_repo():
         return
-    for key, value in [("core.checkStat", "minimal"), ("core.trustctime", "false")]:
+    for key, value in [("core.checkStat", "minimal"), ("core.trustctime", "false"),
+                       ("rebase.autoStash", "false")]:
         try:
             existing = git("config", "--local", "--get", key).stdout.strip()
             if existing != value:
@@ -691,7 +827,9 @@ def build_session_start_context(
     git_state = _describe_git_state()
     version_notice = _check_claude_version_change()
     audit_notice = _check_audit_staleness()
+    harness_map_notice = _check_harness_map_staleness()
     desync_notice = _read_desync_notice()
+    lanes_notice = _check_linear_lanes()
 
     project_lines = "\n".join(f"  - {name}: {summary}" for name, summary in projects) or "  (none found)"
 
@@ -700,8 +838,12 @@ def build_session_start_context(
         notices.append(f"⚠ {version_notice}")
     if audit_notice:
         notices.append(f"⚠ {audit_notice}")
+    if harness_map_notice:
+        notices.append(f"⚠ {harness_map_notice}")
     if desync_notice:
         notices.append(f"⚠ {desync_notice}")
+    if lanes_notice:
+        notices.append(f"⚠ {lanes_notice}")
     worktree_notice = _format_worktree_cleanup_notice(
         cleaned_worktrees or [], skipped_worktrees or []
     )
@@ -755,6 +897,8 @@ If the session produces a durable insight, add or update the entry at session en
 _Full context: `06-context/project-context.md`, `06-context/session-log.md`,_
 _`06-context/role-and-context.md`, `04-preferences/user-preferences.md`._
 _Frameworks: `01-frameworks/00-README.md`._
+_Lexical fallback (when triggers miss): `python3 09-tools/vault-retrieve.py \"…\"` —_
+_FTS over vault; paths + TL;DRs. Layer 0 triggers still win on exact routes._
 _The mandatory session-start ritual format is in CLAUDE.md — render it before responding._
 """
 
@@ -850,9 +994,58 @@ def ensure_local_gitdir() -> None:
 # ---------- Handlers ----------
 
 
+def build_reorientation_context(machine: str, now: datetime, source: str) -> str:
+    """Compact re-orientation block for compact/resume session starts.
+
+    Compaction is exactly the moment the boot-time foundations injection gets
+    summarized away — re-inject the load discipline and the knowledge index so
+    mid-session work doesn't decay into freestyling (the 2026-07-08 failure mode)."""
+    knowledge_index = read_head(KNOWLEDGE_INDEX, 60)
+    source_label = {"compact": "compacted", "resume": "resumed"}.get(source, source)
+    return f"""# Workspace re-orientation (context was {source_label})
+
+**Machine:** {machine} · **Date:** {now.strftime('%Y-%m-%d %H:%M %Z')}
+
+Standing discipline (unchanged by compaction):
+- Load skills per the AGENTS.md precedence algorithm — triggers → load chain, foundation-first.
+- Foundational color/UX/a11y baseline (system-agnostic): `03-skills/design-foundations/SKILL.md`,
+  `03-skills/found-color/SKILL.md`, `03-skills/a11y-visual/SKILL.md`.
+- When authoring inside a specific design system, resolve within THAT system's own
+  tokens/variables (read its DESIGN.md / connected libraries). Missing tokens/features go to
+  the backlog (`06-context/project-context.md` → Pending Items); never import another
+  system's conventions into a system that doesn't use them.
+- QA pre-output gate: `01-frameworks/06-qa-operating-model.md` — runs before any deliverable,
+  including canvas writes.
+
+## Knowledge vault index (08-knowledge/_INDEX.md)
+Read the relevant entry before continuing domain work.
+```
+{knowledge_index}
+```
+
+_Lexical fallback: `python3 09-tools/vault-retrieve.py \"…\"` (Layer 0 triggers still win)._
+"""
+
+
 def handle_session_start(payload: dict) -> None:
+    now = datetime.now().astimezone()
+    machine = resolve_machine_label()
+    source = (payload.get("source") or "startup").lower()
+
+    # Post-compaction / resume: the original boot injection is gone or stale in the
+    # summarized context. Re-inject a compact re-orientation block and skip the
+    # filesystem side effects (healing/cleanup already ran at true startup).
+    if source in ("compact", "resume"):
+        emit_context(build_reorientation_context(machine, now, source), "SessionStart")
+        return
+
     ensure_local_gitdir()
     _ensure_executable_bits()
+    # Fold any per-session fragments into session-log.md before the boot-read below,
+    # so this session opens with the latest reconciled history. Idempotent + safe.
+    _compact_session_fragments()
+    # Refresh the lexical FTS index so UserPromptSubmit --cached queries stay current.
+    _refresh_vault_retrieve_index()
     # Auto-clean stale Drive-resident worktrees whose branches are fully merged.
     # Runs only when this session is in the canonical workspace root (not inside a
     # worktree itself) — that's the natural moment to clean the prior session's
@@ -864,31 +1057,399 @@ def handle_session_start(payload: dict) -> None:
             cleaned, skipped = _cleanup_stale_worktrees()
         except Exception as exc:
             sys.stderr.write(f"[session-start] worktree cleanup error: {exc}\n")
-    now = datetime.now().astimezone()
-    machine = resolve_machine_label()
-    emit_context(build_session_start_context(machine, now, cleaned, skipped))
+    emit_context(build_session_start_context(machine, now, cleaned, skipped), "SessionStart")
+
+
+def _term_matches(term: str, prompt: str) -> bool:
+    """Word-boundary match of a (possibly multiword) trigger term against the
+    lowercased prompt. Boundary-anchored so short triggers like `ui` don't fire
+    inside words like `build` or `guide`."""
+    return re.search(r"(?<!\w)" + re.escape(term.lower()) + r"(?!\w)", prompt) is not None
+
+
+def _registry_trigger_hits(prompt: str) -> list[tuple[str, str]]:
+    """Match skill `triggers` declared in skills.registry.json — the machine graph
+    generated from SKILL.md frontmatter. This is the same graph AGENTS.md's loading
+    precedence algorithm routes by; reading it here makes the deterministic hook
+    layer honor it instead of a hand-synced mirror table. Hints include the
+    foundation-first load chain so ancestors load before the skill itself."""
+    try:
+        data = json.loads(SKILLS_REGISTRY.read_text(encoding="utf-8", errors="replace"))
+    except Exception:
+        return []
+    skills = data.get("skills", {})
+    chains = data.get("load_chains", {})
+    hits: list[tuple[str, str]] = []
+    for name, rec in skills.items():
+        for term in rec.get("triggers", []) or []:
+            if _term_matches(str(term), prompt):
+                chain = chains.get(name) or [name]
+                path_hint = " → ".join(f"03-skills/{n}/SKILL.md" for n in chain)
+                hits.append((str(term), f"skill `{name}` (load chain, foundation-first): {path_hint}"))
+                break  # one hit per skill
+    return hits
+
+
+def _knowledge_index_hits(prompt: str) -> list[tuple[str, str]]:
+    """Match trigger terms declared inline on 08-knowledge/_INDEX.md entry lines
+    (the `Triggers: \\`a\\`, \\`b\\`` convention). The index is the single source of
+    truth — entries gain routing the moment their index line declares triggers,
+    with no dispatcher edit required."""
+    if not KNOWLEDGE_INDEX.exists():
+        return []
+    hits: list[tuple[str, str]] = []
+    try:
+        for line in KNOWLEDGE_INDEX.read_text(encoding="utf-8", errors="replace").splitlines():
+            m = re.match(r"^-\s+\[\[([^\]]+)\]\]", line.strip())
+            if not m:
+                continue
+            name = m.group(1)
+            tm = re.search(r"[Tt]riggers:\s*(.+)$", line)
+            if not tm:
+                continue
+            for term in re.findall(r"`([^`]+)`", tm.group(1)):
+                if _term_matches(term, prompt):
+                    found = sorted(KNOWLEDGE_DIR.glob(f"*/{name}.md"))
+                    target = (
+                        str(found[0].relative_to(WORKSPACE_ROOT)) if found
+                        else f"08-knowledge (entry [[{name}]] — see _INDEX.md)"
+                    )
+                    hits.append((term, f"knowledge: read `{target}` before proceeding"))
+                    break  # one hit per entry
+    except Exception:
+        return []
+    return hits
+
+
+# Per-tier caps (FX-2, 2026-07-09). The old single global cap (15 lines, emit order
+# skill → registry → knowledge → index) let a flood of registry matches truncate the
+# curated knowledge hints away — the highest-value tier lost to the noisiest one.
+# Curated tiers now emit FIRST and every tier keeps its own budget; a hot tier can
+# no longer starve the others.
+TIER_CAPS = {
+    "curated trigger": 8,
+    "knowledge hint": 4,
+    "registry trigger": 6,
+    "index trigger": 4,
+    "lexical fallback": 2,
+}
+
+# Run FTS only when Layer-0 unique targets fall below this. Keeps triggers primary
+# and avoids paying lexical cost (and noise) on well-routed prompts.
+LEXICAL_FALLBACK_MIN = 2
+LEXICAL_FALLBACK_LIMIT = 2
+LEXICAL_TOOL = WORKSPACE_ROOT / "09-tools" / "vault-retrieve.py"
+
+# Extracts the first workspace-relative .md path in a hint — the dedupe key. Hints
+# from different tiers pointing at the same file (e.g. a curated row and a registry
+# row both routing to design-engineer/SKILL.md) collapse to the first occurrence.
+_HINT_TARGET_RE = re.compile(r"\d{2}-[\w./-]+\.md")
+
+
+def _hint_target_key(hint: str) -> str:
+    m = _HINT_TARGET_RE.search(hint)
+    return m.group(0) if m else hint
+
+
+def _refresh_vault_retrieve_index() -> None:
+    """Keep the lexical index fresh at SessionStart. Non-fatal."""
+    if not LEXICAL_TOOL.exists():
+        return
+    try:
+        subprocess.run(
+            [sys.executable, str(LEXICAL_TOOL), "--rebuild", "--quiet"],
+            cwd=str(WORKSPACE_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"[session-start] vault-retrieve rebuild skipped: {exc}\n")
+
+
+class LexicalFallback(NamedTuple):
+    hits: list[tuple[str, str]]
+    status: str  # ok | empty | skipped-short | skipped-empty-prompt | tool-missing | failed
+    detail: str
+
+
+def _lexical_fallback(prompt: str, limit: int = LEXICAL_FALLBACK_LIMIT) -> LexicalFallback:
+    """Query vault-retrieve --cached. Fail-observable: empty/error is a named status, not silence."""
+    if not prompt.strip():
+        return LexicalFallback([], "skipped-empty-prompt", "")
+    if len(re.findall(r"[A-Za-z0-9]{4,}", prompt)) < 2:
+        return LexicalFallback([], "skipped-short", "")
+    if not LEXICAL_TOOL.exists():
+        return LexicalFallback([], "tool-missing", str(LEXICAL_TOOL))
+    try:
+        proc = subprocess.run(
+            [
+                sys.executable,
+                str(LEXICAL_TOOL),
+                prompt.strip(),
+                "--cached",
+                "--json",
+                "--quiet",
+                "--no-expand",
+                "--limit",
+                str(limit),
+            ],
+            cwd=str(WORKSPACE_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=8,
+        )
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"[user-prompt] vault-retrieve skipped: {exc}\n")
+        return LexicalFallback([], "failed", str(exc))
+    if proc.returncode not in (0, 1):
+        return LexicalFallback([], "failed", f"exit {proc.returncode}")
+    if not proc.stdout.strip():
+        return LexicalFallback([], "failed", "empty-stdout")
+    try:
+        data = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return LexicalFallback([], "failed", "bad-json")
+    out: list[tuple[str, str]] = []
+    for hit in data.get("hits") or []:
+        path = hit.get("path") or ""
+        if not path.endswith(".md"):
+            continue
+        snip = (hit.get("snippet") or hit.get("title") or "").strip()
+        snip = re.sub(r"\s+", " ", snip)
+        if len(snip) > 140:
+            snip = snip[:137] + "…"
+        hint = f"lexical: read `{path}` before proceeding"
+        if snip:
+            hint += f" — {snip}"
+        out.append((path, hint))
+    if not out:
+        return LexicalFallback([], "empty", "")
+    return LexicalFallback(out, "ok", "")
+
+
+def _lexical_fallback_hits(prompt: str, limit: int = LEXICAL_FALLBACK_LIMIT) -> list[tuple[str, str]]:
+    """Compat wrapper: hits only. Prefer `_lexical_fallback` when status matters."""
+    return _lexical_fallback(prompt, limit=limit).hits
 
 
 def handle_user_prompt(payload: dict) -> None:
-    prompt = (payload.get("prompt") or "").lower()
+    raw_prompt = payload.get("prompt") or ""
+    prompt = raw_prompt.lower()
     if not prompt:
         return
-    skill_hits = [(trigger, skill) for trigger, skill in TRIGGER_WORDS.items() if trigger in prompt]
-    knowledge_hits = [(kw, path) for kw, path in KNOWLEDGE_HINTS.items() if kw in prompt]
-    if not skill_hits and not knowledge_hits:
+    skill_hits = [(t, s) for t, s in TRIGGER_WORDS.items() if _term_matches(t, prompt)]
+    knowledge_hits = [
+        (kw, f"knowledge: read `{path}` before proceeding")
+        for kw, path in KNOWLEDGE_HINTS.items() if _term_matches(kw, prompt)
+    ]
+    registry_hits = _registry_trigger_hits(prompt)
+    index_hits = _knowledge_index_hits(prompt)
+    tiers = [
+        ("curated trigger", skill_hits),
+        ("knowledge hint", knowledge_hits),
+        ("registry trigger", registry_hits),
+        ("index trigger", index_hits),
+    ]
+    layer0_any = any(hits for _, hits in tiers)
+
+    lines: list[str] = []
+    seen: set[str] = set()
+    for tier_name, hits in tiers:
+        cap = TIER_CAPS[tier_name]
+        emitted = 0
+        dropped = 0
+        for trigger, hint in hits:
+            key = _hint_target_key(hint)
+            if key in seen:
+                continue
+            if emitted >= cap:
+                dropped += 1
+                continue
+            seen.add(key)
+            lines.append(f"- **`{trigger}`** → {hint}")
+            emitted += 1
+        if dropped:
+            lines.append(f"- _(+{dropped} more {tier_name} match(es) dropped — per-tier cap {cap})_")
+
+    # Layer 1: lexical FTS only when Layer 0 under-fires (gap fill, not a peer flood).
+    # Under-fire on a real prompt must never look like "nothing matched."
+    if len(seen) < LEXICAL_FALLBACK_MIN:
+        layer0_n = len(seen)
+        lex = _lexical_fallback(raw_prompt, limit=LEXICAL_FALLBACK_LIMIT)
+        if lex.status not in ("skipped-short", "skipped-empty-prompt"):
+            lex_cap = TIER_CAPS["lexical fallback"]
+            lex_emitted = 0
+            for path, hint in lex.hits:
+                key = _hint_target_key(hint) or path
+                if key in seen:
+                    continue
+                if lex_emitted >= lex_cap:
+                    break
+                seen.add(key)
+                lines.append(f"- **`lexical`** → {hint}")
+                lex_emitted += 1
+            if lex_emitted:
+                lines.append(
+                    f"- _(lexical fallback — Layer 0 had {layer0_n} unique target(s); "
+                    f"cap {lex_cap}. CLI: `python3 09-tools/vault-retrieve.py \"…\"`)_"
+                )
+            elif lex.status == "empty":
+                lines.append(
+                    f"- _(routing skip — Layer 0 under-fired ({layer0_n} unique). "
+                    f"Lexical fallback ran: 0 hits. Do not treat this as no vault entry. "
+                    f"CLI: `python3 09-tools/vault-retrieve.py \"…\"`)_"
+                )
+            elif lex.status == "tool-missing":
+                lines.append(
+                    f"- _(routing skip — Layer 0 under-fired ({layer0_n} unique). "
+                    f"Lexical fallback skipped: vault-retrieve.py missing. "
+                    f"Do not treat this skip as no match.)_"
+                )
+            elif lex.status == "failed":
+                lines.append(
+                    f"- _(routing skip — Layer 0 under-fired ({layer0_n} unique). "
+                    f"Lexical fallback FAILED ({lex.detail or 'error'}). "
+                    f"Do not treat this skip as no match.)_"
+                )
+
+    if not lines:
         return
-    lines = ["# Project trigger detected", ""]
-    seen_skills: set[str] = set()
-    for trigger, skill in skill_hits:
-        if skill not in seen_skills:
-            lines.append(f"- **`{trigger}`** → skill: {skill}")
-            seen_skills.add(skill)
-    seen_knowledge: set[str] = set()
-    for kw, path in knowledge_hits:
-        if path not in seen_knowledge:
-            lines.append(f"- **`{kw}`** → knowledge: read `{path}` before proceeding")
-            seen_knowledge.add(path)
-    emit_context("\n".join(lines))
+
+    lex_hit = any("**`lexical`**" in ln for ln in lines)
+    if layer0_any:
+        header = "# Project trigger detected"
+    elif lex_hit:
+        header = "# Vault lexical fallback"
+    else:
+        header = "# Routing coverage note"
+    body = [
+        header,
+        "",
+        *lines,
+        "",
+        "_Load the matched skills per the AGENTS.md precedence algorithm (foundation-first) "
+        "and read matched knowledge entries BEFORE acting. When authoring inside a specific "
+        "design system, resolve within that system's own tokens; backlog its gaps. "
+        "Layer 0 triggers outrank lexical hints on conflict._",
+    ]
+    emit_context("\n".join(body), "UserPromptSubmit")
+
+
+# Tool names that put pixels on a canvas Sean will inspect. First call per session
+# is denied once with the design-judgment gate below; the retry passes. This is the
+# only layer immune to session length and compaction — every advisory layer above it
+# (boot injection, prompt triggers, skill descriptions) is skippable under execution
+# momentum, and on 2026-07-08 all of them were skipped at once.
+FIGMA_WRITE_TOOL_PATTERN = re.compile(r"use_figma", re.IGNORECASE)
+FIGMA_GATE_STATE_DIR = STATE_DIR / "figma-gate"
+FIGMA_GATE_TTL_DAYS = 7
+
+FIGMA_GATE_TEXT = """FIGMA DESIGN-JUDGMENT GATE (fires ONCE per session — after reading this, simply re-issue the exact same tool call and it will proceed).
+
+This gate prompts skill-loading and judgment. It is NOT a ruleset — design decisions are
+made in context, by you, through the right lenses.
+
+1. LOAD THE LENS (if not already loaded): 03-skills/design-foundations/SKILL.md +
+   03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md +
+   03-skills/uid-color-for-ui/SKILL.md — the system-agnostic color/UX/a11y baseline.
+2. TARGET SYSTEM FIRST. Identify the design system this file/library belongs to. Read its
+   DESIGN.md (if the project has one), its connected Figma libraries, and its variable
+   collections. Select tokens by their object context (fill vs border vs text scope).
+   Don't import another system's conventions (Radix steps, Tailwind shades, shadcn slots)
+   into a system that doesn't use them.
+3. DESIGN WITH JUDGMENT; VERIFY A11Y. Palette, emphasis, and composition choices — including
+   full-color, full-bleed surfaces carrying text or icons — are legitimate whenever the
+   implementation makes sense from a UI/UX/a11y perspective. What is non-negotiable is
+   verification, not any fixed palette rule: every foreground/background pairing is
+   legibility-checked (APCA preferred, WCAG AA fallback), and status meaning never rides
+   on color alone (CVD redundancy).
+4. TOKEN GAPS GO TO THE BACKLOG; WORK CONTINUES. If the target system lacks something you
+   need, derive minimally within its constraints — e.g. the right semantic token, detached
+   to control opacity when that is the system's only lever (an emblematic example, not a
+   rule) — and note the gap in 06-context/project-context.md -> Pending Items. A11y
+   compliance itself is never deferred: what ships now must pass now.
+5. VERIFY AFTER WRITE at meaningful zoom (screenshot), per the pre-output gate in
+   01-frameworks/06-qa-operating-model.md."""
+
+
+def _prune_gate_markers() -> None:
+    """Drop gate markers older than the TTL so .claude/state/ doesn't accumulate."""
+    try:
+        cutoff = datetime.now(timezone.utc).timestamp() - FIGMA_GATE_TTL_DAYS * 86400
+        for f in FIGMA_GATE_STATE_DIR.iterdir():
+            if f.is_file() and f.stat().st_mtime < cutoff:
+                f.unlink()
+    except Exception:
+        pass
+
+
+def handle_pre_tool(payload: dict) -> None:
+    tool = payload.get("tool_name") or ""
+    if not FIGMA_WRITE_TOOL_PATTERN.search(tool):
+        return  # no output = proceed normally
+    session = payload.get("session_id") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    marker = FIGMA_GATE_STATE_DIR / re.sub(r"[^A-Za-z0-9_.-]", "_", str(session))
+    if marker.exists():
+        return  # gate already shown this session — allow silently
+    try:
+        FIGMA_GATE_STATE_DIR.mkdir(parents=True, exist_ok=True)
+        marker.write_text(datetime.now(timezone.utc).isoformat() + "\n", encoding="utf-8")
+        _prune_gate_markers()
+    except Exception:
+        return  # if state can't be written, never wedge the session in a deny loop
+    print(json.dumps({
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": FIGMA_GATE_TEXT,
+        }
+    }))
+
+
+_EDIT_TOOLS = {"Edit", "Write", "MultiEdit", "NotebookEdit", "Update"}
+SESSIONS_DIR = WORKSPACE_ROOT / "06-context" / "sessions"
+
+
+def _session_touch_file(session_id: str) -> Path:
+    safe = re.sub(r"[^A-Za-z0-9._-]", "-", session_id)[:80]
+    return SESSIONS_DIR / f"{safe}.touched"
+
+
+def _rel_to_workspace(p: str) -> str | None:
+    """Return the workspace-relative path if p is inside the workspace, else None."""
+    try:
+        rp = Path(p).resolve()
+        return str(rp.relative_to(WORKSPACE_ROOT))
+    except (ValueError, OSError):
+        return None
+
+
+def handle_post_tool(payload: dict) -> None:
+    """Record files THIS session edited, so session-end can scope its commit to them
+    (never sweeping a concurrent session's in-flight edits). Append-only per session
+    → conflict-free. Transient (*.touched is gitignored)."""
+    if (payload.get("tool_name") or "") not in _EDIT_TOOLS:
+        return
+    session_id = payload.get("session_id")
+    if not session_id:
+        return  # no id → session-end falls back to `git add -A`
+    ti = payload.get("tool_input") or {}
+    fp = ti.get("file_path") or ti.get("notebook_path") or ti.get("path")
+    if not fp:
+        return
+    rel = _rel_to_workspace(fp)
+    if not rel:
+        return  # edit outside the workspace — not ours to commit
+    try:
+        SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+        tf = _session_touch_file(session_id)
+        existing = set(tf.read_text(encoding="utf-8").splitlines()) if tf.exists() else set()
+        if rel not in existing:
+            with tf.open("a", encoding="utf-8") as f:
+                f.write(rel + "\n")
+    except OSError:
+        pass  # tracking is best-effort; never disrupt a tool call
 
 
 def handle_stop(payload: dict) -> None:
@@ -901,12 +1462,81 @@ def handle_stop(payload: dict) -> None:
         git("add", "06-context/session-log.md")
 
 
+# Paths every session-end must stage regardless of tool tracking (the reconciled
+# log, fragment add/removal, and a possibly-regenerated registry).
+_SCOPE_ALWAYS = ["06-context/session-log.md", "06-context/sessions",
+                 "03-skills/skills.registry.json"]
+
+
+def _stage_session_scope(payload: dict) -> str:
+    """Stage this session's changes. Returns 'scoped' when a PostToolUse touch-list
+    exists (commit limited to this session's files), else 'all' (blanket `git add -A`
+    fallback, backward compatible). Scoping is what keeps concurrent sessions from
+    committing each other's in-flight work."""
+    session_id = payload.get("session_id")
+    touched: list[str] = []
+    if session_id:
+        tf = _session_touch_file(session_id)
+        if tf.exists():
+            touched = [ln.strip() for ln in tf.read_text(encoding="utf-8").splitlines() if ln.strip()]
+    if not touched:
+        git("add", "-A")
+        return "all"
+    # Stage add/mod/del for exactly this session's paths + the always-staged set.
+    # Per-path + check=False so one stale pathspec never aborts the whole stage.
+    for path in touched + _SCOPE_ALWAYS:
+        git("add", "-A", "--", path, check=False)
+    try:
+        tf = _session_touch_file(session_id)
+        tf.unlink()  # consume the touch-list; it's transient + gitignored
+    except OSError:
+        pass
+    return "scoped"
+
+
+def _push_with_retry(attempts: int = 3) -> bool:
+    """Push, integrating any commits another machine pushed first — safely.
+
+    On a non-fast-forward rejection: `git pull --rebase` (autostash is pinned OFF, so
+    it REFUSES over a dirty tree rather than stashing — see _ensure_drive_safe_git_config).
+    Union-merge (session-log.md/audit-log.md) auto-resolves during the rebase; a real
+    conflict in a structured file (project-context.md) aborts the rebase and is left
+    for a deliberate /reconcile — never auto-guessed. In every failure path the local
+    commit is SAFE (committed, just not yet pushed); a later clean session-end or
+    /reconcile carries it up. Idempotent + non-lossy.
+    """
+    for _ in range(attempts):
+        push = git("push")
+        if push.returncode == 0:
+            return True
+        err = ((push.stderr or "") + (push.stdout or "")).lower()
+        if not any(s in err for s in ("non-fast-forward", "fetch first", "rejected", "behind")):
+            sys.stderr.write(f"[session-end] push failed (not a race): {push.stderr.strip()}\n")
+            return False
+        # Remote moved. Integrate it by rebasing our commit on top.
+        pull = git("pull", "--rebase")
+        if pull.returncode != 0:
+            git("rebase", "--abort", check=False)  # no-op if not mid-rebase
+            sys.stderr.write(
+                "[session-end] push deferred: remote moved and the local tree/rebase "
+                "isn't clean (a concurrent session's edits, or a structured-file "
+                "conflict). Your commit is safe locally; it will sync on a later clean "
+                "session-end or `/reconcile`.\n")
+            return False
+        # Rebased cleanly (union/fragment files merged automatically) — retry push.
+    sys.stderr.write("[session-end] push still racing after retries; commit is safe locally.\n")
+    return False
+
+
 def handle_session_end(payload: dict) -> None:
     if not in_git_repo():
         sys.stderr.write("[session-end] not a git repo; skipping commit/push\n")
         return
 
     _ensure_drive_safe_git_config()
+    # Fold this session's fragment into session-log.md so the commit below captures
+    # the reconciled log (and the fragment's removal) atomically. Idempotent.
+    _compact_session_fragments()
 
     machine = resolve_machine_label()
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -946,22 +1576,39 @@ def handle_session_end(payload: dict) -> None:
         if not status:
             sys.stderr.write("[session-end] no changes to commit\n")
             return
-        # .gitignore is the source of truth for what's tracked. Add everything
-        # not ignored — covers all system-layer paths plus the 00-obsidian project.
-        git("add", "-A")
+        # Self-heal: if any SKILL.md changed this session, regenerate the skills
+        # registry BEFORE staging so the auto-commit never ships a stale graph.
+        # (Previously only GitHub CI's `build-registry.py --check` caught this,
+        # after the stale registry was already pushed.)
+        if "SKILL.md" in git("status", "--porcelain", "--", "03-skills").stdout:
+            builder = WORKSPACE_ROOT / "09-tools" / "build-registry.py"
+            if builder.exists():
+                reg = subprocess.run(
+                    [sys.executable, str(builder)],
+                    capture_output=True, text=True, cwd=str(WORKSPACE_ROOT),
+                )
+                if reg.returncode != 0:
+                    sys.stderr.write(f"[session-end] registry regeneration failed: {reg.stderr}\n")
+                else:
+                    sys.stderr.write("[session-end] regenerated skills.registry.json (SKILL.md changed)\n")
+        # Stage this session's work. If we tracked which files THIS session edited
+        # (PostToolUse), scope the commit to exactly those (+ the reconciled log and
+        # fragment churn) so a CONCURRENT session's in-flight edits are never swept
+        # into our commit. Otherwise fall back to `git add -A` (backward compatible).
+        scope = _stage_session_scope(payload)
         msg = f"session: auto-commit from {machine} @ {stamp}"
+        if scope == "scoped":
+            msg += " (scoped)"
 
     commit = git("commit", "-m", msg)
     if commit.returncode != 0:
         sys.stderr.write(f"[session-end] commit failed: {commit.stderr}\n")
         return
 
-    # Push if a remote is configured. Silent success, verbose failure.
+    # Push if a remote is configured — safely, idempotently, non-lossily.
     remote = git("remote").stdout.strip()
     if remote:
-        push = git("push")
-        if push.returncode != 0:
-            sys.stderr.write(f"[session-end] push failed: {push.stderr}\n")
+        _push_with_retry()
 
     # Opportunistic cleanup of OTHER stale worktrees. Skips the current one
     # (git refuses self-removal); next session-start in the canonical workspace
@@ -980,6 +1627,8 @@ def handle_session_end(payload: dict) -> None:
 HANDLERS = {
     "session-start": handle_session_start,
     "user-prompt": handle_user_prompt,
+    "pre-tool": handle_pre_tool,
+    "post-tool": handle_post_tool,
     "stop": handle_stop,
     "session-end": handle_session_end,
 }

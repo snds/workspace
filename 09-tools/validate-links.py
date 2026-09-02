@@ -81,21 +81,23 @@ def parse_relations(block_lines):
             yield rel, target.strip()
 
 
-def main():
-    strict = "--strict" in sys.argv[1:]
-    errors, warnings = [], []
-
+def load_skills(skills_dir):
+    """Scan a skills directory. Returns (skills, alias_to_name)."""
     skills = {}          # name -> {"aliases": set, "rels": [(rel, target)]}
     alias_to_name = {}
-    for skill_md in sorted(SKILLS_DIR.glob("*/SKILL.md")):
+    for skill_md in sorted(skills_dir.glob("*/SKILL.md")):
         text = skill_md.read_text(encoding="utf-8", errors="replace")
         names = aliases_for(skill_md.parent, text)
         rels = list(parse_relations(related_block(text)))
         skills[skill_md.parent.name] = {"aliases": names, "rels": rels, "dir": skill_md.parent.name}
         for a in names:
             alias_to_name[a] = skill_md.parent.name
+    return skills, alias_to_name
 
-    # 1 + 2: dangling + reciprocity
+
+def collect_findings(skills, alias_to_name):
+    """Return (errors, warnings) for dangling Related links and missing reciprocals."""
+    errors, warnings = [], []
     for name, rec in skills.items():
         for rel, target in rec["rels"]:
             tgt_name = alias_to_name.get(target)
@@ -110,13 +112,18 @@ def main():
                         f"{name}: `{rel} → [[{target}]]` not reciprocated "
                         f"({target} should declare `{inverse} → [[{name}]]`)")
 
-    # 3: design/eng spokes should reach a foundation — directly (`foundation →`) or via their
-    #    hub (`hub →`, since hubs carry the foundation prerequisite). Warn only if neither exists.
     for name, rec in skills.items():
         if name.startswith(DESIGN_ENG_PREFIXES) and rec["rels"]:
             rels = {rel for rel, _ in rec["rels"]}
             if "foundation" not in rels and "hub" not in rels:
                 warnings.append(f"{name}: design/eng spoke reaches no foundation (no `foundation →` or `hub →`)")
+    return errors, warnings
+
+
+def main():
+    strict = "--strict" in sys.argv[1:]
+    skills, alias_to_name = load_skills(SKILLS_DIR)
+    errors, warnings = collect_findings(skills, alias_to_name)
 
     for w in warnings:
         print(f"  ⚠ {w}", file=sys.stderr)

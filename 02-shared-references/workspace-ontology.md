@@ -40,10 +40,36 @@ answers the one question every contributor (human or LLM) must answer before wri
 - **preference** (`04-preferences/`) — stable, *deliberately set* behavioral defaults (tone, format,
   terminology). Changed only on an explicit user signal.
 
+### Delivery vocabulary (context, audience, medium, evidence)
+Defined in `02-shared-references/delivery-playbooks/` ([[02-shared-references/delivery-playbooks/README|README]]):
+- **context profile** — the declared fact of who owns/reviews a piece of work (`personal-solo` /
+  `centric-engineering` / `centric-design`). Resolves **before** any delivery or repo action; never
+  guessed. Spec + resolution order: [[00-context-profiles]].
+- **forward test** · **three altitudes** · **Proofboard** — the audience bar (forwardable without
+  translation), the explanation model (plain english → how it works → full detail, caveats at the top),
+  and the visual validation harness for code-heavy work. See [[01-audience-contract]] and
+  [[05-validation-harness]].
+
 ### Edge types (cross-links)
 `foundation` (load-before, precedence) · `hub` · `spoke` · `applies-in` · `governed-by` · `peer` ·
 `encodes-into`. Only `foundation →` carries load precedence; the rest are navigational. All edges are
 **reciprocal** (CI-enforced).
+
+### Three graphs (do not cross)
+1. **Skill-load** — `## Related` on skills (`foundation` / `hub` / `spoke` / `governed-by` / …).
+2. **Epistemic** — `relations:` on knowledge and decisions (`builds-on` / `refutes` / …).
+3. **Domain artifact** — documentation-as-data for a job context. Design-systems uses DSDS 0.20
+   (`system` / `component` / `token` / `theme` / `entry` / `shared`) at [[dsds-constitution]].
+   Other job contexts use `domain-constitution/1.0` at [[domain-constitutions]] (same intents;
+   do not force DSDS token/theme kinds onto engines or datasets). Do not mix edge vocabularies.
+
+### Idempotent methods (method, not style)
+A **method** that stays true if the brand, engine, repo, or study changes. Not a hex, radius,
+engine version, or dataset path. Design-systems canonical: [[idempotent-design-decisions]]
+(APCA/role-scale color, overlay emphasis, one-light elevation). Other domains keep methods in
+their `dc-*.yaml` `shared[]` ([[constitution-spec]]). A project's `DESIGN.md` / `RENDER.md` /
+ADR still owns values and look. Audience stamps (`for: human | agent | all`) live on
+constitution sections and on `## For future agent` blocks; see [[vault-graph-conventions]].
 
 ## The routing map — "where does this belong?"
 
@@ -60,9 +86,22 @@ Consult before any write. Mirrored (compressed) in [[AGENTS]] and expanded with 
 | A reusable "when X, do Y" capability | `03-skills/<name>/SKILL.md` | frontmatter v2 + `## Related` |
 | A cross-cutting method / lens / operating model | `01-frameworks/` | new framework only if 3+ consumers |
 | A durable standard / spec / vocabulary | `02-shared-references/` | additive |
+| A standing design *method* (not a project's look) | `02-shared-references/idempotent-design-decisions.md` + DSDS `shared[]` | method here; values in the target system |
+| A portable DS documentation view | `02-shared-references/dsds/` (DSDS 0.20) | view of facets 1–17; not a contract |
+| A job-context constitution (UX, eng, game, vision, …) | `02-shared-references/domain-constitutions/` | methods + complements; not project values; spec [[constitution-spec]] |
 | Why a structural choice was made | `06-context/memory/` (`type: decision`) | decision record |
 | A generated deliverable | `05-artifacts/` | versioned, never overwrite |
+| A Cursor canvas (`.canvas.tsx`) | git-tracked copy under the owning `07-projects/…/canvases/`; live file stays in `~/.cursor/projects/<slug>/canvases/` | `python3 09-tools/cursor-externalize.py` at session-end; do not treat Cursor's folder as the only copy |
+| An actual repo / codebase / non-Figma working file or asset | the platform-relative `Projects/` dir (resolve to the local checkout per device) | never inside this workspace; never hardcode the path |
+| Machine-local agent config (`~/.claude`, `~/.cursor` — per-device) | owned by `00-bootstrap/` (canonical copies in `dist/`, installed/verified by the doctor); per-machine install state recorded as a `06-context/memory/` fact | never hand-edit the installed copy — change `dist/`, rerun the doctor |
+| Hook / adapter code (`.claude/hooks/`, surface shims) | versioned in-workspace at its consumption path; canonical machine-layer copies + install notes in `00-bootstrap/` | edit in-workspace; machine layer flows through `dist/` + doctor |
+| Environment / bootstrap logic (installers, doctors, beacons) | `00-bootstrap/` | doctor (`00-bootstrap/doctor/`) is the verifier; keep idempotent |
 | Something being retired | `_archive/` + `ARCHIVE-LOG.md` | tombstone + provenance |
+
+> **Externalize everything.** Nothing durable lives in an agent's private/internal memory (Claude
+> Code's `.claude` store, a Chat/Design session, any per-tool memory) — it routes to one of the rows
+> above. The only thing an agent keeps internally is a pointer back here. This is an [[AGENTS]] Core
+> rule; rationale in [[decision-externalize-everything-to-workspace]].
 
 ## Foundations: when a domain earns one
 
@@ -72,4 +111,5 @@ principle applied everywhere but owned by no single layer → it's **cross-cutti
 
 ## Tooling pointers (workspace-native, no external dependency)
 - `09-tools/build-registry.py` → generates `03-skills/skills.registry.json` from frontmatter. Stdlib-only.
+- `09-tools/vault-retrieve.py` → Layer-1 lexical FTS over the personal vault (paths + TL;DR snippets). Complements trigger routing; does not replace it. Stdlib-only.
 - Frontmatter contract: [[skill-frontmatter]]. · Loading algorithm: [[AGENTS]].

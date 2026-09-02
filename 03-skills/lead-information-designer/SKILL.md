@@ -320,6 +320,54 @@ explicitly and make the exception deliberately.
 - Stephen Few — *Show Me the Numbers* (2004); *Information Dashboard Design* (2006)
 - Maureen Stone — *A Field Guide to Digital Color* (2003)
 
+
+---
+
+## Execution protocol (Domain Rigor L2)
+
+Domain L1: [[02-ui-ux-operational-framework]] for the interface decisions, plus
+[[15-analysis-operating-model]] for the validity of what is being encoded (a chart inherits the
+gates of the analysis behind it). Rigor model: [[13-domain-rigor-stack]]. Chart failure modes:
+[[11-anticipatory-failure-analysis]]. Native-pixel judgment: [[10-perception-integrity]].
+
+1. **Name the question the view answers** and the decision it serves, plus the person who makes
+   that decision. A dashboard with no decision owner is decoration.
+2. **Check the data behind the encoding**: grain, metric definition, coverage, and whether the
+   underlying claim is descriptive, comparative, or causal. Do not visualize a claim the analysis
+   does not license.
+3. **Choose the comparison** deliberately (over time, across categories, part to whole, against a
+   target), because the comparison is the argument.
+4. **Encode by perceptual accuracy**: position first, then length, then angle and area, with color
+   last for quantitative meaning. Load the one or two `infod-*` spokes the view needs.
+5. **Design for the operational reader** before the exploratory one when the context is enterprise:
+   answer at a glance, drill on demand.
+6. **Reduce non-data ink** where it costs nothing in comprehension, and keep it where it aids
+   scanning. Data-ink is discipline, not dogma.
+7. **Verify legibility and accessibility**: contrast, no color-alone meaning, direct labeling over
+   legend hunting, and readable at the size and resolution it will actually be viewed.
+8. **Check the honesty of the result at native resolution** before calling it done, and state what
+   the view cannot show.
+
+### Done-gates
+- The view states its question, its decision owner, and the metric definitions where they are read.
+- Encoding matches the data type and the comparison, with the strongest available channel used for
+  the most important quantity.
+- Axis baselines honest: no truncated zero on a bar chart, no dual axes implying a correlation, no
+  part-to-whole encoding of non-exclusive categories.
+- Uncertainty shown where the underlying estimate has it, per [[15-analysis-operating-model]].
+- Accessibility: contrast verified, meaning never carried by hue alone, and color-vision-safe
+  palettes for categorical encodings.
+- Labels legible and direct at the delivered size; verified at native resolution
+  ([[10-perception-integrity]]), not from a scaled preview.
+- Dashboards carry a refresh cadence and a retirement condition.
+
+### Absolute bans
+- A chart that flatters a conclusion the data does not support, including through axis choice,
+  aggregation window, or selective series.
+- Color as the primary quantitative encoding, or as the only carrier of meaning.
+- 3D, gradients, or ornament on quantitative marks, which distort area and length judgment.
+- Declaring a visual clean from a downsampled screenshot ([[10-perception-integrity]]).
+
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[infod-dashboard-patterns]] · [[infod-design-system-patterns]] · [[infod-encoding-theory]] · [[infod-narrative-design]] · [[infod-network-graphs]] · [[infod-spatial-maps]] · [[infod-statistical-viz]]

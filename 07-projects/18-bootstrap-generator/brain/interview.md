@@ -88,6 +88,34 @@ question and watch what happens: a hub will keep giving; a spoke will resolve.
 Record this read as you go — it directly shapes how many `contexts.professional.crafts[]` and work
 hubs you propose, and it is the primary input to the Resolver's later GENERATE-vs-PULL bias.
 
+### 4a. Expertise LEVEL is a separate axis from energy — and it is per-domain
+
+Energy tells you *how much a domain matters to them* (hub vs. spoke). It does **not** tell you *how
+good they are at it*. These are different axes and you must read both:
+
+- A person can be a **high-energy hobbyist** — they light up about game design or 3D rendering, have
+  opinions, could talk for an hour — yet are genuinely a beginner in skill. High energy, low level.
+- A person can be a **low-key deep expert** — a staff-level practitioner who answers evenly because
+  it's second nature. Modest energy, top level.
+
+**Crucially, level is per-domain, never a single global rating.** The same person is routinely a
+**staff-level expert in one area and a hobbyist in another** — a principal UX designer who dabbles in
+woodworking; a senior engineer learning to paint. Capture a level *for each domain that becomes a
+skill*, on a simple scale — **hobbyist · intermediate · advanced · expert** — plus **seniority**
+(staff, principal, lead…) and rough **years** where the domain is professional and it matters.
+
+This read is load-bearing: it sets the **altitude** each generated skill is written at. A hobbyist
+skill *teaches* — defines jargon, explains the why, scaffolds the steps, points to foundations. An
+expert skill assumes fluency, skips the fundamentals entirely, and captures *their* judgment, edge
+cases, and (if senior) how they set the bar for others. The wrong altitude makes a skill useless:
+fundamentals bore an expert; peer-level shorthand strands a beginner.
+
+Don't ask "rate yourself 1–5" (people are bad at it). Infer level from how they talk — *do they
+casually reference advanced technique and where the field is wrong (expert), or ask what things mean
+(hobbyist)?* — and confirm lightly: *"Would you say you're more finding your feet here, or is this
+one you go deep on / do professionally?"* Record it per domain; it flows to `profile.expertise{}` and
+becomes each skill's `--level`.
+
 ### 5. The three contexts are a Venn, not three boxes
 
 Work, professional craft, and personal life **overlap on purpose**. Treat them as three
@@ -123,10 +151,10 @@ exactly what a generic pulled skill can't capture, so they bias toward GENERATE 
 
 | # | Friendly name | Listens for | Populates in `profile.yaml` |
 |---|---|---|---|
-| **M0** | Tools & devices | surfaces, models, machines, offline, imports | `identity`, `surfaces`, `models`, `transport`, `imports` |
-| **M1** | Your work | role, deliverables, constraints, time-sinks | `contexts.work` (+ work hubs/spokes) |
-| **M2** | Professional craft | deep expertise, growth, north-star standards | `contexts.professional.crafts[]` (+ `lead-*` hubs) |
-| **M3** | Personal life | dream builds, hobbies, life admin, learning | `contexts.personal` (private) |
+| **M0** | Tools & devices | **use-context (work/personal/mix)**, surfaces, models, machines, offline, imports | `use_context`, `identity`, `surfaces`, `models`, `transport`, `imports` |
+| **M1** | Your work | role, **seniority**, deliverables, constraints, time-sinks | `contexts.work`, `expertise{}` (+ work hubs/spokes) |
+| **M2** | Professional craft | deep expertise, **level per domain**, growth, north-star standards | `contexts.professional.crafts[]`, `expertise{}` (+ `lead-*` hubs) |
+| **M3** | Personal life | dream builds, hobbies (**often hobbyist-level**), life admin, learning | `contexts.personal`, `expertise{}` (private) |
 | **M4** | Preferences | tone, verbosity, audience, anti-patterns, posture | `preferences` |
 | **M5** | Lifecycle & ambition | continuity, separation, automation, privacy | `lifecycle`, `privacy` |
 
@@ -141,9 +169,48 @@ set`.
 machines, whether they need to work offline, how they currently sync anything, and what existing
 notes or files they'd want to bring in. This is the warm-up — concrete, low-stakes, easy to answer —
 and it directly determines which adapters you emit, what transport to set up, and which capability
-tier to plan for.
+tier to plan for. It also settles one framing question that **prioritizes everything after it.**
 
-**Sample questions** (open → menu → escape hatch):
+**Settle the use-context first (populates `use_context`).** Before the tools, ask what this
+workspace is *for*, because the answer reorders the whole interview:
+
+- *"Before anything else — is this workspace mainly for your **work**, for your **personal life**,
+  or a **blend of both**? There's no wrong answer; it just tells me where to spend our time."*
+
+Map the answer to `use_context`: **professional** (weight M1/M2, work hubs lead, blended separation
+is fine), **personal** (weight M3, personal hubs lead, walled + local-only by default), or **mixed**
+(both matter — keep them in their walls; this is the common case, and it's what lets a single
+workspace hold a staff-level-expert work life *and* a hobbyist side of life without them bleeding).
+Don't force a clean split if they hesitate — "mixed" is the safe, common default. This read biases
+which movements you go deep on and the `lifecycle.separation` you'll propose in M5.
+
+**Scan first, then confirm — don't ask cold.** Before the surface questions, run **`wsx scan`**
+(or `wsx scan --json` for machine output). It detects what's already on this machine — installed
+agentic tools (Claude Code, Cursor, Codex, Gemini, Copilot, Windsurf, Aider, Continue), configured
+**MCP integrations** (server names only — it never reads keys), and **local LLMs** (Ollama, LM
+Studio, Jan on localhost). Present what it found and **confirm rather than interrogate**: *"Looks
+like you've got Claude Code and Cursor set up, and a local model running — want me to target those?"*
+Use the scan's `suggested` block to pre-fill `surfaces.primary`, `surfaces.agents[]`, and
+`models.tier`; let the person correct it.
+
+> **If the scan reports `needs_setup` (no agent AND no local model), pause here — don't push into
+> the interview on a weak footing.** The generator leans on the chosen assistant to do the heavy
+> lifting (this interview, the synthesis, and authoring the composite skills), so a capable surface
+> directly determines how good the workspace turns out. **Recommend one before continuing**, best
+> outcome first: **Claude Code** (recommended — the fully-tested path), then Cursor, a frontier chat
+> driven by the emitted `AGENTS.md`/pack, or a local model (Ollama — fully private, but a frontier
+> model gives noticeably richer skills). Help them pick and get set up, then have them re-run
+> `wsx scan` and continue with the detected surface. Only if they *insist* on proceeding with
+> nothing set up: fall back to the mechanical path (`wsx init` scaffolds a real starter workspace),
+> and tell them plainly the guided parts will be limited until they add a surface. Never silently
+> continue a degraded interview.
+
+> **Bring-your-own-tokens — say it plainly.** This generator has **no API key and makes no model
+> calls** of its own; it drives *your* tools and *your* accounts. If a **local model** is running,
+> highlight it — that path is fully private and costs no tokens at all. Nothing here is billed to
+> anyone but the person, on their own assistant.
+
+**Sample questions** (open → menu → escape hatch — the fallback when scan finds nothing):
 
 - *"Let's start easy — when you want help from an AI, what do you actually open? For example, maybe
   the Claude app, ChatGPT in a browser, Copilot inside your code editor, something on your phone, or
@@ -168,6 +235,14 @@ tier to plan for.
   `imports[]`. Don't ingest content now; just register intent.
 - Light touch on sync: do they already use Git, Dropbox, iCloud, nothing? This informs
   `transport.type` (default to git with an Obsidian human layer per spec).
+- **Ask where the workspace should live** (sets `transport.remote`). It's a git repo, so it
+  wants a home to sync across machines and back up. Recommend **free** options, in plain terms:
+  *"Your workspace is a private git repo — where should it live so it syncs and is backed up?
+  Most people use a **private GitHub repo** (free); **GitLab** or **Codeberg** work the same and
+  are also free; or keep it **local-only** on this machine for now. Which sounds right?"* Capture
+  the choice; if they pick a host, note the URL if they have one. **You never create the account
+  or repo** — that's theirs to make (an empty repo on their chosen host); afterward the mechanical
+  hand wires it: `wsx remote <url>` then `wsx sync`. Local-only ⇒ leave `transport.remote` empty.
 
 **Populates:** `identity{name, handle}` · `surfaces{primary, agents[], machines[]}` ·
 `models{tier, offline}` · `transport{type, remote}` · `imports[]`.
@@ -181,7 +256,9 @@ tier to plan for.
 
 **Intent.** Understand what they're paid to do, the shape of their week, the constraints that don't
 move, the standards they're held to, and — critically — **where time leaks.** Recurring deliverables
-become candidate work hubs/spokes; time-sinks are the highest-leverage automation targets.
+become candidate work hubs/spokes; time-sinks are the highest-leverage automation targets. Note their
+**seniority** here (staff, principal, lead, director…) — it feeds `expertise{}` for the work domain
+and, for senior people, tells the generated skills to operate at a peer/leadership altitude (§4a).
 
 **Sample questions:**
 
@@ -222,6 +299,19 @@ emitter produces.
 if no one paid them, where they have a north-star sense of "great." These become the **`lead-*`
 hubs**: the opinionated domain leads with their own spoke networks. This movement is where most true
 *hubs* come from, because it's where people have the most accumulated judgment.
+
+> **Capture the north-stars as references.** When they name whose work is "the bar," a standard they
+> hold to, a canonical text, or a source they'd cite — **write it down.** Those named exemplars are
+> the first, best seeds for the Resolver's **reference track**: they become the `references[]` on a
+> composite skill, letting you build something grounded in *their* definition of great plus the
+> industry-leading guidance around it — not a generic pull. (See `brain/resolver.md` → two-track sourcing.)
+>
+> **Record a level for each craft (per §4a).** As each professional craft surfaces, settle its
+> `expertise{}` entry — **level** (hobbyist/intermediate/advanced/expert), **seniority** (staff,
+> principal, lead…) and rough **years** if it's their day-job discipline. This is where the true
+> experts live, so most M2 crafts land at `advanced`/`expert` — but confirm rather than assume, and
+> keep it per-domain: a person can be an expert in their core craft and only intermediate in an
+> adjacent one. The level sets the skill's altitude (its `--level`).
 
 **Sample questions:**
 
@@ -290,7 +380,7 @@ different: you suggest and invite; you never push, and "skip" is always a comple
   Venn-center find.
 
 **Populates:** `contexts.personal{private, interests[]}`. Default `private: true`. Sensitive items
-flagged here directly inform `privacy.personal_local_only` and `privacy.encrypt` in M5.
+flagged here directly inform `privacy.personal_local_only` in M5.
 
 > If the person skips this movement entirely, that is a valid and respected outcome. Record
 > `contexts.personal.interests: []` and move on with zero friction.
@@ -338,8 +428,9 @@ forward to `lifecycle.automation` in M5.
 
 **Intent.** Decide how the workspace persists and protects itself: session continuity (should each
 session remember the last?), how walled-off work and personal should be, how much automation they
-want, and their privacy/encryption posture. This produces the lifecycle adapter, the
-context-separation policy, and the gitignore/encryption rules.
+want, and their privacy posture. This produces the lifecycle adapter, the
+context-separation policy, and the gitignore rules. (wsx implements no encryption —
+never offer it.)
 
 **Sample questions:**
 
@@ -353,22 +444,41 @@ context-separation policy, and the gitignore/encryption rules.
   background, or do you want to stay in the loop and approve things? For example, 'fully automatic,'
   'automatic but tell me,' 'ask me each time' — or wherever you're comfortable."*
 - *"How private is this, really? For example, is any of it sensitive enough that it should stay only
-  on your machine, or be encrypted, or never get synced anywhere — or is none of it that sensitive?"*
+  on your machine and never get synced anywhere — or is none of it that sensitive?"*
+  **Never offer encryption.** wsx implements none, and asking the question implies it does. If they
+  raise it themselves, answer straight: *"This tool doesn't encrypt anything — I'd be lying if I
+  said it did. What it does guarantee is that your personal notes stay out of git and out of every
+  file the AI reads. For actual at-rest encryption, turn on FileVault (Mac) or BitLocker (Windows) —
+  that protects the whole disk, including this folder."*
 
 **Depth / branch probes:**
 
+- **Context — personal or work-governed?** Ask early (M0): *"Is this workspace just for
+  you, or is it governed by an employer's rules?"* → `profile.context` = `personal-solo`
+  (auto-commit/push are fine) or `work` (employer-governed: NEVER auto-push — branch → PR →
+  review). If unclear, default to the more restrictive `work` and confirm. This gates every
+  git side-effect downstream.
+- **Work AND personal repos?** If they have both, keep GitHub auth NON-OVERLAPPING: one
+  identity per scope, told apart by SSH host-alias (`wsx ssh-setup`), each work repo mapped
+  with `wsx remote <url> --scope work` under a *different* email. Never one identity across
+  both — the tool refuses it, and a personal email in an employer repo is a real leak.
+- **Git authorship (ask when sync/history comes up):** *"When your work gets saved to its
+  history, what name and email should it be signed with?"* Git refuses to commit without
+  one, so this is not optional plumbing — it is the difference between a workspace that
+  saves and one that silently doesn't. Set it with `wsx identity --name "…" --email "…"`
+  (workspace-only by default). Offer the GitHub noreply address if they don't want a
+  personal email in public commits.
 - Continuity answer → `lifecycle.continuity` (and whether session-log/reconcile are active).
 - Separation answer → `lifecycle.separation`. **Default to walled** for anyone who mentioned a work
   machine in M0 (per spec decision #4); confirm rather than assume. A walled setup means personal
   context is local-only and a one-word trigger pulls it in on demand.
 - Automation answer → `lifecycle.automation`, cross-checked against the M4 ask-vs-proceed read; if
   they conflict, reflect the tension back and let them resolve it.
-- Privacy answer → `privacy{personal_local_only, encrypt}`. Anything flagged sensitive in M3 should
-  bias these toward protective defaults. If they want encryption, note it; `wsx` handles the
-  mechanics later.
+- Privacy answer → `privacy{personal_local_only}`. Anything flagged sensitive in M3 should bias this
+  toward protective defaults. **There is no `encrypt` field** — it was removed because wsx never
+  implemented it. Point at full-disk encryption instead; never imply the tool provides crypto.
 
-**Populates:** `lifecycle{continuity, separation, automation}` · `privacy{personal_local_only,
-encrypt}`.
+**Populates:** `lifecycle{continuity, separation, automation}` · `privacy{personal_local_only}`.
 
 ---
 
@@ -433,7 +543,7 @@ contexts:
   personal:     { private, interests[] }   # M3  (private: true by default)
 preferences: { tone, verbosity, audience, banned[] }   # M4
 lifecycle:   { continuity, separation, automation }    # M5
-privacy:     { personal_local_only, encrypt }          # M5
+privacy:     { personal_local_only }                   # M5 (no encrypt field — wsx has no crypto)
 imports:     [ ... ]                 # M0
 ```
 

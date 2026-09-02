@@ -13,7 +13,7 @@ hub: lead-information-designer
 aliases: [infod-encoding-theory]
 tier: spoke
 domain: design
-prerequisites: [lead-information-designer]
+prerequisites: [lead-information-designer, found-color]
 spec_version: "2.0"
 ---
 
@@ -330,4 +330,6 @@ what to notice and why. Route to `infod-narrative-design` for annotation strateg
 - Ware, Colin — *Information Visualization: Perception for Design* (4th ed., 2020)
 
 ## Related
+- foundation → [[found-color]]
 - hub → [[lead-information-designer]]
+- peer ↔ [[visual-qa-dataviz]]

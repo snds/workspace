@@ -1,13 +1,17 @@
 ---
 name: framework-check
-description: Runs current work through the five operating frameworks (Aesthetic Lens, UI/UX Operational, Collaboration & Critique, Research & Evidence, Last-Mile Craft) as a structured critique pass. Invoked as /framework-check.
+description: Runs current work through the eleven operating frameworks as a structured critique pass — the six core lenses always, plus the situational lenses (Integration, Workspace Contribution, Component & Pattern, Perception Integrity, Anticipatory Failure Analysis) when the work touches their domain. Invoked as /framework-check.
 ---
 
 # /framework-check — Multi-framework critique
 
 Takes the current work-in-progress (the thing Sean is asking about, or the most
-recent artifact) and runs it through all five frameworks. Each produces a short
+recent artifact) and runs it through the operating frameworks. Each produces a short
 critique — what the framework values, what it sees here, what it flags.
+
+The **six core lenses (01–06)** always run. The **four situational lenses (07–10)**
+run only when the work touches their domain — otherwise they're listed once under
+"Not applicable" rather than padded with manufactured critique.
 
 ## Trigger phrases
 
@@ -24,14 +28,25 @@ Confirm the target before critiquing.
 
 ### Step 2 — Load frameworks
 
-Read (or verify already loaded):
+`01-frameworks/00-README.md` carries compressed summaries of all eleven — read it first if you
+need the quick version, then load the full files for the lenses in scope.
+
+**Core lenses — always read (or verify already loaded):**
 - `01-frameworks/01-aesthetic-lens.md`
 - `01-frameworks/02-ui-ux-operational-framework.md`
 - `01-frameworks/03-collaboration-and-critique-framework.md`
 - `01-frameworks/04-research-and-evidence-framework.md`
 - `01-frameworks/05-last-mile-craft-framework.md`
+- `01-frameworks/06-qa-operating-model.md`
 
-(If any is missing, flag it and continue with the rest.)
+**Situational lenses — read only if the target is in their domain:**
+- `01-frameworks/07-integration-and-review-framework.md` — work headed for the repo (branching, PRs, merge order, consolidation).
+- `01-frameworks/08-workspace-contribution-framework.md` — the target *is* a change to the workspace itself (a skill, framework, memory, reference, MOC).
+- `01-frameworks/09-component-and-pattern-framework.md` — any component/pattern decision, component docs/schema, tokens, the AI-legible / `DESIGN.md` layer.
+- `01-frameworks/10-perception-integrity.md` — any judgment of fine visual detail (a render, screenshot, artifact, reference, image asset).
+- `01-frameworks/11-anticipatory-failure-analysis.md` — the target proposes or builds a technique with a visible failure surface (shader, post-process, render, generator, layout, motion), or claims a visual is "ready"/"matches the reference".
+
+(If a core file is missing, flag it and continue with the rest.)
 
 ### Step 3 — Critique structure
 
@@ -65,6 +80,19 @@ Output exactly this structure. One paragraph per framework, not more:
 - **Sees here:** ...
 - **Flags:** ...
 
+### QA Operating Model
+- **Values:** ...
+- **Sees here:** ...
+- **Flags:** ... (name the independent detector that ran, or `none (judgment only)`)
+
+## Situational lenses
+
+{Include a block here ONLY for each situational lens (07 Integration · 08 Workspace
+Contribution · 09 Component & Pattern · 10 Perception Integrity · 11 Anticipatory Failure
+Analysis) whose domain the target touches — same Values / Sees here / Flags shape. List the rest on a single line:
+"**Not applicable:** 07 Integration, 08 Workspace Contribution (target isn't repo-bound
+or a workspace edit)." If none apply, replace this whole section with that one line.}
+
 ## Cross-framework tensions
 
 {Only include this section if frameworks disagree on something important. Name the
@@ -84,10 +112,14 @@ decide whether to save, act, or discard.
 
 ## Notes
 
-- **Keep it short.** Five one-paragraph critiques + one cross-tension paragraph +
-  one next-action line. The whole thing should fit on a screen.
+- **Keep it short.** Six core one-paragraph critiques + only the situational lenses
+  that apply + one cross-tension paragraph + one next-action line. Don't run all eleven
+  by reflex — the situational gating is what keeps it on one screen.
 - **Avoid hedging.** If a framework has nothing useful to say about the target,
   say "No specific flag — target is outside this framework's scope." Don't
   manufacture critique to fill space.
 - **Cite framework sections** when the critique draws on a specific part.
   Example: "(04-research-and-evidence-framework.md §Median Persona)".
+- **QA detector.** When the QA lens reports a verdict, Flags must name the independent
+  detector that ran, or write `none (judgment only)`. Verified / matches / done language
+  without a named detector is a failed #06 gate.

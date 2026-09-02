@@ -247,6 +247,54 @@ Patterns that fail across all PM domains:
   support, and customers understand what it does and why it exists. Reduces
   adoption regardless of feature quality.
 
+
+---
+
+## Execution protocol (Domain Rigor L2)
+
+Domain L1: [[15-analysis-operating-model]] for the evidence side of product decisions (question
+before method, validity before narrative). Rigor model: [[13-domain-rigor-stack]]. Evidence tiers
+and advocacy calibration: [[04-research-and-evidence-framework]]. Feasibility claims are contract
+claims and inherit [[14-engineering-operating-model]].
+
+1. **Name the outcome, not the output**: the user or business behavior that should change, and the
+   metric that would show it. A feature name is not an outcome.
+2. **Name the decision and its owner**, what would change it, and the reversibility of the bet.
+   That sets how much evidence the decision deserves.
+3. **State the four risks** for the bet (value, usability, feasibility, viability) and which one is
+   currently the largest unknown. Route feasibility to the engineering leads rather than guessing.
+4. **Load narrowly**: this hub, then the one or two `pm-*` spokes in scope. Pull
+   [[lead-data-scientist]] for anything that turns on a quantitative claim.
+5. **Separate buyer from user** in every requirement: who signs, who lives in the product daily,
+   and where their interests diverge. Sales-mediated feedback is filtered evidence, and the filter
+   is part of the finding.
+6. **Write the hypothesis with its falsifier**: what result would make this the wrong bet, and by
+   when you would know.
+7. **Name the evidence tier** behind each claim in the PRD or roadmap, and calibrate how hard you
+   push to that tier.
+8. **Close the loop after launch**: what the metric actually did, whether the hypothesis held, and
+   what the roadmap changes as a result. Route durable insight to `08-knowledge/`.
+
+### Done-gates
+- Every roadmap item states its intended outcome, its metric, and the hypothesis it is testing.
+- Every quantitative claim in a PRD, business case, or readout carries its metric definition,
+  source, and evidence tier. A number with no definition is not usable.
+- Requirements distinguish buyer commitments from user needs, and name the compliance or IT
+  stakeholder when one exists.
+- Prioritization reflects the largest unknown risk, not the loudest request.
+- Success criteria are defined before build, including what would count as a failed bet.
+- Committed customer promises are tracked as commitments, so the long tail is visible rather than
+  rediscovered.
+- Post-launch review happened, with the outcome compared to the hypothesis.
+
+### Absolute bans
+- Causal language on associational evidence, or a competitor's behavior cited as validation of
+  demand.
+- A roadmap item with no outcome and no metric, carried because it was already on the list.
+- Treating a single loud account as the market. One customer is a data point, and the account size
+  is not the evidence tier.
+- Committing a delivery date on a feasibility claim engineering has not made.
+
 ## Related
 - foundation → [[product-foundations]]
 - spoke → [[pm-competitive-intelligence]] · [[pm-discovery-research]] · [[pm-enterprise-gtm]] · [[pm-metrics-analytics]] · [[pm-platform-api]] · [[pm-roadmap-strategy]] · [[pm-stakeholder-comms]]

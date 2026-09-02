@@ -441,3 +441,59 @@ output is the wrong abstraction for differentiating failure modes —
 the code-path checkpoints are. Cost: ~30 lines of `console.warn`.
 Benefit: reframes the work from "fix N things at once" to "fix the
 right thing for each."
+
+---
+
+## Migrated Figma-API gotchas (from local memory, 2026-06-30)
+
+### 15. Material Symbols icon instances enforce a min/max width — `resize()` reverts
+
+Generated Material Symbols icon instances enforce a min/max width that locks them at their
+native ~20px size. Calling `instance.resize(8,8)` **silently reverts** to 20px, and setting the
+inner glyph's `fontSize` alone leaves the fixed 20px frame around an 8px glyph.
+
+**To resize an MS icon instance** (e.g. to an 8px `size-2` badge glyph):
+1. Clear the constraints: `for (const p of ["minWidth","maxWidth","minHeight","maxHeight"]) inst[p] = null;`
+2. `inst.rescale(target / inst.width)` — `rescale()` scales the **frame and glyph together**
+   (unlike `resize()`), so 8px target = `rescale(8/20)` = `rescale(0.4)`.
+3. Recolor the glyph and recenter (`inst.x = (parent.width - inst.width)/2`).
+
+Also: the MS icon glyph is itself a **TEXT node** (the ligature), so
+`instance.findOne(n=>n.type==="TEXT")` returns the **glyph**, not a sibling label — use top-level
+`instance.children.find(c=>c.type==="TEXT")` when you mean a label next to an icon.
+
+### 16. SectionNode children use PARENT-RELATIVE coordinates (frame-like), not page-absolute
+
+A Figma **SectionNode's children use coordinates relative to the section's own origin**, NOT
+page-absolute — even though sections visually look like loose canvas containers. Matters when
+nesting sections (grouping per-component sections into category supersets):
+
+- Setting a nested child's `y` to an **absolute page value double-offsets it** (`category.y +
+  child.y`). A child meant to sit at page-y 5355 inside a category at y5259 must have `child.y = 96`
+  (relative), not `5355`.
+- Symptom: the FIRST/top category (at y0) looks correct while every later one is pushed
+  progressively further down — because only the y0 parent makes relative == absolute.
+- Diagnose: compare `node.x/.y` (relative to parent) against `node.absoluteBoundingBox` (page
+  coords). If they differ by the parent's offset, you're in relative-coord land.
+
+### 17. The official `use_figma` MCP runs in a detached/headless session
+
+The official Figma MCP `use_figma` executes in a **detached/headless Figma session**, NOT the
+user's live desktop editor. Evidence (centric-ui file):
+- `figma.currentUser` throws "not a supported API".
+- `figma.currentPage` always resets to the file's FIRST page at the start of each call — it never
+  reflects the page the user is viewing or their manual selection.
+- `setCurrentPageAsync` + `currentPage.selection = [...]` + `scrollAndZoomIntoView` all succeed and
+  read back correctly, but NONE of it appears in the user's editor.
+- `listAvailableFontsAsync()` may return nothing for fonts the file uses (Material Symbols came back
+  empty), so `loadFontAsync` for those can't be relied on.
+
+**Consequence:** any task of the form "select these nodes in my editor so I can act on them" CANNOT
+be done via `use_figma` — the selection lives in a session the user can't see. Deliver a tiny **dev
+plugin the user imports** (Plugins → Development → Import plugin from manifest) instead; it runs in
+their real session so selection/viewport stick. (A working example: `Projects/select-filled-icons/`
+— manifest.json + code.js.) **Also:** the Plugin API has NO variable-font axis setter — only
+`setRangeFontName`/`setRangeFontSize`/`setRangeFontWeight`. Material Symbols' FILL/wght/GRAD/opsz are
+variable AXES → can't be set programmatically; the user must drag the axis in the Type panel.
+
+Related: [[figma-cli-authoring]] · [[figma-ds-surface-authoring]] · [[figma-variable-state-representation]].

@@ -293,8 +293,56 @@ state design — not a single loading state that blocks everything.
 
 ---
 
+## User Flows, Task Flows & Workflows — the artifacts
+
+Designing a workflow (above) and *drawing the flow diagram* of it are different acts. Three named
+artifacts get confused constantly; keep them distinct. (Selection + order-of-operations across all
+research/design artifacts: [[06-research-and-design-artifacts]].)
+
+| Artifact | Shows | Includes system/backend steps? | Branches? |
+|---|---|---|---|
+| **Task flow** | The single simplest happy path through one task | No — user actions only | No — one straight line |
+| **User flow** | The exact path a user takes through the product, with the choices along the way | No — only what the *user* does | **Yes** — decisions + alternate paths + drop-offs |
+| **Workflow** | The whole process end-to-end, including the system's and staff's steps | **Yes** — order-processing, validations, staff actions | Yes |
+
+A **service blueprint** is the workflow's mapped, layered cousin (front stage / back stage / support);
+see [[ux-service-design]].
+
+### User flow — anatomy
+
+A **directional flowchart** read start → finish:
+- **Entry point(s)** — where the user arrives (home, search result, deep link, ad). Multiple is normal.
+- **Screen / state nodes** (rectangles) · **action nodes** · **decision diamonds** phrased as a
+  question with **labelled branches** ("Logged in? — yes / no") · **arrows** for direction.
+- **Exit points** — successful completion **and** unexpected drop-off. Standard shapes: oval =
+  start/end, rectangle = screen/step, diamond = decision.
+- It carries **no emotion layer** — that belongs on a journey map. It's product interactions only.
+
+### When each, and where it sits
+
+- Sketch a **task flow** first (linear), then elaborate into a **user flow** (branching).
+- Order: research → journey map (finds the moment) → **task flow → user flow** → wireframes / wireflows
+  → prototype → usability test. A user flow is a *deep dive into one moment of the journey map.*
+- Best research input for a user flow: **usability testing + analytics** (funnels, session recordings,
+  drop-off) — validate the flow against real behaviour, not assumptions.
+
+### Pitfalls (that make a flow useless)
+
+- **Happy-path only.** Map all outcomes and the drop-offs — the friction is where users leave. A cluster
+  of exits at one screen (e.g. a form) is a design signal, not noise.
+- **Cryptic node labels or reference codes.** Every node/decision is spelled out in plain words; a
+  reader follows it with no tribal knowledge and no lookup table. Define any domain term in context
+  (e.g. "request a lab-dip — the mill's dyed swatch that proves the colour before bulk").
+- **"Shorter is better"** — it isn't, if brevity drops real interactions the user needs.
+- **Assuming one path** — real users use back-nav, search, and multiple entry points.
+- **Forcing emotion into a flow** — muddies it; move that to the journey map.
+
+---
+
 ## Cross-Links
 
+- [[06-research-and-design-artifacts]] — which artifact to produce (flow vs journey vs blueprint vs story) + authoring rules
+- `ux-service-design` — service blueprint (the workflow's front/back-stage mapped cousin); journey maps
 - `ux-performance-perception` — loading state taxonomy; skeleton screen design; long-running operations
 - `ux-information-architecture` — flow routing and navigation within workflows
 - `ux-design-systems` — component behavior spec for interactive elements used in workflows

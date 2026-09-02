@@ -35,6 +35,5 @@ lifecycle:
   separation: walled
   automation: standard
 privacy:
-  personal_local_only: true
-  encrypt: false
+  personal_local_only: true   # the guarantee wsx actually keeps (gitignored + never emitted)
 imports: ["github.com/maya/research-templates"]
