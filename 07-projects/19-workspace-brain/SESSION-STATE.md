@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-02 — vqa calibrate relative-output patch on main_
+_Last updated: 2026-09-02 — session-end: Open Engine enroll, visual-qa prove, branch prune_
 
 ---
 
@@ -8,16 +8,16 @@ _Last updated: 2026-09-02 — vqa calibrate relative-output patch on main_
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: Constitutions + graph crosslinking + Cursor canvas copies are on `main`. Legion Continuum is on `snds/legion` `064e363`. Open Engine personal lane is `ok` on this Cursor. Visual-qa prove path ran this session: `vqa calibrate` 48/48 (`vqa/1.1`); LCARS `S-SYS47-01` v4 16/16 measured with 4 named uncued residuals. **Relative `--output` double-join is fixed** in `calibrate.py` + `interact.py`.
-- **Current focus**: Prove path done. Patch landing on `main`. No substantive Legion work this thread.
-- **Working set**: [[visual-prove-engine]] `scripts/calibrate.py`, `scripts/interact.py`.
-- **Last action (2026-09-02):** Landed vqa relative-output patch on `main`. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **TL;DR (for future agent)**: Open Engine personal lane is `ok` on this Cursor (`linear-personal` → `hello@snds.design` / `linear.app/snds`). Visual-qa prove path ran: `vqa calibrate` 48/48 (`vqa/1.1`); relative `--output` double-join fixed (`7a40df5`); LCARS S-SYS47-01 v4 16/16 measured with 4 named uncued residuals. Merged leftover branches pruned on personal `snds/*` clones. Legion Continuum remains `snds/legion` `064e363`. Do not register `linear-c8` here.
+- **Current focus**: Session closing. No substantive Legion work this thread.
+- **Working set**: [[open-agent-engine]]; [[visual-prove-engine]]; [[dc-visual-qa.yaml]].
+- **Last action (2026-09-02):** Session-end after Open Engine enroll + vqa prove + branch prune. Cursor Grok 4.6 / Cursor / Personal MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Stop, or pick new work. Do not start Legion Continuum in this thread.
+- **Next action:** Pick new work. Optional: Davinci leftover unique branches; Legion `feat/scale-unification`.
 - **Open decisions:** Product/data/security constitutions still `mapped` only. YAML still hand-authored.
-- **Blocked on:** Open Engine personal lane is **ok** on this machine (Cursor `linear-personal`, identity `hello@snds.design` / `linear.app/snds`). Machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
+- **Blocked on:** Machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs.** Copilot pack is tracked (`copilot/` + relative `.claude` wrappers); do not convert wrappers back to absolute paths.
-- **Agent thread**: `… → (2026-09-02): Cursor canvas externalize` → `(2026-09-02): Legion Continuum commit + PR #17 + copilot integrity skip`.
+- **Agent thread**: `… → (2026-09-02): Legion Continuum + PR #17 + copilot skip` → `(2026-09-02): Open Engine enroll + visual-qa prove + branch prune`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
@@ -29,7 +29,7 @@ _Last updated: 2026-09-02 — vqa calibrate relative-output patch on main_
 ### VCS state
 - **Branch**: `main` @ session-end commit (this fragment)
 - **Uncommitted at baton write**: session fragment + this baton only
-- **Test state at last check (2026-09-02):** `vqa doctor` core ok (numpy/Pillow/cv2/scipy/ffmpeg); FLIP/DreamSim/OCR/gltf-validator/VGGT degraded honestly. `vqa calibrate` **48/48** (`vqa/1.1`). LCARS `S-SYS47-01` v4 `vqa prove` 16/16 measured, capture verified, 4 named uncued residuals.
+- **Test state at last check (2026-09-02):** `vqa doctor` core ok; FLIP/DreamSim/OCR/gltf-validator/VGGT degraded honestly. `vqa calibrate` **48/48** (`vqa/1.1`). LCARS `S-SYS47-01` v4 `vqa prove` 16/16 measured. Doctor personal lane `ok` on this Cursor.
 
 ### Open work and paused threads
 - **Currently in progress**: error-correction items 1–5 landed; watch for skip-after-close.
@@ -46,6 +46,21 @@ _Last updated: 2026-09-02 — vqa calibrate relative-output patch on main_
 ---
 
 ## Session history (append-only)
+
+### 2026-09-02 — Open Engine enroll + visual-qa prove + branch prune (session-end)
+
+**Focus this session**: Fix Open Engine on this Cursor; load matching domain pack; prove path not Legion work; land vqa relative-output patch; prune merged personal branches.
+**Machine**: Personal MacBook Pro (`Voyager-2.local`) · Cursor Grok 4.6 · Cursor
+**Stopped because**: Sean asked to end session.
+
+**Accomplishments**:
+- Cursor `linear-personal` enrolled; Stage 2 identity matches `snds` / `hello@snds.design`; lane file operational
+- `vqa calibrate` 48/48 after relative `--output` fix (`7a40df5`); LCARS v4 16/16 measured
+- Merged leftover branches pruned on workspace / davinci / legion / LCARS
+- First Cursor ledger heartbeat: `sean-cursor` on `personal:SEA-6`
+
+**Next resumption needs**:
+- Pick new work. Optional Davinci unique branches + Legion `feat/scale-unification`
 
 ### 2026-09-02 — Legion Continuum + PR #17 + copilot skip (session-end)
 
