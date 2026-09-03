@@ -22,7 +22,7 @@ triggers: [motion qa, motion review, animation review, animation audit, jank rev
 tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
-related: [motion-performance, motion-accessibility, motion-principles, qa]
+related: [motion-performance, motion-accessibility, motion-principles, motion-graphic-systems, motion-programmatic-video, qa]
 rigor_role: multi-voice
 surfaces: ["*"]
 spec_version: "2.2"
@@ -171,6 +171,8 @@ What to judge:
 - [ ] Interruption reverses/retargets rather than snapping or queueing
 - [ ] Motion settles cleanly with no residual drift or 1px jump
 - [ ] Each animation has a stated purpose
+- [ ] Register named (product chrome vs graphic system vs diegetic). Idle loops
+      belong only where "live instrument" is the job ([[motion-graphic-systems]])
 
 ## Report shape
 
@@ -184,3 +186,5 @@ hub's library skills.
 ## Related
 - hub → [[lead-visual-qa]]
 - peer ↔ [[motion-performance]] · [[motion-accessibility]] · [[qa]]
+- peer ↔ [[motion-graphic-systems]]
+- peer ↔ [[motion-programmatic-video]]

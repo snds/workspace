@@ -15,7 +15,7 @@ aliases: [lead-vector-designer]
 tier: hub
 domain: design
 prerequisites: [design-foundations]
-related: [lead-icon-artist, lead-technical-digital-artist, variable-icon-font-architect]
+related: [lead-icon-artist, lead-technical-digital-artist, variable-icon-font-architect, gd-display-graphics, motion-graphic-systems, gd-generation-tooling]
 spec_version: "2.0"
 ---
 
@@ -32,6 +32,8 @@ This skill owns **path construction craft** — the mechanics of drawing vectors
 that will survive destructive conversion and interpolate cleanly across masters.
 
 - **What to draw** → `lead-icon-artist`
+- **Display / HUD / schematic illustration** → `gd-display-graphics`
+- **How that graphic moves** → `motion-graphic-systems`
 - **How to process/compile** → `lead-technical-digital-artist`
 - **Interpolation physics & axis mechanics** → `variable-icon-font-architect` (hub)
 
@@ -247,3 +249,6 @@ in the abstract.
 ## Related
 - foundation → [[design-foundations]]
 - peer ↔ [[lead-icon-artist]] · [[lead-technical-digital-artist]] · [[variable-icon-font-architect]]
+- peer ↔ [[gd-display-graphics]]
+- peer ↔ [[motion-graphic-systems]]
+- peer ↔ [[gd-generation-tooling]]

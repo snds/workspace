@@ -21,7 +21,7 @@ triggers: [prove this build, cuespec, measured verdict, visual prove, rank build
 tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
-related: [visual-qa-toolkit, render-qa-toolkit, native-visual-eval, interactive-capture-eval, visual-reference-replication, reference-video-review, play-prove]
+related: [visual-qa-toolkit, render-qa-toolkit, native-visual-eval, interactive-capture-eval, visual-reference-replication, reference-video-review, play-prove, gd-generation-tooling]
 requires: [python-imaging, ffmpeg, nvidia-flip, dreamsim, gltf-validator, tesseract, geometric-foundation-model]
 spec_version: "2.1"
 ---
@@ -127,3 +127,4 @@ Do not: replace this engine with a VLM; use CLIP-IQA as a 3D done-metric; treat 
 ## Related
 - hub → [[lead-visual-qa]]
 - peer ↔ [[visual-qa-toolkit]] · [[render-qa-toolkit]] · [[native-visual-eval]] · [[interactive-capture-eval]] · [[visual-reference-replication]] · [[reference-video-review]] · [[play-prove]]
+- peer ↔ [[gd-generation-tooling]]

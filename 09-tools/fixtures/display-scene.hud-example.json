@@ -1,0 +1,172 @@
+{
+  "id": "hud-example",
+  "title": "Generic instrument still (not a project pack)",
+  "width": 1280,
+  "height": 720,
+  "background": "field",
+  "tokens": {
+    "field": "#12141a",
+    "chrome": "#c4a36a",
+    "accent": "#e8b86a",
+    "mute": "#6e7a88",
+    "ink": "#12141a",
+    "readout": "#d7dde6"
+  },
+  "elements": [
+    {
+      "id": "frame-tl",
+      "kind": "elbow",
+      "group": "frame",
+      "role": "identity",
+      "x": 32,
+      "y": 28,
+      "width": 420,
+      "height": 96,
+      "thickness": 36,
+      "corner": "tl",
+      "fill": "chrome"
+    },
+    {
+      "id": "frame-tr",
+      "kind": "elbow",
+      "group": "frame",
+      "role": "identity",
+      "x": 828,
+      "y": 28,
+      "width": 420,
+      "height": 96,
+      "thickness": 36,
+      "corner": "tr",
+      "fill": "chrome"
+    },
+    {
+      "id": "title",
+      "kind": "label",
+      "group": "frame",
+      "role": "identity",
+      "x": 88,
+      "y": 54,
+      "text": "PRIMARY SCAN",
+      "fill": "ink",
+      "size": 18,
+      "weight": 700,
+      "anchor": "start"
+    },
+    {
+      "id": "mode-a",
+      "kind": "pill",
+      "group": "rail",
+      "role": "status",
+      "x": 32,
+      "y": 140,
+      "width": 88,
+      "height": 28,
+      "fill": "accent"
+    },
+    {
+      "id": "mode-a-label",
+      "kind": "label",
+      "group": "rail",
+      "role": "status",
+      "x": 76,
+      "y": 160,
+      "text": "NAV",
+      "fill": "ink",
+      "size": 12,
+      "anchor": "middle"
+    },
+    {
+      "id": "mode-b",
+      "kind": "pill",
+      "group": "rail",
+      "role": "status",
+      "x": 128,
+      "y": 140,
+      "width": 88,
+      "height": 28,
+      "fill": "mute"
+    },
+    {
+      "id": "mode-b-label",
+      "kind": "label",
+      "group": "rail",
+      "role": "status",
+      "x": 172,
+      "y": 160,
+      "text": "COM",
+      "fill": "ink",
+      "size": 12,
+      "anchor": "middle"
+    },
+    {
+      "id": "spine",
+      "kind": "bar",
+      "group": "spine",
+      "role": "structure",
+      "x": 32,
+      "y": 184,
+      "width": 28,
+      "height": 420,
+      "fill": "chrome"
+    },
+    {
+      "id": "focal-ring",
+      "kind": "sweep",
+      "group": "focal",
+      "role": "schematic",
+      "cx": 640,
+      "cy": 400,
+      "r": 168,
+      "thickness": 18,
+      "start": -40,
+      "sweep": 220,
+      "fill": "accent"
+    },
+    {
+      "id": "focal-core",
+      "kind": "circle",
+      "group": "focal",
+      "role": "schematic",
+      "cx": 640,
+      "cy": 400,
+      "r": 36,
+      "fill": "mute"
+    },
+    {
+      "id": "readout",
+      "kind": "label",
+      "group": "focal",
+      "role": "schematic",
+      "x": 640,
+      "y": 406,
+      "text": "04",
+      "fill": "readout",
+      "size": 22,
+      "anchor": "middle"
+    },
+    {
+      "id": "footer",
+      "kind": "elbow",
+      "group": "frame",
+      "role": "footer",
+      "x": 32,
+      "y": 620,
+      "width": 360,
+      "height": 72,
+      "thickness": 28,
+      "corner": "bl",
+      "fill": "chrome"
+    },
+    {
+      "id": "footer-label",
+      "kind": "label",
+      "group": "frame",
+      "role": "footer",
+      "x": 80,
+      "y": 668,
+      "text": "CHANNEL 7",
+      "fill": "ink",
+      "size": 14
+    }
+  ]
+}

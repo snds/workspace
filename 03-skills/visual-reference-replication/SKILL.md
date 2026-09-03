@@ -17,7 +17,7 @@ tier: spoke
 hub: lead-visual-qa
 domain: quality
 prerequisites: [design-foundations, native-visual-eval]
-related: [visual-qa-toolkit, reference-video-review, lead-visual-qa, design-engineer, realtime-visual-craft, visual-prove-engine]
+related: [visual-qa-toolkit, reference-video-review, lead-visual-qa, design-engineer, realtime-visual-craft, visual-prove-engine, gd-generation-tooling]
 governed_by: []
 governs: []
 surfaces: ["*"]
@@ -55,6 +55,7 @@ Stop and correct course if any of these appear:
 4. **Shipping placeholder assets** (hand-waved SVG, emoji, stock) as stand-ins for reference geometry without labeling them `PLACEHOLDER — not northstar`
 5. **Letting secondary constraints** (token count caps, APCA retunes, density) silently rewrite the visual authority of the northstar without an explicit ADR
 6. **Single-corner “cards” as LCARS** (three sharp + one radius) — legal shapes are pill, sharp bar/segment, or true elbow only (ledger **C-09**)
+7. **Assembling the build from flattened northstar cutouts** (PNG slices, `assetSrcset` plates) instead of live primitives. Northstars measure. They do not construct. Emit via [[gd-generation-tooling]] or the pack catalog.
 
 ## Pipeline (mandatory order)
 
@@ -154,3 +155,4 @@ If (3) or (4) is yes → not Literal progress.
 - foundation → [[design-foundations]]
 - hub → [[lead-visual-qa]]
 - peer ↔ [[visual-prove-engine]]
+- peer ↔ [[gd-generation-tooling]]

@@ -100,6 +100,9 @@
 !09-tools/ds-source-watch.py
 !09-tools/evaluate-skill-routing.py
 !09-tools/cursor-externalize.py
+!09-tools/generate-display-svg.py
+!09-tools/fixtures/
+!09-tools/fixtures/**
 
 # Track only the 00-obsidian integration project; other projects stay local.
 !07-projects/

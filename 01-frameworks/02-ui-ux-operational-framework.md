@@ -78,6 +78,7 @@ Information hierarchy should *visually express* task priority:
 - **Supporting:** Medium visual weight, accessible but not competing
 - **Available if needed:** Lower contrast, grouped, collapsible, or in secondary panels
 - **System feedback:** Clear, immediate, using motion and color purposefully (not decoratively)
+- **Motion register:** Name it before applying duration tokens. Product chrome communicates a control's state change. A graphic system or diegetic display is illustration-in-time: idle loops may say "live," but they still must not overwhelm. Programmatic video is a delivered clip, not a control. Keyboard-initiated and 100+/day actions do not animate. Do not apply button easing to a HUD, or HUD loops to a data table. Implementation default for React UI is Motion (`motion/react`). See [[motion-graphic-systems]], [[motion-programmatic-video]], and [[dc-motion]].
 
 Pair this with the Aesthetic Lens: density is fine if *earned*, hierarchy is clear because the architecture is *authored*, and visual language suggests the system understands what the user is trying to do.
 

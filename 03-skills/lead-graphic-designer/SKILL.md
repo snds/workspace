@@ -7,7 +7,8 @@ description: >
   principles, layout, grid, typography, color theory, brand identity, logo
   design, print design, CMYK, Pantone, visual hierarchy, composition,
   semiotics, visual communication, prepress, print production, illustration
-  direction, visual rhetoric, Swiss design, International Typographic Style,
+  direction, display graphics, HUD illustration, schematic illustration,
+  visual rhetoric, Swiss design, International Typographic Style,
   Müller-Brockmann, Tschichold, visual identity systems, or any foundational
   visual craft question. This is the root node — its principles inform UI
   design, UX design, motion design, type design, and design systems. When in
@@ -21,7 +22,7 @@ spec_version: "2.0"
 
 # Lead Graphic Designer
 
-**Hub skill** for the graphic design skill network. Routes to 7 specialist
+**Hub skill** for the graphic design skill network. Routes to 9 specialist
 spoke skills based on topic. This skill establishes first principles; spokes
 provide domain-specific depth.
 
@@ -60,7 +61,7 @@ departs from them.
 
 ## Spoke Network — Load On-Demand
 
-This hub routes to 7 specialist spoke skills. **Do not load all spokes
+This hub routes to 9 specialist spoke skills. **Do not load all spokes
 eagerly.** Load only the 1–2 spokes most directly relevant to the current
 question. The hub contains enough context to triage and route — spokes provide
 the deep domain knowledge.
@@ -76,6 +77,8 @@ the deep domain knowledge.
 | `gd-brand-identity` | Mark construction, identity systems, brand standards, brand architecture | Logo design, identity systems, brand standards documentation, brand in digital products |
 | `gd-print-production` | Printing processes, prepress, substrates, binding, file delivery standards | Anything destined for physical output: offset, digital, screen, packaging, binding, PDF/X standards |
 | `gd-image-composition` | Photography direction, illustration style, compositional frameworks, visual weight | Image direction, photography briefs, illustration style selection, art direction |
+| `gd-display-graphics` | Technical / HUD / schematic / playback / diegetic panel illustration | Display graphics, film UI illustration, control-surface graphic, okudagram stills |
+| `gd-generation-tooling` | Emit path: live SVG from a display grammar, or raster as testimony only | Generate SVG, live SVG, display grammar, illustration generation, flattened PNG cutouts |
 
 ### Spoke Loading Protocol
 
@@ -87,8 +90,14 @@ the 1–2 spokes most directly relevant. Common routing patterns:
 - **Brand or identity**: `gd-brand-identity` (+ `gd-color-theory` for palette work)
 - **Print output**: `gd-print-production` (+ `gd-color-theory` for color specs)
 - **Composition or image direction**: `gd-image-composition`
+- **Scientific / textbook / editorial / cutaway illustration**: `gd-image-composition`
+  (HUD / schematic stills stay on `gd-display-graphics`)
 - **How images communicate**: `gd-visual-communication`
 - **Layout structure**: `gd-grid-and-layout`
+- **Display / HUD / playback stills**: `gd-display-graphics`
+- **Generate / emit live SVG / refuse flattened PNG cutouts**: `gd-generation-tooling`
+- **AI logo, vectorize, brand IP**: `gd-brand-identity` (AI is testimony;
+  Bezier + IP review are the contract)
 - **Design system foundations**: route to `ds-advisor` + load relevant spoke as
   upstream source (`gd-typography` for type tokens, `gd-color-theory` for color
   tokens, `gd-grid-and-layout` for spacing tokens)
@@ -299,4 +308,4 @@ layer. Rigor model: [[13-domain-rigor-stack]]. Evaluation of a rendered result r
 
 ## Related
 - foundation → [[design-foundations]]
-- spoke → [[gd-brand-identity]] · [[gd-color-theory]] · [[gd-grid-and-layout]] · [[gd-image-composition]] · [[gd-print-production]] · [[gd-typography]] · [[gd-visual-communication]]
+- spoke → [[gd-brand-identity]] · [[gd-color-theory]] · [[gd-display-graphics]] · [[gd-generation-tooling]] · [[gd-grid-and-layout]] · [[gd-image-composition]] · [[gd-print-production]] · [[gd-typography]] · [[gd-visual-communication]]

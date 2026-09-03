@@ -8,14 +8,23 @@ description: >
   color temperature in photography, image-type relationships, illustration
   styles (line/flat/textured/painterly), art direction, mood boards, briefing
   photographers and illustrators, image selection criteria, technical quality
-  assessment, cultural representation in imagery, or how photographic and
-  illustrated elements interact with typographic layouts.
+  assessment, cultural representation in imagery, scientific illustration,
+  textbook illustration, editorial illustration, technical cutaway, exploded
+  view, or how photographic and illustrated elements interact with typographic
+  layouts.
 aliases: [gd-image-composition]
+triggers:
+  - scientific illustration
+  - textbook illustration
+  - editorial illustration
+  - exploded view
+  - technical cutaway
 tier: spoke
 domain: design
 hub: lead-graphic-designer
 prerequisites: [lead-graphic-designer]
-spec_version: "2.0"
+related: [gd-display-graphics, gd-brand-identity, gd-generation-tooling]
+spec_version: "2.2"
 ---
 
 # GD — Image Composition
@@ -34,6 +43,56 @@ how images are composed, selected, directed, and integrated with layout.
 - **Layout structure that images inhabit** → `gd-grid-and-layout`
 - **Icon design and icon construction** → `lead-icon-artist` + `lead-vector-designer`
 - **UI iconography design principles** → `lead-ui-designer` / `uid-iconography`
+- **HUD / schematic / playback / diegetic panel illustration** → `gd-display-graphics`
+- **Exact data charts / labeled diagrams** → `infod-narrative-design` (or overlay
+  labels by hand). Generated text on a diagram is not a caption.
+- **Logo / identity mark** → `gd-brand-identity`
+
+---
+
+## Illustration jobs (name one first)
+
+Style is downstream of the job. A sunflower for a biology textbook and a
+sunflower for a children's spread are different drawings.
+
+| Job | What must be true | Typical views |
+|---|---|---|
+| **Scientific / medical** | Anatomy readable; no invented parts | Plan, elevation, cross-section, magnified inset |
+| **Technical / product** | Assembly readable; parts separable | Cutaway, exploded, labeled callouts |
+| **Editorial** | One argument, limited palette | Metaphor, not a parts catalog |
+| **Children's / storybook** | Character and light carry the page | Single beat, generous margins |
+| **Conceptual / article** | Idea first, decoration last | Surreal or diagrammatic, still one subject |
+
+**HUD / instrument stills are not this table.** Those go to [[gd-display-graphics]].
+
+Name the **audience and medium** in the brief (textbook, magazine, children's
+book, service manual). Reuse the same style keywords across a family so the
+set matches.
+
+**Views are composition.** Ask for the cut, the explode, or the inset
+explicitly. A "detailed illustration" with no view is a mood image.
+
+**Contrast**
+
+| Bad | Good | Why |
+|---|---|---|
+| "Make a scientific jellyfish, also cute and cinematic" | Moon jellyfish, radial canals visible, ink + colored pencil, off-white ground, textbook figure | One job, one medium, one audience |
+| AI flowchart with six stage labels shipped as-is | Generate the node structure; set type in the layout tool | Generated lettering is testimony, not a caption |
+| Exploded watch as a HUD skin | Exploded watch as a service-manual figure | Same drawing language; different register |
+
+### Generated illustration is testimony
+
+Do not vendor an image API (each::labs, Midjourney, etc.) as doctrine. If a
+generator is in the loop:
+
+1. One subject. One style. Contradictory styles ("photorealistic watercolor") fail.
+2. 15–40 words of focused brief beats a 50-word mood dump.
+3. Do not trust on-image type. Overlay labels.
+4. Archive prompt + seed of anything approved ([[gd-brand-identity]] IP path).
+5. The drawing is not done until it survives the intended size and a human
+   cleanup pass. Photo-upscale models on flat figures invent grain.
+6. Emit/tooling lives on [[gd-generation-tooling]]. HUD / schematic stills
+   are live SVG, not this raster path.
 
 ---
 
@@ -443,3 +502,5 @@ environment) align with the brand's established visual language?
 
 ## Related
 - hub → [[lead-graphic-designer]]
+- peer ↔ [[gd-display-graphics]]
+- peer ↔ [[gd-generation-tooling]]

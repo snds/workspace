@@ -34,6 +34,30 @@ This skill owns **which transition to use and why** for specific UI contexts.
 - **Performance of transition implementation** → `motion-performance`
 - **Accessibility: prefers-reduced-motion alternatives** → `motion-accessibility`
 - **Implementation library** → `motion-tooling`
+- **Video / title card / Remotion** → `motion-programmatic-video`
+
+---
+
+## Frequency gate (before a recipe)
+
+| Frequency | Decision |
+|---|---|
+| 100+/day or keyboard-initiated (shortcuts, command palette) | **No animation.** Instant state change. |
+| Tens/day (hover, list nav, frequent toggle) | Near-imperceptible: 100–160ms, or nothing |
+| Occasional (modal, drawer, toast) | Standard band below |
+| Rare / first-time (onboarding, success) | Delight budget lives here |
+
+Name the purpose in one word before continuing: feedback, spatial consistency,
+state indication, preventing a jarring change, explanation, or delight
+(delight only at the rare tier). Can't name it? Don't build it.
+
+**Cheapest tool that works:** CSS transition → `@starting-style` → CSS
+animation → WAAPI → Motion (`motion/react`). Do not install a library for a fade.
+
+**Never `scale(0)` on enter.** Start at `0.9–0.97` + opacity 0. Exit the way
+it entered. Transitions, not keyframes, for anything a user can fire twice in
+a second (they retarget; keyframes restart). Gate hover with
+`(hover: hover) and (pointer: fine)`.
 
 ---
 

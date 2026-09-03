@@ -17,12 +17,12 @@ command:
   - qa
 complements:
   values: "Duration tokens, easing tokens, and library choice in the target system or motion-tooling. Not this file."
-  meaning: "This constitution + motion-principles / motion-transitions / motion-choreography / motion-accessibility / motion-performance."
+  meaning: "This constitution + motion-principles / motion-transitions / motion-choreography / motion-accessibility / motion-performance / motion-graphic-systems / motion-programmatic-video."
   arbitration: "prefers-reduced-motion is a floor. Frame-budget and compositor-layer rules are refuse cases. vqa motion for stutter/flicker."
   look: "Project DESIGN.md and brand motion character. Disney's 12 are adapted, not a style."
-  runtime: "GSAP, Framer Motion, CSS, Lottie, Rive, R3F. Wrapper owns routing; libraries own depth."
+  runtime: "Motion (motion.dev / motion/react), GSAP, CSS, Lottie, Rive, R3F, Remotion for video. Wrapper owns routing; libraries own depth. Motion AI Kit is plugin depth, not a second /motion doctrine."
 graphs:
-  skillLoad: "design-foundations → lead-motion-designer → motion-* ; implementation hub motion wraps plugin libraries"
+  skillLoad: "design-foundations → lead-motion-designer → motion-* including motion-graphic-systems and motion-programmatic-video ; implementation hub motion wraps plugin libraries including motion.dev"
   epistemic: "08-knowledge/design/ (when motion findings land)"
   artifact: "this file"
 shared:
@@ -42,6 +42,15 @@ shared:
       - id: compositor-budget
         statement: "Interface motion targets compositor-only properties at 60fps. Jank is a functional defect."
         level: must
+      - id: name-the-register
+        statement: "Name the motion register before applying duration tokens: product chrome, graphic system, diegetic/film UI, programmatic video, or look-dev. Graphic-system loops communicate 'live'; the same loop on a data table is decoration."
+        level: must
+      - id: frequency-gate
+        statement: "Keyboard-initiated and 100+/day actions do not animate. Frequency is decided before easing."
+        level: must
+      - id: stills-before-encode
+        statement: "Programmatic video is proven at start, mid, and last still before the MP4 is encoded."
+        level: should
   - id: shared-principles
     name: Principles adapted for UI
     for: all
@@ -51,6 +60,9 @@ shared:
         level: should
       - id: no-cargo-cult-squash
         statement: "Do not apply theatrical squash-and-stretch to dense enterprise chrome. The 12 principles are a vocabulary, not a mandate to entertain."
+        level: must-not
+      - id: do-not-mix-registers
+        statement: "Do not apply product-chrome duration tables to diegetic playback, or ship look-dev holograms as the production grammar, without an explicit register change."
         level: must-not
       - id: stagger-is-choreography
         statement: "Multi-element motion is sequenced (choreography). Independent looping ornaments on every cell are noise."
@@ -71,6 +83,10 @@ combos:
     must: [reduced-motion-floor, purposeful-not-decorative]
     mustNot: [no-cargo-cult-squash]
     why: "Brand character never waives vestibular safety or turns every table row into a bounce."
+  - id: register-vs-tokens
+    must: [name-the-register, compose-then-animate]
+    mustNot: [do-not-mix-registers]
+    why: "A live instrument and a button share principles, not duration tables."
   - id: still-vs-motion
     must: [compositor-budget]
     mustNot: []
@@ -80,8 +96,15 @@ refuse:
   - "Skipping prefers-reduced-motion because the motion is 'subtle'."
   - "Declaring 60fps from a screenshot."
   - "Loading every motion-* spoke for a single easing question."
+  - "Applying button easing tokens to a diegetic display because both are 'UI'."
+  - "Vendoring a marketplace motion pack (TikTok templates, aesthetic skills, Motion UI sections) as workspace doctrine."
+  - "Letting Motion AI Kit / a second /motion skill waive the frequency gate or exit-easing law."
 watch:
   - https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html
+  - https://gmunk.com/TRON-Legacy
+  - https://www.awn.com/vfxworld/crushing-the-user-interface-designs-of-oblivion
+  - https://motion.dev
+  - https://motion.dev/docs/ai-kit
 notes:
   for: agent
   - "Plugin library skills are depth behind the /motion wrapper. The wrapper owns triggers and bans."

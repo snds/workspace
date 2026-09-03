@@ -20,7 +20,7 @@ complements:
   look: "Project identity. Warmth is a home base in #01, not a directive. Palette serves intent."
   runtime: "Press, PDF, or exported asset. Not a design-system token file unless the mark is being encoded into a DS."
 graphs:
-  skillLoad: "design-foundations → lead-graphic-designer → graphic spokes ; illustration direction sits on this hub ; game identity also via lead-art-director"
+  skillLoad: "design-foundations → lead-graphic-designer → graphic spokes including gd-display-graphics and gd-generation-tooling ; illustration direction sits on this hub ; game identity also via lead-art-director"
   epistemic: "08-knowledge/design/ when a graphic method is validated"
   artifact: "this file"
 shared:
@@ -45,14 +45,29 @@ shared:
     for: all
     items:
       - id: narrative-job
-        statement: "Illustration has a communication job (explain, tone, identify, spatialize). Style is in service of that job, not a Pinterest default."
+        statement: "Illustration has a communication job (explain, tone, identify, spatialize). Name the job and audience (scientific, technical, editorial, storybook, conceptual) before the style. Style is in service of that job, not a Pinterest default."
         level: must
+      - id: views-are-composition
+        statement: "Scientific and technical figures name the view (plan, section, exploded, inset). A 'detailed illustration' with no view is a mood image."
+        level: should
       - id: medium-floors
         statement: "Print gamut, bleed, line weight at size, and color-vision-safe encoding are floors. Do not author hairline detail that dies at the intended viewing distance."
         level: must
       - id: not-a-ui-kit
         statement: "Do not treat an illustration style guide as a component library. Encoding into a DS is a ds-advisor job after the mark is resolved."
         level: must-not
+      - id: reads-at-distance
+        statement: "A display graphic must still organize when wide, soft, or occluded. Hairline detail that dies at the intended viewing distance is a failed drawing."
+        level: must
+      - id: family-over-parts
+        statement: "Display languages are a small set of legal silhouettes reused. Unique chrome on every module is a leak, not interest."
+        level: must
+      - id: ai-is-testimony
+        statement: "An AI-generated mark or illustration is testimony until Bezier cleanup and a named IP path exist. One dominant archetype before generation."
+        level: must
+      - id: live-geometry-not-cutouts
+        statement: "A display system is emitted as live geometry (SVG or catalog primitives). Flattened PNG cutouts of a plate are testimony or a northstar, not the production surface."
+        level: must
 entries:
   - id: system
     kind: system
@@ -72,11 +87,24 @@ combos:
     must: [print-informs-screen, medium-floors]
     mustNot: []
     why: "CMYK is not a reason to invent new gestalt. It is a gamut constraint on the same principles."
+  - id: display-vs-distance
+    must: [reads-at-distance, family-over-parts]
+    mustNot: [not-a-ui-kit]
+    why: "A HUD that only reads at 100% zoom is a failed instrument. Unique chrome on every module is not a system."
+  - id: generate-vs-cutout
+    must: [live-geometry-not-cutouts, family-over-parts]
+    mustNot: []
+    why: "A stitched plate is not a graphic system. Emit elbows and labels; do not crop the northstar."
 refuse:
   - "Inventing a separate 'visual design' constitution that duplicates design-foundations."
   - "Using illustration to hide broken IA or unreadable UI."
   - "Copying a film still's grade into print without a production path."
+  - "Treating a display graphic as an icon set or as product-chrome decoration."
+  - "Shipping a generated raster as the identity, or upscaling a flat mark with a photographic model."
+  - "Shipping flattened raster cutouts as the constructed display system."
 watch: []
 notes:
   for: agent
   - "No dedicated illustration L1. #01 plus this file is the honest stack. Promote only if 3+ hubs start re-deriving the same illustration-only law."
+  - "Display / HUD / playback stills load gd-display-graphics. Motion of those stills is motion-graphic-systems, not a new L1."
+  - "Emit path is gd-generation-tooling (live SVG). Raster generators stay testimony."

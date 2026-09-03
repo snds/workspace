@@ -7,7 +7,7 @@ description: >
   visual-QA toolkit. Triggers: reference video, extract frames, ffmpeg, yt-dlp, triage frames,
   frame extraction, video reference, screen recording review, motion reference, fly-through reference.
 aliases: [reference-video-review]
-triggers: [reference video, extract frames, ffmpeg, yt-dlp, triage frames, frame extraction, video reference, screen recording review, motion reference, flythrough reference, storyboard from video]
+triggers: [reference video, extract frames, ffmpeg, yt-dlp, triage frames, frame extraction, video reference, screen recording review, motion reference, flythrough reference, storyboard from video, pair audio to frames]
 tier: spoke
 hub: visual-qa-toolkit
 domain: quality
@@ -35,7 +35,11 @@ This is exactly how the Legion galaxy pass found its 7 structural rewrites ([[th
 3. **Review through three lenses at once** — **motion design** (camera dynamics, easing, transition
    rhythm), **3D / engine** (LOD, particles, volumetrics, performance), **craft / effects** (geometry,
    occlusion, lighting). The *cross-product* of lenses surfaces gaps a single lens misses.
-4. **Turn observations into a build list**, not vibes — each frame → a concrete, checkable decision.
+4. **Pair audio to frames.** A still without the line being spoken is incomplete for film/TV
+   UI and interviews. Build a time table: `timestamp · spoken line · what the frame must
+   prove`. Captions (`yt-dlp --write-auto-subs`) are the audio evidence when you cannot
+   sit the whole reel. Graphic-system register: [[motion-graphic-systems]].
+5. **Turn observations into a build list**, not vibes — each frame → a concrete, checkable decision.
 
 ## When to use
 - "Make the galaxy fly-through feel like this clip" → frames → camera/easing/LOD decisions ([[game-scale-traversal]]).

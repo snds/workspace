@@ -18,6 +18,7 @@ aliases: [visual-qa-graphic-design]
 tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
+related: [gd-display-graphics, gd-generation-tooling]
 spec_version: "2.0"
 ---
 
@@ -37,6 +38,8 @@ This skill owns the **graphic design evaluation lens**.
 - **Screen components, spacing systems, platform conventions** → `visual-qa-ui-design`
 - **Type legibility for users with impairments** → `visual-qa-accessibility`
 - **3D render quality, game environments** → `visual-qa-game-design` or `visual-qa-architecture`
+- **Display / HUD / schematic still craft** → authoring in `gd-display-graphics`; this lens still judges the graphic object
+- **How that display moves** → `visual-qa-motion` + `motion-graphic-systems`
 
 When an artifact involves typography in a UI context, apply *this* skill's type
 knowledge alongside `visual-qa-ui-design`'s spacing and component framework.
@@ -233,3 +236,6 @@ structure is serving the content or constraining it.
 
 ## Related
 - hub → [[lead-visual-qa]]
+- governs → [[gd-generation-tooling]]
+- peer ↔ [[gd-display-graphics]]
+- peer ↔ [[gd-generation-tooling]]

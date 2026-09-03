@@ -2,16 +2,20 @@
 name: lead-motion-designer
 description: >
   Staff/principal IC motion design for digital interfaces — from micro-interactions
-  to complex 3D-in-2D spatial reasoning. Hub skill for a network of 7 specialist
-  spokes covering motion principles, transitions, accessibility, 3D spatial
-  reasoning, performance, tooling, and choreography. Use this skill whenever the
-  conversation touches: motion design, animation, transitions, micro-interactions,
-  easing, timing, keyframes, GSAP, Framer Motion, Lottie, CSS animation, Web
-  Animations API, page transitions, state change animation, loading animation,
-  skeleton screen animation, 3D in CSS, perspective transform, parallax, scroll
-  animation, prefers-reduced-motion, vestibular disorders, motion accessibility,
-  choreography, staggering, animation performance, will-change, compositor layer,
-  spring physics, or any question about *how things move and why*.
+  to complex 3D-in-2D spatial reasoning, plus graphic-system / diegetic / film-UI
+  motion and programmatic video. Hub skill for a network of 9 specialist spokes
+  covering motion principles, transitions, accessibility, 3D spatial reasoning,
+  performance, tooling, choreography, graphic-system motion (SVG masks, stroke
+  draw, HUD/playback), and programmatic video (Remotion, kinetic type, title
+  cards). Use this skill whenever the conversation touches: motion design,
+  animation, transitions, micro-interactions, easing, timing, keyframes, GSAP,
+  Framer Motion, Lottie, CSS animation, Web Animations API, page transitions,
+  state change animation, loading animation, skeleton screen animation, 3D in
+  CSS, perspective transform, parallax, scroll animation, prefers-reduced-motion,
+  vestibular disorders, motion accessibility, choreography, staggering, animation
+  performance, will-change, compositor layer, spring physics, SVG animation,
+  diegetic UI, film UI, HUD motion, Remotion, kinetic typography, programmatic
+  video, or any question about *how things move and why*.
 aliases: [lead-motion-designer]
 tier: hub
 domain: design
@@ -21,7 +25,7 @@ spec_version: "2.0"
 
 # Lead Motion Designer
 
-**Hub skill** for the motion design skill network. Routes to 7 specialist spoke
+**Hub skill** for the motion design skill network. Routes to 9 specialist spoke
 skills based on topic. This skill provides the first-principles foundation and
 operating philosophy; spokes provide domain-specific depth.
 
@@ -35,7 +39,7 @@ but governed by the same principles.
 
 ## Spoke Network — Load On-Demand
 
-This hub routes to 7 specialist spoke skills. **Do not load all spokes eagerly.**
+This hub routes to 9 specialist spoke skills. **Do not load all spokes eagerly.**
 Load only the 1–2 spokes relevant to the current question. The hub contains enough
 context to triage and route — spokes provide the deep domain knowledge when needed.
 
@@ -50,6 +54,8 @@ context to triage and route — spokes provide the deep domain knowledge when ne
 | `motion-performance` | Compositor-layer properties, will-change, FLIP technique, frame budget, rendering pipeline, DevTools profiling | Performance of animations, jank, 60fps targets, GPU cost, DevTools workflow |
 | `motion-tooling` | GSAP, Framer Motion, Lottie, CSS animations, Web Animations API — selection and use | Choosing a library, GSAP timeline syntax, Framer Motion variants, Lottie optimization |
 | `motion-choreography` | Multi-element sequencing, stagger, overlapping action, narrative arc, exit choreography | Animating a list, sequencing multiple elements, building a complex intro/exit sequence |
+| `motion-graphic-systems` | Graphic-system / diegetic / film-UI motion; SVG masks, clip-path, stroke draw, morph | HUD, playback graphics, SVG animation, scan/reveal, LCARS-class panel motion |
+| `motion-programmatic-video` | Video / title-card motion: Remotion, Motion Canvas, Manim, kinetic type, safe areas, stills-before-encode | Remotion, kinetic typography, title card, explainer MP4, beat-sync, CSV-to-video |
 
 ### Spoke Loading Protocol
 
@@ -65,6 +71,8 @@ Common routing patterns:
 - **Choosing or using GSAP / Framer Motion** → `motion-tooling`
 - **Multiple elements animating together** → `motion-choreography`
 - **CSS 3D / perspective / parallax** → `motion-3d-spatial`
+- **SVG / HUD / film UI / playback graphic motion** → `motion-graphic-systems`
+- **Remotion / kinetic type / title card / MP4 from code** → `motion-programmatic-video`
 - **Complex multi-element choreography with performance concerns** → `motion-choreography` + `motion-performance`
 - **Page transition with a11y requirement** → `motion-transitions` + `motion-accessibility`
 - **Full animation system review** → load spokes incrementally as each aspect surfaces
@@ -77,7 +85,7 @@ Common routing patterns:
 **Step 3**: If the conversation shifts to a different spoke's domain
 mid-session, load that spoke then — not preemptively.
 
-**Never load all 7 spokes at once.** A typical motion question needs 1–2 spokes.
+**Never load all 9 spokes at once.** A typical motion question needs 1–2 spokes.
 
 ---
 
@@ -145,11 +153,13 @@ sequences need compositional critique.
 ### Expressive motion is context-sensitive
 
 The motion character appropriate for a data table in a PLM workflow is not the same
-as the motion character appropriate for an onboarding sequence or a brand animation.
-Enterprise core workflows: purposeful, fast, unobtrusive. Marketing/onboarding:
-expressive, personality-forward, can hold attention. Both are valid; miscalibration
-(enterprise UI that feels like a website, brand animation that feels clinical) is a
-failure mode.
+as the motion character appropriate for an onboarding sequence, a brand animation,
+or a diegetic display. Enterprise core workflows: purposeful, fast, unobtrusive.
+Marketing/onboarding: expressive, personality-forward, can hold attention.
+Graphic-system / film UI: the display is *alive*, but still must not overwhelm
+(name the register; load `motion-graphic-systems`). Miscalibration (enterprise UI
+that feels like a website, brand animation that feels clinical, LCARS that eases
+like a button) is a failure mode.
 
 ---
 
@@ -181,6 +191,8 @@ failure mode.
   principles apply to 3D motion
 - `motion-choreography` ← `gd-grid-and-layout`: rhythm and visual organization
   principles translate to temporal sequencing
+- `motion-graphic-systems` ← `gd-display-graphics`: compose the still at
+  distance, then animate the few layers that earn motion
 
 ### `lead-motion-designer` → `lead-ui-designer`
 - `motion-transitions` ↔ `uid-visual-system`: motion is part of the visual language;
@@ -244,7 +256,8 @@ is a human judgment that requires rehearsal, iteration, and critique.
 - Google Material Motion guidelines
 - Apple Human Interface Guidelines — Motion
 - GSAP documentation (greensock.com/docs)
-- Framer Motion documentation (framer.com/motion)
+- Motion documentation (motion.dev) — current Framer Motion
+- Motion AI Kit (motion.dev/docs/ai-kit) — plugin depth behind [[motion]]
 
 
 ---
@@ -255,11 +268,16 @@ Domain L1: [[02-ui-ux-operational-framework]] for the interaction decisions, wit
 [[01-aesthetic-lens]] for felt quality. Rigor model: [[13-domain-rigor-stack]]. Motion is temporal,
 so a still frame is never proof: judge recorded playback, and judge fine detail at native
 resolution ([[10-perception-integrity]], [[11-anticipatory-failure-analysis]]). Implementation is
-the [[motion]] hub; this hub owns direction.
+the [[motion]] hub; this hub owns direction. Implementation default for React UI is
+Motion (`motion/react`, [motion.dev](https://motion.dev)), not the retired
+`framer-motion` import.
 
+0. **Frequency gate first** (before a curve). 100+/day or keyboard-initiated
+   (command palette, shortcuts): no animation. Tens/day: near-imperceptible or
+   nothing. Occasional: standard. Rare/first-time: delight budget only.
 1. **Name what the motion has to do**: orient (where did this come from), respond (the system heard
    you), explain (how these things relate), or express (brand character). Motion with no job is
-   decoration and should be cut.
+   decoration and should be cut. Can't name it in those words? Stop.
 2. **Place it in the spatial model** before choosing values: where the element is understood to
    live, so the direction, origin, and transform read as consistent with the interface's geometry.
 3. **Set the timing brief**: duration band, easing character, and stagger logic, tied to the
@@ -300,7 +318,10 @@ the [[motion]] hub; this hub owns direction.
   animation was carrying.
 - Claiming motion quality or smoothness from a still frame or from feel alone when a capture and a
   frame budget are available.
+- Animating a keyboard-initiated or 100+/day control because a library demo did.
+- Letting a marketplace `/motion` skill (Motion AI Kit or similar) override this
+  protocol or the exit-easing law in [[motion-principles]].
 
 ## Related
 - foundation → [[design-foundations]]
-- spoke → [[motion-3d-spatial]] · [[motion-accessibility]] · [[motion-choreography]] · [[motion-performance]] · [[motion-principles]] · [[motion-tooling]] · [[motion-transitions]]
+- spoke → [[motion-3d-spatial]] · [[motion-accessibility]] · [[motion-choreography]] · [[motion-graphic-systems]] · [[motion-performance]] · [[motion-principles]] · [[motion-programmatic-video]] · [[motion-tooling]] · [[motion-transitions]]

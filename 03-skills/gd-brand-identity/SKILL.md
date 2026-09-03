@@ -10,12 +10,19 @@ description: >
   architecture (monolithic, endorsed, pluralistic), brand in digital products,
   dark mode brand behavior, brand token architecture, or any question about
   how a brand identity is constructed, extended, or documented.
+  Also: AI-assisted mark exploration, raster-to-vector cleanup, and IP
+  safety when generated images enter the identity system.
 aliases: [gd-brand-identity]
+triggers:
+  - vectorize
+  - ai logo
+  - brand ip
 tier: spoke
 domain: design
 hub: lead-graphic-designer
 prerequisites: [lead-graphic-designer]
-spec_version: "2.0"
+related: [motion-programmatic-video, gd-generation-tooling]
+spec_version: "2.2"
 ---
 
 # GD — Brand Identity
@@ -35,6 +42,33 @@ of visual identity as a complete system.
 - **Product visual language derived from brand** → `lead-ui-designer` / `uid-visual-system`
 - **Brand color as design system tokens** → `ds-advisor` (this skill is upstream source)
 - **Custom typeface commission** → `lead-type-designer`
+- **Logo sting / title-card motion** → `motion-programmatic-video` after the
+  static system exists
+
+---
+
+## AI-assisted marks (testimony, not the contract)
+
+Generate for exploration. The identity is not done until a human has cleaned
+the Bezier and the IP path is named. Do not treat a tool matrix (Recraft,
+Midjourney, Firefly) as doctrine; tools rotate. The laws do not.
+
+1. **One dominant archetype** before any generation. Conflicting archetypes
+   (luxury + playful + cheap) is the usual failure.
+2. **Negative constraints in the brief** (no gradients, no thin hairlines, max
+   N colors). Unconstrained prompts produce unusable texture.
+3. **Raster → vector:** upscale with a digital/gentle model, not a photographic
+   one. Photo upscalers invent grain and paper inside a flat mark.
+4. **Minimum anchors, orthogonal handles.** Box-method cleanup. The SVG the
+   generator emitted is testimony ([[component-contracts-and-schemas]]).
+5. **Archive prompt + seed + params** of every approved generation, or you
+   cannot iterate.
+6. **IP:** 100% generated images are weak on authorship. Corporate work prefers
+   an indemnified tool plus documented human contribution. Personal exploration
+   can use anything; do not ship it as the mark.
+
+Logo animation is a later pass ([[motion-programmatic-video]]). Do not animate
+a mark that has no static system.
 
 ---
 
@@ -378,3 +412,5 @@ This is a translation problem, not a rendering problem.
 
 ## Related
 - hub → [[lead-graphic-designer]]
+- peer ↔ [[motion-programmatic-video]]
+- peer ↔ [[gd-generation-tooling]]

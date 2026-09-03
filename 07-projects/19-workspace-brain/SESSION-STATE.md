@@ -8,12 +8,12 @@ _Last updated: 2026-09-02 — UX process fold-ins + ds-ops sync + adversarial ro
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: Source-review fold-ins landed except Specs 2 (deferred). DesignParser is now the on-chain rule lookup: [[designparser]] + `designparser-mcp` capability; `design-foundations` calls `suggest_rules_for_context` on every design task. Do not vendor the rule corpus. Open Engine personal lane still `ok` on this Cursor. Legion Continuum remains `snds/legion` `064e363`. Do not register `linear-c8` here.
-- **Current focus**: DesignParser MCP wired into the design load chain.
-- **Working set**: [[designparser]]; [[design-foundations]]; `02-shared-references/capability-registry.md`.
-- **Last action (2026-09-02):** Added DesignParser capability + wrapper + foundation call contract. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **TL;DR (for future agent)**: Motion/illustration stack now includes [[motion-graphic-systems]], [[gd-display-graphics]], [[gd-generation-tooling]], [[motion-programmatic-video]], and Motion (`motion/react`, motion.dev) behind the [[motion]] wrapper. Display systems emit live SVG (`09-tools/generate-display-svg.py`); flattened PNG cutouts are not construction. Frequency gate + stills-before-encode are constitution. Do not vendor marketplace packs. Do not let Motion AI Kit override `/motion`. LCARS is one pack, not the owner. DesignParser remains the on-chain rule lookup. Do not register `linear-c8` here.
+- **Current focus**: Generation tooling landed. Do not start the LCARS from-scratch recreation in this thread.
+- **Working set**: [[gd-generation-tooling]]; `09-tools/generate-display-svg.py`; [[gd-display-graphics]]; [[motion-graphic-systems]]; [[display-graphic-motion-systems]].
+- **Last action (2026-09-02):** Added live-SVG emitter + [[gd-generation-tooling]] so a later session can rebuild an LCARS screen without plate cutouts. Cursor Grok 4.6 / Cursor / Personal MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Commit when Sean asks. Optional later: Specs 2 capability; product-repo ESLint for off-token Tailwind.
+- **Next action:** Commit when Sean asks. Separate session: recursive/adversarial visual review recreating an LCARS generative screen from live primitives only. Optional: local video files → ffmpeg frame pass on the film-UI study.
 - **Open decisions:** Product/data/security constitutions still `mapped` only. YAML still hand-authored.
 - **Blocked on:** Machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs.** Copilot pack is tracked (`copilot/` + relative `.claude` wrappers); do not convert wrappers back to absolute paths.

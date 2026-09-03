@@ -33,6 +33,8 @@ vocabulary that make animation feel right or wrong.
 - **Sequencing multiple elements** → `motion-choreography`
 - **Performance of the chosen approach** → `motion-performance`
 - **Implementation in a specific library** → `motion-tooling`
+- **Graphic-system / SVG / film-UI register** → `motion-graphic-systems`
+- **Programmatic video / kinetic title cards** → `motion-programmatic-video`
 
 ---
 
@@ -316,6 +318,11 @@ easing makes technically correct motion feel wrong.
 | **linear** | `linear` | Loading progress bars (mechanical accuracy required) | Any UI element with implied mass |
 | **ease-out** | `cubic-bezier(0, 0, 0.2, 1)` | **All entrances** — element arrives from off-screen or from zero | Exits |
 | **ease-in** | `cubic-bezier(0.4, 0, 1, 1)` | **All exits** — element departs, accelerates away | Entrances |
+
+**Doctrine, not marketplace.** Emil Kowalski's `animate` skill uses ease-out
+on exits too. This vault keeps ease-in on exits: enter and exit are opposite
+physical events ([[dc-motion]] `easing-matches-weight`). Absorb Emil's
+frequency gate and cheapest-tool order; do not flatten this distinction.
 | **ease-in-out** | `cubic-bezier(0.4, 0, 0.2, 1)` | **Repositioning** — element moves from one on-screen position to another | Entrances or exits |
 | **standard** | `cubic-bezier(0.2, 0, 0, 1)` | Default for most UI transitions (Material Design standard) | — |
 
@@ -385,6 +392,26 @@ The curve is defined by two control points: `(x1, y1)` and `(x2, y2)`.
   multiplied by how many times per session the user triggers it
 - **Ignoring the easing library**: Using whatever default the framework provides
   instead of choosing based on context
+
+---
+
+## Distance, personality, layers (register-aware)
+
+Absorbed from LottieFiles motion-design (not vendored):
+
+- **1/3 travel (graphic-system and video registers):** no element crosses more
+  than a third of the frame without an intermediate keyframe or a paired
+  scale/opacity change. Product chrome does not need this; an 8px press is
+  not a shot.
+- **One personality per project:** pick Playful / Premium / Corporate /
+  Energetic (or the brand's named motion tokens) and keep signature easing +
+  a three-step duration palette. Mixing archetypes is the same defect as
+  mixing registers.
+- **Three motion layers** (primary / secondary / ambient) belong to graphic
+  systems and video. Product chrome keeps the 1-thing rule: do not add
+  ambient pulse to a data table.
+- **Never opacity-only** for an *important* product-chrome state change
+  (pair with a small transform). Opacity-only is correct for reduced-motion.
 
 ---
 

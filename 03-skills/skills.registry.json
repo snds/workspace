@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 288,
+    "total": 292,
     "by_tier": {
       "cross-cutting": 41,
       "foundation": 22,
       "hub": 47,
-      "spoke": 178
+      "spoke": 182
     }
   },
   "skills": {
@@ -2798,17 +2798,24 @@
       "prerequisites": [
         "lead-graphic-designer"
       ],
-      "related": [],
+      "related": [
+        "motion-programmatic-video",
+        "gd-generation-tooling"
+      ],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "vectorize",
+        "ai logo",
+        "brand ip"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:4c6933b9cd26f69a872c38a1a6a808aca689ca18dc2bc23636c86fdb1f081a03"
+      "hash": "sha256:20fa09f75a9f79ea0c79c400bc96d42552271ca05b726bf48c60977286b7de08"
     },
     "gd-color-theory": {
       "path": "03-skills/gd-color-theory/SKILL.md",
@@ -2832,6 +2839,88 @@
       "defers_to": [],
       "rigor_role": null,
       "hash": "sha256:22d29db531e007f31f0883bd9d7cb521b7d7e9f55180639fa03995fa34c5bc1e"
+    },
+    "gd-display-graphics": {
+      "path": "03-skills/gd-display-graphics/SKILL.md",
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "lead-graphic-designer",
+      "prerequisites": [
+        "lead-graphic-designer"
+      ],
+      "related": [
+        "gd-image-composition",
+        "gd-generation-tooling",
+        "motion-graphic-systems",
+        "lead-vector-designer",
+        "visual-qa-graphic-design"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "display graphics",
+        "technical illustration",
+        "hud illustration",
+        "schematic illustration",
+        "control surface graphic",
+        "film ui illustration",
+        "playback graphic",
+        "diegetic interface graphic",
+        "instrument panel graphic",
+        "vector ui illustration"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-01",
+        "lead-graphic-designer"
+      ],
+      "rigor_role": "load-chain",
+      "hash": "sha256:1efc1a580f9d7104d069eb1bd6167a35357859f1299f62f2d84de73218fa1b75"
+    },
+    "gd-generation-tooling": {
+      "path": "03-skills/gd-generation-tooling/SKILL.md",
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "lead-graphic-designer",
+      "prerequisites": [
+        "lead-graphic-designer"
+      ],
+      "related": [
+        "gd-display-graphics",
+        "gd-image-composition",
+        "gd-brand-identity",
+        "lead-vector-designer",
+        "visual-qa-graphic-design",
+        "visual-reference-replication",
+        "visual-prove-engine"
+      ],
+      "governed_by": [
+        "visual-qa-graphic-design"
+      ],
+      "governs": [],
+      "triggers": [
+        "generate svg",
+        "live svg",
+        "display grammar",
+        "illustration generation",
+        "graphic generation",
+        "flattened png",
+        "emit hud"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "lead-graphic-designer",
+        "visual-reference-replication",
+        "framework-06"
+      ],
+      "rigor_role": "measurement",
+      "hash": "sha256:288a4bc9fe7fefd6acad12e86b95bfce0e96deb3bd66f62b20d1f7daf30248ca"
     },
     "gd-grid-and-layout": {
       "path": "03-skills/gd-grid-and-layout/SKILL.md",
@@ -2861,17 +2950,27 @@
       "prerequisites": [
         "lead-graphic-designer"
       ],
-      "related": [],
+      "related": [
+        "gd-display-graphics",
+        "gd-brand-identity",
+        "gd-generation-tooling"
+      ],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "scientific illustration",
+        "textbook illustration",
+        "editorial illustration",
+        "exploded view",
+        "technical cutaway"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:072f6ea5d6de7f43c07275767bf58e4e79ed69fb71bdd2731175c854076c3608"
+      "hash": "sha256:c4b77d5f752c19f47e65926531020b8267fcdd0c54c9a53a9419a97d44fc9022"
     },
     "gd-print-production": {
       "path": "03-skills/gd-print-production/SKILL.md",
@@ -3881,7 +3980,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:5e9a1662af78691a473364c78f3446721e22a22067fc49468c896ade8a31d714"
+      "hash": "sha256:77ed043ef279b07f0c7178c6f522b45f996d54f8035a1b6c9f2caf3b7fd393e9"
     },
     "lead-icon-artist": {
       "path": "03-skills/lead-icon-artist/SKILL.md",
@@ -4010,7 +4109,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:2277fedad77fda02713a6096b2325531c91ede0fdf4724d7579c06f02de95e2d"
+      "hash": "sha256:4784ee4c3d5423ddd3e80b76f5f3d3bea6637a59df4825dc653496470df401a6"
     },
     "lead-product-manager": {
       "path": "03-skills/lead-product-manager/SKILL.md",
@@ -4177,7 +4276,10 @@
       "related": [
         "lead-icon-artist",
         "lead-technical-digital-artist",
-        "variable-icon-font-architect"
+        "variable-icon-font-architect",
+        "gd-display-graphics",
+        "motion-graphic-systems",
+        "gd-generation-tooling"
       ],
       "governed_by": [],
       "governs": [],
@@ -4188,7 +4290,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:02453f0f59a9846edbfce72bc59c424bc164626c7335ee1826e86d9238c37caa"
+      "hash": "sha256:0f6d8b70e9d02bdea40dc349f2acf4d6ddfd656e0f3fb2ac7d612d2a33bdecb2"
     },
     "lead-visual-qa": {
       "path": "03-skills/lead-visual-qa/SKILL.md",
@@ -4570,7 +4672,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:8aae1c9886f97a139f48cb451aa5946cb9787015f1f8c2584c7ae52cbc3cd0e3"
+      "hash": "sha256:e4498f7ca4d716dd61f89d0b113cab49d8758f198827f0de7df70378daec45d1"
     },
     "motion-3d-spatial": {
       "path": "03-skills/motion-3d-spatial/SKILL.md",
@@ -4611,7 +4713,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:481c5b13d16b6fab82274d95629cb41e7552d1b9e32da10e5e2856bf3e496ba2"
+      "hash": "sha256:0218015e91ec4e039d554dbc409816d4c0b97196f536537deeca4be679cd5e1c"
     },
     "motion-choreography": {
       "path": "03-skills/motion-choreography/SKILL.md",
@@ -4631,7 +4733,51 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:3a067bf09521e179feb7c3b4cd3240f6dc7180464c52882a593c78afde1db6d3"
+      "hash": "sha256:997dfe504d20ba2459a11cb5d6a4bfed8d8bdabdb69d8f1ca7b30d827b3dd46a"
+    },
+    "motion-graphic-systems": {
+      "path": "03-skills/motion-graphic-systems/SKILL.md",
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "lead-motion-designer",
+      "prerequisites": [
+        "lead-motion-designer"
+      ],
+      "related": [
+        "gd-display-graphics",
+        "motion-tooling",
+        "visual-qa-motion",
+        "lead-vector-designer",
+        "motion-programmatic-video"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "svg animation",
+        "svg mask",
+        "clip-path",
+        "stroke-dashoffset",
+        "pathLength",
+        "diegetic ui",
+        "film ui",
+        "hud motion",
+        "graphic system motion",
+        "playback graphics",
+        "vector graphic motion",
+        "display graphic animation"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-02",
+        "framework-06",
+        "lead-motion-designer",
+        "motion"
+      ],
+      "rigor_role": "load-chain",
+      "hash": "sha256:69718cdb0c10442b8632e795c1f864a30123ae8625be8c797f9f59acb0bc8d13"
     },
     "motion-performance": {
       "path": "03-skills/motion-performance/SKILL.md",
@@ -4644,14 +4790,16 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "motionscore"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:131b67487135be6492dfaf4925b798c8b1497d884d6e02712fd2054393aac650"
+      "hash": "sha256:f11f9b40e0fa9ebf4f5aeb03c29f02d66c02ec02f422341a47cc68a823f20334"
     },
     "motion-principles": {
       "path": "03-skills/motion-principles/SKILL.md",
@@ -4671,7 +4819,47 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:c3595d017e34030ccf31cfe64b55cddeb8ed41392d9137c8a43a316b54edc16c"
+      "hash": "sha256:91eeb3ffa54814ada24ac05cdbd7446e4840064afafb94d5e220f6e2e129fbc9"
+    },
+    "motion-programmatic-video": {
+      "path": "03-skills/motion-programmatic-video/SKILL.md",
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "lead-motion-designer",
+      "prerequisites": [
+        "lead-motion-designer"
+      ],
+      "related": [
+        "motion-graphic-systems",
+        "motion-tooling",
+        "motion",
+        "visual-qa-motion",
+        "gd-brand-identity"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "remotion",
+        "motion canvas",
+        "manim",
+        "programmatic video",
+        "kinetic typography",
+        "title card",
+        "beat sync",
+        "data-driven video"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-02",
+        "framework-06",
+        "lead-motion-designer",
+        "motion"
+      ],
+      "rigor_role": "load-chain",
+      "hash": "sha256:51ef09d4ce296b645d99195bc65638d1efbb46983035ec7b3d0dc02e7becdcc7"
     },
     "motion-tooling": {
       "path": "03-skills/motion-tooling/SKILL.md",
@@ -4681,7 +4869,10 @@
       "prerequisites": [
         "lead-motion-designer"
       ],
-      "related": [],
+      "related": [
+        "motion-graphic-systems",
+        "motion-programmatic-video"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [],
@@ -4691,7 +4882,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:12cb66cac4e5c36d2bc001f08d1a9576fac3fc3ad6304f5c15cb143cd810b288"
+      "hash": "sha256:af9e25be1ce1ff297a0be7eaa1ecc9fdb862b38db7b98c327c4ab76ed758beb7"
     },
     "motion-transitions": {
       "path": "03-skills/motion-transitions/SKILL.md",
@@ -4711,7 +4902,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:bdd118bb2888cbc99a0c4cb320f772c856d1695c43a10879322acec46fa8b360"
+      "hash": "sha256:939c5329d8c8e8299bdede44cb9ce3d792020cf35868173efe151c83c626d03c"
     },
     "native-visual-eval": {
       "path": "03-skills/native-visual-eval/SKILL.md",
@@ -5293,7 +5484,8 @@
         "screen recording review",
         "motion reference",
         "flythrough reference",
-        "storyboard from video"
+        "storyboard from video",
+        "pair audio to frames"
       ],
       "surfaces": [
         "*"
@@ -5304,7 +5496,7 @@
       ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:23b78a39b595e84b8f35084955b9062d5fe87d4cf97ef204460dbe837b88141d"
+      "hash": "sha256:aa3be8c8830abf3563d8b60d98c37526b409c5ee652c11a18cefd33ffb953495"
     },
     "render-qa-toolkit": {
       "path": "03-skills/render-qa-toolkit/SKILL.md",
@@ -6940,7 +7132,8 @@
         "interactive-capture-eval",
         "visual-reference-replication",
         "reference-video-review",
-        "play-prove"
+        "play-prove",
+        "gd-generation-tooling"
       ],
       "governed_by": [],
       "governs": [],
@@ -6973,7 +7166,7 @@
       ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:2d0402acf783abbe75bd1a63e7e5e2f4d7b218e14c2a508eaf35b05609ef1a29"
+      "hash": "sha256:3af0d31fe49eb72556a02e3f96ef9e0668aef55838ad2e10da15a6c7a86d0d69"
     },
     "visual-qa-accessibility": {
       "path": "03-skills/visual-qa-accessibility/SKILL.md",
@@ -7069,7 +7262,10 @@
       "domain": "quality",
       "hub": "lead-visual-qa",
       "prerequisites": [],
-      "related": [],
+      "related": [
+        "gd-display-graphics",
+        "gd-generation-tooling"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [],
@@ -7079,7 +7275,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:2e90c9b052b612bdf7905c55a0b7cb97403d3ef2c215c13779fa9cbb90b5fb95"
+      "hash": "sha256:f4b399da4cd29bfb8227404ca779bce2a2aca388b21e5cdc2a7575cfa7cced77"
     },
     "visual-qa-interior-design": {
       "path": "03-skills/visual-qa-interior-design/SKILL.md",
@@ -7109,6 +7305,8 @@
         "motion-performance",
         "motion-accessibility",
         "motion-principles",
+        "motion-graphic-systems",
+        "motion-programmatic-video",
         "qa"
       ],
       "governed_by": [],
@@ -7134,7 +7332,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": "multi-voice",
-      "hash": "sha256:e57c18e2070387b6db573c46a7eb31fe0904b9eee87aa5d0f942b063d9468412"
+      "hash": "sha256:0b3773e976bdbe289a18e71d6b498255995bcec4f78f3275000633b7ea0b1974"
     },
     "visual-qa-photoreal-rendering": {
       "path": "03-skills/visual-qa-photoreal-rendering/SKILL.md",
@@ -7313,7 +7511,8 @@
         "lead-visual-qa",
         "design-engineer",
         "realtime-visual-craft",
-        "visual-prove-engine"
+        "visual-prove-engine",
+        "gd-generation-tooling"
       ],
       "governed_by": [],
       "governs": [],
@@ -7339,7 +7538,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:1002561c5dd4b083e23b3ef92ef0ecda974058f0514db9e23f072011d71dbeb6"
+      "hash": "sha256:9273bc59e675030d36b9d1a2b52cc37076ca8f812dd71cea718b46dcf2c99c2a"
     },
     "web-automation": {
       "path": "03-skills/web-automation/SKILL.md",
@@ -7989,6 +8188,16 @@
       "lead-graphic-designer",
       "gd-color-theory"
     ],
+    "gd-display-graphics": [
+      "design-foundations",
+      "lead-graphic-designer",
+      "gd-display-graphics"
+    ],
+    "gd-generation-tooling": [
+      "design-foundations",
+      "lead-graphic-designer",
+      "gd-generation-tooling"
+    ],
     "gd-grid-and-layout": [
       "design-foundations",
       "lead-graphic-designer",
@@ -8330,6 +8539,11 @@
       "lead-motion-designer",
       "motion-choreography"
     ],
+    "motion-graphic-systems": [
+      "design-foundations",
+      "lead-motion-designer",
+      "motion-graphic-systems"
+    ],
     "motion-performance": [
       "design-foundations",
       "lead-motion-designer",
@@ -8339,6 +8553,11 @@
       "design-foundations",
       "lead-motion-designer",
       "motion-principles"
+    ],
+    "motion-programmatic-video": [
+      "design-foundations",
+      "lead-motion-designer",
+      "motion-programmatic-video"
     ],
     "motion-tooling": [
       "design-foundations",

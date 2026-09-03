@@ -75,6 +75,11 @@ Total visual duration = 250 + (50 × 7) = 600ms
 
 This is why stagger values must be small — they compound.
 
+**1/3 simultaneous (graphic-system / video / hero only):** with 3+ elements,
+no more than about a third should be in *active* motion at once. Product-chrome
+lists still use the 30–80ms stagger band; do not invent ambient layers to
+satisfy a "three pillars" checklist.
+
 ### Stagger Direction
 
 The direction of stagger communicates spatial relationships:

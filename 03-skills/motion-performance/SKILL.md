@@ -9,8 +9,10 @@ description: >
   FLIP animation technique, requestAnimationFrame, layout thrashing, forced
   synchronous layout, DevTools Performance panel, Layer panel, paint flashing,
   frame budget, 120fps/ProMotion, Web Animations API vs CSS vs GSAP performance,
-  or any question about why an animation is slow and how to fix it.
+  MotionScore, or any question about why an animation is slow and how to fix it.
 aliases: [motion-performance]
+triggers:
+  - motionscore
 tier: spoke
 domain: design
 hub: lead-motion-designer
@@ -35,6 +37,8 @@ This skill owns **why animation is fast or slow and how to make it faster**.
 - **Library-specific performance characteristics** → `motion-tooling`
 - **3D transform GPU cost** → this skill + `motion-3d-spatial`
 - **Full web performance engineering beyond animation** → `fe-performance`
+- **MotionScore S–F grade** (optional, Motion+) → extra lens only; this spoke
+  and [[visual-qa-motion]] still own the verdict. Playback beats a score.
 
 ---
 

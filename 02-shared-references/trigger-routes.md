@@ -165,6 +165,29 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `designparser` | 03-skills/designparser/SKILL.md — call suggest_rules_for_context; do not vendor rules |
 | `what rules apply` | 03-skills/designparser/SKILL.md — suggest_rules_for_context on the current design task |
 | `evaluate_design` | 03-skills/designparser/SKILL.md — checklist only; /qa still owns measured verdicts |
+| `svg animation` | 03-skills/motion-graphic-systems/SKILL.md + 03-skills/lead-motion-designer/SKILL.md — name the register; /motion implements |
+| `svg mask` | 03-skills/motion-graphic-systems/SKILL.md — animate the mask, not the artwork |
+| `display graphics` | 03-skills/gd-display-graphics/SKILL.md + 03-skills/lead-graphic-designer/SKILL.md — still craft for instruments / HUDs |
+| `film ui` | 08-knowledge/design/display-graphic-motion-systems.md + 03-skills/motion-graphic-systems/SKILL.md + 03-skills/gd-display-graphics/SKILL.md — register first; LCARS is one pack |
+| `diegetic ui` | 03-skills/motion-graphic-systems/SKILL.md + 08-knowledge/design/display-graphic-motion-systems.md |
+| `graphic system motion` | 03-skills/motion-graphic-systems/SKILL.md — idle vs story-beat; not product-chrome tokens |
+| `hud illustration` | 03-skills/gd-display-graphics/SKILL.md — reads-at-distance still; motion is a sibling spoke |
+| `remotion` | 03-skills/motion-programmatic-video/SKILL.md — stills before encode; not product chrome |
+| `kinetic typography` | 03-skills/motion-programmatic-video/SKILL.md — title-card register; UI type does not kinetic-dance |
+| `programmatic video` | 03-skills/motion-programmatic-video/SKILL.md + 03-skills/lead-motion-designer/SKILL.md |
+| `title card` | 03-skills/motion-programmatic-video/SKILL.md |
+| `vectorize` | 03-skills/gd-brand-identity/SKILL.md — AI is testimony; Bezier + IP are the contract |
+| `ai logo` | 03-skills/gd-brand-identity/SKILL.md |
+| `motion/react` | 03-skills/motion-tooling/SKILL.md + 03-skills/motion/SKILL.md — Motion (motion.dev); wrapper wins over AI Kit |
+| `motionscore` | 03-skills/motion-performance/SKILL.md — optional S–F grade; playback still required |
+| `scientific illustration` | 03-skills/gd-image-composition/SKILL.md — job + view first; HUD stills are gd-display-graphics |
+| `textbook illustration` | 03-skills/gd-image-composition/SKILL.md |
+| `editorial illustration` | 03-skills/gd-image-composition/SKILL.md — one argument; generated type is not a caption |
+| `exploded view` | 03-skills/gd-image-composition/SKILL.md — technical figure, not a HUD skin |
+| `live svg` | 03-skills/gd-generation-tooling/SKILL.md — emit live geometry; flattened plates are not construction |
+| `display grammar` | 03-skills/gd-generation-tooling/SKILL.md + 03-skills/gd-display-graphics/SKILL.md — scene JSON then SVG |
+| `illustration generation` | 03-skills/gd-generation-tooling/SKILL.md — raster is testimony; HUD stills stay live SVG |
+| `flattened png` | 03-skills/gd-generation-tooling/SKILL.md — refuse cutouts as the production surface |
 
 ## Registry skills with triggers
 
@@ -234,4 +257,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 150 · Registry rows: 61_
+_Curated routes: 173 · Registry rows: 61_

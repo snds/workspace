@@ -112,4 +112,5 @@ principle applied everywhere but owned by no single layer → it's **cross-cutti
 ## Tooling pointers (workspace-native, no external dependency)
 - `09-tools/build-registry.py` → generates `03-skills/skills.registry.json` from frontmatter. Stdlib-only.
 - `09-tools/vault-retrieve.py` → Layer-1 lexical FTS over the personal vault (paths + TL;DR snippets). Complements trigger routing; does not replace it. Stdlib-only.
+- `09-tools/generate-display-svg.py` → emit live HUD/schematic SVG from a JSON grammar. Refuses raster cutouts. Driven by [[gd-generation-tooling]]. Stdlib-only.
 - Frontmatter contract: [[skill-frontmatter]]. · Loading algorithm: [[AGENTS]].

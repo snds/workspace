@@ -1,19 +1,20 @@
 ---
 name: motion-tooling
 description: >
-  Animation library selection and usage — GSAP, Framer Motion, Lottie, CSS
-  animations, Web Animations API. Use this skill whenever the conversation touches:
-  choosing an animation library, GSAP timeline syntax, GSAP ScrollTrigger, GSAP
-  Flip plugin, Framer Motion motion components, AnimatePresence, Framer Motion
-  variants, Framer Motion layout prop, Framer Motion gestures, Lottie JSON format,
-  dotLottie, Lottie optimization, After Effects Bodymovin export, CSS transition
-  vs CSS animation vs WAAPI, requestAnimationFrame patterns, or any question about
-  implementing animation in code.
+  Animation library selection and usage — Motion (motion.dev, formerly Framer
+  Motion), GSAP, Lottie, CSS, Web Animations API. Use this skill whenever the
+  conversation touches: choosing an animation library, motion/react, Motion
+  AnimatePresence, Motion layout prop, MotionScore, CSS linear() springs,
+  GSAP timeline syntax, GSAP ScrollTrigger, Lottie JSON, dotLottie, After
+  Effects Bodymovin, CSS transition vs CSS animation vs WAAPI, or any question
+  about implementing animation in code. Programmatic video (Remotion) routes
+  to motion-programmatic-video.
 aliases: [motion-tooling]
 tier: spoke
 domain: design
 hub: lead-motion-designer
 prerequisites: [lead-motion-designer]
+related: [motion-graphic-systems, motion-programmatic-video]
 spec_version: "2.0"
 ---
 
@@ -52,9 +53,12 @@ library when native capabilities are genuinely insufficient.
 | Programmatic control with CSS-level performance, no library | Web Animations API |
 | Complex React choreography, layout animation, gestures | Framer Motion |
 | Complex sequencing, ScrollTrigger, SVG morphing, non-React | GSAP |
+| Native SVG mask / clip / stroke-draw (technique first) | CSS / WAAPI, then GSAP DrawSVG/MorphSVG — load [[motion-graphic-systems]] for the register |
+| React UI motion, layout, gestures, exits | Motion (`motion/react`) — current name of Framer Motion |
+| Drag physics / springs without a React tree | Motion JS (`motion`) or CSS `linear()` springs |
 | Illustrative / brand animation from After Effects | Lottie |
 | Marketing site with heavy scroll narrative | GSAP + ScrollTrigger |
-| Drag physics, spring interactions in React | Framer Motion |
+| MP4/GIF from code, kinetic title cards | Remotion / Motion Canvas — [[motion-programmatic-video]] |
 | Very lightweight, no library budget | CSS + WAAPI |
 
 ---
@@ -343,15 +347,21 @@ gsap.from('#checkmark', { drawSVG: '0%', duration: 0.4, ease: 'power2.out' });
 
 ---
 
-## Framer Motion (React)
+## Motion (motion.dev) — React, JS, Vue
 
-The canonical React animation library — designed for React's component model
-with excellent layout animation and gesture support.
+Current name of Framer Motion. Import from `"motion/react"` (React), `"motion"`
+(vanilla JS), or `"motion/vue"`. `framer-motion` still resolves as a
+compatibility package; do not start new work on that import.
+
+Docs and the optional AI Kit live at [motion.dev](https://motion.dev). The
+workspace [[motion]] hub owns verb grammar and bans. Motion's own `/motion`
+skill / MCP is **plugin depth**: live docs, CSS `linear()` springs, MotionScore
+audits. It does not decide whether something should animate.
 
 ### Basic Motion Components
 
 ```jsx
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 // Entrance / state animation
 <motion.div
@@ -367,7 +377,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 ### AnimatePresence — Unmount Animation
 
 ```jsx
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 
 <AnimatePresence>
   {isVisible && (
@@ -461,7 +471,7 @@ for shared element transitions.
 ### useReducedMotion
 
 ```jsx
-import { useReducedMotion } from 'framer-motion';
+import { useReducedMotion } from 'motion/react';
 
 function AnimatedPanel() {
   const shouldReduceMotion = useReducedMotion();
@@ -491,6 +501,42 @@ function AnimatedPanel() {
   }}
 />
 ```
+
+### Hardware acceleration and properties
+
+Independent `x` / `y` / `scale` / `rotate` shorthands are the ergonomic API.
+Under load, set the full `transform` string so the browser can hardware-accelerate
+(Motion 13+ also accelerates SVG and `backgroundColor` when supported):
+
+```jsx
+<motion.div animate={{ x: 100 }} />                          // fine at rest
+<motion.div animate={{ transform: "translateX(100px)" }} />  // prefer under load
+```
+
+Do not drive a child's `transform` from a CSS variable animated on the parent;
+that restyles every child every frame. Use MotionValues.
+
+`height: "auto"` is legal. It still costs layout. Prefer `layout` or a
+`scaleY` stand-in unless the accordion has no transform equivalent.
+
+### CSS springs without the runtime
+
+The AI Kit can emit CSS `linear()` easing that approximates a spring. Use that
+when the surface cannot take a JS library. Tokens still come from
+[[motion-principles]]; do not invent a second curve language.
+
+### `animateView()`
+
+Motion's `animateView()` is the View Transitions API without the rough edges.
+Use it for shared-element page/view changes after [[motion-transitions]] names
+the spatial model. It is not a reason to animate a command palette.
+
+### MotionScore (optional)
+
+Motion+ MotionScore grades a URL or component S–F by render cost. Treat it as
+an extra lens on [[motion-performance]], not a replacement for a recorded
+playback pass or [[visual-qa-motion]]. Compositor-budget and reduced-motion
+still win.
 
 ### Performance Notes
 
@@ -610,3 +656,5 @@ const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)
 
 ## Related
 - hub → [[lead-motion-designer]]
+- peer ↔ [[motion-graphic-systems]]
+- peer ↔ [[motion-programmatic-video]]

@@ -171,6 +171,21 @@ python3 09-tools/ds-source-watch.py --check
 python3 09-tools/ds-source-watch.py --fetch
 ```
 
+## generate-display-svg.py
+
+Emit a live HUD / schematic SVG from a JSON display grammar. Legal primitives
+only (`elbow`, `bar`, `pill`, `rect`, `sweep`, `rail`, `label`, `circle`).
+Refuses raster kinds, `href`/`srcset`, and image paths. Stdlib-only. Driven
+by [[gd-generation-tooling]]. Example scene:
+`09-tools/fixtures/display-scene.hud-example.json`.
+
+```
+python3 09-tools/generate-display-svg.py --check 09-tools/fixtures/display-scene.hud-example.json
+python3 09-tools/generate-display-svg.py --emit SCENE.json -o ARTIFACT.svg
+python3 09-tools/generate-display-svg.py --self-test
+python3 09-tools/generate-display-svg.py --schema
+```
+
 ## cursor-externalize.py
 
 Copies Cursor-local `.canvas.tsx` files from `~/.cursor/projects/*/canvases/` into

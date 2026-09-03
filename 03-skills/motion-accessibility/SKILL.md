@@ -238,8 +238,8 @@ function usePrefersReducedMotion() {
   return prefersReducedMotion;
 }
 
-// Framer Motion — built-in support
-import { useReducedMotion } from 'framer-motion';
+// Motion (motion.dev) — built-in support
+import { useReducedMotion } from 'motion/react';
 const shouldReduceMotion = useReducedMotion();
 const animation = shouldReduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1 };
 ```
