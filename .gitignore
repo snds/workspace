@@ -101,6 +101,8 @@
 !09-tools/evaluate-skill-routing.py
 !09-tools/cursor-externalize.py
 !09-tools/generate-display-svg.py
+!09-tools/eslint-off-system/
+!09-tools/eslint-off-system/**
 !09-tools/fixtures/
 !09-tools/fixtures/**
 

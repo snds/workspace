@@ -51,7 +51,8 @@ Use these ids in Construction IR / Scene IR. They are **jobs**, not CSS class na
 | `frame.spine` | Structural chrome | Elbows, rails, stacked segments | Locked (except segment flip) |
 | `focal.viewport` | Primary visual context | Ship MSD, sensor volume, medical scan | Asset may scrub/scan; chrome locked |
 | `callout.layer` | Point into the focal | Connection **splines** + labels (`HOLODECK 3 / DECK 19`) | Splines may draw in; labels settle |
-| `support.bay` | Controls beside/under the curve | Action pills; **data-processing numerics** | Greeble tick on numerics |
+| `support.bay` | Processing beside/under the curve | **data-processing numerics** in the elbow pocket | Greeble tick on numerics |
+| `support.controls` | Action cluster | Pill variants only (`action`, `numeric`, …). Not spine chrome. | Segment flip / static |
 | `focal.title` | Name the focal subject | `MAIN DEFLECTOR DISH / TORPEDO LAUNCHER` | Locked |
 | `footer.supplement` | Minimized accessible processes | More node blocks/pills, status chips | Tick / segment flip |
 | `footer.minimap` | Orientation chip | Small silhouette / alt view | Optional slow idle |
@@ -117,7 +118,8 @@ footer.supplement optional
 | `frame.spine` | elbows with `variant: 'opposing'` | Constant-thickness SVG paths |
 | `focal.viewport` | region `focal.viewport` + schematic | Northstar asset preferred |
 | `callout.layer` | still baked into raster / TBD overlay | Spline module next |
-| `support.bay` | region `support.bay` (`kind: mode`) | Pills + processing-node numerics |
+| `support.bay` | region `support.bay` (`kind: mode`) | Processing-node numerics |
+| `support.controls` | live T3 `controlCluster` | Pill variants; not used on sys47.literal yet |
 | `focal.title` | schematic `title` prop | May become own region later |
 | `footer.supplement` | region `footer.supplement` | Minimized process blocks |
 | `footer.minimap` | region `footer.minimap` | Silhouette crop |
@@ -141,9 +143,18 @@ Roles for numerics: `processing-node` | `version-tag` | `control` | `status` | `
 
 ---
 
+## Variants (pack, 2026-09-02)
+
+App catalog: `docs/COMPONENT-SYSTEM.md` + `src/catalog/system/`.
+
+Pills are **controls**, not structure. Variants in the live T3: `action` / `action.short` / `action.wide` / `numeric` / `status.time` / `title.capsule`. Curves: `frame.tl|tr|bl|br`, `opposing` (T2), `nested` (pocket). Bars: `block`, `sliver`, `instrument`, `step`. Aesthetic chrome is a barcode + hairline that repeats the same breaks (SYS47 footer).
+
+Spacing: 8px inside a family, 24px between content groups. Equal 8px everywhere fails the squint test.
+
 ## Related
 
 - Shape primitives → app `docs/SHAPE-PRIMITIVES.md`
+- Component / variant catalog → app `docs/COMPONENT-SYSTEM.md`
 - Program thesis → `docs/program-thesis.md` (Intent axis = content groups)
 - Northstar S-SYS47-01 → T2 MSD
 - Sovereign alternate → `docs/construction/captures/sovereign-msd/`

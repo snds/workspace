@@ -24,6 +24,7 @@ relations:
     - "[[agentic-domain-constitutions]]"
     - "[[domain-constitutions]]"
     - "[[llm-safe-design-system-expressiveness]]"
+    - "[[agent-output-rails]]"
 ---
 
 # Agentic design-system context model
@@ -120,11 +121,12 @@ L3 Three graphs       skill load · epistemic · domain artifact   (do not cross
 L4 Schema stack       values · meaning · arbitration · look · runtime
                       (DS: DTCG · DSDS · contract · DESIGN.md · A2UI)
 L5 Memory             short = session/working · long = knowledge/memory · shared = Live handoff
-L6 AgentOps           validators, vqa, trust levels; later: cost/task, approval rate, traces
+L6 AgentOps           validators, vqa capture/prove, isolation stamp, trust levels
 ```
 
 L0 is the dispatcher, doctor, ritual, and walls drawn as one path. L6 is already validators +
-prove artifacts; do not build a new observability stack before a scheduled runner exists.
+prove artifacts. Cost/task traces stay later. Do not clone an n-agent DS eval harness
+([[agent-output-rails]]). Do not build a new observability stack before a scheduled runner exists.
 
 ## 5. Moves worth doing / refuse
 

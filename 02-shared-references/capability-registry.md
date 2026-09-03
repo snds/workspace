@@ -140,6 +140,17 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
       "fallback_note": "ocr_text skips if optional, else errors. Never silently pass a title/string cue. Keep attest for identity until OCR is actually run.",
       "powers": ["visual-prove-engine"]
     },
+    "playwright": {
+      "kind": "cli",
+      "provides": "Playwright Chromium for provenanced still captures (viewport, DPR, reduced-motion).",
+      "detect": { "method": "shell", "probe": "python3 -c 'import playwright'" },
+      "install": {
+        "any": "python3 -m pip install playwright && python3 -m playwright install chromium   # or: npm i -D playwright && npx playwright install chromium in the product repo"
+      },
+      "fallback": "degrade",
+      "fallback_note": "Only `vqa capture` needs a browser. Python Playwright is the preferred detect. The engine also tries cwd `node_modules/playwright` at capture time. Prove/compare/calibrate accept an existing PNG. If no browser is present, capture the still another way, write a *.capture.json (viewport, dpr, format, frozen), and continue. Never invent a verified manifest.",
+      "powers": ["visual-prove-engine"]
+    },
     "geometric-foundation-model": {
       "kind": "cli",
       "provides": "VGGT or DUSt3R for multi-view geometric consistency (pose/pointmap) on pinned orbits.",
@@ -342,6 +353,9 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
   Attested strings stay attested until OCR actually runs.
 - **geometric-foundation-model** — powers [[visual-prove-engine]] `vqa geometry`. Degrades to
   phase-correlation across ≥2 pinned views. A single still is not a 3D pass.
+- **playwright** — powers [[visual-prove-engine]] `vqa capture` only. Python package or the
+  product repo's `node_modules/playwright`. Degrades: capture is optional when a PNG already
+  exists; prove never pretends a missing browser produced a verified manifest. See [[agent-output-rails]].
 - **inference-belt** — powers [[ai-video-generation]]. Account + cost involved; always confirm with
   the user before spending a generation call.
 - **axe-cli / pa11y / lighthouse** — the accessibility + performance measurement runners. `axe-cli`,

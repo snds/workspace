@@ -75,9 +75,12 @@ correction primitive; same-model narrative self-critique is not).
 - Reporting a single improvement score without per-cue movement.
 - Treating a VLM's description of a screenshot as measurement (it is testimony;
   see [[component-contracts-and-schemas]] on testimony vs contract).
+- Claiming a docs or catalog prove that only passed with extra rails on (chunks, lint, MCP). Isolation is [[agent-output-rails]].
+- Claiming a docs or catalog prove that only passed with extra rails on (chunks, lint, MCP). Isolation is [[agent-output-rails]].
 
 ## Related
 - [[visual-failure-mode-ledger]] carries the technique-keyed failure rows the perceive
   detectors implement (banding, blowout, illegal shapes C-08/C-09).
 - [[silent-degradation-in-fenced-layers]] is the same lesson for non-visual pipelines:
   a fence that degrades silently erases the difference between healthy-empty and broken.
+- [[agent-output-rails]] is the same lesson for agent rails: assistance can hide that the docs failed.

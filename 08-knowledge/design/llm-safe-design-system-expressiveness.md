@@ -1,14 +1,14 @@
 ---
 tags: [design-systems, tokens, lint, ci, llm, agentic, tailwind]
 created: 2026-09-02
-updated: 2026-09-02
+updated: 2026-09-03
 status: working
 confidence: medium
 sources:
   - "Polar — Building an LLM safe design system (polar.sh/blog/orbit-llm-safe-design-system, 2026-06-16)"
   - "Polar ADR-0004 — Frontend UI is authored with Orbit Box and design tokens (handbook.polar.sh)"
 related_skills: [design-engineer, ux-component-library, design-system-ops, ds-advisor, uid-color-for-ui]
-related_projects: [19-workspace-brain]
+related_projects: [19-workspace-brain, 20-lcars-generative-interface]
 relations:
   builds-on:
     - "[[component-contracts-and-schemas]]"
@@ -18,6 +18,7 @@ relations:
   relates-to:
     - "[[agentic-ds-context-model]]"
     - "[[ds-ops-governance-notes]]"
+    - "[[agent-output-rails]]"
 ---
 
 # LLM-safe design-system expressiveness
@@ -32,7 +33,7 @@ Testimony: Polar's Orbit post (2026-06-16) and ADR-0004. This note keeps the tra
   - *Timeless:* an escape hatch (raw `className`, arbitrary Tailwind, inline hex, `dark:` as a second pass) is a crack. Growing `eslint-disable` is a design-system bug.
   - *Dated 2026-06:* Polar implements this with StyleX + polymorphic `Box` + `light-dark()` + custom ESLint. Mechanism is theirs. Law is ours.
   - *Pointer:* token gaps are backloggable; a11y is not. A missing decision becomes a token, not a bypass.
-- **As of:** 2026-09 · **Status:** current (doctrine; not yet proven on a workspace product repo)
+- **As of:** 2026-09 · **Status:** current (LCARS ships `npm run lint` with off-system rules; centric-ui / Davinci still open)
 - **Audience:** `for: agent`
 
 ---
@@ -57,7 +58,7 @@ Putting "use our tokens" in `CLAUDE.md` raises the probability. It is not a guar
 - A literal ban on `<div>`. Semantics stay. The workspace version is: one sanctioned primitive *or* lint that makes off-token layout/color inexpressible.
 - Shipping `@polar-sh/orbit`. That package is Polar's product DS.
 
-The product-repo move (centric-ui, Davinci), when wanted: a small ESLint set for off-token Tailwind, arbitrary values, and raw hex. That lives in the product repo, not this vault.
+The product-repo move (centric-ui, Davinci), when wanted: a small ESLint set for off-token Tailwind, arbitrary values, and raw hex. That lives in the product repo, not this vault. Reusable rules: `09-tools/eslint-off-system/`. **LCARS** (2026-09-03): `npm run lint` with vendored `eslint/off-system` (`no-raw-hex`, `no-arbitrary-tailwind`); allowlists `constitution/tokens.ts` + `catalog/system/live-t3.ts`. Reusable rules: `09-tools/eslint-off-system/`. **LCARS** (2026-09-03): `npm run lint` with vendored `eslint/off-system` (`no-raw-hex`, `no-arbitrary-tailwind`); allowlists `constitution/tokens.ts` + `catalog/system/live-t3.ts`.
 
 ## Complements (do not collapse)
 

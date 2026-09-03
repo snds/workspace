@@ -1,6 +1,6 @@
 # SESSION-STATE — LCARS Generative Interface
 
-_Last updated: 2026-08-28 — cuespec names uncued residuals; prove engine vqa/1.1 (altitudes A–G)_
+_Last updated: 2026-09-03 — session-end after pack catalog + live T3 compose_
 
 ## Vault docs (this project)
 
@@ -18,17 +18,17 @@ _Last updated: 2026-08-28 — cuespec names uncued residuals; prove engine vqa/1
 
 ### Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: S-SYS47-01 build v4 still measures **Matches 16/16, score 1.0, capture verified**. Cuespec now declares `default_altitude: A` and names the four uncued residuals (left rail x, mid-band geometry, navy sweep, timestamp) so 16/16 cannot silence those holes. Prove engine is `vqa/1.1` (FLIP, saliency, mesh, geometry, interact critic, photon/tracks, VLM-judge protocol; sibling `play-prove` for altitude G). Missing `renderer` on the existing capture manifest is a warning, not unverified.
-- **Current focus**: cuespec v2 for the named residual zones (now first-class in the spec, still unmeasured). Motion/illustration doctrine is workspace-level ([[motion-graphic-systems]], [[gd-display-graphics]], [[gd-generation-tooling]], [[display-graphic-motion-systems]]); do not fork an LCARS-only copy. A later from-scratch recreation must emit live primitives (`generate-display-svg.py` / catalog), not `SchematicPanel` `assetSrcset` or northstar PNG cutouts.
+- **TL;DR (for future agent)**: Live generative T3 is composed from a pack catalog (`src/catalog/system/`, `docs/COMPONENT-SYSTEM.md`), not a flat primitive bag. App committed on `main` as `e691dec` (not pushed). S-SYS47-01 Literal stays the plate path; do not mix the two. **Capture:** use workspace `vqa capture` (app `scripts/capture-sys47.mjs` is a thin wrapper). `docs/construction/prove_sys47.py` is retired. Isolation: `--assistance off` for docs/catalog proves. Pills are controls; spine is bars; aesthetic is barcode + hairline. 8px inside a family, 24px between content groups.
+- **Current focus**: visual review of the structured live T3. Literal SYS47 residuals still named, still unmeasured.
 - **Working set**:
-  - App: `sys47-literal.ts` + `renderers.css` (pinned plates + mid-band rules) + `SchematicPanel.tsx` (`assetSrcset`) + `scripts/capture-sys47.mjs` (DPR 2 + manifest) + re-cropped `public/northstars/S-SYS47-01/asset_msd{,@0.5x}.png`
-  - Vault: cuespec (live contract + `uncued_residuals`), `*_build_v4.prove.{json,md}`, `S-SYS47-01.ledger.{json,md}`, `captures/S-SYS47-01_build_v4.png` + `.capture.json`, `03-skills/visual-prove-engine/` vqa/1.1, `03-skills/play-prove/`
-- **Last action**: App repos `lcars-generative-interface` + `lcars-curve-figma` enrolled in workspace `beacon-repos.txt` with WORKSPACE-BEACON in each `CLAUDE.md` (local, not committed). Vault doctrine unchanged. Cursor Grok 4.6 / Cursor / Personal MBP. 2026-09-02.
-- **Next action**: separate session only: from-scratch generative screen via live geometry + recursive/adversarial visual review. Do not construct from flattened plates. Also: add measured cues for the four named residuals; optional OCR on SYSTEM 47 / timestamp when tesseract is present. If local Picard/Okuda files arrive, finish the pixel pass in `05-artifacts/active/film-ui-motion-study_v1.0_2026-09-02/` (audio review already written).
-- **Open decisions**: "Matches Literal" is measured within the 19-cue A-altitude contract. The residuals are named, not closed. Coverage remains 0.8421 (3 attested).
-- **Blocked on**: nothing for the course-correction landing; Ruffle/JPEXS still needs approve if motion track resumes
+  - App: `src/catalog/system/` + `LiveDisplay.tsx` + `docs/COMPONENT-SYSTEM.md` @ `e691dec`; `scripts/capture-sys47.mjs` → workspace vqa
+  - Vault: `docs/content-groups.md`; prove via `03-skills/visual-prove-engine/vqa.py`
+- **Last action**: Capture path generalized to workspace (2026-09-03). Cursor Grok 4.6 / Cursor / Personal MBP.
+- **Next action**: `personal:SEA-33` — review `?surface=live` against the pack catalog. Optional T1/T2 composers only if that review asks. Push app `e691dec` only if Sean asks. Do not construct from flattened plates.
+- **Open decisions**: "Matches Literal" is measured within the 19-cue A-altitude contract. Residuals named, not closed. Coverage remains 0.8421 (3 attested).
+- **Blocked on**: nothing for the catalog landing; Ruffle/JPEXS still needs approve if motion track resumes
 - **In-flight / do-not-touch**: app in snds/LCARS; vault design authority; do not treat SWF/AI as Literal overrides; do not edit the 2026-08-09 matrix rows (history), extend the cuespec instead
-- **Agent thread**: Instrumented prove migration 2026-08-26 → course corrections 2026-08-28
+- **Agent thread**: Live T3 generative + pack catalog 2026-09-02/03. Cursor Grok 4.6 / Cursor / Personal MBP.
 
 ### Environment
 
@@ -48,9 +48,9 @@ _Last updated: 2026-08-28 — cuespec names uncued residuals; prove engine vqa/1
 
 ### VCS state
 
-- **Branch (app)**: `cursor/lcars-generative-interface-a660` (verify with `git status` in app)
-- **Vault**: `main` @ `0f4228a` (prove-engine + construction contract). SWF dumps remain local untracked.
-- **Test state at last check**: `vqa calibrate` 48/48 on merge; green tests ≠ residual coverage
+- **Branch (app)**: `main` @ `e691dec` (1 commit ahead of origin; not pushed)
+- **Vault**: `main` (this session-end commit). SWF dumps remain local untracked.
+- **Test state at last check**: app `vitest` 65/65 (2026-09-02). Literal residuals still unmeasured.
 
 ### Active tooling / MCP bridges
 
@@ -67,13 +67,19 @@ _Last updated: 2026-08-28 — cuespec names uncued residuals; prove engine vqa/1
 
 ### Open work and paused threads
 
-- **Currently in progress**: Literal recreation program; IR for S-SYS47-01 unmeasured
+- **Currently in progress**: structured live T3 review; Literal residuals still open
 - **Pending questions**: Prefer System47 vs Titan as first screen?
-- **Blocked on**: pixel probes / still extraction for active northstar
+- **Blocked on**: none for the catalog landing
 
 ---
 
 ## History (append-only)
+
+### 2026-09-03 — Pack catalog + composed live T3
+
+- Sean: work in vectors, not per-pixel. Then a DS pass: components, variants, layouts, refine the demo.
+- App `e691dec`: `composeLiveT3()` from `src/catalog/system/`. Pills = controls; spine = bars; aesthetic = barcode + hairline. T3 pocket vs control cluster vs focal vs footer.
+- Vault: `content-groups.md` gained `support.controls` + variant note. `docs/COMPONENT-SYSTEM.md` is the pack catalog.
 
 ### 2026-08-09 — Composite reference library framing
 

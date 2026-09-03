@@ -84,6 +84,17 @@ def deps_report() -> dict:
         degraded.append("gltf-validator absent — mesh audit uses stdlib parser (still fail-closed on NaN)")
     if not vggt:
         degraded.append("VGGT/DUSt3R absent — geometric_consistency uses phase-correlation only; never a single-still 3D pass")
+    py_pw = False
+    try:
+        import playwright  # noqa: F401
+        py_pw = True
+    except Exception:
+        pass
+    if not py_pw:
+        degraded.append(
+            "Playwright absent — `vqa capture` needs python-playwright or cwd node_modules; "
+            "prove still accepts an existing PNG"
+        )
 
     return {
         "numpy": True,
@@ -96,6 +107,7 @@ def deps_report() -> dict:
         "tesseract": tesseract,
         "gltf_validator": gltf_validator,
         "vggt": vggt,
+        "playwright": py_pw,
         "degraded": degraded,
     }
 
@@ -442,9 +454,15 @@ def verify_capture(image_path: str | Path, manifest_path: Optional[str | Path] =
         result["warnings"].append("manifest has no rng_frozen declaration")
     else:
         result["rng_frozen"] = manifest.get("rng_frozen")
+    if "assistance" in manifest:
+        result["assistance"] = manifest.get("assistance")
     if not result["reasons"]:
         result["status"] = "verified"
-        result["meta"] = {k: manifest.get(k) for k in ("url", "commit", "tool", "time") if k in manifest}
+        result["meta"] = {
+            k: manifest.get(k)
+            for k in ("url", "commit", "tool", "time", "assistance", "reduced_motion")
+            if k in manifest
+        }
     return result
 
 

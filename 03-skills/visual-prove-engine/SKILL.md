@@ -10,19 +10,20 @@ description: >
   defects. Trigger on: prove this build, cuespec, measured verdict, does the
   screenshot really match, rank these builds, visual improvement loop, jank check,
   frame-sequence analysis, action-effect verification, self-critical visual review,
-  "the code says it renders but does it". A cue passes only if an instrumented
+  "the code says it renders but does it", capture this url, write capture manifest,
+  assistance off. A cue passes only if an instrumented
   probe measured it; agent or human declarations are recorded as attestations and
   never count toward a Matches verdict. Structure-independent: judges pixels, not
   DOM or code claims. Do NOT use for heuristic/experiential critique
   (lead-visual-qa), single-metric screenshot audits (visual-qa-toolkit), or
   photoreal render judgment (render-qa-toolkit).
 aliases: [visual-prove-engine, vqa-engine, prove-engine]
-triggers: [prove this build, cuespec, measured verdict, visual prove, rank builds, improvement ledger, visual trajectory, jank check, frame sequence analysis, action-effect, planted defects, visual calibration, self-critical visual]
+triggers: [prove this build, cuespec, measured verdict, visual prove, rank builds, improvement ledger, visual trajectory, jank check, frame sequence analysis, action-effect, planted defects, visual calibration, self-critical visual, vqa capture, capture this url, write capture manifest, assistance off]
 tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
 related: [visual-qa-toolkit, render-qa-toolkit, native-visual-eval, interactive-capture-eval, visual-reference-replication, reference-video-review, play-prove, gd-generation-tooling]
-requires: [python-imaging, ffmpeg, nvidia-flip, dreamsim, gltf-validator, tesseract, geometric-foundation-model]
+requires: [python-imaging, ffmpeg, nvidia-flip, dreamsim, gltf-validator, tesseract, geometric-foundation-model, playwright]
 spec_version: "2.1"
 ---
 
@@ -52,7 +53,8 @@ same probes the calibration suite validates.
 
 | Command | What it does |
 |---|---|
-| `vqa doctor` | Dependency + degradation report (numpy/Pillow required; scipy/OpenCV accelerate; ffmpeg only for `--video`; FLIP/DreamSim/OCR/glTF/VGGT degrade honestly) |
+| `vqa doctor` | Dependency + degradation report (numpy/Pillow required; scipy/OpenCV accelerate; ffmpeg only for `--video`; FLIP/DreamSim/OCR/glTF/VGGT degrade honestly; Playwright only for `capture`) |
+| `vqa capture URL -o PNG` | Project-agnostic screenshot + sibling `*.capture.json`. Viewport/DPR/reduced-motion/`--assistance`. Backends: Python Playwright, else cwd `node_modules`. `--self-test` writes a fixture manifest with no browser |
 | `vqa verify-capture IMG` | Validate a capture manifest (viewport, DPR, freeze state). Missing `renderer` / `rng_frozen` is a **warning**, not unverified |
 | `vqa perceive IMG` | Structure-independent inventory: regions, shapes, palette, background, plus ledger failure-mode detectors (banding, blowout, illegal shapes) |
 | `vqa prove BUILD CUESPEC` | Run a cuespec, emit `*.prove.json` + `*.prove.md` with measured/attested split, altitude coverage, uncued residuals |
@@ -84,11 +86,16 @@ Trust in the engine is itself measured, not asserted:
 
 ```
 1. scout reference  ->  author S-XXX.cuespec.json (targets from measured reality)
-2. vqa prove build cuespec        -> measured verdict + failing cues with margins
-3. fix the worst-margin cue only  -> smallest change that moves a measurement
-4. vqa prove + vqa score --ledger -> movement recorded; --enforce blocks regression
-5. repeat until matches; ledger.md is the proof artifact
+2. vqa capture URL -o build.png --assistance off
+3. vqa prove build cuespec        -> measured verdict + failing cues with margins
+4. fix the worst-margin cue only  -> smallest change that moves a measurement
+5. vqa prove + vqa score --ledger -> movement recorded; --enforce blocks regression
+6. repeat until matches; ledger.md is the proof artifact
 ```
+
+**Isolation.** A docs or catalog prove that only passes with extra rails on (chunks, lint autofix, MCP wizards, extra skills) has not proved the docs. Record `--assistance off` on the capture and `_provenance.assistance: "off"` on the cuespec. The report names a mismatch; it does not invent a pass. See [[agent-output-rails]].
+
+**Not project-gated.** Pack wrappers may pass a URL and output path. They must not reimplement the manifest or the prove runner. Per-project `prove_*.py` scripts with `pass: True` are the failure mode this engine replaced.
 
 Worked example on real project data: `07-projects/20-lcars-generative-interface/docs/construction/S-SYS47-01.cuespec.json`
 (19 cues, 16 measured / 3 attested). Build v2 scored 0.50 (8/16), v3 scored 0.81

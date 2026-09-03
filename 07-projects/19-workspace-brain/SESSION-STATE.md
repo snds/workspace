@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-03 — ATSMATRIX org review (skip); prior /optimize ECC still stands_
+_Last updated: 2026-09-03 — absorb Onori rails; vqa capture generalized_
 
 ---
 
@@ -8,16 +8,16 @@ _Last updated: 2026-09-03 — ATSMATRIX org review (skip); prior /optimize ECC s
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: Motion/illustration stack now includes [[motion-graphic-systems]], [[gd-display-graphics]], [[gd-generation-tooling]], [[motion-programmatic-video]], and Motion (`motion/react`, motion.dev) behind the [[motion]] wrapper. Display systems emit live SVG (`09-tools/generate-display-svg.py`); flattened PNG cutouts are not construction. Frequency gate + stills-before-encode are constitution. Do not vendor marketplace packs. Do not let Motion AI Kit override `/motion`. LCARS is one pack, not the owner. DesignParser remains the on-chain rule lookup. Do not register `linear-c8` here.
-- **Current focus**: /optimize punch list applied. Do not start the LCARS from-scratch recreation in this thread.
-- **Working set**: [[gd-generation-tooling]]; `09-tools/generate-display-svg.py`; [[gd-display-graphics]]; [[motion-graphic-systems]]; [[display-graphic-motion-systems]].
-- **Last action (2026-09-03):** Reviewed github.com/anyel1to (11 public repos). All skip: canvas HUDs / fake summarizers / unrelated toys. RING architecture overlaps existing doctrine; do not take the HUD. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **TL;DR (for future agent)**: Motion/illustration stack stands. [[agent-output-rails]] + `vqa capture`. Isolation: `--assistance off`. **LCARS** has `npm run lint` (off-system hex/arbitrary Tailwind). Shared rules: `09-tools/eslint-off-system/`. Do not clone Sanity's agent tester. Product-repo ESLint for centric-ui / Davinci still open. Do not register `linear-c8` here.
+- **Current focus**: Onori absorb + LCARS off-system lint landed. Commit when ready.
+- **Working set**: [[agent-output-rails]]; `09-tools/eslint-off-system/`; `vqa capture`; [[llm-safe-design-system-expressiveness]].
+- **Last action (2026-09-03):** Off-system ESLint in LCARS + reusable `09-tools/eslint-off-system`. Cursor Grok 4.6 / Cursor / Personal MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Separate session: recursive/adversarial visual review recreating an LCARS generative screen from live primitives only. Optional: local video files → ffmpeg frame pass on the film-UI study. Do not adopt ATSMATRIX.
+- **Next action:** Commit workspace + LCARS. Optional: centric-ui off-token Tailwind lint (employer PR path).
 - **Open decisions:** Product/data/security constitutions still `mapped` only. YAML still hand-authored.
 - **Blocked on:** Machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs.** Copilot pack is tracked (`copilot/` + relative `.claude` wrappers); do not convert wrappers back to absolute paths.
-- **Agent thread**: `… → (2026-09-02): /optimize ECC` → `(2026-09-03): ATSMATRIX review, skip`.
+- **Agent thread**: `… → (2026-09-03): Onori rails + vqa capture` → `(2026-09-03): LCARS off-system lint`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.

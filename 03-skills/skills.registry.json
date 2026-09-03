@@ -2920,7 +2920,7 @@
         "framework-06"
       ],
       "rigor_role": "measurement",
-      "hash": "sha256:288a4bc9fe7fefd6acad12e86b95bfce0e96deb3bd66f62b20d1f7daf30248ca"
+      "hash": "sha256:77e87ee4929d413bca141d9f5b2ef620582475ce79b3edbfa37732b0c09037ec"
     },
     "gd-grid-and-layout": {
       "path": "03-skills/gd-grid-and-layout/SKILL.md",
@@ -7150,7 +7150,11 @@
         "action-effect",
         "planted defects",
         "visual calibration",
-        "self-critical visual"
+        "self-critical visual",
+        "vqa capture",
+        "capture this url",
+        "write capture manifest",
+        "assistance off"
       ],
       "surfaces": [
         "*"
@@ -7162,11 +7166,12 @@
         "dreamsim",
         "gltf-validator",
         "tesseract",
-        "geometric-foundation-model"
+        "geometric-foundation-model",
+        "playwright"
       ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:3af0d31fe49eb72556a02e3f96ef9e0668aef55838ad2e10da15a6c7a86d0d69"
+      "hash": "sha256:7fef7e6de036d67b33a231c48a20da36c0164b55b8c6b59131533e413de416a0"
     },
     "visual-qa-accessibility": {
       "path": "03-skills/visual-qa-accessibility/SKILL.md",
@@ -7538,7 +7543,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:9273bc59e675030d36b9d1a2b52cc37076ca8f812dd71cea718b46dcf2c99c2a"
+      "hash": "sha256:6d4482959b54e74f7810a520f580e855270e920effb660ce7cfd99112e5399fa"
     },
     "web-automation": {
       "path": "03-skills/web-automation/SKILL.md",

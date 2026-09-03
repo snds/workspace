@@ -141,6 +141,22 @@
       "why": "Native contrast-color() is black/white only; map onto DS text tokens. Pairing helper, not APCA substitute."
     },
     {
+      "id": "onori-ds-evals",
+      "name": "PJ Onori — How well do agents use your design system?",
+      "url": "https://www.sanity.io/engineering/design-system-evals",
+      "owners": ["PJ Onori", "Sanity"],
+      "affects": ["dsds", "harness", "specs"],
+      "why": "Agent evals for DS docs: isolation (measure with chunks/lint off), chunks as recipes, lint as rails. Do not clone the tester. Vault note: agent-output-rails."
+    },
+    {
+      "id": "design-system-agent-tester",
+      "name": "sanity-labs/design-system-agent-tester",
+      "url": "https://github.com/sanity-labs/design-system-agent-tester",
+      "owners": ["Sanity Labs", "PJ Onori"],
+      "affects": ["harness"],
+      "why": "Open-source n-agent DS eval harness. Claude-only, WIP. Watch for API drift; do not vendor into 09-tools."
+    },
+    {
       "id": "designparser-mcp",
       "name": "designparser-mcp — design rules as MCP tools",
       "url": "https://github.com/designparser/designparser-mcp",

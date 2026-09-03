@@ -4,6 +4,7 @@ vqa.py — visual prove engine CLI.
 
 Subcommands:
   doctor          — report available deps and what degrades without them
+  capture         — screenshot a URL to PNG + sibling *.capture.json (any project)
   verify-capture  — validate a capture PNG against its *.capture.json manifest
   perceive        — pixel-derived region inventory + shape grammar + ledger flags
   prove           — run a declarative cuespec against a build capture
@@ -28,7 +29,7 @@ from pathlib import Path
 SKILL_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SKILL_DIR))
 
-from scripts import _core, calibrate, compare, geometry, interact, judge, mesh, motion, perceive, prove, trajectory  # noqa: E402
+from scripts import _core, calibrate, capture, compare, geometry, interact, judge, mesh, motion, perceive, prove, trajectory  # noqa: E402
 
 
 def _print(payload: dict) -> None:
@@ -39,6 +40,43 @@ def cmd_doctor(_args) -> int:
     report = _core.deps_report()
     _print(report)
     return 0
+
+
+def cmd_capture(args) -> int:
+    if args.self_test:
+        try:
+            payload = capture.self_test()
+        except Exception as exc:
+            _print({"status": "fail", "error": str(exc)})
+            return 1
+        _print(payload)
+        return 0
+    if not args.url or not args.output:
+        print("vqa capture requires URL and --output (or --self-test)", file=sys.stderr)
+        return 2
+    try:
+        w, h = args.viewport.lower().split("x", 1)
+        viewport = {"width": int(w), "height": int(h)}
+    except Exception:
+        print("vqa capture --viewport must be WIDTHxHEIGHT (e.g. 1920x1080)", file=sys.stderr)
+        return 2
+    try:
+        payload = capture.capture_url(
+            args.url,
+            args.output,
+            viewport=viewport,
+            dpr=args.dpr,
+            reduced_motion=not args.no_reduced_motion,
+            wait_ms=args.wait_ms,
+            full_page=args.full_page,
+            assistance=args.assistance,
+            renderer=args.renderer,
+        )
+    except RuntimeError as exc:
+        _print({"status": "error", "error": str(exc)})
+        return 2
+    _print(payload)
+    return 0 if payload["verify"]["status"] == "verified" else 1
 
 
 def cmd_verify_capture(args) -> int:
@@ -153,6 +191,21 @@ def main(argv=None) -> int:
 
     sub.add_parser("doctor", help="dependency and degradation report")
 
+    p = sub.add_parser("capture", help="screenshot a URL to PNG + capture manifest")
+    p.add_argument("url", nargs="?", help="http(s) URL of the surface to capture")
+    p.add_argument("--output", "-o", help="PNG path; writes sibling .capture.json")
+    p.add_argument("--viewport", default="1920x1080", help="WIDTHxHEIGHT CSS pixels")
+    p.add_argument("--dpr", type=float, default=2.0)
+    p.add_argument("--wait-ms", type=int, default=1000)
+    p.add_argument("--full-page", action="store_true")
+    p.add_argument("--no-reduced-motion", action="store_true",
+                   help="do not request prefers-reduced-motion (still must declare frozen honestly)")
+    p.add_argument("--assistance", choices=("off", "on", "unknown"), default="unknown",
+                   help="whether extra agent rails (chunks/lint/MCP) were on during capture")
+    p.add_argument("--renderer", help="optional renderer id for the manifest")
+    p.add_argument("--self-test", action="store_true",
+                   help="manifest write+verify only; no browser")
+
     p = sub.add_parser("verify-capture", help="validate capture manifest")
     p.add_argument("image")
     p.add_argument("--manifest")
@@ -215,6 +268,7 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
     handlers = {
         "doctor": cmd_doctor,
+        "capture": cmd_capture,
         "verify-capture": cmd_verify_capture,
         "perceive": cmd_perceive,
         "prove": cmd_prove,

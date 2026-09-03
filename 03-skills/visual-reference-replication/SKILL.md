@@ -124,7 +124,8 @@ Map IR nodes → components. If the codebase cannot express an IR node (true con
 
 ### 6. Prove
 
-1. Capture build at same viewport/DPR as reference study plan
+1. Capture the build with the workspace command, not a pack-local screenshot script:
+   `python3 03-skills/visual-prove-engine/vqa.py capture URL -o BUILD.png --viewport WxH --dpr N --assistance off`
 2. Side-by-side native crops (full + 2–3 critical tiles: elbow join, gutter, type)
 3. Run `vqa prove BUILD CUESPEC` ([[visual-prove-engine]]) — the measured/attested split
    and margins per cue are the verdict input; `vqa compare` ranks builds; `vqa score --ledger`
@@ -148,8 +149,9 @@ Ask and answer in the baton:
 2. Which cue would Sean fail in under 3 seconds?
 3. Did I optimize for test green / density caps / APCA at the cost of northstar authority?
 4. Did an image-description paragraph substitute for measurement?
+5. Did the prove only pass with extra rails on (chunks, lint autofix, MCP, extra skills)? If yes, re-run with `--assistance off` ([[agent-output-rails]]).
 
-If (3) or (4) is yes → not Literal progress.
+If (3), (4), or (5) is yes → not Literal progress.
 
 ## Related
 - foundation → [[design-foundations]]

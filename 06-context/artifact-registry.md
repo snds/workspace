@@ -1,12 +1,12 @@
 # Artifact Registry
 <!-- Auto-maintained by any agent. Updated after each task. -->
-<!-- Last updated: 2026-09-02 | Session: Open Engine enroll + visual-qa prove + branch prune -->
+<!-- Last updated: 2026-09-03 | Session: LCARS pack catalog + live T3 compose -->
 
 ## LCARS Generative Interface — 07-projects/20-lcars-generative-interface/ (git-tracked)
 
 ### 20-lcars-generative-interface/ (README.md + SESSION-STATE.md + SPEC.md + docs/construction/ + canvases/)
 - **Purpose**: Project home for the generative LCARS interface (design → plan → implementation pointers). Spec captures constitution-first Scene IR architecture, combadge roles, APCA+AA, data-first 3D viewports. Construction pack holds cuespec, IR, prove reports, and captures for S-SYS47-01. `canvases/` holds the Cursor `lcars-replication-gap` copy.
-- **Last modified**: 2026-09-02 — vault docs wikilinks + canvas copy; prove v4 still the Literal baton.
+- **Last modified**: 2026-09-03 — `content-groups.md` gained `support.controls` + variant note; Live handoff points at app `e691dec` pack catalog. Prove v4 still the Literal baton.
 
 ## Workspace Brain — 07-projects/19-workspace-brain/ (git-tracked)
 

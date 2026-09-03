@@ -2,7 +2,7 @@
 title: Knowledge vault index
 tags: [knowledge-vault, index]
 created: 2026-04-28
-updated: 2026-09-02
+updated: 2026-09-03
 ---
 
 # Knowledge Vault — Index
@@ -14,6 +14,7 @@ when new entries are written. Entries are grouped by domain, then listed alphabe
 
 ## Design
 
+- [[agent-output-rails]] — Onori's DS-eval method, minus the tester. Isolation (measure docs/catalog with chunks/lint/MCP off), pack recipes instead of a wizard, product-repo lint, complementary a11y proxies. Capture is `vqa capture` in [[visual-prove-engine]], not a project script. Do not clone `design-system-agent-tester`. Triggers: `assistance off`, `ds evals`, `agent tester`, `docs flywheel`, `design system chunks`, `onori evals`, `vqa capture` (2026-09-03)
 - [[agentic-ds-context-model]] — **Remap of the vault ontology / graphs / Wolosin context model onto 2026 agentic specs.** Three graphs must not mix (skill load · epistemic · domain artifact; DSDS for DS). Complements stay complements. Project-independent constitution at [[dsds-constitution]]; standing methods at [[idempotent-design-decisions]]. Generalized to other job contexts in [[agentic-domain-constitutions]] / [[domain-constitutions]]. Source review via `ds-source-watch`. Triggers: `ontology`, `knowledge graph`, `context model`, `agentic design system`, `dsds`, `context engineering`, `harness`, `for: agent`, `combos`, `source watch` (2026-09-01; generalized 2026-09-02)
 - [[display-graphic-motion-systems]] — **Register before tokens.** Product chrome, graphic system, diegetic/film UI, programmatic video, and look-dev do not share duration tables. Compose so the still reads at distance, then animate the few layers that earn motion. SVG: transform first, mask/stroke for reveal and draw, morph only when meaning changes. React UI default is Motion (`motion/react`). Picard/Okuda/GMunk are testimony; LCARS is one pack. Live SVG emit via [[gd-generation-tooling]]; flattened plates are not construction. Pixel-frame pass of the three study videos is still open. Triggers: `film ui`, `diegetic ui`, `svg animation`, `display graphics`, `graphic system motion`, `hud illustration`, `playback graphics`, `programmatic video`, `live svg`, `display grammar`, `flattened png` (2026-09-02)
 - [[llm-safe-design-system-expressiveness]] — When an LLM authors UI, off-system values must be **inexpressible**, not discouraged. Docs/`CLAUDE.md` are probabilities; **CI is the contract**. Author in decisions (`background-card`), not values (`p-4`, hex). Escape hatches (raw layout utilities, arbitrary Tailwind, a second `dark:` pass, growing `eslint-disable`) are cracks. Polar Orbit is testimony for the law, not a StyleX/`Box` import. Complements [[component-contracts-and-schemas]] (arbitration) and [[contracts-first-delivery]] (boundaries). Triggers: `llm-safe`, `inexpressible`, `off-system`, `CI is the contract`, `typed tokens`, `escape hatch`, `light-dark`, `no raw layout`, `Orbit` (2026-09-02)

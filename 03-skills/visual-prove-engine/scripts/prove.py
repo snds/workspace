@@ -68,12 +68,27 @@ def run_prove(
         required_altitudes=spec.get("required_altitudes"),
     )
 
+    provenance = spec.get("_provenance") or {}
+    required_assistance = provenance.get("assistance")
+    observed_assistance = capture.get("assistance") or (capture.get("meta") or {}).get("assistance")
+    isolation_notes: list[str] = []
+    if required_assistance == "off" and observed_assistance in (None, "unknown", "on"):
+        isolation_notes.append(
+            "cuespec _provenance.assistance is off but capture assistance is "
+            f"{observed_assistance!r} — extra rails (chunks/lint/MCP) can hide doc/catalog failure"
+        )
+
     payload = {
         "engine": _core.ENGINE_VERSION,
         "cuespec": spec["_path"],
         "northstar": spec.get("northstar"),
         "build": str(Path(build_path).resolve()),
         "capture": capture,
+        "assistance": {
+            "required": required_assistance,
+            "observed": observed_assistance,
+            "notes": isolation_notes,
+        },
         "generated": datetime.datetime.now().isoformat(timespec="seconds"),
         "summary": summary,
         "cues": [r.to_dict() for r in results],
@@ -115,6 +130,13 @@ def to_markdown(payload: dict) -> str:
     warns = payload.get("capture", {}).get("warnings") or []
     for w in warns:
         lines.append(f"- Capture warning: {w}")
+    assist = payload.get("assistance") or {}
+    if assist.get("required") or assist.get("observed"):
+        lines.append(
+            f"- Assistance: required={assist.get('required')} observed={assist.get('observed')}"
+        )
+    for note in assist.get("notes") or []:
+        lines.append(f"- Isolation: {note}")
     for r in payload.get("summary", {}).get("verdict_reasons", []):
         lines.append(f"- {r}")
     lines += ["", "| # | Cue | Probe | Alt | Status | Value | Target | Margin |",

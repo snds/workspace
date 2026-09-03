@@ -73,7 +73,9 @@ plate (`assetSrcset`, cropped chrome, pasted tiles) is the failed path.
 
 Legal kinds match the display-system primitive set: `elbow`, `bar`, `pill`,
 `rect`, `sweep`, `rail`, `label`, `circle`. No one-off silhouettes in the
-emitter. Project catalogs may refine path math; they may not add `image`.
+emitter. Project catalogs may refine path math; they may not add `image`. Those catalogs
+are the pack-level **recipe** layer ([[agent-output-rails]]): pasteable legal
+compositions. They stay in the pack. The emitter stays in `09-tools/`.
 
 ```
 python3 09-tools/generate-display-svg.py --check 09-tools/fixtures/display-scene.hud-example.json

@@ -197,6 +197,17 @@ python3 09-tools/cursor-externalize.py
 python3 09-tools/cursor-externalize.py --check
 ```
 
+## eslint-off-system/
+
+Reusable ESLint rules that ban raw color literals and Tailwind arbitrary
+values in product repos. Doctrine: [[llm-safe-design-system-expressiveness]]
++ [[agent-output-rails]]. Each product repo owns its config and allowlists
+its token SSOTs. LCARS vendors a copy under `eslint/off-system/`.
+
+```
+# see 09-tools/eslint-off-system/README.md
+```
+
 ---
 
 These tools assume only a git checkout + Python 3 — no Google Drive, no vendor-specific file bridge.

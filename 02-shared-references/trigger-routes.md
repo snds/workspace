@@ -68,8 +68,11 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `ds source watch` | 03-skills/ds-source-watch/SKILL.md — fetch curated DS/agentic sources; report-first, never auto-edit ontology |
 | `latest ds thinking` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/dsds/dsds-constitution.md |
 | `refresh ds ontology` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/idempotent-design-decisions.md |
-| `onori` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/dsds/dsds-constitution.md |
-| `pj onori` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/dsds/dsds-constitution.md |
+| `onori` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/dsds/dsds-constitution.md + 08-knowledge/design/agent-output-rails.md |
+| `pj onori` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/dsds/dsds-constitution.md + 08-knowledge/design/agent-output-rails.md |
+| `vqa capture` | 03-skills/visual-prove-engine/SKILL.md — project-agnostic URL screenshot + *.capture.json; pack wrappers pass URL/out only |
+| `assistance off` | 08-knowledge/design/agent-output-rails.md + 03-skills/visual-prove-engine/SKILL.md — measure docs/catalog without chunks/lint/MCP |
+| `ds evals` | 08-knowledge/design/agent-output-rails.md — isolation + recipes + product lint; do not clone the Sanity tester |
 | `domain constitution` | 02-shared-references/domain-constitutions/domain-constitutions.md + constitution-spec.md - job-context methods/complements; DSDS only for design-systems |
 | `domain constitutions` | 02-shared-references/domain-constitutions/domain-constitutions.md + 08-knowledge/cross-domain/agentic-domain-constitutions.md |
 | `job context ontology` | 02-shared-references/domain-constitutions/constitution-spec.md + domain-constitutions.md |
@@ -249,7 +252,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `sec-threat-modeling` | cross-cutting | `threat model`, `stride`, `pasta`, `attack tree`, `trust boundary`, `data flow diagram` (+8) | `eng-foundations` → `lead-security-architect` → `sec-threat-modeling` |
 | `side-chat-handback` | cross-cutting | `handback`, `/handback`, `end side chat`, `close side chat`, `hand this back`, `hand back` (+2) | `side-chat-handback` |
 | `skill-placement` | cross-cutting | `create a skill`, `generate skill`, `make a skill`, `new skill`, `skill placement` | `skill-placement` |
-| `visual-prove-engine` | cross-cutting | `prove this build`, `cuespec`, `measured verdict`, `visual prove`, `rank builds`, `improvement ledger` (+7) | `design-foundations` → `lead-visual-qa` → `visual-prove-engine` |
+| `visual-prove-engine` | cross-cutting | `prove this build`, `cuespec`, `measured verdict`, `visual prove`, `rank builds`, `improvement ledger` (+11) | `design-foundations` → `lead-visual-qa` → `visual-prove-engine` |
 | `visual-qa-dataviz` | cross-cutting | `chart review`, `chart audit`, `dataviz qa`, `graph review`, `data table review`, `dashboard review` (+4) | `design-foundations` → `lead-visual-qa` → `visual-qa-dataviz` |
 | `visual-qa-motion` | cross-cutting | `motion qa`, `motion review`, `animation review`, `animation audit`, `jank review`, `janky animation` (+7) | `design-foundations` → `lead-visual-qa` → `visual-qa-motion` |
 | `visual-qa-toolkit` | cross-cutting | `visual qa`, `pixel diff`, `visual regression`, `screenshot audit`, `design qa`, `qa audit` (+1) | `design-foundations` → `lead-visual-qa` → `visual-qa-toolkit` |
@@ -257,4 +260,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 173 · Registry rows: 61_
+_Curated routes: 176 · Registry rows: 61_
