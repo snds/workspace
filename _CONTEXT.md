@@ -5,7 +5,7 @@ tags: [moc, context]
 
 # Context
 
-Everything Claude needs to know before acting. All files in `06-context/`.
+Everything an agent needs to know before acting. All files in `06-context/`.
 
 ## The context files
 
@@ -13,10 +13,10 @@ Everything Claude needs to know before acting. All files in `06-context/`.
 |---|---|---|
 | [[06-context/role-and-context]] | Who Sean is, his work, specializations | Sean (rarely changes) |
 | [[04-preferences/user-preferences]] | Communication style, tone, conventions | Sean |
-| [[06-context/project-context]] | Active projects + pending items (authoritative) | Claude (via `/session-end`) |
-| [[06-context/session-log]] | Session blocks, newest-first | Claude (via `/session-end`) |
-| [[06-context/artifact-registry]] | Structural index of project files | Claude (via `/session-end` write 4) |
-| [[06-context/memory/MEMORY]] | Durable non-project facts + decisions index | Claude (when a durable fact emerges) |
+| [[06-context/project-context]] | Active projects + pending items (authoritative) | Any agent (via session-end) |
+| [[06-context/session-log]] | Session blocks, newest-first | Any agent (via session-end) |
+| [[06-context/artifact-registry]] | Structural index of project files | Any agent (via session-end write 4) |
+| [[06-context/memory/MEMORY]] | Durable non-project facts + decisions index | Any agent (when a durable fact emerges) |
 
 ## Recent session entries
 
@@ -34,9 +34,9 @@ See [[06-context/project-context]] § Pending Items. Authoritative list.
 
 ## How context flows
 
-1. **Session start** — The `SessionStart` hook (`.claude/hooks/dispatcher.py session-start`) reads role, project, session log heads and injects them into Claude's context.
-2. **During session** — Claude reads specific files as needed. Triggers like `legion` or `centric` route attention to specific skills.
-3. **Session end** — The `/session-end` skill writes a Session Block to session-log.md, updates project-context.md, updates artifact-registry.md, commits, pushes.
+1. **Session start** — Any agent reads [[AGENTS]] then the context heads. Claude Code also injects those heads via `SessionStart` (`.claude/hooks/dispatcher.py`). Cursor re-reads via `.cursor/rules/brain.mdc`.
+2. **During session** — The agent reads specific files as needed. Triggers like `legion` or `centric` route attention to specific skills.
+3. **Session end** — Session-end writes a Session Block to session-log.md, updates project-context.md, updates artifact-registry.md, commits, pushes. Claude Code slash: `/session-end`.
 
 ## Why these files are in Git (and artifacts aren't)
 

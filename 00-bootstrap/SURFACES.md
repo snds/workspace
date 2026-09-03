@@ -2,7 +2,7 @@
 
 _The brain (this workspace) is consumed by multiple tools simultaneously. Each surface has its own context-discovery mechanism. This doc maps what each surface reads, how to launch it against the brain, and known gaps._
 
-_Last updated: 2026-07-30_
+_Last updated: 2026-09-02_
 
 ---
 
@@ -10,7 +10,7 @@ _Last updated: 2026-07-30_
 
 | Surface | Context discovery | AI provider | Hooks/skills | Notes |
 |---|---|---|---|---|
-| **Claude Code (CLI)** | Walks up parents from CWD → `CLAUDE.md` + `.claude/` | Anthropic | Full dispatcher + slash skills + SessionStart/End | Cleanest brain integration for workspace mutation. |
+| **Claude Code (CLI)** | Walks up parents from CWD → `CLAUDE.md` + `.claude/` | Anthropic | Full dispatcher + slash skills + SessionStart/End | Richest hook automation. Not the only surface that may mutate the vault. |
 | **Claude Code (desktop, Code tab)** | Same, plus per-session worktree under `.claude/worktrees/` | Anthropic | Yes — state on worktree branch until merged | Prefer CLI for canonical continuity. |
 | **Cursor** | `.cursor/rules/*.mdc` on **first** workspace folder + project/user hooks | Cursor models (Claude/GPT/Gemini/…) | `sessionStart` (user) · `preCompact`/`sessionEnd`/`subagentStop` (project) · `.cursor/agents/` | Open Brain first or use `*.code-workspace`. Adapter: [[CURSOR]]. |
 | **VS Code** + Claude Code ext | Same as CLI | Anthropic | Yes | IDE UI over the CLI hooks. |
@@ -87,7 +87,7 @@ Paths are relative to the file. Brain must stay first so Cursor loads `.cursor/r
 
 | Task | Best surface |
 |---|---|
-| Workspace mutation, session-end commit, hooks | Claude Code CLI |
+| Workspace mutation, session-end, validators | Any capable agent (Cursor or Claude Code). Claude Code automates more of the handshake. |
 | Multi-model IDE, Task/subagents, heavy editing | Cursor |
 | Notes, wikilinks, graph | Obsidian |
 | Isolated experimental branch | Claude desktop worktree |

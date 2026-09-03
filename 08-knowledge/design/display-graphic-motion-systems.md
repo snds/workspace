@@ -22,11 +22,10 @@ related_skills: [motion-graphic-systems, gd-display-graphics, gd-generation-tool
 related_projects: [20-lcars-generative-interface, 19-workspace-brain]
 relations:
   builds-on:
-    - "[[dc-motion]]"
-    - "[[dc-illustration]]"
+    - "[[domain-constitutions]]"
     - "[[agentic-domain-constitutions]]"
   relates-to:
-    - "[[visual-reference-replication]]"
+    - "[[visual-reference-replication-findings]]"
     - "[[measured-visual-verdicts]]"
 ---
 

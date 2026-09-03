@@ -45,8 +45,9 @@ SORT file.folder ASC
 
 ## Create a new project
 
-In Claude Code, run `/new-project`. It scaffolds the folder, seeds SESSION-STATE, registers it
-in `06-context/project-context.md`, and this MOC picks it up automatically on next refresh.
+Ask the agent to scaffold a project (Claude Code slash: `/new-project`). Same steps on Cursor
+or any other surface: folder, SESSION-STATE, register in `06-context/project-context.md`. This
+MOC picks it up on next refresh.
 
 ## Graph index (static — Dataview does not create graph edges)
 

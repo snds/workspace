@@ -10,3 +10,5 @@
 /Users/snds/Projects/Nexus
 /Users/snds/Projects/SNDS
 /Users/snds/Projects/Zuora
+/Users/snds/Projects/lcars-generative-interface
+/Users/snds/Projects/lcars-curve-figma

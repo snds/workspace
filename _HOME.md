@@ -1,26 +1,25 @@
 ---
-title: Claude Workspace
+title: Workspace
 tags: [moc, home]
 ---
+# Workspace — Home
 
-# Claude Workspace — Home
-
-The front door. From here you can reach everything. Claude Code reads [[CLAUDE]] at session start;
-you read this.
+The front door. From here you can reach everything. Any agent enters via [[AGENTS]].
+Claude Code also reads [[CLAUDE]] (its adapter) at session start. You read this.
 
 ## Operating layer
 
 - [[_FRAMEWORKS|Frameworks]] — the sixteen that govern every project
 - [[_CONTEXT|Context]] — who, what, where, when (role, preferences, sessions, artifacts)
-- [[_SKILLS|Skills]] — 280+ skill library, hub and spokes
+- [[_SKILLS|Skills]] — 292-skill library, hub and spokes
 - [[_PROJECTS|Projects]] — active work across all domains
 - [[_CHEATSHEET|Cheatsheet]] — slash commands, trigger phrases, Obsidian shortcuts
 
 ## Daily flow
 
-1. **Start the day** — open the most recent daily note in `05-artifacts/active/daily/`, or run `/today` in Claude Code to draft one
-2. **Work** — edit notes, create artifacts; Claude Code reads context automatically
-3. **End the day** — run `/session-end` in Claude Code; it writes the session block, commits, pushes
+1. **Start the day** — open the most recent daily note in `05-artifacts/active/daily/`, or ask the agent to draft one (Claude Code: `/today`)
+2. **Work** — edit notes, create artifacts; any agent reads context from this checkout
+3. **End the day** — close out the session (Claude Code: `/session-end`; Cursor: ask to session-end). Writes the session block, commits, pushes.
 
 If you worked on multiple machines today, run `/reconcile` to merge the session blocks into one day entry.
 
@@ -67,7 +66,7 @@ WHERE file.name = "project-context"
 - **`.claude/`** — Claude Code config, hooks, slash-command skills. Don't edit in Obsidian; it's ignored.
 - **`.obsidian/`** — Vault config. Also ignored.
 - **`00-bootstrap/`** — Getting-started + setup. Contract lives in `AGENTS.md`.
-- **`01-frameworks/`** — The eleven operating frameworks (08 governs editing the workspace itself; 10 is the native-resolution perception-integrity precondition; 11 is the anticipatory failure/pre-mortem lens).
+- **`01-frameworks/`** — The sixteen operating frameworks (08 governs editing the workspace itself; 10 is the native-resolution perception-integrity precondition; 11 is the anticipatory failure/pre-mortem lens; 12 realtime photoreal; 13 domain rigor; 14–16 engineering / analysis / security ops).
 - **`02-shared-references/`** — Standards: ontology + routing map, frontmatter spec, reasoning/artifact standards.
 - **`03-skills/`** — Skill library (hub/spoke). Graph in `skills.registry.json` (generated from frontmatter).
 - **`04-preferences/`** — User preferences file (how Sean wants to collaborate).

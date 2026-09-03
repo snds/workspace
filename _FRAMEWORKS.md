@@ -41,8 +41,8 @@ Job-context methods (not project values): [[domain-constitutions]] · [[constitu
 
 ## Running work through the frameworks
 
-In Claude Code, invoke `/framework-check` to run the current work through the operating frameworks as a
-structured critique. Output is ephemeral (not saved unless Sean saves it).
+Ask the agent to run a framework-check (Claude Code slash: `/framework-check`). On Cursor or any
+other surface, load the same frameworks and apply the critique. Output is ephemeral unless you save it.
 
 ## Framework ↔ skill alignment
 

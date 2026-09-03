@@ -34,6 +34,45 @@ _The dispatcher reads the most recent date from this file to decide whether to s
 
 ## Entries
 
+## 2026-09-02 — Personal MacBook Pro
+
+**Scope:** full seven-surface ECC. Foundation reads + `audit_skip` honored. Judgment on top of probes.
+**Findings:** 9 total — P0: 1, P1: 4, P2: 4
+
+**P0 (workflow-breaking):**
+- `display-graphic-motion-systems.md` `relations:` mixed YAML packs / a skill into the epistemic graph (`dc-motion`, `dc-illustration`, `visual-reference-replication`). `vault-health` exit 1.
+
+**P1 (friction):**
+- `project-context.md` had `[x]` `^pc-04` / `^pc-13` still in Active and no Recently resolved section.
+- `project-context.md` still ~36 open Active `^pc-NN` stubs; engine migration deferred. Do not delete anchors.
+- Dormant `SESSION-STATE.md` batons past 30 days: `00-obsidian`, `18-bootstrap-generator`, plus seeded/idle `02-centricPLM` / `10-centric-UX-research` / `14-variable-icon-font-generator` / `16-CDS` / `09-figma-repo-sync-plugin`. Left in place.
+- `^pc-19` Figma PAT revoke still open (~90 days). Sean-side hygiene; no vault edit.
+
+**P2 (polish):**
+- `_HOME.md` anatomy still said "eleven operating frameworks."
+- `team-practices-and-decisions.md` still said "the five frameworks."
+- `_SKILLS.md` curated hubs omitted the new motion/display spokes; count said 280+.
+- `ds-source-watch --check`: snapshot 0d old; registry 18 vs snapshot 14. Left (fetch is the other skill).
+
+**Fixes applied this run:**
+- Retargeted `display-graphic-motion-systems.md` `relations:` to `[[domain-constitutions]]` + `[[visual-reference-replication-findings]]` (YAML/skill names stay in `related_skills` and body).
+- Moved `^pc-04` and `^pc-13` into a Recently resolved section. Anchors kept.
+- `_HOME.md`: sixteen frameworks in anatomy; skill count 292.
+- `team-practices-and-decisions.md`: "sixteen frameworks" in the lede and integration heading.
+- `_SKILLS.md`: 292 count + Motion / display graphics cluster.
+
+**Carried forward:**
+- 36 open Active + 5 Deferred `^pc-NN` stubs; do not delete anchors. Engine migration still deferred.
+- Dormant seeded `SESSION-STATE.md` batons (left in place).
+- Hygiene still with Sean: REVOKE Figma PAT (`^pc-19`); GitHub Support purge of two personal-email SHAs (`^pc-08`).
+- `ds-source-watch` 18-vs-14 source gap (fetch when Sean asks).
+- Doctor-sweep generalization for `* 2.md` conflict-copies (none present this run; recipe still open).
+- Do not auto-enable nightly maintenance from this audit.
+
+**Skipped (opt-out `audit_skip: true`):** `_CHEATSHEET.md`, `08-knowledge/cross-domain/workflow-patterns.md` (the skill documents the flag; the two files carry it).
+
+---
+
 ## 2026-08-28 — Personal MacBook Pro
 
 **Scope:** full seven-surface ECC after landing perception-critique-stack course corrections 1–12 (prove engine vqa/1.1 + play-prove). Foundation reads sampled; `audit_skip` honored.

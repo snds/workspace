@@ -9,8 +9,9 @@ Two skill systems coexist by design.
 
 ## `03-skills/` — skill library (full hub/spoke network)
 
-These live in `03-skills/{skill-name}/SKILL.md`. Loaded per the precedence algorithm in `AGENTS.md`;
-the machine graph is `skills.registry.json` (generated from frontmatter by `09-tools/build-registry.py`).
+These live in `03-skills/{skill-name}/SKILL.md`. 292 skills in the generated graph.
+Loaded per the precedence algorithm in `AGENTS.md`; the machine graph is
+`skills.registry.json` (generated from frontmatter by `09-tools/build-registry.py`).
 Synced across machines via git.
 
 ```dataview
@@ -36,6 +37,7 @@ LIMIT 60
 - **Legion game:** [[03-skills/legion-project/SKILL|legion-project]] → [[03-skills/lead-game-designer/SKILL|lead-game-designer]] / [[03-skills/lead-art-director/SKILL|lead-art-director]] / [[03-skills/lead-game-developer/SKILL|lead-game-developer]]
 - **Realtime photoreal:** [[03-skills/realtime-visual-craft/SKILL|realtime-visual-craft]] + [[03-skills/render-qa-toolkit/SKILL|render-qa-toolkit]] + [[03-skills/interactive-capture-eval/SKILL|interactive-capture-eval]] + [[03-skills/rendering-guild/SKILL|rendering-guild]] (framework #12)
 - **Icon fonts:** [[03-skills/variable-icon-font-architect/SKILL|variable-icon-font-architect]] + math spokes
+- **Motion / display graphics:** [[03-skills/lead-motion-designer/SKILL|lead-motion-designer]] → [[03-skills/motion-graphic-systems/SKILL|motion-graphic-systems]] · [[03-skills/motion-programmatic-video/SKILL|motion-programmatic-video]] + implementation [[03-skills/motion/SKILL|motion]]; still craft via [[03-skills/lead-graphic-designer/SKILL|lead-graphic-designer]] → [[03-skills/gd-display-graphics/SKILL|gd-display-graphics]] · [[03-skills/gd-generation-tooling/SKILL|gd-generation-tooling]] (live SVG, not flattened plates). Law: [[display-graphic-motion-systems]]
 - **Visual QA:** [[03-skills/native-visual-eval/SKILL|native-visual-eval]] (native-resolution capture — the precondition; framework #10's method) + [[03-skills/visual-qa-toolkit/SKILL|visual-qa-toolkit]] (instrumented measurement) + [[03-skills/visual-prove-engine/SKILL|visual-prove-engine]] (contract verdicts, altitudes A–G) + [[03-skills/play-prove/SKILL|play-prove]] (headless balance / feel) + [[03-skills/a11y-audit-toolkit/SKILL|a11y-audit-toolkit]] + [[03-skills/lead-visual-qa/SKILL|lead-visual-qa]] (judgment) + discipline lenses [[03-skills/visual-qa-dataviz/SKILL|visual-qa-dataviz]] · [[03-skills/visual-qa-motion/SKILL|visual-qa-motion]] · [[03-skills/visual-qa-type/SKILL|visual-qa-type]]
 - **Measurement (instrumented, per substrate):** [[03-skills/visual-qa-toolkit/SKILL|visual-qa-toolkit]] (pixels) + [[03-skills/a11y-audit-toolkit/SKILL|a11y-audit-toolkit]] (DOM/WCAG) + [[03-skills/fe-perf-harness/SKILL|fe-perf-harness]] (CWV budgets) + [[03-skills/render-qa-toolkit/SKILL|render-qa-toolkit]] (rendered frames) — each degrades to a stated manual path rather than a silent pass
 - **Career:** [[03-skills/career-ops-job-search/SKILL|career-ops-job-search]] (wrappers → `~/.agents/skills`)

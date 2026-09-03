@@ -1,9 +1,9 @@
 {
   "_meta": {
-    "description": "Workspace manifest — tracks expected contents of Claude Workspace. Updated by Claude Code on every session that adds or removes files. Used by workspace-bootstrap to detect missing, new, or uninstalled items.",
+    "description": "Workspace manifest — tracks expected contents of this workspace. Updated by workspace-bootstrap / any agent on sessions that add or remove files.",
     "version": "1.0",
-    "last_updated": "2026-03-06",
-    "last_updated_by": "workspace-bootstrap (Claude Code)"
+    "last_updated": "2026-09-02",
+    "last_updated_by": "workspace-bootstrap"
   },
 
   "shared_references": [

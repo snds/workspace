@@ -63,7 +63,7 @@ _Last updated: [YYYY-MM-DD HH:MM] — [update reason: rolling | checkpoint | wra
 - **Test state at last check**: [passing | failing | not run]
 
 ### Active tooling / MCP bridges
-- **Filesystem access**: [native (Claude Code) | filesystem MCP]
+- **Filesystem access**: [native (this checkout) | filesystem MCP]
 - **Playwright MCP**: [live | not connected | not applicable]
 - **Figma MCP**: [live | not connected | not applicable]
 - **Other MCP connections**: [list as relevant]

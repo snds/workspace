@@ -9,8 +9,9 @@ agent contract is [[AGENTS]]; this doc covers the Obsidian-specific layer.
 ## Consumers of the same folder
 
 - **Obsidian** — note-taking UI, graph view, templates, plugins. Reads everything.
-- **Claude Code** — reads `CLAUDE.md` + `.claude/` config; a `SessionStart` hook automates the boot reads.
-- **Any other agent** (Cursor, Perplexity, a generic MCP client, a human) — enters via [[AGENTS]].
+- **Cursor** — reads [[AGENTS]] via `.cursor/rules/brain.mdc`; project/user hooks optional. Adapter: [[CURSOR]].
+- **Claude Code** — reads `CLAUDE.md` + `.claude/` config; a `SessionStart` hook automates the boot reads. Adapter: [[CLAUDE]].
+- **Any other agent** (Perplexity, a generic MCP client, a human) — enters via [[AGENTS]].
 
 No sync bridge, no cloud drive, no API layer. Whatever Obsidian sees, every agent sees. Git is the sync
 and history layer across machines.
@@ -56,7 +57,7 @@ loading-precedence algorithm. No hooks required.
 1. `git clone git@github.com:snds/workspace.git` (or your fork).
 2. Ensure Python 3 is available (for `09-tools/build-registry.py`).
 3. Optional ergonomics: run `00-bootstrap/setup/` to install Obsidian plugins, the Claude Code config, and git/gh.
-4. Open the folder in Obsidian (vault) and/or run `claude` from it.
+4. Open the folder in Obsidian (vault) and/or Cursor. `claude` is optional adapter ergonomics.
 
 ## Troubleshooting
 

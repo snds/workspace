@@ -1,21 +1,24 @@
 ---
-title: Obsidian + Claude Code Integration
+title: Obsidian + agent workspace integration
 tags: [project, infrastructure, integration]
 status: active
 ---
 
-# 00-obsidian — Obsidian + Claude Code Integration
+# 00-obsidian — Obsidian + agent workspace integration
 
-The integration is a **cross-Claude ecosystem tool**, not a project deliverable.
+The integration is **portable workspace infrastructure**, not a project deliverable.
 It deploys configuration and scaffolding at the workspace root so that one filesystem
-serves three consumers simultaneously: Obsidian, Claude Code, and Claude Desktop.
+serves Obsidian plus any agent (Claude Code, Cursor, Desktop, a human). The contract
+is [[AGENTS]]; `CLAUDE.md` / `CURSOR.md` are adapters.
 
 This folder is the **project workspace** — design notes, session state, build history.
 The integration's *deployed* files live at the workspace root (one level up from `07-projects/`):
 
 ```
 
-├── CLAUDE.md             ← deployed: Claude Code context
+├── AGENTS.md             ← deployed: universal contract
+├── CLAUDE.md             ← deployed: Claude Code adapter
+├── CURSOR.md             ← deployed: Cursor adapter
 ├── _HOME.md ... (5 MOCs) ← deployed: Obsidian navigation entry points
 ├── .claude/              ← deployed: hooks + slash-command skills
 ├── .obsidian/            ← deployed: vault config + plugins
@@ -36,8 +39,8 @@ the installed binaries live where they have to.
 ## Current scope
 
 - Single-file Python installer (`00-bootstrap/setup/setup.py`) — stdlib only, idempotent, cross-platform
-- Cross-platform Claude Code hook dispatcher (`.claude/hooks/dispatcher.py`)
-- Five `/`-command skills (`today`, `session-end`, `reconcile`, `new-project`, `framework-check`)
+- Claude Code hook dispatcher (`.claude/hooks/dispatcher.py`) plus Cursor rules (`.cursor/rules/brain.mdc`)
+- Claude Code slash skills (`today`, `session-end`, `reconcile`, `new-project`, `framework-check`); same jobs are askable on Cursor
 - Obsidian vault config: 7 community plugins + custom hotkeys + graph + theme
 - Five Obsidian MOCs at workspace root (`_HOME`, `_PROJECTS`, `_SKILLS`, `_FRAMEWORKS`, `_CONTEXT`) with Dataview queries
 - Git-tracked system layer via `snds/workspace` repo on GitHub
@@ -45,11 +48,13 @@ the installed binaries live where they have to.
 ## Provenance
 
 Pattern from [Mibii's dev.to article](https://dev.to/mibii/claude-code-obsidian-build-a-second-brain-that-actually-thinks-d61),
-adapted to an existing multi-project Claude Workspace (60+ skills, 5 frameworks, DC+Drive sync, multi-machine).
+adapted to an existing multi-project workspace (60+ skills, 5 frameworks, DC+Drive sync, multi-machine).
 
 ## See also
 
 - **Operational state:** [SESSION-STATE.md](SESSION-STATE.md)
 - **Architecture + setup:** [`00-bootstrap/OBSIDIAN-SETUP.md`](../../00-bootstrap/OBSIDIAN-SETUP.md)
 - **Installer docs:** [`00-bootstrap/setup/README.md`](../../00-bootstrap/setup/README.md)
-- **Claude Code context:** [`CLAUDE.md`](../../CLAUDE.md)
+- **Universal contract:** [`AGENTS.md`](../../AGENTS.md)
+- **Claude Code adapter:** [`CLAUDE.md`](../../CLAUDE.md)
+- **Cursor adapter:** [`CURSOR.md`](../../CURSOR.md)

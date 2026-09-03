@@ -1,5 +1,5 @@
 # Artifact Registry
-<!-- Auto-maintained by Claude. Updated after each task. -->
+<!-- Auto-maintained by any agent. Updated after each task. -->
 <!-- Last updated: 2026-09-02 | Session: Open Engine enroll + visual-qa prove + branch prune -->
 
 ## LCARS Generative Interface — 07-projects/20-lcars-generative-interface/ (git-tracked)

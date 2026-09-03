@@ -5,9 +5,9 @@ _Authoritative pending queue remains [project-context.md](project-context.md) (+
 
 ## Active Projects
 
-### Claude Workspace Infrastructure
+### Workspace infrastructure
 **Status:** Active — knowledge vault layer live (2026-04-29)
-**Summary:** Multi-session workspace with cross-device context sync via Obsidian + Git. Workspace root is **also an Obsidian vault and a Claude Code working directory** — three consumers reading the same filesystem. Hooks-based hands-off session lifecycle (SessionStart loads context, SessionEnd commits + pushes). Five frameworks (2026-04-21) + SESSION-STATE per-project template. 194-skill hub/spoke network (2026-04-28). 08-knowledge/ vault layer with three-tier surfacing system (2026-04-29).
+**Summary:** Multi-session workspace with cross-device context sync via Obsidian + Git. Workspace root is **also an Obsidian vault and an agent working directory** — every capable surface reads the same filesystem via [[AGENTS]]. Claude Code hooks are one adapter (SessionStart / SessionEnd), not the contract. Sixteen frameworks + SESSION-STATE per-project template. Skill hub/spoke network. 08-knowledge/ vault layer with three-tier surfacing.
 
 **Layered additions across recent cycles:**
 - **2026-04-25 (topology cleanup):** Restored deployed-vs-project distinction. The integration's deployed files (CLAUDE.md, dotfiles, MOCs, `.claude/`, `.obsidian/`) live at workspace root where the consuming tools expect them. Installer + Obsidian templates + integration architecture doc consolidated into existing `00-bootstrap/`. Project workspace `07-projects/00-obsidian/` now holds SESSION-STATE.md + README.md only — design history, not deployment. `.gitignore` rewritten to track only the system layer + the 00-obsidian project. Dispatcher's session-end commit simplified to `git add -A` (gitignore is now the source of truth).

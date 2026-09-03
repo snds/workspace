@@ -23,7 +23,7 @@ _Last updated: 2026-08-28 — cuespec names uncued residuals; prove engine vqa/1
 - **Working set**:
   - App: `sys47-literal.ts` + `renderers.css` (pinned plates + mid-band rules) + `SchematicPanel.tsx` (`assetSrcset`) + `scripts/capture-sys47.mjs` (DPR 2 + manifest) + re-cropped `public/northstars/S-SYS47-01/asset_msd{,@0.5x}.png`
   - Vault: cuespec (live contract + `uncued_residuals`), `*_build_v4.prove.{json,md}`, `S-SYS47-01.ledger.{json,md}`, `captures/S-SYS47-01_build_v4.png` + `.capture.json`, `03-skills/visual-prove-engine/` vqa/1.1, `03-skills/play-prove/`
-- **Last action**: Course corrections 1–12 + `/optimize` merged to workspace `main` (`0f4228a`, 2026-08-28). Session-end 2026-09-02. Cursor Grok 4.6 / Cursor / Personal MBP
+- **Last action**: App repos `lcars-generative-interface` + `lcars-curve-figma` enrolled in workspace `beacon-repos.txt` with WORKSPACE-BEACON in each `CLAUDE.md` (local, not committed). Vault doctrine unchanged. Cursor Grok 4.6 / Cursor / Personal MBP. 2026-09-02.
 - **Next action**: separate session only: from-scratch generative screen via live geometry + recursive/adversarial visual review. Do not construct from flattened plates. Also: add measured cues for the four named residuals; optional OCR on SYSTEM 47 / timestamp when tesseract is present. If local Picard/Okuda files arrive, finish the pixel pass in `05-artifacts/active/film-ui-motion-study_v1.0_2026-09-02/` (audio review already written).
 - **Open decisions**: "Matches Literal" is measured within the 19-cue A-altitude contract. The residuals are named, not closed. Coverage remains 0.8421 (3 attested).
 - **Blocked on**: nothing for the course-correction landing; Ruffle/JPEXS still needs approve if motion track resumes

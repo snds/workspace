@@ -90,7 +90,7 @@ trusted to follow. See [[capability-registry]] → `linear-mcp`.
 
 **Connection-level isolation is not runner-level isolation.** Both servers are registered at **user
 scope** on this machine — which is exactly what the manifest above expects — so *every* Claude Code
-session here binds both and can write to either. Verified 2026-07-29: both connected in one session,
+or Cursor session here that has both servers registered binds both and can write to either. Verified 2026-07-29: both connected in one session,
 each with its own auth dir, both writable. With a human in the loop, the remaining wall is the agent's
 judgment, and that is acceptable. **Unattended it is not:** a scheduled or headless runner must be
 launched with only its own lane's server present (`--strict-mcp-config` plus a one-server
