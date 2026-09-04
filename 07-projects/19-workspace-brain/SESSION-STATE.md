@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-03 — absorb Onori rails; vqa capture generalized_
+_Last updated: 2026-09-03 — session-end Onori rails + LCARS off-system lint_
 
 ---
 
@@ -8,16 +8,16 @@ _Last updated: 2026-09-03 — absorb Onori rails; vqa capture generalized_
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: Motion/illustration stack stands. [[agent-output-rails]] + `vqa capture`. Isolation: `--assistance off`. **LCARS** has `npm run lint` (off-system hex/arbitrary Tailwind). Shared rules: `09-tools/eslint-off-system/`. Do not clone Sanity's agent tester. Product-repo ESLint for centric-ui / Davinci still open. Do not register `linear-c8` here.
-- **Current focus**: Onori absorb + LCARS off-system lint landed. Commit when ready.
-- **Working set**: [[agent-output-rails]]; `09-tools/eslint-off-system/`; `vqa capture`; [[llm-safe-design-system-expressiveness]].
-- **Last action (2026-09-03):** Off-system ESLint in LCARS + reusable `09-tools/eslint-off-system`. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **TL;DR (for future agent)**: Motion/illustration stack stands. [[agent-output-rails]] + `vqa capture` + `09-tools/eslint-off-system`. Isolation: `--assistance off`. LCARS `npm run lint` green. Do not clone Sanity's agent tester. Centric-ui / Davinci off-token lint still open (employer). Do not register `linear-c8` here.
+- **Current focus**: Session closed. Pick up via Next below or `personal:SEA-33`.
+- **Working set**: [[agent-output-rails]]; `09-tools/eslint-off-system/`; `vqa capture`; LCARS lint.
+- **Last action (2026-09-03):** Session-end. Workspace `8024215` + LCARS `a133bb4` committed; session fragment folded. Cursor Grok 4.6 / Cursor / Personal MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Commit workspace + LCARS. Optional: centric-ui off-token Tailwind lint (employer PR path).
+- **Next action:** `personal:SEA-33` live T3 review, or centric-ui off-token lint via PR path. Do not start LCARS from-scratch recreation unless asked.
 - **Open decisions:** Product/data/security constitutions still `mapped` only. YAML still hand-authored.
 - **Blocked on:** Machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs.** Copilot pack is tracked (`copilot/` + relative `.claude` wrappers); do not convert wrappers back to absolute paths.
-- **Agent thread**: `… → (2026-09-03): Onori rails + vqa capture` → `(2026-09-03): LCARS off-system lint`.
+- **Agent thread**: `… → (2026-09-03): Onori rails + LCARS lint` → session-end.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.

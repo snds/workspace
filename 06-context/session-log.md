@@ -23,6 +23,78 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-09-03 — LCARS pack catalog + live T3 compose
+
+SessionID: 2026-09-03-voyager-t3ds1
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 20-lcars-generative-interface
+Summary: Built a pack catalog (primitive → variant → component → content group → layout) and recomposed the live T3 demo from composers. App landed on `main` as `e691dec` (not pushed). S-SYS47-01 Literal stays a separate switch.
+Artifacts:
+  - github.com/snds/LCARS `e691dec` — `src/catalog/system/` + `docs/COMPONENT-SYSTEM.md` + composed `live-t3`
+  - vault `07-projects/20-lcars-generative-interface/docs/content-groups.md` — `support.controls` + variants note
+Decisions:
+  - Work in vectors / grammar, not per-pixel plate overlay
+  - Pills are controls; spine is bars; aesthetic is barcode + hairline
+  - 8px inside a family, 24px between content groups
+  - T1/T4 stay recipes; T2 stays on the SYS47 literal path
+  - Do not construct chrome from `public/northstars/S-SYS47-01/*.png`
+Evidence:
+  - App commit `e691dec` @ github.com/snds/LCARS main (local, not pushed) — verified
+  - Scene emit `generate-display-svg.py --check` 122 live primitives — verified
+  - vitest 65/65 @ LCARS — verified
+  - Agent Todo `personal:SEA-33` @ linear.app/snds — verified
+  - Ledger heartbeat `sean-cursor` @ personal:SEA-6 comment `1d0d5fc1` — blocked (approval pending)
+Pending added:
+  - `personal:SEA-33` review structured live T3 against the pack catalog
+Pending resolved:
+  - Live T3 was a flat primitive bag; now composed from the pack catalog
+Project status changes:
+  - 20-lcars-generative-interface: live generative path has a named catalog; Literal path unchanged
+Next:
+  - `personal:SEA-33` — review `?surface=live` against the pack catalog
+  - Push app `e691dec` only if Sean asks
+--- END BLOCK ---
+
+### 2026-09-03 — Onori rails absorb + LCARS off-system lint
+
+SessionID: 2026-09-03-voyager-onori1
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain, 20-lcars-generative-interface
+Summary: Assessed Sanity/Onori design-system-evals (not previously in vault). Absorbed transferable rails: isolation (`assistance off`), pack recipes, product-repo lint. Generalized LCARS capture into workspace `vqa capture`; retired `prove_sys47.py`. Added reusable `09-tools/eslint-off-system` and wired LCARS `npm run lint`.
+Artifacts:
+  - 08-knowledge/design/agent-output-rails.md — Onori method without cloning the tester
+  - 03-skills/visual-prove-engine/scripts/capture.py + capture.mjs — project-agnostic URL→PNG+manifest
+  - 09-tools/eslint-off-system/ — shared no-raw-hex + no-arbitrary-tailwind rules
+  - github.com/snds/LCARS `a133bb4` — off-system ESLint + TOKENS-wired schematics + capture wrapper
+  - workspace `8024215` — Onori absorb commit (ahead of origin until this session-end push)
+Decisions:
+  - Do not clone sanity-labs/design-system-agent-tester; workspace path is capture→prove→score
+  - Isolation law: docs/catalog proves record `--assistance off`; assistance on is shipping not score
+  - ESLint lives in product repos; vault owns reusable rules + doctrine only
+  - Pack wrappers may pass URL/out; they must not reimplement the capture manifest
+Pending added:
+  - centric-ui / Davinci off-token Tailwind lint (employer PR path)
+Pending resolved:
+  - Sanity design-system-evals source assessment gap
+  - LCARS had no ESLint / off-system gate
+Project status changes:
+  - 19-workspace-brain: agent-output rails + vqa capture + eslint-off-system landed
+  - 20-lcars-generative-interface: capture via workspace vqa; `npm run lint` green (65 tests)
+Next:
+  - `personal:SEA-33` — review `?surface=live` against the pack catalog (from prior fragment)
+  - Optional: centric-ui off-token Tailwind lint via employer PR path
+  - Push LCARS `a133bb4` only if Sean asks (app already ahead)
+--- END BLOCK ---
+
+
 ### 2026-09-03 — ATSMATRIX GitHub org review, skip
 
 SessionID: 2026-09-03-voyager-c0aba2

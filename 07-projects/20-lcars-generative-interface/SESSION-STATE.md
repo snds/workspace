@@ -1,6 +1,6 @@
 # SESSION-STATE — LCARS Generative Interface
 
-_Last updated: 2026-09-03 — session-end after pack catalog + live T3 compose_
+_Last updated: 2026-09-03 — session-end after Onori rails + off-system lint_
 
 ## Vault docs (this project)
 
@@ -18,17 +18,17 @@ _Last updated: 2026-09-03 — session-end after pack catalog + live T3 compose_
 
 ### Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: Live generative T3 is composed from a pack catalog (`src/catalog/system/`, `docs/COMPONENT-SYSTEM.md`), not a flat primitive bag. App committed on `main` as `e691dec` (not pushed). S-SYS47-01 Literal stays the plate path; do not mix the two. **Capture:** use workspace `vqa capture` (app `scripts/capture-sys47.mjs` is a thin wrapper). `docs/construction/prove_sys47.py` is retired. Isolation: `--assistance off` for docs/catalog proves. Pills are controls; spine is bars; aesthetic is barcode + hairline. 8px inside a family, 24px between content groups.
-- **Current focus**: visual review of the structured live T3. Literal SYS47 residuals still named, still unmeasured.
+- **TL;DR (for future agent)**: Live T3 from pack catalog (`src/catalog/system/`). App `main` @ `a133bb4` (ahead 2, not pushed): pack catalog + off-system ESLint (`npm run lint`). Capture via workspace `vqa capture`. Literal SYS47 separate. Isolation: `--assistance off`. Pills=controls; spine=bars; 8px family / 24px groups.
+- **Current focus**: Session closed. Next = `personal:SEA-33` live T3 review.
 - **Working set**:
-  - App: `src/catalog/system/` + `LiveDisplay.tsx` + `docs/COMPONENT-SYSTEM.md` @ `e691dec`; `scripts/capture-sys47.mjs` → workspace vqa
+  - App: catalog + `LiveDisplay.tsx` + `eslint/off-system/` @ `a133bb4`; `scripts/capture-sys47.mjs` → workspace vqa
   - Vault: `docs/content-groups.md`; prove via `03-skills/visual-prove-engine/vqa.py`
-- **Last action**: Capture path generalized to workspace (2026-09-03). Cursor Grok 4.6 / Cursor / Personal MBP.
-- **Next action**: `personal:SEA-33` — review `?surface=live` against the pack catalog. Optional T1/T2 composers only if that review asks. Push app `e691dec` only if Sean asks. Do not construct from flattened plates.
-- **Open decisions**: "Matches Literal" is measured within the 19-cue A-altitude contract. Residuals named, not closed. Coverage remains 0.8421 (3 attested).
-- **Blocked on**: nothing for the catalog landing; Ruffle/JPEXS still needs approve if motion track resumes
-- **In-flight / do-not-touch**: app in snds/LCARS; vault design authority; do not treat SWF/AI as Literal overrides; do not edit the 2026-08-09 matrix rows (history), extend the cuespec instead
-- **Agent thread**: Live T3 generative + pack catalog 2026-09-02/03. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **Last action**: Session-end. Off-system lint landed (`a133bb4`). Cursor Grok 4.6 / Cursor / Personal MBP.
+- **Next action**: `personal:SEA-33` — review `?surface=live` vs pack catalog. Push app only if Sean asks. Do not construct from flattened plates. CSS hex in `renderers.css` / `shell.css` still out of JS lint scope.
+- **Open decisions**: "Matches Literal" measured within 19-cue A-altitude contract. Residuals named, not closed. Coverage 0.8421 (3 attested).
+- **Blocked on**: nothing for catalog/lint; Ruffle/JPEXS needs approve if motion resumes
+- **In-flight / do-not-touch**: app in snds/LCARS; vault design authority; do not treat SWF/AI as Literal overrides; leave untracked `CLAUDE.md` unless Sean wants it
+- **Agent thread**: Pack catalog → Onori rails/lint → session-end. Cursor Grok 4.6 / Cursor / Personal MBP.
 
 ### Environment
 
@@ -48,9 +48,9 @@ _Last updated: 2026-09-03 — session-end after pack catalog + live T3 compose_
 
 ### VCS state
 
-- **Branch (app)**: `main` @ `e691dec` (1 commit ahead of origin; not pushed)
+- **Branch (app)**: `main` @ `a133bb4` (2 ahead of origin; not pushed)
 - **Vault**: `main` (this session-end commit). SWF dumps remain local untracked.
-- **Test state at last check**: app `vitest` 65/65 (2026-09-02). Literal residuals still unmeasured.
+- **Test state at last check**: `vitest` 65/65 + `npm run lint` green (2026-09-03). Literal residuals still unmeasured.
 
 ### Active tooling / MCP bridges
 

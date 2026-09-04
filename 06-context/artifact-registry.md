@@ -6,7 +6,7 @@
 
 ### 20-lcars-generative-interface/ (README.md + SESSION-STATE.md + SPEC.md + docs/construction/ + canvases/)
 - **Purpose**: Project home for the generative LCARS interface (design → plan → implementation pointers). Spec captures constitution-first Scene IR architecture, combadge roles, APCA+AA, data-first 3D viewports. Construction pack holds cuespec, IR, prove reports, and captures for S-SYS47-01. `canvases/` holds the Cursor `lcars-replication-gap` copy.
-- **Last modified**: 2026-09-03 — `content-groups.md` gained `support.controls` + variant note; Live handoff points at app `e691dec` pack catalog. Prove v4 still the Literal baton.
+- **Last modified**: 2026-09-03 — Onori absorb: `vqa capture` path, `prove_sys47.py` tombstone, content-groups + Live handoff; LCARS app `a133bb4` off-system lint (sibling repo).
 
 ## Workspace Brain — 07-projects/19-workspace-brain/ (git-tracked)
 
