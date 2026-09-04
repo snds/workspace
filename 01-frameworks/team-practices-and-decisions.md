@@ -6,7 +6,7 @@ _Last updated: 2026-09-02_
 
 A layered reference for code-level craft and design-engineering conventions, organized so that *which* team I'm on and *when* a practice was adopted are both surfaceable. Read by the Last-Mile Craft Framework (section: Code-level craft) as the authoritative source for team-specific conventions that override or extend the general best-practices baseline.
 
-This is a living document. Unlike the sixteen frameworks, it changes frequently — when team composition shifts, when a convention gets revisited, when historical context becomes newly relevant.
+This is a living document. Unlike the seventeen frameworks, it changes frequently — when team composition shifts, when a convention gets revisited, when historical context becomes newly relevant.
 
 ---
 
@@ -219,7 +219,7 @@ Conventions Sean has seen succeed across multiple teams. Not binding on current 
 
 ---
 
-## Integration with the sixteen frameworks
+## Integration with the seventeen frameworks
 
 - **Last-Mile Craft Framework** (05) references this document as the authoritative source for team-specific code-level craft conventions that override or extend the general best-practices baseline.
 - **Collaboration and Critique Framework** (03) references this document indirectly — the shared archive of disagreements and outcomes may feed into updating the active layer when a prediction plays out and a team convention needs to change.

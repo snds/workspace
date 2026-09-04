@@ -35,6 +35,7 @@ should flow, and why those choices affect downstream quality.
 - **Lighting and rendering** → `3d-lighting-rendering`
 - **Rigging, animation** → `3d-rigging-animation`
 - **Export, baking, engine import** → `3d-asset-pipeline`
+- **Headless agent CSG (no GPU)** → [[web-3d-extensions]] (`chisel-mcp`) then this spoke for topology critique of the export
 - **Game environment layout** → `3d-spatial-design-for-games`
 
 ---
@@ -389,3 +390,4 @@ Before considering a model ready for materials or pipeline:
 
 ## Related
 - hub → [[lead-3d-designer]]
+- peer ↔ [[web-3d-extensions]]

@@ -129,6 +129,7 @@ Surfaces' native "create a skill" flows are **insufficient** if they skip this a
 | Motion / Type / Graphic / Infod / Icon | #02 + craft notes | `/motion`, `/type`, lead protocols | `/qa` lenses + toolkit scripts | design-foundations → leads → spokes | visual-qa discipline spokes |
 | Figma | #09 + DS ops | `/figma` | MCP + source-audit | `figma` hub → `figma-*` | Defers-to contracts |
 | Career / Obsidian / Adobe / Vision / Science | thin L1 in hub or knowledge | wrapper hubs | validators / CLI where applicable | foundation or cross-cutting | doctrine precedence + routing rows |
+| Multi-agent coordination | #17 | `intent-coordination` | `intent-run.py` gate/ready/verify | skills via `load_chains` per task | Intent.app optional; doctrine wins |
 
 Update this table when a cluster gains or loses a layer.
 
@@ -143,7 +144,8 @@ is the design-systems instance. Other domains use `domain-constitution/1.0`
 
 - **#08** — placement and write gates; this framework adds *rigor completeness*.
 - **#06 / #10 / #11** — universal QA, perception, and failure premortem; domain L1s specialize them, never replace them.
-- **#02 / #12 / #14 / #15 / #16** — concrete L1 instantiations.
+- **#02 / #12 / #14 / #15 / #16** — concrete domain L1 instantiations.
+- **#17** — cross-cutting L1 for multi-agent living-spec coordination (`intent-coordination` + `intent-run.py`).
 - **Skill frontmatter `defers_to`** — machine-readable L5 plugin precedence.
 - **Capability registry** — L3 external tools.
 

@@ -16,7 +16,7 @@ description: >-
   *judging* an existing animation (use /qa). Direction lives in the lead/principles
   skills; this hub is the implementation surface.
 user-invocable: true
-argument-hint: "[generate|adapt|audit|polish] [target: effect-name|component|url|page] [--lib gsap|r3f|threejs|framer|anime|lottie|rive|pixi|locomotive|barba] [--perf] [--dry]"
+argument-hint: "[generate|adapt|audit|polish] [target: effect-name|component|url|page] [--lib vgpu|gsap|r3f|threejs|framer|anime|lottie|rive|pixi|locomotive|barba] [--perf] [--dry]"
 license: Apache-2.0
 metadata:
   hub: true
@@ -66,8 +66,9 @@ Conversational invocation maps in: "build a heat-haze shader in three.js" →
 | Need | Library skill (base) |
 |---|---|
 | Scroll-driven timelines, pin/scrub | `gsap-scrolltrigger` |
-| React 3D scenes | `react-three-fiber` (+ `threejs-webgl`, `threejs-materials-master`, `threejs-vfx-atmosphere`) |
-| Raw WebGL / shaders | `threejs-webgl` · `glsl-shader-architect` |
+| New web GPU / WGSL / canvas shader | [[vgpu-webgpu]] (`--lib vgpu`) |
+| React 3D scenes (existing R3F/Three) | `react-three-fiber` (+ `threejs-webgl`, `threejs-materials-master`, `threejs-vfx-atmosphere`) |
+| Raw WebGL / GLSL on a Three tree | `threejs-webgl` · `glsl-shader-architect` |
 | React / JS / Vue UI motion (motion.dev) | `motion-framer` · `react-spring-physics` — import `motion/react` |
 | Lightweight UI tweens | `animejs` · `animated-component-libraries` |
 | Native SVG (mask, clip, stroke draw, morph) | `animejs` / GSAP (`--lib gsap`) after [[motion-graphic-systems]] names the technique |
@@ -75,7 +76,8 @@ Conversational invocation maps in: "build a heat-haze shader in three.js" →
 | Programmatic video / kinetic title cards | [[motion-programmatic-video]] then Remotion / Motion Canvas / Manim |
 | Page transitions / smooth scroll | `barba-js` · `locomotive-scroll` |
 | 2D canvas / particles | `pixijs-2d` · `lightweight-3d-effects` |
-| Engines / XR | `playcanvas-engine` · `babylonjs-engine` · `aframe-webxr` |
+| Live multi-engine demo canvas / WebXR in-world chat | [[web-3d-extensions]] (`maige-3d-mcp`) — not a ship lib |
+| Engines / XR (product) | `playcanvas-engine` · `babylonjs-engine` · `aframe-webxr` |
 | Authoring → web pipeline | `spline-interactive` · `blender-web-pipeline` · `substance-3d-texturing` |
 | Cross-cutting integration | `web3d-integration-patterns` · `modern-web-design` · `scroll-reveal-libraries` |
 
@@ -116,4 +118,4 @@ library skills hold the depth, the `motion-*` skills hold the theory.
 
 ## Related
 - foundation → [[design-foundations]]
-- peer ↔ [[motion-programmatic-video]]
+- peer ↔ [[motion-programmatic-video]] · [[vgpu-webgpu]] · [[web-3d-extensions]]

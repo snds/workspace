@@ -10,9 +10,10 @@ triggers: [unity hdrp, adapter unity, adaptive probe volume, apv, hdrp volume, u
 tier: spoke
 hub: realtime-visual-craft
 domain: game
-related: [realtime-visual-craft, img-photoreal-rendering, dynamic-gi-production, bake-orchestration, adapter-webgpu-three, adapter-unreal]
+related: [realtime-visual-craft, img-photoreal-rendering, dynamic-gi-production, bake-orchestration, adapter-webgpu-three, adapter-unreal, web-3d-extensions]
+requires: [unity-mcp]
 surfaces: ["*"]
-spec_version: "2.0"
+spec_version: "2.1"
 ---
 
 # Adapter — Unity HDRP (northstar corollary)
@@ -27,6 +28,9 @@ workflows. Ship path for browser titles remains [[adapter-webgpu-three]]. Doctri
 - Designing probe-grid behavior inspired by APV for a custom web irradiance volume.
 - Baking in Unity for native HDRP content or export into web ([[bake-orchestration]]).
 - Comparing Volume-based post/exposure stacks to Three composer order.
+- Driving a **live Unity Editor**. Capability `unity-mcp` (Coplay preferred for personal-solo;
+  official Unity 6 MCP needs Cloud + AI seat). Preflight; if absent, edit C#/scenes on disk.
+  See [[web-3d-extensions]].
 
 ## Feature → doctrine mapping
 
@@ -86,4 +90,4 @@ Checklist when mirroring a Unity look:
 
 ## Related
 - hub → [[realtime-visual-craft]]
-- peer ↔ [[adapter-webgpu-three]] · [[adapter-unreal]] · [[dynamic-gi-production]] · [[bake-orchestration]] · [[lead-3d-designer]]
+- peer ↔ [[adapter-webgpu-three]] · [[adapter-unreal]] · [[dynamic-gi-production]] · [[bake-orchestration]] · [[lead-3d-designer]] · [[web-3d-extensions]]

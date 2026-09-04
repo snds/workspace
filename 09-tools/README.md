@@ -197,6 +197,26 @@ python3 09-tools/cursor-externalize.py
 python3 09-tools/cursor-externalize.py --check
 ```
 
+## intent-run.py
+
+Portable kernel of Intent coordination: approval gate, ready waves, git
+worktrees, checklist measures. Optional desktop app via `install-app` /
+`open-app` / `doctor`. Doctrine: [[17-intent-coordination-operating-model]].
+
+```
+python3 09-tools/intent-run.py doctor
+python3 09-tools/intent-run.py daemon            # live intentd status
+python3 09-tools/intent-run.py daemon workspace.list
+python3 09-tools/intent-run.py gate --spec docs/INTENT.md
+python3 09-tools/intent-run.py ready --spec docs/INTENT.md
+python3 09-tools/intent-run.py worktree add T1 --spec docs/INTENT.md
+python3 09-tools/intent-run.py verify --spec docs/INTENT.md
+python3 09-tools/intent-run.py verify --spec docs/INTENT.md --run
+python3 09-tools/intent-run.py install-app   # optional GUI; macOS copies Intent.app
+```
+
+Measures are printed unless `--run`. Never auto-commit. Context profile on the spec still governs landing.
+
 ## eslint-off-system/
 
 Reusable ESLint rules that ban raw color literals and Tailwind arbitrary

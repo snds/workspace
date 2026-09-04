@@ -9,7 +9,7 @@ Claude Code also reads [[CLAUDE]] (its adapter) at session start. You read this.
 
 ## Operating layer
 
-- [[_FRAMEWORKS|Frameworks]] — the sixteen that govern every project
+- [[_FRAMEWORKS|Frameworks]] — the seventeen that govern every project
 - [[_CONTEXT|Context]] — who, what, where, when (role, preferences, sessions, artifacts)
 - [[_SKILLS|Skills]] — 292-skill library, hub and spokes
 - [[_PROJECTS|Projects]] — active work across all domains
@@ -66,7 +66,7 @@ WHERE file.name = "project-context"
 - **`.claude/`** — Claude Code config, hooks, slash-command skills. Don't edit in Obsidian; it's ignored.
 - **`.obsidian/`** — Vault config. Also ignored.
 - **`00-bootstrap/`** — Getting-started + setup. Contract lives in `AGENTS.md`.
-- **`01-frameworks/`** — The sixteen operating frameworks (08 governs editing the workspace itself; 10 is the native-resolution perception-integrity precondition; 11 is the anticipatory failure/pre-mortem lens; 12 realtime photoreal; 13 domain rigor; 14–16 engineering / analysis / security ops).
+- **`01-frameworks/`** — The seventeen operating frameworks (08 governs editing the workspace itself; 10 is the native-resolution perception-integrity precondition; 11 is the anticipatory failure/pre-mortem lens; 12 realtime photoreal; 13 domain rigor; 14–16 engineering / analysis / security ops; **17 living-spec agent coordination**).
 - **`02-shared-references/`** — Standards: ontology + routing map, frontmatter spec, reasoning/artifact standards.
 - **`03-skills/`** — Skill library (hub/spoke). Graph in `skills.registry.json` (generated from frontmatter).
 - **`04-preferences/`** — User preferences file (how Sean wants to collaborate).

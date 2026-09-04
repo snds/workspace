@@ -283,6 +283,119 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
       "fallback": "degrade",
       "fallback_note": "Continue with design-foundations + the hub/spoke. Say the DesignParser lookup was skipped. Do not invent rule IDs. Do not vendor the upstream rules/ tree into this checkout.",
       "powers": ["designparser"]
+    },
+    "vgpu-mcp": {
+      "kind": "mcp",
+      "provides": "vgpu.sh hosted MCP — search/read WebGPU library docs and verified examples (tools docs + examples). Read-only; no auth.",
+      "detect": { "method": "mcp-tool-present", "match": "*vgpu*" },
+      "install": {
+        "claude-code": "claude mcp add --transport http vgpu https://vgpu.sh/api/mcp --scope user",
+        "cursor": "Add to ~/.cursor/mcp.json: `\"vgpu\": { \"url\": \"https://vgpu.sh/api/mcp\" }`. Reload MCP. Template: `00-bootstrap/templates/cursor-mcp.json.example`.",
+        "generic": "Connect Streamable HTTP to https://vgpu.sh/api/mcp (modern MCP; not legacy session HTTP). Or stdio: `npx -y vgpu mcp`."
+      },
+      "fallback": "degrade",
+      "fallback_note": "Use vgpu-cli (`npx vgpu docs` / `npx vgpu examples`) or fetch https://vgpu.sh/agents.md. Do not invent vgpu APIs from training data.",
+      "powers": ["vgpu-webgpu"]
+    },
+    "vgpu-cli": {
+      "kind": "cli",
+      "provides": "vgpu CLI — WGSL check/reflect, bundled docs, example search/pull, doctor, Dawn/software-renderer install, local MCP stdio.",
+      "detect": { "method": "shell", "probe": "command -v vgpu || npx --no-install vgpu --version" },
+      "install": {
+        "any": "Use without a global bin: `npx -y vgpu`. In a product repo: `pnpm add vgpu`. Headless: `npx vgpu doctor` then `npx vgpu install-dawn` or `npx vgpu install-software-renderer`."
+      },
+      "fallback": "degrade",
+      "fallback_note": "npx -y vgpu still works with network. If npm is unavailable, fetch https://vgpu.sh/docs/ and skip check/doctor; say so. Never invent shader reflection.",
+      "powers": ["vgpu-webgpu"]
+    },
+    "gltf-transform": {
+      "kind": "cli",
+      "provides": "Khronos-adjacent glTF Transform CLI — inspect, optimize, Draco/meshopt, KTX2/Basis, quantize GLB/glTF for web delivery.",
+      "detect": { "method": "shell", "probe": "command -v gltf-transform" },
+      "install": {
+        "any": "npm i -g @gltf-transform/cli"
+      },
+      "fallback": "degrade",
+      "fallback_note": "Ship the authored GLB and say it was not optimized. Prefer installing the CLI before calling a web asset 'final'. Official validator (gltf-validator) is a separate capability.",
+      "powers": ["3d-asset-pipeline"]
+    },
+    "threejs-devtools-mcp": {
+      "kind": "mcp",
+      "provides": "Live Three.js / R3F scene inspect and edit via a browser WebSocket bridge (scene tree, materials, shaders, perf).",
+      "detect": { "method": "mcp-tool-present", "match": "*threejs-devtools*" },
+      "install": {
+        "claude-code": "claude mcp add --scope user --transport stdio threejs-devtools -- npx -y threejs-devtools-mcp",
+        "cursor": "Add to ~/.cursor/mcp.json: command `npx`, args `[\"-y\", \"threejs-devtools-mcp\"]`. Keep the injected browser tab open while tools run.",
+        "generic": "Run `npx -y threejs-devtools-mcp` as stdio MCP; start the app's dev server so the bridge can attach."
+      },
+      "fallback": "degrade",
+      "fallback_note": "Debug from source + `?perfcapture` / [[gpu-capture-tooling]] instead. Do not invent a live scene graph. This MCP is for existing Three trees, not greenfield vgpu work.",
+      "powers": ["adapter-webgpu-three"]
+    },
+    "chisel-mcp": {
+      "kind": "mcp",
+      "provides": "Headless CSG modeling MCP — primitives, booleans, software multi-view PNG, export glTF/OBJ. No GPU.",
+      "detect": { "method": "mcp-tool-present", "match": "*chisel*" },
+      "install": {
+        "claude-code": "claude mcp add --scope local --transport stdio chisel -- npx -y github:EYamanS/chisel  # set CSG_OUTPUT_DIR to an absolute product-repo path",
+        "cursor": "Optional project MCP only. Copy chisel block from `00-bootstrap/templates/cursor-mcp-3d-extensions.json.example`. Set CSG_OUTPUT_DIR to an existing absolute export dir.",
+        "generic": "npx -y github:EYamanS/chisel with env CSG_OUTPUT_DIR=/absolute/export/dir"
+      },
+      "fallback": "degrade",
+      "fallback_note": "Model in Blender / [[3d-modeling-fundamentals]] or ask Sean for a GLB. Do not invent CSG meshes as files you did not write.",
+      "powers": ["web-3d-extensions"]
+    },
+    "maige-3d-mcp": {
+      "kind": "mcp",
+      "provides": "Live multi-engine canvas MCP (Three / A-Frame / Babylon / R3F + WebXR chat). npm `maige-3d-mcp`; repo m-ai-geXR/mcp-webgpu. Demo/compare surface, not a ship renderer.",
+      "detect": { "method": "mcp-tool-present", "match": "*maige*" },
+      "install": {
+        "claude-code": "claude mcp add --scope local --transport stdio maige-3d -- npx -y maige-3d-mcp",
+        "cursor": "Optional. Template: `00-bootstrap/templates/cursor-mcp-3d-extensions.json.example` (`npx -y maige-3d-mcp`). Clients via `pnpm dev` in a scratch clone if you need the four viewports.",
+        "generic": "npx maige-3d-mcp (stdio). Relay chat needs no API key; do not put provider keys in git."
+      },
+      "fallback": "degrade",
+      "fallback_note": "Implement in the named engine from source instead (vgpu / Three / R3F). Do not treat this as Legion or vgpu.",
+      "powers": ["web-3d-extensions"]
+    },
+    "godot-mcp": {
+      "kind": "mcp",
+      "provides": "Godot 4.5+ editor bridge (satelliteoflove/godot-mcp) — scenes, nodes, playtest over a local WebSocket addon.",
+      "detect": { "method": "mcp-tool-present", "match": "*godot*" },
+      "install": {
+        "claude-code": "claude mcp add --scope local --transport stdio godot-mcp -- npx -y @satelliteoflove/godot-mcp  # then: npx @satelliteoflove/godot-mcp --install-addon /path/to/godot/project",
+        "cursor": "Optional project MCP. Template block `godot-mcp`. Enable the Godot MCP plugin; keep the editor open.",
+        "generic": "npx -y @satelliteoflove/godot-mcp plus the editor addon. Godot 4.5+, Node 20+."
+      },
+      "fallback": "degrade",
+      "fallback_note": "Read project.godot and scripts on disk. Do not claim scene-tree edits ran.",
+      "powers": ["web-3d-extensions"]
+    },
+    "unity-mcp": {
+      "kind": "mcp",
+      "provides": "Unity Editor bridge. Prefer Coplay MCP for Unity (MIT, often http://localhost:8080/mcp). Official Unity 6 AI MCP needs Cloud + subscription + ~/.unity/relay.",
+      "detect": { "method": "mcp-tool-present", "match": "*unity*mcp*" },
+      "install": {
+        "claude-code": "With Unity open: Coplay Window → MCP for Unity → Configure, or add HTTP `http://localhost:8080/mcp`. Official path: Unity Integrations → Claude Code.",
+        "cursor": "Coplay: while Editor is running, `\"unityMCP\": { \"url\": \"http://localhost:8080/mcp\" }` in a project mcp.json. Official: Integrations → Cursor, or ~/.unity/relay … --mcp.",
+        "generic": "Package Manager git URL https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#main (Unity 2021.3+ / 6.x, Python 3.10+, uv). Official Unity MCP: com.unity.ai.assistant + Cloud seat."
+      },
+      "fallback": "degrade",
+      "fallback_note": "Work from C# / scenes on disk. Northstar stills do not need this MCP. Do not invent Editor mutations.",
+      "powers": ["adapter-unity-hdrp"]
+    },
+    "unreal-agentbridge": {
+      "kind": "mcp",
+      "provides": "Unreal Engine 5.6 AgentBridge — editor/runtime via gRPC + MCP (Tempo plugin). Only when an UE project is the working set.",
+      "detect": { "method": "mcp-tool-present", "match": "*agentbridge*" },
+      "install": {
+        "claude-code": "Follow Incurian/AgentBridge: UE 5.6 project with Tempo + AgentBridge plugin, then the repo's Python MCP wrapper as a local stdio server.",
+        "cursor": "Same as generic; project-scoped MCP only. Do not add to the standing user mcp.json.",
+        "generic": "https://github.com/Incurian/AgentBridge — Unreal 5.6, Tempo gRPC, Python 3.11+ MCP. Not needed for watching UE northstar footage."
+      },
+      "fallback": "degrade",
+      "fallback_note": "Use Unreal as a northstar reference ([[adapter-unreal]]) without the editor bridge. Do not claim actors were spawned.",
+      "powers": ["adapter-unreal"]
     }
   }
 }
@@ -386,6 +499,26 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
   `suggest_rules_for_context`. Degrades: design work continues; the lookup is skipped
   and named. Rule content is © designparser — use in work, do not republish as a
   vault dataset. Workspace contrast / QA / token doctrine still wins on conflict.
+- **vgpu-mcp** — powers [[vgpu-webgpu]]. Hosted `https://vgpu.sh/api/mcp`, no token.
+  Tools are documentation and verified examples, not a GPU. Degrades to `vgpu-cli` or
+  agents.md. Detect glob `*vgpu*` (hosted tool names are otherwise too generic: `docs` /
+  `examples`).
+- **vgpu-cli** — powers [[vgpu-webgpu]]. `npx vgpu` (`check`, `docs`, `examples`,
+  `doctor`, local `mcp`). Probe accepts a global `vgpu` bin or a cached npx install.
+- **gltf-transform** — powers [[3d-asset-pipeline]]. Web delivery optimize/inspect.
+  Degrades: unoptimized GLB, named. Not a substitute for `gltf-validator`.
+- **threejs-devtools-mcp** — powers [[adapter-webgpu-three]]. Live Three/R3F bridge.
+  Degrades to source + perfcapture. Do not use on greenfield vgpu scenes.
+- **chisel-mcp** — powers [[web-3d-extensions]]. Headless CSG → glTF. Optional; never
+  a standing Cursor server. `CSG_OUTPUT_DIR` is machine-local, product-repo only.
+- **maige-3d-mcp** — powers [[web-3d-extensions]]. Live Four-engine demo canvas
+  (`npx maige-3d-mcp`). Not a ship renderer. Relay chat; no keys in git.
+- **godot-mcp** — powers [[web-3d-extensions]]. Godot 4.5+ addon + npx bridge.
+- **unity-mcp** — powers [[adapter-unity-hdrp]]. Coplay HTTP or official Unity relay.
+  Editor must be running. Degrades to disk. Personal vs employer Unity accounts: do not
+  mix.
+- **unreal-agentbridge** — powers [[adapter-unreal]]. UE 5.6 + Tempo. Northstar matching
+  does not require it.
 
 ## Adding a capability
 

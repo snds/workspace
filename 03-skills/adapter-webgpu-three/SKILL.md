@@ -10,9 +10,10 @@ triggers: [adapter webgpu, three webgpu adapter, webgpu three, tsl post order, e
 tier: spoke
 hub: realtime-visual-craft
 domain: game
-related: [webgpu-advanced-rendering, threejs-materials-master, threejs-vfx-atmosphere, realtime-visual-craft, realtime-render-performance, dynamic-gi-production, gpu-capture-tooling]
+related: [webgpu-advanced-rendering, threejs-materials-master, threejs-vfx-atmosphere, realtime-visual-craft, realtime-render-performance, dynamic-gi-production, gpu-capture-tooling, vgpu-webgpu]
+requires: [threejs-devtools-mcp]
 surfaces: ["*"]
-spec_version: "2.0"
+spec_version: "2.1"
 ---
 
 # Adapter — WebGPU / Three.js (primary)
@@ -24,8 +25,10 @@ APIs. Principles stay in [[realtime-visual-craft]] / [[img-photoreal-rendering]]
 
 ## Role
 
-This is the **ship adapter** for browser titles (Legion and kin). Unreal/Unity adapters are
-northstar ceilings, not defaults ([[adapter-unreal]], [[adapter-unity-hdrp]]).
+This is the **ship adapter** for **existing** Three.js browser titles (Legion and kin).
+Greenfield web GPU / WGSL / headless snapshots start at [[vgpu-webgpu]], not a new Three tree.
+Unreal/Unity adapters are northstar ceilings, not defaults ([[adapter-unreal]], [[adapter-unity-hdrp]]).
+Optional live inspect: capability `threejs-devtools-mcp` (browser tab must stay open).
 
 ## Capability map (honest)
 
@@ -103,4 +106,4 @@ Wire a URL flag (project convention: `?perfcapture`) that:
 
 ## Related
 - hub → [[realtime-visual-craft]]
-- peer ↔ [[dynamic-gi-production]] · [[shadow-quality-craft]] · [[bake-orchestration]] · [[gpu-capture-tooling]] · [[adapter-unreal]] · [[adapter-unity-hdrp]] · [[virtual-texturing-ops]] · [[lead-3d-designer]] · [[legion-project]]
+- peer ↔ [[dynamic-gi-production]] · [[shadow-quality-craft]] · [[bake-orchestration]] · [[gpu-capture-tooling]] · [[adapter-unreal]] · [[adapter-unity-hdrp]] · [[virtual-texturing-ops]] · [[lead-3d-designer]] · [[legion-project]] · [[vgpu-webgpu]] · [[web-3d-extensions]]

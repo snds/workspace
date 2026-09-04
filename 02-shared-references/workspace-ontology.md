@@ -86,6 +86,7 @@ Consult before any write. Mirrored (compressed) in [[AGENTS]] and expanded with 
 | A reusable "when X, do Y" capability | `03-skills/<name>/SKILL.md` | frontmatter v2 + `## Related` |
 | A cross-cutting method / lens / operating model | `01-frameworks/` | new framework only if 3+ consumers |
 | A durable standard / spec / vocabulary | `02-shared-references/` | additive |
+| A living intent spec (multi-agent plan) | owning project `docs/INTENT.md` or the code repo; shape [[intent-spec]] | not Linear; not chat |
 | A standing design *method* (not a project's look) | `02-shared-references/idempotent-design-decisions.md` + DSDS `shared[]` | method here; values in the target system |
 | A portable DS documentation view | `02-shared-references/dsds/` (DSDS 0.20) | view of facets 1–17; not a contract |
 | A job-context constitution (UX, eng, game, vision, …) | `02-shared-references/domain-constitutions/` | methods + complements; not project values; spec [[constitution-spec]] |

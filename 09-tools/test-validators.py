@@ -232,7 +232,45 @@ class TestValidatorFixtures(unittest.TestCase):
         self.assertEqual(errors, [])
 
 
+class TestIntentRun(unittest.TestCase):
+    SAMPLE = """---
+profile: personal-solo
+approval: pending
+---
+
+# Spec
+
+## Fidelity / acceptance checklist
+
+- [ ] tests -- measure: python3 -c 'print(1)'
+- [ ] no cmd
+
+## Task graph
+
+| id | role | skill / specialist | isolation | depends_on | status | evidence |
+|---|---|---|---|---|---|---|
+| T0 | coordinator | intent-coordination | n/a | - | | spec |
+| T1 | implementor | design-engineer | worktree | T0 | | code |
+"""
+
+    def test_gate_blocks_pending_approval(self):
+        ir = load("intent-run")
+        spec = ir.parse_spec(self.SAMPLE)
+        self.assertFalse(ir.approval_ok(spec["meta"]))
+        self.assertEqual(ir.ready_implementors(spec), [])
+
+    def test_ready_after_approval(self):
+        ir = load("intent-run")
+        spec = ir.parse_spec(self.SAMPLE.replace("approval: pending", "approval: approved 2026-09-04 by Sean"))
+        self.assertTrue(ir.approval_ok(spec["meta"]))
+        ready = ir.ready_implementors(spec)
+        self.assertEqual(len(ready), 1)
+        self.assertEqual(ready[0]["id"], "T1")
+        self.assertEqual(spec["checks"][0]["measure"], "python3 -c 'print(1)'")
+        self.assertEqual(spec["checks"][1]["measure"], "")
+
+
 if __name__ == "__main__":
-    suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestValidatorFixtures)
+    suite = unittest.defaultTestLoader.loadTestsFromModule(sys.modules[__name__])
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     sys.exit(0 if result.wasSuccessful() else 1)

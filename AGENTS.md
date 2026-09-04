@@ -154,7 +154,7 @@ Project-local overrides should be interpreted narrowly and should not silently r
 
 When workspace doctrine and an installed plugin skill disagree, resolve in this order — **highest wins**:
 
-1. **Workspace frameworks** (`01-frameworks/`, especially #06 QA, #08 contribution, #11 failure analysis, **#13 Domain Rigor Stack**, and domain L1s #02 / #12 / #14 / #15 / #16)
+1. **Workspace frameworks** (`01-frameworks/`, especially #06 QA, #08 contribution, #11 failure analysis, **#13 Domain Rigor Stack**, domain L1s #02 / #12 / #14 / #15 / #16, and **#17 intent coordination**)
 2. **Workspace skills** (`03-skills/`) — including thin **wrapper** hubs that own triggers, bans, and routing
 3. **Installed plugin skills** (Cursor/Claude marketplaces: design-skillstack, impeccable, arch-guild, pstack, superpowers, adobe, etc.)
 
@@ -317,6 +317,13 @@ or session is a **single unified thread** no matter how many agents, models, sur
 it. Mid-project handoff between *any* agents — Claude → Cursor → Perplexity → a local model → a human and
 back — must feel seamless, never like separate contracts or restarted context. This is the hardest part of
 multi-agent work, so it is a first-class contract obligation, not an afterthought.
+
+**Living spec (scale).** When two or more agents or worktrees share a job, the plan is a file
+([intent-spec](02-shared-references/intent-spec.md)), not the chat. Approve it, then
+`python3 09-tools/intent-run.py gate` / `ready` / `worktree add` / `verify`. Doctrine:
+[17-intent-coordination-operating-model.md](01-frameworks/17-intent-coordination-operating-model.md).
+The Intent desktop app is optional GUI (`intent-run.py install-app`). Open Engine still
+carries movement only.
 
 ### Single shared state (no private contexts)
 Every agent reads from and writes to the **same** state. An agent must never keep a private/parallel

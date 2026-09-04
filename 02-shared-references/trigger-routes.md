@@ -47,6 +47,29 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `dominant strategy` | 03-skills/play-prove/SKILL.md — no_dominant_strategy assertion on adapter metrics |
 | `flip metric` | 03-skills/visual-prove-engine/SKILL.md — altitude B; `vqa compare` + flip_region; degrades to flip-lite |
 | `gltf validator` | 03-skills/visual-prove-engine/SKILL.md — `vqa mesh`; fail closed on Error |
+| `vgpu` | 03-skills/vgpu-webgpu/SKILL.md — default web GPU runtime; MCP https://vgpu.sh/api/mcp + `npx vgpu`; existing Three stays on adapter-webgpu-three |
+| `vgpu.sh` | 03-skills/vgpu-webgpu/SKILL.md — default web GPU runtime (vgpu) |
+| `wgsl` | 03-skills/vgpu-webgpu/SKILL.md — new web shaders; GLSL on an existing Three tree → glsl-shader-architect |
+| `web 3d` | 03-skills/vgpu-webgpu/SKILL.md — runtime selection; DCC → lead-3d-designer; glTF → 3d-asset-pipeline |
+| `webgpu shader` | 03-skills/vgpu-webgpu/SKILL.md — greenfield WebGPU; Three WebGPURenderer/TSL → webgpu-advanced-rendering |
+| `canvas webgpu` | 03-skills/vgpu-webgpu/SKILL.md |
+| `headless webgpu` | 03-skills/vgpu-webgpu/SKILL.md — `npx vgpu doctor` / Dawn / mock |
+| `gltf-transform` | 03-skills/3d-asset-pipeline/SKILL.md — optimize GLB before web delivery |
+| `threejs-devtools` | 03-skills/adapter-webgpu-three/SKILL.md — live Three/R3F inspect; not for greenfield vgpu |
+| `boolean csg` | 03-skills/web-3d-extensions/SKILL.md — conversation/intent-valid; chisel when the verb is generate |
+| `csg to gltf` | 03-skills/web-3d-extensions/SKILL.md |
+| `without blender` | 03-skills/web-3d-extensions/SKILL.md — CSG/chisel path when the job is a solid without DCC |
+| `without opening blender` | 03-skills/web-3d-extensions/SKILL.md — CSG/chisel path when the job is a solid without DCC |
+| `godot editor` | 03-skills/web-3d-extensions/SKILL.md — research without editor; mutate only if Godot is open |
+| `drive godot editor` | 03-skills/web-3d-extensions/SKILL.md — research without editor; mutate only if Godot is open |
+| `drive unity editor` | 03-skills/adapter-unity-hdrp/SKILL.md + 03-skills/web-3d-extensions/SKILL.md |
+| `same scene three babylon` | 03-skills/web-3d-extensions/SKILL.md — maige-3d live compare |
+| `chisel mcp` | 03-skills/web-3d-extensions/SKILL.md — headless CSG → glTF |
+| `maige-3d` | 03-skills/web-3d-extensions/SKILL.md — live Three/A-Frame/Babylon/R3F canvas MCP |
+| `mcp-webgpu` | 03-skills/web-3d-extensions/SKILL.md — maige-3d-mcp; demo canvas not a ship renderer |
+| `godot mcp` | 03-skills/web-3d-extensions/SKILL.md — Godot 4.5+ editor bridge |
+| `unity mcp` | 03-skills/adapter-unity-hdrp/SKILL.md + 03-skills/web-3d-extensions/SKILL.md — Coplay or official Unity editor bridge |
+| `agentbridge` | 03-skills/adapter-unreal/SKILL.md + 03-skills/web-3d-extensions/SKILL.md — UE 5.6 editor MCP; not required for northstar stills |
 | `input-to-photon` | 03-skills/visual-prove-engine/SKILL.md — `vqa motion` photon spec; first pixel change after inject |
 | `recreate this screen` | 03-skills/visual-reference-replication/SKILL.md — lock Literal; northstar + IR + cue matrix before implement |
 | `match this reference` | 03-skills/visual-reference-replication/SKILL.md — lock Literal; refuse VLM prose as measurement |
@@ -64,6 +87,12 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `mission fit` | 03-skills/mission-fit/SKILL.md — outcome/access/quality/evidence/supervision before trusting done; blocked ≠ substitute |
 | `false success` | 03-skills/mission-fit/SKILL.md — outcome/access/quality/evidence/supervision before trusting done; blocked ≠ substitute |
 | `trust done` | 03-skills/mission-fit/SKILL.md — outcome/access/quality/evidence/supervision before trusting done; blocked ≠ substitute |
+| `living spec` | 03-skills/intent-coordination/SKILL.md + 01-frameworks/17-intent-coordination-operating-model.md — coordinator spec, waves, worktrees; run 09-tools/intent-run.py |
+| `intent coordination` | 03-skills/intent-coordination/SKILL.md — living spec then intent-run.py gate/ready/verify |
+| `intentapp` | 03-skills/intent-coordination/SKILL.md + 08-knowledge/engineering/intent-app-coordination.md — protocol in-repo; GUI optional |
+| `coordinate agents` | 03-skills/intent-coordination/SKILL.md — do not use chat as the shared plan |
+| `agent orchestration` | 03-skills/intent-coordination/SKILL.md + 09-tools/intent-run.py |
+| `isolated worktree` | 03-skills/intent-coordination/SKILL.md — intent-run.py worktree add; one writer per tree |
 | `source watch` | 03-skills/ds-source-watch/SKILL.md — fetch curated DS/agentic sources; report-first, never auto-edit ontology |
 | `ds source watch` | 03-skills/ds-source-watch/SKILL.md — fetch curated DS/agentic sources; report-first, never auto-edit ontology |
 | `latest ds thinking` | 03-skills/ds-source-watch/SKILL.md + 02-shared-references/dsds/dsds-constitution.md |
@@ -251,6 +280,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `designparser` | cross-cutting | `designparser`, `designparser rules`, `what rules apply`, `suggest_rules_for_context`, `evaluate_design` | `design-foundations` → `designparser` |
 | `failure-mode-premortem` | cross-cutting | `pre-mortem`, `premortem`, `failure mode`, `what could go wrong`, `before we build`, `red team` (+11) | `failure-mode-premortem` |
 | `harness-map` | cross-cutting | `harness map`, `map the harness`, `clean my harness`, `clean my ai harness`, `ai harness audit`, `what's shaping the agent` (+2) | `harness-map` |
+| `intent-coordination` | cross-cutting | `living spec`, `intent coordination`, `intentapp`, `intentapp.dev`, `coordinate agents`, `agent orchestration` (+3) | `intent-coordination` |
 | `interactive-capture-eval` | cross-cutting | `interactive capture`, `flythrough capture`, `record path`, `extract frames`, `ffmpeg frames`, `motion qa` (+6) | `interactive-capture-eval` |
 | `mission-fit` | cross-cutting | `mission fit`, `mission-fit`, `false success`, `false-success`, `can this agent finish`, `trust done` (+3) | `mission-fit` |
 | `native-visual-eval` | cross-cutting | `native resolution`, `high-res screenshot`, `downsample`, `downscaled`, `capture and chunk`, `1:1 pixels` (+12) | `native-visual-eval` |
@@ -272,4 +302,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 188 · Registry rows: 61_
+_Curated routes: 217 · Registry rows: 62_

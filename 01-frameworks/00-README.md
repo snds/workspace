@@ -1,15 +1,15 @@
 # Frameworks — Overview and Navigation
 
 _Workspace: `01-frameworks/`_
-_Last updated: 2026-08-28_
+_Last updated: 2026-09-04_
 
-Sixteen top-level documents that govern how design, **components & patterns**, collaboration, research, craft, QA, **perception integrity**, **anticipatory failure analysis**, **realtime photoreal operations**, **domain rigor for every skill hub**, **engineering / analysis / security operations**, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. **#09 is the design-domain hub** for components and patterns; **#13 is the meta-stack** every other domain must instantiate. They're the portable layer that stays consistent even when the specific work shifts.
+Seventeen top-level documents that govern how design, **components & patterns**, collaboration, research, craft, QA, **perception integrity**, **anticipatory failure analysis**, **realtime photoreal operations**, **domain rigor for every skill hub**, **engineering / analysis / security operations**, **intent coordination**, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. **#09 is the design-domain hub** for components and patterns; **#13 is the meta-stack** every other domain must instantiate. They're the portable layer that stays consistent even when the specific work shifts.
 
 This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all sixteen full documents.
 
 ---
 
-## The sixteen frameworks
+## The seventeen frameworks
 
 | # | Framework | Answers |
 |---|---|---|
@@ -29,6 +29,7 @@ This README is the orientation layer. Load it when you need to know which framew
 | 14 | **[[01-frameworks/14-engineering-operating-model|Engineering Operating Model]]** | How do we shape, verify, and ship FE/BE/DevOps/mobile work with done-gates? |
 | 15 | **[[01-frameworks/15-analysis-operating-model|Analysis Operating Model]]** | How do we go from question → valid method → decision without narrative theater? |
 | 16 | **[[01-frameworks/16-security-operating-model|Security Operating Model]]** | How do we threat-model, build, scan, and monitor so security is a quality dimension? |
+| 17 | **[[01-frameworks/17-intent-coordination-operating-model|Intent Coordination Operating Model]]** | How do many agents stay aligned to designed intent (living spec, waves, verify)? |
 
 ---
 
@@ -62,6 +63,7 @@ This README is the orientation layer. Load it when you need to know which framew
 | Architectural or interior reference | 01, 05 |
 | Branching, PRs, merging, multi-branch consolidation | 07 |
 | Editing the workspace itself — skills, frameworks, memory, archive, structure | 08 (+ **13** for skill clusters) |
+| Multi-agent / parallel implementors / living spec | **17**, mission-fit, `intent-run.py` |
 | Full design-engineered delivery | 01–07 |
 
 ---
@@ -262,11 +264,17 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 
 **When to invoke.** Trust boundaries, auth, supply chain, AppSec. Runs with #14 and #11.
 
+### 17 — Intent Coordination Operating Model
+
+**Core conviction.** Multi-agent work aligns on a living spec, not a chat thread. Approve, isolate, wave, verify.
+
+**When to invoke.** Two or more agents/worktrees, or explicit living-spec / orchestration language. Enforcement: `09-tools/intent-run.py`. The Intent desktop app is optional.
+
 ---
 
 ## How they interconnect
 
-The core operating lenses (01–06) are layered, not parallel — they compose in numerical order (diagrammed below). The remaining frameworks (07–16) are orthogonal meta-layers that fire across whatever the core produces. They're listed in the order they compose:
+The core operating lenses (01–06) are layered, not parallel — they compose in numerical order (diagrammed below). The remaining frameworks (07–17) are orthogonal meta-layers that fire across whatever the core produces. They're listed in the order they compose:
 
 ```
                      ┌─────────────────────────────┐
@@ -315,6 +323,7 @@ The core operating lenses (01–06) are layered, not parallel — they compose i
 - **14 ⟂ all (engineering delivery).** [[01-frameworks/14-engineering-operating-model|Engineering Operating Model]] is contracts-first FE/BE/DevOps/mobile done-gates. Runs with #06, #11, and #16 at trust boundaries.
 - **15 ⟂ all (analysis).** [[01-frameworks/15-analysis-operating-model|Analysis Operating Model]] is question → valid method → decision. Runs with #04.
 - **16 ⟂ all (security).** [[01-frameworks/16-security-operating-model|Security Operating Model]] is threat-model, scan, fail closed. Runs with #14 and #11.
+- **17 ⟂ all (multi-agent).** [[01-frameworks/17-intent-coordination-operating-model|Intent Coordination]] is living spec + waves + independent verify. Enforced by `intent-run.py`. Runs with #06, #07, #08, and [[open-agent-engine]].
 
 ---
 
@@ -333,10 +342,10 @@ The core operating lenses (01–06) are layered, not parallel — they compose i
 
 ## Notes for LLMs loading this README
 
-**Token budget guidance.** The sixteen frameworks total substantial markdown. This README captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For any fine visual-detail judgment, load #10 (it's short, and its `native-visual-eval` skill carries no hub dependency). Before proposing or building any technique with a visible failure surface, load #11 (its `failure-mode-premortem` skill also carries no hub dependency). For realtime 3D / photoreal / frame-budget / flythrough work, load #12 (its `realtime-visual-craft` skill is the command surface). For branching, PR, or consolidation work, load #07.
+**Token budget guidance.** The seventeen frameworks total substantial markdown. This README captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For any fine visual-detail judgment, load #10 (it's short, and its `native-visual-eval` skill carries no hub dependency). Before proposing or building any technique with a visible failure surface, load #11 (its `failure-mode-premortem` skill also carries no hub dependency). For realtime 3D / photoreal / frame-budget / flythrough work, load #12 (its `realtime-visual-craft` skill is the command surface). For branching, PR, or consolidation work, load #07. For multi-agent / living-spec work, load #17 and run `intent-run.py`.
 
 **When the README isn't enough.** The compressed summaries preserve the *what* but not the *why* — the examples, the canon references, the tier descriptions with thresholds, the principle-to-check translations. Any serious reasoning task in the framework's domain should load the full document.
 
-**Updates.** Framework numbering is stable (01–16). Any future framework additions should extend the sequence or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly. (#10 Perception Integrity was added 2026-06-30, #11 Anticipatory Failure Analysis on 2026-07-14, #12 Realtime Photoreal Operational on 2026-08-03, #13–#16 in the 2026-08 domain-ops pass.)
+**Updates.** Framework numbering is stable (01–17). Any future framework additions should extend the sequence or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly. (#10 Perception Integrity was added 2026-06-30, #11 Anticipatory Failure Analysis on 2026-07-14, #12 Realtime Photoreal Operational on 2026-08-03, #13–#16 in the 2026-08 domain-ops pass, #17 Intent Coordination on 2026-09-04.)
 
 **Operational state.** This folder is static reference. Operational continuity between sessions lives in per-project `SESSION-STATE.md` files (see framework 05's Operational State section for the spec) and in `../06-context/session-log.md` for cross-project session logs.

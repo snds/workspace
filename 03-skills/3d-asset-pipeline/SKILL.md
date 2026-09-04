@@ -15,13 +15,16 @@ description: >
   degenerate faces, or any question about getting a 3D asset from a DCC tool into an
   engine correctly. This skill covers the handoff from 3D application to game engine —
   not material authoring (3d-materials-shading), shader code (glsl-shader-architect),
-  or Three.js implementation (threejs-materials-master).
+  or Three.js implementation (threejs-materials-master). Web runtime after export:
+  vgpu-webgpu (greenfield) or adapter-webgpu-three (existing Three). Triggers also:
+  gltf-transform, GLB optimize, meshopt, KTX2 basis.
 hub: lead-3d-designer
 aliases: [3d-asset-pipeline]
 tier: spoke
 domain: design
 prerequisites: [lead-3d-designer]
-spec_version: "2.0"
+requires: [gltf-transform]
+spec_version: "2.1"
 ---
 
 # 3D Asset Pipeline
@@ -43,6 +46,7 @@ workflows, LOD generation, texture compression, and engine import validation.
 - **Rig export, animation bake** → `3d-rigging-animation`
 - **GLSL shader code** → `glsl-shader-architect`
 - **Three.js material implementation** → `threejs-materials-master`
+- **New web GPU / WGSL runtime** → `vgpu-webgpu`
 - **LOD design philosophy** → `3d-spatial-design-for-games` (the design decisions);
   this skill covers the generation and technical pipeline
 
@@ -85,8 +89,9 @@ schema maintained by the Khronos Group.
 - **glTF**: separate files (`.gltf` JSON + `.bin` binary geometry + texture files).
 - **GLB**: single binary container (all data packed) — preferred for delivery.
 - **When to use**: Web delivery (Three.js, Babylon.js), AR/VR (WebXR, RealityKit), progressive
-  loading pipelines, any context where an open standard matters. **Native to Three.js and React
-  Three Fiber — the preferred format for Legion's web renderer.**
+  loading pipelines, any context where an open standard matters. **Preferred interchange for
+  every web runtime here** (vgpu, Three.js, R3F). Legion's live loader is still Three
+  `GLTFLoader`; optimize with `gltf-transform` before either runtime.
 - **Engine support**: Unreal (native) and Unity (via importer) both import glTF, but it's less
   mature than FBX for animation — verify rig compatibility before committing to glTF for
   character import.
@@ -153,9 +158,10 @@ gltf-transform quantize model.glb model-quantized.glb
 gltf-transform optimize model.glb model-final.glb
 ```
 
-**For Legion's Three.js pipeline**: use `gltf-transform` as the final step — author in Blender
-→ export GLB → run through `gltf-transform` for compression → import into the Three.js scene.
-(Full optimization command reference in "glTF Optimization Reference" below.)
+**Web delivery (any project):** author in Blender → export GLB → `gltf-transform optimize` →
+validate (`gltf-validator` / `vqa mesh`) → load in [[vgpu-webgpu]] or the existing Three
+loader. Capability `gltf-transform`: preflight; if missing, ship the authored GLB and say it
+was not optimized. (Full command reference in "glTF Optimization Reference" below.)
 
 ### USDZ
 
@@ -630,3 +636,4 @@ implementation for bpy export automation; folded here rather than added as a dup
 
 ## Related
 - hub → [[lead-3d-designer]]
+- peer ↔ [[vgpu-webgpu]] · [[web-3d-extensions]]

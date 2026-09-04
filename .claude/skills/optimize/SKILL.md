@@ -24,7 +24,7 @@ Default scope is **full**: read all the foundation files listed below. If user s
 **Full-scope reads (in this order):**
 
 1. `CLAUDE.md` — primary context
-2. `01-frameworks/00-README.md` + the numbered frameworks it lists (sixteen as of 2026-08; do not assume the old five-file core set)
+2. `01-frameworks/00-README.md` + the numbered frameworks it lists (seventeen as of 2026-09; do not assume the old five-file core set)
 3. `01-frameworks/team-practices-and-decisions.md`
 4. `06-context/role-and-context.md`
 5. `06-context/project-context.md` (full file)

@@ -14,7 +14,7 @@ aliases: [realtime-visual-craft, rvc]
 triggers: [photoreal, photorealism, realtime craft, realtime visual, flythrough, fly-through, northstar, render contract, RENDER.md, BUDGET.md, NORTHSTAR.md, cinematic look, movie-level, match the reference, frame budget qa, still grid, motion fidelity, interactive capture, craft photoreal, harden render, polish render]
 tier: hub
 domain: game
-related: [imaging-foundations, realtime-render-performance, native-visual-eval, interactive-capture-eval, reference-video-review, visual-qa-photoreal-rendering, rendering-guild, failure-mode-premortem, lead-visual-qa, lead-game-developer, dynamic-gi-production, shadow-quality-craft, virtual-texturing-ops, bake-orchestration, gpu-capture-tooling, adapter-webgpu-three, adapter-unreal, adapter-unity-hdrp]
+related: [imaging-foundations, realtime-render-performance, native-visual-eval, interactive-capture-eval, reference-video-review, visual-qa-photoreal-rendering, rendering-guild, failure-mode-premortem, lead-visual-qa, lead-game-developer, dynamic-gi-production, shadow-quality-craft, virtual-texturing-ops, bake-orchestration, gpu-capture-tooling, adapter-webgpu-three, adapter-unreal, adapter-unity-hdrp, vgpu-webgpu]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -125,4 +125,4 @@ Match-and-refuse. If you are about to do any of these, stop and rewrite the plan
 
 ## Related
 - spoke → [[adapter-unity-hdrp]] · [[adapter-unreal]] · [[adapter-webgpu-three]] · [[bake-orchestration]] · [[dynamic-gi-production]] · [[gpu-capture-tooling]] · [[render-qa-toolkit]] · [[shadow-quality-craft]] · [[virtual-texturing-ops]]
-- peer ↔ [[lead-visual-qa]] · [[interactive-capture-eval]] · [[render-qa-toolkit]] · [[native-visual-eval]] · [[reference-video-review]] · [[visual-qa-photoreal-rendering]] · [[rendering-guild]] · [[failure-mode-premortem]] · [[realtime-render-performance]] · [[imaging-foundations]] · [[lead-game-developer]] · [[legion-project]] · [[lead-3d-designer]]
+- peer ↔ [[lead-visual-qa]] · [[interactive-capture-eval]] · [[render-qa-toolkit]] · [[native-visual-eval]] · [[reference-video-review]] · [[visual-qa-photoreal-rendering]] · [[rendering-guild]] · [[failure-mode-premortem]] · [[realtime-render-performance]] · [[imaging-foundations]] · [[lead-game-developer]] · [[legion-project]] · [[lead-3d-designer]] · [[vgpu-webgpu]]

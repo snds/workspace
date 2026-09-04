@@ -14,7 +14,7 @@ aliases: [workspace-bootstrap]
 triggers: [workspace-bootstrap, reload the workspace, run the handshake, ritual missing, load context, reconcile sessions, legion]
 tier: cross-cutting
 domain: workspace
-related: [open-agent-engine, harness-map, mission-fit, side-chat-handback]
+related: [open-agent-engine, harness-map, mission-fit, side-chat-handback, intent-coordination]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -76,8 +76,8 @@ When these keywords appear, load the project skill set (additive — layered on 
 Load in order: `legion-project` (foundation context — always first), then the relevant hub by topic —
 design → `lead-game-designer`; visual → `lead-art-director`; technical → `lead-game-developer`
 (ambiguous → `lead-game-designer`). Specialty skills load by topic: materials/PBR → `threejs-materials-master`;
-shaders/GLSL → `glsl-shader-architect`; post-processing/VFX → `threejs-vfx-atmosphere`; WebGPU/TSL →
-`webgpu-advanced-rendering`.
+new web GPU / WGSL → `vgpu-webgpu`; existing GLSL/Three shaders → `glsl-shader-architect`;
+post-processing/VFX → `threejs-vfx-atmosphere`; Three WebGPU/TSL → `webgpu-advanced-rendering`.
 
 ## Session End
 
@@ -145,3 +145,4 @@ skill catalogs is a known cost trap — see [[nate-jones-harness-enrichments]] �
 - peer ↔ [[harness-map]]
 - peer ↔ [[mission-fit]]
 - peer ↔ [[side-chat-handback]]
+- peer ↔ [[intent-coordination]]

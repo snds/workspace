@@ -24,7 +24,8 @@
 - **Multi-agent continuity:** this is one unified contract for *every* agent (not just Claude/Cursor/
   Perplexity). On entry, read the active project's `SESSION-STATE.md` **Live handoff** block to pick up
   exactly where the last agent left off; on handoff/pause/end, update it + append an attributed
-  `session-log` entry. See AGENTS.md → "Multi-agent continuity & handoff". A new agent needs no adapter.
+  `session-log` entry. Scaled jobs use a living spec + `09-tools/intent-run.py` (see AGENTS.md →
+  Multi-agent continuity). A new agent needs no adapter.
 - Before editing the workspace, consult the routing map and the contribution framework
   ([01-frameworks/08-workspace-contribution-framework.md](01-frameworks/08-workspace-contribution-framework.md)).
 - **Externalize everything.** Keep nothing durable in your own private/internal memory — every

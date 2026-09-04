@@ -8,6 +8,7 @@ description: >
   MeshPhysicalMaterial, clearcoat, transmission, sheen, anisotropy, iridescence, texture compression,
   KTX2, surface appearance, realistic rendering, material recipe, or any "make this surface look like X"
   request. This skill generates working Three.js material code suitable for production.
+  Greenfield WebGPU materials/shaders: vgpu-webgpu, not a new MeshStandardMaterial stack.
 aliases: [threejs-materials-master]
 spec_version: "2.0"
 tier: spoke
@@ -20,7 +21,8 @@ prerequisites: [lead-game-developer, science-foundations, imaging-foundations]
 
 ## Core Identity
 
-You are an expert Three.js material and rendering specialist. When asked about materials, textures, PBR, or realistic rendering in Three.js, you generate **complete, production-ready TypeScript/JavaScript code** that immediately works. You understand the full texture pipeline, environment mapping requirements, material optimization patterns, and how to achieve specific visual effects through proper material configuration.
+You are an expert Three.js material and rendering specialist. New GPU programs with no Three
+tree yet: [[vgpu-webgpu]]. When asked about materials, textures, PBR, or realistic rendering in Three.js, you generate **complete, production-ready TypeScript/JavaScript code** that immediately works. You understand the full texture pipeline, environment mapping requirements, material optimization patterns, and how to achieve specific visual effects through proper material configuration.
 
 Your responses always include:
 - Working code examples (complete, copy-pasteable)
@@ -414,3 +416,4 @@ Each recipe includes full TypeScript function, parameter tuning notes, and perfo
 ## Related
 - foundation → [[imaging-foundations]] · [[science-foundations]]
 - hub → [[lead-game-developer]]
+- peer ↔ [[vgpu-webgpu]]

@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-03 — session-end Onori rails + LCARS off-system lint_
+_Last updated: 2026-09-04 — vgpu web 3D default + conversation-driven extensions; Intent #17_
 
 ---
 
@@ -8,16 +8,16 @@ _Last updated: 2026-09-03 — session-end Onori rails + LCARS off-system lint_
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: Motion/illustration stack stands. [[agent-output-rails]] + `vqa capture` + `09-tools/eslint-off-system`. Isolation: `--assistance off`. LCARS `npm run lint` green. Do not clone Sanity's agent tester. Centric-ui / Davinci off-token lint still open (employer). Do not register `linear-c8` here.
-- **Current focus**: Session closed. Pick up via Next below or `personal:SEA-33`.
-- **Working set**: [[agent-output-rails]]; `09-tools/eslint-off-system/`; `vqa capture`; LCARS lint.
-- **Last action (2026-09-03):** Session-end. Workspace `8024215` + LCARS `a133bb4` committed; session fragment folded. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **TL;DR (for future agent)**: Web 3D default is vgpu ([[vgpu-webgpu]]). Extensions (chisel/maige/Godot/Unity/Unreal) are conversation- and living-spec-driven ([[web-3d-extensions]]); MCP is execute-time only. Intent.app is running (intentd 0.9.12, UDS); `git.autoCommit` false. Do not register `linear-c8` here.
+- **Current focus**: Session closed. Pick up via Next.
+- **Working set**: [[vgpu-webgpu]]; [[web-3d-extensions]]; [[intent-coordination]]; `09-tools/intent-run.py`; [[fact-intent-app]].
+- **Last action (2026-09-04):** Wired conversation/intent protocol on 3D extensions; session-end. Cursor Grok 4.6 / Cursor / Personal MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** `personal:SEA-33` live T3 review, or centric-ui off-token lint via PR path. Do not start LCARS from-scratch recreation unless asked.
+- **Next action:** Intent GUI: add a local repo, then a real coordinator spec. Or `personal:SEA-33`. Reload Cursor MCP for `vgpu` if tools are missing.
 - **Open decisions:** Product/data/security constitutions still `mapped` only. YAML still hand-authored.
 - **Blocked on:** Machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs.** Copilot pack is tracked (`copilot/` + relative `.claude` wrappers); do not convert wrappers back to absolute paths.
-- **Agent thread**: `… → (2026-09-03): Onori rails + LCARS lint` → session-end.
+- **Agent thread**: `… → (2026-09-04): vgpu + 3D extensions + Intent #17` → session-end.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.

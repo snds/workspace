@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 292,
+    "total": 295,
     "by_tier": {
-      "cross-cutting": 41,
+      "cross-cutting": 42,
       "foundation": 22,
       "hub": 47,
-      "spoke": 182
+      "spoke": 184
     }
   },
   "skills": {
@@ -34,10 +34,12 @@
       "surfaces": [
         "*"
       ],
-      "requires": [],
+      "requires": [
+        "gltf-transform"
+      ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:1c1f386aaaf24acdc28c56ed66a69ec89c6a3b705931fd1a32fa8900a9bbf6fd"
+      "hash": "sha256:a4c5bf13eb5e486f1c8d14c71f5567aa987e2ae5363c1036c4d7402459b61a0f"
     },
     "3d-lighting-rendering": {
       "path": "03-skills/3d-lighting-rendering/SKILL.md",
@@ -99,7 +101,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:96aae59828a41d5092d971d19ee61ab2bb3d65c2b965f1cb6da81a5f882022a4"
+      "hash": "sha256:999dc9002b63721f8574de725ef8bb1af0aa6150aa86d45f3c55130d81f13318"
     },
     "3d-rigging-animation": {
       "path": "03-skills/3d-rigging-animation/SKILL.md",
@@ -338,7 +340,8 @@
         "dynamic-gi-production",
         "bake-orchestration",
         "adapter-webgpu-three",
-        "adapter-unreal"
+        "adapter-unreal",
+        "web-3d-extensions"
       ],
       "governed_by": [],
       "governs": [],
@@ -356,10 +359,12 @@
       "surfaces": [
         "*"
       ],
-      "requires": [],
+      "requires": [
+        "unity-mcp"
+      ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:d1a12327a9da21c6a640c2655eed73d5e693c341ea4b1eee466050ff67b0950a"
+      "hash": "sha256:1a8d667f7a2518eb4cd9be12929930906442cae5dd40eadf5bdab112cf982835"
     },
     "adapter-unreal": {
       "path": "03-skills/adapter-unreal/SKILL.md",
@@ -373,7 +378,8 @@
         "dynamic-gi-production",
         "shadow-quality-craft",
         "bake-orchestration",
-        "adapter-webgpu-three"
+        "adapter-webgpu-three",
+        "web-3d-extensions"
       ],
       "governed_by": [],
       "governs": [],
@@ -392,10 +398,12 @@
       "surfaces": [
         "*"
       ],
-      "requires": [],
+      "requires": [
+        "unreal-agentbridge"
+      ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:ef321d1d5d902b59d4e3b0694821528810cdf8248a5306544a07358e42b6ab8b"
+      "hash": "sha256:b4ec91b950cef8c9f57a9de0707b67855a3f70de88b984f4889b247dcae3d8dc"
     },
     "adapter-webgpu-three": {
       "path": "03-skills/adapter-webgpu-three/SKILL.md",
@@ -410,7 +418,8 @@
         "realtime-visual-craft",
         "realtime-render-performance",
         "dynamic-gi-production",
-        "gpu-capture-tooling"
+        "gpu-capture-tooling",
+        "vgpu-webgpu"
       ],
       "governed_by": [],
       "governs": [],
@@ -429,10 +438,12 @@
       "surfaces": [
         "*"
       ],
-      "requires": [],
+      "requires": [
+        "threejs-devtools-mcp"
+      ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:23bffcf0a53471735cd2bbcc7377912cb7d77b548c5d489f67fc6936d53b2c95"
+      "hash": "sha256:661115b496e06f3264a2d1f1638cf47cad1d37b0b0ccea1035e8e381aed06a8b"
     },
     "adobe-app-builder": {
       "path": "03-skills/adobe-app-builder/SKILL.md",
@@ -3090,7 +3101,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:84654b4f684ec6ba25d93f56c62d39ef3815b1802ffb732c236ec3bd81e87c47"
+      "hash": "sha256:68f3fc10d449367baf354cc7b982ae6f7dfcc3eb8f8625912fc7f4fc36b783e2"
     },
     "google-fonts-scraper": {
       "path": "03-skills/google-fonts-scraper/SKILL.md",
@@ -3175,7 +3186,8 @@
         "mission-fit",
         "workspace-bootstrap",
         "open-agent-engine",
-        "side-chat-handback"
+        "side-chat-handback",
+        "intent-coordination"
       ],
       "governed_by": [],
       "governs": [],
@@ -3195,7 +3207,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:3dde8b6175965216b0fe6c9d2900d7c25c4e41821faa995219fa8d42cdb32636"
+      "hash": "sha256:e1fe603d8d898845b8b6f312d97f6ee86a0e9c225cae8cada273acfe1023c1ff"
     },
     "ia-content-strategy": {
       "path": "03-skills/ia-content-strategy/SKILL.md",
@@ -3371,7 +3383,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:74bd75c95b59a1c85202d6165106336e8f5ab4d6fd70143c9074bccfe758e2c7"
+      "hash": "sha256:e54dbbca3a22a4ab6e8520aba943eb86f7ff6f6e6d0278a2b85e3081bd2f7557"
     },
     "img-cinematography": {
       "path": "03-skills/img-cinematography/SKILL.md",
@@ -3682,6 +3694,46 @@
       "rigor_role": null,
       "hash": "sha256:af73534629efcca542d52ed38bb0be7aa6ba1cc065bcfdca6dca52a1babbb1ee"
     },
+    "intent-coordination": {
+      "path": "03-skills/intent-coordination/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "open-agent-engine",
+        "mission-fit",
+        "harness-map",
+        "workspace-bootstrap",
+        "side-chat-handback",
+        "vgpu-webgpu",
+        "web-3d-extensions"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "living spec",
+        "intent coordination",
+        "intentapp",
+        "intentapp.dev",
+        "coordinate agents",
+        "agent orchestration",
+        "coordinator agent",
+        "implementor wave",
+        "isolated worktree"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-17",
+        "framework-06",
+        "framework-08"
+      ],
+      "rigor_role": "command-hub",
+      "hash": "sha256:ecd6188c1061310b5ed0bb2245a21da4800115e35f6e3a1f4643a47183e8bbab"
+    },
     "interactive-capture-eval": {
       "path": "03-skills/interactive-capture-eval/SKILL.md",
       "tier": "cross-cutting",
@@ -3795,7 +3847,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:9298bff0369a73bad63b5047efd5f9769a77f959a1b3b7d56ec99572adc8cfce"
+      "hash": "sha256:6b7cbbae547bf083a272790711f7c0221ecf3df76b186f30fad0b90bae5c2e87"
     },
     "lead-accessibility-architect": {
       "path": "03-skills/lead-accessibility-architect/SKILL.md",
@@ -3960,7 +4012,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:857c297b235c6957efe53ed0c35afbaacb547bafbd7889ea89c6aea098114903"
+      "hash": "sha256:40245cd731a8b1f75fdaba934bb286c3046d4fafe03f36780da369c0d9843961"
     },
     "lead-graphic-designer": {
       "path": "03-skills/lead-graphic-designer/SKILL.md",
@@ -4502,7 +4554,8 @@
       "related": [
         "harness-map",
         "open-agent-engine",
-        "workspace-bootstrap"
+        "workspace-bootstrap",
+        "intent-coordination"
       ],
       "governed_by": [],
       "governs": [],
@@ -4523,7 +4576,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:fc3c6aabe372331ce48da0a14352f583ef66130ec8540dc0af5713862884643a"
+      "hash": "sha256:334a2018ea4dcac9c615fec78eeef1e81d6163a458a796d16347ec9b124c7444"
     },
     "mobile-android-kotlin": {
       "path": "03-skills/mobile-android-kotlin/SKILL.md",
@@ -4672,7 +4725,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:e4498f7ca4d716dd61f89d0b113cab49d8758f198827f0de7df70378daec45d1"
+      "hash": "sha256:1ef750d0ae9bb7277ca3981a89ea59be0c48732d62b4a8ff75aa2556e947efbc"
     },
     "motion-3d-spatial": {
       "path": "03-skills/motion-3d-spatial/SKILL.md",
@@ -4974,7 +5027,8 @@
         "workspace-bootstrap",
         "harness-map",
         "mission-fit",
-        "side-chat-handback"
+        "side-chat-handback",
+        "intent-coordination"
       ],
       "governed_by": [],
       "governs": [],
@@ -4999,7 +5053,7 @@
       ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:52f5f13f03a3ed17e927702d506631737cc217a2dc080f963365cbde89f3dfb5"
+      "hash": "sha256:3efe2ddb6f083af5dae36d7e39ac5d775aee0582c1c45b99af46148a3bc13b15"
     },
     "planetary-terrain-lod": {
       "path": "03-skills/planetary-terrain-lod/SKILL.md",
@@ -5409,7 +5463,8 @@
         "gpu-capture-tooling",
         "adapter-webgpu-three",
         "adapter-unreal",
-        "adapter-unity-hdrp"
+        "adapter-unity-hdrp",
+        "vgpu-webgpu"
       ],
       "governed_by": [],
       "governs": [],
@@ -5442,7 +5497,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:2d16c5479ad76534aa6ca498d8f5aa618ddbada7fa1e2b1cf6be5fb01c966454"
+      "hash": "sha256:c6d2631684a6e52b22b61ae08726d03e048481dde01a4cd27348d3c4e2a8ba2e"
     },
     "redesign": {
       "path": "03-skills/redesign/SKILL.md",
@@ -5812,7 +5867,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:f8db6995096f242a42c69b04aba45f7d0a0690ca28e63401b1946e0146eb24c2"
+      "hash": "sha256:37a5154fc0e738532a71c0fe4b7ce3999b2ac65d8d27c2ef1e81a222797ecf19"
     },
     "sec-appsec-owasp": {
       "path": "03-skills/sec-appsec-owasp/SKILL.md",
@@ -6055,7 +6110,8 @@
       "related": [
         "workspace-bootstrap",
         "open-agent-engine",
-        "harness-map"
+        "harness-map",
+        "intent-coordination"
       ],
       "governed_by": [],
       "governs": [],
@@ -6075,7 +6131,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:5e74973c7c8adface68545c852eb2aba716c7289e82c7f9f10ba5e9594c55f4f"
+      "hash": "sha256:10a8f08bf390d41504877fd0ab77cdbe3ea3969debd6a86e736517ea712f4fa5"
     },
     "skill-placement": {
       "path": "03-skills/skill-placement/SKILL.md",
@@ -6186,7 +6242,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:3857fa740d7c45f07067375830322400a913cfb428c6b76cf8122b4b5cc4fd8d"
+      "hash": "sha256:fa2d1204899f73fd1ca2b84a4b8544cdaa68cfa7e504f07d7c3915f72897ab58"
     },
     "threejs-vfx-atmosphere": {
       "path": "03-skills/threejs-vfx-atmosphere/SKILL.md",
@@ -6855,6 +6911,55 @@
       "defers_to": [],
       "rigor_role": null,
       "hash": "sha256:1d566143342075832820e7830dfd9c2200ccd9b72cbb6a2f00a19de2d349972b"
+    },
+    "vgpu-webgpu": {
+      "path": "03-skills/vgpu-webgpu/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "lead-game-developer",
+      "prerequisites": [
+        "lead-game-developer"
+      ],
+      "related": [
+        "adapter-webgpu-three",
+        "webgpu-advanced-rendering",
+        "glsl-shader-architect",
+        "3d-asset-pipeline",
+        "realtime-visual-craft",
+        "lead-3d-designer",
+        "motion",
+        "threejs-materials-master",
+        "web-3d-extensions"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "vgpu",
+        "vgpu.sh",
+        "wgsl",
+        "webgpu shader",
+        "web 3d",
+        "canvas webgpu",
+        "headless webgpu",
+        "gpu compute web",
+        "vgpu check",
+        "vgpu examples",
+        "vgpu mcp"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "vgpu-mcp",
+        "vgpu-cli"
+      ],
+      "defers_to": [
+        "framework-12",
+        "realtime-visual-craft",
+        "framework-06"
+      ],
+      "rigor_role": "command-hub",
+      "hash": "sha256:555f4f6cd4981cf481ad00b5aefefaf8faaaa0b01c2addc021f23ce9b0c6b6bc"
     },
     "virtual-texturing-ops": {
       "path": "03-skills/virtual-texturing-ops/SKILL.md",
@@ -7545,6 +7650,65 @@
       "rigor_role": null,
       "hash": "sha256:6d4482959b54e74f7810a520f580e855270e920effb660ce7cfd99112e5399fa"
     },
+    "web-3d-extensions": {
+      "path": "03-skills/web-3d-extensions/SKILL.md",
+      "tier": "spoke",
+      "domain": "game",
+      "hub": "lead-game-developer",
+      "prerequisites": [
+        "lead-game-developer"
+      ],
+      "related": [
+        "vgpu-webgpu",
+        "adapter-webgpu-three",
+        "adapter-unreal",
+        "adapter-unity-hdrp",
+        "3d-modeling-fundamentals",
+        "3d-asset-pipeline",
+        "motion",
+        "lead-3d-designer",
+        "intent-coordination"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "boolean csg",
+        "csg to gltf",
+        "headless csg",
+        "chisel",
+        "chisel mcp",
+        "maige-3d",
+        "mcp-webgpu",
+        "live babylon canvas",
+        "live a-frame canvas",
+        "same scene three babylon",
+        "in-world 3d chat",
+        "drive godot editor",
+        "godot editor",
+        "godot mcp",
+        "without blender",
+        "without opening blender",
+        "drive unity editor",
+        "unity mcp",
+        "agentbridge"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [
+        "chisel-mcp",
+        "maige-3d-mcp",
+        "godot-mcp"
+      ],
+      "defers_to": [
+        "vgpu-webgpu",
+        "framework-12",
+        "realtime-visual-craft",
+        "framework-17"
+      ],
+      "rigor_role": "command-hub",
+      "hash": "sha256:ffe7b074897b0fe99dc18d388f425da413aeb3bb325ac2821c103d248ef0dff9"
+    },
     "web-automation": {
       "path": "03-skills/web-automation/SKILL.md",
       "tier": "cross-cutting",
@@ -7600,7 +7764,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:a79bd27cb349b368d2fefb33c9445afc0ebcd0379dfb3a0e72cc4e5cbc8d77a6"
+      "hash": "sha256:3f76a8d1b317e5b6791a0fe39c93b2911f2791d49c37d476969c53dc3ec0cfb1"
     },
     "workspace-bootstrap": {
       "path": "03-skills/workspace-bootstrap/SKILL.md",
@@ -7612,7 +7776,8 @@
         "open-agent-engine",
         "harness-map",
         "mission-fit",
-        "side-chat-handback"
+        "side-chat-handback",
+        "intent-coordination"
       ],
       "governed_by": [],
       "governs": [],
@@ -7631,7 +7796,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:8848755bb74ecd7a626018acffa01e84162901f08da6073d827b371e9dae4304"
+      "hash": "sha256:3c0f8d600a9c569f6e548dbc8a0cab3b7e56fbd1593483e026ed5961e6ebee2a"
     }
   },
   "load_chains": {
@@ -8349,6 +8514,9 @@
       "lead-information-designer",
       "infod-statistical-viz"
     ],
+    "intent-coordination": [
+      "intent-coordination"
+    ],
     "interactive-capture-eval": [
       "interactive-capture-eval"
     ],
@@ -8916,6 +9084,12 @@
       "threejs-vfx-atmosphere",
       "vfx-volumetrics"
     ],
+    "vgpu-webgpu": [
+      "game-foundations",
+      "science-foundations",
+      "lead-game-developer",
+      "vgpu-webgpu"
+    ],
     "virtual-texturing-ops": [
       "realtime-visual-craft",
       "virtual-texturing-ops"
@@ -9025,6 +9199,12 @@
       "lead-visual-qa",
       "native-visual-eval",
       "visual-reference-replication"
+    ],
+    "web-3d-extensions": [
+      "game-foundations",
+      "science-foundations",
+      "lead-game-developer",
+      "web-3d-extensions"
     ],
     "web-automation": [
       "web-automation"

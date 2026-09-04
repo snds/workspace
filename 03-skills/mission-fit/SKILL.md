@@ -21,7 +21,7 @@ triggers:
   - blocked not done
 tier: cross-cutting
 domain: workspace
-related: [harness-map, open-agent-engine, workspace-bootstrap]
+related: [harness-map, open-agent-engine, workspace-bootstrap, intent-coordination]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -217,6 +217,7 @@ If claimable follow-up work should survive the chat, mint an Open Engine Agent T
 |---|---|
 | [[harness-map]] | Setup inventory + dispositions; run before or beside this |
 | [[open-agent-engine]] | Queue/ledger/receipts for movement; use receipt tokens as Evidence when the job is engine work |
+| [[intent-coordination]] | Living spec + `intent-run.py`; use mission-fit as the verifier stage |
 | Proofboard ([[05-validation-harness]]) | Delivery-time verification UI for code-heavy work — Mission Fit decides if the *mission* can be proven at all |
 | Capability preflight ([[AGENTS]]) | Skill-scoped tool presence; this skill applies the same honesty to the whole mission |
 
@@ -245,3 +246,4 @@ see [[nate-jones-harness-enrichments]] §3/§10 and framework #06 Judge check.
 - peer ↔ [[harness-map]]
 - peer ↔ [[open-agent-engine]]
 - peer ↔ [[workspace-bootstrap]]
+- peer ↔ [[intent-coordination]]

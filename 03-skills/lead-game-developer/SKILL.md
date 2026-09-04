@@ -2,7 +2,8 @@
 name: lead-game-developer
 description: >
   Game and interactive application development architect for web-based 3D.
-  Use this skill whenever: building Three.js/TypeScript game systems, generating
+  GPU default for new work is vgpu (vgpu.sh / vgpu-webgpu); Three.js remains the
+  Legion ship path. Use this skill whenever: building TypeScript game systems, generating
   working game code from design specs, designing game architecture for web,
   implementing factory simulation, RTS combat, AI behavior trees, pathfinding,
   save systems, data models, state machines, ECS patterns, performance
@@ -49,7 +50,8 @@ Generate **production-quality working code** but always explain the "why" behind
 
 **Legion v1 target**: Playable prototype with exploration, factory building, and basic RTS combat, shipping as a web game.
 
-**Stack**: Three.js, TypeScript, Vite, WebGL/WebGPU, IndexedDB for saves
+**Stack**: TypeScript, Vite, IndexedDB for saves. **GPU:** existing Legion renderer =
+Three.js + WebGL/WebGPU ([[adapter-webgpu-three]]). **New web GPU / shaders:** [[vgpu-webgpu]].
 
 **Design Pillars**:
 - Player Agency Through Systems Depth
@@ -64,7 +66,7 @@ Generate **production-quality working code** but always explain the "why" behind
 
 This hub enables Claude to **generate working game code**:
 - TypeScript game modules (classes, systems, managers)
-- Three.js scene setup and configuration
+- Three.js scene setup (existing trees) or vgpu `init`/`surface`/`effect`/`scene` (greenfield GPU)
 - ECS-like entity-component architecture
 - State machine implementations (FSMs, hierarchical states)
 - Data-driven balance/config systems (JSON → runtime)
@@ -130,7 +132,8 @@ Ask me about:
 - **Data modeling**: "What should the save file structure look like for thousands of buildings?"
 - **Performance**: "Can we handle 10,000 asteroids streaming in and out?"
 - **Gameplay code**: "How do I implement unit pathfinding and formation movement?"
-- **Three.js specifics**: "When should I use InstancedMesh vs. individual meshes?"
+- **GPU runtime**: vgpu vs Three — [[vgpu-webgpu]] selection table
+- **Three.js specifics** (existing tree): "When should I use InstancedMesh vs. individual meshes?"
 - **Debugging**: "Why aren't my units moving?"
 - **Build & deploy**: "How do I set up Vite for a Three.js game?"
 
@@ -152,5 +155,5 @@ This hub includes six deep-dive references:
 
 ## Related
 - foundation → [[game-foundations]] · [[science-foundations]]
-- spoke → [[atmospheric-scattering-and-clouds]] · [[game-scale-traversal]] · [[glsl-shader-architect]] · [[planetary-terrain-lod]] · [[realtime-render-performance]] · [[stellar-and-relativistic-hero-bodies]] · [[threejs-materials-master]] · [[threejs-vfx-atmosphere]] · [[webgpu-advanced-rendering]]
+- spoke → [[atmospheric-scattering-and-clouds]] · [[game-scale-traversal]] · [[glsl-shader-architect]] · [[planetary-terrain-lod]] · [[realtime-render-performance]] · [[stellar-and-relativistic-hero-bodies]] · [[threejs-materials-master]] · [[threejs-vfx-atmosphere]] · [[vgpu-webgpu]] · [[web-3d-extensions]] · [[webgpu-advanced-rendering]]
 - peer ↔ [[vision-foundations]] · [[realtime-visual-craft]] · [[rendering-guild]] · [[render-qa-toolkit]]

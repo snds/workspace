@@ -13,6 +13,7 @@ New entry: copy `_template.md`, fill it in, add a line below.
 
 - [[fact-workspace-repos]] — `fact` · the two workspace repos; `snds/workspace` is canonical going forward.
 - [[fact-machine-layer-installs]] — `fact` · per-machine install state of the bootstrap-v2 hooks/doctor layer (Personal MBP ✅ 2026-07-09; both Work MBPs + Windows pending).
+- [[fact-intent-app]] — `fact` · Intent.app + intentd 0.9.12 on Personal MBP; `git.autoCommit` false; secrets stay off-git.
 - [[fact-unraid-server]] — `fact` · Sean's Unraid home server: how to reach it (LAN / key / sandbox) + what runs on it.
 - [[feedback-infra-ip-disclosure]] — `feedback` · internal/LAN IPs OK to record; external/WAN IP never (the real attack surface).
 - [[feedback-credential-scoping]] — `feedback` · on the Centric laptop every repo action uses Centric credentials — including the personal workspace repo, where the Centric account is a contributor; never override repo-local git config.
@@ -26,4 +27,6 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[decision-bootstrap-v2-guarantee]] — `decision` · the workspace handshake is guaranteed by deterministic harness layers (hooks + beacon + audit + launchd doctor), not model discretion; ritual token is frozen ABI.
 - [[decision-commercial-data-licensing]] — `decision` · default to commercially-licensable data/asset sources for all projects; non-commercial sources (e.g. Gaia DR3) only when uniquely needed — isolate, mark, reconcile later.
 - [[decision-defer-dense-vault-retrieval]] — `decision` · defer embedding/dense Layer-2 vault retrieval until `vault-retrieve.py --eval` shows paraphrase gaps lexical cannot fix (13/13 green 2026-08-05).
+- [[decision-intent-coordination-standard]] — `decision` · multi-agent work uses a living spec + `intent-run.py`; Intent.app is optional GUI.
+- [[decision-vgpu-default-web-3d]] — `decision` · new web 3D/shader/GPU work defaults to vgpu (vgpu.sh); existing Three trees stay on the adapter; DCC unchanged.
 - [[relational-context]] — `feedback` · the working-relationship texture, in the agent's voice, carried across sessions (lives at `../relational-context.md`).

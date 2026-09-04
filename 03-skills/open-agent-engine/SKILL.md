@@ -15,7 +15,7 @@ aliases: [open-agent-engine, open-engine, agent-queue]
 triggers: [open engine, agent engine, agent queue, run the queue, queue runner, agent ledger, agent receipts, claim a task, agent todo, agent needs input, status ledger]
 tier: cross-cutting
 domain: workspace
-related: [workspace-bootstrap, harness-map, mission-fit, side-chat-handback]
+related: [workspace-bootstrap, harness-map, mission-fit, side-chat-handback, intent-coordination]
 requires: [linear-mcp]
 surfaces: ["*"]
 spec_version: "2.2"
@@ -406,3 +406,4 @@ rule; substance routed to the workspace rather than the tracker; and the boundar
 - peer ↔ [[harness-map]]
 - peer ↔ [[mission-fit]]
 - peer ↔ [[side-chat-handback]]
+- peer ↔ [[intent-coordination]]

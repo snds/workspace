@@ -15,8 +15,9 @@ description: >
 
   This hub covers 3D craft decisions from the artist/designer perspective — topology,
   shading authorship, lighting design, rigging for game characters, and the full pipeline
-  from scene to engine. It does NOT cover graphics programming (GLSL/shader code) —
-  route that to `glsl-shader-architect` and `threejs-materials-master`.
+  from scene to engine. It does NOT cover graphics programming — new web GPU/WGSL goes to
+  `vgpu-webgpu`; existing Three GLSL/materials go to `glsl-shader-architect` and
+  `threejs-materials-master`.
 
   Current project context: Legion (Bobiverse-inspired 4X strategy game) + personal 3D
   modeling for game assets and parametric/CAD work.
@@ -43,7 +44,8 @@ how to set up lighting, how to rig characters for game animation, how to design 
 environments, and how to get assets from DCC tools into an engine cleanly.
 
 **Route elsewhere for**:
-- GLSL/vertex/fragment shader code → `glsl-shader-architect`
+- New web GPU / WGSL / canvas runtime → `vgpu-webgpu`
+- GLSL/vertex/fragment shader code (existing Three) → `glsl-shader-architect`
 - Three.js material implementation → `threejs-materials-master`
 - Game systems, balance, level design intent → `lead-game-designer`
 - Visual identity, faction aesthetics, art direction → `lead-art-director` (Legion)
@@ -82,9 +84,9 @@ Common routing patterns:
 - **Lighting design / render setup**: `3d-lighting-rendering`
 - **Rigging or animation**: `3d-rigging-animation`
 - **Game environment or space station design**: `3d-spatial-design-for-games`
-- **Asset export / engine import / baking**: `3d-asset-pipeline`
+- **Agent CSG / Godot editor / live multi-engine canvas**: [[web-3d-extensions]]
 - **Full asset review (model → materials → pipeline)**: load spokes incrementally
-- **Custom shader code needed**: route to `glsl-shader-architect` (out of scope here)
+- **Custom shader code needed**: new web → `vgpu-webgpu`; existing Three GLSL → `glsl-shader-architect`
 - **Three.js material implementation**: route to `threejs-materials-master` (out of scope here)
 
 **Step 2**: Load the identified spoke(s):
@@ -207,7 +209,7 @@ Legion's visual context follows the Bobiverse universe:
 | `lead-game-designer` | Game design decisions constrain spatial design; `3d-spatial-design-for-games` ↔ `lead-game-designer` for level design / gameplay space relationship |
 | `lead-art-director` (Legion) | Visual direction and aesthetic decisions sit here; 3D execution serves that direction |
 | `legion-narrative-design` | Environmental storytelling serves narrative; location design follows lore |
-| `glsl-shader-architect` | Custom shader code — vertex/fragment shaders, GLSL, procedural effects; route there when moving from material design into shader programming |
+| `vgpu-webgpu` | Greenfield web GPU / WGSL runtime; route there before writing a new canvas renderer |
 | `threejs-materials-master` | Three.js-specific material implementation; route there when implementing materials in Three.js |
 | `lead-graphic-designer` | Composition principles from graphic design apply directly to 3D spatial composition and environmental design |
 
@@ -239,4 +241,4 @@ how it **looks and performs** in the context it was made for.
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[3d-asset-pipeline]] · [[3d-lighting-rendering]] · [[3d-materials-shading]] · [[3d-modeling-fundamentals]] · [[3d-rigging-animation]] · [[3d-spatial-design-for-games]]
-- peer ↔ [[realtime-visual-craft]] · [[visual-qa-photoreal-rendering]] · [[adapter-webgpu-three]] · [[adapter-unreal]] · [[adapter-unity-hdrp]]
+- peer ↔ [[realtime-visual-craft]] · [[visual-qa-photoreal-rendering]] · [[adapter-webgpu-three]] · [[adapter-unreal]] · [[adapter-unity-hdrp]] · [[vgpu-webgpu]] · [[web-3d-extensions]]

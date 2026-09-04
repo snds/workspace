@@ -50,7 +50,7 @@ the specialty (engine code, GLSL, a training loop) owns the application. Distinc
 
 ## Applied in
 - Game engine + physics → [[lead-game-developer]], [[legion-project]]
-- Real-time rendering math → [[webgpu-advanced-rendering]], [[glsl-shader-architect]], [[threejs-materials-master]]
+- Real-time rendering math → [[vgpu-webgpu]], [[webgpu-advanced-rendering]], [[glsl-shader-architect]], [[threejs-materials-master]]
 - ML / statistics math → [[lead-data-scientist]] (pairs with [[data-foundations]] for the reasoning layer)
 
 ## When the science spokes apply

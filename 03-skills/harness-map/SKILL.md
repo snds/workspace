@@ -22,7 +22,7 @@ triggers:
   - harness crud
 tier: cross-cutting
 domain: workspace
-related: [mission-fit, workspace-bootstrap, open-agent-engine, side-chat-handback]
+related: [mission-fit, workspace-bootstrap, open-agent-engine, side-chat-handback, intent-coordination]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -220,6 +220,7 @@ On approval: smallest reviewable diffs; regenerate registry/related if skills ch
 | [[workspace-bootstrap]] | Session handshake / load protocol — does not audit harness shape |
 | `/optimize` (`.claude/skills/optimize`) | Entropy punch list across the vault — use map dispositions when consolidating |
 | [[open-agent-engine]] | Movement + receipts for tasks — not a harness inventory |
+| [[intent-coordination]] | Living spec + `intent-run.py` waves — not a harness inventory |
 | [[side-chat-handback]] | Parent continuity only |
 
 ## Ritual hooks (thin — skills stay on-demand)
@@ -249,3 +250,4 @@ tools · data reach · permissions · quality bar · proof path · supervision �
 - peer ↔ [[workspace-bootstrap]]
 - peer ↔ [[open-agent-engine]]
 - peer ↔ [[side-chat-handback]]
+- peer ↔ [[intent-coordination]]

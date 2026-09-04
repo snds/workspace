@@ -1,0 +1,23 @@
+{
+  "_comment": "OPTIONAL 3D MCP servers. Do not copy wholesale into ~/.cursor/mcp.json. Enable per product repo or one session. Standing user file stays linear-personal + designparser + vgpu. Expand HOME yourself. No secrets. CSG_OUTPUT_DIR must be an existing absolute directory in the product repo. Unity/Godot/Unreal need the matching editor running. See 03-skills/web-3d-extensions/SKILL.md.",
+  "mcpServers": {
+    "chisel": {
+      "command": "npx",
+      "args": ["-y", "github:EYamanS/chisel"],
+      "env": {
+        "CSG_OUTPUT_DIR": "/Users/YOU/Projects/YOUR_REPO/exports"
+      }
+    },
+    "maige-3d": {
+      "command": "npx",
+      "args": ["-y", "maige-3d-mcp"]
+    },
+    "godot-mcp": {
+      "command": "npx",
+      "args": ["-y", "@satelliteoflove/godot-mcp"]
+    },
+    "unityMCP": {
+      "url": "http://localhost:8080/mcp"
+    }
+  }
+}

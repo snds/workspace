@@ -23,6 +23,33 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-09-04 — vgpu default + conversation-driven 3D extensions
+
+SessionID: 2026-09-04-voyager-vgpu3d
+--- SESSION BLOCK ---
+Date: 2026-09-04
+Machine: Personal MacBook Pro
+Surface: Cursor
+Project(s): 19-workspace-brain
+Summary: Made vgpu the project-agnostic web GPU default; wired optional 3D MCPs (chisel, maige-3d, Godot, Unity, AgentBridge) as conversation- and living-spec-driven extensions, not standing servers. Also landed concurrent Intent #17 / intent-run.py work already in the tree.
+Artifacts:
+  - 03-skills/vgpu-webgpu/SKILL.md
+  - 03-skills/web-3d-extensions/SKILL.md
+  - 08-knowledge/engineering/web-3d-runtime-stack.md
+  - 06-context/memory/decision-vgpu-default-web-3d.md
+  - 00-bootstrap/templates/cursor-mcp-3d-extensions.json.example
+Decisions:
+  - New web GPU/WGSL defaults to vgpu; existing Three (Legion) stays on the adapter
+  - Extensions are driven by ordinary conversation, research, revision, and living-spec steps; MCP is execute-time preflight only
+  - Standing Cursor MCP keeps vgpu HTTP; editor/CSG servers stay project/session scoped
+Pending resolved:
+  - none (pc-NN unchanged)
+Next:
+  - Intent GUI: add a local repo, then a real coordinator spec — or personal:SEA-33
+  - Reload Cursor MCP if vgpu tools are missing
+--- END BLOCK ---
+
+
 ### 2026-09-04 — ShadeGraph: research + scaffold a node-based shader design tool
 
 SessionID: 2026-09-04-voyager-sg21a

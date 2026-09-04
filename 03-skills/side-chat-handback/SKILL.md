@@ -19,7 +19,7 @@ triggers:
   - side chat done
 tier: cross-cutting
 domain: workspace
-related: [workspace-bootstrap, open-agent-engine, harness-map]
+related: [workspace-bootstrap, open-agent-engine, harness-map, intent-coordination]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -177,3 +177,4 @@ Wired in: `.cursor/rules/brain.mdc`, `04-preferences/user-preferences.md`, and t
 - peer ↔ [[workspace-bootstrap]]
 - peer ↔ [[open-agent-engine]]
 - peer ↔ [[harness-map]]
+- peer ↔ [[intent-coordination]]

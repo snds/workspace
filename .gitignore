@@ -100,6 +100,7 @@
 !09-tools/ds-source-watch.py
 !09-tools/evaluate-skill-routing.py
 !09-tools/cursor-externalize.py
+!09-tools/intent-run.py
 !09-tools/generate-display-svg.py
 !09-tools/eslint-off-system/
 !09-tools/eslint-off-system/**
@@ -123,6 +124,7 @@
 # cross-machine continuity is its entire point (framework #08, 2026-07-09).
 !07-projects/19-workspace-brain/
 !07-projects/19-workspace-brain/**
+07-projects/19-workspace-brain/**/*.state.json
 
 # Track the LCARS generative interface project — design SPEC + session continuity
 # (2026-08-07). Implementation code stays in the platform Projects directory.

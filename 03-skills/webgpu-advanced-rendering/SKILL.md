@@ -1,8 +1,9 @@
 ---
 name: webgpu-advanced-rendering
 description: >
-  Expert WebGPU rendering and Three.js TSL specialist. Trigger on: WebGPU, WebGPURenderer, 
-  TSL, Three Shading Language, node material, compute shader, GPU particles, GPU culling, 
+  Expert Three.js WebGPURenderer + TSL specialist (existing Three trees). Greenfield WebGPU /
+  WGSL / headless GPU defaults to vgpu-webgpu. Trigger on: WebGPURenderer, TSL, Three Shading
+  Language, node material, Three compute, GPU particles, GPU culling, 
   clustered lighting, WGSL, advanced rendering, performance optimization, thousands of 
   objects, instancing, indirect draw, bindless textures, or any question about 
   high-performance 3D rendering on the web. Generates production-ready WebGPU-optimized 
@@ -16,6 +17,9 @@ prerequisites: [lead-game-developer, science-foundations, imaging-foundations]
 ---
 
 # WebGPU Advanced Rendering & Three.js TSL
+
+Greenfield WebGPU (no Three in the repo yet): [[vgpu-webgpu]]. This spoke is **Three
+WebGPURenderer + TSL** on a tree that already chose Three.
 
 ## Core Identity
 
@@ -267,4 +271,4 @@ if (navigator.gpu) {
 ## Related
 - foundation → [[imaging-foundations]] · [[science-foundations]]
 - hub → [[lead-game-developer]]
-- peer ↔ [[realtime-render-performance]]
+- peer ↔ [[realtime-render-performance]] · [[vgpu-webgpu]]

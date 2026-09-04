@@ -1,7 +1,7 @@
 ---
 tags: [knowledge-vault, cross-domain, skills, mcp-servers, skill-ecosystem, evaluation]
 created: 2026-06-16
-updated: 2026-06-16
+updated: 2026-09-04
 status: stable
 confidence: high
 sources: [skills.sh, mcpmarket.com/tools/skills, mcpmarket.com/server, session-log 2026-06-16]
@@ -76,6 +76,11 @@ settings → Connectors), not a repo change.
 | **Atlassian MCP** | Already connected. | (have it) |
 | **Playwright MCP** | Redundant — we have the `agent-browser` skill (Playwright-based, used to scrape mcpmarket here). | Skip |
 | **Godot / Unity / Unreal MCP** | Only if Legion ever leaves Three.js + WebGPU. | Low |
+| **vgpu MCP** (`https://vgpu.sh/api/mcp`) | Agent docs + verified examples for the default web GPU library. No auth. | **High (all web 3D)** — wired 2026-09-04, [[vgpu-webgpu]] |
+| **threejs-devtools-mcp** | Live inspect of *existing* Three/R3F scenes. | Medium — wired on [[adapter-webgpu-three]], optional |
+| **gltf-transform CLI** | Web glTF optimize (not MCP). | **High** — wired on [[3d-asset-pipeline]] |
+
+2026-09-04 follow-up: greenfield web GPU defaults to **vgpu**. Optional extensions (chisel, maige-3d/mcp-webgpu, Godot MCP, Unity MCP, AgentBridge) are wired in [[web-3d-extensions]] + capabilities; they are **not** standing Cursor servers. Catalog: [[web-3d-runtime-stack]]. Playwright MCP remains skipped as a duplicate of `agent-browser` + `vqa capture`.
 
 ## Note on scraping mcpmarket
 mcpmarket.com hard-blocks WebFetch (HTTP 429, Cloudflare) but renders fine via the `agent-browser` skill

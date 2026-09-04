@@ -10,9 +10,10 @@ triggers: [unreal adapter, unreal lumen, nanite, virtual shadow maps, vsm unreal
 tier: spoke
 hub: realtime-visual-craft
 domain: game
-related: [realtime-visual-craft, img-photoreal-rendering, dynamic-gi-production, shadow-quality-craft, bake-orchestration, adapter-webgpu-three]
+related: [realtime-visual-craft, img-photoreal-rendering, dynamic-gi-production, shadow-quality-craft, bake-orchestration, adapter-webgpu-three, web-3d-extensions]
+requires: [unreal-agentbridge]
 surfaces: ["*"]
-spec_version: "2.0"
+spec_version: "2.1"
 ---
 
 # Adapter — Unreal Engine (northstar corollary)
@@ -27,6 +28,8 @@ Unreal's own docs. Doctrine: [[realtime-visual-craft]] / [[img-photoreal-renderi
 - Explaining why a web scene does not yet match Lumen bounce / Nanite density.
 - Baking or lighting in Unreal for export into a web pipeline ([[bake-orchestration]]).
 - Comparing shadow contact quality to Virtual Shadow Maps.
+- Driving a **live UE 5.6 editor** (AgentBridge). Capability `unreal-agentbridge`. Preflight;
+  if absent, stay on northstar reference only. See [[web-3d-extensions]].
 
 ## Feature → doctrine mapping
 
@@ -84,4 +87,4 @@ Mirror that discipline with project flythroughs + `?perfcapture` ([[gpu-capture-
 
 ## Related
 - hub → [[realtime-visual-craft]]
-- peer ↔ [[adapter-webgpu-three]] · [[adapter-unity-hdrp]] · [[dynamic-gi-production]] · [[bake-orchestration]] · [[shadow-quality-craft]] · [[lead-3d-designer]]
+- peer ↔ [[adapter-webgpu-three]] · [[adapter-unity-hdrp]] · [[dynamic-gi-production]] · [[bake-orchestration]] · [[shadow-quality-craft]] · [[lead-3d-designer]] · [[web-3d-extensions]]

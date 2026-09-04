@@ -11,6 +11,9 @@
     "designparser": {
       "command": "npx",
       "args": ["-y", "designparser-mcp"]
+    },
+    "vgpu": {
+      "url": "https://vgpu.sh/api/mcp"
     }
   }
 }
