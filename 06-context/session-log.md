@@ -23,6 +23,38 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-09-03 — Looney consolidation + dump-folder cleanup
+
+SessionID: 2026-09-03-voyager-b7191a1
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 01-mediaservices
+Summary: Closed the Aug 26 Looney Tunes thread. Quality adjudication + consolidation put the show in one Sonarr folder (1,062 files). The Orville, Firefly, and 12 Monkeys dump twins were resolved the same way. 16 empty leftover folders were deleted. One incident: 184 intended Looney upgrades were destroyed after ffmpeg `.part` writes failed and a graveyard sweep ran anyway.
+Artifacts:
+  - Unraid `/mnt/user/appdata/media-sentinel/loudness/` — adjudication-report, consolidation journal/manifest, lost-upgrades.json, three-report, cleanup-journal, looney/orville profiles
+  - MediaSentinel grouping/parse + tests (year-seasons, S00 specials, yearless-into-sole-year merge)
+  - `07-projects/01-mediaservices/SESSION-STATE.md`
+Decisions:
+  - Winners go to the Sonarr-managed folder; dump/orphan folders delete only when empty of video
+  - Temp ffmpeg outputs must set `-f`; destructive sweeps gate on zero errors
+  - Review pair decisions before deleting losers (broken once on Orville S01, outcome still defensible)
+Pending added:
+  - Optional Sonarr re-grab of 184 lost Looney upgrades
+  - Firefly E03/E11 Italian-only; E10 may be mislabeled (Objects in Space / War Stories)
+Pending resolved:
+  - User decision on Looney loudness path (dedupe-to-managed executed)
+  - Duplicate dump folders for Looney, Orville, Firefly, 12 Monkeys
+  - Empty leftover folder sweep
+Project status changes:
+  - 01-mediaservices: Aug 26 server work complete; next is `personal:SEA-34` (Desktop Pokémon → Unraid)
+Next:
+  - `personal:SEA-34` — copy Desktop Pokémon pack to Unraid; set TheTVDB (DVD); do not leave Horizons in 1997 Season 20
+--- END BLOCK ---
+
+
 ### 2026-09-03 — Library CUT delete + Desktop Pokémon organize
 
 SessionID: 2026-09-03-voyager-mslib1
@@ -325,17 +357,6 @@ Next:
   - Await user's pick on the loudness remediation path; gains.csv is ready either way
 Git: MediaSentinel repo untouched (scratch/ + docs/ only, uncommitted); workspace this commit
 --- END BLOCK ---
-
----
-
-## Evening continuation: consolidation executed
-
-Looney Tunes consolidated to the single Sonarr folder (1,062 files, Plex rebuilt show as ratingKey 40463, zero dupes, 100% subs, loudness leveled). The Orville / Firefly / 12 Monkeys duplicate folders resolved by MediaSentinel adjudication; 16 empty leftover folders deleted.
-
-Incident: 184 quality-upgrade source files destroyed (ffmpeg `.part` format-inference failure followed by an unconditional graveyard sweep). Library not degraded; upgrade list saved to `lost-upgrades.json` for Sonarr re-grab. Lessons journaled in project SESSION-STATE: explicit `-f` on temp outputs, sweeps gate on zero errors, review decisions before deletions, smoke-test destructive batches.
-
-Repo: parser fix (4-digit year-seasons, S00 specials) and grouping fix (yearless names merge into sole year variant) with tests; suite 578 green, uncommitted.
-
 
 ### 2026-08-11 — cui ViewToolbar bg-card consistency
 
