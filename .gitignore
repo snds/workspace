@@ -139,6 +139,12 @@
 !07-projects/03-omni/
 !07-projects/03-omni/**
 
+# 12-MCS: track ONLY the cross-device migration playbook (2026-09-04). Deliberately
+# NOT `**` — on the work laptop this folder holds employer/customer research that must
+# stay OUT of the workspace repo. Only SESSION-STATE.md (context, no customer data) syncs.
+!07-projects/12-MCS/
+!07-projects/12-MCS/SESSION-STATE.md
+
 # MediaSentinel is otherwise git-local; track only Cursor canvas copies.
 !07-projects/01-mediaservices/
 !07-projects/01-mediaservices/canvases/
