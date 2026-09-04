@@ -19,6 +19,7 @@ driving its planet materials.
 - **Code repo:** `~/Projects/ShadeGraph` (`snds/*`, own git repo — *not* in this
   vault, per portable-first: code lives in `~/Projects`).
 - **This folder:** design docs + continuity baton only (same pattern as 13-legion).
+- **In-repo agent contract:** `~/Projects/ShadeGraph/AGENTS.md` (Intent and other agents load this; they cannot read this vault from a ShadeGraph worktree).
 
 ## Docs
 
