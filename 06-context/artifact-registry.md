@@ -1,6 +1,12 @@
 # Artifact Registry
 <!-- Auto-maintained by any agent. Updated after each task. -->
-<!-- Last updated: 2026-09-03 | Session: LCARS pack catalog + live T3 compose -->
+<!-- Last updated: 2026-09-03 | Session: library CUT delete + Desktop Pokémon organize -->
+
+## Media Services — 07-projects/01-mediaservices/ (git-tracked)
+
+### 01-mediaservices/ (canvases/ git-tracked; SESSION-STATE.md local-only)
+- **Purpose**: Unraid / Plex / Emby / MediaSentinel library ops. Portable handoff is `06-context/session-log.md` + `08-knowledge/engineering/pokemon-tvdb-dvd-vs-aired.md`. Local `SESSION-STATE.md` is gitignored. `canvases/` holds Cursor copies (`duplicate-scan-outcome`, `authoritative-delete-list`, `looney-tunes-loudness`).
+- **Last modified**: 2026-09-03 — session-end: Aug 16–17 CUT delete + Desktop Pokémon organize recorded in the session log.
 
 ## LCARS Generative Interface — 07-projects/20-lcars-generative-interface/ (git-tracked)
 

@@ -23,6 +23,46 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ---
 
+### 2026-09-03 — Library CUT delete + Desktop Pokémon organize
+
+SessionID: 2026-09-03-voyager-mslib1
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 01-mediaservices
+Summary: Closed a long MediaSentinel / Unraid library thread. Library-wide English-watchable duplicate ranking produced 2,327 CUT videos; Sean authorized live delete of those losers plus their sidecars only. Plex TV and Emby TV were scanned. Desktop ColdFusion Pokémon pack was reorganized in place to TVDB DVD seasons; it was not copied to Unraid.
+Artifacts:
+  - 07-projects/01-mediaservices/canvases/duplicate-scan-outcome.canvas.tsx — scan 20260816T214110-ab8d81
+  - 07-projects/01-mediaservices/canvases/authoritative-delete-list.canvas.tsx — 2,327 CUT list
+  - Unraid `/mnt/user/appdata/media-sentinel/exports/` — delete lists + result JSON
+  - Desktop ColdFusion Pokémon pack — 1,299 videos renamed into show/season folders
+  - 08-knowledge/engineering/pokemon-tvdb-dvd-vs-aired.md — DVD vs aired + production-number trap
+Decisions:
+  - Delete CUT extras only; keep KEEP / PRESERVE / singletons; companions of the losing video only
+  - Unlink on disk (space back), not same-fs quarantine, after explicit authorization
+  - Do not whisper-overwrite MST3K S6+ community `.en.srt`; copy sidecars onto tracked obfuscated files instead
+  - ColdFusion `02x28`-style codes are production numbers; map Pokémon via folder context + TVDB DVD
+  - Plex/Emby must use TheTVDB (DVD) for Pokémon (1997) {tvdb-76703}; default aired now maps S20 to Horizons
+Evidence:
+  - 2,327 videos + 5,369 sidecars unlinked; 0 listed videos remaining; 917.7 GiB @ Unraid `/mnt/user/data/media/tv` — verified
+  - Plex TV section 1 refresh HTTP 200; Emby TV Recursive ValidationOnly HTTP 204 — verified
+  - 1,299 Desktop Pokémon videos moved/renamed; leftover non-video only — verified
+Pending added:
+  - `personal:SEA-34` land organized Desktop Pokémon pack on Unraid with TVDB DVD order
+Pending resolved:
+  - Authoritative CUT list for run `20260816T214110-ab8d81`
+  - User-authorized delete of that list + TV library scans
+  - Desktop Pokémon pack season/folder organize
+Project status changes:
+  - 01-mediaservices: Aug 16–17 library reclaim done; Aug 26 Looney/Orville/Firefly/12 Monkeys outcome unchanged; Desktop Pokémon ready to copy
+Next:
+  - `personal:SEA-34` — copy Desktop Pokémon pack to Unraid and set TVDB DVD order
+  - Optional leftovers stay in SESSION-STATE (Sonarr Looney upgrades, Firefly E03/E11/E10, Bazarr missing-sub keepers, MST3K S04E01 sidecar)
+--- END BLOCK ---
+
+
 ### 2026-09-03 — LCARS pack catalog + live T3 compose
 
 SessionID: 2026-09-03-voyager-t3ds1
