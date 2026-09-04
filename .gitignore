@@ -129,12 +129,38 @@
 !07-projects/20-lcars-generative-interface/
 !07-projects/20-lcars-generative-interface/**
 
+# Track the ShadeGraph shader-tool project — design docs + session continuity
+# (2026-09-04). Implementation code stays in the platform Projects directory (~/Projects/ShadeGraph).
+!07-projects/21-shadegraph/
+!07-projects/21-shadegraph/**
+
 # MediaSentinel is otherwise git-local; track only Cursor canvas copies.
 !07-projects/01-mediaservices/
 !07-projects/01-mediaservices/canvases/
 !07-projects/01-mediaservices/canvases/**
 
 # ---- Still ignored, even inside tracked folders ----
+
+# 07-projects tracking policy (2026-09-04) — applies inside ANY tracked project folder.
+# Project CONTEXT (reference, guidance, intent, curated media, docs) IS tracked, for
+# both personal AND work projects. NEVER tracked, even inside a tracked project folder:
+#   • company/app CODE or checked-out repos → live in their own repos (centric-ui,
+#     prototype repos, ~/Projects/*), never the workspace.
+#   • sensitive customer data → never in the workspace at all; keep it with the employer repo.
+#   • dependencies / build output / regenerated capture dumps / heavy media.
+# New project folders are opted in individually (allowlist above) only AFTER a triage
+# confirms no only-copy code and no customer data. Full policy + migration status:
+# 08-knowledge/cross-domain/workspace-infrastructure.md.
+07-projects/**/node_modules/
+07-projects/**/dist/
+07-projects/**/build/
+07-projects/**/.next/
+07-projects/**/target/
+07-projects/**/__pycache__/
+07-projects/**/*.pyc
+07-projects/**/.tmp-*
+07-projects/**/refs/
+07-projects/**/Video/
 
 # Per-user permission grants (machine-local; never share)
 .claude/settings.local.json

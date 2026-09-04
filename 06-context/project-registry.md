@@ -189,6 +189,15 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 
 ---
 
+### ShadeGraph — Node-based Shader Design Tool
+**Status:** Building — Phase 0 scaffold + design plan complete (2026-09-04)
+**Summary:** Reusable, backend-agnostic node-based shader design tool. Compose layered shaders as a live node graph; per-node live thumbnails; solo any node/layer to a full preview; compile one `ShaderDocument` to GLSL ES / WGSL (vgpu/WebGPU) / Three TSL. Stack: React + React Flow 12 + shared Three/WebGPU preview renderer + pluggable compiler (fidelity ⟂ framework: previews run the real target program). Prompted by vgpu.sh + the Codrops Prism article. **Legion is the first consumer** — its GLSL chunks + uniforms + per-archetype lab-store are already a de-facto node system. Code repo `~/Projects/ShadeGraph` (`snds/*`), own git; vault folder holds docs/baton only (portable-first, like Legion).
+**Folder:** `07-projects/21-shadegraph/` (docs + baton) · code at `~/Projects/ShadeGraph`
+**Triggers:** shadegraph, shader tool, node shader, shader editor
+**Next:** Phase 1 — `pnpm install`, wire React Flow shell to a store, starter node set + inspector + JSON save/load. See [[07-projects/21-shadegraph/docs/DESIGN-PLAN|DESIGN-PLAN]] §10.
+
+---
+
 ### Workspace Brain
 **Status:** Active
 **Summary:** Standing home for sessions whose subject is the workspace itself (validation, fix, migration, infrastructure). Established 2026-07-09 per the workspace-work project-home rule in framework #08 (FX-13); git-tracked for cross-machine continuity.
