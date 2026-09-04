@@ -181,6 +181,18 @@
     "live svg": "03-skills/gd-generation-tooling/SKILL.md \u2014 emit live geometry; flattened plates are not construction",
     "display grammar": "03-skills/gd-generation-tooling/SKILL.md + 03-skills/gd-display-graphics/SKILL.md \u2014 scene JSON then SVG",
     "illustration generation": "03-skills/gd-generation-tooling/SKILL.md \u2014 raster is testimony; HUD stills stay live SVG",
-    "flattened png": "03-skills/gd-generation-tooling/SKILL.md \u2014 refuse cutouts as the production surface"
+    "flattened png": "03-skills/gd-generation-tooling/SKILL.md \u2014 refuse cutouts as the production surface",
+    "which model": "02-shared-references/model-routing.md \u2014 resolve surface \u2192 work context \u2192 effort tier before picking; native models first",
+    "pick a model": "02-shared-references/model-routing.md \u2014 resolve surface \u2192 work context \u2192 effort tier before picking; native models first",
+    "best model for": "02-shared-references/model-routing.md \u2014 resolve surface \u2192 work context \u2192 effort tier before picking; native models first",
+    "model selection": "02-shared-references/model-routing.md \u2014 resolve surface \u2192 work context \u2192 effort tier before picking; native models first",
+    "model routing": "02-shared-references/model-routing.md \u2014 full surface \u00d7 work context \u00d7 effort tier map",
+    "what should i use for": "02-shared-references/model-routing.md \u2014 resolve surface \u2192 work context \u2192 effort tier before picking; native models first",
+    "ollama model": "02-shared-references/model-routing.md \u2014 local model roster; M3 Max 36GB fit constraints; effort + speed per model",
+    "local model": "02-shared-references/model-routing.md \u2014 local model roster; M3 Max 36GB fit constraints; effort + speed per model",
+    "cursor model": "02-shared-references/model-routing.md \u2014 Cursor surface; Grok is native default; Claude draws stipend",
+    "codex model": "02-shared-references/model-routing.md \u2014 Codex surface; o4-mini default; o3 for tier-3/4 reasoning",
+    "grok or claude": "02-shared-references/model-routing.md \u2014 Cursor stipend note; Grok native default; Claude only when justified",
+    "effort tier": "02-shared-references/model-routing.md \u2014 four-tier effort scale (Quick / Standard / Deep / Extended) applied per surface"
   }
 }

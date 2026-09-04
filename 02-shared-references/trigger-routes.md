@@ -191,6 +191,18 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `display grammar` | 03-skills/gd-generation-tooling/SKILL.md + 03-skills/gd-display-graphics/SKILL.md — scene JSON then SVG |
 | `illustration generation` | 03-skills/gd-generation-tooling/SKILL.md — raster is testimony; HUD stills stay live SVG |
 | `flattened png` | 03-skills/gd-generation-tooling/SKILL.md — refuse cutouts as the production surface |
+| `which model` | 02-shared-references/model-routing.md — resolve surface → work context → effort tier before picking; native models first |
+| `pick a model` | 02-shared-references/model-routing.md — resolve surface → work context → effort tier before picking; native models first |
+| `best model for` | 02-shared-references/model-routing.md — resolve surface → work context → effort tier before picking; native models first |
+| `model selection` | 02-shared-references/model-routing.md — resolve surface → work context → effort tier before picking; native models first |
+| `model routing` | 02-shared-references/model-routing.md — full surface × work context × effort tier map |
+| `what should i use for` | 02-shared-references/model-routing.md — resolve surface → work context → effort tier before picking; native models first |
+| `ollama model` | 02-shared-references/model-routing.md — local model roster; M3 Max 36GB fit constraints; effort + speed per model |
+| `local model` | 02-shared-references/model-routing.md — local model roster; M3 Max 36GB fit constraints; effort + speed per model |
+| `cursor model` | 02-shared-references/model-routing.md — Cursor surface; Grok is native default; Claude draws stipend |
+| `codex model` | 02-shared-references/model-routing.md — Codex surface; o4-mini default; o3 for tier-3/4 reasoning |
+| `grok or claude` | 02-shared-references/model-routing.md — Cursor stipend note; Grok native default; Claude only when justified |
+| `effort tier` | 02-shared-references/model-routing.md — four-tier effort scale (Quick / Standard / Deep / Extended) applied per surface |
 
 ## Registry skills with triggers
 
@@ -260,4 +272,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 176 · Registry rows: 61_
+_Curated routes: 188 · Registry rows: 61_
