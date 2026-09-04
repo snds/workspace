@@ -134,6 +134,11 @@
 !07-projects/21-shadegraph/
 !07-projects/21-shadegraph/**
 
+# Track Omni project CONTEXT only (2026-09-04). Code moved to ~/Projects/omni
+# (github.com/snds/omni). This folder is a pointer stub — no app code here.
+!07-projects/03-omni/
+!07-projects/03-omni/**
+
 # MediaSentinel is otherwise git-local; track only Cursor canvas copies.
 !07-projects/01-mediaservices/
 !07-projects/01-mediaservices/canvases/
