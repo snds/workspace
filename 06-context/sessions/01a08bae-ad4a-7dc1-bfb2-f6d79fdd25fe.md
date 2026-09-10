@@ -11,4 +11,5 @@ Summary: Resumed the authorized native handoff. Implemented five prescribed sphe
 Commits: PlanetCompiler a3cc5f0, 86ea71f, 2b470bf; local-only repository with no remote configured.
 Next: Inspect the phase-one evidence, then specify/implement coarse global topology and material/boundary interactions before drainage and terrain/collision. Preserve original high-resolution references, adversarial visual gates, and existing Legion work.
 Handoff: 07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md
+Follow-up: design-hook finding fixed in PlanetCompiler a0d35bf by removing a decorative side border. Browser, scoped detector and evidence-integrity checks passed; no suppressions or unresolved findings.
 --- END BLOCK ---
