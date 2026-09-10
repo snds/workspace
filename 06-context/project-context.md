@@ -1,7 +1,7 @@
 # Project Context — Sean Sands
 _Authoritative source: this file (06-context/project-context.md)_
 _Written by any agent — the git checkout is the source of truth._
-_Last updated: 2026-09-02_
+_Last updated: 2026-09-10_
 
 > **Platform note (2026-06-16):** the workspace itself was refactored to be portable, git-native, and
 > LLM/surface/device-agnostic, then consolidated onto `main` at `github.com/snds/workspace` (16-PR stack,
@@ -89,3 +89,5 @@ Moved out of Active on 2026-09-02. Anchors stay. Do not delete.
 
 _Narratives live in [project-registry.md](project-registry.md) (load on demand)._
 _For live focus, prefer the active project's `SESSION-STATE.md` **Live handoff**._
+
+- **PlanetCompiler / independent planet experiment (2026-09-10):** native phase-one material-history laboratory and asynchronous Unreal adapter verified and committed. Human evidence-page inspection is pending; next model work is coarse global topology and interacting material/boundary events before drainage and shared terrain/collision. Live state → [independent planet handoff](../07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md). Implementation stays in the separate personal PlanetCompiler repository; preserve Legion.
