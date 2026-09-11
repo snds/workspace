@@ -50,6 +50,11 @@
     "pages build": "08-knowledge/engineering/cds-host-consume-order.md",
     "cds main": "08-knowledge/engineering/cds-host-consume-order.md",
     "overlay vs main": "08-knowledge/engineering/cds-host-consume-order.md",
-    "consume cds": "08-knowledge/engineering/cds-host-consume-order.md"
+    "consume cds": "08-knowledge/engineering/cds-host-consume-order.md",
+    "agent miss": "08-knowledge/cross-domain/agent-load-miss-review.md",
+    "load miss": "08-knowledge/cross-domain/agent-load-miss-review.md",
+    "cold agent": "08-knowledge/cross-domain/agent-load-miss-review.md",
+    "silent hub": "08-knowledge/cross-domain/agent-load-miss-review.md",
+    "token diet": "08-knowledge/cross-domain/agent-load-miss-review.md"
   }
 }

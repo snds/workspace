@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-11 — plan-ahead skill + Frost DS×AI as #18 (Intent remains #17)_
+_Last updated: 2026-09-11 — agent load-miss harness map v2.0 (map-only)_
 
 ---
 
@@ -8,19 +8,19 @@ _Last updated: 2026-09-11 — plan-ahead skill + Frost DS×AI as #18 (Intent rem
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Plan-ahead is standing doctrine. Frost DS×AI landed as framework **#18** (origin already used #17 for Intent Coordination). Proto Pages gate (`cds-exports-check`) is on #77. Consume of Toaster / SplitDragHandle / ChipMultiSelect waits on cds #35 merge.
-- **Working set**: `03-skills/plan-ahead/SKILL.md`, `.cursor/agents/plan-ahead.md`, `01-frameworks/18-design-systems-ai-operating-model.md`, `08-knowledge/engineering/cds-host-consume-order.md`.
-- **Last action (2026-09-11):** Rebased Frost + plan-ahead onto origin/main; numbered course notes 22 and DS×AI framework 18 to avoid collisions. By Cursor Grok 4.6 · Cursor · Work MBP.
+- **Current focus**: Agent load-miss review is **map-only**. Frost DS×AI is framework **#18** (Intent remains #17). Numbered recs 1–15 wait on Sean (and other-model cross-check). Do not rewrite always-on files until rec numbers are approved.
+- **Working set**: `08-knowledge/cross-domain/agent-load-miss-review.md`, `07-projects/19-workspace-brain/reports/harness-map_v2.0_2026-09-11.md`, canvas `agent-load-miss-review.canvas.tsx`.
+- **Last action (2026-09-11):** Pushed Frost+#18 rebase; wrote harness-map v2.0. Cursor Grok 4.6 · Cursor · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Hub-gated adversarial workspace review (this session). Then merge cds #35 onto `main` (human), then proto re-export.
-- **Open decisions:** Whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat).
-- **Blocked on:** cds #35 human merge (do not merge it from an agent). Numbered harness-map recs from the miss-review — do not rewrite always-on until Sean approves.
+- **Next action:** Sean approves rec numbers (or other LLMs disagree). Then merge cds #35 onto `main` (human).
+- **Open decisions:** Recs 1–15 (AGENTS read order, prompt_route allowlist, silent-hub triggers, `component` route, #18 in AGENTS, stale seventeen, …). Mission Fit auto-mint still open.
+- **Blocked on:** Numbered harness-map approval. cds #35 human merge (do not merge it from an agent).
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`.
 - **Agent thread**: `… → (2026-09-04): vgpu + 3D extensions + Intent #17` → `Cursor Grok 4.6 / Cursor / Work MBP (2026-09-11): plan-ahead + Frost #18 rebase`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
-- **Machine**: Personal MacBook Pro (`Voyager-2.local`) this session; Work MBP remains the other primary.
+- **Machine**: Work MacBook Pro (`CS-K746DRWXY1`) this session; Personal MBP remains the other primary.
 - **OS context**: macOS (Darwin 25.5.0)
 - **Workspace root**: resolve via nearest `AGENTS.md` (this checkout)
 - **Project root**: `07-projects/19-workspace-brain`

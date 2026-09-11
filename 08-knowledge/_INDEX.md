@@ -110,6 +110,7 @@ _Raw research syntheses live in `research/` (double-nesting flattened 2026-07-23
 
 ## Cross-Domain
 
+- [[agent-load-miss-review]] — Hub-gated adversarial review of what a cold LLM (Claude/GPT/Grok/Cursor) never loads vs what it over-loads. Layer 0 is a hook plus a hope; silent hubs; AGENTS read-order vs token diet; #18 Frost is routed not contracted. Map-only — numbered recs in `07-projects/19-workspace-brain/reports/harness-map_v2.0_2026-09-11.md`. Triggers: `agent miss`, `load miss`, `cold agent`, `what would an agent miss`, `token diet`, `silent hub`. (2026-09-11)
 - [[figma-source-audit-patterns]] — Five source shapes; state-coverage taxonomy; recurring gaps observed in the centric-ui Figma library (sizing, variants, composition, properties, variables, indicators); per-component recommendations table (2026-05-08)
 - [[figma-component-composition-from-react]] — Compound generation two-layer model (outer story-driven, inner JSX-anatomy); Figma INSTANCE constraints; variant/independent/INSTANCE_SWAP decision matrix; shadcn conventions (2026-05-07)
 - [[workspace-infrastructure]] — Git-native workspace infrastructure: hook dispatcher (5 events, three-source tiered trigger routing), bootstrap-v2 machine layer (dist shims + doctor + beacon, per-machine installs), multi-machine topology, multi-identity GitHub; headless Claude Code scoping (`--strict-mcp-config` isolates, `--allowed-tools` does NOT restrict built-ins, mcp-remote cold-start silent failure); Drive-era learnings quarantined as historical (2026-07-30)
