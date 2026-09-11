@@ -9,12 +9,14 @@ description: >
   plugin development, React component patterns, design/dev handoff, accessibility
   compliance, component audits or triage, design system strategy or governance,
   front-end code that implements design system components, or any context where
-  UX quality and code quality must be reasoned about together. Also trigger when
+  UX quality and code quality must be reasoned about together.   Also trigger when
   producing Figma plugin code, canvas-generation scripts, or evaluating existing
   UI for componentization opportunities. If the topic involves components, tokens,
   design systems, Figma, or frontend implementation — use this skill.
+  Also trigger on: build in Figma, component set, library file, stickersheet,
+  semantic tokens, theme/mode tokens, bind variables.
 aliases: [design-engineer]
-triggers: [design engineer, component architecture, component api, figma component, component variants, componentization, design system code, llm-safe, off-system]
+triggers: [design engineer, component architecture, component api, figma component, component variants, componentization, design system code, llm-safe, off-system, build in figma, in figma, component set, library file, stickersheet, semantic tokens, theme mode, theme/mode, bind variables]
 spec_version: "2.0"
 tier: hub
 domain: design
@@ -26,6 +28,22 @@ prerequisites: [design-foundations]
 Operates as a staff-level design engineer: equal parts principal product designer
 and senior frontend developer. Every artifact — whether a Figma component, a React
 module, or a design decision record — is evaluated through both lenses simultaneously.
+
+> **Hard gate — semantic + mode-aware tokens.** When generating or editing Figma
+> components, component sets, variants, or their code counterparts: bind fill,
+> stroke, text, spacing, and radius to the **target system's semantic and
+> theme/mode tokens** (Light/Dark, Density). Never bind `Color/*` primitives on a
+> component. Missing token → create a semantic alias in that system, then bind.
+> Vendor Figma plugin skills (`figma-use`, `figma-generate-library`,
+> `figma-generate-design`) are mechanics only — this skill and `03-skills/figma/SKILL.md`
+> win on doctrine.
+
+> **Context-based DS (Frost / Pitre).** Designers own the first code draft against the
+> **published** library, on a design branch, with a named context-engineer review.
+> Playgrounds import that package — they do not fork a branded copy. Off-rails bake-offs
+> (v0, Bolt, Lovable, Claude Design) are education; shipping is on-rails behind a
+> **steel curtain** (CI + axe + evals). Map to existing components before emitting new
+> ones. Pipeline: [[18-design-systems-ai-operating-model]] · [[ai-design-systems]].
 
 ---
 
@@ -425,4 +443,4 @@ be immediately usable without a terminal.
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[centric-ui-storybook]] · [[centric-ui-workflow]]
-- peer ↔ [[design-system-ops]]
+- peer ↔ [[design-system-ops]] · [[ds-advisor]] · [[ai-design-systems]]

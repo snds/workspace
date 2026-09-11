@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 295,
+    "total": 296,
     "by_tier": {
       "cross-cutting": 42,
       "foundation": 22,
       "hub": 47,
-      "spoke": 184
+      "spoke": 185
     }
   },
   "skills": {
@@ -488,6 +488,58 @@
       "rigor_role": "command-hub",
       "hash": "sha256:607bc66514a38a310307705fdfa4835be8cabc7c7916e5a7841e5c5c26ceebc6"
     },
+    "ai-design-systems": {
+      "path": "03-skills/ai-design-systems/SKILL.md",
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "ds-advisor",
+      "prerequisites": [
+        "ds-advisor"
+      ],
+      "related": [
+        "design-engineer",
+        "design-system-ops",
+        "ds-generation-pipeline",
+        "ux-component-library"
+      ],
+      "governed_by": [
+        "qa"
+      ],
+      "governs": [],
+      "triggers": [
+        "ai design system",
+        "ai and design systems",
+        "vibe coding",
+        "generative ui",
+        "gen ui",
+        "a2ui",
+        "steel curtain",
+        "on-rails",
+        "off-rails",
+        "context-based design system",
+        "ai as mortar",
+        "figmalint",
+        "story ui",
+        "agents as users",
+        "dual publish",
+        "design system inspection",
+        "ai-ready",
+        "console mcp"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-18",
+        "framework-09",
+        "framework-13",
+        "ds-advisor",
+        "design-engineer"
+      ],
+      "rigor_role": "command-hub",
+      "hash": "sha256:d82c0f419f93c5738a9fd68ba0ce7584e945632fdbcbaa52b4473ad26c74150b"
+    },
     "ai-video-generation": {
       "path": "03-skills/ai-video-generation/SKILL.md",
       "tier": "cross-cutting",
@@ -944,7 +996,16 @@
         "componentization",
         "design system code",
         "llm-safe",
-        "off-system"
+        "off-system",
+        "build in figma",
+        "in figma",
+        "component set",
+        "library file",
+        "stickersheet",
+        "semantic tokens",
+        "theme mode",
+        "theme/mode",
+        "bind variables"
       ],
       "surfaces": [
         "*"
@@ -952,7 +1013,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:b7598508c38a5420d44aabef99257a9257f6fa66afb2e847a09614ae90c922da"
+      "hash": "sha256:fc7fa3115a0203f267ccbdc4f7f43b5e95ba0b872640d49f989f29f00bd6b671"
     },
     "design-foundations": {
       "path": "03-skills/design-foundations/SKILL.md",
@@ -1025,7 +1086,7 @@
         "design-engineer"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:eb73743fbff7be5e561b0a9f194fee5ccd9559c1b9951e6e627cf846c0ff1ff1"
+      "hash": "sha256:d1b6ce32a3c5e0a432111839d262465c7b0135730d6fc218b894fde6ff994d75"
     },
     "designparser": {
       "path": "03-skills/designparser/SKILL.md",
@@ -1239,7 +1300,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:9fcc0096256fec70e4abb036ec9a3bdd8e74da3cb5802afc3635a2bd753ef10d"
+      "hash": "sha256:77ac44dff286f408c513989bed6db154e0832e2e29155503f28ed9ad76bf554a"
     },
     "ds-bi-platforms": {
       "path": "03-skills/ds-bi-platforms/SKILL.md",
@@ -1379,7 +1440,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:a7273400d1bb322ef6e27bbcac721f5ca135979bf962fcf7313549e380b9690c"
+      "hash": "sha256:624b5b5f25d15d1d18e8c3e11994635a20bb25d156c6564b220a60cdb2ea3f8b"
     },
     "ds-ml-engineering": {
       "path": "03-skills/ds-ml-engineering/SKILL.md",
@@ -3867,7 +3928,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:1cc576a5f3d1d7680297d6c5044a5aab160d3ec3d8d293388cb05b7842baae59"
+      "hash": "sha256:db024777dbe9d6e707f6800457ad4379660d59517b6529e3daab47cf464737a0"
     },
     "lead-art-director": {
       "path": "03-skills/lead-art-director/SKILL.md",
@@ -6640,7 +6701,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:bed5b934d3e20a771525e7c294bd1b7d09c2826cc61709e87a3ecfb526bc7b24"
+      "hash": "sha256:8ba99df4dd94efb93cdfb086a987653140ed15bba602b6f559d27061357e72bd"
     },
     "ux-data-visualization": {
       "path": "03-skills/ux-data-visualization/SKILL.md",
@@ -7885,6 +7946,11 @@
     "adobe-app-builder": [
       "eng-foundations",
       "adobe-app-builder"
+    ],
+    "ai-design-systems": [
+      "design-foundations",
+      "ds-advisor",
+      "ai-design-systems"
     ],
     "ai-video-generation": [
       "imaging-foundations",

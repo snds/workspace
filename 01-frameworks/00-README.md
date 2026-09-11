@@ -1,15 +1,15 @@
 # Frameworks — Overview and Navigation
 
 _Workspace: `01-frameworks/`_
-_Last updated: 2026-09-04_
+_Last updated: 2026-09-11_
 
-Seventeen top-level documents that govern how design, **components & patterns**, collaboration, research, craft, QA, **perception integrity**, **anticipatory failure analysis**, **realtime photoreal operations**, **domain rigor for every skill hub**, **engineering / analysis / security operations**, **intent coordination**, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. **#09 is the design-domain hub** for components and patterns; **#13 is the meta-stack** every other domain must instantiate. They're the portable layer that stays consistent even when the specific work shifts.
+Eighteen top-level documents that govern how design, **components & patterns**, **design systems × AI**, collaboration, research, craft, QA, **perception integrity**, **anticipatory failure analysis**, **realtime photoreal operations**, **domain rigor for every skill hub**, **engineering / analysis / security operations**, **intent coordination**, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. **#09 is the design-domain hub** for components and patterns; **#18 is the design-systems × AI operating model** (Frost/Southleft); **#17 is intent coordination**; **#13 is the meta-stack** every other domain must instantiate. They're the portable layer that stays consistent even when the specific work shifts.
 
-This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all sixteen full documents.
+This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all eighteen full documents.
 
 ---
 
-## The seventeen frameworks
+## The eighteen frameworks
 
 | # | Framework | Answers |
 |---|---|---|
@@ -30,6 +30,7 @@ This README is the orientation layer. Load it when you need to know which framew
 | 15 | **[[01-frameworks/15-analysis-operating-model|Analysis Operating Model]]** | How do we go from question → valid method → decision without narrative theater? |
 | 16 | **[[01-frameworks/16-security-operating-model|Security Operating Model]]** | How do we threat-model, build, scan, and monitor so security is a quality dimension? |
 | 17 | **[[01-frameworks/17-intent-coordination-operating-model|Intent Coordination Operating Model]]** | How do many agents stay aligned to designed intent (living spec, waves, verify)? |
+| 18 | **[[01-frameworks/18-design-systems-ai-operating-model|Design Systems × AI Operating Model]]** | What is the system, how may AI attach to it, and what must be true before generated UI ships? |
 
 ---
 
@@ -43,8 +44,9 @@ This README is the orientation layer. Load it when you need to know which framew
 |---|---|
 | Creative direction, aesthetic reasoning, visual identity | 01 |
 | IA, interaction decisions, pattern choice, expertise design | 01, 02 |
-| Design system work, component audit, triage | 01, 02, 05, 06, 09 |
+| Design system work, component audit, triage | 01, 02, 05, 06, 09, **18** |
 | Component/pattern choice, composition, the component schema, DESIGN.md | 09 (+ 01, 02) |
+| AI generating, inspecting, or adopting UI through a DS (vibe coding, MCP, gen UI, steel curtain) | **18**, 09, 06, 14 |
 | Difficult conversation, pushback, shared disagreement memory | 03 |
 | Evidence threshold, confidence tier, advocacy calibration | 04 |
 | Design review, visual QA, handoff, finishing audit | 01, 02, 05, 06, 10 |
@@ -270,11 +272,24 @@ Each summary captures: core conviction, when to invoke, key operating habits. Us
 
 **When to invoke.** Two or more agents/worktrees, or explicit living-spec / orchestration language. Enforcement: `09-tools/intent-run.py`. The Intent desktop app is optional.
 
+### 18 — Design Systems × AI Operating Model
+
+**Core conviction.** A design system is critical UI infrastructure — the story of how the org designs and builds interfaces. AI is **mortar**, not a parallel universe. Once generation is cheap, **"Is it good?"** is the job. Steel curtain (CI / axe / evals) before vibe output ships; LLM-as-judge is not the gate.
+
+**When to invoke.** AI generating, inspecting, adopting, or serving UI through a design system — vibe coding, MCP, gen UI, designer-owned drafts, agent users, DS+AI pilots.
+
+**Key operating habits.**
+- Inspect, don't generate from scratch. Five qualities: complete · sound · synchronized · extensible · AI-ready.
+- Context-based DS: designer-owned first draft against the **published** package; playgrounds import it, they don't fork it.
+- On-rails ships; off-rails bake-offs teach. Dual publish for agent users. Gen UI = JSON + recipes + confidence.
+- Org: sell → pilot → rollout → govern. The pilot *is* the pitch. Govern from day one.
+- Command surface: `ai-design-systems`. Canon: Brad Frost / Southleft.
+
 ---
 
 ## How they interconnect
 
-The core operating lenses (01–06) are layered, not parallel — they compose in numerical order (diagrammed below). The remaining frameworks (07–17) are orthogonal meta-layers that fire across whatever the core produces. They're listed in the order they compose:
+The core operating lenses (01–06) are layered, not parallel — they compose in numerical order (diagrammed below). The remaining frameworks (07–18) are orthogonal meta-layers that fire across whatever the core produces. They're listed in the order they compose:
 
 ```
                      ┌─────────────────────────────┐
@@ -324,6 +339,7 @@ The core operating lenses (01–06) are layered, not parallel — they compose i
 - **15 ⟂ all (analysis).** [[01-frameworks/15-analysis-operating-model|Analysis Operating Model]] is question → valid method → decision. Runs with #04.
 - **16 ⟂ all (security).** [[01-frameworks/16-security-operating-model|Security Operating Model]] is threat-model, scan, fail closed. Runs with #14 and #11.
 - **17 ⟂ all (multi-agent).** [[01-frameworks/17-intent-coordination-operating-model|Intent Coordination]] is living spec + waves + independent verify. Enforced by `intent-run.py`. Runs with #06, #07, #08, and [[open-agent-engine]].
+- **18 ⟂ DS + generated UI.** [[01-frameworks/18-design-systems-ai-operating-model|Design Systems × AI]] is the Frost/Southleft operating model: what a DS *is* (stool, solid-line graph), how AI attaches (mortar, not a parallel universe), and the steel curtain before vibe output ships. #09 still owns component intent; #18 owns the AI envelope around that body of intent. Routes *out* to `ai-design-systems` (procedure) and `ds-advisor` / `design-engineer` / `design-system-ops`.
 
 ---
 
@@ -342,10 +358,10 @@ The core operating lenses (01–06) are layered, not parallel — they compose i
 
 ## Notes for LLMs loading this README
 
-**Token budget guidance.** The seventeen frameworks total substantial markdown. This README captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For any fine visual-detail judgment, load #10 (it's short, and its `native-visual-eval` skill carries no hub dependency). Before proposing or building any technique with a visible failure surface, load #11 (its `failure-mode-premortem` skill also carries no hub dependency). For realtime 3D / photoreal / frame-budget / flythrough work, load #12 (its `realtime-visual-craft` skill is the command surface). For branching, PR, or consolidation work, load #07. For multi-agent / living-spec work, load #17 and run `intent-run.py`.
+**Token budget guidance.** The eighteen frameworks total substantial markdown. This README captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For any fine visual-detail judgment, load #10 (it's short, and its `native-visual-eval` skill carries no hub dependency). Before proposing or building any technique with a visible failure surface, load #11 (its `failure-mode-premortem` skill also carries no hub dependency). For realtime 3D / photoreal / frame-budget / flythrough work, load #12 (its `realtime-visual-craft` skill is the command surface). For branching, PR, or consolidation work, load #07. For multi-agent / living-spec work, load #17 and run `intent-run.py`. For AI generating or adopting UI through a design system, load **#18** (its `ai-design-systems` skill is the command surface) with #09 for component intent.
 
 **When the README isn't enough.** The compressed summaries preserve the *what* but not the *why* — the examples, the canon references, the tier descriptions with thresholds, the principle-to-check translations. Any serious reasoning task in the framework's domain should load the full document.
 
-**Updates.** Framework numbering is stable (01–17). Any future framework additions should extend the sequence or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly. (#10 Perception Integrity was added 2026-06-30, #11 Anticipatory Failure Analysis on 2026-07-14, #12 Realtime Photoreal Operational on 2026-08-03, #13–#16 in the 2026-08 domain-ops pass, #17 Intent Coordination on 2026-09-04.)
+**Updates.** Framework numbering is stable (01–18). Any future framework additions should extend the sequence or, if a restructure is warranted, be handled as a fresh migration session with full reference audit. Trigger migration work with *"Let's execute a framework migration"* — that flags the scope explicitly. (#10 Perception Integrity was added 2026-06-30, #11 Anticipatory Failure Analysis on 2026-07-14, #12 Realtime Photoreal Operational on 2026-08-03, #13–#16 in the 2026-08 domain-ops pass, #17 Intent Coordination on 2026-09-04, **#18 Design Systems × AI** on 2026-09-11 from the Brad Frost / Southleft course.)
 
 **Operational state.** This folder is static reference. Operational continuity between sessions lives in per-project `SESSION-STATE.md` files (see framework 05's Operational State section for the spec) and in `../06-context/session-log.md` for cross-project session logs.

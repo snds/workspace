@@ -1,8 +1,8 @@
 ---
 title: Running synthesis
-project: 21-ai-design-systems-course
+project: 22-ai-design-systems-course
 as-of: 2026-09-10
-status: curriculum-complete
+status: graduated
 ---
 
 # Running synthesis — AI and Design Systems
@@ -11,7 +11,7 @@ Original notes, not a transcript. Update after each section. Graduate to `08-kno
 
 ## For future agent
 
-Intro + **Ch1–Ch6** + recap + **jams** + **appendix** + extras are on disk. Extra-track videos that duplicate Ch3/Ch4 are `status: pointer`. Caption path unchanged: hydrated tab, no `browser_navigate`, split Thinkific/Wistia CDP, human delays. Do not download videos.
+Intro + **Ch1–Ch6** + recap + **jams** + **appendix** + extras are on disk. Extra-track videos that duplicate Ch3/Ch4 are `status: pointer`. **Surviving claims graduated 2026-09-11** to [[18-design-systems-ai-operating-model]], [[ai-design-systems]], and [[ai-and-design-systems]]. Do not download videos.
 
 ## Thesis so far
 
@@ -85,7 +85,7 @@ LLM → agents → subagents → **MCP** (official Figma vs Console MCP vs Compa
 - Gen UI = JSON + recipes + confidence, not LLM emitting React.
 - Sanctioned play on a small slice; protect the meat-and-potatoes roadmap.
 
-Still ahead: graduate durable claims to `08-knowledge/` if Sean wants; optional caption-gap revisits (Ch6 selling, course recap, early jams, Ch5 A2UI).
+Still ahead: optional caption-gap revisits (Ch6 selling, course recap, early jams, Ch5 A2UI). Durable claims live in workspace doctrine, not only this file.
 
 ## Chapter 6
 

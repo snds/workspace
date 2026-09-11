@@ -180,6 +180,15 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 
 ---
 
+### AI and Design Systems Course
+**Status:** Active
+**Summary:** Original notes + synthesis from Brad Frost / Southleft *AI and Design Systems* (Thinkific). Curriculum captured 2026-09-10–11. Notes only — no video archive. Durable claims graduated to framework #18, `ai-design-systems`, and `08-knowledge/design/ai-and-design-systems.md`.
+**Folder:** `07-projects/22-ai-design-systems-course/`
+**Triggers:** ai design systems course, brad frost course, frost ds course
+**Next:** Optional caption-gap revisits (Ch6 selling, Ch5 A2UI, early jams). Doctrine lives in the workspace layers, not only this project.
+
+---
+
 ### LCARS Generative Interface
 **Status:** Implementing — S-SYS47-01 Literal prove in progress
 **Summary:** LLM-forward adaptive LCARS console/shell — natural-language intent + combadge role context recomposes legal Okudagram surfaces via typed Scene IR; immutable constitution; v1 hybrid recipes with plumbing toward v2 dynamic topology; data-first 3D viewports; APCA primary contrast with WCAG AA fallback. App at https://github.com/snds/LCARS.

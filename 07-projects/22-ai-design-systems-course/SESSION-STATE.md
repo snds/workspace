@@ -1,6 +1,6 @@
 # SESSION-STATE — AI and Design Systems Course
 
-_Last updated: 2026-09-11 — curriculum notes complete (pointers on overlapping extras)_
+_Last updated: 2026-09-11 — course notes committed; Frost canon graduated into workspace doctrine_
 
 ---
 
@@ -8,35 +8,39 @@ _Last updated: 2026-09-11 — curriculum notes complete (pointers on overlapping
 
 ### Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR**: Brad Frost *AI and Design Systems* notes project is **complete at file level**. Intro + Ch1–Ch6 + recap + jams + appendix + extras all have notes. Overlapping extra-track videos are `status: pointer` into Ch3/Ch4, not second transcripts.
-- **Current focus**: none — capture pass done
-- **Working set**: `07-projects/21-ai-design-systems-course/` entire `notes/` tree + `synthesis/running.md`
-- **Last action**: Finished jams 10–12 (captions), appendix, FigmaLint, unique webinar/vibe jam, HTML “what is” pages, pointer files for remaining extras. Tab `d8327d` on FigmaLint extras.
-- **Next action**: Optional — graduate surviving claims to `08-knowledge/`; fill no-caption gaps if tracks appear; commit if Sean asks
-- **Open decisions**: Centric “identify the hard” list still optional
+- **TL;DR**: Curriculum notes are **committed**. Surviving claims graduated into workspace doctrine: framework **#18**, skill **`ai-design-systems`**, knowledge **`ai-and-design-systems`**, plus weaves into `ds-advisor` / `design-engineer` / `design-system-ops` / `ds-generation-pipeline`.
+- **Current focus**: none — capture + graduation done
+- **Working set**: `07-projects/22-ai-design-systems-course/` (archive) · `01-frameworks/18-design-systems-ai-operating-model.md` · `03-skills/ai-design-systems/` · `08-knowledge/design/ai-and-design-systems.md`
+- **Last action**: Committed notes (`c0e8b03`); absorbed Frost/Southleft models into L1/L2/knowledge/routes
+- **Next action**: Optional caption-gap revisits (Ch6 selling, Ch5 A2UI, early jams) if tracks appear; do not re-transcribe pointer extras
+- **Open decisions**: none
 - **Blocked on**: nothing
-- **In-flight / do-not-touch**: don’t invent captions for no-caption files
-- **Agent thread**: `Cursor Grok / Cursor (2026-09-11): extras complete`
+- **In-flight / do-not-touch**: don't invent captions for no-caption files; don't paste this into `c8/*`
+- **Agent thread**: `Cursor Grok / Cursor (2026-09-11): doctrine graduation`
 
 ### Environment
 
 - **Context profile**: `personal-solo`
 - **Machine**: `CS-K746DRWXY1`
-- **Project root**: `07-projects/21-ai-design-systems-course/`
+- **Project root**: `07-projects/22-ai-design-systems-course/`
 
 ### VCS state
 
 - **Branch**: `main`
-- **Uncommitted changes**: yes — this project. Do not commit unless asked.
+- **Uncommitted changes**: doctrine graduation in progress (separate commit from notes)
 
 ### Open work and paused threads
 
-- **Currently in progress**: none
+- **Currently in progress**: none after graduation commit
 - **What's needed to resume**: n/a unless Sean wants caption-gap revisits
 
 ---
 
 ## History (append-only)
+
+### 2026-09-11 — doctrine graduation
+
+- Notes committed. Framework #18 + `ai-design-systems` spoke + knowledge entry. Trigger routes and preferences updated so DS work loads Frost canon.
 
 ### 2026-09-11 — extras complete
 

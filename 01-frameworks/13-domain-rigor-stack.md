@@ -120,7 +120,7 @@ Surfaces' native "create a skill" flows are **insufficient** if they skip this a
 
 | Domain cluster | L1 | L2 | L3 | L4 | L5 |
 |---|---|---|---|---|---|
-| UI/UX / DS | #02, #09 | `/qa`, Impeccable, `DESIGN.md` | `visual-qa-toolkit` | `design-foundations` → leads → `uid-*`/`ux-*`/`ds-*` | `/qa --lens`, `lead-visual-qa` |
+| UI/UX / DS | #02, #09, **#18** | `/qa`, Impeccable, `DESIGN.md`, `ai-design-systems` | `visual-qa-toolkit` + DS inspection scorecards | `design-foundations` → leads → `uid-*`/`ux-*`/`ds-*` + `ai-design-systems` | `/qa --lens`, `lead-visual-qa` |
 | Realtime photoreal / game look | #12 | `realtime-visual-craft` | `render-qa-toolkit` | imaging → 3D/game leads → production spokes | rendering guild |
 | Accessibility | #02 (inclusive) + a11y done-gates | lead-a11y protocol | `a11y-audit-toolkit` | design/eng foundations → `lead-accessibility-architect` → `a11y-*` | `/qa --lens a11y` |
 | Security | #16 | lead-security protocol + threat-model contract | scanners via `requires` + review-security | `eng-foundations` → `lead-security-architect` → `sec-*` | security as sideways lens |
@@ -144,7 +144,7 @@ is the design-systems instance. Other domains use `domain-constitution/1.0`
 
 - **#08** — placement and write gates; this framework adds *rigor completeness*.
 - **#06 / #10 / #11** — universal QA, perception, and failure premortem; domain L1s specialize them, never replace them.
-- **#02 / #12 / #14 / #15 / #16** — concrete domain L1 instantiations.
+- **#02 / #12 / #14 / #15 / #16 / #18** — concrete domain L1 instantiations.
 - **#17** — cross-cutting L1 for multi-agent living-spec coordination (`intent-coordination` + `intent-run.py`).
 - **Skill frontmatter `defers_to`** — machine-readable L5 plugin precedence.
 - **Capability registry** — L3 external tools.

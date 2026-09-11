@@ -9,4 +9,4 @@ as-of: 2026-09-11
 
 # Agentic Design Systems in 2026 with Storybook - Intro from Dominic Nguyen
 
-Pointer: [[../09-appendix/02-storybook-mcp-demo-with-founder-dominic-nguyen]] is the load-bearing founder demo (stories as data, local+remote MCP).
+Pointer: [[02-storybook-mcp-demo-with-founder-dominic-nguyen]] is the load-bearing founder demo (stories as data, local+remote MCP).

@@ -28,7 +28,7 @@ LIMIT 60
 ### Hubs and spoke clusters
 
 - **Domain rigor (meta):** [[01-frameworks/13-domain-rigor-stack|framework #13]] — mandatory L1–L5 for any new/improved hub
-- **Design systems:** [[03-skills/ds-advisor/SKILL|ds-advisor]], [[03-skills/design-engineer/SKILL|design-engineer]], [[03-skills/design-system-ops/SKILL|design-system-ops]], [[03-skills/ux-component-library/SKILL|ux-component-library]]
+- **Design systems:** [[03-skills/ds-advisor/SKILL|ds-advisor]] (strategy) → [[03-skills/ai-design-systems/SKILL|ai-design-systems]] (AI×DS procedure, framework #18) · [[03-skills/design-engineer/SKILL|design-engineer]] · [[03-skills/design-system-ops/SKILL|design-system-ops]] · [[03-skills/ux-component-library/SKILL|ux-component-library]]
 - **Figma:** [[03-skills/figma-canvas-designer/SKILL|figma-canvas-designer]], [[03-skills/figma-plugin-dev/SKILL|figma-plugin-dev]]
 - **Engineering:** [[03-skills/eng/SKILL|eng]] → leads + [[03-skills/arch-guild/SKILL|arch-guild]]; mobile via [[03-skills/lead-mobile-engineer/SKILL|lead-mobile-engineer]]
 - **Security:** [[03-skills/lead-security-architect/SKILL|lead-security-architect]] → `sec-*` (framework #16)

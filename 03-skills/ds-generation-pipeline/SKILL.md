@@ -29,6 +29,14 @@ system artifacts. It is the **generation** counterpart to `design-engineer` (whi
 is the **advisory/review** counterpart). Think of it as the assembly line; design-engineer
 is the engineering review board.
 
+> **Frost ban — do not generate a design system from scratch when one exists.**
+> That is the same failure as adopting Material wholesale ([[18-design-systems-ai-operating-model]]).
+> **Inspect, then extend.** If a published library / token graph / component package
+> is in session or project context, this pipeline scaffolds *against it*. True
+> greenfield (no system, no product yet) is rare — ask once, then proceed. Mortar,
+> not a parallel universe. AI-ready generation still uses the three-tier token model
+> and maps to existing components before minting new ones ([[ai-design-systems]]).
+
 ---
 
 ## Orchestration Flow
@@ -215,3 +223,4 @@ When generating alongside Figma:
 
 ## Related
 - foundation → [[design-foundations]]
+- peer ↔ [[ai-design-systems]]

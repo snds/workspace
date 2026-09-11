@@ -34,6 +34,12 @@ Pack landing page: [[03-skills/design-system-ops/README|design-system-ops README
 | Component authoring / implementation | [[design-engineer]] |
 | Component schema / DESIGN.md | framework #09 |
 | Pixel QA of UI | `/qa` + [[visual-qa-toolkit]] |
+| AI×DS mortar / steel curtain / org arc | [[18-design-systems-ai-operating-model]] + [[ai-design-systems]] |
+
+**Govern from day one of a still-living AI pilot** (Frost Ch6): dual-file issues on
+the product repo *and* the DS repo; cron or hook-fired inspection; new tools must
+earn a place; steel curtain makes the system default, not goodwill. People/process
+is a stool leg — take care of humans; curated signal, not every-model pings.
 
 ## Operation grammar
 
@@ -66,4 +72,4 @@ vendored notes as overriding #09.
 
 ## Related
 - foundation → [[design-foundations]]
-- peer ↔ [[ds-advisor]] · [[design-engineer]] · [[qa]] · [[figma]]
+- peer ↔ [[ds-advisor]] · [[design-engineer]] · [[qa]] · [[figma]] · [[ai-design-systems]]

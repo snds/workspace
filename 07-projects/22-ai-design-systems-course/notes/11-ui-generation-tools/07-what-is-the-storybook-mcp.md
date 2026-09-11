@@ -9,4 +9,4 @@ as-of: 2026-09-11
 
 # What is the Storybook MCP?
 
-MCP next to Storybook (or standalone): exposes metadata, props, examples, story URLs to LLMs. Enables auto-stories, UI-state tests, docs extract, guided dev. Full demo: [[../09-appendix/02-storybook-mcp-demo-with-founder-dominic-nguyen]] and Chapter 4.
+MCP next to Storybook (or standalone): exposes metadata, props, examples, story URLs to LLMs. Enables auto-stories, UI-state tests, docs extract, guided dev. Full demo: [[02-storybook-mcp-demo-with-founder-dominic-nguyen]] and Chapter 4.

@@ -119,12 +119,12 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `close side chat` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
 | `hand this back` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
 | `figma plugin` | 03-skills/figma-plugin-dev/SKILL.md |
-| `figma` | 03-skills/figma-canvas-designer/SKILL.md + 03-skills/design-engineer/SKILL.md — real-library-components rule |
-| `design system` | 03-skills/ds-advisor/SKILL.md + design-engineer |
-| `component` | 03-skills/design-engineer/SKILL.md |
-| `variant` | 03-skills/design-engineer/SKILL.md |
-| `mockup` | 03-skills/figma-canvas-designer/SKILL.md |
-| `wireframe` | 03-skills/figma-canvas-designer/SKILL.md |
+| `figma` | BEFORE vendor plugin skills (figma-use / figma-generate-library / figma-generate-design): load 03-skills/figma/SKILL.md (hub; plugins = mechanics only) → 03-skills/design-engine… |
+| `design system` | 01-frameworks/18-design-systems-ai-operating-model.md + 01-frameworks/09-component-and-pattern-framework.md + 03-skills/ds-advisor/SKILL.md + 03-skills/design-engineer/SKILL.md.… |
+| `component` | BEFORE vendor plugin skills (figma-use / figma-generate-library / figma-generate-design): load 03-skills/figma/SKILL.md (hub; plugins = mechanics only) → 03-skills/design-engine… |
+| `variant` | BEFORE vendor plugin skills (figma-use / figma-generate-library / figma-generate-design): load 03-skills/figma/SKILL.md (hub; plugins = mechanics only) → 03-skills/design-engine… |
+| `mockup` | BEFORE vendor plugin skills (figma-use / figma-generate-library / figma-generate-design): load 03-skills/figma/SKILL.md (hub; plugins = mechanics only) → 03-skills/design-engine… |
+| `wireframe` | BEFORE vendor plugin skills (figma-use / figma-generate-library / figma-generate-design): load 03-skills/figma/SKILL.md (hub; plugins = mechanics only) → 03-skills/design-engine… |
 | `field validation` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `validation state` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `invalid` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
@@ -232,6 +232,34 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `codex model` | 02-shared-references/model-routing.md — Codex surface; o4-mini default; o3 for tier-3/4 reasoning |
 | `grok or claude` | 02-shared-references/model-routing.md — Cursor stipend note; Grok native default; Claude only when justified |
 | `effort tier` | 02-shared-references/model-routing.md — four-tier effort scale (Quick / Standard / Deep / Extended) applied per surface |
+| `order of operations` | 03-skills/plan-ahead/SKILL.md — numbered steps + first later-breaker before writing. Cursor agent: .cursor/agents/plan-ahead.md |
+| `cds then proto` | 03-skills/plan-ahead/SKILL.md — CDS PR onto main, then proto consume. Local overlay ≠ Pages cds main. |
+| `consume cds` | 03-skills/plan-ahead/SKILL.md — do not export * from a path cds main does not export |
+| `pages build` | 03-skills/plan-ahead/SKILL.md + 08-knowledge/engineering/cds-host-consume-order.md — Pages vendors cds main; overlay symlink can lie |
+| `follow up` | 03-skills/plan-ahead/SKILL.md — squash leftovers land on cds main first (Toaster / SplitDragHandle / ChipMultiSelect) |
+| `overlay vs main` | 08-knowledge/engineering/cds-host-consume-order.md |
+| `first breaker` | 03-skills/plan-ahead/SKILL.md |
+| `re-export` | 03-skills/plan-ahead/SKILL.md — @centric/ui/X needs exports["./X"] on cds main |
+| `ai design systems course` | 07-projects/22-ai-design-systems-course/ — read SESSION-STATE.md Live handoff then synthesis/running.md |
+| `brad frost course` | 07-projects/22-ai-design-systems-course/ — read SESSION-STATE.md Live handoff then synthesis/running.md |
+| `frost ds course` | 07-projects/22-ai-design-systems-course/ — read SESSION-STATE.md Live handoff then synthesis/running.md |
+| `in figma` | BEFORE vendor plugin skills (figma-use / figma-generate-library / figma-generate-design): load 03-skills/figma/SKILL.md (hub; plugins = mechanics only) → 03-skills/design-engine… |
+| `build in figma` | BEFORE vendor plugin skills (figma-use / figma-generate-library / figma-generate-design): load 03-skills/figma/SKILL.md (hub; plugins = mechanics only) → 03-skills/design-engine… |
+| `component set` | BEFORE vendor plugin skills (figma-use / figma-generate-library / figma-generate-design): load 03-skills/figma/SKILL.md (hub; plugins = mechanics only) → 03-skills/design-engine… |
+| `library file` | BEFORE vendor plugin skills (figma-use / figma-generate-library / figma-generate-design): load 03-skills/figma/SKILL.md (hub; plugins = mechanics only) → 03-skills/design-engine… |
+| `stickersheet` | BEFORE vendor plugin skills (figma-use / figma-generate-library / figma-generate-design): load 03-skills/figma/SKILL.md (hub; plugins = mechanics only) → 03-skills/design-engine… |
+| `atomic design` | 01-frameworks/18-design-systems-ai-operating-model.md (Frost composition grammar) + 01-frameworks/09-component-and-pattern-framework.md §3. Knowledge: 08-knowledge/design/ai-and… |
+| `brad frost` | 01-frameworks/18-design-systems-ai-operating-model.md + 03-skills/ai-design-systems/SKILL.md + 08-knowledge/design/ai-and-design-systems.md. Course notes: 07-projects/22-ai-desi… |
+| `ai as mortar` | 01-frameworks/18-design-systems-ai-operating-model.md — AI fills cracks in the existing DS graph; do not generate a parallel universe |
+| `steel curtain` | 01-frameworks/18-design-systems-ai-operating-model.md + 03-skills/ai-design-systems/SKILL.md — CI/axe/evals before vibe output; LLM-as-judge is not the gate |
+| `on-rails` | 03-skills/ai-design-systems/SKILL.md — off-rails bake-offs teach; on-rails ships against the published package |
+| `off-rails` | 03-skills/ai-design-systems/SKILL.md — label bake-offs; do not ship look-done CEO demos |
+| `vibe coding` | 03-skills/ai-design-systems/SKILL.md + 01-frameworks/18-design-systems-ai-operating-model.md — riff vs ship; steel curtain before the org sees it |
+| `generative ui` | 03-skills/ai-design-systems/SKILL.md — JSON + blessed catalog + recipes + confidence; do not emit new React as the default |
+| `gen ui` | 03-skills/ai-design-systems/SKILL.md — JSON + blessed catalog + recipes + confidence; do not emit new React as the default |
+| `context-based design system` | 03-skills/ai-design-systems/SKILL.md — designer-owned first draft against the published library; playgrounds import the package |
+| `agents as users` | 03-skills/ai-design-systems/SKILL.md — dual publish HTML canon + markdown twin; illegible to machines = invisible to people using agents |
+| `three-legged stool` | 01-frameworks/18-design-systems-ai-operating-model.md — design lib + code lib + docs + people/process; do not collapse the system to the MCP you have open |
 
 ## Registry skills with triggers
 
@@ -263,7 +291,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `vision-foundations` | foundation | `computer vision`, `machine vision`, `image classification`, `object detection`, `image segmentation`, `feature extraction` (+9) | `vision-foundations` |
 | `adobe-app-builder` | hub | `adobe app builder`, `app builder`, `aio cli`, `aio app init`, `aio app deploy`, `adobe i/o runtime` (+9) | `eng-foundations` → `adobe-app-builder` |
 | `arch-guild` | hub | `arch guild`, `architecture review`, `multi-voice review`, `dijkstra`, `lamport`, `knuth` (+1) | `eng-foundations` → `arch-guild` |
-| `design-engineer` | hub | `design engineer`, `component architecture`, `component api`, `figma component`, `component variants`, `componentization` (+3) | `design-foundations` → `design-engineer` |
+| `design-engineer` | hub | `design engineer`, `component architecture`, `component api`, `figma component`, `component variants`, `componentization` (+12) | `design-foundations` → `design-engineer` |
 | `design-system-ops` | hub | `design system ops`, `token audit`, `audit my tokens`, `drift detection`, `ds governance`, `system health` (+3) | `design-foundations` → `design-system-ops` |
 | `ds-advisor` | hub | `design system`, `design systems`, `PLM`, `component audit`, `token architecture`, `design token` (+7) | `design-foundations` → `ds-advisor` |
 | `eng` | hub | `eng`, `engineering delivery`, `shape contract`, `ship service`, `harden auth`, `rollback plan` (+1) | `eng-foundations` → `eng` |
@@ -302,4 +330,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 217 · Registry rows: 62_
+_Curated routes: 245 · Registry rows: 62_

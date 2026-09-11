@@ -5,16 +5,16 @@ tags: [moc, frameworks]
 
 # Frameworks
 
-Seventeen top-level frameworks that sit **above** any project-specific skill. They govern design,
-components, collaboration, research, craft, QA, perception integrity, anticipatory failure analysis,
+Eighteen top-level frameworks that sit **above** any project-specific skill. They govern design,
+components, **design systems × AI**, collaboration, research, craft, QA, perception integrity, anticipatory failure analysis,
 realtime photoreal, domain rigor, engineering / analysis / security operations, **intent coordination**,
 integration, and workspace-contribution decisions. Most are cross-domain operating lenses; #09 is the
-design-domain hub; #13 is the meta-stack every other domain instantiates.
+design-domain hub; **#18 is the Frost/Southleft DS×AI operating model**; #13 is the meta-stack every other domain instantiates.
 
 Orientation: [[01-frameworks/00-README|00-README]] — compressed summaries and when each framework applies.
 Job-context methods (not project values): [[domain-constitutions]] · [[constitution-spec]].
 
-## The seventeen
+## The eighteen
 
 1. **[[01-frameworks/01-aesthetic-lens|Aesthetic Lens]]** — philosophical ground, visual/aesthetic judgment
 2. **[[01-frameworks/02-ui-ux-operational-framework|UI/UX Operational Framework]]** — operational decisions for interface + experience
@@ -33,6 +33,7 @@ Job-context methods (not project values): [[domain-constitutions]] · [[constitu
 15. **[[01-frameworks/15-analysis-operating-model|Analysis Operating Model]]** — question → valid method → decision, without narrative theater
 16. **[[01-frameworks/16-security-operating-model|Security Operating Model]]** — threat-model, build, scan, and monitor so security is a quality dimension
 17. **[[01-frameworks/17-intent-coordination-operating-model|Intent Coordination Operating Model]]** — living spec, isolated implementors, independent verifier (`intent-run.py`)
+18. **[[01-frameworks/18-design-systems-ai-operating-model|Design Systems × AI Operating Model]]** — Frost/Southleft: mortar, stool, steel curtain, context-based DS, agents as users; procedure in [[03-skills/ai-design-systems/SKILL|ai-design-systems]]
 
 ## Supporting docs
 

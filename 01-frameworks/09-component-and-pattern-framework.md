@@ -11,6 +11,7 @@ links:
   - "[[ux-component-library]]"
   - "[[component-contracts-and-schemas]]"
   - "[[component-contract-schema]]"
+  - "[[18-design-systems-ai-operating-model]]"
 ---
 
 # Component & Pattern Framework
@@ -96,7 +97,7 @@ A design system stacks. Each layer constrains the one above and is composed from
   Foundations            color, type, space, grid, motion, elevation, a11y, voice
 ```
 
-- **Atomic-design mapping** (Brad Frost): atoms ≈ primitives, molecules + organisms ≈ components, templates/pages ≈ templates/screens. Tokens sit *below* atoms as "sub-atomic particles." Frost's reuse gradient is useful downstream: **Components** (agnostic, max reuse) → **Recipes** (product-specific compositions, e.g. `ProductCard`) → **Snowflakes** (one-offs). Name and govern each tier differently.
+- **Atomic Design** (Brad Frost — load-bearing composition grammar, not a folder taxonomy): tokens sit *below* atoms as sub-atomic particles; atoms ≈ primitives; molecules + organisms ≈ components; templates/pages ≈ templates/screens. Reuse gradient: **Components** (agnostic, max reuse) → **Recipes** (product-specific compositions, e.g. `ProductCard`) → **Snowflakes** (one-offs). Name and govern each tier differently. How AI may touch this stack — mortar, steel curtain, gen-UI recipes, agent users — is [[18-design-systems-ai-operating-model]], not this framework.
 - **The component ↔ pattern boundary** is the most useful line in the stack: a **component is content-agnostic**; a **pattern is a composition aimed at a user goal or flow** (Polaris: "preferred solutions to common merchant goals"; Carbon governs patterns separately). If it solves a *job*, it's a pattern (§7). If it's a *part*, it's a component.
 - **The three-tier token model** (Spectrum's global / alias / component; Curtis's Options → Decisions): **Global/primitive** (raw `blue-600`) → **Semantic/alias** (`color-action-primary`, carries intent) → **Component** (`button-bg-primary`, local decision). Rule: only use a global token when no alias exists; start a token *inside* a component and **promote** it outward only after repeated reuse. Tokens are DTCG-shaped JSON (§11) so they round-trip to Figma variables, Tailwind, and `DESIGN.md`.
 - **Token names are assembled from a grammar** (Curtis): `[Namespace] · [Object] · [Base: category + concept + property] · [Modifier: variant/state/scale/mode]` — e.g. `esds-color-feedback-background-error`. Include only the levels needed to distinguish intent; keep `theme` (brand) and `mode` (light/dark) as *orthogonal* axes. **Default to *purposeful* (semantic) naming over *aesthetic* (literal)** — `error` not `red`, `primary` not `blue-600` — and never mix both in one enum. Depth: skill ref `tokens-and-naming.md`.
@@ -663,7 +664,8 @@ Designer / agent has a UI need
 - **UX Components dataset / `ux-components` MCP** (ux-components.com) — the 62-component × 68-system canon; intent, states, anatomy, 1,900+ name mappings. The live data layer of this system.
 - **EightShapes / Nathan Curtis** (medium.com/eightshapes-llc, @nathanacurtis, nathanacurtis.substack.com) — the **8-section component spec** (Anatomy · Properties · Layout & Spacing · Behavior · Accessibility · Motion · Component Tokens · Version History) and spec-vs-guidelines split; the **"as data"** series (*Components / Examples as Data*); **code-only props in Figma** (the hidden-layer mechanism); **the canonical state model** (*The Sorry State of States*); **purposeful-vs-aesthetic naming**; the **reimagined token taxonomy** (the Namespace→Object→Base→Modifier grammar); **many-core-libraries** governance; and — the basis of §5a — ***Component Contracts and Schemas*** (2026-07): description-vs-contract, schema-vs-spec, the seven gates (well-typed · normalized · independent · verifiable · deterministic · efficient · evolvable), *testimony vs contract*, and ADRs as the evolution machinery.
 - **W3C Design Tokens (DTCG)** (designtokens.org) — the token JSON contract: `$value`/`$type`, `{group.token}` aliasing, composite types. The substrate beneath tokens, `DESIGN.md`, and Figma variables.
-- **Brad Frost — Atomic Design** (atomicdesign.bradfrost.com) — atoms→molecules→organisms→templates→pages; the reuse gradient (components / recipes / snowflakes).
+- **Brad Frost — Atomic Design** (atomicdesign.bradfrost.com) — atoms→molecules→organisms→templates→pages; the reuse gradient (components / recipes / snowflakes). Sean's eight-year DS grammar.
+- **Brad Frost / Southleft — *AI and Design Systems*** (courses.bradfrost.com) — AI as mortar; three-legged stool + people/process; steel curtain; context-based DS; agents as users; gen UI as JSON+recipes. Operating model: [[18-design-systems-ai-operating-model]].
 - **The Component Gallery** (component.gallery) — descriptive cross-system synonym dictionary ("also known as"); ~60 types, 90+ systems.
 - **Open UI** (open-ui.org) — prescriptive name standardization; the research schema (Name · Concepts · Anatomy · States) and the convergence matrix.
 - **Storybook / CSF** (storybook.js.org) — single-source living docs: args/argTypes as the props/API table; one story per state.

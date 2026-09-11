@@ -158,6 +158,9 @@ distinguish a genuinely accessible product from a technically compliant one.
 ### Automated Testing Finds ~30–40% of Issues
 
 Automated scanners (axe-core, WAVE, Lighthouse) are necessary but insufficient.
+**LLM-as-judge is not the steel curtain** ([[18-design-systems-ai-operating-model]]):
+the toolkit/axe path measures; this hub judges inclusive design; personalized a11y
+via tokens/prefs beats asking a model "is this accessible?"
 They reliably find:
 - Missing alt attributes
 - Color contrast failures (static text)
@@ -281,4 +284,4 @@ Governed by [[13-domain-rigor-stack]]. Domain L1: see framework table in that do
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[a11y-assistive-tech]] · [[a11y-audit-toolkit]] · [[a11y-auditory]] · [[a11y-cognitive]] · [[a11y-legal-compliance]] · [[a11y-motor-physical]] · [[a11y-neurodiversity]]
-- peer ↔ [[lead-security-architect]]
+- peer ↔ [[lead-security-architect]] · [[ai-design-systems]]

@@ -1,5 +1,5 @@
 # User Preferences — Sean Sands
-**Last updated:** 2026-07-30
+**Last updated:** 2026-09-11
 
 ---
 
@@ -90,6 +90,11 @@ defaults, applied without being re-asked._
   markup + live screenshots, not assumption. Be honest about gaps/tradeoffs — name them.
 - **Assess visuals at NATIVE resolution — always.** Canonical home:
   `01-frameworks/10-perception-integrity.md` (framework #10); this line is a pointer, not a fork.
+- **Brad Frost is the DS canon.** Atomic Design is the composition grammar. A design system is
+  critical UI infrastructure (three-legged stool + people/process). **AI is mortar**, not a
+  parallel universe. **"Is it good?"** once generation is cheap. **Steel curtain** = CI / axe /
+  evals — never LLM-as-judge as the gate. Operating model:
+  `01-frameworks/18-design-systems-ai-operating-model.md`; procedure: `ai-design-systems`.
 
 ## Side Detours — Injection Handback
 When a conversation branches into a **side-chat or "by the way" detour** (a tangent off the main

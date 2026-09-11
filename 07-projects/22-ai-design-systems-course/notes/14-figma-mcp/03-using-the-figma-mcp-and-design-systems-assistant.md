@@ -9,4 +9,4 @@ as-of: 2026-09-11
 
 # Using the Figma MCP and Design Systems Assistant
 
-Pointer: official Figma MCP + DSA together. Chapter 2–3 installs; [[../13-knowledge-tools/01-what-is-the-design-systems-assistant]].
+Pointer: official Figma MCP + DSA together. Chapter 2–3 installs; [[01-what-is-the-design-systems-assistant]].
