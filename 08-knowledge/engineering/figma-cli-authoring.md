@@ -1,7 +1,7 @@
 ---
 tags: [figma, figma-cli, cdp, engineering, design-tools, authoring]
 created: 2026-06-30
-updated: 2026-06-30
+updated: 2026-09-03
 status: stable
 confidence: high
 sources: [centric-ui / C8 cell-indicators authoring via figma-cli 2.1.0, sessions 2026-06; migrated from local memory figma-cli-authoring-techniques / figma-cli-branch-targeting / figma-cli-connect-sandbox]
@@ -103,16 +103,18 @@ disk once** (inventory JSON + rendered PNGs + geometry) and having agents read t
 that worked: serial extract → parallel read-only audit (adversarial) → serial apply-fixes. Under
 API congestion (529s), abandon the fan-out and finish in the serial main loop.
 
-## 6. Creating SLOTs (`figma.createSlot` is undefined in this Figma)
+## 6. Creating SLOTs
 
-Slots are real `SLOT` nodes whose content binds to a `SLOT`-type component property via
-`node.componentPropertyReferences = {slotContentId: <propId>}`. To add a slot to a component/SET:
-(1) `propId = set.addComponentProperty("name","SLOT","")` — `addComponentProperty` DOES accept
-type `"SLOT"`; (2) **clone an existing SLOT node** (`slot.clone()` works), append it into the
-target frame, `[...clone.children].forEach(c=>c.remove())` to empty it; (3) move the region's
-content into the clone; (4) `clone.componentPropertyReferences = {slotContentId: propId}`; set
-`layoutSizingHorizontal=FILL`/`Vertical=HUG`. For a SET, add the prop once on the set and bind
-each variant's slot to that same propId (only variants that show the region need a bound slot).
+**MCP / current Variables+component runtime (probed 2026-09-03):** `component.createSlot()`
+exists and returns a `SLOT` node. `figma.createSlot` is still undefined. Prefer
+`component.createSlot()` via `use_figma`. See [[figma-opacity-variables]] (other 2026 surfaces).
+
+**CLI-era workaround (figma-cli 2.1.0, 2026-06 — keep if `createSlot` is missing in that
+CDP build):** Slots are `SLOT` nodes bound via
+`node.componentPropertyReferences = {slotContentId: <propId>}`. (1) `propId =
+set.addComponentProperty("name","SLOT","")`; (2) **clone an existing SLOT node**, append,
+empty children; (3) move content in; (4) bind `slotContentId`; `FILL`/`HUG`. For a SET, add
+the prop once on the set and bind each variant’s slot to that same propId.
 
 ## 7. Creating variables (tokens)
 

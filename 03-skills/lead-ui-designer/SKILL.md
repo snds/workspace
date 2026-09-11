@@ -15,7 +15,10 @@ aliases: [lead-ui-designer]
 tier: hub
 domain: design
 prerequisites: [design-foundations]
+triggers: [ui design, visual design, color palette, type hierarchy, dark mode palette, elevation]
+governed_by: [qa, a11y-visual]
 spec_version: "2.0"
+
 ---
 
 # Lead UI Designer
@@ -269,3 +272,4 @@ not a replacement for it.
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[uid-color-for-ui]] · [[uid-iconography]] · [[uid-spatial-composition]] · [[uid-surface-depth]] · [[uid-type-for-screens]] · [[uid-visual-critique]] · [[uid-visual-system]]
+- governed-by → [[a11y-visual]] · [[qa]]

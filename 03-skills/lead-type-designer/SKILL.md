@@ -26,7 +26,10 @@ aliases: [lead-type-designer]
 tier: hub
 domain: design
 prerequisites: [design-foundations]
+triggers: [type designer, type family, letterform]
+governed_by: [qa]
 spec_version: "2.0"
+
 ---
 
 # Lead Type Designer
@@ -331,3 +334,4 @@ hub is the command surface.
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[type-classification-history]] · [[type-letterform-construction]] · [[type-multi-script]] · [[type-opentype-text]] · [[type-spacing-metrics]] · [[type-typesetting]] · [[type-variable-text]] · [[variable-icon-font-architect]]
+- governed-by → [[qa]]

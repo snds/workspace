@@ -1,11 +1,17 @@
 ---
 title: centric-ui density token adoption
 status: living
-updated: 2026-08-05
+updated: 2026-08-11
 related: [density-radius-xxs-alignment, density-dashboard-visual-review]
 ---
 
 # centric-ui density token adoption
+
+**Status 2026-08-11:** Global density (`app/density.css`, `app/lib/density.ts`, control-scale
+wiring, DataTable `ROW_DENSITY` 40/52/64) lives on centric-ui
+[PR #284](https://github.com/cpes-software/centric-ui/pull/284) tip `98e5ca66` — **not on `main`
+yet** (`main@f2efaad7`). Proto shipped first (#13). Inventory:
+employer `MIGRATION-TO-CENTRIC-UI.md` unit `density-axis`.
 
 ## Why density felt “sidebar-only”
 

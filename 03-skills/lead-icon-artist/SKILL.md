@@ -17,7 +17,9 @@ tier: hub
 domain: design
 prerequisites: [design-foundations]
 related: [lead-vector-designer, lead-technical-digital-artist, variable-icon-font-architect]
+triggers: [icon artist, icon set, pictogram]
 spec_version: "2.0"
+
 ---
 
 # Lead Icon Artist

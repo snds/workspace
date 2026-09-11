@@ -17,11 +17,12 @@ description: >
   question that requires reasoning about design decisions against technical, data,
   or organizational constraints.
 aliases: [lead-ux-designer]
-triggers: [challenge this, tear this apart]
+triggers: [challenge this, tear this apart, information architecture, enterprise ux, how should this work, user flow]
 tier: hub
 domain: design
 prerequisites: [design-foundations]
 spec_version: "2.1"
+
 ---
 
 # Lead UX Designer

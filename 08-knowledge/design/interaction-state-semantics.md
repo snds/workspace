@@ -1,7 +1,7 @@
 ---
 tags: [design-systems, color, radix, tokens, interaction, states, figma, centric-ui]
 created: 2026-07-31
-updated: 2026-08-05
+updated: 2026-09-03
 status: working
 confidence: high
 sources: [session 2026-07-31 Figma density/interaction work, Centric SaaS PLM DS o6o1ZuGHxDow2vHLuYXT6X]
@@ -89,11 +89,13 @@ Verified on `_Sidebar/Menu Button` Selected: bg resolves to Blue A5 @ α≈0.24 
 
 ## Two mechanics that will bite you
 
-**1. Alpha must live in the token's colour value, never in paint opacity.**
-Paint-level `opacity` is ignored on variable-bound fills at render
-([[figma-ds-surface-authoring]] rule 17c). Radix A-steps store alpha *in the colour*, so they
-work. Verified: a bound `interaction/hover` fill, a literal composite, and a literal rgba all
-rendered pixel-identical at `#e8e8ec`.
+**1. Interaction overlays: keep alpha in the COLOR token (`interaction/*` / Radix A-steps).**
+That path still works and is the system of record for hover/pressed/selected. The 2026-09-03
+UI can bind a number var onto a bound fill’s opacity without detaching; MCP/`use_figma`
+cannot yet ([[figma-opacity-variables]]). Do not replace `interaction/*` with layer-opacity
+12/24/32 — those semantic `opacity/hover` tokens are for leftover node-opacity treatments
+and disabled/scrim only. Verified historically: a bound `interaction/hover` fill, a literal
+composite, and a literal rgba all rendered pixel-identical at `#e8e8ec`.
 
 **2. Set the state-layer node opacity to 1.**
 The old Button state layer carried its alpha as *node* opacity (0.12 / 0.24 / 0.32) over a
@@ -199,6 +201,11 @@ stack on a coloured-cell fixture; code-side `::before`/`::after` layering so CSS
 
 > Employer repo. Branch → PR → human engineer review. No self-merge, no direct push.
 > Nothing from this workspace gets pasted into the repo; this is a plan, not content to copy.
+
+**Status 2026-08-11:** Proto shipped interaction overlays (#18). Centric-ui carries
+`--sem-interaction-*` + `.interaction-layer` on [PR #284](https://github.com/cpes-software/centric-ui/pull/284)
+tip `98e5ca66` — **not on `main` yet**. Inventory unit: `interaction-overlays`. Remaining work =
+finish component mechanism audit (`*/90` hovers) after #284 merges.
 
 The Radix alpha stacks already exist in the centric-ui foundation (every hue carries A1–A12
 per [[radix-derived-color-system]]), so **no new primitives are needed**. The work is the

@@ -26,6 +26,9 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[decision-component-pattern-framework-system]] — `decision` · why the 5-layer component & pattern context system was built (framework #09 + skill + MCP + DESIGN.md + AGENTS binding) and where its outputs live.
 - [[decision-frost-ds-ai-operating-model]] — `decision` · framework #18 + `ai-design-systems` spoke: Frost/Southleft DS×AI as L1 (#18) beside #09 (2026-09-11).
 - [[decision-plan-ahead-order-of-operations]] — `decision` · print numbered order + first later-breaker before executing multi-step / dual-repo work; overlay ≠ Pages `main` (2026-09-11).
+- [[decision-cursor-prompt-route-hook]] — `decision` · Cursor `beforeSubmitPrompt` + shared `prompt_route.py` so employer-repo sessions load workspace doctrine (2026-09-09).
+- [[decision-proto-is-design-sandbox]] — `decision` · saas-plm-prototype is the design sandbox — never strip screens because centric-ui has an equivalent (2026-08-12).
+- [[feedback-expand-acronyms]] — `feedback` · expand acronyms on first use; Sean is a designer peer, not a developer audience.
 - [[decision-bootstrap-v2-guarantee]] — `decision` · the workspace handshake is guaranteed by deterministic harness layers (hooks + beacon + audit + launchd doctor), not model discretion; ritual token is frozen ABI.
 - [[decision-commercial-data-licensing]] — `decision` · default to commercially-licensable data/asset sources for all projects; non-commercial sources (e.g. Gaia DR3) only when uniquely needed — isolate, mark, reconcile later.
 - [[decision-defer-dense-vault-retrieval]] — `decision` · defer embedding/dense Layer-2 vault retrieval until `vault-retrieve.py --eval` shows paraphrase gaps lexical cannot fix (13/13 green 2026-08-05).

@@ -6,7 +6,7 @@ surface: Cursor + workspace-core
 branch: main
 sha: 1f87419
 agent: Cursor Grok 4.6
-status: map-only — no clean applied
+status: applied 2026-09-11 — recs 1–15 + R1–R16
 supersedes: harness-map_v1.0_2026-08-07.md
 ---
 

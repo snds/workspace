@@ -14,11 +14,13 @@ triggers: [eng, engineering delivery, shape contract, ship service, harden auth,
 tier: hub
 domain: engineering
 prerequisites: [eng-foundations]
-related: [lead-frontend-engineer, lead-backend-engineer, lead-devops-engineer, lead-mobile-engineer, lead-security-architect, arch-guild]
+related: [lead-frontend-engineer, lead-backend-engineer, lead-devops-engineer, lead-mobile-engineer, lead-security-architect, arch-guild, close-out]
 defers_to: [framework-14, framework-16, framework-13, eng-foundations]
 rigor_role: command-hub
 surfaces: ["*"]
+governed_by: [qa]
 spec_version: "2.2"
+
 ---
 
 # /eng — Engineering Delivery Hub
@@ -39,7 +41,7 @@ Depth lives in lead hubs and spokes. Doctrine: [[14-engineering-operating-model]
 | `implement` | Build behind the contract | `fe-*` / `be-*` / `devops-*` / `mobile-*` |
 | `review` | Multi-voice correctness/architecture review | `arch-guild` + relevant lead |
 | `harden` | Security, perf, a11y, resilience | `lead-security-architect`, `fe-perf-harness`, `a11y-audit-toolkit` |
-| `ship` | Release with rollback + signals | `lead-devops-engineer` + #14 ship gate |
+| `ship` | Release with rollback + signals | `lead-devops-engineer` + #14 ship gate + [[05-validation-harness|Proofboard]] + [[close-out]] |
 
 Omitted verb → infer from language; ask once if ambiguous. `--dry` reports plan only.
 
@@ -57,4 +59,5 @@ Omitted verb → infer from language; ask once if ambiguous. `--dry` reports pla
 
 ## Related
 - foundation → [[eng-foundations]]
-- peer ↔ [[qa]] · [[lead-security-architect]]
+- governed-by → [[qa]]
+- peer ↔ [[qa]] · [[lead-security-architect]] · [[close-out]]

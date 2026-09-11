@@ -99,6 +99,8 @@
 !09-tools/test-validators.py
 !09-tools/ds-source-watch.py
 !09-tools/evaluate-skill-routing.py
+!09-tools/prompt_route.py
+!09-tools/cursor-prompt-route.py
 !09-tools/cursor-externalize.py
 !09-tools/intent-run.py
 !09-tools/generate-display-svg.py

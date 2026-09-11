@@ -24,10 +24,15 @@ metadata:
   poc: false
   version: 0.1.0
 aliases: [motion]
-spec_version: "2.0"
+triggers: [motion hub, implement this scroll animation, gsap scrolltrigger, motion implementation]
+related: [close-out]
+governed_by: [qa]
+rigor_role: command-hub
+spec_version: "2.2"
 tier: hub
 domain: design
 prerequisites: [design-foundations]
+
 ---
 
 # /motion — Motion Implementation Hub
@@ -109,6 +114,7 @@ points, and a perf/reduced-motion note.
 5. **Generate/adapt/audit** in that library. Respect `prefers-reduced-motion` and a frame budget by default.
 6. **Emit** the report.
 7. **Hand off**: judging → `/qa`; live in-browser iteration → `/redesign`/impeccable.
+8. **Close-out** — invoke [[close-out]].
 
 ## POC scope note
 
@@ -118,4 +124,5 @@ library skills hold the depth, the `motion-*` skills hold the theory.
 
 ## Related
 - foundation → [[design-foundations]]
+- governed-by → [[qa]]
 - peer ↔ [[motion-programmatic-video]] · [[vgpu-webgpu]] · [[web-3d-extensions]]

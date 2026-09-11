@@ -14,7 +14,9 @@ aliases: [lead-information-architect]
 tier: hub
 domain: design
 prerequisites: [design-foundations]
+triggers: [information architect, navigation model, sitemap]
 spec_version: "2.0"
+
 ---
 
 # Lead Information Architect

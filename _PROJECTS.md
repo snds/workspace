@@ -54,7 +54,7 @@ MOC picks it up on next refresh.
 Path-qualified so colliding stems (`SESSION-STATE`, `README`) resolve. Folders with neither file stay off this list on purpose.
 
 - [[07-projects/00-obsidian/SESSION-STATE|00-obsidian]] · [[07-projects/00-obsidian/README|00-obsidian README]]
-- [[07-projects/01-mediaservices/SESSION-STATE|01-mediaservices]]
+- [[07-projects/01-mediaservices/canvases/README|01-mediaservices]] (SESSION-STATE is machine-local by gitignore)
 - [[07-projects/02-centricPLM/SESSION-STATE|02-centricPLM]] · [[07-projects/02-centricPLM/README|02-centricPLM README]]
 - [[07-projects/03-omni/README|03-omni]]
 - [[07-projects/04-claude-figma-plugin/README|04-claude-figma-plugin]]

@@ -192,7 +192,9 @@ textNode.setBoundVariable('fontFamily', fontFamilyVariable)
 
 **Layout:** `width`, `height`, `paddingTop/Right/Bottom/Left`, `itemSpacing`, `counterAxisSpacing`, `minWidth`, `maxWidth`, `minHeight`, `maxHeight`
 
-**Appearance:** `opacity`, `cornerRadius`, `topLeftRadius`, `topRightRadius`, `bottomLeftRadius`, `bottomRightRadius`, `strokeWeight`
+**Appearance:** `opacity` (layer only; FLOAT 0–100, scope `OPACITY`), `cornerRadius`, `topLeftRadius`, `topRightRadius`, `bottomLeftRadius`, `bottomRightRadius`, `strokeWeight`
+
+Paint fill/stroke opacity on a color-bound SOLID is **not** bindable via Plugin API / MCP `use_figma` / `node.set` as of 2026-09-03 (`Expected 'color'`). The Figma UI can bind a number var there without detaching. See [[figma-opacity-variables]].
 
 **Typography:** `fontSize`, `fontFamily`, `lineHeight`, `letterSpacing`, `fontWeight`
 

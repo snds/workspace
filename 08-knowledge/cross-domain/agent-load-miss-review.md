@@ -16,8 +16,8 @@ relations:
 
 ## For future agent
 
-- **TL;DR:** Important process is usually *in the vault*. The miss is **routing**: Layer 0 is a hook plus a hope. A cold Claude / GPT / Grok / Cursor agent that only follows always-on files will not load framework **#18** (Frost DS×AI), most of #01–#16, memory, or ~63/75 knowledge notes unless a phrase matches. The contract also *over*-loads: AGENTS read-order step 3 is the whole `skills.registry.json` (~55k tokens) if obeyed literally.
-- **As of:** 2026-09-11 · **Status:** map-only. Numbered dispositions live in [[harness-map_v2.0_2026-09-11]]. Do not rewrite always-on files until Sean approves rec numbers.
+- **TL;DR:** Important process is usually *in the vault*. The miss is **routing**: Layer 0 is a hook plus a hope. Recs **1–15** applied 2026-09-11 with process-rigor **R1–R16** (close-out attach). A cold agent that only follows always-on files still needs Layer 0; AGENTS read-order now says lookup `load_chains`, not ingest the registry.
+- **As of:** 2026-09-11 · **Status:** recs 1–15 applied (same session as process-rigor R1–R16). Numbered dispositions live in [[harness-map_v2.0_2026-09-11]].
 - **Key claims:** silent hubs (empty `triggers`) are invisible to `prompt_route.py`; description-fallback is documented in AGENTS and unimplemented; `component` burns the Figma generate stack; GitHub clones miss `prompt_route.py` (09-tools allowlist).
 
 ## Target user and bar
@@ -63,3 +63,5 @@ Origin claimed **#17** for Intent Coordination (2026-09-04) and **`07-projects/2
 Do not "fix the vault" in the same turn. Harness-map: map before clean. Approve numbered recs in the v2.0 report.
 
 Full map: `07-projects/19-workspace-brain/reports/harness-map_v2.0_2026-09-11.md`.
+
+Companion (process that exists but does not run): [[process-rigor-gaps]] · recs **R1–R16**. Load-miss recs **1–15** are not replaced.

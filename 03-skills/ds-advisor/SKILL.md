@@ -46,8 +46,10 @@ Full pipeline: [[18-design-systems-ai-operating-model]]. Procedure: [[ai-design-
    Document what's being accepted and what's being deferred — every time.
 4. **Rationale is the artifact.** The *why* behind a decision is as important as the
    decision itself. Missing rationale is a system failure waiting to happen.
-5. **Figma is the knowledge center.** All documentation, decisions, and guidance lives
-   in Figma at the appropriate altitude. Claude is where drafts happen.
+5. **Figma is a signatory, not the knowledge center.** Contracts and code can refuse;
+   Figma records the visual agreement. Pointer: [[09-component-and-pattern-framework]]
+   + [[component-contracts-and-schemas]]. Drafts may start in chat; authority is
+   whatever layer can refuse deterministically.
 6. **Distinguish design problems from org problems.** Some issues can't be fixed in
    Figma. Name them honestly so they can be escalated or deferred with intent.
 7. **Preserve identity, never destroy.** Destructive operations — deleting and

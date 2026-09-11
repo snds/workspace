@@ -17,10 +17,13 @@ description: >
   semantic tokens, theme/mode tokens, bind variables.
 aliases: [design-engineer]
 triggers: [design engineer, component architecture, component api, figma component, component variants, componentization, design system code, llm-safe, off-system, build in figma, in figma, component set, library file, stickersheet, semantic tokens, theme mode, theme/mode, bind variables]
+governed_by: [qa, a11y-visual]
+related: [close-out, qa]
 spec_version: "2.0"
 tier: hub
 domain: design
 prerequisites: [design-foundations]
+
 ---
 
 # Design Engineer
@@ -443,4 +446,5 @@ be immediately usable without a terminal.
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[centric-ui-storybook]] · [[centric-ui-workflow]]
+- governed-by → [[a11y-visual]] · [[qa]]
 - peer ↔ [[design-system-ops]] · [[ds-advisor]] · [[ai-design-systems]]

@@ -18,9 +18,11 @@ description: >
 aliases: [lead-game-designer]
 tier: hub
 domain: game
+triggers: [game designer, gameplay systems, player fantasy]
 spec_version: "2.0"
 prerequisites: [game-foundations]
 related: [play-prove]
+
 ---
 
 # Lead Game Designer

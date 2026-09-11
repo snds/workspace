@@ -54,8 +54,8 @@ const userInfo = await whoami()
 
 ### `get_variable_defs` - Token Extraction
 **Use when**: Need to extract design tokens/variables from a node
-**Returns**: Object mapping like `{'icon/default/secondary': '#949494'}`
-**Use case**: Building token systems, style guides, or documentation
+**Returns**: Object mapping like `{'icon/default/secondary': '#949494'}`. Bound **layer opacity** appears as the code-syntax key → percent string (e.g. `"--opacity-disabled": "50"`). Paint / color-variable opacity binds do not show up here because those writes are not supported yet.
+**Use case**: Building token systems, style guides, or documentation. Confirming a layer-opacity bind after `use_figma`.
 
 ### `get_screenshot` - Visual Capture
 **Use when**: Need visual representation without code generation
@@ -67,6 +67,14 @@ const userInfo = await whoami()
 ### `use_figma` - Primary Design Creation Tool
 **Use when**: Creating, modifying, or deleting any Figma content
 **Limits**: 50,000 characters max code, ~20KB response
+
+`use_figma` **is** the Plugin API running in the file. MCP extras on scene nodes (`node.query`, `node.set`, `node.screenshot`) exist, but they hit the **same validators**. There is no second MCP channel that can bind a property the Plugin API rejects.
+
+**Opacity (probed 2026-09-03, see [[figma-opacity-variables]]):**
+- Layer `node.setBoundVariable('opacity', floatVar)` — **works**. FLOAT values are **0–100** (50 → 50%), scope `['OPACITY']`.
+- Paint fill/stroke opacity while color stays bound — **rejected** (`Expected 'color'`; `boundVariables.opacity` unrecognized). `node.set({fills:[…]})` same error.
+- Color-variable opacity (alias color + number opacity) — **rejected**. Variable has no `setBoundVariable`; `setValueForMode` rejects extra `opacity`/`a` keys.
+- The Figma *UI* can do paint + color-var opacity; do not assume MCP can because the REST/Variables API cannot.
 
 **Critical parameters**:
 - `code`: JavaScript Plugin API code (required)

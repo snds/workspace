@@ -12,9 +12,11 @@ description: >
   ecosystem intent — it should load alongside workspace-bootstrap at session start
   for any Omni-related work.
 aliases: [omni-project]
+triggers: [omni app, omni project]
 spec_version: "2.0"
 tier: hub
 domain: design
+
 ---
 
 # Omni Project Context

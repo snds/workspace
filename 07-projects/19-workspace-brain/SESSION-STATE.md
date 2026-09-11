@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-11 — agent load-miss harness map v2.0 (map-only)_
+_Last updated: 2026-09-11 — load-miss 1–15 + process-rigor R1–R16 applied; validators green_
 
 ---
 
@@ -8,15 +8,16 @@ _Last updated: 2026-09-11 — agent load-miss harness map v2.0 (map-only)_
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Agent load-miss review is **map-only**. Frost DS×AI is framework **#18** (Intent remains #17). Numbered recs 1–15 wait on Sean (and other-model cross-check). Do not rewrite always-on files until rec numbers are approved.
-- **Working set**: `08-knowledge/cross-domain/agent-load-miss-review.md`, `07-projects/19-workspace-brain/reports/harness-map_v2.0_2026-09-11.md`, canvas `agent-load-miss-review.canvas.tsx`.
-- **Last action (2026-09-11):** Pushed Frost+#18 rebase; wrote harness-map v2.0. Cursor Grok 4.6 · Cursor · Work MBP.
+- **Current focus**: Load-miss recs **1–15** and process-rigor recs **R1–R16** are **applied** (close-out skill, hub triggers, Layer-0 diet, integrity unblocks). Frost DS×AI remains **#18**. Do not re-open the maps unless a cold-agent miss shows up in the wild.
+- **Working set**: `03-skills/close-out/SKILL.md`, `08-knowledge/cross-domain/process-rigor-gaps.md`, `08-knowledge/cross-domain/agent-load-miss-review.md`, reports in `07-projects/19-workspace-brain/reports/`.
+- **Last action (2026-09-11):** Applied both maps in attach-order (integrity → close-out → routing → hub triggers → CI checks). Local validators green. Cursor Grok 4.6 · Cursor · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Sean approves rec numbers (or other LLMs disagree). Then merge cds #35 onto `main` (human).
-- **Open decisions:** Recs 1–15 (AGENTS read order, prompt_route allowlist, silent-hub triggers, `component` route, #18 in AGENTS, stale seventeen, …). Mission Fit auto-mint still open.
-- **Blocked on:** Numbered harness-map approval. cds #35 human merge (do not merge it from an agent).
+- **Next action:** Human merge cds #35 onto `main`. Confirm GitHub Actions on this push. Rec 13 Windows `beforeSubmitPrompt` still pending.
+- **Open decisions:** Mission Fit auto-mint still open. Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot).
+- **Blocked on:** cds #35 human merge (do not merge it from an agent).
+- **Blocked on:** Numbered approval of load-miss **1–15** and process-rigor **R1–R16**. cds #35 human merge (do not merge it from an agent).
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`.
-- **Agent thread**: `… → (2026-09-04): vgpu + 3D extensions + Intent #17` → `Cursor Grok 4.6 / Cursor / Work MBP (2026-09-11): plan-ahead + Frost #18 rebase`.
+- **Agent thread**: `… → (2026-09-04): vgpu + 3D extensions + Intent #17` → `Cursor Grok 4.6 / Cursor / Work MBP (2026-09-11): plan-ahead + Frost #18 rebase + load-miss map + process-rigor map`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.

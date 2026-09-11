@@ -16,7 +16,9 @@ tier: hub
 domain: design
 prerequisites: [design-foundations]
 related: [lead-icon-artist, lead-technical-digital-artist, variable-icon-font-architect, gd-display-graphics, motion-graphic-systems, gd-generation-tooling]
+triggers: [vector designer, bezier path, svg illustration]
 spec_version: "2.0"
+
 ---
 
 # Lead Vector Designer

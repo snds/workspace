@@ -55,6 +55,17 @@
     "load miss": "08-knowledge/cross-domain/agent-load-miss-review.md",
     "cold agent": "08-knowledge/cross-domain/agent-load-miss-review.md",
     "silent hub": "08-knowledge/cross-domain/agent-load-miss-review.md",
-    "token diet": "08-knowledge/cross-domain/agent-load-miss-review.md"
+    "token diet": "08-knowledge/cross-domain/agent-load-miss-review.md",
+    "process rigor": "08-knowledge/cross-domain/process-rigor-gaps.md",
+    "close-out": "08-knowledge/cross-domain/process-rigor-gaps.md",
+    "self-police": "08-knowledge/cross-domain/process-rigor-gaps.md",
+    "human visual qa": "08-knowledge/cross-domain/process-rigor-gaps.md",
+    "prove-gate": "08-knowledge/cross-domain/process-rigor-gaps.md",
+    "component contract": "08-knowledge/design/component-contracts-and-schemas.md",
+    "enterprise saas": "08-knowledge/design/enterprise-saas-design-patterns.md",
+    "contracts first": "08-knowledge/engineering/contracts-first-delivery.md",
+    "beyond wcag": "08-knowledge/accessibility/accessibility-beyond-wcag-baseline.md",
+    "threat model before controls": "08-knowledge/security/threat-model-before-controls.md",
+    "failure mode ledger": "08-knowledge/cross-domain/visual-failure-mode-ledger.md"
   }
 }

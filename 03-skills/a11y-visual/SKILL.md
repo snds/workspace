@@ -363,4 +363,4 @@ Before shipping any visual UI component:
 ---
 
 ## Related
-- governs → [[gd-color-theory]] · [[uid-color-for-ui]]
+- governs → [[design-engineer]] · [[figma]] · [[gd-color-theory]] · [[lead-ui-designer]] · [[uid-color-for-ui]]

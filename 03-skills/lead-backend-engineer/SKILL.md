@@ -20,8 +20,10 @@ description: >
 aliases: [lead-backend-engineer]
 tier: hub
 domain: engineering
+triggers: [backend engineer, api contract, service boundary]
 spec_version: "2.0"
 prerequisites: [eng-foundations]
+
 ---
 
 # Lead Backend Engineer

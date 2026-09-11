@@ -18,7 +18,9 @@ tier: hub
 domain: design
 prerequisites: [design-foundations]
 related: [lead-icon-artist, lead-vector-designer, variable-icon-font-architect]
+triggers: [technical artist, lookdev pipeline, shader art]
 spec_version: "2.0"
+
 ---
 
 # Lead Technical Digital Artist

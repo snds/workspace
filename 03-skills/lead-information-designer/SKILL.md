@@ -20,7 +20,10 @@ aliases: [lead-information-designer]
 tier: hub
 domain: design
 prerequisites: [design-foundations]
+triggers: [information designer, infographic, data encoding]
+governed_by: [qa]
 spec_version: "2.0"
+
 ---
 
 # Lead Information Designer
@@ -371,3 +374,4 @@ gates of the analysis behind it). Rigor model: [[13-domain-rigor-stack]]. Chart 
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[infod-dashboard-patterns]] · [[infod-design-system-patterns]] · [[infod-encoding-theory]] · [[infod-narrative-design]] · [[infod-network-graphs]] · [[infod-spatial-maps]] · [[infod-statistical-viz]]
+- governed-by → [[qa]]

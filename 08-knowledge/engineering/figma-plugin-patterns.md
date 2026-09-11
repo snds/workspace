@@ -1,7 +1,7 @@
 ---
 tags: [figma-plugin, engineering, design-tools]
 created: 2026-05-11
-updated: 2026-05-13
+updated: 2026-09-03
 status: stable
 confidence: high
 sources: [figma-repo-sync-plugin Bundles 5–11 + 10A.2 Phases 1–3b, sessions 2026-05-11..05-13]
@@ -89,16 +89,17 @@ while still cascading dark-mode swaps through the muted variable.
 foundation variable then carries an opinionated alpha that can't be reused for
 non-opacity contexts.
 
-**Right fix:** Capture opacity at the parse layer (`fillOpacity` on the StylePatch).
-At paint application time, bind the SOLID paint to the foundation variable normally,
-then set the paint's `.opacity` property to the captured factor. The variable
-binding remains pure; the alpha lives on the paint instance.
+**Right fix (until paint-opacity *variables* write):** Capture opacity at the parse
+layer (`fillOpacity` on the StylePatch). Bind the SOLID paint to the foundation
+variable, then set the paint's `.opacity` *literal*. As of 2026-09-03 the Figma UI
+can bind a number var to that field without detaching; MCP/`use_figma`
+`setBoundVariableForPaint(..., 'opacity', …)` still rejects — see
+[[figma-opacity-variables]]. Prefer a COLOR token that already carries alpha
+(`interaction/*`, Overlay ramps) when the alpha is a system token.
 
 ```ts
-// Bind to foundation (preserves cascade)
 const bound = figma.variables.setBoundVariableForPaint(paint, "color", fgVar);
-// Apply captured opacity on top
-node.fills = [{...bound, opacity: 0.5}];
+node.fills = [{...bound, opacity: 0.5}]; // literal factor, not a FLOAT binding
 ```
 
 ## 5. `figma.createFrame()` seeds 100×100 — kickstart AUTO sizing to 1×1

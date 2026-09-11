@@ -24,8 +24,10 @@ description: >
 aliases: [lead-devops-engineer]
 tier: hub
 domain: engineering
+triggers: [devops engineer, ci pipeline, github actions workflow]
 spec_version: "2.0"
 prerequisites: [eng-foundations]
+
 ---
 
 # Lead DevOps / Platform Engineer

@@ -21,7 +21,7 @@ triggers:
   - blocked not done
 tier: cross-cutting
 domain: workspace
-related: [harness-map, open-agent-engine, workspace-bootstrap, intent-coordination]
+related: [harness-map, open-agent-engine, workspace-bootstrap, intent-coordination, close-out]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -247,3 +247,4 @@ see [[nate-jones-harness-enrichments]] §3/§10 and framework #06 Judge check.
 - peer ↔ [[open-agent-engine]]
 - peer ↔ [[workspace-bootstrap]]
 - peer ↔ [[intent-coordination]]
+- peer ↔ [[close-out]]

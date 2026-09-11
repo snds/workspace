@@ -21,7 +21,9 @@ aliases: [lead-accessibility-architect]
 tier: hub
 domain: accessibility
 prerequisites: [design-foundations]
+triggers: [accessibility architect, wcag audit, screen reader path, inclusive design]
 spec_version: "2.0"
+
 ---
 
 # Lead Accessibility Architect

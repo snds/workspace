@@ -35,10 +35,11 @@ multi-agent handoff live in AGENTS.md — not duplicated here._
 
 | Layer | Location | Events |
 |---|---|---|
-| User-global (doctor-managed) | `~/.cursor/hooks.json` ← `00-bootstrap/dist/cursor-hooks.json` | `sessionStart` (+ mirrors of project events when installed) |
+| User-global (doctor-managed) | `~/.cursor/hooks.json` ← `00-bootstrap/dist/cursor-hooks.json` | `sessionStart`, `beforeSubmitPrompt`, + mirrors of project events when installed |
 | Project (repo) | `.cursor/hooks.json` | `preCompact`, `sessionEnd`, `subagentStop` |
 
 - **sessionStart** — injects root + ritual ABI `[workspace: LOADED · … · via:cursor-hook]`.
+- **beforeSubmitPrompt** — Layer-0 skill/knowledge routing (`09-tools/prompt_route.py`) so employer-repo sessions still load workspace doctrine (semantic + theme/mode tokens on Figma generate, etc.). Fail-open; no hit → `{}`.
 - **preCompact** — re-anchor reminder (compaction survival; Claude's prompt-reassert analogue).
 - **sessionEnd** — nudge Live handoff + session fragment.
 - **subagentStop** — nudge parent to fold Task results into the baton.

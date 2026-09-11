@@ -167,6 +167,7 @@ a distinct, newer library from the files listed above). This is the reusable pat
 - Component authoring and code-level → `design-engineer`
 - Dojo/dgrid legacy → `fw-dojo`
 - TanStack Table implementation → `fe-data-visualization`
+- Charting / dashboard widgets / chart-as-filter → [[enterprise-charting-and-dataviz]] (ECharts behind a CDS facade, including the selection popover; Carbon is a pattern source only)
 - Framework 02 (UX Operational) + Framework 05 (Last-Mile Craft) for component spec work
 - **Component *contracts*** (a table/component being replaced, or two implementations disagreeing) →
   [[component-contracts-and-schemas]] (the seven gates + the investment gate) +

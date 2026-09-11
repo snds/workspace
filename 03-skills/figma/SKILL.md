@@ -12,8 +12,8 @@ description: >-
   Canonical owner of Figma authoring + code-connect routing; delegates to the figma-*
   skills, figma-canvas-designer, and figma-plugin-dev, and uses the Figma MCP server.
   Not for judging a rendered UI (use /qa), system token decisions (use /ds), or motion
-  implementation (use /motion). Load the relevant figma-* skill (e.g. figma-use) before
-  calling the matching MCP tool.
+  implementation (use /motion). Load this hub + design-engineer BEFORE vendor plugin
+  skills (figma-use, figma-generate-library); those are mechanics only.
 user-invocable: true
 argument-hint: "[generate|spec|audit|migrate|tokens] [target: code|figma|component|tokens.json|selection] [--kind component|library|design|diagram|variables] [--out <path>] [--dry]"
 license: Apache-2.0
@@ -23,10 +23,16 @@ metadata:
   poc: false
   version: 0.1.0
 aliases: [figma]
-spec_version: "2.0"
+triggers: [figma, in figma, build in figma, component set, library file, generate a library, code connect, author the variables, stickersheet]
+defers_to: [design-engineer]
+governed_by: [qa, a11y-visual]
+rigor_role: command-hub
+spec_version: "2.2"
 tier: hub
 domain: design
 prerequisites: [design-foundations]
+related: [design-engineer, close-out]
+
 ---
 
 # /figma — Figma Authoring & Code-Connect Hub
@@ -45,10 +51,12 @@ Figma plugin skills, which supply mechanics only. Component and token *decisions
 `audit` claim here needs a measurement path (variable/style/component inspection), not an
 impression.
 
-> **Mandatory pre-step.** The figma-* skills gate the MCP tools. Load the matching skill
-> *before* calling its tool: `figma-use` before `use_figma`; `figma-generate-diagram`
-> before `generate_diagram`; `figma-generate-library` for library builds;
-> `figma-code-connect` for Code Connect. This hub routes; the skills hold the protocol.
+> **Mandatory pre-step.** Load **this hub + [[design-engineer]] before vendor plugin
+> skills** (`figma-use`, `figma-generate-library`, `figma-generate-design`,
+> `figma-generate-diagram`). Plugin skills supply MCP mechanics only; workspace
+> doctrine wins. Then load the matching figma-* protocol skill before its tool.
+> **Hard gate:** bind fill/stroke/text/spacing/radius to the target system's
+> semantic + theme/mode tokens — never `Color/*` primitives on components/sets/variants.
 
 ## Operation grammar
 
@@ -124,12 +132,16 @@ resolve).
 ## Execution protocol
 
 1. **Parse** verb/target/modifiers; default `generate`, auto-`--kind`.
-2. **Load the gating figma-* skill** for the resolved intent (mandatory) — then its MCP tools become callable.
+2. **Load this hub + [[design-engineer]] first** (doctrine: semantic + theme/mode tokens). Then load the gating figma-* protocol skill — then vendor plugin skills / MCP tools become callable.
 3. **`--dry`?** Report the skill + MCP plan and stop.
 4. **Acquire** the target (code scan / MCP read of the Figma node / token-file parse).
 5. **Run** the base procedure. Apply variables/styles — never raw values (token-first).
 6. **Emit** the report (authored artifacts or audit findings).
-7. **Hand off**: `spec` → design-engineer; system-token decisions → `/ds`.
+7. **Prove-gate (generate):** inspect bound fills/strokes (refuse `Color/*` on components/sets);
+   every control is a library or `local/…` instance, not a rectangle; variant matrix complete;
+   native-zoom screenshot. Then **stop for Sean** — invoke [[close-out]].
+8. **Hand off**: `spec` → design-engineer; system-token decisions → `/ds`. After any produce,
+   load `governed_by` lenses (`qa`, `a11y-visual`).
 
 ## POC scope note
 
@@ -139,4 +151,5 @@ Thin by design: the figma-* skills + Figma MCP hold the depth.
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[figma-api-router]] · [[figma-canvas-designer]] · [[figma-code-connect]] · [[figma-component-generation]] · [[figma-design-specs]] · [[figma-design-to-code]] · [[figma-diagramming]] · [[figma-ds-generation-pipeline]] · [[figma-error-troubleshooting]] · [[figma-mcp-tool-usage]] · [[figma-modes-for-variants]] · [[figma-plugin]] · [[figma-plugin-dev]] · [[figma-source-audit]] · [[figma-style-binding]] · [[figma-variable-creation]]
-- peer ↔ [[design-system-ops]]
+- governed-by → [[a11y-visual]] · [[qa]]
+- peer ↔ [[design-system-ops]] · [[close-out]]

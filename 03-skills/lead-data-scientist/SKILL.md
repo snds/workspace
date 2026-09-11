@@ -14,8 +14,10 @@ description: >
 aliases: [lead-data-scientist]
 tier: hub
 domain: data
+triggers: [what does the data say, experiment validity, decision owner, statistical claim]
 spec_version: "2.0"
 prerequisites: [data-foundations, science-foundations]
+
 ---
 
 # Lead Data Scientist

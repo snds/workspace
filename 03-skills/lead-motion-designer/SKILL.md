@@ -20,7 +20,10 @@ aliases: [lead-motion-designer]
 tier: hub
 domain: design
 prerequisites: [design-foundations]
+triggers: [motion designer, animation system, easing choice]
+governed_by: [qa]
 spec_version: "2.0"
+
 ---
 
 # Lead Motion Designer
@@ -325,3 +328,4 @@ Motion (`motion/react`, [motion.dev](https://motion.dev)), not the retired
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[motion-3d-spatial]] · [[motion-accessibility]] · [[motion-choreography]] · [[motion-graphic-systems]] · [[motion-performance]] · [[motion-principles]] · [[motion-programmatic-video]] · [[motion-tooling]] · [[motion-transitions]]
+- governed-by → [[qa]]

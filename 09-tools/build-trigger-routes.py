@@ -54,7 +54,10 @@ def build() -> str:
         "3. Full algorithm: [AGENTS.md](../AGENTS.md) → Skills discovery / Skill loading precedence.",
         "",
         "Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` "
-        "(loads the same JSON). Cursor and other surfaces read this file + the registry directly.",
+        "(loads the same JSON through `09-tools/prompt_route.py`). Cursor injects the "
+        "same Layer-0 matches on `beforeSubmitPrompt` (user-global hook; brain-path "
+        "resolution so employer-repo sessions still route). Other surfaces read this "
+        "file + the registry directly.",
         "",
         "## Curated high-leverage routes",
         "",

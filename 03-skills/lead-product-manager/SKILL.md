@@ -18,8 +18,10 @@ description: >
 aliases: [lead-product-manager]
 tier: hub
 domain: product
+triggers: [product decision, prioritization tradeoff, roadmap tradeoff]
 spec_version: "2.0"
 prerequisites: [product-foundations]
+
 ---
 
 # Lead Product Manager

@@ -1,7 +1,7 @@
 ---
 tags: [figma-plugin, figma-variables, design-tokens, cva, state-representation, engineering]
 created: 2026-05-23
-updated: 2026-05-23
+updated: 2026-09-03
 status: validated
 confidence: high
 sources: [session-log 2026-05-23, figma-repo-sync-plugin Bundles 11.3.49–70]
@@ -28,11 +28,14 @@ Full spec: `07-projects/09-figma-repo-sync-plugin/docs/2026-05-23-state-represen
    variants); the other stays modes. Make the SMALLER axis physical to minimize
    component count — usually states (fewer than variants).
 
-3. **Opacity CANNOT be mode-driven.** `node.opacity` / paint opacity are plain
-   literals, not variable-bindable, so opacity can't follow a variant mode. This
-   forces a choice for `/N` (e.g. `bg-primary/80`): either bake alpha into the
-   variable's per-mode RGBA (detaches the alias → loses live theming on that
-   mode), OR adopt a normalized **state-layer** (uniform opacity per state).
+3. **Layer opacity IS variable-bindable; paint/color-var opacity is not (yet) via
+   MCP/`use_figma`.** `node.setBoundVariable('opacity', floatVar)` works; FLOAT
+   values are **0–100**. The 2026-09-03 UI can bind a number var to a color
+   variable’s opacity and to fill opacity without detaching — Plugin/MCP writes
+   still reject that (see [[figma-opacity-variables]]). This **refutes** the
+   2026-05 claim that opacity cannot be bound at all. For `/N` (e.g.
+   `bg-primary/80`) until paint-opacity writes ship: bake alpha into a COLOR
+   token (Radix A-steps / `interaction/*`) or use a normalized **state-layer**.
 
 4. **`resolvedVariableModes` + `resolveForConsumer(node)` are the AUTHORITATIVE
    resolution.** A pin-heuristic that walks `node→ancestor→page` for

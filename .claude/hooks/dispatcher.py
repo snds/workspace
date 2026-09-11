@@ -914,14 +914,10 @@ def build_session_start_context(
     project_ctx_head = read_head(PROJECT_CONTEXT, 60)
     session_log_head = read_head(SESSION_LOG, 40)
 
-    knowledge_index = read_head(KNOWLEDGE_INDEX, 60)
-    knowledge_block = f"""
-## Knowledge vault index (08-knowledge/_INDEX.md)
-When working in any domain below, read the relevant entry before starting.
-If the session produces a durable insight, add or update the entry at session end.
-```
-{knowledge_index}
-```
+    knowledge_block = """
+## Knowledge vault
+Do **not** ingest `08-knowledge/_INDEX.md`. Match via Layer 0 (`knowledge-hints.json` +
+entry `Triggers:`). Read only the matched file. Path: `08-knowledge/_INDEX.md`.
 """ if KNOWLEDGE_INDEX.exists() else ""
 
     return f"""# Workspace session context (auto-loaded)
@@ -1048,7 +1044,6 @@ def build_reorientation_context(machine: str, now: datetime, source: str) -> str
     Compaction is exactly the moment the boot-time foundations injection gets
     summarized away — re-inject the load discipline and the knowledge index so
     mid-session work doesn't decay into freestyling (the 2026-07-08 failure mode)."""
-    knowledge_index = read_head(KNOWLEDGE_INDEX, 60)
     source_label = {"compact": "compacted", "resume": "resumed"}.get(source, source)
     return f"""# Workspace re-orientation (context was {source_label})
 
@@ -1065,13 +1060,9 @@ Standing discipline (unchanged by compaction):
 - QA pre-output gate: `01-frameworks/06-qa-operating-model.md` — runs before any deliverable,
   including canvas writes.
 
-## Knowledge vault index (08-knowledge/_INDEX.md)
-Read the relevant entry before continuing domain work.
-```
-{knowledge_index}
-```
-
-_Lexical fallback: `python3 09-tools/vault-retrieve.py \"…\"` (Layer 0 triggers still win)._
+## Knowledge vault
+Do **not** ingest `_INDEX.md`. Match via Layer 0 (`knowledge-hints.json` + entry Triggers).
+Read only the matched file. Lexical fallback: `python3 09-tools/vault-retrieve.py "…"`.
 """
 
 

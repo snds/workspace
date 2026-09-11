@@ -1,15 +1,23 @@
 ---
 tags: [design-systems, figma, authoring, surfaces, tokens, transliteration, accessibility]
 created: 2026-06-30
-updated: 2026-08-06
+updated: 2026-09-09
 status: stable
 confidence: high
 sources: [centric-ui Figma library authoring sessions 2026-06; density/overlay construction 2026-08; field adornment optical inset + Icon Button audit 2026-08-06; migrated from local memory ds-figma-surface-conventions / transliteration-focus-and-positioning / figma-use-linked-library-components]
-related_skills: [figma-canvas-designer, design-engineer, ds-advisor, figma-plugin-dev]
+related_skills: [figma, figma-canvas-designer, design-engineer, ds-advisor, figma-plugin-dev]
 related_projects: [centric-ui VMS DS, 02-centricPLM]
 ---
 
 # Figma DS surface authoring — durable conventions
+
+## For future agent
+
+Hard gate on **every** generated component/set/variant: bind fill/stroke/text/spacing/radius
+to the **target system's semantic + theme/mode tokens** (Light/Dark, Density). Never
+`Color/*` primitives. Missing token → create a semantic alias, then bind. Load [[figma]] +
+[[design-engineer]] before vendor `figma-use` / `figma-generate-library`. Routing:
+[[cursor-employer-repo-skill-routing]].
 
 Durable layout/authoring decisions for design-system Figma libraries (validated on the
 centric-ui library). They apply to **any** surface/overlay, not just the component that
@@ -279,9 +287,11 @@ the component gains the missing prop.
     (b) **Stamp the semantic default mode on every VARIANT ROOT** — never ship Auto: an unset
     instance resolves through its PLACEMENT chain to the collection's first mode (not the main's
     context); variant-root explicits mirror onto non-overridden instances, fresh and retroactively;
-    set-frame explicits do NOT propagate. (c) **Paint-level `opacity` is IGNORED on variable-bound
-    fills at render** — never build tints as bound-color-at-alpha; design real pale surface values/
-    tokens. (d) **Test the override before filing a library ask**: nested text accepts
+    set-frame explicits do NOT propagate. (c) **Paint-level `opacity` on variable-bound fills:**
+    historically ignored at render (tints must live in the COLOR token — Radix A-steps /
+    `interaction/*`). As of 2026-09-03 the **UI** can bind a number var to that paint opacity
+    without detaching the color; MCP/`use_figma` still cannot ([[figma-opacity-variables]]).
+    Until write support ships, do not rely on unbound paint opacity on a bound fill. (d) **Test the override before filing a library ask**: nested text accepts
     `textAutoResize`/`layoutSizing FILL`/`textTruncation` overrides, and nested frames accept
     alignment-enum overrides — two assumed-locked walls broke under direct probes. (e) Verification
     bar for any mode/state surface: machine-vision permutation testing on rendered pixels (a

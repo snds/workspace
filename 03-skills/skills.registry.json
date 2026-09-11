@@ -10,9 +10,9 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 297,
+    "total": 298,
     "by_tier": {
-      "cross-cutting": 43,
+      "cross-cutting": 44,
       "foundation": 22,
       "hub": 47,
       "spoke": 185
@@ -267,7 +267,9 @@
       "prerequisites": [],
       "related": [],
       "governed_by": [],
-      "governs": [],
+      "governs": [
+        "mobile-platform-craft"
+      ],
       "triggers": [],
       "surfaces": [
         "*"
@@ -303,7 +305,13 @@
       "prerequisites": [],
       "related": [],
       "governed_by": [],
-      "governs": [],
+      "governs": [
+        "design-engineer",
+        "figma",
+        "gd-color-theory",
+        "lead-ui-designer",
+        "uid-color-for-ui"
+      ],
       "triggers": [
         "contrast",
         "color contrast",
@@ -326,7 +334,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:b5206a4ad83fa1b491c8855abe85085d64d2e3af69a311061d3ff58d7c919355"
+      "hash": "sha256:5929242331bac55125fc6ffb6f49cb7fe48dae9a604dc949ab4c6fba4c823e7c"
     },
     "adapter-unity-hdrp": {
       "path": "03-skills/adapter-unity-hdrp/SKILL.md",
@@ -947,6 +955,37 @@
       "rigor_role": null,
       "hash": "sha256:59c8f602686a18156fbbf6d0404ecdcb6ef7da27836259cfbec1b312d6024937"
     },
+    "close-out": {
+      "path": "03-skills/close-out/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "qa",
+        "plan-ahead",
+        "mission-fit",
+        "eng",
+        "figma",
+        "failure-mode-premortem"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "close-out",
+        "self-police",
+        "prove-gate",
+        "human visual qa",
+        "named detector"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:b1f79cbb2f645d746774ba05da0d5605fc94a6078ec8758e6292172c19e9dc78"
+    },
     "data-foundations": {
       "path": "03-skills/data-foundations/SKILL.md",
       "tier": "foundation",
@@ -984,8 +1023,14 @@
       "prerequisites": [
         "design-foundations"
       ],
-      "related": [],
-      "governed_by": [],
+      "related": [
+        "close-out",
+        "qa"
+      ],
+      "governed_by": [
+        "qa",
+        "a11y-visual"
+      ],
       "governs": [],
       "triggers": [
         "design engineer",
@@ -1013,7 +1058,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:fc7fa3115a0203f267ccbdc4f7f43b5e95ba0b872640d49f989f29f00bd6b671"
+      "hash": "sha256:a26004006bf1fe1ee86ce3133c144ebc9ca4da37fc3c9727f5957898e82fc475"
     },
     "design-foundations": {
       "path": "03-skills/design-foundations/SKILL.md",
@@ -1256,17 +1301,26 @@
       "prerequisites": [
         "design-foundations"
       ],
-      "related": [],
-      "governed_by": [],
+      "related": [
+        "close-out"
+      ],
+      "governed_by": [
+        "qa"
+      ],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "ds hub",
+        "design system decision",
+        "token decision",
+        "write the ddr"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
-      "rigor_role": null,
-      "hash": "sha256:32bf1076f5986d450119cc446048d13b9e735f9bdb4ee4d3392fa837c4ed7a2b"
+      "rigor_role": "command-hub",
+      "hash": "sha256:c833f49dd482c98736ed0ccf87a1042f372eb21fa8b86ac061b8d8ebfc0fe78a"
     },
     "ds-advisor": {
       "path": "03-skills/ds-advisor/SKILL.md",
@@ -1300,7 +1354,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:c382acef0cf2969b9c9eaaf836963cbaed5ce16bcba64816e9b86d8a307141f2"
+      "hash": "sha256:72f86fd5542a92c136b7c5a76d05f911e185b68d3c6829e86c4547424a88ed0d"
     },
     "ds-bi-platforms": {
       "path": "03-skills/ds-bi-platforms/SKILL.md",
@@ -1430,17 +1484,26 @@
       "prerequisites": [
         "design-foundations"
       ],
-      "related": [],
-      "governed_by": [],
+      "related": [
+        "close-out",
+        "ds-advisor"
+      ],
+      "governed_by": [
+        "qa"
+      ],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "generate a design system",
+        "scaffold ds artifacts",
+        "ds generation pipeline"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:624b5b5f25d15d1d18e8c3e11994635a20bb25d156c6564b220a60cdb2ea3f8b"
+      "hash": "sha256:58101f272b6af3b960497f43ce117f84cf14d20a4d8c99772782ed49ce84e971"
     },
     "ds-ml-engineering": {
       "path": "03-skills/ds-ml-engineering/SKILL.md",
@@ -1611,9 +1674,12 @@
         "lead-devops-engineer",
         "lead-mobile-engineer",
         "lead-security-architect",
-        "arch-guild"
+        "arch-guild",
+        "close-out"
       ],
-      "governed_by": [],
+      "governed_by": [
+        "qa"
+      ],
       "governs": [],
       "triggers": [
         "eng",
@@ -1635,7 +1701,7 @@
         "eng-foundations"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:de96da31612760c4f7a74f115445aa30112316bb95262a3c76be0f722a478d4a"
+      "hash": "sha256:c077426bb0af39f2089c7f278188e7b985bf7f13ecd02ba048a97a85fbc06721"
     },
     "eng-foundations": {
       "path": "03-skills/eng-foundations/SKILL.md",
@@ -1941,17 +2007,35 @@
       "prerequisites": [
         "design-foundations"
       ],
-      "related": [],
-      "governed_by": [],
+      "related": [
+        "design-engineer",
+        "close-out"
+      ],
+      "governed_by": [
+        "qa",
+        "a11y-visual"
+      ],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "figma",
+        "in figma",
+        "build in figma",
+        "component set",
+        "library file",
+        "generate a library",
+        "code connect",
+        "author the variables",
+        "stickersheet"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "defers_to": [],
-      "rigor_role": null,
-      "hash": "sha256:a9629a486d498943c59e973de28a6ceb38560d962c27af7731eeca44ef0f2772"
+      "defers_to": [
+        "design-engineer"
+      ],
+      "rigor_role": "command-hub",
+      "hash": "sha256:7f612c6d430cce7a8f0cba54162cafb5d69c96cba060189b7c3752e6cd6a94e7"
     },
     "figma-api-router": {
       "path": "03-skills/figma-api-router/SKILL.md",
@@ -1992,7 +2076,13 @@
         "mockup",
         "wireframe",
         "design in figma",
-        "lay out a page"
+        "lay out a page",
+        "build in figma",
+        "in figma",
+        "put this in figma",
+        "component set",
+        "stickersheet",
+        "library file"
       ],
       "surfaces": [
         "*"
@@ -2000,9 +2090,12 @@
       "requires": [
         "figma-mcp"
       ],
-      "defers_to": [],
+      "defers_to": [
+        "figma",
+        "design-engineer"
+      ],
       "rigor_role": null,
-      "hash": "sha256:2db3584441b9da05d8fe9ae58e2d7f84d5a231768107aaa7b8a29812a2e2f0c9"
+      "hash": "sha256:6bfe05dc37e7ea90d6239ffee25136ba088bf8d3cb72299ce25c094f0c1a1be8"
     },
     "figma-code-connect": {
       "path": "03-skills/figma-code-connect/SKILL.md",
@@ -2043,17 +2136,29 @@
       "prerequisites": [
         "figma"
       ],
-      "related": [],
+      "related": [
+        "design-engineer"
+      ],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "component set",
+        "figma variants",
+        "generate component",
+        "variant combination",
+        "auto-layout component",
+        "library component"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
-      "defers_to": [],
+      "defers_to": [
+        "figma",
+        "design-engineer"
+      ],
       "rigor_role": null,
-      "hash": "sha256:d283d2cd25702a71f24afebe0d740826f2a07e4f7af9e89af68158b5618289a8"
+      "hash": "sha256:db40cf2192040c72449f4af8a64f94f86f8a340abd0a550e7038479f672ff11f"
     },
     "figma-design-specs": {
       "path": "03-skills/figma-design-specs/SKILL.md",
@@ -2211,7 +2316,7 @@
       ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:e1216f5f538ed51262e972b36410fb661124171a5ae804168dcc38a7c9842b76"
+      "hash": "sha256:e54491f4bfad7fd4a573fbe137b17a5016d6db4260a5ce81b68080b43024e681"
     },
     "figma-modes-for-variants": {
       "path": "03-skills/figma-modes-for-variants/SKILL.md",
@@ -2315,7 +2420,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:3950883ec97b573b87778687d5401d53ce6e34dcb2e51b15ca9a499ad3ea9385"
+      "hash": "sha256:62892bbe622de8b2c420cd83cfd3ba8fe54bc3c521ded0c69ce4977c0c666d4f"
     },
     "figma-variable-creation": {
       "path": "03-skills/figma-variable-creation/SKILL.md",
@@ -2335,7 +2440,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:3ed46f24d3f3e6b54f45b9a06c01b06be1cedee1de40514354a57cd4390fa618"
+      "hash": "sha256:8c3c1a5f7b7542ef8158141dd6dded5ceca663c4e98b677ca72e4cba06d2e759"
     },
     "found-color": {
       "path": "03-skills/found-color/SKILL.md",
@@ -3116,14 +3221,17 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "gen manifest",
+        "generation manifest"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:8e614c006460e2dd93ce391c76a08a61ba47ca68debda3e3535fe408a91d389a"
+      "hash": "sha256:4bd29279d39fd096c3780e59bb26cef64ad5be8570176cbe6cb758380a88bce9"
     },
     "github-guardrails": {
       "path": "03-skills/github-guardrails/SKILL.md",
@@ -3174,14 +3282,16 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "google fonts scraper"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:213d5bd40830f465aaf10fbde1dcb58615c60e5fb298fe35ba7fb8b77fcfa574"
+      "hash": "sha256:bead44980b44220a651f5828650215e8f7252bf9d26f3c05735f24953a6d360d"
     },
     "google-fonts-web-scraping": {
       "path": "03-skills/google-fonts-web-scraping/SKILL.md",
@@ -3192,14 +3302,16 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "google fonts scraping"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:6d35e079be869608b548964d2a604bb63458bbeaa15d03152e0ddd91556b5b3b"
+      "hash": "sha256:437789af8d8fec089fc4c6c6e8beeb7348df35750b41d4e301b91ead0da452db"
     },
     "gpu-capture-tooling": {
       "path": "03-skills/gpu-capture-tooling/SKILL.md",
@@ -3902,14 +4014,18 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "3d designer",
+        "dcc scene",
+        "blender scene"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:6b7cbbae547bf083a272790711f7c0221ecf3df76b186f30fad0b90bae5c2e87"
+      "hash": "sha256:73ae36cb786a3d5bb11e4b4afecb1b4d53c154872df83205c298951410d653df"
     },
     "lead-accessibility-architect": {
       "path": "03-skills/lead-accessibility-architect/SKILL.md",
@@ -3922,14 +4038,19 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "accessibility architect",
+        "wcag audit",
+        "screen reader path",
+        "inclusive design"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:db024777dbe9d6e707f6800457ad4379660d59517b6529e3daab47cf464737a0"
+      "hash": "sha256:5997a0b64e3a035f0ae3fd2914cd3fb68632773ae1471b833005e3b8cdc12d98"
     },
     "lead-art-director": {
       "path": "03-skills/lead-art-director/SKILL.md",
@@ -3943,14 +4064,18 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "art direction",
+        "visual direction",
+        "lookdev"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:e8b434284bac1a7080f5dc56a08fefeac2b8b892b7bf77ddc736caa47f803994"
+      "hash": "sha256:859dd0729cd46048e63f275bcc8da637923a3980478229b62afb4e5f4a3bb42c"
     },
     "lead-backend-engineer": {
       "path": "03-skills/lead-backend-engineer/SKILL.md",
@@ -3963,14 +4088,18 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "backend engineer",
+        "api contract",
+        "service boundary"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:3fd4086190dc97ed6941f5621d979c1f130c96d756afbc1b0cd4be292b41abc4"
+      "hash": "sha256:d61d886c61af702c9fbb8541f4de20f85335c8c4762218c528b14d8681d141a0"
     },
     "lead-data-scientist": {
       "path": "03-skills/lead-data-scientist/SKILL.md",
@@ -3984,14 +4113,19 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "what does the data say",
+        "experiment validity",
+        "decision owner",
+        "statistical claim"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:b49ec5290f07f7709d1d0045339490fa25d6eeb14eea77f68b52d12e9dc355ea"
+      "hash": "sha256:fadf928958a375c113d3c106f9517e511e210ba4c08cf5c82651cc8d3be0d8cd"
     },
     "lead-devops-engineer": {
       "path": "03-skills/lead-devops-engineer/SKILL.md",
@@ -4004,14 +4138,18 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "devops engineer",
+        "ci pipeline",
+        "github actions workflow"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:6b20582789c3611186ce764239f0f47177170f8db37e53f8d984077301409d61"
+      "hash": "sha256:16c1d95e739d8e6396800c8f7c66d6ff24eb2f31caa8af4188fc9a09bf58a499"
     },
     "lead-frontend-engineer": {
       "path": "03-skills/lead-frontend-engineer/SKILL.md",
@@ -4022,16 +4160,23 @@
         "eng-foundations"
       ],
       "related": [],
-      "governed_by": [],
+      "governed_by": [
+        "qa"
+      ],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "frontend engineer",
+        "react component",
+        "implement the ui",
+        "frontend architecture"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:ae481944d94b9955815667ed81733faf70b8ecf20da86bad6dba7f489085070f"
+      "hash": "sha256:572a026cfc9b0c98fbe15e4ae4a5d19c12dab06c6db96b6d0a774fc153a270f7"
     },
     "lead-game-designer": {
       "path": "03-skills/lead-game-designer/SKILL.md",
@@ -4046,14 +4191,18 @@
       ],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "game designer",
+        "gameplay systems",
+        "player fantasy"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:fd0a427ed34171c8c5c78109fe0b3be959432a58cc6b338ae0481b230d0df5be"
+      "hash": "sha256:da5837380e255c734165682ac2b7e389b91155cdb3fa81168e5479923b03b5fb"
     },
     "lead-game-developer": {
       "path": "03-skills/lead-game-developer/SKILL.md",
@@ -4067,14 +4216,18 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "game developer",
+        "web game",
+        "three.js game"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:40245cd731a8b1f75fdaba934bb286c3046d4fafe03f36780da369c0d9843961"
+      "hash": "sha256:e9ea6136f66da08106fdbaaccd724515a1fcac8f0ff9ad0032276ba0d3dea203"
     },
     "lead-graphic-designer": {
       "path": "03-skills/lead-graphic-designer/SKILL.md",
@@ -4085,16 +4238,22 @@
         "design-foundations"
       ],
       "related": [],
-      "governed_by": [],
+      "governed_by": [
+        "qa"
+      ],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "graphic designer",
+        "brand identity",
+        "poster design"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:77ed043ef279b07f0c7178c6f522b45f996d54f8035a1b6c9f2caf3b7fd393e9"
+      "hash": "sha256:6bbb165f3563876c88dd56de117c0dcf888e330379f126c13a5811f05e3b4168"
     },
     "lead-icon-artist": {
       "path": "03-skills/lead-icon-artist/SKILL.md",
@@ -4111,14 +4270,18 @@
       ],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "icon artist",
+        "icon set",
+        "pictogram"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:3e5c0ede4a1685c2cba63b22bce588113052d4feece50cb010ce5c27c7ab929d"
+      "hash": "sha256:572c6c68a6b9c48bddefa0ca0ae1d6ea25a6b3fa445e86bd1f6b3f5f4fcea833"
     },
     "lead-information-architect": {
       "path": "03-skills/lead-information-architect/SKILL.md",
@@ -4131,14 +4294,18 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "information architect",
+        "navigation model",
+        "sitemap"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:4873d237c055318b5c3a0a552a651d37c40f10d243d0bc2486150329fc2d2db7"
+      "hash": "sha256:72108dc62134d2c54eab93de54c9ec790804c6fc002000b6d54f26f339f53fe8"
     },
     "lead-information-designer": {
       "path": "03-skills/lead-information-designer/SKILL.md",
@@ -4149,16 +4316,22 @@
         "design-foundations"
       ],
       "related": [],
-      "governed_by": [],
+      "governed_by": [
+        "qa"
+      ],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "information designer",
+        "infographic",
+        "data encoding"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:dddf75c06a6ea741323dbdfb3113ee5afb5e09a884ff96e731748ef7848dfd4c"
+      "hash": "sha256:8091c826a768578deef7ece629d815bf6661af75efb1df61360f4eb780bb991a"
     },
     "lead-mobile-engineer": {
       "path": "03-skills/lead-mobile-engineer/SKILL.md",
@@ -4214,16 +4387,22 @@
         "design-foundations"
       ],
       "related": [],
-      "governed_by": [],
+      "governed_by": [
+        "qa"
+      ],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "motion designer",
+        "animation system",
+        "easing choice"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:4784ee4c3d5423ddd3e80b76f5f3d3bea6637a59df4825dc653496470df401a6"
+      "hash": "sha256:182707556d87e344bbf46d594f29f55979ad7b104316fd6093507a42219cc13c"
     },
     "lead-product-manager": {
       "path": "03-skills/lead-product-manager/SKILL.md",
@@ -4236,14 +4415,18 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "product decision",
+        "prioritization tradeoff",
+        "roadmap tradeoff"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:b02cd44f56b3d4e13c1d6d738a1e151c68b191bd73d157a7e1d8d25dcf3a3c56"
+      "hash": "sha256:5601b3ee925da8d15e184b601357caa92effb1f84a12290b9f3990d2f055c2ca"
     },
     "lead-security-architect": {
       "path": "03-skills/lead-security-architect/SKILL.md",
@@ -4262,7 +4445,6 @@
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "security",
         "appsec",
         "threat model",
         "authentication",
@@ -4290,7 +4472,7 @@
         "framework-13"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:f16a6bcc61629049263b70fee423da557af09695ea8c92bbf91becbb6c7eeba8"
+      "hash": "sha256:8af91c2fa0fd47c3dea5b74085b0a707a39f97e7966cdbc762c65209d0bad578"
     },
     "lead-technical-digital-artist": {
       "path": "03-skills/lead-technical-digital-artist/SKILL.md",
@@ -4307,14 +4489,18 @@
       ],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "technical artist",
+        "lookdev pipeline",
+        "shader art"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:3797857aecb0e367ee50f17e5b462c858a6c307380a8746ff0a3867f2572588e"
+      "hash": "sha256:0351503413634f4fba76cd26b431d1aed471dda80c67c5aef66d4edde0414391"
     },
     "lead-type-designer": {
       "path": "03-skills/lead-type-designer/SKILL.md",
@@ -4325,16 +4511,22 @@
         "design-foundations"
       ],
       "related": [],
-      "governed_by": [],
+      "governed_by": [
+        "qa"
+      ],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "type designer",
+        "type family",
+        "letterform"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:354cc313c2c23e947b9c793169ce8344b54059ab2aa62eac22f48596227b5c0c"
+      "hash": "sha256:8ee5884ca67e8bef8054179ec64ab52a3a124993cf06ae2c6247a552d572b983"
     },
     "lead-ui-designer": {
       "path": "03-skills/lead-ui-designer/SKILL.md",
@@ -4345,16 +4537,26 @@
         "design-foundations"
       ],
       "related": [],
-      "governed_by": [],
+      "governed_by": [
+        "qa",
+        "a11y-visual"
+      ],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "ui design",
+        "visual design",
+        "color palette",
+        "type hierarchy",
+        "dark mode palette",
+        "elevation"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:17975235e6523665780685732094ea58a022fb90d7e71fc14f344c2a453c10cc"
+      "hash": "sha256:4b5014a8d3c756d3b02579006c6e70d1d1c7ec45031c7f99c1b886698a555941"
     },
     "lead-ux-designer": {
       "path": "03-skills/lead-ux-designer/SKILL.md",
@@ -4369,7 +4571,11 @@
       "governs": [],
       "triggers": [
         "challenge this",
-        "tear this apart"
+        "tear this apart",
+        "information architecture",
+        "enterprise ux",
+        "how should this work",
+        "user flow"
       ],
       "surfaces": [
         "*"
@@ -4377,7 +4583,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:e054900c6ce5742e6522e74983d3f2fae9f715159749322b415fe4f35fd979f9"
+      "hash": "sha256:75787c74da9771405378fd7d4b3e908676d138c5f1003d4003c58d061705ae4d"
     },
     "lead-vector-designer": {
       "path": "03-skills/lead-vector-designer/SKILL.md",
@@ -4397,14 +4603,18 @@
       ],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "vector designer",
+        "bezier path",
+        "svg illustration"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:0f6d8b70e9d02bdea40dc349f2acf4d6ddfd656e0f3fb2ac7d612d2a33bdecb2"
+      "hash": "sha256:9cd417d733b0617f2aea16b9ceeead6cda3261e541fe53da07c1c4b2023db72d"
     },
     "lead-visual-qa": {
       "path": "03-skills/lead-visual-qa/SKILL.md",
@@ -4414,17 +4624,25 @@
       "prerequisites": [
         "design-foundations"
       ],
-      "related": [],
+      "related": [
+        "close-out",
+        "qa"
+      ],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "lead visual qa",
+        "pixel review",
+        "last mile craft",
+        "does this look right"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:4b5eb5ad3e74d1552a40ff0246225ff99eaca881a32ebda2adda171621a394d8"
+      "hash": "sha256:ed284923ce7605f4128c662924a34aeb60a55135d1fa89c5831b925bf9f406bc"
     },
     "legion-narrative-design": {
       "path": "03-skills/legion-narrative-design/SKILL.md",
@@ -4478,14 +4696,17 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "material symbols project",
+        "icon automation suite"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:23bacc52c361f4e7e5bdb27763d5e0e1e0e3f5f29ded00cbb263e57e64880308"
+      "hash": "sha256:7b33958126da0df73db9325a69695a63c4b049741ae1fc90f194c0d4c53c9b0d"
     },
     "material-symbols-suite": {
       "path": "03-skills/material-symbols-suite/SKILL.md",
@@ -4617,7 +4838,8 @@
         "harness-map",
         "open-agent-engine",
         "workspace-bootstrap",
-        "intent-coordination"
+        "intent-coordination",
+        "close-out"
       ],
       "governed_by": [],
       "governs": [],
@@ -4638,7 +4860,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:334a2018ea4dcac9c615fec78eeef1e81d6163a458a796d16347ec9b124c7444"
+      "hash": "sha256:dd1d795c806355b34013300b584eeab4c4cf6a3383f9ae9691c7dafb61d5935a"
     },
     "mobile-android-kotlin": {
       "path": "03-skills/mobile-android-kotlin/SKILL.md",
@@ -4777,17 +4999,26 @@
       "prerequisites": [
         "design-foundations"
       ],
-      "related": [],
-      "governed_by": [],
+      "related": [
+        "close-out"
+      ],
+      "governed_by": [
+        "qa"
+      ],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "motion hub",
+        "implement this scroll animation",
+        "gsap scrolltrigger",
+        "motion implementation"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
-      "rigor_role": null,
-      "hash": "sha256:1ef750d0ae9bb7277ca3981a89ea59be0c48732d62b4a8ff75aa2556e947efbc"
+      "rigor_role": "command-hub",
+      "hash": "sha256:7f8e27312bb60197c1e937e9b9b94f7b7c8f4c7a55c3df0d298809a73e1492ef"
     },
     "motion-3d-spatial": {
       "path": "03-skills/motion-3d-spatial/SKILL.md",
@@ -5070,14 +5301,17 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "omni app",
+        "omni project"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:557b19d0209c5f6fc391148f419949fef6d3074e3c8ee71ed289adcc71e4b4e1"
+      "hash": "sha256:7655f635a3e8470c042bb64398088f06a70229ec620a46026ac31cc78cf4abdc"
     },
     "open-agent-engine": {
       "path": "03-skills/open-agent-engine/SKILL.md",
@@ -5125,7 +5359,8 @@
       "prerequisites": [],
       "related": [
         "workspace-bootstrap",
-        "failure-mode-premortem"
+        "failure-mode-premortem",
+        "close-out"
       ],
       "governed_by": [],
       "governs": [],
@@ -5139,7 +5374,12 @@
         "first breaker",
         "dual repo",
         "squash leftover",
-        "re-export"
+        "re-export",
+        "implement this",
+        "open a pr",
+        "pull request",
+        "fix ci",
+        "merge conflict"
       ],
       "surfaces": [
         "*"
@@ -5147,7 +5387,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:68107705517bf6c03dc8478259702bd02d25d089aa87df63d19417b472d09910"
+      "hash": "sha256:a262766a443fa6c900cb7562c06418d9d7cf45dfd123eabb39e5adc93b671946"
     },
     "planetary-terrain-lod": {
       "path": "03-skills/planetary-terrain-lod/SKILL.md",
@@ -5446,14 +5686,17 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "python gui",
+        "pywebview"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:b28de6e91c5ac95c48d1402acc21380dd6d31e20480ed4c2546dda3fd7fb94d4"
+      "hash": "sha256:dbbbf15adcf4dd065c4d18642963605fd1a4be2b756f27778c0d0bc2a10a7dfb"
     },
     "qa": {
       "path": "03-skills/qa/SKILL.md",
@@ -5463,17 +5706,41 @@
       "prerequisites": [
         "design-foundations"
       ],
-      "related": [],
+      "related": [
+        "close-out"
+      ],
       "governed_by": [],
-      "governs": [],
-      "triggers": [],
+      "governs": [
+        "ai-design-systems",
+        "design-engineer",
+        "ds",
+        "ds-generation-pipeline",
+        "eng",
+        "figma",
+        "lead-frontend-engineer",
+        "lead-graphic-designer",
+        "lead-information-designer",
+        "lead-motion-designer",
+        "lead-type-designer",
+        "lead-ui-designer",
+        "motion",
+        "redesign",
+        "type"
+      ],
+      "triggers": [
+        "qa this",
+        "visual qa",
+        "audit this screen",
+        "critique this ui",
+        "qa screenshot"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
-      "rigor_role": null,
-      "hash": "sha256:50380617f63e2a79fca55f79af2ae4972a8d4ee1482dd6338de9dcadac3d9054"
+      "rigor_role": "command-hub",
+      "hash": "sha256:036970d223cf8dd1f6aeb0aceac47328c98144fb29701ff32a5ea59b4da5a2c9"
     },
     "realtime-render-performance": {
       "path": "03-skills/realtime-render-performance/SKILL.md",
@@ -5601,17 +5868,27 @@
       "prerequisites": [
         "design-foundations"
       ],
-      "related": [],
-      "governed_by": [],
+      "related": [
+        "close-out",
+        "qa"
+      ],
+      "governed_by": [
+        "qa"
+      ],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "redesign this site",
+        "generative redesign",
+        "impeccable redesign",
+        "uplift this page"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
-      "rigor_role": null,
-      "hash": "sha256:868fa19ae2aa6c534d5b5f654b6280ac89890752115f9e1f438909397551d241"
+      "rigor_role": "command-hub",
+      "hash": "sha256:78bcd5b52f495bea9379dcfcf5b844c8787e4cc510101a0758454b1dc4f702db"
     },
     "reference-video-review": {
       "path": "03-skills/reference-video-review/SKILL.md",
@@ -5980,7 +6257,10 @@
         "sec-supply-chain"
       ],
       "governed_by": [],
-      "governs": [],
+      "governs": [
+        "be-api-design",
+        "fe-api-integration"
+      ],
       "triggers": [
         "owasp",
         "injection",
@@ -6029,7 +6309,9 @@
         "sec-supply-chain"
       ],
       "governed_by": [],
-      "governs": [],
+      "governs": [
+        "be-api-design"
+      ],
       "triggers": [
         "authentication",
         "authorization",
@@ -6079,7 +6361,9 @@
         "sec-appsec-owasp"
       ],
       "governed_by": [],
-      "governs": [],
+      "governs": [
+        "devops-ci-cd"
+      ],
       "triggers": [
         "supply chain",
         "dependency",
@@ -6307,14 +6591,16 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "svg font extraction"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:98ed05a3953055206091b4e2577834244751ce43c9719f7e9fdc8decce173613"
+      "hash": "sha256:ee0eeefc43a266fa87b6b6e41b08fe65cb794b6363f9344678a9febaf9e5f1fc"
     },
     "threejs-materials-master": {
       "path": "03-skills/threejs-materials-master/SKILL.md",
@@ -6367,17 +6653,27 @@
       "prerequisites": [
         "design-foundations"
       ],
-      "related": [],
-      "governed_by": [],
+      "related": [
+        "close-out"
+      ],
+      "governed_by": [
+        "qa"
+      ],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "type scale",
+        "type design",
+        "typeface pairing",
+        "typographic system",
+        "variable font axes"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
-      "rigor_role": null,
-      "hash": "sha256:44424ceeaa06f794313f96cfe28fe1d960d56d3f7d3091a1e87150ed98bf3d93"
+      "rigor_role": "command-hub",
+      "hash": "sha256:898a5a25db4bb935a369b77424629bdb6bcaf38e365f9d028f74b503f482a36b"
     },
     "type-classification-history": {
       "path": "03-skills/type-classification-history/SKILL.md",
@@ -7471,7 +7767,9 @@
         "gd-generation-tooling"
       ],
       "governed_by": [],
-      "governs": [],
+      "governs": [
+        "gd-generation-tooling"
+      ],
       "triggers": [],
       "surfaces": [
         "*"
@@ -8064,6 +8362,9 @@
       "design-foundations",
       "design-engineer",
       "centric-ui-workflow"
+    ],
+    "close-out": [
+      "close-out"
     ],
     "data-foundations": [
       "data-foundations"

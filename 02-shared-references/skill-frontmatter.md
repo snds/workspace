@@ -27,7 +27,7 @@ ordered or cross-linked until migrated.
 | `name` | string | always | Identity. **Must equal the directory name.** Kebab-case. |
 | `description` | string | always | Routing prose. The zero-cost matching surface (already in the system prompt). Keep the trigger language rich. |
 | `aliases` | list | recommended | Obsidian wikilink targets. Set to `[<dir-name>]` so `[[name]]` resolves despite every file being `SKILL.md`. |
-| `triggers` | list | hubs + foundations | Lowercased keyword/phrase list — the deterministic half of `description`. Drives machine routing. |
+| `triggers` | list | hubs + foundations | Lowercased keyword/phrase list — the deterministic half of `description`. Drives machine routing. **Required for hubs and foundations** — empty list fails `build-registry.py`. Quote multi-word phrases. |
 | `tier` | enum | migrated skills | `foundation` \| `hub` \| `spoke` \| `cross-cutting`. The load-order class. |
 | `domain` | string | optional | `design` \| `engineering` \| `product` \| `data` \| `game` \| … Facet for grouping + dedupe. |
 | `hub` | string | spokes | The hub this spoke belongs to (creates a spoke→hub load edge). |

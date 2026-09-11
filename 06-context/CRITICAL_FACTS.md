@@ -28,7 +28,7 @@ screen, it's doing too much and the overflow belongs in `memory/` or a framework
      is never pasted into employer surfaces.
 - **Session start is mandatory:** read [[AGENTS]] read-order, emit the `workspace: LOADED` ritual
   token (machine-ABI; the SessionEnd audit greps for it), then the ✓ summary block.
-- **Frameworks govern all work** (seventeen, see [01-frameworks/00-README](../01-frameworks/00-README.md)). #17 is living-spec agent coordination (`intent-run.py`).
+- **Frameworks govern all work** (eighteen, see [01-frameworks/00-README](../01-frameworks/00-README.md)). #17 is living-spec agent coordination (`intent-run.py`). #18 is Frost/Southleft DS×AI.
   Framework **#06 QA pre-output gate is non-negotiable** for any audit/review/refine task.
 - **Machine label** resolves from `hostname` at boot (table in [[CLAUDE]]); never ask, never carry forward.
 - **Freshness:** treat every claim as **timeless / dated / pointer** (see

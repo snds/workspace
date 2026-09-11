@@ -72,6 +72,7 @@ repair_file "$DIST/workspace-reassert.sh"     "$HOME/.claude/hooks/workspace-rea
 repair_file "$DIST/workspace-audit.sh"        "$HOME/.claude/hooks/workspace-audit.sh"        exec
 repair_file "$DIST/cursor-sessionstart.sh"    "$HOME/.claude/hooks/cursor-sessionstart.sh"    exec
 repair_file "$DIST/cursor-reassert.sh"        "$HOME/.claude/hooks/cursor-reassert.sh"        exec
+repair_file "$DIST/cursor-prompt-route.sh"    "$HOME/.claude/hooks/cursor-prompt-route.sh"    exec
 repair_file "$DIST/cursor-sessionend.sh"      "$HOME/.claude/hooks/cursor-sessionend.sh"      exec
 repair_file "$DIST/cursor-subagent-stop.sh"   "$HOME/.claude/hooks/cursor-subagent-stop.sh"   exec
 repair_file "$DIST/user-CLAUDE.md"            "$HOME/.claude/CLAUDE.md"                       plain

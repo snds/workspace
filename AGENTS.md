@@ -98,13 +98,13 @@ When entering the workspace without prior context, read in this order:
 
 1. [llms.txt](llms.txt) — machine entry point
 2. `AGENTS.md` (this file)
-3. `03-skills/skills.registry.json` — the skill graph (for routing + load order)
-4. [trigger-routes.md](02-shared-references/trigger-routes.md) — curated high-leverage
-   trigger → load hints (shared by Claude dispatcher + Cursor/other agents); then fall through
-   to the registry algorithm
-5. [08-knowledge/_INDEX.md](08-knowledge/_INDEX.md) — the knowledge-vault index. Match the
-   task's vocabulary against each entry's `Triggers:` list and read matched entries BEFORE
-   domain work — they carry hard-won constraints that are in neither skills nor context.
+3. `03-skills/skills.registry.json` — **lookup** `skills[name]` / `load_chains[name]` for
+   matched skills. Do **not** ingest the whole file (~55k tokens).
+4. [trigger-routes.json](02-shared-references/trigger-routes.json) — curated high-leverage
+   trigger → load hints (shared by Claude dispatcher + Cursor `beforeSubmitPrompt`). Do
+   not ingest the generated [trigger-routes.md](02-shared-references/trigger-routes.md).
+5. Match knowledge via [knowledge-hints.json](02-shared-references/knowledge-hints.json)
+   and `_INDEX.md` `Triggers:` lists — read **matched entries only**, never the whole index.
 6. [workspace-ontology.md](02-shared-references/workspace-ontology.md) — vocabulary + routing map
 7. Delivery playbooks, in their own load order: resolve the context profile FIRST
    ([00-context-profiles.md](02-shared-references/delivery-playbooks/00-context-profiles.md)),
@@ -156,7 +156,7 @@ Project-local overrides should be interpreted narrowly and should not silently r
 
 When workspace doctrine and an installed plugin skill disagree, resolve in this order — **highest wins**:
 
-1. **Workspace frameworks** (`01-frameworks/`, especially #06 QA, #08 contribution, #11 failure analysis, **#13 Domain Rigor Stack**, domain L1s #02 / #12 / #14 / #15 / #16, and **#17 intent coordination**)
+1. **Workspace frameworks** (`01-frameworks/`, especially #06 QA, #08 contribution, #11 failure analysis, **#13 Domain Rigor Stack**, domain L1s #02 / #12 / #14 / #15 / #16, **#17 intent coordination**, and **#18 DS×AI**)
 2. **Workspace skills** (`03-skills/`) — including thin **wrapper** hubs that own triggers, bans, and routing
 3. **Installed plugin skills** (Cursor/Claude marketplaces: design-skillstack, impeccable, arch-guild, pstack, superpowers, adobe, etc.)
 
@@ -200,20 +200,23 @@ Any agent — with or without tool hooks — runs the same algorithm:
 
 ```
 load_set(message, registry):
-  matched   = skills whose `triggers` match the message   (fallback: match `description`)
+  matched   = skills whose `triggers` match the message
   required  = for each matched skill, the union of its load_chains[name]   # ancestors + self, ordered
   ordered   = merge the chains, preserving order; dedupe; foundations first
   suggestions = union of `related` for required skills, minus required     # surfaced, never auto-loaded
-  return ordered, suggestions
+  lenses    = union of `governed_by` for required skills                   # load AFTER output (close-out)
+  return ordered, suggestions, lenses
 ```
 
 `load_chains[name]` is precomputed in the registry (foundation → hub → spoke), so even a weak or
 offline agent needs no graph traversal — it looks up the chain and reads those `SKILL.md` files in
-order. Only `prerequisites` and the implicit spoke→`hub` edge are hard (load-before). `related` and
-`governed_by` are navigational/lenses, never auto-loaded. Cursor sessions whose first folder is not
-this checkout still receive Layer-0 routes via the user-global `beforeSubmitPrompt` hook
-(brain-path resolution in `09-tools/prompt_route.py`). Vendor Figma plugin skills are mechanics
-only; workspace `figma` + `design-engineer` own token/component doctrine.
+order. Only `prerequisites` and the implicit spoke→`hub` edge are hard (load-before). `related` is
+navigational (never auto-loaded). `governed_by` lenses load **after** the skill produces — invoke
+`03-skills/close-out/SKILL.md`. Hubs and foundations must declare `triggers` (registry CI).
+Cursor sessions whose first folder is not this checkout still receive Layer-0 routes via the
+user-global `beforeSubmitPrompt` hook (brain-path resolution in `09-tools/prompt_route.py`).
+Vendor Figma plugin skills are mechanics only; workspace `figma` + `design-engineer` own
+token/component doctrine.
 
 Worked example — "dark-mode palette for this dashboard" →
 `design-foundations` → `lead-ui-designer` → `uid-color-for-ui` (suggests `ds-advisor`, `uid-surface-depth`).

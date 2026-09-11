@@ -95,6 +95,17 @@ const spacingVar = figma.variables.createVariable(
   "FLOAT" 
 )
 
+// Opacity FLOAT — values are 0–100 (percent), NOT 0–1.
+// 50 → layer opacity 0.5. 0.5 → ~0.005 (almost invisible). Trap.
+const opacity50 = figma.variables.createVariable("Opacity/50", collection, "FLOAT")
+opacity50.scopes = ["OPACITY"]  // never ALL_SCOPES; COLOR_OPACITY / LAYER_OPACITY enums reject
+opacity50.setValueForMode(defaultModeId, 50)
+opacity50.setVariableCodeSyntax("WEB", "var(--opacity-50)")  // var() wrapper required
+
+// Bind LAYER opacity only (MCP = Plugin API). Paint / color-var opacity writes reject
+// as of 2026-09-03 — see [[figma-opacity-variables]].
+node.setBoundVariable("opacity", opacity50)
+
 // STRING variables (font families, text content)
 const fontVar = figma.variables.createVariable(
   "font/family/body",
@@ -249,6 +260,9 @@ if (!variable) {
 | `Invalid scope combination` | ALL_SCOPES mixed with specific scopes | Use ALL_SCOPES alone or specific scopes |
 | `Variable not found` | Referencing deleted/renamed variable | Validate variable existence before use |
 | `Circular alias reference` | A→B→A alias chain | Design alias hierarchy to be acyclic |
+| `Expected 'color', received 'opacity'` | `setBoundVariableForPaint(..., 'opacity', …)` | Paint-opacity vars are UI-only as of 2026-09-03. Bind **layer** opacity, or bake alpha into a COLOR token |
+| Layer opacity ≈ 0.005 after bind | FLOAT stored as 0–1 | Store **0–100**. `50` = 50% |
+| Dev Mode shows raw number | WEB syntax is `--opacity-50` | Use `var(--opacity-50)` |
 
 ---
 
@@ -261,6 +275,8 @@ This skill ensures variables are created in the correct dependency order and wit
 - [figma-modes-for-variants](../figma-modes-for-variants/SKILL.md) — architectural
   pattern for using mode-driven variables to collapse component-set variant
   matrices when an axis is purely color/style. Sits one layer above this skill.
+- Knowledge: [[figma-opacity-variables]] — layer vs paint vs color-variable opacity;
+  MCP does not add a write path the Plugin API lacks.
 
 ## Related
 - hub → [[figma]]

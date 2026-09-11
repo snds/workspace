@@ -21,10 +21,15 @@ metadata:
   poc: false
   version: 0.1.0
 aliases: [redesign]
-spec_version: "2.0"
+triggers: [redesign this site, generative redesign, impeccable redesign, uplift this page]
+related: [close-out, qa]
+governed_by: [qa]
+rigor_role: command-hub
+spec_version: "2.2"
 tier: hub
 domain: design
 prerequisites: [design-foundations]
+
 ---
 
 # /redesign — End-to-End Redesign Hub
@@ -118,6 +123,7 @@ recommendation to judge the result. For `migrate`, the migration spec/steps.
 5. **Run** the stardust stage(s); apply `--style` operations via impeccable where relevant. Preserve the live bridge end-to-end.
 6. **Emit** the stage output.
 7. **Hand off**: judge the result → `/qa`; productionize a single component → `design-engineer` / `/figma`; system token decisions → `/ds`.
+8. **Close-out** — invoke [[close-out]] (this hub CREATES; do not skip `/qa`).
 
 ## POC scope note
 
@@ -128,3 +134,4 @@ preserves the live/extension bridge.
 
 ## Related
 - foundation → [[design-foundations]]
+- governed-by → [[qa]]

@@ -18,8 +18,10 @@ description: >
 aliases: [lead-art-director]
 tier: hub
 domain: design
+triggers: [art direction, visual direction, lookdev]
 spec_version: "2.0"
 prerequisites: [game-foundations, imaging-foundations]
+
 ---
 
 # Lead Art Director

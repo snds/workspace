@@ -30,3 +30,9 @@
 {"id": "csg-conversation", "utterance": "Boolean these two boxes into a glTF without opening Blender.", "expect_skills": ["web-3d-extensions"], "expect_routes": ["without opening blender"], "why": "job language, not the product name"}
 {"id": "godot-drive-conversation", "utterance": "Drive the Godot editor and add a MeshInstance to the current scene.", "expect_skills": ["web-3d-extensions"], "expect_routes": ["godot editor"], "why": "ordinary conversation to the Godot bridge"}
 {"id": "maige-canvas", "utterance": "Drive the mcp-webgpu maige-3d canvas across Three and Babylon.", "expect_skills": ["web-3d-extensions"], "expect_routes": ["mcp-webgpu"], "why": "live multi-engine demo, not the ship renderer"}
+{"id": "qa-screenshot", "utterance": "qa this screenshot", "expect_skills": ["qa"], "why": "command hub triggers after silent-hub fix"}
+{"id": "implement-this-button", "utterance": "implement this button", "expect_skills": ["plan-ahead"], "why": "plan-ahead generalized past cds/proto"}
+{"id": "build-in-figma", "utterance": "build this in figma", "expect_skills": ["figma"], "expect_routes": ["in figma"], "why": "figma hub Layer-0, not vendor-first"}
+{"id": "data-says", "utterance": "what does the data say about conversion", "expect_skills": ["lead-data-scientist"], "why": "analysis hub triggers"}
+{"id": "open-a-pr", "utterance": "open a PR for this stack", "expect_routes": ["open a pr"], "why": "#07 at PR time"}
+{"id": "audit-ds-component-no-generate", "utterance": "audit this design system component", "expect_routes": ["audit", "design system"], "forbid_routes": ["component"], "why": "component is not FIGMA_GENERATE"}

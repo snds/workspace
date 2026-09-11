@@ -22,10 +22,15 @@ metadata:
   poc: false
   version: 0.1.0
 aliases: [ds]
-spec_version: "2.0"
+triggers: [ds hub, design system decision, token decision, write the ddr]
+related: [close-out]
+governed_by: [qa]
+rigor_role: command-hub
+spec_version: "2.2"
 tier: hub
 domain: design
 prerequisites: [design-foundations]
+
 ---
 
 # /ds — Design-System Operations Hub
@@ -138,6 +143,7 @@ Method:   <token coverage scan | tier validation | anatomy matrix | governance c
 5. **Run** the base procedure + measured checks. Prefer measured (coverage %, tier-violation counts) over eyeballed.
 6. **Emit** the shared report. Write to `--out` if given.
 7. **Hand off** when the verb implies change (`spec`/`generate` → design-engineer) or a governance decision (`document` → ds-advisor DDR).
+8. **Close-out** — invoke [[close-out]].
 
 ## POC scope note
 
@@ -147,3 +153,4 @@ Sibling to the proven `/qa` hub, cloned from the same wrapper shape per
 
 ## Related
 - foundation → [[design-foundations]]
+- governed-by → [[qa]]

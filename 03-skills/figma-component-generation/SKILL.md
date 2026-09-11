@@ -1,19 +1,31 @@
 ---
 name: figma-component-generation
 description: >
-  Creating Figma components, component sets, and variant combinations with auto-layout best practices.
+  Creating Figma components, component sets, and variant combinations with auto-layout
+  best practices. Trigger on "component set", "figma variants", "generate component",
+  "variant combination", or authoring a DS library component in Figma. Bind semantic
+  + theme/mode tokens — never Color/* primitives.
 aliases: [figma-component-generation]
+triggers: [component set, figma variants, generate component, variant combination, auto-layout component, library component]
 tier: spoke
 domain: design
 hub: figma
 prerequisites: [figma]
-spec_version: "2.0"
+related: [design-engineer]
+defers_to: [figma, design-engineer]
+spec_version: "2.2"
 ---
 
 # Figma Component and Variant Generation
 
+> **Hard gate.** Every bindable fill, stroke, text style, spacing, and radius on a
+> generated component/set/variant uses the **target system's semantic + theme/mode
+> tokens** (Light/Dark, Density). Never bind `Color/*` primitives. Missing token →
+> create a semantic alias in that system, then bind. Plugin `figma-use` /
+> `figma-generate-library` are mechanics; [[figma]] + [[design-engineer]] win.
+
 ## When to Use This Skill
-Use when creating Figma components, component sets, variants, or any structured component system. This skill covers component creation, variant combinations, and auto-layout best practices.
+Use when creating Figma components, component sets, variants, or any structured component system. This skill covers component creation, variant combinations, and auto-layout best practices. Structural examples below may show numeric padding for the Plugin API — production authoring binds tokens, including zeros.
 
 ## Component Creation Fundamentals
 

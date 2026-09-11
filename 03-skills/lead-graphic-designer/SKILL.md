@@ -17,7 +17,10 @@ aliases: [lead-graphic-designer]
 tier: hub
 domain: design
 prerequisites: [design-foundations]
+triggers: [graphic designer, brand identity, poster design]
+governed_by: [qa]
 spec_version: "2.0"
+
 ---
 
 # Lead Graphic Designer
@@ -309,3 +312,4 @@ layer. Rigor model: [[13-domain-rigor-stack]]. Evaluation of a rendered result r
 ## Related
 - foundation → [[design-foundations]]
 - spoke → [[gd-brand-identity]] · [[gd-color-theory]] · [[gd-display-graphics]] · [[gd-generation-tooling]] · [[gd-grid-and-layout]] · [[gd-image-composition]] · [[gd-print-production]] · [[gd-typography]] · [[gd-visual-communication]]
+- governed-by → [[qa]]

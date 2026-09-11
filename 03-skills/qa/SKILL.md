@@ -30,10 +30,14 @@ metadata:
   poc: true
   version: 0.1.0
 aliases: [qa]
-spec_version: "2.0"
+triggers: [qa this, visual qa, audit this screen, critique this ui, qa screenshot]
+related: [close-out]
+rigor_role: command-hub
+spec_version: "2.2"
 tier: hub
 domain: quality
 prerequisites: [design-foundations]
+
 ---
 
 # /qa — Visual & Functional QA Hub
@@ -202,6 +206,7 @@ Method:   <toolkit checks run | heuristics applied | live findings>
 6. **Emit** the shared report format. Write to `--out` if given.
 7. **Hand off** if the verb implies change (`spec` → design-engineer) or generative
    work (`--live` polish → impeccable).
+8. **Close-out** — invoke [[close-out]] (named detector, #06 honesty, human stop).
 
 ## POC scope note
 
@@ -213,6 +218,6 @@ Storybook QA audit**. Once proven, the same wrapper shape generates the sibling 
 
 ## Related
 - foundation → [[design-foundations]]
-- governs → [[ai-design-systems]]
-- peer ↔ [[eng]] · [[design-system-ops]]
+- governs → [[ai-design-systems]] · [[design-engineer]] · [[ds]] · [[ds-generation-pipeline]] · [[eng]] · [[figma]] · [[lead-frontend-engineer]] · [[lead-graphic-designer]] · [[lead-information-designer]] · [[lead-motion-designer]] · [[lead-type-designer]] · [[lead-ui-designer]] · [[motion]] · [[redesign]] · [[type]]
+- peer ↔ [[eng]] · [[design-system-ops]] · [[close-out]]
 - peer ↔ [[visual-qa-motion]] · [[visual-qa-dataviz]] · [[visual-qa-type]]

@@ -11,7 +11,7 @@ description: >
   security, threat modeling, auth, OWASP, vulnerabilities, secrets, or supply-chain risk.
   Complements the backend-specific be-security-posture.
 aliases: [lead-security-architect]
-triggers: [security, appsec, threat model, authentication, authorization, oauth, owasp, vulnerability, secrets, supply chain, csrf, xss, ssrf, least privilege, security review, security audit, fail closed, tenant isolation]
+triggers: [appsec, threat model, authentication, authorization, oauth, owasp, vulnerability, secrets, supply chain, csrf, xss, ssrf, least privilege, security review, security audit, fail closed, tenant isolation]
 tier: hub
 domain: security
 prerequisites: [eng-foundations]
@@ -20,6 +20,7 @@ surfaces: ["*"]
 defers_to: [framework-16, framework-13]
 rigor_role: command-hub
 spec_version: "2.2"
+
 ---
 
 # Lead Security Architect

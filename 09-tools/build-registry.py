@@ -119,6 +119,20 @@ def parse_frontmatter(text):
                 data[key] = _strip_scalar(rest)
                 i += 1
             continue
+        if rest.startswith("[") and not rest.endswith("]"):
+            # Wrapped flow list (illegal-for-this-parser until now). Join until `]`.
+            parts = [rest]
+            j = i + 1
+            while j < len(body):
+                parts.append(body[j].strip())
+                if "]" in body[j]:
+                    break
+                j += 1
+            combined = " ".join(p for p in parts if p)
+            if combined.endswith("]"):
+                data[key] = _parse_flow_list(combined)
+            i = j + 1
+            continue
         if rest in (">", "|", ">-", "|-", "") :
             # block scalar or block list: consume indented continuation lines
             items = []
@@ -163,7 +177,7 @@ def read_skills():
             "related": fm.get("related", []),
             "governed_by": fm.get("governed_by", []),
             "governs": fm.get("governs", []),
-            "triggers": fm.get("triggers", []),
+            "triggers": fm.get("triggers", []) if isinstance(fm.get("triggers", []), list) else [],
             "surfaces": fm.get("surfaces", ["*"]),
             "requires": fm.get("requires", []),
             "defers_to": fm.get("defers_to", []),
@@ -198,8 +212,19 @@ def validate(skills):
         for tgt in rec.get("related", []):
             if tgt not in names:
                 warnings.append(f"{name}: related '{tgt}' does not exist")
+        for tgt in rec.get("governed_by") or []:
+            if tgt not in names:
+                errors.append(f"{name}: governed_by '{tgt}' does not exist")
+        tr = rec.get("triggers")
+        if tr is None:
+            rec["triggers"] = []
+        elif not isinstance(tr, list):
+            warnings.append(f"{name}: triggers must be a YAML flow/block list, not a scalar")
+            rec["triggers"] = []
         if rec.get("tier") is None:
             warnings.append(f"{name}: missing `tier` (defaults to unspecified)")
+        if rec.get("tier") in ("hub", "foundation") and not rec.get("triggers"):
+            errors.append(f"{name}: {rec.get('tier')} missing `triggers` (Layer-0 invisible)")
 
     # cycle detection over the hard-edge graph (DFS coloring)
     WHITE, GRAY, BLACK = 0, 1, 2
@@ -259,6 +284,14 @@ def load_chain(name, skills):
 def build():
     skills = read_skills()
     errors, warnings = validate(skills)
+
+    inv = {}
+    for name, rec in skills.items():
+        for g in rec.get("governed_by") or []:
+            inv.setdefault(g, []).append(name)
+    for name, rec in skills.items():
+        extra = inv.get(name, [])
+        rec["governs"] = sorted(set(list(rec.get("governs") or []) + extra))
 
     registry = {
         "$schema": "./skills.registry.schema.json",

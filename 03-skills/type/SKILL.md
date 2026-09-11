@@ -23,10 +23,15 @@ metadata:
   poc: false
   version: 0.1.0
 aliases: [type]
-spec_version: "2.0"
+triggers: [type scale, type design, typeface pairing, typographic system, variable font axes]
+related: [close-out]
+governed_by: [qa]
+rigor_role: command-hub
+spec_version: "2.2"
 tier: hub
 domain: design
 prerequisites: [design-foundations]
+
 ---
 
 # /type — Typography Hub
@@ -97,6 +102,7 @@ rhythm tokens) and where it's emitted.
 5. **Run** the base procedure. Prefer measured (ratios, ch-measure, level counts) over eyeballed.
 6. **Emit** the report; write to `--out` if given.
 7. **Hand off**: token tier placement → `/ds`; rendered-type judgment → `/qa`; icon glyphs → `variable-icon-font-architect`.
+8. **Close-out** — invoke [[close-out]].
 
 ## POC scope note
 
@@ -105,3 +111,4 @@ Thin by design: the `type-*` skills + `gd-typography` + `lead-type-designer` hol
 
 ## Related
 - foundation → [[design-foundations]]
+- governed-by → [[qa]]

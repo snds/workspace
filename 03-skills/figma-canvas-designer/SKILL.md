@@ -8,13 +8,16 @@ description: >
   asks to "design something in Figma," "create a screen," "lay out a page,"
   "build a UI," "mock up," "wireframe," or any request that involves generating
   or editing visual design content on a Figma canvas — even if they just say
-  "put this in Figma" or "show me what that looks like in Figma." If the user
-  mentions Figma and the intent is visual design output (not plugin development
-  or code generation), use this skill. Do NOT use for Figma plugin development
+  "put this in Figma" or "show me what that looks like in Figma." Also trigger
+  on "build in Figma", "in Figma", "spec this in the library", or generating a
+  component set / stickersheet in a DS file. If the user mentions Figma and the
+  intent is visual design output (not plugin development or code generation),
+  use this skill. Do NOT use for Figma plugin development
   (TypeScript, bundling, Plugin API code) — defer to figma-plugin-dev instead.
 aliases: [figma-canvas-designer]
-triggers: [figma canvas, canvas design, screen design, mock up, mockup, wireframe, design in figma, lay out a page]
-spec_version: "2.1"
+triggers: [figma canvas, canvas design, screen design, mock up, mockup, wireframe, design in figma, lay out a page, build in figma, in figma, put this in figma, component set, stickersheet, library file]
+defers_to: [figma, design-engineer]
+spec_version: "2.2"
 tier: spoke
 domain: design
 hub: figma
@@ -28,6 +31,11 @@ requires: [figma-mcp]
 > ([[capability-registry]]). Before acting, confirm a `mcp__*figma*__*` tool is available on this
 > surface. If it isn't, **degrade** per the registry: ask the user to paste the frame/spec or export
 > assets and work from those — don't silently fail. See [[AGENTS]] → "Capability preflight".
+
+> **Hard gate.** Bind every bindable paint/type/spacing value to the **target
+> system's semantic + theme/mode tokens**. Never `Color/*` primitives on
+> components/sets/variants. Vendor `figma-use` / `figma-generate-library` are
+> mechanics; this spoke + [[figma]] + [[design-engineer]] own doctrine.
 
 Generate and modify UI designs directly on the Figma canvas through a structured
 ideation workflow. Outputs mid-fidelity screens using design system components

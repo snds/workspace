@@ -40,6 +40,8 @@ from pathlib import Path
 
 # Curated operational hub skills (entry points), not the spokes. Edit this list
 # to add/remove commands, then re-run. Names must match dir names in 03-skills/.
+# Include the `figma` hub so employer-repo Cursor sessions see doctrine (semantic +
+# theme/mode tokens; plugins = mechanics) even when Brain is not folder 1.
 HUBS = [
     # Workspace / session ops
     "workspace-bootstrap",
@@ -48,6 +50,7 @@ HUBS = [
     "ds-advisor",
     "design-engineer",
     "ux-component-library",
+    "figma",
     "figma-canvas-designer",
     "figma-plugin-dev",
     "variable-icon-font-architect",
@@ -68,7 +71,7 @@ HUBS = [
 
 MARKETPLACE_NAME = "snds-local"
 PLUGIN_NAME = "snds"  # command prefix -> /snds:<skill>
-PLUGIN_VERSION = "0.3.0"  # 0.3.0: ships the ws-bootstrap SessionStart hook (bootstrap layer L4)
+PLUGIN_VERSION = "0.3.1"  # 0.3.1: ships the figma authoring hub (doctrine before vendor plugins)
 
 # --- Paths ------------------------------------------------------------------
 

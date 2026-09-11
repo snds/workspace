@@ -14,10 +14,14 @@ description: >
   all fw-* spoke skills — load it when the task is generation, not advisory.
 pinned_date: "2026-03-26"
 aliases: [ds-generation-pipeline]
+triggers: [generate a design system, scaffold ds artifacts, ds generation pipeline]
+governed_by: [qa]
+related: [close-out, ds-advisor]
 spec_version: "2.0"
 tier: hub
 domain: design
 prerequisites: [design-foundations]
+
 ---
 
 # DS Generation Pipeline — Orchestrator Skill
@@ -223,4 +227,5 @@ When generating alongside Figma:
 
 ## Related
 - foundation → [[design-foundations]]
+- governed-by → [[qa]]
 - peer ↔ [[ai-design-systems]]
