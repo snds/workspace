@@ -1,0 +1,22 @@
+{
+  "as-of": "2026-09-11",
+  "source": "Thinkific course_player v2 chapters[] from content 72507445",
+  "note": "id = contents id (play URL); ca = contentable_id (lessons API)",
+  "sections": [
+    {
+      "name": "Chapter 6",
+      "items": [
+        { "n": 1, "id": 74285860, "ca": 29659848, "dur": 120, "name": "Chapter 6 Introduction" },
+        { "n": 2, "id": 77857403, "ca": 30833503, "dur": 2651, "name": "Selling AI & Design Systems" },
+        { "n": 3, "id": 77967325, "ca": 30870964, "dur": 1313, "name": "Piloting AI & Design Systems" },
+        { "n": 4, "id": 77967172, "ca": 30870892, "dur": 1229, "name": "Rolling Out AI & Design Systems" },
+        { "n": 5, "id": 77974458, "ca": 30872939, "dur": 1323, "name": "Governing & Evolving AI & Design Systems" },
+        { "n": 6, "id": 77975212, "ca": 30873257, "dur": 350, "name": "Chapter 6 Summary" }
+      ]
+    },
+    {
+      "name": "Course Recap",
+      "items": [{ "n": 1, "id": 77990952, "ca": 30878050, "dur": 418, "name": "Course Recap" }]
+    }
+  ]
+}
