@@ -1,11 +1,17 @@
 # <Tool> Adapter — template
 
-Copy this to a root-level `<TOOL>.md` (e.g. `GEMINI.md`, `COPILOT.md`, `OLLAMA.md`) to onboard a new
-agent. **An adapter is optional** — any agent that executes [AGENTS.md](../../AGENTS.md) participates at
+Copy this to the **filename that tool auto-loads** (see [[tool-adapter-discovery]]). Root examples:
+`GEMINI.md`, `WARP.md`. Path examples: `.github/copilot-instructions.md`, `.windsurf/rules/workspace.md`.
+**An adapter is optional** — any agent that executes [AGENTS.md](../../AGENTS.md) participates at
 full fidelity. The adapter only documents that tool's ergonomics and limits. It is a thin layer over the
 one contract, never a separate contract.
 
-Whitelist the new file in `.gitignore` (the root-contract block) so it's tracked.
+Whitelist the new file in `.gitignore` (the root-contract block) so it's tracked. Keep it under the
+adapter-cap in `09-tools/validate-workspace.py`. Must mention `AGENTS.md` and `close-out`.
+
+**Never** symlink or copy the full AGENTS.md onto a vendor filename — some tools concatenate every
+instruction file they find. **Never** add `.cursorrules`, `.windsurfrules`, or `.clinerules` — several
+IDEs first-match those names and then skip AGENTS.md.
 
 ---
 

@@ -1,5 +1,7 @@
 # Claude Adapter — Claude Code / Desktop
 
+@AGENTS.md
+
 _This is the **Claude adapter** over the universal contract in [AGENTS.md](AGENTS.md). It describes
 only how Claude executes that contract (hooks, slash commands, the session-start ritual). The contract
 itself — folder semantics, read order, the skill loading algorithm, the routing map — lives in

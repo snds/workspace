@@ -2,8 +2,9 @@
 
 _Status: **canonical** universal cross-agent contract for this workspace._
 _spec_version: 1.0 · Owner: Sean Sands_
-_This is the authoritative contract. Tool-specific files (`CLAUDE.md`, `CURSOR.md`, `PERPLEXITY.md`)
-are thin adapters over it, not peers to it. Machine entry point: [llms.txt](llms.txt)._
+_This is the authoritative contract. Tool-specific files (`CLAUDE.md`, `CURSOR.md`, `PERPLEXITY.md`,
+`GEMINI.md`, `WARP.md`, and the other thin adapters listed under Adapter model) are layers over it,
+not peers to it. Machine entry point: [llms.txt](llms.txt)._
 
 ---
 
@@ -53,7 +54,8 @@ The workspace is both a knowledge base and an execution environment.
   checkout per device; never hardcode a path, never store them inside this portable workspace). The
   only thing an agent keeps internally is a *pointer* back here. Rationale + full routing:
   [decision-externalize-everything-to-workspace](06-context/memory/decision-externalize-everything-to-workspace.md).
-- **Adapters, not forks.** Tool-specific files (`CLAUDE.md`, `CURSOR.md`, `PERPLEXITY.md`) describe
+- **Adapters, not forks.** Tool-specific files (`CLAUDE.md`, `CURSOR.md`, `PERPLEXITY.md`,
+  `GEMINI.md`, and the other stubs under Adapter model) describe
   only how that tool executes this contract. They never hold logic the contract lacks, and no tool is
   privileged over another.
 - Prefer additive changes over destructive ones; when retiring something, archive it with provenance
@@ -317,11 +319,17 @@ When adding structure, prefer formats that are friendly to both markdown readers
 
 Agent-specific files are thin adapters over this one contract — **not** separate contracts.
 
-- `CLAUDE.md` — Claude Code / Desktop · `CURSOR.md` — Cursor · `PERPLEXITY.md` — Perplexity ·
-  any future agent ecosystem (GPT-based tools, Gemini, local models, a human).
+- `CLAUDE.md` — Claude Code / Desktop (`@AGENTS.md` import) · `CURSOR.md` — Cursor ·
+  `PERPLEXITY.md` — Perplexity · `GEMINI.md` + `.gemini/settings.json` — Gemini CLI ·
+  `.github/copilot-instructions.md` — VS Code Copilot Chat · `WARP.md` — Warp ·
+  `CONVENTIONS.md` + `.aider.conf.yml` — Aider · `.windsurf/rules/workspace.md` — Windsurf ·
+  `00-bootstrap/adapters/web-session.md` — ChatGPT / Grok.com / Perplexity without filesystem.
+  Onboard a new one from `00-bootstrap/adapters/_ADAPTER-TEMPLATE.md`. Never symlink this
+  contract onto those names (some tools concatenate every instruction file). Never add
+  `.cursorrules` / `.windsurfrules` / `.clinerules` (first-match can hide this file).
 - **A new agent needs no adapter to participate at full fidelity** — executing this contract is
   sufficient. An adapter only documents that tool's ergonomics (hooks, rule files, slash commands)
-  and capability limits. Onboard a new one from `00-bootstrap/adapters/_ADAPTER-TEMPLATE.md`.
+  and capability limits.
 
 Adapters must: reference this contract; describe only tool-specific execution; never fork the workspace
 model or hold state the contract lacks. No tool is privileged over another.

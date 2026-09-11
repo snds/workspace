@@ -16,8 +16,16 @@
 !CLAUDE.md
 !PERPLEXITY.md
 !CURSOR.md
+!GEMINI.md
+!WARP.md
+!CONVENTIONS.md
 !README.md
 !llms.txt
+!.gemini/
+!.gemini/**
+!.aider.conf.yml
+!.windsurf/
+!.windsurf/**
 
 # Maps of Content (Obsidian navigation layer)
 !_HOME.md

@@ -16,7 +16,7 @@ files; git is the sync layer.
 ## Folder structure
 
 ```
-AGENTS.md            universal contract · llms.txt  machine entry · CLAUDE/CURSOR/PERPLEXITY.md  adapters
+AGENTS.md            universal contract · llms.txt  machine entry · CLAUDE/CURSOR/PERPLEXITY/GEMINI/WARP.md  adapters
 00-bootstrap/        this getting-started + setup
 01-frameworks/       operating models (01–16; 08 governs editing the workspace itself, 10 is the native-resolution perception precondition, 11 is the anticipatory failure/pre-mortem lens, 13 is domain rigor)
 02-shared-references/ standards: ontology + routing map, frontmatter spec, epistemic/artifact standards

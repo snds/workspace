@@ -41,8 +41,11 @@
 
 ## Per-tool adapters (thin layers over AGENTS.md; optional)
 - [CLAUDE.md](CLAUDE.md) — Claude Code / Desktop · [CURSOR.md](CURSOR.md) — Cursor ·
-  [PERPLEXITY.md](PERPLEXITY.md) — Perplexity. A new tool needs no adapter to work at full fidelity;
-  it just executes the AGENTS.md contract.
+  [PERPLEXITY.md](PERPLEXITY.md) — Perplexity · [GEMINI.md](GEMINI.md) — Gemini CLI ·
+  [WARP.md](WARP.md) — Warp · [.github/copilot-instructions.md](.github/copilot-instructions.md) —
+  Copilot Chat · [web-session.md](00-bootstrap/adapters/web-session.md) — ChatGPT / Grok.com.
+  A new tool needs no adapter to work at full fidelity; it just executes the AGENTS.md contract.
+  Do not symlink AGENTS.md onto vendor filenames.
 
 ## Generate / validate
 - `python3 09-tools/build-registry.py` — regenerate the skill registry from frontmatter (stdlib-only).

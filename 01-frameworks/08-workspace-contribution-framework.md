@@ -197,7 +197,8 @@ Each layer: what belongs · when to add vs. extend · what never goes here · th
 
 ### Root files + MOCs + adapters
 - Root `_*.md` are Obsidian navigation (MOCs) — keep link-only, Dataview-driven. `AGENTS.md` is the
-  universal contract (edit deliberately). `CLAUDE.md`/`CURSOR.md`/`PERPLEXITY.md` are **thin adapters**
+  universal contract. `CLAUDE.md`/`CURSOR.md`/`PERPLEXITY.md`/`GEMINI.md`/`WARP.md` and the other
+  native-filename stubs are **thin adapters**
   — only how that tool executes the contract; never logic the contract lacks.
 
 ---

@@ -74,6 +74,10 @@
     "contracts first": "08-knowledge/engineering/contracts-first-delivery.md",
     "beyond wcag": "08-knowledge/accessibility/accessibility-beyond-wcag-baseline.md",
     "threat model before controls": "08-knowledge/security/threat-model-before-controls.md",
-    "failure mode ledger": "08-knowledge/cross-domain/visual-failure-mode-ledger.md"
+    "failure mode ledger": "08-knowledge/cross-domain/visual-failure-mode-ledger.md",
+    "tool adapter": "08-knowledge/cross-domain/tool-adapter-discovery.md",
+    "gemini.md": "08-knowledge/cross-domain/tool-adapter-discovery.md",
+    "copilot instructions": "08-knowledge/cross-domain/tool-adapter-discovery.md",
+    "web session": "08-knowledge/cross-domain/tool-adapter-discovery.md"
   }
 }

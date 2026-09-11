@@ -5,7 +5,9 @@ tags: [moc, home]
 # Workspace — Home
 
 The front door. From here you can reach everything. Any agent enters via [[AGENTS]].
-Claude Code also reads [[CLAUDE]] (its adapter) at session start. You read this.
+Claude Code also reads [[CLAUDE]] (its adapter) at session start. Gemini / Copilot / Warp /
+Aider / Windsurf have thin native-filename pointers; web chats paste `00-bootstrap/adapters/web-session.md`.
+You read this.
 
 ## Operating layer
 

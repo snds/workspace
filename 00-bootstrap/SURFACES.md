@@ -2,7 +2,7 @@
 
 _The brain (this workspace) is consumed by multiple tools simultaneously. Each surface has its own context-discovery mechanism. This doc maps what each surface reads, how to launch it against the brain, and known gaps._
 
-_Last updated: 2026-09-02_
+_Last updated: 2026-09-11_
 
 ---
 
@@ -14,10 +14,15 @@ _Last updated: 2026-09-02_
 | **Claude Code (desktop, Code tab)** | Same, plus per-session worktree under `.claude/worktrees/` | Anthropic | Yes — state on worktree branch until merged | Prefer CLI for canonical continuity. |
 | **Cursor** | `.cursor/rules/*.mdc` on **first** workspace folder + project/user hooks | Cursor models (Claude/GPT/Gemini/…) | `sessionStart` (user) · `preCompact`/`sessionEnd`/`subagentStop` (project) · `.cursor/agents/` | Open Brain first or use `*.code-workspace`. Adapter: [[CURSOR]]. |
 | **VS Code** + Claude Code ext | Same as CLI | Anthropic | Yes | IDE UI over the CLI hooks. |
-| **VS Code** + Copilot | `.github/copilot-instructions.md` | OpenAI | No | Not set up. |
+| **VS Code** + Copilot | `.github/copilot-instructions.md` + `AGENTS.md` | OpenAI | No | Thin pointer → AGENTS.md. |
+| **Gemini CLI** | `GEMINI.md` + `.gemini/settings.json` (`context.fileName` = `AGENTS.md`) | Google | No | Thin pointer; settings load the contract. |
+| **Warp** | `WARP.md` | Warp | No | Thin pointer → AGENTS.md. |
+| **Aider** | `CONVENTIONS.md` + `.aider.conf.yml` `read:` | any | No | Root CONVENTIONS is a pointer; PR conventions stay in `.github/CONVENTIONS.md`. |
+| **Windsurf** | `.windsurf/rules/workspace.md` | Cognition | No | No `.windsurfrules` (first-match can hide AGENTS.md). |
 | **Obsidian** | Folder = vault | n/a | n/a | Navigation, graph, daily notes. |
 | **Claude Desktop** | Filesystem MCP | Anthropic | n/a | Skills via AGENTS.md + registry. |
-| **Perplexity / generic MCP / human** | `llms.txt` → `AGENTS.md` → registry + trigger-routes | any | n/a | No adapter required. |
+| **Perplexity / generic MCP / human** | `llms.txt` → `AGENTS.md` → registry + trigger-routes | any | n/a | Adapter: [[PERPLEXITY]]. |
+| **ChatGPT / Grok.com / Perplexity (no FS)** | none | various | n/a | Paste [web-session.md](adapters/web-session.md) + `dist/BEACON.md`. |
 | **Claude iOS** | None | Anthropic | n/a | Paste or describe; no local FS. |
 
 ---
@@ -79,7 +84,7 @@ Paths are relative to the file. Brain must stay first so Cursor loads `.cursor/r
 | Parent `~/Projects` as root | Reopen workspace or move agent to Brain root |
 | MCP not configured on a machine | Install per capability-registry; Open Engine Linear needs Cursor MCP |
 | Worktrees (Claude desktop) | Prefer CLI for canonical session-end |
-| iOS / web no FS | BEACON / paste; RULES-ONLY ritual |
+| iOS / web no FS | BEACON / paste `00-bootstrap/adapters/web-session.md`; RULES-ONLY ritual |
 
 ---
 

@@ -1,0 +1,4 @@
+# Point Aider at the universal contract. Do not duplicate AGENTS.md here.
+read:
+  - AGENTS.md
+  - llms.txt

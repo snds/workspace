@@ -1,3 +1,10 @@
+> **Agents / LLMs: stop here.** This repository is Sean Sands' portable workspace.
+> Your contract is [`AGENTS.md`](AGENTS.md) (machine entry: [`llms.txt`](llms.txt)).
+> Lookup skill `load_chains`; do not ingest the registry. After producing, run
+> [`03-skills/close-out/SKILL.md`](03-skills/close-out/SKILL.md).
+> The generator pitch below is **not** operating procedure. Generator sources live in
+> [`07-projects/18-bootstrap-generator/`](07-projects/18-bootstrap-generator/).
+
 # Bootstrap Generator
 
 **An AI that interviews you, then builds you your own "second brain" — notes, knowledge, and a personal assistant that actually knows you.**

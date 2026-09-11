@@ -77,6 +77,24 @@ class TestValidatorFixtures(unittest.TestCase):
             vw.check_archive(errors, archive=archive, archive_log=log, root=root)
             self.assertTrue(any("lost-note" in e for e in errors), errors)
 
+    def test_workspace_rejects_missing_adapter(self):
+        vw = load("validate-workspace")
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            errors = []
+            vw.check_adapters(errors, root=root, files=["GEMINI.md"], configs=[])
+            self.assertTrue(any("missing tool adapter: GEMINI.md" in e for e in errors), errors)
+
+    def test_workspace_rejects_adapter_without_contract(self):
+        vw = load("validate-workspace")
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "GEMINI.md").write_text("# Gemini\nDo whatever.\n", encoding="utf-8")
+            errors = []
+            vw.check_adapters(errors, root=root, files=["GEMINI.md"], configs=[])
+            self.assertTrue(any("AGENTS.md" in e for e in errors), errors)
+            self.assertTrue(any("close-out" in e for e in errors), errors)
+
     def test_links_rejects_dangling_related(self):
         vl = load("validate-links")
         with tempfile.TemporaryDirectory() as td:

@@ -10,6 +10,9 @@ Checks:
   3. KNOWLEDGE COVERAGE — every entry under `08-knowledge/` (except `_README.md`, `_INDEX.md`,
      and `_archive/`) is listed in `_INDEX.md`, so trigger routing and session-start surfacing
      never silently miss an entry (added 2026-07-08 after unindexed entries were found).      [error]
+  4. TOOL ADAPTERS      — native-filename pointers at AGENTS.md exist, mention close-out, and
+     stay short (added 2026-09-11 so Gemini/Copilot/Warp/Aider/Windsurf/web packs cannot drift
+     into a second contract).                                                                [error]
 
 Stdlib-only. See 01-frameworks/08-workspace-contribution-framework.md (Archive + Memory protocols).
 
@@ -27,6 +30,22 @@ MEMORY_DIR = ROOT / "06-context" / "memory"
 MEMORY_INDEX = MEMORY_DIR / "MEMORY.md"
 KNOWLEDGE_DIR = ROOT / "08-knowledge"
 KNOWLEDGE_INDEX = KNOWLEDGE_DIR / "_INDEX.md"
+
+ADAPTER_MD = [
+    "GEMINI.md",
+    "WARP.md",
+    "CONVENTIONS.md",
+    "PERPLEXITY.md",
+    ".github/copilot-instructions.md",
+    ".windsurf/rules/workspace.md",
+    "00-bootstrap/adapters/web-session.md",
+]
+ADAPTER_CONFIG = [
+    ".gemini/settings.json",
+    ".aider.conf.yml",
+]
+MAX_ADAPTER_LINES = 40
+MAX_WEB_SESSION_LINES = 80
 
 
 def check_archive(errors, archive=None, archive_log=None, root=None):
@@ -87,17 +106,46 @@ def check_knowledge(errors, knowledge_dir=None, knowledge_index=None, root=None)
             errors.append(f"knowledge entry not listed in _INDEX.md: {f.relative_to(root).as_posix()}")
 
 
+def check_adapters(errors, root=None, files=None, configs=None):
+    """Native-filename adapters must exist, point at AGENTS.md, and stay thin."""
+    root = ROOT if root is None else root
+    files = ADAPTER_MD if files is None else files
+    configs = ADAPTER_CONFIG if configs is None else configs
+    for rel in files:
+        path = root / rel
+        if not path.is_file():
+            errors.append(f"missing tool adapter: {rel}")
+            continue
+        text = path.read_text(encoding="utf-8")
+        if "AGENTS.md" not in text:
+            errors.append(f"adapter {rel} must mention AGENTS.md")
+        if "close-out" not in text:
+            errors.append(f"adapter {rel} must mention close-out")
+        cap = MAX_WEB_SESSION_LINES if rel.endswith("web-session.md") else MAX_ADAPTER_LINES
+        n = len(text.splitlines())
+        if n > cap:
+            errors.append(f"adapter {rel} is {n} lines (cap {cap}); keep it a pointer")
+    for rel in configs:
+        path = root / rel
+        if not path.is_file():
+            errors.append(f"missing tool adapter config: {rel}")
+            continue
+        if "AGENTS.md" not in path.read_text(encoding="utf-8"):
+            errors.append(f"adapter config {rel} must name AGENTS.md")
+
+
 def main():
     errors = []
     check_archive(errors)
     check_memory(errors)
     check_knowledge(errors)
+    check_adapters(errors)
     for e in errors:
         print(f"  ✗ {e}", file=sys.stderr)
     if errors:
         print(f"workspace integrity FAILED — {len(errors)} errors", file=sys.stderr)
         return 1
-    print("✓ workspace integrity ok — archive provenance + memory index + knowledge index complete")
+    print("✓ workspace integrity ok — archive provenance + memory index + knowledge index + adapters complete")
     return 0
 
 

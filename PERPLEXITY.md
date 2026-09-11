@@ -10,7 +10,8 @@ handoff as every other surface. Perplexity is not a fork and Claude is not privi
 2. Resolve the [context profile](02-shared-references/delivery-playbooks/00-context-profiles.md)
    before any repo action.
 3. Route skills via [trigger-routes.json](02-shared-references/trigger-routes.json) then
-   registry triggers. Invoke [close-out](03-skills/close-out/SKILL.md) after producing.
+   registry triggers. Invoke [close-out](03-skills/close-out/SKILL.md) then
+   [self-improve](03-skills/self-improve/SKILL.md) after producing.
 4. Continuity: read the project's `SESSION-STATE.md` **Live handoff**. Perplexity often
    cannot write the vault — **surface the handoff text for Sean to paste**; do not invent
    a session-log-append protocol this contract does not have.
