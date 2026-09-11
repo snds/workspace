@@ -92,7 +92,8 @@ Consult before any write. Mirrored (compressed) in [[AGENTS]] and expanded with 
 | A job-context constitution (UX, eng, game, vision, …) | `02-shared-references/domain-constitutions/` | methods + complements; not project values; spec [[constitution-spec]] |
 | Why a structural choice was made | `06-context/memory/` (`type: decision`) | decision record |
 | A generated deliverable | `05-artifacts/` | versioned, never overwrite |
-| A Cursor canvas (`.canvas.tsx`) | git-tracked copy under the owning `07-projects/…/canvases/`; live file stays in `~/.cursor/projects/<slug>/canvases/` | `python3 09-tools/cursor-externalize.py` at session-end; do not treat Cursor's folder as the only copy |
+| A vendor-surface artifact (Claude Artifact, ChatGPT/Gemini canvas, HTML preview, chat-generated doc) | owning `07-projects/NN-*/` (project-scoped) or `05-artifacts/` (generated deliverable); name per [[artifact-standards]] | filesystem: write the vault file as the original — do not treat the vendor panel as source of truth. Web/no-FS: emit a copy-ready block + suggested path. HTML stays HTML when it is a rich deliverable. Never copy `c8/*` canvases into this vault. [[decision-vendor-surface-artifacts]] |
+| A Cursor canvas (`.canvas.tsx`) | git-tracked copy under the owning `07-projects/…/canvases/`; live file stays in `~/.cursor/projects/<slug>/canvases/` | dual-home: IDE compiles only the live path; `python3 09-tools/cursor-externalize.py` at session-end copies into git. Do not treat Cursor's folder as the only copy |
 | An actual repo / codebase / non-Figma working file or asset | the platform-relative `Projects/` dir (resolve to the local checkout per device) | never inside this workspace; never hardcode the path |
 | Machine-local agent config (`~/.claude`, `~/.cursor` — per-device) | owned by `00-bootstrap/` (canonical copies in `dist/`, installed/verified by the doctor); per-machine install state recorded as a `06-context/memory/` fact | never hand-edit the installed copy — change `dist/`, rerun the doctor |
 | Hook / adapter code (`.claude/hooks/`, surface shims) | versioned in-workspace at its consumption path; canonical machine-layer copies + install notes in `00-bootstrap/` | edit in-workspace; machine layer flows through `dist/` + doctor |
@@ -100,9 +101,10 @@ Consult before any write. Mirrored (compressed) in [[AGENTS]] and expanded with 
 | Something being retired | `_archive/` + `ARCHIVE-LOG.md` | tombstone + provenance |
 
 > **Externalize everything.** Nothing durable lives in an agent's private/internal memory (Claude
-> Code's `.claude` store, a Chat/Design session, any per-tool memory) — it routes to one of the rows
-> above. The only thing an agent keeps internally is a pointer back here. This is an [[AGENTS]] Core
-> rule; rationale in [[decision-externalize-everything-to-workspace]].
+> Code's `.claude` store, a Chat/Design session, any per-tool memory, a vendor Canvas/Artifact/HTML
+> panel) — it routes to one of the rows above. The only thing an agent keeps internally is a pointer
+> back here. This is an [[AGENTS]] Core rule; rationale in [[decision-externalize-everything-to-workspace]]
+> and [[decision-vendor-surface-artifacts]].
 
 ## Foundations: when a domain earns one
 

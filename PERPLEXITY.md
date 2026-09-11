@@ -17,7 +17,8 @@ handoff as every other surface. Perplexity is not a fork and Claude is not privi
    SKIP ≠ verified.
 4. Continuity: read the project's `SESSION-STATE.md` **Live handoff**. Perplexity often
    cannot write the vault — **surface the handoff text for Sean to paste**; do not invent
-   a session-log-append protocol this contract does not have.
+   a session-log-append protocol this contract does not have. Canvas/Artifact/HTML panels
+   are not durable — emit a copy-ready block plus a suggested vault path.
 
 ## Do not
 

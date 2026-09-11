@@ -30,7 +30,10 @@ multi-agent handoff live in AGENTS.md — not duplicated here._
   handoff/pause/end, update it + write a `06-context/sessions/<id>.md` fragment (not a direct
   `session-log.md` append). Stamp `Agent · Surface · Machine`. On session-end also run
   `python3 09-tools/cursor-externalize.py` so Cursor canvases are copied into git-tracked
-  `07-projects/…/canvases/` (Cursor still compiles only from `~/.cursor/projects/…`).
+  `07-projects/…/canvases/` (Cursor still compiles only from `~/.cursor/projects/…`). The live
+  `.canvas.tsx` is compile-only; the vault copy is the durable twin. Prefer a vault `md`/`html`
+  when a live canvas is not required for interactivity
+  ([decision-vendor-surface-artifacts](06-context/memory/decision-vendor-surface-artifacts.md)).
 
 ## Hooks (Cursor-native)
 

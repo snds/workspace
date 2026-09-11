@@ -23,6 +23,7 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[reference-saas-plm-knowledge-discovery]] — `reference` · Centric's cross-role SaaS PLM knowledge base (`saas-plm-analysis/knowledge-discovery`); local path, its AGENTS.md/INDEX.md navigation contract, and how it relates to this workspace.
 - [[decision-portable-workspace-refactor]] — `decision` · why the workspace became portable, git-native, LLM-agnostic.
 - [[decision-externalize-everything-to-workspace]] — `decision` · standing directive: all durable content lives in the workspace (or the platform Projects dir), never in an agent's private memory; encoded as an AGENTS.md Core rule for cross-surface reach.
+- [[decision-vendor-surface-artifacts]] — `decision` · vendor Canvas/Artifact/HTML panels are not durable; write through to the vault (or emit a copy-ready path on web); Cursor `.canvas.tsx` is dual-home (2026-09-11).
 - [[decision-component-pattern-framework-system]] — `decision` · why the 5-layer component & pattern context system was built (framework #09 + skill + MCP + DESIGN.md + AGENTS binding) and where its outputs live.
 - [[decision-frost-ds-ai-operating-model]] — `decision` · framework #18 + `ai-design-systems` spoke: Frost/Southleft DS×AI as L1 (#18) beside #09 (2026-09-11).
 - [[decision-plan-ahead-order-of-operations]] — `decision` · print numbered order + first later-breaker before executing multi-step / dual-repo work; overlay ≠ Pages `main` (2026-09-11).

@@ -63,7 +63,9 @@ session. Do **not** copy agent-transcripts, MCP caches, or `~/.cursor` plugin st
 
 If this session produced a durable fact that only exists in Cursor/claude-mem private memory,
 route it per [[workspace-ontology]] / [[decision-externalize-everything-to-workspace]] before
-writing the Session Block.
+writing the Session Block. Other vendor Canvas/Artifact/HTML panels follow the vendor-surface
+row in [[workspace-ontology]] / [[decision-vendor-surface-artifacts]] (write-through; do not
+fake harvest in CI — A10).
 
 ### Step 1 — Generate Session Block
 
@@ -296,7 +298,7 @@ Omit any section with no content. Keep entries to one line.
 
 When running in Cursor (detected via surface detection or `brain.mdc` context):
 
-- **Step 0.5** — run `python3 09-tools/cursor-externalize.py` (canvases → vault copies).
+- **Step 0.5** — run `python3 09-tools/cursor-externalize.py` (canvases → vault copies). Other vendor panels: write-through per [[decision-vendor-surface-artifacts]], not CI harvest.
 - **Step 6** — run `python3 09-tools/build-registry.py` from the terminal if skills changed.
 - **Skip the SessionEnd hook reference** — hooks are Claude Code only.
 - **Read/write files via the filesystem**; use the terminal for git.

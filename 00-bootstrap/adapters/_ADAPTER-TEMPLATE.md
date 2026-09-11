@@ -37,5 +37,7 @@ the multi-agent handoff protocol all live in AGENTS.md and are not duplicated he
 - **Identity stamp:** Agent = `<model/tool>`, Surface = `<tool>`.
 - **Capabilities / limits:** [filesystem read/write? hooks? slash commands? web? what's unavailable]
 - **Writes:** go to the filesystem, committed via git; follow the routing map before writing.
+  Vendor Canvas/Artifact/HTML-preview panels are not the write target — write the vault file,
+  or emit a copy-ready path when this surface has no filesystem.
 
 Other adapters: [CLAUDE.md](CLAUDE.md) · [CURSOR.md](CURSOR.md) · [PERPLEXITY.md](PERPLEXITY.md).

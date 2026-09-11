@@ -52,7 +52,10 @@ The workspace is both a knowledge base and an execution environment.
   [routing map](02-shared-references/workspace-ontology.md). **Actual repos, codebases, and non-Figma
   working files/assets** go to the platform-relative `Projects` directory (resolve to the local
   checkout per device; never hardcode a path, never store them inside this portable workspace). The
-  only thing an agent keeps internally is a *pointer* back here. Rationale + full routing:
+  only thing an agent keeps internally is a *pointer* back here. Vendor Canvas/Artifact/HTML
+  panels are not durable — write the vault file, or on web emit a copy-ready path
+  ([decision-vendor-surface-artifacts](06-context/memory/decision-vendor-surface-artifacts.md)).
+  Rationale + full routing:
   [decision-externalize-everything-to-workspace](06-context/memory/decision-externalize-everything-to-workspace.md).
 - **Adapters, not forks.** Tool-specific files (`CLAUDE.md`, `CURSOR.md`, `PERPLEXITY.md`,
   `GEMINI.md`, and the other stubs under Adapter model) describe
