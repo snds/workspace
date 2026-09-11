@@ -30,13 +30,13 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `workspace brain` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
 | `workspace fix` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
 | `workspace validation` | 07-projects/19-workspace-brain/ — standing home for workspace-subject sessions; read its SESSION-STATE.md Live handoff |
-| `vendor artifact` | 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault file (or copy-ready path on web); Cursor… |
-| `llm canvas` | 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault file (or copy-ready path on web); Cursor… |
-| `chatgpt canvas` | 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault file (or copy-ready path on web); Cursor… |
-| `claude artifact` | 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault file (or copy-ready path on web); Cursor… |
-| `html artifact` | 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault file (or copy-ready path on web); Cursor… |
-| `clipboard ingest` | 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault file (or copy-ready path on web); Cursor… |
-| `externalize canvas` | 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault file (or copy-ready path on web); Cursor… |
+| `vendor artifact` | 03-skills/artifact-ingest/SKILL.md then 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault … |
+| `llm canvas` | 03-skills/artifact-ingest/SKILL.md then 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault … |
+| `chatgpt canvas` | 03-skills/artifact-ingest/SKILL.md then 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault … |
+| `claude artifact` | 03-skills/artifact-ingest/SKILL.md then 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault … |
+| `html artifact` | 03-skills/artifact-ingest/SKILL.md then 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault … |
+| `clipboard ingest` | 03-skills/artifact-ingest/SKILL.md then 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault … |
+| `externalize canvas` | 03-skills/artifact-ingest/SKILL.md then 06-context/memory/decision-vendor-surface-artifacts.md + 02-shared-references/workspace-ontology.md vendor-surface row — write the vault … |
 | `error correction` | 08-knowledge/research/agentic-error-correction-foundations.md + 07-projects/19-workspace-brain/SESSION-STATE.md — independent measurement or refuse the done-claim; do not add a … |
 | `verification loop` | 08-knowledge/research/agentic-error-correction-foundations.md + 01-frameworks/06-qa-operating-model.md + 01-frameworks/11-anticipatory-failure-analysis.md — loops need an indepe… |
 | `agent reliability` | 08-knowledge/research/agentic-error-correction-foundations.md + 07-projects/19-workspace-brain/ — workstream detector registry |
@@ -367,6 +367,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `a11y-audit-toolkit` | cross-cutting | `accessibility audit`, `a11y audit`, `axe`, `axe-core`, `pa11y`, `lighthouse accessibility` (+8) | `design-foundations` → `lead-accessibility-architect` → `a11y-audit-toolkit` |
 | `a11y-visual` | cross-cutting | `contrast`, `color contrast`, `color blindness`, `color vision deficiency`, `cvd`, `wcag` (+8) | `a11y-visual` |
 | `ai-video-generation` | cross-cutting | `ai video`, `text to video`, `image to video`, `animate image`, `generate video`, `video generation` (+8) | `imaging-foundations` → `ai-video-generation` |
+| `artifact-ingest` | cross-cutting | `vendor artifact`, `llm canvas`, `chatgpt canvas`, `claude artifact`, `html artifact`, `clipboard ingest` (+2) | `artifact-ingest` |
 | `close-out` | cross-cutting | `close-out`, `self-police`, `prove-gate`, `human visual qa`, `named detector`, `llm qa` (+1) | `close-out` |
 | `designparser` | cross-cutting | `designparser`, `designparser rules`, `what rules apply`, `suggest_rules_for_context`, `evaluate_design` | `design-foundations` → `designparser` |
 | `failure-mode-premortem` | cross-cutting | `pre-mortem`, `premortem`, `failure mode`, `what could go wrong`, `before we build`, `red team` (+11) | `failure-mode-premortem` |
@@ -395,4 +396,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 273 · Registry rows: 99_
+_Curated routes: 273 · Registry rows: 100_

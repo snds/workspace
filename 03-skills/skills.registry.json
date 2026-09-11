@@ -10,9 +10,9 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 299,
+    "total": 300,
     "by_tier": {
-      "cross-cutting": 45,
+      "cross-cutting": 46,
       "foundation": 22,
       "hub": 47,
       "spoke": 185
@@ -628,6 +628,36 @@
       "rigor_role": "multi-voice",
       "hash": "sha256:b6286a10ed4c769cb28e80ad3acc8e334edf82988c722d23c2429737ff0f445a"
     },
+    "artifact-ingest": {
+      "path": "03-skills/artifact-ingest/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "workspace-bootstrap",
+        "close-out"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "vendor artifact",
+        "llm canvas",
+        "chatgpt canvas",
+        "claude artifact",
+        "html artifact",
+        "clipboard ingest",
+        "externalize canvas",
+        "artifact ingest"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": "load-chain",
+      "hash": "sha256:c96e7b9ce4d32118ac1bad40165a7f359e71eca5b74e3f0007e4ba45e06e5834"
+    },
     "atmospheric-scattering-and-clouds": {
       "path": "03-skills/atmospheric-scattering-and-clouds/SKILL.md",
       "tier": "spoke",
@@ -972,7 +1002,8 @@
         "vision-foundations",
         "visual-qa-toolkit",
         "native-visual-eval",
-        "self-improve"
+        "self-improve",
+        "artifact-ingest"
       ],
       "governed_by": [],
       "governs": [],
@@ -991,7 +1022,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:aff94db35c24dbdcf32060de93ca9533b664a02c92622d920a35b18d5b64a33f"
+      "hash": "sha256:d2fa6decf091e5a8ff9071e899acfc513000db8f4a1246104823da59a7fd39e3"
     },
     "data-foundations": {
       "path": "03-skills/data-foundations/SKILL.md",
@@ -8220,7 +8251,8 @@
         "mission-fit",
         "side-chat-handback",
         "intent-coordination",
-        "plan-ahead"
+        "plan-ahead",
+        "artifact-ingest"
       ],
       "governed_by": [],
       "governs": [],
@@ -8239,7 +8271,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:c7679b7c3ee8ba426d8fd0dd6ddf2fc71b5a6cf4fe1bb52118e274cf0368e88f"
+      "hash": "sha256:44520a5b93777eecdeb0facc864343a4041a5e284a1d7dc8c64e5209f5977743"
     }
   },
   "load_chains": {
@@ -8341,6 +8373,9 @@
     "arch-guild": [
       "eng-foundations",
       "arch-guild"
+    ],
+    "artifact-ingest": [
+      "artifact-ingest"
     ],
     "atmospheric-scattering-and-clouds": [
       "game-foundations",

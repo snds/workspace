@@ -110,6 +110,7 @@
 !09-tools/prompt_route.py
 !09-tools/cursor-prompt-route.py
 !09-tools/cursor-externalize.py
+!09-tools/artifact-ingest.py
 !09-tools/intent-run.py
 !09-tools/skill-loadset.py
 !09-tools/close-out-dispatch.py

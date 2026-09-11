@@ -14,7 +14,7 @@ aliases: [close-out]
 triggers: [close-out, self-police, prove-gate, human visual qa, named detector, llm qa, capability mint]
 tier: cross-cutting
 domain: workspace
-related: [qa, plan-ahead, mission-fit, eng, figma, failure-mode-premortem, visual-prove-engine, vision-foundations, visual-qa-toolkit, native-visual-eval, self-improve]
+related: [qa, plan-ahead, mission-fit, eng, figma, failure-mode-premortem, visual-prove-engine, vision-foundations, visual-qa-toolkit, native-visual-eval, self-improve, artifact-ingest]
 surfaces: ["*"]
 spec_version: "2.5"
 ---
@@ -149,4 +149,4 @@ Loop until pass or interrupt:
 - Cargo-cult SSIM onto a threat model or a career checklist.
 
 ## Related
-- peer ↔ [[qa]] · [[plan-ahead]] · [[mission-fit]] · [[eng]] · [[figma]] · [[self-improve]]
+- peer ↔ [[qa]] · [[plan-ahead]] · [[mission-fit]] · [[eng]] · [[figma]] · [[self-improve]] · [[artifact-ingest]]

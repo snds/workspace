@@ -18,7 +18,11 @@ python3 09-tools/cursor-externalize.py
 python3 09-tools/cursor-externalize.py --check
 ```
 
+`--check` fails on unmapped named slugs. Employer / Legion / ephemeral windows /
+`flavours-` / `guided-setup-` skip. Clipboard or a dropped file:
+`python3 09-tools/artifact-ingest.py --from-clipboard` / `--inbox`.
+
 Routing: workspace-brain canvases land here; `lcars-*` go to
 `07-projects/20-lcars-generative-interface/canvases/`; MediaSentinel analysis
 canvases go to `07-projects/01-mediaservices/canvases/`. Legion canvases stay
-with the Legion repo, not this vault.
+with the Legion repo, not this vault. Centric canvases stay out.

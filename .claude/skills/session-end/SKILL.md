@@ -58,14 +58,22 @@ python3 09-tools/cursor-externalize.py
 ```
 
 Copies `.canvas.tsx` into git-tracked `07-projects/…/canvases/` (workspace-brain, LCARS,
-MediaSentinel). Skips Legion (belongs in the Legion repo). Commit the copies with the
-session. Do **not** copy agent-transcripts, MCP caches, or `~/.cursor` plugin state into the vault.
+MediaSentinel). Skips Legion, employer (`cpes-software`), ephemeral Cursor windows, and
+`flavours-` / `guided-setup-` prefixes. Unmapped named slugs fail `--check` (not silent).
+Commit the copies with the session. Do **not** copy agent-transcripts, MCP caches, or
+`~/.cursor` plugin state into the vault.
+
+Then report pending drop-folder files (do not promote):
+
+```
+python3 09-tools/artifact-ingest.py --check
+```
 
 If this session produced a durable fact that only exists in Cursor/claude-mem private memory,
 route it per [[workspace-ontology]] / [[decision-externalize-everything-to-workspace]] before
 writing the Session Block. Other vendor Canvas/Artifact/HTML panels follow the vendor-surface
-row in [[workspace-ontology]] / [[decision-vendor-surface-artifacts]] (write-through; do not
-fake harvest in CI — A10).
+row in [[workspace-ontology]] / [[decision-vendor-surface-artifacts]] (write-through; harvest
+CLIs above; do not fake harvest in CI — A10).
 
 ### Step 1 — Generate Session Block
 
@@ -298,7 +306,7 @@ Omit any section with no content. Keep entries to one line.
 
 When running in Cursor (detected via surface detection or `brain.mdc` context):
 
-- **Step 0.5** — run `python3 09-tools/cursor-externalize.py` (canvases → vault copies). Other vendor panels: write-through per [[decision-vendor-surface-artifacts]], not CI harvest.
+- **Step 0.5** — run `python3 09-tools/cursor-externalize.py` (canvases → vault copies) then `python3 09-tools/artifact-ingest.py --check` (pending inbox; do not promote). Other vendor panels: write-through per [[decision-vendor-surface-artifacts]], not CI harvest.
 - **Step 6** — run `python3 09-tools/build-registry.py` from the terminal if skills changed.
 - **Skip the SessionEnd hook reference** — hooks are Claude Code only.
 - **Read/write files via the filesystem**; use the terminal for git.

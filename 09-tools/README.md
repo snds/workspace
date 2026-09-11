@@ -195,7 +195,30 @@ Run on every Cursor session-end. `--check` exits 1 on drift.
 ```
 python3 09-tools/cursor-externalize.py
 python3 09-tools/cursor-externalize.py --check
+python3 09-tools/cursor-externalize.py --self-test
 ```
+
+`--check` exits 1 on vault drift **or** an unmapped named project slug. Employer
+(`cpes-software`), Legion, ephemeral Cursor windows, and `flavours-` /
+`guided-setup-` prefixes skip and do not fail. GitHub cannot see `~/.cursor` (A10).
+
+## artifact-ingest.py
+
+Land vendor Canvas/Artifact/HTML content that already exists outside git
+(clipboard, a downloaded file, or `05-artifacts/inbox/`). Write-through is still
+the contract — this is harvest. Secret-scan before write. HTML stays HTML.
+Never copies employer paths. Does not overwrite (bumps `vN.N`).
+
+```
+python3 09-tools/artifact-ingest.py --from-clipboard --context ingest --descriptor notes
+python3 09-tools/artifact-ingest.py --from-file PATH --project 19-workspace-brain
+python3 09-tools/artifact-ingest.py --inbox
+python3 09-tools/artifact-ingest.py --check
+python3 09-tools/artifact-ingest.py --self-test
+```
+
+`--check` exits 1 when the drop-folder has pending files (session-end reports;
+does not promote). Doctrine: [[decision-vendor-surface-artifacts]].
 
 ## intent-run.py
 

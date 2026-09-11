@@ -23,10 +23,10 @@ LLMs park standalone analytical output in surface-specific stores: Cursor `~/.cu
 - **HTML** that is a rich deliverable **stays HTML** (self-contained, per artifact-standards). Do not mandate Markdown conversion.
 - **Web / no-filesystem surfaces:** emit a copy-ready fenced block plus a suggested `context_descriptor_vN.N_YYYY-MM-DD.ext` path. Do not scrape claude.ai / chatgpt.com / Gemini.
 - **Employer wall:** never copy `c8/*` / Centric canvases into `snds/workspace`.
-- **This slice is policy.** Harvest slug-map repair, drop-folder / clipboard ingest CLI, and a dedicated skill are later slices.
+- **This slice is the contract plus harvest.** `cursor-externalize.py` copies Cursor canvases (unmapped slugs fail `--check`). `artifact-ingest.py` lands clipboard / drop-folder / downloaded files. Skill: [[artifact-ingest]].
 
 ## Rationale — why, and what we rejected
 (1) Scrape each vendor UI — not portable, TOS-fragile, and the opposite of filesystem-as-I/O. (2) Convert everything to Markdown — this vault already treats self-contained HTML as a first-class deliverable. (3) Refuse Cursor canvases — the IDE will not compile vault copies; dual-home is required. (4) Put the rule only in `CURSOR.md` — then Claude.ai / Gemini / Perplexity never inherit it. Policy lives in [[AGENTS]] (one sentence) + [[workspace-ontology]] + this decision; adapters stay one line.
 
 ## Consequences — what this commits us to
-Agents with a filesystem must not treat a vendor panel as the finished artifact. Session-end still runs `cursor-externalize.py` on Cursor; that is harvest of the live compile path, not a substitute for write-through. `--check` remaining false-green on unmatched slugs (this Mac: `Users-sean-sands-projects`) is a harvest-slice bug, not an excuse to skip write-through. Inbox / `pbcopy` / `artifact-ingest.py` wait until this policy is the contract.
+Agents with a filesystem must not treat a vendor panel as the finished artifact. Session-end runs `cursor-externalize.py` then `artifact-ingest.py --check` on Cursor. `--check` fails on unmapped named slugs; employer / Legion / ephemeral / denylisted prefixes skip. Inbox promote is explicit (`--inbox` / `--from-clipboard`), never silent at session-end. GitHub still cannot see `~/.cursor` (A10).
