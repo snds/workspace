@@ -24,3 +24,5 @@ Always-on files are a token tax (#1 priority). A prompt-scoped hook fires the ga
 
 ## Consequences — what this commits us to
 Doctor must keep `00-bootstrap/dist/cursor-prompt-route.sh` + `cursor-hooks.json` in sync with `~/.cursor/hooks.json`. After skill-frontmatter edits, regenerate the registry (and rebuild snds-local so the `figma` hub is mirrored). Restart Cursor once after hook install.
+
+Produce / ship language (and work verbs that already matched Layer 0) must inject close-out then self-improve from `followthrough_lines` — Claude `handle_user_prompt` imports the same function. A work verb with zero Layer-0 hits injects a visible miss, not `{}`. Injection is not compliance; web LLMs without this hook still miss.

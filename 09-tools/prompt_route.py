@@ -6,7 +6,9 @@ Reads curated trigger-routes, knowledge-hints, the skill registry, and
 the current project cwd. That is the employer-repo pathing fix: cds/centric-ui
 sessions still get workspace doctrine.
 
-Fail-open: missing files or parse errors yield no hits.
+Fail-open: missing files or parse errors yield no hits. Work verbs with zero
+hits inject a visible miss (not silence). Produce language also injects
+close-out then self-improve so those skills are not hope after a hub body.
 """
 
 from __future__ import annotations
@@ -215,15 +217,84 @@ def collect(prompt: str, brain: Path) -> RouteResult:
     return result
 
 
+# Produce / ship language already in Layer 0. Matching these must also inject
+# close-out + self-improve so those skills are not "hope after the hub body."
+PRODUCE_FOLLOWTHROUGH_TERMS = frozenset(
+    {
+        "implement this",
+        "in figma",
+        "build in figma",
+        "component set",
+        "library file",
+        "stickersheet",
+        "generate a library",
+        "figma",
+        "open a pr",
+        "pull request",
+        "fix ci",
+        "qa this",
+        "audit this screen",
+        "close-out",
+        "capability mint",
+    }
+)
+
+# Work verbs with zero Layer-0 hits: make the miss visible (Cursor has no
+# lexical fallback; silence previously looked like "nothing in the vault").
+WORK_VERBS = frozenset(
+    {
+        "make",
+        "build",
+        "fix",
+        "add",
+        "create",
+        "generate",
+        "implement",
+        "update",
+        "refactor",
+        "design",
+        "draw",
+        "ship",
+    }
+)
+
+FOLLOWTHROUGH_CLOSE_OUT = (
+    "- **after produce** → 03-skills/close-out/SKILL.md then "
+    "03-skills/self-improve/SKILL.md — run the QA loop; mint or heal; "
+    "do not skip because the user did not name those skills."
+)
+FOLLOWTHROUGH_LAYER0_MISS = (
+    "- **Layer 0 missed** → match this prompt against "
+    "02-shared-references/trigger-routes.json and skill `triggers` "
+    "before producing. Say that Layer 0 missed. Do not freestyle doctrine. "
+    "CLI: `python3 09-tools/vault-retrieve.py \"…\"`."
+)
+
+
+def followthrough_lines(prompt: str, any_layer0: bool) -> list[str]:
+    """Extra injection lines after Layer 0 match (or a visible miss on work verbs)."""
+    lowered = (prompt or "").lower()
+    produce = any(term_matches(t, lowered) for t in PRODUCE_FOLLOWTHROUGH_TERMS)
+    work = any(term_matches(v, lowered) for v in WORK_VERBS)
+    if produce or (any_layer0 and work):
+        return [FOLLOWTHROUGH_CLOSE_OUT]
+    if work and not any_layer0:
+        return [FOLLOWTHROUGH_LAYER0_MISS]
+    return []
+
+
 def format_injection(result: RouteResult, extra_lines: list[str] | None = None) -> str:
+    extra = extra_lines or []
     lines = list(result.lines)
-    if extra_lines:
-        lines.extend(extra_lines)
+    lines.extend(extra)
     if not lines:
         return ""
-    header = (
-        "# Project trigger detected" if result.any_layer0 else "# Vault lexical fallback"
-    )
+    if result.any_layer0:
+        header = "# Project trigger detected"
+    elif any("Layer 0 missed" in ln for ln in extra):
+        header = "# Layer 0 missed"
+    else:
+        header = "# Vault lexical fallback"
     return "\n".join(
         [
             header,
@@ -243,4 +314,6 @@ def route_prompt(prompt: str, brain: Path | None = None) -> str:
     root = brain or resolve_brain_root()
     if root is None:
         return ""
-    return format_injection(collect(prompt, root))
+    result = collect(prompt, root)
+    extra = followthrough_lines(prompt, result.any_layer0)
+    return format_injection(result, extra)

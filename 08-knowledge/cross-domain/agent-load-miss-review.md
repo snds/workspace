@@ -16,9 +16,9 @@ relations:
 
 ## For future agent
 
-- **TL;DR:** Important process is usually *in the vault*. The miss is **routing**: Layer 0 is a hook plus a hope. Recs **1–15** applied 2026-09-11 with process-rigor **R1–R16** (close-out attach). A cold agent that only follows always-on files still needs Layer 0; AGENTS read-order now says lookup `load_chains`, not ingest the registry.
-- **As of:** 2026-09-11 · **Status:** recs 1–15 applied (same session as process-rigor R1–R16). Numbered dispositions live in [[harness-map_v2.0_2026-09-11]].
-- **Key claims:** silent hubs (empty `triggers`) are invisible to `prompt_route.py`; description-fallback is documented in AGENTS and unimplemented; `component` burns the Figma generate stack; GitHub clones miss `prompt_route.py` (09-tools allowlist).
+- **TL;DR:** Important process is usually *in the vault*. The miss is **routing**: Layer 0 is a hook plus a hope. Recs **1–15** applied 2026-09-11 with process-rigor **R1–R16** (close-out attach). Produce-followthrough (2026-09-11): Cursor `beforeSubmitPrompt` + Claude `UserPromptSubmit` inject close-out/self-improve on produce language, and a visible miss on work verbs with zero Layer-0 hits. That closes the “didn’t find the skill” class **on hooked surfaces**. It does **not** force the model to obey, and it does not reach Perplexity / ChatGPT / Grok.com / Windows-without-hook. A cold agent that only follows always-on files still needs Layer 0; AGENTS read-order now says lookup `load_chains`, not ingest the registry.
+- **As of:** 2026-09-11 · **Status:** recs 1–15 applied; produce-followthrough landed same day. Numbered dispositions live in [[harness-map_v2.0_2026-09-11]].
+- **Key claims:** silent hubs (empty `triggers`) are invisible to `prompt_route.py`; description-fallback is documented in AGENTS and unimplemented; `component` burns the Figma generate stack; `prompt_route.py` is gitignore-allowlisted (clones can run it); Work MBP has `beforeSubmitPrompt`; Windows / loaner / web LLMs still miss the hook. Injection ≠ compliance.
 
 ## Target user and bar
 
@@ -42,7 +42,7 @@ relations:
 1. **Silent hubs.** 34/47 hubs have `triggers: []` (`qa`, `ds`, `motion`, `type`, `lead-ui-designer`, `lead-ux-designer`, `lead-frontend-engineer`, `ds-generation-pipeline`, …). Spec says hubs must have triggers. AGENTS says "fallback: match description." `prompt_route.py` does not. Grade: `VERIFIED`.
 2. **AGENTS read order vs token diet.** Steps 3–5 ingest registry + `trigger-routes.md` + `_INDEX.md` (~70k tokens) if followed literally. Hooks load JSON + caps. Grade: `VERIFIED` (files) / `INFERRED` (whether a given model obeys).
 3. **`design system` bomb.** Curated route loads #18 + #09 (717 lines) + `ds-advisor` (887) + `design-engineer`. `component` / `variant` / `mockup` alias the entire Figma generate stack — wrong process for an audit. Grade: `VERIFIED`.
-4. **Layer 0 is not portable.** `09-tools/prompt_route.py` is **not** in the gitignore allowlist. Cursor `beforeSubmitPrompt` is user-global, pending on Work MBP / Windows per [[fact-machine-layer-installs]]. Perplexity / GPT.com / Grok.com get nothing automatic. Grade: `VERIFIED`.
+4. **Layer 0 is not portable to every LLM.** `09-tools/prompt_route.py` is gitignore-allowlisted. Cursor `beforeSubmitPrompt` is installed on Work MBP (`CS-K746DRWXY1`) and injects produce-followthrough + visible miss. Windows / loaner pending per [[fact-machine-layer-installs]]. Perplexity / GPT.com / Grok.com get nothing automatic — only AGENTS.md if they read it. Grade: `VERIFIED`.
 5. **#18 is routed, not contracted.** Frost DS×AI is in `trigger-routes.json` on Frost phrases. AGENTS doctrine list names #17 as **intent coordination**, not DS×AI. A hookless agent never opens #18. Grade: `VERIFIED`.
 6. **Knowledge and memory dark matter.** `knowledge-hints.json` covers 12 unique files. `_INDEX` has ~71 entries. Memory has **zero** Layer-0 keys. Three memory files and four knowledge notes were untracked on this machine at review time. Grade: `VERIFIED`.
 7. **Plugin `figma-use` beats workspace doctrine** unless Layer-0 fires. Workspace `figma` hub has no `defers_to`. Lone `"figma"` fails the 2-token gate. Grade: `VERIFIED` (structure) / `INFERRED` (runtime plugin order).
@@ -51,6 +51,7 @@ relations:
 ## What actually works
 
 - Curated keys for QA (`audit`/`review`), Frost phrases (`steel curtain`, `vibe coding`, `brad frost`), plan-ahead (`cds then proto`, `pages build`), and a11y FOUNDATION_ROUTE.
+- Produce-followthrough: `build this in figma` / `implement this` / work-verb+hub-hit inject close-out then self-improve on hooked surfaces. `make the primary button blue` injects **Layer 0 missed**, not `{}`.
 - Registry `load_chains` is the cheap graph — **if** the agent looks up a name instead of ingesting the file.
 - Framework #18 exists beside #09; `ai-design-systems` is the procedure spoke. Do not duplicate the mortar/stool/steel-curtain envelope into a third L1.
 

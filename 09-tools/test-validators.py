@@ -26,6 +26,8 @@ def load(name: str):
     if spec is None or spec.loader is None:
         raise RuntimeError(f"cannot load {path}")
     mod = importlib.util.module_from_spec(spec)
+    # Python 3.14 dataclasses look up sys.modules[cls.__module__] during decorate.
+    sys.modules[name] = mod
     spec.loader.exec_module(mod)
     return mod
 
@@ -268,6 +270,42 @@ approval: pending
         self.assertEqual(ready[0]["id"], "T1")
         self.assertEqual(spec["checks"][0]["measure"], "python3 -c 'print(1)'")
         self.assertEqual(spec["checks"][1]["measure"], "")
+
+
+class TestPromptRouteFollowthrough(unittest.TestCase):
+    """Produce language must inject close-out; empty Layer 0 on work verbs must not be silent."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pr = load("prompt_route")
+        cls.brain = cls.pr.resolve_brain_root(TOOLS.parent)
+        if cls.brain is None:
+            raise unittest.SkipTest("no portable workspace root")
+
+    def test_figma_produce_injects_close_out(self):
+        text = self.pr.route_prompt("build this in figma", self.brain)
+        self.assertIn("close-out", text)
+        self.assertIn("self-improve", text)
+        self.assertIn("Project trigger detected", text)
+
+    def test_implement_button_injects_close_out(self):
+        text = self.pr.route_prompt("implement this button", self.brain)
+        self.assertIn("close-out", text)
+        self.assertIn("self-improve", text)
+
+    def test_hub_hit_plus_work_verb_injects_close_out(self):
+        text = self.pr.route_prompt("fix the spacing on this card", self.brain)
+        self.assertIn("close-out", text)
+        self.assertIn("self-improve", text)
+
+    def test_ungrounded_work_verb_is_visible_miss(self):
+        text = self.pr.route_prompt("make the primary button blue", self.brain)
+        self.assertIn("Layer 0 missed", text)
+        self.assertNotEqual(text, "")
+
+    def test_greeting_stays_empty(self):
+        text = self.pr.route_prompt("hello how are you today", self.brain)
+        self.assertEqual(text, "")
 
 
 if __name__ == "__main__":

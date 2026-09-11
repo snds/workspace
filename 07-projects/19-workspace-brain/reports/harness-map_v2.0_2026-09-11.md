@@ -74,6 +74,8 @@ Validators + `build-related` → `build-registry` → `build-trigger-routes` rem
 
 `09-tools/prompt_route.py` is the Layer-0 matcher and is **gitignored** (not in the 09-tools allowlist). Remote clone cannot run or read it. `VERIFIED`.
 
+**2026-09-11 amendment:** rec **2** applied (`prompt_route.py` + `cursor-prompt-route.py` allowlisted). Produce-followthrough + visible Layer-0 miss live in `prompt_route.py` (Cursor `beforeSubmitPrompt` + Claude `UserPromptSubmit`). Windows / web LLMs remain `INACCESSIBLE` for the hook. Injection is not compliance.
+
 ### Authority + done
 
 - Workspace = `personal-solo` (this merge was a direct push after rebase).

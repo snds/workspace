@@ -1280,6 +1280,30 @@ def _lexical_fallback_hits(prompt: str, limit: int = LEXICAL_FALLBACK_LIMIT) -> 
     return _lexical_fallback(prompt, limit=limit).hits
 
 
+def _followthrough_lines(raw_prompt: str, layer0_any: bool) -> list[str]:
+    """Same produce-followthrough as Cursor (`09-tools/prompt_route.py`). Fail-open."""
+    tools_dirs = [WORKSPACE_ROOT / "09-tools"]
+    try:
+        pointer = Path.home() / ".claude" / "workspace-brain-path"
+        text = pointer.read_text(encoding="utf-8").strip().splitlines()
+        if text:
+            tools_dirs.append(Path(text[0].strip()) / "09-tools")
+    except OSError:
+        pass
+    for tools in tools_dirs:
+        if not (tools / "prompt_route.py").is_file():
+            continue
+        if str(tools) not in sys.path:
+            sys.path.insert(0, str(tools))
+        try:
+            import prompt_route as _pr
+
+            return _pr.followthrough_lines(raw_prompt, layer0_any)
+        except Exception:
+            continue
+    return []
+
+
 def handle_user_prompt(payload: dict) -> None:
     raw_prompt = payload.get("prompt") or ""
     prompt = raw_prompt.lower()
@@ -1360,12 +1384,17 @@ def handle_user_prompt(payload: dict) -> None:
                     f"Do not treat this skip as no match.)_"
                 )
 
+    extra = _followthrough_lines(raw_prompt, layer0_any)
+    lines.extend(extra)
+
     if not lines:
         return
 
     lex_hit = any("**`lexical`**" in ln for ln in lines)
     if layer0_any:
         header = "# Project trigger detected"
+    elif any("Layer 0 missed" in ln for ln in extra):
+        header = "# Layer 0 missed"
     elif lex_hit:
         header = "# Vault lexical fallback"
     else:

@@ -16,7 +16,7 @@ relations:
 
 ## For future agent
 
-- **TL;DR:** The vault already **corrects** (independent detectors, CI, `vqa calibrate`) and partly **heals** (rebuilds, nightly fold). It did not **improve** through ordinary sessions except the visual ledger and close-out detector mint. `/optimize` and `/health` were Claude-only and sign-off-gated, so P0 broken edges waited on Sean. Operational home: [[self-improve]]. Detector subclass: [[close-out]] capability mint. Do not add a parallel brain.
+- **TL;DR:** The vault already **corrects** (independent detectors, CI, `vqa calibrate`) and partly **heals** (rebuilds, nightly fold). It did not **improve** through ordinary sessions except the visual ledger and close-out detector mint. `/optimize` and `/health` were Claude-only and sign-off-gated, so P0 broken edges waited on Sean. Operational home: [[self-improve]]. Detector subclass: [[close-out]] capability mint. Layer 0 now **injects** close-out/self-improve on produce language (Cursor + Claude hooks) so finding those skills is not hope after a hub body. Injection is not compliance. Do not add a parallel brain.
 - **As of:** 2026-09-11 · **Status:** current
 - **Audience:** `for: agent`
 

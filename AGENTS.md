@@ -217,6 +217,11 @@ self-critique or mint still fails). Vault gaps beyond QA → `03-skills/self-imp
 Hubs and foundations must declare `triggers` (registry CI).
 Cursor sessions whose first folder is not this checkout still receive Layer-0 routes via the
 user-global `beforeSubmitPrompt` hook (brain-path resolution in `09-tools/prompt_route.py`).
+Produce / ship language on that hook injects `close-out` then `self-improve` even when the
+user did not name them. A work verb with zero Layer-0 hits injects a visible miss, not silence.
+Injection is not compliance — the model can still skip the files. Surfaces without this hook
+(Perplexity, ChatGPT, Grok.com, a machine that never installed `beforeSubmitPrompt`) only get
+what they actually read from this file.
 Vendor Figma plugin skills are mechanics only; workspace `figma` + `design-engineer` own
 token/component doctrine.
 
