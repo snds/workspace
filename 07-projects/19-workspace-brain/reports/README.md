@@ -25,6 +25,7 @@ navigation.
 |---|---|
 | [harness-map_v2.0_2026-09-11.md](./harness-map_v2.0_2026-09-11.md) | Load-miss map — what a cold LLM never loads vs over-loads. Recs 1–15. |
 | [process-rigor-gaps_v1.0_2026-09-11.md](./process-rigor-gaps_v1.0_2026-09-11.md) | Process-rigor map — doctrine that exists but does not attach. Recs R1–R16. |
+| [workspace-automation-review_v1.0_2026-09-11.md](./workspace-automation-review_v1.0_2026-09-11.md) | Scripts vs LLM judgment — recs A1–A10 mint, R1–R3 refuse. Map-only. |
 | [substack-enrichment-brief_v1.0_2026-08-07.md](./substack-enrichment-brief_v1.0_2026-08-07.md) | Nate + Curtis scan — pointers + landing suggestions only (no paywalled bodies) |
 
 ## `harness-map.stamp` convention
