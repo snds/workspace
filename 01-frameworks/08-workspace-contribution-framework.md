@@ -135,7 +135,9 @@ Each layer: what belongs · when to add vs. extend · what never goes here · th
 - **How:** author from `00-bootstrap/templates/skill.md` (frontmatter v2.2 + typed `## Related`);
   clear the [[13-domain-rigor-stack]] acceptance checklist (L1–L5 intents) before calling the
   cluster done; then `python3 09-tools/build-related.py` → `build-registry.py`; ensure cross-links
-  are reciprocal. CI gates both.
+  are reciprocal. CI gates both. **On-the-fly L3** (a missing detector discovered mid-close-out)
+  uses the same gates, then independent `personal-solo` push — see [[close-out]] capability mint.
+  Do not mint a hub or a "looks good" skill.
 - **Domain rigor (mandatory):** knowledge-only hubs are incomplete. Every domain cluster needs an
   operating model (L1), command/contract surface (L2), measurement path for audits (L3), intact
   foundation→hub→spoke chain (L4), and multi-voice + doctrine precedence (L5). Instantiation varies
@@ -187,7 +189,10 @@ Each layer: what belongs · when to add vs. extend · what never goes here · th
 
 ### `09-tools/` — automation
 - **Belongs:** portable, stdlib-first scripts/generators/validators.
-- **Never:** a tool that only one vendor can run as a shared dependency.
+- **Add vs. extend:** extend an existing validator/probe before adding a script. A new tool
+  minted from [[close-out]] must ship a **negative fixture** (planted defect) in the same change.
+- **Never:** a tool that only one vendor can run as a shared dependency. Never clone photoreal
+  GPU toolkits into other domains.
 
 ### Root files + MOCs + adapters
 - Root `_*.md` are Obsidian navigation (MOCs) — keep link-only, Dataview-driven. `AGENTS.md` is the

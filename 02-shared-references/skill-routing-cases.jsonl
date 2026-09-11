@@ -36,3 +36,6 @@
 {"id": "data-says", "utterance": "what does the data say about conversion", "expect_skills": ["lead-data-scientist"], "why": "analysis hub triggers"}
 {"id": "open-a-pr", "utterance": "open a PR for this stack", "expect_routes": ["open a pr"], "why": "#07 at PR time"}
 {"id": "audit-ds-component-no-generate", "utterance": "audit this design system component", "expect_routes": ["audit", "design system"], "forbid_routes": ["component"], "why": "component is not FIGMA_GENERATE"}
+{"id": "human-visual-qa-named", "utterance": "run human visual qa on this output", "expect_skills": ["close-out"], "why": "interrupt policy lives in close-out, not a standing Sean stop"}
+{"id": "llm-qa-loop", "utterance": "run llm qa on this figma generate", "expect_skills": ["close-out"], "expect_routes": ["llm qa"], "why": "llm qa is the close-out loop, not a page-Sean trigger"}
+{"id": "capability-mint", "utterance": "capability mint a detector for this visual class", "expect_skills": ["close-out"], "expect_routes": ["capability mint"], "why": "missing-detector path is close-out, not a new hub"}

@@ -32,6 +32,8 @@ This skill is the *methodology*. The accumulated *findings* from past audits liv
 in the companion knowledge entry
 [`figma-source-audit-patterns.md`](../../08-knowledge/cross-domain/figma-source-audit-patterns.md);
 read it before starting an audit so you don't re-discover the standard gap set.
+After the audit, invoke [[close-out]]: page Sean only if you cannot be critical
+or the inspect/screenshot loop is unusable.
 
 This skill operates **above** the dual-lens defaults from
 [`design-engineer`](../../01-frameworks/00-README.md). Both lenses apply throughout —

@@ -246,7 +246,11 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `merge conflict` | 03-skills/plan-ahead/SKILL.md — lockfiles, generated registry, files two branches touch |
 | `rebase` | 01-frameworks/07-integration-and-review-framework.md — fetch first; author-owns-drift |
 | `stack these diffs` | 01-frameworks/07-integration-and-review-framework.md — stacking / reviewability |
-| `close-out` | 03-skills/close-out/SKILL.md — self-test → named detector → #06 honesty → human visual or Proofboard stop |
+| `close-out` | 03-skills/close-out/SKILL.md — capture/assess/correct; mint missing detectors and push; page Sean iff self-critique or mint still fails |
+| `human visual qa` | 03-skills/close-out/SKILL.md — interrupt Sean only if the agent cannot be critical or LLM QA rigor is unusable after mint |
+| `llm qa` | 03-skills/close-out/SKILL.md — agent runs the visual/code QA loop; human review is the exception |
+| `prove-gate` | 03-skills/close-out/SKILL.md — Figma: inspect + native-zoom + correct; mint missing probes before paging |
+| `capability mint` | 03-skills/close-out/SKILL.md — missing detector → smallest skill/tool + planted fixture + independent workspace push |
 | `ai design systems course` | 07-projects/22-ai-design-systems-course/ — read SESSION-STATE.md Live handoff then synthesis/running.md |
 | `brad frost course` | 07-projects/22-ai-design-systems-course/ — read SESSION-STATE.md Live handoff then synthesis/running.md |
 | `frost ds course` | 07-projects/22-ai-design-systems-course/ — read SESSION-STATE.md Live handoff then synthesis/running.md |
@@ -346,7 +350,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `a11y-audit-toolkit` | cross-cutting | `accessibility audit`, `a11y audit`, `axe`, `axe-core`, `pa11y`, `lighthouse accessibility` (+8) | `design-foundations` → `lead-accessibility-architect` → `a11y-audit-toolkit` |
 | `a11y-visual` | cross-cutting | `contrast`, `color contrast`, `color blindness`, `color vision deficiency`, `cvd`, `wcag` (+8) | `a11y-visual` |
 | `ai-video-generation` | cross-cutting | `ai video`, `text to video`, `image to video`, `animate image`, `generate video`, `video generation` (+8) | `imaging-foundations` → `ai-video-generation` |
-| `close-out` | cross-cutting | `close-out`, `self-police`, `prove-gate`, `human visual qa`, `named detector` | `close-out` |
+| `close-out` | cross-cutting | `close-out`, `self-police`, `prove-gate`, `human visual qa`, `named detector`, `llm qa` (+1) | `close-out` |
 | `designparser` | cross-cutting | `designparser`, `designparser rules`, `what rules apply`, `suggest_rules_for_context`, `evaluate_design` | `design-foundations` → `designparser` |
 | `failure-mode-premortem` | cross-cutting | `pre-mortem`, `premortem`, `failure mode`, `what could go wrong`, `before we build`, `red team` (+11) | `failure-mode-premortem` |
 | `harness-map` | cross-cutting | `harness map`, `map the harness`, `clean my harness`, `clean my ai harness`, `ai harness audit`, `what's shaping the agent` (+2) | `harness-map` |
@@ -373,4 +377,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 252 · Registry rows: 98_
+_Curated routes: 256 · Registry rows: 98_

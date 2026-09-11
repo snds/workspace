@@ -26,6 +26,7 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[decision-component-pattern-framework-system]] — `decision` · why the 5-layer component & pattern context system was built (framework #09 + skill + MCP + DESIGN.md + AGENTS binding) and where its outputs live.
 - [[decision-frost-ds-ai-operating-model]] — `decision` · framework #18 + `ai-design-systems` spoke: Frost/Southleft DS×AI as L1 (#18) beside #09 (2026-09-11).
 - [[decision-plan-ahead-order-of-operations]] — `decision` · print numbered order + first later-breaker before executing multi-step / dual-repo work; overlay ≠ Pages `main` (2026-09-11).
+- [[decision-visual-qa-interrupt]] — `decision` · mint missing QA detectors and push; page Sean only if self-critique is failing or mint still cannot hit the bar (2026-09-11).
 - [[decision-cursor-prompt-route-hook]] — `decision` · Cursor `beforeSubmitPrompt` + shared `prompt_route.py` so employer-repo sessions load workspace doctrine (2026-09-09).
 - [[decision-proto-is-design-sandbox]] — `decision` · saas-plm-prototype is the design sandbox — never strip screens because centric-ui has an equivalent (2026-08-12).
 - [[feedback-expand-acronyms]] — `feedback` · expand acronyms on first use; Sean is a designer peer, not a developer audience.

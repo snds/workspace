@@ -22,7 +22,7 @@ triggers: [prove this build, cuespec, measured verdict, visual prove, rank build
 tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
-related: [visual-qa-toolkit, render-qa-toolkit, native-visual-eval, interactive-capture-eval, visual-reference-replication, reference-video-review, play-prove, gd-generation-tooling]
+related: [visual-qa-toolkit, render-qa-toolkit, native-visual-eval, interactive-capture-eval, visual-reference-replication, reference-video-review, play-prove, gd-generation-tooling, close-out]
 requires: [python-imaging, ffmpeg, nvidia-flip, dreamsim, gltf-validator, tesseract, geometric-foundation-model, playwright]
 spec_version: "2.1"
 ---
@@ -81,6 +81,10 @@ Trust in the engine is itself measured, not asserted:
    derivation in the cuespec `_provenance` field.
 3. The ledger reports `newly_failing` cues even when the aggregate score improved,
    so an improvement claim cannot hide a localized regression.
+
+Close-out: a measured Matches on **cued** classes is usable QA — do not page Sean
+for those classes. Uncued residuals, failed `vqa calibrate`, or attested-only cues
+are unusable rigor → interrupt ([[close-out]]).
 
 ## Improvement loop (the reliable path from worse to better)
 

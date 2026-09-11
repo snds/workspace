@@ -1,7 +1,7 @@
 ---
 tags: [design-systems, figma, authoring, surfaces, tokens, transliteration, accessibility]
 created: 2026-06-30
-updated: 2026-09-09
+updated: 2026-09-11
 status: stable
 confidence: high
 sources: [centric-ui Figma library authoring sessions 2026-06; density/overlay construction 2026-08; field adornment optical inset + Icon Button audit 2026-08-06; migrated from local memory ds-figma-surface-conventions / transliteration-focus-and-positioning / figma-use-linked-library-components]
@@ -17,7 +17,9 @@ Hard gate on **every** generated component/set/variant: bind fill/stroke/text/sp
 to the **target system's semantic + theme/mode tokens** (Light/Dark, Density). Never
 `Color/*` primitives. Missing token → create a semantic alias, then bind. Load [[figma]] +
 [[design-engineer]] before vendor `figma-use` / `figma-generate-library`. Routing:
-[[cursor-employer-repo-skill-routing]].
+[[cursor-employer-repo-skill-routing]]. After generate: MCP inspect + native-zoom capture →
+assess → correct → re-prove ([[close-out]]). Missing detector → mint and push. Page Sean only
+if that mint cannot be critical or still cannot hit the bar.
 
 Durable layout/authoring decisions for design-system Figma libraries (validated on the
 centric-ui library). They apply to **any** surface/overlay, not just the component that

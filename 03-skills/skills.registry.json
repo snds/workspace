@@ -967,7 +967,11 @@
         "mission-fit",
         "eng",
         "figma",
-        "failure-mode-premortem"
+        "failure-mode-premortem",
+        "visual-prove-engine",
+        "vision-foundations",
+        "visual-qa-toolkit",
+        "native-visual-eval"
       ],
       "governed_by": [],
       "governs": [],
@@ -976,7 +980,9 @@
         "self-police",
         "prove-gate",
         "human visual qa",
-        "named detector"
+        "named detector",
+        "llm qa",
+        "capability mint"
       ],
       "surfaces": [
         "*"
@@ -984,7 +990,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:b1f79cbb2f645d746774ba05da0d5605fc94a6078ec8758e6292172c19e9dc78"
+      "hash": "sha256:8f9eefd20ed6d5f2af50a56a06f1608e0aebb9a6104e8806cf5585f838789570"
     },
     "data-foundations": {
       "path": "03-skills/data-foundations/SKILL.md",
@@ -2035,7 +2041,7 @@
         "design-engineer"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:7f612c6d430cce7a8f0cba54162cafb5d69c96cba060189b7c3752e6cd6a94e7"
+      "hash": "sha256:5c0c17896160b641f9c77dbfa122e7dc3377a00ab4cbc3beb5beaa76b29af4da"
     },
     "figma-api-router": {
       "path": "03-skills/figma-api-router/SKILL.md",
@@ -2400,7 +2406,7 @@
       ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:7b41e076fd8dfe1d5403dd12615e4bc1401368a97112e3b7e0e9b02e619e4e3a"
+      "hash": "sha256:da6cd97aca433d28478e8331fc0cf460255d5f87a727b6e22fb1378679d75a06"
     },
     "figma-style-binding": {
       "path": "03-skills/figma-style-binding/SKILL.md",
@@ -4642,7 +4648,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:ed284923ce7605f4128c662924a34aeb60a55135d1fa89c5831b925bf9f406bc"
+      "hash": "sha256:d43f9f867e65e9d48a7bc9e06642f29fe4d212d2d7157150b66e681d3a41fd0e"
     },
     "legion-narrative-design": {
       "path": "03-skills/legion-narrative-design/SKILL.md",
@@ -4860,7 +4866,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:dd1d795c806355b34013300b584eeab4c4cf6a3383f9ae9691c7dafb61d5935a"
+      "hash": "sha256:b61de354d9f6bd8399333d4b89a7dc44b18844220aa57bd751f39b70edd360d6"
     },
     "mobile-android-kotlin": {
       "path": "03-skills/mobile-android-kotlin/SKILL.md",
@@ -5260,7 +5266,8 @@
         "visual-qa-toolkit",
         "lead-visual-qa",
         "reference-video-review",
-        "render-qa-toolkit"
+        "render-qa-toolkit",
+        "close-out"
       ],
       "governed_by": [],
       "governs": [],
@@ -5290,7 +5297,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:79823855a0c06bb979641eb2a0d285c82c66ecf597ee071b51d878243fb463c2"
+      "hash": "sha256:7f2765e04d76bc21f4ce0d428d1c1460915ca79f23c67745e33c939b58428320"
     },
     "omni-project": {
       "path": "03-skills/omni-project/SKILL.md",
@@ -5740,7 +5747,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": "command-hub",
-      "hash": "sha256:036970d223cf8dd1f6aeb0aceac47328c98144fb29701ff32a5ea59b4da5a2c9"
+      "hash": "sha256:240336e66bd3176524cdcab532215b970d8e83de014593aabc433f4a18bb9368"
     },
     "realtime-render-performance": {
       "path": "03-skills/realtime-render-performance/SKILL.md",
@@ -7586,7 +7593,11 @@
       "domain": "vision",
       "hub": null,
       "prerequisites": [],
-      "related": [],
+      "related": [
+        "close-out",
+        "lead-visual-qa",
+        "visual-qa-toolkit"
+      ],
       "governed_by": [],
       "governs": [],
       "triggers": [
@@ -7612,7 +7623,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:5588a54f12c7b992a86ab025a4616de39191e048349820546fecd38fb149f854"
+      "hash": "sha256:0b11e095ea9d692b2581853b48dc141c8156b546e5a127367ea02706e798af65"
     },
     "visual-prove-engine": {
       "path": "03-skills/visual-prove-engine/SKILL.md",
@@ -7628,7 +7639,8 @@
         "visual-reference-replication",
         "reference-video-review",
         "play-prove",
-        "gd-generation-tooling"
+        "gd-generation-tooling",
+        "close-out"
       ],
       "governed_by": [],
       "governs": [],
@@ -7666,7 +7678,7 @@
       ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:7fef7e6de036d67b33a231c48a20da36c0164b55b8c6b59131533e413de416a0"
+      "hash": "sha256:f7c36bcf5ddbd68d50fd603b8ed0486d14e2b71e017cec02774de7f35d8912b9"
     },
     "visual-qa-accessibility": {
       "path": "03-skills/visual-qa-accessibility/SKILL.md",

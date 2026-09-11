@@ -257,7 +257,10 @@ This skill is a natural final-step reviewer for visual output produced by:
 
 When invoked automatically: begin at **Step 1 (Establish Context)** of the Delta
 Analysis Framework, infer the fidelity contract from available context, and
-identify the most critical visual deviations.
+identify the most critical visual deviations. This is **the agent's QA**, not a
+page to Sean. After the review, invoke [[close-out]]; mint a missing detector
+before interrupting. Interrupt him only if self-critique is failing or mint
+still cannot hit the bar.
 
 ---
 

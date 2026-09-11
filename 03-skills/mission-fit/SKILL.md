@@ -53,8 +53,14 @@ and [[open-agent-engine]] receipts. Not a paste of his product zip.
    first agent's story alone is unreliable (false-success study: judges worse than a coin flip).
 5. **Scale proof to consequence.** Money, external publish, delete, hard-to-reverse:
    human approval. Routine work: routine read-backs the agent can run itself.
+   Visual/LLM QA of agentic output is routine unless [[close-out]] interrupt fires
+   (self-critique failing, or mint still cannot hit the accuracy/perf bar). Missing
+   detectors are minted and pushed here, not paged to Sean. Consequential publish/delete
+   still human.
 6. **Read-only first.** Recommendations are numbered; nothing in the harness changes
-   until Sean approves.
+   until Sean approves — **except** [[close-out]] capability mint on this
+   `personal-solo` workspace (missing detector → smallest calibrated tool/skill +
+   push). That path does not apply to employer repos or leave-the-building.
 
 ## When to run
 

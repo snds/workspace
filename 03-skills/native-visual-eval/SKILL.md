@@ -20,7 +20,7 @@ aliases: [native-visual-eval]
 triggers: [native resolution, high-res screenshot, downsample, downscaled, capture and chunk, 1:1 pixels, canvas readback, preservedrawingbuffer, banding, aliasing, grain, dither, moire, zoom in, full res, pixel-level, retina, screenshot looks low-res]
 tier: cross-cutting
 domain: quality
-related: [visual-qa-toolkit, lead-visual-qa, reference-video-review, render-qa-toolkit]
+related: [visual-qa-toolkit, lead-visual-qa, reference-video-review, render-qa-toolkit, close-out]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -29,7 +29,8 @@ spec_version: "2.0"
 
 **The directive: never judge fine visual detail from a downsampled image. Capture at native
 resolution; if the subject is larger than one truthful view, capture it in 1:1 native BLOCKS and read
-each. Any scaled / fit-to-window / "thumbnail" output is a LOCATOR ONLY — never a verdict.**
+each. Any scaled / fit-to-window / "thumbnail" output is a LOCATOR ONLY — never a verdict.** A
+thumbnail cannot close [[close-out]]: without native capture, QA rigor is unusable and you page Sean.
 
 This is the precondition to every other visual check. Measurement (`visual-qa-toolkit`) and judgment
 (`lead-visual-qa`) are only as trustworthy as the pixels they run on. Load this skill on its own — it

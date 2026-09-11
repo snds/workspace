@@ -206,7 +206,8 @@ Method:   <toolkit checks run | heuristics applied | live findings>
 6. **Emit** the shared report format. Write to `--out` if given.
 7. **Hand off** if the verb implies change (`spec` → design-engineer) or generative
    work (`--live` polish → impeccable).
-8. **Close-out** — invoke [[close-out]] (named detector, #06 honesty, human stop).
+8. **Close-out** — invoke [[close-out]] (named detector, #06 honesty; page Sean only if
+   self-critique or QA rigor is unusable).
 
 ## POC scope note
 

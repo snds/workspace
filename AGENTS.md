@@ -212,7 +212,8 @@ load_set(message, registry):
 offline agent needs no graph traversal — it looks up the chain and reads those `SKILL.md` files in
 order. Only `prerequisites` and the implicit spoke→`hub` edge are hard (load-before). `related` is
 navigational (never auto-loaded). `governed_by` lenses load **after** the skill produces — invoke
-`03-skills/close-out/SKILL.md`. Hubs and foundations must declare `triggers` (registry CI).
+`03-skills/close-out/SKILL.md` (mint a missing detector and push here; page Sean only if
+self-critique or mint still fails). Hubs and foundations must declare `triggers` (registry CI).
 Cursor sessions whose first folder is not this checkout still receive Layer-0 routes via the
 user-global `beforeSubmitPrompt` hook (brain-path resolution in `09-tools/prompt_route.py`).
 Vendor Figma plugin skills are mechanics only; workspace `figma` + `design-engineer` own

@@ -148,6 +148,8 @@ So: **(a)** treat every non-trivial finding as refutable — default to "not rea
 
 Outcomes I produce should make Sean's role *purely* feedback-on-substance — not feedback-on-whether-I-thought-critically-enough.
 
+**Do not page Sean to perform the agent's visual QA.** Run capture → assess → correct with named detectors. If a detector is missing, mint it ([[close-out]] capability mint) and push it to this workspace; prompt him only when you cannot be critical of your own work or that mint still cannot make the QA loop usable. Leave-the-building (publish, employer merge, spend, delete) is unchanged.
+
 The structure of a QA report:
 
 1. **Frame.** Target user, surface, the bar I'm grading against. One paragraph.
@@ -156,7 +158,7 @@ The structure of a QA report:
 4. **Reference comparison.** What I compared against, at what zoom, what I saw. Annotated where helpful.
 5. **Next-pass scope.** What the next iteration round addresses, sequenced by leverage.
 6. **Detector.** What independent check ran, or `none (judgment only)`.
-7. **Skill / tool gaps.** If the framework needed a capability I didn't have (e.g. browser-zoom-and-capture for a particular reference site), name it so the gap closes.
+7. **Skill / tool gaps.** If the framework needed a capability I didn't have, **mint it** via [[close-out]] (smallest layer, planted-defect fixture, independent workspace push). Naming the gap without minting is only the interrupt receipt after mint missed.
 
 What this framework does **not** change:
 

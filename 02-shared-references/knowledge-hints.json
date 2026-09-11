@@ -61,6 +61,8 @@
     "self-police": "08-knowledge/cross-domain/process-rigor-gaps.md",
     "human visual qa": "08-knowledge/cross-domain/process-rigor-gaps.md",
     "prove-gate": "08-knowledge/cross-domain/process-rigor-gaps.md",
+    "llm qa": "08-knowledge/cross-domain/process-rigor-gaps.md",
+    "capability mint": "08-knowledge/cross-domain/process-rigor-gaps.md",
     "component contract": "08-knowledge/design/component-contracts-and-schemas.md",
     "enterprise saas": "08-knowledge/design/enterprise-saas-design-patterns.md",
     "contracts first": "08-knowledge/engineering/contracts-first-delivery.md",

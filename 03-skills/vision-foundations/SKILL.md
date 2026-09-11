@@ -13,8 +13,9 @@ aliases: [vision-foundations, cv-foundations]
 triggers: [computer vision, machine vision, image classification, object detection, image segmentation, feature extraction, convolution, vision model, image embedding, map metric, iou, dataset, annotation, perception pipeline, deep learning vision]
 tier: foundation
 domain: vision
+related: [close-out, lead-visual-qa, visual-qa-toolkit]
 surfaces: ["*"]
-spec_version: "2.0"
+spec_version: "2.1"
 ---
 
 # Vision Foundations
@@ -159,7 +160,8 @@ as an unmet gate, not rounded up.
 - **When vision is used as a QA instrument** (the section above), the measurement path is named and
   the pixels are native. A VLM's prose critique is `critique`; SSIM, a pixel diff, or a detection
   overlay is `audit`. Per [#13 Domain Rigor Stack](../../01-frameworks/13-domain-rigor-stack.md),
-  do not label judgment as measurement.
+  do not label judgment as measurement. VLM-only seeing is not usable QA rigor: capture →
+  assess → correct, or page Sean ([[close-out]] interrupt test).
 
 ## Related
 - spoke → [[vis-classical-opencv]] · [[vis-detection-tracking]] · [[vis-segmentation]] · [[vis-video-pipelines]] · [[vis-vlm-multimodal]]

@@ -137,9 +137,11 @@ resolve).
 4. **Acquire** the target (code scan / MCP read of the Figma node / token-file parse).
 5. **Run** the base procedure. Apply variables/styles — never raw values (token-first).
 6. **Emit** the report (authored artifacts or audit findings).
-7. **Prove-gate (generate):** inspect bound fills/strokes (refuse `Color/*` on components/sets);
-   every control is a library or `local/…` instance, not a rectangle; variant matrix complete;
-   native-zoom screenshot. Then **stop for Sean** — invoke [[close-out]].
+7. **Prove-gate (generate):** invoke [[close-out]] — capture (MCP inspect + native-zoom
+   screenshot) → assess (refuse `Color/*`; instances not rects; variant matrix; pixels if a
+   cuespec exists) → correct and re-prove. Missing detector → mint it and push to this
+   workspace. **Do not page Sean** unless self-critique is failing or that mint still cannot
+   hit the accuracy/perf bar.
 8. **Hand off**: `spec` → design-engineer; system-token decisions → `/ds`. After any produce,
    load `governed_by` lenses (`qa`, `a11y-visual`).
 

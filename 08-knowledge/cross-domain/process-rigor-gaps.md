@@ -16,15 +16,15 @@ relations:
 
 ## For future agent
 
-- **TL;DR:** The missing rigor is not more essays. Frameworks #06–#18, Proofboard, plan-ahead, #11 premortem, and `/eng` already name done-gates. **They do not attach.** 34/47 hubs are silent to Layer 0. `governed_by` is set on **8/297** skills; `governs` is **0**. Judge hubs (`qa`, `lead-visual-qa`) cannot police anyone because they cannot be found. Do not paste a 40-line close-out into every SKILL.md — one close-out protocol, invoked by pointer.
-- **As of:** 2026-09-11 · **Status:** recs **R1–R16** applied with load-miss 1–15. Report: `07-projects/19-workspace-brain/reports/process-rigor-gaps_v1.0_2026-09-11.md`.
+- **TL;DR:** The missing rigor is not more essays. Frameworks #06–#18, Proofboard, plan-ahead, #11 premortem, and `/eng` already name done-gates. **They do not attach.** 34/47 hubs are silent to Layer 0. `governed_by` is set on **8/297** skills; `governs` is **0**. Judge hubs (`qa`, `lead-visual-qa`) cannot police anyone because they cannot be found. Do not paste a 40-line close-out into every SKILL.md — one close-out protocol, invoked by pointer. Human review of visual/LLM work is **not** a standing stop: if a detector is missing, mint it and push; page Sean only when the agent cannot be critical of its own work or that mint still cannot make QA usable.
+- **As of:** 2026-09-11 · **Status:** recs **R1–R16** applied with load-miss 1–15; close-out interrupt policy (page Sean iff self-critique or QA rigor fails) landed the same day. Report: `07-projects/19-workspace-brain/reports/process-rigor-gaps_v1.0_2026-09-11.md`.
 - **Sean's examples are instances, not the map:** coded order-of-operations, Figma construction, hub self-test + human visual QA. The same failure (doctrine without a load edge) hits analysis, a11y, motion, type, security-as-sideways, context-profile, Proofboard, and #07 reviewability.
 
 ## Target user and bar
 
 **User.** Sean as designer-of-designers, plus any cold agent he will cross-check.
 
-**Bar.** An agent finishes a hub's work only when: (1) it followed an order of operations that names the first later-breaker, (2) domain L3 actually ran or was honestly skipped, (3) it did not use verified/done language without a named detector, (4) Sean's last act is visual or Proofboard confirmation — not discovering Pages red, unbound `Color/*`, or a merge conflict.
+**Bar.** An agent finishes a hub's work only when: (1) it followed an order of operations that names the first later-breaker, (2) domain L3 actually ran or was honestly skipped, (3) it did not use verified/done language without a named detector, (4) it **captured, assessed, and corrected** with named CV / visual-code QA — minting a missing detector and pushing it here rather than paging Sean — and interrupts **only** if it cannot be critical of its own work or that mint still cannot hit the accuracy/perf bar. Leave-the-building (publish / employer merge / spend) stays human.
 
 ## The pattern (all clusters)
 
@@ -49,9 +49,9 @@ relations:
 
 ## Four missing connective protocols (one home each)
 
-1. **Close-out** — after produce: self-test → self-validate (named detector) → self-confirm (#06 honesty) → **human visual or Proofboard stop**.
+1. **Close-out** — after produce: self-test → named detector → #06 honesty → capture/assess/correct. Missing detector → **capability mint** (smallest skill/tool, calibrate, independent workspace push). **Interrupt Sean iff** self-critique is failing or mint still cannot hit the accuracy/perf bar.
 2. **Plan-ahead (general)** — not only cds/proto. Fetch, CI-contract vs local overlay, merge-conflict files, generated artifacts, first later-breaker. #07 stacking is the PR-shaped instance.
-3. **Figma prove-gate** — instances not rects; semantic+mode binds not `Color/*`; variant matrix; native zoom screenshot; stop for Sean.
+3. **Figma prove-gate** — instances not rects; semantic+mode binds not `Color/*`; variant matrix; native-zoom capture; correct and re-prove. Mint a missing inspect/cuespec before paging.
 4. **Graph attach** — `governed_by` on producer hubs; real `triggers` on command wrappers; `governs` populated on `qa` / a11y / visual-qa.
 
 Load-miss map: [[agent-load-miss-review]]. Proofboard: [[05-validation-harness]].
