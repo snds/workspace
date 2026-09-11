@@ -253,6 +253,19 @@ Malformed Layer 0 currently fail-opens to `{}`. Schemas:
 python3 09-tools/validate-layer0-schema.py --check
 ```
 
+## session-status.py
+
+Portable session-start card (notices + last session + pending count + every
+`07-projects/*/SESSION-STATE.md` + git). Same shape Claude Code already rendered.
+Hooks inject stdout; any agent can emit it on a new session.
+
+```
+python3 09-tools/session-status.py
+python3 09-tools/session-status.py --surface Cursor --via cursor-hook/startup
+python3 09-tools/session-status.py --json
+python3 09-tools/session-status.py --check
+```
+
 ## check-secrets.py
 
 Stdlib scan of git-tracked files for well-known secret shapes (PEM, AKIA, GitHub/Slack/Anthropic

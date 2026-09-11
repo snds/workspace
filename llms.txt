@@ -19,6 +19,9 @@
 ## How to work here
 - Resolve the workspace root as the directory containing `AGENTS.md`. The git checkout is the
   source of truth — read and write plain files; commit reviewable diffs.
+- On a **new session**, emit `python3 09-tools/session-status.py` (notices + all
+  projects + pending). Continuations skip it. That is how every LLM — not only Claude —
+  reminds Sean of open work and what needs improvement.
 - To answer a request: match it to skills (via `triggers`/`description`), then load the skill plus
   its `load_chains` ancestors in order (foundation → hub → spoke). See AGENTS.md for the algorithm.
 - **Multi-agent continuity:** this is one unified contract for *every* agent (not just Claude/Cursor/

@@ -30,23 +30,12 @@ Before the first reply in a new session:
    stubs only** — not `project-context-detail.md` / `project-registry.md` unless the task needs them —
    session-log head, `memory/MEMORY.md`). Active project: read `SESSION-STATE.md` **Live handoff** first.
    Also run the side-chat inbox check above.
-2. **Notices (optional, top of ritual):** if
-   `07-projects/19-workspace-brain/reports/harness-map.stamp` exists and its `date:` is **>30 days**
-   old, warn once: harness map stale → `/harness-map` when convenient (not a blocker). **Silent if
-   the stamp is missing** (no nag before the first map). Same pattern as Claude's SessionStart Notices.
-   If `skill-routing-harness.stamp` is missing or `python3 09-tools/evaluate-skill-routing.py --stale`
-   fails, run the evaluator and surface FAIL (silent on pass). Not a daemon; also run after skill /
-   trigger-routes / corpus edits, on a live mis-route (`--utterance`), and from `/health` + `/optimize`.
-3. Emit the ritual:
-```
-[workspace: LOADED · {branch}@{short-sha} · {YYYY-MM-DD} · via:cursor-rule]
-**✓ Workspace loaded** — {Machine} · {YYYY-MM-DD HH:MM}
-- **Surface:** Cursor · **Model:** {model}
-- **Last session:** {date} — {one-line}
-- **Pending:** {N} → 06-context/project-context.md
-- **Active:** {project} — {Live handoff one-liner}
-What's on the agenda?
-```
+2. **Notices** come from `session-status.py` (bootstrap MISSes, stale audit, harness map, unpushed).
+   Do not skip them. Do not ingest `project-context-detail.md` at boot.
+3. Run `python3 09-tools/session-status.py --surface Cursor --via cursor-hook/startup`
+   if the hook did not inject it. Emit that stdout as the first reply. Do not shrink
+   Active projects to one line. Skip the card only for Task workers / structured-output.
+
 Machines: `Voyager-2.local`→Personal MBP · `CS-K746DRWXY1`/`CS-KQ23N94M0W`/`seansands.local`→Work MBP ·
 `Enterprise`→Windows.
 

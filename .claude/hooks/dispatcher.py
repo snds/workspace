@@ -853,66 +853,73 @@ def _format_worktree_cleanup_notice(cleaned: list[str], skipped: list[str]) -> s
     return ". ".join(parts) + "."
 
 
+def _portable_session_card(surface: str, via: str) -> str:
+    """Same ritual card Cursor and other LLMs emit. Fail-open."""
+    script = WORKSPACE_ROOT / "09-tools" / "session-status.py"
+    if not script.is_file():
+        return ""
+    try:
+        r = subprocess.run(
+            [sys.executable, str(script), "--surface", surface, "--via", via],
+            cwd=str(WORKSPACE_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=8,
+        )
+        return (r.stdout or "").strip()
+    except Exception:
+        return ""
+
+
 def build_session_start_context(
     machine: str,
     now: datetime,
     cleaned_worktrees: list[str] | None = None,
     skipped_worktrees: list[str] | None = None,
+    via: str = "project-hook/startup",
 ) -> str:
     """Assemble the structured + raw context block injected at SessionStart.
 
-    Includes pre-parsed fields (last session, pending count, project states, git state)
-    so Claude can render CLAUDE.md's mandatory session-start ritual without re-parsing
-    raw markdown. Also includes the head of session-log and project-context for richer
-    follow-up context.
+    The ritual card is `09-tools/session-status.py` (shared with Cursor). Claude-only
+    notices (version pin, desync, Linear lanes, worktree cleanup) append above it.
     """
-    last_sess = _parse_last_session_entry(SESSION_LOG)
-    pending = _count_pending_items(PROJECT_CONTEXT)
-    projects = _scan_active_projects(WORKSPACE_ROOT / "07-projects")
-    git_state = _describe_git_state()
     version_notice = _check_claude_version_change()
-    audit_notice = _check_audit_staleness()
-    harness_map_notice = _check_harness_map_staleness()
-    routing_notice = _check_skill_routing_harness()
     desync_notice = _read_desync_notice()
     lanes_notice = _check_linear_lanes()
-
-    project_lines = "\n".join(f"  - {name}: {summary}" for name, summary in projects) or "  (none found)"
-
-    notices = []
+    extra: list[str] = []
     if version_notice:
-        notices.append(f"⚠ {version_notice}")
-    if audit_notice:
-        notices.append(f"⚠ {audit_notice}")
-    if harness_map_notice:
-        notices.append(f"⚠ {harness_map_notice}")
-    if routing_notice:
-        notices.append(f"⚠ {routing_notice}")
+        extra.append(f"⚠ {version_notice}")
     if desync_notice:
-        notices.append(f"⚠ {desync_notice}")
+        extra.append(f"⚠ {desync_notice}")
     if lanes_notice:
-        notices.append(f"⚠ {lanes_notice}")
+        extra.append(f"⚠ {lanes_notice}")
     worktree_notice = _format_worktree_cleanup_notice(
         cleaned_worktrees or [], skipped_worktrees or []
     )
     if worktree_notice:
-        notices.append(f"ℹ {worktree_notice}")
-    notices_block = ("\n## Notices (surface these in the session-start ritual)\n\n" +
-                     "\n\n".join(notices) + "\n") if notices else ""
+        extra.append(f"ℹ {worktree_notice}")
 
-    structured = f"""## Session-start data (pre-parsed for the mandatory ritual in CLAUDE.md)
+    card = _portable_session_card("Claude Code", via)
+    if extra:
+        prefix = "\n".join(f"- {n}" for n in extra) + "\n\n"
+        card = prefix + card if card else prefix.rstrip()
+    if not card:
+        # Fallback if the portable script is missing on this machine.
+        last_sess = _parse_last_session_entry(SESSION_LOG)
+        pending = _count_pending_items(PROJECT_CONTEXT)
+        projects = _scan_active_projects(WORKSPACE_ROOT / "07-projects")
+        git_state = _describe_git_state()
+        project_lines = "\n".join(f"  - {name}: {summary}" for name, summary in projects) or "  (none found)"
+        card = (
+            f"[workspace: LOADED · via:{via}]\n"
+            f"- last_session: {last_sess or '(none in log)'}\n"
+            f"- pending_count: {pending}\n"
+            f"- git_state: {git_state or '(no git)'}\n"
+            f"- active_projects ({len(projects)}):\n{project_lines}"
+        )
 
-- machine: {machine}
-- date: {now.strftime('%Y-%m-%d %H:%M %Z')}
-- last_session: {last_sess or '(none in log)'}
-- pending_count: {pending}
-- git_state: {git_state or '(no git)'}
-- active_projects ({len(projects)}):
-{project_lines}
-{notices_block}"""
-
-    project_ctx_head = read_head(PROJECT_CONTEXT, 60)
-    session_log_head = read_head(SESSION_LOG, 40)
+    session_log_head = read_head(SESSION_LOG, 20)
+    project_ctx_head = read_head(PROJECT_CONTEXT, 20)
 
     knowledge_block = """
 ## Knowledge vault
@@ -922,11 +929,9 @@ entry `Triggers:`). Read only the matched file. Path: `08-knowledge/_INDEX.md`.
 
     return f"""# Workspace session context (auto-loaded)
 
-**Date:** {now.strftime('%Y-%m-%d %H:%M %Z')}
-**Machine:** {machine}
-**Workspace:** `{WORKSPACE_ROOT}`
+Render the ritual card below as your first reply, then answer.
 
-{structured}
+{card}
 
 ## Recent session log (head)
 ```
@@ -943,7 +948,7 @@ _`06-context/role-and-context.md`, `04-preferences/user-preferences.md`._
 _Frameworks: `01-frameworks/00-README.md`._
 _Lexical fallback (when triggers miss): `python3 09-tools/vault-retrieve.py \"…\"` —_
 _FTS over vault; paths + TL;DRs. Layer 0 triggers still win on exact routes._
-_The mandatory session-start ritual format is in CLAUDE.md — render it before responding._
+_The mandatory session-start ritual is the card above (09-tools/session-status.py)._
 """
 
 
@@ -1096,7 +1101,12 @@ def handle_session_start(payload: dict) -> None:
             cleaned, skipped = _cleanup_stale_worktrees()
         except Exception as exc:
             sys.stderr.write(f"[session-start] worktree cleanup error: {exc}\n")
-    emit_context(build_session_start_context(machine, now, cleaned, skipped), "SessionStart")
+    emit_context(
+        build_session_start_context(
+            machine, now, cleaned, skipped, via=f"project-hook/{source}"
+        ),
+        "SessionStart",
+    )
 
 
 def _term_matches(term: str, prompt: str) -> bool:

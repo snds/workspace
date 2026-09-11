@@ -34,7 +34,7 @@ See [[06-context/project-context]] § Pending Items. Authoritative list.
 
 ## How context flows
 
-1. **Session start** — Any agent reads [[AGENTS]] then the context heads. Claude Code also injects those heads via `SessionStart` (`.claude/hooks/dispatcher.py`). Cursor re-reads via `.cursor/rules/brain.mdc`.
+1. **Session start** — emit `python3 09-tools/session-status.py` (Claude/Cursor hooks inject it; if they miss, run the CLI). Then [[AGENTS]] + context heads.
 2. **During session** — The agent reads specific files as needed. Triggers like `legion` or `centric` route attention to specific skills.
 3. **Session end** — Session-end writes a Session Block to session-log.md, updates project-context.md, updates artifact-registry.md, commits, pushes. Claude Code slash: `/session-end`.
 

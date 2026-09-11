@@ -68,7 +68,7 @@ Paths are relative to the file. Brain must stay first so Cursor loads `.cursor/r
 ## How Cursor finds the brain
 
 1. First folder root → `.cursor/rules/*.mdc` (`brain.mdc` alwaysApply).
-2. User `~/.cursor/hooks.json` `sessionStart` → `cursor-sessionstart.sh` (doctor-managed).
+2. User `~/.cursor/hooks.json` `sessionStart` → `cursor-sessionstart.sh` injects `session-status.py` (doctor-managed).
 3. Project `.cursor/hooks.json` → compaction / session-end / subagent-stop nudges.
 4. Agent follows ritual in `brain.mdc`; routes skills via [trigger-routes.md](../02-shared-references/trigger-routes.md) + registry.
 5. Task tool may spawn `.cursor/agents/*` (hub load chains).
@@ -79,6 +79,7 @@ Paths are relative to the file. Brain must stay first so Cursor loads `.cursor/r
 
 | Gap | Status / workaround |
 |---|---|
+| Cursor sessionStart was ABI-only | 2026-09-11: hook injects `session-status.py` (notices + all projects + pending) |
 | Cursor ≠ Claude slash skills | Use `.cursor/agents/` + trigger-routes + registry |
 | Compaction dropping ritual | `preCompact` reassert hook (2026-07-30) |
 | Parent `~/Projects` as root | Reopen workspace or move agent to Brain root |

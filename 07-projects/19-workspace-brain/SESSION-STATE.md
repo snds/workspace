@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-11 — first-wave automation wired (loadset + dispatch + schema + secrets)_
+_Last updated: 2026-09-11 — session-status.py is the portable boot card_
 
 ---
 
@@ -8,11 +8,11 @@ _Last updated: 2026-09-11 — first-wave automation wired (loadset + dispatch + 
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: First-wave automation is live: `skill-loadset.py` + `close-out-dispatch.py` (A1–A3) and Layer 0 schema + secret scan (A6–A7) are wired into followthrough, adapters, bootstrap, and CI. Remaining: A8 Figma bind probe, A4 nightly.sh without cron, A5 ruff, A9 analysis lint.
-- **Working set**: `09-tools/skill-loadset.py`, `09-tools/close-out-dispatch.py`, `09-tools/check-secrets.py`, `09-tools/validate-layer0-schema.py`, `03-skills/close-out/SKILL.md`.
-- **Last action (2026-09-11):** Applied automation-review first wave and attached the CLIs so they are not unused scripts. Cursor Grok 4.6 · Cursor · Work MBP.
+- **Current focus**: Portable session-start card (`09-tools/session-status.py`) so every LLM — not only Claude — emits notices + all projects + pending. First-wave automation remains live. Remaining first-wave: A8 Figma bind probe, A4 nightly.sh without cron, A5 ruff, A9 analysis lint.
+- **Working set**: `09-tools/session-status.py`, `00-bootstrap/dist/cursor-sessionstart.sh`, `09-tools/prompt_route.py` (`make sure` is not produce).
+- **Last action (2026-09-11):** Wired the Claude-shaped boot card onto Cursor + adapters; quieted Layer 0 `make sure` false misses. Cursor Grok 4.6 · Cursor · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** A8 on the next Figma produce that cannot refuse `Color/*`. Rec 13 Windows `beforeSubmitPrompt` still pending. Human merge cds #35 onto `main`.
+- **Next action:** Confirm the card on a **new** Cursor session. Then A8 on the next Figma produce that cannot refuse `Color/*`. Rec 13 Windows `beforeSubmitPrompt` still pending. Human merge cds #35 onto `main`.
 - **Open decisions:** Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot).
 - **Blocked on:** cds #35 human merge (do not merge it from an agent).
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`.

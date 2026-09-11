@@ -194,6 +194,8 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `skill routing` | 09-tools/evaluate-skill-routing.py — adversarial Layer 0 corpus; --utterance to probe a live miss |
 | `skill loadset` | python3 09-tools/skill-loadset.py "…" — compute load_chains; do not ingest the registry |
 | `close-out-dispatch` | python3 09-tools/close-out-dispatch.py --from-prompt "…" --run — named L3; SKIP ≠ verified |
+| `session status` | python3 09-tools/session-status.py — emit the session-start card (notices + all projects + pending) |
+| `what's on the agenda` | python3 09-tools/session-status.py — open-work reminder; do not shrink Active projects |
 | `routing harness` | 09-tools/evaluate-skill-routing.py — run when the graph changed, after skill authoring, or a prompt mis-routed |
 | `designparser` | 03-skills/designparser/SKILL.md — call suggest_rules_for_context; do not vendor rules |
 | `what rules apply` | 03-skills/designparser/SKILL.md — suggest_rules_for_context on the current design task |
@@ -386,4 +388,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 264 · Registry rows: 99_
+_Curated routes: 266 · Registry rows: 99_

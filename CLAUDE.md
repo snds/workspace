@@ -43,41 +43,24 @@ invoked headless), read them explicitly before answering substantive questions.
 
 > **Cursor users:** `.cursor/rules/brain.mdc` is the Cursor-canonical override for this ritual. If both are loaded, follow `brain.mdc`. The format below is the Claude Code / Claude Desktop reference.
 
-**Before responding to the user's first message in a new session,** output a session-start summary in exactly this format. This is non-negotiable — Sean works across surfaces (Claude Code, Cursor, VS Code, iOS app), machines (Mac, Windows, Linux), and contexts (personal, Centric employer work). A consistent visible summary is how he confirms the brain loaded correctly and re-orients regardless of where he is.
+**Before responding to the user's first message in a new session,** emit the session-start
+card. Prefer the injected `session-status.py` block from SessionStart. If the hook missed,
+run `python3 09-tools/session-status.py --surface "Claude Code" --via project-hook/startup`
+and print it. Do not invent a shorter summary.
 
-Render it as a markdown block, exactly this shape, before any other response:
+The shape (notices above the ✓ line, all SESSION-STATE projects, pending count) is owned by
+`09-tools/session-status.py`. Claude-only extras still apply:
 
-```
-[workspace: LOADED · {branch}@{short-sha} · {YYYY-MM-DD} · via:{project-hook | user-hook | prompt-hook}/{startup | resume | compact}]
-**✓ Workspace loaded** — {Machine label} · {YYYY-MM-DD HH:MM TZ}
-
-- **Surface:** {Claude Code (Mac desktop app) | Claude Code (Windows desktop app) | Cursor | VS Code | iOS | etc. — best inference from environment}
-- **Last session:** {YYYY-MM-DD} — {one-line title from session-log.md}
-- **Pending:** {N} items → see [06-context/project-context.md](06-context/project-context.md)
-- **Engine:** {lane} — {N hold · N queued · N claimed} · {lane} — clean   ← omit this line entirely when every lane's queue is empty
-- **Active projects ({N}):**
-  - **{folder-name}** ({last-updated date}) — {first-line title from latest SESSION-STATE.md entry}
-  - ...
-- **Git:** `{branch}` @ `{short-sha}`, {clean | N modified} {· worktree: {worktree-name} if applicable}
-
-What's on the agenda today?
-```
+- **Engine line:** one label-filtered `list_issues` per provisioned lane. Omit when every
+  queue is empty or MCP is absent. Orphaned `Agent Working` claims: surface and ask.
+- Worktree: if branch starts with `claude/`, append `· worktree: <name>` on the Git line.
 
 Rules:
-- **The first line is the machine-ABI ritual token** (`[workspace: LOADED · …]`) — frozen ABI per
-  memory `decision-bootstrap-v2-guarantee`; the machine layer's SessionEnd audit greps assistant
-  output for `workspace: LOADED` and logs a MISS without it (FX-16, 2026-07-09). The `via:` layer
-  comes from the hook that injected context (in-workspace = `project-hook`).
-- Pull data from the SessionStart hook's injected context (`06-context/project-context.md` head + `06-context/session-log.md` head). If a field can't be determined, omit that line rather than guess.
-- Limit "Active projects" to those with `SESSION-STATE.md` files in `07-projects/*/`. List all of them, not a curated subset.
-- If the session is in a worktree (branch starts with `claude/`), append `· worktree: <name>` to the Git line so Sean knows.
-- Do not editorialize, do not skip the format because the user "just" asked something simple, do not summarize differently each session. The format IS the deliverable.
-- If `06-context/role-and-context.md` or related context files weren't injected by the hook (e.g., headless invocation), read them via the Read tool first, THEN output the ritual.
+- **The first line is the machine-ABI ritual token** (`[workspace: LOADED · …]`).
+- Do not skip the card because the user "just" asked something simple.
 - After the ritual block, respond to the user's message normally.
-- **If the SessionStart context contains a `## Notices` section, render those notices as bulleted warnings AT THE TOP of the ritual block (above the ✓ Workspace loaded line) so they're impossible to miss.** Notices include Claude Code version changes, stale workspace audits (`/optimize`), and a **stale harness map** (>30 days since `07-projects/19-workspace-brain/reports/harness-map.stamp` — silent if no stamp yet; suggest `/harness-map`, not a blocker).
-- **Engine line:** one label-filtered `list_issues` per _provisioned_ lane (id/title/status only), counted locally. **Omit the line entirely when every queue is empty**, and omit it silently if the MCP transport is absent — a missing line must never read as "empty". Report only; never claim at session start. An issue in `Agent Working` is an **orphaned claim** — surface it and ask, never silently re-claim. Procedure: [[open-agent-engine]] → Ritual integration.
 
-This ritual costs ~150 tokens per session start in exchange for cross-surface continuity and reliable confirmation that the brain loaded.
+This ritual is how Sean sees open work and what needs improvement on every surface, not only Claude.
 
 **Surface posture:** Claude Code is **dispatch-heavy** (hooks inject context; slash skills
 route work). Cursor is more **steer-heavy**. Prefer the posture the surface exposes — don't

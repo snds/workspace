@@ -21,6 +21,7 @@ on:
       - "09-tools/close-out-dispatch.py"
       - "09-tools/check-secrets.py"
       - "09-tools/validate-layer0-schema.py"
+      - "09-tools/session-status.py"
       - "09-tools/prompt_route.py"
       - "02-shared-references/skill-routing-cases.jsonl"
       - "02-shared-references/trigger-routes.json"
@@ -40,6 +41,7 @@ on:
       - "09-tools/close-out-dispatch.py"
       - "09-tools/check-secrets.py"
       - "09-tools/validate-layer0-schema.py"
+      - "09-tools/session-status.py"
       - "09-tools/prompt_route.py"
       - "02-shared-references/skill-routing-cases.jsonl"
       - "02-shared-references/trigger-routes.json"
@@ -67,6 +69,8 @@ jobs:
         run: python3 09-tools/close-out-dispatch.py --check
       - name: Layer 0 JSON schema
         run: python3 09-tools/validate-layer0-schema.py --check
+      - name: Session-start ritual card
+        run: python3 09-tools/session-status.py --check
       - name: Secret shape scan
         run: python3 09-tools/check-secrets.py
       - name: Negative fixtures (validators must refuse planted defects)

@@ -121,6 +121,16 @@ When entering the workspace without prior context, read in this order:
 
 If a task is clearly project-scoped, move to the nearest project root and read local context immediately after these workspace files.
 
+## Session-start ritual (every surface)
+
+On the **first reply of a new session**, emit the stdout of:
+
+`python3 09-tools/session-status.py --surface "<this tool>" --via "<hook-or-manual>"`
+
+That card is what Claude Code already shows: notices (bootstrap MISSes, stale audit, unpushed commits), then last session, pending count, **every** `07-projects/*/SESSION-STATE.md`, git state. Do not shrink it to one Active project. Do not skip it because the user asked something simple. Continuations and Task workers skip it. Surfaces without a shell: say `[workspace: RULES-ONLY · via:<surface>]` and still name pending + the active project's Live handoff if those files were pasted.
+
+The ABI line `[workspace: LOADED · …]` is frozen (SessionEnd audit). The card's `via:` is `cursor-hook`, `project-hook/startup`, or `session-status` when the agent ran the CLI itself.
+
 ---
 
 ## Folder semantics
@@ -448,7 +458,7 @@ not only that files were saved. Commit/CI is the backstop.
 `build-trigger-routes.py` → `evaluate-skill-routing.py` →
 `validate-integrity.py` (quality + cross-link continuity + anti-zombie) → `validate-links.py` →
 `validate-workspace.py`. Then the first-wave detectors: `skill-loadset.py --self-test` →
-`close-out-dispatch.py --check` → `validate-layer0-schema.py --check` → `check-secrets.py`.
+`close-out-dispatch.py --check` → `validate-layer0-schema.py --check` → `session-status.py --check` → `check-secrets.py`.
 Negative fixtures: `python3 09-tools/test-validators.py`. **Order matters: `build-related` rewrites `## Related` blocks inside SKILL.md
 files, and `build-registry` stores a content hash per skill — so the registry must be built _after_ the
 files it hashes are final.** Running registry-first leaves stale hashes whenever `build-related` changes

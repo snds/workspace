@@ -26,6 +26,7 @@ python3 09-tools/validate-workspace.py
 python3 09-tools/skill-loadset.py --self-test
 python3 09-tools/close-out-dispatch.py --check
 python3 09-tools/validate-layer0-schema.py --check
+python3 09-tools/session-status.py --check
 python3 09-tools/check-secrets.py
 ```
 

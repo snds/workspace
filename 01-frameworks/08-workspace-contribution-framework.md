@@ -245,7 +245,8 @@ How any agent opens and closes a working session here, with **no dependency on t
 adapter (e.g. a Claude hook) may automate this, but the protocol is the contract.
 
 **Session start — read (and inherit the thread), frugally:**
-1. `llms.txt` → `AGENTS.md` (contract) → `03-skills/skills.registry.json` (skill graph).
+0. Emit `python3 09-tools/session-status.py` (notices + all projects + pending). Skip on continuations / Task workers.
+1. `llms.txt` → `AGENTS.md` (contract). Do not ingest `03-skills/skills.registry.json`.
 2. `06-context/`: `role-and-context`, `project-context` (head), **head of `session-log`** (it's bounded;
    old blocks are in `session-log-archive.md`, read only on demand), `memory/MEMORY.md`. Never read a whole
    growing log — token frugality is a #1 priority.

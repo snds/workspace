@@ -44,8 +44,8 @@ protocol* ([[08-workspace-contribution-framework]]). It assumes only a git check
    - `04-preferences/user-preferences.md` — communication style
 4. **Regenerate the registry if skills changed** since last run: `python3 09-tools/build-registry.py`
    (idempotent; no-op if nothing changed).
-5. **Confirm** with the session-start ritual (the tool adapter defines the exact format; see
-   [[CLAUDE]] / [[CURSOR]]). Then proceed into the user's request.
+5. **Confirm** — emit `python3 09-tools/session-status.py --surface "<this tool>"`
+   (notices + all projects + pending). Then proceed into the user's request.
 
 If a file is missing, proceed without it — note only genuinely unexpected gaps.
 

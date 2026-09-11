@@ -63,12 +63,13 @@ regenerate + repoint; never leave orphaned/superseded-but-live/stub files). Full
 - `skill-loadset.py` — utterance → ordered SKILL.md paths (`--self-test` in CI).
 - `close-out-dispatch.py` — named command-hub L3 (`--check` coverage; `--run` executes).
 - `validate-layer0-schema.py` — refuse malformed trigger-routes / knowledge-hints / routing cases.
+- `session-status.py` — session-start ritual card (`--check` in CI).
 - `check-secrets.py` — known secret shapes on tracked files.
 
 Before committing any change: `build-related.py` → `build-registry.py` → `build-trigger-routes.py` →
 `evaluate-skill-routing.py` → `validate-integrity.py` →
 `validate-links.py` → `validate-workspace.py` → `skill-loadset.py --self-test` →
-`close-out-dispatch.py --check` → `validate-layer0-schema.py --check` → `check-secrets.py`.
+`close-out-dispatch.py --check` → `validate-layer0-schema.py --check` → `session-status.py --check` → `check-secrets.py`.
 CI runs these. Done on a write means the
 relevant validators ran this session, not only that files were saved. When changing a
 validator, also run `python3 09-tools/test-validators.py` (negative fixtures; CI runs them).

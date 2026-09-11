@@ -5,8 +5,9 @@ handoff as every other surface. Perplexity is not a fork and Claude is not privi
 
 ## How Perplexity executes the contract
 
-1. Follow **AGENTS.md Canonical read order**. Compute the load set with
-   `python3 09-tools/skill-loadset.py "…"` — do not ingest the registry or `_INDEX.md`.
+1. Follow **AGENTS.md Canonical read order**. On a new session, emit
+   `python3 09-tools/session-status.py --surface Perplexity` first (or RULES-ONLY + pasted pending).
+   Compute the load set with `python3 09-tools/skill-loadset.py "…"` — do not ingest the registry.
 2. Resolve the [context profile](02-shared-references/delivery-playbooks/00-context-profiles.md)
    before any repo action.
 3. Route skills via [trigger-routes.json](02-shared-references/trigger-routes.json) then

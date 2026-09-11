@@ -258,6 +258,9 @@ WORK_VERBS = frozenset(
     }
 )
 
+# Ordinary English that contains a work verb but is not produce.
+MAKE_SKIP_PHRASES = ("make sure", "make sense", "make up for")
+
 FOLLOWTHROUGH_CLOSE_OUT = (
     "- **after produce** → 03-skills/close-out/SKILL.md then "
     "03-skills/self-improve/SKILL.md — run "
@@ -266,19 +269,36 @@ FOLLOWTHROUGH_CLOSE_OUT = (
     "did not name those skills."
 )
 FOLLOWTHROUGH_LAYER0_MISS = (
-    "- **Layer 0 missed** → match this prompt against "
+    "- **Layer 0 missed** → if this is new work, match "
     "02-shared-references/trigger-routes.json and skill `triggers` "
-    "before producing. Say that Layer 0 missed. Do not freestyle doctrine. "
+    "before producing. Continuations already in-flight: stay on the baton. "
+    "Do not announce this miss as the answer. Do not freestyle doctrine. "
     "CLI: `python3 09-tools/skill-loadset.py \"…\"` then "
     "`python3 09-tools/vault-retrieve.py \"…\"`."
 )
+
+
+def has_work_verb(prompt: str) -> bool:
+    """True when the prompt looks like produce, not 'make sure' English."""
+    lowered = (prompt or "").lower()
+    for verb in WORK_VERBS:
+        if verb == "make":
+            continue
+        if term_matches(verb, lowered):
+            return True
+    if not term_matches("make", lowered):
+        return False
+    stripped = lowered
+    for phrase in MAKE_SKIP_PHRASES:
+        stripped = stripped.replace(phrase, " ")
+    return term_matches("make", stripped)
 
 
 def followthrough_lines(prompt: str, any_layer0: bool) -> list[str]:
     """Extra injection lines after Layer 0 match (or a visible miss on work verbs)."""
     lowered = (prompt or "").lower()
     produce = any(term_matches(t, lowered) for t in PRODUCE_FOLLOWTHROUGH_TERMS)
-    work = any(term_matches(v, lowered) for v in WORK_VERBS)
+    work = has_work_verb(prompt)
     if produce or (any_layer0 and work):
         return [FOLLOWTHROUGH_CLOSE_OUT]
     if work and not any_layer0:

@@ -16,7 +16,7 @@ relations:
 
 ## For future agent
 
-- **TL;DR:** `AGENTS.md` is the contract. Many tools still auto-load a *different* filename first (`GEMINI.md`, `.github/copilot-instructions.md`, `WARP.md`, Windsurf rules, Aider `CONVENTIONS.md`). Those files are **thin pointers** (read AGENTS.md, lookup `load_chains`, close-out). Never symlink the full contract onto those names — some tools concatenate every instruction file they find. Never add `.cursorrules` / `.windsurfrules` / `.clinerules`: several IDEs first-match those and then skip `AGENTS.md`.
+- **TL;DR:** `AGENTS.md` is the contract. Many tools still auto-load a *different* filename first (`GEMINI.md`, `.github/copilot-instructions.md`, `WARP.md`, Windsurf rules, Aider `CONVENTIONS.md`). Those files are **thin pointers** (read AGENTS.md, emit `session-status.py` on a new session, lookup `load_chains`, close-out). Never symlink the full contract onto those names — some tools concatenate every instruction file they find. Never add `.cursorrules` / `.windsurfrules` / `.clinerules`: several IDEs first-match those and then skip `AGENTS.md`.
 - **As of:** 2026-09-11 · **Status:** current
 - **Audience:** `for: agent`
 

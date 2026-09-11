@@ -1,7 +1,7 @@
 ---
 tags: [workflow, process, patterns, audit, session-management]
 created: 2026-04-28
-updated: 2026-07-27
+updated: 2026-09-11
 status: stable
 confidence: high
 sources: [session-log 2026-04-27, audit-log 2026-04-27, session-log 2026-07-09, session-log 2026-07-27]
@@ -12,6 +12,10 @@ related_projects: [00-obsidian, 18-bootstrap-generator]
 # Workflow Patterns — What We've Learned Works
 
 Cross-domain patterns for how to manage work across sessions, machines, and projects. These are the operating habits that emerged from real experience, not from theoretical planning.
+
+## Session-start card (every surface)
+
+Emit `python3 09-tools/session-status.py` on the first reply of a **new** session — notices (bootstrap MISSes, stale audit) plus every `SESSION-STATE` project plus pending. Do not shrink Active projects. Continuations and Task workers skip it. Decision: [[decision-session-status-card]].
 
 ---
 

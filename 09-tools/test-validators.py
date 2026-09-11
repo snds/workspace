@@ -321,6 +321,14 @@ class TestPromptRouteFollowthrough(unittest.TestCase):
         text = self.pr.route_prompt("make the primary button blue", self.brain)
         self.assertIn("Layer 0 missed", text)
         self.assertNotEqual(text, "")
+        self.assertNotIn("Say that Layer 0 missed", text)
+
+    def test_make_sure_is_not_a_miss(self):
+        text = self.pr.route_prompt(
+            "Make sure these are reliably wired across the workspace.",
+            self.brain,
+        )
+        self.assertEqual(text, "")
 
     def test_greeting_stays_empty(self):
         text = self.pr.route_prompt("hello how are you today", self.brain)
@@ -423,6 +431,40 @@ class TestLayer0Schema(unittest.TestCase):
             kh.write_text('{"spec_version":"1.0","hints":{"a":"b"}}\n', encoding="utf-8")
             errors = vl.check_files(tr, kh, bad)
             self.assertTrue(errors, errors)
+
+
+class TestSessionStatus(unittest.TestCase):
+    def test_check_and_card(self):
+        ss = load("session-status")
+        data = ss.collect(surface="test", via="test")
+        self.assertGreaterEqual(data["pending"], 0)
+        self.assertTrue(data["sha"])
+        card = ss.format_card(data)
+        self.assertIn("workspace: LOADED", card)
+        self.assertIn("Active projects", card)
+        self.assertIn("Pending:", card)
+        self.assertIn("What's on the agenda today?", card)
+
+    def test_pending_counts_open_boxes(self):
+        ss = load("session-status")
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "pc.md"
+            path.write_text("- [ ] open one\n- [x] done\n- [ ] open two\n", encoding="utf-8")
+            self.assertEqual(ss.count_pending(path), 2)
+
+    def test_stamp_age_parses_heading_and_yaml(self):
+        ss = load("session-status")
+        with tempfile.TemporaryDirectory() as td:
+            heading = Path(td) / "audit.md"
+            heading.write_text("## 2026-09-02 — Personal MacBook Pro\n", encoding="utf-8")
+            yaml = Path(td) / "stamp"
+            yaml.write_text("date: 2026-09-11\nreport: x.md\n", encoding="utf-8")
+            age = ss._stamp_age_days(heading)
+            self.assertIsNotNone(age)
+            self.assertGreaterEqual(age, 0)
+            yaml_age = ss._stamp_age_days(yaml)
+            self.assertIsNotNone(yaml_age)
+            self.assertLessEqual(yaml_age, 1)
 
 
 if __name__ == "__main__":

@@ -33,14 +33,18 @@ _archive/            retired files + ARCHIVE-LOG.md provenance
 ## How to start a session
 
 1. Resolve the workspace root: the directory containing `AGENTS.md` (this checkout).
-2. Read [[AGENTS]] → `03-skills/skills.registry.json` → `06-context/` (role,
-   project-context, session-log head, [[06-context/memory/MEMORY|MEMORY]]) → [[04-preferences/user-preferences]].
-3. Match the request to skills via `triggers`/`description`; load the `load_chains` ancestors in order
-   (foundation → hub → spoke). See AGENTS.md "Skill loading precedence."
+2. Emit `python3 09-tools/session-status.py --surface "<this tool>"` (notices + all
+   projects + pending). Skip on continuations.
+3. Read [[AGENTS]] → `06-context/` heads (role, project-context, session-log head,
+   [[06-context/memory/MEMORY|MEMORY]]) → [[04-preferences/user-preferences]].
+   Do not ingest `03-skills/skills.registry.json`.
+4. Match the request via `python3 09-tools/skill-loadset.py "…"`; load only those
+   `SKILL.md` paths (foundation → hub → spoke).
 
 Per tool: **Claude Code/Desktop** auto-loads [[CLAUDE]] (a `SessionStart` hook can
-automate the reads). **Cursor** uses [[CURSOR]] + `.cursor/rules/brain.mdc`.
-**Perplexity / generic MCP / a human** follow [[AGENTS]] directly — no adapter required.
+automate the reads). **Cursor** uses [[CURSOR]] + `.cursor/rules/brain.mdc` + the
+user `sessionStart` hook. **Perplexity / generic MCP / a human** follow [[AGENTS]]
+directly — no adapter required.
 
 ## Setup
 

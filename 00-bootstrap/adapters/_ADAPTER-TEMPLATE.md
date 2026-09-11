@@ -23,8 +23,9 @@ the multi-agent handoff protocol all live in AGENTS.md and are not duplicated he
 
 ## How <Tool> executes the contract
 - **Workspace root:** the directory containing `AGENTS.md` (this checkout). No cloud-drive paths.
-- **Entry:** read `llms.txt` → `AGENTS.md` → `03-skills/skills.registry.json`, then `06-context/`
-  (role, project-context, session-log head, `memory/MEMORY.md`).
+- **Entry:** emit `python3 09-tools/session-status.py --surface "<Tool>"` on a new session,
+  then read `llms.txt` → `AGENTS.md` → `06-context/` (role, project-context, session-log head,
+  `memory/MEMORY.md`). Do not ingest the registry.
 - **Skills:** load via `python3 09-tools/skill-loadset.py "…"` — do not ingest the registry.
   After producing: `python3 09-tools/close-out-dispatch.py --from-prompt "…" --run`.
 - **Continuity:** on entry, read the active project's `SESSION-STATE.md` **Live handoff** block; on
