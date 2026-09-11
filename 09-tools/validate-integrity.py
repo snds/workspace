@@ -85,13 +85,20 @@ def addressable_names(all_files):
     return names
 
 
-def resolves(target, names, root=None):
-    """A wikilink resolves by basename/alias/dir-name OR as a path-form link to an existing file."""
+def resolves(target, names, root=None, tracked_rels=None):
+    """A wikilink resolves by basename/alias/dir-name OR as a path-form link to a tracked file.
+
+    Path-form must be git-tracked. A file that exists only on this laptop (gitignored
+    SESSION-STATE, etc.) is not addressable on GitHub CI.
+    """
     if target in names:
         return True
     root = ROOT if root is None else root
-    # path-form: [[06-context/project-context]] or [[03-skills/foo/SKILL]] (+ implied .md), or with ext
     for cand in (target, target + ".md"):
+        if tracked_rels is not None:
+            if cand in tracked_rels:
+                return True
+            continue
         if (root / cand).is_file():
             return True
     return False
@@ -109,12 +116,12 @@ def wikilink_targets(text):
     return out
 
 
-def dangling_wikilinks(rel, text, names, root=None):
+def dangling_wikilinks(rel, text, names, root=None, tracked_rels=None):
     """Return error strings for wikilinks that do not resolve."""
     root = ROOT if root is None else root
     errors = []
     for tgt in wikilink_targets(text):
-        if not resolves(tgt, names, root=root):
+        if not resolves(tgt, names, root=root, tracked_rels=tracked_rels):
             errors.append(f"{rel}: dangling wikilink [[{tgt}]]")
     return errors
 
@@ -131,7 +138,9 @@ def main():
     strict = "--strict" in sys.argv[1:]
     errors, warnings = [], []
     md = tracked_markdown()
-    names = addressable_names(all_tracked())
+    tracked = all_tracked()
+    names = addressable_names(tracked)
+    tracked_rels = {p.relative_to(ROOT).as_posix() for p in tracked}
 
     for p in md:
         rel = p.relative_to(ROOT).as_posix()
@@ -162,7 +171,7 @@ def main():
             continue
 
         # 2. wikilink resolution (cross-link continuity / anti-zombie-reference)
-        errors.extend(dangling_wikilinks(rel, text, names))
+        errors.extend(dangling_wikilinks(rel, text, names, tracked_rels=tracked_rels))
 
         # authoring-quality checks only for the curated layers
         authored = rel.startswith(("03-skills/", "01-frameworks/", "02-shared-references/"))

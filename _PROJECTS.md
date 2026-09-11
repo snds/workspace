@@ -51,23 +51,22 @@ MOC picks it up on next refresh.
 
 ## Graph index (static — Dataview does not create graph edges)
 
-Path-qualified so colliding stems (`SESSION-STATE`, `README`) resolve. Folders with neither file stay off this list on purpose.
+Path-qualified so colliding stems (`SESSION-STATE`, `README`) resolve. Wikilinks are **git-tracked
+files only** — gitignored Live handoffs stay machine-local (load-miss rec 8).
 
 - [[07-projects/00-obsidian/SESSION-STATE|00-obsidian]] · [[07-projects/00-obsidian/README|00-obsidian README]]
-- [[07-projects/01-mediaservices/canvases/README|01-mediaservices]] (SESSION-STATE is machine-local by gitignore)
-- [[07-projects/02-centricPLM/SESSION-STATE|02-centricPLM]] · [[07-projects/02-centricPLM/README|02-centricPLM README]]
+- [[07-projects/01-mediaservices/canvases/README|01-mediaservices]] (SESSION-STATE is machine-local)
+- `07-projects/02-centricPLM/` — machine-local SESSION-STATE / README
 - [[07-projects/03-omni/README|03-omni]]
-- [[07-projects/04-claude-figma-plugin/README|04-claude-figma-plugin]]
-- [[07-projects/05-C8-PLM/README|05-C8-PLM]]
-- [[07-projects/09-figma-repo-sync-plugin/SESSION-STATE|09-figma-repo-sync-plugin]]
-- [[07-projects/10-centric-UX-research/SESSION-STATE|10-centric-UX-research]]
-- [[07-projects/13-legion/SESSION-STATE|13-legion]]
-- [[07-projects/14-variable-icon-font-generator/SESSION-STATE|14-variable-icon-font-generator]]
-- [[07-projects/15-DavinciRemake/README|15-DavinciRemake]]
-- [[07-projects/16-CDS Figma-Code Audit/SESSION-STATE|16-CDS Figma-Code Audit]]
+- `07-projects/04-claude-figma-plugin/` · `07-projects/05-C8-PLM/` — machine-local
+- `07-projects/09-figma-repo-sync-plugin/` · `07-projects/10-centric-UX-research/` — machine-local
+- [[07-projects/12-MCS/SESSION-STATE|12-MCS]]
+- `07-projects/13-legion/` · `07-projects/14-variable-icon-font-generator/` · `07-projects/15-DavinciRemake/` · `07-projects/16-CDS Figma-Code Audit/` — machine-local
 - [[07-projects/18-bootstrap-generator/SESSION-STATE|18-bootstrap-generator]] · [[07-projects/18-bootstrap-generator/README|18-bootstrap-generator README]]
 - [[07-projects/19-workspace-brain/SESSION-STATE|19-workspace-brain]] · [[07-projects/19-workspace-brain/README|19-workspace-brain README]]
 - [[07-projects/20-lcars-generative-interface/SESSION-STATE|20-lcars-generative-interface]] · [[07-projects/20-lcars-generative-interface/README|20-lcars README]]
+- [[07-projects/21-shadegraph/SESSION-STATE|21-shadegraph]] · [[07-projects/21-shadegraph/README|21-shadegraph README]]
+- [[07-projects/22-ai-design-systems-course/SESSION-STATE|22-ai-design-systems-course]] · [[07-projects/22-ai-design-systems-course/README|22-course README]]
 
 ## Notes
 
