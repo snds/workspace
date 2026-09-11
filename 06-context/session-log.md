@@ -18,6 +18,56 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ## Session Entries
 
+### 2026-09-11 — Plan-ahead + cds export gate
+
+SessionID: 2026-09-11-plan-ahead-export-gate
+--- SESSION BLOCK ---
+Date: 2026-09-11
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): 19-workspace-brain; saas-plm-prototype (#77); cds (#35)
+Summary: Workspace now prints a numbered order of operations before executing. Proto `cds-exports-check` gates `@centric/ui/<subpath>` against cds `origin/main` so overlay-ahead cannot hide a Pages fail. Breakers that were invisible: Toaster (`./sonner`) and SplitDragHandle after cds #34 squash.
+Evidence:
+  - Skill: [[plan-ahead]]
+  - Knowledge: [[cds-host-consume-order]]
+  - Decision: [[decision-plan-ahead-order-of-operations]]
+Next:
+  - Merge cds #35, then proto re-export Toaster / SplitDragHandle / ChipMultiSelect
+--- END SESSION BLOCK ---
+
+### 2026-09-03 — Figma opacity variables: UI yes, MCP layer-only
+
+SessionID: 2026-09-03-figma-opacity-variables
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): Centric SaaS PLM Design System (`o6o1ZuGHxDow2vHLuYXT6X`); workspace knowledge
+Summary: Figma 2026-09-03 “Control opacity at scale” lets the UI bind a number var to color-variable + fill opacity without detaching. MCP `use_figma` / `node.set` is the Plugin API — layer opacity binds work (FLOAT 0–100); paint and color-var opacity writes reject. Applied `Opacity/*` + `opacity/{disabled,scrim,hover,focus,pressed}` and bound Components masters.
+Evidence:
+  - Knowledge: [[figma-opacity-variables]]
+  - MCP re-probe: Button `State=Disabled` (`7:5060`) `get_variable_defs` → `"var(--opacity-disabled)": "50"`; `setBoundVariableForPaint(..., 'opacity')` → Expected 'color'; `node.set` same unrecognized `boundVariables.opacity`
+Next:
+  - Re-bind Overlay Black/White ramps as alias+opacity when paint/color-var writes ship
+  - Do not split Radix A-steps / `interaction/*`
+--- END SESSION BLOCK ---
+
+### 2026-08-12 — Proto is the design sandbox (don't strip screens)
+
+SessionID: 2026-08-12-proto-sandbox-model
+--- SESSION BLOCK ---
+Date: 2026-08-12
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): saas-plm-prototype, centric-ui (employer)
+Summary: Sean corrected the migration reading: never delete prototype screens because centric-ui already has the page. Proto is Olga+Sean design iteration; consume `@centric/*`; lift net-new into centric-ui.
+Evidence:
+  - Workspace: [[decision-proto-is-design-sandbox]], pc-05 note, [[feedback-expand-acronyms]]
+Next:
+  - Inventory proto-only components/composites not in `@centric/ui` and lift those (ChipMultiSelect #290 already open)
+  - Catalogue lives on [[decision-proto-is-design-sandbox]]; refresh when a lift lands
+--- END SESSION BLOCK ---
+
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
 
@@ -468,6 +518,24 @@ Next:
   - Await user's pick on the loudness remediation path; gains.csv is ready either way
 Git: MediaSentinel repo untouched (scratch/ + docs/ only, uncommitted); workspace this commit
 --- END BLOCK ---
+
+### 2026-08-11 — Proto ↔ cui DS inventory refresh (bridge-then-consume)
+
+SessionID: 2026-08-11-work-ds-inventory
+--- SESSION BLOCK ---
+Date: 2026-08-11
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): saas-plm-prototype, centric-ui (employer); workspace pointers
+Summary: Re-ran proto↔centric-ui DS inventories against proto `42f8ba1` + cui #284 `98e5ca66`. Rewrote directionality to lift → package → consume `@centric/*`. Updated migration SSOT, gap map, sync manifest, DESIGN-SYSTEM bridge contract; workspace pc-01/pc-05 + Layer C status.
+Evidence:
+  - Employer: `MIGRATION-TO-CENTRIC-UI.md`, `MIGRATION-PER-UNIT-DETAIL.md`, `plm-centric-ui-gap-map.html`, `CENTRIC-UI-SYNC.md`, `DESIGN-SYSTEM.md` (docs only; uncommitted)
+  - Workspace: `project-context.md` / `project-context-detail.md` pc-01/pc-05; visual-parity Layer C; density-adoption + interaction-state-semantics status
+Next:
+  - Merge https://github.com/cpes-software/centric-ui/pull/284
+  - Track L lifts (chip-multi-select, proto-only ui/, caution #87, C8/C13/C16)
+  - Track P `@centric/ui` extract; Track C proto consume
+--- END SESSION BLOCK ---
 
 ### 2026-08-11 — cui ViewToolbar bg-card consistency
 

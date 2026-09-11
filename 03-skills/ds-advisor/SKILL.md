@@ -883,5 +883,5 @@ into tokens, styles, and components so that the mathematics is encoded once and 
 
 ## Related
 - foundation → [[design-foundations]]
-- spoke → [[ds-source-watch]]
+- spoke → [[ai-design-systems]] · [[ds-source-watch]]
 - peer ↔ [[design-system-ops]] · [[design-engineer]]

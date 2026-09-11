@@ -213,5 +213,6 @@ Storybook QA audit**. Once proven, the same wrapper shape generates the sibling 
 
 ## Related
 - foundation → [[design-foundations]]
+- governs → [[ai-design-systems]]
 - peer ↔ [[eng]] · [[design-system-ops]]
 - peer ↔ [[visual-qa-motion]] · [[visual-qa-dataviz]] · [[visual-qa-type]]

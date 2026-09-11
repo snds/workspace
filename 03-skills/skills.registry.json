@@ -10,9 +10,9 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 296,
+    "total": 297,
     "by_tier": {
-      "cross-cutting": 42,
+      "cross-cutting": 43,
       "foundation": 22,
       "hub": 47,
       "spoke": 185
@@ -1300,7 +1300,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:77ac44dff286f408c513989bed6db154e0832e2e29155503f28ed9ad76bf554a"
+      "hash": "sha256:c382acef0cf2969b9c9eaaf836963cbaed5ce16bcba64816e9b86d8a307141f2"
     },
     "ds-bi-platforms": {
       "path": "03-skills/ds-bi-platforms/SKILL.md",
@@ -1681,7 +1681,8 @@
         "reference-video-review",
         "render-qa-toolkit",
         "interactive-capture-eval",
-        "realtime-visual-craft"
+        "realtime-visual-craft",
+        "plan-ahead"
       ],
       "governed_by": [],
       "governs": [],
@@ -1710,7 +1711,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:7d75a2a14cbe96ee1e0c20eb08f63b61be653247d60526b9bc9fbd0a12784076"
+      "hash": "sha256:ff7e9399e9f0415a6d4a2ea202f87cb6ad9726db152bbe15e56ce60194d5c3a5"
     },
     "fe-accessibility": {
       "path": "03-skills/fe-accessibility/SKILL.md",
@@ -5116,6 +5117,38 @@
       "rigor_role": null,
       "hash": "sha256:3efe2ddb6f083af5dae36d7e39ac5d775aee0582c1c45b99af46148a3bc13b15"
     },
+    "plan-ahead": {
+      "path": "03-skills/plan-ahead/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "workspace-bootstrap",
+        "failure-mode-premortem"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "order of operations",
+        "cds then proto",
+        "consume cds",
+        "pages build",
+        "follow up",
+        "overlay vs main",
+        "first breaker",
+        "dual repo",
+        "squash leftover",
+        "re-export"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:68107705517bf6c03dc8478259702bd02d25d089aa87df63d19417b472d09910"
+    },
     "planetary-terrain-lod": {
       "path": "03-skills/planetary-terrain-lod/SKILL.md",
       "tier": "spoke",
@@ -5440,7 +5473,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:afa6426cd02c843938f7a8fbd33b80ac2c04e8bcfa58d95ada086d4f9af19893"
+      "hash": "sha256:50380617f63e2a79fca55f79af2ae4972a8d4ee1482dd6338de9dcadac3d9054"
     },
     "realtime-render-performance": {
       "path": "03-skills/realtime-render-performance/SKILL.md",
@@ -7838,7 +7871,8 @@
         "harness-map",
         "mission-fit",
         "side-chat-handback",
-        "intent-coordination"
+        "intent-coordination",
+        "plan-ahead"
       ],
       "governed_by": [],
       "governs": [],
@@ -7857,7 +7891,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:3c0f8d600a9c569f6e548dbc8a0cab3b7e56fbd1593483e026ed5961e6ebee2a"
+      "hash": "sha256:0a898a495dab9149ec7cf36428816d9c1ee806045adb0d6c21339c8ff1a7c1ed"
     }
   },
   "load_chains": {
@@ -8816,6 +8850,9 @@
     ],
     "open-agent-engine": [
       "open-agent-engine"
+    ],
+    "plan-ahead": [
+      "plan-ahead"
     ],
     "planetary-terrain-lod": [
       "game-foundations",

@@ -21,7 +21,7 @@ aliases: [failure-mode-premortem, visual-pre-mortem, anticipatory-failure-analys
 triggers: [pre-mortem, premortem, failure mode, what could go wrong, before we build, red team, oppositional, classic symptom, common issue, avoidable, will this band, acceptance criteria, reference comparison, ready for review, pitfall ledger, anticipate bugs, find the bug first]
 tier: cross-cutting
 domain: quality
-related: [native-visual-eval, visual-qa-toolkit, lead-visual-qa, reference-video-review, render-qa-toolkit, interactive-capture-eval, realtime-visual-craft]
+related: [native-visual-eval, visual-qa-toolkit, lead-visual-qa, reference-video-review, render-qa-toolkit, interactive-capture-eval, realtime-visual-craft, plan-ahead]
 surfaces: ["*"]
 spec_version: "1.0"
 ---
@@ -133,3 +133,4 @@ the loop *after* them (step 6). It is the operational teeth of framework #11.
 
 ## Related
 - peer ↔ [[render-qa-toolkit]] · [[interactive-capture-eval]] · [[realtime-visual-craft]] · [[rendering-guild]] · [[visual-qa-photoreal-rendering]]
+- peer ↔ [[plan-ahead]]

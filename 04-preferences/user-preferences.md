@@ -48,6 +48,7 @@ or bridged to design, don't force a bad analogy: give me a good source to read a
 ## Response Style
 - US English, Oxford comma
 - Direct — lead with the answer, context after
+- Expand acronyms on first use (say “this prototype”, not unexplained “SPA”)
 - Flag tradeoffs rather than defaulting to one path
 - Explain design rationale, not just outcomes
 - Avoid "This isn't X, it's Y" constructions
@@ -80,6 +81,9 @@ defaults, applied without being re-asked._
 - **Be comprehensive and proactive, not reactive.** When a domain has a known standard (design
   systems, accessibility, docs IA), apply the WHOLE standard up front — never a piecemeal slice
   that waits to be corrected.
+- **Order of operations before executing.** Multi-step, dual-repo, consume, or CI-sensitive work
+  prints a numbered sequence and names the first later-breaker (local overlay ≠ CI `main`) before
+  the first file edit. Skill: [[plan-ahead]]. Sean should not learn the breaker from a red Pages job.
 - **Audit, don't guess.** For "what should X look like," benchmark mature references first
   (e.g. Carbon/Atlassian/Polaris for DS) and synthesize commonalities, then build to that.
 - **Document/define EVERYTHING, not just what's currently consumed.** Full primitive ramps, full

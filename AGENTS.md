@@ -67,6 +67,8 @@ The workspace is both a knowledge base and an execution environment.
   history is in `session-log-archive.md`, read only on demand). Load a skill only when its trigger fires;
   prefer the smallest sufficient context. When editing an **auto-loaded** file (this contract, `CLAUDE.md`,
   a `.cursor` rule), keep additions terse — every line there is a recurring per-session cost.
+- **Order of operations before executing.** Multi-step / dual-repo / consume work prints a numbered
+  sequence and the first later-breaker before writing. Skill: `03-skills/plan-ahead/SKILL.md`.
 - Before writing anything, consult the routing map in [workspace-ontology.md](02-shared-references/workspace-ontology.md).
 - **Context is king — resolve the context profile before any repo action or delivery.** Who owns the
   work and who reviews it is a *declared fact*, never a guess:
@@ -178,11 +180,14 @@ Skills are discoverable by both humans and machines through one generated graph:
    precomputed `load_chains`). Generated from frontmatter by `09-tools/build-registry.py`.
 2. [trigger-routes.json](02-shared-references/trigger-routes.json) (+ generated
    [trigger-routes.md](02-shared-references/trigger-routes.md)) — curated high-leverage routes
-   shared by the Claude dispatcher and non-Claude agents. Regenerate markdown with
-   `09-tools/build-trigger-routes.py`.
-3. Each `03-skills/<name>/SKILL.md` — the skill itself; its frontmatter is the source of truth.
+   shared by the Claude dispatcher and Cursor `beforeSubmitPrompt` (both via
+   `09-tools/prompt_route.py`, which resolves the brain checkout even when CWD is an
+   employer repo). Regenerate markdown with `09-tools/build-trigger-routes.py`.
+3. [knowledge-hints.json](02-shared-references/knowledge-hints.json) — curated knowledge paths
+   for the same Layer-0 matcher.
+4. Each `03-skills/<name>/SKILL.md` — the skill itself; its frontmatter is the source of truth.
    Spec: [skill-frontmatter.md](02-shared-references/skill-frontmatter.md).
-4. `_SKILLS.md` and per-domain MOCs — human navigation.
+5. `_SKILLS.md` and per-domain MOCs — human navigation.
 
 Each skill's frontmatter exposes: `name`, `description` (routing prose), `triggers`, `tier`
 (`foundation`/`hub`/`spoke`/`cross-cutting`), `hub`, `prerequisites`, `related`, `governed_by`,
@@ -205,7 +210,10 @@ load_set(message, registry):
 `load_chains[name]` is precomputed in the registry (foundation → hub → spoke), so even a weak or
 offline agent needs no graph traversal — it looks up the chain and reads those `SKILL.md` files in
 order. Only `prerequisites` and the implicit spoke→`hub` edge are hard (load-before). `related` and
-`governed_by` are navigational/lenses, never auto-loaded.
+`governed_by` are navigational/lenses, never auto-loaded. Cursor sessions whose first folder is not
+this checkout still receive Layer-0 routes via the user-global `beforeSubmitPrompt` hook
+(brain-path resolution in `09-tools/prompt_route.py`). Vendor Figma plugin skills are mechanics
+only; workspace `figma` + `design-engineer` own token/component doctrine.
 
 Worked example — "dark-mode palette for this dashboard" →
 `design-foundations` → `lead-ui-designer` → `uid-color-for-ui` (suggests `ds-advisor`, `uid-surface-depth`).

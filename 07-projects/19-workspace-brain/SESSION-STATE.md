@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-04 — vgpu web 3D default + conversation-driven extensions; Intent #17_
+_Last updated: 2026-09-11 — plan-ahead skill + Frost DS×AI as #18 (Intent remains #17)_
 
 ---
 
@@ -8,16 +8,15 @@ _Last updated: 2026-09-04 — vgpu web 3D default + conversation-driven extensio
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **TL;DR (for future agent)**: Web 3D default is vgpu ([[vgpu-webgpu]]). Extensions (chisel/maige/Godot/Unity/Unreal) are conversation- and living-spec-driven ([[web-3d-extensions]]); MCP is execute-time only. Intent.app is running (intentd 0.9.12, UDS); `git.autoCommit` false. Do not register `linear-c8` here.
-- **Current focus**: Session closed. Pick up via Next.
-- **Working set**: [[vgpu-webgpu]]; [[web-3d-extensions]]; [[intent-coordination]]; `09-tools/intent-run.py`; [[fact-intent-app]].
-- **Last action (2026-09-04):** Wired conversation/intent protocol on 3D extensions; session-end. Cursor Grok 4.6 / Cursor / Personal MBP.
+- **Current focus**: Plan-ahead is standing doctrine. Frost DS×AI landed as framework **#18** (origin already used #17 for Intent Coordination). Proto Pages gate (`cds-exports-check`) is on #77. Consume of Toaster / SplitDragHandle / ChipMultiSelect waits on cds #35 merge.
+- **Working set**: `03-skills/plan-ahead/SKILL.md`, `.cursor/agents/plan-ahead.md`, `01-frameworks/18-design-systems-ai-operating-model.md`, `08-knowledge/engineering/cds-host-consume-order.md`.
+- **Last action (2026-09-11):** Rebased Frost + plan-ahead onto origin/main; numbered course notes 22 and DS×AI framework 18 to avoid collisions. By Cursor Grok 4.6 · Cursor · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Intent GUI: add a local repo, then a real coordinator spec. Or `personal:SEA-33`. Reload Cursor MCP for `vgpu` if tools are missing.
-- **Open decisions:** Product/data/security constitutions still `mapped` only. YAML still hand-authored.
-- **Blocked on:** Machine-local homes for `^pc-07` / `^pc-11`; lane ambiguity on `^pc-30` / `^pc-41`.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs.** Copilot pack is tracked (`copilot/` + relative `.claude` wrappers); do not convert wrappers back to absolute paths.
-- **Agent thread**: `… → (2026-09-04): vgpu + 3D extensions + Intent #17` → session-end.
+- **Next action:** Hub-gated adversarial workspace review (this session). Then merge cds #35 onto `main` (human), then proto re-export.
+- **Open decisions:** Whether Mission Fit recommendations should auto-mint Open Engine Todos (default: only when claimable work must survive the chat).
+- **Blocked on:** cds #35 human merge (do not merge it from an agent). Numbered harness-map recs from the miss-review — do not rewrite always-on until Sean approves.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`.
+- **Agent thread**: `… → (2026-09-04): vgpu + 3D extensions + Intent #17` → `Cursor Grok 4.6 / Cursor / Work MBP (2026-09-11): plan-ahead + Frost #18 rebase`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.

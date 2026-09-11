@@ -313,6 +313,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `mission-fit` | cross-cutting | `mission fit`, `mission-fit`, `false success`, `false-success`, `can this agent finish`, `trust done` (+3) | `mission-fit` |
 | `native-visual-eval` | cross-cutting | `native resolution`, `high-res screenshot`, `downsample`, `downscaled`, `capture and chunk`, `1:1 pixels` (+12) | `native-visual-eval` |
 | `open-agent-engine` | cross-cutting | `open engine`, `agent engine`, `agent queue`, `run the queue`, `queue runner`, `agent ledger` (+5) | `open-agent-engine` |
+| `plan-ahead` | cross-cutting | `order of operations`, `cds then proto`, `consume cds`, `pages build`, `follow up`, `overlay vs main` (+4) | `plan-ahead` |
 | `process-plugins` | cross-cutting | `tdd`, `test driven development`, `write the test first`, `red green refactor`, `verification before completion`, `am i done` (+11) | `process-plugins` |
 | `render-qa-toolkit` | cross-cutting | `render qa`, `perfcapture`, `frame budget`, `pass attribution`, `native grid`, `false color exposure` (+7) | `realtime-visual-craft` → `render-qa-toolkit` |
 | `rendering-guild` | cross-cutting | `rendering guild`, `convene guild`, `render guild`, `light td`, `material td`, `shadow td` (+4) | `rendering-guild` |
@@ -330,4 +331,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 245 · Registry rows: 62_
+_Curated routes: 245 · Registry rows: 63_

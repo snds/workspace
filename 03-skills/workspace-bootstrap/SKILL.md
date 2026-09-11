@@ -14,7 +14,7 @@ aliases: [workspace-bootstrap]
 triggers: [workspace-bootstrap, reload the workspace, run the handshake, ritual missing, load context, reconcile sessions, legion]
 tier: cross-cutting
 domain: workspace
-related: [open-agent-engine, harness-map, mission-fit, side-chat-handback, intent-coordination]
+related: [open-agent-engine, harness-map, mission-fit, side-chat-handback, intent-coordination, plan-ahead]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -146,3 +146,4 @@ skill catalogs is a known cost trap — see [[nate-jones-harness-enrichments]] �
 - peer ↔ [[mission-fit]]
 - peer ↔ [[side-chat-handback]]
 - peer ↔ [[intent-coordination]]
+- peer ↔ [[plan-ahead]]

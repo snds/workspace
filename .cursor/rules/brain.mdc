@@ -70,3 +70,7 @@ Any model may write behind the gates in `01-agent-controller.mdc` / AGENTS.md. N
 Route skills; don't bulk-load. Artifacts: `context_descriptor_vN.N_YYYY-MM-DD.ext`. `[[wikilinks]]`.
 Archive don't delete. Never rename `SKILL.md` (use `aliases`). Never hand-edit generated files
 (`skills.registry.json`, `trigger-routes.md`).
+
+**Order of operations:** before executing multi-step / dual-repo / consume work, print numbered
+steps and the first later-breaker (overlay ≠ Pages `main`). Skill: `03-skills/plan-ahead/SKILL.md`.
+Agent: `.cursor/agents/plan-ahead.md`.

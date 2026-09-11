@@ -25,6 +25,7 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[decision-externalize-everything-to-workspace]] — `decision` · standing directive: all durable content lives in the workspace (or the platform Projects dir), never in an agent's private memory; encoded as an AGENTS.md Core rule for cross-surface reach.
 - [[decision-component-pattern-framework-system]] — `decision` · why the 5-layer component & pattern context system was built (framework #09 + skill + MCP + DESIGN.md + AGENTS binding) and where its outputs live.
 - [[decision-frost-ds-ai-operating-model]] — `decision` · framework #18 + `ai-design-systems` spoke: Frost/Southleft DS×AI as L1 (#18) beside #09 (2026-09-11).
+- [[decision-plan-ahead-order-of-operations]] — `decision` · print numbered order + first later-breaker before executing multi-step / dual-repo work; overlay ≠ Pages `main` (2026-09-11).
 - [[decision-bootstrap-v2-guarantee]] — `decision` · the workspace handshake is guaranteed by deterministic harness layers (hooks + beacon + audit + launchd doctor), not model discretion; ritual token is frozen ABI.
 - [[decision-commercial-data-licensing]] — `decision` · default to commercially-licensable data/asset sources for all projects; non-commercial sources (e.g. Gaia DR3) only when uniquely needed — isolate, mark, reconcile later.
 - [[decision-defer-dense-vault-retrieval]] — `decision` · defer embedding/dense Layer-2 vault retrieval until `vault-retrieve.py --eval` shows paraphrase gaps lexical cannot fix (13/13 green 2026-08-05).
