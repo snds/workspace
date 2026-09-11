@@ -9,7 +9,6 @@ related_skills: [plan-ahead]
 related_projects: []
 relations:
   builds-on: ["[[centric-ui-local-against-cloud-dev]]", "[[contracts-first-delivery]]"]
-  relates-to: ["[[cursor-employer-repo-skill-routing]]"]
 ---
 
 # CDS host consume order: overlay ≠ Pages `main`

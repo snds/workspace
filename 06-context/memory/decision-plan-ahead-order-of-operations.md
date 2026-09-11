@@ -4,7 +4,6 @@ description: Always print a numbered order of operations and the first later-bre
 created: 2026-09-11
 confidence: high
 relations:
-  builds-on: ["[[decision-cursor-prompt-route-hook]]"]
   relates-to: ["[[plan-ahead]]"]
 ---
 
