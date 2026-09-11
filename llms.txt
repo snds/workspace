@@ -49,3 +49,8 @@
 
 ## Generate / validate
 - `python3 09-tools/build-registry.py` — regenerate the skill registry from frontmatter (stdlib-only).
+- `python3 09-tools/skill-loadset.py "…"` — compute the AGENTS.md load set; do not ingest the registry.
+- `python3 09-tools/close-out-dispatch.py --from-prompt "…" --run` — named L3 after produce; SKIP ≠ verified.
+- `python3 09-tools/close-out-dispatch.py --check` — every command hub has a named detector.
+- `python3 09-tools/validate-layer0-schema.py --check` — refuse malformed Layer 0 JSON.
+- `python3 09-tools/check-secrets.py` — known secret shapes on tracked files.

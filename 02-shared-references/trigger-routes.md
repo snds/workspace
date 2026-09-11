@@ -192,6 +192,8 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `llm-safe` | 08-knowledge/design/llm-safe-design-system-expressiveness.md + 03-skills/design-engineer/SKILL.md — CI is the contract; do not import StyleX |
 | `contrast-color` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `skill routing` | 09-tools/evaluate-skill-routing.py — adversarial Layer 0 corpus; --utterance to probe a live miss |
+| `skill loadset` | python3 09-tools/skill-loadset.py "…" — compute load_chains; do not ingest the registry |
+| `close-out-dispatch` | python3 09-tools/close-out-dispatch.py --from-prompt "…" --run — named L3; SKIP ≠ verified |
 | `routing harness` | 09-tools/evaluate-skill-routing.py — run when the graph changed, after skill authoring, or a prompt mis-routed |
 | `designparser` | 03-skills/designparser/SKILL.md — call suggest_rules_for_context; do not vendor rules |
 | `what rules apply` | 03-skills/designparser/SKILL.md — suggest_rules_for_context on the current design task |
@@ -246,7 +248,7 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `merge conflict` | 03-skills/plan-ahead/SKILL.md — lockfiles, generated registry, files two branches touch |
 | `rebase` | 01-frameworks/07-integration-and-review-framework.md — fetch first; author-owns-drift |
 | `stack these diffs` | 01-frameworks/07-integration-and-review-framework.md — stacking / reviewability |
-| `close-out` | 03-skills/close-out/SKILL.md — capture/assess/correct; mint missing detectors and push; page Sean iff self-critique or mint still fails |
+| `close-out` | 03-skills/close-out/SKILL.md then python3 09-tools/close-out-dispatch.py --from-prompt "…" --run — capture/assess/correct; SKIP ≠ verified |
 | `human visual qa` | 03-skills/close-out/SKILL.md — interrupt Sean only if the agent cannot be critical or LLM QA rigor is unusable after mint |
 | `llm qa` | 03-skills/close-out/SKILL.md — agent runs the visual/code QA loop; human review is the exception |
 | `prove-gate` | 03-skills/close-out/SKILL.md — Figma: inspect + native-zoom + correct; mint missing probes before paging |
@@ -384,4 +386,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 262 · Registry rows: 99_
+_Curated routes: 264 · Registry rows: 99_

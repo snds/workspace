@@ -31,6 +31,10 @@ const EXISTING = [
   ["Write-quality CI", "validate-integrity / links / workspace / capabilities", "Any agent may write; CI refuses zombies", "keep"],
   ["Negative fixtures", "test-validators.py + vqa calibrate", "A green detector that never saw a defect is not a detector", "keep"],
   ["Layer 0", "prompt_route.py + routing corpus", "Find skills without ingesting the registry", "keep"],
+  ["Load set CLI", "skill-loadset.py", "Utterance → ordered SKILL.md paths", "keep"],
+  ["Close-out L3", "close-out-dispatch.py", "Named detector or honest skip; --check covers command hubs", "keep"],
+  ["Layer 0 schema", "validate-layer0-schema.py", "Malformed routes fail CI instead of fail-open {}", "keep"],
+  ["Secret scan", "check-secrets.py", "Known secret shapes on tracked files", "keep"],
   ["Lexical fallback", "vault-retrieve.py", "Layer 1 when Layer 0 under-fires", "keep"],
   ["Visual prove", "vqa prove / capture / calibrate", "Pixels, not VLM “looks good”", "keep"],
   ["Intent kernel", "intent-run.py gate / verify", "Multi-agent jobs cannot self-approve", "keep"],
@@ -47,6 +51,7 @@ const RECS: {
   validity: string;
   bucket: FilterId;
   tone: "info" | "success" | "warning" | "neutral" | "deleted";
+  applied?: boolean;
 }[] = [
   {
     id: "A1",
@@ -56,7 +61,8 @@ const RECS: {
     tokens: "Replaces ~55k registry ingest with a 10-line print.",
     validity: "Next cold agent can compute the load set without reading the graph essay.",
     bucket: "mint",
-    tone: "info",
+    tone: "success",
+    applied: true,
   },
   {
     id: "A2",
@@ -66,7 +72,8 @@ const RECS: {
     tokens: "Stops loading a 400-line hub that cannot refuse false done.",
     validity: "Construct: “operationally ready” = named independent check, not more prose.",
     bucket: "mint",
-    tone: "info",
+    tone: "success",
+    applied: true,
   },
   {
     id: "A3",
@@ -76,7 +83,8 @@ const RECS: {
     tokens: "Skip the skill body when the detector is already named.",
     validity: "Same-model self-test is not the detector; the CLI must exit non-zero.",
     bucket: "mint",
-    tone: "info",
+    tone: "success",
+    applied: true,
   },
   {
     id: "A4",
@@ -101,22 +109,24 @@ const RECS: {
   {
     id: "A6",
     title: "Secret scan in CI",
-    change: "gitleaks or detect-secrets on tracked files.",
+    change: "stdlib check-secrets.py on tracked files (PEM, AKIA, GitHub/Slack/Anthropic).",
     why: "Personal vault + employer wall. Accuracy includes not leaking.",
     tokens: "None. Prevents a class of irreversible miss.",
     validity: "Independent refuse. Do not LLM-review diffs for secrets.",
     bucket: "mint",
-    tone: "warning",
+    tone: "success",
+    applied: true,
   },
   {
     id: "A7",
     title: "Schema-check Layer 0 JSON",
-    change: "JSON Schema for trigger-routes, knowledge-hints, routing cases.",
+    change: "JSON Schema + validate-layer0-schema.py for trigger-routes, knowledge-hints, routing cases.",
     why: "A malformed route file fail-opens to silence (Cursor {}).",
     tokens: "Prevents a silent empty Layer 0.",
     validity: "Parse errors are already fail-open; schema makes that a CI red.",
     bucket: "mint",
-    tone: "neutral",
+    tone: "success",
+    applied: true,
   },
   {
     id: "A8",
@@ -194,12 +204,19 @@ export default function WorkspaceAutomationReview() {
     (r) => [r[0], r[1], r[2], <Pill size="sm" tone="success" active>keep</Pill>],
   );
 
-  const mintRows = RECS.filter((r) => r.bucket === "mint").map((r) => [
+  const mintRows = RECS.filter((r) => r.bucket === "mint" && !r.applied).map((r) => [
     r.id,
     r.title,
     r.change,
     r.tokens,
     <Pill size="sm" tone={r.tone} active>mint</Pill>,
+  ]);
+
+  const appliedRows = RECS.filter((r) => r.applied).map((r) => [
+    r.id,
+    r.title,
+    r.change,
+    <Pill size="sm" tone="success" active>applied</Pill>,
   ]);
 
   const refuseRows = RECS.filter((r) => r.bucket === "refuse").map((r) => [
@@ -214,10 +231,7 @@ export default function WorkspaceAutomationReview() {
       <Stack gap={8}>
         <H1>Workspace automation review</H1>
         <Text tone="secondary" size="small">
-          Source: live registry 2026-09-11 · 299 skills · 22 portable 09-tools scripts · 5
-          GitHub workflows · process-rigor R1–R16, #13 Domain Rigor Stack, #06 QA, Frost steel
-          curtain, experiment-validity-baseline, Nate Jones proof/diet loop, 2026 agent-harness
-          field practice. Not a build. Map before mint.
+          Source: live registry 2026-09-11 · first wave applied (A1 A2 A3 A6 A7) · remaining A4 A5 A8 A9
         </Text>
       </Stack>
 
@@ -228,7 +242,7 @@ export default function WorkspaceAutomationReview() {
       </Callout>
 
       <Grid columns={4} gap={12}>
-        <Stat value="22" label="Portable scripts in 09-tools" />
+        <Stat value="26" label="Portable scripts in 09-tools" />
         <Stat value="5" label="GitHub CI workflows" tone="success" />
         <Stat value="33 / 47" label="Hubs with no governed_by" tone="warning" />
         <Stat value="130 / 185" label="Spokes with empty triggers" />
@@ -272,6 +286,14 @@ export default function WorkspaceAutomationReview() {
             striped
             stickyHeader
           />
+          {appliedRows.length > 0 && (
+            <Table
+              headers={["#", "First wave", "Change", ""]}
+              rows={appliedRows}
+              striped
+              stickyHeader
+            />
+          )}
         </Stack>
       )}
 
@@ -352,10 +374,11 @@ export default function WorkspaceAutomationReview() {
         </Card>
       </Grid>
 
-      <Callout tone="info" title="Recommended first wave if you approve">
-        A1 skill-loadset · A2 hub L3 coverage · A3 close-out dispatch · A6 secret scan · A7
-        Layer 0 JSON schema. A8 Figma bind probe only when the next Figma produce cannot refuse
-        Color/*. A4 nightly.sh without enabling cron. Skip A10 as GitHub CI theater.
+      <Callout tone="success" title="First wave applied 2026-09-11">
+        A1 skill-loadset · A2 hub L3 table · A3 close-out dispatch · A6 secret scan · A7
+        Layer 0 JSON schema — wired into followthrough, adapters, bootstrap, and CI. Next:
+        A8 Figma bind probe when produce cannot refuse Color/*. A4 nightly.sh without cron.
+        A5 ruff after the script layer settles. A9 analysis lint. Skip A10 as GitHub CI theater.
       </Callout>
     </Stack>
   );

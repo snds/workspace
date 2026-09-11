@@ -991,7 +991,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:2ebf9d655646afe80e6ca8ce4e5498df042335664ec18058e675590387a52325"
+      "hash": "sha256:aff94db35c24dbdcf32060de93ca9533b664a02c92622d920a35b18d5b64a33f"
     },
     "data-foundations": {
       "path": "03-skills/data-foundations/SKILL.md",
@@ -8239,7 +8239,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:0a898a495dab9149ec7cf36428816d9c1ee806045adb0d6c21339c8ff1a7c1ed"
+      "hash": "sha256:b030437fd937d012c91e99036168974b409d237ded0a1ab981260838cd692b5a"
     }
   },
   "load_chains": {

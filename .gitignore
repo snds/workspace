@@ -111,6 +111,10 @@
 !09-tools/cursor-prompt-route.py
 !09-tools/cursor-externalize.py
 !09-tools/intent-run.py
+!09-tools/skill-loadset.py
+!09-tools/close-out-dispatch.py
+!09-tools/check-secrets.py
+!09-tools/validate-layer0-schema.py
 !09-tools/generate-display-svg.py
 !09-tools/eslint-off-system/
 !09-tools/eslint-off-system/**

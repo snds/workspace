@@ -28,6 +28,7 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[decision-plan-ahead-order-of-operations]] — `decision` · print numbered order + first later-breaker before executing multi-step / dual-repo work; overlay ≠ Pages `main` (2026-09-11).
 - [[decision-visual-qa-interrupt]] — `decision` · mint missing QA detectors and push; page Sean only if self-critique is failing or mint still cannot hit the bar (2026-09-11).
 - [[decision-tool-native-adapters]] — `decision` · Thin native-filename adapters so Gemini/Copilot/Warp/Aider/Windsurf/web LLMs have a first-file path into AGENTS.md (2026-09-11).
+- [[decision-workspace-automation-first-wave]] — `decision` · A1/A2/A3/A6/A7 scripts are wired into Layer 0, close-out, adapters, and CI (2026-09-11).
 - [[decision-self-improving-workspace]] — `decision` · per-session correct/heal/improve for the whole vault; P0 mechanical heals no longer wait on /optimize (2026-09-11).
 - [[decision-cursor-prompt-route-hook]] — `decision` · Cursor `beforeSubmitPrompt` + shared `prompt_route.py` so employer-repo sessions load workspace doctrine (2026-09-09).
 - [[decision-proto-is-design-sandbox]] — `decision` · saas-plm-prototype is the design sandbox — never strip screens because centric-ui has an equivalent (2026-08-12).

@@ -17,8 +17,15 @@ on:
       - "09-tools/validate-integrity.py"
       - "09-tools/test-validators.py"
       - "09-tools/evaluate-skill-routing.py"
+      - "09-tools/skill-loadset.py"
+      - "09-tools/close-out-dispatch.py"
+      - "09-tools/check-secrets.py"
+      - "09-tools/validate-layer0-schema.py"
+      - "09-tools/prompt_route.py"
       - "02-shared-references/skill-routing-cases.jsonl"
       - "02-shared-references/trigger-routes.json"
+      - "02-shared-references/knowledge-hints.json"
+      - "02-shared-references/schemas/**"
       - "03-skills/skills.registry.json"
   pull_request:
     paths:
@@ -29,8 +36,15 @@ on:
       - "09-tools/validate-integrity.py"
       - "09-tools/test-validators.py"
       - "09-tools/evaluate-skill-routing.py"
+      - "09-tools/skill-loadset.py"
+      - "09-tools/close-out-dispatch.py"
+      - "09-tools/check-secrets.py"
+      - "09-tools/validate-layer0-schema.py"
+      - "09-tools/prompt_route.py"
       - "02-shared-references/skill-routing-cases.jsonl"
       - "02-shared-references/trigger-routes.json"
+      - "02-shared-references/knowledge-hints.json"
+      - "02-shared-references/schemas/**"
       - "03-skills/skills.registry.json"
 
 jobs:
@@ -47,5 +61,13 @@ jobs:
         run: python3 09-tools/validate-integrity.py
       - name: Adversarial skill-routing corpus
         run: python3 09-tools/evaluate-skill-routing.py --check
+      - name: Skill loadset smoke
+        run: python3 09-tools/skill-loadset.py --self-test
+      - name: Command-hub L3 table
+        run: python3 09-tools/close-out-dispatch.py --check
+      - name: Layer 0 JSON schema
+        run: python3 09-tools/validate-layer0-schema.py --check
+      - name: Secret shape scan
+        run: python3 09-tools/check-secrets.py
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py

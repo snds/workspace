@@ -16,7 +16,7 @@ tier: cross-cutting
 domain: workspace
 related: [open-agent-engine, harness-map, mission-fit, side-chat-handback, intent-coordination, plan-ahead]
 surfaces: ["*"]
-spec_version: "2.0"
+spec_version: "2.1"
 ---
 
 # Workspace Bootstrap
@@ -32,7 +32,10 @@ protocol* ([[08-workspace-contribution-framework]]). It assumes only a git check
 1. **Resolve the workspace root** — the nearest ancestor directory containing `AGENTS.md`. That is the
    source of truth. (A tool adapter — a Claude `SessionStart` hook, a Cursor rule — may automate this,
    but the steps below work with zero tool support: just read files.)
-2. **Read the contract + graph:** [[AGENTS]] → `03-skills/skills.registry.json`.
+2. **Read the contract:** [[AGENTS]]. Do **not** ingest `03-skills/skills.registry.json`.
+   For the user's utterance, run `python3 09-tools/skill-loadset.py "<utterance>"` and
+   read only those `SKILL.md` paths. After producing, run
+   `python3 09-tools/close-out-dispatch.py --from-prompt "<utterance>" --run`.
 3. **Read context** via the filesystem (in order):
    - `06-context/role-and-context.md` — who Sean is
    - `06-context/project-context.md` — active projects + pending (authoritative)
@@ -52,13 +55,13 @@ If a file is missing, proceed without it — note only genuinely unexpected gaps
 zero-cost — `description`/`triggers` are already available via the registry. Loading a `SKILL.md` costs
 tokens, so never load speculatively.
 
-1. **Route** — match the user's message to skills by `triggers` (fallback: `description`).
-2. **Expand** — for each matched skill, take its `load_chains[name]` from the registry: the ordered
-   ancestor list (**foundation → hub → spoke**). This is precomputed, so no graph traversal is needed.
-3. **Load in order** — read those `SKILL.md` files foundation-first. A foundation loads *before* the
-   specialty skill so principles are in hand before application.
-4. **Suggest, don't load** — surface each skill's `related` as options; never auto-load them.
-   Cross-cutting lenses (`governed_by`, e.g. `a11y-*`, `visual-qa-*`) load *after* output is produced.
+1. **Route** — `python3 09-tools/skill-loadset.py "<utterance>"` (same algorithm as AGENTS.md).
+   Do not ingest the registry. Fallback if the CLI is missing: match `triggers`, then look up
+   `load_chains[name]`.
+2. **Load in order** — read the printed `SKILL.md` paths foundation-first.
+3. **Suggest, don't load** — surface `related` as options; never auto-load them.
+   After produce, run `python3 09-tools/close-out-dispatch.py --from-prompt "<utterance>" --run`
+   (`governed_by` lenses / SKIP classes are not verified on exit 0).
 
 **Do not** load all spokes of a hub, project-context skills unless the project is referenced, or
 framework spokes for a framework not in use. A typical question needs 1–3 skills.

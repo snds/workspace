@@ -60,10 +60,16 @@ regenerate + repoint; never leave orphaned/superseded-but-live/stub files). Full
 - `validate-workspace.py` — archive provenance + memory-index coverage.
 - `test-validators.py` — negative fixtures: each detector must refuse a planted defect.
 - `evaluate-skill-routing.py` — adversarial Layer 0 corpus + stopword trigger lint (`--check` in CI).
+- `skill-loadset.py` — utterance → ordered SKILL.md paths (`--self-test` in CI).
+- `close-out-dispatch.py` — named command-hub L3 (`--check` coverage; `--run` executes).
+- `validate-layer0-schema.py` — refuse malformed trigger-routes / knowledge-hints / routing cases.
+- `check-secrets.py` — known secret shapes on tracked files.
 
 Before committing any change: `build-related.py` → `build-registry.py` → `build-trigger-routes.py` →
 `evaluate-skill-routing.py` → `validate-integrity.py` →
-`validate-links.py` → `validate-workspace.py`. CI runs these. Done on a write means the
+`validate-links.py` → `validate-workspace.py` → `skill-loadset.py --self-test` →
+`close-out-dispatch.py --check` → `validate-layer0-schema.py --check` → `check-secrets.py`.
+CI runs these. Done on a write means the
 relevant validators ran this session, not only that files were saved. When changing a
 validator, also run `python3 09-tools/test-validators.py` (negative fixtures; CI runs them).
 

@@ -260,14 +260,17 @@ WORK_VERBS = frozenset(
 
 FOLLOWTHROUGH_CLOSE_OUT = (
     "- **after produce** → 03-skills/close-out/SKILL.md then "
-    "03-skills/self-improve/SKILL.md — run the QA loop; mint or heal; "
-    "do not skip because the user did not name those skills."
+    "03-skills/self-improve/SKILL.md — run "
+    "`python3 09-tools/close-out-dispatch.py --from-prompt \"…\" --run`; "
+    "exit 0 is not verified for SKIP classes. Do not skip because the user "
+    "did not name those skills."
 )
 FOLLOWTHROUGH_LAYER0_MISS = (
     "- **Layer 0 missed** → match this prompt against "
     "02-shared-references/trigger-routes.json and skill `triggers` "
     "before producing. Say that Layer 0 missed. Do not freestyle doctrine. "
-    "CLI: `python3 09-tools/vault-retrieve.py \"…\"`."
+    "CLI: `python3 09-tools/skill-loadset.py \"…\"` then "
+    "`python3 09-tools/vault-retrieve.py \"…\"`."
 )
 
 

@@ -23,6 +23,10 @@ python3 09-tools/evaluate-skill-routing.py
 python3 09-tools/validate-integrity.py
 python3 09-tools/validate-links.py
 python3 09-tools/validate-workspace.py
+python3 09-tools/skill-loadset.py --self-test
+python3 09-tools/close-out-dispatch.py --check
+python3 09-tools/validate-layer0-schema.py --check
+python3 09-tools/check-secrets.py
 ```
 
 (`build-registry` after `build-related` — registry hashes SKILL.md bodies that related rewrites.)

@@ -217,6 +217,51 @@ python3 09-tools/intent-run.py install-app   # optional GUI; macOS copies Intent
 
 Measures are printed unless `--run`. Never auto-commit. Context profile on the spec still governs landing.
 
+## skill-loadset.py
+
+AGENTS.md `load_set` as a CLI. Utterance → matched skills, ordered `SKILL.md` paths
+(foundation-first), suggestions, and the close-out command. Do not ingest the registry.
+
+```
+python3 09-tools/skill-loadset.py "dark-mode palette for this dashboard"
+python3 09-tools/skill-loadset.py --json "…"
+python3 09-tools/skill-loadset.py --self-test
+```
+
+Layer 0 miss injection and `CURSOR.md` / `brain.mdc` point here. `--self-test` is the CI smoke.
+
+## close-out-dispatch.py
+
+Named L3 for every `rigor_role: command-hub` skill. `--check` is A2 (coverage). `--run`
+executes CLI detectors; SKIP classes are not verified; exit 2 is honest skip only.
+
+```
+python3 09-tools/close-out-dispatch.py --from-prompt "build this in figma" --run
+python3 09-tools/close-out-dispatch.py --hub qa --run
+python3 09-tools/close-out-dispatch.py --check
+```
+
+Produce-language followthrough in `prompt_route.py` names this CLI. Close-out step 2 runs it first.
+
+## validate-layer0-schema.py
+
+Refuse malformed `trigger-routes.json`, `knowledge-hints.json`, and routing-case JSONL.
+Malformed Layer 0 currently fail-opens to `{}`. Schemas:
+`02-shared-references/schemas/`.
+
+```
+python3 09-tools/validate-layer0-schema.py --check
+```
+
+## check-secrets.py
+
+Stdlib scan of git-tracked files for well-known secret shapes (PEM, AKIA, GitHub/Slack/Anthropic
+keys). Does not echo values. Skip `_archive`, lockfiles, `node_modules`, `*.example`.
+
+```
+python3 09-tools/check-secrets.py
+```
+
 ## eslint-off-system/
 
 Reusable ESLint rules that ban raw color literals and Tailwind arbitrary

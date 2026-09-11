@@ -78,6 +78,8 @@
     "tool adapter": "08-knowledge/cross-domain/tool-adapter-discovery.md",
     "gemini.md": "08-knowledge/cross-domain/tool-adapter-discovery.md",
     "copilot instructions": "08-knowledge/cross-domain/tool-adapter-discovery.md",
-    "web session": "08-knowledge/cross-domain/tool-adapter-discovery.md"
+    "web session": "08-knowledge/cross-domain/tool-adapter-discovery.md",
+    "skill loadset": "08-knowledge/cross-domain/process-rigor-gaps.md",
+    "close-out-dispatch": "08-knowledge/cross-domain/process-rigor-gaps.md"
   }
 }

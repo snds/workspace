@@ -5,13 +5,15 @@ handoff as every other surface. Perplexity is not a fork and Claude is not privi
 
 ## How Perplexity executes the contract
 
-1. Follow **AGENTS.md Canonical read order** (lookup registry `load_chains`, JSON routes,
-   matched knowledge only — do not ingest the whole registry or `_INDEX.md`).
+1. Follow **AGENTS.md Canonical read order**. Compute the load set with
+   `python3 09-tools/skill-loadset.py "…"` — do not ingest the registry or `_INDEX.md`.
 2. Resolve the [context profile](02-shared-references/delivery-playbooks/00-context-profiles.md)
    before any repo action.
 3. Route skills via [trigger-routes.json](02-shared-references/trigger-routes.json) then
-   registry triggers. Invoke [close-out](03-skills/close-out/SKILL.md) then
-   [self-improve](03-skills/self-improve/SKILL.md) after producing.
+   the loadset CLI. After producing, run
+   `python3 09-tools/close-out-dispatch.py --from-prompt "…" --run` then
+   [close-out](03-skills/close-out/SKILL.md) / [self-improve](03-skills/self-improve/SKILL.md).
+   SKIP ≠ verified.
 4. Continuity: read the project's `SESSION-STATE.md` **Live handoff**. Perplexity often
    cannot write the vault — **surface the handoff text for Sean to paste**; do not invent
    a session-log-append protocol this contract does not have.

@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-11 — close-out mint + self-improve attached; validators pending this push_
+_Last updated: 2026-09-11 — first-wave automation wired (loadset + dispatch + schema + secrets)_
 
 ---
 
@@ -8,11 +8,11 @@ _Last updated: 2026-09-11 — close-out mint + self-improve attached; validators
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Per-session vault evolution is live: [[close-out]] mints QA detectors; [[self-improve]] corrects / heals / improves the rest of the vault through ordinary use. Load-miss 1–15 and process-rigor R1–R16 remain applied. Frost DS×AI remains **#18**.
-- **Working set**: `03-skills/self-improve/SKILL.md`, `03-skills/close-out/SKILL.md`, `08-knowledge/cross-domain/self-improving-workspace.md`.
-- **Last action (2026-09-11):** Extended QA interrupt/mint to whole-workspace self-improve; `/optimize` `/health` P0 mechanical heals no longer wait on sign-off. Cursor Grok 4.6 · Cursor · Work MBP.
+- **Current focus**: First-wave automation is live: `skill-loadset.py` + `close-out-dispatch.py` (A1–A3) and Layer 0 schema + secret scan (A6–A7) are wired into followthrough, adapters, bootstrap, and CI. Remaining: A8 Figma bind probe, A4 nightly.sh without cron, A5 ruff, A9 analysis lint.
+- **Working set**: `09-tools/skill-loadset.py`, `09-tools/close-out-dispatch.py`, `09-tools/check-secrets.py`, `09-tools/validate-layer0-schema.py`, `03-skills/close-out/SKILL.md`.
+- **Last action (2026-09-11):** Applied automation-review first wave and attached the CLIs so they are not unused scripts. Cursor Grok 4.6 · Cursor · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Confirm GitHub Actions on this push. Rec 13 Windows `beforeSubmitPrompt` still pending. Human merge cds #35 onto `main`.
+- **Next action:** A8 on the next Figma produce that cannot refuse `Color/*`. Rec 13 Windows `beforeSubmitPrompt` still pending. Human merge cds #35 onto `main`.
 - **Open decisions:** Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot).
 - **Blocked on:** cds #35 human merge (do not merge it from an agent).
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`.

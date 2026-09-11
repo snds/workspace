@@ -9,9 +9,9 @@ If you cannot fetch files, say `[workspace: RULES-ONLY · via:<surface>]` and st
 the standing rules below. Do not invent workspace doctrine from training data.
 
 1. Workspace root = the directory containing `AGENTS.md`.
-2. Lookup `03-skills/skills.registry.json` → `load_chains[name]` for matching `triggers`. Do not ingest the registry.
+2. `python3 09-tools/skill-loadset.py "…"` — ordered SKILL.md paths. Do not ingest the registry.
 3. Match `02-shared-references/trigger-routes.json`.
-4. After producing: `03-skills/close-out/SKILL.md` then `03-skills/self-improve/SKILL.md`.
+4. After producing: `python3 09-tools/close-out-dispatch.py --from-prompt "…" --run` then `03-skills/close-out/SKILL.md` / `self-improve`. SKIP ≠ verified.
 5. Durable learnings go in the vault, never this chat's memory. Never mix this vault into employer `c8/*`.
 6. Figma work uses real library components, never hand-built shapes.
 

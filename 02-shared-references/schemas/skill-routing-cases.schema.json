@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://snds.workspace/schemas/skill-routing-cases.schema.json",
+  "title": "skill-routing-cases.jsonl row",
+  "description": "One adversarial Layer 0 utterance. File is JSONL; each line must match this object.",
+  "type": "object",
+  "required": ["id", "utterance"],
+  "additionalProperties": true,
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "utterance": { "type": "string", "minLength": 1 },
+    "why": { "type": "string" },
+    "expect_skills": { "type": "array", "items": { "type": "string" } },
+    "expect_routes": { "type": "array", "items": { "type": "string" } },
+    "expect_knowledge": { "type": "array", "items": { "type": "string" } },
+    "forbid_skills": { "type": "array", "items": { "type": "string" } },
+    "forbid_routes": { "type": "array", "items": { "type": "string" } },
+    "forbid_knowledge": { "type": "array", "items": { "type": "string" } },
+    "forbid_description_skills": { "type": "array", "items": { "type": "string" } },
+    "min_layer0": { "type": "integer", "minimum": 0 }
+  }
+}

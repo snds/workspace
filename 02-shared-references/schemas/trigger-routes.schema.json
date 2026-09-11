@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://snds.workspace/schemas/trigger-routes.schema.json",
+  "title": "trigger-routes.json",
+  "description": "Curated Layer 0 routes. Malformed files fail-open to {} in prompt_route.py — this schema is the CI refuse.",
+  "type": "object",
+  "required": ["spec_version", "templates", "routes"],
+  "additionalProperties": true,
+  "properties": {
+    "spec_version": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "templates": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "routes": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    }
+  }
+}

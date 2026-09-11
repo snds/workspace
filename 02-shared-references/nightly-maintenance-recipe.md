@@ -28,6 +28,10 @@ bootstrap-generator feedback pass (2026-07-23)._
    `validate-links.py` → `validate-workspace.py` (the standard chain; order matters — see framework #08).
 3b. **DS source freshness (optional)** — `python3 09-tools/ds-source-watch.py --check`. If P1,
    leave a pointer; do **not** `--fetch` from nightly (network + judgment).
+3c. **First-wave detectors** — `python3 09-tools/skill-loadset.py --self-test` →
+   `python3 09-tools/close-out-dispatch.py --check` →
+   `python3 09-tools/validate-layer0-schema.py --check` →
+   `python3 09-tools/check-secrets.py`. Report; do not invent skills.
 4. **Commit + sync** — if clean, commit the mechanical updates and push (the session/auto-commit model
    already does this; the routine just guarantees a daily floor).
 

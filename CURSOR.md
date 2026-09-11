@@ -21,10 +21,11 @@ multi-agent handoff live in AGENTS.md — not duplicated here._
   and `04-preferences/user-preferences.md` at session start per framework 08.
 - **Skills:** Cursor has no Claude slash commands. Route via
   [trigger-routes.md](02-shared-references/trigger-routes.md) (curated) then
-  `03-skills/skills.registry.json` (`load_chains`, foundation→hub→spoke). Project Task agents live in
-  `.cursor/agents/` and encode the same load chains. When triggers miss, run
-  `python3 09-tools/vault-retrieve.py "<query>"` or say that Layer 0 missed.
-  Empty retrieve or a failed CLI is not "nothing in the vault."
+  `python3 09-tools/skill-loadset.py "<utterance>"` (do not ingest the registry).
+  After producing, run `python3 09-tools/close-out-dispatch.py --from-prompt "<utterance>" --run`.
+  Project Task agents live in `.cursor/agents/` and encode the same load chains. When
+  triggers miss, run that loadset CLI then `python3 09-tools/vault-retrieve.py "<query>"`
+  or say that Layer 0 missed. Empty retrieve or a failed CLI is not "nothing in the vault."
 - **Continuity:** on entry, read the active project's `SESSION-STATE.md` **Live handoff**; on
   handoff/pause/end, update it + write a `06-context/sessions/<id>.md` fragment (not a direct
   `session-log.md` append). Stamp `Agent · Surface · Machine`. On session-end also run

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://snds.workspace/schemas/knowledge-hints.schema.json",
+  "title": "knowledge-hints.json",
+  "description": "Curated topic-keyword → 08-knowledge path map for Layer 0.",
+  "type": "object",
+  "required": ["spec_version", "hints"],
+  "additionalProperties": true,
+  "properties": {
+    "spec_version": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "hints": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    }
+  }
+}

@@ -100,8 +100,9 @@ When entering the workspace without prior context, read in this order:
 
 1. [llms.txt](llms.txt) — machine entry point
 2. `AGENTS.md` (this file)
-3. `03-skills/skills.registry.json` — **lookup** `skills[name]` / `load_chains[name]` for
-   matched skills. Do **not** ingest the whole file (~55k tokens).
+3. `python3 09-tools/skill-loadset.py "<utterance>"` — ordered `SKILL.md` paths for this
+   request. Do **not** ingest `03-skills/skills.registry.json` (~55k tokens). Lookup
+   `load_chains[name]` only if the CLI is unavailable.
 4. [trigger-routes.json](02-shared-references/trigger-routes.json) — curated high-leverage
    trigger → load hints (shared by Claude dispatcher + Cursor `beforeSubmitPrompt`). Do
    not ingest the generated [trigger-routes.md](02-shared-references/trigger-routes.md).
@@ -178,8 +179,10 @@ Any new or materially improved skill hub/spoke/addendum must satisfy the **Domai
 
 Skills are discoverable by both humans and machines through one generated graph:
 
-1. `03-skills/skills.registry.json` — the machine graph (tiers, prerequisites, related, triggers,
-   precomputed `load_chains`). Generated from frontmatter by `09-tools/build-registry.py`.
+1. `python3 09-tools/skill-loadset.py "<utterance>"` — runtime load set (do not ingest the
+   generated graph). `03-skills/skills.registry.json` is the lookup the CLI uses
+   (tiers, prerequisites, related, triggers, precomputed `load_chains`). Generated from
+   frontmatter by `09-tools/build-registry.py`.
 2. [trigger-routes.json](02-shared-references/trigger-routes.json) (+ generated
    [trigger-routes.md](02-shared-references/trigger-routes.md)) — curated high-leverage routes
    shared by the Claude dispatcher and Cursor `beforeSubmitPrompt` (both via
@@ -210,6 +213,19 @@ load_set(message, registry):
   return ordered, suggestions, lenses
 ```
 
+Do **not** ingest `skills.registry.json`. Compute the same `load_set` with:
+
+`python3 09-tools/skill-loadset.py "<utterance>"`
+
+It prints matched skills, ordered `03-skills/<name>/SKILL.md` paths (foundation-first), suggestions,
+and the close-out command. After producing, run that command:
+
+`python3 09-tools/close-out-dispatch.py --from-prompt "<utterance>" --run`
+
+Exit 0 means runnable CLIs passed; SKIP classes are **not** verified. Exit 2 is honest skip only.
+`close-out-dispatch.py --check` is the command-hub L3 coverage gate (every `rigor_role: command-hub`
+must name a detector in that table).
+
 `load_chains[name]` is precomputed in the registry (foundation → hub → spoke), so even a weak or
 offline agent needs no graph traversal — it looks up the chain and reads those `SKILL.md` files in
 order. Only `prerequisites` and the implicit spoke→`hub` edge are hard (load-before). `related` is
@@ -220,7 +236,8 @@ Hubs and foundations must declare `triggers` (registry CI).
 Cursor sessions whose first folder is not this checkout still receive Layer-0 routes via the
 user-global `beforeSubmitPrompt` hook (brain-path resolution in `09-tools/prompt_route.py`).
 Produce / ship language on that hook injects `close-out` then `self-improve` even when the
-user did not name them. A work verb with zero Layer-0 hits injects a visible miss, not silence.
+user did not name them, and names `close-out-dispatch.py`. A work verb with zero Layer-0 hits
+injects a visible miss plus `skill-loadset.py` then `vault-retrieve.py`, not silence.
 Injection is not compliance — the model can still skip the files. Surfaces without this hook
 (Perplexity, ChatGPT, Grok.com, a machine that never installed `beforeSubmitPrompt`) only get
 what they actually read from this file.
@@ -430,7 +447,9 @@ not only that files were saved. Commit/CI is the backstop.
 **Enforcement (run before claiming the write complete; CI runs them too):** `build-related.py` → `build-registry.py` →
 `build-trigger-routes.py` → `evaluate-skill-routing.py` →
 `validate-integrity.py` (quality + cross-link continuity + anti-zombie) → `validate-links.py` →
-`validate-workspace.py`. Negative fixtures: `python3 09-tools/test-validators.py`. **Order matters: `build-related` rewrites `## Related` blocks inside SKILL.md
+`validate-workspace.py`. Then the first-wave detectors: `skill-loadset.py --self-test` →
+`close-out-dispatch.py --check` → `validate-layer0-schema.py --check` → `check-secrets.py`.
+Negative fixtures: `python3 09-tools/test-validators.py`. **Order matters: `build-related` rewrites `## Related` blocks inside SKILL.md
 files, and `build-registry` stores a content hash per skill — so the registry must be built _after_ the
 files it hashes are final.** Running registry-first leaves stale hashes whenever `build-related` changes
 anything, which CI catches as `registry-drift` / `capability-validator` failures (observed 2026-07-20).

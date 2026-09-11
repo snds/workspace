@@ -4,13 +4,15 @@ version: "1.0"
 date: 2026-09-11
 surface: Cursor + workspace-core
 sha: 8b1b12f
-status: map-only — numbered recs A1–A10 mint, R1–R3 refuse; nothing applied
+status: first wave applied 2026-09-11 — A1, A2, A3, A6, A7 wired; A4/A5/A8/A9 deferred; A10 keep session-end
 companion: harness-map_v2.0_2026-09-11.md
 ---
 
 # Workspace automation review v1.0 — 2026-09-11
 
-**Read-only map.** Do not mint until Sean approves numbers. Decision rule (written first):
+**First wave applied** (A1, A2, A3, A6, A7) the same day as the map. Remaining: A8 on the next Figma produce that cannot refuse `Color/*`; A4 wrapper without enabling cron; A5 ruff after the script layer stabilizes; A9 analysis pre-registration lint. A10 stays session-end, not GitHub theater. R1–R3 still refuse.
+
+Decision rule (written first):
 
 > If adding script X means the next cold agent on another device can **refuse a false done** or **skip a 400-line skill**, mint X. If both branches are “the model tries harder,” do not mint.
 
@@ -44,7 +46,7 @@ Live registry 2026-09-11: **299** skills, **47** hubs (all have triggers — rec
 
 ## 3. Numbered recommendations
 
-Approve by number. Nothing below has been applied.
+Approve by number. First wave **applied** 2026-09-11 (A1, A2, A3, A6, A7).
 
 | # | Disposition | Change | Risk if skipped | Rollback |
 |---|---|---|---|---|
@@ -62,7 +64,7 @@ Approve by number. Nothing below has been applied.
 | **R2** | **Refuse** | No cloned `vqa` toolkit per hub. Replicate *intent* (type → fonttools; eng → tests; PM → pre-registration). | Token bomb + wrong construct. | n/a |
 | **R3** | **Refuse** | No pasting close-out into 47 hubs or SessionStart `_INDEX` ingest. | Recreates the 70k read-order miss. | n/a |
 
-Suggested first wave: **A1, A2, A3, A6, A7**. A8 on the next Figma produce that cannot refuse `Color/*`. A4 wrapper without enabling nightly. A5 after A1–A3 if the script layer is growing.
+Suggested first wave: **A1, A2, A3, A6, A7** — **applied**. Next: A8 on the next Figma produce that cannot refuse `Color/*`. A4 wrapper without enabling nightly. A5 after A1–A3 if the script layer is growing.
 
 ## 4. Synthesis + field practice (why these, not others)
 

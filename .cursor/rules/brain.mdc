@@ -67,7 +67,12 @@ Any model may write behind the gates in `01-agent-controller.mdc` / AGENTS.md. N
 
 ## Skills & conventions
 
-Route skills; don't bulk-load. Artifacts: `context_descriptor_vN.N_YYYY-MM-DD.ext`. `[[wikilinks]]`.
+Route skills; don't bulk-load. Compute the load set with
+`python3 09-tools/skill-loadset.py "<utterance>"`. After produce, run
+`python3 09-tools/close-out-dispatch.py --from-prompt "<utterance>" --run`
+(exit 0 is not verified for SKIP classes). Layer 0 miss: that loadset CLI, then
+`python3 09-tools/vault-retrieve.py "<query>"`. Artifacts:
+`context_descriptor_vN.N_YYYY-MM-DD.ext`. `[[wikilinks]]`.
 Archive don't delete. Never rename `SKILL.md` (use `aliases`). Never hand-edit generated files
 (`skills.registry.json`, `trigger-routes.md`).
 

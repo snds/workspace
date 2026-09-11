@@ -12,6 +12,7 @@ Usage:
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 import tempfile
 import unittest
@@ -324,6 +325,104 @@ class TestPromptRouteFollowthrough(unittest.TestCase):
     def test_greeting_stays_empty(self):
         text = self.pr.route_prompt("hello how are you today", self.brain)
         self.assertEqual(text, "")
+
+    def test_produce_names_dispatch_cli(self):
+        text = self.pr.route_prompt("build this in figma", self.brain)
+        self.assertIn("close-out-dispatch.py", text)
+
+    def test_layer0_miss_names_loadset_and_retrieve(self):
+        text = self.pr.route_prompt("make the primary button blue", self.brain)
+        self.assertIn("skill-loadset.py", text)
+        self.assertIn("vault-retrieve.py", text)
+
+
+class TestSkillLoadset(unittest.TestCase):
+    def test_dashboard_palette_chain(self):
+        sl = load("skill-loadset")
+        result = sl.load_set("dark-mode palette for this dashboard")
+        self.assertIn("uid-color-for-ui", result["load"])
+        self.assertIn("design-foundations", result["load"])
+        self.assertLess(
+            result["load"].index("design-foundations"),
+            result["load"].index("uid-color-for-ui"),
+        )
+        self.assertTrue(any(p.endswith("uid-color-for-ui/SKILL.md") for p in result["paths"]))
+        self.assertIn("close-out-dispatch.py", result["close_out"])
+
+    def test_self_test_cli(self):
+        sl = load("skill-loadset")
+        self.assertEqual(sl.self_test(), 0)
+
+
+class TestCloseOutDispatch(unittest.TestCase):
+    def test_check_covers_command_hubs(self):
+        d = load("close-out-dispatch")
+        self.assertEqual(d.check_table(), 0)
+
+    def test_figma_is_honest_skip(self):
+        d = load("close-out-dispatch")
+        plan = d.format_plan(["figma"])
+        self.assertIn("figma-mcp-inspect", plan)
+        self.assertIn("SKIP", plan)
+        self.assertEqual(d.run_hubs(["lead-mobile-engineer"]), 2)
+
+    def test_from_prompt_figma(self):
+        d = load("close-out-dispatch")
+        data = json.loads(d.REGISTRY.read_text(encoding="utf-8"))
+        hubs = d.hubs_for_prompt("build this in figma", data)
+        self.assertIn("figma", hubs)
+
+
+class TestCheckSecrets(unittest.TestCase):
+    def test_planted_aws_key_fails(self):
+        cs = load("check-secrets")
+        planted = "AKIA" + "FAKESECRETTEST99"
+        hits = cs.findings_in_text(f"aws_key={planted}\n")
+        self.assertTrue(any(name == "aws-access-key" for name, _ in hits), hits)
+
+    def test_clean_prose_passes(self):
+        cs = load("check-secrets")
+        self.assertEqual(cs.findings_in_text("Use the capability registry URL, not a key.\n"), [])
+
+    def test_scan_planted_tree(self):
+        cs = load("check-secrets")
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            tools = root / "09-tools"
+            tools.mkdir()
+            planted = "sk-ant-" + ("a" * 24)
+            (tools / "leak.txt").write_text(f"key={planted}\n", encoding="utf-8")
+            errors = cs.scan_root(root)
+            self.assertTrue(any("anthropic-key" in e for e in errors), errors)
+
+
+class TestLayer0Schema(unittest.TestCase):
+    def test_live_files_pass(self):
+        vl = load("validate-layer0-schema")
+        errors = vl.check_files()
+        self.assertEqual(errors, [], errors)
+
+    def test_missing_utterance_fails(self):
+        vl = load("validate-layer0-schema")
+        errors: list[str] = []
+        vl.check_routing_case({"id": "x"}, "row", errors)
+        self.assertTrue(any("utterance" in e for e in errors), errors)
+
+    def test_malformed_jsonl_fails(self):
+        vl = load("validate-layer0-schema")
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            bad = root / "cases.jsonl"
+            bad.write_text("{not json\n", encoding="utf-8")
+            tr = root / "tr.json"
+            tr.write_text(
+                '{"spec_version":"1.0","templates":{"A":"x"},"routes":{"a":"b"}}\n',
+                encoding="utf-8",
+            )
+            kh = root / "kh.json"
+            kh.write_text('{"spec_version":"1.0","hints":{"a":"b"}}\n', encoding="utf-8")
+            errors = vl.check_files(tr, kh, bad)
+            self.assertTrue(errors, errors)
 
 
 if __name__ == "__main__":

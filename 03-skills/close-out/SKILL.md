@@ -16,7 +16,7 @@ tier: cross-cutting
 domain: workspace
 related: [qa, plan-ahead, mission-fit, eng, figma, failure-mode-premortem, visual-prove-engine, vision-foundations, visual-qa-toolkit, native-visual-eval, self-improve]
 surfaces: ["*"]
-spec_version: "2.4"
+spec_version: "2.5"
 ---
 
 # Close-out — run the QA loop; page Sean only when it cannot
@@ -49,9 +49,11 @@ produced an artifact). After analysis/PM claims. Not for a question with no writ
 1. **Self-test** — run the domain L3 you already have (toolkit, CI, bind inspect,
    contrast). If the hub never captured evidence, say so; `visual-qa-toolkit`
    will not hunt screenshots.
-2. **Self-validate** — name the detector (`vqa prove`, axe/contrast, Pages
-   `cds-exports-check`, variable bind inspect, `validate-integrity`). Honest skip
-   beats a fake pass.
+2. **Self-validate** — run `python3 09-tools/close-out-dispatch.py --from-prompt "<user prompt>" --run`
+   first. That CLI is the named-detector table (command-hub L3). Exit 0 is not
+   verified for SKIP classes; exit 2 is honest skip only. Then name any extra
+   detector the table could not run (`vqa prove`, axe/contrast, Pages
+   `cds-exports-check`, MCP bind inspect). Honest skip beats a fake pass.
 3. **Self-confirm** — #06: no `verified`/`done` language without that detector.
    Resolve the [context profile](../../02-shared-references/delivery-playbooks/00-context-profiles.md)
    if a repo or product file was touched.
