@@ -10,9 +10,9 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 298,
+    "total": 299,
     "by_tier": {
-      "cross-cutting": 44,
+      "cross-cutting": 45,
       "foundation": 22,
       "hub": 47,
       "spoke": 185
@@ -971,7 +971,8 @@
         "visual-prove-engine",
         "vision-foundations",
         "visual-qa-toolkit",
-        "native-visual-eval"
+        "native-visual-eval",
+        "self-improve"
       ],
       "governed_by": [],
       "governs": [],
@@ -990,7 +991,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:8f9eefd20ed6d5f2af50a56a06f1608e0aebb9a6104e8806cf5585f838789570"
+      "hash": "sha256:2ebf9d655646afe80e6ca8ce4e5498df042335664ec18058e675590387a52325"
     },
     "data-foundations": {
       "path": "03-skills/data-foundations/SKILL.md",
@@ -1754,7 +1755,8 @@
         "render-qa-toolkit",
         "interactive-capture-eval",
         "realtime-visual-craft",
-        "plan-ahead"
+        "plan-ahead",
+        "self-improve"
       ],
       "governed_by": [],
       "governs": [],
@@ -1783,7 +1785,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:ff7e9399e9f0415a6d4a2ea202f87cb6ad9726db152bbe15e56ce60194d5c3a5"
+      "hash": "sha256:9c655fab290ed1c0a6066832211ffc56fce6e8d693b5dd9dbb5c8932002044f4"
     },
     "fe-accessibility": {
       "path": "03-skills/fe-accessibility/SKILL.md",
@@ -3367,7 +3369,8 @@
         "workspace-bootstrap",
         "open-agent-engine",
         "side-chat-handback",
-        "intent-coordination"
+        "intent-coordination",
+        "self-improve"
       ],
       "governed_by": [],
       "governs": [],
@@ -3387,7 +3390,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:e1fe603d8d898845b8b6f312d97f6ee86a0e9c225cae8cada273acfe1023c1ff"
+      "hash": "sha256:bd9f72aa5e87d4b8457b26f76c5d4a08799296811c1d618d6875024cb3b103ca"
     },
     "ia-content-strategy": {
       "path": "03-skills/ia-content-strategy/SKILL.md",
@@ -4845,7 +4848,8 @@
         "open-agent-engine",
         "workspace-bootstrap",
         "intent-coordination",
-        "close-out"
+        "close-out",
+        "self-improve"
       ],
       "governed_by": [],
       "governs": [],
@@ -4866,7 +4870,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:b61de354d9f6bd8399333d4b89a7dc44b18844220aa57bd751f39b70edd360d6"
+      "hash": "sha256:2d006cf7f19a7c86ed85c741f0f10972cefc27bbea02db568d4214372f2d8da6"
     },
     "mobile-android-kotlin": {
       "path": "03-skills/mobile-android-kotlin/SKILL.md",
@@ -5367,7 +5371,8 @@
       "related": [
         "workspace-bootstrap",
         "failure-mode-premortem",
-        "close-out"
+        "close-out",
+        "self-improve"
       ],
       "governed_by": [],
       "governs": [],
@@ -5394,7 +5399,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:a262766a443fa6c900cb7562c06418d9d7cf45dfd123eabb39e5adc93b671946"
+      "hash": "sha256:964488b183fe04895843810f20303dcd90bc104f46d9d47f7056ffaf54a8c358"
     },
     "planetary-terrain-lod": {
       "path": "03-skills/planetary-terrain-lod/SKILL.md",
@@ -6445,6 +6450,39 @@
       ],
       "rigor_role": "measurement",
       "hash": "sha256:d76a553422cf1c8076ddb8ad96c97fd71862795a63b5befe8d1c36b92f23d537"
+    },
+    "self-improve": {
+      "path": "03-skills/self-improve/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "close-out",
+        "plan-ahead",
+        "mission-fit",
+        "harness-map",
+        "failure-mode-premortem"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "self-improve",
+        "self-improving",
+        "self-heal",
+        "self-healing",
+        "self-correcting",
+        "connective tissue",
+        "transferable process",
+        "corollary access"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:84999dd1c01a61a00f93621fff426d064f81cb52d97704be8f69a3205de69bb1"
     },
     "shadow-quality-craft": {
       "path": "03-skills/shadow-quality-craft/SKILL.md",
@@ -9305,6 +9343,9 @@
       "eng-foundations",
       "lead-security-architect",
       "sec-threat-modeling"
+    ],
+    "self-improve": [
+      "self-improve"
     ],
     "shadow-quality-craft": [
       "realtime-visual-craft",

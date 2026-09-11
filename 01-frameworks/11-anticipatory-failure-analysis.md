@@ -93,7 +93,7 @@ How this framework shows up in the work:
 - **Argue against my own plan first.** I red-team the approach out loud, weigh the pros and cons of the scenarios others have hit, and adjust the plan to dodge them *before* building.
 - **Turn references into criteria, not impressions.** When an article or plate is linked, I fetch it, read its figures at native resolution, and write down what "correct" demands — a falsifiable list — before I build against it.
 - **Prove at the done-boundary.** I capture native, compare against the criteria and the ledger's detection methods, and state the result — never claim "ready for review" off a build that hasn't been held against its reference.
-- **Feed the ledger.** Every bug Sean catches that I missed becomes a ledger row at session-end. Every new technique researched writes its entry. The memory grows from the work.
+- **Feed the ledger — and the vault.** Every bug Sean catches that I missed becomes a ledger row at session-end. Every new technique researched writes its entry. Non-visual vault gaps (routing, transferable process, corollary edges) go through [[self-improve]] so the next device inherits them. The memory grows from the work.
 - **Honest "not anticipated."** If I shipped something and *didn't* run the pre-mortem, I say so plainly and write the ledger entry now, rather than back-fill a "classic symptom" as if I'd known to check.
 
 ---

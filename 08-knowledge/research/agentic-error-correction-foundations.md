@@ -1,7 +1,7 @@
 ---
 tags: [research, agents, reliability, verification, error-correction, loops, second-brain]
 created: 2026-08-26
-updated: 2026-08-26
+updated: 2026-09-11
 status: working
 confidence: medium
 sources:
@@ -15,7 +15,7 @@ sources:
   - "Liang et al., Multi-Agent Debate / Degeneration-of-Thought (EMNLP 2024)"
   - "Du et al., Improving Factuality through Multiagent Debate (2023)"
   - "Pitre, Use AI to Need Less AI (via [[component-contracts-and-schemas]])"
-related_skills: [failure-mode-premortem, visual-qa-toolkit, native-visual-eval, visual-reference-replication, open-agent-engine, workspace-bootstrap]
+related_skills: [failure-mode-premortem, visual-qa-toolkit, native-visual-eval, visual-reference-replication, open-agent-engine, workspace-bootstrap, self-improve, close-out]
 related_projects: [19-workspace-brain, 20-lcars-generative-interface]
 relations:
   builds-on:
@@ -45,8 +45,8 @@ relations:
   - *Timeless:* authority belongs to whatever layer can refuse deterministically (schema, test, SSIM, validator), not to whoever instructs loudest (`AGENTS.md` prose).
   - *Dated (as of 2026-08):* at equal token cost, extra samples beat Self-Refine / Reflexion rewrite loops on the sizes tested; Reflexion can silently never fire if the model judges itself correct.
   - *Dated (this vault):* we already observed the same failure family: VLM-as-measurement, Spirit-as-done, label volatility, silent degradation, tests-green ≠ Literal match.
-  - *Pointer:* operational home is `07-projects/19-workspace-brain/`; do not invent a parallel brain.
-- **As of:** 2026-08 · **Status:** working (field survey + workspace mapping; not yet a skill or framework)
+  - *Pointer:* operational home is `07-projects/19-workspace-brain/`; do not invent a parallel brain. Per-session vault evolution: [[self-improve]]. QA detector mint: [[close-out]].
+- **As of:** 2026-09 · **Status:** working (field survey + mapping; operational homes [[self-improve]] / [[close-out]])
 
 ---
 
@@ -116,7 +116,7 @@ Spend the same tokens on more attempts, then pick by majority or by an *external
 
 Sean catching a bug is the most expensive detector and the only one that currently closes classes this brain did not anticipate. Framework #11's self-improving loop is this: reactive catch → ledger row → proactive check next time. Nate B. Jones' operating point matches: the bottleneck moved to handoffs, state, receipts, and review, not to a more autonomous model. Open Engine in this workspace is the movement layer for that; it must not become a second substance store.
 
-**Use here:** already the design. Do not try to replace Sean as the last detector. Make his catches cheap to convert into mechanical detectors.
+**Use here:** already the design. Sean catching a class this brain did not anticipate is still the expensive detector. Convert it into a mechanical detector or corollary edge via [[self-improve]] / [[close-out]] mint. Do not page him to be ordinary L3.
 
 ### The generation-verification gap
 
@@ -234,7 +234,7 @@ This is not a greenfield agent framework. It is a partially built reliability st
 - **Gates degrade silently.** Hook payload drop, trigger under-fire, `except: return None`, progress counters on the cheap phase. Same family as MediaSentinel.
 - **Token frugality fights loops.** Extra critique rounds are a recurring per-session cost. They must earn their tokens against an independent detector, or they are completeness theater.
 - **Model-decided stop.** Agents declare done when the skill's prove-gate was never run (LCARS: green tests ≠ Matches Literal).
-- **Maintenance loop now in `/optimize`.** Seven-surface system ECC (skill graph, contract, knowledge, memory, routing, validators, handoff): probes first, then judgment. Distinct from per-task loops. Nightly recipe remains opt-in cron, not a substitute.
+- **Maintenance loop now in `/optimize` plus per-session [[self-improve]].** Seven-surface system ECC (skill graph, contract, knowledge, memory, routing, validators, handoff): probes first, then judgment. P0 mechanical heals no longer wait on sign-off. Nightly recipe remains opt-in cron, not a substitute. Ordinary-use improve (transfer, corollary edges, research-worthy skillsets) is [[self-improve]], not a parallel brain.
 
 ---
 

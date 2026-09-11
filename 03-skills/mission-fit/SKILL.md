@@ -21,7 +21,7 @@ triggers:
   - blocked not done
 tier: cross-cutting
 domain: workspace
-related: [harness-map, open-agent-engine, workspace-bootstrap, intent-coordination, close-out]
+related: [harness-map, open-agent-engine, workspace-bootstrap, intent-coordination, close-out, self-improve]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -58,9 +58,10 @@ and [[open-agent-engine]] receipts. Not a paste of his product zip.
    detectors are minted and pushed here, not paged to Sean. Consequential publish/delete
    still human.
 6. **Read-only first.** Recommendations are numbered; nothing in the harness changes
-   until Sean approves — **except** [[close-out]] capability mint on this
-   `personal-solo` workspace (missing detector → smallest calibrated tool/skill +
-   push). That path does not apply to employer repos or leave-the-building.
+   until Sean approves — **except** [[close-out]] capability mint and
+   [[self-improve]] mechanical P0 heals / calibrated session-mints on this
+   `personal-solo` workspace. That path does not apply to employer repos or
+   leave-the-building.
 
 ## When to run
 
@@ -254,3 +255,4 @@ see [[nate-jones-harness-enrichments]] §3/§10 and framework #06 Judge check.
 - peer ↔ [[workspace-bootstrap]]
 - peer ↔ [[intent-coordination]]
 - peer ↔ [[close-out]]
+- peer ↔ [[self-improve]]

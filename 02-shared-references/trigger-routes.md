@@ -251,6 +251,12 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `llm qa` | 03-skills/close-out/SKILL.md — agent runs the visual/code QA loop; human review is the exception |
 | `prove-gate` | 03-skills/close-out/SKILL.md — Figma: inspect + native-zoom + correct; mint missing probes before paging |
 | `capability mint` | 03-skills/close-out/SKILL.md — missing detector → smallest skill/tool + planted fixture + independent workspace push |
+| `self-improve` | 03-skills/self-improve/SKILL.md — per-session correct / heal / improve; transfer processes; corollary edges; independent push |
+| `self-improving` | 03-skills/self-improve/SKILL.md — leave the vault better than this session found it |
+| `self-heal` | 03-skills/self-improve/SKILL.md — mechanical P0 connective-tissue heals without waiting |
+| `connective tissue` | 03-skills/self-improve/SKILL.md — smallest graph edge before a new hub |
+| `transferable process` | 03-skills/self-improve/SKILL.md — adapt another hub's process; do not clone its toolkit |
+| `corollary access` | 03-skills/self-improve/SKILL.md — reciprocal related + hint + one Layer-0 key before a new file |
 | `ai design systems course` | 07-projects/22-ai-design-systems-course/ — read SESSION-STATE.md Live handoff then synthesis/running.md |
 | `brad frost course` | 07-projects/22-ai-design-systems-course/ — read SESSION-STATE.md Live handoff then synthesis/running.md |
 | `frost ds course` | 07-projects/22-ai-design-systems-course/ — read SESSION-STATE.md Live handoff then synthesis/running.md |
@@ -367,6 +373,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `sec-authn-authz` | cross-cutting | `authentication`, `authorization`, `oauth`, `oidc`, `jwt`, `session management` (+14) | `eng-foundations` → `lead-security-architect` → `sec-authn-authz` |
 | `sec-supply-chain` | cross-cutting | `supply chain`, `dependency`, `sbom`, `provenance`, `slsa`, `sigstore` (+12) | `eng-foundations` → `lead-security-architect` → `sec-supply-chain` |
 | `sec-threat-modeling` | cross-cutting | `threat model`, `stride`, `pasta`, `attack tree`, `trust boundary`, `data flow diagram` (+8) | `eng-foundations` → `lead-security-architect` → `sec-threat-modeling` |
+| `self-improve` | cross-cutting | `self-improve`, `self-improving`, `self-heal`, `self-healing`, `self-correcting`, `connective tissue` (+2) | `self-improve` |
 | `side-chat-handback` | cross-cutting | `handback`, `/handback`, `end side chat`, `close side chat`, `hand this back`, `hand back` (+2) | `side-chat-handback` |
 | `skill-placement` | cross-cutting | `create a skill`, `generate skill`, `make a skill`, `new skill`, `skill placement` | `skill-placement` |
 | `visual-prove-engine` | cross-cutting | `prove this build`, `cuespec`, `measured verdict`, `visual prove`, `rank builds`, `improvement ledger` (+11) | `design-foundations` → `lead-visual-qa` → `visual-prove-engine` |
@@ -377,4 +384,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 256 · Registry rows: 98_
+_Curated routes: 262 · Registry rows: 99_

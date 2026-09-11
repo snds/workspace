@@ -14,7 +14,7 @@ aliases: [close-out]
 triggers: [close-out, self-police, prove-gate, human visual qa, named detector, llm qa, capability mint]
 tier: cross-cutting
 domain: workspace
-related: [qa, plan-ahead, mission-fit, eng, figma, failure-mode-premortem, visual-prove-engine, vision-foundations, visual-qa-toolkit, native-visual-eval]
+related: [qa, plan-ahead, mission-fit, eng, figma, failure-mode-premortem, visual-prove-engine, vision-foundations, visual-qa-toolkit, native-visual-eval, self-improve]
 surfaces: ["*"]
 spec_version: "2.4"
 ---
@@ -116,6 +116,9 @@ is usable in this session.
 Hair-trigger skills that steal routing, a detector whose only job is "looks
 good", or a mint that fails CI are not a pass.
 
+Non-detector vault gaps (missed route, transferable process, corollary edge,
+research-worthy skillset) → invoke [[self-improve]]. Do not grow this file.
+
 ## Figma prove-gate (when `/figma` or design-engineer produced canvas)
 
 Loop until pass or interrupt:
@@ -144,4 +147,4 @@ Loop until pass or interrupt:
 - Cargo-cult SSIM onto a threat model or a career checklist.
 
 ## Related
-- peer ↔ [[qa]] · [[plan-ahead]] · [[mission-fit]] · [[eng]] · [[figma]]
+- peer ↔ [[qa]] · [[plan-ahead]] · [[mission-fit]] · [[eng]] · [[figma]] · [[self-improve]]

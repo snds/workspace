@@ -213,7 +213,8 @@ offline agent needs no graph traversal — it looks up the chain and reads those
 order. Only `prerequisites` and the implicit spoke→`hub` edge are hard (load-before). `related` is
 navigational (never auto-loaded). `governed_by` lenses load **after** the skill produces — invoke
 `03-skills/close-out/SKILL.md` (mint a missing detector and push here; page Sean only if
-self-critique or mint still fails). Hubs and foundations must declare `triggers` (registry CI).
+self-critique or mint still fails). Vault gaps beyond QA → `03-skills/self-improve/SKILL.md`.
+Hubs and foundations must declare `triggers` (registry CI).
 Cursor sessions whose first folder is not this checkout still receive Layer-0 routes via the
 user-global `beforeSubmitPrompt` hook (brain-path resolution in `09-tools/prompt_route.py`).
 Vendor Figma plugin skills are mechanics only; workspace `figma` + `design-engineer` own
@@ -358,6 +359,8 @@ context store; it updates the shared one so the next agent inherits an unbroken 
 3. **On handoff / pause / end** — rewrite the Live handoff block (atomically, no stale fields) and write your
    session block as a **fragment** (`06-context/sessions/<id>.md` with a `SessionID:` line) — not a direct
    append to `session-log.md`. Compaction folds it in. Leave the next agent a clean "next action."
+   If this session hit a vault gap (missed route, broken edge, transferable process, missing spoke),
+   invoke `03-skills/self-improve/SKILL.md` before leaving so the other machine inherits the mint.
 4. **Concurrent edits** — disjoint fragments + the `merge=union` log rarely conflict now, so concurrent
    sessions/machines/surfaces mostly reconcile automatically (compaction at session-start/end). `/reconcile`
    remains for the structured `project-context.md` merge, which is flagged for a human, never auto-guessed.

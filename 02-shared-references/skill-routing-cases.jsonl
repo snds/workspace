@@ -39,3 +39,5 @@
 {"id": "human-visual-qa-named", "utterance": "run human visual qa on this output", "expect_skills": ["close-out"], "why": "interrupt policy lives in close-out, not a standing Sean stop"}
 {"id": "llm-qa-loop", "utterance": "run llm qa on this figma generate", "expect_skills": ["close-out"], "expect_routes": ["llm qa"], "why": "llm qa is the close-out loop, not a page-Sean trigger"}
 {"id": "capability-mint", "utterance": "capability mint a detector for this visual class", "expect_skills": ["close-out"], "expect_routes": ["capability mint"], "why": "missing-detector path is close-out, not a new hub"}
+{"id": "self-improve-named", "utterance": "self-improve the vault from this session gap", "expect_skills": ["self-improve"], "expect_routes": ["self-improve"], "why": "ordinary-use vault evolution is self-improve, not /optimize"}
+{"id": "transferable-process", "utterance": "apply this transferable process to another hub without cloning its toolkit", "expect_skills": ["self-improve"], "expect_routes": ["transferable process"], "why": "adapt a process across hubs; do not clone the toolkit"}

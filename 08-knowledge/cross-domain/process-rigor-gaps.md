@@ -5,11 +5,11 @@ updated: 2026-09-11
 status: working
 confidence: high
 sources: [01-frameworks/13-domain-rigor-stack.md, 03-skills/skills.registry.json, 02-shared-references/delivery-playbooks/05-validation-harness.md, 03-skills/plan-ahead/SKILL.md]
-related_skills: [harness-map, plan-ahead, qa, figma, eng, mission-fit, failure-mode-premortem]
+related_skills: [harness-map, plan-ahead, qa, figma, eng, mission-fit, failure-mode-premortem, close-out, self-improve]
 related_projects: [19-workspace-brain]
 relations:
   builds-on: ["[[agent-load-miss-review]]", "[[nate-jones-harness-enrichments]]"]
-  relates-to: ["[[workspace-infrastructure]]"]
+  relates-to: ["[[workspace-infrastructure]]", "[[self-improving-workspace]]"]
 ---
 
 # Process rigor gaps — whole workspace
@@ -47,11 +47,12 @@ relations:
 | Career / Adobe / Vision / Science | thin / none | mixed | checklists | Honest INCOMPLETE per #13 — do not fake L3 |
 | Context / intent | `00-context-profiles.md`, #06, #15, #16 | Phrase `context profile` only; `audit`/`review` loads #06 file not `/qa` | CREATE never attaches JUDGE | Profile, target user, decision owner, and `done` are optional manners |
 
-## Four missing connective protocols (one home each)
+## Connective protocols (one home each)
 
 1. **Close-out** — after produce: self-test → named detector → #06 honesty → capture/assess/correct. Missing detector → **capability mint** (smallest skill/tool, calibrate, independent workspace push). **Interrupt Sean iff** self-critique is failing or mint still cannot hit the accuracy/perf bar.
 2. **Plan-ahead (general)** — not only cds/proto. Fetch, CI-contract vs local overlay, merge-conflict files, generated artifacts, first later-breaker. #07 stacking is the PR-shaped instance.
 3. **Figma prove-gate** — instances not rects; semantic+mode binds not `Color/*`; variant matrix; native-zoom capture; correct and re-prove. Mint a missing inspect/cuespec before paging.
 4. **Graph attach** — `governed_by` on producer hubs; real `triggers` on command wrappers; `governs` populated on `qa` / a11y / visual-qa.
+5. **Self-improve** — per-session correct / heal / improve for the whole vault, not only QA detectors. Transfer processes across hubs (adapt, don't clone toolkits). Wire corollary edges. Push independently. Home: [[self-improve]]. Map: [[self-improving-workspace]].
 
 Load-miss map: [[agent-load-miss-review]]. Proofboard: [[05-validation-harness]].

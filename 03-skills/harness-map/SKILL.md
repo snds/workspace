@@ -22,7 +22,7 @@ triggers:
   - harness crud
 tier: cross-cutting
 domain: workspace
-related: [mission-fit, workspace-bootstrap, open-agent-engine, side-chat-handback, intent-coordination]
+related: [mission-fit, workspace-bootstrap, open-agent-engine, side-chat-handback, intent-coordination, self-improve]
 surfaces: ["*"]
 spec_version: "2.0"
 ---
@@ -251,3 +251,4 @@ tools · data reach · permissions · quality bar · proof path · supervision �
 - peer ↔ [[open-agent-engine]]
 - peer ↔ [[side-chat-handback]]
 - peer ↔ [[intent-coordination]]
+- peer ↔ [[self-improve]]

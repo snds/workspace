@@ -1,6 +1,6 @@
 ---
 name: optimize
-description: Workspace audit. Reviews CLAUDE.md, frameworks, MOCs, context files, skills for stale items, contradictions, drift, and consolidation opportunities. Runs a seven-surface system maintenance loop (skill graph, contract, knowledge, memory, routing, validators, handoff): deterministic probes first, then judgment. Distinct from per-task prove-gates. Outputs a prioritized punch list (P0/P1/P2) and applies fixes only with sign-off. Logs to 06-context/audit-log.md. Invoked as /optimize or triggered by "audit the brain" / "workflow audit" / "system error correction".
+description: Workspace audit. Reviews CLAUDE.md, frameworks, MOCs, context files, skills for stale items, contradictions, drift, and consolidation opportunities. Runs a seven-surface system maintenance loop (skill graph, contract, knowledge, memory, routing, validators, handoff): deterministic probes first, then judgment. Distinct from per-task prove-gates. P0 mechanical heals apply via self-improve without waiting; archive/rename/shrinking consolidation still need sign-off. Logs to 06-context/audit-log.md. Invoked as /optimize or triggered by "audit the brain" / "workflow audit" / "system error correction".
 ---
 
 # /optimize — Brain audit
@@ -69,7 +69,8 @@ treat a green live-tree validator as proof the detector still has teeth; that is
 what `test-validators.py` is for.
 
 The opt-in cron cousin is `02-shared-references/nightly-maintenance-recipe.md`
-(fold / heal / rebuild). `/optimize` stays human-in-the-loop judgment. Do not
+(fold / heal / rebuild). Per-session vault evolution is [[self-improve]] (portable
+`03-skills/`, all surfaces). `/optimize` is the periodic full audit. Do not
 auto-enable nightly from this skill.
 
 ### Step 2 — Run the checks
@@ -150,9 +151,11 @@ Render in this format:
 Want me to apply any of these now? Reply with the numbers (e.g., "P0 1,2 + P1 3") or "all P0" or "skip all".
 ```
 
-### Step 4 — Apply approved fixes
+### Step 4 — Apply
 
-Only apply fixes the user explicitly authorizes. Rules:
+**P0 mechanical heals** (dangling skill wikilink, registry drift, empty hub triggers, reciprocity hole, Layer-0 fixture for an utterance that under-fired *this session*): apply via [[self-improve]] on `personal-solo` without waiting. Rebuild validators. Push. Still list them in the report.
+
+**P1/P2, archive, rename, shrinking consolidation, new foundation/framework:** only with explicit authorization. Rules:
 
 - **No deletions** without explicit per-fix confirmation. Move to `_archive/` instead.
 - **Move-don't-rename** for files referenced from elsewhere — update references first, then move.
@@ -208,7 +211,8 @@ If carried-forward findings include things that ought to become real pending ite
 - Doesn't archive without confirmation
 - Doesn't second-guess deliberate stylistic choices in user-authored content
 - Doesn't audit project-internal artifacts (`05-artifacts/`, `07-projects/<project>/<work-files>`) — those have their own per-project review cadence; this is meta-level only
-- Doesn't replace per-task prove-gates (Literal prove, #06 detector check, Proofboard). Those fire inside producing work.
+- Doesn't replace per-task prove-gates (Literal prove, #06 detector check, Proofboard, [[close-out]]). Those fire inside producing work.
+- Doesn't replace per-session [[self-improve]]. This skill is the periodic full audit; self-improve is ordinary-use evolution.
 - Doesn't auto-enable the nightly recipe. That remains opt-in.
 
 ## Tone

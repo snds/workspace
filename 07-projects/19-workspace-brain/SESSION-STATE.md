@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-11 — load-miss 1–15 + process-rigor R1–R16 applied; validators green_
+_Last updated: 2026-09-11 — close-out mint + self-improve attached; validators pending this push_
 
 ---
 
@@ -8,16 +8,15 @@ _Last updated: 2026-09-11 — load-miss 1–15 + process-rigor R1–R16 applied;
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Load-miss recs **1–15** and process-rigor recs **R1–R16** are **applied** (close-out skill, hub triggers, Layer-0 diet, integrity unblocks). Frost DS×AI remains **#18**. Do not re-open the maps unless a cold-agent miss shows up in the wild.
-- **Working set**: `03-skills/close-out/SKILL.md`, `08-knowledge/cross-domain/process-rigor-gaps.md`, `08-knowledge/cross-domain/agent-load-miss-review.md`, reports in `07-projects/19-workspace-brain/reports/`.
-- **Last action (2026-09-11):** Applied both maps in attach-order (integrity → close-out → routing → hub triggers → CI checks). Local validators green. Cursor Grok 4.6 · Cursor · Work MBP.
+- **Current focus**: Per-session vault evolution is live: [[close-out]] mints QA detectors; [[self-improve]] corrects / heals / improves the rest of the vault through ordinary use. Load-miss 1–15 and process-rigor R1–R16 remain applied. Frost DS×AI remains **#18**.
+- **Working set**: `03-skills/self-improve/SKILL.md`, `03-skills/close-out/SKILL.md`, `08-knowledge/cross-domain/self-improving-workspace.md`.
+- **Last action (2026-09-11):** Extended QA interrupt/mint to whole-workspace self-improve; `/optimize` `/health` P0 mechanical heals no longer wait on sign-off. Cursor Grok 4.6 · Cursor · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Human merge cds #35 onto `main`. Confirm GitHub Actions on this push. Rec 13 Windows `beforeSubmitPrompt` still pending.
-- **Open decisions:** Mission Fit auto-mint still open. Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot).
+- **Next action:** Confirm GitHub Actions on this push. Rec 13 Windows `beforeSubmitPrompt` still pending. Human merge cds #35 onto `main`.
+- **Open decisions:** Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot).
 - **Blocked on:** cds #35 human merge (do not merge it from an agent).
-- **Blocked on:** Numbered approval of load-miss **1–15** and process-rigor **R1–R16**. cds #35 human merge (do not merge it from an agent).
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`.
-- **Agent thread**: `… → (2026-09-04): vgpu + 3D extensions + Intent #17` → `Cursor Grok 4.6 / Cursor / Work MBP (2026-09-11): plan-ahead + Frost #18 rebase + load-miss map + process-rigor map`.
+- **Agent thread**: `… → (2026-09-04): vgpu + 3D extensions + Intent #17` → `Cursor Grok 4.6 / Cursor / Work MBP (2026-09-11): plan-ahead + Frost #18 + load-miss + process-rigor + close-out mint + self-improve`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.

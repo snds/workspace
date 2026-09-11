@@ -41,8 +41,10 @@ bootstrap-generator feedback pass (2026-07-23)._
 
 ## Guardrails
 
-- **Report, don't rewrite.** Automation folds/rebuilds/commits; it does not make epistemic judgments
-  (refuting a claim, archiving an orphan). Those wait for a human-in-the-loop `/health` pass.
+- **Report, don't rewrite notes.** Automation folds/rebuilds/commits; it does not make epistemic judgments
+  (refuting a claim, archiving an orphan). Those wait for `/health` + judgment. Mechanical P0
+  graph heals (rebuild indexes, registry) are already in step 3. Inventing skills is **not**
+  nightly's job — that is [[self-improve]] during ordinary sessions.
   The judgment-heavy cousin is `/optimize` (seven-surface system ECC). This recipe does not
   replace it.
 - **Respect the walls.** Never touch `06-context/personal.md` beyond git; never push employer content.

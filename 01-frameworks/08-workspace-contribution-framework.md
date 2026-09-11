@@ -136,8 +136,9 @@ Each layer: what belongs · when to add vs. extend · what never goes here · th
   clear the [[13-domain-rigor-stack]] acceptance checklist (L1–L5 intents) before calling the
   cluster done; then `python3 09-tools/build-related.py` → `build-registry.py`; ensure cross-links
   are reciprocal. CI gates both. **On-the-fly L3** (a missing detector discovered mid-close-out)
-  uses the same gates, then independent `personal-solo` push — see [[close-out]] capability mint.
-  Do not mint a hub or a "looks good" skill.
+  and **on-the-fly vault improve** (routing, transferable process, corollary edges) use the same
+  gates, then independent `personal-solo` push — see [[close-out]] capability mint and
+  [[self-improve]]. Do not mint a hub or a "looks good" skill.
 - **Domain rigor (mandatory):** knowledge-only hubs are incomplete. Every domain cluster needs an
   operating model (L1), command/contract surface (L2), measurement path for audits (L3), intact
   foundation→hub→spoke chain (L4), and multi-voice + doctrine precedence (L5). Instantiation varies

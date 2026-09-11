@@ -14,7 +14,7 @@ aliases: [plan-ahead, order-of-operations, cds-then-proto]
 triggers: [order of operations, cds then proto, consume cds, pages build, follow up, overlay vs main, first breaker, dual repo, squash leftover, re-export, implement this, open a pr, pull request, fix ci, merge conflict]
 tier: cross-cutting
 domain: workspace
-related: [workspace-bootstrap, failure-mode-premortem, close-out]
+related: [workspace-bootstrap, failure-mode-premortem, close-out, self-improve]
 surfaces: ["*"]
 spec_version: "2.2"
 ---
@@ -82,3 +82,4 @@ them. Proto imported `@centric/ui/sonner`. Local Vite succeeded. Pages failed. K
 - peer ↔ [[workspace-bootstrap]]
 - peer ↔ [[failure-mode-premortem]]
 - peer ↔ [[close-out]]
+- peer ↔ [[self-improve]]

@@ -158,7 +158,7 @@ The structure of a QA report:
 4. **Reference comparison.** What I compared against, at what zoom, what I saw. Annotated where helpful.
 5. **Next-pass scope.** What the next iteration round addresses, sequenced by leverage.
 6. **Detector.** What independent check ran, or `none (judgment only)`.
-7. **Skill / tool gaps.** If the framework needed a capability I didn't have, **mint it** via [[close-out]] (smallest layer, planted-defect fixture, independent workspace push). Naming the gap without minting is only the interrupt receipt after mint missed.
+7. **Skill / tool gaps.** If the framework needed a capability I didn't have, **mint it** via [[close-out]] (detectors) or [[self-improve]] (routing, transfer, corollary edges). Smallest layer, planted-defect fixture when it's a detector, independent workspace push. Naming the gap without minting is only the interrupt receipt after mint missed.
 
 What this framework does **not** change:
 

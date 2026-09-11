@@ -55,9 +55,11 @@ For each finding, decide the disposition — don't just relay the script output:
   hit is legitimate — domain vocabulary, or a historical/immutable file — don't reword it; add the
   exemption to `check-terminology.py` instead, so the rule stays high-precision.
 
-### Step 3 — Apply only with sign-off, and log
+### Step 3 — Apply mechanical P0; sign-off the rest
 
-Present the triaged list; apply fixes only after Sean agrees (same discipline as `/optimize`).
+**Dangling typed edges and skill-graph reciprocity holes** that validators already fail: fix via [[self-improve]] on `personal-solo` without waiting, then log.
+
+**`#stale` / aging / orphan disposition, archive, terminology exemptions:** present the triaged list; apply after Sean agrees (same as `/optimize` for judgment).
 Append a one-line entry to `06-context/audit-log.md`:
 `YYYY-MM-DD /health — N orphans, M stale, K dangling; {what was fixed / deferred}`.
 
