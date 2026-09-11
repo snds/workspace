@@ -4,6 +4,172 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-08-10 — Harness-map cycle closed + CI triage
+
+SessionID: 2026-08-10-work-hmclose
+--- SESSION BLOCK ---
+Date: 2026-08-10
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.5
+Project(s): 19-workspace-brain
+Summary: Closed the harness-map cycle — applied #1–#3+#6, accepted #4/#5/#7/#8 standing; triaged email CI failures (INDEX/MEMORY orphans, fixed by #1); main green and pushed through `6b92c1a`.
+Artifacts:
+  - 07-projects/19-workspace-brain/reports/harness-map_v1.0_2026-08-07.md — map + stamp + applied/accepted dispositions
+  - 07-projects/19-workspace-brain/reports/harness-map.stamp — first real stamp (2026-08-07)
+  - 06-context/project-context-detail.md — graduated pending substance
+  - 06-context/project-registry.md — Active Projects narratives (load later)
+  - 09-tools/check-unattended-runner-gate.py — unattended runner hard gate
+Decisions:
+  - Apply harness-map #1–#3+#6; leave #4 Keep, #5/#8 Probation, #7 Load later/Keep as standing (Sean ack).
+  - Retest #5 on next plugin publish; revisit #8 ~2026-09-07.
+Evidence:
+  - workspace CI all green after apply @ github.com/snds/workspace actions on e2d28eb — verified
+  - prior workspace-integrity failures (runs 31190694022, 31191199865) = INDEX/MEMORY orphans — verified fixed by #1
+Pending added: (none)
+Pending resolved:
+  - Harness-map first-run + stamp (was next action on baton)
+Project status changes:
+  - 19-workspace-brain: harness-map cycle closed; baton points at optional mission-fit + probation retests
+Next:
+  - Optional: mission-fit on one unreliable “done”
+  - Retest harness-map #5 on next build-local-skill-plugin publish
+  - Revisit harness-map #8 (~2026-09-07)
+  - Still open from prior baton: ^pc-07 / ^pc-11 homes; lane ambiguity ^pc-30 / ^pc-41
+--- END BLOCK ---
+
+
+### 2026-08-05 — Layer-1 vault retrieve + dispatcher fallback
+
+SessionID: 2026-08-05-voyager-5d6242
+--- SESSION BLOCK ---
+Date: 2026-08-05
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.5
+Project(s): 19-workspace-brain
+Summary: Shipped Layer-1 lexical vault retrieval (`09-tools/vault-retrieve.py`, stdlib FTS5) and wired it as a capped Claude dispatcher fallback when Layer 0 under-fires; Cursor gets CLI-on-demand only.
+Artifacts:
+  - 09-tools/vault-retrieve.py — FTS index/rebuild/query + graph expand; machine-local `.claude/state/vault-retrieve/`
+  - .claude/hooks/dispatcher.py — SessionStart index refresh; UserPromptSubmit lexical tier (min 2 Layer-0 targets, cap 2, `--cached`)
+Decisions:
+  - Triggers stay primary; lexical is gap-fill only (not a peer flood on every prompt)
+  - Index personal vault layers only — no `07-projects/` / employer surfaces
+  - Cursor has no prompt-hook equivalent → document CLI; do not fake a dispatcher tier there
+Pending added:
+  - Optional: golden-set eval of trigger misses vs lexical baseline
+  - Optional: dense/embedding path as capability-registry entry with degrade→lexical
+Pending resolved:
+  - (none from prior baton; this session was additive tooling)
+Next:
+  - Prove lexical fallback in a live Claude Code session (SessionStart rebuild + under-fire inject)
+  - Optionally design dense Layer 2 only after golden-set shows lexical gaps worth the capability
+  - Prior baton still open: review personal:SEA-11; decide personal:SEA-32
+Git: 55b9f2a (feature) + this session commit
+--- END BLOCK ---
+
+
+### 2026-08-03 — Domain rigor stack hardening
+
+SessionID: 2026-08-03-voyager-r7k2
+--- SESSION BLOCK ---
+Date: 2026-08-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Project(s): Workspace (skill hubs / domain rigor)
+Summary: Encoded five-layer domain rigor stack (#13) and shipped L1–L5 hardening across hubs/spokes outside the parallel photoreal session; measurement toolkits + reciprocity/capability follow-ups landed.
+Artifacts:
+  - 01-frameworks/13-domain-rigor-stack.md — reusable L1–L5 contribution mechanism
+  - 01-frameworks/14-engineering-operating-model.md — eng L1 gates
+  - 01-frameworks/15-analysis-operating-model.md — analysis L1 gates
+  - 01-frameworks/16-security-operating-model.md — security L1 gates
+  - 03-skills/a11y-audit-toolkit + fe-perf-harness — break measurement monoculture
+  - Command hubs: eng, arch-guild, process-plugins, design-system-ops; career hub = job-search-strategist
+Decisions:
+  - Domain rigor is a five-layer stack (ops model → command hub → measurement → load chain → multi-voice + doctrine precedence), not UI/UX-only.
+  - Plugin skills defer to AGENTS.md / frameworks; frontmatter `defers_to` + `rigor_role` are first-class.
+  - Contested photoreal/3D/game surface (Framework #12, img-photoreal*, legion-*, 08-knowledge/research|game-dev) owned by parallel session — do not collide.
+  - Career: hub = job-search-strategist; spokes wrap ~/.agents/skills mirrors.
+Pending resolved:
+  - Specialist/rigor gap evaluation across Workspace hubs (execute comprehensively, including former leave-alones).
+  - Measurement monoculture: a11y toolkit, FE perf harness, /qa lenses motion|dataviz|type|security.
+Next:
+  - Spot-check career routing docs vs hub = job-search-strategist if a session touches job search.
+  - Use Framework #13 as the gate when adding or hardening any new domain skill cluster.
+--- END BLOCK ---
+
+
+### 2026-08-03 — Realtime photoreal rigor stack (#12)
+
+SessionID: 2026-08-03-voyager-b505c2
+--- SESSION BLOCK ---
+Date: 2026-08-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Project(s): Workspace (skills/frameworks); Legion (consumer contracts only)
+Artifacts:
+  - 01-frameworks/12-realtime-photoreal-operational-framework.md — triple done-gate + movie-level northstar ops
+  - 03-skills/realtime-visual-craft/ — Impeccable-shaped command hub + RENDER/BUDGET/NORTHSTAR templates
+  - 03-skills/render-qa-toolkit/ — frame/motion/still measurement suite (Legion ?perfcapture config)
+  - 03-skills/interactive-capture-eval/, visual-qa-photoreal-rendering/, rendering-guild/ — motion capture + photoreal QA + guild
+  - 03-skills/{dynamic-gi,shadow-quality,virtual-texturing,bake-orchestration,gpu-capture,adapter-*}/ — AAA spokes + engine adapters
+  - Legion RENDER.md / BUDGET.md / NORTHSTAR.md + docs/render-acceptance-harness.md — project consumer contracts
+Decisions:
+  - Multi-engine principles with thin Unreal/Unity adapters (1B); full rigor stack in one program (2B)
+  - Legion is test platform only — skills stay in Workspace
+  - Evaluation requires still grid + flythrough frame-by-frame + measured ms; low-res/still-only verdicts banned
+  - Movie-level fidelity gated by named NORTHSTAR stills/videos/game examples
+Pending resolved:
+  - Workspace photoreal connective tissue (framework #12 + command hub + measurement + guild + adapters)
+  - Legion contracts landed on main (dcd9abb)
+Next:
+  - Run a live Legion acceptance pass on official poses + flythroughs in native Chrome (not IDE-browser alone)
+  - Sign concrete northstar file paths into Legion NORTHSTAR.md as captures are approved
+  - Optional: register Open Agent Engine personal lane when MCP is available (skipped this session — not-registered)
+--- END BLOCK ---
+---
+
+### 2026-08-04 — Token Spec page (Figma ↔ code)
+
+SessionID: 2026-08-04-token-spec-page
+--- SESSION BLOCK ---
+Date: 2026-08-04
+Agent: Composer
+Surface: Cursor
+Machine: Work MacBook Pro
+Project(s): Centric SaaS PLM — Figma DS (`o6o1ZuGHxDow2vHLuYXT6X`); centric-ui tokens read-only
+Summary: Built a **Token Spec** page in the DS file from live Figma variables, paired each
+  semantic token with its centric-ui `--sem-*` (when mapped), flagged raw/alias deviations,
+  and tagged representable-but-missing tokens on both sides.
+Artifacts:
+  - Figma page `Token Spec` (id `405:1679`, index 2 after Cover separator)
+  - `08-knowledge/design/token-spec-page.md`
+  - `08-knowledge/design/token-spec-figma-vs-code.json`
+Decisions / findings:
+  - 74 semantic colors: 40 MATCH · 6 DEVIATE · 28 FIGMA-ONLY
+  - Deviations concentrated on selected/sidebar chrome: Figma uses `interaction/*` opacity
+    overlays + `action/primary` foregrounds; code still uses solid `blue-5` / `blue-11` and
+    zinc sidebar accent.
+  - Density + `interaction/*` + `status/caution*` are Figma-ahead (no code counterparts).
+  - Missing in Figma (representable): `--header-h`, `--shadow-cds-drop-{1,2,3}`.
+  - (Superseded 2026-08-05) Radii now density-modeled with `xxs`.
+Next:
+  - Optionally sync code selected/sidebar to Figma interaction model, or document intentional lag.
+  - Add effect variables for CDS drop shadows if Figma should own them.
+--- END SESSION BLOCK ---
+
+### 2026-08-05 — Added prototype library comparison
+Summary: Rebuilt Token Spec as three-way (Figma ↔ centric-ui ↔ saas-plm-prototype).
+  Density + radii call out Normal-axis offset (Figma Normal = Proto Compact).
+  Proto-only density tokens tagged MISSING IN FIGMA.
+
+### 2026-08-05 — Align Figma density/radii to prototype
+Summary: Figma Density + Radii updated to prototype values; missing density
+  tokens added; proto gained padding-x/sm twin, radius-none,
+  radius-full. Token Spec rebuilt (18 density MATCH). Later: Radii
+  density-modeled + `radius/xxs`; centric-ui density port.
+
+
 ### 2026-07-31 — Figma DS library: semantic density modes + collection cleanup
 
 SessionID: 2026-07-31-work-figma-density

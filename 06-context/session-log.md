@@ -18,10 +18,133 @@ Keep entries concise. This is a handoff log, not a journal.
 
 ## Session Entries
 
+> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
+
+
 ### 2026-09-11 — Plan-ahead + cds export gate
 
 SessionID: 2026-09-11-plan-ahead-export-gate
 --- SESSION BLOCK ---
+
+### 2026-09-10 — PlanetCompiler controlled histories and connected globe
+
+SessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe
+--- SESSION BLOCK ---
+Date: 2026-09-10
+Agent: Codex
+Surface: Codex desktop
+Machine: Personal Mac, Apple M3 Max
+Project(s): PlanetCompiler; independent Planet Lab scoped handoff
+Summary: Resumed the authorized native handoff. Implemented five prescribed spherical material-strip histories with versioned recipes and material/age ledgers, then connected the standalone Release compiler to bounded asynchronous Unreal MCP tools. Completed independent science and native lifecycle reviews and corrected the defects found. Debug/Release each passed 3/3 CTest suites and 65/65 independent checks, including eight planted defects; 9/9 native tests and 59 live MCP checks passed. Built and inspected an interactive evidence page using actual outputs. Human acceptance and all global-planet/visual claims remain pending. No Legion files changed.
+Commits: PlanetCompiler a3cc5f0, 86ea71f, 2b470bf; local-only repository with no remote configured.
+Next: Review the completed native phase-two diagnostic, then specify the bounded regional surface/hydrology model before phase 3. Preserve original high-resolution references, adversarial visual gates, and all Legion work.
+Handoff: 07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md
+Follow-up: design-hook finding fixed in PlanetCompiler a0d35bf by removing a decorative side border. Browser, scoped detector and evidence-integrity checks passed; no suppressions or unresolved findings.
+Phase-two follow-up: Sean approved the connected globe. Integrated spherical finite-volume core, per-birth-plate material transport, explicit supported/unresolved ledgers, native diagnostic globe and real scheduled playback. Debug/Release 5/5 core suites, 78/78 independent global checks with 13 planted corruptions, 65/65 strip regression; clean native 12/12, global MCP534, strip MCP59 and actual Slate controls8/8 passed. Six final captures were independently inspected. Preserved hot-reload, debug-overlay, stopped-playback and first-black-frame observations; corrected confirmed defects, retained unconfirmed first-use anomaly and model/rendering limits. Human acceptance remains pending. No phase 3 or Legion edits.
+Phase-two commits: da88d1b, e801aa3, 342ecc7, 39071e7, 797e48f and 29744d6 (final evidence checkpoint); implementation repo remains local-only.
+--- END BLOCK ---
+
+### 2026-09-09 — Cursor employer-repo Layer-0 routing
+
+SessionID: 2026-09-09-work-prompt-route
+--- SESSION BLOCK ---
+Date: 2026-09-09
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): 19-workspace-brain (from a cds Figma generate miss)
+Summary: Semantic + theme/mode token binding already lived in design-engineer / figma hub / figma-ds-surface-authoring but did not fire in Cursor-on-cds. Gap: no beforeSubmitPrompt injection, curated `figma` route skipped the hub + token gate, vendor figma-use was MANDATORY, snds-local omitted the figma hub, wrapped YAML triggers iterated as letters. Fixed with shared prompt_route.py, user-global beforeSubmitPrompt, FIGMA_GENERATE_ROUTE, expanded triggers/hard gates, parser + plugin 0.3.1.
+Evidence:
+  - Knowledge: [[cursor-employer-repo-skill-routing]]
+  - Decision: [[decision-cursor-prompt-route-hook]]
+  - Smoke (cds cwd): `figma` → FIGMA_GENERATE_ROUTE HARD GATE; ack prompts emit `{}`
+Next:
+  - Restart Cursor once so hooks.json reload is certain
+  - `claude plugin install snds@snds-local` (or restart) to pick up `/snds:figma` 0.3.1
+  - Resume cds Wave 1 token rebind (primary-soft) after this routing fix
+--- END SESSION BLOCK ---
+
+SessionID: 2026-08-31-cds-consolidation
+--- SESSION BLOCK ---
+Date: 2026-08-31
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Claude Opus 5 / Cursor / Work MBP
+Project(s): cds (was ds-docs), centric-ui, saas-plm-prototype (employer — `centric-engineering`)
+Summary: Started the CDS consolidation — making `cpes-software/cds` the single DS write surface
+so the system versions independently of its consumers. Strategy is mirror-gate-flip over a
+deliberate dual-source period rather than a move: cds receives the DS by copy while
+centric-ui stays authoritative, with a CI parity gate that fails on divergence. Four PRs
+opened; centric-ui deliberately untouched.
+
+Four structural findings, each now documented in-repo rather than in agent memory:
+  - `cpes-software/ds-docs` was ALREADY renamed to `cpes-software/cds` on GitHub; only the
+    local checkout and remote URL were stale.
+  - CDS has never contained a `.storybook` on any branch or in any history — the two-tool
+    README describes an iframe at localhost:6006 into centric-ui. Moving Storybook is part
+    of the migration, not a precondition.
+  - The semantic token layer is NOT in `@centric/tokens`. `@theme` + the whole `--sem-*`
+    family live in `centric-ui/app/app.css` (852 lines), so the packages are visually
+    self-insufficient. Three drifting copies: 852 / 479 / 307 lines across centric-ui, cds,
+    proto. Generated palette drifted too (1722 in package vs 1724 in both consumers).
+  - The prototype had NO DS pin. Its sync script short-circuits on a sibling checkout, so it
+    silently consumed `feat/figma-regen-idempotency@0004f572` — a NON-ANCESTOR of main,
+    43 commits short, missing `empty-state`/`statusTone`/`viewTransitions`. Fixed first.
+
+Durable technique learned (worth a knowledge entry if it recurs): `git rev-parse <branch>`
+resolves the LOCAL branch, which in a multi-worktree setup is routinely stale — always prefer
+`origin/<ref>`. This bit twice in one session: it is the root cause of the prototype pin bug,
+and my own parity manifest first recorded a 43-commit-stale sha for exactly the same reason.
+Also: `secrets` is unavailable in a step-level GitHub Actions `if`, so a condition testing it
+silently never matches — map to a job-level `env` first, or a gate quietly passes unchecked.
+
+Decisions taken (Sean, this session):
+  - Phase-one distribution stays vendor symlink + `file:` deps (proven in proto); registry
+    publishing + build step deliberately deferred as the riskiest, non-essential change.
+  - Repo identity `cds`; plain copy with provenance recorded, not history grafting.
+  - Review scope: CDS mirror + Storybook + proto flip; centric-ui untouched this pass.
+
+Evidence:
+  - cds#4 plan · cds#5 workspaces+apps/docs · cds#6 packages mirror+parity gate (CI green)
+  - saas-plm-prototype#57 pin guard (CI green)
+  - cds#3 retargeted from the already-merged `chore/license-ci` to `main` so it is reviewable
+  - Plan: `cds/docs/plans/2026-08-31-cds-consolidation-plan.md`; provenance:
+    `cds/packages/{MIGRATION.md,ds-source.json}`
+Next:
+  - OPEN DECISION for Sean: the semantic split (PR C) needs the layer extracted from
+    centric-ui's app.css. Write-surface rule says it lands upstream first; the agreed scope
+    says centric-ui is untouched. Recommended resolution is additive — author
+    `packages/tokens/semantic.css` in cds, add a `cdsOwned` exclusion to `ds-source.json`,
+    and gate it with an extraction-faithfulness check so the temporary 4th copy is verified
+    rather than trusted. Not started pending Sean's call.
+  - Then PR D Storybook move (depends on C), then proto PRs F (flip to cds) and G (consume
+    `@centric/tokens`, delete drifted copies, with qa/ A/B evidence).
+  - Set repo secret `CENTRIC_UI_READ_TOKEN` on cds to bring the parity gate to full strength;
+    without it only the offline mirror-integrity half runs (annotates a warning, does not
+    silently pass).
+  - cds#4/#5 are ungated until the broadened CI `pull_request` trigger in #6 lands.
+--- END SESSION BLOCK ---
+
+## 2026-09-09 — Independent Planet Lab prototype and adversarial evidence
+
+SessionID: 01a08930-3c92-7ca0-ba45-7c9a4088ddb8
+Agent · Surface · Machine: Codex / Codex desktop / personal Mac, Apple M3 Max
+
+Sean requested an additive, completely isolated planetary-generator attempt inside Legion. Created `~/Projects/Legion/planet-lab/` with an independent WebGPU/vgpu application, own package and local Git repository. Isolated commit `b057dc1` on `codex/independent-planet-lab`. Existing Legion files and dirty work were left alone.
+
+Implemented reduced plate kinematics and bathymetry, climate and habitation fields, evolving moisture transport, volumetric clouds and internal lightning emission, camera-relative Earth-scale rendering and continuous 19,000 km orbital insertion to 8 m terrain clearance. Nine numerical tests, native shader validation and seven browser integration checks passed. Actual 1920×1080 motion/stills, optional GPU timestamps and practical-quality timing runs were recorded.
+
+Independent native-resolution review against inspected NASA/NOAA originals remains FAIL. Documented coarse coast geometry, terrain bands/moire, insufficient surface and cloud morphology, stylized city patterns and coarse lightning glow. Physical models remain explicit approximations. Highest-quality full-HD rendering misses the p95 target in some views; Balanced at 1632×918 passed five fixed views (8.8–9.2 ms p95), but a descent window reached 17.9 ms. Sustained 60 fps, full-HD and other GPUs remain uncertified.
+
+Durable scoped baton: [[07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE]]. Code-local README, NORTHSTAR, VISUAL-REVIEW, BUDGET and PRODUCTION-PATH hold the source provenance, test evidence and next architecture. Recommended native candidate is Unreal, with independent causal world-generation data; no native port or deployment performed.
+
+## 2026-09-10 — Isolated Unreal development environment verified
+
+Sean requested setup and resumed after OS permissions required a Codex restart. Created the separate personal-solo `~/Projects/PlanetCompiler` repository, branch `codex/planet-compiler-environment`, local commit `b5f2f90`. Installed Epic Launcher/UE5.8.2, Xcode26.1.1 build17B100, Metal17B54, CMake4.3.4 and Ninja1.13.2. Sean completed sign-ins and accepted the Xcode agreement. Global developer-tools selection remains CommandLineTools; native scripts set Xcode per process.
+
+Portable C++20 Debug and Release tests pass2/2 each. Native editor host compiles, loads and opens. Official ModelContextProtocol + AllToolsets expose52 toolsets on127.0.0.1:8765. Initialize, discovery and read-only current-level query pass, including after the final restart. UE5.8.2 returns blank serverInfo metadata; discrepancy is retained in the smoke report. Disabled unused Android deployment plugin and excluded its autogenerated credential from source.
+
+Evidence and startup instructions are in native README and evidence/setup-report.json. Native repo remains local, clean and independent; Legion sources were not modified. The visible terrain is Unreal’s default starter level, not generated by PlanetCompiler. Native causal geology, streaming renderer and portable-core adapter remain next implementation. Open PlanetCompiler as its own trusted Codex project to load its scoped MCP configuration.
+
 Date: 2026-09-11
 Machine: Work MacBook Pro
 Surface: Cursor
@@ -605,168 +728,3 @@ Next:
   - Optional: trim compose services / bump Colima RAM further to stop Keycloak OOMs.
 --- END BLOCK ---
 
-
-### 2026-08-10 — Harness-map cycle closed + CI triage
-
-SessionID: 2026-08-10-work-hmclose
---- SESSION BLOCK ---
-Date: 2026-08-10
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.5
-Project(s): 19-workspace-brain
-Summary: Closed the harness-map cycle — applied #1–#3+#6, accepted #4/#5/#7/#8 standing; triaged email CI failures (INDEX/MEMORY orphans, fixed by #1); main green and pushed through `6b92c1a`.
-Artifacts:
-  - 07-projects/19-workspace-brain/reports/harness-map_v1.0_2026-08-07.md — map + stamp + applied/accepted dispositions
-  - 07-projects/19-workspace-brain/reports/harness-map.stamp — first real stamp (2026-08-07)
-  - 06-context/project-context-detail.md — graduated pending substance
-  - 06-context/project-registry.md — Active Projects narratives (load later)
-  - 09-tools/check-unattended-runner-gate.py — unattended runner hard gate
-Decisions:
-  - Apply harness-map #1–#3+#6; leave #4 Keep, #5/#8 Probation, #7 Load later/Keep as standing (Sean ack).
-  - Retest #5 on next plugin publish; revisit #8 ~2026-09-07.
-Evidence:
-  - workspace CI all green after apply @ github.com/snds/workspace actions on e2d28eb — verified
-  - prior workspace-integrity failures (runs 31190694022, 31191199865) = INDEX/MEMORY orphans — verified fixed by #1
-Pending added: (none)
-Pending resolved:
-  - Harness-map first-run + stamp (was next action on baton)
-Project status changes:
-  - 19-workspace-brain: harness-map cycle closed; baton points at optional mission-fit + probation retests
-Next:
-  - Optional: mission-fit on one unreliable “done”
-  - Retest harness-map #5 on next build-local-skill-plugin publish
-  - Revisit harness-map #8 (~2026-09-07)
-  - Still open from prior baton: ^pc-07 / ^pc-11 homes; lane ambiguity ^pc-30 / ^pc-41
---- END BLOCK ---
-
-
-### 2026-08-05 — Layer-1 vault retrieve + dispatcher fallback
-
-SessionID: 2026-08-05-voyager-5d6242
---- SESSION BLOCK ---
-Date: 2026-08-05
-Machine: Personal MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.5
-Project(s): 19-workspace-brain
-Summary: Shipped Layer-1 lexical vault retrieval (`09-tools/vault-retrieve.py`, stdlib FTS5) and wired it as a capped Claude dispatcher fallback when Layer 0 under-fires; Cursor gets CLI-on-demand only.
-Artifacts:
-  - 09-tools/vault-retrieve.py — FTS index/rebuild/query + graph expand; machine-local `.claude/state/vault-retrieve/`
-  - .claude/hooks/dispatcher.py — SessionStart index refresh; UserPromptSubmit lexical tier (min 2 Layer-0 targets, cap 2, `--cached`)
-Decisions:
-  - Triggers stay primary; lexical is gap-fill only (not a peer flood on every prompt)
-  - Index personal vault layers only — no `07-projects/` / employer surfaces
-  - Cursor has no prompt-hook equivalent → document CLI; do not fake a dispatcher tier there
-Pending added:
-  - Optional: golden-set eval of trigger misses vs lexical baseline
-  - Optional: dense/embedding path as capability-registry entry with degrade→lexical
-Pending resolved:
-  - (none from prior baton; this session was additive tooling)
-Next:
-  - Prove lexical fallback in a live Claude Code session (SessionStart rebuild + under-fire inject)
-  - Optionally design dense Layer 2 only after golden-set shows lexical gaps worth the capability
-  - Prior baton still open: review personal:SEA-11; decide personal:SEA-32
-Git: 55b9f2a (feature) + this session commit
---- END BLOCK ---
-
-
-### 2026-08-03 — Domain rigor stack hardening
-
-SessionID: 2026-08-03-voyager-r7k2
---- SESSION BLOCK ---
-Date: 2026-08-03
-Machine: Personal MacBook Pro
-Surface: Cursor
-Project(s): Workspace (skill hubs / domain rigor)
-Summary: Encoded five-layer domain rigor stack (#13) and shipped L1–L5 hardening across hubs/spokes outside the parallel photoreal session; measurement toolkits + reciprocity/capability follow-ups landed.
-Artifacts:
-  - 01-frameworks/13-domain-rigor-stack.md — reusable L1–L5 contribution mechanism
-  - 01-frameworks/14-engineering-operating-model.md — eng L1 gates
-  - 01-frameworks/15-analysis-operating-model.md — analysis L1 gates
-  - 01-frameworks/16-security-operating-model.md — security L1 gates
-  - 03-skills/a11y-audit-toolkit + fe-perf-harness — break measurement monoculture
-  - Command hubs: eng, arch-guild, process-plugins, design-system-ops; career hub = job-search-strategist
-Decisions:
-  - Domain rigor is a five-layer stack (ops model → command hub → measurement → load chain → multi-voice + doctrine precedence), not UI/UX-only.
-  - Plugin skills defer to AGENTS.md / frameworks; frontmatter `defers_to` + `rigor_role` are first-class.
-  - Contested photoreal/3D/game surface (Framework #12, img-photoreal*, legion-*, 08-knowledge/research|game-dev) owned by parallel session — do not collide.
-  - Career: hub = job-search-strategist; spokes wrap ~/.agents/skills mirrors.
-Pending resolved:
-  - Specialist/rigor gap evaluation across Workspace hubs (execute comprehensively, including former leave-alones).
-  - Measurement monoculture: a11y toolkit, FE perf harness, /qa lenses motion|dataviz|type|security.
-Next:
-  - Spot-check career routing docs vs hub = job-search-strategist if a session touches job search.
-  - Use Framework #13 as the gate when adding or hardening any new domain skill cluster.
---- END BLOCK ---
-
-
-### 2026-08-03 — Realtime photoreal rigor stack (#12)
-
-SessionID: 2026-08-03-voyager-b505c2
---- SESSION BLOCK ---
-Date: 2026-08-03
-Machine: Personal MacBook Pro
-Surface: Cursor
-Project(s): Workspace (skills/frameworks); Legion (consumer contracts only)
-Artifacts:
-  - 01-frameworks/12-realtime-photoreal-operational-framework.md — triple done-gate + movie-level northstar ops
-  - 03-skills/realtime-visual-craft/ — Impeccable-shaped command hub + RENDER/BUDGET/NORTHSTAR templates
-  - 03-skills/render-qa-toolkit/ — frame/motion/still measurement suite (Legion ?perfcapture config)
-  - 03-skills/interactive-capture-eval/, visual-qa-photoreal-rendering/, rendering-guild/ — motion capture + photoreal QA + guild
-  - 03-skills/{dynamic-gi,shadow-quality,virtual-texturing,bake-orchestration,gpu-capture,adapter-*}/ — AAA spokes + engine adapters
-  - Legion RENDER.md / BUDGET.md / NORTHSTAR.md + docs/render-acceptance-harness.md — project consumer contracts
-Decisions:
-  - Multi-engine principles with thin Unreal/Unity adapters (1B); full rigor stack in one program (2B)
-  - Legion is test platform only — skills stay in Workspace
-  - Evaluation requires still grid + flythrough frame-by-frame + measured ms; low-res/still-only verdicts banned
-  - Movie-level fidelity gated by named NORTHSTAR stills/videos/game examples
-Pending resolved:
-  - Workspace photoreal connective tissue (framework #12 + command hub + measurement + guild + adapters)
-  - Legion contracts landed on main (dcd9abb)
-Next:
-  - Run a live Legion acceptance pass on official poses + flythroughs in native Chrome (not IDE-browser alone)
-  - Sign concrete northstar file paths into Legion NORTHSTAR.md as captures are approved
-  - Optional: register Open Agent Engine personal lane when MCP is available (skipped this session — not-registered)
---- END BLOCK ---
----
-
-### 2026-08-04 — Token Spec page (Figma ↔ code)
-
-SessionID: 2026-08-04-token-spec-page
---- SESSION BLOCK ---
-Date: 2026-08-04
-Agent: Composer
-Surface: Cursor
-Machine: Work MacBook Pro
-Project(s): Centric SaaS PLM — Figma DS (`o6o1ZuGHxDow2vHLuYXT6X`); centric-ui tokens read-only
-Summary: Built a **Token Spec** page in the DS file from live Figma variables, paired each
-  semantic token with its centric-ui `--sem-*` (when mapped), flagged raw/alias deviations,
-  and tagged representable-but-missing tokens on both sides.
-Artifacts:
-  - Figma page `Token Spec` (id `405:1679`, index 2 after Cover separator)
-  - `08-knowledge/design/token-spec-page.md`
-  - `08-knowledge/design/token-spec-figma-vs-code.json`
-Decisions / findings:
-  - 74 semantic colors: 40 MATCH · 6 DEVIATE · 28 FIGMA-ONLY
-  - Deviations concentrated on selected/sidebar chrome: Figma uses `interaction/*` opacity
-    overlays + `action/primary` foregrounds; code still uses solid `blue-5` / `blue-11` and
-    zinc sidebar accent.
-  - Density + `interaction/*` + `status/caution*` are Figma-ahead (no code counterparts).
-  - Missing in Figma (representable): `--header-h`, `--shadow-cds-drop-{1,2,3}`.
-  - (Superseded 2026-08-05) Radii now density-modeled with `xxs`.
-Next:
-  - Optionally sync code selected/sidebar to Figma interaction model, or document intentional lag.
-  - Add effect variables for CDS drop shadows if Figma should own them.
---- END SESSION BLOCK ---
-
-### 2026-08-05 — Added prototype library comparison
-Summary: Rebuilt Token Spec as three-way (Figma ↔ centric-ui ↔ saas-plm-prototype).
-  Density + radii call out Normal-axis offset (Figma Normal = Proto Compact).
-  Proto-only density tokens tagged MISSING IN FIGMA.
-
-### 2026-08-05 — Align Figma density/radii to prototype
-Summary: Figma Density + Radii updated to prototype values; missing density
-  tokens added; proto gained padding-x/sm twin, radius-none,
-  radius-full. Token Spec rebuilt (18 density MATCH). Later: Radii
-  density-modeled + `radius/xxs`; centric-ui density port.

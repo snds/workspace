@@ -1,0 +1,297 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+/*
+  ---break---
+*/
+@custom-variant dark (&:is(.dark *));
+
+/*
+  Omni Design System — CSS Custom Properties
+  Sourced from Radix Colors dark scales (Mauve + Violet)
+  https://www.radix-ui.com/colors
+*/
+
+@layer base {
+  :root {
+    /* ── Mauve Dark (neutral chrome) ── */
+    --mauve-1:  #111113;
+    --mauve-2:  #19191b;
+    --mauve-3:  #222325;
+    --mauve-4:  #292a2e;
+    --mauve-5:  #303136;
+    --mauve-6:  #3b3c3f;
+    --mauve-7:  #494b4f;
+    --mauve-8:  #62626b;
+    --mauve-9:  #62626b;
+    --mauve-10: #68686f;
+    --mauve-11: #9898a0;
+    --mauve-12: #ebebef;
+
+    /* ── Violet Dark (accent) ── */
+    --violet-1:  #14121f;
+    --violet-2:  #1b1525;
+    --violet-3:  #291f43;
+    --violet-4:  #33255b;
+    --violet-5:  #3c2e69;
+    --violet-6:  #473876;
+    --violet-7:  #56468b;
+    --violet-8:  #6958ad;
+    --violet-9:  #6e56cf;
+    --violet-10: #7d66f0;
+    --violet-11: #baa7ff;
+    --violet-12: #e2ddfe;
+
+    /* ── Green Dark (success) ── */
+    --green-9:  #46a758;
+    --green-10: #55b467;
+    --green-11: #71d083;
+
+    /* ── Red Dark (error) ── */
+    --red-9:  #e5484d;
+    --red-10: #f2555a;
+    --red-11: #ff6369;
+
+    /* ── Amber Dark (warning) ── */
+    --amber-9:  #ffc53d;
+    --amber-10: #ffd60a;
+    --amber-11: #ffca16;
+
+    /* ── Blue Dark (info) ── */
+    --blue-9:  #0090ff;
+    --blue-10: #3b9eff;
+    --blue-11: #70b8ff;
+
+    /* ── Omni Surface Tokens ── */
+    --color-surface-0: var(--mauve-1);
+    --color-surface-1: var(--mauve-2);
+    --color-surface-2: var(--mauve-3);
+    --color-surface-3: var(--mauve-4);
+    --color-surface-4: var(--mauve-5);
+
+    /* ── Borders ── */
+    --color-border-subtle:  var(--mauve-4);
+    --color-border-default: var(--mauve-6);
+    --color-border-strong:  var(--mauve-7);
+
+    /* ── Text ── */
+    --color-text-primary:   var(--mauve-12);
+    --color-text-secondary: var(--mauve-11);
+    --color-text-tertiary:  var(--mauve-9);
+
+    /* ── Accent (Violet) ── */
+    --color-accent:         var(--violet-9);
+    --color-accent-hover:   var(--violet-10);
+    --color-accent-subtle:  var(--violet-3);
+    --color-accent-text:    var(--violet-11);
+
+    /* ── Semantic ── */
+    --color-success: var(--green-9);
+    --color-warning: var(--amber-9);
+    --color-error:   var(--red-9);
+    --color-info:    var(--blue-9);
+
+    /* ── Layout ── */
+    --panel-left-width:  240px;
+    --panel-right-width: 280px;
+    --topbar-height:     48px;
+    --panel-transition:  200ms ease;
+  }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* ── Light theme overrides ── */
+  html.light {
+    /* Mauve Light */
+    --mauve-1:  #fdfcfd;
+    --mauve-2:  #faf9fb;
+    --mauve-3:  #f2eff3;
+    --mauve-4:  #eae7ec;
+    --mauve-5:  #e3dfe6;
+    --mauve-6:  #d9d3e0;
+    --mauve-7:  #cdc7d7;
+    --mauve-8:  #b9b2c3;
+    --mauve-9:  #8b8396;
+    --mauve-10: #807889;
+    --mauve-11: #5c556a;
+    --mauve-12: #1a1523;
+
+    /* Violet Light (step 9 is the brand accent — stays the same) */
+    --violet-1:  #fdfcfe;
+    --violet-2:  #faf8ff;
+    --violet-3:  #f4f0fe;
+    --violet-4:  #ebe4ff;
+    --violet-5:  #e1d9ff;
+    --violet-6:  #d4cafe;
+    --violet-7:  #c2b5f5;
+    --violet-8:  #aa99ec;
+    --violet-9:  #6e56cf;
+    --violet-10: #654dc4;
+    --violet-11: #6550b9;
+    --violet-12: #2f265f;
+
+    /* Semantic palette light values */
+    --green-9:  #30a46c;
+    --green-10: #299764;
+    --green-11: #18794e;
+    --red-9:    #e5484d;
+    --red-10:   #dc3d43;
+    --red-11:   #cd2b31;
+    --amber-9:  #f59f00;
+    --amber-10: #f08c00;
+    --amber-11: #ad5700;
+    --blue-9:   #0090ff;
+    --blue-10:  #0588f0;
+    --blue-11:  #0d74ce;
+
+    /* White on violet-9 passes WCAG AA (7.1:1) in light mode */
+    --primary-foreground: #ffffff;
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-surface-0);
+    color: var(--color-text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--mauve-6);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--mauve-7);
+  }
+}
+
+/*
+  ---break---
+*/
+
+@theme inline {
+  --radius-sm:  calc(var(--radius) - 4px);
+  --radius-md:  calc(var(--radius) - 2px);
+  --radius-lg:  var(--radius);
+  --radius-xl:  calc(var(--radius) + 4px);
+  --radius-2xl:  calc(var(--radius) + 8px);
+  --radius-3xl:  calc(var(--radius) + 12px);
+  --radius-4xl:  calc(var(--radius) + 16px);
+  --color-background:  var(--background);
+  --color-foreground:  var(--foreground);
+  --color-card:  var(--card);
+  --color-card-foreground:  var(--card-foreground);
+  --color-popover:  var(--popover);
+  --color-popover-foreground:  var(--popover-foreground);
+  --color-primary:  var(--primary);
+  --color-primary-foreground:  var(--primary-foreground);
+  --color-secondary:  var(--secondary);
+  --color-secondary-foreground:  var(--secondary-foreground);
+  --color-muted:  var(--muted);
+  --color-muted-foreground:  var(--muted-foreground);
+  --color-accent:  var(--accent);
+  --color-accent-foreground:  var(--accent-foreground);
+  --color-destructive:  var(--destructive);
+  --color-border:  var(--border);
+  --color-input:  var(--input);
+  --color-ring:  var(--ring);
+  --color-chart-1:  var(--chart-1);
+  --color-chart-2:  var(--chart-2);
+  --color-chart-3:  var(--chart-3);
+  --color-chart-4:  var(--chart-4);
+  --color-chart-5:  var(--chart-5);
+  --color-sidebar:  var(--sidebar);
+  --color-sidebar-foreground:  var(--sidebar-foreground);
+  --color-sidebar-primary:  var(--sidebar-primary);
+  --color-sidebar-primary-foreground:  var(--sidebar-primary-foreground);
+  --color-sidebar-accent:  var(--sidebar-accent);
+  --color-sidebar-accent-foreground:  var(--sidebar-accent-foreground);
+  --color-sidebar-border:  var(--sidebar-border);
+  --color-sidebar-ring:  var(--sidebar-ring);
+}
+
+/*
+  ---break---
+*/
+
+/*
+  Omni is a permanently-dark design tool (like Figma / VS Code).
+  We override both :root and .dark with Radix Colors dark scales
+  so shadcn components always render in dark mode regardless of
+  system preference. The <html> element carries class="dark".
+*/
+
+:root,
+.dark {
+  --radius: 0.375rem; /* Tighter radius — design tool feel */
+
+  /* ── Core surfaces (Mauve dark) ── */
+  --background:         var(--mauve-1);   /* #111113 — deepest surface */
+  --foreground:         var(--mauve-12);  /* #ebebef — primary text */
+
+  --card:               var(--mauve-2);   /* #19191b — card / panel */
+  --card-foreground:    var(--mauve-12);
+
+  --popover:            var(--mauve-3);   /* #222325 — dropdown / popover */
+  --popover-foreground: var(--mauve-12);
+
+  /* ── Interactive (Violet dark) ── */
+  --primary:            var(--violet-9);  /* #6e56cf — CTA / primary buttons */
+  --primary-foreground: var(--violet-12); /* #e2ddfe — text on violet */
+
+  --secondary:          var(--mauve-3);   /* #222325 — secondary button bg */
+  --secondary-foreground: var(--mauve-12);
+
+  --muted:              var(--mauve-4);   /* #292a2e — muted bg */
+  --muted-foreground:   var(--mauve-11);  /* #9898a0 — placeholder text */
+
+  --accent:             var(--violet-3);  /* #291f43 — subtle violet tint */
+  --accent-foreground:  var(--violet-11); /* #baa7ff — violet-tinted text */
+
+  --destructive:        var(--red-9);     /* #e5484d */
+
+  /* ── Borders & inputs ── */
+  --border:             var(--mauve-6);   /* #3b3c3f */
+  --input:              var(--mauve-5);   /* #303136 */
+  --ring:               var(--violet-7);  /* #56468b — focus ring */
+
+  /* ── Charts ── */
+  --chart-1: var(--violet-9);
+  --chart-2: var(--green-9);
+  --chart-3: var(--amber-9);
+  --chart-4: var(--red-9);
+  --chart-5: var(--blue-9);
+
+  /* ── Sidebar (panels) ── */
+  --sidebar:                      var(--mauve-2);
+  --sidebar-foreground:            var(--mauve-12);
+  --sidebar-primary:               var(--violet-9);
+  --sidebar-primary-foreground:    var(--violet-12);
+  --sidebar-accent:                var(--mauve-3);
+  --sidebar-accent-foreground:     var(--mauve-11);
+  --sidebar-border:                var(--mauve-6);
+  --sidebar-ring:                  var(--violet-7);
+}

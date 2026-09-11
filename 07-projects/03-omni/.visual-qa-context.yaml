@@ -1,0 +1,31 @@
+# ════════════════════════════════════════════════════════════════════
+# Omni — visual QA context
+#
+# Project profile: design-to-production platform (Vite + React SPA +
+# Tauri desktop). The tool itself has a UI — canvas editor, visual
+# logic builder, component panels — which is what this context QAs.
+# Moderate tolerances (design tool for designers; precision matters
+# but not to the degree of a 4px data-table grid).
+#
+# Usage:
+#   python3 qa-suite.py --context <path-to-this-file>
+# ════════════════════════════════════════════════════════════════════
+
+project: Omni
+
+defaults:
+  # Paths resolve relative to THIS file's directory (07-projects/03-omni/)
+  input: ./screenshots/latest.png        # populate or override with --input
+  output: ./qa-out/
+  config: ../../02-skills/visual-qa-toolkit/configs/default.yaml
+  # reference: ./reference/              # uncomment once a reference dir exists
+  # folder_for: ./states/                # uncomment when auditing state sets
+
+check_overrides:
+  # Design tool audience: contrast should meet AA but not be over-tight
+  contrast:
+    standard: WCAG_AA
+
+  # Omni's own palette — populate when the primitives are exported
+  # color_extraction:
+  #   palette_path: ./omni-fonts/primitives.json
