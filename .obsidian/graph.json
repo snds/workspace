@@ -3,7 +3,7 @@
   "search": "-file:LICENSE -file:CHANGELOG -file:README -path:_archive -file:desktop -file:.DS_Store -file:Thumbs -path:copilot -path:03-skills/design-system-ops/skills",
   "showTags": true,
   "showAttachments": true,
-  "hideUnresolved": false,
+  "hideUnresolved": true,
   "showOrphans": false,
   "collapse-color-groups": false,
   "colorGroups": [
@@ -144,6 +144,6 @@
   "repelStrength": 10,
   "linkStrength": 1,
   "linkDistance": 250,
-  "scale": 0.19362681755071254,
+  "scale": 0.22280273543239087,
   "close": true
 }
