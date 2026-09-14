@@ -189,8 +189,11 @@ python3 09-tools/generate-display-svg.py --schema
 ## cursor-externalize.py
 
 Copies Cursor-local `.canvas.tsx` files from `~/.cursor/projects/*/canvases/` into
-git-tracked `07-projects/…/canvases/`. Cursor still compiles only the live path.
-Run on every Cursor session-end. `--check` exits 1 on drift.
+git-tracked folders. Personal canvases land in `07-projects/…/canvases/` and are
+mirrored into this checkout's live Cursor folder. Employer canvases land in that
+repo's `canvases/` (never this vault); mixed-parent `flavours-` / `guided-setup-`
+files move into `cpes-software/saas-plm-prototype/canvases/`. Cursor still will
+not compile the git copies themselves. Run on every Cursor session-end.
 
 ```
 python3 09-tools/cursor-externalize.py
@@ -198,9 +201,11 @@ python3 09-tools/cursor-externalize.py --check
 python3 09-tools/cursor-externalize.py --self-test
 ```
 
-`--check` exits 1 on vault drift **or** an unmapped named project slug. Employer
-(`cpes-software`), Legion, ephemeral Cursor windows, and `flavours-` /
-`guided-setup-` prefixes skip and do not fail. GitHub cannot see `~/.cursor` (A10).
+`--check` exits 1 on vault drift, a missing live mirror (when that Cursor slug
+exists on this machine), employer-repo drift, a company canvas still in a mixed
+personal slug, **or** an unmapped named project slug. Legion, ephemeral Cursor
+windows, and a missing employer checkout skip and do not fail. GitHub cannot see
+`~/.cursor` (A10). Do not auto-commit employer repos.
 
 ## artifact-ingest.py
 

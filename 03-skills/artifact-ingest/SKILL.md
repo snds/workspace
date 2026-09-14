@@ -52,11 +52,17 @@ Drop-folder. Session-end harvest of Cursor canvases. "Don't leave this in ChatGP
 1. **Write-through first.** If this surface can write files, write the vault path as
    the original (`05-artifacts/` or owning `07-projects/NN-*/`, named per
    [[artifact-standards]]). HTML that is a rich deliverable stays HTML.
-2. **Cursor `.canvas.tsx` is dual-home.** Live compile path stays
-   `~/.cursor/projects/<slug>/canvases/`. Then:
+2. **Cursor `.canvas.tsx` is dual-home.** The IDE compiles only
+   `~/.cursor/projects/<slug>/canvases/`. Harvest copies personal canvases into
+   git **and** mirrors vault copies into the owning checkout's live folder.
+   Employer canvases never enter this vault — they copy into that repo's
+   `canvases/` (`flavours-` / `guided-setup-` move from a mixed `~/Projects`
+   slug into `saas-plm-prototype/canvases/`).
    `python3 09-tools/cursor-externalize.py`
-   `--check` exits 1 on vault drift or an unmapped named slug. Employer, Legion,
-   ephemeral windows, and `flavours-` / `guided-setup-` prefixes skip (not a fail).
+   `--check` exits 1 on vault drift, a missing live mirror (when that slug exists),
+   employer-repo drift, a company canvas still in a mixed personal slug, or an
+   unmapped named slug. Legion, ephemeral windows, and a missing employer
+   checkout skip (not a fail).
 3. **Already-copied bytes** (clipboard, download, drop):
    ```
    python3 09-tools/artifact-ingest.py --from-clipboard [--context X] [--descriptor Y] [--project 19-workspace-brain]

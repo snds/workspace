@@ -21,10 +21,34 @@ Keep entries concise. This is a handoff log, not a journal.
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
 
+### 2026-09-14 — Canvas live-mirror + employer repo dest
+
+SessionID: 2026-09-14-work-c4nvx
+--- SESSION BLOCK ---
+Date: 2026-09-14
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6 / Cursor / Work MBP
+Project(s): 19-workspace-brain
+Summary: Harvest was writing git copies only, so Recents in this checkout still pointed at parent `~/Projects` canvases. `cursor-externalize.py` now mirrors vault canvases into `…-workspace/canvases/` and copies company canvases into that repo's `canvases/` (never this vault). Mixed-parent `flavours-` / `guided-setup-` moved into saas-plm-prototype.
+Decisions:
+  - Employer canvases dual-home in the owning `cpes-software/*` checkout's `canvases/`, not skip-and-drop.
+  - Flavours / Guided Setup belong in saas-plm-prototype (design sandbox), not workspace-brain.
+Evidence:
+  - Live mirror @ `~/.cursor/projects/Users-sean-sands-Projects-workspace/canvases/` — verified (7 `.canvas.tsx`)
+  - Employer copies @ `cpes-software/cds/canvases/` and `cpes-software/saas-plm-prototype/canvases/` — verified on disk, untracked; no employer commit (centric-engineering)
+Next:
+  - Open employer PRs for untracked `canvases/` in cds + saas-plm-prototype (do not auto-commit)
+  - First-wave leftovers: A8 Figma bind probe, A4 nightly.sh without cron, A5 ruff, A9 analysis lint
+  - Human merge cds #35 onto `main` (do not merge from an agent)
+  - Open Engine residue not filed — Linear MCP absent on this Cursor session
+--- END BLOCK ---
+
 ### 2026-09-11 — Plan-ahead + cds export gate
 
 SessionID: 2026-09-11-plan-ahead-export-gate
 --- SESSION BLOCK ---
+
 
 ### 2026-09-10 — PlanetCompiler controlled histories and connected globe
 
@@ -694,37 +718,5 @@ Decisions:
 Next:
   - Review/merge https://github.com/cpes-software/centric-ui/pull/284
   - After merge: revisit table shell radii if still off vs demo
---- END BLOCK ---
-
-
-### 2026-08-11 — Local centric-service stack for UI API auth
-
-SessionID: 2026-08-11-work-localstack
---- SESSION BLOCK ---
-Date: 2026-08-11
-Agent: Cursor Grok 4.5
-Surface: Cursor
-Machine: Work MacBook Pro (CS-K746DRWXY1)
-Project(s): centric-ui (employer), centric-service
-Artifacts:
-  - ~/Projects/cpes-software/centric-service — cloned
-  - ~/Projects/cpes-software/platform-golden-verticals — cloned (sibling for volume-mode flavours)
-  - centric-ui `.env.local` / `.env.compose.local` — local compose creds (`DUMMY-123`, provisioner `cpes-record-service`)
-  - centric-ui `vite.config.ts` — `server.host: true` (IPv4+IPv6; fixes ERR_CONNECTION_REFUSED -102)
-  - Colima Docker runtime (20GB / 6 CPU) — Docker Desktop cask install blocked on sudo
-Decisions:
-  - Local stack path (Leanne): compose + `npm run dev`, not Cursor-hosted server.
-  - Local Keycloak user `test`/`test` (realm VMS, org test-org) is fine for FE work.
-  - Flavour provisioner unauthorized was wrong API identity (`cpes-admin-portal`+cloud key); use `cpes-record-service`+`DUMMY-123` locally.
-Pending added:
-  - Colima memory pressure: Keycloak OOM (exit 137) → nginx 502; may need to stop LocalStack/OpenSearch-dashboards when idle.
-  - Golden provisioner poller can hang after JWT expiry (`status=unknown`); volume-mode sibling checkout is the reliable local source.
-  - `gh auth` token invalid on this machine; GHCR pull still needs PAT/`gh auth login` if not building `centric-service:local`.
-Pending resolved:
-  - Unauthorized API / no local backend — stack up; login + provisioner identity fixed for local compose.
-Next:
-  - Keep UI via terminal: `cd ~/Projects/cpes-software/centric-ui && npm run dev` (agents' nohup sessions die).
-  - If Keycloak 502 again: `docker start keycloak` (or compose up keycloak) after OOM.
-  - Optional: trim compose services / bump Colima RAM further to stop Keycloak OOMs.
 --- END BLOCK ---
 

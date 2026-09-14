@@ -656,7 +656,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": "load-chain",
-      "hash": "sha256:c96e7b9ce4d32118ac1bad40165a7f359e71eca5b74e3f0007e4ba45e06e5834"
+      "hash": "sha256:425d53a40cd600cecadc55e5b7ef979c3cfc7deef4b0f49c96696de249a78b77"
     },
     "atmospheric-scattering-and-clouds": {
       "path": "03-skills/atmospheric-scattering-and-clouds/SKILL.md",

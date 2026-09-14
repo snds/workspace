@@ -17,7 +17,7 @@
 ## Workspace Brain — 07-projects/19-workspace-brain/ (git-tracked)
 
 ### 19-workspace-brain/ (README.md + SESSION-STATE.md + notes/ + reports/ + canvases/)
-- **Purpose**: Standing project home for workspace-subject sessions (validation, fix, migration, infrastructure) per the framework #08 project-home rule (FX-13). Git-tracked — cross-machine continuity is its point. `canvases/` holds copies of Cursor `.canvas.tsx` files (live path remains `~/.cursor/projects/…`).
+- **Purpose**: Standing project home for workspace-subject sessions (validation, fix, migration, infrastructure) per the framework #08 project-home rule (FX-13). Git-tracked — cross-machine continuity is its point. `canvases/` holds copies of Cursor `.canvas.tsx` files; `cursor-externalize.py` also mirrors them into this checkout's live Cursor folder. Employer canvases go to that repo's `canvases/`, never here.
 - **Last modified**: 2026-09-02 — session-end after Open Engine enroll, visual-qa prove, merged-branch prune.
 
 ## Delivery Playbooks — 02-shared-references/delivery-playbooks/

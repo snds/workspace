@@ -57,11 +57,13 @@ That folder is **not** this git tree; Cursor will not compile vault copies.
 python3 09-tools/cursor-externalize.py
 ```
 
-Copies `.canvas.tsx` into git-tracked `07-projects/…/canvases/` (workspace-brain, LCARS,
-MediaSentinel). Skips Legion, employer (`cpes-software`), ephemeral Cursor windows, and
-`flavours-` / `guided-setup-` prefixes. Unmapped named slugs fail `--check` (not silent).
-Commit the copies with the session. Do **not** copy agent-transcripts, MCP caches, or
-`~/.cursor` plugin state into the vault.
+Copies personal `.canvas.tsx` into git-tracked `07-projects/…/canvases/` (workspace-brain,
+LCARS, MediaSentinel). Employer canvases copy into that repo's `canvases/` — never into
+this vault. `flavours-` / `guided-setup-` move off a mixed `~/Projects` slug into
+`saas-plm-prototype`. Skips Legion, ephemeral Cursor windows, and a missing employer
+checkout. Unmapped named slugs fail `--check` (not silent). Commit the **vault** copies
+with the session; do not auto-commit employer repos. Do **not** copy agent-transcripts,
+MCP caches, or `~/.cursor` plugin state into the vault.
 
 Then report pending drop-folder files (do not promote):
 

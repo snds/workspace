@@ -101,9 +101,15 @@ def compact(root: Path, check: bool = False, quiet: bool = False) -> int:
             # no marker — append a section rather than lose content
             log = log.rstrip() + f"\n\n{ENTRIES_MARKER}\n\n---\n\n" + block_text
         else:
-            # insert after the first "---" separator following the marker
-            sep = log.find("\n---", idx)
-            insert_at = (log.find("\n", sep + 1) + 1) if sep != -1 else (idx + len(ENTRIES_MARKER) + 1)
+            # Insert before the first `###` session heading. Do not search for `\n---`
+            # after the marker — `--- SESSION BLOCK ---` matches and would nest the
+            # new block inside the current top entry (hit 2026-09-14).
+            first_block = log.find("\n### ", idx)
+            if first_block != -1:
+                insert_at = first_block + 1
+            else:
+                sep = log.find("\n---", idx)
+                insert_at = (log.find("\n", sep + 1) + 1) if sep != -1 else (idx + len(ENTRIES_MARKER) + 1)
             log = log[:insert_at] + "\n" + block_text + log[insert_at:]
         log_path.write_text(log, encoding="utf-8")
 

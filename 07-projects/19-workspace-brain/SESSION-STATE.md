@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-11 — session-status.py is the portable boot card_
+_Last updated: 2026-09-14 — canvas harvest dual-home + employer dest_
 
 ---
 
@@ -8,15 +8,15 @@ _Last updated: 2026-09-11 — session-status.py is the portable boot card_
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Portable session-start card (`09-tools/session-status.py`) so every LLM — not only Claude — emits notices + all projects + pending. First-wave automation remains live. Remaining first-wave: A8 Figma bind probe, A4 nightly.sh without cron, A5 ruff, A9 analysis lint.
-- **Working set**: `09-tools/session-status.py`, `00-bootstrap/dist/cursor-sessionstart.sh`, `09-tools/prompt_route.py` (`make sure` is not produce).
-- **Last action (2026-09-11):** Wired the Claude-shaped boot card onto Cursor + adapters; quieted Layer 0 `make sure` false misses. Cursor Grok 4.6 · Cursor · Work MBP.
+- **Current focus**: Cursor canvas harvest is dual-home (vault + this window's live `canvases/`). Employer canvases copy into that repo's `canvases/`. First-wave leftovers remain: A8 Figma bind probe, A4 nightly.sh without cron, A5 ruff, A9 analysis lint.
+- **Working set**: `09-tools/cursor-externalize.py`, `03-skills/artifact-ingest/SKILL.md`, `06-context/memory/decision-vendor-surface-artifacts.md`.
+- **Last action (2026-09-14):** Live-mirrored vault canvases into `Users-sean-sands-Projects-workspace/canvases/`; routed company canvases into `cpes-software/cds/canvases/` and `saas-plm-prototype/canvases/`; moved flavours/guided-setup off the mixed `~/Projects` slug. Cursor Grok 4.6 · Cursor · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Confirm the card on a **new** Cursor session. Then A8 on the next Figma produce that cannot refuse `Color/*`. Rec 13 Windows `beforeSubmitPrompt` still pending. Human merge cds #35 onto `main`.
+- **Next action:** Employer PRs for untracked `canvases/` in cds + proto (centric-engineering — no auto-commit). Then A8 on the next Figma produce that cannot refuse `Color/*`. Rec 13 Windows `beforeSubmitPrompt` still pending. Human merge cds #35 onto `main`.
 - **Open decisions:** Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot).
-- **Blocked on:** cds #35 human merge (do not merge it from an agent).
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`.
-- **Agent thread**: `… → (2026-09-04): vgpu + 3D extensions + Intent #17` → `Cursor Grok 4.6 / Cursor / Work MBP (2026-09-11): plan-ahead + Frost #18 + load-miss + process-rigor + close-out mint + self-improve`.
+- **Blocked on:** cds #35 human merge (do not merge it from an agent). Employer `canvases/` exist on disk but are untracked pending PRs.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`. Do not auto-commit employer repos.
+- **Agent thread**: `… → (2026-09-11): plan-ahead + Frost #18 + load-miss + process-rigor` → `Cursor Grok 4.6 / Cursor / Work MBP (2026-09-14): canvas live-mirror + employer canvases dest`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
@@ -27,7 +27,7 @@ _Last updated: 2026-09-11 — session-status.py is the portable boot card_
 
 ### VCS state
 - **Branch**: `main` @ session-end commit (this fragment)
-- **Uncommitted at baton write**: this baton + session fragment (folded into session-log at end)
+- **Uncommitted at baton write**: session fragment + harvest script/docs (folded into session-log at end)
 - **Test state at last check (2026-09-02):** `vqa doctor` core ok; FLIP/DreamSim/OCR/gltf-validator/VGGT degraded honestly. `vqa calibrate` **48/48** (`vqa/1.1`). LCARS `S-SYS47-01` v4 `vqa prove` 16/16 measured. Doctor personal lane `ok` on this Cursor.
 
 ### Open work and paused threads

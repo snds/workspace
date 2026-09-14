@@ -273,10 +273,11 @@ baton. Record durable insights/facts in the moment (knowledge/memory), not just 
 2. Apply any project status / pending changes to `06-context/project-context.md`.
 3. Update the active project's `SESSION-STATE.md` (incl. the Live handoff block).
 4. On Cursor: `python3 09-tools/cursor-externalize.py` so live `~/.cursor/projects/*/canvases/` copies
-   land in git-tracked project folders (Cursor will not compile the vault copies). Then
+   land in git-tracked project folders (personal → this vault; employer → that repo's `canvases/`).
+   Cursor will not compile the git copies. Then
    `python3 09-tools/artifact-ingest.py --check` (pending drop-folder; do not promote). Other surfaces
    follow the vendor-surface ontology row / [[decision-vendor-surface-artifacts]] (write-through;
-   do not fake `~/.cursor` harvest in CI).
+   do not fake `~/.cursor` harvest in CI). Do not auto-commit employer repos.
 5. If a generated artifact changed (frontmatter edited), regenerate `skills.registry.json` + Related blocks.
 6. Commit + push reviewable diffs.
 
