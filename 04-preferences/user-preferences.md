@@ -1,5 +1,5 @@
 # User Preferences — Sean Sands
-**Last updated:** 2026-09-11
+**Last updated:** 2026-09-14
 
 ---
 
@@ -44,6 +44,9 @@ or bridged to design, don't force a bad analogy: give me a good source to read a
 - Design system terms: tokens, variants, states, anatomy, slot, tier, alias,
   primitive, semantic
 - Token model: 3-tier (global → semantic → component)
+- **Ordinary words first (2026-09-14).** Do not invent sideways terms when a
+  common one exists. "Dialog," "parent component," "usage," and "variant" beat
+  "chassis" or a newly coined synonym. Full rule: `08-knowledge/design/plain-language.md`.
 
 ## Response Style
 - US English, Oxford comma
@@ -99,6 +102,14 @@ defaults, applied without being re-asked._
   parallel universe. **"Is it good?"** once generation is cheap. **Steel curtain** = CI / axe /
   evals — never LLM-as-judge as the gate. Operating model:
   `01-frameworks/18-design-systems-ai-operating-model.md`; procedure: `ai-design-systems`.
+- **Pattern uniqueness (2026-09-14).** If a person can tell the jobs apart without
+  reading the domain nouns, they are different patterns. If they share a parent
+  component, that is a usage or variant — not a new pattern. One-offs stay
+  host-local. Decision: `06-context/memory/decision-pattern-uniqueness.md`.
+- **Visual-first documentation (2026-09-14).** A definition without a picture is
+  unfinished. Show live shipping components, or a labeled schematic of those
+  primitives. Do not ship a table of names as the example. Method:
+  `08-knowledge/design/visual-first-documentation.md`.
 
 ## Side Detours — Injection Handback
 When a conversation branches into a **side-chat or "by the way" detour** (a tangent off the main

@@ -1,7 +1,7 @@
 ---
 tags: [enterprise-saas, plm, patterns, design-systems, components, layouts]
 created: 2026-05-12
-updated: 2026-05-12
+updated: 2026-09-14
 status: stable
 confidence: high
 sources:
@@ -351,6 +351,8 @@ Watch-fors that surfaced during the audit:
 - **Tag-chip-heavy rows defeat density tokens.** When every row carries 3-5 pill chips, perceived row height ≈ 2× the CSS row-height. Chip-cells have their own density tax that the density token can't fully control. Account for this in the cell-anatomy spec.
 - **AI workflow builders without a visible generated rule.** If the AI translates NL to a workflow, *show the rule* (Asana's pattern). Don't ask the user to trust an invisible translation.
 - **Inbox without keyboard shortcuts.** Linear's productivity edge is single-letter shortcuts for every action. PLM tables operate at scale where keyboard is essential.
+- **Collapsing by visual rhyme.** Rows, cards, or a top toolbar do not make a data table. A grant/settings matrix (cell is the work), a type lookup (pick a value), a work inbox (process arrivals), and a page action cluster (what this surface can start) are different jobs from A1 even when they look row-like. Inbox is already a distinct surface shape above; do not fold it into the list/table branch.
+- **Minting a pattern for a parent component's usage.** If the jobs are distinguishable without domain nouns, they are different patterns. If they share a parent (Dialog, property sheet, a chart type), document the usage — do not add a sibling pattern. Decision: [[decision-pattern-uniqueness]]. Language: [[plain-language]].
 
 ---
 

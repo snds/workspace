@@ -26,6 +26,8 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[decision-vendor-surface-artifacts]] — `decision` · vendor Canvas/Artifact/HTML panels are not durable; write through to the vault (or emit a copy-ready path on web); Cursor `.canvas.tsx` is dual-home (2026-09-11).
 - [[decision-component-pattern-framework-system]] — `decision` · why the 5-layer component & pattern context system was built (framework #09 + skill + MCP + DESIGN.md + AGENTS binding) and where its outputs live.
 - [[decision-frost-ds-ai-operating-model]] — `decision` · framework #18 + `ai-design-systems` spoke: Frost/Southleft DS×AI as L1 (#18) beside #09 (2026-09-11).
+- [[decision-pattern-uniqueness]] — `decision` · jobs you can tell apart without domain nouns are different patterns; a parent component's usage is not a new pattern (2026-09-14).
+- [[decision-visual-first-documentation]] — `decision` · a definition without a picture is unfinished; live components or a labeled schematic, never a text dump (2026-09-14). Method: [[visual-first-documentation]].
 - [[decision-plan-ahead-order-of-operations]] — `decision` · print numbered order + first later-breaker before executing multi-step / dual-repo work; overlay ≠ Pages `main` (2026-09-11).
 - [[decision-visual-qa-interrupt]] — `decision` · mint missing QA detectors and push; page Sean only if self-critique is failing or mint still cannot hit the bar (2026-09-11).
 - [[decision-tool-native-adapters]] — `decision` · Thin native-filename adapters so Gemini/Copilot/Warp/Aider/Windsurf/web LLMs have a first-file path into AGENTS.md (2026-09-11).

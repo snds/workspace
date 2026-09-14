@@ -82,6 +82,12 @@
     "skill loadset": "08-knowledge/cross-domain/process-rigor-gaps.md",
     "close-out-dispatch": "08-knowledge/cross-domain/process-rigor-gaps.md",
     "session status": "08-knowledge/cross-domain/workflow-patterns.md",
-    "what's on the agenda": "08-knowledge/cross-domain/workflow-patterns.md"
+    "what's on the agenda": "08-knowledge/cross-domain/workflow-patterns.md",
+    "documentation": "08-knowledge/design/visual-first-documentation.md",
+    "live example": "08-knowledge/design/visual-first-documentation.md",
+    "docs dump": "08-knowledge/design/visual-first-documentation.md",
+    "pattern docs": "08-knowledge/design/visual-first-documentation.md",
+    "visual documentation": "08-knowledge/design/visual-first-documentation.md",
+    "storybook embed": "08-knowledge/design/visual-first-documentation.md"
   }
 }
