@@ -22,6 +22,163 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+
+### 2026-09-15 — Unattended runner: decided not to build it; guard stays
+
+SessionID: 2026-09-15-work-mbp-runner-decision
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Claude Code (Mac desktop app)
+Agent: Claude Opus 5
+Project(s): 19-workspace-brain
+
+Summary: Sean asked whether to delete the unattended runner and its tasks as an orphaned
+artifact that reports stale. Checked before answering: nothing reports it stale (0 notices,
+vault-health clean across 170 notes), there is no timer, no cron entry, no launchd agent, and
+no queue item. The only artifact is `09-tools/check-unattended-runner-gate.py`.
+
+Recommendation given and taken: keep the gate, close the question. The gate is a lock, not a
+feature — it refuses unsafe unattended runs and is silent otherwise. The risk it blocks does
+not depend on a runner existing, because `/schedule`, the `CronCreate` tool and any headless
+`claude -p` run can reach an unattended path by accident. Deleting a lock because the door is
+unused is backwards. It also costs nothing at rest: `09-tools/` is not auto-loaded, so zero
+tokens per session.
+
+The actual irritant was one baton line reading "authorized-but-unbuilt", which looks like a
+pending task for something nobody intends to do. Replaced with a decided line pointing at
+[[decision-no-unattended-runner]], which also records what a safe first version would look
+like if the answer ever changes: one lane, tools removed rather than granted, and only
+tickets Sean wrote himself.
+--- END BLOCK ---
+
+### 2026-09-15 — Plain language is now a standing requirement
+
+SessionID: 2026-09-15-work-mbp-plain-language
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Claude Code (Mac desktop app)
+Agent: Claude Opus 5
+Project(s): 19-workspace-brain
+
+Summary: Sean said an explanation went over his head and asked for plain language as a
+durable rule, giving ADHD and autism as the reason.
+
+Recorded in two places. `04-preferences/user-preferences.md` → Response Style holds the full
+rule: it outranks every other style note in that file, plain does not mean shallow (keep the
+depth, change the packaging), and it lists concrete do/avoid items plus the worked example
+that caused it. `06-context/CRITICAL_FACTS.md` carries a three-line version, because that
+file loads on every session and this applies to every reply.
+
+The failure it came from, kept as the example: an explanation of the unattended runner used
+`--allowed-tools`, `--strict-mcp-config`, "prompt-injection path" and "lane-scoped" with no
+definitions, stacked four abstract numbered points, and never said the simple thing first —
+that it reads job tickets and does the work on its own, and is switched off because a ticket
+could tell it to do something harmful.
+
+Session floor went 14,778 → 15,480, still inside the 17,000 budget. Worth the tokens: it is
+an accessibility requirement, not a style tweak.
+--- END BLOCK ---
+
+### 2026-09-15 — Record the shared-git-index hazard (and a coverage gap it exposed)
+
+SessionID: 2026-09-15-work-mbp-index-hazard
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Claude Code (Mac desktop app)
+Agent: Claude Opus 5
+Project(s): 19-workspace-brain
+
+Summary: Tree settled (Cursor's @shadcn/lint work landed, 22 harness gates green, no
+divergence), so the hazard deferred earlier is now recorded. Extended
+[[multi-session-workspace-resilience]] rather than minting a new entry — it already owns
+git/concurrency and had a Key diagnostic lessons section.
+
+The hazard: two agents in one working tree share `.git/index`, so `git add <mine>` followed
+by `git commit` commits whatever the other agent staged in between — the commit takes the
+whole index, not your paths. Hit for real this session: a commit swept in two files
+belonging to the concurrent Cursor session under a message asserting it held only my work.
+Recovery is `git reset --soft HEAD~1` → `git restore --staged <theirs>` → re-commit. The fix
+is a pathspec-limited commit, `git commit -- <paths>`, which ignores index state.
+
+Worth separating: the fragment model prevents merge conflicts between disjoint FILES; it does
+nothing about a shared INDEX. Different layers, and only the first had been solved.
+
+Measured a coverage gap in the documented mitigation while writing it up. Point 3 of that
+entry says a PostToolUse hook records edited paths so session-end stages only those. True,
+but it records only `Edit|Write|MultiEdit|NotebookEdit` — anything written through Bash
+(heredoc, sed, `python3 -`) is invisible. This session's touch file held 8 paths against 67
+the commits actually changed, because auto-mode routes most writes through Bash. And it runs
+at session-end only, so a manual mid-session commit bypasses it entirely. Both limits are now
+stated in the entry instead of being implied protection.
+
+Also added: Layer 1 cannot see what you just wrote. `vault-retrieve.py`'s FTS index rebuilds
+at SessionStart and in `nightly.py`, so a mid-session entry is invisible to the lexical
+fallback until `--rebuild`. Found by checking my own work — the natural phrasing "why did git
+commit take files I did not add" produced a visible Layer-0 miss with two wrong lexical hits;
+after rebuild the new entry is the #1 hit. Verified all three phrasings now reach it: two via
+Layer 0 triggers, one via Layer 1.
+
+Committed with `git commit -- <paths>`, which is the practice the entry now prescribes.
+
+22 harness gates green, vault-health 0/0 across 170 notes, ruff clean.
+--- END BLOCK ---
+
+### 2026-09-15 — Close the scoped-commit gap, verify the Open Engine, retire Windows
+
+SessionID: 2026-09-15-work-mbp-fixes-and-engine-verify
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Claude Code (Mac desktop app)
+Agent: Claude Opus 5
+Project(s): 19-workspace-brain
+
+Summary: Cleared the outstanding items.
+
+**Scoped-commit gap closed (the fix, not just the note).** `handle_stop` now snapshots
+`git status --porcelain` once per turn and appends newly-dirty paths to the session touch
+file, so Bash-written files are attributed too — previously only Edit/Write tool paths were
+recorded (8 of 67 this session), which is what dropped session-end into the blanket
+`git add -A` that swept a concurrent session's work. And `_stage_session_scope` now subtracts
+`_other_session_claims()` — the union of every other live session's touch file — so a path
+another session has declared is never staged here even if it went dirty on our watch. Three
+tests added; 52/52 pass. Snapshot files are gitignored. The residual race is stated in the
+entry rather than hidden, and the manual-commit caveat still stands.
+
+**Open Engine verified — the test that had never run.** Label-filtered `list_issues` on the
+personal lane: 30 issues, and all 23 anchor→issue mappings in `open-engine/personal.md`
+resolve. **Zero orphaned pointers.** The other 7 are engine infra (SEA-5/6/7/8) plus three
+created after the migration.
+
+**The migration was already done; the baton was stale.** It happened 2026-07-30, substance
+graduated to `project-context-detail.md` 2026-08-07, and `project-context.md` is now 93 lines
+/ 12.4 KB costing 560 tokens at session start (head-30) — not the ~61 KB the stale entry
+implied. The five unmigrated items are deliberate refusals (three `c8` with no valid pointer,
+two lane-ambiguous), not backlog. Corrected in SESSION-STATE.
+
+**Rec 13 closed.** Its Work-MBP half was already installed — verified `~/.cursor/hooks.json`
+carries `beforeSubmitPrompt` → `cursor-prompt-route.sh`. Its Windows half is dropped: Sean is
+selling the desktop. Windows retired across `fact-machine-layer-installs`, the CLAUDE.md
+machine-label map (auto-loaded, so one line lighter), and the two queue items it scoped —
+`^pc-03` (machine-layer installs: no Windows install route needed, and none should be built)
+and `^pc-39` (author email: Personal MBP only).
+
+**Bootstrap MISSes acknowledged.** All three dated 2026-07-29, two in an employer repo, one in
+a bare `~/Projects` — seven weeks of a notice firing every session start, which is the
+detector-everyone-ignores failure mode. `workspace-doctor --ack`; notices down to one.
+
+**Reported, not actioned — deliberately.** `^pc-04`/SEA-11 is fully done in the vault but sits
+in `Agent Review` on the board. Review→Done is the supervisor's transition, and this session
+has spent its length insisting a machine should not claim done on judgment. `^pc-13`/SEA-15
+correctly stays open: its Perplexity-Space half is genuinely unfinished.
+
+22 harness gates green, 52/52 negative fixtures, ruff clean.
+--- END BLOCK ---
+
 ### 2026-09-15 — vault CI green after Layer-0 brain-root fix
 
 SessionID: 2026-09-15-work-n3p8r
@@ -595,21 +752,3 @@ Next:
 SessionID: 2026-09-11-plan-ahead-export-gate
 --- SESSION BLOCK ---
 
-
-### 2026-09-10 — PlanetCompiler controlled histories and connected globe
-
-SessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe
---- SESSION BLOCK ---
-Date: 2026-09-10
-Agent: Codex
-Surface: Codex desktop
-Machine: Personal Mac, Apple M3 Max
-Project(s): PlanetCompiler; independent Planet Lab scoped handoff
-Summary: Resumed the authorized native handoff. Implemented five prescribed spherical material-strip histories with versioned recipes and material/age ledgers, then connected the standalone Release compiler to bounded asynchronous Unreal MCP tools. Completed independent science and native lifecycle reviews and corrected the defects found. Debug/Release each passed 3/3 CTest suites and 65/65 independent checks, including eight planted defects; 9/9 native tests and 59 live MCP checks passed. Built and inspected an interactive evidence page using actual outputs. Human acceptance and all global-planet/visual claims remain pending. No Legion files changed.
-Commits: PlanetCompiler a3cc5f0, 86ea71f, 2b470bf; local-only repository with no remote configured.
-Next: Review the completed native phase-two diagnostic, then specify the bounded regional surface/hydrology model before phase 3. Preserve original high-resolution references, adversarial visual gates, and all Legion work.
-Handoff: 07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md
-Follow-up: design-hook finding fixed in PlanetCompiler a0d35bf by removing a decorative side border. Browser, scoped detector and evidence-integrity checks passed; no suppressions or unresolved findings.
-Phase-two follow-up: Sean approved the connected globe. Integrated spherical finite-volume core, per-birth-plate material transport, explicit supported/unresolved ledgers, native diagnostic globe and real scheduled playback. Debug/Release 5/5 core suites, 78/78 independent global checks with 13 planted corruptions, 65/65 strip regression; clean native 12/12, global MCP534, strip MCP59 and actual Slate controls8/8 passed. Six final captures were independently inspected. Preserved hot-reload, debug-overlay, stopped-playback and first-black-frame observations; corrected confirmed defects, retained unconfirmed first-use anomaly and model/rendering limits. Human acceptance remains pending. No phase 3 or Legion edits.
-Phase-two commits: da88d1b, e801aa3, 342ecc7, 39071e7, 797e48f and 29744d6 (final evidence checkpoint); implementation repo remains local-only.
---- END BLOCK ---

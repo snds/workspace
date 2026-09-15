@@ -1,6 +1,6 @@
 # Artifact Registry
 <!-- Auto-maintained by any agent. Updated after each task. -->
-<!-- Last updated: 2026-09-03 | Session: library CUT delete + Desktop Pokémon organize -->
+<!-- Last updated: 2026-09-15 | Session: six-phase workspace review — harness, trajectories, retrieval, Figma probe -->
 
 ## Media Services — 07-projects/01-mediaservices/ (git-tracked)
 
@@ -18,7 +18,7 @@
 
 ### 19-workspace-brain/ (README.md + SESSION-STATE.md + notes/ + reports/ + canvases/)
 - **Purpose**: Standing project home for workspace-subject sessions (validation, fix, migration, infrastructure) per the framework #08 project-home rule (FX-13). Git-tracked — cross-machine continuity is its point. `canvases/` holds copies of Cursor `.canvas.tsx` files; `cursor-externalize.py` also mirrors them into this checkout's live Cursor folder. Employer canvases go to that repo's `canvases/`, never here.
-- **Last modified**: 2026-09-02 — session-end after Open Engine enroll, visual-qa prove, merged-branch prune.
+- **Last modified**: 2026-09-15 — six-phase workspace review landed: `workspace-harness.py` (quality/connections/tokens), `evaluate-surface-trajectories.py` (3 Layer-0 matchers collapsed to 1), `artifact-find.py` (session floor −32%), `figma-bind-probe.py` (A8, validated on 3 live nodes), `nightly.py`, `validate-evidence-grades.py`, `ruff.toml`. Reports: workspace-harness, surface-trajectories, automation-second-wave, artifact-retrieval, figma-bind-probe (all v1.0 2026-09-15).
 
 ## Delivery Playbooks — 02-shared-references/delivery-playbooks/
 
