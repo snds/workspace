@@ -39,6 +39,8 @@ Text is the caption, the when-not, and the arbitration. It is not the demonstrat
 
 Do not paste a screenshot of proto or centric-ui into system docs. Those go stale and they leak host product. Recreate the job with CDS pieces.
 
+**Repo truth.** Document the library the package actually imports. A Figma or product intent (for example Google Material Symbols) is not the shipping contract until it is in `package.json` and consumed by `@centric/ui`. Do not write the intended library as current.
+
 Do not invent a second library of hand-drawn shapes when a real component exists. Mortar, not a parallel kit ([[ai-and-design-systems]]).
 
 ## What this forbids

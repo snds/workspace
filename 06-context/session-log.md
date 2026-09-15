@@ -21,6 +21,71 @@ Keep entries concise. This is a handoff log, not a journal.
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
 
+
+# Shapr3D MCP setup
+
+SessionID: 2026-09-14-shapr3d-mcp-setup
+Date: 2026-09-14
+Agent · Surface · Machine: GPT-6 · Codex desktop · Work MacBook Pro
+Context profile: personal-solo, explicitly declared by Sean.
+Project home: temporary name `Projects/shapr3d-personal`; final project concept/name pending reference. No numbered vault project allocated yet.
+
+## Live handoff
+
+- Installed Alfredoalv13/shapr3d-mcp revision `88fcefe` in the sibling Projects checkout with frozen uv dependencies.
+- Registered `shapr3d` globally using the Codex CLI; read-back confirms enabled. Project config alone was not loaded by this parent task. Native tool refresh requires restart; real MCP client connection tested successfully.
+- All 30 upstream tests pass. Generated test plate STEP + STL; independent mesh topology, 60 × 40 × 8 mm bounds, and analytic volume checks pass (0.00205% volume error).
+- Sean installed and launched Shapr3D during the session. The server app bridge opened the STL; Computer Use observed the imported plate with four holes and captured the app window.
+- Evidence and portable setup notes: `Projects/shapr3d-personal/README.md`, `validation.json`, `models/shapr3d_stl_import.png`, and reproducible smoke script.
+- Upstream executes unrestricted Python. Screenshot tool falls back to entire display; prefer app-targeted Computer Use. STEP is editable-solid interchange, without feature history; STL is a mesh.
+- Next: receive visual reference and dimensions; establish final project identity, create versioned models, and inspect in Shapr3D. STEP app import and app-side measurements remain unverified.
+- No employer repository modified. No conceptual design work started.
+
+# Custom desk reference intake
+
+SessionID: 2026-09-14-custom-desk-references
+Date: 2026-09-14
+Agent · Surface · Machine: GPT-6 · Codex desktop · Work MacBook Pro
+Context profile: personal-solo.
+
+## Live handoff
+
+- Sean is designing a custom desk, desktop first. Primary Pinterest form plus upper platform atop main desktop like Aero; exclude Hex Desk side extensions.
+- Source references and decisions are in `Projects/shapr3d-personal/DESIGN-BRIEF.md`.
+- Native Shapr3D MCP tools now callable. Imported `HEXADesk-Main.SLDPRT` successfully in Shapr3D. Exported STEP copied from Documents to project models as `hexadesk_main_reference.step`; MCP reads one solid, 2046.458 × 895.562 mm plan, 25.4 mm thickness (source Y-up).
+- Original SolidWorks files preserved in project reference directory. Shelf part and complete assembly remain untested.
+- Pinterest sign-in required in the in-app browser; asked Sean to sign in. Primary pin image and board not yet visually assessed. Asked for dimensions and platform equipment.
+- Next: complete reference review, inspect shelf, agree dimensions, then desktop/platform study. No custom design generated yet.
+
+# Custom desk dimensions and mounting concept
+
+SessionID: 2026-09-14-custom-desk-materials
+Date: 2026-09-14
+Agent · Surface · Machine: GPT-6 · Codex desktop · Work MacBook Pro
+Context profile: personal-solo.
+
+## Live handoff
+
+- Sean confirmed 71.93 × 29.92 inches overall desktop envelope, hardwood likely American walnut, thickness open. Magnetic ferrous underside for 3D-printed dock/KVM/accessory cradles; organization shelf with probable laptop arm; black straight and custom curved T-slot rail idea for LG ultrawide and Audioengine speakers.
+- Pinterest access now works. Visually inspected both specific pins and board overview. Sustema main form has an angled wraparound outline and central seating recess. Do not claim whole-board review or generated fidelity.
+- Updated `Projects/shapr3d-personal/DESIGN-BRIEF.md` with source links, proposed construction logic, verified/provisional hardware envelopes, and explicit unknowns. `desktop-parameters.json` records exact footprint and null values for undecided dimensions.
+- Full rectangular 1 mm steel sheet estimated 24 lb; smaller panels proposed, not approved. Wood-movement allowances needed. Magnet capacity requires physical stack testing. Structural rail must not rely on thin sheet for arm loads.
+- Live Humanscale M21BJTBC configurator shows black 8-inch/8-inch links, standard tilt, 100 mm VESA and clamp; successor M2 Pro wording. Notebook holder not selected. Native SolidWorks import and STEP conversion verified in prior entry.
+- Asked whether standing or fixed base, and slim versus substantial edge. Answers pending. No custom geometry generated or final thickness selected.
+- Next: use answers to develop desktop/platform layout, then fit equipment with actual revision/adapter/cable clearances. Curved rail fabrication and load ratings remain unverified. No purchase or supplier communication performed.
+
+# Custom desk base and rail research
+
+SessionID: 2026-09-15-custom-desk-base-rail
+Agent · Surface · Machine: GPT / Codex desktop / Sean's Mac
+Context: personal-solo
+
+Sean confirms existing Humanscale laptop holder and clearance work; do not reopen that question. Prefer complete Aero standing-base reuse, but documented replacements are acceptable. Custom longitudinally bent black T-slot rail is selected in principle; investigate specifications and pricing rather than segmented alternatives. Smaller thin steel panels are accepted, with broad flexible coverage for frequently changing magnetic modules.
+
+Working files remain outside the portable workspace in Projects/shapr3d-personal. Updated DESIGN-BRIEF.md and desktop-parameters.json; added BASE-AND-RAIL-PLAN.md. Downloaded and visually reviewed relevant Aero assembly drawings in reference/aero-es71-assembly.pdf: bolted complete base appears reusable, but mounting dimensions and revision-specific payload remain unverified. DeskHaus Apex Pro provides a documented fallback ($925 observed configuration, advertised 600 lb lifting capacity); actual interface fit remains pending. Alubend advertises one-off extrusion bending; prepared quotation requirements, no supplier contacted or custom price obtained.
+
+Next: desktop/platform concept with provisional thickness and shelf dimensions, steel coverage zones and frame clearance. Thickness, recess, shelf dimensions and rail radius remain open. No new custom desk CAD produced in this research pass. MCP installation/test and native SolidWorks-to-STEP reference conversion were completed in prior sessions.
+
 ### 2026-09-14 — Canvas live-mirror + employer repo dest
 
 SessionID: 2026-09-14-work-c4nvx
