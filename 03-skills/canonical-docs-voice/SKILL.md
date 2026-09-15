@@ -8,26 +8,26 @@ description: >
   instead of the component. Fix the docs host so the live instance can ship.
 aliases: [canonical-docs-voice, docs-voice, changelog-voice]
 triggers:
-  [
-    documentation,
-    fumadocs,
-    mdx,
-    live example,
-    schematic,
-    changelog note,
-    canonical documentation,
-    docs page,
-    write docs,
-    component docs,
-    because the docs app,
-  ]
+  - documentation
+  - fumadocs
+  - mdx
+  - live example
+  - schematic
+  - changelog note
+  - canonical documentation
+  - docs page
+  - write docs
+  - component docs
+  - because the docs app
+  - page description
+  - optional peer
 tier: spoke
 domain: design
 hub: ds-advisor
 prerequisites: [ds-advisor]
 related: [design-engineer]
 surfaces: ["*"]
-spec_version: "2.2"
+spec_version: "2.3"
 ---
 
 # Canonical docs voice
@@ -58,13 +58,19 @@ migration notes. Those surfaces *should* say what changed and why.
 3. **Schematic** is only for something that does not ship (or is a different
    package this page is not mounting). Mark it schematic. Still caption the
    *job*, never "schematic here because X is not in the docs app."
-4. **Code tab** may list consume facts (optional peer, subpath import, required
-   height). That is how to use it. It is not an apology.
-5. **Never** put changelog voice on a canonical page: "for now", "until we…",
+4. **Code tab** may list consume facts (optional peer, height, subpath). That is
+   how to use it. It is not an apology.
+5. **The one-line description under the H1 names the thing** in product language.
+   Additional context lives in the paragraph below it (`PageHero` summary). Import
+   paths, optional peers, package names, and "not RHF / not Object Chip" belong in
+   the Code tab or When not to use — never in that one-line description.
+6. **Never** put changelog voice on a canonical page: "for now", "until we…",
    "because the docs app does not…", "this used to be…", "Storybook has the real
    one because we couldn't."
 
 ## Forbidden (canonical pages)
+
+> Token-themed React Flow host for relationship graphs. Optional peer; subpath import.
 
 > The live example is a schematic of the node sequence. The pannable canvas,
 > MiniMap, and Controls live in Storybook because the docs app does not take
@@ -73,6 +79,10 @@ migration notes. Those surfaces *should* say what changed and why.
 > Graph canvas — `@centric/ui/flow-canvas` in product, schematic here
 
 ## Prefer
+
+> A pannable canvas for relationship graphs.
+
+Then a paragraph of context. Consume facts wait for the Code tab.
 
 > Style → colourway → sample — pan and zoom
 

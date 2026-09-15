@@ -30,6 +30,7 @@ A component page is the contract a product team reads. A sentence about the docs
 
 | Surface | Voice |
 |---|---|
+| Title description (under the H1) | What it is, in product language. One line. |
 | Component / pattern / foundation page | What it is, when to use it, how it behaves. Live instance. |
 | Code tab | How to import and configure it (optional peer, height, subpath). |
 | Changelog / PR / story comment | What changed in the docs host, and why. |
@@ -51,6 +52,7 @@ Schematic is honest when **the named thing does not ship** (or lives in a packag
 - Captions that say "in product, schematic here."
 - Body copy that points at Storybook as the place the *real* component lives, except as the Open-menu workbench jump-out.
 - "Until we wire X", "for now", "workaround" on a catalog page.
+- A title description that is a consume note: optional peer, subpath import, package name, "not RHF".
 
 ## Related
 

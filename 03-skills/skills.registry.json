@@ -919,14 +919,28 @@
       ],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "documentation",
+        "fumadocs",
+        "mdx",
+        "live example",
+        "schematic",
+        "changelog note",
+        "canonical documentation",
+        "docs page",
+        "write docs",
+        "component docs",
+        "because the docs app",
+        "page description",
+        "optional peer"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:39b08cf38181310585b2ceab30c1fb3bdaa6e3ccb8b7e752ef5b57d6507ce66d"
+      "hash": "sha256:9b39d3b3e875a4a6f9caf6685e82bb4bf7c776dc59b5a086d9626e309d2b6675"
     },
     "career-ops-job-search": {
       "path": "03-skills/career-ops-job-search/SKILL.md",
