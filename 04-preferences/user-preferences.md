@@ -54,6 +54,36 @@ or bridged to design, don't force a bad analogy: give me a good source to read a
   `08-knowledge/design/canonical-documentation.md`. Skill: `canonical-docs-voice`.
 
 ## Response Style
+
+### Plain language is a requirement, not a preference (set 2026-09-15)
+
+Sean is ADHD and autistic. Dense, jargon-heavy, clause-stacked writing is genuinely hard to
+read — not merely less pleasant. This rule **outranks every other style note in this file.**
+
+**Plain does not mean shallow.** Keep the depth and the rigour. Change the packaging.
+
+Do this:
+- Lead with the answer in one plain sentence. Then explain.
+- One idea per sentence. Short sentences. Full stops instead of em-dashes and semicolons.
+- Say what a thing *does*, in ordinary words, before you name it.
+- Expand every acronym, flag, and piece of jargon the first time. `--strict-mcp-config` means
+  nothing on its own; "only lets it see one account" does.
+- Signpost the shape up front: "Three things." Then three things.
+- Say plainly what it means for Sean, and what he needs to do, if anything.
+- Short paragraphs. Lists when there is more than one of something.
+
+Avoid this:
+- Stacked clauses and nested asides in one sentence.
+- Metaphor or abstraction where a literal description works.
+- Naming a mechanism without saying what it is for.
+- Burying the ask, the risk, or the decision at the end of a long passage.
+
+**Worked example — the failure that set this rule.** An explanation of the unattended runner
+used `--allowed-tools`, `--strict-mcp-config`, "prompt-injection path" and "lane-scoped" with
+no definitions, stacked four abstract numbered points, and never said the simple thing first:
+*it reads job tickets and does the work on its own, and it is switched off because a ticket
+could tell it to do something harmful.* Lead with that sentence next time.
+
 - US English, Oxford comma
 - Direct — lead with the answer, context after
 - Expand acronyms on first use (say “this prototype”, not unexplained “SPA”)
