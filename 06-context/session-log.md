@@ -20,9 +20,37 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
+### 2026-09-15 — CDS Material Symbols Icon; proto consume; cui next
 
+SessionID: 2026-09-15-work-mbp-cds-icons
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): cpes-software/cds, saas-plm-prototype
+Context profile: centric-engineering
 
+Summary: Implemented CDS `Icon` as Material Symbols ligatures (`name`, `size`, `filled`; axes from `iconAxes`). Dropped Lucide in CDS. Proto replaced Lucide with `@centric/ui/icon`. Hosts that still pass `Icon={Component}` keep compiling.
 
+Decisions:
+- Ligature `name` is the CDS path. `IconGlyph` still accepts a `className` slot so Lucide hosts type-check without bringing `lucide-react` back.
+- Glyph text sits in an inner `aria-hidden` span so it is not the control name.
+- Preferred / close / mill / style metaphors: `keep`, `close`/`delete`, `apartment`, `checkroom`.
+- centric-ui waits until CDS + proto are on main; that is now true. Remaining work is cui tickets.
+
+Artifacts:
+- cds #39 merged — Icon + drop Lucide
+- cds #40 merged — host slots + accname
+- saas-plm-prototype #80 merged — proto consume
+
+Pending added:
+- centric-ui consume `@centric/ui/icon` (Sean’s cui tickets — review + merge)
+- Optional: palette accordion nested `<button>`; light-mode / toast / BOM icon pass
+
+Next:
+- Review and merge the cui tickets. Nothing else blocks this icon program.
+--- END BLOCK ---
 
 ### 2026-09-15 — Unattended runner: decided not to build it; guard stays
 
