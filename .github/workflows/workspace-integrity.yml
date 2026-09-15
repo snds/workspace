@@ -31,6 +31,8 @@ on:
       - "09-tools/evaluate-surface-trajectories.py"
       - "09-tools/validate-evidence-grades.py"
       - "09-tools/nightly.py"
+      - "09-tools/artifact-find.py"
+      - "06-context/artifact-registry.md"
       - "ruff.toml"
       - "02-shared-references/surface-trajectory-cases.jsonl"
       - "02-shared-references/skill-routing-cases.jsonl"
@@ -58,6 +60,8 @@ on:
       - "09-tools/evaluate-surface-trajectories.py"
       - "09-tools/validate-evidence-grades.py"
       - "09-tools/nightly.py"
+      - "09-tools/artifact-find.py"
+      - "06-context/artifact-registry.md"
       - "ruff.toml"
       - "02-shared-references/surface-trajectory-cases.jsonl"
       - "02-shared-references/skill-routing-cases.jsonl"
@@ -110,5 +114,9 @@ jobs:
         run: python3 09-tools/validate-evidence-grades.py --self-test
       - name: Nightly entrypoint is wired correctly (plan only, runs nothing)
         run: python3 09-tools/nightly.py --dry-run
+      - name: Artifact registry stays queryable (an index you ingest is a bug)
+        run: python3 09-tools/artifact-find.py --check
+      - name: Artifact retrieval self-test
+        run: python3 09-tools/artifact-find.py --self-test
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py

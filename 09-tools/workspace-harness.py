@@ -51,15 +51,18 @@ STAMP = ROOT / "07-projects" / "19-workspace-brain" / "reports" / "workspace-har
 
 # Token budget ceilings. Raising one is a deliberate, reviewable diff — never a
 # side effect of "the report went red". Measured 2026-09-15; headroom ~15%.
+# session_floor dropped 21,697 -> 14,778 when artifact-registry.md moved from "read" to
+# "query" (C2). The ceiling was lowered with it on purpose: reverting the read order now
+# fails CI instead of quietly costing 6.9k a session again.
 # Cross-chain trigger collisions: correct sometimes, so a ceiling rather than zero.
 # Raising it is a reviewable diff, which is the point.
 CROSS_CHAIN_COLLISION_CEILING = 25
 
 BUDGETS = {
     "contract_floor": 11_800,
-    "session_floor": 25_000,
+    "session_floor": 17_000,
     "loadset_p95": 14_500,
-    "worst_case_legal": 72_000,
+    "worst_case_legal": 64_000,
 }
 
 # The enforcement chain, in the order AGENTS.md fixes. build-related rewrites Related
@@ -78,6 +81,8 @@ QUALITY_CHAIN = [
     ("validate-capabilities.py", ["--check"]),
     ("validate-evidence-grades.py", []),
     ("validate-evidence-grades.py", ["--self-test"]),
+    ("artifact-find.py", ["--check"]),
+    ("artifact-find.py", ["--self-test"]),
     ("validate-layer0-schema.py", ["--check"]),
     ("skill-loadset.py", ["--self-test"]),
     ("close-out-dispatch.py", ["--check"]),
@@ -468,8 +473,15 @@ SESSION_CONTEXT = [
     ("06-context/role-and-context.md", None),
     ("06-context/project-context.md", 30),
     ("06-context/session-log.md", 30),
-    ("06-context/artifact-registry.md", None),
     ("04-preferences/user-preferences.md", None),
+]
+# Indexes the contract says to QUERY, never ingest. Not in the floor, because no compliant
+# agent pays them — but priced here so the saving stays visible and a silent reversion of
+# the read order shows up as a number rather than as nothing. Each has a retrieval CLI:
+#   artifact-registry.md -> artifact-find.py · skills.registry.json -> skill-loadset.py
+#   _INDEX.md            -> knowledge-hints + prompt_route parsing it server-side
+QUERIED_NOT_INGESTED = [
+    ("06-context/artifact-registry.md", "09-tools/artifact-find.py"),
 ]
 # Reached on a real request, on top of the floor.
 REQUEST_EXTRAS = [
@@ -497,6 +509,7 @@ def run_tokens() -> dict:
 
     session_parts = {p: file_tokens(ROOT / p, n) for p, n in SESSION_CONTEXT}
     session_floor = contract_floor + sum(session_parts.values())
+    avoided = {p: file_tokens(ROOT / p) for p, _cli in QUERIED_NOT_INGESTED}
 
     chain_costs = {}
     for name in skills:
@@ -537,6 +550,7 @@ def run_tokens() -> dict:
         "loadset_max": ordered[-1] if ordered else 0,
         "worst_case_legal": worst_case_legal,
         "banned_ingest_total": sum(banned.values()),
+        "avoided_by_retrieval": sum(avoided.values()),
     }
     over = [
         f"{k}: {measured[k]:,} tokens over budget {BUDGETS[k]:,}"
@@ -560,6 +574,8 @@ def run_tokens() -> dict:
             "worst_knowledge_entry": worst_knowledge,
             "request_extras": extras,
             "banned_ingest": banned,
+            "avoided_by_retrieval": avoided,
+            "retrieval_clis": {p: cli for p, cli in QUERIED_NOT_INGESTED},
         },
     }
 
@@ -624,6 +640,9 @@ def print_report(report: dict) -> None:
             print(f"  {mark} {label:<44} {m[key]:>7,}{budget}")
         d = t["detail"]
         print(f"  · worst load chain: {' → '.join(d['worst_loadset_chain'])}")
+        if m.get("avoided_by_retrieval"):
+            print(f"  · avoided by retrieval (query, never ingest): {m['avoided_by_retrieval']:>7,}"
+                  f"  — {', '.join(d['retrieval_clis'].values())}")
         print(f"  · banned ingest if routing is skipped:       {m['banned_ingest_total']:>7,}"
               f"  ({m['banned_ingest_total'] / max(m['worst_case_legal'], 1):.1f}× the legal worst case)")
         for line in t["over_budget"]:
@@ -744,6 +763,13 @@ def self_test() -> int:
     expect("token estimate of empty is zero", est_tokens("") == 0)
     expect("head read is cheaper than whole file",
            file_tokens(ROOT / "AGENTS.md", 5) < file_tokens(ROOT / "AGENTS.md"))
+
+    # The point of moving an index behind a CLI is that reverting must COST something
+    # visible. A ceiling a revert would not breach is decoration, so assert the gap.
+    tokens = run_tokens()
+    reverted = tokens["measured"]["session_floor"] + tokens["measured"]["avoided_by_retrieval"]
+    expect("session_floor budget would catch a reverted read order",
+           reverted > BUDGETS["session_floor"] >= tokens["measured"]["session_floor"])
 
     expect("PATH_RE finds a parenthesised path",
            PATH_RE.findall("resolve (02-shared-references/x.md) first") == ["02-shared-references/x.md"])

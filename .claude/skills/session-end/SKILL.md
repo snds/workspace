@@ -148,7 +148,9 @@ Apply pending adds/resolves and project status changes. Skip if no changes.
 ### Step 4 — Update artifact-registry.md (only if files were created/modified)
 
 For any file created or modified in `07-projects/` this session, update or add its
-entry in `06-context/artifact-registry.md`.
+entry in `06-context/artifact-registry.md`. Keep the `- **Purpose**:` / `- **Last modified**:`
+shape — agents QUERY this file (`09-tools/artifact-find.py`) rather than reading it, so format
+drift makes queries miss silently. Verify with `python3 09-tools/artifact-find.py --check`.
 
 ### Step 5 — Harvest knowledge (if warranted)
 

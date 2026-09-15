@@ -31,7 +31,9 @@ When starting a non-trivial task, read (in this order):
 1. **[06-context/role-and-context.md](06-context/role-and-context.md)** — who Sean is, his work, specializations
 2. **[06-context/project-context.md](06-context/project-context.md)** — pending stubs + `^pc-NN` (authoritative queue); long substance in `project-context-detail.md`; project narratives in `project-registry.md` (load on demand)
 3. **[06-context/session-log.md](06-context/session-log.md)** — recent session entries, newest-first
-4. **[06-context/artifact-registry.md](06-context/artifact-registry.md)** — structural index of known files
+4. **[06-context/artifact-registry.md](06-context/artifact-registry.md)** — structural index of known
+   files. **Query it, never read it** (~6.9k tokens): `python3 09-tools/artifact-find.py "<terms>"`,
+   `--path <fragment>`, or `--list` for the whole map at ~575. Still WRITE to it at session-end.
 5. **[04-preferences/user-preferences.md](04-preferences/user-preferences.md)** — communication style, tone
 
 The `SessionStart` hook loads these automatically. If the hook didn't fire (e.g., you were

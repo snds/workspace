@@ -29,7 +29,7 @@ Default scope is **full**: read all the foundation files listed below. If user s
 4. `06-context/role-and-context.md`
 5. `06-context/project-context.md` (full file)
 6. `06-context/session-log.md` (head — first 200 lines is enough for recency)
-7. `06-context/artifact-registry.md` (if exists)
+7. `06-context/artifact-registry.md` (if exists) — whole-file read is correct HERE (a full audit is the one caller that needs every entry); ordinary sessions query `09-tools/artifact-find.py`
 8. `04-preferences/user-preferences.md`
 9. All MOCs at workspace root: `_HOME.md`, `_PROJECTS.md`, `_SKILLS.md`, `_FRAMEWORKS.md`, `_CONTEXT.md`, `_CHEATSHEET.md`
 10. `00-bootstrap/OBSIDIAN-SETUP.md`

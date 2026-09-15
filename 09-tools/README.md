@@ -303,6 +303,35 @@ keys). Does not echo values. Skip `_archive`, lockfiles, `node_modules`, `*.exam
 python3 09-tools/check-secrets.py
 ```
 
+## artifact-find.py
+
+C2 — query the artifact registry instead of ingesting it.
+`06-context/artifact-registry.md` is **~6,942 tokens**, and the contract used to tell every
+agent to read it at session start: the largest recurring item in the session floor after
+AGENTS.md itself. An index is for looking things up.
+
+| Call | Cost |
+|---|---|
+| reading the file (the old read-order) | 6,942 |
+| `--list` (every group + entry name) | 575 |
+| `--path 07-projects` | 513 |
+| `artifact-find.py "lcars"` | 100 |
+
+Same fix already applied twice: `skills.registry.json` → `skill-loadset.py`, and
+`08-knowledge/_INDEX.md` → knowledge-hints plus the router parsing the index server-side.
+
+`--check` is half the tool. A retrieval layer is only as good as the structure it reads, so
+the thing that queries the file also polices its shape — drift the format and queries start
+missing *silently* instead of failing loudly. It runs in CI and at session-end, right after
+the step that writes to the registry.
+
+```
+python3 09-tools/artifact-find.py "session state"
+python3 09-tools/artifact-find.py --path 05-artifacts
+python3 09-tools/artifact-find.py --list
+python3 09-tools/artifact-find.py --check
+```
+
 ## nightly.py
 
 A4 — the executable form of [[nightly-maintenance-recipe]]. **Wrapper only; nothing

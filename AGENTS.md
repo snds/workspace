@@ -118,7 +118,8 @@ When entering the workspace without prior context, read in this order:
    (02 diagrams · 03 data/charts · 04 documents/specs · 05 Proofboard) — see
    [delivery-playbooks/README.md](02-shared-references/delivery-playbooks/README.md)
 8. Root helper files such as `_HOME.md`, `_CONTEXT.md`, `_FRAMEWORKS.md`, `_SKILLS.md`
-9. `06-context/` — durable context + memory (`memory/MEMORY.md` index)
+9. `06-context/` — durable context + memory (`memory/MEMORY.md` index). `artifact-registry.md`
+   is an INDEX: query it with `python3 09-tools/artifact-find.py "<terms>"`, never ingest it.
 10. Shared references in `02-shared-references/` and preferences in `04-preferences/` when relevant
 11. Project-local context files for the active project; skill files when performing specialized work
 

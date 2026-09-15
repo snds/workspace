@@ -41,6 +41,7 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[decision-commercial-data-licensing]] — `decision` · default to commercially-licensable data/asset sources for all projects; non-commercial sources (e.g. Gaia DR3) only when uniquely needed — isolate, mark, reconcile later.
 - [[decision-defer-dense-vault-retrieval]] — `decision` · defer embedding/dense Layer-2 vault retrieval until `vault-retrieve.py --eval` shows paraphrase gaps lexical cannot fix (13/13 green 2026-08-05).
 - [[decision-intent-coordination-standard]] — `decision` · multi-agent work uses a living spec + `intent-run.py`; Intent.app is optional GUI.
+- [[decision-indexes-are-queried-not-read]] — `decision` · every index gets a retrieval CLI (`artifact-find.py`, `skill-loadset.py`, knowledge-hints) and the token budget drops with it, so reverting to a whole-file read fails CI.
 - [[decision-lint-narrow-or-not-at-all]] — `decision` · automation-layer lints stay narrow (ruff E9/F/I; evidence grades need a legend + named detector); a check that reports non-defects gets routed around.
 - [[decision-one-matcher-per-workspace]] — `decision` · one Layer-0 matcher (`prompt_route.py`); every surface delegates and `evaluate-surface-trajectories.py` proves each real entry point delivers the same context.
 - [[decision-reachability-is-a-detector]] — `decision` · validators prove files are well-formed; `workspace-harness.py` proves an agent can reach them and prices the traversal — reachability + token budget are CI detectors now.

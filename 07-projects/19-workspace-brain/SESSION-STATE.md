@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-15 — automation second wave: A4/A5/A9 applied, A8 still blocked_
+_Last updated: 2026-09-15 — C2: artifact registry behind a CLI, session floor −32%_
 
 ---
 
@@ -8,11 +8,11 @@ _Last updated: 2026-09-15 — automation second wave: A4/A5/A9 applied, A8 still
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Phases 5 and 6 landed. 21 harness gates green. Remaining from the automation review: A8 only (Figma bind probe), still blocked on a produce that cannot refuse `Color/*`.
-- **Working set**: `09-tools/nightly.py`, `09-tools/validate-evidence-grades.py`, `ruff.toml`, `09-tools/workspace-harness.py`.
-- **Last action (2026-09-15):** A5 ruff (narrow E9/F/I after measuring 143 default findings), A9 evidence-grade lint (1 real violation fixed), A4 nightly entrypoint (nothing scheduled). Found 25 cross-chain trigger collisions (now ceilinged) and measured artifact-registry.md at 6,942 tokens/session. Claude Opus 5 · Claude Code · Work MBP.
+- **Current focus**: C2 landed — `artifact-find.py` replaces a 6,942-token read; session floor 21,697 → 14,778 and the budget was lowered to 17,000 so a revert fails CI. 21 harness gates green. Remaining from the automation review: A8 only.
+- **Working set**: `09-tools/artifact-find.py`, `09-tools/workspace-harness.py`, `CLAUDE.md`, `AGENTS.md`.
+- **Last action (2026-09-15):** Moved `artifact-registry.md` behind a retrieval CLI, changed the contract in 4 places, then updated the harness model and lowered the budget to lock the saving. Claude Opus 5 · Claude Code · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** C2 — artifact-registry retrieval CLI + read-order change (~6.9k tokens/session, 28% of the session floor); it is an index being ingested, the same mistake already fixed for the skill registry and _INDEX. Then A8 on the next Figma produce that cannot refuse `Color/*`. Employer PRs for untracked `canvases/` in cds + proto (no auto-commit). Human merge cds #35.
+- **Next action:** A8 Figma bind probe, on the next produce that cannot refuse `Color/*` — the last open row from the automation review. Employer PRs for untracked `canvases/` in cds + proto (no auto-commit). Human merge cds #35. Watch the two graded counters: hub-prose spokes (140) and cross-chain trigger collisions (25/25, at ceiling).
 - **Open decisions:** Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot).
 - **Blocked on:** cds #35 human merge (do not merge it from an agent). Employer `canvases/` exist on disk but are untracked pending PRs.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`. Do not auto-commit employer repos.

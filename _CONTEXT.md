@@ -15,7 +15,7 @@ Everything an agent needs to know before acting. All files in `06-context/`.
 | [[04-preferences/user-preferences]] | Communication style, tone, conventions | Sean |
 | [[06-context/project-context]] | Active projects + pending items (authoritative) | Any agent (via session-end) |
 | [[06-context/session-log]] | Session blocks, newest-first | Any agent (via session-end) |
-| [[06-context/artifact-registry]] | Structural index of project files | Any agent (via session-end write 4) |
+| [[06-context/artifact-registry]] | Structural index of project files — **query with `09-tools/artifact-find.py`, do not read whole** | Any agent (via session-end write 4) |
 | [[06-context/memory/MEMORY]] | Durable non-project facts + decisions index | Any agent (when a durable fact emerges) |
 
 ## Recent session entries

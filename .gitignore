@@ -123,6 +123,7 @@
 !09-tools/evaluate-surface-trajectories.py
 !09-tools/validate-evidence-grades.py
 !09-tools/nightly.py
+!09-tools/artifact-find.py
 !09-tools/eslint-off-system/
 !09-tools/eslint-off-system/**
 !09-tools/fixtures/
