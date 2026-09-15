@@ -88,10 +88,15 @@ HUB_DETECTORS: dict[str, tuple[Step, ...]] = {
         ),
     ),
     "figma": (
+        # Capture needs MCP (agent-only); JUDGING the capture is a CLI. Split honestly:
+        # the skip is the capture step, the probe is the assess step A8 minted.
         _skip(
-            "figma-mcp-inspect",
-            "MCP inspect fills/strokes/instances + native-zoom screenshot. Refuse Color/*.",
+            "figma-mcp-capture",
+            "Agent step: get_variable_defs + get_metadata on the node you just wrote, into "
+            "your scratchpad (employer content — never commit it). "
+            "`figma-bind-probe.py --emit-template` prints the calls.",
         ),
+        _cli("figma-bind-probe.py", "--self-test"),
         _skip("vqa-prove", "vqa prove BUILD CUESPEC when a reference exists."),
     ),
     "eng": (

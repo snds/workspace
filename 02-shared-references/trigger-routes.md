@@ -310,6 +310,11 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `where is that file` | 09-tools/artifact-find.py "<terms>" — query the artifact registry; --list for the map, --path for a folder. Never read 06-context/artifact-registry.md whole (~6.9k tokens) |
 | `known artifacts` | 09-tools/artifact-find.py "<terms>" — query the artifact registry; --list for the map, --path for a folder. Never read 06-context/artifact-registry.md whole (~6.9k tokens) |
 | `project files` | 09-tools/artifact-find.py "<terms>" — query the artifact registry; --list for the map, --path for a folder. Never read 06-context/artifact-registry.md whole (~6.9k tokens) |
+| `bind probe` | 09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass |
+| `figma prove` | 09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass |
+| `construction gate` | 09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass |
+| `color primitive` | 09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass |
+| `instances not rects` | 09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass |
 
 ## Registry skills with triggers
 
@@ -419,4 +424,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 295 · Registry rows: 101_
+_Curated routes: 300 · Registry rows: 101_

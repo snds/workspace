@@ -1,0 +1,29 @@
+{
+  "_note": "SYNTHETIC. The Figma account on this machine is the employer org; real captures are employer content and must never be committed to this personal workspace.",
+  "system": "example-ds",
+  "file_key": "SYNTHETICFIXTUREKEY0000",
+  "node_id": "1:2",
+  "variables": {
+    "surface/action/primary": "#1d4ed8",
+    "text/on-action": "#ffffff",
+    "control-radius/sm": "4",
+    "padding-x/md": "12",
+    "border-width-0": "0"
+  },
+  "nodes": [
+    {
+      "id": "1:3",
+      "name": "Button / Primary / Default",
+      "type": "INSTANCE",
+      "bindings": {
+        "fill": "surface/action/primary",
+        "textColor": "text/on-action",
+        "cornerRadius": "control-radius/sm",
+        "paddingX": "padding-x/md",
+        "strokeWeight": "border-width-0"
+      },
+      "raw": {}
+    }
+  ],
+  "allow": []
+}

@@ -83,6 +83,7 @@ QUALITY_CHAIN = [
     ("validate-evidence-grades.py", ["--self-test"]),
     ("artifact-find.py", ["--check"]),
     ("artifact-find.py", ["--self-test"]),
+    ("figma-bind-probe.py", ["--self-test"]),
     ("validate-layer0-schema.py", ["--check"]),
     ("skill-loadset.py", ["--self-test"]),
     ("close-out-dispatch.py", ["--check"]),

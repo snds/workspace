@@ -302,6 +302,11 @@
     "what files exist": "09-tools/artifact-find.py \"<terms>\" — query the artifact registry; --list for the map, --path for a folder. Never read 06-context/artifact-registry.md whole (~6.9k tokens)",
     "where is that file": "09-tools/artifact-find.py \"<terms>\" — query the artifact registry; --list for the map, --path for a folder. Never read 06-context/artifact-registry.md whole (~6.9k tokens)",
     "known artifacts": "09-tools/artifact-find.py \"<terms>\" — query the artifact registry; --list for the map, --path for a folder. Never read 06-context/artifact-registry.md whole (~6.9k tokens)",
-    "project files": "09-tools/artifact-find.py \"<terms>\" — query the artifact registry; --list for the map, --path for a folder. Never read 06-context/artifact-registry.md whole (~6.9k tokens)"
+    "project files": "09-tools/artifact-find.py \"<terms>\" — query the artifact registry; --list for the map, --path for a folder. Never read 06-context/artifact-registry.md whole (~6.9k tokens)",
+    "bind probe": "09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass",
+    "figma prove": "09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass",
+    "construction gate": "09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass",
+    "color primitive": "09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass",
+    "instances not rects": "09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass"
   }
 }

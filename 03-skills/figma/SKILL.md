@@ -138,10 +138,16 @@ resolve).
 5. **Run** the base procedure. Apply variables/styles — never raw values (token-first).
 6. **Emit** the report (authored artifacts or audit findings).
 7. **Prove-gate (generate):** invoke [[close-out]] — capture (MCP inspect + native-zoom
-   screenshot) → assess (refuse `Color/*`; instances not rects; variant matrix; pixels if a
-   cuespec exists) → correct and re-prove. Missing detector → mint it and push to this
-   workspace. **Do not page Sean** unless self-critique is failing or that mint still cannot
-   hit the accuracy/perf bar.
+   screenshot) → assess → correct and re-prove. **The assess step is a detector, not a
+   judgement call:** `python3 09-tools/figma-bind-probe.py --emit-template` prints the
+   `get_variable_defs` / `get_metadata` calls, then
+   `figma-bind-probe.py --capture <scratchpad>/cap.json` refuses `Color/*` primitives, raw
+   values (zeros are not exempt), and rects-instead-of-instances, and warns on
+   density-unaware control tokens. **Exit 2 means nothing was verified — that is not a
+   pass.** Write captures to your scratchpad, never into this repo: Figma here is the
+   employer account. Pixels still go through `vqa prove` when a cuespec exists. Missing
+   detector → mint it and push to this workspace. **Do not page Sean** unless self-critique
+   is failing or that mint still cannot hit the accuracy/perf bar.
 8. **Hand off**: `spec` → design-engineer; system-token decisions → `/ds`. After any produce,
    load `governed_by` lenses (`qa`, `a11y-visual`).
 

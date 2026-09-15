@@ -4,6 +4,81 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-09-02 — Domain constitutions, graph crosslinking, Cursor canvas externalize
+
+SessionID: 2026-09-02-voyager-g4x9k2
+--- SESSION BLOCK ---
+Date: 2026-09-02
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain, 20-lcars-generative-interface, 01-mediaservices (canvas copies only)
+Summary: Generalized DS constitution rigor to other job contexts (`domain-constitution/1.0`, 10 YAML packs). Fixed Obsidian graph islands that were Dataview-without-edges plus colliding stems (not a missing ontology). Copied 8 Cursor canvases from `~/.cursor/projects/` into git-tracked `07-projects/…/canvases/` and wired `cursor-externalize.py` into session-end so this runs every Cursor close.
+Artifacts:
+  - 02-shared-references/domain-constitutions/ (spec, domains.yaml, 10 dc-*.yaml, index)
+  - 08-knowledge/cross-domain/agentic-domain-constitutions.md
+  - 09-tools/cursor-externalize.py
+  - 07-projects/19-workspace-brain/canvases/ (domain-constitutions, ds-agentic-ontology, perception-critique-stack, skill-hub-rigor-audit)
+  - 07-projects/20-lcars-generative-interface/canvases/lcars-replication-gap.canvas.tsx
+  - 07-projects/01-mediaservices/canvases/ (looney-tunes-loudness, duplicate-scan-outcome, authoritative-delete-list)
+Decisions:
+  - Cursor live canvases stay in `~/.cursor/projects/` (IDE compile path); vault copies are the portable source of truth.
+  - Legion canvases belong in the Legion repo, not snds/workspace. Copied to Legion/docs/canvases/ on disk; not committed there.
+  - Do not star-link Copilot, .superpowers, or vendored command trees into the Obsidian graph.
+Pending added: none
+Pending resolved: none
+Next:
+  - Refresh Obsidian graph (orphans off). Remaining islands should be vendor/Copilot/artifact.
+  - Optional: commit Legion `docs/canvases/` in the Legion repo.
+  - Use a domain pack on real work, or `python3 09-tools/ds-source-watch.py --fetch`, or `vqa prove`.
+  - Open Engine personal lane still not-registered on this machine (`python3 00-bootstrap/doctor/linear-lanes.py`).
+--- END BLOCK ---
+
+
+### 2026-09-02 — Ontology and knowledge graphs for agents
+
+SessionID: 2026-09-02-voyager-ontkg
+--- SESSION BLOCK ---
+Date: 2026-09-02
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain (teaching; no project files changed)
+Summary: Explained ontology (shared types and legal relations) vs knowledge graph (typed facts in that vocabulary), and how agents use classify → traverse → constrain → write-back instead of dumping similar text. Mapped the same split onto this vault: workspace-ontology + skill frontmatter as schema; registry load_chains, routing map, and epistemic `relations:` as the graphs; retrieval finds candidates, types decide what may act.
+Decisions:
+  - Career-ops trigger on the letter `i` treated as a misfire; did not load job-search skills
+Next:
+  - Sean picks a follow-up if wanted: walk one vault decision through the graph; contrast ontology+graph vs RAG/skills/memory; or sketch a domain graph (PLM / LCARS / tokens) on top of the workspace ontology
+--- END BLOCK ---
+
+### 2026-09-02 — Prove-engine merge close + DSDS persist
+
+SessionID: 2026-09-02-voyager-e4f1a
+--- SESSION BLOCK ---
+Date: 2026-09-02
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain, 20-lcars-generative-interface
+Summary: Closed the prove-engine thread (vqa/1.1 altitudes A–G, play-prove, /optimize, LCARS uncued residuals) already merged to main as 0f4228a. Persisted the 2026-09-01 project-independent DSDS constitution + ds-source-watch landing that was still sitting staged. Folded the 2026-08-26 Looney Tunes fragment into session-log.
+Artifacts:
+  - 03-skills/visual-prove-engine/ vqa/1.1 + 03-skills/play-prove/ (on main via 54a2efe / 0f4228a)
+  - 02-shared-references/dsds/dsds-constitution.md + workspace-ds-constitution.dsds.yaml
+  - 02-shared-references/idempotent-design-decisions.md + 03-skills/ds-source-watch/ + 09-tools/ds-source-watch.py
+Decisions:
+  - Personal-solo merge to main, not a PR; SWF dumps stay untracked
+  - DS constitution is project-independent; projects extend it, they do not fork it
+Evidence:
+  - prove-engine merge @ github.com/snds/workspace main 0f4228a — verified
+Pending resolved:
+  - Prove-engine course corrections 1–12 + /optimize landed on origin/main
+Next:
+  - Run `python3 09-tools/ds-source-watch.py --fetch` when the first snapshot should be judged
+  - LCARS: add measured cues for the four named uncued residuals, then build to them
+--- END BLOCK ---
+
+
+
 ### 2026-08-26 — Looney Tunes loudness analysis + full subtitle coverage
 
 SessionID: 2026-08-26-voyager-b7191a1

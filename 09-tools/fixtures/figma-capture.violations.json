@@ -1,0 +1,20 @@
+{
+  "_note": "SYNTHETIC. Plants one violation of each failing rule so the probe's refusals stay exercised.",
+  "system": "example-ds",
+  "file_key": "SYNTHETICFIXTUREKEY0001",
+  "node_id": "1:9",
+  "variables": {
+    "surface/default": "#ffffff",
+    "Color/Gray/100": "#f5f5f5"
+  },
+  "nodes": [
+    {
+      "id": "1:10",
+      "name": "Toggle / Track",
+      "type": "RECTANGLE",
+      "bindings": {"fill": "Color/Base/White", "cornerRadius": "radius/md"},
+      "raw": {"itemSpacing": 0}
+    }
+  ],
+  "allow": [{"pattern": "Legacy/*"}]
+}

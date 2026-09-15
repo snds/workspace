@@ -368,12 +368,27 @@ class TestCloseOutDispatch(unittest.TestCase):
         d = load("close-out-dispatch")
         self.assertEqual(d.check_table(), 0)
 
-    def test_figma_is_honest_skip(self):
+    def test_figma_splits_capture_from_assess(self):
+        # A8 (2026-09-15): capture still needs MCP and stays an honest SKIP, but ASSESS is
+        # now a real detector. Asserting both halves so neither can quietly regress — a
+        # scripted "capture" would be a lie, and a skipped assess is the gap A8 closed.
         d = load("close-out-dispatch")
         plan = d.format_plan(["figma"])
-        self.assertIn("figma-mcp-inspect", plan)
-        self.assertIn("SKIP", plan)
+        self.assertIn("figma-mcp-capture", plan)
+        self.assertIn("SKIP `figma-mcp-capture`", plan)
+        self.assertIn("CLI `figma-bind-probe.py --self-test`", plan)
         self.assertEqual(d.run_hubs(["lead-mobile-engineer"]), 2)
+
+    def test_figma_probe_refuses_planted_violations(self):
+        probe = load("figma-bind-probe")
+        clean = json.loads((TOOLS / "fixtures"
+                            / "figma-capture.clean.json").read_text(encoding="utf-8"))
+        dirty = json.loads((TOOLS / "fixtures"
+                            / "figma-capture.violations.json").read_text(encoding="utf-8"))
+        self.assertEqual(probe.evaluate(clean)["failures"], [])
+        self.assertTrue(probe.evaluate(dirty)["failures"])
+        # Nothing to verify must never read as a pass.
+        self.assertEqual(probe.evaluate({"system": "x"})["verified"], [])
 
     def test_from_prompt_figma(self):
         d = load("close-out-dispatch")

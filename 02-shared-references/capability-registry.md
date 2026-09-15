@@ -24,7 +24,8 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
     "figma-mcp": {
       "kind": "mcp",
       "provides": "Figma Dev Mode access — read the current selection, variables/tokens, screenshots, and code-connect mappings.",
-      "detect": { "method": "mcp-tool-present", "match": "mcp__*figma*__*" },
+      "detect": { "method": "mcp-tool-present", "match": "mcp__*figma*" },
+      "_detect_note": "Match anywhere in the tool name, not just the server segment: Claude Code mounts this server under a UUID (mcp__<uuid>__use_figma), so the old mcp__*figma*__* pattern reported the capability ABSENT while it was live (2026-09-15).",
       "install": {
         "claude-code": "Enable Figma Desktop → Preferences → Enable Dev Mode MCP Server, then `claude mcp add` the local server; or `claude mcp add --transport http figma <url> --scope user`.",
         "cursor": "Cursor → Settings → MCP → add the Figma Dev Mode MCP server.",

@@ -2074,7 +2074,7 @@
         "design-engineer"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:5c0c17896160b641f9c77dbfa122e7dc3377a00ab4cbc3beb5beaa76b29af4da"
+      "hash": "sha256:f0c0a931a89ef521f5f77bdd4860ff98bca0bda0014fb0fc5262a87227059c39"
     },
     "figma-api-router": {
       "path": "03-skills/figma-api-router/SKILL.md",

@@ -23,6 +23,7 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
 # Shapr3D MCP setup
 
 SessionID: 2026-09-14-shapr3d-mcp-setup
@@ -87,6 +88,101 @@ Working files remain outside the portable workspace in Projects/shapr3d-personal
 
 Next: desktop/platform concept with provisional thickness and shelf dimensions, steel coverage zones and frame clearance. Thickness, recess, shelf dimensions and rail radius remain open. No new custom desk CAD produced in this research pass. MCP installation/test and native SolidWorks-to-STEP reference conversion were completed in prior sessions.
 
+
+
+### 2026-09-15 — Automation second wave: A4, A5, A9 applied; A8 stays blocked
+
+SessionID: 2026-09-15-work-mbp-automation-wave2
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Claude Code (Mac desktop app)
+Agent: Claude Opus 5
+Project(s): 19-workspace-brain
+
+Summary: Phase 6 — closed the remaining automation candidates from the 2026-09-11 review.
+
+A5 (ruff): measured the blast radius before wiring anything. Defaults return 143 findings,
+`E,F` returns 402 (395 of them line-length). Selected `E9`/`F`/`I` only — 7 errors, all
+auto-fixed — and excluded BLE001/S110/S112/PLW1510 because fail-open and manual returncode
+checks are the contract here, not sloppiness. Declared in `ruff.toml` so local and CI agree.
+It caught its own author within the hour (two F541s in the new A9 lint).
+
+A9 (`validate-evidence-grades.py`): any report using the evidence-grade vocabulary 3+ times
+must declare the legend and name a re-runnable detector. One real violation
+(`agent-load-miss-review.md`) fixed. `--strict` adds pre-registration fields but only on
+two distinct experiment signals — the first cut fired on `process-rigor-gaps` because
+"experiment" appears there as a trigger word in a routing table.
+
+A4 (`nightly.py`): the recipe's executable form — fold → rebuild → verify → watch → commit
+(opt-in, allowlisted paths, refuses on a red tree). Python not `.sh`, because portable-first
+is a core rule and the fleet includes Windows. Nothing is scheduled.
+
+A8 stays blocked and is stated as such: it needs a Figma produce that cannot refuse `Color/*`,
+and manufacturing one would be theater.
+
+Two new candidates from measurements the first review did not have. C1 (applied):
+1,443 trigger terms, 92 claimed by >1 skill — 67 benign (same chain), 25 cross-chain, now a
+harness check with a ceiling of 25 rather than fail-at-zero. C2 (queued, not built):
+`06-context/artifact-registry.md` is 6,942 tokens, the largest recurring cost after AGENTS.md
+itself, and it is a structural INDEX — the same shape already fixed for the skill registry and
+_INDEX. A retrieval CLI plus a read-order change is real work; queued with the number attached
+(~28% of the 21.7k session floor) rather than half-built at session end.
+
+19 harness gates, all green. 48/48 matcher cases, 14/14 trajectories, vault-health 0/0, ruff clean.
+
+Report: `07-projects/19-workspace-brain/reports/automation-second-wave_v1.0_2026-09-15.md`
+Decision: `[[decision-lint-narrow-or-not-at-all]]`
+--- END BLOCK ---
+
+### 2026-09-15 — C2: the artifact registry moves behind a CLI; session floor down 32%
+
+SessionID: 2026-09-15-work-mbp-artifact-retrieval
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Claude Code (Mac desktop app)
+Agent: Claude Opus 5
+Project(s): 19-workspace-brain
+
+Summary: `06-context/artifact-registry.md` cost 6,942 tokens and CLAUDE.md read-order item 4
+told every agent to read it — the largest recurring item in the session floor after AGENTS.md
+itself. It is a structural index, and the same fix was already applied twice in this workspace
+(skills.registry.json → skill-loadset.py; _INDEX.md → knowledge-hints + server-side parsing)
+and simply left standing in a third place.
+
+Built `09-tools/artifact-find.py`: terms search name/path/group/purpose with name hits
+outranking prose, plus `--path`, `--list`, `--json`, `--limit`. Measured: reading the file is
+6,942 tokens; `--list` (the whole map) is 575; a real query is 100. A no-match points at
+vault-retrieve rather than returning empty, because a bare "no results" invites the agent to
+conclude nothing exists.
+
+`--check` is half the tool — a retrieval layer whose source drifts starts missing SILENTLY,
+which is worse than the whole-file read it replaced. It verifies every entry is parseable,
+has a Purpose to match on, a YYYY-MM-DD to age against, and a unique name. Live: 36/36
+complete. It runs in CI and in /session-end step 4, right after the step that writes the file.
+
+Contract changed in four places (CLAUDE.md item 4, AGENTS.md item 9, _CONTEXT.md, /optimize
+step 7 — where a whole-file read stays correct and is annotated as the one legitimate caller).
+Harness model updated only AFTER the contract, so the number followed the cost rather than
+leading it.
+
+Result: session floor 21,697 → 14,778 (−31.9%), worst-case legal request 62,110 → 55,191.
+Locked three ways: session_floor budget lowered 25,000 → 17,000 so a revert (21,720) fails CI;
+a self-test asserting the ceiling sits in that gap, verified non-vacuous by raising it to
+99,000 and watching the test fail; and an `avoided_by_retrieval` line so the 6,942 stays
+visible instead of vanishing from the accounting.
+
+21 harness gates green, connections 8/8, every budget met, 48/48 matcher cases, 14/14
+trajectories, vault-health 0/0, ruff clean.
+
+Not done, and stated: this does not shrink AGENTS.md (7,691) or user-preferences.md (2,331) —
+both are always-on content rather than indexes, so the same trick does not apply. And the
+budget catches a reverted contract, not a model that ingests the file anyway.
+
+Report: `07-projects/19-workspace-brain/reports/artifact-retrieval_v1.0_2026-09-15.md`
+Decision: `[[decision-indexes-are-queried-not-read]]`
+--- END BLOCK ---
 
 ### 2026-09-15 — Surface trajectories: three Layer-0 matchers collapsed to one
 
@@ -720,79 +816,5 @@ Next:
   - Register Open Engine personal lane on Voyager-2.local (`python3 00-bootstrap/doctor/linear-lanes.py`)
   - Refresh Obsidian graph (orphans off)
   - Domain pack on real work, or `python3 09-tools/ds-source-watch.py --fetch`, or `vqa prove`
---- END BLOCK ---
-
-
-### 2026-09-02 — Domain constitutions, graph crosslinking, Cursor canvas externalize
-
-SessionID: 2026-09-02-voyager-g4x9k2
---- SESSION BLOCK ---
-Date: 2026-09-02
-Machine: Personal MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 19-workspace-brain, 20-lcars-generative-interface, 01-mediaservices (canvas copies only)
-Summary: Generalized DS constitution rigor to other job contexts (`domain-constitution/1.0`, 10 YAML packs). Fixed Obsidian graph islands that were Dataview-without-edges plus colliding stems (not a missing ontology). Copied 8 Cursor canvases from `~/.cursor/projects/` into git-tracked `07-projects/…/canvases/` and wired `cursor-externalize.py` into session-end so this runs every Cursor close.
-Artifacts:
-  - 02-shared-references/domain-constitutions/ (spec, domains.yaml, 10 dc-*.yaml, index)
-  - 08-knowledge/cross-domain/agentic-domain-constitutions.md
-  - 09-tools/cursor-externalize.py
-  - 07-projects/19-workspace-brain/canvases/ (domain-constitutions, ds-agentic-ontology, perception-critique-stack, skill-hub-rigor-audit)
-  - 07-projects/20-lcars-generative-interface/canvases/lcars-replication-gap.canvas.tsx
-  - 07-projects/01-mediaservices/canvases/ (looney-tunes-loudness, duplicate-scan-outcome, authoritative-delete-list)
-Decisions:
-  - Cursor live canvases stay in `~/.cursor/projects/` (IDE compile path); vault copies are the portable source of truth.
-  - Legion canvases belong in the Legion repo, not snds/workspace. Copied to Legion/docs/canvases/ on disk; not committed there.
-  - Do not star-link Copilot, .superpowers, or vendored command trees into the Obsidian graph.
-Pending added: none
-Pending resolved: none
-Next:
-  - Refresh Obsidian graph (orphans off). Remaining islands should be vendor/Copilot/artifact.
-  - Optional: commit Legion `docs/canvases/` in the Legion repo.
-  - Use a domain pack on real work, or `python3 09-tools/ds-source-watch.py --fetch`, or `vqa prove`.
-  - Open Engine personal lane still not-registered on this machine (`python3 00-bootstrap/doctor/linear-lanes.py`).
---- END BLOCK ---
-
-
-### 2026-09-02 — Ontology and knowledge graphs for agents
-
-SessionID: 2026-09-02-voyager-ontkg
---- SESSION BLOCK ---
-Date: 2026-09-02
-Machine: Personal MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 19-workspace-brain (teaching; no project files changed)
-Summary: Explained ontology (shared types and legal relations) vs knowledge graph (typed facts in that vocabulary), and how agents use classify → traverse → constrain → write-back instead of dumping similar text. Mapped the same split onto this vault: workspace-ontology + skill frontmatter as schema; registry load_chains, routing map, and epistemic `relations:` as the graphs; retrieval finds candidates, types decide what may act.
-Decisions:
-  - Career-ops trigger on the letter `i` treated as a misfire; did not load job-search skills
-Next:
-  - Sean picks a follow-up if wanted: walk one vault decision through the graph; contrast ontology+graph vs RAG/skills/memory; or sketch a domain graph (PLM / LCARS / tokens) on top of the workspace ontology
---- END BLOCK ---
-
-### 2026-09-02 — Prove-engine merge close + DSDS persist
-
-SessionID: 2026-09-02-voyager-e4f1a
---- SESSION BLOCK ---
-Date: 2026-09-02
-Machine: Personal MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 19-workspace-brain, 20-lcars-generative-interface
-Summary: Closed the prove-engine thread (vqa/1.1 altitudes A–G, play-prove, /optimize, LCARS uncued residuals) already merged to main as 0f4228a. Persisted the 2026-09-01 project-independent DSDS constitution + ds-source-watch landing that was still sitting staged. Folded the 2026-08-26 Looney Tunes fragment into session-log.
-Artifacts:
-  - 03-skills/visual-prove-engine/ vqa/1.1 + 03-skills/play-prove/ (on main via 54a2efe / 0f4228a)
-  - 02-shared-references/dsds/dsds-constitution.md + workspace-ds-constitution.dsds.yaml
-  - 02-shared-references/idempotent-design-decisions.md + 03-skills/ds-source-watch/ + 09-tools/ds-source-watch.py
-Decisions:
-  - Personal-solo merge to main, not a PR; SWF dumps stay untracked
-  - DS constitution is project-independent; projects extend it, they do not fork it
-Evidence:
-  - prove-engine merge @ github.com/snds/workspace main 0f4228a — verified
-Pending resolved:
-  - Prove-engine course corrections 1–12 + /optimize landed on origin/main
-Next:
-  - Run `python3 09-tools/ds-source-watch.py --fetch` when the first snapshot should be judged
-  - LCARS: add measured cues for the four named uncued residuals, then build to them
 --- END BLOCK ---
 
