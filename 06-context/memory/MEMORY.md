@@ -44,6 +44,7 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[decision-capture-and-assess-split]] — `decision` · MCP-gated checks split at the tool boundary: the agent captures, `figma-bind-probe.py` judges; the capture stays a labelled SKIP and exit 2 is not a pass.
 - [[decision-indexes-are-queried-not-read]] — `decision` · every index gets a retrieval CLI (`artifact-find.py`, `skill-loadset.py`, knowledge-hints) and the token budget drops with it, so reverting to a whole-file read fails CI.
 - [[decision-lint-narrow-or-not-at-all]] — `decision` · automation-layer lints stay narrow (ruff E9/F/I; evidence grades need a legend + named detector); a check that reports non-defects gets routed around.
+- [[decision-shadcn-lint-independent-service]] — `decision` · `@shadcn/lint` is a product-repo DS lint service, independent of vault validators and eslint-off-system; token-tier overlay lives beside it.
 - [[decision-one-matcher-per-workspace]] — `decision` · one Layer-0 matcher (`prompt_route.py`); every surface delegates and `evaluate-surface-trajectories.py` proves each real entry point delivers the same context.
 - [[decision-reachability-is-a-detector]] — `decision` · validators prove files are well-formed; `workspace-harness.py` proves an agent can reach them and prices the traversal — reachability + token budget are CI detectors now.
 - [[decision-vgpu-default-web-3d]] — `decision` · new web 3D/shader/GPU work defaults to vgpu (vgpu.sh); existing Three trees stay on the adapter; DCC unchanged.

@@ -93,6 +93,13 @@
     "canonical documentation": "08-knowledge/design/canonical-documentation.md",
     "because the docs app": "08-knowledge/design/canonical-documentation.md",
     "schematic here": "08-knowledge/design/canonical-documentation.md",
-    "docs voice": "08-knowledge/design/canonical-documentation.md"
+    "docs voice": "08-knowledge/design/canonical-documentation.md",
+    "shadcn lint": "08-knowledge/engineering/shadcn-lint-token-tiers.md",
+    "lint:ds": "08-knowledge/engineering/shadcn-lint-token-tiers.md",
+    "@shadcn/lint": "08-knowledge/engineering/shadcn-lint-token-tiers.md",
+    "no-restyle": "08-knowledge/engineering/shadcn-lint-token-tiers.md",
+    "no-raw-colors": "08-knowledge/engineering/shadcn-lint-token-tiers.md",
+    "no-tier-leakage": "08-knowledge/engineering/shadcn-lint-token-tiers.md",
+    "ds-lint": "08-knowledge/engineering/shadcn-lint-token-tiers.md"
   }
 }

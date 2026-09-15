@@ -434,6 +434,18 @@ its token SSOTs. LCARS vendors a copy under `eslint/off-system/`.
 # see 09-tools/eslint-off-system/README.md
 ```
 
+## shadcn-lint/
+
+Independent product-repo design-system lint service (`@shadcn/lint` + token-tier
+overlay). Not vault CI. Not an extension of `eslint-off-system/`. Doctrine:
+[[shadcn-lint-token-tiers]] + [[decision-shadcn-lint-independent-service]].
+
+```
+python3 09-tools/shadcn-lint/probe.py --self-test
+# overlay + eslint.ds.config.mjs wiring; not vault CI
+# see 09-tools/shadcn-lint/README.md
+```
+
 ---
 
 These tools assume only a git checkout + Python 3 — no Google Drive, no vendor-specific file bridge.

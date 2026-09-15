@@ -9,7 +9,7 @@ related_skills: [design-system-ops, ds-advisor, design-engineer, ux-component-li
 related_projects: []
 relations:
   builds-on: ["[[radix-derived-color-system]]", "[[figma-tailwind-token-pipeline]]"]
-  relates-to: ["[[centric-plm-design-system]]", "[[enterprise-saas-design-patterns]]", "[[figma-ds-surface-authoring]]", "[[llm-safe-design-system-expressiveness]]"]
+  relates-to: ["[[centric-plm-design-system]]", "[[enterprise-saas-design-patterns]]", "[[figma-ds-surface-authoring]]", "[[llm-safe-design-system-expressiveness]]", "[[shadcn-lint-token-tiers]]"]
 ---
 
 # Design system ops: the workspace position on governance

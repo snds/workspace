@@ -1,5 +1,5 @@
 # User Preferences — Sean Sands
-**Last updated:** 2026-09-14
+**Last updated:** 2026-09-15
 
 ---
 
@@ -34,6 +34,7 @@ or bridged to design, don't force a bad analogy: give me a good source to read a
 - Primary content in artifact windows when output is a document, spec, or visual
 - No supporting documentation or meta-commentary unless asked
 - Tables, specs, briefs — use that format directly, no preamble
+- **Outstanding items are a numbered list (2026-09-15).** Whenever summarizing leftover work, open questions, follow-ups, blockers, or "what's left," use a numbered list of specific actions (verb + object). Do not use bullets, paragraphs, or unlabeled dumps for that job. Same shape as the [[plan-ahead]] pre-execution sequence; this rule is for status, not only for starting work. **Unblocked first:** actions that do not wait on review, merge, or another person come before review-blocked items. Do not lead a leftover list with "wait for PR review" when other work can proceed.
 - Code: inline comments on non-obvious behavior; skip boilerplate explanation
 - Target audience: UX/product designer, not a developer — operationalized in
   `02-shared-references/delivery-playbooks/` (2026-07-09): resolve the context profile

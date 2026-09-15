@@ -1,12 +1,14 @@
 ---
 tags: [engineering, design-tokens, figma, tailwind, css-cascade]
 created: 2026-06-04
-updated: 2026-06-04
+updated: 2026-09-15
 status: stable
 confidence: high
 sources: [session-log 2026-06-04, figma-repo-sync-plugin]
 related_skills: [figma-plugin-dev, design-engineer]
 related_projects: [figma-repo-sync-plugin, centric-ui]
+relations:
+  relates-to: ["[[shadcn-lint-token-tiers]]", "[[radix-derived-color-system]]"]
 ---
 
 # Figma + Tailwind design-token pipeline — hard-won mechanics
@@ -29,6 +31,10 @@ engine (`@tailwindcss/node` `compile(css,{base}).build([candidates])`) and inspe
 (Radix) value too. Corollary: custom props in plain `:root` (not `@theme`) set CSS variables but
 do **not** generate utilities — so `bg-blue-9` (a non-default name) won't exist as a class unless
 added to `@theme`; `bg-blue-500` works only because Tailwind's default theme already declares it.
+That `@theme` membership is also what `@shadcn/lint` `no-raw-colors` treats as a *declared*
+token — so a generator that registers primitives and shade aliases will false-green
+`bg-blue-9` / `bg-blue-500` in product TSX. Overlay + optional `@theme { --color-*: initial }`
+(semantics only) live in [[shadcn-lint-token-tiers]]; they are not vault CI.
 
 ## 2. Figma `Variable.consumers` is unreliable for usage audits
 `variable.consumers` returns **0 even for variables genuinely bound by nodes** inside

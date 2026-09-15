@@ -12,6 +12,7 @@ relations:
     - "[[idempotent-design-decisions]]"
   relates-to:
     - "[[llm-safe-design-system-expressiveness]]"
+    - "[[shadcn-lint-token-tiers]]"
 ---
 
 # Radix-derived color system — validated architecture

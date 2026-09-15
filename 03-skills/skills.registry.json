@@ -926,7 +926,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:beeebf8dae76a1925b0baf1d4b33306d6cdbd9bd5e4e7a6c78412035b759ca43"
+      "hash": "sha256:39b08cf38181310585b2ceab30c1fb3bdaa6e3ccb8b7e752ef5b57d6507ce66d"
     },
     "career-ops-job-search": {
       "path": "03-skills/career-ops-job-search/SKILL.md",

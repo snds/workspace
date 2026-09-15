@@ -9,6 +9,7 @@
 {"id": "theme-audit", "utterance": "Run a theme audit on light and dark mode coverage.", "expect_skills": ["design-system-ops"], "why": "new ops verb"}
 {"id": "docs-coverage", "utterance": "Which components are undocumented? Check docs coverage against Storybook.", "expect_skills": ["design-system-ops"], "why": "new ops verb"}
 {"id": "llm-safe", "utterance": "Make off-system Tailwind inexpressible. Docs are a suggestion, CI is the contract.", "expect_knowledge": ["llm-safe-design-system-expressiveness"], "expect_skills": ["design-engineer"], "why": "Orbit law plus design-engineer"}
+{"id": "shadcn-lint-service", "utterance": "Bring shadcn lint in as lint:ds with no-tier-leakage for our token tiers.", "expect_knowledge": ["shadcn-lint-token-tiers"], "expect_routes": ["shadcn lint", "lint:ds", "no-tier-leakage"], "why": "independent product-repo DS lint; not vault integrity"}
 {"id": "contrast-color-css", "utterance": "Use contrast-color() with our design tokens instead of black and white.", "expect_skills": ["uid-color-for-ui"], "expect_routes": ["contrast"], "why": "CSS pairing stays on the color/a11y chain"}
 {"id": "color-dashboard", "utterance": "dark-mode palette for this dashboard", "expect_skills": ["uid-color-for-ui"], "min_layer0": 1, "why": "canonical foundation-first example from AGENTS.md"}
 {"id": "routing-harness", "utterance": "Run the skill routing harness. Did the right skill fire?", "expect_routes": ["skill routing"], "why": "harness self-route"}

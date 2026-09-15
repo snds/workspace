@@ -1,7 +1,7 @@
 ---
 tags: [design-systems, agents, evals, lint, qa, verification, knowledge-vault]
 created: 2026-09-03
-updated: 2026-09-03
+updated: 2026-09-15
 status: working
 confidence: medium
 sources:
@@ -20,6 +20,7 @@ relations:
   relates-to:
     - "[[dsds-constitution]]"
     - "[[component-contracts-and-schemas]]"
+    - "[[shadcn-lint-token-tiers]]"
 ---
 
 # For future agent
@@ -30,7 +31,7 @@ relations:
   - *Timeless:* agent feedback reports symptoms. Humans name the cause. Same-model critique is not a prove-gate.
   - *Timeless:* more docs plateau. Better structured docs (DSDS) beat volume. Pack recipes beat a prop-walking wizard.
   - *Dated 2026-08:* Sanity UI numbers (Haiku/Sonnet/Opus n=30, AILF +34) are his system, his prompts, Claude-only. Do not treat them as transferable scores.
-  - *Pointer:* lint that makes off-system values inexpressible lives in the **product repo**. The vault owns the law, not the ESLint config.
+  - *Pointer:* lint that makes off-system values inexpressible lives in the **product repo**. The vault owns the law. Two shared sources: `eslint-off-system/` (LCARS) and `shadcn-lint/` (shadcn-bound). See [[shadcn-lint-token-tiers]].
 - **As of:** 2026-09 · **Status:** current
 - **Audience:** `for: agent`
 
@@ -53,7 +54,7 @@ The miss was the **loop**, not the schema. Structured docs landed without a work
 
 1. **Isolation.** When the claim is "the docs / catalog / pack are enough," run the prove with chunks, lint autofix, MCP wizards, and extra skills **off**. Record `assistance: off` on the capture (`vqa capture --assistance off`) and `_provenance.assistance: "off"` on the cuespec. Assistance on is allowed for shipping. It is not allowed as the score for the docs.
 2. **Recipes stay in the pack.** A chunk is a pasteable legal composition (when/why/how + code). It is not a new workspace DSDS kind until the spec ships one. LCARS `src/catalog/` and `generate-display-svg.py` are the existing form. Other packs get their own catalog. The method is shared; the primitives are not.
-3. **Lint in the repo agents write.** Hex, arbitrary utilities, and off-token layout fail in that repo's CI. Do not add a vault ESLint that pretends to know every product grammar. Shared rule source: `09-tools/eslint-off-system/`. First product: LCARS `npm run lint`. Shared rule source: `09-tools/eslint-off-system/`. First product: LCARS `npm run lint`.
+3. **Lint in the repo agents write.** Hex, arbitrary utilities, and off-token layout fail in that repo's CI. Do not add a vault ESLint that pretends to know every product grammar. Two shared sources, not one: `09-tools/eslint-off-system/` (LCARS / constitution hex) and `09-tools/shadcn-lint/` (`npm run lint:ds` for shadcn-bound apps, [[shadcn-lint-token-tiers]]). Neither is a vault CI gate.
 4. **Quality proxies are complementary.** axe / inline-style / responsive counts ([[a11y-audit-toolkit]]) sit beside pixel cues. They do not replace `vqa prove`. Eyeball remains testimony.
 5. **Do not clone the tester.** `sanity-labs/design-system-agent-tester` is Claude-only, paid per run, and scores do not transfer. The workspace equivalent is: capture → prove → score --enforce. n-agent same-prompt sweeps stay a human-asked experiment.
 

@@ -487,6 +487,103 @@ class TestSessionStatus(unittest.TestCase):
             self.assertEqual(ss._stamp_age_days(yaml), 3)
 
 
+class TestShadcnLintOverlay(unittest.TestCase):
+    def _probe(self):
+        path = TOOLS / "shadcn-lint" / "probe.py"
+        spec = importlib.util.spec_from_file_location("shadcn_lint_probe", path)
+        if spec is None or spec.loader is None:
+            raise RuntimeError(f"cannot load {path}")
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules["shadcn_lint_probe"] = mod
+        spec.loader.exec_module(mod)
+        return mod
+
+    def test_overlay_self_test_passes(self):
+        probe = self._probe()
+        self.assertEqual(probe.self_test(), [])
+
+    def test_overlay_rejects_radix_step_and_allows_semantic(self):
+        probe = self._probe()
+        spec = probe.load_spec()
+        self.assertEqual(probe.iter_leaks("bg-primary mt-4", spec), [])
+        self.assertEqual(probe.iter_leaks("bg-blue-9", spec), ["bg-blue-9"])
+        self.assertEqual(probe.iter_leaks("md:bg-blue-500/50", spec), ["md:bg-blue-500/50"])
+        self.assertEqual(probe.iter_leaks("bg-white", spec), ["bg-white"])
+        self.assertEqual(probe.iter_leaks("bg-cds-blue-500", spec), ["bg-cds-blue-500"])
+        self.assertEqual(probe.iter_leaks("bg-cds-gray-1000", spec), ["bg-cds-gray-1000"])
+
+    def test_overlay_policy_names_shadcn_rules(self):
+        probe = self._probe()
+        self.assertEqual(probe.validate_policy(), [])
+        self.assertEqual(probe.validate_config(), [])
+
+    def test_overlay_refuses_policy_that_disables_raw_colors(self):
+        probe = self._probe()
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "design-system.lint.json"
+            rules = {name: "error" for name in probe.REQUIRED_SHADCN_RULES}
+            path.write_text(
+                json.dumps(
+                    {
+                        "rules": rules,
+                        "overrides": [
+                            {
+                                "files": ["**/components/ui/**"],
+                                "rules": {"shadcn/no-raw-colors": "off"},
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            errors = probe.validate_policy(path)
+            self.assertTrue(any("no-raw-colors" in e for e in errors), errors)
+
+    def test_overlay_refuses_tuple_off_and_warn(self):
+        probe = self._probe()
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "design-system.lint.json"
+            rules = {name: "error" for name in probe.REQUIRED_SHADCN_RULES}
+            path.write_text(
+                json.dumps(
+                    {
+                        "rules": {
+                            **rules,
+                            "shadcn/no-raw-colors": ["off", {"message": "x"}],
+                        },
+                        "overrides": [{"files": ["**/*"], "rules": {}}],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            errors = probe.validate_policy(path)
+            self.assertTrue(any("no-raw-colors" in e for e in errors), errors)
+            path.write_text(
+                json.dumps(
+                    {
+                        "rules": rules,
+                        "overrides": [
+                            {
+                                "files": ["**/components/ui/**"],
+                                "rules": {"ds-lint/no-tier-leakage": "warn"},
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            errors = probe.validate_policy(path)
+            self.assertTrue(any("no-tier-leakage" in e for e in errors), errors)
+
+    def test_overlay_refuses_config_without_companion_rule(self):
+        probe = self._probe()
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "eslint.ds.config.mjs"
+            path.write_text("export default []\n", encoding="utf-8")
+            errors = probe.validate_config(path)
+            self.assertTrue(any("no-tier-leakage" in e for e in errors), errors)
+
+
 if __name__ == "__main__":
     suite = unittest.defaultTestLoader.loadTestsFromModule(sys.modules[__name__])
     result = unittest.TextTestRunner(verbosity=2).run(suite)

@@ -319,6 +319,13 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `write docs` | 03-skills/canonical-docs-voice/SKILL.md + 08-knowledge/design/canonical-documentation.md — canonical pages describe the system, not the docs site |
 | `canonical documentation` | 03-skills/canonical-docs-voice/SKILL.md + 08-knowledge/design/canonical-documentation.md — canonical pages describe the system, not the docs site |
 | `changelog note` | 03-skills/canonical-docs-voice/SKILL.md — changelog voice stays in changelogs, not component pages |
+| `shadcn lint` | 09-tools/shadcn-lint/README.md + 08-knowledge/engineering/shadcn-lint-token-tiers.md — independent product-repo DS linter; not vault integrity; overlay catches primitive/shade u… |
+| `lint:ds` | 09-tools/shadcn-lint/README.md — product `npm run lint:ds`; do not fold into workspace-harness |
+| `@shadcn/lint` | 09-tools/shadcn-lint/README.md + 08-knowledge/engineering/shadcn-lint-token-tiers.md — upstream plugin; vault ships policy + no-tier-leakage overlay |
+| `no-restyle` | 09-tools/shadcn-lint/README.md — @shadcn/lint restyle contracts; allow layout; component dir override |
+| `no-raw-colors` | 08-knowledge/engineering/shadcn-lint-token-tiers.md — declared @theme tokens pass stock rule; overlay needed for Radix steps / shade aliases |
+| `no-tier-leakage` | 09-tools/shadcn-lint/README.md — ds-lint overlay; bg-blue-9 / bg-blue-500 / bg-white are authoring leaks |
+| `ds-lint` | 09-tools/shadcn-lint/README.md + 08-knowledge/engineering/shadcn-lint-token-tiers.md — independent of eslint-off-system and vault CI |
 
 ## Registry skills with triggers
 
@@ -428,4 +435,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 304 · Registry rows: 101_
+_Curated routes: 311 · Registry rows: 101_

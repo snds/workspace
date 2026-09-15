@@ -1,0 +1,5 @@
+{
+  "errors": 0,
+  "updated": "2026-09-15",
+  "note": "CDS default. centric-ui and proto overwrite this with --write-baseline after copy."
+}

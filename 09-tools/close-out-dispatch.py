@@ -103,7 +103,7 @@ HUB_DETECTORS: dict[str, tuple[Step, ...]] = {
         _cli("validate-integrity.py"),
         _skip(
             "product-ci",
-            "Run the product repo's test/lint CI; this vault's integrity is not Pages/GHA.",
+            "Run the product repo's test/lint CI (`npm run lint:ds` when shadcn-bound). Vault integrity is not Pages/GHA.",
         ),
     ),
     "motion": (
@@ -125,7 +125,7 @@ HUB_DETECTORS: dict[str, tuple[Step, ...]] = {
         _cli("validate-integrity.py"),
         _skip(
             "steel-curtain",
-            "CI/axe/evals in the target product repo; not LLM-as-judge.",
+            "CI/axe/evals in the target product repo (`npm run lint:ds` when shadcn-bound); not LLM-as-judge.",
         ),
     ),
     "design-system-ops": (

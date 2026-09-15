@@ -8,15 +8,15 @@ _Last updated: 2026-09-15 — A8: Figma construction gate is a detector (live ca
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Independent `@shadcn/lint` service landed in-vault (`09-tools/shadcn-lint/`); product-repo install is a follow-up PR. Prior: A8 Figma bind probe; 22 harness gates green.
-- **Working set**: `09-tools/shadcn-lint/`, `08-knowledge/engineering/shadcn-lint-token-tiers.md`, `06-context/memory/decision-shadcn-lint-independent-service.md`.
-- **Last action (2026-09-15):** Brought `@shadcn/lint` in as a sibling of vault validators and `eslint-off-system`: shareable policy + `ds-lint/no-tier-leakage` overlay because stock `no-raw-colors` false-greens Radix steps / shade aliases declared in `@theme`. Cursor Grok 4.6 · Cursor · Work MBP.
+- **Current focus**: lint:ds — cds + proto on `main`; centric-ui [#398](https://github.com/cpes-software/centric-ui/pull/398) awaiting review.
+- **Working set**: `09-tools/shadcn-lint/`; leftover worktrees cds-lint-ds / centric-ui-lint-ds / saas-plm-prototype-lint-ds.
+- **Last action (2026-09-15):** Outstanding-item lists: numbered, unblocked-first (preferences). cui 398 CI green, review still required. Vault overlay still uncommitted. Cursor Grok 4.6 · Cursor · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Product-repo install of `lint:ds` (cds / proto / LCARS as appropriate) via employer PR path — do not symlink this vault. Then: A8 live-validation is DONE — the probe ran against two real nodes and the R2 discriminator was rebuilt on Figma/CSS property names after a real false positive; the only open probe item is whether a raw `wght` axis is a true positive. Employer PRs for untracked `canvases/` in cds + proto (no auto-commit); human merge cds #35. Watch hub-prose spokes (140) and cross-chain collisions (25/25).
-- **Open decisions:** Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot). Whether proto/cds apply `@theme { --color-*: initial }` (semantics only) in the same PR as the linter, or overlay-first.
-- **Blocked on:** cds #35 human merge (do not merge it from an agent). Employer `canvases/` exist on disk but are untracked pending PRs.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`. Do not auto-commit employer repos. Do not wire `shadcn-lint` into `workspace-harness.py` / vault CI.
-- **Agent thread**: `… → (2026-09-11): plan-ahead + Frost #18 + load-miss + process-rigor` → `Cursor Grok 4.6 / Cursor / Work MBP (2026-09-15): shadcn-lint independent service`.
+- **Next action:** Land uncommitted vault overlay on workspace `main` (independent of cui 398). Human review of [#398](https://github.com/cpes-software/centric-ui/pull/398) stays in parallel (CI green; do not agent-merge).
+- **Open decisions:** Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot). Theme reset (`@theme { --color-*: initial }`) stays a later product-CSS PR — decided overlay-first. Restyle/arbitrary/inline shadcn rules stay off until a later wave.
+- **Blocked on:** cui 398 human review (CI green, `REVIEW_REQUIRED`). Employer `canvases/` exist on disk but are untracked pending PRs. Vault `09-tools/shadcn-lint/` not committed.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until the proto pin includes cds `./sonner`. Do not auto-commit employer repos. Do not wire `shadcn-lint` into `workspace-harness.py` / vault CI. Dirty product branches (`feat/object-chip-action-modes`, `refactor/delete-sidebar-reexport`, `feat/page-composer-model`) are unrelated — lint:ds used worktrees from `origin/main`.
+- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Work MBP (2026-09-15): lint:ds PRs cds#41 cui#398 proto#81`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.

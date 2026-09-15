@@ -1,0 +1,32 @@
+{
+  "rules": {
+    "shadcn/no-restyle": "off",
+    "shadcn/no-raw-colors": [
+      "error",
+      {
+        "message": "Use a semantic theme color for \"{{className}}\" (primary, background, muted-foreground, destructive, …). See {{file}}. Hue-step and shade-alias utilities are a tier leak even when they exist in CSS."
+      }
+    ],
+    "shadcn/no-arbitrary-values": "off",
+    "shadcn/no-inline-styles": "off",
+    "shadcn/require-static-classes": "off",
+    "shadcn/no-unknown-classes": "off"
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/components/ui/**",
+        "**/src/components/ui/**",
+        "**/packages/ui/**",
+        "**/packages/data-table/**",
+        "**/packages/charts/**"
+      ],
+      "rules": {
+        "shadcn/no-restyle": "off",
+        "shadcn/no-arbitrary-values": "off",
+        "shadcn/no-inline-styles": "off",
+        "shadcn/require-static-classes": "off"
+      }
+    }
+  ]
+}

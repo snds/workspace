@@ -127,6 +127,8 @@
 !09-tools/figma-bind-probe.py
 !09-tools/eslint-off-system/
 !09-tools/eslint-off-system/**
+!09-tools/shadcn-lint/
+!09-tools/shadcn-lint/**
 !09-tools/fixtures/
 !09-tools/fixtures/**
 

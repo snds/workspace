@@ -48,6 +48,10 @@ Prefer reading hex from the token table (`TOKENS['frame.amber'].hex`) over
 literals in components. CSS `var(--token)` is out of scope for these JS rules;
 add Stylelint later if CSS debt matters.
 
+shadcn-bound Tailwind apps do **not** extend this plugin. They use the sibling
+service `09-tools/shadcn-lint/` (`@shadcn/lint` + `ds-lint/no-tier-leakage`).
+Different job: theme discovery and component contracts, not constitution hex.
+
 ## LCARS
 
 `~/Projects/lcars-generative-interface` vendors a copy under `eslint/off-system/`
