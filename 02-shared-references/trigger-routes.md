@@ -296,6 +296,11 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `is the workspace healthy` | 09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff |
 | `reachability` | 09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff |
 | `unreachable skill` | 09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff |
+| `surface parity` | 09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance "…"` shows what each one injects |
+| `surface trajectory` | 09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance "…"` shows what each one injects |
+| `routing trajectory` | 09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance "…"` shows what each one injects |
+| `cursor missed` | 09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance "…"` shows what each one injects |
+| `what does cursor see` | 09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance "…"` shows what each one injects |
 
 ## Registry skills with triggers
 
@@ -405,4 +410,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 281 · Registry rows: 101_
+_Curated routes: 286 · Registry rows: 101_

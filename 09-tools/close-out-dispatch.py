@@ -77,6 +77,7 @@ HUB_DETECTORS: dict[str, tuple[Step, ...]] = {
     "self-improve": (
         _cli("workspace-harness.py", "--self-test"),
         _cli("workspace-harness.py", "--connections", "--tokens"),
+        _cli("evaluate-surface-trajectories.py", "--check"),
         _cli("vault-health.py"),
     ),
     "ds": (

@@ -2,9 +2,11 @@
 """Adversarial skill-routing harness.
 
 Proves Layer 0 still fires the right skill (and does not fire the wrong one)
-against a curated utterance corpus. Matching must stay aligned with
-`.claude/hooks/dispatcher.py` (`_term_matches`, curated routes, registry
-triggers, knowledge-index triggers).
+against a curated utterance corpus. Matching is imported from
+`09-tools/prompt_route.py` — the one matcher every surface runs.
+
+This tests the MATCHER. It cannot tell you what a given surface actually
+delivered; that is `evaluate-surface-trajectories.py`, and you want both.
 
 Usage:
   python3 09-tools/evaluate-skill-routing.py              # run corpus, write stamp on pass
@@ -31,7 +33,8 @@ import sys
 from datetime import date
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+TOOLS_DIR = Path(__file__).resolve().parent
+ROOT = TOOLS_DIR.parent
 CURATED = ROOT / "02-shared-references" / "trigger-routes.json"
 REGISTRY = ROOT / "03-skills" / "skills.registry.json"
 INDEX = ROOT / "08-knowledge" / "_INDEX.md"
@@ -44,9 +47,12 @@ STAMP = (
     / "skill-routing-harness.stamp"
 )
 
-# Word-boundary match — copy of dispatcher._term_matches. Do not drift.
-def term_matches(term: str, prompt: str) -> bool:
-    return re.search(r"(?<!\w)" + re.escape(term.lower()) + r"(?!\w)", prompt) is not None
+# Word-boundary match, imported rather than copied. This was a hand-synced copy of the
+# Claude hook's matcher until 2026-09-15; hand-synced copies are what let the surfaces
+# drift apart in the first place. One definition, in prompt_route.
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+from prompt_route import term_matches  # noqa: E402
 
 
 STOPWORDS = frozenset(

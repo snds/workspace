@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-15 — workspace harness: reachability + traversal cost are detectors_
+_Last updated: 2026-09-15 — surface trajectories: 3 matchers → 1, 6 divergences → 0_
 
 ---
 
@@ -8,11 +8,11 @@ _Last updated: 2026-09-15 — workspace harness: reachability + traversal cost a
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: `09-tools/workspace-harness.py` is live — quality · connections · tokens, wired into CI, the AGENTS enforcement chain, and `close-out-dispatch.py` (`self-improve` row). First-wave leftovers unchanged: A8 Figma bind probe, A4 nightly.sh without cron, A5 ruff, A9 analysis lint.
-- **Working set**: `09-tools/workspace-harness.py`, `09-tools/vault-health.py`, `.github/workflows/workspace-integrity.yml`, `09-tools/close-out-dispatch.py`, `08-knowledge/_INDEX.md`.
-- **Last action (2026-09-15):** Adversarial pass over the first-wave automation found `main` CI-red twice (unindexed `plain-language.md`; a clock-bomb fixture in `test-validators.py`) plus 14 more reachability/connection defects — all 16 fixed, all three harness lanes green. Claude Opus 5 · Claude Code · Work MBP.
+- **Current focus**: Phase 5 landed. Three Layer-0 matchers collapsed to one (`prompt_route.py`); `evaluate-surface-trajectories.py` holds 14 per-surface cases with a parity assertion and a one-matcher structural guard. First-wave leftovers unchanged: A8 Figma bind probe, A4 nightly.sh without cron, A5 ruff, A9 analysis lint.
+- **Working set**: `09-tools/evaluate-surface-trajectories.py`, `09-tools/prompt_route.py`, `.claude/hooks/dispatcher.py`, `02-shared-references/surface-trajectory-cases.jsonl`.
+- **Last action (2026-09-15):** Measured 6/48 Claude-vs-Cursor delivery divergences, traced them to three independent matchers, unified to one, re-measured 0. Claude Opus 5 · Claude Code · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Phase 5 — per-surface routing trajectory fixtures (prove a model *traverses* the graph, not just that it is traversable). Then A8 on the next Figma produce that cannot refuse `Color/*`. Employer PRs for untracked `canvases/` in cds + proto (centric-engineering — no auto-commit). Human merge cds #35 onto `main`.
+- **Next action:** Outcome evidence that a model *reads* what it receives (injection is not compliance) — needs real-session data, not fixtures. Then A8 on the next Figma produce that cannot refuse `Color/*`. Employer PRs for untracked `canvases/` in cds + proto (no auto-commit). Human merge cds #35.
 - **Open decisions:** Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot).
 - **Blocked on:** cds #35 human merge (do not merge it from an agent). Employer `canvases/` exist on disk but are untracked pending PRs.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`. Do not auto-commit employer repos.

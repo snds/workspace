@@ -28,6 +28,8 @@ on:
       - "09-tools/prompt_route.py"
       - "09-tools/vault-health.py"
       - "09-tools/workspace-harness.py"
+      - "09-tools/evaluate-surface-trajectories.py"
+      - "02-shared-references/surface-trajectory-cases.jsonl"
       - "02-shared-references/skill-routing-cases.jsonl"
       - "02-shared-references/trigger-routes.json"
       - "02-shared-references/knowledge-hints.json"
@@ -50,6 +52,8 @@ on:
       - "09-tools/prompt_route.py"
       - "09-tools/vault-health.py"
       - "09-tools/workspace-harness.py"
+      - "09-tools/evaluate-surface-trajectories.py"
+      - "02-shared-references/surface-trajectory-cases.jsonl"
       - "02-shared-references/skill-routing-cases.jsonl"
       - "02-shared-references/trigger-routes.json"
       - "02-shared-references/knowledge-hints.json"
@@ -86,5 +90,9 @@ jobs:
         run: python3 09-tools/workspace-harness.py --self-test
       - name: Reachability, connection solidity, traversal token budget
         run: python3 09-tools/workspace-harness.py --connections --tokens
+      - name: Per-surface trajectories (every surface delivers the same context)
+        run: python3 09-tools/evaluate-surface-trajectories.py --self-test
+      - name: Surface trajectory corpus + one-matcher guard
+        run: python3 09-tools/evaluate-surface-trajectories.py --check
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py

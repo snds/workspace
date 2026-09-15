@@ -15,15 +15,25 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import NamedTuple
 
 TIER_CAPS = {
     "curated trigger": 8,
     "knowledge hint": 4,
     "registry trigger": 6,
     "index trigger": 4,
+    "lexical fallback": 2,
 }
+
+# Layer 1 runs only when Layer 0 under-fires, so triggers stay primary and a thin
+# prompt still reaches the vault. This lived only in the Claude hook until
+# 2026-09-15, which is why Cursor silently returned less on the same utterance.
+LEXICAL_FALLBACK_MIN = 2
+LEXICAL_FALLBACK_LIMIT = 2
 
 _HINT_TARGET_RE = re.compile(r"\d{2}-[\w./-]+\.md")
 
@@ -181,8 +191,98 @@ def _knowledge_index_hits(prompt: str, brain: Path) -> list[tuple[str, str]]:
     return hits
 
 
+class LexicalFallback(NamedTuple):
+    hits: list[tuple[str, str]]
+    status: str  # ok | empty | skipped-short | skipped-empty-prompt | tool-missing | failed
+    detail: str
+
+
+def lexical_fallback(prompt: str, brain: Path, limit: int = LEXICAL_FALLBACK_LIMIT) -> LexicalFallback:
+    """Query vault-retrieve --cached. Fail-observable: empty/error is a named status, not silence."""
+    tool = brain / "09-tools" / "vault-retrieve.py"
+    if not prompt.strip():
+        return LexicalFallback([], "skipped-empty-prompt", "")
+    if len(re.findall(r"[A-Za-z0-9]{4,}", prompt)) < 2:
+        return LexicalFallback([], "skipped-short", "")
+    if not tool.exists():
+        return LexicalFallback([], "tool-missing", str(tool))
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(tool), prompt.strip(), "--cached", "--json",
+             "--quiet", "--no-expand", "--limit", str(limit)],
+            cwd=str(brain), capture_output=True, text=True, timeout=8,
+        )
+    except Exception as exc:  # noqa: BLE001
+        return LexicalFallback([], "failed", str(exc))
+    if proc.returncode not in (0, 1):
+        return LexicalFallback([], "failed", f"exit {proc.returncode}")
+    if not proc.stdout.strip():
+        return LexicalFallback([], "failed", "empty-stdout")
+    try:
+        data = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return LexicalFallback([], "failed", "bad-json")
+    out: list[tuple[str, str]] = []
+    for hit in data.get("hits") or []:
+        path = hit.get("path") or ""
+        if not path.endswith(".md"):
+            continue
+        snip = re.sub(r"\s+", " ", (hit.get("snippet") or hit.get("title") or "").strip())
+        if len(snip) > 140:
+            snip = snip[:137] + "\u2026"
+        hint = f"lexical: read `{path}` before proceeding"
+        if snip:
+            hint += f" \u2014 {snip}"
+        out.append((path, hint))
+    return LexicalFallback(out, "ok" if out else "empty", "")
+
+
+def apply_lexical_fallback(result: RouteResult, prompt: str, brain: Path) -> None:
+    """Layer 1 gap-fill, in place. An under-fire must never look like 'nothing matched'."""
+    if len(result.seen) >= LEXICAL_FALLBACK_MIN:
+        return
+    layer0_n = len(result.seen)
+    lex = lexical_fallback(prompt, brain)
+    if lex.status in ("skipped-short", "skipped-empty-prompt"):
+        return
+    cap = TIER_CAPS["lexical fallback"]
+    emitted = 0
+    for path, hint in lex.hits:
+        key = hint_target_key(hint) or path
+        if key in result.seen:
+            continue
+        if emitted >= cap:
+            break
+        result.seen.add(key)
+        result.lines.append(f"- **`lexical`** \u2192 {hint}")
+        emitted += 1
+    if emitted:
+        result.lines.append(
+            f"- _(lexical fallback \u2014 Layer 0 had {layer0_n} unique target(s); "
+            f"cap {cap}. CLI: `python3 09-tools/vault-retrieve.py \"\u2026\"`)_"
+        )
+    elif lex.status == "empty":
+        result.lines.append(
+            f"- _(routing skip \u2014 Layer 0 under-fired ({layer0_n} unique). "
+            f"Lexical fallback ran: 0 hits. Do not treat this as no vault entry. "
+            f"CLI: `python3 09-tools/vault-retrieve.py \"\u2026\"`)_"
+        )
+    elif lex.status == "tool-missing":
+        result.lines.append(
+            f"- _(routing skip \u2014 Layer 0 under-fired ({layer0_n} unique). "
+            f"Lexical fallback skipped: vault-retrieve.py missing. "
+            f"Do not treat this skip as no match.)_"
+        )
+    elif lex.status == "failed":
+        result.lines.append(
+            f"- _(routing skip \u2014 Layer 0 under-fired ({layer0_n} unique). "
+            f"Lexical fallback FAILED ({lex.detail or 'error'}). "
+            f"Do not treat this skip as no match.)_"
+        )
+
+
 def collect(prompt: str, brain: Path) -> RouteResult:
-    """Match Layer 0 (curated → knowledge hints → registry → index). No lexical FTS."""
+    """Match Layer 0 (curated \u2192 knowledge hints \u2192 registry \u2192 index)."""
     result = RouteResult()
     raw = (prompt or "").strip()
     if len(re.findall(r"[A-Za-z0-9]{4,}", raw)) < 2:
@@ -312,12 +412,20 @@ def format_injection(result: RouteResult, extra_lines: list[str] | None = None) 
     lines.extend(extra)
     if not lines:
         return ""
+    # A payload made only of parenthetical status notes is noise: nothing matched, and
+    # nothing in the prompt asked for work. Chatter must not be taxed on every message
+    # (token frugality is a #1 rule). A work verb still gets its visible miss, because
+    # followthrough contributes a real line and this guard then does not fire.
+    if all(ln.lstrip().startswith("- _(") for ln in lines):
+        return ""
     if result.any_layer0:
         header = "# Project trigger detected"
     elif any("Layer 0 missed" in ln for ln in extra):
         header = "# Layer 0 missed"
-    else:
+    elif any("**`lexical`**" in ln for ln in lines):
         header = "# Vault lexical fallback"
+    else:
+        header = "# Routing coverage note"
     return "\n".join(
         [
             header,
@@ -338,5 +446,6 @@ def route_prompt(prompt: str, brain: Path | None = None) -> str:
     if root is None:
         return ""
     result = collect(prompt, root)
+    apply_lexical_fallback(result, prompt, root)
     extra = followthrough_lines(prompt, result.any_layer0)
     return format_injection(result, extra)

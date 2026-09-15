@@ -1315,111 +1315,29 @@ def _followthrough_lines(raw_prompt: str, layer0_any: bool) -> list[str]:
 
 
 def handle_user_prompt(payload: dict) -> None:
+    """Delegate Layer 0 + Layer 1 to the ONE shared matcher (09-tools/prompt_route.py).
+
+    This used to be a second full implementation of the tier machinery, and it drifted:
+    on 2026-09-15 six of the 48 routing fixtures delivered a different file set here than
+    on Cursor — Cursor had no lexical fallback, and this copy deduped a knowledge hint
+    away when the same trigger had already produced a curated hit. Same vault, same
+    utterance, different context. One matcher is the only shape that cannot drift;
+    `evaluate-surface-trajectories.py` is what keeps it honest.
+    """
     raw_prompt = payload.get("prompt") or ""
-    prompt = raw_prompt.lower()
-    if not prompt:
+    if not raw_prompt:
         return
-    skill_hits = [(t, s) for t, s in TRIGGER_WORDS.items() if _term_matches(t, prompt)]
-    knowledge_hits = [
-        (kw, f"knowledge: read `{path}` before proceeding")
-        for kw, path in KNOWLEDGE_HINTS.items() if _term_matches(kw, prompt)
-    ]
-    registry_hits = _registry_trigger_hits(prompt)
-    index_hits = _knowledge_index_hits(prompt)
-    tiers = [
-        ("curated trigger", skill_hits),
-        ("knowledge hint", knowledge_hits),
-        ("registry trigger", registry_hits),
-        ("index trigger", index_hits),
-    ]
-    layer0_any = any(hits for _, hits in tiers)
-
-    lines: list[str] = []
-    seen: set[str] = set()
-    for tier_name, hits in tiers:
-        cap = TIER_CAPS[tier_name]
-        emitted = 0
-        dropped = 0
-        for trigger, hint in hits:
-            key = _hint_target_key(hint)
-            if key in seen:
-                continue
-            if emitted >= cap:
-                dropped += 1
-                continue
-            seen.add(key)
-            lines.append(f"- **`{trigger}`** → {hint}")
-            emitted += 1
-        if dropped:
-            lines.append(f"- _(+{dropped} more {tier_name} match(es) dropped — per-tier cap {cap})_")
-
-    # Layer 1: lexical FTS only when Layer 0 under-fires (gap fill, not a peer flood).
-    # Under-fire on a real prompt must never look like "nothing matched."
-    if len(seen) < LEXICAL_FALLBACK_MIN:
-        layer0_n = len(seen)
-        lex = _lexical_fallback(raw_prompt, limit=LEXICAL_FALLBACK_LIMIT)
-        if lex.status not in ("skipped-short", "skipped-empty-prompt"):
-            lex_cap = TIER_CAPS["lexical fallback"]
-            lex_emitted = 0
-            for path, hint in lex.hits:
-                key = _hint_target_key(hint) or path
-                if key in seen:
-                    continue
-                if lex_emitted >= lex_cap:
-                    break
-                seen.add(key)
-                lines.append(f"- **`lexical`** → {hint}")
-                lex_emitted += 1
-            if lex_emitted:
-                lines.append(
-                    f"- _(lexical fallback — Layer 0 had {layer0_n} unique target(s); "
-                    f"cap {lex_cap}. CLI: `python3 09-tools/vault-retrieve.py \"…\"`)_"
-                )
-            elif lex.status == "empty":
-                lines.append(
-                    f"- _(routing skip — Layer 0 under-fired ({layer0_n} unique). "
-                    f"Lexical fallback ran: 0 hits. Do not treat this as no vault entry. "
-                    f"CLI: `python3 09-tools/vault-retrieve.py \"…\"`)_"
-                )
-            elif lex.status == "tool-missing":
-                lines.append(
-                    f"- _(routing skip — Layer 0 under-fired ({layer0_n} unique). "
-                    f"Lexical fallback skipped: vault-retrieve.py missing. "
-                    f"Do not treat this skip as no match.)_"
-                )
-            elif lex.status == "failed":
-                lines.append(
-                    f"- _(routing skip — Layer 0 under-fired ({layer0_n} unique). "
-                    f"Lexical fallback FAILED ({lex.detail or 'error'}). "
-                    f"Do not treat this skip as no match.)_"
-                )
-
-    extra = _followthrough_lines(raw_prompt, layer0_any)
-    lines.extend(extra)
-
-    if not lines:
+    tools = WORKSPACE_ROOT / "09-tools"
+    if str(tools) not in sys.path:
+        sys.path.insert(0, str(tools))
+    try:
+        import prompt_route  # noqa: PLC0415
+    except Exception as exc:  # noqa: BLE001 — never block the session
+        sys.stderr.write(f"[user-prompt] prompt_route unavailable: {exc}\n")
         return
-
-    lex_hit = any("**`lexical`**" in ln for ln in lines)
-    if layer0_any:
-        header = "# Project trigger detected"
-    elif any("Layer 0 missed" in ln for ln in extra):
-        header = "# Layer 0 missed"
-    elif lex_hit:
-        header = "# Vault lexical fallback"
-    else:
-        header = "# Routing coverage note"
-    body = [
-        header,
-        "",
-        *lines,
-        "",
-        "_Load the matched skills per the AGENTS.md precedence algorithm (foundation-first) "
-        "and read matched knowledge entries BEFORE acting. When authoring inside a specific "
-        "design system, resolve within that system's own tokens; backlog its gaps. "
-        "Layer 0 triggers outrank lexical hints on conflict._",
-    ]
-    emit_context("\n".join(body), "UserPromptSubmit")
+    injection = prompt_route.route_prompt(raw_prompt, WORKSPACE_ROOT)
+    if injection:
+        emit_context(injection, "UserPromptSubmit")
 
 
 # Tool names that put pixels on a canvas Sean will inspect. First call per session

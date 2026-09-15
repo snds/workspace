@@ -462,7 +462,8 @@ not only that files were saved. Commit/CI is the backstop.
 `validate-integrity.py` (quality + cross-link continuity + anti-zombie) → `validate-links.py` →
 `validate-workspace.py`. Then the first-wave detectors: `skill-loadset.py --self-test` →
 `close-out-dispatch.py --check` → `validate-layer0-schema.py --check` → `session-status.py --check` → `check-secrets.py`
-→ `vault-health.py` → `workspace-harness.py` (all three lanes in one pass: the chain above, whether an agent can
+→ `vault-health.py` → `evaluate-surface-trajectories.py --check` (every surface delivers the SAME context;
+the Claude hook must delegate to `prompt_route.py`, never fork the matcher) → `workspace-harness.py` (all three lanes in one pass: the chain above, whether an agent can
 **reach** every skill/knowledge entry, and the worst-case traversal token budget — `--self-test` first, budgets
 in `BUDGETS` are raised only by a deliberate diff).
 Negative fixtures: `python3 09-tools/test-validators.py`. **Order matters: `build-related` rewrites `## Related` blocks inside SKILL.md

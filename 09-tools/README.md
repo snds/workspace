@@ -303,6 +303,35 @@ keys). Does not echo values. Skip `_archive`, lockfiles, `node_modules`, `*.exam
 python3 09-tools/check-secrets.py
 ```
 
+## evaluate-surface-trajectories.py
+
+Per-surface routing trajectories. `evaluate-skill-routing.py` proves the **matcher**
+routes correctly; this proves each **surface actually delivers** it, by running the
+command that surface really invokes.
+
+| Surface | Entry point |
+|---|---|
+| `claude-code` | `.claude/hooks/dispatcher.py user-prompt` (stdin JSON, `CLAUDE_PROJECT_DIR`) |
+| `cursor` | `09-tools/cursor-prompt-route.py` (`beforeSubmitPrompt`) |
+| `shell-agent` | `09-tools/skill-loadset.py --json` — any agent with a shell and no hook |
+| `hookless` | no executable path (web ChatGPT/Grok/Perplexity); its adapter file is asserted statically |
+
+Per case: `expect_paths`, `forbid_paths`, `expect_header`, `expect_empty`, and **`parity`** —
+the hook surfaces must deliver an identical set of workspace paths. Plus a structural
+one-matcher guard: the Claude hook must delegate to `prompt_route`, never fork the tier
+machinery again.
+
+Why: on 2026-09-15, six of the 48 routing fixtures delivered a different file set on Claude
+Code than on Cursor. Cursor had no Layer-1 lexical fallback; the Claude hook dropped a
+knowledge hint when the same trigger already produced a curated hit. Both wrong, opposite
+directions, invisible because nothing ran both. Now 0 divergences, and a gate that says so.
+
+```
+python3 09-tools/evaluate-surface-trajectories.py --check
+python3 09-tools/evaluate-surface-trajectories.py --utterance "qa this screenshot"
+python3 09-tools/evaluate-surface-trajectories.py --self-test
+```
+
 ## workspace-harness.py
 
 The reusable test harness: **quality · connections · tokens** in one report card.

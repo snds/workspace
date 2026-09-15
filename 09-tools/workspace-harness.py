@@ -66,6 +66,8 @@ QUALITY_CHAIN = [
     ("build-registry.py", ["--check"]),
     ("build-trigger-routes.py", ["--check"]),
     ("evaluate-skill-routing.py", ["--check"]),
+    ("evaluate-surface-trajectories.py", ["--self-test"]),
+    ("evaluate-surface-trajectories.py", ["--check"]),
     ("validate-integrity.py", []),
     ("validate-links.py", []),
     ("validate-workspace.py", []),

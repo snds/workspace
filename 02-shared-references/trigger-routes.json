@@ -288,6 +288,11 @@
     "token budget": "09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff",
     "is the workspace healthy": "09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff",
     "reachability": "09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff",
-    "unreachable skill": "09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff"
+    "unreachable skill": "09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff",
+    "surface parity": "09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance \"…\"` shows what each one injects",
+    "surface trajectory": "09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance \"…\"` shows what each one injects",
+    "routing trajectory": "09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance \"…\"` shows what each one injects",
+    "cursor missed": "09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance \"…\"` shows what each one injects",
+    "what does cursor see": "09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance \"…\"` shows what each one injects"
   }
 }

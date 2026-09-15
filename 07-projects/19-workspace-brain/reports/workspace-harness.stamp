@@ -1,7 +1,7 @@
 result: pass
 quality_failing: 0
 connection_defects: 0
-session_floor: 21656
+session_floor: 21697
 loadset_p95: 12261
-worst_case_legal: 62069
+worst_case_legal: 62110
 estimator: bytes/4 (estimate)
