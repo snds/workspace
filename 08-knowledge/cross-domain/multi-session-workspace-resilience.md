@@ -1,13 +1,13 @@
 ---
 tags: [cross-domain, engineering, git, concurrency, token-frugality, workspace-ops]
 created: 2026-07-23
-updated: 2026-07-23
+updated: 2026-09-15
 status: stable
 confidence: high
-sources: [session-log 2026-07-23, .claude/hooks/dispatcher.py, 09-tools/compact-sessions.py]
+sources: [session-log 2026-07-23, session-log 2026-09-15, .claude/hooks/dispatcher.py, 09-tools/compact-sessions.py]
 related_skills: []
 related_projects: [18-bootstrap-generator, 19-workspace-brain]
-triggers: [multi-session, concurrent session, cross-machine sync, session-log, git pull rebase, autostash, token frugality, session fragment, compaction, workspace resilience]
+triggers: [multi-session, concurrent session, cross-machine sync, session-log, git pull rebase, autostash, token frugality, session fragment, compaction, workspace resilience, shared index, git index, scoped commit, git add, concurrent agents, same working tree]
 ---
 
 # Multi-session, token-frugal workspace resilience
@@ -32,6 +32,11 @@ compaction**. Writers never touch the same bytes; a pure function rebuilds the v
 3. **Scoped commit.** A PostToolUse hook records this session's edited paths; session-end
    stages only those (+ reconciled log) — so a concurrent session's in-flight WIP is never
    swept into the wrong commit. Falls back to `git add -A` when untracked.
+   **Two coverage limits, measured 2026-09-15 — do not assume this protects you.** It records
+   only `Edit|Write|MultiEdit|NotebookEdit` paths, so anything written through **Bash**
+   (heredoc, `sed`, a `python3 -` script) is invisible: in a Bash-heavy session the touch file
+   held **8** paths against **67** the commits actually changed. And it runs at **session-end
+   only** — a manual `git commit` mid-session bypasses it entirely.
 4. **Safe push-retry.** On non-fast-forward: `git pull --rebase` (autostash pinned **OFF**
    → refuses over a dirty tree, never stashes/strands work), union auto-resolves logs, then
    retry. A structured-file conflict aborts + defers to `/reconcile`. Non-lossy, idempotent.
@@ -59,3 +64,18 @@ justify every token.
   them onto arriving commits) — alarming but non-lossy. Check the reflog before assuming loss.
 - **Diagnose before hardening.** The auto-sync was already non-destructive; the fix was
   pinning safe defaults + graceful dirty-tree guards, not a rewrite.
+- **The git index is shared; `git add` is not a claim on it.** Two agents in one working tree
+  share `.git/index`, so `git add <mine>` then `git commit` commits *whatever else the other
+  agent staged in between* — the commit takes the whole index, not your paths. Observed
+  2026-09-15: a commit swept in two files belonging to a concurrent Cursor session, under a
+  message asserting it contained only this session's work. **Use a pathspec-limited commit —
+  `git commit -- <paths>` — which ignores index state and commits exactly those paths.**
+  Recovery is `git reset --soft HEAD~1`, `git restore --staged <theirs>`, re-commit; their
+  files return to untracked, where that session left them. Disjoint *files* (fragment model
+  above) prevent merge conflicts but do nothing about a shared *index*; these are different
+  layers and only the first was solved.
+- **Layer 1 cannot see what you just wrote.** `vault-retrieve.py`'s FTS index is rebuilt at
+  SessionStart and by `nightly.py`, so an entry authored mid-session is invisible to the
+  lexical fallback until `python3 09-tools/vault-retrieve.py --rebuild --quiet`. Run it after
+  adding knowledge, or the session that wrote the entry is the one session that cannot find
+  it (observed while recording the index hazard above).
