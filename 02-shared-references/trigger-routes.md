@@ -120,11 +120,11 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `figma slots` | 08-knowledge/design/nathan-curtis-ds-ops-substack.md — slots over prop sprawl; AI-ready composition |
 | `maintenance loop` | 08-knowledge/cross-domain/nate-jones-harness-enrichments.md + .claude/skills/optimize/SKILL.md |
 | `skill one-job` | 08-knowledge/cross-domain/nate-jones-harness-enrichments.md — keep/rewrite/remove imported skills |
-| `handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
-| `/handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
-| `end side chat` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
-| `close side chat` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
-| `hand this back` | 03-skills/side-chat-handback/SKILL.md — end side chat; write 06-context/side-chat-inbox.md for parent pickup |
+| `handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write the gitignored parent inbox for pickup |
+| `/handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write the gitignored parent inbox for pickup |
+| `end side chat` | 03-skills/side-chat-handback/SKILL.md — end side chat; write the gitignored parent inbox for pickup |
+| `close side chat` | 03-skills/side-chat-handback/SKILL.md — end side chat; write the gitignored parent inbox for pickup |
+| `hand this back` | 03-skills/side-chat-handback/SKILL.md — end side chat; write the gitignored parent inbox for pickup |
 | `figma plugin` | 03-skills/figma-plugin-dev/SKILL.md |
 | `figma` | BEFORE vendor plugin skills (figma-use / figma-generate-library / figma-generate-design): load 03-skills/figma/SKILL.md (hub; plugins = mechanics only) → 03-skills/design-engine… |
 | `design system` | 01-frameworks/18-design-systems-ai-operating-model.md + 03-skills/ds-advisor/SKILL.md. AI generating/inspecting/adopting UI through the system also loads 03-skills/ai-design-sys… |

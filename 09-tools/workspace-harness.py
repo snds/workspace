@@ -169,19 +169,39 @@ def _layer0_targets() -> list[tuple[str, str, str]]:
     return out
 
 
+def _git_ignored(rel: str) -> bool:
+    """True when `rel` is gitignored — present on a dirty laptop, absent in CI."""
+    proc = subprocess.run(
+        ["git", "-C", str(ROOT), "check-ignore", "-q", "--", rel],
+        capture_output=True,
+    )
+    return proc.returncode == 0
+
+
+def _clone_visible(rel: str) -> bool:
+    dest = ROOT / rel
+    return dest.exists() and not _git_ignored(rel)
+
+
 def check_layer0_targets() -> dict:
     """C1 — a route that names a file that isn't there sends the agent nowhere.
 
     The Layer-0 schema validates SHAPE only; nothing checked that the paths resolve
     until four routes were found pointing at a bare `00-context-profiles.md` that
-    does not exist at the root (2026-09-15).
+    does not exist at the root (2026-09-15). Gitignored files (the side-chat inbox)
+    exist locally and vanish on a clean clone — treat them as missing (2026-09-15).
     """
     targets = _layer0_targets()
-    missing = [t for t in targets if not (ROOT / t[2]).exists()]
+    missing = []
+    for source, trigger, rel in targets:
+        if _clone_visible(rel):
+            continue
+        why = "gitignored — absent on a clean clone" if _git_ignored(rel) else "no such file"
+        missing.append((source, trigger, rel, why))
     return {
         "check": "layer0-targets",
         "scanned": len(targets),
-        "failures": [f"{f}: '{trig}' → {p} (no such file)" for f, trig, p in missing],
+        "failures": [f"{f}: '{trig}' → {p} ({why})" for f, trig, p, why in missing],
     }
 
 
@@ -775,6 +795,14 @@ def self_test() -> int:
     expect("PATH_RE finds a parenthesised path",
            PATH_RE.findall("resolve (02-shared-references/x.md) first") == ["02-shared-references/x.md"])
     expect("PATH_RE ignores prose", not PATH_RE.findall("no paths. here at all"))
+    expect(
+        "gitignored inbox is not clone-visible",
+        not _clone_visible("06-context/side-chat-inbox.md"),
+    )
+    expect(
+        "handback Layer-0 hints do not name the gitignored inbox path",
+        not any("side-chat-inbox.md" in t[2] for t in _layer0_targets()),
+    )
 
     for name in failures:
         print(f"  ✗ {name}")
