@@ -20,6 +20,39 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
+
+
+### 2026-09-15 — Brand-soft tokens: Figma and code share one map
+
+SessionID: 2026-09-15-work-cdsmap
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): cds (cpes-software/cds); Figma SaaS PLM DS; 02-centricPLM
+Summary: Closed the Wave 1 semantic/component token map. Figma `action/primary/soft*` and `Object Chip / Color` publish WEB `var(--sem-primary-soft*)`; cds consumes Tailwind `bg-primary-soft` / `text-primary-soft-foreground` / `border-primary-soft-border`. Data Summary hover stays `interaction/primary/hover`. Nested Chip Cluster instance overrides needed a second rebind. cds uncommitted; Figma library unpublished.
+Decisions:
+  - Brand-soft = Blue/3 fill, Blue/11 text, Blue/6 border — same recipe as status-soft, brand hue. Not info-soft cyan.
+  - Component Color collections alias semantics. Code does not mint `--object-chip-*` CSS vars.
+  - Labelled-value hover wash is the interaction overlay, not the chip fill.
+  - Rebind nested instance paint overrides; main-set rebind does not clear them.
+Evidence:
+  - Figma Compact Rest + Editable Hover variable defs @ o6o1ZuGHxDow2vHLuYXT6X — verified
+  - cds ObjectChip / DataSummary / LockedField / ChipCluster tests 31/31 — verified
+  - Figma library publish — unverified (Sean, manual)
+  - cds commit/PR — unverified (not asked; employer repo)
+Pending added:
+  - Publish the SaaS PLM Figma library after Wave 1 rebind
+  - When asked: commit/PR cds primary-soft mapping
+Pending resolved:
+  - Wave 1 Figma paints no longer bind Color/Blue primitives on Object Chip, Chip Cluster, Data Summary hover
+Next:
+  - Sean publish Figma library
+  - Commit/PR cds token work only if Sean asks
+  - Wave 1 leftover stays out: ChipMultiSelect, TypeTag, OutlinedValueChips
+--- END BLOCK ---
+
 ### 2026-09-15 — CDS Material Symbols Icon; proto consume; cui next
 
 SessionID: 2026-09-15-work-mbp-cds-icons
@@ -704,79 +737,3 @@ that needs real-session outcome data, not fixtures.
 Report: `07-projects/19-workspace-brain/reports/surface-trajectories_v1.0_2026-09-15.md`
 Decision: `[[decision-one-matcher-per-workspace]]`
 --- END BLOCK ---
-
-### 2026-09-15 — Workspace harness: reachability + traversal cost become detectors
-
-SessionID: 2026-09-15-work-mbp-harness
---- SESSION BLOCK ---
-Date: 2026-09-15
-Machine: Work MacBook Pro (main, going forward)
-Surface: Claude Code (Mac desktop app)
-Agent: Claude Opus 5
-Project(s): 19-workspace-brain
-
-Summary: Adversarial second pass over the 2026-09-11 first-wave automation, run against the
-live tree rather than the report. Found `main` CI-red in two places, both introduced by the
-pass that added the gates: an unindexed knowledge entry (`plain-language.md`) and a
-clock-dependent fixture in `test-validators.py` that was green only on its authoring day.
-Found four Layer-0 routes naming a file that does not exist, a `status: canonical` doc
-(`model-routing.md`) with zero inbound edges and zero routes, ten knowledge entries indexed
-but matchable by nothing, one skill (`github-guardrails`) reachable by nothing, a
-`vault-health.py` link resolver that could not resolve any note→skill edge (keyed on stem;
-every skill is `SKILL.md`), and `vault-health.py` itself wired into no gate. Sixteen defects,
-all fixed.
-
-Built `09-tools/workspace-harness.py` — stdlib-only, read-only, clock-free. Three lanes:
-quality (runs the enforcement chain, reimplements nothing), connections (seven graph checks
-nothing else performs — Layer-0 target resolution, skill reachability, hub-chain ascent,
-registry paths, knowledge routability, `_INDEX` link resolution the way `prompt_route.py`
-resolves it, named-detector existence), tokens (contract floor 10,305 · session floor 21,656 ·
-load set p50/p95/max 7,877/12,261/20,057 · worst-case legal request 62,069 · banned ingest
-87,154 = 1.4× the legal worst case). `--self-test` proves each check can fail.
-
-Two modelling corrections the vault forced: reachability is three grades, not two (141
-hub-prose spokes are reported, never failed — failing them every run would kill the detector);
-the chain invariant is subsequence, not prefix and not the tier enum (sub-spokes are legitimate
-topology). Attach points so it is not another unused script: CI (`--self-test` then
-`--connections --tokens`, plus `vault-health.py`), the AGENTS.md enforcement chain,
-`close-out-dispatch.py` under a new `self-improve` row (`rigor_role: command-hub`), and seven
-Layer-0 routes.
-
-All three lanes green; routing corpus still 48/48; vault-health 0/0.
-
-Not covered, deliberately: phase 5 (per-surface routing trajectories — the harness proves the
-graph is traversable, not that a given model traverses it) and phase 6 (A4/A5/A8/A9 remain
-open). Nothing here touches the visual/Figma lane.
-
-Report: `07-projects/19-workspace-brain/reports/workspace-harness_v1.0_2026-09-15.md`
-Decision: `[[decision-reachability-is-a-detector]]`
---- END BLOCK ---
-
-### 2026-09-14 — Canvas live-mirror + employer repo dest
-
-SessionID: 2026-09-14-work-c4nvx
---- SESSION BLOCK ---
-Date: 2026-09-14
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6 / Cursor / Work MBP
-Project(s): 19-workspace-brain
-Summary: Harvest was writing git copies only, so Recents in this checkout still pointed at parent `~/Projects` canvases. `cursor-externalize.py` now mirrors vault canvases into `…-workspace/canvases/` and copies company canvases into that repo's `canvases/` (never this vault). Mixed-parent `flavours-` / `guided-setup-` moved into saas-plm-prototype.
-Decisions:
-  - Employer canvases dual-home in the owning `cpes-software/*` checkout's `canvases/`, not skip-and-drop.
-  - Flavours / Guided Setup belong in saas-plm-prototype (design sandbox), not workspace-brain.
-Evidence:
-  - Live mirror @ `~/.cursor/projects/Users-sean-sands-Projects-workspace/canvases/` — verified (7 `.canvas.tsx`)
-  - Employer copies @ `cpes-software/cds/canvases/` and `cpes-software/saas-plm-prototype/canvases/` — verified on disk, untracked; no employer commit (centric-engineering)
-Next:
-  - Open employer PRs for untracked `canvases/` in cds + saas-plm-prototype (do not auto-commit)
-  - First-wave leftovers: A8 Figma bind probe, A4 nightly.sh without cron, A5 ruff, A9 analysis lint
-  - Human merge cds #35 onto `main` (do not merge from an agent)
-  - Open Engine residue not filed — Linear MCP absent on this Cursor session
---- END BLOCK ---
-
-### 2026-09-11 — Plan-ahead + cds export gate
-
-SessionID: 2026-09-11-plan-ahead-export-gate
---- SESSION BLOCK ---
-

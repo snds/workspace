@@ -1,7 +1,7 @@
 ---
 tags: [design-systems, color, radix, tailwind, apca, tokens]
 created: 2026-06-02
-updated: 2026-09-02
+updated: 2026-09-15
 status: working
 confidence: high
 sources: [session-log 2026-06-02, centric-ui Radix palette re-architecture]
@@ -53,6 +53,10 @@ non-colliding scale. Brand = blue → `info` shifts blue→cyan/sky; `warning`�
 brand owns its hue; success/warning/error/info take distinct alternates. Generalize as a
 generative rule keyed on the brand hue, not hardcoded.
 
+Brand-tinted chrome (chips, soft brand surfaces) is the brand-soft pair: fill hue-3, text
+hue-11, border hue-6 (`primary-soft*`). That is **not** `info-soft`. Info stays cyan so
+status never reads as brand.
+
 ## 5. accent (hover) ≠ selected (active) — and the right Radix steps
 shadcn's `accent` is **neutral** (a gray hover/highlight surface, ≈ Radix step 4), NOT
 brand-derived — because it's applied to every hovered/highlighted item, so brand-tinting it
@@ -87,7 +91,7 @@ bare minimum = [[a11y-visual]]'s APCA floors (Lc ≥ 60 body / 45 large-bold / 3
 
 **Step → role → use-class:**
 - **1–2** app/subtle backgrounds (FILL only): `background`=Zinc1, `card`/`popover`=white→Zinc2.
-- **3** component surface (FILL): `muted`/`secondary`=Zinc3; soft status bg = hue3.
+- **3** component surface (FILL): `muted`/`secondary`=Zinc3; soft status bg = hue3; brand-soft fill = Blue/3 (`primary-soft`, not `info-soft`).
 - **4** hover surface (FILL): `accent`=Zinc4 (neutral hover, NOT brand).
 - **5** active/selected surface (FILL): `selected`=Blue5 (tinted, never the solid).
 - **6–8** borders/separators (BORDER/RING only, never a fill): `border`=Zinc6 (subtle), `input`=Zinc7

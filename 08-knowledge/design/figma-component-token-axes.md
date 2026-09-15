@@ -1,7 +1,7 @@
 ---
 tags: [design-system, figma, tokens, density, component-tokens, modes]
 created: 2026-07-31
-updated: 2026-08-06
+updated: 2026-09-15
 status: stable
 confidence: high
 sources: [session 2026-07-31-work-figma-density, Figma o6o1ZuGHxDow2vHLuYXT6X]
@@ -63,6 +63,11 @@ used in product chrome breathe with shell Density automatically.
 4. Every mode value **aliases** a semantic or density token — no raw numbers when a scale exists.
 5. Bind component masters to the component vars (not past them to semantics), so the Size/State
    mode pin actually drives the node.
+6. **WEB syntax on a Color collection is the semantic CSS variable**, not a new `--component-*`
+   custom property. Code stays on Tailwind semantic utilities (`bg-primary-soft`). MATCH is
+   “same `--sem-*` published on both surfaces.”
+7. Rebinding a main component does **not** clear nested-instance paint overrides. Walk those
+   instances too, or they stay pinned to `Color/*` primitives.
 
 Subcomponent folders inside a collection are fine when one chrome owns several parts
 (`Calendar / Radii` → `Day/*`; later `Header/*`).
