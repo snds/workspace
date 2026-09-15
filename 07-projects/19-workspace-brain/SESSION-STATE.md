@@ -8,15 +8,15 @@ _Last updated: 2026-09-15 — A8: Figma construction gate is a detector (live ca
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: lint:ds — cds + proto on `main`; centric-ui [#398](https://github.com/cpes-software/centric-ui/pull/398) awaiting review.
-- **Working set**: `09-tools/shadcn-lint/`; leftover worktrees cds-lint-ds / centric-ui-lint-ds / saas-plm-prototype-lint-ds.
-- **Last action (2026-09-15):** Outstanding-item lists: numbered, unblocked-first (preferences). cui 398 CI green, review still required. Vault overlay still uncommitted. Cursor Grok 4.6 · Cursor · Work MBP.
+- **Current focus**: lint:ds overlay on vault `main`; cui [#398](https://github.com/cpes-software/centric-ui/pull/398) still in review.
+- **Working set**: `09-tools/shadcn-lint/` (tracked). `centric-ui-lint-ds` worktree kept until 398 merges.
+- **Last action (2026-09-15):** Unblocked items done — overlay committed+pushed (`51e7859` / merge `f446cbb`); cds-lint-ds and proto-lint-ds worktrees removed. Cursor Grok 4.6 · Cursor · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Land uncommitted vault overlay on workspace `main` (independent of cui 398). Human review of [#398](https://github.com/cpes-software/centric-ui/pull/398) stays in parallel (CI green; do not agent-merge).
+- **Next action:** Human review of cui [#398](https://github.com/cpes-software/centric-ui/pull/398) (CI green; do not agent-merge). After merge, remove `centric-ui-lint-ds`. Later: wave 2 rules, theme reset, proto pre-commit lint:ds, ratchet paydown.
 - **Open decisions:** Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot). Theme reset (`@theme { --color-*: initial }`) stays a later product-CSS PR — decided overlay-first. Restyle/arbitrary/inline shadcn rules stay off until a later wave.
-- **Blocked on:** cui 398 human review (CI green, `REVIEW_REQUIRED`). Employer `canvases/` exist on disk but are untracked pending PRs. Vault `09-tools/shadcn-lint/` not committed.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until the proto pin includes cds `./sonner`. Do not auto-commit employer repos. Do not wire `shadcn-lint` into `workspace-harness.py` / vault CI. Dirty product branches (`feat/object-chip-action-modes`, `refactor/delete-sidebar-reexport`, `feat/page-composer-model`) are unrelated — lint:ds used worktrees from `origin/main`.
-- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Work MBP (2026-09-15): lint:ds PRs cds#41 cui#398 proto#81`.
+- **Blocked on:** cui 398 human review (`REVIEW_REQUIRED`). Employer `canvases/` exist on disk but are untracked pending PRs.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until the proto pin includes cds `./sonner`. Do not auto-commit employer repos. Do not wire `shadcn-lint` into `workspace-harness.py` / vault CI. Keep `centric-ui-lint-ds` until 398 merges.
+- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Work MBP (2026-09-15): session-end after lint:ds overlay land`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.

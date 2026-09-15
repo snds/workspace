@@ -20,10 +20,37 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
+### 2026-09-15 — lint:ds overlay land + session-end
 
-
-
-
+SessionID: 2026-09-15-work-k7m2q
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6 / Cursor / Work MBP
+Project(s): 19-workspace-brain; cds; centric-ui; saas-plm-prototype
+Summary: Stand up `09-tools/shadcn-lint/` as an independent product-repo lint service; install `lint:ds` on cds (baseline 0), proto (ratchet 5410, merged), cui (ratchet 988, in review). Outstanding-item lists are numbered and unblocked-first.
+Artifacts:
+  - 09-tools/shadcn-lint/ — overlay + probe + host configs + ratchet (whitelisted in .gitignore)
+  - 08-knowledge/engineering/shadcn-lint-token-tiers.md
+  - 06-context/memory/decision-shadcn-lint-independent-service.md
+Decisions:
+  - Overlay-first; do not fold @shadcn/lint into vault CI or eslint-off-system
+  - Wave 1 errors = no-raw-colors + ds-lint/no-tier-leakage only
+  - CDS packages baseline 0; cui/proto ratchet existing debt
+  - Theme reset is a later product-CSS PR
+Evidence:
+  - cds #41 merged @ https://github.com/cpes-software/cds/pull/41 — verified
+  - proto #81 merged; Pages on main succeeded @ https://github.com/cpes-software/saas-plm-prototype/pull/81 — verified
+  - vault overlay `51e7859` + merge `f446cbb` pushed to snds/workspace main — verified
+  - cui #398 CI green, REVIEW_REQUIRED @ https://github.com/cpes-software/centric-ui/pull/398 — verified
+Deferred commits:
+  - 03-skills/canonical-docs-voice/SKILL.md — pending, not this overlay (stash: canonical-docs leftover)
+  - 08-knowledge/design/canonical-documentation.md — pending, not this overlay
+Next:
+  - Human review of cui #398; after merge remove centric-ui-lint-ds
+  - Later: wave 2 shadcn rules; CDS theme reset; proto pre-commit lint:ds; ratchet paydown
+--- END BLOCK ---
 
 # Shapr3D MCP setup
 
@@ -91,6 +118,173 @@ Next: desktop/platform concept with provisional thickness and shelf dimensions, 
 
 
 
+
+
+### 2026-09-15 — A8 third node: R2's premise demonstrated, `wght` settled as a true positive
+
+SessionID: 2026-09-15-work-mbp-probe-wght
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Claude Code (Mac desktop app)
+Agent: Claude Opus 5
+Project(s): 19-workspace-brain
+
+Summary: Third live node, probed to settle whether the raw variable-font weight axis (`wght`)
+was a true positive or an artifact of Figma echoing a resolved axis. Settled: true positive,
+and the same data proves R2's underlying premise.
+
+The decisive evidence is a natural experiment, not an argument. A 15px focus-ring radius
+appears in node 1 as the BARE property `radiusRing: 15`, with no focus-ring token anywhere in
+that node's map; it appears in node 3 as the TOKEN `focus-ring-radius/md: 15`, with no bare
+key. One concept, one value, two nodes — bare where unbound, token where bound. If bare keys
+were echoes of bound properties, node 3 would show both; it shows one. So a bare key can be
+trusted to mean unbound, which is the assumption R2 rests on and had not previously been
+tested.
+
+Applied to `wght`: node 1 reports 400 while its only weight token is `font-weight/medium: 500`;
+node 2 reports 461 against tokens 500 and 600. Neither value exists as a token in its own map,
+so neither can be an echo. Node 3 reports 400 alongside `font-weight/normal: 400`, which is
+coincidence — 400 is Regular. Likely cause worth naming: the `ligature/*` entries show this
+file uses variable ICON fonts, which carry their own `wght` axis; `var(--icon-size)` is bound
+and the icon weight axis is not, which also explains node 2's otherwise odd 461.
+
+Also confirmed on node 3: the rebuilt property-name discriminator holds — `foreground` passes,
+and the Figma-only construction tokens (`Day/top-left` and siblings, sanctioned by doctrine
+rule 0) pass as tokens. No metadata was supplied for this node and the probe correctly
+reported `verified: R1, R2` only, declining to claim R3 rather than implying a clean tree.
+
+Three nodes now: node 1 eight R2 hits, node 2 one, node 3 five. R1 clean on all three — the
+hard gate has not over-fired once on real production work.
+
+CONCURRENCY: the Cursor `@shadcn/lint` work is still in-flight and uncommitted in this tree,
+with its routing fixture red and `trigger-routes.md` drifted. This commit again contains only
+the probe files.
+--- END BLOCK ---
+
+### 2026-09-15 — A8 over-fire test: a second node rebuilt the R2 discriminator
+
+SessionID: 2026-09-15-work-mbp-probe-overfire
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Claude Code (Mac desktop app)
+Agent: Claude Opus 5
+Project(s): 19-workspace-brain
+
+Summary: Sean asked for a second node specifically to check whether R2 over-fires. It did,
+immediately, and the fix is the more valuable half of A8.
+
+The separator-based discriminator flagged `foreground` — a real single-word semantic token,
+sitting among `surface/popover` and `chrome/border/subtle` with a `var(--sem-muted-foreground)`
+CSS twin. Flagging it would have told a designer to bind something already bound.
+
+Three attempts, each failing on live data the previous one had not seen: "a token has a
+slash" flagged doctrine's own `space-0` / `radius-none` / `border-width-0`; "a token has a
+separator" flagged `foreground`; the rule that holds is **"the key names a Figma/CSS
+property"**. Token names are unbounded and system-specific; property names are a closed,
+stable set. Keying on the open set was the error, and the tell was in the first node all
+along — it was full of bound fills and produced no colour-valued bare key, because unbound
+values only ever surface under a property name.
+
+After the rebuild: node 2 reports 1 hit (was 2), node 1 still reports 8 (unchanged).
+Precision up, detection unweakened.
+
+R3 also gained live vocabulary: real trees use `symbol` / `instance` / `slot` / `frame` /
+`text`, and a `slot` nested inside an instance must not reset instance context or every icon
+vector in a composed overlay would be flagged. Pinned by self-test.
+
+Open, stated: both nodes report a raw variable-font weight axis (`wght`) at different values
+while named weight tokens exist in the file. Consistent and probably genuine — if Figma
+merely echoed a resolved axis, node 2's would match its bound weight token, and it does not.
+Not rounded up to certain.
+
+Generalised into [[decision-capture-and-assess-split]]: when writing a discriminator,
+enumerate the closed set, never the open one.
+
+CONCURRENCY NOTE: a Cursor session (Grok 4.6) landed `@shadcn/lint` work in this same tree
+mid-session — new routes, knowledge-hints, `_INDEX`, `09-tools/shadcn-lint/`, and a baton
+rewrite. Its `shadcn-lint-service` routing fixture is currently RED and `trigger-routes.md`
+has drift; both belong to that in-flight work, not to this. This commit deliberately contains
+only the probe files, so their work is left untouched in the tree for them to finish. I
+corrected one stale line in their baton rewrite (it still said the probe had only seen
+synthetic fixtures).
+--- END BLOCK ---
+
+### 2026-09-15 — A8 live validation: real MCP output corrected the probe twice
+
+SessionID: 2026-09-15-work-mbp-figma-probe-live
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Claude Code (Mac desktop app)
+Agent: Claude Opus 5
+Project(s): 19-workspace-brain
+
+Summary: Closed the gap left by the A8 fragment earlier today — Sean supplied a node URL and
+`figma-bind-probe.py` was fed real MCP output for the first time. It ran end to end and
+corrected the capture contract in two places that fixtures could never have caught.
+
+(1) `get_metadata` returns `<frame …><symbol …/></frame>`: types are element TAGS and there
+is NO paint attribute at all. The original R3-from-metadata path required a node to be
+"painted", so it could never fire on real output — and a self-test asserted it worked, using
+an invented `type="RECTANGLE" fill="#fff"` shape Figma does not emit. R3 now judges a raw
+shape by tree position: top-level chrome fails, the same shape inside an instance is that
+component's own internals (icon vectors) and is left alone.
+
+(2) `get_variable_defs` returns a MIXED map — token paths, `var(--x)` references, and bare
+property names whose values are the resolved literals of UNBOUND properties. That third kind
+is precisely what R2 exists to refuse and it is visible nowhere else; the probe was not
+reading the map for R2 at all. Before the fix it would have reported "R1 and R3 verified, 0
+violations" on a component carrying eight unbound properties — a false pass, the worst
+outcome for a prove-gate. A follow-on fragility surfaced while fixing it: "a token has a
+slash" would have flagged doctrine's own hyphenated spellings (`space-0`, `radius-none`,
+`border-width-0`), so the discriminator is now "a token has a separator", pinned in both
+directions by self-test.
+
+Findings on the live node: R1 clean — no `Color/*` primitives anywhere, which is the evidence
+that the hard gate does not over-fire on real production work. R3 clean — every child is a
+variant symbol. R2 found eight unbound properties spanning height, padding, gap, radius,
+focus-ring radius, font size, line height and weight: exactly the families the Density
+standing rule names, on a control, while tokens for those families exist in the same file.
+Reported to Sean in session; the capture stayed in the scratchpad.
+
+Also corrected a rule I had written wrong earlier in the day: I justified scratchpad-only
+captures as wall 3 ("employer content must not be committed here"). Wall 3 is
+one-directional — nothing personal into employer repos — and employer design data is tracked
+in this vault by design (CDS file key, token names and hex values already live across
+02-centricPLM, 09-figma-repo-sync-plugin, project-context-detail and the log archive). Fixed
+in the probe docstring, its --emit-template help, figma hub step 7, the close-out SKIP text,
+the decision memo and the report. A wrong rule written into a skill surface gets followed
+later, so it was worth the pass.
+
+Generalisable lesson, recorded in [[decision-capture-and-assess-split]]: a detector built
+only against fixtures of your own design tests your imagination, not the tool.
+
+22 harness gates green, 43/43 negative fixtures, ruff clean.
+
+Report: `07-projects/19-workspace-brain/reports/figma-bind-probe_v1.0_2026-09-15.md`
+--- END BLOCK ---
+
+### 2026-09-12 — PlanetCompiler regional catchment and shared terrain completion
+
+SessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe-phase3-2026-09-12
+ParentSessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe
+--- SESSION BLOCK ---
+Date: 2026-09-12
+Agent: Codex
+Surface: Codex desktop
+Machine: Personal Mac, Apple M3 Max
+Project(s): PlanetCompiler; independent Planet Lab
+Continuity: The September 10 phases-one/two note was already folded into session-log.md by another machine. This additive continuation retains the same parent task and uses a distinct compaction key so new completion evidence is not discarded.
+Phase-three follow-up: Sean authorized Continue and resumed on September 12. Completed the conditioned catchment core, separate routing/physical ground, finite lake water and conservative solid accounts, authoritative shared-triangle queries, bounded native display and editor playback. Debug/Release each 7 core suites,112 regional checks/24 planted corruptions,78 global and65 strip checks pass. Final native17/17, live regional1771/1771 with five byte-equal histories/90queries, actualSlate controls8/8 and eleven independent original-pixel captures pass. Corrected below-scene placement and animated-focus failure; preserved all eleven failed images and later cropped top view. Final wider top passes. Scientific and rendering limits/human acceptance remain explicit. Independent first84/86 report was overwritten; reconstruction is labeled and original104/106 preserved. All implementation remains PlanetCompiler; Legion untouched.
+Phase-three source checkpoints: f0bf700,234d8e8,18a762c,a468110,a112e1c,a0fe2ae (final evidence checkpoint); source/evidence checker, all seven intent criteria and canonical validators pass; complete artifact manifest at evidence/phase-3/phase-report.json. Native editor left clean/stopped on final5000-year elevation at localhost8765; agents complete.
+Phase-four follow-up: Sean instructed Continue after phase three. Completed immutable regional quadtree hierarchy, explicit mixed-detail stitches, all-mask triangle-overlay errors, separate source/committed queries and atomic async-cooked native collision/display publication. Review corrected nonmonotone balancing, worker marker path, valid-root placement and subtle/absolute child-transform bypass. Preserve the first oracle runs, initial 18/24 native failure, zero-probe live attempt and complete pre-guard run. Debug/Release each pass 9/9 core suites, 105/105 independent terrain checks with 22 planted corruptions and 21,900 geometric probes, plus 1,120 actual source and 1,120 emitted queries. Prior regional/global/strip audits pass 112/78/65 each. Final native 24/24, live 1,837/1,837 with 13,200 real collision probes (12,992 distinct), eight actual controls and all twelve independently inspected original captures pass. Maximum actual world mismatch is 1.758e-6 m against the 0.02 m collision/display gate.
+Phase-four checkpoint: e9593d3, source/evidence checker and all seven intent criteria pass; evidence/phase-4/phase-report.json records source and all retained artifact hashes. Native source 8a9faa9 independently reviewed. Editor PID 66415 left clean on N64 finest Elevation at 2,000 years, actual terrain selected/focused and only localhost8765 listening. No pending replacement, PIE or open assets; observer removed, all agents complete. Source spacing remains 500 m at 32 km/N64. No added geology, continuous streaming/geomorphing, production traversal, frame-rate or photographic acceptance. Human acceptance remains pending. Native repo has no remote; Legion remains untouched. Canonical generation, routing, integrity, links, workspace, first-wave detector and negative-fixture validation passes.
+Phase-five active: Sean continued. Frozen camera/quantization/readiness contract and independent design review at native9edd216; intent gate/ready passed. G5/U5/V5 implementing in isolated view-core/view-unreal/view-oracle worktrees. V5 freezes before new implementation access. Root owns all editor calls and ≥100submissions/10publications/2000collision-probes, actual controls, motion/pixel review and source/evidence closeout. No phase-five acceptance is closed yet.
+Next: complete phase five within its bounded contract. Preserve original references, adversarial visual gates and Legion.
+Handoff: 07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md
+--- END BLOCK ---
 
 ### 2026-09-15 — Proto PR 79 merge conflicts resolved
 
@@ -569,253 +763,5 @@ Pending resolved:
 Next:
   - Intent GUI: add a local repo, then a real coordinator spec — or personal:SEA-33
   - Reload Cursor MCP if vgpu tools are missing
---- END BLOCK ---
-
-
-### 2026-09-04 — ShadeGraph: research + scaffold a node-based shader design tool
-
-SessionID: 2026-09-04-voyager-sg21a
---- SESSION BLOCK ---
-Date: 2026-09-04
-Machine: Personal MacBook Pro
-Surface: Claude Desktop (Code tab)
-Project(s): 21-shadegraph (new) · 13-legion (integration target)
-Summary: Researched vgpu.sh + the Codrops "Prism with vgpu" article + industry node-based shader editors (Unreal Material Layers, Unity Shader Graph, Substance, Blender node-preview, Nuke viewer-per-node, litegraph/ComfyUI, React Flow). Traced Legion's real shader architecture (GLSL chunks + uniforms + per-archetype lab-store — already a de-facto node system). Chose the stack, scaffolded a standalone tool repo, and wrote a comprehensive design plan.
-Artifacts:
-  - ~/Projects/ShadeGraph/ — new standalone repo (commit 50abc6a): model/compiler/nodes/preview contracts, React app shell, Legion adapter plan
-  - 07-projects/21-shadegraph/docs/DESIGN-PLAN.md — research synthesis, stack decision, data model, phased roadmap
-  - 07-projects/21-shadegraph/{SESSION-STATE.md, README.md}
-Decisions:
-  - Stack: React + React Flow 12 (editor shell) + one shared Three/WebGPU preview renderer + pluggable compiler. Rationale: preview fidelity ⟂ node-editor framework — fidelity is owned by compiler+renderer (previews run the real target program), scale by keeping GPU work off the DOM. litegraph/canvas is the documented escape hatch.
-  - Compiler targets both backends from day one: glsl-es (drives Legion now) + wgsl/tsl (WebGPU/vgpu future).
-  - Home: standalone repo ~/Projects/ShadeGraph (snds/*, own git); vault 21-shadegraph holds docs/baton only (portable-first, like Legion).
-  - Vault folder allowlisted in .gitignore (docs-only) so the design plan syncs cross-device.
-  - **Workspace project-tracking policy clarified (Sean):** project CONTEXT (reference/guidance/intent/curated media/docs) is tracked for BOTH personal and work projects; NEVER tracked = company/app code or checked-out repos (live in their own repos: centric-ui, prototype, ~/Projects/*) and sensitive customer data (never in the workspace at all — kept with the employer repo). The gate is content-type (context vs code/repo/customer-data), not personal-vs-employer. Encoded as exclude patterns in .gitignore under "07-projects tracking policy".
-Evidence:
-  - ShadeGraph initial commit @ ~/Projects/ShadeGraph (git log 50abc6a, tree clean) — verified
-Pending added:
-  - ShadeGraph Phase 1 (graph MVP): pnpm install, wire React Flow shell to store, starter node set + inspector + JSON save/load
-  - Resolve 4 open design calls (name; state lib; WGSL-via-emitters vs TSL-as-IR; Legion live-bridge vs export-only) — DESIGN-PLAN §11
-Project status changes:
-  - 21-shadegraph: (new) → Building (Phase 0 scaffold + design plan complete)
-Migration done this session (vault content → correct homes):
-  - 03-omni: relocated ~/Projects/Workspace/07-projects/03-omni → ~/Projects/omni; fresh git; new PRIVATE repo github.com/snds/omni (pushed, commit 22c3527). Vault folder now a tracked context pointer stub (allowlisted). node_modules/target excluded.
-  - 13-legion/Video (455MB Homeworld 2 frame reference) → moved to ~/Desktop/Legion-Reference-Media/Video (staging). Tracked pointer added: 06-context/external-media-registry.md. Legion vault folder 462MB→6.9MB. Awaiting Sean's durable large-format storage destination.
-  - 12-MCS: empty on this (personal) machine + target employer repo unreachable from snds account. Content/access live on the WORK laptop. Queued as cross-device action: playbook in 07-projects/12-MCS/SESSION-STATE.md (SESSION-STATE tracked; folder body deliberately NOT `**`-allowlisted so work-laptop customer data can't leak into the workspace repo) + pending item ^pc-44 (machine-gated, work laptop). Sean authorized PR+commit+merge to saas-plm-analysis (doc-only employer repo).
-  - ShadeGraph: PUBLIC repo created + pushed → github.com/snds/shadegraph.
-Next:
-  - Phase 1 per DESIGN-PLAN §10 — begin graph MVP in ~/Projects/ShadeGraph
-  - [WORK LAPTOP] execute ^pc-44 — MCS → saas-plm-analysis migration (see 12-MCS SESSION-STATE).
-  - Remaining backfill (deferred, per-folder triage): 02-centricPLM + 11-lexical-react-native hold employer code checkouts; relocate/scrub before any tracking. Other personal folders (04,08,09,14,15) can be triaged + allowlisted for context. Update 08-knowledge/cross-domain/workspace-infrastructure.md tracking table when done.
---- END BLOCK ---
-
-
----
-SessionID: claude-web-2026-09-03-model-routing
-Agent: Claude Sonnet 4.6
-Surface: claude.ai (web)
-Machine: Voyager-2.local
-Date: 2026-09-03
-Branch: main
-Commit: 23788ee
----
-
-## Summary
-
-Local LLM setup and workspace model routing infrastructure session.
-
-## What happened
-
-- Debugged Ollama setup on M3 Max (36GB): EOF on model pulls traced to invalid
-  tag names from third-party guides (not a connectivity or disk issue); resolved
-  by using `ollama run gemma4` without explicit tag suffix
-- Mapped open-source model recommendations to specific work contexts (DS work,
-  code, reasoning, comms, Legion creative) across the local Ollama roster
-- Created `02-shared-references/model-routing.md` — new canonical shared reference
-  covering Ollama, Claude, Cursor, and Codex surfaces; native-first model roster
-  per surface; work context → model map; effort tiers 1–4; speed signals
-- Added 13 trigger phrases to `trigger-routes.json` for model selection vocabulary
-  (which model, pick a model, best model for, model routing, ollama model, local
-  model, cursor model, codex model, grok or claude, effort tier, etc.)
-- Regenerated `trigger-routes.md` via `build-trigger-routes.py`
-- Confirmed dispatcher.py loads trigger-routes.json dynamically — no hook changes needed
-- Confirmed Cursor brain.mdc already reads trigger-routes.md at session start — no rule changes needed
-- All validators green (validate-links, validate-capabilities, validate-workspace)
-- Committed and pushed to github.com/snds/workspace main (23788ee)
-
-## Pending
-
-- No new pending items from this session
-- GitHub MCP not surfaced in claude.ai session despite being installed; used git
-  via Desktop Commander instead — consider verifying GitHub MCP connector state
-
-## Notes
-
-Filesystem MCP (read/write at /Users/snds/Projects) + Desktop Commander both
-available this session — used both successfully. Web surface confirmed write-capable
-via Desktop Commander when workspace is on local disk.
-
-
-### 2026-09-03 — Looney consolidation + dump-folder cleanup
-
-SessionID: 2026-09-03-voyager-b7191a1
---- SESSION BLOCK ---
-Date: 2026-09-03
-Machine: Personal MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 01-mediaservices
-Summary: Closed the Aug 26 Looney Tunes thread. Quality adjudication + consolidation put the show in one Sonarr folder (1,062 files). The Orville, Firefly, and 12 Monkeys dump twins were resolved the same way. 16 empty leftover folders were deleted. One incident: 184 intended Looney upgrades were destroyed after ffmpeg `.part` writes failed and a graveyard sweep ran anyway.
-Artifacts:
-  - Unraid `/mnt/user/appdata/media-sentinel/loudness/` — adjudication-report, consolidation journal/manifest, lost-upgrades.json, three-report, cleanup-journal, looney/orville profiles
-  - MediaSentinel grouping/parse + tests (year-seasons, S00 specials, yearless-into-sole-year merge)
-  - `07-projects/01-mediaservices/SESSION-STATE.md`
-Decisions:
-  - Winners go to the Sonarr-managed folder; dump/orphan folders delete only when empty of video
-  - Temp ffmpeg outputs must set `-f`; destructive sweeps gate on zero errors
-  - Review pair decisions before deleting losers (broken once on Orville S01, outcome still defensible)
-Pending added:
-  - Optional Sonarr re-grab of 184 lost Looney upgrades
-  - Firefly E03/E11 Italian-only; E10 may be mislabeled (Objects in Space / War Stories)
-Pending resolved:
-  - User decision on Looney loudness path (dedupe-to-managed executed)
-  - Duplicate dump folders for Looney, Orville, Firefly, 12 Monkeys
-  - Empty leftover folder sweep
-Project status changes:
-  - 01-mediaservices: Aug 26 server work complete; next is `personal:SEA-34` (Desktop Pokémon → Unraid)
-Next:
-  - `personal:SEA-34` — copy Desktop Pokémon pack to Unraid; set TheTVDB (DVD); do not leave Horizons in 1997 Season 20
---- END BLOCK ---
-
-
-### 2026-09-03 — Library CUT delete + Desktop Pokémon organize
-
-SessionID: 2026-09-03-voyager-mslib1
---- SESSION BLOCK ---
-Date: 2026-09-03
-Machine: Personal MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 01-mediaservices
-Summary: Closed a long MediaSentinel / Unraid library thread. Library-wide English-watchable duplicate ranking produced 2,327 CUT videos; Sean authorized live delete of those losers plus their sidecars only. Plex TV and Emby TV were scanned. Desktop ColdFusion Pokémon pack was reorganized in place to TVDB DVD seasons; it was not copied to Unraid.
-Artifacts:
-  - 07-projects/01-mediaservices/canvases/duplicate-scan-outcome.canvas.tsx — scan 20260816T214110-ab8d81
-  - 07-projects/01-mediaservices/canvases/authoritative-delete-list.canvas.tsx — 2,327 CUT list
-  - Unraid `/mnt/user/appdata/media-sentinel/exports/` — delete lists + result JSON
-  - Desktop ColdFusion Pokémon pack — 1,299 videos renamed into show/season folders
-  - 08-knowledge/engineering/pokemon-tvdb-dvd-vs-aired.md — DVD vs aired + production-number trap
-Decisions:
-  - Delete CUT extras only; keep KEEP / PRESERVE / singletons; companions of the losing video only
-  - Unlink on disk (space back), not same-fs quarantine, after explicit authorization
-  - Do not whisper-overwrite MST3K S6+ community `.en.srt`; copy sidecars onto tracked obfuscated files instead
-  - ColdFusion `02x28`-style codes are production numbers; map Pokémon via folder context + TVDB DVD
-  - Plex/Emby must use TheTVDB (DVD) for Pokémon (1997) {tvdb-76703}; default aired now maps S20 to Horizons
-Evidence:
-  - 2,327 videos + 5,369 sidecars unlinked; 0 listed videos remaining; 917.7 GiB @ Unraid `/mnt/user/data/media/tv` — verified
-  - Plex TV section 1 refresh HTTP 200; Emby TV Recursive ValidationOnly HTTP 204 — verified
-  - 1,299 Desktop Pokémon videos moved/renamed; leftover non-video only — verified
-Pending added:
-  - `personal:SEA-34` land organized Desktop Pokémon pack on Unraid with TVDB DVD order
-Pending resolved:
-  - Authoritative CUT list for run `20260816T214110-ab8d81`
-  - User-authorized delete of that list + TV library scans
-  - Desktop Pokémon pack season/folder organize
-Project status changes:
-  - 01-mediaservices: Aug 16–17 library reclaim done; Aug 26 Looney/Orville/Firefly/12 Monkeys outcome unchanged; Desktop Pokémon ready to copy
-Next:
-  - `personal:SEA-34` — copy Desktop Pokémon pack to Unraid and set TVDB DVD order
-  - Optional leftovers stay in SESSION-STATE (Sonarr Looney upgrades, Firefly E03/E11/E10, Bazarr missing-sub keepers, MST3K S04E01 sidecar)
---- END BLOCK ---
-
-
-### 2026-09-03 — LCARS pack catalog + live T3 compose
-
-SessionID: 2026-09-03-voyager-t3ds1
---- SESSION BLOCK ---
-Date: 2026-09-03
-Machine: Personal MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 20-lcars-generative-interface
-Summary: Built a pack catalog (primitive → variant → component → content group → layout) and recomposed the live T3 demo from composers. App landed on `main` as `e691dec` (not pushed). S-SYS47-01 Literal stays a separate switch.
-Artifacts:
-  - github.com/snds/LCARS `e691dec` — `src/catalog/system/` + `docs/COMPONENT-SYSTEM.md` + composed `live-t3`
-  - vault `07-projects/20-lcars-generative-interface/docs/content-groups.md` — `support.controls` + variants note
-Decisions:
-  - Work in vectors / grammar, not per-pixel plate overlay
-  - Pills are controls; spine is bars; aesthetic is barcode + hairline
-  - 8px inside a family, 24px between content groups
-  - T1/T4 stay recipes; T2 stays on the SYS47 literal path
-  - Do not construct chrome from `public/northstars/S-SYS47-01/*.png`
-Evidence:
-  - App commit `e691dec` @ github.com/snds/LCARS main (local, not pushed) — verified
-  - Scene emit `generate-display-svg.py --check` 122 live primitives — verified
-  - vitest 65/65 @ LCARS — verified
-  - Agent Todo `personal:SEA-33` @ linear.app/snds — verified
-  - Ledger heartbeat `sean-cursor` @ personal:SEA-6 comment `1d0d5fc1` — blocked (approval pending)
-Pending added:
-  - `personal:SEA-33` review structured live T3 against the pack catalog
-Pending resolved:
-  - Live T3 was a flat primitive bag; now composed from the pack catalog
-Project status changes:
-  - 20-lcars-generative-interface: live generative path has a named catalog; Literal path unchanged
-Next:
-  - `personal:SEA-33` — review `?surface=live` against the pack catalog
-  - Push app `e691dec` only if Sean asks
---- END BLOCK ---
-
-### 2026-09-03 — Onori rails absorb + LCARS off-system lint
-
-SessionID: 2026-09-03-voyager-onori1
---- SESSION BLOCK ---
-Date: 2026-09-03
-Machine: Personal MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 19-workspace-brain, 20-lcars-generative-interface
-Summary: Assessed Sanity/Onori design-system-evals (not previously in vault). Absorbed transferable rails: isolation (`assistance off`), pack recipes, product-repo lint. Generalized LCARS capture into workspace `vqa capture`; retired `prove_sys47.py`. Added reusable `09-tools/eslint-off-system` and wired LCARS `npm run lint`.
-Artifacts:
-  - 08-knowledge/design/agent-output-rails.md — Onori method without cloning the tester
-  - 03-skills/visual-prove-engine/scripts/capture.py + capture.mjs — project-agnostic URL→PNG+manifest
-  - 09-tools/eslint-off-system/ — shared no-raw-hex + no-arbitrary-tailwind rules
-  - github.com/snds/LCARS `a133bb4` — off-system ESLint + TOKENS-wired schematics + capture wrapper
-  - workspace `8024215` — Onori absorb commit (ahead of origin until this session-end push)
-Decisions:
-  - Do not clone sanity-labs/design-system-agent-tester; workspace path is capture→prove→score
-  - Isolation law: docs/catalog proves record `--assistance off`; assistance on is shipping not score
-  - ESLint lives in product repos; vault owns reusable rules + doctrine only
-  - Pack wrappers may pass URL/out; they must not reimplement the capture manifest
-Pending added:
-  - centric-ui / Davinci off-token Tailwind lint (employer PR path)
-Pending resolved:
-  - Sanity design-system-evals source assessment gap
-  - LCARS had no ESLint / off-system gate
-Project status changes:
-  - 19-workspace-brain: agent-output rails + vqa capture + eslint-off-system landed
-  - 20-lcars-generative-interface: capture via workspace vqa; `npm run lint` green (65 tests)
-Next:
-  - `personal:SEA-33` — review `?surface=live` against the pack catalog (from prior fragment)
-  - Optional: centric-ui off-token Tailwind lint via employer PR path
-  - Push LCARS `a133bb4` only if Sean asks (app already ahead)
---- END BLOCK ---
-
-
-### 2026-09-03 — ATSMATRIX GitHub org review, skip
-
-SessionID: 2026-09-03-voyager-c0aba2
---- SESSION BLOCK ---
-Date: 2026-09-03
-Machine: Personal MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 19-workspace-brain
-Summary: Reviewed all 11 public repos under github.com/anyel1to (ATSMATRIX). Account is a two-week demo mill of GitHub Pages canvases. Sean agreed skip; nothing adopted.
-Decisions:
-  - Do not clone, skill, or knowledge-entry the ATSMATRIX set unless Sean later asks for a fake-agent-demo pattern note
-  - AGENT RING architecture prose overlaps existing doctrine (state not transcripts, second reader, receipt before ship); our open-agent-engine / mission-fit / error-correction stack already owns it
-  - Canvas HUDs with Math.random plus LangGraph/CrewAI name-drops are visuals, not harnesses
-Next:
-  - No Agent Todo from this review
-  - Separate session: LCARS live-primitive visual review (not this thread)
 --- END BLOCK ---
 

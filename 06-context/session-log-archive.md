@@ -4,6 +4,255 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-09-04 — ShadeGraph: research + scaffold a node-based shader design tool
+
+SessionID: 2026-09-04-voyager-sg21a
+--- SESSION BLOCK ---
+Date: 2026-09-04
+Machine: Personal MacBook Pro
+Surface: Claude Desktop (Code tab)
+Project(s): 21-shadegraph (new) · 13-legion (integration target)
+Summary: Researched vgpu.sh + the Codrops "Prism with vgpu" article + industry node-based shader editors (Unreal Material Layers, Unity Shader Graph, Substance, Blender node-preview, Nuke viewer-per-node, litegraph/ComfyUI, React Flow). Traced Legion's real shader architecture (GLSL chunks + uniforms + per-archetype lab-store — already a de-facto node system). Chose the stack, scaffolded a standalone tool repo, and wrote a comprehensive design plan.
+Artifacts:
+  - ~/Projects/ShadeGraph/ — new standalone repo (commit 50abc6a): model/compiler/nodes/preview contracts, React app shell, Legion adapter plan
+  - 07-projects/21-shadegraph/docs/DESIGN-PLAN.md — research synthesis, stack decision, data model, phased roadmap
+  - 07-projects/21-shadegraph/{SESSION-STATE.md, README.md}
+Decisions:
+  - Stack: React + React Flow 12 (editor shell) + one shared Three/WebGPU preview renderer + pluggable compiler. Rationale: preview fidelity ⟂ node-editor framework — fidelity is owned by compiler+renderer (previews run the real target program), scale by keeping GPU work off the DOM. litegraph/canvas is the documented escape hatch.
+  - Compiler targets both backends from day one: glsl-es (drives Legion now) + wgsl/tsl (WebGPU/vgpu future).
+  - Home: standalone repo ~/Projects/ShadeGraph (snds/*, own git); vault 21-shadegraph holds docs/baton only (portable-first, like Legion).
+  - Vault folder allowlisted in .gitignore (docs-only) so the design plan syncs cross-device.
+  - **Workspace project-tracking policy clarified (Sean):** project CONTEXT (reference/guidance/intent/curated media/docs) is tracked for BOTH personal and work projects; NEVER tracked = company/app code or checked-out repos (live in their own repos: centric-ui, prototype, ~/Projects/*) and sensitive customer data (never in the workspace at all — kept with the employer repo). The gate is content-type (context vs code/repo/customer-data), not personal-vs-employer. Encoded as exclude patterns in .gitignore under "07-projects tracking policy".
+Evidence:
+  - ShadeGraph initial commit @ ~/Projects/ShadeGraph (git log 50abc6a, tree clean) — verified
+Pending added:
+  - ShadeGraph Phase 1 (graph MVP): pnpm install, wire React Flow shell to store, starter node set + inspector + JSON save/load
+  - Resolve 4 open design calls (name; state lib; WGSL-via-emitters vs TSL-as-IR; Legion live-bridge vs export-only) — DESIGN-PLAN §11
+Project status changes:
+  - 21-shadegraph: (new) → Building (Phase 0 scaffold + design plan complete)
+Migration done this session (vault content → correct homes):
+  - 03-omni: relocated ~/Projects/Workspace/07-projects/03-omni → ~/Projects/omni; fresh git; new PRIVATE repo github.com/snds/omni (pushed, commit 22c3527). Vault folder now a tracked context pointer stub (allowlisted). node_modules/target excluded.
+  - 13-legion/Video (455MB Homeworld 2 frame reference) → moved to ~/Desktop/Legion-Reference-Media/Video (staging). Tracked pointer added: 06-context/external-media-registry.md. Legion vault folder 462MB→6.9MB. Awaiting Sean's durable large-format storage destination.
+  - 12-MCS: empty on this (personal) machine + target employer repo unreachable from snds account. Content/access live on the WORK laptop. Queued as cross-device action: playbook in 07-projects/12-MCS/SESSION-STATE.md (SESSION-STATE tracked; folder body deliberately NOT `**`-allowlisted so work-laptop customer data can't leak into the workspace repo) + pending item ^pc-44 (machine-gated, work laptop). Sean authorized PR+commit+merge to saas-plm-analysis (doc-only employer repo).
+  - ShadeGraph: PUBLIC repo created + pushed → github.com/snds/shadegraph.
+Next:
+  - Phase 1 per DESIGN-PLAN §10 — begin graph MVP in ~/Projects/ShadeGraph
+  - [WORK LAPTOP] execute ^pc-44 — MCS → saas-plm-analysis migration (see 12-MCS SESSION-STATE).
+  - Remaining backfill (deferred, per-folder triage): 02-centricPLM + 11-lexical-react-native hold employer code checkouts; relocate/scrub before any tracking. Other personal folders (04,08,09,14,15) can be triaged + allowlisted for context. Update 08-knowledge/cross-domain/workspace-infrastructure.md tracking table when done.
+--- END BLOCK ---
+
+
+---
+SessionID: claude-web-2026-09-03-model-routing
+Agent: Claude Sonnet 4.6
+Surface: claude.ai (web)
+Machine: Voyager-2.local
+Date: 2026-09-03
+Branch: main
+Commit: 23788ee
+---
+
+## Summary
+
+Local LLM setup and workspace model routing infrastructure session.
+
+## What happened
+
+- Debugged Ollama setup on M3 Max (36GB): EOF on model pulls traced to invalid
+  tag names from third-party guides (not a connectivity or disk issue); resolved
+  by using `ollama run gemma4` without explicit tag suffix
+- Mapped open-source model recommendations to specific work contexts (DS work,
+  code, reasoning, comms, Legion creative) across the local Ollama roster
+- Created `02-shared-references/model-routing.md` — new canonical shared reference
+  covering Ollama, Claude, Cursor, and Codex surfaces; native-first model roster
+  per surface; work context → model map; effort tiers 1–4; speed signals
+- Added 13 trigger phrases to `trigger-routes.json` for model selection vocabulary
+  (which model, pick a model, best model for, model routing, ollama model, local
+  model, cursor model, codex model, grok or claude, effort tier, etc.)
+- Regenerated `trigger-routes.md` via `build-trigger-routes.py`
+- Confirmed dispatcher.py loads trigger-routes.json dynamically — no hook changes needed
+- Confirmed Cursor brain.mdc already reads trigger-routes.md at session start — no rule changes needed
+- All validators green (validate-links, validate-capabilities, validate-workspace)
+- Committed and pushed to github.com/snds/workspace main (23788ee)
+
+## Pending
+
+- No new pending items from this session
+- GitHub MCP not surfaced in claude.ai session despite being installed; used git
+  via Desktop Commander instead — consider verifying GitHub MCP connector state
+
+## Notes
+
+Filesystem MCP (read/write at /Users/snds/Projects) + Desktop Commander both
+available this session — used both successfully. Web surface confirmed write-capable
+via Desktop Commander when workspace is on local disk.
+
+
+### 2026-09-03 — Looney consolidation + dump-folder cleanup
+
+SessionID: 2026-09-03-voyager-b7191a1
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 01-mediaservices
+Summary: Closed the Aug 26 Looney Tunes thread. Quality adjudication + consolidation put the show in one Sonarr folder (1,062 files). The Orville, Firefly, and 12 Monkeys dump twins were resolved the same way. 16 empty leftover folders were deleted. One incident: 184 intended Looney upgrades were destroyed after ffmpeg `.part` writes failed and a graveyard sweep ran anyway.
+Artifacts:
+  - Unraid `/mnt/user/appdata/media-sentinel/loudness/` — adjudication-report, consolidation journal/manifest, lost-upgrades.json, three-report, cleanup-journal, looney/orville profiles
+  - MediaSentinel grouping/parse + tests (year-seasons, S00 specials, yearless-into-sole-year merge)
+  - `07-projects/01-mediaservices/SESSION-STATE.md`
+Decisions:
+  - Winners go to the Sonarr-managed folder; dump/orphan folders delete only when empty of video
+  - Temp ffmpeg outputs must set `-f`; destructive sweeps gate on zero errors
+  - Review pair decisions before deleting losers (broken once on Orville S01, outcome still defensible)
+Pending added:
+  - Optional Sonarr re-grab of 184 lost Looney upgrades
+  - Firefly E03/E11 Italian-only; E10 may be mislabeled (Objects in Space / War Stories)
+Pending resolved:
+  - User decision on Looney loudness path (dedupe-to-managed executed)
+  - Duplicate dump folders for Looney, Orville, Firefly, 12 Monkeys
+  - Empty leftover folder sweep
+Project status changes:
+  - 01-mediaservices: Aug 26 server work complete; next is `personal:SEA-34` (Desktop Pokémon → Unraid)
+Next:
+  - `personal:SEA-34` — copy Desktop Pokémon pack to Unraid; set TheTVDB (DVD); do not leave Horizons in 1997 Season 20
+--- END BLOCK ---
+
+
+### 2026-09-03 — Library CUT delete + Desktop Pokémon organize
+
+SessionID: 2026-09-03-voyager-mslib1
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 01-mediaservices
+Summary: Closed a long MediaSentinel / Unraid library thread. Library-wide English-watchable duplicate ranking produced 2,327 CUT videos; Sean authorized live delete of those losers plus their sidecars only. Plex TV and Emby TV were scanned. Desktop ColdFusion Pokémon pack was reorganized in place to TVDB DVD seasons; it was not copied to Unraid.
+Artifacts:
+  - 07-projects/01-mediaservices/canvases/duplicate-scan-outcome.canvas.tsx — scan 20260816T214110-ab8d81
+  - 07-projects/01-mediaservices/canvases/authoritative-delete-list.canvas.tsx — 2,327 CUT list
+  - Unraid `/mnt/user/appdata/media-sentinel/exports/` — delete lists + result JSON
+  - Desktop ColdFusion Pokémon pack — 1,299 videos renamed into show/season folders
+  - 08-knowledge/engineering/pokemon-tvdb-dvd-vs-aired.md — DVD vs aired + production-number trap
+Decisions:
+  - Delete CUT extras only; keep KEEP / PRESERVE / singletons; companions of the losing video only
+  - Unlink on disk (space back), not same-fs quarantine, after explicit authorization
+  - Do not whisper-overwrite MST3K S6+ community `.en.srt`; copy sidecars onto tracked obfuscated files instead
+  - ColdFusion `02x28`-style codes are production numbers; map Pokémon via folder context + TVDB DVD
+  - Plex/Emby must use TheTVDB (DVD) for Pokémon (1997) {tvdb-76703}; default aired now maps S20 to Horizons
+Evidence:
+  - 2,327 videos + 5,369 sidecars unlinked; 0 listed videos remaining; 917.7 GiB @ Unraid `/mnt/user/data/media/tv` — verified
+  - Plex TV section 1 refresh HTTP 200; Emby TV Recursive ValidationOnly HTTP 204 — verified
+  - 1,299 Desktop Pokémon videos moved/renamed; leftover non-video only — verified
+Pending added:
+  - `personal:SEA-34` land organized Desktop Pokémon pack on Unraid with TVDB DVD order
+Pending resolved:
+  - Authoritative CUT list for run `20260816T214110-ab8d81`
+  - User-authorized delete of that list + TV library scans
+  - Desktop Pokémon pack season/folder organize
+Project status changes:
+  - 01-mediaservices: Aug 16–17 library reclaim done; Aug 26 Looney/Orville/Firefly/12 Monkeys outcome unchanged; Desktop Pokémon ready to copy
+Next:
+  - `personal:SEA-34` — copy Desktop Pokémon pack to Unraid and set TVDB DVD order
+  - Optional leftovers stay in SESSION-STATE (Sonarr Looney upgrades, Firefly E03/E11/E10, Bazarr missing-sub keepers, MST3K S04E01 sidecar)
+--- END BLOCK ---
+
+
+### 2026-09-03 — LCARS pack catalog + live T3 compose
+
+SessionID: 2026-09-03-voyager-t3ds1
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 20-lcars-generative-interface
+Summary: Built a pack catalog (primitive → variant → component → content group → layout) and recomposed the live T3 demo from composers. App landed on `main` as `e691dec` (not pushed). S-SYS47-01 Literal stays a separate switch.
+Artifacts:
+  - github.com/snds/LCARS `e691dec` — `src/catalog/system/` + `docs/COMPONENT-SYSTEM.md` + composed `live-t3`
+  - vault `07-projects/20-lcars-generative-interface/docs/content-groups.md` — `support.controls` + variants note
+Decisions:
+  - Work in vectors / grammar, not per-pixel plate overlay
+  - Pills are controls; spine is bars; aesthetic is barcode + hairline
+  - 8px inside a family, 24px between content groups
+  - T1/T4 stay recipes; T2 stays on the SYS47 literal path
+  - Do not construct chrome from `public/northstars/S-SYS47-01/*.png`
+Evidence:
+  - App commit `e691dec` @ github.com/snds/LCARS main (local, not pushed) — verified
+  - Scene emit `generate-display-svg.py --check` 122 live primitives — verified
+  - vitest 65/65 @ LCARS — verified
+  - Agent Todo `personal:SEA-33` @ linear.app/snds — verified
+  - Ledger heartbeat `sean-cursor` @ personal:SEA-6 comment `1d0d5fc1` — blocked (approval pending)
+Pending added:
+  - `personal:SEA-33` review structured live T3 against the pack catalog
+Pending resolved:
+  - Live T3 was a flat primitive bag; now composed from the pack catalog
+Project status changes:
+  - 20-lcars-generative-interface: live generative path has a named catalog; Literal path unchanged
+Next:
+  - `personal:SEA-33` — review `?surface=live` against the pack catalog
+  - Push app `e691dec` only if Sean asks
+--- END BLOCK ---
+
+### 2026-09-03 — Onori rails absorb + LCARS off-system lint
+
+SessionID: 2026-09-03-voyager-onori1
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain, 20-lcars-generative-interface
+Summary: Assessed Sanity/Onori design-system-evals (not previously in vault). Absorbed transferable rails: isolation (`assistance off`), pack recipes, product-repo lint. Generalized LCARS capture into workspace `vqa capture`; retired `prove_sys47.py`. Added reusable `09-tools/eslint-off-system` and wired LCARS `npm run lint`.
+Artifacts:
+  - 08-knowledge/design/agent-output-rails.md — Onori method without cloning the tester
+  - 03-skills/visual-prove-engine/scripts/capture.py + capture.mjs — project-agnostic URL→PNG+manifest
+  - 09-tools/eslint-off-system/ — shared no-raw-hex + no-arbitrary-tailwind rules
+  - github.com/snds/LCARS `a133bb4` — off-system ESLint + TOKENS-wired schematics + capture wrapper
+  - workspace `8024215` — Onori absorb commit (ahead of origin until this session-end push)
+Decisions:
+  - Do not clone sanity-labs/design-system-agent-tester; workspace path is capture→prove→score
+  - Isolation law: docs/catalog proves record `--assistance off`; assistance on is shipping not score
+  - ESLint lives in product repos; vault owns reusable rules + doctrine only
+  - Pack wrappers may pass URL/out; they must not reimplement the capture manifest
+Pending added:
+  - centric-ui / Davinci off-token Tailwind lint (employer PR path)
+Pending resolved:
+  - Sanity design-system-evals source assessment gap
+  - LCARS had no ESLint / off-system gate
+Project status changes:
+  - 19-workspace-brain: agent-output rails + vqa capture + eslint-off-system landed
+  - 20-lcars-generative-interface: capture via workspace vqa; `npm run lint` green (65 tests)
+Next:
+  - `personal:SEA-33` — review `?surface=live` against the pack catalog (from prior fragment)
+  - Optional: centric-ui off-token Tailwind lint via employer PR path
+  - Push LCARS `a133bb4` only if Sean asks (app already ahead)
+--- END BLOCK ---
+
+
+### 2026-09-03 — ATSMATRIX GitHub org review, skip
+
+SessionID: 2026-09-03-voyager-c0aba2
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain
+Summary: Reviewed all 11 public repos under github.com/anyel1to (ATSMATRIX). Account is a two-week demo mill of GitHub Pages canvases. Sean agreed skip; nothing adopted.
+Decisions:
+  - Do not clone, skill, or knowledge-entry the ATSMATRIX set unless Sean later asks for a fake-agent-demo pattern note
+  - AGENT RING architecture prose overlaps existing doctrine (state not transcripts, second reader, receipt before ship); our open-agent-engine / mission-fit / error-correction stack already owns it
+  - Canvas HUDs with Math.random plus LangGraph/CrewAI name-drops are visuals, not harnesses
+Next:
+  - No Agent Todo from this review
+  - Separate session: LCARS live-primitive visual review (not this thread)
+--- END BLOCK ---
+
+
+
 ### 2026-09-02 — Open Engine enroll, visual-qa prove, branch prune
 
 SessionID: 2026-09-02-voyager-oe9k2
