@@ -177,24 +177,38 @@ def check_primitives(capture: dict) -> list[str]:
 # paint or spacing detail at all. The synthetic fixture missed this entirely.
 VAR_REF_RE = re.compile(r"^var\(--.+\)$")
 
+# Unbound values surface under a FIGMA/CSS PROPERTY NAME. Token names do not, so this is an
+# allowlist of properties, not a heuristic about token shape — a closed, stable set, whereas
+# token names are unbounded and system-specific.
+#
+# Getting that backwards is exactly how the first two versions failed (2026-09-15):
+#   "no slash"     flagged doctrine's own `space-0` / `radius-none` / `border-width-0`
+#   "no separator" flagged a real single-word semantic token, `foreground`
+# The tell in live output: a node full of bound fills produced NO colour-valued bare key,
+# while every bare key was a property name. So judge the key, not its punctuation.
+FIGMA_PROPERTY_NAMES = frozenset({
+    # typography
+    "fontsize", "lineheight", "letterspacing", "paragraphspacing", "paragraphindent",
+    "textcase", "textdecoration", "fontname", "fontstyle", "fontweight",
+    # variable-font axes
+    "wght", "wdth", "slnt", "opsz", "ital", "grad",
+    # layout + spacing
+    "gap", "itemspacing", "counteraxisspacing", "padding", "paddingx", "paddingy",
+    "paddingleft", "paddingright", "paddingtop", "paddingbottom",
+    "width", "height", "minwidth", "maxwidth", "minheight", "maxheight",
+    # geometry + stroke
+    "radius", "cornerradius", "radiusring", "strokeweight", "borderwidth", "bordreradius",
+    "topleftradius", "toprightradius", "bottomleftradius", "bottomrightradius",
+    # paint
+    "opacity", "fillopacity", "strokeopacity", "blendmode",
+})
+
 
 def unbound_keys(variables: dict) -> list[str]:
-    """Bare keys — no separator at all, no var() reference — are unbound literals.
-
-    The discriminator is a SEPARATOR, not just a slash. Token names carry a family:
-    `foreground/default`, `border-width/1` (live), and doctrine's own hyphenated spellings
-    `space-0`, `radius-none`, `border-width-0`. Unbound properties are bare Figma/CSS
-    property names with no family at all — `gap`, `height`, `radius`, `wght` — or camelCase
-    ones like `fontSize`, `paddingX`, `radiusRing`. A slash-only test would have flagged
-    every hyphenated token in the doctrine as a violation.
-    """
-    out = []
-    for key in variables:
-        name = key.strip()
-        if VAR_REF_RE.match(name) or "/" in name or "-" in name:
-            continue
-        out.append(key)
-    return out
+    """Keys that name a Figma/CSS PROPERTY rather than a token — i.e. unbound literals."""
+    return [k for k in variables
+            if not VAR_REF_RE.match(k.strip())
+            and k.strip().replace("-", "").replace("_", "").lower() in FIGMA_PROPERTY_NAMES]
 
 
 def check_raw_values(capture: dict) -> list[str]:
@@ -367,6 +381,11 @@ def self_test() -> int:
     # Live output (2026-09-15) mixes token paths, var() refs and bare property names.
     mixed = {"variables": {"foreground/default": "#fff", "border-width-0": "0",
                            "radius-none": "0", "var(--icon-size)": "20",
+                           # `foreground` and `foreground-muted` are REAL single-word
+                           # semantic tokens in a live system — the false positive that a
+                           # separator-based rule produced (2026-09-15, node 2).
+                           "foreground": "#1c2024", "foreground-muted": "#1c2024",
+                           "surface/popover": "#fff", "chrome/border/subtle": "#00002d17",
                            "fontSize": "14", "gap": "6", "wght": "400"}}
     flagged = evaluate(mixed)["failures"]
     expect("R2 flags bare property names", len(flagged) == 3)
@@ -374,7 +393,8 @@ def self_test() -> int:
     # `radius-none` / `border-width-0` as guidance, so a loose substring test passes
     # for the wrong reason.
     flagged_keys = {f.split("`")[1] for f in flagged}
-    for token in ("foreground/default", "border-width-0", "radius-none", "var(--icon-size)"):
+    for token in ("foreground/default", "border-width-0", "radius-none", "var(--icon-size)",
+                  "foreground", "foreground-muted", "surface/popover", "chrome/border/subtle"):
         expect(f"R2 leaves `{token}` alone", token not in flagged_keys)
     for bare in ("fontSize", "gap", "wght"):
         expect(f"R2 catches bare `{bare}`", bare in flagged_keys)
@@ -419,6 +439,18 @@ def self_test() -> int:
         '<rectangle id="7:4" name="Loose Chrome" x="0" y="0" width="10" height="10"/>'
         "</frame>"
     )
+    # Live tag vocabulary (node 2): symbol / instance / slot / frame / text, no raw shapes.
+    nested = evaluate({"metadata_xml":
+        '<symbol id="1" name="Command">'
+        '<instance id="2" name="Popover">'
+        '<slot id="3" name="content">'
+        '<frame id="4" name="Frame"><text id="5" name="label"/>'
+        '<vector id="6" name="icon glyph"/></frame>'
+        "</slot></instance></symbol>"})
+    expect("R3 accepts a properly composed instance tree", not nested["failures"])
+    expect("a slot inside an instance does not reset instance context",
+           not any("icon glyph" in f for f in nested["failures"]))
+
     meta = evaluate({"metadata_xml": real_meta})
     expect("R3 flags a top-level raw shape from real metadata",
            any("R3" in f and "Loose Chrome" in f for f in meta["failures"]))

@@ -8,15 +8,15 @@ _Last updated: 2026-09-15 — A8: Figma construction gate is a detector (live ca
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: A8 landed — `figma-bind-probe.py` judges a capture the agent takes via MCP; close-out's figma row now names a real CLI. Every row of the 2026-09-11 automation review is closed. 22 harness gates green.
-- **Working set**: `09-tools/figma-bind-probe.py`, `09-tools/fixtures/figma-capture.*.json`, `02-shared-references/capability-registry.md`, `03-skills/figma/SKILL.md`.
-- **Last action (2026-09-15):** Split the Figma gate at the tool boundary (agent captures via MCP, CLI judges); fixed a capability-registry detect pattern that reported figma-mcp absent while it was live. Claude Opus 5 · Claude Code · Work MBP.
+- **Current focus**: Independent `@shadcn/lint` service landed in-vault (`09-tools/shadcn-lint/`); product-repo install is a follow-up PR. Prior: A8 Figma bind probe; 22 harness gates green.
+- **Working set**: `09-tools/shadcn-lint/`, `08-knowledge/engineering/shadcn-lint-token-tiers.md`, `06-context/memory/decision-shadcn-lint-independent-service.md`.
+- **Last action (2026-09-15):** Brought `@shadcn/lint` in as a sibling of vault validators and `eslint-off-system`: shareable policy + `ds-lint/no-tier-leakage` overlay because stock `no-raw-colors` false-greens Radix steps / shade aliases declared in `@theme`. Cursor Grok 4.6 · Cursor · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Feed `figma-bind-probe.py` a REAL capture — it has only ever seen synthetic fixtures, so the capture contract is unproven against live MCP output. Needs one Figma node URL (`get_variable_defs` + `get_metadata`), captures to scratchpad only (employer account). Then: employer PRs for untracked `canvases/` in cds + proto (no auto-commit); human merge cds #35. Watch the graded counters: hub-prose spokes (140), cross-chain collisions (25/25, at ceiling).
-- **Open decisions:** Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot).
+- **Next action:** Product-repo install of `lint:ds` (cds / proto / LCARS as appropriate) via employer PR path — do not symlink this vault. Then: A8 live-validation is DONE — the probe ran against two real nodes and the R2 discriminator was rebuilt on Figma/CSS property names after a real false positive; the only open probe item is whether a raw `wght` axis is a true positive. Employer PRs for untracked `canvases/` in cds + proto (no auto-commit); human merge cds #35. Watch hub-prose spokes (140) and cross-chain collisions (25/25).
+- **Open decisions:** Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot). Whether proto/cds apply `@theme { --color-*: initial }` (semantics only) in the same PR as the linter, or overlay-first.
 - **Blocked on:** cds #35 human merge (do not merge it from an agent). Employer `canvases/` exist on disk but are untracked pending PRs.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`. Do not auto-commit employer repos.
-- **Agent thread**: `… → (2026-09-11): plan-ahead + Frost #18 + load-miss + process-rigor` → `Cursor Grok 4.6 / Cursor / Work MBP (2026-09-14): canvas live-mirror + employer canvases dest`.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`. Do not auto-commit employer repos. Do not wire `shadcn-lint` into `workspace-harness.py` / vault CI.
+- **Agent thread**: `… → (2026-09-11): plan-ahead + Frost #18 + load-miss + process-rigor` → `Cursor Grok 4.6 / Cursor / Work MBP (2026-09-15): shadcn-lint independent service`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.

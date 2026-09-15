@@ -4,7 +4,7 @@ version: "1.0"
 date: 2026-09-15
 surface: Claude Opus 5 + Claude Code (Mac desktop app)
 sha: 71f8d7a
-status: applied — probe minted, wired, and VALIDATED against live MCP output; contract corrected in two places
+status: applied — validated on two live nodes; R2 discriminator rebuilt after a real false positive
 companion: automation-second-wave_v1.0_2026-09-15.md
 ---
 
@@ -128,18 +128,46 @@ bare and camelCase property names are the unbound ones. A self-test pins both di
 suggests it does, and the reasoned `allow` list is the escape hatch — but this is inference
 from one file, not a proof.
 
-## 6a. What it found
+## 6a. Two nodes, and the false positive that rebuilt R2
 
-On that component set: **R1 clean** — no `Color/*` primitives anywhere, so the hard gate
-passes on real production work, which is the evidence that R1 is not over-firing. **R3
-clean** — every child is a variant symbol, no loose shapes. **R2: eight unbound properties**,
-covering height, padding, gap, radius, focus-ring radius, font size, line height and weight
-— precisely the six families the Density standing rule names, on a control, while tokens for
-those families exist in the same file. That is a real doctrine violation found by a script on
-the first real run, not a fixture.
+**Node 1 — a component set (30 variables).** R1 clean: no `Color/*` anywhere, so the hard
+gate does not over-fire on real production work. R3 clean: every child a variant symbol.
+R2: **eight unbound properties** — height, padding, gap, radius, focus-ring radius, font
+size, line height, weight. Exactly the families the Density standing rule names, on a
+control, while tokens for them exist in the same file.
 
-The finding itself is employer content and stays out of this repo; it was reported to Sean
-in session.
+**Node 2 — a composed overlay (38 variables), probed specifically to test for over-fire.**
+It found one, immediately. The separator-based discriminator flagged `foreground` — a **real
+single-word semantic token**, sitting among `surface/popover` and `chrome/border/subtle`,
+with a `var(--sem-muted-foreground)` CSS twin. Flagging it would have told a designer to
+"bind" something already bound.
+
+The rule was backwards. Three attempts:
+
+| Discriminator | Fails on |
+|---|---|
+| "a token has a `/`" | doctrine's own `space-0`, `radius-none`, `border-width-0` |
+| "a token has a separator" | a real single-word token, `foreground` |
+| **"the key names a Figma/CSS property"** | — holds on both nodes |
+
+Token names are unbounded and system-specific; **property names are a closed, stable set**.
+Keying on the open set was the error. The tell was in the live data all along: node 1 was
+full of bound fills and produced **no colour-valued bare key** — every bare key was a
+property name.
+
+After the rebuild: node 2 reports **1** hit (down from 2), node 1 still reports **8**
+(unchanged). Precision improved without weakening detection, which is the only version of
+that trade worth taking.
+
+**The one remaining hit, and its uncertainty:** both nodes report a raw variable-font weight
+axis (`wght`), at different values, while named weight tokens exist in the file. Consistent
+across two nodes and most likely genuine. It cannot be fully excluded that Figma reports a
+resolved axis for every text node — but if it did, node 2's value would match its bound
+weight token, and it does not. Stated rather than rounded up.
+
+R3 also gained live vocabulary: real trees use `symbol` / `instance` / `slot` / `frame` /
+`text`, and a `slot` inside an instance must not reset instance context or every icon vector
+inside a composed overlay would be flagged. Pinned by self-test.
 
 ## 7. State
 

@@ -43,11 +43,17 @@ New MCP-gated checks follow this shape rather than becoming prose. The `figma` h
 names the probe, and `test_figma_splits_capture_from_assess` asserts BOTH halves so neither
 regresses.
 
-**Validated against live MCP output on the first run, which corrected the contract twice.**
+**Validated on two live nodes, which corrected the contract three times.**
 `get_metadata` carries no paint data and types are element tags, so R3 must judge a raw shape
 by tree position (top-level = chrome; inside an instance = that component's internals).
 `get_variable_defs` returns a MIXED map — token paths, `var(--x)` refs, and bare property
 names that are the resolved literals of UNBOUND properties. That third kind is the R2 signal
 and it is visible nowhere else; without the fix the probe would have returned a false pass on
-a component carrying eight unbound properties. Lesson that generalises: a detector built only
-against fixtures of your own design tests your imagination, not the tool.
+a component carrying eight unbound properties.
+
+Third: a second node, probed specifically to test for over-fire, found one. R2 must key on
+**Figma/CSS PROPERTY NAMES (a closed, stable set)**, never on token shape — "no slash"
+flagged doctrine's `space-0`; "no separator" flagged a real single-word semantic token,
+`foreground`. Two lessons that generalise: a detector built only against fixtures of your own
+design tests your imagination, not the tool — and when writing a discriminator, enumerate the
+closed set, never the open one.
