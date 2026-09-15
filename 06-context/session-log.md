@@ -22,6 +22,7 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
 # Shapr3D MCP setup
 
 SessionID: 2026-09-14-shapr3d-mcp-setup
@@ -85,6 +86,99 @@ Sean confirms existing Humanscale laptop holder and clearance work; do not reope
 Working files remain outside the portable workspace in Projects/shapr3d-personal. Updated DESIGN-BRIEF.md and desktop-parameters.json; added BASE-AND-RAIL-PLAN.md. Downloaded and visually reviewed relevant Aero assembly drawings in reference/aero-es71-assembly.pdf: bolted complete base appears reusable, but mounting dimensions and revision-specific payload remain unverified. DeskHaus Apex Pro provides a documented fallback ($925 observed configuration, advertised 600 lb lifting capacity); actual interface fit remains pending. Alubend advertises one-off extrusion bending; prepared quotation requirements, no supplier contacted or custom price obtained.
 
 Next: desktop/platform concept with provisional thickness and shelf dimensions, steel coverage zones and frame clearance. Thickness, recess, shelf dimensions and rail radius remain open. No new custom desk CAD produced in this research pass. MCP installation/test and native SolidWorks-to-STEP reference conversion were completed in prior sessions.
+
+
+### 2026-09-15 — Surface trajectories: three Layer-0 matchers collapsed to one
+
+SessionID: 2026-09-15-work-mbp-trajectories
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Claude Code (Mac desktop app)
+Agent: Claude Opus 5
+Project(s): 19-workspace-brain
+
+Summary: Phase 5 of the review prompt. Found three independent Layer-0 implementations —
+`prompt_route.py` (Cursor), a fork inside `dispatcher.py` (Claude Code), and a copy inside
+`evaluate-skill-routing.py` (the 48 fixtures). The fixtures tested the copy, so neither live
+surface was under test by anything. Ran the same 48 utterances through both real entry
+points: 6 divergences (12.5%). Cursor had no Layer-1 lexical fallback (contract-documented,
+so non-compliance rather than difference); the Claude fork deduped knowledge hints by trigger
+instead of by target and silently dropped them. Both wrong, opposite directions. That is the
+"Cursor didn't find the skill" complaint, reproduced.
+
+Collapsed to one matcher instead of patching two into agreement: ported Layer 1 into
+prompt_route, made handle_user_prompt delegate, made evaluate-skill-routing import
+term_matches. Re-measured: 0 divergences.
+
+Built `09-tools/evaluate-surface-trajectories.py` — executes each surface's real entry point
+(claude-code hook, cursor hook, shell-agent via skill-loadset, hookless adapters asserted
+statically), asserts expect/forbid paths, headers, silence, and hook-surface PARITY, plus a
+structural one-matcher guard so re-forking fails CI for every utterance, not only corpus
+ones. `--self-test` plants a divergence and asserts parity fails on it. 14 cases.
+
+Unification immediately surfaced its own cost: a bare status-note payload began appearing on
+non-work utterances on both surfaces at once. Fixed with a general rule (a payload of nothing
+but parenthetical notes is noise) which preserves the visible miss for work verbs; two
+fixtures now hold it.
+
+Wired: CI, the workspace-harness quality lane (17 gates), AGENTS.md enforcement chain, the
+self-improve close-out row, five Layer-0 routes. All three harness lanes green; 48/48 matcher
+cases; 14/14 trajectories; vault-health 0/0.
+
+Not proven, deliberately: that a model *reads* what it receives. Injection is not compliance;
+that needs real-session outcome data, not fixtures.
+
+Report: `07-projects/19-workspace-brain/reports/surface-trajectories_v1.0_2026-09-15.md`
+Decision: `[[decision-one-matcher-per-workspace]]`
+--- END BLOCK ---
+
+### 2026-09-15 — Workspace harness: reachability + traversal cost become detectors
+
+SessionID: 2026-09-15-work-mbp-harness
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Claude Code (Mac desktop app)
+Agent: Claude Opus 5
+Project(s): 19-workspace-brain
+
+Summary: Adversarial second pass over the 2026-09-11 first-wave automation, run against the
+live tree rather than the report. Found `main` CI-red in two places, both introduced by the
+pass that added the gates: an unindexed knowledge entry (`plain-language.md`) and a
+clock-dependent fixture in `test-validators.py` that was green only on its authoring day.
+Found four Layer-0 routes naming a file that does not exist, a `status: canonical` doc
+(`model-routing.md`) with zero inbound edges and zero routes, ten knowledge entries indexed
+but matchable by nothing, one skill (`github-guardrails`) reachable by nothing, a
+`vault-health.py` link resolver that could not resolve any note→skill edge (keyed on stem;
+every skill is `SKILL.md`), and `vault-health.py` itself wired into no gate. Sixteen defects,
+all fixed.
+
+Built `09-tools/workspace-harness.py` — stdlib-only, read-only, clock-free. Three lanes:
+quality (runs the enforcement chain, reimplements nothing), connections (seven graph checks
+nothing else performs — Layer-0 target resolution, skill reachability, hub-chain ascent,
+registry paths, knowledge routability, `_INDEX` link resolution the way `prompt_route.py`
+resolves it, named-detector existence), tokens (contract floor 10,305 · session floor 21,656 ·
+load set p50/p95/max 7,877/12,261/20,057 · worst-case legal request 62,069 · banned ingest
+87,154 = 1.4× the legal worst case). `--self-test` proves each check can fail.
+
+Two modelling corrections the vault forced: reachability is three grades, not two (141
+hub-prose spokes are reported, never failed — failing them every run would kill the detector);
+the chain invariant is subsequence, not prefix and not the tier enum (sub-spokes are legitimate
+topology). Attach points so it is not another unused script: CI (`--self-test` then
+`--connections --tokens`, plus `vault-health.py`), the AGENTS.md enforcement chain,
+`close-out-dispatch.py` under a new `self-improve` row (`rigor_role: command-hub`), and seven
+Layer-0 routes.
+
+All three lanes green; routing corpus still 48/48; vault-health 0/0.
+
+Not covered, deliberately: phase 5 (per-surface routing trajectories — the harness proves the
+graph is traversable, not that a given model traverses it) and phase 6 (A4/A5/A8/A9 remain
+open). Nothing here touches the visual/Figma lane.
+
+Report: `07-projects/19-workspace-brain/reports/workspace-harness_v1.0_2026-09-15.md`
+Decision: `[[decision-reachability-is-a-detector]]`
+--- END BLOCK ---
 
 ### 2026-09-14 — Canvas live-mirror + employer repo dest
 
@@ -700,88 +794,5 @@ Pending resolved:
 Next:
   - Run `python3 09-tools/ds-source-watch.py --fetch` when the first snapshot should be judged
   - LCARS: add measured cues for the four named uncued residuals, then build to them
---- END BLOCK ---
-
-
-### 2026-08-26 — Looney Tunes loudness analysis + full subtitle coverage
-
-SessionID: 2026-08-26-voyager-b7191a1
---- SESSION BLOCK ---
-Date: 2026-08-26
-Machine: Personal MacBook Pro
-Surface: Cursor
-Agent: Claude Fable 5
-Project(s): 01-mediaservices
-Summary: Measured EBU R128 loudness for all 2,919 Looney Tunes files plus watched reference titles; derived a -21.9 LUFS reference target and a -6.6 dB best nominal gain for the set Plex actually plays. Found the real problem is spread, not level: Plex prefers the unmanaged dump folder for 1,035 of 1,064 episodes (15.1 dB p10-p90 spread) while the Sonarr-managed twins are already leveled (1.7 dB spread, nominal -7.4 dB). Separately closed the subtitle gap on played copies: 781 sidecars placed (721 copied from managed twins, 46 extracted from embedded tracks, 14 subgen/whisper), final audit 1,064/1,064 covered, 0 uncovered.
-Artifacts:
-  - Server /mnt/user/appdata/media-sentinel/loudness/ — results.jsonl (2,919 measurements), summary.json, gains.csv (per-file clip-safe gains), plex-preferred.json (episode → played file map), subtitle-sync-journal.txt (781-line delete-list of every sidecar placed)
-  - Canvas looney-tunes-loudness.canvas.tsx (Cursor, MediaSentinel project) — full analysis
-  - MediaSentinel repo scratch/loudness-scan.py + scratch/loudness-analyze.py (gitignored scratch)
-Decisions:
-  - Loudness fix recommendation: point Plex at the managed copies (MediaSentinel dedupe path) then apply one nominal gain of -7.4 dB, instead of per-file gain edits on 1,871 dump files
-  - Subtitle quality order enforced: human sidecar > extracted embedded > whisper; nothing overwritten, every placement journaled for reversal
-  - subgen used only for the 14 episodes with no human-made source anywhere
-Pending added:
-  - User decision: adopt dedupe-to-managed recommendation vs per-file gains from gains.csv
-  - If dedupe chosen: run MediaSentinel duplicate adjudication on the two Looney Tunes folders
-Pending resolved:
-  - (none from prior baton)
-Next:
-  - Await user's pick on the loudness remediation path; gains.csv is ready either way
-Git: MediaSentinel repo untouched (scratch/ + docs/ only, uncommitted); workspace this commit
---- END BLOCK ---
-
-### 2026-08-11 — Proto ↔ cui DS inventory refresh (bridge-then-consume)
-
-SessionID: 2026-08-11-work-ds-inventory
---- SESSION BLOCK ---
-Date: 2026-08-11
-Machine: Work MacBook Pro
-Surface: Cursor
-Project(s): saas-plm-prototype, centric-ui (employer); workspace pointers
-Summary: Re-ran proto↔centric-ui DS inventories against proto `42f8ba1` + cui #284 `98e5ca66`. Rewrote directionality to lift → package → consume `@centric/*`. Updated migration SSOT, gap map, sync manifest, DESIGN-SYSTEM bridge contract; workspace pc-01/pc-05 + Layer C status.
-Evidence:
-  - Employer: `MIGRATION-TO-CENTRIC-UI.md`, `MIGRATION-PER-UNIT-DETAIL.md`, `plm-centric-ui-gap-map.html`, `CENTRIC-UI-SYNC.md`, `DESIGN-SYSTEM.md` (docs only; uncommitted)
-  - Workspace: `project-context.md` / `project-context-detail.md` pc-01/pc-05; visual-parity Layer C; density-adoption + interaction-state-semantics status
-Next:
-  - Merge https://github.com/cpes-software/centric-ui/pull/284
-  - Track L lifts (chip-multi-select, proto-only ui/, caution #87, C8/C13/C16)
-  - Track P `@centric/ui` extract; Track C proto consume
---- END SESSION BLOCK ---
-
-### 2026-08-11 — cui ViewToolbar bg-card consistency
-
-SessionID: 2026-08-11-work-a7c2e1
---- SESSION BLOCK ---
-Date: 2026-08-11
-Machine: Work MacBook Pro
-Surface: Cursor
-Project(s): centric-ui (employer)
-Summary: Materials ViewToolbar used bg-background (darker) via single-toolbar flag; switched all collection toolbars to bg-card to match Material Colours / Samples. Pushed follow-up commit to PR #284.
-Evidence:
-  - PR updated @ https://github.com/cpes-software/centric-ui/pull/284 — verified
-Next:
-  - Review/merge https://github.com/cpes-software/centric-ui/pull/284
---- END BLOCK ---
-
-
-### 2026-08-11 — cui data-table landing parity + sticky actions
-
-SessionID: 2026-08-11-work-40891f
---- SESSION BLOCK ---
-Date: 2026-08-11
-Machine: Work MacBook Pro
-Surface: Cursor
-Project(s): centric-ui (employer)
-Summary: Finished Materials landing table parity work in `@centric/data-table`: decoupled sticky row actions into spacer + float host (fixes stacked hover wash), restored package header border/pad, wired landing density to global Compact/Normal/Spacious, stripped fighting landing CSS. Opened PR.
-Evidence:
-  - PR opened @ https://github.com/cpes-software/centric-ui/pull/284 — verified
-Decisions:
-  - Sticky actions: in-flow spacer (wash + width) + zero-width sticky float host (pill only)
-  - Landing tables follow global app density; non-landing BO tables keep view-config density
-  - Header separator/height owned by package, not Materials recipe; radii deferred post density-merge
-Next:
-  - Review/merge https://github.com/cpes-software/centric-ui/pull/284
-  - After merge: revisit table shell radii if still off vs demo
 --- END BLOCK ---
 

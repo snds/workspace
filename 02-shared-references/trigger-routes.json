@@ -293,6 +293,10 @@
     "surface trajectory": "09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance \"…\"` shows what each one injects",
     "routing trajectory": "09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance \"…\"` shows what each one injects",
     "cursor missed": "09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance \"…\"` shows what each one injects",
-    "what does cursor see": "09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance \"…\"` shows what each one injects"
+    "what does cursor see": "09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance \"…\"` shows what each one injects",
+    "nightly": "09-tools/nightly.py — fold/rebuild/verify in one command; --dry-run first, --commit is opt-in, nothing is scheduled",
+    "evidence grade": "09-tools/validate-evidence-grades.py — a VERIFIED stamp must declare the legend and name a re-runnable detector",
+    "verified claim": "09-tools/validate-evidence-grades.py — a VERIFIED stamp must declare the legend and name a re-runnable detector",
+    "pre-registration": "09-tools/validate-evidence-grades.py — a VERIFIED stamp must declare the legend and name a re-runnable detector"
   }
 }

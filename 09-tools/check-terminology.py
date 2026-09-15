@@ -18,7 +18,6 @@ Usage:
   python3 09-tools/check-terminology.py             # report; exit 1 on any violation
   python3 09-tools/check-terminology.py --list      # show the active rules and exit
 """
-import re
 import sys
 from pathlib import Path
 

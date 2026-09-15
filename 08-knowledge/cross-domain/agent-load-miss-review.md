@@ -14,6 +14,8 @@ relations:
 
 # Agent load-miss review — what a cold LLM never sees
 
+**Evidence-grade legend:** `VERIFIED` · `USER_REPORTED` · `INFERRED` · `INACCESSIBLE` · `NOT_EXPOSED` · `NOT_APPLICABLE` — the standard in [[05-validation-harness]]. Grades here were measured with `09-tools/prompt_route.py` and the routing corpus, not asserted.
+
 ## For future agent
 
 - **TL;DR:** Important process is usually *in the vault*. The miss is **routing**: Layer 0 is a hook plus a hope. Recs **1–15** applied 2026-09-11 with process-rigor **R1–R16** (close-out attach). Produce-followthrough (2026-09-11): Cursor `beforeSubmitPrompt` + Claude `UserPromptSubmit` inject close-out/self-improve on produce language, and a visible miss on work verbs with zero Layer-0 hits. That closes the “didn’t find the skill” class **on hooked surfaces**. It does **not** force the model to obey, and it does not reach Perplexity / ChatGPT / Grok.com / Windows-without-hook. A cold agent that only follows always-on files still needs Layer 0; AGENTS read-order now says lookup `load_chains`, not ingest the registry.

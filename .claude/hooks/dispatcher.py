@@ -650,8 +650,8 @@ def _write_desync_notice(state: dict, staged_count: int) -> None:
         body = [
             f"# Auto-commit safety fallback — {when}",
             "",
-            f"Last session-end aborted `git add -A` and used content-hash staging "
-            f"on the safe-paths allowlist instead.",
+            "Last session-end aborted `git add -A` and used content-hash staging "
+            "on the safe-paths allowlist instead.",
             "",
             f"**Trigger:** {reason}",
             "",

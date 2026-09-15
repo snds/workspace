@@ -24,8 +24,8 @@ See 02-shared-references/skill-frontmatter.md for the field spec and
 AGENTS.md "Skill loading precedence" for how an agent consumes the registry.
 """
 
-import json
 import hashlib
+import json
 import sys
 from pathlib import Path
 

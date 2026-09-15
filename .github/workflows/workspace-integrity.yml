@@ -29,6 +29,9 @@ on:
       - "09-tools/vault-health.py"
       - "09-tools/workspace-harness.py"
       - "09-tools/evaluate-surface-trajectories.py"
+      - "09-tools/validate-evidence-grades.py"
+      - "09-tools/nightly.py"
+      - "ruff.toml"
       - "02-shared-references/surface-trajectory-cases.jsonl"
       - "02-shared-references/skill-routing-cases.jsonl"
       - "02-shared-references/trigger-routes.json"
@@ -53,6 +56,9 @@ on:
       - "09-tools/vault-health.py"
       - "09-tools/workspace-harness.py"
       - "09-tools/evaluate-surface-trajectories.py"
+      - "09-tools/validate-evidence-grades.py"
+      - "09-tools/nightly.py"
+      - "ruff.toml"
       - "02-shared-references/surface-trajectory-cases.jsonl"
       - "02-shared-references/skill-routing-cases.jsonl"
       - "02-shared-references/trigger-routes.json"
@@ -68,6 +74,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
+      - name: Lint the automation layer (CI-only; never a vault runtime dep)
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: check
       - name: Archive provenance + memory index
         run: python3 09-tools/validate-workspace.py
       - name: Write-quality + cross-link continuity + anti-zombie
@@ -94,5 +104,11 @@ jobs:
         run: python3 09-tools/evaluate-surface-trajectories.py --self-test
       - name: Surface trajectory corpus + one-matcher guard
         run: python3 09-tools/evaluate-surface-trajectories.py --check
+      - name: Evidence grades (a VERIFIED stamp must name what verified it)
+        run: python3 09-tools/validate-evidence-grades.py
+      - name: Evidence-grade lint self-test
+        run: python3 09-tools/validate-evidence-grades.py --self-test
+      - name: Nightly entrypoint is wired correctly (plan only, runs nothing)
+        run: python3 09-tools/nightly.py --dry-run
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py

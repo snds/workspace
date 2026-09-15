@@ -51,6 +51,10 @@ STAMP = ROOT / "07-projects" / "19-workspace-brain" / "reports" / "workspace-har
 
 # Token budget ceilings. Raising one is a deliberate, reviewable diff — never a
 # side effect of "the report went red". Measured 2026-09-15; headroom ~15%.
+# Cross-chain trigger collisions: correct sometimes, so a ceiling rather than zero.
+# Raising it is a reviewable diff, which is the point.
+CROSS_CHAIN_COLLISION_CEILING = 25
+
 BUDGETS = {
     "contract_floor": 11_800,
     "session_floor": 25_000,
@@ -72,6 +76,8 @@ QUALITY_CHAIN = [
     ("validate-links.py", []),
     ("validate-workspace.py", []),
     ("validate-capabilities.py", ["--check"]),
+    ("validate-evidence-grades.py", []),
+    ("validate-evidence-grades.py", ["--self-test"]),
     ("validate-layer0-schema.py", ["--check"]),
     ("skill-loadset.py", ["--self-test"]),
     ("close-out-dispatch.py", ["--check"]),
@@ -349,6 +355,52 @@ def check_index_link_resolution(root: Path = ROOT) -> dict:
     return {"check": "index-link-resolution", "scanned": len(names), "failures": fails}
 
 
+def check_trigger_collisions(reg: dict) -> dict:
+    """C8 — two skills claiming one trigger from DIFFERENT chains is routing ambiguity.
+
+    Most collisions are benign: a foundation and its hub both claim `api contract`, and the
+    load chain pulls both anyway. The ones that cost you are cross-chain — `mechanics`
+    claimed by game-foundations AND science-foundations drags two unrelated chains into
+    context for one word.
+
+    Reported against a ceiling rather than failed at zero: some cross-chain collisions are
+    correct (`color blindness` genuinely wants a11y-visual and found-color). What must not
+    happen is silent growth, so the ceiling makes a new one a reviewable diff.
+    """
+    skills, chains = reg["skills"], reg.get("load_chains", {})
+    owners: dict[str, list[str]] = {}
+    for name, meta in skills.items():
+        for term in meta.get("triggers") or []:
+            owners.setdefault(str(term).lower().strip(), []).append(name)
+
+    benign, cross = 0, []
+    for term, claimants in owners.items():
+        if len(claimants) < 2:
+            continue
+        related = any(
+            a in (chains.get(b) or []) or b in (chains.get(a) or [])
+            for a in claimants for b in claimants if a != b
+        )
+        if related:
+            benign += 1
+        else:
+            cross.append((term, sorted(claimants)))
+
+    fails = []
+    if len(cross) > CROSS_CHAIN_COLLISION_CEILING:
+        worst = sorted(cross)[: len(cross) - CROSS_CHAIN_COLLISION_CEILING]
+        fails = [f"cross-chain trigger collision over ceiling "
+                 f"({len(cross)} > {CROSS_CHAIN_COLLISION_CEILING}): '{t}' -> {c}"
+                 for t, c in worst]
+    return {
+        "check": "trigger-collisions",
+        "scanned": len(owners),
+        "note": f"{benign} benign (same chain) · {len(cross)} cross-chain "
+                f"(ceiling {CROSS_CHAIN_COLLISION_CEILING})",
+        "failures": fails,
+    }
+
+
 def check_named_detectors(root: Path = ROOT) -> dict:
     """C7 — a gate whose binary is gone fails open, and so does one git never took.
 
@@ -397,6 +449,7 @@ def run_connections() -> dict:
         check_skill_files(reg),
         check_knowledge_routability(),
         check_index_link_resolution(),
+        check_trigger_collisions(reg),
         check_named_detectors(),
     ]
     return {"lane": "connections",
@@ -542,7 +595,9 @@ def print_report(report: dict) -> None:
         print(f"## connections — {len(c['checks'])} checks, {total} defect(s)")
         for chk in c["checks"]:
             mark = "✓" if not chk["failures"] else "✗"
-            print(f"  {mark} {chk['check']:<24} {chk['scanned']:>4} scanned, {len(chk['failures'])} defect(s)")
+            detail = f" — {chk['note']}" if chk.get("note") else ""
+            print(f"  {mark} {chk['check']:<24} {chk['scanned']:>4} scanned, "
+                  f"{len(chk['failures'])} defect(s){detail}")
             for f in chk["failures"][:12]:
                 print(f"        · {f}")
             if len(chk["failures"]) > 12:
@@ -648,6 +703,15 @@ def self_test() -> int:
     expect("subsequence rejects reordering", not _is_subsequence(["c", "a"], ["a", "b", "c"]))
 
     expect("skill-files rejects missing path", check_skill_files(reg)["failures"])
+
+    collide = {"skills": {"a": {"triggers": ["shared"], "path": "p"},
+                          "b": {"triggers": ["shared"], "path": "p"}},
+               "load_chains": {"a": ["a"], "b": ["b"]}}
+    expect("collision check counts a cross-chain claim",
+           "1 cross-chain" in check_trigger_collisions(collide)["note"])
+    same = {"skills": collide["skills"], "load_chains": {"a": ["a"], "b": ["a", "b"]}}
+    expect("collision check treats a same-chain claim as benign",
+           "1 benign" in check_trigger_collisions(same)["note"])
 
     with tempfile.TemporaryDirectory() as td:
         fake = Path(td)

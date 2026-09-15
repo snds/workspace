@@ -1,0 +1,28 @@
+# Lint for the automation layer only. CI-only tool — never a vault runtime dependency;
+# every script here stays stdlib-only and runnable with a bare `python3`.
+#
+# The ruleset is deliberately narrow: things that mean a script is BROKEN or ROTTING,
+# not things that mean it is unfashionable.
+#   E9  syntax / IO errors
+#   F   pyflakes — undefined names, unused imports, dead f-strings
+#   I   import ordering (auto-fixable hygiene)
+#
+# Deliberately NOT enabled, because they fight doctrine rather than catch rot:
+#   BLE001 / S110 / S112  fail-open is the contract — a hook must never block a session
+#   PLW1510               these tools inspect returncode themselves, on purpose
+#   E501                  395 hits of pure style
+#   EXE001                shebangs are decorative; everything is invoked as `python3 x.py`
+#   RUF100                misfires under a narrow select, flagging deliberate noqa comments
+
+line-length = 100
+
+include = ["09-tools/**/*.py", ".claude/hooks/**/*.py"]
+extend-exclude = [
+    "09-tools/figma-cli-2.1.0",
+    "09-tools/eslint-off-system",
+    "**/__pycache__",
+    "_archive",
+]
+
+[lint]
+select = ["E9", "F", "I"]

@@ -4,6 +4,90 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-08-26 — Looney Tunes loudness analysis + full subtitle coverage
+
+SessionID: 2026-08-26-voyager-b7191a1
+--- SESSION BLOCK ---
+Date: 2026-08-26
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Claude Fable 5
+Project(s): 01-mediaservices
+Summary: Measured EBU R128 loudness for all 2,919 Looney Tunes files plus watched reference titles; derived a -21.9 LUFS reference target and a -6.6 dB best nominal gain for the set Plex actually plays. Found the real problem is spread, not level: Plex prefers the unmanaged dump folder for 1,035 of 1,064 episodes (15.1 dB p10-p90 spread) while the Sonarr-managed twins are already leveled (1.7 dB spread, nominal -7.4 dB). Separately closed the subtitle gap on played copies: 781 sidecars placed (721 copied from managed twins, 46 extracted from embedded tracks, 14 subgen/whisper), final audit 1,064/1,064 covered, 0 uncovered.
+Artifacts:
+  - Server /mnt/user/appdata/media-sentinel/loudness/ — results.jsonl (2,919 measurements), summary.json, gains.csv (per-file clip-safe gains), plex-preferred.json (episode → played file map), subtitle-sync-journal.txt (781-line delete-list of every sidecar placed)
+  - Canvas looney-tunes-loudness.canvas.tsx (Cursor, MediaSentinel project) — full analysis
+  - MediaSentinel repo scratch/loudness-scan.py + scratch/loudness-analyze.py (gitignored scratch)
+Decisions:
+  - Loudness fix recommendation: point Plex at the managed copies (MediaSentinel dedupe path) then apply one nominal gain of -7.4 dB, instead of per-file gain edits on 1,871 dump files
+  - Subtitle quality order enforced: human sidecar > extracted embedded > whisper; nothing overwritten, every placement journaled for reversal
+  - subgen used only for the 14 episodes with no human-made source anywhere
+Pending added:
+  - User decision: adopt dedupe-to-managed recommendation vs per-file gains from gains.csv
+  - If dedupe chosen: run MediaSentinel duplicate adjudication on the two Looney Tunes folders
+Pending resolved:
+  - (none from prior baton)
+Next:
+  - Await user's pick on the loudness remediation path; gains.csv is ready either way
+Git: MediaSentinel repo untouched (scratch/ + docs/ only, uncommitted); workspace this commit
+--- END BLOCK ---
+
+### 2026-08-11 — Proto ↔ cui DS inventory refresh (bridge-then-consume)
+
+SessionID: 2026-08-11-work-ds-inventory
+--- SESSION BLOCK ---
+Date: 2026-08-11
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): saas-plm-prototype, centric-ui (employer); workspace pointers
+Summary: Re-ran proto↔centric-ui DS inventories against proto `42f8ba1` + cui #284 `98e5ca66`. Rewrote directionality to lift → package → consume `@centric/*`. Updated migration SSOT, gap map, sync manifest, DESIGN-SYSTEM bridge contract; workspace pc-01/pc-05 + Layer C status.
+Evidence:
+  - Employer: `MIGRATION-TO-CENTRIC-UI.md`, `MIGRATION-PER-UNIT-DETAIL.md`, `plm-centric-ui-gap-map.html`, `CENTRIC-UI-SYNC.md`, `DESIGN-SYSTEM.md` (docs only; uncommitted)
+  - Workspace: `project-context.md` / `project-context-detail.md` pc-01/pc-05; visual-parity Layer C; density-adoption + interaction-state-semantics status
+Next:
+  - Merge https://github.com/cpes-software/centric-ui/pull/284
+  - Track L lifts (chip-multi-select, proto-only ui/, caution #87, C8/C13/C16)
+  - Track P `@centric/ui` extract; Track C proto consume
+--- END SESSION BLOCK ---
+
+### 2026-08-11 — cui ViewToolbar bg-card consistency
+
+SessionID: 2026-08-11-work-a7c2e1
+--- SESSION BLOCK ---
+Date: 2026-08-11
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): centric-ui (employer)
+Summary: Materials ViewToolbar used bg-background (darker) via single-toolbar flag; switched all collection toolbars to bg-card to match Material Colours / Samples. Pushed follow-up commit to PR #284.
+Evidence:
+  - PR updated @ https://github.com/cpes-software/centric-ui/pull/284 — verified
+Next:
+  - Review/merge https://github.com/cpes-software/centric-ui/pull/284
+--- END BLOCK ---
+
+
+### 2026-08-11 — cui data-table landing parity + sticky actions
+
+SessionID: 2026-08-11-work-40891f
+--- SESSION BLOCK ---
+Date: 2026-08-11
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): centric-ui (employer)
+Summary: Finished Materials landing table parity work in `@centric/data-table`: decoupled sticky row actions into spacer + float host (fixes stacked hover wash), restored package header border/pad, wired landing density to global Compact/Normal/Spacious, stripped fighting landing CSS. Opened PR.
+Evidence:
+  - PR opened @ https://github.com/cpes-software/centric-ui/pull/284 — verified
+Decisions:
+  - Sticky actions: in-flow spacer (wash + width) + zero-width sticky float host (pill only)
+  - Landing tables follow global app density; non-landing BO tables keep view-config density
+  - Header separator/height owned by package, not Materials recipe; radii deferred post density-merge
+Next:
+  - Review/merge https://github.com/cpes-software/centric-ui/pull/284
+  - After merge: revisit table shell radii if still off vs demo
+--- END BLOCK ---
+
+
+
 ### 2026-08-11 — Local centric-service stack for UI API auth
 
 SessionID: 2026-08-11-work-localstack

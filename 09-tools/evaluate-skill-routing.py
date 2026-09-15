@@ -54,7 +54,6 @@ if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
 from prompt_route import term_matches  # noqa: E402
 
-
 STOPWORDS = frozenset(
     {
         "a",

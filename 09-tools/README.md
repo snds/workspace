@@ -303,6 +303,40 @@ keys). Does not echo values. Skip `_archive`, lockfiles, `node_modules`, `*.exam
 python3 09-tools/check-secrets.py
 ```
 
+## nightly.py
+
+A4 — the executable form of [[nightly-maintenance-recipe]]. **Wrapper only; nothing
+schedules it.** One command instead of re-reading a markdown list and hand-sequencing eight
+CLIs, which is the token cost the recipe was paying every time.
+
+`fold` (compact-sessions) → `rebuild` (build-related → build-registry → build-trigger-routes,
+MUTATING, order load-bearing) → `verify` (workspace-harness, read-only) → `watch`
+(ds-source-watch --check, advisory) → `commit` (**opt-in**, allowlisted paths only, refused
+on a red tree).
+
+Not a `.sh` despite the review naming `nightly.sh`: portable-first is an AGENTS core rule and
+the fleet includes a Windows machine.
+
+```
+python3 09-tools/nightly.py --dry-run
+python3 09-tools/nightly.py            # fold, rebuild, verify, report
+python3 09-tools/nightly.py --commit   # + commit mechanical updates
+```
+
+## validate-evidence-grades.py
+
+A9 — a report may not stamp `VERIFIED` without saying what verified it. Any report using the
+evidence-grade vocabulary 3+ times must declare the legend and name a re-runnable detector.
+`--strict` additionally requires the six pre-registration fields from
+[[experiment-validity-baseline]], but only on genuinely experiment-shaped documents (two
+distinct signals) — one bare "experiment" is usually a trigger word in a routing table.
+`03-skills/` is exempt: it defines the vocabulary.
+
+```
+python3 09-tools/validate-evidence-grades.py
+python3 09-tools/validate-evidence-grades.py --strict
+```
+
 ## evaluate-surface-trajectories.py
 
 Per-surface routing trajectories. `evaluate-skill-routing.py` proves the **matcher**

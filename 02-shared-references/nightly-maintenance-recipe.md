@@ -18,6 +18,10 @@ bootstrap-generator feedback pass (2026-07-23)._
 
 ## What it does (in order)
 
+**Executable form: `python3 09-tools/nightly.py`** (`--dry-run` to see the plan, `--commit` to
+commit mechanical updates). The steps below are the doctrine that entrypoint implements —
+read them to change the recipe, run the CLI to execute it. Still nothing scheduled.
+
 1. **Fold sessions** — `python3 09-tools/compact-sessions.py` (merge `06-context/sessions/` fragments
    into the log; idempotent, conflict-free across machines).
 2. **Graph hygiene** — `python3 09-tools/vault-health.py` (report orphans, `#stale`/aging claims,

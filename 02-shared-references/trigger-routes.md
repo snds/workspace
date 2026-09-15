@@ -301,6 +301,10 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `routing trajectory` | 09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance "…"` shows what each one injects |
 | `cursor missed` | 09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance "…"` shows what each one injects |
 | `what does cursor see` | 09-tools/evaluate-surface-trajectories.py --check — does every surface deliver the same context; `--utterance "…"` shows what each one injects |
+| `nightly` | 09-tools/nightly.py — fold/rebuild/verify in one command; --dry-run first, --commit is opt-in, nothing is scheduled |
+| `evidence grade` | 09-tools/validate-evidence-grades.py — a VERIFIED stamp must declare the legend and name a re-runnable detector |
+| `verified claim` | 09-tools/validate-evidence-grades.py — a VERIFIED stamp must declare the legend and name a re-runnable detector |
+| `pre-registration` | 09-tools/validate-evidence-grades.py — a VERIFIED stamp must declare the legend and name a re-runnable detector |
 
 ## Registry skills with triggers
 
@@ -410,4 +414,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 286 · Registry rows: 101_
+_Curated routes: 290 · Registry rows: 101_
