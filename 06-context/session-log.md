@@ -20,6 +20,33 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
+
+
+### 2026-09-15 — vault CI green after Layer-0 brain-root fix
+
+SessionID: 2026-09-15-work-n3p8r
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6 / Cursor / Work MBP
+Project(s): 19-workspace-brain
+Summary: Follow-up after lint:ds session-end — committed leftover canonical-docs housekeeping, then fixed GitHub Actions workspace-integrity (Cursor trajectory self-test empty because `resolve_brain_root` ignored cwd/CLAUDE_PROJECT_DIR). HEAD `9178aaf` integrity + fixtures green.
+Artifacts: none new (CI + docs already on main)
+Decisions:
+  - `resolve_brain_root` must consider CLAUDE_PROJECT_DIR, cwd, and parents so a clean GHA checkout of snds/workspace routes without ~/.claude/workspace-brain-path
+  - Layer-0 handback routes must not name gitignored `06-context/side-chat-inbox.md` (clone-invisible; harness now treats gitignored paths as missing)
+Pending resolved:
+  - canonical-docs-voice leftover (title-description + YAML block-list triggers) committed as `c69baef`
+  - workspace-integrity Cursor trajectory self-test on Actions — fixed `9178aaf`, confirmed green
+Evidence:
+  - workspace-integrity success @ https://github.com/snds/workspace/actions/runs/34994953678 — verified
+  - validator-fixtures success @ https://github.com/snds/workspace/actions/runs/34994953629 — verified
+Next:
+  - Human review of cui #398; after merge remove centric-ui-lint-ds
+  - Later: wave 2 shadcn rules; CDS theme reset; proto pre-commit lint:ds; ratchet paydown
+--- END BLOCK ---
+
 ### 2026-09-15 — lint:ds overlay land + session-end
 
 SessionID: 2026-09-15-work-k7m2q
@@ -586,182 +613,3 @@ Follow-up: design-hook finding fixed in PlanetCompiler a0d35bf by removing a dec
 Phase-two follow-up: Sean approved the connected globe. Integrated spherical finite-volume core, per-birth-plate material transport, explicit supported/unresolved ledgers, native diagnostic globe and real scheduled playback. Debug/Release 5/5 core suites, 78/78 independent global checks with 13 planted corruptions, 65/65 strip regression; clean native 12/12, global MCP534, strip MCP59 and actual Slate controls8/8 passed. Six final captures were independently inspected. Preserved hot-reload, debug-overlay, stopped-playback and first-black-frame observations; corrected confirmed defects, retained unconfirmed first-use anomaly and model/rendering limits. Human acceptance remains pending. No phase 3 or Legion edits.
 Phase-two commits: da88d1b, e801aa3, 342ecc7, 39071e7, 797e48f and 29744d6 (final evidence checkpoint); implementation repo remains local-only.
 --- END BLOCK ---
-
-### 2026-09-09 — Cursor employer-repo Layer-0 routing
-
-SessionID: 2026-09-09-work-prompt-route
---- SESSION BLOCK ---
-Date: 2026-09-09
-Machine: Work MacBook Pro
-Surface: Cursor
-Project(s): 19-workspace-brain (from a cds Figma generate miss)
-Summary: Semantic + theme/mode token binding already lived in design-engineer / figma hub / figma-ds-surface-authoring but did not fire in Cursor-on-cds. Gap: no beforeSubmitPrompt injection, curated `figma` route skipped the hub + token gate, vendor figma-use was MANDATORY, snds-local omitted the figma hub, wrapped YAML triggers iterated as letters. Fixed with shared prompt_route.py, user-global beforeSubmitPrompt, FIGMA_GENERATE_ROUTE, expanded triggers/hard gates, parser + plugin 0.3.1.
-Evidence:
-  - Knowledge: [[cursor-employer-repo-skill-routing]]
-  - Decision: [[decision-cursor-prompt-route-hook]]
-  - Smoke (cds cwd): `figma` → FIGMA_GENERATE_ROUTE HARD GATE; ack prompts emit `{}`
-Next:
-  - Restart Cursor once so hooks.json reload is certain
-  - `claude plugin install snds@snds-local` (or restart) to pick up `/snds:figma` 0.3.1
-  - Resume cds Wave 1 token rebind (primary-soft) after this routing fix
---- END SESSION BLOCK ---
-
-SessionID: 2026-08-31-cds-consolidation
---- SESSION BLOCK ---
-Date: 2026-08-31
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Claude Opus 5 / Cursor / Work MBP
-Project(s): cds (was ds-docs), centric-ui, saas-plm-prototype (employer — `centric-engineering`)
-Summary: Started the CDS consolidation — making `cpes-software/cds` the single DS write surface
-so the system versions independently of its consumers. Strategy is mirror-gate-flip over a
-deliberate dual-source period rather than a move: cds receives the DS by copy while
-centric-ui stays authoritative, with a CI parity gate that fails on divergence. Four PRs
-opened; centric-ui deliberately untouched.
-
-Four structural findings, each now documented in-repo rather than in agent memory:
-  - `cpes-software/ds-docs` was ALREADY renamed to `cpes-software/cds` on GitHub; only the
-    local checkout and remote URL were stale.
-  - CDS has never contained a `.storybook` on any branch or in any history — the two-tool
-    README describes an iframe at localhost:6006 into centric-ui. Moving Storybook is part
-    of the migration, not a precondition.
-  - The semantic token layer is NOT in `@centric/tokens`. `@theme` + the whole `--sem-*`
-    family live in `centric-ui/app/app.css` (852 lines), so the packages are visually
-    self-insufficient. Three drifting copies: 852 / 479 / 307 lines across centric-ui, cds,
-    proto. Generated palette drifted too (1722 in package vs 1724 in both consumers).
-  - The prototype had NO DS pin. Its sync script short-circuits on a sibling checkout, so it
-    silently consumed `feat/figma-regen-idempotency@0004f572` — a NON-ANCESTOR of main,
-    43 commits short, missing `empty-state`/`statusTone`/`viewTransitions`. Fixed first.
-
-Durable technique learned (worth a knowledge entry if it recurs): `git rev-parse <branch>`
-resolves the LOCAL branch, which in a multi-worktree setup is routinely stale — always prefer
-`origin/<ref>`. This bit twice in one session: it is the root cause of the prototype pin bug,
-and my own parity manifest first recorded a 43-commit-stale sha for exactly the same reason.
-Also: `secrets` is unavailable in a step-level GitHub Actions `if`, so a condition testing it
-silently never matches — map to a job-level `env` first, or a gate quietly passes unchecked.
-
-Decisions taken (Sean, this session):
-  - Phase-one distribution stays vendor symlink + `file:` deps (proven in proto); registry
-    publishing + build step deliberately deferred as the riskiest, non-essential change.
-  - Repo identity `cds`; plain copy with provenance recorded, not history grafting.
-  - Review scope: CDS mirror + Storybook + proto flip; centric-ui untouched this pass.
-
-Evidence:
-  - cds#4 plan · cds#5 workspaces+apps/docs · cds#6 packages mirror+parity gate (CI green)
-  - saas-plm-prototype#57 pin guard (CI green)
-  - cds#3 retargeted from the already-merged `chore/license-ci` to `main` so it is reviewable
-  - Plan: `cds/docs/plans/2026-08-31-cds-consolidation-plan.md`; provenance:
-    `cds/packages/{MIGRATION.md,ds-source.json}`
-Next:
-  - OPEN DECISION for Sean: the semantic split (PR C) needs the layer extracted from
-    centric-ui's app.css. Write-surface rule says it lands upstream first; the agreed scope
-    says centric-ui is untouched. Recommended resolution is additive — author
-    `packages/tokens/semantic.css` in cds, add a `cdsOwned` exclusion to `ds-source.json`,
-    and gate it with an extraction-faithfulness check so the temporary 4th copy is verified
-    rather than trusted. Not started pending Sean's call.
-  - Then PR D Storybook move (depends on C), then proto PRs F (flip to cds) and G (consume
-    `@centric/tokens`, delete drifted copies, with qa/ A/B evidence).
-  - Set repo secret `CENTRIC_UI_READ_TOKEN` on cds to bring the parity gate to full strength;
-    without it only the offline mirror-integrity half runs (annotates a warning, does not
-    silently pass).
-  - cds#4/#5 are ungated until the broadened CI `pull_request` trigger in #6 lands.
---- END SESSION BLOCK ---
-
-## 2026-09-09 — Independent Planet Lab prototype and adversarial evidence
-
-SessionID: 01a08930-3c92-7ca0-ba45-7c9a4088ddb8
-Agent · Surface · Machine: Codex / Codex desktop / personal Mac, Apple M3 Max
-
-Sean requested an additive, completely isolated planetary-generator attempt inside Legion. Created `~/Projects/Legion/planet-lab/` with an independent WebGPU/vgpu application, own package and local Git repository. Isolated commit `b057dc1` on `codex/independent-planet-lab`. Existing Legion files and dirty work were left alone.
-
-Implemented reduced plate kinematics and bathymetry, climate and habitation fields, evolving moisture transport, volumetric clouds and internal lightning emission, camera-relative Earth-scale rendering and continuous 19,000 km orbital insertion to 8 m terrain clearance. Nine numerical tests, native shader validation and seven browser integration checks passed. Actual 1920×1080 motion/stills, optional GPU timestamps and practical-quality timing runs were recorded.
-
-Independent native-resolution review against inspected NASA/NOAA originals remains FAIL. Documented coarse coast geometry, terrain bands/moire, insufficient surface and cloud morphology, stylized city patterns and coarse lightning glow. Physical models remain explicit approximations. Highest-quality full-HD rendering misses the p95 target in some views; Balanced at 1632×918 passed five fixed views (8.8–9.2 ms p95), but a descent window reached 17.9 ms. Sustained 60 fps, full-HD and other GPUs remain uncertified.
-
-Durable scoped baton: [[07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE]]. Code-local README, NORTHSTAR, VISUAL-REVIEW, BUDGET and PRODUCTION-PATH hold the source provenance, test evidence and next architecture. Recommended native candidate is Unreal, with independent causal world-generation data; no native port or deployment performed.
-
-## 2026-09-10 — Isolated Unreal development environment verified
-
-Sean requested setup and resumed after OS permissions required a Codex restart. Created the separate personal-solo `~/Projects/PlanetCompiler` repository, branch `codex/planet-compiler-environment`, local commit `b5f2f90`. Installed Epic Launcher/UE5.8.2, Xcode26.1.1 build17B100, Metal17B54, CMake4.3.4 and Ninja1.13.2. Sean completed sign-ins and accepted the Xcode agreement. Global developer-tools selection remains CommandLineTools; native scripts set Xcode per process.
-
-Portable C++20 Debug and Release tests pass2/2 each. Native editor host compiles, loads and opens. Official ModelContextProtocol + AllToolsets expose52 toolsets on127.0.0.1:8765. Initialize, discovery and read-only current-level query pass, including after the final restart. UE5.8.2 returns blank serverInfo metadata; discrepancy is retained in the smoke report. Disabled unused Android deployment plugin and excluded its autogenerated credential from source.
-
-Evidence and startup instructions are in native README and evidence/setup-report.json. Native repo remains local, clean and independent; Legion sources were not modified. The visible terrain is Unreal’s default starter level, not generated by PlanetCompiler. Native causal geology, streaming renderer and portable-core adapter remain next implementation. Open PlanetCompiler as its own trusted Codex project to load its scoped MCP configuration.
-
-Date: 2026-09-11
-Machine: Work MacBook Pro
-Surface: Cursor
-Project(s): 19-workspace-brain; saas-plm-prototype (#77); cds (#35)
-Summary: Workspace now prints a numbered order of operations before executing. Proto `cds-exports-check` gates `@centric/ui/<subpath>` against cds `origin/main` so overlay-ahead cannot hide a Pages fail. Breakers that were invisible: Toaster (`./sonner`) and SplitDragHandle after cds #34 squash.
-Evidence:
-  - Skill: [[plan-ahead]]
-  - Knowledge: [[cds-host-consume-order]]
-  - Decision: [[decision-plan-ahead-order-of-operations]]
-Next:
-  - Merge cds #35, then proto re-export Toaster / SplitDragHandle / ChipMultiSelect
---- END SESSION BLOCK ---
-
-### 2026-09-03 — Figma opacity variables: UI yes, MCP layer-only
-
-SessionID: 2026-09-03-figma-opacity-variables
---- SESSION BLOCK ---
-Date: 2026-09-03
-Machine: Work MacBook Pro
-Surface: Cursor
-Project(s): Centric SaaS PLM Design System (`o6o1ZuGHxDow2vHLuYXT6X`); workspace knowledge
-Summary: Figma 2026-09-03 “Control opacity at scale” lets the UI bind a number var to color-variable + fill opacity without detaching. MCP `use_figma` / `node.set` is the Plugin API — layer opacity binds work (FLOAT 0–100); paint and color-var opacity writes reject. Applied `Opacity/*` + `opacity/{disabled,scrim,hover,focus,pressed}` and bound Components masters.
-Evidence:
-  - Knowledge: [[figma-opacity-variables]]
-  - MCP re-probe: Button `State=Disabled` (`7:5060`) `get_variable_defs` → `"var(--opacity-disabled)": "50"`; `setBoundVariableForPaint(..., 'opacity')` → Expected 'color'; `node.set` same unrecognized `boundVariables.opacity`
-Next:
-  - Re-bind Overlay Black/White ramps as alias+opacity when paint/color-var writes ship
-  - Do not split Radix A-steps / `interaction/*`
---- END SESSION BLOCK ---
-
-### 2026-08-12 — Proto is the design sandbox (don't strip screens)
-
-SessionID: 2026-08-12-proto-sandbox-model
---- SESSION BLOCK ---
-Date: 2026-08-12
-Machine: Work MacBook Pro
-Surface: Cursor
-Project(s): saas-plm-prototype, centric-ui (employer)
-Summary: Sean corrected the migration reading: never delete prototype screens because centric-ui already has the page. Proto is Olga+Sean design iteration; consume `@centric/*`; lift net-new into centric-ui.
-Evidence:
-  - Workspace: [[decision-proto-is-design-sandbox]], pc-05 note, [[feedback-expand-acronyms]]
-Next:
-  - Inventory proto-only components/composites not in `@centric/ui` and lift those (ChipMultiSelect #290 already open)
-  - Catalogue lives on [[decision-proto-is-design-sandbox]]; refresh when a lift lands
---- END SESSION BLOCK ---
-
-> _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
-
-
----
-
-### 2026-09-04 — vgpu default + conversation-driven 3D extensions
-
-SessionID: 2026-09-04-voyager-vgpu3d
---- SESSION BLOCK ---
-Date: 2026-09-04
-Machine: Personal MacBook Pro
-Surface: Cursor
-Project(s): 19-workspace-brain
-Summary: Made vgpu the project-agnostic web GPU default; wired optional 3D MCPs (chisel, maige-3d, Godot, Unity, AgentBridge) as conversation- and living-spec-driven extensions, not standing servers. Also landed concurrent Intent #17 / intent-run.py work already in the tree.
-Artifacts:
-  - 03-skills/vgpu-webgpu/SKILL.md
-  - 03-skills/web-3d-extensions/SKILL.md
-  - 08-knowledge/engineering/web-3d-runtime-stack.md
-  - 06-context/memory/decision-vgpu-default-web-3d.md
-  - 00-bootstrap/templates/cursor-mcp-3d-extensions.json.example
-Decisions:
-  - New web GPU/WGSL defaults to vgpu; existing Three (Legion) stays on the adapter
-  - Extensions are driven by ordinary conversation, research, revision, and living-spec steps; MCP is execute-time preflight only
-  - Standing Cursor MCP keeps vgpu HTTP; editor/CSG servers stay project/session scoped
-Pending resolved:
-  - none (pc-NN unchanged)
-Next:
-  - Intent GUI: add a local repo, then a real coordinator spec — or personal:SEA-33
-  - Reload Cursor MCP if vgpu tools are missing
---- END BLOCK ---
-

@@ -8,15 +8,15 @@ _Last updated: 2026-09-15 — A8: Figma construction gate is a detector (live ca
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: lint:ds overlay on vault `main`; cui [#398](https://github.com/cpes-software/centric-ui/pull/398) still in review.
+- **Current focus**: lint:ds overlay on vault `main`; cui [#398](https://github.com/cpes-software/centric-ui/pull/398) still in review. Vault CI green at `9178aaf`.
 - **Working set**: `09-tools/shadcn-lint/` (tracked). `centric-ui-lint-ds` worktree kept until 398 merges.
-- **Last action (2026-09-15):** Unblocked items done — overlay committed+pushed (`51e7859` / merge `f446cbb`); cds-lint-ds and proto-lint-ds worktrees removed. Cursor Grok 4.6 · Cursor · Work MBP.
+- **Last action (2026-09-15):** Housekeeping `c69baef`; Layer-0 gitignore harness `2214bbd`; `resolve_brain_root` cwd/CLAUDE_PROJECT_DIR `9178aaf`. workspace-integrity + validator-fixtures green on HEAD. Cursor Grok 4.6 · Cursor · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
 - **Next action:** Human review of cui [#398](https://github.com/cpes-software/centric-ui/pull/398) (CI green; do not agent-merge). After merge, remove `centric-ui-lint-ds`. Later: wave 2 rules, theme reset, proto pre-commit lint:ds, ratchet paydown.
 - **Open decisions:** Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot). Theme reset (`@theme { --color-*: initial }`) stays a later product-CSS PR — decided overlay-first. Restyle/arbitrary/inline shadcn rules stay off until a later wave.
 - **Blocked on:** cui 398 human review (`REVIEW_REQUIRED`). Employer `canvases/` exist on disk but are untracked pending PRs.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until the proto pin includes cds `./sonner`. Do not auto-commit employer repos. Do not wire `shadcn-lint` into `workspace-harness.py` / vault CI. Keep `centric-ui-lint-ds` until 398 merges.
-- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Work MBP (2026-09-15): session-end after lint:ds overlay land`.
+- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Work MBP (2026-09-15): session-end after CI green`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
@@ -26,8 +26,8 @@ _Last updated: 2026-09-15 — A8: Figma construction gate is a detector (live ca
 - **Project root**: `07-projects/19-workspace-brain`
 
 ### VCS state
-- **Branch**: `main` @ session-end commit (this fragment)
-- **Uncommitted at baton write**: session fragment + harvest script/docs (folded into session-log at end)
+- **Branch**: `main` @ `9178aaf` plus this session-end fragment
+- **Uncommitted at baton write**: session fragment + SESSION-STATE (folded into session-log at end)
 - **Test state at last check (2026-09-02):** `vqa doctor` core ok; FLIP/DreamSim/OCR/gltf-validator/VGGT degraded honestly. `vqa calibrate` **48/48** (`vqa/1.1`). LCARS `S-SYS47-01` v4 `vqa prove` 16/16 measured. Doctor personal lane `ok` on this Cursor.
 
 ### Open work and paused threads
@@ -45,6 +45,19 @@ _Last updated: 2026-09-15 — A8: Figma construction gate is a detector (live ca
 ---
 
 ## Session history (append-only)
+
+### 2026-09-15 — vault CI green after Layer-0 brain-root fix (session-end)
+
+**Focus this session**: Confirm workspace CI; session-end after canonical-docs housekeeping + Actions trajectory self-test fix.
+**Machine**: Work MacBook Pro (`CS-K746DRWXY1`) · Cursor Grok 4.6 · Cursor
+**Stopped because**: Sean asked to end session.
+
+**Accomplishments**:
+- Housekeeping `c69baef` (canonical-docs-voice title-description + YAML block-list triggers)
+- Layer-0 handback routes no longer name gitignored inbox (`2214bbd`)
+- `resolve_brain_root` uses CLAUDE_PROJECT_DIR + cwd (`9178aaf`); workspace-integrity green
+
+**Next**: Human review of cui #398; after merge remove `centric-ui-lint-ds`.
 
 ### 2026-09-03 — ATSMATRIX GitHub org review (session-end)
 
