@@ -93,7 +93,7 @@ HUB_DETECTORS: dict[str, tuple[Step, ...]] = {
         _skip(
             "figma-mcp-capture",
             "Agent step: get_variable_defs + get_metadata on the node you just wrote, into "
-            "your scratchpad (employer content — never commit it). "
+            "your scratchpad (transient artifact, not a fixture). "
             "`figma-bind-probe.py --emit-template` prints the calls.",
         ),
         _cli("figma-bind-probe.py", "--self-test"),

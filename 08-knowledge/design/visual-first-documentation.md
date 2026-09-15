@@ -1,13 +1,13 @@
 ---
 tags: [design-systems, documentation, examples, patterns]
 created: 2026-09-14
-updated: 2026-09-14
+updated: 2026-09-15
 status: validated
 confidence: high
-related_skills: [ds-advisor, design-engineer]
+related_skills: [ds-advisor, design-engineer, canonical-docs-voice]
 relations:
   builds-on: ["[[davinci-ds-boilerplate]]"]
-  relates-to: ["[[plain-language]]", "[[decision-pattern-uniqueness]]", "[[ai-and-design-systems]]"]
+  relates-to: ["[[plain-language]]", "[[decision-pattern-uniqueness]]", "[[ai-and-design-systems]]", "[[canonical-documentation]]"]
 trigger_words:
   - documentation
   - live example
@@ -34,8 +34,10 @@ Text is the caption, the when-not, and the arbitration. It is not the demonstrat
 
 1. **Live instance** of the shipping component, in the docs app, on the page (tokens, theme, real interaction). This is the default. Chart galleries and in-page Dialogs beat an iframe.
 2. **Live composition** of shipping primitives when the named thing is a pattern or page template, not a single component. Dialog + Field, Tabs + FilterChip, Data Summary on a property sheet. Label the parent and the body.
-3. **Labeled schematic** when the pattern does not ship yet (Gantt schedule editing, print preview, a collection table that is not wired into docs). Build it from system tokens and primitives. Numbered pins that match the Anatomy list. Mark it **schematic** so it is not mistaken for a shipping component.
+3. **Labeled schematic** when the named thing **does not ship** (Gantt schedule editing, print preview) or lives in a package this page is not mounting. Build it from system tokens and primitives. Numbered pins that match the Anatomy list. Mark it **schematic**. Caption the *job*, never the docs-host gap ([[canonical-documentation]]).
 4. **Storybook embed** is a jump-out for the workbench (controls, states, a11y addon). It is not the only example. Iframes go blank when Storybook is down and they hide the composition in chrome.
+
+If the component **does ship** and the docs app is missing a peer, CSS import, or client-only mount, **add it**. Do not caption "schematic here because the docs app does not take X."
 
 Do not paste a screenshot of proto or centric-ui into system docs. Those go stale and they leak host product. Recreate the job with CDS pieces.
 
@@ -49,6 +51,7 @@ Do not invent a second library of hand-drawn shapes when a real component exists
 - Anatomy as a numbered list with no corresponding picture.
 - "Form in a Dialog" explained in prose next to an empty Dialog story.
 - Wire jargon or new names used as the illustration ([[plain-language]]).
+- A caption or paragraph that explains why the docs app could not mount a shipping component ([[canonical-documentation]]).
 
 ## Docs-site shape (when the host is CDS / Fumadocs)
 
@@ -61,3 +64,4 @@ Do not invent a second library of hand-drawn shapes when a real component exists
 
 - [[davinci-ds-boilerplate]] — canonical DS docs IA still requires live preview; this entry is the enforcement when the page is a pattern or a definition.
 - [[decision-visual-first-documentation]] — why this is standing, not a one-off CDS polish.
+- [[canonical-documentation]] — live instance is the default; never narrate a docs-host gap.

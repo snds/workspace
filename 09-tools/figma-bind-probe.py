@@ -45,9 +45,11 @@ Usage:
 
 Exit: 0 clean · 1 a rule failed · 2 nothing verifiable (honest skip, never a pass).
 
-Employer note: the Figma account on this machine is Centric. Run the probe against those
-files freely — it is read-only — but captures are employer content and must NOT be committed
-to this personal workspace. Fixtures here are synthetic for that reason.
+Captures go in your scratchpad, not in this repo: they are large, one-off and file-specific,
+and a fixture should be small, stable and legible. Wall 3 is NOT the reason — it forbids
+pushing personal-workspace content into employer repos, not employer design data living here
+(this vault tracks CDS work by design). The shipped fixtures are synthetic so they stay
+readable and never drift with a live file.
 """
 
 from __future__ import annotations
@@ -108,8 +110,8 @@ EMIT_HELP = """# Figma bind probe — capture, then judge
      get_design_context(...)                         -> per-node bindings for `nodes` (optional
                                                         but this is what makes R2 checkable)
 
-2. Write the capture to your SCRATCHPAD — never into this repo; Figma here is the employer
-   account and captures are employer content.
+2. Write the capture to your SCRATCHPAD. It is a transient, file-specific artifact — not a
+   fixture, and not something to commit.
 
 3. python3 09-tools/figma-bind-probe.py --capture <scratchpad>/cap.json
 
@@ -167,9 +169,47 @@ def check_primitives(capture: dict) -> list[str]:
     return fails
 
 
+# get_variable_defs returns a MIXED map, learned from live output (2026-09-15):
+#   "foreground/default": "#ffffff"   a bound Figma variable — a token path has "/"
+#   "var(--icon-size)": "20"          a bound CSS variable reference
+#   "height": "36"                    a BARE key: the resolved literal of an unbound property
+# The third kind is the R2 signal, and it is only visible here — get_metadata carries no
+# paint or spacing detail at all. The synthetic fixture missed this entirely.
+VAR_REF_RE = re.compile(r"^var\(--.+\)$")
+
+
+def unbound_keys(variables: dict) -> list[str]:
+    """Bare keys — no separator at all, no var() reference — are unbound literals.
+
+    The discriminator is a SEPARATOR, not just a slash. Token names carry a family:
+    `foreground/default`, `border-width/1` (live), and doctrine's own hyphenated spellings
+    `space-0`, `radius-none`, `border-width-0`. Unbound properties are bare Figma/CSS
+    property names with no family at all — `gap`, `height`, `radius`, `wght` — or camelCase
+    ones like `fontSize`, `paddingX`, `radiusRing`. A slash-only test would have flagged
+    every hyphenated token in the doctrine as a violation.
+    """
+    out = []
+    for key in variables:
+        name = key.strip()
+        if VAR_REF_RE.match(name) or "/" in name or "-" in name:
+            continue
+        out.append(key)
+    return out
+
+
 def check_raw_values(capture: dict) -> list[str]:
     """R2 — zeros and blanks are not exempt; an unbound value is an unbound value."""
     fails = []
+    allows = capture.get("allow") or []
+    variables = capture.get("variables") or {}
+    for key in sorted(unbound_keys(variables)):
+        if _allowed(key, allows):
+            continue
+        fails.append(
+            f"R2 unbound property: `{key}` = {variables[key]!r} resolves to a literal with no "
+            f"token behind it. Bind it (zeros are not exempt: pad/gap 0 -> `space-0`, "
+            f"radius 0 -> `radius-none`, stroke 0 -> `border-width-0`)."
+        )
     for node in capture.get("nodes") or []:
         who = node.get("name", node.get("id", "?"))
         for prop, value in (node.get("raw") or {}).items():
@@ -188,13 +228,22 @@ def check_instances(capture: dict) -> list[str]:
     for node in capture.get("nodes") or []:
         kind = str(node.get("type", "")).upper()
         who = node.get("name", node.get("id", "?"))
-        if kind in RAW_SHAPE_TYPES and not _allowed(who, allows):
-            painted = bool(node.get("bindings") or node.get("raw"))
-            if painted:
+        if kind not in RAW_SHAPE_TYPES or _allowed(who, allows):
+            continue
+        if node.get("from_metadata"):
+            # No paint data exists at this level, so judge by position: a raw shape inside
+            # an instance is that component's own internals (icon vectors are fine); one
+            # sitting at the top level is chrome that should have been a component.
+            if not node.get("inside_instance"):
                 fails.append(
-                    f"R3 rect not instance: {who} is a {kind} carrying paint/geometry — "
-                    f"build from the real component, not a shape."
+                    f"R3 rect not instance: {who} is a top-level {kind} — chrome should be "
+                    f"built from the real component, not drawn as a shape."
                 )
+        elif node.get("bindings") or node.get("raw"):
+            fails.append(
+                f"R3 rect not instance: {who} is a {kind} carrying paint/geometry — "
+                f"build from the real component, not a shape."
+            )
     return fails
 
 
@@ -216,27 +265,37 @@ def check_density(capture: dict) -> list[str]:
     return warns
 
 
+# Real get_metadata output (2026-09-15) is <frame id name x y width height> with <symbol>
+# children: the TAG is the layer type and there is no paint attribute whatsoever. So a shape
+# here is judged by existence and position in the tree, never by "is it painted" — the
+# earlier version tested a `type="RECTANGLE" fill="#fff"` shape Figma does not emit.
+INSTANCE_TAGS = {"SYMBOL", "INSTANCE", "COMPONENT", "COMPONENT_SET"}
+
+
 def nodes_from_metadata(xml_text: str) -> list[dict]:
-    """get_metadata returns XML of layer types/names. Enough for R3 when nodes[] is absent."""
+    """Flatten get_metadata XML, tracking whether each node sits inside an instance."""
     try:
         root = ElementTree.fromstring(xml_text)
     except ElementTree.ParseError:
         return []
-    out = []
-    for el in root.iter():
-        attrs = el.attrib
-        kind = (attrs.get("type") or el.tag or "").upper()
-        if not kind:
-            continue
+    out: list[dict] = []
+
+    def walk(el, inside_instance: bool):
+        kind = (el.attrib.get("type") or el.tag or "").upper()
         out.append({
-            "id": attrs.get("id", ""),
-            "name": attrs.get("name", ""),
+            "id": el.attrib.get("id", ""),
+            "name": el.attrib.get("name", ""),
             "type": kind,
-            # Metadata carries no binding detail, so R2 cannot run from it. Mark geometry
-            # present so R3 can still judge a painted shape.
+            "inside_instance": inside_instance,
+            "from_metadata": True,
             "bindings": {},
-            "raw": {} if not attrs.get("fill") else {"fill": attrs.get("fill")},
+            "raw": {},
         })
+        deeper = inside_instance or kind in INSTANCE_TAGS
+        for child in el:
+            walk(child, deeper)
+
+    walk(root, False)
     return out
 
 
@@ -254,7 +313,7 @@ def evaluate(capture: dict) -> dict:
     if has_vars or has_nodes:
         verified.append("R1 primitive-binding")
         failures += check_primitives(cap)
-    if has_nodes and any("raw" in n or "bindings" in n for n in cap["nodes"]):
+    if has_vars or (has_nodes and any("raw" in n or "bindings" in n for n in cap["nodes"])):
         verified.append("R2 raw-value")
         failures += check_raw_values(cap)
     if has_nodes:
@@ -305,6 +364,21 @@ def self_test() -> int:
     expect("R2 catches a raw zero (zeros are not exempt)",
            any("R2" in f for f in evaluate(raw)["failures"]))
 
+    # Live output (2026-09-15) mixes token paths, var() refs and bare property names.
+    mixed = {"variables": {"foreground/default": "#fff", "border-width-0": "0",
+                           "radius-none": "0", "var(--icon-size)": "20",
+                           "fontSize": "14", "gap": "6", "wght": "400"}}
+    flagged = evaluate(mixed)["failures"]
+    expect("R2 flags bare property names", len(flagged) == 3)
+    # Match the FLAGGED KEY, not the message body — the R2 text quotes `space-0` /
+    # `radius-none` / `border-width-0` as guidance, so a loose substring test passes
+    # for the wrong reason.
+    flagged_keys = {f.split("`")[1] for f in flagged}
+    for token in ("foreground/default", "border-width-0", "radius-none", "var(--icon-size)"):
+        expect(f"R2 leaves `{token}` alone", token not in flagged_keys)
+    for bare in ("fontSize", "gap", "wght"):
+        expect(f"R2 catches bare `{bare}`", bare in flagged_keys)
+
     rect = json.loads(json.dumps(clean))
     rect["nodes"][0]["type"] = "RECTANGLE"
     expect("R3 catches a painted rectangle",
@@ -334,10 +408,23 @@ def self_test() -> int:
     empty = evaluate({"system": "CDS"})
     expect("an empty capture verifies nothing", not empty["verified"])
 
-    meta = evaluate({"metadata_xml":
-                     '<node id="1:2" name="Chrome" type="RECTANGLE" fill="#fff"/>'})
-    expect("metadata XML alone still supports R3",
-           any("R3" in f for f in meta["failures"]))
+    # The real get_metadata shape: tags ARE the types, and there is no paint attribute.
+    # The earlier fixture used type="RECTANGLE" fill="#fff", which Figma never emits —
+    # caught by feeding the probe live output (2026-09-15).
+    real_meta = (
+        '<frame id="7:1" name="Button" x="0" y="0" width="775" height="112">'
+        '<symbol id="7:2" name="State=Default" x="40" y="40" width="91" height="36">'
+        '<vector id="7:3" name="icon path" x="0" y="0" width="16" height="16"/>'
+        "</symbol>"
+        '<rectangle id="7:4" name="Loose Chrome" x="0" y="0" width="10" height="10"/>'
+        "</frame>"
+    )
+    meta = evaluate({"metadata_xml": real_meta})
+    expect("R3 flags a top-level raw shape from real metadata",
+           any("R3" in f and "Loose Chrome" in f for f in meta["failures"]))
+    expect("R3 leaves a vector INSIDE an instance alone (icon internals)",
+           not any("icon path" in f for f in meta["failures"]))
+    expect("metadata-only capture still verifies something", meta["verified"])
     expect("malformed XML degrades to nothing verified",
            not evaluate({"metadata_xml": "<not xml"})["verified"])
 

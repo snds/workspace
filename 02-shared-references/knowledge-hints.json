@@ -83,11 +83,16 @@
     "close-out-dispatch": "08-knowledge/cross-domain/process-rigor-gaps.md",
     "session status": "08-knowledge/cross-domain/workflow-patterns.md",
     "what's on the agenda": "08-knowledge/cross-domain/workflow-patterns.md",
-    "documentation": "08-knowledge/design/visual-first-documentation.md",
-    "live example": "08-knowledge/design/visual-first-documentation.md",
+    "documentation": "08-knowledge/design/visual-first-documentation.md · 08-knowledge/design/canonical-documentation.md",
+    "live example": "08-knowledge/design/visual-first-documentation.md · 08-knowledge/design/canonical-documentation.md",
     "docs dump": "08-knowledge/design/visual-first-documentation.md",
     "pattern docs": "08-knowledge/design/visual-first-documentation.md",
     "visual documentation": "08-knowledge/design/visual-first-documentation.md",
-    "storybook embed": "08-knowledge/design/visual-first-documentation.md"
+    "storybook embed": "08-knowledge/design/visual-first-documentation.md",
+    "changelog note": "08-knowledge/design/canonical-documentation.md",
+    "canonical documentation": "08-knowledge/design/canonical-documentation.md",
+    "because the docs app": "08-knowledge/design/canonical-documentation.md",
+    "schematic here": "08-knowledge/design/canonical-documentation.md",
+    "docs voice": "08-knowledge/design/canonical-documentation.md"
   }
 }

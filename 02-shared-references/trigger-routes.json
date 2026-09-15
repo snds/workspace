@@ -307,6 +307,10 @@
     "figma prove": "09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass",
     "construction gate": "09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass",
     "color primitive": "09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass",
-    "instances not rects": "09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass"
+    "instances not rects": "09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass",
+    "fumadocs": "03-skills/canonical-docs-voice/SKILL.md + 08-knowledge/design/visual-first-documentation.md + 08-knowledge/design/canonical-documentation.md — live instance on the page; never caption a docs-host gap",
+    "write docs": "03-skills/canonical-docs-voice/SKILL.md + 08-knowledge/design/canonical-documentation.md — canonical pages describe the system, not the docs site",
+    "canonical documentation": "03-skills/canonical-docs-voice/SKILL.md + 08-knowledge/design/canonical-documentation.md — canonical pages describe the system, not the docs site",
+    "changelog note": "03-skills/canonical-docs-voice/SKILL.md — changelog voice stays in changelogs, not component pages"
   }
 }

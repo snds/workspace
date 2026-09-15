@@ -6,7 +6,7 @@ status: stable
 confidence: high
 related_skills: [ds-advisor, design-engineer]
 relations:
-  relates-to: ["[[decision-pattern-uniqueness]]"]
+  relates-to: ["[[decision-pattern-uniqueness]]", "[[canonical-documentation]]"]
 trigger_words:
   - chassis
   - lateral terminology

@@ -4,7 +4,7 @@ version: "1.0"
 date: 2026-09-15
 surface: Claude Opus 5 + Claude Code (Mac desktop app)
 sha: 71f8d7a
-status: applied — probe minted, wired, fixture-validated; LIVE MCP validation still outstanding
+status: applied — probe minted, wired, and VALIDATED against live MCP output; contract corrected in two places
 companion: automation-second-wave_v1.0_2026-09-15.md
 ---
 
@@ -66,13 +66,20 @@ reason recorded inline.
 
 Found only because A8 forced an actual preflight instead of a documented one.
 
-## 4. The employer wall
+## 4. Where captures live — and a rule I got wrong first
 
-`whoami` returns `sean.sands@centricsoftware.com`, Centric Software org. Running the probe
-against Centric files is fine — it is read-only, on Sean's own work account — but **captures
-are employer content and must never be committed to this personal workspace**. Both fixtures
-are therefore synthetic and say so in a `_note` field, and the skill, the CLI help and the
-close-out SKIP text all say "write captures to your scratchpad."
+Captures belong in the scratchpad: they are large, one-off and file-specific, while a fixture
+should be small, stable and legible. The shipped fixtures are synthetic for that reason.
+
+I initially justified this as **wall 3** — "captures are employer content, never commit them
+here". That is wrong, and worth recording because a wrong rule written into a skill gets
+followed later. Wall 3 is one-directional: *employer repos never receive personal-workspace
+content, and workspace content is never pasted into employer surfaces.* It says nothing about
+employer design data living in this vault, which demonstrably does — the CDS file key, token
+names and hex values are already tracked across `07-projects/02-centricPLM`,
+`09-figma-repo-sync-plugin`, `project-context-detail.md` and the session-log archive, by
+design. Corrected in the probe docstring, its `--emit-template` help, the `figma` hub step 7,
+and the close-out SKIP text.
 
 ## 5. Wiring
 
@@ -83,20 +90,56 @@ The old `test_figma_is_honest_skip` asserted the pre-A8 world; it is now
 `test_figma_splits_capture_from_assess` and asserts **both** halves, so neither can quietly
 regress — a scripted "capture" would be a lie, and a skipped assess is the gap A8 closed.
 
-## 6. What is NOT verified — the live capture
+## 6. Live validation — and the two things it corrected
 
-**The probe has never been fed real MCP output.** The capture contract is derived from the
-documented shapes of `get_variable_defs` (a name→value map, certain) and `get_metadata`
-(XML of layer types/names, documented), not from observed responses. Parsing is deliberately
-tolerant and `metadata_xml` degrades to "nothing verified" rather than to a false pass, but
-tolerance is not evidence.
+The probe was fed a real component set from an employer design-system file (read-only;
+the capture lives in a scratchpad and is deliberately not in this repo). It ran end to end,
+and it corrected the capture contract in two places that fixtures could never have caught:
 
-This is precisely the "plausible substitute" `mission-fit` warns about, so it is recorded as
-an open gap rather than rounded up to done. Closing it needs one Figma node URL and one run —
-after which the capture contract either holds or gets corrected against reality.
+**`get_metadata` has no paint data, and types are element TAGS.** Real output is
+`<frame …><symbol …/></frame>` — `id`, `name`, `x`, `y`, `width`, `height`, and nothing
+else. The first version keyed off a `type="RECTANGLE" fill="#fff"` attribute shape that
+Figma never emits, so its R3-from-metadata path **could not fire on real output at all** —
+and a self-test asserted it worked, using that invented shape. R3 now judges a raw shape by
+its position in the tree: top-level chrome fails; the same shape inside an instance is that
+component's own internals (icon vectors are legitimate) and is left alone.
 
-Until then the honest status is: **rules correct against doctrine, refusals exercised against
-planted defects, input contract unproven against the live tool.**
+**`get_variable_defs` carries the R2 signal, and the probe was not reading it.** The map is
+*mixed*, three kinds of key:
+
+| Key shape | Meaning |
+|---|---|
+| `<family>/<name>` (a slash or hyphen path) | bound Figma variable |
+| `var(--icon-size)` | bound CSS variable reference |
+| `fontSize`, `gap`, `height`, `radius` | **the resolved literal of an UNBOUND property** |
+
+The third kind is exactly what R2 exists to refuse, and it is visible nowhere else. Before
+this correction the probe would have reported *"R1 and R3 verified, 0 violations"* on a
+component carrying eight unbound properties — **a false pass**, which is the single worst
+outcome for a prove-gate.
+
+One further fragility surfaced while fixing it: the first discriminator was "a token has a
+`/`", which would have flagged doctrine's own hyphenated spellings (`space-0`,
+`radius-none`, `border-width-0`) as violations. The rule is now "a token has a separator";
+bare and camelCase property names are the unbound ones. A self-test pins both directions.
+
+**Residual uncertainty, stated:** if Figma reports a bare key for a property bound to a
+*style* rather than a variable, R2 would over-fire there. Nothing in the observed output
+suggests it does, and the reasoned `allow` list is the escape hatch — but this is inference
+from one file, not a proof.
+
+## 6a. What it found
+
+On that component set: **R1 clean** — no `Color/*` primitives anywhere, so the hard gate
+passes on real production work, which is the evidence that R1 is not over-firing. **R3
+clean** — every child is a variant symbol, no loose shapes. **R2: eight unbound properties**,
+covering height, padding, gap, radius, focus-ring radius, font size, line height and weight
+— precisely the six families the Density standing rule names, on a control, while tokens for
+those families exist in the same file. That is a real doctrine violation found by a script on
+the first real run, not a fixture.
+
+The finding itself is employer content and stays out of this repo; it was reported to Sean
+in session.
 
 ## 7. State
 

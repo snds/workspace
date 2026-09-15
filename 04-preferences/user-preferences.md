@@ -47,6 +47,10 @@ or bridged to design, don't force a bad analogy: give me a good source to read a
 - **Ordinary words first (2026-09-14).** Do not invent sideways terms when a
   common one exists. "Dialog," "parent component," "usage," and "variant" beat
   "chassis" or a newly coined synonym. Full rule: `08-knowledge/design/plain-language.md`.
+- **Canonical docs are not a changelog (2026-09-15).** Do not explain why the
+  docs site could not host a live example — fix the host. No "for now" /
+  "because the docs app…" on component pages. Full rule:
+  `08-knowledge/design/canonical-documentation.md`. Skill: `canonical-docs-voice`.
 
 ## Response Style
 - US English, Oxford comma

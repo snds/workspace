@@ -144,8 +144,7 @@ resolve).
    `figma-bind-probe.py --capture <scratchpad>/cap.json` refuses `Color/*` primitives, raw
    values (zeros are not exempt), and rects-instead-of-instances, and warns on
    density-unaware control tokens. **Exit 2 means nothing was verified — that is not a
-   pass.** Write captures to your scratchpad, never into this repo: Figma here is the
-   employer account. Pixels still go through `vqa prove` when a cuespec exists. Missing
+   pass.** Captures go to your scratchpad — transient, file-specific artifacts, not fixtures. Pixels still go through `vqa prove` when a cuespec exists. Missing
    detector → mint it and push to this workspace. **Do not page Sean** unless self-critique
    is failing or that mint still cannot hit the accuracy/perf bar.
 8. **Hand off**: `spec` → design-engineer; system-token decisions → `/ds`. After any produce,

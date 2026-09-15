@@ -315,6 +315,10 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `construction gate` | 09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass |
 | `color primitive` | 09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass |
 | `instances not rects` | 09-tools/figma-bind-probe.py — the assess half of the Figma prove-gate. --emit-template for the MCP capture calls; exit 2 (nothing verified) is NOT a pass |
+| `fumadocs` | 03-skills/canonical-docs-voice/SKILL.md + 08-knowledge/design/visual-first-documentation.md + 08-knowledge/design/canonical-documentation.md — live instance on the page; never c… |
+| `write docs` | 03-skills/canonical-docs-voice/SKILL.md + 08-knowledge/design/canonical-documentation.md — canonical pages describe the system, not the docs site |
+| `canonical documentation` | 03-skills/canonical-docs-voice/SKILL.md + 08-knowledge/design/canonical-documentation.md — canonical pages describe the system, not the docs site |
+| `changelog note` | 03-skills/canonical-docs-voice/SKILL.md — changelog voice stays in changelogs, not component pages |
 
 ## Registry skills with triggers
 
@@ -424,4 +428,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 300 · Registry rows: 101_
+_Curated routes: 304 · Registry rows: 101_

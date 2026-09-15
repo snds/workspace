@@ -5,7 +5,7 @@ created: 2026-09-14
 confidence: high
 relations:
   builds-on: ["[[davinci-ds-boilerplate]]"]
-  relates-to: ["[[plain-language]]", "[[decision-pattern-uniqueness]]"]
+  relates-to: ["[[plain-language]]", "[[decision-pattern-uniqueness]]", "[[canonical-documentation]]"]
 ---
 
 ## For future agent

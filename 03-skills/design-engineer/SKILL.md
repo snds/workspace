@@ -447,4 +447,4 @@ be immediately usable without a terminal.
 - foundation → [[design-foundations]]
 - spoke → [[centric-ui-storybook]] · [[centric-ui-workflow]]
 - governed-by → [[a11y-visual]] · [[qa]]
-- peer ↔ [[design-system-ops]] · [[ds-advisor]] · [[ai-design-systems]]
+- peer ↔ [[design-system-ops]] · [[ds-advisor]] · [[ai-design-systems]] · [[canonical-docs-voice]]

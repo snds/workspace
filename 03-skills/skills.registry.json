@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 300,
+    "total": 301,
     "by_tier": {
       "cross-cutting": 46,
       "foundation": 22,
       "hub": 47,
-      "spoke": 185
+      "spoke": 186
     }
   },
   "skills": {
@@ -906,6 +906,28 @@
       "rigor_role": null,
       "hash": "sha256:5f2e63759f78028f866a47d93d44952daff65662617c24165d2400c804fa710d"
     },
+    "canonical-docs-voice": {
+      "path": "03-skills/canonical-docs-voice/SKILL.md",
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "ds-advisor",
+      "prerequisites": [
+        "ds-advisor"
+      ],
+      "related": [
+        "design-engineer"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:beeebf8dae76a1925b0baf1d4b33306d6cdbd9bd5e4e7a6c78412035b759ca43"
+    },
     "career-ops-job-search": {
       "path": "03-skills/career-ops-job-search/SKILL.md",
       "tier": "spoke",
@@ -1096,7 +1118,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:a26004006bf1fe1ee86ce3133c144ebc9ca4da37fc3c9727f5957898e82fc475"
+      "hash": "sha256:36cf6a46b00212a8c2847c5d3f9080d47cccd7d08cb3c845ab9d59101111da4a"
     },
     "design-foundations": {
       "path": "03-skills/design-foundations/SKILL.md",
@@ -1392,7 +1414,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:72f86fd5542a92c136b7c5a76d05f911e185b68d3c6829e86c4547424a88ed0d"
+      "hash": "sha256:30b615c863bfa80a966ac8b13fd9d8f7d8d0a667614ef11854432ac309c729e0"
     },
     "ds-bi-platforms": {
       "path": "03-skills/ds-bi-platforms/SKILL.md",
@@ -2074,7 +2096,7 @@
         "design-engineer"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:f0c0a931a89ef521f5f77bdd4860ff98bca0bda0014fb0fc5262a87227059c39"
+      "hash": "sha256:634fe989445d42afda6a28d6d059a3f445571417e64f4e841a641816c325e052"
     },
     "figma-api-router": {
       "path": "03-skills/figma-api-router/SKILL.md",
@@ -8443,6 +8465,11 @@
       "eng-foundations",
       "lead-backend-engineer",
       "be-service-architecture"
+    ],
+    "canonical-docs-voice": [
+      "design-foundations",
+      "ds-advisor",
+      "canonical-docs-voice"
     ],
     "career-ops-job-search": [
       "job-search-strategist",

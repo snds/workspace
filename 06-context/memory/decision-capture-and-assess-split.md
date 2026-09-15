@@ -13,8 +13,10 @@ relations:
   `python3 09-tools/figma-bind-probe.py --emit-template` prints the MCP calls;
   `--capture <scratchpad>/cap.json` refuses `Color/*` primitives, raw values (zeros are not
   exempt), and rects-instead-of-instances, and warns on density-unaware control tokens.
-  **Exit 2 = nothing verified = NOT a pass.** Captures are employer content — scratchpad only,
-  never committed. Same shape applies to any MCP-gated check.
+  **Exit 2 = nothing verified = NOT a pass.** Captures go to the scratchpad because they are
+  transient and file-specific, NOT because of wall 3 (that wall is one-directional: nothing
+  personal into employer repos; employer design data lives here by design). Same split shape
+  applies to any MCP-gated check.
 - **As of:** 2026-09 · **Status:** current
 
 ## Context — what forced a choice
@@ -39,6 +41,13 @@ instead); committing a real capture as a fixture (employer content in a personal
 ## Consequences — what this commits us to
 New MCP-gated checks follow this shape rather than becoming prose. The `figma` hub's step 7
 names the probe, and `test_figma_splits_capture_from_assess` asserts BOTH halves so neither
-regresses. Still open and deliberately recorded as such: the probe has never been fed real
-MCP output — the capture contract comes from documented tool shapes, not observed ones, and
-one live node URL closes that.
+regresses.
+
+**Validated against live MCP output on the first run, which corrected the contract twice.**
+`get_metadata` carries no paint data and types are element tags, so R3 must judge a raw shape
+by tree position (top-level = chrome; inside an instance = that component's internals).
+`get_variable_defs` returns a MIXED map — token paths, `var(--x)` refs, and bare property
+names that are the resolved literals of UNBOUND properties. That third kind is the R2 signal
+and it is visible nowhere else; without the fix the probe would have returned a false pass on
+a component carrying eight unbound properties. Lesson that generalises: a detector built only
+against fixtures of your own design tests your imagination, not the tool.
