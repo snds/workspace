@@ -12,6 +12,8 @@ description: >
   `centric-ui-workflow` (which has the team-specific rules) — this skill
   provides the educational safety layer underneath those rules.
 aliases: [github-guardrails]
+triggers: [github guardrails, git guardrails, force push, git rebase, open a pull request,
+  request review, tag a release, merge conflict, how does github work]
 spec_version: "2.0"
 tier: cross-cutting
 domain: engineering

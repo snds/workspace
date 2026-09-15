@@ -303,6 +303,34 @@ keys). Does not echo values. Skip `_archive`, lockfiles, `node_modules`, `*.exam
 python3 09-tools/check-secrets.py
 ```
 
+## workspace-harness.py
+
+The reusable test harness: **quality · connections · tokens** in one report card.
+Stdlib-only, read-only, deterministic — no clock dependence, no LLM judgment in the
+pass/fail path.
+
+- **quality** runs the documented enforcement chain as subprocesses (`--check` modes,
+  so the tree is never mutated) and aggregates exit codes. Reimplements nothing.
+- **connections** is what nothing else checks: do Layer-0 route paths resolve, can an
+  agent actually **reach** every skill (own triggers / an ancestor in some chain / a
+  named route — `related` does not count, it never auto-loads) and every knowledge
+  entry (hint / `_INDEX` `Triggers:` / `trigger_words`), do hub chains ascend in order,
+  do `_INDEX` wikilinks resolve the way `prompt_route.py` resolves them, do the CLIs
+  the contract names exist. Skills reachable only through their hub's prose are counted
+  and reported, not failed.
+- **tokens** prices the traversal: contract floor → session floor → load-set p50/p95/max
+  → worst-case legal request → the banned-ingest number routing exists to avoid.
+  `BUDGETS` are a regression gate; raising one is a deliberate, reviewable diff.
+
+`--self-test` proves each check can fail — a detector that only ever passes is decor.
+
+```
+python3 09-tools/workspace-harness.py              # all three lanes
+python3 09-tools/workspace-harness.py --connections --tokens
+python3 09-tools/workspace-harness.py --json --stamp
+python3 09-tools/workspace-harness.py --self-test
+```
+
 ## eslint-off-system/
 
 Reusable ESLint rules that ban raw color literals and Tailwind arbitrary

@@ -11,6 +11,7 @@ Usage:
 
 from __future__ import annotations
 
+import datetime as dt
 import importlib.util
 import json
 import sys
@@ -453,18 +454,22 @@ class TestSessionStatus(unittest.TestCase):
             self.assertEqual(ss.count_pending(path), 2)
 
     def test_stamp_age_parses_heading_and_yaml(self):
+        # Dates are computed relative to today, never hardcoded: a fixture stamped
+        # with the authoring date turns green-on-write into a fail-forever clock bomb
+        # (observed 2026-09-15, this very test). Assert the parser, not the calendar.
         ss = load("session-status")
+        today = dt.date.today()
         with tempfile.TemporaryDirectory() as td:
             heading = Path(td) / "audit.md"
-            heading.write_text("## 2026-09-02 — Personal MacBook Pro\n", encoding="utf-8")
+            heading.write_text(
+                f"## {today - dt.timedelta(days=13)} — Personal MacBook Pro\n", encoding="utf-8"
+            )
             yaml = Path(td) / "stamp"
-            yaml.write_text("date: 2026-09-11\nreport: x.md\n", encoding="utf-8")
-            age = ss._stamp_age_days(heading)
-            self.assertIsNotNone(age)
-            self.assertGreaterEqual(age, 0)
-            yaml_age = ss._stamp_age_days(yaml)
-            self.assertIsNotNone(yaml_age)
-            self.assertLessEqual(yaml_age, 1)
+            yaml.write_text(
+                f"date: {today - dt.timedelta(days=3)}\nreport: x.md\n", encoding="utf-8"
+            )
+            self.assertEqual(ss._stamp_age_days(heading), 13)
+            self.assertEqual(ss._stamp_age_days(yaml), 3)
 
 
 if __name__ == "__main__":

@@ -3281,14 +3281,24 @@
       "related": [],
       "governed_by": [],
       "governs": [],
-      "triggers": [],
+      "triggers": [
+        "github guardrails",
+        "git guardrails",
+        "force push",
+        "git rebase",
+        "open a pull request",
+        "request review",
+        "tag a release",
+        "merge conflict",
+        "how does github work"
+      ],
       "surfaces": [
         "*"
       ],
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:e11db44170a1165761e43f263ca98f35962a38bf84bf818fac69693d6d4383e0"
+      "hash": "sha256:88fad9646be05663c84684b0923709e28fed88839d147f261c390692a644efb4"
     },
     "glsl-shader-architect": {
       "path": "03-skills/glsl-shader-architect/SKILL.md",
@@ -6512,8 +6522,8 @@
       ],
       "requires": [],
       "defers_to": [],
-      "rigor_role": null,
-      "hash": "sha256:84999dd1c01a61a00f93621fff426d064f81cb52d97704be8f69a3205de69bb1"
+      "rigor_role": "command-hub",
+      "hash": "sha256:0a286e8704c973783023b5317bda7f03197a877f2c59259399e218f146803f63"
     },
     "shadow-quality-craft": {
       "path": "03-skills/shadow-quality-craft/SKILL.md",

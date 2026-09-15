@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-14 — canvas harvest dual-home + employer dest_
+_Last updated: 2026-09-15 — workspace harness: reachability + traversal cost are detectors_
 
 ---
 
@@ -8,11 +8,11 @@ _Last updated: 2026-09-14 — canvas harvest dual-home + employer dest_
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: Cursor canvas harvest is dual-home (vault + this window's live `canvases/`). Employer canvases copy into that repo's `canvases/`. First-wave leftovers remain: A8 Figma bind probe, A4 nightly.sh without cron, A5 ruff, A9 analysis lint.
-- **Working set**: `09-tools/cursor-externalize.py`, `03-skills/artifact-ingest/SKILL.md`, `06-context/memory/decision-vendor-surface-artifacts.md`.
-- **Last action (2026-09-14):** Live-mirrored vault canvases into `Users-sean-sands-Projects-workspace/canvases/`; routed company canvases into `cpes-software/cds/canvases/` and `saas-plm-prototype/canvases/`; moved flavours/guided-setup off the mixed `~/Projects` slug. Cursor Grok 4.6 · Cursor · Work MBP.
+- **Current focus**: `09-tools/workspace-harness.py` is live — quality · connections · tokens, wired into CI, the AGENTS enforcement chain, and `close-out-dispatch.py` (`self-improve` row). First-wave leftovers unchanged: A8 Figma bind probe, A4 nightly.sh without cron, A5 ruff, A9 analysis lint.
+- **Working set**: `09-tools/workspace-harness.py`, `09-tools/vault-health.py`, `.github/workflows/workspace-integrity.yml`, `09-tools/close-out-dispatch.py`, `08-knowledge/_INDEX.md`.
+- **Last action (2026-09-15):** Adversarial pass over the first-wave automation found `main` CI-red twice (unindexed `plain-language.md`; a clock-bomb fixture in `test-validators.py`) plus 14 more reachability/connection defects — all 16 fixed, all three harness lanes green. Claude Opus 5 · Claude Code · Work MBP.
 - **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
-- **Next action:** Employer PRs for untracked `canvases/` in cds + proto (centric-engineering — no auto-commit). Then A8 on the next Figma produce that cannot refuse `Color/*`. Rec 13 Windows `beforeSubmitPrompt` still pending. Human merge cds #35 onto `main`.
+- **Next action:** Phase 5 — per-surface routing trajectory fixtures (prove a model *traverses* the graph, not just that it is traversable). Then A8 on the next Figma produce that cannot refuse `Color/*`. Employer PRs for untracked `canvases/` in cds + proto (centric-engineering — no auto-commit). Human merge cds #35 onto `main`.
 - **Open decisions:** Rec 13 Windows hook. Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot).
 - **Blocked on:** cds #35 human merge (do not merge it from an agent). Employer `canvases/` exist on disk but are untracked pending PRs.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until cds `main` exports `./sonner`. Do not auto-commit employer repos.

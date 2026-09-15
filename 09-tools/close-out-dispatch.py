@@ -72,6 +72,13 @@ HUB_DETECTORS: dict[str, tuple[Step, ...]] = {
         _cli("validate-integrity.py"),
         _cli("evaluate-skill-routing.py", "--check"),
     ),
+    # Editing the vault itself. validate-integrity alone cannot see a skill that became
+    # unreachable or a traversal that got more expensive, so the harness is the detector.
+    "self-improve": (
+        _cli("workspace-harness.py", "--self-test"),
+        _cli("workspace-harness.py", "--connections", "--tokens"),
+        _cli("vault-health.py"),
+    ),
     "ds": (
         _cli("validate-integrity.py"),
         _skip(
@@ -169,7 +176,7 @@ def hubs_for_prompt(prompt: str, data: dict) -> list[str]:
     if not names:
         lowered = (prompt or "").lower()
         if any(w in lowered for w in ("workspace", "vault", "agents.md", "skill-loadset")):
-            names.append("qa")
+            names.append("self-improve")
     return names
 
 

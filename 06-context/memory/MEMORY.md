@@ -41,5 +41,6 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[decision-commercial-data-licensing]] — `decision` · default to commercially-licensable data/asset sources for all projects; non-commercial sources (e.g. Gaia DR3) only when uniquely needed — isolate, mark, reconcile later.
 - [[decision-defer-dense-vault-retrieval]] — `decision` · defer embedding/dense Layer-2 vault retrieval until `vault-retrieve.py --eval` shows paraphrase gaps lexical cannot fix (13/13 green 2026-08-05).
 - [[decision-intent-coordination-standard]] — `decision` · multi-agent work uses a living spec + `intent-run.py`; Intent.app is optional GUI.
+- [[decision-reachability-is-a-detector]] — `decision` · validators prove files are well-formed; `workspace-harness.py` proves an agent can reach them and prices the traversal — reachability + token budget are CI detectors now.
 - [[decision-vgpu-default-web-3d]] — `decision` · new web 3D/shader/GPU work defaults to vgpu (vgpu.sh); existing Three trees stay on the adapter; DCC unchanged.
 - [[relational-context]] — `feedback` · the working-relationship texture, in the agent's voice, carried across sessions (lives at `../relational-context.md`).

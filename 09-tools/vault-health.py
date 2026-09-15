@@ -39,6 +39,16 @@ STALE_MONTHS = 12
 EXEMPT = {"MEMORY.md", "_template.md", "_INDEX.md", "_README.md", "CRITICAL_FACTS.md"}
 
 
+def link_name(p):
+    """The name a [[wikilink]] addresses this file by.
+
+    Every skill is `03-skills/<name>/SKILL.md`, so its stem is the useless "skill";
+    the DIR carries the identity. Same rule validate-integrity.py uses — keep the two
+    resolvers agreed or note->skill edges read as dangling (observed 2026-09-15).
+    """
+    return (p.parent.name if p.name == "SKILL.md" else p.stem).lower()
+
+
 def md_files(rel_roots):
     for r in rel_roots:
         p = ROOT / r
@@ -71,7 +81,7 @@ def main():
     all_notes = list(md_files(LINK_SOURCES))
     by_name = {}
     for p in all_notes:
-        by_name.setdefault(p.stem.lower(), []).append(p)
+        by_name.setdefault(link_name(p), []).append(p)
 
     # inbound wikilink counts across the whole vault
     inbound = {p.resolve(): 0 for p in all_notes}
@@ -81,7 +91,7 @@ def main():
         except OSError:
             continue
         seen = set()
-        # wikilinks resolve by basename (Obsidian shortest-path)
+        # wikilinks resolve by basename (Obsidian shortest-path), skills by dir name
         for name in (t.split("/")[-1].lower() for t in WIKILINK.findall(text)):
             for tgt in by_name.get(name, []):
                 if tgt.resolve() != p.resolve():

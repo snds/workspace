@@ -12,6 +12,7 @@ description: >
 aliases: [self-improve]
 triggers: [self-improve, self-improving, self-heal, self-healing, self-correcting, connective tissue, transferable process, corollary access]
 tier: cross-cutting
+rigor_role: command-hub
 domain: workspace
 related: [close-out, plan-ahead, mission-fit, harness-map, failure-mode-premortem]
 surfaces: ["*"]

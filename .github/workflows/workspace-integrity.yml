@@ -4,6 +4,9 @@ name: workspace-integrity
 #  - validate-workspace.py: archive provenance + memory-index coverage
 #  - validate-integrity.py: name==dir, cross-link continuity (no dangling wikilinks),
 #    no superseded-but-live files, no unfilled scaffold/stub tokens, quality smells
+#  - vault-health.py: dangling typed edges, orphan notes, stale claims
+#  - workspace-harness.py: can an agent REACH each skill/entry, and what does the
+#    worst-case traversal cost (budget ceilings are a regression gate)
 # See 01-frameworks/08-workspace-contribution-framework.md → "Write-quality gates".
 
 on:
@@ -23,6 +26,8 @@ on:
       - "09-tools/validate-layer0-schema.py"
       - "09-tools/session-status.py"
       - "09-tools/prompt_route.py"
+      - "09-tools/vault-health.py"
+      - "09-tools/workspace-harness.py"
       - "02-shared-references/skill-routing-cases.jsonl"
       - "02-shared-references/trigger-routes.json"
       - "02-shared-references/knowledge-hints.json"
@@ -43,6 +48,8 @@ on:
       - "09-tools/validate-layer0-schema.py"
       - "09-tools/session-status.py"
       - "09-tools/prompt_route.py"
+      - "09-tools/vault-health.py"
+      - "09-tools/workspace-harness.py"
       - "02-shared-references/skill-routing-cases.jsonl"
       - "02-shared-references/trigger-routes.json"
       - "02-shared-references/knowledge-hints.json"
@@ -73,5 +80,11 @@ jobs:
         run: python3 09-tools/session-status.py --check
       - name: Secret shape scan
         run: python3 09-tools/check-secrets.py
+      - name: Epistemic graph hygiene (dangling typed edges, orphans, stale claims)
+        run: python3 09-tools/vault-health.py
+      - name: Harness self-test (the detectors must be able to fail)
+        run: python3 09-tools/workspace-harness.py --self-test
+      - name: Reachability, connection solidity, traversal token budget
+        run: python3 09-tools/workspace-harness.py --connections --tokens
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py

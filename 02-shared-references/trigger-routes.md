@@ -150,10 +150,10 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `color blind` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `color-blind` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `cvd` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
-| `diagram` | 02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first |
-| `flowchart` | 02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first |
-| `how does it work` | 02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first |
-| `show me the steps` | 02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first |
+| `diagram` | 02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (02-shared-references/delivery-playbooks/00-context-profile… |
+| `flowchart` | 02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (02-shared-references/delivery-playbooks/00-context-profile… |
+| `how does it work` | 02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (02-shared-references/delivery-playbooks/00-context-profile… |
+| `show me the steps` | 02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (02-shared-references/delivery-playbooks/00-context-profile… |
 | `user journey` | 02-shared-references/delivery-playbooks/06-research-and-design-artifacts.md — SELECT the right research/design artifact (JTBD/persona/journey map/service blueprint/user story/us… |
 | `journey map` | 02-shared-references/delivery-playbooks/06-research-and-design-artifacts.md — SELECT the right research/design artifact (JTBD/persona/journey map/service blueprint/user story/us… |
 | `customer journey` | 02-shared-references/delivery-playbooks/06-research-and-design-artifacts.md — SELECT the right research/design artifact (JTBD/persona/journey map/service blueprint/user story/us… |
@@ -288,6 +288,14 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `context-based design system` | 03-skills/ai-design-systems/SKILL.md — designer-owned first draft against the published library; playgrounds import the package |
 | `agents as users` | 03-skills/ai-design-systems/SKILL.md — dual publish HTML canon + markdown twin; illegible to machines = invisible to people using agents |
 | `three-legged stool` | 01-frameworks/18-design-systems-ai-operating-model.md — design lib + code lib + docs + people/process; do not collapse the system to the MCP you have open |
+| `switch models` | 02-shared-references/model-routing.md — canonical model-per-surface map; pick from the surface's own roster first |
+| `workspace harness` | 09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff |
+| `traversal cost` | 09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff |
+| `token cost` | 09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff |
+| `token budget` | 09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff |
+| `is the workspace healthy` | 09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff |
+| `reachability` | 09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff |
+| `unreachable skill` | 09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff |
 
 ## Registry skills with triggers
 
@@ -371,6 +379,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `close-out` | cross-cutting | `close-out`, `self-police`, `prove-gate`, `human visual qa`, `named detector`, `llm qa` (+1) | `close-out` |
 | `designparser` | cross-cutting | `designparser`, `designparser rules`, `what rules apply`, `suggest_rules_for_context`, `evaluate_design` | `design-foundations` → `designparser` |
 | `failure-mode-premortem` | cross-cutting | `pre-mortem`, `premortem`, `failure mode`, `what could go wrong`, `before we build`, `red team` (+11) | `failure-mode-premortem` |
+| `github-guardrails` | cross-cutting | `github guardrails`, `git guardrails`, `force push`, `git rebase`, `open a pull request`, `request review` (+3) | `github-guardrails` |
 | `harness-map` | cross-cutting | `harness map`, `map the harness`, `clean my harness`, `clean my ai harness`, `ai harness audit`, `what's shaping the agent` (+2) | `harness-map` |
 | `intent-coordination` | cross-cutting | `living spec`, `intent coordination`, `intentapp`, `intentapp.dev`, `coordinate agents`, `agent orchestration` (+3) | `intent-coordination` |
 | `interactive-capture-eval` | cross-cutting | `interactive capture`, `flythrough capture`, `record path`, `extract frames`, `ffmpeg frames`, `motion qa` (+6) | `interactive-capture-eval` |
@@ -396,4 +405,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 273 · Registry rows: 100_
+_Curated routes: 281 · Registry rows: 101_

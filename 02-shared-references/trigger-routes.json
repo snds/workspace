@@ -143,10 +143,10 @@
     "color blind": "$FOUNDATION_ROUTE",
     "color-blind": "$FOUNDATION_ROUTE",
     "cvd": "$FOUNDATION_ROUTE",
-    "diagram": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
-    "flowchart": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
-    "how does it work": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
-    "show me the steps": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (00-context-profiles.md) first",
+    "diagram": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (02-shared-references/delivery-playbooks/00-context-profiles.md) first",
+    "flowchart": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (02-shared-references/delivery-playbooks/00-context-profiles.md) first",
+    "how does it work": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (02-shared-references/delivery-playbooks/00-context-profiles.md) first",
+    "show me the steps": "02-shared-references/delivery-playbooks/02-diagrams-and-flows.md — medium is the requirement; resolve context profile (02-shared-references/delivery-playbooks/00-context-profiles.md) first",
     "user journey": "$ARTIFACT_ROUTE",
     "journey map": "$ARTIFACT_ROUTE",
     "customer journey": "$ARTIFACT_ROUTE",
@@ -280,6 +280,14 @@
     "gen ui": "03-skills/ai-design-systems/SKILL.md — JSON + blessed catalog + recipes + confidence; do not emit new React as the default",
     "context-based design system": "03-skills/ai-design-systems/SKILL.md — designer-owned first draft against the published library; playgrounds import the package",
     "agents as users": "03-skills/ai-design-systems/SKILL.md — dual publish HTML canon + markdown twin; illegible to machines = invisible to people using agents",
-    "three-legged stool": "01-frameworks/18-design-systems-ai-operating-model.md — design lib + code lib + docs + people/process; do not collapse the system to the MCP you have open"
+    "three-legged stool": "01-frameworks/18-design-systems-ai-operating-model.md — design lib + code lib + docs + people/process; do not collapse the system to the MCP you have open",
+    "switch models": "02-shared-references/model-routing.md — canonical model-per-surface map; pick from the surface's own roster first",
+    "workspace harness": "09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff",
+    "traversal cost": "09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff",
+    "token cost": "09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff",
+    "token budget": "09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff",
+    "is the workspace healthy": "09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff",
+    "reachability": "09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff",
+    "unreachable skill": "09-tools/workspace-harness.py — run it (quality · connections · tokens); `--self-test` first, budgets in BUDGETS are raised only by a deliberate diff"
   }
 }

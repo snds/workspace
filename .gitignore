@@ -118,6 +118,7 @@
 !09-tools/validate-layer0-schema.py
 !09-tools/session-status.py
 !09-tools/generate-display-svg.py
+!09-tools/workspace-harness.py
 !09-tools/eslint-off-system/
 !09-tools/eslint-off-system/**
 !09-tools/fixtures/
