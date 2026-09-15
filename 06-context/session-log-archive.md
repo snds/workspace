@@ -4,6 +4,76 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-09-02 — Open Engine enroll, visual-qa prove, branch prune
+
+SessionID: 2026-09-02-voyager-oe9k2
+--- SESSION BLOCK ---
+Date: 2026-09-02
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain
+Summary: Enrolled Open Engine personal lane on this Cursor (`linear-personal` → `hello@snds.design` / `linear.app/snds`). Loaded imaging+game then visual-qa packs; ran prove path (no Legion feature work). `vqa calibrate` 48/48 after fixing relative `--output` double-join (`7a40df5`). LCARS S-SYS47-01 v4 re-prove 16/16 measured, 4 named uncued residuals. Pruned merged leftover branches on personal `snds/*` clones.
+Artifacts:
+  - 05-artifacts/active/vqa-calibrate_v1.0_2026-09-02.md — planted-defect calibrate 48/48 (gitignored local)
+  - 06-context/open-engine/personal.md — Stage 2 2026-09-02 + status operational
+Decisions:
+  - Domain pack is job-context constitution load, not a replay of git housekeeping
+  - Visual-qa prove this session, not Legion Continuum
+  - Relative `--output` on `vqa calibrate` must resolve; interact must not re-prefix existing paths
+  - Prune only ancestry-merged (or squash leftover of a merged PR) personal branches; keep unique unmerged work
+Evidence:
+  - Open Engine personal lane @ Cursor `linear-personal` / linear.app/snds Stage 2 — verified
+  - vqa calibrate 48/48 @ vqa/1.1 after relative-output fix — verified
+  - LCARS S-SYS47-01 v4 `vqa prove` 16/16 measured, capture verified — verified
+  - Patch `7a40df5` @ github.com/snds/workspace main — verified
+  - Branch prune @ snds/workspace, davinci, legion, LCARS — verified
+  - Ledger heartbeat `sean-cursor` @ personal:SEA-6 comment `1d0d5fc1` — verified
+Pending resolved:
+  - Open Engine personal lane not-registered on Voyager-2.local Cursor (doctor now `ok`)
+Project status changes:
+  - 19-workspace-brain: Open Engine personal lane operational on this machine; visual-qa pack exercised
+Next:
+  - Pick new work. Do not start Legion Continuum in a housekeeping thread.
+  - Optional leftovers (not filed): Davinci `feat/three-way-contract` post-merge beacon commit; Davinci `chore/sync-design-system-*`; Legion `feat/scale-unification` (closed PR #149)
+  - Engine: no new Agent Todo (existing ^pc-NN queue stands). First Cursor ledger comment is `sean-cursor` on personal:SEA-6.
+--- END BLOCK ---
+
+
+### 2026-09-02 — Legion Continuum commit, PR #17 merge, copilot integrity skip
+
+SessionID: 2026-09-02-voyager-k8m2n
+--- SESSION BLOCK ---
+Date: 2026-09-02
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 13-legion (Legion repo), 19-workspace-brain
+Summary: Committed remaining Legion Continuum WIP (unified accept harness, per-archetype lab store, rocky QA). Resolved workspace PR #17 conflicts (mode-first §8e + QA adversarial default as #7); GitHub merged it. Skipped vendored `copilot/` example wikilinks in integrity so vault notes stay gated.
+Artifacts:
+  - Legion `064e363` — feat(planet): unified accept harness, per-archetype lab store, rocky Continuum QA
+  - Legion `4bee94c` — docs/canvases Continuum + fly-to-surface (prior in this thread)
+  - Workspace PR #17 merged `9221e54` — §8e + QA #6 system-context + #7 adversarial
+  - Workspace `b62058d` — validate-integrity skips `copilot/` only
+Decisions:
+  - Legion capture dumps (`refs/`, `.tmp-*`) stay local; gitignored
+  - Integrity skip is `copilot/` only — not `.claude/skills/` wrappers, not `03-skills/` / `08-knowledge/`
+  - PR #17 took current `project-context` / `session-log` from main (June pending list would have overwritten `^pc-NN`)
+  - `compact-sessions.py` now strips leftover archive-pointer blockquotes so they do not stack
+Evidence:
+  - Legion Continuum WIP @ github.com/snds/legion `064e363` on main — verified
+  - Workspace PR #17 @ github.com/snds/workspace `9221e54` — verified
+  - Integrity skip @ github.com/snds/workspace `b62058d` on main — verified
+Pending added: none
+Pending resolved: none
+Next:
+  - Register Open Engine personal lane on Voyager-2.local (`python3 00-bootstrap/doctor/linear-lanes.py`)
+  - Refresh Obsidian graph (orphans off)
+  - Domain pack on real work, or `python3 09-tools/ds-source-watch.py --fetch`, or `vqa prove`
+--- END BLOCK ---
+
+
+
 ### 2026-09-02 — Domain constitutions, graph crosslinking, Cursor canvas externalize
 
 SessionID: 2026-09-02-voyager-g4x9k2
