@@ -91,7 +91,7 @@ Standing law and folder semantics live in **[AGENTS.md](AGENTS.md)** — do not 
 
 - **Figma write gate:** first `use_figma` per session → PreToolUse design-judgment inject, then retry.
 - **Machine labels** (session blocks): `Voyager-2.local`→Personal MBP · `seansands.local` /
-  `CS-KQ23N94M0W` / `CS-K746DRWXY1`→Work MBP · `Enterprise`→Windows.
+  `CS-KQ23N94M0W` / `CS-K746DRWXY1`→Work MBP. (Fleet is macOS-only; Windows retired 2026-09-15.)
 
 ## Paths + lifecycle (Claude execution)
 

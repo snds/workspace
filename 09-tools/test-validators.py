@@ -14,12 +14,14 @@ from __future__ import annotations
 import datetime as dt
 import importlib.util
 import json
+import os
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 TOOLS = Path(__file__).resolve().parent
+ROOT_DIR = TOOLS.parent
 
 
 def load(name: str):
@@ -447,6 +449,83 @@ class TestLayer0Schema(unittest.TestCase):
             kh.write_text('{"spec_version":"1.0","hints":{"a":"b"}}\n', encoding="utf-8")
             errors = vl.check_files(tr, kh, bad)
             self.assertTrue(errors, errors)
+
+
+class TestScopedCommit(unittest.TestCase):
+    """The scoped-commit path must see Bash writes and must not take another session's."""
+
+    def _dispatcher(self):
+        # The dispatcher sys.exit(0)s at import without CLAUDE_PROJECT_DIR — that guard
+        # is deliberate (a stray copy must not treat an arbitrary cwd as the workspace),
+        # so satisfy it rather than working around it.
+        path = ROOT_DIR / ".claude" / "hooks" / "dispatcher.py"
+        if not path.is_file():
+            self.skipTest("dispatcher not present")
+        spec = importlib.util.spec_from_file_location("ws_dispatcher", path)
+        if spec is None or spec.loader is None:
+            self.skipTest("dispatcher not importable")
+        mod = importlib.util.module_from_spec(spec)
+        prior = os.environ.get("CLAUDE_PROJECT_DIR")
+        os.environ["CLAUDE_PROJECT_DIR"] = str(ROOT_DIR)
+        try:
+            spec.loader.exec_module(mod)
+        except SystemExit:  # pragma: no cover - guard tripped anyway
+            self.skipTest("dispatcher aborted at import")
+        finally:
+            if prior is None:
+                os.environ.pop("CLAUDE_PROJECT_DIR", None)
+            else:
+                os.environ["CLAUDE_PROJECT_DIR"] = prior
+        return mod
+
+    def test_other_session_claims_are_excluded(self):
+        d = self._dispatcher()
+        with tempfile.TemporaryDirectory() as td:
+            sessions = Path(td)
+            original = d.SESSIONS_DIR
+            d.SESSIONS_DIR = sessions
+            try:
+                (sessions / "mine.touched").write_text("a.md\nshared.md\n", encoding="utf-8")
+                (sessions / "theirs.touched").write_text("shared.md\nb.md\n", encoding="utf-8")
+                claims = d._other_session_claims("mine")
+                self.assertEqual(claims, {"shared.md", "b.md"})
+                self.assertNotIn("a.md", claims)
+                # and a session does not claim against itself
+                self.assertEqual(d._other_session_claims("theirs"), {"a.md", "shared.md"})
+            finally:
+                d.SESSIONS_DIR = original
+
+    def test_bash_writes_are_recorded_by_snapshot_diff(self):
+        d = self._dispatcher()
+        with tempfile.TemporaryDirectory() as td:
+            sessions = Path(td)
+            original_dir, original_dirty = d.SESSIONS_DIR, d._dirty_paths
+            d.SESSIONS_DIR = sessions
+            try:
+                # Turn 1: two paths dirty. Neither came through an Edit/Write tool.
+                d._dirty_paths = lambda: {"09-tools/x.py", "notes/y.md"}
+                d._record_bash_writes("s1")
+                touched = (sessions / "s1.touched").read_text(encoding="utf-8").split()
+                self.assertIn("09-tools/x.py", touched)
+                self.assertIn("notes/y.md", touched)
+                # Turn 2: one new path. Only the new one is appended, no duplicates.
+                d._dirty_paths = lambda: {"09-tools/x.py", "notes/y.md", "notes/z.md"}
+                d._record_bash_writes("s1")
+                touched = (sessions / "s1.touched").read_text(encoding="utf-8").split()
+                self.assertIn("notes/z.md", touched)
+                self.assertEqual(len(touched), len(set(touched)), "no duplicate entries")
+                self.assertEqual(touched.count("09-tools/x.py"), 1)
+            finally:
+                d.SESSIONS_DIR, d._dirty_paths = original_dir, original_dirty
+
+    def test_dirty_paths_parses_rename_and_untracked(self):
+        d = self._dispatcher()
+        original = d.git
+        try:
+            d.git = lambda *a, **k: type("R", (), {"stdout": ' M a.md\n?? b.md\nR  old.md -> new.md\n'})()
+            self.assertEqual(d._dirty_paths(), {"a.md", "b.md", "new.md"})
+        finally:
+            d.git = original
 
 
 class TestSessionStatus(unittest.TestCase):

@@ -32,11 +32,17 @@ compaction**. Writers never touch the same bytes; a pure function rebuilds the v
 3. **Scoped commit.** A PostToolUse hook records this session's edited paths; session-end
    stages only those (+ reconciled log) — so a concurrent session's in-flight WIP is never
    swept into the wrong commit. Falls back to `git add -A` when untracked.
-   **Two coverage limits, measured 2026-09-15 — do not assume this protects you.** It records
-   only `Edit|Write|MultiEdit|NotebookEdit` paths, so anything written through **Bash**
-   (heredoc, `sed`, a `python3 -` script) is invisible: in a Bash-heavy session the touch file
-   held **8** paths against **67** the commits actually changed. And it runs at **session-end
-   only** — a manual `git commit` mid-session bypasses it entirely.
+   **Two coverage limits found 2026-09-15; both addressed the same day.** It recorded only
+   `Edit|Write|MultiEdit|NotebookEdit` paths, so anything written through **Bash** (heredoc,
+   `sed`, `python3 -`) was invisible — in a Bash-heavy session the touch file held **8** paths
+   against **67** the commits actually changed, which is what dropped session-end into the
+   blanket `git add -A` fallback. Now `handle_stop` snapshots `git status --porcelain` once
+   per turn and appends newly-dirty paths, so Bash writes are attributed too. And
+   `_stage_session_scope` subtracts `_other_session_claims()` — the union of every *other*
+   live session's touch file — so a path another session has declared is never staged here
+   even if it went dirty on our watch.
+   **Still true, and the reason the rule below still matters:** this protects the *session-end*
+   commit only. A manual `git commit` mid-session bypasses all of it.
 4. **Safe push-retry.** On non-fast-forward: `git pull --rebase` (autostash pinned **OFF**
    → refuses over a dirty tree, never stashes/strands work), union auto-resolves logs, then
    retry. A structured-file conflict aborts + defers to `/reconcile`. Non-lossy, idempotent.

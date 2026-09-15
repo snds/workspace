@@ -1456,11 +1456,67 @@ def handle_post_tool(payload: dict) -> None:
         pass  # tracking is best-effort; never disrupt a tool call
 
 
+def _dirty_paths() -> set[str]:
+    """Every path git currently reports as changed or untracked."""
+    r = git("status", "--porcelain", check=False)
+    out: set[str] = set()
+    for line in (r.stdout or "").splitlines():
+        if len(line) < 4:
+            continue
+        path = line[3:]
+        if " -> " in path:               # rename: credit the destination
+            path = path.split(" -> ", 1)[1]
+        out.add(path.strip().strip('"'))
+    return out
+
+
+def _session_snapshot_file(session_id: str):
+    return SESSIONS_DIR / f"{session_id}.dirty"
+
+
+def _record_bash_writes(session_id: str) -> None:
+    """Attribute paths that went dirty during this turn to this session.
+
+    PostToolUse only sees Edit/Write tool inputs, so anything written through Bash —
+    a heredoc, `sed`, `python3 -` — was invisible to the touch-list. Measured
+    2026-09-15: 8 recorded paths against 67 the session actually changed, which meant
+    session-end fell through to a blanket `git add -A` and swept a concurrent session's
+    work into the wrong commit.
+
+    Snapshot-and-diff once per turn (here) rather than once per Bash call: same
+    attribution, a fraction of the cost on a hot path.
+
+    Residual race, stated rather than hidden: a file another session dirties *between
+    my turns* is credited to me. That is strictly narrower than `git add -A`, and
+    `_other_session_claims()` subtracts it back out whenever that session has declared
+    the path itself.
+    """
+    if not session_id:
+        return
+    snap = _session_snapshot_file(session_id)
+    try:
+        previous = set(snap.read_text(encoding="utf-8").splitlines()) if snap.exists() else set()
+        current = _dirty_paths()
+        new_paths = current - previous
+        if new_paths:
+            tf = _session_touch_file(session_id)
+            known = set(tf.read_text(encoding="utf-8").splitlines()) if tf.exists() else set()
+            add = sorted(p for p in new_paths if p and p not in known)
+            if add:
+                SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+                with tf.open("a", encoding="utf-8") as f:
+                    f.write("\n".join(add) + "\n")
+        snap.write_text("\n".join(sorted(current)) + "\n", encoding="utf-8")
+    except OSError:
+        pass  # best-effort; never disrupt the turn
+
+
 def handle_stop(payload: dict) -> None:
     # Light-touch. No-op unless session-log.md was modified in the last turn —
     # then stage it so the session-end commit captures it cleanly.
     if not in_git_repo():
         return
+    _record_bash_writes(payload.get("session_id") or "")
     r = git("diff", "--name-only", "--", "06-context/session-log.md")
     if r.stdout.strip():
         git("add", "06-context/session-log.md")
@@ -1470,6 +1526,20 @@ def handle_stop(payload: dict) -> None:
 # log, fragment add/removal, and a possibly-regenerated registry).
 _SCOPE_ALWAYS = ["06-context/session-log.md", "06-context/sessions",
                  "03-skills/skills.registry.json"]
+
+
+def _other_session_claims(session_id: str) -> set[str]:
+    """Paths declared by every OTHER session's touch file — never ours to commit."""
+    claims: set[str] = set()
+    try:
+        for tf in SESSIONS_DIR.glob("*.touched"):
+            if tf.stem == session_id:
+                continue
+            claims.update(ln.strip() for ln in tf.read_text(encoding="utf-8").splitlines()
+                          if ln.strip())
+    except OSError:
+        pass
+    return claims
 
 
 def _stage_session_scope(payload: dict) -> str:
@@ -1486,9 +1556,15 @@ def _stage_session_scope(payload: dict) -> str:
     if not touched:
         git("add", "-A")
         return "all"
+    # Subtract what OTHER live sessions have claimed. Each session declares its own
+    # paths in its own touch file, so a path another session is mid-edit on is theirs
+    # even if it went dirty on our watch — this is what the snapshot race above cannot
+    # resolve on its own, and it is the concrete failure observed 2026-09-15.
+    theirs = _other_session_claims(session_id)
+    mine = [p for p in touched if p not in theirs]
     # Stage add/mod/del for exactly this session's paths + the always-staged set.
     # Per-path + check=False so one stale pathspec never aborts the whole stage.
-    for path in touched + _SCOPE_ALWAYS:
+    for path in mine + _SCOPE_ALWAYS:
         git("add", "-A", "--", path, check=False)
     try:
         tf = _session_touch_file(session_id)
