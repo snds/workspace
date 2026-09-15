@@ -14,6 +14,7 @@ close-out then self-improve so those skills are not hope after a hub body.
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -51,6 +52,9 @@ def resolve_brain_root(project: Path | None = None) -> Path | None:
     candidates: list[Path] = []
     if project is not None:
         candidates.append(project)
+    env_dir = os.environ.get("CLAUDE_PROJECT_DIR")
+    if env_dir:
+        candidates.append(Path(env_dir))
     try:
         pointer = Path.home() / ".claude" / "workspace-brain-path"
         text = pointer.read_text(encoding="utf-8").strip().splitlines()
@@ -63,6 +67,8 @@ def resolve_brain_root(project: Path | None = None) -> Path | None:
         home / "Projects" / "Workspace",
         home / "Projects" / "workspace",
         home / "projects" / "workspace",
+        Path.cwd(),
+        *Path.cwd().parents,
     ]
     seen: set[str] = set()
     for c in candidates:

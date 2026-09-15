@@ -42,7 +42,7 @@ def main() -> int:
     if not isinstance(payload, dict):
         print("{}")
         return 0
-    brain = prompt_route.resolve_brain_root()
+    brain = prompt_route.resolve_brain_root(Path.cwd())
     if brain is None:
         print("{}")
         return 0
