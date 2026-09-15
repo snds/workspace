@@ -47,6 +47,19 @@ _Last updated: 2026-09-15 — A8: Figma construction gate is a detector (live ca
 
 ## Session history (append-only)
 
+### 2026-09-15 — portable session-status card closed; doctor MISSes acked
+
+**Focus this session**: Close the leftover 2026-09-11 Cursor thread; ack bootstrap MISSes.
+**Machine**: Work MacBook Pro (`CS-K746DRWXY1`) · Cursor Grok 4.6 · Cursor
+**Stopped because**: Sean asked to acknowledge the misses and end session.
+
+**Accomplishments**:
+- Portable boot card shipped earlier as `46d207a` (`session-status.py` + Cursor `sessionStart` hook)
+- `workspace-doctor.sh --ack` on this machine; session-status notices = 0
+- Layer 0 `make sure` is not produce
+
+**Next**: New Cursor session on this machine should show 0 MISS notices. Live handoff current focus stays with later 2026-09-15 work (cui #398 / lint:ds).
+
 ### 2026-09-15 — vault CI green after Layer-0 brain-root fix (session-end)
 
 **Focus this session**: Confirm workspace CI; session-end after canonical-docs housekeeping + Actions trajectory self-test fix.

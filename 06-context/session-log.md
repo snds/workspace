@@ -22,6 +22,26 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+### 2026-09-15 — portable session-status card closed; doctor MISSes acked
+
+SessionID: 2026-09-15-work-ssack
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain
+Summary: Closed the leftover 2026-09-11 Cursor thread that shipped `session-status.py` (`46d207a`) so every LLM emits Claude's notices + all projects + pending card. Acknowledged 3 bootstrap MISSes on this Work MBP (`workspace-doctor.sh --ack`); `session-status.py --check` now reports 0 notices. Layer 0 no longer treats "make sure" as produce. Did not rewrite Live handoff — later 2026-09-15 sessions already own lint:ds / brand-soft.
+Decisions:
+  - Session-start card is `09-tools/session-status.py` on every surface; continuations skip it. [[decision-session-status-card]]
+  - Doctor ACK is machine-local (`~/.claude/ws-state/ack-mark`), not a git write.
+Pending added:
+Pending resolved:
+Next:
+  - Next new Cursor session on this machine should show 0 MISS notices on the boot card.
+--- END BLOCK ---
+
 ### 2026-09-15 — Brand-soft tokens: Figma and code share one map
 
 SessionID: 2026-09-15-work-cdsmap
