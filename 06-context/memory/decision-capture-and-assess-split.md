@@ -43,7 +43,7 @@ New MCP-gated checks follow this shape rather than becoming prose. The `figma` h
 names the probe, and `test_figma_splits_capture_from_assess` asserts BOTH halves so neither
 regresses.
 
-**Validated on two live nodes, which corrected the contract three times.**
+**Validated on three live nodes, which corrected the contract three times and then proved its premise.**
 `get_metadata` carries no paint data and types are element tags, so R3 must judge a raw shape
 by tree position (top-level = chrome; inside an instance = that component's internals).
 `get_variable_defs` returns a MIXED map — token paths, `var(--x)` refs, and bare property
@@ -57,3 +57,10 @@ flagged doctrine's `space-0`; "no separator" flagged a real single-word semantic
 `foreground`. Two lessons that generalise: a detector built only against fixtures of your own
 design tests your imagination, not the tool — and when writing a discriminator, enumerate the
 closed set, never the open one.
+
+Fourth, the premise itself is now demonstrated: a 15px focus-ring radius appears in one node
+as the bare property `radiusRing` (no token in its map) and in another as the bound token
+`focus-ring-radius/md` (no bare key). Bare where unbound, token where bound. That is why a
+bare key can be trusted to mean unbound, and it is what settled the raw variable-font weight
+axis as a TRUE positive — two of the three nodes carry `wght` values that no token in their
+own map could be echoing.

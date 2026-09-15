@@ -4,7 +4,7 @@ version: "1.0"
 date: 2026-09-15
 surface: Claude Opus 5 + Claude Code (Mac desktop app)
 sha: 71f8d7a
-status: applied — validated on two live nodes; R2 discriminator rebuilt after a real false positive
+status: applied — validated on three live nodes; R2's premise demonstrated, not assumed
 companion: automation-second-wave_v1.0_2026-09-15.md
 ---
 
@@ -159,11 +159,35 @@ After the rebuild: node 2 reports **1** hit (down from 2), node 1 still reports 
 (unchanged). Precision improved without weakening detection, which is the only version of
 that trade worth taking.
 
-**The one remaining hit, and its uncertainty:** both nodes report a raw variable-font weight
-axis (`wght`), at different values, while named weight tokens exist in the file. Consistent
-across two nodes and most likely genuine. It cannot be fully excluded that Figma reports a
-resolved axis for every text node — but if it did, node 2's value would match its bound
-weight token, and it does not. Stated rather than rounded up.
+**The one remaining hit, settled by a third node.** A raw variable-font weight axis (`wght`)
+appeared on every node while named weight tokens existed in the file. The open question was
+whether Figma merely echoes a resolved axis for bound text — which would make it a false
+positive. It does not, and a natural experiment across the three nodes proves it.
+
+*The direct evidence.* A 15px focus-ring radius appears in node 1 as the **bare property**
+`radiusRing: 15` with no focus-ring token anywhere in its map, and in node 3 as the **token**
+`focus-ring-radius/md: 15` with no bare key. One concept, one value, two nodes — bare where
+unbound, token where bound. If bare keys were echoes of bound properties, node 3 would show
+both. It shows one. **R2's premise is demonstrated rather than assumed.**
+
+*Applied to `wght`:*
+
+| Node | `wght` | weight tokens in that node's map | could it be an echo? |
+|---|---|---|---|
+| 1 | 400 | `font-weight/medium: 500` | **no** — no 400 token to echo |
+| 2 | 461 | `medium: 500`, `semibold: 600` | **no** — no 461 token to echo |
+| 3 | 400 | `medium: 500`, `semibold: 600`, `normal: 400` | coincidence |
+
+Nodes 1 and 2 decide it: `wght` carries values no token in their own map could be echoing, so
+it is an independently-set raw axis. Node 3's agreement with `font-weight/normal` is just 400
+being Regular. The likely cause is worth naming — the `ligature/*` entries show this file uses
+variable **icon** fonts, which carry their own `wght` axis; `var(--icon-size)` is bound and the
+icon weight axis is not, which also explains node 2's otherwise odd `461`.
+
+*Also confirmed on node 3:* the rebuilt property-name discriminator holds — `foreground`
+passes, and the Figma-only construction tokens (`Day/top-left` and siblings, sanctioned by
+doctrine rule 0) pass as tokens. And the probe correctly reported `verified: R1, R2` only,
+because no metadata was supplied: it declined to claim R3 rather than implying a clean tree.
 
 R3 also gained live vocabulary: real trees use `symbol` / `instance` / `slot` / `frame` /
 `text`, and a `slot` inside an instance must not reset instance context or every icon vector
