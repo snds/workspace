@@ -11,7 +11,8 @@ _Last updated: 2026-09-15 — A8: Figma construction gate is a detector (live ca
 - **Current focus**: lint:ds overlay on vault `main`; cui [#398](https://github.com/cpes-software/centric-ui/pull/398) still in review. Vault CI green at `9178aaf`.
 - **Working set**: `09-tools/shadcn-lint/` (tracked). `centric-ui-lint-ds` worktree kept until 398 merges.
 - **Last action (2026-09-15):** Housekeeping `c69baef`; Layer-0 gitignore harness `2214bbd`; `resolve_brain_root` cwd/CLAUDE_PROJECT_DIR `9178aaf`. workspace-integrity + validator-fixtures green on HEAD. Cursor Grok 4.6 · Cursor · Work MBP.
-- **Unattended runner — hard gate exists; no timer.** Still authorized-but-unbuilt.
+- **Unattended runner — decided 2026-09-15: not building it.** Not a pending task. The safety gate
+  (`check-unattended-runner-gate.py`) stays and is silent when idle. See [[decision-no-unattended-runner]].
 - **Next action:** Human review of cui [#398](https://github.com/cpes-software/centric-ui/pull/398) (CI green; do not agent-merge). After merge, remove `centric-ui-lint-ds`. Later: wave 2 rules, theme reset, proto pre-commit lint:ds, ratchet paydown.
 - **Open decisions:** ~~Rec 13~~ **closed 2026-09-15** (Work MBP half verified installed; Windows half dropped — machine sold). Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot). Theme reset (`@theme { --color-*: initial }`) stays a later product-CSS PR — decided overlay-first. Restyle/arbitrary/inline shadcn rules stay off until a later wave.
 - **Blocked on:** cui 398 human review (`REVIEW_REQUIRED`). Employer `canvases/` exist on disk but are untracked pending PRs.
