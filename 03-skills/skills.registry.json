@@ -2110,7 +2110,7 @@
         "design-engineer"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:068e8606dfcab9d9f74a8aa7b2aa9a16599d42c1dc6ba0897b0f220f4a4383cd"
+      "hash": "sha256:f8b2619a385211fa7e142ed38f4cd21bc59f6f3549091b1c880e88a012d7732f"
     },
     "figma-api-router": {
       "path": "03-skills/figma-api-router/SKILL.md",
@@ -2237,7 +2237,7 @@
         "design-engineer"
       ],
       "rigor_role": null,
-      "hash": "sha256:57a00c50ca21eefb419d5a45f895c779f31d17659af4d15a9d0948200ec9ac9c"
+      "hash": "sha256:6b8c46adfde1c0282f803026ceb240c1ffc078ed2106054c88d2f1d4cb46ea77"
     },
     "figma-design-specs": {
       "path": "03-skills/figma-design-specs/SKILL.md",

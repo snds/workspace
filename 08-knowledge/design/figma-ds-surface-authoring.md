@@ -343,6 +343,20 @@ the component gains the missing prop.
     Inputs/Data Display/Overlays without measuring Locked Field, Data Summary, Dialog, or
     parent height.
 
+21. **Library Text Styles on every non-glyph TEXT in a component — except Size-owned type
+    (STANDING RULE, 2026-09-16).** Assign a local style (`UI/*` for chrome, `Body/*` for
+    content, `Header/*` / `Caption` / `Overline` / `Display` as the hierarchy requires). Do
+    not leave labels as naked fontSize/weight/leading, even if those fields are variable-
+    bound. Material Symbols ligatures are exempt. **If an instance Size axis (mode or a
+    FLOAT `fontSize` on `Component / Size`) owns type on that same node, do not apply a
+    Text Style.** Styles in this file bind `fontSize` to a single `type-size/*` token;
+    applying one dual-binds and then *replaces* the Size bind — xs/sm/lg stop scaling.
+    Leave `textStyleId` empty; bind family/weight/leading/letter-spacing individually; let
+    `Button / Size`.`fontSize` (etc.) own size. Physical Size *variants* (Object Chip
+    Compact vs Field) may each carry a matching style because switching Size swaps the
+    variant, not a mode on one node. Off-scale one-offs with no style (Drawer demo `350`
+    at 44px) stay noted exceptions. Empirically verified on Button 2026-09-16.
+
 ## C. Code→Figma transliteration judgment calls
 
 1. **Focus states must use a focus token.** Use the `ring` (focus) color for the focus indicator

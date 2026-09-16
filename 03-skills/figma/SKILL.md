@@ -135,7 +135,7 @@ resolve).
 2. **Load this hub + [[design-engineer]] first** (doctrine: semantic + theme/mode tokens). Then load the gating figma-* protocol skill — then vendor plugin skills / MCP tools become callable.
 3. **`--dry`?** Report the skill + MCP plan and stop.
 4. **Acquire** the target (code scan / MCP read of the Figma node / token-file parse).
-5. **Run** the base procedure. Apply variables/styles — never raw values (token-first). For `--kind component|library`: load [[figma-modes-for-variants]] (style axes → modes, not cartesian variants); instance real subcomponents / nested `_Part`s; parent into the owning catalog SECTION; AABB-reflow siblings ([[figma-ds-surface-authoring]] rules 12 and 20).
+5. **Run** the base procedure. Apply variables/styles — never raw values (token-first). For `--kind component|library`: load [[figma-modes-for-variants]] (style axes → modes, not cartesian variants); instance real subcomponents / nested `_Part`s; parent into the owning catalog SECTION; AABB-reflow siblings; apply library Text Styles except where Size owns `fontSize` ([[figma-ds-surface-authoring]] rules 12, 20, 21).
 6. **Emit** the report (authored artifacts or audit findings).
 7. **Prove-gate (generate):** invoke [[close-out]] — capture (MCP inspect + native-zoom
    screenshot) → assess → correct and re-prove. **The assess step is a detector, not a

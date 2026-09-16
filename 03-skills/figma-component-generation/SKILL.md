@@ -35,7 +35,11 @@ spec_version: "2.3"
 > `_Component/Part` (or an instance of an existing library atom — Badge, Icon,
 > Button), never a hand-drawn duplicate. Place the result in the **owning
 > catalog SECTION** (create it if needed); measure sibling AABBs; grow/reflow
-> colliding sections. Doctrine: [[figma-ds-surface-authoring]] rules 12 and 20.
+> colliding sections. Apply a local **Text Style** to every non-glyph TEXT node
+> ([[figma-ds-surface-authoring]] rule 21). Exception: if `Component / Size`
+> (or another instance axis) owns `fontSize` on that node, leave `textStyleId`
+> empty — a style’s fontSize bind defeats Size-mode scaling. Doctrine:
+> [[figma-ds-surface-authoring]] rules 12, 20, and 21.
 
 ## When to Use This Skill
 Use when creating Figma components, component sets, variants, or any structured component system. This skill covers component creation, variant combinations, and auto-layout best practices. Structural examples below may show numeric padding for the Plugin API — production authoring binds tokens, including zeros.

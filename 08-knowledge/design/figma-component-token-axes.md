@@ -1,7 +1,7 @@
 ---
 tags: [design-system, figma, tokens, density, component-tokens, modes]
 created: 2026-07-31
-updated: 2026-09-15
+updated: 2026-09-16
 status: stable
 confidence: high
 sources: [session 2026-07-31-work-figma-density, Figma o6o1ZuGHxDow2vHLuYXT6X]
@@ -108,10 +108,13 @@ as separate mode chores.
 Text nodes bind to **`Button / Size` `fontSize`** (etc.), not straight to `font-size/sm`,
 so Size mode and Density mode both participate.
 
-**Gotcha:** a Text Style that binds `fontSize` will reassert that binding and defeat the Size
-token. For size-varying controls, apply the style’s other fields (family, weight, line-height,
-letter-spacing) as individual variable binds, leave `textStyleId` empty (or use a style with no
-`fontSize` bind), and let the component Size var own `fontSize`.
+**Gotcha (verified 2026-09-16 on Button):** a Text Style that binds `fontSize` dual-binds
+alongside `Button / Size`.`fontSize`, then *wins*. Clearing the style drops the Size bind
+and leaves the style’s `type-size/*` token — xs/sm/lg no longer scale. Do not apply
+`textStyleId` on a node whose type size is a component Size mode. Bind family / weight /
+leading / letter-spacing individually; let the Size var own `fontSize`. Physical Size
+*variants* (a Compact component vs a Field component) may each have a matching style.
+Doctrine: [[figma-ds-surface-authoring]] rule 21.
 
 ## Checklist for a new component axis
 
