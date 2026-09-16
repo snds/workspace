@@ -203,6 +203,19 @@ The plugin places the generated component on a dedicated `Component` page
 (created if missing) so the file's other pages stay free for documentation,
 specs, exemplar usage, etc.
 
+### Single library file (Centric and other multi-component files)
+
+When many components share one `.fig` file, **put the component name in the
+collection** so axes do not collide: `Button / Variant`, `Button / Size`,
+`Spinner / Size`, `Step Glyph / Variant`, `Chart Frame / Encoding`,
+`Progress / Status`. Do not create a second `Types` or `Sizes` collection in
+that file. Stamp the semantic default mode on every variant root
+(`setExplicitVariableModeForCollection`). Nested instance children that must
+scale with a FLOAT size mode need `layoutSizing FILL` (or SCALE constraints) —
+binding width/height on the outer component does not enlarge a fixed 20px glyph
+inside it. Part presence (a Badge, a close control) is a BOOLEAN, not a mode
+and not a second variant axis.
+
 ---
 
 ## Plugin API call sequence (multi-collection)

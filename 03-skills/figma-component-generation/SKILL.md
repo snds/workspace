@@ -3,17 +3,19 @@ name: figma-component-generation
 description: >
   Creating Figma components, component sets, and variant combinations with auto-layout
   best practices. Trigger on "component set", "figma variants", "generate component",
-  "variant combination", or authoring a DS library component in Figma. Bind semantic
-  + theme/mode tokens — never Color/* primitives.
+  "variant combination", "section overlap", or authoring a DS library component in Figma.
+  Style axes are variable modes (load figma-modes-for-variants); catalog entries go in a
+  named section with no AABB overlap. Bind semantic + theme/mode tokens — never Color/*
+  primitives.
 aliases: [figma-component-generation]
-triggers: [component set, figma variants, generate component, variant combination, auto-layout component, library component]
+triggers: [component set, figma variants, generate component, variant combination, auto-layout component, library component, section overlap, catalog section, variants as modes]
 tier: spoke
 domain: design
 hub: figma
 prerequisites: [figma]
-related: [design-engineer]
+related: [design-engineer, figma-modes-for-variants]
 defers_to: [figma, design-engineer]
-spec_version: "2.2"
+spec_version: "2.3"
 ---
 
 # Figma Component and Variant Generation
@@ -23,6 +25,17 @@ spec_version: "2.2"
 > tokens** (Light/Dark, Density). Never bind `Color/*` primitives. Missing token →
 > create a semantic alias in that system, then bind. Plugin `figma-use` /
 > `figma-generate-library` are mechanics; [[figma]] + [[design-engineer]] win.
+>
+> **Hard gate — modes, subcomponents, catalog placement.** Load
+> [[figma-modes-for-variants]] before creating a variant matrix. Color/style axes
+> (and geometry that is only FLOAT token swaps) become component-scoped variable
+> **modes** (`Button / Variant`, `Spinner / Size`, `Chart Frame / Encoding`).
+> Physical VARIANT is only for true structure (different children) or
+> non-bindable props. Part presence is BOOLEAN. Repeated inner UI is a nested
+> `_Component/Part` (or an instance of an existing library atom — Badge, Icon,
+> Button), never a hand-drawn duplicate. Place the result in the **owning
+> catalog SECTION** (create it if needed); measure sibling AABBs; grow/reflow
+> colliding sections. Doctrine: [[figma-ds-surface-authoring]] rules 12 and 20.
 
 ## When to Use This Skill
 Use when creating Figma components, component sets, variants, or any structured component system. This skill covers component creation, variant combinations, and auto-layout best practices. Structural examples below may show numeric padding for the Plugin API — production authoring binds tokens, including zeros.
@@ -563,12 +576,22 @@ function validateComponent(component) {
 
 ---
 
+## Catalog page placement (library files)
+
+Do this **before** considering the component "generated":
+
+1. Identify the category section (Inputs, Data Display, Overlays, Navigation, Layout, …). Create a child SECTION named for the component if one does not exist.
+2. Parent the new COMPONENT / COMPONENT_SET / nested `_Part` into that section — never into a sibling's box, never onto the page, never into the next category "because there was room at that y".
+3. Measure **absolute** bounding boxes of all sibling sections in the category **and** the next category down the page. Intersection > 1px on both axes (excluding ancestor containment) is a collision.
+4. On collision: move the new section, then grow the category parent, then shift following category sections by the same delta so gaps stay consistent (Centric library: 48px sibling, 96px category).
+5. Screenshot the owning section and re-run the AABB pass. `clipsContent` will not save you — overflow into Overlays is still a collision.
+
+`combineAsVariants` stacks every variant at `(0,0)` until you position them. Space variants inside the set (padding ~20, gap ~24) and resize the set; otherwise only the last variant is visible/clickable.
+
 ## See also
 
-- [figma-modes-for-variants](../figma-modes-for-variants/SKILL.md) — before
-  generating an N × M variant matrix, check whether one of the axes is
-  color/style-only and would be better expressed as variable modes on a
-  component-scoped collection. Avoids combinatorial blow-up.
+- [[figma-modes-for-variants]] — **required** before an N × M variant matrix. Style axes → component-scoped collections with modes. In a multi-component library file, name collections `Component / Axis` (not generic `Types` / `Sizes`).
+- [[figma-ds-surface-authoring]] — rule 12 (mode-first variants) and rule 20 (catalog AABB).
 
 ## Related
 - hub → [[figma]]

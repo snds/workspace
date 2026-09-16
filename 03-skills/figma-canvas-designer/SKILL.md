@@ -252,6 +252,13 @@ Adjust dimensions based on platform:
 Build everything with auto-layout. Avoid absolute positioning unless the design
 explicitly requires overlapping elements. Auto-layout produces designs that are
 structurally coherent and easier to modify later.
+
+**Library catalog pages are not screens.** Auto-layout on a component does not
+prevent its SECTION from intersecting a sibling section. When adding a
+component to a stickersheet / Components page: parent it into the owning
+category SECTION (create one if needed), then measure absolute bounding boxes
+and reflow any collision — including overflow into the next category.
+[[figma-component-generation]] + [[figma-ds-surface-authoring]] rule 20.
 ### Font loading
 
 Always load fonts before creating text nodes. Default to Inter if no DS font is

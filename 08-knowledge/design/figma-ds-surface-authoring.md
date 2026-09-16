@@ -1,11 +1,11 @@
 ---
 tags: [design-systems, figma, authoring, surfaces, tokens, transliteration, accessibility]
 created: 2026-06-30
-updated: 2026-09-11
+updated: 2026-09-16
 status: stable
 confidence: high
-sources: [centric-ui Figma library authoring sessions 2026-06; density/overlay construction 2026-08; field adornment optical inset + Icon Button audit 2026-08-06; migrated from local memory ds-figma-surface-conventions / transliteration-focus-and-positioning / figma-use-linked-library-components]
-related_skills: [figma, figma-canvas-designer, design-engineer, ds-advisor, figma-plugin-dev]
+sources: [centric-ui Figma library authoring sessions 2026-06; density/overlay construction 2026-08; field adornment optical inset + Icon Button audit 2026-08-06; catalog AABB reflow + modes-for-variants enforcement 2026-09-16; migrated from local memory ds-figma-surface-conventions / transliteration-focus-and-positioning / figma-use-linked-library-components]
+related_skills: [figma, figma-canvas-designer, figma-component-generation, figma-modes-for-variants, design-engineer, ds-advisor, figma-plugin-dev]
 related_projects: [centric-ui VMS DS, 02-centricPLM]
 ---
 
@@ -325,6 +325,23 @@ the component gains the missing prop.
     ≥28px targets are a smell. Intentional bare exceptions: expanders/chevrons inside Select
     triggers, menu/command leading icons, status glyphs, decorative marks, pagination page
     **labeled** Buttons, ellipsis gap markers.
+
+20. **Catalog section ownership + no AABB overlap (STANDING RULE, 2026-09-16).** Every new
+    library catalog entry lives in a **named SECTION that owns that component** — create the
+    section if the category exists (Inputs / Data Display / Overlays / …) but the item does
+    not. Never drop a COMPONENT / COMPONENT_SET onto the page, into the wrong category, or
+    into a parent whose absolute box already hosts a sibling. After append, measure sibling
+    **absolute** bounding boxes. Ignore ancestor containment (a child "overlaps" its parent
+    by definition). If the new box intersects another section/set/component, **grow the
+    parent and reflow colliding siblings** so the new item is fully inside, selectable, and
+    gapped (this file: **48px** between sibling catalog sections, **96px** between category
+    sections). Overflowing a parent into the next category (Data Display into Overlays, a
+    stickersheet into Alert Dialog, …) **is a collision**. Nested `_Component/Part`
+    subcomponents stay in the same owning section. Prove with an AABB pass + a screenshot
+    of the owning section — a page-level glance will miss 60px overlaps. Missed 2026-09-16:
+    Filter Chip/Spinner/Step Glyph/Charts/Flow Canvas were parked at coordinates inside
+    Inputs/Data Display/Overlays without measuring Locked Field, Data Summary, Dialog, or
+    parent height.
 
 ## C. Code→Figma transliteration judgment calls
 

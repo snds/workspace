@@ -2110,7 +2110,7 @@
         "design-engineer"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:634fe989445d42afda6a28d6d059a3f445571417e64f4e841a641816c325e052"
+      "hash": "sha256:068e8606dfcab9d9f74a8aa7b2aa9a16599d42c1dc6ba0897b0f220f4a4383cd"
     },
     "figma-api-router": {
       "path": "03-skills/figma-api-router/SKILL.md",
@@ -2170,7 +2170,7 @@
         "design-engineer"
       ],
       "rigor_role": null,
-      "hash": "sha256:6bfe05dc37e7ea90d6239ffee25136ba088bf8d3cb72299ce25c094f0c1a1be8"
+      "hash": "sha256:175e64004b5b342ed0d5e82b7c88af564379e4dd0bd108dacbee700de1acb431"
     },
     "figma-code-connect": {
       "path": "03-skills/figma-code-connect/SKILL.md",
@@ -2212,7 +2212,8 @@
         "figma"
       ],
       "related": [
-        "design-engineer"
+        "design-engineer",
+        "figma-modes-for-variants"
       ],
       "governed_by": [],
       "governs": [],
@@ -2222,7 +2223,10 @@
         "generate component",
         "variant combination",
         "auto-layout component",
-        "library component"
+        "library component",
+        "section overlap",
+        "catalog section",
+        "variants as modes"
       ],
       "surfaces": [
         "*"
@@ -2233,7 +2237,7 @@
         "design-engineer"
       ],
       "rigor_role": null,
-      "hash": "sha256:db40cf2192040c72449f4af8a64f94f86f8a340abd0a550e7038479f672ff11f"
+      "hash": "sha256:57a00c50ca21eefb419d5a45f895c779f31d17659af4d15a9d0948200ec9ac9c"
     },
     "figma-design-specs": {
       "path": "03-skills/figma-design-specs/SKILL.md",
@@ -2411,7 +2415,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:631747c76d2c57626ce9b4cbd9bf0bbca53716ed158bbb5eb8458aedd641be8c"
+      "hash": "sha256:c049fb65f209ce36bd4a08920c0a23baddc3f1defd277429ad07399bf4e284bf"
     },
     "figma-plugin": {
       "path": "03-skills/figma-plugin/SKILL.md",
