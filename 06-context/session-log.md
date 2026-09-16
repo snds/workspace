@@ -20,8 +20,28 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
+### 2026-09-16 — CDS Figma catalog reflow + construction rules
 
-
+SessionID: 2026-09-16-work-figma-catalog
+--- SESSION BLOCK ---
+Date: 2026-09-16
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 02-centricPLM, 19-workspace-brain
+Summary: Un-collided new catalog sections in Centric SaaS PLM Figma (`o6o1ZuGHxDow2vHLuYXT6X`); rebuilt Filter Chip / Spinner / Step Glyph / Chart Frame / Flow Canvas with subcomponents and style axes as modes. Text-style sweep applied then fully reverted. Construction rule: Text Styles iff the component has no Size/Density type axis — those modes own `fontSize`.
+Decisions:
+  - Catalog SECTION ownership + AABB reflow is rule 20 ([[figma-ds-surface-authoring]]); generate cannot skip [[figma-modes-for-variants]].
+  - Text Styles do not apply when Size or Density drives type (rule 21). Verified: a style dual-binds then replaces `Button / Size`.`fontSize`.
+  - Table / Data Table stays out of this Figma file.
+Pending added:
+Pending resolved:
+Project status changes:
+  - 02-centricPLM: Figma catalog overlap + modes land in the file; vault rules on `main` (`d414136`…`f6090f9`). Publish still manual (^pc-18).
+Next:
+  - Publish the centric-ui Figma library (Sean, Assets panel).
+  - Continue Base UI / docs / Storybook parity on CDS as needed; Table later.
+--- END BLOCK ---
 
 ### 2026-09-15 — portable session-status card closed; doctor MISSes acked
 
