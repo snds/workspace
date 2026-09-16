@@ -1428,7 +1428,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:30b615c863bfa80a966ac8b13fd9d8f7d8d0a667614ef11854432ac309c729e0"
+      "hash": "sha256:974846b247bc3d112321d98919ae1b511fedab80ca483fd47bb8808f2a7c5027"
     },
     "ds-bi-platforms": {
       "path": "03-skills/ds-bi-platforms/SKILL.md",
@@ -2110,7 +2110,7 @@
         "design-engineer"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:f8b2619a385211fa7e142ed38f4cd21bc59f6f3549091b1c880e88a012d7732f"
+      "hash": "sha256:71d9e7d49c67cdedd2ad33a1006e90b71767f19b29c63dff517863db3b31eafa"
     },
     "figma-api-router": {
       "path": "03-skills/figma-api-router/SKILL.md",
@@ -2237,7 +2237,7 @@
         "design-engineer"
       ],
       "rigor_role": null,
-      "hash": "sha256:6b8c46adfde1c0282f803026ceb240c1ffc078ed2106054c88d2f1d4cb46ea77"
+      "hash": "sha256:7994b504336f7bba3a78a9980754da084aa67c40def33274698ded2f5d22441f"
     },
     "figma-design-specs": {
       "path": "03-skills/figma-design-specs/SKILL.md",

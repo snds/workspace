@@ -35,10 +35,10 @@ spec_version: "2.3"
 > `_Component/Part` (or an instance of an existing library atom — Badge, Icon,
 > Button), never a hand-drawn duplicate. Place the result in the **owning
 > catalog SECTION** (create it if needed); measure sibling AABBs; grow/reflow
-> colliding sections. Apply a local **Text Style** to every non-glyph TEXT node
-> ([[figma-ds-surface-authoring]] rule 21). Exception: if `Component / Size`
-> (or another instance axis) owns `fontSize` on that node, leave `textStyleId`
-> empty — a style’s fontSize bind defeats Size-mode scaling. Doctrine:
+> colliding sections. **Text Style iff no Size/Density type axis** (rule 21): if
+> the component binds `type-size/*`, `control-font-size/*`, or `Component / Size`
+> `.fontSize`, leave `textStyleId` empty and let those modes own type. Apply a
+> library Text Style only when no sizing/density system is in play. Doctrine:
 > [[figma-ds-surface-authoring]] rules 12, 20, and 21.
 
 ## When to Use This Skill

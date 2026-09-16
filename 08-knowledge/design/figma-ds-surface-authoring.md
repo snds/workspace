@@ -69,7 +69,7 @@ the component gains the missing prop.
    `padding-x/*`, `padding-y/*`, `gap/*`, `type-size/*`, `popover/offset-y`, …) over raw
    primitives or a Density-unaware Radii/Spacing alias — **especially when in doubt.** Control
    chrome must keep working under a Density-only mode pin (Compact/Normal/Spacious) without also
-   pinning Radii. General surface radius (cards, dialogs) may still use the Radii ladder
+   pinning Radii. **Density (and Size) type binds outrank Text Styles** — see rule 21. General surface radius (cards, dialogs) may still use the Radii ladder
    (`radius/xxs…4xl`); field-adjacent overlays follow Rule 10a. Figma-only construction tokens
    (focus-ring radii, `popover/offset-y`, Calendar Day corner masks) carry
    `[figma-only][sync:ignore]` in their descriptions — do not export them as product CSS.
@@ -343,19 +343,20 @@ the component gains the missing prop.
     Inputs/Data Display/Overlays without measuring Locked Field, Data Summary, Dialog, or
     parent height.
 
-21. **Library Text Styles on every non-glyph TEXT in a component — except Size-owned type
-    (STANDING RULE, 2026-09-16).** Assign a local style (`UI/*` for chrome, `Body/*` for
-    content, `Header/*` / `Caption` / `Overline` / `Display` as the hierarchy requires). Do
-    not leave labels as naked fontSize/weight/leading, even if those fields are variable-
-    bound. Material Symbols ligatures are exempt. **If an instance Size axis (mode or a
-    FLOAT `fontSize` on `Component / Size`) owns type on that same node, do not apply a
-    Text Style.** Styles in this file bind `fontSize` to a single `type-size/*` token;
-    applying one dual-binds and then *replaces* the Size bind — xs/sm/lg stop scaling.
-    Leave `textStyleId` empty; bind family/weight/leading/letter-spacing individually; let
-    `Button / Size`.`fontSize` (etc.) own size. Physical Size *variants* (Object Chip
-    Compact vs Field) may each carry a matching style because switching Size swaps the
-    variant, not a mode on one node. Off-scale one-offs with no style (Drawer demo `350`
-    at 44px) stay noted exceptions. Empirically verified on Button 2026-09-16.
+21. **Text Styles iff no Size/Density type axis (STANDING RULE, 2026-09-16).** Apply a
+    local library Text Style (`UI/*`, `Body/*`, `Header/*`, …) to component TEXT **only
+    when that component has no sizing or density system driving type** — no
+    `Component / Size`.`fontSize` (or other instance size axis), no Density
+    `type-size/*` / `control-font-size/*` / `type-leading/*` binds, no Density mode that
+    should scale type. **If Size or Density is in play, those modes override the
+    requirement for font styles:** leave `textStyleId` empty; bind `fontSize` /
+    `lineHeight` to the Size or Density variables (family/weight/tracking may still be
+    token-bound individually). A Text Style in this file binds `fontSize` to a single
+    `type-size/*` token and will freeze or dual-bind scaling — verified on Button
+    (style dual-bound then *replaced* `Button / Size`.`fontSize`; clearing the style
+    dropped the Size bind). Material Symbols ligatures never get a text style.
+    Token Spec / inventory / spec-note copy is not a Size/Density control and may
+    still use styles. Off-scale one-offs (Drawer demo `350` at 44px) stay noted.
 
 ## C. Code→Figma transliteration judgment calls
 

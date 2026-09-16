@@ -109,12 +109,11 @@ Text nodes bind to **`Button / Size` `fontSize`** (etc.), not straight to `font-
 so Size mode and Density mode both participate.
 
 **Gotcha (verified 2026-09-16 on Button):** a Text Style that binds `fontSize` dual-binds
-alongside `Button / Size`.`fontSize`, then *wins*. Clearing the style drops the Size bind
-and leaves the style’s `type-size/*` token — xs/sm/lg no longer scale. Do not apply
-`textStyleId` on a node whose type size is a component Size mode. Bind family / weight /
-leading / letter-spacing individually; let the Size var own `fontSize`. Physical Size
-*variants* (a Compact component vs a Field component) may each have a matching style.
-Doctrine: [[figma-ds-surface-authoring]] rule 21.
+then *wins* over `Button / Size`.`fontSize` and over Density `type-size/*`. Clearing the
+style drops the Size bind. **Do not apply `textStyleId` when Size or Density is driving
+type on that node.** Bind family/weight/leading individually; let Size/Density vars own
+`fontSize` / `lineHeight`. Text Styles are for copy with no sizing/density axis (Token
+Spec, inventory, spec notes). Doctrine: [[figma-ds-surface-authoring]] rule 21.
 
 ## Checklist for a new component axis
 

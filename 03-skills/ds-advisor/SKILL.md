@@ -583,9 +583,11 @@ or coded demos — always follow this dependency order:
 1. **Resolve the system first.** Before creating anything new, inventory what already exists:
    variables, tokens, styles, components, type scale, spacing scale, radius scale.
 2. **Use system elements before inventing.** If the system provides a text style, use it —
-   don't create a raw text node and manually set font properties. If the system provides a
-   spacing variable, bind it — don't hardcode a pixel value. If a component exists, instantiate
-   it — don't rebuild it from raw frames.
+   don't create a raw text node and manually set font properties — **unless Size or Density
+   is driving type on that component** ([[figma-ds-surface-authoring]] rule 21): then bind
+   `type-size/*` / `Component / Size`.`fontSize` and skip the Text Style. If the system
+   provides a spacing variable, bind it — don't hardcode a pixel value. If a component
+   exists, instantiate it — don't rebuild it from raw frames.
 3. **Respect dependency order.** Tokens before styles. Styles before components. Components
    before documentation. If element B depends on element A, A must be fully resolved before
    B is created. This is not optional — it's how design systems maintain integrity.
