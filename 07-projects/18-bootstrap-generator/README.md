@@ -4,9 +4,14 @@
 
 *Works with your AI assistant of choice. **Claude recommended** (it's what this was built and tested with), but the workspace it creates is truly AI-agnostic — it speaks open standards, not one company's format.*
 
-> ⚠️ **Early days.** This is a real project, but it's just getting started. The design is written down (see [SPEC.md](SPEC.md)), and the building has only just begun. Read this as *"here's the plan and how it will work,"* not *"here's a finished app you can install today."*
+> ⚠️ **Early, but real.** The CLI (`wsx`) interviews-via-your-AI, scaffolds a vault, emits
+> thin adapters for many surfaces, can **consume** an existing never-wsx folder without
+> rewriting it, and will not call a produce “done” without a named detector. It is **not**
+> a finished consumer app: install polish and chat-only surfaces still need a folder-capable
+> assistant (or a paste pack). Read this as *what it does today*, not a store listing.
 >
-> **Today you can:** install the apps below and read the plan. **Coming soon:** the AI interview that builds your folder *for* you. So this README is part how-to, part preview — and where something doesn't exist yet, it says so plainly.
+> **Today you can:** open this folder in Claude or Cursor and say *“set up my workspace.”*
+> Point it at notes you already have with *“consume this vault.”* Or double-click `start.command`.
 
 ---
 
@@ -123,7 +128,7 @@ Here's the shopping list:
 | **ChatGPT · Perplexity · Gemini (browser)** | ❌ **No** | Paste/upload the context pack (`wsx emit pack`). Cannot open folders. |
 | *…and 20+ more* | ✅ Yes | `AGENTS.md` — see the [full list at agents.md](https://agents.md). |
 
-*Cost varies by assistant: Claude needs a paid plan (~$20/mo); some open-source agents (Gemini CLI, Codex CLI) are free to run but use your own API key. Pick whichever suits you — the folder works the same.* *(🚧 The non-Claude adapters are part of what's still being built — see [Status](#status--whats-next).)*
+*Cost varies by assistant: Claude needs a paid plan (~$20/mo); some open-source agents (Gemini CLI, Codex CLI) are free to run but use your own API key. Pick whichever suits you — the folder works the same.* Thin native adapters (`GEMINI.md`, `CURSOR.md`, Copilot, Windsurf, …) ship from `wsx emit all`. Chat-only surfaces still paste `adapters/web-session.md` then `adapters/context-pack.md`.
 
 ### Obsidian (your notebook)
 Free for personal use. This is where your folder comes alive as a browsable, linked notebook. [Download Obsidian](https://obsidian.md/download).
@@ -152,7 +157,7 @@ You don't type anything technical — your AI runs the tool for you.
 2. **Say:** *"set up my workspace."* In Claude Code the generator ships as a registered skill, so that phrase alone triggers it — no need to name any file. *(On other assistants, or if it doesn't catch, nudge it: "Read `brain/SKILL.md` and set up my workspace for me.")*
 3. Your AI **interviews you** (see [below](#what-the-interview-covers)), then creates your workspace and tells you where it is.
 
-*(🚧 The guided interview is **early**. In Claude Code the trigger is wired; elsewhere the nudge above always works. If it stalls, use Path B — it never depends on the AI.)*
+*(The interview can save mid-way and resume: `wsx interview status`. If it stalls, use Path B — it never depends on the AI.)*
 
 ### Path B — One double-click (no AI, nothing to type)
 1. **macOS:** double-click **`start.command`**. *(The first time, macOS may say "unidentified developer" — right-click the file → **Open** → **Open**. Just once.)*
@@ -201,19 +206,14 @@ In short: the tool errs on the side of keeping your private life private, and as
 
 ## Status & what's next
 
-**Where things stand (mid-2026):**
-- ✅ **The design is written.** The spec is at version 0.2 — see [SPEC.md](SPEC.md).
-- 🛠️ **The tool runs today.** The `wsx` CLI scaffolds your workspace, makes it AI-ready, and verifies it (Paths B & C above). What's still early is the *guided interview* that fills it in automatically for you.
-- 🚧 **Agnostic adapters in progress.** The Claude path is the first target; the `AGENTS.md`, Cursor, MCP, and context-pack adapters come next.
-- 📦 **Packaging is in progress.** This will become its own shareable download, separate from any private workspace.
+**Where things stand (2026-09):**
+- ✅ **`wsx` runs.** Init, interview (save/resume), dests + harvest, consume a never-wsx vault, thin adapters (`llms.txt`, GEMINI, Cursor, Copilot, Windsurf, web paste pack), portable close-out / plan-ahead / self-improve, `wsx reach` (well-formed ≠ reachable).
+- ✅ **Claude is not the only path.** Folder-capable assistants follow `AGENTS.md`. Chat-only surfaces paste `adapters/web-session.md` then the context pack. Injection is not obedience — the honesty line is in every adapter.
+- 🛠️ **Still early as a product.** Packaging (its own shareable download) and a less-technical Git on-ramp are not done. Chat-only AIs cannot create the folder for you.
 
-**What's next, roughly:**
-- A working interview you can actually talk to.
-- A first version of `wsx` that creates and syncs your folder.
-- The adapters that let it target any AI assistant, not just Claude.
-- A smoother, less-technical setup path (the goal is to retire the "this part is techie" warnings).
+**Not promised:** zero miss on ChatGPT-without-files; `wsx` will not upgrade a rich hand-built vault into the numbered taxonomy.
 
-Current working state and notes are tracked in **[SESSION-STATE.md](SESSION-STATE.md)**.
+Current working state: **[SESSION-STATE.md](SESSION-STATE.md)**. Proofboard: **[VALIDATION.md](VALIDATION.md)**.
 
 ---
 
@@ -223,7 +223,7 @@ Current working state and notes are tracked in **[SESSION-STATE.md](SESSION-STAT
 No. The whole point is that an AI interviews you and builds it for you — and you never operate the file-making tool (`wsx`) yourself. The honest catch: a few *setup* steps today still feel technical (mostly the Git sync part). GitHub Desktop and the Claude desktop app are the gentlest ways through, and smoothing this out is a top priority.
 
 **Does it only work with Claude?**
-No. **Claude is recommended** because it's what this was built and tested with — the smoothest path. But the workspace it creates is **AI-agnostic**: it's built on open standards ([AGENTS.md](https://agents.md), MCP, [Agent Skills](https://agentskills.io)) that many assistants understand, so it also works with tools like Cursor, GitHub Copilot, OpenAI Codex, and Google Gemini — and you can switch later without rebuilding. *(The non-Claude adapters are still being built.)*
+No. **Claude is recommended** because it's what this was built and tested with — the smoothest path. But the workspace it creates is **AI-agnostic**: it's built on open standards ([AGENTS.md](https://agents.md), MCP, [Agent Skills](https://agentskills.io)) that many assistants understand, so it also works with tools like Cursor, GitHub Copilot, OpenAI Codex, and Google Gemini — and you can switch later without rebuilding. Chat-only apps (browser ChatGPT, etc.) get a paste pack; they cannot open the folder.
 
 **Does it cost anything?**
 Obsidian and GitHub Desktop are free. The only paid piece is the AI — and that depends on which you pick. The recommended Claude path needs a paid plan (entry **Pro** ≈ **$20/month**, ~$17 annually, as of mid-2026 — see [current pricing](https://claude.com/pricing)). Some open-source agents (Google Gemini CLI, OpenAI Codex CLI) are free to run but use your own API access.
@@ -280,4 +280,4 @@ Not the full thing yet — it's **early**. The design is done; the tool is being
 
 ---
 
-*Built with care, and honestly still being built. If a step here doesn't exist yet, this README will tell you so — no pretending. Questions and patience both welcome.*
+*Built with care, and honestly still being built as a product. If a step here doesn't exist yet, this README will tell you so — no pretending. Questions and patience both welcome.*

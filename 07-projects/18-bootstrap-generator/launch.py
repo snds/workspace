@@ -66,6 +66,19 @@ def main() -> int:
         print("  history. Get it free from https://desktop.github.com , then re-run for")
         print("  sync. Continuing without it.\n")
 
+    # An unfinished interview (even from a previous unzip) lives in ~/.wsx.
+    st = wsx("interview", "status", capture_output=True, text=True)
+    if st.returncode == 0 and "in-progress session found" in (st.stdout or ""):
+        print(st.stdout)
+        choice = ask("Continue that workspace, or start over?", "continue")
+        if choice.lower().startswith("c"):
+            print("\nOpen that folder in your AI assistant and say:")
+            print('  "continue my workspace interview"')
+            pause()
+            return 0
+        wsx("interview", "abandon")
+        print("Unfinished interview discarded. Starting fresh.\n")
+
     # Where + who. Default to Documents/Projects/Workspace: keeping it under
     # Documents means iCloud/OneDrive/Time Machine back it up automatically, and a
     # "Projects" folder gives every future project (this workspace included) one home.

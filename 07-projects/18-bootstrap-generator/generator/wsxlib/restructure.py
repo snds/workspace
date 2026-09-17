@@ -31,7 +31,7 @@ from . import adapters, core, health, layout, lifecycle, skills, upgrade
 # Dirs never treated as vault content when rewriting link targets (they are generated
 # tool output, and `.claude/skills/` must never be confused with the vault skills dir).
 _PROTECTED_SEGMENTS = {".claude", ".cursor", ".wsx", ".obsidian", ".git", "adapters",
-                       "_archive"}
+                       ".gemini", ".windsurf", ".github", "_archive"}
 # copytree noise we never need in a backup.
 _BACKUP_IGNORE = shutil.ignore_patterns(".git", "node_modules", "dist", "build", "target",
                                         ".venv", "__pycache__")
@@ -264,6 +264,13 @@ def _rollback_from(root: Path, bdir: Path) -> int:
 
 # ---------------------------------------------------------------------- main ---
 def restructure(root: Path, apply: bool = False, rollback: bool = False) -> int:
+    from . import adapter
+    if adapter.is_adapted(root) and not rollback:
+        print("wsx restructure — REFUSED: this vault is adapter-mapped (reference mode).\n")
+        print("  Consumed / hand-built layouts stay theirs. Do not impose the numbered taxonomy.")
+        print("  Safer path: `wsx consume <path>` (already done) or `wsx dest` / `wsx skill add`.")
+        return 0
+
     if rollback:
         bdir = _latest_backup(root)
         if not bdir:

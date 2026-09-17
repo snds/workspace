@@ -6,4 +6,4 @@ model/judgment — that lives in the canonical brain (../brain/*.md). The seam
 between brain and hands is two files: context/profile.yaml and manifest.json.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.3.0"

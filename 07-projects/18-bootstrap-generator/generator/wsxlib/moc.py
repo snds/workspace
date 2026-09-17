@@ -115,6 +115,62 @@ def write_projects_index(root: Path) -> Path:
     return out
 
 
+# ---------------------------------------------------------------- knowledge MOC ---
+_KNOWLEDGE_SKIP = {"readme.md", "_index.md", "_template.md", "_readme.md"}
+
+
+def write_knowledge_index(root: Path) -> Path:
+    """Regenerate knowledge/_INDEX.md with one routable line per entry.
+
+    Format the trigger-router already parses:
+      `- [title](rel.md) — one-line · Triggers: a, b`
+    """
+    kdir = layout.of(root).dir("knowledge")
+    kdir.mkdir(parents=True, exist_ok=True)
+    entries = []
+    for p in sorted(kdir.rglob("*.md")):
+        if any(part.startswith(".") for part in p.relative_to(root).parts):
+            continue
+        if p.name.lower() in _KNOWLEDGE_SKIP or p.stem.startswith("_"):
+            continue
+        fm, body = core.parse_frontmatter(p)
+        title = str(fm.get("title") or fm.get("name") or p.stem)
+        desc = str(fm.get("description", "")).strip()
+        if not desc:
+            for line in body.splitlines():
+                s = line.strip()
+                if s and not s.startswith("#") and not s.startswith("_") and not s.startswith("---"):
+                    desc = s[:120]
+                    break
+        trg = core.entry_triggers(p)
+        rel = str(p.relative_to(kdir)).replace("\\", "/")
+        entries.append((title, rel, desc, trg))
+
+    lines = [
+        "# Knowledge — index",
+        "",
+        _BANNER,
+        "",
+        "One line per entry so an assistant can decide what to read without opening",
+        "everything. **Every entry must declare `Triggers:`** — the index is not a file",
+        "to ingest. Back to [[HOME]].",
+        "",
+        "Format: `- [title](file.md) — one-line · Triggers: word, phrase`",
+        "",
+    ]
+    if not entries:
+        lines += ["_(no entries yet — write one when a session produces a durable insight.)_", ""]
+    else:
+        for title, rel, desc, trg in entries:
+            bit = f" — {desc}" if desc else ""
+            tbit = f" · Triggers: {', '.join(trg)}" if trg else " · Triggers: (missing)"
+            lines.append(f"- [{title}]({rel}){bit}{tbit}")
+        lines.append("")
+    out = kdir / "_INDEX.md"
+    out.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+    return out
+
+
 # -------------------------------------------------------------------- HOME MOC ---
 def write_home(root: Path) -> Path:
     prof = core.load_profile(root)
@@ -200,7 +256,11 @@ def write_home(root: Path) -> Path:
         "",
         "## Adapters (generated — never hand-edit)",
         "AI-tool-specific files compiled from the canonical workspace. Re-run `wsx emit`.",
-        "See `adapters/`, plus root `AGENTS.md` / `CLAUDE.md` and `.cursor/`.",
+        "Machine entry: [llms.txt](llms.txt) (pointer to [AGENTS.md](AGENTS.md)).",
+        "Where generated files live: `python3 wsx.py dest list` "
+        f"(`{C}/destinations.yaml` — do not dump that table into always-on adapters).",
+        "See `adapters/` (incl. `web-session.md` for chat-only), plus root `AGENTS.md` /",
+        "`CLAUDE.md` / thin natives (`GEMINI.md`, `CURSOR.md`, …) and `.cursor/`.",
         "",
     ]
     out = root / "HOME.md"
@@ -282,5 +342,6 @@ def write_mocs(root: Path) -> list:
     if adapter.is_adapted(root):
         return [registry.build(root)]
     out = [write_home(root), write_skills_index(root), write_projects_index(root),
+           write_knowledge_index(root),
            write_profile_mirror(root), registry.build(root), commands.write(root)]
     return [p for p in out if p is not None]

@@ -25,6 +25,9 @@ _EXEMPT_NAMES = {"HOME.md", "README.md", "_INDEX.md", "_TEMPLATE.md",
                  "profile.md",  # generated mirror of profile.yaml
                  "COMMANDS.md",  # generated command cheat sheet, not a vault note
                  "AGENTS.md", "CLAUDE.md",  # generated adapters, not vault notes
+                 "llms.txt", "GEMINI.md", "WARP.md", "PERPLEXITY.md",
+                 "CURSOR.md", "CONVENTIONS.md",  # thin native pointers, not vault notes
+                 "destinations.yaml",  # dest map — generated seam, not a vault note
                  "personal.md"}  # walled — intentionally unlinked when private
 # Only CANONICAL vault content participates in the graph. This is an ALLOWLIST on
 # purpose: generated adapter output (adapters/, .claude/, .cursor/, .agents/, .wsx/, and
@@ -62,11 +65,25 @@ def _iter_notes(root: Path):
             yield p
 
 
+def _link_names(p: Path) -> list:
+    """Names a wikilink / typed-edge may use to address this note.
+
+    Every skill file is named `SKILL.md`, so the stem is always `"skill"` and is
+    useless as an identity. Address skills by their parent directory (the skill
+    name), matching `validate-integrity.link_name`. Other notes stay stem-addressed.
+    """
+    if p.name.lower() == "skill.md":
+        return [p.parent.name.lower()]
+    return [p.stem.lower()]
+
+
 def _basename_index(notes: list) -> dict:
-    """basename (no ext, lowercased) -> list of note paths (Obsidian resolves by name)."""
+    """link-name (lowercased) -> list of note paths."""
     idx: dict[str, list] = {}
     for p in notes:
-        idx.setdefault(p.stem.lower(), []).append(p)
+        for n in _link_names(p):
+            if n:
+                idx.setdefault(n, []).append(p)
     return idx
 
 

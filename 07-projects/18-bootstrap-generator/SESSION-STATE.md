@@ -1,5 +1,17 @@
 # SESSION-STATE — Portable Bootstrap Generator
 
+### 🤝 Live handoff (the baton)
+
+- **Current focus:** Waves 0–7 and 2+3 proved; README/VALIDATION honesty updated (`wsx` 0.3.0).
+- **Working set:** `generator/wsxlib/{consume,loadset,reach,dispatch,scaffold,cli,…}.py` + `brain/SKILL.md` + README/VALIDATION
+- **Last action:** Wave 7 consume + Waves 2+3 rigor + front-door honesty. Proof fixtures removed.
+- **Next action:** Colleague/Olga path when asked. No commit unless asked.
+- **Do-not-touch:** `wsx upgrade` / `restructure` on Sean's real vault; do not copy personal trigger tables, employer org names, or Cursor slug tables into templates; never emit `.cursorrules` / `.windsurfrules` / `.clinerules`.
+- **Agent thread:** Cursor Grok 4.6 / Cursor / Work MBP (2026-09-17).
+
+_Last updated: 2026-09-17 — Waves 0, 1, 2+3, 4, 5, 6, 7 proved; README honesty._
+
+
 _Last updated: 2026-07-27 — v0.2 R1 shipped (numbered taxonomy as the generator DEFAULT + neutral automation port); earlier: colleague-feedback pass ( broader `wsx scan` detection incl. ChatGPT/desktop chat apps, connective **MOC layer** so the emitted vault graph is no longer islands, `projects/` per-project documentation tree + `wsx project`, and `wsx upgrade` corrective pass for already-generated workspaces; earlier: permission-free `launch.py` + per-OS zips, scan gate + BYO-tokens, authoring framework, `wsx remote`, expertise calibration, two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
 
 ### 2026-07-23 — colleague feedback (four asks, all built + dogfooded)

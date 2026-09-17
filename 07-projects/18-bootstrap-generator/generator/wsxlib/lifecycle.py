@@ -57,13 +57,53 @@ def doctor() -> int:
         print("  You're inside a workspace. Useful next:")
         print("    wsx verify            # check it's healthy")
         print("    wsx emit claude-code  # make it AI-ready")
+        from . import interview as _iv
+        try:
+            _iv.doctor_rebind(root)
+            if _iv._session_path(root).exists() or (
+                (_iv.global_in_progress().get("workspace") or "")
+                in (str(root), str(root.resolve()))
+            ):
+                print("    wsx interview status  # in-progress interview detected — continue or abandon")
+        except Exception:  # noqa: BLE001
+            pass
     else:
         print("  workspace : — none here (this is the GENERATOR, not a workspace)\n")
+        from . import interview as _iv
+        glob = _iv.global_in_progress()
+        if glob:
+            print("  in-progress interview found:")
+            print(f"    {glob.get('workspace') or '(folder not created yet)'}  "
+                  f"({glob.get('movement') or 'start'})")
+            print("    continue: open that folder and `wsx interview continue`")
+            print("    start over: `wsx interview abandon` (does not delete a folder)")
+            print()
         print("  The generator BUILDS a separate workspace folder. To create yours:")
         print('    wsx init ~/Documents/Projects/Workspace --name "Your Name"')
         print("  …or just open this folder in your AI assistant and say:")
         print('    "set up my workspace"')
     return 0
+
+
+_KNOWLEDGE_SKIP = {"readme.md", "_index.md", "_template.md", "_readme.md"}
+
+
+def _lint_knowledge(root: Path) -> int:
+    """Every knowledge entry must be routable (Triggers: in the note)."""
+    kdir = layout.of(root).dir("knowledge")
+    if not kdir.is_dir():
+        return 0
+    problems = 0
+    for p in sorted(kdir.rglob("*.md")):
+        if any(part.startswith(".") for part in p.relative_to(root).parts):
+            continue
+        if p.name.lower() in _KNOWLEDGE_SKIP or p.stem.startswith("_"):
+            continue
+        if not core.entry_triggers(p):
+            print(f"  ✗ knowledge {p.relative_to(root)}: no Triggers: (front matter or body) "
+                  "— an index the agent is forbidden to ingest is not a route")
+            problems += 1
+    return problems
 
 
 # -------------------------------------------------------------------- lint ---
@@ -100,8 +140,15 @@ def lint(root: Path) -> int:
             print(f"  ⚠ {name}: composite skill has {len(rec['references'])} recorded "
                   "reference(s) but no Sources block — re-run `wsx resolve` to cite them")
             problems += 1
-        for t in core.skill_triggers(fm):
+        trg = core.skill_triggers(fm)
+        if core.is_command_skill(fm) and not trg:
+            print(f"  ✗ {name}: hub/foundation has empty triggers — it will never load. "
+                  "Add front-matter triggers, or `wsx skill add … --triggers \"…\"`")
+            problems += 1
+        for t in trg:
             trigger_owners.setdefault(t, []).append(name)
+
+    problems += _lint_knowledge(root)
 
     for trg, owners in sorted(trigger_owners.items()):
         if len(owners) > 1:
@@ -140,7 +187,7 @@ def verify(root: Path) -> int:
         fails += 1
 
     # 2. each adapter can gather without error (no files written)
-    for target in ("claude-code", "agents-md", "cursor", "pack"):
+    for target in ("claude-code", "agents-md", "cursor", "thin", "pack"):
         try:
             adapters.gather(root, prof)
             print(f"  ✓ {target}: ready to emit")
@@ -410,6 +457,10 @@ def session(root: Path, sub: str, summary: str = "", next_: str = "",
                   f"{lay.name('context')}/open-threads.md so they carry forward.")
         print(f"  Harvest any generalizable insight into {lay.name('knowledge')}/ "
               "(a pattern, a hard-won constraint), then `wsx sync`.")
+        from . import dest as _dest
+        _dest.harvest_on_session_end(root)
+        from . import interview
+        interview.try_refresh(root)
         return 0
     if sub == "reconcile":
         return reconcile(root)

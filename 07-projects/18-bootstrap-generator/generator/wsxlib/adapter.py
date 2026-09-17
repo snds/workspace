@@ -70,7 +70,7 @@ def detect_map(root: Path) -> dict:
     }
 
 
-def create(root: Path, copy_cli: bool = True) -> int:
+def create(root: Path, copy_cli: bool = True, quiet: bool = False) -> int:
     if not examine._looks_like_workspace(root):
         raise SystemExit(f"error: {root} doesn't look like a workspace — nothing to adapt. "
                          "(`wsx examine <path>` to inspect, or `wsx init` for a new vault.)")
@@ -90,6 +90,8 @@ def create(root: Path, copy_cli: bool = True) -> int:
     out.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
 
     copied = scaffold.copy_cli(root) if copy_cli else []
+    if quiet:
+        return 0
 
     print(f"wsx adapter — mapped your vault to the wsx concepts (reference mode)\n")
     print(f"  wrote {ADAPTER_PATH}  ·  {'copied the CLI into .wsx/ (self-driving)' if copied else ''}\n")

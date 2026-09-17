@@ -243,9 +243,19 @@ Use the scan's `suggested` block to pre-fill `surfaces.primary`, `surfaces.agent
   the choice; if they pick a host, note the URL if they have one. **You never create the account
   or repo** — that's theirs to make (an empty repo on their chosen host); afterward the mechanical
   hand wires it: `wsx remote <url>` then `wsx sync`. Local-only ⇒ leave `transport.remote` empty.
+- **Ask where files this assistant generates should live** (the destination map, not the git
+  remote). Menus: *this vault* / *one folder for everything* / *per-project* / *a separate work
+  tree that never enters this vault*. Then drive the mechanical hand:
+  `wsx dest add <name> --path <folder> --scope personal|work [--wall vault|external]`.
+  Someone with one research repo sets default (and every project) to that repo's `artifacts/`
+  or `briefs/`. Someone with employer segregation sets a `work` dest whose `wall: external`
+  **refuses** the vault. Someone with only the vault leaves default at `05-artifacts/` (created
+  on first ingest). Capture dest **names**, never clone anyone else's folder table. Vendor
+  panels are not the original — write through `wsx artifact ingest` / `wsx canvas harvest`.
 
 **Populates:** `identity{name, handle}` · `surfaces{primary, agents[], machines[]}` ·
-`models{tier, offline}` · `transport{type, remote}` · `imports[]`.
+`models{tier, offline}` · `transport{type, remote}` · `imports[]`. The dest map is **not** a
+profile field — `wsx dest add` writes `context/destinations.yaml`.
 
 > Capture `identity.name` naturally here if you don't already have it ("And what should I call you,
 > and is there a handle you go by?"). Don't make it a separate stiff question.

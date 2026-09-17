@@ -97,6 +97,7 @@ Each row: the movement that surfaces it, the profile field it sets, and the synt
 | "I need it to work on a plane / offline" | `models.offline` | `true` triggers the offline snapshot (a flattened context pack) at emit time. |
 | How they sync today + **where the workspace should live** (GitHub/GitLab/Codeberg/local) | `transport.type` / `transport.remote` | Default `git`. Recommend a **free private repo** (GitHub, else GitLab/Codeberg) as the home; capture the URL if they have one → `transport.remote`. Local-only ⇒ leave `remote: ""`. The person creates the empty repo themselves; the mechanical hand wires it after emit: `wsx remote <url>` then `wsx sync`. |
 | "I already have notes / a vault / docs…" | `imports[]` | Each importable asset is recorded as a path/URL + a short note on what it is. The brain does **not** read or move them here — `wsx` imports them later; synthesis only registers intent. |
+| **Where files this assistant generates should live** | (not a profile field) | Drive `wsx dest add` / `wsx dest bind`. Menus: this vault / one folder / per-project / a work tree that never enters the vault. Capture dest **names**. `wall: external` refuses the vault. Never clone anyone else's folder table into the map. |
 
 ### M1 — Work context → `contexts.work`
 

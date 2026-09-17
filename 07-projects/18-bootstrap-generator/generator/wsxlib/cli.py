@@ -5,7 +5,7 @@
   wsx profile set k=v [k=v ...]  validate + write profile.yaml fields
   wsx resolve                    fetch + pin pulled skills (stub)
   wsx emit <target>              compile canonical -> adapter
-                                 (claude-code | agents-md | cursor | mcp | pack | all)
+                                 (claude-code | agents-md | cursor | thin | mcp | pack | all)
   wsx lint                       validate skills + manifest, report trigger overlaps
   wsx health                     vault graph hygiene: orphans, stale claims, dangling edges
   wsx verify                     dry-run load per target
@@ -14,6 +14,10 @@
   wsx ingest [discover|<path>]   consent-gated ingestion of outside notes/projects (secret-scanned; --apply to promote)
   wsx archive <path> [--reason]  retire a note with provenance (never delete)
   wsx examine [--json]           read-only: what an existing workspace still needs (augment additively)
+  wsx consume <path>             speak a never-wsx vault's dialect (digest + dialect.json; no scaffolding)
+  wsx loadset "<utterance>"      ordered SKILL.md paths from declared triggers (never ingest the registry)
+  wsx reach                      well-formed ≠ reachable (layer-0, silent hubs, knowledge routes)
+  wsx dispatch [hub]             close-out detector table (non-zero exit; honest skip)
   wsx adapter [<path>]           map a HAND-BUILT vault to wsx concepts (reference mode — no scaffolding/clobbering)
   wsx diagnose [--fix]           report problems in an EXISTING workspace; --fix applies the safe corrections
   wsx help                       the command cheat sheet (also written to COMMANDS.md)
@@ -26,6 +30,10 @@
   wsx ssh-setup                  scaffold SSH host-aliases for work/personal keys (append-only)
   wsx push                       finalize a fresh workspace: first commit + push (personal-solo only)
   wsx collab <account>           grant a work account access to your PRIVATE workspace repo
+  wsx dest add|list|bind         where generated files live (vault / external, by scope)
+  wsx artifact ingest            land a vendor-surface file (secret-scanned, never overwrite)
+  wsx canvas harvest [--check]   copy Cursor-local canvases into dests from the map
+  wsx interview …                save/resume the interview + workspace shape ledger
   wsx session start|end|reconcile
   wsx sync                       git pull --rebase + push
 """
@@ -34,9 +42,10 @@ from __future__ import annotations
 import argparse
 import sys
 
-from . import (adapter, adapters, archive, bridges, commands, core, diagnose, examine,
-               gitscope, health, ingest, lifecycle, projects, resolver, restructure, scaffold,
-               scan, search, skills, upgrade, wire)
+from . import (adapter, adapters, archive, bridges, commands, consume, core, dest, diagnose,
+               dispatch, examine, gitscope, health, ingest, interview, lifecycle, loadset,
+               projects, reach, resolver, restructure, scaffold, scan, search, skills,
+               upgrade, wire)
 
 
 # profile fields that are lists — `set` splits these on commas (and accepts [a, b] form).
@@ -279,7 +288,7 @@ def cmd_project(a):
         return projects.list_projects(root)
     if a.project_cmd == "adopt":
         return projects.adopt(root, a.path, move=a.move, import_docs=a.import_docs,
-                              title=a.title or "")
+                              title=a.title or "", dest=getattr(a, "dest", "") or "")
     raise SystemExit("error: project expects new|list|adopt")
 
 
@@ -292,8 +301,70 @@ def cmd_ingest(a):
                       apply=getattr(a, "apply", False))
 
 
+def cmd_dest(a):
+    return dest.run_dest(
+        core.require_workspace(), a.dest_cmd,
+        name=getattr(a, "name", "") or "",
+        path=getattr(a, "path", "") or "",
+        scope=getattr(a, "scope", "") or "personal",
+        kinds=getattr(a, "kinds", "") or "",
+        wall=getattr(a, "wall", None) or "",
+        key=getattr(a, "key", "") or "",
+    )
+
+
+def cmd_artifact(a):
+    return dest.artifact_ingest(
+        core.require_workspace(),
+        from_file=getattr(a, "from_file", "") or "",
+        from_clipboard=getattr(a, "from_clipboard", False),
+        inbox=getattr(a, "inbox", False),
+        dest=getattr(a, "dest", "") or "",
+        project=getattr(a, "project", "") or "",
+        stem=getattr(a, "stem", "") or "ingest",
+    )
+
+
+def cmd_canvas(a):
+    return dest.canvas_harvest(core.require_workspace(), check=getattr(a, "check", False))
+
+
+def cmd_interview(a):
+    root = core.find_workspace_root()
+    action = a.interview_cmd
+    if action in ("complete", "outcome") and not root:
+        raise SystemExit("error: run this from inside a workspace")
+    return interview.run(
+        root, action,
+        movement=getattr(a, "movement", "") or "",
+        last_q=getattr(a, "last_q", "") or "",
+        last_a=getattr(a, "last_a", "") or "",
+        remaining=getattr(a, "remaining", "") or "",
+        seed=getattr(a, "seed", "") or "",
+        tags=getattr(a, "tags", "") or "",
+        wipe_draft=getattr(a, "wipe_draft", False),
+        seed_id=getattr(a, "seed_id", "") or "",
+    )
+
+
 def cmd_archive(a):
     return archive.archive(core.require_workspace(), a.path, a.reason)
+
+
+def cmd_loadset(a):
+    return loadset.run(core.require_workspace(), " ".join(a.rest) if a.rest else "")
+
+
+def cmd_reach(a):
+    return reach.run(core.require_workspace())
+
+
+def cmd_dispatch(a):
+    return dispatch.run(core.require_workspace(), getattr(a, "hub", "") or "close-out")
+
+
+def cmd_consume(a):
+    return consume.consume(a.path, scope=getattr(a, "scope", "") or "personal")
 
 
 def cmd_adapter(a):
@@ -358,7 +429,7 @@ def build_parser() -> argparse.ArgumentParser:
     pp.set_defaults(fn=cmd_profile)
 
     pe = sub.add_parser("emit", help="compile canonical workspace to a surface adapter")
-    pe.add_argument("target", help="claude-code | agents-md | cursor | mcp | pack | all")
+    pe.add_argument("target", help="claude-code | agents-md | cursor | thin | mcp | pack | all")
     pe.set_defaults(fn=cmd_emit)
 
     pdg = sub.add_parser("diagnose",
@@ -483,6 +554,8 @@ def build_parser() -> argparse.ArgumentParser:
                      help="physically move the project to sit beside the vault (code stays out of the vault)")
     pad.add_argument("--import-docs", dest="import_docs", action="store_true",
                      help="copy a PLAIN folder's loose docs into notes/ (ignored for git repos; skips secrets)")
+    pad.add_argument("--dest", default="",
+                     help="artifact dest path (creates dest named after the project; wall=external if outside the vault)")
     ppr.set_defaults(fn=cmd_project)
 
     pbr = sub.add_parser("bridge",
@@ -507,6 +580,77 @@ def build_parser() -> argparse.ArgumentParser:
     par.add_argument("path", help="path to the note, relative to the workspace")
     par.add_argument("--reason", default="", help="why it is being retired")
     par.set_defaults(fn=cmd_archive)
+
+    pde = sub.add_parser("dest", help="where generated files live (vault / external, by scope)")
+    desub = pde.add_subparsers(dest="dest_cmd", required=True)
+    da = desub.add_parser("add", help="add a named destination")
+    da.add_argument("name", help="dest name, e.g. vault or work-tree")
+    da.add_argument("--path", required=True, help="folder the files should live in")
+    da.add_argument("--scope", default="personal", choices=["personal", "work", "other"])
+    da.add_argument("--kinds", default="", help="comma list: canvas, artifact, html, file")
+    da.add_argument("--wall", default=None, choices=["vault", "external"],
+                    help="vault = inside this workspace; external = never enters the vault")
+    desub.add_parser("list", help="show the destination map")
+    db = desub.add_parser("bind", help="bind a Cursor slug or filename prefix to a dest")
+    db.add_argument("key", help="Cursor project slug or filename prefix")
+    db.add_argument("name", help="dest name from `wsx dest list`")
+    pde.set_defaults(fn=cmd_dest)
+
+    pal = sub.add_parser("artifact", help="land a vendor-surface file (secret-scanned, never overwrite)")
+    alsub = pal.add_subparsers(dest="artifact_cmd", required=True)
+    ali = alsub.add_parser("ingest", help="write a file/clipboard/inbox drop into a dest")
+    ali.add_argument("--from-file", dest="from_file", default="", help="path to a file to ingest")
+    ali.add_argument("--from-clipboard", dest="from_clipboard", action="store_true")
+    ali.add_argument("--inbox", action="store_true", help="promote files from 05-artifacts/inbox/")
+    ali.add_argument("--dest", default="", help="named dest (default: the map's default)")
+    ali.add_argument("--project", default="", help="project slug (uses that dest or projects/<slug>/artifacts)")
+    ali.add_argument("--stem", default="ingest", help="filename stem before the version bump")
+    pal.set_defaults(fn=cmd_artifact)
+
+    pca = sub.add_parser("canvas", help="copy Cursor-local canvases into dests from the map")
+    casub = pca.add_subparsers(dest="canvas_cmd", required=True)
+    cah = casub.add_parser("harvest", help="copy ~/.cursor/projects/*/canvases into dests")
+    cah.add_argument("--check", action="store_true",
+                     help="report only; clean pass if ~/.cursor is absent (CI-safe)")
+    pca.set_defaults(fn=cmd_canvas)
+
+    pintr = sub.add_parser("interview", help="save/resume the interview + workspace shape ledger")
+    isub = pintr.add_subparsers(dest="interview_cmd", required=True)
+    icp = isub.add_parser("checkpoint", help="silent save-point (brain runs this; user is not asked)")
+    icp.add_argument("--movement", default="", help="M0–M5 id just closed")
+    icp.add_argument("--last-q", dest="last_q", default="", help="exact last question")
+    icp.add_argument("--last-a", dest="last_a", default="", help="exact last answer")
+    icp.add_argument("--remaining", default="", help="comma list of remaining movements")
+    icp.add_argument("--seed", default="", help="persona seed id if any")
+    icp.add_argument("--tags", default="", help="field tags key=answered|assumed|defaulted, …")
+    isub.add_parser("status", help="detect an in-progress interview (also looks in ~/.wsx)")
+    isub.add_parser("continue", help="print the restore payload (last Q/A + remaining)")
+    iab = isub.add_parser("abandon", help="delete session files only (not the workspace folder)")
+    iab.add_argument("--wipe-draft", dest="wipe_draft", action="store_true",
+                     help="second confirm — this flag still refuses to delete the folder")
+    isub.add_parser("complete", help="interview confirmed: cleanup session files + write outcome")
+    ise = isub.add_parser("seed", help="opt-in persona seed (or `list`)")
+    ise.add_argument("seed_id", nargs="?", default="list", help="maker|research|staff|hobby|notes|list")
+    isub.add_parser("outcome", help="refresh .wsx/outcome.json + ~/.wsx/index.json")
+    pintr.set_defaults(fn=cmd_interview)
+
+    pco = sub.add_parser("consume",
+                         help="speak a never-wsx vault's dialect (digest on disk; no scaffolding)")
+    pco.add_argument("path", help="path to the foreign vault")
+    pco.add_argument("--scope", default="personal", choices=["personal", "work", "other"],
+                     help="scope for dest guesses (walls by scope, not org names)")
+    pco.set_defaults(fn=cmd_consume)
+
+    pls = sub.add_parser("loadset", help="utterance → ordered SKILL.md paths (never ingest the registry)")
+    pls.add_argument("rest", nargs="*", help="utterance words")
+    pls.set_defaults(fn=cmd_loadset)
+
+    prh = sub.add_parser("reach", help="well-formed ≠ reachable (layer-0, silent hubs, knowledge routes)")
+    prh.set_defaults(fn=cmd_reach)
+
+    pdi = sub.add_parser("dispatch", help="close-out detector table (non-zero exit; honest skip)")
+    pdi.add_argument("hub", nargs="?", default="close-out", help="hub to dispatch (default: close-out)")
+    pdi.set_defaults(fn=cmd_dispatch)
 
     pad2 = sub.add_parser("adapter",
                           help="map a HAND-BUILT vault to wsx concepts (reference mode; no scaffolding)")

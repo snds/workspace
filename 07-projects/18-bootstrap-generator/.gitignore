@@ -6,6 +6,7 @@ demo/
 my-workspace/
 scratch/
 *-workspace/
+.tmp-*
 
 # Python
 __pycache__/

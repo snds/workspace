@@ -212,7 +212,7 @@ def _upsert_adoption(project_md: Path, block: str) -> None:
 
 
 def adopt(root: Path, path: str, move: bool = False, import_docs: bool = False,
-          title: str = "") -> int:
+          title: str = "", dest: str = "") -> int:
     src = Path(path).expanduser().resolve()
     if not src.is_dir():
         raise SystemExit(f"error: {src} is not a directory. `wsx project adopt <path-to-project>`.")
@@ -285,6 +285,21 @@ def adopt(root: Path, path: str, move: bool = False, import_docs: bool = False,
     if scan["docs"] and not imported and not gi["is_repo"]:
         print(f"  {len(scan['docs'])} doc(s) found — referenced. Add --import-docs to copy them into notes/.")
     print(f"  fill in PROJECT.md's overview + handoff; it now shows in {pj}/_INDEX.md and HOME.md.")
+    if dest:
+        from . import dest as destmod
+        dest_path = Path(dest).expanduser()
+        if not dest_path.is_absolute():
+            dest_path = (src / dest).resolve()
+        inside = True
+        try:
+            dest_path.relative_to(root.resolve())
+        except ValueError:
+            inside = False
+        destmod.dest_add(
+            root, slug, str(dest_path),
+            scope="work" if not inside else "personal",
+            wall="vault" if inside else "external",
+        )
     return 0
 
 

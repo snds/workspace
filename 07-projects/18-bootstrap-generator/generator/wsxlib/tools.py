@@ -52,28 +52,6 @@ except Exception:
 sys.exit(related.run(WS))
 '''
 
-_VALIDATE = r'''#!/usr/bin/env python3
-"""Run the whole validation suite over this workspace, in one command:
-
-  verify  — profile round-trips + every adapter is emit-ready (integrity)
-  lint    — skills: no unfilled skeletons, no trigger overlaps
-  health  — graph: orphan notes, #stale/aging claims, dangling typed edges (links)
-
-Maps the named validators to the workspace's own commands. Exit non-zero if any fails."""
-import subprocess
-import sys
-from pathlib import Path
-
-WS = Path(__file__).resolve().parents[1]
-wsx = WS / "wsx.py"
-rc = 0
-for cmd in ("verify", "lint", "health"):
-    print("\n===== wsx " + cmd + " =====")
-    r = subprocess.run([sys.executable, str(wsx), cmd])
-    rc = rc or r.returncode
-sys.exit(rc)
-'''
-
 _CHECK_TERMINOLOGY = r'''#!/usr/bin/env python3
 """Enforce YOUR terminology rules across the vault (optional, opt-in).
 
@@ -149,11 +127,119 @@ if __name__ == "__main__":
     sys.exit(main())
 '''
 
+_VALIDATE = r'''#!/usr/bin/env python3
+"""Run the whole validation suite over this workspace, in one command:
+
+  verify  — profile round-trips + every adapter is emit-ready (integrity)
+  lint    — skills: no unfilled skeletons, no empty hub triggers, knowledge Triggers, no trigger overlaps
+  health  — graph: orphan notes, #stale/aging claims, dangling typed edges (links)
+  reach   — well-formed ≠ reachable (layer-0, silent hubs, knowledge routes, close-out)
+  secrets — vault notes (not .wsx / adapters / personal.md)
+
+Maps the named validators to the workspace's own commands. Exit non-zero if any fails."""
+import subprocess
+import sys
+from pathlib import Path
+
+WS = Path(__file__).resolve().parents[1]
+wsx = WS / "wsx.py"
+sys.path.insert(0, str(WS / ".wsx"))
+rc = 0
+for cmd in ("verify", "lint", "health", "reach"):
+    print("\n===== wsx " + cmd + " =====")
+    r = subprocess.run([sys.executable, str(wsx), cmd])
+    rc = rc or r.returncode
+
+print("\n===== secret scan =====")
+try:
+    from wsxlib import layout, secretscan
+    blocked = 0
+    skip_names = {"personal.md"}
+    for key in ("context", "skills", "frameworks", "projects", "knowledge", "shared", "preferences"):
+        base = layout.of(WS).dir(key)
+        if not base.is_dir():
+            continue
+        for p in sorted(base.rglob("*.md")):
+            if any(part.startswith(".") for part in p.relative_to(WS).parts):
+                continue
+            if p.name.lower() in skip_names:
+                continue
+            try:
+                text = p.read_text(encoding="utf-8")
+            except OSError:
+                continue
+            hits = secretscan.scan_text(text)
+            if secretscan.blocked(hits):
+                print("  ✗ " + str(p.relative_to(WS)) + " — secret-scan block")
+                blocked += 1
+    if blocked:
+        print("secret scan: " + str(blocked) + " file(s) blocked")
+        rc = rc or 1
+    else:
+        print("  ✓ no blocking secrets in vault notes")
+except Exception as e:
+    print("  ⚠ secret scan skipped: " + str(e))
+
+sys.exit(rc)
+'''
+
+_LOADSET = r'''#!/usr/bin/env python3
+"""Utterance → ordered SKILL.md paths from declared triggers. Never ingest the registry."""
+import sys
+from pathlib import Path
+WS = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(WS / ".wsx"))
+from wsxlib import loadset
+sys.exit(loadset.run(WS, " ".join(sys.argv[1:])))
+'''
+
+_DISPATCH = r'''#!/usr/bin/env python3
+"""Close-out detector table. Non-zero exit. Honest skip if no detector."""
+import sys
+from pathlib import Path
+WS = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(WS / ".wsx"))
+from wsxlib import dispatch
+hub = sys.argv[1] if len(sys.argv) > 1 else "close-out"
+sys.exit(dispatch.run(WS, hub))
+'''
+
+_REACH = r'''#!/usr/bin/env python3
+"""Well-formed ≠ reachable. Layer-0 files, silent hubs, knowledge routes, named detectors."""
+import sys
+from pathlib import Path
+WS = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(WS / ".wsx"))
+from wsxlib import reach
+sys.exit(reach.run(WS))
+'''
+
+_GHA = r'''# Copy to .github/workflows/wsx-validate.yml on a personal-solo repo only.
+# Work-context profiles still refuse auto-push; do not enable this on employer remotes.
+name: wsx-validate
+on:
+  push:
+  pull_request:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python3 09-tools/validate.py
+'''
+
 _SCRIPTS = {
     "build-registry.py": _BUILD_REGISTRY,
     "build-related.py": _BUILD_RELATED,
     "validate.py": _VALIDATE,
     "check-terminology.py": _CHECK_TERMINOLOGY,
+    "skill-loadset.py": _LOADSET,
+    "close-out-dispatch.py": _DISPATCH,
+    "reachability.py": _REACH,
+    "github-action.yml": _GHA,
 }
 
 

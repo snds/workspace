@@ -5,7 +5,9 @@ that into the format a given AI tool understands, written to the tool's expected
 location. Adapters are generated, never hand-edited — re-run `wsx emit <target>`.
 
 Agnostic by design: the same workspace targets Claude (recommended), AGENTS.md
-(Cursor/Copilot/Codex/Gemini/…), Cursor rules, MCP, or a tool-less context pack.
+(Cursor/Copilot/Codex/Gemini/…), Cursor rules, thin native first-files (`GEMINI.md`,
+`WARP.md`, …), MCP, or a tool-less context pack. `llms.txt` is the machine entry
+(a pointer to AGENTS.md, not a second contract).
 
 Privacy: when contexts.personal.private is true (walled), personal context is
 NEVER included in emitted output — it stays local.
@@ -83,6 +85,7 @@ def gather(root: Path, profile: dict, include_personal: bool = False):
 
 
 def _skill_index_md(skills: list) -> str:
+    """Full catalog — for the pasteable context pack only (no filesystem)."""
     if not skills:
         return "_(no skills yet — the interview + resolver populate these.)_\n"
     out = []
@@ -91,6 +94,98 @@ def _skill_index_md(skills: list) -> str:
         hub = f" [{s['hub']}]" if s["hub"] else ""
         out.append(f"- **{s['name']}**{hub} — {s['description'] or '(no description)'}{trg}")
     return "\n".join(out) + "\n"
+
+
+def _skill_load_md(root: Path) -> str:
+    """Always-on adapters: point at the index + CLI. Never dump the catalog."""
+    from . import layout as _layout
+    S = _layout.of(root).name("skills")
+    return "\n".join([
+        "Skills load **on demand**. Do **not** ingest a catalog or `skills.registry.json`.",
+        f"- Index (hub → spoke, path links): `{S}/_INDEX.md`",
+        "- List: `python3 wsx.py skill list`",
+        "- Load a skill only when its **own** front-matter `triggers` match this request.",
+        "- After producing: `python3 wsx.py lint` then `python3 wsx.py health`.",
+    ]) + "\n"
+
+
+def _write_through_md() -> str:
+    """One sentence, every adapter: vendor panels are not the original."""
+    return "\n".join([
+        "## Vendor panels are not the original",
+        "Cursor canvases, Claude Artifacts, ChatGPT/Gemini canvases, and HTML previews",
+        "are not durable. Write the file through `python3 wsx.py dest list` (then",
+        "`python3 wsx.py artifact ingest` or `python3 wsx.py canvas harvest`), or emit a",
+        "copy-ready block plus that suggested path when this surface has no filesystem.",
+        "Do not scrape vendor UIs. HTML that is the deliverable stays HTML.",
+    ]) + "\n"
+
+
+def _honesty_md() -> str:
+    """Every adapter: injection ≠ obedience; no-filesystem surfaces use the paste pack."""
+    return "\n".join([
+        "## Honesty — injection is not compliance",
+        "Hooks, always-on rules, and adapter files **inject** this contract; they do not",
+        "guarantee the model will follow it. If this surface cannot read this folder",
+        "(browser chat, no filesystem), say so and use `adapters/web-session.md` plus",
+        "`adapters/context-pack.md` — do not invent workspace doctrine from training data.",
+    ]) + "\n"
+
+
+def _read_order_md() -> str:
+    """Portable session ritual. Not a vendor-only status card."""
+    return "\n".join([
+        "## Read order (every session)",
+        "1. `llms.txt` — machine entry (a pointer; **this file** is the contract).",
+        "2. `context/CRITICAL_FACTS.md` — tiny always-on hot cache. Read first.",
+        "3. Heads only of `context/project-context.md` and `context/session-log.md`",
+        "   (older history: `context/session-log-archive.md`, on demand).",
+        "4. Skills: lookup via `python3 wsx.py skill list` or `skills/_INDEX.md`.",
+        "   Load a skill only when its own front-matter `triggers` match **this** request.",
+        "   Do **not** ingest `skills.registry.json` or dump a catalog into context.",
+        "5. New session ritual: `python3 wsx.py doctor` (or `python3 wsx.py session start`).",
+        "   That is the portable ritual — not a vendor-only status card.",
+        "6. After producing: `python3 wsx.py lint` then `python3 wsx.py health`.",
+    ]) + "\n"
+
+
+# Native first-files some tools auto-load instead of AGENTS.md. Pointers only —
+# never a second copy of the contract. Never emit the first-match names that
+# make several IDEs skip AGENTS.md.
+_FORBIDDEN_NATIVE = (".cursorrules", ".windsurfrules", ".clinerules")
+
+
+def _thin_adapter_md(tool: str, extra: list | None = None) -> str:
+    """One template → every vendor filename. Extra lines are tool-specific mechanics."""
+    bits = [
+        f"# {tool} adapter",
+        "",
+        f"_Thin pointer. {tool} auto-loads this filename; the contract is [AGENTS.md](AGENTS.md)._",
+        "",
+        "**Read AGENTS.md before producing.** Do not treat this file as standing law.",
+        "Never concatenate this file with a copy of AGENTS.md — this is a pointer only.",
+        "",
+        "1. Workspace root = the directory containing `AGENTS.md`.",
+        "2. New session: `python3 wsx.py doctor` (or `python3 wsx.py session start`).",
+        "3. Read `context/CRITICAL_FACTS.md` first, then heads of the context logs.",
+        "4. Skills: `python3 wsx.py skill list` or `skills/_INDEX.md`. Do **not** ingest the registry.",
+        "5. After producing: `python3 wsx.py lint` then `python3 wsx.py health`.",
+        "6. Durable learnings go in this vault, never this tool's private memory.",
+        "   Vendor panels are not durable — `python3 wsx.py dest list` then",
+        "   `artifact ingest` / `canvas harvest`, or a copy-ready path. Do not scrape vendor UIs.",
+        "",
+        _honesty_md().rstrip(),
+        "",
+    ]
+    if extra:
+        bits += extra + [""]
+    bits += [
+        "Other adapters: [CLAUDE.md](CLAUDE.md) · [CURSOR.md](CURSOR.md) · "
+        "[GEMINI.md](GEMINI.md) · [WARP.md](WARP.md) · [PERPLEXITY.md](PERPLEXITY.md) · "
+        "[llms.txt](llms.txt).",
+        "",
+    ]
+    return "\n".join(bits)
 
 
 def _identity(profile: dict) -> str:
@@ -135,6 +230,8 @@ def emit_pack(root: Path, profile: dict, manifest: dict) -> list:
         f"(personal context {'excluded' if g['walled'] else 'included'})._",
         "",
         _identity_anchor(profile),
+        _honesty_md(),
+        _write_through_md(),
         "## Who you're working with",
         "",
         f"- Name: {_identity(profile)}",
@@ -176,9 +273,13 @@ def _agents_md_body(root: Path, profile: dict) -> str:
         "",
         "Instructions for any AI coding agent (open standard: https://agents.md).",
         "Generated by `wsx emit agents-md` — do not hand-edit; edit the canonical",
-        "workspace (context/, skills/) and re-emit.",
+        "workspace (context/, skills/) and re-emit. Machine entry: `llms.txt`",
+        "(a pointer to this file, not a second contract).",
         "",
         _identity_anchor(profile),
+        _read_order_md(),
+        _honesty_md(),
+        _write_through_md(),
         "## About",
         f"- Name: {name}",
         f"- Role: {profile.get('contexts', {}).get('work', {}).get('role', '') or '(unspecified)'}",
@@ -229,7 +330,7 @@ def _agents_md_body(root: Path, profile: dict) -> str:
         "`wsx sync`. Disjoint fragment files never collide across devices/sessions/surfaces.",
         "",
         "## Specialized skills",
-        _skill_index_md(g["skills"]),
+        _skill_load_md(root),
         "## Building skills, hubs, frameworks, or playbooks — SUPREME RULE",
         "When asked to build/add any skill, hub, framework, or playbook, follow",
         "`frameworks/skill-authoring.md` — it SUPERSEDES any native skill-creation. Set the",
@@ -243,10 +344,13 @@ def _agents_md_body(root: Path, profile: dict) -> str:
 
 
 def emit_agents_md(root: Path, profile: dict, manifest: dict) -> list:
+    written = []
     out = root / "AGENTS.md"
     out.write_text(_resolve_dirs(root, _agents_md_body(root, profile)), encoding="utf-8")
-    _record(root, manifest, "agents-md", [out])
-    return [out]
+    written.append(out)
+    written += emit_llms_txt(root, profile, manifest)
+    _record(root, manifest, "agents-md", written)
+    return written
 
 
 # -------------------------------------------------------------- claude-code ---
@@ -259,8 +363,11 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
         f"# {name}'s Workspace — Claude instructions",
         "",
         "_Generated by `wsx emit claude-code`. Canonical source: context/ + skills/._",
+        "The universal contract is `AGENTS.md`; this file is how Claude Code executes it.",
         "",
         _identity_anchor(profile),
+        _honesty_md(),
+        _write_through_md(),
         "## Token frugality — a top priority",
         "This workspace must never cost the person MORE tokens than the value it adds.",
         "Read **frugally**: the TOP (most recent) of `context/project-context.md` and",
@@ -307,7 +414,7 @@ def emit_claude_code(root: Path, profile: dict, manifest: dict) -> list:
         "checklist before calling it done. Do not use a built-in skill-builder instead.",
         "",
         "## Skills (load on demand)",
-        _skill_index_md(g["skills"]),
+        _skill_load_md(root),
     ]) + "\n"
     cm = root / "CLAUDE.md"
     cm.write_text(_resolve_dirs(root, claude_md), encoding="utf-8")
@@ -785,8 +892,13 @@ def emit_cursor(root: Path, profile: dict, manifest: dict) -> list:
         "(SUPERSEDES native skill-creation): altitude from per-domain expertise, source +",
         "cite, reconcile triggers, pass the acceptance checklist.",
         "",
-        "## Skills",
-        _skill_index_md(g["skills"]),
+        "The contract is `AGENTS.md`. This rule injects framing; it is not obedience.",
+        "If this surface cannot read the folder, use `adapters/web-session.md` + `adapters/context-pack.md`.",
+        "Vendor panels are not durable — write through `python3 wsx.py dest list` /",
+        "`artifact ingest` / `canvas harvest`, or emit a copy-ready path.",
+        "",
+        "## Skills (load on demand)",
+        _skill_load_md(root),
     ]) + "\n"
     rule.write_text(_resolve_dirs(root, body), encoding="utf-8")
     written.append(rule)
@@ -873,12 +985,164 @@ def _mcp_readme(server: Path) -> str:
     ])
 
 
+# ---------------------------------------------------------------- llms.txt ---
+def emit_llms_txt(root: Path, profile: dict, manifest: dict) -> list:
+    """Machine entry — a pointer to AGENTS.md, never a second contract."""
+    name = _identity(profile)
+    body = "\n".join([
+        f"# {name}'s workspace",
+        "",
+        "> Machine entry. The contract is [AGENTS.md](AGENTS.md) — this file is a",
+        "> pointer, not a second contract. Generated by `wsx emit`.",
+        "",
+        "## Start here (read in order)",
+        "- [AGENTS.md](AGENTS.md) — universal agent contract (folder semantics, read",
+        "  order, skill loading). Execute that file.",
+        "- [HOME.md](HOME.md) — linked front door of the vault.",
+        "- `context/CRITICAL_FACTS.md` — always-on hot cache (read first every session).",
+        "",
+        "## How to work here",
+        "- Workspace root = the directory containing `AGENTS.md`.",
+        "- New session: `python3 wsx.py doctor` (or `python3 wsx.py session start`).",
+        "- Skills: `python3 wsx.py skill list` — do **not** ingest `skills.registry.json`.",
+        "- Load a skill only when its own front-matter `triggers` match this request.",
+        "- After producing: `python3 wsx.py lint` then `python3 wsx.py health`.",
+        "- If this surface cannot read the folder, paste `adapters/web-session.md` then",
+        "  `adapters/context-pack.md`. Do not invent doctrine from training data.",
+        "",
+        "## Honesty",
+        "Hooks and adapter files inject this contract; they do not guarantee obedience.",
+        "Vendor panels are not durable — write through `python3 wsx.py dest list` or emit",
+        "a copy-ready path. Do not scrape vendor UIs.",
+        "",
+        "## Per-tool adapters (thin pointers over AGENTS.md)",
+        "- [CLAUDE.md](CLAUDE.md) · [CURSOR.md](CURSOR.md) · [GEMINI.md](GEMINI.md) ·",
+        "  [WARP.md](WARP.md) · [PERPLEXITY.md](PERPLEXITY.md) ·",
+        "  [.github/copilot-instructions.md](.github/copilot-instructions.md) ·",
+        "  [CONVENTIONS.md](CONVENTIONS.md) (Aider) · `.windsurf/rules/00-workspace.md`.",
+        "  A new tool needs no adapter to work at full fidelity; it executes AGENTS.md.",
+        "  Do not symlink AGENTS.md onto vendor filenames.",
+        "",
+    ])
+    out = root / "llms.txt"
+    out.write_text(_resolve_dirs(root, body), encoding="utf-8")
+    _record(root, manifest, "llms", [out])
+    return [out]
+
+
+# ----------------------------------------------------------- thin natives ---
+def _write_text(path: Path, text: str) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+    return path
+
+
+def emit_thin(root: Path, profile: dict, manifest: dict) -> list:
+    """Native first-files the major LLMs look for. Pointers, not copies of AGENTS.md."""
+    written = []
+    body = lambda tool, extra=None: _resolve_dirs(root, _thin_adapter_md(tool, extra))
+
+    written.append(_write_text(root / "GEMINI.md", body("Gemini CLI", [
+        "`.gemini/settings.json` names `AGENTS.md` as the context file so Gemini CLI",
+        "can load the contract directly.",
+    ])))
+    written.append(_write_text(root / "WARP.md", body("Warp")))
+    written.append(_write_text(root / "PERPLEXITY.md", body("Perplexity")))
+    written.append(_write_text(root / "CURSOR.md", body("Cursor", [
+        "Cursor's always-on project rule is `.cursor/rules/00-workspace.mdc`",
+        "(`alwaysApply: true`). This file is the named adapter; the rule injects",
+        "framing. Follow AGENTS.md for everything else.",
+    ])))
+    written.append(_write_text(
+        root / ".github" / "copilot-instructions.md",
+        body("GitHub Copilot Chat"),
+    ))
+    written.append(_write_text(root / "CONVENTIONS.md", body("Aider", [
+        "This root `CONVENTIONS.md` is Aider's workspace read-me, not GitHub PR",
+        "conventions. If you add `.github/CONVENTIONS.md` for pull requests, keep",
+        "that file for humans; leave this pointer for Aider.",
+    ])))
+    written.append(_write_text(
+        root / ".windsurf" / "rules" / "00-workspace.md",
+        body("Windsurf Cascade"),
+    ))
+
+    # Gemini CLI optional context.fileName → AGENTS.md (merge, never clobber).
+    gemini_settings = root / ".gemini" / "settings.json"
+    existing = {}
+    if gemini_settings.exists():
+        try:
+            existing = json.loads(gemini_settings.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            existing = {}
+    ctx = existing.setdefault("context", {})
+    if isinstance(ctx, dict):
+        ctx["fileName"] = "AGENTS.md"
+    else:
+        existing["context"] = {"fileName": "AGENTS.md"}
+    written.append(_write_text(
+        gemini_settings, json.dumps(existing, indent=2) + "\n",
+    ))
+
+    written += emit_web_session(root, profile, manifest)
+
+    for banned in _FORBIDDEN_NATIVE:
+        # Never create these — first-match names make some IDEs skip AGENTS.md.
+        if (root / banned).exists():
+            print(f"  ⚠ {banned} exists (not written by wsx). Several IDEs first-match")
+            print("    that name and then skip AGENTS.md. Prefer the thin adapter + rule.")
+    _record(root, manifest, "thin", written)
+    return written
+
+
+def emit_web_session(root: Path, profile: dict, manifest: dict) -> list:
+    """Paste pack for ChatGPT / Grok.com / Perplexity-without-FS (no folder access)."""
+    name = _identity(profile)
+    body = "\n".join([
+        f"# Web LLM session pack — {name}'s workspace",
+        "",
+        "_For ChatGPT, Grok.com, Perplexity Space, and any chat that cannot read this",
+        "folder. Paste as custom instructions or the first message, then attach",
+        "`AGENTS.md` if the surface can take files. Not a second contract._",
+        "",
+        "**Read AGENTS.md before producing.** If you cannot fetch files, say so plainly",
+        "and still follow the standing rules below. Do not invent workspace doctrine",
+        "from training data.",
+        "",
+        "1. Workspace root = the directory containing `AGENTS.md`.",
+        "2. New session: `python3 wsx.py doctor` if you can run it; otherwise work from",
+        "   whatever files were pasted (HOME.md live-handoff + session-log head).",
+        "3. Skills: use a pasted `skills/_INDEX.md` or `python3 wsx.py skill list`.",
+        "   Do **not** ingest `skills.registry.json`.",
+        "4. After producing: `python3 wsx.py lint` then `python3 wsx.py health` if you",
+        "   can run them; otherwise list what you changed so a filesystem agent can.",
+        "5. Durable learnings go in the vault, never this chat's memory. Vendor",
+        "   Canvas/Artifact/HTML-preview panels are not durable — emit a copy-ready",
+        "   fenced block plus a suggested vault path.",
+        "",
+        _honesty_md().rstrip(),
+        "",
+        _write_through_md().rstrip(),
+        "",
+        "For a fuller brief paste `adapters/context-pack.md` (regenerate with",
+        "`python3 wsx.py emit pack` whenever the workspace changes).",
+        "",
+        "Other adapters: `CLAUDE.md` · `CURSOR.md` · `GEMINI.md` · `PERPLEXITY.md` · `WARP.md`.",
+        "",
+    ])
+    out = root / "adapters" / "web-session.md"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(_resolve_dirs(root, body), encoding="utf-8")
+    return [out]
+
+
 ADAPTERS = {
     "pack": emit_pack,
     "agents-md": emit_agents_md,
     "claude-code": emit_claude_code,
     "cursor": emit_cursor,
     "mcp": emit_mcp,
+    "thin": emit_thin,
 }
 
 
@@ -895,16 +1159,21 @@ def emit(root: Path, target: str, profile: dict, manifest: dict) -> list:
     if target == "all":
         from . import moc, tools
         written = []
-        for name in ("claude-code", "agents-md", "cursor", "pack", "mcp"):
+        for name in ("claude-code", "agents-md", "cursor", "thin", "pack", "mcp"):
             written += ADAPTERS[name](root, profile, manifest)
         # Refresh the connective MOC layer (incl. skills.registry.json) + ensure the
         # 09-tools scripts exist, so the vault graph + automation reflect current skills.
         written += moc.write_mocs(root)
         written += tools.write_tools(root)
+        from . import interview
+        interview.try_refresh(root)
         return written
     if target not in ADAPTERS:
         raise SystemExit(
             f"error: unknown emit target '{target}'. "
             f"choose: {', '.join(ADAPTERS)} | all"
         )
-    return ADAPTERS[target](root, profile, manifest)
+    written = ADAPTERS[target](root, profile, manifest)
+    from . import interview
+    interview.try_refresh(root)
+    return written

@@ -184,6 +184,7 @@ def upgrade(root: Path, dry_run: bool = False, force: bool = False) -> int:
         print("  model. Running the full corrective pass here would add generic scaffold, fabricate")
         print("  a placeholder profile, and edit your own skill files — a downgrade, not an upgrade.")
         print("\n  Safer paths:")
+        print("    wsx consume <path>     speak this vault's dialect (digest on disk; no scaffolding)")
         print("    wsx examine <path>     read-only readout (what, if anything, is missing)")
         print("    wsx adapter <path>     map your existing folders to wsx concepts (no scaffolding)")
         print("    wsx upgrade --force    override, if you REALLY want the scaffold added (not advised)")
@@ -266,4 +267,6 @@ def upgrade(root: Path, dry_run: bool = False, force: bool = False) -> int:
         print("\n  → run `wsx upgrade` (no --dry-run) to apply.")
     else:
         print("\n  next: `wsx lint` and `wsx emit all` to refresh the AI adapters.")
+        from . import interview
+        interview.try_refresh(root)
     return 0

@@ -20,7 +20,7 @@ from . import core, layout
 
 # Never treated as vault content (generated tooling / vcs / editor state).
 _NON_CONTENT = {"adapters", "_archive", ".git", ".claude", ".cursor", ".obsidian",
-                ".wsx", "node_modules"}
+                ".wsx", ".gemini", ".windsurf", ".github", "node_modules"}
 
 # dir-kind → the destinations wire must connect it to. Known taxonomy kinds are already
 # handled by moc/emit; the load-bearing row is "other" — how an UNANTICIPATED content dir

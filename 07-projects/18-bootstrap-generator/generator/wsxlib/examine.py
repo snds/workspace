@@ -181,10 +181,8 @@ def _md_count(d: Path) -> int:
         return 0
 
 
-def examine_foreign(root: Path, as_json: bool = False) -> int:
-    """Read-only coverage map of a NON-wsx workspace. Never restructures — a mature
-    foreign vault (like the one this generator grew out of) usually EXCEEDS the wsx
-    model, and imposing the wsx scaffold on it would be a downgrade, not an upgrade."""
+def foreign_snapshot(root: Path) -> dict:
+    """Bounded coverage map. The digest is written from this — not from a tree crawl."""
     present, missing = {}, []
     for concept, what in _CONCEPTS.items():
         d = _find_concept_dir(root, concept)
@@ -192,17 +190,42 @@ def examine_foreign(root: Path, as_json: bool = False) -> int:
             present[concept] = {"dir": d.name, "md_files": _md_count(d), "what": what}
         else:
             missing.append(concept)
-
     ai_wired = [f for f in ("AGENTS.md", "CLAUDE.md") if (root / f).exists()]
-    cursor = (root / ".cursor").is_dir()
-    obsidian = (root / ".obsidian").is_dir()
-    is_git = (root / ".git").exists()
-    total_md = _md_count(root)
     coverage = len(present)
+    total_md = _md_count(root)
+    rich = coverage == len(_CONCEPTS) and total_md >= 40 and "skills" in present
+    if rich:
+        verdict = "exceeds"
+    elif coverage >= 3:
+        verdict = "partial"
+    else:
+        verdict = "thin"
+    return {
+        "mode": "foreign",
+        "path": str(root),
+        "coverage": f"{coverage}/{len(_CONCEPTS)}",
+        "present": present,
+        "missing": missing,
+        "ai_wired": ai_wired,
+        "cursor": (root / ".cursor").is_dir(),
+        "obsidian": (root / ".obsidian").is_dir(),
+        "git": (root / ".git").exists(),
+        "total_md": total_md,
+        "verdict": verdict,
+    }
 
-    report = {"mode": "foreign", "path": str(root), "coverage": f"{coverage}/{len(_CONCEPTS)}",
-              "present": present, "missing": missing, "ai_wired": ai_wired,
-              "cursor": cursor, "obsidian": obsidian, "git": is_git, "total_md": total_md}
+
+def examine_foreign(root: Path, as_json: bool = False) -> int:
+    """Read-only coverage map of a NON-wsx workspace. Never restructures — a mature
+    foreign vault (like the one this generator grew out of) usually EXCEEDS the wsx
+    model, and imposing the wsx scaffold on it would be a downgrade, not an upgrade."""
+    report = foreign_snapshot(root)
+    present = report["present"]
+    missing = report["missing"]
+    ai_wired = report["ai_wired"]
+    coverage = len(present)
+    total_md = report["total_md"]
+    verdict = report["verdict"]
     if as_json:
         print(json.dumps(report, indent=2))
         return 0
@@ -212,7 +235,7 @@ def examine_foreign(root: Path, as_json: bool = False) -> int:
     print("  layout onto the wsx concepts and reports coverage. It changes NOTHING, and it will")
     print("  not impose the wsx scaffold — a mature workspace like this usually exceeds it.\n")
 
-    print(f"Concept coverage: {coverage}/{len(_CONCEPTS)}")
+    print(f"Concept coverage: {report['coverage']}")
     for concept, what in _CONCEPTS.items():
         if concept in present:
             p = present[concept]
@@ -222,35 +245,30 @@ def examine_foreign(root: Path, as_json: bool = False) -> int:
 
     print("\nAI wiring:")
     print(f"  {'✓' if ai_wired else '·'} instruction files: {', '.join(ai_wired) or '(none)'}")
-    print(f"  {'✓' if cursor else '·'} .cursor/   {'✓' if obsidian else '·'} .obsidian (vault)   "
-          f"{'✓' if is_git else '·'} git repo")
+    print(f"  {'✓' if report['cursor'] else '·'} .cursor/   "
+          f"{'✓' if report['obsidian'] else '·'} .obsidian (vault)   "
+          f"{'✓' if report['git'] else '·'} git repo")
     print(f"  {total_md} markdown files total.")
 
-    # The wsx DEFAULT is now a comprehensive model (numbered taxonomy, frameworks, memory
-    # system, shared-references, automation). So the verdict compares this foreign vault to
-    # THAT richer target: a vault that meets/exceeds it should not be downgraded; a thinner
-    # one is offered a migrate-UP, never a flattening.
-    rich = coverage == len(_CONCEPTS) and total_md >= 40 and "skills" in present
     print("\nVerdict:")
-    if rich:
+    if verdict == "exceeds":
         print("  This workspace meets — and, being hand-built, likely EXCEEDS — the comprehensive")
         print("  wsx model (frameworks, a real skill network, a memory system). wsx has nothing")
         print("  structural to add; `wsx upgrade`/`restructure` here would risk imposing a simpler")
-        print("  shape, i.e. a downgrade. Don't. If you want wsx tooling on it, the right path is a")
-        print("  thin adapter mapping these existing folders to the wsx concepts — a future capability.")
-    elif coverage >= 3:
+        print("  shape, i.e. a downgrade. Don't. To speak this vault's dialect:")
+        print("    wsx consume <path>     digest + dialect.json (reference mode — no scaffolding)")
+    elif verdict == "partial":
         print(f"  Comparable but partial ({coverage}/{len(_CONCEPTS)} concepts; ~{total_md} notes).")
         if missing:
             print(f"  Not detected: {', '.join(missing)} (may exist here under a name wsx didn't match).")
         print("  Two honest options, your call — nothing is imposed:")
-        print("    • Adopt the missing pieces additively as NEW folders alongside what exists, or")
-        print("    • MIGRATE UP to the full wsx model (numbered taxonomy + memory + automation):")
-        print("      `wsx init` a fresh rich workspace and bring this content in.")
+        print("    • `wsx consume <path>` — speak THIS vault's dialect (digest on disk first), or")
+        print("    • MIGRATE UP to the full wsx model: `wsx init` a fresh workspace and bring this in.")
     else:
         print(f"  Thinner than the wsx default ({coverage}/{len(_CONCEPTS)} concepts). The generator")
         print("  now scaffolds a comprehensive model well beyond this — so the useful move is to")
         print("  MIGRATE UP: `wsx init` a rich workspace and migrate your content into it, rather")
-        print("  than bolt concepts onto a loose notes folder.")
+        print("  than bolt concepts onto a loose notes folder. `wsx consume` will say the same.")
     return 0
 
 

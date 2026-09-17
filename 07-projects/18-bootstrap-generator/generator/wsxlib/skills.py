@@ -17,11 +17,10 @@ def _title(name: str) -> str:
 
 
 def _record(root: Path, name: str) -> dict:
-    sd = layout.of(root).name("skills")
-    sk = root / sd / name / "SKILL.md"
+    sk = core.skill_path(root, name)
     fm, _ = core.parse_frontmatter(sk)
     rec = {
-        "path": f"{sd}/{name}/SKILL.md",
+        "path": str(sk.relative_to(root)),
         "hub": fm.get("hub", ""),
         "kind": fm.get("kind", "spoke"),
         "level": fm.get("level", "intermediate"),
@@ -156,13 +155,17 @@ def _skeleton_hub(title: str, desc: str, name: str, level: str, seniority: str) 
 def add(root: Path, name: str, desc: str, triggers, hub: str,
         source: str = "generated", title: str = "", kind: str = "spoke",
         level: str = "intermediate", seniority: str = "") -> int:
-    sk = root / layout.of(root).name("skills") / name / "SKILL.md"
+    sk = core.skill_path(root, name)
     if sk.exists():
         raise SystemExit(f"error: skill '{name}' already exists ({sk.relative_to(root)})")
     if level not in LEVELS:
         level = "intermediate"
     trg = ([t.strip() for t in triggers.split(",") if t.strip()]
            if isinstance(triggers, str) else list(triggers or []))
+    if kind == "hub" and not trg:
+        raise SystemExit(
+            "error: hubs must declare --triggers (otherwise they never load). "
+            'Example: --triggers "photography, photo craft"')
     disp = title or _title(name)
     fm = {
         "name": name,
@@ -189,6 +192,8 @@ def add(root: Path, name: str, desc: str, triggers, hub: str,
     sen = f"/{seniority}" if seniority else ""
     print(f"✓ {kind} '{name}' created  [hub: {fm['hub']}]  ({source}, {level}{sen}, {len(trg)} trigger(s))")
     print(f"  skeleton written at {level} altitude — enrich the body, then: wsx skill reindex")
+    from . import interview
+    interview.try_refresh(root)
     return 0
 
 

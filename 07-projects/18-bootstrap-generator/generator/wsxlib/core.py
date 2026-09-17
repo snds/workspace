@@ -101,15 +101,37 @@ def save_manifest(root: Path, man: dict) -> None:
 
 
 # -------------------------------------------------------------------- skills ---
+def skill_path(root: Path, name: str) -> Path:
+    """Where a skill file lives for THIS vault (dialect-aware)."""
+    sdir = layout.of(root).dir("skills")
+    dia = layout.dialect(root)
+    if (dia.get("skill_file") or "SKILL.md") == "SKILL.md":
+        return sdir / name / "SKILL.md"
+    return sdir / f"{name}.md"
+
+
 def iter_skills(root: Path):
-    """Yield (name, SKILL.md Path) for each skill folder under the skills dir."""
+    """Yield (name, skill Path). Folders of SKILL.md, plus loose `*.md` when dialect says so."""
     sdir = layout.of(root).dir("skills")
     if not sdir.is_dir():
         return
+    seen: set[str] = set()
     for d in sorted(sdir.iterdir()):
         sk = d / "SKILL.md"
         if d.is_dir() and sk.exists():
+            seen.add(d.name)
             yield d.name, sk
+    dia = layout.dialect(root)
+    if (dia.get("skill_file") or "SKILL.md") == "SKILL.md":
+        return
+    for p in sorted(sdir.glob("*.md")):
+        if not p.is_file() or p.name.startswith("_"):
+            continue
+        if p.name.lower() in ("personal.md", "readme.md"):
+            continue
+        if p.stem in seen:
+            continue
+        yield p.stem, p
 
 
 def parse_frontmatter(path: Path):
@@ -134,6 +156,34 @@ def skill_triggers(fm: dict) -> list:
         return [str(x).strip().lower() for x in t if str(x).strip()]
     if isinstance(t, str):
         return [x.strip().lower() for x in t.split(",") if x.strip()]
+    return []
+
+
+def is_command_skill(fm: dict) -> bool:
+    """Hubs and foundations must declare triggers or they never load."""
+    kind = str(fm.get("kind", "")).strip().lower()
+    tier = str(fm.get("tier", "")).strip().lower()
+    role = str(fm.get("role", "")).strip().lower()
+    return (
+        kind in ("hub", "foundation")
+        or tier in ("hub", "foundation")
+        or role == "orchestrator"
+    )
+
+
+_TRIGGERS_LINE = re.compile(r"[Tt]riggers?:\s*(.+)$")
+
+
+def entry_triggers(path: Path) -> list:
+    """Triggers declared in front matter or a `Triggers:` body line."""
+    fm, body = parse_frontmatter(path)
+    trg = skill_triggers(fm)
+    if trg:
+        return trg
+    for line in body.splitlines():
+        m = _TRIGGERS_LINE.search(line)
+        if m:
+            return [t.strip().lower() for t in m.group(1).split(",") if t.strip()]
     return []
 
 

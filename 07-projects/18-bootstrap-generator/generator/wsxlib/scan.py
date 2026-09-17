@@ -36,8 +36,8 @@ EXT_DIRS = [HOME / ".vscode/extensions", HOME / ".vscode-insiders/extensions",
 # Known agentic tools. A PATH binary, a config dir, a macOS .app, or an installed
 # editor extension signals "installed". `surface` maps to the wsx emit target that
 # fits the tool; `kind` is coding (drives files) vs chat (paste a context pack).
-#   coding agents  → read AGENTS.md / native config / MCP  → surface = that target
-#   chat/desktop   → no file-reading → surface = pack (paste `wsx emit pack`)
+#   coding agents  → AGENTS.md + native first-file (GEMINI.md, …) / MCP
+#   chat/desktop   → no file-reading → surface = pack (paste web-session + context-pack)
 AGENTS = [
     # --- coding agents (read files / MCP) ---------------------------------------
     {"id": "claude-code", "name": "Claude Code", "kind": "coding", "bins": ["claude"],

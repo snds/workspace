@@ -59,12 +59,31 @@ their substance here:
 
 ## First: NEW workspace, or UPDATE an existing one?
 
-Two entry paths. Read the person's ask before choosing:
+**In-progress interview — check this before either path.** Run `wsx interview status`
+(works from the generator folder; also looks in `~/.wsx`). If a session exists, ask
+**one** question: continue that workspace, or start over. Continue:
+`wsx interview continue` (prints last Q/A + remaining — do not re-ask completed
+movements). Start over: `wsx interview abandon` (session files only). Wiping the
+draft folder is a **second, explicit confirm** you must obtain separately.
 
-- **"Set up / bootstrap / generate my workspace"** → this is a **new build**. Continue to
+After each movement, silently (the user is not asked):
+`wsx interview checkpoint --movement M0 --last-q "…" --last-a "…" --remaining M1,M2,M3`.
+Offer “save and stop here” at most once, and only when a movement just closed, the
+session has already been long, and remaining work is a full movement. Assume/skip:
+one offer per movement at the boundary; never M3 personal, never dest `wall: external`,
+never blended privacy. Playback at confirm tags every field `answered` vs `assumed`
+vs `defaulted`. Persona seeds: one optional beat at the start (`wsx interview seed list`);
+escape hatch first; no seed is the default. A seed is a draft, not a finished workspace.
+
+On confirm + emit: `wsx interview complete` (cleanup + outcome). Do **not** emit
+adapters, resolve skills, or harvest canvases until that confirm.
+
+Four entry paths. Read the person's ask before choosing:
+
+- **"Set up / bootstrap / generate my workspace"** (no existing vault) → this is a **new build**. Continue to
   Phase 0 below and run the full interview.
-- **"Update / upgrade / fix / augment my workspace"** or **anyone who already HAS a
-  workspace** → **do NOT re-interview from scratch.** Examine first, then augment additively:
+- **In-progress interview already on disk** → handled above (`continue` vs `abandon`). Do not start a third vault.
+- **"Update / upgrade / fix / augment my workspace"** on a **wsx-generated** vault → **do NOT re-interview from scratch.** Examine first, then augment additively:
 
   1. **Find it.** If the current dir is a workspace (`wsx doctor` says so), use it. Otherwise
      `python3 <generator>/bin/wsx scan --find-workspaces` lists workspaces in the usual homes.
@@ -86,6 +105,13 @@ Two entry paths. Read the person's ask before choosing:
      `wsx upgrade` → `wsx emit all` → `wsx health` + `wsx lint`. Report what changed.
   5. Only run the **resolver** loop (search → review-gate → resolve → emit) if they want to
      *add new capabilities*. Everything pre-existing stays.
+
+- **They point at an existing vault that was never `wsx init`'d** (Obsidian, AGENTS.md tree, notes repo) → **`wsx consume <path>`**, not init, not upgrade.
+  1. Run `wsx consume <path>`. It writes `.wsx/consume-digest.md` **first** (the detector). An LLM "I understood your ontology" without that file is not a consume.
+  2. Load `.wsx/consume-prompt.md` (generated FROM the digest). Quote their dialect. Do not crawl the tree. Do not impose `00–09`. Do not rewrite their AGENTS.md / HOME.
+  3. Verdict **thin** → offer migrate-up (`wsx init` a new workspace + ingest/adopt). Do not treat the folder as a peer.
+  4. Verdict **partial / exceeds** → one intent question (add / improve / change / just map it). Then only dests, altitude, what to add. Additive writes go through `wsx skill add` / `wsx dest add` in reference mode.
+  5. Never read `personal.md` into the digest. Never copy their notes into the generator.
 
 ## Operating rules (hold these across every phase)
 
@@ -120,7 +146,12 @@ everything structural goes through `wsx`:
 | Step | Command |
 |---|---|
 | Detect their stack (run first) | `wsx scan` (or `wsx scan --json`) — agents, MCP, local LLMs |
-| **Find an existing workspace to update** | `wsx scan --find-workspaces` — locates vaults in the usual homes |
+| **Unfinished interview?** | `wsx interview status` then `continue` or `abandon` |
+| Silent checkpoint after a movement | `wsx interview checkpoint --movement M0 --last-q "…" --last-a "…"` |
+| **Consume a never-wsx vault** | `wsx consume <path>` — digest + dialect.json (do not init/upgrade over it) |
+| **Load skills for an utterance** | `wsx loadset "<phrase>"` — ordered SKILL.md paths; never ingest the registry |
+| **Reachability** | `wsx reach` — well-formed ≠ reachable |
+| **Close-out detector** | `wsx dispatch [hub]` — named detector or honest skip |
 | Scaffold the workspace | `wsx init <dir> --name "<name>"` (recommend `~/Documents/Projects/Workspace`) |
 | **Update/upgrade an existing workspace** | `wsx upgrade [--dry-run]` — non-destructive: add missing scaffold + reconnect the graph |
 | Write profile fields | `wsx profile set contexts.work.role="…" surfaces.agents="claude,cursor" …` |
@@ -360,17 +391,20 @@ explicitly — ask which they want; emit one or several:
 
 ```
 wsx emit claude-code   # .claude/skills/, CLAUDE.md, hooks  (recommended default)
-wsx emit agents-md     # AGENTS.md instruction file (Codex / Copilot / Gemini / Windsurf)
+wsx emit agents-md     # AGENTS.md + llms.txt (Codex / Copilot / Gemini / Windsurf)
 wsx emit cursor        # .cursor/ rules + AGENTS.md
+wsx emit thin          # native first-files (GEMINI.md, WARP.md, CURSOR.md, …) + web pack
 wsx emit mcp           # the universal MCP runtime (lights up many frontends at once)
 wsx emit pack          # tool-less, pasteable context pack (degradation backstop)
+wsx emit all           # every adapter, including thin natives + llms.txt
 ```
 
 **If any of their assistants is chat-only** (ChatGPT, Perplexity, Gemini in a browser — `wsx
 scan` labels these `chat` → surface `pack`), say so plainly: those cannot open a folder on
-their computer, so pointing them at a path will always fail. `wsx emit pack` is the answer —
-they paste or upload `adapters/context-pack.md`. Tell them this *before* they try, and re-run
-`wsx emit pack` whenever the workspace changes so the pasted copy stays current.
+their computer, so pointing them at a path will always fail. `wsx emit pack` +
+`adapters/web-session.md` is the answer — they paste `adapters/web-session.md` first, then
+`adapters/context-pack.md` if they want a fuller brief. Tell them this *before* they try,
+and re-run `wsx emit pack` whenever the workspace changes so the pasted copy stays current.
 
 Adapters are **generated, never hand-edited.** They compile from the one
 canonical source (`triggers`/`description` are the single source each adapter

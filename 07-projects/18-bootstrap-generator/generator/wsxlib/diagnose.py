@@ -153,7 +153,18 @@ def _check_emitted(root: Path) -> list:
     if not (root / "CLAUDE.md").exists() and not (root / "AGENTS.md").exists():
         return [_finding("warn", "adapters", "no emitted adapter files (CLAUDE.md/AGENTS.md).",
                          "`wsx emit all`")]
-    return [_finding("ok", "adapters", "adapter files present.")]
+    findings = [_finding("ok", "adapters", "adapter files present.")]
+    if not (root / "llms.txt").exists():
+        findings.append(_finding("warn", "adapters", "no llms.txt machine entry.",
+                                 "`wsx emit all` (or `wsx emit agents-md`) writes the pointer to AGENTS.md"))
+    for banned in (".cursorrules", ".windsurfrules", ".clinerules"):
+        if (root / banned).exists():
+            findings.append(_finding(
+                "warn", "adapters",
+                f"{banned} exists — several IDEs first-match that name and skip AGENTS.md.",
+                "prefer the thin native adapter + rule; do not add first-match vendor files",
+            ))
+    return findings
 
 
 def _check_wiring(root: Path) -> list:
@@ -202,12 +213,34 @@ def _check_git(root: Path) -> list:
     return out
 
 
+def _check_interview(root: Path) -> list:
+    from datetime import datetime, timezone
+    from . import interview
+    sess = interview._session_path(root)
+    if not sess.exists():
+        return [_finding("ok", "interview", "no in-progress interview session.")]
+    data = interview._read_json(sess)
+    updated = str(data.get("updated") or "")
+    stale = False
+    try:
+        ts = datetime.strptime(updated, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+        stale = (datetime.now(timezone.utc) - ts).days > interview.STALE_DAYS
+    except ValueError:
+        stale = False
+    if stale:
+        return [_finding("warn", "interview",
+                         f"in-progress interview is older than {interview.STALE_DAYS} days.",
+                         "`wsx interview complete` if finished, or `wsx interview abandon`")]
+    return [_finding("ok", "interview", f"in-progress interview at {data.get('movement') or 'start'}.")]
+
+
 _CHECKS = [
     ("workspace", _check_is_workspace), ("layout", _check_layout),
     ("scaffold", _check_scaffold), ("integrity", _check_integrity),
     ("skills", _check_manifest_drift), ("adapters", _check_emitted),
     ("graph", _check_graph), ("references", _check_references),
     ("wiring", _check_wiring), ("self-sufficiency", _check_cli_copy), ("git", _check_git),
+    ("interview", _check_interview),
 ]
 
 

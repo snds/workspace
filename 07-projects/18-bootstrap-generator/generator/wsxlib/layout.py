@@ -25,13 +25,14 @@ physically moves a flat workspace up to the numbered layout; until then both coe
     tools        09-tools                —               core (automation) / optional (extra validators)
     adapters     adapters                adapters        generated (never numbered)
 
-`adapters/` (and root `AGENTS.md` / `CLAUDE.md` / `HOME.md`, `.claude/`, `.cursor/`,
-`.wsx/`) stay un-numbered — they are generated tooling, not vault content, exactly as
-in a hand-built comprehensive workspace.
+`adapters/` (and root `AGENTS.md` / `CLAUDE.md` / `llms.txt` / `HOME.md`, `.claude/`,
+`.cursor/`, `.gemini/`, `.windsurf/`, `.github/`, `.wsx/`) stay un-numbered — they are
+generated tooling, not vault content, exactly as in a hand-built comprehensive workspace.
 """
 from __future__ import annotations
 
 from pathlib import Path
+import json
 
 # logical name -> canonical (numbered) directory. THE source of truth.
 CANONICAL: dict[str, str] = {
@@ -80,6 +81,12 @@ class Layout:
                 self._resolved[key] = LEGACY[key]
             else:
                 self._resolved[key] = num  # nothing on disk yet -> create numbered
+        # Wave 7: a consumed foreign vault names its own dirs. Honor that map so
+        # skill add / health / dest never invent a parallel numbered taxonomy.
+        dia = dialect(self.root)
+        for key, name in (dia.get("concepts") or {}).items():
+            if key in CANONICAL and isinstance(name, str) and name.strip():
+                self._resolved[key] = name.strip().rstrip("/")
 
     def name(self, key: str) -> str:
         """The directory NAME in use for this logical key (e.g. '06-context')."""
@@ -96,6 +103,11 @@ class Layout:
     @property
     def numbered(self) -> bool:
         """True if this workspace uses the numbered taxonomy (vs the legacy flat one)."""
+        kind = dialect(self.root).get("layout")
+        if kind == "numbered":
+            return True
+        if kind in ("flat", "other"):
+            return False
         return self._resolved.get("context") == CANONICAL["context"]
 
     # convenience accessors for the hot dirs (keep call sites readable)
@@ -117,6 +129,18 @@ class Layout:
     def tools(self) -> str: return self._resolved["tools"]
     @property
     def adapters(self) -> str: return self._resolved["adapters"]
+
+
+def dialect(root: Path) -> dict:
+    """Wave 7: how THIS vault names skills/graphs/dests. Empty dict if none."""
+    p = Path(root) / ".wsx" / "dialect.json"
+    if not p.exists():
+        return {}
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except (OSError, json.JSONDecodeError):
+        return {}
 
 
 def of(root: Path) -> Layout:
@@ -141,6 +165,15 @@ def remap(layout: Layout, rel: str) -> str:
 
 
 def has_workspace_dirs(root: Path) -> bool:
-    """True if `root` has the marker dir of a wsx workspace (numbered OR flat)."""
+    """True if `root` has the marker dir of a wsx workspace (numbered OR flat),
+    or a consumed/adapted foreign vault with any mapped concept dir on disk."""
+    root = Path(root)
+    if (root / ".wsx" / "dialect.json").exists() or (root / ".wsx" / "adapter.json").exists():
+        names = list((dialect(root).get("concepts") or {}).values())
+        if names:
+            return any((root / n).is_dir() for n in names)
+        return any((root / n).is_dir() for n in (
+            "context", "skills", "knowledge", "projects", "frameworks",
+            *CANONICAL.values()))
     lay = Layout(root)
     return all((root / lay.name(k)).is_dir() for k in _MARKER_KEYS)

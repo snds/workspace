@@ -15,10 +15,14 @@ from pathlib import Path
 GROUPS = [
     ("Everyday", [
         ("python3 wsx.py doctor", "where am I · is my setup healthy · what to run next"),
-        ("python3 wsx.py emit all", "recompile the AI adapters (CLAUDE.md, AGENTS.md, hooks, MCP, indexes)"),
+        ("python3 wsx.py emit all", "recompile adapters (AGENTS.md, llms.txt, thin natives, hooks, MCP, pack)"),
+        ("python3 wsx.py interview status", "resume an interview that died mid-question (also looks in ~/.wsx)"),
+        ("python3 wsx.py interview checkpoint --movement M0", "silent save-point after a movement (brain runs this)"),
+        ("python3 wsx.py artifact ingest --from-file PATH", "land a vendor-surface file (secret-scanned, versioned)"),
+        ("python3 wsx.py canvas harvest", "copy Cursor-local canvases into dests from the map"),
         ("python3 wsx.py health", "graph hygiene: orphan notes, stale/aging claims, dangling typed edges"),
         ("python3 wsx.py verify", "integrity: profile round-trips + every adapter is emit-ready"),
-        ("python3 wsx.py lint", "skills: unfilled skeletons + trigger overlaps"),
+        ("python3 wsx.py lint", "skills: unfilled skeletons, empty hub triggers, knowledge Triggers, overlaps"),
         ("python3 wsx.py sync", "save your work: pull --rebase, commit, push"),
     ]),
     ("Session & memory", [
@@ -45,6 +49,10 @@ GROUPS = [
         ("python3 wsx.py upgrade", "non-destructive corrective pass (adds missing pieces, reconnects the graph)"),
         ("python3 wsx.py restructure --apply", "migrate a legacy flat layout → numbered (dry-run by default; --rollback)"),
         ("python3 wsx.py examine", "read-only: what this workspace still needs"),
+        ("python3 wsx.py consume <path>", "speak a never-wsx vault's dialect (digest + dialect.json; no scaffolding)"),
+        ("python3 wsx.py loadset \"<utterance>\"", "ordered SKILL.md paths from declared triggers (never ingest the registry)"),
+        ("python3 wsx.py reach", "well-formed ≠ reachable: layer-0, silent hubs, knowledge routes"),
+        ("python3 wsx.py dispatch [hub]", "close-out detector table (non-zero exit; honest skip)"),
         ("python3 wsx.py adapter <path>", "bring wsx tooling to a HAND-BUILT vault safely (reference mode)"),
         ("python3 wsx.py archive <path> --reason \"…\"", "retire a note with provenance (never delete)"),
     ]),

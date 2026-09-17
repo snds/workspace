@@ -78,6 +78,10 @@ The boundary IS the architecture. Two manifests are the contract: `profile.yaml`
 
 ```
 wsx init                 scaffold neutral workspace + Obsidian vault + git init
+wsx consume <path>       speak a never-wsx vault's dialect (digest + dialect.json; no scaffolding)
+wsx loadset "<utterance>" ordered SKILL.md paths from declared triggers (never ingest the registry)
+wsx reach                well-formed ≠ reachable (layer-0, silent hubs, knowledge routes)
+wsx dispatch [hub]       close-out detector table (non-zero exit; honest skip)
 wsx profile <get|set>    validate/read/write profile.yaml
 wsx resolve              fetch + pin pulled skills (mechanical half of Resolver)
 wsx emit <target>        compile canonical → adapter (claude-code|mcp|cursor|agents-md|pack)

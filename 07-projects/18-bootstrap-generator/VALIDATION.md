@@ -7,9 +7,10 @@ on the right. If you want to try it yourself, jump to [Run it yourself](#run-it-
 "second brain" — an Obsidian vault that is also a git repo and a set of AI skills tuned to
 *how you actually work* — and wires it into your AI assistant (Claude, Cursor, and others).
 
-**Status:** the whole command surface is built and green — 11 commands, ~2,270 lines of
-zero-dependency Python. The *guided interview* (your AI filling everything in for you) is
-early but works; the mechanical engine underneath it is solid and tested.
+**Status:** `wsx` 0.3.0 — init, interview save/resume, dests/harvest, consume-a-foreign-vault,
+thin any-LLM adapters, portable close-out / plan-ahead / self-improve, and a reachability
+check (`wsx reach`: well-formed ≠ reachable). Zero-dependency Python. The *guided interview*
+is usable; chat-only surfaces still need a paste pack. Not a store app.
 
 ---
 
@@ -59,7 +60,7 @@ fundamentals bore an expert, shorthand strands a beginner — so this is the cor
 | **It runs on *your* tools and *your* tokens — never the author's.** The generator has no API key and makes no model calls; it drives whatever AI you already run (or a local model, fully private at zero token cost). | `wsx scan` detects your installed agents, MCP servers (names only — never keys), and local LLMs, and pre-fills the setup. The engine is zero-API by construction. ✓ |
 
 Every claim here was produced by running the tool — not asserted. The commands are
-`init · scan · profile · emit · resolve · search · lint · verify · session · sync · remote · doctor · skill`.
+`init · consume · scan · profile · emit · resolve · search · lint · verify · health · reach · loadset · dispatch · dest · interview · session · sync · remote · doctor · skill`.
 
 ---
 
@@ -97,8 +98,9 @@ Stuck? `python3 generator/bin/wsx doctor` tells you where you are and the next s
 
 ## Honest limitations (so nothing surprises you)
 
-- **The guided interview is early.** In Claude Code the trigger is wired; elsewhere it may need
-  the one-line nudge above. Paths B/C always work and never depend on the AI.
+- **The guided interview needs a folder-capable assistant** (or Path B/C). Chat-only
+  surfaces get `adapters/web-session.md` + a paste pack; they cannot `wsx init` for you.
+  Save/resume: `wsx interview status`.
 - **Reference *finding* is your AI's research, not a magic index.** The tool cites and pins the
   references your AI gathers; the built-in skill registries don't yet expose a public search
   index, so `wsx search` currently points you at their homepages (a local index works today).
