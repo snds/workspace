@@ -4,6 +4,101 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-09-15 — C2: the artifact registry moves behind a CLI; session floor down 32%
+
+SessionID: 2026-09-15-work-mbp-artifact-retrieval
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Claude Code (Mac desktop app)
+Agent: Claude Opus 5
+Project(s): 19-workspace-brain
+
+Summary: `06-context/artifact-registry.md` cost 6,942 tokens and CLAUDE.md read-order item 4
+told every agent to read it — the largest recurring item in the session floor after AGENTS.md
+itself. It is a structural index, and the same fix was already applied twice in this workspace
+(skills.registry.json → skill-loadset.py; _INDEX.md → knowledge-hints + server-side parsing)
+and simply left standing in a third place.
+
+Built `09-tools/artifact-find.py`: terms search name/path/group/purpose with name hits
+outranking prose, plus `--path`, `--list`, `--json`, `--limit`. Measured: reading the file is
+6,942 tokens; `--list` (the whole map) is 575; a real query is 100. A no-match points at
+vault-retrieve rather than returning empty, because a bare "no results" invites the agent to
+conclude nothing exists.
+
+`--check` is half the tool — a retrieval layer whose source drifts starts missing SILENTLY,
+which is worse than the whole-file read it replaced. It verifies every entry is parseable,
+has a Purpose to match on, a YYYY-MM-DD to age against, and a unique name. Live: 36/36
+complete. It runs in CI and in /session-end step 4, right after the step that writes the file.
+
+Contract changed in four places (CLAUDE.md item 4, AGENTS.md item 9, _CONTEXT.md, /optimize
+step 7 — where a whole-file read stays correct and is annotated as the one legitimate caller).
+Harness model updated only AFTER the contract, so the number followed the cost rather than
+leading it.
+
+Result: session floor 21,697 → 14,778 (−31.9%), worst-case legal request 62,110 → 55,191.
+Locked three ways: session_floor budget lowered 25,000 → 17,000 so a revert (21,720) fails CI;
+a self-test asserting the ceiling sits in that gap, verified non-vacuous by raising it to
+99,000 and watching the test fail; and an `avoided_by_retrieval` line so the 6,942 stays
+visible instead of vanishing from the accounting.
+
+21 harness gates green, connections 8/8, every budget met, 48/48 matcher cases, 14/14
+trajectories, vault-health 0/0, ruff clean.
+
+Not done, and stated: this does not shrink AGENTS.md (7,691) or user-preferences.md (2,331) —
+both are always-on content rather than indexes, so the same trick does not apply. And the
+budget catches a reverted contract, not a model that ingests the file anyway.
+
+Report: `07-projects/19-workspace-brain/reports/artifact-retrieval_v1.0_2026-09-15.md`
+Decision: `[[decision-indexes-are-queried-not-read]]`
+--- END BLOCK ---
+
+### 2026-09-15 — Surface trajectories: three Layer-0 matchers collapsed to one
+
+SessionID: 2026-09-15-work-mbp-trajectories
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Claude Code (Mac desktop app)
+Agent: Claude Opus 5
+Project(s): 19-workspace-brain
+
+Summary: Phase 5 of the review prompt. Found three independent Layer-0 implementations —
+`prompt_route.py` (Cursor), a fork inside `dispatcher.py` (Claude Code), and a copy inside
+`evaluate-skill-routing.py` (the 48 fixtures). The fixtures tested the copy, so neither live
+surface was under test by anything. Ran the same 48 utterances through both real entry
+points: 6 divergences (12.5%). Cursor had no Layer-1 lexical fallback (contract-documented,
+so non-compliance rather than difference); the Claude fork deduped knowledge hints by trigger
+instead of by target and silently dropped them. Both wrong, opposite directions. That is the
+"Cursor didn't find the skill" complaint, reproduced.
+
+Collapsed to one matcher instead of patching two into agreement: ported Layer 1 into
+prompt_route, made handle_user_prompt delegate, made evaluate-skill-routing import
+term_matches. Re-measured: 0 divergences.
+
+Built `09-tools/evaluate-surface-trajectories.py` — executes each surface's real entry point
+(claude-code hook, cursor hook, shell-agent via skill-loadset, hookless adapters asserted
+statically), asserts expect/forbid paths, headers, silence, and hook-surface PARITY, plus a
+structural one-matcher guard so re-forking fails CI for every utterance, not only corpus
+ones. `--self-test` plants a divergence and asserts parity fails on it. 14 cases.
+
+Unification immediately surfaced its own cost: a bare status-note payload began appearing on
+non-work utterances on both surfaces at once. Fixed with a general rule (a payload of nothing
+but parenthetical notes is noise) which preserves the visible miss for work verbs; two
+fixtures now hold it.
+
+Wired: CI, the workspace-harness quality lane (17 gates), AGENTS.md enforcement chain, the
+self-improve close-out row, five Layer-0 routes. All three harness lanes green; 48/48 matcher
+cases; 14/14 trajectories; vault-health 0/0.
+
+Not proven, deliberately: that a model *reads* what it receives. Injection is not compliance;
+that needs real-session outcome data, not fixtures.
+
+Report: `07-projects/19-workspace-brain/reports/surface-trajectories_v1.0_2026-09-15.md`
+Decision: `[[decision-one-matcher-per-workspace]]`
+--- END BLOCK ---
+
+
 ### 2026-09-15 — Workspace harness: reachability + traversal cost become detectors
 
 SessionID: 2026-09-15-work-mbp-harness

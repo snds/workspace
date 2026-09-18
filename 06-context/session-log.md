@@ -20,6 +20,75 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
+
+
+### 2026-09-17 — CDS shadcn consume waves on cds main
+
+SessionID: 2026-09-17-work-shadcn-consume
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 02-centricPLM
+Summary: Consumed leftover shadcn UI into `@centric/ui` on cds (Calendar/DatePicker wave, then Combobox/menus wave). #44 stacked onto a feature base after #43 merged, so Combobox never hit `main` until cherry-pick #45.
+Decisions:
+  - DatePicker is Popover + Calendar; no shadcn DatePicker root. Density cells; Material Symbols `Icon`; no local focus rings; no Lucide.
+  - Do not replace Progress/Toaster or CDS `Field`/`EmptyState`/Sheet. Drawer is the swipe bottom sheet only.
+  - Stacked PRs that merge after the base is on `main` must be re-landed onto `main` (cherry-pick), not treated as done.
+Evidence:
+  - cds #43 + #45 merged @ https://github.com/cpes-software/cds — verified (`origin/main` `4dfb957`, CI green)
+  - #44 merged to `feat/consume-shadcn-calendar-datepicker`, not `main` — verified via `gh pr view 44`
+Project status changes:
+  - 02-centricPLM: shadcn UI consume complete on cds `main` except skip-list (Field collision, EmptyState, chart, carousel, chat kit).
+Next:
+  - Hosts import new `@centric/ui` subpaths from cds `main` (calendar, date-picker, combobox, input-group, drawer, input-otp, menubar, navigation-menu, item, direction, plus wave-1 primitives).
+  - Skip-list stays unless Sean asks. Restore cds stash `wip icon font host load` if still wanted.
+--- END BLOCK ---
+
+### 2026-09-17 — Brand-soft tokens landed on cds main
+
+SessionID: 2026-09-17-work-pr42
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): cds (cpes-software/cds); 02-centricPLM
+Summary: After Sean published the Figma library, the brand-soft map was committed off origin/main as `feat/primary-soft-tokens` (`2a12726`) and opened as cds [#42](https://github.com/cpes-software/cds/pull/42). That PR is merged (2026-09-16). The original cds checkout's other WIP was left alone. cds HEAD in this window is now `feat/land-shadcn-combobox-on-main`.
+Decisions:
+  - Token commit was isolated from charting/docs WIP via a worktree so PR 30's merged branch was not reused.
+Evidence:
+  - cds [#42](https://github.com/cpes-software/cds/pull/42) merged @ GitHub — verified
+  - Figma library publish — verified (Sean)
+Pending resolved:
+  - Commit/PR cds primary-soft mapping
+  - Publish the SaaS PLM Figma library (this wave)
+Next:
+  - Wave 1 leftover still out: ChipMultiSelect, TypeTag, OutlinedValueChips
+  - Do not mix combobox-land WIP with token follow-ups
+--- END BLOCK ---
+
+### 2026-09-17 — session-end (Figma catalog thread + wsx Path B launcher)
+
+SessionID: 2026-09-17-work-session-end
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 02-centricPLM, 18-bootstrap-generator, 19-workspace-brain
+Summary: Closed the 2026-09-16 Figma catalog thread (overlap reflow, modes-for-variants, Text Styles iff no Size/Density — already on `main`). Folded leftover `wsx` Path B work: `launch.py` detects folder-capable apps, offers to open the generator folder, emits all adapters; `scan.py` gains folder-capable/open helpers; README Path B + Linux.
+Decisions:
+  - CDS `apps/docs/AGENTS.md` / `CLAUDE.md` left untracked (employer repo, `centric-engineering` — no auto-commit).
+  - Interview still starts from the generator folder, not the new workspace dest.
+Pending added:
+Pending resolved:
+Next:
+  - Publish centric-ui Figma library (Sean, Assets panel) — ^pc-18.
+  - Colleague/Olga `wsx` path when asked.
+--- END BLOCK ---
+
 ### 2026-09-16 — CDS Figma catalog reflow + construction rules
 
 SessionID: 2026-09-16-work-figma-catalog
@@ -682,98 +751,4 @@ _INDEX. A retrieval CLI plus a read-order change is real work; queued with the n
 
 Report: `07-projects/19-workspace-brain/reports/automation-second-wave_v1.0_2026-09-15.md`
 Decision: `[[decision-lint-narrow-or-not-at-all]]`
---- END BLOCK ---
-
-### 2026-09-15 — C2: the artifact registry moves behind a CLI; session floor down 32%
-
-SessionID: 2026-09-15-work-mbp-artifact-retrieval
---- SESSION BLOCK ---
-Date: 2026-09-15
-Machine: Work MacBook Pro (main, going forward)
-Surface: Claude Code (Mac desktop app)
-Agent: Claude Opus 5
-Project(s): 19-workspace-brain
-
-Summary: `06-context/artifact-registry.md` cost 6,942 tokens and CLAUDE.md read-order item 4
-told every agent to read it — the largest recurring item in the session floor after AGENTS.md
-itself. It is a structural index, and the same fix was already applied twice in this workspace
-(skills.registry.json → skill-loadset.py; _INDEX.md → knowledge-hints + server-side parsing)
-and simply left standing in a third place.
-
-Built `09-tools/artifact-find.py`: terms search name/path/group/purpose with name hits
-outranking prose, plus `--path`, `--list`, `--json`, `--limit`. Measured: reading the file is
-6,942 tokens; `--list` (the whole map) is 575; a real query is 100. A no-match points at
-vault-retrieve rather than returning empty, because a bare "no results" invites the agent to
-conclude nothing exists.
-
-`--check` is half the tool — a retrieval layer whose source drifts starts missing SILENTLY,
-which is worse than the whole-file read it replaced. It verifies every entry is parseable,
-has a Purpose to match on, a YYYY-MM-DD to age against, and a unique name. Live: 36/36
-complete. It runs in CI and in /session-end step 4, right after the step that writes the file.
-
-Contract changed in four places (CLAUDE.md item 4, AGENTS.md item 9, _CONTEXT.md, /optimize
-step 7 — where a whole-file read stays correct and is annotated as the one legitimate caller).
-Harness model updated only AFTER the contract, so the number followed the cost rather than
-leading it.
-
-Result: session floor 21,697 → 14,778 (−31.9%), worst-case legal request 62,110 → 55,191.
-Locked three ways: session_floor budget lowered 25,000 → 17,000 so a revert (21,720) fails CI;
-a self-test asserting the ceiling sits in that gap, verified non-vacuous by raising it to
-99,000 and watching the test fail; and an `avoided_by_retrieval` line so the 6,942 stays
-visible instead of vanishing from the accounting.
-
-21 harness gates green, connections 8/8, every budget met, 48/48 matcher cases, 14/14
-trajectories, vault-health 0/0, ruff clean.
-
-Not done, and stated: this does not shrink AGENTS.md (7,691) or user-preferences.md (2,331) —
-both are always-on content rather than indexes, so the same trick does not apply. And the
-budget catches a reverted contract, not a model that ingests the file anyway.
-
-Report: `07-projects/19-workspace-brain/reports/artifact-retrieval_v1.0_2026-09-15.md`
-Decision: `[[decision-indexes-are-queried-not-read]]`
---- END BLOCK ---
-
-### 2026-09-15 — Surface trajectories: three Layer-0 matchers collapsed to one
-
-SessionID: 2026-09-15-work-mbp-trajectories
---- SESSION BLOCK ---
-Date: 2026-09-15
-Machine: Work MacBook Pro (main, going forward)
-Surface: Claude Code (Mac desktop app)
-Agent: Claude Opus 5
-Project(s): 19-workspace-brain
-
-Summary: Phase 5 of the review prompt. Found three independent Layer-0 implementations —
-`prompt_route.py` (Cursor), a fork inside `dispatcher.py` (Claude Code), and a copy inside
-`evaluate-skill-routing.py` (the 48 fixtures). The fixtures tested the copy, so neither live
-surface was under test by anything. Ran the same 48 utterances through both real entry
-points: 6 divergences (12.5%). Cursor had no Layer-1 lexical fallback (contract-documented,
-so non-compliance rather than difference); the Claude fork deduped knowledge hints by trigger
-instead of by target and silently dropped them. Both wrong, opposite directions. That is the
-"Cursor didn't find the skill" complaint, reproduced.
-
-Collapsed to one matcher instead of patching two into agreement: ported Layer 1 into
-prompt_route, made handle_user_prompt delegate, made evaluate-skill-routing import
-term_matches. Re-measured: 0 divergences.
-
-Built `09-tools/evaluate-surface-trajectories.py` — executes each surface's real entry point
-(claude-code hook, cursor hook, shell-agent via skill-loadset, hookless adapters asserted
-statically), asserts expect/forbid paths, headers, silence, and hook-surface PARITY, plus a
-structural one-matcher guard so re-forking fails CI for every utterance, not only corpus
-ones. `--self-test` plants a divergence and asserts parity fails on it. 14 cases.
-
-Unification immediately surfaced its own cost: a bare status-note payload began appearing on
-non-work utterances on both surfaces at once. Fixed with a general rule (a payload of nothing
-but parenthetical notes is noise) which preserves the visible miss for work verbs; two
-fixtures now hold it.
-
-Wired: CI, the workspace-harness quality lane (17 gates), AGENTS.md enforcement chain, the
-self-improve close-out row, five Layer-0 routes. All three harness lanes green; 48/48 matcher
-cases; 14/14 trajectories; vault-health 0/0.
-
-Not proven, deliberately: that a model *reads* what it receives. Injection is not compliance;
-that needs real-session outcome data, not fixtures.
-
-Report: `07-projects/19-workspace-brain/reports/surface-trajectories_v1.0_2026-09-15.md`
-Decision: `[[decision-one-matcher-per-workspace]]`
 --- END BLOCK ---
