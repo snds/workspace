@@ -26,6 +26,27 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+### 2026-09-17 — late close: cui PR 312 quality gate
+
+SessionID: 2026-09-17-work-pr312
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 02-centricPLM (centric-ui advisory)
+Summary: Closed an Aug 18 Cursor thread on cui [#312](https://github.com/cpes-software/centric-ui/pull/312) Quality gate. Knip `unused` failed: `@xyflow/react` is imported by FlowCanvas but marked optional in `packages/ui/package.json`. Typecheck, lint, format, duplicates, and tests passed. Verdict then was do-not-merge. PR later merged 2026-08-18 with the check still red. No employer code written this close.
+Decisions:
+  - Optional peer + unconditional import is a real knip fail, not a flake.
+  - Employer merge stays human-owned; this thread does not reopen #312.
+Evidence:
+  - Quality gate `unused` @ https://github.com/cpes-software/centric-ui/actions/runs/31852905498 — verified
+  - PR 312 MERGED 2026-08-18T14:31:38Z with Quality gate still FAILURE — verified
+Next:
+  - Resume only if Sean asks. Live baton stays lint:ds / cui #398.
+--- END BLOCK ---
+
 ### 2026-09-17 — leftover cds consume closed (#77 / #78)
 
 SessionID: 2026-09-17-work-cds78

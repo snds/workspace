@@ -47,6 +47,18 @@ _Last updated: 2026-09-17 — leftover cds consume (#77/#78) closed; cui #398 st
 
 ## Session history (append-only)
 
+### 2026-09-17 — late close: cui PR 312 quality gate
+
+**Focus this session**: Close an Aug 18 thread on cui #312 Quality gate (knip unused optional peer).
+**Machine**: Work MacBook Pro (`CS-K746DRWXY1`) · Cursor Grok 4.6 · Cursor
+**Stopped because**: Sean asked to end session.
+
+**Accomplishments**:
+- Confirmed knip `unused` was a real fail (`@xyflow/react` optional + FlowCanvas import)
+- Read-back: #312 MERGED 2026-08-18 with Quality gate still red
+
+**Next**: None. Live handoff current focus stays lint:ds / cui #398.
+
 ### 2026-09-17 — leftover cds consume closed (#77 / #78)
 
 **Focus this session**: Close the Sep 11 leftover consume thread after cds #35 and proto #78 merged.
