@@ -2,14 +2,14 @@
 
 ### 🤝 Live handoff (the baton)
 
-- **Current focus:** Path B launcher: detect folder-capable apps, open the generator folder, `emit all`. Waves 0–7 still proved (`wsx` 0.3.0).
+- **Current focus:** Path B surface picker + Windows handoff zip. Waves 0–7 still proved (`wsx` 0.3.0).
 - **Working set:** `launch.py`, `generator/wsxlib/scan.py`, README Path B, `package.py`
-- **Last action:** Session-end 2026-09-17 — committed Path B detect/open + emit-all.
-- **Next action:** Colleague/Olga path when asked.
+- **Last action:** Session-end 2026-09-17 — Path B picker committing; `wsx-generator-windows.zip` on Desktop.
+- **Next action:** Colleague tests `start.bat` on PC (Cursor default). Then Olga/full path when asked.
 - **Do-not-touch:** `wsx upgrade` / `restructure` on Sean's real vault; do not copy personal trigger tables, employer org names, or Cursor slug tables into templates; never emit `.cursorrules` / `.windsurfrules` / `.clinerules`.
 - **Agent thread:** Cursor Grok 4.6 / Cursor / Work MBP (2026-09-17 session-end).
 
-_Last updated: 2026-09-17 — Path B folder-capable launch + session-end._
+_Last updated: 2026-09-17 — Path B picker + Windows zip on Desktop._
 
 
 _Last updated: 2026-07-27 — v0.2 R1 shipped (numbered taxonomy as the generator DEFAULT + neutral automation port); earlier: colleague-feedback pass ( broader `wsx scan` detection incl. ChatGPT/desktop chat apps, connective **MOC layer** so the emitted vault graph is no longer islands, `projects/` per-project documentation tree + `wsx project`, and `wsx upgrade` corrective pass for already-generated workspaces; earlier: permission-free `launch.py` + per-OS zips, scan gate + BYO-tokens, authoring framework, `wsx remote`, expertise calibration, two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_

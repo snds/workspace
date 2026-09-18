@@ -20,6 +20,48 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
+
+### 2026-09-17 — wsx Path B picker + Windows handoff zip
+
+SessionID: 2026-09-17-work-wsxpc
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 18-bootstrap-generator
+Summary: Path B launcher now auto-detects folder-capable apps, ranks a platform default (Cursor on Windows/Linux, Claude Code on Mac), emits all adapters, and can open the generator folder with a paste-ready prompt. Built per-OS zips; Windows copy placed on Desktop for PC colleague testing.
+Artifacts:
+  - wsx-generator-windows.zip — 267 KB handoff on Desktop (also dist/; gitignored)
+Decisions:
+  - Interview still starts from the generator folder, not the new workspace dest.
+  - Windows ranking prefers Cursor.exe under %LOCALAPPDATA% even when `cursor` is not on PATH.
+  - VS Code is offered only if it can actually launch (config-only ~/.vscode is skipped).
+Evidence:
+  - Desktop zip @ /Users/sean.sands/Desktop/wsx-generator-windows.zip — verified (267 KB, 17 Sep 10:39)
+  - Linear Agent Todo for colleague test @ linear-personal — blocked (MCP needsAuth)
+Next:
+  - Colleague tests start.bat on PC; expect Cursor default + paste prompt.
+  - Colleague/Olga full wsx path when asked — 07-projects/18-bootstrap-generator/SESSION-STATE.md.
+--- END BLOCK ---
+
+### 2026-09-17 — Guided Setup Other-chat wrap-up (employer proto)
+
+SessionID: 2026-09-17-work-gs-other-chat
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Agent: Cursor Grok 4.6
+Surface: Cursor
+Machine: Work MacBook Pro
+Project(s): employer saas-plm-prototype (centric-engineering)
+Summary: Closed an Aug 20 Other-chat pass on `feat/guided-setup-live`. Wrap-ups now render as markdown, stay conversational, close with Continue instead of “shall we?”, and name the next card or rail step. Shipped as `5ac6a09` and opened [PR #56](https://github.com/cpes-software/saas-plm-prototype/pull/56). No employer detail written into this vault.
+Decisions:
+  - Other-chat wrap-up copy is next-screen aware (sub-step title in-group; rail label when crossing groups).
+  - Employer delivery stays branch → PR → human review; this session did not merge.
+Next:
+  - Human review of https://github.com/cpes-software/saas-plm-prototype/pull/56
+--- END BLOCK ---
+
 ### 2026-09-17 — session-end (Figma catalog thread + wsx Path B launcher)
 
 SessionID: 2026-09-17-work-k7m2

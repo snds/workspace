@@ -1,6 +1,6 @@
 # Artifact Registry
 <!-- Auto-maintained by any agent. Updated after each task. -->
-<!-- Last updated: 2026-09-17 | Session: wsx Path B launcher + session close -->
+<!-- Last updated: 2026-09-17 | Session: wsx Path B picker + Windows handoff zip -->
 
 ## Media Services — 07-projects/01-mediaservices/ (git-tracked)
 
@@ -24,7 +24,7 @@
 
 ### 18-bootstrap-generator/ (README.md + SESSION-STATE.md + generator/ + launch.py)
 - **Purpose**: `wsx` interviews then scaffolds a portable second-brain workspace. Path B launcher detects folder-capable apps (Cursor/Claude/VS Code), opens the generator folder, emits all adapters.
-- **Last modified**: 2026-09-17 — Path B: folder-capable detect/open + `emit all`; Linux `python3 launch.py`.
+- **Last modified**: 2026-09-17 — Path B surface picker (platform default + open folder); Windows zip on Desktop for colleague test.
 
 ## Delivery Playbooks — 02-shared-references/delivery-playbooks/
 
