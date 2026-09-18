@@ -22,6 +22,28 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+
+### 2026-09-17 — Figma Icons page pack + section A–Z
+
+SessionID: 2026-09-17-work-figma-icons
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.5
+Project(s): 02-centricPLM
+Summary: On Centric SaaS PLM DS Figma (`o6o1ZuGHxDow2vHLuYXT6X` Icons page `4:2`), packed icons into the existing 12-col grid (80×72, origin 32,64) after erroneous icon deletions left gaps, then ordered all 27 category sections A–Z left-to-right. Earlier in this thread (Aug): field-overlay/control-radius parity plan + Proto #18 / cui #225 / #179 PRs — treat as prior history; this baton is Icons hygiene done.
+Decisions:
+  - Icons within a section sort A–Z then pack row-major; section width hugs used columns (`40 + cols*80`).
+  - Section gutter stays 96px; do not invent a new Icons layout system.
+Evidence:
+  - Figma Icons page verified: 0 grid gaps, 27 sections alphabetical (action…travel)
+Next:
+  - Sean visual spot-check of Icons page in Figma; publish library if needed.
+  - Code parity backlog remains in `08-knowledge/design/figma-to-code-parity-plan-2026-08-06.md` (P1+ still open where not already landed).
+--- END BLOCK ---
+
 ### 2026-09-17 — CDS shadcn consume waves on cds main
 
 SessionID: 2026-09-17-work-shadcn-consume
@@ -706,49 +728,4 @@ ruff clean.
 
 Report: `07-projects/19-workspace-brain/reports/figma-bind-probe_v1.0_2026-09-15.md`
 Decision: `[[decision-capture-and-assess-split]]`
---- END BLOCK ---
-
-### 2026-09-15 — Automation second wave: A4, A5, A9 applied; A8 stays blocked
-
-SessionID: 2026-09-15-work-mbp-automation-wave2
---- SESSION BLOCK ---
-Date: 2026-09-15
-Machine: Work MacBook Pro (main, going forward)
-Surface: Claude Code (Mac desktop app)
-Agent: Claude Opus 5
-Project(s): 19-workspace-brain
-
-Summary: Phase 6 — closed the remaining automation candidates from the 2026-09-11 review.
-
-A5 (ruff): measured the blast radius before wiring anything. Defaults return 143 findings,
-`E,F` returns 402 (395 of them line-length). Selected `E9`/`F`/`I` only — 7 errors, all
-auto-fixed — and excluded BLE001/S110/S112/PLW1510 because fail-open and manual returncode
-checks are the contract here, not sloppiness. Declared in `ruff.toml` so local and CI agree.
-It caught its own author within the hour (two F541s in the new A9 lint).
-
-A9 (`validate-evidence-grades.py`): any report using the evidence-grade vocabulary 3+ times
-must declare the legend and name a re-runnable detector. One real violation
-(`agent-load-miss-review.md`) fixed. `--strict` adds pre-registration fields but only on
-two distinct experiment signals — the first cut fired on `process-rigor-gaps` because
-"experiment" appears there as a trigger word in a routing table.
-
-A4 (`nightly.py`): the recipe's executable form — fold → rebuild → verify → watch → commit
-(opt-in, allowlisted paths, refuses on a red tree). Python not `.sh`, because portable-first
-is a core rule and the fleet includes Windows. Nothing is scheduled.
-
-A8 stays blocked and is stated as such: it needs a Figma produce that cannot refuse `Color/*`,
-and manufacturing one would be theater.
-
-Two new candidates from measurements the first review did not have. C1 (applied):
-1,443 trigger terms, 92 claimed by >1 skill — 67 benign (same chain), 25 cross-chain, now a
-harness check with a ceiling of 25 rather than fail-at-zero. C2 (queued, not built):
-`06-context/artifact-registry.md` is 6,942 tokens, the largest recurring cost after AGENTS.md
-itself, and it is a structural INDEX — the same shape already fixed for the skill registry and
-_INDEX. A retrieval CLI plus a read-order change is real work; queued with the number attached
-(~28% of the 21.7k session floor) rather than half-built at session end.
-
-19 harness gates, all green. 48/48 matcher cases, 14/14 trajectories, vault-health 0/0, ruff clean.
-
-Report: `07-projects/19-workspace-brain/reports/automation-second-wave_v1.0_2026-09-15.md`
-Decision: `[[decision-lint-narrow-or-not-at-all]]`
 --- END BLOCK ---
