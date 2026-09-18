@@ -1,7 +1,7 @@
 # Project Context — Sean Sands
 _Authoritative source: this file (06-context/project-context.md)_
 _Written by any agent — the git checkout is the source of truth._
-_Last updated: 2026-09-17_
+_Last updated: 2026-09-18_
 
 > **Platform note (2026-06-16):** the workspace itself was refactored to be portable, git-native, and
 > LLM/surface/device-agnostic, then consolidated onto `main` at `github.com/snds/workspace` (16-PR stack,
