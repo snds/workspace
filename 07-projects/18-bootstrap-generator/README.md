@@ -162,8 +162,9 @@ You don't type anything technical — your AI runs the tool for you.
 ### Path B — One double-click (no AI, nothing to type)
 1. **macOS:** double-click **`start.command`**. *(The first time, macOS may say "unidentified developer" — right-click the file → **Open** → **Open**. Just once.)*
    **Windows:** double-click **`start.bat`**.
-2. It checks you have Python (preinstalled on Macs), then asks **two questions** — where to put your workspace and your name.
-3. It creates your workspace and prints where it is + what to do next. Done.
+   **Linux:** `python3 launch.py`.
+2. It checks Python, **detects which AI apps can open a folder** (Cursor, Claude, VS Code, …), and picks a default for this computer (Cursor on Windows/Linux, Claude on a Mac). You can type a number to choose another.
+3. It asks **two questions** — where to put your workspace and your name — creates the folder, then offers to **open this generator folder in the app you picked**. Paste the starter prompt it prints (on Cursor: *Read `brain/SKILL.md` and set up my workspace for me.* — use Agent chat, not Ask).
 
 ### Path C — One command (if a terminal doesn't scare you)
 From **inside this generator folder**:

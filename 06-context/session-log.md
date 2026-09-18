@@ -20,9 +20,22 @@ Keep entries concise. This is a handoff log, not a journal.
 
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
+### 2026-09-17 — session-end (Figma catalog thread + wsx Path B launcher)
 
-
-
+SessionID: 2026-09-17-work-k7m2
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 02-centricPLM, 18-bootstrap-generator, 19-workspace-brain
+Summary: Closed the 2026-09-16 Figma catalog thread (overlap reflow, modes-for-variants, Text Styles iff no Size/Density — already on `main`). Folded leftover `wsx` Path B work: `launch.py` detects folder-capable apps, offers to open the generator folder, emits all adapters; `scan.py` gains folder-capable/open helpers; README Path B + Linux.
+Decisions:
+  - CDS `apps/docs/AGENTS.md` / `CLAUDE.md` left untracked (employer repo, `centric-engineering` — no auto-commit).
+  - Interview still starts from the generator folder, not the new workspace dest.
+Next:
+  - Colleague/Olga `wsx` path when asked.
+--- END BLOCK ---
 
 ### 2026-09-17 — Figma Icons page pack + section A–Z
 
@@ -89,26 +102,6 @@ Pending resolved:
 Next:
   - Wave 1 leftover still out: ChipMultiSelect, TypeTag, OutlinedValueChips
   - Do not mix combobox-land WIP with token follow-ups
---- END BLOCK ---
-
-### 2026-09-17 — session-end (Figma catalog thread + wsx Path B launcher)
-
-SessionID: 2026-09-17-work-session-end
---- SESSION BLOCK ---
-Date: 2026-09-17
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 02-centricPLM, 18-bootstrap-generator, 19-workspace-brain
-Summary: Closed the 2026-09-16 Figma catalog thread (overlap reflow, modes-for-variants, Text Styles iff no Size/Density — already on `main`). Folded leftover `wsx` Path B work: `launch.py` detects folder-capable apps, offers to open the generator folder, emits all adapters; `scan.py` gains folder-capable/open helpers; README Path B + Linux.
-Decisions:
-  - CDS `apps/docs/AGENTS.md` / `CLAUDE.md` left untracked (employer repo, `centric-engineering` — no auto-commit).
-  - Interview still starts from the generator folder, not the new workspace dest.
-Pending added:
-Pending resolved:
-Next:
-  - Publish centric-ui Figma library (Sean, Assets panel) — ^pc-18.
-  - Colleague/Olga `wsx` path when asked.
 --- END BLOCK ---
 
 ### 2026-09-16 — CDS Figma catalog reflow + construction rules

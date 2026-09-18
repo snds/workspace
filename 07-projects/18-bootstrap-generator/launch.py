@@ -42,6 +42,64 @@ def pause():
         pass
 
 
+def _scan():
+    sys.path.insert(0, str(HERE / "generator"))
+    from wsxlib import scan
+    return scan
+
+
+def pick_surface():
+    """Auto-detect folder-capable apps; pick the platform ideal; let them override."""
+    scan = _scan()
+    found = scan.folder_capable()
+    print("Checking which AI apps on this computer can open a folder…\n")
+    if found:
+        for i, a in enumerate(found, 1):
+            mark = "  ← recommended here" if i == 1 else ""
+            print(f"  {i}. {a['name']}  (found via {a['via']}){mark}")
+        print()
+        default = found[0]["name"]
+        raw = ask("Which one should start the interview? (number, or skip)", "1")
+        if raw.lower() in ("skip", "none", "n"):
+            return scan.briefing(found[0]), False
+        try:
+            idx = int(raw) - 1
+        except ValueError:
+            idx = 0
+        if idx < 0 or idx >= len(found):
+            idx = 0
+        return scan.briefing(found[idx]), True
+    rec = scan.briefing(None)
+    print("  — none found (Cursor / Claude / VS Code aren't installed, or aren't")
+    print("    on PATH). That's OK — you can install one in a minute.\n")
+    print(f"  Recommended on this computer: {rec['name']}")
+    print(f"    {rec['install']}\n")
+    return rec, False
+
+
+def tell_and_open(brief, offer_open: bool) -> None:
+    scan = _scan()
+    print("\nNext — start the interview in your AI app:")
+    print(f"  App:    {brief['name']}")
+    print(f"  Folder: {HERE}")
+    print(f"  How:    {brief['how']}")
+    print("  Paste this in the chat:\n")
+    print(f"    {brief['prompt']}\n")
+    if not brief["detected"]:
+        print(f"  Install {brief['name']} first: {brief['install']}")
+        print("  Then open this generator folder in it (not the new workspace yet).")
+        return
+    if not offer_open:
+        return
+    yn = ask(f"Open this folder in {brief['name']} now?", "yes")
+    if yn.lower().startswith("y"):
+        if scan.try_open(brief, HERE):
+            print(f"  ✓ launched {brief['name']}. Paste the line above into Agent chat.")
+        else:
+            print(f"  Couldn't launch {brief['name']} automatically. Open it yourself:")
+            print(f"    {brief['how']}")
+
+
 def main() -> int:
     # Line-buffer our own output so our prints interleave in the right order with
     # the child `wsx` process's output (otherwise buffering shows them out of order).
@@ -66,6 +124,8 @@ def main() -> int:
         print("  history. Get it free from https://desktop.github.com , then re-run for")
         print("  sync. Continuing without it.\n")
 
+    brief, can_open = pick_surface()
+
     # An unfinished interview (even from a previous unzip) lives in ~/.wsx.
     st = wsx("interview", "status", capture_output=True, text=True)
     if st.returncode == 0 and "in-progress session found" in (st.stdout or ""):
@@ -74,6 +134,7 @@ def main() -> int:
         if choice.lower().startswith("c"):
             print("\nOpen that folder in your AI assistant and say:")
             print('  "continue my workspace interview"')
+            tell_and_open(brief, can_open)
             pause()
             return 0
         wsx("interview", "abandon")
@@ -98,22 +159,19 @@ def main() -> int:
         pause()
         return 1
 
-    # Make it AI-ready on the recommended path (harmless if it no-ops).
+    # Emit every adapter so Cursor/VS Code/Claude all have their first-file.
     # wsx resolves the workspace from cwd, so run it inside the new folder.
-    wsx("emit", "claude-code", cwd=dest,
+    print("Making it AI-ready…")
+    wsx("emit", "all", cwd=dest,
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-    # Show what assistant is available so they know where to continue.
-    print("\nChecking what AI tools you have set up…\n")
-    wsx("scan")
-
-    print("\n✓ Done. Your workspace is at:")
+    print("\n✓ Done. Your workspace folder is at:")
     print(f"    {dest}\n")
-    print("Next — pick ONE:")
-    print("  • Best: open that folder in your AI assistant (Claude Code, Cursor, …)")
-    print('    and say:   "set up my workspace"   — it interviews you and fills it in.')
-    print("  • Browse it: open the folder in Obsidian (https://obsidian.md).")
-    print("  • Decide where it lives online: run  python3 generator/bin/wsx remote")
+    print("The interview still starts FROM THIS generator folder (the tool),")
+    print("not from the new workspace. When it asks where the workspace lives,")
+    print(f"answer:  {dest}")
+    tell_and_open(brief, can_open)
+    print("Browse notes later in Obsidian (https://obsidian.md).")
     pause()
     return 0
 

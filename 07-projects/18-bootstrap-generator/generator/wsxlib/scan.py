@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import subprocess
 import sys
 import urllib.error
 import urllib.request
@@ -41,9 +42,20 @@ EXT_DIRS = [HOME / ".vscode/extensions", HOME / ".vscode-insiders/extensions",
 AGENTS = [
     # --- coding agents (read files / MCP) ---------------------------------------
     {"id": "claude-code", "name": "Claude Code", "kind": "coding", "bins": ["claude"],
-     "paths": ["~/.claude", "~/.claude.json"], "surface": "claude-code"},
+     "paths": ["~/.claude", "~/.claude.json"],
+     "exes": [
+         r"%LOCALAPPDATA%\AnthropicClaude\claude.exe",
+         r"%LOCALAPPDATA%\Programs\claude\Claude.exe",
+     ],
+     "surface": "claude-code"},
     {"id": "cursor", "name": "Cursor", "kind": "coding", "bins": ["cursor"],
-     "paths": ["~/.cursor"], "apps": ["Cursor.app"], "surface": "cursor"},
+     "paths": ["~/.cursor"], "apps": ["Cursor.app"],
+     "exes": [
+         r"%LOCALAPPDATA%\Programs\cursor\Cursor.exe",
+         r"%LOCALAPPDATA%\Programs\Cursor\Cursor.exe",
+         r"%ProgramFiles%\Cursor\Cursor.exe",
+     ],
+     "surface": "cursor"},
     {"id": "codex", "name": "OpenAI Codex CLI", "kind": "coding", "bins": ["codex"],
      "paths": ["~/.codex"], "surface": "agents-md"},
     {"id": "gemini", "name": "Gemini CLI", "kind": "coding", "bins": ["gemini"],
@@ -51,9 +63,18 @@ AGENTS = [
     {"id": "copilot", "name": "GitHub Copilot CLI", "kind": "coding", "bins": ["copilot"],
      "paths": ["~/.config/github-copilot"], "surface": "agents-md"},
     {"id": "windsurf", "name": "Windsurf", "kind": "coding", "bins": ["windsurf"],
-     "paths": ["~/.codeium"], "apps": ["Windsurf.app"], "surface": "agents-md"},
+     "paths": ["~/.codeium"], "apps": ["Windsurf.app"],
+     "exes": [r"%LOCALAPPDATA%\Programs\Windsurf\Windsurf.exe"],
+     "surface": "agents-md"},
     {"id": "zed", "name": "Zed", "kind": "coding", "bins": ["zed"],
      "paths": ["~/.config/zed"], "apps": ["Zed.app"], "surface": "agents-md"},
+    {"id": "vscode", "name": "VS Code", "kind": "coding", "bins": ["code"],
+     "paths": ["~/.vscode"], "apps": ["Visual Studio Code.app"],
+     "exes": [
+         r"%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe",
+         r"%ProgramFiles%\Microsoft VS Code\Code.exe",
+     ],
+     "surface": "agents-md"},
     {"id": "aider", "name": "Aider", "kind": "coding", "bins": ["aider"],
      "paths": ["~/.aider"], "surface": "agents-md"},
     {"id": "amazon-q", "name": "Amazon Q Developer", "kind": "coding", "bins": ["q"],
@@ -71,8 +92,13 @@ AGENTS = [
      "paths": ["~/Library/Application Support/com.openai.chat"],
      "apps": ["ChatGPT.app"], "surface": "pack"},
     {"id": "claude-desktop", "name": "Claude (desktop)", "kind": "chat", "bins": [],
-     "paths": ["~/Library/Application Support/Claude"],
-     "apps": ["Claude.app"], "surface": "pack"},
+     "paths": [
+         "~/Library/Application Support/Claude",
+         r"%APPDATA%\Claude",
+     ],
+     "apps": ["Claude.app"],
+     "exes": [r"%LOCALAPPDATA%\AnthropicClaude\claude.exe"],
+     "surface": "pack"},
     {"id": "perplexity", "name": "Perplexity (desktop)", "kind": "chat", "bins": [],
      "apps": ["Perplexity.app"], "surface": "pack"},
     {"id": "copilot-app", "name": "Microsoft Copilot (desktop)", "kind": "chat", "bins": [],
@@ -108,7 +134,7 @@ def _which(bins) -> str | None:
 
 
 def _exists(paths) -> bool:
-    return any(Path(p).expanduser().exists() for p in paths)
+    return any(Path(os.path.expandvars(p)).expanduser().exists() for p in paths)
 
 
 def _app_exists(apps) -> bool:
@@ -116,6 +142,17 @@ def _app_exists(apps) -> bool:
     if not apps or sys.platform != "darwin":
         return False
     return any((d / a).exists() for a in apps for d in APP_DIRS)
+
+
+def _exe_path(exes) -> Path | None:
+    """Windows (and env-expanded) installers: Cursor.exe etc. when PATH has no shim."""
+    if not exes:
+        return None
+    for raw in exes:
+        p = Path(os.path.expandvars(raw)).expanduser()
+        if p.is_file():
+            return p
+    return None
 
 
 def _ext_exists(exts) -> bool:
@@ -142,11 +179,20 @@ def _detect_agents() -> list:
         hit_path = _exists(a["paths"]) if a.get("paths") else False
         hit_app = _app_exists(a.get("apps"))
         hit_ext = _ext_exists(a.get("exts"))
-        if hit_bin or hit_path or hit_app or hit_ext:
-            via = ("PATH" if hit_bin else "app" if hit_app
+        hit_exe = _exe_path(a.get("exes"))
+        if hit_bin or hit_path or hit_app or hit_ext or hit_exe:
+            via = ("PATH" if hit_bin else "app" if hit_app else "exe" if hit_exe
                    else "extension" if hit_ext else "config")
-            found.append({"id": a["id"], "name": a["name"], "kind": a.get("kind", "coding"),
-                          "surface": a["surface"], "via": via})
+            row = {"id": a["id"], "name": a["name"], "kind": a.get("kind", "coding"),
+                   "surface": a["surface"], "via": via}
+            if hit_bin:
+                row["bin"] = hit_bin
+            if hit_exe:
+                row["exe"] = str(hit_exe)
+            if a.get("apps") and hit_app:
+                row["app"] = next(x for x in a["apps"]
+                                  if any((d / x).exists() for d in APP_DIRS))
+            found.append(row)
     return found
 
 
@@ -232,7 +278,7 @@ def _suggest(agents: list, local: list) -> dict:
     app (ChatGPT/Perplexity/…) still counts, but its best delivery is a pasted pack.
     """
     order = ["claude-code", "cursor", "codex", "gemini", "copilot", "windsurf", "zed",
-             "aider", "amazon-q", "continue", "cline", "roo", "cody"]
+             "vscode", "aider", "amazon-q", "continue", "cline", "roo", "cody"]
     coding = [a for a in agents if a.get("kind", "coding") == "coding"]
     chat = [a for a in agents if a.get("kind") == "chat"]
     ranked = sorted(coding, key=lambda a: order.index(a["id"]) if a["id"] in order else 99)
@@ -257,6 +303,121 @@ def _suggest(agents: list, local: list) -> dict:
         "models.tier": tier,
         "models.offline": bool(local and not ranked and not chat),
     }
+
+
+# ---------------------------------------------------------- launcher picker ---
+# Folder-capable desktop apps the double-click on-ramp can open. Chat-only
+# (browser ChatGPT, Perplexity) cannot start Path A — they get a paste pack.
+_FOLDER_IDS = ("cursor", "claude-code", "vscode", "windsurf", "zed")
+_INSTALL = {
+    "cursor": "https://cursor.com",
+    "claude-code": "https://claude.com/download",
+    "vscode": "https://code.visualstudio.com",
+    "windsurf": "https://windsurf.com",
+    "zed": "https://zed.dev",
+}
+_PROMPTS = {
+    "cursor": 'Read brain/SKILL.md and set up my workspace for me.',
+    "claude-code": "set up my workspace",
+    "vscode": 'Read brain/SKILL.md and set up my workspace for me.',
+    "windsurf": 'Read brain/SKILL.md and set up my workspace for me.',
+    "zed": 'Read brain/SKILL.md and set up my workspace for me.',
+}
+_HOW = {
+    "cursor": "Cursor → File → Open Folder → this generator folder. Use Agent chat (not Ask).",
+    "claude-code": "Open this generator folder in Claude Desktop / Claude Code.",
+    "vscode": "VS Code → File → Open Folder → this generator folder. Use Copilot Chat (Agent).",
+    "windsurf": "Windsurf → File → Open Folder → this generator folder.",
+    "zed": "Zed → Open folder → this generator folder.",
+}
+
+
+def platform_ideal_id() -> str:
+    """Best first pick when several apps are installed. Windows/Linux → Cursor."""
+    if sys.platform == "darwin":
+        return "claude-code"
+    return "cursor"
+
+
+def folder_capable(agents: list | None = None) -> list:
+    """Detected apps that can open this folder and run the interview."""
+    agents = agents if agents is not None else _detect_agents()
+    by_id = {a["id"]: a for a in agents if a["id"] in _FOLDER_IDS}
+    ranked = []
+    ideal = platform_ideal_id()
+    order = [ideal] + [i for i in _FOLDER_IDS if i != ideal]
+    for i in order:
+        if i not in by_id:
+            continue
+        # ~/.vscode leftover dirs are common; only offer VS Code if we can actually launch it.
+        if i == "vscode" and by_id[i].get("via") == "config":
+            continue
+        ranked.append(by_id[i])
+    return ranked
+
+
+def briefing(agent: dict | None) -> dict:
+    """What to tell a person: app name, prompt to paste, how to open, emit target."""
+    if not agent:
+        rec = platform_ideal_id()
+        return {
+            "id": rec,
+            "name": "Cursor" if rec == "cursor" else "Claude Code",
+            "detected": False,
+            "install": _INSTALL.get(rec, "https://cursor.com"),
+            "prompt": _PROMPTS.get(rec, _PROMPTS["cursor"]),
+            "how": _HOW.get(rec, _HOW["cursor"]),
+            "emit": "all",
+        }
+    aid = agent["id"]
+    return {
+        "id": aid,
+        "name": agent["name"],
+        "detected": True,
+        "install": "",
+        "prompt": _PROMPTS.get(aid, _PROMPTS["cursor"]),
+        "how": _HOW.get(aid, _HOW["cursor"]),
+        "emit": "all",
+        "bin": agent.get("bin") or "",
+        "exe": agent.get("exe") or "",
+        "app": agent.get("app") or "",
+    }
+
+
+def try_open(brief: dict, folder: Path) -> bool:
+    """Open `folder` in the chosen app. Best-effort; never raises to the user."""
+    folder = str(Path(folder).resolve())
+    cmd = None
+    if brief.get("bin"):
+        cmd = [brief["bin"], folder]
+    elif brief.get("exe"):
+        cmd = [brief["exe"], folder]
+    elif sys.platform == "darwin" and brief.get("id"):
+        # Cursor.app / Windsurf.app / Visual Studio Code.app
+        app = {
+            "cursor": "Cursor",
+            "claude-code": "Claude",
+            "vscode": "Visual Studio Code",
+            "windsurf": "Windsurf",
+            "zed": "Zed",
+        }.get(brief["id"])
+        if app:
+            cmd = ["open", "-a", app, folder]
+    if not cmd:
+        return False
+    kw: dict = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
+    if os.name == "nt":
+        kw["creationflags"] = (
+            getattr(subprocess, "DETACHED_PROCESS", 0x00000008)
+            | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0x00000200)
+        )
+    else:
+        kw["start_new_session"] = True
+    try:
+        subprocess.Popen(cmd, **kw)
+        return True
+    except OSError:
+        return False
 
 
 # ---------------------------------------------------------- workspace discovery ---

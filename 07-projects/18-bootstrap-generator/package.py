@@ -91,6 +91,8 @@ Prefer to just create the starter folder yourself?
   • Double-click  start.bat
     If Windows SmartScreen warns: click "More info" then "Run anyway".
     That's normal for downloaded tools.
+  • The launcher detects Cursor / Claude / VS Code, picks a default (Cursor
+    on a PC), and can open this folder in that app with a paste-ready prompt.
   • Needs Python: if it says Python isn't found, install it from
     https://www.python.org/downloads/ (CHECK "Add Python to PATH"), then
     double-click start.bat again.

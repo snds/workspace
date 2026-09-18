@@ -1,6 +1,6 @@
 # Artifact Registry
 <!-- Auto-maintained by any agent. Updated after each task. -->
-<!-- Last updated: 2026-09-15 | Session: six-phase workspace review — harness, trajectories, retrieval, Figma probe -->
+<!-- Last updated: 2026-09-17 | Session: wsx Path B launcher + session close -->
 
 ## Media Services — 07-projects/01-mediaservices/ (git-tracked)
 
@@ -19,6 +19,12 @@
 ### 19-workspace-brain/ (README.md + SESSION-STATE.md + notes/ + reports/ + canvases/)
 - **Purpose**: Standing project home for workspace-subject sessions (validation, fix, migration, infrastructure) per the framework #08 project-home rule (FX-13). Git-tracked — cross-machine continuity is its point. `canvases/` holds copies of Cursor `.canvas.tsx` files; `cursor-externalize.py` also mirrors them into this checkout's live Cursor folder. Employer canvases go to that repo's `canvases/`, never here.
 - **Last modified**: 2026-09-15 — six-phase workspace review landed: `workspace-harness.py` (quality/connections/tokens), `evaluate-surface-trajectories.py` (3 Layer-0 matchers collapsed to 1), `artifact-find.py` (session floor −32%), `figma-bind-probe.py` (A8, validated on 3 live nodes), `nightly.py`, `validate-evidence-grades.py`, `ruff.toml`. Reports: workspace-harness, surface-trajectories, automation-second-wave, artifact-retrieval, figma-bind-probe (all v1.0 2026-09-15).
+
+## Portable Bootstrap Generator — 07-projects/18-bootstrap-generator/ (git-tracked)
+
+### 18-bootstrap-generator/ (README.md + SESSION-STATE.md + generator/ + launch.py)
+- **Purpose**: `wsx` interviews then scaffolds a portable second-brain workspace. Path B launcher detects folder-capable apps (Cursor/Claude/VS Code), opens the generator folder, emits all adapters.
+- **Last modified**: 2026-09-17 — Path B: folder-capable detect/open + `emit all`; Linux `python3 launch.py`.
 
 ## Delivery Playbooks — 02-shared-references/delivery-playbooks/
 
