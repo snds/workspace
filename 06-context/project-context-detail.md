@@ -36,7 +36,7 @@ _Long substance for pending items, graduated from `project-context.md` 2026-08-0
 
 ## pc-06
 
-- [ ] **centric-ui PR #179 — assign reviewers + settle the redirect-URI question..** (Added 2026-07-20.) Makes local-FE-against-cloud-dev work: routes record/schema-registry/workflow through `cloudOrLocalServiceProxy` (completing the pattern Alex Myronov introduced in #160 — natural reviewer), and corrects the API-key placement across `.env.example` / `.env.cloud.example` / `docs/local-setup.md`. **Item 3 needs a decision, not a review:** the VMS realm's `react` client accepts only `localhost:3000` while `vite.config.ts` defaults to 8082 and the example file said 5173 — either the realm allows 8082 or the examples say 3000. Deliberately not guessed; needs whoever owns the realm.
+- [ ] **centric-ui PR #179 — assign reviewers + settle the redirect-URI question..** (Added 2026-07-20.) Makes local-FE-against-cloud-dev work. **Progress 2026-08-10 / logged 2026-09-17:** conflicts with main resolved and pushed — keeps `main`'s density + `VITE_DEV_BACKEND_URL`/`serviceProxy` stack; retains cloud-Keycloak → port **3000** auto-bind (`vite.config.ts` + `scripts/run-dev.mjs`); `.env.cloud.example` leaves redirect URI unset (derive from origin) and documents the :3000 trap. PR MERGEABLE; still needs human review (Alex Myronov natural reviewer for proxy pattern from #160). Realm ownership of allowing 8082 remains open if anyone wants that origin.
 
 ^pc-06
 

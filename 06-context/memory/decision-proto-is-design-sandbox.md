@@ -10,7 +10,7 @@ relations:
 
 ## For future agent
 - **TL;DR:** Prototype screens stay. The only semi-destructive proto work is swapping local design-system copies for `@centric/*`. Remaining proto-only components get catalogued, authored in centric-ui, then consumed back.
-- **As of:** 2026-08 · **Status:** current
+- **As of:** 2026-09-17 · **Status:** current
 
 ## Context — what forced a choice
 
@@ -42,16 +42,16 @@ Accepted: DS consume was the allowed replace. Next is catalogue → lift into ce
 - Do still replace local *design-system leaves* with `export * from "@centric/ui/…"` when APIs match.
 - Any remaining component that should be in the DS gets a catalogue entry and a lift plan (centric-ui first, proto consumes). Snapshot 2026-08-12 below; refresh when a lift lands.
 
-### Catalogue — still to land in / consume from centric-ui (2026-08-12)
+### Catalogue — still to land in / consume from centric-ui (refresh 2026-09-17)
 
-**Already in `@centric/ui` — finish proto consume (replace local copy, keep the import path):**
-TypeTag, StatusPill, IconTooltip, CellIconButton, `statusTone`. ChipMultiSelect + RichOptionList after [centric-ui#290](https://github.com/cpes-software/centric-ui/pull/290).
+**Consumed on proto `main` (2026-08-13):**
+TypeTag / `statusTone` (#46). StatusPill, IconTooltip, CellIconButton, InfoHint, PaneCloseButton (#48). ChipMultiSelect + RichOptionList (#49; cui #297 `selectionMode`). Tailwind vendor `@source` (#50). `SplitPreviewLayout` + `ConsumerPreviewPane` wrap (#51).
 
-**Package exists — proto still forks (align API, then consume; not new components):**
-sheet, tabs, dialog, toggle-group, dropdown-menu (Header/Footer, `asChild` vs `render`, tabs chrome).
+**Stay local in proto (host extras / API mismatch):**
+`SplitPreviewPane` chrome — quote compare needs `fullscreen`, `headerActions`, `bodyClassName`; package pane does not have them. `SplitDragHandle`. sheet, tabs, dialog, toggle-group, dropdown-menu (`asChild` vs `render`), popover (`anchor` + `asChild`), sonner.
 
 **Lift into `@centric/ui` (shared composites proto invented):**
-PaneCloseButton / pane-controls, InfoHint, SplitPreviewLayout + SplitPreviewPane + ConsumerPreviewPane (shared record-preview pane), searchable SingleSelect (or reuse cui SearchableSelect).
+`SplitPreviewPane` fullscreen extras, searchable SingleSelect (or reuse cui SearchableSelect).
 
 **Lift into centric-ui app/features (product patterns, not package primitives):**
 CellComments, PrintColourAnnotator, CountrySelect, PartnerFacilityPicker, WhereUsedTable, FilterBar, InlineEdit, FormField, LandingGalleryCard, BulkSelect, UploadDropzone, CompositionBuilder, RequestStageStepper.

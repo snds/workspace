@@ -21,6 +21,54 @@ Keep entries concise. This is a handoff log, not a journal.
 > _Older entries archived to [session-log-archive.md](session-log-archive.md) to keep this file cheap to read. Ask to see it only if you need history._
 
 
+
+
+### 2026-09-17 — centric-ui workflowAuthor PR #282 closeout
+
+SessionID: 2026-09-17-work-wf282
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.5
+Project(s): 02-centricPLM (centric-ui workflowAuthor), saas-plm-prototype (pickup context only)
+Summary: Picked up Aug workflow-authoring thread; rebased `feat/workflow-author-typed-step-editors` onto main (clean); fixed Technical-mode test gating; marked PR #282 ready; Prettier quality-gate fix pushed. PR is MERGED (2026-08-14) with green checks. Logged durable auth fact: cloud Unauthorized API ≠ GH PAT.
+Decisions:
+  - Technical mode off by default; JSON rails / raw step JSON / Export opt-in; Common vs Advanced palette.
+  - Cloud API identity lives in `.env.local` as `VITE_API_KEY` + `VITE_SERVICE_NAME` — not a GitHub PAT.
+Evidence:
+  - PR #282 merged @ https://github.com/cpes-software/centric-ui/pull/282 (sha 06672954) — verified
+Pending resolved:
+  - Finish / land workflowAuthor typed editors + Technical mode (PR #282)
+Next:
+  - Optional wedges still open if product wants them: richer Call beyond HTTP; typed `for` / `fork` / `listen`.
+  - Earlier same-day baton (Figma Icons spot-check / library publish) still pending Sean review — see 02-centricPLM Live handoff.
+--- END BLOCK ---
+
+### 2026-09-17 — centric-ui draft PRs (#87 / #179)
+
+SessionID: 2026-09-17-work-cui-drafts
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Agent: Cursor Grok 4.5
+Surface: Cursor
+Machine: Work MacBook Pro
+Project(s): centric-ui (cpes-software; employer)
+Summary: Triaged open drafts; promoted #87 (caution Badge/Button) after rebase onto main dropping redundant app.css (tokens already from #225); reviewed #225 gate as inherited main red; resolved #179 merge conflicts keeping main density + VITE_DEV_BACKEND_URL and retaining cloud-Keycloak→:3000 auto-bind.
+Artifacts:
+  - https://github.com/cpes-software/centric-ui/pull/87 — ready; +3 Badge/Button only
+  - https://github.com/cpes-software/centric-ui/pull/179 — MERGEABLE after conflict resolve
+Decisions:
+  - #87 app.css hunk dropped — caution tokens already on main via #225; Alert caution via #119.
+  - #179 keeps main density + serviceProxy; unique value is port-3000 auto-bind + env docs.
+  - #225 quality-gate red was shared main outage, not the token PR.
+Pending added: (none — pc-06 progressed in place)
+Pending resolved: (none fully closed)
+Next:
+  - Human review/merge #87 and #179; assign Alex on #179.
+  - #88 harness still draft — rebase after #87 if still wanted.
+--- END BLOCK ---
+
 ### 2026-09-17 — wsx Path B picker + Windows handoff zip
 
 SessionID: 2026-09-17-work-wsxpc
@@ -712,55 +760,4 @@ Evidence:
   - PR 79 mergeable + CI (build, ds-check, CodeQL) @ https://github.com/cpes-software/saas-plm-prototype/pull/79 — verified
 Next:
   - Human review and merge of proto PR 79 (no Linear file — GitHub PR is the tracker).
---- END BLOCK ---
-
-### 2026-09-15 — A8: the Figma construction gate becomes a detector
-
-SessionID: 2026-09-15-work-mbp-figma-probe
---- SESSION BLOCK ---
-Date: 2026-09-15
-Machine: Work MacBook Pro (main, going forward)
-Surface: Claude Code (Mac desktop app)
-Agent: Claude Opus 5
-Project(s): 19-workspace-brain
-
-Summary: A8, the last open row from the 2026-09-11 automation review. It was classified a
-capability mint rather than a check because capture needs MCP, which only the agent has.
-Resolved by splitting the gate at the tool boundary: the agent captures via
-get_variable_defs/get_metadata into its scratchpad, and `09-tools/figma-bind-probe.py`
-judges the capture deterministically. `--emit-template` prints the exact MCP calls so the
-agent half is mechanical.
-
-Rules taken verbatim from the figma hub hard gate and figma-ds-surface-authoring: R1 a bound
-`Color/*` primitive (FAIL), R2 raw unbound value with zeros explicitly not exempt (FAIL), R3
-painted rect where an instance belongs (FAIL), R4 density-unaware ladder on a control (WARN,
-because general surface radius may correctly use the Radii ladder), R0 an allow entry with no
-written reason (FAIL — doctrine says exceptions are noted, not silently left). An empty
-capture exits 2, never 0: "no findings" and "no evidence" are different claims.
-
-Preflight defect found on the way: capability-registry detected Figma with `mcp__*figma*__*`,
-but Claude Code mounts the server under a UUID (`mcp__<uuid>__use_figma`), so the capability
-read as ABSENT while live and authenticated — every `requires: [figma-mcp]` skill would have
-silently degraded. Pattern fixed to `mcp__*figma*` with the reason recorded inline. Found only
-because A8 forced a real preflight instead of a documented one.
-
-Employer wall: `whoami` is sean.sands@centricsoftware.com (Centric org). Running the probe is
-fine (read-only, Sean's own work account) but captures are employer content — both fixtures
-are synthetic and say so, and the skill, CLI help and close-out SKIP text all say scratchpad.
-
-Wired: close-out figma row goes from two bare SKIPs to SKIP-for-capture plus a real CLI for
-assess; harness quality lane (22 gates); CI runs the self-test and both fixtures, asserting
-the violation fixture FAILS; figma hub step 7; five Layer-0 routes. The old
-`test_figma_is_honest_skip` encoded the pre-A8 world and is now
-`test_figma_splits_capture_from_assess`, asserting both halves.
-
-OPEN AND STATED: the probe has never been fed real MCP output. The capture contract comes
-from documented tool shapes, not observed ones. One Figma node URL and one run closes it.
-Recorded as a gap rather than rounded up to done.
-
-22 harness gates green, 43/43 negative fixtures, 48/48 matcher cases, 14/14 trajectories,
-ruff clean.
-
-Report: `07-projects/19-workspace-brain/reports/figma-bind-probe_v1.0_2026-09-15.md`
-Decision: `[[decision-capture-and-assess-split]]`
 --- END BLOCK ---
