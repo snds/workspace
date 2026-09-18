@@ -29,6 +29,34 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+### 2026-09-18 — CDS ShadCN federalization instance 0 (local)
+
+SessionID: 2026-09-18-work-cds-fed
+--- SESSION BLOCK ---
+Date: 2026-09-18
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): employer cds (PR #48); centric-ui chat root only
+Summary: Instance 0 wrap pass is local on cds `feat/shadcn-federalization` @ `5b21ec9` (10 ahead of origin / PR #48 @ `8da550c`). True stock L0 + extras wrap + ShadCN vs CDS Storybook exists only for Button, Input, Badge. Remaining L0 files are previous CDS implementations moved under `vendor/shadcn`, not restored stock. Chat was rooted in centric-ui so every cds write prompted Allow; `move_agent_to_root` aborted. Sean takes a new chat with folder `/Users/sean.sands/Projects/cpes-software/cds`. Not pushed. Storybook on :6006 was stopped.
+Decisions:
+  - Keep local until Sean reviews. No push, no PR merge, no cui `cds.pin` bump.
+  - Public API stays additive. Extras on the wrap, not in L0, once stock is restored.
+  - Do not run `npm run shadcn:sync` until it merge-adds sibling checksums (today it rewrites the map to `tailwind.css` only).
+  - Progress stays native `<progress>`; AspectRatio stays CSS `aspect-ratio`. StatusPill/TypeTag stay laterals, not Badge.
+  - Resume in a CDS-rooted Cursor folder. Do not keep editing cds from a centric-ui chat.
+Evidence:
+  - cds `feat/shadcn-federalization` @ `5b21ec9` — 10 local commits ahead of origin — verified
+  - `l0:check` 52 files; stock stories only `{button,input,badge}.shadcn.stories.tsx` — verified
+  - cds PR #48 still the origin tip @ `8da550c` — not updated this session
+Pending resolved:
+  - Isolated wrap worktrees merged locally (button/input/badge/rest)
+  - Unused modules thin-wrapped into L0 (still CDS-as-L0, not stock)
+Next:
+  - Open Cursor on `/Users/sean.sands/Projects/cpes-software/cds`. Restore stock L0 + extras wrap + `*.shadcn.stories.tsx` for every remaining checksum module. Then fix `shadcn:sync`. Still no push until Sean reviews.
+--- END BLOCK ---
+
 ### 2026-09-17 — Phosphor consume (cds #46 / proto #84)
 
 SessionID: 2026-09-17-work-ph84

@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-17 — cds #46 + proto #84 Phosphor consume; cui #398 still in review_
+_Last updated: 2026-09-18 — CDS ShadCN federalization local on cds #48 branch; resume in CDS-rooted chat_
 
 ---
 
@@ -8,21 +8,21 @@ _Last updated: 2026-09-17 — cds #46 + proto #84 Phosphor consume; cui #398 sti
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: proto Phosphor consume is merge-ready; cui [#398](https://github.com/cpes-software/centric-ui/pull/398) still in review.
-- **Working set**: `09-tools/shadcn-lint/` (tracked). `centric-ui-lint-ds` worktree kept until 398 merges.
-- **Last action (2026-09-17):** cds [#46](https://github.com/cpes-software/cds/pull/46) dual-set Icon on `main`. Proto [#84](https://github.com/cpes-software/saas-plm-prototype/pull/84) consume PR is `MERGEABLE` / `CLEAN`. Do not merge unless named. Cursor Grok 4.6 · Cursor · Work MBP.
+- **Current focus**: CDS ShadCN federalization instance 0. Local branch `feat/shadcn-federalization` @ `5b21ec9` (10 ahead of origin / cds [#48](https://github.com/cpes-software/cds/pull/48) @ `8da550c`). Stock L0 + extras + ShadCN stories only for Button, Input, Badge. Remaining L0 is CDS-as-vendor, not stock.
+- **Working set**: `/Users/sean.sands/Projects/cpes-software/cds` (open that folder for the next chat). Isolated worktrees already merged. Do not edit cds from a centric-ui-rooted chat (Allow spam).
+- **Last action (2026-09-18):** Merged wrap worktrees locally; unused modules thin-wrapped; Button/Input/Badge Storybook split. `move_agent_to_root` to cds aborted. Resumption prompt given. Storybook :6006 stopped. Cursor Grok 4.6 · Cursor · Work MBP.
 - **Unattended runner — decided 2026-09-15: not building it.** Not a pending task. The safety gate
   (`check-unattended-runner-gate.py`) stays and is silent when idle. See [[decision-no-unattended-runner]].
-- **Next action:** Human merge of proto [#84](https://github.com/cpes-software/saas-plm-prototype/pull/84) if wanted. Human review of cui [#398](https://github.com/cpes-software/centric-ui/pull/398) (do not agent-merge). After 398 merges, remove `centric-ui-lint-ds`. Later: wave 2 rules, theme reset, proto pre-commit lint:ds, ratchet paydown.
-- **Open decisions:** ~~Rec 13~~ **closed 2026-09-15** (Work MBP half verified installed; Windows half dropped — machine sold). Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot). Theme reset (`@theme { --color-*: initial }`) stays a later product-CSS PR — decided overlay-first. Restyle/arbitrary/inline shadcn rules stay off until a later wave.
-- **Blocked on:** cui 398 human review (`REVIEW_REQUIRED`). Proto #84 waiting on Sean to merge. Employer `canvases/` exist on disk but are untracked pending PRs.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Proto Toaster / SplitDragHandle / ChipMultiSelect consume is **done** (#78). Do not auto-commit or merge employer repos. Do not wire `shadcn-lint` into `workspace-harness.py` / vault CI. Keep `centric-ui-lint-ds` until 398 merges. Do not start centric-ui host-chrome consume unless Sean names it.
-- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Work MBP (2026-09-17): phosphor consume session-end`.
+- **Next action:** New Cursor chat with root `/Users/sean.sands/Projects/cpes-software/cds`. Restore stock L0 + extras wrap + `*.shadcn.stories.tsx` for every remaining checksum module. Then fix `shadcn:sync` so it merge-adds sibling hashes. No push / no cui pin / no PR merge until Sean reviews. Proto [#84](https://github.com/cpes-software/saas-plm-prototype/pull/84) and cui [#398](https://github.com/cpes-software/centric-ui/pull/398) remain human-merge if wanted.
+- **Open decisions:** Theme reset (`@theme { --color-*: initial }`) stays a later product-CSS PR — decided overlay-first. Restyle/arbitrary/inline shadcn rules stay off until a later wave. Rec 15 Claude INDEX pointer — watch token quality on Claude boot.
+- **Blocked on:** Sean review of local cds federalization before push. cui 398 human review. Proto #84 waiting on Sean to merge.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not auto-commit or merge employer repos. Do not run cds `shadcn:sync` until checksum merge-add is fixed. Do not bump cui `cds.pin`. Do not consume Progress/Toaster in cui from this branch. Keep `centric-ui-lint-ds` until 398 merges.
+- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Work MBP (2026-09-18): cds federalization session-end`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
 - **Machine**: Work MacBook Pro (`CS-K746DRWXY1`) this session; Personal MBP remains the other primary.
-- **OS context**: macOS (Darwin 25.5.0)
+- **OS context**: macOS (Darwin 25.6.0)
 - **Workspace root**: resolve via nearest `AGENTS.md` (this checkout)
 - **Project root**: `07-projects/19-workspace-brain`
 
@@ -46,6 +46,20 @@ _Last updated: 2026-09-17 — cds #46 + proto #84 Phosphor consume; cui #398 sti
 ---
 
 ## Session history (append-only)
+
+### 2026-09-18 — CDS ShadCN federalization instance 0 (local)
+
+**Focus this session**: Federalize CDS on bumpable ShadCN; keep local; resume in CDS-rooted chat.
+**Machine**: Work MacBook Pro (`CS-K746DRWXY1`) · Cursor Grok 4.6 · Cursor
+**Stopped because**: Sean asked to end session.
+
+**Accomplishments**:
+- Local wrap merge on cds `feat/shadcn-federalization` @ `5b21ec9` (10 ahead of origin)
+- Stock L0 + extras + ShadCN stories: Button, Input, Badge
+- Remaining modules thin-wrapped (CDS-as-L0, not stock yet)
+- Resumption prompt for a CDS-folder chat
+
+**Next**: Open Cursor on `/Users/sean.sands/Projects/cpes-software/cds`. Restore stock per remaining module. No push until review.
 
 ### 2026-09-17 — Phosphor consume (cds #46 / proto #84)
 
