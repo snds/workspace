@@ -21,4 +21,4 @@ Make order-of-operations the default presentation. Route it into employer-repo c
 A pin check that allows overlay-ahead cannot catch this. A skill that only loads on "plan" is too late. Rejected stuffing a long checklist into always-on rules (token cost).
 
 ## Consequences — what this commits us to
-Agents print the sequence first. Proto `cds-exports-check` is the mechanical gate. Consume of Toaster / SplitDragHandle / ChipMultiSelect still waits on cds #35 merge.
+Agents print the sequence first. Proto `cds-exports-check` is the mechanical gate. Consume of Toaster / SplitDragHandle / ChipMultiSelect landed on proto `main` via #78 (`adac92b`) after cds #35.

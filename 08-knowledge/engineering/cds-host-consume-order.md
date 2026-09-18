@@ -1,7 +1,7 @@
 ---
 tags: [engineering, cds, pages, overlay, exports, consume]
 created: 2026-09-11
-updated: 2026-09-11
+updated: 2026-09-17
 status: working
 confidence: high
 sources: [saas-plm-prototype Pages build on PR 77, cds PR 34 squash, cds PR 35]
@@ -17,13 +17,14 @@ relations:
 - **TL;DR:** Pages CI vendors **cds `main`**. A local `vendor/cds` symlink to an overlay worktree can
   export paths `main` does not. Vite then succeeds and Pages fails with
   `"./X" is not exported … from package @centric/ui`. Land the export on cds `main` first, then
-  proto-consume. Squash-merges drop unpicked follow-up commits.
+  proto-consume. Squash-merges and merge-before-late-push both drop unpicked follow-up commits.
 - **Key claims:**
   - *Timeless:* `@centric/ui/X` requires `package.json` `exports["./X"]` on the SHA CI clones.
   - *Timeless:* `ds-pin` overlay-ahead is a *note*, not a Pages contract.
   - *Dated 2026-09-11:* Toaster / `./sonner` and `SplitDragHandle` were the breakers on proto #77
-    after cds #34 squash. Follow-up is cds #35. Proto keeps local Toaster + handle until that
-    merges. Proto `scripts/cds-exports-check.mjs` is the gate (`npm run build` + `ds:check`).
+    after cds #34 squash. cds #35 landed the exports. Proto #77 merged before later commits;
+    #78 cherry-picked consume + `cds-exports-check` onto `main` (`adac92b`). Merge-before-late-push
+    drops follow-ups the same way squash does.
 - **As of:** 2026-09 · **Status:** current
 
 ---

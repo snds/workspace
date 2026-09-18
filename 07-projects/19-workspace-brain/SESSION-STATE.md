@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-15 — A8: Figma construction gate is a detector (live capture unproven)_
+_Last updated: 2026-09-17 — leftover cds consume (#77/#78) closed; cui #398 still in review_
 
 ---
 
@@ -10,14 +10,14 @@ _Last updated: 2026-09-15 — A8: Figma construction gate is a detector (live ca
 
 - **Current focus**: lint:ds overlay on vault `main`; cui [#398](https://github.com/cpes-software/centric-ui/pull/398) still in review. Vault CI green at `9178aaf`.
 - **Working set**: `09-tools/shadcn-lint/` (tracked). `centric-ui-lint-ds` worktree kept until 398 merges.
-- **Last action (2026-09-15):** Housekeeping `c69baef`; Layer-0 gitignore harness `2214bbd`; `resolve_brain_root` cwd/CLAUDE_PROJECT_DIR `9178aaf`. workspace-integrity + validator-fixtures green on HEAD. Cursor Grok 4.6 · Cursor · Work MBP.
+- **Last action (2026-09-17):** Closed leftover proto consume thread. cds #35 + proto #77/#78 on `main` (`adac92b`): Toaster, SplitDragHandle, ChipMultiSelect, `cds-exports-check`. Do not start centric-ui host-chrome consume unless named. Cursor Grok 4.6 · Cursor · Work MBP.
 - **Unattended runner — decided 2026-09-15: not building it.** Not a pending task. The safety gate
   (`check-unattended-runner-gate.py`) stays and is silent when idle. See [[decision-no-unattended-runner]].
 - **Next action:** Human review of cui [#398](https://github.com/cpes-software/centric-ui/pull/398) (CI green; do not agent-merge). After merge, remove `centric-ui-lint-ds`. Later: wave 2 rules, theme reset, proto pre-commit lint:ds, ratchet paydown.
 - **Open decisions:** ~~Rec 13~~ **closed 2026-09-15** (Work MBP half verified installed; Windows half dropped — machine sold). Rec 15 Claude INDEX injection replaced with a pointer (watch token quality on Claude boot). Theme reset (`@theme { --color-*: initial }`) stays a later product-CSS PR — decided overlay-first. Restyle/arbitrary/inline shadcn rules stay off until a later wave.
 - **Blocked on:** cui 398 human review (`REVIEW_REQUIRED`). Employer `canvases/` exist on disk but are untracked pending PRs.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not proto-consume `@centric/ui/sonner` until the proto pin includes cds `./sonner`. Do not auto-commit employer repos. Do not wire `shadcn-lint` into `workspace-harness.py` / vault CI. Keep `centric-ui-lint-ds` until 398 merges.
-- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Work MBP (2026-09-15): session-end after CI green`.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Proto Toaster / SplitDragHandle / ChipMultiSelect consume is **done** (#78). Do not auto-commit employer repos. Do not wire `shadcn-lint` into `workspace-harness.py` / vault CI. Keep `centric-ui-lint-ds` until 398 merges. Do not start centric-ui host-chrome consume unless Sean names it.
+- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Work MBP (2026-09-17): leftover cds consume session-end`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
@@ -46,6 +46,19 @@ _Last updated: 2026-09-15 — A8: Figma construction gate is a detector (live ca
 ---
 
 ## Session history (append-only)
+
+### 2026-09-17 — leftover cds consume closed (#77 / #78)
+
+**Focus this session**: Close the Sep 11 leftover consume thread after cds #35 and proto #78 merged.
+**Machine**: Work MacBook Pro (`CS-K746DRWXY1`) · Cursor Grok 4.6 · Cursor
+**Stopped because**: Sean asked to end session.
+
+**Accomplishments**:
+- Proto #77 host chrome + #78 leftover consume on `main` (`adac92b`)
+- `cds-exports-check` gates `@centric/ui/<subpath>` against cds `origin/main`
+- Workspace [[plan-ahead]] + [[cds-host-consume-order]] already on vault `main`
+
+**Next**: centric-ui host-chrome consume only if named. Live handoff current focus stays lint:ds / cui #398.
 
 ### 2026-09-15 — portable session-status card closed; doctor MISSes acked
 
