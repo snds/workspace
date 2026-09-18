@@ -23,47 +23,29 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+### 2026-09-17 — Supplier Portal polish session close (proto)
 
-
-### 2026-09-17 — Figma opacity MCP re-probe (session-end)
-
-SessionID: 2026-09-17-work-figma-opacity-mcp
+SessionID: 2026-09-17-work-supplier-portal-close
 --- SESSION BLOCK ---
 Date: 2026-09-17
-Machine: Work MacBook Pro
+Agent: Cursor Composer
 Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 02-centricPLM; Centric SaaS PLM Design System (`o6o1ZuGHxDow2vHLuYXT6X`)
-Summary: Closed the opacity-variables thread. Live MCP re-probe confirms `use_figma`/`node.set` still cannot bind paint or color-variable opacity; layer opacity and `get_variable_defs` still work. Knowledge [[figma-opacity-variables]] dated for the re-probe.
+Machine: Work MacBook Pro (CS-K746DRWXY1)
+Project(s): saas-plm-prototype (cpes-software)
+Summary: Closed a resumed Supplier Portal polish thread. Work already on proto `main` via merged PRs #14–#16 (Aug 2026): single-company portal, My Home insights/welcome, LandingDataTable landings, seeded POs, host Header → Supplier Portal Demo, portal avatar email links, demo hash **push** for Back/Forward. No new uncommitted portal work from this baton; checkout was on `feat/page-composer-model` (untracked `canvases/` left alone).
 Decisions:
-  - MCP extras are not a second bind channel. Overlay Black/White ramps stay baked RGBA until write API ships.
-  - Do not split Radix A-steps / `interaction/*`.
-Evidence:
-  - Button `State=Disabled` (`7:5060`) `get_variable_defs` → `"var(--opacity-disabled)": "50"`
-  - `setBoundVariableForPaint(..., 'opacity')` → Expected 'color'; `node.set` same unrecognized `boundVariables.opacity`
+  - Portal demo is Performance Fabrics only (no company switcher).
+  - Waiting On: Needs you / Awaiting buyer. Complete cards: Completed on + success hover.
+  - Demo navigations push `location.hash` (not `replaceState`) for Back/Forward.
+Artifacts:
+  - https://github.com/cpes-software/saas-plm-prototype/pull/14 (merged)
+  - https://github.com/cpes-software/saas-plm-prototype/pull/15 (merged)
+  - https://github.com/cpes-software/saas-plm-prototype/pull/16 (merged)
+Pending added:
+  - Optional: Sean Miro board catalog for further portal gaps (offered; board not sent).
 Next:
-  - Re-bind Overlay Black/White as alias+opacity when paint/color-var writes ship.
-  - Sean visual spot-check of Icons page remains from the earlier 2026-09-17 Figma session.
---- END BLOCK ---
-
-### 2026-09-17 — proto DS consume #48–#51 conflict closeout
-
-SessionID: 2026-09-17-work-ds-consume-conflicts
---- SESSION BLOCK ---
-Date: 2026-09-17
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): saas-plm-prototype (cpes-software); 02-centricPLM
-Summary: Closed the Aug 13 DS-consume merge-conflict thread. Sequential merges of isolated notes-heavy PRs kept colliding on PROJECT-NOTES / HANDOVER. All four PRs are on `main`.
-Decisions:
-  - `SplitPreviewPane` chrome stays local until `@centric/ui` grows `fullscreen`, `headerActions`, and `bodyClassName` (quote compare on `#/requests-quotes`). Layout + `ConsumerPreviewPane` wrap the package.
-  - Sequential consume PRs that prepend the same notes files will conflict after each merge; keep-both, do not squash the earlier PR’s note.
-Evidence:
-  - proto #48–#51 merged @ GitHub — verified (`mergedAt` 2026-08-13)
-Next:
-  - Lift quote-compare pane extras into `@centric/ui` when asked; keep sheet / tabs / dialog / dropdown-menu / popover local until those APIs match.
-  - Current proto checkout is `feat/page-composer-model` — unrelated to this thread.
+  - If continuing portal: send Miro share/export, or pick next surface from proto HANDOVER.
+  - Unrelated: `feat/page-composer-model` + untracked `canvases/` — separate thread.
 --- END BLOCK ---
 
 ### 2026-09-17 — centric-ui workflowAuthor PR #282 closeout
@@ -766,4 +748,41 @@ only against fixtures of your own design tests your imagination, not the tool.
 22 harness gates green, 43/43 negative fixtures, ruff clean.
 
 Report: `07-projects/19-workspace-brain/reports/figma-bind-probe_v1.0_2026-09-15.md`
+--- END BLOCK ---
+
+### 2026-09-12 — PlanetCompiler regional catchment and shared terrain completion
+
+SessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe-phase3-2026-09-12
+ParentSessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe
+--- SESSION BLOCK ---
+Date: 2026-09-12
+Agent: Codex
+Surface: Codex desktop
+Machine: Personal Mac, Apple M3 Max
+Project(s): PlanetCompiler; independent Planet Lab
+Continuity: The September 10 phases-one/two note was already folded into session-log.md by another machine. This additive continuation retains the same parent task and uses a distinct compaction key so new completion evidence is not discarded.
+Phase-three follow-up: Sean authorized Continue and resumed on September 12. Completed the conditioned catchment core, separate routing/physical ground, finite lake water and conservative solid accounts, authoritative shared-triangle queries, bounded native display and editor playback. Debug/Release each 7 core suites,112 regional checks/24 planted corruptions,78 global and65 strip checks pass. Final native17/17, live regional1771/1771 with five byte-equal histories/90queries, actualSlate controls8/8 and eleven independent original-pixel captures pass. Corrected below-scene placement and animated-focus failure; preserved all eleven failed images and later cropped top view. Final wider top passes. Scientific and rendering limits/human acceptance remain explicit. Independent first84/86 report was overwritten; reconstruction is labeled and original104/106 preserved. All implementation remains PlanetCompiler; Legion untouched.
+Phase-three source checkpoints: f0bf700,234d8e8,18a762c,a468110,a112e1c,a0fe2ae (final evidence checkpoint); source/evidence checker, all seven intent criteria and canonical validators pass; complete artifact manifest at evidence/phase-3/phase-report.json. Native editor left clean/stopped on final5000-year elevation at localhost8765; agents complete.
+Phase-four follow-up: Sean instructed Continue after phase three. Completed immutable regional quadtree hierarchy, explicit mixed-detail stitches, all-mask triangle-overlay errors, separate source/committed queries and atomic async-cooked native collision/display publication. Review corrected nonmonotone balancing, worker marker path, valid-root placement and subtle/absolute child-transform bypass. Preserve the first oracle runs, initial 18/24 native failure, zero-probe live attempt and complete pre-guard run. Debug/Release each pass 9/9 core suites, 105/105 independent terrain checks with 22 planted corruptions and 21,900 geometric probes, plus 1,120 actual source and 1,120 emitted queries. Prior regional/global/strip audits pass 112/78/65 each. Final native 24/24, live 1,837/1,837 with 13,200 real collision probes (12,992 distinct), eight actual controls and all twelve independently inspected original captures pass. Maximum actual world mismatch is 1.758e-6 m against the 0.02 m collision/display gate.
+Phase-four checkpoint: e9593d3, source/evidence checker and all seven intent criteria pass; evidence/phase-4/phase-report.json records source and all retained artifact hashes. Native source 8a9faa9 independently reviewed. Editor PID 66415 left clean on N64 finest Elevation at 2,000 years, actual terrain selected/focused and only localhost8765 listening. No pending replacement, PIE or open assets; observer removed, all agents complete. Source spacing remains 500 m at 32 km/N64. No added geology, continuous streaming/geomorphing, production traversal, frame-rate or photographic acceptance. Human acceptance remains pending. Native repo has no remote; Legion remains untouched. Canonical generation, routing, integrity, links, workspace, first-wave detector and negative-fixture validation passes.
+Phase-five active: Sean continued. Frozen camera/quantization/readiness contract and independent design review at native9edd216; intent gate/ready passed. G5/U5/V5 implementing in isolated view-core/view-unreal/view-oracle worktrees. V5 freezes before new implementation access. Root owns all editor calls and ≥100submissions/10publications/2000collision-probes, actual controls, motion/pixel review and source/evidence closeout. No phase-five acceptance is closed yet.
+Next: complete phase five within its bounded contract. Preserve original references, adversarial visual gates and Legion.
+Handoff: 07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md
+--- END BLOCK ---
+
+### 2026-09-15 — Proto PR 79 merge conflicts resolved
+
+SessionID: 2026-09-15-work-p79cf
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): saas-plm-prototype (cpes-software)
+Summary: Merged origin/main into feat/page-composer-model so proto PR 79 is mergeable after #80 Material Symbols. Kept page-composer wiring; Pages tab uses `web`, Configure page uses `open_in_new`; renamed ComposerTree.tsx → ComposerTreeList.tsx to avoid a case-insensitive clash with composerTree.ts.
+Decisions:
+  - centric-engineering: push the conflict resolution; do not self-merge the PR.
+Evidence:
+  - PR 79 mergeable + CI (build, ds-check, CodeQL) @ https://github.com/cpes-software/saas-plm-prototype/pull/79 — verified
+Next:
+  - Human review and merge of proto PR 79 (no Linear file — GitHub PR is the tracker).
 --- END BLOCK ---
