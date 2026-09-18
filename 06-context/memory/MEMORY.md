@@ -12,6 +12,7 @@ New entry: copy `_template.md`, fill it in, add a line below.
 ## Entries
 
 - [[fact-workspace-repos]] — `fact` · the two workspace repos; `snds/workspace` is canonical going forward.
+- [[fact-centric-ui-api-key-vs-gh-pat]] — `fact` · cloud API 401s need `VITE_API_KEY` + matching `VITE_SERVICE_NAME`, not a GH PAT (PAT is for ghcr.io).
 - [[fact-machine-layer-installs]] — `fact` · per-machine install state of the bootstrap-v2 hooks/doctor layer (Personal MBP ✅ 2026-07-09; both Work MBPs + Windows pending).
 - [[fact-intent-app]] — `fact` · Intent.app + intentd 0.9.12 on Personal MBP; `git.autoCommit` false; secrets stay off-git.
 - [[fact-unraid-server]] — `fact` · Sean's Unraid home server: how to reach it (LAN / key / sandbox) + what runs on it.
