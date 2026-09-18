@@ -4,7 +4,7 @@ created: 2026-09-11
 updated: 2026-09-17
 status: working
 confidence: high
-sources: [saas-plm-prototype Pages build on PR 77, cds PR 34 squash, cds PR 35]
+sources: [saas-plm-prototype Pages build on PR 77, cds PR 34 squash, cds PR 35, cds PR 46, proto PR 84]
 related_skills: [plan-ahead]
 related_projects: []
 relations:
@@ -47,3 +47,17 @@ Do not invert 3 and 1 because the laptop looks green.
 
 `scripts/ds-pin.mjs` allows overlay **ahead** of the pin (co-dev). Ahead-with-unmerged-exports is
 exactly the Pages trap. The new check compares **imports vs `origin/main` exports**, not SHAs.
+
+## Later breakers after the export exists (2026-09-17)
+
+- **Named export ≠ new subpath.** `IconSetProvider` from existing `./icon` passes `cds-exports-check`.
+  Pages can still fail for other reasons.
+- **Vite 8 / Rolldown CSR maps.** Phosphor's `./dist/csr/*` → `*.es.js` export is applied by Node,
+  not by Rolldown. Host needs a resolve plugin. Proto `main` now has `phosphorCsrResolve()`.
+- **`lint-ds` ratchet on new files.** Copying `text-neutral-*` / `text-blue-600` from an existing
+  header control still raises the frozen count. Author new files in semantic tokens.
+- **In-tree `_cds` vs sibling overlay.** Pages clones cds inside the proto workspace (`_cds`), so
+  walk-up from data-table finds proto `node_modules`. A sibling worktree without `node_modules`
+  fails `@centric/ui/fn` locally even when CI would pass.
+- **Parallel main.** The CSR resolve landed on proto `main` while #84 was open. Merge `origin/main`
+  before treating a green feature branch as mergeable.
