@@ -1,7 +1,7 @@
 ---
 tags: [workflow, process, patterns, audit, session-management]
 created: 2026-04-28
-updated: 2026-09-11
+updated: 2026-09-18
 status: stable
 confidence: high
 sources: [session-log 2026-04-27, audit-log 2026-04-27, session-log 2026-07-09, session-log 2026-07-27]
@@ -79,6 +79,7 @@ The `/session-end` skill is the canonical close-out. What matters most for conti
 2. **Update project-context.md** — mark resolved items, add new pending items
 3. **Update the relevant SESSION-STATE.md** if project state changed
 4. **Commit and push** — everything on `main` via `git add -A` (the dispatcher handles this)
+5. **Prune our merged branches** — `python3 09-tools/prune-our-branches.py --apply`. Only heads whose PRs we authored and already merged; leave everyone else's, open PRs, and dirty leftover worktrees.
 
 **Don't skip the commit even for small sessions.** Drive sync is the file layer, but git is the version layer. A session that only moves files still needs a commit so the history is coherent.
 

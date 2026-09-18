@@ -207,6 +207,21 @@ personal slug, **or** an unmapped named project slug. Legion, ephemeral Cursor
 windows, and a missing employer checkout skip and do not fail. GitHub cannot see
 `~/.cursor` (A10). Do not auto-commit employer repos.
 
+## prune-our-branches.py
+
+Session-end git hygiene. Deletes local (and leftover remote) branches only when
+`gh` shows a **merged** PR for that head authored by `@me`, there is no open PR
+on the same head, and the checkout is not ahead of `origin/<branch>`. Someone
+else's branches, unmerged work, and dirty leftover worktrees stay. Squash
+merges are not ancestors of `main` — the merged PR is the signal, not
+`merge-base`. `/session-end` runs this with `--apply`.
+
+```
+python3 09-tools/prune-our-branches.py              # dry-run
+python3 09-tools/prune-our-branches.py --apply
+python3 09-tools/prune-our-branches.py --self-test
+```
+
 ## artifact-ingest.py
 
 Land vendor Canvas/Artifact/HTML content that already exists outside git

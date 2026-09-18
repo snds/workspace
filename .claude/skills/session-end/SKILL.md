@@ -1,6 +1,6 @@
 ---
 name: session-end
-description: End-of-session protocol. Writes the Session Block as a fragment (06-context/sessions/<id>.md; compaction folds it into session-log.md), updates project-context.md, runs skills sync, commits and pushes to Git. Invoked as /session-end or triggered by "end of session"/"wrap up"/"done for today".
+description: End-of-session protocol. Writes the Session Block as a fragment (06-context/sessions/<id>.md; compaction folds it into session-log.md), updates project-context.md, runs skills sync, commits and pushes to Git, then prunes merged branches we authored. Invoked as /session-end or triggered by "end of session"/"wrap up"/"done for today".
 ---
 
 # /session-end — Close out the session cleanly
@@ -265,6 +265,22 @@ Group by origin and present:
 Do not auto-commit. Always ask. These files belong to another session's context
 and committing them silently under the wrong message corrupts the audit trail.
 
+### Step 7.6 — Prune our merged branches
+
+Engineering hygiene. After the session commit, delete leftover git branches **we**
+opened whose PRs have already merged. Never delete someone else's branch, an open
+PR, `main`, or a branch with unpushed unique commits.
+
+```
+python3 09-tools/prune-our-branches.py --apply
+```
+
+Default scan: this workspace, `~/Projects/cpes-software/cds`,
+`~/Projects/cpes-software/saas-plm-prototype`. Dry-run first only if `gh` is
+unavailable. Report keep-reasons (dirty leftover worktree, not our merged PR).
+Do not `--force` worktree removal. Employer repos: deleting a merged branch we
+authored is hygiene, not a self-merge.
+
 ### Step 8 — Confirm
 
 ```
@@ -317,7 +333,7 @@ When running in Cursor (detected via surface detection or `brain.mdc` context):
 - **Surface detection probe** still applies — run it in terminal.
 - Confirm line: `✓ Session logged and pushed — {N} files committed. Obsidian will reflect on next focus.`
 
-All other steps including 7.5 run identically.
+All other steps including 7.5 and 7.6 run identically.
 
 ---
 
