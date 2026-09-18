@@ -2,7 +2,7 @@
 title: Knowledge vault index
 tags: [knowledge-vault, index]
 created: 2026-04-28
-updated: 2026-09-15
+updated: 2026-09-17
 ---
 
 # Knowledge Vault — Index
@@ -39,7 +39,7 @@ when new entries are written. Entries are grouped by domain, then listed alphabe
 - [[centric-ui-density-adoption]] — Where centric-ui consumes `--density-*`; remaining hardcoded `h-8` gaps. Triggers: `density not working`, `h-8`, `control height`, `homepage density` (2026-08-05)
 - [[figma-component-token-axes]] — Instance vs context component-token method: Density/Color = shell context; Size/Variant/Position = instance; Color collections alias semantics and publish WEB `var(--sem-*)`; code stays on Tailwind semantic utilities. Triggers: `component tokens`, `density mode`, `instance axis`, `context axis`, `sidebar surface`, `control-font-size`, `mode stacking`, `WEB syntax` (2026-07-31; Color WEB map 2026-09-15)
 - [[figma-ds-surface-authoring]] — Durable DS Figma authoring conventions for any surface/overlay: build-from-real-components (props-first), surface/overlay construction rules (edge-to-edge separators, spacing-token binding, absolute-positioned in-parent popovers, icon↔label match, no double padding, slot fill/hug, mode-first variants, total tokenization, floating-element constraints, **catalog section ownership + no AABB overlap**), and code→Figma transliteration judgment calls (focus uses `ring` token; otherwise code-faithful). Triggers: `figma authoring`, `surface authoring`, `overlay`, `popover`, `separator`, `mode-first`, `tokenize`, `transliteration`, `focus token`, `section overlap`, `catalog section` (2026-06-30; AABB rule 2026-09-16)
-- [[figma-opacity-variables]] — Figma 2026-09-03 opacity-as-variable: bind opacity on fills/strokes; do not fake it with mode tricks. Triggers: `opacity variable`, `figma opacity`. (2026-09-03)
+- [[figma-opacity-variables]] — Figma UI (2026-09-03): number vars on color-variable + fill opacity without detaching. MCP/`use_figma`/`node.set` bind **layer** opacity only (FLOAT 0–100); paint/color-var writes still reject (re-probed 2026-09-17). Triggers: `opacity variable`, `figma opacity`, `bind opacity`, `MCP opacity`. (2026-09-17)
 - [[enterprise-charting-and-dataviz]] — Enterprise charting stack (ECharts / Carbon / Recharts) vs CDS table-chart; encoding and token constraints. Triggers: `charting`, `echarts`, `recharts`, `dataviz`. (2026-09-09)
 - [[enterprise-charting-pm-brief]] — Plain briefing for product management on charts in the product. Triggers: `charting pm brief`. (2026-09-10)
 - [[nathan-curtis-ds-ops-substack]] — Curtis Substack ops notes absorbed: **configuration collapse** (slots over prop sprawl; make common configurable / uncommon composable; AI-ready composition grammar), specs-on-command as testimony→contract, many-core-library sync, fallacy of federated DS, Figma component testing as design Proofboard, DS Generations governance. Triggers: `configuration collapse`, `figma slots`, `prop sprawl`, `composability`, `specs on command`, `federated design system`, `many core libraries`, `testing figma components`, `design system generations`, `nathan curtis` (2026-08-07)

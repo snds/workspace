@@ -1,13 +1,13 @@
 ---
 tags: [figma, variables, opacity, design-tokens, mcp, plugin-api]
 created: 2026-09-03
-updated: 2026-09-03
+updated: 2026-09-17
 status: working
 confidence: high
 sources:
   - Figma release notes 2026-09-03 "Control opacity at scale"
   - Figma help: Overview of variables; Create and manage variables
-  - Figma MCP runtime probes on o6o1ZuGHxDow2vHLuYXT6X 2026-09-03
+  - Figma MCP runtime probes on o6o1ZuGHxDow2vHLuYXT6X 2026-09-03 and re-probe 2026-09-17
 related_skills: [figma-variable-creation, figma-mcp-tool-usage, figma-plugin-dev, ds-advisor]
 related_projects: [Centric SaaS PLM Design System]
 relations:
@@ -36,7 +36,7 @@ Release: *Control opacity at scale*. Help center:
 
 ## Agent / MCP — what actually works (probed)
 
-`use_figma` runs JS against the file. MCP-only extras (`node.set`, `node.query`, `screenshot`) use the same validators.
+`use_figma` runs JS against the file. MCP-only extras (`node.set`, `node.query`, `screenshot`) use the same validators. **Re-probed 2026-09-17** on Button `State=Disabled` (`7:5060`): `get_variable_defs` returned `"var(--opacity-disabled)": "50"`; paint/`node.set` opacity binds still reject.
 
 | Surface | Bind FLOAT to it? | How |
 |---|---|---|
