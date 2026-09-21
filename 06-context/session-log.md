@@ -32,6 +32,24 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+### 2026-09-21 — cds #50 CodeQL green
+
+SessionID: 2026-09-21-work-k7m2
+--- SESSION BLOCK ---
+Date: 2026-09-21
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): 19-workspace-brain (cds #50)
+Summary: Cleared the remaining CodeQL failure on cds #50. Polynomial CSS scans are now linear. Checks green at a346322.
+Decisions:
+  - Keep declaration and var() match behavior; change only the scan method.
+Evidence:
+  - CodeQL and CI on cds #50 @ a346322 — verified (gh pr checks)
+Next:
+  - Sean reviews cds #50. Do not agent-merge. Do not commit cds canvases/.
+--- END BLOCK ---
+
 ### 2026-09-18 — Figma Icons family (all ligature text selected)
 
 SessionID: 2026-09-18-work-figma-icon-family

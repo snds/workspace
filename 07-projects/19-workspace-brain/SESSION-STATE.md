@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-18 — CDS ShadCN federalization local on cds #48 branch; resume in CDS-rooted chat_
+_Last updated: 2026-09-21 — cds #50 CodeQL green; waiting on Sean to review_
 
 ---
 
@@ -8,27 +8,27 @@ _Last updated: 2026-09-18 — CDS ShadCN federalization local on cds #48 branch;
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
-- **Current focus**: CDS ShadCN federalization instance 0. Local branch `feat/shadcn-federalization` @ `5b21ec9` (10 ahead of origin / cds [#48](https://github.com/cpes-software/cds/pull/48) @ `8da550c`). Stock L0 + extras + ShadCN stories only for Button, Input, Badge. Remaining L0 is CDS-as-vendor, not stock.
-- **Working set**: `/Users/sean.sands/Projects/cpes-software/cds` (open that folder for the next chat). Isolated worktrees already merged. Do not edit cds from a centric-ui-rooted chat (Allow spam).
-- **Last action (2026-09-18):** Merged wrap worktrees locally; unused modules thin-wrapped; Button/Input/Badge Storybook split. `move_agent_to_root` to cds aborted. Resumption prompt given. Storybook :6006 stopped. Cursor Grok 4.6 · Cursor · Work MBP.
+- **Current focus**: cds [#50](https://github.com/cpes-software/cds/pull/50) on `feat/instance-0-thin-child-lockstep` @ `a346322`. CodeQL and CI green. Waiting on Sean to review.
+- **Working set**: `/Users/sean.sands/Projects/cpes-software/cds`. Do not edit cds from a centric-ui-rooted chat.
+- **Last action (2026-09-21):** Replaced polynomial CSS scans that CodeQL flagged on #50. Pushed `a346322`. `gh pr checks` green (CodeQL, analyze jobs, lint/types/test/build). Cursor Grok 4.7 · Cursor · Work MBP.
 - **Unattended runner — decided 2026-09-15: not building it.** Not a pending task. The safety gate
   (`check-unattended-runner-gate.py`) stays and is silent when idle. See [[decision-no-unattended-runner]].
-- **Next action:** New Cursor chat with root `/Users/sean.sands/Projects/cpes-software/cds`. Restore stock L0 + extras wrap + `*.shadcn.stories.tsx` for every remaining checksum module. Then fix `shadcn:sync` so it merge-adds sibling hashes. No push / no cui pin / no PR merge until Sean reviews. Proto [#84](https://github.com/cpes-software/saas-plm-prototype/pull/84) and cui [#398](https://github.com/cpes-software/centric-ui/pull/398) remain human-merge if wanted.
-- **Open decisions:** Theme reset (`@theme { --color-*: initial }`) stays a later product-CSS PR — decided overlay-first. Restyle/arbitrary/inline shadcn rules stay off until a later wave. Rec 15 Claude INDEX pointer — watch token quality on Claude boot.
-- **Blocked on:** Sean review of local cds federalization before push. cui 398 human review. Proto #84 waiting on Sean to merge.
-- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not auto-commit or merge employer repos. Do not run cds `shadcn:sync` until checksum merge-add is fixed. Do not bump cui `cds.pin`. Do not consume Progress/Toaster in cui from this branch. Keep `centric-ui-lint-ds` until 398 merges.
-- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Work MBP (2026-09-18): cds federalization session-end`.
+- **Next action:** Sean reviews cds #50. Do not agent-merge. Do not bump a host `cds.pin`.
+- **Open decisions:** Theme reset stays a later product-CSS PR. Restyle/arbitrary/inline shadcn rules stay off until a later wave. Proto #84 and cui #398 were last noted 2026-09-18 as human-merge; not re-checked this session.
+- **Blocked on:** Sean review of cds #50.
+- **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not auto-commit or merge employer repos. Do not commit the untracked `canvases/` in the cds checkout. Do not bump cui `cds.pin`.
+- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Work MBP (2026-09-18): cds federalization session-end → Cursor Grok 4.7 / Cursor / Work MBP (2026-09-21): cds #50 CodeQL green`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
 - **Machine**: Work MacBook Pro (`CS-K746DRWXY1`) this session; Personal MBP remains the other primary.
-- **OS context**: macOS (Darwin 25.6.0)
+- **OS context**: macOS (Darwin 27.0.0)
 - **Workspace root**: resolve via nearest `AGENTS.md` (this checkout)
 - **Project root**: `07-projects/19-workspace-brain`
 
 ### VCS state
-- **Branch**: `main` @ `9178aaf` plus this session-end fragment
-- **Uncommitted at baton write**: session fragment + SESSION-STATE (folded into session-log at end)
+- **Branch**: `main` plus this session-end commit
+- **Uncommitted at baton write**: session fragment + this SESSION-STATE rewrite (folded into session-log at end)
 - **Test state at last check (2026-09-02):** `vqa doctor` core ok; FLIP/DreamSim/OCR/gltf-validator/VGGT degraded honestly. `vqa calibrate` **48/48** (`vqa/1.1`). LCARS `S-SYS47-01` v4 `vqa prove` 16/16 measured. Doctor personal lane `ok` on this Cursor.
 
 ### Open work and paused threads
@@ -46,6 +46,18 @@ _Last updated: 2026-09-18 — CDS ShadCN federalization local on cds #48 branch;
 ---
 
 ## Session history (append-only)
+
+### 2026-09-21 — cds #50 CodeQL green
+
+**Focus this session**: Clear the remaining CodeQL failure on cds #50.
+**Machine**: Work MacBook Pro (`CS-K746DRWXY1`) · Cursor Grok 4.7 · Cursor
+**Stopped because**: Sean asked to end session.
+
+**Accomplishments**:
+- Linear CSS scans pushed as `a346322` on `feat/instance-0-thin-child-lockstep`
+- CodeQL and CI green on [#50](https://github.com/cpes-software/cds/pull/50)
+
+**Next**: Sean reviews #50. Do not agent-merge.
 
 ### 2026-09-18 — CDS ShadCN federalization instance 0 (local)
 
