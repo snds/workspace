@@ -34,6 +34,27 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+### 2026-09-21 — proto #87 Pages build, CDS split
+
+--- SESSION BLOCK ---
+Date: 2026-09-21
+Agent: Grok 4.7 / Cursor
+Surface: Cursor
+Machine: Work MacBook Pro
+Project(s): saas-plm-prototype (proto #87); cds (prompt only, repo not edited)
+Summary: Proto #87 Pages build failed because `DisclosureChevron` is not exported from CDS `DetailSection`. Host chevron restored and pushed (`6bcd04e`). Sheet flush/border and the centered section chevron are CDS defaults. Paste-ready prompt left in chat for a CDS-rooted session.
+Evidence:
+  - Pages job https://github.com/cpes-software/saas-plm-prototype/actions/runs/35671930108/job/106570081611 — verified (missing export)
+  - Local `npm run build` after `6bcd04e` — verified (`build-ok`)
+  - Chevron centering on Classic blue Where Used — not verified (no browser pass)
+Decisions:
+  - Unblock Pages with the host `expand_more` icon. Do not invent `DisclosureChevron` on the proto.
+  - CDS owns sheet `gap-0` + `border-border`, and one centered section chevron on the existing `./DetailSection` subpath.
+Next:
+  - Open Cursor on `/Users/sean.sands/Projects/cpes-software/cds` and paste the prompt from this chat. Branch and PR. Do not merge. Do not edit the prototype in that chat.
+  - After that PR is on cds `main`, drop the proto sheet `gap-0 border-border` override and consume the centered chevron.
+--- END BLOCK ---
+
 ### 2026-09-21 — cui #413 peer replies
 
 SessionID: 2026-09-21-work-c4p13

@@ -1,7 +1,7 @@
 ---
 tags: [engineering, cds, pages, overlay, exports, consume]
 created: 2026-09-11
-updated: 2026-09-17
+updated: 2026-09-21
 status: working
 confidence: high
 sources: [saas-plm-prototype Pages build on PR 77, cds PR 34 squash, cds PR 35, cds PR 46, proto PR 84]
@@ -61,3 +61,31 @@ exactly the Pages trap. The new check compares **imports vs `origin/main` export
   fails `@centric/ui/fn` locally even when CI would pass.
 - **Parallel main.** The CSR resolve landed on proto `main` while #84 was open. Merge `origin/main`
   before treating a green feature branch as mergeable.
+
+## Host paint that is a CDS default (2026-09-21)
+
+Proto #87 Pages `build` failed: the host imported `DisclosureChevron` from
+`@centric/ui/DetailSection`, and that name is not on cds `main` (`cf55fb3`).
+Proto `6bcd04e` restored a host `expand_more` so Pages can build. The chevron
+is still not a CDS control.
+
+Two overrides in that PR are parent defaults:
+
+- `SheetContent` ships `gap-4` and an uncolored side border. Proto
+  `ui/sheet.tsx` forces `gap-0 border-border`.
+- `DetailSection` uses a 24px primary well, and the trigger pins the glyph
+  to the corner. The proto draws a second 28px muted well with the glyph
+  centered. A new named export belongs on the existing `./DetailSection`
+  subpath, and it must be that centered control. Exporting the old icon as
+  `DisclosureChevron` repeats the break.
+
+Proto consume waits until those defaults are on cds `main`.
+
+## See also
+
+Host ButtonGroup / split-CTA paint is not an export-order problem. Inventory for cui
+federalization: [[cds-host-buttongroup-realign]].
+
+The host-level process (CDS as parent, not ShadCN) is the CDS plan
+`docs/plans/cds-host-federalization.md`. A proto migration is a later doc that
+fills that plan's instantiation template. Do not paste the plan here.
