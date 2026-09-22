@@ -33,6 +33,22 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+### 2026-09-21 — cui #413 peer replies
+
+SessionID: 2026-09-21-work-c4p13
+--- SESSION BLOCK ---
+Date: 2026-09-21
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): 19-workspace-brain (centric-ui #413)
+Summary: Replied on centric-ui #413. `input-otp` and `react-day-picker` are required `@centric/ui` peers re-exported from the barrel; the app does not use them yet.
+Evidence:
+  - Review replies @ https://github.com/cpes-software/centric-ui/pull/413#discussion_r4068308656 and #discussion_r4068308733 — verified (gh api read-back)
+Next:
+  - Sean reviews cds #50. Alex has the peer explanation on cui #413. Do not agent-merge. Do not bump a host cds.pin.
+--- END BLOCK ---
+
 ### 2026-09-21 — cds #50 CodeQL green
 
 SessionID: 2026-09-21-work-k7m2

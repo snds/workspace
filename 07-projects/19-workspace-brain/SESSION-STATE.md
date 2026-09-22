@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-21 — cds #50 CodeQL green; waiting on Sean to review_
+_Last updated: 2026-09-21 — cui #413 peer replies posted; cds #50 still waiting on Sean_
 
 ---
 
@@ -10,14 +10,14 @@ _Last updated: 2026-09-21 — cds #50 CodeQL green; waiting on Sean to review_
 
 - **Current focus**: cds [#50](https://github.com/cpes-software/cds/pull/50) on `feat/instance-0-thin-child-lockstep` @ `a346322`. CodeQL and CI green. Waiting on Sean to review.
 - **Working set**: `/Users/sean.sands/Projects/cpes-software/cds`. Do not edit cds from a centric-ui-rooted chat.
-- **Last action (2026-09-21):** Replaced polynomial CSS scans that CodeQL flagged on #50. Pushed `a346322`. `gh pr checks` green (CodeQL, analyze jobs, lint/types/test/build). Cursor Grok 4.7 · Cursor · Work MBP.
+- **Last action (2026-09-21):** Replied on centric-ui [#413](https://github.com/cpes-software/centric-ui/pull/413) to Alex's questions on `input-otp` and `react-day-picker` (required `@centric/ui` peers, unused by the app). Cursor Grok 4.7 · Cursor · Work MBP. cds #50 remains green at `a346322`.
 - **Unattended runner — decided 2026-09-15: not building it.** Not a pending task. The safety gate
   (`check-unattended-runner-gate.py`) stays and is silent when idle. See [[decision-no-unattended-runner]].
-- **Next action:** Sean reviews cds #50. Do not agent-merge. Do not bump a host `cds.pin`.
+- **Next action:** Sean reviews cds #50. Alex has the peer explanation on cui #413. Do not agent-merge. Do not bump a host `cds.pin`.
 - **Open decisions:** Theme reset stays a later product-CSS PR. Restyle/arbitrary/inline shadcn rules stay off until a later wave. Proto #84 and cui #398 were last noted 2026-09-18 as human-merge; not re-checked this session.
 - **Blocked on:** Sean review of cds #50.
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not auto-commit or merge employer repos. Do not commit the untracked `canvases/` in the cds checkout. Do not bump cui `cds.pin`.
-- **Agent thread**: `… → Cursor Grok 4.6 / Cursor / Work MBP (2026-09-18): cds federalization session-end → Cursor Grok 4.7 / Cursor / Work MBP (2026-09-21): cds #50 CodeQL green`.
+- **Agent thread**: `… → Cursor Grok 4.7 / Cursor / Work MBP (2026-09-21): cds #50 CodeQL green → Cursor Grok 4.7 / Cursor / Work MBP (2026-09-21): cui #413 peer replies`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.
@@ -46,6 +46,17 @@ _Last updated: 2026-09-21 — cds #50 CodeQL green; waiting on Sean to review_
 ---
 
 ## Session history (append-only)
+
+### 2026-09-21 — cui #413 peer replies
+
+**Focus this session**: Answer Alex on centric-ui #413 about `input-otp` and `react-day-picker`.
+**Machine**: Work MacBook Pro (`CS-K746DRWXY1`) · Cursor Grok 4.7 · Cursor
+**Stopped because**: Sean asked to end session.
+
+**Accomplishments**:
+- Replies posted on [#413](https://github.com/cpes-software/centric-ui/pull/413) discussion threads
+
+**Next**: Sean reviews cds #50. Do not agent-merge.
 
 ### 2026-09-21 — cds #50 CodeQL green
 
