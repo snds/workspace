@@ -34,6 +34,20 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+### 2026-09-21 — cui #413 drop widget deps
+
+--- SESSION BLOCK ---
+Date: 2026-09-21
+Project(s): 19-workspace-brain (centric-ui #413)
+Summary: Alex was right — the host must not declare CDS widget libraries. Removed `input-otp` and `react-day-picker` on cui #413 (`022c468`) and replied on both threads. Encoded the boundary in eng-foundations, #14, #18, ds-advisor, fe-component-architecture, and [[abstraction-hides-its-dependencies]].
+Shipped:
+  - centric-ui `022c468` on `feat/consume-cds-shadcn-federalization` — replies https://github.com/cpes-software/centric-ui/pull/413#discussion_r4068404303 and #discussion_r4068404401
+  - Knowledge [[abstraction-hides-its-dependencies]]
+Left open:
+  - npm still installs both as required `@centric/ui` peers (`peer: true`). Hiding that install is a CDS change (real dependency, or optional peer off the barrel). Not started. Do not bump `cds.pin`.
+  - Sean reviews cds #50. Do not agent-merge.
+--- END SESSION BLOCK ---
+
 ### 2026-09-21 — proto #87 Pages build, CDS split
 
 --- SESSION BLOCK ---

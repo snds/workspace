@@ -323,6 +323,22 @@ the component's `variant` prop exposes exactly those values, not local synonyms.
 Consumers reading the DS docs should be able to use the component without
 translation. Naming divergence is a maintenance tax.
 
+### Package boundary: the consumer does not install your widgets
+
+`peerDependencies` are for a shared singleton where a second copy would be a
+correctness bug (React, React DOM). Everything else the component uses to
+render itself is a `dependency` of the design system, or it is bundled.
+
+Do not push a widget library (date picker, OTP input, command palette) onto
+the host as a peer just so install resolves. That publishes an implementation
+choice, and a barrel `export *` then pulls the unused module into the consumer
+bundle. Optional integrations use a deep export and
+`peerDependenciesMeta.optional`, and they stay off the package barrel.
+
+The host adds a direct dependency only when its own code imports that package.
+An unmet peer for a module the host does not import is not a host defect.
+See [[abstraction-hides-its-dependencies]].
+
 ### Breaking Change Discipline
 
 Enterprise DS components may have hundreds of consumers. Breaking changes require:
@@ -385,6 +401,7 @@ focus management while also forwarding the ref to the consumer.
 | Exporting raw context | Consumers bypass component API, coupling to implementation | Export hook with error guard only |
 | Polymorphic + forwardRef in strict TypeScript | Inference breaks | Use `asChild` pattern or `innerRef` |
 | Removing deprecated props immediately | Enterprise consumers can't move fast | 2-sprint minimum + codemod + runtime warning |
+| Host declares a DS widget as a direct dependency | Couples the app to a swappable library and can ship it via the barrel | DS owns it as a dependency; peers are shared singletons only; optional widgets are deep exports off the barrel |
 
 ---
 

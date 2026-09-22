@@ -101,6 +101,7 @@ A slice is ready for review only when:
 - **Do not ship off-rails output** (footer ignoring the system, branded fork of the library) as the product.
 - **Do not leave agent users with HTML-only docs.** Invisible to the people using agents.
 - **Do not let a playground import a fork** when the job is to consume the validated package. Story UI saying "this is all I got" is more honest than Claude Design's branded fork.
+- **Do not make a product repo name a design system's private libraries.** Abstraction means the consumer does not know them. Peers are the shared runtime only; widget libraries stay behind the package ([[abstraction-hides-its-dependencies]]).
 
 ---
 

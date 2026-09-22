@@ -116,7 +116,7 @@ Stage 5 is where work is most often quietly incomplete. A merged PR with green C
 - Accessibility: keyboard reachable and operable, focus visible and managed, semantics and labels correct, automated checks clean on the touched surface, contrast verified. WCAG 2.2 AA is the target for new work. Automated checks are necessary and never sufficient: a hand keyboard pass is part of the gate.
 - Performance budget respected for the touched surface (bundle delta, LCP/INP/CLS or the platform equivalent, virtualization above the stated row count), measured with `fe-perf-harness` rather than assumed.
 - Every state implemented: loading, empty, partial, error, offline or degraded, permission-denied.
-- Design system compliance: tokens and DS components consumed rather than reimplemented; DS gaps routed back instead of locally patched.
+- Design system compliance: tokens and DS components consumed rather than reimplemented; DS gaps routed back instead of locally patched. The host does not declare a design-system implementation dependency. Peers are shared singletons the app already provides; an unmet peer for a module this app does not import is not a host defect ([[abstraction-hides-its-dependencies]]).
 - Internationalization holds: no concatenated sentences, formatting through the platform Intl layer, layout survives long strings and RTL where supported.
 
 ### Trust boundary (new or changed)

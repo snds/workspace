@@ -52,7 +52,12 @@ Full pipeline: [[18-design-systems-ai-operating-model]]. Procedure: [[ai-design-
    whatever layer can refuse deterministically.
 6. **Distinguish design problems from org problems.** Some issues can't be fixed in
    Figma. Name them honestly so they can be escalated or deferred with intent.
-7. **Preserve identity, never destroy.** Destructive operations — deleting and
+7. **The system owns its implementation dependencies.** A consumer that treats the design
+   system as an abstraction does not declare the libraries inside components it does not
+   use. Peers are the shared runtime (React), not a calendar or OTP widget. An unmet peer
+   warning is not a reason for the product repo to grow a dependency. Optional widgets stay
+   off the package barrel. See [[abstraction-hides-its-dependencies]].
+8. **Preserve identity, never destroy.** Destructive operations — deleting and
    recreating components, styles, variables, or tokens — break consumer references,
    invalidate instance links, and create downstream churn. Always update existing
    objects in place. When an artifact is no longer needed, archive it (move to an

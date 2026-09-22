@@ -32,6 +32,13 @@ only when it hides a decision that's likely to change** (or removes real duplica
 abstraction and copy-paste are both failures; the rule of three is a decent threshold. Prefer composition
 over inheritance; prefer pure, testable units over hidden state.
 
+**The dependency list is part of the boundary.** Libraries a module uses to implement itself are
+decisions likely to change, so callers must not take them on. A peer dependency is only for a shared
+singleton the host must provide one copy of (a UI runtime, a plugin host) — two copies would be a
+correctness bug. It is not a channel for publishing private dependencies back onto the caller.
+Forcing that install breaks the abstraction and puts unused code on the caller's graph, where a
+barrel import can ship it. Detail: [[abstraction-hides-its-dependencies]].
+
 ## Interface contracts
 Anything crossing a boundary (function, API, queue, file) is a contract: explicit inputs/outputs, an
 **error taxonomy** (expected vs. exceptional), and stability guarantees. Principles true at every layer:
