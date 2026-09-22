@@ -1,7 +1,7 @@
 # Project Context — Sean Sands
 _Authoritative source: this file (06-context/project-context.md)_
 _Written by any agent — the git checkout is the source of truth._
-_Last updated: 2026-09-18_
+_Last updated: 2026-09-22_
 
 > **Platform note (2026-06-16):** the workspace itself was refactored to be portable, git-native, and
 > LLM/surface/device-agnostic, then consolidated onto `main` at `github.com/snds/workspace` (16-PR stack,
@@ -65,6 +65,8 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 - [ ] **28 individual pattern entries pending graduation at `08-knowledge/design/{slug}.md`.** Graduate one-by-one as Centric work creates demand; the master entry already references their target paths and serves as their parent until materialized. ^pc-37
 - [ ] **Stream C re-audit scheduled ~2027-Q3** (12-18 months). Emerging patterns C4 NL-workflow / C5 canvases / C7 true-merge will mature significantly. ^pc-38
 - [ ] **▶ WORK LAPTOP ONLY — Migrate MCS research → `saas-plm-analysis` employer repo.** (Added 2026-09-04 from Personal MBP.) `12-MCS` is empty on personal + the repo is unreachable there; content + access live on the Centric work laptop. Full playbook in [07-projects/12-MCS/SESSION-STATE.md](../07-projects/12-MCS/SESSION-STATE.md). Sean authorized **PR + commit + merge** directly (doc-only employer repo). Review Olga's uploads first; place with context; then leave a workspace pointer stub. ^pc-44
+- [ ] **Zero-Vector harness plan: Sean decides wave 0–1.** (Added 2026-09-22.) Proposed: 15 additive components in 4 waves, report-only first. Decisions: the wave-0 go-ahead (H1 heal sequencer, H3 intent-run hardening), the H2 playbook sign-off (incl. stale row 48, "Git identity"), the H4 project-intent home, the H15 wall guard. Plan → [notes/zero-vector-harness-plan_2026-09-22.md](../07-projects/19-workspace-brain/notes/zero-vector-harness-plan_2026-09-22.md). ^pc-45
+- [ ] **Claude Code version went down on the Work MBP (2.1.173 → 2.1.131).** (Added 2026-09-22, from a session-start notice.) Check whether this was a deliberate rollback or a channel change. Compare hooks, the settings schema and worktree behaviour in the release notes for that range before relying on any newer-version behaviour. ^pc-46
 
 ### Deferred (resurface on context match)
 
