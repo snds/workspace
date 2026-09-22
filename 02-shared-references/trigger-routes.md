@@ -127,8 +127,11 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `hand this back` | 03-skills/side-chat-handback/SKILL.md — end side chat; write the gitignored parent inbox for pickup |
 | `figma plugin` | 03-skills/figma-plugin-dev/SKILL.md |
 | `figma` | BEFORE vendor plugin skills (figma-use / figma-generate-library / figma-generate-design): load 03-skills/figma/SKILL.md (hub; plugins = mechanics only) → 03-skills/design-engine… |
-| `design system` | 01-frameworks/18-design-systems-ai-operating-model.md + 03-skills/ds-advisor/SKILL.md. AI generating/inspecting/adopting UI through the system also loads 03-skills/ai-design-sys… |
-| `design systems` | 01-frameworks/18-design-systems-ai-operating-model.md + 03-skills/ds-advisor/SKILL.md |
+| `design system` | 01-frameworks/18-design-systems-ai-operating-model.md + 03-skills/ds-advisor/SKILL.md + 08-knowledge/design/ds-parent-owns-shared-defects.md. AI generating/inspecting/adopting U… |
+| `design systems` | 01-frameworks/18-design-systems-ai-operating-model.md + 03-skills/ds-advisor/SKILL.md + 08-knowledge/design/ds-parent-owns-shared-defects.md |
+| `parent vs host` | 08-knowledge/design/ds-parent-owns-shared-defects.md — shared component defects land in the parent DS; name the layer before editing |
+| `cds or proto` | 08-knowledge/design/ds-parent-owns-shared-defects.md |
+| `consuming app` | 08-knowledge/design/ds-parent-owns-shared-defects.md |
 | `component contract` | 01-frameworks/09-component-and-pattern-framework.md + 08-knowledge/design/component-contracts-and-schemas.md — schema/arbitration; not a Figma generate. |
 | `DESIGN.md` | 01-frameworks/09-component-and-pattern-framework.md — in-repo component schema / token contract |
 | `field validation` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
@@ -244,7 +247,7 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `effort tier` | 02-shared-references/model-routing.md — four-tier effort scale (Quick / Standard / Deep / Extended) applied per surface |
 | `order of operations` | 03-skills/plan-ahead/SKILL.md — numbered steps + first later-breaker before writing. Cursor agent: .cursor/agents/plan-ahead.md |
 | `cds then proto` | 03-skills/plan-ahead/SKILL.md — CDS PR onto main, then proto consume. Local overlay ≠ Pages cds main. |
-| `consume cds` | 03-skills/plan-ahead/SKILL.md — do not export * from a path cds main does not export |
+| `consume cds` | 03-skills/plan-ahead/SKILL.md + 08-knowledge/design/ds-parent-owns-shared-defects.md — do not export * from a path cds main does not export; shared defects land in the parent |
 | `pages build` | 03-skills/plan-ahead/SKILL.md + 08-knowledge/engineering/cds-host-consume-order.md — Pages vendors cds main; overlay symlink can lie |
 | `follow up` | 03-skills/plan-ahead/SKILL.md — squash leftovers land on cds main first (Toaster / SplitDragHandle / ChipMultiSelect) |
 | `overlay vs main` | 08-knowledge/engineering/cds-host-consume-order.md |
@@ -435,4 +438,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 311 · Registry rows: 101_
+_Curated routes: 314 · Registry rows: 101_

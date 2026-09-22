@@ -50,13 +50,14 @@ Before the first edit, print:
 
 1. **Goal** in one line
 2. **Context profile** — who owns / who reviews ([00-context-profiles.md](../../02-shared-references/delivery-playbooks/00-context-profiles.md))
-3. **Numbered order of operations** (what must land *before* the next step)
-4. **What CI actually vendors** vs what this laptop is linked to
-5. **Squash leftovers** — commits that sat on a feature branch after a squash-merge
-6. **Merge-conflict hot files** — lockfiles, generated registry, files two branches touch
-7. **First breaker** — the one thing that will fail later if we invert the order
-8. **Do not start** any proto `export * from "@centric/ui/X"` until cds `main` exports `./X`
-9. After producing: invoke [[close-out]]
+3. **Target layer** — parent design system vs consuming host. Shared component defects go in the parent ([[ds-parent-owns-shared-defects]])
+4. **Numbered order of operations** (what must land *before* the next step)
+5. **What CI actually vendors** vs what this laptop is linked to
+6. **Squash leftovers** — commits that sat on a feature branch after a squash-merge
+7. **Merge-conflict hot files** — lockfiles, generated registry, files two branches touch
+8. **First breaker** — the one thing that will fail later if we invert the order
+9. **Do not start** any proto `export * from "@centric/ui/X"` until cds `main` exports `./X`
+10. After producing: invoke [[close-out]]
 
 Then execute in that order. If a step is blocked (open cds PR, waiting on merge), stop and say so.
 

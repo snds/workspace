@@ -32,8 +32,13 @@
     "library file": "08-knowledge/design/figma-ds-surface-authoring.md",
     "object chip": "08-knowledge/design/figma-ds-surface-authoring.md",
     "variant": "08-knowledge/design/figma-ds-surface-authoring.md",
-    "design system": "08-knowledge/design/ai-and-design-systems.md",
-    "design systems": "08-knowledge/design/ai-and-design-systems.md",
+    "design system": "08-knowledge/design/ai-and-design-systems.md · 08-knowledge/design/ds-parent-owns-shared-defects.md",
+    "design systems": "08-knowledge/design/ai-and-design-systems.md · 08-knowledge/design/ds-parent-owns-shared-defects.md",
+    "parent vs host": "08-knowledge/design/ds-parent-owns-shared-defects.md",
+    "cds or proto": "08-knowledge/design/ds-parent-owns-shared-defects.md",
+    "consuming app": "08-knowledge/design/ds-parent-owns-shared-defects.md",
+    "host overlay": "08-knowledge/design/ds-parent-owns-shared-defects.md",
+    "shared component defect": "08-knowledge/design/ds-parent-owns-shared-defects.md",
     "brad frost": "08-knowledge/design/ai-and-design-systems.md",
     "atomic design": "08-knowledge/design/ai-and-design-systems.md",
     "ai as mortar": "08-knowledge/design/ai-and-design-systems.md",
@@ -50,7 +55,7 @@
     "pages build": "08-knowledge/engineering/cds-host-consume-order.md",
     "cds main": "08-knowledge/engineering/cds-host-consume-order.md",
     "overlay vs main": "08-knowledge/engineering/cds-host-consume-order.md",
-    "consume cds": "08-knowledge/engineering/cds-host-consume-order.md",
+    "consume cds": "08-knowledge/engineering/cds-host-consume-order.md · 08-knowledge/design/ds-parent-owns-shared-defects.md",
     "peer dependency": "08-knowledge/engineering/abstraction-hides-its-dependencies.md",
     "unmet peer": "08-knowledge/engineering/abstraction-hides-its-dependencies.md",
     "implementation dependency": "08-knowledge/engineering/abstraction-hides-its-dependencies.md",
@@ -106,6 +111,11 @@
     "no-restyle": "08-knowledge/engineering/shadcn-lint-token-tiers.md",
     "no-raw-colors": "08-knowledge/engineering/shadcn-lint-token-tiers.md",
     "no-tier-leakage": "08-knowledge/engineering/shadcn-lint-token-tiers.md",
-    "ds-lint": "08-knowledge/engineering/shadcn-lint-token-tiers.md"
+    "ds-lint": "08-knowledge/engineering/shadcn-lint-token-tiers.md",
+    "button group": "08-knowledge/engineering/cds-host-buttongroup-realign.md",
+    "buttongroup": "08-knowledge/engineering/cds-host-buttongroup-realign.md",
+    "split action": "08-knowledge/engineering/cds-host-buttongroup-realign.md",
+    "cui federalization": "08-knowledge/engineering/cds-host-buttongroup-realign.md",
+    "ViewHeaderActions": "08-knowledge/engineering/cds-host-buttongroup-realign.md"
   }
 }

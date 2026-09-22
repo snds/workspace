@@ -1,7 +1,7 @@
 ---
 tags: [engineering, cds, pages, overlay, exports, consume]
 created: 2026-09-11
-updated: 2026-09-21
+updated: 2026-09-22
 status: working
 confidence: high
 sources: [saas-plm-prototype Pages build on PR 77, cds PR 34 squash, cds PR 35, cds PR 46, proto PR 84]
@@ -21,6 +21,7 @@ relations:
 - **Key claims:**
   - *Timeless:* `@centric/ui/X` requires `package.json` `exports["./X"]` on the SHA CI clones.
   - *Timeless:* `ds-pin` overlay-ahead is a *note*, not a Pages contract.
+  - *Timeless:* The host process is the **consume kit** (old name: federalization). Canonical agent hub is employer `cds/docs/consume-kit/` — do not copy it here.
   - *Dated 2026-09-11:* Toaster / `./sonner` and `SplitDragHandle` were the breakers on proto #77
     after cds #34 squash. cds #35 landed the exports. Proto #77 merged before later commits;
     #78 cherry-picked consume + `cds-exports-check` onto `main` (`adac92b`). Merge-before-late-push
@@ -86,6 +87,10 @@ Proto consume waits until those defaults are on cds `main`.
 Host ButtonGroup / split-CTA paint is not an export-order problem. Inventory for cui
 federalization: [[cds-host-buttongroup-realign]].
 
-The host-level process (CDS as parent, not ShadCN) is the CDS plan
-`docs/plans/cds-host-federalization.md`. A proto migration is a later doc that
-fills that plan's instantiation template. Do not paste the plan here.
+The host-level process (CDS as parent, not ShadCN) is the **consume kit** in
+employer `cds/docs/consume-kit/` (plan file still named
+`docs/plans/cds-host-federalization.md`). A proto instantiation lives in that
+host as `docs/consume/`. Do not paste either here.
+
+Which *repo* owns a visual or behavior fix (parent package vs host recipe) is
+[[ds-parent-owns-shared-defects]] — a different gate from this pin/export order.

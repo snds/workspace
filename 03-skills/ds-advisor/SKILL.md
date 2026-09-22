@@ -57,7 +57,11 @@ Full pipeline: [[18-design-systems-ai-operating-model]]. Procedure: [[ai-design-
    use. Peers are the shared runtime (React), not a calendar or OTP widget. An unmet peer
    warning is not a reason for the product repo to grow a dependency. Optional widgets stay
    off the package barrel. See [[abstraction-hides-its-dependencies]].
-8. **Preserve identity, never destroy.** Destructive operations — deleting and
+8. **Name the layer, then fix in the parent.** Shared paint, geometry, focus, and
+   tokens belong in the design-system package so every consuming app inherits the
+   fix. Hosts keep recipes and Pages-safe holds, not a second primitive. Say
+   `parent` or `host` before the first edit. [[ds-parent-owns-shared-defects]]
+9. **Preserve identity, never destroy.** Destructive operations — deleting and
    recreating components, styles, variables, or tokens — break consumer references,
    invalidate instance links, and create downstream churn. Always update existing
    objects in place. When an artifact is no longer needed, archive it (move to an
