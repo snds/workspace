@@ -1428,7 +1428,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:974846b247bc3d112321d98919ae1b511fedab80ca483fd47bb8808f2a7c5027"
+      "hash": "sha256:a128c81c32f80e68a25a53a2313fe55b79090a5b6afa5c661f8ca51df00ab01b"
     },
     "ds-bi-platforms": {
       "path": "03-skills/ds-bi-platforms/SKILL.md",
@@ -1806,7 +1806,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:373d278635e9665e5cfe5c6e352ff0eac467ee169fe21c66437a57bd6256250e"
+      "hash": "sha256:55eaa8a09e5f09d0296485953a43f018b94ab8e7eca92afe945d54f185fc388a"
     },
     "failure-mode-premortem": {
       "path": "03-skills/failure-mode-premortem/SKILL.md",
@@ -1914,7 +1914,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:ec0400961cdc67eca5d761d3ce2de32ddb66fffa95d9424544eb3fa495d5501e"
+      "hash": "sha256:50a3aa933ad1a7fa08a7c107b6ebe925c95f62b958dd0bb2a593c524d96831d0"
     },
     "fe-data-visualization": {
       "path": "03-skills/fe-data-visualization/SKILL.md",
@@ -5480,7 +5480,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:964488b183fe04895843810f20303dcd90bc104f46d9d47f7056ffaf54a8c358"
+      "hash": "sha256:27e7af83a34f2f2ead3861578142fecdba56422ad74e93e40e99a6fb8324b4bc"
     },
     "planetary-terrain-lod": {
       "path": "03-skills/planetary-terrain-lod/SKILL.md",
