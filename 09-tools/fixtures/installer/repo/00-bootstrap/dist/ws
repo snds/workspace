@@ -1,0 +1,3 @@
+#!/bin/sh
+# fixture ws wrapper
+exit 2

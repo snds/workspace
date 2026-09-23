@@ -110,14 +110,14 @@ def main() -> int:
         shutil.copytree(src, dst, ignore=shutil.ignore_patterns(".git", "__pycache__"))
         copied.append(h)
 
-    # Plugin hooks — L4 of the bootstrap guarantee. Points at the WORKSPACE copy of
-    # the SessionStart script (different failure surface from ~/.claude/hooks/);
-    # dedup vs the user-scope registration is the script's own atomic marker.
-    hooks_src = WORKSPACE_ROOT / "00-bootstrap" / "dist" / "plugin-hooks.json"
-    if hooks_src.exists():
-        hooks_dir = PLUGIN_DIR / "hooks"
-        hooks_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(hooks_src, hooks_dir / "hooks.json")
+    # Plugin hooks (formerly "L4" of the bootstrap guarantee) are NOT copied here any
+    # more. They run in every host that loads the plugin (Claude Code, Cursor, Codex) and
+    # in any cwd, so installing them is an explicit, human-run step with a diff, backup
+    # and uninstall path (H24): `workspace-doctor.sh --install-plugin`.
+    hooks_note = (
+        "NOTE: plugin hooks are not copied by this script. To install or refresh them, "
+        "run 00-bootstrap/doctor/workspace-doctor.sh --install-plugin in a plain terminal."
+    )
 
     # Plugin manifest.
     plugin_manifest = {
@@ -152,6 +152,7 @@ def main() -> int:
         json.dumps(marketplace_manifest, indent=2) + "\n", encoding="utf-8"
     )
 
+    print(hooks_note)
     print(f"Built local plugin '{PLUGIN_NAME}' with {len(copied)} skills at:")
     print(f"  {DEST_ROOT}")
     print()
