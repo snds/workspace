@@ -129,9 +129,11 @@ class Lab:
         return w
 
     def overlay(self, *, lifted: bool = False) -> dict:
+        """The v5 env exactly as the installer writes it (merge_settings.expand_env_home on this HOME)."""
+        ms = load("00-bootstrap/doctor/merge_settings.py", "merge_settings")
+        frag = ms.expand_env_home({"env": dict(self.rs.overlay_env(self.cr, self.dev, "v5"))}, self.home)
         env = dict(self.base_env)
-        for k, v in self.rs.overlay_env(self.cr, self.dev, "v5").items():
-            env[k] = str(self.home / v[2:]) if v.startswith("~/") else v
+        env.update(frag["env"])
         return self.pr.lift_env(env, root=self.lib) if lifted else env
 
     def g(self, env: dict, *args: str, cwd=None) -> subprocess.CompletedProcess:
@@ -300,7 +302,9 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "decisions: an employer remote seen only through [include], a legacy section or an inline comment "
                   "blocks the commit [I2]",
                   "decisions: a modified copy of the vetted script at the same relative path is not vetted",
-                  "decisions: the genuine vetted script run without -I (PYTHONPATH injection possible) is not vetted"]
+                  "decisions: the genuine vetted script run without -I (PYTHONPATH injection possible) is not vetted",
+                  "decisions: HOME=<elsewhere> git commit on an employer repo still reaches the floor [I2]",
+                  "decisions: PYTHONPATH with a sitecustomize that exits 0 does not silence the floor [I2]"]
 VETTED_CASES = (DECISION_CASES[3], DECISION_CASES[13], DECISION_CASES[14])
 
 
@@ -440,6 +444,15 @@ def floor_decision_cases(pr, rs) -> list:
         else:
             for n in VETTED_CASES[1:]:
                 out.append((n, None, "ps not permitted (sandbox): the vetted shape cannot be proven here"))
+        fake_home = lab.tmp / "fake-home"
+        fake_home.mkdir(exist_ok=True)
+        r = lab.g(dict(lifted, HOME=str(fake_home)), "commit", "--allow-empty", "-m", "home override", cwd=clone)
+        out.append((DECISION_CASES[15], r.returncode != 0 and "[I2]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
+        site = lab.tmp / "site-inject"
+        site.mkdir(exist_ok=True)
+        (site / "sitecustomize.py").write_text("import os\nos._exit(0)\n", encoding="utf-8")
+        r = lab.g(dict(lifted, PYTHONPATH=str(site)), "commit", "--allow-empty", "-m", "site inject", cwd=clone)
+        out.append((DECISION_CASES[16], r.returncode != 0 and "[I2]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
     finally:
         _cleanup(td)
     return out
@@ -529,7 +542,10 @@ def overlay_install_cases(pr, rs) -> list:
         managed = {k: v for k, v in got.get("env", {}).items() if ms.is_managed_env(k)}
         env = got.get("env", {})
         keys = [env.get(f"GIT_CONFIG_KEY_{i}") for i in range(int(env.get("GIT_CONFIG_COUNT", "0")))]
-        good = (rc == 0 and managed == frag["env"] and env.get("WS_CLAUDE_OVERLAY") == "v5"
+        cmd_i = next((i for i, k in enumerate(keys) if k == f"hook.{FLOOR}.command"), None)
+        bound = cmd_i is not None and env.get(f"GIT_CONFIG_VALUE_{cmd_i}", "").startswith(f"H={home};") \
+            and "$HOME" not in env.get(f"GIT_CONFIG_VALUE_{cmd_i}", "")
+        good = (rc == 0 and bound and managed == frag["env"] and env.get("WS_CLAUDE_OVERLAY") == "v5"
                 and env.get("WS_SURFACE_FAMILY") == "claude" and f"hook.{FLOOR}.command" in keys
                 and env.get("GH_CONFIG_DIR", "").startswith(str(home))
                 and (base / "git" / "claude-identity.inc").is_file())

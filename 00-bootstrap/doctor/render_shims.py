@@ -464,9 +464,13 @@ OVERLAY_INCLUDE = "~/.config/snds-workspace/git/claude-identity.inc"
 OVERLAY_GH_DIR = "~/.config/snds-workspace/gh-claude"
 FLOOR_HOOK = "ws-claude-wall"
 # git appends "$@" to a config hook command itself, so the command never carries it. The guard
-# makes a missing pin (no bin/ws-hook) a no-op instead of a failed commit.
-FLOOR_COMMAND = ('W="$HOME/.config/snds-workspace/bin/ws-hook"; [ -x "$W" ] || exit 0; '
-                 'exec "$W" --host git --floor claude')
+# makes a missing pin (no bin/ws-hook) a no-op instead of a failed commit. The installer renders the
+# leading `H="$HOME";` as the absolute install home (merge_settings.expand_env_home), and the command
+# re-sets HOME and drops the PYTHON* startup variables, so a caller's HOME= or PYTHONPATH= cannot
+# route the wrapper or the pinned lib elsewhere.
+FLOOR_COMMAND = ('H="$HOME"; W="$H/.config/snds-workspace/bin/ws-hook"; [ -x "$W" ] || exit 0; '
+                 'exec env -u PYTHONPATH -u PYTHONHOME -u PYTHONSTARTUP -u PYTHONINSPECT -u PYTHONUSERBASE '
+                 'HOME="$H" "$W" --host git --floor claude')
 FLOOR_EVENTS = ("pre-commit", "commit-msg", "pre-merge-commit", "pre-push")
 CASE_VARIANTS = ("declared", "lower", "upper", "capitalized")
 # The v4 employer layout (per host), kept only so the emitter can prove it reproduces the
@@ -1151,8 +1155,7 @@ def overlay_cases() -> list:
     results.append(("overlay: no GIT_AUTHOR_* or GIT_COMMITTER_* key, in env or in pairs",
                     not any(k.startswith(("GIT_AUTHOR_", "GIT_COMMITTER_")) for k in env)
                     and not any(k.lower().startswith("user.") for k, _v in pairs), ""))
-    guarded = ('W="$HOME/.config/snds-workspace/bin/ws-hook"; [ -x "$W" ] || exit 0; '
-               'exec "$W" --host git --floor claude')
+    guarded = FLOOR_COMMAND
     hook = dict((k, v) for k, v in pairs if k == "hook.ws-claude-wall.command")
     events = [v for k, v in pairs if k == "hook.ws-claude-wall.event"]
     results.append(("overlay: the floor hook is the guarded command, on the four events, enabled",

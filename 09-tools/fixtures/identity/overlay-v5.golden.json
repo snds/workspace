@@ -108,7 +108,7 @@
     "GIT_CONFIG_KEY_50": "url.fixture-blocked-remote://.insteadOf",
     "GIT_CONFIG_VALUE_50": "https://git@bitbucket.org/Acme-bb/",
     "GIT_CONFIG_KEY_51": "hook.ws-claude-wall.command",
-    "GIT_CONFIG_VALUE_51": "W=\"$HOME/.config/snds-workspace/bin/ws-hook\"; [ -x \"$W\" ] || exit 0; exec \"$W\" --host git --floor claude",
+    "GIT_CONFIG_VALUE_51": "H=\"$HOME\"; W=\"$H/.config/snds-workspace/bin/ws-hook\"; [ -x \"$W\" ] || exit 0; exec env -u PYTHONPATH -u PYTHONHOME -u PYTHONSTARTUP -u PYTHONINSPECT -u PYTHONUSERBASE HOME=\"$H\" \"$W\" --host git --floor claude",
     "GIT_CONFIG_KEY_52": "hook.ws-claude-wall.event",
     "GIT_CONFIG_VALUE_52": "pre-commit",
     "GIT_CONFIG_KEY_53": "hook.ws-claude-wall.event",
