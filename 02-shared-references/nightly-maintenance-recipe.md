@@ -14,7 +14,7 @@ bootstrap-generator feedback pass (2026-07-23)._
 ## For future agent
 - **TL;DR:** an optional cron/routine that folds sessions, heals the graph, rebuilds indexes, and
   commits — so a fresh morning session opens on a clean, current vault.
-- **As of:** 2026-07 · **Status:** current (opt-in; not enabled by default)
+- **As of:** 2026-09 · **Status:** current (opt-in; not enabled by default)
 
 ## What it does (in order)
 
@@ -22,14 +22,33 @@ bootstrap-generator feedback pass (2026-07-23)._
 commit mechanical updates). The steps below are the doctrine that entrypoint implements —
 read them to change the recipe, run the CLI to execute it. Still nothing scheduled.
 
+**Regeneration is one command:** `python3 09-tools/nightly.py --phases rebuild`. It runs the
+generator fixpoint in order — build-registry → build-related → build-registry again (skipped
+when build-related wrote nothing) → build-trigger-routes — so no agent hand-sequences it.
+
+| Flag | What it does |
+|---|---|
+| `--phases fold,rebuild,verify,watch,commit` | Choose phases (default: all but `commit`). `commit` = `--commit`. |
+| `--check` | Generators in `--check` mode. Writes nothing; exit 1 on drift. |
+| `--scope all\|staged\|session:SID\|range:R` | What counts as "yours". A written path with unstaged edits outside the scope is **foreign**: exit 4, never staged. |
+| `--budget S` · `--step-timeout S` | Total and per-step limits (per step 15 s; verify 180 s). A timeout or spent budget is SKIPPED, exit 3, never green. |
+| `--json` | One entry per step with `written[]` (from sha256 snapshots), plus `written`, `foreign`, `status`, `fix`. |
+| `--lane pre-commit` | Stateless git-hook lane: checks the staged index; on drift prints exactly two fix lines. Installed by Sean in wave 1 (H18), not before. |
+| `--self-test` | Fixtures: fixpoint, scope, foreign edits, timeouts, budget, X1 replay, timed SessionEnd. |
+
+Exit codes: 0 clean · 1 FAIL/drift · 2 could not run · 3 SKIPPED · 4 refused. `commit` refuses
+unless the run is clean, and stages only the paths the run wrote. The Claude SessionEnd hook
+uses the same command (`--phases rebuild --scope session:<sid> --json --budget B`) as a
+budgeted accelerator (≤ 55 s total); CI stays the backstop for every surface.
+
 1. **Fold sessions** — `python3 09-tools/compact-sessions.py` (merge `06-context/sessions/` fragments
    into the log; idempotent, conflict-free across machines).
 2. **Graph hygiene** — `python3 09-tools/vault-health.py` (report orphans, `#stale`/aging claims,
    dangling typed edges) + `python3 09-tools/validate-links.py` (skill graph). Surface findings; do
    **not** auto-fix content — that needs judgment (`/health` with sign-off).
-3. **Rebuild indexes** — `build-related.py` → `build-registry.py` → `build-trigger-routes.py` →
+3. **Rebuild indexes** — `python3 09-tools/nightly.py --phases rebuild` (the fixpoint above), then
    `evaluate-skill-routing.py` → `validate-integrity.py` →
-   `validate-links.py` → `validate-workspace.py` (the standard chain; order matters — see framework #08).
+   `validate-links.py` → `validate-workspace.py` (the standard chain; see framework #08).
 3b. **DS source freshness (optional)** — `python3 09-tools/ds-source-watch.py --check`. If P1,
    leave a pointer; do **not** `--fetch` from nightly (network + judgment).
 3c. **First-wave detectors** — `python3 09-tools/skill-loadset.py --self-test` →

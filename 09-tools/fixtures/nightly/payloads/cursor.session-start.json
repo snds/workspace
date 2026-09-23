@@ -1,0 +1,9 @@
+{
+  "cursor_version": "3.21.16",
+  "hook_event_name": "sessionStart",
+  "conversation_id": "fixture-conversation",
+  "generation_id": "fixture-generation",
+  "model": "fixture-model",
+  "workspace_roots": [],
+  "is_background_agent": false
+}
