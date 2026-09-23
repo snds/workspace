@@ -20,7 +20,7 @@ import re
 import socket
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import date, datetime
 from pathlib import Path
 
 TOOLS = Path(__file__).resolve().parent
@@ -223,12 +223,12 @@ def _stamp_age_days(path: Path, key: str = "date") -> int | None:
     if not m:
         return None
     try:
-        last = datetime(
-            int(m.group(1)), int(m.group(2)), int(m.group(3)), tzinfo=timezone.utc
-        )
+        last = date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
     except ValueError:
         return None
-    return (datetime.now(timezone.utc) - last).days
+    # One clock: stamps are authored as local calendar dates, so measure against the
+    # local date. Mixing a UTC "now" in made every Pacific evening read one day older.
+    return (date.today() - last).days
 
 
 def notices() -> list[str]:
