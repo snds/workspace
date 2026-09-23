@@ -14,7 +14,7 @@ description: >
   Tailwind config extension from token JSON, light/dark theme switching via CSS
   custom properties, color-scheme property, FOUC prevention, token semantic
   versioning, deprecation patterns, or changelog generation from token diffs.
-  Not for: token architecture design decisions and naming strategy (ds-advisor),
+  Not for: token architecture design decisions and naming strategy (ds-advisor, token-architecture),
   component implementation that consumes tokens (fe-component-architecture),
   or visual design system decisions (lead-ui-designer).
 hub: lead-frontend-engineer
@@ -636,6 +636,8 @@ or the `next-themes` library which does the same thing.
 ---
 
 ## Token Governance and Versioning
+
+> Subatomic canon (tier structure = directory structure, `theme-` tier-id transform, publish tier 2/3 only, SemVer lockstep with components, token czars): [[token-architecture]] · [[design-token-architecture]]. Mechanical check of built outputs and component CSS: `python3 09-tools/token-audit.py --outputs … --css …`.
 
 ### Semantic Versioning for Token Packages
 

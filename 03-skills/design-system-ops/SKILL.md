@@ -62,6 +62,8 @@ Prefer the command file's instructions; do not paste entire nested skills into c
 
 ## Knowledge note
 
+- Token audits ("audit my tokens", theme audit): run `python3 09-tools/token-audit.py` (tiers, aliases, tier-3 budget, naming, theme API parity, Figma↔code parity, component CSS, output drift). Architecture decisions it surfaces → [[token-architecture]].
+
 Vendored `knowledge-notes/` are pack-local. Durable workspace insight belongs in
 `08-knowledge/design/` (see [[ds-ops-governance-notes]] when present). Do not treat
 vendored notes as overriding #09.

@@ -88,4 +88,5 @@ The lesson for any system: **primitives are aesthetic-named (`blue-600`); semant
 
 ## 7. Relationships
 - **Up:** framework [[09-component-and-pattern-framework]] §3 (tiers), §8c (which dimensions a component resolves).
+- **Counterpoint:** [[design-token-architecture]] — Frost *Subatomic* per-tier naming algorithm and the promotion-vs-earned-tier-3 disagreement with §1; procedure [[token-architecture]].
 - **Across:** `component-authoring.md` (the `default`/`variants` blocks reference these tokens); `ai-ready-design-systems.md` (DESIGN.md frontmatter *is* a token export; "reasonable-English" naming for agents).

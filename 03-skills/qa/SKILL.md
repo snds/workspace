@@ -219,6 +219,6 @@ Storybook QA audit**. Once proven, the same wrapper shape generates the sibling 
 
 ## Related
 - foundation → [[design-foundations]]
-- governs → [[ai-design-systems]] · [[design-engineer]] · [[ds]] · [[ds-generation-pipeline]] · [[eng]] · [[figma]] · [[lead-frontend-engineer]] · [[lead-graphic-designer]] · [[lead-information-designer]] · [[lead-motion-designer]] · [[lead-type-designer]] · [[lead-ui-designer]] · [[motion]] · [[redesign]] · [[type]]
+- governs → [[ai-design-systems]] · [[design-engineer]] · [[ds]] · [[ds-generation-pipeline]] · [[eng]] · [[figma]] · [[lead-frontend-engineer]] · [[lead-graphic-designer]] · [[lead-information-designer]] · [[lead-motion-designer]] · [[lead-type-designer]] · [[lead-ui-designer]] · [[motion]] · [[redesign]] · [[token-architecture]] · [[type]]
 - peer ↔ [[eng]] · [[design-system-ops]] · [[close-out]]
 - peer ↔ [[visual-qa-motion]] · [[visual-qa-dataviz]] · [[visual-qa-type]]

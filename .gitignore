@@ -127,6 +127,7 @@
 !09-tools/nightly.py
 !09-tools/artifact-find.py
 !09-tools/figma-bind-probe.py
+!09-tools/token-audit.py
 !09-tools/ws_hook.py
 !09-tools/profile_resolve.py
 !09-tools/eslint-off-system/
@@ -169,6 +170,11 @@
 # Number is 22 because origin already claimed 21 for ShadeGraph (2026-09-04).
 !07-projects/22-ai-design-systems-course/
 !07-projects/22-ai-design-systems-course/**
+
+# Subatomic design tokens course (2026-09-23): original notes + synthesis only. Raw media lives in
+# <Projects>/subatomic-design-tokens-course/, outside this vault.
+!07-projects/23-subatomic-design-tokens-course/
+!07-projects/23-subatomic-design-tokens-course/**
 
 # Track Omni project CONTEXT only (2026-09-04). Code moved to ~/Projects/omni
 # (github.com/snds/omni). This folder is a pointer stub — no app code here.

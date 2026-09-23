@@ -329,6 +329,7 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `no-raw-colors` | 08-knowledge/engineering/shadcn-lint-token-tiers.md — declared @theme tokens pass stock rule; overlay needed for Radix steps / shade aliases |
 | `no-tier-leakage` | 09-tools/shadcn-lint/README.md — ds-lint overlay; bg-blue-9 / bg-blue-500 / bg-white are authoring leaks |
 | `ds-lint` | 09-tools/shadcn-lint/README.md + 08-knowledge/engineering/shadcn-lint-token-tiers.md — independent of eslint-off-system and vault CI |
+| `subatomic course` | 07-projects/23-subatomic-design-tokens-course/ — read SESSION-STATE.md Live handoff then synthesis/running.md; doctrine = 08-knowledge/design/design-token-architecture.md + 03-s… |
 
 ## Registry skills with triggers
 
@@ -438,4 +439,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 314 · Registry rows: 101_
+_Curated routes: 315 · Registry rows: 101_

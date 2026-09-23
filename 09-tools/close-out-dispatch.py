@@ -131,6 +131,17 @@ HUB_DETECTORS: dict[str, tuple[Step, ...]] = {
     "design-system-ops": (
         _cli("validate-integrity.py"),
         _cli("ds-source-watch.py", "--check"),
+        _cli("token-audit.py", "--self-test"),
+    ),
+    # Three-tier token architecture (Subatomic canon). The self-test proves the detector; auditing a real
+    # token source is the product repo's run (`token-audit.py --config … tokens/**/*.json`), not the vault's.
+    "token-architecture": (
+        _cli("token-audit.py", "--self-test"),
+        _skip(
+            "token-audit-target",
+            "Run `09-tools/token-audit.py` against the target token source (+ --themes/--parity/--css/--outputs) "
+            "in the product repo; Figma scopes via figma-mcp get_variable_defs.",
+        ),
     ),
     "intent-coordination": (
         _cli("intent-run.py", "--self-test"),

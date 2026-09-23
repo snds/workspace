@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 301,
+    "total": 302,
     "by_tier": {
       "cross-cutting": 46,
       "foundation": 22,
       "hub": 47,
-      "spoke": 186
+      "spoke": 187
     }
   },
   "skills": {
@@ -310,6 +310,7 @@
         "figma",
         "gd-color-theory",
         "lead-ui-designer",
+        "token-architecture",
         "uid-color-for-ui"
       ],
       "triggers": [
@@ -334,7 +335,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:5929242331bac55125fc6ffb6f49cb7fe48dae9a604dc949ab4c6fba4c823e7c"
+      "hash": "sha256:6bb3b1de7eecb0fd5bc0cc0589c91b397b7e01aa8bb27350047c374932f87155"
     },
     "adapter-unity-hdrp": {
       "path": "03-skills/adapter-unity-hdrp/SKILL.md",
@@ -1205,7 +1206,7 @@
         "design-engineer"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:d1b6ce32a3c5e0a432111839d262465c7b0135730d6fc218b894fde6ff994d75"
+      "hash": "sha256:82f13b0ecd5fba4478c1c61330ca609396330799995473096acc9a75a5534f78"
     },
     "designparser": {
       "path": "03-skills/designparser/SKILL.md",
@@ -1428,7 +1429,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:a128c81c32f80e68a25a53a2313fe55b79090a5b6afa5c661f8ca51df00ab01b"
+      "hash": "sha256:500b61d0ebc76d9711cd002d503a5b86d386c91d946a71d8230ce5699d22e87f"
     },
     "ds-bi-platforms": {
       "path": "03-skills/ds-bi-platforms/SKILL.md",
@@ -1954,7 +1955,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:3bb1488670fefb9c75a6fe19dab46db30e9b113673a04096b09fc2b5cfe04f70"
+      "hash": "sha256:d4c1fc554cccc4000fa5fb89e043a5f6f52dc6565c6ae5693e35c4c65862b862"
     },
     "fe-i18n": {
       "path": "03-skills/fe-i18n/SKILL.md",
@@ -5818,6 +5819,7 @@
         "lead-ui-designer",
         "motion",
         "redesign",
+        "token-architecture",
         "type"
       ],
       "triggers": [
@@ -5833,7 +5835,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": "command-hub",
-      "hash": "sha256:240336e66bd3176524cdcab532215b970d8e83de014593aabc433f4a18bb9368"
+      "hash": "sha256:4866dd5401ea7d7b35ccd7f7af922da6dea79264691c62eea6b23d9bcef531cf"
     },
     "realtime-render-performance": {
       "path": "03-skills/realtime-render-performance/SKILL.md",
@@ -6770,6 +6772,60 @@
       "defers_to": [],
       "rigor_role": null,
       "hash": "sha256:481ea8a09d5d97e9665eada1a664c950322603c667dbbfad24084d1e60d8d107"
+    },
+    "token-architecture": {
+      "path": "03-skills/token-architecture/SKILL.md",
+      "tier": "spoke",
+      "domain": "design",
+      "hub": "ds-advisor",
+      "prerequisites": [
+        "ds-advisor"
+      ],
+      "related": [
+        "fe-design-tokens",
+        "design-system-ops",
+        "design-engineer",
+        "ux-component-library",
+        "figma-variable-creation",
+        "ai-design-systems"
+      ],
+      "governed_by": [
+        "qa",
+        "a11y-visual"
+      ],
+      "governs": [],
+      "triggers": [
+        "subatomic",
+        "three-tier tokens",
+        "three tier tokens",
+        "token tiers",
+        "tier 3 tokens",
+        "tier-3 token",
+        "token naming algorithm",
+        "naming tokens",
+        "token naming convention",
+        "vanilla theme",
+        "core tokens",
+        "token czar",
+        "token czars",
+        "token governance",
+        "publish tier 1",
+        "token adoption",
+        "multi-brand tokens",
+        "new theme tokens",
+        "token-audit"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-09",
+        "framework-13",
+        "ds-advisor"
+      ],
+      "rigor_role": "command-hub",
+      "hash": "sha256:2c8e92f33030d18531dd34550f914f88914cae2499683e60d28f336d0efa9bf6"
     },
     "type": {
       "path": "03-skills/type/SKILL.md",
@@ -9477,6 +9533,11 @@
       "science-foundations",
       "lead-game-developer",
       "threejs-vfx-atmosphere"
+    ],
+    "token-architecture": [
+      "design-foundations",
+      "ds-advisor",
+      "token-architecture"
     ],
     "type": [
       "design-foundations",

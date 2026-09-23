@@ -116,6 +116,20 @@
     "buttongroup": "08-knowledge/engineering/cds-host-buttongroup-realign.md",
     "split action": "08-knowledge/engineering/cds-host-buttongroup-realign.md",
     "cui federalization": "08-knowledge/engineering/cds-host-buttongroup-realign.md",
-    "ViewHeaderActions": "08-knowledge/engineering/cds-host-buttongroup-realign.md"
+    "ViewHeaderActions": "08-knowledge/engineering/cds-host-buttongroup-realign.md",
+    "subatomic": "08-knowledge/design/design-token-architecture.md",
+    "three-tier tokens": "08-knowledge/design/design-token-architecture.md",
+    "token tiers": "08-knowledge/design/design-token-architecture.md",
+    "tier 3 tokens": "08-knowledge/design/design-token-architecture.md",
+    "vanilla theme": "08-knowledge/design/design-token-architecture.md",
+    "core tokens": "08-knowledge/design/design-token-architecture.md",
+    "token czar": "08-knowledge/design/design-token-architecture.md",
+    "token naming algorithm": "08-knowledge/design/design-token-architecture.md",
+    "token governance": "08-knowledge/design/design-token-architecture.md",
+    "publish tier 1": "08-knowledge/design/design-token-architecture.md",
+    "course capture": "08-knowledge/cross-domain/in-app-browser-bulk-capture.md",
+    "bulk download course": "08-knowledge/cross-domain/in-app-browser-bulk-capture.md",
+    "thinkific": "08-knowledge/cross-domain/in-app-browser-bulk-capture.md",
+    "wistia": "08-knowledge/cross-domain/in-app-browser-bulk-capture.md"
   }
 }

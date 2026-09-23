@@ -38,6 +38,29 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+### 2026-09-23 — Subatomic design-tokens course: capture, synthesis, token harness
+
+SessionID: 2026-09-23-work-sub8f6
+--- SESSION BLOCK ---
+Date: 2026-09-23
+Machine: Work MacBook Pro
+Surface: Claude Code (desktop app) · Claude Opus 5.5
+Project(s): 23-subatomic-design-tokens-course (new)
+Summary: Sean logged into Brad & Ian Frost's *Subatomic: The Complete Guide To Design Tokens* in the in-app browser. The course explicitly offers downloads, and Sean approved them for this course only; project 22's no-video rule stands. Mapped all 372 items through the Thinkific player API at human pace. A paced, resumable downloader pulled 360 1080p Wistia videos, 358 course transcripts plus Wistia captions, slides, lesson notes and 7 demo repos (5.4 GB, 0 errors) into `<Projects>/subatomic-design-tokens-course/`, outside the vault. Wrote original notes for every chapter; delegated agents drafted Ch5–8 under a no-transcript contract. Graduated the doctrine:
+- knowledge `design-token-architecture`, which includes a Curtis-vs-Frost disagreement table
+- skill `token-architecture`, an L2 command hub under `ds-advisor`
+- L3 detector `09-tools/token-audit.py`: 23 rules, self-tested, and calibrated on the course's own demo repo, where it found 3 genuine contrast failures, 1 dark-theme drift and 15 CSS literals, and fixed 5 false-positive classes
+- a counter-stance note in framework #09
+- cross-links in `fe-design-tokens` / `design-system-ops` / `tokens-and-naming.md`
+- close-out detectors, knowledge hints, a trigger route, and routing corpus cases (52/52)
+Also captured the process lesson in `08-knowledge/cross-domain/in-app-browser-bulk-capture.md`. All write-quality validators pass.
+Pending:
+- `token-audit.py`: value-level Figma↔code parity (TA014 checks names only)
+- MCP probe for Figma variable scopes and the publish set
+- Self-improve: lexical misroutes seen in prompt hooks this session. `mvp`→sci-linear-algebra, `light`→imaging-foundations, `aliasing`→native-visual-eval, `distribution`→sci-probability-stochastic, `integration`→science-foundations and `dependency`→sec-supply-chain all fired on design-token prose. Tighten those triggers and add forbid cases.
+--- END BLOCK ---
+
 ### 2026-09-22 — Zero-Vector research and additive harness plan
 
 SessionID: 2026-09-22-work-zv7h

@@ -67,6 +67,7 @@ files only** — gitignored Live handoffs stay machine-local (load-miss rec 8).
 - [[07-projects/20-lcars-generative-interface/SESSION-STATE|20-lcars-generative-interface]] · [[07-projects/20-lcars-generative-interface/README|20-lcars README]]
 - [[07-projects/21-shadegraph/SESSION-STATE|21-shadegraph]] · [[07-projects/21-shadegraph/README|21-shadegraph README]]
 - [[07-projects/22-ai-design-systems-course/SESSION-STATE|22-ai-design-systems-course]] · [[07-projects/22-ai-design-systems-course/README|22-course README]]
+- [[07-projects/23-subatomic-design-tokens-course/SESSION-STATE|23-subatomic-design-tokens-course]] · [[07-projects/23-subatomic-design-tokens-course/README|23-course README]]
 
 ## Notes
 

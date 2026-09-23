@@ -189,6 +189,15 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 
 ---
 
+### Subatomic Design Tokens Course
+**Status:** Active — capture complete, doctrine graduated
+**Summary:** Original notes + synthesis from Brad Frost & Ian Frost *Subatomic: The Complete Guide To Design Tokens* (Thinkific, 360 lessons, ~13.6 h). Course explicitly offers downloads; full raw archive (1080p videos, transcripts, captions, slides, 7 demo repos) lives in `<Projects>/subatomic-design-tokens-course/`, never in the vault. Graduated to knowledge `design-token-architecture`, skill `token-architecture`, detector `09-tools/token-audit.py`, and a counter-stance note in framework #09.
+**Folder:** `07-projects/23-subatomic-design-tokens-course/`
+**Triggers:** subatomic course, subatomic design tokens, brad frost tokens course
+**Next:** Backlog — value-level Figma↔code parity in `token-audit.py`; MCP probe for Figma variable scopes/publish set.
+
+---
+
 ### LCARS Generative Interface
 **Status:** Implementing — S-SYS47-01 Literal prove in progress
 **Summary:** LLM-forward adaptive LCARS console/shell — natural-language intent + combadge role context recomposes legal Okudagram surfaces via typed Scene IR; immutable constitution; v1 hybrid recipes with plumbing toward v2 dynamic topology; data-first 3D viewports; APCA primary contrast with WCAG AA fallback. App at https://github.com/snds/LCARS.
