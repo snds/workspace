@@ -26,6 +26,29 @@ reality changes. Designed intent (outcome + northstar) changes only with Sean's 
 8. **Open decisions / blocked-on**
 9. **Changelog** — date, who, what changed in the plan.
 
+## Grammar (read by `09-tools/intent-run.py`)
+
+- **Frontmatter.** `#` starts a comment only after whitespace and outside quotes; quote the whole
+  value to keep a `#`. Stripped comments are recorded.
+- **Approval.** `approved YYYY-MM-DD by <name>[ <note without #>]`, `approved via PR <n>`, or
+  `waived (<reason>)`. The gate opens on any value starting `approved` or `waived`; an approval
+  that lost `#<n>` to a comment is a lint ERROR.
+- **Checklist.** `- [ ] <label> -- measure: <command>`. A measure ends at the next ` -- <key>:`
+  (for example `-- signal:`). A `human:` measure never executes; `verify` reports it as HUMAN, or
+  HUMAN-ATTESTED when ticked, and never as PASS.
+- **Tables.** Write `\|` for a literal pipe inside a cell.
+- **Task graph `writes`.** Comma-separated at bracket depth 0: paths and globs (`*`, `**`,
+  `{a,b}`), `path.json[key.path, …]` selectors (`*` matches every list element by `id`, or every
+  key), `@Tn` for another task's writes, or `none`.
+- **`verify --run [--root DIR]`.** Measures run through `shlex` with `shell=False`. The cwd is DIR,
+  else the process cwd's git toplevel when the spec is outside it or ignored by it, else the spec's
+  own toplevel. In an automated context (CI, any agent, no TTY) only `python3 <git-tracked
+  09-tools/*.py>` without shell metacharacters runs; anything else is NOT_EXPOSED. Exit 1 on FAIL
+  or SKIP, 2 on NOT_EXPOSED only, else 0.
+- **`scope-audit`.** Checks each integration merge (or a `--task ID --rev A..B` range) against the
+  task's `writes` plus the integrator's, the spec's `**HELD:**` set, JSON selectors, and unreverted
+  `session: auto-commit` commits. Exit 0 clean, 1 violation, 3 nothing to audit.
+
 ## Filename and placement
 
 | Work lives in… | Spec lives in… |

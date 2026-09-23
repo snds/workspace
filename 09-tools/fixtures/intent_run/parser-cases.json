@@ -1,0 +1,27 @@
+{
+  "doc": "H3 parser cases for intent-run.py --self-test. Synthetic values only.",
+  "frontmatter": [
+    {"line": "approval: approved via PR 12", "value": "approved via PR 12", "kind": "approved-pr", "lint_error": false},
+    {"line": "approval: \"approved via PR #12\"", "value": "approved via PR #12", "kind": "approved-pr", "lint_error": false},
+    {"line": "approval: approved via PR #12", "value": "approved via PR", "comment": "#12", "lint_error": true},
+    {"line": "blocked_by: x#F-003", "value": "x#F-003"},
+    {"line": "profile: personal-solo # c", "value": "personal-solo", "comment": "# c"},
+    {"line": "approval: approved 2026-09-01 by Fixture (see chat)", "value": "approved 2026-09-01 by Fixture (see chat)", "kind": "approved", "lint_error": false},
+    {"line": "approval: waived (no reviewer (solo))", "value": "waived (no reviewer (solo))", "kind": "waived", "lint_error": false},
+    {"line": "approval: pending        # pending | approved YYYY-MM-DD by <name> | waived (<reason>)", "value": "pending", "kind": "pending", "ok": false, "lint_error": false},
+    {"line": "title: 'quoted' and 'not whole'", "value": "'quoted' and 'not whole'"},
+    {"line": "title: it's fine # note", "value": "it's fine", "comment": "# note"},
+    {"line": "title: 'a # b'", "value": "a # b"},
+    {"line": "title: tag#inline stays", "value": "tag#inline stays"}
+  ],
+  "tables": [
+    {"table": "| a | b |\n|---|---|\n| (foo\\|bar) | z |\n", "column": "a", "cell": "(foo|bar)"},
+    {"table": "| a | b |\n|---|---|\n| x | y |\n", "column": "b", "cell": "y"}
+  ],
+  "measures": [
+    {"line": "- [ ] x -- measure: python3 a.py -- signal: y", "measure": "python3 a.py", "label": "x"},
+    {"line": "- [ ] y -- measure: python3 09-tools/t.py --strict-skips A", "measure": "python3 09-tools/t.py --strict-skips A", "label": "y"},
+    {"line": "- [ ] h -- measure: human: the reviewer does it", "measure": "human: the reviewer does it", "label": "h"},
+    {"line": "- [ ] z -- cmd: python3 b.py", "measure": "python3 b.py", "label": "z"}
+  ]
+}
