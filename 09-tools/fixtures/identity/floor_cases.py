@@ -158,6 +158,12 @@ class Lab:
     def acme_mail(self) -> str:
         return next(i["email"] for i in self.dev["identities"] if i["id"] == "acme-id")
 
+    def with_ident(self, env: dict) -> dict:
+        """An explicit employer identity (env beats config): under the v5 overlay an employer remote gets a
+        blank identity (useConfigOnly), so commit cases that must reach the floor carry one explicitly."""
+        return dict(env, GIT_AUTHOR_NAME="Acme Worker", GIT_AUTHOR_EMAIL=self.acme_mail(),
+                    GIT_COMMITTER_NAME="Acme Worker", GIT_COMMITTER_EMAIL=self.acme_mail())
+
     def pat_mail(self) -> str:
         return next(i["email"] for i in self.dev["identities"] if i["id"] == "pat")
 
@@ -275,7 +281,7 @@ def claude_floor_cases(pr, rs) -> list:
     out = []
     lab, td = _mk(pr, rs)
     try:
-        env = lab.overlay(lifted=True)
+        env = lab.with_ident(lab.overlay(lifted=True))
         clone, _bare, _genv = lab.employer()
         listed = {}
         for ev in ("pre-commit", "commit-msg", "pre-merge-commit", "pre-push"):
@@ -332,7 +338,8 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "decisions: HOME=<elsewhere> git commit on an employer repo still reaches the floor [I2]",
                   "decisions: PYTHONPATH with a sitecustomize that exits 0 does not silence the floor [I2]",
                   "transport: every declared employer URL form (ssh alias, ports, :/owner, www) is rewritten to the "
-                  "blocked scheme; mixed case and ssh.github.com classify employer at the floor"]
+                  "blocked scheme; mixed case and ssh.github.com classify employer at the floor",
+                  "identity: under the overlay a composed commit on an employer repo has no identity to commit with"]
 VETTED_CASES = (DECISION_CASES[3], DECISION_CASES[13], DECISION_CASES[14])
 
 
@@ -390,7 +397,7 @@ def floor_decision_cases(pr, rs) -> list:
         r = lab.g(lifted, "push", "--no-verify", "origin", "--delete", "feat/b2", cwd=clone)
         out.append((DECISION_CASES[5], r.returncode == 0 and not lab.has_ref(bare, "feat/b2"),
                     f"rc={r.returncode} {r.stderr[-200:]}"))
-        r = lab.g(lifted, "commit", "--no-verify", "--allow-empty", "-m", "bypass", cwd=clone)
+        r = lab.g(lab.with_ident(lifted), "commit", "--no-verify", "--allow-empty", "-m", "bypass", cwd=clone)
         out.append((DECISION_CASES[6], r.returncode == 0, f"rc={r.returncode} {r.stderr[-200:]}"))
         stripped = dict(lifted, GIT_CONFIG_COUNT="0")
         r = lab.g(stripped, "commit", "--allow-empty", "-m", "env removed", cwd=clone)
@@ -451,7 +458,7 @@ def floor_decision_cases(pr, rs) -> list:
             with open(cfg, "a", encoding="utf-8") as fh:
                 fh.write(text)
             seen = lab.g(genv, "config", "--get", "remote.origin.url", cwd=rp).stdout.strip()
-            r = lab.g(lifted, "commit", "--allow-empty", "-m", "x", cwd=rp)
+            r = lab.g(lab.with_ident(lifted), "commit", "--allow-empty", "-m", "x", cwd=rp)
             got[name] = (seen == "git@github.com:acme-corp/w.git", r.returncode, "[I2]" in r.stderr)
         out.append((DECISION_CASES[12], all(s and rc != 0 and hit for s, rc, hit in got.values()), str(got)))
         if ps_ok:
@@ -474,12 +481,14 @@ def floor_decision_cases(pr, rs) -> list:
                 out.append((n, None, "ps not permitted (sandbox): the vetted shape cannot be proven here"))
         fake_home = lab.tmp / "fake-home"
         fake_home.mkdir(exist_ok=True)
-        r = lab.g(dict(lifted, HOME=str(fake_home)), "commit", "--allow-empty", "-m", "home override", cwd=clone)
+        r = lab.g(lab.with_ident(dict(lifted, HOME=str(fake_home))), "commit", "--allow-empty", "-m", "home override",
+                  cwd=clone)
         out.append((DECISION_CASES[15], r.returncode != 0 and "[I2]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
         site = lab.tmp / "site-inject"
         site.mkdir(exist_ok=True)
         (site / "sitecustomize.py").write_text("import os\nos._exit(0)\n", encoding="utf-8")
-        r = lab.g(dict(lifted, PYTHONPATH=str(site)), "commit", "--allow-empty", "-m", "site inject", cwd=clone)
+        r = lab.g(lab.with_ident(dict(lifted, PYTHONPATH=str(site))), "commit", "--allow-empty", "-m", "site inject",
+                  cwd=clone)
         out.append((DECISION_CASES[16], r.returncode != 0 and "[I2]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
         forms = ["ssh://git@github-work/acme-corp/w.git", "ssh://github-work/acme-corp/w.git",
                  "ssh://git@github.com:22/acme-corp/w.git", "https://github.com:443/acme-corp/w",
@@ -492,6 +501,10 @@ def floor_decision_cases(pr, rs) -> list:
                                                                  "https://www.github.com/acme-corp/w")}
         out.append((DECISION_CASES[17], not miss and all(c == "employer" for c in floor_cls.values()),
                     f"not rewritten: {miss} floor: {floor_cls}"))
+        r = lab.g(lifted, "commit", "--allow-empty", "-m", "no identity", cwd=clone)
+        out.append((DECISION_CASES[18], r.returncode != 0 and lab.g(lifted, "config", "--get", "user.email",
+                                                                    cwd=clone).stdout.strip() == "",
+                    f"rc={r.returncode} {r.stderr[-200:]}"))
     finally:
         _cleanup(td)
     return out
