@@ -52,6 +52,31 @@ directly — no adapter required.
 None of it is required to *work* in the checkout — it only adds convenience. The workspace functions on a
 plain `git clone` with Python 3 available for `09-tools/build-registry.py`.
 
+### Doctor modes and installers
+
+`00-bootstrap/doctor/workspace-doctor.sh` reports; it installs nothing unattended.
+
+| Mode | Behaviour |
+|---|---|
+| default | Reports every layer. Heals only the HEAL class: `~/.claude/hooks/workspace-{sessionstart,reassert,audit}.sh`, `~/.claude/CLAUDE.md`, `~/.claude/workspace-brain-path`, `~/.claude/ws-state/`. |
+| `--quick` | As default, without the beacon, canary, chat and hygiene sections. Never scans and never runs an installer. The Claude SessionStart hook runs it outside the workspace. |
+| `--quiet` | The launchd mode. May also write `telemetry/install-state.json` and run the pinned `profile_resolve.py scan --report`, only when `~/.config/snds-workspace/telemetry/` exists. |
+| `--check` | Reports only, writes nothing, exits 1 on drift. Adds the exact overlay env comparison, pin lag, git capabilities and probe-record notes. |
+| `--no-launchctl` | No `launchctl` or `osascript` calls. Automatic when `$HOME` is not the passwd home. |
+
+Everything else it looks at (Cursor shims, the Claude settings overlay, `~/.config/snds-workspace`,
+plugin hooks, the launchd job, fossils, beacons) is REPORT class: a drift line names the installer.
+
+Installers are explicit and human-run, one per invocation, each with an uninstall:
+`--install-<name>[=ARG]` / `--uninstall-<name>[=ARG]` for `pin`, `shims` (`=SURFACE`, `--probe`),
+`git-hooks`, `identity`, `claude-overlay`, `sandbox-roots`, `plugin`, `projects-pointer` and
+`launchd`. The flags exec `00-bootstrap/doctor/installers.py`, which refuses (exit 4) without a TTY
+on stdin and stdout or when an agent is detected or possible, prints a diff, asks `Apply? [y/N]`,
+backs each target up to `<target>.ws-bak.<UTC>` and logs to `control/install-log.jsonl`. Uninstall
+restores those backups byte-for-byte. `--install-pin` copies the pinned paths at one commit into
+`~/.config/snds-workspace/lib/<sha>/` (`pin_lib.py`); hooks run that copy, never the live tree.
+Run installers in a plain terminal, never from an agent session.
+
 ## Conventions (quick reference)
 
 - **Artifacts:** `context_descriptor_vN.N_YYYY-MM-DD.ext` — never overwrite; increment version

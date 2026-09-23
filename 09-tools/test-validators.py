@@ -744,6 +744,97 @@ class TestProfileResolve(unittest.TestCase):
         self.assertEqual(self.mod.self_test(stub_chain=True), 0)
 
 
+class TestPinLib(unittest.TestCase):
+    """H24 pin_lib: its own fixture suite, plus the real-home guard against the REAL
+    profile_resolve verdict (never a human verdict with confirm_real_home=True)."""
+
+    def test_self_test(self):
+        import subprocess
+        r = subprocess.run([sys.executable, str(ROOT_DIR / "00-bootstrap/doctor/pin_lib.py"), "--self-test"],
+                           capture_output=True, text=True, timeout=300)
+        self.assertEqual(r.returncode, 0, r.stdout[-2000:] + r.stderr[-2000:])
+
+    def test_real_home_refuses_injected_agent_with_real_profile_resolve(self):
+        import functools
+        pin_lib = load("00-bootstrap/doctor/pin_lib.py")
+        pr = load("profile_resolve")
+        calls = []
+        saved = pin_lib._fs
+
+        def spy(op, path, *args):
+            calls.append((op, str(path)))
+            raise AssertionError(f"write primitive reached: {op} {path}")
+        pin_lib._fs = spy
+        try:
+            real = pin_lib.passwd_home()
+            agent = functools.partial(pr.agent_check, env={"CLAUDECODE": "1"}, ancestry=[],
+                                      isatty={"stdin": True, "stdout": True})
+            with self.assertRaises(pin_lib.RefusedError):
+                pin_lib.pin(repo=ROOT_DIR, home=real, confirm_real_home=True, agent_check=agent)
+            with self.assertRaises(pin_lib.RefusedError):
+                pin_lib.pin(repo=ROOT_DIR, home=real)
+        finally:
+            pin_lib._fs = saved
+        self.assertEqual(calls, [])
+
+    def test_pinned_paths_single_home(self):
+        pin_lib = load("00-bootstrap/doctor/pin_lib.py")
+        self.assertEqual(len(pin_lib.PINNED_PATHS), 9)
+        self.assertIn("09-tools/profile_resolve.py", pin_lib.PINNED_PATHS)
+
+
+class TestInstaller(unittest.TestCase):
+    """H24 installers: the fixture suite (refusal matrix, allow path, byte-exact uninstall,
+    doctor modes with a hash spy and PATH stubs), plus every declared agent marker through
+    the REAL profile_resolve.agent_check: every installer, both actions, must refuse."""
+
+    MARKERS = [
+        ({"CURSOR_AGENT": "1"}, []),
+        ({"CODEX_THREAD_ID": "x"}, []),
+        ({"GEMINI_CLI": "1"}, []),
+        ({"WS_SURFACE_FAMILY": "claude"}, []),
+        ({"CLAUDECODE": "1"}, []),
+        ({"CI": "1"}, []),
+        ({}, [{"pid": 4202, "ppid": 4201, "comm": "claude", "args": "claude"}]),
+        ({}, [{"pid": 4202, "ppid": 4201, "comm": "Claude Helper", "args": "Claude Helper (Renderer)"}]),
+    ]
+
+    def test_self_test(self):
+        import subprocess
+        r = subprocess.run([sys.executable, str(ROOT_DIR / "00-bootstrap/doctor/installers.py"), "--self-test"],
+                           capture_output=True, text=True, timeout=600)
+        self.assertEqual(r.returncode, 0, r.stdout[-2000:] + r.stderr[-2000:])
+
+    def test_every_marker_refuses_every_installer(self):
+        import contextlib
+        import functools
+        import io
+        if not (ROOT_DIR / "02-shared-references" / "surfaces.json").is_file():
+            # The non-Claude env markers are declared in surfaces.json (T1); without it the
+            # resolver only knows the built-in Claude and CI markers.
+            self.skipTest("surfaces.json not present: non-Claude markers undeclared")
+        inst = load("00-bootstrap/doctor/installers.py")
+        pr = load("profile_resolve")
+        tty = {"stdin": True, "stdout": True}
+        with tempfile.TemporaryDirectory() as td:
+            home = Path(td) / "home"
+            home.mkdir()
+            base_env = {"PATH": "/usr/bin:/bin", "HOME": str(home), "TERM": "xterm-256color"}
+            for env, ancestry in self.MARKERS:
+                check = functools.partial(pr.agent_check, env={**base_env, **env},
+                                          ancestry=ancestry, isatty=tty)
+                for name in inst.NAMES:
+                    for action in inst.ACTIONS:
+                        err = io.StringIO()
+                        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(err):
+                            rc = inst.run(name, action, home=home, repo=ROOT_DIR, agent_check=check,
+                                          isatty=tty, confirm=lambda _p: "y",
+                                          which=lambda _n: None, app_exists=lambda _p: False)
+                        self.assertEqual(rc, 4, f"{name} {action} under {env or ancestry}")
+                        self.assertIn("installer refused:", err.getvalue())
+            self.assertEqual(list(home.iterdir()), [])
+
+
 def main(argv: list) -> int:
     strict = "--strict-skips" in argv
     names = [a for a in argv if a != "--strict-skips"]

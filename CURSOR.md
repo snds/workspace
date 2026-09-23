@@ -40,7 +40,7 @@ multi-agent handoff live in AGENTS.md — not duplicated here._
 
 | Layer | Location | Events |
 |---|---|---|
-| User-global (doctor-managed) | `~/.cursor/hooks.json` ← `00-bootstrap/dist/cursor-hooks.json` | `sessionStart`, `beforeSubmitPrompt`, + mirrors of project events when installed |
+| User-global (installer) | `~/.cursor/hooks.json` ← `00-bootstrap/dist/cursor-hooks.json` | `sessionStart`, `beforeSubmitPrompt`, + mirrors of project events when installed |
 | Project (repo) | `.cursor/hooks.json` | `preCompact`, `sessionEnd`, `subagentStop` |
 
 - **sessionStart** — injects `session-status.py` ritual card (notices + all projects + pending).
@@ -50,7 +50,7 @@ multi-agent handoff live in AGENTS.md — not duplicated here._
 - **sessionEnd** — nudge Live handoff + session fragment.
 - **subagentStop** — nudge parent to fold Task results into the baton.
 
-Scripts: `.cursor/hooks/*.sh` (project) and `00-bootstrap/dist/cursor-*.sh` (installed by doctor).
+Scripts: `.cursor/hooks/*.sh` (project) and `00-bootstrap/dist/cursor-*.sh` (`--install-shims`).
 Fail-open. Structured-output / subagent turns skip the ritual line (see BEACON exemption).
 
 ## Dynamic model switching + parallel agents

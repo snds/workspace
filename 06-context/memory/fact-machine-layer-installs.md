@@ -17,14 +17,16 @@ at `066edac`) must be installed **per machine**. State as known:
 | Work MacBook Pro (loaner, `CS-KQ23N94M0W`) | ❌ no | — | Pending; machine may be returned. |
 | ~~Windows Desktop (`Enterprise`)~~ | **RETIRED** | 2026-09-15 | **Machine is being sold (Sean, 2026-09-15) — out of the fleet.** No Windows install route is needed and none should be built. The fleet is macOS-only: Personal MBP + Work MBP (+ loaner, if kept). This closes harness-map Rec 13's Windows half; its Work-MBP half is done (`~/.cursor/hooks.json` carries `beforeSubmitPrompt`, verified 2026-09-15). |
 
-Install = run `00-bootstrap/doctor/workspace-doctor.sh` on that machine, then retire any
-Drive-era `~/.claude/hooks/*.sh` + their `settings.json` registrations, refresh
-`~/.claude/workspace-brain-path`. Update this table when a machine's state changes.
+Install is explicit and pinned (H24, wave 0). In a plain terminal on that machine run
+`workspace-doctor.sh --install-pin`, then `--install-shims=<surface>`, `--install-claude-overlay`,
+`--install-plugin` and `--install-launchd` as needed. The unattended doctor only heals the
+Claude-only injectors and reports everything else. Update this table when a machine's state changes.
 
 ## Per-OS brain location (FX-14)
 
 The authoritative pointer on every machine is `~/.claude/workspace-brain-path` (one line,
-absolute path; doctor self-heals it on every run). Shims resolve brain-path first, then the
+absolute path; doctor self-heals it, HEAL class). `~/.config/snds-workspace/root` is the
+tool-neutral pointer written by `--install-pin`. Shims resolve brain-path first, then the
 candidate list, testing for `AGENTS.md`:
 
 | OS | Expected checkout |

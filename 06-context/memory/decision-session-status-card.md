@@ -22,4 +22,4 @@ One stdlib CLI owns the shape. Claude dispatcher shells out to it (Claude-only e
 Re-implementing the card in each adapter (drift). Teaching models to invent a shorter summary. Ingesting `project-context-detail.md` at boot (token bomb). Requiring every surface to parse `session-log.md` by hand.
 
 ## Consequences — what this commits us to
-Doctor copies `00-bootstrap/dist/cursor-sessionstart.sh` onto `~/.claude/hooks/cursor-sessionstart.sh`. Do not shrink Active projects. Do not dump the card on a continuation. `session-status.py --check` is in the write-quality chain.
+`workspace-doctor.sh --install-shims=cursor` (human-run) installs `00-bootstrap/dist/cursor-sessionstart.sh` as `~/.claude/hooks/cursor-sessionstart.sh`; the doctor only reports drift. Do not shrink Active projects. Do not dump the card on a continuation. `session-status.py --check` is in the write-quality chain.

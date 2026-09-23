@@ -104,6 +104,26 @@
 - **Purpose**: Synthetic tables (dev-a/dev-b, acme-corp/acme-bb/pat-sample/oss-upstream) for the profile_resolve self-test.
 - **Last modified**: 2026-09-22 — created in wave 0 (T2).
 
+### 00-bootstrap/doctor/pin_lib.py
+- **Size**: ~673 lines
+- **Purpose**: H24 pinned lib: PINNED_PATHS home, pin/current/lag, real-home guard, single write primitive.
+- **Last modified**: 2026-09-22 — created in wave 0 (T3).
+
+### 00-bootstrap/doctor/installers.py
+- **Size**: ~1348 lines
+- **Purpose**: H24 installers API/CLI (pin, shims, git-hooks, identity, claude-overlay, sandbox-roots, plugin, projects-pointer, launchd) with uninstall paths.
+- **Last modified**: 2026-09-22 — created in wave 0 (T3).
+
+### 00-bootstrap/doctor/workspace-doctor.sh
+- **Size**: ~306 lines
+- **Purpose**: Doctor v3: report-only unattended modes; HEAL limited to Claude-only injectors; installer flags exec installers.py.
+- **Last modified**: 2026-09-22 — created in wave 0 (T3).
+
+### 09-tools/fixtures/installer/
+- **Size**: 14 files
+- **Purpose**: Synthetic installer fixtures: render list stand-in, stale v1 settings, probe record, fixture repo.
+- **Last modified**: 2026-09-22 — created in wave 0 (T3).
+
 ## Meridian Design System — files/meridian-ds/
 
 ### app-shell-prototype-v0.1.jsx

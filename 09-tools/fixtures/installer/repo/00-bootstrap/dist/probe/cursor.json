@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      { "command": "$HOME/.config/snds-workspace/bin/ws-hook --host auto --event session-start --probe" }
+    ]
+  }
+}

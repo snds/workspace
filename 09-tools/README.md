@@ -447,6 +447,14 @@ python3 09-tools/workspace-harness.py --self-test
 
 Declared resolver (H2): device, repo, where, scan, audit, detect, agent-check, gitcaps and validate-tables over devices.json and context-remotes.json; the one home for load_table, detect_surface, normalize_remote and agent_check. --self-test runs synthetic fixtures.
 
+## 00-bootstrap/doctor/pin_lib.py
+
+Pinned lib under ~/.config/snds-workspace: pin/current/lag with the real-home guard; --self-test.
+
+## 00-bootstrap/doctor/installers.py
+
+Human-run installers behind workspace-doctor.sh --install-*/--uninstall-*: refusal on agent/no TTY, diff, y/N, .ws-bak backups, install log, byte-exact uninstall; --self-test (incl. doctor modes).
+
 ## eslint-off-system/
 
 Reusable ESLint rules that ban raw color literals and Tailwind arbitrary

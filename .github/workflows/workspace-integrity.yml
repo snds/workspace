@@ -41,6 +41,9 @@ on:
       - "02-shared-references/knowledge-hints.json"
       - "02-shared-references/schemas/**"
       - "03-skills/skills.registry.json"
+      - "00-bootstrap/doctor/**"
+      - "09-tools/build-local-skill-plugin.py"
+      - "09-tools/fixtures/installer/**"
       - "09-tools/profile_resolve.py"
       - "02-shared-references/devices.json"
       - "02-shared-references/delivery-playbooks/*.json"
@@ -76,6 +79,9 @@ on:
       - "02-shared-references/knowledge-hints.json"
       - "02-shared-references/schemas/**"
       - "03-skills/skills.registry.json"
+      - "00-bootstrap/doctor/**"
+      - "09-tools/build-local-skill-plugin.py"
+      - "09-tools/fixtures/installer/**"
       - "09-tools/profile_resolve.py"
       - "02-shared-references/devices.json"
       - "02-shared-references/delivery-playbooks/*.json"
@@ -140,5 +146,9 @@ jobs:
         run: python3 09-tools/profile_resolve.py --self-test
       - name: Declared tables valid
         run: python3 09-tools/profile_resolve.py validate-tables
+      - name: Pinned lib self-test (H24)
+        run: python3 00-bootstrap/doctor/pin_lib.py --self-test
+      - name: Installers + doctor modes self-test (H24)
+        run: python3 00-bootstrap/doctor/installers.py --self-test
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py

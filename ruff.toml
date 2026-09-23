@@ -16,7 +16,7 @@
 
 line-length = 100
 
-include = ["09-tools/**/*.py", ".claude/hooks/**/*.py"]
+include = ["09-tools/**/*.py", ".claude/hooks/**/*.py", "00-bootstrap/doctor/**/*.py"]
 extend-exclude = [
     "09-tools/figma-cli-2.1.0",
     "09-tools/eslint-off-system",
@@ -26,3 +26,8 @@ extend-exclude = [
 
 [lint]
 select = ["E9", "F", "I"]
+
+# 00-bootstrap/doctor joined `include` in wave 0 (H24). linear-lanes.py predates that and has
+# one dead f-string; it has no wave-0 owner, so the debt is scoped here instead of fixed.
+[lint.per-file-ignores]
+"00-bootstrap/doctor/linear-lanes.py" = ["F541"]
