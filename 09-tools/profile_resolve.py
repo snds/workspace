@@ -743,10 +743,11 @@ def device_label(hostname: Optional[str] = None, *, root: Optional[Path] = None)
             return "unknown"
 
 
-def projects_root(*, root: Optional[Path] = None, home: Optional[Path] = None) -> Path:
+def projects_root(*, root: Optional[Path] = None, home: Optional[Path] = None,
+                  hostname: Optional[str] = None) -> Path:
     h = Path(home) if home is not None else Path.home()
     try:
-        row = _resolve_device(None, root, None)["row"]
+        row = _resolve_device(hostname, root, None)["row"]
     except Exception:  # noqa: BLE001
         row = None
     rel = (row or {}).get("projects_root") or "Projects"
@@ -1338,7 +1339,7 @@ def _iter_checkout_dirs(pr: Path, depth: int) -> List[Path]:
 def _scan_doc(*, root: Optional[Path], home: Optional[Path], depth: int, det: dict,
               hostname: Optional[str] = None) -> dict:
     table = _try_table("context-remotes", root) or {}
-    pr = projects_root(root=root, home=home)
+    pr = projects_root(root=root, home=home, hostname=hostname)
     dev = current_device(hostname=hostname, root=root)
     checkouts = []
     for d in _iter_checkout_dirs(pr, depth):
@@ -4753,11 +4754,32 @@ def self_test(stub_chain: bool = False) -> int:
             real = validate_tables()
             ok(real["tables"]["devices"]["ok"] and real["tables"]["context-remotes"]["ok"], "shipped tables validate")
 
-        # hostnames
+        # hostnames: variants derived from the shipped table (no device literal outside devices.json)
         if (ROOT / TABLE_PATHS["devices"]).exists():
-            for h in ("Voyager-2.lan", "voyager-2", "VOYAGER-2.local"):
-                ok(current_device(hostname=h)["id"] == "personal-mbp", f"{h} resolves to personal-mbp")
-            ok(device_label("CS-KQ23N94M0W.local") == "Work MacBook Pro (loaner)", "loaner hostname label")
+            shipped = load_table("devices")
+            for row in shipped.get("devices") or []:
+                h0 = (row.get("hostnames") or [None])[0]
+                if not h0:
+                    continue
+                for h in (h0 + ".lan", h0.lower(), h0.upper() + ".local"):
+                    ok(current_device(hostname=h)["id"] == row["id"], f"{h} resolves to {row['id']}")
+                for hn, lab in (row.get("hostname_labels") or {}).items():
+                    ok(device_label(hn + ".local") == lab, f"hostname label for {row['id']}")
+        pr_root = tmp / "pr-root"
+        for name in ("devices", "context-remotes", "surfaces"):
+            src = root / TABLE_PATHS[name]
+            if src.exists():
+                dst = pr_root / TABLE_PATHS[name]
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                dst.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
+        dt_ = json.loads((pr_root / TABLE_PATHS["devices"]).read_text(encoding="utf-8"))
+        for row in dt_["devices"]:
+            if row["id"] == "dev-b":
+                row["projects_root"] = "Code"
+        (pr_root / TABLE_PATHS["devices"]).write_text(json.dumps(dt_), encoding="utf-8")
+        ok(projects_root(root=pr_root, home=home_a, hostname="host-b") == home_a / "Code"
+           and projects_root(root=pr_root, home=home_a, hostname="host-a") == home_a / "Projects",
+           "projects_root follows the injected hostname's device row (LLM/device F-05)")
         ok(current_device(hostname="HOST-A.local", root=root)["id"] == "dev-a", "fixture host case-folded")
         ok(current_device(hostname="host-a2.lan", root=root)["label"] == "Device A (spare)", "hostname label wins")
         d = current_device(hostname="mystery.local", root=root, scutil=lambda: "host-b")
@@ -4963,6 +4985,34 @@ def self_test(stub_chain: bool = False) -> int:
         det_err = _detect(None, {}, None, HUMAN_TTY, root)
         ok(isinstance(det_err[0], dict), "live detection runs without raising")
         ok("ancestry_unavailable" in det_err[0], "the detection object says whether ancestry was available")
+        global _ps_default
+        saved_ps = _ps_default
+
+        def ps_denied(_cols: str) -> str:
+            raise PermissionError("operation not permitted")
+        _ps_default = ps_denied
+        try:
+            r = agent_check(env={}, ancestry=None, isatty=HUMAN_TTY, root=root)
+            d = detect_surface(env={}, ancestry=None, isatty=HUMAN_TTY, root=root)
+        finally:
+            _ps_default = saved_ps
+        ok(not r["human"] and not r["determined"] and d["ancestry_unavailable"],
+           f"ps denied: agent_check is undetermined and detection says ancestry is unavailable: {r}")
+        nm_root = tmp / "never-root"
+        for name in ("surfaces", "devices", "context-remotes"):
+            src = root / TABLE_PATHS[name]
+            if src.exists():
+                dst = nm_root / TABLE_PATHS[name]
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                dst.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
+        st_ = json.loads((nm_root / TABLE_PATHS["surfaces"]).read_text(encoding="utf-8"))
+        for row in st_["surfaces"]:
+            if row["id"] == "claude-code":
+                row["markers"]["env"] = [{"name": "CLAUDECODE", "verified": True}]
+        (nm_root / TABLE_PATHS["surfaces"]).write_text(json.dumps(st_), encoding="utf-8")
+        d = detect_surface(env={"CLAUDECODE": "1"}, ancestry=[], isatty=HUMAN_TTY, root=nm_root)
+        ok(d["via"] != "env" and "CLAUDECODE" not in d["markers"],
+           f"a never_markers name declared as an env marker attributes nothing: {d['via']} {d['markers']}")
 
         # AI_AGENT is set by several vendors: a value prefix attributes Claude Code (LLM/device F-01)
         d = detect_surface(env={"AI_AGENT": "claude-code_2-1-280_agent", "CLAUDECODE": "1"}, ancestry=[],
