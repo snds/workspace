@@ -1,0 +1,6 @@
+{
+  "sessionId": "sess-0001",
+  "hookEventName": "UserPromptSubmit",
+  "cwd": "fixture-cwd",
+  "prompt": "fixture prompt"
+}

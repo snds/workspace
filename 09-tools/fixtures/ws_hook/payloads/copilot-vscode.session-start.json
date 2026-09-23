@@ -1,0 +1,6 @@
+{
+  "sessionId": "sess-0001",
+  "hookEventName": "SessionStart",
+  "cwd": "fixture-cwd",
+  "source": "startup"
+}

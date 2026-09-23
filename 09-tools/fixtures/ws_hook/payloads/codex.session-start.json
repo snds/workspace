@@ -1,0 +1,7 @@
+{
+  "session_id": "sess-0001",
+  "thread_id": "thr-0001",
+  "cwd": "fixture-cwd",
+  "hook_event_name": "SessionStart",
+  "source": "startup"
+}
