@@ -33,7 +33,7 @@ values”, figma-ds-surface-authoring total tokenization). It did not fire becau
 2. Skill `triggers:` missed spoken phrasing (`build in figma`, `component set`, `library file`).
 3. Claude `UserPromptSubmit` injects trigger-routes; Cursor only had `sessionStart` +
    `preCompact`. `cursor-reassert.sh` comments mentioned `beforeSubmitPrompt` but was never
-   registered on that event.
+   registered on that event. (Both scripts retired 2026-09-22 to `_archive/cursor-dark-shims-2026-09/`.)
 4. snds-local plugin mirrored canvas-designer but **not** the `figma` hub, so employer-repo
    Cursor never saw “plugins = mechanics” in available skills.
 5. Agents loaded Cursor plugin `figma-use` / `figma-generate-library` first because those
@@ -44,7 +44,9 @@ values”, figma-ds-surface-authoring total tokenization). It did not fire becau
 
 ## What to load (the path)
 
-User-global `~/.cursor/hooks.json` `beforeSubmitPrompt` →
+Retired 2026-09-22 (the injection never reached the model; the H7 `ws route` steer replaces it,
+and the scripts are in `_archive/cursor-dark-shims-2026-09/`). The path was: user-global
+`~/.cursor/hooks.json` `beforeSubmitPrompt` →
 `~/.claude/hooks/cursor-prompt-route.sh` → `09-tools/cursor-prompt-route.py` →
 `09-tools/prompt_route.py` (resolves `~/.claude/workspace-brain-path`, then
 `~/Projects/Workspace` / `workspace`). Matches `trigger-routes.json`,

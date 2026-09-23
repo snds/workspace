@@ -394,7 +394,7 @@ command that surface really invokes.
 | Surface | Entry point |
 |---|---|
 | `claude-code` | `.claude/hooks/dispatcher.py user-prompt` (stdin JSON, `CLAUDE_PROJECT_DIR`) |
-| `cursor` | `09-tools/cursor-prompt-route.py` (`beforeSubmitPrompt`) |
+| `cursor` | `09-tools/cursor-prompt-route.py` (compatibility shim; the live `beforeSubmitPrompt` registration is retired) |
 | `shell-agent` | `09-tools/skill-loadset.py --json` — any agent with a shell and no hook |
 | `hookless` | no executable path (web ChatGPT/Grok/Perplexity); its adapter file is asserted statically |
 
@@ -454,6 +454,14 @@ Pinned lib under ~/.config/snds-workspace: pin/current/lag with the real-home gu
 ## 00-bootstrap/doctor/installers.py
 
 Human-run installers behind workspace-doctor.sh --install-*/--uninstall-*: refusal on agent/no TTY, diff, y/N, .ws-bak backups, install log, byte-exact uninstall; --self-test (incl. doctor modes).
+
+## ws_hook.py
+
+Neutral hook core (H19): payload adapters, `host --skip-any` host filter, dedupe claims, budgeted session-start card, output dialects, redacted probes (`probe-env`, `probe-promote`) and the `--host git --floor claude` adapter. `--self-test`, `--self-test-shell`.
+
+## 00-bootstrap/doctor/render_shims.py
+
+Renders every hook registration file from 02-shared-references/surfaces.json (H16). `--check` covers Rule C coverage, Rule R one-registration, drift and wrapper sha; also `--write`, `--list --json`, `--install-state --json`, `--rev`, `--verify-canonical` and `--self-test`.
 
 ## eslint-off-system/
 

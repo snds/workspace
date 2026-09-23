@@ -41,6 +41,14 @@ on:
       - "02-shared-references/knowledge-hints.json"
       - "02-shared-references/schemas/**"
       - "03-skills/skills.registry.json"
+      - "09-tools/ws_hook.py"
+      - "00-bootstrap/doctor/render_shims.py"
+      - "00-bootstrap/dist/**"
+      - "02-shared-references/surfaces.json"
+      - "02-shared-references/probes/**"
+      - ".claude/settings.json"
+      - ".cursor/hooks.json"
+      - ".cursor/hooks/**"
       - "00-bootstrap/doctor/**"
       - "09-tools/build-local-skill-plugin.py"
       - "09-tools/fixtures/installer/**"
@@ -79,6 +87,14 @@ on:
       - "02-shared-references/knowledge-hints.json"
       - "02-shared-references/schemas/**"
       - "03-skills/skills.registry.json"
+      - "09-tools/ws_hook.py"
+      - "00-bootstrap/doctor/render_shims.py"
+      - "00-bootstrap/dist/**"
+      - "02-shared-references/surfaces.json"
+      - "02-shared-references/probes/**"
+      - ".claude/settings.json"
+      - ".cursor/hooks.json"
+      - ".cursor/hooks/**"
       - "00-bootstrap/doctor/**"
       - "09-tools/build-local-skill-plugin.py"
       - "09-tools/fixtures/installer/**"
@@ -150,5 +166,9 @@ jobs:
         run: python3 00-bootstrap/doctor/pin_lib.py --self-test
       - name: Installers + doctor modes self-test (H24)
         run: python3 00-bootstrap/doctor/installers.py --self-test
+      - name: Render shims check
+        run: python3 00-bootstrap/doctor/render_shims.py --check
+      - name: Hook core self-test
+        run: python3 09-tools/ws_hook.py --self-test
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py

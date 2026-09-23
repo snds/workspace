@@ -11,7 +11,7 @@ relations:
 
 ## For future agent
 - **TL;DR:** Cursor in an employer repo does not attach `brain.mdc`; Layer-0 skill routes must be injected on `beforeSubmitPrompt` from the brain checkout (brain-path), not from CWD.
-- **As of:** 2026-09 · **Status:** current
+- **As of:** 2026-09 · **Status:** superseded 2026-09-22 — the `beforeSubmitPrompt` registration and `dist/cursor-prompt-route.sh` were retired to `_archive/cursor-dark-shims-2026-09/` (H19; its output never reached the model). The H7 `ws route` steer replaces it. `prompt_route.py` and `09-tools/cursor-prompt-route.py` stay.
 
 ## Context — what forced a choice
 A Figma component-generate session in `cpes-software/cds` skipped workspace skills that already required semantic + theme/mode-aware token bindings. Claude Code injects `trigger-routes.json` on `UserPromptSubmit`. Cursor only ran routing-adjacent hooks at `sessionStart` / `preCompact`, so vendor `figma-use` / `figma-generate-library` won.

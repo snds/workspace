@@ -107,7 +107,7 @@ When entering the workspace without prior context, read in this order:
    request. Do **not** ingest `03-skills/skills.registry.json` (~55k tokens). Lookup
    `load_chains[name]` only if the CLI is unavailable.
 4. [trigger-routes.json](02-shared-references/trigger-routes.json) — curated high-leverage
-   trigger → load hints (shared by Claude dispatcher + Cursor `beforeSubmitPrompt`). Do
+   trigger → load hints (shared via `09-tools/prompt_route.py`). Do
    not ingest the generated [trigger-routes.md](02-shared-references/trigger-routes.md).
 5. Match knowledge via [knowledge-hints.json](02-shared-references/knowledge-hints.json)
    and `_INDEX.md` `Triggers:` lists — read **matched entries only**, never the whole index.
@@ -199,9 +199,8 @@ Skills are discoverable by both humans and machines through one generated graph:
    frontmatter by `09-tools/build-registry.py`.
 2. [trigger-routes.json](02-shared-references/trigger-routes.json) (+ generated
    [trigger-routes.md](02-shared-references/trigger-routes.md)) — curated high-leverage routes
-   shared by the Claude dispatcher and Cursor `beforeSubmitPrompt` (both via
-   `09-tools/prompt_route.py`, which resolves the brain checkout even when CWD is an
-   employer repo). Regenerate markdown with `09-tools/build-trigger-routes.py`.
+   shared by the Claude dispatcher through `09-tools/prompt_route.py` (which resolves the
+   brain checkout even when CWD is an employer repo). Regenerate markdown with `09-tools/build-trigger-routes.py`.
 3. [knowledge-hints.json](02-shared-references/knowledge-hints.json) — curated knowledge paths
    for the same Layer-0 matcher.
 4. Each `03-skills/<name>/SKILL.md` — the skill itself; its frontmatter is the source of truth.
@@ -247,14 +246,9 @@ navigational (never auto-loaded). `governed_by` lenses load **after** the skill 
 `03-skills/close-out/SKILL.md` (mint a missing detector and push here; page Sean only if
 self-critique or mint still fails). Vault gaps beyond QA → `03-skills/self-improve/SKILL.md`.
 Hubs and foundations must declare `triggers` (registry CI).
-Cursor sessions whose first folder is not this checkout still receive Layer-0 routes via the
-user-global `beforeSubmitPrompt` hook (brain-path resolution in `09-tools/prompt_route.py`).
-Produce / ship language on that hook injects `close-out` then `self-improve` even when the
-user did not name them, and names `close-out-dispatch.py`. A work verb with zero Layer-0 hits
-injects a visible miss plus `skill-loadset.py` then `vault-retrieve.py`, not silence.
-Injection is not compliance — the model can still skip the files. Surfaces without this hook
-(Perplexity, ChatGPT, Grok.com, a machine that never installed `beforeSubmitPrompt`) only get
-what they actually read from this file.
+The Cursor route hook was retired 2026-09-22 (its output never reached the model). Cursor
+sessions outside this checkout get routes from User Rules until the `ws route` steer (H7).
+Surfaces without a route hook only get what they actually read from this file.
 Vendor Figma plugin skills are mechanics only; workspace `figma` + `design-engineer` own
 token/component doctrine.
 

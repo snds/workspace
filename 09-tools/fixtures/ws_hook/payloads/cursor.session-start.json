@@ -1,0 +1,8 @@
+{
+  "conversation_id": "sess-0001",
+  "hook_event_name": "sessionStart",
+  "cursor_version": "3.21.16",
+  "workspace_roots": [
+    "fixture-cwd"
+  ]
+}

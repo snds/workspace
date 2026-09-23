@@ -108,6 +108,10 @@ QUALITY_CHAIN = [
     ("profile_resolve.py", ["validate-tables"]),
     ("../00-bootstrap/doctor/pin_lib.py", ["--self-test"]),
     ("../00-bootstrap/doctor/installers.py", ["--self-test"]),
+    ("ws_hook.py", ["--self-test"]),
+    ("ws_hook.py", ["--self-test-shell"]),
+    ("../00-bootstrap/doctor/render_shims.py", ["--check"]),
+    ("../00-bootstrap/doctor/render_shims.py", ["--self-test"]),
     ("test-validators.py", []),
 ]
 

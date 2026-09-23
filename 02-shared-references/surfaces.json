@@ -1,0 +1,2344 @@
+{
+  "schema_version": 1,
+  "doc": "Surface registry (H16). Source for render_shims.py and for profile_resolve detection. Never auto-loaded.",
+  "coverage_modes": [
+    "enforced",
+    "enforced-partial",
+    "enforced-when-installed",
+    "advisory",
+    "unverified",
+    "backstop-only",
+    "not-applicable"
+  ],
+  "minimum_surfaces": [
+    "claude-code",
+    "claude-chat",
+    "cursor",
+    "codex"
+  ],
+  "components": [
+    "H1",
+    "H2",
+    "H3",
+    "H16",
+    "H17",
+    "H19",
+    "H22",
+    "H24",
+    "H25"
+  ],
+  "families": {
+    "claude": {
+      "wall_rank": 100,
+      "agent": true
+    },
+    "unknown-agent": {
+      "wall_rank": 90,
+      "agent": true
+    },
+    "gemini": {
+      "wall_rank": 60,
+      "agent": true
+    },
+    "copilot": {
+      "wall_rank": 60,
+      "agent": true
+    },
+    "cursor": {
+      "wall_rank": 50,
+      "agent": true
+    },
+    "codex": {
+      "wall_rank": 50,
+      "agent": true
+    },
+    "human": {
+      "wall_rank": 0,
+      "agent": false
+    }
+  },
+  "never_markers": [
+    "CLAUDECODE",
+    "CLAUDE_PROJECT_DIR",
+    "CLAUDE_PLUGIN_ROOT",
+    "CLAUDE_WORKSPACE_VAULT"
+  ],
+  "agent_possible_env": {
+    "names": [
+      "CLAUDECODE",
+      "CLAUDE_PROJECT_DIR",
+      "CLAUDE_PLUGIN_ROOT",
+      "CLAUDE_WORKSPACE_VAULT",
+      "CLAUDE_ENV_FILE"
+    ],
+    "prefixes": [
+      "CLAUDE_CODE_"
+    ]
+  },
+  "probe_env_name_prefixes": [
+    "CLAUDE",
+    "CURSOR",
+    "CODEX",
+    "VSCODE",
+    "TERM_PROGRAM",
+    "GEMINI",
+    "COPILOT",
+    "WINDSURF",
+    "GROK",
+    "AI_AGENT",
+    "WS_",
+    "GIT_CONFIG",
+    "GH_",
+    "AIDER",
+    "GOOSE",
+    "OPENCODE"
+  ],
+  "probe_env_value_allowlist": [
+    "TERM_PROGRAM",
+    "CURSOR_AGENT",
+    "AI_AGENT",
+    "WS_SURFACE_FAMILY",
+    "WS_CLAUDE_OVERLAY"
+  ],
+  "surfaces": [
+    {
+      "id": "claude-code",
+      "family": "claude",
+      "label": "Claude Code (CLI, desktop Code tab, IDE extensions)",
+      "kind": "cli-agent",
+      "required": true,
+      "hookable": true,
+      "dialect": "claude",
+      "timeouts_s": {
+        "session-start": 15,
+        "user-prompt": 5,
+        "session-end": 10
+      },
+      "markers": {
+        "env": [],
+        "ancestry": [
+          {
+            "comm": "claude",
+            "match": "exact",
+            "verified": false
+          },
+          {
+            "comm": "Claude",
+            "match": "exact",
+            "verified": false
+          },
+          {
+            "comm": "Claude Helper",
+            "match": "prefix",
+            "verified": false
+          }
+        ],
+        "payload_keys_any": [
+          {
+            "key": "transcript_path",
+            "verified": false,
+            "contains": "/.claude/projects/"
+          }
+        ]
+      },
+      "family_marker_channel": "claude-settings-env",
+      "sandbox": null,
+      "plugin_layers": [
+        {
+          "source": "claude-plugin",
+          "scope": "user",
+          "path": "~/.claude/local-plugins/snds-local",
+          "reaches": [
+            "session-start"
+          ]
+        }
+      ],
+      "install_probe": {
+        "any_of": [
+          {
+            "cmd": "claude"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "ref": "code.claude.com/docs/en/hooks",
+          "fetched": "2026-09-22",
+          "verified": true
+        }
+      ],
+      "coverage": {
+        "H1": {
+          "mode": "unverified",
+          "rules": "pre-commit lane when installed (plan decision #2) plus the budgeted Claude SessionEnd accelerator; CI backstop without lanes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestNightly"
+          ],
+          "how": "enforced-when-installed once the X1 replay fixture (T5) resolves and lanes are installed"
+        },
+        "H2": {
+          "mode": "unverified",
+          "rules": "the resolver library consumed by the Claude floor, the action policy and the H15 guard",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestProfileResolve",
+            "probe:claude-code@work-mbp"
+          ],
+          "how": "enforced-partial once TestProfileResolve and the claude-code probe resolve"
+        },
+        "H3": {
+          "mode": "enforced",
+          "rules": "in-tool: shell=False measures and the allowlist",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestIntentRun"
+          ],
+          "planned_verified_by": [],
+          "how": "TestIntentRun"
+        },
+        "H16": {
+          "mode": "enforced",
+          "rules": "generation checked by render_shims --check; installation only through H24 installers",
+          "decision": null,
+          "verified_by": [
+            "selftest:00-bootstrap/doctor/render_shims.py"
+          ],
+          "planned_verified_by": [
+            "fixture:TestSurfaces",
+            "fixture:TestRenderShims"
+          ],
+          "how": "render_shims --check and --self-test"
+        },
+        "H17": {
+          "mode": "unverified",
+          "rules": "identity scoping, transport block and Claude floor apply once the overlay is installed; bypass residuals: git -c hook.ws-claude-wall.enabled=false, --no-verify, env-scope config removal (GIT_CONFIG_COUNT=0), exec -a ancestor spoofing, an unsandboxed Claude process writing control/receipts.jsonl; H15 closes them at tool time",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestIdentity",
+            "probe:claude-code@work-mbp"
+          ],
+          "how": "enforced-partial once TestIdentity (T8) resolves; T8 owns this entry"
+        },
+        "H19": {
+          "mode": "unverified",
+          "rules": "N1 wrappers and the pinned host filter ship in wave 0; the hook core is registered only for probes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "selftest:09-tools/ws_hook.py",
+            "probe:claude-code@work-mbp"
+          ],
+          "how": "enforced once the claude-code probe file exists"
+        },
+        "H22": {
+          "mode": "unverified",
+          "rules": "model-composed employer git blocked by the transport block, floor and guard; gh advisory until the belt",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestActionPolicy",
+            "probe:claude-code@work-mbp"
+          ],
+          "how": "enforced-partial once TestActionPolicy (T7) resolves; T7 owns this entry"
+        },
+        "H24": {
+          "mode": "unverified",
+          "rules": "installers refuse Claude processes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestInstaller"
+          ],
+          "how": "enforced once TestInstaller (T3) resolves"
+        },
+        "H25": {
+          "mode": "unverified",
+          "rules": "report-only employer-substance scan when the lane is installed, plus a CI backstop",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestEmployerSubstance"
+          ],
+          "how": "enforced-when-installed once TestEmployerSubstance (T4) resolves"
+        }
+      }
+    },
+    {
+      "id": "claude-code-cloud",
+      "family": "claude",
+      "label": "Claude Code on the web and cloud sessions",
+      "kind": "cloud-agent",
+      "required": false,
+      "hookable": true,
+      "dialect": "claude",
+      "timeouts_s": {
+        "session-start": 30
+      },
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": null,
+      "sources": [
+        {
+          "ref": "code.claude.com/docs/en/claude-code-on-the-web",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "advisory",
+          "rules": "committed workspace hooks only; the user-level plugin shim fails open without HOME",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "claude-chat",
+      "family": "claude",
+      "label": "Claude chat (claude.ai web and mobile)",
+      "kind": "chat",
+      "required": true,
+      "hookable": false,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": null,
+      "sources": [
+        {
+          "ref": "support.claude.com",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H1": {
+          "mode": "backstop-only",
+          "rules": "CI registry-drift after the push, and HEAD red on the next card",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H2": {
+          "mode": "advisory",
+          "rules": "plain JSON readable through the GitHub integration, project knowledge or a sandbox clone; nothing executes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H3": {
+          "mode": "not-applicable",
+          "rules": "no execution; specs are linted in CI once committed",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H16": {
+          "mode": "advisory",
+          "rules": "documents what gets pasted and synced",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H17": {
+          "mode": "backstop-only",
+          "rules": "credential scope plus the CI identity audit on personal repos; unverified until the first audit",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "not-applicable",
+          "rules": "no hooks; Cowork needs a synced plugin (inference)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H22": {
+          "mode": "backstop-only",
+          "rules": "credential scope; unverified until the audit",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H24": {
+          "mode": "not-applicable",
+          "rules": "no local installs",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H25": {
+          "mode": "backstop-only",
+          "rules": "CI after the push; on a public repo that is already publication",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "claude-chat-desktop",
+      "family": "claude",
+      "label": "Claude desktop app (Chat, Cowork, local MCP)",
+      "kind": "desktop-app",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [],
+        "ancestry": [
+          {
+            "comm": "Claude",
+            "match": "exact",
+            "verified": false
+          },
+          {
+            "comm": "Claude Helper",
+            "match": "prefix",
+            "verified": false
+          }
+        ],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": {
+        "any_of": [
+          {
+            "path": "/Applications/Claude.app"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "ref": "support.claude.com",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "not-applicable",
+          "rules": "no local hook surface",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "claude-in-chrome",
+      "family": "claude",
+      "label": "Claude in Chrome",
+      "kind": "browser",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": null,
+      "sources": [
+        {
+          "ref": "support.claude.com",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "not-applicable",
+          "rules": "no local hook surface",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "cursor",
+      "family": "cursor",
+      "label": "Cursor IDE agent",
+      "kind": "ide-agent",
+      "required": true,
+      "hookable": true,
+      "dialect": "cursor",
+      "timeouts_s": {
+        "session-start": 15
+      },
+      "markers": {
+        "env": [
+          {
+            "name": "CURSOR_AGENT",
+            "value": "1",
+            "verified": true
+          }
+        ],
+        "ancestry": [
+          {
+            "comm": "Cursor Helper",
+            "match": "prefix",
+            "verified": false
+          }
+        ],
+        "payload_keys_any": [
+          {
+            "key": "cursor_version",
+            "verified": false
+          }
+        ]
+      },
+      "family_marker_channel": "cursor-sessionstart-env",
+      "sandbox": {
+        "protects": [
+          ".git/config",
+          ".git/hooks",
+          ".cursor/*.json",
+          ".claude/*.json"
+        ],
+        "write_root_key": "additionalReadwritePaths",
+        "config_path": null,
+        "config_path_verified": false
+      },
+      "plugin_layers": [
+        {
+          "source": "claude-plugin",
+          "scope": "user",
+          "path": "~/.claude/local-plugins/snds-local",
+          "reaches": [
+            "session-start"
+          ]
+        }
+      ],
+      "install_probe": {
+        "any_of": [
+          {
+            "cmd": "cursor"
+          },
+          {
+            "path": "/Applications/Cursor.app"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "ref": "cursor.com/docs/hooks",
+          "fetched": "2026-09-22",
+          "verified": true
+        }
+      ],
+      "coverage": {
+        "H1": {
+          "mode": "unverified",
+          "rules": "agent commits pass through the lane when installed; sessionEnd is not used; no session baseline in wave 0",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestNightly"
+          ],
+          "how": "enforced-when-installed once the X1 replay fixture (T5) resolves"
+        },
+        "H2": {
+          "mode": "unverified",
+          "rules": "a voluntary CLI until H15 shims or H18 lanes are installed",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestProfileResolve"
+          ],
+          "how": "enforced-when-installed once TestProfileResolve (T2) resolves"
+        },
+        "H3": {
+          "mode": "enforced",
+          "rules": "in-tool, wherever the CLI runs",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestIntentRun"
+          ],
+          "planned_verified_by": [],
+          "how": "TestIntentRun"
+        },
+        "H16": {
+          "mode": "enforced-when-installed",
+          "rules": "the rendered dist reaches the machine only through an explicit H24 installer",
+          "decision": null,
+          "verified_by": [
+            "selftest:00-bootstrap/doctor/render_shims.py"
+          ],
+          "planned_verified_by": [
+            "fixture:TestRenderShims"
+          ],
+          "how": "render_shims --check"
+        },
+        "H17": {
+          "mode": "unverified",
+          "rules": "identity from git config; I1 blocks and a device mismatch is a flag",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestIdentity"
+          ],
+          "how": "enforced-when-installed once TestIdentity (T8) resolves"
+        },
+        "H19": {
+          "mode": "unverified",
+          "rules": "user-level hooks; cloud only through the repo-relative shim; no session baseline in wave 0",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "probe:cursor@work-mbp"
+          ],
+          "how": "enforced-partial once the probe file exists"
+        },
+        "H22": {
+          "mode": "advisory",
+          "rules": "merge and default-branch denial is report-only; employer branch protection is the real wall",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H24": {
+          "mode": "unverified",
+          "rules": "installers refuse Cursor agent shells",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestInstaller"
+          ],
+          "how": "enforced once TestInstaller (T3) resolves"
+        },
+        "H25": {
+          "mode": "unverified",
+          "rules": "report-only first, when installed",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestEmployerSubstance"
+          ],
+          "how": "enforced-when-installed once TestEmployerSubstance (T4) resolves"
+        }
+      }
+    },
+    {
+      "id": "cursor-cli",
+      "family": "cursor",
+      "label": "Cursor CLI agent",
+      "kind": "cli-agent",
+      "required": false,
+      "hookable": true,
+      "dialect": "cursor",
+      "timeouts_s": {},
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": {
+        "any_of": [
+          {
+            "cmd": "cursor-agent"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "ref": "cursor.com/docs/cli",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "advisory",
+          "rules": "unverified; the same user hooks are expected",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "cursor-cloud",
+      "family": "cursor",
+      "label": "Cursor cloud agents",
+      "kind": "cloud-agent",
+      "required": false,
+      "hookable": true,
+      "dialect": "cursor",
+      "timeouts_s": {},
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": null,
+      "sources": [
+        {
+          "ref": "cursor.com/docs/cloud-agent",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "advisory",
+          "rules": "only the committed .cursor/hooks.json runs; unverified",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "codex",
+      "family": "codex",
+      "label": "Codex (desktop app, bundled CLI, IDE extension)",
+      "kind": "desktop-app",
+      "required": true,
+      "hookable": true,
+      "dialect": "codex",
+      "timeouts_s": {
+        "session-start": 15
+      },
+      "markers": {
+        "env": [
+          {
+            "name": "CODEX_THREAD_ID",
+            "value": null,
+            "verified": false
+          }
+        ],
+        "ancestry": [],
+        "payload_keys_any": [
+          {
+            "key": "thread_id",
+            "verified": false
+          }
+        ]
+      },
+      "family_marker_channel": "codex-shell-environment-policy",
+      "sandbox": {
+        "protects": [
+          ".git"
+        ],
+        "write_root_key": "writable_roots",
+        "config_path": "~/.codex/config.toml",
+        "config_path_verified": true
+      },
+      "plugin_layers": [
+        {
+          "source": "codex-plugin",
+          "scope": "user",
+          "path": "~/.claude/local-plugins/snds-local",
+          "reaches": [
+            "session-start"
+          ]
+        }
+      ],
+      "install_probe": {
+        "any_of": [
+          {
+            "cmd": "codex"
+          },
+          {
+            "path": "/Applications/ChatGPT.app/Contents/Resources/codex"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "ref": "developers.openai.com/codex/config",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H1": {
+          "mode": "unverified",
+          "rules": "the escalated commit runs the lane when installed; no session baseline in wave 0",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestNightly"
+          ],
+          "how": "enforced-when-installed once the X1 replay fixture (T5) resolves"
+        },
+        "H2": {
+          "mode": "unverified",
+          "rules": "`where` resolves by slug, not cwd; hooks only once trusted",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestProfileResolve"
+          ],
+          "how": "enforced-when-installed once TestProfileResolve (T2) resolves"
+        },
+        "H3": {
+          "mode": "enforced",
+          "rules": "in-tool",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestIntentRun"
+          ],
+          "planned_verified_by": [],
+          "how": "TestIntentRun"
+        },
+        "H16": {
+          "mode": "enforced-when-installed",
+          "rules": "installed through H24; hook trust is confirmed manually",
+          "decision": null,
+          "verified_by": [
+            "selftest:00-bootstrap/doctor/render_shims.py"
+          ],
+          "planned_verified_by": [
+            "fixture:TestRenderShims"
+          ],
+          "how": "render_shims --check"
+        },
+        "H17": {
+          "mode": "unverified",
+          "rules": "identity from git config (device rule)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestIdentity"
+          ],
+          "how": "enforced-when-installed once TestIdentity (T8) resolves"
+        },
+        "H19": {
+          "mode": "unverified",
+          "rules": "inert until trusted; trust-state detection needs a manual confirmation; no session baseline in wave 0",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "probe:codex@work-mbp"
+          ],
+          "how": "enforced-partial once the probe file exists"
+        },
+        "H22": {
+          "mode": "advisory",
+          "rules": "as Cursor; the hooks are also untrusted",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H24": {
+          "mode": "unverified",
+          "rules": "installers refuse Codex shells",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestInstaller"
+          ],
+          "how": "enforced once TestInstaller (T3) resolves"
+        },
+        "H25": {
+          "mode": "unverified",
+          "rules": "report-only first, when installed",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "fixture:TestEmployerSubstance"
+          ],
+          "how": "enforced-when-installed once TestEmployerSubstance (T4) resolves"
+        }
+      }
+    },
+    {
+      "id": "codex-cloud",
+      "family": "codex",
+      "label": "Codex cloud",
+      "kind": "cloud-agent",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": null,
+      "sources": [
+        {
+          "ref": "developers.openai.com/codex/cloud",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "not-applicable",
+          "rules": "no local hook surface",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "gemini-cli",
+      "family": "gemini",
+      "label": "Gemini CLI",
+      "kind": "cli-agent",
+      "required": false,
+      "hookable": true,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [
+          {
+            "name": "GEMINI_CLI",
+            "value": null,
+            "verified": false
+          }
+        ],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": {
+        "any_of": [
+          {
+            "cmd": "gemini"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "ref": "geminicli.com/docs/hooks",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "advisory",
+          "rules": "unverified; through its own shims when installed",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "copilot-vscode",
+      "family": "copilot",
+      "label": "VS Code agent mode (Copilot)",
+      "kind": "ide-agent",
+      "required": false,
+      "hookable": true,
+      "dialect": "claude",
+      "timeouts_s": {
+        "session-start": 15
+      },
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": [
+          {
+            "key": "hookEventName",
+            "verified": false
+          }
+        ]
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": {
+        "any_of": [
+          {
+            "cmd": "code"
+          },
+          {
+            "path": "/Applications/Visual Studio Code.app"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "ref": "code.visualstudio.com/docs/copilot/customization/hooks",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "advisory",
+          "rules": "unverified until a live probe; made safe by N1",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "copilot-cli",
+      "family": "copilot",
+      "label": "GitHub Copilot CLI",
+      "kind": "cli-agent",
+      "required": false,
+      "hookable": true,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [
+          {
+            "name": "COPILOT_MODEL",
+            "value": null,
+            "verified": false
+          },
+          {
+            "name": "COPILOT_ALLOW_ALL",
+            "value": null,
+            "verified": false
+          }
+        ],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": {
+        "any_of": [
+          {
+            "cmd": "copilot"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "ref": "docs.github.com/copilot",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "advisory",
+          "rules": "unverified; through its own shims when installed",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "copilot-cloud-agent",
+      "family": "copilot",
+      "label": "GitHub Copilot coding agent",
+      "kind": "cloud-agent",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": null,
+      "sources": [
+        {
+          "ref": "docs.github.com/copilot",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "not-applicable",
+          "rules": "no local hook surface",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "windsurf",
+      "family": "unknown-agent",
+      "label": "Windsurf (Cascade)",
+      "kind": "ide-agent",
+      "required": false,
+      "hookable": true,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [
+          {
+            "name": "AI_AGENT",
+            "value": null,
+            "verified": false
+          }
+        ],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": {
+        "any_of": [
+          {
+            "cmd": "windsurf"
+          },
+          {
+            "path": "/Applications/Windsurf.app"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "ref": "docs.windsurf.com",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "advisory",
+          "rules": "unverified; through its own shims when installed",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "aider",
+      "family": "unknown-agent",
+      "label": "Aider",
+      "kind": "cli-agent",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [
+          {
+            "name": "AI_AGENT",
+            "value": null,
+            "verified": false
+          }
+        ],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": {
+        "any_of": [
+          {
+            "cmd": "aider"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "ref": "aider.chat/docs",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "not-applicable",
+          "rules": "no hook API",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "warp",
+      "family": "unknown-agent",
+      "label": "Warp agent",
+      "kind": "cli-agent",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [
+          {
+            "name": "AI_AGENT",
+            "value": null,
+            "verified": false
+          }
+        ],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": {
+        "any_of": [
+          {
+            "path": "/Applications/Warp.app"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "ref": "docs.warp.dev",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "not-applicable",
+          "rules": "no hook API",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "other-local-agents",
+      "family": "unknown-agent",
+      "label": "Other local agents (OpenCode, Goose, Cline, Zed, Amp)",
+      "kind": "cli-agent",
+      "required": false,
+      "hookable": true,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [
+          {
+            "name": "AI_AGENT",
+            "value": null,
+            "verified": false
+          }
+        ],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": {
+        "any_of": [
+          {
+            "cmd": "opencode"
+          },
+          {
+            "cmd": "goose"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "ref": "agents.md",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "advisory",
+          "rules": "unverified; through its own shims when installed",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "grok-build",
+      "family": "unknown-agent",
+      "label": "Grok Build",
+      "kind": "cli-agent",
+      "required": false,
+      "hookable": true,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [
+          {
+            "name": "AI_AGENT",
+            "value": null,
+            "verified": false
+          }
+        ],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": {
+        "any_of": [
+          {
+            "cmd": "grok"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "ref": "x.ai",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "advisory",
+          "rules": "unverified; through its own shims when installed",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "web-chat",
+      "family": "unknown-agent",
+      "label": "Web chat (ChatGPT, grok.com, Perplexity web)",
+      "kind": "chat",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [
+          {
+            "name": "AI_AGENT",
+            "value": null,
+            "verified": false
+          }
+        ],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": null,
+      "sources": [
+        {
+          "ref": "agents.md",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "not-applicable",
+          "rules": "no local hook surface",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "mcp-clients",
+      "family": "unknown-agent",
+      "label": "MCP clients and local models",
+      "kind": "mcp-client",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [
+          {
+            "name": "AI_AGENT",
+            "value": null,
+            "verified": false
+          }
+        ],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": null,
+      "sources": [
+        {
+          "ref": "modelcontextprotocol.io",
+          "fetched": "2026-09-22",
+          "verified": false
+        }
+      ],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "not-applicable",
+          "rules": "no local hook surface",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "human",
+      "family": "human",
+      "label": "Sean at a plain terminal or git GUI",
+      "kind": "human",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": null,
+      "sources": [],
+      "coverage": {
+        "H16": {
+          "mode": "not-applicable",
+          "rules": "rendered and installed only when install_probe passes",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "not-applicable",
+          "rules": "no local hook surface",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    }
+  ],
+  "formats": {
+    "claude-settings": {
+      "session-start": "SessionStart",
+      "user-prompt": "UserPromptSubmit",
+      "pre-tool": "PreToolUse",
+      "post-tool": "PostToolUse",
+      "stop": "Stop",
+      "session-end": "SessionEnd"
+    },
+    "cursor-hooks": {
+      "session-start": "sessionStart",
+      "user-prompt": "beforeSubmitPrompt",
+      "pre-compact": "preCompact",
+      "session-end": "sessionEnd",
+      "subagent-stop": "subagentStop",
+      "pre-tool": "beforeShellExecution"
+    },
+    "codex-hooks": {
+      "session-start": "SessionStart",
+      "user-prompt": "UserPromptSubmit",
+      "pre-tool": "PreToolUse",
+      "post-tool": "PostToolUse",
+      "stop": "Stop"
+    }
+  },
+  "dialects": {
+    "claude": {
+      "context": "hookSpecificOutput",
+      "noop": "",
+      "verified": true
+    },
+    "cursor": {
+      "context": "additional_context",
+      "noop": "{}",
+      "verified": true
+    },
+    "codex": {
+      "context": "plain",
+      "noop": "",
+      "verified": false
+    }
+  },
+  "layers": [
+    {
+      "id": "claude-user",
+      "scope": "user",
+      "install_path": "~/.claude/settings.json",
+      "format": "claude-settings",
+      "output": "00-bootstrap/dist/settings-user-fragment.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "claude-settings-keys",
+      "cwd_context": [
+        "workspace",
+        "other"
+      ],
+      "loaded_by": [
+        "claude-code",
+        "cursor",
+        "copilot-vscode",
+        "grok-build"
+      ]
+    },
+    {
+      "id": "claude-project",
+      "scope": "project",
+      "install_path": ".claude/settings.json",
+      "format": "claude-settings",
+      "output": ".claude/settings.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "tracked",
+      "cwd_context": [
+        "workspace"
+      ],
+      "loaded_by": [
+        "claude-code",
+        "claude-code-cloud",
+        "cursor",
+        "copilot-vscode"
+      ]
+    },
+    {
+      "id": "snds-plugin",
+      "scope": "user",
+      "install_path": "~/.claude/local-plugins/snds-local/snds/hooks/hooks.json",
+      "format": "claude-settings",
+      "output": "00-bootstrap/dist/plugin-hooks.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "whole-file",
+      "cwd_context": [
+        "workspace",
+        "other"
+      ],
+      "loaded_by": [
+        "claude-code",
+        "cursor",
+        "codex"
+      ]
+    },
+    {
+      "id": "cursor-user",
+      "scope": "user",
+      "install_path": "~/.cursor/hooks.json",
+      "format": "cursor-hooks",
+      "output": "00-bootstrap/dist/cursor-hooks.json",
+      "owned_keys": [
+        "version",
+        "hooks"
+      ],
+      "install_mode": "whole-file",
+      "cwd_context": [
+        "workspace",
+        "other"
+      ],
+      "loaded_by": [
+        "cursor",
+        "cursor-cli"
+      ]
+    },
+    {
+      "id": "cursor-project",
+      "scope": "project",
+      "install_path": ".cursor/hooks.json",
+      "format": "cursor-hooks",
+      "output": ".cursor/hooks.json",
+      "owned_keys": [
+        "version",
+        "hooks"
+      ],
+      "install_mode": "tracked",
+      "cwd_context": [
+        "workspace"
+      ],
+      "loaded_by": [
+        "cursor",
+        "cursor-cli",
+        "cursor-cloud"
+      ]
+    },
+    {
+      "id": "probe-claude-user",
+      "scope": "user",
+      "install_path": "~/.claude/settings.json",
+      "format": "claude-settings",
+      "output": "00-bootstrap/dist/probe/claude-code.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "merge-hook-entries",
+      "cwd_context": [
+        "workspace",
+        "other"
+      ],
+      "loaded_by": [
+        "claude-code",
+        "cursor",
+        "copilot-vscode",
+        "grok-build"
+      ]
+    },
+    {
+      "id": "probe-cursor-user",
+      "scope": "user",
+      "install_path": "~/.cursor/hooks.json",
+      "format": "cursor-hooks",
+      "output": "00-bootstrap/dist/probe/cursor.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "merge-hook-entries",
+      "cwd_context": [
+        "workspace",
+        "other"
+      ],
+      "loaded_by": [
+        "cursor",
+        "cursor-cli"
+      ]
+    },
+    {
+      "id": "probe-codex-user",
+      "scope": "user",
+      "install_path": "~/.codex/hooks.json",
+      "format": "codex-hooks",
+      "output": "00-bootstrap/dist/probe/codex.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "merge-hook-entries",
+      "cwd_context": [
+        "workspace",
+        "other"
+      ],
+      "loaded_by": [
+        "codex"
+      ]
+    }
+  ],
+  "commands": {
+    "ws-user-sessionstart": {
+      "template": "$HOME/.claude/hooks/workspace-sessionstart.sh",
+      "behaviour": "boot-context",
+      "implements": [
+        "host_filter",
+        "claim",
+        "defer_in_workspace"
+      ],
+      "verified_by": [
+        "fixture:TestHostFilter"
+      ]
+    },
+    "ws-user-reassert": {
+      "template": "$HOME/.claude/hooks/workspace-reassert.sh",
+      "behaviour": "ritual-reassert",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestHostFilter"
+      ]
+    },
+    "ws-user-audit": {
+      "template": "$HOME/.claude/hooks/workspace-audit.sh",
+      "behaviour": "ritual-audit",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestHostFilter"
+      ]
+    },
+    "dispatcher": {
+      "template": "d=\"${CLAUDE_PROJECT_DIR:-}/.claude/hooks/dispatcher.py\"; [ -n \"${CLAUDE_PROJECT_DIR:-}\" ] && [ -f \"$d\" ] && command -v python3 >/dev/null 2>&1 || exit 0; exec python3 \"$d\" {event}",
+      "behaviour_by_event": {
+        "session-start": "boot-context",
+        "user-prompt": "layer0-route",
+        "pre-tool": "figma-gate",
+        "post-tool": "touch-ledger",
+        "stop": "stop-nudge",
+        "session-end": "session-close"
+      },
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestDispatcherDefer"
+      ]
+    },
+    "cursor-sessionstart": {
+      "template": "$HOME/.claude/hooks/cursor-sessionstart.sh",
+      "behaviour": "boot-context",
+      "implements": [],
+      "verified_by": []
+    },
+    "cursor-subagent-stop-project": {
+      "template": ".cursor/hooks/cursor-subagent-stop.sh",
+      "behaviour": "baton-nudge",
+      "implements": [],
+      "verified_by": []
+    },
+    "ws-hook-probe": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook --host auto --event {event} --probe",
+      "behaviour": "probe",
+      "implements": [
+        "claim"
+      ],
+      "verified_by": [
+        "selftest:09-tools/ws_hook.py"
+      ]
+    }
+  },
+  "registrations": [
+    {
+      "id": "claude-user.session-start",
+      "layer": "claude-user",
+      "event": "session-start",
+      "command": "ws-user-sessionstart",
+      "timeout": 15,
+      "matcher": null,
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": "claude-boot",
+      "defers_to": "claude-project.session-start"
+    },
+    {
+      "id": "claude-user.user-prompt",
+      "layer": "claude-user",
+      "event": "user-prompt",
+      "command": "ws-user-reassert",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "claude-user.session-end",
+      "layer": "claude-user",
+      "event": "session-end",
+      "command": "ws-user-audit",
+      "timeout": 10,
+      "matcher": null,
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "claude-project.session-start",
+      "layer": "claude-project",
+      "event": "session-start",
+      "command": "dispatcher",
+      "timeout": 30,
+      "matcher": null,
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "claude-project.pre-tool",
+      "layer": "claude-project",
+      "event": "pre-tool",
+      "command": "dispatcher",
+      "timeout": 10,
+      "matcher": "mcp__.*use_figma.*",
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "claude-project.user-prompt",
+      "layer": "claude-project",
+      "event": "user-prompt",
+      "command": "dispatcher",
+      "timeout": 10,
+      "matcher": null,
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "claude-project.post-tool",
+      "layer": "claude-project",
+      "event": "post-tool",
+      "command": "dispatcher",
+      "timeout": 10,
+      "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "claude-project.stop",
+      "layer": "claude-project",
+      "event": "stop",
+      "command": "dispatcher",
+      "timeout": 10,
+      "matcher": null,
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "claude-project.session-end",
+      "layer": "claude-project",
+      "event": "session-end",
+      "command": "dispatcher",
+      "timeout": 60,
+      "matcher": null,
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "snds-plugin.session-start",
+      "layer": "snds-plugin",
+      "event": "session-start",
+      "command": "ws-user-sessionstart",
+      "timeout": 15,
+      "matcher": null,
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": "claude-boot",
+      "defers_to": "claude-project.session-start"
+    },
+    {
+      "id": "cursor-user.session-start",
+      "layer": "cursor-user",
+      "event": "session-start",
+      "command": "cursor-sessionstart",
+      "timeout": null,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "cursor-project.subagent-stop",
+      "layer": "cursor-project",
+      "event": "subagent-stop",
+      "command": "cursor-subagent-stop-project",
+      "timeout": null,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "probe-claude-user.session-start",
+      "layer": "probe-claude-user",
+      "event": "session-start",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-claude-user.user-prompt",
+      "layer": "probe-claude-user",
+      "event": "user-prompt",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-claude-user.stop",
+      "layer": "probe-claude-user",
+      "event": "stop",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-claude-user.session-end",
+      "layer": "probe-claude-user",
+      "event": "session-end",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-cursor-user.session-start",
+      "layer": "probe-cursor-user",
+      "event": "session-start",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-cursor-user.user-prompt",
+      "layer": "probe-cursor-user",
+      "event": "user-prompt",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-cursor-user.pre-compact",
+      "layer": "probe-cursor-user",
+      "event": "pre-compact",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-cursor-user.session-end",
+      "layer": "probe-cursor-user",
+      "event": "session-end",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-cursor-user.subagent-stop",
+      "layer": "probe-cursor-user",
+      "event": "subagent-stop",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-codex-user.session-start",
+      "layer": "probe-codex-user",
+      "event": "session-start",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-codex-user.user-prompt",
+      "layer": "probe-codex-user",
+      "event": "user-prompt",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-codex-user.stop",
+      "layer": "probe-codex-user",
+      "event": "stop",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    }
+  ],
+  "outputs": [
+    {
+      "id": "claude-user-fragment",
+      "path": "00-bootstrap/dist/settings-user-fragment.json",
+      "layer": "claude-user",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": "~/.claude/settings.json",
+      "install_mode": "claude-settings-keys",
+      "surface": "claude-code",
+      "probe": false,
+      "render": "hooks"
+    },
+    {
+      "id": "claude-project-settings",
+      "path": ".claude/settings.json",
+      "layer": "claude-project",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": ".claude/settings.json",
+      "install_mode": "tracked",
+      "surface": "claude-code",
+      "probe": false,
+      "render": "hooks"
+    },
+    {
+      "id": "cursor-user-hooks",
+      "path": "00-bootstrap/dist/cursor-hooks.json",
+      "layer": "cursor-user",
+      "owned_keys": [
+        "version",
+        "hooks"
+      ],
+      "install_path": "~/.cursor/hooks.json",
+      "install_mode": "whole-file",
+      "surface": "cursor",
+      "probe": false,
+      "render": "hooks"
+    },
+    {
+      "id": "cursor-project-hooks",
+      "path": ".cursor/hooks.json",
+      "layer": "cursor-project",
+      "owned_keys": [
+        "version",
+        "hooks"
+      ],
+      "install_path": ".cursor/hooks.json",
+      "install_mode": "tracked",
+      "surface": "cursor",
+      "probe": false,
+      "render": "hooks"
+    },
+    {
+      "id": "snds-plugin-hooks",
+      "path": "00-bootstrap/dist/plugin-hooks.json",
+      "layer": "snds-plugin",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": "~/.claude/local-plugins/snds-local/snds/hooks/hooks.json",
+      "install_mode": "whole-file",
+      "surface": "claude-code",
+      "probe": false,
+      "render": "hooks"
+    },
+    {
+      "id": "codex-config-fragment",
+      "path": "00-bootstrap/dist/codex-config-fragment.toml",
+      "layer": null,
+      "owned_keys": [
+        "shell_environment_policy.set.WS_SURFACE_FAMILY",
+        "sandbox_workspace_write.writable_roots"
+      ],
+      "install_path": "~/.codex/config.toml",
+      "install_mode": "managed-block",
+      "surface": "codex",
+      "probe": false,
+      "render": "codex-config"
+    },
+    {
+      "id": "cursor-sandbox-fragment",
+      "path": "00-bootstrap/dist/cursor-sandbox-fragment.json",
+      "layer": null,
+      "owned_keys": [
+        "additionalReadwritePaths"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": "cursor",
+      "probe": false,
+      "render": "cursor-sandbox"
+    },
+    {
+      "id": "probe-claude-code",
+      "path": "00-bootstrap/dist/probe/claude-code.json",
+      "layer": "probe-claude-user",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": "~/.claude/settings.json",
+      "install_mode": "merge-hook-entries",
+      "surface": "claude-code",
+      "probe": true,
+      "render": "hooks"
+    },
+    {
+      "id": "probe-cursor",
+      "path": "00-bootstrap/dist/probe/cursor.json",
+      "layer": "probe-cursor-user",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": "~/.cursor/hooks.json",
+      "install_mode": "merge-hook-entries",
+      "surface": "cursor",
+      "probe": true,
+      "render": "hooks"
+    },
+    {
+      "id": "probe-codex",
+      "path": "00-bootstrap/dist/probe/codex.json",
+      "layer": "probe-codex-user",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": "~/.codex/hooks.json",
+      "install_mode": "merge-hook-entries",
+      "surface": "codex",
+      "probe": true,
+      "render": "hooks"
+    },
+    {
+      "id": "surfaces-md-block",
+      "path": "00-bootstrap/SURFACES.md",
+      "layer": null,
+      "owned_keys": [
+        "surfaces-block"
+      ],
+      "install_path": null,
+      "install_mode": "tracked",
+      "surface": null,
+      "probe": false,
+      "render": "surfaces-md-block"
+    }
+  ],
+  "wrappers": {
+    "00-bootstrap/dist/ws-hook": {
+      "sha256": "35ce5d895a865e9881e5d6c8a42bef5643f6bcebfc4545275ed8d9c4b8cc4b32"
+    },
+    "00-bootstrap/dist/ws": {
+      "sha256": "c955a7eb7942c90a656bc3577e462f04c605ccae163a594ee2edb1b785faa6ef"
+    }
+  }
+}

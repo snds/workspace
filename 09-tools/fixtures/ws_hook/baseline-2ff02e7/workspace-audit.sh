@@ -6,8 +6,6 @@
 set -u
 STATE="$HOME/.claude/ws-state"; mkdir -p "$STATE"
 INPUT="$(cat 2>/dev/null || true)"
-W="$HOME/.config/snds-workspace/bin/ws-hook"
-if [ -x "$W" ]; then printf '%s' "$INPUT" | "$W" host --skip-any cursor >/dev/null 2>&1; [ "$?" = 3 ] && exit 0; fi
 # grep -o + head -1 takes the FIRST match. The old sed used a greedy `.*` prefix,
 # which anchored to the LAST occurrence: a nested/repeated key (e.g. a "source"
 # inside a meta object) silently won over the real top-level one.

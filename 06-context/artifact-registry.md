@@ -124,6 +124,56 @@
 - **Purpose**: Synthetic installer fixtures: render list stand-in, stale v1 settings, probe record, fixture repo.
 - **Last modified**: 2026-09-22 — created in wave 0 (T3).
 
+### 02-shared-references/surfaces.json
+- **Size**: ~2344 lines
+- **Purpose**: Surface registry (H16): 22 surface rows, families, markers, formats, dialects, layers, commands, registrations, outputs, wrapper sha256; source for render_shims and profile_resolve detection.
+- **Last modified**: 2026-09-22 — created in wave 0 (T1).
+
+### 00-bootstrap/doctor/render_shims.py
+- **Size**: ~951 lines
+- **Purpose**: Generator and checker for every hook registration output declared in surfaces.json.
+- **Last modified**: 2026-09-22 — created in wave 0 (T1).
+
+### 09-tools/ws_hook.py
+- **Size**: ~1395 lines
+- **Purpose**: Neutral hook core behind the pinned ws-hook wrapper (H19).
+- **Last modified**: 2026-09-22 — created in wave 0 (T1).
+
+### 00-bootstrap/dist/ws-hook
+- **Size**: ~7 lines
+- **Purpose**: Byte-stable user-level hook entry; execs the pinned lib's ws_hook.py; sha256 pinned in surfaces.json.
+- **Last modified**: 2026-09-22 — created in wave 0 (T1).
+
+### 00-bootstrap/dist/ws
+- **Size**: ~11 lines
+- **Purpose**: Byte-stable neutral command entry: ws hook|resolve|intent|status.
+- **Last modified**: 2026-09-22 — created in wave 0 (T1).
+
+### 00-bootstrap/dist/probe/
+- **Size**: 3 files
+- **Purpose**: Probe registration fragments for claude-code, cursor and codex (installed only by Sean with --probe).
+- **Last modified**: 2026-09-22 — created in wave 0 (T1).
+
+### 00-bootstrap/dist/codex-config-fragment.toml
+- **Size**: ~10 lines
+- **Purpose**: Codex managed block: WS_SURFACE_FAMILY=codex and the telemetry writable root.
+- **Last modified**: 2026-09-22 — created in wave 0 (T1).
+
+### 00-bootstrap/dist/cursor-sandbox-fragment.json
+- **Size**: ~5 lines
+- **Purpose**: Cursor sandbox write root for telemetry only (config path unverified).
+- **Last modified**: 2026-09-22 — created in wave 0 (T1).
+
+### 02-shared-references/probes/README.md
+- **Size**: ~54 lines
+- **Purpose**: How host probe records are produced, promoted and redacted.
+- **Last modified**: 2026-09-22 — created in wave 0 (T1).
+
+### _archive/cursor-dark-shims-2026-09/
+- **Size**: 6 files
+- **Purpose**: Six retired Cursor shims (dark output or duplicate registration), with ARCHIVE-LOG rows.
+- **Last modified**: 2026-09-22 — created in wave 0 (T1).
+
 ## Meridian Design System — files/meridian-ds/
 
 ### app-shell-prototype-v0.1.jsx

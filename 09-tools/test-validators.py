@@ -835,6 +835,117 @@ class TestInstaller(unittest.TestCase):
             self.assertEqual(list(home.iterdir()), [])
 
 
+class TestSurfaces(unittest.TestCase):
+    """G1: Rule C on the live surfaces.json (strict) plus planted coverage defects."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.rs = load("00-bootstrap/doctor/render_shims.py")
+        import contextlib
+        import io
+        with contextlib.redirect_stdout(io.StringIO()):
+            cls.results = {name: (ok, detail) for name, ok, detail in cls.rs.self_test_cases()}
+
+    def test_live_coverage_is_strictly_clean(self):
+        res = self.rs.check(ROOT_DIR, only=["coverage"], pending_ok=False)
+        self.assertEqual(res["errors"], [])
+        self.assertEqual(res["warnings"], [])
+
+    def test_minimum_surfaces_cover_every_component(self):
+        t = self.rs.load_table(ROOT_DIR)
+        rows = {s["id"]: s for s in t["surfaces"]}
+        self.assertEqual(len(t["surfaces"]), 22)
+        for m in t["minimum_surfaces"]:
+            for c in t["components"]:
+                with self.subTest(surface=m, component=c):
+                    self.assertIn(c, rows[m]["coverage"])
+        for s in t["surfaces"]:
+            self.assertIn(s["family"], t["families"])
+
+    def test_planted_coverage_defects_fail(self):
+        for name in ("missing codex row", "row family not in families", "enforced with no verified_by",
+                     "unresolvable verified_by in strict mode",
+                     "unresolvable fixture ref is a warning under --pending-ok",
+                     "unresolvable probe ref stays an error under --pending-ok", "invalid coverage mode",
+                     "unknown top-level key"):
+            with self.subTest(case=name):
+                ok, detail = self.results.get(name, (False, "case missing"))
+                self.assertTrue(ok, detail)
+
+
+class TestRenderShims(unittest.TestCase):
+    """G2: rendered outputs match, one effective registration per surface/event/behaviour, wrappers pinned."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.rs = load("00-bootstrap/doctor/render_shims.py")
+        import contextlib
+        import io
+        with contextlib.redirect_stdout(io.StringIO()):
+            cls.results = {name: (ok, detail) for name, ok, detail in cls.rs.self_test_cases()}
+
+    def test_live_outputs_registrations_wrappers_clean(self):
+        res = self.rs.check(ROOT_DIR, only=["outputs", "registrations", "wrappers"], pending_ok=False)
+        self.assertEqual(res["errors"], [])
+        self.assertEqual(res["warnings"], [])
+
+    def test_rule_r_one_effective_registration(self):
+        self.assertEqual(self.rs.effective_violations(self.rs.load_table(ROOT_DIR)), {})
+
+    def test_project_registrations_reach_dispatcher_handlers(self):
+        import ast
+        tree = ast.parse((ROOT_DIR / ".claude" / "hooks" / "dispatcher.py").read_text(encoding="utf-8"))
+        handlers = None
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign) and any(getattr(t, "id", None) == "HANDLERS" for t in node.targets):
+                handlers = {k.value for k in node.value.keys}
+        self.assertTrue(handlers)
+        settings = json.loads((ROOT_DIR / ".claude" / "settings.json").read_text(encoding="utf-8"))
+        commands = [h["command"] for groups in settings["hooks"].values() for g in groups for h in g["hooks"]]
+        self.assertTrue(commands)
+        for cmd in commands:
+            with self.subTest(command=cmd[-40:]):
+                self.assertIn(cmd.rsplit(" ", 1)[-1], handlers)
+                self.assertNotIn("$HOME", cmd)
+
+    def test_planted_registration_and_output_defects_fail(self):
+        for name in ("base fixture is clean", "write is idempotent",
+                     "duplicate Cursor sessionEnd (project plus user)",
+                     "plugin SessionStart duplicates the user hook without a claim_group",
+                     "project-scope shim references $HOME", "host_skip on a command without host_filter",
+                     "pending registration fails in strict mode", "wrapper sha mismatch",
+                     "hand-edited output is drift", "--rev without render_shims.py exits 3",
+                     "--verify-canonical passes a pure reformat and fails a value change"):
+            with self.subTest(case=name):
+                ok, detail = self.results.get(name, (False, "case missing"))
+                self.assertTrue(ok, detail)
+
+
+class TestWsHook(unittest.TestCase):
+    """G3a: payload goldens, dialects, dedupe, budget, fail-open, redaction, host filter, floor adapter, N1."""
+
+    def test_ws_hook_cases(self):
+        ws = load("ws_hook")
+        cases = ws.self_test_cases()
+        self.assertGreater(len(cases), 50)
+        for name, ok, detail in cases:
+            with self.subTest(case=name):
+                self.assertTrue(ok, detail)
+
+
+class TestHostFilter(unittest.TestCase):
+    """G2b: Claude Code and Codex boot output byte-identical to 2ff02e7 with and without a pin;
+    Cursor silenced only when the pinned wrapper reports verified evidence (exit 3)."""
+
+    def test_host_filter_goldens(self):
+        ws = load("ws_hook")
+        cases = ws.shell_golden_cases()
+        self.assertGreater(len(cases), 40)
+        for name, ok, detail in cases:
+            with self.subTest(case=name):
+                self.assertTrue(ok, detail)
+
+
 def main(argv: list) -> int:
     strict = "--strict-skips" in argv
     names = [a for a in argv if a != "--strict-skips"]

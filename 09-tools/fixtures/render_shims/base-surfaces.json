@@ -1,0 +1,451 @@
+{
+  "schema_version": 1,
+  "doc": "render_shims.py --self-test base fixture: synthetic surfaces, layers and registrations only.",
+  "coverage_modes": [
+    "enforced",
+    "enforced-partial",
+    "enforced-when-installed",
+    "advisory",
+    "unverified",
+    "backstop-only",
+    "not-applicable"
+  ],
+  "minimum_surfaces": [
+    "claude-code",
+    "claude-chat",
+    "cursor",
+    "codex"
+  ],
+  "components": [
+    "H16",
+    "H19"
+  ],
+  "families": {
+    "claude": {
+      "wall_rank": 100,
+      "agent": true
+    },
+    "cursor": {
+      "wall_rank": 50,
+      "agent": true
+    },
+    "codex": {
+      "wall_rank": 50,
+      "agent": true
+    },
+    "human": {
+      "wall_rank": 0,
+      "agent": false
+    }
+  },
+  "never_markers": [],
+  "agent_possible_env": {
+    "names": [],
+    "prefixes": []
+  },
+  "probe_env_name_prefixes": [],
+  "probe_env_value_allowlist": [],
+  "surfaces": [
+    {
+      "id": "claude-code",
+      "family": "claude",
+      "label": "fixture claude-code",
+      "kind": "cli-agent",
+      "required": true,
+      "hookable": true,
+      "dialect": "claude",
+      "timeouts_s": {},
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": null,
+      "sources": [],
+      "coverage": {
+        "H16": {
+          "mode": "enforced",
+          "rules": "fixture",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestFixtureOk"
+          ],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "enforced",
+          "rules": "fixture",
+          "decision": null,
+          "verified_by": [
+            "selftest:tools/fx.py"
+          ],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "claude-chat",
+      "family": "claude",
+      "label": "fixture claude-chat",
+      "kind": "chat",
+      "required": true,
+      "hookable": false,
+      "dialect": "none",
+      "timeouts_s": {},
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": null,
+      "sources": [],
+      "coverage": {
+        "H16": {
+          "mode": "advisory",
+          "rules": "fixture",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "not-applicable",
+          "rules": "fixture",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "cursor",
+      "family": "cursor",
+      "label": "fixture cursor",
+      "kind": "ide-agent",
+      "required": true,
+      "hookable": true,
+      "dialect": "cursor",
+      "timeouts_s": {},
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": null,
+      "sources": [],
+      "coverage": {
+        "H16": {
+          "mode": "enforced-when-installed",
+          "rules": "fixture",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestFixtureOk"
+          ],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "unverified",
+          "rules": "fixture",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [
+            "probe:cursor@dev-a"
+          ],
+          "how": ""
+        }
+      }
+    },
+    {
+      "id": "codex",
+      "family": "codex",
+      "label": "fixture codex",
+      "kind": "desktop-app",
+      "required": true,
+      "hookable": true,
+      "dialect": "codex",
+      "timeouts_s": {},
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "family_marker_channel": "none",
+      "sandbox": null,
+      "plugin_layers": [],
+      "install_probe": null,
+      "sources": [],
+      "coverage": {
+        "H16": {
+          "mode": "advisory",
+          "rules": "fixture",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H19": {
+          "mode": "unverified",
+          "rules": "fixture",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        }
+      }
+    }
+  ],
+  "formats": {
+    "claude-settings": {
+      "session-start": "SessionStart",
+      "session-end": "SessionEnd"
+    },
+    "cursor-hooks": {
+      "session-start": "sessionStart",
+      "session-end": "sessionEnd"
+    }
+  },
+  "dialects": {
+    "claude": {
+      "context": "hookSpecificOutput",
+      "noop": "",
+      "verified": true
+    },
+    "cursor": {
+      "context": "additional_context",
+      "noop": "{}",
+      "verified": true
+    },
+    "codex": {
+      "context": "plain",
+      "noop": "",
+      "verified": false
+    }
+  },
+  "layers": [
+    {
+      "id": "fx-user",
+      "scope": "user",
+      "install_path": "~/fixture/fx-user.json",
+      "format": "claude-settings",
+      "output": "out/user.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "whole-file",
+      "cwd_context": [
+        "workspace",
+        "other"
+      ],
+      "loaded_by": [
+        "claude-code",
+        "cursor"
+      ]
+    },
+    {
+      "id": "fx-plugin",
+      "scope": "user",
+      "install_path": "~/fixture/fx-plugin.json",
+      "format": "claude-settings",
+      "output": "out/plugin.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "whole-file",
+      "cwd_context": [
+        "workspace",
+        "other"
+      ],
+      "loaded_by": [
+        "claude-code",
+        "cursor",
+        "codex"
+      ]
+    },
+    {
+      "id": "fx-cursor-user",
+      "scope": "user",
+      "install_path": "~/fixture/fx-cursor-user.json",
+      "format": "cursor-hooks",
+      "output": "out/cursor-user.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "whole-file",
+      "cwd_context": [
+        "workspace",
+        "other"
+      ],
+      "loaded_by": [
+        "cursor"
+      ]
+    },
+    {
+      "id": "fx-project",
+      "scope": "project",
+      "install_path": "out/project.json",
+      "format": "cursor-hooks",
+      "output": "out/project.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "tracked",
+      "cwd_context": [
+        "workspace"
+      ],
+      "loaded_by": [
+        "cursor"
+      ]
+    }
+  ],
+  "commands": {
+    "fx-boot": {
+      "template": "$HOME/x/boot.sh",
+      "behaviour": "boot-context",
+      "implements": [
+        "host_filter",
+        "claim"
+      ],
+      "verified_by": []
+    },
+    "fx-cursor-boot": {
+      "template": "$HOME/x/cursor-boot.sh",
+      "behaviour": "boot-context",
+      "implements": [],
+      "verified_by": []
+    },
+    "fx-nudge-user": {
+      "template": "$HOME/x/nudge.sh",
+      "behaviour": "session-close-nudge",
+      "implements": [],
+      "verified_by": []
+    },
+    "fx-nudge-project": {
+      "template": "x/nudge.sh",
+      "behaviour": "session-close-nudge",
+      "implements": [],
+      "verified_by": []
+    }
+  },
+  "registrations": [
+    {
+      "id": "fx-user.session-start",
+      "layer": "fx-user",
+      "event": "session-start",
+      "command": "fx-boot",
+      "timeout": 15,
+      "matcher": null,
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": "boot",
+      "defers_to": null
+    },
+    {
+      "id": "fx-plugin.session-start",
+      "layer": "fx-plugin",
+      "event": "session-start",
+      "command": "fx-boot",
+      "timeout": 15,
+      "matcher": null,
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": "boot",
+      "defers_to": null
+    },
+    {
+      "id": "fx-cursor-user.session-start",
+      "layer": "fx-cursor-user",
+      "event": "session-start",
+      "command": "fx-cursor-boot",
+      "timeout": null,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "fx-project.session-end",
+      "layer": "fx-project",
+      "event": "session-end",
+      "command": "fx-nudge-project",
+      "timeout": null,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    }
+  ],
+  "outputs": [
+    {
+      "id": "fx-user-out",
+      "path": "out/user.json",
+      "layer": "fx-user",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": "claude-code",
+      "probe": false,
+      "render": "hooks"
+    },
+    {
+      "id": "fx-plugin-out",
+      "path": "out/plugin.json",
+      "layer": "fx-plugin",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": "claude-code",
+      "probe": false,
+      "render": "hooks"
+    },
+    {
+      "id": "fx-cursor-user-out",
+      "path": "out/cursor-user.json",
+      "layer": "fx-cursor-user",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": "cursor",
+      "probe": false,
+      "render": "hooks"
+    },
+    {
+      "id": "fx-project-out",
+      "path": "out/project.json",
+      "layer": "fx-project",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": null,
+      "install_mode": "tracked",
+      "surface": "cursor",
+      "probe": false,
+      "render": "hooks"
+    }
+  ],
+  "wrappers": {
+    "wrap/ws-hook": {
+      "sha256": "306c6ca7407560340797866e077e053627ad409277d1b9da58106fce4cf717cb"
+    }
+  }
+}
