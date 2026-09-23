@@ -16,6 +16,16 @@ confidence: high
 >   employer repos (cpes-software/*, c8*, Centric Bitbucket, design-system), and it does not paste
 >   employer material. Employer-repo actions go to Cursor, Codex or Sean.
 > - Every non-Claude surface follows the device rule below.
+> - **Employer-approved surfaces are Cursor and Codex** (Sean, 2026-09-22). They get full use of the
+>   workspace harness in employer repos (which live under `~/Projects` on the Work MBP), including
+>   read-only repo mapping and recon. Claude never maps or reads employer code.
+> - **Scope of the Claude gate:** no *meaningful or long-running coding* on employer work.
+>   **Housekeeping is allowed for Claude, with receipts** (Sean confirmed 2026-09-22). This covers
+>   pruning merged branches authored by `@me`, fast-forwarding `main`, and removing clean merged
+>   worktrees. It runs only through vetted scripts, never through commands Claude composes itself, and
+>   each run prints a receipt naming the repo, the action, and the credential used. Content-read,
+>   author and publish actions on employer repos are handed off to Cursor/Codex; merge is human-only.
+>   The action-class policy table that makes this mechanical is in harness plan v1.1 (wave 0, with H2).
 
 > **Update 2026-09-22 (Sean, in chat): identity is device-based, not surface-based** (except Claude;
 > see above).
