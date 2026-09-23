@@ -1923,6 +1923,13 @@ _SHELLS = frozenset({"sh", "bash", "zsh", "dash", "ksh"})
 _WRAPPERS = frozenset({"command", "exec", "nohup", "time", "builtin", "nice"})
 _NOOP_TOOLS = frozenset({"true", "false", ":", "echo", "printf", "exit", "set"})
 _BYPASS_ENV = ("GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS", "GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM")
+# Set or unset on the command itself, these reroute the floor's wrapper, its interpreter or git's
+# config (git), or drop the gh belt / swap its credential (gh).
+_BYPASS_ENV_GIT = ("HOME", "PATH", "XDG_CONFIG_HOME", "PYTHONPATH", "PYTHONHOME", "PYTHONSTARTUP", "PYTHONUSERBASE",
+                   "PYTHONINSPECT")
+_BYPASS_ENV_GH = ("GH_CONFIG_DIR", "GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN",
+                  "GH_HOST", "HOME", "XDG_CONFIG_HOME")
+_UNKNOWN_CWD = "\x00unknown-cwd"
 _ASSIGN_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
 _REDIRECT_OPS = frozenset({">", ">>", "<", "<<", "<<<", ">&", "<&", "&>", "&>>", ">|"})
 _GIT_OPTS_WITH_VALUE = frozenset({"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--config-env",
@@ -2034,10 +2041,11 @@ def _parse_git(args: List[str], cwd: Optional[str]) -> Tuple[List[str], Optional
             j += 1
             continue
         break
-    if gitdir and cwd is None:
+    if gitdir:
         import posixpath
 
-        gd = posixpath.normpath(gitdir)
+        # git operates on --git-dir / GIT_DIR wherever the command runs, so it names the repo.
+        gd = posixpath.normpath(_join_cwd(cwd, gitdir) or gitdir) if not gitdir.startswith("~") else gitdir
         cwd = posixpath.dirname(gd) if posixpath.basename(gd) == ".git" else gd
     return args[j:], cwd, gitdir, bypass
 
@@ -2120,8 +2128,13 @@ def _parse_into(text: str, env0: Dict[str, Optional[str]], cwd0: Optional[str], 
             continue
         tool = toks[i].rstrip("/").rsplit("/", 1)[-1]
         args = toks[i + 1:]
-        if tool == "cd":
-            cwd = _join_cwd(cwd, args[0] if args else "~")
+        if tool in ("cd", "pushd", "popd"):
+            dest = [a for a in args if not a.startswith("-") or a == "-"]
+            if tool == "popd" or (tool == "pushd" and not dest) or (dest and (dest[0] == "-" or "$" in dest[0]
+                                                                                or "`" in dest[0])):
+                cwd = _UNKNOWN_CWD          # the target cannot be determined: most restrictive
+            else:
+                cwd = _join_cwd(cwd, dest[0] if dest else "~")
             continue
         if tool in ("export", "unset", "declare", "typeset"):
             for a in args:
@@ -2160,7 +2173,13 @@ def _parse_into(text: str, env0: Dict[str, Optional[str]], cwd0: Optional[str], 
                                "hook_bypass": False}
         bypass = "*" in env or any(k in env for k in _BYPASS_ENV)
         if tool == "git":
-            argv, gcwd, gitdir, cfg_bypass = _parse_git(args, cmd_cwd)
+            bypass = bypass or any(k in env for k in _BYPASS_ENV_GIT)
+            pre: List[str] = []
+            if env.get("GIT_DIR"):
+                pre += ["--git-dir", str(env["GIT_DIR"])]
+            if env.get("GIT_WORK_TREE"):
+                pre += ["--work-tree", str(env["GIT_WORK_TREE"])]
+            argv, gcwd, gitdir, cfg_bypass = _parse_git(pre + list(args), cmd_cwd)
             inv.update(argv=argv, cwd_hint=gcwd)
             if gitdir:
                 inv["git_dir_hint"] = gitdir
@@ -2168,6 +2187,7 @@ def _parse_into(text: str, env0: Dict[str, Optional[str]], cwd0: Optional[str], 
             if argv and argv[0] == "commit" and _commit_n(argv):
                 bypass = True
         elif tool == "gh":
+            bypass = bypass or any(k in env for k in _BYPASS_ENV_GH)
             argv = []
             repo_hint = None
             j = 0
@@ -2200,6 +2220,9 @@ def parse_command(text: str) -> list:
     out: List[dict] = []
     _parse_into(text or "", {}, None, 0, out)
     for inv in out:
+        if str(inv.get("cwd_hint") or "").startswith(_UNKNOWN_CWD):
+            inv["cwd_hint"] = None
+            inv["target_unknown"] = True
         ep = inv["env_prefix"]
         clean = {k: v for k, v in ep.items() if k != "*"}
         if "*" in ep:
@@ -2399,7 +2422,7 @@ def classify_command(text: str, *, cwd: Any = None, root: Optional[Path] = None,
         cls, vid = verb_class(inv2, table)
         row = {"tool": inv["tool"], "argv": argv, "cwd_hint": inv.get("cwd_hint"), "class": cls, "verb_id": vid,
                "target_ref": tr, "hook_bypass": bool(inv.get("hook_bypass"))}
-        for k in ("repo_hint", "op", "unparsed"):
+        for k in ("repo_hint", "op", "unparsed", "target_unknown"):
             if k in inv:
                 row[k] = inv[k]
         out.append(row)
@@ -2560,7 +2583,11 @@ def policy(*, repo: str, action_class: Optional[str] = None, command: Optional[s
             res = resolved[target]
         else:
             res = base
-        facts = dict(_res_facts(res, root, home), walls_family=walls, acting_family=acting, device=dev_id,
+        rf = _res_facts(res, root, home)
+        if inv.get("target_unknown"):
+            # a cwd change the parser cannot follow (popd, cd "$VAR", cd -): the most restrictive target
+            rf = dict(rf, owner_class="employer", positively_personal=False, has_remote=True)
+        facts = dict(rf, walls_family=walls, acting_family=acting, device=dev_id,
                      action_class=inv["class"], via=via, target_ref=inv.get("target_ref") or "none",
                      chain_has_agent=agent, hook_bypass=bool(inv.get("hook_bypass")))
         d = policy_decide(facts, table)
@@ -4094,9 +4121,18 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
                       ("git commit -anm x", "commit -anm"), ("GIT_CONFIG_COUNT=0 git push", "GIT_CONFIG_COUNT=0"),
                       ("env -u GIT_CONFIG_COUNT git push", "env -u"), ("env -i git push", "env -i"),
                       ("export GIT_CONFIG_PARAMETERS=x; git push", "export"),
-                      ("bash -lc 'git push --no-verify origin feat/a'", "bash -lc")):
+                      ("bash -lc 'git push --no-verify origin feat/a'", "bash -lc"),
+                      ("env -u GH_CONFIG_DIR gh api -X DELETE repos/acme-corp/w/git/refs/heads/x", "env -u GH_CONFIG_DIR"),
+                      ("GH_CONFIG_DIR=/tmp/x gh pr merge 1", "GH_CONFIG_DIR override"),
+                      ("GH_TOKEN=t gh pr merge 1 -R acme-corp/w", "GH_TOKEN"), ("GITHUB_TOKEN=t gh api x", "GITHUB_TOKEN"),
+                      ("HOME=/tmp/x git push origin --delete feat/h1", "HOME= on git"),
+                      ("env HOME=/tmp/x git commit -m x", "env HOME= on git"),
+                      ("PYTHONPATH=/tmp/x git commit -m x", "PYTHONPATH= on git"),
+                      ("PATH=/tmp/x:/usr/bin git push origin feat/a", "PATH= on git"),
+                      ("XDG_CONFIG_HOME=/tmp/x git push origin feat/a", "XDG_CONFIG_HOME= on git")):
         ok(any(b for _c, _t, b in cls(text)), f"hook_bypass: {why}")
     ok(not any(b for _c, _t, b in cls("git commit -m 'no -n here' && git push origin feat/a")), "no false bypass")
+    ok(not any(b for _c, _t, b in cls("HOME=/tmp/x ls && GH_TOKEN=t ls")), "no false bypass for other tools")
     p = parse_command("cd /x/y && FOO=1 command /usr/bin/git -C ../z --work-tree w status")
     ok(len(p) == 1 and p[0]["tool"] == "git" and p[0]["argv"] == ["status"] and p[0]["cwd_hint"] == "/x/z/w"
        and p[0]["env_prefix"] == {"FOO": "1"}, f"cd, env prefix, command, abs git, -C, --work-tree: {p}")
@@ -4143,6 +4179,17 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     ok(r["outcome"] == "deny", "multi-invocation: the most restrictive outcome wins")
     r = pol(claude, repo=str(pers), command=f"cd {emp} && git push origin --delete feat/done")
     ok(r["outcome"] == "deny" and r["facts"]["owner_class"] == "employer", "cd into another repo is evaluated there")
+    for text, why in ((f"GIT_DIR={emp}/.git git push origin main", "GIT_DIR= prefix"),
+                      (f"env GIT_DIR={emp}/.git git push origin main", "env GIT_DIR="),
+                      (f"export GIT_DIR={emp}/.git; git commit -m x", "export GIT_DIR"),
+                      (f"GIT_WORK_TREE={emp} git commit -m x", "GIT_WORK_TREE= prefix"),
+                      (f"pushd {emp} && git commit -m x", "pushd"),
+                      ("popd && git commit -m x", "popd (undeterminable target)"),
+                      ("cd \"$OLDPWD\" && git push origin main", "cd to a variable (undeterminable target)")):
+        r = pol(claude, repo=str(pers), command=text)
+        ok(r["outcome"] != "allow" and r["facts"]["owner_class"] == "employer",
+           f"{why}: the employer (or most restrictive) target is evaluated, not the personal base: {r['outcome']} "
+           f"{r['rule_id']} {r['facts'].get('owner_class')}")
     r = pol(claude, repo=str(pers), command="git push origin --delete feat/old")
     ok(r["outcome"] == "allow" and r["rule_id"] == "P50-personal", "personal repo allows under Claude")
     r = pol(human, command="git push origin --delete feat/done")
