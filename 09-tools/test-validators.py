@@ -903,6 +903,173 @@ class TestProfileResolve(unittest.TestCase):
         self.assertEqual(self.mod.self_test(stub_chain=True), 0)
 
 
+class TestActionPolicy(unittest.TestCase):
+    """H22 action policy: committed table schema, decide() matrix, verb map, bypass, routes (profile_resolve.py)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.mod = load("profile_resolve")
+        cls.fx = TOOLS / "fixtures" / "action_policy"
+
+    def _tmp(self):
+        td = tempfile.TemporaryDirectory()
+        self.addCleanup(td.cleanup)
+        return Path(os.path.realpath(td.name))
+
+    def test_t7_fixture_suite(self):
+        fails = []
+        self.mod._t7_self_test(self._tmp(), lambda cond, label: None if cond else fails.append(label))
+        self.assertEqual(fails, [])
+
+    def test_committed_tables_validate_and_fixture_mirrors_ids(self):
+        res = self.mod.validate_tables()["tables"]
+        for name in ("action-policy", "vetted-scripts"):
+            self.assertTrue(res[name]["present"], name)
+            self.assertTrue(res[name]["ok"], res[name]["errors"])
+        real = self.mod.load_table("action-policy")
+        fx = json.loads((self.fx / "action-policy.json").read_text(encoding="utf-8"))
+        self.assertEqual([r["id"] for r in real["rules"]], [r["id"] for r in fx["rules"]])
+        self.assertEqual([r["id"] for r in real["verb_map"]], [r["id"] for r in fx["verb_map"]])
+
+    def test_schema_negatives_fail_the_validator(self):
+        base = json.loads((self.fx / "action-policy.json").read_text(encoding="utf-8"))
+        cases = [
+            (lambda t: t["rules"][2]["when"].__setitem__("action_class", ["mischief"]), "unknown value 'mischief'"),
+            (lambda t: t.pop("default_outcome"), "missing key 'default_outcome'"),
+            (lambda t: t["rules"][0]["when"].__setitem__("mood", True), "unknown key 'mood'"),
+            (lambda t: t["verb_map"][0].__setitem__("class", "mischief"), "unknown class"),
+        ]
+        for mutate, needle in cases:
+            bad = json.loads(json.dumps(base))
+            mutate(bad)
+            errs = self.mod.validate_table("action-policy", bad)
+            self.assertTrue(any(needle in e for e in errs), (needle, errs))
+
+    def test_matrix_matches_item9_oracle(self):
+        table = json.loads((self.fx / "action-policy.json").read_text(encoding="utf-8"))
+        rows = self.mod._matrix_facts()
+        self.assertGreater(len(rows), 10000)
+        for f in rows:
+            self.assertEqual(self.mod.policy_decide(f, table)["outcome"], self.mod._oracle(f), f)
+
+    def test_committed_rows_p19_p21_p22_p40(self):
+        t = self.mod.load_table("action-policy")
+        base = {"walls_family": "claude", "device": "work-mbp", "positively_personal": False,
+                "under_projects_root": False, "chain_has_agent": True, "hook_bypass": False}
+        d = self.mod.policy_decide(dict(base, owner_class="unknown", action_class="author", has_remote=False), t)
+        self.assertEqual((d["rule_id"][:3], d["outcome"]), ("P19", "allow"))
+        d = self.mod.policy_decide(dict(base, owner_class="third-party", action_class="meta", has_remote=True), t)
+        self.assertEqual((d["rule_id"][:3], d["outcome"]), ("P21", "allow"))
+        d = self.mod.policy_decide(dict(base, owner_class="third-party", action_class="publish", has_remote=True), t)
+        self.assertEqual((d["rule_id"][:3], d["outcome"]), ("P22", "deny"))
+        d = self.mod.policy_decide({"walls_family": "cursor", "device": "personal-mbp", "owner_class": "employer",
+                                    "action_class": "author", "chain_has_agent": True, "hook_bypass": False}, t)
+        self.assertEqual((d["rule_id"][:3], d["outcome"]), ("P40", "deny"))
+
+    def test_verb_map_and_hook_bypass(self):
+        tmp = self._tmp()
+        root = self.mod._t7_fixture_root(tmp)
+        det = {"family_for_walls": "human", "agent_possible": False}
+
+        def one(text, **kw):
+            inv = self.mod.classify_command(text, cwd=str(tmp), root=root, detection=det, **kw)
+            return inv[0]["class"], inv[0]["target_ref"], inv[0]["hook_bypass"]
+
+        self.assertEqual(one("git frobnicate")[0], "author")
+        self.assertEqual(one("git commit -m x", current_branch="main")[:2], ("author", "default"))
+        self.assertEqual(one("git commit -m x", current_branch="feat/x")[:2], ("author", "non-default"))
+        self.assertEqual(one("git push")[:2], ("merge", "unknown"))
+        self.assertEqual(one("git push origin --delete feat/x")[0], "housekeeping")
+        for text in ("git -c hook.x.command=true push", "git commit --no-verify -m x", "git commit -n -m x",
+                     "GIT_CONFIG_COUNT=0 git push", "env -u GIT_CONFIG_COUNT git push"):
+            self.assertTrue(one(text)[2], text)
+        inv = self.mod.parse_command("cd /r && bash -lc \"command /usr/bin/git -C sub fetch\"")
+        self.assertEqual((inv[0]["tool"], inv[0]["argv"], inv[0]["cwd_hint"]), ("git", ["fetch"], "/r/sub"))
+
+    def test_hand_set_markers_and_composed_push_delete_denied(self):
+        tmp = self._tmp()
+        root = self.mod._t7_fixture_root(tmp)
+        home = tmp / "t7-home"
+        emp, _bare, _env = self.mod._employer_pair(tmp, home)
+        det = self.mod.detect_surface(env={"WS_VETTED": "1", "WS_WALL_OK": "1"}, ancestry=[{"comm": "claude"}],
+                                      isatty={"stdin": True, "stdout": True}, root=root)
+        r = self.mod.policy(repo=str(emp), command="WS_VETTED=1 WS_WALL_OK=1 git push origin --delete feat/done",
+                            root=root, home=home, detection=det, device="dev-a")
+        self.assertEqual((r["outcome"], r["rule_id"]), ("deny", "P11-claude-employer-composed"))
+        r = self.mod.policy(repo=str(emp), command="git commit -m x", root=root, home=home, detection=det,
+                            device="dev-a", record=False)
+        self.assertEqual((r["outcome"], r["route_to"]), ("route", ["cursor", "codex"]))
+
+
+class TestVettedContext(unittest.TestCase):
+    """H22 vetted path: pinned blob, lifted env, receipts, pin lag, prune fixes (profile_resolve.py, prune)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.mod = load("profile_resolve")
+
+    def _tmp(self):
+        td = tempfile.TemporaryDirectory()
+        self.addCleanup(td.cleanup)
+        return Path(os.path.realpath(td.name))
+
+    def test_prune_self_test(self):
+        self.assertEqual(load("prune-our-branches").self_test(), 0)
+
+    def test_lift_env_drops_only_the_transport_block(self):
+        env = {"HOME": "/h", "WS_SURFACE_FAMILY": "claude", "GH_CONFIG_DIR": "/h/gh", "GIT_AUTHOR_NAME": "x",
+               "GIT_COMMITTER_EMAIL": "y", "GIT_CONFIG_COUNT": "3",
+               "GIT_CONFIG_KEY_0": "hook.floor.command", "GIT_CONFIG_VALUE_0": "ws-hook",
+               "GIT_CONFIG_KEY_1": "url.fixture-blocked-remote://.insteadOf", "GIT_CONFIG_VALUE_1": "git@github.com:acme-corp/",
+               "GIT_CONFIG_KEY_2": "credential.https://github.com.helper", "GIT_CONFIG_VALUE_2": ""}
+        root = self.mod._t7_fixture_root(self._tmp())
+        out = self.mod.lift_env(env, root=root)
+        self.assertEqual(out["GIT_CONFIG_COUNT"], "2")
+        self.assertEqual((out["GIT_CONFIG_KEY_0"], out["GIT_CONFIG_KEY_1"]),
+                         ("hook.floor.command", "credential.https://github.com.helper"))
+        self.assertNotIn("GIT_CONFIG_KEY_2", out)
+        self.assertNotIn("GIT_AUTHOR_NAME", out)
+        self.assertNotIn("GIT_COMMITTER_EMAIL", out)
+        self.assertEqual(out["WS_SURFACE_FAMILY"], "claude")
+        self.assertEqual(out["GH_CONFIG_DIR"], "/h/gh")
+        self.assertNotIn("GH_CONFIG_DIR", self.mod.lift_env(env, needs_employer_gh=True, root=root))
+
+    def test_hash_mismatch_and_pin_lag(self):
+        tmp = self._tmp()
+        root = self.mod._t7_fixture_root(tmp)
+        home = tmp / "t7-home"
+        script = self.mod._write(root / "09-tools" / "fixture-housekeeper.py", "# v1\n")
+        self.assertEqual(self.mod.vetted_status("fixture-housekeeper", home=home, root=root)["status"], "unpinned")
+        self.mod._pin_fixture(home, root, "09-tools/fixture-housekeeper.py", self.mod.git_blob_sha(script))
+        self.assertEqual(self.mod.vetted_status("fixture-housekeeper", home=home, root=root)["status"], "vetted")
+        self.mod._write(script, "# v2, not pinned\n")
+        self.assertEqual(self.mod.vetted_status("fixture-housekeeper", home=home, root=root)["status"], "hash-mismatch")
+        self.mod._write(script, "# v1\n")
+        reg = self.mod.TABLE_PATHS["vetted-scripts"]
+        (root / reg).write_text(json.dumps({"schema_version": 1, "doc": "edited", "scripts": []}), encoding="utf-8")
+        self.assertEqual(self.mod.vetted_status("fixture-housekeeper", home=home, root=root)["status"], "vetted")
+
+    def test_receipts_never_create_control(self):
+        home = self._tmp() / "bare-home"
+        with self.assertRaises(OSError):
+            self.mod.append_receipt({"type": "receipt", "result": "ok"}, home=home)
+        self.assertFalse((home / ".config").exists())
+
+    def test_present_state_v4_regression(self):
+        tmp = self._tmp()
+        home = tmp / "home"
+        v4 = self.mod._v4_fixture_env(self.mod._git_env(home))
+        if v4 is None:
+            self.skipTest("no v4 fragment in this checkout")
+        emp, bare, genv = self.mod._employer_pair(tmp, home)
+        composed = self.mod._g(v4, "push", "origin", "--delete", "feat/done", cwd=emp)
+        self.assertNotEqual(composed.returncode, 0)
+        lifted = self.mod._g(self.mod.lift_env(v4), "push", "origin", "--delete", "feat/done", cwd=emp)
+        self.assertEqual(lifted.returncode, 0, lifted.stderr)
+        gone = self.mod._g(genv, "--git-dir", str(bare), "show-ref", "--verify", "--quiet", "refs/heads/feat/done")
+        self.assertNotEqual(gone.returncode, 0)
+
+
 class TestPinLib(unittest.TestCase):
     """H24 pin_lib: its own fixture suite, plus the real-home guard against the REAL
     profile_resolve verdict (never a human verdict with confirm_real_home=True)."""

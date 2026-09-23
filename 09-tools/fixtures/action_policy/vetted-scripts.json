@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "doc": "Synthetic vetted-script registry for TestVettedContext (fixture-housekeeper is not a real script).",
+  "scripts": [
+    {
+      "id": "fixture-housekeeper",
+      "path": "09-tools/fixture-housekeeper.py",
+      "action_classes": [
+        "meta",
+        "housekeeping"
+      ],
+      "actions": {
+        "fetch": "meta",
+        "pr-list": "meta",
+        "branch-delete": "housekeeping",
+        "remote-branch-delete": "housekeeping"
+      },
+      "needs_employer_gh": true,
+      "approved": "fixture"
+    }
+  ]
+}

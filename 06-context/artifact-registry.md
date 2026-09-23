@@ -85,9 +85,19 @@
 - **Last modified**: 2026-06-01 — created; canonical copy synced to Drive for other machines.
 
 ### 09-tools/profile_resolve.py
-- **Size**: ~2188 lines
-- **Purpose**: H2 declared resolver CLI and import home (tables, devices, remotes, repo walls, checkout cache, surface detection, agent check, gitcaps).
-- **Last modified**: 2026-09-22 — created in wave 0 (T2).
+- **Size**: ~3835 lines
+- **Purpose**: H2 declared resolver CLI and import home (tables, devices, remotes, repo walls, checkout cache, surface detection, agent check, gitcaps); H22 policy, classify, vetted-status, vetted_context, lift_env and receipts.
+- **Last modified**: 2026-09-23 — H22 action-class policy and vetted path added in wave 0 (T7).
+
+### 02-shared-references/vetted-scripts.json
+- **Size**: ~25 lines
+- **Purpose**: Vetted-script registry (DECISIONS-2 item 9; SENSITIVE); only the pinned copy is consulted.
+- **Last modified**: 2026-09-23 — created in wave 0 (T7).
+
+### 09-tools/fixtures/action_policy/
+- **Size**: 2 files
+- **Purpose**: TestActionPolicy/TestVettedContext fixtures: synthetic mirror of the committed action-policy rule ids (dev-a/dev-b) and a synthetic registry.
+- **Last modified**: 2026-09-23 — created in wave 0 (T7).
 
 ### 02-shared-references/devices.json
 - **Size**: ~43 lines

@@ -144,7 +144,7 @@ Coverage on the minimum surfaces:
 | H16 | enforced | advisory | enforced-when-installed | enforced-when-installed |
 | H17 | unverified | backstop-only | unverified | unverified |
 | H19 | unverified | not-applicable | unverified | unverified |
-| H22 | unverified | backstop-only | advisory | advisory |
+| H22 | enforced-partial | backstop-only | advisory | advisory |
 | H24 | unverified | not-applicable | unverified | unverified |
 | H25 | unverified | backstop-only | unverified | unverified |
 

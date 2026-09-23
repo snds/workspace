@@ -226,6 +226,8 @@ python3 09-tools/prune-our-branches.py --apply
 python3 09-tools/prune-our-branches.py --self-test
 ```
 
+Vetted housekeeping script (H22): `DEFAULT_SLUGS` resolve via `where`, the default branch is fast-forward only (never reset), and each action writes one receipt to `control/receipts.jsonl`. Claude chains skip non-personal repos unless the pinned blob matches the registry.
+
 ## artifact-ingest.py
 
 Land vendor Canvas/Artifact/HTML content that already exists outside git
@@ -457,6 +459,8 @@ python3 09-tools/workspace-harness.py --self-test
 ## profile_resolve.py
 
 Declared resolver (H2): device, repo, where, scan, audit, detect, agent-check, gitcaps and validate-tables over devices.json and context-remotes.json; the one home for load_table, detect_surface, normalize_remote and agent_check. --self-test runs synthetic fixtures.
+
+H22 adds `policy` (action-class policy over the committed action-policy.json, most restrictive per invocation), `classify` (verb map + hook_bypass) and `vetted-status` (pinned blob check); `vetted_context`, `lift_env` and `append_receipt` serve vetted scripts.
 
 ## 00-bootstrap/doctor/pin_lib.py
 

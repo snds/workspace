@@ -235,15 +235,17 @@
           "how": "enforced once the claude-code probe file exists"
         },
         "H22": {
-          "mode": "unverified",
-          "rules": "model-composed employer git blocked by the transport block, floor and guard; gh advisory until the belt",
+          "mode": "enforced-partial",
+          "rules": "model-composed employer network git fails at the installed transport block; vetted housekeeping runs only through vetted_context (pinned blob check, policy via=vetted, receipts); local composed git and gh stay advisory until the floor and the gh belt",
           "decision": null,
-          "verified_by": [],
+          "verified_by": [
+            "fixture:TestActionPolicy"
+          ],
           "planned_verified_by": [
-            "fixture:TestActionPolicy",
+            "fixture:TestVettedContext",
             "probe:claude-code@work-mbp"
           ],
-          "how": "enforced-partial once TestActionPolicy (T7) resolves; T7 owns this entry"
+          "how": "TestActionPolicy runs the policy matrix and a composed-vs-vetted push --delete in temp repos; the live vetted run is Sean's G5c"
         },
         "H24": {
           "mode": "unverified",
@@ -655,11 +657,13 @@
         },
         "H22": {
           "mode": "advisory",
-          "rules": "merge and default-branch denial is report-only; employer branch protection is the real wall",
+          "rules": "`profile_resolve.py policy` is a voluntary, report-only CLI; merge and default-branch denial is not enforced here; employer branch protection is the real wall",
           "decision": null,
           "verified_by": [],
-          "planned_verified_by": [],
-          "how": ""
+          "planned_verified_by": [
+            "fixture:TestActionPolicy"
+          ],
+          "how": "enforced-when-installed once H15 shims or H18 lanes call policy (wave 1)"
         },
         "H24": {
           "mode": "unverified",
@@ -908,8 +912,10 @@
           "rules": "as Cursor; the hooks are also untrusted",
           "decision": null,
           "verified_by": [],
-          "planned_verified_by": [],
-          "how": ""
+          "planned_verified_by": [
+            "fixture:TestActionPolicy"
+          ],
+          "how": "enforced-when-installed once H15 shims are installed and trusted (wave 1)"
         },
         "H24": {
           "mode": "unverified",

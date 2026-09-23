@@ -106,6 +106,7 @@ QUALITY_CHAIN = [
     ("vault-health.py", []),
     ("profile_resolve.py", ["--self-test"]),
     ("profile_resolve.py", ["validate-tables"]),
+    ("prune-our-branches.py", ["--self-test"]),
     ("../00-bootstrap/doctor/pin_lib.py", ["--self-test"]),
     ("../00-bootstrap/doctor/installers.py", ["--self-test"]),
     ("ws_hook.py", ["--self-test"]),
