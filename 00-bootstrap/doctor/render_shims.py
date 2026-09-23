@@ -1195,10 +1195,22 @@ def overlay_cases() -> list:
     results.append(("outputs: env is never a shim-installable owned key; overlay versions are closed",
                     any("env is never an owned" in e for e in errs) and any("overlay must be one of" in e for e in errs),
                     str(errs)))
+    try:
+        pr = _pr_module()
+        det = pr.detect_surface(env={"AI_AGENT": "claude-code_2-1-280_agent", "CLAUDECODE": "1"}, ancestry=[],
+                                isatty={"stdin": False, "stdout": False}, root=ROOT)
+        oth = pr.detect_surface(env={"AI_AGENT": "vendor-x"}, ancestry=[], isatty={"stdin": False, "stdout": False},
+                                root=ROOT)
+        results.append(("table: AI_AGENT=claude-code_* is Claude Code; another value is the generic unknown-agent row",
+                        det["acting_host"] == "claude-code" and det["family"] == "claude"
+                        and oth["family"] == "unknown-agent" and oth["acting_host"] == "other-local-agents",
+                        f"{det['acting_host']}/{det['family']} {oth['acting_host']}/{oth['family']}"))
+    except DataError as exc:
+        results.append(("table: AI_AGENT=claude-code_* is Claude Code", False, str(exc)))
     old_frag, old_inc = _git_show(f"{V4_REV}:00-bootstrap/dist/settings-user-fragment.json"), \
         _git_show(f"{V4_REV}:00-bootstrap/dist/git/claude-identity.inc")
     if old_frag is None or old_inc is None:
-        results.append(("overlay: v4 reproduced from the tables (SKIP: no v4 history here)", True, ""))
+        results.append(("overlay: v4 reproduced from the tables", None, "no v4 history here (shallow clone?)"))
     else:
         try:
             rcr, rdev = identity_tables(ROOT)
@@ -1217,11 +1229,14 @@ def self_test() -> int:
     buf = io.StringIO()
     with contextlib.redirect_stdout(buf):
         results = self_test_cases()
-    failed = [r for r in results if not r[1]]
+    failed = [r for r in results if r[1] is False or (r[1] is not None and not r[1])]
+    skipped = [r for r in results if r[1] is None]
     for name, ok, detail in results:
-        print(f"{'ok  ' if ok else 'FAIL'} {name}" + ("" if ok else f" — {detail}"))
-    print(f"render_shims self-test: {len(results) - len(failed)}/{len(results)} passed")
-    return 1 if failed else 0
+        tag = "SKIP" if ok is None else ("ok  " if ok else "FAIL")
+        print(f"{tag} {name}" + ("" if ok else f" — {detail}"))
+    passed = len(results) - len(failed) - len(skipped)
+    print(f"render_shims self-test: {passed}/{len(results)} passed" + (f", {len(skipped)} SKIPPED" if skipped else ""))
+    return 1 if failed else (3 if skipped else 0)
 
 
 # --------------------------------------------------------------------------- CLI

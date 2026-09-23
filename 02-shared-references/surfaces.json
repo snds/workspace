@@ -115,7 +115,14 @@
         "session-end": 10
       },
       "markers": {
-        "env": [],
+        "env": [
+          {
+            "name": "AI_AGENT",
+            "value": null,
+            "value_prefix": "claude-code",
+            "verified": false
+          }
+        ],
         "ancestry": [
           {
             "comm": "claude",
@@ -302,8 +309,8 @@
       ],
       "coverage": {
         "H16": {
-          "mode": "not-applicable",
-          "rules": "rendered and installed only when install_probe passes",
+          "mode": "unverified",
+          "rules": "the tracked claude-project output rendered by render_shims reaches this surface without an install; loading unverified",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -724,8 +731,8 @@
       ],
       "coverage": {
         "H16": {
-          "mode": "not-applicable",
-          "rules": "rendered and installed only when install_probe passes",
+          "mode": "unverified",
+          "rules": "the tracked cursor-project output rendered by render_shims reaches this surface without an install; loading unverified",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -768,8 +775,8 @@
       ],
       "coverage": {
         "H16": {
-          "mode": "not-applicable",
-          "rules": "rendered and installed only when install_probe passes",
+          "mode": "unverified",
+          "rules": "the tracked cursor-project output rendered by render_shims reaches this surface without an install; loading unverified",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1086,8 +1093,8 @@
       ],
       "coverage": {
         "H16": {
-          "mode": "not-applicable",
-          "rules": "rendered and installed only when install_probe passes",
+          "mode": "unverified",
+          "rules": "the tracked claude-project output rendered by render_shims reaches this surface without an install; loading unverified",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1222,7 +1229,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],
@@ -1281,7 +1291,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],
@@ -1337,7 +1350,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],
@@ -1393,7 +1409,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],
@@ -1452,7 +1471,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],
@@ -1508,7 +1530,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],
@@ -1558,7 +1583,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],
