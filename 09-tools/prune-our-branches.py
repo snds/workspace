@@ -462,6 +462,12 @@ def self_test() -> int:
         else:
             fails.append(label)
 
+    me = Path(__file__).resolve()
+    again = _isolated_argv(["--apply"], False, "/usr/bin/python3", Path("09-tools/../09-tools/prune-our-branches.py"))
+    ok(again is not None and again[:2] == ["/usr/bin/python3", "-I"] and os.path.isabs(again[2])
+       and again[3:] == ["--apply"], f"a non-isolated run re-execs under -I by absolute path: {again}")
+    ok(_isolated_argv(["--apply"], True, "/usr/bin/python3", me) is None, "an isolated run does not re-exec")
+
     vault = _vault_resolver()
     fx = ROOT / "09-tools" / "fixtures"
     if vault is None or not (fx / "action_policy").is_dir() or not (fx / "profile_resolve").is_dir():
@@ -662,7 +668,20 @@ def self_test() -> int:
     return 0
 
 
+def _isolated_argv(argv: List[str], isolated: bool, exe: str, script: Path) -> Optional[List[str]]:
+    """The argv to re-exec under `python3 -I <absolute path>`, or None when already isolated.
+
+    The Claude floor accepts a vetted ancestor only when it runs isolated and names its script by an
+    absolute path, so PYTHONPATH, user site hooks or a same-named copy elsewhere cannot stand in."""
+    if isolated or "--self-test" in argv:
+        return None
+    return [exe, "-I", str(Path(script).resolve()), *argv]
+
+
 def main() -> int:
+    again = _isolated_argv(sys.argv[1:], bool(sys.flags.isolated), sys.executable, Path(__file__))
+    if again is not None:
+        os.execv(sys.executable, again)
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--apply", action="store_true", help="delete prune-ok branches (default is dry-run)")
     parser.add_argument("--repo", action="append", type=Path, help="checkout to scan (repeatable)")
