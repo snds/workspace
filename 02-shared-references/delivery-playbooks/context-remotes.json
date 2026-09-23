@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "doc": "Remote-keyed context table (H2). Employers at owner level only; employer repos are never listed.",
+  "conduct_order": [
+    "personal-solo",
+    "centric-design",
+    "centric-engineering"
+  ],
+  "owner_classes": [
+    "employer",
+    "personal",
+    "third-party",
+    "unknown"
+  ],
+  "unknown_owner": {
+    "conduct": "centric-engineering",
+    "claude_walls": "employer"
+  },
+  "blocked_scheme": "claude-is-personal-only-blocked-employer-remote://",
+  "hosts": [
+    {
+      "host": "github.com",
+      "ssh_user": "git",
+      "forms": [
+        "scp",
+        "scp-alias",
+        "ssh",
+        "https",
+        "https-userinfo"
+      ]
+    },
+    {
+      "host": "bitbucket.org",
+      "ssh_user": "git",
+      "forms": [
+        "scp",
+        "ssh",
+        "https",
+        "https-userinfo"
+      ]
+    }
+  ],
+  "owners": [
+    {
+      "host": "github.com",
+      "owner": "snds",
+      "class": "personal",
+      "profile": "personal-solo"
+    },
+    {
+      "host": "github.com",
+      "owner": "cpes-software",
+      "class": "employer",
+      "profile": "centric-engineering"
+    },
+    {
+      "host": "bitbucket.org",
+      "owner": "centricsoftware",
+      "class": "employer",
+      "profile": "centric-engineering"
+    }
+  ],
+  "repos": [
+    {
+      "slug": "snds/workspace",
+      "host": "github.com",
+      "role": "workspace",
+      "profile": "personal-solo",
+      "visibility": "public",
+      "beacon": false,
+      "vault_project": "19-workspace-brain"
+    }
+  ],
+  "employer_path_globs": [
+    "*c8*",
+    "cpes-software/*",
+    "design-system"
+  ],
+  "employer_substance": {
+    "allow_tokens": [
+      "cpes-software",
+      "centricsoftware",
+      "Centric",
+      "c8"
+    ],
+    "url_prefixes": [
+      "github.com/cpes-software/",
+      "bitbucket.org/centricsoftware/"
+    ],
+    "domains": [],
+    "count_keywords": [
+      "centric",
+      "cpes-software",
+      "centricsoftware",
+      "c8"
+    ]
+  }
+}

@@ -8,13 +8,15 @@
 # WORKSPACE-BEACON block into that repo's CLAUDE.md — always both, atomically,
 # because a listed repo with no beacon block makes the doctor raise DRIFT alerts.
 #
-# Classification is mechanical, per the context-profile resolution order
-# (02-shared-references/delivery-playbooks/00-context-profiles.md):
-#   personal  = origin remote under github.com/snds/            -> may enroll
-#   employer  = github-work / cpes-software / c8 remotes or dir -> NEVER enrolled;
-#               recorded in beacon-repos.ignore.txt so it stops being flagged
-#   unknown   = anything else (incl. no remote) -> fail-safe: NOT enrolled unless
-#               Sean's word overrides via --personal
+# Classification is mechanical and delegated to the declared resolver
+# (09-tools/profile_resolve.py over context-remotes.json and devices.json; walls are the
+# most restrictive of every remote, the path globs and the declarations):
+#   personal  = positively personal (every remote personal)     -> may enroll
+#   employer  = any employer remote (an undeclared owner behind the work ssh alias counts),
+#               or an employer path glob under projects_root
+#               -> NEVER enrolled; recorded in beacon-repos.ignore.txt so it stops being flagged
+#   unknown   = anything else (incl. no remote, or the resolver failing) -> fail-safe:
+#               NOT enrolled unless Sean's word overrides via --personal
 #
 # --sweep is a DRY-RUN by default; add --apply to act. --commit additionally
 # commits+pushes the CLAUDE.md change inside each enrolled repo (cloud sessions
@@ -35,13 +37,12 @@ IGNORE="$DIST/beacon-repos.ignore.txt"
 BEACON="$DIST/BEACON.md"
 [ -f "$BEACON" ] || { echo "FATAL: $BEACON missing"; exit 1; }
 
-classify() { # $1=repo-path -> echoes personal|employer|unknown
-  case "$1" in *c8*) echo employer; return;; esac
-  local r; r="$(git -C "$1" remote get-url origin 2>/dev/null || true)"
-  case "$r" in
-    *github.com[:/]snds/*)                       echo personal;;
-    *github-work*|*cpes-software*|*[:/]c8[-/]*)  echo employer;;
-    *)                                           echo unknown;;
+classify() { # $1=repo-path -> echoes personal|employer|unknown (delegates; failure = unknown)
+  local c
+  c="$(python3 "$WS/09-tools/profile_resolve.py" repo "$1" --format classify 2>/dev/null)" || c=""
+  case "$c" in
+    personal|employer|unknown) echo "$c";;
+    *)                         echo unknown;;
   esac
 }
 

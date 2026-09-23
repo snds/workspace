@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "doc": "Synthetic device table for profile_resolve fixtures (dev-a, dev-b). Not a real device list.",
+  "devices": [
+    {
+      "id": "dev-a",
+      "label": "Device A",
+      "hostnames": [
+        "host-a",
+        "host-a2"
+      ],
+      "hostname_labels": {
+        "host-a2": "Device A (spare)"
+      },
+      "os": "macos",
+      "home": "/home/dev-a",
+      "projects_root": "Projects",
+      "brain": "Projects/ws",
+      "default_identity": null
+    },
+    {
+      "id": "dev-b",
+      "label": "Device B",
+      "hostnames": [
+        "host-b"
+      ],
+      "hostname_labels": {},
+      "os": "macos",
+      "home": "/home/dev-b",
+      "projects_root": "Projects",
+      "brain": "Projects/ws",
+      "default_identity": null
+    }
+  ],
+  "ssh_aliases": [
+    {
+      "alias": "github-work",
+      "host": "github.com",
+      "credential_scope": "work"
+    }
+  ]
+}

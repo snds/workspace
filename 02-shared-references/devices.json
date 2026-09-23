@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "doc": "Declared device table (H2/H17, D14). Tools use Path.home() at runtime; `home` is verified by doctor --check only.",
+  "devices": [
+    {
+      "id": "work-mbp",
+      "label": "Work MacBook Pro",
+      "hostnames": [
+        "CS-K746DRWXY1",
+        "seansands",
+        "CS-KQ23N94M0W"
+      ],
+      "hostname_labels": {
+        "CS-KQ23N94M0W": "Work MacBook Pro (loaner)"
+      },
+      "os": "macos",
+      "home": "/Users/sean.sands",
+      "projects_root": "Projects",
+      "brain": "Projects/workspace",
+      "default_identity": "centric"
+    },
+    {
+      "id": "personal-mbp",
+      "label": "Personal MacBook Pro",
+      "hostnames": [
+        "Voyager-2"
+      ],
+      "hostname_labels": {},
+      "os": "macos",
+      "home": "/Users/snds",
+      "projects_root": "Projects",
+      "brain": "Projects/Workspace",
+      "default_identity": "snds"
+    }
+  ],
+  "ssh_aliases": [
+    {
+      "alias": "github-work",
+      "host": "github.com",
+      "credential_scope": "work"
+    }
+  ]
+}
