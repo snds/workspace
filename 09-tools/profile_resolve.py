@@ -259,8 +259,95 @@ def _validate_devices(obj: dict, errors: List[str]) -> None:
         if isinstance(home, str) and not home.startswith("/"):
             errors.append(f"{where}.home: must be absolute")
     alias_spec = {"alias": (_STR, True), "host": (_STR, True), "credential_scope": (_STR, True)}
+    aliases = set()
     for i, row in enumerate(_rows(obj, "ssh_aliases", errors)):
         _check_row(row, f"ssh_aliases[{i}]", alias_spec, errors)
+        aliases.add(row.get("alias"))
+    _validate_identity_keys(obj, errors, seen_ids, aliases)
+
+
+IDENTITY_CLASSES = ("employer", "personal")
+IDENTITY_TRANSPORTS = ("ssh", "https")
+IDENTITY_MISMATCH = ("flag",)
+IDENTITY_OVERRIDE_SCOPES = ("non-employer-repos-only",)
+
+
+def _validate_identity_keys(obj: dict, errors: List[str], device_ids: set, aliases: set) -> None:
+    """The H17 keys of devices.json (T8): identities, markers, allowlist, rules, invariants."""
+    ident_spec = {"id": (_STR, True), "name": (_STR, True), "email": (_STR, True), "class": (_STR, True),
+                  "accounts": (_LIST, True), "push": (_DICT, True)}
+    ids: Dict[str, dict] = {}
+    for i, row in enumerate(_rows(obj, "identities", errors)):
+        where = f"identities[{i}]"
+        _check_row(row, where, ident_spec, errors)
+        iid = row.get("id")
+        if iid in ids:
+            errors.append(f"{where}: duplicate id {iid!r}")
+        ids[str(iid)] = row
+        if row.get("class") not in IDENTITY_CLASSES:
+            errors.append(f"{where}.class: must be one of {list(IDENTITY_CLASSES)}")
+        if not _str_list(row.get("accounts", [])):
+            errors.append(f"{where}.accounts: must be a list of strings")
+        email = row.get("email")
+        if isinstance(email, str) and ("@" not in email or email.strip() != email):
+            errors.append(f"{where}.email: not an address")
+        push = row.get("push") if isinstance(row.get("push"), dict) else {}
+        transport = push.get("transport")
+        if transport not in IDENTITY_TRANSPORTS:
+            errors.append(f"{where}.push.transport: must be one of {list(IDENTITY_TRANSPORTS)}")
+        elif transport == "ssh" and push.get("alias") is not None and push.get("alias") not in aliases:
+            errors.append(f"{where}.push.alias: {push.get('alias')!r} is not a declared ssh alias")
+        for k in push:
+            if k not in ("transport", "alias", "credential"):
+                errors.append(f"{where}.push: unknown key {k!r}")
+    if "identities" in obj:
+        for i, dev in enumerate(obj.get("devices") or []):
+            di = dev.get("default_identity") if isinstance(dev, dict) else None
+            if di is not None and di not in ids:
+                errors.append(f"devices[{i}].default_identity: {di!r} is not a declared identity")
+    pm = obj.get("personal_markers")
+    if isinstance(pm, dict):
+        _check_row(pm, "personal_markers", {"emails": (_LIST, True), "email_domains": (_LIST, True)}, errors)
+        for k in ("emails", "email_domains"):
+            if not _str_list(pm.get(k, [])):
+                errors.append(f"personal_markers.{k}: must be a list of strings")
+    ea = obj.get("employer_allowlist")
+    if isinstance(ea, dict):
+        _check_row(ea, "employer_allowlist", {"identity_ids": (_LIST, True), "email_domains": (_LIST, True)}, errors)
+        for iid in ea.get("identity_ids") or []:
+            if iid not in ids:
+                errors.append(f"employer_allowlist.identity_ids: {iid!r} is not a declared identity")
+            elif ids[iid].get("class") != "employer":
+                errors.append(f"employer_allowlist.identity_ids: {iid!r} is not an employer identity")
+        marked = {str(x).casefold() for x in ((pm or {}).get("emails") or [])} if isinstance(pm, dict) else set()
+        for iid in ea.get("identity_ids") or []:
+            if str((ids.get(iid) or {}).get("email", "")).casefold() in marked:
+                errors.append(f"employer_allowlist: {iid!r} carries a personal-marker email")
+    rule_spec = {"id": (_STR, True), "family": (_STR, True), "device": (_STR, True), "identity": (_STR, True),
+                 "overridable": (_BOOL, False), "mismatch": (_STR, False), "override_suppresses": (_STR, False)}
+    seen_rules: set = set()
+    for i, row in enumerate(_rows(obj, "identity_rules", errors)):
+        where = f"identity_rules[{i}]"
+        _check_row(row, where, rule_spec, errors)
+        if row.get("id") in seen_rules:
+            errors.append(f"{where}: duplicate id {row.get('id')!r}")
+        seen_rules.add(row.get("id"))
+        if ids and row.get("identity") not in ids:
+            errors.append(f"{where}.identity: {row.get('identity')!r} is not a declared identity")
+        if row.get("device") != "*" and row.get("device") not in device_ids:
+            errors.append(f"{where}.device: {row.get('device')!r} is not '*' or a declared device")
+        if "mismatch" in row and row.get("mismatch") not in IDENTITY_MISMATCH:
+            errors.append(f"{where}.mismatch: must be one of {list(IDENTITY_MISMATCH)}")
+        if "override_suppresses" in row and row.get("override_suppresses") not in IDENTITY_OVERRIDE_SCOPES:
+            errors.append(f"{where}.override_suppresses: must be one of {list(IDENTITY_OVERRIDE_SCOPES)}")
+        if row.get("overridable") is False and "override_suppresses" in row:
+            errors.append(f"{where}: a non-overridable rule cannot name override_suppresses")
+    inv_ids: set = set()
+    for i, row in enumerate(_rows(obj, "invariants", errors)):
+        _check_row(row, f"invariants[{i}]", {"id": (_STR, True), "text": (_STR, True)}, errors)
+        inv_ids.add(row.get("id"))
+    if "invariants" in obj and not {"I1", "I2"} <= inv_ids:
+        errors.append("invariants: I1 and I2 must both be declared")
 
 
 def _validate_context_remotes(obj: dict, errors: List[str]) -> None:

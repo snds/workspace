@@ -39,5 +39,81 @@
       "host": "github.com",
       "credential_scope": "work"
     }
+  ],
+  "identities": [
+    {
+      "id": "centric",
+      "name": "Sean Sands",
+      "email": "271648271+sean-sands-centric@users.noreply.github.com",
+      "class": "employer",
+      "accounts": [
+        "sean-sands-centric"
+      ],
+      "push": {
+        "transport": "ssh",
+        "alias": "github-work"
+      }
+    },
+    {
+      "id": "snds",
+      "name": "Sean Sands",
+      "email": "570874+snds@users.noreply.github.com",
+      "class": "personal",
+      "accounts": [
+        "snds"
+      ],
+      "push": {
+        "transport": "https",
+        "credential": "gh:gh-claude"
+      }
+    }
+  ],
+  "personal_markers": {
+    "emails": [
+      "570874+snds@users.noreply.github.com"
+    ],
+    "email_domains": [
+      "snds.design"
+    ]
+  },
+  "employer_allowlist": {
+    "identity_ids": [
+      "centric"
+    ],
+    "email_domains": []
+  },
+  "identity_rules": [
+    {
+      "id": "IR1",
+      "family": "claude",
+      "device": "*",
+      "identity": "snds",
+      "overridable": false
+    },
+    {
+      "id": "IR2",
+      "family": "*",
+      "device": "work-mbp",
+      "identity": "centric",
+      "mismatch": "flag",
+      "override_suppresses": "non-employer-repos-only"
+    },
+    {
+      "id": "IR3",
+      "family": "*",
+      "device": "personal-mbp",
+      "identity": "snds",
+      "mismatch": "flag"
+    }
+  ],
+  "invariants": [
+    {
+      "id": "I1",
+      "text": "A personal identity never authors or commits on an employer repo, on any path."
+    },
+    {
+      "id": "I2",
+      "text": "A Claude-family actor never commits or pushes on an employer repo outside vetted housekeeping."
+    }
   ]
 }
