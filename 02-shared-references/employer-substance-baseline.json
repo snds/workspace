@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-22",
+  "generated_from": "0d49774395a3c4a5c2f627b5cd6e193c5042fa78",
+  "rules": [
+    "emp-url",
+    "emp-path",
+    "emp-slug",
+    "emp-quote"
+  ],
+  "totals": {
+    "emp-url": 52,
+    "emp-path": 22,
+    "emp-slug": 62,
+    "emp-quote": 2
+  },
+  "paths": {
+    ".claude/skills/session-end/SKILL.md": {
+      "emp-slug": 2
+    },
+    "01-frameworks/09-component-and-pattern-framework.md": {
+      "emp-path": 2,
+      "emp-quote": 1
+    },
+    "03-skills/centric-ui-workflow/SKILL.md": {
+      "emp-slug": 1
+    },
+    "03-skills/github-guardrails/SKILL.md": {
+      "emp-slug": 1
+    },
+    "06-context/memory/decision-component-pattern-framework-system.md": {
+      "emp-path": 2
+    },
+    "06-context/memory/decision-cursor-prompt-route-hook.md": {
+      "emp-slug": 1
+    },
+    "06-context/memory/decision-project-intent-in-repo.md": {
+      "emp-slug": 1
+    },
+    "06-context/memory/decision-shadcn-lint-independent-service.md": {
+      "emp-url": 3
+    },
+    "06-context/memory/feedback-credential-scoping.md": {
+      "emp-slug": 1
+    },
+    "06-context/project-context-detail.md": {
+      "emp-url": 2,
+      "emp-slug": 1
+    },
+    "06-context/project-context.md": {
+      "emp-url": 2,
+      "emp-path": 1
+    },
+    "06-context/project-registry.md": {
+      "emp-url": 4,
+      "emp-path": 2,
+      "emp-slug": 5
+    },
+    "06-context/session-log-archive.md": {
+      "emp-url": 13,
+      "emp-path": 8,
+      "emp-slug": 18
+    },
+    "06-context/session-log.md": {
+      "emp-url": 19,
+      "emp-path": 2,
+      "emp-slug": 7
+    },
+    "07-projects/19-workspace-brain/SESSION-STATE.md": {
+      "emp-url": 4,
+      "emp-slug": 2
+    },
+    "07-projects/19-workspace-brain/reports/zero-vector-harness-detail_v1.0_2026-09-22.md": {
+      "emp-slug": 1
+    },
+    "08-knowledge/cross-domain/cursor-employer-repo-skill-routing.md": {
+      "emp-slug": 1
+    },
+    "08-knowledge/design/centric-ui-density-adoption.md": {
+      "emp-url": 1
+    },
+    "08-knowledge/design/figma-to-code-parity-plan-2026-08-06.md": {
+      "emp-url": 2,
+      "emp-path": 1,
+      "emp-slug": 6
+    },
+    "08-knowledge/design/interaction-state-semantics.md": {
+      "emp-url": 1,
+      "emp-quote": 1
+    },
+    "08-knowledge/engineering/centric-plm-codebase.md": {
+      "emp-slug": 3
+    },
+    "08-knowledge/engineering/centric-plm-frontend-stack.md": {
+      "emp-slug": 4
+    },
+    "08-knowledge/engineering/centric-vms-frontend-stack.md": {
+      "emp-slug": 4
+    },
+    "08-knowledge/engineering/shadcn-lint-token-tiers.md": {
+      "emp-url": 1
+    },
+    "09-tools/README.md": {
+      "emp-path": 1
+    },
+    "09-tools/artifact-ingest.py": {
+      "emp-path": 1
+    },
+    "09-tools/cursor-externalize.py": {
+      "emp-path": 2
+    },
+    "09-tools/prune-our-branches.py": {
+      "emp-slug": 2
+    },
+    "09-tools/shadcn-lint/hosts/cds.config.mjs": {
+      "emp-slug": 1
+    }
+  }
+}
