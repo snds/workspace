@@ -1,0 +1,10 @@
+{"schema_version": 1, "device": "dev-a", "generated_at": "2026-09-22T20:00:00Z", "generated_by": "human",
+ "projects_root": "PROJECTS_ROOT",
+ "checkouts": [
+  {"path": "PROJECTS_ROOT/acme-cache/zz-cached-repo", "kind": "repo",
+   "remotes": [{"name": "origin", "form": "scp", "host": "github.com", "slug": "acme-cache/zz-cached-repo"}],
+   "owner_class": "employer", "default_branch": null},
+  {"path": "PROJECTS_ROOT/pat-sample/sample-tool", "kind": "repo",
+   "remotes": [{"name": "origin", "form": "https", "host": "github.com", "slug": "pat-sample/sample-tool"}],
+   "owner_class": "personal", "default_branch": null}
+ ]}
