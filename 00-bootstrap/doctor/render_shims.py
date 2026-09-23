@@ -1066,6 +1066,8 @@ def self_test_cases() -> list:
                      (r / "out" / "user.json").read_text(encoding="utf-8").replace("15", "16"), encoding="utf-8"))
     _mutate_case(results, "unknown top-level key", lambda t: t.__setitem__("extra", 1), "unknown top-level key")
 
+    results += overlay_cases()
+
     # --rev on a revision without render_shims.py exits 3; --verify-canonical catches a real change.
     with tempfile.TemporaryDirectory(prefix="render-shims-git-") as tmp:
         repo = Path(tmp) / "repo"
@@ -1091,6 +1093,116 @@ def self_test_cases() -> list:
                             rc_ok == 0 and rc_bad == 1, f"ok={rc_ok} bad={rc_bad}"))
         except (DataError, OSError, subprocess.SubprocessError) as exc:
             results.append(("git fixtures", False, str(exc)))
+    return results
+
+
+IDENTITY_FIXTURES_REL = "09-tools/fixtures/identity"
+V4_REV = "2ff02e7"          # the commit that carries the installed v4 overlay (read-only history)
+
+
+def _git_show(rev_path: str):
+    try:
+        r = _git(ROOT, "show", rev_path, check_rc=False)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return r.stdout if r.returncode == 0 else None
+
+
+def overlay_cases() -> list:
+    """H17 emitter cases: the synthetic golden, owners x forms x case, the guarded floor command,
+    no GIT_AUTHOR_*, the v4 reproduction from the tables, identity-inc, and the owned-keys guard."""
+    results = []
+    fx = ROOT / IDENTITY_FIXTURES_REL
+    try:
+        cr = json.loads((fx / "context-remotes.json").read_text(encoding="utf-8"))
+        dev = json.loads((fx / "devices.json").read_text(encoding="utf-8"))
+        golden = json.loads((fx / "overlay-v5.golden.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        return [("overlay: identity fixtures readable", False, str(exc))]
+    env = overlay_env(cr, dev, "v5")
+    results.append(("overlay: v5 env equals the synthetic golden", env == golden["env"],
+                    "run the emitter and diff against overlay-v5.golden.json"))
+    pairs = [(env[f"GIT_CONFIG_KEY_{i}"], env[f"GIT_CONFIG_VALUE_{i}"]) for i in range(int(env["GIT_CONFIG_COUNT"]))]
+    blocked = cr["blocked_scheme"]
+    emp = [v for k, v in pairs if k == f"url.{blocked}.insteadOf"]
+    want = set()
+    accts = ["acme-worker", "pat-sample", "git"]
+    for host, owner, alias in (("github.com", "acme-corp", "github-work"), ("bitbucket.org", "acme-bb", None)):
+        for o in {owner, owner.upper(), owner.capitalize()}:
+            forms = [f"git@{host}:{o}/", f"ssh://git@{host}/{o}/", f"https://{host}/{o}/"]
+            forms += [f"https://{a}@{host}/{o}/" for a in accts]
+            if alias:
+                forms += [f"git@{alias}:{o}/", f"{alias}:{o}/"]
+            want |= set(forms)
+    results.append(("overlay: employer blocks equal owners x forms x case, deduplicated",
+                    set(emp) == want and len(emp) == len(set(emp)), f"missing={sorted(want - set(emp))} extra={sorted(set(emp) - want)}"))
+    inc = [k for k, _v in pairs if k.startswith("includeIf.hasconfig:remote.*.url:")]
+    want_inc = {f"includeIf.hasconfig:remote.*.url:{p}.path" for p in (
+        "git@github.com:pat-sample/**", "git@github-work:pat-sample/**", "https://github.com/pat-sample/**",
+        "ssh://git@github.com/pat-sample/**")}
+    results.append(("overlay: personal includes equal personal owners x forms", set(inc) == want_inc and len(inc) == 4,
+                    str(inc)))
+    results.append(("overlay: no GIT_AUTHOR_* or GIT_COMMITTER_* key, in env or in pairs",
+                    not any(k.startswith(("GIT_AUTHOR_", "GIT_COMMITTER_")) for k in env)
+                    and not any(k.lower().startswith("user.") for k, _v in pairs), ""))
+    guarded = ('W="$HOME/.config/snds-workspace/bin/ws-hook"; [ -x "$W" ] || exit 0; '
+               'exec "$W" --host git --floor claude')
+    hook = dict((k, v) for k, v in pairs if k == "hook.ws-claude-wall.command")
+    events = [v for k, v in pairs if k == "hook.ws-claude-wall.event"]
+    results.append(("overlay: the floor hook is the guarded command, on the four events, enabled",
+                    hook.get("hook.ws-claude-wall.command") == guarded and '"$@"' not in guarded
+                    and events == ["pre-commit", "commit-msg", "pre-merge-commit", "pre-push"]
+                    and ("hook.ws-claude-wall.enabled", "true") in pairs, str(hook)))
+    kinds = []
+    for k, _v in pairs:
+        kind = ("include" if k.startswith("includeIf.") else "https" if k.startswith("url.https://")
+                else "helper" if k.startswith("credential.") else "block" if k.startswith(f"url.{blocked}")
+                else "floor" if k.startswith("hook.") else "?")
+        if not kinds or kinds[-1] != kind:
+            kinds.append(kind)
+    results.append(("overlay: GIT_CONFIG order is include, https insteadOf, helper reset, block, floor",
+                    kinds == ["include", "https", "helper", "block", "floor"], str(kinds)))
+    helper = [v for k, v in pairs if k.startswith("credential.")]
+    results.append(("overlay: the credential helper is reset, then gh", helper == ["", "!gh auth git-credential"],
+                    str(helper)))
+    results.append(("overlay: markers and the gh belt",
+                    env.get("WS_CLAUDE_OVERLAY") == "v5" and env.get("WS_SURFACE_FAMILY") == "claude"
+                    and env.get("GH_CONFIG_DIR") == "~/.config/snds-workspace/gh-claude", ""))
+    results.append(("identity-inc: Claude include and device includes equal the golden",
+                    render_claude_identity_inc(dev) == golden["claude_identity_inc"]
+                    and render_device_identity_inc(dev, "dev-a") == golden["identity_inc"]["dev-a"]
+                    and render_device_identity_inc(dev, "dev-b") == golden["identity_inc"]["dev-b"]
+                    and render_device_identity_inc(dev, "unknown") is None
+                    and "http" not in golden["claude_identity_inc"], ""))
+    bad = json.loads(json.dumps(dev))
+    bad["identity_rules"][0]["identity"] = "acme-id"
+    try:
+        render_claude_identity_inc(bad)
+        results.append(("identity-inc: an employer identity for the Claude rule is refused", False, ""))
+    except DataError:
+        results.append(("identity-inc: an employer identity for the Claude rule is refused", True, ""))
+    t = {k: [] for k in TOP_KEYS}
+    t.update(schema_version=1, families={}, outputs=[{"id": "x", "install_mode": "claude-settings-keys",
+                                                      "owned_keys": ["hooks", "env"], "render": "hooks"},
+                                                     {"id": "y", "install_mode": "tracked", "overlay": "v9"}])
+    errs = check_table(t)
+    results.append(("outputs: env is never a shim-installable owned key; overlay versions are closed",
+                    any("env is never an owned" in e for e in errs) and any("overlay must be one of" in e for e in errs),
+                    str(errs)))
+    old_frag, old_inc = _git_show(f"{V4_REV}:00-bootstrap/dist/settings-user-fragment.json"), \
+        _git_show(f"{V4_REV}:00-bootstrap/dist/git/claude-identity.inc")
+    if old_frag is None or old_inc is None:
+        results.append(("overlay: v4 reproduced from the tables (SKIP: no v4 history here)", True, ""))
+    else:
+        try:
+            rcr, rdev = identity_tables(ROOT)
+            v4 = json.loads(old_frag, object_pairs_hook=OrderedDict).get("env") or {}
+            ok = (list(overlay_env(rcr, rdev, "v4").items()) == list(v4.items())
+                  and render_claude_identity_inc(rdev) == old_inc)
+            results.append(("overlay: v4 env and claude-identity.inc reproduced byte-for-byte from the tables", ok, ""))
+        except (DataError, ValueError) as exc:
+            results.append(("overlay: v4 env and claude-identity.inc reproduced byte-for-byte from the tables", False,
+                            str(exc)))
     return results
 
 

@@ -2204,7 +2204,7 @@
       "surface": "claude-code",
       "probe": false,
       "render": "hooks",
-      "overlay": "v4"
+      "overlay": "v5"
     },
     {
       "id": "claude-identity-inc",
