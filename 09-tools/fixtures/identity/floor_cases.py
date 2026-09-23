@@ -379,7 +379,7 @@ def floor_decision_cases(pr, rs) -> list:
 
 INSTALL_CASES = ["install: --install-claude-overlay lands the v5 env on a temp HOME through installers.run",
                  "install: the installed env is a full-key replace (stale managed keys gone, user keys kept)",
-                 "install: refused under an agent verdict and without a TTY (exit 4, nothing written)",
+                 "install: refused under an agent marker, a Claude ancestor and without a TTY (exit 4, nothing written)",
                  "install: the diff is printed and the answer N writes nothing",
                  "install: launchctl, gh and osascript are never called"]
 
@@ -443,9 +443,12 @@ def overlay_install_cases(pr, rs) -> list:
             return rc, o.getvalue(), e.getvalue()
 
         rc_a, _o, err_a = run(verdict=AGENT)
+        anc = pr.agent_check(env={}, ancestry=[{"comm": "zsh"}, {"comm": "Claude"}], isatty=TTY)
+        rc_c, _o, err_c = run(verdict=anc)
         rc_t, _o, err_t = run(tty={"stdin": True, "stdout": False})
-        out.append((INSTALL_CASES[2], rc_a == 4 and rc_t == 4 and sj.read_bytes() == before
-                    and "refused" in err_a + err_t, f"{rc_a}/{rc_t} {err_a[-160:]} {err_t[-160:]}"))
+        out.append((INSTALL_CASES[2], rc_a == 4 and rc_c == 4 and rc_t == 4 and sj.read_bytes() == before
+                    and "agent:claude" in err_c and "refused" in err_a + err_t,
+                    f"{rc_a}/{rc_c}/{rc_t} {err_a[-160:]} {err_t[-160:]}"))
         rc_n, o_n, _e = run(answer="n")
         out.append((INSTALL_CASES[3], rc_n == 1 and "WS_CLAUDE_OVERLAY" in o_n and sj.read_bytes() == before,
                     f"rc={rc_n}"))
