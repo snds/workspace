@@ -547,7 +547,7 @@ def _validate_action_policy(obj: dict, errors: List[str]) -> None:
 def _validate_vetted_scripts(obj: dict, errors: List[str]) -> None:
     spec = {
         "id": (_STR, True), "path": (_STR, True), "action_classes": (_LIST, True), "actions": (_DICT, True),
-        "needs_employer_gh": (_BOOL, True), "approved": (_STR, True),
+        "needs_employer_gh": (_BOOL, True), "approved": (_STR, True), "argv": (_DICT, True),
     }
     seen: set = set()
     for i, row in enumerate(_rows(obj, "scripts", errors)):
@@ -567,6 +567,15 @@ def _validate_vetted_scripts(obj: dict, errors: List[str]) -> None:
         for name, c in acts.items():
             if c not in acs:
                 errors.append(f"{where}.actions.{name}: class {c!r} is not in the row's action_classes")
+        shapes = row.get("argv") if isinstance(row.get("argv"), dict) else {}
+        for name in acts:
+            if name not in shapes:
+                errors.append(f"{where}.argv: action {name!r} declares no argv shape")
+        for name, lst in shapes.items():
+            if name not in acts:
+                errors.append(f"{where}.argv.{name}: not a declared action")
+            if not (isinstance(lst, list) and lst and all(_str_list(x) and x for x in lst)):
+                errors.append(f"{where}.argv.{name}: must be a non-empty list of token lists")
 
 
 _ROW_VALIDATORS: Dict[str, Callable[[dict, List[str]], None]] = {
@@ -2684,6 +2693,28 @@ def _credential(argv: List[str], res: dict, env: dict, root: Optional[Path]) -> 
     return "unknown"
 
 
+_SHAPE_TOKENS = {
+    "<ref>": re.compile(r"^[A-Za-z0-9_@][A-Za-z0-9._/@-]*$"),
+    "<n>": re.compile(r"^[0-9]{1,6}$"),
+    "<path>": re.compile(r"^[^-\s][^\s]*$"),
+}
+
+
+def argv_matches_shape(argv: List[str], shape: List[str]) -> bool:
+    """Exact-length match: literal tokens equal, <ref>/<n>/<path> placeholders by pattern (no options,
+    no refspec colons or leading +)."""
+    if len(argv) != len(shape):
+        return False
+    for a, t in zip(argv, shape):
+        rx = _SHAPE_TOKENS.get(t)
+        if rx is not None:
+            if not rx.match(str(a)) or ":" in str(a):
+                return False
+        elif str(a) != t:
+            return False
+    return True
+
+
 class VettedContext:
     """Context for one vetted script in one repo. `.run()` = intent line, lifted env, receipt."""
 
@@ -2795,6 +2826,10 @@ class VettedContext:
             self._receipt(base, "none", "skipped:not-registered")
             return self._refuse(argv, f"{action}: not a registered action of {self.script_id}")
         base = self._base_record(action, cls, refs_l)
+        shapes = ((self.row or {}).get("argv") or {}).get(action) or []
+        if not any(argv_matches_shape(list(argv), sh) for sh in shapes if isinstance(sh, list)):
+            self._receipt(base, "none", "skipped:argv-mismatch")
+            return self._refuse(argv, f"{action}: argv is not a registered shape for this action")
         d = self.decide(cls)
         if d["outcome"] != "allow":
             self._receipt(base, "none", f"skipped:{d['outcome']}-{d['rule_id'] or 'default'}")
@@ -4172,6 +4207,29 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
         hits = {rule for _line, rule in rules.scan_text(text)}
         masked = {rule for _line, rule in rules.scan_text(text.replace("acme-corp/widget", "slug-field"))}
         ok(hits and not masked, f"receipts pass the employer-substance class outside the declared repo_slug field: {masked}")
+
+    # ---- argv binding: a registered action runs only its declared argv shapes (stub runner; nothing executes)
+    seen_argv: List[List[str]] = []
+
+    def stub(argv: List[str], **_kw: Any) -> subprocess.CompletedProcess:
+        seen_argv.append(list(argv))
+        return subprocess.CompletedProcess(list(argv), 0, "", "")
+
+    n0 = len(rec_path.read_text(encoding="utf-8").splitlines())
+    with vetted_context("fixture-housekeeper", str(emp), script, home=home, root=root, detection=claude, device="dev-a",
+                        env=base_env, out=None, runner=stub) as ctx:
+        m1 = ctx.run(["gh", "pr", "merge", "7", "--admin", "-R", "acme-corp/widget"], action="pr-list",
+                     needs_employer_gh=True)
+        m2 = ctx.run(["git", "push", "--force", "origin", "HEAD:main"], action="remote-branch-delete",
+                     refs=["refs/heads/main"])
+        m3 = ctx.run(["git", "push", "origin", "--delete", "feat/x:main"], action="remote-branch-delete")
+        m4 = ctx.run(["git", "push", "origin", "--delete", "feat/ok"], action="remote-branch-delete",
+                     refs=["refs/heads/feat/ok"])
+    tail = [json.loads(x) for x in rec_path.read_text(encoding="utf-8").splitlines()[n0:]]
+    mism = [x for x in tail if x.get("type") == "receipt" and x.get("result") == "skipped:argv-mismatch"]
+    ok(m1.returncode == 126 and m2.returncode == 126 and m3.returncode == 126 and len(mism) == 3
+       and seen_argv == [["git", "push", "origin", "--delete", "feat/ok"]] and m4.returncode == 0,
+       f"argv binding: another verb under a registered label is refused with a receipt: {seen_argv} {mism[:1]}")
 
     # ---- pin lag: a vault registry edit without a pin advance keeps the old behaviour
     vault_reg = json.loads((root / TABLE_PATHS["vetted-scripts"]).read_text(encoding="utf-8"))
