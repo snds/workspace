@@ -706,6 +706,14 @@ def overlay_refusals(ctx: Ctx) -> list:
     return reasons
 
 
+EMPLOYER_NOIDENT_NAME = "claude-employer-noident.inc"
+EMPLOYER_NOIDENT_INC = (
+    "# Claude overlay (snds-workspace): included for every employer remote form AFTER the personal\n"
+    "# includes, so an employer repo that also has a personal remote gets no identity at all.\n"
+    "[user]\n\tuseConfigOnly = true\n\tname =\n\temail =\n"
+)
+
+
 def do_claude_overlay(ctx: Ctx) -> int:
     if ctx.action == "uninstall":
         return _uninstall(ctx)
@@ -725,6 +733,7 @@ def do_claude_overlay(ctx: Ctx) -> int:
             for f in sorted(d.iterdir()):
                 if f.is_file():
                     targets.append((base / sub / f.name, _file_state(f.read_bytes(), mode)))
+    targets.append((base / "git" / EMPLOYER_NOIDENT_NAME, _file_state(EMPLOYER_NOIDENT_INC.encode("utf-8"), 0o644)))
     return _apply(ctx, targets)
 
 
@@ -1101,6 +1110,9 @@ def self_test() -> int:
             cmds = [h["command"] for g in got["hooks"]["SessionStart"] for h in g["hooks"]]
             self.assertEqual(sum("workspace-sessionstart" in c for c in cmds), 1)
             self.assertIn("my-own-hook.sh", " ".join(cmds))               # user hook kept
+            ni = self.home / ".config/snds-workspace/git" / EMPLOYER_NOIDENT_NAME
+            self.assertEqual(ni.read_text(), EMPLOYER_NOIDENT_INC)          # the employer no-identity include
+            self.assertIn("useConfigOnly = true", EMPLOYER_NOIDENT_INC)
             self.assertTrue((self.home / ".config/snds-workspace/git/claude-identity.inc").is_file())
             self.assertTrue((self.home / ".config/snds-workspace/gh-claude/config.yml").is_file())
             self.assertEqual(self.run_inst("claude-overlay")[0], 3)
