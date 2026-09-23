@@ -106,20 +106,29 @@ if ! { grep -q workspace-sessionstart "$SJ" && grep -q workspace-reassert "$SJ" 
     esac
   fi
 fi
-# 2b. Claude identity overlay. Claude surfaces are personal-only on every device
-# (06-context/memory/feedback-credential-scoping.md): the fragment's `env` gives
-# Claude-spawned git the snds identity, the personal SSH route, and a block on
-# employer remotes. The merge never overrides a value that is already set.
-if ! grep -q '"GIT_CONFIG_KEY_0"' "$SJ" 2>/dev/null; then
-  if [ "$CHECK" -eq 1 ]; then flag "DRIFT: $SJ missing the Claude personal-identity env overlay"
+# 2b. Claude identity overlay v2 (Claude surfaces are personal-only; see
+# 06-context/memory/feedback-credential-scoping.md). The fragment's `env` scopes the
+# snds identity to snds/* remotes via includeIf hasconfig, routes snds/* over the
+# personal key, and blocks employer remotes. It never sets GIT_AUTHOR_* (v1 did, and
+# that would have put snds on an employer commit). The unattended doctor only merges
+# on a machine with no overlay; replacing an outdated overlay is a human-run step.
+INC="$HOME/.config/snds-workspace/git/claude-identity.inc"
+if ! cmp -s "$DIST/git/claude-identity.inc" "$INC" 2>/dev/null; then
+  if [ "$CHECK" -eq 1 ]; then flag "DRIFT: $INC missing or differs from dist"
+  else mkdir -p "$(dirname "$INC")" && cp "$DIST/git/claude-identity.inc" "$INC" && DRIFT=1 && say "REPAIRED: $INC (Claude identity include)"; fi
+fi
+if ! grep -q '"GIT_CONFIG_KEY_0"' "$SJ" 2>/dev/null && ! grep -q '"GIT_AUTHOR_EMAIL"' "$SJ" 2>/dev/null; then
+  if [ "$CHECK" -eq 1 ]; then flag "DRIFT: $SJ missing the Claude identity env overlay"
   else
     python3 "$WS/00-bootstrap/doctor/merge_settings.py" "$DIST/settings-user-fragment.json" "$SJ" 2>/dev/null; _rc=$?
     case $_rc in
-      0) DRIFT=1; say "REPAIRED: $SJ (Claude identity env overlay merged; backup written)" ;;
-      3) flag "REPAIR FAILED: $SJ — overlay merge was a no-op (an existing env value wins?) — fix by hand" ;;
+      0) DRIFT=1; say "REPAIRED: $SJ (Claude identity env overlay v2 merged; backup written)" ;;
+      3) flag "REPAIR FAILED: $SJ — overlay merge was a no-op — fix by hand" ;;
       *) flag "REPAIR FAILED: $SJ overlay merge aborted (unparseable settings?) — fix by hand" ;;
     esac
   fi
+elif ! grep -q '"WS_CLAUDE_OVERLAY": "v2"' "$SJ" 2>/dev/null || grep -q '"GIT_AUTHOR_EMAIL"' "$SJ" 2>/dev/null; then
+  flag "DRIFT: $SJ carries an outdated Claude identity overlay (v1 set GIT_AUTHOR_* unconditionally) — replace it by hand from $DIST/settings-user-fragment.json (remove the old GIT_AUTHOR_*/GIT_COMMITTER_*/GIT_CONFIG_* keys first), then restart Claude sessions"
 fi
 # Check EVERY settings layer, not just the user one. A temporary "turn hooks off"
 # most often lands in settings.local.json or the project file — precisely where the
