@@ -24,7 +24,10 @@ Phases (run in this order; default fold,rebuild,verify,watch):
 Written paths are computed from sha256 snapshots, taken before and after every step, of
 the registry, every 03-skills/**/SKILL.md, trigger-routes.md, 06-context/session-log*.md
 and 06-context/sessions/*.md. A written path is FOREIGN when it had unstaged edits before
-the run and is outside `--scope`; foreign edits give exit 4 and are never staged.
+the run and is outside `--scope`; foreign edits give exit 4 and are never staged. When a
+generator INPUT (any 03-skills/**/SKILL.md, trigger-routes.json, knowledge-hints.json) outside
+`--scope` has unstaged edits, the whole heal is refused before any step runs: exit 4, nothing
+written or staged, and the inputs are listed under `foreign_inputs`.
 
 Scopes: all (default; nothing is foreign) · staged (the index) · session:SID (the
 dispatcher touch ledger 06-context/sessions/<SID>.touched, plus every path dirty now
@@ -88,6 +91,21 @@ PHASES: list[dict] = [
     {"phase": "watch", "tool": "ds-source-watch.py", "args": ["--check"], "check_args": ["--check"],
      "mutating": False, "advisory": True},
 ]
+
+# Generator INPUTS: an unstaged edit on one of these outside --scope changes what the rebuild
+# would write (the registry hashes every SKILL.md), so the whole heal is refused.
+GENERATOR_INPUT_RE = re.compile(r"^03-skills/.+/SKILL\.md$")
+GENERATOR_INPUTS = ("02-shared-references/trigger-routes.json",
+                    "02-shared-references/knowledge-hints.json")
+
+
+def foreign_generator_inputs(pre_unstaged: set[str], scope_paths: set[str] | None) -> list[str]:
+    """Generator inputs with unstaged edits before the run and outside --scope."""
+    if scope_paths is None:
+        return []
+    return sorted(p for p in pre_unstaged
+                  if (GENERATOR_INPUT_RE.match(p) or p in GENERATOR_INPUTS) and p not in scope_paths)
+
 
 # Staged paths that make the pre-commit lane run the rebuild check.
 LANE_SOURCES = ("02-shared-references/trigger-routes.json",
@@ -277,6 +295,19 @@ def run(args: argparse.Namespace) -> tuple[int, dict]:
     scope_paths = resolve_scope(args.scope)
     pre_unstaged = set() if args.check else unstaged_paths()
     budget = args.budget
+    foreign_inputs = [] if args.check else foreign_generator_inputs(pre_unstaged, scope_paths)
+    if foreign_inputs and any(ph in phases for ph in ("fold", "rebuild")):
+        results = [{"phase": st["phase"], "tool": st["tool"], "exit": None, "status": "SKIPPED",
+                    "seconds": 0.0, "last": "refused: foreign unstaged generator inputs", "written": [],
+                    "pass": False} for st in PHASES if st["phase"] in phases]
+        return 4, {
+            "schema_version": 1, "cmd": "nightly", "status": "refused", "phases": results, "failed": 0,
+            "commit": "refused — foreign unstaged generator inputs; nothing written or staged",
+            "written": [], "foreign": foreign_inputs, "foreign_inputs": foreign_inputs,
+            "scope": args.scope, "scope_paths": None if scope_paths is None else sorted(scope_paths),
+            "budget_s": budget, "elapsed_s": round(time.monotonic() - started, 2), "skipped": [],
+            "check": False, "fix": None,
+        }
 
     results: list[dict] = []
     skipped: list[dict] = []
@@ -375,7 +406,7 @@ def run(args: argparse.Namespace) -> tuple[int, dict]:
         "scope": args.scope,
         "scope_paths": None if scope_paths is None else sorted(scope_paths),
         "budget_s": budget, "elapsed_s": round(time.monotonic() - started, 2),
-        "skipped": skipped, "check": bool(args.check), "fix": fix,
+        "skipped": skipped, "check": bool(args.check), "fix": fix, "foreign_inputs": [],
     }
     return rc, report
 
@@ -450,7 +481,12 @@ def _print_human(report: dict) -> None:
         print(f"  {mark} [{e['phase']:<7}] {e['tool']:<26} {e['seconds']:>5.2f}s  "
               f"{e['status']:<8} {e['last'][:56]}{wrote}")
     print(f"  · commit: {report['commit']}")
-    if report["foreign"]:
+    if report.get("foreign_inputs"):
+        print("  ✗ refused: another session has unstaged edits on generator inputs (nothing written; "
+              "resolve or commit them first):")
+        for p in report["foreign_inputs"]:
+            print(f"      {p}")
+    elif report["foreign"]:
         print("  ✗ foreign unstaged edits on written paths (not staged; resolve first):")
         for p in report["foreign"]:
             print(f"      {p}")
