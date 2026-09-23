@@ -86,6 +86,10 @@ class Lab:
         for d in ("control", "telemetry", "git"):
             (self.base / d).mkdir(parents=True, exist_ok=True)
         (self.base / "git" / "claude-identity.inc").write_text(rs.render_claude_identity_inc(self.dev), encoding="utf-8")
+        inst = load("00-bootstrap/doctor/installers.py", "installers")
+        noident = getattr(inst, "EMPLOYER_NOIDENT_INC", None)
+        if noident is not None:
+            (self.base / "git" / inst.EMPLOYER_NOIDENT_NAME).write_text(noident, encoding="utf-8")
         self.ws.mkdir(parents=True, exist_ok=True)
         (self.ws / "AGENTS.md").write_text("# fixture workspace\n", encoding="utf-8")
         self.script = self.ws / SCRIPT_REL
@@ -188,7 +192,9 @@ def _need(minimum: tuple, names: list) -> list:
 IDENTITY_CASES = ["identity: pat-sample remote gets the include identity (scp, alias, https, ssh forms)",
                   "identity: acme-corp remote never gets the include identity",
                   "identity: identity() reports I1 for a personal identity in an employer repo",
-                  "identity: no remote gets no overlay identity"]
+                  "identity: no remote gets no overlay identity",
+                  "identity: an employer repo that also has a personal remote gets no personal identity",
+                  "identity: cherry-pick and revert on such a repo cannot create a personal-identity commit"]
 
 
 def identity_cases(pr, rs) -> list:
@@ -221,13 +227,33 @@ def identity_cases(pr, rs) -> list:
             p.parent.mkdir(parents=True, exist_ok=True)
             p.write_text((FX / f"{name}.json").read_text(encoding="utf-8"), encoding="utf-8")
         human = {"family": "cursor", "family_for_walls": "cursor", "agent_possible": False, "acting_host": "cursor"}
-        res = pr.identity(repo=str(emp), family="cursor", device="dev-a", root=root, env=env, home=lab.home,
+        res = pr.identity(repo=str(emp), family="cursor", device="dev-a", root=root, env=lab.base_env, home=lab.home,
                           detection=human)
         out.append((IDENTITY_CASES[2], res["invariants_hit"] == ["I1"], json.dumps(res)[:300]))
         none = lab.tmp / "loose"
         lab.g(lab.base_env, "init", "-q", str(none))
         got = lab.g(env, "config", "--get", "user.email", cwd=none).stdout.strip()
         out.append((IDENTITY_CASES[3], got != lab.pat_mail(), got or "(unset)"))
+        dual = lab.tmp / "dual"
+        lab.g(lab.base_env, "init", "-q", "-b", "main", str(dual))
+        lab.g(lab.base_env, "remote", "add", "origin", "git@github.com:acme-corp/w.git", cwd=dual)
+        lab.g(lab.base_env, "remote", "add", "fork", "https://github.com/pat-sample/w.git", cwd=dual)
+        got = lab.g(env, "config", "--get", "user.email", cwd=dual).stdout.strip()
+        out.append((IDENTITY_CASES[4], got != lab.pat_mail(), got or "(unset)"))
+        benv = dict(env, GIT_AUTHOR_NAME="Acme Worker", GIT_AUTHOR_EMAIL=lab.acme_mail(),
+                    GIT_COMMITTER_NAME="Acme Worker", GIT_COMMITTER_EMAIL=lab.acme_mail())
+        for i in range(2):
+            (dual / f"f{i}.txt").write_text(f"{i}\n", encoding="utf-8")
+            lab.g(benv, "-c", "core.hooksPath=/dev/null", "add", f"f{i}.txt", cwd=dual)
+            lab.g(dict(benv, GIT_CONFIG_COUNT="0"), "commit", "-q", "-m", f"c{i}", cwd=dual)
+        lab.g(lab.base_env, "switch", "-q", "-c", "side", "HEAD~1", cwd=dual)
+        cp = lab.g(env, "cherry-pick", "main", cwd=dual)
+        rv = lab.g(env, "revert", "--no-edit", "HEAD", cwd=dual)
+        who = {lab.g(lab.base_env, "log", "-1", "--format=%ae|%ce", ref, cwd=dual).stdout.strip()
+               for ref in ("HEAD", "side")}
+        made_personal = any(lab.pat_mail() in w for w in who)
+        out.append((IDENTITY_CASES[5], cp.returncode != 0 and rv.returncode != 0 and not made_personal,
+                    f"cherry-pick={cp.returncode} revert={rv.returncode} idents={who} {cp.stderr[-160:]}"))
     finally:
         _cleanup(td)
     return out
