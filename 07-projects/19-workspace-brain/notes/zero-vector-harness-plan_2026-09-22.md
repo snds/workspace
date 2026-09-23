@@ -1,259 +1,181 @@
 ---
-title: Zero-Vector-informed additive harness plan
+title: Zero-Vector-informed harness plan (v1.1, LLM- and device-inclusive)
 date: 2026-09-22
-status: proposed
+status: proposed — wave 0 approved by Sean with the LLM-inclusive caveat
 related: [[zero-vector-design-methodology]]
 ---
 
-# Zero-Vector-informed additive harness plan (2026-09-22)
+# Zero-Vector-informed harness plan — v1.1 (2026-09-22)
 
 Standing home: this project.
-- Synthesis of the methodology: `08-knowledge/cross-domain/zero-vector-design-methodology.md`.
-- Implementation-grade detail for every component (read by section, never whole):
-  `reports/zero-vector-harness-detail_v1.0_2026-09-22.md`.
+- Methodology synthesis: `08-knowledge/cross-domain/zero-vector-design-methodology.md`.
+- v1.0 detail (public): `reports/zero-vector-harness-detail_v1.0_2026-09-22.md`.
+- **v1.1 detail and surface research are held locally, not committed.** They are at
+  `.claude/state/held/`, on the Work MBP only. The vault repo is **public**, and those documents
+  map agent-surface gaps and employer-wall mechanics. Publish them after the visibility decision
+  (^pc-47).
+
+## Sean's decisions (2026-09-22) — binding
+
+1. **Wave 0 is approved**, on the condition that everything is **LLM-inclusive as a first-class
+   concept**. The minimum surfaces are Claude Code, Claude Chat, Cursor and Codex, and as many
+   others as feasible. See [[decision-llm-inclusive-harness]].
+2. **Device-inclusive.** It must work on both the Work MBP and the Personal MBP. Repos are keyed by
+   remote slug and resolved per device, and nothing hardcodes a path.
+3. **Project intent lives in each repo** as `PROJECT.md`, with a pointer from the repo's
+   `AGENTS.md`. Projects without a repo keep their intent in the vault. `centric-ui` inherits
+   `saas-plm-prototype`'s intent. See [[decision-project-intent-in-repo]].
+4. **Identity is (surface family, device).** Every Claude surface is **personal-only** (`snds`) on
+   every device, with no substantive employer work, but housekeeping is allowed with receipts.
+   Cursor and Codex are the **employer-approved** surfaces, with full harness access including
+   mapping and recon. Every other surface follows the device. See [[feedback-credential-scoping]].
+5. **The guard is workspace-owned and LLM-agnostic.** One decision function works over declared
+   tables, and every host reaches it through a generated shim.
 
 ## Bottom line
 
-- **Zero-Vector's value is its patterns, not its tools.** Keep these five: declared project
-  intent, a lint that checks the spec against disk, findings that stay open until closed with
-  evidence, self-contained work packets, and owned write-sets. ZV's tooling runs all of these as
-  prompts. Its own site repo shows the result: good remediation was produced and mostly carried
-  out, but it was never closed, and stale maps still point agents the wrong way.
-- **This workspace repeats that failure at two boundaries.**
-  - *Project level:* projects don't declare intent, and audits never close.
-  - *Surface boundaries:* Cursor commits skip the heal that only Claude runs. HEAD was red on
-    registry drift until healed in `6cac460`. Also, `llms.txt`, the always-applied `brain.mdc`,
-    and six Cursor agent files all teach reads that the contract bans.
-- **The plan is 15 components in 4 waves**, and every one extends a home that already exists. It
-  adds nothing to always-loaded context. Everything runs report-only before anything blocks, and
-  the employer wall becomes mechanical for agent git actions.
+The v1.0 substance survives: the heal sequencer, one profile resolver, one spec parser, the
+findings register, owned write-sets, and gates computed from the diff. What changes is **where
+things are enforced**. Research on the current vendor docs and on this Mac's logs showed that
+vendor-hook enforcement does not transfer between surfaces:
+- Cursor's `sessionEnd` failed in 98 of 147 logged runs.
+- Cursor's prompt-time hooks cannot inject context. The route hook returned context 232 times, and
+  none of it reached a transcript.
+- Codex's hooks here are configured but untrusted, and its SessionEnd is capped at about 3 s.
+- Claude Chat and cloud agents run none of the local config.
 
-## What changes for the long-term build process
+So v1.1 implements every behaviour once, in workspace-owned stdlib code and declared tables:
+`surfaces.json`, `devices.json`, `context-remotes.json`, `action-policy.json` and
+`vetted-scripts.json`. It generates the per-host shims from those tables, and it claims
+enforcement only at the lowest tier that actually blocks.
 
-| Today | After |
-|---|---|
-| A project's problem, audience, knowns and unknowns live in ad hoc prose (or nowhere) | A bounded `## Project intent` block in the README (vault projects) or a root `PROJECT.md` (external personal repos). It holds knowns and unknowns with #04 labels and decision rules written before any evidence, plus an explicit out-of-scope list and a Later list |
-| Specs are trusted as written; approval is any string starting with "approved" | `intent-run lint` checks spec vs. disk and scales severity by `lifecycle:`. Approval is TTY-only and pinned to a content hash. Verify leaves append-only records in mission-fit's PASS/FAIL/UNKNOWN terms |
-| Audits end as reports, and their status contradicts the memory decisions | Audits become remediation specs: a findings register (F-IDs, OPEN/RESOLVED/DEFERRED, `closed_by`), self-contained packets, a preserve list with expiry, and a mission-fit verdict. Snapshot reports are never edited |
-| Parallel agents are separated only by worktrees | Tasks declare `writes`/`forbids` globs. `gate` rejects overlapping writers in the same wave, and `scope` checks each diff against its declared globs |
-| Validators run only when someone remembers, and SessionEnd pushes unchecked | Gates run at boundaries every surface passes through (SessionEnd plus git hooks you install), and the diff decides which ones run. Failures are split into charged (this diff caused it) and ambient (it was already there). Reporting only until the data justifies blocking |
-| Machine entry points drift from the contract | One `ENTRY_POINTS` list. A parity check fails any read order that names a banned-ingest file |
-| The employer wall is text injected into context | One declared resolver on two axes (owner and credential), plus a user-global guard on agent `git`/`gh` actions |
+## Enforcement tiers (strongest reach last)
 
-## Waves
+| Tier | What | Blocks? |
+|---|---|---|
+| T0 contract text | `AGENTS.md` + adapters, `llms.txt`, paste pack | no |
+| T1 always-on rules | beacons, `.cursor/rules`, Codex global `AGENTS.md` | no |
+| T2 prompt/session hooks | context injection where a host supports it | not used to block |
+| T3 tool-time shims | Claude `PreToolUse`, Cursor `beforeShellExecution`, Codex `PreToolUse` (once trusted), generated static belts | yes, on hooked hosts |
+| T4 git boundary | a Claude git floor (in the overlay) and global config-based hooks (git ≥ 2.54), which every local committer passes | yes (a human can bypass them) |
+| T5 server side | CI + a force-push/deletion ruleset on the workspace | CI detects; the ruleset blocks |
+| T6 credential scope | the personal account holds no employer grants; the Claude GitHub App and connectors are personal-only | yes (the server refuses access) |
 
-The **first breaker** is wiring any gate before wave 0 greens HEAD and makes the heal safe under
-scoped commits. If that order is inverted, every gate fires on inherited debt, the telemetry that
-must justify blocking is poisoned, and bypassing gates becomes a habit.
+## Surface coverage at a glance
 
-### Wave 0: a green baseline and proven tools (H1, H3, H2)
+| Surface | Strongest enforcement it can run | Honest limit |
+|---|---|---|
+| Claude Code (local) | T3 PreToolUse + T4 Claude floor | Hooks are skipped in `--bare` mode |
+| Claude Code (cloud) | Committed repo hooks + T5 | None of the local config applies |
+| Claude Chat (web/mobile) | T5 + T6 only | No local enforcement at all |
+| Claude Chat (desktop/Cowork) | MCP server write tools (H21) + T5 | Cowork's hook behaviour is unverified |
+| Cursor (IDE) | T3 user hooks + T4 lanes | Prompt injection is dropped; sessionEnd is unreliable |
+| Cursor (cloud) | Committed repo hooks + T5 | Platform identity |
+| Codex (desktop/CLI) | T3 once hooks are trusted, execpolicy belts, T4 lanes | Trust is pinned per definition hash; 32 KiB AGENTS.md cap |
+| Codex (cloud) | T5 | Low-confidence docs |
+| Gemini, Copilot, Windsurf, Warp, Aider, others | T3 where hooks exist, T4, T5 | Unverified until installed and probed |
 
-- **H1: regeneration baseline.** Make `nightly.py` the single regeneration sequencer, with
-  per-step timeouts, a `--budget` deadline, and the fixpoint order build-registry → build-related
-  → build-registry → build-trigger-routes. The SessionEnd hook calls it inside a 52 s deadline
-  with a 12 s push reserve. The heal is skipped when a dirty `SKILL.md` belongs to another
-  session, or to Cursor, which writes no touch-list. Its one-off census report covers
-  git-tracked files only.
-  - *Detector:* `nightly.py --self-test`, plus `TestScopedCommit` extensions.
-  - *HEAD heal already done:* `6cac460`.
-- **H3: harden intent-run before extending it.** Quote-aware frontmatter parsing, so
-  `approved via PR #12` survives. Escaped table pipes. Measures run with `shell=False`, and an
-  allowlist applies in CI and hooks, so a `; <cmd>` chain cannot run. A no-git-write invariant, a
-  `--self-test`, and CI path filters.
-- **H2: declared profile resolver.** `09-tools/profile_resolve.py` reads the declared table
-  `delivery-playbooks/context-remotes.json` and returns two axes: owner profile and credential
-  scope. It classifies against the declared table, and the code holds no employer org names.
-  Contradictions come back as `conflict`, naming both sides. `beacon-enroll.sh` and the doctor
-  call it, keeping their case arms only as a fallback when python3 is absent.
-  - *Needs your sign-off:* the playbook step-3 edit.
+## Components (25) by wave
 
-### Wave 1: honest intent and honest entry points (H6, H15, H4, H5, H7)
+**Wave 0: declare, probe, pin, and encode the action policy before any new gate.**
+- H16 surface registry (data)
+- H19 neutral hook core (`ws_hook.py`: host detection, dedupe, budgeted start)
+- H24 installer discipline and pinned execution (the unattended doctor only reports)
+- H2 resolver keyed by remote slug and device
+- H22 action-class policy, vetted scripts, receipts (prune-our-branches is the first member)
+- H17 identity table + Claude overlay + git floor
+- H25 employer-substance boundary for the public vault
+- H1 regeneration sequencer at every committer
+- H3 intent-run hardening
 
-- **H6: entry-point parity.**
-  - One `ENTRY_POINTS` list in `workspace-harness.py`; the other two adapter lists derive from it.
-  - A read-order check covering llms.txt, `brain.mdc`, CURSOR.md, CLAUDE.md:81, `.cursor/agents/*`
-    and the ontology row. It lands in the same commit as the fixes for all 13+ current defects.
-  - Prices `cursor_floor`, `hook_injection` and `trigger-routes.json`. Net token effect is
-    negative.
-- **H15: employer-wall guard.** A user-global `PreToolUse(Bash)` hook runs only on commands
-  containing `git ` or `gh `, and calls `profile_resolve.py guard`. It runs 14 days in ask mode,
-  then denies default-branch commits, pushes and self-merges in employer repos. Branch → PR flows
-  stay allowed.
-  - *Needs your approval* for the user-global fragment.
-- **H4: project-intent block.** The `## Project intent` block has three sections:
-  1. Problem & audience.
-  2. Knowns & unknowns: claim | #04 label | tier | evidence | decision rule.
-  3. Out of scope & Later (≤ 15 items).
+**Wave 1: universal floors and honest entry points.**
+- H6 entry-point parity and per-surface budgets. It cuts `AGENTS.md` first, because Codex headroom
+  is only 336–1,851 B.
+- H18 git lanes for every local committer
+- H15 wall guard rendered into every hooked host
+- H7 routing through `ws route --stdin` on every surface
+- H20 portable homes for the seven Claude-only workflows
+- H23 surface- and device-aware session closure per touched repo
+- H4 `PROJECT.md` intent in each repo, with inheritance
+- H5 intent lint, approve and verify
 
-  Details:
-  - Capped at 40 lines; any field may be a pointer or `n/a (reason)`.
-  - README frontmatter gains `lifecycle: discover|define|build|operate` (deliberately not
-    "stage", which #17 already uses).
-  - `intent-run init --frame` writes the block, and `/new-project` calls it.
-  - Employer or unknown profiles get only an engineer-voiced `--neutral` variant, checked by a
-    new opt-in `check-secrets --class workspace-leak`.
-- **H5: intent-run lint / approve / next / verify --record.**
-  - Lint compares spec vs. disk ("update one of them") and severity scales with `lifecycle`.
-    Profiles must agree per repo.
-  - Approval is TTY-only and hash-pinned: `gate` blocks silent edits to outcome, northstar or
-    decision rules made after approval.
-  - Verify records land in tracked `*.verify.jsonl` (personal-solo) or under the git dir
-    (anything else).
-  - In the same commit: `lint --all` joins CI, and this project's done-but-open
-    `docs/INTENT.md` is closed.
-- **H7: routes through the one matcher.** Multiword keys for knowns/unknowns, project brief,
-  definition of done, "onboard this repo", and codebase/repo audit (→ eng + #14; still also #06).
-  Remediation and closure keys land with H8. Target checks resolve anchors and subcommands, so a
-  route can't land before its target. The dead dispatcher `TRIGGER_WORDS` and `KNOWLEDGE_HINTS`
-  dicts are removed.
+**Wave 2: close the loops, report-only.**
+- H8 remediation spec (recon is Cursor/Codex-only for employer repos)
+- H9 write-set scope
+- H10 diff-computed gates and per-surface compliance
+- H11 gate lanes
 
-### Wave 2: close the loops (H8, H9, H10, H11). Report-only.
+**Wave 3: opt-in blocking plus breadth on demand.**
+- H12 research records
+- H13 structure conformance
+- H14 rule-of-three
+- H21 workspace MCP server (it replaces the unguarded `workspace-fs`)
 
-- **H8: remediation spec.** `kind: remediation` has these parts:
-  - a read-only recon card (ported from `wsx adopt`, carries `source_sha`, stdout only for
-    employer or unknown remotes);
-  - `## Findings`, a findings register (not a "ledger"; that word is taken): F-IDs,
-    Critical/High/Medium/Low, OPEN/RESOLVED/DEFERRED, `closed_by`, `revisit`;
-  - `## Preserve`: glob | why | until;
-  - `### T<n>` packets with non-goals, verification, rollback via worktree, bail points and
-    previous attempts.
+**First breaker:** the Claude identity overlay. It had to be fixed before anything else could stack
+on it. The fix to the flaw below **landed in `0d19852`**; the rest of H17 follows the wave-0 order
+(probes → pinned installers → H22 → full overlay → shared-layer guards).
 
-  How it behaves:
-  - `verdict` returns Fit / Fit with gaps / Unfit / Blocked.
-  - A loop-breaker refuses to re-dispatch after 3 FAIL records, and never reverts.
-  - Dogfood: this project's A1–A10, R1–R3, R1–R16 and load-miss 1–15 are imported. A8 becomes
-    RESOLVED, and the reports get registered in `artifact-registry`.
-- **H9: write-set scope.** Task-graph `writes`/`forbids` globs, a committed contract before any
-  fan-out, and a read-only verifier. `scope TASK` fails any file outside the task's globs, any
-  forbidden file, lockfiles and manifests nobody owns, and preserve paths. The restore point is
-  the worktree: no checkpoint commits, no stash, no reset.
-- **H10: diff-computed gates.** `close-out-dispatch --from-diff` maps changed paths to
-  QUALITY_CHAIN steps. A failure is charged if this diff caused it, including links broken by a
-  delete or rename. `last-gate.json` keeps a bounded ring of recent runs. `--telemetry` counts
-  catches and false positives for harness-map's Probation step; you decide every disposition.
-  `ws-audit` gains one `COMPLY` line: injected close-out vs. whether it actually ran, and injected
-  `SKILL.md` paths vs. which were actually Read. This is the Labrador-style context receipt.
-- **H11: closure triggers.** The SessionEnd gate runs through `nightly --phases verify`, and the
-  commit subject gets a `[gate: …]` suffix. `post-commit` and `pre-push` git hooks are installed
-  only by your explicit `workspace-doctor.sh --install-git-hooks`, with a matching uninstall. Kill
-  switch: `WS_PUSH_GATE=off`. A bypass requires a reason. The card gains at most one line:
-  specs that need closure, and the last red gate.
+## Done in this session
 
-### Wave 3: opt-in blocking plus breadth where it's needed (H12, H13, H14)
+- **X1 heal** (`6cac460`).
+- **Stamp-age clock bug** (`fc51b2d`).
+- **Claude identity overlay.** v1 (`bb4cf05`) set `GIT_AUTHOR_*` unconditionally. Env outranks
+  every config file, and Cursor and VS Code import Claude config, so this was an I1 risk.
+  **v2 (`0d19852`)** scopes `snds` to `snds/*` remotes through `includeIf hasconfig`. That was
+  verified on synthetic repos: an employer checkout keeps its own identity, and employer remotes
+  stay blocked.
+- **Decisions recorded:** `bb4cf05`, `f25e916`, and the credential memory, restructured.
 
-- **Blocking** is a per-machine opt-in (`--install-git-hooks --blocking`) for charged regressions
-  only. It requires at most 1 false positive in 20 runs first.
-- **H12: research records and project ADRs** (only when a tracked personal project keeps
-  records). `vault-health --research` checks them over tracked files:
-  - prefixed IDs and typed relations;
-  - #04 labels only;
-  - decision rules registered before the evidence;
-  - personas only with evidence edges;
-  - `^P\d+$` participant IDs;
-  - an opt-in `check-secrets --class pii`.
+## Findings about the current setup (all surface-relevant)
 
-  Project ADRs are Nygard-shaped, and supersession is written in both ADRs' bodies.
-- **H13: `structure-conform.py`** (demand-triggered). It checks only the layers and import rules
-  a project declared, in a fenced JSON block, using stdlib parsing. It becomes the eng hub's L3
-  detector. ShadeGraph is the likely first consumer.
-- **H14: rule-of-three instance log.** `06-context/rule-of-three.jsonl` plus a growth check: new
-  hubs need 3 resolvable instances or a command-surface detector row, and new frameworks need 3
-  consumers. self-improve asks "what would have helped at the start?"
+- **The workspace repo is public.** The vault itself calls it private (^pc-47).
+- **Cursor's Layer-0 route injection never reached a transcript** (232 returns). Cursor's routing
+  therefore rests on rules text, not hooks. The fix is H7/N2.
+- **Workspace `AGENTS.md` (30.9 KB) plus the Codex global beacon (1.5 KB) is at Codex's 32 KiB cap,
+  and truncation is silent.** The fix is H6, which cuts before any addition.
+- **Codex's Claude import (2026-07-31) left untracked, drifting forks:** a stale
+  `.codex/hooks/dispatcher.py`, and `.agents/skills`, 6 of 8 of which have drifted. The fix is
+  retire-with-backup (decision 8).
+- **Claude Code on this Mac exposes employer-capable tools.** The employer Linear MCP has write
+  tools, and computer use and Claude in Chrome are both enabled. This is decision 4.
+- **The prompt router fires on background task-notification turns (X2)**, confirmed in local
+  transcripts.
+- **Three Claude Code installs cause false version notices** (^pc-46).
 
-## Not adopted (key refusals)
+## Decisions needed (these block wave 0; the full list of 24 is in the held detail)
 
-- **The ideology.** "One auteur, zero handoff" does not override the employer wall, and design
-  systems are not "translation overhead". Handoffs also carry distributed scepticism, and
-  independent measurement stays primary.
-- **Auto-committing audits, checkpoint commits, forced reverts, and reflect-and-retry.** These
-  break the walls and the Do-not-build list.
-- **A standing named crew, per-role instruction files, a separate ledger tool, a separate
-  project-drift tool, per-skill reads/writes frontmatter on all 301 skills, and a vault-wide
-  artifact-lifecycle registry.** They would be parallel stores or would fail rule-of-three. The
-  useful parts are folded in: globs on task rows, one parser, `source_sha` on recon.
-- **A learning ladder (skills-as-levels, comprehension probes, coach mode).** The probes are
-  self-report, not independent measurement. Only the session-end gap question survives.
-- **A handoff-count KPI** (it encodes the ideology), **instruction-file rationale lint**
-  (noisy), **a general fact registry** (drifts toward an LLM judge), and **a one-page operating
-  model** (it duplicates AGENTS/CRITICAL_FACTS and eats contract headroom).
-- **Any ZV text, schema or template**, because there is no upstream LICENSE. A one-shot n-gram
-  overlap check runs before any template lands.
+1. **Public vault.** Keep it public and scrub going forward, or make it private (rulesets then need
+   a paid plan). History rewriting is a separate, destructive choice.
+2. **Overlay completion (H17).** A Claude git floor, `WS_SURFACE_FAMILY`, and a Claude-only gh
+   config via `GH_CONFIG_DIR`. Will you log `snds` into that gh config, or leave it empty?
+3. **Employer tools in Claude.** Remove the employer Linear MCP from Claude's user scope? Use a
+   personal-only browser profile for Claude in Chrome?
+4. **Codex.** Trust the generated hooks and the plugin hooks, and retire the import forks?
+5. **Wave-0 defaults** I'll use unless you object:
+   - Claude on unknown-owner repos under `~/Projects` → deny.
+   - The express override is CLI-only, 8 h by default.
+   - R2 and R4 stay report-only for 14 days.
+   - Neutral machine dir: `~/.config/snds-workspace/`.
 
-## Decisions needed from you (these block wave 0–1)
+## Do not build (inherited, plus v1.1 additions)
 
-1. **Wave 0 go-ahead.** Approve H1 (the dispatcher and `nightly.py` changes) and H3. Both are
-   harness mutations, so they need your approval under mission-fit.
-2. **Playbook sign-off (H2).** Step 3 reads remotes via the declared `context-remotes.json` on
-   two axes, and adds the `centricsoftware` Bitbucket org. Also fix row 48 ("Git identity:
-   personal snds"). It contradicts `feedback-credential-scoping.md`, which requires the Centric
-   identity for workspace commits on this laptop. The code is right; the doc is stale.
-3. **Project-intent home (H4).** A README block for vault projects and `PROJECT.md` for external
-   personal repos. Are `lifecycle` values discover/define/build/operate right?
-4. **H15 wall guard.** Add it to the user-global fragment? It starts in ask mode for 14 days,
-   then denies.
-5. **Approval authenticity.** Is a TTY-only `approve` plus an intent hash enough, or do you want
-   out-of-band approval (a PR review or signed tag) before implementors start?
-6. **Beacon behaviour.** snds-owned repos reached through the `github-work` alias are currently
-   refused, because the credential scope is work. Keep that, or allow them when the owner is
-   personal?
-7. **IP boundary.** The playbook says "no employer material, ever", but the vault deliberately
-   tracks Centric context. Declare that as a sanctioned exception?
-
-Later decisions: the `hook_injection` budget, blocking opt-in per machine, research-L3 naming,
-the mapping between the DDR vocabulary and #04, grandfathering the rule-of-three baseline, and
-the state of the 16-CDS plan. All are listed in the detail report.
-
-## Defects found and verified along the way
-
-All 18 candidates were confirmed by an independent read, plus one new one (X1). The
-load-bearing claims were re-run by hand.
-
-| ID | Defect | Sev | Status |
-|---|---|---|---|
-| X1 | Registry drift at HEAD; routing stamp stale | med | **Healed `6cac460`** |
-| D7 | `llms.txt` "Start here" links `skills.registry.json` (~62k tok) and `trigger-routes.md` | high | H6 |
-| D1–D2 | SessionEnd heal runs build-registry only, and no timeout; fixpoint order undocumented | med | H1 |
-| D3 | Dead forked matcher code in `dispatcher.py`; one-matcher guard scans only the first 3000 chars | med | H7 |
-| D4–D5 | CI path filters miss hooks/bootstrap/intent-run; `build-trigger-routes --check` not in CI | med | H3/H6/H10 |
-| D6 | `intent-run` approval is self-attestable | med | H3/H5 |
-| D8 | SessionStart timeout 30 s vs ~98 s of allowed serial subprocess time | med | H1 (extend to SessionStart) |
-| D9 | Card warns on a missing routing stamp, not a stale one | low | small fix |
-| D10 | `/new-project` and templates say to edit dispatcher `TRIGGER_WORDS` | med | H4/H6 |
-| D11 | `beacon-enroll` refuses snds repos via `github-work` (documented fail-safe) | low | decision 6 |
-| D12 | 6 of 12 SESSION-STATE files lack a Context profile line (4 are employer projects) | med | small fix + H5 |
-| D13 | `github-guardrails` keeps dismissals in agent-local memory | low | self-improve |
-| D14 | `HOSTNAME_MAP` duplicated ×3 with divergent labels; retired Windows host | low | self-improve |
-| D15–D16 | `skill-placement` skips #13; hub-prerequisite rule not enforced | med | self-improve |
-| D17 | `/optimize` exists only under `.claude/skills` (not portable) | med | separate task |
-| D18 | "Seventeen frameworks" and a 01–05-only README template | low | self-improve |
-| X2 | The UserPromptSubmit router also fires on background task-notification turns. It injected about 20 unrelated routes twice this session (e.g. `figma`, `centric`, `exposure`). Separately, "zero **vector**" false-routes to `sci-linear-algebra` | med | H7 (skip non-user turns; forbid case) |
-
-## Do not build (inherited plus new)
-
-The same list as `error-correction-research_2026-08-26.md`: no parallel agent framework or second
-substance store, no default reflect-and-retry, no LLM-as-judge KPIs, no new framework or skill
-without rule-of-three evidence, no unattended runners. This plan adds four items:
-- no hooks in employer repos;
-- no tracked blocking flag;
-- no doctor-set `core.hooksPath`;
-- no gate that charges ambient debt.
+- Inherited: no parallel agent framework or second substance store, no default reflect-and-retry,
+  no LLM-as-judge KPIs, no new framework or skill without rule-of-three evidence, no unattended
+  runners.
+- New in v1.1: no hooks or workspace files in employer repos, no tracked blocking flag, no
+  doctor-set `core.hooksPath`, no unattended installs of anything that runs in employer working
+  directories, and no gate that charges ambient debt.
 
 ## Method
 
-- **Source read, 2026-09-22.** One browser tab, read serially with 4–8 s pauses, about 20 page
-  loads across zerovector.design, open.zerovector.design, herelabrador.ai and Substack.
-  `robots.txt` allows everything and points LLMs to `llms.txt`. There was no CAPTCHA, bot wall or
-  AI block. The three GitHub repos were read without authentication, because `gh` is logged into
-  the work account, and none of their scripts were run.
-- **First multi-agent workflow (8 agents).** Deep-read the local capture and mapped this
-  workspace's runtime, method and project layers.
-- **Second multi-agent workflow (12 agents).**
-  - Designed three competing plans.
-  - Three lens judges ranked them: minimal 24, closure 21, builder 19.
-  - A synthesis merged the best, then three adversarial refuters attacked it.
-  - A revision applied 58 objections, partially applied 2 and rejected 2.
-  - An independent verifier checked the defects.
-- **This session's outputs.**
-  - The knowledge note.
-  - This plan, and the detail report.
-  - The X1 heal. No harness code was changed.
+- **v1.0.** Serial, human-paced reads of the Zero-Vector sources, then two workflows (8 and 12
+  agents).
+- **v1.1.** A third workflow of 10 agents:
+  - 5 research agents: Claude Code and Claude Chat, Cursor, Codex, the long tail, and workspace
+    lock-in. They used official docs plus read-only local config and logs, and never opened
+    employer repos.
+  - 1 designer.
+  - 3 adversarial refuters: lock-in, walls and identity, facts.
+  - 1 reviser, who applied 35 objections, partially applied 4 and rejected 1.
+- The load-bearing claims were re-run by hand: repo visibility, the overlay's identity scoping, and
+  `includeIf` through the environment.

@@ -9,14 +9,19 @@ _Last updated: 2026-09-22 — Zero-Vector harness plan proposed (awaiting Sean's
 ### 🤝 Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
 - **Current focus**: cds [#50](https://github.com/cpes-software/cds/pull/50) on `feat/instance-0-thin-child-lockstep` @ `a346322`. CodeQL and CI green. Waiting on Sean to review.
-- **Parallel thread (2026-09-22): Zero-Vector harness plan, PROPOSED.** Plan: `notes/zero-vector-harness-plan_2026-09-22.md`. Detail (read by section): `reports/zero-vector-harness-detail_v1.0_2026-09-22.md`. Synthesis: [[zero-vector-design-methodology]]. The plan is 15 components (H1–H15) in 4 waves. Nothing is implemented except the X1 registry heal (`6cac460`). Waves run report-only first, and the first breaker is wiring any gate before wave 0 (H1 heal sequencer, H3 intent-run hardening).
+- **Parallel thread (2026-09-22): Zero-Vector harness plan v1.1, WAVE 0 APPROVED (LLM-inclusive caveat).**
+  - Plan: `notes/zero-vector-harness-plan_2026-09-22.md` (v1.1 summary). Full v1.1 detail and surface research are held locally at `.claude/state/held/` (Work MBP; not committed while the vault is public, ^pc-47).
+  - Decisions are recorded in [[decision-llm-inclusive-harness]], [[decision-project-intent-in-repo]] and [[feedback-credential-scoping]].
+  - Landed so far: X1 heal (`6cac460`), stamp-age clock fix (`fc51b2d`), Claude identity overlay v2 (`0d19852`; v1 `bb4cf05` was unconditional).
+  - **Next action:** wave 0 in order: H16 surface registry → H19 hook core → H24 pinned installers → H2 resolver → H22 action policy + vetted prune with receipts → H17 overlay completion → H25 → H1 → H3.
+  - **Claude sessions must not open employer repos.** Employer mapping and recon run in Cursor/Codex.
 - **Working set**: `/Users/sean.sands/Projects/cpes-software/cds`. Do not edit cds from a centric-ui-rooted chat.
 - **Last action (2026-09-21):** Alex rejected the peer explanation on centric-ui [#413](https://github.com/cpes-software/centric-ui/pull/413). Removed `input-otp` and `react-day-picker` from the host (`022c468`) and replied on both threads. npm still installs them as required peers of `@centric/ui`; hiding that install is a CDS change, not started. Cursor Grok 4.7 · Cursor · Work MBP. cds #50 remains green at `a346322`.
 - **Unattended runner — decided 2026-09-15: not building it.** Not a pending task. The safety gate
   (`check-unattended-runner-gate.py`) stays and is silent when idle. See [[decision-no-unattended-runner]].
 - **Next action:** Sean reviews cds #50. Alex has the correction on cui #413 (`022c468`). Do not agent-merge. Do not bump a host `cds.pin`. Do not re-add widget libraries to the host to silence an unmet peer.
 - **Open decisions:** Theme reset stays a later product-CSS PR. Restyle/arbitrary/inline shadcn rules stay off until a later wave. Proto #84 and cui #398 were last noted 2026-09-18 as human-merge; not re-checked this session.
-- **Blocked on:** Sean review of cds #50. For the ZV plan, Sean must decide: the wave-0 go-ahead (H1, H3), the H2 playbook sign-off (context-remotes.json, plus a stale row 48 on git identity), the project-intent home (H4), and the H15 wall guard. The full list is in the plan's "Decisions needed". Do not implement H1–H15 before approval.
+- **Blocked on:** Sean review of cds #50. For the ZV plan, Sean still has to decide: the public vault (^pc-47), overlay completion (the gh config), whether employer tools stay in Claude, and Codex hook trust (see the plan's "Decisions needed").
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not auto-commit or merge employer repos. Do not commit the untracked `canvases/` in the cds checkout. Do not bump cui `cds.pin`.
 - **Agent thread**: `… → Cursor Grok 4.7 / Cursor / Work MBP (2026-09-21): cds #50 CodeQL green → Cursor Grok 4.7 / Cursor / Work MBP (2026-09-21): cui #413 peer replies → Cursor Grok 4.7 / Cursor / Work MBP (2026-09-21): cui #413 drop widget deps → Claude Opus 5.5 / Claude Code / Work MBP (2026-09-22): Zero-Vector research + harness plan + X1 heal`.
 
