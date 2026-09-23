@@ -73,17 +73,43 @@ _PR = None          # test seam: a stand-in profile_resolve module
 
 # --------------------------------------------------------------------------- imports + tables
 
+IMPORT_BUDGET_S = 3.0
+_PR_CACHE: dict = {}
+
+
+def _import_budget() -> float:
+    try:
+        return max(0.2, float(os.environ.get("WS_HOOK_IMPORT_BUDGET", IMPORT_BUDGET_S)))
+    except ValueError:
+        return IMPORT_BUDGET_S
+
+
 def _profile_resolve():
-    """The sibling profile_resolve module, or None (callers then give no decision)."""
+    """The sibling profile_resolve module, or None (callers then give no decision).
+
+    Hook paths fail open: any failure at import (SyntaxError, RuntimeError, SystemExit, ...) and an
+    import that outlasts the import budget both give None, once per process."""
     if _PR is not None:
         return _PR
-    try:
-        if str(TOOLS) not in sys.path:
-            sys.path.insert(0, str(TOOLS))
-        import profile_resolve
-        return profile_resolve
-    except (ImportError, OSError, ValueError):
-        return None
+    if "mod" in _PR_CACHE:
+        return _PR_CACHE["mod"]
+    box = {}
+
+    def imp():
+        try:
+            if str(TOOLS) not in sys.path:
+                sys.path.insert(0, str(TOOLS))
+            import profile_resolve
+            box["m"] = profile_resolve
+        except BaseException:  # noqa: BLE001 - a broken pinned module must never block a host
+            sys.modules.pop("profile_resolve", None)
+
+    th = threading.Thread(target=imp, daemon=True)
+    th.start()
+    th.join(_import_budget())
+    mod = None if th.is_alive() else box.get("m")
+    _PR_CACHE["mod"] = mod
+    return mod
 
 
 def _surfaces():
@@ -1161,6 +1187,23 @@ def self_test_cases() -> list:
         ok("missing profile_resolve: event exits 0 silently", r.returncode == 0 and r.stdout == "", f"{r.returncode} {r.stdout!r}")
         r = _run_cli(lone, ["--host", "git", "--floor", "claude", "origin", "url"], stdin="", home=home)
         ok("missing profile_resolve: floor exits 0 with a notice", r.returncode == 0 and "allowing" in r.stderr, r.stderr)
+        broken = {"raises": "raise RuntimeError('fixture')\n", "syntax": "def x(:\n",
+                  "exits": "import sys\nsys.exit(7)\n", "hangs": "import time\ntime.sleep(30)\n"}
+        for label, body in broken.items():
+            bt = _fixture_tree(tmp / f"broken-{label}", with_pr=False)
+            (bt.parent / "profile_resolve.py").write_text(body, encoding="utf-8")
+            t0 = time.monotonic()
+            try:
+                rf = _run_cli(bt, ["--host", "git", "--floor", "claude", "origin", "url"], stdin="a b c d\n",
+                              home=home, extra_env={"WS_HOOK_IMPORT_BUDGET": "1"}, timeout=12)
+                re_ = _run_cli(bt, ["--host", "auto", "--event", "session-start"], stdin=cur, home=home,
+                               extra_env={"WS_HOOK_IMPORT_BUDGET": "1"}, timeout=12)
+            except subprocess.TimeoutExpired:
+                rf = re_ = subprocess.CompletedProcess([], 124, "", "timed out (unbounded import)")
+            took = time.monotonic() - t0
+            ok(f"a pinned profile_resolve that {label} at import fails open (floor 0, event 0, bounded)",
+               rf.returncode == 0 and re_.returncode == 0 and took < 15 and "Traceback" not in rf.stderr + re_.stderr,
+               f"floor={rf.returncode} event={re_.returncode} took={took:.1f}s {rf.stderr[-160:]} {re_.stderr[-160:]}")
         full = _fixture_tree(tmp / "full", with_pr=True)
         r = _run_cli(full, ["host", "--skip-any", "cursor"], stdin=cur, home=home)
         ok("CLI host --skip-any with a cursor payload exits 3", r.returncode == 3, f"rc={r.returncode} {r.stderr}")
@@ -1366,6 +1409,16 @@ def main(argv=None) -> int:
         except SystemExit:
             return 2
         return probe_promote(a.host, device=a.device)
+    try:
+        return _hook_main(argv)
+    except KeyboardInterrupt:
+        raise
+    except BaseException as exc:  # noqa: BLE001 - hook paths (floor, events) always fail open
+        print(f"ws_hook: {exc.__class__.__name__} in a hook path; allowing", file=sys.stderr)
+        return 0
+
+
+def _hook_main(argv) -> int:
     if "--floor" in argv:
         i = argv.index("--floor")
         if argv[:2] != ["--host", "git"] or i != 2 or argv[3:4] != ["claude"]:
