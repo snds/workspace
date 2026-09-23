@@ -63,7 +63,7 @@ A host `className` that undoes a parent default is a parent gap. File it on the 
 
 These landed in **CDS**, not proto, so cui and later kits inherit them:
 
-- Lightbox close in the scrim gutter
+- Lightbox close 8px outside the media (`--dialog-lightbox-close-inset`), 16px from the viewport (`--dialog-lightbox-pad`), using the `icon-sm` ghost button
 - Combobox/Select option outline quieted (field outline stays)
 - InputGroup shell owns `--input-px`; inner input and addon are `px-0`
 
