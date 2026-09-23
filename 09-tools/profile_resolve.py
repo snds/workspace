@@ -15,13 +15,19 @@ Usage:
   python3 09-tools/profile_resolve.py agent-check [--json]
   python3 09-tools/profile_resolve.py gitcaps [--record] [--check-recorded] [--json]
   python3 09-tools/profile_resolve.py validate-tables [--require-all] [--json]
+  python3 09-tools/profile_resolve.py policy --repo PATH|SLUG (--action-class C | --command TEXT)
+                                      [--family auto|F] [--device auto|ID] [--via composed|vetted] [--json]
+  python3 09-tools/profile_resolve.py classify --command TEXT [--json]
+  python3 09-tools/profile_resolve.py vetted-status SCRIPT_ID [--json]
   python3 09-tools/profile_resolve.py --self-test [--stub-chain]
 
 Exit codes: 0 ok; 1 deny/fail/drift or a positive negative determination; 2 usage or
 undetermined; 3 not found / not on this device / SKIPPED; 4 refused.
 
 `--root DIR` (a repo root with the standard layout) is for tests only. `scan` and `audit`
-refuse under a Claude chain or any agent-possible env. `agent-check` tests fds 0 and 1: run
+refuse under a Claude chain or any agent-possible env. `policy` evaluates the committed
+action-policy table (read-only here); `--family` and `--via vetted` are what-if inputs that can
+only tighten the detected walls and grant nothing: only vetted_context() runs anything vetted. `agent-check` tests fds 0 and 1: run
 it with inherited stdio and never capture its stdout.
 """
 
@@ -346,36 +352,93 @@ def _validate_surfaces(obj: dict, errors: List[str]) -> None:
             errors.append(f"{k}: must be a list of strings")
 
 
+POLICY_OUTCOMES = ("allow", "deny", "route", "undecided")
+POLICY_VIA = ("vetted", "composed")
+POLICY_TARGET_REFS = ("default", "non-default", "unknown", "none")
+VERB_TARGET_REFS = ("default", "non-default")
+ACTION_CLASSES = ("meta", "housekeeping", "content-read", "author", "publish", "merge")
+_VERB_KEYS: Dict[str, Tuple[tuple, bool]] = {
+    "id": (_STR, True), "tool": (_STR, True), "argv": (_LIST, False), "op": (_STR, False),
+    "flags_any": (_LIST, False), "flags_none": (_LIST, False), "target_ref": (_STR, False), "class": (_STR, True),
+}
+
+
 def _validate_action_policy(obj: dict, errors: List[str]) -> None:
+    """Schema only (T7 never writes the rows): closed keys, known classes, outcomes and `when` values."""
     classes = obj.get("action_classes") if _str_list(obj.get("action_classes")) else []
     outcomes = obj.get("outcomes") if _str_list(obj.get("outcomes")) else []
+    if not classes or len(set(classes)) != len(classes):
+        errors.append("action_classes: must be a non-empty list of distinct strings")
+    for c in outcomes:
+        if c not in POLICY_OUTCOMES:
+            errors.append(f"outcomes: unknown outcome {c!r}")
+    for c in ("allow", "deny"):
+        if c not in outcomes:
+            errors.append(f"outcomes: must include {c!r}")
     for k in ("undecided_evaluates_as", "default_outcome"):
         if obj.get(k) not in outcomes:
             errors.append(f"{k}: not in outcomes")
+    if obj.get("undecided_evaluates_as") == "undecided":
+        errors.append("undecided_evaluates_as: must be a decided outcome")
     if obj.get("unknown_verb_class") not in classes:
         errors.append("unknown_verb_class: not in action_classes")
+    targets = obj.get("route_targets") if _str_list(obj.get("route_targets")) else []
+    if not _str_list(obj.get("route_targets")):
+        errors.append("route_targets: must be a list of strings")
+    seen: set = set()
     for i, row in enumerate(_rows(obj, "verb_map", errors)):
-        if not isinstance(row.get("id"), str) or not isinstance(row.get("tool"), str):
-            errors.append(f"verb_map[{i}]: needs id and tool")
+        where = f"verb_map[{i}]"
+        _check_row(row, where, _VERB_KEYS, errors)
+        if row.get("id") in seen:
+            errors.append(f"{where}: duplicate id {row.get('id')!r}")
+        seen.add(row.get("id"))
         if row.get("class") not in classes:
-            errors.append(f"verb_map[{i}].class: not in action_classes")
+            errors.append(f"{where}.class: unknown class {row.get('class')!r}")
+        if "argv" not in row and "op" not in row:
+            errors.append(f"{where}: needs argv or op")
+        for k in ("argv", "flags_any", "flags_none"):
+            if k in row and not _str_list(row[k]):
+                errors.append(f"{where}.{k}: must be a list of strings")
+        if "target_ref" in row and row["target_ref"] not in VERB_TARGET_REFS:
+            errors.append(f"{where}.target_ref: must be one of {list(VERB_TARGET_REFS)}")
+    seen = set()
     for i, row in enumerate(_rows(obj, "rules", errors)):
         where = f"rules[{i}]"
         for k in row:
             if k not in _RULE_KEYS:
                 errors.append(f"{where}: unknown key {k!r}")
+        if not isinstance(row.get("id"), str):
+            errors.append(f"{where}: missing key 'id'")
+        elif row["id"] in seen:
+            errors.append(f"{where}: duplicate id {row['id']!r}")
+        seen.add(row.get("id"))
         if row.get("outcome") not in outcomes:
             errors.append(f"{where}.outcome: not in outcomes")
         if "proposed" in row and row.get("outcome") != "undecided":
             errors.append(f"{where}: 'proposed' is only valid with outcome 'undecided'")
+        if "proposed" in row and row.get("proposed") not in outcomes:
+            errors.append(f"{where}.proposed: not in outcomes")
+        for k in ("reason", "note"):
+            if k in row and not isinstance(row[k], str):
+                errors.append(f"{where}.{k}: must be a string")
+        if "receipt" in row and not isinstance(row["receipt"], bool):
+            errors.append(f"{where}.receipt: must be a bool")
+        if "route_to" in row and (not _str_list(row["route_to"]) or any(t not in targets for t in row["route_to"])):
+            errors.append(f"{where}.route_to: must be a subset of route_targets")
         when = row.get("when")
         if not isinstance(when, dict):
             errors.append(f"{where}.when: must be an object")
             continue
+        allowed_values = {"action_class": classes, "via": POLICY_VIA, "target_ref": POLICY_TARGET_REFS,
+                          "owner_class": tuple(CLASS_RANK)}
         for k, v in when.items():
             if k in _WHEN_LIST_KEYS:
-                if not _str_list(v):
-                    errors.append(f"{where}.when.{k}: must be a list of strings")
+                if not _str_list(v) or not v:
+                    errors.append(f"{where}.when.{k}: must be a non-empty list of strings")
+                    continue
+                for x in v:
+                    if k in allowed_values and x not in allowed_values[k]:
+                        errors.append(f"{where}.when.{k}: unknown value {x!r}")
             elif k in _WHEN_BOOL_KEYS:
                 if not isinstance(v, bool):
                     errors.append(f"{where}.when.{k}: must be a bool")
@@ -388,11 +451,24 @@ def _validate_vetted_scripts(obj: dict, errors: List[str]) -> None:
         "id": (_STR, True), "path": (_STR, True), "action_classes": (_LIST, True), "actions": (_DICT, True),
         "needs_employer_gh": (_BOOL, True), "approved": (_STR, True),
     }
+    seen: set = set()
     for i, row in enumerate(_rows(obj, "scripts", errors)):
-        _check_row(row, f"scripts[{i}]", spec, errors)
+        where = f"scripts[{i}]"
+        _check_row(row, where, spec, errors)
+        if row.get("id") in seen:
+            errors.append(f"{where}: duplicate id {row.get('id')!r}")
+        seen.add(row.get("id"))
         p = row.get("path")
-        if isinstance(p, str) and (p.startswith("/") or p.startswith("~")):
-            errors.append(f"scripts[{i}].path: must be repo-relative")
+        if isinstance(p, str) and (p.startswith("/") or p.startswith("~") or ".." in Path(p).parts):
+            errors.append(f"{where}.path: must be repo-relative")
+        acs = row.get("action_classes") if _str_list(row.get("action_classes")) else []
+        for c in acs:
+            if c not in ACTION_CLASSES:
+                errors.append(f"{where}.action_classes: unknown class {c!r}")
+        acts = row.get("actions") if isinstance(row.get("actions"), dict) else {}
+        for name, c in acts.items():
+            if c not in acs:
+                errors.append(f"{where}.actions.{name}: class {c!r} is not in the row's action_classes")
 
 
 _ROW_VALIDATORS: Dict[str, Callable[[dict, List[str]], None]] = {
@@ -1668,6 +1744,991 @@ def gitcaps_check_recorded(*, root: Optional[Path] = None, git: str = "git", hos
     return out
 
 
+# --------------------------------------------------------------------------- action policy (T7, H22)
+#
+# One decide() over the committed action-policy table (DECISIONS-2 item 9). The table's rows are
+# T0's and Sean's; this code only reads them. `via` is never taken from the environment: only
+# vetted_context() evaluates with via=vetted, so a hand-set WS_VETTED or WS_WALL_OK changes nothing.
+
+_CTRL_TOKENS = frozenset({"&&", "||", ";", "|", "&", "|&", ";;", "(", ")", "{", "}"})
+_SHELLS = frozenset({"sh", "bash", "zsh", "dash", "ksh"})
+_WRAPPERS = frozenset({"command", "exec", "nohup", "time", "builtin", "nice"})
+_NOOP_TOOLS = frozenset({"true", "false", ":", "echo", "printf", "exit", "set"})
+_BYPASS_ENV = ("GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS", "GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM")
+_ASSIGN_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
+_REDIRECT_OPS = frozenset({">", ">>", "<", "<<", "<<<", ">&", "<&", "&>", "&>>", ">|"})
+_GIT_OPTS_WITH_VALUE = frozenset({"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--config-env",
+                                  "--super-prefix", "--exec-path", "--attr-source", "--list-cmds"})
+_GIT_OPTS_FLAG = frozenset({"-p", "-P", "--paginate", "--no-pager", "--bare", "--no-replace-objects",
+                            "--literal-pathspecs", "--glob-pathspecs", "--noglob-pathspecs", "--icase-pathspecs",
+                            "--no-optional-locks", "--no-advice", "--no-lazy-fetch", "--html-path", "--man-path",
+                            "--info-path"})
+_PUSH_OPTS_WITH_VALUE = frozenset({"--repo", "-o", "--push-option", "--receive-pack", "--exec"})
+_COMMIT_SHORT_WITH_VALUE = "mFcCtS"
+_NETWORK_GIT = frozenset({"fetch", "push", "pull", "ls-remote", "clone"})
+OUTCOME_RANK = {"allow": 0, "route": 1, "deny": 2}
+
+
+class PolicyError(ValueError):
+    """Bad policy input (unknown action class, neither class nor command)."""
+
+
+class ReceiptError(OSError):
+    """A receipt or intent line could not be written (control/ absent or unwritable)."""
+
+
+def _tokenize(text: str) -> Optional[List[str]]:
+    import shlex
+
+    lex = shlex.shlex(text.replace("\r", " ").replace("\n", " ; "), posix=True, punctuation_chars=True)
+    lex.whitespace_split = True
+    lex.commenters = ""
+    try:
+        return list(lex)
+    except ValueError:
+        return None
+
+
+def _split_simple(tokens: List[str]) -> List[Tuple[List[str], Optional[str]]]:
+    """[(simple command tokens, following control operator)]."""
+    out: List[Tuple[List[str], Optional[str]]] = []
+    cur: List[str] = []
+    for t in tokens:
+        if t in _CTRL_TOKENS:
+            if cur:
+                out.append((cur, t))
+            cur = []
+            continue
+        cur.append(t)
+    if cur:
+        out.append((cur, None))
+    return out
+
+
+def _join_cwd(base: Optional[str], p: Optional[str]) -> Optional[str]:
+    if not p:
+        return base
+    import posixpath
+
+    if p.startswith(("/", "~")) or not base:
+        return posixpath.normpath(p) if not p.startswith("~") else p
+    return posixpath.normpath(posixpath.join(base, p))
+
+
+def _cfg_bypass(item: str) -> bool:
+    key = item.split("=", 1)[0].strip().lower()
+    return key.startswith("hook.") or key == "core.hookspath" or key.startswith("url.")
+
+
+def _commit_n(argv: List[str]) -> bool:
+    for a in argv[1:]:
+        if a == "--":
+            return False
+        if a.startswith("-") and not a.startswith("--") and len(a) > 1:
+            for ch in a[1:]:
+                if ch == "n":
+                    return True
+                if ch in _COMMIT_SHORT_WITH_VALUE:
+                    break
+    return False
+
+
+def _parse_git(args: List[str], cwd: Optional[str]) -> Tuple[List[str], Optional[str], Optional[str], bool]:
+    """(argv after global options, cwd_hint, git_dir_hint, bypass-from-config)."""
+    j = 0
+    bypass = False
+    gitdir = None
+    while j < len(args):
+        a = args[j]
+        if a in _GIT_OPTS_WITH_VALUE:
+            val = args[j + 1] if j + 1 < len(args) else ""
+            if a == "-C":
+                cwd = _join_cwd(cwd, val)
+            elif a in ("-c", "--config-env"):
+                bypass = bypass or _cfg_bypass(val)
+            elif a == "--work-tree":
+                cwd = _join_cwd(cwd, val)
+            elif a == "--git-dir":
+                gitdir = val
+            j += 2
+            continue
+        if a.startswith("--") and "=" in a and a.split("=", 1)[0] in _GIT_OPTS_WITH_VALUE:
+            name, val = a.split("=", 1)
+            if name == "--config-env":
+                bypass = bypass or _cfg_bypass(val)
+            elif name == "--work-tree":
+                cwd = _join_cwd(cwd, val)
+            elif name == "--git-dir":
+                gitdir = val
+            j += 1
+            continue
+        if a in _GIT_OPTS_FLAG:
+            j += 1
+            continue
+        break
+    if gitdir and cwd is None:
+        import posixpath
+
+        gd = posixpath.normpath(gitdir)
+        cwd = posixpath.dirname(gd) if posixpath.basename(gd) == ".git" else gd
+    return args[j:], cwd, gitdir, bypass
+
+
+def _parse_into(text: str, env0: Dict[str, Optional[str]], cwd0: Optional[str], depth: int, out: List[dict]) -> None:
+    tokens = _tokenize(text)
+    if tokens is None:
+        out.append({"tool": "?", "argv": [], "cwd_hint": cwd0, "env_prefix": dict(env0), "hook_bypass": False,
+                    "unparsed": True})
+        return
+    chain_env = dict(env0)
+    cwd = cwd0
+    for simple, _op in _split_simple(tokens):
+        # redirections: strip operator and target; a file write becomes an fs-write invocation
+        toks: List[str] = []
+        writes = False
+        k = 0
+        while k < len(simple):
+            t = simple[k]
+            if t in _REDIRECT_OPS:
+                target = simple[k + 1] if k + 1 < len(simple) else ""
+                if toks and toks[-1].isdigit():
+                    toks.pop()
+                if t in (">", ">>", ">|", "&>", "&>>") and target and not target.startswith("&") and target != "/dev/null":
+                    writes = True
+                k += 2
+                continue
+            toks.append(t)
+            k += 1
+        env = dict(chain_env)
+        i = 0
+        while i < len(toks) and _ASSIGN_RE.match(toks[i]):
+            name, _, val = toks[i].partition("=")
+            env[name] = val
+            i += 1
+        cmd_cwd = cwd
+        while i < len(toks):
+            base = toks[i].rstrip("/").rsplit("/", 1)[-1]
+            if base == "env":
+                i += 1
+                while i < len(toks):
+                    t = toks[i]
+                    if t in ("-i", "--ignore-environment", "-"):
+                        env["*"] = None
+                        i += 1
+                    elif t in ("-u", "--unset") and i + 1 < len(toks):
+                        env[toks[i + 1]] = None
+                        i += 2
+                    elif t.startswith("--unset="):
+                        env[t.split("=", 1)[1]] = None
+                        i += 1
+                    elif t.startswith("-u") and len(t) > 2:
+                        env[t[2:]] = None
+                        i += 1
+                    elif t in ("-C", "--chdir") and i + 1 < len(toks):
+                        cmd_cwd = _join_cwd(cmd_cwd, toks[i + 1])
+                        i += 2
+                    elif t == "--":
+                        i += 1
+                        break
+                    elif _ASSIGN_RE.match(t):
+                        name, _, val = t.partition("=")
+                        env[name] = val
+                        i += 1
+                    elif t.startswith("-"):
+                        i += 1
+                    else:
+                        break
+                continue
+            if base in _WRAPPERS:
+                i += 1
+                while i < len(toks) and toks[i].startswith("-") and base in ("command", "time", "nice", "exec"):
+                    i += 1
+                continue
+            break
+        if writes:
+            out.append({"tool": "fs", "op": "write", "argv": [], "cwd_hint": cmd_cwd, "env_prefix": dict(env),
+                        "hook_bypass": False})
+        if i >= len(toks):
+            continue
+        tool = toks[i].rstrip("/").rsplit("/", 1)[-1]
+        args = toks[i + 1:]
+        if tool == "cd":
+            cwd = _join_cwd(cwd, args[0] if args else "~")
+            continue
+        if tool in ("export", "unset", "declare", "typeset"):
+            for a in args:
+                if tool == "unset":
+                    if not a.startswith("-"):
+                        chain_env[a] = None
+                elif _ASSIGN_RE.match(a):
+                    name, _, val = a.partition("=")
+                    chain_env[name] = val
+            continue
+        if tool in _NOOP_TOOLS:
+            continue
+        if tool in _SHELLS:
+            script = None
+            j = 0
+            has_c = False
+            while j < len(args):
+                a = args[j]
+                if a.startswith("-") and not a.startswith("--") and len(a) > 1:
+                    if "c" in a[1:]:
+                        has_c = True
+                    j += 1
+                    continue
+                if a.startswith("--"):
+                    j += 1
+                    continue
+                break
+            if has_c and j < len(args):
+                script = args[j]
+            if script is not None and depth < 6:
+                _parse_into(script, env, cmd_cwd, depth + 1, out)
+                continue
+            out.append({"tool": tool, "argv": args, "cwd_hint": cmd_cwd, "env_prefix": dict(env), "hook_bypass": False})
+            continue
+        inv: Dict[str, Any] = {"tool": tool, "argv": args, "cwd_hint": cmd_cwd, "env_prefix": dict(env),
+                               "hook_bypass": False}
+        bypass = "*" in env or any(k in env for k in _BYPASS_ENV)
+        if tool == "git":
+            argv, gcwd, gitdir, cfg_bypass = _parse_git(args, cmd_cwd)
+            inv.update(argv=argv, cwd_hint=gcwd)
+            if gitdir:
+                inv["git_dir_hint"] = gitdir
+            bypass = bypass or cfg_bypass or "--no-verify" in argv
+            if argv and argv[0] == "commit" and _commit_n(argv):
+                bypass = True
+        elif tool == "gh":
+            argv = []
+            repo_hint = None
+            j = 0
+            while j < len(args):
+                a = args[j]
+                if a in ("-R", "--repo") and j + 1 < len(args):
+                    repo_hint = args[j + 1]
+                    j += 2
+                    continue
+                if a.startswith("--repo="):
+                    repo_hint = a.split("=", 1)[1]
+                    j += 1
+                    continue
+                argv.append(a)
+                j += 1
+            inv["argv"] = argv
+            if repo_hint:
+                inv["repo_hint"] = repo_hint
+        inv["hook_bypass"] = bool(bypass)
+        out.append(inv)
+
+
+def parse_command(text: str) -> list:
+    """Shell text -> [{tool, argv, cwd_hint, env_prefix, hook_bypass}] (plus repo_hint for gh -R/--repo).
+
+    Handles `git -C`, `--git-dir`, `--work-tree`, `cd X &&`, env prefixes, `env` (incl. `-u`),
+    `command git`, absolute git paths, recursive `sh -c` / `bash -lc`, and `gh -R` / `--repo`.
+    Unparseable text yields one `?` invocation (it classifies as the unknown-verb class).
+    """
+    out: List[dict] = []
+    _parse_into(text or "", {}, None, 0, out)
+    for inv in out:
+        ep = inv["env_prefix"]
+        clean = {k: v for k, v in ep.items() if k != "*"}
+        if "*" in ep:
+            clean["(env -i)"] = None
+        inv["env_prefix"] = clean
+    return out
+
+
+def _git_paths(top: Path) -> Tuple[Optional[Path], Optional[Path]]:
+    """(git dir, common dir) for a checkout, reading only the .git file/dir."""
+    g = top / ".git"
+    try:
+        if g.is_dir():
+            return g, g
+        if g.is_file():
+            first = g.read_text(encoding="utf-8", errors="replace").splitlines()[0].strip()
+            if not first.startswith("gitdir:"):
+                return None, None
+            gd = Path(first[len("gitdir:"):].strip())
+            gd = gd if gd.is_absolute() else top / gd
+            common = gd
+            cd = gd / "commondir"
+            if cd.is_file():
+                c = Path(cd.read_text(encoding="utf-8", errors="replace").strip())
+                common = c if c.is_absolute() else gd / c
+            return gd, common
+    except (OSError, IndexError):
+        return None, None
+    return None, None
+
+
+def _repo_heads(path: Any) -> Tuple[Optional[str], Optional[str]]:
+    """(current branch, remote default branch) from HEAD files only; None when unknown."""
+    top = _find_top(_real(path))
+    if top is None:
+        return None, None
+    gd, common = _git_paths(top)
+    cur = dflt = None
+    try:
+        head = (gd / "HEAD").read_text(encoding="utf-8").strip() if gd else ""
+        if head.startswith("ref: refs/heads/"):
+            cur = head[len("ref: refs/heads/"):]
+    except OSError:
+        pass
+    try:
+        oh = (common / "refs" / "remotes" / "origin" / "HEAD").read_text(encoding="utf-8").strip() if common else ""
+        if oh.startswith("ref: refs/remotes/origin/"):
+            dflt = oh[len("ref: refs/remotes/origin/"):]
+    except OSError:
+        pass
+    return cur, dflt
+
+
+def _ref_kind(name: Optional[str], default: Optional[str]) -> str:
+    if not name:
+        return "unknown"
+    n = name
+    for pre in ("refs/heads/", "refs/remotes/origin/"):
+        if n.startswith(pre):
+            n = n[len(pre):]
+    defaults = {default} if default else {"main", "master"}
+    return "default" if n in defaults else "non-default"
+
+
+def _push_target_ref(argv: List[str], current: Optional[str], default: Optional[str]) -> str:
+    pos: List[str] = []
+    j = 1
+    everything = False
+    while j < len(argv):
+        a = argv[j]
+        if a == "--":
+            pos.extend(argv[j + 1:])
+            break
+        if a in _PUSH_OPTS_WITH_VALUE:
+            j += 2
+            continue
+        if a in ("--all", "--mirror", "--branches"):
+            everything = True
+        if a.startswith("-"):
+            j += 1
+            continue
+        pos.append(a)
+        j += 1
+    if everything:
+        return "default"
+    refspecs = pos[1:]
+    if not refspecs:
+        return "unknown"
+    kinds = []
+    for rs in refspecs:
+        rs = rs.lstrip("+")
+        dst = rs.split(":", 1)[1] if ":" in rs else rs
+        if dst in ("HEAD", "@"):
+            dst = current
+        kinds.append(_ref_kind(dst, default))
+    if "default" in kinds:
+        return "default"
+    if "unknown" in kinds:
+        return "unknown"
+    return "non-default"
+
+
+def _flag_hit(flag: str, argv: List[str]) -> bool:
+    for a in argv:
+        if a == flag:
+            return True
+        if (len(flag) == 2 and flag[0] == "-" and flag[1] != "-" and a.startswith("-") and not a.startswith("--")
+                and len(a) > 2 and flag[1] in a[1:]):
+            return True
+    return False
+
+
+def _verb_row_match(row: dict, inv: dict, target_ref: str) -> bool:
+    if row.get("tool") != inv.get("tool"):
+        return False
+    if "op" in row and row.get("op") != inv.get("op"):
+        return False
+    argv = list(inv.get("argv") or [])
+    pre = list(row.get("argv") or [])
+    if pre and argv[:len(pre)] != pre:
+        return False
+    rest = argv[len(pre):]
+    if row.get("flags_any") and not any(_flag_hit(f, rest) for f in row["flags_any"]):
+        return False
+    if row.get("flags_none") and any(_flag_hit(f, rest) for f in row["flags_none"]):
+        return False
+    want = row.get("target_ref")
+    if want:
+        eff = target_ref
+        if target_ref == "unknown" and argv[:1] == ["push"]:
+            eff = "default"          # an implicit push refspec is treated as default
+        if eff != want:
+            return False
+    return True
+
+
+def verb_class(inv: dict, table: dict) -> Tuple[str, Optional[str]]:
+    """(action class, verb id) for one invocation; unmatched -> unknown_verb_class."""
+    tr = inv.get("target_ref") or "none"
+    for row in table.get("verb_map") or []:
+        if isinstance(row, dict) and _verb_row_match(row, inv, tr):
+            return str(row.get("class")), row.get("id")
+    return str(table.get("unknown_verb_class") or "author"), None
+
+
+def _may_read_repo_files(path: Path, det: dict, root: Optional[Path], home: Optional[Path]) -> bool:
+    """The Claude-chain read rule, applied to HEAD reads as well as to config reads."""
+    if not _restricted(det, root):
+        return True
+    if _workspace_kind(path, root, home) is not None:
+        return True
+    pr = projects_root(root=root, home=home)
+    return not _is_under(path, pr)
+
+
+def _abs_hint(cwd: Optional[Any], hint: Optional[str]) -> Optional[str]:
+    if not hint:
+        return str(cwd) if cwd else None
+    if hint.startswith("~"):
+        return os.path.expanduser(hint)
+    if os.path.isabs(hint) or not cwd:
+        return hint
+    return os.path.normpath(os.path.join(str(cwd), hint))
+
+
+def classify_command(text: str, *, cwd: Any = None, root: Optional[Path] = None, detection: Optional[dict] = None,
+                     home: Optional[Path] = None, default_branch: Optional[str] = None,
+                     current_branch: Optional[str] = None) -> list:
+    """invocations[]{tool, argv, cwd_hint, class, verb_id, target_ref, hook_bypass}.
+
+    target_ref: push from the explicit refspec (implicit -> unknown); commit and merge from the
+    current branch; `none` otherwise. HEAD files are read only where the Claude-chain read rule allows.
+    """
+    table = load_table("action-policy", root=root)
+    det = detection
+    out = []
+    for inv in parse_command(text):
+        argv = inv.get("argv") or []
+        sub = argv[0] if (inv.get("tool") == "git" and argv) else None
+        tr = "none"
+        if sub in ("push", "commit", "merge"):
+            cur, dflt = current_branch, default_branch
+            where_abs = _abs_hint(cwd if cwd is not None else os.getcwd(), inv.get("cwd_hint"))
+            if where_abs and (cur is None or dflt is None):
+                if det is None:
+                    det = detect_surface(root=root)
+                p = _real(where_abs)
+                if _may_read_repo_files(p, det, root, home):
+                    rc, rd = _repo_heads(p)
+                    cur = cur if cur is not None else rc
+                    dflt = dflt if dflt is not None else rd
+            if sub == "push":
+                tr = _push_target_ref(argv, cur, dflt)
+            else:
+                tr = _ref_kind(cur, dflt)
+        inv2 = dict(inv, target_ref=tr)
+        cls, vid = verb_class(inv2, table)
+        row = {"tool": inv["tool"], "argv": argv, "cwd_hint": inv.get("cwd_hint"), "class": cls, "verb_id": vid,
+               "target_ref": tr, "hook_bypass": bool(inv.get("hook_bypass"))}
+        for k in ("repo_hint", "op", "unparsed"):
+            if k in inv:
+                row[k] = inv[k]
+        out.append(row)
+    return out
+
+
+def _when_matches(when: dict, facts: dict) -> bool:
+    for k, v in when.items():
+        if k in _WHEN_LIST_KEYS:
+            if facts.get(k) not in v:
+                return False
+        elif k in _WHEN_BOOL_KEYS:
+            f = facts.get(k)
+            if not isinstance(f, bool) or f is not v:
+                return False
+        else:
+            return False
+    return True
+
+
+def policy_decide(facts: dict, table: dict) -> dict:
+    """decide(): the first matching rule wins; undecided evaluates as the table says; no match -> default."""
+    undecided_as = table.get("undecided_evaluates_as") or "deny"
+    for rule in table.get("rules") or []:
+        if not isinstance(rule, dict) or not isinstance(rule.get("when"), dict):
+            continue
+        if _when_matches(rule["when"], facts):
+            raw = rule.get("outcome")
+            eff = undecided_as if raw == "undecided" else raw
+            if eff not in OUTCOME_RANK:
+                eff = "deny"
+            route_to = list(rule.get("route_to") or table.get("route_targets") or []) if eff == "route" else []
+            return {"outcome": eff, "rule_outcome": raw, "rule_id": rule.get("id"),
+                    "reason": rule.get("reason") or rule.get("note") or "", "receipt": bool(rule.get("receipt")),
+                    "route_to": route_to, "proposed": rule.get("proposed")}
+    dflt = table.get("default_outcome") or "deny"
+    eff = undecided_as if dflt == "undecided" else dflt
+    return {"outcome": eff if eff in OUTCOME_RANK else "deny", "rule_outcome": dflt, "rule_id": None,
+            "reason": "no rule matched: default outcome", "receipt": False, "route_to": [], "proposed": None}
+
+
+def _walls(family: str, det: dict, fams: dict) -> Tuple[str, str]:
+    """(acting family, walls family). An explicit family can only tighten the detected walls."""
+    acting = det.get("family") if family == "auto" else family
+    walls = det.get("family_for_walls") or det.get("family") or "unknown"
+    if family != "auto":
+        cands = [c for c in (family, walls) if c in fams]
+        walls = max(cands, key=lambda c: fams[c].get("wall_rank", 0)) if cands else family
+    return str(acting), str(walls)
+
+
+def _chain_has_agent(walls: str, acting: str, det: dict, fams: dict) -> bool:
+    if det.get("agent_possible"):
+        return True
+    for f in (walls, acting):
+        if f not in fams:
+            return True          # unknown family: fail closed
+        if fams[f].get("agent"):
+            return True
+    return False
+
+
+def _res_facts(res: dict, root: Optional[Path], home: Optional[Path]) -> dict:
+    under = res.get("in_projects_root")
+    if res.get("path") and not under:
+        pr = projects_root(root=root, home=home)
+        under = _is_under(_real(res["path"]), pr) and _cf(_real(res["path"])) != _cf(pr)
+    if res.get("path") is None:
+        under = True             # a slug with no local path: most restrictive
+    return {"owner_class": res.get("owner_class", "unknown"), "role": res.get("role", "unknown"),
+            "positively_personal": bool(res.get("positively_personal")), "under_projects_root": bool(under),
+            "has_remote": bool(res.get("remotes")), "repo_conflict": bool(res.get("conflict"))}
+
+
+def _slug_of(res: dict) -> Optional[str]:
+    rems = res.get("remotes") or []
+    for r in rems:
+        if r.get("name") == "origin" and r.get("slug"):
+            return r["slug"]
+    for r in rems:
+        if r.get("slug"):
+            return r["slug"]
+    return None
+
+
+def _append_jsonl(path: Path, record: dict) -> None:
+    line = json.dumps(record, ensure_ascii=False, separators=(",", ":")) + "\n"
+    fd = os.open(str(path), os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
+    try:
+        os.write(fd, line.encode("utf-8"))
+    finally:
+        os.close(fd)
+
+
+def _record_handoff(rec: dict, home: Optional[Path]) -> bool:
+    tel = ws_paths(home=home)["telemetry"]
+    if not tel.is_dir():
+        return False
+    try:
+        _append_jsonl(tel / "handoffs.jsonl", rec)
+        return True
+    except OSError:
+        return False
+
+
+def policy(*, repo: str, action_class: Optional[str] = None, command: Optional[str] = None, family: str = "auto",
+           device: str = "auto", via: str = "composed", root: Optional[Path] = None, env: Optional[dict] = None,
+           ancestry: Optional[list] = None, isatty: Optional[dict] = None, home: Optional[Path] = None,
+           hostname: Optional[str] = None, detection: Optional[dict] = None, record: bool = True,
+           cache: Any = None, _resolved: Optional[dict] = None) -> dict:
+    """The `policy` JSON: outcome (allow|deny|route), route_to, action_class, rule_id, reason, handoff.
+
+    Every invocation of a command is evaluated against its own target repo; the most restrictive
+    outcome wins. `via` is only ever what the caller passes: env markers never make a call vetted.
+    """
+    table = load_table("action-policy", root=root)
+    classes = list(table.get("action_classes") or [])
+    if command is None and action_class is None:
+        raise PolicyError("policy needs --action-class or --command")
+    if action_class is not None and action_class not in classes:
+        raise PolicyError(f"unknown action class {action_class!r}")
+    if via not in POLICY_VIA:
+        raise PolicyError(f"via must be one of {list(POLICY_VIA)}")
+    t = _surfaces_or_fallback(root)
+    fams = t.get("families") or {}
+    det = detection if detection is not None else detect_surface(env=env, ancestry=ancestry, isatty=isatty, root=root)
+    acting, walls = _walls(family, det, fams)
+    agent = _chain_has_agent(walls, acting, det, fams)
+    walls_det = dict(det, family_for_walls=walls) if walls != det.get("family_for_walls") else det
+    dev_id = current_device(hostname=hostname, root=root)["id"] if device == "auto" else device
+    base = _resolved if _resolved is not None else repo_resolve(repo, root=root, home=home, detection=walls_det,
+                                                                cache=cache)
+    repo_is_path = base.get("path") is not None and not _looks_like_slug(str(repo))
+    if command is not None:
+        invs = classify_command(command, cwd=base.get("path") if repo_is_path else None, root=root,
+                                detection=walls_det, home=home)
+    else:
+        tr = "none"
+        if action_class in ("author", "merge") and repo_is_path and _may_read_repo_files(_real(base["path"]), walls_det,
+                                                                                         root, home):
+            cur, dflt = _repo_heads(base["path"])
+            tr = _ref_kind(cur, dflt)
+        elif action_class in ("author", "merge", "publish"):
+            tr = "unknown"
+        invs = [{"tool": None, "argv": [], "cwd_hint": None, "class": action_class, "verb_id": None, "target_ref": tr,
+                 "hook_bypass": False}]
+    resolved: Dict[str, dict] = {}
+    best = None
+    for inv in invs:
+        target = None
+        if inv.get("repo_hint"):
+            target = inv["repo_hint"]
+        elif inv.get("cwd_hint") and repo_is_path:
+            target = _abs_hint(base["path"], inv["cwd_hint"])
+        if target and _cf(_real(target) if not _looks_like_slug(target) else target) != _cf(base.get("path") or ""):
+            if target not in resolved:
+                resolved[target] = repo_resolve(target, root=root, home=home, detection=walls_det, cache=cache)
+            res = resolved[target]
+        else:
+            res = base
+        facts = dict(_res_facts(res, root, home), walls_family=walls, acting_family=acting, device=dev_id,
+                     action_class=inv["class"], via=via, target_ref=inv.get("target_ref") or "none",
+                     chain_has_agent=agent, hook_bypass=bool(inv.get("hook_bypass")))
+        d = policy_decide(facts, table)
+        d.update(action_class=inv["class"], facts=facts, repo_slug=_slug_of(res), verb_id=inv.get("verb_id"))
+        if best is None or OUTCOME_RANK[d["outcome"]] > OUTCOME_RANK[best["outcome"]]:
+            best = d
+    assert best is not None
+    handoff = None
+    written = False
+    reason = best["reason"]
+    if best["outcome"] == "route":
+        targets = " or ".join(best["route_to"]) or "an approved surface"
+        reason = f"route: {targets} — {reason or 'this action belongs on an employer-approved surface'}"
+        if walls == "claude":
+            handoff = {"schema_version": SCHEMA_VERSION, "ts": _now_z(), "device": dev_id, "acting_family": acting,
+                       "walls_family": walls, "repo_slug": best.get("repo_slug"), "action_class": best["action_class"],
+                       "route_to": best["route_to"],
+                       "summary": f"{best['action_class']} on a {best['facts']['owner_class']} repo routed to {targets}"[:120]}
+            if record:
+                written = _record_handoff(handoff, home)
+    return {"outcome": best["outcome"], "route_to": best["route_to"], "action_class": best["action_class"],
+            "rule_id": best["rule_id"], "reason": reason, "handoff": handoff, "handoff_written": written,
+            "rule_outcome": best["rule_outcome"], "receipt": best["receipt"], "verb_id": best.get("verb_id"),
+            "facts": best["facts"], "invocations": len(invs)}
+
+
+# --------------------------------------------------------------------------- vetted scripts (T7, H22)
+
+
+def git_blob_sha(path: Any) -> str:
+    """`git hash-object` for a file, computed in Python (no subprocess)."""
+    import hashlib
+
+    data = Path(path).read_bytes()
+    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+
+
+def _workspace_checkout(home: Optional[Path], root: Optional[Path]) -> Path:
+    if root is not None:
+        return Path(root)
+    try:
+        lines = ws_paths(home=home)["root_file"].read_text(encoding="utf-8").splitlines()
+        if lines and lines[0].strip() and (Path(lines[0].strip()) / "AGENTS.md").is_file():
+            return Path(lines[0].strip())
+    except OSError:
+        pass
+    return ROOT
+
+
+def vetted_status(script_id: str, *, script_path: Any = None, home: Optional[Path] = None,
+                  root: Optional[Path] = None) -> dict:
+    """{status: vetted|unpinned|hash-mismatch|not-registered, pinned_sha, blob, notice}.
+
+    The registry and the lock are read from the PINNED lib (lib/current), never from the vault, so
+    a vault registry edit takes effect only after Sean advances the pin.
+    """
+    lc = ws_paths(home=home)["lib_current"]
+    out: Dict[str, Any] = {"script": script_id, "status": "unpinned", "pinned_sha": None, "blob": None, "notice": None}
+    try:
+        lock = json.loads((lc / "vetted.lock.json").read_text(encoding="utf-8"))
+        if not isinstance(lock, dict):
+            raise ValueError("lock is not an object")
+    except (OSError, ValueError):
+        out["notice"] = "no pinned lib or vetted.lock.json (a human runs workspace-doctor.sh --install-pin)"
+        return out
+    out["pinned_sha"] = lock.get("pinned_sha")
+    reg = _try_table("vetted-scripts", lc)
+    if reg is None:
+        out["notice"] = "the pinned lib carries no vetted-scripts.json (advance the pin)"
+        return out
+    row = next((r for r in reg.get("scripts") or [] if isinstance(r, dict) and r.get("id") == script_id), None)
+    if row is None:
+        out.update(status="not-registered", notice=f"{script_id} is not in the pinned registry")
+        return out
+    ent = next((s for s in lock.get("scripts") or [] if isinstance(s, dict) and s.get("id") == script_id), None)
+    if ent is None or not ent.get("blob") or ent.get("path") != row.get("path"):
+        out["notice"] = f"{script_id} has no blob in the pinned lock (advance the pin)"
+        return out
+    sp = Path(script_path) if script_path is not None else _workspace_checkout(home, root) / str(row.get("path"))
+    try:
+        blob = git_blob_sha(sp)
+    except OSError:
+        out.update(status="hash-mismatch", notice="script file unreadable")
+        return out
+    out["blob"] = blob
+    if blob != ent.get("blob"):
+        out.update(status="hash-mismatch", notice="script bytes differ from the pinned blob (advance the pin)")
+        return out
+    out["status"] = "vetted"
+    return out
+
+
+def lift_env(env: dict, *, needs_employer_gh: bool = False, root: Optional[Path] = None) -> dict:
+    """The vetted env: drops ONLY the transport block (url.<blocked_scheme>.insteadOf and
+    pushInsteadOf entries, renumbered), unsets GIT_AUTHOR_*/GIT_COMMITTER_*, unsets GH_CONFIG_DIR
+    only for employer-gh calls. Floor hooks, hasconfig includes, credential entries and
+    WS_SURFACE_FAMILY are kept; no WS marker is added."""
+    src = dict(env)
+    out = {k: v for k, v in src.items() if not k.startswith(("GIT_AUTHOR_", "GIT_COMMITTER_"))}
+    if needs_employer_gh:
+        out.pop("GH_CONFIG_DIR", None)
+    try:
+        blocked = str(load_table("context-remotes", root=root).get("blocked_scheme") or "")
+    except TableError:
+        blocked = ""
+    try:
+        count = int(str(src.get("GIT_CONFIG_COUNT", "")).strip())
+    except ValueError:
+        return out
+    if not blocked:
+        return out
+    pairs = []
+    for i in range(max(0, count)):
+        k = src.get(f"GIT_CONFIG_KEY_{i}")
+        if k is None:
+            continue
+        # section and variable are case-insensitive; the url subsection is compared as written
+        var = k.rsplit(".", 1)[-1]
+        if (k[:4].casefold() == "url." and var.casefold() in ("insteadof", "pushinsteadof")
+                and k[4:len(k) - len(var) - 1] == blocked):
+            continue
+        pairs.append((k, src.get(f"GIT_CONFIG_VALUE_{i}", "")))
+    for key in list(out):
+        if re.fullmatch(r"GIT_CONFIG_(KEY|VALUE)_\d+", key):
+            del out[key]
+    for i, (k, v) in enumerate(pairs):
+        out[f"GIT_CONFIG_KEY_{i}"] = k
+        out[f"GIT_CONFIG_VALUE_{i}"] = v
+    out["GIT_CONFIG_COUNT"] = str(len(pairs))
+    return out
+
+
+_RECEIPT_KEYS = ("type", "ts", "device", "family", "surface", "pid", "ppid", "script", "script_blob", "repo_slug",
+                 "action_class", "action", "refs", "credential", "result")
+
+
+def _receipt_clean(record: dict) -> dict:
+    out = {}
+    for k in _RECEIPT_KEYS:
+        if k not in record:
+            continue
+        v = record[k]
+        vals = v if isinstance(v, list) else [v]
+        for x in vals:
+            if isinstance(x, str) and ("://" in x or x.startswith(("/", "~")) or re.search(r"\S+@\S+:", x)):
+                raise ValueError(f"receipt field {k} looks like a URL or a path")
+        out[k] = v
+    return out
+
+
+def append_receipt(record: dict, *, home: Optional[Path] = None) -> None:
+    """Append one intent or receipt line to control/receipts.jsonl. Never creates control/."""
+    ctrl = ws_paths(home=home)["control"]
+    if not ctrl.is_dir():
+        raise ReceiptError("control/ is absent (a human runs workspace-doctor.sh --install-pin)")
+    _append_jsonl(ctrl / "receipts.jsonl", _receipt_clean(record))
+
+
+def _gh_class(env: dict) -> str:
+    return "gh-claude" if env.get("GH_CONFIG_DIR") else "default-account"
+
+
+def _git_sub(argv: List[str]) -> Optional[str]:
+    if not argv or argv[0].rstrip("/").rsplit("/", 1)[-1] != "git":
+        return None
+    rest, _cwd, _gd, _b = _parse_git(list(argv[1:]), None)
+    return rest[0] if rest else None
+
+
+def _credential(argv: List[str], res: dict, env: dict, root: Optional[Path]) -> str:
+    tool = argv[0].rstrip("/").rsplit("/", 1)[-1] if argv else ""
+    if tool == "gh":
+        return f"gh:{_gh_class(env)}"
+    if _git_sub(argv) not in _NETWORK_GIT:
+        return "none"
+    rems = res.get("remotes") or []
+    r = next((x for x in rems if x.get("name") == "origin"), rems[0] if rems else None)
+    if not r:
+        return "unknown"
+    form, host = r.get("form"), r.get("host") or "unknown"
+    if form in ("scp", "ssh"):
+        return f"ssh:{host}"
+    if form == "scp-alias":
+        aliases = [a for a in _ssh_aliases(root).values() if str(a.get("host", "")).lower() == host]
+        if len(aliases) > 1:
+            want = "work" if r.get("owner_class") == "employer" else None
+            aliases = [a for a in aliases if a.get("credential_scope") == want] or aliases
+        return f"ssh:{aliases[0].get('alias')}" if aliases else f"ssh:{host}"
+    if form in ("https", "https-userinfo"):
+        return f"https:{host}+gh:{_gh_class(env)}"
+    return "unknown"
+
+
+class VettedContext:
+    """Context for one vetted script in one repo. `.run()` = intent line, lifted env, receipt."""
+
+    def __init__(self, script_id: str, repo: Any, script_path: Any, *, home: Optional[Path], root: Optional[Path],
+                 detection: Optional[dict], device: str, hostname: Optional[str], env: Optional[dict],
+                 runner: Optional[Callable[..., subprocess.CompletedProcess]], assume_unpinned: bool,
+                 out: Any, cache: Any) -> None:
+        self.script_id = script_id
+        self.repo = str(repo)
+        self.script_path = script_path
+        self.home, self.root = home, root
+        self._det, self._device, self._hostname = detection, device, hostname
+        self._env = env
+        self._runner = runner
+        self._assume_unpinned = assume_unpinned
+        self._out = out
+        self._cache = cache
+        self.status: dict = {}
+        self.row: Optional[dict] = None
+        self.res: dict = {}
+        self.receipts: List[dict] = []
+        self._noticed = False
+
+    def _notice(self, text: str) -> None:
+        if not self._noticed:
+            self._noticed = True
+            print(f"notice: {text}", file=sys.stderr)
+
+    def __enter__(self) -> "VettedContext":
+        self.status = vetted_status(self.script_id, script_path=self.script_path, home=self.home, root=self.root)
+        if self._assume_unpinned and self.status.get("status") == "vetted":
+            self.status = dict(self.status, status="unpinned", notice="pinned module not importable: unpinned")
+        lc = ws_paths(home=self.home)["lib_current"]
+        reg = _try_table("vetted-scripts", lc) if self.status.get("status") != "unpinned" else None
+        if reg is None:
+            reg = _try_table("vetted-scripts", self.root)   # action names only; never makes a call vetted
+        self.row = next((r for r in (reg or {}).get("scripts") or []
+                         if isinstance(r, dict) and r.get("id") == self.script_id), None)
+        t = _surfaces_or_fallback(self.root)
+        self.fams = t.get("families") or {}
+        self.det = self._det if self._det is not None else detect_surface(root=self.root)
+        self.acting, self.walls = _walls("auto", self.det, self.fams)
+        self.device = (current_device(hostname=self._hostname, root=self.root)["id"]
+                       if self._device == "auto" else self._device)
+        self.res = repo_resolve(self.repo, root=self.root, home=self.home, detection=self.det, cache=self._cache)
+        self.path = self.res.get("path") or self.repo
+        self.slug = _slug_of(self.res)
+        return self
+
+    def __exit__(self, *exc: Any) -> bool:
+        return False
+
+    @property
+    def vetted(self) -> bool:
+        return self.status.get("status") == "vetted"
+
+    def decide(self, action_class: str) -> dict:
+        return policy(repo=self.repo, action_class=action_class, via="vetted" if self.vetted else "composed",
+                      root=self.root, home=self.home, detection=self.det, device=self.device, record=False,
+                      _resolved=self.res)
+
+    def _exec(self, argv: List[str], env: dict, timeout: float) -> subprocess.CompletedProcess:
+        if self._runner is not None:
+            return self._runner(list(argv), cwd=str(self.path), env=env, timeout=timeout)
+        try:
+            return subprocess.run(list(argv), cwd=str(self.path), env=env, capture_output=True, text=True,
+                                  timeout=timeout)
+        except (OSError, subprocess.SubprocessError) as exc:
+            return subprocess.CompletedProcess(list(argv), 125, "", f"{exc.__class__.__name__}")
+
+    def _refuse(self, argv: List[str], why: str) -> subprocess.CompletedProcess:
+        return subprocess.CompletedProcess(list(argv), 126, "", why)
+
+    def query(self, argv: List[str], timeout: float = 30.0) -> subprocess.CompletedProcess:
+        """A local, read-only git query (no receipt). Runs only where meta is allowed."""
+        d = self.decide("meta")
+        if d["outcome"] != "allow":
+            return self._refuse(argv, f"denied ({d['rule_id']}): {d['reason']}")
+        return self._exec(argv, lift_env(dict(os.environ if self._env is None else self._env), root=self.root),
+                          timeout)
+
+    def _base_record(self, action: str, action_class: str, refs: List[str]) -> dict:
+        return {"ts": _now_z(), "script": self.script_id, "script_blob": self.status.get("blob"),
+                "repo_slug": self.slug, "action_class": action_class, "action": action, "refs": refs}
+
+    def _receipt(self, base: dict, credential: str, result: str) -> dict:
+        rec = {"type": "receipt", "ts": _now_z(), "device": self.device, "family": self.walls,
+               "surface": self.det.get("acting_host"), "script": base["script"], "script_blob": base["script_blob"],
+               "repo_slug": base["repo_slug"], "action_class": base["action_class"], "action": base["action"],
+               "refs": base["refs"], "credential": credential, "result": result}
+        written = True
+        try:
+            append_receipt(rec, home=self.home)
+        except (OSError, ValueError) as exc:
+            written = False
+            self._notice(f"receipts not written ({exc})")
+        self.receipts.append(dict(rec, _written=written))
+        if self._out is not None:
+            self._out(f"receipt {json.dumps(rec, ensure_ascii=False, separators=(',', ':'))}")
+        return rec
+
+    def run(self, argv: List[str], action: str, refs: Any = (), needs_employer_gh: bool = False,
+            timeout: float = 120.0) -> subprocess.CompletedProcess:
+        refs_l = [str(r) for r in refs]
+        acts = (self.row or {}).get("actions") or {}
+        cls = acts.get(action)
+        if self.row is None or cls not in ((self.row or {}).get("action_classes") or []):
+            base = self._base_record(action, str(cls or "author"), refs_l)
+            self._receipt(base, "none", "skipped:not-registered")
+            return self._refuse(argv, f"{action}: not a registered action of {self.script_id}")
+        base = self._base_record(action, cls, refs_l)
+        d = self.decide(cls)
+        if d["outcome"] != "allow":
+            self._receipt(base, "none", f"skipped:{d['outcome']}-{d['rule_id'] or 'default'}")
+            return self._refuse(argv, f"{d['outcome']} ({d['rule_id']}): {d['reason']}")
+        intent = dict(base, type="intent", pid=os.getpid(), ppid=os.getppid())
+        try:
+            append_receipt(intent, home=self.home)
+        except (OSError, ValueError) as exc:
+            if d.get("receipt"):
+                self._receipt(base, "none", "skipped:receipt-unwritable")
+                return self._refuse(argv, f"receipt required and not writable ({exc})")
+            self._notice(f"receipts not written ({exc})")
+        gh = bool(needs_employer_gh and (self.row or {}).get("needs_employer_gh"))
+        env = lift_env(dict(os.environ if self._env is None else self._env), needs_employer_gh=gh, root=self.root)
+        proc = self._exec(argv, env, timeout)
+        result = "ok" if proc.returncode == 0 else f"fail:{proc.returncode}"
+        self._receipt(base, _credential(list(argv), self.res, env, self.root), result)
+        return proc
+
+
+def vetted_context(script_id: str, repo: Any, script_path: Any = None, *, home: Optional[Path] = None,
+                   root: Optional[Path] = None, detection: Optional[dict] = None, device: str = "auto",
+                   hostname: Optional[str] = None, env: Optional[dict] = None,
+                   runner: Optional[Callable[..., subprocess.CompletedProcess]] = None,
+                   assume_unpinned: bool = False, out: Any = print, cache: Any = None) -> VettedContext:
+    """Context manager for a vetted script: blob checked against the pinned lock, policy(via=vetted)
+    per action, `.run(argv, action, refs=(), needs_employer_gh=False)` with intent + receipt lines."""
+    return VettedContext(script_id, repo, script_path, home=home, root=root, detection=detection, device=device,
+                         hostname=hostname, env=env, runner=runner, assume_unpinned=assume_unpinned, out=out,
+                         cache=cache)
+
+
 # --------------------------------------------------------------------------- CLI
 
 
@@ -1724,6 +2785,18 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--check-recorded", action="store_true")
     p = sub.add_parser("validate-tables", parents=[common])
     p.add_argument("--require-all", action="store_true")
+    p = sub.add_parser("policy", parents=[common])
+    p.add_argument("--repo", required=True)
+    g = p.add_mutually_exclusive_group(required=True)
+    g.add_argument("--action-class")
+    g.add_argument("--command")
+    p.add_argument("--family", default="auto")
+    p.add_argument("--device", default="auto")
+    p.add_argument("--via", choices=list(POLICY_VIA), default="composed")
+    p = sub.add_parser("classify", parents=[common])
+    p.add_argument("--command", required=True)
+    p = sub.add_parser("vetted-status", parents=[common])
+    p.add_argument("script_id")
     return ap
 
 
@@ -1794,6 +2867,22 @@ def main(argv: Optional[List[str]] = None) -> int:
             v = validate_tables(root=root, require_all=args.require_all)
             _emit(cmd, v, as_json)
             return EXIT_OK if all(t["ok"] for t in v["tables"].values()) else EXIT_FAIL
+        if cmd == "policy":
+            try:
+                r = policy(repo=args.repo, action_class=args.action_class, command=args.command, family=args.family,
+                           device=args.device, via=args.via, root=root)
+            except PolicyError as exc:
+                print(f"profile_resolve policy: {exc}", file=sys.stderr)
+                return EXIT_USAGE
+            _emit(cmd, r, as_json)
+            return EXIT_OK if r["outcome"] == "allow" else EXIT_FAIL
+        if cmd == "classify":
+            _emit(cmd, {"invocations": classify_command(args.command, cwd=os.getcwd(), root=root)}, as_json)
+            return EXIT_OK
+        if cmd == "vetted-status":
+            st = vetted_status(args.script_id, root=root)
+            _emit(cmd, {k: st[k] for k in ("script", "status", "pinned_sha", "notice")}, as_json)
+            return EXIT_OK if st["status"] == "vetted" else EXIT_FAIL
     except Exception as exc:  # noqa: BLE001
         print(f"profile_resolve {cmd}: undetermined ({exc.__class__.__name__}: {exc})", file=sys.stderr)
         return EXIT_USAGE
@@ -1831,6 +2920,535 @@ def _fixture_root(tmp: Path) -> Path:
     _write(root / "07-projects" / "99-fixture" / "SESSION-STATE.md",
            "- **Context profile**: `centric-design` (fixture declaration)\n")
     return root
+
+
+AP_FIXTURES = TOOLS / "fixtures" / "action_policy"
+CLAUDE_ANC = [{"comm": "claude"}]
+_ORACLE_ORDER = ("P00", "P05", "P10", "P11", "P12", "P13", "P14", "P20", "P19", "P21", "P22", "P40", "P30", "P31",
+                 "P32", "P50")
+
+
+def _t7_fixture_root(tmp: Path) -> Path:
+    """A synthetic workspace root with every table: T2's fixtures plus the T7 mirror and registry."""
+    root = tmp / "t7-home" / "Projects" / "ws"
+    for name in ("devices", "context-remotes", "surfaces"):
+        _write(root / TABLE_PATHS[name], (FIXTURES / f"{name}.json").read_text(encoding="utf-8"))
+    for name in ("action-policy", "vetted-scripts"):
+        _write(root / TABLE_PATHS[name], (AP_FIXTURES / f"{name}.json").read_text(encoding="utf-8"))
+    _write(root / "AGENTS.md", "# fixture workspace\n")
+    _fake_repo(root, {"origin": "https://github.com/pat-sample/ws.git"})
+    return root
+
+
+def _oracle(f: dict) -> str:
+    """Item 9 written out independently of the table (dev-a = work, dev-b = personal)."""
+    fam, dev, oc, ac = f["walls_family"], f["device"], f["owner_class"], f["action_class"]
+    agent = f["chain_has_agent"]
+    if not agent:
+        return "allow"
+    if f["hook_bypass"]:
+        return "deny"
+    if fam == "claude":
+        if oc == "employer":
+            if ac in ("meta", "housekeeping"):
+                return "allow" if (dev == "dev-a" and f["via"] == "vetted") else "deny"
+            if ac in ("content-read", "author", "publish"):
+                return "route"
+            return "deny"
+        if not f["positively_personal"] and f["under_projects_root"]:
+            return "deny"
+        if not f["under_projects_root"] and not f["has_remote"]:
+            return "allow"
+        if not f["positively_personal"] and not f["under_projects_root"]:
+            return "allow" if ac in ("meta", "content-read") else "deny"
+    if dev == "dev-b" and oc == "employer" and ac in ("author", "publish", "merge"):
+        return "deny"
+    if fam in ("cursor", "codex") and dev == "dev-a" and oc == "employer":
+        if ac == "merge":
+            return "deny"
+        if ac in ("author", "publish") and f["target_ref"] in ("default", "unknown"):
+            return "deny"
+        return "allow"
+    if oc == "personal":
+        return "allow"
+    return "deny"
+
+
+def _matrix_facts() -> List[dict]:
+    rows = []
+    fams = {"claude": True, "cursor": True, "codex": True, "unknown-agent": True, "human": False}
+    shapes = {
+        "employer": [(False, True, True), (False, False, True)],
+        "personal": [(True, True, True), (True, False, True)],
+        "third-party": [(False, True, True), (False, False, True)],
+        "unknown": [(False, True, True), (False, False, True), (False, False, False), (False, True, False)],
+    }
+    for fam, agent in fams.items():
+        for dev in ("dev-a", "dev-b", "unknown"):
+            for oc, shape_list in shapes.items():
+                for pp, under, remote in shape_list:
+                    for ac in ACTION_CLASSES:
+                        for via in POLICY_VIA:
+                            for tr in POLICY_TARGET_REFS:
+                                for bypass in (False, True):
+                                    rows.append({"walls_family": fam, "acting_family": fam, "device": dev,
+                                                 "owner_class": oc, "role": oc, "positively_personal": pp,
+                                                 "under_projects_root": under, "has_remote": remote,
+                                                 "repo_conflict": False, "action_class": ac, "via": via,
+                                                 "target_ref": tr, "chain_has_agent": agent, "hook_bypass": bypass})
+    return rows
+
+
+def _git_env(home: Path) -> dict:
+    return {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(home), "XDG_CONFIG_HOME": str(home / ".config"),
+            "GIT_CONFIG_NOSYSTEM": "1", "LANG": "C", "LC_ALL": "C", "GIT_TERMINAL_PROMPT": "0"}
+
+
+def _g(env: dict, *args: str, cwd: Optional[Path] = None) -> subprocess.CompletedProcess:
+    return subprocess.run(["git", *args], cwd=str(cwd) if cwd else None, env=env, capture_output=True, text=True,
+                          timeout=60)
+
+
+def _employer_pair(tmp: Path, home: Path, slug: str = "acme-corp/widget", where: Optional[Path] = None
+                   ) -> Tuple[Path, Path, dict]:
+    """(clone, bare) for an employer-shaped repo whose ssh URL reaches a local bare remote.
+
+    The temp HOME's gitconfig maps `git@github.com:` to the local bare root (the stand-in for the
+    network); the overlay's longer transport-block prefix wins over it, exactly as on the machine.
+    """
+    env = _git_env(home)
+    bare_root = tmp / "remotes"
+    bare = bare_root / f"{slug}.git"
+    bare.parent.mkdir(parents=True, exist_ok=True)
+    _g(env, "init", "-q", "--bare", "-b", "main", str(bare))
+    gc = home / ".gitconfig"
+    if not gc.exists() or "insteadOf" not in gc.read_text(encoding="utf-8"):
+        _write(gc, f'[url "file://{bare_root}/"]\n\tinsteadOf = git@github.com:\n'
+                   "[user]\n\tname = Fixture Person\n\temail = fixture@example.invalid\n")
+    clone = where or (tmp / "elsewhere" / slug.replace("/", "-"))
+    clone.parent.mkdir(parents=True, exist_ok=True)
+    _g(env, "init", "-q", "-b", "main", str(clone))
+    _g(env, "remote", "add", "origin", f"git@github.com:{slug}.git", cwd=clone)
+    _write(clone / "README.md", "fixture\n")
+    _g(env, "add", "README.md", cwd=clone)
+    _g(env, "commit", "-q", "-m", "base", cwd=clone)
+    _g(env, "push", "-q", "origin", "main", cwd=clone)
+    _g(env, "switch", "-q", "-c", "feat/done", cwd=clone)
+    _write(clone / "done.txt", "done\n")
+    _g(env, "add", "done.txt", cwd=clone)
+    _g(env, "commit", "-q", "-m", "done", cwd=clone)
+    _g(env, "push", "-q", "origin", "feat/done", cwd=clone)
+    _g(env, "switch", "-q", "main", cwd=clone)
+    _g(env, "remote", "set-head", "origin", "main", cwd=clone)
+    return clone, bare, env
+
+
+def _overlay_env(base: dict, blocked: str, prefixes: List[str], extra: Optional[List[Tuple[str, str]]] = None) -> dict:
+    """A v4-shaped Claude overlay env: kept entries, then the transport block."""
+    pairs = list(extra or [])
+    pairs += [(f"url.{blocked}.insteadOf", p) for p in prefixes]
+    env = dict(base, WS_CLAUDE_OVERLAY="v4", GH_CONFIG_DIR=str(Path(base["HOME"]) / "gh-claude"))
+    env["GIT_CONFIG_COUNT"] = str(len(pairs))
+    for i, (k, v) in enumerate(pairs):
+        env[f"GIT_CONFIG_KEY_{i}"] = k
+        env[f"GIT_CONFIG_VALUE_{i}"] = v
+    return env
+
+
+def _v4_fixture_env(base: dict) -> Optional[dict]:
+    """Today's installed v4 fragment env, with its employer owners swapped for synthetic ones.
+
+    Reads 00-bootstrap/dist/settings-user-fragment.json and the committed context-remotes table in
+    memory only; nothing employer-named is written or printed.
+    """
+    try:
+        frag = json.loads((ROOT / "00-bootstrap" / "dist" / "settings-user-fragment.json").read_text(encoding="utf-8"))
+        cr = load_table("context-remotes")
+    except (OSError, ValueError):
+        return None
+    env_in = frag.get("env") or {}
+    if "GIT_CONFIG_COUNT" not in env_in:
+        return None
+    swap = {}
+    for row in cr.get("owners") or []:
+        if row.get("class") == "employer":
+            swap[str(row["owner"])] = "acme-corp" if row.get("host") == "github.com" else "acme-bb"
+    env = dict(base)
+    for k, v in env_in.items():
+        v = str(v)
+        if v.startswith("~/"):
+            v = str(Path(base["HOME"]) / v[2:])
+        for real, fake in swap.items():
+            v = v.replace(f":{real}/", f":{fake}/").replace(f"/{real}/", f"/{fake}/")
+        env[k] = v
+    return env
+
+
+def _pin_fixture(home: Path, root: Path, script_rel: str, blob: Optional[str], sha: str = "a" * 40) -> Path:
+    """What `--install-pin` leaves behind, for a temp HOME only: lib/<sha> + current + control/."""
+    base = ws_paths(home=home)["base"]
+    lib = base / "lib" / sha
+    for name in ("devices", "context-remotes", "surfaces", "action-policy", "vetted-scripts"):
+        src = root / TABLE_PATHS[name]
+        _write(lib / TABLE_PATHS[name], src.read_text(encoding="utf-8"))
+    lock = {"schema_version": 1, "pinned_sha": sha, "scripts": []}
+    reg = json.loads((lib / TABLE_PATHS["vetted-scripts"]).read_text(encoding="utf-8"))
+    for s in reg.get("scripts") or []:
+        lock["scripts"].append({"id": s["id"], "path": s["path"], "blob": blob if s["path"] == script_rel else None})
+    _write(lib / "vetted.lock.json", json.dumps(lock))
+    cur = base / "lib" / "current"
+    if cur.is_symlink() or cur.exists():
+        cur.unlink()
+    cur.symlink_to(lib)
+    (base / "control").mkdir(parents=True, exist_ok=True)
+    (base / "telemetry").mkdir(parents=True, exist_ok=True)
+    return lib
+
+
+def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
+    root = _t7_fixture_root(tmp)
+    home = tmp / "t7-home"
+    table = load_table("action-policy", root=root)
+
+    # ---- tables: schema only; T7 never writes the committed rows
+    v = validate_tables(root=root, require_all=False)
+    ok(v["tables"]["action-policy"]["ok"] and v["tables"]["vetted-scripts"]["ok"], "T7 fixture tables validate")
+    real_ap = _try_table("action-policy", None)
+    if real_ap is not None:
+        ok(not validate_table("action-policy", real_ap), "committed action-policy.json validates")
+        ok([r.get("id") for r in real_ap["rules"]] == [r.get("id") for r in table["rules"]]
+           and [r.get("id") for r in real_ap["verb_map"]] == [r.get("id") for r in table["verb_map"]],
+           "fixture mirrors the committed rule and verb ids in order")
+        ok([r[:3] for r in (x.get("id", "") for x in real_ap["rules"])] == list(_ORACLE_ORDER),
+           "the oracle covers every committed rule in order")
+    real_vs = _try_table("vetted-scripts", None)
+    if real_vs is not None:
+        ok(not validate_table("vetted-scripts", real_vs), "committed vetted-scripts.json validates")
+    for label, mutate, needle in (
+        ("unknown class in when", lambda t: t["rules"][2]["when"].__setitem__("action_class", ["mischief"]),
+         "unknown value 'mischief'"),
+        ("unknown verb class", lambda t: t["verb_map"][0].__setitem__("class", "mischief"), "unknown class"),
+        ("missing default_outcome", lambda t: t.pop("default_outcome"), "missing key 'default_outcome'"),
+        ("unknown when key", lambda t: t["rules"][0]["when"].__setitem__("mood", True), "unknown key 'mood'"),
+        ("proposed without undecided", lambda t: t["rules"][0].__setitem__("proposed", "deny"), "'proposed'"),
+        ("bad via", lambda t: t["rules"][2]["when"].__setitem__("via", ["trusted"]), "unknown value 'trusted'"),
+        ("unknown verb key", lambda t: t["verb_map"][0].__setitem__("sneaky", 1), "unknown key 'sneaky'"),
+        ("duplicate rule id", lambda t: t["rules"].append(dict(t["rules"][0])), "duplicate id"),
+    ):
+        bad = json.loads(json.dumps(table))
+        mutate(bad)
+        errs = validate_table("action-policy", bad)
+        ok(any(needle in e for e in errs), f"action-policy negative: {label} ({errs[:2]})")
+    bad = json.loads((AP_FIXTURES / "vetted-scripts.json").read_text(encoding="utf-8"))
+    bad["scripts"][0]["actions"]["merge-it"] = "merge"
+    ok(any("not in the row's action_classes" in e for e in validate_table("vetted-scripts", bad)),
+       "vetted-scripts negative: an action outside the row's classes")
+    bad = json.loads((AP_FIXTURES / "vetted-scripts.json").read_text(encoding="utf-8"))
+    bad["scripts"][0]["path"] = "../elsewhere.py"
+    ok(any("repo-relative" in e for e in validate_table("vetted-scripts", bad)), "vetted-scripts negative: .. path")
+
+    # ---- decide(): the full family x device x owner x action matrix against the oracle
+    mism = []
+    rows = _matrix_facts()
+    for f in rows:
+        got = policy_decide(f, table)["outcome"]
+        want = _oracle(f)
+        if got != want:
+            mism.append((f, got, want))
+    ok(not mism, f"matrix ({len(rows)} cases) matches the item-9 oracle; first mismatch: {mism[:1]}")
+    d = policy_decide({"walls_family": "codex", "acting_family": "codex", "device": "dev-b", "owner_class": "employer",
+                       "action_class": "author", "chain_has_agent": True, "hook_bypass": False}, table)
+    ok(d["rule_id"] == "P40-agent-personal-mbp-employer" and d["outcome"] == "deny", "P40 row denies on dev-b")
+    d = policy_decide({"walls_family": "claude", "device": "dev-a", "owner_class": "unknown", "action_class": "meta",
+                       "positively_personal": False, "under_projects_root": False, "has_remote": False,
+                       "chain_has_agent": True, "hook_bypass": False}, table)
+    ok(d["rule_id"] == "P19-claude-no-remote-outside-root" and d["outcome"] == "allow", "P19 row")
+    d = policy_decide({"walls_family": "claude", "device": "dev-a", "owner_class": "third-party",
+                       "action_class": "content-read", "positively_personal": False, "under_projects_root": False,
+                       "has_remote": True, "chain_has_agent": True, "hook_bypass": False}, table)
+    ok(d["rule_id"] == "P21-claude-unknown-owner-outside-root" and d["outcome"] == "allow", "P21 row")
+    d = policy_decide({"walls_family": "claude", "device": "dev-a", "owner_class": "third-party",
+                       "action_class": "author", "positively_personal": False, "under_projects_root": False,
+                       "has_remote": True, "chain_has_agent": True, "hook_bypass": False}, table)
+    ok(d["rule_id"] == "P22-claude-unknown-owner-outside-root-other" and d["outcome"] == "deny", "P22 row")
+    und = json.loads(json.dumps(table))
+    und["rules"].insert(0, {"id": "PX-undecided", "when": {"owner_class": ["third-party"]}, "outcome": "undecided",
+                            "proposed": "allow"})
+    d = policy_decide({"owner_class": "third-party"}, und)
+    ok(d["outcome"] == "deny" and d["rule_outcome"] == "undecided", "undecided evaluates as the table says (deny)")
+    ok(policy_decide({"owner_class": "nobody-knows"}, table)["outcome"] == "deny", "no match -> default_outcome deny")
+    # smoke pass over the committed table (real device ids)
+    if real_ap is not None:
+        smoke = [
+            ({"walls_family": "claude", "device": "work-mbp", "owner_class": "employer", "action_class": "housekeeping",
+              "via": "vetted", "chain_has_agent": True, "hook_bypass": False}, "allow"),
+            ({"walls_family": "claude", "device": "work-mbp", "owner_class": "employer", "action_class": "housekeeping",
+              "via": "composed", "chain_has_agent": True, "hook_bypass": False}, "deny"),
+            ({"walls_family": "claude", "device": "personal-mbp", "owner_class": "employer", "action_class": "meta",
+              "via": "vetted", "chain_has_agent": True, "hook_bypass": False}, "deny"),
+            ({"walls_family": "claude", "device": "work-mbp", "owner_class": "employer", "action_class": "author",
+              "via": "composed", "chain_has_agent": True, "hook_bypass": False}, "route"),
+            ({"walls_family": "cursor", "device": "work-mbp", "owner_class": "employer", "action_class": "merge",
+              "chain_has_agent": True, "hook_bypass": False}, "deny"),
+            ({"walls_family": "cursor", "device": "work-mbp", "owner_class": "employer", "action_class": "publish",
+              "target_ref": "non-default", "chain_has_agent": True, "hook_bypass": False}, "allow"),
+            ({"walls_family": "codex", "device": "personal-mbp", "owner_class": "employer", "action_class": "author",
+              "chain_has_agent": True, "hook_bypass": False}, "deny"),
+            ({"walls_family": "human", "chain_has_agent": False, "owner_class": "employer"}, "allow"),
+            ({"walls_family": "cursor", "chain_has_agent": True, "hook_bypass": True, "owner_class": "personal"}, "deny"),
+        ]
+        bad = [(f, w) for f, w in smoke if policy_decide(f, real_ap)["outcome"] != w]
+        ok(not bad, f"smoke pass over the committed table: {bad[:1]}")
+
+    # ---- verb map and parse_command
+    def cls(text: str, **kw: Any) -> List[Tuple[str, str, bool]]:
+        return [(i["class"], i["target_ref"], i["hook_bypass"])
+                for i in classify_command(text, cwd=str(tmp), root=root,
+                                          detection={"family_for_walls": "human", "agent_possible": False}, **kw)]
+
+    ok(cls("git rebase main") == [("author", "none", False)], "unknown git verb -> author")
+    ok(cls("ls -la")[0][0] == "author", "unknown tool -> author")
+    ok(cls("git commit -m x", current_branch="main") == [("author", "default", False)], "commit on main: default")
+    ok(cls("git commit -m x", current_branch="feat/a") == [("author", "non-default", False)], "commit on feat: non-default")
+    ok(cls("git push") == [("merge", "unknown", False)], "implicit push refspec is unknown, treated as default (merge)")
+    ok(cls("git push origin feat/a")[0][:2] == ("publish", "non-default"), "explicit non-default push is publish")
+    ok(cls("git push origin HEAD:main")[0][:2] == ("merge", "default"), "push to default is merge")
+    ok(cls("git push origin --delete feat/done")[0][:2] == ("housekeeping", "non-default"), "push --delete is housekeeping")
+    ok(cls("git push origin --delete main")[0][0] == "merge", "push --delete of the default is not housekeeping")
+    ok(cls("git push origin :feat/x")[0][0] == "publish", "a colon-delete without --delete stays publish")
+    ok(cls("git branch -d feat/x")[0][0] == "housekeeping" and cls("git branch -D feat/x")[0][0] == "author"
+       and cls("git branch -d --force feat/x")[0][0] == "author", "branch -d housekeeping; -D and --force author")
+    ok(cls("git merge --ff-only origin/main", current_branch="main")[0][0] == "housekeeping"
+       and cls("git merge --ff-only origin/main", current_branch="feat")[0][0] == "author", "ff-only on default only")
+    ok([c for c, _t, _b in cls("gh pr list; gh pr create; gh pr merge 3; gh api x")] == ["meta", "publish", "merge", "author"],
+       "gh verbs")
+    ok(cls("git status && git fetch && git show HEAD") == [("meta", "none", False), ("meta", "none", False),
+                                                           ("content-read", "none", False)], "meta and content-read")
+    for text, why in (("git -c hook.pre-push.command=true push origin feat/a", "-c hook.*"),
+                      ("git -c core.hooksPath=/dev/null commit -m x", "core.hooksPath"),
+                      ("git -c url.x://.insteadOf=git@github.com: push", "-c url.*"),
+                      ("git commit --no-verify -m x", "--no-verify"), ("git commit -n -m x", "commit -n"),
+                      ("git commit -anm x", "commit -anm"), ("GIT_CONFIG_COUNT=0 git push", "GIT_CONFIG_COUNT=0"),
+                      ("env -u GIT_CONFIG_COUNT git push", "env -u"), ("env -i git push", "env -i"),
+                      ("export GIT_CONFIG_PARAMETERS=x; git push", "export"),
+                      ("bash -lc 'git push --no-verify origin feat/a'", "bash -lc")):
+        ok(any(b for _c, _t, b in cls(text)), f"hook_bypass: {why}")
+    ok(not any(b for _c, _t, b in cls("git commit -m 'no -n here' && git push origin feat/a")), "no false bypass")
+    p = parse_command("cd /x/y && FOO=1 command /usr/bin/git -C ../z --work-tree w status")
+    ok(len(p) == 1 and p[0]["tool"] == "git" and p[0]["argv"] == ["status"] and p[0]["cwd_hint"] == "/x/z/w"
+       and p[0]["env_prefix"] == {"FOO": "1"}, f"cd, env prefix, command, abs git, -C, --work-tree: {p}")
+    p = parse_command("sh -c \"bash -lc 'gh --repo acme-corp/w pr merge 1'\"")
+    ok(len(p) == 1 and p[0]["tool"] == "gh" and p[0]["argv"] == ["pr", "merge", "1"]
+       and p[0]["repo_hint"] == "acme-corp/w", "recursive sh -c / bash -lc and gh --repo")
+    p = parse_command("git --git-dir=/r/.git log")
+    ok(p[0]["cwd_hint"] == "/r" and p[0]["argv"] == ["log"], "--git-dir")
+    ok(parse_command("git commit -m 'unbalanced")[0]["tool"] == "?", "unparseable -> one unknown invocation")
+    ok(cls("echo hi > notes.txt")[0][0] == "author", "a redirect write is fs-write (author)")
+
+    # ---- policy() on temp repos, injected detections
+    claude = detect_surface(env={}, ancestry=CLAUDE_ANC, isatty=HUMAN_TTY, root=root)
+    human = detect_surface(env={}, ancestry=[{"comm": "zsh"}], isatty=HUMAN_TTY, root=root)
+    cursor = detect_surface(env={"CURSOR_AGENT": "1"}, ancestry=[], isatty=NO_TTY, root=root)
+    emp, bare, genv = _employer_pair(tmp, home)
+    pers = _fake_repo(tmp / "elsewhere" / "mine", {"origin": "git@github.com:pat-sample/mine.git"})
+
+    def pol(det: dict, **kw: Any) -> dict:
+        kw.setdefault("repo", str(emp))
+        kw.setdefault("device", "dev-a")
+        return policy(root=root, home=home, detection=det, **kw)
+
+    r = pol(claude, command="git push origin --delete feat/done")
+    ok(r["outcome"] == "deny" and r["rule_id"] == "P11-claude-employer-composed",
+       f"composed push --delete under a Claude chain is denied: {r['rule_id']}")
+    r = pol(detect_surface(env={"WS_VETTED": "1", "WS_WALL_OK": "1"}, ancestry=CLAUDE_ANC, isatty=HUMAN_TTY, root=root),
+            command="WS_VETTED=1 WS_WALL_OK=1 git push origin --delete feat/done")
+    ok(r["outcome"] == "deny" and r["facts"]["via"] == "composed", "hand-set WS_VETTED / WS_WALL_OK is denied")
+    r = pol(claude, command="git push origin --delete feat/done", via="vetted")
+    ok(r["outcome"] == "allow" and r["rule_id"] == "P10-claude-employer-vetted" and r["receipt"], "vetted what-if: P10")
+    r = pol(claude, command="git push origin --delete feat/done", via="vetted", device="dev-b")
+    ok(r["outcome"] == "deny", "vetted housekeeping is work-device only")
+    hof = ws_paths(home=home)["telemetry"] / "handoffs.jsonl"
+    r = pol(claude, command="git commit -m x")
+    ok(r["outcome"] == "route" and r["route_to"] == ["cursor", "codex"] and "route: cursor or codex" in r["reason"]
+       and not r["handoff_written"], "author on employer routes; no telemetry/ means no handoff write")
+    ws_paths(home=home)["telemetry"].mkdir(parents=True, exist_ok=True)
+    r = pol(claude, command="git commit -m x")
+    lines = hof.read_text(encoding="utf-8").splitlines() if hof.exists() else []
+    ok(r["handoff_written"] and len(lines) == 1 and json.loads(lines[0])["repo_slug"] == "acme-corp/widget"
+       and "/" not in json.loads(lines[0])["summary"], "a route on a Claude host appends one handoff (no paths)")
+    r = pol(claude, command="git fetch && git commit -m x")
+    ok(r["outcome"] == "deny", "multi-invocation: the most restrictive outcome wins")
+    r = pol(claude, repo=str(pers), command=f"cd {emp} && git push origin --delete feat/done")
+    ok(r["outcome"] == "deny" and r["facts"]["owner_class"] == "employer", "cd into another repo is evaluated there")
+    r = pol(claude, repo=str(pers), command="git push origin --delete feat/old")
+    ok(r["outcome"] == "allow" and r["rule_id"] == "P50-personal", "personal repo allows under Claude")
+    r = pol(human, command="git push origin --delete feat/done")
+    ok(r["outcome"] == "allow" and r["rule_id"] == "P00-human", "humans are not policy-gated")
+    r = pol(cursor, command="git commit -m x")
+    ok(r["outcome"] == "deny" and r["rule_id"] == "P31-cc-work-employer-default", "cursor author on default is denied")
+    _g(genv, "switch", "-q", "feat/done", cwd=emp)
+    r = pol(cursor, command="git commit -m x")
+    ok(r["outcome"] == "allow" and r["rule_id"] == "P32-cc-work-employer", "cursor author on a feature branch")
+    _g(genv, "switch", "-q", "main", cwd=emp)
+    r = pol(cursor, command="git commit --no-verify -m x")
+    ok(r["outcome"] == "deny" and r["rule_id"] == "P05-agent-hook-bypass", "agent hook bypass is denied (P05)")
+    r = pol(human, family="cursor", command="git push origin main")
+    ok(r["outcome"] == "deny" and r["facts"]["walls_family"] == "cursor", "--family tightens a human context")
+    r = pol(claude, family="cursor", command="git push origin feat/x")
+    ok(r["facts"]["walls_family"] == "claude", "--family never loosens a Claude chain")
+    try:
+        pol(claude, action_class="mischief")
+        ok(False, "unknown --action-class is a usage error")
+    except PolicyError:
+        ok(True, "")
+
+    # ---- lift_env: drops only the transport block
+    blocked = str(load_table("context-remotes", root=root)["blocked_scheme"])
+    keep = [("includeIf.hasconfig:remote.*.url:git@github.com:pat-sample/**.path", "/h/claude-identity.inc"),
+            ("hook.ws-floor.command", "ws-hook --host git --floor claude"), ("hook.ws-floor.event", "pre-push"),
+            ("credential.https://github.com.helper", ""), ("url.https://github.com/pat-sample/.insteadOf", "git@github.com:pat-sample/")]
+    src = _overlay_env(_git_env(home), blocked, ["git@github.com:acme-corp/", "git@bitbucket.org:acme-bb/"], keep)
+    n = int(src["GIT_CONFIG_COUNT"])
+    src[f"GIT_CONFIG_KEY_{n}"] = f"URL.{blocked}.PUSHINSTEADOF"
+    src[f"GIT_CONFIG_VALUE_{n}"] = "https://github.com/acme-corp/"
+    src[f"GIT_CONFIG_KEY_{n + 1}"] = "hook.late.event"
+    src[f"GIT_CONFIG_VALUE_{n + 1}"] = "pre-commit"
+    src["GIT_CONFIG_COUNT"] = str(n + 2)
+    src.update(GIT_AUTHOR_NAME="x", GIT_AUTHOR_EMAIL="x@example.invalid", GIT_COMMITTER_NAME="y",
+               GIT_COMMITTER_DATE="0", WS_SURFACE_FAMILY="claude")
+    lifted = lift_env(src, root=root)
+    got = [(lifted[f"GIT_CONFIG_KEY_{i}"], lifted[f"GIT_CONFIG_VALUE_{i}"]) for i in range(int(lifted["GIT_CONFIG_COUNT"]))]
+    ok(got == keep + [("hook.late.event", "pre-commit")], f"lift_env keeps every non-transport entry in order: {got}")
+    ok(not any(k.startswith(("GIT_AUTHOR_", "GIT_COMMITTER_")) for k in lifted), "lift_env unsets author and committer")
+    ok(lifted.get("WS_SURFACE_FAMILY") == "claude" and lifted.get("GH_CONFIG_DIR") == src["GH_CONFIG_DIR"]
+       and lifted.get("WS_CLAUDE_OVERLAY") == "v4", "lift_env keeps WS_SURFACE_FAMILY, the overlay marker and gh-claude")
+    ok(not ({k for k in lifted if k.startswith("WS_")} - {k for k in src if k.startswith("WS_")}), "lift_env adds no WS marker")
+    ok("GH_CONFIG_DIR" not in lift_env(src, needs_employer_gh=True, root=root), "employer gh restores the default gh")
+    same = {k: v for k, v in src.items() if not re.fullmatch(r"GIT_CONFIG_(COUNT|KEY_\d+|VALUE_\d+)", k)
+            and not k.startswith(("GIT_AUTHOR_", "GIT_COMMITTER_"))}
+    ok(all(lifted.get(k) == v for k, v in same.items()), "lift_env leaves every other variable untouched")
+    v4 = _v4_fixture_env(_git_env(home))
+    if v4 is not None:
+        lv4 = lift_env(v4)
+        n4 = int(v4["GIT_CONFIG_COUNT"])
+        realb = str(load_table("context-remotes").get("blocked_scheme"))
+        kept4 = [(v4[f"GIT_CONFIG_KEY_{i}"], v4[f"GIT_CONFIG_VALUE_{i}"]) for i in range(n4)
+                 if not v4[f"GIT_CONFIG_KEY_{i}"].startswith(f"url.{realb}.")]
+        got4 = [(lv4[f"GIT_CONFIG_KEY_{i}"], lv4[f"GIT_CONFIG_VALUE_{i}"]) for i in range(int(lv4["GIT_CONFIG_COUNT"]))]
+        ok(got4 == kept4 and len(got4) < n4, "lift_env over today's v4 fragment drops exactly its transport block")
+
+    # ---- vetted_status and the pinned lock
+    script_rel = "09-tools/fixture-housekeeper.py"
+    script = _write(root / script_rel, "# fixture housekeeper\n")
+    home_np = tmp / "t7-nopin"
+    ok(vetted_status("fixture-housekeeper", home=home_np, root=root)["status"] == "unpinned", "no lib: unpinned")
+    lib = _pin_fixture(home, root, script_rel, git_blob_sha(script))
+    st = vetted_status("fixture-housekeeper", home=home, root=root)
+    ok(st["status"] == "vetted" and st["pinned_sha"] == "a" * 40, f"pinned blob matches: vetted ({st['status']})")
+    ok(vetted_status("nobody", home=home, root=root)["status"] == "not-registered", "not-registered")
+    blob_git = _g(genv, "hash-object", str(script)).stdout.strip()
+    ok(blob_git == git_blob_sha(script), "Python blob equals git hash-object")
+    _write(script, "# fixture housekeeper, edited after the pin\n")
+    ok(vetted_status("fixture-housekeeper", home=home, root=root)["status"] == "hash-mismatch", "edited script: mismatch")
+
+    # ---- composed vs vetted push --delete: synthetic employer repo, local bare remote
+    base_env = _overlay_env(_git_env(home), blocked, ["git@github.com:acme-corp/", "git@bitbucket.org:acme-bb/"])
+    comp = _g(base_env, "push", "origin", "--delete", "feat/done", cwd=emp)
+    still = _g(genv, "--git-dir", str(bare), "show-ref", "--verify", "--quiet", "refs/heads/feat/done").returncode == 0
+    ok(comp.returncode != 0 and still, "the transport block makes a composed employer push --delete fail")
+    printed: List[str] = []
+    with vetted_context("fixture-housekeeper", str(emp), script, home=home, root=root, detection=claude, device="dev-a",
+                        env=base_env, out=printed.append) as ctx:
+        denied = ctx.run(["git", "push", "origin", "--delete", "feat/done"], action="remote-branch-delete",
+                         refs=["refs/heads/feat/done"])
+    ok(denied.returncode == 126 and ctx.status["status"] == "hash-mismatch", "hash mismatch: the vetted run is denied")
+    ok(_g(genv, "--git-dir", str(bare), "show-ref", "--verify", "--quiet", "refs/heads/feat/done").returncode == 0,
+       "hash mismatch: the remote branch is untouched")
+    _write(script, "# fixture housekeeper\n")
+    rec_path = ws_paths(home=home)["control"] / "receipts.jsonl"
+    before = rec_path.read_text(encoding="utf-8").splitlines() if rec_path.exists() else []
+    printed.clear()
+    with vetted_context("fixture-housekeeper", str(emp), script, home=home, root=root, detection=claude, device="dev-a",
+                        env=base_env, out=printed.append) as ctx:
+        done = ctx.run(["git", "push", "origin", "--delete", "feat/done"], action="remote-branch-delete",
+                       refs=["refs/heads/feat/done"])
+        undeclared = ctx.run(["git", "commit", "--allow-empty", "-m", "x"], action="commit")
+    gone = _g(genv, "--git-dir", str(bare), "show-ref", "--verify", "--quiet", "refs/heads/feat/done").returncode != 0
+    ok(done.returncode == 0 and gone, f"the same refs through the vetted path succeed (lifted env): {done.stderr[-200:]}")
+    ok(undeclared.returncode == 126, "an action the registry does not declare is refused")
+    new = [json.loads(x) for x in rec_path.read_text(encoding="utf-8").splitlines()[len(before):]]
+    intents = [x for x in new if x["type"] == "intent"]
+    receipts = [x for x in new if x["type"] == "receipt"]
+    ok(len(intents) == 1 and intents[0]["pid"] == os.getpid() and intents[0]["refs"] == ["refs/heads/feat/done"],
+       "one intent line (pid, refs) before the remote action")
+    ok(len(receipts) == 2 and receipts[0]["result"] == "ok" and receipts[0]["repo_slug"] == "acme-corp/widget"
+       and receipts[0]["action"] == "remote-branch-delete" and receipts[0]["credential"] == "ssh:github.com"
+       and receipts[0]["family"] == "claude" and receipts[0]["device"] == "dev-a"
+       and receipts[1]["result"].startswith("skipped:"), f"receipts name repo, action and credential: {receipts[:1]}")
+    ok(printed and printed[0].startswith("receipt {"), "the receipt is printed")
+    text = rec_path.read_text(encoding="utf-8")
+    ok("://" not in text and str(tmp) not in text and "Fixture Person" not in text, "receipts carry no URL, path or identity")
+    cs = None
+    try:
+        import importlib.util as _ilu
+
+        spec = _ilu.spec_from_file_location("ws_check_secrets_t7", TOOLS / "check-secrets.py")
+        if spec is not None and spec.loader is not None:
+            cs = _ilu.module_from_spec(spec)
+            sys.modules["ws_check_secrets_t7"] = cs
+            spec.loader.exec_module(cs)
+    except Exception:  # noqa: BLE001 - optional cross-check
+        cs = None
+    if cs is not None:
+        ok(not cs.findings_in_text(text), "receipts pass the check-secrets secret class")
+        rules = cs.EmpRules(load_table("context-remotes", root=root))
+        hits = {rule for _line, rule in rules.scan_text(text)}
+        masked = {rule for _line, rule in rules.scan_text(text.replace("acme-corp/widget", "slug-field"))}
+        ok(hits and not masked, f"receipts pass the employer-substance class outside the declared repo_slug field: {masked}")
+
+    # ---- pin lag: a vault registry edit without a pin advance keeps the old behaviour
+    vault_reg = json.loads((root / TABLE_PATHS["vetted-scripts"]).read_text(encoding="utf-8"))
+    vault_reg["scripts"][0]["actions"]["tag-delete"] = "housekeeping"
+    _write(root / TABLE_PATHS["vetted-scripts"], json.dumps(vault_reg))
+    with vetted_context("fixture-housekeeper", str(emp), script, home=home, root=root, detection=claude, device="dev-a",
+                        env=base_env, out=None) as ctx:
+        lagged = ctx.run(["git", "push", "origin", "--delete", "refs/tags/v1"], action="tag-delete", refs=["refs/tags/v1"])
+    ok(lagged.returncode == 126, "a registry edit with no pin advance is not honoured")
+    vault_reg["scripts"] = []
+    _write(root / TABLE_PATHS["vetted-scripts"], json.dumps(vault_reg))
+    ok(vetted_status("fixture-housekeeper", home=home, root=root)["status"] == "vetted",
+       "removing the vault row without a pin advance keeps the pinned registration")
+    _write(root / TABLE_PATHS["vetted-scripts"], (AP_FIXTURES / "vetted-scripts.json").read_text(encoding="utf-8"))
+    with vetted_context("fixture-housekeeper", str(emp), script, home=home, root=root, detection=claude, device="dev-a",
+                        env=base_env, out=None, assume_unpinned=True) as ctx:
+        r = ctx.run(["git", "fetch", "origin"], action="fetch")
+    ok(r.returncode == 126 and ctx.status["status"] == "unpinned", "the vault-module fallback is always unpinned")
+    with vetted_context("fixture-housekeeper", str(emp), script, home=home, root=root, detection=human, device="dev-a",
+                        env=base_env, out=None, assume_unpinned=True) as ctx:
+        r = ctx.run(["git", "fetch", "origin"], action="fetch")
+    ok(r.returncode == 0, "a human run is not policy-gated even unpinned")
+
+    # ---- today's v4 overlay: composed fails, the lifted env succeeds (synthetic owners)
+    if v4 is not None:
+        emp2, bare2, _e = _employer_pair(tmp, home, slug="acme-corp/gadget")
+        comp = _g(v4, "push", "origin", "--delete", "feat/done", cwd=emp2)
+        lifted_run = _g(lift_env(v4), "push", "origin", "--delete", "feat/done", cwd=emp2)
+        gone = _g(genv, "--git-dir", str(bare2), "show-ref", "--verify", "--quiet", "refs/heads/feat/done").returncode != 0
+        ok(comp.returncode != 0 and lifted_run.returncode == 0 and gone,
+           "present-state regression: v4's transport block fails a composed push --delete; the lifted env succeeds")
+
+    # ---- receipts are machine-local and never create control/
+    try:
+        append_receipt({"type": "receipt", "result": "ok"}, home=home_np)
+        ok(False, "append_receipt without control/ raises")
+    except ReceiptError:
+        ok(not ws_paths(home=home_np)["base"].exists(), "append_receipt never creates control/")
+    try:
+        append_receipt({"type": "receipt", "repo_slug": "git@github.com:acme-corp/x"}, home=home)
+        ok(False, "a URL-shaped receipt value is refused")
+    except ValueError:
+        ok(True, "")
+    ok(lib.is_dir(), "pin fixture present")
 
 
 def self_test(stub_chain: bool = False) -> int:
@@ -2152,6 +3770,12 @@ def self_test(stub_chain: bool = False) -> int:
         rr = subprocess.run([sys.executable, me, "--root", str(root), "scan", "--json"], capture_output=True, text=True,
                             timeout=60, env=dict(env, CLAUDE_PROJECT_DIR="/x"))
         ok(rr.returncode == 4, "CLI scan refuses under agent-possible env (exit 4)")
+
+        # T7 (H22): action policy, verb map, lift_env, vetted context, receipts
+        if AP_FIXTURES.is_dir():
+            _t7_self_test(tmp, ok)
+        else:
+            fails.append(f"T7 fixtures missing at {AP_FIXTURES}")
 
         if stub_chain:
             # A real ancestor named `claude` that stays alive as the parent of the check.

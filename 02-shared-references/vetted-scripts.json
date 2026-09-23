@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "doc": "Vetted-script registry (DECISIONS-2 item 9). Blob hashes are taken at pin time into lib/<sha>/vetted.lock.json; this file carries none. Only the pinned copy is consulted, so an edit here takes effect after a human advances the pin.",
+  "scripts": [
+    {
+      "id": "prune-our-branches",
+      "path": "09-tools/prune-our-branches.py",
+      "action_classes": [
+        "meta",
+        "housekeeping"
+      ],
+      "actions": {
+        "fetch": "meta",
+        "pr-list": "meta",
+        "switch-default": "housekeeping",
+        "ff-default": "housekeeping",
+        "branch-delete": "housekeeping",
+        "remote-branch-delete": "housekeeping",
+        "worktree-remove": "housekeeping"
+      },
+      "needs_employer_gh": true,
+      "approved": "Sean 2026-09-22, DECISIONS-2 item 9 confirmation"
+    }
+  ]
+}

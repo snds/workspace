@@ -1,0 +1,402 @@
+{
+  "schema_version": 1,
+  "doc": "Synthetic mirror of the committed action-policy rows for TestActionPolicy: same rule and verb ids in the same order; devices work-mbp -> dev-a and personal-mbp -> dev-b. Regenerate only when the committed rows change.",
+  "action_classes": [
+    "meta",
+    "housekeeping",
+    "content-read",
+    "author",
+    "publish",
+    "merge"
+  ],
+  "outcomes": [
+    "allow",
+    "deny",
+    "route",
+    "undecided"
+  ],
+  "undecided_evaluates_as": "deny",
+  "unknown_verb_class": "author",
+  "default_outcome": "deny",
+  "route_targets": [
+    "cursor",
+    "codex"
+  ],
+  "verb_map": [
+    {
+      "id": "git-status",
+      "tool": "git",
+      "argv": [
+        "status"
+      ],
+      "class": "meta"
+    },
+    {
+      "id": "git-fetch",
+      "tool": "git",
+      "argv": [
+        "fetch"
+      ],
+      "class": "meta"
+    },
+    {
+      "id": "git-branch-delete",
+      "tool": "git",
+      "argv": [
+        "branch"
+      ],
+      "flags_any": [
+        "-d",
+        "--delete"
+      ],
+      "flags_none": [
+        "-D",
+        "--force"
+      ],
+      "class": "housekeeping"
+    },
+    {
+      "id": "git-push-delete",
+      "tool": "git",
+      "argv": [
+        "push"
+      ],
+      "flags_any": [
+        "--delete",
+        "-d"
+      ],
+      "target_ref": "non-default",
+      "class": "housekeeping"
+    },
+    {
+      "id": "git-merge-ff-default",
+      "tool": "git",
+      "argv": [
+        "merge"
+      ],
+      "flags_any": [
+        "--ff-only"
+      ],
+      "target_ref": "default",
+      "class": "housekeeping"
+    },
+    {
+      "id": "git-show",
+      "tool": "git",
+      "argv": [
+        "show"
+      ],
+      "class": "content-read"
+    },
+    {
+      "id": "git-commit",
+      "tool": "git",
+      "argv": [
+        "commit"
+      ],
+      "class": "author"
+    },
+    {
+      "id": "git-push-default",
+      "tool": "git",
+      "argv": [
+        "push"
+      ],
+      "target_ref": "default",
+      "class": "merge"
+    },
+    {
+      "id": "git-push",
+      "tool": "git",
+      "argv": [
+        "push"
+      ],
+      "class": "publish"
+    },
+    {
+      "id": "gh-pr-list",
+      "tool": "gh",
+      "argv": [
+        "pr",
+        "list"
+      ],
+      "class": "meta"
+    },
+    {
+      "id": "gh-pr-create",
+      "tool": "gh",
+      "argv": [
+        "pr",
+        "create"
+      ],
+      "class": "publish"
+    },
+    {
+      "id": "gh-pr-merge",
+      "tool": "gh",
+      "argv": [
+        "pr",
+        "merge"
+      ],
+      "class": "merge"
+    },
+    {
+      "id": "fs-read",
+      "tool": "fs",
+      "op": "read",
+      "class": "content-read"
+    },
+    {
+      "id": "fs-write",
+      "tool": "fs",
+      "op": "write",
+      "class": "author"
+    }
+  ],
+  "rules": [
+    {
+      "id": "P00-human",
+      "when": {
+        "chain_has_agent": false
+      },
+      "outcome": "allow"
+    },
+    {
+      "id": "P05-agent-hook-bypass",
+      "when": {
+        "chain_has_agent": true,
+        "hook_bypass": true
+      },
+      "outcome": "deny",
+      "reason": "hook or config bypass"
+    },
+    {
+      "id": "P10-claude-employer-vetted",
+      "when": {
+        "walls_family": [
+          "claude"
+        ],
+        "device": [
+          "dev-a"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "meta",
+          "housekeeping"
+        ],
+        "via": [
+          "vetted"
+        ]
+      },
+      "outcome": "allow",
+      "receipt": true
+    },
+    {
+      "id": "P11-claude-employer-composed",
+      "when": {
+        "walls_family": [
+          "claude"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "meta",
+          "housekeeping"
+        ],
+        "via": [
+          "composed"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "run the vetted script instead"
+    },
+    {
+      "id": "P12-claude-employer-route",
+      "when": {
+        "walls_family": [
+          "claude"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "content-read",
+          "author",
+          "publish"
+        ]
+      },
+      "outcome": "route"
+    },
+    {
+      "id": "P13-claude-employer-merge",
+      "when": {
+        "walls_family": [
+          "claude"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "merge"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "merge is human-only"
+    },
+    {
+      "id": "P14-claude-employer-other",
+      "when": {
+        "walls_family": [
+          "claude"
+        ],
+        "owner_class": [
+          "employer"
+        ]
+      },
+      "outcome": "deny"
+    },
+    {
+      "id": "P20-claude-not-personal-under-root",
+      "when": {
+        "walls_family": [
+          "claude"
+        ],
+        "positively_personal": false,
+        "under_projects_root": true
+      },
+      "outcome": "deny"
+    },
+    {
+      "id": "P19-claude-no-remote-outside-root",
+      "when": {
+        "walls_family": [
+          "claude"
+        ],
+        "under_projects_root": false,
+        "has_remote": false
+      },
+      "outcome": "allow"
+    },
+    {
+      "id": "P21-claude-unknown-owner-outside-root",
+      "when": {
+        "walls_family": [
+          "claude"
+        ],
+        "positively_personal": false,
+        "under_projects_root": false,
+        "action_class": [
+          "meta",
+          "content-read"
+        ],
+        "has_remote": true
+      },
+      "outcome": "allow"
+    },
+    {
+      "id": "P22-claude-unknown-owner-outside-root-other",
+      "when": {
+        "walls_family": [
+          "claude"
+        ],
+        "positively_personal": false,
+        "under_projects_root": false,
+        "has_remote": true
+      },
+      "outcome": "deny",
+      "reason": "owner not declared personal: declare it in context-remotes.json first"
+    },
+    {
+      "id": "P40-agent-personal-mbp-employer",
+      "when": {
+        "chain_has_agent": true,
+        "device": [
+          "dev-b"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "author",
+          "publish",
+          "merge"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "employer work stays on the Work MBP"
+    },
+    {
+      "id": "P30-cc-work-employer-merge",
+      "when": {
+        "walls_family": [
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "dev-a"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "merge"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "merge is human-only"
+    },
+    {
+      "id": "P31-cc-work-employer-default",
+      "when": {
+        "walls_family": [
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "dev-a"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "author",
+          "publish"
+        ],
+        "target_ref": [
+          "default",
+          "unknown"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "employer work goes branch -> PR -> human review"
+    },
+    {
+      "id": "P32-cc-work-employer",
+      "when": {
+        "walls_family": [
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "dev-a"
+        ],
+        "owner_class": [
+          "employer"
+        ]
+      },
+      "outcome": "allow"
+    },
+    {
+      "id": "P50-personal",
+      "when": {
+        "owner_class": [
+          "personal"
+        ]
+      },
+      "outcome": "allow"
+    }
+  ]
+}
