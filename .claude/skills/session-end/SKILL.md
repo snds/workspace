@@ -269,17 +269,29 @@ and committing them silently under the wrong message corrupts the audit trail.
 
 Engineering hygiene. After the session commit, delete leftover git branches **we**
 opened whose PRs have already merged. Never delete someone else's branch, an open
-PR, `main`, or a branch with unpushed unique commits.
+PR, the default branch, or a branch with unpushed unique commits.
 
 ```
 python3 09-tools/prune-our-branches.py --apply
 ```
 
-Default scan: this workspace, `~/Projects/cpes-software/cds`,
-`~/Projects/cpes-software/saas-plm-prototype`. Dry-run first only if `gh` is
-unavailable. Report keep-reasons (dirty leftover worktree, not our merged PR).
-Do not `--force` worktree removal. Employer repos: deleting a merged branch we
-authored is hygiene, not a self-merge.
+Default scan: this workspace plus the script's `DEFAULT_SLUGS`, each resolved on this
+device through `profile_resolve.py where` (a slug not on this device is a skip with a
+notice). Dry-run first only if `gh` is unavailable. Report keep-reasons (dirty leftover
+worktree, not our merged PR, a diverged default branch — reported, never reset). Do not
+`--force` worktree removal. Employer repos: deleting a merged branch we authored is
+hygiene, not a self-merge.
+
+It is a **vetted script** (`02-shared-references/vetted-scripts.json`, DECISIONS-2 item 9).
+Every remote action and deletion writes an intent line and a receipt (repo slug, action,
+credential class; never a token) to `~/.config/snds-workspace/control/receipts.jsonl`.
+From a **Claude** session, a repo that is not positively personal runs only through this
+vetted path, and only while the pinned lib holds this file's blob
+(`python3 09-tools/profile_resolve.py vetted-status prune-our-branches` prints `vetted`);
+otherwise it is skipped with a notice and zero git or gh calls. Never hand-compose the
+equivalent git or gh commands in an employer repo from Claude: the action policy denies
+that. The session block reports counts and credential classes only; receipt lines stay
+machine-local.
 
 ### Step 8 — Confirm
 
