@@ -122,6 +122,22 @@ QUALITY_CHAIN = [
     ("test-validators.py", []),
 ]
 
+# Fingerprints a sandboxed agent shell leaves in gate output (Claude Code's Bash sandbox on
+# macOS, observed 2026-09-23: 3 red gates, all environmental). A match names the likely
+# cause beside the result; it never changes the result.
+AMBIENT_FINGERPRINTS = [
+    ("xcrun_db", "git's macOS launcher (xcrun) cannot write its cache here, so every git call is "
+                 "slow and prints a warning: expect timeouts and 'not silent' failures"),
+    ("ps not permitted (sandbox)", "`ps` is denied here, so process-ancestry cases SKIP; "
+                                   "prove them outside the sandbox"),
+]
+
+
+def ambient_notes(text: str) -> list[str]:
+    """The environment notes whose fingerprint appears in a gate's output."""
+    return [note for mark, note in AMBIENT_FINGERPRINTS if mark in text]
+
+
 # A path-shaped token inside Layer-0 prose: "02-shared-references/x.md", "09-tools/y.py".
 PATH_RE = re.compile(r"((?:0\d-|_)[\w][\w./-]*\.(?:md|py|json|jsonl|txt))")
 FRONTMATTER_LIST = re.compile(r"^(trigger_words|triggers):\s*(.*?)(?=^\S|\Z)", re.M | re.S)
@@ -157,6 +173,13 @@ def file_tokens(path: Path, head_lines: int | None = None) -> int:
 
 def run_quality(verbose: bool = False) -> dict:
     results, failed = [], 0
+    seen: dict[str, list[str]] = {}   # ambient note -> gates whose output carried its fingerprint
+
+    def note_env(script: str, *streams) -> None:
+        text = "".join(s.decode(errors="replace") if isinstance(s, bytes) else (s or "") for s in streams)
+        for n in ambient_notes(text):
+            seen.setdefault(n, []).append(script)
+
     for script, args in QUALITY_CHAIN:
         target = TOOLS / script
         if not target.exists():
@@ -169,13 +192,15 @@ def run_quality(verbose: bool = False) -> dict:
                 [sys.executable, str(target), *args],
                 capture_output=True, text=True, cwd=str(ROOT), timeout=QUALITY_STEP_TIMEOUT_S,
             )
-        except subprocess.TimeoutExpired:
+        except subprocess.TimeoutExpired as exc:
+            note_env(script, exc.stdout, exc.stderr)   # partial output; bytes even under text=True
             failed += 1
             results.append({"tool": script, "status": "FAIL", "exit": None, "seconds": QUALITY_STEP_TIMEOUT_S,
                             "last": f"SKIPPED: timed out after {QUALITY_STEP_TIMEOUT_S:g}s (never green)",
                             "output": ""})
             continue
         elapsed = round(time.monotonic() - start, 2)
+        note_env(script, proc.stdout, proc.stderr)
         ok = proc.returncode == 0
         failed += 0 if ok else 1
         tail = (proc.stdout + proc.stderr).strip().splitlines()
@@ -187,7 +212,8 @@ def run_quality(verbose: bool = False) -> dict:
             "last": tail[-1] if tail else "",
             "output": "\n".join(tail[-12:]) if (verbose and not ok) else "",
         })
-    return {"lane": "quality", "failed": failed, "checks": results}
+    return {"lane": "quality", "failed": failed, "checks": results,
+            "environment": [{"note": n, "gates": g} for n, g in seen.items()]}
 
 
 # -------------------------------------------------------------------- lane: connections
@@ -730,6 +756,8 @@ def print_report(report: dict) -> None:
             if c.get("output"):
                 for line in c["output"].splitlines():
                     print(f"        {line}")
+        for env in q.get("environment", []):
+            print(f"  ! environment: {env['note']} (seen in: {', '.join(env['gates'])})")
         print()
 
     c = report.get("connections")
@@ -782,6 +810,8 @@ def print_report(report: dict) -> None:
     lanes = [report[k] for k in ("quality", "connections", "tokens") if k in report]
     failed = sum(l["failed"] for l in lanes)
     print(f"harness: {'PASS' if failed == 0 else 'FAIL'} — {failed} failing check(s) across {len(lanes)} lane(s)")
+    if failed and (q or {}).get("environment"):
+        print("  the environment notes under quality may explain some of these; they do not change the result")
 
 
 def write_stamp(report: dict) -> None:
@@ -949,6 +979,13 @@ def self_test() -> int:
         "handback Layer-0 hints do not name the gitignored inbox path",
         not any("side-chat-inbox.md" in t[2] for t in _layer0_targets()),
     )
+
+    expect("ambient note names the unwritable git launcher cache",
+           len(ambient_notes("git: error: couldn't create cache file '/var/folders/x/T/xcrun_db-ab' "
+                             "(errno=Operation not permitted)")) == 1)
+    expect("ambient note names a sandbox ps denial",
+           len(ambient_notes("self-test SKIP: x (ps not permitted (sandbox): y) — not a pass")) == 1)
+    expect("clean gate output carries no ambient note", ambient_notes("OK all 74 checks") == [])
 
     for name in failures:
         print(f"  ✗ {name}")
