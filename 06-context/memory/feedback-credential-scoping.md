@@ -41,7 +41,11 @@ commit.
   - Identity comes from `includeIf hasconfig` on `snds/*` remote URLs, via
     `~/.config/snds-workspace/git/claude-identity.inc`, so an employer checkout never gets `snds`
     from it.
-  - `snds/*` traffic is routed over `github.com` (the personal key).
+  - `snds/*` traffic goes over **HTTPS** (overlay v4, Sean 2026-09-22). SSH to github.com on ports
+    22 and 443 times out intermittently on the Work MBP network (^pc-09). The overlay resets the
+    `https://github.com` credential-helper list, because the system `osxkeychain` holds a
+    **Centric** GitHub credential that would otherwise answer first. It then uses
+    `!gh auth git-credential` through Claude's `GH_CONFIG_DIR`, which resolves to `snds`.
   - Employer remotes are rewritten to an unresolvable scheme, so a push Claude composes itself fails.
   - v1 (`bb4cf05`) set `GIT_AUTHOR_*` unconditionally and was replaced by `0d19852`. Claude sessions
     started before that still carry v1 until they are restarted.

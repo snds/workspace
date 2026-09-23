@@ -125,6 +125,16 @@ on it. The fix to the flaw below **landed in `0d19852`**; the rest of H17 follow
   verified on synthetic repos: an employer checkout keeps its own identity, and employer remotes
   stay blocked.
 - **Decisions recorded:** `bb4cf05`, `f25e916`, and the credential memory, restructured.
+- **Vault stays public, with scrubbing going forward** (Sean). The "private" claims are corrected
+  (`d083403`).
+- **Claude-only `gh` config** (overlay v3). Sean's `snds` login had made `snds` the active `gh`
+  account for every surface. The default is restored to Centric (`d083403`).
+- **Overlay v4: Claude's `snds/*` git traffic goes over HTTPS through the Claude `gh` helper.** The
+  helper list is reset, because the system keychain holds a Centric GitHub credential. Verified:
+  only the `gh` helper runs, and it answers as `snds`.
+- **Codex import hooks #1 and #2 are retired** to
+  `~/.config/snds-workspace/archive/codex-import-2026-07-31/`. The snds plugin's SessionStart is kept
+  until H19. Nothing is trusted in Codex yet.
 
 ## Findings about the current setup (all surface-relevant)
 

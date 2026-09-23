@@ -106,7 +106,7 @@ if ! { grep -q workspace-sessionstart "$SJ" && grep -q workspace-reassert "$SJ" 
     esac
   fi
 fi
-# 2b. Claude identity overlay v2 (Claude surfaces are personal-only; see
+# 2b. Claude identity overlay v4 (HTTPS transport for snds/* via the Claude gh helper) (Claude surfaces are personal-only; see
 # 06-context/memory/feedback-credential-scoping.md). The fragment's `env` scopes the
 # snds identity to snds/* remotes via includeIf hasconfig, routes snds/* over the
 # personal key, and blocks employer remotes. It never sets GIT_AUTHOR_* (v1 did, and
@@ -139,7 +139,7 @@ if ! grep -q '"GIT_CONFIG_KEY_0"' "$SJ" 2>/dev/null && ! grep -q '"GIT_AUTHOR_EM
       *) flag "REPAIR FAILED: $SJ overlay merge aborted (unparseable settings?) — fix by hand" ;;
     esac
   fi
-elif ! grep -q '"WS_CLAUDE_OVERLAY": "v3"' "$SJ" 2>/dev/null || grep -q '"GIT_AUTHOR_EMAIL"' "$SJ" 2>/dev/null; then
+elif ! grep -q '"WS_CLAUDE_OVERLAY": "v4"' "$SJ" 2>/dev/null || grep -q '"GIT_AUTHOR_EMAIL"' "$SJ" 2>/dev/null; then
   flag "DRIFT: $SJ carries an outdated Claude identity overlay (v1 set GIT_AUTHOR_* unconditionally) — replace it by hand from $DIST/settings-user-fragment.json (remove the old GIT_AUTHOR_*/GIT_COMMITTER_*/GIT_CONFIG_* keys first), then restart Claude sessions"
 fi
 # Check EVERY settings layer, not just the user one. A temporary "turn hooks off"
