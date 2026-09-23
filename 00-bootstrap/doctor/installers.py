@@ -1329,6 +1329,14 @@ def self_test() -> int:
             self.assertNotIn("osascript", self.stub_calls())
             self.assertIn("overlay env", r.stdout)
 
+        def test_current_overlay_is_not_reported_outdated(self):
+            frag = merge_settings.expand_env_home(json.loads(
+                (self.ws / "00-bootstrap/dist/settings-user-fragment.json").read_text()), self.home)
+            (self.home / ".claude/settings.json").write_text(json.dumps({"env": frag["env"]}, indent=2) + "\n")
+            r = self.doctor()
+            self.assertNotIn("outdated Claude identity overlay", r.stdout + r.stderr)
+            self.assertNotIn("missing the Claude identity env overlay", r.stdout + r.stderr)
+
         def test_quick_never_runs_installers(self):
             r = self.doctor("--quick", "--install-plugin")
             self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
