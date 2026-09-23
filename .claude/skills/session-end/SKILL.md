@@ -288,7 +288,9 @@ credential class; never a token) to `~/.config/snds-workspace/control/receipts.j
 From a **Claude** session, a repo that is not positively personal runs only through this
 vetted path, and only while the pinned lib holds this file's blob
 (`python3 09-tools/profile_resolve.py vetted-status prune-our-branches` prints `vetted`);
-otherwise it is skipped with a notice and zero git or gh calls. Never hand-compose the
+otherwise it is skipped with a notice and zero git or gh calls. The Claude floor proves the
+vetted shape from the process table, so a sandboxed Bash that denies `ps` blocks the remote
+deletion with "ancestry unavailable": run this one command with the sandbox off. Never hand-compose the
 equivalent git or gh commands in an employer repo from Claude: the action policy denies
 that. The session block reports counts and credential classes only; receipt lines stay
 machine-local.

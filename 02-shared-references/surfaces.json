@@ -247,7 +247,7 @@
         },
         "H22": {
           "mode": "enforced-partial",
-          "rules": "model-composed employer network git fails at the installed transport block; vetted housekeeping runs only through vetted_context (pinned blob check, policy via=vetted, receipts); local composed git and gh stay advisory until the floor and the gh belt",
+          "rules": "model-composed employer network git fails at the installed transport block; vetted housekeeping runs only through vetted_context (pinned blob check, policy via=vetted, receipts); local composed git and gh stay advisory until the floor and the gh belt; each registered action runs only its declared argv shapes; the vetted remote deletion needs a readable process table (a ps-denying sandbox blocks it)",
           "decision": null,
           "verified_by": [
             "fixture:TestActionPolicy"
