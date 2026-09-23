@@ -56,7 +56,9 @@ can land. **CI** — the automated checks that run on every proposed change._
 - **`visibility: public`** — applies to any public repo (e.g. nexus/Davinci portfolio work), **including
   this workspace** (`snds/workspace` is public; Sean chose to keep it public, 2026-09-22). In the
   workspace this also means no new employer substance in tracked files. Employer repos are named only
-  as pointers, and wall and security mechanics beyond summaries stay local until scrubbed.
+  as pointers. Harness code and declared tables are published (D1, Sean 2026-09-23: no secrets,
+  owner-level names only, scrub gate = check-secrets + employer-substance baseline + a human read).
+  Machine-posture analysis and research reports stay local (`.claude/state/held/`).
   Tightens the IP rule: no third-party proprietary reference material of any kind (competitor
   screenshots, design-source folders) — gitignore it. No secrets, no plaintext personal email
   in commit metadata where avoidable.
