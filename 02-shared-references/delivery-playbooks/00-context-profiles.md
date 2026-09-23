@@ -45,7 +45,7 @@ otherwise. Wrong-and-cautious costs minutes; wrong-and-permissive costs trust.
 | **Repo conduct** | Direct commits fine; session-end auto-commit fine; pushes to `main` acceptable | **No auto-commit, no self-merge, no direct pushes.** Branch → PR → human review; small dependency-ordered diffs per [[07-integration-and-review-framework]] | Usually no repo — artifact delivery per [[artifact-standards]] |
 | **Evidence target** | The Proofboard ([[05-validation-harness]]) **is** the review | Dual: Proofboard for Sean pre-PR **plus** conventional engineer evidence — tests, CI green, engineer-voiced PR description | The forward test ([[01-audience-contract]]) at full strength |
 | **Delivery voice** | Designer-first | Designer-first to Sean; engineer-voiced **only** inside the repo surface itself (PR descriptions, code comments, commit messages) | Designer-first, zero translation required |
-| **Git identity** | Personal `snds` GitHub auth | Centric GitHub auth | n/a |
+| **Git identity** | **Claude surfaces:** always personal `snds`, on every device. **Other surfaces:** device-based (Sean, 2026-09-22). Personal MBP → `snds`. Work MBP → Centric, including this workspace (a deliberate contributor crossover), unless Sean expressly overrides for a task. See [[feedback-credential-scoping]] | Centric GitHub auth, on every device; personal identity **never**. **Never a Claude surface** (Claude is personal-only) | n/a |
 | **IP boundary** | No employer material, ever | Employer material stays inside employer repos | Confidential by default |
 
 _Terms: **PR** (pull request) — a proposed change packaged up for someone else to review before it

@@ -106,6 +106,21 @@ if ! { grep -q workspace-sessionstart "$SJ" && grep -q workspace-reassert "$SJ" 
     esac
   fi
 fi
+# 2b. Claude identity overlay. Claude surfaces are personal-only on every device
+# (06-context/memory/feedback-credential-scoping.md): the fragment's `env` gives
+# Claude-spawned git the snds identity, the personal SSH route, and a block on
+# employer remotes. The merge never overrides a value that is already set.
+if ! grep -q '"GIT_CONFIG_KEY_0"' "$SJ" 2>/dev/null; then
+  if [ "$CHECK" -eq 1 ]; then flag "DRIFT: $SJ missing the Claude personal-identity env overlay"
+  else
+    python3 "$WS/00-bootstrap/doctor/merge_settings.py" "$DIST/settings-user-fragment.json" "$SJ" 2>/dev/null; _rc=$?
+    case $_rc in
+      0) DRIFT=1; say "REPAIRED: $SJ (Claude identity env overlay merged; backup written)" ;;
+      3) flag "REPAIR FAILED: $SJ — overlay merge was a no-op (an existing env value wins?) — fix by hand" ;;
+      *) flag "REPAIR FAILED: $SJ overlay merge aborted (unparseable settings?) — fix by hand" ;;
+    esac
+  fi
+fi
 # Check EVERY settings layer, not just the user one. A temporary "turn hooks off"
 # most often lands in settings.local.json or the project file — precisely where the
 # old single-file check was blind, and precisely what this alert exists to catch.

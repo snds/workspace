@@ -1,9 +1,40 @@
 ---
 type: feedback
-description: On the Centric laptop every repo action uses Centric credentials — including the personal workspace repo, where the Centric account is a contributor
+description: Identity is device-based EXCEPT Claude (2026-09-22) — every Claude surface is personal-only (snds) on every device and never does employer work; other surfaces follow the device (Work MBP → Centric unless expressly overridden; Personal MBP → snds); personal identity never lands in employer repos
 created: 2026-07-20
+updated: 2026-09-22
 confidence: high
 ---
+
+> **Exception (Sean, 2026-09-22, latest): every Claude surface is PERSONAL-ONLY, on every device.**
+> This covers Claude Code, Claude Chat (claude.ai web, desktop and mobile), Claude in Chrome and the
+> Claude desktop app. Sean cannot use Claude for employer work.
+>
+> - Claude always commits as `Sean Sands <570874+snds@users.noreply.github.com>` and authenticates
+>   with the personal key, including on the Work MBP (where `github.com` → `id_ed25519_personal`).
+> - Claude does **no employer work at all**. It does not open, edit, commit to or open PRs against
+>   employer repos (cpes-software/*, c8*, Centric Bitbucket, design-system), and it does not paste
+>   employer material. Employer-repo actions go to Cursor, Codex or Sean.
+> - Every non-Claude surface follows the device rule below.
+
+> **Update 2026-09-22 (Sean, in chat): identity is device-based, not surface-based** (except Claude;
+> see above).
+>
+> - **Work MBP** (`CS-K746DRWXY1`; also `seansands.local` / `CS-KQ23N94M0W`): every agent
+>   interaction, on **every** surface (Claude Code, Claude Chat, Cursor, Codex, …), is work/employer by
+>   default and uses the **Centric** identity, unless Sean **expressly** says otherwise for a specific
+>   task. Workspace commits from this laptop keep using the Centric identity: the deliberate crossover
+>   described below still stands.
+> - **Personal MBP** (`Voyager-2.local`): every agent interaction, on every surface, is **personal**
+>   and uses `snds`.
+> - **Absolute on every device:** personal identity never appears on an employer-repo commit.
+> - An express override must be visible, scoped to one task, and self-expiring. It is never an ad-hoc
+>   `-c user.*` flag. The harness plan (v1.1: declared device table, git-boundary check) makes this
+>   mechanical for all surfaces.
+>
+> This session's earlier commits `6cac460` and `353f4f1` were made from Claude Code before the Claude
+> exception existed, so they are Centric-authored and were pushed over `github-work`. Whether to
+> rewrite them is Sean's call.
 
 **On the Centric laptop (`CS-K746DRWXY1`), all work uses the Centric credentials unless Sean says
 otherwise. No other account is used for anything — commits, pushes, or auth.**
@@ -41,4 +72,5 @@ footnote instead of fixing it. See [[fact-workspace-repos]] for the repo topolog
   immediately, then audit every ref (`git log --all --format='%an <%ae>|%cn <%ce>' | grep -i …`) rather
   than assuming the visible tip was the only one. Note that force-push does not purge the old SHA from
   GitHub — it stays reachable by direct URL until GC, so say so plainly rather than implying it's gone.
-- On other machines, this entry does not apply — resolve identity per that machine's own setup.
+- On the Personal MBP, the device rule in the update above applies (personal, `snds`). Any future
+  machine gets a row in the declared device table before any agent commits from it.
