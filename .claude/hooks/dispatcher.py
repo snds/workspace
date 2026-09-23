@@ -1888,6 +1888,9 @@ def handle_session_end(payload: dict) -> None:
             if rstatus in ("ok", "refused"):
                 extra = [p for p in written if p not in foreign]
                 gate_status = "ok" if rstatus == "ok" else "fail"
+                if rstatus == "refused":
+                    exclude |= set(GENERATED_OUTPUTS)
+                    extra = [p for p in extra if p not in GENERATED_OUTPUTS]
             else:
                 exclude |= set(written) | set(GENERATED_OUTPUTS)
                 gate_status = "fail" if rstatus == "fail" else "skipped"

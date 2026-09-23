@@ -115,7 +115,14 @@
         "session-end": 10
       },
       "markers": {
-        "env": [],
+        "env": [
+          {
+            "name": "AI_AGENT",
+            "value": null,
+            "value_prefix": "claude-code",
+            "verified": false
+          }
+        ],
         "ancestry": [
           {
             "comm": "claude",
@@ -214,7 +221,7 @@
         },
         "H17": {
           "mode": "enforced-partial",
-          "rules": "in force once Sean installs the rendered v5 overlay (G4e): the Claude identity comes only from the hasconfig include on personal remotes; employer remotes hit the transport block; GH_CONFIG_DIR is the gh belt; the guarded ws-claude-wall config hook blocks I1 over the pushed range, I2 outside vetted housekeeping and not-positively-personal under projects_root, and fails open on infrastructure errors. Bypass residuals: git -c hook.ws-claude-wall.enabled=false, --no-verify, env-scope config removal (GIT_CONFIG_COUNT=0), exec -a ancestor spoofing, an unsandboxed Claude process writing control/receipts.jsonl; H15 closes them at tool time. For employer remotes the transport block stays the barrier unless the env config is removed wholesale",
+          "rules": "in force once Sean installs the rendered v5 overlay (G4e): the Claude identity comes only from the hasconfig include on personal remotes; employer remotes hit the transport block; GH_CONFIG_DIR is the gh belt; the guarded ws-claude-wall config hook blocks I1 over the pushed range, I2 outside vetted housekeeping and not-positively-personal under projects_root, and fails open on infrastructure errors. Bypass residuals: git -c hook.ws-claude-wall.enabled=false, --no-verify, env-scope config removal (GIT_CONFIG_COUNT=0), command-level env tampering (PATH, the gh belt GH_CONFIG_DIR/GH_TOKEN, identity env), exec -a ancestor spoofing, an unsandboxed Claude process writing control/receipts.jsonl; classify marks them hook_bypass and H15 closes them at tool time. Mixed-case owners and arbitrary https userinfo are floor-only (insteadOf is case-sensitive). For employer remotes the transport block stays the barrier unless the env config is removed wholesale",
           "decision": null,
           "verified_by": [
             "fixture:TestIdentity",
@@ -240,7 +247,7 @@
         },
         "H22": {
           "mode": "enforced-partial",
-          "rules": "model-composed employer network git fails at the installed transport block; vetted housekeeping runs only through vetted_context (pinned blob check, policy via=vetted, receipts); local composed git and gh stay advisory until the floor and the gh belt",
+          "rules": "model-composed employer network git fails at the installed transport block; vetted housekeeping runs only through vetted_context (pinned blob check, policy via=vetted, receipts); local composed git and gh stay advisory until the floor and the gh belt; each registered action runs only its declared argv shapes; the vetted remote deletion needs a readable process table (a ps-denying sandbox blocks it)",
           "decision": null,
           "verified_by": [
             "fixture:TestActionPolicy"
@@ -302,8 +309,8 @@
       ],
       "coverage": {
         "H16": {
-          "mode": "not-applicable",
-          "rules": "rendered and installed only when install_probe passes",
+          "mode": "unverified",
+          "rules": "the tracked claude-project output rendered by render_shims reaches this surface without an install; loading unverified",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -724,8 +731,8 @@
       ],
       "coverage": {
         "H16": {
-          "mode": "not-applicable",
-          "rules": "rendered and installed only when install_probe passes",
+          "mode": "unverified",
+          "rules": "the tracked cursor-project output rendered by render_shims reaches this surface without an install; loading unverified",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -768,8 +775,8 @@
       ],
       "coverage": {
         "H16": {
-          "mode": "not-applicable",
-          "rules": "rendered and installed only when install_probe passes",
+          "mode": "unverified",
+          "rules": "the tracked cursor-project output rendered by render_shims reaches this surface without an install; loading unverified",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1086,8 +1093,8 @@
       ],
       "coverage": {
         "H16": {
-          "mode": "not-applicable",
-          "rules": "rendered and installed only when install_probe passes",
+          "mode": "unverified",
+          "rules": "the tracked claude-project output rendered by render_shims reaches this surface without an install; loading unverified",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1222,7 +1229,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],
@@ -1281,7 +1291,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],
@@ -1337,7 +1350,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],
@@ -1393,7 +1409,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],
@@ -1452,7 +1471,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],
@@ -1508,7 +1530,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],
@@ -1558,7 +1583,10 @@
           {
             "name": "AI_AGENT",
             "value": null,
-            "verified": false
+            "verified": false,
+            "value_not_prefixes": [
+              "claude-code"
+            ]
           }
         ],
         "ancestry": [],

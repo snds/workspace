@@ -66,6 +66,8 @@ on:
       - "09-tools/fixtures/action_policy/**"
       - "00-bootstrap/dist/git/**"
       - "09-tools/fixtures/identity/**"
+      - "09-tools/fixtures/ws_hook/**"
+      - "09-tools/fixtures/render_shims/**"
   pull_request:
     paths:
       - "**/*.md"
@@ -121,15 +123,25 @@ on:
       - "09-tools/fixtures/action_policy/**"
       - "00-bootstrap/dist/git/**"
       - "09-tools/fixtures/identity/**"
+      - "09-tools/fixtures/ws_hook/**"
+      - "09-tools/fixtures/render_shims/**"
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the session-status and render_shims oracles read 2ff02e7; a shallow clone SKIPs them
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
+      - name: Git >= 2.54 (config hooks; the floor fixtures SKIP, never pass, below it)
+        run: |
+          sudo add-apt-repository -y ppa:git-core/ppa
+          sudo apt-get update -q
+          sudo apt-get install -y -q git
+          git --version
       - name: Lint the automation layer (CI-only; never a vault runtime dep)
         uses: astral-sh/ruff-action@v3
         with:
@@ -196,3 +208,5 @@ jobs:
         run: python3 09-tools/check-secrets.py --class employer-substance --report || echo "employer-substance report unavailable (exit $?)"
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py
+      - name: Floor, identity and overlay fixtures (strict; a SKIP fails)
+        run: python3 09-tools/test-validators.py --strict-skips TestClaudeFloor TestFloorDecisions TestIdentity TestOverlay

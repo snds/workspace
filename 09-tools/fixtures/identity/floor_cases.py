@@ -86,6 +86,10 @@ class Lab:
         for d in ("control", "telemetry", "git"):
             (self.base / d).mkdir(parents=True, exist_ok=True)
         (self.base / "git" / "claude-identity.inc").write_text(rs.render_claude_identity_inc(self.dev), encoding="utf-8")
+        inst = load("00-bootstrap/doctor/installers.py", "installers")
+        noident = getattr(inst, "EMPLOYER_NOIDENT_INC", None)
+        if noident is not None:
+            (self.base / "git" / inst.EMPLOYER_NOIDENT_NAME).write_text(noident, encoding="utf-8")
         self.ws.mkdir(parents=True, exist_ok=True)
         (self.ws / "AGENTS.md").write_text("# fixture workspace\n", encoding="utf-8")
         self.script = self.ws / SCRIPT_REL
@@ -129,9 +133,11 @@ class Lab:
         return w
 
     def overlay(self, *, lifted: bool = False) -> dict:
+        """The v5 env exactly as the installer writes it (merge_settings.expand_env_home on this HOME)."""
+        ms = load("00-bootstrap/doctor/merge_settings.py", "merge_settings")
+        frag = ms.expand_env_home({"env": dict(self.rs.overlay_env(self.cr, self.dev, "v5"))}, self.home)
         env = dict(self.base_env)
-        for k, v in self.rs.overlay_env(self.cr, self.dev, "v5").items():
-            env[k] = str(self.home / v[2:]) if v.startswith("~/") else v
+        env.update(frag["env"])
         return self.pr.lift_env(env, root=self.lib) if lifted else env
 
     def g(self, env: dict, *args: str, cwd=None) -> subprocess.CompletedProcess:
@@ -151,6 +157,12 @@ class Lab:
 
     def acme_mail(self) -> str:
         return next(i["email"] for i in self.dev["identities"] if i["id"] == "acme-id")
+
+    def with_ident(self, env: dict) -> dict:
+        """An explicit employer identity (env beats config): under the v5 overlay an employer remote gets a
+        blank identity (useConfigOnly), so commit cases that must reach the floor carry one explicitly."""
+        return dict(env, GIT_AUTHOR_NAME="Acme Worker", GIT_AUTHOR_EMAIL=self.acme_mail(),
+                    GIT_COMMITTER_NAME="Acme Worker", GIT_COMMITTER_EMAIL=self.acme_mail())
 
     def pat_mail(self) -> str:
         return next(i["email"] for i in self.dev["identities"] if i["id"] == "pat")
@@ -186,7 +198,9 @@ def _need(minimum: tuple, names: list) -> list:
 IDENTITY_CASES = ["identity: pat-sample remote gets the include identity (scp, alias, https, ssh forms)",
                   "identity: acme-corp remote never gets the include identity",
                   "identity: identity() reports I1 for a personal identity in an employer repo",
-                  "identity: no remote gets no overlay identity"]
+                  "identity: no remote gets no overlay identity",
+                  "identity: an employer repo that also has a personal remote gets no personal identity",
+                  "identity: cherry-pick and revert on such a repo cannot create a personal-identity commit"]
 
 
 def identity_cases(pr, rs) -> list:
@@ -219,13 +233,33 @@ def identity_cases(pr, rs) -> list:
             p.parent.mkdir(parents=True, exist_ok=True)
             p.write_text((FX / f"{name}.json").read_text(encoding="utf-8"), encoding="utf-8")
         human = {"family": "cursor", "family_for_walls": "cursor", "agent_possible": False, "acting_host": "cursor"}
-        res = pr.identity(repo=str(emp), family="cursor", device="dev-a", root=root, env=env, home=lab.home,
+        res = pr.identity(repo=str(emp), family="cursor", device="dev-a", root=root, env=lab.base_env, home=lab.home,
                           detection=human)
         out.append((IDENTITY_CASES[2], res["invariants_hit"] == ["I1"], json.dumps(res)[:300]))
         none = lab.tmp / "loose"
         lab.g(lab.base_env, "init", "-q", str(none))
         got = lab.g(env, "config", "--get", "user.email", cwd=none).stdout.strip()
         out.append((IDENTITY_CASES[3], got != lab.pat_mail(), got or "(unset)"))
+        dual = lab.tmp / "dual"
+        lab.g(lab.base_env, "init", "-q", "-b", "main", str(dual))
+        lab.g(lab.base_env, "remote", "add", "origin", "git@github.com:acme-corp/w.git", cwd=dual)
+        lab.g(lab.base_env, "remote", "add", "fork", "https://github.com/pat-sample/w.git", cwd=dual)
+        got = lab.g(env, "config", "--get", "user.email", cwd=dual).stdout.strip()
+        out.append((IDENTITY_CASES[4], got != lab.pat_mail(), got or "(unset)"))
+        benv = dict(env, GIT_AUTHOR_NAME="Acme Worker", GIT_AUTHOR_EMAIL=lab.acme_mail(),
+                    GIT_COMMITTER_NAME="Acme Worker", GIT_COMMITTER_EMAIL=lab.acme_mail())
+        for i in range(2):
+            (dual / f"f{i}.txt").write_text(f"{i}\n", encoding="utf-8")
+            lab.g(benv, "-c", "core.hooksPath=/dev/null", "add", f"f{i}.txt", cwd=dual)
+            lab.g(dict(benv, GIT_CONFIG_COUNT="0"), "commit", "-q", "-m", f"c{i}", cwd=dual)
+        lab.g(lab.base_env, "switch", "-q", "-c", "side", "HEAD~1", cwd=dual)
+        cp = lab.g(env, "cherry-pick", "main", cwd=dual)
+        rv = lab.g(env, "revert", "--no-edit", "HEAD", cwd=dual)
+        who = {lab.g(lab.base_env, "log", "-1", "--format=%ae|%ce", ref, cwd=dual).stdout.strip()
+               for ref in ("HEAD", "side")}
+        made_personal = any(lab.pat_mail() in w for w in who)
+        out.append((IDENTITY_CASES[5], cp.returncode != 0 and rv.returncode != 0 and not made_personal,
+                    f"cherry-pick={cp.returncode} revert={rv.returncode} idents={who} {cp.stderr[-160:]}"))
     finally:
         _cleanup(td)
     return out
@@ -247,7 +281,7 @@ def claude_floor_cases(pr, rs) -> list:
     out = []
     lab, td = _mk(pr, rs)
     try:
-        env = lab.overlay(lifted=True)
+        env = lab.with_ident(lab.overlay(lifted=True))
         clone, _bare, _genv = lab.employer()
         listed = {}
         for ev in ("pre-commit", "commit-msg", "pre-merge-commit", "pre-push"):
@@ -294,7 +328,28 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "bypass: commit --no-verify skips the floor (declared residual)",
                   "bypass: GIT_CONFIG_COUNT=0 removes the floor with the overlay (declared residual)",
                   "bypass: classify marks each bypass hook_bypass and the P05 fixture row denies it",
-                  "bypass: with the transport block active the same employer push fails at transport, not the floor"]
+                  "bypass: with the transport block active the same employer push fails at transport, not the floor",
+                  "decisions: a bare-mirror push --delete to the employer URL is blocked [I2] and the ref survives",
+                  "decisions: a GIT_DIR push to the employer default branch from outside the work tree is blocked [I2]",
+                  "decisions: an employer remote seen only through [include], a legacy section or an inline comment "
+                  "blocks the commit [I2]",
+                  "decisions: a modified copy of the vetted script at the same relative path is not vetted",
+                  "decisions: the genuine vetted script run without -I (PYTHONPATH injection possible) is not vetted",
+                  "decisions: HOME=<elsewhere> git commit on an employer repo still reaches the floor [I2]",
+                  "decisions: PYTHONPATH with a sitecustomize that exits 0 does not silence the floor [I2]",
+                  "transport: every declared employer URL form (ssh alias, ports, :/owner, www) is rewritten to the "
+                  "blocked scheme; mixed case and ssh.github.com classify employer at the floor",
+                  "identity: under the overlay a composed commit on an employer repo has no identity to commit with"]
+VETTED_CASES = (DECISION_CASES[3], DECISION_CASES[13], DECISION_CASES[14])
+
+
+def ps_permitted() -> bool:
+    """The vetted shape is proven from the process table; a sandbox that denies `ps` cannot prove it."""
+    try:
+        r = subprocess.run(["ps", "-A", "-o", "pid="], capture_output=True, text=True, timeout=5)
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return r.returncode == 0 and bool(r.stdout.strip())
 
 
 def floor_decision_cases(pr, rs) -> list:
@@ -306,7 +361,9 @@ def floor_decision_cases(pr, rs) -> list:
     try:
         lifted = lab.overlay(lifted=True)
         full = lab.overlay()
-        clone, bare, genv = lab.employer(("feat/done", "feat/b1", "feat/b2", "feat/b4"))
+        clone, bare, genv = lab.employer(("feat/done", "feat/b1", "feat/b2", "feat/b4", "feat/m1", "feat/col",
+                                          "feat/col2"))
+        ps_ok = ps_permitted()
         r = lab.g(lifted, "push", "origin", "--delete", "feat/done", cwd=clone)
         out.append((DECISION_CASES[0], r.returncode != 0 and "[I2]" in r.stderr and lab.has_ref(bare, "feat/done"),
                     f"rc={r.returncode} {r.stderr[-300:]}"))
@@ -327,17 +384,20 @@ def floor_decision_cases(pr, rs) -> list:
         out.append((DECISION_CASES[2], r.returncode != 0 and "[not-positively-personal]" in r.stderr
                     and "scan" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
         py = shutil.which("python3") or sys.executable
-        v = subprocess.run([py, str(lab.script), str(clone), "feat/done"], env=lifted, capture_output=True, text=True,
-                           timeout=120)
-        out.append((DECISION_CASES[3], v.returncode == 0 and not lab.has_ref(bare, "feat/done"),
-                    f"rc={v.returncode} {v.stderr[-400:]}"))
+        if ps_ok:
+            v = subprocess.run([py, "-I", str(lab.script), str(clone), "feat/done"], env=lifted, capture_output=True,
+                               text=True, timeout=120)
+            out.append((DECISION_CASES[3], v.returncode == 0 and not lab.has_ref(bare, "feat/done"),
+                        f"rc={v.returncode} {v.stderr[-400:]}"))
+        else:
+            out.append((DECISION_CASES[3], None, "ps not permitted (sandbox): the vetted shape cannot be proven here"))
         r = lab.g(lifted, "-c", f"hook.{FLOOR}.enabled=false", "push", "origin", "--delete", "feat/b1", cwd=clone)
         out.append((DECISION_CASES[4], r.returncode == 0 and not lab.has_ref(bare, "feat/b1") and FLOOR not in r.stderr,
                     f"rc={r.returncode} {r.stderr[-200:]}"))
         r = lab.g(lifted, "push", "--no-verify", "origin", "--delete", "feat/b2", cwd=clone)
         out.append((DECISION_CASES[5], r.returncode == 0 and not lab.has_ref(bare, "feat/b2"),
                     f"rc={r.returncode} {r.stderr[-200:]}"))
-        r = lab.g(lifted, "commit", "--no-verify", "--allow-empty", "-m", "bypass", cwd=clone)
+        r = lab.g(lab.with_ident(lifted), "commit", "--no-verify", "--allow-empty", "-m", "bypass", cwd=clone)
         out.append((DECISION_CASES[6], r.returncode == 0, f"rc={r.returncode} {r.stderr[-200:]}"))
         stripped = dict(lifted, GIT_CONFIG_COUNT="0")
         r = lab.g(stripped, "commit", "--allow-empty", "-m", "env removed", cwd=clone)
@@ -370,6 +430,81 @@ def floor_decision_cases(pr, rs) -> list:
         out.append((DECISION_CASES[9], r1.returncode != 0 and r2.returncode != 0 and lab.has_ref(bare, "feat/b4")
                     and FLOOR not in r1.stderr and scheme in r1.stderr + r2.stderr,
                     f"{r1.returncode}/{r2.returncode} {r1.stderr[-200:]}"))
+        emp_url = "git@github.com:acme-corp/widget.git"
+        nowhere = lab.tmp / "nowhere"
+        nowhere.mkdir(exist_ok=True)
+        mirror = lab.tmp / "mirror.git"
+        lab.g(genv, "clone", "-q", "--bare", str(bare), str(mirror))
+        r = lab.g(lifted, "--git-dir", str(mirror), "push", emp_url, "--delete", "feat/m1", cwd=nowhere)
+        out.append((DECISION_CASES[10], r.returncode != 0 and "[I2]" in r.stderr and lab.has_ref(bare, "feat/m1"),
+                    f"rc={r.returncode} {r.stderr[-300:]}"))
+        before = lab.g(genv, "--git-dir", str(bare), "rev-parse", "refs/heads/main").stdout.strip()
+        lab.g(genv, "commit", "-q", "--allow-empty", "-m", "employer default push", cwd=clone)
+        r = lab.g(dict(lifted, GIT_DIR=str(clone / ".git")), "push", emp_url, "HEAD:refs/heads/main", cwd=nowhere)
+        after = lab.g(genv, "--git-dir", str(bare), "rev-parse", "refs/heads/main").stdout.strip()
+        out.append((DECISION_CASES[11], r.returncode != 0 and "[I2]" in r.stderr and before == after,
+                    f"rc={r.returncode} {r.stderr[-300:]}"))
+        shapes = {"include": None, "legacy": "[remote.origin]\n\turl = git@github.com:acme-corp/w.git\n",
+                  "comment": '[remote "origin"]\n\turl = git@github.com:acme-corp/w.git ; a note\n'}
+        got = {}
+        for name, text in shapes.items():
+            rp = lab.tmp / f"shape-{name}"
+            lab.g(genv, "init", "-q", str(rp))
+            cfg = rp / ".git" / "config"
+            if name == "include":
+                inc = lab.tmp / "shape-include.inc"
+                inc.write_text('[remote "origin"]\n\turl = git@github.com:acme-corp/w.git\n', encoding="utf-8")
+                text = f"[include]\n\tpath = {inc}\n"
+            with open(cfg, "a", encoding="utf-8") as fh:
+                fh.write(text)
+            seen = lab.g(genv, "config", "--get", "remote.origin.url", cwd=rp).stdout.strip()
+            r = lab.g(lab.with_ident(lifted), "commit", "--allow-empty", "-m", "x", cwd=rp)
+            got[name] = (seen == "git@github.com:acme-corp/w.git", r.returncode, "[I2]" in r.stderr)
+        out.append((DECISION_CASES[12], all(s and rc != 0 and hit for s, rc, hit in got.values()), str(got)))
+        if ps_ok:
+            evil = lab.tmp / "evil"
+            copy = evil / SCRIPT_REL
+            copy.parent.mkdir(parents=True, exist_ok=True)
+            copy.write_text(HOUSEKEEPER + "# modified copy\n", encoding="utf-8")
+            v = subprocess.run([py, "-I", SCRIPT_REL, str(clone), "feat/col"], cwd=str(evil), env=lifted,
+                               capture_output=True, text=True, timeout=120)
+            out.append((DECISION_CASES[13], v.returncode != 0 and lab.has_ref(bare, "feat/col")
+                        and "wall: vetted housekeeping" not in v.stderr, f"rc={v.returncode} {v.stderr[-300:]}"))
+            inj = lab.tmp / "inject"
+            inj.mkdir(exist_ok=True)
+            v = subprocess.run([py, str(lab.script), str(clone), "feat/col2"], env=dict(lifted, PYTHONPATH=str(inj)),
+                               capture_output=True, text=True, timeout=120)
+            out.append((DECISION_CASES[14], v.returncode != 0 and lab.has_ref(bare, "feat/col2")
+                        and "wall: vetted housekeeping" not in v.stderr, f"rc={v.returncode} {v.stderr[-300:]}"))
+        else:
+            for n in VETTED_CASES[1:]:
+                out.append((n, None, "ps not permitted (sandbox): the vetted shape cannot be proven here"))
+        fake_home = lab.tmp / "fake-home"
+        fake_home.mkdir(exist_ok=True)
+        r = lab.g(lab.with_ident(dict(lifted, HOME=str(fake_home))), "commit", "--allow-empty", "-m", "home override",
+                  cwd=clone)
+        out.append((DECISION_CASES[15], r.returncode != 0 and "[I2]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
+        site = lab.tmp / "site-inject"
+        site.mkdir(exist_ok=True)
+        (site / "sitecustomize.py").write_text("import os\nos._exit(0)\n", encoding="utf-8")
+        r = lab.g(lab.with_ident(dict(lifted, PYTHONPATH=str(site))), "commit", "--allow-empty", "-m", "site inject",
+                  cwd=clone)
+        out.append((DECISION_CASES[16], r.returncode != 0 and "[I2]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
+        forms = ["ssh://git@github-work/acme-corp/w.git", "ssh://github-work/acme-corp/w.git",
+                 "ssh://git@github.com:22/acme-corp/w.git", "https://github.com:443/acme-corp/w",
+                 "git@github.com:/acme-corp/w.git", "ssh://git@ssh.github.com:443/acme-corp/w.git",
+                 "https://www.github.com/acme-corp/w", "git@github.com:ACME-CORP/w.git", "ssh://github.com/acme-corp/w"]
+        bl = str(lab.cr["blocked_scheme"])
+        miss = [u for u in forms if not lab.g(full, "ls-remote", "--get-url", u).stdout.strip().startswith(bl)]
+        floor_cls = {u: pr._push_url_class(u, lab.lib) for u in ("https://github.com/AcMe-CoRp/w",
+                                                                 "ssh://git@ssh.github.com:443/acme-corp/w.git",
+                                                                 "https://www.github.com/acme-corp/w")}
+        out.append((DECISION_CASES[17], not miss and all(c == "employer" for c in floor_cls.values()),
+                    f"not rewritten: {miss} floor: {floor_cls}"))
+        r = lab.g(lifted, "commit", "--allow-empty", "-m", "no identity", cwd=clone)
+        out.append((DECISION_CASES[18], r.returncode != 0 and lab.g(lifted, "config", "--get", "user.email",
+                                                                    cwd=clone).stdout.strip() == "",
+                    f"rc={r.returncode} {r.stderr[-200:]}"))
     finally:
         _cleanup(td)
     return out
@@ -459,7 +594,10 @@ def overlay_install_cases(pr, rs) -> list:
         managed = {k: v for k, v in got.get("env", {}).items() if ms.is_managed_env(k)}
         env = got.get("env", {})
         keys = [env.get(f"GIT_CONFIG_KEY_{i}") for i in range(int(env.get("GIT_CONFIG_COUNT", "0")))]
-        good = (rc == 0 and managed == frag["env"] and env.get("WS_CLAUDE_OVERLAY") == "v5"
+        cmd_i = next((i for i, k in enumerate(keys) if k == f"hook.{FLOOR}.command"), None)
+        bound = cmd_i is not None and env.get(f"GIT_CONFIG_VALUE_{cmd_i}", "").startswith(f"H={home};") \
+            and "$HOME" not in env.get(f"GIT_CONFIG_VALUE_{cmd_i}", "")
+        good = (rc == 0 and bound and managed == frag["env"] and env.get("WS_CLAUDE_OVERLAY") == "v5"
                 and env.get("WS_SURFACE_FAMILY") == "claude" and f"hook.{FLOOR}.command" in keys
                 and env.get("GH_CONFIG_DIR", "").startswith(str(home))
                 and (base / "git" / "claude-identity.inc").is_file())

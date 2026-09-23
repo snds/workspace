@@ -86,6 +86,9 @@ AGENT_TRAILER_RE = re.compile(
 
 # Used only when surfaces.json is absent or unreadable, so refusals stay fail-closed. The table
 # is the source of truth; these mirror its declared refusal inputs and nothing else.
+# Used only when surfaces.json is missing or unreadable. Every declared agent marker is listed as
+# agent-possible here, so installers, the pin guard, scan, audit and override still refuse (the most
+# restrictive reading: with no table, any agent marker raises the walls to claude).
 _FALLBACK_SURFACES: Dict[str, Any] = {
     "families": {
         "claude": {"wall_rank": 100, "agent": True},
@@ -94,16 +97,25 @@ _FALLBACK_SURFACES: Dict[str, Any] = {
     },
     "never_markers": ["CLAUDECODE", "CLAUDE_PROJECT_DIR", "CLAUDE_PLUGIN_ROOT", "CLAUDE_WORKSPACE_VAULT"],
     "agent_possible_env": {
-        "names": ["CLAUDECODE", "CLAUDE_PROJECT_DIR", "CLAUDE_PLUGIN_ROOT", "CLAUDE_WORKSPACE_VAULT", "CLAUDE_ENV_FILE"],
-        "prefixes": ["CLAUDE_CODE_"],
+        "names": ["CLAUDECODE", "CLAUDE_PROJECT_DIR", "CLAUDE_PLUGIN_ROOT", "CLAUDE_WORKSPACE_VAULT", "CLAUDE_ENV_FILE",
+                  "CURSOR_AGENT", "CODEX_THREAD_ID", "GEMINI_CLI", "AI_AGENT"],
+        "prefixes": ["CLAUDE_CODE_", "CURSOR_", "CODEX_", "COPILOT_", "GEMINI_"],
     },
     "surfaces": [
         {"id": "claude-code", "family": "claude", "markers": {"env": [], "ancestry": [
             {"comm": "claude", "match": "exact", "verified": False},
             {"comm": "Claude", "match": "exact", "verified": False},
             {"comm": "Claude Helper", "match": "prefix", "verified": False}]}},
+        {"id": "other-local-agents", "family": "unknown-agent", "markers": {"env": [], "ancestry": [
+            {"comm": "Cursor", "match": "prefix", "verified": False},
+            {"comm": "codex", "match": "exact", "verified": False},
+            {"comm": "Code Helper", "match": "prefix", "verified": False}]}},
     ],
 }
+# Positive human evidence: a chain that reaches launchd must pass one of these (walls F-09).
+HUMAN_TERMINALS = ("Terminal", "iTerm2", "iTerm", "login", "sshd", "sshd-session", "tmux", "screen", "ghostty",
+                   "Ghostty", "Alacritty", "alacritty", "kitty", "WezTerm", "wezterm-gui", "Hyper", "Tabby")
+PTY_WRAPPERS = ("script", "expect", "unbuffer")
 
 
 class TableError(ValueError):
@@ -439,6 +451,8 @@ def _validate_surfaces(obj: dict, errors: List[str]) -> None:
         for m in markers.get("env") or []:
             if not isinstance(m, dict) or not isinstance(m.get("name"), str) or not _type_ok(m.get("verified", False), _BOOL):
                 errors.append(f"surfaces[{i}].markers.env: needs name and bool verified")
+            elif not _type_ok(m.get("value_prefix"), _OPT_STR) or not _str_list(m.get("value_not_prefixes", [])):
+                errors.append(f"surfaces[{i}].markers.env: value_prefix is a string, value_not_prefixes a string list")
         for m in markers.get("ancestry") or []:
             if not isinstance(m, dict) or not isinstance(m.get("comm"), str) or m.get("match", "exact") not in ("exact", "prefix"):
                 errors.append(f"surfaces[{i}].markers.ancestry: needs comm and match exact|prefix")
@@ -547,7 +561,7 @@ def _validate_action_policy(obj: dict, errors: List[str]) -> None:
 def _validate_vetted_scripts(obj: dict, errors: List[str]) -> None:
     spec = {
         "id": (_STR, True), "path": (_STR, True), "action_classes": (_LIST, True), "actions": (_DICT, True),
-        "needs_employer_gh": (_BOOL, True), "approved": (_STR, True),
+        "needs_employer_gh": (_BOOL, True), "approved": (_STR, True), "argv": (_DICT, True),
     }
     seen: set = set()
     for i, row in enumerate(_rows(obj, "scripts", errors)):
@@ -567,6 +581,15 @@ def _validate_vetted_scripts(obj: dict, errors: List[str]) -> None:
         for name, c in acts.items():
             if c not in acs:
                 errors.append(f"{where}.actions.{name}: class {c!r} is not in the row's action_classes")
+        shapes = row.get("argv") if isinstance(row.get("argv"), dict) else {}
+        for name in acts:
+            if name not in shapes:
+                errors.append(f"{where}.argv: action {name!r} declares no argv shape")
+        for name, lst in shapes.items():
+            if name not in acts:
+                errors.append(f"{where}.argv.{name}: not a declared action")
+            if not (isinstance(lst, list) and lst and all(_str_list(x) and x for x in lst)):
+                errors.append(f"{where}.argv.{name}: must be a non-empty list of token lists")
 
 
 _ROW_VALIDATORS: Dict[str, Callable[[dict, List[str]], None]] = {
@@ -720,10 +743,11 @@ def device_label(hostname: Optional[str] = None, *, root: Optional[Path] = None)
             return "unknown"
 
 
-def projects_root(*, root: Optional[Path] = None, home: Optional[Path] = None) -> Path:
+def projects_root(*, root: Optional[Path] = None, home: Optional[Path] = None,
+                  hostname: Optional[str] = None) -> Path:
     h = Path(home) if home is not None else Path.home()
     try:
-        row = _resolve_device(None, root, None)["row"]
+        row = _resolve_device(hostname, root, None)["row"]
     except Exception:  # noqa: BLE001
         row = None
     rel = (row or {}).get("projects_root") or "Projects"
@@ -743,6 +767,11 @@ def ws_paths(*, home: Optional[Path] = None) -> dict:
 
 _SCHEME_RE = re.compile(r"^(?P<scheme>[A-Za-z][A-Za-z0-9+.-]*)://(?P<rest>.*)$")
 _SCP_RE = re.compile(r"^(?:(?P<user>[^@/\s:]+)@)?(?P<host>[A-Za-z0-9._-]+):(?P<path>[^\s]+)$")
+
+
+# Hosts that reach the same owners as the canonical host (GitHub's ssh-over-443 endpoint and www).
+_HOST_SYNONYMS = {"ssh.github.com": "github.com", "www.github.com": "github.com", "www.bitbucket.org": "bitbucket.org",
+                  "altssh.bitbucket.org": "bitbucket.org"}
 
 
 def _ssh_aliases(root: Optional[Path]) -> Dict[str, dict]:
@@ -784,7 +813,7 @@ def _normalize_remote_ex(url: str, *, root: Optional[Path] = None) -> Tuple[Opti
         if not m:
             return None, None
         host, path, form = m.group("host"), m.group("path"), "scp"
-    host = host.lower()
+    host = _HOST_SYNONYMS.get(host.lower(), host.lower())
     alias_row = _ssh_aliases(root).get(host.casefold())
     if alias_row is not None:
         host = str(alias_row.get("host", host)).lower()
@@ -1310,7 +1339,7 @@ def _iter_checkout_dirs(pr: Path, depth: int) -> List[Path]:
 def _scan_doc(*, root: Optional[Path], home: Optional[Path], depth: int, det: dict,
               hostname: Optional[str] = None) -> dict:
     table = _try_table("context-remotes", root) or {}
-    pr = projects_root(root=root, home=home)
+    pr = projects_root(root=root, home=home, hostname=hostname)
     dev = current_device(hostname=hostname, root=root)
     checkouts = []
     for d in _iter_checkout_dirs(pr, depth):
@@ -1618,12 +1647,37 @@ def _env_markers(env: Any, t: dict) -> List[dict]:
             name = m.get("name")
             if not name or name in never or e.get(name) in (None, ""):
                 continue
-            if m.get("value") is not None and str(e.get(name)) != str(m.get("value")):
+            val = str(e.get(name))
+            if m.get("value") is not None and val != str(m.get("value")):
+                continue
+            if m.get("value_prefix") and not val.startswith(str(m.get("value_prefix"))):
+                continue
+            if any(val.startswith(str(x)) for x in m.get("value_not_prefixes") or []):
                 continue
             if row.get("family") not in fams:
                 continue
-            out.append({"name": name, "surface": row.get("id"), "family": row.get("family"), "verified": bool(m.get("verified"))})
+            out.append({"name": name, "surface": row.get("id"), "family": row.get("family"),
+                        "verified": bool(m.get("verified")),
+                        "specific": m.get("value") is not None or bool(m.get("value_prefix"))})
     return out
+
+
+def _pick_env_marker(envm: List[dict]) -> dict:
+    """Verified first, then value-specific; a name-only marker that matches several rows of one family
+    reports that family's generic `other-*` row rather than whichever row comes first."""
+    for m in envm:
+        if m["verified"]:
+            return m
+    for m in envm:
+        if m.get("specific"):
+            return m
+    first = envm[0]
+    same = [m for m in envm if m["name"] == first["name"] and m["family"] == first["family"]]
+    if len(same) > 1:
+        generic = next((m for m in same if str(m["surface"]).startswith("other-")), None)
+        if generic is not None:
+            return generic
+    return first
 
 
 def read_markers(*, env: Optional[dict] = None, root: Optional[Path] = None) -> list:
@@ -1668,7 +1722,7 @@ def _detect(payload_hint: Optional[str], env: Optional[dict], ancestry: Optional
         n = anc[0]
         acting, family, via, verified = n["surface"], n["family"], "ancestry", n["verified"]
     if acting is None and envm:
-        pick = next((m for m in envm if m["verified"]), envm[0])
+        pick = _pick_env_marker(envm)
         acting, family, via, verified = pick["surface"], pick["family"], "env", pick["verified"]
     if acting is None:
         if tty["stdin"] and tty["stdout"]:
@@ -1679,6 +1733,8 @@ def _detect(payload_hint: Optional[str], env: Optional[dict], ancestry: Optional
     wsf = e.get("WS_SURFACE_FAMILY")
     if wsf in fams:
         cands.append(wsf)
+    if ap and "claude" in fams:
+        cands.append("claude")   # agent-possible env only ever tightens; forged markers cannot lower it
     ranked = [c for c in cands if c in fams]
     walls = max(ranked, key=lambda c: fams[c].get("wall_rank", 0)) if ranked else family
     if family in fams and walls in fams and fams[walls].get("wall_rank", 0) <= fams[family].get("wall_rank", 0):
@@ -1694,7 +1750,7 @@ def _detect(payload_hint: Optional[str], env: Optional[dict], ancestry: Optional
         "acting_host": acting, "family": family, "family_for_walls": walls, "via": via, "verified": bool(verified),
         "determined": via in ("payload", "ancestry", "env"), "chain": [h["comm"] for h in chain],
         "markers": [m["name"] for m in envm], "conflict": conflict, "conflict_reason": reason, "automated": automated,
-        "agent_possible": bool(ap),
+        "agent_possible": bool(ap), "ancestry_unavailable": bool(anc_err),
     }
     return det, anc_err
 
@@ -1708,6 +1764,23 @@ def detect_surface(payload_hint: Optional[str] = None, *, env: Optional[dict] = 
 def automated_context(*, env: Optional[dict] = None, ancestry: Optional[list] = None, isatty: Optional[dict] = None,
                       root: Optional[Path] = None) -> bool:
     return bool(detect_surface(env=env, ancestry=ancestry, isatty=isatty, root=root)["automated"])
+
+
+def _no_human_evidence(chain: List[dict]) -> Optional[str]:
+    """Why a chain that looks agent-free still is not positive human evidence, or None.
+
+    Only a chain that reaches launchd (pid 1) is judged: it must pass a known terminal or login
+    ancestor, and its nearest hop must not be a pty wrapper reparented to launchd."""
+    if not chain:
+        return None
+    first = chain[0]
+    if first["comm"].lstrip("-") in PTY_WRAPPERS and str(first.get("ppid")) == "1":
+        return f"the nearest ancestor is an orphaned pty wrapper ({first['comm']})"
+    last = chain[-1]
+    reaches_init = last["comm"].lstrip("-") == "launchd" or str(last.get("pid")) == "1"
+    if reaches_init and not any(h["comm"].lstrip("-") in HUMAN_TERMINALS for h in chain):
+        return "the ancestry reaches launchd through no known terminal or login process"
+    return None
 
 
 def agent_check(*, env: Optional[dict] = None, ancestry: Optional[list] = None, isatty: Optional[dict] = None,
@@ -1742,6 +1815,9 @@ def agent_check(*, env: Optional[dict] = None, ancestry: Optional[list] = None, 
             return {"human": False, "determined": True, "reasons": reasons}
         if anc_err:
             return {"human": False, "determined": False, "reasons": [f"undetermined: ancestry unavailable ({anc_err})"]}
+        why = _no_human_evidence(chain)
+        if why:
+            return {"human": False, "determined": False, "reasons": [f"undetermined: {why}"]}
         return {"human": True, "determined": True, "reasons": []}
     except Exception as exc:  # noqa: BLE001 - undetermined is refuse for every caller
         return {"human": False, "determined": False, "reasons": [f"undetermined: {exc.__class__.__name__}"]}
@@ -1853,6 +1929,13 @@ _SHELLS = frozenset({"sh", "bash", "zsh", "dash", "ksh"})
 _WRAPPERS = frozenset({"command", "exec", "nohup", "time", "builtin", "nice"})
 _NOOP_TOOLS = frozenset({"true", "false", ":", "echo", "printf", "exit", "set"})
 _BYPASS_ENV = ("GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS", "GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM")
+# Set or unset on the command itself, these reroute the floor's wrapper, its interpreter or git's
+# config (git), or drop the gh belt / swap its credential (gh).
+_BYPASS_ENV_GIT = ("HOME", "PATH", "XDG_CONFIG_HOME", "PYTHONPATH", "PYTHONHOME", "PYTHONSTARTUP", "PYTHONUSERBASE",
+                   "PYTHONINSPECT")
+_BYPASS_ENV_GH = ("GH_CONFIG_DIR", "GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN",
+                  "GH_HOST", "HOME", "XDG_CONFIG_HOME")
+_UNKNOWN_CWD = "\x00unknown-cwd"
 _ASSIGN_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
 _REDIRECT_OPS = frozenset({">", ">>", "<", "<<", "<<<", ">&", "<&", "&>", "&>>", ">|"})
 _GIT_OPTS_WITH_VALUE = frozenset({"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--config-env",
@@ -1964,10 +2047,11 @@ def _parse_git(args: List[str], cwd: Optional[str]) -> Tuple[List[str], Optional
             j += 1
             continue
         break
-    if gitdir and cwd is None:
+    if gitdir:
         import posixpath
 
-        gd = posixpath.normpath(gitdir)
+        # git operates on --git-dir / GIT_DIR wherever the command runs, so it names the repo.
+        gd = posixpath.normpath(_join_cwd(cwd, gitdir) or gitdir) if not gitdir.startswith("~") else gitdir
         cwd = posixpath.dirname(gd) if posixpath.basename(gd) == ".git" else gd
     return args[j:], cwd, gitdir, bypass
 
@@ -2050,8 +2134,13 @@ def _parse_into(text: str, env0: Dict[str, Optional[str]], cwd0: Optional[str], 
             continue
         tool = toks[i].rstrip("/").rsplit("/", 1)[-1]
         args = toks[i + 1:]
-        if tool == "cd":
-            cwd = _join_cwd(cwd, args[0] if args else "~")
+        if tool in ("cd", "pushd", "popd"):
+            dest = [a for a in args if not a.startswith("-") or a == "-"]
+            if tool == "popd" or (tool == "pushd" and not dest) or (dest and (dest[0] == "-" or "$" in dest[0]
+                                                                                or "`" in dest[0])):
+                cwd = _UNKNOWN_CWD          # the target cannot be determined: most restrictive
+            else:
+                cwd = _join_cwd(cwd, dest[0] if dest else "~")
             continue
         if tool in ("export", "unset", "declare", "typeset"):
             for a in args:
@@ -2090,7 +2179,13 @@ def _parse_into(text: str, env0: Dict[str, Optional[str]], cwd0: Optional[str], 
                                "hook_bypass": False}
         bypass = "*" in env or any(k in env for k in _BYPASS_ENV)
         if tool == "git":
-            argv, gcwd, gitdir, cfg_bypass = _parse_git(args, cmd_cwd)
+            bypass = bypass or any(k in env for k in _BYPASS_ENV_GIT)
+            pre: List[str] = []
+            if env.get("GIT_DIR"):
+                pre += ["--git-dir", str(env["GIT_DIR"])]
+            if env.get("GIT_WORK_TREE"):
+                pre += ["--work-tree", str(env["GIT_WORK_TREE"])]
+            argv, gcwd, gitdir, cfg_bypass = _parse_git(pre + list(args), cmd_cwd)
             inv.update(argv=argv, cwd_hint=gcwd)
             if gitdir:
                 inv["git_dir_hint"] = gitdir
@@ -2098,6 +2193,7 @@ def _parse_into(text: str, env0: Dict[str, Optional[str]], cwd0: Optional[str], 
             if argv and argv[0] == "commit" and _commit_n(argv):
                 bypass = True
         elif tool == "gh":
+            bypass = bypass or any(k in env for k in _BYPASS_ENV_GH)
             argv = []
             repo_hint = None
             j = 0
@@ -2130,6 +2226,9 @@ def parse_command(text: str) -> list:
     out: List[dict] = []
     _parse_into(text or "", {}, None, 0, out)
     for inv in out:
+        if str(inv.get("cwd_hint") or "").startswith(_UNKNOWN_CWD):
+            inv["cwd_hint"] = None
+            inv["target_unknown"] = True
         ep = inv["env_prefix"]
         clean = {k: v for k, v in ep.items() if k != "*"}
         if "*" in ep:
@@ -2329,7 +2428,7 @@ def classify_command(text: str, *, cwd: Any = None, root: Optional[Path] = None,
         cls, vid = verb_class(inv2, table)
         row = {"tool": inv["tool"], "argv": argv, "cwd_hint": inv.get("cwd_hint"), "class": cls, "verb_id": vid,
                "target_ref": tr, "hook_bypass": bool(inv.get("hook_bypass"))}
-        for k in ("repo_hint", "op", "unparsed"):
+        for k in ("repo_hint", "op", "unparsed", "target_unknown"):
             if k in inv:
                 row[k] = inv[k]
         out.append(row)
@@ -2490,7 +2589,11 @@ def policy(*, repo: str, action_class: Optional[str] = None, command: Optional[s
             res = resolved[target]
         else:
             res = base
-        facts = dict(_res_facts(res, root, home), walls_family=walls, acting_family=acting, device=dev_id,
+        rf = _res_facts(res, root, home)
+        if inv.get("target_unknown"):
+            # a cwd change the parser cannot follow (popd, cd "$VAR", cd -): the most restrictive target
+            rf = dict(rf, owner_class="employer", positively_personal=False, has_remote=True)
+        facts = dict(rf, walls_family=walls, acting_family=acting, device=dev_id,
                      action_class=inv["class"], via=via, target_ref=inv.get("target_ref") or "none",
                      chain_has_agent=agent, hook_bypass=bool(inv.get("hook_bypass")))
         d = policy_decide(facts, table)
@@ -2684,6 +2787,28 @@ def _credential(argv: List[str], res: dict, env: dict, root: Optional[Path]) -> 
     return "unknown"
 
 
+_SHAPE_TOKENS = {
+    "<ref>": re.compile(r"^[A-Za-z0-9_@][A-Za-z0-9._/@-]*$"),
+    "<n>": re.compile(r"^[0-9]{1,6}$"),
+    "<path>": re.compile(r"^[^-\s][^\s]*$"),
+}
+
+
+def argv_matches_shape(argv: List[str], shape: List[str]) -> bool:
+    """Exact-length match: literal tokens equal, <ref>/<n>/<path> placeholders by pattern (no options,
+    no refspec colons or leading +)."""
+    if len(argv) != len(shape):
+        return False
+    for a, t in zip(argv, shape):
+        rx = _SHAPE_TOKENS.get(t)
+        if rx is not None:
+            if not rx.match(str(a)) or ":" in str(a):
+                return False
+        elif str(a) != t:
+            return False
+    return True
+
+
 class VettedContext:
     """Context for one vetted script in one repo. `.run()` = intent line, lifted env, receipt."""
 
@@ -2795,6 +2920,10 @@ class VettedContext:
             self._receipt(base, "none", "skipped:not-registered")
             return self._refuse(argv, f"{action}: not a registered action of {self.script_id}")
         base = self._base_record(action, cls, refs_l)
+        shapes = ((self.row or {}).get("argv") or {}).get(action) or []
+        if not any(argv_matches_shape(list(argv), sh) for sh in shapes if isinstance(sh, list)):
+            self._receipt(base, "none", "skipped:argv-mismatch")
+            return self._refuse(argv, f"{action}: argv is not a registered shape for this action")
         d = self.decide(cls)
         if d["outcome"] != "allow":
             self._receipt(base, "none", f"skipped:{d['outcome']}-{d['rule_id'] or 'default'}")
@@ -3156,11 +3285,13 @@ def _floor_git_env(env: dict) -> dict:
     return _clean_git_env(env)
 
 
-def _range_idents(top: Path, line: dict, remote: str, env: dict, git: str) -> Optional[List[Tuple[str, str, str]]]:
+def _range_idents(top: Path, line: dict, remote: str, env: dict, git: str,
+                  gitdir: Optional[Path] = None) -> Optional[List[Tuple[str, str, str]]]:
     """(sha, author email, committer email) for every commit the ref line would publish; None on error."""
     if _ZERO_SHA_RE.match(line["local_sha"]):
         return []
-    fmt = ["-c", "log.showSignature=false", "log", "--no-color", "--format=%H%x00%ae%x00%ce"]
+    fmt = (["--git-dir", str(gitdir)] if gitdir is not None else []) + [
+        "-c", "log.showSignature=false", "log", "--no-color", "--format=%H%x00%ae%x00%ce"]
     r = None
     if not _ZERO_SHA_RE.match(line["remote_sha"]):
         r = _git_run(fmt + [f"{line['remote_sha']}..{line['local_sha']}"], top, env, git)
@@ -3224,9 +3355,18 @@ def _vetted_ancestor(chain: List[dict], *, home: Optional[Path], root: Optional[
     if hop is None:
         return None, "no python ancestor (model-composed)"
     args = str(hop.get("args") or "").split()
-    if len(args) < 2 or args[1].startswith("-"):
+    flags = ""
+    i = 1
+    while i < len(args) and re.fullmatch(r"-[IEsSBuqbO]+", args[i]):
+        flags += args[i][1:]
+        i += 1
+    if i >= len(args) or args[i].startswith("-"):
         return None, "the python ancestor runs no script path"
-    script = args[1]
+    script = args[i]
+    if not os.path.isabs(script):
+        return None, "the python ancestor names its script by a relative path (vetted scripts re-exec by absolute path)"
+    if "I" not in flags:
+        return None, "the python ancestor does not run isolated (-I), so PYTHONPATH or site hooks could change it"
     lc = ws_paths(home=home)["lib_current"]
     try:
         lock = json.loads((lc / "vetted.lock.json").read_text(encoding="utf-8"))
@@ -3244,11 +3384,8 @@ def _vetted_ancestor(chain: List[dict], *, home: Optional[Path], root: Optional[
             continue
         rel = str(row.get("path"))
         files: List[Path] = []
-        if os.path.isabs(script):
-            if any(_cf(_real(script)) == _cf(_real(r / rel)) for r in roots):
-                files = [Path(script)]
-        elif os.path.normpath(script) == os.path.normpath(rel):
-            files = [r / rel for r in roots]
+        if any(_cf(_real(script)) == _cf(_real(r / rel)) for r in roots):
+            files = [Path(script)]
         for f in files:
             try:
                 if git_blob_sha(f) == ent.get("blob"):
@@ -3295,6 +3432,47 @@ def _push_url_class(url: str, root: Optional[Path]) -> str:
     return cls
 
 
+def _floor_locate(cwd: Path, e: dict, git: str) -> Tuple[Optional[Path], Optional[Path]]:
+    """(git dir, work tree top) the way git finds them: GIT_DIR first, else discovery from cwd (bare
+    repos included). The work tree is None for a bare repo or a GIT_DIR used from outside its tree."""
+    loc = _clean_git_env(e)
+    for k in ("GIT_DIR", "GIT_WORK_TREE"):
+        if e.get(k):
+            loc[k] = str(e[k])
+    r = _git_run(["rev-parse", "--absolute-git-dir"], cwd, loc, git)
+    gitdir = Path(r.stdout.strip()) if r is not None and r.returncode == 0 and r.stdout.strip() else None
+    if e.get("GIT_DIR"):
+        top = None
+        if gitdir is not None and gitdir.name == ".git" and (gitdir.parent / ".git").exists():
+            top = gitdir.parent
+        elif e.get("GIT_WORK_TREE"):
+            top = _find_top(_real(Path(cwd) / str(e["GIT_WORK_TREE"])))
+        return gitdir, top
+    top = _find_top(cwd)
+    if gitdir is None and top is not None:
+        gd, _common = _git_paths(top)
+        gitdir = gd
+    return gitdir, top
+
+
+def _floor_config_remotes(cwd: Path, gitdir: Optional[Path], e: dict, git: str) -> Optional[List[str]]:
+    """Every remote url/pushurl as git itself resolves the repo config ([include], includeIf, legacy
+    [remote.x] sections, inline comments). The caller's GIT_CONFIG_* and -c are not honoured. None
+    when git cannot read the config."""
+    loc = _clean_git_env(e)
+    args = (["--git-dir", str(gitdir)] if gitdir is not None else []) + [
+        "config", "--get-regexp", r"^remote\..*\.(push)?url$"]
+    r = _git_run(args, cwd, loc, git)
+    if r is None or r.returncode not in (0, 1):
+        return None
+    out = []
+    for ln in r.stdout.splitlines():
+        parts = ln.split(None, 1)
+        if len(parts) == 2 and parts[1].strip():
+            out.append(parts[1].strip())
+    return out
+
+
 def floor_decide(event: str, hook_args: list, stdin_lines: list, *, env: Optional[dict] = None,
                  ancestry: Optional[list] = None, root: Optional[Path] = None, home: Optional[Path] = None,
                  cwd: Optional[Any] = None, cache: Any = None, ps: Optional[Callable[[str], str]] = None,
@@ -3321,27 +3499,42 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
     if event not in FLOOR_EVENTS:
         return _floor_allow(f"unknown hook event {event!r}; allowing")
     e = dict(os.environ if env is None else env)
-    top = _find_top(_real(cwd if cwd is not None else os.getcwd()))
-    if top is None:
-        return _floor_allow("not inside a work tree; allowing")
-    det = {"family": "claude", "family_for_walls": "claude", "agent_possible": True}
-    res = repo_resolve(str(top), root=root, home=home, detection=det, cache=cache)
-    employer = res.get("owner_class") == "employer"
+    here = _real(cwd if cwd is not None else os.getcwd())
     url_cls = "none"
     if event == "pre-push" and len(hook_args) >= 2:
-        url_cls = _push_url_class(str(hook_args[1]), root)
-        employer = employer or url_cls == "employer"
+        # args: the remote name (the URL itself when none was configured) and the URL after insteadOf.
+        cls2 = [_push_url_class(str(a), root) for a in hook_args[:2]]
+        url_cls = max(cls2, key=lambda c: CLASS_RANK.get(c, -1))
+    gitdir, top = _floor_locate(here, e, git)
+    if gitdir is None and top is None:
+        if url_cls == "employer":
+            return _floor_block("I2", "pre-push: a Claude-family push to an employer remote from an unlocatable "
+                                      "repository; route this work to Cursor or Codex")
+        return _floor_allow("not inside a repository; allowing")
+    det = {"family": "claude", "family_for_walls": "claude", "agent_possible": True}
+    if top is not None:
+        res = repo_resolve(str(top), root=root, home=home, detection=det, cache=cache)
+    else:
+        res = {"owner_class": "unknown", "positively_personal": False, "remotes": [],
+               "in_projects_root": False}
+    cfg_urls = _floor_config_remotes(here, gitdir, e, git)
+    cfg_cls = [_push_url_class(u, root) for u in cfg_urls or []]
+    employer = res.get("owner_class") == "employer" or url_cls == "employer" or "employer" in cfg_cls
+    if cfg_urls is None and event != "pre-push" and not employer and (res.get("remotes") or top is None):
+        return _floor_block("I2", f"{event}: git cannot read this repository's remote config, so it is not "
+                                  "positively personal for a Claude-family actor; fix the config, then retry")
     if not employer:
         if res.get("positively_personal"):
             return _floor_allow()
         pr = projects_root(root=root, home=home)
-        under = bool(res.get("in_projects_root")) or (_is_under(_real(top), pr) and _cf(_real(top)) != _cf(pr))
+        where_p = _real(top if top is not None else gitdir)
+        under = bool(res.get("in_projects_root")) or (_is_under(where_p, pr) and _cf(where_p) != _cf(pr))
         if under:
             return _floor_block("not-positively-personal",
                                 "this checkout under projects_root is not positively personal for a Claude actor "
                                 "(unknown, third-party or uncached); fix: run `python3 09-tools/profile_resolve.py "
                                 "scan` in a plain terminal, then retry")
-        return _floor_allow(None if not res.get("remotes") else
+        return _floor_allow(None if not (res.get("remotes") or cfg_urls) else
                             f"{res.get('owner_class')} repo outside projects_root; the floor allows it")
     if event != "pre-push":
         return _floor_block("I2", f"{event}: a Claude-family actor never commits on an employer repo; "
@@ -3354,7 +3547,7 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
     for ln in lines:
         if ln.get("bad"):
             continue
-        idents = _range_idents(top, ln, remote, genv, git)
+        idents = _range_idents(top if top is not None else here, ln, remote, genv, git, gitdir)
         if idents is None:
             notice = "I1 range check unavailable (git error)"
             continue
@@ -3366,12 +3559,16 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
                     return _floor_block("I1", f"commit {sha[:12]} in the pushed range has {what} as {role}; "
                                               "an employer repo takes only employer identities (rewrite it in "
                                               "Cursor or Codex with the employer identity)")
-    _cur, dflt = _repo_heads(top)
+    _cur, dflt = _repo_heads(top) if top is not None else (None, None)
     all_deletes = bool(lines) and all(
         not ln.get("bad") and _ZERO_SHA_RE.match(ln["local_sha"]) and ln["remote_ref"].startswith("refs/heads/")
         and _ref_kind(ln["remote_ref"], dflt) == "non-default" for ln in lines)
     if ancestry is None:
         raw, err = _walk_ancestry_ex(None, ps, 12)
+        if err:
+            return _floor_block("I2", f"a Claude-family push to an employer repo: ancestry unavailable ({err}), so "
+                                      "vetted housekeeping cannot be verified; run the vetted script with the "
+                                      "sandbox off for that one command, or route to Cursor or Codex")
         chain = _norm_chain(raw)
     else:
         chain = _norm_chain(ancestry)
@@ -3930,9 +4127,18 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
                       ("git commit -anm x", "commit -anm"), ("GIT_CONFIG_COUNT=0 git push", "GIT_CONFIG_COUNT=0"),
                       ("env -u GIT_CONFIG_COUNT git push", "env -u"), ("env -i git push", "env -i"),
                       ("export GIT_CONFIG_PARAMETERS=x; git push", "export"),
-                      ("bash -lc 'git push --no-verify origin feat/a'", "bash -lc")):
+                      ("bash -lc 'git push --no-verify origin feat/a'", "bash -lc"),
+                      ("env -u GH_CONFIG_DIR gh api -X DELETE repos/acme-corp/w/git/refs/heads/x", "env -u GH_CONFIG_DIR"),
+                      ("GH_CONFIG_DIR=/tmp/x gh pr merge 1", "GH_CONFIG_DIR override"),
+                      ("GH_TOKEN=t gh pr merge 1 -R acme-corp/w", "GH_TOKEN"), ("GITHUB_TOKEN=t gh api x", "GITHUB_TOKEN"),
+                      ("HOME=/tmp/x git push origin --delete feat/h1", "HOME= on git"),
+                      ("env HOME=/tmp/x git commit -m x", "env HOME= on git"),
+                      ("PYTHONPATH=/tmp/x git commit -m x", "PYTHONPATH= on git"),
+                      ("PATH=/tmp/x:/usr/bin git push origin feat/a", "PATH= on git"),
+                      ("XDG_CONFIG_HOME=/tmp/x git push origin feat/a", "XDG_CONFIG_HOME= on git")):
         ok(any(b for _c, _t, b in cls(text)), f"hook_bypass: {why}")
     ok(not any(b for _c, _t, b in cls("git commit -m 'no -n here' && git push origin feat/a")), "no false bypass")
+    ok(not any(b for _c, _t, b in cls("HOME=/tmp/x ls && GH_TOKEN=t ls")), "no false bypass for other tools")
     p = parse_command("cd /x/y && FOO=1 command /usr/bin/git -C ../z --work-tree w status")
     ok(len(p) == 1 and p[0]["tool"] == "git" and p[0]["argv"] == ["status"] and p[0]["cwd_hint"] == "/x/z/w"
        and p[0]["env_prefix"] == {"FOO": "1"}, f"cd, env prefix, command, abs git, -C, --work-tree: {p}")
@@ -3979,6 +4185,17 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     ok(r["outcome"] == "deny", "multi-invocation: the most restrictive outcome wins")
     r = pol(claude, repo=str(pers), command=f"cd {emp} && git push origin --delete feat/done")
     ok(r["outcome"] == "deny" and r["facts"]["owner_class"] == "employer", "cd into another repo is evaluated there")
+    for text, why in ((f"GIT_DIR={emp}/.git git push origin main", "GIT_DIR= prefix"),
+                      (f"env GIT_DIR={emp}/.git git push origin main", "env GIT_DIR="),
+                      (f"export GIT_DIR={emp}/.git; git commit -m x", "export GIT_DIR"),
+                      (f"GIT_WORK_TREE={emp} git commit -m x", "GIT_WORK_TREE= prefix"),
+                      (f"pushd {emp} && git commit -m x", "pushd"),
+                      ("popd && git commit -m x", "popd (undeterminable target)"),
+                      ("cd \"$OLDPWD\" && git push origin main", "cd to a variable (undeterminable target)")):
+        r = pol(claude, repo=str(pers), command=text)
+        ok(r["outcome"] != "allow" and r["facts"]["owner_class"] == "employer",
+           f"{why}: the employer (or most restrictive) target is evaluated, not the personal base: {r['outcome']} "
+           f"{r['rule_id']} {r['facts'].get('owner_class')}")
     r = pol(claude, repo=str(pers), command="git push origin --delete feat/old")
     ok(r["outcome"] == "allow" and r["rule_id"] == "P50-personal", "personal repo allows under Claude")
     r = pol(human, command="git push origin --delete feat/done")
@@ -4104,6 +4321,29 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
         hits = {rule for _line, rule in rules.scan_text(text)}
         masked = {rule for _line, rule in rules.scan_text(text.replace("acme-corp/widget", "slug-field"))}
         ok(hits and not masked, f"receipts pass the employer-substance class outside the declared repo_slug field: {masked}")
+
+    # ---- argv binding: a registered action runs only its declared argv shapes (stub runner; nothing executes)
+    seen_argv: List[List[str]] = []
+
+    def stub(argv: List[str], **_kw: Any) -> subprocess.CompletedProcess:
+        seen_argv.append(list(argv))
+        return subprocess.CompletedProcess(list(argv), 0, "", "")
+
+    n0 = len(rec_path.read_text(encoding="utf-8").splitlines())
+    with vetted_context("fixture-housekeeper", str(emp), script, home=home, root=root, detection=claude, device="dev-a",
+                        env=base_env, out=None, runner=stub) as ctx:
+        m1 = ctx.run(["gh", "pr", "merge", "7", "--admin", "-R", "acme-corp/widget"], action="pr-list",
+                     needs_employer_gh=True)
+        m2 = ctx.run(["git", "push", "--force", "origin", "HEAD:main"], action="remote-branch-delete",
+                     refs=["refs/heads/main"])
+        m3 = ctx.run(["git", "push", "origin", "--delete", "feat/x:main"], action="remote-branch-delete")
+        m4 = ctx.run(["git", "push", "origin", "--delete", "feat/ok"], action="remote-branch-delete",
+                     refs=["refs/heads/feat/ok"])
+    tail = [json.loads(x) for x in rec_path.read_text(encoding="utf-8").splitlines()[n0:]]
+    mism = [x for x in tail if x.get("type") == "receipt" and x.get("result") == "skipped:argv-mismatch"]
+    ok(m1.returncode == 126 and m2.returncode == 126 and m3.returncode == 126 and len(mism) == 3
+       and seen_argv == [["git", "push", "origin", "--delete", "feat/ok"]] and m4.returncode == 0,
+       f"argv binding: another verb under a registered label is refused with a receipt: {seen_argv} {mism[:1]}")
 
     # ---- pin lag: a vault registry edit without a pin advance keeps the old behaviour
     vault_reg = json.loads((root / TABLE_PATHS["vetted-scripts"]).read_text(encoding="utf-8"))
@@ -4389,15 +4629,26 @@ def _t8_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
                                                "action": "remote-branch-delete", "refs": refs})
 
     vet = [{"pid": 900, "comm": "git", "args": "git push origin --delete feat/done"},
-           {"pid": 4242, "comm": "Python", "args": f"/usr/bin/python3 {script} --apply"},
+           {"pid": 4242, "comm": "Python", "args": f"/usr/bin/python3 -I {script} --apply"},
            {"pid": 10, "comm": "claude", "args": "claude"}]
     dl = [f"(delete) {zero} refs/heads/feat/done {head}"]
     intent(4242, ["refs/heads/feat/done"])
     d = floor("pre-push", emp, ["origin", "git@github.com:acme-corp/w.git"], dl, anc=vet)
     ok(d["decision"] == "allow" and "vetted" in (d["notice"] or ""), f"floor: the vetted shape is allowed: {d}")
-    rel = [dict(vet[0]), dict(vet[1], args="python3 09-tools/fixture-housekeeper.py"), vet[2]]
-    ok(floor("pre-push", emp, ["origin", "u"], dl, anc=rel)["decision"] == "allow",
-       "floor: a relative script path resolves against the root pointer")
+    rel = [dict(vet[0]), dict(vet[1], args="python3 -I 09-tools/fixture-housekeeper.py"), vet[2]]
+    d = floor("pre-push", emp, ["origin", "u"], dl, anc=rel)
+    ok(d["rule"] == "I2" and "relative" in d["reason"], f"floor: a relative script path is never vetted: {d}")
+    noi = [dict(vet[0]), dict(vet[1], args=f"/usr/bin/python3 {script} --apply"), vet[2]]
+    d = floor("pre-push", emp, ["origin", "u"], dl, anc=noi)
+    ok(d["rule"] == "I2" and "-I" in d["reason"], f"floor: a vetted script run without -I is not vetted: {d}")
+
+    def ps_denied(_cols: str) -> str:
+        raise PermissionError("operation not permitted")
+
+    d = floor_decide("pre-push", ["origin", "u"], dl, env=fenv, ancestry=None, ps=ps_denied, root=root, home=home,
+                     cwd=emp)
+    ok(d["rule"] == "I2" and "ancestry unavailable" in d["reason"] and "sandbox" in d["reason"],
+       f"floor: a denied ps names the cause instead of 'model-composed': {d}")
     d = floor("pre-push", emp, ["origin", "u"], [f"(delete) {zero} refs/heads/feat/other {head}"], anc=vet)
     ok(d["rule"] == "housekeeping-shape", f"floor: refs that differ from the intent line block: {d}")
     d = floor("pre-push", emp, ["origin", "u"], [f"(delete) {zero} refs/heads/main {head}"], anc=vet)
@@ -4426,6 +4677,7 @@ def _t8_git_floor(ok: Callable[[Any, str], None]) -> None:
     helper = ID_FIXTURES / "floor_cases.py"
     if not helper.is_file():
         print("self-test SKIP: hook-level floor fixtures absent (a pinned copy) — not a pass", file=sys.stderr)
+        _SELFTEST_SKIPS.append("hook-level floor fixtures absent")
         return
     import importlib.util
 
@@ -4438,13 +4690,19 @@ def _t8_git_floor(ok: Callable[[Any, str], None]) -> None:
     for name, passed, detail in mod.run_all(sys.modules[__name__]):
         if passed is None:
             print(f"self-test SKIP: {name} ({detail}) — not a pass", file=sys.stderr)
+            _SELFTEST_SKIPS.append(name)
             continue
         ok(passed, f"{name}: {detail}")
 
 
+_SELFTEST_SKIPS: List[str] = []
+
+
 def self_test(stub_chain: bool = False) -> int:
+    """0 all passed; 1 a failure; 3 no failure but at least one case SKIPPED (never green, 3c)."""
     fails: List[str] = []
     passes = [0]
+    del _SELFTEST_SKIPS[:]
 
     def ok(cond: Any, label: str) -> None:
         if cond:
@@ -4496,11 +4754,32 @@ def self_test(stub_chain: bool = False) -> int:
             real = validate_tables()
             ok(real["tables"]["devices"]["ok"] and real["tables"]["context-remotes"]["ok"], "shipped tables validate")
 
-        # hostnames
+        # hostnames: variants derived from the shipped table (no device literal outside devices.json)
         if (ROOT / TABLE_PATHS["devices"]).exists():
-            for h in ("Voyager-2.lan", "voyager-2", "VOYAGER-2.local"):
-                ok(current_device(hostname=h)["id"] == "personal-mbp", f"{h} resolves to personal-mbp")
-            ok(device_label("CS-KQ23N94M0W.local") == "Work MacBook Pro (loaner)", "loaner hostname label")
+            shipped = load_table("devices")
+            for row in shipped.get("devices") or []:
+                h0 = (row.get("hostnames") or [None])[0]
+                if not h0:
+                    continue
+                for h in (h0 + ".lan", h0.lower(), h0.upper() + ".local"):
+                    ok(current_device(hostname=h)["id"] == row["id"], f"{h} resolves to {row['id']}")
+                for hn, lab in (row.get("hostname_labels") or {}).items():
+                    ok(device_label(hn + ".local") == lab, f"hostname label for {row['id']}")
+        pr_root = tmp / "pr-root"
+        for name in ("devices", "context-remotes", "surfaces"):
+            src = root / TABLE_PATHS[name]
+            if src.exists():
+                dst = pr_root / TABLE_PATHS[name]
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                dst.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
+        dt_ = json.loads((pr_root / TABLE_PATHS["devices"]).read_text(encoding="utf-8"))
+        for row in dt_["devices"]:
+            if row["id"] == "dev-b":
+                row["projects_root"] = "Code"
+        (pr_root / TABLE_PATHS["devices"]).write_text(json.dumps(dt_), encoding="utf-8")
+        ok(projects_root(root=pr_root, home=home_a, hostname="host-b") == home_a / "Code"
+           and projects_root(root=pr_root, home=home_a, hostname="host-a") == home_a / "Projects",
+           "projects_root follows the injected hostname's device row (LLM/device F-05)")
         ok(current_device(hostname="HOST-A.local", root=root)["id"] == "dev-a", "fixture host case-folded")
         ok(current_device(hostname="host-a2.lan", root=root)["label"] == "Device A (spare)", "hostname label wins")
         d = current_device(hostname="mystery.local", root=root, scutil=lambda: "host-b")
@@ -4518,6 +4797,10 @@ def self_test(stub_chain: bool = False) -> int:
         n = normalize_remote("https://user@bitbucket.org/Acme-BB/x", root=root)
         ok(n == {"host": "bitbucket.org", "owner": "acme-bb", "repo": "x", "slug": "acme-bb/x", "form": "https-userinfo"},
            "https userinfo bitbucket normalizes with case-folding")
+        for u in ("ssh://git@ssh.github.com:443/acme-corp/x.git", "https://www.github.com/acme-corp/x"):
+            n = normalize_remote(u, root=root)
+            ok(n is not None and n["host"] == "github.com" and n["owner"] == "acme-corp",
+               f"{u.split('://')[1].split('/')[0]} normalizes to github.com (walls F-03): {n}")
         n = normalize_remote("github-work:acme-corp/x", root=root)
         ok(n and n["host"] == "github.com" and n["owner"] == "acme-corp" and n["form"] == "scp-alias", "ssh alias normalizes")
         ok(owner_class("bitbucket.org", "Acme-BB", root=root) == "employer", "bitbucket owner class")
@@ -4701,6 +4984,72 @@ def self_test(stub_chain: bool = False) -> int:
         ok(not r["human"] and "no-tty:stdout" in r["reasons"], "no TTY on fd 1 is refused")
         det_err = _detect(None, {}, None, HUMAN_TTY, root)
         ok(isinstance(det_err[0], dict), "live detection runs without raising")
+        ok("ancestry_unavailable" in det_err[0], "the detection object says whether ancestry was available")
+        global _ps_default
+        saved_ps = _ps_default
+
+        def ps_denied(_cols: str) -> str:
+            raise PermissionError("operation not permitted")
+        _ps_default = ps_denied
+        try:
+            r = agent_check(env={}, ancestry=None, isatty=HUMAN_TTY, root=root)
+            d = detect_surface(env={}, ancestry=None, isatty=HUMAN_TTY, root=root)
+        finally:
+            _ps_default = saved_ps
+        ok(not r["human"] and not r["determined"] and d["ancestry_unavailable"],
+           f"ps denied: agent_check is undetermined and detection says ancestry is unavailable: {r}")
+        nm_root = tmp / "never-root"
+        for name in ("surfaces", "devices", "context-remotes"):
+            src = root / TABLE_PATHS[name]
+            if src.exists():
+                dst = nm_root / TABLE_PATHS[name]
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                dst.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
+        st_ = json.loads((nm_root / TABLE_PATHS["surfaces"]).read_text(encoding="utf-8"))
+        for row in st_["surfaces"]:
+            if row["id"] == "claude-code":
+                row["markers"]["env"] = [{"name": "CLAUDECODE", "verified": True}]
+        (nm_root / TABLE_PATHS["surfaces"]).write_text(json.dumps(st_), encoding="utf-8")
+        d = detect_surface(env={"CLAUDECODE": "1"}, ancestry=[], isatty=HUMAN_TTY, root=nm_root)
+        ok(d["via"] != "env" and "CLAUDECODE" not in d["markers"],
+           f"a never_markers name declared as an env marker attributes nothing: {d['via']} {d['markers']}")
+
+        # AI_AGENT is set by several vendors: a value prefix attributes Claude Code (LLM/device F-01)
+        d = detect_surface(env={"AI_AGENT": "claude-code_2-1-280_agent", "CLAUDECODE": "1"}, ancestry=[],
+                           isatty=NO_TTY, root=root)
+        ok(d["acting_host"] == "claude-code" and d["family"] == "claude" and d["family_for_walls"] == "claude",
+           f"AI_AGENT=claude-code_* with no ancestry is Claude Code: {d['acting_host']} {d['family']}")
+        d = detect_surface(env={"AI_AGENT": "some-other-agent"}, ancestry=[], isatty=NO_TTY, root=root)
+        ok(d["family"] == "unknown-agent" and d["acting_host"] == "other-local-agents",
+           f"a name-only marker matching several rows reports the family's generic row: {d['acting_host']}")
+        # agent-possible env always raises the walls to claude (walls F-08); forged markers cannot lower them
+        for extra in ({"CURSOR_AGENT": "1"}, {"CODEX_THREAD_ID": "t"}, {"WS_SURFACE_FAMILY": "cursor"}):
+            d = detect_surface(env=dict(extra, CLAUDECODE="1"), ancestry=[], isatty=NO_TTY, root=root)
+            ok(d["family_for_walls"] == "claude", f"CLAUDECODE plus {sorted(extra)} keeps claude walls: {d}")
+        d = detect_surface(env={"CURSOR_AGENT": "1"}, ancestry=[], isatty=NO_TTY, root=root)
+        ok(d["family_for_walls"] == "cursor", "a Cursor marker without agent-possible env stays cursor")
+
+        # the surfaces table unreadable: the built-in marker list still refuses (test F-02, decision b)
+        empty = tmp / "no-tables"
+        empty.mkdir(exist_ok=True)
+        for env_m in ({"CURSOR_AGENT": "1"}, {"CODEX_THREAD_ID": "t"}, {"GEMINI_CLI": "1"}, {"AI_AGENT": "x"},
+                      {"COPILOT_MODEL": "m"}):
+            r = agent_check(env=env_m, ancestry=shell, isatty=HUMAN_TTY, root=empty)
+            ok(not r["human"], f"no surfaces.json: {sorted(env_m)} still refuses: {r}")
+        r = agent_check(env={}, ancestry=[{"comm": "zsh"}, {"comm": "Cursor Helper (Plugin)"}, {"comm": "launchd"}],
+                        isatty=HUMAN_TTY, root=empty)
+        ok(not r["human"], f"no surfaces.json: a Cursor Helper ancestor still refuses: {r}")
+        ok(automated_context(env={"CURSOR_AGENT": "1"}, ancestry=shell, isatty=HUMAN_TTY, root=empty),
+           "no surfaces.json: automated_context still sees a Cursor marker")
+
+        # positive human evidence (walls F-09): an orphan reaching launchd through no terminal is undetermined
+        r = ac({}, [{"comm": "script", "pid": 500, "ppid": 1}, {"comm": "launchd", "pid": 1, "ppid": 0}], HUMAN_TTY)
+        ok(not r["human"] and not r["determined"], f"an orphaned pty wrapper under launchd is undetermined: {r}")
+        r = ac({}, [{"comm": "zsh"}, {"comm": "launchd", "pid": 1}], HUMAN_TTY)
+        ok(not r["human"] and not r["determined"], f"a chain to launchd through no terminal is undetermined: {r}")
+        for term in ("Terminal", "iTerm2", "sshd", "tmux", "login"):
+            r = ac({}, [{"comm": "zsh"}, {"comm": term}, {"comm": "launchd", "pid": 1}], HUMAN_TTY)
+            ok(r["human"] and r["determined"], f"a chain through {term} is human")
 
         # gitcaps: temp repo, temp HOME
         caps = gitcaps(root=root)
@@ -4802,6 +5151,7 @@ def self_test(stub_chain: bool = False) -> int:
             if not runnable:
                 print("self-test SKIP: stub chain needs a runnable non-platform binary named claude "
                       "(no C compiler, or the stub was killed) — not a pass", file=sys.stderr)
+                _SELFTEST_SKIPS.append("stub chain")
                 stub_chain = False
         if stub_chain:
             clean = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(home_a)}
@@ -4825,6 +5175,9 @@ def self_test(stub_chain: bool = False) -> int:
             print(f"self-test FAIL: {f}", file=sys.stderr)
         print(f"profile_resolve self-test: {passes[0]} passed, {len(fails)} failed", file=sys.stderr)
         return EXIT_FAIL
+    if _SELFTEST_SKIPS:
+        print(f"OK profile_resolve self-test ({passes[0]} checks, {len(_SELFTEST_SKIPS)} SKIPPED: not green)")
+        return 3
     print(f"OK profile_resolve self-test ({passes[0]} checks)")
     return EXIT_OK
 

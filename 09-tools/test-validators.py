@@ -716,7 +716,10 @@ class TestSessionStatus(unittest.TestCase):
         import io
         ss = load("session-status")
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            self.assertEqual(ss.self_test(), 0)
+            rc = ss.self_test()
+        if rc == 3:
+            self.skipTest("the 2ff02e7 card oracle is not in local history (shallow clone)")
+        self.assertEqual(rc, 0)
 
     def test_no_hostname_map_literal(self):
         src = (TOOLS / "session-status.py").read_text(encoding="utf-8")
@@ -841,7 +844,10 @@ class TestProfileResolve(unittest.TestCase):
         cls.mod = load("profile_resolve")
 
     def test_self_test_negative_fixtures(self):
-        self.assertEqual(self.mod.self_test(), 0)
+        rc = self.mod.self_test()
+        if rc == 3:
+            self.skipTest("profile_resolve self-test SKIPPED cases (git below 2.54, ps not permitted, or a pinned copy)")
+        self.assertEqual(rc, 0)
 
     def test_shipped_tables_validate(self):
         res = self.mod.validate_tables()["tables"]
@@ -853,8 +859,12 @@ class TestProfileResolve(unittest.TestCase):
                 self.assertTrue(entry["ok"], f"{name}: {entry['errors']}")
 
     def test_hostname_normalization(self):
-        for host in ("Voyager-2.lan", "voyager-2", "VOYAGER-2.local"):
-            self.assertEqual(self.mod.current_device(hostname=host)["id"], "personal-mbp")
+        for row in self.mod.load_table("devices").get("devices") or []:
+            h0 = (row.get("hostnames") or [None])[0]
+            if not h0:
+                continue
+            for host in (h0 + ".lan", h0.lower(), h0.upper() + ".local"):
+                self.assertEqual(self.mod.current_device(hostname=host)["id"], row["id"])
         dev = self.mod.current_device(hostname="host-z.local", scutil=lambda: None)
         self.assertEqual(dev["id"], "unknown")
         self.assertFalse(dev["hostname_known"])
@@ -1183,11 +1193,14 @@ class TestFloorDecisions(unittest.TestCase):
 
     def test_floor_decision_cases(self):
         cases = self.fc.floor_decision_cases(self.pr, self.rs)
-        if any(c[1] is None for c in cases):
-            self.skipTest(cases[0][2])
         for name, passed, detail in cases:
+            if passed is None:
+                continue
             with self.subTest(case=name):
                 self.assertTrue(passed, detail)
+        skipped = [c for c in cases if c[1] is None]
+        if skipped:
+            self.skipTest(f"{len(skipped)} case(s) SKIPPED: {skipped[0][2]}")
 
 
 class TestPinLib(unittest.TestCase):

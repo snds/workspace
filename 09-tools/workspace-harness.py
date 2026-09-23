@@ -82,6 +82,7 @@ BUDGETS = {
 # The enforcement chain, in the order AGENTS.md fixes. build-related rewrites Related
 # blocks and build-registry hashes them, so registry-after-related is load-bearing;
 # --check keeps this harness read-only.
+QUALITY_STEP_TIMEOUT_S = 300.0   # one hanging self-test must not hang the chain; a timeout is a FAIL
 QUALITY_CHAIN = [
     ("build-related.py", ["--check"]),
     ("build-registry.py", ["--check"]),
@@ -163,17 +164,24 @@ def run_quality(verbose: bool = False) -> dict:
             failed += 1
             continue
         start = time.monotonic()
-        proc = subprocess.run(
-            [sys.executable, str(target), *args],
-            capture_output=True, text=True, cwd=str(ROOT),
-        )
+        try:
+            proc = subprocess.run(
+                [sys.executable, str(target), *args],
+                capture_output=True, text=True, cwd=str(ROOT), timeout=QUALITY_STEP_TIMEOUT_S,
+            )
+        except subprocess.TimeoutExpired:
+            failed += 1
+            results.append({"tool": script, "status": "FAIL", "exit": None, "seconds": QUALITY_STEP_TIMEOUT_S,
+                            "last": f"SKIPPED: timed out after {QUALITY_STEP_TIMEOUT_S:g}s (never green)",
+                            "output": ""})
+            continue
         elapsed = round(time.monotonic() - start, 2)
         ok = proc.returncode == 0
         failed += 0 if ok else 1
         tail = (proc.stdout + proc.stderr).strip().splitlines()
         results.append({
             "tool": script,
-            "status": "ok" if ok else "FAIL",
+            "status": "ok" if ok else ("SKIPPED" if proc.returncode == 3 else "FAIL"),
             "exit": proc.returncode,
             "seconds": elapsed,
             "last": tail[-1] if tail else "",

@@ -177,7 +177,7 @@ if [ "$CHECK" -eq 1 ] && ! GH_CONFIG_DIR="$GHC" gh auth status >/dev/null 2>&1; 
 fi
 if ! grep -q '"GIT_CONFIG_KEY_0"' "$SJ" 2>/dev/null && ! grep -q '"GIT_AUTHOR_EMAIL"' "$SJ" 2>/dev/null; then
   flag "DRIFT: $SJ missing the Claude identity env overlay — run workspace-doctor.sh --install-claude-overlay"
-elif ! grep -q '"WS_CLAUDE_OVERLAY": "v4"' "$SJ" 2>/dev/null || grep -q '"GIT_AUTHOR_EMAIL"' "$SJ" 2>/dev/null; then
+elif ! grep -q "\"WS_CLAUDE_OVERLAY\": \"$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["env"]["WS_CLAUDE_OVERLAY"])' "$DIST/settings-user-fragment.json" 2>/dev/null || echo v4)\"" "$SJ" 2>/dev/null || grep -q '"GIT_AUTHOR_EMAIL"' "$SJ" 2>/dev/null; then
   flag "DRIFT: $SJ carries an outdated Claude identity overlay — run workspace-doctor.sh --install-claude-overlay (a full managed-key replace), then restart Claude sessions"
 fi
 if [ "$CHECK" -eq 1 ]; then

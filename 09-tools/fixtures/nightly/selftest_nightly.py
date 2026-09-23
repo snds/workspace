@@ -122,6 +122,28 @@ def case_foreign(c: fx.Checks, base: Path, tmp: Path, env: dict) -> None:
         c.check(rep["fix"] is None, "no fix line while foreign edits are present")
 
 
+def case_foreign_input(c: fx.Checks, base: Path, tmp: Path, env: dict) -> None:
+    """Another session's body edit on a SKILL.md the rebuild never rewrites still changes the
+    registry hash: the whole heal is refused, nothing is written, and the input is named."""
+    v = fx.clone(base, tmp / "foreign-input", env)
+    alpha, beta = v / ALPHA, v / BETA
+    alpha.write_text(alpha.read_text(encoding="utf-8").replace(
+        "Fixture body for alpha.", "Fixture body for alpha. Another session's edit."), encoding="utf-8")
+    beta.write_text(beta.read_text(encoding="utf-8").replace(
+        "Fixture body for beta.", "Fixture body for beta. This session's edit."), encoding="utf-8")
+    _ledger(v, "S6", [BETA])
+    reg_before = (v / REGISTRY).read_bytes()
+    r, rep = _nightly(v, env, "--phases", "rebuild", "--scope", "session:S6", "--json")
+    c.check(r.returncode == 4 and rep and rep["status"] == "refused",
+            "a foreign unstaged generator input refuses the whole heal (exit 4)", str(r.returncode))
+    c.check((v / REGISTRY).read_bytes() == reg_before, "the refused heal writes nothing (registry untouched)")
+    if rep:
+        c.check(rep["written"] == [] and rep["foreign"] == [ALPHA] and rep.get("foreign_inputs") == [ALPHA],
+                "the foreign input is named and nothing is listed as written",
+                f"{rep['written']} {rep['foreign']} {rep.get('foreign_inputs')}")
+        c.check(rep["fix"] is None, "no fix line while a foreign input is present")
+
+
 def case_timeout(c: fx.Checks, base: Path, tmp: Path, env: dict) -> None:
     v = fx.clone(base, tmp / "timeout", env)
     (v / "09-tools" / "build-related.py").write_text("import time\ntime.sleep(30)\n",
@@ -262,7 +284,7 @@ def run(root: Path) -> int:
         except Exception as exc:  # noqa: BLE001
             c.check(False, "fixture vault builds", str(exc))
             return c.result()
-        for case in (case_fixpoint_clean, case_session_scope, case_foreign, case_timeout,
+        for case in (case_fixpoint_clean, case_session_scope, case_foreign, case_foreign_input, case_timeout,
                      case_budget, case_lane_x1_replay):
             print(f"· {case.__name__}")
             try:

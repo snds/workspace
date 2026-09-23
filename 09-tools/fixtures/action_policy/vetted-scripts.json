@@ -16,7 +16,77 @@
         "remote-branch-delete": "housekeeping"
       },
       "needs_employer_gh": true,
-      "approved": "fixture"
+      "approved": "fixture",
+      "argv": {
+        "fetch": [
+          [
+            "git",
+            "fetch",
+            "origin",
+            "<ref>"
+          ],
+          [
+            "git",
+            "fetch",
+            "origin"
+          ],
+          [
+            "git",
+            "fetch",
+            "--prune",
+            "origin"
+          ]
+        ],
+        "pr-list": [
+          [
+            "gh",
+            "pr",
+            "list",
+            "--state",
+            "<ref>",
+            "--author",
+            "@me",
+            "--limit",
+            "<n>",
+            "--json",
+            "number,headRefName,state"
+          ],
+          [
+            "gh",
+            "pr",
+            "list",
+            "--state",
+            "<ref>",
+            "--limit",
+            "<n>",
+            "--json",
+            "number,headRefName,state"
+          ]
+        ],
+        "branch-delete": [
+          [
+            "git",
+            "branch",
+            "-D",
+            "<ref>"
+          ],
+          [
+            "git",
+            "branch",
+            "-d",
+            "<ref>"
+          ]
+        ],
+        "remote-branch-delete": [
+          [
+            "git",
+            "push",
+            "origin",
+            "--delete",
+            "<ref>"
+          ]
+        ]
+      }
     }
   ]
 }

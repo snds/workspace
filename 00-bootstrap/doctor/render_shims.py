@@ -462,21 +462,36 @@ def _render_cursor_sandbox(t: dict) -> str:
 OVERLAY_VERSIONS = ("v4", "v5")
 OVERLAY_INCLUDE = "~/.config/snds-workspace/git/claude-identity.inc"
 OVERLAY_GH_DIR = "~/.config/snds-workspace/gh-claude"
+# Written by installers.py (EMPLOYER_NOIDENT_INC). Included AFTER the personal includes for every
+# employer remote form, so a repo with both an employer and a personal remote (a fork) gets a blank
+# identity with useConfigOnly: commit, cherry-pick, revert and am cannot mint a personal identity there.
+OVERLAY_NOIDENT = "~/.config/snds-workspace/git/claude-employer-noident.inc"
 FLOOR_HOOK = "ws-claude-wall"
 # git appends "$@" to a config hook command itself, so the command never carries it. The guard
-# makes a missing pin (no bin/ws-hook) a no-op instead of a failed commit.
-FLOOR_COMMAND = ('W="$HOME/.config/snds-workspace/bin/ws-hook"; [ -x "$W" ] || exit 0; '
-                 'exec "$W" --host git --floor claude')
+# makes a missing pin (no bin/ws-hook) a no-op instead of a failed commit. The installer renders the
+# leading `H="$HOME";` as the absolute install home (merge_settings.expand_env_home), and the command
+# re-sets HOME and drops the PYTHON* startup variables, so a caller's HOME= or PYTHONPATH= cannot
+# route the wrapper or the pinned lib elsewhere.
+FLOOR_COMMAND = ('H="$HOME"; W="$H/.config/snds-workspace/bin/ws-hook"; [ -x "$W" ] || exit 0; '
+                 'exec env -u PYTHONPATH -u PYTHONHOME -u PYTHONSTARTUP -u PYTHONINSPECT -u PYTHONUSERBASE '
+                 'HOME="$H" "$W" --host git --floor claude')
 FLOOR_EVENTS = ("pre-commit", "commit-msg", "pre-merge-commit", "pre-push")
 CASE_VARIANTS = ("declared", "lower", "upper", "capitalized")
 # The v4 employer layout (per host), kept only so the emitter can prove it reproduces the
 # installed v4 bytes from the tables before the data moves to v5.
 _V4_EMPLOYER_FORMS = {"github.com": ("scp-alias", "scp", "https"), "bitbucket.org": ("scp", "https", "ssh")}
-IDENTITY_INC_HEADER = (
+IDENTITY_INC_HEADER_V4 = (
     "# Claude surfaces are personal-only (06-context/memory/feedback-credential-scoping.md).\n"
     "# Included ONLY for repos whose remote is an snds/* URL (includeIf hasconfig in the\n"
     "# Claude env overlay). Never included in employer repos. No remote URLs in this file\n"
     "# (git forbids them inside hasconfig includes).\n"
+)
+IDENTITY_INC_HEADER = (
+    "# Claude surfaces are personal-only (06-context/memory/feedback-credential-scoping.md).\n"
+    "# Included for repos with an snds/* remote (includeIf hasconfig in the Claude env overlay).\n"
+    "# A repo that also has an employer remote gets a later no-identity include, so this\n"
+    "# identity never applies there. No remote URLs in this file (git forbids them inside\n"
+    "# hasconfig includes).\n"
 )
 
 
@@ -523,15 +538,20 @@ def _host_facts(cr: dict, dev: dict, host: str):
 def _employer_prefixes(owner: str, host: str, user: str, forms: list, aliases: list, accounts: list,
                        version: str) -> list:
     def tmpl(form: str) -> list:
+        v5 = version != "v4"
         if form == "scp":
-            return [f"{user}@{host}:{{o}}/"]
+            return [f"{user}@{host}:{{o}}/"] + ([f"{user}@{host}:/{{o}}/"] if v5 else [])
         if form == "scp-alias":
-            return ([f"{user}@{a}:{{o}}/" for a in aliases] if version == "v4"
-                    else [x for a in aliases for x in (f"{user}@{a}:{{o}}/", f"{a}:{{o}}/")])
+            return ([f"{user}@{a}:{{o}}/" for a in aliases] if not v5
+                    else [x for a in aliases for x in (f"{user}@{a}:{{o}}/", f"{a}:{{o}}/", f"ssh://{user}@{a}/{{o}}/",
+                                                       f"ssh://{a}/{{o}}/")])
         if form == "ssh":
-            return [f"ssh://{user}@{host}/{{o}}/"]
+            if not v5:
+                return [f"ssh://{user}@{host}/{{o}}/"]
+            extra = [f"ssh://{user}@ssh.{host}:443/{{o}}/"] if host == "github.com" else []
+            return [f"ssh://{user}@{host}/{{o}}/", f"ssh://{user}@{host}:22/{{o}}/", f"ssh://{host}/{{o}}/"] + extra
         if form == "https":
-            return [f"https://{host}/{{o}}/"]
+            return [f"https://{host}/{{o}}/"] + ([f"https://{host}:443/{{o}}/", f"https://www.{host}/{{o}}/"] if v5 else [])
         if form == "https-userinfo":
             return [f"https://{acct}@{host}/{{o}}/" for acct in accounts]
         return []
@@ -575,6 +595,21 @@ def overlay_pairs(cr: dict, dev: dict, version: str = "v5") -> list:
         if "ssh" in forms:
             pats.append(f"ssh://{user}@{h}/{n}/**")
         pairs += [(f"includeIf.hasconfig:remote.*.url:{p}.path", OVERLAY_INCLUDE) for p in pats]
+    if version != "v4":
+        accts0 = []
+        for ident in dev.get("identities") or []:
+            for acct in ident.get("accounts") or []:
+                if acct not in accts0:
+                    accts0.append(acct)
+        if "git" not in accts0:
+            accts0.append("git")
+        seen_ni = set()
+        for o in employer:
+            user, forms, aliases = _host_facts(cr, dev, o["host"])
+            for pre in _employer_prefixes(o["owner"], o["host"], user, forms, aliases, accts0, version):
+                if pre not in seen_ni:
+                    seen_ni.add(pre)
+                    pairs.append((f"includeIf.hasconfig:remote.*.url:{pre}**.path", OVERLAY_NOIDENT))
     for o in personal:
         user, forms, aliases = _host_facts(cr, dev, o["host"])
         h, n = o["host"], o["owner"]
@@ -647,11 +682,11 @@ def _user_block(row: dict) -> str:
     return f"[user]\n\tname = {row['name']}\n\temail = {row['email']}\n"
 
 
-def render_claude_identity_inc(dev: dict) -> str:
+def render_claude_identity_inc(dev: dict, version: str = "v5") -> str:
     row = _identity_row(dev, claude_identity_id(dev))
     if row.get("class") != "personal":
         raise DataError("the Claude identity must be a personal identity")
-    return IDENTITY_INC_HEADER + _user_block(row)
+    return (IDENTITY_INC_HEADER_V4 if version == "v4" else IDENTITY_INC_HEADER) + _user_block(row)
 
 
 def device_identity_id(dev: dict, device_id: str):
@@ -1135,24 +1170,33 @@ def overlay_cases() -> list:
     accts = ["acme-worker", "pat-sample", "git"]
     for host, owner, alias in (("github.com", "acme-corp", "github-work"), ("bitbucket.org", "acme-bb", None)):
         for o in {owner, owner.upper(), owner.capitalize()}:
-            forms = [f"git@{host}:{o}/", f"ssh://git@{host}/{o}/", f"https://{host}/{o}/"]
+            forms = [f"git@{host}:{o}/", f"git@{host}:/{o}/", f"ssh://git@{host}/{o}/", f"ssh://git@{host}:22/{o}/",
+                     f"ssh://{host}/{o}/", f"https://{host}/{o}/", f"https://{host}:443/{o}/",
+                     f"https://www.{host}/{o}/"]
+            if host == "github.com":
+                forms += [f"ssh://git@ssh.{host}:443/{o}/"]
             forms += [f"https://{a}@{host}/{o}/" for a in accts]
             if alias:
-                forms += [f"git@{alias}:{o}/", f"{alias}:{o}/"]
+                forms += [f"git@{alias}:{o}/", f"{alias}:{o}/", f"ssh://git@{alias}/{o}/", f"ssh://{alias}/{o}/"]
             want |= set(forms)
     results.append(("overlay: employer blocks equal owners x forms x case, deduplicated",
                     set(emp) == want and len(emp) == len(set(emp)), f"missing={sorted(want - set(emp))} extra={sorted(set(emp) - want)}"))
-    inc = [k for k, _v in pairs if k.startswith("includeIf.hasconfig:remote.*.url:")]
+    inc = [k for k, v in pairs if k.startswith("includeIf.hasconfig:remote.*.url:") and v == OVERLAY_INCLUDE]
     want_inc = {f"includeIf.hasconfig:remote.*.url:{p}.path" for p in (
         "git@github.com:pat-sample/**", "git@github-work:pat-sample/**", "https://github.com/pat-sample/**",
         "ssh://git@github.com/pat-sample/**")}
     results.append(("overlay: personal includes equal personal owners x forms", set(inc) == want_inc and len(inc) == 4,
                     str(inc)))
+    ni = [k for k, v in pairs if k.startswith("includeIf.hasconfig:remote.*.url:") and v == OVERLAY_NOIDENT]
+    last_personal = max(i for i, (k, v) in enumerate(pairs) if v == OVERLAY_INCLUDE)
+    first_ni = min((i for i, (k, v) in enumerate(pairs) if v == OVERLAY_NOIDENT), default=-1)
+    want_ni = {f"includeIf.hasconfig:remote.*.url:{w}**.path" for w in want}
+    results.append(("overlay: every employer block form also gets the no-identity include, after the personal ones",
+                    set(ni) == want_ni and first_ni > last_personal, f"missing={sorted(want_ni - set(ni))[:3]}"))
     results.append(("overlay: no GIT_AUTHOR_* or GIT_COMMITTER_* key, in env or in pairs",
                     not any(k.startswith(("GIT_AUTHOR_", "GIT_COMMITTER_")) for k in env)
                     and not any(k.lower().startswith("user.") for k, _v in pairs), ""))
-    guarded = ('W="$HOME/.config/snds-workspace/bin/ws-hook"; [ -x "$W" ] || exit 0; '
-               'exec "$W" --host git --floor claude')
+    guarded = FLOOR_COMMAND
     hook = dict((k, v) for k, v in pairs if k == "hook.ws-claude-wall.command")
     events = [v for k, v in pairs if k == "hook.ws-claude-wall.event"]
     results.append(("overlay: the floor hook is the guarded command, on the four events, enabled",
@@ -1195,16 +1239,28 @@ def overlay_cases() -> list:
     results.append(("outputs: env is never a shim-installable owned key; overlay versions are closed",
                     any("env is never an owned" in e for e in errs) and any("overlay must be one of" in e for e in errs),
                     str(errs)))
+    try:
+        pr = _pr_module()
+        det = pr.detect_surface(env={"AI_AGENT": "claude-code_2-1-280_agent", "CLAUDECODE": "1"}, ancestry=[],
+                                isatty={"stdin": False, "stdout": False}, root=ROOT)
+        oth = pr.detect_surface(env={"AI_AGENT": "vendor-x"}, ancestry=[], isatty={"stdin": False, "stdout": False},
+                                root=ROOT)
+        results.append(("table: AI_AGENT=claude-code_* is Claude Code; another value is the generic unknown-agent row",
+                        det["acting_host"] == "claude-code" and det["family"] == "claude"
+                        and oth["family"] == "unknown-agent" and oth["acting_host"] == "other-local-agents",
+                        f"{det['acting_host']}/{det['family']} {oth['acting_host']}/{oth['family']}"))
+    except DataError as exc:
+        results.append(("table: AI_AGENT=claude-code_* is Claude Code", False, str(exc)))
     old_frag, old_inc = _git_show(f"{V4_REV}:00-bootstrap/dist/settings-user-fragment.json"), \
         _git_show(f"{V4_REV}:00-bootstrap/dist/git/claude-identity.inc")
     if old_frag is None or old_inc is None:
-        results.append(("overlay: v4 reproduced from the tables (SKIP: no v4 history here)", True, ""))
+        results.append(("overlay: v4 reproduced from the tables", None, "no v4 history here (shallow clone?)"))
     else:
         try:
             rcr, rdev = identity_tables(ROOT)
             v4 = json.loads(old_frag, object_pairs_hook=OrderedDict).get("env") or {}
             ok = (list(overlay_env(rcr, rdev, "v4").items()) == list(v4.items())
-                  and render_claude_identity_inc(rdev) == old_inc)
+                  and render_claude_identity_inc(rdev, "v4") == old_inc)
             results.append(("overlay: v4 env and claude-identity.inc reproduced byte-for-byte from the tables", ok, ""))
         except (DataError, ValueError) as exc:
             results.append(("overlay: v4 env and claude-identity.inc reproduced byte-for-byte from the tables", False,
@@ -1217,11 +1273,14 @@ def self_test() -> int:
     buf = io.StringIO()
     with contextlib.redirect_stdout(buf):
         results = self_test_cases()
-    failed = [r for r in results if not r[1]]
+    failed = [r for r in results if r[1] is False or (r[1] is not None and not r[1])]
+    skipped = [r for r in results if r[1] is None]
     for name, ok, detail in results:
-        print(f"{'ok  ' if ok else 'FAIL'} {name}" + ("" if ok else f" — {detail}"))
-    print(f"render_shims self-test: {len(results) - len(failed)}/{len(results)} passed")
-    return 1 if failed else 0
+        tag = "SKIP" if ok is None else ("ok  " if ok else "FAIL")
+        print(f"{tag} {name}" + ("" if ok else f" — {detail}"))
+    passed = len(results) - len(failed) - len(skipped)
+    print(f"render_shims self-test: {passed}/{len(results)} passed" + (f", {len(skipped)} SKIPPED" if skipped else ""))
+    return 1 if failed else (3 if skipped else 0)
 
 
 # --------------------------------------------------------------------------- CLI

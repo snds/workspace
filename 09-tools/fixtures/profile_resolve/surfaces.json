@@ -80,7 +80,13 @@
       "hookable": false,
       "dialect": "none",
       "markers": {
-        "env": [],
+        "env": [
+          {
+            "name": "AI_AGENT",
+            "value_prefix": "claude-code",
+            "verified": false
+          }
+        ],
         "ancestry": [
           {
             "comm": "claude",
@@ -187,6 +193,32 @@
         "env": [
           {
             "name": "AI_AGENT",
+            "value_not_prefixes": [
+              "claude-code"
+            ],
+            "verified": false
+          }
+        ],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "coverage": {}
+    },
+    {
+      "id": "other-local-agents",
+      "family": "unknown-agent",
+      "label": "windsurf",
+      "kind": "ide-agent",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "markers": {
+        "env": [
+          {
+            "name": "AI_AGENT",
+            "value_not_prefixes": [
+              "claude-code"
+            ],
             "verified": false
           }
         ],

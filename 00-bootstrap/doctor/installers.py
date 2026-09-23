@@ -484,11 +484,25 @@ def _render_target(ctx: Ctx, out: dict, *, keys=None):
         begin, end = lines[0], lines[-1]
         cur = old[1].decode("utf-8") if old and old[0] == "file" else ""
         body = block if block.endswith("\n") else block + "\n"
+        # Quoted `~/` paths are rendered to this machine's home (codex does not expand `~`).
+        home_s = str(ctx.home).replace("\\", "\\\\").replace('"', '\\"')
+        body = re.sub(r'(["\'])~/', lambda m: m.group(1) + home_s + "/", body)
         rx = re.compile(re.escape(begin) + r".*?" + re.escape(end) + r"\n?", re.S)
         if rx.search(cur):
             new_text = rx.sub(lambda _m: body, cur, count=1)
         else:
             new_text = cur + ("" if not cur or cur.endswith("\n") else "\n") + body
+        if dst.suffix == ".toml":
+            try:
+                import tomllib  # noqa: PLC0415 - optional (python 3.11+)
+            except ImportError:
+                tomllib = None
+            if tomllib is not None:
+                try:
+                    tomllib.loads(new_text)
+                except tomllib.TOMLDecodeError as e:
+                    raise InstallerError(f"{dst}: the managed block would make invalid TOML ({e}); a table it "
+                                         "declares is already defined outside the block (fix by hand)") from e
         return dst, _file_state(new_text.encode("utf-8"),
                                 old[2] if old and old[0] == "file" else 0o644)
     raise InstallerError(f"unknown install_mode {mode!r} for output {out.get('id')}")
@@ -706,6 +720,14 @@ def overlay_refusals(ctx: Ctx) -> list:
     return reasons
 
 
+EMPLOYER_NOIDENT_NAME = "claude-employer-noident.inc"
+EMPLOYER_NOIDENT_INC = (
+    "# Claude overlay (snds-workspace): included for every employer remote form AFTER the personal\n"
+    "# includes, so an employer repo that also has a personal remote gets no identity at all.\n"
+    "[user]\n\tuseConfigOnly = true\n\tname =\n\temail =\n"
+)
+
+
 def do_claude_overlay(ctx: Ctx) -> int:
     if ctx.action == "uninstall":
         return _uninstall(ctx)
@@ -725,6 +747,7 @@ def do_claude_overlay(ctx: Ctx) -> int:
             for f in sorted(d.iterdir()):
                 if f.is_file():
                     targets.append((base / sub / f.name, _file_state(f.read_bytes(), mode)))
+    targets.append((base / "git" / EMPLOYER_NOIDENT_NAME, _file_state(EMPLOYER_NOIDENT_INC.encode("utf-8"), 0o644)))
     return _apply(ctx, targets)
 
 
@@ -972,6 +995,22 @@ def self_test() -> int:
                 self.assertIn("real verdict: agent", err)
             self.assertEqual(len(self.spy.calls), n)
 
+        def test_temp_home_without_injected_verdict_consults_the_real_one(self):
+            # pin_lib._PR_LOADER is the agent fake (setUp): no injected verdict must still refuse.
+            reasons = preflight(self.home, agent_check=None, isatty=TTY)
+            self.assertTrue(any(r.startswith("real verdict: agent") for r in reasons), reasons)
+
+        def test_is_real_home_fails_closed(self):
+            saved = pin_lib.passwd_home
+
+            def boom():
+                raise KeyError("no passwd entry")
+            pin_lib.passwd_home = boom
+            try:
+                self.assertTrue(pin_lib.is_real_home(self.home))
+            finally:
+                pin_lib.passwd_home = saved
+
         def test_allow_path_backup_log_and_byte_exact_uninstall(self):
             tgt = self.plugin_target()
             tgt.parent.mkdir(parents=True)
@@ -1084,6 +1123,31 @@ def self_test() -> int:
                 rec["env_probe"]["env_presence"]["WS_CLAUDE_OVERLAY"] = probe_env
                 (d / "cursor@dev-a.json").write_text(json.dumps(rec))
 
+        def test_codex_managed_block_expands_home_and_refuses_duplicate_tables(self):
+            frag = VAULT_ROOT / "00-bootstrap" / "dist" / "codex-config-fragment.toml"
+            (self.repo / "00-bootstrap/dist").mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(frag, self.repo / "00-bootstrap/dist/codex-config-fragment.toml")
+            out = {"id": "codex-config-fragment", "path": "00-bootstrap/dist/codex-config-fragment.toml",
+                   "install_path": "~/.codex/config.toml", "install_mode": "managed-block"}
+            ctx = Ctx("shims", "codex", "install", home=self.home, repo=self.repo, agent_check=None,
+                      confirm=lambda *_a: True, now=None, which=None, sha=None, surface="codex", probe=False,
+                      render_list=None, app_exists=None)
+            cfg = self.home / ".codex" / "config.toml"
+            cfg.parent.mkdir(parents=True, exist_ok=True)
+            cfg.write_text('model = "x"\n')
+            _dst, state = _render_target(ctx, out)
+            text = state[1].decode("utf-8")
+            self.assertIn(f'"{self.home}/.config/snds-workspace/telemetry"', text)
+            self.assertNotIn('"~/', text)
+            cfg.write_text('[sandbox_workspace_write]\nwritable_roots = ["/tmp/x"]\n')
+            try:
+                import tomllib  # noqa: F401
+            except ImportError:
+                self.skipTest("tomllib needs python 3.11 (the duplicate-table refusal is best effort before)")
+            with self.assertRaises(InstallerError) as cm:
+                _render_target(ctx, out)
+            self.assertIn("sandbox_workspace_write", str(cm.exception))
+
         def test_overlay_replace_end_to_end(self):
             self._seed_overlay_ready()
             sj = self.home / ".claude" / "settings.json"
@@ -1101,6 +1165,9 @@ def self_test() -> int:
             cmds = [h["command"] for g in got["hooks"]["SessionStart"] for h in g["hooks"]]
             self.assertEqual(sum("workspace-sessionstart" in c for c in cmds), 1)
             self.assertIn("my-own-hook.sh", " ".join(cmds))               # user hook kept
+            ni = self.home / ".config/snds-workspace/git" / EMPLOYER_NOIDENT_NAME
+            self.assertEqual(ni.read_text(), EMPLOYER_NOIDENT_INC)          # the employer no-identity include
+            self.assertIn("useConfigOnly = true", EMPLOYER_NOIDENT_INC)
             self.assertTrue((self.home / ".config/snds-workspace/git/claude-identity.inc").is_file())
             self.assertTrue((self.home / ".config/snds-workspace/gh-claude/config.yml").is_file())
             self.assertEqual(self.run_inst("claude-overlay")[0], 3)
@@ -1148,6 +1215,15 @@ def self_test() -> int:
             self.assertEqual(self.run_inst("plugin", "reinstall")[0], 2)
 
     class TestOverlayReplace(unittest.TestCase):
+        def test_floor_command_is_bound_to_the_install_home(self):
+            cmd = 'H="$HOME"; W="$H/.config/snds-workspace/bin/ws-hook"; exec env HOME="$H" "$W"'
+            got = merge_settings.expand_env_home({"env": {"GIT_CONFIG_VALUE_9": cmd, "X": "~/a", "Y": "plain"}},
+                                                 "/Users/pat sample")
+            self.assertEqual(got["env"]["GIT_CONFIG_VALUE_9"],
+                             "H='/Users/pat sample'; W=\"$H/.config/snds-workspace/bin/ws-hook\"; exec env HOME=\"$H\" \"$W\"")
+            self.assertEqual(got["env"]["X"], "/Users/pat sample/a")
+            self.assertEqual(got["env"]["Y"], "plain")
+
         def test_stale_v1_env_yields_exactly_dist_keys(self):
             stale = json.loads((FIXTURES / "settings-v1-stale.json").read_text())
             self.assertIn("GIT_AUTHOR_EMAIL", stale["env"])
@@ -1328,6 +1404,14 @@ def self_test() -> int:
             self.assertNotIn("launchctl", self.stub_calls())
             self.assertNotIn("osascript", self.stub_calls())
             self.assertIn("overlay env", r.stdout)
+
+        def test_current_overlay_is_not_reported_outdated(self):
+            frag = merge_settings.expand_env_home(json.loads(
+                (self.ws / "00-bootstrap/dist/settings-user-fragment.json").read_text()), self.home)
+            (self.home / ".claude/settings.json").write_text(json.dumps({"env": frag["env"]}, indent=2) + "\n")
+            r = self.doctor()
+            self.assertNotIn("outdated Claude identity overlay", r.stdout + r.stderr)
+            self.assertNotIn("missing the Claude identity env overlay", r.stdout + r.stderr)
 
         def test_quick_never_runs_installers(self):
             r = self.doctor("--quick", "--install-plugin")

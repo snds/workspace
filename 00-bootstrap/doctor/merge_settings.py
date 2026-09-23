@@ -30,6 +30,7 @@ the legacy `.bak-<ts>` copy (the installer takes its own `.ws-bak.<UTC>` backup)
 import copy
 import json
 import os
+import shlex
 import shutil
 import sys
 import tempfile
@@ -53,6 +54,9 @@ def merge(dst, src):
     return dst
 
 
+HOME_BIND = 'H="$HOME";'
+
+
 def expand_env_home(frag, home=None):
     """Settings `env` values reach processes verbatim (no shell), and tools such as gh do
     not expand `~` in GH_CONFIG_DIR. Render a leading `~/` to this machine's home so one
@@ -60,9 +64,13 @@ def expand_env_home(frag, home=None):
     is the process's own home (legacy behaviour)."""
     env = frag.get("env")
     if isinstance(env, dict):
+        h = str(home) if home else os.path.expanduser("~")
         for k, v in env.items():
             if isinstance(v, str) and v.startswith("~/"):
                 env[k] = os.path.join(str(home), v[2:]) if home else os.path.expanduser(v)
+            elif isinstance(v, str) and v.startswith(HOME_BIND):
+                # the Claude floor command: bind the wrapper to this install's home, never $HOME at run time
+                env[k] = f"H={shlex.quote(h)};" + v[len(HOME_BIND):]
     return frag
 
 

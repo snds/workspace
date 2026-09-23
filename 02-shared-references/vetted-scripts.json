@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "doc": "Vetted-script registry (DECISIONS-2 item 9). Blob hashes are taken at pin time into lib/<sha>/vetted.lock.json; this file carries none. Only the pinned copy is consulted, so an edit here takes effect after a human advances the pin.",
+  "doc": "Vetted-script registry (DECISIONS-2 item 9). Blob hashes are taken at pin time into lib/<sha>/vetted.lock.json; this file carries none. Only the pinned copy is consulted, so an edit here takes effect after a human advances the pin. Each action runs only the argv shapes listed under `argv` (<ref> one plain ref name, <n> digits, <path> one non-option path).",
   "scripts": [
     {
       "id": "prune-our-branches",
@@ -19,7 +19,100 @@
         "worktree-remove": "housekeeping"
       },
       "needs_employer_gh": true,
-      "approved": "Sean 2026-09-22, DECISIONS-2 item 9 confirmation"
+      "approved": "Sean 2026-09-22, DECISIONS-2 item 9 confirmation",
+      "argv": {
+        "fetch": [
+          [
+            "git",
+            "fetch",
+            "origin",
+            "<ref>"
+          ],
+          [
+            "git",
+            "fetch",
+            "origin"
+          ],
+          [
+            "git",
+            "fetch",
+            "--prune",
+            "origin"
+          ]
+        ],
+        "pr-list": [
+          [
+            "gh",
+            "pr",
+            "list",
+            "--state",
+            "<ref>",
+            "--author",
+            "@me",
+            "--limit",
+            "<n>",
+            "--json",
+            "number,headRefName,state"
+          ],
+          [
+            "gh",
+            "pr",
+            "list",
+            "--state",
+            "<ref>",
+            "--limit",
+            "<n>",
+            "--json",
+            "number,headRefName,state"
+          ]
+        ],
+        "switch-default": [
+          [
+            "git",
+            "switch",
+            "<ref>"
+          ]
+        ],
+        "ff-default": [
+          [
+            "git",
+            "merge",
+            "--ff-only",
+            "<ref>"
+          ]
+        ],
+        "branch-delete": [
+          [
+            "git",
+            "branch",
+            "-D",
+            "<ref>"
+          ],
+          [
+            "git",
+            "branch",
+            "-d",
+            "<ref>"
+          ]
+        ],
+        "remote-branch-delete": [
+          [
+            "git",
+            "push",
+            "origin",
+            "--delete",
+            "<ref>"
+          ]
+        ],
+        "worktree-remove": [
+          [
+            "git",
+            "worktree",
+            "remove",
+            "<path>"
+          ]
+        ]
+      }
     }
   ]
 }

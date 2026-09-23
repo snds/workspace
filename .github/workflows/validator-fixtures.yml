@@ -51,6 +51,8 @@ on:
       - "09-tools/fixtures/action_policy/**"
       - "00-bootstrap/dist/git/**"
       - "09-tools/fixtures/identity/**"
+      - "09-tools/fixtures/ws_hook/**"
+      - "09-tools/fixtures/render_shims/**"
   pull_request:
     paths:
       - "09-tools/validate-*.py"
@@ -96,6 +98,8 @@ on:
       - "09-tools/fixtures/action_policy/**"
       - "00-bootstrap/dist/git/**"
       - "09-tools/fixtures/identity/**"
+      - "09-tools/fixtures/ws_hook/**"
+      - "09-tools/fixtures/render_shims/**"
 
 jobs:
   check:
