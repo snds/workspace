@@ -4676,6 +4676,7 @@ def _t8_git_floor(ok: Callable[[Any, str], None]) -> None:
     helper = ID_FIXTURES / "floor_cases.py"
     if not helper.is_file():
         print("self-test SKIP: hook-level floor fixtures absent (a pinned copy) — not a pass", file=sys.stderr)
+        _SELFTEST_SKIPS.append("hook-level floor fixtures absent")
         return
     import importlib.util
 
@@ -4688,13 +4689,19 @@ def _t8_git_floor(ok: Callable[[Any, str], None]) -> None:
     for name, passed, detail in mod.run_all(sys.modules[__name__]):
         if passed is None:
             print(f"self-test SKIP: {name} ({detail}) — not a pass", file=sys.stderr)
+            _SELFTEST_SKIPS.append(name)
             continue
         ok(passed, f"{name}: {detail}")
 
 
+_SELFTEST_SKIPS: List[str] = []
+
+
 def self_test(stub_chain: bool = False) -> int:
+    """0 all passed; 1 a failure; 3 no failure but at least one case SKIPPED (never green, 3c)."""
     fails: List[str] = []
     passes = [0]
+    del _SELFTEST_SKIPS[:]
 
     def ok(cond: Any, label: str) -> None:
         if cond:
@@ -5094,6 +5101,7 @@ def self_test(stub_chain: bool = False) -> int:
             if not runnable:
                 print("self-test SKIP: stub chain needs a runnable non-platform binary named claude "
                       "(no C compiler, or the stub was killed) — not a pass", file=sys.stderr)
+                _SELFTEST_SKIPS.append("stub chain")
                 stub_chain = False
         if stub_chain:
             clean = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(home_a)}
@@ -5117,6 +5125,9 @@ def self_test(stub_chain: bool = False) -> int:
             print(f"self-test FAIL: {f}", file=sys.stderr)
         print(f"profile_resolve self-test: {passes[0]} passed, {len(fails)} failed", file=sys.stderr)
         return EXIT_FAIL
+    if _SELFTEST_SKIPS:
+        print(f"OK profile_resolve self-test ({passes[0]} checks, {len(_SELFTEST_SKIPS)} SKIPPED: not green)")
+        return 3
     print(f"OK profile_resolve self-test ({passes[0]} checks)")
     return EXIT_OK
 
