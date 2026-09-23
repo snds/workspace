@@ -768,6 +768,11 @@ _SCHEME_RE = re.compile(r"^(?P<scheme>[A-Za-z][A-Za-z0-9+.-]*)://(?P<rest>.*)$")
 _SCP_RE = re.compile(r"^(?:(?P<user>[^@/\s:]+)@)?(?P<host>[A-Za-z0-9._-]+):(?P<path>[^\s]+)$")
 
 
+# Hosts that reach the same owners as the canonical host (GitHub's ssh-over-443 endpoint and www).
+_HOST_SYNONYMS = {"ssh.github.com": "github.com", "www.github.com": "github.com", "www.bitbucket.org": "bitbucket.org",
+                  "altssh.bitbucket.org": "bitbucket.org"}
+
+
 def _ssh_aliases(root: Optional[Path]) -> Dict[str, dict]:
     table = _try_table("devices", root) or {}
     out = {}
@@ -807,7 +812,7 @@ def _normalize_remote_ex(url: str, *, root: Optional[Path] = None) -> Tuple[Opti
         if not m:
             return None, None
         host, path, form = m.group("host"), m.group("path"), "scp"
-    host = host.lower()
+    host = _HOST_SYNONYMS.get(host.lower(), host.lower())
     alias_row = _ssh_aliases(root).get(host.casefold())
     if alias_row is not None:
         host = str(alias_row.get("host", host)).lower()
@@ -4763,6 +4768,10 @@ def self_test(stub_chain: bool = False) -> int:
         n = normalize_remote("https://user@bitbucket.org/Acme-BB/x", root=root)
         ok(n == {"host": "bitbucket.org", "owner": "acme-bb", "repo": "x", "slug": "acme-bb/x", "form": "https-userinfo"},
            "https userinfo bitbucket normalizes with case-folding")
+        for u in ("ssh://git@ssh.github.com:443/acme-corp/x.git", "https://www.github.com/acme-corp/x"):
+            n = normalize_remote(u, root=root)
+            ok(n is not None and n["host"] == "github.com" and n["owner"] == "acme-corp",
+               f"{u.split('://')[1].split('/')[0]} normalizes to github.com (walls F-03): {n}")
         n = normalize_remote("github-work:acme-corp/x", root=root)
         ok(n and n["host"] == "github.com" and n["owner"] == "acme-corp" and n["form"] == "scp-alias", "ssh alias normalizes")
         ok(owner_class("bitbucket.org", "Acme-BB", root=root) == "employer", "bitbucket owner class")
