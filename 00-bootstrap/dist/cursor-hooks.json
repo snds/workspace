@@ -2,7 +2,9 @@
   "version": 1,
   "hooks": {
     "sessionStart": [
-      { "command": "$HOME/.claude/hooks/cursor-sessionstart.sh" }
+      {
+        "command": "$HOME/.claude/hooks/cursor-sessionstart.sh"
+      }
     ],
     "beforeSubmitPrompt": [
       {
@@ -12,13 +14,19 @@
       }
     ],
     "preCompact": [
-      { "command": "$HOME/.claude/hooks/cursor-reassert.sh" }
+      {
+        "command": "$HOME/.claude/hooks/cursor-reassert.sh"
+      }
     ],
     "sessionEnd": [
-      { "command": "$HOME/.claude/hooks/cursor-sessionend.sh" }
+      {
+        "command": "$HOME/.claude/hooks/cursor-sessionend.sh"
+      }
     ],
     "subagentStop": [
-      { "command": "$HOME/.claude/hooks/cursor-subagent-stop.sh" }
+      {
+        "command": "$HOME/.claude/hooks/cursor-subagent-stop.sh"
+      }
     ]
   }
 }
