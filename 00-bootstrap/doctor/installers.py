@@ -484,11 +484,25 @@ def _render_target(ctx: Ctx, out: dict, *, keys=None):
         begin, end = lines[0], lines[-1]
         cur = old[1].decode("utf-8") if old and old[0] == "file" else ""
         body = block if block.endswith("\n") else block + "\n"
+        # Quoted `~/` paths are rendered to this machine's home (codex does not expand `~`).
+        home_s = str(ctx.home).replace("\\", "\\\\").replace('"', '\\"')
+        body = re.sub(r'(["\'])~/', lambda m: m.group(1) + home_s + "/", body)
         rx = re.compile(re.escape(begin) + r".*?" + re.escape(end) + r"\n?", re.S)
         if rx.search(cur):
             new_text = rx.sub(lambda _m: body, cur, count=1)
         else:
             new_text = cur + ("" if not cur or cur.endswith("\n") else "\n") + body
+        if dst.suffix == ".toml":
+            try:
+                import tomllib  # noqa: PLC0415 - optional (python 3.11+)
+            except ImportError:
+                tomllib = None
+            if tomllib is not None:
+                try:
+                    tomllib.loads(new_text)
+                except tomllib.TOMLDecodeError as e:
+                    raise InstallerError(f"{dst}: the managed block would make invalid TOML ({e}); a table it "
+                                         "declares is already defined outside the block (fix by hand)") from e
         return dst, _file_state(new_text.encode("utf-8"),
                                 old[2] if old and old[0] == "file" else 0o644)
     raise InstallerError(f"unknown install_mode {mode!r} for output {out.get('id')}")
@@ -1092,6 +1106,31 @@ def self_test() -> int:
                 rec = json.loads((FIXTURES / "probe-cursor.json").read_text())
                 rec["env_probe"]["env_presence"]["WS_CLAUDE_OVERLAY"] = probe_env
                 (d / "cursor@dev-a.json").write_text(json.dumps(rec))
+
+        def test_codex_managed_block_expands_home_and_refuses_duplicate_tables(self):
+            frag = VAULT_ROOT / "00-bootstrap" / "dist" / "codex-config-fragment.toml"
+            (self.repo / "00-bootstrap/dist").mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(frag, self.repo / "00-bootstrap/dist/codex-config-fragment.toml")
+            out = {"id": "codex-config-fragment", "path": "00-bootstrap/dist/codex-config-fragment.toml",
+                   "install_path": "~/.codex/config.toml", "install_mode": "managed-block"}
+            ctx = Ctx("shims", "codex", "install", home=self.home, repo=self.repo, agent_check=None,
+                      confirm=lambda *_a: True, now=None, which=None, sha=None, surface="codex", probe=False,
+                      render_list=None, app_exists=None)
+            cfg = self.home / ".codex" / "config.toml"
+            cfg.parent.mkdir(parents=True, exist_ok=True)
+            cfg.write_text('model = "x"\n')
+            _dst, state = _render_target(ctx, out)
+            text = state[1].decode("utf-8")
+            self.assertIn(f'"{self.home}/.config/snds-workspace/telemetry"', text)
+            self.assertNotIn('"~/', text)
+            cfg.write_text('[sandbox_workspace_write]\nwritable_roots = ["/tmp/x"]\n')
+            try:
+                import tomllib  # noqa: F401
+            except ImportError:
+                self.skipTest("tomllib needs python 3.11 (the duplicate-table refusal is best effort before)")
+            with self.assertRaises(InstallerError) as cm:
+                _render_target(ctx, out)
+            self.assertIn("sandbox_workspace_write", str(cm.exception))
 
         def test_overlay_replace_end_to_end(self):
             self._seed_overlay_ready()
