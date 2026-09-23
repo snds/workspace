@@ -22,6 +22,11 @@ on:
       - "03-skills/visual-prove-engine/**"
       - "03-skills/play-prove/**"
       - ".github/workflows/validator-fixtures.yml"
+      - "09-tools/profile_resolve.py"
+      - "02-shared-references/devices.json"
+      - "02-shared-references/delivery-playbooks/*.json"
+      - "00-bootstrap/beacon-enroll.sh"
+      - "09-tools/fixtures/profile_resolve/**"
   pull_request:
     paths:
       - "09-tools/validate-*.py"
@@ -38,6 +43,11 @@ on:
       - "03-skills/visual-prove-engine/**"
       - "03-skills/play-prove/**"
       - ".github/workflows/validator-fixtures.yml"
+      - "09-tools/profile_resolve.py"
+      - "02-shared-references/devices.json"
+      - "02-shared-references/delivery-playbooks/*.json"
+      - "00-bootstrap/beacon-enroll.sh"
+      - "09-tools/fixtures/profile_resolve/**"
 
 jobs:
   check:

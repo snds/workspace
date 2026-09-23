@@ -41,6 +41,11 @@ on:
       - "02-shared-references/knowledge-hints.json"
       - "02-shared-references/schemas/**"
       - "03-skills/skills.registry.json"
+      - "09-tools/profile_resolve.py"
+      - "02-shared-references/devices.json"
+      - "02-shared-references/delivery-playbooks/*.json"
+      - "00-bootstrap/beacon-enroll.sh"
+      - "09-tools/fixtures/profile_resolve/**"
   pull_request:
     paths:
       - "**/*.md"
@@ -71,6 +76,11 @@ on:
       - "02-shared-references/knowledge-hints.json"
       - "02-shared-references/schemas/**"
       - "03-skills/skills.registry.json"
+      - "09-tools/profile_resolve.py"
+      - "02-shared-references/devices.json"
+      - "02-shared-references/delivery-playbooks/*.json"
+      - "00-bootstrap/beacon-enroll.sh"
+      - "09-tools/fixtures/profile_resolve/**"
 
 jobs:
   check:
@@ -126,5 +136,9 @@ jobs:
         run: |
           python3 09-tools/figma-bind-probe.py --capture 09-tools/fixtures/figma-capture.clean.json
           ! python3 09-tools/figma-bind-probe.py --capture 09-tools/fixtures/figma-capture.violations.json
+      - name: Resolver self-test
+        run: python3 09-tools/profile_resolve.py --self-test
+      - name: Declared tables valid
+        run: python3 09-tools/profile_resolve.py validate-tables
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py

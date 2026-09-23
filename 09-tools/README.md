@@ -58,7 +58,11 @@ trees and asserts each checker refuses them.
 
 ```
 python3 09-tools/test-validators.py
+python3 09-tools/test-validators.py TestSurfaces TestWsHook     # named classes only
+python3 09-tools/test-validators.py --strict-skips TestIdentity # a skip exits 3
 ```
+
+`load()` takes a 09-tools stem or a repo-relative path. Exit 2 means an unknown class name.
 
 CI: `.github/workflows/validator-fixtures.yml`. Run this after changing a
 `validate-*.py` or `vault-health.py`.
@@ -428,6 +432,7 @@ pass/fail path.
 - **tokens** prices the traversal: contract floor → session floor → load-set p50/p95/max
   → worst-case legal request → the banned-ingest number routing exists to avoid.
   `BUDGETS` are a regression gate; raising one is a deliberate, reviewable diff.
+  `ALWAYS_LOADED_BYTES_CEILING` pins the always-loaded files at their 2ff02e7 byte sizes.
 
 `--self-test` proves each check can fail — a detector that only ever passes is decor.
 
@@ -437,6 +442,10 @@ python3 09-tools/workspace-harness.py --connections --tokens
 python3 09-tools/workspace-harness.py --json --stamp
 python3 09-tools/workspace-harness.py --self-test
 ```
+
+## profile_resolve.py
+
+Declared resolver (H2): device, repo, where, scan, audit, detect, agent-check, gitcaps and validate-tables over devices.json and context-remotes.json; the one home for load_table, detect_surface, normalize_remote and agent_check. --self-test runs synthetic fixtures.
 
 ## eslint-off-system/
 

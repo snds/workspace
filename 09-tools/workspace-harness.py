@@ -58,6 +58,20 @@ STAMP = ROOT / "07-projects" / "19-workspace-brain" / "reports" / "workspace-har
 # Raising it is a reviewable diff, which is the point.
 CROSS_CHAIN_COLLISION_CEILING = 25
 
+# Byte ceilings for the files every session loads, pinned at their 2ff02e7 sizes (wave 0,
+# plan v1.1). Edits there are net-negative or neutral; raising one is a reviewable diff.
+ALWAYS_LOADED_BYTES_CEILING = {
+    "AGENTS.md": 30_917,
+    "CLAUDE.md": 5_769,
+    "CURSOR.md": 6_153,
+    ".cursor/rules/brain.mdc": 3_592,
+    ".cursor/rules/01-agent-controller.mdc": 1_218,
+    ".cursor/rules/02-workspace-filesystem.mdc": 1_602,
+    "00-bootstrap/dist/user-CLAUDE.md": 1_515,
+    "00-bootstrap/dist/BEACON.md": 1_515,
+    "00-bootstrap/dist/RULES.txt": 293,
+}
+
 BUDGETS = {
     "contract_floor": 11_800,
     "session_floor": 17_000,
@@ -90,6 +104,8 @@ QUALITY_CHAIN = [
     ("session-status.py", ["--check"]),
     ("check-secrets.py", []),
     ("vault-health.py", []),
+    ("profile_resolve.py", ["--self-test"]),
+    ("profile_resolve.py", ["validate-tables"]),
     ("test-validators.py", []),
 ]
 
@@ -519,6 +535,15 @@ BANNED_INGEST = [
 ]
 
 
+def check_always_loaded_bytes(root: Path = ROOT, ceilings: dict | None = None) -> dict:
+    """Always-loaded files may not grow past their pinned byte ceiling."""
+    ceilings = ALWAYS_LOADED_BYTES_CEILING if ceilings is None else ceilings
+    sizes = {rel: (root / rel).stat().st_size for rel in ceilings if (root / rel).is_file()}
+    over = [f"{rel}: {sizes[rel]:,} bytes over ceiling {cap:,}"
+            for rel, cap in ceilings.items() if sizes.get(rel, 0) > cap]
+    return {"sizes": sizes, "over": over}
+
+
 def run_tokens() -> dict:
     reg = json.loads(REGISTRY.read_text(encoding="utf-8"))
     skills, chains = reg["skills"], reg.get("load_chains", {})
@@ -578,9 +603,12 @@ def run_tokens() -> dict:
         for k in BUDGETS
         if measured.get(k, 0) > BUDGETS[k]
     ]
+    ceilings = check_always_loaded_bytes()
+    over += ceilings["over"]
     return {
         "lane": "tokens",
         "failed": 1 if over else 0,
+        "always_loaded_bytes": ceilings["sizes"],
         "estimator": "tiktoken" if _has_tiktoken() else "bytes/4 (estimate)",
         "measured": measured,
         "budgets": BUDGETS,
@@ -666,6 +694,9 @@ def print_report(report: dict) -> None:
                   f"  — {', '.join(d['retrieval_clis'].values())}")
         print(f"  · banned ingest if routing is skipped:       {m['banned_ingest_total']:>7,}"
               f"  ({m['banned_ingest_total'] / max(m['worst_case_legal'], 1):.1f}× the legal worst case)")
+        sizes = t.get("always_loaded_bytes", {})
+        print(f"  · always-loaded bytes: {sum(sizes.values()):,} across {len(sizes)} file(s)"
+              f" (ceiling {sum(ALWAYS_LOADED_BYTES_CEILING.values()):,})")
         for line in t["over_budget"]:
             print(f"  ✗ OVER BUDGET — {line}")
         print()
@@ -791,6 +822,17 @@ def self_test() -> int:
     reverted = tokens["measured"]["session_floor"] + tokens["measured"]["avoided_by_retrieval"]
     expect("session_floor budget would catch a reverted read order",
            reverted > BUDGETS["session_floor"] >= tokens["measured"]["session_floor"])
+
+    with tempfile.TemporaryDirectory() as td:
+        fake = Path(td)
+        (fake / "AGENTS.md").write_text("x" * 11, encoding="utf-8")
+        (fake / "CLAUDE.md").write_text("x" * 5, encoding="utf-8")
+        grown = check_always_loaded_bytes(fake, {"AGENTS.md": 10, "CLAUDE.md": 5})
+        expect("always-loaded ceiling catches a grown file",
+               any("AGENTS.md" in o for o in grown["over"]))
+        expect("always-loaded ceiling accepts a file at its ceiling",
+               not any("CLAUDE.md" in o for o in grown["over"]))
+    expect("always-loaded ceilings hold on the live tree", not check_always_loaded_bytes()["over"])
 
     expect("PATH_RE finds a parenthesised path",
            PATH_RE.findall("resolve (02-shared-references/x.md) first") == ["02-shared-references/x.md"])

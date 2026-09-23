@@ -6,7 +6,12 @@ green forever. This harness plants small broken trees and asserts errors.
 Pattern: vault-retrieve.py --eval.
 
 Usage:
-  python3 09-tools/test-validators.py
+  python3 09-tools/test-validators.py                       # every class
+  python3 09-tools/test-validators.py TestSurfaces TestWsHook  # named classes only
+  python3 09-tools/test-validators.py --strict-skips TestIdentity
+
+Exit: 0 green · 1 a test failed · 2 unknown class name · 3 a test skipped under
+--strict-skips (a device measure that silently SKIPs is not a pass).
 """
 
 from __future__ import annotations
@@ -25,7 +30,13 @@ ROOT_DIR = TOOLS.parent
 
 
 def load(name: str):
-    path = TOOLS / f"{name}.py"
+    """Load a 09-tools module by stem ("nightly") or a repo-relative path
+    ("00-bootstrap/doctor/render_shims.py")."""
+    if "/" in name or name.endswith(".py"):
+        path = ROOT_DIR / name
+        name = path.stem
+    else:
+        path = TOOLS / f"{name}.py"
     spec = importlib.util.spec_from_file_location(name, path)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"cannot load {path}")
@@ -663,7 +674,98 @@ class TestShadcnLintOverlay(unittest.TestCase):
             self.assertTrue(any("no-tier-leakage" in e for e in errors), errors)
 
 
-if __name__ == "__main__":
-    suite = unittest.defaultTestLoader.loadTestsFromModule(sys.modules[__name__])
+class TestProfileResolve(unittest.TestCase):
+    """H2 resolver: fixtures, shipped tables, detection seams, scan refusal (profile_resolve.py)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.mod = load("profile_resolve")
+
+    def test_self_test_negative_fixtures(self):
+        self.assertEqual(self.mod.self_test(), 0)
+
+    def test_shipped_tables_validate(self):
+        res = self.mod.validate_tables()["tables"]
+        for name in ("devices", "context-remotes"):
+            self.assertTrue(res[name]["present"], name)
+            self.assertTrue(res[name]["ok"], res[name]["errors"])
+        for name, entry in res.items():
+            if entry["present"]:
+                self.assertTrue(entry["ok"], f"{name}: {entry['errors']}")
+
+    def test_hostname_normalization(self):
+        for host in ("Voyager-2.lan", "voyager-2", "VOYAGER-2.local"):
+            self.assertEqual(self.mod.current_device(hostname=host)["id"], "personal-mbp")
+        dev = self.mod.current_device(hostname="host-z.local", scutil=lambda: None)
+        self.assertEqual(dev["id"], "unknown")
+        self.assertFalse(dev["hostname_known"])
+        self.assertTrue(dev["notice"])
+
+    def test_normalize_remote_drops_userinfo(self):
+        fake = "not-a-real-" + "credential"
+        n = self.mod.normalize_remote(f"https://someone:{fake}@bitbucket.org/Acme-BB/x.git")
+        self.assertEqual((n["host"], n["owner"], n["slug"], n["form"]),
+                         ("bitbucket.org", "acme-bb", "acme-bb/x", "https-userinfo"))
+        self.assertNotIn(fake, json.dumps(n))
+        self.assertEqual(self.mod.normalize_remote("github-work:acme-corp/x")["host"], "github.com")
+
+    def test_scan_refused_under_claude_env_cache_untouched(self):
+        with tempfile.TemporaryDirectory() as td:
+            home = Path(td)
+            tel = self.mod.ws_paths(home=home)["telemetry"]
+            tel.mkdir(parents=True)
+            cache = tel / "checkouts.json"
+            cache.write_text('{"schema_version": 1, "checkouts": []}\n', encoding="utf-8")
+            before = cache.read_bytes()
+            det = self.mod.detect_surface(env={"CLAUDE_PROJECT_DIR": "/x"}, ancestry=[{"comm": "launchd"}],
+                                          isatty={"stdin": False, "stdout": False})
+            out = self.mod.scan(home=home, detection=det)
+            self.assertTrue(out["refused"])
+            self.assertEqual(cache.read_bytes(), before)
+
+    def test_agent_check_seams(self):
+        tty = {"stdin": True, "stdout": True}
+        shell = [{"comm": "zsh"}, {"comm": "Terminal"}, {"comm": "launchd"}]
+        self.assertTrue(self.mod.agent_check(env={}, ancestry=shell, isatty=tty)["human"])
+        self.assertFalse(self.mod.agent_check(env={"CI": "1"}, ancestry=shell, isatty=tty)["human"])
+        self.assertFalse(self.mod.agent_check(env={"CLAUDECODE": "1"}, ancestry=shell, isatty=tty)["human"])
+        r = self.mod.agent_check(env={}, ancestry=[{"comm": "zsh"}, {"comm": "Claude Helper (Renderer)"}], isatty=tty)
+        self.assertFalse(r["human"])
+        self.assertIn("agent:claude", r["reasons"])
+
+    def test_workspace_classifies_personal(self):
+        res = self.mod.repo_resolve(str(ROOT_DIR), detection=self.mod.detect_surface(
+            env={}, ancestry=[{"comm": "claude"}], isatty={"stdin": False, "stdout": False}))
+        self.assertIn(res["source"], ("workspace-root", "linked-worktree"))
+        self.assertEqual(self.mod.classify_word(res), "personal")
+
+    @unittest.skipUnless(os.environ.get("CI"), "real stub-ancestor chain runs in CI only")
+    def test_stub_ancestor_chain(self):
+        self.assertEqual(self.mod.self_test(stub_chain=True), 0)
+
+
+def main(argv: list) -> int:
+    strict = "--strict-skips" in argv
+    names = [a for a in argv if a != "--strict-skips"]
+    module = sys.modules[__name__]
+    loader = unittest.defaultTestLoader
+    if names:
+        unknown = [n for n in names if not isinstance(getattr(module, n, None), type)
+                   or not issubclass(getattr(module, n), unittest.TestCase)]
+        if unknown:
+            print(f"test-validators: unknown test class(es): {', '.join(unknown)}", file=sys.stderr)
+            return 2
+        suite = unittest.TestSuite(loader.loadTestsFromTestCase(getattr(module, n)) for n in names)
+    else:
+        suite = loader.loadTestsFromModule(module)
     result = unittest.TextTestRunner(verbosity=2).run(suite)
-    sys.exit(0 if result.wasSuccessful() else 1)
+    if not result.wasSuccessful():
+        return 1
+    if strict and result.skipped:
+        print(f"test-validators: {len(result.skipped)} skip(s) under --strict-skips", file=sys.stderr)
+        return 3
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

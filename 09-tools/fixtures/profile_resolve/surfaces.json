@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "doc": "Synthetic surface registry for profile_resolve detection fixtures. Not the real registry.",
+  "coverage_modes": [
+    "enforced",
+    "enforced-partial",
+    "enforced-when-installed",
+    "advisory",
+    "unverified",
+    "backstop-only",
+    "not-applicable"
+  ],
+  "minimum_surfaces": [
+    "claude-code",
+    "cursor",
+    "codex"
+  ],
+  "components": [
+    "H2"
+  ],
+  "families": {
+    "claude": {
+      "wall_rank": 100,
+      "agent": true
+    },
+    "unknown-agent": {
+      "wall_rank": 90,
+      "agent": true
+    },
+    "cursor": {
+      "wall_rank": 50,
+      "agent": true
+    },
+    "codex": {
+      "wall_rank": 50,
+      "agent": true
+    },
+    "human": {
+      "wall_rank": 0,
+      "agent": false
+    }
+  },
+  "never_markers": [
+    "CLAUDECODE",
+    "CLAUDE_PROJECT_DIR",
+    "CLAUDE_PLUGIN_ROOT",
+    "CLAUDE_WORKSPACE_VAULT"
+  ],
+  "agent_possible_env": {
+    "names": [
+      "CLAUDECODE",
+      "CLAUDE_PROJECT_DIR",
+      "CLAUDE_PLUGIN_ROOT",
+      "CLAUDE_WORKSPACE_VAULT",
+      "CLAUDE_ENV_FILE"
+    ],
+    "prefixes": [
+      "CLAUDE_CODE_"
+    ]
+  },
+  "probe_env_name_prefixes": [
+    "CLAUDE",
+    "CURSOR",
+    "CODEX",
+    "AI_AGENT",
+    "WS_"
+  ],
+  "probe_env_value_allowlist": [
+    "CURSOR_AGENT",
+    "AI_AGENT",
+    "WS_SURFACE_FAMILY"
+  ],
+  "surfaces": [
+    {
+      "id": "claude-code",
+      "family": "claude",
+      "label": "claude-code",
+      "kind": "cli-agent",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "markers": {
+        "env": [],
+        "ancestry": [
+          {
+            "comm": "claude",
+            "match": "exact",
+            "verified": false
+          },
+          {
+            "comm": "Claude",
+            "match": "exact",
+            "verified": false
+          },
+          {
+            "comm": "Claude Helper",
+            "match": "prefix",
+            "verified": false
+          }
+        ],
+        "payload_keys_any": []
+      },
+      "coverage": {}
+    },
+    {
+      "id": "claude-chat-desktop",
+      "family": "claude",
+      "label": "claude-chat-desktop",
+      "kind": "desktop-app",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "markers": {
+        "env": [],
+        "ancestry": [
+          {
+            "comm": "Claude",
+            "match": "exact",
+            "verified": false
+          },
+          {
+            "comm": "Claude Helper",
+            "match": "prefix",
+            "verified": false
+          }
+        ],
+        "payload_keys_any": []
+      },
+      "coverage": {}
+    },
+    {
+      "id": "cursor",
+      "family": "cursor",
+      "label": "cursor",
+      "kind": "ide-agent",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "markers": {
+        "env": [
+          {
+            "name": "CURSOR_AGENT",
+            "value": "1",
+            "verified": true
+          }
+        ],
+        "ancestry": [
+          {
+            "comm": "Cursor Helper",
+            "match": "prefix",
+            "verified": false
+          }
+        ],
+        "payload_keys_any": []
+      },
+      "coverage": {}
+    },
+    {
+      "id": "codex",
+      "family": "codex",
+      "label": "codex",
+      "kind": "cli-agent",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "markers": {
+        "env": [
+          {
+            "name": "CODEX_THREAD_ID",
+            "verified": false
+          }
+        ],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "coverage": {}
+    },
+    {
+      "id": "windsurf",
+      "family": "unknown-agent",
+      "label": "windsurf",
+      "kind": "ide-agent",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "markers": {
+        "env": [
+          {
+            "name": "AI_AGENT",
+            "verified": false
+          }
+        ],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "coverage": {}
+    },
+    {
+      "id": "human",
+      "family": "human",
+      "label": "human",
+      "kind": "human",
+      "required": false,
+      "hookable": false,
+      "dialect": "none",
+      "markers": {
+        "env": [],
+        "ancestry": [],
+        "payload_keys_any": []
+      },
+      "coverage": {}
+    }
+  ],
+  "formats": {},
+  "dialects": {},
+  "layers": [],
+  "commands": {},
+  "registrations": [],
+  "outputs": [],
+  "wrappers": {}
+}

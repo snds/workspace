@@ -36,8 +36,7 @@ Before the first reply in a new session:
    if the hook did not inject it. Emit that stdout as the first reply. Do not shrink
    Active projects to one line. Skip the card only for Task workers / structured-output.
 
-Machines: `Voyager-2.local`→Personal MBP · `CS-K746DRWXY1`/`CS-KQ23N94M0W`/`seansands.local`→Work MBP ·
-`Enterprise`→Windows.
+Machine labels: `02-shared-references/devices.json`.
 
 ## Model swap / resume
 

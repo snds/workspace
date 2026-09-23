@@ -84,6 +84,26 @@
 - **Purpose**: Machine-local resolver that points `~/.claude/skills` at whichever Drive root is materialized on this machine — lets work Mac run stream+offline while personal/Windows mirror. Wired as a SessionStart hook in `~/.claude/settings.json`.
 - **Last modified**: 2026-06-01 — created; canonical copy synced to Drive for other machines.
 
+### 09-tools/profile_resolve.py
+- **Size**: ~2188 lines
+- **Purpose**: H2 declared resolver CLI and import home (tables, devices, remotes, repo walls, checkout cache, surface detection, agent check, gitcaps).
+- **Last modified**: 2026-09-22 — created in wave 0 (T2).
+
+### 02-shared-references/devices.json
+- **Size**: ~43 lines
+- **Purpose**: Declared device table (D14): hostnames, labels, projects_root, brain, ssh aliases; T8 adds identity keys.
+- **Last modified**: 2026-09-22 — created in wave 0 (T2).
+
+### 02-shared-references/delivery-playbooks/context-remotes.json
+- **Size**: ~98 lines
+- **Purpose**: Remote-keyed context table (H2): conduct order, owner classes at owner level, repos, employer path globs, employer_substance block for H25.
+- **Last modified**: 2026-09-22 — created in wave 0 (T2).
+
+### 09-tools/fixtures/profile_resolve/
+- **Size**: 3 files
+- **Purpose**: Synthetic tables (dev-a/dev-b, acme-corp/acme-bb/pat-sample/oss-upstream) for the profile_resolve self-test.
+- **Last modified**: 2026-09-22 — created in wave 0 (T2).
+
 ## Meridian Design System — files/meridian-ds/
 
 ### app-shell-prototype-v0.1.jsx
