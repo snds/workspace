@@ -86,6 +86,9 @@ AGENT_TRAILER_RE = re.compile(
 
 # Used only when surfaces.json is absent or unreadable, so refusals stay fail-closed. The table
 # is the source of truth; these mirror its declared refusal inputs and nothing else.
+# Used only when surfaces.json is missing or unreadable. Every declared agent marker is listed as
+# agent-possible here, so installers, the pin guard, scan, audit and override still refuse (the most
+# restrictive reading: with no table, any agent marker raises the walls to claude).
 _FALLBACK_SURFACES: Dict[str, Any] = {
     "families": {
         "claude": {"wall_rank": 100, "agent": True},
@@ -94,16 +97,25 @@ _FALLBACK_SURFACES: Dict[str, Any] = {
     },
     "never_markers": ["CLAUDECODE", "CLAUDE_PROJECT_DIR", "CLAUDE_PLUGIN_ROOT", "CLAUDE_WORKSPACE_VAULT"],
     "agent_possible_env": {
-        "names": ["CLAUDECODE", "CLAUDE_PROJECT_DIR", "CLAUDE_PLUGIN_ROOT", "CLAUDE_WORKSPACE_VAULT", "CLAUDE_ENV_FILE"],
-        "prefixes": ["CLAUDE_CODE_"],
+        "names": ["CLAUDECODE", "CLAUDE_PROJECT_DIR", "CLAUDE_PLUGIN_ROOT", "CLAUDE_WORKSPACE_VAULT", "CLAUDE_ENV_FILE",
+                  "CURSOR_AGENT", "CODEX_THREAD_ID", "GEMINI_CLI", "AI_AGENT"],
+        "prefixes": ["CLAUDE_CODE_", "CURSOR_", "CODEX_", "COPILOT_", "GEMINI_"],
     },
     "surfaces": [
         {"id": "claude-code", "family": "claude", "markers": {"env": [], "ancestry": [
             {"comm": "claude", "match": "exact", "verified": False},
             {"comm": "Claude", "match": "exact", "verified": False},
             {"comm": "Claude Helper", "match": "prefix", "verified": False}]}},
+        {"id": "other-local-agents", "family": "unknown-agent", "markers": {"env": [], "ancestry": [
+            {"comm": "Cursor", "match": "prefix", "verified": False},
+            {"comm": "codex", "match": "exact", "verified": False},
+            {"comm": "Code Helper", "match": "prefix", "verified": False}]}},
     ],
 }
+# Positive human evidence: a chain that reaches launchd must pass one of these (walls F-09).
+HUMAN_TERMINALS = ("Terminal", "iTerm2", "iTerm", "login", "sshd", "sshd-session", "tmux", "screen", "ghostty",
+                   "Ghostty", "Alacritty", "alacritty", "kitty", "WezTerm", "wezterm-gui", "Hyper", "Tabby")
+PTY_WRAPPERS = ("script", "expect", "unbuffer")
 
 
 class TableError(ValueError):
@@ -439,6 +451,8 @@ def _validate_surfaces(obj: dict, errors: List[str]) -> None:
         for m in markers.get("env") or []:
             if not isinstance(m, dict) or not isinstance(m.get("name"), str) or not _type_ok(m.get("verified", False), _BOOL):
                 errors.append(f"surfaces[{i}].markers.env: needs name and bool verified")
+            elif not _type_ok(m.get("value_prefix"), _OPT_STR) or not _str_list(m.get("value_not_prefixes", [])):
+                errors.append(f"surfaces[{i}].markers.env: value_prefix is a string, value_not_prefixes a string list")
         for m in markers.get("ancestry") or []:
             if not isinstance(m, dict) or not isinstance(m.get("comm"), str) or m.get("match", "exact") not in ("exact", "prefix"):
                 errors.append(f"surfaces[{i}].markers.ancestry: needs comm and match exact|prefix")
@@ -1627,12 +1641,37 @@ def _env_markers(env: Any, t: dict) -> List[dict]:
             name = m.get("name")
             if not name or name in never or e.get(name) in (None, ""):
                 continue
-            if m.get("value") is not None and str(e.get(name)) != str(m.get("value")):
+            val = str(e.get(name))
+            if m.get("value") is not None and val != str(m.get("value")):
+                continue
+            if m.get("value_prefix") and not val.startswith(str(m.get("value_prefix"))):
+                continue
+            if any(val.startswith(str(x)) for x in m.get("value_not_prefixes") or []):
                 continue
             if row.get("family") not in fams:
                 continue
-            out.append({"name": name, "surface": row.get("id"), "family": row.get("family"), "verified": bool(m.get("verified"))})
+            out.append({"name": name, "surface": row.get("id"), "family": row.get("family"),
+                        "verified": bool(m.get("verified")),
+                        "specific": m.get("value") is not None or bool(m.get("value_prefix"))})
     return out
+
+
+def _pick_env_marker(envm: List[dict]) -> dict:
+    """Verified first, then value-specific; a name-only marker that matches several rows of one family
+    reports that family's generic `other-*` row rather than whichever row comes first."""
+    for m in envm:
+        if m["verified"]:
+            return m
+    for m in envm:
+        if m.get("specific"):
+            return m
+    first = envm[0]
+    same = [m for m in envm if m["name"] == first["name"] and m["family"] == first["family"]]
+    if len(same) > 1:
+        generic = next((m for m in same if str(m["surface"]).startswith("other-")), None)
+        if generic is not None:
+            return generic
+    return first
 
 
 def read_markers(*, env: Optional[dict] = None, root: Optional[Path] = None) -> list:
@@ -1677,7 +1716,7 @@ def _detect(payload_hint: Optional[str], env: Optional[dict], ancestry: Optional
         n = anc[0]
         acting, family, via, verified = n["surface"], n["family"], "ancestry", n["verified"]
     if acting is None and envm:
-        pick = next((m for m in envm if m["verified"]), envm[0])
+        pick = _pick_env_marker(envm)
         acting, family, via, verified = pick["surface"], pick["family"], "env", pick["verified"]
     if acting is None:
         if tty["stdin"] and tty["stdout"]:
@@ -1688,6 +1727,8 @@ def _detect(payload_hint: Optional[str], env: Optional[dict], ancestry: Optional
     wsf = e.get("WS_SURFACE_FAMILY")
     if wsf in fams:
         cands.append(wsf)
+    if ap and "claude" in fams:
+        cands.append("claude")   # agent-possible env only ever tightens; forged markers cannot lower it
     ranked = [c for c in cands if c in fams]
     walls = max(ranked, key=lambda c: fams[c].get("wall_rank", 0)) if ranked else family
     if family in fams and walls in fams and fams[walls].get("wall_rank", 0) <= fams[family].get("wall_rank", 0):
@@ -1703,7 +1744,7 @@ def _detect(payload_hint: Optional[str], env: Optional[dict], ancestry: Optional
         "acting_host": acting, "family": family, "family_for_walls": walls, "via": via, "verified": bool(verified),
         "determined": via in ("payload", "ancestry", "env"), "chain": [h["comm"] for h in chain],
         "markers": [m["name"] for m in envm], "conflict": conflict, "conflict_reason": reason, "automated": automated,
-        "agent_possible": bool(ap),
+        "agent_possible": bool(ap), "ancestry_unavailable": bool(anc_err),
     }
     return det, anc_err
 
@@ -1717,6 +1758,23 @@ def detect_surface(payload_hint: Optional[str] = None, *, env: Optional[dict] = 
 def automated_context(*, env: Optional[dict] = None, ancestry: Optional[list] = None, isatty: Optional[dict] = None,
                       root: Optional[Path] = None) -> bool:
     return bool(detect_surface(env=env, ancestry=ancestry, isatty=isatty, root=root)["automated"])
+
+
+def _no_human_evidence(chain: List[dict]) -> Optional[str]:
+    """Why a chain that looks agent-free still is not positive human evidence, or None.
+
+    Only a chain that reaches launchd (pid 1) is judged: it must pass a known terminal or login
+    ancestor, and its nearest hop must not be a pty wrapper reparented to launchd."""
+    if not chain:
+        return None
+    first = chain[0]
+    if first["comm"].lstrip("-") in PTY_WRAPPERS and str(first.get("ppid")) == "1":
+        return f"the nearest ancestor is an orphaned pty wrapper ({first['comm']})"
+    last = chain[-1]
+    reaches_init = last["comm"].lstrip("-") == "launchd" or str(last.get("pid")) == "1"
+    if reaches_init and not any(h["comm"].lstrip("-") in HUMAN_TERMINALS for h in chain):
+        return "the ancestry reaches launchd through no known terminal or login process"
+    return None
 
 
 def agent_check(*, env: Optional[dict] = None, ancestry: Optional[list] = None, isatty: Optional[dict] = None,
@@ -1751,6 +1809,9 @@ def agent_check(*, env: Optional[dict] = None, ancestry: Optional[list] = None, 
             return {"human": False, "determined": True, "reasons": reasons}
         if anc_err:
             return {"human": False, "determined": False, "reasons": [f"undetermined: ancestry unavailable ({anc_err})"]}
+        why = _no_human_evidence(chain)
+        if why:
+            return {"human": False, "determined": False, "reasons": [f"undetermined: {why}"]}
         return {"human": True, "determined": True, "reasons": []}
     except Exception as exc:  # noqa: BLE001 - undetermined is refuse for every caller
         return {"human": False, "determined": False, "reasons": [f"undetermined: {exc.__class__.__name__}"]}
@@ -4838,6 +4899,44 @@ def self_test(stub_chain: bool = False) -> int:
         ok(not r["human"] and "no-tty:stdout" in r["reasons"], "no TTY on fd 1 is refused")
         det_err = _detect(None, {}, None, HUMAN_TTY, root)
         ok(isinstance(det_err[0], dict), "live detection runs without raising")
+        ok("ancestry_unavailable" in det_err[0], "the detection object says whether ancestry was available")
+
+        # AI_AGENT is set by several vendors: a value prefix attributes Claude Code (LLM/device F-01)
+        d = detect_surface(env={"AI_AGENT": "claude-code_2-1-280_agent", "CLAUDECODE": "1"}, ancestry=[],
+                           isatty=NO_TTY, root=root)
+        ok(d["acting_host"] == "claude-code" and d["family"] == "claude" and d["family_for_walls"] == "claude",
+           f"AI_AGENT=claude-code_* with no ancestry is Claude Code: {d['acting_host']} {d['family']}")
+        d = detect_surface(env={"AI_AGENT": "some-other-agent"}, ancestry=[], isatty=NO_TTY, root=root)
+        ok(d["family"] == "unknown-agent" and d["acting_host"] == "other-local-agents",
+           f"a name-only marker matching several rows reports the family's generic row: {d['acting_host']}")
+        # agent-possible env always raises the walls to claude (walls F-08); forged markers cannot lower them
+        for extra in ({"CURSOR_AGENT": "1"}, {"CODEX_THREAD_ID": "t"}, {"WS_SURFACE_FAMILY": "cursor"}):
+            d = detect_surface(env=dict(extra, CLAUDECODE="1"), ancestry=[], isatty=NO_TTY, root=root)
+            ok(d["family_for_walls"] == "claude", f"CLAUDECODE plus {sorted(extra)} keeps claude walls: {d}")
+        d = detect_surface(env={"CURSOR_AGENT": "1"}, ancestry=[], isatty=NO_TTY, root=root)
+        ok(d["family_for_walls"] == "cursor", "a Cursor marker without agent-possible env stays cursor")
+
+        # the surfaces table unreadable: the built-in marker list still refuses (test F-02, decision b)
+        empty = tmp / "no-tables"
+        empty.mkdir(exist_ok=True)
+        for env_m in ({"CURSOR_AGENT": "1"}, {"CODEX_THREAD_ID": "t"}, {"GEMINI_CLI": "1"}, {"AI_AGENT": "x"},
+                      {"COPILOT_MODEL": "m"}):
+            r = agent_check(env=env_m, ancestry=shell, isatty=HUMAN_TTY, root=empty)
+            ok(not r["human"], f"no surfaces.json: {sorted(env_m)} still refuses: {r}")
+        r = agent_check(env={}, ancestry=[{"comm": "zsh"}, {"comm": "Cursor Helper (Plugin)"}, {"comm": "launchd"}],
+                        isatty=HUMAN_TTY, root=empty)
+        ok(not r["human"], f"no surfaces.json: a Cursor Helper ancestor still refuses: {r}")
+        ok(automated_context(env={"CURSOR_AGENT": "1"}, ancestry=shell, isatty=HUMAN_TTY, root=empty),
+           "no surfaces.json: automated_context still sees a Cursor marker")
+
+        # positive human evidence (walls F-09): an orphan reaching launchd through no terminal is undetermined
+        r = ac({}, [{"comm": "script", "pid": 500, "ppid": 1}, {"comm": "launchd", "pid": 1, "ppid": 0}], HUMAN_TTY)
+        ok(not r["human"] and not r["determined"], f"an orphaned pty wrapper under launchd is undetermined: {r}")
+        r = ac({}, [{"comm": "zsh"}, {"comm": "launchd", "pid": 1}], HUMAN_TTY)
+        ok(not r["human"] and not r["determined"], f"a chain to launchd through no terminal is undetermined: {r}")
+        for term in ("Terminal", "iTerm2", "sshd", "tmux", "login"):
+            r = ac({}, [{"comm": "zsh"}, {"comm": term}, {"comm": "launchd", "pid": 1}], HUMAN_TTY)
+            ok(r["human"] and r["determined"], f"a chain through {term} is human")
 
         # gitcaps: temp repo, temp HOME
         caps = gitcaps(root=root)
