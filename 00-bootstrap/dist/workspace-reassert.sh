@@ -21,6 +21,8 @@ done
 [ -n "$WS" ] || WS="$HOME/Projects/workspace"
 STATE="$HOME/.claude/ws-state"; mkdir -p "$STATE"
 INPUT="$(cat 2>/dev/null || true)"
+W="$HOME/.config/snds-workspace/bin/ws-hook"
+if [ -x "$W" ]; then printf '%s' "$INPUT" | "$W" host --skip-any cursor >/dev/null 2>&1; [ "$?" = 3 ] && exit 0; fi
 # grep -o + head -1 takes the FIRST match (the old greedy sed anchored to the LAST).
 jget() { printf '%s' "$INPUT" | grep -o "\"$1\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" | head -1 | sed "s/.*:[[:space:]]*\"//; s/\"$//"; }
 SID="$(jget session_id)"; TP="$(jget transcript_path)"

@@ -29,6 +29,10 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
       "install": {
         "claude-code": "Enable Figma Desktop → Preferences → Enable Dev Mode MCP Server, then `claude mcp add` the local server; or `claude mcp add --transport http figma <url> --scope user`.",
         "cursor": "Cursor → Settings → MCP → add the Figma Dev Mode MCP server.",
+        "codex": "Add an `[mcp_servers.figma]` entry to `~/.codex/config.toml` (or `codex mcp add`). Codex desktop bundles its CLI: when `codex` is not on PATH, use the binary inside the ChatGPT app bundle (`Contents/Resources/codex`).",
+        "claude-chat": "claude.ai → Settings → Connectors → add the Figma connector (remote MCP), signed in with the personal account.",
+        "gemini": "Add the server under `mcpServers` in `~/.gemini/settings.json` (or `gemini mcp add`).",
+        "copilot": "VS Code: MCP: Add Server (user or `.vscode/mcp.json`). Copilot CLI: `/mcp add`.",
         "generic": "Run the Figma Dev Mode MCP server and connect your MCP client to it."
       },
       "fallback": "degrade",
@@ -55,6 +59,10 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
         "claude-code": "One server per lane, user-scoped so the runner works from any directory: `claude mcp add --transport sse linear-<lane> https://mcp.linear.app/sse --scope user`, then `/mcp` to complete OAuth. Multiple Linear workspaces need SEPARATE auth contexts — Linear scopes one MCP connection to one workspace, so run each through `mcp-remote` with its own config dir: `MCP_REMOTE_CONFIG_DIR=~/.mcp-auth/linear-<lane> npx mcp-remote https://mcp.linear.app/mcp`.",
         "cursor": "User-scope `~/.cursor/mcp.json` (the doctor reads this file, not the marketplace Linear plugin). Name the server `linear-personal` and run it through mcp-remote so tokens land in the lane auth dir. Native SSE (`https://mcp.linear.app/sse`) OAuths into Cursor's store and still reports `not-authed`. Work MBP also adds `linear-c8` with its own dir; Voyager-2.local must not. Template: `00-bootstrap/templates/cursor-mcp.json.example`. Reload MCP, then complete OAuth as `hello@snds.design` (never the Centric Google account).",
         "generic": "Point any MCP client at https://mcp.linear.app/mcp (or /mcp/readonly for read-only reach) and complete the OAuth flow with the account that should read and update agent issues. One connection binds to one workspace.",
+        "codex": "One `[mcp_servers.linear-<lane>]` entry per lane in `~/.codex/config.toml`, running `npx mcp-remote https://mcp.linear.app/mcp` with that lane's `MCP_REMOTE_CONFIG_DIR`. Codex desktop bundles its CLI: when `codex` is not on PATH, use the binary inside the ChatGPT app bundle (`Contents/Resources/codex`).",
+        "claude-chat": "claude.ai → Settings → Connectors → Linear, authorized as the personal account only. Claude surfaces never carry the employer lane.",
+        "gemini": "One `mcpServers.linear-<lane>` entry per lane in `~/.gemini/settings.json`, running mcp-remote with that lane's config dir.",
+        "copilot": "VS Code `mcp.json` (user scope) or Copilot CLI `/mcp add`: one server per lane, running mcp-remote with that lane's config dir.",
         "no-mcp": "No MCP on this surface: use the HTTP transport instead — POST https://api.linear.app/graphql with header `Authorization: <LINEAR_API_KEY from the environment>`. Equivalent capability, one extra credential to manage. See [[open-agent-engine]] → Transport."
       },
       "fallback": "degrade",
@@ -401,6 +409,13 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
   }
 }
 ```
+
+## Install keys
+
+`install` is keyed by surface (`claude-code`, `cursor`, `codex`, `claude-chat`, `gemini`, `copilot`,
+`generic`, `no-mcp`) or by OS (`any`, `macos`, `linux`, `windows`). Surface ids follow
+`02-shared-references/surfaces.json`. The `codex` key is bundle-aware: Codex desktop ships its CLI
+inside the app bundle, so a missing `codex` on PATH is not a missing install.
 
 ## Detection methods
 

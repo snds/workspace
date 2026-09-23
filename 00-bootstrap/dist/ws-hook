@@ -1,0 +1,7 @@
+#!/bin/sh
+# ws-hook — byte-stable entry for every user-level shim (snds-workspace). Do not edit:
+# Codex trust is pinned to this file's hash. Behaviour lives in the pinned lib.
+L="$HOME/.config/snds-workspace/lib/current/09-tools/ws_hook.py"
+command -v python3 >/dev/null 2>&1 || exit 0
+[ -f "$L" ] || exit 0
+exec python3 "$L" "$@"

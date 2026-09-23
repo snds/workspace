@@ -1,0 +1,10 @@
+# snds-workspace managed block. Rendered by 00-bootstrap/doctor/render_shims.py from
+# 02-shared-references/surfaces.json; do not edit by hand. The installer expands ~/ and
+# replaces only the lines between BEGIN and END in ~/.codex/config.toml.
+# BEGIN snds-workspace
+[shell_environment_policy.set]
+WS_SURFACE_FAMILY = "codex"
+
+[sandbox_workspace_write]
+writable_roots = ["~/.config/snds-workspace/telemetry"]
+# END snds-workspace

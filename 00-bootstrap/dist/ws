@@ -1,0 +1,11 @@
+#!/bin/sh
+# ws — neutral command entry (snds-workspace). Pinned tools from lib/current; others from root.
+H="$HOME/.config/snds-workspace"; L="$H/lib/current/09-tools"
+R="$(cat "$H/root" 2>/dev/null)"
+case "${1:-}" in
+  hook) shift; exec python3 "$L/ws_hook.py" "$@";;
+  resolve) shift; exec python3 "$L/profile_resolve.py" "$@";;
+  intent) shift; exec python3 "$R/09-tools/intent-run.py" "$@";;
+  status) shift; exec python3 "$R/09-tools/session-status.py" "$@";;
+  *) echo "usage: ws hook|resolve|intent|status ..." >&2; exit 2;;
+esac

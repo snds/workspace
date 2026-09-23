@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "$HOME/.config/snds-workspace/bin/ws-hook --host auto --event session-start --probe",
+        "timeout": 5
+      }
+    ],
+    "beforeSubmitPrompt": [
+      {
+        "command": "$HOME/.config/snds-workspace/bin/ws-hook --host auto --event user-prompt --probe",
+        "timeout": 5
+      }
+    ],
+    "preCompact": [
+      {
+        "command": "$HOME/.config/snds-workspace/bin/ws-hook --host auto --event pre-compact --probe",
+        "timeout": 5
+      }
+    ],
+    "sessionEnd": [
+      {
+        "command": "$HOME/.config/snds-workspace/bin/ws-hook --host auto --event session-end --probe",
+        "timeout": 5
+      }
+    ],
+    "subagentStop": [
+      {
+        "command": "$HOME/.config/snds-workspace/bin/ws-hook --host auto --event subagent-stop --probe",
+        "timeout": 5
+      }
+    ]
+  }
+}

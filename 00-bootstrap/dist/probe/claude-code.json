@@ -1,0 +1,48 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/snds-workspace/bin/ws-hook --host auto --event session-start --probe",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/snds-workspace/bin/ws-hook --host auto --event user-prompt --probe",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/snds-workspace/bin/ws-hook --host auto --event stop --probe",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/snds-workspace/bin/ws-hook --host auto --event session-end --probe",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

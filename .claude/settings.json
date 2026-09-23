@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/dispatcher.py\" session-start",
+            "command": "d=\"${CLAUDE_PROJECT_DIR:-}/.claude/hooks/dispatcher.py\"; [ -n \"${CLAUDE_PROJECT_DIR:-}\" ] && [ -f \"$d\" ] && command -v python3 >/dev/null 2>&1 || exit 0; exec python3 \"$d\" session-start",
             "timeout": 30
           }
         ]
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/dispatcher.py\" pre-tool",
+            "command": "d=\"${CLAUDE_PROJECT_DIR:-}/.claude/hooks/dispatcher.py\"; [ -n \"${CLAUDE_PROJECT_DIR:-}\" ] && [ -f \"$d\" ] && command -v python3 >/dev/null 2>&1 || exit 0; exec python3 \"$d\" pre-tool",
             "timeout": 10
           }
         ]
@@ -30,7 +30,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/dispatcher.py\" user-prompt",
+            "command": "d=\"${CLAUDE_PROJECT_DIR:-}/.claude/hooks/dispatcher.py\"; [ -n \"${CLAUDE_PROJECT_DIR:-}\" ] && [ -f \"$d\" ] && command -v python3 >/dev/null 2>&1 || exit 0; exec python3 \"$d\" user-prompt",
             "timeout": 10
           }
         ]
@@ -42,7 +42,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/dispatcher.py\" post-tool",
+            "command": "d=\"${CLAUDE_PROJECT_DIR:-}/.claude/hooks/dispatcher.py\"; [ -n \"${CLAUDE_PROJECT_DIR:-}\" ] && [ -f \"$d\" ] && command -v python3 >/dev/null 2>&1 || exit 0; exec python3 \"$d\" post-tool",
             "timeout": 10
           }
         ]
@@ -53,7 +53,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/dispatcher.py\" stop",
+            "command": "d=\"${CLAUDE_PROJECT_DIR:-}/.claude/hooks/dispatcher.py\"; [ -n \"${CLAUDE_PROJECT_DIR:-}\" ] && [ -f \"$d\" ] && command -v python3 >/dev/null 2>&1 || exit 0; exec python3 \"$d\" stop",
             "timeout": 10
           }
         ]
@@ -64,7 +64,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/dispatcher.py\" session-end",
+            "command": "d=\"${CLAUDE_PROJECT_DIR:-}/.claude/hooks/dispatcher.py\"; [ -n \"${CLAUDE_PROJECT_DIR:-}\" ] && [ -f \"$d\" ] && command -v python3 >/dev/null 2>&1 || exit 0; exec python3 \"$d\" session-end",
             "timeout": 60
           }
         ]

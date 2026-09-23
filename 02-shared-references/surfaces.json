@@ -799,7 +799,7 @@
         "ancestry": [],
         "payload_keys_any": [
           {
-            "key": "turn_id",
+            "key": "thread_id",
             "verified": false
           }
         ]
@@ -1766,6 +1766,64 @@
         "cursor-cli",
         "cursor-cloud"
       ]
+    },
+    {
+      "id": "probe-claude-user",
+      "scope": "user",
+      "install_path": "~/.claude/settings.json",
+      "format": "claude-settings",
+      "output": "00-bootstrap/dist/probe/claude-code.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "merge-hook-entries",
+      "cwd_context": [
+        "workspace",
+        "other"
+      ],
+      "loaded_by": [
+        "claude-code",
+        "cursor",
+        "copilot-vscode",
+        "grok-build"
+      ]
+    },
+    {
+      "id": "probe-cursor-user",
+      "scope": "user",
+      "install_path": "~/.cursor/hooks.json",
+      "format": "cursor-hooks",
+      "output": "00-bootstrap/dist/probe/cursor.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "merge-hook-entries",
+      "cwd_context": [
+        "workspace",
+        "other"
+      ],
+      "loaded_by": [
+        "cursor",
+        "cursor-cli"
+      ]
+    },
+    {
+      "id": "probe-codex-user",
+      "scope": "user",
+      "install_path": "~/.codex/hooks.json",
+      "format": "codex-hooks",
+      "output": "00-bootstrap/dist/probe/codex.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "merge-hook-entries",
+      "cwd_context": [
+        "workspace",
+        "other"
+      ],
+      "loaded_by": [
+        "codex"
+      ]
     }
   ],
   "commands": {
@@ -1773,25 +1831,36 @@
       "template": "$HOME/.claude/hooks/workspace-sessionstart.sh",
       "behaviour": "boot-context",
       "implements": [
+        "host_filter",
         "claim",
         "defer_in_workspace"
       ],
-      "verified_by": []
+      "verified_by": [
+        "fixture:TestHostFilter"
+      ]
     },
     "ws-user-reassert": {
       "template": "$HOME/.claude/hooks/workspace-reassert.sh",
       "behaviour": "ritual-reassert",
-      "implements": [],
-      "verified_by": []
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestHostFilter"
+      ]
     },
     "ws-user-audit": {
       "template": "$HOME/.claude/hooks/workspace-audit.sh",
       "behaviour": "ritual-audit",
-      "implements": [],
-      "verified_by": []
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestHostFilter"
+      ]
     },
     "dispatcher": {
-      "template": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/dispatcher.py\" {event}",
+      "template": "d=\"${CLAUDE_PROJECT_DIR:-}/.claude/hooks/dispatcher.py\"; [ -n \"${CLAUDE_PROJECT_DIR:-}\" ] && [ -f \"$d\" ] && command -v python3 >/dev/null 2>&1 || exit 0; exec python3 \"$d\" {event}",
       "behaviour_by_event": {
         "session-start": "boot-context",
         "user-prompt": "layer0-route",
@@ -1800,48 +1869,16 @@
         "stop": "stop-nudge",
         "session-end": "session-close"
       },
-      "implements": [],
-      "verified_by": []
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestDispatcherDefer"
+      ]
     },
     "cursor-sessionstart": {
       "template": "$HOME/.claude/hooks/cursor-sessionstart.sh",
       "behaviour": "boot-context",
-      "implements": [],
-      "verified_by": []
-    },
-    "cursor-prompt-route": {
-      "template": "$HOME/.claude/hooks/cursor-prompt-route.sh",
-      "behaviour": "layer0-route",
-      "implements": [],
-      "verified_by": []
-    },
-    "cursor-reassert-user": {
-      "template": "$HOME/.claude/hooks/cursor-reassert.sh",
-      "behaviour": "continuity-reassert",
-      "implements": [],
-      "verified_by": []
-    },
-    "cursor-sessionend-user": {
-      "template": "$HOME/.claude/hooks/cursor-sessionend.sh",
-      "behaviour": "session-close-nudge",
-      "implements": [],
-      "verified_by": []
-    },
-    "cursor-subagent-stop-user": {
-      "template": "$HOME/.claude/hooks/cursor-subagent-stop.sh",
-      "behaviour": "baton-nudge",
-      "implements": [],
-      "verified_by": []
-    },
-    "cursor-reassert-project": {
-      "template": ".cursor/hooks/cursor-reassert.sh",
-      "behaviour": "continuity-reassert",
-      "implements": [],
-      "verified_by": []
-    },
-    "cursor-sessionend-project": {
-      "template": ".cursor/hooks/cursor-sessionend.sh",
-      "behaviour": "session-close-nudge",
       "implements": [],
       "verified_by": []
     },
@@ -1850,6 +1887,16 @@
       "behaviour": "baton-nudge",
       "implements": [],
       "verified_by": []
+    },
+    "ws-hook-probe": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook --host auto --event {event} --probe",
+      "behaviour": "probe",
+      "implements": [
+        "claim"
+      ],
+      "verified_by": [
+        "selftest:09-tools/ws_hook.py"
+      ]
     }
   },
   "registrations": [
@@ -1860,10 +1907,11 @@
       "command": "ws-user-sessionstart",
       "timeout": 15,
       "matcher": null,
-      "host_skip": [],
-      "claim_group": null,
-      "defers_to": "claude-project.session-start",
-      "pending": "C: host_skip cursor through the pinned host filter / dispatcher deferral"
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": "claude-boot",
+      "defers_to": "claude-project.session-start"
     },
     {
       "id": "claude-user.user-prompt",
@@ -1872,7 +1920,9 @@
       "command": "ws-user-reassert",
       "timeout": 5,
       "matcher": null,
-      "host_skip": [],
+      "host_skip": [
+        "cursor"
+      ],
       "claim_group": null,
       "defers_to": null
     },
@@ -1883,7 +1933,9 @@
       "command": "ws-user-audit",
       "timeout": 10,
       "matcher": null,
-      "host_skip": [],
+      "host_skip": [
+        "cursor"
+      ],
       "claim_group": null,
       "defers_to": null
     },
@@ -1894,10 +1946,11 @@
       "command": "dispatcher",
       "timeout": 30,
       "matcher": null,
-      "host_skip": [],
+      "host_skip": [
+        "cursor"
+      ],
       "claim_group": null,
-      "defers_to": null,
-      "pending": "C: host_skip cursor through the pinned host filter / dispatcher deferral"
+      "defers_to": null
     },
     {
       "id": "claude-project.pre-tool",
@@ -1906,7 +1959,9 @@
       "command": "dispatcher",
       "timeout": 10,
       "matcher": "mcp__.*use_figma.*",
-      "host_skip": [],
+      "host_skip": [
+        "cursor"
+      ],
       "claim_group": null,
       "defers_to": null
     },
@@ -1917,10 +1972,11 @@
       "command": "dispatcher",
       "timeout": 10,
       "matcher": null,
-      "host_skip": [],
+      "host_skip": [
+        "cursor"
+      ],
       "claim_group": null,
-      "defers_to": null,
-      "pending": "C: host_skip cursor through the pinned host filter / dispatcher deferral"
+      "defers_to": null
     },
     {
       "id": "claude-project.post-tool",
@@ -1929,7 +1985,9 @@
       "command": "dispatcher",
       "timeout": 10,
       "matcher": "Edit|Write|MultiEdit|NotebookEdit",
-      "host_skip": [],
+      "host_skip": [
+        "cursor"
+      ],
       "claim_group": null,
       "defers_to": null
     },
@@ -1940,7 +1998,9 @@
       "command": "dispatcher",
       "timeout": 10,
       "matcher": null,
-      "host_skip": [],
+      "host_skip": [
+        "cursor"
+      ],
       "claim_group": null,
       "defers_to": null
     },
@@ -1951,7 +2011,9 @@
       "command": "dispatcher",
       "timeout": 60,
       "matcher": null,
-      "host_skip": [],
+      "host_skip": [
+        "cursor"
+      ],
       "claim_group": null,
       "defers_to": null
     },
@@ -1962,10 +2024,11 @@
       "command": "ws-user-sessionstart",
       "timeout": 15,
       "matcher": null,
-      "host_skip": [],
-      "claim_group": null,
-      "defers_to": "claude-project.session-start",
-      "pending": "C: claim_group claude-boot (the existing mkdir boot claim)"
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": "claude-boot",
+      "defers_to": "claude-project.session-start"
     },
     {
       "id": "cursor-user.session-start",
@@ -1979,78 +2042,6 @@
       "defers_to": null
     },
     {
-      "id": "cursor-user.user-prompt",
-      "layer": "cursor-user",
-      "event": "user-prompt",
-      "command": "cursor-prompt-route",
-      "timeout": 8,
-      "matcher": "UserPromptSubmit",
-      "host_skip": [],
-      "claim_group": null,
-      "defers_to": null,
-      "pending": "C: retired to _archive/cursor-dark-shims-2026-09"
-    },
-    {
-      "id": "cursor-user.pre-compact",
-      "layer": "cursor-user",
-      "event": "pre-compact",
-      "command": "cursor-reassert-user",
-      "timeout": null,
-      "matcher": null,
-      "host_skip": [],
-      "claim_group": null,
-      "defers_to": null,
-      "pending": "C: retired to _archive/cursor-dark-shims-2026-09"
-    },
-    {
-      "id": "cursor-user.session-end",
-      "layer": "cursor-user",
-      "event": "session-end",
-      "command": "cursor-sessionend-user",
-      "timeout": null,
-      "matcher": null,
-      "host_skip": [],
-      "claim_group": null,
-      "defers_to": null,
-      "pending": "C: retired to _archive/cursor-dark-shims-2026-09"
-    },
-    {
-      "id": "cursor-user.subagent-stop",
-      "layer": "cursor-user",
-      "event": "subagent-stop",
-      "command": "cursor-subagent-stop-user",
-      "timeout": null,
-      "matcher": null,
-      "host_skip": [],
-      "claim_group": null,
-      "defers_to": null,
-      "pending": "C: retired to _archive/cursor-dark-shims-2026-09"
-    },
-    {
-      "id": "cursor-project.pre-compact",
-      "layer": "cursor-project",
-      "event": "pre-compact",
-      "command": "cursor-reassert-project",
-      "timeout": null,
-      "matcher": null,
-      "host_skip": [],
-      "claim_group": null,
-      "defers_to": null,
-      "pending": "C: retired to _archive/cursor-dark-shims-2026-09"
-    },
-    {
-      "id": "cursor-project.session-end",
-      "layer": "cursor-project",
-      "event": "session-end",
-      "command": "cursor-sessionend-project",
-      "timeout": null,
-      "matcher": null,
-      "host_skip": [],
-      "claim_group": null,
-      "defers_to": null,
-      "pending": "C: retired to _archive/cursor-dark-shims-2026-09"
-    },
-    {
       "id": "cursor-project.subagent-stop",
       "layer": "cursor-project",
       "event": "subagent-stop",
@@ -2059,6 +2050,138 @@
       "matcher": null,
       "host_skip": [],
       "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "probe-claude-user.session-start",
+      "layer": "probe-claude-user",
+      "event": "session-start",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-claude-user.user-prompt",
+      "layer": "probe-claude-user",
+      "event": "user-prompt",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-claude-user.stop",
+      "layer": "probe-claude-user",
+      "event": "stop",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-claude-user.session-end",
+      "layer": "probe-claude-user",
+      "event": "session-end",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-cursor-user.session-start",
+      "layer": "probe-cursor-user",
+      "event": "session-start",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-cursor-user.user-prompt",
+      "layer": "probe-cursor-user",
+      "event": "user-prompt",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-cursor-user.pre-compact",
+      "layer": "probe-cursor-user",
+      "event": "pre-compact",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-cursor-user.session-end",
+      "layer": "probe-cursor-user",
+      "event": "session-end",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-cursor-user.subagent-stop",
+      "layer": "probe-cursor-user",
+      "event": "subagent-stop",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-codex-user.session-start",
+      "layer": "probe-codex-user",
+      "event": "session-start",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-codex-user.user-prompt",
+      "layer": "probe-codex-user",
+      "event": "user-prompt",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
+      "defers_to": null
+    },
+    {
+      "id": "probe-codex-user.stop",
+      "layer": "probe-codex-user",
+      "event": "stop",
+      "command": "ws-hook-probe",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": "ws-probe",
       "defers_to": null
     }
   ],
@@ -2129,7 +2252,93 @@
       "surface": "claude-code",
       "probe": false,
       "render": "hooks"
+    },
+    {
+      "id": "codex-config-fragment",
+      "path": "00-bootstrap/dist/codex-config-fragment.toml",
+      "layer": null,
+      "owned_keys": [
+        "shell_environment_policy.set.WS_SURFACE_FAMILY",
+        "sandbox_workspace_write.writable_roots"
+      ],
+      "install_path": "~/.codex/config.toml",
+      "install_mode": "managed-block",
+      "surface": "codex",
+      "probe": false,
+      "render": "codex-config"
+    },
+    {
+      "id": "cursor-sandbox-fragment",
+      "path": "00-bootstrap/dist/cursor-sandbox-fragment.json",
+      "layer": null,
+      "owned_keys": [
+        "additionalReadwritePaths"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": "cursor",
+      "probe": false,
+      "render": "cursor-sandbox"
+    },
+    {
+      "id": "probe-claude-code",
+      "path": "00-bootstrap/dist/probe/claude-code.json",
+      "layer": "probe-claude-user",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": "~/.claude/settings.json",
+      "install_mode": "merge-hook-entries",
+      "surface": "claude-code",
+      "probe": true,
+      "render": "hooks"
+    },
+    {
+      "id": "probe-cursor",
+      "path": "00-bootstrap/dist/probe/cursor.json",
+      "layer": "probe-cursor-user",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": "~/.cursor/hooks.json",
+      "install_mode": "merge-hook-entries",
+      "surface": "cursor",
+      "probe": true,
+      "render": "hooks"
+    },
+    {
+      "id": "probe-codex",
+      "path": "00-bootstrap/dist/probe/codex.json",
+      "layer": "probe-codex-user",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": "~/.codex/hooks.json",
+      "install_mode": "merge-hook-entries",
+      "surface": "codex",
+      "probe": true,
+      "render": "hooks"
+    },
+    {
+      "id": "surfaces-md-block",
+      "path": "00-bootstrap/SURFACES.md",
+      "layer": null,
+      "owned_keys": [
+        "surfaces-block"
+      ],
+      "install_path": null,
+      "install_mode": "tracked",
+      "surface": null,
+      "probe": false,
+      "render": "surfaces-md-block"
     }
   ],
-  "wrappers": {}
+  "wrappers": {
+    "00-bootstrap/dist/ws-hook": {
+      "sha256": "35ce5d895a865e9881e5d6c8a42bef5643f6bcebfc4545275ed8d9c4b8cc4b32"
+    },
+    "00-bootstrap/dist/ws": {
+      "sha256": "c955a7eb7942c90a656bc3577e462f04c605ccae163a594ee2edb1b785faa6ef"
+    }
+  }
 }

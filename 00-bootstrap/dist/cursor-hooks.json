@@ -5,28 +5,6 @@
       {
         "command": "$HOME/.claude/hooks/cursor-sessionstart.sh"
       }
-    ],
-    "beforeSubmitPrompt": [
-      {
-        "command": "$HOME/.claude/hooks/cursor-prompt-route.sh",
-        "matcher": "UserPromptSubmit",
-        "timeout": 8
-      }
-    ],
-    "preCompact": [
-      {
-        "command": "$HOME/.claude/hooks/cursor-reassert.sh"
-      }
-    ],
-    "sessionEnd": [
-      {
-        "command": "$HOME/.claude/hooks/cursor-sessionend.sh"
-      }
-    ],
-    "subagentStop": [
-      {
-        "command": "$HOME/.claude/hooks/cursor-subagent-stop.sh"
-      }
     ]
   }
 }
