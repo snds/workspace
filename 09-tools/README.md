@@ -363,18 +363,23 @@ A4 — the executable form of [[nightly-maintenance-recipe]]. **Wrapper only; no
 schedules it.** One command instead of re-reading a markdown list and hand-sequencing eight
 CLIs, which is the token cost the recipe was paying every time.
 
-`fold` (compact-sessions) → `rebuild` (build-related → build-registry → build-trigger-routes,
-MUTATING, order load-bearing) → `verify` (workspace-harness, read-only) → `watch`
-(ds-source-watch --check, advisory) → `commit` (**opt-in**, allowlisted paths only, refused
-on a red tree).
+`fold` (compact-sessions) → `rebuild` (fixpoint: build-registry → build-related → build-registry,
+skipped as `noop` when related wrote nothing → build-trigger-routes; MUTATING) → `verify`
+(workspace-harness, read-only) → `watch` (ds-source-watch --check, advisory) → `commit`
+(**opt-in**; stages exactly the paths this run wrote, refused on a red tree).
 
-Not a `.sh` despite the review naming `nightly.sh`: portable-first is an AGENTS core rule and
-the fleet includes a Windows machine.
+`--check` writes nothing and exits 1 on drift. `--scope all|staged|session:<id>|range:<R>` sets which
+dirty paths are yours (the rest are foreign, exit 4); `--budget` and `--step-timeout` mark overrunning steps SKIPPED (exit 3);
+`--json` lists written and foreign paths per step; `--lane pre-commit` judges the staged skill
+sources and prints the two fix lines; `--self-test` runs the hermetic fixtures (X1 replay, timed
+SessionEnd accelerator).
 
 ```
 python3 09-tools/nightly.py --dry-run
-python3 09-tools/nightly.py            # fold, rebuild, verify, report
-python3 09-tools/nightly.py --commit   # + commit mechanical updates
+python3 09-tools/nightly.py --phases rebuild      # the generator fixpoint
+python3 09-tools/nightly.py --check --phases rebuild
+python3 09-tools/nightly.py --commit              # + commit the written paths
+python3 09-tools/nightly.py --self-test
 ```
 
 ## validate-evidence-grades.py
@@ -468,6 +473,10 @@ Neutral hook core (H19): payload adapters, `host --skip-any` host filter, dedupe
 ## 00-bootstrap/doctor/render_shims.py
 
 Renders every hook registration file from 02-shared-references/surfaces.json (H16). `--check` covers Rule C coverage, Rule R one-registration, drift and wrapper sha; also `--write`, `--list --json`, `--install-state --json`, `--rev`, `--verify-canonical` and `--self-test`.
+
+## fixtures/nightly/
+
+Hermetic fixtures for nightly.py and dispatcher.py self-tests: temp vault from the real generators, X1 replay, timed SessionEnd, fake resolver modules, host-shaped payload copies.
 
 ## eslint-off-system/
 

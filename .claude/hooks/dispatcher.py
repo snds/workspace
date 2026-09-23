@@ -13,22 +13,29 @@ Reference: https://docs.claude.com/en/docs/claude-code/hooks
 
 from __future__ import annotations
 
+import importlib
+import importlib.util
 import json
 import os
 import re
 import socket
 import subprocess
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import NamedTuple
 
+_PROCESS_T0 = time.monotonic()  # the SessionEnd budget counts from process start
+# `--self-test` runs hermetic fixtures in temp repos (09-tools/fixtures/nightly/), so it
+# is the one entry allowed without CLAUDE_PROJECT_DIR.
+_SELF_TEST = __name__ == "__main__" and sys.argv[1:2] == ["--self-test"]
 _project_dir = os.environ.get("CLAUDE_PROJECT_DIR")
-if not _project_dir:
+if not _project_dir and not _SELF_TEST:
     # Not invoked by Claude Code from a project checkout (stray copy, mis-registered
     # hook). Abort silently rather than treating an arbitrary cwd as the workspace.
     sys.exit(0)
-WORKSPACE_ROOT = Path(_project_dir)
+WORKSPACE_ROOT = Path(_project_dir) if _project_dir else Path(__file__).resolve().parents[2]
 CONTEXT_DIR = WORKSPACE_ROOT / "06-context"
 SESSION_LOG = CONTEXT_DIR / "session-log.md"
 PROJECT_CONTEXT = CONTEXT_DIR / "project-context.md"
@@ -66,13 +73,18 @@ SAFE_STAGE_PATHS = [
 # safe-paths staging — committing those deletions could destroy real files on main.
 STALE_DELETION_THRESHOLD = 5
 
-HOSTNAME_MAP = {
-    "Voyager-2.local": "Personal MacBook Pro",
-    "seansands.local": "Work MacBook Pro",
-    "CS-KQ23N94M0W": "Work MacBook Pro (loaner)",
-    "CS-K746DRWXY1": "Work MacBook Pro (main, going forward)",
-    "Enterprise": "Windows Desktop",
-}
+# Machine labels come from 02-shared-references/devices.json through
+# profile_resolve.device_label() (D14: one declared device table). Fallback: the raw
+# short hostname.
+
+# Hosts whose hook payloads this dispatcher serves. Any other VERIFIED host (Cursor,
+# VS Code, ...) that loads .claude/settings.json gets no output from this file.
+CLAUDE_HOSTS = frozenset({"claude-code", "claude-code-cloud"})
+
+# Default timeout for read-only git calls on hook paths. Index-writing and network
+# calls pass their own, bounded by the SessionEnd deadline.
+GIT_TIMEOUT_S = 4.0
+GIT_WRITE_TIMEOUT_S = 15.0
 
 # Curated trigger → load-hint map. Source of truth:
 # 02-shared-references/trigger-routes.json (also rendered to trigger-routes.md for
@@ -153,9 +165,62 @@ def emit_context(text: str, event_name: str) -> None:
     print(json.dumps(payload))
 
 
+def _vault_module(name: str):
+    """Import a vault `09-tools` module lazily (import contract 3d). None on any failure,
+    so every caller keeps its fail-open fallback."""
+    tools = str(WORKSPACE_ROOT / "09-tools")
+    try:
+        if tools not in sys.path:
+            sys.path.insert(0, tools)
+        return importlib.import_module(name)
+    except Exception:  # noqa: BLE001 — ImportError, OSError, ValueError or a broken module
+        return None
+
+
+def _short_hostname() -> str:
+    try:
+        return socket.gethostname().split(".")[0] or "unknown-host"
+    except OSError:
+        return "unknown-host"
+
+
 def resolve_machine_label() -> str:
-    host = socket.gethostname()
-    return HOSTNAME_MAP.get(host, f"{host} (unknown machine — add to CLAUDE.md)")
+    """Label from devices.json via profile_resolve.device_label(); raw short hostname
+    when the resolver is absent or fails."""
+    pr = _vault_module("profile_resolve")
+    if pr is not None:
+        try:
+            label = pr.device_label()
+            if isinstance(label, str) and label.strip():
+                return label.strip()
+        except Exception:  # noqa: BLE001 — device_label never raises by contract; stay safe
+            pass
+    return _short_hostname()
+
+
+def _should_defer(payload: dict) -> bool:
+    """True only when a VERIFIED non-Claude host is running this hook (for example Cursor
+    or VS Code loading .claude/settings.json). The payload hint decides first, with no
+    ancestry walk when it names Claude Code. Any error, or unverified evidence, keeps
+    today's behaviour."""
+    try:
+        ws_hook = _vault_module("ws_hook")
+        if ws_hook is None:
+            return False
+        hint = ws_hook.payload_host_hint(payload)
+        if hint in CLAUDE_HOSTS:
+            return False
+        pr = _vault_module("profile_resolve")
+        if pr is None:
+            return False
+        det = pr.detect_surface(hint)
+        if not isinstance(det, dict):
+            return False
+        host = det.get("acting_host")
+        return bool(det.get("determined") and det.get("verified") and host
+                    and host not in CLAUDE_HOSTS)
+    except Exception:  # noqa: BLE001 — fail open: proceed as Claude Code
+        return False
 
 
 def read_head(path: Path, lines: int = 30) -> str:
@@ -166,13 +231,20 @@ def read_head(path: Path, lines: int = 30) -> str:
     return "".join(head).rstrip()
 
 
-def git(*args: str, check: bool = False) -> subprocess.CompletedProcess:
-    return subprocess.run(
-        ["git", "-C", str(WORKSPACE_ROOT), *args],
-        capture_output=True,
-        text=True,
-        check=check,
-    )
+def git(*args: str, check: bool = False,
+        timeout: float = GIT_TIMEOUT_S) -> subprocess.CompletedProcess:
+    """Run git in the workspace. A timeout returns exit 124 instead of raising."""
+    try:
+        return subprocess.run(
+            ["git", "-C", str(WORKSPACE_ROOT), *args],
+            capture_output=True,
+            text=True,
+            check=check,
+            timeout=timeout,
+        )
+    except subprocess.TimeoutExpired:
+        return subprocess.CompletedProcess(["git", *args], 124, stdout="",
+                                           stderr=f"git timed out after {timeout:g}s")
 
 
 def _is_inside_linked_worktree() -> bool:
@@ -236,8 +308,8 @@ def _cleanup_stale_worktrees() -> tuple[list[str], list[str]]:
     """Auto-remove fully-merged Drive-resident worktrees.
 
     Criteria for removal:
-    - Drive-resident: path begins with the canonical WORKSPACE_ROOT (Drive-synced).
-      Off-Drive worktrees (Tier 2 setup at e.g. ~/.claude-worktrees/) are skipped —
+    - Nested: path lies under WORKSPACE_ROOT + os.sep. Worktrees elsewhere (e.g.
+      ~/.claude-worktrees/, or sibling `<root>.intent-*` wave worktrees) are skipped —
       those may be parked work the user wants to keep.
     - Branch fully merged into main: `main..branch` is empty. Means main has every
       commit, so removing the worktree's working-tree copy loses nothing.
@@ -284,8 +356,10 @@ def _cleanup_stale_worktrees() -> tuple[list[str], list[str]]:
         # Skip the main working tree (workspace root itself)
         if resolved == drive_prefix:
             continue
-        # Only Drive-resident worktrees
-        if not resolved.startswith(drive_prefix):
+        # Only worktrees nested UNDER the workspace root. The separator matters:
+        # a sibling `<root>.intent-*` worktree shares the string prefix and must never
+        # be a candidate (wave worktrees are removed by their owner, not by this hook).
+        if not resolved.startswith(drive_prefix + os.sep):
             continue
         # Never self-remove
         if cur_path and resolved == cur_path:
@@ -299,7 +373,7 @@ def _cleanup_stale_worktrees() -> tuple[list[str], list[str]]:
             skipped.append(f"{path}: {branch} has commits not in main; manual review needed")
             continue
 
-        rm = git("worktree", "remove", "--force", path)
+        rm = git("worktree", "remove", "--force", path, timeout=GIT_WRITE_TIMEOUT_S)
         if rm.returncode != 0:
             skipped.append(f"{path}: `git worktree remove` failed — {rm.stderr.strip()}")
             continue
@@ -307,7 +381,7 @@ def _cleanup_stale_worktrees() -> tuple[list[str], list[str]]:
         short = branch.replace("refs/heads/", "")
         # Use -D since we already verified the branch is merged. Quiet on failure
         # (branch may already be gone if --force pruned it).
-        git("branch", "-D", short)
+        git("branch", "-D", short, timeout=GIT_WRITE_TIMEOUT_S)
         cleaned.append(short)
 
     return cleaned, skipped
@@ -633,7 +707,8 @@ def _content_hash_stage(rel_paths: list[str]) -> int:
             if len(parts) >= 2:
                 index_hash = parts[1]
         if disk_hash != index_hash:
-            up = git("update-index", "--add", "--cacheinfo", f"100644,{disk_hash},{rel}")
+            up = git("update-index", "--add", "--cacheinfo", f"100644,{disk_hash},{rel}",
+                     timeout=GIT_WRITE_TIMEOUT_S)
             if up.returncode == 0:
                 staged += 1
     return staged
@@ -1081,6 +1156,7 @@ def handle_session_start(payload: dict) -> None:
     # filesystem side effects (healing/cleanup already ran at true startup).
     if source in ("compact", "resume"):
         emit_context(build_reorientation_context(machine, now, source), "SessionStart")
+        _write_session_baseline(payload, source)
         return
 
     ensure_local_gitdir()
@@ -1107,6 +1183,23 @@ def handle_session_start(payload: dict) -> None:
         ),
         "SessionStart",
     )
+    _write_session_baseline(payload, source)
+
+
+def _write_session_baseline(payload: dict, source: str) -> None:
+    """Record this session's starting porcelain (ws_hook.write_baseline, workspace only),
+    so `nightly --scope session:<sid>` can tell this session's edits from older dirt.
+    A resumed or compacted session keeps the baseline it started with. Fail-open."""
+    try:
+        sid = str(payload.get("session_id") or "")
+        existing = WORKSPACE_ROOT / ".workspace" / "state" / "sessions" / f"{sid}.json"
+        if source in ("compact", "resume") and sid and existing.is_file():
+            return
+        ws_hook = _vault_module("ws_hook")
+        if ws_hook is not None:
+            ws_hook.write_baseline(payload, WORKSPACE_ROOT)
+    except Exception:  # noqa: BLE001 — a baseline is an accelerator, never a blocker
+        pass
 
 
 def _term_matches(term: str, prompt: str) -> bool:
@@ -1519,7 +1612,7 @@ def handle_stop(payload: dict) -> None:
     _record_bash_writes(payload.get("session_id") or "")
     r = git("diff", "--name-only", "--", "06-context/session-log.md")
     if r.stdout.strip():
-        git("add", "06-context/session-log.md")
+        git("add", "06-context/session-log.md", timeout=GIT_WRITE_TIMEOUT_S)
 
 
 # Paths every session-end must stage regardless of tool tracking (the reconciled
@@ -1542,11 +1635,19 @@ def _other_session_claims(session_id: str) -> set[str]:
     return claims
 
 
-def _stage_session_scope(payload: dict) -> str:
+def _stage_session_scope(payload: dict, extra: list[str] | None = None,
+                         exclude: set[str] | None = None) -> str:
     """Stage this session's changes. Returns 'scoped' when a PostToolUse touch-list
     exists (commit limited to this session's files), else 'all' (blanket `git add -A`
     fallback, backward compatible). Scoping is what keeps concurrent sessions from
-    committing each other's in-flight work."""
+    committing each other's in-flight work.
+
+    `extra` = paths the session-end rebuild WROTE (minus foreign ones), so rewritten
+    Related blocks and the registry ride with the edit that caused them. `exclude` =
+    paths that must never be staged here: foreign edits, and generator output from a
+    rebuild that was SKIPPED or FAILED."""
+    extra = list(extra or [])
+    exclude = set(exclude or ())
     session_id = payload.get("session_id")
     touched: list[str] = []
     if session_id:
@@ -1554,7 +1655,9 @@ def _stage_session_scope(payload: dict) -> str:
         if tf.exists():
             touched = [ln.strip() for ln in tf.read_text(encoding="utf-8").splitlines() if ln.strip()]
     if not touched:
-        git("add", "-A")
+        git("add", "-A", timeout=GIT_WRITE_TIMEOUT_S)
+        if exclude:
+            git("reset", "-q", "--", *sorted(exclude), timeout=GIT_WRITE_TIMEOUT_S)
         return "all"
     # Subtract what OTHER live sessions have claimed. Each session declares its own
     # paths in its own touch file, so a path another session is mid-edit on is theirs
@@ -1562,10 +1665,18 @@ def _stage_session_scope(payload: dict) -> str:
     # resolve on its own, and it is the concrete failure observed 2026-09-15.
     theirs = _other_session_claims(session_id)
     mine = [p for p in touched if p not in theirs]
-    # Stage add/mod/del for exactly this session's paths + the always-staged set.
-    # Per-path + check=False so one stale pathspec never aborts the whole stage.
-    for path in mine + _SCOPE_ALWAYS:
-        git("add", "-A", "--", path, check=False)
+    # Stage add/mod/del for exactly this session's paths + the always-staged set + what
+    # the rebuild wrote. Per-path + check=False so one stale pathspec never aborts the
+    # whole stage.
+    seen: set[str] = set()
+    for path in mine + _SCOPE_ALWAYS + extra:
+        if path in seen or path in exclude:
+            continue
+        seen.add(path)
+        git("add", "-A", "--", path, check=False, timeout=GIT_WRITE_TIMEOUT_S)
+    if exclude:
+        # A directory pathspec above (06-context/sessions) may have swept one in.
+        git("reset", "-q", "--", *sorted(exclude), timeout=GIT_WRITE_TIMEOUT_S)
     try:
         tf = _session_touch_file(session_id)
         tf.unlink()  # consume the touch-list; it's transient + gitignored
@@ -1574,7 +1685,13 @@ def _stage_session_scope(payload: dict) -> str:
     return "scoped"
 
 
-def _push_with_retry(attempts: int = 3) -> bool:
+def _remaining(deadline: float | None, cap: float) -> float:
+    if deadline is None:
+        return cap
+    return max(0.0, min(cap, deadline - time.monotonic()))
+
+
+def _push_with_retry(attempts: int = 3, deadline: float | None = None) -> bool:
     """Push, integrating any commits another machine pushed first — safely.
 
     On a non-fast-forward rejection: `git pull --rebase` (autostash is pinned OFF, so
@@ -1583,10 +1700,16 @@ def _push_with_retry(attempts: int = 3) -> bool:
     conflict in a structured file (project-context.md) aborts the rebase and is left
     for a deliberate /reconcile — never auto-guessed. In every failure path the local
     commit is SAFE (committed, just not yet pushed); a later clean session-end or
-    /reconcile carries it up. Idempotent + non-lossy.
+    /reconcile carries it up. Idempotent + non-lossy. Every network call is bounded by
+    the SessionEnd `deadline`.
     """
     for _ in range(attempts):
-        push = git("push")
+        budget = _remaining(deadline, GIT_WRITE_TIMEOUT_S)
+        if budget < 1.0:
+            sys.stderr.write("[session-end] push deferred: SessionEnd budget spent; "
+                             "your commit is safe locally.\n")
+            return False
+        push = git("push", timeout=budget)
         if push.returncode == 0:
             return True
         err = ((push.stderr or "") + (push.stdout or "")).lower()
@@ -1594,9 +1717,10 @@ def _push_with_retry(attempts: int = 3) -> bool:
             sys.stderr.write(f"[session-end] push failed (not a race): {push.stderr.strip()}\n")
             return False
         # Remote moved. Integrate it by rebasing our commit on top.
-        pull = git("pull", "--rebase")
+        budget = _remaining(deadline, GIT_WRITE_TIMEOUT_S)
+        pull = git("pull", "--rebase", timeout=max(budget, 1.0))
         if pull.returncode != 0:
-            git("rebase", "--abort", check=False)  # no-op if not mid-rebase
+            git("rebase", "--abort", check=False, timeout=GIT_WRITE_TIMEOUT_S)  # no-op if not mid-rebase
             sys.stderr.write(
                 "[session-end] push deferred: remote moved and the local tree/rebase "
                 "isn't clean (a concurrent session's edits, or a structured-file "
@@ -1608,9 +1732,96 @@ def _push_with_retry(attempts: int = 3) -> bool:
     return False
 
 
+# SessionEnd budget invariant (H1): heal, commit and push together stay <= 55 s, under
+# Claude's 60 s SessionEnd maximum. The rebuild gets max(5, 55 - elapsed - 20) seconds;
+# the 20 s reserve covers staging, commit, last-gate.json and push.
+SESSION_END_BUDGET_S = 55.0
+SESSION_END_RESERVE_S = 20.0
+LAST_GATE = WORKSPACE_ROOT / ".workspace" / "state" / "last-gate.json"
+GENERATED_OUTPUTS = ("03-skills/skills.registry.json", "02-shared-references/trigger-routes.md")
+
+
+def _current_branch() -> str:
+    return git("symbolic-ref", "--short", "-q", "HEAD").stdout.strip()
+
+
+def _session_rebuild(session_id: str | None, budget: float) -> dict | None:
+    """Delegate the regeneration fixpoint to nightly.py. Returns its JSON report, a
+    synthetic SKIPPED report on a hard timeout, or None when nightly is unavailable or
+    unparseable (the caller then falls back to the inline registry rebuild)."""
+    tool = WORKSPACE_ROOT / "09-tools" / "nightly.py"
+    if not tool.is_file():
+        return None
+    scope = f"session:{session_id}" if session_id else "all"
+    cmd = [sys.executable, str(tool), "--phases", "rebuild", "--scope", scope, "--json",
+           "--budget", f"{budget:.1f}"]
+    try:
+        r = subprocess.run(cmd, cwd=str(WORKSPACE_ROOT), capture_output=True, text=True,
+                           timeout=budget + 5.0)
+    except subprocess.TimeoutExpired:
+        return {"status": "skipped", "written": [], "foreign": [], "hard_timeout": True}
+    except OSError:
+        return None
+    try:
+        report = json.loads(r.stdout)
+    except ValueError:
+        return None
+    if not isinstance(report, dict) or report.get("status") not in ("ok", "fail", "skipped", "refused"):
+        return None
+    return report
+
+
+def _inline_registry_rebuild() -> None:
+    """Pre-H1 fallback: regenerate the registry when a SKILL.md changed and nightly.py
+    is unavailable, so the auto-commit never ships a stale graph."""
+    if "SKILL.md" not in git("status", "--porcelain", "--", "03-skills").stdout:
+        return
+    builder = WORKSPACE_ROOT / "09-tools" / "build-registry.py"
+    if not builder.exists():
+        return
+    try:
+        reg = subprocess.run([sys.executable, str(builder)], capture_output=True, text=True,
+                             cwd=str(WORKSPACE_ROOT), timeout=20)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        sys.stderr.write(f"[session-end] registry regeneration skipped: {exc}\n")
+        return
+    if reg.returncode != 0:
+        sys.stderr.write(f"[session-end] registry regeneration failed: {reg.stderr}\n")
+    else:
+        sys.stderr.write("[session-end] regenerated skills.registry.json (SKILL.md changed)\n")
+
+
+def _write_last_gate(nightly_status: str) -> None:
+    """Record the gate result for the exact post-commit HEAD tree (workspace only,
+    gitignored). A later pre-push short-circuits only on a matching tree hash."""
+    try:
+        head = git("rev-parse", "HEAD").stdout.strip()
+        tree = git("rev-parse", "HEAD^{tree}").stdout.strip()
+        if not head or not tree:
+            return
+        LAST_GATE.parent.mkdir(parents=True, exist_ok=True)
+        data = {"schema_version": 1, "head": head, "tree": tree,
+                "nightly": {"status": nightly_status, "phases": ["rebuild"]},
+                "ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+        tmp = LAST_GATE.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+        os.replace(tmp, LAST_GATE)
+    except OSError:
+        pass
+
+
 def handle_session_end(payload: dict) -> None:
+    deadline = _PROCESS_T0 + SESSION_END_BUDGET_S
     if not in_git_repo():
         sys.stderr.write("[session-end] not a git repo; skipping commit/push\n")
+        return
+
+    # Wave implementor branches are committed explicitly by their owner. An auto-commit
+    # here would stage _SCOPE_ALWAYS or `git add -A` onto the task branch.
+    branch = _current_branch()
+    if branch.startswith("intent/"):
+        sys.stderr.write(f"[session-end] on {branch}: auto-commit and push skipped "
+                         "(intent/* branches are committed explicitly by their task)\n")
         return
 
     _ensure_drive_safe_git_config()
@@ -1620,6 +1831,7 @@ def handle_session_end(payload: dict) -> None:
 
     machine = resolve_machine_label()
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    gate_status = "skipped"
 
     # Auto-commit safety guard. `git add -A` is unsafe in two cases:
     #   1. Drive stat-cache lies about file existence (phantom entries) → would
@@ -1656,43 +1868,62 @@ def handle_session_end(payload: dict) -> None:
         if not status:
             sys.stderr.write("[session-end] no changes to commit\n")
             return
-        # Self-heal: if any SKILL.md changed this session, regenerate the skills
-        # registry BEFORE staging so the auto-commit never ships a stale graph.
-        # (Previously only GitHub CI's `build-registry.py --check` caught this,
-        # after the stale registry was already pushed.)
-        if "SKILL.md" in git("status", "--porcelain", "--", "03-skills").stdout:
-            builder = WORKSPACE_ROOT / "09-tools" / "build-registry.py"
-            if builder.exists():
-                reg = subprocess.run(
-                    [sys.executable, str(builder)],
-                    capture_output=True, text=True, cwd=str(WORKSPACE_ROOT),
-                )
-                if reg.returncode != 0:
-                    sys.stderr.write(f"[session-end] registry regeneration failed: {reg.stderr}\n")
-                else:
-                    sys.stderr.write("[session-end] regenerated skills.registry.json (SKILL.md changed)\n")
+        # Heal BEFORE staging so the auto-commit never ships a stale graph: the
+        # regeneration fixpoint runs through nightly.py, scoped to this session, within
+        # the SessionEnd budget. Stage the session scope plus what the rebuild wrote,
+        # minus foreign edits; never stage generator output from a SKIPPED/FAIL rebuild.
+        elapsed = time.monotonic() - _PROCESS_T0
+        budget = max(5.0, SESSION_END_BUDGET_S - elapsed - SESSION_END_RESERVE_S)
+        session_id = payload.get("session_id")
+        report = _session_rebuild(session_id, budget)
+        extra: list[str] = []
+        exclude: set[str] = set()
+        if report is None:
+            _inline_registry_rebuild()  # fail-open fallback (pre-H1 behaviour)
+        else:
+            rstatus = report.get("status")
+            written = [p for p in report.get("written") or [] if isinstance(p, str)]
+            foreign = {p for p in report.get("foreign") or [] if isinstance(p, str)}
+            exclude |= foreign
+            if rstatus in ("ok", "refused"):
+                extra = [p for p in written if p not in foreign]
+                gate_status = "ok" if rstatus == "ok" else "fail"
+            else:
+                exclude |= set(written) | set(GENERATED_OUTPUTS)
+                gate_status = "fail" if rstatus == "fail" else "skipped"
+            if foreign:
+                sys.stderr.write("[session-end] left unstaged (another session's edits on "
+                                 f"regenerated files): {', '.join(sorted(foreign))}\n")
+            if rstatus not in ("ok", "refused"):
+                sys.stderr.write(f"[session-end] rebuild {rstatus}: generated files not "
+                                 "staged; CI and the next session re-check\n")
         # Stage this session's work. If we tracked which files THIS session edited
         # (PostToolUse), scope the commit to exactly those (+ the reconciled log and
         # fragment churn) so a CONCURRENT session's in-flight edits are never swept
         # into our commit. Otherwise fall back to `git add -A` (backward compatible).
-        scope = _stage_session_scope(payload)
+        scope = _stage_session_scope(payload, extra=extra, exclude=exclude)
         msg = f"session: auto-commit from {machine} @ {stamp}"
         if scope == "scoped":
             msg += " (scoped)"
 
-    commit = git("commit", "-m", msg)
+    commit = git("commit", "-m", msg, timeout=max(1.0, _remaining(deadline, GIT_WRITE_TIMEOUT_S)))
     if commit.returncode != 0:
         sys.stderr.write(f"[session-end] commit failed: {commit.stderr}\n")
         return
 
+    # Record the gate for the exact committed tree BEFORE pushing.
+    _write_last_gate(gate_status)
+
     # Push if a remote is configured — safely, idempotently, non-lossily.
     remote = git("remote").stdout.strip()
     if remote:
-        _push_with_retry()
+        _push_with_retry(deadline=deadline)
 
     # Opportunistic cleanup of OTHER stale worktrees. Skips the current one
     # (git refuses self-removal); next session-start in the canonical workspace
-    # root will catch this one.
+    # root will catch this one. Only when the budget still has room.
+    if _remaining(deadline, 60.0) < 5.0:
+        return
     try:
         cleaned, _ = _cleanup_stale_worktrees()
         if cleaned:
@@ -1714,17 +1945,42 @@ HANDLERS = {
 }
 
 
+def _self_test() -> int:
+    """Hermetic fixtures (temp repos, fake resolver modules, temp HOME). The fixture code
+    lives in 09-tools/fixtures/nightly/ so this hot-path file stays small."""
+    fx = Path(__file__).resolve().parents[2] / "09-tools" / "fixtures" / "nightly" / "selftest_dispatcher.py"
+    if not fx.is_file():
+        sys.stderr.write(f"dispatcher self-test: missing {fx}\n")
+        return 1
+    spec = importlib.util.spec_from_file_location("selftest_dispatcher", fx)
+    if spec is None or spec.loader is None:
+        return 1
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules["selftest_dispatcher"] = mod
+    spec.loader.exec_module(mod)
+    return int(mod.run(Path(__file__).resolve()))
+
+
 def main() -> int:
+    # Never exit 2 on a usage error or an unknown event: exit 2 is a BLOCK for
+    # UserPromptSubmit and PreToolUse (and in VS Code).
     if len(sys.argv) < 2:
-        sys.stderr.write("usage: dispatcher.py <event>\n")
-        return 2
+        sys.stderr.write("dispatcher: no event given; nothing to do\n")
+        return 0
     event = sys.argv[1]
+    if event == "--self-test":
+        return _self_test()
     handler = HANDLERS.get(event)
     if not handler:
-        sys.stderr.write(f"unknown event: {event}\n")
-        return 2
+        sys.stderr.write(f"dispatcher: unknown event {event!r}; ignored\n")
+        return 0
     try:
         payload = read_stdin_json()
+        if not isinstance(payload, dict):
+            payload = {}
+        # Another verified host (Cursor, VS Code) loading .claude/settings.json: no output.
+        if _should_defer(payload):
+            return 0
         handler(payload)
         return 0
     except Exception as exc:

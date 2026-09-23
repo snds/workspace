@@ -452,8 +452,8 @@ human), and they are what let dynamic multi-agent work stay one coherent contrac
 **Embedded, not commit-only.** Done on a vault write means the relevant validators ran in this session,
 not only that files were saved. Commit/CI is the backstop.
 
-**Enforcement (run before claiming the write complete; CI runs them too):** `build-related.py` → `build-registry.py` →
-`build-trigger-routes.py` → `evaluate-skill-routing.py` →
+**Enforcement (run before claiming the write complete; CI runs them too):** `nightly.py --phases rebuild` →
+`evaluate-skill-routing.py` →
 `validate-integrity.py` (quality + cross-link continuity + anti-zombie) → `validate-links.py` →
 `validate-workspace.py`. Then the first-wave detectors: `skill-loadset.py --self-test` →
 `close-out-dispatch.py --check` → `validate-layer0-schema.py --check` → `session-status.py --check` → `check-secrets.py`
@@ -461,10 +461,8 @@ not only that files were saved. Commit/CI is the backstop.
 the Claude hook must delegate to `prompt_route.py`, never fork the matcher) → `workspace-harness.py` (all three lanes in one pass: the chain above, whether an agent can
 **reach** every skill/knowledge entry, and the worst-case traversal token budget — `--self-test` first, budgets
 in `BUDGETS` are raised only by a deliberate diff).
-Negative fixtures: `python3 09-tools/test-validators.py`. **Order matters: `build-related` rewrites `## Related` blocks inside SKILL.md
-files, and `build-registry` stores a content hash per skill — so the registry must be built _after_ the
-files it hashes are final.** Running registry-first leaves stale hashes whenever `build-related` changes
-anything, which CI catches as `registry-drift` / `capability-validator` failures (observed 2026-07-20).
+Negative fixtures: `python3 09-tools/test-validators.py`. **`nightly.py` owns the rebuild fixpoint (registry, related,
+registry, trigger-routes); do not hand-sequence the generators.**
 Gate 2 is partly semantic — CI can't fully judge intent; that's the authoring agent
 + PR review. Everything else is machine-checked. See framework 08 for the per-layer detail.
 

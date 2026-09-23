@@ -52,18 +52,16 @@ including a mid-task dynamic model swap in Cursor — must clear four gates:
 
 **Embedded, not commit-only.** Done on a vault write means the relevant validators ran in this session, not only that files were saved. Commit/CI is the backstop. After a skill, knowledge, or framework edit, run the chain before claiming complete:
 
-`build-related.py` → `build-registry.py` → `build-trigger-routes.py` → `evaluate-skill-routing.py` → `validate-integrity.py` → `validate-links.py` → `validate-workspace.py`.
+`python3 09-tools/nightly.py --phases rebuild` → `evaluate-skill-routing.py` → `validate-integrity.py` → `validate-links.py` → `validate-workspace.py`.
 
 CI mirrors these. Gate 2 is partly semantic — the authoring agent + PR review own it; the rest is machine-checked. Mirrored, compressed, in [[AGENTS]] → "Write-quality gates". Negative fixtures: `python3 09-tools/test-validators.py`.
 
-**Why `build-related` runs first.** It rewrites the `## Related` block *inside* SKILL.md files;
-`build-registry` records a content hash per skill. Build the registry first and any file `build-related`
-subsequently touches carries a stale hash, so the committed registry is already drifted — CI fails with
-`registry-drift` and `capability-validator` even though the chain was "run as documented". The coupling is
-one-directional (`build-related` writes what `build-registry` reads), so ordering alone closes it. If a
-future generator also mutates SKILL.md content, it belongs *before* `build-registry` too — or the chain
-needs a run-to-fixpoint loop. Discovered 2026-07-20 when a Related-block refresh to `found-color`,
-`infod-encoding-theory` and `ux-component-library` drifted exactly those three hashes.
+**Why the rebuild is a fixpoint.** `build-related` rewrites the `## Related` block *inside* SKILL.md
+files and reads the registry to do it; `build-registry` records a content hash per skill. The coupling runs
+both ways, so ordering alone cannot close it (the 2026-07-20 `registry-drift` on `found-color`,
+`infod-encoding-theory` and `ux-component-library` was that gap). `nightly.py --phases rebuild` runs
+registry → related → registry (skipped when related wrote nothing) → trigger-routes and reports the exact
+paths it wrote. Do not hand-sequence the generators.
 
 ### Graph & freshness conventions (knowledge/memory notes)
 

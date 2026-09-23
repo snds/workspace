@@ -189,6 +189,21 @@
 - **Purpose**: Synthetic-owner fixtures (acme-corp/acme-bb) for check-secrets --self-test: fixture context-remotes table, planted/clean/growth texts, cache fixture, expected hits, never-print markers.
 - **Last modified**: 2026-09-22 — created in wave 0 (T4).
 
+### 09-tools/nightly.py
+- **Size**: ~538 lines
+- **Purpose**: Regeneration sequencer and nightly recipe entrypoint (H1): generator fixpoint, written paths, session scope, pre-commit lane.
+- **Last modified**: 2026-09-22 — created in wave 0 (T5).
+
+### 09-tools/fixtures/nightly/
+- **Size**: 11 files
+- **Purpose**: T5 self-test fixtures for nightly.py and the Claude dispatcher (X1 replay, timed SessionEnd accelerator, deferral payloads).
+- **Last modified**: 2026-09-22 — created in wave 0 (T5).
+
+### .claude/hooks/dispatcher.py
+- **Size**: ~1992 lines
+- **Purpose**: Claude Code hook dispatcher: defers to verified non-Claude hosts, SessionEnd delegates to nightly within 55 s, labels from devices.json, --self-test.
+- **Last modified**: 2026-09-22 — created in wave 0 (T5).
+
 ## Meridian Design System — files/meridian-ds/
 
 ### app-shell-prototype-v0.1.jsx

@@ -1,0 +1,8 @@
+{
+  "hookEventName": "PreToolUse",
+  "sessionId": "fixture-vscode-session",
+  "timestamp": "2026-09-22T20:00:00Z",
+  "cwd": "fixture-cwd",
+  "tool_name": "mcp__figma__use_figma",
+  "tool_input": {}
+}

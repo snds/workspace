@@ -22,6 +22,10 @@ on:
       - "03-skills/visual-prove-engine/**"
       - "03-skills/play-prove/**"
       - ".github/workflows/validator-fixtures.yml"
+      - ".claude/hooks/dispatcher.py"
+      - "00-bootstrap/setup/setup.py"
+      - "09-tools/nightly.py"
+      - "09-tools/fixtures/nightly/**"
       - "09-tools/fixtures/employer_substance/**"
       - "02-shared-references/employer-substance-baseline.json"
       - "09-tools/intent-run.py"
@@ -58,6 +62,10 @@ on:
       - "03-skills/visual-prove-engine/**"
       - "03-skills/play-prove/**"
       - ".github/workflows/validator-fixtures.yml"
+      - ".claude/hooks/dispatcher.py"
+      - "00-bootstrap/setup/setup.py"
+      - "09-tools/nightly.py"
+      - "09-tools/fixtures/nightly/**"
       - "09-tools/fixtures/employer_substance/**"
       - "02-shared-references/employer-substance-baseline.json"
       - "09-tools/intent-run.py"
@@ -91,6 +99,10 @@ jobs:
           python-version: "3.x"
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py
+      - name: Dispatcher self-test
+        run: python3 .claude/hooks/dispatcher.py --self-test
+      - name: Nightly sequencer self-test (fixpoint, lane, X1 replay, timed SessionEnd)
+        run: python3 09-tools/nightly.py --self-test
       - name: session-status self-test
         run: python3 09-tools/session-status.py --self-test
       - name: check-secrets self-test

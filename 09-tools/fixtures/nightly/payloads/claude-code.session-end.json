@@ -1,0 +1,7 @@
+{
+  "session_id": "fixture-claude-end",
+  "transcript_path": "fixture-transcript.jsonl",
+  "cwd": "fixture-cwd",
+  "hook_event_name": "SessionEnd",
+  "reason": "exit"
+}

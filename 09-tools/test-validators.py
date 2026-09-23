@@ -20,6 +20,7 @@ import datetime as dt
 import importlib.util
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -1161,6 +1162,223 @@ class TestEmployerSubstance(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             rc = self._quiet(cs.main, ["--class", "employer-substance", "--baseline-check"], home=Path(td))
         self.assertEqual(rc, 0)
+
+
+class TestNightly(unittest.TestCase):
+    """H1 sequencer: written-path diffing, phase order, lane matching, scope parsing."""
+
+    def setUp(self):
+        self.n = load("nightly")
+
+    def test_written_between_reports_changed_created_and_deleted(self):
+        before = {"a": "1", "b": "2", "gone": "3"}
+        after = {"a": "1", "b": "9", "new": "4"}
+        self.assertEqual(self.n.written_between(before, after), ["b", "gone", "new"])
+
+    def test_phase_order_is_canonical_and_commit_flag_adds_commit(self):
+        self.assertEqual(self.n._ordered_phases("verify,rebuild", False), ["rebuild", "verify"])
+        self.assertEqual(self.n._ordered_phases("rebuild", True), ["rebuild", "commit"])
+        with self.assertRaises(ValueError):
+            self.n._ordered_phases("rebuild,bogus", False)
+
+    def test_fixpoint_order_is_declared(self):
+        tools = [s["tool"] for s in self.n.PHASES if s["phase"] == "rebuild"]
+        self.assertEqual(tools, ["build-registry.py", "build-related.py", "build-registry.py",
+                                 "build-trigger-routes.py"])
+        self.assertTrue(self.n.PHASES[3]["fixpoint"])
+
+    def test_lane_matches_only_skill_sources(self):
+        m = self.n._lane_matches
+        self.assertTrue(m("03-skills/x/SKILL.md"))
+        self.assertTrue(m("02-shared-references/trigger-routes.json"))
+        self.assertTrue(m("02-shared-references/knowledge-hints.json"))
+        self.assertFalse(m("03-skills/skills.registry.json"))
+        self.assertFalse(m("06-context/session-log.md"))
+
+    def test_scope_rejects_unknown_and_empty(self):
+        for bad in ("bogus", "session:", "range:"):
+            with self.assertRaises(ValueError):
+                self.n.resolve_scope(bad)
+        self.assertIsNone(self.n.resolve_scope("all"))
+
+    def test_session_scope_reads_ledger_and_baseline(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "06-context" / "sessions").mkdir(parents=True)
+            (root / "06-context" / "sessions" / "S1.touched").write_text("a.md\n", encoding="utf-8")
+            (root / ".workspace" / "state" / "sessions").mkdir(parents=True)
+            (root / ".workspace" / "state" / "sessions" / "S1.json").write_text(json.dumps(
+                {"schema_version": 1, "porcelain": [{"xy": " M", "path": "old.md", "orig": None}]}),
+                encoding="utf-8")
+            original = self.n._dirty_now
+            self.n._dirty_now = lambda r: {"old.md", "new.md"}
+            try:
+                scope = self.n.resolve_scope("session:S1", root)
+            finally:
+                self.n._dirty_now = original
+            self.assertEqual(scope, {"a.md", "new.md"})
+
+
+class TestDispatcherDefer(unittest.TestCase):
+    """Verified non-Claude hosts get no dispatcher output; Claude Code payloads proceed.
+
+    Runs the real dispatcher against a temp repo that carries copies of the real
+    ws_hook.py, profile_resolve.py and their tables, fed T1's golden payloads."""
+
+    PAYLOADS = TOOLS / "fixtures" / "ws_hook" / "payloads"
+    TABLES = ("surfaces.json", "devices.json", "delivery-playbooks/context-remotes.json")
+
+    def _env(self, home):
+        drop = ("GIT_", "CLAUDE", "CURSOR", "CODEX", "WS_", "GH_", "VSCODE", "TERM_PROGRAM",
+                "GEMINI", "COPILOT", "AI_AGENT")
+        env = {k: v for k, v in os.environ.items() if not k.startswith(drop)}
+        env.update(HOME=str(home), GIT_CONFIG_NOSYSTEM="1")
+        return env
+
+    def _repo(self, td):
+        repo = Path(td) / "ws"
+        (repo / "09-tools").mkdir(parents=True)
+        for mod in ("ws_hook.py", "profile_resolve.py"):
+            src = TOOLS / mod
+            if not src.is_file():
+                self.skipTest(f"{mod} not integrated yet")
+            (repo / "09-tools" / mod).write_bytes(src.read_bytes())
+        for rel in self.TABLES:
+            src = ROOT_DIR / "02-shared-references" / rel
+            if src.is_file():
+                dst = repo / "02-shared-references" / rel
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                dst.write_bytes(src.read_bytes())
+        (repo / ".gitignore").write_text(".workspace/\n.claude/state/\n", encoding="utf-8")
+        return repo
+
+    def _run(self, repo, home, event, payload):
+        env = self._env(home)
+        env["CLAUDE_PROJECT_DIR"] = str(repo)
+        return subprocess.run(
+            [sys.executable, str(ROOT_DIR / ".claude" / "hooks" / "dispatcher.py"), event],
+            input=json.dumps(payload), capture_output=True, text=True, env=env, cwd=str(repo),
+            timeout=60)
+
+    def test_foreign_host_payloads_exit_silently(self):
+        files = sorted(self.PAYLOADS.glob("cursor.*.json")) + sorted(
+            self.PAYLOADS.glob("copilot-vscode.*.json"))
+        if not files:
+            self.skipTest("T1 golden payloads not present")
+        with tempfile.TemporaryDirectory() as td:
+            repo, home = self._repo(td), Path(td) / "home"
+            home.mkdir()
+            subprocess.run(["git", "init", "-q", "-b", "main", str(repo)], check=True,
+                           env=self._env(home), capture_output=True)
+            for f in files:
+                event = f.name.split(".")[1]
+                if event not in ("session-start", "user-prompt", "pre-tool", "post-tool",
+                                 "stop", "session-end"):
+                    continue
+                pl = json.loads(f.read_text(encoding="utf-8"))
+                if event == "pre-tool":
+                    pl = dict(pl, tool_name="mcp__figma__use_figma")
+                r = self._run(repo, home, event, pl)
+                self.assertEqual(r.returncode, 0, f.name)
+                self.assertEqual(r.stdout, "", f"{f.name} produced output")
+
+    def test_claude_code_payload_proceeds(self):
+        f = self.PAYLOADS / "claude-code.pre-tool.json"
+        if not f.is_file():
+            # T1's goldens cover session-start and user-prompt only; T5 ships a pre-tool copy.
+            f = TOOLS / "fixtures" / "nightly" / "payloads" / "claude-code.pre-tool.json"
+        if not f.is_file():
+            self.skipTest("no claude-code pre-tool payload present")
+        with tempfile.TemporaryDirectory() as td:
+            repo, home = self._repo(td), Path(td) / "home"
+            home.mkdir()
+            subprocess.run(["git", "init", "-q", "-b", "main", str(repo)], check=True,
+                           env=self._env(home), capture_output=True)
+            pl = dict(json.loads(f.read_text(encoding="utf-8")), tool_name="mcp__figma__use_figma",
+                      session_id="t5-claude-proceeds")
+            r = self._run(repo, home, "pre-tool", pl)
+            self.assertEqual(r.returncode, 0)
+            self.assertIn("permissionDecision", r.stdout)
+
+    def test_unknown_event_exits_zero(self):
+        with tempfile.TemporaryDirectory() as td:
+            home = Path(td)
+            r = self._run(Path(td), home, "no-such-event", {})
+            self.assertEqual(r.returncode, 0)
+            self.assertIn("unknown event", r.stderr)
+
+
+class TestScopedCommitH1(unittest.TestCase):
+    """H1 extensions of TestScopedCommit: written paths ride along, excluded paths never
+    stage, sibling worktrees are never cleanup candidates, and intent/* branches never
+    auto-commit. Reuses TestScopedCommit's loader (CLAUDE_PROJECT_DIR guard satisfied)."""
+
+    _dispatcher = TestScopedCommit._dispatcher
+
+    class _Git:
+        def __init__(self, branch="main"):
+            self.calls = []
+            self.branch = branch
+
+        def __call__(self, *args, **kwargs):
+            self.calls.append(args)
+            out = ""
+            if args[:2] == ("symbolic-ref", "--short"):
+                out = self.branch + "\n"
+            return subprocess.CompletedProcess(["git", *args], 0, stdout=out, stderr="")
+
+    def test_stage_adds_written_and_never_excluded(self):
+        d = self._dispatcher()
+        with tempfile.TemporaryDirectory() as td:
+            sessions = Path(td)
+            orig = (d.SESSIONS_DIR, d.git)
+            d.SESSIONS_DIR, d.git = sessions, self._Git()
+            try:
+                (sessions / "s1.touched").write_text("03-skills/x/SKILL.md\n", encoding="utf-8")
+                mode = d._stage_session_scope(
+                    {"session_id": "s1"},
+                    extra=["03-skills/y/SKILL.md", "03-skills/skills.registry.json"],
+                    exclude={"03-skills/z/SKILL.md", "03-skills/skills.registry.json"})
+                self.assertEqual(mode, "scoped")
+                added = [c[-1] for c in d.git.calls if c[:3] == ("add", "-A", "--")]
+                self.assertIn("03-skills/x/SKILL.md", added)
+                self.assertIn("03-skills/y/SKILL.md", added)
+                self.assertNotIn("03-skills/skills.registry.json", added)
+                resets = [c for c in d.git.calls if c[:1] == ("reset",)]
+                self.assertTrue(resets and "03-skills/z/SKILL.md" in resets[-1])
+            finally:
+                d.SESSIONS_DIR, d.git = orig
+
+    def test_cleanup_never_touches_sibling_intent_worktrees(self):
+        d = self._dispatcher()
+        with tempfile.TemporaryDirectory() as td:
+            ws = Path(td) / "ws"
+            (ws / ".claude" / "worktrees" / "n").mkdir(parents=True)
+            (Path(td) / "ws.intent-x").mkdir()
+            orig = (d.WORKSPACE_ROOT, d.git, d.in_git_repo, d._list_worktrees,
+                    d._branch_fully_merged_into_main)
+            d.WORKSPACE_ROOT, d.git, d.in_git_repo = ws, self._Git(), (lambda: True)
+            d._list_worktrees = lambda: [
+                {"path": str(ws), "branch": "refs/heads/main"},
+                {"path": str(Path(td) / "ws.intent-x"), "branch": "refs/heads/intent/x"},
+                {"path": str(ws / ".claude" / "worktrees" / "n"), "branch": "refs/heads/n"}]
+            d._branch_fully_merged_into_main = lambda b: True
+            try:
+                cleaned, _ = d._cleanup_stale_worktrees()
+            finally:
+                (d.WORKSPACE_ROOT, d.git, d.in_git_repo, d._list_worktrees,
+                 d._branch_fully_merged_into_main) = orig
+            self.assertEqual(cleaned, ["n"])
+
+    def test_session_end_on_intent_branch_never_commits(self):
+        d = self._dispatcher()
+        orig = (d.git, d.in_git_repo)
+        d.git, d.in_git_repo = self._Git(branch="intent/x"), (lambda: True)
+        try:
+            d.handle_session_end({"session_id": "s1"})
+            self.assertFalse(any(c[:1] in (("commit",), ("push",), ("add",)) for c in d.git.calls))
+        finally:
+            d.git, d.in_git_repo = orig
 
 
 def main(argv: list) -> int:

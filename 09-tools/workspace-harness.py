@@ -115,6 +115,8 @@ QUALITY_CHAIN = [
     ("intent-run.py", ["--self-test"]),
     ("check-secrets.py", ["--self-test"]),
     ("check-secrets.py", ["--class", "employer-substance", "--report"]),
+    ("nightly.py", ["--self-test"]),
+    ("../.claude/hooks/dispatcher.py", ["--self-test"]),
     ("test-validators.py", []),
 ]
 
@@ -487,6 +489,63 @@ def check_named_detectors(root: Path = ROOT) -> dict:
     return {"check": "named-detectors", "scanned": len(named), "failures": fails}
 
 
+# 3d single-source rule (wave 0): each resolver helper has exactly one home. A second
+# module-level definition is a fork; the harness finds it by AST, so fake modules held as
+# source text and methods on test doubles do not count.
+SINGLE_SOURCE_HOME = "09-tools/profile_resolve.py"
+SINGLE_SOURCE_HELPERS = ("detect_surface", "normalize_remote", "load_table", "agent_check")
+# render_shims reads surfaces.json itself (3b allows it); its loader is not the H2 helper.
+SINGLE_SOURCE_EXEMPT = {("00-bootstrap/doctor/render_shims.py", "load_table")}
+_LEGACY_MAP_RE = re.compile(r"\b" + "HOSTNAME" + r"_MAP\s*=")
+_SHELL_CLASSIFY_RE = re.compile(r"^\s*classify\s*\(\)\s*\{(.*?)^\}", re.M | re.S)
+_TEXT_SUFFIXES = {".py", ".sh", ".md", ".mdc", ".json", ".toml", ".yml", ".yaml", ".txt"}
+
+
+def _tracked_files(root: Path) -> list:
+    try:
+        out = subprocess.run(["git", "ls-files", "-z"], capture_output=True, text=True,
+                             cwd=str(root), check=True, timeout=30).stdout
+        return [f for f in out.split("\0") if f]
+    except (OSError, subprocess.SubprocessError):
+        return [p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()]
+
+
+def check_single_sources(root: Path = ROOT, files: list | None = None) -> dict:
+    """C8 — one home per helper: no legacy hostname map, no forked resolver helper, and
+    every shell classify() delegates to profile_resolve.py."""
+    import ast
+
+    files = _tracked_files(root) if files is None else files
+    fails, scanned = [], 0
+    for rel in files:
+        path = root / rel
+        if path.suffix not in _TEXT_SUFFIXES or "_archive/" in rel or not path.is_file():
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        scanned += 1
+        if _LEGACY_MAP_RE.search(text):
+            fails.append(f"{rel}: legacy hostname map literal (labels live in devices.json)")
+        if path.suffix == ".py" and rel != SINGLE_SOURCE_HOME:
+            try:
+                tree = ast.parse(text)
+            except SyntaxError:
+                continue
+            for node in tree.body:
+                if (isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                        and node.name in SINGLE_SOURCE_HELPERS
+                        and (rel, node.name) not in SINGLE_SOURCE_EXEMPT):
+                    fails.append(f"{rel}:{node.lineno}: second definition of {node.name}() "
+                                 f"(its home is {SINGLE_SOURCE_HOME})")
+        if path.suffix == ".sh":
+            for body in _SHELL_CLASSIFY_RE.findall(text):
+                if "profile_resolve.py" not in body:
+                    fails.append(f"{rel}: shell classify() does not delegate to profile_resolve.py")
+    return {"check": "single-sources", "scanned": scanned, "failures": fails}
+
+
 def run_connections() -> dict:
     if not REGISTRY.exists():
         return {"lane": "connections", "failed": 1,
@@ -502,6 +561,7 @@ def run_connections() -> dict:
         check_index_link_resolution(),
         check_trigger_collisions(reg),
         check_named_detectors(),
+        check_single_sources(),
     ]
     return {"lane": "connections",
             "failed": sum(1 for c in checks if c["failures"]),
@@ -842,6 +902,32 @@ def self_test() -> int:
         expect("always-loaded ceiling accepts a file at its ceiling",
                not any("CLAUDE.md" in o for o in grown["over"]))
     expect("always-loaded ceilings hold on the live tree", not check_always_loaded_bytes()["over"])
+
+    with tempfile.TemporaryDirectory() as td:
+        fake = Path(td)
+        (fake / "09-tools").mkdir()
+        (fake / "09-tools" / "profile_resolve.py").write_text("def agent_check():\n    pass\n",
+                                                           encoding="utf-8")
+        (fake / "09-tools" / "fork.py").write_text(
+            "def agent_check():\n    pass\n" + "HOSTNAME" + "_MAP = {}\n", encoding="utf-8")
+        (fake / "09-tools" / "double.py").write_text(
+            "SRC = 'def load_table(name):\\n    pass'\nclass Fake:\n    def detect_surface(self):\n"
+            "        pass\n", encoding="utf-8")
+        (fake / "enroll.sh").write_text("classify() {\n  echo unknown\n}\n", encoding="utf-8")
+        (fake / "ok.sh").write_text("classify() {\n  python3 x/profile_resolve.py repo\n}\n",
+                                    encoding="utf-8")
+        files = ["09-tools/profile_resolve.py", "09-tools/fork.py", "09-tools/double.py",
+                 "enroll.sh", "ok.sh"]
+        single = check_single_sources(fake, files)["failures"]
+        expect("single-sources catches a forked helper",
+               any("fork.py" in f and "agent_check" in f for f in single))
+        expect("single-sources catches a legacy hostname map",
+               any("fork.py" in f and "hostname map" in f for f in single))
+        expect("single-sources catches a non-delegating shell classify()",
+               any("enroll.sh" in f for f in single))
+        expect("single-sources ignores the home, source text, methods and delegating shells",
+               not any(x in f for f in single
+                       for x in ("profile_resolve.py:", "double.py", "ok.sh")))
 
     expect("PATH_RE finds a parenthesised path",
            PATH_RE.findall("resolve (02-shared-references/x.md) first") == ["02-shared-references/x.md"])

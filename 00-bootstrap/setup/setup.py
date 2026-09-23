@@ -37,13 +37,9 @@ from pathlib import Path
 REPO_NAME = "workspace"
 DEFAULT_REPO_URL = os.environ.get("CLAUDE_WORKSPACE_REPO", "")  # e.g. git@github.com:snds/workspace.git
 
-HOSTNAME_MAP = {
-    "Voyager-2.local": "Personal MacBook Pro",
-    "seansands.local": "Work MacBook Pro",
-    "CS-KQ23N94M0W": "Work MacBook Pro (loaner)",
-    "CS-K746DRWXY1": "Work MacBook Pro (main, going forward)",
-    "Enterprise": "Windows Desktop",
-}
+# Machine labels live in ONE declared table, 02-shared-references/devices.json, read
+# through 09-tools/profile_resolve.py (D14). Fallback: the raw short hostname.
+DEVICES_TABLE = "02-shared-references/devices.json"
 
 # Marker file that identifies the workspace root (the universal contract).
 ROOT_MARKER = "AGENTS.md"
@@ -120,9 +116,50 @@ def detect_os() -> str:
     return s
 
 
-def detect_machine_label() -> str:
-    host = socket.gethostname()
-    return HOSTNAME_MAP.get(host, f"unknown ({host})")
+def short_hostname() -> str:
+    try:
+        return socket.gethostname().split(".")[0] or "unknown-host"
+    except OSError:
+        return "unknown-host"
+
+
+def _profile_resolve(root: Path | None = None):
+    """Lazily import the vault's profile_resolve (import contract 3d). None on failure."""
+    root = root or find_workspace_root()
+    if root is None:
+        return None
+    tools = str(root / "09-tools")
+    try:
+        if tools not in sys.path:
+            sys.path.insert(0, tools)
+        import profile_resolve  # noqa: PLC0415 — lazy by contract
+        return profile_resolve
+    except (ImportError, OSError, ValueError):
+        return None
+
+
+def detect_machine_label(*, root: Path | None = None) -> str:
+    """Device label from devices.json; the raw short hostname when unresolvable."""
+    pr = _profile_resolve(root)
+    if pr is not None:
+        try:
+            label = pr.device_label()
+            if isinstance(label, str) and label.strip():
+                return label.strip()
+        except Exception:  # noqa: BLE001 — device_label never raises by contract
+            pass
+    return short_hostname()
+
+
+def hostname_known(*, root: Path | None = None) -> bool | None:
+    """True/False from profile_resolve.current_device(); None when the resolver is absent."""
+    pr = _profile_resolve(root)
+    if pr is None:
+        return None
+    try:
+        return bool(pr.current_device().get("hostname_known"))
+    except Exception:  # noqa: BLE001 — TableError or a malformed table
+        return None
 
 
 def find_workspace_root() -> Path | None:
@@ -361,18 +398,22 @@ def download_file(url: str, dest: Path) -> None:
 
 
 def register_hostname(workspace: Path) -> None:
-    host = socket.gethostname()
-    if host in HOSTNAME_MAP:
-        ok(f"Hostname '{host}' known → {HOSTNAME_MAP[host]}")
+    host = short_hostname()
+    known = hostname_known(root=workspace)
+    if known:
+        ok(f"Hostname '{host}' known → {detect_machine_label(root=workspace)}")
         return
+    if known is None:
+        warn(f"profile_resolve unavailable; the machine label falls back to '{host}'.")
     step(f"Unknown hostname: {host}")
-    label = input(f"  Label for this machine (e.g. 'Personal MacBook Pro'): ").strip()
+    label = input("  Label for this machine (e.g. 'Personal MacBook Pro'): ").strip()
     if not label:
         warn("No label provided; skipping registration.")
         return
-    # Update CLAUDE.md's hostname table + the dispatcher.
-    warn("Add this mapping manually to CLAUDE.md and .claude/hooks/dispatcher.py:")
-    print(f"    '{host}': '{label}',")
+    # One declared table; every tool reads it through profile_resolve.
+    warn(f"Add this hostname to the matching device in {DEVICES_TABLE} "
+         "(devices[].hostnames, and hostname_labels if the label differs):")
+    print(f'    "{host}"  →  "{label}"')
 
 
 # ---------- Verification ----------
@@ -432,7 +473,7 @@ def verify(workspace: Path) -> None:
 
 def main() -> int:
     os_name = detect_os()
-    host = socket.gethostname()
+    host = short_hostname()
     machine = detect_machine_label()
 
     print(f"\n\033[1mClaude Workspace Installer\033[0m")
