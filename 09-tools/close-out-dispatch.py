@@ -133,7 +133,8 @@ HUB_DETECTORS: dict[str, tuple[Step, ...]] = {
         _cli("ds-source-watch.py", "--check"),
     ),
     "intent-coordination": (
-        _cli("intent-run.py", "doctor", name="intent-run doctor"),
+        _cli("intent-run.py", "--self-test"),
+        _skip("intent-run-doctor", "doctor is environment info, not a detector"),
     ),
     "lead-security-architect": (
         _skip(

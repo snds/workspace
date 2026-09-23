@@ -174,6 +174,11 @@
 - **Purpose**: Six retired Cursor shims (dark output or duplicate registration), with ARCHIVE-LOG rows.
 - **Last modified**: 2026-09-22 — created in wave 0 (T1).
 
+### 09-tools/fixtures/intent_run/
+- **Size**: 2 files
+- **Purpose**: Synthetic intent-spec fixtures (parser cases, a wave spec with selectors, @Tn, human: measures, HELD) for intent-run.py --self-test
+- **Last modified**: 2026-09-22 — created in wave 0 (T6).
+
 ## Meridian Design System — files/meridian-ds/
 
 ### app-shell-prototype-v0.1.jsx

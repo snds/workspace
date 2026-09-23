@@ -264,6 +264,8 @@ python3 09-tools/intent-run.py install-app   # optional GUI; macOS copies Intent
 
 Measures are printed unless `--run`. Never auto-commit. Context profile on the spec still governs landing.
 
+Living-spec runner: status, gate, ready, worktree add, verify [--run] [--root DIR] (shlex + shell=False; automated contexts run only python3 + git-tracked 09-tools/*.py), scope-audit (task writes + @T9a, HELD, JSON selectors, unreverted auto-commits); --self-test
+
 ## skill-loadset.py
 
 AGENTS.md `load_set` as a CLI. Utterance → matched skills, ordered `SKILL.md` paths

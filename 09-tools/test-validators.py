@@ -288,6 +288,10 @@ approval: pending
 | T1 | implementor | design-engineer | worktree | T0 | | code |
 """
 
+    @staticmethod
+    def _isolated_env(home):
+        return {"HOME": str(home), "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull}
+
     def test_gate_blocks_pending_approval(self):
         ir = load("intent-run")
         spec = ir.parse_spec(self.SAMPLE)
@@ -303,6 +307,135 @@ approval: pending
         self.assertEqual(ready[0]["id"], "T1")
         self.assertEqual(spec["checks"][0]["measure"], "python3 -c 'print(1)'")
         self.assertEqual(spec["checks"][1]["measure"], "")
+
+    def test_self_test_passes(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as td:
+            env = dict(os.environ, **self._isolated_env(td))
+            r = subprocess.run([sys.executable, str(TOOLS / "intent-run.py"), "--self-test"],
+                               capture_output=True, text=True, env=env, timeout=300)
+        self.assertEqual(r.returncode, 0, r.stdout[-2000:] + r.stderr[-2000:])
+
+    def test_frontmatter_and_approval_grammar(self):
+        ir = load("intent-run")
+
+        def fm(line):
+            meta, _, comments = ir._split_frontmatter_ex("---\n" + line + "\n---\n")
+            return meta, comments
+
+        meta, comments = fm("approval: approved via PR 12")
+        self.assertEqual(meta["approval"], "approved via PR 12")
+        self.assertEqual(ir.approval_detail(meta, comments)["pr"], 12)
+        meta, comments = fm('approval: "approved via PR #12"')
+        self.assertEqual(meta["approval"], "approved via PR #12")
+        self.assertEqual(ir.approval_detail(meta, comments)["errors"], [])
+        meta, comments = fm("approval: approved via PR #12")
+        self.assertEqual(comments["approval"], "#12")
+        self.assertTrue(ir.approval_detail(meta, comments)["errors"])
+        self.assertTrue(any(level == "ERROR" for level, _ in ir.lint_spec(
+            {"meta": meta, "meta_comments": comments})))
+        self.assertEqual(fm("blocked_by: x#F-003")[0]["blocked_by"], "x#F-003")
+        self.assertEqual(fm("profile: personal-solo # c")[0]["profile"], "personal-solo")
+        det = ir.approval_detail(fm("approval: approved 2026-09-22 by Sean (chat 'go')")[0])
+        self.assertEqual((det["kind"], det["by"], det["grammar_ok"]), ("approved", "Sean", True))
+
+    def test_escaped_pipe_and_measure_delimiter(self):
+        ir = load("intent-run")
+        rows = ir._parse_table("| a | b |\n|---|---|\n| (foo\\|bar) | z |\n")
+        self.assertEqual(rows, [{"a": "(foo|bar)", "b": "z"}])
+        spec = ir.parse_spec("---\nprofile: p\n---\n## Fidelity / acceptance checklist\n\n"
+                             "- [ ] x -- measure: python3 a.py -- signal: y\n")
+        self.assertEqual(spec["checks"][0]["measure"], "python3 a.py")
+
+    def test_no_git_write_invariant(self):
+        ir = load("intent-run")
+        self.assertEqual(ir.git_write_violations((TOOLS / "intent-run.py").read_text(encoding="utf-8")), [])
+        self.assertTrue(ir.git_write_violations("import subprocess\nsubprocess.run(['git','commit'])\n"))
+
+    def test_verify_human_and_injection_never_run(self):
+        import contextlib
+        import io
+        import subprocess
+        from unittest import mock
+        ir = load("intent-run")
+        with tempfile.TemporaryDirectory() as tds:
+            td = Path(tds).resolve()
+            with mock.patch.dict(os.environ, self._isolated_env(td)):
+                repo = td / "repo"
+                (repo / "09-tools").mkdir(parents=True)
+                subprocess.run(["git", "init", "-q", "-b", "main"], cwd=repo, check=True, timeout=30)
+                (repo / "09-tools" / "ok.py").write_text("raise SystemExit(0)\n", encoding="utf-8")
+                subprocess.run(["git", "add", "09-tools/ok.py"], cwd=repo, check=True, timeout=30)
+                pwned, human = td / "pwned", td / "human"
+                spec = td / "spec.md"
+                spec.write_text(
+                    "---\nprofile: personal-solo\napproval: approved 2026-01-01 by Fixture\n---\n"
+                    "## Fidelity / acceptance checklist\n\n"
+                    "- [ ] ok -- measure: python3 09-tools/ok.py\n"
+                    f"- [ ] injected -- measure: python3 09-tools/x.py; touch {pwned}\n"
+                    f"- [ ] person -- measure: human: touch {human}\n", encoding="utf-8")
+                results = set()
+                for automated in (True, False):
+                    buf = io.StringIO()
+                    with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+                        rc = ir.cmd_verify(spec, True, str(repo), automated=automated)
+                    results.add((automated, rc))
+                    self.assertFalse(pwned.exists(), buf.getvalue())
+                    self.assertFalse(human.exists(), buf.getvalue())
+                    self.assertIn("HUMAN: person", buf.getvalue())
+                self.assertIn((True, 2), results)
+                self.assertIn((False, 1), results)
+
+    def test_automated_context_fail_closed_and_claudecode_tty(self):
+        ir = load("intent-run")
+
+        def boom():
+            raise ImportError("absent")
+
+        self.assertTrue(ir.automated_context(loader=boom)[0])
+        tty = {"stdin": True, "stdout": True}
+        fake = ir.automated_context(env={"CLAUDECODE": "1"}, ancestry=[], isatty=tty,
+                                    loader=lambda: ir._FakeResolver)
+        self.assertTrue(fake[0])
+        if (TOOLS / "profile_resolve.py").is_file():
+            pr = load("profile_resolve")
+            self.assertTrue(ir.automated_context(env={"CLAUDECODE": "1"}, ancestry=[], isatty=tty,
+                                                 loader=lambda: pr)[0])
+            self.assertTrue(ir.automated_context(env={"CI": "1"}, ancestry=[], isatty=tty,
+                                                 loader=lambda: pr)[0])
+
+    def test_scope_audit_held_and_integrator_paths(self):
+        import contextlib
+        import io
+        from unittest import mock
+        ir = load("intent-run")
+        with tempfile.TemporaryDirectory() as tds:
+            td = Path(tds).resolve()
+            with mock.patch.dict(os.environ, self._isolated_env(td)):
+                spec = td / "INTENT-fixture.md"
+                spec.write_text((TOOLS / "fixtures" / "intent_run" / "synthetic-spec.md")
+                                .read_text(encoding="utf-8"), encoding="utf-8")
+
+                def run(files, name):
+                    repo, env = ir._new_repo(td, name)
+                    h = ir._History(repo, env)
+                    b0 = h.commit("main", "base", {"README.md": "x\n"})
+                    tip = h.commit("intent/T2", "wave0(T2): work", files, frm=b0)
+                    h.flush()
+                    merged = dict(files, **{"tools/test-validators.py": "# w9\n"})
+                    h.commit("main", "wave0(T9a): merge intent/T2", merged, frm=b0, merge=tip)
+                    h.flush()
+                    buf = io.StringIO()
+                    with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+                        rc = ir.cmd_scope_audit(spec, task=None, rev=None, wave_merges=True,
+                                                ref="main", root=str(repo))
+                    return rc, buf.getvalue()
+
+                rc, out = run({"tools/beta.py": "b\n"}, "ok")
+                self.assertEqual(rc, 0, out)
+                rc, out = run({"tools/beta.py": "b\n", "held/x.md": "x\n"}, "held")
+                self.assertEqual(rc, 1, out)
+                self.assertIn("held: held/x.md", out)
 
 
 class TestPromptRouteFollowthrough(unittest.TestCase):

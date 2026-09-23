@@ -41,6 +41,8 @@ on:
       - "02-shared-references/knowledge-hints.json"
       - "02-shared-references/schemas/**"
       - "03-skills/skills.registry.json"
+      - "09-tools/intent-run.py"
+      - "09-tools/fixtures/intent_run/**"
       - "09-tools/ws_hook.py"
       - "00-bootstrap/doctor/render_shims.py"
       - "00-bootstrap/dist/**"
@@ -87,6 +89,8 @@ on:
       - "02-shared-references/knowledge-hints.json"
       - "02-shared-references/schemas/**"
       - "03-skills/skills.registry.json"
+      - "09-tools/intent-run.py"
+      - "09-tools/fixtures/intent_run/**"
       - "09-tools/ws_hook.py"
       - "00-bootstrap/doctor/render_shims.py"
       - "00-bootstrap/dist/**"
@@ -170,5 +174,7 @@ jobs:
         run: python3 00-bootstrap/doctor/render_shims.py --check
       - name: Hook core self-test
         run: python3 09-tools/ws_hook.py --self-test
+      - name: Intent-run self-test (parser, verify hardening, scope-audit, no-git-write)
+        run: python3 09-tools/intent-run.py --self-test
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py
