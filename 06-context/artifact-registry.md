@@ -179,6 +179,16 @@
 - **Purpose**: Synthetic intent-spec fixtures (parser cases, a wave spec with selectors, @Tn, human: measures, HELD) for intent-run.py --self-test
 - **Last modified**: 2026-09-22 — created in wave 0 (T6).
 
+### 02-shared-references/employer-substance-baseline.json
+- **Size**: ~119 lines
+- **Purpose**: H25 employer-substance baseline: counts per (path, rule), no matched text; written only by T4 via check-secrets --write-baseline; may only shrink.
+- **Last modified**: 2026-09-22 — created in wave 0 (T4).
+
+### 09-tools/fixtures/employer_substance/
+- **Size**: 8 files
+- **Purpose**: Synthetic-owner fixtures (acme-corp/acme-bb) for check-secrets --self-test: fixture context-remotes table, planted/clean/growth texts, cache fixture, expected hits, never-print markers.
+- **Last modified**: 2026-09-22 — created in wave 0 (T4).
+
 ## Meridian Design System — files/meridian-ds/
 
 ### app-shell-prototype-v0.1.jsx

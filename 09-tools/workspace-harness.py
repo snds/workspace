@@ -113,6 +113,8 @@ QUALITY_CHAIN = [
     ("../00-bootstrap/doctor/render_shims.py", ["--check"]),
     ("../00-bootstrap/doctor/render_shims.py", ["--self-test"]),
     ("intent-run.py", ["--self-test"]),
+    ("check-secrets.py", ["--self-test"]),
+    ("check-secrets.py", ["--class", "employer-substance", "--report"]),
     ("test-validators.py", []),
 ]
 

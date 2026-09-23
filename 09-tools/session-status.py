@@ -9,30 +9,35 @@ Usage:
   python3 09-tools/session-status.py --surface Cursor --via cursor-hook/startup
   python3 09-tools/session-status.py --json
   python3 09-tools/session-status.py --check
+  python3 09-tools/session-status.py --family claude|cursor|codex|auto
+  python3 09-tools/session-status.py --self-test
+
+Family-aware (H25): when the walls family is `claude`, projects whose SESSION-STATE
+`Context profile` starts with `centric-` collapse to one count line, and the pending
+line adds the employer-keyword count. Every other family gets today's card, byte for
+byte. The machine label comes from `profile_resolve.device_label()`; if that import
+fails the label is the raw short hostname. Fail-open throughout.
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
+import importlib.util
+import io
 import json
 import os
 import re
 import socket
 import subprocess
 import sys
-from datetime import date, datetime
+import tempfile
+from datetime import date, datetime, timezone
 from pathlib import Path
+from typing import Any, Optional
 
 TOOLS = Path(__file__).resolve().parent
 ROOT = TOOLS.parent
-
-HOSTNAME_MAP = {
-    "Voyager-2.local": "Personal MacBook Pro",
-    "seansands.local": "Work MacBook Pro",
-    "CS-KQ23N94M0W": "Work MacBook Pro (loaner)",
-    "CS-K746DRWXY1": "Work MacBook Pro",
-    "Enterprise": "Windows Desktop",
-}
 
 AUDIT_STALE_DAYS = 14
 HARNESS_MAP_STALE_DAYS = 30
@@ -48,10 +53,98 @@ ROUTING_STAMP = (
 SIDE_CHAT = ROOT / "06-context" / "side-chat-inbox.md"
 DOCTOR_STATE = Path.home() / ".claude" / "ws-state"
 
+EMPLOYER_PROFILE_PREFIX = "centric-"
+EMPLOYER_HANDLERS = "Cursor/Codex"
+ORACLE_SHA = "2ff02e7"
+_UNSET: Any = object()
 
-def machine_label() -> str:
-    host = socket.gethostname()
-    return HOSTNAME_MAP.get(host, host)
+
+def _resolver() -> Any:
+    """Lazy import of the vault resolver (3d import rules). None when absent. Fail-open."""
+    try:
+        if str(TOOLS) not in sys.path:
+            sys.path.insert(0, str(TOOLS))
+        import profile_resolve  # noqa: PLC0415 — lazy by contract
+
+        return profile_resolve
+    except Exception:  # fail-open: any import-time failure means "no resolver"
+        return None
+
+
+def _short_hostname() -> str:
+    host = socket.gethostname() or "unknown-host"
+    return host.split(".", 1)[0] or host
+
+
+def machine_label(*, resolver: Any = _UNSET) -> str:
+    pr = _resolver() if resolver is _UNSET else resolver
+    if pr is not None:
+        try:
+            label = pr.device_label()
+            if isinstance(label, str) and label.strip():
+                return label
+        except Exception:
+            pass
+    return _short_hostname()
+
+
+def resolve_family(family: str = "auto", *, resolver: Any = _UNSET) -> str:
+    """The walls family: explicit flag, else profile_resolve.detect_surface(). Unknown on failure."""
+    if family and family != "auto":
+        return family
+    pr = _resolver() if resolver is _UNSET else resolver
+    if pr is None:
+        return "unknown"
+    try:
+        det = pr.detect_surface()
+        fam = det.get("family_for_walls") if isinstance(det, dict) else None
+        return fam if isinstance(fam, str) and fam else "unknown"
+    except Exception:
+        return "unknown"
+
+
+def employer_keywords(*, resolver: Any = _UNSET) -> Optional[list[str]]:
+    """`employer_substance.count_keywords` from context-remotes, or None when unreadable."""
+    pr = _resolver() if resolver is _UNSET else resolver
+    if pr is None:
+        return None
+    try:
+        table = pr.load_table("context-remotes")
+        words = table["employer_substance"]["count_keywords"]
+    except Exception:
+        return None
+    if not isinstance(words, list):
+        return None
+    return [w for w in words if isinstance(w, str) and w.strip()]
+
+
+def count_pending_employer(keywords: list[str], path: Optional[Path] = None) -> int:
+    """Open `- [ ]` lines naming any keyword (case-insensitive, word boundaries)."""
+    target = path or PROJECT_CONTEXT
+    if not keywords or not target.is_file():
+        return 0
+    rx = re.compile(
+        r"(?<![A-Za-z0-9_])(?:" + "|".join(re.escape(k) for k in keywords) + r")(?![A-Za-z0-9_])",
+        re.IGNORECASE,
+    )
+    n = 0
+    for line in target.read_text(encoding="utf-8", errors="replace").splitlines():
+        if re.match(r"^\s*-\s\[\s\]\s", line) and rx.search(line):
+            n += 1
+    return n
+
+
+def project_profile(state: Path) -> str:
+    """The SESSION-STATE `Context profile` value (first token, backticks stripped)."""
+    try:
+        text = state.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return ""
+    m = re.search(r"^\s*-\s+\*\*Context profile\*\*:\s*(.+)$", text, re.MULTILINE)
+    if not m:
+        return ""
+    value = m.group(1).strip().lstrip("`").strip()
+    return re.split(r"[`\s/]", value, maxsplit=1)[0] if value else ""
 
 
 def _git(*args: str) -> str:
@@ -279,17 +372,34 @@ def _notices() -> list[str]:
     return out
 
 
-def collect(surface: str = "", via: str = "session-status") -> dict:
+def collect(
+    surface: str = "", via: str = "session-status", family: str = "auto", *, resolver: Any = _UNSET
+) -> dict:
+    pr = _resolver() if resolver is _UNSET else resolver
     now = datetime.now().astimezone()
     git = git_state()
     projects = active_projects()
-    return {
+    fam = resolve_family(family, resolver=pr)
+    hidden = 0
+    pending_employer: Optional[int] = None
+    if fam == "claude":
+        base = ROOT / "07-projects"
+        kept = [
+            p for p in projects
+            if not project_profile(base / p[0] / "SESSION-STATE.md").startswith(EMPLOYER_PROFILE_PREFIX)
+        ]
+        hidden = len(projects) - len(kept)
+        projects = kept
+        words = employer_keywords(resolver=pr)
+        if words is not None:
+            pending_employer = count_pending_employer(words)
+    data = {
         "branch": git["branch"],
         "sha": git["sha"],
         "date": now.strftime("%Y-%m-%d"),
         "datetime": now.strftime("%Y-%m-%d %H:%M %Z") or now.strftime("%Y-%m-%d %H:%M"),
         "via": via,
-        "machine": machine_label(),
+        "machine": machine_label(resolver=pr),
         "surface": surface or os.environ.get("WORKSPACE_SURFACE", "agent"),
         "last_session": last_session() or "(none in log)",
         "pending": count_pending(),
@@ -299,6 +409,10 @@ def collect(surface: str = "", via: str = "session-status") -> dict:
         "git_line": git["line"],
         "notices": notices(),
     }
+    data["family"] = fam
+    data["employer_projects_hidden"] = hidden
+    data["pending_employer"] = pending_employer
+    return data
 
 
 def format_card(data: dict) -> str:
@@ -314,32 +428,46 @@ def format_card(data: dict) -> str:
     lines.append("")
     lines.append(f"- **Surface:** {data['surface']}")
     lines.append(f"- **Last session:** {data['last_session']}")
+    employer = data.get("pending_employer")
+    split = (
+        f" ({employer} employer — handled by {EMPLOYER_HANDLERS})" if employer is not None else ""
+    )
     lines.append(
-        f"- **Pending:** {data['pending']} items → "
+        f"- **Pending:** {data['pending']} items{split} → "
         "06-context/project-context.md"
     )
-    n = len(data["projects"])
+    hidden = data.get("employer_projects_hidden") or 0
+    n = len(data["projects"]) + hidden
     lines.append(f"- **Active projects ({n}):**")
-    if not data["projects"]:
+    if not data["projects"] and not hidden:
         lines.append("  - (none with SESSION-STATE.md)")
     else:
         for p in data["projects"]:
             when = f" ({p['updated']})" if p["updated"] else ""
             lines.append(f"  - **{p['name']}**{when} — {p['title']}")
+        if hidden:
+            lines.append(f"  - {hidden} employer projects — handled by {EMPLOYER_HANDLERS}")
     lines.append(f"- **Git:** {data['git_line']}")
     lines.append("")
     lines.append("What's on the agenda today?")
     return "\n".join(lines)
 
 
-def main() -> int:
+def main(argv: Optional[list[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Session-start ritual card")
     parser.add_argument("--surface", default="")
     parser.add_argument("--via", default="session-status")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--check", action="store_true")
-    args = parser.parse_args()
-    data = collect(surface=args.surface, via=args.via)
+    parser.add_argument(
+        "--family", default="auto",
+        help="walls family: auto (profile_resolve.detect_surface), claude, cursor, codex, …",
+    )
+    parser.add_argument("--self-test", action="store_true")
+    args = parser.parse_args(argv)
+    if args.self_test:
+        return self_test()
+    data = collect(surface=args.surface, via=args.via, family=args.family)
     if args.check:
         if not data["sha"] or data["sha"] == "?":
             print("session-status FAIL: no git sha", file=sys.stderr)
@@ -356,6 +484,250 @@ def main() -> int:
         print(json.dumps(data, indent=2))
     else:
         print(format_card(data))
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# --self-test: the 2ff02e7 oracle plus family cases. profile_resolve is faked
+# (3d parallel-wave rule); HOME-derived state points at a temp dir.
+# ---------------------------------------------------------------------------
+
+_PATH_CONSTS = (
+    "ROOT", "AUDIT_LOG", "SESSION_LOG", "PROJECT_CONTEXT", "HARNESS_STAMP", "ROUTING_STAMP", "SIDE_CHAT",
+)
+
+
+class _FixedDateTime(datetime):
+    @classmethod
+    def now(cls, tz=None):  # type: ignore[override]
+        return datetime(2026, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
+
+
+class _FakeResolver:
+    def __init__(self, *, family: str = "claude", keywords=("acme",), label: str = "Dev A",
+                 broken: bool = False) -> None:
+        self.family, self.keywords, self.label, self.broken = family, list(keywords), label, broken
+
+    def detect_surface(self, payload_hint=None, **_kw):
+        if self.broken:
+            raise RuntimeError("fixture: detection failed")
+        return {"family_for_walls": self.family, "family": self.family, "via": "env", "verified": True}
+
+    def device_label(self, hostname=None, **_kw):
+        if self.broken:
+            raise RuntimeError("fixture: no label")
+        return self.label
+
+    def load_table(self, name, **_kw):
+        if self.broken or name != "context-remotes":
+            raise ValueError("fixture: no table")
+        return {"employer_substance": {"count_keywords": self.keywords}}
+
+
+def _load_oracle(tmp: Path) -> Any:
+    """The 2ff02e7 module from git history, or None when history is unavailable."""
+    try:
+        r = subprocess.run(
+            ["git", "-C", str(ROOT), "show", f"{ORACLE_SHA}:09-tools/session-status.py"],
+            capture_output=True, text=True, timeout=10,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if r.returncode != 0 or not r.stdout:
+        return None
+    path = tmp / "session_status_oracle.py"
+    path.write_text(r.stdout, encoding="utf-8")
+    spec = importlib.util.spec_from_file_location("session_status_oracle", path)
+    if spec is None or spec.loader is None:
+        return None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+@contextlib.contextmanager
+def _pinned(mods: list, consts: dict, doctor: Path, label: str):
+    """Point every module at the same tree, a temp doctor dir, a fixed clock and label."""
+    saved = []
+    for mod in mods:
+        keep = {k: getattr(mod, k) for k in (*_PATH_CONSTS, "DOCTOR_STATE", "datetime", "machine_label")}
+        saved.append((mod, keep))
+        for k, v in consts.items():
+            setattr(mod, k, v)
+        mod.DOCTOR_STATE = doctor
+        mod.datetime = _FixedDateTime
+        mod.machine_label = lambda *a, **k: label
+    try:
+        yield
+    finally:
+        for mod, keep in saved:
+            for k, v in keep.items():
+                setattr(mod, k, v)
+
+
+def _consts_for(root: Path) -> dict:
+    return {
+        "ROOT": root,
+        "AUDIT_LOG": root / "06-context" / "audit-log.md",
+        "SESSION_LOG": root / "06-context" / "session-log.md",
+        "PROJECT_CONTEXT": root / "06-context" / "project-context.md",
+        "HARNESS_STAMP": root / "07-projects" / "19-workspace-brain" / "reports" / "harness-map.stamp",
+        "ROUTING_STAMP": root / "07-projects" / "19-workspace-brain" / "reports"
+        / "skill-routing-harness.stamp",
+        "SIDE_CHAT": root / "06-context" / "side-chat-inbox.md",
+    }
+
+
+def _synthetic_tree(root: Path) -> None:
+    """Synthetic owners only: two employer-profile projects, two personal, keyworded pending."""
+    projects = {
+        "01-alpha": ("personal-solo", "Alpha focus line"),
+        "02-acme-work": ("centric-engineering", "ZZ-EMPLOYER-FOCUS acme widget rollout"),
+        "03-beta": ("", "Beta focus line"),
+        "04-acme-design": ("centric-design", "ZZ-EMPLOYER-FOCUS acme audit"),
+    }
+    for name, (profile, focus) in projects.items():
+        d = root / "07-projects" / name
+        d.mkdir(parents=True)
+        prof = f"- **Context profile**: `{profile}` — fixture\n" if profile else ""
+        d.joinpath("SESSION-STATE.md").write_text(
+            f"# {name}\n\n_Last updated: 2026-01-01_\n\n{prof}- **Current focus**: {focus}\n",
+            encoding="utf-8",
+        )
+    ctx = root / "06-context"
+    ctx.mkdir(parents=True)
+    ctx.joinpath("project-context.md").write_text(
+        "- [ ] personal task\n"
+        "- [ ] ACME review of the widget\n"
+        "- [ ] acme-corp follow-up\n"
+        "- [ ] acmex is not a keyword hit\n"
+        "- [x] acme done item\n",
+        encoding="utf-8",
+    )
+    ctx.joinpath("session-log.md").write_text(
+        "## Session Entries\n\n### 2026-01-01 — fixture session\n", encoding="utf-8"
+    )
+
+
+def self_test() -> int:
+    failures: list[str] = []
+    passed = 0
+
+    def check(name: str, cond: bool, detail: str = "") -> None:
+        nonlocal passed
+        if cond:
+            passed += 1
+        else:
+            failures.append(f"{name}{(' — ' + detail) if detail else ''}")
+
+    me = sys.modules[__name__]
+    label = "Fixture Label"
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td)
+        doctor = tmp / "home" / ".claude" / "ws-state"
+        doctor.mkdir(parents=True)
+        oracle = _load_oracle(tmp)
+        tree = tmp / "tree"
+        _synthetic_tree(tree)
+
+        # 1. Oracle: every non-claude family is byte-identical to 2ff02e7 on the same tree.
+        if oracle is None:
+            print(f"  SKIP oracle — {ORACLE_SHA} not in local history (shallow clone?)")
+        else:
+            for label_root, root in (("real tree", ROOT), ("synthetic tree", tree)):
+                with _pinned([oracle, me], _consts_for(root), doctor, label):
+                    want = oracle.format_card(oracle.collect(surface="S", via="V"))
+                    for fam, res in (
+                        ("cursor", _FakeResolver(family="cursor")),
+                        ("codex", None),
+                        ("auto", _FakeResolver(family="cursor")),
+                        ("auto", _FakeResolver(broken=True)),
+                        ("auto", None),
+                    ):
+                        got = format_card(collect(surface="S", via="V", family=fam, resolver=res))
+                        check(f"oracle {label_root} family={fam} res={type(res).__name__}",
+                              got == want, "card differs from the 2ff02e7 module")
+                    claude = format_card(collect(surface="S", via="V", family="claude",
+                                                 resolver=_FakeResolver()))
+                    ritual = [ln for ln in want.splitlines() if ln.startswith("[workspace: ")]
+                    check(f"ritual line unchanged ({label_root})",
+                          bool(ritual) and ritual[0] in claude.splitlines())
+
+        # 2. --family claude hides centric-* projects and prints the counts.
+        with _pinned([me], _consts_for(tree), doctor, label):
+            fake = _FakeResolver()
+            data = collect(surface="S", via="V", family="claude", resolver=fake)
+            card = format_card(data)
+            names = [p["name"] for p in data["projects"]]
+            check("claude hides centric-* projects", names == ["01-alpha", "03-beta"], str(names))
+            check("claude card has no employer focus lines", "ZZ-EMPLOYER-FOCUS" not in card)
+            check("claude card count line",
+                  "  - 2 employer projects — handled by Cursor/Codex" in card.splitlines(), card)
+            check("claude pending line",
+                  "- **Pending:** 4 items (2 employer — handled by Cursor/Codex) → "
+                  "06-context/project-context.md" in card.splitlines(), card)
+            check("claude header counts all projects", "- **Active projects (4):**" in card.splitlines())
+            check("json fields", data["family"] == "claude" and data["employer_projects_hidden"] == 2
+                  and data["pending_employer"] == 2, json.dumps({k: data[k] for k in (
+                      "family", "employer_projects_hidden", "pending_employer")}))
+            auto = collect(surface="S", via="V", family="auto", resolver=fake)
+            check("auto uses detect_surface family_for_walls", auto["family"] == "claude"
+                  and auto["employer_projects_hidden"] == 2)
+            nokw = format_card(collect(surface="S", via="V", family="claude",
+                                       resolver=_FakeResolver(broken=True)))
+            check("claude without tables still hides, no split", "ZZ-EMPLOYER-FOCUS" not in nokw
+                  and "- **Pending:** 4 items → 06-context/project-context.md" in nokw.splitlines())
+            cur = collect(surface="S", via="V", family="cursor", resolver=fake)
+            check("cursor json fields", cur["family"] == "cursor" and cur["employer_projects_hidden"] == 0
+                  and cur["pending_employer"] is None)
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                real_resolver = globals()["_resolver"]
+                globals()["_resolver"] = lambda: fake
+                try:
+                    rc = main(["--json", "--family", "claude", "--surface", "S"])
+                finally:
+                    globals()["_resolver"] = real_resolver
+            try:
+                j = json.loads(out.getvalue())
+                check("cli --json --family claude", rc == 0 and j["family"] == "claude"
+                      and j["employer_projects_hidden"] == 2 and j["pending_employer"] == 2)
+            except (ValueError, KeyError) as exc:
+                check("cli json parses", False, repr(exc))
+
+    # 3. The label: device_label when the resolver loads; raw short hostname when the import fails.
+    check("label from device_label", machine_label(resolver=_FakeResolver(label="Dev B")) == "Dev B")
+    check("label falls back when device_label raises",
+          machine_label(resolver=_FakeResolver(broken=True)) == _short_hostname())
+    saved_mod = sys.modules.get("profile_resolve", _UNSET)
+    sys.modules["profile_resolve"] = None  # type: ignore[assignment]  # forces ImportError
+    try:
+        check("import failure → resolver None", _resolver() is None)
+        check("import failure → raw short hostname", machine_label() == socket.gethostname().split(".", 1)[0])
+        check("import failure → family unknown", resolve_family("auto") == "unknown")
+    finally:
+        if saved_mod is _UNSET:
+            sys.modules.pop("profile_resolve", None)
+        else:
+            sys.modules["profile_resolve"] = saved_mod
+
+    # 4. No hostname→label literal remains in this module.
+    src = Path(__file__).read_text(encoding="utf-8")
+    check("no hostname map literal", ("HOSTNAME" + "_MAP") not in src)
+
+    # 5. Keyword counting: word boundaries, open boxes only.
+    with tempfile.TemporaryDirectory() as td:
+        pc = Path(td) / "pc.md"
+        pc.write_text("- [ ] Acme x\n- [ ] acmex y\n- [x] acme z\n- [ ] (acme-corp)\n", encoding="utf-8")
+        check("count_pending_employer", count_pending_employer(["acme"], pc) == 2)
+
+    for f in failures:
+        print(f"  ✗ {f}", file=sys.stderr)
+    if failures:
+        print(f"session-status self-test FAILED — {len(failures)} of {passed + len(failures)}",
+              file=sys.stderr)
+        return 1
+    print(f"OK session-status self-test — {passed} checks")
     return 0
 
 

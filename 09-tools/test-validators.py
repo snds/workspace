@@ -709,6 +709,31 @@ class TestSessionStatus(unittest.TestCase):
             self.assertEqual(ss._stamp_age_days(heading), 13)
             self.assertEqual(ss._stamp_age_days(yaml), 3)
 
+    # --- appended to TestSessionStatus (H25) ---
+    def test_self_test_oracle_and_family_cases(self):
+        import contextlib
+        import io
+        ss = load("session-status")
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(ss.self_test(), 0)
+
+    def test_no_hostname_map_literal(self):
+        src = (TOOLS / "session-status.py").read_text(encoding="utf-8")
+        self.assertNotIn("HOSTNAME" + "_MAP", src)
+
+    def test_import_failure_label_is_short_hostname(self):
+        import socket
+        ss = load("session-status")
+        saved = sys.modules.get("profile_resolve")
+        sys.modules["profile_resolve"] = None
+        try:
+            self.assertEqual(ss.machine_label(), socket.gethostname().split(".", 1)[0])
+        finally:
+            if saved is None:
+                sys.modules.pop("profile_resolve", None)
+            else:
+                sys.modules["profile_resolve"] = saved
+
 
 class TestShadcnLintOverlay(unittest.TestCase):
     def _probe(self):
@@ -1077,6 +1102,65 @@ class TestHostFilter(unittest.TestCase):
         for name, ok, detail in cases:
             with self.subTest(case=name):
                 self.assertTrue(ok, detail)
+
+
+class TestEmployerSubstance(unittest.TestCase):
+    """H25: employer-substance class of check-secrets (report-only in wave 0)."""
+
+    def _quiet(self, fn, *a, **kw):
+        import contextlib
+        import io
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            return fn(*a, **kw)
+
+    def test_self_test_fixtures(self):
+        cs = load("check-secrets")
+        self.assertEqual(self._quiet(cs.self_test), 0)
+
+    def test_planted_flagged_allowlist_passes(self):
+        cs = load("check-secrets")
+        table = json.loads(
+            (TOOLS / "fixtures" / "employer_substance" / "context-remotes.json").read_text(encoding="utf-8")
+        )
+        rules = cs.EmpRules(table)
+        text = (
+            "see https://github.com/acme-corp/zz-app/pull/1\n"
+            "file acme-corp/zz-app/src/a.ts\n"
+            "repo acme-corp/zz-lib\n"
+            "owner-level acme-corp, acme-bb and acme-corp/* pass\n"
+            "personal pat-sample/zz-tool/src/a.py passes\n"
+        )
+        self.assertEqual(rules.scan_text(text), [(1, "emp-url"), (2, "emp-path"), (3, "emp-slug")])
+
+    def test_output_never_prints_matched_text(self):
+        cs = load("check-secrets")
+        import contextlib
+        import io
+        import shutil
+        fx = TOOLS / "fixtures" / "employer_substance"
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td) / "vault"
+            (root / "notes").mkdir(parents=True)
+            (root / cs.REMOTES_REL).parent.mkdir(parents=True)
+            shutil.copy(fx / "context-remotes.json", root / cs.REMOTES_REL)
+            shutil.copy(fx / "planted.md", root / "notes" / "planted.md")
+            fake = cs._FakeResolver(Path(td) / "home")
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(out):
+                rc = cs.main(["--class", "employer-substance", "--report", "--root", str(root)],
+                             resolver=fake, home=Path(td) / "home")
+            self.assertEqual(rc, 0)
+            self.assertIn("notes/planted.md:3 emp-url", out.getvalue())
+            self.assertNotIn("zz-planted", out.getvalue())
+
+    def test_live_baseline_not_exceeded(self):
+        # G7a: the committed baseline holds on the live tree (real tables, temp HOME for the cache).
+        cs = load("check-secrets")
+        if cs._resolver() is None:
+            self.skipTest("profile_resolve not importable (pre-T2 tree)")
+        with tempfile.TemporaryDirectory() as td:
+            rc = self._quiet(cs.main, ["--class", "employer-substance", "--baseline-check"], home=Path(td))
+        self.assertEqual(rc, 0)
 
 
 def main(argv: list) -> int:

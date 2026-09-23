@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "doc": "Fixture table for check-secrets --self-test. Synthetic owners only; never a copy of the real table.",
+  "conduct_order": ["personal-solo", "centric-design", "centric-engineering"],
+  "owner_classes": ["employer", "personal", "third-party", "unknown"],
+  "unknown_owner": {"conduct": "centric-engineering", "claude_walls": "employer"},
+  "blocked_scheme": "fixture-blocked://",
+  "hosts": [
+    {"host": "github.com", "ssh_user": "git", "forms": ["scp", "ssh", "https"]},
+    {"host": "bitbucket.org", "ssh_user": "git", "forms": ["scp", "ssh", "https"]}
+  ],
+  "owners": [
+    {"host": "github.com", "owner": "acme-corp", "class": "employer", "profile": "centric-engineering"},
+    {"host": "bitbucket.org", "owner": "acme-bb", "class": "employer", "profile": "centric-engineering"},
+    {"host": "github.com", "owner": "pat-sample", "class": "personal", "profile": "personal-solo"},
+    {"host": "github.com", "owner": "oss-upstream", "class": "third-party", "profile": "personal-solo"}
+  ],
+  "repos": [],
+  "employer_path_globs": ["*acmeapp*", "acme-corp/*", "acme-ds"],
+  "employer_substance": {
+    "allow_tokens": ["acme-corp", "acme-bb", "Acme", "acmeapp"],
+    "url_prefixes": ["github.com/acme-corp/", "bitbucket.org/acme-bb/"],
+    "domains": ["acme-corp.example"],
+    "count_keywords": ["acme", "acme-corp", "acme-bb", "acmeapp"]
+  }
+}

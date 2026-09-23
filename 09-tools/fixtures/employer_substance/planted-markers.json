@@ -1,0 +1,1 @@
+{"doc": "Substrings that must never appear in check-secrets output (matched text is never printed).", "markers": ["zz-planted", "zz-cached"]}

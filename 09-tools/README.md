@@ -315,6 +315,8 @@ python3 09-tools/session-status.py --json
 python3 09-tools/session-status.py --check
 ```
 
+Session-start card; --family auto|claude|cursor|codex (Claude collapses centric-* projects to a count and splits the pending line); label from profile_resolve.device_label(); --self-test runs the 2ff02e7 oracle.
+
 ## check-secrets.py
 
 Stdlib scan of git-tracked files for well-known secret shapes (PEM, AKIA, GitHub/Slack/Anthropic
@@ -323,6 +325,8 @@ keys). Does not echo values. Skip `_archive`, lockfiles, `node_modules`, `*.exam
 ```
 python3 09-tools/check-secrets.py
 ```
+
+Secret-shape scan (exit 1 on a hit) plus --class employer-substance (H25, report-only): emp-url/emp-path/emp-slug/emp-quote as path:line rule, --baseline-check / --write-baseline ratchet, --self-test.
 
 ## artifact-find.py
 

@@ -22,6 +22,8 @@ on:
       - "03-skills/visual-prove-engine/**"
       - "03-skills/play-prove/**"
       - ".github/workflows/validator-fixtures.yml"
+      - "09-tools/fixtures/employer_substance/**"
+      - "02-shared-references/employer-substance-baseline.json"
       - "09-tools/intent-run.py"
       - "09-tools/fixtures/intent_run/**"
       - "09-tools/ws_hook.py"
@@ -56,6 +58,8 @@ on:
       - "03-skills/visual-prove-engine/**"
       - "03-skills/play-prove/**"
       - ".github/workflows/validator-fixtures.yml"
+      - "09-tools/fixtures/employer_substance/**"
+      - "02-shared-references/employer-substance-baseline.json"
       - "09-tools/intent-run.py"
       - "09-tools/fixtures/intent_run/**"
       - "09-tools/ws_hook.py"
@@ -80,11 +84,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # session-status self-test diffs against the 2ff02e7 card oracle
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py
+      - name: session-status self-test
+        run: python3 09-tools/session-status.py --self-test
+      - name: check-secrets self-test
+        run: python3 09-tools/check-secrets.py --self-test
 
   # Same contract for the visual detectors: every planted visual defect must be
   # caught and every clean/noise-only variant must stay quiet, or the engine's
