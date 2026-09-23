@@ -1,17 +1,42 @@
 {
   "hooks": {
     "SessionStart": [
-      { "hooks": [ { "type": "command", "command": "$HOME/.claude/hooks/workspace-sessionstart.sh", "timeout": 15 } ] }
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/workspace-sessionstart.sh",
+            "timeout": 15
+          }
+        ]
+      }
     ],
     "UserPromptSubmit": [
-      { "hooks": [ { "type": "command", "command": "$HOME/.claude/hooks/workspace-reassert.sh", "timeout": 5 } ] }
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/workspace-reassert.sh",
+            "timeout": 5
+          }
+        ]
+      }
     ],
     "SessionEnd": [
-      { "hooks": [ { "type": "command", "command": "$HOME/.claude/hooks/workspace-audit.sh", "timeout": 10 } ] }
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/workspace-audit.sh",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   },
   "env": {
-    "WS_CLAUDE_OVERLAY": "v2",
+    "WS_CLAUDE_OVERLAY": "v3",
+    "GH_CONFIG_DIR": "~/.config/snds-workspace/gh-claude",
     "GIT_CONFIG_COUNT": "11",
     "GIT_CONFIG_KEY_0": "includeIf.hasconfig:remote.*.url:git@github.com:snds/**.path",
     "GIT_CONFIG_VALUE_0": "~/.config/snds-workspace/git/claude-identity.inc",

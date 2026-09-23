@@ -45,6 +45,16 @@ commit.
   - Employer remotes are rewritten to an unresolvable scheme, so a push Claude composes itself fails.
   - v1 (`bb4cf05`) set `GIT_AUTHOR_*` unconditionally and was replaced by `0d19852`. Claude sessions
     started before that still carry v1 until they are restarted.
+- **Claude's `gh`:** overlay v3 sets `GH_CONFIG_DIR=~/.config/snds-workspace/gh-claude`, a config
+  that names only `snds`. The token stays in the keyring; Sean logged `snds` in on 2026-09-22.
+  - The machine-default `~/.config/gh` keeps the device's account **active** (Centric on the Work
+    MBP), because Cursor, Codex and the terminal all share it.
+  - After any `gh auth login`, run `gh auth switch` back to the device default. Logging in makes the
+    new account active for every surface.
+  - Vetted housekeeping scripts restore the default config only for employer `gh` calls.
+- **Linear connectors stay attached to Claude** (Sean, 2026-09-22): both `linear-personal` and
+  `linear-c8`. Claude uses `linear-c8` only for the Open Engine `c8` lane's movement (pointers,
+  statuses, receipts), never for employer substance. That lane is already movement-only.
 - **Everyone else:** repo-local git config (Centric noreply on the Work MBP).
 - **Never** use ad-hoc `-c user.*` identity flags. A mechanical per-surface, per-device table and
   git-boundary checks are harness plan v1.1 (H2/H17/H22).

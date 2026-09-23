@@ -48,7 +48,7 @@ _Last updated: 2026-04-25 — checkpoint (post-restructure)_
 - **What's needed to resume**: just `cd` into workspace root, run `git status` to see staged state, then commit + push
 
 ### Known state of external dependencies
-- **GitHub repo**: `snds/workspace` (private) — created, remote configured, no commits yet
+- **GitHub repo**: `snds/workspace` (was recorded as private; **public** as verified 2026-09-22) — created, remote configured, no commits yet
 - **Sync**: git is the sync layer (the Drive-era sync was removed 2026-06-17)
 
 ---

@@ -117,6 +117,18 @@ if ! cmp -s "$DIST/git/claude-identity.inc" "$INC" 2>/dev/null; then
   if [ "$CHECK" -eq 1 ]; then flag "DRIFT: $INC missing or differs from dist"
   else mkdir -p "$(dirname "$INC")" && cp "$DIST/git/claude-identity.inc" "$INC" && DRIFT=1 && say "REPAIRED: $INC (Claude identity include)"; fi
 fi
+# Claude-only gh config (v3): names the snds account; the token stays in the keyring.
+# The machine default gh config is left alone (other surfaces follow the device).
+GHC="$HOME/.config/snds-workspace/gh-claude"
+for _f in hosts.yml config.yml; do
+  if ! cmp -s "$DIST/gh-claude/$_f" "$GHC/$_f" 2>/dev/null; then
+    if [ "$CHECK" -eq 1 ]; then flag "DRIFT: $GHC/$_f missing or differs from dist"
+    else mkdir -p "$GHC" && cp "$DIST/gh-claude/$_f" "$GHC/$_f" && DRIFT=1 && say "REPAIRED: $GHC/$_f (Claude gh config)"; fi
+  fi
+done
+if [ "$CHECK" -eq 1 ] && ! GH_CONFIG_DIR="$GHC" gh auth status >/dev/null 2>&1; then
+  flag "NOTE: Claude gh config has no usable snds login on this machine — run: gh auth login (as snds), then gh auth switch back to this device's default account"
+fi
 if ! grep -q '"GIT_CONFIG_KEY_0"' "$SJ" 2>/dev/null && ! grep -q '"GIT_AUTHOR_EMAIL"' "$SJ" 2>/dev/null; then
   if [ "$CHECK" -eq 1 ]; then flag "DRIFT: $SJ missing the Claude identity env overlay"
   else
@@ -127,7 +139,7 @@ if ! grep -q '"GIT_CONFIG_KEY_0"' "$SJ" 2>/dev/null && ! grep -q '"GIT_AUTHOR_EM
       *) flag "REPAIR FAILED: $SJ overlay merge aborted (unparseable settings?) — fix by hand" ;;
     esac
   fi
-elif ! grep -q '"WS_CLAUDE_OVERLAY": "v2"' "$SJ" 2>/dev/null || grep -q '"GIT_AUTHOR_EMAIL"' "$SJ" 2>/dev/null; then
+elif ! grep -q '"WS_CLAUDE_OVERLAY": "v3"' "$SJ" 2>/dev/null || grep -q '"GIT_AUTHOR_EMAIL"' "$SJ" 2>/dev/null; then
   flag "DRIFT: $SJ carries an outdated Claude identity overlay (v1 set GIT_AUTHOR_* unconditionally) — replace it by hand from $DIST/settings-user-fragment.json (remove the old GIT_AUTHOR_*/GIT_COMMITTER_*/GIT_CONFIG_* keys first), then restart Claude sessions"
 fi
 # Check EVERY settings layer, not just the user one. A temporary "turn hooks off"

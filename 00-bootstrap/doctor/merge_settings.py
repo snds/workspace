@@ -26,10 +26,22 @@ def merge(dst, src):
     return dst
 
 
+def expand_env_home(frag):
+    """Settings `env` values reach processes verbatim (no shell), and tools such as gh do
+    not expand `~` in GH_CONFIG_DIR. Render a leading `~/` to this machine's home so one
+    tracked fragment works on every device."""
+    env = frag.get("env")
+    if isinstance(env, dict):
+        for k, v in env.items():
+            if isinstance(v, str) and v.startswith("~/"):
+                env[k] = os.path.expanduser(v)
+    return frag
+
+
 def main():
     frag_path, target_path = sys.argv[1], sys.argv[2]
     with open(frag_path) as f:
-        frag = json.load(f)                       # bad fragment -> abort
+        frag = expand_env_home(json.load(f))      # bad fragment -> abort
     target = {}
     if os.path.exists(target_path):
         with open(target_path) as f:

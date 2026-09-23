@@ -16,7 +16,7 @@ _Authoritative pending queue remains [project-context.md](project-context.md) (+
 
 **Project folder:** `07-projects/00-obsidian/` — populated 2026-04-25 with SESSION-STATE.md + README.md.
 
-**Git remote:** `https://github.com/snds/workspace` (private). Initialized 2026-04-25; first commit pushed to `main` 2026-04-25.
+**Git remote:** `https://github.com/snds/workspace` (**public** — verified 2026-09-22; Sean chose to keep it public and scrub employer substance going forward, see [[feedback-credential-scoping]] and ^pc-47). Initialized 2026-04-25; first commit pushed to `main` 2026-04-25.
 
 **Next:** Smoke-test installer on Mac. Decide Python binary strategy. Then act on 2026-04-21 audit findings and seed remaining SESSION-STATE files.
 
