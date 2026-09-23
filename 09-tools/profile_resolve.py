@@ -3156,11 +3156,13 @@ def _floor_git_env(env: dict) -> dict:
     return _clean_git_env(env)
 
 
-def _range_idents(top: Path, line: dict, remote: str, env: dict, git: str) -> Optional[List[Tuple[str, str, str]]]:
+def _range_idents(top: Path, line: dict, remote: str, env: dict, git: str,
+                  gitdir: Optional[Path] = None) -> Optional[List[Tuple[str, str, str]]]:
     """(sha, author email, committer email) for every commit the ref line would publish; None on error."""
     if _ZERO_SHA_RE.match(line["local_sha"]):
         return []
-    fmt = ["-c", "log.showSignature=false", "log", "--no-color", "--format=%H%x00%ae%x00%ce"]
+    fmt = (["--git-dir", str(gitdir)] if gitdir is not None else []) + [
+        "-c", "log.showSignature=false", "log", "--no-color", "--format=%H%x00%ae%x00%ce"]
     r = None
     if not _ZERO_SHA_RE.match(line["remote_sha"]):
         r = _git_run(fmt + [f"{line['remote_sha']}..{line['local_sha']}"], top, env, git)
@@ -3224,9 +3226,18 @@ def _vetted_ancestor(chain: List[dict], *, home: Optional[Path], root: Optional[
     if hop is None:
         return None, "no python ancestor (model-composed)"
     args = str(hop.get("args") or "").split()
-    if len(args) < 2 or args[1].startswith("-"):
+    flags = ""
+    i = 1
+    while i < len(args) and re.fullmatch(r"-[IEsSBuqbO]+", args[i]):
+        flags += args[i][1:]
+        i += 1
+    if i >= len(args) or args[i].startswith("-"):
         return None, "the python ancestor runs no script path"
-    script = args[1]
+    script = args[i]
+    if not os.path.isabs(script):
+        return None, "the python ancestor names its script by a relative path (vetted scripts re-exec by absolute path)"
+    if "I" not in flags:
+        return None, "the python ancestor does not run isolated (-I), so PYTHONPATH or site hooks could change it"
     lc = ws_paths(home=home)["lib_current"]
     try:
         lock = json.loads((lc / "vetted.lock.json").read_text(encoding="utf-8"))
@@ -3244,11 +3255,8 @@ def _vetted_ancestor(chain: List[dict], *, home: Optional[Path], root: Optional[
             continue
         rel = str(row.get("path"))
         files: List[Path] = []
-        if os.path.isabs(script):
-            if any(_cf(_real(script)) == _cf(_real(r / rel)) for r in roots):
-                files = [Path(script)]
-        elif os.path.normpath(script) == os.path.normpath(rel):
-            files = [r / rel for r in roots]
+        if any(_cf(_real(script)) == _cf(_real(r / rel)) for r in roots):
+            files = [Path(script)]
         for f in files:
             try:
                 if git_blob_sha(f) == ent.get("blob"):
@@ -3295,6 +3303,47 @@ def _push_url_class(url: str, root: Optional[Path]) -> str:
     return cls
 
 
+def _floor_locate(cwd: Path, e: dict, git: str) -> Tuple[Optional[Path], Optional[Path]]:
+    """(git dir, work tree top) the way git finds them: GIT_DIR first, else discovery from cwd (bare
+    repos included). The work tree is None for a bare repo or a GIT_DIR used from outside its tree."""
+    loc = _clean_git_env(e)
+    for k in ("GIT_DIR", "GIT_WORK_TREE"):
+        if e.get(k):
+            loc[k] = str(e[k])
+    r = _git_run(["rev-parse", "--absolute-git-dir"], cwd, loc, git)
+    gitdir = Path(r.stdout.strip()) if r is not None and r.returncode == 0 and r.stdout.strip() else None
+    if e.get("GIT_DIR"):
+        top = None
+        if gitdir is not None and gitdir.name == ".git" and (gitdir.parent / ".git").exists():
+            top = gitdir.parent
+        elif e.get("GIT_WORK_TREE"):
+            top = _find_top(_real(Path(cwd) / str(e["GIT_WORK_TREE"])))
+        return gitdir, top
+    top = _find_top(cwd)
+    if gitdir is None and top is not None:
+        gd, _common = _git_paths(top)
+        gitdir = gd
+    return gitdir, top
+
+
+def _floor_config_remotes(cwd: Path, gitdir: Optional[Path], e: dict, git: str) -> Optional[List[str]]:
+    """Every remote url/pushurl as git itself resolves the repo config ([include], includeIf, legacy
+    [remote.x] sections, inline comments). The caller's GIT_CONFIG_* and -c are not honoured. None
+    when git cannot read the config."""
+    loc = _clean_git_env(e)
+    args = (["--git-dir", str(gitdir)] if gitdir is not None else []) + [
+        "config", "--get-regexp", r"^remote\..*\.(push)?url$"]
+    r = _git_run(args, cwd, loc, git)
+    if r is None or r.returncode not in (0, 1):
+        return None
+    out = []
+    for ln in r.stdout.splitlines():
+        parts = ln.split(None, 1)
+        if len(parts) == 2 and parts[1].strip():
+            out.append(parts[1].strip())
+    return out
+
+
 def floor_decide(event: str, hook_args: list, stdin_lines: list, *, env: Optional[dict] = None,
                  ancestry: Optional[list] = None, root: Optional[Path] = None, home: Optional[Path] = None,
                  cwd: Optional[Any] = None, cache: Any = None, ps: Optional[Callable[[str], str]] = None,
@@ -3321,27 +3370,42 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
     if event not in FLOOR_EVENTS:
         return _floor_allow(f"unknown hook event {event!r}; allowing")
     e = dict(os.environ if env is None else env)
-    top = _find_top(_real(cwd if cwd is not None else os.getcwd()))
-    if top is None:
-        return _floor_allow("not inside a work tree; allowing")
-    det = {"family": "claude", "family_for_walls": "claude", "agent_possible": True}
-    res = repo_resolve(str(top), root=root, home=home, detection=det, cache=cache)
-    employer = res.get("owner_class") == "employer"
+    here = _real(cwd if cwd is not None else os.getcwd())
     url_cls = "none"
     if event == "pre-push" and len(hook_args) >= 2:
-        url_cls = _push_url_class(str(hook_args[1]), root)
-        employer = employer or url_cls == "employer"
+        # args: the remote name (the URL itself when none was configured) and the URL after insteadOf.
+        cls2 = [_push_url_class(str(a), root) for a in hook_args[:2]]
+        url_cls = max(cls2, key=lambda c: CLASS_RANK.get(c, -1))
+    gitdir, top = _floor_locate(here, e, git)
+    if gitdir is None and top is None:
+        if url_cls == "employer":
+            return _floor_block("I2", "pre-push: a Claude-family push to an employer remote from an unlocatable "
+                                      "repository; route this work to Cursor or Codex")
+        return _floor_allow("not inside a repository; allowing")
+    det = {"family": "claude", "family_for_walls": "claude", "agent_possible": True}
+    if top is not None:
+        res = repo_resolve(str(top), root=root, home=home, detection=det, cache=cache)
+    else:
+        res = {"owner_class": "unknown", "positively_personal": False, "remotes": [],
+               "in_projects_root": False}
+    cfg_urls = _floor_config_remotes(here, gitdir, e, git)
+    cfg_cls = [_push_url_class(u, root) for u in cfg_urls or []]
+    employer = res.get("owner_class") == "employer" or url_cls == "employer" or "employer" in cfg_cls
+    if cfg_urls is None and event != "pre-push" and not employer and (res.get("remotes") or top is None):
+        return _floor_block("I2", f"{event}: git cannot read this repository's remote config, so it is not "
+                                  "positively personal for a Claude-family actor; fix the config, then retry")
     if not employer:
         if res.get("positively_personal"):
             return _floor_allow()
         pr = projects_root(root=root, home=home)
-        under = bool(res.get("in_projects_root")) or (_is_under(_real(top), pr) and _cf(_real(top)) != _cf(pr))
+        where_p = _real(top if top is not None else gitdir)
+        under = bool(res.get("in_projects_root")) or (_is_under(where_p, pr) and _cf(where_p) != _cf(pr))
         if under:
             return _floor_block("not-positively-personal",
                                 "this checkout under projects_root is not positively personal for a Claude actor "
                                 "(unknown, third-party or uncached); fix: run `python3 09-tools/profile_resolve.py "
                                 "scan` in a plain terminal, then retry")
-        return _floor_allow(None if not res.get("remotes") else
+        return _floor_allow(None if not (res.get("remotes") or cfg_urls) else
                             f"{res.get('owner_class')} repo outside projects_root; the floor allows it")
     if event != "pre-push":
         return _floor_block("I2", f"{event}: a Claude-family actor never commits on an employer repo; "
@@ -3354,7 +3418,7 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
     for ln in lines:
         if ln.get("bad"):
             continue
-        idents = _range_idents(top, ln, remote, genv, git)
+        idents = _range_idents(top if top is not None else here, ln, remote, genv, git, gitdir)
         if idents is None:
             notice = "I1 range check unavailable (git error)"
             continue
@@ -3366,12 +3430,16 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
                     return _floor_block("I1", f"commit {sha[:12]} in the pushed range has {what} as {role}; "
                                               "an employer repo takes only employer identities (rewrite it in "
                                               "Cursor or Codex with the employer identity)")
-    _cur, dflt = _repo_heads(top)
+    _cur, dflt = _repo_heads(top) if top is not None else (None, None)
     all_deletes = bool(lines) and all(
         not ln.get("bad") and _ZERO_SHA_RE.match(ln["local_sha"]) and ln["remote_ref"].startswith("refs/heads/")
         and _ref_kind(ln["remote_ref"], dflt) == "non-default" for ln in lines)
     if ancestry is None:
         raw, err = _walk_ancestry_ex(None, ps, 12)
+        if err:
+            return _floor_block("I2", f"a Claude-family push to an employer repo: ancestry unavailable ({err}), so "
+                                      "vetted housekeeping cannot be verified; run the vetted script with the "
+                                      "sandbox off for that one command, or route to Cursor or Codex")
         chain = _norm_chain(raw)
     else:
         chain = _norm_chain(ancestry)
@@ -4389,15 +4457,26 @@ def _t8_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
                                                "action": "remote-branch-delete", "refs": refs})
 
     vet = [{"pid": 900, "comm": "git", "args": "git push origin --delete feat/done"},
-           {"pid": 4242, "comm": "Python", "args": f"/usr/bin/python3 {script} --apply"},
+           {"pid": 4242, "comm": "Python", "args": f"/usr/bin/python3 -I {script} --apply"},
            {"pid": 10, "comm": "claude", "args": "claude"}]
     dl = [f"(delete) {zero} refs/heads/feat/done {head}"]
     intent(4242, ["refs/heads/feat/done"])
     d = floor("pre-push", emp, ["origin", "git@github.com:acme-corp/w.git"], dl, anc=vet)
     ok(d["decision"] == "allow" and "vetted" in (d["notice"] or ""), f"floor: the vetted shape is allowed: {d}")
-    rel = [dict(vet[0]), dict(vet[1], args="python3 09-tools/fixture-housekeeper.py"), vet[2]]
-    ok(floor("pre-push", emp, ["origin", "u"], dl, anc=rel)["decision"] == "allow",
-       "floor: a relative script path resolves against the root pointer")
+    rel = [dict(vet[0]), dict(vet[1], args="python3 -I 09-tools/fixture-housekeeper.py"), vet[2]]
+    d = floor("pre-push", emp, ["origin", "u"], dl, anc=rel)
+    ok(d["rule"] == "I2" and "relative" in d["reason"], f"floor: a relative script path is never vetted: {d}")
+    noi = [dict(vet[0]), dict(vet[1], args=f"/usr/bin/python3 {script} --apply"), vet[2]]
+    d = floor("pre-push", emp, ["origin", "u"], dl, anc=noi)
+    ok(d["rule"] == "I2" and "-I" in d["reason"], f"floor: a vetted script run without -I is not vetted: {d}")
+
+    def ps_denied(_cols: str) -> str:
+        raise PermissionError("operation not permitted")
+
+    d = floor_decide("pre-push", ["origin", "u"], dl, env=fenv, ancestry=None, ps=ps_denied, root=root, home=home,
+                     cwd=emp)
+    ok(d["rule"] == "I2" and "ancestry unavailable" in d["reason"] and "sandbox" in d["reason"],
+       f"floor: a denied ps names the cause instead of 'model-composed': {d}")
     d = floor("pre-push", emp, ["origin", "u"], [f"(delete) {zero} refs/heads/feat/other {head}"], anc=vet)
     ok(d["rule"] == "housekeeping-shape", f"floor: refs that differ from the intent line block: {d}")
     d = floor("pre-push", emp, ["origin", "u"], [f"(delete) {zero} refs/heads/main {head}"], anc=vet)

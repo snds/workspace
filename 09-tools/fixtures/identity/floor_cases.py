@@ -294,7 +294,23 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "bypass: commit --no-verify skips the floor (declared residual)",
                   "bypass: GIT_CONFIG_COUNT=0 removes the floor with the overlay (declared residual)",
                   "bypass: classify marks each bypass hook_bypass and the P05 fixture row denies it",
-                  "bypass: with the transport block active the same employer push fails at transport, not the floor"]
+                  "bypass: with the transport block active the same employer push fails at transport, not the floor",
+                  "decisions: a bare-mirror push --delete to the employer URL is blocked [I2] and the ref survives",
+                  "decisions: a GIT_DIR push to the employer default branch from outside the work tree is blocked [I2]",
+                  "decisions: an employer remote seen only through [include], a legacy section or an inline comment "
+                  "blocks the commit [I2]",
+                  "decisions: a modified copy of the vetted script at the same relative path is not vetted",
+                  "decisions: the genuine vetted script run without -I (PYTHONPATH injection possible) is not vetted"]
+VETTED_CASES = (DECISION_CASES[3], DECISION_CASES[13], DECISION_CASES[14])
+
+
+def ps_permitted() -> bool:
+    """The vetted shape is proven from the process table; a sandbox that denies `ps` cannot prove it."""
+    try:
+        r = subprocess.run(["ps", "-A", "-o", "pid="], capture_output=True, text=True, timeout=5)
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return r.returncode == 0 and bool(r.stdout.strip())
 
 
 def floor_decision_cases(pr, rs) -> list:
@@ -306,7 +322,9 @@ def floor_decision_cases(pr, rs) -> list:
     try:
         lifted = lab.overlay(lifted=True)
         full = lab.overlay()
-        clone, bare, genv = lab.employer(("feat/done", "feat/b1", "feat/b2", "feat/b4"))
+        clone, bare, genv = lab.employer(("feat/done", "feat/b1", "feat/b2", "feat/b4", "feat/m1", "feat/col",
+                                          "feat/col2"))
+        ps_ok = ps_permitted()
         r = lab.g(lifted, "push", "origin", "--delete", "feat/done", cwd=clone)
         out.append((DECISION_CASES[0], r.returncode != 0 and "[I2]" in r.stderr and lab.has_ref(bare, "feat/done"),
                     f"rc={r.returncode} {r.stderr[-300:]}"))
@@ -327,10 +345,13 @@ def floor_decision_cases(pr, rs) -> list:
         out.append((DECISION_CASES[2], r.returncode != 0 and "[not-positively-personal]" in r.stderr
                     and "scan" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
         py = shutil.which("python3") or sys.executable
-        v = subprocess.run([py, str(lab.script), str(clone), "feat/done"], env=lifted, capture_output=True, text=True,
-                           timeout=120)
-        out.append((DECISION_CASES[3], v.returncode == 0 and not lab.has_ref(bare, "feat/done"),
-                    f"rc={v.returncode} {v.stderr[-400:]}"))
+        if ps_ok:
+            v = subprocess.run([py, "-I", str(lab.script), str(clone), "feat/done"], env=lifted, capture_output=True,
+                               text=True, timeout=120)
+            out.append((DECISION_CASES[3], v.returncode == 0 and not lab.has_ref(bare, "feat/done"),
+                        f"rc={v.returncode} {v.stderr[-400:]}"))
+        else:
+            out.append((DECISION_CASES[3], None, "ps not permitted (sandbox): the vetted shape cannot be proven here"))
         r = lab.g(lifted, "-c", f"hook.{FLOOR}.enabled=false", "push", "origin", "--delete", "feat/b1", cwd=clone)
         out.append((DECISION_CASES[4], r.returncode == 0 and not lab.has_ref(bare, "feat/b1") and FLOOR not in r.stderr,
                     f"rc={r.returncode} {r.stderr[-200:]}"))
@@ -370,6 +391,55 @@ def floor_decision_cases(pr, rs) -> list:
         out.append((DECISION_CASES[9], r1.returncode != 0 and r2.returncode != 0 and lab.has_ref(bare, "feat/b4")
                     and FLOOR not in r1.stderr and scheme in r1.stderr + r2.stderr,
                     f"{r1.returncode}/{r2.returncode} {r1.stderr[-200:]}"))
+        emp_url = "git@github.com:acme-corp/widget.git"
+        nowhere = lab.tmp / "nowhere"
+        nowhere.mkdir(exist_ok=True)
+        mirror = lab.tmp / "mirror.git"
+        lab.g(genv, "clone", "-q", "--bare", str(bare), str(mirror))
+        r = lab.g(lifted, "--git-dir", str(mirror), "push", emp_url, "--delete", "feat/m1", cwd=nowhere)
+        out.append((DECISION_CASES[10], r.returncode != 0 and "[I2]" in r.stderr and lab.has_ref(bare, "feat/m1"),
+                    f"rc={r.returncode} {r.stderr[-300:]}"))
+        before = lab.g(genv, "--git-dir", str(bare), "rev-parse", "refs/heads/main").stdout.strip()
+        lab.g(genv, "commit", "-q", "--allow-empty", "-m", "employer default push", cwd=clone)
+        r = lab.g(dict(lifted, GIT_DIR=str(clone / ".git")), "push", emp_url, "HEAD:refs/heads/main", cwd=nowhere)
+        after = lab.g(genv, "--git-dir", str(bare), "rev-parse", "refs/heads/main").stdout.strip()
+        out.append((DECISION_CASES[11], r.returncode != 0 and "[I2]" in r.stderr and before == after,
+                    f"rc={r.returncode} {r.stderr[-300:]}"))
+        shapes = {"include": None, "legacy": "[remote.origin]\n\turl = git@github.com:acme-corp/w.git\n",
+                  "comment": '[remote "origin"]\n\turl = git@github.com:acme-corp/w.git ; a note\n'}
+        got = {}
+        for name, text in shapes.items():
+            rp = lab.tmp / f"shape-{name}"
+            lab.g(genv, "init", "-q", str(rp))
+            cfg = rp / ".git" / "config"
+            if name == "include":
+                inc = lab.tmp / "shape-include.inc"
+                inc.write_text('[remote "origin"]\n\turl = git@github.com:acme-corp/w.git\n', encoding="utf-8")
+                text = f"[include]\n\tpath = {inc}\n"
+            with open(cfg, "a", encoding="utf-8") as fh:
+                fh.write(text)
+            seen = lab.g(genv, "config", "--get", "remote.origin.url", cwd=rp).stdout.strip()
+            r = lab.g(lifted, "commit", "--allow-empty", "-m", "x", cwd=rp)
+            got[name] = (seen == "git@github.com:acme-corp/w.git", r.returncode, "[I2]" in r.stderr)
+        out.append((DECISION_CASES[12], all(s and rc != 0 and hit for s, rc, hit in got.values()), str(got)))
+        if ps_ok:
+            evil = lab.tmp / "evil"
+            copy = evil / SCRIPT_REL
+            copy.parent.mkdir(parents=True, exist_ok=True)
+            copy.write_text(HOUSEKEEPER + "# modified copy\n", encoding="utf-8")
+            v = subprocess.run([py, "-I", SCRIPT_REL, str(clone), "feat/col"], cwd=str(evil), env=lifted,
+                               capture_output=True, text=True, timeout=120)
+            out.append((DECISION_CASES[13], v.returncode != 0 and lab.has_ref(bare, "feat/col")
+                        and "wall: vetted housekeeping" not in v.stderr, f"rc={v.returncode} {v.stderr[-300:]}"))
+            inj = lab.tmp / "inject"
+            inj.mkdir(exist_ok=True)
+            v = subprocess.run([py, str(lab.script), str(clone), "feat/col2"], env=dict(lifted, PYTHONPATH=str(inj)),
+                               capture_output=True, text=True, timeout=120)
+            out.append((DECISION_CASES[14], v.returncode != 0 and lab.has_ref(bare, "feat/col2")
+                        and "wall: vetted housekeeping" not in v.stderr, f"rc={v.returncode} {v.stderr[-300:]}"))
+        else:
+            for n in VETTED_CASES[1:]:
+                out.append((n, None, "ps not permitted (sandbox): the vetted shape cannot be proven here"))
     finally:
         _cleanup(td)
     return out
