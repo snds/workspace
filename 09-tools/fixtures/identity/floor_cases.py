@@ -304,7 +304,9 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "decisions: a modified copy of the vetted script at the same relative path is not vetted",
                   "decisions: the genuine vetted script run without -I (PYTHONPATH injection possible) is not vetted",
                   "decisions: HOME=<elsewhere> git commit on an employer repo still reaches the floor [I2]",
-                  "decisions: PYTHONPATH with a sitecustomize that exits 0 does not silence the floor [I2]"]
+                  "decisions: PYTHONPATH with a sitecustomize that exits 0 does not silence the floor [I2]",
+                  "transport: every declared employer URL form (ssh alias, ports, :/owner, www) is rewritten to the "
+                  "blocked scheme; mixed case and ssh.github.com classify employer at the floor"]
 VETTED_CASES = (DECISION_CASES[3], DECISION_CASES[13], DECISION_CASES[14])
 
 
@@ -453,6 +455,17 @@ def floor_decision_cases(pr, rs) -> list:
         (site / "sitecustomize.py").write_text("import os\nos._exit(0)\n", encoding="utf-8")
         r = lab.g(dict(lifted, PYTHONPATH=str(site)), "commit", "--allow-empty", "-m", "site inject", cwd=clone)
         out.append((DECISION_CASES[16], r.returncode != 0 and "[I2]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
+        forms = ["ssh://git@github-work/acme-corp/w.git", "ssh://github-work/acme-corp/w.git",
+                 "ssh://git@github.com:22/acme-corp/w.git", "https://github.com:443/acme-corp/w",
+                 "git@github.com:/acme-corp/w.git", "ssh://git@ssh.github.com:443/acme-corp/w.git",
+                 "https://www.github.com/acme-corp/w", "git@github.com:ACME-CORP/w.git", "ssh://github.com/acme-corp/w"]
+        bl = str(lab.cr["blocked_scheme"])
+        miss = [u for u in forms if not lab.g(full, "ls-remote", "--get-url", u).stdout.strip().startswith(bl)]
+        floor_cls = {u: pr._push_url_class(u, lab.lib) for u in ("https://github.com/AcMe-CoRp/w",
+                                                                 "ssh://git@ssh.github.com:443/acme-corp/w.git",
+                                                                 "https://www.github.com/acme-corp/w")}
+        out.append((DECISION_CASES[17], not miss and all(c == "employer" for c in floor_cls.values()),
+                    f"not rewritten: {miss} floor: {floor_cls}"))
     finally:
         _cleanup(td)
     return out

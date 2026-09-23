@@ -527,15 +527,20 @@ def _host_facts(cr: dict, dev: dict, host: str):
 def _employer_prefixes(owner: str, host: str, user: str, forms: list, aliases: list, accounts: list,
                        version: str) -> list:
     def tmpl(form: str) -> list:
+        v5 = version != "v4"
         if form == "scp":
-            return [f"{user}@{host}:{{o}}/"]
+            return [f"{user}@{host}:{{o}}/"] + ([f"{user}@{host}:/{{o}}/"] if v5 else [])
         if form == "scp-alias":
-            return ([f"{user}@{a}:{{o}}/" for a in aliases] if version == "v4"
-                    else [x for a in aliases for x in (f"{user}@{a}:{{o}}/", f"{a}:{{o}}/")])
+            return ([f"{user}@{a}:{{o}}/" for a in aliases] if not v5
+                    else [x for a in aliases for x in (f"{user}@{a}:{{o}}/", f"{a}:{{o}}/", f"ssh://{user}@{a}/{{o}}/",
+                                                       f"ssh://{a}/{{o}}/")])
         if form == "ssh":
-            return [f"ssh://{user}@{host}/{{o}}/"]
+            if not v5:
+                return [f"ssh://{user}@{host}/{{o}}/"]
+            extra = [f"ssh://{user}@ssh.{host}:443/{{o}}/"] if host == "github.com" else []
+            return [f"ssh://{user}@{host}/{{o}}/", f"ssh://{user}@{host}:22/{{o}}/", f"ssh://{host}/{{o}}/"] + extra
         if form == "https":
-            return [f"https://{host}/{{o}}/"]
+            return [f"https://{host}/{{o}}/"] + ([f"https://{host}:443/{{o}}/", f"https://www.{host}/{{o}}/"] if v5 else [])
         if form == "https-userinfo":
             return [f"https://{acct}@{host}/{{o}}/" for acct in accounts]
         return []
@@ -1139,10 +1144,14 @@ def overlay_cases() -> list:
     accts = ["acme-worker", "pat-sample", "git"]
     for host, owner, alias in (("github.com", "acme-corp", "github-work"), ("bitbucket.org", "acme-bb", None)):
         for o in {owner, owner.upper(), owner.capitalize()}:
-            forms = [f"git@{host}:{o}/", f"ssh://git@{host}/{o}/", f"https://{host}/{o}/"]
+            forms = [f"git@{host}:{o}/", f"git@{host}:/{o}/", f"ssh://git@{host}/{o}/", f"ssh://git@{host}:22/{o}/",
+                     f"ssh://{host}/{o}/", f"https://{host}/{o}/", f"https://{host}:443/{o}/",
+                     f"https://www.{host}/{o}/"]
+            if host == "github.com":
+                forms += [f"ssh://git@ssh.{host}:443/{o}/"]
             forms += [f"https://{a}@{host}/{o}/" for a in accts]
             if alias:
-                forms += [f"git@{alias}:{o}/", f"{alias}:{o}/"]
+                forms += [f"git@{alias}:{o}/", f"{alias}:{o}/", f"ssh://git@{alias}/{o}/", f"ssh://{alias}/{o}/"]
             want |= set(forms)
     results.append(("overlay: employer blocks equal owners x forms x case, deduplicated",
                     set(emp) == want and len(emp) == len(set(emp)), f"missing={sorted(want - set(emp))} extra={sorted(set(emp) - want)}"))
