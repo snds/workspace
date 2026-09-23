@@ -709,6 +709,12 @@ def render_md_block(t: dict) -> str:
     for r in t.get("registrations") or []:
         lines.append(f"| {r['id']} | {r['event']} | {r['command']} | "
                      f"{', '.join(r.get('host_skip') or []) or '-'} | {r.get('claim_group') or '-'} |")
+    lines += ["", "Rendered outputs (installers read this mapping from `render_shims.py --list --json`; an "
+              "`overlay` output also renders the Claude overlay env, which only `--install-claude-overlay` installs):",
+              "", "| Output | Path | Install mode | Installs to | Overlay |", "|---|---|---|---|---|"]
+    for o in t.get("outputs") or []:
+        lines.append(f"| {o.get('id')} | `{o.get('path')}` | {o.get('install_mode')} | "
+                     f"{('`' + o['install_path'] + '`') if o.get('install_path') else '-'} | {o.get('overlay') or '-'} |")
     lines.append(MD_END)
     return "\n".join(lines) + "\n"
 
