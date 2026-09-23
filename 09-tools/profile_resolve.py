@@ -2154,11 +2154,34 @@ def self_test(stub_chain: bool = False) -> int:
         ok(rr.returncode == 4, "CLI scan refuses under agent-possible env (exit 4)")
 
         if stub_chain:
-            # A real ancestor named `claude`: a copy of bash in the temp dir spawns the check.
-            bash = shutil.which("bash")
+            # A real ancestor named `claude` that stays alive as the parent of the check.
+            # macOS kills copies of Apple platform binaries (launch constraints: a copied
+            # /bin/bash exits 137), and framework Python re-execs as `Python`, so on macOS the
+            # stub is a tiny fork-and-wait binary compiled here. Linux CI can copy bash.
             stub = tmp / "stub" / "claude"
             stub.parent.mkdir()
-            shutil.copy2(bash or "/bin/bash", stub)
+            src = tmp / "stub" / "stub.c"
+            src.write_text('#include <unistd.h>\n#include <sys/wait.h>\n'
+                           'int main(int c,char**v){(void)c;pid_t p=fork();'
+                           'if(p==0){execv("/bin/sh",v);_exit(127);}int s=0;'
+                           'if(waitpid(p,&s,0)<0)return 1;return WIFEXITED(s)?WEXITSTATUS(s):1;}\n')
+            cc = shutil.which("cc") or shutil.which("clang") or shutil.which("gcc")
+            built = False
+            if cc:
+                built = subprocess.run([cc, "-O0", "-o", str(stub), str(src)], capture_output=True,
+                                       timeout=120).returncode == 0
+            if not built and sys.platform != "darwin" and shutil.which("bash"):
+                # Bytes + exec bit only: copy2 would also copy BSD flags (EPERM on SIP binaries).
+                shutil.copyfile(shutil.which("bash"), stub)
+                os.chmod(stub, 0o755)
+                built = True
+            runnable = built and subprocess.run([str(stub), "-c", "exit 0"], capture_output=True,
+                                                timeout=30).returncode == 0
+            if not runnable:
+                print("self-test SKIP: stub chain needs a runnable non-platform binary named claude "
+                      "(no C compiler, or the stub was killed) — not a pass", file=sys.stderr)
+                stub_chain = False
+        if stub_chain:
             clean = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(home_a)}
             cmd = f'"{sys.executable}" "{me}" --root "{root}" detect --json; exit $?'
             rr = subprocess.run([str(stub), "-c", cmd], capture_output=True, text=True, timeout=60, env=clean)
