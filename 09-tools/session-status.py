@@ -631,6 +631,7 @@ def self_test() -> int:
         _synthetic_tree(tree)
 
         # 1. Oracle: every non-claude family is byte-identical to 2ff02e7 on the same tree.
+        oracle_skipped = oracle is None
         if oracle is None:
             print(f"  SKIP oracle — {ORACLE_SHA} not in local history (shallow clone?)")
         else:
@@ -727,6 +728,10 @@ def self_test() -> int:
         print(f"session-status self-test FAILED — {len(failures)} of {passed + len(failures)}",
               file=sys.stderr)
         return 1
+    if oracle_skipped:
+        # The oracle is the byte-identity guarantee for non-Claude cards: a run without it is not green.
+        print(f"SKIPPED session-status self-test — {passed} checks, the {ORACLE_SHA} oracle did not run (exit 3)")
+        return 3
     print(f"OK session-status self-test — {passed} checks")
     return 0
 
