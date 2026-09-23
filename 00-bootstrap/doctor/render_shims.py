@@ -21,7 +21,14 @@ Usage:
   render_shims.py --list --json
   render_shims.py --install-state --json
   render_shims.py --verify-canonical REV
+  render_shims.py --emit identity-inc --device ID
   render_shims.py --self-test
+
+H17 (T8) adds two emitters. The Claude overlay env inside settings-user-fragment.json is rendered
+from context-remotes.json and devices.json (the output row's `overlay` names the layout version;
+`owned_keys` stays ["hooks"] so --install-shims never writes the env: only the Sean-run
+--install-claude-overlay does). `claude-identity.inc` is rendered from the Claude identity rule, and
+`--emit identity-inc --device ID` prints one device's default identity include for --install-identity.
 
 Exit: 0 clean; 1 drift or a violation; 2 data or usage error; 3 --rev has no render_shims.py.
 Stdlib only; Python 3.9+.
@@ -59,7 +66,7 @@ DIALECTS = {"claude", "cursor", "codex", "plain", "none"}
 CHANNELS = {"claude-settings-env", "codex-shell-environment-policy", "cursor-sessionstart-env", "none"}
 INSTALL_MODES = {"tracked", "whole-file", "claude-settings-keys", "merge-hook-entries", "managed-block"}
 ANCESTRY_MATCH = {"exact", "prefix"}
-RENDERS = {"hooks", "codex-config", "cursor-sandbox", "surfaces-md-block"}
+RENDERS = {"hooks", "codex-config", "cursor-sandbox", "surfaces-md-block", "identity-inc"}
 CWD_CONTEXTS = ("workspace", "other")
 CHECK_AREAS = ("coverage", "outputs", "registrations", "wrappers")
 TELEMETRY_ROOT = "~/.config/snds-workspace/telemetry"
@@ -137,6 +144,11 @@ def check_table(t: dict) -> list:
             errors.append(f"output {o.get('id')}: invalid install_mode")
         if o.get("render", "hooks") not in RENDERS:
             errors.append(f"output {o.get('id')}: invalid render {o.get('render')!r}")
+        if "overlay" in o and (o.get("overlay") not in OVERLAY_VERSIONS or o.get("render", "hooks") != "hooks"):
+            errors.append(f"output {o.get('id')}: overlay must be one of {list(OVERLAY_VERSIONS)} on a hooks output")
+        if "env" in (o.get("owned_keys") or []):
+            errors.append(f"output {o.get('id')}: env is never an owned (shim-installable) key; "
+                          "the overlay is installed only by --install-claude-overlay")
     return errors
 
 
@@ -409,6 +421,9 @@ def _render_hooks_output(t: dict, out: dict, root: Path) -> str:
         except (OSError, ValueError) as exc:
             raise DataError(f"output {out['id']}: base file unreadable: {exc}") from exc
         base["hooks"] = hooks
+        if out.get("overlay"):
+            cr, dev = identity_tables(root)
+            base["env"] = overlay_env(cr, dev, out["overlay"])
         return canonical(base)
     if fmt_name == "cursor-hooks":
         return canonical(OrderedDict([("version", 1), ("hooks", hooks)]))
@@ -440,6 +455,229 @@ def _render_cursor_sandbox(t: dict) -> str:
         if s.get("id") == "cursor" and sb.get("write_root_key"):
             return canonical(OrderedDict([(sb["write_root_key"], [TELEMETRY_ROOT])]))
     raise DataError("cursor row has no sandbox.write_root_key")
+
+
+# --------------------------------------------------------------------------- H17 overlay (T8)
+
+OVERLAY_VERSIONS = ("v4", "v5")
+OVERLAY_INCLUDE = "~/.config/snds-workspace/git/claude-identity.inc"
+OVERLAY_GH_DIR = "~/.config/snds-workspace/gh-claude"
+FLOOR_HOOK = "ws-claude-wall"
+# git appends "$@" to a config hook command itself, so the command never carries it. The guard
+# makes a missing pin (no bin/ws-hook) a no-op instead of a failed commit.
+FLOOR_COMMAND = ('W="$HOME/.config/snds-workspace/bin/ws-hook"; [ -x "$W" ] || exit 0; '
+                 'exec "$W" --host git --floor claude')
+FLOOR_EVENTS = ("pre-commit", "commit-msg", "pre-merge-commit", "pre-push")
+CASE_VARIANTS = ("declared", "lower", "upper", "capitalized")
+# The v4 employer layout (per host), kept only so the emitter can prove it reproduces the
+# installed v4 bytes from the tables before the data moves to v5.
+_V4_EMPLOYER_FORMS = {"github.com": ("scp-alias", "scp", "https"), "bitbucket.org": ("scp", "https", "ssh")}
+IDENTITY_INC_HEADER = (
+    "# Claude surfaces are personal-only (06-context/memory/feedback-credential-scoping.md).\n"
+    "# Included ONLY for repos whose remote is an snds/* URL (includeIf hasconfig in the\n"
+    "# Claude env overlay). Never included in employer repos. No remote URLs in this file\n"
+    "# (git forbids them inside hasconfig includes).\n"
+)
+
+
+def _pr_module():
+    """The vault profile_resolve (one home for table loading), imported lazily."""
+    tools = str(ROOT / "09-tools")
+    if tools not in sys.path:
+        sys.path.insert(0, tools)
+    try:
+        import profile_resolve  # noqa: PLC0415 - lazy by contract (3d)
+    except (ImportError, OSError, ValueError) as exc:
+        raise DataError(f"profile_resolve unavailable ({exc.__class__.__name__})") from exc
+    return profile_resolve
+
+
+def identity_tables(root: Path = ROOT):
+    """(context-remotes, devices) through profile_resolve.load_table; DataError when unusable."""
+    pr = _pr_module()
+    try:
+        return pr.load_table("context-remotes", root=root), pr.load_table("devices", root=root)
+    except (pr.TableError, OSError) as exc:
+        raise DataError(f"identity tables: {exc}") from exc
+
+
+def _case_variants(owner: str) -> list:
+    out = []
+    for c in CASE_VARIANTS:
+        v = {"declared": owner, "lower": owner.lower(), "upper": owner.upper(),
+             "capitalized": owner[:1].upper() + owner[1:].lower()}[c]
+        if v not in out:
+            out.append(v)
+    return out
+
+
+def _host_facts(cr: dict, dev: dict, host: str):
+    row = next((h for h in cr.get("hosts") or [] if str(h.get("host", "")).lower() == host.lower()), None)
+    if row is None:
+        raise DataError(f"context-remotes: owner host {host!r} has no hosts[] row")
+    aliases = [a["alias"] for a in dev.get("ssh_aliases") or []
+               if str(a.get("host", "")).lower() == host.lower() and a.get("alias")]
+    return row.get("ssh_user") or "git", list(row.get("forms") or []), aliases
+
+
+def _employer_prefixes(owner: str, host: str, user: str, forms: list, aliases: list, accounts: list,
+                       version: str) -> list:
+    def tmpl(form: str) -> list:
+        if form == "scp":
+            return [f"{user}@{host}:{{o}}/"]
+        if form == "scp-alias":
+            return ([f"{user}@{a}:{{o}}/" for a in aliases] if version == "v4"
+                    else [x for a in aliases for x in (f"{user}@{a}:{{o}}/", f"{a}:{{o}}/")])
+        if form == "ssh":
+            return [f"ssh://{user}@{host}/{{o}}/"]
+        if form == "https":
+            return [f"https://{host}/{{o}}/"]
+        if form == "https-userinfo":
+            return [f"https://{acct}@{host}/{{o}}/" for acct in accounts]
+        return []
+    if version == "v4":
+        order = [f for f in _V4_EMPLOYER_FORMS.get(host, ("scp", "https", "ssh")) if f in forms]
+        return [t.format(o=owner) for f in order for t in tmpl(f)]
+    order = [f for f in ("scp", "scp-alias", "ssh", "https", "https-userinfo") if f in forms]
+    out = []
+    for f in order:
+        for t in tmpl(f):
+            for o in _case_variants(owner):
+                v = t.format(o=o)
+                if v not in out:
+                    out.append(v)
+    return out
+
+
+def overlay_pairs(cr: dict, dev: dict, version: str = "v5") -> list:
+    """The overlay's GIT_CONFIG (key, value) pairs, in the H17 order:
+    personal hasconfig includes; personal https insteadOf; credential helper reset; the employer
+    transport block; (v5) the guarded Claude floor hook."""
+    if version not in OVERLAY_VERSIONS:
+        raise DataError(f"unknown overlay version {version!r}")
+    blocked = cr.get("blocked_scheme")
+    if not isinstance(blocked, str) or not blocked:
+        raise DataError("context-remotes: blocked_scheme missing")
+    owners = [o for o in cr.get("owners") or [] if isinstance(o, dict)]
+    personal = [o for o in owners if o.get("class") == "personal"]
+    employer = [o for o in owners if o.get("class") == "employer"]
+    pairs = []
+    for o in personal:
+        user, forms, aliases = _host_facts(cr, dev, o["host"])
+        h, n = o["host"], o["owner"]
+        pats = []
+        if "scp" in forms:
+            pats.append(f"{user}@{h}:{n}/**")
+        if "scp-alias" in forms:
+            pats += [f"{user}@{a}:{n}/**" for a in aliases]
+        if "https" in forms:
+            pats.append(f"https://{h}/{n}/**")
+        if "ssh" in forms:
+            pats.append(f"ssh://{user}@{h}/{n}/**")
+        pairs += [(f"includeIf.hasconfig:remote.*.url:{p}.path", OVERLAY_INCLUDE) for p in pats]
+    for o in personal:
+        user, forms, aliases = _host_facts(cr, dev, o["host"])
+        h, n = o["host"], o["owner"]
+        srcs = []
+        if "scp-alias" in forms:
+            srcs += [f"{user}@{a}:{n}/" for a in aliases]
+        if "scp" in forms:
+            srcs.append(f"{user}@{h}:{n}/")
+        if "ssh" in forms:
+            srcs.append(f"ssh://{user}@{h}/{n}/")
+        pairs += [(f"url.https://{h}/{n}/.insteadOf", s) for s in srcs]
+    hosts_seen = []
+    for o in personal:
+        if o["host"] not in hosts_seen:
+            hosts_seen.append(o["host"])
+    for h in hosts_seen:
+        pairs += [(f"credential.https://{h}.helper", ""), (f"credential.https://{h}.helper", "!gh auth git-credential")]
+    accounts = []
+    for ident in dev.get("identities") or []:
+        for acct in ident.get("accounts") or []:
+            if acct not in accounts:
+                accounts.append(acct)
+    if "git" not in accounts:
+        accounts.append("git")
+    seen = set()
+    for o in employer:
+        user, forms, aliases = _host_facts(cr, dev, o["host"])
+        for pre in _employer_prefixes(o["owner"], o["host"], user, forms, aliases, accounts, version):
+            if pre not in seen:
+                seen.add(pre)
+                pairs.append((f"url.{blocked}.insteadOf", pre))
+    if version != "v4":
+        pairs.append((f"hook.{FLOOR_HOOK}.command", FLOOR_COMMAND))
+        pairs += [(f"hook.{FLOOR_HOOK}.event", e) for e in FLOOR_EVENTS]
+        pairs.append((f"hook.{FLOOR_HOOK}.enabled", "true"))
+    return pairs
+
+
+def overlay_env(cr: dict, dev: dict, version: str = "v5") -> "OrderedDict":
+    """The settings `env` block: markers, the gh belt, then GIT_CONFIG_COUNT/KEY/VALUE pairs.
+    No GIT_AUTHOR_* or GIT_COMMITTER_* key, ever: identity comes only from the hasconfig include."""
+    pairs = overlay_pairs(cr, dev, version)
+    env = OrderedDict([("WS_CLAUDE_OVERLAY", version)])
+    if version != "v4":
+        env["WS_SURFACE_FAMILY"] = "claude"
+    env["GH_CONFIG_DIR"] = OVERLAY_GH_DIR
+    env["GIT_CONFIG_COUNT"] = str(len(pairs))
+    for i, (k, v) in enumerate(pairs):
+        env[f"GIT_CONFIG_KEY_{i}"] = k
+        env[f"GIT_CONFIG_VALUE_{i}"] = v
+    return env
+
+
+def _identity_row(dev: dict, iid: str) -> dict:
+    row = next((r for r in dev.get("identities") or [] if isinstance(r, dict) and r.get("id") == iid), None)
+    if row is None:
+        raise DataError(f"devices: identity {iid!r} is not declared")
+    return row
+
+
+def claude_identity_id(dev: dict) -> str:
+    """The identity of the Claude-family rule (IR1: claude -> the personal identity on every device)."""
+    for r in dev.get("identity_rules") or []:
+        if isinstance(r, dict) and r.get("family") == "claude" and r.get("device") == "*":
+            return str(r.get("identity"))
+    raise DataError("devices: no identity rule for the claude family on every device")
+
+
+def _user_block(row: dict) -> str:
+    return f"[user]\n\tname = {row['name']}\n\temail = {row['email']}\n"
+
+
+def render_claude_identity_inc(dev: dict) -> str:
+    row = _identity_row(dev, claude_identity_id(dev))
+    if row.get("class") != "personal":
+        raise DataError("the Claude identity must be a personal identity")
+    return IDENTITY_INC_HEADER + _user_block(row)
+
+
+def device_identity_id(dev: dict, device_id: str):
+    """The device default for non-Claude families: the first family-* rule for the device, else
+    the device row's default_identity. None for an unknown device (most restrictive: no default)."""
+    for r in dev.get("identity_rules") or []:
+        if isinstance(r, dict) and r.get("family") == "*" and r.get("device") == device_id:
+            return r.get("identity")
+    row = next((d for d in dev.get("devices") or [] if isinstance(d, dict) and d.get("id") == device_id), None)
+    return (row or {}).get("default_identity")
+
+
+def render_device_identity_inc(dev: dict, device_id: str):
+    iid = device_identity_id(dev, device_id)
+    if not iid:
+        return None
+    row = _identity_row(dev, iid)
+    return (f"# snds-workspace device identity for {device_id} (render_shims.py --emit identity-inc).\n"
+            "# Non-Claude surfaces and humans on this device commit as this identity unless a repo sets\n"
+            "# its own. Claude surfaces never use it: their identity comes from claude-identity.inc.\n"
+            + _user_block(row))
+
+
+def _render_identity_inc(out: dict, root: Path) -> str:
+    _cr, dev = identity_tables(root)
+    return render_claude_identity_inc(dev)
 
 
 def _yn(v) -> str:
@@ -494,6 +732,8 @@ def render_output(t: dict, out: dict, root: Path = ROOT) -> str:
         return _render_codex_config(t)
     if kind == "cursor-sandbox":
         return _render_cursor_sandbox(t)
+    if kind == "identity-inc":
+        return _render_identity_inc(out, root)
     if kind == "surfaces-md-block":
         try:
             current = (root / out["path"]).read_text(encoding="utf-8")
@@ -880,6 +1120,31 @@ def _emit(report: dict, as_json: bool, cmd: str) -> None:
         print(f"ok render_shims {cmd}: clean" + (f" ({len(report.get('warnings', []))} warning(s))" if report.get("warnings") else ""))
 
 
+def emit(kind: str, root: Path = ROOT, *, device=None, overlay=None, out=None) -> int:
+    """--emit identity-inc --device ID: that device's default identity include on stdout (exit 3 when
+    the device has none). --emit overlay-env [--overlay v4|v5]: the overlay env JSON (read-only)."""
+    out = out or sys.stdout
+    try:
+        cr, dev = identity_tables(root)
+        if kind == "identity-inc":
+            if not device:
+                print("usage: --emit identity-inc --device ID", file=sys.stderr)
+                return 2
+            text = render_device_identity_inc(dev, device)
+            if text is None:
+                print(f"no default identity for device {device!r} (unknown devices get none)", file=sys.stderr)
+                return 3
+            out.write(text)
+            return 0
+        t = load_table(root)
+        row = next((o for o in t.get("outputs") or [] if o.get("overlay")), {})
+        out.write(canonical(overlay_env(cr, dev, overlay or row.get("overlay") or "v5")))
+        return 0
+    except DataError as exc:
+        print(f"ERROR {exc}", file=sys.stderr)
+        return 2
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Render and check hook registrations from surfaces.json.")
     mode = ap.add_mutually_exclusive_group(required=True)
@@ -889,6 +1154,9 @@ def main(argv=None) -> int:
     mode.add_argument("--install-state", action="store_true")
     mode.add_argument("--verify-canonical", metavar="REV")
     mode.add_argument("--self-test", action="store_true")
+    mode.add_argument("--emit", choices=["identity-inc", "overlay-env"])
+    ap.add_argument("--device")
+    ap.add_argument("--overlay", choices=list(OVERLAY_VERSIONS))
     ap.add_argument("--only")
     ap.add_argument("--pending-ok", action="store_true")
     ap.add_argument("--rev")
@@ -902,6 +1170,8 @@ def main(argv=None) -> int:
 
     if args.self_test:
         return self_test()
+    if args.emit:
+        return emit(args.emit, root, device=args.device, overlay=args.overlay)
     if args.verify_canonical:
         return verify_canonical(args.verify_canonical, root)
     if args.check:

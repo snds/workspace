@@ -2203,7 +2203,21 @@
       "install_mode": "claude-settings-keys",
       "surface": "claude-code",
       "probe": false,
-      "render": "hooks"
+      "render": "hooks",
+      "overlay": "v4"
+    },
+    {
+      "id": "claude-identity-inc",
+      "path": "00-bootstrap/dist/git/claude-identity.inc",
+      "layer": null,
+      "owned_keys": [
+        "whole-file"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": "claude-code",
+      "probe": false,
+      "render": "identity-inc"
     },
     {
       "id": "claude-project-settings",
