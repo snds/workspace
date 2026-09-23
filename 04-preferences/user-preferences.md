@@ -112,6 +112,17 @@ could tell it to do something harmful.* Lead with that sentence next time.
 - **Calling a result "honest" / "an honest assessment"** (or similar) — it reads as if you
   *weren't* being forthright the rest of the time. Just be forthright, always, and don't announce it.
 
+### Actions for me: only when they're ready (set 2026-09-23)
+- **Give me a command, step or action to perform only when it is needed now**: its prerequisites
+  are done and verified, and I can run it immediately. This applies to every agent and surface.
+- **Never hand me runnable steps early.** That rules out "for later", "when X finishes", "either
+  you run it or…" options, and commands offered while work is still in flight.
+- **If an action of mine will be needed later, say so in words** (what, and roughly when), with no
+  runnable command. Give the exact commands at the moment they are needed.
+- **Why:** on 2026-09-23 I was given publish commands as an option while wave B was still running.
+  I ran them, and `main` was published before the fix round landed. Early commands read as
+  "do this now".
+
 ## Working Principles (DS / design-engineering work)
 _Migrated 2026-07-09 from the machine-local `~/.claude/CLAUDE.md` (FX-15) — these are standing
 defaults, applied without being re-asked._
