@@ -64,6 +64,8 @@ on:
       - "02-shared-references/vetted-scripts.json"
       - "09-tools/prune-our-branches.py"
       - "09-tools/fixtures/action_policy/**"
+      - "00-bootstrap/dist/git/**"
+      - "09-tools/fixtures/identity/**"
   pull_request:
     paths:
       - "**/*.md"
@@ -117,6 +119,8 @@ on:
       - "02-shared-references/vetted-scripts.json"
       - "09-tools/prune-our-branches.py"
       - "09-tools/fixtures/action_policy/**"
+      - "00-bootstrap/dist/git/**"
+      - "09-tools/fixtures/identity/**"
 
 jobs:
   check:
@@ -174,8 +178,8 @@ jobs:
           ! python3 09-tools/figma-bind-probe.py --capture 09-tools/fixtures/figma-capture.violations.json
       - name: Resolver self-test
         run: python3 09-tools/profile_resolve.py --self-test
-      - name: Declared tables valid
-        run: python3 09-tools/profile_resolve.py validate-tables
+      - name: Declared tables valid (require all, incl. the devices.json identity keys)
+        run: python3 09-tools/profile_resolve.py validate-tables --require-all
       - name: Prune vetted-script self-test
         run: python3 09-tools/prune-our-branches.py --self-test
       - name: Pinned lib self-test (H24)

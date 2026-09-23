@@ -142,7 +142,7 @@ Coverage on the minimum surfaces:
 | H2 | unverified | advisory | unverified | unverified |
 | H3 | enforced | not-applicable | enforced | enforced |
 | H16 | enforced | advisory | enforced-when-installed | enforced-when-installed |
-| H17 | unverified | backstop-only | unverified | unverified |
+| H17 | enforced-partial | backstop-only | advisory | advisory |
 | H19 | unverified | not-applicable | unverified | unverified |
 | H22 | enforced-partial | backstop-only | advisory | advisory |
 | H24 | unverified | not-applicable | unverified | unverified |
@@ -176,6 +176,23 @@ Registrations (one effective registration per surface, event and behaviour):
 | probe-codex-user.session-start | session-start | ws-hook-probe | - | ws-probe |
 | probe-codex-user.user-prompt | user-prompt | ws-hook-probe | - | ws-probe |
 | probe-codex-user.stop | stop | ws-hook-probe | - | ws-probe |
+
+Rendered outputs (installers read this mapping from `render_shims.py --list --json`; an `overlay` output also renders the Claude overlay env, which only `--install-claude-overlay` installs):
+
+| Output | Path | Install mode | Installs to | Overlay |
+|---|---|---|---|---|
+| claude-user-fragment | `00-bootstrap/dist/settings-user-fragment.json` | claude-settings-keys | `~/.claude/settings.json` | v5 |
+| claude-identity-inc | `00-bootstrap/dist/git/claude-identity.inc` | whole-file | - | - |
+| claude-project-settings | `.claude/settings.json` | tracked | `.claude/settings.json` | - |
+| cursor-user-hooks | `00-bootstrap/dist/cursor-hooks.json` | whole-file | `~/.cursor/hooks.json` | - |
+| cursor-project-hooks | `.cursor/hooks.json` | tracked | `.cursor/hooks.json` | - |
+| snds-plugin-hooks | `00-bootstrap/dist/plugin-hooks.json` | whole-file | `~/.claude/local-plugins/snds-local/snds/hooks/hooks.json` | - |
+| codex-config-fragment | `00-bootstrap/dist/codex-config-fragment.toml` | managed-block | `~/.codex/config.toml` | - |
+| cursor-sandbox-fragment | `00-bootstrap/dist/cursor-sandbox-fragment.json` | whole-file | - | - |
+| probe-claude-code | `00-bootstrap/dist/probe/claude-code.json` | merge-hook-entries | `~/.claude/settings.json` | - |
+| probe-cursor | `00-bootstrap/dist/probe/cursor.json` | merge-hook-entries | `~/.cursor/hooks.json` | - |
+| probe-codex | `00-bootstrap/dist/probe/codex.json` | merge-hook-entries | `~/.codex/hooks.json` | - |
+| surfaces-md-block | `00-bootstrap/SURFACES.md` | tracked | - | - |
 <!-- END GENERATED: surfaces -->
 
 ---

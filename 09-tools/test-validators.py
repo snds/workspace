@@ -1070,6 +1070,126 @@ class TestVettedContext(unittest.TestCase):
         self.assertNotEqual(gone.returncode, 0)
 
 
+class TestIdentity(unittest.TestCase):
+    """G4b/H17: identity matrix, express override, floor decisions in process, hasconfig include (git >= 2.36)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pr = load("profile_resolve")
+        cls.rs = load("00-bootstrap/doctor/render_shims.py")
+        cls.fc = load("09-tools/fixtures/identity/floor_cases.py")
+
+    def _tmp(self):
+        td = tempfile.TemporaryDirectory()
+        self.addCleanup(td.cleanup)
+        return Path(os.path.realpath(td.name))
+
+    def _cases(self, cases):
+        skipped = [c for c in cases if c[1] is None]
+        if skipped:
+            self.skipTest(f"{len(skipped)} case(s) skipped: {skipped[0][2]}")
+        for name, passed, detail in cases:
+            with self.subTest(case=name):
+                self.assertTrue(passed, detail)
+
+    def test_t8_unit_suite(self):
+        fails = []
+        self.pr._t8_self_test(self._tmp(), lambda cond, label: None if cond else fails.append(label))
+        self.assertEqual(fails, [])
+
+    def test_shipped_identity_keys(self):
+        res = self.pr.validate_tables(require_all=True)["tables"]["devices"]
+        self.assertTrue(res["ok"], res["errors"])
+        dev = self.pr.load_table("devices")
+        rule = self.pr.identity_rule("claude", "work-mbp", dev)
+        self.assertEqual((rule["id"], rule["identity"], rule.get("overridable")), ("IR1", "snds", False))
+        self.assertEqual(self.pr.identity_rule("cursor", "work-mbp", dev)["identity"], "centric")
+        self.assertEqual(self.pr.identity_rule("codex", "personal-mbp", dev)["identity"], "snds")
+        self.assertIsNone(self.pr.identity_rule("cursor", "unknown", dev))
+
+    def test_hasconfig_include(self):
+        self._cases(self.fc.identity_cases(self.pr, self.rs))
+
+
+class TestOverlay(unittest.TestCase):
+    """H17: the v5 overlay render (golden, owners x forms x case, guarded floor, no GIT_AUTHOR_*),
+    the v4 reproduction, the tracked fragment, the gh belt and --install-claude-overlay on a temp HOME."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pr = load("profile_resolve")
+        cls.rs = load("00-bootstrap/doctor/render_shims.py")
+        cls.fc = load("09-tools/fixtures/identity/floor_cases.py")
+
+    def test_emitter_cases(self):
+        for name, passed, detail in self.rs.overlay_cases():
+            with self.subTest(case=name):
+                self.assertTrue(passed, detail)
+
+    def test_tracked_fragment_is_the_v5_render(self):
+        cr, dev = self.rs.identity_tables(ROOT_DIR)
+        frag = json.loads((ROOT_DIR / "00-bootstrap/dist/settings-user-fragment.json").read_text(encoding="utf-8"))
+        env = frag["env"]
+        self.assertEqual(env, dict(self.rs.overlay_env(cr, dev, "v5")))
+        self.assertEqual(env["WS_CLAUDE_OVERLAY"], "v5")
+        self.assertFalse([k for k in env if k.startswith(("GIT_AUTHOR_", "GIT_COMMITTER_"))])
+        inc = (ROOT_DIR / "00-bootstrap/dist/git/claude-identity.inc").read_text(encoding="utf-8")
+        self.assertEqual(inc, self.rs.render_claude_identity_inc(dev))
+
+    def test_gh_belt_names_no_employer_account(self):
+        dev = self.pr.load_table("devices")
+        cr = self.pr.load_table("context-remotes")
+        employer = [a for i in dev["identities"] if i["class"] == "employer" for a in i["accounts"]]
+        employer += [o["owner"] for o in cr["owners"] if o["class"] == "employer"]
+        self.assertTrue(employer)
+        hosts = (ROOT_DIR / "00-bootstrap/dist/gh-claude/hosts.yml").read_text(encoding="utf-8").casefold()
+        for name in employer:
+            self.assertNotIn(name.casefold(), hosts)
+
+    def test_install_claude_overlay_on_temp_home(self):
+        for name, passed, detail in self.fc.overlay_install_cases(self.pr, self.rs):
+            with self.subTest(case=name):
+                self.assertTrue(passed, detail)
+
+
+class TestClaudeFloor(unittest.TestCase):
+    """G4a: the rendered floor under git >= 2.54 config hooks: listed, survives repo-local overrides,
+    guarded when the pin is absent, exact hook arguments."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pr = load("profile_resolve")
+        cls.rs = load("00-bootstrap/doctor/render_shims.py")
+        cls.fc = load("09-tools/fixtures/identity/floor_cases.py")
+
+    def test_floor_hook_cases(self):
+        cases = self.fc.claude_floor_cases(self.pr, self.rs)
+        if any(c[1] is None for c in cases):
+            self.skipTest(cases[0][2])
+        for name, passed, detail in cases:
+            with self.subTest(case=name):
+                self.assertTrue(passed, detail)
+
+
+class TestFloorDecisions(unittest.TestCase):
+    """G5b: floor decisions through real git hooks (transport block lifted, local bare remote), each with
+    its own rule id on stderr; the declared bypass residuals; transport refusal is not a floor pass."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pr = load("profile_resolve")
+        cls.rs = load("00-bootstrap/doctor/render_shims.py")
+        cls.fc = load("09-tools/fixtures/identity/floor_cases.py")
+
+    def test_floor_decision_cases(self):
+        cases = self.fc.floor_decision_cases(self.pr, self.rs)
+        if any(c[1] is None for c in cases):
+            self.skipTest(cases[0][2])
+        for name, passed, detail in cases:
+            with self.subTest(case=name):
+                self.assertTrue(passed, detail)
+
+
 class TestPinLib(unittest.TestCase):
     """H24 pin_lib: its own fixture suite, plus the real-home guard against the REAL
     profile_resolve verdict (never a human verdict with confirm_real_home=True)."""

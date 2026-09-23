@@ -49,6 +49,8 @@ on:
       - "02-shared-references/vetted-scripts.json"
       - "09-tools/prune-our-branches.py"
       - "09-tools/fixtures/action_policy/**"
+      - "00-bootstrap/dist/git/**"
+      - "09-tools/fixtures/identity/**"
   pull_request:
     paths:
       - "09-tools/validate-*.py"
@@ -92,6 +94,8 @@ on:
       - "02-shared-references/vetted-scripts.json"
       - "09-tools/prune-our-branches.py"
       - "09-tools/fixtures/action_policy/**"
+      - "00-bootstrap/dist/git/**"
+      - "09-tools/fixtures/identity/**"
 
 jobs:
   check:

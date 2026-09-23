@@ -462,6 +462,8 @@ Declared resolver (H2): device, repo, where, scan, audit, detect, agent-check, g
 
 H22 adds `policy` (action-class policy over the committed action-policy.json, most restrictive per invocation), `classify` (verb map + hook_bypass) and `vetted-status` (pinned blob check); `vetted_context`, `lift_env` and `append_receipt` serve vetted scripts.
 
+H17 adds `identity` (expected identity, I1/I2 hits, device-mismatch flag), `override` (human-only, TTY, <=24h, non-employer; suppresses the flag only) and `floor` / `floor_decide` (the Claude git floor behind the v5 overlay's `ws-claude-wall` config hook).
+
 ## 00-bootstrap/doctor/pin_lib.py
 
 Pinned lib under ~/.config/snds-workspace: pin/current/lag with the real-home guard; --self-test.
@@ -477,6 +479,12 @@ Neutral hook core (H19): payload adapters, `host --skip-any` host filter, dedupe
 ## 00-bootstrap/doctor/render_shims.py
 
 Renders every hook registration file from 02-shared-references/surfaces.json (H16). `--check` covers Rule C coverage, Rule R one-registration, drift and wrapper sha; also `--write`, `--list --json`, `--install-state --json`, `--rev`, `--verify-canonical` and `--self-test`.
+
+H17 adds the Claude overlay env emitter (`overlay` output field, v4 reproduction kept for proof; `--emit overlay-env`), the `claude-identity-inc` output and `--emit identity-inc --device ID`.
+
+## fixtures/identity/
+
+Synthetic identity tables, the v5 overlay golden and `floor_cases.py`: hook-level floor, hasconfig include and `--install-claude-overlay` fixtures on a temp HOME (git >= 2.54 for the floor; otherwise the cases skip).
 
 ## fixtures/nightly/
 

@@ -85,9 +85,9 @@
 - **Last modified**: 2026-06-01 — created; canonical copy synced to Drive for other machines.
 
 ### 09-tools/profile_resolve.py
-- **Size**: ~3835 lines
-- **Purpose**: H2 declared resolver CLI and import home (tables, devices, remotes, repo walls, checkout cache, surface detection, agent check, gitcaps); H22 policy, classify, vetted-status, vetted_context, lift_env and receipts.
-- **Last modified**: 2026-09-23 — H22 action-class policy and vetted path added in wave 0 (T7).
+- **Size**: ~4833 lines
+- **Purpose**: H2 declared resolver CLI and import home (tables, devices, remotes, repo walls, checkout cache, surface detection, agent check, gitcaps); H22 policy, classify, vetted-status, vetted_context, lift_env and receipts; H17 identity, override and floor (floor_decide).
+- **Last modified**: 2026-09-23 — H17 identity, override and Claude git floor added in wave 0 (T8).
 
 ### 02-shared-references/vetted-scripts.json
 - **Size**: ~25 lines
@@ -100,9 +100,9 @@
 - **Last modified**: 2026-09-23 — created in wave 0 (T7).
 
 ### 02-shared-references/devices.json
-- **Size**: ~43 lines
-- **Purpose**: Declared device table (D14): hostnames, labels, projects_root, brain, ssh aliases; T8 adds identity keys.
-- **Last modified**: 2026-09-22 — created in wave 0 (T2).
+- **Size**: ~119 lines
+- **Purpose**: Declared device table (D14): hostnames, labels, projects_root, brain, ssh aliases; identities, personal markers, employer allowlist, identity rules IR1-IR3 and I1/I2 (H17).
+- **Last modified**: 2026-09-23 — identity keys added in wave 0 (T8).
 
 ### 02-shared-references/delivery-playbooks/context-remotes.json
 - **Size**: ~98 lines
@@ -135,14 +135,24 @@
 - **Last modified**: 2026-09-22 — created in wave 0 (T3).
 
 ### 02-shared-references/surfaces.json
-- **Size**: ~2344 lines
-- **Purpose**: Surface registry (H16): 22 surface rows, families, markers, formats, dialects, layers, commands, registrations, outputs, wrapper sha256; source for render_shims and profile_resolve detection.
-- **Last modified**: 2026-09-22 — created in wave 0 (T1).
+- **Size**: ~2368 lines
+- **Purpose**: Surface registry (H16): 22 surface rows, families, markers, formats, dialects, layers, commands, registrations, outputs, wrapper sha256, coverage (H22, H17); source for render_shims and profile_resolve detection.
+- **Last modified**: 2026-09-23 — coverage.H17 and the overlay/identity-inc outputs added in wave 0 (T8).
 
 ### 00-bootstrap/doctor/render_shims.py
-- **Size**: ~951 lines
-- **Purpose**: Generator and checker for every hook registration output declared in surfaces.json.
-- **Last modified**: 2026-09-22 — created in wave 0 (T1).
+- **Size**: ~1339 lines
+- **Purpose**: Generator and checker for every hook registration output declared in surfaces.json; Claude overlay env (v5, v4 reproduction) and identity-inc emitters.
+- **Last modified**: 2026-09-23 — overlay and identity-inc emitters added in wave 0 (T8).
+
+### 09-tools/fixtures/identity/floor_cases.py
+- **Size**: ~491 lines
+- **Purpose**: H17 hook-level fixtures: rendered floor under git config hooks, floor decisions with rule ids, bypass residuals, hasconfig identity, overlay installer on a temp HOME.
+- **Last modified**: 2026-09-23 — created in wave 0 (T8).
+
+### 09-tools/fixtures/identity/overlay-v5.golden.json
+- **Size**: ~128 lines
+- **Purpose**: Golden v5 overlay env and identity includes from the synthetic identity tables.
+- **Last modified**: 2026-09-23 — created in wave 0 (T8).
 
 ### 09-tools/ws_hook.py
 - **Size**: ~1395 lines

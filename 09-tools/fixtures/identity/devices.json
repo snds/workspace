@@ -1,36 +1,35 @@
 {
   "schema_version": 1,
-  "doc": "Declared device table (H2/H17, D14). Tools use Path.home() at runtime; `home` is verified by doctor --check only.",
+  "doc": "Synthetic device table with the H17 identity keys (T8 fixtures: dev-a works for acme-corp, dev-b is personal). Not a real device list.",
   "devices": [
     {
-      "id": "work-mbp",
-      "label": "Work MacBook Pro",
+      "id": "dev-a",
+      "label": "Device A",
       "hostnames": [
-        "CS-K746DRWXY1",
-        "seansands",
-        "CS-KQ23N94M0W"
+        "host-a",
+        "host-a2"
       ],
       "hostname_labels": {
-        "CS-KQ23N94M0W": "Work MacBook Pro (loaner)"
+        "host-a2": "Device A (spare)"
       },
       "os": "macos",
-      "home": "/Users/sean.sands",
+      "home": "/home/dev-a",
       "projects_root": "Projects",
-      "brain": "Projects/workspace",
-      "default_identity": "centric"
+      "brain": "Projects/ws",
+      "default_identity": "acme-id"
     },
     {
-      "id": "personal-mbp",
-      "label": "Personal MacBook Pro",
+      "id": "dev-b",
+      "label": "Device B",
       "hostnames": [
-        "Voyager-2"
+        "host-b"
       ],
       "hostname_labels": {},
       "os": "macos",
-      "home": "/Users/snds",
+      "home": "/home/dev-b",
       "projects_root": "Projects",
-      "brain": "Projects/Workspace",
-      "default_identity": "snds"
+      "brain": "Projects/ws",
+      "default_identity": "pat"
     }
   ],
   "ssh_aliases": [
@@ -42,12 +41,12 @@
   ],
   "identities": [
     {
-      "id": "centric",
-      "name": "Sean Sands",
-      "email": "271648271+sean-sands-centric@users.noreply.github.com",
+      "id": "acme-id",
+      "name": "Acme Worker",
+      "email": "4242+acme-worker@users.noreply.github.com",
       "class": "employer",
       "accounts": [
-        "sean-sands-centric"
+        "acme-worker"
       ],
       "push": {
         "transport": "ssh",
@@ -55,12 +54,12 @@
       }
     },
     {
-      "id": "snds",
-      "name": "Sean Sands",
-      "email": "570874+snds@users.noreply.github.com",
+      "id": "pat",
+      "name": "Pat Sample",
+      "email": "1717+pat-sample@users.noreply.github.com",
       "class": "personal",
       "accounts": [
-        "snds"
+        "pat-sample"
       ],
       "push": {
         "transport": "https",
@@ -70,39 +69,41 @@
   ],
   "personal_markers": {
     "emails": [
-      "570874+snds@users.noreply.github.com"
+      "1717+pat-sample@users.noreply.github.com"
     ],
     "email_domains": [
-      "snds.design"
+      "pat-sample.example"
     ]
   },
   "employer_allowlist": {
     "identity_ids": [
-      "centric"
+      "acme-id"
     ],
-    "email_domains": []
+    "email_domains": [
+      "acme-corp.example"
+    ]
   },
   "identity_rules": [
     {
       "id": "IR1",
       "family": "claude",
       "device": "*",
-      "identity": "snds",
+      "identity": "pat",
       "overridable": false
     },
     {
       "id": "IR2",
       "family": "*",
-      "device": "work-mbp",
-      "identity": "centric",
+      "device": "dev-a",
+      "identity": "acme-id",
       "mismatch": "flag",
       "override_suppresses": "non-employer-repos-only"
     },
     {
       "id": "IR3",
       "family": "*",
-      "device": "personal-mbp",
-      "identity": "snds",
+      "device": "dev-b",
+      "identity": "pat",
       "mismatch": "flag"
     }
   ],

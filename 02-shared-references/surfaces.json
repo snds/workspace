@@ -213,15 +213,19 @@
           "how": "render_shims --check and --self-test"
         },
         "H17": {
-          "mode": "unverified",
-          "rules": "identity scoping, transport block and Claude floor apply once the overlay is installed; bypass residuals: git -c hook.ws-claude-wall.enabled=false, --no-verify, env-scope config removal (GIT_CONFIG_COUNT=0), exec -a ancestor spoofing, an unsandboxed Claude process writing control/receipts.jsonl; H15 closes them at tool time",
+          "mode": "enforced-partial",
+          "rules": "in force once Sean installs the rendered v5 overlay (G4e): the Claude identity comes only from the hasconfig include on personal remotes; employer remotes hit the transport block; GH_CONFIG_DIR is the gh belt; the guarded ws-claude-wall config hook blocks I1 over the pushed range, I2 outside vetted housekeeping and not-positively-personal under projects_root, and fails open on infrastructure errors. Bypass residuals: git -c hook.ws-claude-wall.enabled=false, --no-verify, env-scope config removal (GIT_CONFIG_COUNT=0), exec -a ancestor spoofing, an unsandboxed Claude process writing control/receipts.jsonl; H15 closes them at tool time. For employer remotes the transport block stays the barrier unless the env config is removed wholesale",
           "decision": null,
-          "verified_by": [],
-          "planned_verified_by": [
+          "verified_by": [
             "fixture:TestIdentity",
+            "fixture:TestOverlay",
+            "fixture:TestClaudeFloor",
+            "fixture:TestFloorDecisions"
+          ],
+          "planned_verified_by": [
             "probe:claude-code@work-mbp"
           ],
-          "how": "enforced-partial once TestIdentity (T8) resolves; T8 owns this entry"
+          "how": "fixtures prove the rendered overlay; the claude-code probe after G4e proves the install"
         },
         "H19": {
           "mode": "unverified",
@@ -636,14 +640,14 @@
           "how": "render_shims --check"
         },
         "H17": {
-          "mode": "unverified",
-          "rules": "identity from git config; I1 blocks and a device mismatch is a flag",
+          "mode": "advisory",
+          "rules": "identity from git config (the device rule); --install-identity renders the device identity include; profile_resolve.py identity reports I1 and the device-mismatch flag, report-only; no wave-0 git boundary blocks a non-Claude committer",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [
             "fixture:TestIdentity"
           ],
-          "how": "enforced-when-installed once TestIdentity (T8) resolves"
+          "how": "enforced-when-installed once the H18 identity lanes ship (wave 1)"
         },
         "H19": {
           "mode": "unverified",
@@ -888,14 +892,14 @@
           "how": "render_shims --check"
         },
         "H17": {
-          "mode": "unverified",
-          "rules": "identity from git config (device rule)",
+          "mode": "advisory",
+          "rules": "identity from git config (the device rule); --install-identity renders the device identity include; profile_resolve.py identity reports I1 and the device-mismatch flag, report-only; no wave-0 git boundary blocks a non-Claude committer",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [
             "fixture:TestIdentity"
           ],
-          "how": "enforced-when-installed once TestIdentity (T8) resolves"
+          "how": "enforced-when-installed once the H18 identity lanes ship (wave 1)"
         },
         "H19": {
           "mode": "unverified",
@@ -2203,7 +2207,21 @@
       "install_mode": "claude-settings-keys",
       "surface": "claude-code",
       "probe": false,
-      "render": "hooks"
+      "render": "hooks",
+      "overlay": "v5"
+    },
+    {
+      "id": "claude-identity-inc",
+      "path": "00-bootstrap/dist/git/claude-identity.inc",
+      "layer": null,
+      "owned_keys": [
+        "whole-file"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": "claude-code",
+      "probe": false,
+      "render": "identity-inc"
     },
     {
       "id": "claude-project-settings",
