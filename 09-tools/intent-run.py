@@ -1068,6 +1068,16 @@ def _integrator_base(spec: dict) -> list[str]:
     return ["T9a"] if "T9A" in ids else []
 
 
+def _main_checkout_path(rel: Path) -> Path | None:
+    """`rel` under the main checkout of the repo that owns cwd (a held spec is gitignored, so a linked
+    worktree never has its own copy), or None."""
+    r = _git(["rev-parse", "--path-format=absolute", "--git-common-dir"], Path.cwd())
+    if r.returncode != 0 or not r.stdout.strip():
+        return None
+    cand = Path(r.stdout.strip()).parent / rel
+    return cand.resolve() if cand.is_file() else None
+
+
 def cmd_scope_audit(
     spec_path: Path,
     *,
@@ -1135,6 +1145,14 @@ def cmd_scope_audit(
                 vio.append(f"auto-commit: {s[:12]} unreverted")
             records.append({"sha": c["sha"], "subject": c["subject"], "task": tid, "paths": n,
                             "violations": vio, "notes": notes})
+        direct_re = re.compile(rf"^wave{wp}\(([^)]+)\): ")
+        for c in _commit_log(aroot, ["--first-parent", ref]):
+            subj = c["subject"].strip()
+            if len(c["parents"]) >= 2 or merge_re.match(subj) or fix_re.match(subj) or not direct_re.match(subj):
+                continue
+            records.append({"sha": c["sha"], "subject": c["subject"], "task": direct_re.match(subj).group(1),
+                            "paths": 0, "violations": [],
+                            "notes": ["unaudited direct commit (not a task merge or a fix-round commit)"]})
         for c in _commit_log(aroot, [ref]):
             m = fix_re.match(c["subject"].strip())
             if not m or not c["parents"]:
@@ -1548,10 +1566,14 @@ def _st_fixture_spec() -> None:
     assert sig and sig[0]["measure"] == "python3 09-tools/tool.py --self-test", sig
 
 
+class _Skip(Exception):
+    """A self-test case that could not run here: reported as SKIP, never counted as ok."""
+
+
 def _st_held_parity() -> str:
     found = _held_spec_candidates()
     if not found:
-        return "skipped (no held spec on this checkout)"
+        raise _Skip("no held spec on this checkout")
     for p in found:
         text = p.read_text(encoding="utf-8")
         old, new = _legacy_parse(text), parse_spec(text)
@@ -1624,6 +1646,10 @@ def _st_verify() -> None:
         assert (repo / "ran-ok").exists(), "tracked script did not run in --root"
         assert "HUMAN: human step" in out and "HUMAN-ATTESTED: human attested" in out, out
         assert out.count("NOT_EXPOSED") >= 2, out
+        # An item with no measure is a SKIP, and a SKIP never lets verify --run pass.
+        spec_nm = _verify_spec(td, "- [ ] tracked script -- measure: python3 09-tools/ok.py\n- [ ] no measure here")
+        rc_nm, out_nm = _quiet(cmd_verify, spec_nm, True, str(repo), automated=False)
+        assert rc_nm == 1 and "SKIP" in out_nm, (rc_nm, out_nm)
         # Interactive: shell=False still never runs the injected command; human still never runs.
         (repo / "ran-ok").unlink()
         rc, out = _quiet(cmd_verify, spec, True, str(repo), automated=False)
@@ -1820,6 +1846,14 @@ def _st_scope_audit() -> None:
         # 9. Unknown task → usage (2).
         rc, out = audit(repo, task="TX", rev="main..main")
         assert rc == 2, (rc, out)
+        # 10. A direct first-parent wave commit (no merge, no fix subject) is listed, never silent.
+        repo, env = _new_repo(td, "direct")
+        h = _History(repo, env)
+        b0 = h.commit("main", "base", base_files)
+        h.commit("main", "wave0(T0): table rows", {"tools/alpha.py": "direct\n"}, frm=b0)
+        h.flush()
+        rc, out = audit(repo, wave_merges=True)
+        assert "NOTE unaudited direct commit" in out and "wave0(T0): table rows" in out, (rc, out)
 
 
 SELF_TESTS = (
@@ -1832,8 +1866,12 @@ SELF_TESTS = (
 )
 
 
+_SKIPPED: list = []
+
+
 def self_test() -> int:
     only = os.environ.get("INTENT_RUN_SELFTEST_ONLY")
+    del _SKIPPED[:]
     failed = 0
     saved = dict(os.environ)
     home = tempfile.mkdtemp(prefix="intent-run-home-")
@@ -1845,7 +1883,7 @@ def self_test() -> int:
         os.environ.update(saved)
         shutil.rmtree(home, ignore_errors=True)
     ran = 1 if only == "invariant" else len(SELF_TESTS)
-    print(f"self-test: {ran - failed} ok, {failed} failed")
+    print(f"self-test: {ran - failed - len(_SKIPPED)} ok, {len(_SKIPPED)} skipped, {failed} failed")
     return 1 if failed else 0
 
 
@@ -1859,6 +1897,9 @@ def _run_self_tests(only: str | None) -> int:
         try:
             note = fn()
             print(f"ok   {name}" + (f" — {note}" if note else ""))
+        except _Skip as sk:
+            _SKIPPED.append(name)
+            print(f"SKIP {name} — {sk}")
         except Exception as exc:  # report every failing case, then exit 1
             failed += 1
             msg = str(exc).replace("\n", " ")[:600]
@@ -1928,6 +1969,10 @@ def main(argv: list[str] | None = None) -> int:
             print("scope-audit: pass exactly one of --task ID --rev A..B or --wave-merges", file=sys.stderr)
             return 2
         spec_p = Path(args.spec).expanduser().resolve()
+        if not spec_p.is_file() and not Path(args.spec).expanduser().is_absolute():
+            alt = _main_checkout_path(Path(args.spec))
+            if alt is not None:
+                spec_p = alt
         if not spec_p.is_file():
             print(f"spec not found: {spec_p}", file=sys.stderr)
             return 2
