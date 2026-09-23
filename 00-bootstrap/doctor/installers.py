@@ -995,6 +995,22 @@ def self_test() -> int:
                 self.assertIn("real verdict: agent", err)
             self.assertEqual(len(self.spy.calls), n)
 
+        def test_temp_home_without_injected_verdict_consults_the_real_one(self):
+            # pin_lib._PR_LOADER is the agent fake (setUp): no injected verdict must still refuse.
+            reasons = preflight(self.home, agent_check=None, isatty=TTY)
+            self.assertTrue(any(r.startswith("real verdict: agent") for r in reasons), reasons)
+
+        def test_is_real_home_fails_closed(self):
+            saved = pin_lib.passwd_home
+
+            def boom():
+                raise KeyError("no passwd entry")
+            pin_lib.passwd_home = boom
+            try:
+                self.assertTrue(pin_lib.is_real_home(self.home))
+            finally:
+                pin_lib.passwd_home = saved
+
         def test_allow_path_backup_log_and_byte_exact_uninstall(self):
             tgt = self.plugin_target()
             tgt.parent.mkdir(parents=True)
