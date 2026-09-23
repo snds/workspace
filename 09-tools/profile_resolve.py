@@ -19,6 +19,11 @@ Usage:
                                       [--family auto|F] [--device auto|ID] [--via composed|vetted] [--json]
   python3 09-tools/profile_resolve.py classify --command TEXT [--json]
   python3 09-tools/profile_resolve.py vetted-status SCRIPT_ID [--json]
+  python3 09-tools/profile_resolve.py identity [--repo PATH] [--family auto|F] [--device auto|ID] [--json]
+  python3 09-tools/profile_resolve.py override --task S --repo O/R --identity ID --ttl 8h --reason TEXT
+                                      | --list | --revoke ID [--json]
+  python3 09-tools/profile_resolve.py floor --event pre-commit|commit-msg|pre-merge-commit|pre-push
+                                      [--remote NAME URL] [--json]   (stdin: pre-push ref lines)
   python3 09-tools/profile_resolve.py --self-test [--stub-chain]
 
 Exit codes: 0 ok; 1 deny/fail/drift or a positive negative determination; 2 usage or
@@ -29,6 +34,12 @@ refuse under a Claude chain or any agent-possible env. `policy` evaluates the co
 action-policy table (read-only here); `--family` and `--via vetted` are what-if inputs that can
 only tighten the detected walls and grant nothing: only vetted_context() runs anything vetted. `agent-check` tests fds 0 and 1: run
 it with inherited stdio and never capture its stdout.
+
+H17 (T8): `identity` reports the expected identity for (family, device, repo), the invariants hit (I1,
+I2; exit 1) and the device-mismatch flag. `override` is Sean's express override: human, TTY, <= 24 h,
+non-employer repos only, and it suppresses only that flag. `floor` (and floor_decide(), which the
+pinned ws_hook calls from the overlay's config hook) blocks I1, I2 and not-positively-personal
+under projects_root, allows the vetted housekeeping shape, and fails open on infrastructure errors.
 """
 
 from __future__ import annotations
@@ -2816,6 +2827,567 @@ def vetted_context(script_id: str, repo: Any, script_path: Any = None, *, home: 
                          cache=cache)
 
 
+# --------------------------------------------------------------------------- identity (T8, H17)
+
+OVERRIDE_MAX_TTL_S = 24 * 3600
+_TTL_RE = re.compile(r"^(\d+)([mh])$")
+_TASK_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
+FLOOR_EVENTS = ("pre-commit", "commit-msg", "pre-merge-commit", "pre-push")
+FLOOR_RULES = ("I1", "I2", "housekeeping-shape", "not-positively-personal")
+_ZERO_SHA_RE = re.compile(r"^0{40}(?:0{24})?$")
+_PY_COMM_RE = re.compile(r"^(?:python3?|Python|python3\.\d+)$")
+_INTENT_TAIL_LINES = 2000
+
+
+class OverrideError(ValueError):
+    """An override request that is malformed (usage, exit 2)."""
+
+
+def _identities(dev_t: dict) -> Dict[str, dict]:
+    return {str(r.get("id")): r for r in dev_t.get("identities") or [] if isinstance(r, dict) and r.get("id")}
+
+
+def _email_domain(email: str) -> str:
+    return email.rpartition("@")[2].casefold()
+
+
+def email_class(email: Optional[str], dev_t: dict) -> Optional[str]:
+    """personal | employer | other (None for no email). Any personal marker wins (I1 denylist);
+    employer means on the allowlist (declared employer identity or allowlisted domain)."""
+    e = (email or "").strip().casefold()
+    if not e:
+        return None
+    pm = dev_t.get("personal_markers") or {}
+    if e in {str(x).casefold() for x in pm.get("emails") or []} or \
+            _email_domain(e) in {str(x).casefold() for x in pm.get("email_domains") or []}:
+        return "personal"
+    ids = _identities(dev_t)
+    for row in ids.values():
+        if row.get("class") == "personal" and str(row.get("email", "")).casefold() == e:
+            return "personal"
+    ea = dev_t.get("employer_allowlist") or {}
+    allowed = {str((ids.get(i) or {}).get("email", "")).casefold() for i in ea.get("identity_ids") or []}
+    if e in allowed or _email_domain(e) in {str(x).casefold() for x in ea.get("email_domains") or []}:
+        return "employer"
+    return "other"
+
+
+def _identity_id_of(email: Optional[str], dev_t: dict) -> Optional[str]:
+    e = (email or "").strip().casefold()
+    for iid, row in _identities(dev_t).items():
+        if e and str(row.get("email", "")).casefold() == e:
+            return iid
+    return None
+
+
+def identity_rule(family: str, device_id: str, dev_t: dict) -> Optional[dict]:
+    """First identity rule whose family and device match ('*' matches any)."""
+    for r in dev_t.get("identity_rules") or []:
+        if not isinstance(r, dict):
+            continue
+        if r.get("family") in ("*", family) and r.get("device") in ("*", device_id):
+            return r
+    return None
+
+
+def _overrides_path(home: Optional[Path]) -> Path:
+    return ws_paths(home=home)["control"] / "overrides.json"
+
+
+def _parse_z(ts: Any) -> Optional[datetime]:
+    try:
+        return datetime.strptime(str(ts), "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except ValueError:
+        return None
+
+
+def _now(now: Optional[Callable[[], datetime]]) -> datetime:
+    n = now() if callable(now) else now
+    return n if isinstance(n, datetime) else datetime.now(timezone.utc)
+
+
+def load_overrides(*, home: Optional[Path] = None) -> List[dict]:
+    try:
+        obj = json.loads(_overrides_path(home).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+    rows = obj.get("overrides") if isinstance(obj, dict) else None
+    return [r for r in rows or [] if isinstance(r, dict)]
+
+
+def active_overrides(*, home: Optional[Path] = None, now: Any = None) -> List[dict]:
+    """Unexpired, human-created overrides whose lifetime never exceeds 24 h (longer rows are void)."""
+    t = _now(now)
+    out = []
+    for r in load_overrides(home=home):
+        c, x = _parse_z(r.get("created")), _parse_z(r.get("expires"))
+        if c is None or x is None or r.get("created_by") != "human":
+            continue
+        if (x - c).total_seconds() > OVERRIDE_MAX_TTL_S or not (c <= t < x):
+            continue
+        out.append(r)
+    return out
+
+
+def _git_run(args: List[str], cwd: Path, env: dict, git: str = "git",
+             timeout: float = GIT_TIMEOUT_S) -> Optional[subprocess.CompletedProcess]:
+    try:
+        return subprocess.run([git, *args], cwd=str(cwd), env=env, capture_output=True, text=True, timeout=timeout)
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+def _effective_git_identity(top: Path, env: dict, git: str) -> Tuple[Optional[str], Optional[str]]:
+    """(name, email) as git resolves them for this repo under the given env (overlay included)."""
+    e = {k: v for k, v in env.items() if k not in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE")}
+    e["GIT_TERMINAL_PROMPT"] = "0"
+    vals = []
+    for key in ("user.name", "user.email"):
+        r = _git_run(["config", "--get", key], top, e, git)
+        vals.append(r.stdout.strip() or None if r is not None and r.returncode == 0 else None)
+    return vals[0], vals[1]
+
+
+def identity(*, repo: Optional[str] = None, family: str = "auto", device: str = "auto", root: Optional[Path] = None,
+             env: Optional[dict] = None, ancestry: Optional[list] = None, home: Optional[Path] = None,
+             isatty: Optional[dict] = None, hostname: Optional[str] = None, detection: Optional[dict] = None,
+             cache: Any = None, now: Any = None, git: str = "git") -> dict:
+    """The `identity` JSON (3c): expected, allowed[], effective{name,email_class}, invariants_hit[],
+    flag, override, repo_class. Claude family -> the IR1 identity on every device; other families ->
+    the device default. Only I1/I2 are invariants; a device mismatch is a flag."""
+    dev_t = load_table("devices", root=root)
+    t = _surfaces_or_fallback(root)
+    fams = t.get("families") or {}
+    e = dict(os.environ if env is None else env)
+    det = detection if detection is not None else detect_surface(env=e, ancestry=ancestry, isatty=isatty, root=root)
+    acting, walls = _walls(family, det, fams)
+    walls_det = dict(det, family_for_walls=walls)
+    cur = current_device(hostname=hostname, root=root) if device == "auto" else {"id": device, "notice": None}
+    dev_id = str(cur.get("id") or "unknown")
+    notices: List[str] = []
+    if dev_id == "unknown" or cur.get("notice"):
+        notices.append(cur.get("notice") or "unknown device: most restrictive rules, no default identity")
+    rule = identity_rule(walls, dev_id, dev_t)
+    ids = _identities(dev_t)
+    emp_ids = [i for i in (dev_t.get("employer_allowlist") or {}).get("identity_ids") or [] if i in ids]
+    res: Optional[dict] = None
+    repo_class = None
+    if repo:
+        res = repo_resolve(repo, root=root, home=home, detection=walls_det, cache=cache)
+        repo_class = res.get("owner_class")
+    expected = rule.get("identity") if rule else None
+    if repo_class == "employer":
+        allowed = [] if walls == "claude" else list(emp_ids)
+        if walls == "claude":
+            expected = None
+            notices.append("I2: a Claude-family actor never authors on an employer repo (route to Cursor or Codex)")
+        elif expected not in allowed:
+            if expected:
+                notices.append(f"I1: the device default {expected} is not on the employer allowlist here")
+            expected = allowed[0] if allowed else None
+    elif walls == "claude":
+        allowed = [expected] if expected else []
+    else:
+        allowed = list(ids)
+    eff = {"name": None, "email_class": None, "identity": None, "read": False}
+    if res is not None and res.get("path") and not _looks_like_slug(str(repo)):
+        top = _find_top(_real(res["path"]))
+        if top is not None and _may_read_repo_files(top, walls_det, root, home):
+            name, email = _effective_git_identity(top, e, git)
+            eff = {"name": name, "email_class": email_class(email, dev_t), "identity": _identity_id_of(email, dev_t),
+                   "read": True}
+        elif top is not None:
+            notices.append("effective identity not read: a Claude chain reads checkouts under projects_root "
+                           "from the cache only")
+    hits: List[str] = []
+    if repo_class == "employer" and eff["email_class"] not in (None, "employer"):
+        hits.append("I1")
+    if repo_class == "employer" and walls == "claude":
+        hits.append("I2")
+    flag = None
+    ovr = None
+    if rule and eff["email_class"] is not None and eff["identity"] != expected and "I1" not in hits:
+        flag = (f"device mismatch ({rule.get('id')}): expected {expected or 'none'}, "
+                f"effective {eff['identity'] or 'an undeclared identity'}")
+        slug = _slug_of(res or {})
+        if rule.get("override_suppresses") == "non-employer-repos-only" and repo_class not in ("employer", None) \
+                and slug and eff["identity"]:
+            for o in active_overrides(home=home, now=now):
+                if str(o.get("repo", "")).casefold() == slug and o.get("identity") == eff["identity"]:
+                    ovr = o
+                    notices.append(f"override {o.get('id')} suppresses the device-mismatch flag until {o.get('expires')}")
+                    flag = None
+                    break
+    return {"expected": expected, "allowed": allowed,
+            "effective": {k: eff[k] for k in ("name", "email_class", "identity")},
+            "invariants_hit": hits, "flag": flag, "override": ovr, "repo_class": repo_class,
+            "rule": (rule or {}).get("id"), "family": walls, "acting_family": acting, "device": dev_id,
+            "notice": "; ".join(notices) or None}
+
+
+def _parse_ttl(ttl: str) -> int:
+    m = _TTL_RE.match(str(ttl or "").strip())
+    if not m:
+        raise OverrideError("ttl must look like 8h or 90m")
+    secs = int(m.group(1)) * (3600 if m.group(2) == "h" else 60)
+    if secs <= 0 or secs > OVERRIDE_MAX_TTL_S:
+        raise OverrideError("ttl must be more than 0 and at most 24h")
+    return secs
+
+
+def _slug_owner_class(slug: str, root: Optional[Path]) -> str:
+    table = _try_table("context-remotes", root)
+    if table is None:
+        return "unknown"
+    owner = slug.split("/", 1)[0].casefold()
+    classes = [r.get("class") for r in table.get("owners") or []
+               if isinstance(r, dict) and str(r.get("owner", "")).casefold() == owner and r.get("class") in CLASS_RANK]
+    return max(classes, key=lambda c: CLASS_RANK[c]) if classes else "unknown"
+
+
+def _override_refusals(*, env: dict, ancestry: Optional[list], isatty: Optional[dict], root: Optional[Path]) -> List[str]:
+    reasons = []
+    ac = agent_check(env=env, ancestry=ancestry, isatty=isatty, root=root)
+    if not (ac.get("human") and ac.get("determined")):
+        reasons += list(ac.get("reasons") or ["undetermined"])
+    det = detect_surface(env=env, ancestry=ancestry, isatty=isatty, root=root)
+    if det.get("family_for_walls") == "claude" or det.get("family") == "claude":
+        reasons.append("claude family: Claude identity (IR1) is never overridable")
+    return list(dict.fromkeys(reasons))
+
+
+def _write_overrides(home: Optional[Path], rows: List[dict]) -> None:
+    path = _overrides_path(home)
+    tmp = path.with_name(path.name + ".tmp")
+    fd = os.open(str(tmp), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8") as fh:
+        fh.write(json.dumps({"schema_version": SCHEMA_VERSION, "overrides": rows}, indent=2, ensure_ascii=False) + "\n")
+    os.replace(tmp, path)
+
+
+def override(*, task: Optional[str] = None, repo: Optional[str] = None, identity: Optional[str] = None,
+             ttl: str = "8h", reason: Optional[str] = None, list_only: bool = False, revoke: Optional[str] = None,
+             home: Optional[Path] = None, root: Optional[Path] = None, env: Optional[dict] = None,
+             ancestry: Optional[list] = None, isatty: Optional[dict] = None, now: Any = None) -> dict:
+    """The express override (item 7): human-only, TTY, expiring (<= 24 h), non-employer repos only.
+    It suppresses ONLY the device-mismatch flag; I1 and I2 are untouched. Returns
+    {exit, override, overrides, refused, reasons}. Writes control/overrides.json; never creates control/."""
+    e = dict(os.environ if env is None else env)
+    t = _now(now)
+    if list_only:
+        rows = []
+        act = {r.get("id") for r in active_overrides(home=home, now=now)}
+        for r in load_overrides(home=home):
+            rows.append(dict(r, active=r.get("id") in act))
+        return {"exit": EXIT_OK, "override": None, "overrides": rows, "refused": False, "reasons": []}
+    reasons = _override_refusals(env=e, ancestry=ancestry, isatty=isatty, root=root)
+    if revoke is None:
+        slug = str(repo or "").strip().casefold()
+        if not re.fullmatch(r"[a-z0-9_.-]+/[a-z0-9_.-]+", slug):
+            raise OverrideError("--repo takes OWNER/REPO")
+        cls = _slug_owner_class(slug, root)
+        if cls == "employer":
+            reasons.append("employer repo: an override never applies to an employer repo (I1)")
+        elif cls == "unknown":
+            reasons.append("owner not declared in context-remotes.json: cannot prove the repo is non-employer")
+        try:
+            dev_t = load_table("devices", root=root)
+        except TableError as exc:
+            raise OverrideError(f"devices table unavailable ({exc})") from exc
+        if identity not in _identities(dev_t):
+            raise OverrideError(f"--identity must be a declared identity ({', '.join(_identities(dev_t))})")
+        if not task or not _TASK_RE.match(task):
+            raise OverrideError("--task takes a short slug")
+        if not str(reason or "").strip():
+            raise OverrideError("--reason is required (Sean's words)")
+        secs = _parse_ttl(ttl)
+    if reasons:
+        return {"exit": EXIT_REFUSED, "override": None, "overrides": [], "refused": True, "reasons": reasons}
+    if not ws_paths(home=home)["control"].is_dir():
+        return {"exit": EXIT_NOTFOUND, "override": None, "overrides": [], "refused": False,
+                "reasons": ["control/ is absent (a human runs workspace-doctor.sh --install-pin)"]}
+    rows = load_overrides(home=home)
+    if revoke is not None:
+        kept = [r for r in rows if r.get("id") != revoke]
+        if len(kept) == len(rows):
+            return {"exit": EXIT_NOTFOUND, "override": None, "overrides": rows, "refused": False,
+                    "reasons": [f"no override {revoke}"]}
+        _write_overrides(home, kept)
+        return {"exit": EXIT_OK, "override": None, "overrides": kept, "refused": False, "reasons": []}
+    rows = [r for r in rows if (_parse_z(r.get("expires")) or t) > t]
+    day = t.strftime("%Y%m%d")
+    n = 1 + sum(1 for r in rows if str(r.get("id", "")).startswith(f"ovr-{day}-"))
+    new = {"id": f"ovr-{day}-{n:02d}", "task": task, "repo": slug, "identity": identity,
+           "created": t.strftime("%Y-%m-%dT%H:%M:%SZ"),
+           "expires": datetime.fromtimestamp(t.timestamp() + secs, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+           "reason": str(reason).strip(), "created_by": "human"}
+    rows.append(new)
+    _write_overrides(home, rows)
+    return {"exit": EXIT_OK, "override": new, "overrides": rows, "refused": False, "reasons": []}
+
+
+# --------------------------------------------------------------------------- Claude git floor (T8, H17/H18)
+
+
+def _floor_allow(notice: Optional[str] = None) -> dict:
+    return {"decision": "allow", "rule": None, "reason": "", "notice": notice}
+
+
+def _floor_block(rule: str, reason: str) -> dict:
+    return {"decision": "block", "rule": rule, "reason": reason, "notice": None}
+
+
+def _push_lines(stdin_lines: List[str]) -> List[dict]:
+    out = []
+    for ln in stdin_lines or []:
+        parts = str(ln).split()
+        if len(parts) != 4:
+            out.append({"bad": True, "raw_parts": len(parts)})
+            continue
+        out.append({"local_ref": parts[0], "local_sha": parts[1], "remote_ref": parts[2], "remote_sha": parts[3]})
+    return out
+
+
+def _short_ref(ref: str) -> str:
+    return ref[len("refs/heads/"):] if ref.startswith("refs/heads/") else ref
+
+
+def _floor_git_env(env: dict) -> dict:
+    return _clean_git_env(env)
+
+
+def _range_idents(top: Path, line: dict, remote: str, env: dict, git: str) -> Optional[List[Tuple[str, str, str]]]:
+    """(sha, author email, committer email) for every commit the ref line would publish; None on error."""
+    if _ZERO_SHA_RE.match(line["local_sha"]):
+        return []
+    fmt = ["-c", "log.showSignature=false", "log", "--no-color", "--format=%H%x00%ae%x00%ce"]
+    r = None
+    if not _ZERO_SHA_RE.match(line["remote_sha"]):
+        r = _git_run(fmt + [f"{line['remote_sha']}..{line['local_sha']}"], top, env, git)
+    if r is None or r.returncode != 0:
+        r = _git_run(fmt + [line["local_sha"], "--not", f"--remotes={remote}"], top, env, git)
+    if r is None or r.returncode != 0:
+        return None
+    out = []
+    for row in r.stdout.splitlines():
+        parts = row.split("\x00")
+        if len(parts) == 3:
+            out.append((parts[0], parts[1], parts[2]))
+    return out
+
+
+def _workspace_checkouts(home: Optional[Path], root: Optional[Path]) -> List[Path]:
+    """The `root` pointer's checkout and its linked worktrees (read from its .git/worktrees only)."""
+    cands: List[Path] = []
+    if root is not None:
+        cands.append(Path(root))
+    try:
+        lines = ws_paths(home=home)["root_file"].read_text(encoding="utf-8").splitlines()
+        if lines and lines[0].strip():
+            cands.append(Path(lines[0].strip()))
+    except OSError:
+        pass
+    out: List[Path] = []
+    for c in cands:
+        for p in [c] + _linked_worktrees(c):
+            if all(_cf(_real(p)) != _cf(_real(x)) for x in out):
+                out.append(p)
+    return out
+
+
+def _linked_worktrees(ws: Path) -> List[Path]:
+    out = []
+    try:
+        for d in sorted((ws / ".git" / "worktrees").iterdir()):
+            try:
+                gd = (d / "gitdir").read_text(encoding="utf-8").strip()
+            except OSError:
+                continue
+            if gd:
+                out.append(Path(gd).parent)
+    except OSError:
+        pass
+    return out
+
+
+def _nearest_python(chain: List[dict]) -> Optional[dict]:
+    for hop in chain:
+        if _PY_COMM_RE.match(str(hop.get("comm") or "")):
+            return hop
+    return None
+
+
+def _vetted_ancestor(chain: List[dict], *, home: Optional[Path], root: Optional[Path]) -> Tuple[Optional[dict], str]:
+    """({script, pid, path}, why) when the nearest python ancestor runs a registered script whose
+    bytes match the pinned lock; (None, why) otherwise. Registry and lock come from lib/current."""
+    hop = _nearest_python(chain)
+    if hop is None:
+        return None, "no python ancestor (model-composed)"
+    args = str(hop.get("args") or "").split()
+    if len(args) < 2 or args[1].startswith("-"):
+        return None, "the python ancestor runs no script path"
+    script = args[1]
+    lc = ws_paths(home=home)["lib_current"]
+    try:
+        lock = json.loads((lc / "vetted.lock.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None, "no pinned vetted.lock.json"
+    reg = _try_table("vetted-scripts", lc)
+    if reg is None or not isinstance(lock, dict):
+        return None, "the pinned lib carries no vetted-scripts.json"
+    roots = _workspace_checkouts(home, root)
+    for row in reg.get("scripts") or []:
+        if not isinstance(row, dict):
+            continue
+        ent = next((s for s in lock.get("scripts") or [] if isinstance(s, dict) and s.get("id") == row.get("id")), None)
+        if ent is None or not ent.get("blob") or ent.get("path") != row.get("path"):
+            continue
+        rel = str(row.get("path"))
+        files: List[Path] = []
+        if os.path.isabs(script):
+            if any(_cf(_real(script)) == _cf(_real(r / rel)) for r in roots):
+                files = [Path(script)]
+        elif os.path.normpath(script) == os.path.normpath(rel):
+            files = [r / rel for r in roots]
+        for f in files:
+            try:
+                if git_blob_sha(f) == ent.get("blob"):
+                    return {"script": row.get("id"), "pid": hop.get("pid"), "path": rel}, "vetted"
+            except OSError:
+                continue
+        if files:
+            return None, f"{rel}: bytes differ from the pinned blob"
+    return None, "the python ancestor is not a registered vetted script"
+
+
+def _intent_matches(pid: Any, script: str, refs: List[str], home: Optional[Path]) -> bool:
+    path = ws_paths(home=home)["control"] / "receipts.jsonl"
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()[-_INTENT_TAIL_LINES:]
+    except OSError:
+        return False
+    want = sorted(_short_ref(r) for r in refs)
+    for ln in reversed(lines):
+        try:
+            rec = json.loads(ln)
+        except ValueError:
+            continue
+        if not isinstance(rec, dict) or rec.get("type") != "intent" or rec.get("script") != script:
+            continue
+        if str(rec.get("pid")) != str(pid):
+            continue
+        if sorted(_short_ref(str(r)) for r in rec.get("refs") or []) == want:
+            return True
+    return False
+
+
+def _push_url_class(url: str, root: Optional[Path]) -> str:
+    table = _try_table("context-remotes", root)
+    blocked = str((table or {}).get("blocked_scheme") or "")
+    if blocked and url.startswith(blocked):
+        return "employer"
+    norm, alias = _normalize_remote_ex(url, root=root)
+    if norm is None:
+        return "none"
+    cls = _owner_row_class(table or {}, norm["host"], norm["owner"])[0]
+    if cls == "unknown" and (alias or {}).get("credential_scope") == "work":
+        return "employer"
+    return cls
+
+
+def floor_decide(event: str, hook_args: list, stdin_lines: list, *, env: Optional[dict] = None,
+                 ancestry: Optional[list] = None, root: Optional[Path] = None, home: Optional[Path] = None,
+                 cwd: Optional[Any] = None, cache: Any = None, ps: Optional[Callable[[str], str]] = None,
+                 git: str = "git") -> dict:
+    """The Claude git floor: {decision: allow|block, rule, reason, notice}.
+
+    Employer repo: every commit event blocks (I2); pre-push allows only the vetted housekeeping
+    shape (all ref lines delete non-default branches, the nearest python ancestor runs a
+    registered script whose blob matches the pinned lock, and that pid wrote an intent line for
+    exactly those refs), after an I1 identity check over every commit in the pushed range.
+    Not positively personal under projects_root blocks. An infrastructure error allows, with a
+    notice (fail-open): the transport block stays the barrier for employer remotes.
+    """
+    try:
+        return _floor(event, list(hook_args or []), list(stdin_lines or []), env=env, ancestry=ancestry, root=root,
+                      home=home, cwd=cwd, cache=cache, ps=ps, git=git)
+    except Exception as exc:  # noqa: BLE001 - the floor fails open on infrastructure errors
+        return _floor_allow(f"floor infrastructure error ({exc.__class__.__name__}); allowing")
+
+
+def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Optional[dict], ancestry: Optional[list],
+           root: Optional[Path], home: Optional[Path], cwd: Optional[Any], cache: Any,
+           ps: Optional[Callable[[str], str]], git: str) -> dict:
+    if event not in FLOOR_EVENTS:
+        return _floor_allow(f"unknown hook event {event!r}; allowing")
+    e = dict(os.environ if env is None else env)
+    top = _find_top(_real(cwd if cwd is not None else os.getcwd()))
+    if top is None:
+        return _floor_allow("not inside a work tree; allowing")
+    det = {"family": "claude", "family_for_walls": "claude", "agent_possible": True}
+    res = repo_resolve(str(top), root=root, home=home, detection=det, cache=cache)
+    employer = res.get("owner_class") == "employer"
+    url_cls = "none"
+    if event == "pre-push" and len(hook_args) >= 2:
+        url_cls = _push_url_class(str(hook_args[1]), root)
+        employer = employer or url_cls == "employer"
+    if not employer:
+        if res.get("positively_personal"):
+            return _floor_allow()
+        pr = projects_root(root=root, home=home)
+        under = bool(res.get("in_projects_root")) or (_is_under(_real(top), pr) and _cf(_real(top)) != _cf(pr))
+        if under:
+            return _floor_block("not-positively-personal",
+                                "this checkout under projects_root is not positively personal for a Claude actor "
+                                "(unknown, third-party or uncached); fix: run `python3 09-tools/profile_resolve.py "
+                                "scan` in a plain terminal, then retry")
+        return _floor_allow(None if not res.get("remotes") else
+                            f"{res.get('owner_class')} repo outside projects_root; the floor allows it")
+    if event != "pre-push":
+        return _floor_block("I2", f"{event}: a Claude-family actor never commits on an employer repo; "
+                                  "route this work to Cursor or Codex")
+    lines = _push_lines(stdin_lines)
+    remote = str(hook_args[0]) if hook_args else "origin"
+    genv = _floor_git_env(e)
+    notice = None
+    dev_t = _try_table("devices", root) or {}
+    for ln in lines:
+        if ln.get("bad"):
+            continue
+        idents = _range_idents(top, ln, remote, genv, git)
+        if idents is None:
+            notice = "I1 range check unavailable (git error)"
+            continue
+        for sha, ae, ce in idents:
+            for role, em in (("author", ae), ("committer", ce)):
+                cls = email_class(em, dev_t)
+                if cls != "employer":
+                    what = "a personal identity" if cls == "personal" else "an identity not on the employer allowlist"
+                    return _floor_block("I1", f"commit {sha[:12]} in the pushed range has {what} as {role}; "
+                                              "an employer repo takes only employer identities (rewrite it in "
+                                              "Cursor or Codex with the employer identity)")
+    _cur, dflt = _repo_heads(top)
+    all_deletes = bool(lines) and all(
+        not ln.get("bad") and _ZERO_SHA_RE.match(ln["local_sha"]) and ln["remote_ref"].startswith("refs/heads/")
+        and _ref_kind(ln["remote_ref"], dflt) == "non-default" for ln in lines)
+    if ancestry is None:
+        raw, err = _walk_ancestry_ex(None, ps, 12)
+        chain = _norm_chain(raw)
+    else:
+        chain = _norm_chain(ancestry)
+    anc, why = _vetted_ancestor(chain, home=home, root=root)
+    if anc is None:
+        return _floor_block("I2", f"a Claude-family push to an employer repo outside vetted housekeeping ({why}); "
+                                  "run the vetted script (prune-our-branches) or route to Cursor or Codex")
+    if not all_deletes:
+        return _floor_block("housekeeping-shape", f"{anc['script']} may push only deletions of non-default branches")
+    refs = [ln["remote_ref"] for ln in lines]
+    if not _intent_matches(anc["pid"], str(anc["script"]), refs, home):
+        return _floor_block("housekeeping-shape", f"no intent line from {anc['script']} (pid {anc['pid']}) for "
+                                                  "exactly these refs")
+    return _floor_allow(notice or f"vetted housekeeping by {anc['script']}")
+
+
 # --------------------------------------------------------------------------- CLI
 
 
@@ -2884,6 +3456,22 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--command", required=True)
     p = sub.add_parser("vetted-status", parents=[common])
     p.add_argument("script_id")
+    p = sub.add_parser("identity", parents=[common])
+    p.add_argument("--repo")
+    p.add_argument("--family", default="auto")
+    p.add_argument("--device", default="auto")
+    p = sub.add_parser("override", parents=[common])
+    g = p.add_mutually_exclusive_group(required=True)
+    g.add_argument("--task")
+    g.add_argument("--list", action="store_true", dest="list_only")
+    g.add_argument("--revoke")
+    p.add_argument("--repo")
+    p.add_argument("--identity")
+    p.add_argument("--ttl", default="8h")
+    p.add_argument("--reason")
+    p = sub.add_parser("floor", parents=[common])
+    p.add_argument("--event", required=True, choices=list(FLOOR_EVENTS))
+    p.add_argument("--remote", nargs=2, metavar=("NAME", "URL"))
     return ap
 
 
@@ -2970,6 +3558,30 @@ def main(argv: Optional[List[str]] = None) -> int:
             st = vetted_status(args.script_id, root=root)
             _emit(cmd, {k: st[k] for k in ("script", "status", "pinned_sha", "notice")}, as_json)
             return EXIT_OK if st["status"] == "vetted" else EXIT_FAIL
+        if cmd == "identity":
+            r = identity(repo=args.repo, family=args.family, device=args.device, root=root)
+            _emit(cmd, r, as_json)
+            return EXIT_FAIL if r["invariants_hit"] else EXIT_OK
+        if cmd == "override":
+            try:
+                r = override(task=args.task, repo=args.repo, identity=args.identity, ttl=args.ttl, reason=args.reason,
+                             list_only=args.list_only, revoke=args.revoke, root=root)
+            except OverrideError as exc:
+                print(f"profile_resolve override: {exc}", file=sys.stderr)
+                return EXIT_USAGE
+            if r["refused"]:
+                print(f"override refused: {'; '.join(r['reasons'])}", file=sys.stderr)
+            _emit(cmd, {k: r[k] for k in ("override", "overrides", "refused", "reasons")}, as_json)
+            return int(r["exit"])
+        if cmd == "floor":
+            lines = [] if args.event != "pre-push" or sys.stdin.isatty() else \
+                [ln.rstrip("\n") for ln in sys.stdin.read().splitlines() if ln.strip()]
+            d = floor_decide(args.event, list(args.remote or []), lines, root=root)
+            _emit(cmd, d, as_json)
+            if d["decision"] == "block":
+                print(f"ws-claude-wall: blocked [{d['rule']}] {d['reason']}", file=sys.stderr)
+                return EXIT_FAIL
+            return EXIT_OK
     except Exception as exc:  # noqa: BLE001
         print(f"profile_resolve {cmd}: undetermined ({exc.__class__.__name__}: {exc})", file=sys.stderr)
         return EXIT_USAGE
@@ -3538,6 +4150,298 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     ok(lib.is_dir(), "pin fixture present")
 
 
+ID_FIXTURES = TOOLS / "fixtures" / "identity"
+SHELL_ANC = [{"comm": "zsh"}, {"comm": "Terminal"}, {"comm": "launchd"}]
+_T8_FAMILIES = ("claude", "cursor", "human")
+_T8_DEVICES = ("dev-a", "dev-b", "unknown")
+
+
+def _t8_fixture_root(tmp: Path) -> Path:
+    """A synthetic workspace root with the T8 identity tables plus T2's surfaces and T7's policy mirror."""
+    root = tmp / "t8-home" / "Projects" / "ws"
+    for name in ("devices", "context-remotes"):
+        _write(root / TABLE_PATHS[name], (ID_FIXTURES / f"{name}.json").read_text(encoding="utf-8"))
+    _write(root / TABLE_PATHS["surfaces"], (FIXTURES / "surfaces.json").read_text(encoding="utf-8"))
+    for name in ("action-policy", "vetted-scripts"):
+        _write(root / TABLE_PATHS[name], (AP_FIXTURES / f"{name}.json").read_text(encoding="utf-8"))
+    _write(root / "AGENTS.md", "# fixture workspace\n")
+    _fake_repo(root, {"origin": "https://github.com/pat-sample/ws.git"})
+    return root
+
+
+def _t8_git_env(home: Path) -> dict:
+    return dict(_git_env(home), GIT_AUTHOR_DATE="2026-09-22T12:00:00Z", GIT_COMMITTER_DATE="2026-09-22T12:00:00Z")
+
+
+def _t8_repo(where: Path, url: Optional[str], email: Optional[str], home: Path, name: str = "Fixture") -> Path:
+    """A real (tiny) git repo with an optional origin URL and a repo-local identity."""
+    env = _t8_git_env(home)
+    where.mkdir(parents=True, exist_ok=True)
+    _g(env, "init", "-q", "-b", "main", str(where))
+    if url:
+        _g(env, "remote", "add", "origin", url, cwd=where)
+    if email:
+        _g(env, "config", "user.email", email, cwd=where)
+        _g(env, "config", "user.name", name, cwd=where)
+    return where
+
+
+def _t8_oracle(fam: str, dev: str, repo_cls: str, eff: str, ovr_for: Optional[str]) -> Tuple[Optional[str], List[str], bool]:
+    """(expected, invariants_hit, flag raised) written out from the plan, independent of the table."""
+    if fam == "claude":
+        expected, rule, overridable = "pat", "IR1", False
+    elif dev == "dev-a":
+        expected, rule, overridable = "acme-id", "IR2", True
+    elif dev == "dev-b":
+        expected, rule, overridable = "pat", "IR3", False
+    else:
+        expected, rule, overridable = None, None, False
+    hits: List[str] = []
+    if repo_cls == "employer":
+        expected = None if fam == "claude" else "acme-id"
+        if eff != "acme-id":
+            hits.append("I1")
+        if fam == "claude":
+            hits.append("I2")
+    flag = rule is not None and eff != expected and "I1" not in hits
+    if flag and overridable and repo_cls != "employer" and ovr_for == eff:
+        flag = False
+    return expected, hits, flag
+
+
+def _t8_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
+    root = _t8_fixture_root(tmp)
+    home = tmp / "t8-home"
+    human = detect_surface(env={}, ancestry=SHELL_ANC, isatty=HUMAN_TTY, root=root)
+    genv = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(home), "GIT_CONFIG_NOSYSTEM": "1"}
+    dev_t = load_table("devices", root=root)
+    acme_mail = _identities(dev_t)["acme-id"]["email"]
+    pat_mail = _identities(dev_t)["pat"]["email"]
+
+    # ---- tables: identity keys validate; negatives fail
+    v = validate_tables(root=root, require_all=True)
+    ok(v["tables"]["devices"]["ok"], f"identity fixture devices validate under --require-all: {v['tables']['devices']}")
+    real = validate_tables(require_all=True)
+    ok(real["tables"]["devices"]["ok"], f"shipped devices.json validates under --require-all: {real['tables']['devices']}")
+    base = json.loads((ID_FIXTURES / "devices.json").read_text(encoding="utf-8"))
+    for mutate, needle in (
+            (lambda d: d["identities"][0].__setitem__("class", "contractor"), "identities[0].class"),
+            (lambda d: d["employer_allowlist"].__setitem__("identity_ids", ["pat"]), "is not an employer identity"),
+            (lambda d: d["identity_rules"][0].__setitem__("identity", "ghost"), "is not a declared identity"),
+            (lambda d: d["identity_rules"][1].__setitem__("device", "dev-z"), "is not '*' or a declared device"),
+            (lambda d: d["identity_rules"][0].__setitem__("override_suppresses", "non-employer-repos-only"),
+             "non-overridable rule"),
+            (lambda d: d.__setitem__("invariants", d["invariants"][:1]), "I1 and I2 must both be declared"),
+            (lambda d: d["identities"][0]["push"].__setitem__("alias", "nowhere"), "is not a declared ssh alias"),
+            (lambda d: d["personal_markers"].__setitem__("emails", [acme_mail]), "personal-marker email")):
+        bad = json.loads(json.dumps(base))
+        mutate(bad)
+        errs = validate_table("devices", bad)
+        ok(any(needle in x for x in errs), f"devices negative {needle!r}: {errs}")
+
+    # ---- email classes (personal markers win; allowlist is identity or domain)
+    ok(email_class(pat_mail, dev_t) == "personal" and email_class("x@pat-sample.example", dev_t) == "personal",
+       "personal marker email and domain")
+    ok(email_class(acme_mail, dev_t) == "employer" and email_class("y@acme-corp.example", dev_t) == "employer",
+       "employer allowlist identity and domain")
+    ok(email_class("fixture@example.invalid", dev_t) == "other" and email_class("", dev_t) is None, "other and none")
+
+    # ---- the family x device x repo x effective x override matrix
+    elsewhere = tmp / "t8-elsewhere"
+    repos = {}
+    for cls, url in (("personal", "git@github.com:pat-sample/mine.git"), ("employer", "git@github.com:acme-corp/w.git"),
+                     ("third-party", "https://github.com/oss-upstream/up.git")):
+        for eff, mail in (("acme-id", acme_mail), ("pat", pat_mail)):
+            repos[(cls, eff)] = _t8_repo(elsewhere / f"{cls}-{eff}", url, mail, home)
+    (ws_paths(home=home)["control"]).mkdir(parents=True, exist_ok=True)
+    made = override(task="fixture-task", repo="pat-sample/mine", identity="pat", ttl="8h", reason="fixture words",
+                    home=home, root=root, env={}, ancestry=SHELL_ANC, isatty=HUMAN_TTY)
+    ok(made["exit"] == 0 and made["override"]["created_by"] == "human", f"human override created: {made}")
+    mism = 0
+    for fam in _T8_FAMILIES:
+        for dev in _T8_DEVICES:
+            for (cls, eff), path in repos.items():
+                r = identity(repo=str(path), family=fam, device=dev, root=root, env=genv, home=home, detection=human)
+                exp, hits, flag = _t8_oracle(fam, dev, cls, eff, "pat" if cls == "personal" else None)
+                good = (r["expected"] == exp and r["invariants_hit"] == hits and bool(r["flag"]) == flag
+                        and r["repo_class"] == cls and r["effective"]["identity"] == eff)
+                if not good:
+                    mism += 1
+                    ok(False, f"identity matrix {fam}/{dev}/{cls}/{eff}: got {r}")
+    ok(mism == 0, "identity matrix matches the oracle (family x device x repo x effective x override)")
+    r = identity(repo=str(repos[("employer", "acme-id")]), family="claude", device="dev-a", root=root, env=genv,
+                 home=home, detection=human)
+    ok(r["allowed"] == [] and "I2" in r["invariants_hit"], "Claude on an employer repo: no identity allowed, I2")
+    r = identity(repo=str(repos[("personal", "pat")]), family="cursor", device="dev-a", root=root, env=genv, home=home,
+                 detection=human)
+    ok(r["flag"] is None and r["override"] and r["override"]["identity"] == "pat",
+       "an active override suppresses the dev-a mismatch flag on a personal repo")
+    cached = _t8_repo(home / "Projects" / "sealed", "git@github.com:pat-sample/sealed.git", pat_mail, home)
+    claude_det = detect_surface(env={}, ancestry=CLAUDE_ANC, isatty=NO_TTY, root=root)
+    r = identity(repo=str(cached), root=root, env=genv, home=home, detection=claude_det, device="dev-b",
+                 cache={"checkouts": []})
+    ok(r["effective"]["email_class"] is None and r["notice"] and "cache" in r["notice"],
+       "a Claude chain never reads an uncached checkout under projects_root for the effective identity")
+    r = identity(family="cursor", device="unknown", root=root, env=genv, home=home, detection=human)
+    ok(r["expected"] is None and r["rule"] is None, "unknown device: no default identity")
+
+    # ---- the express override: refusals, expiry, never creates control/
+    def ovr(**kw):
+        args = dict(task="t", repo="pat-sample/mine", identity="pat", ttl="8h", reason="words", home=home, root=root,
+                    env={}, ancestry=SHELL_ANC, isatty=HUMAN_TTY)
+        args.update(kw)
+        return override(**args)
+
+    for label, kw in (("agent-possible env", {"env": {"CLAUDECODE": "1"}}), ("no TTY", {"isatty": NO_TTY}),
+                      ("Claude family", {"ancestry": CLAUDE_ANC}),
+                      ("WS_SURFACE_FAMILY=claude", {"env": {"WS_SURFACE_FAMILY": "claude"}}),
+                      ("employer repo", {"repo": "acme-corp/w"}), ("employer repo (bitbucket owner)", {"repo": "Acme-BB/x"}),
+                      ("undeclared owner", {"repo": "stranger/x"})):
+        r = ovr(**kw)
+        ok(r["exit"] == EXIT_REFUSED and r["refused"] and r["override"] is None, f"override refused: {label}: {r}")
+    for label, kw in (("ttl above 24h", {"ttl": "25h"}), ("ttl zero", {"ttl": "0h"}), ("bad ttl", {"ttl": "1d"}),
+                      ("undeclared identity", {"identity": "ghost"}), ("no reason", {"reason": " "})):
+        try:
+            ovr(**kw)
+            ok(False, f"override usage error: {label}")
+        except OverrideError:
+            ok(True, "")
+    r = ovr(ttl="24h", repo="oss-upstream/up")
+    c, x = _parse_z(r["override"]["created"]), _parse_z(r["override"]["expires"])
+    ok(r["exit"] == 0 and c and x and 0 < (x - c).total_seconds() <= OVERRIDE_MAX_TTL_S, "override expires within 24 h")
+    later = _now(None).timestamp() + OVERRIDE_MAX_TTL_S + 60
+    ok(not active_overrides(home=home, now=lambda: datetime.fromtimestamp(later, timezone.utc)),
+       "every override has expired a day later")
+    rows = load_overrides(home=home)
+    rows.append({"id": "ovr-forged", "repo": "pat-sample/mine", "identity": "pat", "created": "2026-09-22T00:00:00Z",
+                 "expires": "2026-09-30T00:00:00Z", "created_by": "human"})
+    _write_overrides(home, rows)
+    ok(all(o.get("id") != "ovr-forged" for o in active_overrides(home=home, now=lambda: datetime(
+        2026, 9, 23, tzinfo=timezone.utc))), "a hand-written row longer than 24 h is void")
+    r = ovr(revoke="ovr-forged", env={"CLAUDECODE": "1"})
+    ok(r["exit"] == EXIT_REFUSED, "an agent cannot revoke either")
+    ok(ovr(revoke="ovr-forged")["exit"] == 0 and ovr(revoke="ovr-forged")["exit"] == EXIT_NOTFOUND, "human revoke")
+    ok(override(list_only=True, home=home, env={"CLAUDECODE": "1"}, isatty=NO_TTY)["exit"] == 0, "list is read-only")
+    bare = tmp / "t8-bare-home"
+    r = ovr(home=bare)
+    ok(r["exit"] == EXIT_NOTFOUND and not (bare / ".config").exists(), "override never creates control/")
+
+    # ---- the floor decision (in process; real temp repos; injected ancestry)
+    fenv = dict(_t8_git_env(home))
+
+    def floor(event: str, where: Path, args: Optional[list] = None, lines: Optional[list] = None,
+              anc: Optional[list] = None, **kw) -> dict:
+        return floor_decide(event, args or [], lines or [], env=fenv, ancestry=anc if anc is not None else CLAUDE_ANC,
+                            root=root, home=home, cwd=where, **kw)
+
+    pers = repos[("personal", "pat")]
+    emp = _t8_repo(elsewhere / "emp-floor", "git@github.com:acme-corp/w.git", acme_mail, home)
+    ok(floor("pre-commit", pers)["decision"] == "allow", "floor: personal repo outside projects_root commits")
+    ok(floor("pre-commit", root)["decision"] == "allow", "floor: the workspace commits")
+    for ev in ("pre-commit", "commit-msg", "pre-merge-commit"):
+        d = floor(ev, emp, ["x"] if ev == "commit-msg" else [])
+        ok(d["decision"] == "block" and d["rule"] == "I2", f"floor: employer {ev} blocks I2: {d}")
+    _g(fenv, "commit", "-q", "--allow-empty", "-m", "base", cwd=emp)
+    head = _g(fenv, "rev-parse", "HEAD", cwd=emp).stdout.strip()
+    zero = "0" * 40
+    d = floor("pre-push", emp, ["origin", "git@github.com:acme-corp/w.git"],
+              [f"(delete) {zero} refs/heads/feat/done {head}"], anc=[{"comm": "git"}, {"comm": "zsh"}, {"comm": "claude"}])
+    ok(d["decision"] == "block" and d["rule"] == "I2", f"floor: model-composed employer push --delete blocks I2: {d}")
+    _g(fenv, "-c", f"user.email={pat_mail}", "commit", "-q", "--allow-empty", "-m", "personal", cwd=emp)
+    top = _g(fenv, "rev-parse", "HEAD", cwd=emp).stdout.strip()
+    d = floor("pre-push", emp, ["origin", "git@github.com:acme-corp/w.git"],
+              [f"refs/heads/main {top} refs/heads/main {head}"])
+    ok(d["decision"] == "block" and d["rule"] == "I1", f"floor: a personal commit in the pushed range blocks I1: {d}")
+    d = floor("pre-push", emp, ["origin", "/somewhere/local.git"], [f"refs/heads/main {top} refs/heads/main {zero}"])
+    ok(d["decision"] == "block" and d["rule"] == "I1", f"floor: I1 over a new branch (no remote sha): {d}")
+    blocked = str(load_table("context-remotes", root=root)["blocked_scheme"])
+    d = floor("pre-push", pers, ["origin", blocked + "w.git"], [f"(delete) {zero} refs/heads/x {head}"])
+    ok(d["decision"] == "block", f"floor: a blocked-scheme URL is employer: {d}")
+    uncached = _t8_repo(home / "Projects" / "looks-mine", "git@github.com:pat-sample/looks-mine.git", pat_mail, home)
+    d = floor("pre-commit", uncached, cache={"checkouts": []})
+    ok(d["decision"] == "block" and d["rule"] == "not-positively-personal" and "scan" in d["reason"],
+       f"floor: an uncached personal-looking repo under projects_root blocks with the fix named: {d}")
+    hit = {"checkouts": [{"path": str(uncached), "kind": "repo", "owner_class": "personal", "default_branch": None,
+                          "remotes": [{"name": "origin", "form": "scp", "host": "github.com",
+                                       "slug": "pat-sample/looks-mine"}]}]}
+    ok(floor("pre-commit", uncached, cache=hit)["decision"] == "allow", "floor: a cached personal repo commits")
+    loose = _t8_repo(home / "Projects" / "scratch", None, pat_mail, home)
+    ok(floor("pre-commit", loose, cache={"checkouts": []})["rule"] == "not-positively-personal",
+       "floor: no remote under projects_root blocks")
+    ok(floor("pre-commit", _t8_repo(elsewhere / "loose", None, None, home))["decision"] == "allow",
+       "floor: no remote outside projects_root commits")
+    ok(floor("pre-commit", repos[("third-party", "pat")])["decision"] == "allow",
+       "floor: a third-party checkout outside projects_root is not the floor's business")
+    d = floor_decide("pre-commit", [], [], env=5, ancestry=CLAUDE_ANC, root=root, home=home, cwd=pers)  # type: ignore[arg-type]
+    ok(d["decision"] == "allow" and "infrastructure error" in (d["notice"] or ""), "floor: infrastructure errors allow")
+    ok(floor("post-checkout", emp)["decision"] == "allow", "floor: an unknown event allows")
+
+    # ---- the vetted housekeeping shape
+    script = _write(root / "09-tools" / "fixture-housekeeper.py", "# fixture housekeeper v1\n")
+    _pin_fixture(home, root, "09-tools/fixture-housekeeper.py", git_blob_sha(script))
+    _write(ws_paths(home=home)["root_file"], f"{root}\n")
+    ctrl = ws_paths(home=home)["control"]
+
+    def intent(pid: int, refs: List[str], script_id: str = "fixture-housekeeper") -> None:
+        _append_jsonl(ctrl / "receipts.jsonl", {"type": "intent", "ts": _now_z(), "pid": pid, "ppid": 1,
+                                               "script": script_id, "script_blob": git_blob_sha(script),
+                                               "repo_slug": "acme-corp/w", "action_class": "housekeeping",
+                                               "action": "remote-branch-delete", "refs": refs})
+
+    vet = [{"pid": 900, "comm": "git", "args": "git push origin --delete feat/done"},
+           {"pid": 4242, "comm": "Python", "args": f"/usr/bin/python3 {script} --apply"},
+           {"pid": 10, "comm": "claude", "args": "claude"}]
+    dl = [f"(delete) {zero} refs/heads/feat/done {head}"]
+    intent(4242, ["refs/heads/feat/done"])
+    d = floor("pre-push", emp, ["origin", "git@github.com:acme-corp/w.git"], dl, anc=vet)
+    ok(d["decision"] == "allow" and "vetted" in (d["notice"] or ""), f"floor: the vetted shape is allowed: {d}")
+    rel = [dict(vet[0]), dict(vet[1], args="python3 09-tools/fixture-housekeeper.py"), vet[2]]
+    ok(floor("pre-push", emp, ["origin", "u"], dl, anc=rel)["decision"] == "allow",
+       "floor: a relative script path resolves against the root pointer")
+    d = floor("pre-push", emp, ["origin", "u"], [f"(delete) {zero} refs/heads/feat/other {head}"], anc=vet)
+    ok(d["rule"] == "housekeeping-shape", f"floor: refs that differ from the intent line block: {d}")
+    d = floor("pre-push", emp, ["origin", "u"], [f"(delete) {zero} refs/heads/main {head}"], anc=vet)
+    ok(d["rule"] == "housekeeping-shape", f"floor: deleting the default branch blocks: {d}")
+    d = floor("pre-push", emp, ["origin", "u"], [f"refs/heads/main {head} refs/heads/main {zero}"], anc=vet)
+    ok(d["decision"] == "block", f"floor: a vetted non-delete push blocks: {d}")
+    ok(floor("pre-push", emp, ["origin", "u"], dl, anc=[vet[0], dict(vet[1], pid=5555), vet[2]])["rule"]
+       == "housekeeping-shape", "floor: an intent line from another pid does not count")
+    intent(4343, ["refs/heads/feat/done"])
+    fake = [vet[0], {"pid": 4343, "comm": "python3", "args": f"python3 {tmp}/elsewhere-copy.py"}, vet[2]]
+    ok(floor("pre-push", emp, ["origin", "u"], dl, anc=fake)["rule"] == "I2",
+       "floor: an unregistered python script is model-composed (I2)")
+    _write(script, "# edited, not pinned\n")
+    d = floor("pre-push", emp, ["origin", "u"], dl, anc=vet)
+    ok(d["rule"] == "I2" and "differ" in d["reason"], f"floor: a hash mismatch is not vetted: {d}")
+    _write(script, "# fixture housekeeper v1\n")
+    ok(all(r in FLOOR_RULES for r in ("I1", "I2", "housekeeping-shape", "not-positively-personal")), "floor rule ids")
+
+
+def _t8_git_floor(ok: Callable[[Any, str], None]) -> None:
+    """The hook-level floor fixtures (git >= 2.54 config hooks), from 09-tools/fixtures/identity.
+
+    They need the vault checkout (render_shims, ws_hook, the dist wrapper), so a pinned copy of this
+    module skips them with a notice; git below 2.54 skips them too. A skip is never a pass: the
+    device measures run them through `test-validators.py --strict-skips`."""
+    helper = ID_FIXTURES / "floor_cases.py"
+    if not helper.is_file():
+        print("self-test SKIP: hook-level floor fixtures absent (a pinned copy) — not a pass", file=sys.stderr)
+        return
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("t8_floor_cases", helper)
+    if spec is None or spec.loader is None:
+        ok(False, "floor_cases.py loads")
+        return
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    for name, passed, detail in mod.run_all(sys.modules[__name__]):
+        if passed is None:
+            print(f"self-test SKIP: {name} ({detail}) — not a pass", file=sys.stderr)
+            continue
+        ok(passed, f"{name}: {detail}")
+
+
 def self_test(stub_chain: bool = False) -> int:
     fails: List[str] = []
     passes = [0]
@@ -3863,6 +4767,13 @@ def self_test(stub_chain: bool = False) -> int:
             _t7_self_test(tmp, ok)
         else:
             fails.append(f"T7 fixtures missing at {AP_FIXTURES}")
+
+        # T8 (H17): identity keys, the identity matrix, the express override, the Claude floor
+        if ID_FIXTURES.is_dir() and AP_FIXTURES.is_dir():
+            _t8_self_test(tmp, ok)
+            _t8_git_floor(ok)
+        else:
+            fails.append(f"T8 fixtures missing at {ID_FIXTURES}")
 
         if stub_chain:
             # A real ancestor named `claude` that stays alive as the parent of the check.
