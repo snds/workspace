@@ -1148,6 +1148,15 @@ def self_test() -> int:
             self.assertEqual(self.run_inst("plugin", "reinstall")[0], 2)
 
     class TestOverlayReplace(unittest.TestCase):
+        def test_floor_command_is_bound_to_the_install_home(self):
+            cmd = 'H="$HOME"; W="$H/.config/snds-workspace/bin/ws-hook"; exec env HOME="$H" "$W"'
+            got = merge_settings.expand_env_home({"env": {"GIT_CONFIG_VALUE_9": cmd, "X": "~/a", "Y": "plain"}},
+                                                 "/Users/pat sample")
+            self.assertEqual(got["env"]["GIT_CONFIG_VALUE_9"],
+                             "H='/Users/pat sample'; W=\"$H/.config/snds-workspace/bin/ws-hook\"; exec env HOME=\"$H\" \"$W\"")
+            self.assertEqual(got["env"]["X"], "/Users/pat sample/a")
+            self.assertEqual(got["env"]["Y"], "plain")
+
         def test_stale_v1_env_yields_exactly_dist_keys(self):
             stale = json.loads((FIXTURES / "settings-v1-stale.json").read_text())
             self.assertIn("GIT_AUTHOR_EMAIL", stale["env"])
