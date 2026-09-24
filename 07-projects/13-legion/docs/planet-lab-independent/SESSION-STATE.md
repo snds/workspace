@@ -2,8 +2,6 @@
 
 _Last updated: 2026-09-23 — Codex / Codex desktop / Personal MacBook Pro_
 
-Updated 2026-09-23. Agent · Surface · Machine: Codex / Codex desktop / personal Mac, Apple M3 Max.
-
 User requested a completely independent, additive experiment in a physically defensible dynamic planet generator, starting in Legion. All implementation and assets live in `~/Projects/Legion/planet-lab/`, with their own package, dependencies, local Git repository (branch `codex/independent-planet-lab`, commit `a367a99`) and ports 5187 (development) / 5188 (preview). No existing Legion source or configuration was changed.
 
 Implemented: seeded reduced plate kinematics, uplift/ridges/trenches, bathymetry and climate proxies, geography-based settlement lights, spherical moisture transport, volumetric clouds/internal lightning, camera-relative Earth-scale rendering, continuous orbital descent to 8 m above the same terrain. Nine numerical checks and seven browser integration checks pass. Native shader validation passes.
