@@ -16,7 +16,7 @@ _Last updated: 2026-09-04 — checkpoint (cross-device migration action queued f
 - **2026-09-23 addendum — CDS analytics strategy (Claude Code, Work MBP):** Sean granted a **one-task
   override** of standing wall #3 so Claude could research + plan CDS design-system analytics. Plan is
   **machine-local** (gitignored): `07-projects/12-MCS/plan_cds-analytics_v1.0_2026-09-23.md`.
-  Vendor-neutral research: [[ds-analytics-measurement-and-tooling]]. No employer repo was modified.
+  Metrics plan (DS vs app teams + VP headlines + ROI model): `plan_cds-metrics_v1.0_2026-09-23.md` (machine-local). Vendor-neutral research: [[ds-analytics-measurement-and-tooling]]. No employer repo was modified.
   Next: Sean answers the plan's §7 open decisions; first PR (`ratchet --json`) goes through the employer lane.
 - **TL;DR**: Move the MCS research/analysis work out of the workspace vault into its proper employer
   home — the `saas-plm-analysis` repo (a **documentation** repo: briefs, analysis, research — not a
