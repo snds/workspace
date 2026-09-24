@@ -137,7 +137,8 @@ In code, Dev Mode's generated CSS shows the variable names — which match excep
 ## For Sean
 
 - "Tier = collection = directory" is the strongest mechanical hook in the course: an audit can derive
-  tier from file location and never guess. `token-audit.py --config` supports `tier_prefixes` for this.
+  tier from file location and never guess. `token-audit.py` reads `tier-N`/`core/` directories
+  automatically; `--config` `tier_prefixes` (token-name prefixes) covers single-file exports.
 - The **no stray font-size/weight in component CSS** rule is directly lintable (extend TA015-style scan).
 - Figma scoping is a checklist item for any Figma variables work: tier 1 unscoped, tier-2 colour
   scoped by property — verifiable through the Figma MCP (`get_variable_defs` exposes scopes).

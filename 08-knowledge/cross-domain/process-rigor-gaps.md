@@ -1,7 +1,7 @@
 ---
 tags: [workspace, rigor, close-out, qa, figma, engineering, token-frugality]
 created: 2026-09-11
-updated: 2026-09-11
+updated: 2026-09-24
 status: working
 confidence: high
 sources: [01-frameworks/13-domain-rigor-stack.md, 03-skills/skills.registry.json, 02-shared-references/delivery-playbooks/05-validation-harness.md, 03-skills/plan-ahead/SKILL.md]
@@ -54,5 +54,6 @@ relations:
 3. **Figma prove-gate** — instances not rects; semantic+mode binds not `Color/*`; variant matrix; native-zoom capture; correct and re-prove. Mint a missing inspect/cuespec before paging.
 4. **Graph attach** — `governed_by` on producer hubs; real `triggers` on command wrappers; `governs` populated on `qa` / a11y / visual-qa.
 5. **Self-improve** — per-session correct / heal / improve for the whole vault, not only QA detectors. Transfer processes across hubs (adapt, don't clone toolkits). Wire corollary edges. Push independently. Home: [[self-improve]]. Map: [[self-improving-workspace]].
+6. **New detector ≠ reviewed detector** (2026-09-24) — the session-end auto-commit lands work on `main` without review, and the local validator chain omits ruff (CI-only by `ruff.toml` design). Before pushing a new/changed `09-tools/*.py`: `UV_CACHE_DIR=$TMPDIR/uv-cache UV_TOOL_DIR=$TMPDIR/uv-tools uvx ruff check <file>` (the temp dirs are needed under the sandbox). For a new L3 detector, run an adversarial review (finders → refuters → fix → re-verify) and calibrate on real data: `token-audit.py` shipped an F541 only CI caught, then 31 confirmed defects + 7 fix-introduced regressions surfaced ([[design-token-architecture]]).
 
 Load-miss map: [[agent-load-miss-review]]. Proofboard: [[05-validation-harness]].

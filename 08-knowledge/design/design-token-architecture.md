@@ -20,7 +20,8 @@ relations:
 ## For future agent
 
 - **TL;DR:** A token system is **three tiers** (definitions → semantic jobs → rare component overrides)
-  whose tiers 2–3 are a **contract/API** that every theme must implement identically. Build it
+  whose tiers 2–3 are a **contract/API** that every root theme must implement identically (a child theme
+  implements it through parent + override). Build it
   **MVP-first against a pilot**, name it with a **per-tier algorithm** co-owned by a design + a dev
   **token czar**, publish **tier 2/3 only** by default, adopt it at three levels (reference → tokens →
   components), and govern it with SemVer lockstep releases. Full design↔code automation does not exist;
@@ -39,7 +40,7 @@ relations:
 |---|---|---|
 | Three tiers (global/semantic/component) | [[09-component-and-pattern-framework]] §3; `ux-component-library/references/tokens-and-naming.md` | Tier 3 as an *earned privilege*; tier = collection = directory; themes = modes over identical tier-2/3 names; core + vanilla themes |
 | Naming grammar (Curtis) | `tokens-and-naming.md` §2 | A **per-tier** algorithm: tier 1 loose/literal, tier 2–3 strict; `disabled` placement; code-only prefix + tier id |
-| Components consume semantic only | [[shadcn-lint-token-tiers]], [[figma-tailwind-token-pipeline]] | Exception: tier-1 **spacing** may be consumed directly; typography only via composites |
+| Components consume semantic only | [[shadcn-lint-token-tiers]], [[figma-tailwind-token-pipeline]] | Exceptions: tier-1 **spacing** (on the grid) and **z-index** (the ramp) may be consumed directly; typography only via composites |
 | Parity statuses MATCH/ALIGNED/DEVIATE/FIGMA-ONLY | [[cross-surface-token-parity]] | The enumerated **sanctioned divergences** (all ALIGNED or code-only-by-design) |
 | Frost canon on AI × DS | [[ai-and-design-systems]], [[18-design-systems-ai-operating-model]] | Token-specific ops: czars, pilots, SemVer lockstep, governance workflow |
 
@@ -47,7 +48,7 @@ relations:
 
 | Question | Nathan Curtis (`tokens-and-naming.md`) | Frosts (Subatomic) | Workspace default |
 |---|---|---|---|
-| Where do component tokens come from? | Start **inside** a component; promote after reuse | Tier 2 does the heavy lifting; a tier-3 token must **earn** its place (heavily-variable components, component categories, special cases like focus ring) | **Multi-theme systems → Frost.** A component-local value becomes a *published* tier-3 token only if it varies by theme. Single-product systems may use Curtis's local-first promotion for *semantic* roles. |
+| Where do component tokens come from? | Start **inside** a component; promote after reuse | Tier 2 does the heavy lifting; a tier-3 token must **earn** its place (heavily-variable components, component categories, special cases like focus ring) | **Multi-theme systems → Frost.** A component-local value becomes a *published* tier-3 token only if it fits one of Frost's three cases (most often: it varies by theme). Single-product systems may use Curtis's local-first promotion for *semantic* roles. |
 | Literal vs purposeful names | Purposeful by default; never mix in one enum | Literal is **fine at tier 1** (`helvetica`, `64`, `pink-500`); purposeful from tier 2 up | Compatible — literal tier 1, purposeful tiers 2–3. Mixed enums stay banned. |
 | Theme vs mode | Orthogonal axes in the name | **One flat theme list.** Knockout/inverted = tier-2 roles inside a theme; user/OS dark mode = a **child theme of one brand** (`dark-chocolate` inherits `chocolate`, overrides colour + shadow only; code loads parent then a small override, switched by root class or `prefers-color-scheme`; Figma = a sibling mode, often a full copy). Extended Collections (Enterprise) mentioned, not demonstrated. | **Not a contradiction — Frost just doesn't practise the orthogonal model.** Model brand × mode as orthogonal; *implement* dark as a per-brand child theme whose overrides are restricted to colour + shadow (TA022) and that only overrides existing parent names (TA021). |
 | Size abbreviations | Deliberate choice (readability vs brevity) | Spell words out, **except** t-shirt sizes (`sm`/`lg`) | Abbreviated t-shirt sizes OK; one vocabulary per system (TA008). |
@@ -175,8 +176,10 @@ relations:
 
 ## Mechanical harness (what any agent can run)
 
-`09-tools/token-audit.py` — vendor-neutral; DTCG or Style Dictionary JSON; tier from `--config`
-`tier_prefixes` (mirror the collection/directory structure) or inferred.
+`09-tools/token-audit.py` — vendor-neutral; DTCG or Style Dictionary JSON; files or directories. Tier comes
+from the path (a `tier-1|2|3` directory; `core/` → 1 — mirror the Figma collection structure in code
+directories), else `--config` `tier_prefixes` (dotted token-name prefixes, for single-file exports), else
+inferred.
 
 | Rule | Checks | Source |
 |---|---|---|
@@ -184,16 +187,20 @@ relations:
 | TA006 | Tier-3 share budget (default 25%) | Ch2 |
 | TA007–TA009, TA011 | Legible names, one size vocabulary, colour property buckets, one casing | Ch3 |
 | TA012 | `$type` present (opt-in) | DTCG |
-| TA013 | Every theme exposes the same tier-2/3 API | Ch4 |
+| TA013 | Every **root** theme exposes the same tier-2/3 API (skinny child themes are checked by TA021–022 instead) | Ch4/Ch8 |
 | TA014 | Figma↔code name parity after sanctioned divergences (FIGMA-ONLY / CODE-ONLY gaps) | Ch3/Ch4 + [[cross-surface-token-parity]] |
-| TA015–TA018, TA020 | Component CSS: no colour/dimension/motion literals, no tier-1 (except spacing), typography via composites, knockout pairing | Ch4/Ch6 |
+| TA015–TA018, TA020 | Component CSS/SCSS: no colour literals (hex, functional, named), no dimension/motion/z-index literals, no tier-1 (except spacing and z-index), typography via composites, knockout background ⇒ knockout content in the same component stylesheet | Ch4/Ch6 |
 | TA019 | All platform outputs expose the same token set | Ch6 |
-| TA021–TA022 | Child theme (dark / sub-brand / campaign) overrides only existing parent names, only allowed categories (unchanged re-declarations ignored) | Ch8 |
-| TA023 | Tier-2 content-on-background pairs ≥ 4.5:1 in every theme (error — a11y is not deferrable) | Ch2/Ch8 + [[a11y-visual]] |
+| TA021–TA022 | Child theme overrides only existing parent names, only allowed categories — dark: colour + shadow; sub-brand and campaign: colour, font-family, radius (unchanged re-declarations ignored) | Ch8 |
+| TA023 | Tier-2 content-on-background pairs ≥ 4.5:1 in every theme; translucent text composited over its background (error — a11y is not deferrable) | Ch2/Ch8 + [[a11y-visual]] |
+| TA024 | A contrast pair that exists but cannot be evaluated (unsupported colour value, translucent background) — warning, blocking under `--strict` | Ch8 |
 
-**Calibrated on the course's own demo repo** (4 themes): tiers/aliases/naming clean; identical theme API;
-identical build outputs; genuine findings only — 15 component-CSS literals, `content-subtle` on
-`background-default` at 4.07:1 in three light themes, and one font-family override in `dark-chocolate`.
+**Calibrated on the course's own demo repo** (4 themes; re-run 2026-09-24 after an adversarial review fixed
+31 confirmed defects): tiers/aliases/naming clean; identical root-theme API; identical build outputs;
+genuine findings only — `content-subtle` on `background-default` at 4.07:1 in three light themes, one
+font-family override in `dark-chocolate`, and 30 component-CSS warnings (hard-coded greys and named
+colours in the checkout page and placeholder styles, 9 local z-index integers, literal animation/transition
+timings, one decorative knockout wave with no text).
 Details: `07-projects/23-subatomic-design-tokens-course/synthesis/running.md`.
 
 Product-repo CI checks the course implies but that live outside this tool (by design — see the

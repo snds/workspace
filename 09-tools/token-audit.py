@@ -10,22 +10,29 @@ project 23) so any agent can audit a token source instead of eyeballing it:
   budget     tier 3 is a privilege: warn when it grows past a share of the system
   naming     legibility over succinctness (no cryptic abbreviations), one size vocabulary,
              one case/separator convention, tier-2 colour properties from a fixed bucket set
-  themes     every theme exposes the same tier-2 + tier-3 API (components depend on it)
+  themes     every ROOT theme exposes the same tier-2 + tier-3 API (components depend on it); skinny
+             child themes (dark / sub-brand / campaign) are checked with --parent/--override instead
   parity     Figma vs code token names match once the sanctioned divergences are removed
              (code-only prefix, Figma's named `default`, code-only animation/z-index/breakpoint,
              Figma-only viewport)
-  css        component CSS consumes tier 2/3 only — no raw colour literals, no tier-1 vars
-             (tier-1 spacing is exempt), no stray typography literals (use composites), no
-             hard-coded spacing/radius/shadow/motion/z-index, knockout bg ⇒ knockout content
+  css        component CSS/SCSS consumes tier 2/3 only — no raw colour literals (hex, functional,
+             named), no tier-1 vars (tier-1 spacing and z-index are exempt), no stray typography
+             literals (use composites), no hard-coded spacing/radius/shadow/motion/z-index; a stylesheet
+             that paints a knockout background also uses knockout content (same component)
   outputs    every platform output (CSS/SCSS/JSON) built from one source exposes the same names
   override   a child theme (dark / sub-brand / campaign) only overrides names its parent has, and only
-             allowed categories (dark: colour + shadow; sub-brand: colour, font-family, radius)
-  contrast   tier-2 content-on-background pairs meet WCAG 4.5:1 in every theme (a11y is not deferrable)
+             allowed categories (dark: colour + shadow; sub-brand / campaign: colour, font-family, radius)
+  contrast   tier-2 content-on-background pairs meet WCAG 4.5:1 in every theme (a11y is not deferrable);
+             translucent text is composited over its background; unparseable colours are reported (TA024)
 
-Input: DTCG (`$value`/`$type`) or Style Dictionary (`value`) JSON, nested groups; files or directories
-(build/dist/node_modules skipped). Tier resolution, first match wins: a `tier-1|2|3` directory in the
-file path (structure = tier) · a `core/` directory → 1 · `--config` `tier_prefixes` · inference (raw
-value → 1; alias under a category root → 2; alias under anything else, e.g. `button.*` → 3).
+Input: DTCG (`$value`/`$type`) or Style Dictionary (`value`, `{a.b.value}` refs) JSON, nested groups;
+files or directories (build/dist/node_modules skipped inside the directory given; a directory with no
+token JSON is bad input). Tier resolution, first match wins, judged only on the part of the path you
+pointed at (a directory argument's own name + below; for a file, a `tier-N` folder anywhere in the path
+typed, else its immediate parent): a `tier-1|2|3`
+directory (structure = tier) · a `core/` directory → 1 · `--config` `tier_prefixes` (dotted token-name
+prefixes) · inference (raw value → 1; alias under a category root → 2; alias under anything else,
+e.g. `button.*` → 3). Rule ids TA001–TA024 (TA010 unassigned); errors: TA001–005, TA013, TA021, TA023.
 
 Usage:
   python3 09-tools/token-audit.py tokens/**/*.json
@@ -39,7 +46,8 @@ Usage:
   python3 09-tools/token-audit.py --config token-audit.config.json tokens.json --json
   python3 09-tools/token-audit.py --self-test
 
-Exit: 0 clean (warnings allowed) · 1 errors (or warnings with --strict) · 2 bad input.
+Exit: 0 clean (warnings allowed) · 1 errors (or warnings with --strict) · 2 bad input (unreadable or
+invalid JSON, non-object root, empty directory, --override without --parent).
 """
 
 from __future__ import annotations
@@ -53,8 +61,38 @@ from pathlib import Path
 
 REF_RE = re.compile(r"\{([^{}]+)\}")
 CSS_VAR_RE = re.compile(r"var\(\s*--([a-zA-Z0-9_-]+)")
-CSS_COLOR_LITERAL_RE = re.compile(r"#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?|oklch|oklab|lab|lch)\(")
-CSS_DECL_RE = re.compile(r"([a-zA-Z-]+)\s*:\s*([^;{}]+);")
+# Sass variables, optionally module-namespaced (`$ds-x`, `tokens.$ds-x`).
+SCSS_VAR_RE = re.compile(r"(?<![\w$-])(?:[A-Za-z_][\w-]*\.)?\$([A-Za-z_][\w-]*)")
+# `(?<![\w-])` so getters such as `theme-color(…)` / `mat-color(…)` / `ds-color(…)` are token reads, not literals.
+CSS_COLOR_LITERAL_RE = re.compile(r"#[0-9a-fA-F]{3,8}\b|(?<![\w-])(?:rgba?|hsla?|oklch|oklab|lab|lch|hwb|color)\(")
+CSS_NAMED_COLORS = (
+    "aliceblue antiquewhite aqua aquamarine azure beige bisque black blanchedalmond blue blueviolet brown "
+    "burlywood cadetblue chartreuse chocolate coral cornflowerblue cornsilk crimson cyan darkblue darkcyan "
+    "darkgoldenrod darkgray darkgreen darkgrey darkkhaki darkmagenta darkolivegreen darkorange darkorchid "
+    "darkred darksalmon darkseagreen darkslateblue darkslategray darkslategrey darkturquoise darkviolet "
+    "deeppink deepskyblue dimgray dimgrey dodgerblue firebrick floralwhite forestgreen fuchsia gainsboro "
+    "ghostwhite gold goldenrod gray green greenyellow grey honeydew hotpink indianred indigo ivory khaki "
+    "lavender lavenderblush lawngreen lemonchiffon lightblue lightcoral lightcyan lightgoldenrodyellow "
+    "lightgray lightgreen lightgrey lightpink lightsalmon lightseagreen lightskyblue lightslategray "
+    "lightslategrey lightsteelblue lightyellow lime limegreen linen magenta maroon mediumaquamarine "
+    "mediumblue mediumorchid mediumpurple mediumseagreen mediumslateblue mediumspringgreen "
+    "mediumturquoise mediumvioletred midnightblue mintcream mistyrose moccasin navajowhite navy oldlace "
+    "olive olivedrab orange orangered orchid palegoldenrod palegreen paleturquoise palevioletred "
+    "papayawhip peachpuff peru pink plum powderblue purple rebeccapurple red rosybrown royalblue "
+    "saddlebrown salmon sandybrown seagreen seashell sienna silver skyblue slateblue slategray slategrey "
+    "snow springgreen steelblue tan teal thistle tomato turquoise violet wheat white whitesmoke yellow "
+    "yellowgreen"
+).split()
+# Word-bounded so `var(--ds-color-red)` / `$white` never match; applied to colour-bearing properties only.
+CSS_NAMED_COLOR_RE = re.compile(
+    r"(?<![\w$@#.-])(?:" + "|".join(sorted(CSS_NAMED_COLORS, key=len, reverse=True)) + r")(?![\w-])", re.I)
+COLOR_PROPS_RE = re.compile(
+    r"^(?:color|background(?:-color|-image)?|border(?:-[a-z]+)*|outline(?:-color)?|fill|stroke|"
+    r"(?:box|text)-shadow|text-decoration(?:-color)?|caret-color|accent-color|column-rule(?:-color)?)$")
+# A declaration ends at `;` or just before the block's closing `}` (last declaration, minified CSS).
+CSS_DECL_RE = re.compile(r"([a-zA-Z-]+)\s*:\s*([^;{}]+?)\s*(?:;|(?=\}))")
+KO_BACKGROUND_RE = re.compile(r"background(?:-\w+)*-knockout")
+KO_CONTENT_RE = re.compile(r"content(?:-\w+)*-knockout")
 # Typography comes from composite bundles; a literal on one of these in component CSS is a stray.
 TYPOGRAPHY_PROPS = {"font-size", "font-weight", "font-family", "line-height", "letter-spacing"}
 CSS_KEYWORDS = {"inherit", "initial", "unset", "revert", "normal", "1", "0"}  # line-height:1 trims text boxes
@@ -63,10 +101,11 @@ DIMENSION_PROPS = {
     "padding", "padding-top", "padding-right", "padding-bottom", "padding-left", "padding-inline",
     "padding-block", "margin", "margin-top", "margin-right", "margin-bottom", "margin-left",
     "margin-inline", "margin-block", "gap", "row-gap", "column-gap", "border-radius", "border-width",
-    "box-shadow", "transition", "transition-duration", "animation-duration", "z-index",
+    "box-shadow", "transition", "transition-duration", "transition-delay", "animation",
+    "animation-duration", "animation-delay", "z-index",
 }
-LITERAL_DIMENSION_RE = re.compile(r"(?<![\w-])(?:\d*\.?\d+)(?:px|rem|em|ms|s)\b|^\s*\d{2,}\s*$")
-CSS_RULE_RE = re.compile(r"([^{}]+)\{([^{}]*)\}")
+# Signed dimension/time literals, or a bare integer (z-index) — zero is stripped before this runs.
+LITERAL_DIMENSION_RE = re.compile(r"(?<![\w-])-?(?:\d*\.?\d+)(?:px|rem|em|ms|s)\b|^\s*-?\d+\s*$")
 
 # Roots that name a token *category* — an alias living directly under one of these is tier 2.
 CATEGORY_ROOTS = {
@@ -109,6 +148,7 @@ OVERRIDE_ALLOW = {
     "dark": {"color", "colour", "shadow", "box-shadow", "elevation"},
     "sub-brand": {"color", "colour", "font-family", "border-radius", "radius", "typography.font-family"},
 }
+OVERRIDE_ALLOW["campaign"] = OVERRIDE_ALLOW["sub-brand"]  # campaigns are cosmetic partial overrides too (ch8)
 # Tier-2 content-on-background pairs checked for WCAG contrast when both exist (config `contrast_pairs` extends).
 DEFAULT_CONTRAST_PAIRS = [
     ("color.content.default", "color.background.default"),
@@ -119,6 +159,19 @@ DEFAULT_CONTRAST_PAIRS = [
 ]
 
 
+class BadInput(Exception):
+    """Unreadable or structurally invalid input → exit 2, never mistaken for 'findings' (exit 1)."""
+
+
+def norm_ref(ref: str) -> str:
+    """`{a.b.value}` / `{a.b.$value}` (Style Dictionary) → `a.b`."""
+    ref = ref.strip()
+    for suf in (".$value", ".value"):
+        if ref.endswith(suf):
+            return ref[: -len(suf)]
+    return ref
+
+
 @dataclass
 class Token:
     path: tuple[str, ...]
@@ -126,6 +179,7 @@ class Token:
     type: str | None
     source: str
     tier: str = "?"
+    tier_path: str = ""  # the part of the path the user pointed at; tier directories are judged here only
 
     @property
     def name(self) -> str:
@@ -136,7 +190,7 @@ class Token:
 
         def walk(v: object) -> None:
             if isinstance(v, str):
-                out.extend(m.strip() for m in REF_RE.findall(v))
+                out.extend(norm_ref(m) for m in REF_RE.findall(v))
             elif isinstance(v, dict):
                 for x in v.values():
                     walk(x)
@@ -181,24 +235,36 @@ class Config:
         cfg = cls()
         if not path:
             return cfg
-        raw = json.loads(Path(path).read_text())
-        cfg.prefix = raw.get("prefix", cfg.prefix)
-        cfg.tier_prefixes = {str(k): list(v) for k, v in raw.get("tier_prefixes", {}).items()}
-        cfg.tier3_max_share = float(raw.get("tier3_max_share", cfg.tier3_max_share))
-        cfg.tier3_may_alias_tier1 = bool(raw.get("tier3_may_alias_tier1", cfg.tier3_may_alias_tier1))
-        cfg.abbreviations.update(raw.get("abbreviations", {}))
-        cfg.allow_abbreviations = set(raw.get("allow_abbreviations", []))
-        cfg.color_buckets = set(raw.get("color_buckets", sorted(cfg.color_buckets)))
-        cfg.require_type = bool(raw.get("require_type", cfg.require_type))
-        cfg.contrast_pairs += [tuple(x) for x in raw.get("contrast_pairs", [])]
-        cfg.contrast_min = float(raw.get("contrast_min", cfg.contrast_min))
+        try:
+            raw = json.loads(Path(path).read_text())
+        except (OSError, ValueError) as e:
+            raise BadInput(f"cannot read config {path}: {e}") from e
+        if not isinstance(raw, dict):
+            raise BadInput(f"{path}: config root must be a JSON object")
+        try:
+            cfg.prefix = str(raw.get("prefix", cfg.prefix))
+            cfg.tier_prefixes = {str(k): [str(x) for x in v] for k, v in raw.get("tier_prefixes", {}).items()}
+            cfg.tier3_max_share = float(raw.get("tier3_max_share", cfg.tier3_max_share))
+            cfg.tier3_may_alias_tier1 = bool(raw.get("tier3_may_alias_tier1", cfg.tier3_may_alias_tier1))
+            cfg.abbreviations.update(dict(raw.get("abbreviations", {})))
+            cfg.allow_abbreviations = {str(x) for x in raw.get("allow_abbreviations", [])}
+            cfg.color_buckets = {str(x) for x in raw.get("color_buckets", sorted(cfg.color_buckets))}
+            cfg.require_type = bool(raw.get("require_type", cfg.require_type))
+            pairs = [tuple(x) for x in raw.get("contrast_pairs", [])]
+            if any(len(x) != 2 or not all(isinstance(y, str) for y in x) for x in pairs):
+                raise ValueError("contrast_pairs must be a list of [fg, bg] token names")
+            cfg.contrast_pairs += pairs  # type: ignore[arg-type]
+            cfg.contrast_min = float(raw.get("contrast_min", cfg.contrast_min))
+        except (TypeError, ValueError, AttributeError) as e:
+            raise BadInput(f"{path}: invalid config value — {e}") from e
         return cfg
 
 
 # ---------------------------------------------------------------- loading
 
 
-def flatten(data: dict, source: str, path: tuple[str, ...] = (), inherited_type: str | None = None) -> list[Token]:
+def flatten(data: dict, source: str, path: tuple[str, ...] = (), inherited_type: str | None = None,
+            tier_path: str = "") -> list[Token]:
     tokens: list[Token] = []
     group_type = data.get("$type", inherited_type) if isinstance(data, dict) else inherited_type
     for key, node in data.items():
@@ -206,9 +272,10 @@ def flatten(data: dict, source: str, path: tuple[str, ...] = (), inherited_type:
             continue
         if "$value" in node or "value" in node:
             val = node.get("$value", node.get("value"))
-            tokens.append(Token(path + (key,), val, node.get("$type", node.get("type", group_type)), source))
+            tokens.append(Token(path + (key,), val, node.get("$type", node.get("type", group_type)), source,
+                                tier_path=tier_path or source))
         else:
-            tokens.extend(flatten(node, source, path + (key,), group_type))
+            tokens.extend(flatten(node, source, path + (key,), group_type, tier_path))
     return tokens
 
 
@@ -216,27 +283,39 @@ SKIP_DIRS = {"node_modules", "build", "dist", ".git", "__MACOSX"}
 TIER_DIR_RE = re.compile(r"(?:^|[/\\])tier[-_ ]?([123])\b", re.I)
 
 
-def expand(paths: list[str]) -> list[str]:
-    """Files as given; directories → their token JSON (build output and vendored dirs skipped)."""
-    out: list[str] = []
+def expand(paths: list[str]) -> list[tuple[str, str]]:
+    """(file, tier_path) pairs. Directories → their token JSON; build/vendored dirs are skipped *inside* the
+    directory given (an ancestor named build/ does not hide everything). tier_path keeps only what the
+    user pointed at — the directory argument's own name + below, or a file's immediate parent — so an
+    unrelated ancestor such as `packages/core/…` cannot force a tier."""
+    out: list[tuple[str, str]] = []
     for p in paths:
         pp = Path(p)
         if pp.is_dir():
-            out.extend(str(f) for f in sorted(pp.rglob("*.json"))
-                       if not SKIP_DIRS & set(f.parts) and not f.name.startswith(("package", "tsconfig", ".")))
+            found = [f for f in sorted(pp.rglob("*.json"))
+                     if not SKIP_DIRS & set(f.relative_to(pp).parts[:-1])
+                     and not f.name.startswith(("package", "tsconfig", "."))]
+            if not found:
+                raise BadInput(f"{p}: directory contains no token JSON")
+            # The directory's own name + the path below it; files are not resolve()d (symlinks may point anywhere).
+            out.extend((str(f), f"{pp.resolve().name}/{f.relative_to(pp).as_posix()}") for f in found)
+        elif TIER_DIR_RE.search(pp.parent.as_posix()):
+            out.append((p, pp.as_posix()))  # an explicit tier-N folder anywhere in the typed path counts
         else:
-            out.append(p)
+            out.append((p, f"{pp.parent.name}/{pp.name}"))  # only an immediate `core/` parent counts
     return out
 
 
 def load_tokens(paths: list[str]) -> list[Token]:
     out: list[Token] = []
-    for p in expand(paths):
+    for p, tier_path in expand(paths):
         try:
             data = json.loads(Path(p).read_text())
-        except (OSError, json.JSONDecodeError) as e:
-            raise SystemExit(f"token-audit: cannot read {p}: {e}")
-        out.extend(flatten(data, p))
+        except (OSError, ValueError) as e:
+            raise BadInput(f"cannot read {p}: {e}") from e
+        if not isinstance(data, dict):
+            raise BadInput(f"{p}: token root must be a JSON object")
+        out.extend(flatten(data, p, tier_path=tier_path))
     return out
 
 
@@ -259,10 +338,10 @@ def assign_tiers(tokens: list[Token], cfg: Config) -> None:
         tier = None
         # Structure = tier (course ch4): a `tier-1|2|3` directory in the source path is authoritative;
         # a `core/` directory without one holds shared tier-1 definitions.
-        m = TIER_DIR_RE.search(t.source)
+        m = TIER_DIR_RE.search(t.tier_path)
         if m:
             tier = m.group(1)
-        elif re.search(r"(?:^|[/\\])core[/\\]", t.source):
+        elif re.search(r"(?:^|[/\\])core[/\\]", t.tier_path) or t.tier_path.startswith("core/"):
             tier = "1"
         for tier_id, prefixes in ({} if tier else cfg.tier_prefixes).items():
             if any(".".join(segs).startswith(p.lower().rstrip(".") ) for p in prefixes):
@@ -409,10 +488,15 @@ def normalize_for_parity(t: Token, cfg: Config) -> str | None:
 def check_parity(figma_path: str, code_path: str, cfg: Config) -> list[Finding]:
     fig = load_tokens([figma_path])
     code = load_tokens([code_path])
-    fig_names = {n for t in fig if (n := normalize_for_parity(t, cfg)) and t.path[0].lower() not in FIGMA_ONLY_ROOTS}
-    code_names = {n for t in code if (n := normalize_for_parity(t, cfg))}
-    code_names = {n for n in code_names if n.split("-")[0] not in CODE_ONLY_ROOTS | FIGMA_ONLY_ROOTS}
-    fig_names = {n for n in fig_names if n.split("-")[0] not in CODE_ONLY_ROOTS | FIGMA_ONLY_ROOTS}
+    exempt = CODE_ONLY_ROOTS | FIGMA_ONLY_ROOTS
+
+    def names(tokens: list[Token]) -> set[str]:
+        # Exempt by the first *meaning segment* — the hyphen-joined name would split `z-index` and would
+        # wrongly exempt components such as `media-card` or `layer-panel`.
+        return {n for t in tokens
+                if (n := normalize_for_parity(t, cfg)) and meaning_segments(t.path, cfg)[0] not in exempt}
+
+    fig_names, code_names = names(fig), names(code)
     # Vocabulary: [[cross-surface-token-parity]] (MATCH / ALIGNED / DEVIATE / FIGMA-ONLY). Names that survive
     # normalisation are MATCH-or-ALIGNED by construction (prefix, named `default` = ALIGNED); code-only
     # categories are excluded by design, so only true one-sided gaps are reported.
@@ -442,36 +526,76 @@ def check_css(css_paths: list[str], tokens: list[Token], cfg: Config) -> list[Fi
             files.append(pp)
     findings: list[Finding] = []
     for f in files:
-        text = f.read_text(errors="replace")
+        try:
+            text = f.read_text(errors="replace")
+        except OSError as e:
+            raise BadInput(f"cannot read {f}: {e}") from e
         text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+        if f.suffix in (".scss", ".sass"):
+            # Sass line comments; the lookbehind keeps `url(//cdn…)`, `http://` and quoted `//` intact.
+            text = re.sub(r"(\"(?:\\.|[^\"\\\n])*\"|'(?:\\.|[^'\\\n])*'|url\([^)]*\))|//[^\n]*",
+                          lambda m: m.group(1) or "", text)
         for prop, value in CSS_DECL_RE.findall(text):
             if prop.startswith("--"):
                 continue  # token definitions themselves are allowed to hold values
-            if prop in TYPOGRAPHY_PROPS and "var(" not in value and value.strip() not in CSS_KEYWORDS:
-                findings.append(Finding("TA017", f"{f}:{prop}", f"stray typography literal `{value.strip()}` — use a composite (mixin/class) or a tier-3 typography token", str(f)))
-            if CSS_COLOR_LITERAL_RE.search(value):
-                findings.append(Finding("TA015", f"{f}:{prop}", f"raw colour literal `{value.strip()}` in component CSS — consume a tier-2/3 token", str(f)))
-            for var in CSS_VAR_RE.findall(value):
+            value = value.strip()
+            uses_token = "var(" in value or bool(SCSS_VAR_RE.search(value))
+            if prop in TYPOGRAPHY_PROPS and not uses_token and value not in CSS_KEYWORDS:
+                findings.append(Finding("TA017", f"{f}:{prop}", f"stray typography literal `{value}` — use a composite (mixin/class) or a tier-3 typography token", str(f)))
+            # urls, strings and Sass map lookups (`map-get($m, red)`) carry names, not colours
+            plain = re.sub(r"url\([^)]*\)|\"[^\"]*\"|'[^']*'|\b(?:map-get|map\.get)\([^)]*\)", "", value)
+            if CSS_COLOR_LITERAL_RE.search(value) or (COLOR_PROPS_RE.match(prop) and CSS_NAMED_COLOR_RE.search(plain)):
+                findings.append(Finding("TA015", f"{f}:{prop}", f"raw colour literal `{value}` in component CSS — consume a tier-2/3 token", str(f)))
+            for sigil, var in [("--", v) for v in CSS_VAR_RE.findall(value)] + [("$", v) for v in SCSS_VAR_RE.findall(value)]:
                 if var.lower() in tier1_vars:
-                    findings.append(Finding("TA016", f"{f}:{prop}", f"component consumes tier-1 definition `--{var}` — give it a job (tier 2) first", str(f)))
-            bare = re.sub(r"var\([^)]*\)", "", value)
-            bare = re.sub(r"(?<![\w.-])0(?:\.0+)?(?:px|rem|em|ms|s)?\b", "", bare)  # zero needs no token
+                    findings.append(Finding("TA016", f"{f}:{prop}", f"component consumes tier-1 definition `{sigil}{var}` — give it a job (tier 2) first", str(f)))
+            bare = SCSS_VAR_RE.sub("", re.sub(r"var\([^)]*\)", "", value))
+            bare = re.sub(r"(?<![\w.-])-?0(?:\.0+)?(?:px|rem|em|ms|s)?\b", "", bare)  # zero needs no token
             if prop in DIMENSION_PROPS and LITERAL_DIMENSION_RE.search(bare):
-                findings.append(Finding("TA020", f"{f}:{prop}", f"hard-coded `{value.strip()}` — spacing/radius/shadow/motion/z-index come from tokens", str(f)))
-        # Knockout backgrounds and knockout content travel together (course ch6).
-        for selector, body in CSS_RULE_RE.findall(text):
-            uses = [v.lower() for v in CSS_VAR_RE.findall(body)]
-            if any("background-knockout" in v for v in uses) and not any("content-knockout" in v for v in uses):
-                sel = re.split(r"[;}]", selector)[-1].strip()
-                findings.append(Finding("TA018", f"{f}:{sel}", "knockout background without a knockout content colour in the same rule", str(f)))
+                findings.append(Finding("TA020", f"{f}:{prop}", f"hard-coded `{value}` — spacing/radius/shadow/motion/z-index come from tokens", str(f)))
+        findings += knockout_findings(text, str(f))
     return findings
+
+
+def knockout_findings(text: str, source: str) -> list[Finding]:
+    """Knockout surfaces carry knockout content on the SAME COMPONENT (course ch6). Judged per stylesheet:
+    component CSS commonly paints the knockout background on a container and sets knockout content on
+    its own children elsewhere in the file (`.x--inverted &` context rules, icon fills, nav links) — a
+    per-rule check misfires on that correct pattern (calibrated on the course demo, 2026-09-24). Only
+    background properties count as a knockout *background* (a knockout token used as an SVG `fill` is
+    not one)."""
+    bg_rules: list[str] = []
+    decls = list(CSS_DECL_RE.finditer(text))
+    stack: list[str] = []
+    di = 0
+    for i, ch in enumerate(text + "\0"):
+        while di < len(decls) and decls[di].start() <= i:  # attribute each declaration to its innermost selector
+            prop, value = decls[di].group(1), decls[di].group(2)
+            names = [v.lower() for v in CSS_VAR_RE.findall(value) + SCSS_VAR_RE.findall(value)]
+            if prop.startswith("background") and any(KO_BACKGROUND_RE.search(v) for v in names):
+                bg_rules.append(stack[-1] if stack else "(root)")
+            di += 1
+        if ch == "{":
+            start = max(text.rfind(c, 0, i) for c in "{};") + 1
+            stack.append(" ".join(text[start:i].split()))
+        elif ch == "}" and stack:
+            stack.pop()
+    used = [v.lower() for v in CSS_VAR_RE.findall(text) + SCSS_VAR_RE.findall(text)]
+    if bg_rules and not any(KO_CONTENT_RE.search(v) for v in used):
+        return [Finding("TA018", f"{source}:{bg_rules[0]}",
+                        f"knockout background on {len(bg_rules)} rule(s) but no knockout content colour anywhere in "
+                        "this component's stylesheet", source)]
+    return []
 
 
 def output_names(path: Path) -> set[str]:
     """Token names a build output exposes, normalised (case, separators, `--`/`$` sigils) for cross-format comparison."""
-    text = path.read_text(errors="replace")
+    try:
+        text = path.read_text(errors="replace")
+        data = json.loads(text) if path.suffix == ".json" else None
+    except (OSError, ValueError) as e:
+        raise BadInput(f"cannot read {path}: {e}") from e
     if path.suffix == ".json":
-        data = json.loads(text)
         names: set[str] = set()
 
         def walk(node: object, trail: tuple[str, ...]) -> None:
@@ -522,18 +646,46 @@ def check_override(parent_paths: list[str], child_paths: list[str], kind: str, c
     return findings
 
 
-def _hex_rgb(v: object) -> tuple[float, float, float] | None:
+def _alpha(raw: str | None, pct: str | None) -> float:
+    if raw is None:
+        return 1.0
+    return max(0.0, min(1.0, float(raw) / (100 if pct else 1)))
+
+
+def parse_color(v: object) -> tuple[float, float, float, float] | None:
+    """sRGB (r, g, b, alpha) in 0..1 from hex (3/4/6/8), rgb[a](), hsl[a]() or a DTCG colour object;
+    None when the value is not a colour this tool can evaluate (named colours, other spaces)."""
+    if isinstance(v, dict):  # DTCG 2025 colour object
+        if isinstance(v.get("hex"), str) and v.get("colorSpace", "srgb") == "srgb" and "components" not in v:
+            return parse_color(v["hex"])
+        comps = v.get("components")
+        if v.get("colorSpace", "srgb") == "srgb" and isinstance(comps, list) and len(comps) >= 3 \
+                and all(isinstance(c, (int, float)) for c in comps[:3]):
+            a = v.get("alpha", 1)
+            return (float(comps[0]), float(comps[1]), float(comps[2]), float(a) if isinstance(a, (int, float)) else 1.0)
+        return None
     if not isinstance(v, str):
         return None
     v = v.strip()
-    m = re.fullmatch(r"#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})(?:[0-9a-fA-F]{2})?", v)
+    m = re.fullmatch(r"#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})", v)
     if m:
         h = m.group(1)
-        h = "".join(c * 2 for c in h) if len(h) == 3 else h
-        return tuple(int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))  # type: ignore[return-value]
-    m = re.fullmatch(r"rgba?\(\s*(\d+)[ ,]+(\d+)[ ,]+(\d+).*\)", v)
+        if len(h) in (3, 4):
+            h = "".join(c * 2 for c in h)
+        a = int(h[6:8], 16) / 255 if len(h) == 8 else 1.0
+        return (int(h[0:2], 16) / 255, int(h[2:4], 16) / 255, int(h[4:6], 16) / 255, a)
+    num = r"(\d*\.?\d+)"
+    m = re.fullmatch(rf"rgba?\(\s*{num}(%?)[\s,]+{num}(%?)[\s,]+{num}(%?)\s*(?:[,/]\s*{num}(%?))?\s*\)", v)
     if m:
-        return tuple(int(x) / 255 for x in m.groups())  # type: ignore[return-value]
+        g = m.groups()
+        ch = [float(g[i]) / (100 if g[i + 1] else 255) for i in (0, 2, 4)]
+        return (ch[0], ch[1], ch[2], _alpha(g[6], g[7]))
+    m = re.fullmatch(rf"hsla?\(\s*{num}(?:deg)?[\s,]+{num}%[\s,]+{num}%\s*(?:[,/]\s*{num}(%?))?\s*\)", v)
+    if m:
+        h, s_, lum = float(m.group(1)) % 360 / 360, float(m.group(2)) / 100, float(m.group(3)) / 100
+        import colorsys
+        r, g_, b = colorsys.hls_to_rgb(h, lum, s_)
+        return (r, g_, b, _alpha(m.group(4), m.group(5)))
     return None
 
 
@@ -548,7 +700,8 @@ def contrast_ratio(a: tuple[float, float, float], b: tuple[float, float, float])
 
 
 def resolve(tokens: list[Token], cfg: Config) -> dict[str, object]:
-    """Meaning-name → resolved raw value (alias chains followed; unresolvable → None)."""
+    """Meaning-name → resolved raw value. Refs follow full token paths only — the same rule TA001 uses,
+    so a ref the alias check calls broken never silently resolves here (unresolvable → None)."""
     by_full = {t.name: t for t in tokens}
     by_meaning = {".".join(meaning_segments(t.path, cfg)): t for t in tokens}
     out: dict[str, object] = {}
@@ -556,23 +709,33 @@ def resolve(tokens: list[Token], cfg: Config) -> dict[str, object]:
         seen, cur = set(), t
         while cur is not None and isinstance(cur.value, str) and REF_RE.fullmatch(cur.value.strip()) and cur.name not in seen:
             seen.add(cur.name)
-            ref = REF_RE.fullmatch(cur.value.strip()).group(1)
-            cur = by_full.get(ref) or by_meaning.get(".".join(meaning_segments(tuple(ref.split(".")), cfg)))
-        out[key] = None if cur is None else cur.value
+            cur = by_full.get(norm_ref(REF_RE.fullmatch(cur.value.strip()).group(1)))
+        out[key] = None if cur is None or cur.name in seen else cur.value
     return out
 
 
 def check_contrast(tokens: list[Token], cfg: Config, label: str = "") -> list[Finding]:
     """Tier-2 content-on-background pairs meet WCAG AA (4.5:1 default) in this theme (course ch8; a11y is not deferrable)."""
     values = resolve(tokens, cfg)
+    where = f" in {label}" if label else ""
     findings: list[Finding] = []
     for fg, bg in cfg.contrast_pairs:
-        a, b = _hex_rgb(values.get(fg)), _hex_rgb(values.get(bg))
-        if a is None or b is None:
+        if fg not in values or bg not in values:
+            continue  # pair absent in this system
+        if values[fg] is None or values[bg] is None:
+            # --themes mode never runs the alias check on theme files, so this must not pass silently.
+            findings.append(Finding("TA024", f"{fg} on {bg}", f"contrast unverifiable: alias does not resolve{where}", label))
             continue
-        r = contrast_ratio(a, b)
+        a, b = parse_color(values[fg]), parse_color(values[bg])
+        if a is None or b is None or b[3] < 1:
+            why = "translucent background (depends on what is beneath)" if b is not None and b[3] < 1 else "unsupported colour value"
+            findings.append(Finding("TA024", f"{fg} on {bg}", f"contrast unverifiable: {why}{where}", label))
+            continue
+        # Translucent text is seen composited over its background.
+        fg_rgb = tuple(a[3] * a[i] + (1 - a[3]) * b[i] for i in range(3))
+        r = contrast_ratio(fg_rgb, b[:3])  # type: ignore[arg-type]
         if r < cfg.contrast_min:
-            findings.append(Finding("TA023", f"{fg} on {bg}", f"contrast {r:.2f}:1 < {cfg.contrast_min}:1{(' in ' + label) if label else ''}", label))
+            findings.append(Finding("TA023", f"{fg} on {bg}", f"contrast {r:.2f}:1 < {cfg.contrast_min}:1{where}", label))
     return findings
 
 
@@ -592,7 +755,7 @@ def audit(paths: list[str], cfg: Config, themes: list[str] | None = None,
     extra: dict = {}
     if themes:
         findings += check_themes(themes, cfg)
-        extra["themes"] = {Path(t).name: len(load_tokens([t])) for t in themes}
+        extra["themes"] = {t: len(load_tokens([t])) for t in themes}
     if parity:
         findings += check_parity(parity[0], parity[1], cfg)
     if css:
@@ -604,7 +767,7 @@ def audit(paths: list[str], cfg: Config, themes: list[str] | None = None,
     if contrast:
         if themes:
             for th in themes:
-                findings += check_contrast(load_tokens((paths or []) + [th]), cfg, Path(th).name)
+                findings += check_contrast(load_tokens((paths or []) + [th]), cfg, th)
         elif tokens:
             findings += check_contrast(tokens, cfg)
     counts = {tier: sum(1 for t in tokens if t.tier == tier) for tier in ("1", "2", "3")}
@@ -727,6 +890,148 @@ def self_test() -> int:
         f_c2, _ = audit([str(pp)], cfg, contrast=True)
         if not any(f.rule == "TA023" and f.token.startswith("color.content.default") for f in f_c2):
             failures.append("contrast failure not detected")
+        # ---- regressions from the 2026-09-24 adversarial review (one case per confirmed finding) ----
+        def css_rules_for(name: str, text: str, toks: list[str] | None = None, c: Config = cfg) -> list[str]:
+            fpath = Path(d, name)
+            fpath.write_text(text)
+            return sorted(f.rule for f in audit(toks or [str(g)], c, css=[str(fpath)])[0] if f.rule.startswith("TA0") and f.source == str(fpath))
+
+        # parity exempts by meaning segment: z-index is sanctioned; media-/layer- components are real gaps
+        fp2, cp2 = Path(d, "fig2.json"), Path(d, "code2.json")
+        fp2.write_text(json.dumps({"color": {"background": {"default": {"$value": "#fff"}}}}))
+        cp2.write_text(json.dumps({"color": {"background": {"default": {"value": "#fff"}}},
+                                   "z-index": {"modal": {"value": 500}},
+                                   "media-card": {"color": {"background": {"value": "{color.background.default}"}}},
+                                   "layer-panel": {"color": {"border": {"value": "{color.background.default}"}}}}))
+        got = sorted(f.token for f in audit([], cfg, parity=[str(fp2), str(cp2)])[0])
+        if got != ["layer-panel-color-border", "media-card-color-background"]:
+            failures.append(f"parity exemption wrong: {got}")
+        # declarations without a trailing semicolon (last in block, minified)
+        if css_rules_for("nosemi.css", ".x{color:#f00}.y{padding:12px}") != ["TA015", "TA020"]:
+            failures.append("declaration without trailing ';' not scanned")
+        # knockout pairing is per component stylesheet: content on children elsewhere in the file passes;
+        # a knockout token used as a `fill` is not a background; a stylesheet with no knockout content fails
+        ko = ("--theme-color-background-knockout", "--theme-color-content-knockout")
+        paired = (f".hdr--inverted{{background:var(--theme-color-background-brand-knockout);}}"
+                  f".nav{{.hdr--inverted &{{color:var({ko[1]});}}}}"
+                  f".logo{{.hdr--inverted &{{fill:var({ko[0]});}}}}")
+        unpaired = (f".promo{{background:var({ko[0]});.title{{font-weight:var(--x);}}"
+                    f"@media (min-width: 40em){{padding:var(--spacing-8);}}}}")
+        fill_only = f".icon{{fill:var({ko[0]});}}"
+        got = [css_rules_for(n, t) for n, t in (("paired.scss", paired), ("unpaired.scss", unpaired), ("fill.scss", fill_only))]
+        if got != [[], ["TA018"], []]:
+            failures.append(f"knockout pairing wrong: {got}")
+        # negative dimensions, animation shorthand and bare z-index integers are literals; zero is not
+        if css_rules_for("dims.css", ".a{margin-top:-8px;animation:spin 2s;z-index:5;margin:-0px;}") != ["TA020", "TA020", "TA020"]:
+            failures.append("negative / animation / z-index literals not flagged")
+        # Sass: // comments ignored, $token counts as token use, tier-1 $vars caught
+        sass = "// .x { color: #f00; }\n.a{font-size:$ds-theme-body-size;color:$ds-color-neutral-900;}"
+        if css_rules_for("v.scss", sass, c=Config(prefix="ds")) != ["TA016"]:
+            failures.append("sass comments / variables handled wrong")
+        # named colours in colour properties only; urls, strings and token names are not colours
+        named = (".a{color:white;}.b{background:url(red.png);}.c{color:var(--ds-color-red);}"
+                 ".d{font-family:\"Navy Sans\";}.e{transition:color 0s;}")
+        # `white` is a colour (TA015); the quoted "Navy Sans" is not — it is only a stray font literal (TA017)
+        if css_rules_for("named.css", named) != ["TA015", "TA017"]:
+            failures.append("named-colour detection wrong")
+        # Style Dictionary `{a.b.value}` refs resolve
+        sd = Path(d, "sd.json")
+        sd.write_text(json.dumps({"color": {"base": {"value": "#fff"}, "font": {"value": "{color.base.value}"}}}))
+        if any(f.rule == "TA001" for f in audit([str(sd)], cfg)[0]):
+            failures.append("Style Dictionary .value ref reported unresolved")
+        # an ancestor named build/ must not hide a directory's tokens; an empty directory is bad input
+        bdir = Path(d, "build", "tokens")
+        bdir.mkdir(parents=True)
+        (bdir / "t.json").write_text(json.dumps(good))
+        if audit([str(bdir)], cfg)[1]["tokens"] != 10:
+            failures.append("directory under a build/ ancestor loaded no tokens")
+        Path(d, "empty").mkdir()
+        # an unrelated `core` ancestor must not force tier 1
+        cdir = Path(d, "packages", "core", "tokens")
+        cdir.mkdir(parents=True)
+        (cdir / "tokens.json").write_text(json.dumps(good))
+        for arg in (str(cdir / "tokens.json"), str(cdir)):
+            fs, st = audit([arg], cfg)
+            if any(f.rule == "TA003" for f in fs) or st["tiers"] != {"1": 4, "2": 5, "3": 1}:
+                failures.append(f"core ancestor forced tier 1 for {Path(arg).name}: {st['tiers']}")
+        core_dir = Path(d, "core")
+        core_dir.mkdir()
+        (core_dir / "c.json").write_text(json.dumps({"brand": {"$value": "{x.y}"}}))
+        if audit([str(core_dir)], cfg)[1]["tiers"]["1"] != 1:
+            failures.append("core/ directory argument no longer tier 1")
+        # contrast: translucent text composited, DTCG colour objects parsed, unparseable reported
+        def contrast_rules(fg: object) -> list[str]:
+            t = json.loads(json.dumps(good))
+            t["color"]["neutral"]["900"]["$value"] = fg
+            cp_ = Path(d, "c.json")
+            cp_.write_text(json.dumps(t))
+            return sorted({f.rule for f in audit([str(cp_)], cfg, contrast=True)[0] if f.rule in ("TA023", "TA024")})
+        for fg, want in (("rgba(17, 17, 17, 0.2)", ["TA023"]), ("#11111133", ["TA023"]),
+                         ({"colorSpace": "srgb", "components": [0.8, 0.8, 0.8]}, ["TA023"]),
+                         ("hsl(0, 0%, 7%)", []), ("hsl(0 0% 85%)", ["TA023"]), ("black", ["TA024"])):
+            got = contrast_rules(fg)
+            if got != want:
+                failures.append(f"contrast for {fg!r}: {got} != {want}")
+        # a meaning-name ref is broken for TA001 AND unresolved for contrast (no silent resolution)
+        mn = json.loads(json.dumps(good))
+        mn["theme"]["color"]["content"]["default"]["$value"] = "{color.background.default}"
+        mp = Path(d, "mn.json")
+        mp.write_text(json.dumps(mn))
+        fs = audit([str(mp)], cfg, contrast=True)[0]
+        if not any(f.rule == "TA001" for f in fs) or any(f.rule == "TA023" for f in fs):
+            failures.append("meaning-name ref: alias and contrast checks disagree")
+        # same-named theme files keep distinct stats
+        t1, t2 = Path(d, "ta", "tokens.json"), Path(d, "tb", "tokens.json")
+        for tp in (t1, t2):
+            tp.parent.mkdir()
+            tp.write_text(json.dumps(good))
+        if len(audit([], cfg, themes=[str(t1), str(t2)])[1]["themes"]) != 2:
+            failures.append("same-named theme files collapsed in stats")
+        # campaign overrides are cosmetic like sub-brands
+        if not any(f.rule == "TA022" for f in audit([], cfg, override=([str(par)], [str(kid)], "campaign"))[0]):
+            failures.append("campaign override categories unchecked")
+        # bad input exits 2, never 1; --override needs --parent
+        badj = Path(d, "bad-input.json")
+        badj.write_text("{not json")
+        arr = Path(d, "arr.json")
+        arr.write_text("[1, 2]")
+        import contextlib
+        import io
+        # verification round (2026-09-24): getters are not literals; typed tier-N folders count; broken
+        # aliases in theme contrast are reported; strings/urls survive `//` stripping; malformed numbers
+        # and bad config values are handled; map keys named like colours are not colours
+        getters = (".x{color:theme-color(primary);background:mat-color($p, 500);border-color:ds-color(border);}"
+                   ".y{color:map-get($brand, red);background:url(\"//cdn.example.com/a.png\");padding:var(--spacing-8);}")
+        if css_rules_for("getters.scss", getters) != []:
+            failures.append(f"getter / map / url false positive: {css_rules_for('getters.scss', getters)}")
+        nested_t2 = Path(d, "typed", "tier-2", "color", "x.json")
+        nested_t2.parent.mkdir(parents=True)
+        nested_t2.write_text(json.dumps({"color": {"background": {"default": {"$value": "#fff"}}}}))
+        if not any(f.rule == "TA004" for f in audit([str(nested_t2)], cfg)[0]):
+            failures.append("file below a typed tier-2 folder lost its tier")
+        core_t, theme_t = Path(d, "tcore.json"), Path(d, "tlight.json")
+        core_t.write_text(json.dumps({"core": {"white": {"$value": "#fff"}, "grey": {"$value": "#777"}}}))
+        theme_t.write_text(json.dumps({"theme": {"color": {"content": {"default": {"$value": "{color.grey}"}},
+                                                           "background": {"default": {"$value": "{core.white}"}}}}}))
+        if not any(f.rule == "TA024" for f in audit([str(core_t)], cfg, themes=[str(theme_t)], contrast=True)[0]):
+            failures.append("broken alias in a theme passed contrast silently")
+        if contrast_rules("rgb(1.2.3, 0, 0)") != ["TA024"]:
+            failures.append("malformed rgb() not reported as unverifiable")
+        bad_cfg = Path(d, "badcfg.json")
+        for cfg_text in ('{"tier3_max_share": "abc"}', '{"contrast_pairs": 5}', '{"tier_prefixes": ["core"]}'):
+            bad_cfg.write_text(cfg_text)
+            with contextlib.redirect_stderr(io.StringIO()):
+                if main(["--config", str(bad_cfg), str(g)]) != 2:
+                    failures.append(f"bad config {cfg_text} did not exit 2")
+
+        for argv in ([str(badj)], [str(arr)], [str(Path(d, "empty"))], ["--override", str(kid)]):
+            with contextlib.redirect_stderr(io.StringIO()):
+                try:
+                    rc = main(argv)
+                except SystemExit as e:
+                    rc = e.code
+            if rc != 2:
+                failures.append(f"bad input {argv[-1]} exited {rc}, expected 2")
     if failures:
         for x in failures:
             print("self-test FAIL:", x, file=sys.stderr)
@@ -738,9 +1043,9 @@ def self_test() -> int:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0], formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("paths", nargs="*", help="token JSON files (DTCG or Style Dictionary)")
-    ap.add_argument("--config", help="JSON config: prefix, tier_prefixes, tier3_max_share, tier3_may_alias_tier1, abbreviations, allow_abbreviations, color_buckets, require_type")
+    ap.add_argument("--config", help="JSON config: prefix, tier_prefixes (dotted token-name prefixes; used only when the path has no tier-N/core directory), tier3_max_share, tier3_may_alias_tier1, abbreviations, allow_abbreviations, color_buckets, require_type, contrast_pairs (list of [fg, bg]; extends the defaults), contrast_min (WCAG ratio, default 4.5)")
     ap.add_argument("--prefix", help="global code namespace (e.g. ds) — stripped before analysis")
-    ap.add_argument("--themes", nargs="+", help="theme files that must expose the same tier-2/3 API")
+    ap.add_argument("--themes", nargs="+", help="ROOT theme files/dirs that must expose the same tier-2/3 API (skinny child themes → --parent/--override)")
     ap.add_argument("--parity", nargs=2, metavar=("FIGMA_JSON", "CODE_JSON"))
     ap.add_argument("--css", nargs="+", help="component CSS/SCSS files or dirs to scan for raw values / tier-1 use")
     ap.add_argument("--outputs", nargs="+", help="built platform outputs (.css/.scss/.json) that must expose the same token set")
@@ -754,15 +1059,21 @@ def main(argv: list[str] | None = None) -> int:
     a = ap.parse_args(argv)
     if a.self_test:
         return self_test()
+    if bool(a.override) != bool(a.parent):
+        ap.error("--override and --parent must be given together")  # exits 2
     if not (a.paths or a.themes or a.parity or a.outputs or a.css or a.override):
         ap.print_usage(sys.stderr)
         return 2
-    cfg = Config.load(a.config)
-    if a.prefix:
-        cfg.prefix = a.prefix
-    override = (a.parent, a.override, a.kind) if a.override and a.parent else None
-    findings, stats = audit(a.paths, cfg, themes=a.themes, parity=a.parity, css=a.css, outputs=a.outputs,
-                            override=override, contrast=a.contrast)
+    try:
+        cfg = Config.load(a.config)
+        if a.prefix:
+            cfg.prefix = a.prefix
+        override = (a.parent, a.override, a.kind) if a.override else None
+        findings, stats = audit(a.paths, cfg, themes=a.themes, parity=a.parity, css=a.css, outputs=a.outputs,
+                                override=override, contrast=a.contrast)
+    except BadInput as e:
+        print(f"token-audit: {e}", file=sys.stderr)
+        return 2
     report(findings, stats, a.json)
     if any(f.level == "error" for f in findings) or (a.strict and findings):
         return 1

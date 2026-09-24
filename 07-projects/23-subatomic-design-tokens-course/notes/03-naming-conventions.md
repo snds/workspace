@@ -14,7 +14,7 @@ The authors call this chapter "worth the price of admission" — most token-team
 
 ## Why naming matters (seven reasons)
 
-1. **Shared understanding** — a token system is a *vocabulary for a design language*; names are how
+1. **Shared understanding** — the token set is the working lexicon of a visual language; names are how
    people stop talking past each other.
 2. **Collaboration** — designers, developers, tools, and now AI align on the same words.
 3. **Contract** — Figma variable definitions *and applications* must match code's. Names are the handshake.
@@ -58,7 +58,7 @@ Overriding claim: **a sound naming *structure* matters far more than the specifi
 
 ## Cross-disciplinary ownership (one of the few "musts")
 
-- Token **architecture, structure, and nomenclature must be co-created** by designers and developers.
+- Designers and developers have to author the token **architecture, structure, and nomenclature** together.
   Thrown-over-the-fence systems fail — this is the only place the authors use "must."
 - Developers have decades of naming discipline; they should act as guides.
 - Division of labor after the structure is agreed: **designers own value assignment/mapping**
@@ -196,7 +196,7 @@ template (see Links in manifest). Naming anatomy differs by tier:
 
 - Mechanizable now (→ `09-tools/token-audit.py`): tier-2 colour bucket position, one size vocabulary,
   no cryptic abbreviations (t-shirt abbreviations are sanctioned), theme API identical across themes,
-  Figma↔code parity after the five sanctioned divergences, no tier-1 in component CSS **except spacing**.
+  Figma↔code parity after the five sanctioned divergences, no tier-1 in component CSS **except spacing and z-index**.
 - `disabled` placement (intention in tier 2, state in tier 3) is a subtle rule worth encoding in any
   generator that emits token names.
 - "Tier 1 names can be literal" is a useful counter to reviewers who push semantic names into primitives.
