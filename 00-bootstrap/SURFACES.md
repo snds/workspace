@@ -2,7 +2,7 @@
 
 _The brain (this workspace) is consumed by multiple tools simultaneously. Each surface has its own context-discovery mechanism. This doc maps what each surface reads, how to launch it against the brain, and known gaps._
 
-_Last updated: 2026-09-22_
+_Last updated: 2026-09-23_
 
 ---
 
@@ -86,6 +86,7 @@ Paths are relative to the file. Brain must stay first so Cursor loads `.cursor/r
 | MCP not configured on a machine | Install per capability-registry; Open Engine Linear needs Cursor MCP |
 | Worktrees (Claude desktop) | Prefer CLI for canonical session-end |
 | iOS / web no FS | BEACON / paste `00-bootstrap/adapters/web-session.md`; RULES-ONLY ritual |
+| Claude injector heal reads the checkout | Declared residual in wave 0: the doctor refreshes the Claude-only injectors (hook scripts and the user CLAUDE.md) from the checkout, not the pinned copy, and its session-start and scheduled runs use the checkout's doctor. Wave 1 pins them with H20. |
 
 ---
 

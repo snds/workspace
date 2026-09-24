@@ -1,7 +1,7 @@
 ---
 title: Zero-Vector-informed harness plan (v1.1, LLM- and device-inclusive)
 date: 2026-09-22
-status: proposed — wave 0 approved by Sean with the LLM-inclusive caveat
+status: wave 0 published 2026-09-23; wave 1 not started (wave 0 approved 2026-09-22 with the LLM-inclusive caveat)
 related: [[zero-vector-design-methodology]]
 ---
 
@@ -31,6 +31,23 @@ Standing home: this project.
    mapping and recon. Every other surface follows the device. See [[feedback-credential-scoping]].
 5. **The guard is workspace-owned and LLM-agnostic.** One decision function works over declared
    tables, and every host reaches it through a generated shim.
+
+## Sean's decisions (2026-09-23) — binding
+
+Wave 0 is published. These answers close its open items.
+
+1. **The heal path gets pinned in wave 1.** Today the doctor refreshes the Claude-only injectors (the hook
+   scripts and the user `CLAUDE.md`) from the checkout, not from the pinned copy, and its session-start
+   and scheduled runs use the checkout's doctor. Until wave 1 that is a declared residual.
+2. **The Claude git floor keeps blocking** the vetted branch-prune push when it cannot read the
+   process table, for example inside Claude Code's Bash sandbox. That one command runs with the
+   sandbox off.
+3. **Employer email domain:** `centricsoftware.com`. Sean will say if the employer changes.
+4. **Three H25 parts move to wave 1**, because each needs a wave-1 component: the limits on
+   fragments from employer-touched sessions (H23), the Cursor/Codex inventory of workspace-derived
+   files in employer repos (H4), and the static Claude deny rules for employer vault folders (H15).
+
+Still open: how much residual detail the public identity table keeps. A recommendation went to Sean on 2026-09-23.
 
 ## Bottom line
 
@@ -80,11 +97,13 @@ enforcement only at the lowest tier that actually blocks.
 **Wave 0: declare, probe, pin, and encode the action policy before any new gate.**
 - H16 surface registry (data)
 - H19 neutral hook core (`ws_hook.py`: host detection, dedupe, budgeted start)
-- H24 installer discipline and pinned execution (the unattended doctor only reports)
+- H24 installer discipline and pinned execution (the unattended doctor only reports, except the
+  heal of the Claude-only injectors, which reads the checkout until wave 1 pins it)
 - H2 resolver keyed by remote slug and device
 - H22 action-class policy, vetted scripts, receipts (prune-our-branches is the first member)
 - H17 identity table + Claude overlay + git floor
-- H25 employer-substance boundary for the public vault
+- H25 employer-substance boundary for the public vault (report-only scan and baseline; three parts
+  move to wave 1)
 - H1 regeneration sequencer at every committer
 - H3 intent-run hardening
 
@@ -92,11 +111,15 @@ enforcement only at the lowest tier that actually blocks.
 - H6 entry-point parity and per-surface budgets. It cuts `AGENTS.md` first, because Codex headroom
   is only 336–1,851 B.
 - H18 git lanes for every local committer
-- H15 wall guard rendered into every hooked host
+- H15 wall guard rendered into every hooked host, plus H25's static Claude deny rules for employer
+  vault folders
 - H7 routing through `ws route --stdin` on every surface
-- H20 portable homes for the seven Claude-only workflows
-- H23 surface- and device-aware session closure per touched repo
-- H4 `PROJECT.md` intent in each repo, with inheritance
+- H20 portable homes for the seven Claude-only workflows, plus pinning the Claude-only injector heal and
+  the scheduled doctor run (a declared residual until then)
+- H23 surface- and device-aware session closure per touched repo, plus H25's limits on fragments
+  from employer-touched sessions
+- H4 `PROJECT.md` intent in each repo, with inheritance, plus H25's one-time Cursor/Codex inventory
+  of workspace-derived files in employer repos
 - H5 intent lint, approve and verify
 
 **Wave 2: close the loops, report-only.**
@@ -145,14 +168,14 @@ on it. The fix to the flaw below **landed in `0d19852`**; the rest of H17 follow
   and truncation is silent.** The fix is H6, which cuts before any addition.
 - **Codex's Claude import (2026-07-31) left untracked, drifting forks:** a stale
   `.codex/hooks/dispatcher.py`, and `.agents/skills`, 6 of 8 of which have drifted. The fix is
-  retire-with-backup (decision 8).
+  retire-with-backup (Decisions needed, item 4).
 - **Claude Code on this Mac exposes employer-capable tools.** The employer Linear MCP has write
-  tools, and computer use and Claude in Chrome are both enabled. This is decision 4.
+  tools, and computer use and Claude in Chrome are both enabled. See Decisions needed, item 3.
 - **The prompt router fires on background task-notification turns (X2)**, confirmed in local
   transcripts.
 - **Three Claude Code installs cause false version notices** (^pc-46).
 
-## Decisions needed (these block wave 0; the full list of 24 is in the held detail)
+## Decisions needed before wave 0 (2026-09-22 snapshot; the full list of 24 is in the held detail)
 
 1. **Public vault.** Keep it public and scrub going forward, or make it private (rulesets then need
    a paid plan). History rewriting is a separate, destructive choice.

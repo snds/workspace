@@ -1,6 +1,6 @@
 # SESSION-STATE — Workspace Brain
 
-_Last updated: 2026-09-22 — Zero-Vector harness plan proposed (awaiting Sean's wave-0 decisions); cds #50 still waiting on Sean_
+_Last updated: 2026-09-23 — Zero-Vector wave 0 published; Sean decided walls F-11, tests F-07, D5 and D7 (walls F-14 waiting on Sean); cds #50 still waiting on Sean_
 
 ---
 
@@ -12,11 +12,12 @@ _Last updated: 2026-09-22 — Zero-Vector harness plan proposed (awaiting Sean's
 - **Parallel thread (2026-09-22): Zero-Vector harness plan v1.1, WAVE 0 APPROVED (LLM-inclusive caveat).**
   - Plan: `notes/zero-vector-harness-plan_2026-09-22.md` (v1.1 summary). Full v1.1 detail and surface research are held locally at `.claude/state/held/` (Work MBP; not committed while the vault is public, ^pc-47).
   - Decisions are recorded in [[decision-llm-inclusive-harness]], [[decision-project-intent-in-repo]] and [[feedback-credential-scoping]].
-  - **Wave 0 status (2026-09-23):** waves A and B reached `main` at `ec77eda`. The fix round (23 fixes, including the walls F-01/F-02 blockers) plus harness environment notes is verified on `intent/wave0-integration` at `bd8274d`. Publishing is a fast-forward of `main` to that branch, done by Sean (auto mode blocks agent pushes to `main`). If `main` contains `bd8274d`, it is published.
+  - **Wave 0 status (2026-09-23): published.** Waves A and B reached `main` at `ec77eda`. Sean then fast-forwarded `main` to the verified fix round (head `7fefad5`) and pushed it. That round holds 23 fixes, including the walls F-01/F-02 blockers, plus the harness environment notes.
   - **Verification at `bd8274d`:** harness 35/36 gates with the real git; the 36th (profile_resolve) is 340/340 outside the sandbox. Under Claude Code's Bash sandbox, 3 gates go red for environmental reasons (xcrun cache, `ps` denied); the harness now prints an environment note naming them.
-  - **Next action (agent):** after publish, remove the merged intent worktrees (T1–T8, T11, integration), write the session fragment, run close-out.
+  - **Done after publish (2026-09-23):** D5 landed in `6d30676` (exact, case-insensitive domain match; 351/351 resolver checks outside the sandbox; three reviewers found no defects). Decisions recorded here, in ^pc-45, the plan note, `surfaces.json` and the held spec. The ten merged intent worktrees were removed; their branches stay. The T10/T11 findings register is saved in held (`wave0-verification/`).
+  - **Next action (agent):** after Sean's F-14 call, if he agrees: move the H17 bypass mechanics into a held residual register, rewrite `surfaces.json` `coverage.H17` at class level, and record the visibility rule in `00-context-profiles.md` (his sign-off). Do it before the first `--install-pin`, because `surfaces.json` is a pinned file.
   - **Human steps later (words only until ready):** pin install, per-surface probes (Claude Code, Cursor, Codex, VS Code), Personal MBP identity checks, v5 overlay install, one vetted prune with the sandbox off.
-  - **Open Sean decisions:** walls F-11 (the heal path runs unpinned vault shell: declared residual or wave-1 pinning), walls F-14 (how much residual detail the public H17 table keeps), tests F-07 (floor blocks the vetted employer prune when `ps` is denied; recommendation: keep blocking), D5 (employer email domains), D7 (move H25 items to wave 1).
+  - **Sean's decisions (2026-09-23):** walls F-11: the heal path gets pinned in wave 1, and until then it is a declared residual. Tests F-07: the floor keeps blocking the vetted employer prune when `ps` is denied; that one command runs with the sandbox off. D5: the employer email domain is `centricsoftware.com`; Sean will say if the employer changes. D7: the three H25 items move to wave 1 with H23, H4 and H15. Still open: walls F-14 (how much residual detail the public H17 table keeps); recommendation given to Sean 2026-09-23, waiting on his call.
   - **Claude sessions must not open employer repos.** Employer mapping and recon run in Cursor/Codex.
 - **Working set**: `/Users/sean.sands/Projects/cpes-software/cds`. Do not edit cds from a centric-ui-rooted chat.
 - **Last action (2026-09-21):** Alex rejected the peer explanation on centric-ui [#413](https://github.com/cpes-software/centric-ui/pull/413). Removed `input-otp` and `react-day-picker` from the host (`022c468`) and replied on both threads. npm still installs them as required peers of `@centric/ui`; hiding that install is a CDS change, not started. Cursor Grok 4.7 · Cursor · Work MBP. cds #50 remains green at `a346322`.
@@ -24,9 +25,9 @@ _Last updated: 2026-09-22 — Zero-Vector harness plan proposed (awaiting Sean's
   (`check-unattended-runner-gate.py`) stays and is silent when idle. See [[decision-no-unattended-runner]].
 - **Next action:** Sean reviews cds #50. Alex has the correction on cui #413 (`022c468`). Do not agent-merge. Do not bump a host `cds.pin`. Do not re-add widget libraries to the host to silence an unmet peer.
 - **Open decisions:** Theme reset stays a later product-CSS PR. Restyle/arbitrary/inline shadcn rules stay off until a later wave. Proto #84 and cui #398 were last noted 2026-09-18 as human-merge; not re-checked this session.
-- **Blocked on:** Sean review of cds #50. For the ZV plan: Sean publishes the verified fix round, then the five open decisions above.
+- **Blocked on:** Sean review of cds #50. For the ZV plan: Sean's call on the walls F-14 recommendation (given 2026-09-23).
 - **In-flight / do-not-touch:** do **not** `git add` the c8 lane config. **Do not delete anchored `^pc-NN` stubs** from `project-context.md`. Do not auto-commit or merge employer repos. Do not commit the untracked `canvases/` in the cds checkout. Do not bump cui `cds.pin`.
-- **Agent thread**: `… → Cursor Grok 4.7 / Cursor / Work MBP (2026-09-21): cds #50 CodeQL green → Cursor Grok 4.7 / Cursor / Work MBP (2026-09-21): cui #413 peer replies → Cursor Grok 4.7 / Cursor / Work MBP (2026-09-21): cui #413 drop widget deps → Claude Opus 5.5 / Claude Code / Work MBP (2026-09-22): Zero-Vector research + harness plan + X1 heal → Claude Opus 5.5 / Claude Code / Work MBP (2026-09-23): wave 0 A+B, fix round, harness environment notes`.
+- **Agent thread**: `… → Cursor Grok 4.7 / Cursor / Work MBP (2026-09-21): cds #50 CodeQL green → Cursor Grok 4.7 / Cursor / Work MBP (2026-09-21): cui #413 peer replies → Cursor Grok 4.7 / Cursor / Work MBP (2026-09-21): cui #413 drop widget deps → Claude Opus 5.5 / Claude Code / Work MBP (2026-09-22): Zero-Vector research + harness plan + X1 heal → Claude Opus 5.5 / Claude Code / Work MBP (2026-09-23): wave 0 A+B, fix round, harness environment notes → Claude Opus 5.5 / Claude Code / Work MBP (2026-09-23): D5, decisions recorded, worktrees removed`.
 
 ### Environment
 - **Context profile**: `personal-solo` for the workspace itself. The engine's `c8` lane declares `centric-engineering` and is **movement-only** — pointers, status, receipts; never substance.

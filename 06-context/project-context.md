@@ -1,7 +1,7 @@
 # Project Context — Sean Sands
 _Authoritative source: this file (06-context/project-context.md)_
 _Written by any agent — the git checkout is the source of truth._
-_Last updated: 2026-09-22_
+_Last updated: 2026-09-23_
 
 > **Platform note (2026-06-16):** the workspace itself was refactored to be portable, git-native, and
 > LLM/surface/device-agnostic, then consolidated onto `main` at `github.com/snds/workspace` (16-PR stack,
@@ -65,11 +65,11 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 - [ ] **28 individual pattern entries pending graduation at `08-knowledge/design/{slug}.md`.** Graduate one-by-one as Centric work creates demand; the master entry already references their target paths and serves as their parent until materialized. ^pc-37
 - [ ] **Stream C re-audit scheduled ~2027-Q3** (12-18 months). Emerging patterns C4 NL-workflow / C5 canvases / C7 true-merge will mature significantly. ^pc-38
 - [ ] **▶ WORK LAPTOP ONLY — Migrate MCS research → `saas-plm-analysis` employer repo.** (Added 2026-09-04 from Personal MBP.) `12-MCS` is empty on personal + the repo is unreachable there; content + access live on the Centric work laptop. Full playbook in [07-projects/12-MCS/SESSION-STATE.md](../07-projects/12-MCS/SESSION-STATE.md). Sean authorized **PR + commit + merge** directly (doc-only employer repo). Review Olga's uploads first; place with context; then leave a workspace pointer stub. ^pc-44
-- [ ] **Zero-Vector harness v1.1 — wave 0 in progress.** (Added 2026-09-22.)
-  - Wave A (H16/H19, H2, H24, H25, H1, H3) is integrated and green on `intent/wave0-integration`, together with the action-policy table (Sean's P19/P21/P22/P40 rows).
-  - D1 (publish code and tables) is approved; the fast-forward and push to `main` wait on Sean's permission.
-  - Next: wave B (H22 action policy + vetted prune + receipts, then H17 identity + overlay), then T10 verify.
-  - Human steps after that: `--install-pin`, probes in Cursor/Codex/VS Code, the overlay install.
+- [ ] **Zero-Vector harness v1.1 — wave 0 published; human steps and one decision left.** (Added 2026-09-22.)
+  - Waves A and B and the verified fix round are on `main`. Sean published them on 2026-09-23.
+  - Sean's decisions (2026-09-23): the heal path stays a declared residual until wave 1 pins it (walls F-11). The floor keeps blocking the vetted prune when `ps` is denied, so that one command runs with the sandbox off (tests F-07). The employer email domain is `centricsoftware.com` (D5). Three H25 items move to wave 1 (D7).
+  - Open: walls F-14, how much residual detail the public H17 table keeps. Recommendation given 2026-09-23; waiting on Sean.
+  - Human steps: `--install-pin`, probes in Claude Code, Cursor, Codex and VS Code, the Personal MBP identity checks, the v5 overlay install, and one vetted prune with the sandbox off.
   - Spec (held locally): `.claude/state/held/INTENT-wave0-2026-09.md`. Plan: [notes/zero-vector-harness-plan_2026-09-22.md](../07-projects/19-workspace-brain/notes/zero-vector-harness-plan_2026-09-22.md).
 
   ^pc-45

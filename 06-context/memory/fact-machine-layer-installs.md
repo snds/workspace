@@ -20,7 +20,10 @@ at `066edac`) must be installed **per machine**. State as known:
 Install is explicit and pinned (H24, wave 0). In a plain terminal on that machine run
 `workspace-doctor.sh --install-pin`, then `--install-shims=<surface>`, `--install-claude-overlay`,
 `--install-plugin` and `--install-launchd` as needed. The unattended doctor only heals the
-Claude-only injectors and reports everything else. Update this table when a machine's state changes.
+Claude-only injectors and reports everything else. Until wave 1 pins it, that heal copies the
+injectors from the checkout, not the pinned lib, and its session-start and scheduled runs use the
+checkout's doctor (a declared residual; Sean, 2026-09-23).
+Update this table when a machine's state changes.
 
 ## Per-OS brain location (FX-14)
 

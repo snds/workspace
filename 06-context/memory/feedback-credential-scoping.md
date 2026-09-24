@@ -60,6 +60,9 @@ commit.
   `linear-c8`. Claude uses `linear-c8` only for the Open Engine `c8` lane's movement (pointers,
   statuses, receipts), never for employer substance. That lane is already movement-only.
 - **Everyone else:** repo-local git config (Centric noreply on the Work MBP).
+- **Employer email domain (Sean, 2026-09-23):** `centricsoftware.com`. Any address on that domain
+  counts as employer in the identity checks (`devices.json` `employer_allowlist.email_domains`,
+  beside the Centric identity id). Sean will say if the employer changes. Do not guess a new one.
 - **Never** use ad-hoc `-c user.*` identity flags. A mechanical per-surface, per-device table and
   git-boundary checks are harness plan v1.1 (H2/H17/H22).
 

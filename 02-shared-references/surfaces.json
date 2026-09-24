@@ -221,7 +221,7 @@
         },
         "H17": {
           "mode": "enforced-partial",
-          "rules": "in force once Sean installs the rendered v5 overlay (G4e): the Claude identity comes only from the hasconfig include on personal remotes; employer remotes hit the transport block; GH_CONFIG_DIR is the gh belt; the guarded ws-claude-wall config hook blocks I1 over the pushed range, I2 outside vetted housekeeping and not-positively-personal under projects_root, and fails open on infrastructure errors. Bypass residuals: git -c hook.ws-claude-wall.enabled=false, --no-verify, env-scope config removal (GIT_CONFIG_COUNT=0), command-level env tampering (PATH, the gh belt GH_CONFIG_DIR/GH_TOKEN, identity env), exec -a ancestor spoofing, an unsandboxed Claude process writing control/receipts.jsonl; classify marks them hook_bypass and H15 closes them at tool time. Mixed-case owners and arbitrary https userinfo are floor-only (insteadOf is case-sensitive). For employer remotes the transport block stays the barrier unless the env config is removed wholesale",
+          "rules": "in force once Sean installs the rendered v5 overlay (G4e): the Claude identity comes only from the hasconfig include on personal remotes; employer remotes hit the transport block; GH_CONFIG_DIR is the gh belt; the guarded ws-claude-wall config hook blocks I1 over the pushed range, I2 outside vetted housekeeping and not-positively-personal under projects_root, and fails open on infrastructure errors. Bypass residuals: git -c hook.ws-claude-wall.enabled=false, --no-verify, env-scope config removal (GIT_CONFIG_COUNT=0), command-level env tampering (PATH, the gh belt GH_CONFIG_DIR/GH_TOKEN, identity env), exec -a ancestor spoofing, an unsandboxed Claude process writing control/receipts.jsonl; classify marks them hook_bypass and H15 is planned to close them at tool time in wave 1; today nothing does at tool time. Mixed-case owners and arbitrary https userinfo are floor-only (insteadOf is case-sensitive). For employer remotes the transport block stays the barrier unless the env config is removed wholesale",
           "decision": null,
           "verified_by": [
             "fixture:TestIdentity",
@@ -248,7 +248,7 @@
         "H22": {
           "mode": "enforced-partial",
           "rules": "model-composed employer network git fails at the installed transport block; vetted housekeeping runs only through vetted_context (pinned blob check, policy via=vetted, receipts); local composed git and gh stay advisory until the floor and the gh belt; each registered action runs only its declared argv shapes; the vetted remote deletion needs a readable process table (a ps-denying sandbox blocks it)",
-          "decision": null,
+          "decision": "Sean 2026-09-23: keep blocking when ps is denied; the vetted prune runs with the sandbox off for that one command",
           "verified_by": [
             "fixture:TestActionPolicy"
           ],
@@ -260,8 +260,8 @@
         },
         "H24": {
           "mode": "unverified",
-          "rules": "installers refuse Claude processes",
-          "decision": null,
+          "rules": "installers refuse Claude processes. Declared residual until wave 1: the doctor heals the Claude-only injectors (user hook scripts and the user CLAUDE.md) from the checkout, not the pinned lib, and its SessionStart and scheduled runs use the checkout doctor; wave 1 pins both with H20",
+          "decision": "Sean 2026-09-23: accepted as a declared residual; pinned in wave 1",
           "verified_by": [],
           "planned_verified_by": [
             "fixture:TestInstaller"
@@ -270,8 +270,8 @@
         },
         "H25": {
           "mode": "unverified",
-          "rules": "report-only employer-substance scan when the lane is installed, plus a CI backstop",
-          "decision": null,
+          "rules": "report-only employer-substance scan when the lane is installed, plus a CI backstop; the fragment limits, the Cursor/Codex inventory and the static Claude deny rules ship in wave 1 with H23, H4 and H15",
+          "decision": "D7, Sean 2026-09-23: three H25 parts move to wave 1",
           "verified_by": [],
           "planned_verified_by": [
             "fixture:TestEmployerSubstance"
@@ -678,8 +678,8 @@
         },
         "H24": {
           "mode": "unverified",
-          "rules": "installers refuse Cursor agent shells",
-          "decision": null,
+          "rules": "installers refuse Cursor agent shells; the Claude user hook scripts Cursor loads carry the claude-code H24 heal residual until wave 1",
+          "decision": "Sean 2026-09-23: as claude-code H24",
           "verified_by": [],
           "planned_verified_by": [
             "fixture:TestInstaller"
@@ -930,8 +930,8 @@
         },
         "H24": {
           "mode": "unverified",
-          "rules": "installers refuse Codex shells",
-          "decision": null,
+          "rules": "installers refuse Codex shells; the Claude user hook scripts Codex reaches through the snds plugin carry the claude-code H24 heal residual until wave 1",
+          "decision": "Sean 2026-09-23: as claude-code H24",
           "verified_by": [],
           "planned_verified_by": [
             "fixture:TestInstaller"
