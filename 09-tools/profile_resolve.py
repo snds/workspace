@@ -5160,7 +5160,8 @@ def self_test(stub_chain: bool = False) -> int:
             # A real ancestor named `claude` that stays alive as the parent of the check.
             # macOS kills copies of Apple platform binaries (launch constraints: a copied
             # /bin/bash exits 137), and framework Python re-execs as `Python`, so on macOS the
-            # stub is a tiny fork-and-wait binary compiled here. Linux CI can copy bash.
+            # stub is a tiny fork-and-wait binary compiled here (Linux CI too: it has gcc). A
+            # non-macOS host without a compiler copies bash instead.
             stub = tmp / "stub" / "claude"
             stub.parent.mkdir()
             src = tmp / "stub" / "stub.c"
@@ -5170,6 +5171,7 @@ def self_test(stub_chain: bool = False) -> int:
                            'if(waitpid(p,&s,0)<0)return 1;return WIFEXITED(s)?WEXITSTATUS(s):1;}\n')
             cc = shutil.which("cc") or shutil.which("clang") or shutil.which("gcc")
             built = False
+            stub_kind = "compiled"
             if cc:
                 built = subprocess.run([cc, "-O0", "-o", str(stub), str(src)], capture_output=True,
                                        timeout=120).returncode == 0
@@ -5177,7 +5179,7 @@ def self_test(stub_chain: bool = False) -> int:
                 # Bytes + exec bit only: copy2 would also copy BSD flags (EPERM on SIP binaries).
                 shutil.copyfile(shutil.which("bash"), stub)
                 os.chmod(stub, 0o755)
-                built = True
+                built, stub_kind = True, "bash-copy"
             runnable = built and subprocess.run([str(stub), "-c", "exit 0"], capture_output=True,
                                                 timeout=30).returncode == 0
             if not runnable:
@@ -5187,14 +5189,19 @@ def self_test(stub_chain: bool = False) -> int:
                 stub_chain = False
         if stub_chain:
             clean = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(home_a)}
-            cmd = f'"{sys.executable}" "{me}" --root "{root}" detect --json; exit $?'
+            # The check's parent must be the process named claude. The compiled stub runs the
+            # command through a forked /bin/sh, and Linux names that hop "sh" (comm is the
+            # executable, not argv[0]), so `exec` hands the sh process to Python. A bash copy is
+            # itself named claude, so `; exit $?` keeps bash from exec-ing Python in its place.
+            lead, tail = ("exec ", "") if stub_kind == "compiled" else ("", "; exit $?")
+            cmd = f'{lead}"{sys.executable}" "{me}" --root "{root}" detect --json{tail}'
             rr = subprocess.run([str(stub), "-c", cmd], capture_output=True, text=True, timeout=60, env=clean)
             try:
                 j = json.loads(rr.stdout)
             except ValueError:
                 j = {}
             ok(j.get("chain", [None])[0] == "claude", "stub ancestor named claude is the nearest hop")
-            cmd = f'"{sys.executable}" "{me}" --root "{root}" agent-check --json; exit $?'
+            cmd = f'{lead}"{sys.executable}" "{me}" --root "{root}" agent-check --json{tail}'
             rr = subprocess.run([str(stub), "-c", cmd], capture_output=True, text=True, timeout=60, env=clean)
             try:
                 j = json.loads(rr.stdout)

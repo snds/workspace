@@ -393,7 +393,7 @@ def check_themes(theme_paths: list[str], cfg: Config) -> list[Finding]:
     findings: list[Finding] = []
     for p, api in apis.items():
         for missing in sorted(union - api):
-            findings.append(Finding("TA013", missing, f"theme does not define this tier-2/3 token other themes expose", p))
+            findings.append(Finding("TA013", missing, "theme does not define this tier-2/3 token other themes expose", p))
     return findings
 
 
