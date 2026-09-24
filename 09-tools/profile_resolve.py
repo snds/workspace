@@ -3427,6 +3427,13 @@ def _workspace_checkouts(home: Optional[Path], root: Optional[Path]) -> List[Pat
     return out
 
 
+def _admin_gitdir_target(admin: Path, named: str) -> Path:
+    """The worktree `.git` path a linked worktree's admin-dir `gitdir` file names: absolute as written,
+    or (a --relative-paths worktree) relative to the admin dir holding that file (W3-04)."""
+    p = Path(named)
+    return p if p.is_absolute() else Path(os.path.normpath(str(admin / p)))
+
+
 def _linked_worktrees(ws: Path) -> List[Path]:
     out = []
     try:
@@ -3436,7 +3443,7 @@ def _linked_worktrees(ws: Path) -> List[Path]:
             except OSError:
                 continue
             if gd:
-                out.append(Path(gd).parent)
+                out.append(_admin_gitdir_target(d, gd).parent)
     except OSError:
         pass
     return out
@@ -3536,16 +3543,16 @@ def _push_url_class(url: str, root: Optional[Path]) -> str:
 def _gitfile_top(gitdir: Path, cwd: Path) -> Optional[Path]:
     """The work tree of a linked worktree or submodule whose admin dir git exported as GIT_DIR (git
     does that for every hook it runs there): the hook's cwd, or the tree the admin dir's `gitdir`
-    file names, as long as that tree's own .git points back at the admin dir. The second candidate
-    does not depend on the cwd when that file holds an absolute path, so such a linked worktree's
-    admin dir used as GIT_DIR from anywhere resolves to that worktree (a --relative-paths worktree
-    resolves only from its own tree) (same repository, same config, same owner class). None when neither
-    candidate points back, e.g. a submodule's admin dir used from outside its tree."""
+    file names (an absolute path, or a --relative-paths one taken relative to the admin dir), as
+    long as that tree's own .git points back at the admin dir. The second candidate does not depend
+    on the cwd, so a linked worktree's admin dir used as GIT_DIR from anywhere resolves to that
+    worktree (same repository, same config, same owner class). None when neither candidate points
+    back, e.g. a submodule's admin dir used from outside its tree."""
     cands = [Path(cwd)]
     try:
         named = (gitdir / "gitdir").read_text(encoding="utf-8").strip()
         if named:
-            cands.append(Path(named).parent)
+            cands.append(_admin_gitdir_target(gitdir, named).parent)
     except OSError:
         pass
     want = _cf(_real(gitdir))
@@ -3559,9 +3566,9 @@ def _gitfile_top(gitdir: Path, cwd: Path) -> Optional[Path]:
 def _floor_locate(cwd: Path, e: dict, git: str) -> Tuple[Optional[Path], Optional[Path]]:
     """(git dir, work tree top) the way git finds them: GIT_DIR first, else discovery from cwd (bare
     repos included). With GIT_DIR the work tree is, whatever the cwd, the parent of a `<top>/.git`
-    dir, GIT_WORK_TREE's tree, or the tree _gitfile_top finds for an admin dir (an absolute-path linked
-    worktree's admin dir resolves to its worktree); it is None for a bare repo and for an admin dir that
-    no tree points back at."""
+    dir, GIT_WORK_TREE's tree, or the tree _gitfile_top finds for an admin dir (a linked worktree's
+    admin dir, with absolute or --relative-paths gitdir files, resolves to its worktree); it is None
+    for a bare repo and for an admin dir that no tree points back at."""
     loc = _clean_git_env(e)
     for k in ("GIT_DIR", "GIT_WORK_TREE"):
         if e.get(k):

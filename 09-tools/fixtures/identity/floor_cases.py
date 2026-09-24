@@ -369,7 +369,9 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "decisions: scan records bare repos under projects_root, so a Claude commit in a personal bare "
                   "repo's linked worktree is allowed and one in an employer bare repo's worktree stays blocked [I2]",
                   "decisions: a Claude push to a personal fork of a branch carrying an upstream commit with an "
-                  "employer author stays blocked [IR1], and the reason names the upstream remote it is already on"]
+                  "employer author stays blocked [IR1], and the reason names the upstream remote it is already on",
+                  "decisions: a --relative-paths linked worktree's admin dir used as GIT_DIR from another cwd locates "
+                  "that worktree, and its relative gitdir file is listed among the workspace's worktrees"]
 VETTED_CASES = (DECISION_CASES[3], DECISION_CASES[13], DECISION_CASES[14])
 
 
@@ -739,6 +741,17 @@ def _outside_worktree_cases(lab: Lab, pr, penv: dict) -> list:
         gd, top = pr._floor_locate(elsewhere, dict(lab.base_env, GIT_DIR=str(admin)), "git")
         out.append((DECISION_CASES[31], gd is not None and top is not None
                     and os.path.realpath(top) == os.path.realpath(wt), f"gitdir={gd} top={top}"))
+        # W3-04: with --relative-paths both gitdir files hold relative paths (the admin dir's is relative to
+        # the admin dir, the worktree's .git file to the worktree).
+        rwt = lab.tmp / "wt-tool-relative"
+        add = lab.g(pat, "worktree", "add", "-q", "--relative-paths", "-b", "wt-rel", str(rwt), cwd=main)
+        radmin = main / ".git" / "worktrees" / rwt.name
+        named = (radmin / "gitdir").read_text(encoding="utf-8").strip() if (radmin / "gitdir").is_file() else ""
+        gd, top = pr._floor_locate(elsewhere, dict(lab.base_env, GIT_DIR=str(radmin)), "git")
+        listed = [os.path.realpath(p) for p in pr._linked_worktrees(main)]
+        out.append((DECISION_CASES[35], add.returncode == 0 and not os.path.isabs(named) and top is not None
+                    and os.path.realpath(top) == os.path.realpath(rwt) and os.path.realpath(rwt) in listed,
+                    f"add={add.returncode} named={named} gitdir={gd} top={top} listed={listed}"))
     finally:
         if cache.exists():
             cache.unlink()
