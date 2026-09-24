@@ -80,8 +80,15 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
   - A free branch ruleset (block force-push and deletion on `main`) is offered to Sean.
   - History is not rewritten.
   - The vault's "private" claims are corrected (project-registry, 00-obsidian), and the workspace carries the `visibility: public` flag in 00-context-profiles.
+  - Found 2026-09-23: a work email address on the employer domain sits on 5 lines in 3 tracked files (the work git-config template, the identity setup script, the session-log archive). The employer-substance scan does not count addresses on that domain yet; adding the domain to `employer_substance.domains` would surface 12 hits in 8 files. Sean decides: scrub going forward (the two setup files would read the address from a local, untracked file) and extend the scan with H25's wave-1 work.
 
   ^pc-47
+- [ ] **Two prompt-hook false positives (Claude Code).** (Added 2026-09-23.)
+  - The prompt router fires on background task-notification turns (X2 in the harness plan). On 2026-09-23 notification text matched the employer name, "vector", "lens" and "baseline", and injected unrelated skills and employer knowledge pointers.
+  - The ritual nag (`00-bootstrap/dist/workspace-reassert.sh`) said "never emitted" on a resumed session whose transcript already had the token in an assistant reply. It scans from a saved offset per session id; the resume path likely leaves that offset or the session id out of step. Low cost (one nag, a late ritual line), but it can train agents to ignore the nag.
+  - Fix: skip routing and the nag when the prompt is a task notification, and check the scan offset on resume.
+
+  ^pc-48
 
 ### Deferred (resurface on context match)
 

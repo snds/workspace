@@ -127,7 +127,9 @@ QUALITY_CHAIN = [
 # cause beside the result; it never changes the result.
 AMBIENT_FINGERPRINTS = [
     ("xcrun_db", "git's macOS launcher (xcrun) cannot write its cache here, so every git call is "
-                 "slow and prints a warning: expect timeouts and 'not silent' failures"),
+                 "slow and prints a warning: expect timeouts and 'not silent' failures. To verify, "
+                 "prepend a folder holding only a symlink to $(xcode-select -p)/usr/bin/git to PATH "
+                 "(not Xcode's whole bin folder, which also swaps in its older python3)"),
     ("ps not permitted (sandbox)", "`ps` is denied here, so process-ancestry cases SKIP; "
                                    "prove them outside the sandbox"),
 ]
