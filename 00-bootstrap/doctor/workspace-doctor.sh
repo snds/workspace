@@ -216,6 +216,10 @@ if [ "$CHECK" -eq 1 ]; then
   python3 "$WS/09-tools/profile_resolve.py" gitcaps --check-recorded >/dev/null 2>&1; _rc=$?
   case $_rc in 0) : ;; 1) note "git capability record missing or stale — run profile_resolve.py gitcaps --record";;
     *) note "gitcaps unavailable";; esac
+  # H17-R9: a URL rewrite in a git config file can undo the Claude overlay's transport block.
+  python3 "$DOC/render_shims.py" --rewrite-audit >/dev/null 2>&1; _rc=$?
+  case $_rc in 0) : ;; 1) note "a git config file rewrites an employer URL, so the transport block may not apply — run render_shims.py --rewrite-audit";;
+    *) note "rewrite audit unavailable";; esac
   _dev="$(python3 "$WS/09-tools/profile_resolve.py" device --json 2>/dev/null | python3 -c 'import json,sys;print(json.load(sys.stdin)["device"]["id"])' 2>/dev/null)"
   if [ -n "$_dev" ] && [ "$_dev" != unknown ]; then
     for _p in claude-code cursor codex copilot-vscode; do

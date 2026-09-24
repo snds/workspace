@@ -65,10 +65,10 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 - [ ] **28 individual pattern entries pending graduation at `08-knowledge/design/{slug}.md`.** Graduate one-by-one as Centric work creates demand; the master entry already references their target paths and serves as their parent until materialized. ^pc-37
 - [ ] **Stream C re-audit scheduled ~2027-Q3** (12-18 months). Emerging patterns C4 NL-workflow / C5 canvases / C7 true-merge will mature significantly. ^pc-38
 - [ ] **▶ WORK LAPTOP ONLY — Migrate MCS research → `saas-plm-analysis` employer repo.** (Added 2026-09-04 from Personal MBP.) `12-MCS` is empty on personal + the repo is unreachable there; content + access live on the Centric work laptop. Full playbook in [07-projects/12-MCS/SESSION-STATE.md](../07-projects/12-MCS/SESSION-STATE.md). Sean authorized **PR + commit + merge** directly (doc-only employer repo). Review Olga's uploads first; place with context; then leave a workspace pointer stub. ^pc-44
-- [ ] **Zero-Vector harness v1.1 — wave 0 published; human steps and one decision left.** (Added 2026-09-22.)
+- [ ] **Zero-Vector harness v1.1 — wave 0 published; human steps left.** (Added 2026-09-22.)
   - Waves A and B and the verified fix round are on `main`. Sean published them on 2026-09-23.
   - Sean's decisions (2026-09-23): the heal path stays a declared residual until wave 1 pins it (walls F-11). The floor keeps blocking the vetted prune when `ps` is denied, so that one command runs with the sandbox off (tests F-07). The employer email domain is `centricsoftware.com` (D5). Three H25 items move to wave 1 (D7).
-  - Open: walls F-14, how much residual detail the public H17 table keeps. Recommendation given 2026-09-23; waiting on Sean.
+  - Decided 2026-09-23 (Sean): walls F-14, gap detail follows the repo's visibility. In this public vault a known gap is written at class level with a stable ID (H17-R1 to H17-R10); the recipe and machine posture stay held ([decision](memory/decision-public-residual-detail.md)). D6: `00-context-profiles.md` says "cited by the agent". The work email address is handled with wave 1 (^pc-47).
   - Human steps: `--install-pin`, probes in Claude Code, Cursor, Codex and VS Code, the Personal MBP identity checks, the v5 overlay install, and one vetted prune with the sandbox off.
   - Spec (held locally): `.claude/state/held/INTENT-wave0-2026-09.md`. Plan: [notes/zero-vector-harness-plan_2026-09-22.md](../07-projects/19-workspace-brain/notes/zero-vector-harness-plan_2026-09-22.md).
 
@@ -76,11 +76,11 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 - [ ] **Three Claude Code installs on the Work MBP produce false version-change notices.** (Added 2026-09-22.) `~/.local/bin/claude` is 2.1.280, Homebrew `/opt/homebrew/bin/claude` is a stale 2.1.173, and the desktop app's bundled binary is ~2.1.131. `_check_claude_version_change()` (dispatcher.py:394) keeps one pin per machine, but each surface's PATH resolves a different binary, so the notice flips. Fix: key the pin by resolved binary path (or list all installs), and decide whether to remove the stale Homebrew copy. Logged as X3 in the harness plan. ^pc-46
 - [ ] **`snds/workspace` is PUBLIC; Sean decided 2026-09-22 to KEEP IT PUBLIC and scrub going forward (option a).** Next:
   - H25's employer-substance scan lands in wave 0 and gates new tracked employer detail.
-  - The v1.1 detail and surface research stay local (`.claude/state/held/`) until a scrubbed version passes that scan.
+  - The v1.1 detail and surface research stay local (`.claude/state/held/`). Only a copy rewritten to class level (F-14), with the recipes and machine posture removed and read by Sean, may be published; passing that scan alone is not enough ([decision](memory/decision-public-residual-detail.md)).
   - A free branch ruleset (block force-push and deletion on `main`) is offered to Sean.
   - History is not rewritten.
   - The vault's "private" claims are corrected (project-registry, 00-obsidian), and the workspace carries the `visibility: public` flag in 00-context-profiles.
-  - Found 2026-09-23: a work email address on the employer domain sits on 5 lines in 3 tracked files (the work git-config template, the identity setup script, the session-log archive). The employer-substance scan does not count addresses on that domain yet; adding the domain to `employer_substance.domains` would surface 12 hits in 8 files. Sean decides: scrub going forward (the two setup files would read the address from a local, untracked file) and extend the scan with H25's wave-1 work.
+  - Found 2026-09-23: a work email address on the employer domain sits on 5 lines in 3 tracked files (the work git-config template, the identity setup script, the session-log archive). The employer-substance scan does not count addresses on that domain yet; adding the domain to `employer_substance.domains` would surface 12 hits in 8 files. Sean, 2026-09-23: handled with wave 1 (H25 scrub; the two setup files will read the address from a local, untracked file, and the employer-substance scan starts counting that domain).
 
   ^pc-47
 - [ ] **Two prompt-hook false positives (Claude Code).** (Added 2026-09-23.)
@@ -89,6 +89,15 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
   - Fix: skip routing and the nag when the prompt is a task notification, and check the scan offset on resume.
 
   ^pc-48
+- [ ] **F-14 posture scrub, second pass.** (Added 2026-09-23.) The same rule moves the remaining
+  machine-posture lines to held (quote them there first, then rewrite the public text): ^pc-09 and
+  ^pc-46 in this file, two lines in the harness plan note, two parts of
+  `06-context/memory/fact-machine-layer-installs.md`, the hostname block and the identity include
+  path line in `06-context/memory/feedback-credential-scoping.md` (for the hostnames, a pointer to
+  `devices.json` will do), two lines in
+  `07-projects/19-workspace-brain/reports/zero-vector-harness-detail_v1.0_2026-09-22.md`, and the
+  session history in `07-projects/19-workspace-brain/SESSION-STATE.md`. The list with line detail is
+  held (`machine-posture_2026-09-23.md`). ^pc-49
 
 ### Deferred (resurface on context match)
 

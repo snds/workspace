@@ -1928,7 +1928,11 @@ _CTRL_TOKENS = frozenset({"&&", "||", ";", "|", "&", "|&", ";;", "(", ")", "{", 
 _SHELLS = frozenset({"sh", "bash", "zsh", "dash", "ksh"})
 _WRAPPERS = frozenset({"command", "exec", "nohup", "time", "builtin", "nice"})
 _NOOP_TOOLS = frozenset({"true", "false", ":", "echo", "printf", "exit", "set"})
-_BYPASS_ENV = ("GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS", "GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM")
+_BYPASS_ENV = ("GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS", "GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM",
+               "GIT_CONFIG_SYSTEM")
+# Any single indexed env-config entry set or unset on the command counts too: it changes the
+# env-scope config that carries the floor and the transport block.
+_BYPASS_ENV_PREFIXES = ("GIT_CONFIG_KEY_", "GIT_CONFIG_VALUE_")
 # Set or unset on the command itself, these reroute the floor's wrapper, its interpreter or git's
 # config (git), or drop the gh belt / swap its credential (gh).
 _BYPASS_ENV_GIT = ("HOME", "PATH", "XDG_CONFIG_HOME", "PYTHONPATH", "PYTHONHOME", "PYTHONSTARTUP", "PYTHONUSERBASE",
@@ -1936,7 +1940,8 @@ _BYPASS_ENV_GIT = ("HOME", "PATH", "XDG_CONFIG_HOME", "PYTHONPATH", "PYTHONHOME"
 _BYPASS_ENV_GH = ("GH_CONFIG_DIR", "GH_TOKEN", "GITHUB_TOKEN", "GH_ENTERPRISE_TOKEN", "GITHUB_ENTERPRISE_TOKEN",
                   "GH_HOST", "HOME", "XDG_CONFIG_HOME")
 _UNKNOWN_CWD = "\x00unknown-cwd"
-_ASSIGN_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
+# NAME=value, and the append form NAME+=value (zsh and bash accept it as a prefix assignment).
+_ASSIGN_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*\+?=")
 _REDIRECT_OPS = frozenset({">", ">>", "<", "<<", "<<<", ">&", "<&", "&>", "&>>", ">|"})
 _GIT_OPTS_WITH_VALUE = frozenset({"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--config-env",
                                   "--super-prefix", "--exec-path", "--attr-source", "--list-cmds"})
@@ -1996,9 +2001,23 @@ def _join_cwd(base: Optional[str], p: Optional[str]) -> Optional[str]:
     return posixpath.normpath(posixpath.join(base, p))
 
 
+def _split_assign(tok: str) -> Tuple[str, str]:
+    """NAME=value or NAME+=value -> (NAME, value)."""
+    name, _, val = tok.partition("=")
+    return name[:-1] if name.endswith("+") else name, val
+
+
 def _cfg_bypass(item: str) -> bool:
+    # include / includeIf read a file in the command scope, after the env config; an alias can
+    # carry a hook-skip option. Either can switch the floor off or add a URL rewrite.
     key = item.split("=", 1)[0].strip().lower()
-    return key.startswith("hook.") or key == "core.hookspath" or key.startswith("url.")
+    return (key.startswith(("hook.", "url.", "include.", "includeif.", "alias."))
+            or key == "core.hookspath")
+
+
+def _no_verify(argv: List[str]) -> bool:
+    """--no-verify, or an abbreviation git accepts for it (--no-veri, --no-verif)."""
+    return any(a.startswith("--no-veri") and "--no-verify".startswith(a) for a in argv)
 
 
 def _commit_n(argv: List[str]) -> bool:
@@ -2084,7 +2103,7 @@ def _parse_into(text: str, env0: Dict[str, Optional[str]], cwd0: Optional[str], 
         env = dict(chain_env)
         i = 0
         while i < len(toks) and _ASSIGN_RE.match(toks[i]):
-            name, _, val = toks[i].partition("=")
+            name, val = _split_assign(toks[i])
             env[name] = val
             i += 1
         cmd_cwd = cwd
@@ -2113,7 +2132,7 @@ def _parse_into(text: str, env0: Dict[str, Optional[str]], cwd0: Optional[str], 
                         i += 1
                         break
                     elif _ASSIGN_RE.match(t):
-                        name, _, val = t.partition("=")
+                        name, val = _split_assign(t)
                         env[name] = val
                         i += 1
                     elif t.startswith("-"):
@@ -2148,7 +2167,7 @@ def _parse_into(text: str, env0: Dict[str, Optional[str]], cwd0: Optional[str], 
                     if not a.startswith("-"):
                         chain_env[a] = None
                 elif _ASSIGN_RE.match(a):
-                    name, _, val = a.partition("=")
+                    name, val = _split_assign(a)
                     chain_env[name] = val
             continue
         if tool in _NOOP_TOOLS:
@@ -2177,7 +2196,8 @@ def _parse_into(text: str, env0: Dict[str, Optional[str]], cwd0: Optional[str], 
             continue
         inv: Dict[str, Any] = {"tool": tool, "argv": args, "cwd_hint": cmd_cwd, "env_prefix": dict(env),
                                "hook_bypass": False}
-        bypass = "*" in env or any(k in env for k in _BYPASS_ENV)
+        bypass = ("*" in env or any(k in env for k in _BYPASS_ENV)
+                  or any(k.startswith(_BYPASS_ENV_PREFIXES) for k in env))
         if tool == "git":
             bypass = bypass or any(k in env for k in _BYPASS_ENV_GIT)
             pre: List[str] = []
@@ -2189,7 +2209,7 @@ def _parse_into(text: str, env0: Dict[str, Optional[str]], cwd0: Optional[str], 
             inv.update(argv=argv, cwd_hint=gcwd)
             if gitdir:
                 inv["git_dir_hint"] = gitdir
-            bypass = bypass or cfg_bypass or "--no-verify" in argv
+            bypass = bypass or cfg_bypass or _no_verify(argv)
             if argv and argv[0] == "commit" and _commit_n(argv):
                 bypass = True
         elif tool == "gh":
@@ -4129,6 +4149,17 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
                       ("git commit -anm x", "commit -anm"), ("GIT_CONFIG_COUNT=0 git push", "GIT_CONFIG_COUNT=0"),
                       ("env -u GIT_CONFIG_COUNT git push", "env -u"), ("env -i git push", "env -i"),
                       ("export GIT_CONFIG_PARAMETERS=x; git push", "export"),
+                      ("GIT_CONFIG_VALUE_3=false git push origin feat/a", "GIT_CONFIG_VALUE_<n>=false on push"),
+                      ("env -u GIT_CONFIG_KEY_3 git commit -m x", "env -u GIT_CONFIG_KEY_<n> on commit"),
+                      ("GIT_CONFIG_SYSTEM=/tmp/x git push origin feat/a", "GIT_CONFIG_SYSTEM= on push"),
+                      ("git -c include.path=/tmp/x push origin feat/a", "-c include.path"),
+                      ("git --config-env=include.path=V push", "--config-env include.path"),
+                      ("git -c includeIf.onbranch:*.path=/tmp/x commit -m x", "-c includeIf.*"),
+                      ("git -c alias.pp='push --no-verify' pp origin feat/a", "-c alias.*"),
+                      ("GIT_CONFIG_KEY_3+=x git commit -m x", "GIT_CONFIG_KEY_<n>+= (append form)"),
+                      ("HOME+=x git commit -m x", "HOME+= on git (append form)"),
+                      ("git push --no-verif origin feat/a", "push --no-verif (abbreviation)"),
+                      ("git commit --no-veri -m x", "commit --no-veri (abbreviation)"),
                       ("bash -lc 'git push --no-verify origin feat/a'", "bash -lc"),
                       ("env -u GH_CONFIG_DIR gh api -X DELETE repos/acme-corp/w/git/refs/heads/x", "env -u GH_CONFIG_DIR"),
                       ("GH_CONFIG_DIR=/tmp/x gh pr merge 1", "GH_CONFIG_DIR override"),
@@ -4141,6 +4172,12 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
         ok(any(b for _c, _t, b in cls(text)), f"hook_bypass: {why}")
     ok(not any(b for _c, _t, b in cls("git commit -m 'no -n here' && git push origin feat/a")), "no false bypass")
     ok(not any(b for _c, _t, b in cls("HOME=/tmp/x ls && GH_TOKEN=t ls")), "no false bypass for other tools")
+    ok(not any(b for _c, _t, b in cls("GIT_TRACE=1 MY_GIT_CONFIG_VALUE_1=x GIT_CONFIG_KEYRING=x git push origin feat/a")),
+       "unrelated env on git is not hook_bypass")
+    ok(not any(b for _c, _t, b in cls("git commit --no-verbose -m x")), "commit --no-verbose is not hook_bypass")
+    p = parse_command("GIT_CONFIG_KEY_3+=x git commit -m x")
+    ok(len(p) == 1 and p[0]["tool"] == "git" and p[0]["env_prefix"] == {"GIT_CONFIG_KEY_3": "x"},
+       f"append-form assignment is an env prefix, and git is the tool: {p}")
     p = parse_command("cd /x/y && FOO=1 command /usr/bin/git -C ../z --work-tree w status")
     ok(len(p) == 1 and p[0]["tool"] == "git" and p[0]["argv"] == ["status"] and p[0]["cwd_hint"] == "/x/z/w"
        and p[0]["env_prefix"] == {"FOO": "1"}, f"cd, env prefix, command, abs git, -C, --work-tree: {p}")

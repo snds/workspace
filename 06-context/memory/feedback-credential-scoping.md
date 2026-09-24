@@ -2,7 +2,7 @@
 type: feedback
 description: Identity is device-based EXCEPT Claude (2026-09-22) — every Claude surface is personal-only (snds) on every device and does no substantive employer work (vetted housekeeping allowed, with receipts); Cursor/Codex are the employer-approved surfaces; personal identity never lands in employer repos
 created: 2026-07-20
-updated: 2026-09-22
+updated: 2026-09-23
 confidence: high
 ---
 
@@ -41,24 +41,35 @@ commit.
   - Identity comes from `includeIf hasconfig` on `snds/*` remote URLs, via
     `~/.config/snds-workspace/git/claude-identity.inc`, so an employer checkout never gets `snds`
     from it.
-  - `snds/*` traffic goes over **HTTPS** (overlay v4, Sean 2026-09-22). SSH to github.com on ports
-    22 and 443 times out intermittently on the Work MBP network (^pc-09). The overlay resets the
-    `https://github.com` credential-helper list, because the system `osxkeychain` holds a
-    **Centric** GitHub credential that would otherwise answer first. It then uses
-    `!gh auth git-credential` through Claude's `GH_CONFIG_DIR`, which resolves to `snds`.
-  - Employer remotes are rewritten to an unresolvable scheme, so a push Claude composes itself fails.
+  - `snds/*` traffic goes over **HTTPS** (overlay v4, Sean 2026-09-22), because SSH to github.com
+    is unreliable on some networks (^pc-09). The overlay resets the `https://github.com`
+    credential-helper list, so no device-level credential store can answer first. It then uses
+    `!gh auth git-credential` through Claude's own gh config, which resolves to `snds`.
+    Per-device credential and network detail is held.
+  - Employer remotes in their declared spellings are rewritten to an unresolvable scheme, so a push
+    Claude composes itself fails. Spellings the rewrite misses are left to the git floor (residual
+    H17-R6), and so is another rewrite for an employer remote, given for one command or written
+    into any git config file (the repository's, the user's or the system's), that undoes the block
+    for that remote (residual H17-R9).
   - v1 (`bb4cf05`) set `GIT_AUTHOR_*` unconditionally and was replaced by `0d19852`. Claude sessions
     started before that still carry v1 until they are restarted.
-- **Claude's `gh`:** overlay v3 sets `GH_CONFIG_DIR=~/.config/snds-workspace/gh-claude`, a config
-  that names only `snds`. The token stays in the keyring; Sean logged `snds` in on 2026-09-22.
-  - The machine-default `~/.config/gh` keeps the device's account **active** (Centric on the Work
-    MBP), because Cursor, Codex and the terminal all share it.
+- **Claude's `gh`:** overlay v3 points Claude's gh at a Claude-only gh config that names only
+  `snds`. The token stays in the OS keyring.
+  - The machine-default gh config keeps the device's default account (`devices.json`) **active**,
+    because Cursor, Codex and the terminal all share it. Per-device account state is held.
   - After any `gh auth login`, run `gh auth switch` back to the device default. Logging in makes the
     new account active for every surface.
-  - Vetted housekeeping scripts restore the default config only for employer `gh` calls.
-- **Linear connectors stay attached to Claude** (Sean, 2026-09-22): both `linear-personal` and
-  `linear-c8`. Claude uses `linear-c8` only for the Open Engine `c8` lane's movement (pointers,
-  statuses, receipts), never for employer substance. That lane is already movement-only.
+  - Vetted housekeeping uses the device default gh account only for employer gh calls.
+- **Tracker connectors stay attached to Claude** (Sean, 2026-09-22): the personal one and the
+  employer one. Claude uses the employer connector only for the Open Engine `c8` lane's movement
+  (pointers, statuses, receipts), never for employer substance. No mechanical layer limits what it
+  writes there; the limit is this rule and the lane's movement-only design. This is part of the
+  known gap WALL-C1 (employer-capable channels outside git, with browser control, desktop control and a
+  terminal beside the session).
+  What closes it: H15 (wave 1) denies the employer connector's tools to Claude, which would also
+  end the movement use above, and adds an employer-host check for browser control driven from
+  Claude Code; the browser profile (harness decision 3) covers the rest; desktop control has no
+  planned close. The per-device connector roster is held.
 - **Everyone else:** repo-local git config (Centric noreply on the Work MBP).
 - **Employer email domain (Sean, 2026-09-23):** `centricsoftware.com`. Any address on that domain
   counts as employer in the identity checks (`devices.json` `employer_allowlist.email_domains`,

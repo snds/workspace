@@ -12,8 +12,9 @@ Standing home: this project.
 - v1.0 detail (public): `reports/zero-vector-harness-detail_v1.0_2026-09-22.md`.
 - **v1.1 detail and surface research are held locally, not committed.** They are at
   `.claude/state/held/`, on the Work MBP only. The vault repo is **public**, and those documents
-  map agent-surface gaps and employer-wall mechanics. Publish them after the visibility decision
-  (^pc-47).
+  map agent-surface gaps and employer-wall mechanics. Only a copy rewritten to class level (F-14),
+  with the recipes and machine posture removed and read by Sean, may be published. Passing the
+  employer-substance scan alone is not enough (^pc-47, [[decision-public-residual-detail]]).
 
 ## Sean's decisions (2026-09-22) — binding
 
@@ -47,7 +48,14 @@ Wave 0 is published. These answers close its open items.
    fragments from employer-touched sessions (H23), the Cursor/Codex inventory of workspace-derived
    files in employer repos (H4), and the static Claude deny rules for employer vault folders (H15).
 
-Still open: how much residual detail the public identity table keeps. A recommendation went to Sean on 2026-09-23.
+5. **Gap detail follows the repo's visibility** (walls F-14). This vault is public, so a known gap
+   is written at class level with a stable ID, and the recipe and machine posture stay held. The
+   H17 coverage row now cites H17-R1 to H17-R10. See [[decision-public-residual-detail]].
+6. **Context profiles name no single agent** (D6). `00-context-profiles.md` now says the declared
+   facts are "cited by the agent", not "cited by Claude".
+7. **The work email address in three tracked files is handled with wave 1** (the H25 scrub). The
+   two setup files will read it from a local, untracked file, and the employer-substance scan
+   starts counting that domain (^pc-47).
 
 ## Bottom line
 
@@ -82,7 +90,7 @@ enforcement only at the lowest tier that actually blocks.
 
 | Surface | Strongest enforcement it can run | Honest limit |
 |---|---|---|
-| Claude Code (local) | T3 PreToolUse + T4 Claude floor | Hooks are skipped in `--bare` mode |
+| Claude Code (local) | T3 PreToolUse + T4 Claude floor | A documented minimal launch mode skips hooks; whether it also drops the overlay env is not yet probed (H17-R7, held) |
 | Claude Code (cloud) | Committed repo hooks + T5 | None of the local config applies |
 | Claude Chat (web/mobile) | T5 + T6 only | No local enforcement at all |
 | Claude Chat (desktop/Cowork) | MCP server write tools (H21) + T5 | Cowork's hook behaviour is unverified |
@@ -150,11 +158,11 @@ on it. The fix to the flaw below **landed in `0d19852`**; the rest of H17 follow
 - **Decisions recorded:** `bb4cf05`, `f25e916`, and the credential memory, restructured.
 - **Vault stays public, with scrubbing going forward** (Sean). The "private" claims are corrected
   (`d083403`).
-- **Claude-only `gh` config** (overlay v3). Sean's `snds` login had made `snds` the active `gh`
-  account for every surface. The default is restored to Centric (`d083403`).
+- **Claude-only `gh` config** (overlay v3). Logging a second account into the shared `gh` config
+  had made it the active account for every surface. The device default is restored (`d083403`).
 - **Overlay v4: Claude's `snds/*` git traffic goes over HTTPS through the Claude `gh` helper.** The
-  helper list is reset, because the system keychain holds a Centric GitHub credential. Verified:
-  only the `gh` helper runs, and it answers as `snds`.
+  helper list is reset first, so a device-level credential store cannot answer before it. Verified:
+  only the `gh` helper runs, and it answers as `snds`. Per-device credential detail is held.
 - **Codex import hooks #1 and #2 are retired** to
   `~/.config/snds-workspace/archive/codex-import-2026-07-31/`. The snds plugin's SessionStart is kept
   until H19. Nothing is trusted in Codex yet.
@@ -169,8 +177,16 @@ on it. The fix to the flaw below **landed in `0d19852`**; the rest of H17 follow
 - **Codex's Claude import (2026-07-31) left untracked, drifting forks:** a stale
   `.codex/hooks/dispatcher.py`, and `.agents/skills`, 6 of 8 of which have drifted. The fix is
   retire-with-backup (Decisions needed, item 4).
-- **Claude Code on this Mac exposes employer-capable tools.** The employer Linear MCP has write
-  tools, and computer use and Claude in Chrome are both enabled. See Decisions needed, item 3.
+- **Claude Code can reach employer-capable channels outside git (known gap WALL-C1):** a tracker
+  connector with write tools, browser control, desktop control, and a terminal beside the session
+  (whether that terminal carries the overlay is not yet probed). The git guard does not cover
+  them. The employer tracker connector is limited by policy only (movement-only use,
+  [[feedback-credential-scoping]]). Browser and desktop control act as whatever accounts the driven
+  apps are signed into; T6 limits them only when those are personal (decision 3 is open). What
+  closes it: H15 (wave 1) denies the employer connector's tools to Claude and adds an employer-host
+  check for browser control driven from Claude Code; the browser profile (decision 3) covers the
+  rest; desktop control has no planned close. The per-device roster is held. See Decisions needed,
+  item 3.
 - **The prompt router fires on background task-notification turns (X2)**, confirmed in local
   transcripts.
 - **Three Claude Code installs cause false version notices** (^pc-46).
@@ -180,9 +196,9 @@ on it. The fix to the flaw below **landed in `0d19852`**; the rest of H17 follow
 1. **Public vault.** Keep it public and scrub going forward, or make it private (rulesets then need
    a paid plan). History rewriting is a separate, destructive choice.
 2. **Overlay completion (H17).** A Claude git floor, `WS_SURFACE_FAMILY`, and a Claude-only gh
-   config via `GH_CONFIG_DIR`. Will you log `snds` into that gh config, or leave it empty?
-3. **Employer tools in Claude.** Remove the employer Linear MCP from Claude's user scope? Use a
-   personal-only browser profile for Claude in Chrome?
+   config set by the overlay. Will you log `snds` into that gh config, or leave it empty?
+3. **Employer-capable tools in Claude.** Keep, scope or remove the employer tracker connector?
+   Which browser profile does Claude drive?
 4. **Codex.** Trust the generated hooks and the plugin hooks, and retire the import forks?
 5. **Wave-0 defaults** I'll use unless you object:
    - Claude on unknown-owner repos under `~/Projects` → deny.

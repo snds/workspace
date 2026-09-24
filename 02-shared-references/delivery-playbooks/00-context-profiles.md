@@ -9,7 +9,7 @@ tags: [context, governance, repo-conduct, identity, delivery]
 
 **Context is king.** Every downstream delivery decision — voice, medium, evidence, repo
 conduct, identity — derives from facts about who owns the work and who reviews it. Those facts
-are **declared here by Sean once and cited by Claude every time**; they are never guessed
+are **declared here by Sean once and cited by the agent every time**; they are never guessed
 per-task. A wrongly-contexted action (auto-committing to an employer repo, pushing employer
 material to a public repo) is the class of mistake that can't be walked back cheaply, so this
 file resolves *before* any playbook, gate, or repo action.
@@ -59,6 +59,15 @@ can land. **CI** — the automated checks that run on every proposed change._
   as pointers. Harness code and declared tables are published (D1, Sean 2026-09-23: no secrets,
   owner-level names only, scrub gate = check-secrets + employer-substance baseline + a human read).
   Machine-posture analysis and research reports stay local (`.claude/state/held/`).
+  **Gap detail follows visibility** (Sean, 2026-09-23 (F-14)). In a public repo a known gap is
+  written at class level: that it exists, its category, which layer catches it and which does not,
+  what closes it (component, wave), and a stable ID for the held record. Runnable detail (exact
+  flags, env names, commands, forgeable paths) and machine posture (per-device installs, accounts,
+  credentials, connectors, network) stay held, or in a private repo if they must travel. Still
+  public: code and fixtures (D1; comments say what is checked, not how to use it), operator
+  controls, prohibitions naming the flag they forbid, and a fixed defect's history once a fixture
+  pins it. A private personal repo may keep mechanics; employer repos get no workspace content;
+  unknown visibility counts as public ([[decision-public-residual-detail]]).
   Tightens the IP rule: no third-party proprietary reference material of any kind (competitor
   screenshots, design-source folders) — gitignore it. No secrets, no plaintext personal email
   in commit metadata where avoidable.

@@ -129,7 +129,7 @@ The github-work → employer result is a documented fail-safe, not a bug:
 
 02-shared-references/delivery-playbooks/00-context-profiles.md defines three profiles plus a `visibility: public` flag. Its step-2 declaration is a SESSION-STATE line OR a project-context.md entry. Its step-3 remote rule is host-specific (`github.com/snds/*`).
 
-The real Centric remotes on this Mac are git@bitbucket.org:centricsoftware/… (~/Projects/c8, ~/Projects/design-system). No current marker matches them, so design-system resolves unknown: fail-safe, but unlabelled.
+The real employer remotes on this Mac use an owner spelling that no current marker matched, so an employer checkout resolved unknown: fail-safe, but unlabelled. The per-device detail is held (F-14).
 
 **Mechanics.**
 
@@ -844,7 +844,7 @@ QUALITY_CHAIN gains `close-out-dispatch.py --telemetry --self-test`.
 
 **Profile behaviour.**
 
-Runs on the workspace checkout only and is never installed as a gate in employer repos. ws-audit COMPLY lines carry counts only, no paths and no prompt text. There is no gh-based metric, because gh is logged into the employer account (SOURCES.md).
+Runs on the workspace checkout only and is never installed as a gate in employer repos. ws-audit COMPLY lines carry counts only, no paths and no prompt text. There is no gh-based metric, because gh's shared default config holds the device's default account, which is the employer account on an employer-default device (`devices.json`).
 
 ### H11 — Closure triggers at session and git boundaries: SessionEnd gate through nightly.py's verify phase, git hooks installed only by Sean's explicit command, one conditional notice line. Report-only first; later a per-machine opt-in hold for charged regressions only
 
@@ -1154,9 +1154,9 @@ Nothing mechanical stops an agent from committing, pushing or self-merging on an
 
 **Mechanics.**
 
-The wrapper pre-filters in shell: only when tool_input.command contains `git ` or `gh ` does it exec `python3 $WS/09-tools/profile_resolve.py guard --hook claude`. Otherwise it exits 0 immediately.
+A thin wrapper runs the guard only for commands in its scope (the matching rule is held, F-14); other commands get no decision.
 
-guard parses the command with shlex, handling `git -C <dir>` and a `cd <dir> &&` prefix. It resolves the target repo, its profile and its default branch (the origin/HEAD symbolic ref, else main/master).
+guard parses the command and resolves the target repo, its profile and its default branch.
 
 Decisions for centric-engineering:
 - deny `git commit` on the default branch;
@@ -1171,7 +1171,7 @@ For other profiles:
 
 The deny reason cites the profile: 'per centric-engineering: open a PR, not a merge'.
 
-Fail-open: a parse error, a 5 s timeout or a missing python3 produces no decision and exit 0. The guard is a seatbelt; the doctrine and human PR review stay the wall.
+Fail-open: when the guard itself errors, it produces no decision and allows (declared residual, H17-R8 class; the triggers are held, F-14). The guard is a seatbelt; the doctrine and human PR review stay the wall.
 
 Rollout: wave 1 ships with every deny downgraded to `ask` for 14 days. It flips to deny after zero false asks, by Sean's decision.
 
@@ -1189,13 +1189,13 @@ TestWallGuard with a synthetic table and temp repos:
 - an unknown remote push → ask;
 - personal → allow;
 - a merge in a grant repo → allow;
-- a malformed payload → no decision, exit 0;
-- a command without git or gh → the wrapper exits before python starts.
+- a malformed payload → no decision (declared fail-open, H17-R8 class);
+- a command outside the guard's scope → no decision.
 Runs through profile_resolve --self-test in QUALITY_CHAIN. The fragment and wrapper paths go into the path filters. An evaluate-surface-trajectories note records the Cursor degrade.
 
 **Token impact.**
 
-0. Nothing is injected into context; the deny reason appears only when the guard fires. Python starts only for git and gh commands.
+0. Nothing is injected into context; the deny reason appears only when the guard fires. Python starts only for commands in the guard's scope.
 
 **Profile behaviour.**
 
@@ -1339,7 +1339,7 @@ Secondary ordering rules (a single commit, or a strict order):
 - **17 scheduled prune/promote cadence** — decision-no-unattended-runner. Telemetry is read when harness-map or self-improve runs, and Sean decides (H10).
 - **14 standing named crew or per-role instruction files** — That would be a parallel agent framework (constraint 1). Roles stay rows with owned globs (H9).
 - **11 interactive two-gate propose→diff→apply tool** — ZV's gates were conversational and could be skipped when non-interactive. Provenance stays deterministic: the approval hash, the Changelog and verify records (H5).
-- **B's gh-cli 'escape' metric** — gh is logged into the employer account (SOURCES.md). Commit-subject gate suffixes give a portable metric instead (H11).
+- **B's gh-cli 'escape' metric** — gh's shared default config holds the device's default account (see H10). Commit-subject gate suffixes give a portable metric instead (H11).
 - **Markdown table cells for structure regexes or closure commands** — _parse_table splits on '|' (intent-run.py:72-89), so alternation regexes and piped commands would shift columns. The plan uses fenced JSON (H13) and an ID-keyed Closures list (H8).
 - **A new closure skill or framework** — Prompt-only enforcement is the ZV anti-pattern, and constraint 1 requires 3+ consumers or rule-of-three evidence. The mechanisms fit existing homes.
 - **ZV ideology (one auteur, zero handoff; design systems as overhead), auto-committing audits, a verify step that deletes REMEDIATION.md, verbatim default principles** — Each conflicts with the context-profile walls, Sean's DS practice, the mutation policy or the verbatim-defaults anti-pattern. The plan adopts ZV's mechanisms and rejects its ideology.
@@ -1356,7 +1356,7 @@ Secondary ordering rules (a single commit, or a strict order):
 - **Approval and human fields stay self-attestable.** — `approve` is TTY-only and refuses under CI or WS_HOOK. It records approved_via. lint WARNs 'self-approved' when the approval lands in the creation commit. The intent_hash makes silent post-approval drift fail. Human items are USER_REPORTED, never VERIFIED. The residual is stated in the memory decision.
 - **Employer-wall leak through recon, specs, packets, verify records, notices or telemetry.** — H2 resolver on two axes with a restrictiveness lattice. The neutral variant plus check-secrets workspace-leak class for anything placed in employer repos. Employer verify records under the git dir. Recon stdout-only for employer and unknown remotes. Notices and COMPLY lines carry counts only. The H15 guard denies default-branch commit, push and merge by agents. Hooks and the installer refuse non-workspace repos.
 - **An agent edits context-remotes.json and loosens a wall.** — It is in the SENSITIVE diff class, so the change is flagged in gate output and the commit suffix. The playbook's 'only Sean's explicit sign-off' rule applies. profile_resolve --self-test fixtures pin the lattice semantics.
-- **The H15 guard falsely denies a legitimate operation, or misses a command shape.** — 14 days in ask mode before deny. Fail-open on parse errors. Branch-to-PR flows are explicitly allowed. Shapes are covered by TestWallGuard fixtures. PR review remains the wall.
+- **The H15 guard falsely denies a legitimate operation, or misses a command shape.** — 14 days in ask mode before deny. Fails open on its own errors (declared residual, H17-R8 class; triggers held). Branch-to-PR flows are explicitly allowed. Shapes are covered by TestWallGuard fixtures. PR review remains the wall.
 - **Compliance measurement is Claude-only (transcripts), so Cursor gets no compliance data.** — Cursor reports an honest SKIP in COMPLY accounting. Cursor commits are still gated and measured through post-commit / pre-push and commit-subject suffixes.
 - **Machine locality: the personal repos needed for wave-2 recon and H13 live only on the Personal MBP.** — Those exit criteria are stated as Personal-MBP runs. Work-MBP runs cover the vault dogfood.
 - **Tools that walk 07-projects/ or 05-artifacts/ give different results per machine because of untracked employer folders.** — A global rule: every new walker uses `git ls-files` (H1 census, H5 --all, H8 --status, H12 --research), each with a fixture proving an untracked c8_* or employer file is ignored.
@@ -1503,7 +1503,7 @@ session-status.py warns only when the skill-routing stamp is MISSING, not when i
 
 00-bootstrap/beacon-enroll.sh classify() would treat a personal snds/* repo cloned via the github-work SSH alias as employer.
 
-**Evidence.** beacon-enroll.sh:38-46: the first arm, `*github.com[:/]snds/*`, requires the literal host 'github.com'. The next arm, `*github-work*|…`, then returns 'employer'. `git -C . remote -v` gives `origin git@github-work:snds/workspace.git`, so this machine clones personal snds repos through the github-work alias. Such a remote fails the personal arm and matches the employer arm. The workspace itself is exempt (sweep skips $WS at :87). For other repos, `--sweep --apply` permanently records them in beacon-repos.ignore.txt (:95-96), and single-repo mode refuses even with `--personal`, because the employer arm exits before FORCE is read (:109). The authoritative rule keys on OWNER, not host alias: 00-context-profiles.md:28-29 says '`github.com/snds/*` → personal. `cpes-software/*` … → Centric'. The error direction is fail-safe (over-restrictive), so no wall is breached. The cost is lost beacon coverage for personal repos on work machines.
+**Evidence.** beacon-enroll.sh:38-46: the first arm, `*github.com[:/]snds/*`, requires the literal host 'github.com'. The next arm, `*github-work*|…`, then returns 'employer'. A personal remote cloned through the work SSH alias fails the personal arm and matches the employer arm. The workspace itself is exempt (sweep skips $WS at :87). For other repos, `--sweep --apply` permanently records them in beacon-repos.ignore.txt (:95-96), and single-repo mode refuses even with `--personal`, because the employer arm exits before FORCE is read (:109). The authoritative rule keys on OWNER, not host alias: 00-context-profiles.md:28-29 says '`github.com/snds/*` → personal. `cpes-software/*` … → Centric'. The error direction is fail-safe (over-restrictive), so no wall is breached. The cost is lost beacon coverage for personal repos on work machines.
 
 **Smallest fix.** Change the personal arm to `*github.com[:/]snds/*|*github-work:snds/*|*github-work/snds/*)` (owner-keyed, and checked before the github-work employer arm), keeping `*c8*` and `cpes-software` as employer. Add a tiny shell self-test (or a test-validators.py case that sources classify) covering github-work:snds → personal and github-work:cpes-software → employer.
 

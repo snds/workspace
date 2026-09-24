@@ -22,6 +22,7 @@ Usage:
   render_shims.py --install-state --json
   render_shims.py --verify-canonical REV
   render_shims.py --emit identity-inc --device ID
+  render_shims.py --rewrite-audit [--json]
   render_shims.py --self-test
 
 H17 (T8) adds two emitters. The Claude overlay env inside settings-user-fragment.json is rendered
@@ -29,6 +30,8 @@ from context-remotes.json and devices.json (the output row's `overlay` names the
 `owned_keys` stays ["hooks"] so --install-shims never writes the env: only the Sean-run
 --install-claude-overlay does). `claude-identity.inc` is rendered from the Claude identity rule, and
 `--emit identity-inc --device ID` prints one device's default identity include for --install-identity.
+`--rewrite-audit` (H17-R9, report-only, read by `workspace-doctor.sh --check`) reads the git config
+files, not the overlay env, and reports URL rewrites that can undo the employer transport block.
 
 Exit: 0 clean; 1 drift or a violation; 2 data or usage error; 3 --rev has no render_shims.py.
 Stdlib only; Python 3.9+.
@@ -663,6 +666,92 @@ def overlay_env(cr: dict, dev: dict, version: str = "v5") -> "OrderedDict":
     return env
 
 
+FILE_SCOPES = ("system", "global", "local", "worktree")
+
+
+def rewrite_conflicts(cr: dict, dev: dict, entries: list, version: str = "v5") -> list:
+    """H17-R9 audit: URL rewrites in git config files that can undo the employer transport block.
+
+    entries: [(scope, key, value)] as `git config --show-scope --get-regexp` reports them. git reads
+    the config files before the env scope that carries the block and keeps the first longest
+    insteadOf match, so a file-scope insteadOf whose value starts with a blocked prefix ties with or
+    beats the block. A matching pushInsteadOf is applied first for pushes, whatever its length. A
+    rewrite whose target starts with a blocked prefix maps another spelling onto an employer URL,
+    and git rewrites a URL only once. Returns [(scope, key, value, why)]; command-scope entries (the
+    overlay itself and -c) are skipped."""
+    blocked = cr.get("blocked_scheme")
+    prefixes = [v for k, v in overlay_pairs(cr, dev, version) if k == f"url.{blocked}.insteadOf"]
+    out = []
+    for scope, key, value in entries:
+        if scope not in FILE_SCOPES or not key.lower().startswith("url."):
+            continue
+        base, _, var = key[4:].rpartition(".")
+        var = var.lower()
+        if var not in ("insteadof", "pushinsteadof") or base == blocked:
+            continue
+        why = None
+        if var == "insteadof" and any(value.startswith(p) for p in prefixes):
+            why = "ties with or beats the transport block"
+        elif var == "pushinsteadof" and any(value.startswith(p) or p.startswith(value) for p in prefixes):
+            why = "applies to employer pushes before the transport block"
+        elif any(base.startswith(p) for p in prefixes):
+            why = "maps another spelling onto an employer URL"
+        if why:
+            out.append((scope, key, value, why))
+    return out
+
+
+def _config_rewrites(cwd: Path, env_over=None) -> list:
+    """[(scope, key, value)] for url.*.insteadOf / pushInsteadOf in the config files git reads from
+    cwd. The env config (GIT_CONFIG_COUNT/KEY/VALUE, GIT_CONFIG_PARAMETERS) is dropped after
+    env_over is applied; an env_over value of None removes that variable (tests)."""
+    base = dict(os.environ)
+    for k, v in (env_over or {}).items():
+        if v is None:
+            base.pop(k, None)
+        else:
+            base[k] = v
+    env = {k: v for k, v in base.items()
+           if k not in ("GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS")
+           and not k.startswith(("GIT_CONFIG_KEY_", "GIT_CONFIG_VALUE_"))}
+    r = subprocess.run(["git", "config", "--show-scope", "-z", "--get-regexp",
+                        r"^url\..*\.(insteadof|pushinsteadof)$"],
+                       cwd=str(cwd), env=env, capture_output=True, text=True, timeout=20)
+    if r.returncode == 1 and not r.stdout:
+        return []
+    if r.returncode != 0:
+        raise DataError(f"git config failed: {r.stderr.strip()[:200]}")
+    parts = r.stdout.split("\0")
+    out = []
+    for scope, kv in zip(parts[0::2], parts[1::2]):
+        key, _, value = kv.partition("\n")
+        out.append((scope, key, value))
+    return out
+
+
+def rewrite_audit(root: Path = ROOT, cwd=None, as_json: bool = False, out=None) -> int:
+    """--rewrite-audit: report-only (H17-R9). Exit 0 clean, 1 when a config-file rewrite can undo
+    the transport block, 2 on a data or git error. Runs from $HOME by default, so it reads the
+    system and user files."""
+    out = out or sys.stdout
+    try:
+        cr, dev = identity_tables(root)
+        hits = rewrite_conflicts(cr, dev, _config_rewrites(Path(cwd) if cwd else Path.home()))
+    except (DataError, OSError, subprocess.SubprocessError) as exc:
+        print(f"ERROR {exc}", file=sys.stderr)
+        return 2
+    if as_json:
+        out.write(json.dumps({"schema_version": 1, "cmd": "rewrite-audit",
+                              "findings": [{"scope": s, "key": k, "value": v, "why": w} for s, k, v, w in hits]},
+                             indent=2, ensure_ascii=False) + "\n")
+    else:
+        for s, k, v, w in hits:
+            out.write(f"WARN  {s}: {k} = {v} ({w})\n")
+        if not hits:
+            out.write("ok render_shims rewrite-audit: no config-file rewrite overlaps the transport block\n")
+    return 1 if hits else 0
+
+
 def _identity_row(dev: dict, iid: str) -> dict:
     row = next((r for r in dev.get("identities") or [] if isinstance(r, dict) and r.get("id") == iid), None)
     if row is None:
@@ -1149,6 +1238,51 @@ def _git_show(rev_path: str):
     return r.stdout if r.returncode == 0 else None
 
 
+def rewrite_audit_cases(cr: dict, dev: dict) -> list:
+    """H17-R9 audit cases on the synthetic tables: pure entries, then one real git read of a temp
+    user config with a planted command-scope entry that must be ignored."""
+    results = []
+    blocked = cr["blocked_scheme"]
+    pre = "git@github.com:acme-corp/"
+    entries = [("global", "url.alias://.insteadof", pre),                                   # tie
+               ("local", f"url.{pre}w.git.insteadof", f"{pre}w.git"),                        # longer
+               ("system", "url.https://github.com/.pushinsteadof", "git@github.com:"),       # push, shorter
+               ("global", f"url.{pre}.insteadof", "work:"),                                  # onto employer
+               ("command", "url.alias://.insteadof", pre),                                  # the overlay / -c
+               ("global", "url.alias://.insteadof", "git@github.com:"),                      # shorter: block wins
+               ("global", "url.https://github.com/pat-sample/.insteadof", "git@github.com:pat-sample/"),
+               ("global", f"url.{blocked}.insteadof", "git@github.com:other/")]
+    hits = rewrite_conflicts(cr, dev, entries)
+    got = [(s, k) for s, k, _v, _w in hits]
+    results.append(("rewrite audit: a file-scope insteadOf that ties with or beats a blocked prefix is reported",
+                    got[:2] == [("global", "url.alias://.insteadof"), ("local", f"url.{pre}w.git.insteadof")],
+                    str(got)))
+    results.append(("rewrite audit: a file-scope pushInsteadOf that overlaps a blocked prefix is reported, "
+                    "and so is a rewrite onto an employer URL",
+                    got[2:] == [("system", "url.https://github.com/.pushinsteadof"), ("global", f"url.{pre}.insteadof")],
+                    str(got)))
+    with tempfile.TemporaryDirectory() as td:
+        home = Path(td)
+        (home / ".gitconfig").write_text(
+            f'[url "alias://"]\n\tinsteadOf = {pre}\n[url "https://github.com/pat-sample/"]\n'
+            '\tinsteadOf = git@github.com:pat-sample/\n', encoding="utf-8")
+        over = {"HOME": str(home), "XDG_CONFIG_HOME": str(home / "xdg"), "GIT_CONFIG_SYSTEM": os.devnull,
+                "GIT_CONFIG_GLOBAL": None, "GIT_CONFIG_NOSYSTEM": None, "GIT_DIR": None,
+                "GIT_CEILING_DIRECTORIES": str(home.parent),
+                "GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "url.cmd://.insteadOf", "GIT_CONFIG_VALUE_0": pre}
+        try:
+            read = _config_rewrites(home, over)
+            real = rewrite_conflicts(cr, dev, read)
+            ok = (("global", "url.alias://.insteadof", pre) in read and not any(k.startswith("url.cmd:") for _s, k, _v in read)
+                  and [(s, k) for s, k, _v, _w in real] == [("global", "url.alias://.insteadof")])
+            detail = f"read={read} hits={real}"
+        except (DataError, OSError, subprocess.SubprocessError) as exc:
+            ok, detail = False, str(exc)
+    results.append(("rewrite audit: command-scope entries, shorter insteadOf values and unrelated rewrites are not "
+                    "reported", ok and len(hits) == 4, detail))
+    return results
+
+
 def overlay_cases() -> list:
     """H17 emitter cases: the synthetic golden, owners x forms x case, the guarded floor command,
     no GIT_AUTHOR_*, the v4 reproduction from the tables, identity-inc, and the owned-keys guard."""
@@ -1218,6 +1352,7 @@ def overlay_cases() -> list:
     results.append(("overlay: markers and the gh belt",
                     env.get("WS_CLAUDE_OVERLAY") == "v5" and env.get("WS_SURFACE_FAMILY") == "claude"
                     and env.get("GH_CONFIG_DIR") == "~/.config/snds-workspace/gh-claude", ""))
+    results += rewrite_audit_cases(cr, dev)
     results.append(("identity-inc: Claude include and device includes equal the golden",
                     render_claude_identity_inc(dev) == golden["claude_identity_inc"]
                     and render_device_identity_inc(dev, "dev-a") == golden["identity_inc"]["dev-a"]
@@ -1332,6 +1467,7 @@ def main(argv=None) -> int:
     mode.add_argument("--verify-canonical", metavar="REV")
     mode.add_argument("--self-test", action="store_true")
     mode.add_argument("--emit", choices=["identity-inc", "overlay-env"])
+    mode.add_argument("--rewrite-audit", action="store_true")
     ap.add_argument("--device")
     ap.add_argument("--overlay", choices=list(OVERLAY_VERSIONS))
     ap.add_argument("--only")
@@ -1349,6 +1485,8 @@ def main(argv=None) -> int:
         return self_test()
     if args.emit:
         return emit(args.emit, root, device=args.device, overlay=args.overlay)
+    if args.rewrite_audit:
+        return rewrite_audit(root, as_json=args.json)
     if args.verify_canonical:
         return verify_canonical(args.verify_canonical, root)
     if args.check:
