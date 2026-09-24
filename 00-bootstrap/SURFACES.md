@@ -18,7 +18,7 @@ _Last updated: 2026-09-23_
 | **Gemini CLI** | `GEMINI.md` + `.gemini/settings.json` (`context.fileName` = `AGENTS.md`) | Google | Hook API yes; none wired | Thin pointer; settings load the contract. |
 | **Warp** | `WARP.md` | Warp | No | Thin pointer → AGENTS.md. |
 | **Aider** | `.aider.conf.yml` `read:` (AGENTS.md, llms.txt, CONVENTIONS.md) | any | No | Root CONVENTIONS is a pointer; PR conventions stay in `.github/CONVENTIONS.md`. |
-| **Windsurf** | `.windsurf/rules/*.md` (`trigger: always_on`) + `AGENTS.md` | Cognition | Hook API yes; none wired | No `.windsurfrules`. AGENTS.md exceeds the 12,000-char rule limit (see H6). |
+| **Windsurf** | `.windsurf/rules/*.md` (`trigger: always_on`) + `AGENTS.md` | Cognition | Hook API yes; none wired | No `.windsurfrules`. AGENTS.md exceeds the 12,000-char rule limit, so `contract-core.md` is generated from its invariant sections. |
 | **Obsidian** | Folder = vault | n/a | n/a | Navigation, graph, daily notes. |
 | **Claude Desktop** | Filesystem MCP | Anthropic | n/a | Skills via AGENTS.md + `trigger-routes-digest.md`. |
 | **Perplexity / generic MCP / human** | `llms.txt` → `AGENTS.md` → `skill-loadset.py` or `trigger-routes-digest.md` | any | n/a | Adapter: [[PERPLEXITY]]. |
@@ -217,6 +217,7 @@ Rendered outputs (installers read this mapping from `render_shims.py --list --js
 | beacon-cursor-user-rules | `00-bootstrap/dist/cursor-user-rules.txt` | whole-file | - | - |
 | beacon-projects-pointer | `00-bootstrap/dist/projects-AGENTS.md` | whole-file | - | - |
 | beacon-rules | `00-bootstrap/dist/RULES.txt` | whole-file | - | - |
+| windsurf-contract-core | `.windsurf/rules/contract-core.md` | tracked | - | - |
 | surfaces-md-block | `00-bootstrap/SURFACES.md` | tracked | - | - |
 <!-- END GENERATED: surfaces -->
 

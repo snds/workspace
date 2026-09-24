@@ -2454,6 +2454,41 @@
       "beacon": "rules"
     },
     {
+      "id": "windsurf-contract-core",
+      "path": ".windsurf/rules/contract-core.md",
+      "layer": null,
+      "owned_keys": [
+        "whole-file"
+      ],
+      "install_path": null,
+      "install_mode": "tracked",
+      "surface": "windsurf",
+      "probe": false,
+      "render": "contract-core",
+      "max_chars": 12000,
+      "sections": [
+        {
+          "heading": "## Core rules",
+          "bullet": "**Context is king"
+        },
+        {
+          "heading": "## Session-start ritual (every surface)"
+        },
+        {
+          "heading": "### Handoff protocol (tool-neutral — every agent follows this)"
+        },
+        {
+          "heading": "## Mutation policy"
+        },
+        {
+          "heading": "## Adapter model"
+        },
+        {
+          "heading": "## Write-quality gates"
+        }
+      ]
+    },
+    {
       "id": "surfaces-md-block",
       "path": "00-bootstrap/SURFACES.md",
       "layer": null,

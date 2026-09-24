@@ -7,7 +7,7 @@ trigger: always_on
 
 _Thin pointer. Do not add `.windsurfrules` — some IDEs first-match that filename and then skip `AGENTS.md`._
 
-**Read AGENTS.md at the repository root before producing.** This is not the contract.
+**Read AGENTS.md at the repository root before producing.** This is not the contract. AGENTS.md is longer than a Windsurf rule, so `contract-core.md` (generated) repeats its invariant sections.
 
 1. Workspace root = the directory containing `AGENTS.md`.
 2. New session: emit `python3 09-tools/session-status.py --surface Windsurf` first.
