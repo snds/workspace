@@ -2,8 +2,8 @@
   "schema_version": 1,
   "surface": "git",
   "device": "personal-mbp",
-  "git_version": "2.50.1",
+  "git_version": "2.55.0",
   "hasconfig": true,
-  "config_hooks": false,
+  "config_hooks": true,
   "recorded_at": "2026-09-24"
 }
