@@ -748,6 +748,9 @@ def overlay_install_cases(pr, rs) -> list:
         (probes / f"cursor@{dev}.json").write_text(json.dumps(
             {"schema_version": 1, "surface": "cursor", "device": dev,
              "env_probe": {"env_presence": {"WS_CLAUDE_OVERLAY": False}}}), encoding="utf-8")
+        (probes / f"git@{dev}.json").write_text(json.dumps(
+            {"schema_version": 1, "surface": "git", "device": dev, "git_version": "2.54.0", "hasconfig": True,
+             "config_hooks": True, "recorded_at": "2026-09-24"}), encoding="utf-8")
         sj = home / ".claude" / "settings.json"
         sj.parent.mkdir(parents=True)
         stale = {"env": {"EDITOR": "vi", "WS_CLAUDE_OVERLAY": "v4", "GIT_AUTHOR_EMAIL": "stale@example.invalid",

@@ -813,15 +813,18 @@ def overlay_refusals(ctx: Ctx) -> list:
         except (OSError, ValueError):
             reasons.append(f"probe record unreadable: {s}@{dev}")
             continue
-        envp = (rec.get("env_probe") or {}) if isinstance(rec, dict) else {}
-        pres = envp.get("env_presence") or {}
-        if pres.get("WS_CLAUDE_OVERLAY") is True:
+        # Every env probe the record keeps (one per `via`), plus the legacy single `env_probe`.
+        envps = []
+        if isinstance(rec, dict):
+            envps = [e for e in [rec.get("env_probe"), *(rec.get("env_probes") or {}).values()] if isinstance(e, dict)]
+        if any((e.get("env_presence") or {}).get("WS_CLAUDE_OVERLAY") is True for e in envps):
             reasons.append(f"probe {s}@{dev} shows env import of the Claude overlay "
                            "(WS_CLAUDE_OVERLAY present)")
             continue
         # On a device without the overlay, WS_CLAUDE_OVERLAY is absent everywhere, so its absence
         # proves nothing. Any name from Claude's own settings env in another host's shell does.
-        leaked = sorted(set(envp.get("env_marker_names") or []) & claude_env)
+        names = set().union(*[set(e.get("env_marker_names") or []) for e in envps]) if envps else set()
+        leaked = sorted(names & claude_env)
         if leaked:
             reasons.append(f"probe {s}@{dev} shows env import of Claude settings env ({', '.join(leaked)}); "
                            "the overlay would reach that host (D4: needs the Claude-only env-file channel)")
@@ -1375,6 +1378,18 @@ def self_test() -> int:
             rc, _o, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
             self.assertEqual(rc, 4)
             self.assertIn("env import of Claude settings env (CLAUDE_CODE_DISABLE_AUTO_MEMORY)", err)
+
+        def test_overlay_reads_every_per_via_env_probe(self):
+            self._seed_overlay_ready()
+            f = self.repo / PROBES_DIR / "cursor@dev-a.json"
+            rec = json.loads(f.read_text())
+            clean = dict(rec["env_probe"])
+            rec["env_probes"] = {"terminal": clean,
+                                 "run_in_terminal": dict(clean, env_presence={"WS_CLAUDE_OVERLAY": True})}
+            f.write_text(json.dumps(rec))                        # the latest env_probe is clean; an older via is not
+            rc, _o, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
+            self.assertEqual(rc, 4)
+            self.assertIn("WS_CLAUDE_OVERLAY present", err)
 
         def test_overlay_refuses_git_without_config_hooks(self):
             self._seed_overlay_ready(config_hooks=False)

@@ -547,6 +547,10 @@ def _write_probe_record(rec: dict, *, home=None) -> Optional[Path]:
         return None
 
 
+def _via_key(via) -> str:
+    return str(via) if via else "agent-shell"
+
+
 def _tracked_probe(host: str, device: str, existing: dict, hook_recs: list, env_rec, today: str) -> dict:
     hp = existing.get("hook_probe") or {"status": "not-installed", "events": {}}
     hp = {"status": hp.get("status", "not-installed"), "events": dict(hp.get("events") or {})}
@@ -565,9 +569,16 @@ def _tracked_probe(host: str, device: str, existing: dict, hook_recs: list, env_
         detected = rec.get("detected") or detected
         git_version = rec.get("git_version") or git_version
         mismatch = mismatch or (detected.get("acting_host") != host)
+    # One env probe per `via` (terminal, run_in_terminal, agent shell): a later run of one kind must not
+    # overwrite another kind's evidence. `env_probe` stays the latest, for readers of the older shape.
+    probes = dict(existing.get("env_probes") or {})
+    if not probes and existing.get("env_probe") and (existing["env_probe"].get("env_marker_names")
+                                                    or existing["env_probe"].get("env_presence")):
+        probes[_via_key(existing["env_probe"].get("via"))] = existing["env_probe"]
     if env_rec:
         envp = {"via": env_rec.get("via"), "env_marker_names": env_rec.get("env_marker_names") or [],
                 "env_values": env_rec.get("env_values") or {}, "env_presence": env_rec.get("env_presence") or {}}
+        probes[_via_key(env_rec.get("via"))] = envp
         # Payload-derived detection outranks env detection: an env-only run keeps a recorded hook probe's.
         if not hook_recs and hp["status"] != "recorded":
             ancestry = env_rec.get("ancestry_comm") or ancestry
@@ -575,7 +586,7 @@ def _tracked_probe(host: str, device: str, existing: dict, hook_recs: list, env_
             mismatch = mismatch or ((env_rec.get("detected") or {}).get("acting_host") != host)
         git_version = env_rec.get("git_version") or git_version
     return {"schema_version": 1, "surface": host, "device": device, "recorded_at": today,
-            "declared_host": host, "hook_probe": hp, "env_probe": envp, "ancestry_comm": ancestry,
+            "declared_host": host, "hook_probe": hp, "env_probe": envp, "env_probes": probes, "ancestry_comm": ancestry,
             "detected": detected, "detection_mismatch": mismatch, "git_version": git_version}
 
 
@@ -1071,6 +1082,16 @@ def self_test_cases() -> list:
         ok("env-only record keeps hook detection",
            merged["detected"] == hook_det and merged["ancestry_comm"] == ["claude"]
            and merged["env_probe"]["env_presence"]["WS_CLAUDE_OVERLAY"] is True, json.dumps(merged))
+        term = dict(env_only, via="terminal", env_presence={"WS_CLAUDE_OVERLAY": False})
+        both = _tracked_probe("claude-code", "d", merged, [], term, "2026-01-02")
+        ok("env probes are kept per via",
+           set(both["env_probes"]) == {"agent-shell", "terminal"}
+           and both["env_probes"]["agent-shell"]["env_presence"]["WS_CLAUDE_OVERLAY"] is True
+           and both["env_probe"]["via"] == "terminal", json.dumps(both["env_probes"]))
+        legacy = _tracked_probe("claude-code", "d", {"env_probe": {"via": "run_in_terminal", "env_marker_names": ["X"],
+                                                                   "env_presence": {}}}, [], term, "2026-01-02")
+        ok("a legacy single env_probe is kept under its via",
+           set(legacy["env_probes"]) == {"run_in_terminal", "terminal"}, json.dumps(legacy["env_probes"]))
         fresh = _tracked_probe("claude-code", "d", {}, [], env_only, "2026-01-01")
         ok("env-only record without a hook probe takes env detection",
            fresh["detected"]["via"] == "env", json.dumps(fresh))

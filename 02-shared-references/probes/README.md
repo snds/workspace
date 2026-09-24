@@ -36,7 +36,8 @@ Probes are human-run. No agent installs probe hooks or promotes records.
 | `surface`, `device`, `declared_host` | the host and device the file describes |
 | `hook_probe.status` | `recorded`, `untrusted` (the host has not trusted the hooks yet) or `not-installed` |
 | `hook_probe.events` | per event: payload key names, env marker names, env presence |
-| `env_probe` | the terminal record: `via`, env marker names, allowlisted env values, env presence |
+| `env_probe` | the latest terminal record: `via`, env marker names, allowlisted env values, env presence |
+| `env_probes` | every terminal record kept, one per `via` (`terminal`, `run_in_terminal`, `agent-shell` when no `via` was given), so one kind of run never overwrites another; the overlay installer reads all of them |
 | `env_presence` | whether `WS_CLAUDE_OVERLAY`, `WS_SURFACE_FAMILY`, `GIT_CONFIG_COUNT`, `GH_CONFIG_DIR` and `CLAUDE_ENV_FILE` are set; this answers the env-import question for Cursor and VS Code |
 | `ancestry_comm` | process-name basenames from the hook up to the host |
 | `detected` | what host detection concluded, and whether it was verified |

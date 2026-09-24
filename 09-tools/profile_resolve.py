@@ -5195,6 +5195,13 @@ def self_test(stub_chain: bool = False) -> int:
             ok(d["family_for_walls"] == "claude", f"CLAUDECODE plus {sorted(extra)} keeps claude walls: {d}")
         d = detect_surface(env={"CURSOR_AGENT": "1"}, ancestry=[], isatty=NO_TTY, root=root)
         ok(d["family_for_walls"] == "cursor", "a Cursor marker without agent-possible env stays cursor")
+        # live table: Copilot's agent terminal sets AI_AGENT=github_copilot_vscode_* (probe copilot-vscode@personal-mbp).
+        # It stays other-local-agents (restricted) on purpose: an env-only copilot label would lower the walls, and
+        # L-01 keeps detection tighten-only until H15 decides discounts (wave 1). Changing this is a decision.
+        if (ROOT / "02-shared-references" / "surfaces.json").is_file():
+            d = detect_surface(env={"AI_AGENT": "github_copilot_vscode_agent"}, ancestry=[], isatty=NO_TTY, root=ROOT)
+            ok(d["family_for_walls"] == "unknown-agent" and _restricted(d, ROOT),
+               f"AI_AGENT=github_copilot_vscode_* alone stays restricted (L-01): {d}")
 
         # the surfaces table unreadable: the built-in marker list still refuses (test F-02, decision b)
         empty = tmp / "no-tables"
