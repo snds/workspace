@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "surface": "grok-build",
+  "device": "personal-mbp",
+  "recorded_at": "2026-09-24",
+  "declared_host": "grok-build",
+  "hook_probe": {
+    "status": "not-installed",
+    "events": {}
+  },
+  "env_probe": {
+    "via": "terminal",
+    "env_marker_names": [
+      "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+      "CLAUDE_WORKSPACE_VAULT",
+      "GH_PAGER",
+      "GROK_AGENT",
+      "GROK_SESSION_ID",
+      "TERM_PROGRAM",
+      "TERM_PROGRAM_VERSION"
+    ],
+    "env_values": {
+      "TERM_PROGRAM": "Apple_Terminal"
+    },
+    "env_presence": {
+      "WS_CLAUDE_OVERLAY": false,
+      "WS_SURFACE_FAMILY": false,
+      "GIT_CONFIG_COUNT": false,
+      "GH_CONFIG_DIR": false,
+      "CLAUDE_ENV_FILE": false
+    }
+  },
+  "ancestry_comm": [
+    "zsh",
+    "grok",
+    "-zsh",
+    "login",
+    "Terminal",
+    "launchd"
+  ],
+  "detected": {
+    "acting_host": "unknown",
+    "family_for_walls": "claude",
+    "via": "none",
+    "verified": false,
+    "conflict": true
+  },
+  "detection_mismatch": true,
+  "git_version": "2.55.0"
+}
