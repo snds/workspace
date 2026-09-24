@@ -86,6 +86,10 @@ BUDGETS = {
 # blocks and build-registry hashes them, so registry-after-related is load-bearing;
 # --check keeps this harness read-only.
 QUALITY_STEP_TIMEOUT_S = 300.0   # one hanging self-test must not hang the chain; a timeout is a FAIL
+# Per-step overrides, each a deliberate diff. test-validators runs every fixture suite that builds real
+# git repos (floor, identity, installers); it measured 309 s outside the sandbox on 2026-09-24 after the
+# wave-1 floor cases, so it gets 600 s. Every other step keeps the 300 s hang guard.
+QUALITY_STEP_TIMEOUT_OVERRIDE_S = {"test-validators.py": 600.0}
 QUALITY_CHAIN = [
     ("build-related.py", ["--check"]),
     ("build-registry.py", ["--check"]),
@@ -192,16 +196,17 @@ def run_quality(verbose: bool = False) -> dict:
             failed += 1
             continue
         start = time.monotonic()
+        limit = QUALITY_STEP_TIMEOUT_OVERRIDE_S.get(script, QUALITY_STEP_TIMEOUT_S)
         try:
             proc = subprocess.run(
                 [sys.executable, str(target), *args],
-                capture_output=True, text=True, cwd=str(ROOT), timeout=QUALITY_STEP_TIMEOUT_S,
+                capture_output=True, text=True, cwd=str(ROOT), timeout=limit,
             )
         except subprocess.TimeoutExpired as exc:
             note_env(script, exc.stdout, exc.stderr)   # partial output; bytes even under text=True
             failed += 1
-            results.append({"tool": script, "status": "FAIL", "exit": None, "seconds": QUALITY_STEP_TIMEOUT_S,
-                            "last": f"SKIPPED: timed out after {QUALITY_STEP_TIMEOUT_S:g}s (never green)",
+            results.append({"tool": script, "status": "FAIL", "exit": None, "seconds": limit,
+                            "last": f"SKIPPED: timed out after {limit:g}s (never green)",
                             "output": ""})
             continue
         elapsed = round(time.monotonic() - start, 2)
