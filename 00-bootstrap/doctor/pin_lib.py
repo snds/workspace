@@ -136,21 +136,27 @@ def check_writer(home, *, confirm_real_home=False, agent_check=None) -> list:
 
 # --------------------------------------------------------------------------- write primitive
 
-_ARMED: set = set()
+_ARMED: dict = {}  # home -> nesting depth
 
 
 class armed:
-    """Context manager: permit primitive writes under `home` for one guarded operation."""
+    """Context manager: permit primitive writes under `home` for one guarded operation.
+    Re-entrant: a nested arming (installers.run arms, then pin() arms again) must not disarm the
+    outer one on exit, so each home carries a depth count."""
 
     def __init__(self, home):
         self.home = _real(home)
 
     def __enter__(self):
-        _ARMED.add(self.home)
+        _ARMED[self.home] = _ARMED.get(self.home, 0) + 1
         return self
 
     def __exit__(self, *exc):
-        _ARMED.discard(self.home)
+        n = _ARMED.get(self.home, 0) - 1
+        if n > 0:
+            _ARMED[self.home] = n
+        else:
+            _ARMED.pop(self.home, None)
         return False
 
 
@@ -632,6 +638,26 @@ def self_test() -> int:
                 pin(repo=self.repo, home=real, **kw)
             self.assertEqual(len(self.spy.calls), n, "write primitive reached")
             return str(cm.exception)
+
+        def test_nested_arming_survives_inner_exit(self):
+            # installers.run arms the home, then pin() arms it again; the inner exit must not
+            # disarm the outer guard (the 2026-09-24 re-pin logged nothing for this reason).
+            g = globals()
+            saved = g["passwd_home"]
+            g["passwd_home"] = lambda: _real(self.home)
+            try:
+                target = self.base() / "control" / "probe.txt"
+                with armed(self.home):
+                    with armed(self.home):
+                        fs("mkdir", self.base(), 0o755)
+                    fs("mkdir", target.parent, 0o700)
+                    fs("append", target, b"after inner exit\n")
+                self.assertEqual(target.read_bytes(), b"after inner exit\n")
+                with self.assertRaises(RefusedError):
+                    fs("append", target, b"after outer exit\n")
+                self.assertEqual(_ARMED, {})
+            finally:
+                g["passwd_home"] = saved
 
         def test_real_home_without_confirm(self):
             msg = self._assert_real_home_refused()
