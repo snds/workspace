@@ -40,6 +40,41 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+### 2026-09-24 — Zero-Vector wave 0: G4e, promotion batch, re-pins
+
+SessionID: 2026-09-24-work-zv4e
+--- SESSION BLOCK ---
+Date: 2026-09-24
+Machine: Work MacBook Pro
+Surface: Claude Code
+Agent: Claude Opus 5.5
+Project(s): 19-workspace-brain (Zero-Vector wave 0)
+Summary: G4e confirmed and closed; G5c dry-run clean; surfaces.json promotion batch; two bug fixes found on the way (ws_hook probe merge, pin_lib nested arming); re-pinned twice, now at 918a329.
+Artifacts:
+  - 02-shared-references/surfaces.json — claude-code H2/H19 and cursor H19 to enforced-partial; H17/H22 refs verified; codex H19 held back; H17-R7 text
+  - 02-shared-references/probes/claude-code@work-mbp.json — re-taken from the agent shell after G4e (overlay v5 present)
+  - 09-tools/ws_hook.py — env-only probe record keeps payload-derived detection (+2 self-test cases)
+  - 09-tools/prune-our-branches.py — one scan per git common dir (+4 self-test cases)
+  - 00-bootstrap/doctor/pin_lib.py — armed guard counts nesting depth (+1 self-test case)
+Decisions:
+  - Sean: G4e done; run the promotion batch ahead of the G5c apply
+  - claude-code H19 promoted to enforced-partial, not enforced (hook core registered only for probes in wave 0)
+  - G5c apply not manufactured: no merged-PR branch of ours exists on this device
+Evidence:
+  - v5 overlay + floor live (`git hook list pre-push` = ws-claude-wall; TestClaudeFloor OK) @ Work MBP Claude session — verified
+  - G5c dry-run: vetted, exit 0, zero deletions, credential classes gh:default-account and https:github.com+gh:default-account @ control/receipts.jsonl — verified
+  - pin at 918a329 with install-log entry and backup; prune vetted-status = vetted @ ~/.config/snds-workspace — verified
+  - harness 36/36 outside the Bash sandbox @ 09-tools/workspace-harness.py — verified
+Pending resolved:
+  - G4e (Sean); surfaces.json promotion batch; H17-R7 text; prune dedupe; re-pin
+Next:
+  - G5c apply once a merged-PR branch of ours exists (e.g. cds #50's head after it merges)
+  - Personal MBP G3d and G4d
+  - Sean: doctor drift (~/.cursor/hooks.json, 4 retired cursor-* scripts, launchd timer, 1 un-acked audit MISS)
+  - Follow-up: keep one env_probe per `via` in tracked probe records (finding #2)
+--- END BLOCK ---
+
 ### 2026-09-23 — Zero-Vector wave 0: fix round, publish, decisions, D5
 
 SessionID: 2026-09-23-work-4602a8
