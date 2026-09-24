@@ -116,7 +116,9 @@ The full spec is held locally (`INTENT-wave1-2026-09.md`), like wave 0's.
 - **Decided by Sean (2026-09-24):** the recommended AGENTS.md cut set lands first; H18 git lanes go on
   both Macs in wave 1 and block at install; a detection discount needs verified evidence (a host hook
   payload or process ancestry), never an environment variable alone; the heal scripts keep healing,
-  but only from the pinned lib. Still open: D4's design and the employer-domain baseline.
+  but only from the pinned lib. Also decided: the employer-domain scan counts full addresses only
+  (baseline zero); the Claude-only settings channel (D4) goes on both Macs, accepting that its protections
+  apply once Claude's startup hook has run (a doctor check flags a session without them).
 - **Non-Claude only:** the employer-repo intent PRs and the one-time inventory of workspace-derived
   files in employer repos (Cursor, Codex or Sean).
 
