@@ -802,6 +802,7 @@ def overlay_refusals(ctx: Ctx) -> list:
     reasons += _git_floor_refusals(ctx, dev)
     needed, table_reasons = overlay_probe_surfaces(ctx)
     reasons += table_reasons
+    claude_env = _claude_settings_env_names(ctx)
     for s in needed:
         f = _probe_file(ctx, s, dev)
         if not f.is_file():
@@ -812,11 +813,32 @@ def overlay_refusals(ctx: Ctx) -> list:
         except (OSError, ValueError):
             reasons.append(f"probe record unreadable: {s}@{dev}")
             continue
-        pres = ((rec.get("env_probe") or {}).get("env_presence") or {}) if isinstance(rec, dict) else {}
+        envp = (rec.get("env_probe") or {}) if isinstance(rec, dict) else {}
+        pres = envp.get("env_presence") or {}
         if pres.get("WS_CLAUDE_OVERLAY") is True:
             reasons.append(f"probe {s}@{dev} shows env import of the Claude overlay "
                            "(WS_CLAUDE_OVERLAY present)")
+            continue
+        # On a device without the overlay, WS_CLAUDE_OVERLAY is absent everywhere, so its absence
+        # proves nothing. Any name from Claude's own settings env in another host's shell does.
+        leaked = sorted(set(envp.get("env_marker_names") or []) & claude_env)
+        if leaked:
+            reasons.append(f"probe {s}@{dev} shows env import of Claude settings env ({', '.join(leaked)}); "
+                           "the overlay would reach that host (D4: needs the Claude-only env-file channel)")
     return reasons
+
+
+def _claude_settings_env_names(ctx: Ctx) -> set:
+    """Env names Claude Code applies from settings: the user layer and this repo's project layer."""
+    names: set = set()
+    for f in (ctx.home / ".claude" / "settings.json", ctx.repo / ".claude" / "settings.json"):
+        try:
+            env = json.loads(f.read_text(encoding="utf-8")).get("env") or {}
+        except (OSError, ValueError, AttributeError):
+            continue
+        if isinstance(env, dict):
+            names |= {k for k in env if isinstance(k, str)}
+    return names
 
 
 EMPLOYER_NOIDENT_NAME = "claude-employer-noident.inc"
@@ -1335,6 +1357,24 @@ def self_test() -> int:
             self.assertEqual(rc, 4)
             self.assertIn("copilot-vscode@dev-a", err)
             self.assertNotIn("cursor@dev-a", err)
+
+        def test_overlay_refuses_claude_settings_env_import_before_first_install(self):
+            # Personal MBP 2026-09-24: no overlay yet, so WS_CLAUDE_OVERLAY was absent everywhere, but
+            # Codex desktop and Grok Build shells carried names from Claude's settings env.
+            self._seed_overlay_ready()
+            sj = self.home / ".claude" / "settings.json"
+            sj.parent.mkdir(parents=True, exist_ok=True)
+            sj.write_text(json.dumps({"env": {"CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"}}))
+            rc, out, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
+            self.assertEqual(rc, 0, out + err)                   # the seeded cursor shell carries none of it
+            self.run_inst("claude-overlay", "uninstall")
+            f = self.repo / PROBES_DIR / "cursor@dev-a.json"
+            rec = json.loads(f.read_text())
+            rec["env_probe"]["env_marker_names"] = ["CLAUDE_CODE_DISABLE_AUTO_MEMORY", "TERM_PROGRAM"]
+            f.write_text(json.dumps(rec))
+            rc, _o, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
+            self.assertEqual(rc, 4)
+            self.assertIn("env import of Claude settings env (CLAUDE_CODE_DISABLE_AUTO_MEMORY)", err)
 
         def test_overlay_refuses_git_without_config_hooks(self):
             self._seed_overlay_ready(config_hooks=False)
