@@ -1,7 +1,7 @@
 ---
 title: Zero-Vector-informed harness plan (v1.1, LLM- and device-inclusive)
 date: 2026-09-22
-status: wave 0 published 2026-09-23; wave 1 not started (wave 0 approved 2026-09-22 with the LLM-inclusive caveat)
+status: wave 0 closed on the Work MBP except the G5c apply; wave 1 started 2026-09-24 (items not needing a decision)
 related: [[zero-vector-design-methodology]]
 ---
 
@@ -99,6 +99,22 @@ enforcement only at the lowest tier that actually blocks.
 | Codex (desktop/CLI) | T3 once hooks are trusted, execpolicy belts, T4 lanes | Trust is pinned per definition hash; 32 KiB AGENTS.md cap |
 | Codex (cloud) | T5 | Low-confidence docs |
 | Gemini, Copilot, Windsurf, Warp, Aider, others | T3 where hooks exist, T4, T5 | Unverified until installed and probed |
+
+## Wave 1 status (2026-09-24)
+
+Sean approved planning wave 1 and starting every item that neither waits on a decision nor on G5c.
+The full spec is held locally (`INTENT-wave1-2026-09.md`), like wave 0's.
+
+- **Started:** the work email address leaves tracked files (^pc-47; setup scripts read it from a
+  machine-local file); the seven minor wave 0 follow-ups (fail-closed hardening and test pins); the
+  H6 entry-point measurement and a proposed AGENTS.md cut list (report only).
+- **Waiting on Sean's decisions:** which AGENTS.md cuts land (H6 lands first); which git lanes install
+  where (H18); whether any host detection may lower the walls (H15, including the Copilot label);
+  the Claude-only env-file channel design (D4, which the Personal MBP overlay needs); the
+  employer-substance baseline for the employer mail domain; moving the heal scripts to report class
+  (D11, with H20).
+- **Non-Claude only:** the employer-repo intent PRs and the one-time inventory of workspace-derived
+  files in employer repos (Cursor, Codex or Sean).
 
 ## Components (25) by wave
 
