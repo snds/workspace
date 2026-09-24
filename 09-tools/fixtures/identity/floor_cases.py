@@ -365,7 +365,9 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "matches an employer path glob is blocked [I2]",
                   "decisions: a linked worktree's admin dir used as GIT_DIR from another cwd locates that worktree",
                   "decisions: a Claude push of an annotated tag whose tagger is the employer identity is blocked "
-                  "[IR1]; the same tag with the personal tagger pushes"]
+                  "[IR1]; the same tag with the personal tagger pushes",
+                  "decisions: scan records bare repos under projects_root, so a Claude commit in a personal bare "
+                  "repo's linked worktree is allowed and one in an employer bare repo's worktree stays blocked [I2]"]
 VETTED_CASES = (DECISION_CASES[3], DECISION_CASES[13], DECISION_CASES[14])
 
 
@@ -590,6 +592,7 @@ def floor_decision_cases(pr, rs) -> list:
                     f"rc={r.returncode} {r.stderr[-200:]}"))
         out += _ir1_push_cases(lab, pr, lifted)
         out += _outside_worktree_cases(lab, pr, penv)
+        out += _bare_worktree_cases(lab, pr, penv)
     finally:
         _cleanup(td)
     return out
@@ -708,6 +711,44 @@ def _outside_worktree_cases(lab: Lab, pr, penv: dict) -> list:
         gd, top = pr._floor_locate(elsewhere, dict(lab.base_env, GIT_DIR=str(admin)), "git")
         out.append((DECISION_CASES[31], gd is not None and top is not None
                     and os.path.realpath(top) == os.path.realpath(wt), f"gitdir={gd} top={top}"))
+    finally:
+        if cache.exists():
+            cache.unlink()
+    return out
+
+
+def _bare_worktree_cases(lab: Lab, pr, penv: dict) -> list:
+    """W3-02: a linked worktree's main checkout is its common dir when that is a bare repo; the floor
+    resolves it from the cache, so `scan` (run as a human) must record bare repos."""
+    out = []
+    pat = dict(lab.base_env, GIT_AUTHOR_NAME="Pat Sample", GIT_AUTHOR_EMAIL=lab.pat_mail(),
+               GIT_COMMITTER_NAME="Pat Sample", GIT_COMMITTER_EMAIL=lab.pat_mail())
+    cache = pr.ws_paths(home=lab.home)["telemetry"] / "checkouts.json"
+    human = {"family": "human", "family_for_walls": "human", "agent_possible": False}
+    try:
+        seed = lab.tmp / "bare-seed"
+        lab.g(pat, "init", "-q", "-b", "main", str(seed))
+        lab.g(pat, "commit", "-q", "--allow-empty", "-m", "seed", cwd=seed)
+        bare = lab.home / "Projects" / "bare-mine.git"
+        lab.g(pat, "clone", "-q", "--bare", str(seed), str(bare))
+        lab.g(pat, "--git-dir", str(bare), "remote", "set-url", "origin", "git@github.com:pat-sample/bare-mine.git")
+        wt = lab.tmp / "bare-mine-wt"
+        lab.g(pat, "--git-dir", str(bare), "worktree", "add", "-q", "-b", "wt", str(wt), "main")
+        ebare = lab.home / "Projects" / "bare-theirs.git"
+        lab.g(pat, "clone", "-q", "--bare", str(seed), str(ebare))
+        lab.g(pat, "--git-dir", str(ebare), "remote", "set-url", "origin", "git@github.com:acme-corp/bare-theirs.git")
+        ewt = lab.tmp / "bare-theirs-wt"
+        lab.g(pat, "--git-dir", str(ebare), "worktree", "add", "-q", "-b", "wt", str(ewt), "main")
+        sc = pr.scan(root=lab.lib, home=lab.home, detection=human)
+        rows = {os.path.basename(c["path"]): c["owner_class"] for c in ((sc.get("_doc") or {}).get("checkouts") or [])
+                if c.get("kind") == "bare"}
+        r = lab.g(penv, "commit", "--allow-empty", "-m", "claude commit in a bare repo's worktree", cwd=wt)
+        e = lab.g(lab.with_ident(penv), "commit", "--allow-empty", "-m", "employer bare worktree", cwd=ewt)
+        out.append((DECISION_CASES[33], sc.get("written") and rows == {"bare-mine.git": "personal",
+                                                                     "bare-theirs.git": "employer"}
+                    and r.returncode == 0 and "blocked" not in r.stderr and e.returncode != 0 and "[I2]" in e.stderr,
+                    f"written={sc.get('written')} rows={rows} rc={r.returncode} {r.stderr[-300:]} "
+                    f"employer rc={e.returncode} {e.stderr[-200:]}"))
     finally:
         if cache.exists():
             cache.unlink()

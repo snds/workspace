@@ -852,11 +852,23 @@ def _owner_row_class(table: dict, host: str, owner: str) -> Tuple[str, Optional[
     return "unknown", None
 
 
-def _read_git_config_remotes(top: Path) -> Tuple[List[Tuple[str, str]], Optional[str]]:
-    """[(remote name, url)] from the checkout's git config file. Reads only config files."""
+def _is_bare_repo(d: Path) -> bool:
+    """A bare repository dir, by git's own shape test (HEAD, objects/ and refs/, no .git)."""
+    try:
+        return (not (d / ".git").exists() and (d / "HEAD").is_file() and (d / "objects").is_dir()
+                and (d / "refs").is_dir())
+    except OSError:
+        return False
+
+
+def _read_git_config_remotes(top: Path, bare: bool = False) -> Tuple[List[Tuple[str, str]], Optional[str]]:
+    """[(remote name, url)] from the checkout's git config file (a bare repo's own `config` when
+    `bare`). Reads only config files."""
     gitp = top / ".git"
     try:
-        if gitp.is_dir():
+        if bare:
+            cfg = top / "config"
+        elif gitp.is_dir():
             cfg = gitp / "config"
         elif gitp.is_file():
             first = gitp.read_text(encoding="utf-8", errors="replace").splitlines()[0].strip()
@@ -1330,7 +1342,7 @@ def _iter_checkout_dirs(pr: Path, depth: int) -> List[Path]:
                 if k.name.startswith(".") or k.is_symlink() or not k.is_dir():
                     continue
                 nxt.append(k)
-                if (k / ".git").exists():
+                if (k / ".git").exists() or _is_bare_repo(k):
                     out.append(k)
         frontier = nxt
     return out
@@ -1343,8 +1355,10 @@ def _scan_doc(*, root: Optional[Path], home: Optional[Path], depth: int, det: di
     dev = current_device(hostname=hostname, root=root)
     checkouts = []
     for d in _iter_checkout_dirs(pr, depth):
-        kind = "repo" if (d / ".git").is_dir() else "linked-worktree"
-        pairs, _err = _read_git_config_remotes(d)
+        # A bare repo is recorded too: it is the main checkout of its linked worktrees (W3-02).
+        bare = _is_bare_repo(d)
+        kind = "bare" if bare else ("repo" if (d / ".git").is_dir() else "linked-worktree")
+        pairs, _err = _read_git_config_remotes(d, bare=bare)
         remotes = _remotes_from_urls(pairs, root)
         classes = []
         stored = []
