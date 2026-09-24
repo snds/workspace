@@ -54,8 +54,9 @@ or both.
 2. **MVP against a pilot.** One real production pilot (committed, not started; good token yield). Build
    one colour through all three tiers in Figma *and* code before expanding. Versions stay `0.x`.
 3. **Structure = tier.** Figma collections per tier (per-theme tier-1 collections, tier-2/3 modes per
-   theme, a `core` collection); code directories per tier. Configure `token-audit.py` `tier_prefixes`
-   to the same structure so tier is never guessed.
+   theme, a `core` collection); code directories named `tier-1-*` / `tier-2-*` / `tier-3-*` (+ `core/`) — `token-audit.py` reads the
+   tier from those directories, so it is never guessed. `tier_prefixes` in its config matches dotted
+   token-name prefixes and is only a fallback when the path carries no tier.
 4. **Name with an algorithm** (small group of design + dev leads; codify, document in the makers' path):
    tier 1 loose/literal and ramp-based; tier 2 `category → property/surface → intention → variant →
    state` (colour buckets background/content/border; `disabled` = intention); tier 3
@@ -66,8 +67,11 @@ or both.
 6. **Composites for typography, shadow, motion;** consumers get one bundle (style / mixin / class /
    single `box-shadow`). Responsive type is absorbed by the system, not by consumers.
 7. **Advanced axes are situational** (dark mode, sub-brands, campaigns, white-label, i18n, rebrand,
-   AI): each is a child theme or a restricted override of a parent, never a new architecture. Dark =
-   colour + shadow only; sub-brand = cosmetic only; white-label = allowlisted keys after 1.0.
+   AI): each touches a few properties and extends the existing architecture. Dark mode, sub-brands and
+   campaigns are child themes or restricted overrides of a parent — dark = colour + shadow only;
+   sub-brand/campaign = cosmetic only; a sub-brand that fights its parent becomes a standalone theme.
+   White-label = an allowlisted translation layer after 1.0. Rebrands scale with scope: small tweaks
+   stay inside the theme; a refresh or radical rebrand is a new standalone theme.
 8. **Second theme = remap + core.** Clone, remap aliases, extract `core` immediately, add an internal
    **vanilla** theme; expect architecture churn until theme 2–4, then stability.
 9. **Publish tier 2/3 only** (tier 1 unscoped + hidden in Figma; not exported in the package unless a
@@ -84,12 +88,12 @@ or both.
 ```bash
 python3 09-tools/token-audit.py --self-test
 python3 09-tools/token-audit.py --config token-audit.config.json tokens/**/*.json
-python3 09-tools/token-audit.py --themes themes/*.json              # identical tier-2/3 API
+python3 09-tools/token-audit.py --themes brand-a/ brand-b/ vanilla/  # ROOT themes: identical tier-2/3 API
 python3 09-tools/token-audit.py --parity figma.json code.json --prefix ds
 python3 09-tools/token-audit.py tokens.json --css src/components --prefix ds
 python3 09-tools/token-audit.py --outputs dist/tokens.css dist/_tokens.scss dist/tokens.json
 python3 09-tools/token-audit.py --parent brand/ --override brand-dark/ --kind dark   # colour + shadow only
-python3 09-tools/token-audit.py core/ --themes brand-a/ brand-b/ --contrast           # WCAG per theme
+python3 09-tools/token-audit.py core/ --themes brand-a/ brand-b/ --contrast           # WCAG per theme (TA023/TA024)
 ```
 
 Errors (TA001–005, TA013, TA021, TA023) block; warnings are review items. Product-repo CI owns: `dist`-only package,
@@ -109,7 +113,8 @@ and text keep binding tier-2 `background-default`, `content-default`, `border-su
 category token covers input borders. A new brand is a remap of tier-1 + two modes.
 
 **Why —** tier 2 is the contract; tier 3 multiplies maintenance per theme. Tokens exist for themeability,
-so a component token is justified only by variation *across themes*.
+so a component token needs one of the step-5 cases — most often variation across themes; a form-control
+category or an assistive special case such as a focus ring also qualifies.
 
 ## Defers to
 

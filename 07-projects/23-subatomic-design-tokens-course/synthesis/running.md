@@ -29,7 +29,7 @@ cross-disciplinary collaboration.
 
 ## What was new to the workspace (vs. Curtis-based doctrine already in #09)
 
-1. **Tier 3 must be earned** (varies across themes) — contradicts Curtis's local-first promotion;
+1. **Tier 3 must be earned** (heavily-variable components, component categories, special cases) — contradicts Curtis's local-first promotion;
    recorded as a disagreement with a context-dependent default.
 2. **Structure = tier** (Figma collections, code directories) → mechanical tier resolution.
 3. **Sanctioned Figma↔code divergences** enumerated (prefix, tier id, named `default`, viewport ≠
@@ -45,11 +45,19 @@ cross-disciplinary collaboration.
 | Run | Result |
 |---|---|
 | `token-audit.py core/ <theme>/ --prefix ds` × 4 themes | 0 errors, 0 warnings; tier 3 ≈ 11% (42/≈390) |
-| `--themes strawberry chocolate vanilla dark-chocolate` | identical tier-2/3 API (315–337 tokens per theme dir) |
+| `--themes strawberry chocolate vanilla dark-chocolate` | identical tier-2/3 API (315–337 tokens per theme dir). dark-chocolate passes only because the demo ships it as a full tier-1/2/3 copy; Ch8's skinny code override belongs under `--parent/--override`, not `--themes` |
 | `--outputs build/json/tokens.json build/css/tokens.css` | identical token sets |
 | `core/ --themes … --contrast` | **3 genuine WCAG failures**: `content-subtle` (#7A7E87) on `background-default` (#fff) = 4.07:1 in strawberry, chocolate, vanilla; dark-chocolate passes |
 | `--parent chocolate --override dark-chocolate --kind dark` | 1 genuine drift: dark theme changes `typography.title-lg-mobile.font-family` (dark should touch colour + shadow only) |
-| `--css subatomic-components/src` | 15 warnings, all true positives in the demo (hard-coded greys on the checkout page, placeholder `fpo` styles, a literal `0.6s` transition) — authors call the demo "not production-ready" |
+| `--css subatomic-components/src` | 2026-09-23: 15 warnings. **2026-09-24 re-run after the review fixes: 30**, all genuine or explainable — 16 TA020 (9 local z-index integers, 2 literal animations, padding/radius/transition literals), 11 TA015 (hex greys on the checkout page, named `darkblue`/`lightblue` in the `fpo` placeholder, rgba gradient stops), 2 TA017, 1 TA018 (the hero's decorative knockout wave — no text on it, a human-confirmable warning). Authors call the demo "not production-ready" |
+
+**2026-09-24 adversarial review** (workflow: 4 reviewers + 31 refuters): 31 findings, all confirmed and fixed
+— parity exempted by meaning segment (z-index was never exempt; `media-*`/`layer-*` components were
+silently dropped), declarations without `;`, Style Dictionary `{a.value}` refs, ancestor `build/`/`core/`
+directories, bad input exiting 1 instead of 2, alpha-blind contrast, DTCG colour objects/hsl, named
+colours, negative/animation/z-index literals, Sass `//` comments and `$vars`, campaign allowlist, doc
+drift. One review recommendation was superseded by data: per-rule knockout checking misfired on 5 correct
+demo stylesheets, so TA018 is judged per component stylesheet (the course's "same component").
 
 Calibration fixes made from real data: z-index joins spacing as directly consumable tier 1; `.storybook`/docs
 specimen CSS skipped; zero values exempt; tier from `tier-N` directories; knockout content pairs with

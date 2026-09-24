@@ -6825,7 +6825,7 @@
         "ds-advisor"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:2c8e92f33030d18531dd34550f914f88914cae2499683e60d28f336d0efa9bf6"
+      "hash": "sha256:e5c5660953bef32f9146bd3075a98031f9616e237d9e65b077e6933c63a7771d"
     },
     "type": {
       "path": "03-skills/type/SKILL.md",
