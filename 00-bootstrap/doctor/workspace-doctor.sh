@@ -63,7 +63,7 @@ for a in "$@"; do case $a in
   # The log line is kept purely as a human-readable audit trail.
   --ack) mkdir -p "$STATE"; _ts=$(date +%Y-%m-%dT%H:%M:%S); echo "$_ts ACK" >> "$LOG"
          printf '%s\n' "$_ts" > "$STATE/ack-mark"; echo "acknowledged"; exit 0;;
-  --ack-chat) mkdir -p "$STATE"; shasum -a 256 "$DIST/BEACON.md" | cut -d' ' -f1 > "$STATE/chat-beacon.sha"; echo "chat surfaces marked current"; exit 0;;
+  --ack-chat) mkdir -p "$STATE"; cat "$DIST/BEACON.md" "$DIST/cursor-user-rules.txt" 2>/dev/null | shasum -a 256 | cut -d' ' -f1 > "$STATE/chat-beacon.sha"; echo "chat surfaces marked current"; exit 0;;
 esac; done
 
 notify() { [ "$NOLC" -eq 1 ] && return 0; command -v osascript >/dev/null 2>&1 && osascript -e "display notification \"$1\" with title \"workspace-doctor\"" >/dev/null 2>&1; }
@@ -147,6 +147,9 @@ heal_file "$DIST/user-CLAUDE.md"            "$HOME/.claude/CLAUDE.md"           
 [ -f "$DIST/cursor-sessionstart.sh" ] && \
   report_file "$DIST/cursor-sessionstart.sh" "$HOME/.claude/hooks/cursor-sessionstart.sh" "--install-shims=cursor"
 report_file "$DIST/cursor-hooks.json" "$HOME/.cursor/hooks.json" "--install-shims=cursor" json
+# H6 per-family beacons: the Codex user beacon and the machine-local ~/Projects pointer.
+[ -d "$HOME/.codex" ] && report_file "$DIST/codex-AGENTS.md" "$HOME/.codex/AGENTS.md" "--install-shims=codex"
+[ -d "$HOME/Projects" ] && report_file "$DIST/projects-AGENTS.md" "$HOME/Projects/AGENTS.md" "--install-projects-pointer"
 for _r in cursor-prompt-route cursor-reassert cursor-sessionend cursor-subagent-stop; do
   [ -f "$HOME/.claude/hooks/$_r.sh" ] && note "retired script still installed: ~/.claude/hooks/$_r.sh — run workspace-doctor.sh --uninstall-shims=cursor"
 done
@@ -275,8 +278,8 @@ if [ "$QUICK" -eq 0 ]; then
   [ "${M:-0}" -gt 0 ] 2>/dev/null && say "AUDIT: $M un-acknowledged MISS(es) — inspect $LOG, then: workspace-doctor --ack"
 
   # 7. Chat-surface staleness: nag until Sean re-pastes and acks
-  [ "$(sha "$DIST/BEACON.md")" != "$(cat "$STATE/chat-beacon.sha" 2>/dev/null)" ] && \
-    flag "CHAT SURFACES STALE: BEACON.md changed — repaste into claude.ai preferences, Workspace project, Cursor User Rules, Perplexity Space, then: workspace-doctor --ack-chat"
+  [ "$(cat "$DIST/BEACON.md" "$DIST/cursor-user-rules.txt" 2>/dev/null | shasum -a 256 | cut -d' ' -f1)" != "$(cat "$STATE/chat-beacon.sha" 2>/dev/null)" ] && \
+    flag "CHAT SURFACES STALE: a paste beacon changed — repaste BEACON.md into claude.ai preferences, Workspace project, Perplexity Space and cursor-user-rules.txt into Cursor User Rules, then: workspace-doctor --ack-chat"
 
   BEHIND=$(git -C "$WS" rev-list --count '@{u}..HEAD' 2>/dev/null); BEHIND=${BEHIND:-0}
   [ "$BEHIND" != "0" ] && say "SYNC: $BEHIND unpushed commit(s) — chat knowledge stale until push + Sync now"

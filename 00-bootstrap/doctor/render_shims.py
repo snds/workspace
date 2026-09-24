@@ -64,6 +64,7 @@ TABLE_REL = "02-shared-references/surfaces.json"
 TEST_VALIDATORS_REL = "09-tools/test-validators.py"
 PROBES_REL = "02-shared-references/probes"
 FIXTURE_BASE_REL = "09-tools/fixtures/render_shims/base-surfaces.json"
+BEACONS_REL = "02-shared-references/beacons.json"
 
 TOP_KEYS = [
     "schema_version", "doc", "coverage_modes", "minimum_surfaces", "components", "families",
@@ -75,7 +76,7 @@ DIALECTS = {"claude", "cursor", "codex", "plain", "none"}
 CHANNELS = {"claude-settings-env", "codex-shell-environment-policy", "cursor-sessionstart-env", "none"}
 INSTALL_MODES = {"tracked", "whole-file", "claude-settings-keys", "merge-hook-entries", "managed-block"}
 ANCESTRY_MATCH = {"exact", "prefix"}
-RENDERS = {"hooks", "codex-config", "cursor-sandbox", "surfaces-md-block", "identity-inc"}
+RENDERS = {"hooks", "codex-config", "cursor-sandbox", "surfaces-md-block", "identity-inc", "beacon"}
 CWD_CONTEXTS = ("workspace", "other")
 CHECK_AREAS = ("coverage", "outputs", "registrations", "wrappers")
 TELEMETRY_ROOT = "~/.config/snds-workspace/telemetry"
@@ -828,6 +829,48 @@ def _render_identity_inc(out: dict, root: Path) -> str:
     return render_claude_identity_inc(dev)
 
 
+def load_beacons(root: Path = ROOT) -> dict:
+    try:
+        data = json.loads((Path(root) / BEACONS_REL).read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise DataError(f"beacon table missing: {BEACONS_REL}") from exc
+    except (OSError, ValueError) as exc:
+        raise DataError(f"beacon table unreadable: {BEACONS_REL}: {exc}") from exc
+    if not isinstance(data, dict) or not isinstance(data.get("variants"), dict):
+        raise DataError(f"{BEACONS_REL}: needs a variants object")
+    return data
+
+
+def render_beacon(t: dict, variant: str, root: Path = ROOT) -> str:
+    """One per-family beacon (H6) from beacons.json. A variant lists block names in order;
+    'family_rules' expands to the rule line of each family it names (surfaces.json families).
+    A render over the variant's max_bytes is a DataError, so a beacon can never quietly grow
+    the Codex window or the always-loaded set."""
+    b = load_beacons(root)
+    v = (b.get("variants") or {}).get(variant)
+    if not isinstance(v, dict):
+        raise DataError(f"beacon variant {variant!r} is not declared in {BEACONS_REL}")
+    blocks, rules = b.get("blocks") or {}, b.get("family_rules") or {}
+    lines = []
+    for part in v.get("parts") or []:
+        if part == "family_rules":
+            for fam in v.get("families") or []:
+                if fam not in (t.get("families") or {}):
+                    raise DataError(f"beacon {variant}: family {fam!r} is not a key of surfaces.json families")
+                if fam not in rules:
+                    raise DataError(f"beacon {variant}: no family_rules line for {fam!r}")
+                lines.append(rules[fam])
+        elif part in blocks:
+            lines += [ln.replace("{variant}", variant) for ln in blocks[part]]
+        else:
+            raise DataError(f"beacon {variant}: unknown block {part!r}")
+    text = "\n".join(lines) + "\n"
+    size, cap = len(text.encode("utf-8")), v.get("max_bytes")
+    if not isinstance(cap, int) or size > cap:
+        raise DataError(f"beacon {variant}: {size} bytes over max_bytes {cap}")
+    return text
+
+
 def _yn(v) -> str:
     return "yes" if v else "no"
 
@@ -888,6 +931,8 @@ def render_output(t: dict, out: dict, root: Path = ROOT) -> str:
         return _render_cursor_sandbox(t)
     if kind == "identity-inc":
         return _render_identity_inc(out, root)
+    if kind == "beacon":
+        return render_beacon(t, out.get("beacon") or "", root)
     if kind == "surfaces-md-block":
         try:
             current = (root / out["path"]).read_text(encoding="utf-8")
@@ -1291,6 +1336,7 @@ def self_test_cases() -> list:
                      (r / "out" / "user.json").read_text(encoding="utf-8").replace("15", "16"), encoding="utf-8"))
     _mutate_case(results, "unknown top-level key", lambda t: t.__setitem__("extra", 1), "unknown top-level key")
 
+    results += beacon_cases()
     results += overlay_cases()
 
     # --rev on a revision without render_shims.py exits 3; --verify-canonical catches a real change.
@@ -1318,6 +1364,52 @@ def self_test_cases() -> list:
                             rc_ok == 0 and rc_bad == 1, f"ok={rc_ok} bad={rc_bad}"))
         except (DataError, OSError, subprocess.SubprocessError) as exc:
             results.append(("git fixtures", False, str(exc)))
+    return results
+
+
+def beacon_cases() -> list:
+    """H6: beacons render from beacons.json; drift, a size over max_bytes and a family the
+    surface table does not declare all fail --check."""
+    results = []
+    fam = next(iter(_fixture_base()["families"]))
+    beacons = {"blocks": {"open": ["<!-- WORKSPACE-BEACON v3 · {variant} -->"], "rules": ["- rule"]},
+               "family_rules": {fam: f"- {fam}: personal-only"},
+               "variants": {"fx": {"parts": ["open", "rules", "family_rules"], "families": [fam],
+                                   "max_bytes": 200}}}
+    row = {"id": "fx-beacon", "path": "out/beacon.md", "layer": None, "owned_keys": ["whole-file"],
+           "install_path": None, "install_mode": "whole-file", "surface": None, "probe": False,
+           "render": "beacon", "beacon": "fx"}
+
+    def run(name, mutate_beacons=None, post=None, needle="", clean=False):
+        table = _fixture_base()
+        table["outputs"].append(dict(row))
+        with tempfile.TemporaryDirectory(prefix="render-shims-beacon-") as tmp:
+            root = Path(tmp)
+            (root / "02-shared-references").mkdir(parents=True, exist_ok=True)
+            (root / BEACONS_REL).write_text(json.dumps(beacons), encoding="utf-8")
+            _write_fixture_root(root, table, render=True)
+            if mutate_beacons:
+                b = json.loads(json.dumps(beacons))
+                mutate_beacons(b)
+                (root / BEACONS_REL).write_text(json.dumps(b), encoding="utf-8")
+            if post:
+                post(root)
+            res = check(root, only=["outputs"])
+            text = (root / "out" / "beacon.md").read_text(encoding="utf-8")
+        if clean:
+            ok = not res["errors"] and text.startswith("<!-- WORKSPACE-BEACON v3 · fx -->")
+        else:
+            ok = any(needle in e for e in res["errors"])
+        results.append((name, ok, f"errors={res['errors']}"))
+
+    run("beacon renders from beacons.json and checks clean", clean=True)
+    run("hand-edited beacon is drift", post=lambda r: (r / "out" / "beacon.md").write_text("x\n"),
+        needle="drift in out/beacon.md")
+    run("beacon over max_bytes fails", lambda b: b["variants"]["fx"].__setitem__("max_bytes", 10),
+        needle="over max_bytes 10")
+    run("beacon family not in surfaces.json fails",
+        lambda b: b["variants"]["fx"].__setitem__("families", ["martian"]),
+        needle="family 'martian' is not a key of surfaces.json families")
     return results
 
 

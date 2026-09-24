@@ -2370,6 +2370,90 @@
       "render": "hooks"
     },
     {
+      "id": "beacon-paste",
+      "path": "00-bootstrap/dist/BEACON.md",
+      "layer": null,
+      "owned_keys": [
+        "whole-file"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": null,
+      "probe": false,
+      "render": "beacon",
+      "beacon": "paste"
+    },
+    {
+      "id": "beacon-claude-user",
+      "path": "00-bootstrap/dist/user-CLAUDE.md",
+      "layer": null,
+      "owned_keys": [
+        "whole-file"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": "claude-code",
+      "probe": false,
+      "render": "beacon",
+      "beacon": "claude"
+    },
+    {
+      "id": "beacon-codex",
+      "path": "00-bootstrap/dist/codex-AGENTS.md",
+      "layer": null,
+      "owned_keys": [
+        "whole-file"
+      ],
+      "install_path": "~/.codex/AGENTS.md",
+      "install_mode": "whole-file",
+      "surface": "codex",
+      "probe": false,
+      "render": "beacon",
+      "beacon": "codex"
+    },
+    {
+      "id": "beacon-cursor-user-rules",
+      "path": "00-bootstrap/dist/cursor-user-rules.txt",
+      "layer": null,
+      "owned_keys": [
+        "whole-file"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": "cursor",
+      "probe": false,
+      "render": "beacon",
+      "beacon": "cursor-user-rules"
+    },
+    {
+      "id": "beacon-projects-pointer",
+      "path": "00-bootstrap/dist/projects-AGENTS.md",
+      "layer": null,
+      "owned_keys": [
+        "whole-file"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": null,
+      "probe": false,
+      "render": "beacon",
+      "beacon": "projects-pointer"
+    },
+    {
+      "id": "beacon-rules",
+      "path": "00-bootstrap/dist/RULES.txt",
+      "layer": null,
+      "owned_keys": [
+        "whole-file"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": null,
+      "probe": false,
+      "render": "beacon",
+      "beacon": "rules"
+    },
+    {
       "id": "surfaces-md-block",
       "path": "00-bootstrap/SURFACES.md",
       "layer": null,

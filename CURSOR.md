@@ -65,8 +65,8 @@ Fail-open. Structured-output / subagent turns skip the ritual line (see BEACON e
 - Writes are open to any model behind the write-quality gates (see `01-agent-controller.mdc` /
   AGENTS.md). Before commit: `python3 09-tools/nightly.py --phases rebuild`, then
   `python3 09-tools/workspace-harness.py` (chain: framework 08). Done on a write means those ran this session.
-- **User Rules beacon:** paste `00-bootstrap/dist/BEACON.md` into Cursor Settings → Rules (fallback when
-  hooks miss). Doctor nags until `workspace-doctor.sh --ack-chat`.
+- **User Rules beacon:** paste `00-bootstrap/dist/cursor-user-rules.txt` into Cursor Settings → Rules
+  (advisory; reaches employer repos too). Doctor nags until `workspace-doctor.sh --ack-chat`.
 - **MCP:** configure in Cursor Settings → MCP (or `~/.cursor/mcp.json`). See
   [capability-registry.md](02-shared-references/capability-registry.md) for per-surface install.
   Linear lanes / Figma are not assumed present until configured on this machine.

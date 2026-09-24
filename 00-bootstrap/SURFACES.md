@@ -40,7 +40,7 @@ claude
 
 1. **File → Open Workspace from File…** → `00-bootstrap/workspaces/*.code-workspace` (Brain first), **or** open the workspace folder itself.
 2. Confirm `.cursor/rules/brain.mdc` is active (Rules / agent context).
-3. Optional: paste `00-bootstrap/dist/BEACON.md` into **Cursor Settings → Rules** (User Rules) as hook fallback; then `workspace-doctor.sh --ack-chat`.
+3. Optional: paste `00-bootstrap/dist/cursor-user-rules.txt` into **Cursor Settings → Rules** (User Rules) as hook fallback; then `workspace-doctor.sh --ack-chat`.
 4. MCP (Figma, Linear, …): Settings → MCP — see [[capability-registry]].
 
 Do **not** open only `~/Projects` as the root if you need brain rules — attach the checkout first.
@@ -48,6 +48,24 @@ Do **not** open only `~/Projects` as the root if you need brain rules — attach
 ### VS Code / Obsidian / Claude Desktop / iOS
 
 Unchanged from prior practice: multi-root `.code-workspace` for VS Code; Obsidian opens the vault; Desktop uses filesystem MCP; iOS is paste-only.
+
+---
+
+## Per-family beacons (H6)
+
+Rendered by `render_shims.py` from `02-shared-references/beacons.json` (drift and size caps fail `--check`).
+Installing is a human step:
+
+| File | Goes to | How |
+|---|---|---|
+| `dist/BEACON.md` | claude.ai preferences, Workspace project, Perplexity Space | paste, then `--ack-chat` |
+| `dist/user-CLAUDE.md` | `~/.claude/CLAUDE.md` (Claude: personal-only) | the doctor heals it |
+| `dist/codex-AGENTS.md` | `~/.codex/AGENTS.md` (counts toward the 32 KiB Codex window) | `workspace-doctor.sh --install-shims=codex` |
+| `dist/cursor-user-rules.txt` | Cursor Settings → Rules (advisory) | paste, then `--ack-chat` |
+| `dist/projects-AGENTS.md` | `~/Projects/AGENTS.md` (machine-local pointer, ≤1 KiB) | `workspace-doctor.sh --install-projects-pointer` |
+| `dist/RULES.txt` | standing rules the SessionStart hooks inject | none (read from the checkout) |
+
+`workspace-doctor.sh --check` compares the installed Codex beacon and `~/Projects` pointer with dist.
 
 ---
 
@@ -193,6 +211,12 @@ Rendered outputs (installers read this mapping from `render_shims.py --list --js
 | probe-claude-code | `00-bootstrap/dist/probe/claude-code.json` | merge-hook-entries | `~/.claude/settings.json` | - |
 | probe-cursor | `00-bootstrap/dist/probe/cursor.json` | merge-hook-entries | `~/.cursor/hooks.json` | - |
 | probe-codex | `00-bootstrap/dist/probe/codex.json` | merge-hook-entries | `~/.codex/hooks.json` | - |
+| beacon-paste | `00-bootstrap/dist/BEACON.md` | whole-file | - | - |
+| beacon-claude-user | `00-bootstrap/dist/user-CLAUDE.md` | whole-file | - | - |
+| beacon-codex | `00-bootstrap/dist/codex-AGENTS.md` | whole-file | `~/.codex/AGENTS.md` | - |
+| beacon-cursor-user-rules | `00-bootstrap/dist/cursor-user-rules.txt` | whole-file | - | - |
+| beacon-projects-pointer | `00-bootstrap/dist/projects-AGENTS.md` | whole-file | - | - |
+| beacon-rules | `00-bootstrap/dist/RULES.txt` | whole-file | - | - |
 | surfaces-md-block | `00-bootstrap/SURFACES.md` | tracked | - | - |
 <!-- END GENERATED: surfaces -->
 

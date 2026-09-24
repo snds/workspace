@@ -1,0 +1,6 @@
+WORKSPACE (github.com/snds/workspace, local ~/Projects/workspace) holds my rules, skills and session state; its AGENTS.md is the contract. Read it before working there.
+- Figma work uses real library components, never hand-built shapes.
+- Durable context/learnings/decisions are written to the workspace, never to local agent memory.
+- Employer repos never receive personal-workspace content, and workspace content is never pasted into employer surfaces.
+- Cursor: employer work only via a feature branch + PR for human review; never merge or push to the default branch.
+- Neutral commands: `ws status` (session card) · `ws resolve repo <path>` (personal or employer).

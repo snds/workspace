@@ -9,7 +9,8 @@
 inherited stdio; the shell reads only the exit code. The unattended doctor never installs.
 
 Names: pin, shims, git-hooks, identity, claude-overlay, sandbox-roots, plugin,
-projects-pointer, launchd.
+projects-pointer (~/Projects/AGENTS.md from dist/projects-AGENTS.md), launchd.
+The Codex beacon (~/.codex/AGENTS.md) is a whole-file output of `shims=codex`.
 
 Common contract (every name, both actions):
   1. refuse (exit 4, `installer refused: <reasons>`) unless fds 0 and 1 are TTYs and the
@@ -912,6 +913,18 @@ def do_sandbox_roots(ctx: Ctx) -> int:
     return _apply(ctx, targets)
 
 
+PROJECTS_POINTER_SRC = "00-bootstrap/dist/projects-AGENTS.md"
+
+
+def do_projects_pointer(ctx: Ctx) -> int:
+    """H6: the machine-local ~/Projects/AGENTS.md pointer (rendered by render_shims.py from
+    beacons.json; each family's rule plus the neutral `ws` commands). Whole file, never merged."""
+    if ctx.action == "uninstall":
+        return _uninstall(ctx)
+    src = _src(ctx, PROJECTS_POINTER_SRC)
+    return _apply(ctx, [(ctx.home / "Projects" / "AGENTS.md", _file_state(src.read_bytes(), 0o644))])
+
+
 def do_no_source(ctx: Ctx) -> int:
     if ctx.action == "uninstall":
         return _uninstall(ctx)
@@ -921,7 +934,7 @@ def do_no_source(ctx: Ctx) -> int:
 HANDLERS = {
     "pin": do_pin, "shims": do_shims, "git-hooks": do_no_source, "identity": do_identity,
     "claude-overlay": do_claude_overlay, "sandbox-roots": do_sandbox_roots,
-    "plugin": do_plugin, "projects-pointer": do_no_source, "launchd": do_launchd,
+    "plugin": do_plugin, "projects-pointer": do_projects_pointer, "launchd": do_launchd,
 }
 
 
@@ -1183,6 +1196,35 @@ def self_test() -> int:
             self.assertEqual(tgt.stat().st_mode & 0o777, 0o640)
             self.assertEqual(self.log()[-1]["action"], "uninstall")
             self.assertEqual(self.run_inst("plugin", "uninstall")[0], 3)
+
+        def test_projects_pointer_install_and_uninstall(self):
+            src = self.repo / PROJECTS_POINTER_SRC
+            src.write_text("# ~/Projects pointer fixture\n")
+            tgt = self.home / "Projects" / "AGENTS.md"
+            rc, out, err = self.run_inst("projects-pointer")
+            self.assertEqual(rc, 0, out + err)
+            self.assertEqual(tgt.read_bytes(), src.read_bytes())
+            self.assertEqual(self.run_inst("projects-pointer")[0], 3)       # idempotent
+            rc, out, err = self.run_inst("projects-pointer", "uninstall")
+            self.assertEqual(rc, 0, out + err)
+            self.assertFalse(tgt.exists())
+
+        def test_codex_beacon_installs_through_shims_codex(self):
+            src = self.repo / "00-bootstrap/dist/codex-AGENTS.md"
+            src.write_text("<!-- WORKSPACE-BEACON v3 · codex -->\nfixture\n")
+            render = {"outputs": [{"id": "beacon-codex", "path": "00-bootstrap/dist/codex-AGENTS.md",
+                                   "install_path": "~/.codex/AGENTS.md", "install_mode": "whole-file",
+                                   "surface": "codex", "probe": False, "keys": ["whole-file"]}]}
+            self.install_pin()
+            tgt = self.home / ".codex" / "AGENTS.md"
+            tgt.parent.mkdir(parents=True, exist_ok=True)
+            tgt.write_text("old beacon\n")
+            rc, out, err = self.run_inst("shims=codex", render_list=render)
+            self.assertEqual(rc, 0, out + err)
+            self.assertEqual(tgt.read_bytes(), src.read_bytes())
+            rc, out, err = self.run_inst("shims=codex", "uninstall", render_list=render)
+            self.assertEqual(rc, 0, out + err)
+            self.assertEqual(tgt.read_text(), "old beacon\n")
 
         def test_declined_writes_nothing(self):
             self.plugin_target().parent.mkdir(parents=True)
@@ -1476,7 +1518,7 @@ def self_test() -> int:
             self.assertNotIn("copilot-vscode", needed)
 
         def test_missing_sources_exit_3(self):
-            for name in ("git-hooks", "projects-pointer", "identity"):
+            for name in ("git-hooks", "projects-pointer", "identity"):   # fixture repo has no pointer
                 rc, _o, err = self.run_inst(name)
                 self.assertEqual(rc, 3, name + err)
             self.assertEqual(self.run_inst("shims", render_list=None)[0], 3)   # no render_shims.py
@@ -1590,6 +1632,8 @@ def self_test() -> int:
                 ".config/snds-workspace/git/claude-identity.inc": "stale\n",
                 ".config/snds-workspace/gh-claude/hosts.yml": "stale\n",
                 ".claude/local-plugins/snds-local/snds/hooks/hooks.json": "{}\n",
+                ".codex/AGENTS.md": "stale beacon\n",
+                "Projects/AGENTS.md": "stale pointer\n",
                 "Library/LaunchAgents/design.snds.workspace-doctor.plist": "stale\n",
                 "Projects/.claude/hooks/dispatcher.py": "# fossil\n",
                 ".config/snds-workspace/lib/fake/09-tools/profile_resolve.py": (
@@ -1681,7 +1725,8 @@ def self_test() -> int:
             self.assert_report_unchanged()
             self.assertEqual(self.stub_calls(), "")
             for flag in ("--install-shims=cursor", "--install-claude-overlay", "--install-plugin",
-                         "--install-launchd", "--uninstall-shims=cursor"):
+                         "--install-launchd", "--uninstall-shims=cursor", "--install-shims=codex",
+                         "--install-projects-pointer"):
                 self.assertIn(flag, r.stdout)
 
         def test_check_writes_nothing(self):
