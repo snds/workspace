@@ -528,3 +528,17 @@
 ### 2026-05-23-state-representation-decision-tree.md
 - **Purpose**: Authoritative CVA variant×state→Figma spec. Locked decisions: physical State axis, normalized state-layer (Decision B), grouped `<slot>/<state>` naming with explicit `default`, ring-as-stroke-overlay anatomy, state-layer opacities (12/24/32/50%), per-component derivation. Carries the ⚠ engineer-doc requirement for the `default` affordance.
 - **Last modified**: 2026-05-23 — Initial creation
+
+## subatomic-design-tokens-course — 07-projects/23-subatomic-design-tokens-course/
+
+### CURRICULUM.md
+- **Purpose**: Generated index of the Frost *Subatomic* course (11 sections, 372 items, 360 lessons, ~13.6 h) with per-section durations, lesson titles, downloadable files, and links to the chapter notes. Regenerate from `<Projects>/subatomic-design-tokens-course/manifest/manifest.json`.
+- **Last modified**: 2026-09-23 — Initial creation
+
+### notes/ (00-01 … 09-10)
+- **Purpose**: Original chapter notes (no transcript text): core concepts, three-tier architecture, naming algorithm + parity divergences, building in Figma + Style Dictionary, publishing, adoption levels, governance/SemVer, advanced axes (dark mode, sub-brands, white-label, i18n, rebrand, AI), summary + 166-link resource index. Each ends with For Sean + Mechanizable rules.
+- **Last modified**: 2026-09-24 — review corrections (tier_prefixes, z-index exemption, two reworded sentences)
+
+### synthesis/running.md
+- **Purpose**: Thesis, what Subatomic added to workspace doctrine, harness calibration table on the course demo repo (incl. the 2026-09-24 review/re-run), open questions.
+- **Last modified**: 2026-09-24 — adversarial review + recalibration (30 CSS warnings, 3 contrast failures, 1 dark drift)

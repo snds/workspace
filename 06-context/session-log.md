@@ -45,6 +45,34 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+
+### 2026-09-24 — Subatomic token-audit: adversarial review, fixes, PR #20
+
+SessionID: 2026-09-24-work-sub9r2
+--- SESSION BLOCK ---
+Date: 2026-09-24
+Machine: Work MacBook Pro
+Surface: Claude Code (desktop app) · Claude Opus 5.5
+Project(s): 23-subatomic-design-tokens-course
+Artifacts:
+  - 09-tools/token-audit.py — 31 reviewed defects + 7 fix-introduced regressions fixed; new TA024; a self-test case per defect
+  - 08-knowledge/cross-domain/process-rigor-gaps.md — protocol #6: lint 09-tools scripts locally with ruff (CI-only); review new L3 detectors adversarially
+Decisions:
+  - Sean asked to commit, open a PR, and merge. The work had already been auto-committed to main as 3daed0f with no review, so the PR carried an adversarial review instead.
+  - TA018 is judged per component stylesheet, overriding the review's per-rule walker. Real-data calibration showed per-rule checking flags correct demo CSS.
+  - Campaign themes get the sub-brand cosmetic allowlist in code. The docs already said so; the code didn't.
+Evidence:
+  - PR merged with all 4 CI checks passing @ github.com/snds/workspace/pull/20 → e763ed5 — verified
+  - Two Agent Todo issues filed @ Linear personal lane (SEA-35, SEA-36) — verified
+Pending added:
+  - personal:SEA-35 — token-audit value-level Figma↔code parity
+  - personal:SEA-36 — Figma variable scope / publish-set probe
+Next:
+  - Sean to pick a real (personal) token source for token-audit's first non-demo run. Employer repos only by copying the tool in, per the independence contract.
+  - Self-improve backlog, carried from 2026-09-23: prompt-hook lexical misroutes on design-token prose (mvp, light, aliasing, distribution, integration, dependency)
+--- END BLOCK ---
+
 ### 2026-09-24 — Codex environment probe recorded
 
 SessionID: 2026-09-24-personal-mbp-cdx8f2
@@ -800,49 +828,4 @@ could tell it to do something harmful.
 
 Session floor went 14,778 → 15,480, still inside the 17,000 budget. Worth the tokens: it is
 an accessibility requirement, not a style tweak.
---- END BLOCK ---
-
-### 2026-09-15 — Record the shared-git-index hazard (and a coverage gap it exposed)
-
-SessionID: 2026-09-15-work-mbp-index-hazard
---- SESSION BLOCK ---
-Date: 2026-09-15
-Machine: Work MacBook Pro (main, going forward)
-Surface: Claude Code (Mac desktop app)
-Agent: Claude Opus 5
-Project(s): 19-workspace-brain
-
-Summary: Tree settled (Cursor's @shadcn/lint work landed, 22 harness gates green, no
-divergence), so the hazard deferred earlier is now recorded. Extended
-[[multi-session-workspace-resilience]] rather than minting a new entry — it already owns
-git/concurrency and had a Key diagnostic lessons section.
-
-The hazard: two agents in one working tree share `.git/index`, so `git add <mine>` followed
-by `git commit` commits whatever the other agent staged in between — the commit takes the
-whole index, not your paths. Hit for real this session: a commit swept in two files
-belonging to the concurrent Cursor session under a message asserting it held only my work.
-Recovery is `git reset --soft HEAD~1` → `git restore --staged <theirs>` → re-commit. The fix
-is a pathspec-limited commit, `git commit -- <paths>`, which ignores index state.
-
-Worth separating: the fragment model prevents merge conflicts between disjoint FILES; it does
-nothing about a shared INDEX. Different layers, and only the first had been solved.
-
-Measured a coverage gap in the documented mitigation while writing it up. Point 3 of that
-entry says a PostToolUse hook records edited paths so session-end stages only those. True,
-but it records only `Edit|Write|MultiEdit|NotebookEdit` — anything written through Bash
-(heredoc, sed, `python3 -`) is invisible. This session's touch file held 8 paths against 67
-the commits actually changed, because auto-mode routes most writes through Bash. And it runs
-at session-end only, so a manual mid-session commit bypasses it entirely. Both limits are now
-stated in the entry instead of being implied protection.
-
-Also added: Layer 1 cannot see what you just wrote. `vault-retrieve.py`'s FTS index rebuilds
-at SessionStart and in `nightly.py`, so a mid-session entry is invisible to the lexical
-fallback until `--rebuild`. Found by checking my own work — the natural phrasing "why did git
-commit take files I did not add" produced a visible Layer-0 miss with two wrong lexical hits;
-after rebuild the new entry is the #1 hit. Verified all three phrasings now reach it: two via
-Layer 0 triggers, one via Layer 1.
-
-Committed with `git commit -- <paths>`, which is the practice the entry now prescribes.
-
-22 harness gates green, vault-health 0/0 across 170 notes, ruff clean.
 --- END BLOCK ---
