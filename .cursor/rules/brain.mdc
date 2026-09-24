@@ -25,8 +25,7 @@ session-end. Skill: `03-skills/side-chat-handback/SKILL.md`.
 
 Before the first reply in a new session:
 
-1. Root = directory containing `AGENTS.md`. Read: `AGENTS.md` → `03-skills/skills.registry.json` →
-   `02-shared-references/trigger-routes.md` (curated head) → `06-context/` (role, **project-context
+1. Root = directory containing `AGENTS.md`. Read: `AGENTS.md` → `06-context/` (role, **project-context
    stubs only** — not `project-context-detail.md` / `project-registry.md` unless the task needs them —
    session-log head, `memory/MEMORY.md`). Active project: read `SESSION-STATE.md` **Live handoff** first.
    Also run the side-chat inbox check above.
@@ -40,7 +39,7 @@ Machine labels: `02-shared-references/devices.json`.
 
 ## Model swap / resume
 
-Re-anchor: re-read Live handoff + load skills (`trigger-routes` / registry `load_chains`) before acting.
+Re-anchor: re-read Live handoff + load skills (`skill-loadset.py`) before acting.
 Update Live handoff on meaningful change (`Cursor · {model}`).
 
 ## Parallel Task agents

@@ -14,14 +14,14 @@ _Last updated: 2026-09-23_
 | **Claude Code (desktop, Code tab)** | Same, plus per-session worktree under `.claude/worktrees/` | Anthropic | Yes — state on worktree branch until merged | Prefer CLI for canonical continuity. |
 | **Cursor** | `.cursor/rules/*.mdc` on **first** workspace folder + project/user hooks | Cursor models (Claude/GPT/Gemini/…) | `sessionStart` (user) · `subagentStop` (project) · `.cursor/agents/` | Open Brain first or use `*.code-workspace`. Adapter: [[CURSOR]]. |
 | **VS Code** + Claude Code ext | Same as CLI | Anthropic | Yes | IDE UI over the CLI hooks. |
-| **VS Code** + Copilot | `.github/copilot-instructions.md` + `AGENTS.md` | OpenAI | No | Thin pointer → AGENTS.md. |
-| **Gemini CLI** | `GEMINI.md` + `.gemini/settings.json` (`context.fileName` = `AGENTS.md`) | Google | No | Thin pointer; settings load the contract. |
+| **VS Code** + Copilot | `.github/copilot-instructions.md` + `AGENTS.md` | OpenAI | Hook API yes; none wired | Thin pointer → AGENTS.md. |
+| **Gemini CLI** | `GEMINI.md` + `.gemini/settings.json` (`context.fileName` = `AGENTS.md`) | Google | Hook API yes; none wired | Thin pointer; settings load the contract. |
 | **Warp** | `WARP.md` | Warp | No | Thin pointer → AGENTS.md. |
-| **Aider** | `CONVENTIONS.md` + `.aider.conf.yml` `read:` | any | No | Root CONVENTIONS is a pointer; PR conventions stay in `.github/CONVENTIONS.md`. |
-| **Windsurf** | `.windsurf/rules/workspace.md` | Cognition | No | No `.windsurfrules` (first-match can hide AGENTS.md). |
+| **Aider** | `.aider.conf.yml` `read:` (AGENTS.md, llms.txt, CONVENTIONS.md) | any | No | Root CONVENTIONS is a pointer; PR conventions stay in `.github/CONVENTIONS.md`. |
+| **Windsurf** | `.windsurf/rules/*.md` (`trigger: always_on`) + `AGENTS.md` | Cognition | Hook API yes; none wired | No `.windsurfrules`. AGENTS.md exceeds the 12,000-char rule limit (see H6). |
 | **Obsidian** | Folder = vault | n/a | n/a | Navigation, graph, daily notes. |
-| **Claude Desktop** | Filesystem MCP | Anthropic | n/a | Skills via AGENTS.md + registry. |
-| **Perplexity / generic MCP / human** | `llms.txt` → `AGENTS.md` → registry + trigger-routes | any | n/a | Adapter: [[PERPLEXITY]]. |
+| **Claude Desktop** | Filesystem MCP | Anthropic | n/a | Skills via AGENTS.md + `trigger-routes-digest.md`. |
+| **Perplexity / generic MCP / human** | `llms.txt` → `AGENTS.md` → `skill-loadset.py` or `trigger-routes-digest.md` | any | n/a | Adapter: [[PERPLEXITY]]. |
 | **ChatGPT / Grok.com / Perplexity (no FS)** | none | various | n/a | Paste [web-session.md](adapters/web-session.md) + `dist/BEACON.md`. |
 | **Claude iOS** | None | Anthropic | n/a | Paste or describe; no local FS. |
 
@@ -70,7 +70,7 @@ Paths are relative to the file. Brain must stay first so Cursor loads `.cursor/r
 1. First folder root → `.cursor/rules/*.mdc` (`brain.mdc` alwaysApply).
 2. User `~/.cursor/hooks.json` `sessionStart` → `cursor-sessionstart.sh` injects `session-status.py` (doctor-managed).
 3. Project `.cursor/hooks.json` → subagent-stop nudge. The preCompact, sessionEnd and beforeSubmitPrompt shims were retired on 2026-09-22 (their output never reached the model).
-4. Agent follows ritual in `brain.mdc`; routes skills via [trigger-routes.md](../02-shared-references/trigger-routes.md) + registry.
+4. Agent follows ritual in `brain.mdc`; routes skills via `python3 09-tools/skill-loadset.py "<utterance>"`.
 5. Task tool may spawn `.cursor/agents/*` (hub load chains).
 
 ---
@@ -80,7 +80,7 @@ Paths are relative to the file. Brain must stay first so Cursor loads `.cursor/r
 | Gap | Status / workaround |
 |---|---|
 | Cursor sessionStart was ABI-only | 2026-09-11: hook injects `session-status.py` (notices + all projects + pending) |
-| Cursor ≠ Claude slash skills | Use `.cursor/agents/` + trigger-routes + registry |
+| Cursor ≠ Claude slash skills | Use `.cursor/agents/` + `skill-loadset.py` |
 | Compaction dropping ritual | `preCompact` reassert retired 2026-09-22 (output never reached the model); the H7 `ws route` steer replaces it in wave 1 |
 | Parent `~/Projects` as root | Reopen workspace or move agent to Brain root |
 | MCP not configured on a machine | Install per capability-registry; Open Engine Linear needs Cursor MCP |

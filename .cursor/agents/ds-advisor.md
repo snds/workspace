@@ -19,7 +19,7 @@ Read in order from the workspace root (directory containing `AGENTS.md`):
 
 Optional related (suggest, don't auto-load): `design-engineer`, `ux-component-library`.
 
-Also check curated routes in `02-shared-references/trigger-routes.md` if the ask touches color/a11y/validation vocabulary.
+Also check curated routes in `02-shared-references/trigger-routes.json` if the ask touches color/a11y/validation vocabulary.
 
 ## Continuity
 

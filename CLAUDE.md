@@ -78,7 +78,7 @@ Standing law and folder semantics live in **[AGENTS.md](AGENTS.md)** — do not 
 
 - Frameworks → [01-frameworks/00-README.md](01-frameworks/00-README.md) (+ `/framework-check`)
 - Delivery / Proofboard / context profiles → [02-shared-references/delivery-playbooks/](02-shared-references/delivery-playbooks/)
-- Skill routing → [trigger-routes.md](02-shared-references/trigger-routes.md) + `03-skills/skills.registry.json`
+- Skill routing → `python3 09-tools/skill-loadset.py "<utterance>"` (never ingest the registry)
 - Knowledge → [08-knowledge/_INDEX.md](08-knowledge/_INDEX.md) before domain work
 - QA always-load → framework #06 before audit/review/critique/refine work
 

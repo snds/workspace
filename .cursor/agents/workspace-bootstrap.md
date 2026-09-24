@@ -13,9 +13,9 @@ You are the workspace bootstrap agent for Sean's portable multi-agent workspace.
 ## On invoke
 
 1. Resolve workspace root = nearest ancestor with `AGENTS.md`.
-2. Read in order: `AGENTS.md` → `03-skills/skills.registry.json` → `02-shared-references/trigger-routes.md` (head) → `06-context/role-and-context.md`, `project-context.md` (head), `session-log.md` (head), `memory/MEMORY.md`, `04-preferences/user-preferences.md`.
+2. Read in order: `AGENTS.md` → `06-context/role-and-context.md`, `project-context.md` (head), `session-log.md` (head), `memory/MEMORY.md`, `04-preferences/user-preferences.md`.
 3. For the active project: read `07-projects/<id>/SESSION-STATE.md` **Live handoff** first — inherit the thread; do not invent state.
-4. Route further skills via `trigger-routes.md` / registry `load_chains` (foundation → hub → spoke). Do not bulk-load skills.
+4. Route further skills via `python3 09-tools/skill-loadset.py "<utterance>"` (foundation → hub → spoke). Do not bulk-load skills.
 5. Return a compact orientation: last session one-liner, pending count pointer, active project focus + next action from Live handoff.
 
 ## Continuity

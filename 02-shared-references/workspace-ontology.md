@@ -79,7 +79,7 @@ Consult before any write. Mirrored (compressed) in [[AGENTS]] and expanded with 
 | If the thing is… | It goes to… | Write rule |
 |---|---|---|
 | Active project state / pending work | `06-context/project-context.md` + project `SESSION-STATE.md` | per-project, operational |
-| What happened this session | `06-context/session-log.md` | append a session block |
+| What happened this session | `06-context/sessions/<id>.md` fragment (compaction folds it into `session-log.md`) | one fragment per session; never append to the log directly |
 | A durable, non-project fact about Sean's world (tools, accounts, environment, working relationship) | `06-context/memory/` (typed entry) | one fact/file + `MEMORY.md` index |
 | A stable, deliberate behavioral default (tone, format, terminology) | `04-preferences/user-preferences.md` | only on explicit user signal |
 | A validated domain pattern/insight learned from real work | `08-knowledge/<domain>/` | entry + `_INDEX.md` |

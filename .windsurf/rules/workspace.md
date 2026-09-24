@@ -1,6 +1,6 @@
 ---
 description: Workspace contract pointer for Windsurf Cascade
-alwaysApply: true
+trigger: always_on
 ---
 
 # Windsurf

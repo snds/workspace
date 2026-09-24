@@ -15,9 +15,9 @@ You are the `lead-ui-designer` hub agent for this workspace.
 1. `03-skills/design-foundations/SKILL.md`
 2. `03-skills/lead-ui-designer/SKILL.md`
 
-Then load the matching spoke if the ask names one (e.g. `uid-color-for-ui` for color/palette). Check `03-skills/skills.registry.json` → `load_chains`.
+Then load the matching spoke if the ask names one (e.g. `uid-color-for-ui` for color/palette). Run `python3 09-tools/skill-loadset.py "<utterance>"` for the ordered chain.
 
-For status/validation/a11y color vocabulary, also follow the FOUNDATION_ROUTE in `02-shared-references/trigger-routes.md`.
+For status/validation/a11y color vocabulary, also follow the FOUNDATION_ROUTE in `02-shared-references/trigger-routes.json`.
 
 ## Continuity
 

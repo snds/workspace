@@ -20,8 +20,7 @@ multi-agent handoff live in AGENTS.md — not duplicated here._
   on demand, session-log head, `memory/MEMORY.md`)
   and `04-preferences/user-preferences.md` at session start per framework 08.
 - **Skills:** Cursor has no Claude slash commands. Route via
-  [trigger-routes.md](02-shared-references/trigger-routes.md) (curated) then
-  `python3 09-tools/skill-loadset.py "<utterance>"` (do not ingest the registry).
+  `python3 09-tools/skill-loadset.py "<utterance>"` (never ingest the registry or `trigger-routes.md`).
   After producing, run `python3 09-tools/close-out-dispatch.py --from-prompt "<utterance>" --run`.
   Project Task agents live in `.cursor/agents/` and encode the same load chains. When
   triggers miss, run that loadset CLI then `python3 09-tools/vault-retrieve.py "<query>"`
@@ -64,15 +63,14 @@ Fail-open. Structured-output / subagent turns skip the ritual line (see BEACON e
 ## Capabilities / limits
 
 - Writes are open to any model behind the write-quality gates (see `01-agent-controller.mdc` /
-  AGENTS.md). Before commit: `build-related.py` → `build-registry.py` → `build-trigger-routes.py` →
-  `evaluate-skill-routing.py` → validators (integrity → links → workspace). Done on a write means those
-  validators ran this session. Negative fixtures: `python3 09-tools/test-validators.py`.
+  AGENTS.md). Before commit: `python3 09-tools/nightly.py --phases rebuild`, then
+  `python3 09-tools/workspace-harness.py` (chain: framework 08). Done on a write means those ran this session.
 - **User Rules beacon:** paste `00-bootstrap/dist/BEACON.md` into Cursor Settings → Rules (fallback when
   hooks miss). Doctor nags until `workspace-doctor.sh --ack-chat`.
 - **MCP:** configure in Cursor Settings → MCP (or `~/.cursor/mcp.json`). See
   [capability-registry.md](02-shared-references/capability-registry.md) for per-surface install.
   Linear lanes / Figma are not assumed present until configured on this machine.
-- `.claude/skills/` slash commands are Claude-only; use `.cursor/agents/` + registry instead.
+- `.claude/skills/` slash commands are Claude-only; use `.cursor/agents/` + `skill-loadset.py` instead.
 
 ## Surface posture
 

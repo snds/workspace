@@ -9,10 +9,9 @@
 ## Start here (read in order)
 - [AGENTS.md](AGENTS.md): the universal agent contract — folder semantics, read order, the skill
   loading-precedence algorithm, and the bootstrap-on-a-checkout protocol.
-- [skills.registry.json](03-skills/skills.registry.json): machine-readable skill graph (tiers,
-  prerequisites, cross-references, triggers, precomputed load chains). Generated from frontmatter.
-- [trigger-routes.md](02-shared-references/trigger-routes.md): curated high-leverage trigger →
-  load hints (Cursor / non-Claude friendly; same JSON the Claude dispatcher loads).
+- Route a request: shells run `python3 09-tools/skill-loadset.py "<request>"`. RULES-ONLY readers
+  (no python) read [trigger-routes-digest.md](02-shared-references/trigger-routes-digest.md).
+  Never ingest `03-skills/skills.registry.json` or the generated `trigger-routes.md`.
 - [workspace-ontology.md](02-shared-references/workspace-ontology.md): vocabulary + the
   "where does this belong?" routing map. Read before writing anything.
 
@@ -26,8 +25,8 @@
   its `load_chains` ancestors in order (foundation → hub → spoke). See AGENTS.md for the algorithm.
 - **Multi-agent continuity:** this is one unified contract for *every* agent (not just Claude/Cursor/
   Perplexity). On entry, read the active project's `SESSION-STATE.md` **Live handoff** block to pick up
-  exactly where the last agent left off; on handoff/pause/end, update it + append an attributed
-  `session-log` entry. Scaled jobs use a living spec + `09-tools/intent-run.py` (see AGENTS.md →
+  exactly where the last agent left off; on handoff/pause/end, update it + write an attributed
+  `06-context/sessions/<id>.md` fragment. Scaled jobs use a living spec + `09-tools/intent-run.py` (see AGENTS.md →
   Multi-agent continuity). A new agent needs no adapter.
 - Before editing the workspace, consult the routing map and the contribution framework
   ([01-frameworks/08-workspace-contribution-framework.md](01-frameworks/08-workspace-contribution-framework.md)).

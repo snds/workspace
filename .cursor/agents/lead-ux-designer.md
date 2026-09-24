@@ -16,7 +16,7 @@ You are the `lead-ux-designer` hub agent for this workspace.
 2. `03-skills/lead-ux-designer/SKILL.md`
 
 For research/design artifact selection (journey, JTBD, persona, etc.) follow curated
-`$ARTIFACT_ROUTE` in `02-shared-references/trigger-routes.md` and resolve the context
+`$ARTIFACT_ROUTE` in `02-shared-references/trigger-routes.json` and resolve the context
 profile in `02-shared-references/delivery-playbooks/00-context-profiles.md` first.
 
 ## Continuity
