@@ -3391,6 +3391,23 @@ def _push_idents(top: Path, line: dict, remote: str, env: dict, git: str,
     return out
 
 
+def _other_remotes_with(top: Path, sha: str, remote: str, env: dict, git: str,
+                        gitdir: Optional[Path] = None) -> List[str]:
+    """Names of the remotes other than `remote` whose remote-tracking refs contain `sha` ([] on a git
+    error). Used only to word an IR1 block (W3-03): tracking refs are local and can be set to any
+    commit without a hook, so they never exempt a commit from the check."""
+    pre = ["--git-dir", str(gitdir)] if gitdir is not None else []
+    r = _git_run(pre + ["for-each-ref", "--contains", sha, "--format=%(refname)", "refs/remotes/"], top, env, git)
+    if r is None or r.returncode != 0:
+        return []
+    out: List[str] = []
+    for ref in r.stdout.split():
+        parts = ref.split("/")
+        if len(parts) >= 4 and parts[2] != remote and parts[2] not in out:
+            out.append(parts[2])
+    return out
+
+
 def _workspace_checkouts(home: Optional[Path], root: Optional[Path]) -> List[Path]:
     """The `root` pointer's checkout and its linked worktrees (read from its .git/worktrees only)."""
     cands: List[Path] = []
@@ -3628,8 +3645,9 @@ def floor_decide(event: str, hook_args: list, stdin_lines: list, *, env: Optiona
     to a non-employer remote never publishes a commit that carries it. A local rewrite (revert,
     cherry-pick, rebase, am) can still record it locally until that push is refused. The tagger of an
     annotated tag the push publishes (and of every tag it peels through) meets the same rule as a
-    commit's author and committer, at IR1 and at I1. An unreadable range or tag allows with a notice,
-    as for I1.
+    commit's author and committer, at IR1 and at I1. A commit already on another remote (a fork's
+    upstream) is still refused, since remote-tracking refs are local and forgeable; the reason then
+    names that remote. An unreadable range or tag allows with a notice, as for I1.
     Not positively personal under projects_root blocks; a linked worktree is classified by its own
     top and by its main checkout (under projects_root when either is). An infrastructure error
     allows, with a notice (fail-open): the transport block stays the barrier for employer remotes.
@@ -3701,6 +3719,16 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
                     continue
                 for kind, sha, role, em in idents:
                     if email_class(em, dev_t) == "employer":
+                        seen = _other_remotes_with(top if top is not None else here, sha, remote, genv, git, gitdir) \
+                            if kind == "commit" else []
+                        if seen:
+                            names = ", ".join(f"'{n}'" for n in seen)
+                            return _floor_block("IR1", f"{kind} {sha[:12]} in the push has an employer identity as "
+                                                       f"{role}; it is already on remote {names} (by its local "
+                                                       f"tracking refs) but not on '{remote}', and a Claude-family "
+                                                       "push never publishes it to a non-employer remote (IR1); "
+                                                       "push a branch that does not carry it, or leave this push "
+                                                       "to a human outside Claude")
                         return _floor_block("IR1", f"{kind} {sha[:12]} in the push has an employer identity "
                                                    f"as {role}; a Claude-family push never publishes it to a "
                                                    "non-employer remote (IR1); rewrite it with the personal "

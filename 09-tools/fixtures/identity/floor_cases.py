@@ -367,7 +367,9 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "decisions: a Claude push of an annotated tag whose tagger is the employer identity is blocked "
                   "[IR1]; the same tag with the personal tagger pushes",
                   "decisions: scan records bare repos under projects_root, so a Claude commit in a personal bare "
-                  "repo's linked worktree is allowed and one in an employer bare repo's worktree stays blocked [I2]"]
+                  "repo's linked worktree is allowed and one in an employer bare repo's worktree stays blocked [I2]",
+                  "decisions: a Claude push to a personal fork of a branch carrying an upstream commit with an "
+                  "employer author stays blocked [IR1], and the reason names the upstream remote it is already on"]
 VETTED_CASES = (DECISION_CASES[3], DECISION_CASES[13], DECISION_CASES[14])
 
 
@@ -663,6 +665,32 @@ def _ir1_push_cases(lab: Lab, pr, lifted: dict) -> list:
                     and "[IR1]" in r.stderr and "tagger" in r.stderr and landed.returncode != 0
                     and pp.returncode == 0, f"tag={tg.returncode} tagger={tagger.strip()} push={r.returncode} "
                     f"landed={landed.returncode == 0} personal={pp.returncode} {r.stderr[-300:]} {pp.stderr[-200:]}"))
+        # W3-03: fork workflow. The upstream (third-party) history holds a commit an employer identity authored; a
+        # branch on top of it pushed to the personal fork would publish it there. Remote-tracking refs are local and
+        # forgeable, so the floor keeps blocking, and the reason says where the commit already is.
+        acme = dict(lab.base_env, GIT_AUTHOR_NAME="Acme Worker", GIT_AUTHOR_EMAIL=lab.acme_mail(),
+                    GIT_COMMITTER_NAME="Acme Worker", GIT_COMMITTER_EMAIL=lab.acme_mail())
+        up_bare = bare_root / "oss-upstream" / "lib.git"
+        fork_bare = bare_root / "pat-sample" / "lib.git"
+        for b in (up_bare, fork_bare):
+            lab.g(lab.base_env, "init", "-q", "--bare", "-b", "main", str(b))
+        seed = lab.tmp / "upstream-seed"
+        lab.g(acme, "init", "-q", "-b", "main", str(seed))
+        lab.g(acme, "commit", "-q", "--allow-empty", "-m", "upstream work by an employer author", cwd=seed)
+        lab.g(acme, "push", "-q", f"file://{up_bare}", "main", cwd=seed)
+        fork = lab.tmp / "fork-clone"
+        lab.g(pat, "init", "-q", "-b", "main", str(fork))
+        lab.g(pat, "remote", "add", "origin", "https://github.com/pat-sample/lib.git", cwd=fork)
+        lab.g(pat, "remote", "add", "upstream", "https://github.com/oss-upstream/lib.git", cwd=fork)
+        lab.g(pat, "fetch", "-q", "upstream", cwd=fork)
+        lab.g(pat, "switch", "-q", "-c", "feat/fork", "upstream/main", cwd=fork)
+        lab.g(pat, "commit", "-q", "--allow-empty", "-m", "my change on the fork", cwd=fork)
+        r = lab.g(lifted, "push", "origin", "feat/fork", cwd=fork)
+        landed = lab.g(lab.base_env, "--git-dir", str(fork_bare), "show-ref", "--verify", "--quiet",
+                       "refs/heads/feat/fork")
+        out.append((DECISION_CASES[34], r.returncode != 0 and "[IR1]" in r.stderr and landed.returncode != 0
+                    and "already on remote 'upstream'" in r.stderr and "rewrite it" not in r.stderr,
+                    f"push={r.returncode} landed={landed.returncode == 0} {r.stderr[-400:]}"))
     finally:
         gc.unlink()
     return out
