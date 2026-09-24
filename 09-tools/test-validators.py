@@ -1117,6 +1117,18 @@ class TestIdentity(unittest.TestCase):
         self.assertEqual(self.pr.identity_rule("codex", "personal-mbp", dev)["identity"], "snds")
         self.assertIsNone(self.pr.identity_rule("cursor", "unknown", dev))
 
+    def test_shipped_employer_email_domain(self):
+        """D5 (2026-09-23): the employer mail domain, matched exactly and casefolded; personal markers win."""
+        dev, d5 = self.pr.load_table("devices"), "centricsoftware.com"
+        self.assertIn(d5, dev["employer_allowlist"]["email_domains"])
+        for addr, want in ((f"user@{d5}", "employer"), ("USER@CentricSoftware.COM", "employer"),
+                           (f"user@{d5}.evil.io", "other"), (f"user@not{d5}", "other"), (f"user@mail.{d5}", "other")):
+            with self.subTest(addr=addr):
+                self.assertEqual(self.pr.email_class(addr, dev), want)
+        both = json.loads(json.dumps(dev))
+        both["personal_markers"]["emails"].append(f"user@{d5}")
+        self.assertEqual(self.pr.email_class(f"user@{d5}", both), "personal")
+
     def test_hasconfig_include(self):
         self._cases(self.fc.identity_cases(self.pr, self.rs))
 

@@ -80,7 +80,9 @@
     "identity_ids": [
       "centric"
     ],
-    "email_domains": []
+    "email_domains": [
+      "centricsoftware.com"
+    ]
   },
   "identity_rules": [
     {

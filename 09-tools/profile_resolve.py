@@ -2977,7 +2977,9 @@ def _identities(dev_t: dict) -> Dict[str, dict]:
 
 
 def _email_domain(email: str) -> str:
-    return email.rpartition("@")[2].casefold()
+    # No "@" means no domain: a bare "example.com" user.email must not match an allowlisted domain.
+    _local, at, dom = email.rpartition("@")
+    return dom.casefold() if at else ""
 
 
 def email_class(email: Optional[str], dev_t: dict) -> Optional[str]:
@@ -4485,6 +4487,27 @@ def _t8_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     ok(email_class(acme_mail, dev_t) == "employer" and email_class("y@acme-corp.example", dev_t) == "employer",
        "employer allowlist identity and domain")
     ok(email_class("fixture@example.invalid", dev_t) == "other" and email_class("", dev_t) is None, "other and none")
+    ok(email_class("Y@ACME-Corp.Example", dev_t) == "employer", "an allowlisted domain matches casefolded")
+    ok(all(email_class(f"y@{d}", dev_t) == "other"
+           for d in ("acme-corp.example.evil.io", "notacme-corp.example", "mail.acme-corp.example")),
+       "an allowlisted domain matches exactly: suffix and prefix lookalikes and subdomains are other")
+    for key, val in (("emails", "y@acme-corp.example"), ("email_domains", "acme-corp.example")):
+        both = json.loads(json.dumps(dev_t))
+        both["personal_markers"][key].append(val)
+        ok(email_class("y@acme-corp.example", both) == "personal",
+           f"a personal marker ({key}) wins over the allowlisted domain")
+    # D5 (2026-09-23): the shipped allowlist names the employer mail domain, matched the same way
+    shipped, d5 = load_table("devices"), "centricsoftware.com"
+    ok(d5 in (shipped.get("employer_allowlist") or {}).get("email_domains", []),
+       "shipped employer_allowlist carries the D5 domain")
+    ok([email_class(a, shipped) for a in (f"user@{d5}", "USER@CentricSoftware.COM")] == ["employer"] * 2,
+       "D5: the employer domain classifies employer in any case")
+    ok([email_class(f"user@{d}", shipped) for d in (f"{d5}.evil.io", f"not{d5}", f"mail.{d5}")] == ["other"] * 3,
+       "D5: lookalikes and subdomains of the employer domain classify other")
+    ok(email_class(d5, shipped) == "other", "D5: a bare domain with no '@' is not an employer address")
+    both = json.loads(json.dumps(shipped))
+    both["personal_markers"]["emails"].append(f"user@{d5}")
+    ok(email_class(f"user@{d5}", both) == "personal", "D5: a personal marker still wins over the domain")
 
     # ---- the family x device x repo x effective x override matrix
     elsewhere = tmp / "t8-elsewhere"
@@ -4512,6 +4535,15 @@ def _t8_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     r = identity(repo=str(repos[("employer", "acme-id")]), family="claude", device="dev-a", root=root, env=genv,
                  home=home, detection=human)
     ok(r["allowed"] == [] and "I2" in r["invariants_hit"], "Claude on an employer repo: no identity allowed, I2")
+    # The I1 check reads the allowlisted domain: an author at exactly that domain is employer (no I1, but
+    # still flagged as an undeclared identity); an author at a lookalike domain is other and hits I1.
+    for label, mail, want_cls, want_hits in (("an allowlisted-domain", "y@acme-corp.example", "employer", []),
+                                             ("a lookalike-domain", "y@acme-corp.example.evil.io", "other", ["I1"])):
+        path = _t8_repo(elsewhere / f"employer-{label.split()[-1]}", "git@github.com:acme-corp/w.git", mail, home)
+        r = identity(repo=str(path), family="cursor", device="dev-a", root=root, env=genv, home=home, detection=human)
+        ok(r["effective"]["email_class"] == want_cls and r["invariants_hit"] == want_hits
+           and r["effective"]["identity"] is None and bool(r["flag"]) == (not want_hits),
+           f"identity() on an employer repo with {label} author: {want_cls}, hits {want_hits}: {r}")
     r = identity(repo=str(repos[("personal", "pat")]), family="cursor", device="dev-a", root=root, env=genv, home=home,
                  detection=human)
     ok(r["flag"] is None and r["override"] and r["override"]["identity"] == "pat",
