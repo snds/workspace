@@ -54,4 +54,13 @@ report the aggregate, or redefine the unit's "changed?" signal off the correctio
 adversarial pass for what it's good at — catching the genuinely weak mapping — and stop reading its
 per-unit boolean as a stable grade.
 
+## When the loop does not converge: open threat surfaces (2026-09-23)
+
+Reviewing a same-machine guard (the Claude git floor and transport block), four adversarial rounds
+each found new real bypasses: a lower-level push command, a remote helper, shell indirection, another
+config scope. The attack surface was open, so "loop until dry" could never go dry. Stop when two
+rounds both add new shapes of the same class. Declare one umbrella gap for deliberate evasion, name
+the real barrier (server-side protection, review, credential scope), and keep specific IDs only for
+shapes a detector can label. Otherwise every public "still holds, except…" sentence stays false.
+
 Related: [[workflow-patterns]] (general multi-agent orchestration mechanics).
