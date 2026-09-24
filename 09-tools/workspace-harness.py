@@ -73,13 +73,31 @@ ALWAYS_LOADED_BYTES_CEILING = {
     "00-bootstrap/dist/user-CLAUDE.md": 1_515,
     "00-bootstrap/dist/BEACON.md": 1_515,
     "00-bootstrap/dist/RULES.txt": 293,
+    # H6 per-family renders (wave 1, 2026-09-24). New files, so these are new pins, not raises:
+    # the Codex beacon is held to the old shared beacon's 1,515 B (it counts toward the Codex
+    # window); the ~/Projects pointer to the spec's 1 KiB; the Cursor paste to its first render.
+    "00-bootstrap/dist/codex-AGENTS.md": 1_515,
+    "00-bootstrap/dist/projects-AGENTS.md": 1_024,
+    "00-bootstrap/dist/cursor-user-rules.txt": 670,
 }
+# The files that can sit at ~/.codex/AGENTS.md: the Codex beacon, or the shared paste beacon
+# that was installed there before H6. The worst case counts the larger.
+CODEX_BEACONS = ("00-bootstrap/dist/codex-AGENTS.md", "00-bootstrap/dist/BEACON.md")
 
 BUDGETS = {
     "contract_floor": 11_800,
     "session_floor": 17_000,
     "loadset_p95": 14_500,
     "worst_case_legal": 64_000,
+    # H6 per-surface floors (wave 1, 2026-09-24, bytes/4 estimate). Each is the value measured
+    # after the H6 cuts plus about 5% headroom, rounded up to the next 100:
+    #   cursor_floor 9,076 (AGENTS.md + alwaysApply .mdc + CLAUDE.md, which Cursor injects) -> 9,600
+    #   claude_floor 8,304 (CLAUDE.md + @AGENTS.md + ~/.claude/CLAUDE.md beacon)            -> 8,800
+    #   web_pack     4,393 (web-session.md + dist/BEACON.md + the route digest)              -> 4,700
+    # web_pack grows with trigger-routes.json; raising any of these is a deliberate diff.
+    "cursor_floor": 9_600,
+    "claude_floor": 8_800,
+    "web_pack": 4_700,
 }
 
 # The enforcement chain, in the order AGENTS.md fixes. build-related rewrites Related
@@ -592,6 +610,87 @@ def check_single_sources(root: Path = ROOT, files: list | None = None) -> dict:
     return {"check": "single-sources", "scanned": scanned, "failures": fails}
 
 
+# H6 entry points. Each rendered beacon must carry its family's wall; each tuple is satisfied
+# by one line that contains every token.
+BEACON_RULES = {
+    "00-bootstrap/dist/BEACON.md": [("Claude", "personal-only")],
+    "00-bootstrap/dist/user-CLAUDE.md": [("Claude", "personal-only")],
+    "00-bootstrap/dist/codex-AGENTS.md": [("Codex", "feature branch", "PR"), ("ws status",)],
+    "00-bootstrap/dist/cursor-user-rules.txt": [("Cursor", "feature branch", "PR")],
+    "00-bootstrap/dist/projects-AGENTS.md": [("Claude", "personal-only"), ("Codex", "feature branch", "PR"),
+                                             ("Cursor", "feature branch", "PR"), ("ws status",)],
+}
+# Facts restated somewhere they have gone stale (observed drift only). Each: id, pattern,
+# where to look (path globs; "*" = tracked text), and the correction the failure names.
+RESTATED_FACTS = [
+    ("workspace-private", r"snds/workspace[`)\]]*\s*\(\**private",
+     ["*"], "snds/workspace is PUBLIC (verified 2026-09-22)"),
+    ("beacon-c8-only", r"Employer repos \(c8/\*\)",
+     ["00-bootstrap/dist/*.md", "00-bootstrap/dist/*.txt"],
+     "c8/* is not the whole employer set; beacons name the profile (`ws resolve repo`)"),
+]
+RESTATED_EXCLUDE = ("_archive/", "06-context/session-log", ".claude/state/", "07-projects/19-workspace-brain/")
+LLMS_START_RE = re.compile(r"^## Start here.*?$(.*?)(?=^## |\Z)", re.M | re.S)
+MD_LINK_RE = re.compile(r"\]\(([^)\s]+)\)")
+
+
+def check_entry_points(root: Path = ROOT, files: list | None = None) -> dict:
+    """H6: entry points agents read first stay honest. llms.txt Start-here never links a
+    never-ingest file; every beacon carries its family's wall; Windsurf rules use `trigger:`;
+    a tracked hook copy matches its dist source; no stale fact is restated."""
+    fails, scanned = [], 0
+    llms = root / "llms.txt"
+    if llms.is_file():
+        scanned += 1
+        m = LLMS_START_RE.search(llms.read_text(encoding="utf-8"))
+        banned = set(BANNED_INGEST) | {q for q, _cli in QUERIED_NOT_INGESTED}
+        for target in MD_LINK_RE.findall(m.group(1) if m else ""):
+            if target.lstrip("./") in banned:
+                fails.append(f"llms.txt Start-here links {target}, which the contract says never to ingest")
+    for rel, needs in BEACON_RULES.items():
+        path = root / rel
+        if not path.is_file():
+            fails.append(f"{rel}: beacon missing (render_shims.py --write)")
+            continue
+        scanned += 1
+        lines = path.read_text(encoding="utf-8").splitlines()
+        for need in needs:
+            if not any(all(tok in ln for tok in need) for ln in lines):
+                fails.append(f"{rel}: no line carries the {' + '.join(need)} rule")
+    for rule in sorted((root / ".windsurf" / "rules").glob("*.md")):
+        scanned += 1
+        head = rule.read_text(encoding="utf-8").split("\n---", 1)[0]
+        rel = rule.relative_to(root).as_posix()
+        if re.search(r"^alwaysApply:", head, re.M):
+            fails.append(f"{rel}: uses alwaysApply; Windsurf reads `trigger: always_on`")
+        elif not re.search(r"^trigger:", head, re.M):
+            fails.append(f"{rel}: no `trigger:` frontmatter, so Windsurf may never load it")
+    for hook in sorted((root / ".cursor" / "hooks").glob("*")):
+        twin = root / "00-bootstrap" / "dist" / hook.name
+        if not (hook.is_file() and twin.is_file()):
+            continue
+        scanned += 1
+        body = [ln for ln in hook.read_text(encoding="utf-8").splitlines() if ln.strip() and not ln.startswith("#")]
+        if hook.read_bytes() != twin.read_bytes() and not (len(body) == 1 and body[0].lstrip().startswith("exec ")):
+            fails.append(f".cursor/hooks/{hook.name} diverges from 00-bootstrap/dist/{hook.name} "
+                         "(keep one copy, or make the local one a one-line exec)")
+    tracked = _tracked_files(root) if files is None else files
+    text_files = [f for f in tracked if Path(f).suffix in {".md", ".mdc", ".txt"}
+                  and not f.startswith(RESTATED_EXCLUDE)]
+    for fid, pattern, scope, fix in RESTATED_FACTS:
+        rx = re.compile(pattern)
+        pool = text_files if scope == ["*"] else [f for f in text_files if any(Path(f).match(g) for g in scope)]
+        for rel in pool:
+            try:
+                text = (root / rel).read_text(encoding="utf-8")
+            except (OSError, UnicodeDecodeError):
+                continue
+            for n, ln in enumerate(text.splitlines(), 1):
+                if rx.search(ln):
+                    fails.append(f"{rel}:{n}: stale restatement [{fid}] — {fix}")
+    return {"check": "entry-points", "scanned": scanned, "failures": fails}
+
+
 def run_connections() -> dict:
     if not REGISTRY.exists():
         return {"lane": "connections", "failed": 1,
@@ -608,6 +707,7 @@ def run_connections() -> dict:
         check_trigger_collisions(reg),
         check_named_detectors(),
         check_single_sources(),
+        check_entry_points(),
     ]
     return {"lane": "connections",
             "failed": sum(1 for c in checks if c["failures"]),
@@ -656,19 +756,37 @@ def check_always_loaded_bytes(root: Path = ROOT, ceilings: dict | None = None) -
     sizes = {rel: (root / rel).stat().st_size for rel in ceilings if (root / rel).is_file()}
     over = [f"{rel}: {sizes[rel]:,} bytes over ceiling {cap:,}"
             for rel, cap in ceilings.items() if sizes.get(rel, 0) > cap]
+    warnings = []
     if ceilings is ALWAYS_LOADED_BYTES_CEILING:
-        over += check_codex_headroom(sizes)
-    return {"sizes": sizes, "over": over}
+        fails, warnings = codex_window(sizes)
+        over += fails
+    return {"sizes": sizes, "over": over, "warnings": warnings}
+
+
+def codex_window(sizes: dict, baseline: int | None = None) -> tuple:
+    """H6 codex_floor: Codex reads AGENTS.md plus the ~/.codex/AGENTS.md beacon into one 32 KiB
+    project-doc window. Over the window is a FAIL. Under 3 KiB of worst-case headroom is a FAIL
+    when AGENTS.md grew past its committed baseline (the pinned ceiling) and a WARN when it did
+    not, which is accepted only while a named cut is pending. Returns (failures, warnings)."""
+    baseline = ALWAYS_LOADED_BYTES_CEILING["AGENTS.md"] if baseline is None else baseline
+    agents = sizes.get("AGENTS.md", 0)
+    beacon = max((sizes.get(b, 0) for b in CODEX_BEACONS), default=0)
+    codex = agents + beacon
+    head = CODEX_DOC_MAX_BYTES - codex
+    what = f"(AGENTS.md {agents:,} + beacon {beacon:,} = {codex:,} of {CODEX_DOC_MAX_BYTES:,})"
+    if head < 0:
+        return [f"Codex window over the cap by {-head:,} bytes {what}"], []
+    if head < CODEX_MIN_HEADROOM_BYTES:
+        line = f"Codex worst-case headroom {head:,} bytes < {CODEX_MIN_HEADROOM_BYTES:,} {what}"
+        if agents > baseline:
+            return [line + f"; AGENTS.md grew past its {baseline:,} B baseline"], []
+        return [], [line + " — accepted only while a named cut is pending"]
+    return [], []
 
 
 def check_codex_headroom(sizes: dict) -> list:
-    """H6: Codex reads AGENTS.md plus the ~/.codex/AGENTS.md beacon (dist/BEACON.md) into one
-    32 KiB project-doc window; wave 1 keeps at least 3 KiB of it free in the worst case."""
-    codex = sizes.get("AGENTS.md", 0) + sizes.get("00-bootstrap/dist/BEACON.md", 0)
-    if CODEX_DOC_MAX_BYTES - codex < CODEX_MIN_HEADROOM_BYTES:
-        return [f"Codex worst-case headroom {CODEX_DOC_MAX_BYTES - codex:,} bytes < {CODEX_MIN_HEADROOM_BYTES:,} "
-                f"(AGENTS.md + beacon = {codex:,} of {CODEX_DOC_MAX_BYTES:,})"]
-    return []
+    """Failures only (the baseline-relative WARN is reported by check_always_loaded_bytes)."""
+    return codex_window(sizes)[0]
 
 
 def run_tokens() -> dict:
@@ -679,6 +797,8 @@ def run_tokens() -> dict:
     adapter_costs = {a: file_tokens(ROOT / a) for a in ADAPTERS if (ROOT / a).exists()}
     worst_adapter = max(adapter_costs, key=adapter_costs.get) if adapter_costs else ""
     contract_floor = sum(floor_parts.values()) + adapter_costs.get(worst_adapter, 0)
+
+    floors = surface_floors()
 
     session_parts = {p: file_tokens(ROOT / p, n) for p, n in SESSION_CONTEXT}
     session_floor = contract_floor + sum(session_parts.values())
@@ -724,6 +844,7 @@ def run_tokens() -> dict:
         "worst_case_legal": worst_case_legal,
         "banned_ingest_total": sum(banned.values()),
         "avoided_by_retrieval": sum(avoided.values()),
+        **{k: sum(v.values()) for k, v in floors.items()},
     }
     over = [
         f"{k}: {measured[k]:,} tokens over budget {BUDGETS[k]:,}"
@@ -732,6 +853,7 @@ def run_tokens() -> dict:
     ]
     ceilings = check_always_loaded_bytes()
     over += ceilings["over"]
+    warnings = ceilings.get("warnings", [])
     return {
         "lane": "tokens",
         "failed": 1 if over else 0,
@@ -740,7 +862,9 @@ def run_tokens() -> dict:
         "measured": measured,
         "budgets": BUDGETS,
         "over_budget": over,
+        "warnings": warnings,
         "detail": {
+            "surface_floors": floors,
             "worst_adapter": worst_adapter,
             "adapters": adapter_costs,
             "floor_parts": floor_parts,
@@ -753,6 +877,30 @@ def run_tokens() -> dict:
             "avoided_by_retrieval": avoided,
             "retrieval_clis": {p: cli for p, cli in QUERIED_NOT_INGESTED},
         },
+    }
+
+
+def _always_apply_rules(root: Path = ROOT) -> list:
+    rules = []
+    for p in sorted((root / ".cursor" / "rules").glob("*.mdc")):
+        head = p.read_text(encoding="utf-8").split("\n---", 1)[0]
+        if re.search(r"^alwaysApply:\s*true\b", head, re.M):
+            rules.append(p.relative_to(root).as_posix())
+    return rules
+
+
+def surface_floors(root: Path = ROOT) -> dict:
+    """H6: what each surface family auto-loads before doing anything, per file.
+    cursor_floor: AGENTS.md + every alwaysApply rule + CLAUDE.md (Cursor's third-party import is
+    on by default). claude_floor: CLAUDE.md + its @AGENTS.md import + the ~/.claude/CLAUDE.md
+    beacon. web_pack: what a RULES-ONLY chat gets (the paste pack plus the route digest)."""
+    def cost(rels):
+        return {r: file_tokens(root / r) for r in rels if (root / r).is_file()}
+    return {
+        "cursor_floor": cost(["AGENTS.md", *_always_apply_rules(root), "CLAUDE.md"]),
+        "claude_floor": cost(["CLAUDE.md", "AGENTS.md", "00-bootstrap/dist/user-CLAUDE.md"]),
+        "web_pack": cost(["00-bootstrap/adapters/web-session.md", "00-bootstrap/dist/BEACON.md",
+                          "02-shared-references/trigger-routes-digest.md"]),
     }
 
 
@@ -807,6 +955,9 @@ def print_report(report: dict) -> None:
             ("session floor (+ context read order)", "session_floor"),
             ("load set p50 / p95 / max", None),
             ("worst-case legal request", "worst_case_legal"),
+            ("cursor floor (AGENTS+alwaysApply+CLAUDE)", "cursor_floor"),
+            ("claude floor (CLAUDE+AGENTS+beacon)", "claude_floor"),
+            ("web pack (paste pack + route digest)", "web_pack"),
         ]
         for label, key in rows:
             if key is None:
@@ -828,6 +979,8 @@ def print_report(report: dict) -> None:
               f" (ceiling {sum(ALWAYS_LOADED_BYTES_CEILING.values()):,})")
         for line in t["over_budget"]:
             print(f"  ✗ OVER BUDGET — {line}")
+        for line in t.get("warnings", []):
+            print(f"  ! WARN — {line}")
         print()
 
     lanes = [report[k] for k in ("quality", "connections", "tokens") if k in report]
@@ -858,6 +1011,56 @@ def write_stamp(report: dict) -> None:
 
 
 # -------------------------------------------------------------------------- self-test
+
+def _plant_entry_points(root: Path) -> list:
+    """A minimal clean tree for check_entry_points; returns its 'tracked' file list."""
+    walls = {"claude": "- Claude surfaces are personal-only.",
+             "codex": "- Codex: employer work only via a feature branch + PR.",
+             "cursor": "- Cursor: employer work only via a feature branch + PR.",
+             "ws": "- `ws status` prints the card."}
+    body = {
+        "llms.txt": "# x\n\n## Start here\n- [AGENTS.md](AGENTS.md)\n- run skill-loadset; never ingest "
+                    "`03-skills/skills.registry.json`\n\n## Other\n- [r](03-skills/skills.registry.json)\n",
+        "00-bootstrap/dist/BEACON.md": walls["claude"],
+        "00-bootstrap/dist/user-CLAUDE.md": walls["claude"],
+        "00-bootstrap/dist/codex-AGENTS.md": walls["codex"] + "\n" + walls["ws"],
+        "00-bootstrap/dist/cursor-user-rules.txt": walls["cursor"],
+        "00-bootstrap/dist/projects-AGENTS.md": "\n".join(walls.values()),
+        ".windsurf/rules/workspace.md": "---\ntrigger: always_on\n---\nread AGENTS.md\n",
+        "notes/fact.md": "Remote: snds/workspace (**public**)\n",
+    }
+    for rel, text in body.items():
+        (root / rel).parent.mkdir(parents=True, exist_ok=True)
+        (root / rel).write_text(text + ("" if text.endswith("\n") else "\n"), encoding="utf-8")
+    return sorted(body)
+
+
+def _entry_point_fixtures() -> list:
+    def write(rel, text):
+        def plant(root, files):
+            (root / rel).parent.mkdir(parents=True, exist_ok=True)
+            (root / rel).write_text(text, encoding="utf-8")
+            if rel not in files:
+                files.append(rel)
+        return plant
+    return [
+        ("an llms.txt Start-here that links the registry fails (H6)", "llms.txt Start-here links",
+         write("llms.txt", "## Start here\n- [reg](03-skills/skills.registry.json)\n")),
+        ("a beacon missing the Claude personal-only rule fails (H6)", "Claude + personal-only",
+         write("00-bootstrap/dist/user-CLAUDE.md", "- Figma work uses real library components.\n")),
+        ("a Codex beacon without the feature-branch rule fails (H6)", "Codex + feature branch + PR",
+         write("00-bootstrap/dist/codex-AGENTS.md", "- `ws status` prints the card.\n")),
+        ("a Windsurf rule using alwaysApply is flagged (H6)", "uses alwaysApply",
+         write(".windsurf/rules/workspace.md", "---\nalwaysApply: true\n---\nx\n")),
+        ("a stale 'private' restatement is flagged (H6)", "[workspace-private]",
+         write("notes/old.md", "Git remote: `https://github.com/snds/workspace` (**private**)\n")),
+        ("the 'c8/* only' beacon wording is flagged (H6)", "[beacon-c8-only]",
+         write("00-bootstrap/dist/RULES.txt", "- Employer repos (c8/*) never receive it.\n")),
+        ("a divergent tracked hook copy fails (H6)", "diverges from 00-bootstrap/dist",
+         lambda root, files: [write(".cursor/hooks/x.sh", "#!/bin/sh\necho a\necho b\n")(root, files),
+                              write("00-bootstrap/dist/x.sh", "#!/bin/sh\necho c\n")(root, files)]),
+    ]
+
 
 def self_test() -> int:
     """Prove each connection check can FAIL. A detector that only ever passes is decor.
@@ -968,6 +1171,34 @@ def self_test() -> int:
            bool(check_codex_headroom({"AGENTS.md": 30_221, "00-bootstrap/dist/BEACON.md": 1_515})))
     expect("Codex headroom at 3 KiB or more passes (H6)",
            not check_codex_headroom({"AGENTS.md": 28_181, "00-bootstrap/dist/BEACON.md": 1_515}))
+    grown = codex_window({"AGENTS.md": 28_300, "00-bootstrap/dist/codex-AGENTS.md": 1_515}, baseline=28_000)
+    expect("a net-positive AGENTS.md diff below 3 KiB headroom fails (H6)", grown[0] and not grown[1])
+    held = codex_window({"AGENTS.md": 28_500, "00-bootstrap/dist/codex-AGENTS.md": 1_515}, baseline=28_600)
+    expect("under 3 KiB without AGENTS.md growth is a WARN, not a FAIL (H6)", not held[0] and held[1])
+    over = codex_window({"AGENTS.md": 31_900, "00-bootstrap/dist/BEACON.md": 1_000}, baseline=40_000)
+    expect("codex_floor over the 32 KiB window fails whatever the baseline (H6)", bool(over[0]))
+    big_beacon = codex_window({"AGENTS.md": 26_000, "00-bootstrap/dist/BEACON.md": 1_000,
+                               "00-bootstrap/dist/codex-AGENTS.md": 4_000}, baseline=26_000)
+    expect("the larger of the two Codex beacons is the one counted (H6)", bool(big_beacon[1]))
+    floors = surface_floors()
+    expect("surface floors price every H6 family", sorted(floors) == ["claude_floor", "cursor_floor", "web_pack"]
+           and all(floors.values()))
+    live = run_tokens()
+    expect("the H6 floors hold on the live tree", not any(k in o for o in live["over_budget"]
+                                                           for k in ("cursor_floor", "claude_floor", "web_pack")))
+    expect("entry points are clean on the live tree", not check_entry_points()["failures"])
+    for name, needle, plant in _entry_point_fixtures():
+        with tempfile.TemporaryDirectory() as td:
+            fake = Path(td)
+            files = _plant_entry_points(fake)
+            plant(fake, files)
+            got = check_entry_points(fake, files)["failures"]
+            expect(name, any(needle in f for f in got))
+    with tempfile.TemporaryDirectory() as td:
+        fake = Path(td)
+        files = _plant_entry_points(fake)
+        clean = check_entry_points(fake, files)["failures"]
+        expect("the planted clean entry-point tree passes", not clean)
 
     with tempfile.TemporaryDirectory() as td:
         fake = Path(td)

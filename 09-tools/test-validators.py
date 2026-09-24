@@ -1452,10 +1452,46 @@ class TestRenderShims(unittest.TestCase):
                      "project-scope shim references $HOME", "host_skip on a command without host_filter",
                      "pending registration fails in strict mode", "wrapper sha mismatch",
                      "hand-edited output is drift", "--rev without render_shims.py exits 3",
-                     "--verify-canonical passes a pure reformat and fails a value change"):
+                     "--verify-canonical passes a pure reformat and fails a value change",
+                     "beacon renders from beacons.json and checks clean", "hand-edited beacon is drift",
+                     "beacon over max_bytes fails", "beacon family not in surfaces.json fails",
+                     "contract-core over the rule limit fails", "contract-core with a missing section fails",
+                     "contract-core keeps the bullet verbatim, drops the rest, re-roots links"):
             with self.subTest(case=name):
                 ok, detail = self.results.get(name, (False, "case missing"))
                 self.assertTrue(ok, detail)
+
+
+class TestEntryPoints(unittest.TestCase):
+    """H6: entry points and per-surface floors (mirrors workspace-harness --self-test)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.wh = load("09-tools/workspace-harness.py")
+
+    def test_live_entry_points_and_floors_clean(self):
+        self.assertEqual(self.wh.check_entry_points(ROOT_DIR)["failures"], [])
+        over = self.wh.run_tokens()["over_budget"]
+        self.assertEqual([o for o in over if o.split(":")[0] in ("cursor_floor", "claude_floor", "web_pack")], [])
+
+    def test_planted_entry_point_defects_fail(self):
+        import tempfile
+        for name, needle, plant in self.wh._entry_point_fixtures():
+            with self.subTest(case=name), tempfile.TemporaryDirectory() as td:
+                root = Path(td)
+                files = self.wh._plant_entry_points(root)
+                self.assertEqual(self.wh.check_entry_points(root, list(files))["failures"], [])
+                plant(root, files)
+                got = self.wh.check_entry_points(root, files)["failures"]
+                self.assertTrue(any(needle in f for f in got), got)
+
+    def test_codex_window_fail_and_baseline_relative_warn(self):
+        cw = self.wh.codex_window
+        fails, warns = cw({"AGENTS.md": 28_300, "00-bootstrap/dist/codex-AGENTS.md": 1_515}, baseline=28_000)
+        self.assertTrue(fails)
+        fails, warns = cw({"AGENTS.md": 28_500, "00-bootstrap/dist/codex-AGENTS.md": 1_515}, baseline=28_600)
+        self.assertEqual((fails, bool(warns)), ([], True))
+        self.assertTrue(cw({"AGENTS.md": 32_000, "00-bootstrap/dist/BEACON.md": 1_000}, baseline=40_000)[0])
 
 
 class TestWsHook(unittest.TestCase):
