@@ -363,7 +363,9 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "under it is blocked [not-positively-personal]",
                   "decisions: a Claude commit in a linked worktree outside projects_root of a checkout under it that "
                   "matches an employer path glob is blocked [I2]",
-                  "decisions: a linked worktree's admin dir used as GIT_DIR from another cwd locates that worktree"]
+                  "decisions: a linked worktree's admin dir used as GIT_DIR from another cwd locates that worktree",
+                  "decisions: a Claude push of an annotated tag whose tagger is the employer identity is blocked "
+                  "[IR1]; the same tag with the personal tagger pushes"]
 VETTED_CASES = (DECISION_CASES[3], DECISION_CASES[13], DECISION_CASES[14])
 
 
@@ -644,6 +646,20 @@ def _ir1_push_cases(lab: Lab, pr, lifted: dict) -> list:
         v = pr.floor_decide("pre-push", ["origin", url], [line], env=lifted, root=lab.lib, home=lab.home, cwd=str(rp))
         out.append((DECISION_CASES[27], v["decision"] == "allow" and "IR1 range check unavailable" in str(v["notice"]),
                     str(v)))
+        # W3-01: an annotated tag carries its own tagger identity, and `git tag` runs no hook. The tag points at a
+        # commit origin already has, so the commit range is empty and only the tagger check can refuse it.
+        rp, bare, _url = repos["www"]
+        base = tip(bare)
+        tg = lab.g(lifted, "tag", "-a", "v-emp", "-m", "employer tagger", base, cwd=rp)
+        tagger = lab.g(lab.base_env, "for-each-ref", "--format=%(taggeremail)", "refs/tags/v-emp", cwd=rp).stdout
+        r = lab.g(lifted, "push", "origin", "refs/tags/v-emp", cwd=rp)
+        landed = lab.g(lab.base_env, "--git-dir", str(bare), "show-ref", "--verify", "--quiet", "refs/tags/v-emp")
+        lab.g(pat, "tag", "-a", "v-pat", "-m", "personal tagger", base, cwd=rp)
+        pp = lab.g(lifted, "push", "origin", "refs/tags/v-pat", cwd=rp)
+        out.append((DECISION_CASES[32], tg.returncode == 0 and lab.acme_mail() in tagger and r.returncode != 0
+                    and "[IR1]" in r.stderr and "tagger" in r.stderr and landed.returncode != 0
+                    and pp.returncode == 0, f"tag={tg.returncode} tagger={tagger.strip()} push={r.returncode} "
+                    f"landed={landed.returncode == 0} personal={pp.returncode} {r.stderr[-300:]} {pp.stderr[-200:]}"))
     finally:
         gc.unlink()
     return out

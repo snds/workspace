@@ -3329,6 +3329,54 @@ def _range_idents(top: Path, line: dict, remote: str, env: dict, git: str,
     return out
 
 
+_TAG_CHAIN_MAX = 16
+
+
+def _tag_taggers(top: Path, line: dict, env: dict, git: str,
+                 gitdir: Optional[Path] = None) -> Optional[List[Tuple[str, str]]]:
+    """(tag object sha, tagger email) for the annotated tag the ref line publishes and every tag it
+    peels through (a tag of a tag); [] for a deletion or a non-tag object; None on a git error or a
+    chain longer than _TAG_CHAIN_MAX. `git tag` runs no hook, so pre-push is where a tagger is seen."""
+    sha = line["local_sha"]
+    if _ZERO_SHA_RE.match(sha):
+        return []
+    pre = ["--git-dir", str(gitdir)] if gitdir is not None else []
+    out: List[Tuple[str, str]] = []
+    for _ in range(_TAG_CHAIN_MAX):
+        t = _git_run(pre + ["cat-file", "-t", sha], top, env, git)
+        if t is None or t.returncode != 0:
+            return None
+        if t.stdout.strip() != "tag":
+            return out
+        r = _git_run(pre + ["cat-file", "tag", sha], top, env, git)
+        if r is None or r.returncode != 0:
+            return None
+        head = r.stdout.split("\n\n", 1)[0].splitlines()
+        target = next((h[len("object "):].strip() for h in head if h.startswith("object ")), "")
+        tagger = next((h for h in head if h.startswith("tagger ")), "")
+        m = re.search(r"<([^<>]*)>", tagger)
+        out.append((sha, m.group(1) if m else ""))
+        if not re.fullmatch(r"[0-9a-f]{40}(?:[0-9a-f]{24})?", target):
+            return None
+        sha = target
+    return None
+
+
+def _push_idents(top: Path, line: dict, remote: str, env: dict, git: str,
+                 gitdir: Optional[Path] = None) -> Optional[List[Tuple[str, str, str, str]]]:
+    """(object kind, sha, role, email) for every identity a ref line publishes: author and committer
+    of each commit in the range (the I1 range reader) and the tagger of each annotated tag it pushes
+    (W3-01). None when either part cannot be read."""
+    idents = _range_idents(top, line, remote, env, git, gitdir)
+    tags = _tag_taggers(top, line, env, git, gitdir)
+    if idents is None or tags is None:
+        return None
+    out = [("annotated tag", sha, "tagger", em) for sha, em in tags]
+    for sha, ae, ce in idents:
+        out += [("commit", sha, "author", ae), ("commit", sha, "committer", ce)]
+    return out
+
+
 def _workspace_checkouts(home: Optional[Path], root: Optional[Path]) -> List[Path]:
     """The `root` pointer's checkout and its linked worktrees (read from its .git/worktrees only)."""
     cands: List[Path] = []
@@ -3564,8 +3612,10 @@ def floor_decide(event: str, hook_args: list, stdin_lines: list, *, env: Optiona
     author or committer, which catches commits no commit hook saw (revert, cherry-pick, rebase,
     am): IR1. A Claude commit event never records the device's employer identity, and a Claude push
     to a non-employer remote never publishes a commit that carries it. A local rewrite (revert,
-    cherry-pick, rebase, am) can still record it locally until that push is refused; annotated-tag
-    tagger identities are not checked. An unreadable range allows with a notice, as for I1.
+    cherry-pick, rebase, am) can still record it locally until that push is refused. The tagger of an
+    annotated tag the push publishes (and of every tag it peels through) meets the same rule as a
+    commit's author and committer, at IR1 and at I1. An unreadable range or tag allows with a notice,
+    as for I1.
     Not positively personal under projects_root blocks; a linked worktree is classified by its own
     top and by its main checkout (under projects_root when either is). An infrastructure error
     allows, with a notice (fail-open): the transport block stays the barrier for employer remotes.
@@ -3631,17 +3681,16 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
             for ln in _push_lines(stdin_lines):
                 if ln.get("bad"):
                     continue
-                idents = _range_idents(top if top is not None else here, ln, remote, genv, git, gitdir)
+                idents = _push_idents(top if top is not None else here, ln, remote, genv, git, gitdir)
                 if idents is None:
                     ir1_notice = "IR1 range check unavailable (git error)"
                     continue
-                for sha, ae, ce in idents:
-                    for role, em in (("author", ae), ("committer", ce)):
-                        if email_class(em, dev_t) == "employer":
-                            return _floor_block("IR1", f"commit {sha[:12]} in the pushed range has an employer identity "
-                                                       f"as {role}; a Claude-family push never publishes it to a "
-                                                       "non-employer remote (IR1); rewrite it with the personal "
-                                                       "identity, then retry")
+                for kind, sha, role, em in idents:
+                    if email_class(em, dev_t) == "employer":
+                        return _floor_block("IR1", f"{kind} {sha[:12]} in the push has an employer identity "
+                                                   f"as {role}; a Claude-family push never publishes it to a "
+                                                   "non-employer remote (IR1); rewrite it with the personal "
+                                                   "identity, then retry")
         if res.get("positively_personal"):
             return _floor_allow(ir1_notice)
         pr = projects_root(root=root, home=home)
@@ -3666,18 +3715,17 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
     for ln in lines:
         if ln.get("bad"):
             continue
-        idents = _range_idents(top if top is not None else here, ln, remote, genv, git, gitdir)
+        idents = _push_idents(top if top is not None else here, ln, remote, genv, git, gitdir)
         if idents is None:
             notice = "I1 range check unavailable (git error)"
             continue
-        for sha, ae, ce in idents:
-            for role, em in (("author", ae), ("committer", ce)):
-                cls = email_class(em, dev_t)
-                if cls != "employer":
-                    what = "a personal identity" if cls == "personal" else "an identity not on the employer allowlist"
-                    return _floor_block("I1", f"commit {sha[:12]} in the pushed range has {what} as {role}; "
-                                              "an employer repo takes only employer identities (rewrite it in "
-                                              "Cursor or Codex with the employer identity)")
+        for kind, sha, role, em in idents:
+            cls = email_class(em, dev_t)
+            if cls != "employer":
+                what = "a personal identity" if cls == "personal" else "an identity not on the employer allowlist"
+                return _floor_block("I1", f"{kind} {sha[:12]} in the push has {what} as {role}; "
+                                          "an employer repo takes only employer identities (rewrite it in "
+                                          "Cursor or Codex with the employer identity)")
     _cur, dflt = _repo_heads(top) if top is not None else (None, None)
     all_deletes = bool(lines) and all(
         not ln.get("bad") and _ZERO_SHA_RE.match(ln["local_sha"]) and ln["remote_ref"].startswith("refs/heads/")
