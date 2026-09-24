@@ -3346,11 +3346,15 @@ def _range_idents(top: Path, line: dict, remote: str, env: dict, git: str,
 _TAG_CHAIN_MAX = 16
 
 
+class _TagChainTooDeep(Exception):
+    """A tag chain longer than _TAG_CHAIN_MAX: never legitimate, so the floor blocks it."""
+
+
 def _tag_taggers(top: Path, line: dict, env: dict, git: str,
                  gitdir: Optional[Path] = None) -> Optional[List[Tuple[str, str]]]:
     """(tag object sha, tagger email) for the annotated tag the ref line publishes and every tag it
     peels through (a tag of a tag); [] for a deletion or a non-tag object; None on a git error or a
-    chain longer than _TAG_CHAIN_MAX. `git tag` runs no hook, so pre-push is where a tagger is seen."""
+    chain longer than _TAG_CHAIN_MAX raises _TagChainTooDeep. `git tag` runs no hook, so pre-push is where a tagger is seen."""
     sha = line["local_sha"]
     if _ZERO_SHA_RE.match(sha):
         return []
@@ -3373,22 +3377,24 @@ def _tag_taggers(top: Path, line: dict, env: dict, git: str,
         if not re.fullmatch(r"[0-9a-f]{40}(?:[0-9a-f]{24})?", target):
             return None
         sha = target
-    return None
+    raise _TagChainTooDeep(line["local_sha"])
 
 
 def _push_idents(top: Path, line: dict, remote: str, env: dict, git: str,
-                 gitdir: Optional[Path] = None) -> Optional[List[Tuple[str, str, str, str]]]:
-    """(object kind, sha, role, email) for every identity a ref line publishes: author and committer
-    of each commit in the range (the I1 range reader) and the tagger of each annotated tag it pushes
-    (W3-01). None when either part cannot be read."""
+                 gitdir: Optional[Path] = None) -> Tuple[Optional[List[Tuple[str, str, str, str]]], bool]:
+    """((object kind, sha, role, email) for every identity a ref line publishes, tags_readable).
+    Author and committer of each commit in the range (the I1 range reader) and the tagger of each
+    annotated tag it pushes (W3-01). The two parts are independent: an unreadable tag never switches
+    off the commit check. The list is None only when the commit range cannot be read; an unreadable
+    tag gives tags_readable False; a tag chain past _TAG_CHAIN_MAX raises _TagChainTooDeep."""
     idents = _range_idents(top, line, remote, env, git, gitdir)
     tags = _tag_taggers(top, line, env, git, gitdir)
-    if idents is None or tags is None:
-        return None
-    out = [("annotated tag", sha, "tagger", em) for sha, em in tags]
+    if idents is None:
+        return None, tags is not None
+    out = [("annotated tag", sha, "tagger", em) for sha, em in (tags or [])]
     for sha, ae, ce in idents:
         out += [("commit", sha, "author", ae), ("commit", sha, "committer", ce)]
-    return out
+    return out, tags is not None
 
 
 def _other_remotes_with(top: Path, sha: str, remote: str, env: dict, git: str,
@@ -3720,7 +3726,13 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
             for ln in _push_lines(stdin_lines):
                 if ln.get("bad"):
                     continue
-                idents = _push_idents(top if top is not None else here, ln, remote, genv, git, gitdir)
+                try:
+                    idents, tags_ok = _push_idents(top if top is not None else here, ln, remote, genv, git, gitdir)
+                except _TagChainTooDeep as exc:
+                    return _floor_block("IR1", f"annotated tag chain from {str(exc)[:12]} is longer than "
+                                               f"{_TAG_CHAIN_MAX} tags; its taggers cannot be checked (IR1)")
+                if not tags_ok:
+                    ir1_notice = "IR1 tag check unavailable (git error)"
                 if idents is None:
                     ir1_notice = "IR1 range check unavailable (git error)"
                     continue
@@ -3764,7 +3776,13 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
     for ln in lines:
         if ln.get("bad"):
             continue
-        idents = _push_idents(top if top is not None else here, ln, remote, genv, git, gitdir)
+        try:
+            idents, tags_ok = _push_idents(top if top is not None else here, ln, remote, genv, git, gitdir)
+        except _TagChainTooDeep as exc:
+            return _floor_block("I1", f"annotated tag chain from {str(exc)[:12]} is longer than "
+                                      f"{_TAG_CHAIN_MAX} tags; its taggers cannot be checked (I1)")
+        if not tags_ok:
+            notice = "I1 tag check unavailable (git error)"
         if idents is None:
             notice = "I1 range check unavailable (git error)"
             continue

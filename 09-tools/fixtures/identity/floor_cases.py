@@ -375,7 +375,9 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "decisions: a Claude cherry-pick of a personal-authored commit records the employer identity as "
                   "committer only, and the push of it is blocked [IR1] on the committer",
                   "decisions: a Claude commit in a cached personal linked worktree under projects_root whose main "
-                  "checkout is uncached is blocked [not-positively-personal] (both must be positively personal)"]
+                  "checkout is uncached is blocked [not-positively-personal] (both must be positively personal)",
+                  "decisions: an annotated tag chain longer than the floor reads is blocked [IR1] (never fail-open on a crafted chain)",
+                  "decisions: an unreadable tag never switches off the commit identity check (_push_idents keeps the commit part)"]
 VETTED_CASES = (DECISION_CASES[3], DECISION_CASES[13], DECISION_CASES[14])
 
 
@@ -672,6 +674,24 @@ def _ir1_push_cases(lab: Lab, pr, lifted: dict) -> list:
                     and "[IR1]" in r.stderr and "tagger" in r.stderr and landed.returncode != 0
                     and pp.returncode == 0, f"tag={tg.returncode} tagger={tagger.strip()} push={r.returncode} "
                     f"landed={landed.returncode == 0} personal={pp.returncode} {r.stderr[-300:]} {pp.stderr[-200:]}"))
+        # Review fix: a tag chain past the reader's limit blocks, and a tag read failure leaves the commit check on.
+        prev = "v-pat"
+        for k in range(pr._TAG_CHAIN_MAX + 1):
+            lab.g(pat, "tag", "-a", f"deep-{k}", "-m", "chain", prev, cwd=rp)
+            prev = f"deep-{k}"
+        dr = lab.g(lifted, "push", "origin", f"refs/tags/{prev}", cwd=rp)
+        dlanded = lab.g(lab.base_env, "--git-dir", str(bare), "show-ref", "--verify", "--quiet", f"refs/tags/{prev}")
+        out.append((DECISION_CASES[38], dr.returncode != 0 and "[IR1]" in dr.stderr and "longer than" in dr.stderr
+                    and dlanded.returncode != 0, f"push={dr.returncode} landed={dlanded.returncode == 0} {dr.stderr[-300:]}"))
+        saved_rng, saved_tag = pr._range_idents, pr._tag_taggers
+        try:
+            pr._range_idents = lambda *a, **k: [("c" * 40, "a@x.invalid", "b@x.invalid")]
+            pr._tag_taggers = lambda *a, **k: None
+            got, tags_ok = pr._push_idents(rp, {"local_sha": "c" * 40}, "origin", {}, "git")
+        finally:
+            pr._range_idents, pr._tag_taggers = saved_rng, saved_tag
+        out.append((DECISION_CASES[39], got is not None and not tags_ok
+                    and [(k, r) for k, _s, r, _e in got] == [("commit", "author"), ("commit", "committer")], f"{got} {tags_ok}"))
         # TR3-02: cherry-pick keeps the author and records the committer from config, so the author is personal and
         # only the committer is the employer identity; the push must be refused on the committer alone.
         lab.g(pat, "switch", "-q", "-c", "pick-src", base, cwd=rp)
