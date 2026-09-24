@@ -8,6 +8,8 @@ imports its sibling `profile_resolve.py`; tables resolve relative to that copy.
   ws_hook.py --host HOST --event EVENT [--probe] [--budget SECONDS]   stdin: host payload JSON
   ws_hook.py --host git --floor claude [GIT_HOOK_ARGS...]             stdin: pre-push ref lines
   ws_hook.py host --skip-any H[,H...]                                 stdin: payload JSON (optional)
+  ws_hook.py host --skip-unless H[,H...]                              stdin: payload JSON (optional)
+  ws_hook.py host --skip-unless-layer LAYER                           stdin: payload JSON (optional)
   ws_hook.py probe-env --host H [--via terminal|run_in_terminal] [--record]
   ws_hook.py probe-promote --host H [--device D]
   ws_hook.py --self-test
@@ -16,7 +18,12 @@ imports its sibling `profile_resolve.py`; tables resolve relative to that copy.
 Hook paths fail open: a missing module or table, an exception or a timeout gives no decision
 (exit 0, no stdout). In wave 0 no live registration runs --event without --probe; the event
 paths are exercised by fixtures. `host --skip-any` exits 3 only on verified evidence that the
-acting host is in the set, 0 when a verified host is outside it, 2 otherwise.
+acting host is in the set, 0 when a verified host is outside it, 2 otherwise. `host --skip-unless`
+is its complement: 3 only on verified evidence that the acting host is outside the set, 0 when a
+verified host is in it, 2 otherwise (an empty set is a usage error, 2). `host --skip-unless-layer
+LAYER` is `--skip-unless` with the set read from surfaces.json: the `loaded_by` of that layer. An
+unknown layer, a layer with no hosts or a missing table gives 2. The boot shim uses it with
+`claude-project`, so the hosts it defers for are exactly the table's.
 
 Stdlib only; Python 3.9+.
 """
@@ -69,6 +76,7 @@ BASELINE_SCRIPTS = {
 BASELINE_REV = "2ff02e7"
 
 _PR = None          # test seam: a stand-in profile_resolve module
+_UNSET_TABLE = object()
 
 
 # --------------------------------------------------------------------------- imports + tables
@@ -356,18 +364,38 @@ def _detect(hint=None, *, env=None) -> dict:
     return det if isinstance(det, dict) else {}
 
 
-def host_skip_any(hosts, payload, *, env=None) -> int:
+def layer_hosts(layer_id, *, table=_UNSET_TABLE) -> set:
+    """The hosts that load a layer (its `loaded_by` in surfaces.json); empty when the table or the
+    layer is missing."""
+    t = _surfaces() if table is _UNSET_TABLE else table
+    for lay in (t or {}).get("layers") or []:
+        if isinstance(lay, dict) and lay.get("id") == layer_id:
+            return {h for h in lay.get("loaded_by") or [] if isinstance(h, str) and h}
+    return set()
+
+
+def host_skip_any(hosts, payload, *, env=None, unless=False) -> int:
+    """Exit code for `host --skip-any` (unless=False) or `host --skip-unless` (unless=True).
+
+    3 on verified evidence that the acting host is in the set (unless: outside it), 0 on verified
+    evidence of the opposite, 2 when no host is verified."""
     try:
+        if unless and not hosts:
+            return 2
         t = _surfaces()
         hint = payload_host_hint(payload, table=t) if (payload and t) else None
         if hint:
-            return 3 if hint in hosts else 0
-        if _profile_resolve() is None:
+            acting = hint
+        else:
+            if _profile_resolve() is None:
+                return 2
+            det = _detect(None, env=env)
+            if not det.get("determined") or not det.get("verified"):
+                return 2
+            acting = det.get("acting_host")
+        if unless and (not acting or acting == "unknown"):
             return 2
-        det = _detect(None, env=env)
-        if not det.get("determined") or not det.get("verified"):
-            return 2
-        return 3 if det.get("acting_host") in hosts else 0
+        return 3 if (acting in hosts) != unless else 0
     except Exception:
         return 2
 
@@ -1138,6 +1166,51 @@ def self_test_cases() -> list:
         with _with_pr(_Boom(home)):
             ok("host --skip-any: detection error -> 2", host_skip_any({"cursor"}, {}) == 2)
 
+        # --skip-unless: the complement. 3 only on verified evidence of a host outside the set.
+        proj = {"claude-code", "cursor"}
+        cases = [
+            ("claude payload in the set", _golden("claude-code", "session-start"), None, proj, 0),
+            ("cursor payload in the set", _golden("cursor", "session-start"), None, proj, 0),
+            ("codex payload outside the set", _golden("codex", "session-start"), None, proj, 3),
+            ("copilot-vscode payload outside the set", _golden("copilot-vscode", "session-start"), None, proj, 3),
+            ("no payload, verified env claude", {}, {"acting_host": "claude-code", "determined": True, "verified": True}, proj, 0),
+            ("no payload, verified env codex", {}, {"acting_host": "codex", "determined": True, "verified": True}, proj, 3),
+            ("no payload, unverified codex", {}, {"acting_host": "codex", "determined": True, "verified": False}, proj, 2),
+            ("verified but unknown host", {}, {"acting_host": "unknown", "determined": True, "verified": True}, proj, 2),
+            ("undetermined", {}, {"acting_host": "unknown", "determined": False, "verified": False}, proj, 2),
+            ("empty set", _golden("codex", "session-start"), None, set(), 2),
+        ]
+        for name, payload, det, hosts, want in cases:
+            with _with_pr(_FakePR(home, detect=det)):
+                rc = host_skip_any(hosts, payload, unless=True)
+            ok(f"host --skip-unless: {name} -> {want}", rc == want, f"rc={rc}")
+        with _with_pr(_Boom(home)):
+            ok("host --skip-unless: detection error -> 2", host_skip_any(proj, {}, unless=True) == 2)
+
+        # --skip-unless-layer: the set is a layer's loaded_by in surfaces.json, never a list in the shim.
+        live = json.loads((ROOT / "02-shared-references" / "surfaces.json").read_text(encoding="utf-8"))
+        want_proj = set(next(lay for lay in live["layers"] if lay["id"] == "claude-project")["loaded_by"])
+        ok("layer_hosts(claude-project) is the table's loaded_by",
+           layer_hosts("claude-project", table=live) == want_proj and "copilot-vscode" in want_proj
+           and "codex" not in want_proj, f"{sorted(layer_hosts('claude-project', table=live))}")
+        ok("layer_hosts: unknown layer -> empty", layer_hosts("no-such-layer", table=live) == set())
+        ok("layer_hosts: no table -> empty", layer_hosts("claude-project", table=None) == set())
+        with _with_pr(_FakePR(home)):
+            ok("layer_hosts reads the table through profile_resolve", layer_hosts("claude-project") == want_proj)
+        for surface, want in (("claude-code", 0), ("cursor", 0), ("copilot-vscode", 0), ("codex", 3)):
+            with _with_pr(_FakePR(home)):
+                rc = host_skip_any(layer_hosts("claude-project"), _golden(surface, "session-start"), unless=True)
+            ok(f"host --skip-unless-layer claude-project: {surface} payload -> {want}", rc == want, f"rc={rc}")
+        # The boot shim defers by the layer its own registrations defer to (Rule R defers_to).
+        shim = (ROOT / "00-bootstrap" / "dist" / "workspace-sessionstart.sh").read_text(encoding="utf-8")
+        named = set(re.findall(r"host --skip-unless-layer (\S+)", shim))
+        regs = {r["id"]: r for r in live["registrations"]}
+        targets = {regs[r["defers_to"]]["layer"] for r in live["registrations"]
+                   if r.get("command") == "ws-user-sessionstart" and r.get("defers_to") in regs}
+        ok("boot shim defers for the hosts of the layer its registrations defer to",
+           bool(named) and named == targets, f"shim={sorted(named)} table={sorted(targets)}")
+        ok("boot shim names no host list for the deferral", "host --skip-unless " not in shim)
+
         # 10. Floor adapter.
         seen = []
 
@@ -1183,6 +1256,11 @@ def self_test_cases() -> list:
         cur = json.dumps(_golden("cursor", "session-start"))
         r = _run_cli(lone, ["host", "--skip-any", "cursor"], stdin=cur, home=home)
         ok("missing profile_resolve: host --skip-any exits 2", r.returncode == 2, f"rc={r.returncode} {r.stderr}")
+        cdx = json.dumps(_golden("codex", "session-start"))
+        r = _run_cli(lone, ["host", "--skip-unless", "claude-code,cursor"], stdin=cdx, home=home)
+        ok("missing profile_resolve: host --skip-unless exits 2", r.returncode == 2, f"rc={r.returncode} {r.stderr}")
+        r = _run_cli(lone, ["host", "--skip-unless-layer", "claude-project"], stdin=cdx, home=home)
+        ok("missing profile_resolve: host --skip-unless-layer exits 2", r.returncode == 2, f"rc={r.returncode} {r.stderr}")
         r = _run_cli(lone, ["--host", "auto", "--event", "session-start"], stdin=cur, home=home)
         ok("missing profile_resolve: event exits 0 silently", r.returncode == 0 and r.stdout == "", f"{r.returncode} {r.stdout!r}")
         r = _run_cli(lone, ["--host", "git", "--floor", "claude", "origin", "url"], stdin="", home=home)
@@ -1207,6 +1285,23 @@ def self_test_cases() -> list:
         full = _fixture_tree(tmp / "full", with_pr=True)
         r = _run_cli(full, ["host", "--skip-any", "cursor"], stdin=cur, home=home)
         ok("CLI host --skip-any with a cursor payload exits 3", r.returncode == 3, f"rc={r.returncode} {r.stderr}")
+        for label, stdin, want in (("codex", cdx, 3), ("cursor", cur, 0),
+                                   ("claude", json.dumps(_golden("claude-code", "session-start")), 0)):
+            r = _run_cli(full, ["host", "--skip-unless", "claude-code,cursor"], stdin=stdin, home=home)
+            ok(f"CLI host --skip-unless claude-code,cursor with a {label} payload exits {want}",
+               r.returncode == want, f"rc={r.returncode} {r.stderr}")
+        for label, stdin, want in (("codex", cdx, 3), ("cursor", cur, 0),
+                                   ("claude", json.dumps(_golden("claude-code", "session-start")), 0),
+                                   ("copilot-vscode", json.dumps(_golden("copilot-vscode", "session-start")), 0)):
+            r = _run_cli(full, ["host", "--skip-unless-layer", "claude-project"], stdin=stdin, home=home)
+            ok(f"CLI host --skip-unless-layer claude-project with a {label} payload exits {want}",
+               r.returncode == want, f"rc={r.returncode} {r.stderr}")
+        for label, args in (("both flags", ["--skip-any", "cursor", "--skip-unless", "cursor"]), ("no flag", []),
+                            ("empty set", ["--skip-unless", ","]),
+                            ("an unknown layer", ["--skip-unless-layer", "no-such-layer"]),
+                            ("a layer and a list", ["--skip-unless-layer", "claude-project", "--skip-unless", "codex"])):
+            r = _run_cli(full, ["host", *args], stdin=cdx, home=home)
+            ok(f"CLI host with {label} exits 2", r.returncode == 2, f"rc={r.returncode} {r.stderr}")
         r = _run_cli(full, ["--host", "git", "--floor", "claude", "origin", "url"], stdin="a b c d\n", home=home,
                      extra_env={"WS_FAKE_FLOOR": "block"})
         ok("CLI floor block exits 1 with the rule on stderr", r.returncode == 1 and "I1" in r.stderr, f"{r.returncode} {r.stderr}")
@@ -1255,7 +1350,12 @@ def _baseline_script(name: str) -> bytes:
     return data
 
 
-def _shell_run(script: bytes, payload: str, *, tmp: Path, ws: Path, tag: str, pin_rc=None, pre_state=None):
+def _shell_run(script: bytes, payload: str, *, tmp: Path, ws: Path, tag: str, pin_rc=None, pre_state=None,
+               real_pin=False):
+    """(rc, stdout, audit lines) of one shim run in a temp home.
+
+    pin_rc installs a stand-in ws-hook that always exits pin_rc. real_pin installs the byte-stable
+    dist wrapper with lib/current pointing at this tree, so the real host detection answers."""
     home = tmp / f"home-{tag}"
     (home / ".claude").mkdir(parents=True)
     (home / ".claude" / "workspace-brain-path").write_text(str(ws) + "\n", encoding="utf-8")
@@ -1268,6 +1368,13 @@ def _shell_run(script: bytes, payload: str, *, tmp: Path, ws: Path, tag: str, pi
         b.mkdir(parents=True)
         (b / "ws-hook").write_text(f"#!/bin/sh\ncat >/dev/null\nexit {pin_rc}\n", encoding="utf-8")
         (b / "ws-hook").chmod(0o755)
+    elif real_pin:
+        cfg = home / ".config" / "snds-workspace"
+        (cfg / "bin").mkdir(parents=True)
+        (cfg / "lib").mkdir()
+        shutil.copy2(ROOT / "00-bootstrap" / "dist" / "ws-hook", cfg / "bin" / "ws-hook")
+        (cfg / "bin" / "ws-hook").chmod(0o755)
+        (cfg / "lib" / "current").symlink_to(ROOT, target_is_directory=True)
     path = tmp / f"script-{tag}.sh"
     path.write_bytes(script)
     env = {"HOME": str(home), "PATH": os.environ.get("PATH", "/usr/bin:/bin"), "LANG": "C", "LC_ALL": "C",
@@ -1315,12 +1422,16 @@ def shell_golden_cases() -> list:
             return p
 
         codex_p = shaped("codex", "session-start", cwd=str(outside))
+        codex_in = shaped("codex", "session-start", cwd=str(ws))
+        copilot_in = shaped("copilot-vscode", "session-start", cwd=str(ws))
         cursor_p = shaped("cursor", "session-start", workspace_roots=[str(outside)])
         cases = {
             "workspace-sessionstart.sh": [
                 (f"claude {src} {where}", claude("SessionStart", src, cwd), None)
                 for src in ("startup", "resume", "compact") for where, cwd in (("inside", ws), ("outside", outside))
-            ] + [("codex outside", codex_p, None), ("cursor outside", cursor_p, None)],
+            ] + [("codex outside", codex_p, None), ("cursor outside", cursor_p, None),
+                 # No verdict (no pin, exit 0, exit 2) keeps the 2ff02e7 in-workspace deferral.
+                 ("codex inside", codex_in, None), ("copilot-vscode inside", copilot_in, None)],
             "workspace-reassert.sh": [
                 ("claude no boot marker inside", claude("UserPromptSubmit", cwd=ws), None),
                 ("claude marker, ritual missing outside", claude("UserPromptSubmit", cwd=outside, transcript=transcript_miss),
@@ -1362,6 +1473,45 @@ def shell_golden_cases() -> list:
                 if want[1] == "" and not want[2] and name != "workspace-reassert.sh":
                     results.append((f"{name} {label}: baseline produced output to compare", False,
                                     "fixture produced no stdout and no log line"))
+
+        # L-08, the one sanctioned departure from 2ff02e7 (every case above stays byte-identical).
+        # Inside the workspace the boot shim defers to the project hook only for a host that loads
+        # the claude-project layer (its loaded_by in surfaces.json). Codex does not, so a Codex host
+        # verified by the real pinned ws-hook gets the card 2ff02e7 gives it outside the workspace,
+        # not the pointer. Claude Code and Copilot in VS Code load the layer and stay byte-identical.
+        name = "workspace-sessionstart.sh"
+        try:
+            old = _baseline_script(name)
+        except (OSError, RuntimeError) as exc:
+            results.append((f"{name}: {BASELINE_REV} baseline available for the real-pin goldens", False, str(exc)))
+            return results
+        new = (ROOT / "00-bootstrap" / "dist" / name).read_bytes()
+        n += 1
+        card = _shell_run(old, json.dumps(codex_p), tmp=tmp, ws=ws, tag=f"{n}-old")
+        n += 1
+        pointer = _shell_run(old, json.dumps(codex_in), tmp=tmp, ws=ws, tag=f"{n}-old")
+        n += 1
+        got = _shell_run(new, json.dumps(codex_in), tmp=tmp, ws=ws, tag=f"{n}-new", real_pin=True)
+        results.append((f"{name} codex inside, real pin: the card {BASELINE_REV} gives codex outside, not the pointer",
+                        got == card and card != pointer and "via:user-hook/" in card[1],
+                        f"card={card!r} pointer={pointer!r} got={got!r}"))
+        claude_in = claude("SessionStart", "startup", ws)
+        n += 1
+        want = _shell_run(old, json.dumps(claude_in), tmp=tmp, ws=ws, tag=f"{n}-old")
+        n += 1
+        got = _shell_run(new, json.dumps(claude_in), tmp=tmp, ws=ws, tag=f"{n}-new", real_pin=True)
+        results.append((f"{name} claude inside, real pin: identical to {BASELINE_REV}",
+                        got == want and "via:project-hook/" in want[1], f"want={want!r} got={got!r}"))
+        n += 1
+        want = _shell_run(old, json.dumps(copilot_in), tmp=tmp, ws=ws, tag=f"{n}-old")
+        n += 1
+        got = _shell_run(new, json.dumps(copilot_in), tmp=tmp, ws=ws, tag=f"{n}-new", real_pin=True)
+        results.append((f"{name} copilot-vscode inside the workspace, real pin: identical to {BASELINE_REV}",
+                        got == want and "via:project-hook/" in want[1], f"want={want!r} got={got!r}"))
+        cursor_in = shaped("cursor", "session-start", workspace_roots=[str(ws)])
+        n += 1
+        got = _shell_run(new, json.dumps(cursor_in), tmp=tmp, ws=ws, tag=f"{n}-new", real_pin=True)
+        results.append((f"{name} cursor inside, real pin: exits 0 with no output", got == (0, "", []), f"got={got!r}"))
     return results
 
 
@@ -1383,13 +1533,25 @@ def main(argv=None) -> int:
         return _report(shell_golden_cases(), "ws_hook self-test-shell")
     if argv[:1] == ["host"]:
         ap = argparse.ArgumentParser(prog="ws_hook.py host")
-        ap.add_argument("--skip-any", required=True)
+        mode = ap.add_mutually_exclusive_group(required=True)
+        mode.add_argument("--skip-any")
+        mode.add_argument("--skip-unless")
+        mode.add_argument("--skip-unless-layer")
         try:
             a = ap.parse_args(argv[1:])
         except SystemExit:
             return 2
-        hosts = {h.strip() for h in a.skip_any.split(",") if h.strip()}
-        return host_skip_any(hosts, _read_payload())
+        payload = _read_payload()
+        if a.skip_unless_layer is not None:
+            try:
+                hosts = layer_hosts(a.skip_unless_layer.strip())
+            except Exception:
+                return 2
+            return host_skip_any(hosts, payload, unless=True)
+        unless = a.skip_unless is not None
+        spec = a.skip_unless if unless else a.skip_any
+        hosts = {h.strip() for h in spec.split(",") if h.strip()}
+        return host_skip_any(hosts, payload, unless=unless)
     if argv[:1] == ["probe-env"]:
         ap = argparse.ArgumentParser(prog="ws_hook.py probe-env")
         ap.add_argument("--host", required=True)

@@ -1315,8 +1315,10 @@ class TestPinLib(unittest.TestCase):
 
 class TestInstaller(unittest.TestCase):
     """H24 installers: the fixture suite (refusal matrix, allow path, byte-exact uninstall,
-    doctor modes with a hash spy and PATH stubs), plus every declared agent marker through
-    the REAL profile_resolve.agent_check: every installer, both actions, must refuse."""
+    doctor modes with a hash spy and PATH stubs), plus the agent markers pinned in MARKERS (one
+    env marker each for Cursor, Codex, Gemini and Claude, the CI marker, the family override and
+    a Claude process in the ancestry) through the REAL profile_resolve.agent_check: every
+    installer, both actions, must refuse. It does not run every marker surfaces.json declares."""
 
     MARKERS = [
         ({"CURSOR_AGENT": "1"}, []),
@@ -1397,7 +1399,12 @@ class TestSurfaces(unittest.TestCase):
                      "unresolvable verified_by in strict mode",
                      "unresolvable fixture ref is a warning under --pending-ok",
                      "unresolvable probe ref stays an error under --pending-ok", "invalid coverage mode",
-                     "unknown top-level key"):
+                     "unknown top-level key",
+                     "planned refs that all resolve give a notice and no warning",
+                     "an unpromoted entry keeps strict mode clean (no errors, no warnings)",
+                     "--check exits 0 and prints the notice outside warnings",
+                     "--check --json exits 0 and prints the notice outside warnings",
+                     "a verified_by ref on a non-enforced entry must resolve"):
             with self.subTest(case=name):
                 ok, detail = self.results.get(name, (False, "case missing"))
                 self.assertTrue(ok, detail)
@@ -1464,8 +1471,12 @@ class TestWsHook(unittest.TestCase):
 
 
 class TestHostFilter(unittest.TestCase):
-    """G2b: Claude Code and Codex boot output byte-identical to 2ff02e7 with and without a pin;
-    Cursor silenced only when the pinned wrapper reports verified evidence (exit 3)."""
+    """G2b: boot output byte-identical to 2ff02e7 with and without a pin, except the recorded L-08
+    case: Codex inside the workspace with a verified pin gets the card 2ff02e7 gives it outside the
+    workspace, because Codex does not load the claude-project layer. Claude Code and Copilot in
+    VS Code inside the workspace with a verified pin stay byte-identical (the deferral set is the
+    layer's loaded_by in surfaces.json). Cursor silenced only when the pinned wrapper reports
+    verified evidence (exit 3)."""
 
     def test_host_filter_goldens(self):
         ws = load("ws_hook")

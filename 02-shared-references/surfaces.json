@@ -179,11 +179,12 @@
           "mode": "unverified",
           "rules": "pre-commit lane when installed (plan decision #2) plus the budgeted Claude SessionEnd accelerator; CI backstop without lanes",
           "decision": null,
-          "verified_by": [],
-          "planned_verified_by": [
-            "fixture:TestNightly"
+          "verified_by": [
+            "fixture:TestNightly",
+            "selftest:09-tools/nightly.py"
           ],
-          "how": "enforced-when-installed once the X1 replay fixture (T5) resolves and lanes are installed"
+          "planned_verified_by": [],
+          "how": "enforced-when-installed once the H18 pre-commit lane installer ships (wave 1). TestNightly and the X1 replay in nightly.py --self-test already pass"
         },
         "H2": {
           "mode": "unverified",
@@ -194,7 +195,7 @@
             "fixture:TestProfileResolve",
             "probe:claude-code@work-mbp"
           ],
-          "how": "enforced-partial once TestProfileResolve and the claude-code probe resolve"
+          "how": "enforced-partial once the claude-code probe record exists (a human step in the G3b probe window). TestProfileResolve already passes"
         },
         "H3": {
           "mode": "enforced",
@@ -211,13 +212,12 @@
           "rules": "generation checked by render_shims --check; installation only through H24 installers",
           "decision": null,
           "verified_by": [
-            "selftest:00-bootstrap/doctor/render_shims.py"
-          ],
-          "planned_verified_by": [
+            "selftest:00-bootstrap/doctor/render_shims.py",
             "fixture:TestSurfaces",
             "fixture:TestRenderShims"
           ],
-          "how": "render_shims --check and --self-test"
+          "planned_verified_by": [],
+          "how": "render_shims --check and --self-test, pinned by TestSurfaces and TestRenderShims"
         },
         "H17": {
           "mode": "enforced-partial",
@@ -243,7 +243,7 @@
             "selftest:09-tools/ws_hook.py",
             "probe:claude-code@work-mbp"
           ],
-          "how": "enforced once the claude-code probe file exists"
+          "how": "enforced once the claude-code probe record exists (a human step in the G3b probe window). The ws_hook.py self-test already passes"
         },
         "H22": {
           "mode": "enforced-partial",
@@ -256,27 +256,27 @@
             "fixture:TestVettedContext",
             "probe:claude-code@work-mbp"
           ],
-          "how": "TestActionPolicy runs the policy matrix and a composed-vs-vetted push --delete in temp repos; the live vetted run is Sean's G5c"
+          "how": "TestActionPolicy runs the policy matrix and a composed-vs-vetted push --delete in temp repos. TestVettedContext already passes. The planned refs wait on the claude-code probe record (G3b); the live vetted run is Sean's G5c"
         },
         "H24": {
-          "mode": "unverified",
+          "mode": "enforced-partial",
           "rules": "installers refuse Claude processes. Declared residual until wave 1: the doctor heals the Claude-only injectors (user hook scripts and the user CLAUDE.md) from the checkout, not the pinned lib, and its SessionStart and scheduled runs use the checkout doctor; wave 1 pins both with H20",
           "decision": "Sean 2026-09-23: accepted as a declared residual; pinned in wave 1",
-          "verified_by": [],
-          "planned_verified_by": [
+          "verified_by": [
             "fixture:TestInstaller"
           ],
-          "how": "enforced once TestInstaller (T3) resolves"
+          "planned_verified_by": [],
+          "how": "TestInstaller: every installer, for both actions, refuses the agent markers TestInstaller pins (one env marker each for Cursor, Codex, Gemini and Claude, the CI marker, the family override and a Claude process in the ancestry), an undetermined verdict and a missing TTY. It does not run every marker the table declares. Partial because of the declared heal residual in rules; wave 1 pins it"
         },
         "H25": {
           "mode": "unverified",
           "rules": "report-only employer-substance scan when the lane is installed, plus a CI backstop; the fragment limits, the Cursor/Codex inventory and the static Claude deny rules ship in wave 1 with H23, H4 and H15",
           "decision": "D7, Sean 2026-09-23: three H25 parts move to wave 1",
-          "verified_by": [],
-          "planned_verified_by": [
+          "verified_by": [
             "fixture:TestEmployerSubstance"
           ],
-          "how": "enforced-when-installed once TestEmployerSubstance (T4) resolves"
+          "planned_verified_by": [],
+          "how": "enforced-when-installed once the H18 pre-commit lane installer ships (wave 1) and Sean makes the allowlist decision. Until then the scan is report-only. TestEmployerSubstance already passes"
         }
       }
     },
@@ -608,21 +608,22 @@
           "mode": "unverified",
           "rules": "agent commits pass through the lane when installed; sessionEnd is not used; no session baseline in wave 0",
           "decision": null,
-          "verified_by": [],
-          "planned_verified_by": [
-            "fixture:TestNightly"
+          "verified_by": [
+            "fixture:TestNightly",
+            "selftest:09-tools/nightly.py"
           ],
-          "how": "enforced-when-installed once the X1 replay fixture (T5) resolves"
+          "planned_verified_by": [],
+          "how": "enforced-when-installed once the H18 pre-commit lane installer ships (wave 1). TestNightly and the X1 replay in nightly.py --self-test already pass"
         },
         "H2": {
           "mode": "unverified",
           "rules": "a voluntary CLI until H15 shims or H18 lanes are installed",
           "decision": null,
-          "verified_by": [],
-          "planned_verified_by": [
+          "verified_by": [
             "fixture:TestProfileResolve"
           ],
-          "how": "enforced-when-installed once TestProfileResolve (T2) resolves"
+          "planned_verified_by": [],
+          "how": "enforced-when-installed once H15 shims or H18 lanes call the resolver (wave 1). Until then it is a voluntary CLI. TestProfileResolve already passes"
         },
         "H3": {
           "mode": "enforced",
@@ -639,22 +640,21 @@
           "rules": "the rendered dist reaches the machine only through an explicit H24 installer",
           "decision": null,
           "verified_by": [
-            "selftest:00-bootstrap/doctor/render_shims.py"
-          ],
-          "planned_verified_by": [
+            "selftest:00-bootstrap/doctor/render_shims.py",
             "fixture:TestRenderShims"
           ],
-          "how": "render_shims --check"
+          "planned_verified_by": [],
+          "how": "render_shims --check, pinned by TestRenderShims"
         },
         "H17": {
           "mode": "advisory",
           "rules": "identity from git config (the device rule); --install-identity renders the device identity include; profile_resolve.py identity reports I1 and the device-mismatch flag, report-only; no wave-0 git boundary blocks a non-Claude committer",
           "decision": null,
-          "verified_by": [],
-          "planned_verified_by": [
+          "verified_by": [
             "fixture:TestIdentity"
           ],
-          "how": "enforced-when-installed once the H18 identity lanes ship (wave 1)"
+          "planned_verified_by": [],
+          "how": "enforced-when-installed once the H18 identity lanes ship (wave 1). TestIdentity already verifies the report-only identity check"
         },
         "H19": {
           "mode": "unverified",
@@ -670,31 +670,31 @@
           "mode": "advisory",
           "rules": "`profile_resolve.py policy` is a voluntary, report-only CLI; merge and default-branch denial is not enforced here; employer branch protection is the real wall",
           "decision": null,
-          "verified_by": [],
-          "planned_verified_by": [
+          "verified_by": [
             "fixture:TestActionPolicy"
           ],
-          "how": "enforced-when-installed once H15 shims or H18 lanes call policy (wave 1)"
+          "planned_verified_by": [],
+          "how": "enforced-when-installed once H15 shims or H18 lanes call policy (wave 1). TestActionPolicy already verifies the report-only CLI"
         },
         "H24": {
-          "mode": "unverified",
+          "mode": "enforced-partial",
           "rules": "installers refuse Cursor agent shells; the Claude user hook scripts Cursor loads carry the claude-code H24 heal residual until wave 1",
           "decision": "Sean 2026-09-23: as claude-code H24",
-          "verified_by": [],
-          "planned_verified_by": [
+          "verified_by": [
             "fixture:TestInstaller"
           ],
-          "how": "enforced once TestInstaller (T3) resolves"
+          "planned_verified_by": [],
+          "how": "TestInstaller: every installer, for both actions, refuses the agent markers TestInstaller pins (one env marker each for Cursor, Codex, Gemini and Claude, the CI marker, the family override and a Claude process in the ancestry), an undetermined verdict and a missing TTY. It does not run every marker the table declares. Partial because of the declared heal residual in rules; wave 1 pins it"
         },
         "H25": {
           "mode": "unverified",
           "rules": "report-only first, when installed",
           "decision": null,
-          "verified_by": [],
-          "planned_verified_by": [
+          "verified_by": [
             "fixture:TestEmployerSubstance"
           ],
-          "how": "enforced-when-installed once TestEmployerSubstance (T4) resolves"
+          "planned_verified_by": [],
+          "how": "enforced-when-installed once the H18 pre-commit lane installer ships (wave 1); report-only first. TestEmployerSubstance already passes"
         }
       }
     },
@@ -860,21 +860,22 @@
           "mode": "unverified",
           "rules": "the escalated commit runs the lane when installed; no session baseline in wave 0",
           "decision": null,
-          "verified_by": [],
-          "planned_verified_by": [
-            "fixture:TestNightly"
+          "verified_by": [
+            "fixture:TestNightly",
+            "selftest:09-tools/nightly.py"
           ],
-          "how": "enforced-when-installed once the X1 replay fixture (T5) resolves"
+          "planned_verified_by": [],
+          "how": "enforced-when-installed once the H18 pre-commit lane installer ships (wave 1). TestNightly and the X1 replay in nightly.py --self-test already pass"
         },
         "H2": {
           "mode": "unverified",
           "rules": "`where` resolves by slug, not cwd; hooks only once trusted",
           "decision": null,
-          "verified_by": [],
-          "planned_verified_by": [
+          "verified_by": [
             "fixture:TestProfileResolve"
           ],
-          "how": "enforced-when-installed once TestProfileResolve (T2) resolves"
+          "planned_verified_by": [],
+          "how": "enforced-when-installed once H18 lanes call the resolver (wave 1) and the Codex hooks are trusted (a manual step). TestProfileResolve already passes"
         },
         "H3": {
           "mode": "enforced",
@@ -891,22 +892,21 @@
           "rules": "installed through H24; hook trust is confirmed manually",
           "decision": null,
           "verified_by": [
-            "selftest:00-bootstrap/doctor/render_shims.py"
-          ],
-          "planned_verified_by": [
+            "selftest:00-bootstrap/doctor/render_shims.py",
             "fixture:TestRenderShims"
           ],
-          "how": "render_shims --check"
+          "planned_verified_by": [],
+          "how": "render_shims --check, pinned by TestRenderShims"
         },
         "H17": {
           "mode": "advisory",
           "rules": "identity from git config (the device rule); --install-identity renders the device identity include; profile_resolve.py identity reports I1 and the device-mismatch flag, report-only; no wave-0 git boundary blocks a non-Claude committer",
           "decision": null,
-          "verified_by": [],
-          "planned_verified_by": [
+          "verified_by": [
             "fixture:TestIdentity"
           ],
-          "how": "enforced-when-installed once the H18 identity lanes ship (wave 1)"
+          "planned_verified_by": [],
+          "how": "enforced-when-installed once the H18 identity lanes ship (wave 1). TestIdentity already verifies the report-only identity check"
         },
         "H19": {
           "mode": "unverified",
@@ -922,31 +922,31 @@
           "mode": "advisory",
           "rules": "as Cursor; the hooks are also untrusted",
           "decision": null,
-          "verified_by": [],
-          "planned_verified_by": [
+          "verified_by": [
             "fixture:TestActionPolicy"
           ],
-          "how": "enforced-when-installed once H15 shims are installed and trusted (wave 1)"
+          "planned_verified_by": [],
+          "how": "enforced-when-installed once H15 shims are installed and trusted (wave 1). TestActionPolicy already verifies the report-only CLI"
         },
         "H24": {
-          "mode": "unverified",
+          "mode": "enforced-partial",
           "rules": "installers refuse Codex shells; the Claude user hook scripts Codex reaches through the snds plugin carry the claude-code H24 heal residual until wave 1",
           "decision": "Sean 2026-09-23: as claude-code H24",
-          "verified_by": [],
-          "planned_verified_by": [
+          "verified_by": [
             "fixture:TestInstaller"
           ],
-          "how": "enforced once TestInstaller (T3) resolves"
+          "planned_verified_by": [],
+          "how": "TestInstaller: every installer, for both actions, refuses the agent markers TestInstaller pins (one env marker each for Cursor, Codex, Gemini and Claude, the CI marker, the family override and a Claude process in the ancestry), an undetermined verdict and a missing TTY. It does not run every marker the table declares. Partial because of the declared heal residual in rules; wave 1 pins it. Until the codex probe record exists, recognizing a Codex shell rests on an unverified env marker or a missing TTY"
         },
         "H25": {
           "mode": "unverified",
           "rules": "report-only first, when installed",
           "decision": null,
-          "verified_by": [],
-          "planned_verified_by": [
+          "verified_by": [
             "fixture:TestEmployerSubstance"
           ],
-          "how": "enforced-when-installed once TestEmployerSubstance (T4) resolves"
+          "planned_verified_by": [],
+          "how": "enforced-when-installed once the H18 pre-commit lane installer ships (wave 1); report-only first. TestEmployerSubstance already passes"
         }
       }
     },

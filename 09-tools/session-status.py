@@ -16,9 +16,14 @@ Family-aware (H25): when the walls family is `claude`, projects whose SESSION-ST
 `Context profile` starts with `centric-` collapse to one count line, projects with no
 `personal-*` profile (missing or unrecognised) collapse to a second count line (the
 fail-safe default in 00-context-profiles.md), and the pending line adds the
-employer-keyword count. Every other family gets today's card, byte for byte. The
-machine label comes from `profile_resolve.device_label()`; if that import fails the
-label is the raw short hostname. Fail-open throughout.
+employer-keyword count. The full card (today's, byte for byte) is an allowlist: only
+the families the surfaces.json `families` table lists, minus `claude` and
+`unknown-agent` (today cursor, codex, gemini, copilot and human). Every other value
+gets the restrictive card: `unknown-agent`, `unknown` (the resolver will not import or
+detection finds no evidence), a mistyped `--family`, a surface id passed as a family,
+and any family when the table cannot be read. AGENTS.md says unresolvable means the
+most restrictive profile. The machine label comes from `profile_resolve.device_label()`;
+if that import fails the label is the raw short hostname. Fail-open throughout.
 """
 
 from __future__ import annotations
@@ -58,6 +63,10 @@ DOCTOR_STATE = Path.home() / ".claude" / "ws-state"
 EMPLOYER_PROFILE_PREFIX = "centric-"
 PERSONAL_PROFILE_PREFIX = "personal-"
 EMPLOYER_HANDLERS = "Cursor/Codex"
+# Named families that always get the restrictive card, as profile_resolve._restricted treats them
+# (tighten-only). The full card is an allowlist (full_card_families): every value the surfaces.json
+# `families` table does not list, `unknown` included, gets the restrictive card too.
+RESTRICTIVE_FAMILIES = ("claude", "unknown-agent")
 ORACLE_SHA = "2ff02e7"
 _UNSET: Any = object()
 
@@ -104,6 +113,27 @@ def resolve_family(family: str = "auto", *, resolver: Any = _UNSET) -> str:
         return fam if isinstance(fam, str) and fam else "unknown"
     except Exception:
         return "unknown"
+
+
+def full_card_families(*, resolver: Any = _UNSET) -> frozenset:
+    """Families that get the full card: the surfaces.json `families` keys minus
+    RESTRICTIVE_FAMILIES. Empty when the resolver or the table is unavailable, so every family then
+    gets the restrictive card (unresolvable = most restrictive)."""
+    pr = _resolver() if resolver is _UNSET else resolver
+    if pr is None:
+        return frozenset()
+    try:
+        fams = pr.load_table("surfaces")["families"]
+    except Exception:
+        return frozenset()
+    if not isinstance(fams, dict):
+        return frozenset()
+    return frozenset(k for k in fams if isinstance(k, str) and k and k not in RESTRICTIVE_FAMILIES)
+
+
+def restrictive_family(fam: str, *, resolver: Any = _UNSET) -> bool:
+    """True unless `fam` is on the full-card allowlist."""
+    return fam in RESTRICTIVE_FAMILIES or fam not in full_card_families(resolver=resolver)
 
 
 def employer_keywords(*, resolver: Any = _UNSET) -> Optional[list[str]]:
@@ -386,7 +416,7 @@ def collect(
     hidden = 0
     undeclared = 0
     pending_employer: Optional[int] = None
-    if fam == "claude":
+    if restrictive_family(fam, resolver=pr):
         base = ROOT / "07-projects"
         profiles = {p[0]: project_profile(base / p[0] / "SESSION-STATE.md") for p in projects}
         # Fail-safe default: a project shows on a Claude card only under a declared personal profile.
@@ -470,7 +500,9 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--check", action="store_true")
     parser.add_argument(
         "--family", default="auto",
-        help="walls family: auto (profile_resolve.detect_surface), claude, cursor, codex, …",
+        help="walls family: auto (profile_resolve.detect_surface), claude, cursor, codex, …; "
+             "only the surfaces.json families other than claude and unknown-agent get the full card, "
+             "every other value gets the restrictive (claude) card",
     )
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args(argv)
@@ -512,10 +544,18 @@ class _FixedDateTime(datetime):
         return datetime(2026, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
 
 
+def _live_families() -> dict:
+    """The live surfaces.json `families` table (test fixture input only; the card reads it through
+    profile_resolve.load_table)."""
+    path = TOOLS.parent / "02-shared-references" / "surfaces.json"
+    return json.loads(path.read_text(encoding="utf-8"))["families"]
+
+
 class _FakeResolver:
     def __init__(self, *, family: str = "claude", keywords=("acme",), label: str = "Dev A",
-                 broken: bool = False) -> None:
+                 broken: bool = False, families: Any = _UNSET) -> None:
         self.family, self.keywords, self.label, self.broken = family, list(keywords), label, broken
+        self.families = _live_families() if families is _UNSET else families
 
     def detect_surface(self, payload_hint=None, **_kw):
         if self.broken:
@@ -528,8 +568,12 @@ class _FakeResolver:
         return self.label
 
     def load_table(self, name, **_kw):
-        if self.broken or name != "context-remotes":
+        if self.broken or name not in ("context-remotes", "surfaces"):
             raise ValueError("fixture: no table")
+        if name == "surfaces":
+            if self.families is None:
+                raise ValueError("fixture: no surfaces table")
+            return {"families": self.families}
         return {"employer_substance": {"count_keywords": self.keywords}}
 
 
@@ -572,6 +616,20 @@ def _pinned(mods: list, consts: dict, doctor: Path, label: str):
         for mod, keep in saved:
             for k, v in keep.items():
                 setattr(mod, k, v)
+
+
+@contextlib.contextmanager
+def _no_resolver_import():
+    """Make `import profile_resolve` raise ImportError, then restore sys.modules."""
+    saved_mod = sys.modules.get("profile_resolve", _UNSET)
+    sys.modules["profile_resolve"] = None  # type: ignore[assignment]  # forces ImportError
+    try:
+        yield
+    finally:
+        if saved_mod is _UNSET:
+            sys.modules.pop("profile_resolve", None)
+        else:
+            sys.modules["profile_resolve"] = saved_mod
 
 
 def _consts_for(root: Path) -> dict:
@@ -641,29 +699,77 @@ def self_test() -> int:
         tree = tmp / "tree"
         _synthetic_tree(tree)
 
-        # 1. Oracle: every non-claude family is byte-identical to 2ff02e7 on the same tree.
+        # 0. The full-card allowlist is the surfaces.json families table minus claude and
+        #    unknown-agent, read through the real resolver.
+        live = _live_families()
+        allow = frozenset(k for k in live if k not in RESTRICTIVE_FAMILIES)
+        check("allowlist is the table's families minus claude and unknown-agent",
+              full_card_families(resolver=_FakeResolver()) == allow
+              and allow == {"cursor", "codex", "gemini", "copilot", "human"}, str(sorted(allow)))
+        check("allowlist through the real profile_resolve.load_table",
+              full_card_families() == allow, str(sorted(full_card_families())))
+        check("no allowlist without the table", full_card_families(resolver=None) == frozenset()
+              and full_card_families(resolver=_FakeResolver(families=None)) == frozenset()
+              and full_card_families(resolver=_FakeResolver(families=["cursor"])) == frozenset())
+
+        # 1. Oracle: every allowlisted family is byte-identical to 2ff02e7 on the same tree, by flag
+        #    and by detection. Every other family is the deliberate exception (1b): restrictive card.
         oracle_skipped = oracle is None
         if oracle is None:
             print(f"  SKIP oracle — {ORACLE_SHA} not in local history (shallow clone?)")
         else:
+            full_cases = [(f, _FakeResolver(family="claude")) for f in sorted(allow)]
+            full_cases += [("auto", _FakeResolver(family=f)) for f in sorted(allow)]
             for label_root, root in (("real tree", ROOT), ("synthetic tree", tree)):
                 with _pinned([oracle, me], _consts_for(root), doctor, label):
                     want = oracle.format_card(oracle.collect(surface="S", via="V"))
-                    for fam, res in (
-                        ("cursor", _FakeResolver(family="cursor")),
-                        ("codex", None),
-                        ("auto", _FakeResolver(family="cursor")),
-                        ("auto", _FakeResolver(broken=True)),
-                        ("auto", None),
-                    ):
+                    for fam, res in full_cases:
                         got = format_card(collect(surface="S", via="V", family=fam, resolver=res))
-                        check(f"oracle {label_root} family={fam} res={type(res).__name__}",
+                        check(f"oracle {label_root} family={fam} detected={res.family}",
                               got == want, "card differs from the 2ff02e7 module")
                     claude = format_card(collect(surface="S", via="V", family="claude",
                                                  resolver=_FakeResolver()))
                     ritual = [ln for ln in want.splitlines() if ln.startswith("[workspace: ")]
                     check(f"ritual line unchanged ({label_root})",
                           bool(ritual) and ritual[0] in claude.splitlines())
+                    if root == tree:
+                        unknown = format_card(collect(surface="S", via="V", family="auto", resolver=None))
+                        check("unknown family no longer renders the 2ff02e7 full card (synthetic tree)",
+                              unknown != want)
+
+        # 1b. Any family off the allowlist → the restrictive (claude) card for the same resolver
+        #     state: a failed import, a broken resolver, detection with no evidence, an agent the
+        #     table cannot name, a mistyped or surface-id --family, and a named family without the table.
+        for label_root, root in (("real tree", ROOT), ("synthetic tree", tree)):
+            with _pinned([me], _consts_for(root), doctor, label):
+                for why, fam, res, twin in (
+                    ("no resolver", "auto", None, None),
+                    ("broken resolver", "auto", _FakeResolver(broken=True), _FakeResolver(broken=True)),
+                    ("no evidence", "auto", _FakeResolver(family="unknown"), _FakeResolver()),
+                    ("empty family", "auto", _FakeResolver(family=""), _FakeResolver()),
+                    ("unnamed agent", "auto", _FakeResolver(family="unknown-agent"), _FakeResolver()),
+                    ("--family unknown-agent", "unknown-agent", _FakeResolver(family="cursor"), _FakeResolver()),
+                    ("--family foo", "foo", _FakeResolver(family="cursor"), _FakeResolver()),
+                    ("--family claude-code (a surface id)", "claude-code", _FakeResolver(family="cursor"),
+                     _FakeResolver()),
+                    ("detected surface id", "auto", _FakeResolver(family="cursor-cli"), _FakeResolver()),
+                    ("--family codex, no resolver", "codex", None, None),
+                    ("--family codex, no surfaces table", "codex", _FakeResolver(family="codex", families=None),
+                     _FakeResolver()),
+                ):
+                    got = format_card(collect(surface="S", via="V", family=fam, resolver=res))
+                    want = format_card(collect(surface="S", via="V", family="claude", resolver=twin))
+                    check(f"off the allowlist ({why}, {label_root}) renders the restrictive card", got == want,
+                          "card differs from the claude card")
+        with _pinned([me], _consts_for(tree), doctor, label), _no_resolver_import():
+            data = collect(surface="S", via="V", family="auto")
+            card = format_card(data)
+            check("import failure → restrictive card end to end",
+                  data["family"] == "unknown" and data["employer_projects_hidden"] == 2
+                  and data["undeclared_projects_hidden"] == 2 and "ZZ-EMPLOYER-FOCUS" not in card
+                  and "  - 2 employer projects — handled by Cursor/Codex" in card.splitlines(), card)
+            check("import failure → no pending split without tables",
+                  "- **Pending:** 4 items → 06-context/project-context.md" in card.splitlines(), card)
 
         # 2. --family claude hides centric-* projects and prints the counts.
         with _pinned([me], _consts_for(tree), doctor, label):
@@ -712,21 +818,35 @@ def self_test() -> int:
             except (ValueError, KeyError) as exc:
                 check("cli json parses", False, repr(exc))
 
+            def cli_card(*args: str) -> str:
+                buf = io.StringIO()
+                real = globals()["_resolver"]
+                globals()["_resolver"] = lambda: _FakeResolver(family="cursor")
+                try:
+                    with contextlib.redirect_stdout(buf):
+                        main(["--surface", "S", "--via", "V", *args])
+                finally:
+                    globals()["_resolver"] = real
+                return buf.getvalue()
+
+            restrictive = cli_card("--family", "claude")
+            check("cli claude card is restrictive", "ZZ-EMPLOYER-FOCUS" not in restrictive
+                  and "  - 2 employer projects — handled by Cursor/Codex" in restrictive.splitlines(), restrictive)
+            for fam in ("foo", "claude-code", "unknown-agent"):
+                check(f"cli --family {fam} gives the restrictive card", cli_card("--family", fam) == restrictive)
+            for fam in sorted(allow):
+                card = cli_card("--family", fam)
+                check(f"cli --family {fam} gives the full card", card != restrictive
+                      and "ZZ-EMPLOYER-FOCUS" in card and "handled by Cursor/Codex" not in card, card)
+
     # 3. The label: device_label when the resolver loads; raw short hostname when the import fails.
     check("label from device_label", machine_label(resolver=_FakeResolver(label="Dev B")) == "Dev B")
     check("label falls back when device_label raises",
           machine_label(resolver=_FakeResolver(broken=True)) == _short_hostname())
-    saved_mod = sys.modules.get("profile_resolve", _UNSET)
-    sys.modules["profile_resolve"] = None  # type: ignore[assignment]  # forces ImportError
-    try:
+    with _no_resolver_import():
         check("import failure → resolver None", _resolver() is None)
         check("import failure → raw short hostname", machine_label() == socket.gethostname().split(".", 1)[0])
         check("import failure → family unknown", resolve_family("auto") == "unknown")
-    finally:
-        if saved_mod is _UNSET:
-            sys.modules.pop("profile_resolve", None)
-        else:
-            sys.modules["profile_resolve"] = saved_mod
 
     # 4. No hostname→label literal remains in this module.
     src = Path(__file__).read_text(encoding="utf-8")
@@ -745,7 +865,8 @@ def self_test() -> int:
               file=sys.stderr)
         return 1
     if oracle_skipped:
-        # The oracle is the byte-identity guarantee for non-Claude cards: a run without it is not green.
+        # The oracle is the byte-identity guarantee for the full (named non-Claude) cards: a run
+        # without it is not green.
         print(f"SKIPPED session-status self-test — {passed} checks, the {ORACLE_SHA} oracle did not run (exit 3)")
         return 3
     print(f"OK session-status self-test — {passed} checks")

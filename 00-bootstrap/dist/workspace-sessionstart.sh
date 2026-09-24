@@ -55,12 +55,20 @@ TODAY=$(date +%Y-%m-%d)
 # not a log line (log rotation used to discard it — see workspace-doctor.sh --ack).
 MISSES=$(awk -v m="$(cat "$STATE/ack-mark" 2>/dev/null)" '/ MISS /{ if ($1 "" > m "") n++ } END{print n+0}' "$STATE/audit.log" 2>/dev/null)
 
-# In-workspace: defer to the project hook ONLY if it is verifiably registered.
+# In-workspace: defer to the project hook ONLY if it is verifiably registered AND the host loads
+# the claude-project layer (its loaded_by in surfaces.json, read by the pinned ws-hook; no host
+# list lives here). Codex does not load it, so deferring would leave it a pointer and no card.
+# The pinned ws-hook exits 3 only on verified evidence of a host outside that layer. No pin, an
+# older pin or no verdict keeps the 2ff02e7 deferral.
 if [ "$LIVE" != "$WS" ] || { [ -n "$CWD" ] && case "$CWD" in "$WS"|"$WS"/*) true;; *) false;; esac; }; then
   if [ -f "$LIVE/.claude/hooks/dispatcher.py" ] && grep -q "dispatcher.py" "$LIVE/.claude/settings.json" 2>/dev/null; then
-    emit "[ws-bootstrap:$SRC] In-workspace session; project hook supplies full context. Ritual line for your first reply: [workspace: LOADED · $BRANCH@$SHA · $TODAY · via:project-hook/$SRC]"
-    [ "${MISSES:-0}" -gt 0 ] 2>/dev/null && echo "NOTICE: $MISSES un-acknowledged bootstrap MISS(es) — run workspace-doctor."
-    exit 0
+    NOPROJ=""
+    if [ -x "$W" ]; then printf '%s' "$INPUT" | "$W" host --skip-unless-layer claude-project >/dev/null 2>&1; [ "$?" = 3 ] && NOPROJ=1; fi
+    if [ -z "$NOPROJ" ]; then
+      emit "[ws-bootstrap:$SRC] In-workspace session; project hook supplies full context. Ritual line for your first reply: [workspace: LOADED · $BRANCH@$SHA · $TODAY · via:project-hook/$SRC]"
+      [ "${MISSES:-0}" -gt 0 ] 2>/dev/null && echo "NOTICE: $MISSES un-acknowledged bootstrap MISS(es) — run workspace-doctor."
+      exit 0
+    fi
   fi
 fi
 

@@ -479,7 +479,9 @@ Human-run installers behind workspace-doctor.sh --install-*/--uninstall-*: refus
 
 ## ws_hook.py
 
-Neutral hook core (H19): payload adapters, `host --skip-any` host filter, dedupe claims, budgeted session-start card, output dialects, redacted probes (`probe-env`, `probe-promote`) and the `--host git --floor claude` adapter. `--self-test`, `--self-test-shell`.
+Neutral hook core (H19): payload adapters, host filters, dedupe claims, budgeted session-start card, output dialects, redacted probes (`probe-env`, `probe-promote`) and the `--host git --floor claude` adapter. `--self-test`, `--self-test-shell`.
+
+Host filters read the payload on stdin and exit 3 only on verified evidence, 2 when no host is verified: `host --skip-any H[,H...]` exits 3 when the acting host is in the set and 0 when a verified host is outside it; `host --skip-unless H[,H...]` is the complement (3 when a verified host is outside the set, 0 when it is in it); `host --skip-unless-layer LAYER` is `--skip-unless` with the set read from surfaces.json, the `loaded_by` of that layer (an unknown layer gives 2). The boot shim `workspace-sessionstart.sh` uses `--skip-unless-layer claude-project` inside the workspace, so it defers to the project hook only for the hosts that load that layer.
 
 ## 00-bootstrap/doctor/render_shims.py
 

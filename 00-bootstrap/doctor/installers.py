@@ -57,8 +57,12 @@ ACTIONS = ("install", "uninstall")
 RETIRED_CURSOR_SCRIPTS = ("cursor-prompt-route.sh", "cursor-reassert.sh",
                           "cursor-sessionend.sh", "cursor-subagent-stop.sh")
 LAUNCHD_LABEL = "design.snds.workspace-doctor"
-VSCODE_APP = "/Applications/Visual Studio Code.app"
 OVERLAY_OUTPUT_ID = "claude-user-fragment"
+# The overlay goes into the file this surfaces.json layer installs. Every non-Claude host in
+# its loaded_by list that is installed here needs a clean probe record first.
+OVERLAY_LAYER_ID = "claude-user"
+CLAUDE_FAMILY = "claude"
+SURFACE_ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 PROBES_DIR = "02-shared-references/probes"
 HOOK_SCRIPT_RE = re.compile(r"(?:\$HOME|~)/\.claude/hooks/([A-Za-z0-9._-]+\.sh)")
 RENDER_TIMEOUT = 30
@@ -688,6 +692,82 @@ def _probe_file(ctx: Ctx, surface: str, device: str) -> Path:
     return ctx.repo / PROBES_DIR / f"{surface}@{device}.json"
 
 
+def _install_known(ctx: Ctx, row) -> bool | None:
+    """Whether a surface is installed here, from its install_probe in surfaces.json.
+
+    True or False when the probe gives an answer. None when it cannot: no probe, an item of
+    an unknown kind, a relative path, or a check that raised. Callers treat None as
+    installed (fail closed).
+    """
+    probe = row.get("install_probe") if isinstance(row, dict) else None
+    items = probe.get("any_of") if isinstance(probe, dict) else None
+    if not isinstance(items, list) or not items:
+        return None
+    unknown = False
+    for item in items:
+        checked = False
+        try:
+            cmd = item.get("cmd") if isinstance(item, dict) else None
+            if isinstance(cmd, str) and cmd:
+                checked = True
+                if ctx.which(cmd):
+                    return True
+            path = item.get("path") if isinstance(item, dict) else None
+            if isinstance(path, str) and path:
+                full = ctx.expand(path)
+                if full is None:
+                    unknown = True
+                else:
+                    checked = True
+                    if ctx.app_exists(str(full)):
+                        return True
+        except Exception:  # noqa: BLE001 - a check that fails gives no answer
+            unknown = True
+            continue
+        if not checked:
+            unknown = True
+    return None if unknown else False
+
+
+def overlay_probe_surfaces(ctx: Ctx) -> tuple:
+    """(surfaces that need a probe record, refusal reasons) for the Claude overlay.
+
+    The list comes from surfaces.json: every surface in the loaded_by list of the
+    claude-user layer that is not in the Claude family and is installed on this device.
+    A surface stays in the list when the table has no row for it or its install state
+    cannot be determined. A missing or malformed table is a refusal.
+    """
+    try:
+        table = ctx.pr().load_table("surfaces")
+    except Exception as e:  # noqa: BLE001
+        return [], [f"surfaces table unavailable ({type(e).__name__}); cannot tell which "
+                    "hosts load the Claude overlay"]
+    if not isinstance(table, dict):
+        return [], ["surfaces table is not an object; cannot tell which hosts load the Claude overlay"]
+    layer = next((ly for ly in table.get("layers") or []
+                  if isinstance(ly, dict) and ly.get("id") == OVERLAY_LAYER_ID), None)
+    loaded_by = layer.get("loaded_by") if layer else None
+    if not isinstance(loaded_by, list):
+        return [], [f"surfaces table has no {OVERLAY_LAYER_ID} layer with a loaded_by list; "
+                    "cannot tell which hosts load the Claude overlay"]
+    rows = {r.get("id"): r for r in table.get("surfaces") or [] if isinstance(r, dict)}
+    needed, reasons = [], []
+    for sid in loaded_by:
+        if not isinstance(sid, str) or not SURFACE_ID_RE.match(sid):
+            reasons.append(f"surfaces table: {OVERLAY_LAYER_ID} loaded_by has an invalid surface id "
+                           f"{sid!r}")
+            continue
+        if sid in needed:
+            continue
+        row = rows.get(sid)
+        if row is not None and row.get("family") == CLAUDE_FAMILY:
+            continue
+        if row is not None and _install_known(ctx, row) is False:
+            continue
+        needed.append(sid)
+    return needed, reasons
+
+
 def overlay_refusals(ctx: Ctx) -> list:
     reasons = []
     p = ctx.paths()
@@ -700,9 +780,8 @@ def overlay_refusals(ctx: Ctx) -> list:
     except Exception as e:  # noqa: BLE001
         dev = "unknown"
         reasons.append(f"device unresolved ({type(e).__name__})")
-    needed = ["cursor"]
-    if ctx.which("code") or ctx.app_exists(VSCODE_APP):
-        needed.append("copilot-vscode")
+    needed, table_reasons = overlay_probe_surfaces(ctx)
+    reasons += table_reasons
     for s in needed:
         f = _probe_file(ctx, s, dev)
         if not f.is_file():
@@ -874,6 +953,28 @@ FIXTURES = VAULT_ROOT / "09-tools" / "fixtures" / "installer"
 HUMAN, AGENT, UNDETERMINED = pin_lib.HUMAN, pin_lib.AGENT, pin_lib.UNDETERMINED
 TTY = {"stdin": True, "stdout": True}
 FIXED_NOW = dt.datetime(2026, 9, 22, 20, 0, 0, tzinfo=dt.timezone.utc)
+_KEEP = object()
+
+
+def CURSOR_ONLY(name):  # noqa: N802 - a `which` stand-in: only the cursor command exists
+    return "/x/cursor" if name == "cursor" else None
+
+
+def overlay_table(*, grok_probe=_KEEP, extra_loaded_by=()) -> dict:
+    """A small surfaces table with the claude-user layer, shaped like the tracked one."""
+    rows = [
+        {"id": "claude-code", "family": "claude", "install_probe": {"any_of": [{"cmd": "claude"}]}},
+        {"id": "cursor", "family": "cursor",
+         "install_probe": {"any_of": [{"cmd": "cursor"}, {"path": "/Applications/Cursor.app"}]}},
+        {"id": "copilot-vscode", "family": "copilot",
+         "install_probe": {"any_of": [{"cmd": "code"}, {"path": "/Applications/Visual Studio Code.app"}]}},
+        {"id": "grok-build", "family": "unknown-agent",
+         "install_probe": {"any_of": [{"cmd": "grok"}]} if grok_probe is _KEEP else grok_probe},
+    ]
+    loaded_by = ["claude-code", "cursor", "copilot-vscode", "grok-build", *extra_loaded_by]
+    return {"schema_version": 1, "surfaces": rows,
+            "layers": [{"id": OVERLAY_LAYER_ID, "loaded_by": loaded_by},
+                       {"id": "cursor-user", "loaded_by": ["cursor", "cursor-cli"]}]}
 
 
 def self_test() -> int:
@@ -1116,12 +1217,22 @@ def self_test() -> int:
 
         def _seed_overlay_ready(self, probe_env=False, probe=True):
             self.install_pin()
+            self.surfaces = overlay_table()
             if probe:
-                d = self.repo / PROBES_DIR
-                d.mkdir(parents=True, exist_ok=True)
-                rec = json.loads((FIXTURES / "probe-cursor.json").read_text())
-                rec["env_probe"]["env_presence"]["WS_CLAUDE_OVERLAY"] = probe_env
-                (d / "cursor@dev-a.json").write_text(json.dumps(rec))
+                self._seed_probe("cursor", probe_env)
+
+        def _seed_probe(self, surface, env=False):
+            d = self.repo / PROBES_DIR
+            d.mkdir(parents=True, exist_ok=True)
+            rec = json.loads((FIXTURES / "probe-cursor.json").read_text())
+            rec["surface"] = surface
+            rec["env_probe"]["env_presence"]["WS_CLAUDE_OVERLAY"] = env
+            (d / f"{surface}@dev-a.json").write_text(json.dumps(rec))
+
+        def overlay_ctx(self, which=lambda _n: None, app_exists=lambda _p: False):
+            return Ctx("claude-overlay", None, "install", home=self.home, repo=self.repo,
+                       agent_check=None, confirm=None, now=None, which=which, sha=None,
+                       surface=None, probe=False, render_list=None, app_exists=app_exists)
 
         def test_codex_managed_block_expands_home_and_refuses_duplicate_tables(self):
             frag = VAULT_ROOT / "00-bootstrap" / "dist" / "codex-config-fragment.toml"
@@ -1154,7 +1265,7 @@ def self_test() -> int:
             sj.parent.mkdir(parents=True, exist_ok=True)
             stale = (FIXTURES / "settings-v1-stale.json").read_bytes()
             sj.write_bytes(stale)
-            rc, out, err = self.run_inst("claude-overlay")
+            rc, out, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
             self.assertEqual(rc, 0, out + err)
             got = json.loads(sj.read_text())
             frag = merge_settings.expand_env_home(json.loads(
@@ -1170,7 +1281,7 @@ def self_test() -> int:
             self.assertIn("useConfigOnly = true", EMPLOYER_NOIDENT_INC)
             self.assertTrue((self.home / ".config/snds-workspace/git/claude-identity.inc").is_file())
             self.assertTrue((self.home / ".config/snds-workspace/gh-claude/config.yml").is_file())
-            self.assertEqual(self.run_inst("claude-overlay")[0], 3)
+            self.assertEqual(self.run_inst("claude-overlay", which=CURSOR_ONLY)[0], 3)
             rc, out, err = self.run_inst("claude-overlay", "uninstall")
             self.assertEqual(rc, 0, out + err)
             self.assertEqual(sj.read_bytes(), stale)
@@ -1180,17 +1291,90 @@ def self_test() -> int:
             self.assertEqual(rc, 4)
             self.assertIn("bin/ws-hook", err)
             self._seed_overlay_ready(probe=False)
-            rc, _o, err = self.run_inst("claude-overlay")
+            rc, _o, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
             self.assertEqual(rc, 4)
             self.assertIn("probe record missing", err)
             self._seed_overlay_ready(probe_env=True)
-            rc, _o, err = self.run_inst("claude-overlay")
+            rc, _o, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
             self.assertEqual(rc, 4)
             self.assertIn("env import", err)
             self._seed_overlay_ready()
-            rc, _o, err = self.run_inst("claude-overlay", which=lambda n: "/x/code" if n == "code" else None)
+            rc, _o, err = self.run_inst("claude-overlay",
+                                        which=lambda n: f"/x/{n}" if n in ("cursor", "code") else None)
             self.assertEqual(rc, 4)
             self.assertIn("copilot-vscode@dev-a", err)
+            self.assertNotIn("cursor@dev-a", err)
+
+        # T10 rerun L-09: the probe list comes from surfaces.json, not a hard-coded list.
+        def test_overlay_probe_list_skips_an_uninstalled_cursor(self):
+            self._seed_overlay_ready(probe=False)
+            reasons = overlay_refusals(self.overlay_ctx())
+            self.assertEqual(reasons, [])
+            self.assertFalse(any("cursor@" in r for r in reasons), reasons)
+            rc, out, err = self.run_inst("claude-overlay")          # no Cursor, no probe record
+            self.assertEqual(rc, 0, out + err)
+
+        def test_overlay_probe_list_requires_an_installed_non_claude_surface(self):
+            self._seed_overlay_ready(probe=False)
+            ctx = self.overlay_ctx(which=lambda n: f"/x/{n}" if n in ("grok", "claude") else None)
+            reasons = overlay_refusals(ctx)
+            self.assertIn(f"probe record missing: {PROBES_DIR}/grok-build@dev-a.json", reasons)
+            self.assertFalse(any("claude-code@" in r for r in reasons), reasons)   # Claude family
+            self.assertFalse(any("cursor@" in r or "copilot-vscode@" in r for r in reasons), reasons)
+            self._seed_probe("grok-build", env=True)
+            self.assertTrue(any("probe grok-build@dev-a shows env import" in r
+                                for r in overlay_refusals(ctx)))
+            self._seed_probe("grok-build")
+            self.assertEqual(overlay_refusals(ctx), [])
+
+        def test_overlay_probe_list_fails_closed_when_install_state_is_unknown(self):
+            self._seed_overlay_ready(probe=False)
+            missing = f"probe record missing: {PROBES_DIR}/grok-build@dev-a.json"
+            unknown_probes = (None, {}, {"any_of": []}, {"any_of": [{"bundle": "x"}]},
+                              {"any_of": [{"path": "Applications/Grok.app"}]})
+            for probe in unknown_probes:
+                self.surfaces = overlay_table(grok_probe=probe)
+                self.assertIn(missing, overlay_refusals(self.overlay_ctx()), probe)
+
+            def boom(_n):
+                raise OSError("which failed")
+            self.surfaces = overlay_table()
+            reasons = overlay_refusals(self.overlay_ctx(which=boom))
+            for s in ("cursor", "copilot-vscode", "grok-build"):
+                self.assertIn(f"probe record missing: {PROBES_DIR}/{s}@dev-a.json", reasons)
+            self.surfaces = overlay_table(extra_loaded_by=["new-host"])      # no surface row
+            self.assertIn(f"probe record missing: {PROBES_DIR}/new-host@dev-a.json",
+                          overlay_refusals(self.overlay_ctx()))
+            for table in ({"surfaces": []}, {"layers": [{"id": "claude-user"}]}):
+                self.surfaces = table
+                self.assertTrue(any("cannot tell which hosts load the Claude overlay" in r
+                                    for r in overlay_refusals(self.overlay_ctx())), table)
+
+            def no_table(_name, **_kw):
+                raise OSError("surfaces.json unreadable")
+            self.verdict_fake.load_table = no_table
+            self.assertTrue(any(r.startswith("surfaces table unavailable (OSError)")
+                                for r in overlay_refusals(self.overlay_ctx())))
+
+        def test_overlay_probe_list_on_the_tracked_table(self):
+            """Today's behaviour on the tracked surfaces.json: Cursor and VS Code need a probe
+            record when installed, and only then; Claude Code never does."""
+            self.install_pin()
+            self.surfaces = json.loads((VAULT_ROOT / "02-shared-references" / "surfaces.json")
+                                       .read_text(encoding="utf-8"))
+            both = self.overlay_ctx(which=lambda n: f"/x/{n}" if n in ("cursor", "code", "claude") else None)
+            needed, reasons = overlay_probe_surfaces(both)
+            self.assertEqual(reasons, [])
+            self.assertIn("cursor", needed)
+            self.assertIn("copilot-vscode", needed)
+            self.assertNotIn("claude-code", needed)
+            vscode_app = self.overlay_ctx(app_exists=lambda p: p == "/Applications/Visual Studio Code.app")
+            needed, _r = overlay_probe_surfaces(vscode_app)
+            self.assertIn("copilot-vscode", needed)
+            self.assertNotIn("cursor", needed)
+            needed, _r = overlay_probe_surfaces(self.overlay_ctx())
+            self.assertNotIn("cursor", needed)
+            self.assertNotIn("copilot-vscode", needed)
 
         def test_missing_sources_exit_3(self):
             for name in ("git-hooks", "projects-pointer", "identity"):

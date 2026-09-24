@@ -7,7 +7,13 @@ config fragments, the probe registration fragments and the generated SURFACES.md
 checks the table's semantics:
 
   Rule C  every component has a coverage entry on every minimum surface; modes come from the
-          enum; every enforced* mode names verified_by refs that resolve.
+          enum; every enforced* mode names verified_by refs; every verified_by ref resolves, on
+          any mode. planned_verified_by holds the refs an entry still waits on. When all of them
+          resolve, Rule C prints a NOTICE until the entry is promoted: the refs move to
+          verified_by and the mode goes up, or, when a non-ref condition remains (an install that
+          ships later, a human step), the refs move and `how` names that condition. Notices are
+          report-only: they sit in their own list, never in the warnings, and never change the
+          exit code.
   Rule R  one effective registration per (hookable surface, event, cwd context, behaviour),
           after host_skip, defers_to and claim_group are applied.
   Also    a project-scope layer never references $HOME or ~, and wrapper sha256 values match.
@@ -204,7 +210,8 @@ def resolve_ref(ref: str, root: Path):
 
 
 def check_surface_coverage(t: dict, root: Path = ROOT, pending_ok: bool = False):
-    errors, warnings = [], []
+    """Rule C: (errors, warnings, notices). Notices are report-only and never fail a check."""
+    errors, warnings, notices = [], [], []
     modes = set(t.get("coverage_modes") or [])
     comps = list(t.get("components") or [])
     rows = {s.get("id"): s for s in t.get("surfaces") or []}
@@ -225,15 +232,13 @@ def check_surface_coverage(t: dict, root: Path = ROOT, pending_ok: bool = False)
             if mode not in modes:
                 errors.append(f"{where}: invalid mode {mode!r}")
                 continue
-            for ref in entry.get("planned_verified_by") or []:
+            planned = entry.get("planned_verified_by") or []
+            for ref in planned:
                 if not REF_RE.match(ref):
                     errors.append(f"{where}: bad planned_verified_by ref {ref!r}")
-            if not mode.startswith("enforced"):
-                continue
             refs = entry.get("verified_by") or []
-            if not refs:
+            if mode.startswith("enforced") and not refs:
                 errors.append(f"{where}: {mode} with no verified_by")
-                continue
             for ref in refs:
                 ok, kind, reason = resolve_ref(ref, root)
                 if ok:
@@ -242,7 +247,17 @@ def check_surface_coverage(t: dict, root: Path = ROOT, pending_ok: bool = False)
                     warnings.append(f"{where}: pending: {reason}")
                 else:
                     errors.append(f"{where}: {reason}")
-    return errors, warnings
+            if planned_ready(entry, root):
+                notices.append(f"{where}: not promoted: every planned_verified_by ref resolves "
+                               f"({', '.join(planned)}); move them to verified_by and raise the mode, or move "
+                               "them and name the remaining non-ref condition in how")
+    return errors, warnings, notices
+
+
+def planned_ready(entry: dict, root: Path = ROOT) -> bool:
+    """True when an entry's planned_verified_by is non-empty and every ref in it resolves (Rule C notice)."""
+    planned = entry.get("planned_verified_by") or []
+    return bool(planned) and all(resolve_ref(ref, root)[0] for ref in planned)
 
 
 # --------------------------------------------------------------------------- Rule R
@@ -925,21 +940,24 @@ def check_wrappers(t: dict, root: Path = ROOT) -> list:
 
 
 def check(root: Path = ROOT, only=None, pending_ok: bool = False) -> dict:
+    """errors fail the check; warnings are --pending-ok leniency; notices are report-only (Rule C
+    promotion reminders) and are kept out of warnings so a strict clean check stays clean."""
     root = Path(root)
     areas = set(only or CHECK_AREAS)
-    errors, warnings = [], []
+    errors, warnings, notices = [], [], []
     try:
         t = load_table(root)
     except DataError as exc:
-        return {"errors": [str(exc)], "warnings": [], "data_error": True}
+        return {"errors": [str(exc)], "warnings": [], "notices": [], "data_error": True}
     errors += check_table(t)
     if errors:
-        return {"errors": errors, "warnings": warnings, "data_error": False}
+        return {"errors": errors, "warnings": warnings, "notices": notices, "data_error": False}
     try:
         if "coverage" in areas:
-            e, w = check_surface_coverage(t, root, pending_ok)
+            e, w, n = check_surface_coverage(t, root, pending_ok)
             errors += e
             warnings += w
+            notices += n
         if "registrations" in areas:
             e, w = check_registrations(t, pending_ok)
             errors += e
@@ -949,8 +967,8 @@ def check(root: Path = ROOT, only=None, pending_ok: bool = False) -> dict:
         if "wrappers" in areas:
             errors += check_wrappers(t, root)
     except DataError as exc:
-        return {"errors": errors + [str(exc)], "warnings": warnings, "data_error": True}
-    return {"errors": errors, "warnings": warnings, "data_error": False}
+        return {"errors": errors + [str(exc)], "warnings": warnings, "notices": notices, "data_error": True}
+    return {"errors": errors, "warnings": warnings, "notices": notices, "data_error": False}
 
 
 def write(root: Path = ROOT, only_id=None) -> list:
@@ -1119,14 +1137,25 @@ def _fixture_base() -> dict:
     return json.loads((ROOT / FIXTURE_BASE_REL).read_text(encoding="utf-8"))
 
 
-def _expect(results: list, name: str, res: dict, needle: str, *, want_error=True) -> None:
+def _expect(results: list, name: str, res: dict, needle: str, *, want_error=True, want_clean=False,
+            want_notice=False) -> None:
+    got = f"errors={res['errors']} warnings={res['warnings']} notices={res.get('notices')}"
+    if want_clean:
+        ok = not res["errors"] and not res["warnings"] and not res.get("notices")
+        results.append((name, ok, "" if ok else f"expected no errors, warnings or notices; got {got}"))
+        return
+    if want_notice:
+        # Report-only: the notice is present and the strict result (errors, warnings) stays clean.
+        ok = needle in "\n".join(res.get("notices") or []) and not res["errors"] and not res["warnings"]
+        results.append((name, ok, "" if ok else f"expected {needle!r} in notices only; got {got}"))
+        return
     blob = "\n".join(res["errors"] if want_error else res["warnings"])
     ok = needle in blob and (bool(res["errors"]) if want_error else not res["errors"])
     results.append((name, ok, "" if ok else f"expected {needle!r} in {'errors' if want_error else 'warnings'}; got errors={res['errors']} warnings={res['warnings']}"))
 
 
 def _mutate_case(results: list, name: str, mutate, needle: str, *, only=None, pending_ok=False,
-                 rerender=False, want_error=True, post=None) -> None:
+                 rerender=False, want_error=True, want_clean=False, want_notice=False, post=None) -> None:
     table = _fixture_base()
     with tempfile.TemporaryDirectory(prefix="render-shims-st-") as tmp:
         root = Path(tmp)
@@ -1138,7 +1167,7 @@ def _mutate_case(results: list, name: str, mutate, needle: str, *, only=None, pe
         if post:
             post(root)
         res = check(root, only=only, pending_ok=pending_ok)
-    _expect(results, name, res, needle, want_error=want_error)
+    _expect(results, name, res, needle, want_error=want_error, want_clean=want_clean, want_notice=want_notice)
 
 
 def _reg(table: dict, rid: str) -> dict:
@@ -1152,8 +1181,8 @@ def self_test_cases() -> list:
         root = Path(tmp)
         _write_fixture_root(root, base)
         res = check(root)
-        results.append(("base fixture is clean", not res["errors"] and not res["warnings"],
-                        f"errors={res['errors']} warnings={res['warnings']}"))
+        results.append(("base fixture is clean", not res["errors"] and not res["warnings"] and not res["notices"],
+                        f"errors={res['errors']} warnings={res['warnings']} notices={res['notices']}"))
         second = write(root)
         results.append(("write is idempotent", second == [], f"rewrote {second}"))
 
@@ -1179,6 +1208,63 @@ def self_test_cases() -> list:
     _mutate_case(results, "invalid coverage mode",
                  lambda t: t["surfaces"][0]["coverage"]["H19"].__setitem__("mode", "mostly"),
                  "invalid mode 'mostly'", only=["coverage"])
+
+    # Rule C, report-only: planned refs that all resolve mean the entry is due for promotion.
+    def cursor_h19(t):
+        return next(s for s in t["surfaces"] if s["id"] == "cursor")["coverage"]["H19"]
+    def ready(t):
+        cursor_h19(t).__setitem__("planned_verified_by", ["fixture:TestFixtureOk", "selftest:tools/fx.py"])
+    _mutate_case(results, "planned refs that all resolve give a notice and no warning", ready,
+                 "cursor.H19: not promoted: every planned_verified_by ref resolves", only=["coverage"],
+                 want_notice=True)
+    # Strict mode (what TestSurfaces asserts on the live table) stays clean with an unpromoted
+    # entry: no errors, no warnings, --check exits 0 and still prints the notice.
+    table = _fixture_base()
+    with tempfile.TemporaryDirectory(prefix="render-shims-st-") as tmp:
+        root = Path(tmp)
+        _write_fixture_root(root, table, render=True)
+        ready(table)
+        (root / TABLE_REL).write_text(canonical(table), encoding="utf-8")
+        strict = check(root, only=["coverage"], pending_ok=False)
+        results.append(("an unpromoted entry keeps strict mode clean (no errors, no warnings)",
+                        strict["errors"] == [] and strict["warnings"] == [] and len(strict["notices"]) == 1,
+                        f"errors={strict['errors']} warnings={strict['warnings']} notices={strict['notices']}"))
+        for as_json in (False, True):
+            out = io.StringIO()
+            saved, sys.stdout = sys.stdout, out
+            try:
+                rc = main(["--check", "--only", "coverage", "--root", str(root)] + (["--json"] if as_json else []))
+            finally:
+                sys.stdout = saved
+            text = out.getvalue()
+            if as_json:
+                try:
+                    rep = json.loads(text)
+                    shown = rep.get("warnings") == [] and len(rep.get("notices") or []) == 1
+                except ValueError:
+                    shown = False
+            else:
+                shown = "NOTICE coverage: cursor.H19: not promoted" in text and "WARN" not in text
+            results.append((f"--check{' --json' if as_json else ''} exits 0 and prints the notice outside warnings",
+                            rc == 0 and shown, f"rc={rc} out={text[-400:]!r}"))
+    _mutate_case(results, "planned refs with one unresolved probe record do not warn",
+                 lambda t: cursor_h19(t).__setitem__("planned_verified_by", ["fixture:TestFixtureOk", "probe:cursor@dev-a"]),
+                 "", only=["coverage"], want_clean=True)
+
+    def promoted(t):
+        cursor_h19(t).update(mode="enforced-partial", verified_by=["fixture:TestFixtureOk"], planned_verified_by=[])
+    _mutate_case(results, "a promoted entry (refs moved, mode raised) does not warn", promoted, "",
+                 only=["coverage"], want_clean=True)
+
+    def held_back(t):
+        cursor_h19(t).update(mode="unverified", verified_by=["fixture:TestFixtureOk"], planned_verified_by=[],
+                             how="enforced-when-installed once the lane installer ships")
+    _mutate_case(results, "an entry held back by a named non-ref condition does not warn", held_back, "",
+                 only=["coverage"], want_clean=True)
+    _mutate_case(results, "a verified_by ref on a non-enforced entry must resolve",
+                 lambda t: next(s for s in t["surfaces"] if s["id"] == "claude-chat")["coverage"]["H16"]
+                 .__setitem__("verified_by", ["fixture:TestNope"]),
+                 "claude-chat.H16: fixture:TestNope does not resolve", only=["coverage"])
 
     def dup_cursor_session_end(t):
         t["registrations"].append({"id": "fx-cursor-user.session-end", "layer": "fx-cursor-user",
@@ -1492,8 +1578,11 @@ def _emit(report: dict, as_json: bool, cmd: str) -> None:
         print(f"ERROR {e}")
     for w in report.get("warnings", []):
         print(f"WARN  {w}")
+    for n in report.get("notices", []):
+        print(f"NOTICE {n}")
     if not report.get("errors"):
-        print(f"ok render_shims {cmd}: clean" + (f" ({len(report.get('warnings', []))} warning(s))" if report.get("warnings") else ""))
+        extra = [f"{len(report[k])} {k[:-1]}(s)" for k in ("warnings", "notices") if report.get(k)]
+        print(f"ok render_shims {cmd}: clean" + (f" ({', '.join(extra)})" if extra else ""))
 
 
 def emit(kind: str, root: Path = ROOT, *, device=None, overlay=None, out=None) -> int:

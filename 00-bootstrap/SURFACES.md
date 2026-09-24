@@ -146,7 +146,7 @@ Coverage on the minimum surfaces:
 | H17 | enforced-partial | backstop-only | advisory | advisory |
 | H19 | unverified | not-applicable | unverified | unverified |
 | H22 | enforced-partial | backstop-only | advisory | advisory |
-| H24 | unverified | not-applicable | unverified | unverified |
+| H24 | enforced-partial | not-applicable | enforced-partial | enforced-partial |
 | H25 | unverified | backstop-only | unverified | unverified |
 
 Registrations (one effective registration per surface, event and behaviour):
