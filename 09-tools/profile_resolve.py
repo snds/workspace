@@ -2982,7 +2982,7 @@ OVERRIDE_MAX_TTL_S = 24 * 3600
 _TTL_RE = re.compile(r"^(\d+)([mh])$")
 _TASK_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
 FLOOR_EVENTS = ("pre-commit", "commit-msg", "pre-merge-commit", "pre-push")
-FLOOR_RULES = ("I1", "I2", "housekeeping-shape", "not-positively-personal")
+FLOOR_RULES = ("I1", "I2", "IR1", "housekeeping-shape", "not-positively-personal")
 _ZERO_SHA_RE = re.compile(r"^0{40}(?:0{24})?$")
 _PY_COMM_RE = re.compile(r"^(?:python3?|Python|python3\.\d+)$")
 _INTENT_TAIL_LINES = 2000
@@ -3454,9 +3454,35 @@ def _push_url_class(url: str, root: Optional[Path]) -> str:
     return cls
 
 
+def _gitfile_top(gitdir: Path, cwd: Path) -> Optional[Path]:
+    """The work tree of a linked worktree or submodule whose admin dir git exported as GIT_DIR (git
+    does that for every hook it runs there): the hook's cwd, or the tree the admin dir's `gitdir`
+    file names, as long as that tree's own .git points back at the admin dir. The second candidate
+    does not depend on the cwd when that file holds an absolute path, so such a linked worktree's
+    admin dir used as GIT_DIR from anywhere resolves to that worktree (a --relative-paths worktree
+    resolves only from its own tree) (same repository, same config, same owner class). None when neither
+    candidate points back, e.g. a submodule's admin dir used from outside its tree."""
+    cands = [Path(cwd)]
+    try:
+        named = (gitdir / "gitdir").read_text(encoding="utf-8").strip()
+        if named:
+            cands.append(Path(named).parent)
+    except OSError:
+        pass
+    want = _cf(_real(gitdir))
+    for c in cands:
+        gd, _common = _git_paths(c)
+        if gd is not None and _cf(_real(gd)) == want:
+            return c
+    return None
+
+
 def _floor_locate(cwd: Path, e: dict, git: str) -> Tuple[Optional[Path], Optional[Path]]:
     """(git dir, work tree top) the way git finds them: GIT_DIR first, else discovery from cwd (bare
-    repos included). The work tree is None for a bare repo or a GIT_DIR used from outside its tree."""
+    repos included). With GIT_DIR the work tree is, whatever the cwd, the parent of a `<top>/.git`
+    dir, GIT_WORK_TREE's tree, or the tree _gitfile_top finds for an admin dir (an absolute-path linked
+    worktree's admin dir resolves to its worktree); it is None for a bare repo and for an admin dir that
+    no tree points back at."""
     loc = _clean_git_env(e)
     for k in ("GIT_DIR", "GIT_WORK_TREE"):
         if e.get(k):
@@ -3469,12 +3495,25 @@ def _floor_locate(cwd: Path, e: dict, git: str) -> Tuple[Optional[Path], Optiona
             top = gitdir.parent
         elif e.get("GIT_WORK_TREE"):
             top = _find_top(_real(Path(cwd) / str(e["GIT_WORK_TREE"])))
+        elif gitdir is not None:
+            top = _gitfile_top(gitdir, Path(cwd))
         return gitdir, top
     top = _find_top(cwd)
     if gitdir is None and top is not None:
         gd, _common = _git_paths(top)
         gitdir = gd
     return gitdir, top
+
+
+def _main_checkout(top: Path) -> Optional[Path]:
+    """The main checkout of a linked worktree: the work tree of its common dir, or the common dir
+    itself for a bare repository. None when `top` is not a linked worktree (a main checkout or a
+    submodule has no separate common dir)."""
+    gd, common = _git_paths(top)
+    if gd is None or common is None or _cf(_real(gd)) == _cf(_real(common)):
+        return None
+    c = _real(common)
+    return c.parent if c.name == ".git" else c
 
 
 def _floor_config_remotes(cwd: Path, gitdir: Optional[Path], e: dict, git: str) -> Optional[List[str]]:
@@ -3495,6 +3534,21 @@ def _floor_config_remotes(cwd: Path, gitdir: Optional[Path], e: dict, git: str) 
     return out
 
 
+def _commit_idents(cwd: Path, e: dict, git: str) -> List[Tuple[str, str]]:
+    """[(role, email)] for the author and committer identity git will record for this commit, read
+    with the hook's own env (so the overlay include, -c and the GIT_AUTHOR_* that commit exports all
+    count). A role git has no identity for is left out."""
+    genv = dict(e)
+    genv["GIT_TERMINAL_PROMPT"] = "0"
+    out = []
+    for role, var in (("author", "GIT_AUTHOR_IDENT"), ("committer", "GIT_COMMITTER_IDENT")):
+        r = _git_run(["var", var], cwd, genv, git)
+        m = re.search(r"<([^<>]*)>", r.stdout) if r is not None and r.returncode == 0 else None
+        if m:
+            out.append((role, m.group(1)))
+    return out
+
+
 def floor_decide(event: str, hook_args: list, stdin_lines: list, *, env: Optional[dict] = None,
                  ancestry: Optional[list] = None, root: Optional[Path] = None, home: Optional[Path] = None,
                  cwd: Optional[Any] = None, cache: Any = None, ps: Optional[Callable[[str], str]] = None,
@@ -3505,8 +3559,16 @@ def floor_decide(event: str, hook_args: list, stdin_lines: list, *, env: Optiona
     shape (all ref lines delete non-default branches, the nearest python ancestor runs a
     registered script whose blob matches the pinned lock, and that pid wrote an intent line for
     exactly those refs), after an I1 identity check over every commit in the pushed range.
-    Not positively personal under projects_root blocks. An infrastructure error allows, with a
-    notice (fail-open): the transport block stays the barrier for employer remotes.
+    Any other repo: a commit event whose author or committer identity is an employer identity
+    blocks, and so does a push whose range (the I1 range reader) holds a commit with an employer
+    author or committer, which catches commits no commit hook saw (revert, cherry-pick, rebase,
+    am): IR1. A Claude commit event never records the device's employer identity, and a Claude push
+    to a non-employer remote never publishes a commit that carries it. A local rewrite (revert,
+    cherry-pick, rebase, am) can still record it locally until that push is refused; annotated-tag
+    tagger identities are not checked. An unreadable range allows with a notice, as for I1.
+    Not positively personal under projects_root blocks; a linked worktree is classified by its own
+    top and by its main checkout (under projects_root when either is). An infrastructure error
+    allows, with a notice (fail-open): the transport block stays the barrier for employer remotes.
     """
     try:
         return _floor(event, list(hook_args or []), list(stdin_lines or []), env=env, ancestry=ancestry, root=root,
@@ -3536,6 +3598,15 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
     det = {"family": "claude", "family_for_walls": "claude", "agent_possible": True}
     if top is not None:
         res = repo_resolve(str(top), root=root, home=home, detection=det, cache=cache)
+        main = _main_checkout(top)
+        if main is not None:
+            # A linked worktree counts as its main checkout too: under projects_root when either is, and
+            # the cache-only rule and employer path globs apply to both (W-07).
+            mres = repo_resolve(str(main), root=root, home=home, detection=det, cache=cache)
+            res = dict(res, owner_class=max((res.get("owner_class"), mres.get("owner_class")),
+                                            key=lambda c: CLASS_RANK.get(str(c), CLASS_RANK["unknown"])),
+                       positively_personal=bool(res.get("positively_personal") and mres.get("positively_personal")),
+                       in_projects_root=bool(res.get("in_projects_root") or mres.get("in_projects_root")))
     else:
         res = {"owner_class": "unknown", "positively_personal": False, "remotes": [],
                "in_projects_root": False}
@@ -3546,18 +3617,44 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
         return _floor_block("I2", f"{event}: git cannot read this repository's remote config, so it is not "
                                   "positively personal for a Claude-family actor; fix the config, then retry")
     if not employer:
+        dev_t = _try_table("devices", root) or {}
+        ir1_notice = None
+        if event != "pre-push":
+            for role, em in _commit_idents(here, e, git):
+                if email_class(em, dev_t) == "employer":
+                    return _floor_block("IR1", f"{event}: the {role} identity is an employer identity; a Claude-family "
+                                               "commit never carries it (IR1); set this repo's user.name and "
+                                               "user.email to the personal identity, then retry")
+        else:
+            remote = str(hook_args[0]) if hook_args else "origin"
+            genv = _floor_git_env(e)
+            for ln in _push_lines(stdin_lines):
+                if ln.get("bad"):
+                    continue
+                idents = _range_idents(top if top is not None else here, ln, remote, genv, git, gitdir)
+                if idents is None:
+                    ir1_notice = "IR1 range check unavailable (git error)"
+                    continue
+                for sha, ae, ce in idents:
+                    for role, em in (("author", ae), ("committer", ce)):
+                        if email_class(em, dev_t) == "employer":
+                            return _floor_block("IR1", f"commit {sha[:12]} in the pushed range has an employer identity "
+                                                       f"as {role}; a Claude-family push never publishes it to a "
+                                                       "non-employer remote (IR1); rewrite it with the personal "
+                                                       "identity, then retry")
         if res.get("positively_personal"):
-            return _floor_allow()
+            return _floor_allow(ir1_notice)
         pr = projects_root(root=root, home=home)
         where_p = _real(top if top is not None else gitdir)
         under = bool(res.get("in_projects_root")) or (_is_under(where_p, pr) and _cf(where_p) != _cf(pr))
         if under:
             return _floor_block("not-positively-personal",
-                                "this checkout under projects_root is not positively personal for a Claude actor "
-                                "(unknown, third-party or uncached); fix: run `python3 09-tools/profile_resolve.py "
-                                "scan` in a plain terminal, then retry")
-        return _floor_allow(None if not (res.get("remotes") or cfg_urls) else
-                            f"{res.get('owner_class')} repo outside projects_root; the floor allows it")
+                                "this checkout under projects_root (or a linked worktree of one) is not positively "
+                                "personal for a Claude actor (unknown, third-party or uncached); fix: run `python3 "
+                                "09-tools/profile_resolve.py scan` in a plain terminal, then retry")
+        outside = None if not (res.get("remotes") or cfg_urls) else \
+            f"{res.get('owner_class')} repo outside projects_root; the floor allows it"
+        return _floor_allow("; ".join(m for m in (ir1_notice, outside) if m) or None)
     if event != "pre-push":
         return _floor_block("I2", f"{event}: a Claude-family actor never commits on an employer repo; "
                                   "route this work to Cursor or Codex")
@@ -4734,7 +4831,8 @@ def _t8_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     d = floor("pre-push", emp, ["origin", "u"], dl, anc=vet)
     ok(d["rule"] == "I2" and "differ" in d["reason"], f"floor: a hash mismatch is not vetted: {d}")
     _write(script, "# fixture housekeeper v1\n")
-    ok(all(r in FLOOR_RULES for r in ("I1", "I2", "housekeeping-shape", "not-positively-personal")), "floor rule ids")
+    ok(all(r in FLOOR_RULES for r in ("I1", "I2", "IR1", "housekeeping-shape", "not-positively-personal")),
+       "floor rule ids")
 
 
 def _t8_git_floor(ok: Callable[[Any, str], None]) -> None:

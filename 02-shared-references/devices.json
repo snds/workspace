@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "doc": "Declared device table (H2/H17, D14). Tools use Path.home() at runtime; `home` is verified by doctor --check only.",
+  "doc": "Declared device table (H2/H17, D14). Tools use Path.home() at runtime; `home` and `brain` are verified by doctor --check only.",
   "devices": [
     {
       "id": "work-mbp",

@@ -28,7 +28,9 @@ fallback() {
 }
 
 if [ -f "$WS/09-tools/session-status.py" ]; then
-  CARD=$(python3 "$WS/09-tools/session-status.py" --surface Cursor --via cursor-hook/startup 2>/dev/null || true)
+  # --family cursor: Cursor exports CLAUDE_PROJECT_DIR into every hook process, so detection would
+  # rank this Cursor session as Claude and hide the employer projects Cursor handles.
+  CARD=$(python3 "$WS/09-tools/session-status.py" --surface Cursor --via cursor-hook/startup --family cursor 2>/dev/null || true)
   if [ -n "${CARD:-}" ]; then
     printf '%s\n' "Emit this session-start card as your first reply in a NEW session. Do not shrink Active projects. Skip on continuations and Task workers / structured-output.
 

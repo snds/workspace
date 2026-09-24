@@ -740,29 +740,34 @@ def cmd_verify(
     else:
         ctx_src = "injected"
     tracked = tracked_tool_scripts(vroot)
+
+    def say(line: str) -> None:
+        # One stream, flushed before any measure runs: piped output keeps each verdict under its RUN line.
+        print(line, flush=True)
+
     counts = {"PASS": 0, "FAIL": 0, "SKIP": 0, "NOT_EXPOSED": 0, "HUMAN": 0, "HUMAN-ATTESTED": 0}
-    print(f"verify cwd: {vroot} ({why_root})")
-    print(f"context: {'automated' if automated else 'interactive'} ({ctx_src})")
+    say(f"verify cwd: {vroot} ({why_root})")
+    say(f"context: {'automated' if automated else 'interactive'} ({ctx_src})")
     for c in spec["checks"]:
         status, reason, argv = classify_check(c, automated=automated, tracked=tracked)
         label = c["label"]
         if status == "SKIP":
-            print(f"SKIP ({reason}): {label}")
+            say(f"SKIP ({reason}): {label}")
             counts["SKIP"] += 1
             continue
         if status in ("HUMAN", "HUMAN-ATTESTED"):
-            print(f"{status}: {label}")
+            say(f"{status}: {label}")
             counts[status] += 1
             continue
         if status == "BAD":
-            print(f"FAIL ({reason}): {label}", file=sys.stderr)
+            say(f"FAIL ({reason}): {label}")
             counts["FAIL"] += 1
             continue
         if status == "NOT_EXPOSED":
-            print(f"NOT_EXPOSED ({reason}): {label}")
+            say(f"NOT_EXPOSED ({reason}): {label}")
             counts["NOT_EXPOSED"] += 1
             continue
-        print(f"{'RUN' if run else 'CMD'} {c['measure']}")
+        say(f"{'RUN' if run else 'CMD'} {c['measure']}")
         if not run:
             continue
         try:
@@ -775,19 +780,19 @@ def cmd_verify(
         except OSError:
             rc = 126
         if rc != 0:
-            print(f"FAIL exit {rc}: {label}", file=sys.stderr)
+            say(f"FAIL exit {rc}: {label}")
             counts["FAIL"] += 1
         else:
-            print(f"PASS {label}")
+            say(f"PASS {label}")
             counts["PASS"] += 1
     human_total = counts["HUMAN"] + counts["HUMAN-ATTESTED"]
-    print(
+    say(
         f"summary: pass={counts['PASS']} fail={counts['FAIL']} skip={counts['SKIP']} "
         f"not_exposed={counts['NOT_EXPOSED']} human={human_total} "
         f"(attested {counts['HUMAN-ATTESTED']})"
     )
     if not run:
-        print("dry — pass --run to execute measures")
+        say("dry — pass --run to execute measures")
         return 0
     if counts["FAIL"] or counts["SKIP"]:
         return 1
@@ -1713,6 +1718,22 @@ def _st_verify() -> None:
         assert exposure_refusal("bash 09-tools/ok.py", ["bash", "09-tools/ok.py"], {"09-tools/ok.py"})
         assert exposure_refusal("python3 ../09-tools/ok.py", ["python3", "../09-tools/ok.py"],
                                 {"09-tools/ok.py"})
+        # Piped (T10 rerun T-03): each RUN line is followed by its own verdict, before the next RUN,
+        # with the measures' own output inherited on the same pipe.
+        for name, code in (("p1", 0), ("f2", 2), ("p3", 0)):
+            (repo / "09-tools" / f"{name}.py").write_text(
+                f"print('measure output {name}')\nraise SystemExit({code})\n", encoding="utf-8")
+            _run_fixture_git(["add", f"09-tools/{name}.py"], repo, env)
+        piped = _verify_spec(td, "\n".join(f"- [ ] {n} -- measure: python3 09-tools/{n}.py" for n in ("p1", "f2", "p3")))
+        r = subprocess.run([sys.executable, str(Path(__file__).resolve()), "verify", "--spec", str(piped), "--run",
+                            "--root", str(repo)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+                           timeout=120)
+        lines = r.stdout.splitlines()
+        runs = [i for i, ln in enumerate(lines) if ln.startswith("RUN ")]
+        assert lines and lines[0].startswith("verify cwd:") and len(runs) == 3, r.stdout
+        for i, want in zip(runs, ("PASS p1", "FAIL exit 2: f2", "PASS p3")):
+            nxt = next(ln for ln in lines[i + 1:] if ln.startswith(("PASS", "FAIL", "RUN ")))
+            assert nxt == want, (want, r.stdout)
 
 
 def _audit_spec_path(td: Path) -> Path:

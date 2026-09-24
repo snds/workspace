@@ -1,6 +1,8 @@
 # Global git config — uses includeIf to apply identity by directory.
-# Personal repos under ~/personal/** or ~/Projects/**, work repos under ~/work/**.
+# Personal repos under ~/personal/**, work repos under ~/work/**.
 # Repos outside all routed directories use repo-local config (e.g., the Claude Workspace).
+# ~/Projects/ is deliberately NOT routed: on the work Mac it holds employer checkouts, and a
+# personal identity there would author employer commits (invariant I1, 02-shared-references/devices.json).
 
 [init]
 	defaultBranch = main
@@ -28,9 +30,6 @@
 # The trailing slash in the pattern is required for gitdir matching.
 
 [includeIf "gitdir:~/personal/"]
-	path = ~/.gitconfig.personal
-
-[includeIf "gitdir:~/Projects/"]
 	path = ~/.gitconfig.personal
 
 [includeIf "gitdir:~/work/"]

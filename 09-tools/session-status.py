@@ -13,10 +13,12 @@ Usage:
   python3 09-tools/session-status.py --self-test
 
 Family-aware (H25): when the walls family is `claude`, projects whose SESSION-STATE
-`Context profile` starts with `centric-` collapse to one count line, and the pending
-line adds the employer-keyword count. Every other family gets today's card, byte for
-byte. The machine label comes from `profile_resolve.device_label()`; if that import
-fails the label is the raw short hostname. Fail-open throughout.
+`Context profile` starts with `centric-` collapse to one count line, projects with no
+`personal-*` profile (missing or unrecognised) collapse to a second count line (the
+fail-safe default in 00-context-profiles.md), and the pending line adds the
+employer-keyword count. Every other family gets today's card, byte for byte. The
+machine label comes from `profile_resolve.device_label()`; if that import fails the
+label is the raw short hostname. Fail-open throughout.
 """
 
 from __future__ import annotations
@@ -54,6 +56,7 @@ SIDE_CHAT = ROOT / "06-context" / "side-chat-inbox.md"
 DOCTOR_STATE = Path.home() / ".claude" / "ws-state"
 
 EMPLOYER_PROFILE_PREFIX = "centric-"
+PERSONAL_PROFILE_PREFIX = "personal-"
 EMPLOYER_HANDLERS = "Cursor/Codex"
 ORACLE_SHA = "2ff02e7"
 _UNSET: Any = object()
@@ -381,14 +384,15 @@ def collect(
     projects = active_projects()
     fam = resolve_family(family, resolver=pr)
     hidden = 0
+    undeclared = 0
     pending_employer: Optional[int] = None
     if fam == "claude":
         base = ROOT / "07-projects"
-        kept = [
-            p for p in projects
-            if not project_profile(base / p[0] / "SESSION-STATE.md").startswith(EMPLOYER_PROFILE_PREFIX)
-        ]
-        hidden = len(projects) - len(kept)
+        profiles = {p[0]: project_profile(base / p[0] / "SESSION-STATE.md") for p in projects}
+        # Fail-safe default: a project shows on a Claude card only under a declared personal profile.
+        kept = [p for p in projects if profiles[p[0]].startswith(PERSONAL_PROFILE_PREFIX)]
+        hidden = sum(1 for p in projects if profiles[p[0]].startswith(EMPLOYER_PROFILE_PREFIX))
+        undeclared = len(projects) - len(kept) - hidden
         projects = kept
         words = employer_keywords(resolver=pr)
         if words is not None:
@@ -411,6 +415,7 @@ def collect(
     }
     data["family"] = fam
     data["employer_projects_hidden"] = hidden
+    data["undeclared_projects_hidden"] = undeclared
     data["pending_employer"] = pending_employer
     return data
 
@@ -437,9 +442,10 @@ def format_card(data: dict) -> str:
         "06-context/project-context.md"
     )
     hidden = data.get("employer_projects_hidden") or 0
-    n = len(data["projects"]) + hidden
+    undeclared = data.get("undeclared_projects_hidden") or 0
+    n = len(data["projects"]) + hidden + undeclared
     lines.append(f"- **Active projects ({n}):**")
-    if not data["projects"] and not hidden:
+    if not data["projects"] and not hidden and not undeclared:
         lines.append("  - (none with SESSION-STATE.md)")
     else:
         for p in data["projects"]:
@@ -447,6 +453,9 @@ def format_card(data: dict) -> str:
             lines.append(f"  - **{p['name']}**{when} — {p['title']}")
         if hidden:
             lines.append(f"  - {hidden} employer projects — handled by {EMPLOYER_HANDLERS}")
+        if undeclared:
+            lines.append(f"  - {undeclared} projects with no declared Context profile — hidden here until "
+                         "their SESSION-STATE declares one")
     lines.append(f"- **Git:** {data['git_line']}")
     lines.append("")
     lines.append("What's on the agenda today?")
@@ -579,12 +588,14 @@ def _consts_for(root: Path) -> dict:
 
 
 def _synthetic_tree(root: Path) -> None:
-    """Synthetic owners only: two employer-profile projects, two personal, keyworded pending."""
+    """Synthetic owners only: two employer-profile projects, one personal, two with no profile line
+    (one of them employer work), keyworded pending."""
     projects = {
         "01-alpha": ("personal-solo", "Alpha focus line"),
         "02-acme-work": ("centric-engineering", "ZZ-EMPLOYER-FOCUS acme widget rollout"),
         "03-beta": ("", "Beta focus line"),
         "04-acme-design": ("centric-design", "ZZ-EMPLOYER-FOCUS acme audit"),
+        "05-acme-unprofiled": ("", "ZZ-EMPLOYER-FOCUS acme research with no profile line"),
     }
     for name, (profile, focus) in projects.items():
         d = root / "07-projects" / name
@@ -660,17 +671,22 @@ def self_test() -> int:
             data = collect(surface="S", via="V", family="claude", resolver=fake)
             card = format_card(data)
             names = [p["name"] for p in data["projects"]]
-            check("claude hides centric-* projects", names == ["01-alpha", "03-beta"], str(names))
-            check("claude card has no employer focus lines", "ZZ-EMPLOYER-FOCUS" not in card)
+            check("claude shows only personal-* projects", names == ["01-alpha"], str(names))
+            check("claude card has no employer focus lines (an unprofiled employer project included)",
+                  "ZZ-EMPLOYER-FOCUS" not in card)
             check("claude card count line",
                   "  - 2 employer projects — handled by Cursor/Codex" in card.splitlines(), card)
+            check("claude card undeclared line",
+                  "  - 2 projects with no declared Context profile — hidden here until their SESSION-STATE "
+                  "declares one" in card.splitlines(), card)
             check("claude pending line",
                   "- **Pending:** 4 items (2 employer — handled by Cursor/Codex) → "
                   "06-context/project-context.md" in card.splitlines(), card)
-            check("claude header counts all projects", "- **Active projects (4):**" in card.splitlines())
+            check("claude header counts all projects", "- **Active projects (5):**" in card.splitlines())
             check("json fields", data["family"] == "claude" and data["employer_projects_hidden"] == 2
-                  and data["pending_employer"] == 2, json.dumps({k: data[k] for k in (
-                      "family", "employer_projects_hidden", "pending_employer")}))
+                  and data["undeclared_projects_hidden"] == 2 and data["pending_employer"] == 2,
+                  json.dumps({k: data[k] for k in (
+                      "family", "employer_projects_hidden", "undeclared_projects_hidden", "pending_employer")}))
             auto = collect(surface="S", via="V", family="auto", resolver=fake)
             check("auto uses detect_surface family_for_walls", auto["family"] == "claude"
                   and auto["employer_projects_hidden"] == 2)
@@ -680,7 +696,7 @@ def self_test() -> int:
                   and "- **Pending:** 4 items → 06-context/project-context.md" in nokw.splitlines())
             cur = collect(surface="S", via="V", family="cursor", resolver=fake)
             check("cursor json fields", cur["family"] == "cursor" and cur["employer_projects_hidden"] == 0
-                  and cur["pending_employer"] is None)
+                  and cur["undeclared_projects_hidden"] == 0 and cur["pending_employer"] is None)
             out = io.StringIO()
             with contextlib.redirect_stdout(out):
                 real_resolver = globals()["_resolver"]

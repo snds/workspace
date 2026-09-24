@@ -215,8 +215,13 @@ windows, and a missing employer checkout skip and do not fail. GitHub cannot see
 
 Session-end git hygiene. Deletes local (and leftover remote) branches only when
 `gh` shows a **merged** PR for that head authored by `@me`, there is no open PR
-on the same head, and the checkout is not ahead of `origin/<branch>`. Someone
-else's branches, unmerged work, and dirty leftover worktrees stay. Squash
+on the same head, and the checkout is not ahead of `origin/<branch>`. The remote
+branch goes only while its tip is still that PR's head commit (from origin, not
+a fork). A name that any PR in the repo (open or closed, anyone's) targets as its
+base stays (one read-only `gh pr list --base` per candidate; a failed query keeps
+it), and so do the default branch, `main`, `master`, `develop` and `release/*`.
+Someone else's branches, a reused name, unmerged work, and dirty leftover
+worktrees stay. Squash
 merges are not ancestors of `main` — the merged PR is the signal, not
 `merge-base`. `/session-end` runs this with `--apply`.
 
@@ -317,7 +322,7 @@ python3 09-tools/session-status.py --json
 python3 09-tools/session-status.py --check
 ```
 
-Session-start card; --family auto|claude|cursor|codex (Claude collapses centric-* projects to a count and splits the pending line); label from profile_resolve.device_label(); --self-test runs the 2ff02e7 oracle.
+Session-start card; --family auto|claude|cursor|codex (Claude shows only personal-* projects: centric-* ones collapse to one count, projects with no declared profile to another, and the pending line splits; the Cursor shim passes --family cursor); label from profile_resolve.device_label(); --self-test runs the 2ff02e7 oracle.
 
 ## check-secrets.py
 

@@ -3,11 +3,16 @@
 
 Deletes a local (and still-present remote) branch only when ALL of:
   - `gh pr` shows a MERGED pull request for that head, authored by `@me`
-  - no OPEN pull request uses that head
-  - the branch is not the default branch, `main` or `master`
+  - no OPEN pull request uses that head, and no pull request in the repo (open or closed, anyone's)
+    uses it as its base: one read-only `gh pr list --base <name>` per candidate, and a failed
+    query keeps the branch
+  - the branch is not the default branch, `main`, `master`, `develop` or `release/*`
   - local is not ahead of `origin/<branch>` (no unpushed unique commits)
   - a linked worktree is clean, or the primary checkout can switch to the default branch and
     fast-forward it (a diverged default branch is reported and never reset)
+`origin/<branch>` is deleted only while its tip is still the head commit of one of those merged
+pull requests, opened from origin itself (not a fork): a branch that moved on after the merge, or
+a colleague's branch that reuses the name, is left alone.
 
 Squash-merged branches are not ancestors of main — do not use merge-base as
 the keep/delete signal. Unmerged work, someone else's PRs, and dirty leftover
@@ -33,6 +38,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import importlib.util
 import json
 import os
@@ -46,11 +52,13 @@ from typing import Any, Callable, List, Optional, Tuple
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPT_ID = "prune-our-branches"
 PROTECTED = frozenset({"main", "master", "HEAD"})
+LONG_LIVED = ("develop", "release/*")  # with PROTECTED and the default branch: never pruned
 # D10: the two slugs this script has always named (no new slug); resolved per device via `where`.
 DEFAULT_SLUGS = (
     "cpes-software/cds",
     "cpes-software/saas-plm-prototype",
 )
+PR_FIELDS = "number,headRefName,headRefOid,baseRefName,isCrossRepository,state"
 LOCAL_TIMEOUT_S = 30.0
 NETWORK_TIMEOUT_S = 120.0
 
@@ -94,6 +102,10 @@ def _pinned_resolver(home: Optional[Path] = None) -> Any:
 # --------------------------------------------------------------------------- decisions
 
 
+def long_lived(name: str) -> bool:
+    return name in PROTECTED or any(fnmatch.fnmatchcase(name, pat) for pat in LONG_LIVED)
+
+
 @dataclass(frozen=True)
 class BranchDecision:
     name: str
@@ -109,7 +121,7 @@ def decide(
     ahead_of_remote: bool,
     protected: frozenset[str] = PROTECTED,
 ) -> BranchDecision:
-    if name in protected:
+    if name in protected or long_lived(name):
         return BranchDecision(name, "keep", "protected")
     if name in open_heads:
         return BranchDecision(name, "keep", "open PR")
@@ -153,7 +165,7 @@ def _err(proc: subprocess.CompletedProcess, fallback: str) -> str:
 
 
 def gh_json(ctx: Any, args: list[str], employer_gh: bool) -> list[dict]:
-    proc = ctx.run(["gh", "pr", "list", *args, "--json", "number,headRefName,state"], action="pr-list",
+    proc = ctx.run(["gh", "pr", "list", *args, "--json", PR_FIELDS], action="pr-list",
                    needs_employer_gh=employer_gh)
     if proc.returncode != 0:
         raise RuntimeError(_err(proc, "gh pr list failed"))
@@ -161,6 +173,28 @@ def gh_json(ctx: Any, args: list[str], employer_gh: bool) -> list[dict]:
     if not isinstance(data, list):
         raise RuntimeError("gh pr list returned a non-list")
     return data
+
+
+def base_of_any_pr(ctx: Any, name: str, employer_gh: bool) -> Optional[bool]:
+    """True when any pull request in the repo (open or closed, anyone's) targets <name> as its base;
+    None when gh cannot say, and the caller then keeps the branch."""
+    proc = ctx.run(["gh", "pr", "list", "--state", "all", "--base", name, "--limit", "1", "--json", "number"],
+                   action="pr-list", needs_employer_gh=employer_gh)
+    if proc.returncode != 0:
+        return None
+    try:
+        data = json.loads(proc.stdout or "[]")
+    except ValueError:
+        return None
+    return bool(data) if isinstance(data, list) else None
+
+
+def _base_keep(ctx: Any, name: str, employer_gh: bool) -> Optional[str]:
+    """The keep reason when <name> is (or may be) some pull request's base; None when it is not."""
+    hit = base_of_any_pr(ctx, name, employer_gh)
+    if hit is None:
+        return "base check unavailable (gh pr list --base failed)"
+    return "a pull request targets it as its base" if hit else None
 
 
 def local_branches(ctx: Any) -> list[str]:
@@ -221,6 +255,12 @@ def remote_branch_exists(ctx: Any, name: str) -> bool:
     return ctx.query(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{name}"]).returncode == 0
 
 
+def remote_is_merged_head(ctx: Any, name: str, heads: dict[str, set[str]]) -> bool:
+    """origin/<name> still points at the head commit of one of our merged PRs from origin itself."""
+    tip = ctx.query(["git", "rev-parse", "--verify", "--quiet", f"refs/remotes/origin/{name}^{{commit}}"])
+    return tip.returncode == 0 and tip.stdout.strip() in heads.get(name, set())
+
+
 def switch_to_default(ctx: Any, default: str, employer_gh: bool) -> str | None:
     """`git switch <default>` then `git merge --ff-only origin/<default>`. Never resets."""
     ref = [f"refs/heads/{default}"]
@@ -245,15 +285,21 @@ def prune_repo(ctx: Any, *, apply: bool, employer_gh: bool = False, label: str =
         return lines
 
     try:
-        merged = {row["headRefName"] for row in
-                  gh_json(ctx, ["--state", "merged", "--author", "@me", "--limit", "200"], employer_gh)}
-        opened = {row["headRefName"] for row in gh_json(ctx, ["--state", "open", "--limit", "100"], employer_gh)}
+        merged_rows = gh_json(ctx, ["--state", "merged", "--author", "@me", "--limit", "200"], employer_gh)
+        open_rows = gh_json(ctx, ["--state", "open", "--limit", "100"], employer_gh)
+        merged = {row["headRefName"] for row in merged_rows}
+        opened = {row["headRefName"] for row in open_rows}
+        heads: dict[str, set[str]] = {}
+        for row in merged_rows:
+            if not row.get("isCrossRepository") and row.get("headRefOid"):
+                heads.setdefault(row["headRefName"], set()).add(str(row["headRefOid"]))
+        bases = {str(row["baseRefName"]) for row in merged_rows + open_rows if row.get("baseRefName")}
     except (RuntimeError, ValueError, KeyError, TypeError) as exc:
         lines.append(f"  skip: {exc}")
         return lines
 
     default = default_branch(ctx)
-    protected = frozenset(PROTECTED | {default})
+    protected = frozenset(PROTECTED | {default} | bases)
     trees = worktree_map(ctx)
     current = current_branch(ctx)
     here = Path(ctx.path).resolve()
@@ -269,9 +315,16 @@ def prune_repo(ctx: Any, *, apply: bool, employer_gh: bool = False, label: str =
         if wt is not None and worktree_dirty(ctx, wt):
             lines.append(f"  keep  {name} — dirty worktree {wt}")
             continue
+        why = _base_keep(ctx, name, employer_gh)
+        if why:
+            lines.append(f"  keep  {name} — {why}")
+            continue
 
         if not apply:
-            extra = " + remote" if remote_branch_exists(ctx, name) else ""
+            extra = ""
+            if remote_branch_exists(ctx, name):
+                extra = (" + remote" if remote_is_merged_head(ctx, name, heads)
+                         else " (remote kept: origin tip is not our merged PR head)")
             lines.append(f"  prune {name}{extra} (dry-run)")
             continue
 
@@ -294,7 +347,9 @@ def prune_repo(ctx: Any, *, apply: bool, employer_gh: bool = False, label: str =
             lines.append(f"  keep  {name} — local delete failed: {_err(deleted, 'unknown')}")
             continue
         note = f"  pruned {name}"
-        if remote_branch_exists(ctx, name):
+        if remote_branch_exists(ctx, name) and not remote_is_merged_head(ctx, name, heads):
+            note += " (remote kept: origin tip is not our merged PR head)"
+        elif remote_branch_exists(ctx, name):
             pushed = ctx.run(["git", "push", "origin", "--delete", name], action="remote-branch-delete", refs=ref,
                              needs_employer_gh=employer_gh)
             if pushed.returncode == 0:
@@ -307,9 +362,16 @@ def prune_repo(ctx: Any, *, apply: bool, employer_gh: bool = False, label: str =
 
     remaining_local = set(local_branches(ctx))
     for name in sorted(merged - remaining_local):
-        if name in protected or name in opened:
+        if name in protected or long_lived(name) or name in opened:
             continue
         if not remote_branch_exists(ctx, name):
+            continue
+        if not remote_is_merged_head(ctx, name, heads):
+            lines.append(f"  keep  origin/{name} — its tip is not the head of our merged PR from origin")
+            continue
+        why = _base_keep(ctx, name, employer_gh)
+        if why:
+            lines.append(f"  keep  origin/{name} — {why}")
             continue
         if not apply:
             lines.append(f"  prune origin/{name} (dry-run, remote-only)")
@@ -442,6 +504,109 @@ def _decide_cases() -> list[str]:
     return fails
 
 
+class _StubCtx:
+    """prune_repo's ctx with canned answers: `tips` maps origin branch -> tip, `locals_` the local
+    branches (never ahead), `merged`/`opened` the listed gh rows, `others` PRs the lists miss (a
+    colleague's merged PR). `--base` queries answer from all three, or fail when `base_fails`.
+    Records every run() as (action, argv)."""
+
+    def __init__(self, tips: dict, locals_: list, merged: list, opened: list, others: Optional[list] = None,
+                 base_fails: bool = False) -> None:
+        self.path = "/nonexistent/stub-clone"
+        self.tips, self.locals_, self.merged, self.opened = tips, locals_, merged, opened
+        self.others, self.base_fails = list(others or []), base_fails
+        self.calls: list = []
+
+    @staticmethod
+    def _cp(argv: List[str], rc: int = 0, out: str = "") -> subprocess.CompletedProcess:
+        return subprocess.CompletedProcess(argv, rc, out, "")
+
+    def query(self, argv: List[str], timeout: float = LOCAL_TIMEOUT_S) -> subprocess.CompletedProcess:
+        if argv[:3] == ["git", "symbolic-ref", "--short"]:
+            return self._cp(argv, 0, "origin/main\n")
+        if argv[:2] == ["git", "for-each-ref"]:
+            return self._cp(argv, 0, "".join(f"{b}\n" for b in ["main", *self.locals_]))
+        if argv[:3] == ["git", "rev-parse", "--abbrev-ref"]:
+            return self._cp(argv, 0, "main\n")
+        if argv[:3] == ["git", "show-ref", "--verify"]:
+            name = argv[-1].split("refs/remotes/origin/", 1)[-1]
+            return self._cp(argv, 0 if argv[-1].startswith("refs/remotes/origin/") and name in self.tips else 1)
+        if argv[:2] == ["git", "rev-list"]:
+            return self._cp(argv, 0, "0\t0\n")
+        if argv[:3] == ["git", "rev-parse", "--verify"]:
+            name = argv[-1].split("refs/remotes/origin/", 1)[-1].rsplit("^", 1)[0]
+            return self._cp(argv, 0, f"{self.tips[name]}\n") if name in self.tips else self._cp(argv, 1)
+        return self._cp(argv, 0, "")
+
+    def run(self, argv: List[str], action: str, refs: Any = (), needs_employer_gh: bool = False,
+            timeout: float = NETWORK_TIMEOUT_S) -> subprocess.CompletedProcess:
+        self.calls.append((action, list(argv)))
+        if argv[:3] == ["gh", "pr", "list"] and "--base" in argv:
+            if self.base_fails:
+                return self._cp(argv, 1, "")
+            base = argv[argv.index("--base") + 1]
+            rows = [{"number": r["number"]} for r in self.merged + self.opened + self.others
+                    if r.get("baseRefName") == base]
+            return self._cp(argv, 0, json.dumps(rows[:1]))
+        if argv[:3] == ["gh", "pr", "list"]:
+            return self._cp(argv, 0, json.dumps(self.merged if "merged" in argv else self.opened))
+        return self._cp(argv, 0, "")
+
+
+def _remote_cases() -> list[str]:
+    """W-03 (T10 rerun): origin/<name> is deleted only while it still points at our merged PR's head.
+    L-11 (round 2): never a name that any PR in the repo targets as its base, nor develop or release/*."""
+    def pr(name: str, oid: str, *, base: str = "main", cross: bool = False, number: int = 1) -> dict:
+        return {"number": number, "headRefName": name, "headRefOid": oid, "baseRefName": base,
+                "isCrossRepository": cross, "state": "MERGED"}
+
+    colleague = [pr("feat/z", "e" * 40, base="staging", number=7)]
+    cases = [
+        ("a reused name whose origin tip moved on is kept", {"main": "m", "fix/login": "b" * 40}, [],
+         [pr("fix/login", "a" * 40)], [], {}, [], None),
+        ("the merged head still at origin is deleted (remote-only)", {"main": "m", "fix/login": "a" * 40}, [],
+         [pr("fix/login", "a" * 40)], [], {}, ["fix/login"], None),
+        ("a fork PR's head name is never deleted at origin", {"main": "m", "fix/login": "a" * 40}, [],
+         [pr("fix/login", "a" * 40, cross=True)], [], {}, [], None),
+        ("a promotion PR's head that other PRs target is kept", {"main": "m", "develop": "d" * 40}, [],
+         [pr("develop", "d" * 40)], [pr("feat/y", "e" * 40, base="develop")], {}, [], None),
+        ("a local merged branch is pruned but a moved origin branch is kept", {"main": "m", "feat/x": "c" * 40},
+         ["feat/x"], [pr("feat/x", "a" * 40)], [], {}, [], ["feat/x"]),
+        ("a promotion head with an unmoved tip that only an unlisted (colleague's, closed) PR targets is kept",
+         {"main": "m", "staging": "d" * 40}, [], [pr("staging", "d" * 40)], [], {"others": colleague}, [], None),
+        ("the same promotion head as a local branch is kept locally and at origin",
+         {"main": "m", "staging": "d" * 40}, ["staging"], [pr("staging", "d" * 40)], [], {"others": colleague},
+         [], []),
+        ("develop and release/* are kept even when no PR targets them",
+         {"main": "m", "develop": "d" * 40, "release/1.0": "r" * 40}, [],
+         [pr("develop", "d" * 40), pr("release/1.0", "r" * 40)], [], {}, [], None),
+        ("an ordinary merged branch whose origin tip matches is pruned locally and at origin",
+         {"main": "m", "feat/ok": "a" * 40}, ["feat/ok"], [pr("feat/ok", "a" * 40)], [], {"others": colleague},
+         ["feat/ok"], ["feat/ok"]),
+        ("a failed base query deletes nothing", {"main": "m", "fix/login": "a" * 40}, ["fix/login"],
+         [pr("fix/login", "a" * 40)], [], {"base_fails": True}, [], []),
+    ]
+    fails = []
+    for label, tips, locals_, merged, opened, extra, want, want_local in cases:
+        for apply in (True, False):
+            ctx = _StubCtx(tips, locals_, merged, opened, **extra)
+            out = prune_repo(ctx, apply=apply, label="stub")
+            if not apply:
+                dry = sorted(x.split()[1].split("origin/", 1)[-1] for x in out[1:]
+                             if x.split()[:1] == ["prune"] and (" + remote " in x or "remote-only" in x))
+                if dry != sorted(want):
+                    fails.append(f"{label} (dry-run): remote deletions {dry} != {want} ({out[1:]})")
+                continue
+            got = sorted(a[-1] for act, a in ctx.calls if act == "remote-branch-delete")
+            if got != sorted(want):
+                fails.append(f"{label}: remote deletions {got} != {want} ({out[1:]})")
+            if want_local is not None:
+                loc = sorted(a[-1] for act, a in ctx.calls if act == "branch-delete")
+                if loc != sorted(want_local):
+                    fails.append(f"{label}: local deletions {loc} != {want_local} ({out[1:]})")
+    return fails
+
+
 def _load_file(name: str, path: Path) -> Any:
     spec = importlib.util.spec_from_file_location(name, path)
     if spec is None or spec.loader is None:
@@ -453,7 +618,7 @@ def _load_file(name: str, path: Path) -> Any:
 
 
 def self_test() -> int:
-    fails = _decide_cases()
+    fails = _decide_cases() + _remote_cases()
     passes = [0]
 
     def ok(cond: Any, label: str) -> None:
@@ -507,8 +672,13 @@ def self_test() -> int:
             calls.append((list(argv), cwd, dict(env)))
             if argv and argv[0] == "gh":
                 heads = ["feat/done"] if "merged" in argv else []
-                return subprocess.CompletedProcess(argv, 0, json.dumps([{"number": 1, "headRefName": h, "state": "x"}
-                                                                         for h in heads]), "")
+                rows = []
+                for h in heads:
+                    tip = subprocess.run(["git", "rev-parse", "--verify", "--quiet", f"refs/remotes/origin/{h}"], cwd=cwd,
+                                         env=env, capture_output=True, text=True, timeout=timeout).stdout.strip()
+                    rows.append({"number": 1, "headRefName": h, "headRefOid": tip, "baseRefName": "main",
+                                 "isCrossRepository": False, "state": "x"})
+                return subprocess.CompletedProcess(argv, 0, json.dumps(rows), "")
             return subprocess.run(argv, cwd=cwd, env=env, capture_output=True, text=True, timeout=timeout)
 
         def has_ref(bare: Path, name: str) -> bool:
@@ -664,7 +834,7 @@ def self_test() -> int:
             print(f"FAIL {f}", file=sys.stderr)
         print(f"prune-our-branches self-test: {passes[0]} passed, {len(fails)} failed", file=sys.stderr)
         return 1
-    print(f"prune-our-branches self-test ok ({passes[0] + 6} checks)")
+    print(f"prune-our-branches self-test ok ({passes[0] + 26} checks)")  # + 6 decide, 10 stub cases x 2 modes
     return 0
 
 

@@ -21,6 +21,10 @@ for _c in "$(cat "$HOME/.claude/workspace-brain-path" 2>/dev/null | head -1)" \
   [ -n "$_c" ] && [ -f "$_c/AGENTS.md" ] && WS="$_c" && break
 done
 [ -n "$WS" ] || WS="$HOME/Projects/workspace"
+# A case-insensitive volume accepts any spelling; keep the on-disk one (a case change only, never a
+# symlink target), so the pointer and the path compares below agree with git and the declared brain.
+_p="$(cd "$WS" 2>/dev/null && { /bin/pwd -P 2>/dev/null || pwd -P; })"   # getcwd: bash's builtin keeps the typed case
+[ -n "$_p" ] && [ "$(printf '%s' "$_p" | tr '[:upper:]' '[:lower:]')" = "$(printf '%s' "$WS" | tr '[:upper:]' '[:lower:]')" ] && WS="$_p"
 DIST="$WS/00-bootstrap/dist"
 DOC="$WS/00-bootstrap/doctor"
 STATE="$HOME/.claude/ws-state"; LOG="$STATE/audit.log"
@@ -222,6 +226,19 @@ if [ "$CHECK" -eq 1 ]; then
     *) note "rewrite audit unavailable";; esac
   _dev="$(python3 "$WS/09-tools/profile_resolve.py" device --json 2>/dev/null | python3 -c 'import json,sys;print(json.load(sys.stdin)["device"]["id"])' 2>/dev/null)"
   if [ -n "$_dev" ] && [ "$_dev" != unknown ]; then
+    # devices.json declares this device's home and brain; tools use the live values, this reports drift.
+    python3 - "$WS" "$_dev" <<'PY' 2>/dev/null | while IFS= read -r _l; do note "$_l"; done
+import json, os, sys
+ws, dev = sys.argv[1], sys.argv[2]
+rows = json.load(open(os.path.join(ws, "02-shared-references", "devices.json"), encoding="utf-8")).get("devices") or []
+row = next((r for r in rows if isinstance(r, dict) and r.get("id") == dev), None) or {}
+home = os.path.expanduser("~")
+cf = lambda p: os.path.realpath(p).rstrip("/").casefold()
+if row.get("home") and cf(row["home"]) != cf(home):
+    print(f"devices.json declares home {row['home']} for {dev}, but this login's home is {home}")
+if row.get("brain") and cf(os.path.join(home, row["brain"])) != cf(ws):
+    print(f"devices.json declares brain {row['brain']} for {dev}, but the workspace resolved to {ws}")
+PY
     for _p in claude-code cursor codex copilot-vscode; do
       [ -f "$WS/02-shared-references/probes/$_p@$_dev.json" ] || note "no probe record for $_p@$_dev"
     done

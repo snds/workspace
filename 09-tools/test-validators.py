@@ -725,6 +725,23 @@ class TestSessionStatus(unittest.TestCase):
         src = (TOOLS / "session-status.py").read_text(encoding="utf-8")
         self.assertNotIn("HOSTNAME" + "_MAP", src)
 
+    def test_cursor_sessionstart_renders_the_cursor_card(self):
+        """T10 rerun L-01: Cursor exports CLAUDE_PROJECT_DIR into every hook process, which detection
+        ranks as Claude. The Cursor shim still renders the Cursor card (no Claude-only hiding)."""
+        script = ROOT_DIR / "00-bootstrap" / "dist" / "cursor-sessionstart.sh"
+        with tempfile.TemporaryDirectory() as td:
+            home = Path(td)
+            (home / ".claude").mkdir()
+            (home / ".claude" / "workspace-brain-path").write_text(f"{ROOT_DIR}\n", encoding="utf-8")
+            env = {"HOME": str(home), "PATH": os.environ.get("PATH", "/usr/bin:/bin"), "CURSOR_VERSION": "2.0",
+                   "CURSOR_PROJECT_DIR": str(ROOT_DIR), "CLAUDE_PROJECT_DIR": str(ROOT_DIR)}
+            r = subprocess.run(["bash", str(script)], input='{"cursor_version": "2.0"}', env=env,
+                               capture_output=True, text=True, timeout=120)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        ctx = json.loads(r.stdout)["additional_context"]
+        self.assertIn("workspace: LOADED", ctx)
+        self.assertNotIn("handled by Cursor/Codex", ctx)
+
     def test_import_failure_label_is_short_hostname(self):
         import socket
         ss = load("session-status")
@@ -737,6 +754,44 @@ class TestSessionStatus(unittest.TestCase):
                 sys.modules.pop("profile_resolve", None)
             else:
                 sys.modules["profile_resolve"] = saved
+
+
+class TestSetupTemplates(unittest.TestCase):
+    """T10 rerun L-03: the setup gitconfig template never routes the personal identity over the projects
+    root of a device whose default identity is an employer one (employer checkouts live there: I1)."""
+
+    def test_gitconfig_template_has_no_personal_route_over_an_employer_projects_root(self):
+        import re
+        tpl = (ROOT_DIR / "00-bootstrap" / "setup" / "gitconfig.template").read_text(encoding="utf-8")
+        routes = re.findall(r'\[includeIf "gitdir(?:/i)?:([^"]+)"\]\s*\n\s*path\s*=\s*(\S+)', tpl)
+        self.assertTrue(routes)
+        dev = json.loads((ROOT_DIR / "02-shared-references" / "devices.json").read_text(encoding="utf-8"))
+        ids = {i["id"]: i for i in dev["identities"]}
+        roots = {d["projects_root"] for d in dev["devices"]
+                 if ids.get(d.get("default_identity"), {}).get("class") == "employer"}
+        self.assertTrue(roots)
+        for pat, path in routes:
+            if "personal" not in path:
+                continue
+            for r in roots:
+                with self.subTest(route=pat, projects_root=r):
+                    self.assertFalse(f"~/{r}/".casefold().startswith(pat.rstrip("*").casefold()),
+                                     f"{pat} -> {path} covers ~/{r}/")
+
+
+class TestPublicClaims(unittest.TestCase):
+    """T10 rerun L-04: a public gate description never claims a parity the registrations do not deliver."""
+
+    def test_surface_parity_claim_matches_the_cursor_registrations(self):
+        regs = ""
+        for rel in ("00-bootstrap/dist/cursor-hooks.json", ".cursor/hooks.json"):
+            p = ROOT_DIR / rel
+            if p.is_file():
+                regs += p.read_text(encoding="utf-8")
+        if "cursor-prompt-route" in regs or "beforeSubmitPrompt" in regs:
+            self.skipTest("a Cursor prompt-route registration exists again; the parity claim may stand")
+        agents = " ".join((ROOT_DIR / "AGENTS.md").read_text(encoding="utf-8").split())
+        self.assertNotIn("every surface delivers the SAME context", agents)
 
 
 class TestShadcnLintOverlay(unittest.TestCase):
@@ -910,7 +965,11 @@ class TestProfileResolve(unittest.TestCase):
 
     @unittest.skipUnless(os.environ.get("CI"), "real stub-ancestor chain runs in CI only")
     def test_stub_ancestor_chain(self):
-        self.assertEqual(self.mod.self_test(stub_chain=True), 0)
+        rc = self.mod.self_test(stub_chain=True)
+        git = subprocess.run(["git", "--version"], capture_output=True, text=True, timeout=10).stdout.strip()
+        # A SKIP (exit 3) is not a pass; name it: the hook-level floor fixtures need git >= 2.54 (T10 rerun T-04).
+        self.assertEqual(rc, 0, f"self_test(stub_chain=True) exit {rc}; skipped {list(self.mod._SELFTEST_SKIPS)}; "
+                                f"{git} (the hook-level floor fixtures need git >= 2.54)")
 
 
 class TestActionPolicy(unittest.TestCase):

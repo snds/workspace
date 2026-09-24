@@ -1287,9 +1287,14 @@ def self_test() -> int:
             beacon_repo = self.td / "beacon-repo"
             beacon_repo.mkdir()
             (dist / "beacon-repos.txt").write_text(f"{beacon_repo}\n")
-            # render_shims stand-in: only --install-state is exercised here.
+            # render_shims stand-in: --install-state, and --rewrite-audit exiting with the code in
+            # <td>/rewrite-audit-exit (0 when absent).
             (self.ws / "00-bootstrap" / "doctor" / "render_shims.py").write_text(
-                "import json\nprint(json.dumps({'schema_version': 1, 'cmd': 'install-state', "
+                "import json, os, sys\n"
+                "if '--rewrite-audit' in sys.argv:\n"
+                "    m = os.path.join(os.environ['HOME'], '..', 'rewrite-audit-exit')\n"
+                "    sys.exit(int(open(m).read()) if os.path.exists(m) else 0)\n"
+                "print(json.dumps({'schema_version': 1, 'cmd': 'install-state', "
                 "'surfaces': {'cursor': {'installed': True, 'via': 'cmd:cursor'}}}))\n")
             h = self.home
             (h / ".claude" / "hooks").mkdir(parents=True)
@@ -1404,6 +1409,51 @@ def self_test() -> int:
             self.assertNotIn("launchctl", self.stub_calls())
             self.assertNotIn("osascript", self.stub_calls())
             self.assertIn("overlay env", r.stdout)
+
+        def test_check_maps_the_rewrite_audit_exit_code(self):
+            """T10 rerun T-01: exit 1 is the H17-R9 NOTE, any other failure is 'unavailable', 0 is silent."""
+            marker = self.td / "rewrite-audit-exit"
+            seen = {}
+            for code in ("0", "1", "2"):
+                marker.write_text(code)
+                seen[code] = self.doctor("--check").stdout
+            self.assertNotIn("rewrites an employer URL", seen["0"])
+            self.assertNotIn("rewrite audit unavailable", seen["0"])
+            self.assertIn("NOTE: a git config file rewrites an employer URL", seen["1"])
+            self.assertIn("NOTE: rewrite audit unavailable", seen["2"])
+            self.assertNotIn("rewrites an employer URL", seen["2"])
+
+        def test_check_notes_declared_home_and_brain(self):
+            """T10 rerun L-05: devices.json says doctor --check verifies `home` (and `brain`)."""
+            import socket
+            (self.ws / "09-tools").mkdir()
+            shutil.copy2(VAULT_ROOT / "09-tools" / "profile_resolve.py", self.ws / "09-tools" / "profile_resolve.py")
+            dev = json.loads((VAULT_ROOT / "02-shared-references" / "devices.json").read_text(encoding="utf-8"))
+            host = socket.gethostname().split(".", 1)[0]
+            for row in dev["devices"]:
+                row["hostnames"] = [host] if row["id"] == "work-mbp" else [f"not-{host}"]
+                if row["id"] == "work-mbp":
+                    row.update(home="/nonexistent/fixture-home", brain="Projects/elsewhere")
+            (self.ws / "02-shared-references").mkdir()
+            (self.ws / "02-shared-references" / "devices.json").write_text(json.dumps(dev), encoding="utf-8")
+            r = self.doctor("--check")
+            self.assertIn("devices.json declares home /nonexistent/fixture-home", r.stdout, r.stdout + r.stderr)
+            self.assertIn("devices.json declares brain Projects/elsewhere", r.stdout, r.stdout + r.stderr)
+            next(d for d in dev["devices"] if d["id"] == "work-mbp").update(
+                home=str(self.home), brain=os.path.relpath(self.ws, self.home))
+            (self.ws / "02-shared-references" / "devices.json").write_text(json.dumps(dev), encoding="utf-8")
+            r = self.doctor("--check")
+            self.assertNotIn("devices.json declares", r.stdout, r.stdout + r.stderr)
+
+        def test_pointer_takes_the_on_disk_spelling(self):
+            """T10 rerun L-05: on a case-insensitive volume the pointer keeps the on-disk spelling."""
+            real = os.path.realpath(self.ws)
+            if not os.path.isdir(real.upper()) or real.upper() == real:
+                self.skipTest("case-sensitive volume: another spelling is another path")
+            (self.home / ".claude" / "workspace-brain-path").write_text(real.upper() + "\n")
+            r = self.doctor("--quick")
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            self.assertEqual((self.home / ".claude" / "workspace-brain-path").read_text().strip(), real)
 
         def test_current_overlay_is_not_reported_outdated(self):
             frag = merge_settings.expand_env_home(json.loads(

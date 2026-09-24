@@ -714,9 +714,11 @@ def _config_rewrites(cwd: Path, env_over=None) -> list:
     env = {k: v for k, v in base.items()
            if k not in ("GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS")
            and not k.startswith(("GIT_CONFIG_KEY_", "GIT_CONFIG_VALUE_"))}
+    # surrogateescape: a non-UTF-8 byte in any rewrite (related or not) must not crash the audit.
     r = subprocess.run(["git", "config", "--show-scope", "-z", "--get-regexp",
                         r"^url\..*\.(insteadof|pushinsteadof)$"],
-                       cwd=str(cwd), env=env, capture_output=True, text=True, timeout=20)
+                       cwd=str(cwd), env=env, capture_output=True, encoding="utf-8", errors="surrogateescape",
+                       timeout=20)
     if r.returncode == 1 and not r.stdout:
         return []
     if r.returncode != 0:
@@ -732,14 +734,19 @@ def _config_rewrites(cwd: Path, env_over=None) -> list:
 def rewrite_audit(root: Path = ROOT, cwd=None, as_json: bool = False, out=None) -> int:
     """--rewrite-audit: report-only (H17-R9). Exit 0 clean, 1 when a config-file rewrite can undo
     the transport block, 2 on a data or git error. Runs from $HOME by default, so it reads the
-    system and user files."""
+    system and user files. Any crash is exit 2 (the doctor's "unavailable"), never 1 (a finding)."""
     out = out or sys.stdout
     try:
         cr, dev = identity_tables(root)
         hits = rewrite_conflicts(cr, dev, _config_rewrites(Path(cwd) if cwd else Path.home()))
-    except (DataError, OSError, subprocess.SubprocessError) as exc:
-        print(f"ERROR {exc}", file=sys.stderr)
+    except Exception as exc:  # noqa: BLE001 - exit 1 means a finding, so a crash must not reach it
+        print(f"ERROR {exc.__class__.__name__}: {exc}", file=sys.stderr)
         return 2
+
+    def safe(x: str) -> str:
+        return x.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
+
+    hits = [tuple(safe(x) for x in h) for h in hits]
     if as_json:
         out.write(json.dumps({"schema_version": 1, "cmd": "rewrite-audit",
                               "findings": [{"scope": s, "key": k, "value": v, "why": w} for s, k, v, w in hits]},
@@ -795,7 +802,9 @@ def render_device_identity_inc(dev: dict, device_id: str):
     row = _identity_row(dev, iid)
     return (f"# snds-workspace device identity for {device_id} (render_shims.py --emit identity-inc).\n"
             "# Non-Claude surfaces and humans on this device commit as this identity unless a repo sets\n"
-            "# its own. Claude surfaces never use it: their identity comes from claude-identity.inc.\n"
+            "# its own. Claude surfaces get claude-identity.inc only in repos with a personal remote, and\n"
+            "# the Claude floor refuses an employer identity on a Claude commit or merge commit, and on\n"
+            "# any commit in a Claude push to a non-employer remote (IR1).\n"
             + _user_block(row))
 
 
@@ -1280,6 +1289,61 @@ def rewrite_audit_cases(cr: dict, dev: dict) -> list:
             ok, detail = False, str(exc)
     results.append(("rewrite audit: command-scope entries, shorter insteadOf values and unrelated rewrites are not "
                     "reported", ok and len(hits) == 4, detail))
+    own = rewrite_conflicts(cr, dev, [("global", f"url.{blocked}.insteadof", f"{pre}w.git")])
+    results.append(("rewrite audit: the block's own rewrite in a config file is not reported", own == [], str(own)))
+    results += _rewrite_audit_cli_cases(cr, dev, pre)
+    return results
+
+
+def _rewrite_audit_cli_cases(cr: dict, dev: dict, pre: str) -> list:
+    """The --rewrite-audit CLI the doctor runs: its exit codes (0 clean, 1 finding, 2 unavailable), the
+    --json envelope, the $HOME default, and a non-UTF-8 byte in an unrelated rewrite."""
+    results = []
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td)
+        root = tmp / "root"
+        pr = _pr_module()
+        for name, data in (("context-remotes", cr), ("devices", dev)):
+            dst = root / pr.TABLE_PATHS[name]
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            dst.write_text(json.dumps(data), encoding="utf-8")
+        home = tmp / "home"
+        home.mkdir()
+        repo = tmp / "repo"
+        env = {k: v for k, v in os.environ.items() if not k.startswith(("GIT_CONFIG", "GIT_DIR"))}
+        env.update(HOME=str(home), XDG_CONFIG_HOME=str(home / "xdg"), GIT_CONFIG_NOSYSTEM="1",
+                   GIT_CEILING_DIRECTORIES=str(tmp))
+        subprocess.run(["git", "init", "-q", str(repo)], env=env, capture_output=True, timeout=20)
+        subprocess.run(["git", "config", "url.alias://.insteadOf", pre], cwd=str(repo), env=env,
+                       capture_output=True, timeout=20)
+
+        def cli(*extra: str, cwd: Path = tmp) -> subprocess.CompletedProcess:
+            return subprocess.run([sys.executable, str(Path(__file__).resolve()), "--rewrite-audit", "--root", str(root),
+                                   *extra], cwd=str(cwd), env=env, capture_output=True, text=True, timeout=60)
+
+        clean = cli(cwd=repo)
+        results.append(("rewrite audit CLI: clean user files exit 0 with the ok line, and a rewrite in the current "
+                        "repo is not read (the audit runs from $HOME)",
+                        clean.returncode == 0 and "ok render_shims rewrite-audit" in clean.stdout,
+                        f"rc={clean.returncode} {clean.stdout[-200:]} {clean.stderr[-200:]}"))
+        (home / ".gitconfig").write_bytes(f'[url "alias://"]\n\tinsteadOf = {pre}\n'.encode())
+        hit = cli()
+        js = cli("--json")
+        try:
+            env_ok = [f["key"] for f in json.loads(js.stdout)["findings"]] == ["url.alias://.insteadof"]
+        except (ValueError, KeyError, TypeError):
+            env_ok = False
+        results.append(("rewrite audit CLI: a planted user-file rewrite exits 1 with a WARN line and a --json finding",
+                        hit.returncode == 1 and "WARN  global: url.alias://.insteadof" in hit.stdout
+                        and js.returncode == 1 and env_ok, f"rc={hit.returncode}/{js.returncode} {hit.stdout[-200:]}"))
+        (home / ".gitconfig").write_bytes(b'[url "alias://"]\n\tinsteadOf = git@example.invalid:caf\xe9/\n')
+        odd = cli()
+        results.append(("rewrite audit CLI: a non-UTF-8 byte in an unrelated rewrite never reads as a finding",
+                        odd.returncode in (0, 2), f"rc={odd.returncode} {odd.stderr[-200:]}"))
+        (root / pr.TABLE_PATHS["devices"]).write_text("{not json", encoding="utf-8")
+        bad = cli()
+        results.append(("rewrite audit CLI: unreadable tables exit 2 (unavailable)", bad.returncode == 2,
+                        f"rc={bad.returncode} {bad.stderr[-200:]}"))
     return results
 
 

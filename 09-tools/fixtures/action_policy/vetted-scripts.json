@@ -49,7 +49,7 @@
             "--limit",
             "<n>",
             "--json",
-            "number,headRefName,state"
+            "number,headRefName,headRefOid,baseRefName,isCrossRepository,state"
           ],
           [
             "gh",
@@ -60,7 +60,20 @@
             "--limit",
             "<n>",
             "--json",
-            "number,headRefName,state"
+            "number,headRefName,headRefOid,baseRefName,isCrossRepository,state"
+          ],
+          [
+            "gh",
+            "pr",
+            "list",
+            "--state",
+            "<ref>",
+            "--base",
+            "<ref>",
+            "--limit",
+            "<n>",
+            "--json",
+            "number"
           ]
         ],
         "branch-delete": [

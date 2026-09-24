@@ -339,7 +339,31 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "decisions: PYTHONPATH with a sitecustomize that exits 0 does not silence the floor [I2]",
                   "transport: every declared employer URL form (ssh alias, ports, :/owner, www) is rewritten to the "
                   "blocked scheme; mixed case and ssh.github.com classify employer at the floor",
-                  "identity: under the overlay a composed commit on an employer repo has no identity to commit with"]
+                  "identity: under the overlay a composed commit on an employer repo has no identity to commit with",
+                  "decisions: a Claude commit in a personal linked worktree under projects_root is allowed "
+                  "(git exports GIT_DIR to its hooks)",
+                  "decisions: a Claude commit in an employer linked worktree is blocked [I2]",
+                  "decisions: with the device's employer identity in ~/.gitconfig, a Claude commit in a no-remote "
+                  "repo, a third-party repo and a personal repo whose remote form the include misses is blocked [IR1]",
+                  "decisions: with the same ~/.gitconfig, a personal repo the include matches commits as the "
+                  "personal identity",
+                  "bypass: composed local branch deletion and rename on an employer repo reach no floor event "
+                  "(declared residual H17-R11)",
+                  "bypass: an undeclared-owner repo outside projects_root commits past the floor with a notice "
+                  "(declared residual H17-R12)",
+                  "decisions: with the device's employer identity in ~/.gitconfig, a Claude revert in a personal repo "
+                  "whose remote form the include misses records it, and the Claude push of it is blocked [IR1]",
+                  "decisions: with the same ~/.gitconfig, a Claude push of personal-identity commits to a personal "
+                  "remote is allowed",
+                  "decisions: a Claude pre-push to a personal remote whose range git cannot read allows with the IR1 "
+                  "notice",
+                  "decisions: a Claude commit in a linked worktree outside projects_root of a cached personal checkout "
+                  "under it is allowed",
+                  "decisions: a Claude commit in a linked worktree outside projects_root of an unknown-owner checkout "
+                  "under it is blocked [not-positively-personal]",
+                  "decisions: a Claude commit in a linked worktree outside projects_root of a checkout under it that "
+                  "matches an employer path glob is blocked [I2]",
+                  "decisions: a linked worktree's admin dir used as GIT_DIR from another cwd locates that worktree"]
 VETTED_CASES = (DECISION_CASES[3], DECISION_CASES[13], DECISION_CASES[14])
 
 
@@ -505,8 +529,172 @@ def floor_decision_cases(pr, rs) -> list:
         out.append((DECISION_CASES[18], r.returncode != 0 and lab.g(lifted, "config", "--get", "user.email",
                                                                     cwd=clone).stdout.strip() == "",
                     f"rc={r.returncode} {r.stderr[-200:]}"))
+        # Linked worktrees: git exports GIT_DIR=<main>/.git/worktrees/<name> to every hook it runs there.
+        root_file = lab.base / "root"
+        saved_root = root_file.read_text(encoding="utf-8")
+        try:
+            ws2 = lab.home / "Projects" / "workspace"
+            ws2.mkdir(parents=True, exist_ok=True)
+            (ws2 / "AGENTS.md").write_text("# fixture workspace (worktree case)\n", encoding="utf-8")
+            lab.g(genv, "init", "-q", "-b", "main", str(ws2))
+            lab.g(genv, "remote", "add", "origin", "https://github.com/pat-sample/ws.git", cwd=ws2)
+            root_file.write_text(f"{ws2}\n", encoding="utf-8")
+            base_c = lab.g(lifted, "commit", "--allow-empty", "-m", "main checkout", cwd=ws2)
+            wt = lab.home / "Projects" / "workspace.intent-t1"
+            lab.g(genv, "worktree", "add", "-q", "-b", "intent/t1", str(wt), cwd=ws2)
+            r = lab.g(lifted, "commit", "--allow-empty", "-m", "worktree commit", cwd=wt)
+            out.append((DECISION_CASES[19], base_c.returncode == 0 and r.returncode == 0 and FLOOR not in r.stderr,
+                        f"main={base_c.returncode} worktree={r.returncode} {r.stderr[-300:]}"))
+        finally:
+            root_file.write_text(saved_root, encoding="utf-8")
+        ewt = lab.tmp / "emp-wt"
+        lab.g(genv, "worktree", "add", "-q", "-b", "feat/wt", str(ewt), "main", cwd=clone)
+        r = lab.g(lab.with_ident(lifted), "commit", "--allow-empty", "-m", "employer worktree", cwd=ewt)
+        out.append((DECISION_CASES[20], ewt.is_dir() and r.returncode != 0 and "[I2]" in r.stderr,
+                    f"rc={r.returncode} {r.stderr[-300:]}"))
+        # IR1: the device default identity (IR2 on an employer-default device) never reaches a Claude commit.
+        gc = lab.home / ".gitconfig"
+        gc.write_text(f"[user]\n\tname = Acme Worker\n\temail = {lab.acme_mail()}\n", encoding="utf-8")
+        try:
+            got = {}
+            for name, url in (("no-remote", None), ("third-party", "https://github.com/oss-upstream/lib.git"),
+                              ("personal-www", "https://www.github.com/pat-sample/x"),
+                              ("personal-scp", "git@github.com:pat-sample/x.git")):
+                rp = lab.tmp / f"ir1-{name}"
+                lab.g(genv, "init", "-q", "-b", "main", str(rp))
+                if url:
+                    lab.g(genv, "remote", "add", "origin", url, cwd=rp)
+                r = lab.g(lifted, "commit", "--allow-empty", "-m", "claude commit", cwd=rp)
+                who = lab.g(genv, "log", "-1", "--format=%ae|%ce", cwd=rp).stdout.strip() if r.returncode == 0 else ""
+                got[name] = (r.returncode, "[IR1]" in r.stderr, who)
+            blocked = all(got[n][0] != 0 and got[n][1] for n in ("no-remote", "third-party", "personal-www"))
+            out.append((DECISION_CASES[21], blocked, str(got)))
+            mine = got["personal-scp"]
+            out.append((DECISION_CASES[22], mine[0] == 0 and mine[2] == f"{lab.pat_mail()}|{lab.pat_mail()}", str(got)))
+        finally:
+            gc.unlink()
+        lab.g(genv, "branch", "feat/r11", "main", cwd=clone)
+        mv = lab.g(full, "branch", "-m", "feat/r11", "feat/r11b", cwd=clone)
+        rm = lab.g(full, "branch", "-D", "feat/r11b", cwd=clone)
+        out.append((DECISION_CASES[23], mv.returncode == 0 and rm.returncode == 0 and FLOOR not in mv.stderr + rm.stderr,
+                    f"-m {mv.returncode} -D {rm.returncode} {rm.stderr[-200:]}"))
+        und = lab.tmp / "undeclared"
+        lab.g(genv, "init", "-q", "-b", "main", str(und))
+        lab.g(genv, "remote", "add", "origin", "https://github.com/someone-else/tool.git", cwd=und)
+        penv = dict(lifted, GIT_AUTHOR_NAME="Pat Sample", GIT_AUTHOR_EMAIL=lab.pat_mail(),
+                    GIT_COMMITTER_NAME="Pat Sample", GIT_COMMITTER_EMAIL=lab.pat_mail())
+        r = lab.g(penv, "commit", "--allow-empty", "-m", "outside code", cwd=und)
+        out.append((DECISION_CASES[24], r.returncode == 0 and "outside projects_root; the floor allows it" in r.stderr,
+                    f"rc={r.returncode} {r.stderr[-200:]}"))
+        out += _ir1_push_cases(lab, pr, lifted)
+        out += _outside_worktree_cases(lab, pr, penv)
     finally:
         _cleanup(td)
+    return out
+
+
+def _ir1_push_cases(lab: Lab, pr, lifted: dict) -> list:
+    """IR1 at pre-push (W-06): revert, cherry-pick, rebase and am make commits that no commit hook sees, so the
+    push to a non-employer remote reads the pushed range. The local bare remotes stand in for the network."""
+    out = []
+    bare_root = lab.tmp / "remotes"
+    gc = lab.home / ".gitconfig"
+    # The overlay rewrites personal scp and ssh forms to https, so the stand-in maps the https forms.
+    gc.write_text(f'[url "file://{bare_root}/"]\n\tinsteadOf = https://www.github.com/\n'
+                  '\tinsteadOf = https://github.com/\n'
+                  f"[user]\n\tname = Acme Worker\n\temail = {lab.acme_mail()}\n", encoding="utf-8")
+    pat = dict(lab.base_env, GIT_AUTHOR_NAME="Pat Sample", GIT_AUTHOR_EMAIL=lab.pat_mail(),
+               GIT_COMMITTER_NAME="Pat Sample", GIT_COMMITTER_EMAIL=lab.pat_mail())
+    try:
+        repos = {}
+        for name, url in (("www", "https://www.github.com/pat-sample/ir1-www.git"),
+                          ("https", "https://github.com/pat-sample/ir1-https.git")):
+            bare = bare_root / "pat-sample" / f"ir1-{name}.git"
+            lab.g(lab.base_env, "init", "-q", "--bare", "-b", "main", str(bare))
+            rp = lab.tmp / f"ir1-push-{name}"
+            lab.g(pat, "init", "-q", "-b", "main", str(rp))
+            lab.g(pat, "remote", "add", "origin", url, cwd=rp)
+            for i in range(2):
+                (rp / "f.txt").write_text("a\n" * (i + 1), encoding="utf-8")
+                lab.g(pat, "add", "f.txt", cwd=rp)
+                lab.g(pat, "commit", "-q", "-m", f"seed {i}", cwd=rp)
+            lab.g(pat, "push", "-q", "origin", "main", cwd=rp)
+            repos[name] = (rp, bare, url)
+
+        def tip(bare: Path) -> str:
+            return lab.g(lab.base_env, "--git-dir", str(bare), "rev-parse", "refs/heads/main").stdout.strip()
+
+        rp, bare, _url = repos["www"]
+        before = tip(bare)
+        rv = lab.g(lifted, "revert", "--no-edit", "HEAD", cwd=rp)
+        who = lab.g(lab.base_env, "log", "-1", "--format=%ae|%ce", cwd=rp).stdout.strip()
+        r = lab.g(lifted, "push", "origin", "main", cwd=rp)
+        out.append((DECISION_CASES[25], rv.returncode == 0 and lab.acme_mail() in who and r.returncode != 0
+                    and "[IR1]" in r.stderr and tip(bare) == before,
+                    f"revert={rv.returncode} idents={who} push={r.returncode} {r.stderr[-300:]}"))
+        rp, bare, url = repos["https"]
+        c = lab.g(lifted, "commit", "--allow-empty", "-m", "claude commit", cwd=rp)
+        head = lab.g(lab.base_env, "rev-parse", "HEAD", cwd=rp).stdout.strip()
+        who = lab.g(lab.base_env, "log", "-1", "--format=%ae|%ce", cwd=rp).stdout.strip()
+        r = lab.g(lifted, "push", "origin", "main", cwd=rp)
+        out.append((DECISION_CASES[26], c.returncode == 0 and who == f"{lab.pat_mail()}|{lab.pat_mail()}"
+                    and r.returncode == 0 and tip(bare) == head, f"commit={c.returncode} idents={who} "
+                    f"push={r.returncode} {r.stderr[-300:]}"))
+        line = f"refs/heads/main {'f' * 40} refs/heads/main {'0' * 40}"
+        v = pr.floor_decide("pre-push", ["origin", url], [line], env=lifted, root=lab.lib, home=lab.home, cwd=str(rp))
+        out.append((DECISION_CASES[27], v["decision"] == "allow" and "IR1 range check unavailable" in str(v["notice"]),
+                    str(v)))
+    finally:
+        gc.unlink()
+    return out
+
+
+def _outside_worktree_cases(lab: Lab, pr, penv: dict) -> list:
+    """W-07: a linked worktree outside projects_root counts as its main checkout under it (cache-only rule and
+    employer path globs included). The fixture table's globs include '*acme*'."""
+    out = []
+    pat = dict(lab.base_env, GIT_AUTHOR_NAME="Pat Sample", GIT_AUTHOR_EMAIL=lab.pat_mail(),
+               GIT_COMMITTER_NAME="Pat Sample", GIT_COMMITTER_EMAIL=lab.pat_mail())
+    cache = pr.ws_paths(home=lab.home)["telemetry"] / "checkouts.json"
+    rows = []
+    got = {}
+    try:
+        for name, url, cached in (("wt-mine", "git@github.com:pat-sample/wt-mine.git", "personal"),
+                                  ("wt-tool", "https://github.com/someone-else/tool.git", None),
+                                  ("acme-ds", "https://github.com/someone-else/ds.git", "employer")):
+            main = lab.home / "Projects" / name
+            lab.g(pat, "init", "-q", "-b", "main", str(main))
+            lab.g(pat, "remote", "add", "origin", url, cwd=main)
+            lab.g(pat, "commit", "-q", "--allow-empty", "-m", "seed", cwd=main)
+            wt = lab.tmp / f"{name}-outside-wt"
+            lab.g(pat, "worktree", "add", "-q", "-b", "wt-outside", str(wt), cwd=main)
+            norm = pr.normalize_remote(url, root=lab.lib)
+            if cached:
+                rows.append({"path": str(main), "kind": "repo", "owner_class": cached, "default_branch": None,
+                             "remotes": [{"name": "origin", "form": norm["form"], "host": norm["host"],
+                                          "slug": norm["slug"]}]})
+            got[name] = (main, wt)
+        cache.write_text(json.dumps({"schema_version": 1, "device": "dev-a", "generated_at": "2026-09-23T00:00:00Z",
+                                     "generated_by": "human", "projects_root": str(lab.home / "Projects"),
+                                     "checkouts": rows}), encoding="utf-8")
+        res = {}
+        for name, (_main, wt) in got.items():
+            r = lab.g(penv, "commit", "--allow-empty", "-m", "claude worktree commit", cwd=wt)
+            res[name] = (r.returncode, r.stderr.strip().splitlines()[-1:] if r.stderr.strip() else [])
+        mine, tool, ds = res["wt-mine"], res["wt-tool"], res["acme-ds"]
+        out.append((DECISION_CASES[28], mine[0] == 0 and "blocked" not in str(mine[1]), str(mine)))
+        out.append((DECISION_CASES[29], tool[0] != 0 and "[not-positively-personal]" in str(tool[1]), str(tool)))
+        out.append((DECISION_CASES[30], ds[0] != 0 and "[I2]" in str(ds[1]), str(ds)))
+        main, wt = got["wt-tool"]
+        admin = main / ".git" / "worktrees" / wt.name
+        elsewhere = lab.tmp / "elsewhere-cwd"
+        elsewhere.mkdir(exist_ok=True)
+        gd, top = pr._floor_locate(elsewhere, dict(lab.base_env, GIT_DIR=str(admin)), "git")
+        out.append((DECISION_CASES[31], gd is not None and top is not None
+                    and os.path.realpath(top) == os.path.realpath(wt), f"gitdir={gd} top={top}"))
+    finally:
+        if cache.exists():
+            cache.unlink()
     return out
 
 
