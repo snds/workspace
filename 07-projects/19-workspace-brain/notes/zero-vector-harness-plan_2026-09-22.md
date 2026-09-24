@@ -179,7 +179,7 @@ on it. The fix to the flaw below **landed in `0d19852`**; the rest of H17 follow
   retire-with-backup (Decisions needed, item 4).
 - **Claude Code can reach employer-capable channels outside git (known gap WALL-C1):** a tracker
   connector with write tools, browser control, desktop control, and a terminal beside the session
-  (whether that terminal carries the overlay is not yet probed). The git guard does not cover
+  (probed 2026-09-24: it does not carry the overlay; each command sent there needs the user's approval). The git guard does not cover
   them. The employer tracker connector is limited by policy only (movement-only use,
   [[feedback-credential-scoping]]). Browser and desktop control act as whatever accounts the driven
   apps are signed into; T6 limits them only when those are personal (decision 3 is open). What

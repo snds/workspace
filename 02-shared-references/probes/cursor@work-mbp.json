@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "surface": "cursor",
+  "device": "work-mbp",
+  "recorded_at": "2026-09-24",
+  "declared_host": "cursor",
+  "hook_probe": {
+    "status": "recorded",
+    "events": {
+      "session-start": {
+        "payload_keys": [
+          "composer_mode",
+          "conversation_id",
+          "cursor_version",
+          "generation_id",
+          "hook_event_name",
+          "is_background_agent",
+          "model",
+          "model_id",
+          "model_params",
+          "session_id",
+          "transcript_path",
+          "user_email",
+          "workspace_roots"
+        ],
+        "env_marker_names": [
+          "CLAUDE_PROJECT_DIR",
+          "CURSOR_LAYOUT",
+          "CURSOR_PROJECT_DIR",
+          "CURSOR_RIPGREP_PATH",
+          "CURSOR_USER_EMAIL",
+          "CURSOR_VERSION",
+          "CURSOR_WORKSPACE_LABEL",
+          "VSCODE_CODE_CACHE_PATH",
+          "VSCODE_CRASH_REPORTER_PROCESS_TYPE",
+          "VSCODE_CWD",
+          "VSCODE_ESM_ENTRYPOINT",
+          "VSCODE_HANDLES_UNCAUGHT_ERRORS",
+          "VSCODE_IPC_HOOK",
+          "VSCODE_NLS_CONFIG",
+          "VSCODE_PID",
+          "VSCODE_PROCESS_TITLE"
+        ],
+        "env_presence": {
+          "WS_CLAUDE_OVERLAY": false,
+          "WS_SURFACE_FAMILY": false,
+          "GIT_CONFIG_COUNT": false,
+          "GH_CONFIG_DIR": false,
+          "CLAUDE_ENV_FILE": false
+        }
+      },
+      "user-prompt": {
+        "payload_keys": [
+          "attachments",
+          "composer_mode",
+          "conversation_id",
+          "cursor_version",
+          "generation_id",
+          "hook_event_name",
+          "model",
+          "model_id",
+          "model_params",
+          "prompt",
+          "session_id",
+          "transcript_path",
+          "user_email",
+          "workspace_roots"
+        ],
+        "env_marker_names": [
+          "CLAUDE_PROJECT_DIR",
+          "CURSOR_LAYOUT",
+          "CURSOR_PROJECT_DIR",
+          "CURSOR_RIPGREP_PATH",
+          "CURSOR_USER_EMAIL",
+          "CURSOR_VERSION",
+          "CURSOR_WORKSPACE_LABEL",
+          "VSCODE_CODE_CACHE_PATH",
+          "VSCODE_CRASH_REPORTER_PROCESS_TYPE",
+          "VSCODE_CWD",
+          "VSCODE_ESM_ENTRYPOINT",
+          "VSCODE_HANDLES_UNCAUGHT_ERRORS",
+          "VSCODE_IPC_HOOK",
+          "VSCODE_NLS_CONFIG",
+          "VSCODE_PID",
+          "VSCODE_PROCESS_TITLE"
+        ],
+        "env_presence": {
+          "WS_CLAUDE_OVERLAY": false,
+          "WS_SURFACE_FAMILY": false,
+          "GIT_CONFIG_COUNT": false,
+          "GH_CONFIG_DIR": false,
+          "CLAUDE_ENV_FILE": false
+        }
+      },
+      "stop": {
+        "payload_keys": [
+          "cache_read_tokens",
+          "cache_write_tokens",
+          "conversation_id",
+          "cursor_version",
+          "generation_id",
+          "hook_event_name",
+          "input_tokens",
+          "loop_count",
+          "model",
+          "model_id",
+          "model_params",
+          "output_tokens",
+          "session_id",
+          "status",
+          "transcript_path",
+          "user_email",
+          "workspace_roots"
+        ],
+        "env_marker_names": [
+          "CLAUDE_PROJECT_DIR",
+          "CURSOR_LAYOUT",
+          "CURSOR_PROJECT_DIR",
+          "CURSOR_RIPGREP_PATH",
+          "CURSOR_TRANSCRIPT_PATH",
+          "CURSOR_USER_EMAIL",
+          "CURSOR_VERSION",
+          "CURSOR_WORKSPACE_LABEL",
+          "VSCODE_CODE_CACHE_PATH",
+          "VSCODE_CRASH_REPORTER_PROCESS_TYPE",
+          "VSCODE_CWD",
+          "VSCODE_ESM_ENTRYPOINT",
+          "VSCODE_HANDLES_UNCAUGHT_ERRORS",
+          "VSCODE_IPC_HOOK",
+          "VSCODE_NLS_CONFIG",
+          "VSCODE_PID",
+          "VSCODE_PROCESS_TITLE"
+        ],
+        "env_presence": {
+          "WS_CLAUDE_OVERLAY": false,
+          "WS_SURFACE_FAMILY": false,
+          "GIT_CONFIG_COUNT": false,
+          "GH_CONFIG_DIR": false,
+          "CLAUDE_ENV_FILE": false
+        }
+      }
+    }
+  },
+  "env_probe": {
+    "via": "run_in_terminal",
+    "env_marker_names": [
+      "CLAUDE_CODE_SSE_PORT",
+      "TERM_PROGRAM",
+      "TERM_PROGRAM_VERSION",
+      "VSCODE_GIT_ASKPASS_EXTRA_ARGS",
+      "VSCODE_GIT_ASKPASS_MAIN",
+      "VSCODE_GIT_ASKPASS_NODE",
+      "VSCODE_GIT_IPC_AUTH_TOKEN",
+      "VSCODE_GIT_IPC_HANDLE",
+      "VSCODE_INJECTION",
+      "VSCODE_PROFILE_INITIALIZED",
+      "VSCODE_PYTHON_AUTOACTIVATE_GUARD"
+    ],
+    "env_values": {
+      "TERM_PROGRAM": "vscode"
+    },
+    "env_presence": {
+      "WS_CLAUDE_OVERLAY": false,
+      "WS_SURFACE_FAMILY": false,
+      "GIT_CONFIG_COUNT": false,
+      "GH_CONFIG_DIR": false,
+      "CLAUDE_ENV_FILE": false
+    }
+  },
+  "ancestry_comm": [
+    "redacted",
+    "Cursor",
+    "launchd"
+  ],
+  "detected": {
+    "acting_host": "cursor",
+    "family_for_walls": "claude",
+    "via": "payload",
+    "verified": true,
+    "conflict": true
+  },
+  "detection_mismatch": false,
+  "git_version": "2.54.0"
+}

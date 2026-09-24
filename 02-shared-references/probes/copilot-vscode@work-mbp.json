@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "surface": "copilot-vscode",
+  "device": "work-mbp",
+  "recorded_at": "2026-09-24",
+  "declared_host": "copilot-vscode",
+  "hook_probe": {
+    "status": "not-installed",
+    "events": {}
+  },
+  "env_probe": {
+    "via": "run_in_terminal",
+    "env_marker_names": [
+      "CLAUDE_CODE_SSE_PORT",
+      "COPILOT_DEBUG_NONCE",
+      "TERM_PROGRAM",
+      "TERM_PROGRAM_VERSION",
+      "VSCODE_GIT_ASKPASS_EXTRA_ARGS",
+      "VSCODE_GIT_ASKPASS_MAIN",
+      "VSCODE_GIT_ASKPASS_NODE",
+      "VSCODE_GIT_IPC_HANDLE",
+      "VSCODE_INJECTION",
+      "VSCODE_PROFILE_INITIALIZED",
+      "VSCODE_PYTHON_AUTOACTIVATE_GUARD"
+    ],
+    "env_values": {
+      "TERM_PROGRAM": "vscode"
+    },
+    "env_presence": {
+      "WS_CLAUDE_OVERLAY": false,
+      "WS_SURFACE_FAMILY": false,
+      "GIT_CONFIG_COUNT": false,
+      "GH_CONFIG_DIR": false,
+      "CLAUDE_ENV_FILE": false
+    }
+  },
+  "ancestry_comm": [
+    "zsh",
+    "Code Helper",
+    "Code",
+    "launchd"
+  ],
+  "detected": {
+    "acting_host": "unknown",
+    "family_for_walls": "claude",
+    "via": "none",
+    "verified": false,
+    "conflict": true
+  },
+  "detection_mismatch": true,
+  "git_version": "2.54.0"
+}
