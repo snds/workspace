@@ -22,6 +22,8 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+### 2026-09-11 — Plan-ahead + cds export gate
+
 
 
 
@@ -73,6 +75,71 @@ Next:
   - Personal MBP G3d and G4d
   - Sean: doctor drift (~/.cursor/hooks.json, 4 retired cursor-* scripts, launchd timer, 1 un-acked audit MISS)
   - Follow-up: keep one env_probe per `via` in tracked probe records (finding #2)
+
+### 2026-09-23 — PlanetCompiler camera-following phase 5
+SessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe-phase5
+
+--- SESSION BLOCK ---
+Date: 2026-09-23
+Agent: Codex
+Surface: Codex desktop
+Machine: Personal Mac, Apple M3 Max
+Project(s): PlanetCompiler; independent Planet Lab scoped handoff
+
+Summary: Completed the bounded phase-five camera-driven terrain selection and measured committed-readiness increment in the separate personal-solo PlanetCompiler repository. Final project commit is `cdb16a4` on `codex/planet-compiler-environment`; no remote is configured and no Legion file changed.
+
+Evidence: Debug and Release pass 11/11 portable suites; the independent view oracle passes 91/91 with 17 detected corruptions and four prior regressions; native passes 28/28. Final live evidence records 230 actual submissions, 41 publications, 3,328 collision hits, five Slate lifecycle/control checks and 26 original reviewed captures. The complete checker, its 33 tests, ten evidence-audit tests, project doctor and whitespace checks pass. Its `human_acceptance: pending` field is the immutable pre-review machine-evidence snapshot. Sean subsequently reviewed the Proofboard and accepted the bounded visual approach; whole-planet scale and the original photographic, geological and production gates remain open.
+
+Commit: PlanetCompiler `cdb16a4` (`Complete bounded camera-following terrain evidence`).
+
+Runtime: Unreal stopped cleanly and released 127.0.0.1:8765. The self-contained Proofboard remains served at `http://127.0.0.1:8770/proofboard.html` for Sean's review.
+
+Next: scope a separate whole-planet validation only after a new instruction. It must address traversal/seams, source and tile availability, rebasing, cache/memory bounds, collision continuity, camera cadence and measured production performance. Preserve Legion, the browser prototype, original high-resolution references and adversarial gates.
+
+Review: On 2026-09-23 Sean stated that the intended camera-following visuals hold well for the approach, while the proof remains how it behaves at scale across an entire planetary surface.
+
+Handoff: Canonical live state is `07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md`; project evidence index is `evidence/phase-5/phase-report.json` inside PlanetCompiler.
+
+Hook review: the earlier side-tab accent was already removed in PlanetCompiler commit `a0d35bf` and rechecked in the current template and board. No suppression was added and no design-hook issue remains standing.
+--- END BLOCK ---
+
+### 2026-09-12 — PlanetCompiler regional catchment and shared terrain completion
+
+SessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe-phase3-2026-09-12
+ParentSessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe
+--- SESSION BLOCK ---
+Date: 2026-09-12
+Agent: Codex
+Surface: Codex desktop
+Machine: Personal Mac, Apple M3 Max
+Project(s): PlanetCompiler; independent Planet Lab
+Continuity: The September 10 phases-one/two note was already folded into session-log.md by another machine. This additive continuation retains the same parent task and uses a distinct compaction key so new completion evidence is not discarded.
+Phase-three follow-up: Sean authorized Continue and resumed on September 12. Completed the conditioned catchment core, separate routing/physical ground, finite lake water and conservative solid accounts, authoritative shared-triangle queries, bounded native display and editor playback. Debug/Release each 7 core suites,112 regional checks/24 planted corruptions,78 global and65 strip checks pass. Final native17/17, live regional1771/1771 with five byte-equal histories/90queries, actualSlate controls8/8 and eleven independent original-pixel captures pass. Corrected below-scene placement and animated-focus failure; preserved all eleven failed images and later cropped top view. Final wider top passes. Scientific and rendering limits/human acceptance remain explicit. Independent first84/86 report was overwritten; reconstruction is labeled and original104/106 preserved. All implementation remains PlanetCompiler; Legion untouched.
+Phase-three source checkpoints: f0bf700,234d8e8,18a762c,a468110,a112e1c,a0fe2ae (final evidence checkpoint); source/evidence checker, all seven intent criteria and canonical validators pass; complete artifact manifest at evidence/phase-3/phase-report.json. Native editor left clean/stopped on final5000-year elevation at localhost8765; agents complete.
+Phase-four follow-up: Sean instructed Continue after phase three. Completed immutable regional quadtree hierarchy, explicit mixed-detail stitches, all-mask triangle-overlay errors, separate source/committed queries and atomic async-cooked native collision/display publication. Review corrected nonmonotone balancing, worker marker path, valid-root placement and subtle/absolute child-transform bypass. Preserve the first oracle runs, initial 18/24 native failure, zero-probe live attempt and complete pre-guard run. Debug/Release each pass 9/9 core suites, 105/105 independent terrain checks with 22 planted corruptions and 21,900 geometric probes, plus 1,120 actual source and 1,120 emitted queries. Prior regional/global/strip audits pass 112/78/65 each. Final native 24/24, live 1,837/1,837 with 13,200 real collision probes (12,992 distinct), eight actual controls and all twelve independently inspected original captures pass. Maximum actual world mismatch is 1.758e-6 m against the 0.02 m collision/display gate.
+Phase-four checkpoint: e9593d3, source/evidence checker and all seven intent criteria pass; evidence/phase-4/phase-report.json records source and all retained artifact hashes. Native source 8a9faa9 independently reviewed. Editor PID 66415 left clean on N64 finest Elevation at 2,000 years, actual terrain selected/focused and only localhost8765 listening. No pending replacement, PIE or open assets; observer removed, all agents complete. Source spacing remains 500 m at 32 km/N64. No added geology, continuous streaming/geomorphing, production traversal, frame-rate or photographic acceptance. Human acceptance remains pending. Native repo has no remote; Legion remains untouched. Canonical generation, routing, integrity, links, workspace, first-wave detector and negative-fixture validation passes.
+Phase-five active: Sean continued. Frozen camera/quantization/readiness contract and independent design review at native9edd216; intent gate/ready passed. G5/U5/V5 implementing in isolated view-core/view-unreal/view-oracle worktrees. V5 freezes before new implementation access. Root owns all editor calls and ≥100submissions/10publications/2000collision-probes, actual controls, motion/pixel review and source/evidence closeout. No phase-five acceptance is closed yet.
+Next: complete phase five within its bounded contract. Preserve original references, adversarial visual gates and Legion.
+Handoff: 07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md
+--- END BLOCK ---
+
+
+### 2026-09-10 — PlanetCompiler controlled histories and connected globe
+
+SessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe
+--- SESSION BLOCK ---
+Date: 2026-09-10
+Agent: Codex
+Surface: Codex desktop
+Machine: Personal Mac, Apple M3 Max
+Project(s): PlanetCompiler; independent Planet Lab scoped handoff
+Summary: Resumed the authorized native handoff. Implemented five prescribed spherical material-strip histories with versioned recipes and material/age ledgers, then connected the standalone Release compiler to bounded asynchronous Unreal MCP tools. Completed independent science and native lifecycle reviews and corrected the defects found. Debug/Release each passed 3/3 CTest suites and 65/65 independent checks, including eight planted defects; 9/9 native tests and 59 live MCP checks passed. Built and inspected an interactive evidence page using actual outputs. Human acceptance and all global-planet/visual claims remain pending. No Legion files changed.
+Commits: PlanetCompiler a3cc5f0, 86ea71f, 2b470bf; local-only repository with no remote configured.
+Next: Review the completed native phase-two diagnostic, then specify the bounded regional surface/hydrology model before phase 3. Preserve original high-resolution references, adversarial visual gates, and all Legion work.
+Handoff: 07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md
+Follow-up: design-hook finding fixed in PlanetCompiler a0d35bf by removing a decorative side border. Browser, scoped detector and evidence-integrity checks passed; no suppressions or unresolved findings.
+Phase-two follow-up: Sean approved the connected globe. Integrated spherical finite-volume core, per-birth-plate material transport, explicit supported/unresolved ledgers, native diagnostic globe and real scheduled playback. Debug/Release 5/5 core suites, 78/78 independent global checks with 13 planted corruptions, 65/65 strip regression; clean native 12/12, global MCP534, strip MCP59 and actual Slate controls8/8 passed. Six final captures were independently inspected. Preserved hot-reload, debug-overlay, stopped-playback and first-black-frame observations; corrected confirmed defects, retained unconfirmed first-use anomaly and model/rendering limits. Human acceptance remains pending. No phase 3 or Legion edits.
+Phase-two commits: da88d1b, e801aa3, 342ecc7, 39071e7, 797e48f and 29744d6 (final evidence checkpoint); implementation repo remains local-only.
 --- END BLOCK ---
 
 ### 2026-09-23 — Zero-Vector wave 0: fix round, publish, decisions, D5
@@ -853,3 +920,305 @@ Next:
   - Human review of cui #398; after merge remove centric-ui-lint-ds
   - Later: wave 2 shadcn rules; CDS theme reset; proto pre-commit lint:ds; ratchet paydown
 --- END BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 01-mediaservices
+Summary: Closed the Aug 26 Looney Tunes thread. Quality adjudication + consolidation put the show in one Sonarr folder (1,062 files). The Orville, Firefly, and 12 Monkeys dump twins were resolved the same way. 16 empty leftover folders were deleted. One incident: 184 intended Looney upgrades were destroyed after ffmpeg `.part` writes failed and a graveyard sweep ran anyway.
+Artifacts:
+  - Unraid `/mnt/user/appdata/media-sentinel/loudness/` — adjudication-report, consolidation journal/manifest, lost-upgrades.json, three-report, cleanup-journal, looney/orville profiles
+  - MediaSentinel grouping/parse + tests (year-seasons, S00 specials, yearless-into-sole-year merge)
+  - `07-projects/01-mediaservices/SESSION-STATE.md`
+Decisions:
+  - Winners go to the Sonarr-managed folder; dump/orphan folders delete only when empty of video
+  - Temp ffmpeg outputs must set `-f`; destructive sweeps gate on zero errors
+  - Review pair decisions before deleting losers (broken once on Orville S01, outcome still defensible)
+Pending added:
+  - Optional Sonarr re-grab of 184 lost Looney upgrades
+  - Firefly E03/E11 Italian-only; E10 may be mislabeled (Objects in Space / War Stories)
+Pending resolved:
+  - User decision on Looney loudness path (dedupe-to-managed executed)
+  - Duplicate dump folders for Looney, Orville, Firefly, 12 Monkeys
+  - Empty leftover folder sweep
+Project status changes:
+  - 01-mediaservices: Aug 26 server work complete; next is `personal:SEA-34` (Desktop Pokémon → Unraid)
+Next:
+  - `personal:SEA-34` — copy Desktop Pokémon pack to Unraid; set TheTVDB (DVD); do not leave Horizons in 1997 Season 20
+--- END BLOCK ---
+
+
+### 2026-09-03 — Library CUT delete + Desktop Pokémon organize
+
+SessionID: 2026-09-03-voyager-mslib1
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 01-mediaservices
+Summary: Closed a long MediaSentinel / Unraid library thread. Library-wide English-watchable duplicate ranking produced 2,327 CUT videos; Sean authorized live delete of those losers plus their sidecars only. Plex TV and Emby TV were scanned. Desktop ColdFusion Pokémon pack was reorganized in place to TVDB DVD seasons; it was not copied to Unraid.
+Artifacts:
+  - 07-projects/01-mediaservices/canvases/duplicate-scan-outcome.canvas.tsx — scan 20260816T214110-ab8d81
+  - 07-projects/01-mediaservices/canvases/authoritative-delete-list.canvas.tsx — 2,327 CUT list
+  - Unraid `/mnt/user/appdata/media-sentinel/exports/` — delete lists + result JSON
+  - Desktop ColdFusion Pokémon pack — 1,299 videos renamed into show/season folders
+  - 08-knowledge/engineering/pokemon-tvdb-dvd-vs-aired.md — DVD vs aired + production-number trap
+Decisions:
+  - Delete CUT extras only; keep KEEP / PRESERVE / singletons; companions of the losing video only
+  - Unlink on disk (space back), not same-fs quarantine, after explicit authorization
+  - Do not whisper-overwrite MST3K S6+ community `.en.srt`; copy sidecars onto tracked obfuscated files instead
+  - ColdFusion `02x28`-style codes are production numbers; map Pokémon via folder context + TVDB DVD
+  - Plex/Emby must use TheTVDB (DVD) for Pokémon (1997) {tvdb-76703}; default aired now maps S20 to Horizons
+Evidence:
+  - 2,327 videos + 5,369 sidecars unlinked; 0 listed videos remaining; 917.7 GiB @ Unraid `/mnt/user/data/media/tv` — verified
+  - Plex TV section 1 refresh HTTP 200; Emby TV Recursive ValidationOnly HTTP 204 — verified
+  - 1,299 Desktop Pokémon videos moved/renamed; leftover non-video only — verified
+Pending added:
+  - `personal:SEA-34` land organized Desktop Pokémon pack on Unraid with TVDB DVD order
+Pending resolved:
+  - Authoritative CUT list for run `20260816T214110-ab8d81`
+  - User-authorized delete of that list + TV library scans
+  - Desktop Pokémon pack season/folder organize
+Project status changes:
+  - 01-mediaservices: Aug 16–17 library reclaim done; Aug 26 Looney/Orville/Firefly/12 Monkeys outcome unchanged; Desktop Pokémon ready to copy
+Next:
+  - `personal:SEA-34` — copy Desktop Pokémon pack to Unraid and set TVDB DVD order
+  - Optional leftovers stay in SESSION-STATE (Sonarr Looney upgrades, Firefly E03/E11/E10, Bazarr missing-sub keepers, MST3K S04E01 sidecar)
+--- END BLOCK ---
+
+
+### 2026-09-03 — LCARS pack catalog + live T3 compose
+
+SessionID: 2026-09-03-voyager-t3ds1
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 20-lcars-generative-interface
+Summary: Built a pack catalog (primitive → variant → component → content group → layout) and recomposed the live T3 demo from composers. App landed on `main` as `e691dec` (not pushed). S-SYS47-01 Literal stays a separate switch.
+Artifacts:
+  - github.com/snds/LCARS `e691dec` — `src/catalog/system/` + `docs/COMPONENT-SYSTEM.md` + composed `live-t3`
+  - vault `07-projects/20-lcars-generative-interface/docs/content-groups.md` — `support.controls` + variants note
+Decisions:
+  - Work in vectors / grammar, not per-pixel plate overlay
+  - Pills are controls; spine is bars; aesthetic is barcode + hairline
+  - 8px inside a family, 24px between content groups
+  - T1/T4 stay recipes; T2 stays on the SYS47 literal path
+  - Do not construct chrome from `public/northstars/S-SYS47-01/*.png`
+Evidence:
+  - App commit `e691dec` @ github.com/snds/LCARS main (local, not pushed) — verified
+  - Scene emit `generate-display-svg.py --check` 122 live primitives — verified
+  - vitest 65/65 @ LCARS — verified
+  - Agent Todo `personal:SEA-33` @ linear.app/snds — verified
+  - Ledger heartbeat `sean-cursor` @ personal:SEA-6 comment `1d0d5fc1` — blocked (approval pending)
+Pending added:
+  - `personal:SEA-33` review structured live T3 against the pack catalog
+Pending resolved:
+  - Live T3 was a flat primitive bag; now composed from the pack catalog
+Project status changes:
+  - 20-lcars-generative-interface: live generative path has a named catalog; Literal path unchanged
+Next:
+  - `personal:SEA-33` — review `?surface=live` against the pack catalog
+  - Push app `e691dec` only if Sean asks
+--- END BLOCK ---
+
+### 2026-09-03 — Onori rails absorb + LCARS off-system lint
+
+SessionID: 2026-09-03-voyager-onori1
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain, 20-lcars-generative-interface
+Summary: Assessed Sanity/Onori design-system-evals (not previously in vault). Absorbed transferable rails: isolation (`assistance off`), pack recipes, product-repo lint. Generalized LCARS capture into workspace `vqa capture`; retired `prove_sys47.py`. Added reusable `09-tools/eslint-off-system` and wired LCARS `npm run lint`.
+Artifacts:
+  - 08-knowledge/design/agent-output-rails.md — Onori method without cloning the tester
+  - 03-skills/visual-prove-engine/scripts/capture.py + capture.mjs — project-agnostic URL→PNG+manifest
+  - 09-tools/eslint-off-system/ — shared no-raw-hex + no-arbitrary-tailwind rules
+  - github.com/snds/LCARS `a133bb4` — off-system ESLint + TOKENS-wired schematics + capture wrapper
+  - workspace `8024215` — Onori absorb commit (ahead of origin until this session-end push)
+Decisions:
+  - Do not clone sanity-labs/design-system-agent-tester; workspace path is capture→prove→score
+  - Isolation law: docs/catalog proves record `--assistance off`; assistance on is shipping not score
+  - ESLint lives in product repos; vault owns reusable rules + doctrine only
+  - Pack wrappers may pass URL/out; they must not reimplement the capture manifest
+Pending added:
+  - centric-ui / Davinci off-token Tailwind lint (employer PR path)
+Pending resolved:
+  - Sanity design-system-evals source assessment gap
+  - LCARS had no ESLint / off-system gate
+Project status changes:
+  - 19-workspace-brain: agent-output rails + vqa capture + eslint-off-system landed
+  - 20-lcars-generative-interface: capture via workspace vqa; `npm run lint` green (65 tests)
+Next:
+  - `personal:SEA-33` — review `?surface=live` against the pack catalog (from prior fragment)
+  - Optional: centric-ui off-token Tailwind lint via employer PR path
+  - Push LCARS `a133bb4` only if Sean asks (app already ahead)
+--- END BLOCK ---
+
+
+### 2026-09-03 — ATSMATRIX GitHub org review, skip
+
+SessionID: 2026-09-03-voyager-c0aba2
+--- SESSION BLOCK ---
+Date: 2026-09-03
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain
+Summary: Reviewed all 11 public repos under github.com/anyel1to (ATSMATRIX). Account is a two-week demo mill of GitHub Pages canvases. Sean agreed skip; nothing adopted.
+Decisions:
+  - Do not clone, skill, or knowledge-entry the ATSMATRIX set unless Sean later asks for a fake-agent-demo pattern note
+  - AGENT RING architecture prose overlaps existing doctrine (state not transcripts, second reader, receipt before ship); our open-agent-engine / mission-fit / error-correction stack already owns it
+  - Canvas HUDs with Math.random plus LangGraph/CrewAI name-drops are visuals, not harnesses
+Next:
+  - No Agent Todo from this review
+  - Separate session: LCARS live-primitive visual review (not this thread)
+--- END BLOCK ---
+
+
+### 2026-09-02 — Open Engine enroll, visual-qa prove, branch prune
+
+SessionID: 2026-09-02-voyager-oe9k2
+--- SESSION BLOCK ---
+Date: 2026-09-02
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain
+Summary: Enrolled Open Engine personal lane on this Cursor (`linear-personal` → `hello@snds.design` / `linear.app/snds`). Loaded imaging+game then visual-qa packs; ran prove path (no Legion feature work). `vqa calibrate` 48/48 after fixing relative `--output` double-join (`7a40df5`). LCARS S-SYS47-01 v4 re-prove 16/16 measured, 4 named uncued residuals. Pruned merged leftover branches on personal `snds/*` clones.
+Artifacts:
+  - 05-artifacts/active/vqa-calibrate_v1.0_2026-09-02.md — planted-defect calibrate 48/48 (gitignored local)
+  - 06-context/open-engine/personal.md — Stage 2 2026-09-02 + status operational
+Decisions:
+  - Domain pack is job-context constitution load, not a replay of git housekeeping
+  - Visual-qa prove this session, not Legion Continuum
+  - Relative `--output` on `vqa calibrate` must resolve; interact must not re-prefix existing paths
+  - Prune only ancestry-merged (or squash leftover of a merged PR) personal branches; keep unique unmerged work
+Evidence:
+  - Open Engine personal lane @ Cursor `linear-personal` / linear.app/snds Stage 2 — verified
+  - vqa calibrate 48/48 @ vqa/1.1 after relative-output fix — verified
+  - LCARS S-SYS47-01 v4 `vqa prove` 16/16 measured, capture verified — verified
+  - Patch `7a40df5` @ github.com/snds/workspace main — verified
+  - Branch prune @ snds/workspace, davinci, legion, LCARS — verified
+  - Ledger heartbeat `sean-cursor` @ personal:SEA-6 comment `1d0d5fc1` — verified
+Pending resolved:
+  - Open Engine personal lane not-registered on Voyager-2.local Cursor (doctor now `ok`)
+Project status changes:
+  - 19-workspace-brain: Open Engine personal lane operational on this machine; visual-qa pack exercised
+Next:
+  - Pick new work. Do not start Legion Continuum in a housekeeping thread.
+  - Optional leftovers (not filed): Davinci `feat/three-way-contract` post-merge beacon commit; Davinci `chore/sync-design-system-*`; Legion `feat/scale-unification` (closed PR #149)
+  - Engine: no new Agent Todo (existing ^pc-NN queue stands). First Cursor ledger comment is `sean-cursor` on personal:SEA-6.
+--- END BLOCK ---
+
+
+### 2026-09-02 — Legion Continuum commit, PR #17 merge, copilot integrity skip
+
+SessionID: 2026-09-02-voyager-k8m2n
+--- SESSION BLOCK ---
+Date: 2026-09-02
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 13-legion (Legion repo), 19-workspace-brain
+Summary: Committed remaining Legion Continuum WIP (unified accept harness, per-archetype lab store, rocky QA). Resolved workspace PR #17 conflicts (mode-first §8e + QA adversarial default as #7); GitHub merged it. Skipped vendored `copilot/` example wikilinks in integrity so vault notes stay gated.
+Artifacts:
+  - Legion `064e363` — feat(planet): unified accept harness, per-archetype lab store, rocky Continuum QA
+  - Legion `4bee94c` — docs/canvases Continuum + fly-to-surface (prior in this thread)
+  - Workspace PR #17 merged `9221e54` — §8e + QA #6 system-context + #7 adversarial
+  - Workspace `b62058d` — validate-integrity skips `copilot/` only
+Decisions:
+  - Legion capture dumps (`refs/`, `.tmp-*`) stay local; gitignored
+  - Integrity skip is `copilot/` only — not `.claude/skills/` wrappers, not `03-skills/` / `08-knowledge/`
+  - PR #17 took current `project-context` / `session-log` from main (June pending list would have overwritten `^pc-NN`)
+  - `compact-sessions.py` now strips leftover archive-pointer blockquotes so they do not stack
+Evidence:
+  - Legion Continuum WIP @ github.com/snds/legion `064e363` on main — verified
+  - Workspace PR #17 @ github.com/snds/workspace `9221e54` — verified
+  - Integrity skip @ github.com/snds/workspace `b62058d` on main — verified
+Pending added: none
+Pending resolved: none
+Next:
+  - Register Open Engine personal lane on Voyager-2.local (`python3 00-bootstrap/doctor/linear-lanes.py`)
+  - Refresh Obsidian graph (orphans off)
+  - Domain pack on real work, or `python3 09-tools/ds-source-watch.py --fetch`, or `vqa prove`
+--- END BLOCK ---
+
+
+### 2026-09-02 — Domain constitutions, graph crosslinking, Cursor canvas externalize
+
+SessionID: 2026-09-02-voyager-g4x9k2
+--- SESSION BLOCK ---
+Date: 2026-09-02
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain, 20-lcars-generative-interface, 01-mediaservices (canvas copies only)
+Summary: Generalized DS constitution rigor to other job contexts (`domain-constitution/1.0`, 10 YAML packs). Fixed Obsidian graph islands that were Dataview-without-edges plus colliding stems (not a missing ontology). Copied 8 Cursor canvases from `~/.cursor/projects/` into git-tracked `07-projects/…/canvases/` and wired `cursor-externalize.py` into session-end so this runs every Cursor close.
+Artifacts:
+  - 02-shared-references/domain-constitutions/ (spec, domains.yaml, 10 dc-*.yaml, index)
+  - 08-knowledge/cross-domain/agentic-domain-constitutions.md
+  - 09-tools/cursor-externalize.py
+  - 07-projects/19-workspace-brain/canvases/ (domain-constitutions, ds-agentic-ontology, perception-critique-stack, skill-hub-rigor-audit)
+  - 07-projects/20-lcars-generative-interface/canvases/lcars-replication-gap.canvas.tsx
+  - 07-projects/01-mediaservices/canvases/ (looney-tunes-loudness, duplicate-scan-outcome, authoritative-delete-list)
+Decisions:
+  - Cursor live canvases stay in `~/.cursor/projects/` (IDE compile path); vault copies are the portable source of truth.
+  - Legion canvases belong in the Legion repo, not snds/workspace. Copied to Legion/docs/canvases/ on disk; not committed there.
+  - Do not star-link Copilot, .superpowers, or vendored command trees into the Obsidian graph.
+Pending added: none
+Pending resolved: none
+Next:
+  - Refresh Obsidian graph (orphans off). Remaining islands should be vendor/Copilot/artifact.
+  - Optional: commit Legion `docs/canvases/` in the Legion repo.
+  - Use a domain pack on real work, or `python3 09-tools/ds-source-watch.py --fetch`, or `vqa prove`.
+  - Open Engine personal lane still not-registered on this machine (`python3 00-bootstrap/doctor/linear-lanes.py`).
+--- END BLOCK ---
+
+
+### 2026-09-02 — Ontology and knowledge graphs for agents
+
+SessionID: 2026-09-02-voyager-ontkg
+--- SESSION BLOCK ---
+Date: 2026-09-02
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain (teaching; no project files changed)
+Summary: Explained ontology (shared types and legal relations) vs knowledge graph (typed facts in that vocabulary), and how agents use classify → traverse → constrain → write-back instead of dumping similar text. Mapped the same split onto this vault: workspace-ontology + skill frontmatter as schema; registry load_chains, routing map, and epistemic `relations:` as the graphs; retrieval finds candidates, types decide what may act.
+Decisions:
+  - Career-ops trigger on the letter `i` treated as a misfire; did not load job-search skills
+Next:
+  - Sean picks a follow-up if wanted: walk one vault decision through the graph; contrast ontology+graph vs RAG/skills/memory; or sketch a domain graph (PLM / LCARS / tokens) on top of the workspace ontology
+--- END BLOCK ---
+
+### 2026-09-02 — Prove-engine merge close + DSDS persist
+
+SessionID: 2026-09-02-voyager-e4f1a
+--- SESSION BLOCK ---
+Date: 2026-09-02
+Machine: Personal MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain, 20-lcars-generative-interface
+Summary: Closed the prove-engine thread (vqa/1.1 altitudes A–G, play-prove, /optimize, LCARS uncued residuals) already merged to main as 0f4228a. Persisted the 2026-09-01 project-independent DSDS constitution + ds-source-watch landing that was still sitting staged. Folded the 2026-08-26 Looney Tunes fragment into session-log.
+Artifacts:
+  - 03-skills/visual-prove-engine/ vqa/1.1 + 03-skills/play-prove/ (on main via 54a2efe / 0f4228a)
+  - 02-shared-references/dsds/dsds-constitution.md + workspace-ds-constitution.dsds.yaml
+  - 02-shared-references/idempotent-design-decisions.md + 03-skills/ds-source-watch/ + 09-tools/ds-source-watch.py
+Decisions:
+  - Personal-solo merge to main, not a PR; SWF dumps stay untracked
+  - DS constitution is project-independent; projects extend it, they do not fork it
+Evidence:
+  - prove-engine merge @ github.com/snds/workspace main 0f4228a — verified
+Pending resolved:
+  - Prove-engine course corrections 1–12 + /optimize landed on origin/main
+Next:
+  - Run `python3 09-tools/ds-source-watch.py --fetch` when the first snapshot should be judged
+  - LCARS: add measured cues for the four named uncued residuals, then build to them
+--- END BLOCK ---
+
