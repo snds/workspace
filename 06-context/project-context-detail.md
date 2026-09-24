@@ -20,7 +20,7 @@ _Long substance for pending items, graduated from `project-context.md` 2026-08-0
 
 ## pc-03
 
-- [ ] **Machine-layer installs on remaining machines (FX-1/FX-14 carry-over)..** Run `00-bootstrap/doctor/workspace-doctor.sh` + retire Drive-era `~/.claude/hooks/*.sh` + registrations on: Work MBP (main, `CS-K746DRWXY1`) and Work MBP (loaner, if kept). **Windows Desktop dropped 2026-09-15 — machine sold; no Windows install route is needed.** (brain location per machine: memory `fact-machine-layer-installs` at install time). Then run ONE verified post-migration Windows session end-to-end (none exists on record). **Work MBP session also includes:** Cursor User Rules + Perplexity Space beacon pastes + `--ack-chat` there (Sean's split, 2026-07-09). Added 2026-07-09 (fix session).
+- [ ] **Machine-layer installs on remaining machines (FX-1/FX-14 carry-over)..** Run `00-bootstrap/doctor/workspace-doctor.sh` + retire Drive-era `~/.claude/hooks/*.sh` + registrations on: Work MBP (main, `CS-K746DRWXY1`) (the loaner was retired 2026-09-23). **Windows Desktop dropped 2026-09-15 — machine sold; no Windows install route is needed.** (brain location per machine: memory `fact-machine-layer-installs` at install time). Then run ONE verified post-migration Windows session end-to-end (none exists on record). **Work MBP session also includes:** Cursor User Rules + Perplexity Space beacon pastes + `--ack-chat` there (Sean's split, 2026-07-09). Added 2026-07-09 (fix session).
 
 ^pc-03
 

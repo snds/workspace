@@ -42,7 +42,7 @@ detail must travel between devices:
 Four things stay public:
 1. Code, tests and fixtures may carry exact shapes when a detector or test needs them (D1). Their
    comments say what the code checks, not how to use it.
-   - *Clarification, pending Sean's confirmation (2026-09-23):* the redacted probe records under
+   - *Clarification, confirmed by Sean (2026-09-23):* the redacted probe records under
      `02-shared-references/probes/` count as verification evidence under this exception and stay
      public. `render_shims.py --check` resolves them, and the probes README sets their redaction
      rules. So the answer to H17-R7 goes in the tracked probe record and the class-level row; any

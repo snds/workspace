@@ -25,7 +25,7 @@ employer repos (the clones under `~/Projects` on the Work MBP), including read-o
 recon. They publish through feature branch → PR → human review; merging is human-only.
 
 **Every non-Claude surface follows the device:**
-- Work MBP (`CS-K746DRWXY1`; also `seansands.local` / `CS-KQ23N94M0W`): work/employer by default,
+- Work MBP (`CS-K746DRWXY1`; also `seansands.local`): work/employer by default,
   using the Centric identity `Sean Sands <271648271+sean-sands-centric@users.noreply.github.com>`
   over the `github-work` SSH alias, unless Sean expressly overrides for one task. Workspace commits
   from Cursor/Codex here are Centric: the deliberate contributor crossover.

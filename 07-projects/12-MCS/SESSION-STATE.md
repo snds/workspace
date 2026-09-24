@@ -43,7 +43,7 @@ _Last updated: 2026-09-04 — checkpoint (cross-device migration action queued f
 
 ### Environment
 - **Context profile**: `centric-engineering` / employer — EXCEPT the explicit PR+commit+merge grant above for `saas-plm-analysis` (doc repo).
-- **Machine (target)**: Work MacBook Pro (`seansands.local` / `CS-KQ23N94M0W` / `CS-K746DRWXY1`)
+- **Machine (target)**: Work MacBook Pro (`seansands.local` / `CS-K746DRWXY1`)
 - **Project root**: `07-projects/12-MCS/`
 
 ---

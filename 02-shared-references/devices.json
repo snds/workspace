@@ -7,12 +7,9 @@
       "label": "Work MacBook Pro",
       "hostnames": [
         "CS-K746DRWXY1",
-        "seansands",
-        "CS-KQ23N94M0W"
+        "seansands"
       ],
-      "hostname_labels": {
-        "CS-KQ23N94M0W": "Work MacBook Pro (loaner)"
-      },
+      "hostname_labels": {},
       "os": "macos",
       "home": "/Users/sean.sands",
       "projects_root": "Projects",
