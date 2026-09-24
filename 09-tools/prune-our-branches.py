@@ -535,7 +535,8 @@ def _decide_cases() -> list[str]:
 class _StubCtx:
     """prune_repo's ctx with canned answers: `tips` maps origin branch -> tip, `locals_` the local
     branches (never ahead), `merged`/`opened` the listed gh rows, `others` PRs the lists miss (a
-    colleague's merged PR). `--base` queries answer from all three, or fail when `base_fails`.
+    colleague's closed PR). `--base` queries answer from all three filtered by `--state` the way gh
+    does (open by default; `all` matches every state), or fail when `base_fails` (TR3-04).
     Records every run() as (action, argv)."""
 
     def __init__(self, tips: dict, locals_: list, merged: list, opened: list, others: Optional[list] = None,
@@ -573,8 +574,9 @@ class _StubCtx:
             if self.base_fails:
                 return self._cp(argv, 1, "")
             base = argv[argv.index("--base") + 1]
+            state = argv[argv.index("--state") + 1].casefold() if "--state" in argv else "open"
             rows = [{"number": r["number"]} for r in self.merged + self.opened + self.others
-                    if r.get("baseRefName") == base]
+                    if r.get("baseRefName") == base and state in ("all", str(r.get("state")).casefold())]
             return self._cp(argv, 0, json.dumps(rows[:1]))
         if argv[:3] == ["gh", "pr", "list"]:
             return self._cp(argv, 0, json.dumps(self.merged if "merged" in argv else self.opened))
@@ -584,11 +586,13 @@ class _StubCtx:
 def _remote_cases() -> list[str]:
     """W-03 (T10 rerun): origin/<name> is deleted only while it still points at our merged PR's head.
     L-11 (round 2): never a name that any PR in the repo targets as its base, nor develop or release/*."""
-    def pr(name: str, oid: str, *, base: str = "main", cross: bool = False, number: int = 1) -> dict:
+    def pr(name: str, oid: str, *, base: str = "main", cross: bool = False, number: int = 1,
+           state: str = "MERGED") -> dict:
         return {"number": number, "headRefName": name, "headRefOid": oid, "baseRefName": base,
-                "isCrossRepository": cross, "state": "MERGED"}
+                "isCrossRepository": cross, "state": state}
 
-    colleague = [pr("feat/z", "e" * 40, base="staging", number=7)]
+    # A CLOSED colleague PR: only a `--state all` base query sees it (TR3-04).
+    colleague = [pr("feat/z", "e" * 40, base="staging", number=7, state="CLOSED")]
     cases = [
         ("a reused name whose origin tip moved on is kept", {"main": "m", "fix/login": "b" * 40}, [],
          [pr("fix/login", "a" * 40)], [], {}, [], None),
@@ -597,7 +601,7 @@ def _remote_cases() -> list[str]:
         ("a fork PR's head name is never deleted at origin", {"main": "m", "fix/login": "a" * 40}, [],
          [pr("fix/login", "a" * 40, cross=True)], [], {}, [], None),
         ("a promotion PR's head that other PRs target is kept", {"main": "m", "develop": "d" * 40}, [],
-         [pr("develop", "d" * 40)], [pr("feat/y", "e" * 40, base="develop")], {}, [], None),
+         [pr("develop", "d" * 40)], [pr("feat/y", "e" * 40, base="develop", state="OPEN")], {}, [], None),
         ("a local merged branch is pruned but a moved origin branch is kept", {"main": "m", "feat/x": "c" * 40},
          ["feat/x"], [pr("feat/x", "a" * 40)], [], {}, [], ["feat/x"]),
         ("a promotion head with an unmoved tip that only an unlisted (colleague's, closed) PR targets is kept",
