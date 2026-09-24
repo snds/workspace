@@ -568,7 +568,8 @@ def _tracked_probe(host: str, device: str, existing: dict, hook_recs: list, env_
     if env_rec:
         envp = {"via": env_rec.get("via"), "env_marker_names": env_rec.get("env_marker_names") or [],
                 "env_values": env_rec.get("env_values") or {}, "env_presence": env_rec.get("env_presence") or {}}
-        if not hook_recs:
+        # Payload-derived detection outranks env detection: an env-only run keeps a recorded hook probe's.
+        if not hook_recs and hp["status"] != "recorded":
             ancestry = env_rec.get("ancestry_comm") or ancestry
             detected = env_rec.get("detected") or detected
             mismatch = mismatch or ((env_rec.get("detected") or {}).get("acting_host") != host)
@@ -1059,6 +1060,20 @@ def self_test_cases() -> list:
                 ok("probe record keeps env names, not foreign values",
                    "CURSOR_AGENT" in rec["env_marker_names"] and "SECRET_THING" not in json.dumps(rec)
                    and rec["env_values"].get("CURSOR_AGENT") == "1", json.dumps(rec))
+
+        # 5b. An env-only record keeps the payload-derived detection of a recorded hook probe.
+        hook_det = {"acting_host": "claude-code", "via": "payload", "verified": True}
+        prior = {"hook_probe": {"status": "recorded", "events": {"stop": {}}}, "detected": hook_det,
+                 "ancestry_comm": ["claude"]}
+        env_only = {"via": None, "detected": {"acting_host": "claude-code", "via": "env", "verified": False},
+                    "ancestry_comm": ["zsh"], "env_presence": {"WS_CLAUDE_OVERLAY": True}}
+        merged = _tracked_probe("claude-code", "d", prior, [], env_only, "2026-01-01")
+        ok("env-only record keeps hook detection",
+           merged["detected"] == hook_det and merged["ancestry_comm"] == ["claude"]
+           and merged["env_probe"]["env_presence"]["WS_CLAUDE_OVERLAY"] is True, json.dumps(merged))
+        fresh = _tracked_probe("claude-code", "d", {}, [], env_only, "2026-01-01")
+        ok("env-only record without a hook probe takes env detection",
+           fresh["detected"]["via"] == "env", json.dumps(fresh))
 
         # 6. No writes when telemetry/ is absent.
         home = home_with(False, "h-notele")

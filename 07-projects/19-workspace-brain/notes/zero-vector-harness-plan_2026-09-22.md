@@ -90,7 +90,7 @@ enforcement only at the lowest tier that actually blocks.
 
 | Surface | Strongest enforcement it can run | Honest limit |
 |---|---|---|
-| Claude Code (local) | T3 PreToolUse + T4 Claude floor | A documented minimal launch mode skips hooks; whether it also drops the overlay env is not yet probed (H17-R7, held) |
+| Claude Code (local) | T3 PreToolUse + T4 Claude floor | A documented minimal launch mode skips hooks; whether it also drops the overlay env is unknown; the G3b probe window could not run it on this sign-in (H17-R7, held) |
 | Claude Code (cloud) | Committed repo hooks + T5 | None of the local config applies |
 | Claude Chat (web/mobile) | T5 + T6 only | No local enforcement at all |
 | Claude Chat (desktop/Cowork) | MCP server write tools (H21) + T5 | Cowork's hook behaviour is unverified |

@@ -409,6 +409,25 @@ def _claude_chain(det: dict) -> bool:
     return det.get("family_for_walls") == "claude" or bool(det.get("agent_possible"))
 
 
+def _common_dir(repo: Path) -> Optional[Path]:
+    """The repository's shared git dir, read from files only (no git subprocess before the vetted
+    check): `.git` itself for a primary checkout, or the `commondir` of a linked worktree's gitdir.
+    None when it cannot be read; the caller then scans that path on its own."""
+    dot = repo / ".git"
+    try:
+        if dot.is_dir():
+            return dot.resolve()
+        line = dot.read_text(encoding="utf-8").strip()
+        if not line.startswith("gitdir:"):
+            return None
+        gitdir = Path(line[len("gitdir:"):].strip())
+        gitdir = (gitdir if gitdir.is_absolute() else repo / gitdir).resolve()
+        common = (gitdir / "commondir").read_text(encoding="utf-8").strip()
+        return (Path(common) if Path(common).is_absolute() else gitdir / common).resolve()
+    except OSError:
+        return None
+
+
 def run(repos: Optional[List[Path]], *, apply: bool, deps: Optional[Deps] = None) -> int:
     d = deps or Deps()
     pinned = _pinned_resolver(d.home) if d.pinned == "auto" else d.pinned
@@ -442,10 +461,19 @@ def run(repos: Optional[List[Path]], *, apply: bool, deps: Optional[Deps] = None
             for p in w.get("paths") or []:
                 targets.append((Path(p), slug))
 
+    # One scan per repository: prune_repo already covers every linked worktree, so a slug that
+    # resolves to several checkouts of one repo is scanned once, from its primary checkout.
+    targets.sort(key=lambda t: not (t[0] / ".git").is_dir())
+    seen: set = set()
     for repo, label in targets:
         if not (repo / ".git").exists():
             out(f"## {label}\n  skip: not a git checkout")
             continue
+        common = _common_dir(repo)
+        if common is not None:
+            if common in seen:
+                continue
+            seen.add(common)
         if mod is None:
             if repo != Path(d.workspace).resolve():
                 out(f"## {label}\n  skip: profile_resolve unavailable (only the workspace runs without it)")
@@ -748,6 +776,24 @@ def self_test() -> int:
         ok(vault._g(genv, "rev-parse", "main", cwd=div).stdout.strip() == local_main, "a diverged main is never reset")
         ok(local_has(div, "feat/done") and any("never reset" in p for p in printed),
            f"the branch is kept and the divergence reported: {printed[-3:]}")
+
+        # 2b. several checkouts of one repository are scanned once, from the primary checkout
+        dup, _db, _e = vault._employer_pair(tmp, home, slug="pat-sample/dup")
+        wt = tmp / "dup-wt"
+        vault._g(genv, "worktree", "add", "-q", "-b", "wt-side", str(wt), cwd=dup)
+        ok(_common_dir(wt) == _common_dir(dup) == (dup / ".git").resolve(),
+           f"a linked worktree resolves to its primary's git dir: {_common_dir(wt)}")
+        rel = tmp / "rel-wt"
+        rel.mkdir()
+        vault._write(rel / ".git", f"gitdir: {os.path.relpath(dup / '.git' / 'worktrees' / 'dup-wt', rel)}\n")
+        ok(_common_dir(rel) == (dup / ".git").resolve(), "a relative gitdir file resolves")
+        ok(_common_dir(tmp / "nowhere") is None, "an unreadable .git gives None")
+        printed.clear()
+        run([wt, dup], apply=False, deps=deps())
+        heads = [p for p in printed if p.startswith("## ")]
+        ok(sum(p.startswith(f"## {dup.resolve()}") for p in heads) == 1
+           and not any(p.startswith(f"## {wt.resolve()}") for p in heads),
+           f"one scan per repository, from the primary: {heads}")
 
         # 3. Claude chain, employer repo, unpinned lib: skipped with zero git/gh calls in it
         emp, emp_bare, _e = vault._employer_pair(tmp, home, slug="acme-corp/widget")
