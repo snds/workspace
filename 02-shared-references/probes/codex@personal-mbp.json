@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "surface": "codex",
+  "device": "personal-mbp",
+  "recorded_at": "2026-09-24",
+  "declared_host": "codex",
+  "hook_probe": {
+    "status": "not-installed",
+    "events": {}
+  },
+  "env_probe": {
+    "via": "terminal",
+    "env_marker_names": [
+      "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+      "CLAUDE_WORKSPACE_VAULT",
+      "CODEX_APP_TOOLS_PIPE_PATH",
+      "CODEX_CI",
+      "CODEX_INTERNAL_ORIGINATOR_OVERRIDE",
+      "CODEX_MCP_NODE_PATH",
+      "CODEX_PERMISSION_PROFILE",
+      "CODEX_SAGE_BACKFILL_TRACKER_TAB_REUSE",
+      "CODEX_SANDBOX",
+      "CODEX_SANDBOX_NETWORK_DISABLED",
+      "CODEX_SESSION_ID",
+      "CODEX_SHELL",
+      "CODEX_THREAD_ID",
+      "CODEX_VERSION",
+      "GH_PAGER"
+    ],
+    "env_values": {},
+    "env_presence": {
+      "WS_CLAUDE_OVERLAY": false,
+      "WS_SURFACE_FAMILY": false,
+      "GIT_CONFIG_COUNT": false,
+      "GH_CONFIG_DIR": false,
+      "CLAUDE_ENV_FILE": false
+    }
+  },
+  "ancestry_comm": [],
+  "detected": {
+    "acting_host": "codex",
+    "family_for_walls": "claude",
+    "via": "env",
+    "verified": false,
+    "conflict": true
+  },
+  "detection_mismatch": false,
+  "git_version": "2.50.1"
+}
