@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "surface": "cursor",
+  "device": "personal-mbp",
+  "recorded_at": "2026-09-24",
+  "declared_host": "cursor",
+  "hook_probe": {
+    "status": "not-installed",
+    "events": {}
+  },
+  "env_probe": {
+    "via": "terminal",
+    "env_marker_names": [
+      "CURSOR_AGENT",
+      "CURSOR_AGENT_STORE_FILES_DIR",
+      "CURSOR_AGENT_STORE_SHARED_PATHS",
+      "CURSOR_CONVERSATION_ID",
+      "CURSOR_LAYOUT",
+      "CURSOR_ORIG_GID",
+      "CURSOR_ORIG_UID",
+      "CURSOR_REQUEST_ID",
+      "CURSOR_RIPGREP_PATH",
+      "CURSOR_SANDBOX",
+      "CURSOR_WORKSPACE_LABEL",
+      "VSCODE_CODE_CACHE_PATH",
+      "VSCODE_CRASH_REPORTER_PROCESS_TYPE",
+      "VSCODE_CWD",
+      "VSCODE_ESM_ENTRYPOINT",
+      "VSCODE_HANDLES_UNCAUGHT_ERRORS",
+      "VSCODE_IPC_HOOK",
+      "VSCODE_NLS_CONFIG",
+      "VSCODE_PID",
+      "VSCODE_PROCESS_TITLE"
+    ],
+    "env_values": {
+      "CURSOR_AGENT": "1"
+    },
+    "env_presence": {
+      "WS_CLAUDE_OVERLAY": false,
+      "WS_SURFACE_FAMILY": false,
+      "GIT_CONFIG_COUNT": false,
+      "GH_CONFIG_DIR": false,
+      "CLAUDE_ENV_FILE": false
+    }
+  },
+  "ancestry_comm": [],
+  "detected": {
+    "acting_host": "cursor",
+    "family_for_walls": "cursor",
+    "via": "env",
+    "verified": true,
+    "conflict": false
+  },
+  "detection_mismatch": false,
+  "git_version": "2.50.1"
+}

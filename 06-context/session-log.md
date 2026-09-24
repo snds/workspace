@@ -42,6 +42,28 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+
+### 2026-09-24 — Env probe record (cursor)
+
+SessionID: 2026-09-24-voyager-q4n8c
+--- NANO BLOCK ---
+Date: 2026-09-24
+Machine: Personal MacBook Pro
+Surface: Cursor
+Ran `ws hook probe-env --host cursor --via terminal --record` → wrote 02-shared-references/probes/cursor@personal-mbp.json (acting_host cursor via env, verified:true, no conflict). Hook probe status not-installed. No decisions.
+--- END BLOCK ---
+
+### 2026-09-24 — Env probe record (claude-code)
+
+SessionID: 2026-09-24-voyager-p7e2k
+--- NANO BLOCK ---
+Date: 2026-09-24
+Machine: Personal MacBook Pro
+Surface: Claude Desktop / Cowork (Code tab)
+Ran `ws hook probe-env --host claude-code --via terminal --record` → wrote 02-shared-references/probes/claude-code@personal-mbp.json (acting_host claude-code via ancestry, verified:false, no conflict). No decisions.
+--- END BLOCK ---
+
 ### 2026-09-24 — Zero-Vector wave 0: G4e, promotion batch, re-pins
 
 SessionID: 2026-09-24-work-zv4e
