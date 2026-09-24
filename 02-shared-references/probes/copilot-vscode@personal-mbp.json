@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "surface": "copilot-vscode",
+  "device": "personal-mbp",
+  "recorded_at": "2026-09-24",
+  "declared_host": "copilot-vscode",
+  "hook_probe": {
+    "status": "not-installed",
+    "events": {}
+  },
+  "env_probe": {
+    "via": "terminal",
+    "env_marker_names": [
+      "AI_AGENT",
+      "CLAUDE_CODE_SSE_PORT",
+      "COPILOT_AGENT",
+      "COPILOT_DEBUG_NONCE",
+      "TERM_PROGRAM",
+      "TERM_PROGRAM_VERSION",
+      "VSCODE_AGENT_ZSH_FIXUPS",
+      "VSCODE_GIT_ASKPASS_EXTRA_ARGS",
+      "VSCODE_GIT_ASKPASS_MAIN",
+      "VSCODE_GIT_ASKPASS_NODE",
+      "VSCODE_GIT_IPC_HANDLE",
+      "VSCODE_NONCE",
+      "VSCODE_PREVENT_SHELL_HISTORY"
+    ],
+    "env_values": {
+      "TERM_PROGRAM": "vscode",
+      "AI_AGENT": "github_copilot_vscode_agent"
+    },
+    "env_presence": {
+      "WS_CLAUDE_OVERLAY": false,
+      "WS_SURFACE_FAMILY": false,
+      "GIT_CONFIG_COUNT": false,
+      "GH_CONFIG_DIR": false,
+      "CLAUDE_ENV_FILE": false
+    }
+  },
+  "ancestry_comm": [
+    "zsh",
+    "Code Helper",
+    "Code",
+    "launchd"
+  ],
+  "detected": {
+    "acting_host": "other-local-agents",
+    "family_for_walls": "claude",
+    "via": "env",
+    "verified": false,
+    "conflict": true
+  },
+  "detection_mismatch": true,
+  "git_version": "2.50.1"
+}

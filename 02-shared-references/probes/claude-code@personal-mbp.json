@@ -5,8 +5,187 @@
   "recorded_at": "2026-09-24",
   "declared_host": "claude-code",
   "hook_probe": {
-    "status": "not-installed",
-    "events": {}
+    "status": "recorded",
+    "events": {
+      "session-start": {
+        "payload_keys": [
+          "cwd",
+          "hook_event_name",
+          "scratchpad_dir",
+          "session_id",
+          "source",
+          "transcript_path"
+        ],
+        "env_marker_names": [
+          "AI_AGENT",
+          "CLAUDECODE",
+          "CLAUDE_AGENT_SDK_VERSION",
+          "CLAUDE_CODE_CHILD_SESSION",
+          "CLAUDE_CODE_DESKTOP_APP_VERSION",
+          "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+          "CLAUDE_CODE_DISABLE_CRON",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE",
+          "CLAUDE_CODE_EAGER_FLUSH",
+          "CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES",
+          "CLAUDE_CODE_ENABLE_ASK_USER_QUESTION_TOOL",
+          "CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING",
+          "CLAUDE_CODE_ENTRYPOINT",
+          "CLAUDE_CODE_HOST_SESSION_ID",
+          "CLAUDE_CODE_MESSAGING_SOCKET",
+          "CLAUDE_CODE_MESSAGING_TOKEN",
+          "CLAUDE_CODE_OAUTH_SCOPES",
+          "CLAUDE_CODE_REPORT_FINDINGS",
+          "CLAUDE_CODE_SDK_HAS_HOST_AUTH_REFRESH",
+          "CLAUDE_CODE_SESSION_ATTENDED",
+          "CLAUDE_CODE_SESSION_ID",
+          "CLAUDE_ENV_FILE",
+          "CLAUDE_PID",
+          "CLAUDE_PREVIEW_CLASSIFIER_FLOOR",
+          "CLAUDE_PROJECT_DIR",
+          "CLAUDE_WORKSPACE_VAULT"
+        ],
+        "env_presence": {
+          "WS_CLAUDE_OVERLAY": false,
+          "WS_SURFACE_FAMILY": false,
+          "GIT_CONFIG_COUNT": false,
+          "GH_CONFIG_DIR": false,
+          "CLAUDE_ENV_FILE": true
+        }
+      },
+      "session-end": {
+        "payload_keys": [
+          "cwd",
+          "hook_event_name",
+          "reason",
+          "scratchpad_dir",
+          "session_id",
+          "transcript_path"
+        ],
+        "env_marker_names": [
+          "AI_AGENT",
+          "CLAUDECODE",
+          "CLAUDE_AGENT_SDK_VERSION",
+          "CLAUDE_CODE_CHILD_SESSION",
+          "CLAUDE_CODE_DESKTOP_APP_VERSION",
+          "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+          "CLAUDE_CODE_DISABLE_CRON",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE",
+          "CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES",
+          "CLAUDE_CODE_ENABLE_ASK_USER_QUESTION_TOOL",
+          "CLAUDE_CODE_ENTRYPOINT",
+          "CLAUDE_CODE_OAUTH_SCOPES",
+          "CLAUDE_CODE_SESSION_ATTENDED",
+          "CLAUDE_CODE_SESSION_ID",
+          "CLAUDE_PID",
+          "CLAUDE_PROJECT_DIR",
+          "CLAUDE_WORKSPACE_VAULT"
+        ],
+        "env_presence": {
+          "WS_CLAUDE_OVERLAY": false,
+          "WS_SURFACE_FAMILY": false,
+          "GIT_CONFIG_COUNT": false,
+          "GH_CONFIG_DIR": false,
+          "CLAUDE_ENV_FILE": false
+        }
+      },
+      "user-prompt": {
+        "payload_keys": [
+          "cwd",
+          "hook_event_name",
+          "permission_mode",
+          "prompt",
+          "prompt_id",
+          "scratchpad_dir",
+          "session_id",
+          "transcript_path"
+        ],
+        "env_marker_names": [
+          "AI_AGENT",
+          "CLAUDECODE",
+          "CLAUDE_AGENT_SDK_VERSION",
+          "CLAUDE_CODE_CHILD_SESSION",
+          "CLAUDE_CODE_DESKTOP_APP_VERSION",
+          "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+          "CLAUDE_CODE_DISABLE_CRON",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE",
+          "CLAUDE_CODE_EAGER_FLUSH",
+          "CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES",
+          "CLAUDE_CODE_ENABLE_ASK_USER_QUESTION_TOOL",
+          "CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING",
+          "CLAUDE_CODE_ENTRYPOINT",
+          "CLAUDE_CODE_HOST_SESSION_ID",
+          "CLAUDE_CODE_MESSAGING_SOCKET",
+          "CLAUDE_CODE_MESSAGING_TOKEN",
+          "CLAUDE_CODE_OAUTH_SCOPES",
+          "CLAUDE_CODE_REPORT_FINDINGS",
+          "CLAUDE_CODE_SDK_HAS_HOST_AUTH_REFRESH",
+          "CLAUDE_CODE_SESSION_ATTENDED",
+          "CLAUDE_CODE_SESSION_ID",
+          "CLAUDE_PID",
+          "CLAUDE_PREVIEW_CLASSIFIER_FLOOR",
+          "CLAUDE_PROJECT_DIR",
+          "CLAUDE_WORKSPACE_VAULT"
+        ],
+        "env_presence": {
+          "WS_CLAUDE_OVERLAY": false,
+          "WS_SURFACE_FAMILY": false,
+          "GIT_CONFIG_COUNT": false,
+          "GH_CONFIG_DIR": false,
+          "CLAUDE_ENV_FILE": false
+        }
+      },
+      "stop": {
+        "payload_keys": [
+          "background_tasks",
+          "cwd",
+          "effort",
+          "hook_event_name",
+          "last_assistant_message",
+          "permission_mode",
+          "prompt_id",
+          "scratchpad_dir",
+          "session_crons",
+          "session_id",
+          "stop_hook_active",
+          "transcript_path"
+        ],
+        "env_marker_names": [
+          "AI_AGENT",
+          "CLAUDECODE",
+          "CLAUDE_AGENT_SDK_VERSION",
+          "CLAUDE_CODE_CHILD_SESSION",
+          "CLAUDE_CODE_DESKTOP_APP_VERSION",
+          "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+          "CLAUDE_CODE_DISABLE_CRON",
+          "CLAUDE_CODE_DISABLE_TERMINAL_TITLE",
+          "CLAUDE_CODE_EAGER_FLUSH",
+          "CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES",
+          "CLAUDE_CODE_ENABLE_ASK_USER_QUESTION_TOOL",
+          "CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING",
+          "CLAUDE_CODE_ENTRYPOINT",
+          "CLAUDE_CODE_HOST_SESSION_ID",
+          "CLAUDE_CODE_MESSAGING_SOCKET",
+          "CLAUDE_CODE_MESSAGING_TOKEN",
+          "CLAUDE_CODE_OAUTH_SCOPES",
+          "CLAUDE_CODE_REPORT_FINDINGS",
+          "CLAUDE_CODE_SDK_HAS_HOST_AUTH_REFRESH",
+          "CLAUDE_CODE_SESSION_ATTENDED",
+          "CLAUDE_CODE_SESSION_ID",
+          "CLAUDE_EFFORT",
+          "CLAUDE_PID",
+          "CLAUDE_PREVIEW_CLASSIFIER_FLOOR",
+          "CLAUDE_PROJECT_DIR",
+          "CLAUDE_WORKSPACE_VAULT"
+        ],
+        "env_presence": {
+          "WS_CLAUDE_OVERLAY": false,
+          "WS_SURFACE_FAMILY": false,
+          "GIT_CONFIG_COUNT": false,
+          "GH_CONFIG_DIR": false,
+          "CLAUDE_ENV_FILE": false
+        }
+      }
+    }
   },
   "env_probe": {
     "via": "terminal",
@@ -50,7 +229,6 @@
     }
   },
   "ancestry_comm": [
-    "zsh",
     "claude",
     "disclaimer",
     "Claude",
@@ -59,8 +237,8 @@
   "detected": {
     "acting_host": "claude-code",
     "family_for_walls": "claude",
-    "via": "ancestry",
-    "verified": false,
+    "via": "payload",
+    "verified": true,
     "conflict": false
   },
   "detection_mismatch": false,
