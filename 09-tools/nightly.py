@@ -22,8 +22,8 @@ Phases (run in this order; default fold,rebuild,verify,watch):
            run WROTE, and refuses unless the run's status is ok.
 
 Written paths are computed from sha256 snapshots, taken before and after every step, of
-the registry, every 03-skills/**/SKILL.md, trigger-routes.md, 06-context/session-log*.md
-and 06-context/sessions/*.md. A written path is FOREIGN when it had unstaged edits before
+the registry, every 03-skills/**/SKILL.md, trigger-routes.md, trigger-routes-digest.md,
+06-context/session-log*.md and 06-context/sessions/*.md. A written path is FOREIGN when it had unstaged edits before
 the run and is outside `--scope`; foreign edits give exit 4 and are never staged. When a
 generator INPUT (any 03-skills/**/SKILL.md, trigger-routes.json, knowledge-hints.json) outside
 `--scope` has unstaged edits, the whole heal is refused before any step runs: exit 4, nothing
@@ -112,6 +112,7 @@ LANE_SOURCES = ("02-shared-references/trigger-routes.json",
                 "02-shared-references/knowledge-hints.json")
 LANE_EXPORT = ["03-skills", "02-shared-references/trigger-routes.json",
                "02-shared-references/trigger-routes.md",
+               "02-shared-references/trigger-routes-digest.md",
                "02-shared-references/knowledge-hints.json",
                "09-tools/build-registry.py", "09-tools/build-related.py",
                "09-tools/build-trigger-routes.py"]
@@ -143,6 +144,7 @@ def snapshot(root: Path = ROOT) -> dict[str, str]:
     if skills.is_dir():
         files.extend(sorted(skills.glob("**/SKILL.md")))
     files.append(root / "02-shared-references" / "trigger-routes.md")
+    files.append(root / "02-shared-references" / "trigger-routes-digest.md")
     ctx = root / "06-context"
     if ctx.is_dir():
         files.extend(sorted(ctx.glob("session-log*.md")))
