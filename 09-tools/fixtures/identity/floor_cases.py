@@ -371,7 +371,9 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "decisions: a Claude push to a personal fork of a branch carrying an upstream commit with an "
                   "employer author stays blocked [IR1], and the reason names the upstream remote it is already on",
                   "decisions: a --relative-paths linked worktree's admin dir used as GIT_DIR from another cwd locates "
-                  "that worktree, and its relative gitdir file is listed among the workspace's worktrees"]
+                  "that worktree, and its relative gitdir file is listed among the workspace's worktrees",
+                  "decisions: a Claude cherry-pick of a personal-authored commit records the employer identity as "
+                  "committer only, and the push of it is blocked [IR1] on the committer"]
 VETTED_CASES = (DECISION_CASES[3], DECISION_CASES[13], DECISION_CASES[14])
 
 
@@ -667,6 +669,21 @@ def _ir1_push_cases(lab: Lab, pr, lifted: dict) -> list:
                     and "[IR1]" in r.stderr and "tagger" in r.stderr and landed.returncode != 0
                     and pp.returncode == 0, f"tag={tg.returncode} tagger={tagger.strip()} push={r.returncode} "
                     f"landed={landed.returncode == 0} personal={pp.returncode} {r.stderr[-300:]} {pp.stderr[-200:]}"))
+        # TR3-02: cherry-pick keeps the author and records the committer from config, so the author is personal and
+        # only the committer is the employer identity; the push must be refused on the committer alone.
+        lab.g(pat, "switch", "-q", "-c", "pick-src", base, cwd=rp)
+        (rp / "picked.txt").write_text("picked\n", encoding="utf-8")
+        lab.g(pat, "add", "picked.txt", cwd=rp)
+        lab.g(pat, "commit", "-q", "-m", "personal work to pick", cwd=rp)
+        lab.g(pat, "switch", "-q", "-c", "picked", base, cwd=rp)
+        cp = lab.g(lifted, "cherry-pick", "pick-src", cwd=rp)
+        who = lab.g(lab.base_env, "log", "-1", "--format=%ae|%ce", cwd=rp).stdout.strip()
+        r = lab.g(lifted, "push", "origin", "picked", cwd=rp)
+        landed = lab.g(lab.base_env, "--git-dir", str(bare), "show-ref", "--verify", "--quiet", "refs/heads/picked")
+        out.append((DECISION_CASES[36], cp.returncode == 0 and who == f"{lab.pat_mail()}|{lab.acme_mail()}"
+                    and r.returncode != 0 and "[IR1]" in r.stderr and "as committer" in r.stderr
+                    and landed.returncode != 0,
+                    f"cherry-pick={cp.returncode} idents={who} push={r.returncode} {r.stderr[-300:]}"))
         # W3-03: fork workflow. The upstream (third-party) history holds a commit an employer identity authored; a
         # branch on top of it pushed to the personal fork would publish it there. Remote-tracking refs are local and
         # forgeable, so the floor keeps blocking, and the reason says where the commit already is.
