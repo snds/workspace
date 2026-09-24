@@ -373,7 +373,9 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "decisions: a --relative-paths linked worktree's admin dir used as GIT_DIR from another cwd locates "
                   "that worktree, and its relative gitdir file is listed among the workspace's worktrees",
                   "decisions: a Claude cherry-pick of a personal-authored commit records the employer identity as "
-                  "committer only, and the push of it is blocked [IR1] on the committer"]
+                  "committer only, and the push of it is blocked [IR1] on the committer",
+                  "decisions: a Claude commit in a cached personal linked worktree under projects_root whose main "
+                  "checkout is uncached is blocked [not-positively-personal] (both must be positively personal)"]
 VETTED_CASES = (DECISION_CASES[3], DECISION_CASES[13], DECISION_CASES[14])
 
 
@@ -599,6 +601,7 @@ def floor_decision_cases(pr, rs) -> list:
         out += _ir1_push_cases(lab, pr, lifted)
         out += _outside_worktree_cases(lab, pr, penv)
         out += _bare_worktree_cases(lab, pr, penv)
+        out += _uncached_main_cases(lab, pr, penv)
     finally:
         _cleanup(td)
     return out
@@ -769,6 +772,37 @@ def _outside_worktree_cases(lab: Lab, pr, penv: dict) -> list:
         out.append((DECISION_CASES[35], add.returncode == 0 and not os.path.isabs(named) and top is not None
                     and os.path.realpath(top) == os.path.realpath(rwt) and os.path.realpath(rwt) in listed,
                     f"add={add.returncode} named={named} gitdir={gd} top={top} listed={listed}"))
+    finally:
+        if cache.exists():
+            cache.unlink()
+    return out
+
+
+def _uncached_main_cases(lab: Lab, pr, penv: dict) -> list:
+    """TR3-03: a linked worktree is positively personal only when it AND its main checkout are. Here the
+    worktree itself is cached personal and the main checkout (same personal remote) is a cache miss, so
+    only the AND refuses it; an OR would allow."""
+    out = []
+    pat = dict(lab.base_env, GIT_AUTHOR_NAME="Pat Sample", GIT_AUTHOR_EMAIL=lab.pat_mail(),
+               GIT_COMMITTER_NAME="Pat Sample", GIT_COMMITTER_EMAIL=lab.pat_mail())
+    cache = pr.ws_paths(home=lab.home)["telemetry"] / "checkouts.json"
+    try:
+        url = "git@github.com:pat-sample/uncached-main.git"
+        main = lab.home / "Projects" / "uncached-main"
+        lab.g(pat, "init", "-q", "-b", "main", str(main))
+        lab.g(pat, "remote", "add", "origin", url, cwd=main)
+        lab.g(pat, "commit", "-q", "--allow-empty", "-m", "seed", cwd=main)
+        wt = lab.home / "Projects" / "uncached-main-wt"
+        lab.g(pat, "worktree", "add", "-q", "-b", "wt", str(wt), cwd=main)
+        norm = pr.normalize_remote(url, root=lab.lib)
+        row = {"path": str(wt), "kind": "linked-worktree", "owner_class": "personal", "default_branch": None,
+               "remotes": [{"name": "origin", "form": norm["form"], "host": norm["host"], "slug": norm["slug"]}]}
+        cache.write_text(json.dumps({"schema_version": 1, "device": "dev-a", "generated_at": "2026-09-24T00:00:00Z",
+                                     "generated_by": "human", "projects_root": str(lab.home / "Projects"),
+                                     "checkouts": [row]}), encoding="utf-8")
+        r = lab.g(penv, "commit", "--allow-empty", "-m", "claude commit, main checkout uncached", cwd=wt)
+        out.append((DECISION_CASES[37], r.returncode != 0 and "[not-positively-personal]" in r.stderr,
+                    f"rc={r.returncode} {r.stderr[-300:]}"))
     finally:
         if cache.exists():
             cache.unlink()
