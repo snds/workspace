@@ -768,6 +768,25 @@ def overlay_probe_surfaces(ctx: Ctx) -> tuple:
     return needed, reasons
 
 
+def _git_floor_refusals(ctx: Ctx, dev: str) -> list:
+    """The floor is a config-based git hook; git older than 2.54 ignores `hook.*` config silently,
+    so the overlay would install with no floor and no error. Require this device's git record
+    (profile_resolve.py gitcaps --record) to show config_hooks true."""
+    f = _probe_file(ctx, "git", dev)
+    if not f.is_file():
+        return [f"git capability record missing: {PROBES_DIR}/git@{dev}.json "
+                "(run python3 09-tools/profile_resolve.py gitcaps --record)"]
+    try:
+        rec = json.loads(f.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return [f"git capability record unreadable: git@{dev}"]
+    if not isinstance(rec, dict) or rec.get("config_hooks") is not True:
+        ver = rec.get("git_version") if isinstance(rec, dict) else None
+        return [f"git@{dev} shows no config-based hooks (git {ver or 'unknown'}; the floor needs git >= 2.54 "
+                "on PATH, then re-record gitcaps)"]
+    return []
+
+
 def overlay_refusals(ctx: Ctx) -> list:
     reasons = []
     p = ctx.paths()
@@ -780,6 +799,7 @@ def overlay_refusals(ctx: Ctx) -> list:
     except Exception as e:  # noqa: BLE001
         dev = "unknown"
         reasons.append(f"device unresolved ({type(e).__name__})")
+    reasons += _git_floor_refusals(ctx, dev)
     needed, table_reasons = overlay_probe_surfaces(ctx)
     reasons += table_reasons
     for s in needed:
@@ -1215,11 +1235,22 @@ def self_test() -> int:
             self.assertFalse(retired.exists())
             self.assertTrue(list(retired.parent.glob("cursor-reassert.sh.ws-bak.*")))
 
-        def _seed_overlay_ready(self, probe_env=False, probe=True):
+        def _seed_overlay_ready(self, probe_env=False, probe=True, config_hooks=True):
             self.install_pin()
             self.surfaces = overlay_table()
+            self._seed_gitcaps(config_hooks)
             if probe:
                 self._seed_probe("cursor", probe_env)
+
+        def _seed_gitcaps(self, config_hooks=True, present=True):
+            f = self.repo / PROBES_DIR / "git@dev-a.json"
+            f.parent.mkdir(parents=True, exist_ok=True)
+            if not present:
+                f.unlink(missing_ok=True)
+                return
+            f.write_text(json.dumps({"schema_version": 1, "surface": "git", "device": "dev-a",
+                                     "git_version": "2.54.0" if config_hooks else "2.50.1", "hasconfig": True,
+                                     "config_hooks": config_hooks, "recorded_at": "2026-09-24"}))
 
         def _seed_probe(self, surface, env=False):
             d = self.repo / PROBES_DIR
@@ -1304,6 +1335,19 @@ def self_test() -> int:
             self.assertEqual(rc, 4)
             self.assertIn("copilot-vscode@dev-a", err)
             self.assertNotIn("cursor@dev-a", err)
+
+        def test_overlay_refuses_git_without_config_hooks(self):
+            self._seed_overlay_ready(config_hooks=False)
+            rc, _o, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
+            self.assertEqual(rc, 4)
+            self.assertIn("no config-based hooks (git 2.50.1", err)
+            self._seed_gitcaps(present=False)
+            rc, _o, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
+            self.assertEqual(rc, 4)
+            self.assertIn("git capability record missing", err)
+            self._seed_gitcaps(config_hooks=True)
+            rc, out, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
+            self.assertEqual(rc, 0, out + err)
 
         # T10 rerun L-09: the probe list comes from surfaces.json, not a hard-coded list.
         def test_overlay_probe_list_skips_an_uninstalled_cursor(self):
