@@ -2,20 +2,20 @@
   "doc": "Per-family beacon text (H6). render_shims.py renders each variant into 00-bootstrap/dist/ for the outputs in surfaces.json whose render is 'beacon'; render_shims.py --check fails on drift and on a variant over its max_bytes. Families must be keys of surfaces.json families. Installing is a human step (installers.py); the Codex beacon counts toward the 32 KiB Codex window, so its max_bytes keeps the 3 KiB headroom gate.",
   "blocks": {
     "open": [
-      "<!-- WORKSPACE-BEACON v3 · {variant} · generated, do not edit -->"
+      "<!-- WORKSPACE-BEACON v3 \u00b7 {variant} \u00b7 generated, do not edit -->"
     ],
     "identity": [
       "WORKSPACE = the single source of truth for my rules, skills, knowledge, and session state.",
-      "- Local root: ~/Projects/workspace · Remote: github.com/snds/workspace (use GitHub when there is no local disk)."
+      "- Local root: ~/Projects/workspace \u00b7 Remote: github.com/snds/workspace (GitHub if no local disk)."
     ],
     "protocol": [
-      "LOAD PROTOCOL for interactive work sessions — before any task, tool, or task-skill:",
-      "1. Read AGENTS.md at the workspace root (on chat surfaces: the Workspace project knowledge, or GitHub if a connector exists) and follow its read order.",
+      "LOAD PROTOCOL for interactive sessions \u2014 before any task, tool, or task-skill:",
+      "1. Read AGENTS.md at the workspace root (on chat: the Workspace project knowledge, or GitHub via a connector) and follow its read order.",
       "2. Open your first reply with exactly ONE ritual line:",
-      "   [workspace: LOADED · <branch>@<sha> · <date> · via:<layer>]  — you read live workspace content",
-      "   [workspace: RULES-ONLY · via:<surface>]  — this surface cannot fetch files; the rules below still govern",
-      "   [workspace: UNREACHABLE · <reason>]  — you should have been able to read it but could not",
-      "EXEMPTION: when the caller demands raw structured output (headless -p, subagent data, API script), skip the ritual line and apply the rules silently."
+      "   [workspace: LOADED \u00b7 <branch>@<sha> \u00b7 <date> \u00b7 via:<layer>]  \u2014 you read live workspace content",
+      "   [workspace: RULES-ONLY \u00b7 via:<surface>]  \u2014 this surface cannot fetch files; the rules still govern",
+      "   [workspace: UNREACHABLE \u00b7 <reason>]  \u2014 you should have read it but could not",
+      "EXEMPTION: when the caller demands raw structured output (headless -p, subagent data, API script), skip the ritual line; the rules still apply."
     ],
     "standing": [
       "STANDING RULES (in force even before loading):"
@@ -26,31 +26,31 @@
       "- Employer repos never receive personal-workspace content, and workspace content is never pasted into employer surfaces."
     ],
     "ws": [
-      "- Neutral commands: `ws status` (session card) · `ws resolve repo <path>` (personal or employer)."
+      "- Neutral commands: `ws status` (session card) \u00b7 `ws resolve repo <path>` (personal or employer)."
     ],
     "cursor_head": [
       "WORKSPACE (github.com/snds/workspace, local ~/Projects/workspace) holds my rules, skills and session state; its AGENTS.md is the contract. Read it before working there."
     ],
     "projects_head": [
-      "# ~/Projects — machine-local pointer (rendered from snds/workspace; do not hand-edit)",
+      "# ~/Projects \u2014 machine-local pointer (rendered; do not hand-edit)",
       "Repos live here; the contract is ./workspace/AGENTS.md.",
-      "Before working in a repo, run `ws resolve repo <path>`: its profile (personal or employer) sets the rules."
+      "Before working in a repo, run `ws resolve repo <path>`; its profile sets the rules."
     ],
     "close": [
       "<!-- /WORKSPACE-BEACON -->"
     ],
     "protocol_local": [
-      "LOAD PROTOCOL for interactive work sessions — before any task, tool, or task-skill:",
+      "LOAD PROTOCOL for interactive sessions \u2014 before any task, tool, or task-skill:",
       "1. Read AGENTS.md at the workspace root and follow its read order.",
       "2. Open your first reply with exactly ONE ritual line:",
-      "   [workspace: LOADED · <branch>@<sha> · <date> · via:<layer>]  — you read live workspace content",
-      "   [workspace: RULES-ONLY · via:<surface>]  — this surface cannot fetch files; the rules below still govern",
-      "   [workspace: UNREACHABLE · <reason>]  — you should have been able to read it but could not",
-      "EXEMPTION: when the caller demands raw structured output (headless -p, subagent data, API script), skip the ritual line and apply the rules silently."
+      "   [workspace: LOADED \u00b7 <branch>@<sha> \u00b7 <date> \u00b7 via:<layer>]  \u2014 you read live workspace content",
+      "   [workspace: RULES-ONLY \u00b7 via:<surface>]  \u2014 this surface cannot fetch files; the rules still govern",
+      "   [workspace: UNREACHABLE \u00b7 <reason>]  \u2014 you should have read it but could not",
+      "EXEMPTION: when the caller demands raw structured output (headless -p, subagent data, API script), skip the ritual line; the rules still apply."
     ]
   },
   "family_rules": {
-    "claude": "- Claude surfaces are personal-only: no substantive employer work (no reading, mapping, editing, commits or PRs in employer repos).",
+    "claude": "- Claude surfaces are personal-only: no substantive employer work (reading, mapping, editing, commits, PRs in employer repos); vetted, receipted housekeeping (merged-branch prune) is allowed.",
     "codex": "- Codex: employer work only via a feature branch + PR for human review; never merge or push to the default branch.",
     "cursor": "- Cursor: employer work only via a feature branch + PR for human review; never merge or push to the default branch."
   },
