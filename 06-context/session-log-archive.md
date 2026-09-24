@@ -484,7 +484,7 @@ read as ABSENT while live and authenticated — every `requires: [figma-mcp]` sk
 silently degraded. Pattern fixed to `mcp__*figma*` with the reason recorded inline. Found only
 because A8 forced a real preflight instead of a documented one.
 
-Employer wall: `whoami` is sean.sands@centricsoftware.com (Centric org). Running the probe is
+Employer wall: `whoami` is the work account (Centric org). Running the probe is
 fine (read-only, Sean's own work account) but captures are employer content — both fixtures
 are synthetic and say so, and the skill, CLI help and close-out SKIP text all say scratchpad.
 
@@ -536,7 +536,7 @@ read as ABSENT while live and authenticated — every `requires: [figma-mcp]` sk
 silently degraded. Pattern fixed to `mcp__*figma*` with the reason recorded inline. Found only
 because A8 forced a real preflight instead of a documented one.
 
-Employer wall: `whoami` is sean.sands@centricsoftware.com (Centric org). Running the probe is
+Employer wall: `whoami` is the work account (Centric org). Running the probe is
 fine (read-only, Sean's own work account) but captures are employer content — both fixtures
 are synthetic and say so, and the skill, CLI help and close-out SKIP text all say scratchpad.
 

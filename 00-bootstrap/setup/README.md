@@ -65,7 +65,9 @@ need auth to **push** changes later: run `gh auth login` once.
 2. Obsidian prompts about community plugins — **enable them** (the installer already downloaded the files).
 3. **GitHub identity (macOS, two-account):** `bash 00-bootstrap/setup/setup-identity.sh` — generates SSH keys
    and writes `~/.ssh/config` aliases (`github.com` → snds, `github-work` → sean-sands-centric). See
-   `08-knowledge/cross-domain/workspace-infrastructure.md`.
+   `08-knowledge/cross-domain/workspace-infrastructure.md`. The work address is not stored in this
+   repo: put a line `WORK_EMAIL=<address>` in `~/.config/snds-workspace/work-identity.env` first, or the
+   script skips `~/.gitconfig.work` with a warning.
 4. **First session:** `cd` to the checkout and run `claude`.
 
 ## Idempotency

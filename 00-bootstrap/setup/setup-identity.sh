@@ -24,7 +24,13 @@ PERSONAL_EMAIL="hello@snds.design"
 PERSONAL_NOREPLY="570874+snds@users.noreply.github.com"
 
 WORK_USER="sean-sands-centric"
-WORK_EMAIL="sean.sands@centricsoftware.com"
+# The work address is not stored in this public repo (^pc-47). It lives in a machine-local file:
+#   ~/.config/snds-workspace/work-identity.env   containing a line   WORK_EMAIL=<address>
+WORK_IDENTITY_FILE="$HOME/.config/snds-workspace/work-identity.env"
+WORK_EMAIL=""
+if [ -f "$WORK_IDENTITY_FILE" ]; then
+  WORK_EMAIL="$(sed -n 's/^WORK_EMAIL=//p' "$WORK_IDENTITY_FILE" | head -n 1 | tr -d '[:space:]"'"'"'')"
+fi
 WORK_NAME="Sean Sands"
 
 HOST=$(hostname)
@@ -173,7 +179,7 @@ fi
 step "~/.gitconfig with includeIf identity routing"
 echo "  Routes identity by directory:"
 echo "    ~/personal/**  → uses snds + GitHub no-reply email"
-echo "    ~/work/**      → uses Sean Sands + sean.sands@centricsoftware.com"
+echo "    ~/work/**      → uses Sean Sands + ${WORK_EMAIL:-<work address from $WORK_IDENTITY_FILE>}"
 echo "  Repos outside both (incl. the Claude Workspace) use repo-local config."
 
 if ask "Install ~/.gitconfig template?"; then
@@ -186,6 +192,17 @@ if ask "Install ~/.gitconfig template?"; then
     esac
     if [ ! -f "$src" ]; then
       warn "Template missing: $src — skipping $dst"
+      continue
+    fi
+    if [ "$src_name" = gitconfig.work.template ]; then
+      if [ -z "$WORK_EMAIL" ]; then
+        warn "No work address in $WORK_IDENTITY_FILE — skipping $dst (add a line WORK_EMAIL=<address>, then re-run)"
+        continue
+      fi
+      if overwrite_ok "$dst"; then
+        sed "s|@WORK_EMAIL@|$WORK_EMAIL|" "$src" > "$dst"
+        ok "Wrote $dst"
+      fi
       continue
     fi
     if overwrite_ok "$dst"; then

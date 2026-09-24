@@ -1,4 +1,4 @@
 # Work identity — applied by ~/.gitconfig when gitdir is under ~/work/
 [user]
 	name = Sean Sands
-	email = sean.sands@centricsoftware.com
+	email = @WORK_EMAIL@
