@@ -52,7 +52,9 @@ including a mid-task dynamic model swap in Cursor — must clear four gates:
 
 **Embedded, not commit-only.** Done on a vault write means the relevant validators ran in this session, not only that files were saved. Commit/CI is the backstop. After a skill, knowledge, or framework edit, run the chain before claiming complete:
 
-`python3 09-tools/nightly.py --phases rebuild` → `evaluate-skill-routing.py` → `validate-integrity.py` → `validate-links.py` → `validate-workspace.py`.
+`python3 09-tools/nightly.py --phases rebuild` → `evaluate-skill-routing.py` → `validate-integrity.py` → `validate-links.py` → `validate-workspace.py` Then the first-wave detectors: `skill-loadset.py --self-test` → `close-out-dispatch.py --check` → `validate-layer0-schema.py --check` → `session-status.py --check` → `check-secrets.py` → `vault-health.py` → `validate-evidence-grades.py` → `evaluate-surface-trajectories.py --check` → `workspace-harness.py` (all three lanes in one pass: this chain, reachability of every skill and knowledge entry, and the worst-case traversal token budget; `--self-test` first; `BUDGETS` rise only by a deliberate diff).
+
+`evaluate-surface-trajectories.py` checks that the Claude hook, the Cursor route script and the shell path deliver the same context. The Claude hook must delegate to `prompt_route.py`, never fork the matcher.
 
 CI mirrors these. Gate 2 is partly semantic — the authoring agent + PR review own it; the rest is machine-checked. Mirrored, compressed, in [[AGENTS]] → "Write-quality gates". Negative fixtures: `python3 09-tools/test-validators.py`.
 
@@ -147,7 +149,7 @@ Each layer: what belongs · when to add vs. extend · what never goes here · th
 - **External tools:** if a skill needs an MCP server or CLI, declare `requires: [<capability-id>]` and
   register the capability in `02-shared-references/capability-registry.md` (detection + install +
   fallback). Don't hard-code tool paths or install steps in the skill. The agent **preflights** the
-  capability before use ([[AGENTS]] → "Capability preflight") and degrades/blocks/routes if it's
+  capability before use ([[capability-registry]] → "Capability preflight") and degrades/blocks/routes if it's
   absent on the current surface — so the skill stays portable across surfaces that may or may not have
   the tool. `09-tools/validate-capabilities.py` enforces the contract (no dangling ids, reciprocity).
 - **Unreachable packs:** a directory under `03-skills/` without a root `SKILL.md` is incomplete —

@@ -60,8 +60,11 @@ CROSS_CHAIN_COLLISION_CEILING = 25
 
 # Byte ceilings for the files every session loads, pinned at their 2ff02e7 sizes (wave 0,
 # plan v1.1). Edits there are net-negative or neutral; raising one is a reviewable diff.
+CODEX_DOC_MAX_BYTES = 32_768   # Codex project_doc_max_bytes default
+CODEX_MIN_HEADROOM_BYTES = 3_072  # wave 1 exit gate (H6)
+
 ALWAYS_LOADED_BYTES_CEILING = {
-    "AGENTS.md": 30_917,
+    "AGENTS.md": 26_044,  # re-pinned after the H6 cuts (wave 1, 2026-09-24)
     "CLAUDE.md": 5_769,
     "CURSOR.md": 6_153,
     ".cursor/rules/brain.mdc": 3_592,
@@ -502,7 +505,8 @@ def check_named_detectors(root: Path = ROOT) -> dict:
     """
     tools = root / "09-tools"
     named: set[str] = set()
-    sources = [root / "AGENTS.md", root / "CLAUDE.md"]
+    sources = [root / "AGENTS.md", root / "CLAUDE.md",
+               root / "01-frameworks" / "08-workspace-contribution-framework.md"]  # H6: the chain moved there
     sources += sorted((root / ".github" / "workflows").glob("*.yml"))
     for doc in sources:
         if doc.exists():
@@ -647,7 +651,19 @@ def check_always_loaded_bytes(root: Path = ROOT, ceilings: dict | None = None) -
     sizes = {rel: (root / rel).stat().st_size for rel in ceilings if (root / rel).is_file()}
     over = [f"{rel}: {sizes[rel]:,} bytes over ceiling {cap:,}"
             for rel, cap in ceilings.items() if sizes.get(rel, 0) > cap]
+    if ceilings is ALWAYS_LOADED_BYTES_CEILING:
+        over += check_codex_headroom(sizes)
     return {"sizes": sizes, "over": over}
+
+
+def check_codex_headroom(sizes: dict) -> list:
+    """H6: Codex reads AGENTS.md plus the ~/.codex/AGENTS.md beacon (dist/BEACON.md) into one
+    32 KiB project-doc window; wave 1 keeps at least 3 KiB of it free in the worst case."""
+    codex = sizes.get("AGENTS.md", 0) + sizes.get("00-bootstrap/dist/BEACON.md", 0)
+    if CODEX_DOC_MAX_BYTES - codex < CODEX_MIN_HEADROOM_BYTES:
+        return [f"Codex worst-case headroom {CODEX_DOC_MAX_BYTES - codex:,} bytes < {CODEX_MIN_HEADROOM_BYTES:,} "
+                f"(AGENTS.md + beacon = {codex:,} of {CODEX_DOC_MAX_BYTES:,})"]
+    return []
 
 
 def run_tokens() -> dict:
@@ -943,6 +959,10 @@ def self_test() -> int:
         expect("always-loaded ceiling accepts a file at its ceiling",
                not any("CLAUDE.md" in o for o in grown["over"]))
     expect("always-loaded ceilings hold on the live tree", not check_always_loaded_bytes()["over"])
+    expect("Codex headroom under 3 KiB fails (H6)",
+           bool(check_codex_headroom({"AGENTS.md": 30_221, "00-bootstrap/dist/BEACON.md": 1_515})))
+    expect("Codex headroom at 3 KiB or more passes (H6)",
+           not check_codex_headroom({"AGENTS.md": 28_181, "00-bootstrap/dist/BEACON.md": 1_515}))
 
     with tempfile.TemporaryDirectory() as td:
         fake = Path(td)

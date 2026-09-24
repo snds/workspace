@@ -113,6 +113,10 @@ The full spec is held locally (`INTENT-wave1-2026-09.md`), like wave 0's.
   the Claude-only env-file channel design (D4, which the Personal MBP overlay needs); the
   employer-substance baseline for the employer mail domain; moving the heal scripts to report class
   (D11, with H20).
+- **Decided by Sean (2026-09-24):** the recommended AGENTS.md cut set lands first; H18 git lanes go on
+  both Macs in wave 1 and block at install; a detection discount needs verified evidence (a host hook
+  payload or process ancestry), never an environment variable alone; the heal scripts keep healing,
+  but only from the pinned lib. Still open: D4's design and the employer-domain baseline.
 - **Non-Claude only:** the employer-repo intent PRs and the one-time inventory of workspace-derived
   files in employer repos (Cursor, Codex or Sean).
 

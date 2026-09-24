@@ -10,8 +10,35 @@ aliases: [capability-registry, capabilities]
 The **single source of truth** for external tool dependencies (MCP servers and CLIs) that
 skills can require. A skill declares `requires: [<capability-id>]` in its frontmatter; the
 details of how to **detect**, **install**, and **fall back** live here — never duplicated into
-the skill. See [[skill-frontmatter]] → "Capability requirements" for the field, and [[AGENTS]] +
-[[08-workspace-contribution-framework]] → "Capability preflight" for the runtime protocol.
+the skill. See [[skill-frontmatter]] → "Capability requirements" for the field; the runtime protocol is
+"Capability preflight" below ([[AGENTS]] keeps a three-line pointer to it).
+
+## Capability preflight
+
+Some skills declare `requires: [<capability-id>]` — an external **MCP server** or **CLI** they need
+(e.g. `figma-mcp`, `agent-browser`, `ffmpeg`). Surfaces differ in what's installed, so before you use
+that tool you **preflight** the capability. The id resolves in
+`02-shared-references/capability-registry.md`, which holds the detection probe, per-surface install
+command, and fallback — never hard-coded into the skill.
+
+```
+preflight(skill):
+  for cap_id in skill.requires:                       # also in registry: skills[name].requires
+    cap = capability_registry[cap_id]
+    present = (cap.kind == "mcp")  ? a tool matching cap.detect.match exists in YOUR tool surface
+                                   : shell(cap.detect.probe) exits 0     # cli/env
+    if present: continue
+    else: apply cap.fallback —
+       degrade → proceed with the reduced path in cap.fallback_note (tell the user what's degraded)
+       block   → stop the tool step; surface cap.install[<this surface>]; ask the user to install
+       route   → hand off to cap.fallback_skill
+```
+
+The rule: **never call a required tool without confirming it's there, and never fail silently.** An
+absent dependency produces a clear "missing X — here's how to install it, or here's the degraded path,"
+identically on Claude Code, Cursor, or any MCP client. Detection is surface-agnostic: for MCP, inspect
+*your own available tools* (including tool-search/deferred ones) for the name pattern; for CLIs, a
+`command -v` probe.
 
 The fenced `json` block below is canonical and machine-read by `09-tools/validate-capabilities.py`.
 The prose under each heading is the human mirror — keep them in sync (the validator checks that

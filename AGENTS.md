@@ -246,9 +246,6 @@ navigational (never auto-loaded). `governed_by` lenses load **after** the skill 
 `03-skills/close-out/SKILL.md` (mint a missing detector and push here; page Sean only if
 self-critique or mint still fails). Vault gaps beyond QA → `03-skills/self-improve/SKILL.md`.
 Hubs and foundations must declare `triggers` (registry CI).
-The Cursor route hook was retired 2026-09-22 (its output never reached the model). Cursor
-sessions outside this checkout get routes from User Rules until the `ws route` steer (H7).
-Surfaces without a route hook only get what they actually read from this file.
 Vendor Figma plugin skills are mechanics only; workspace `figma` + `design-engineer` own
 token/component doctrine.
 
@@ -259,30 +256,9 @@ Worked example — "dark-mode palette for this dashboard" →
 
 ## Capability preflight (external tool dependencies)
 
-Some skills declare `requires: [<capability-id>]` — an external **MCP server** or **CLI** they need
-(e.g. `figma-mcp`, `agent-browser`, `ffmpeg`). Surfaces differ in what's installed, so before you use
-that tool you **preflight** the capability. The id resolves in
-`02-shared-references/capability-registry.md`, which holds the detection probe, per-surface install
-command, and fallback — never hard-coded into the skill.
-
-```
-preflight(skill):
-  for cap_id in skill.requires:                       # also in registry: skills[name].requires
-    cap = capability_registry[cap_id]
-    present = (cap.kind == "mcp")  ? a tool matching cap.detect.match exists in YOUR tool surface
-                                   : shell(cap.detect.probe) exits 0     # cli/env
-    if present: continue
-    else: apply cap.fallback —
-       degrade → proceed with the reduced path in cap.fallback_note (tell the user what's degraded)
-       block   → stop the tool step; surface cap.install[<this surface>]; ask the user to install
-       route   → hand off to cap.fallback_skill
-```
-
-The rule: **never call a required tool without confirming it's there, and never fail silently.** An
-absent dependency produces a clear "missing X — here's how to install it, or here's the degraded path,"
-identically on Claude Code, Cursor, or any MCP client. Detection is surface-agnostic: for MCP, inspect
-*your own available tools* (including tool-search/deferred ones) for the name pattern; for CLIs, a
-`command -v` probe.
+Some skills declare `requires: [<capability-id>]` (an MCP server or CLI). Preflight it before use per
+[capability-registry.md](02-shared-references/capability-registry.md) (probe, then degrade / block / route).
+**Never call a required tool unconfirmed; never fail silently.**
 
 ---
 
@@ -342,22 +318,11 @@ When adding structure, prefer formats that are friendly to both markdown readers
 
 ## Adapter model
 
-Agent-specific files are thin adapters over this one contract — **not** separate contracts.
-
-- `CLAUDE.md` — Claude Code / Desktop (`@AGENTS.md` import) · `CURSOR.md` — Cursor ·
-  `PERPLEXITY.md` — Perplexity · `GEMINI.md` + `.gemini/settings.json` — Gemini CLI ·
-  `.github/copilot-instructions.md` — VS Code Copilot Chat · `WARP.md` — Warp ·
-  `CONVENTIONS.md` + `.aider.conf.yml` — Aider · `.windsurf/rules/workspace.md` — Windsurf ·
-  `00-bootstrap/adapters/web-session.md` — ChatGPT / Grok.com / Perplexity without filesystem.
-  Onboard a new one from `00-bootstrap/adapters/_ADAPTER-TEMPLATE.md`. Never symlink this
-  contract onto those names (some tools concatenate every instruction file). Never add
-  `.cursorrules` / `.windsurfrules` / `.clinerules` (first-match can hide this file).
-- **A new agent needs no adapter to participate at full fidelity** — executing this contract is
-  sufficient. An adapter only documents that tool's ergonomics (hooks, rule files, slash commands)
-  and capability limits.
-
-Adapters must: reference this contract; describe only tool-specific execution; never fork the workspace
-model or hold state the contract lacks. No tool is privileged over another.
+Agent-specific files are thin adapters over this one contract, not separate contracts; the per-tool list is
+[00-bootstrap/SURFACES.md](00-bootstrap/SURFACES.md). Onboard from `00-bootstrap/adapters/_ADAPTER-TEMPLATE.md`.
+Never symlink this contract onto an adapter's filename (some tools concatenate every instruction file).
+Never add `.cursorrules` / `.windsurfrules` / `.clinerules` (first-match can hide this file).
+No adapter is needed for full fidelity; adapters never fork the model or hold state the contract lacks.
 
 ---
 
@@ -420,12 +385,6 @@ Every session-log entry and Live handoff update stamps **Agent · Surface · Mac
 `Claude Opus / Claude Code / Personal MBP`, `GPT / Cursor / Work MBP`, `Perplexity / web`). Attribution is
 what lets one continuous thread show *who did what* without fragmenting into per-agent contexts.
 
-### What makes it unified (not N contracts)
-- One contract (this file) every agent obeys → identical rules, identical loading precedence.
-- One generated skill graph (`03-skills/skills.registry.json`) → identical skill set + order for the same request.
-- One live state (above) → the baton passes intact.
-- One routing map (`02-shared-references/workspace-ontology.md`) → everyone writes to the same place.
-
 Full per-layer protocol: `01-frameworks/08-workspace-contribution-framework.md` → "Portable session protocol".
 
 ---
@@ -452,32 +411,7 @@ human), and they are what let dynamic multi-agent work stay one coherent contrac
 **Embedded, not commit-only.** Done on a vault write means the relevant validators ran in this session,
 not only that files were saved. Commit/CI is the backstop.
 
-**Enforcement (run before claiming the write complete; CI runs them too):** `nightly.py --phases rebuild` →
-`evaluate-skill-routing.py` →
-`validate-integrity.py` (quality + cross-link continuity + anti-zombie) → `validate-links.py` →
-`validate-workspace.py`. Then the first-wave detectors: `skill-loadset.py --self-test` →
-`close-out-dispatch.py --check` → `validate-layer0-schema.py --check` → `session-status.py --check` → `check-secrets.py`
-→ `vault-health.py` → `validate-evidence-grades.py` → `evaluate-surface-trajectories.py --check` (the Claude hook, the Cursor route script and the shell path deliver
-the SAME context; Cursor parity is checked at script level until H7; the Claude hook must delegate to `prompt_route.py`, never fork the matcher) → `workspace-harness.py` (all three lanes in one pass: the chain above, whether an agent can
-**reach** every skill/knowledge entry, and the worst-case traversal token budget — `--self-test` first, budgets
-in `BUDGETS` are raised only by a deliberate diff).
-Negative fixtures: `python3 09-tools/test-validators.py`. **`nightly.py` owns the rebuild fixpoint (registry, related,
-registry, trigger-routes); do not hand-sequence the generators.**
-Gate 2 is partly semantic — CI can't fully judge intent; that's the authoring agent
-+ PR review. Everything else is machine-checked. See framework 08 for the per-layer detail.
-
----
-
-## Desired end state
-
-A successful universal agent system should allow any capable model to:
-
-- enter the workspace and orient quickly
-- find the correct bootstrap path
-- discover relevant skills
-- identify active project context
-- understand safe write locations and mutation rules
-- improve the workspace without breaking existing integrations
-
-No single tool is privileged: Claude, Cursor, Perplexity, a generic MCP client, and a human reading
-the files all follow this same contract and should reach near-identical results.
+**Enforcement (before claiming a write complete; CI runs it too):** `python3 09-tools/nightly.py --phases rebuild`
+(owns the rebuild fixpoint; never hand-sequence the generators), then `python3 09-tools/workspace-harness.py`
+(every gate in order, reachability, token budgets). Chain + per-layer detail: framework 08. Gate 2 stays with the
+authoring agent + PR review.
