@@ -56,6 +56,26 @@ def _date(text: str) -> str:
     return m.group(1) if m else "0000-00-00"
 
 
+def _h25_limiter(root: Path):
+    """H25: a fragment from a session whose touch ledger (H23) reached a repo that is not positively
+    personal folds only {slug, status, PR URL if allowed} for that repo (09-tools/closure.py). With
+    no closure module or no ledger the fragment folds unchanged."""
+    try:
+        tools = str(Path(__file__).resolve().parent)
+        if tools not in sys.path:
+            sys.path.insert(0, tools)
+        import closure  # noqa: PLC0415
+    except Exception:  # noqa: BLE001 - maintenance never breaks a session
+        return lambda _f, text: text
+
+    def limit(frag: Path, text: str) -> str:
+        try:
+            return closure.limit_for_fold(root, frag, text, root=root)
+        except Exception:  # noqa: BLE001
+            return text
+    return limit
+
+
 def compact(root: Path, check: bool = False, quiet: bool = False) -> int:
     log_path = root / "06-context" / "session-log.md"
     frag_dir = root / "06-context" / "sessions"
@@ -72,9 +92,10 @@ def compact(root: Path, check: bool = False, quiet: bool = False) -> int:
                   + (f" Archived {archived} old block(s) → session-log-archive.md." if archived else ""))
         return 0
 
+    limit = _h25_limiter(root)
     new, already = [], []
     for f in fragments:
-        text = f.read_text(encoding="utf-8").strip()
+        text = limit(f, f.read_text(encoding="utf-8")).strip()
         if not text:
             f.unlink()  # empty fragment — drop it
             continue

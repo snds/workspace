@@ -28,7 +28,8 @@
     "H20",
     "H22",
     "H24",
-    "H25"
+    "H25",
+    "H23"
   ],
   "component_scopes": {
     "H1": {
@@ -78,6 +79,10 @@
     "H25": {
       "scope": "shared",
       "reason": "Any committer can leak employer substance into this public vault; Cursor and Codex, the employer-approved tools, are the likelier path."
+    },
+    "H23": {
+      "scope": "shared",
+      "reason": "Every surface closes a session the same way, per repo it touched, and any surface's next start tidies what a crashed or forgetful session left behind."
     }
   },
   "current_wave": 1,
@@ -367,6 +372,18 @@
           ],
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
+        },
+        "H23": {
+          "mode": "enforced-partial",
+          "rules": "the post-tool ledger and the session-start sweeper run once Sean reinstalls the claude-user shims and re-pins (closure.py is a pinned path); `ws closure plan` and the H25 fragment limits (compact-sessions, the sweeper) work now; closing a touched repo is the /session-end protocol, so an agent that skips it leaves work to the sweeper's notice; a shell command's paths come from the git status fallback; the project dispatcher's own SessionEnd commit still runs beside it (follow-up: defer it to closure)",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestClosure",
+            "selftest:09-tools/closure.py",
+            "selftest:09-tools/ws_hook.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestClosure: the plan matrix per repo class and family (Claude employer repos get a handoff and no git, spied), the sweeper commits only mechanical unclaimed workspace paths under the resolved identity, fragment limits at fold and sweep, ledger parity from the Claude golden. Partial until installed and until the dispatcher defers to closure"
         }
       },
       "non_user_envelopes": [
@@ -445,6 +462,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": "no local git lane applies"
+        },
+        "H23": {
+          "mode": "advisory",
+          "rules": "no user hooks, so no ledger or sweeper; /session-end runs `ws closure plan`, which falls back to git status in the cloud clone",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -570,6 +595,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": "no local git lane applies"
+        },
+        "H23": {
+          "mode": "not-applicable",
+          "rules": "no local repos or commits",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -656,6 +689,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": "no local git lane applies"
+        },
+        "H23": {
+          "mode": "not-applicable",
+          "rules": "no local repos or commits",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -725,6 +766,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": "no local git lane applies"
+        },
+        "H23": {
+          "mode": "not-applicable",
+          "rules": "no local repos or commits",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -926,6 +975,18 @@
           ],
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
+        },
+        "H23": {
+          "mode": "enforced-partial",
+          "rules": "the post-tool ledger and the session-start sweeper run once Sean reinstalls the cursor-user shims and re-pins (closure.py is a pinned path); `ws closure plan` and the H25 fragment limits (compact-sessions, the sweeper) work now; closing a touched repo is the /session-end protocol, so an agent that skips it leaves work to the sweeper's notice; a shell command's paths come from the git status fallback; Cursor sessionEnd stays unregistered, so the next start on any surface sweeps",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestClosure",
+            "selftest:09-tools/closure.py",
+            "selftest:09-tools/ws_hook.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestClosure: ledger parity from the Cursor afterFileEdit and afterShellExecution goldens, a Cursor session's leftover fragment swept by the next start on another surface, employer repos closed by a feature branch and a PR. Partial until installed"
         }
       },
       "non_user_envelopes": []
@@ -1005,6 +1066,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
+        },
+        "H23": {
+          "mode": "advisory",
+          "rules": "loads the cursor-user layer, but its post-tool payload shape is unverified; /session-end runs `ws closure plan`",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1076,6 +1145,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": "no local git lane applies"
+        },
+        "H23": {
+          "mode": "advisory",
+          "rules": "project-level hooks only, so no ledger or sweeper; /session-end runs `ws closure plan`",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1268,6 +1345,18 @@
           ],
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
+        },
+        "H23": {
+          "mode": "enforced-partial",
+          "rules": "the post-tool ledger and the session-start sweeper run once Sean reinstalls the codex-user shims and re-pins (closure.py is a pinned path); `ws closure plan` and the H25 fragment limits (compact-sessions, the sweeper) work now; closing a touched repo is the /session-end protocol, so an agent that skips it leaves work to the sweeper's notice; a shell command's paths come from the git status fallback; inert until Sean trusts the hooks in /hooks; Codex SessionEnd stays unregistered",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestClosure",
+            "selftest:09-tools/closure.py",
+            "selftest:09-tools/ws_hook.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestClosure: ledger parity from the Codex apply_patch and Bash goldens, a Codex leftover fragment swept by a Cursor start. Partial until installed and trusted"
         }
       },
       "non_user_envelopes": []
@@ -1339,6 +1428,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": "no local git lane applies"
+        },
+        "H23": {
+          "mode": "advisory",
+          "rules": "no local hooks; /session-end runs `ws closure plan` in the cloud checkout",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1422,6 +1519,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
+        },
+        "H23": {
+          "mode": "advisory",
+          "rules": "no shims rendered; /session-end runs `ws closure plan` (git status fallback)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1509,6 +1614,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
+        },
+        "H23": {
+          "mode": "advisory",
+          "rules": "loads the Claude user layer, but the Claude ledger registration filters its payload out; /session-end runs `ws closure plan` (git status fallback)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1597,6 +1710,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
+        },
+        "H23": {
+          "mode": "advisory",
+          "rules": "no shims rendered; /session-end runs `ws closure plan` (git status fallback)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1666,6 +1787,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": "no local git lane applies"
+        },
+        "H23": {
+          "mode": "not-applicable",
+          "rules": "no local device; server-side review closes its PRs",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1755,6 +1884,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
+        },
+        "H23": {
+          "mode": "advisory",
+          "rules": "no shims rendered; the session-end protocol applies (git status fallback)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1841,6 +1978,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
+        },
+        "H23": {
+          "mode": "advisory",
+          "rules": "no hooks; the session-end protocol applies (git status fallback)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1927,6 +2072,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
+        },
+        "H23": {
+          "mode": "advisory",
+          "rules": "no hooks; the session-end protocol applies (git status fallback)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2016,6 +2169,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
+        },
+        "H23": {
+          "mode": "advisory",
+          "rules": "no shims rendered; the session-end protocol applies (git status fallback)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2102,6 +2263,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
+        },
+        "H23": {
+          "mode": "advisory",
+          "rules": "loads the Claude user layer, but the Claude ledger registration filters its payload out; the session-end protocol applies (git status fallback)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2180,6 +2349,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": "no local git lane applies"
+        },
+        "H23": {
+          "mode": "not-applicable",
+          "rules": "no local repos or commits",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2258,6 +2435,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": "no local git lane applies"
+        },
+        "H23": {
+          "mode": "not-applicable",
+          "rules": "no session of their own on a local repo",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2323,6 +2508,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
+        },
+        "H23": {
+          "mode": "advisory",
+          "rules": "`ws closure plan` and `closure.py sweep` by hand; a human's own commits are not policy-gated (P00)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2345,7 +2538,9 @@
       "subagent-stop": "subagentStop",
       "pre-tool": "preToolUse",
       "pre-shell": "beforeShellExecution",
-      "pre-mcp": "beforeMCPExecution"
+      "pre-mcp": "beforeMCPExecution",
+      "post-edit": "afterFileEdit",
+      "post-shell": "afterShellExecution"
     },
     "codex-hooks": {
       "session-start": "SessionStart",
@@ -2809,6 +3004,72 @@
       "verified_by": [
         "fixture:TestWallGuard"
       ]
+    },
+    "ws-ledger-claude": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook --host claude-code --event post-tool",
+      "behaviour": "session-ledger",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestClosure",
+        "selftest:09-tools/ws_hook.py"
+      ]
+    },
+    "ws-sweep-claude": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook sweep --host claude-code",
+      "behaviour": "closure-sweep",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestClosure",
+        "selftest:09-tools/closure.py"
+      ]
+    },
+    "ws-ledger-cursor": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook --host cursor --event post-tool",
+      "behaviour": "session-ledger",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestClosure",
+        "selftest:09-tools/ws_hook.py"
+      ]
+    },
+    "ws-sweep-cursor": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook sweep --host cursor",
+      "behaviour": "closure-sweep",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestClosure",
+        "selftest:09-tools/closure.py"
+      ]
+    },
+    "ws-ledger-codex": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook --host codex --event post-tool",
+      "behaviour": "session-ledger",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestClosure",
+        "selftest:09-tools/ws_hook.py"
+      ]
+    },
+    "ws-sweep-codex": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook sweep --host codex",
+      "behaviour": "closure-sweep",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestClosure",
+        "selftest:09-tools/closure.py"
+      ]
     }
   },
   "registrations": [
@@ -2871,6 +3132,32 @@
       "command": "ws-guard-claude",
       "timeout": 5,
       "matcher": "@tool_families:claude",
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "claude-user.post-tool",
+      "layer": "claude-user",
+      "event": "post-tool",
+      "command": "ws-ledger-claude",
+      "timeout": 5,
+      "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit",
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "claude-user.sweep",
+      "layer": "claude-user",
+      "event": "session-start",
+      "command": "ws-sweep-claude",
+      "timeout": 10,
+      "matcher": null,
       "host_skip": [
         "cursor"
       ],
@@ -3013,6 +3300,39 @@
       "defers_to": null
     },
     {
+      "id": "cursor-user.post-edit",
+      "layer": "cursor-user",
+      "event": "post-edit",
+      "command": "ws-ledger-cursor",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "cursor-user.post-shell",
+      "layer": "cursor-user",
+      "event": "post-shell",
+      "command": "ws-ledger-cursor",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "cursor-user.sweep",
+      "layer": "cursor-user",
+      "event": "session-start",
+      "command": "ws-sweep-cursor",
+      "timeout": 10,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
       "id": "cursor-project.subagent-stop",
       "layer": "cursor-project",
       "event": "subagent-stop",
@@ -3030,6 +3350,28 @@
       "command": "ws-guard-codex",
       "timeout": 5,
       "matcher": "^Bash$|apply_patch|mcp__.*",
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "codex-user.post-tool",
+      "layer": "codex-user",
+      "event": "post-tool",
+      "command": "ws-ledger-codex",
+      "timeout": 5,
+      "matcher": "^Bash$|apply_patch",
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "codex-user.sweep",
+      "layer": "codex-user",
+      "event": "session-start",
+      "command": "ws-sweep-codex",
+      "timeout": 10,
+      "matcher": null,
       "host_skip": [],
       "claim_group": null,
       "defers_to": null
@@ -3518,7 +3860,7 @@
       "sha256": "35ce5d895a865e9881e5d6c8a42bef5643f6bcebfc4545275ed8d9c4b8cc4b32"
     },
     "00-bootstrap/dist/ws": {
-      "sha256": "b53a29f01a2cd9b4b2b6ce6414a8b2bc2a424bf0c58c8bd26fdc9658923d2540"
+      "sha256": "fa305bfdca314a92cc2eb535e59e01dd355b87488a7fea7a084e382ba68ae337"
     },
     "00-bootstrap/dist/ws-doctor": {
       "sha256": "c4c2db2365adb39f74abd48b59364536a2366083866f3057d466fa8f7a81e00d"

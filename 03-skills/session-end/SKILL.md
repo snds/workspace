@@ -19,9 +19,12 @@ spec_version: "2.2"
 
 > Canonical home for every surface. The `.claude/skills/session-end/` and `.agents/skills/session-end/` copies (and the snds plugin's) are generated pointer wrappers (`09-tools/build-local-skill-plugin.py`); edit this file, never a wrapper.
 
-Writes a Session Block, updates project context, commits to Git, pushes to remote.
+Writes a Session Block, updates project context, closes every repo the session touched the way
+`ws closure plan` says (H23), commits the workspace and pushes.
 On Claude Code the `SessionEnd` hook will catch and commit anything not committed explicitly,
-but the block itself needs the agent to author — the hook can't know what was decided.
+but the block itself needs the agent to author — the hook can't know what was decided. On every
+surface the next session start sweeps what a crashed or forgetful session left: its fragment and the
+rebuild outputs are committed, anything else becomes a card notice naming `ws closure plan`.
 
 ## Trigger phrases
 
@@ -136,12 +139,15 @@ To stay collision-free across concurrent sessions/machines/surfaces, **do NOT ed
 - `short-random`: any unique 4–6 char token so two same-day sessions never collide.
 
 The fragment is your Session Block plus a **`SessionID:` line** matching the filename
-stem (the compactor dedupes on it). Write a `### heading` above it too:
+stem (the compactor dedupes on it). Add a `HostSession:` line with the host's session id when you
+know it (it ties the fragment to the touch ledger; the ledger also records the fragment you write).
+Write a `### heading` above it too:
 
 ```
 ### {YYYY-MM-DD} — {short session title}
 
 SessionID: {YYYY-MM-DD}-{machine-slug}-{short-random}
+HostSession: {host session id, if known}
 --- SESSION BLOCK ---
 Date: {YYYY-MM-DD}
 Machine: {machine label}
@@ -220,9 +226,33 @@ If any `SKILL.md` frontmatter changed this session, run
 `03-skills/skills.registry.json` alongside the session log. No Drive/mount sync —
 git is the source of truth.
 
+### Step 6.5 — Close every repo this session touched (every surface)
+
+```
+ws closure plan --session {host session id}      # or --session latest; no `ws`: python3 09-tools/closure.py plan …
+```
+
+The plan reads this session's touch ledger (written by the post-tool hook on Claude Code, Cursor and
+Codex; without one it falls back to `git status` over the checkout cache) and prints one action per
+repo, resolved through `profile_resolve` for this surface and device. Do exactly what it says:
+
+| Action | Repo | What you do |
+|---|---|---|
+| `workspace` | this workspace | Step 7 below: fold, rebuild, verify, commit, push, under the identity it names |
+| `commit-push` | positively personal | commit and push on its branch under the identity it names |
+| `hold` | personal, no identity resolved | commit nothing there; report the reason in the Session Block |
+| `handoff` | not positively personal, from Claude | a handoff note (slug and status only) in the project's Live handoff; run only the vetted command it lists; **no git** |
+| `branch-pr` | employer or not positively personal, from Cursor/Codex | feature branch, commit, push the branch, open a PR; never the default branch; a human merges |
+
+If the plan prints the **H25** line, this session touched a repo that is not positively personal, so
+your fragment may hold only `{slug, status, PR URL if allowed}` for it. Run
+`ws closure fragment --session {id} 06-context/sessions/{fragment}.md` before Step 7; compaction and
+the sweeper apply the same limit, and in this public workspace the slug becomes an opaque id with no URL.
+
 ### Step 7 — Commit + push (session changes only)
 
-Use the session signature from surface detection in the commit message:
+Workspace only; every other repo follows its Step 6.5 action. Use the session signature from surface
+detection in the commit message:
 
 ```bash
 git add -A -- .claude .agents CLAUDE.md 06-context 01-frameworks 02-shared-references \
@@ -357,7 +387,9 @@ When running in Cursor (detected via surface detection or `brain.mdc` context):
 
 - **Step 0.5** — run `python3 09-tools/cursor-externalize.py` (canvases → vault copies) then `python3 09-tools/artifact-ingest.py --check` (pending inbox; do not promote). Other vendor panels: write-through per [[decision-vendor-surface-artifacts]], not CI harvest.
 - **Step 6** — run `python3 09-tools/build-registry.py` from the terminal if skills changed.
-- **Skip the SessionEnd hook reference** — hooks are Claude Code only.
+- **Skip the SessionEnd hook reference** — Cursor's `sessionEnd` is not registered. Step 6.5 is how
+  Cursor closes each touched repo; a missed close is swept (mechanical leftovers) or noticed at the
+  next start on any surface.
 - **Read/write files via the filesystem**; use the terminal for git.
 - **Surface detection probe** still applies — run it in terminal.
 - Confirm line: `✓ Session logged and pushed — {N} files committed. Obsidian will reflect on next focus.`

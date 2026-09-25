@@ -1340,9 +1340,10 @@ class TestPinLib(unittest.TestCase):
     def test_pinned_paths_single_home(self):
         pin_lib = load("00-bootstrap/doctor/pin_lib.py")
         # wave 1 added 09-tools/git_lanes.py (H18), wall_guard.py (H15), and W1-6 (H20, walls F-11) the
-        # heal sources, the pinned doctor entry and the doctor with every helper it executes.
-        self.assertEqual(len(pin_lib.PINNED_PATHS), 20)
-        self.assertEqual(len(set(pin_lib.PINNED_PATHS)), 20)
+        # heal sources, the pinned doctor entry and the doctor with every helper it executes; H23 closure.py.
+        self.assertEqual(len(pin_lib.PINNED_PATHS), 21)
+        self.assertEqual(len(set(pin_lib.PINNED_PATHS)), 21)
+        self.assertIn("09-tools/closure.py", pin_lib.PINNED_PATHS)
         self.assertIn("09-tools/profile_resolve.py", pin_lib.PINNED_PATHS)
         self.assertIn("09-tools/git_lanes.py", pin_lib.PINNED_PATHS)
         self.assertIn("09-tools/wall_guard.py", pin_lib.PINNED_PATHS)
@@ -1627,6 +1628,31 @@ class TestWsHook(unittest.TestCase):
         ws = load("ws_hook")
         cases = ws.self_test_cases()
         self.assertGreater(len(cases), 50)
+        for name, ok, detail in cases:
+            with self.subTest(case=name):
+                self.assertTrue(ok, detail)
+
+
+class TestClosure(unittest.TestCase):
+    """H23 + H25: the closure plan per repo class x family, the session-start sweeper (mechanical,
+    unclaimed, workspace-only commits; a Cursor leftover swept by another surface's start), no git in
+    an employer repo from Claude (spied), ledger parity from the Claude, Cursor and Codex post-tool
+    goldens, and fragment limits for employer-touched sessions. Synthetic owners; temp HOME only."""
+
+    def test_closure_cases(self):
+        if str(TOOLS) not in sys.path:
+            sys.path.insert(0, str(TOOLS))
+        import closure  # noqa: PLC0415 - one module object shared with ws_hook's sweep
+        cases = closure.closure_cases()
+        self.assertGreater(len(cases), 40)
+        for name, ok, detail in cases:
+            with self.subTest(case=name):
+                self.assertTrue(ok, detail)
+
+    def test_ledger_self_test_cases(self):
+        ws = load("ws_hook")
+        cases = ws.ledger_cases()
+        self.assertGreater(len(cases), 10)
         for name, ok, detail in cases:
             with self.subTest(case=name):
                 self.assertTrue(ok, detail)

@@ -1,0 +1,13 @@
+{
+  "conversation_id": "sess-0001",
+  "generation_id": "gen-0001",
+  "cursor_version": "3.21.16",
+  "workspace_roots": [
+    "fixture-cwd"
+  ],
+  "hook_event_name": "afterShellExecution",
+  "command": "python3 09-tools/nightly.py --phases rebuild",
+  "output": "",
+  "duration": 12,
+  "cwd": "fixture-cwd"
+}

@@ -1,0 +1,16 @@
+{
+  "conversation_id": "sess-0001",
+  "generation_id": "gen-0001",
+  "cursor_version": "3.21.16",
+  "workspace_roots": [
+    "fixture-cwd"
+  ],
+  "hook_event_name": "afterFileEdit",
+  "file_path": "fixture-cwd/notes/touched.md",
+  "edits": [
+    {
+      "old_string": "a",
+      "new_string": "b"
+    }
+  ]
+}

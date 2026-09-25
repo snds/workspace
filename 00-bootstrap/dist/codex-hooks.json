@@ -11,6 +11,29 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "^Bash$|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/snds-workspace/bin/ws-hook --host codex --event post-tool",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/snds-workspace/bin/ws-hook sweep --host codex",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   }
 }

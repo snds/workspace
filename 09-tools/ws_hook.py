@@ -11,6 +11,7 @@ imports its sibling `profile_resolve.py`; tables resolve relative to that copy.
   ws_hook.py host --skip-unless H[,H...]                              stdin: payload JSON (optional)
   ws_hook.py host --skip-unless-layer LAYER                           stdin: payload JSON (optional)
   ws_hook.py env-file --host claude-code                              stdin: SessionStart payload JSON
+  ws_hook.py sweep --host H [--budget SECONDS]                       stdin: session-start payload JSON
   ws_hook.py probe-env --host H [--via terminal|run_in_terminal] [--record]
   ws_hook.py probe-promote --host H [--device D]
   ws_hook.py --self-test
@@ -31,12 +32,19 @@ unknown layer, a layer with no hosts or a missing table gives 2. The boot shim u
 the validated exports of the installed ~/.config/snds-workspace/claude-overlay.env into the file
 named by CLAUDE_ENV_FILE, as one delimited block. It never prints and always exits 0.
 
+H23: `--event post-tool` appends the tool call's touches (repo root, repo-relative path or null
+for a shell command, tool, ts, host) to ~/.config/snds-workspace/telemetry/sessions/<sid>.touched
+without importing profile_resolve; it never prints. `sweep` (and the session-start event) runs the
+pinned sibling closure.py sweeper within its budget: a dead session's mechanical workspace
+leftovers are committed, substantive ones become a card notice. Both fail open.
+
 Stdlib only; Python 3.9+.
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
 import datetime as dt
 import getpass
 import hashlib
@@ -72,6 +80,7 @@ CLAIM_MAX_AGE_S = 14 * 86400
 DEFAULT_BUDGET_S = 10.0
 FLOOR_BUDGET_S = 10.0
 GIT_TIMEOUT_S = 4
+SWEEP_BUDGET_S = 4.0     # H23: the session-start sweeper's share of the start budget
 # Wave 0: only the Claude dispatcher writes the session baseline (T5 wiring). Wave 1 decides
 # whether the hook core writes it too, once the path is registered live.
 BASELINE_IN_HOOK = False
@@ -357,6 +366,176 @@ def write_baseline(payload: dict, root: Path, *, now=None) -> Optional[Path]:
         return out
     except Exception:
         return None
+
+
+# --------------------------------------------------------------------------- H23: the touch ledger
+
+# telemetry/sessions/<sid>.touched, one JSON line per touch: {repo, path, tool, ts, host}. `path` is
+# repo-relative for an edit and null for a shell command (closure falls back to git status there).
+# The write path never imports profile_resolve and never prints: it runs after every tool call.
+LEDGER_DIR = "sessions"
+LEDGER_SUFFIX = ".touched"
+LEDGER_BUDGET_S = 0.05
+LEDGER_EDIT_TOOLS = ("Edit", "Write", "MultiEdit", "NotebookEdit", "Update")
+LEDGER_SHELL_TOOLS = ("Bash", "Shell", "run_terminal_cmd")
+LEDGER_PATH_KEYS = ("file_path", "notebook_path", "path")
+_PATCH_RE = re.compile(r"^\*\*\* (?:Add File|Update File|Delete File|Move to): (.+)$")
+
+
+def _home_base(home=None) -> Path:
+    return (Path(home) if home is not None else Path.home()) / ".config" / "snds-workspace"
+
+
+def ledger_path(sid: str, *, home=None) -> Path:
+    return _home_base(home) / "telemetry" / LEDGER_DIR / f"{_safe(sid)}{LEDGER_SUFFIX}"
+
+
+def _jsonish(v):
+    if isinstance(v, str) and v.strip()[:1] == "{":
+        try:
+            return json.loads(v)
+        except ValueError:
+            return v
+    return v
+
+
+def _repo_top(p: Path) -> Optional[Path]:
+    cur = p
+    for _ in range(64):
+        try:
+            if (cur / ".git").exists():
+                return cur
+        except OSError:
+            return None
+        if cur.parent == cur:
+            return None
+        cur = cur.parent
+    return None
+
+
+def touch_records(payload: dict, host: str, *, now=None) -> list:
+    """Ledger lines for one post-tool payload (Claude PostToolUse, Cursor afterFileEdit and
+    afterShellExecution, Codex PostToolUse on Bash and apply_patch). [] for anything else."""
+    p = payload if isinstance(payload, dict) else {}
+    event = str(p.get("hook_event_name") or p.get("hookEventName") or "")
+    tool = str(p.get("tool_name") or p.get("toolName") or "")
+    tin = _jsonish(p.get("tool_input") if "tool_input" in p else p.get("toolInput"))
+    tin = tin if isinstance(tin, dict) else {}
+    cwd = p.get("cwd") or ""
+    if not cwd and isinstance(p.get("workspace_roots"), list) and p["workspace_roots"]:
+        cwd = p["workspace_roots"][0]
+    paths, shell = [], False
+    if event == "afterFileEdit":
+        tool, paths = "Write", [p.get("file_path")]
+    elif event == "afterShellExecution":
+        tool, shell = "Shell", True
+    elif tool in LEDGER_EDIT_TOOLS:
+        paths = [next((tin[k] for k in LEDGER_PATH_KEYS if isinstance(tin.get(k), str) and tin[k]), None)]
+    elif tool == "apply_patch":
+        text = next((tin[k] for k in ("input", "patch", "command") if isinstance(tin.get(k), str)), "")
+        paths = [m.group(1).strip() for m in (_PATCH_RE.match(ln.strip()) for ln in text.splitlines()) if m]
+    elif tool in LEDGER_SHELL_TOOLS:
+        shell = True
+        wd = tin.get("workdir") or tin.get("cwd")
+        cwd = wd if isinstance(wd, str) and wd else cwd
+    else:
+        return []
+    base = Path(str(cwd)).expanduser() if cwd else None
+    stamp = (now or dt.datetime.now(dt.timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    out = []
+    if shell:
+        top = _repo_top(base.resolve()) if base is not None and base.is_absolute() else None
+        if top is not None:
+            out.append({"repo": str(top), "path": None, "tool": tool, "ts": stamp, "host": host})
+        return out
+    for raw in dict.fromkeys(x for x in paths if isinstance(x, str) and x):
+        f = Path(raw).expanduser()
+        if not f.is_absolute():
+            if base is None or not base.is_absolute():
+                continue
+            f = base / f
+        f = Path(os.path.abspath(f))
+        top = _repo_top(f.parent)
+        if top is None:
+            continue
+        try:
+            rel = f.relative_to(top).as_posix()
+        except ValueError:
+            continue
+        out.append({"repo": str(top), "path": rel, "tool": tool, "ts": stamp, "host": host})
+    return out
+
+
+def _payload_table():
+    """surfaces.json read directly (no profile_resolve import on the post-tool path)."""
+    try:
+        return json.loads((ROOT / "02-shared-references" / "surfaces.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
+def record_touch(host_arg: str, payload: dict, *, home=None, now=None) -> int:
+    """Append this tool call's touches to the session ledger. Fails open, never prints, 0 always.
+
+    Host filter: a payload that names another host (Cursor running the Claude user hooks) is left
+    to that host's own registration. Nothing is written until telemetry/ exists (a human installs)."""
+    try:
+        p = payload if isinstance(payload, dict) else {}
+        sid = next((str(p[k]) for k in SESSION_KEYS if p.get(k)), "")
+        tele = _home_base(home) / "telemetry"
+        if not sid or not tele.is_dir():
+            return 0
+        hint = payload_host_hint(p, table=_payload_table())
+        if host_arg != "auto" and hint and hint != host_arg:
+            return 0
+        host = host_arg if host_arg != "auto" else (hint or "unknown")
+        recs = touch_records(p, host, now=now)
+        if not recs:
+            return 0
+        target = tele / LEDGER_DIR / f"{_safe(sid)}{LEDGER_SUFFIX}"
+        target.parent.mkdir(exist_ok=True)
+        data = "".join(json.dumps(r, ensure_ascii=False, sort_keys=True) + "\n" for r in recs).encode("utf-8")
+        fd = os.open(str(target), os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
+        try:
+            os.write(fd, data)
+        finally:
+            os.close(fd)
+        return 0
+    except Exception:
+        return 0
+
+
+def read_ledger(sid: str, *, home=None) -> list:
+    try:
+        text = ledger_path(sid, home=home).read_text(encoding="utf-8")
+    except OSError:
+        return []
+    out = []
+    for ln in text.splitlines():
+        try:
+            rec = json.loads(ln)
+        except ValueError:
+            continue
+        if isinstance(rec, dict) and isinstance(rec.get("repo"), str):
+            out.append(rec)
+    return out
+
+
+def run_sweep(host_arg: str, payload: dict, *, home=None, budget=None) -> int:
+    """H23 sweeper at session start: the pinned sibling closure.py commits a dead session's
+    mechanical workspace leftovers and records card notices. Budget-limited; fails open; silent."""
+    p = payload if isinstance(payload, dict) else {}
+    limit = max(0.2, float(budget)) if budget is not None else SWEEP_BUDGET_S
+
+    def go():
+        if str(TOOLS) not in sys.path:
+            sys.path.insert(0, str(TOOLS))
+        import closure  # noqa: PLC0415 - pinned sibling; absent in an older pin (then no sweep)
+        sid = next((str(p[k]) for k in SESSION_KEYS if p.get(k)), "")
+        closure.sweep(home=home, current_sid=sid, host=host_arg, budget=limit)
+
+    _run_optional([go], limit)
+    return 0
 
 
 # --------------------------------------------------------------------------- detection glue
@@ -786,6 +965,8 @@ def handle_event(host_arg, event, payload, *, probe=False, budget=None, home=Non
     start = time.monotonic()
     if event == "pre-tool" and not probe:
         return run_guard(host_arg, payload, env=env, home=home, out=out)
+    if event == "post-tool" and not probe:
+        return record_touch(host_arg, payload, home=home)
     try:
         t = _surfaces()
         if t is None:
@@ -819,6 +1000,9 @@ def handle_event(host_arg, event, payload, *, probe=False, budget=None, home=Non
             out.write(text + "\n")
             out.flush()
         steps = optional_steps if optional_steps is not None else [lambda: prune_claims(home=home)]
+        if optional_steps is None and host:
+            rest = max(0.2, limit - (time.monotonic() - start))
+            steps.append(lambda: run_sweep(host, payload, home=home, budget=min(SWEEP_BUDGET_S, rest)))
         if BASELINE_IN_HOOK and optional_steps is None:
             steps.append(lambda: write_baseline(payload, Path(n["cwd"] or ".")))
         _run_optional(steps, limit - (time.monotonic() - start))
@@ -1684,6 +1868,97 @@ def self_test_cases() -> list:
         ok("N1: a present dispatcher still runs with its event", r3.returncode == 0 and r3.stdout.startswith("ran "),
            f"{r3.returncode} {r3.stdout!r} {r3.stderr!r}")
     results += env_file_cases(table)
+    results += ledger_cases()
+    return results
+
+
+LEDGER_GOLDENS = (("claude-code", "post-tool", "edit"), ("claude-code", "post-tool-bash", "shell"),
+                  ("cursor", "post-edit", "edit"), ("cursor", "post-shell", "shell"),
+                  ("codex", "post-tool", "edit"), ("codex", "post-tool-bash", "shell"))
+
+
+def _placed(obj, cwd: Path):
+    if isinstance(obj, str):
+        return obj.replace("fixture-cwd", str(cwd))
+    if isinstance(obj, list):
+        return [_placed(x, cwd) for x in obj]
+    if isinstance(obj, dict):
+        return {k: _placed(v, cwd) for k, v in obj.items()}
+    return obj
+
+
+def ledger_golden(surface: str, event: str, cwd: Path) -> dict:
+    """A post-tool golden with its fixture cwd placed at a real directory (H23 tests)."""
+    return _placed(_golden(surface, event), cwd)
+
+
+def ledger_cases() -> list:
+    """H23: one ledger shape from every host's post-tool golden; host filter; silent; fast."""
+    results = []
+
+    def ok(name, cond, detail=""):
+        results.append((name, bool(cond), "" if cond else detail))
+
+    with tempfile.TemporaryDirectory(prefix="ws-hook-ledger-") as tmpd:
+        tmp = Path(os.path.realpath(tmpd))
+        repo = tmp / "repo"
+        (repo / ".git").mkdir(parents=True)
+        (repo / "notes").mkdir()
+        home = tmp / "home"
+        (home / ".config" / "snds-workspace" / "telemetry").mkdir(parents=True)
+        shapes = {}
+        for surface, event, kind in LEDGER_GOLDENS:
+            payload = dict(ledger_golden(surface, event, repo), session_id=f"s-{surface}-{event}")
+            payload.pop("conversation_id", None)
+            buf = io.StringIO()
+            t0 = time.monotonic()
+            with contextlib.redirect_stdout(buf):
+                rc = handle_event(surface, "post-tool", payload, home=home)
+            took = time.monotonic() - t0
+            recs = read_ledger(f"s-{surface}-{event}", home=home)
+            ok(f"ledger {surface}.{event}: rc 0, silent, under {LEDGER_BUDGET_S * 1000:.0f} ms",
+               rc == 0 and buf.getvalue() == "" and took < LEDGER_BUDGET_S, f"rc={rc} out={buf.getvalue()!r} {took:.3f}s")
+            shape = [(r["repo"], r["path"]) for r in recs]
+            ok(f"ledger {surface}.{event} names the repo and host",
+               len(recs) == 1 and recs[0]["host"] == surface and recs[0]["repo"] == str(repo)
+               and set(recs[0]) == {"repo", "path", "tool", "ts", "host"}, json.dumps(recs))
+            shapes.setdefault(kind, set()).add(tuple(shape))
+        ok("ledger parity: every host's edit golden gives the same record",
+           shapes.get("edit") == {((str(repo), "notes/touched.md"),)}, str(shapes.get("edit")))
+        ok("ledger parity: every host's shell golden gives the repo with no path",
+           shapes.get("shell") == {((str(repo), None),)}, str(shapes.get("shell")))
+        cur = dict(ledger_golden("cursor", "post-edit", repo), conversation_id="s-filter")
+        handle_event("claude-code", "post-tool", cur, home=home)
+        ok("host filter: a Cursor payload on the Claude registration writes nothing",
+           not ledger_path("s-filter", home=home).exists())
+        handle_event("auto", "post-tool", cur, home=home)
+        ok("--host auto takes the payload host", [r["host"] for r in read_ledger("s-filter", home=home)] == ["cursor"])
+        outside = dict(ledger_golden("claude-code", "post-tool", tmp / "no-repo"), session_id="s-out")
+        handle_event("claude-code", "post-tool", outside, home=home)
+        ok("an edit outside any repo is not recorded", not ledger_path("s-out", home=home).exists())
+        read = dict(ledger_golden("claude-code", "post-tool", repo), session_id="s-read", tool_name="Read")
+        handle_event("claude-code", "post-tool", read, home=home)
+        ok("a read tool is not recorded", not ledger_path("s-read", home=home).exists())
+        bare = tmp / "bare-home"
+        bare.mkdir()
+        handle_event("claude-code", "post-tool", dict(ledger_golden("claude-code", "post-tool", repo)), home=bare)
+        ok("no ledger without telemetry/ (nothing installed)", _tree_snapshot(bare) == [], str(_tree_snapshot(bare)))
+        ok("a broken payload fails open", handle_event("codex", "post-tool", {"session_id": "x", "tool_input": 3},
+                                                       home=home) == 0)
+        full = _fixture_tree(tmp / "cli", with_pr=False)
+        pl = json.dumps(dict(ledger_golden("codex", "post-tool", repo), session_id="s-cli"))
+        r = _run_cli(full, ["--host", "codex", "--event", "post-tool"], stdin=pl, home=home)
+        ok("CLI post-tool writes the ledger without profile_resolve and prints nothing",
+           r.returncode == 0 and r.stdout == "" and r.stderr == ""
+           and [x["path"] for x in read_ledger("s-cli", home=home)] == ["notes/touched.md"],
+           f"{r.returncode} {r.stdout!r} {r.stderr!r}")
+        start = json.dumps(dict(_golden("cursor", "session-start"), conversation_id="s-sweep"))
+        r = _run_cli(full, ["sweep", "--host", "cursor", "--budget", "1"], stdin=start, home=home)
+        ok("CLI sweep with no closure module in the pin fails open with the Cursor noop",
+           r.returncode == 0 and r.stdout.strip() == "{}" and r.stderr == "", f"{r.returncode} {r.stdout!r} {r.stderr!r}")
+        r = _run_cli(full, ["sweep", "--host", "claude-code"], stdin=start, home=home)
+        ok("CLI sweep host filter: a Cursor payload on the Claude registration is silent",
+           r.returncode == 0 and r.stdout == "" and r.stderr == "", f"{r.returncode} {r.stdout!r} {r.stderr!r}")
     return results
 
 
@@ -2073,6 +2348,8 @@ def main(argv=None) -> int:
         return host_skip_any(hosts, payload, unless=unless)
     if argv[:1] == ["env-file"]:
         return _env_file_main(argv)
+    if argv[:1] == ["sweep"]:
+        return _sweep_main(argv)
     if argv[:1] == ["probe-env"]:
         ap = argparse.ArgumentParser(prog="ws_hook.py probe-env")
         ap.add_argument("--host", required=True)
@@ -2101,6 +2378,27 @@ def main(argv=None) -> int:
         return 0
 
 
+def _sweep_main(argv) -> int:
+    """`ws_hook.py sweep --host H` (stdin: the session-start payload). Never prints; exit 0."""
+    try:
+        ap = argparse.ArgumentParser(prog="ws_hook.py sweep")
+        ap.add_argument("--host", required=True)
+        ap.add_argument("--budget", type=float)
+        a = ap.parse_args(argv[1:])
+        payload = _read_payload()
+        t = _payload_table()
+        hint = payload_host_hint(payload, table=t)
+        host = a.host if a.host != "auto" else (hint or "unknown")
+        if not (a.host != "auto" and hint and hint != a.host):   # host filter: the other host sweeps
+            run_sweep(host, payload, budget=a.budget)
+        text = noop((_row(t, host) or {}).get("dialect") or "none", table=t)
+        if text:
+            sys.stdout.write(text + "\n")
+        return 0
+    except BaseException:  # noqa: BLE001 - a session start is never blocked
+        return 0
+
+
 def _hook_main(argv) -> int:
     if "--floor" in argv:
         i = argv.index("--floor")
@@ -2118,6 +2416,8 @@ def _hook_main(argv) -> int:
         a = ap.parse_args(argv)
     except SystemExit:
         return 0            # hook path: a usage error never blocks the host
+    if a.event == "post-tool" and not a.probe:
+        return record_touch(a.host, _read_payload())     # H23 hot path: no profile_resolve import
     t = _surfaces()
     if t is not None and a.host != "auto":
         row = _row(t, a.host)
