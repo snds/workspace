@@ -4062,7 +4062,7 @@ def _fixture_root(tmp: Path) -> Path:
 AP_FIXTURES = TOOLS / "fixtures" / "action_policy"
 CLAUDE_ANC = [{"comm": "claude"}]
 _ORACLE_ORDER = ("P00", "P05", "P10", "P11", "P12", "P13", "P14", "P20", "P19", "P21", "P22", "P40", "P30", "P31",
-                 "P32", "P50")
+                 "P32", "P33", "P50")
 
 
 def _t7_fixture_root(tmp: Path) -> Path:
@@ -4106,6 +4106,8 @@ def _oracle(f: dict) -> str:
         if ac in ("author", "publish") and f["target_ref"] in ("default", "unknown"):
             return "deny"
         return "allow"
+    if fam in ("cursor", "codex") and not f["under_projects_root"] and not f["has_remote"]:
+        return "allow"  # P33 (Sean 2026-09-24): local scratch dirs, as P19 is for Claude
     if oc == "personal":
         return "allow"
     return "deny"

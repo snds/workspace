@@ -396,6 +396,19 @@
       "outcome": "allow"
     },
     {
+      "id": "P33-cc-no-remote-outside-root",
+      "when": {
+        "walls_family": [
+          "cursor",
+          "codex"
+        ],
+        "under_projects_root": false,
+        "has_remote": false
+      },
+      "outcome": "allow",
+      "note": "Sean 2026-09-24: mirrors P19 for Cursor and Codex (local scratch/temp dirs); removes R4 would-ask noise from the rollout data"
+    },
+    {
       "id": "P50-personal",
       "when": {
         "owner_class": [
