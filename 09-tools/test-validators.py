@@ -1339,10 +1339,32 @@ class TestPinLib(unittest.TestCase):
 
     def test_pinned_paths_single_home(self):
         pin_lib = load("00-bootstrap/doctor/pin_lib.py")
-        self.assertEqual(len(pin_lib.PINNED_PATHS), 11)  # wave 1 added 09-tools/git_lanes.py (H18), wall_guard.py (H15)
+        # wave 1 added 09-tools/git_lanes.py (H18), wall_guard.py (H15), and W1-6 (H20, walls F-11) the
+        # heal sources, the pinned doctor entry and the doctor with every helper it executes.
+        self.assertEqual(len(pin_lib.PINNED_PATHS), 20)
+        self.assertEqual(len(set(pin_lib.PINNED_PATHS)), 20)
         self.assertIn("09-tools/profile_resolve.py", pin_lib.PINNED_PATHS)
         self.assertIn("09-tools/git_lanes.py", pin_lib.PINNED_PATHS)
         self.assertIn("09-tools/wall_guard.py", pin_lib.PINNED_PATHS)
+        for rel in ("00-bootstrap/dist/workspace-sessionstart.sh", "00-bootstrap/dist/workspace-reassert.sh",
+                    "00-bootstrap/dist/workspace-audit.sh", "00-bootstrap/dist/user-CLAUDE.md",
+                    "00-bootstrap/dist/ws-doctor", "00-bootstrap/doctor/workspace-doctor.sh",
+                    "00-bootstrap/doctor/pin_lib.py", "00-bootstrap/doctor/merge_settings.py",
+                    "00-bootstrap/doctor/render_shims.py"):
+            self.assertIn(rel, pin_lib.PINNED_PATHS)
+            self.assertTrue((ROOT_DIR / rel).is_file(), rel)
+        self.assertIn("ws-doctor", pin_lib.WRAPPERS)
+        # Every file the doctor executes is pinned: each python3 helper path in the doctor sits under
+        # $CDOC/$CODE (the doctor's own tree) or the pinned lib, and resolves to a pinned path.
+        doc = (ROOT_DIR / "00-bootstrap/doctor/workspace-doctor.sh").read_text(encoding="utf-8")
+        import re as _re
+        for var, rel in _re.findall(r'python3 "\$(\w+)/([\w./-]+\.py)"', doc):
+            if var == "DOC":
+                self.assertEqual(rel, "installers.py")   # human-run only (TTY + human verdict)
+                continue
+            self.assertIn(var, ("CDOC", "CODE", "LIBC"), f"{var}/{rel}")
+            full = ("00-bootstrap/doctor/" + rel) if var == "CDOC" else rel
+            self.assertIn(full, pin_lib.PINNED_PATHS, full)
 
 
 class TestInstaller(unittest.TestCase):
