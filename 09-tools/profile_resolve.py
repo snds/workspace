@@ -181,6 +181,8 @@ TABLE_SCHEMAS: Dict[str, Dict[str, Tuple[tuple, bool]]] = {
         "surfaces": (_LIST, True), "formats": (_DICT, True), "dialects": (_DICT, True),
         "layers": (_LIST, True), "commands": (_DICT, True), "registrations": (_LIST, True),
         "outputs": (_LIST, True), "wrappers": (_DICT, True),
+        # H15 wall guard: tool families (payload reader, generated matcher) and the rollout modes
+        "tool_families": (_LIST, False), "wall_guard": (_DICT, False),
     },
     "devices": {
         "schema_version": (_INT, True), "doc": (_STR, True), "devices": (_LIST, True),
