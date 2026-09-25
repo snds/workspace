@@ -157,16 +157,16 @@ Coverage on the minimum surfaces (scope: `shared` is held to parity on the hooka
 
 | Component | Scope | claude-code | claude-chat | cursor | codex |
 |---|---|---|---|---|---|
-| H1 | shared | unverified | backstop-only | unverified | unverified |
-| H2 | shared | enforced-partial | advisory | unverified | unverified |
+| H1 | shared | enforced-when-installed | backstop-only | enforced-when-installed | enforced-when-installed |
+| H2 | shared | enforced-partial | advisory | enforced-when-installed | enforced-when-installed |
 | H3 | shared | enforced | not-applicable | enforced | enforced |
 | H15 | shared | enforced-partial | backstop-only | enforced-partial | enforced-when-installed |
 | H16 | shared | enforced | advisory | enforced-when-installed | enforced-when-installed |
 | H17 | claude-restriction | enforced-partial | backstop-only | advisory | advisory |
 | H18 | shared | enforced-when-installed | backstop-only | enforced-when-installed | enforced-when-installed |
-| H19 | shared | enforced-partial | not-applicable | enforced-partial | unverified |
+| H19 | shared | enforced-partial | not-applicable | enforced-partial | enforced-partial |
 | H20 | shared | enforced | not-applicable | advisory | advisory |
-| H22 | shared | enforced-partial | backstop-only | advisory | advisory |
+| H22 | shared | enforced-partial | backstop-only | enforced-partial | enforced-partial |
 | H24 | shared | enforced-partial | not-applicable | enforced-partial | enforced-partial |
 | H25 | shared | enforced-partial | backstop-only | enforced-when-installed | enforced-when-installed |
 | H23 | shared | enforced-partial | not-applicable | enforced-partial | enforced-partial |

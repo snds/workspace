@@ -240,15 +240,18 @@
       ],
       "coverage": {
         "H1": {
-          "mode": "unverified",
+          "mode": "enforced-when-installed",
           "rules": "pre-commit lane when installed (plan decision #2) plus the budgeted Claude SessionEnd accelerator; CI backstop without lanes",
           "decision": null,
           "verified_by": [
             "fixture:TestNightly",
-            "selftest:09-tools/nightly.py"
+            "selftest:09-tools/nightly.py",
+            "fixture:TestGitLanes",
+            "probe:git@work-mbp",
+            "probe:git@personal-mbp"
           ],
           "planned_verified_by": [],
-          "how": "enforced-when-installed once the H18 pre-commit lane installer ships (wave 1). TestNightly and the X1 replay in nightly.py --self-test already pass"
+          "how": "the H18 workspace lane runs the H1 heal lane (git_lanes._heal_lane -> nightly.py --lane pre-commit) on every commit to the workspace, whichever agent or human commits; TestGitLanes blocks a stale commit [H1] and passes a clean one through the real installer in a temp HOME; TestNightly and the X1 replay in nightly.py --self-test pass; the git probe records show config hooks on both Macs, where Sean installed the lanes (W1-2h). The lane rechecks the skill-graph generators for staged skill sources; other derived files and the declared lane bypasses rest on CI"
         },
         "H2": {
           "mode": "enforced-partial",
@@ -854,25 +857,32 @@
       ],
       "coverage": {
         "H1": {
-          "mode": "unverified",
+          "mode": "enforced-when-installed",
           "rules": "agent commits pass through the lane when installed; sessionEnd is not used; no session baseline in wave 0",
           "decision": null,
           "verified_by": [
             "fixture:TestNightly",
-            "selftest:09-tools/nightly.py"
+            "selftest:09-tools/nightly.py",
+            "fixture:TestGitLanes",
+            "probe:git@work-mbp",
+            "probe:git@personal-mbp"
           ],
           "planned_verified_by": [],
-          "how": "enforced-when-installed once the H18 pre-commit lane installer ships (wave 1). TestNightly and the X1 replay in nightly.py --self-test already pass"
+          "how": "the H18 workspace lane runs the H1 heal lane (git_lanes._heal_lane -> nightly.py --lane pre-commit) on every commit to the workspace, whichever agent or human commits; TestGitLanes blocks a stale commit [H1] and passes a clean one through the real installer in a temp HOME; TestNightly and the X1 replay in nightly.py --self-test pass; the git probe records show config hooks on both Macs, where Sean installed the lanes (W1-2h). The lane rechecks the skill-graph generators for staged skill sources; other derived files and the declared lane bypasses rest on CI"
         },
         "H2": {
-          "mode": "unverified",
-          "rules": "a voluntary CLI until H15 shims or H18 lanes are installed",
+          "mode": "enforced-when-installed",
+          "rules": "consumed at tool time by the H15 guard shims and at commit and push by the H18 lanes, where installed; otherwise a voluntary CLI",
           "decision": null,
           "verified_by": [
-            "fixture:TestProfileResolve"
+            "fixture:TestProfileResolve",
+            "fixture:TestWallGuard",
+            "fixture:TestGitLanes",
+            "probe:wallguard-cursor@work-mbp",
+            "probe:wallguard-cursor@personal-mbp"
           ],
           "planned_verified_by": [],
-          "how": "enforced-when-installed once H15 shims or H18 lanes call the resolver (wave 1). Until then it is a voluntary CLI. TestProfileResolve already passes"
+          "how": "the installed H15 guard (wall_guard.py) and the H18 lanes (git_lanes.py) both call profile_resolve; the live wallguard-cursor probes on both Macs (2026-09-24, all five goldens match) show the resolver deciding at tool time; TestProfileResolve, TestWallGuard and TestGitLanes pass"
         },
         "H3": {
           "mode": "enforced",
@@ -939,14 +949,17 @@
           "how": "the user-wrapper installer is tested (--install-user-skills); raise to enforced-when-installed once a live Cursor session outside the workspace is probed loading a wrapper"
         },
         "H22": {
-          "mode": "advisory",
-          "rules": "`profile_resolve.py policy` is a voluntary, report-only CLI; merge and default-branch denial is not enforced here; employer branch protection is the real wall",
+          "mode": "enforced-partial",
+          "rules": "the H15 guard consults the policy at tool time where installed; P05 enforces, the merge and default-branch rows (R2) log a would-deny only during the rollout window; employer branch protection is the real wall",
           "decision": null,
           "verified_by": [
-            "fixture:TestActionPolicy"
+            "fixture:TestActionPolicy",
+            "fixture:TestWallGuard",
+            "probe:wallguard-cursor@work-mbp",
+            "probe:wallguard-cursor@personal-mbp"
           ],
           "planned_verified_by": [],
-          "how": "enforced-when-installed once H15 shims or H18 lanes call policy (wave 1). TestActionPolicy already verifies the report-only CLI"
+          "how": "the installed H15 guard calls profile_resolve.policy at tool time (live wallguard-cursor probes on both Macs, 2026-09-24, all five goldens match). Partial: only P05 (hook bypass, as R6) enforces; the non-Claude employer rows P30-P32 and P40 map to R2, report-only for the rollout window until Sean decides; employer branch protection stays the real wall for merge and the default branch"
         },
         "H24": {
           "mode": "enforced-partial",
@@ -1224,25 +1237,32 @@
       ],
       "coverage": {
         "H1": {
-          "mode": "unverified",
+          "mode": "enforced-when-installed",
           "rules": "the escalated commit runs the lane when installed; no session baseline in wave 0",
           "decision": null,
           "verified_by": [
             "fixture:TestNightly",
-            "selftest:09-tools/nightly.py"
+            "selftest:09-tools/nightly.py",
+            "fixture:TestGitLanes",
+            "probe:git@work-mbp",
+            "probe:git@personal-mbp"
           ],
           "planned_verified_by": [],
-          "how": "enforced-when-installed once the H18 pre-commit lane installer ships (wave 1). TestNightly and the X1 replay in nightly.py --self-test already pass"
+          "how": "the H18 workspace lane runs the H1 heal lane (git_lanes._heal_lane -> nightly.py --lane pre-commit) on every commit to the workspace, whichever agent or human commits; TestGitLanes blocks a stale commit [H1] and passes a clean one through the real installer in a temp HOME; TestNightly and the X1 replay in nightly.py --self-test pass; the git probe records show config hooks on both Macs, where Sean installed the lanes (W1-2h). The lane rechecks the skill-graph generators for staged skill sources; other derived files and the declared lane bypasses rest on CI"
         },
         "H2": {
-          "mode": "unverified",
+          "mode": "enforced-when-installed",
           "rules": "`where` resolves by slug, not cwd; hooks only once trusted",
           "decision": null,
           "verified_by": [
-            "fixture:TestProfileResolve"
+            "fixture:TestProfileResolve",
+            "fixture:TestWallGuard",
+            "fixture:TestGitLanes",
+            "probe:wallguard-codex@work-mbp",
+            "probe:wallguard-codex@personal-mbp"
           ],
           "planned_verified_by": [],
-          "how": "enforced-when-installed once H18 lanes call the resolver (wave 1) and the Codex hooks are trusted (a manual step). TestProfileResolve already passes"
+          "how": "the Codex hooks are trusted and the installed H15 guard calls profile_resolve at tool time (live wallguard-codex probes on both Macs, 2026-09-24, all five goldens match); the H18 lanes call it at commit and push; TestProfileResolve, TestWallGuard and TestGitLanes pass. Enforced where Sean installs and trusts the hooks"
         },
         "H3": {
           "mode": "enforced",
@@ -1288,14 +1308,17 @@
           "how": "enforced-when-installed once the H18 identity lanes ship (wave 1). TestIdentity already verifies the report-only identity check"
         },
         "H19": {
-          "mode": "unverified",
-          "rules": "inert until trusted; trust-state detection needs a manual confirmation; no session baseline in wave 0",
+          "mode": "enforced-partial",
+          "rules": "trusted user hooks run the ws-hook entry into the pinned hook core; trust is a manual step per device; no session baseline in wave 0",
           "decision": null,
           "verified_by": [
-            "probe:codex@work-mbp"
+            "selftest:09-tools/ws_hook.py",
+            "probe:codex@work-mbp",
+            "probe:wallguard-codex@work-mbp",
+            "probe:wallguard-codex@personal-mbp"
           ],
           "planned_verified_by": [],
-          "how": "held back: the codex probe record exists but its hook probe is not-installed (Codex in the ChatGPT app did not fire the hooks), so the record proves the shell env only. Stays unverified until a Codex host that loads the hooks records a hook probe"
+          "how": "the codex pre-tool shim is ws-hook --host codex --event pre-tool, which ws_hook.handle_event routes to the guard; the wallguard-codex probes (2026-09-24, both Macs) hold decision rows logged only on that hook path, so Codex fires the hook core. Partial: the codex probe records still show the probe hook layer not installed, so session-start, user-prompt and stop are not yet shown firing on Codex; trust stays a manual step"
         },
         "H20": {
           "mode": "advisory",
@@ -1309,14 +1332,17 @@
           "how": "the user-wrapper installer is tested (--install-user-skills); raise to enforced-when-installed once a live Codex session outside the workspace is probed loading a wrapper"
         },
         "H22": {
-          "mode": "advisory",
-          "rules": "as Cursor; the hooks are also untrusted",
+          "mode": "enforced-partial",
+          "rules": "as Cursor, once the hooks are trusted",
           "decision": null,
           "verified_by": [
-            "fixture:TestActionPolicy"
+            "fixture:TestActionPolicy",
+            "fixture:TestWallGuard",
+            "probe:wallguard-codex@work-mbp",
+            "probe:wallguard-codex@personal-mbp"
           ],
           "planned_verified_by": [],
-          "how": "enforced-when-installed once H15 shims are installed and trusted (wave 1). TestActionPolicy already verifies the report-only CLI"
+          "how": "the installed H15 guard calls profile_resolve.policy at tool time (live wallguard-codex probes on both Macs, 2026-09-24, all five goldens match). Partial: only P05 (hook bypass, as R6) enforces; the non-Claude employer rows P30-P32 and P40 map to R2, report-only for the rollout window until Sean decides; employer branch protection stays the real wall for merge and the default branch"
         },
         "H24": {
           "mode": "enforced-partial",
