@@ -100,6 +100,7 @@ _FALLBACK_SURFACES: Dict[str, Any] = {
         "names": ["CLAUDECODE", "CLAUDE_PROJECT_DIR", "CLAUDE_PLUGIN_ROOT", "CLAUDE_WORKSPACE_VAULT", "CLAUDE_ENV_FILE",
                   "CURSOR_AGENT", "CODEX_THREAD_ID", "GEMINI_CLI", "AI_AGENT"],
         "prefixes": ["CLAUDE_CODE_", "CURSOR_", "CODEX_", "COPILOT_", "GEMINI_"],
+        "exclude": ["CLAUDE_CODE_SSE_PORT"],
     },
     "surfaces": [
         {"id": "claude-code", "family": "claude", "markers": {"env": [], "ancestry": [
@@ -459,8 +460,8 @@ def _validate_surfaces(obj: dict, errors: List[str]) -> None:
             if not isinstance(m, dict) or not isinstance(m.get("comm"), str) or m.get("match", "exact") not in ("exact", "prefix"):
                 errors.append(f"surfaces[{i}].markers.ancestry: needs comm and match exact|prefix")
     ape = obj.get("agent_possible_env") if isinstance(obj.get("agent_possible_env"), dict) else {}
-    if not _str_list(ape.get("names", [])) or not _str_list(ape.get("prefixes", [])):
-        errors.append("agent_possible_env: names and prefixes must be lists of strings")
+    if not _str_list(ape.get("names", [])) or not _str_list(ape.get("prefixes", [])) or not _str_list(ape.get("exclude", [])):
+        errors.append("agent_possible_env: names, prefixes and exclude must be lists of strings")
     for k in ("never_markers", "minimum_surfaces", "components", "coverage_modes"):
         if k in obj and not _str_list(obj[k]):
             errors.append(f"{k}: must be a list of strings")
@@ -1551,9 +1552,13 @@ def _agent_possible_names(env: Any, t: dict) -> List[str]:
     ape = t.get("agent_possible_env") or {}
     names = set(ape.get("names") or [])
     prefixes = tuple(ape.get("prefixes") or ())
+    # Names that match a prefix but are no agent evidence on their own. CLAUDE_CODE_SSE_PORT is set by
+    # the Claude IDE extension in every Cursor / VS Code terminal, a human's included (Sean, 2026-09-24);
+    # a real Claude chain still carries CLAUDECODE, the overlay's WS_SURFACE_FAMILY and its ancestry.
+    exclude = set(ape.get("exclude") or [])
     out = []
     for k, v in dict(env).items():
-        if v in (None, ""):
+        if v in (None, "") or k in exclude:
             continue
         if k in names or (prefixes and k.startswith(prefixes)):
             out.append(k)
@@ -5319,6 +5324,16 @@ def self_test(stub_chain: bool = False) -> int:
             d = detect_surface(env={"AI_AGENT": "github_copilot_vscode_agent"}, ancestry=[], isatty=NO_TTY, root=ROOT)
             ok(d["family_for_walls"] == "unknown-agent" and _restricted(d, ROOT),
                f"AI_AGENT=github_copilot_vscode_* alone stays restricted (L-01): {d}")
+            # Sean 2026-09-24: CLAUDE_CODE_SSE_PORT alone (the Claude IDE extension's variable, present in every
+            # Cursor / VS Code terminal) is no agent evidence; any real Claude marker beside it still is.
+            ide = {"CLAUDE_CODE_SSE_PORT": "12345", "TERM_PROGRAM": "vscode"}
+            ok(not _agent_possible_names(ide, _surfaces_or_fallback(ROOT)),
+               "CLAUDE_CODE_SSE_PORT alone is not agent-possible (IDE terminal)")
+            for extra in ({"CLAUDECODE": "1"}, {"CLAUDE_CODE_ENTRYPOINT": "cli"}):
+                ok(bool(_agent_possible_names(dict(ide, **extra), _surfaces_or_fallback(ROOT))),
+                   f"CLAUDE_CODE_SSE_PORT plus {sorted(extra)} stays agent-possible")
+            d = detect_surface(env=dict(ide, WS_SURFACE_FAMILY="claude"), ancestry=[], isatty=NO_TTY, root=ROOT)
+            ok(d["family_for_walls"] == "claude", f"the overlay beside the IDE variable keeps claude walls: {d}")
 
         # the surfaces table unreadable: the built-in marker list still refuses (test F-02, decision b)
         empty = tmp / "no-tables"

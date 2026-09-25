@@ -233,9 +233,9 @@ CASES = [
     "fail-open: with the pin absent the lane allows (declared; the installer refuses without a pinned lane)",
     "in-process: a claude process in the ancestry gets the Claude floor [I2] on an employer repo",
     "in-process: the device-mismatch flag is a notice, never a block",
-    "in-process (resolver semantics, decision pending): a Cursor shell that also carries CLAUDE_CODE_SSE_PORT "
-    "(an IDE terminal with the Claude extension, as the work-mbp cursor probe records) tightens to the Claude "
-    "floor [I2] on an employer repo",
+    "in-process (Sean 2026-09-24): a Cursor shell that also carries CLAUDE_CODE_SSE_PORT (an IDE terminal "
+    "with the Claude extension, as the work-mbp cursor probe records) keeps Cursor's walls, and its "
+    "employer-identity commit on an employer repo is allowed",
 ]
 # Measurements, never pass/fail: the 300 ms target depends on the host (python start, bytecode, ps, git spawns).
 REPORT: list = []
@@ -412,7 +412,7 @@ def lane_cases() -> list:
         ide = lab.ident(dict(lab.env, CURSOR_AGENT="1", CLAUDE_CODE_SSE_PORT="41234"), "acme-id")
         d = gl.lane_decide("pre-commit", [], [], env=ide, ancestry=[{"comm": "Cursor Helper (Plugin)"}],
                            root=lab.lib, home=lab.home, cwd=emp)
-        out.append((CASES[21], d["decision"] == "block" and d["rule"] == "I2" and d["family"] == "claude",
+        out.append((CASES[21], d["decision"] == "allow" and d["family"] == "cursor",
                     json.dumps(d)[:300]))
 
         # budget (reported, never asserted): the whole pre-commit hook process outside the workspace with the

@@ -74,6 +74,9 @@
     ],
     "prefixes": [
       "CLAUDE_CODE_"
+    ],
+    "exclude": [
+      "CLAUDE_CODE_SSE_PORT"
     ]
   },
   "probe_env_name_prefixes": [
