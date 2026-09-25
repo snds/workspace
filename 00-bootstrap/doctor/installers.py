@@ -880,6 +880,10 @@ def overlay_refusals(ctx: Ctx) -> list:
         reasons.append("bin/ws-hook missing or not executable (run --install-pin)")
     if not p["lib_current"].exists():
         reasons.append("lib/current missing (run --install-pin)")
+    elif not _pin_has_env_file(p["lib_current"]):
+        # D-W1-4: the settings fragment is hooks-only now; a pin older than the env-file step would
+        # leave a fresh device's Claude shells with no overlay at all.
+        reasons.append("the pinned ws-hook predates the env-file step (run --install-pin first)")
     try:
         dev = ctx.pr().current_device().get("id") or "unknown"
     except Exception as e:  # noqa: BLE001
@@ -968,6 +972,13 @@ def channel_leak_refusals(ctx: Ctx, dev: str) -> list:
             reasons.append(f"probe {sid}@{dev} shows {OVERLAY_CHANNEL_NAME}: the Claude env-file overlay "
                            "reached a non-Claude shell")
     return reasons
+
+
+def _pin_has_env_file(lib: Path) -> bool:
+    try:
+        return "def env_file(" in (lib / "09-tools" / "ws_hook.py").read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return False
 
 
 def _claude_settings_env_names(ctx: Ctx) -> set:
@@ -1640,12 +1651,33 @@ def self_test() -> int:
             self.assertFalse(retired.exists())
             self.assertTrue(list(retired.parent.glob("cursor-reassert.sh.ws-bak.*")))
 
-        def _seed_overlay_ready(self, probe_env=False, probe=True, config_hooks=True):
+        def _seed_overlay_ready(self, probe_env=False, probe=True, config_hooks=True, env_file_pin=True):
             self.install_pin()
+            self._seed_pinned_ws_hook(env_file_pin)
             self.surfaces = overlay_table()
             self._seed_gitcaps(config_hooks)
             if probe:
                 self._seed_probe("cursor", probe_env)
+
+        def _seed_pinned_ws_hook(self, env_file=True):
+            """The fixture pin archives a synthetic repo with no ws_hook.py; give lib/current one that does
+            (or does not) carry the D-W1-4 env-file step."""
+            lib = (self.home / ".config/snds-workspace/lib/current").resolve()
+            tools = lib / "09-tools"
+            for d in (lib, tools):
+                if d.exists():
+                    d.chmod(0o755)
+            tools.mkdir(parents=True, exist_ok=True)
+            f = tools / "ws_hook.py"
+            if f.exists():
+                f.chmod(0o644)
+            f.write_text("def env_file(host, payload):\n    return 'noop'\n" if env_file else "# pre-D4 pin\n")
+
+        def test_overlay_refuses_a_pin_without_the_env_file_step(self):
+            self._seed_overlay_ready(env_file_pin=False)
+            rc, _o, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
+            self.assertNotEqual(rc, 0)
+            self.assertIn("predates the env-file step", err)
 
         def _seed_gitcaps(self, config_hooks=True, present=True):
             f = self.repo / PROBES_DIR / "git@dev-a.json"
