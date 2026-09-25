@@ -45,6 +45,22 @@ reality changes. Designed intent (outcome + northstar) changes only with Sean's 
   own toplevel. In an automated context (CI, any agent, no TTY) only `python3 <git-tracked
   09-tools/*.py>` without shell metacharacters runs; anything else is NOT_EXPOSED. Exit 1 on FAIL
   or SKIP, 2 on NOT_EXPOSED only, else 0.
+- **Project intent (`<repo>/PROJECT.md`, H4).** Frontmatter: `lifecycle:` discover | define | build |
+  operate; `profile:` in personal repos only and tighten-only (the context table is authoritative);
+  optional `inherits: <owner>/<repo>[#path][@ref]` and `inherits_context: <slug>#AGENTS.md[, vault:<id>]`;
+  optional `approval:` (grammar above). Body `## Project intent`, ≤40 lines: `### Problem & audience`,
+  `### Knowns & unknowns` (table `claim | label | tier | evidence | decision rule`; labels known,
+  inferred, assumed, unknown, conflicted; tiers T1–T5; the rule is written before the evidence),
+  `### Out of scope & later`. `n/a (reason)` and `[HUMAN: …]` markers are allowed; markers and missing
+  rules WARN at discover and ERROR from define on. The repo's `AGENTS.md` (and `AGENTS.override.md`)
+  carries `Project intent: PROJECT.md`. Vault-only projects use the same block in their README. Frame
+  with `init --frame --repo DIR`; employer repos get the `--neutral` render by PR only.
+- **`lint` / `approve` / `next` / `verify --record` (H5).** Inheritance stays within one owner class
+  (checked from the table before any read). An approval whose introducing commit (`git log -S`)
+  carries an agent trailer is BLOCKED; with no trailer lane it WARNs "provenance unknown". Employer
+  intent and specs accept only `approved via PR <n>`. Records: `<spec>.verify.jsonl` (workspace,
+  `merge=union`); employer records hold counts, ids and hashes under
+  `~/.config/snds-workspace/state/telemetry/<slug>/`, never in the repo.
 - **`scope-audit`.** Checks each integration merge (or a `--task ID --rev A..B` range) against the
   task's `writes` plus the integrator's, the spec's `**HELD:**` set, JSON selectors, and unreverted
   `session: auto-commit` commits. Exit 0 clean, 1 violation, 3 nothing to audit.

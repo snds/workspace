@@ -87,6 +87,7 @@ Consult before any write. Mirrored (compressed) in [[AGENTS]] and expanded with 
 | A cross-cutting method / lens / operating model | `01-frameworks/` | new framework only if 3+ consumers |
 | A durable standard / spec / vocabulary | `02-shared-references/` | additive |
 | A living intent spec (multi-agent plan) | owning project `docs/INTENT.md` or the code repo; shape [[intent-spec]] | not Linear; not chat |
+| A project's intent (problem, audience, knowns/unknowns, scope) | `<repo>/PROJECT.md` + one `AGENTS.md` pointer line; vault-only projects: a README `## Project intent` block; shape [[intent-spec]] | the repo holds it, the vault points (never copies); employer repos: neutral render by PR, non-Claude authors |
 | A standing design *method* (not a project's look) | `02-shared-references/idempotent-design-decisions.md` + DSDS `shared[]` | method here; values in the target system |
 | A portable DS documentation view | `02-shared-references/dsds/` (DSDS 0.20) | view of facets 1–17; not a contract |
 | A job-context constitution (UX, eng, game, vision, …) | `02-shared-references/domain-constitutions/` | methods + complements; not project values; spec [[constitution-spec]] |
