@@ -130,6 +130,7 @@
 !09-tools/token-audit.py
 !09-tools/ws_hook.py
 !09-tools/profile_resolve.py
+!09-tools/git_lanes.py
 !09-tools/eslint-off-system/
 !09-tools/eslint-off-system/**
 !09-tools/shadcn-lint/

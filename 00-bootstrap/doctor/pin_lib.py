@@ -44,6 +44,7 @@ VAULT_TOOLS = VAULT_ROOT / "09-tools"
 PINNED_PATHS = [
     "09-tools/ws_hook.py",
     "09-tools/profile_resolve.py",
+    "09-tools/git_lanes.py",
     "02-shared-references/surfaces.json",
     "02-shared-references/devices.json",
     "02-shared-references/delivery-playbooks/context-remotes.json",
