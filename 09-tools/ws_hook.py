@@ -16,8 +16,9 @@ imports its sibling `profile_resolve.py`; tables resolve relative to that copy.
   ws_hook.py --self-test-shell
 
 Hook paths fail open: a missing module or table, an exception or a timeout gives no decision
-(exit 0, no stdout). In wave 0 no live registration runs --event without --probe; the event
-paths are exercised by fixtures. `host --skip-any` exits 3 only on verified evidence that the
+(exit 0, no stdout). `--event user-prompt` routes through the vault's 09-tools/prompt_route.py
+(the one matcher, run as a subprocess from the root the pointer names; H7), rendered in the
+host dialect. Event paths are exercised by fixtures until a registration runs them live. `host --skip-any` exits 3 only on verified evidence that the
 acting host is in the set, 0 when a verified host is outside it, 2 otherwise. `host --skip-unless`
 is its complement: 3 only on verified evidence that the acting host is outside the set, 0 when a
 verified host is in it, 2 otherwise (an empty set is a usage error, 2). `host --skip-unless-layer
@@ -716,6 +717,38 @@ def _card(host, row, budget, home=None) -> Optional[str]:
     return text or None
 
 
+def _route(host, payload, budget, home=None) -> Optional[str]:
+    """H7: the one matcher, run from the vault checkout (never a fork, never imported into
+    the pinned process). The raw payload goes in on stdin; prompt_route applies the host
+    adapter and is_user_turn (X2). Nothing on any failure."""
+    vroot = _vault_root(home)
+    if vroot is None:
+        return None
+    script = vroot / "09-tools" / "prompt_route.py"
+    if not script.is_file():
+        return None
+    try:
+        r = subprocess.run([sys.executable, str(script), "--stdin", "--payload", "--host", host,
+                            "--brain", str(vroot)], input=json.dumps(payload), capture_output=True,
+                           text=True, timeout=budget, cwd=str(vroot))
+    except (OSError, subprocess.SubprocessError, TypeError, ValueError):
+        return None
+    text = (r.stdout or "").strip() if r.returncode == 0 else ""
+    return text or None
+
+
+def _route_event(host, row, dialect, payload, n, t, budget, home, out, start) -> int:
+    if not host or not claim(n["session"], "user-prompt", n["turn"] or "0", host=host, home=home):
+        return 0
+    limit = _budget(row, "user-prompt", budget)
+    text = _route(host, payload, max(0.2, limit - (time.monotonic() - start)), home)
+    rendered = render(dialect, "user-prompt", text, table=t) if text else ""
+    if rendered:
+        out.write(rendered + "\n")
+        out.flush()
+    return 0
+
+
 def _run_optional(steps, remaining: float) -> None:
     threads = []
     for step in steps:
@@ -761,8 +794,10 @@ def handle_event(host_arg, event, payload, *, probe=False, budget=None, home=Non
             if text:
                 out.write(text + "\n")
             return 0
+        if event == "user-prompt":
+            return _route_event(host, row, dialect, payload, n, t, budget, home, out, start)
         if event != "session-start":
-            return 0            # wave 0: user-prompt routes arrive with H7; other events observe only
+            return 0            # other events observe only
         if not claim(n["session"], event, n["turn"] or "0", host=host or "unknown", home=home):
             return 0
         limit = _budget(row, event, budget)
@@ -1008,6 +1043,10 @@ def self_test_cases() -> list:
         (vroot / "09-tools").mkdir(parents=True)
         (vroot / "09-tools" / "session-status.py").write_text(
             "import sys\nprint('CARD for ' + sys.argv[2])\n", encoding="utf-8")
+        # H7: the real matcher over the prompt_route fixture brain.
+        shutil.copy2(TOOLS / "prompt_route.py", vroot / "09-tools" / "prompt_route.py")
+        shutil.copytree(TOOLS / "fixtures" / "prompt_route" / "brain", vroot, dirs_exist_ok=True)
+        (vroot / "AGENTS.md").write_text("# fixture brain\n", encoding="utf-8")
 
         def home_with(tele: bool, name: str) -> Path:
             home = tmp / name
@@ -1045,9 +1084,43 @@ def self_test_cases() -> list:
             handle_event("auto", "session-start", dict(_golden("codex", "session-start"), session_id="sess-cdx"),
                          home=home, out=buf4, optional_steps=[])
             ok("codex (unverified dialect) gets nothing", buf4.getvalue() == "", buf4.getvalue())
+            # H7: user-prompt routes through the vault's prompt_route (the one matcher).
             buf5 = io.StringIO()
             handle_event("auto", "user-prompt", _golden("claude-code", "user-prompt"), home=home, out=buf5)
-            ok("user-prompt emits no route in wave 0", buf5.getvalue() == "", buf5.getvalue())
+            ok("user-prompt with no trigger emits nothing", buf5.getvalue() == "", buf5.getvalue())
+            routed = dict(_golden("claude-code", "user-prompt"), prompt="review the zero vector plan",
+                          session_id="sess-route")
+            buf6 = io.StringIO()
+            handle_event("auto", "user-prompt", routed, home=home, out=buf6)
+            try:
+                ctx = json.loads(buf6.getvalue())["hookSpecificOutput"]
+                route_ok = ctx["hookEventName"] == "UserPromptSubmit" and "zero-vector.md" in ctx["additionalContext"]
+                longest_ok = "fixture-linear-algebra" not in ctx["additionalContext"]
+            except (ValueError, KeyError):
+                route_ok = longest_ok = False
+            ok("user-prompt routes in the host dialect (claude-code)", route_ok, buf6.getvalue())
+            ok("user-prompt keeps longest-match suppression", longest_ok, buf6.getvalue())
+            buf7 = io.StringIO()
+            handle_event("auto", "user-prompt", routed, home=home, out=buf7)
+            ok("a duplicate user-prompt claim gives no output", buf7.getvalue() == "", buf7.getvalue())
+            x2 = dict(routed, session_id="sess-x2",
+                      prompt="<task-notification>\n<summary>review the zero vector plan</summary>\n</task-notification>")
+            buf8 = io.StringIO()
+            handle_event("auto", "user-prompt", x2, home=home, out=buf8)
+            ok("X2: a task-notification turn is not routed", buf8.getvalue() == "", buf8.getvalue())
+            buf9 = io.StringIO()
+            handle_event("auto", "user-prompt", dict(_golden("cursor", "user-prompt"), conversation_id="sess-rc",
+                                                     prompt="review the zero vector plan"), home=home, out=buf9)
+            ok("cursor user-prompt cannot inject (renders {})", buf9.getvalue().strip() == "{}", buf9.getvalue())
+            buf10 = io.StringIO()
+            handle_event("auto", "user-prompt", dict(_golden("codex", "user-prompt"), session_id="sess-rx",
+                                                     prompt="review the zero vector plan"), home=home, out=buf10)
+            ok("codex user-prompt (unverified dialect) gets nothing", buf10.getvalue() == "", buf10.getvalue())
+            (vroot / "09-tools" / "prompt_route.py").rename(vroot / "09-tools" / "prompt_route.off")
+            buf11 = io.StringIO()
+            handle_event("auto", "user-prompt", dict(routed, session_id="sess-noroute"), home=home, out=buf11)
+            (vroot / "09-tools" / "prompt_route.off").rename(vroot / "09-tools" / "prompt_route.py")
+            ok("user-prompt fails open without prompt_route", buf11.getvalue() == "", buf11.getvalue())
 
             # 4. Card still emitted when optional steps sleep past the budget.
             buf = io.StringIO()
