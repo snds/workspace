@@ -82,10 +82,10 @@ Standing law and folder semantics live in **[AGENTS.md](AGENTS.md)** — do not 
 - Knowledge → [08-knowledge/_INDEX.md](08-knowledge/_INDEX.md) before domain work
 - QA always-load → framework #06 before audit/review/critique/refine work
 
-### `.claude/skills/` — Claude Code slash workflows only
+### Workflow slash commands
 
-- `/today` · `/handback` · `/session-end` · `/reconcile` · `/new-project`
-- `/framework-check` · `/optimize` · `/health` · `/harness-map` · `/mission-fit`
+`/today` `/side-chat-handback` `/session-end` `/reconcile` `/new-project` `/framework-check` `/optimize`
+`/health` `/harness-map` `/mission-fit`: bodies in `03-skills/<name>/`; `.claude/skills/` holds generated wrappers.
 
 ### Claude-only gates
 
@@ -96,5 +96,5 @@ Standing law and folder semantics live in **[AGENTS.md](AGENTS.md)** — do not 
 
 - **Root:** nearest ancestor with `AGENTS.md`. **Remote:** `snds/workspace`.
 - **Start** — SessionStart injects context; resume via project **Live handoff**.
-- **End** — `/session-end` fragment + baton; see [.claude/skills/session-end/SKILL.md](.claude/skills/session-end/SKILL.md).
+- **End** — `/session-end` fragment + baton; see [03-skills/session-end/SKILL.md](03-skills/session-end/SKILL.md).
 - Continuity contract: [AGENTS.md](AGENTS.md) → Multi-agent continuity & handoff.

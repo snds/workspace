@@ -111,7 +111,7 @@
     "visual qa constitution": "02-shared-references/domain-constitutions/dc-visual-qa.yaml + 03-skills/visual-prove-engine/SKILL.md",
     "configuration collapse": "08-knowledge/design/nathan-curtis-ds-ops-substack.md — slots over prop sprawl; AI-ready composition",
     "figma slots": "08-knowledge/design/nathan-curtis-ds-ops-substack.md — slots over prop sprawl; AI-ready composition",
-    "maintenance loop": "08-knowledge/cross-domain/nate-jones-harness-enrichments.md + .claude/skills/optimize/SKILL.md",
+    "maintenance loop": "08-knowledge/cross-domain/nate-jones-harness-enrichments.md + 03-skills/optimize/SKILL.md",
     "skill one-job": "08-knowledge/cross-domain/nate-jones-harness-enrichments.md — keep/rewrite/remove imported skills",
     "handback": "03-skills/side-chat-handback/SKILL.md — end side chat; write the gitignored parent inbox for pickup",
     "/handback": "03-skills/side-chat-handback/SKILL.md — end side chat; write the gitignored parent inbox for pickup",

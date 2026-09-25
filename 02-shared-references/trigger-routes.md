@@ -118,7 +118,7 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `visual qa constitution` | 02-shared-references/domain-constitutions/dc-visual-qa.yaml + 03-skills/visual-prove-engine/SKILL.md |
 | `configuration collapse` | 08-knowledge/design/nathan-curtis-ds-ops-substack.md — slots over prop sprawl; AI-ready composition |
 | `figma slots` | 08-knowledge/design/nathan-curtis-ds-ops-substack.md — slots over prop sprawl; AI-ready composition |
-| `maintenance loop` | 08-knowledge/cross-domain/nate-jones-harness-enrichments.md + .claude/skills/optimize/SKILL.md |
+| `maintenance loop` | 08-knowledge/cross-domain/nate-jones-harness-enrichments.md + 03-skills/optimize/SKILL.md |
 | `skill one-job` | 08-knowledge/cross-domain/nate-jones-harness-enrichments.md — keep/rewrite/remove imported skills |
 | `handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write the gitignored parent inbox for pickup |
 | `/handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write the gitignored parent inbox for pickup |
@@ -426,7 +426,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `optimize` | cross-cutting | `/optimize`, `audit the brain`, `brain audit`, `workflow audit`, `system error correction`, `review the workspace foundations` | `optimize` |
 | `plan-ahead` | cross-cutting | `order of operations`, `cds then proto`, `consume cds`, `pages build`, `follow up`, `overlay vs main` (+9) | `plan-ahead` |
 | `process-plugins` | cross-cutting | `tdd`, `test driven development`, `write the test first`, `red green refactor`, `verification before completion`, `am i done` (+11) | `process-plugins` |
-| `reconcile` | cross-cutting | `/reconcile`, `reconcile sessions`, `end of day sync`, `merge sessions`, `consolidate sessions` | `reconcile` |
+| `reconcile` | cross-cutting | `/reconcile`, `end of day sync`, `merge sessions`, `consolidate sessions` | `reconcile` |
 | `render-qa-toolkit` | cross-cutting | `render qa`, `perfcapture`, `frame budget`, `pass attribution`, `native grid`, `false color exposure` (+7) | `realtime-visual-craft` → `render-qa-toolkit` |
 | `rendering-guild` | cross-cutting | `rendering guild`, `convene guild`, `render guild`, `light td`, `material td`, `shadow td` (+4) | `rendering-guild` |
 | `sec-appsec-owasp` | cross-cutting | `owasp`, `injection`, `sql injection`, `xss`, `csrf`, `ssrf` (+12) | `eng-foundations` → `lead-security-architect` → `sec-appsec-owasp` |

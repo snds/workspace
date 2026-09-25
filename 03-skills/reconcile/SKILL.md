@@ -5,7 +5,7 @@ description: >
   clean updates for session-log.md and project-context.md. Invoked as /reconcile or triggered by
   "reconcile sessions" / "end of day sync" / "merge sessions".
 aliases: [reconcile]
-triggers: ["/reconcile", "reconcile sessions", "end of day sync", "merge sessions", "consolidate sessions"]
+triggers: ["/reconcile", "end of day sync", "merge sessions", "consolidate sessions"]
 tier: cross-cutting
 domain: workspace
 related: [session-end, workspace-bootstrap]

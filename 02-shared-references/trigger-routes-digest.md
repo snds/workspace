@@ -55,7 +55,8 @@ Shells run `python3 09-tools/skill-loadset.py "<request>"` instead. Never ingest
 - machine vision ontology → `02-shared-references/domain-constitutions/` + `03-skills/vision-foundations/SKILL.md`
 - visual qa constitution → `02-shared-references/domain-constitutions/` + `03-skills/visual-prove-engine/SKILL.md`
 - configuration collapse, figma slots → `08-knowledge/design/nathan-curtis-ds-ops-substack.md`
-- maintenance loop, skill one-job → `08-knowledge/cross-domain/nate-jones-harness-enrichments.md`
+- maintenance loop → `08-knowledge/cross-domain/nate-jones-harness-enrichments.md` + `03-skills/optimize/SKILL.md`
+- skill one-job → `08-knowledge/cross-domain/nate-jones-harness-enrichments.md`
 - handback, /handback, end side chat, close side chat, hand this back → `03-skills/side-chat-handback/SKILL.md`
 - figma plugin → `03-skills/figma-plugin-dev/SKILL.md`
 - figma, in figma, build in figma, component set, library file, stickersheet → `03-skills/figma/SKILL.md` + `03-skills/design-engineer/SKILL.md` + `03-skills/figma-component-generation/SKILL.md` + `03-skills/figma-canvas-designer/SKILL.md` + `08-knowledge/design/figma-ds-surface-authoring.md`
@@ -127,4 +128,4 @@ Shells run `python3 09-tools/skill-loadset.py "<request>"` instead. Never ingest
 - no-raw-colors → `08-knowledge/engineering/shadcn-lint-token-tiers.md`
 - subatomic course → `07-projects/23-subatomic-design-tokens-course/` + `08-knowledge/design/design-token-architecture.md` + `03-skills/token-architecture/SKILL.md`
 
-_Routes: 315 · targets: 119_
+_Routes: 315 · targets: 120_

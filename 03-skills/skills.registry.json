@@ -3499,7 +3499,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:d8c2b5ea8aa5571d0eb09f640a7e38a2eba209943e6634ba0368e79a4199e6b8"
+      "hash": "sha256:5785286dd4d461f112490f291e11aae69372cf9c01145fc049fbe4356b361735"
     },
     "health": {
       "path": "03-skills/health/SKILL.md",
@@ -6079,7 +6079,6 @@
       "governs": [],
       "triggers": [
         "/reconcile",
-        "reconcile sessions",
         "end of day sync",
         "merge sessions",
         "consolidate sessions"
@@ -6090,7 +6089,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:5f3e315390f72f4a8547de7a5082f85952ae5a86f443e07d61cad502b90a955e"
+      "hash": "sha256:ee33802de2a19f1a6bad38c9e63177b3fe847f8944cd550bfdf9f0e26b4f1ef8"
     },
     "redesign": {
       "path": "03-skills/redesign/SKILL.md",
@@ -6806,7 +6805,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:705f006d26095327931161c3a6685b0751c0ac5f89078165b01207df8837a6bd"
+      "hash": "sha256:d8423f9a34aeafcaf1d3cb3c9491399cf047c5af1a5465647628a6de8d346944"
     },
     "skill-placement": {
       "path": "03-skills/skill-placement/SKILL.md",

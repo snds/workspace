@@ -80,7 +80,7 @@ Record the **active surface** in the report. Coverage differs:
 |---|---|
 | **Workspace core** (always) | [[AGENTS]], `03-skills/skills.registry.json`, [[trigger-routes]], `01-frameworks/`, `02-shared-references/`, `06-context/` (head only for growing logs), `09-tools/validate*.py` + `build*.py`, write-quality gate chain |
 | **Cursor** | `.cursor/rules/**` (`alwaysApply` especially), `.cursor/agents/`, User Rules / beacon if reachable, Cursor hooks if present |
-| **Claude Code** | `CLAUDE.md`, `.claude/settings.json`, `.claude/hooks/`, `.claude/skills/` slash wrappers, SessionStart/UserPromptSubmit behavior |
+| **Claude Code** | `CLAUDE.md`, `.claude/settings.json`, `.claude/hooks/`, `.claude/skills/` generated wrappers (bodies in `03-skills/`), SessionStart/UserPromptSubmit behavior |
 | **Other** | Named adapter only (`PERPLEXITY.md`, etc.) + what that surface can actually see |
 
 One run may cover **core + current surface**. Do not borrow another surface's receipt.
@@ -218,7 +218,7 @@ On approval: smallest reviewable diffs; regenerate registry/related if skills ch
 |---|---|
 | [[mission-fit]] | Jobs + recent runs vs this map; false-success checks |
 | [[workspace-bootstrap]] | Session handshake / load protocol — does not audit harness shape |
-| `/optimize` (`.claude/skills/optimize`) | Entropy punch list across the vault — use map dispositions when consolidating |
+| [[optimize]] (`/optimize`) | Entropy punch list across the vault — use map dispositions when consolidating |
 | [[open-agent-engine]] | Movement + receipts for tasks — not a harness inventory |
 | [[intent-coordination]] | Living spec + `intent-run.py` waves — not a harness inventory |
 | [[side-chat-handback]] | Parent continuity only |

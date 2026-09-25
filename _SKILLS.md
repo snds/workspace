@@ -44,9 +44,9 @@ LIMIT 60
 - **Workspace mgmt:** [[03-skills/workspace-bootstrap/SKILL|workspace-bootstrap]] (session handshake) + [[03-skills/side-chat-handback/SKILL|side-chat-handback]] (`/handback` — side chat → parent inbox) + [[03-skills/open-agent-engine/SKILL|open-agent-engine]] (work movement — queue, ledger, receipts; lanes in [[06-context/open-engine/README|open-engine]]) + [[03-skills/harness-map/SKILL|harness-map]] (map the AI setup before cleaning) + [[03-skills/mission-fit/SKILL|mission-fit]] (jobs vs harness; false-success checks before trusting `done`) + [[03-skills/close-out/SKILL|close-out]] (QA loop; mint missing detectors; page Sean iff self-critique or mint fails) + [[03-skills/self-improve/SKILL|self-improve]] (correct / heal / improve through ordinary use) + [[03-skills/plan-ahead/SKILL|plan-ahead]] (order of operations before write) + [[03-skills/artifact-ingest/SKILL|artifact-ingest]] (vendor Canvas/Artifact/HTML → vault; write-through + harvest CLIs)
 - **Process plugins:** [[03-skills/process-plugins/SKILL|process-plugins]] (pstack/superpowers precedence)
 
-## `.claude/skills/` — Claude Code slash commands
+## Workflows — one home, generated wrappers
 
-Invoked by `/name` from inside Claude Code. Small, focused workflow automations.
+[[03-skills/optimize/SKILL|optimize]] · [[03-skills/health/SKILL|health]] · [[03-skills/session-end/SKILL|session-end]] · [[03-skills/reconcile/SKILL|reconcile]] · [[03-skills/today/SKILL|today]] · [[03-skills/new-project/SKILL|new-project]] · [[03-skills/framework-check/SKILL|framework-check]] live in `03-skills/` like every skill. `.claude/skills/` (Claude `/name`) and `.agents/skills/` (Codex, Cursor) hold generated pointer wrappers (`09-tools/build-local-skill-plugin.py --wrappers`); the table below lists them.
 
 ```dataview
 TABLE WITHOUT ID
@@ -61,4 +61,4 @@ SORT file.name ASC
 
 **For Claude Desktop:** create `03-skills/{name}/SKILL.md` using the template at `00-bootstrap/templates/skill.md`. Run skills sync (automatic on session boot) so the hash registry picks it up.
 
-**For Claude Code:** create `.claude/skills/{name}/SKILL.md`. It becomes available as `/{name}` on next session start.
+**For a workflow slash command (every surface):** create `03-skills/{name}/SKILL.md`, add the name to `WORKFLOWS` in `09-tools/build-local-skill-plugin.py`, then run it with `--wrappers`. Never hand-write `.claude/skills/` or `.agents/skills/` (`--check` fails on it).
