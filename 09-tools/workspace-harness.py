@@ -142,6 +142,7 @@ QUALITY_CHAIN = [
     ("../00-bootstrap/doctor/installers.py", ["--self-test"]),
     ("ws_hook.py", ["--self-test"]),
     ("ws_hook.py", ["--self-test-shell"]),
+    ("closure.py", ["--self-test"]),
     ("../00-bootstrap/doctor/render_shims.py", ["--check"]),
     ("../00-bootstrap/doctor/render_shims.py", ["--self-test"]),
     ("intent-run.py", ["--self-test"]),
