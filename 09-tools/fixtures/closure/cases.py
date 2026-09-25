@@ -281,6 +281,10 @@ def _sweeper(c, pr, tmp: Path, ok) -> None:
     ok("a Codex leftover fragment is swept by a Cursor start and its ledger closes",
        any(x["sid"] == "cdx-dead" for x in res["committed"])
        and (w["tele"] / "sessions" / "cdx-dead.closed").is_file(), json.dumps(res))
+    ok("a closed ledger still plans", [r["action"] for r in c.plan("cdx-dead", home=home, root=ws,
+                                                                   hostname="host-b")["repos"]] == ["workspace"])
+    ok("a ledger that reached another repo is not closed by the sweeper",
+       (w["tele"] / "sessions" / "cur-dead.touched").is_file())
     # never blocks: a zero budget sweeps nothing and returns
     ledger(w, "late", [rec(ws, "notes/idea.md", "codex")], age=OLD)
     t0 = time.monotonic()

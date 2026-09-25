@@ -105,7 +105,24 @@ def telemetry(home=None) -> Path:
 
 
 def ledger(sid: str, *, home=None) -> List[dict]:
-    return _wh().read_ledger(sid, home=home)
+    """The session's touch records; a ledger the sweeper closed stays readable (`<sid>.closed`)."""
+    wh = _wh()
+    recs = wh.read_ledger(sid, home=home)
+    if recs:
+        return recs
+    closed = wh.ledger_path(sid, home=home).with_suffix(".closed")
+    out = []
+    try:
+        for ln in closed.read_text(encoding="utf-8").splitlines():
+            try:
+                rec = json.loads(ln)
+            except ValueError:
+                continue
+            if isinstance(rec, dict) and isinstance(rec.get("repo"), str):
+                out.append(rec)
+    except OSError:
+        pass
+    return out
 
 
 def _families(root=None) -> dict:
@@ -678,8 +695,8 @@ def sweep(*, home=None, root=None, current_sid: str = "", host: str = "unknown",
         if part["substantive"]:
             out["notices"].append({"sid": sid, "surface": surface, "files": len(part["substantive"]),
                                    "text": notice_text(surface, sid, len(part["substantive"]))})
-        elif done and not dry_run:
-            _close_ledger(sess, sid)
+        elif done and not dry_run and all(_real(r.get("repo", "")) == str(ws) for r in ledger(sid, home=home)):
+            _close_ledger(sess, sid)      # a ledger that reached other repos stays for `ws closure plan`
     if not dry_run:
         _write_notices(tele, out["notices"])
         _prune_closed(sess, now)
@@ -713,7 +730,7 @@ def _close_ledger(sess: Path, sid: str) -> None:
 
 
 def _prune_closed(sess: Path, now: float) -> None:
-    for f in sess.glob("*.closed"):
+    for f in list(sess.glob("*.closed")) + list(sess.glob("*.touched")):
         if _mtime(f) < now - LEDGER_MAX_AGE_S:
             try:
                 f.unlink()
