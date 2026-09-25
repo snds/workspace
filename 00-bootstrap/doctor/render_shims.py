@@ -83,7 +83,9 @@ TOP_KEYS = [
 ]
 # H15: optional keys (the render fixtures predate them). tool_families feeds the generated Claude
 # PreToolUse matcher and the guard's payload reader; wall_guard holds the rollout modes.
-OPTIONAL_TOP_KEYS = ["tool_families", "wall_guard"]
+# W1-11: component_scopes, current_wave and parity_gate feed the parity gate in
+# 09-tools/workspace-harness.py (check_component_parity), which owns their validation.
+OPTIONAL_TOP_KEYS = ["tool_families", "wall_guard", "component_scopes", "current_wave", "parity_gate"]
 TOOL_FAMILY_KINDS = {"shell", "file", "server", "url", "mcp"}
 WALL_MODES = {"enforce", "report"}
 MATCHER_TOKEN_RE = re.compile(r"^@tool_families:([a-z-]+)$")
@@ -1094,12 +1096,15 @@ def render_md_block(t: dict) -> str:
                      f"{s.get('dialect')} | {_yn(s.get('required'))} |")
     mins = list(t.get("minimum_surfaces") or [])
     rows = {s["id"]: s for s in t.get("surfaces") or []}
-    lines += ["", "Coverage on the minimum surfaces:", "",
-              "| Component | " + " | ".join(mins) + " |",
-              "|---|" + "---|" * len(mins)]
+    scopes = t.get("component_scopes") or {}
+    lines += ["", "Coverage on the minimum surfaces (scope: `shared` is held to parity on the hookable ones by "
+              "`workspace-harness.py --parity`; `claude-restriction` exists to hold Claude back):", "",
+              "| Component | Scope | " + " | ".join(mins) + " |",
+              "|---|---|" + "---|" * len(mins)]
     for c in t.get("components") or []:
         cells = [((rows.get(m) or {}).get("coverage") or {}).get(c, {}).get("mode", "-") for m in mins]
-        lines.append(f"| {c} | " + " | ".join(cells) + " |")
+        scope = (scopes.get(c) or {}).get("scope", "-") if isinstance(scopes.get(c), dict) else "-"
+        lines.append(f"| {c} | {scope} | " + " | ".join(cells) + " |")
     lines += ["", "Registrations (one effective registration per surface, event and behaviour):", "",
               "| Registration | Event | Command | Host skip | Claim group |", "|---|---|---|---|---|"]
     for r in t.get("registrations") or []:

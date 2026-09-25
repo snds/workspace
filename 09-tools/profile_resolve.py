@@ -184,6 +184,8 @@ TABLE_SCHEMAS: Dict[str, Dict[str, Tuple[tuple, bool]]] = {
         "outputs": (_LIST, True), "wrappers": (_DICT, True),
         # H15 wall guard: tool families (payload reader, generated matcher) and the rollout modes
         "tool_families": (_LIST, False), "wall_guard": (_DICT, False),
+        # W1-11 parity gate (validated by workspace-harness.py check_component_parity)
+        "component_scopes": (_DICT, False), "current_wave": (_INT, False), "parity_gate": (_STR, False),
     },
     "devices": {
         "schema_version": (_INT, True), "doc": (_STR, True), "devices": (_LIST, True),
