@@ -20,6 +20,8 @@ related_skills: [omni-project]
 > This vault folder holds **context only**. The working project context/skill is
 > [[omni-project]] (`03-skills/omni-project/SKILL.md`).
 
+- **Project intent:** `snds/omni:PROJECT.md` (the intent lives in the code repo; frame it there with `intent-run.py init --frame`)
+
 ## Continuity
 
 Design intent, decisions, and narrative live in the `omni-project` skill and the

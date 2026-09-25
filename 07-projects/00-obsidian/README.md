@@ -2,6 +2,7 @@
 title: Obsidian + agent workspace integration
 tags: [project, infrastructure, integration]
 status: active
+lifecycle: define
 ---
 
 # 00-obsidian — Obsidian + agent workspace integration
@@ -28,6 +29,28 @@ The integration's *deployed* files live at the workspace root (one level up from
     ├── setup/            ← cross-platform installer (setup.py + wrappers)
     └── templates/        ← Templater templates for daily notes, projects, skills
 ```
+
+## Project intent
+
+### Problem & audience
+
+One filesystem has to serve Obsidian and every agent (Claude Code, Cursor, desktop apps, a human)
+with no vendor-specific file bridge. The audience is Sean, on each of his machines, plus any agent
+that enters the workspace.
+
+### Knowns & unknowns
+
+| claim | label | tier | evidence | decision rule |
+|---|---|---|---|---|
+| Git is the sync layer and the checkout is the source of truth | known | T1 | the move off the cloud drive; AGENTS.md "Bootstrap on a checkout" | — |
+| The 2026-04 SESSION-STATE checkpoint predates that move | known | T1 | the superseded note at the top of SESSION-STATE.md | — |
+| Obsidian and the agents never clobber each other's writes | assumed | T5 | not measured | if a lost write shows up in the session log, add a check to the doctor before anything else |
+| The Windows setup named in SESSION-STATE is still in use | unknown | T5 | the devices table lists macOS machines only | if no device row names Windows at the next audit, archive the Windows notes |
+
+### Out of scope & later
+
+The deployed files themselves (AGENTS.md, adapters, hooks) have their own homes; this block covers
+the integration project. Later: rewrite the stale SESSION-STATE checkpoint.
 
 ## Why this lives in `07-projects/`
 
