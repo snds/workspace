@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "doc": "Fixture devices table for check-secrets --self-test (emp-email). Synthetic domains only; never a copy of the real table.",
+  "personal_markers": {"emails": [], "email_domains": ["pat-sample.example"]},
+  "employer_allowlist": {"identity_ids": [], "email_domains": ["acme-mail.example"]}
+}

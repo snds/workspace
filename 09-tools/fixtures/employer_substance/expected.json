@@ -1,3 +1,4 @@
 {
-  "planted.md": [[3, "emp-url"], [4, "emp-path"], [5, "emp-slug"], [6, "emp-path"], [7, "emp-url"], [10, "emp-quote"], [12, "emp-url"]]
+  "planted.md": [[3, "emp-url"], [4, "emp-path"], [5, "emp-slug"], [6, "emp-path"], [7, "emp-url"], [10, "emp-quote"], [12, "emp-url"]],
+  "email.md": [[3, "emp-email"], [4, "emp-email"], [5, "emp-email"]]
 }

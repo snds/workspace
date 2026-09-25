@@ -4,13 +4,20 @@
 Does not depend on gitleaks. Exit 1 on any hit. Skip _archive, lockfiles,
 node_modules, *.example, and binary files.
 
-Second class, `employer-substance` (H25, report-only in wave 0): flags employer
-PR/issue/blob/tree URLs, file-level paths inside employer repos, repo-level
-employer slugs, and quoted text near those hits. The rules come from the declared
-table `context-remotes.json` (`owners`, `employer_path_globs`, `employer_substance`),
-read through `profile_resolve.load_table`. Output is `path:line rule` only; matched
-text is never printed. Counts ratchet against
-`02-shared-references/employer-substance-baseline.json` (may only shrink).
+Second class, `employer-substance` (H25; blocking against the baseline since wave 1,
+W1-10): flags employer PR/issue/blob/tree URLs, file-level paths inside employer repos,
+repo-level employer slugs, quoted text near those hits, and full email addresses on the
+employer mail domain (`emp-email`, D-W1-5: a bare mention of the domain never counts).
+The rules come from the declared tables `context-remotes.json` (`owners`,
+`employer_path_globs`, `employer_substance`) and `devices.json`
+(`employer_allowlist.email_domains`, exact domain, no subdomains — the same match the
+identity checks use), read through `profile_resolve.load_table`. Output is
+`path:line rule` only; matched text is never printed. Counts ratchet against
+`02-shared-references/employer-substance-baseline.json` (may only shrink):
+`--baseline-check` fails on any count above it (the workspace pre-commit lane runs it
+with `--staged`; CI runs it on the full tree) and names counts below it so the
+baseline gets lowered with `--write-baseline`. Cache-derived slug hits stay
+informational (never compared with the baseline).
 
 Usage:
   python3 09-tools/check-secrets.py
@@ -172,11 +179,12 @@ def secrets_main() -> int:
 
 
 # ---------------------------------------------------------------------------
-# employer-substance class (H25). Report-only in wave 0.
+# employer-substance class (H25). Blocking against the baseline (W1-10); cache-derived
+# slug hits stay informational.
 # ---------------------------------------------------------------------------
 
 EMP_CLASS = "employer-substance"
-EMP_RULES: tuple[str, ...] = ("emp-url", "emp-path", "emp-slug", "emp-quote")
+EMP_RULES: tuple[str, ...] = ("emp-url", "emp-path", "emp-slug", "emp-quote", "emp-email")
 BASELINE_REL = "02-shared-references/employer-substance-baseline.json"
 REMOTES_REL = "02-shared-references/delivery-playbooks/context-remotes.json"
 EMP_EXCLUDE = frozenset({BASELINE_REL, REMOTES_REL})
@@ -217,7 +225,7 @@ def _resolver() -> Any:
 class EmpRules:
     """Compiled employer-substance rules from one `context-remotes` table."""
 
-    def __init__(self, table: dict) -> None:
+    def __init__(self, table: dict, mail_domains: Optional[list[str]] = None) -> None:
         if not isinstance(table, dict):
             raise EmpTableError("context-remotes: not an object")
         owners = table.get("owners")
@@ -269,6 +277,17 @@ class EmpRules:
         else:
             self.path_rx = None
             self.slug_rx = None
+        # D-W1-5: a full address on the employer mail domain counts; the bare domain does not.
+        # Exact domain (no subdomains), matching `profile_resolve.email_class`.
+        doms = [d.strip().lstrip("@") for d in mail_domains or [] if isinstance(d, str) and d.strip()]
+        self.mail_domains = doms
+        self.email_rx: Optional[re.Pattern[str]] = None
+        if doms:
+            alt = "|".join(re.escape(d) for d in doms)
+            self.email_rx = re.compile(
+                rf"(?<![A-Za-z0-9._%+-])[A-Za-z0-9._%+-]+@(?:{alt})(?![A-Za-z0-9-])(?!\.[A-Za-z0-9])",
+                re.IGNORECASE,
+            )
 
     # -- per-line matchers ---------------------------------------------------
     def _glob_path_spans(self, line: str) -> list[tuple[int, int]]:
@@ -349,6 +368,8 @@ class EmpRules:
                 hits.add((i, "emp-path"))
             if slug:
                 hits.add((i, "emp-slug"))
+            if self.email_rx is not None and self.email_rx.search(line):
+                hits.add((i, "emp-email"))
             if url or path:
                 anchor.append(i)
         for q in quoted:
@@ -377,14 +398,33 @@ def _projects_rel(tok: str) -> Optional[list[str]]:
     return rel
 
 
+def mail_domains(resolver: Any, root: Path) -> tuple[list[str], str]:
+    """Employer mail domains from the tracked `devices` table (`employer_allowlist.email_domains`).
+
+    Absent or unreadable: ([], reason) and the address check is a no-op with a notice."""
+    try:
+        dev = resolver.load_table("devices", root=root)
+    except (OSError, ValueError, KeyError, TypeError):
+        return [], "skipped (devices table unreadable)"
+    doms = ((dev.get("employer_allowlist") or {}).get("email_domains") or []) if isinstance(dev, dict) else []
+    doms = [d for d in doms if isinstance(d, str) and d.strip()] if isinstance(doms, list) else []
+    return (doms, "ok") if doms else ([], "skipped (no employer mail domain declared)")
+
+
 def load_emp_rules(resolver: Any, root: Path) -> EmpRules:
+    rules, _status = load_emp_rules_status(resolver, root)
+    return rules
+
+
+def load_emp_rules_status(resolver: Any, root: Path) -> tuple[EmpRules, str]:
     if resolver is None:
         raise EmpTableError("profile_resolve unavailable")
     try:
         table = resolver.load_table("context-remotes", root=root)
     except (OSError, ValueError, KeyError, TypeError) as exc:
         raise EmpTableError(f"context-remotes unreadable ({type(exc).__name__})") from None
-    return EmpRules(table)
+    doms, status = mail_domains(resolver, root)
+    return EmpRules(table, doms), status
 
 
 def _git_out(root: Path, *args: str) -> Optional[bytes]:
@@ -524,6 +564,18 @@ def _load_baseline(root: Path) -> Optional[dict]:
     return data
 
 
+def baseline_shrink(paths: dict, baseline: dict) -> int:
+    """How many baseline (path, rule) counts the tree now sits below (full-tree scans only)."""
+    n = 0
+    for rel, allowed in (baseline.get("paths") or {}).items():
+        if not isinstance(allowed, dict):
+            continue
+        for rule, cap in allowed.items():
+            if isinstance(cap, int) and paths.get(rel, {}).get(rule, 0) < cap:
+                n += 1
+    return n
+
+
 def baseline_growth(paths: dict, baseline: dict, *, only: Optional[set] = None) -> list[tuple[str, str, int, int]]:
     """(path, rule, now, allowed) for every count above the baseline or new."""
     base = baseline.get("paths", {})
@@ -565,7 +617,7 @@ def run_employer(
         print("employer-substance: --write-baseline needs the full tree, not --staged", file=sys.stderr)
         return finish(2)
     try:
-        rules = load_emp_rules(resolver, root)
+        rules, mail_status = load_emp_rules_status(resolver, root)
     except EmpTableError as exc:
         print(f"employer-substance: tables unreadable — {exc}", file=sys.stderr)
         env["error"] = str(exc)
@@ -575,6 +627,7 @@ def run_employer(
     slugs, cache_status = cache_slugs(resolver, home)
     chits = cache_hits(slugs, root, staged=args.staged)
     env["totals"] = totals
+    env["email_domains"] = {"status": mail_status, "count": len(rules.mail_domains)}
     env["findings"] = [
         {"path": rel, "line": line, "rule": rule} for rel in sorted(found) for line, rule in found[rel]
     ]
@@ -591,8 +644,10 @@ def run_employer(
             print(f"cache-derived: {rel}:{line} emp-slug")
         if not chits:
             print(f"cache-derived: {len(chits)} hit(s) — {cache_status}")
+        if mail_status != "ok":
+            print(f"emp-email: {mail_status}; the address check did not run")
         summary = " · ".join(f"{r} {totals[r]}" for r in EMP_RULES)
-        print(f"employer-substance ({mode}, report-only): {summary} in {len(paths)} file(s)")
+        print(f"employer-substance ({mode}): {summary} in {len(paths)} file(s)")
 
     if mode == "report":
         return finish(0)
@@ -615,10 +670,16 @@ def run_employer(
         for p, r, n, c in grew:
             print(f"  ✗ {p} {r} {n} > baseline {c}", file=sys.stderr)
         if grew:
-            print(f"employer-substance baseline EXCEEDED — {len(grew)} (path, rule) count(s)", file=sys.stderr)
+            print(f"employer-substance baseline EXCEEDED — {len(grew)} (path, rule) count(s). Remove the "
+                  f"employer content; the baseline never grows", file=sys.stderr)
             return finish(1)
+        shrink = 0 if args.staged else baseline_shrink(paths, baseline)
+        env["below_baseline"] = shrink
         if human:
             print("OK employer-substance — no (path, rule) count above the baseline")
+            if shrink:
+                print(f"employer-substance: {shrink} (path, rule) count(s) below the baseline; lower it: "
+                      f"python3 09-tools/check-secrets.py --class {EMP_CLASS} --write-baseline")
         return finish(0)
 
     # write-baseline
@@ -684,6 +745,7 @@ def main(argv: Optional[list[str]] = None, *, resolver: Any = "auto", home: Opti
 # ---------------------------------------------------------------------------
 
 FIXTURES = TOOLS / "fixtures" / "employer_substance"
+DEVICES_REL = "02-shared-references/devices.json"
 
 
 class _FakeResolver:
@@ -699,7 +761,7 @@ class _FakeResolver:
     def load_table(self, name: str, *, root: Optional[Path] = None) -> dict:
         if self.broken:
             raise self.TableError("fixture: broken table")
-        path = Path(root or ROOT) / REMOTES_REL
+        path = Path(root or ROOT) / (DEVICES_REL if name == "devices" else REMOTES_REL)
         try:
             return json.loads(path.read_text(encoding="utf-8"))
         except (OSError, ValueError) as exc:
@@ -751,6 +813,7 @@ def self_test() -> int:
         shutil.copy(FIXTURES / "context-remotes.json", root / REMOTES_REL)
         shutil.copy(FIXTURES / "planted.md", root / "notes" / "planted.md")
         shutil.copy(FIXTURES / "clean.md", root / "notes" / "clean.md")
+        shutil.copy(FIXTURES / "devices.json", root / DEVICES_REL)
         fake = _FakeResolver(home)
         rules = load_emp_rules(fake, root)
 
@@ -762,6 +825,17 @@ def self_test() -> int:
               f"got {got_pairs}")
         for rule in ("emp-url", "emp-path", "emp-slug", "emp-quote"):
             check(f"planted: {rule} flagged", any(r == rule for _, r in got))
+
+        # emp-email (D-W1-5): full addresses on the declared mail domain count, any case; bare
+        # mentions, handles, hosts, subdomains, lookalikes and other domains never do.
+        got = rules.scan_text((FIXTURES / "email.md").read_text(encoding="utf-8"))
+        got_pairs = sorted([line, rule] for line, rule in got)
+        check("email hits match expected.json", got_pairs == sorted(expect["email.md"]), f"got {got_pairs}")
+        check("email rule reads the devices table", rules.mail_domains == ["acme-mail.example"],
+              str(len(rules.mail_domains)))
+        no_dom = EmpRules(json.loads((FIXTURES / "context-remotes.json").read_text(encoding="utf-8")))
+        check("no mail domain → address check is a no-op",
+              no_dom.scan_text((FIXTURES / "email.md").read_text(encoding="utf-8")) == [])
 
         # Allowlisted owner-level tokens and non-employer owners pass.
         clean = rules.scan_text((root / "notes" / "clean.md").read_text(encoding="utf-8"))
@@ -803,6 +877,25 @@ def self_test() -> int:
         check("baseline file never holds planted text", not leaks(base_bytes.decode("utf-8")))
         rc, _ = _run_captured(["--class", EMP_CLASS, "--baseline-check", "--root", str(root)], fake, home)
         check("baseline-check holds", rc == 0, f"rc={rc}")
+        check("baseline carries emp-email at zero",
+              json.loads(base_bytes.decode("utf-8"))["totals"].get("emp-email") == 0)
+
+        # One new address above a zero emp-email baseline blocks, and never prints the address.
+        (root / "notes" / "addr.md").write_text("ping zz-planted@acme-mail.example\n", encoding="utf-8")
+        rc, text = _run_captured(["--class", EMP_CLASS, "--baseline-check", "--root", str(root)], fake, home)
+        check("new address → baseline-check exit 1", rc == 1 and "notes/addr.md emp-email 1 > baseline 0" in text,
+              f"rc={rc}")
+        check("address output never prints the address", not leaks(text), f"leaked {leaks(text)}")
+        (root / "notes" / "addr.md").write_text("config value only: acme-mail.example\n", encoding="utf-8")
+        rc, _ = _run_captured(["--class", EMP_CLASS, "--baseline-check", "--root", str(root)], fake, home)
+        check("bare domain mention → baseline-check holds", rc == 0, f"rc={rc}")
+        (root / "notes" / "addr.md").unlink()
+
+        # Devices table absent → the address check is a no-op with a one-line notice (exit unchanged).
+        (root / DEVICES_REL).rename(root / "devices.off")
+        rc, text = _run_captured(["--class", EMP_CLASS, "--baseline-check", "--root", str(root)], fake, home)
+        check("no devices table → notice, exit 0", rc == 0 and "emp-email: skipped" in text, f"rc={rc}")
+        (root / "devices.off").rename(root / DEVICES_REL)
 
         # Baseline growth → --baseline-check exits 1; --write-baseline refuses and leaves the file.
         grow = (FIXTURES / "growth.md").read_text(encoding="utf-8")
@@ -819,6 +912,9 @@ def self_test() -> int:
         # Shrink → rewrite allowed, and the ratchet tightens.
         (root / "notes" / "new.md").unlink()
         shutil.copy(FIXTURES / "clean.md", root / "notes" / "planted.md")
+        rc, text = _run_captured(["--class", EMP_CLASS, "--baseline-check", "--root", str(root)], fake, home)
+        check("shrink → check passes and asks for a lower baseline",
+              rc == 0 and "below the baseline; lower it" in text, f"rc={rc}")
         rc, _ = _run_captured(["--class", EMP_CLASS, "--write-baseline", "--root", str(root)], fake, home)
         check("write-baseline accepts shrink", rc == 0, f"rc={rc}")
         shrunk = json.loads((root / BASELINE_REL).read_text(encoding="utf-8"))

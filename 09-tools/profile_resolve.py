@@ -4762,7 +4762,7 @@ def _t8_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     shipped, d5 = load_table("devices"), "centricsoftware.com"
     ok(d5 in (shipped.get("employer_allowlist") or {}).get("email_domains", []),
        "shipped employer_allowlist carries the D5 domain")
-    ok([email_class(a, shipped) for a in (f"user@{d5}", "USER@CentricSoftware.COM")] == ["employer"] * 2,
+    ok([email_class(a, shipped) for a in (f"user@{d5}", f"USER@{d5.upper()}")] == ["employer"] * 2,
        "D5: the employer domain classifies employer in any case")
     ok([email_class(f"user@{d}", shipped) for d in (f"{d5}.evil.io", f"not{d5}", f"mail.{d5}")] == ["other"] * 3,
        "D5: lookalikes and subdomains of the employer domain classify other")

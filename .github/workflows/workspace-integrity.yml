@@ -228,8 +228,8 @@ jobs:
         run: python3 09-tools/ws_hook.py --self-test
       - name: Intent-run self-test (parser, verify hardening, scope-audit, no-git-write)
         run: python3 09-tools/intent-run.py --self-test
-      - name: Employer-substance report (report-only, never fails)
-        run: python3 09-tools/check-secrets.py --class employer-substance --report || echo "employer-substance report unavailable (exit $?)"
+      - name: Employer-substance baseline (H25, blocking; a count above the baseline fails)
+        run: python3 09-tools/check-secrets.py --class employer-substance --baseline-check
       - name: Negative fixtures (validators must refuse planted defects)
         run: python3 09-tools/test-validators.py
       - name: Floor, identity and overlay fixtures (strict; a SKIP fails)

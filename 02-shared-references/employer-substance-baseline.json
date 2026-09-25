@@ -1,23 +1,22 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-22",
-  "generated_from": "0d49774395a3c4a5c2f627b5cd6e193c5042fa78",
+  "generated_at": "2026-09-25",
+  "generated_from": "8d6fb753db3ea34d3c99c0bace7357b60e243c52",
   "rules": [
     "emp-url",
     "emp-path",
     "emp-slug",
-    "emp-quote"
+    "emp-quote",
+    "emp-email"
   ],
   "totals": {
     "emp-url": 52,
     "emp-path": 22,
-    "emp-slug": 62,
-    "emp-quote": 2
+    "emp-slug": 60,
+    "emp-quote": 2,
+    "emp-email": 0
   },
   "paths": {
-    ".claude/skills/session-end/SKILL.md": {
-      "emp-slug": 2
-    },
     "01-frameworks/09-component-and-pattern-framework.md": {
       "emp-path": 2,
       "emp-quote": 1

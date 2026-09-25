@@ -20,7 +20,8 @@ The lane is chosen by the repo profile (profile_resolve):
              commit and annotated tag in a pushed range (author AND committer on the employer
              allowlist; any personal marker blocks). R2 (agent default-branch and force pushes) is
              report-only here, under H15's rollout. Nothing is ever written into an employer repo.
-  workspace  identity as for personal, plus the H1 heal lane (`nightly.py --lane pre-commit`).
+  workspace  identity as for personal, plus the H25 employer-substance scan over the staged files
+             (blocks above its baseline) and the H1 heal lane (`nightly.py --lane pre-commit`).
   personal   the device-mismatch flag (a notice, never a block).
   unknown    agents WARN, humans are allowed.
 A Claude chain (the most restrictive family anywhere in the chain; env markers only ever tighten)
@@ -62,6 +63,7 @@ GITCONFIG_BEGIN = "# BEGIN snds-workspace git lanes (installers.py git-hooks; do
 GITCONFIG_END = "# END snds-workspace git lanes"
 LANE_BUDGET_S = 10.0
 HEAL_TIMEOUT_S = 120.0
+EMP_TIMEOUT_S = 30.0
 GIT_TIMEOUT_S = 10
 TAG = "ws-lanes"
 AGENT_FAMILIES_R2 = ("cursor", "codex", "copilot", "gemini", "unknown-agent")
@@ -310,6 +312,30 @@ def _heal_lane(base: dict, top: Path, e: dict) -> dict:
     return base
 
 
+def _emp_lane(base: dict, top: Path, e: dict) -> dict:
+    """H25 (W1-10): the employer-substance scan over the staged files, blocking against the baseline
+    (`check-secrets.py --class employer-substance --baseline-check --staged`, from the checkout being
+    committed). Exit 1 blocks; a missing script, a timeout or any other exit allows with a notice
+    (CI runs the full-tree check on every push)."""
+    script = top / "09-tools" / "check-secrets.py"
+    if not script.is_file():
+        return base
+    try:
+        r = subprocess.run([sys.executable, str(script), "--class", "employer-substance", "--baseline-check",
+                            "--staged"], cwd=str(top), env=e, capture_output=True, text=True,
+                           timeout=EMP_TIMEOUT_S)
+    except (OSError, subprocess.SubprocessError) as exc:
+        base["notices"].append(f"H25 employer-substance scan could not run ({exc.__class__.__name__}); CI re-checks")
+        return base
+    if r.returncode == 1:
+        # The scan prints `path rule count > baseline` lines only; matched text is never printed.
+        lines = [ln.strip() for ln in (r.stderr or "").splitlines() if ln.strip()]
+        return _block(base, "H25", "; ".join(lines[-6:]) or "employer-substance baseline exceeded", "workspace")
+    if r.returncode != 0:
+        base["notices"].append(f"H25 employer-substance scan exited {r.returncode}; CI re-checks")
+    return base
+
+
 def lane_decide(event: str, hook_args: Optional[list] = None, stdin_lines: Optional[list] = None, *,
                 env: Optional[dict] = None, ancestry: Optional[list] = None, root: Optional[Path] = None,
                 home: Optional[Path] = None, cwd: Optional[Any] = None, hostname: Optional[str] = None,
@@ -381,6 +407,9 @@ def lane_decide(event: str, hook_args: Optional[list] = None, stdin_lines: Optio
         except Exception as exc:  # noqa: BLE001 - a flag is advisory; never block on its failure
             base["notices"].append(f"identity flag unavailable ({exc.__class__.__name__})")
         if base["lane"] == "workspace" and heal:
+            base = _emp_lane(base, top, e)
+            if base.get("decision") == "block":
+                return base
             return _heal_lane(base, top, e)
     return base
 
@@ -676,8 +705,9 @@ def main(argv: Optional[List[str]] = None) -> int:
         if len(argv) < 2:
             return 0
         event, hook_args = argv[1], argv[2:]
-        # pre-commit may run the workspace's H1 lane (its own timeout); every other event gets the lane budget.
-        budget = LANE_BUDGET_S + (HEAL_TIMEOUT_S if event == "pre-commit" else 0)
+        # pre-commit may run the workspace's H25 scan and H1 lane (their own timeouts); every other event
+        # gets the lane budget.
+        budget = LANE_BUDGET_S + (EMP_TIMEOUT_S + HEAL_TIMEOUT_S if event == "pre-commit" else 0)
         try:
             return run_hook(event, hook_args, _read_lines() if event == "pre-push" else [], budget=budget)
         except BaseException as exc:  # noqa: BLE001
