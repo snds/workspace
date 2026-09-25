@@ -86,7 +86,7 @@
     }
   },
   "current_wave": 1,
-  "parity_gate": "report",
+  "parity_gate": "enforce",
   "families": {
     "claude": {
       "wall_rank": 100,
@@ -938,7 +938,7 @@
           "how": "the cursor probe record (G3b, 2026-09-24) shows the user-level hooks firing on session-start, user-prompt and stop with the host detected from the payload. Partial: no session-end event, no session baseline in wave 0, and Cursor's CLAUDE_PROJECT_DIR alias ranks it as Claude for the walls (tighten-only, L-01)"
         },
         "H20": {
-          "mode": "advisory",
+          "mode": "enforced-when-installed",
           "rules": "inside the workspace the tracked .agents/skills and .claude/skills wrappers point at 03-skills (loading unverified); from any other cwd once Sean runs --install-user-skills (user-level wrappers)",
           "decision": null,
           "verified_by": [
@@ -946,7 +946,7 @@
             "fixture:TestUserSkillWrappers"
           ],
           "planned_verified_by": [],
-          "how": "the user-wrapper installer is tested (--install-user-skills); raise to enforced-when-installed once a live Cursor session outside the workspace is probed loading a wrapper"
+          "how": "wrappers installed by --install-user-skills (TestUserSkillWrappers); live check 2026-09-25 on the Work MBP: a Cursor session opened outside the workspace listed the today skill from ~/.agents/skills/today/SKILL.md in its loaded catalog without searching (bodies load on use)"
         },
         "H22": {
           "mode": "enforced-partial",
@@ -1321,7 +1321,7 @@
           "how": "the codex pre-tool shim is ws-hook --host codex --event pre-tool, which ws_hook.handle_event routes to the guard; the wallguard-codex probes (2026-09-24, both Macs) hold decision rows logged only on that hook path, so Codex fires the hook core. Partial: the codex probe records still show the probe hook layer not installed, so session-start, user-prompt and stop are not yet shown firing on Codex; trust stays a manual step"
         },
         "H20": {
-          "mode": "advisory",
+          "mode": "enforced-when-installed",
           "rules": "inside the workspace Codex reads the tracked .agents/skills wrappers; the snds plugin carries absolute-path wrappers; from any other cwd once Sean runs --install-user-skills (user-level wrappers)",
           "decision": null,
           "verified_by": [
@@ -1329,7 +1329,7 @@
             "fixture:TestUserSkillWrappers"
           ],
           "planned_verified_by": [],
-          "how": "the user-wrapper installer is tested (--install-user-skills); raise to enforced-when-installed once a live Codex session outside the workspace is probed loading a wrapper"
+          "how": "wrappers installed by --install-user-skills (TestUserSkillWrappers); live check 2026-09-25 on the Work MBP: a Codex session opened outside the workspace listed the today skill from ~/.agents/skills/today/SKILL.md in its loaded catalog without searching (bodies load on use)"
         },
         "H22": {
           "mode": "enforced-partial",
