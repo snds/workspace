@@ -1,0 +1,17 @@
+{
+  "session_id": "sess-0001",
+  "transcript_path": "fixture-home/.claude/projects/fixture/sess-0001.jsonl",
+  "cwd": "fixture-cwd",
+  "permission_mode": "default",
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "fixture-cwd/notes/touched.md",
+    "old_string": "a",
+    "new_string": "b"
+  },
+  "tool_response": {
+    "filePath": "fixture-cwd/notes/touched.md",
+    "success": true
+  }
+}

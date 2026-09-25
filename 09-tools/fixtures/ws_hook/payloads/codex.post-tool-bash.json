@@ -1,0 +1,12 @@
+{
+  "session_id": "sess-0001",
+  "thread_id": "thr-0001",
+  "cwd": "fixture-cwd",
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Bash",
+  "tool_input": {
+    "command": "python3 09-tools/nightly.py --phases rebuild",
+    "workdir": "fixture-cwd"
+  },
+  "tool_response": ""
+}

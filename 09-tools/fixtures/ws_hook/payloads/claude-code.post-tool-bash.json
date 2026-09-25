@@ -1,0 +1,17 @@
+{
+  "session_id": "sess-0001",
+  "transcript_path": "fixture-home/.claude/projects/fixture/sess-0001.jsonl",
+  "cwd": "fixture-cwd",
+  "permission_mode": "default",
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Bash",
+  "tool_input": {
+    "command": "python3 09-tools/nightly.py --phases rebuild",
+    "description": "fixture"
+  },
+  "tool_response": {
+    "stdout": "",
+    "stderr": "",
+    "interrupted": false
+  }
+}

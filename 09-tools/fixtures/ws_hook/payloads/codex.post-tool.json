@@ -1,0 +1,11 @@
+{
+  "session_id": "sess-0001",
+  "thread_id": "thr-0001",
+  "cwd": "fixture-cwd",
+  "hook_event_name": "PostToolUse",
+  "tool_name": "apply_patch",
+  "tool_input": {
+    "input": "*** Begin Patch\n*** Update File: notes/touched.md\n@@\n-a\n+b\n*** End Patch\n"
+  },
+  "tool_response": "Success. Updated the following files:\nM notes/touched.md\n"
+}
