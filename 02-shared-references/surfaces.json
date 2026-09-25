@@ -826,15 +826,14 @@
         },
         "H20": {
           "mode": "advisory",
-          "rules": "inside the workspace the tracked .agents/skills and .claude/skills wrappers point at 03-skills (loading unverified); from any other cwd only once the installer writes the user-level wrappers (--user)",
+          "rules": "inside the workspace the tracked .agents/skills and .claude/skills wrappers point at 03-skills (loading unverified); from any other cwd once Sean runs --install-user-skills (user-level wrappers)",
           "decision": null,
           "verified_by": [
-            "fixture:TestSkillHomes"
-          ],
-          "planned_verified_by": [
+            "fixture:TestSkillHomes",
             "fixture:TestUserSkillWrappers"
           ],
-          "how": "raise to enforced-when-installed when the installer's user-wrapper test lands and a Cursor load is probed"
+          "planned_verified_by": [],
+          "how": "the user-wrapper installer is tested (--install-user-skills); raise to enforced-when-installed once a live Cursor session outside the workspace is probed loading a wrapper"
         },
         "H22": {
           "mode": "advisory",
@@ -1169,15 +1168,14 @@
         },
         "H20": {
           "mode": "advisory",
-          "rules": "inside the workspace Codex reads the tracked .agents/skills wrappers; the snds plugin carries absolute-path wrappers; from any other cwd only once the installer writes the user-level wrappers (--user)",
+          "rules": "inside the workspace Codex reads the tracked .agents/skills wrappers; the snds plugin carries absolute-path wrappers; from any other cwd once Sean runs --install-user-skills (user-level wrappers)",
           "decision": null,
           "verified_by": [
-            "fixture:TestSkillHomes"
-          ],
-          "planned_verified_by": [
+            "fixture:TestSkillHomes",
             "fixture:TestUserSkillWrappers"
           ],
-          "how": "raise to enforced-when-installed when the installer's user-wrapper test lands and a Codex load is probed"
+          "planned_verified_by": [],
+          "how": "the user-wrapper installer is tested (--install-user-skills); raise to enforced-when-installed once a live Codex session outside the workspace is probed loading a wrapper"
         },
         "H22": {
           "mode": "advisory",

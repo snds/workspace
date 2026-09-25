@@ -1935,6 +1935,39 @@ class TestScopedCommitH1(unittest.TestCase):
             d.git, d.in_git_repo = orig
 
 
+class TestUserSkillWrappers(unittest.TestCase):
+    """H20: --install-user-skills, end to end against THIS checkout into a temp HOME: every workflow gets a
+    <=10-line pointer at ~/.agents/skills/<name>/SKILL.md naming its absolute 03-skills home, a re-run is a
+    no-op, and uninstall leaves no wrapper behind. The refusal and byte-exact cases run in installers.py
+    --self-test (TestUserSkillWrappers there)."""
+
+    def test_install_into_a_temp_home(self):
+        import contextlib
+        import io
+        inst = load("00-bootstrap/doctor/installers.py")
+        bl = load("build-local-skill-plugin")
+        with tempfile.TemporaryDirectory() as td:
+            home = Path(td) / "home"
+            home.mkdir()
+            kw = dict(home=home, repo=ROOT_DIR, agent_check=lambda: dict(inst.HUMAN),
+                      isatty={"stdin": True, "stdout": True}, confirm=lambda _p: "y",
+                      which=lambda _n: None, app_exists=lambda _p: False)
+            def go(action):
+                out, err = io.StringIO(), io.StringIO()
+                with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                    return inst.run("user-skills", action, **kw), out.getvalue() + err.getvalue()
+            rc, log = go("install")
+            self.assertEqual(rc, 0, log)
+            for name in bl.WORKFLOWS:
+                text = (home / ".agents/skills" / name / "SKILL.md").read_text(encoding="utf-8")
+                self.assertIn(str(ROOT_DIR.resolve() / "03-skills" / name / "SKILL.md"), text)
+                self.assertLessEqual(len(text.splitlines()), 10)
+            self.assertEqual(go("install")[0], 3)
+            rc, log = go("uninstall")
+            self.assertEqual(rc, 0, log)
+            self.assertEqual(list((home / ".agents/skills").rglob("SKILL.md")), [])
+
+
 class TestSkillHomes(unittest.TestCase):
     """H20 / D15: every workflow has one 03-skills home; the tracked .claude/.agents copies are
     generated pointer wrappers (no drift, at most 10 lines); nothing hand-made sits under those
