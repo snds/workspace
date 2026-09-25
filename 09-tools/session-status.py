@@ -59,6 +59,9 @@ ROUTING_STAMP = (
 )
 SIDE_CHAT = ROOT / "06-context" / "side-chat-inbox.md"
 DOCTOR_STATE = Path.home() / ".claude" / "ws-state"
+# H23: the session-start sweeper's notices (09-tools/closure.py), one per dead session with
+# substantive uncommitted work. Machine-local; read only.
+CLOSURE_NOTICES = Path.home() / ".config" / "snds-workspace" / "telemetry" / "closure-notices.json"
 
 EMPLOYER_PROFILE_PREFIX = "centric-"
 PERSONAL_PROFILE_PREFIX = "personal-"
@@ -364,8 +367,17 @@ def notices() -> list[str]:
         return []
 
 
+def closure_notices() -> list[str]:
+    try:
+        obj = json.loads(CLOSURE_NOTICES.read_text(encoding="utf-8"))
+        return [str(n["text"]) for n in obj.get("notices") or [] if isinstance(n, dict) and n.get("text")][:5]
+    except (OSError, ValueError, AttributeError, KeyError, TypeError):
+        return []
+
+
 def _notices() -> list[str]:
     out: list[str] = []
+    out += closure_notices()
     misses = doctor_misses()
     if misses:
         out.append(
@@ -604,6 +616,9 @@ def _pinned(mods: list, consts: dict, doctor: Path, label: str):
     saved = []
     for mod in mods:
         keep = {k: getattr(mod, k) for k in (*_PATH_CONSTS, "DOCTOR_STATE", "datetime", "machine_label")}
+        if hasattr(mod, "CLOSURE_NOTICES"):
+            keep["CLOSURE_NOTICES"] = mod.CLOSURE_NOTICES
+            mod.CLOSURE_NOTICES = doctor / "closure-notices.json"
         saved.append((mod, keep))
         for k, v in consts.items():
             setattr(mod, k, v)
