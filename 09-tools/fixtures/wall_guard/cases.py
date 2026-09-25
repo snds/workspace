@@ -41,6 +41,7 @@ ENV_KINDS: Dict[str, Dict[str, str]] = {
     "cursor+overlay": {"CLAUDE_PROJECT_DIR": "/fixture/ws", "CURSOR_VERSION": "3.21.16",
                        "WS_CLAUDE_OVERLAY": "v5", "WS_SURFACE_FAMILY": "claude"},
     "codex": {"CODEX_THREAD_ID": "thr-wg"},
+    "cursor-shell": {"CURSOR_AGENT": "1"},          # the agent's own shell (what git sees), not the hook env
     "vscode": {"CLAUDECODE": "1", "TERM_PROGRAM": "vscode", "AI_AGENT": "github_copilot_vscode_1"},
     "gemini": {"GEMINI_CLI": "1"},
     "copilot-cli": {"COPILOT_MODEL": "m"},
@@ -718,11 +719,28 @@ def lane_cases(wg, w: dict) -> list:
         return [("git-lane corpus agreement", None, "git_lanes has no lane_decide(event, hook_args, stdin_lines, "
                                                     "*, env, cwd, root, home) yet: SKIPPED")]
     res = []
-    for key, rule in (("EMP_P", "R3"),):
-        v = fn("pre-commit", [], [], env=dict(w["env"], **ENV_KINDS["cursor"]), cwd=w[key], root=w["root"],
-               home=w["home"])
-        res.append((f"lane: non-Claude commit in {key} blocks like the guard's {rule}",
-                    (v or {}).get("decision") == "block", str(v)))
+    # (repo, hook env/ancestry kind, guard golden, lane decision the guard's verdict implies, the env git sees:
+    # the agent's own shell, which for Cursor carries CURSOR_AGENT and not the hook's imported Claude names)
+    rows = (("EMP_P", "cursor", "cursor.before-shell", "block", "cursor-shell"),   # R3 (I1) both
+            ("EMP", "cursor", "cursor.before-shell", "allow", "cursor-shell"),     # R2 report-only both
+            ("PERS", "cursor", "cursor.before-shell", "allow", "cursor-shell"),
+            ("EMP", "claude", "claude-code.bash", "block", "claude"),              # R1 / the Claude floor
+            ("PERS", "claude", "claude-code.bash", "allow", "claude"))
+    for key, kind, golden, lane_want, shell_kind in rows:
+        host = "cursor" if kind == "cursor" else "claude-code"
+        case = ("lane", host, golden, {"command": "git commit -m x", "cwd": key}, kind, kind, "dev-a", "", None, {})
+        d = run_case(wg, w, case)[3] or {"decision": "none"}
+        g = "block" if d.get("decision") in ("deny", "route") else "allow"
+        try:
+            v = fn("pre-commit", [], [], env=dict(w["env"], **ENV_KINDS[shell_kind]), ancestry=ANC_KINDS[kind],
+                   cwd=w[key],
+                   root=w["root"], home=w["home"], heal=False)
+        except Exception as exc:  # noqa: BLE001
+            res.append((f"lane: {kind} commit in {key}", False, f"lane_decide raised {exc!r}"))
+            continue
+        lane = (v or {}).get("decision")
+        res.append((f"lane: {kind} commit in {key}: guard {g}, lane {lane}", g == lane == lane_want,
+                    f"guard {d.get('rule')} {d.get('policy_rule')}; lane {v}"))
     return res
 
 
