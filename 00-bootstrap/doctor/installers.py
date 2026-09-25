@@ -493,6 +493,9 @@ def _render_target(ctx: Ctx, out: dict, *, keys=None):
         home_s = str(ctx.home).replace("\\", "\\\\").replace('"', '\\"')
         body = re.sub(r'(["\'])~/', lambda m: m.group(1) + home_s + "/", body)
         rx = re.compile(re.escape(begin) + r".*?" + re.escape(end) + r"\n?", re.S)
+        if dst.suffix == ".toml":
+            cur, body = _splice_toml_tables(dst, rx.sub("", cur, count=1), body, begin, end)
+            rx = re.compile(r"(?!)")  # the old block is already out of `cur`
         if rx.search(cur):
             new_text = rx.sub(lambda _m: body, cur, count=1)
         else:
@@ -511,6 +514,71 @@ def _render_target(ctx: Ctx, out: dict, *, keys=None):
         return dst, _file_state(new_text.encode("utf-8"),
                                 old[2] if old and old[0] == "file" else 0o644)
     raise InstallerError(f"unknown install_mode {mode!r} for output {out.get('id')}")
+
+
+SPLICE_TAG = "# snds-workspace"
+_TOML_HEADER_RE = re.compile(r"^\s*\[([^\[\]]+)\]\s*(?:#.*)?$")
+_TOML_KEY_RE = re.compile(r"^\s*([A-Za-z0-9_.\"'-]+)\s*=")
+
+
+def _splice_toml_tables(dst: Path, cur: str, body: str, begin: str, end: str) -> tuple:
+    """TOML forbids declaring a table twice. When a table the managed block declares already
+    exists outside the block (a host app may write one, e.g. Codex's [shell_environment_policy.set]),
+    that table's key lines go inside the existing table, each tagged SPLICE_TAG, and the rest stays
+    in the block. Lines spliced by an earlier install are removed first, so a reinstall is idempotent;
+    uninstall restores the pre-install backup byte for byte. A key the existing table already
+    defines is a conflict for the user, never an overwrite. Returns (cur, body)."""
+    lines = [ln for ln in cur.splitlines(keepends=True) if not ln.rstrip("\n").endswith(SPLICE_TAG)]
+    headers = {}
+    for i, ln in enumerate(lines):
+        m = _TOML_HEADER_RE.match(ln.rstrip("\n"))
+        if m:
+            headers.setdefault(m.group(1).strip(), i)
+    sections, keep = [], []            # block sections: (table, [key lines])
+    inner = body.splitlines(keepends=True)
+    try:
+        b0 = next(i for i, ln in enumerate(inner) if ln.rstrip("\n") == begin)
+        b1 = next(i for i, ln in enumerate(inner) if ln.rstrip("\n") == end)
+    except StopIteration:
+        return "".join(lines), body
+    table = None
+    for ln in inner[b0 + 1:b1]:
+        m = _TOML_HEADER_RE.match(ln.rstrip("\n"))
+        if m:
+            table = m.group(1).strip()
+            sections.append((table, []))
+        elif table is not None and ln.strip() and not ln.lstrip().startswith("#"):
+            sections[-1][1].append(ln if ln.endswith("\n") else ln + "\n")
+    inserts = {}
+    for table, keys in sections:
+        if table not in headers:
+            continue
+        start = headers[table] + 1
+        stop = next((j for j in range(start, len(lines)) if _TOML_HEADER_RE.match(lines[j].rstrip("\n"))), len(lines))
+        existing = {m.group(1) for ln in lines[start:stop] for m in [_TOML_KEY_RE.match(ln)] if m}
+        clash = [k for ln in keys for m in [_TOML_KEY_RE.match(ln)] if m and m.group(1) in existing for k in [m.group(1)]]
+        if clash:
+            raise InstallerError(f"{dst}: [{table}] already sets {', '.join(sorted(set(clash)))} outside the managed "
+                                 "block; remove it there or rename it, then re-run (fix by hand)")
+        inserts[start] = [ln.rstrip("\n") + "  " + SPLICE_TAG + "\n" for ln in keys]
+    if not inserts:
+        return "".join(lines), body
+    for at in sorted(inserts, reverse=True):
+        lines[at:at] = inserts[at]
+    spliced = {t for t, _k in sections if t in headers}
+    out, skip = [], False
+    for ln in inner:
+        m = _TOML_HEADER_RE.match(ln.rstrip("\n"))
+        if m:
+            skip = m.group(1).strip() in spliced
+            if skip:
+                continue
+        elif ln.rstrip("\n") == end:
+            skip = False
+        if skip and ln.strip():
+            continue
+        out.append(ln)
+    return "".join(lines), "".join(out)
 
 
 def _script_deps(ctx: Ctx, state) -> list:
@@ -1356,6 +1424,41 @@ def self_test() -> int:
             with self.assertRaises(InstallerError) as cm:
                 _render_target(ctx, out)
             self.assertIn("sandbox_workspace_write", str(cm.exception))
+            self.assertIn("writable_roots", str(cm.exception))
+
+        def test_codex_managed_block_splices_into_an_existing_table(self):
+            # Work MBP 2026-09-24: the Codex app had written its own [shell_environment_policy.set].
+            try:
+                import tomllib
+            except ImportError:
+                self.skipTest("tomllib needs python 3.11")
+            frag = VAULT_ROOT / "00-bootstrap" / "dist" / "codex-config-fragment.toml"
+            (self.repo / "00-bootstrap/dist").mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(frag, self.repo / "00-bootstrap/dist/codex-config-fragment.toml")
+            out = {"id": "codex-config-fragment", "path": "00-bootstrap/dist/codex-config-fragment.toml",
+                   "install_path": "~/.codex/config.toml", "install_mode": "managed-block"}
+            ctx = Ctx("shims", "codex", "install", home=self.home, repo=self.repo, agent_check=None,
+                      confirm=lambda *_a: True, now=None, which=None, sha=None, surface="codex", probe=False,
+                      render_list=None, app_exists=None)
+            cfg = self.home / ".codex" / "config.toml"
+            cfg.parent.mkdir(parents=True, exist_ok=True)
+            user = 'model = "x"\n\n[shell_environment_policy.set]\nAPP_KEY = "app"\n\n[features]\nx = true\n'
+            cfg.write_text(user)
+            _dst, state = _render_target(ctx, out)
+            text = state[1].decode("utf-8")
+            doc = tomllib.loads(text)
+            self.assertEqual(doc["shell_environment_policy"]["set"]["APP_KEY"], "app")      # user key kept
+            self.assertIn("WS_SURFACE_FAMILY", doc["shell_environment_policy"]["set"])      # spliced in
+            self.assertIn("writable_roots", doc["sandbox_workspace_write"])                  # rest stays in the block
+            self.assertEqual(text.count("[shell_environment_policy.set]"), 1)
+            self.assertTrue(any(ln.endswith(SPLICE_TAG) for ln in text.splitlines() if "WS_SURFACE_FAMILY" in ln))
+            cfg.write_text(text)
+            _dst, again = _render_target(ctx, out)                                          # reinstall: idempotent
+            self.assertEqual(again[1].decode("utf-8"), text)
+            cfg.write_text(user.replace('APP_KEY = "app"', 'WS_SURFACE_FAMILY = "mine"'))
+            with self.assertRaises(InstallerError) as cm:                                   # a real clash refuses
+                _render_target(ctx, out)
+            self.assertIn("WS_SURFACE_FAMILY", str(cm.exception))
 
         def test_overlay_replace_end_to_end(self):
             self._seed_overlay_ready()
