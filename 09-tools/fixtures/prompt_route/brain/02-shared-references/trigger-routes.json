@@ -1,0 +1,6 @@
+{
+  "routes": {
+    "zero vector": "read `08-knowledge/fixture/zero-vector.md`",
+    "harness": "load `03-skills/fixture-harness/SKILL.md`"
+  }
+}

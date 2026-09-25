@@ -1,0 +1,7 @@
+{
+  "session_id": "sess-x2",
+  "transcript_path": "/home/fixture/.claude/projects/-fixture/sess-x2.jsonl",
+  "cwd": "fixture-cwd",
+  "hook_event_name": "UserPromptSubmit",
+  "prompt": "<task-notification>\n<task-id>fixture</task-id>\n<status>completed</status>\n<summary>Agent finished the zero vector harness audit</summary>\n</task-notification>"
+}

@@ -1,0 +1,7 @@
+{
+  "session_id": "sess-user",
+  "transcript_path": "/home/fixture/.claude/projects/-fixture/sess-user.jsonl",
+  "cwd": "fixture-cwd",
+  "hook_event_name": "UserPromptSubmit",
+  "prompt": "review the zero vector plan and the harness"
+}

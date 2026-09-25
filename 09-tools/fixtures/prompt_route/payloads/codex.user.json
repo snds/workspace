@@ -1,0 +1,7 @@
+{
+  "session_id": "sess-cdx",
+  "thread_id": "thr-cdx",
+  "cwd": "fixture-cwd",
+  "hook_event_name": "UserPromptSubmit",
+  "prompt": "review the zero vector plan and the harness"
+}

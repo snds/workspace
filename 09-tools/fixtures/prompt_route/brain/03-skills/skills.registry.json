@@ -1,0 +1,10 @@
+{
+  "skills": {
+    "fixture-audit": {"triggers": ["audit"]},
+    "fixture-linear-algebra": {"triggers": ["vector"]}
+  },
+  "load_chains": {
+    "fixture-audit": ["fixture-audit"],
+    "fixture-linear-algebra": ["fixture-linear-algebra"]
+  }
+}

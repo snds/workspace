@@ -1,0 +1,7 @@
+{
+  "conversation_id": "sess-cur",
+  "hook_event_name": "beforeSubmitPrompt",
+  "cursor_version": "3.21.16",
+  "workspace_roots": ["fixture-cwd"],
+  "content": {"text": "review the zero vector plan and the harness"}
+}
