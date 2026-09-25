@@ -14,28 +14,28 @@
     },
     "R6count": {
       "expected": "deny",
-      "observed": "not-seen",
-      "rule": "none",
-      "match": false
+      "observed": "deny",
+      "rule": "R6",
+      "match": true
     },
     "allow": {
       "expected": "none",
-      "observed": "not-seen",
+      "observed": "none",
       "rule": "none",
-      "match": false
+      "match": true
     },
     "R1meta": {
       "expected": "none",
-      "observed": "not-seen",
+      "observed": "none",
       "rule": "none",
-      "match": false
+      "match": true
     },
     "R3ident": {
       "expected": "deny",
-      "observed": "not-seen",
-      "rule": "none",
-      "match": false
+      "observed": "deny",
+      "rule": "R3",
+      "match": true
     }
   },
-  "all_match": false
+  "all_match": true
 }

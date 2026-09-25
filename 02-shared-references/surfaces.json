@@ -217,13 +217,13 @@
           "rules": "R1, R3 and R6 enforce at tool time once Sean installs the claude-code shims: a PreToolUse matcher generated from the tool families (shell, file writes, the terminal panel, browser control, desktop control, the filesystem MCP and the employer tracker connector) plus static permission rules (employer checkouts and employer vault folders, workspace control state, the Claude settings files, and the invariant belts); R2, R4, R6c and R7 log a would-deny only during the rollout window; the tracker connector is report-only until decision 3; desktop control has no account policy (WALL-C1); text parsing can be evaded (H17-R10) and the guard fails open on its own errors (H17-R8 class)",
           "decision": null,
           "verified_by": [
-            "fixture:TestWallGuard"
+            "fixture:TestWallGuard",
+            "probe:wallguard-claude-code@work-mbp"
           ],
           "planned_verified_by": [
-            "probe:wallguard-claude-code@work-mbp",
             "probe:wallguard-claude-code@personal-mbp"
           ],
-          "how": "enforced-partial once installed and the live probe record matches the goldens; until then the fixture corpus is the evidence"
+          "how": "installed and live-probed on the Work MBP (2026-09-24: all five goldens match); enforced-partial once the Personal MBP install and its live probe record match too; the fixture corpus covers the rest"
         },
         "H16": {
           "mode": "enforced",
@@ -735,16 +735,15 @@
           "how": "TestIntentRun"
         },
         "H15": {
-          "mode": "enforced-when-installed",
+          "mode": "enforced-partial",
           "rules": "R3 and R6 enforce once Sean installs the cursor shims (beforeShellExecution, preToolUse on Shell and Write, beforeMCPExecution); R2, R4 and R7 log a would-deny only during the rollout window; R1 does not apply; the walls come from the verified host payload (D-W1-3) unless an inherited Claude overlay or Claude ancestry raises them",
           "decision": null,
           "verified_by": [
-            "fixture:TestWallGuard"
-          ],
-          "planned_verified_by": [
+            "fixture:TestWallGuard",
             "probe:wallguard-cursor@work-mbp"
           ],
-          "how": "enforced-partial once installed and the live probe record matches the goldens"
+          "planned_verified_by": [],
+          "how": "installed and live-probed on the Work MBP (2026-09-24: all five goldens match); partial per the rules text"
         },
         "H16": {
           "mode": "enforced-when-installed",
@@ -1046,16 +1045,15 @@
           "how": "TestIntentRun"
         },
         "H15": {
-          "mode": "advisory",
+          "mode": "enforced-when-installed",
           "rules": "the rules-file belt (forbidden invariants only) applies once installed; the PreToolUse shim is deny-only and inert until Sean trusts the user hooks and the plugin hooks in /hooks; R3 and R6 would enforce, R2, R4 and R7 report only; floor: the git lanes when installed",
           "decision": null,
           "verified_by": [
-            "fixture:TestWallGuard"
-          ],
-          "planned_verified_by": [
+            "fixture:TestWallGuard",
             "probe:wallguard-codex@work-mbp"
           ],
-          "how": "enforced-when-installed once the hooks are trusted and a live probe shows PreToolUse firing on the desktop app's shell tool"
+          "planned_verified_by": [],
+          "how": "hooks trusted and PreToolUse firing on the desktop app's shell tool, shown by the Work MBP live probe (2026-09-24: all five goldens match); enforced where Sean installs and trusts the hooks"
         },
         "H16": {
           "mode": "enforced-when-installed",
