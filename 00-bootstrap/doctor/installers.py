@@ -8,7 +8,8 @@
 `workspace-doctor.sh --install-<name>[=ARG]` / `--uninstall-<name>[=ARG]` exec this with
 inherited stdio; the shell reads only the exit code. The unattended doctor never installs.
 
-Names: pin, shims, git-hooks, identity, claude-overlay, sandbox-roots, plugin,
+Names: pin, shims, git-hooks (H18: the global git lanes include from dist/git/lanes plus one
+managed include block in ~/.gitconfig), identity, claude-overlay, sandbox-roots, plugin,
 projects-pointer (~/Projects/AGENTS.md from dist/projects-AGENTS.md), launchd.
 The Codex beacon (~/.codex/AGENTS.md) is a whole-file output of `shims=codex`.
 
@@ -999,8 +1000,90 @@ def do_no_source(ctx: Ctx) -> int:
     raise MissingSource(f"{ctx.name}: no wave-0 source")
 
 
+# H18: the global git lanes. One rendered include under ~/.config/snds-workspace and one managed
+# include block in ~/.gitconfig; the lanes exec the PINNED git_lanes.py. Constants mirror
+# 09-tools/git_lanes.py (the self-test asserts they agree).
+GIT_LANES_DIST = "00-bootstrap/dist/git/lanes/ws-lanes.inc"
+GIT_LANES_INC = ".config/snds-workspace/git/lanes/ws-lanes.inc"          # under HOME
+GIT_LANES_PINNED = "09-tools/git_lanes.py"                               # under lib/current
+GIT_LANES_BEGIN = "# BEGIN snds-workspace git lanes (installers.py git-hooks; do not edit)"
+GIT_LANES_END = "# END snds-workspace git lanes"
+
+
+def _in_git_repo(path: Path):
+    """The work tree (or git dir) containing `path`, or None: a lane include must never live in a
+    repo, where a commit, checkout or agent edit could change what every repo on the device runs."""
+    cur = path.parent
+    for _ in range(64):
+        try:
+            if (cur / ".git").exists() or (cur / "HEAD").is_file() and (cur / "objects").is_dir():
+                return cur
+        except OSError:
+            return None
+        if cur.parent == cur:
+            return None
+        cur = cur.parent
+    return None
+
+
+def git_hooks_refusals(ctx: Ctx) -> list:
+    reasons = []
+    p = ctx.paths()
+    if not (p["lib_current"] / GIT_LANES_PINNED).is_file():
+        reasons.append(f"the pinned lib has no {GIT_LANES_PINNED} (it must be in pin_lib.PINNED_PATHS; "
+                       "then run workspace-doctor.sh --install-pin), so the lanes would silently allow everything")
+    try:
+        dev = ctx.pr().current_device().get("id") or "unknown"
+    except Exception as e:  # noqa: BLE001
+        dev = "unknown"
+        reasons.append(f"device unresolved ({type(e).__name__})")
+    reasons += [r.replace("the floor needs", "the git lanes need") for r in _git_floor_refusals(ctx, dev)]
+    inc = ctx.home / GIT_LANES_INC
+    repo = _in_git_repo(inc)
+    if repo is not None:
+        reasons.append(f"the lane include {inc} would lie inside the git repository {repo}")
+    gc = ctx.home / ".gitconfig"
+    if os.path.islink(gc):
+        reasons.append(f"{gc} is a symlink (a dotfiles checkout?); the installer never rewrites a link — add "
+                       f"the include block from {GIT_LANES_DIST}'s header by hand, or replace the link with a file")
+    if os.environ.get("GIT_CONFIG_GLOBAL") and ctx.real:
+        reasons.append("GIT_CONFIG_GLOBAL is set in this shell, so git would not read ~/.gitconfig; unset it first")
+    return reasons
+
+
+def gitconfig_with_lanes(cur: str, home: Path) -> str:
+    block = f"{GIT_LANES_BEGIN}\n[include]\n\tpath = ~/{GIT_LANES_INC}\n{GIT_LANES_END}\n"
+    rx = re.compile(re.escape(GIT_LANES_BEGIN) + r".*?" + re.escape(GIT_LANES_END) + r"\n?", re.S)
+    if rx.search(cur):
+        return rx.sub(lambda _m: block, cur, count=1)
+    return cur + ("" if not cur or cur.endswith("\n") else "\n") + block
+
+
+def do_git_hooks(ctx: Ctx) -> int:
+    """--install-git-hooks: the include file plus one managed include block in ~/.gitconfig.
+    Refuses unless the pinned lib carries git_lanes.py and this device's git record shows config
+    hooks (git >= 2.54). Uninstall restores ~/.gitconfig byte-for-byte (or removes it if the
+    installer created it) and removes the include."""
+    if ctx.action == "uninstall":
+        return _uninstall(ctx)
+    src = _src(ctx, GIT_LANES_DIST)
+    reasons = git_hooks_refusals(ctx)
+    if reasons:
+        raise RefusedError("; ".join(reasons))
+    inc = ctx.home / GIT_LANES_INC
+    gc = ctx.home / ".gitconfig"
+    old = _state(gc)
+    try:
+        cur = old[1].decode("utf-8") if old else ""
+    except UnicodeDecodeError as e:
+        raise InstallerError(f"{gc} is not UTF-8 (fix by hand)") from e
+    new = gitconfig_with_lanes(cur, ctx.home)
+    return _apply(ctx, [(inc, _file_state(src.read_bytes(), 0o644)),
+                        (gc, _file_state(new.encode("utf-8"), old[2] if old else 0o644))])
+
+
 HANDLERS = {
-    "pin": do_pin, "shims": do_shims, "git-hooks": do_no_source, "identity": do_identity,
+    "pin": do_pin, "shims": do_shims, "git-hooks": do_git_hooks, "identity": do_identity,
     "claude-overlay": do_claude_overlay, "sandbox-roots": do_sandbox_roots,
     "plugin": do_plugin, "projects-pointer": do_projects_pointer, "launchd": do_launchd,
 }
@@ -1620,6 +1703,97 @@ def self_test() -> int:
             self.assertNotIn("cursor", needed)
             self.assertNotIn("copilot-vscode", needed)
 
+        def _seed_git_lanes(self, *, pinned=True, config_hooks=True):
+            """The lanes' dist include in the fixture repo, a gitcaps record and (optionally) a lib/current
+            that carries git_lanes.py (a hand-made lib dir: the fixture pin has no git_lanes.py)."""
+            dist = self.repo / GIT_LANES_DIST
+            dist.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(VAULT_ROOT / GIT_LANES_DIST, dist)
+            self._seed_gitcaps(config_hooks)
+            lib = self.home / ".config/snds-workspace/lib/lanes-fixture"
+            (lib / "09-tools").mkdir(parents=True, exist_ok=True)
+            if pinned:
+                (lib / GIT_LANES_PINNED).write_text("# fixture pinned lane\n")
+            cur = self.home / ".config/snds-workspace/lib/current"
+            if os.path.lexists(cur):
+                cur.unlink()
+            cur.symlink_to("lanes-fixture")
+
+        def test_git_hooks_constants_match_git_lanes(self):
+            import importlib.util
+            spec = importlib.util.spec_from_file_location("git_lanes_const", VAULT_ROOT / "09-tools/git_lanes.py")
+            gl = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(gl)
+            self.assertEqual((gl.DIST_INCLUDE_REL, gl.INSTALL_INCLUDE_REL, gl.GITCONFIG_BEGIN, gl.GITCONFIG_END),
+                             (GIT_LANES_DIST, GIT_LANES_INC, GIT_LANES_BEGIN, GIT_LANES_END))
+            self.assertEqual(gitconfig_with_lanes("", self.home), gl.gitconfig_block(self.home))
+            self.assertTrue(gl.PINNED_SELF_REL.endswith(GIT_LANES_PINNED))
+
+        def test_git_hooks_install_and_byte_exact_uninstall(self):
+            self._seed_git_lanes()
+            gc = self.home / ".gitconfig"
+            original = b"[user]\n\tname = Someone\n[alias]\n\tst = status"          # no trailing newline
+            gc.write_bytes(original)
+            os.chmod(gc, 0o600)
+            rc, out, err = self.run_inst("git-hooks")
+            self.assertEqual(rc, 0, out + err)
+            inc = self.home / GIT_LANES_INC
+            self.assertEqual(inc.read_bytes(), (VAULT_ROOT / GIT_LANES_DIST).read_bytes())
+            text = gc.read_text()
+            self.assertTrue(text.startswith(original.decode() + "\n"), text)       # user content kept
+            self.assertIn(f"\tpath = ~/{GIT_LANES_INC}\n", text)
+            self.assertEqual(gc.stat().st_mode & 0o777, 0o600)
+            self.assertEqual(self.run_inst("git-hooks")[0], 3)                     # idempotent
+            rc, out, err = self.run_inst("git-hooks", "uninstall")
+            self.assertEqual(rc, 0, out + err)
+            self.assertEqual(gc.read_bytes(), original)
+            self.assertFalse(inc.exists())
+            gc.unlink()                                                            # no ~/.gitconfig at all
+            self.assertEqual(self.run_inst("git-hooks")[0], 0)
+            self.assertTrue(gc.is_file())
+            self.assertEqual(self.run_inst("git-hooks", "uninstall")[0], 0)
+            self.assertFalse(gc.exists())
+            self.assertFalse(inc.exists())
+
+        def test_git_hooks_foreign_edit_refuses_uninstall(self):
+            self._seed_git_lanes()
+            self.assertEqual(self.run_inst("git-hooks")[0], 0)
+            gc = self.home / ".gitconfig"
+            gc.write_text(gc.read_text() + "[core]\n\teditor = vi\n")
+            rc, _o, err = self.run_inst("git-hooks", "uninstall")
+            self.assertEqual(rc, 4)
+            self.assertIn("foreign edits since install", err)
+
+        def test_git_hooks_refusals(self):
+            self._seed_git_lanes(pinned=False)
+            rc, _o, err = self.run_inst("git-hooks")
+            self.assertEqual(rc, 4)
+            self.assertIn("pinned lib has no 09-tools/git_lanes.py", err)
+            self._seed_git_lanes(config_hooks=False)
+            rc, _o, err = self.run_inst("git-hooks")
+            self.assertEqual(rc, 4)
+            self.assertIn("no config-based hooks (git 2.50.1", err)
+            self.assertIn("the git lanes need git >= 2.54", err)
+            self._seed_git_lanes()
+            self._seed_gitcaps(present=False)
+            rc, _o, err = self.run_inst("git-hooks")
+            self.assertEqual(rc, 4)
+            self.assertIn("git capability record missing", err)
+            self._seed_git_lanes()
+            real = self.td / "dotfiles-gitconfig"
+            real.write_text("[user]\n\tname = x\n")
+            (self.home / ".gitconfig").symlink_to(real)
+            rc, _o, err = self.run_inst("git-hooks")
+            self.assertEqual(rc, 4)
+            self.assertIn("is a symlink", err)
+            (self.home / ".gitconfig").unlink()
+            (self.home / ".config" / ".git").mkdir(parents=True)                     # ~/.config is a dotfiles repo
+            rc, _o, err = self.run_inst("git-hooks")
+            self.assertEqual(rc, 4)
+            self.assertIn("would lie inside the git repository", err)
+            self.assertEqual(real.read_text(), "[user]\n\tname = x\n")
+            self.assertFalse((self.home / GIT_LANES_INC).exists())
+
         def test_missing_sources_exit_3(self):
             for name in ("git-hooks", "projects-pointer", "identity"):   # fixture repo has no pointer
                 rc, _o, err = self.run_inst(name)
@@ -1840,6 +2014,31 @@ def self_test() -> int:
             self.assertNotIn("launchctl", self.stub_calls())
             self.assertNotIn("osascript", self.stub_calls())
             self.assertIn("overlay env", r.stdout)
+
+        def test_check_audits_the_git_lanes(self):
+            """H18: not installed is a NOTE naming the installer; installed and untouched is silent; a later
+            global entry that disables a lane is DRIFT; --check still writes nothing."""
+            tools = self.ws / "09-tools"
+            tools.mkdir(exist_ok=True)
+            shutil.copy2(VAULT_ROOT / "09-tools" / "git_lanes.py", tools / "git_lanes.py")
+            dist = self.ws / GIT_LANES_DIST
+            dist.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(VAULT_ROOT / GIT_LANES_DIST, dist)
+            r = self.doctor("--check")
+            self.assertIn("git lanes not installed — to install: workspace-doctor.sh --install-git-hooks", r.stdout)
+            inc = self.home / GIT_LANES_INC
+            inc.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(dist, inc)
+            gc = self.home / ".gitconfig"
+            gc.write_text(gitconfig_with_lanes("", self.home))
+            r = self.doctor("--check")
+            self.assertNotIn("git lanes", r.stdout, r.stdout)
+            gc.write_text(gc.read_text() + '[hook "ws-lane-pre-push"]\n\tenabled = false\n')
+            before = self.snapshot()
+            r = self.doctor("--check")
+            self.assertIn("DRIFT: git lanes shadowed, disabled or stale", r.stdout)
+            self.assertIn("ws-lane-pre-push disabled", r.stdout)
+            self.assertEqual(self.snapshot(), before)
 
         def test_check_maps_the_rewrite_audit_exit_code(self):
             """T10 rerun T-01: exit 1 is the H17-R9 NOTE, any other failure is 'unavailable', 0 is silent."""

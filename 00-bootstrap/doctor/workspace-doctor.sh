@@ -227,6 +227,20 @@ if [ "$CHECK" -eq 1 ]; then
   python3 "$DOC/render_shims.py" --rewrite-audit >/dev/null 2>&1; _rc=$?
   case $_rc in 0) : ;; 1) note "a git config file rewrites an employer URL, so the transport block may not apply — run render_shims.py --rewrite-audit";;
     *) note "rewrite audit unavailable";; esac
+  # H18: the global git lanes (REPORT; installed only by --install-git-hooks). The audit reads git config at
+  # every scope, globally and per cached checkout: any entry that replaces, clears or disables a lane, or a
+  # lane key outside the lane include, is drift. From an agent chain it skips
+  # non-personal checkouts.
+  if [ -f "$WS/09-tools/git_lanes.py" ]; then
+    _la="$(python3 "$WS/09-tools/git_lanes.py" audit --cache 2>/dev/null)"; _rc=$?
+    case $_rc in
+      0) : ;;
+      1) printf '%s\n' "$_la" | grep '^FINDING: ' | head -5 | while IFS= read -r _l; do say "  $_l"; done
+         flag "DRIFT: git lanes shadowed, disabled or stale — see python3 09-tools/git_lanes.py audit --cache; remove the listed entries, or re-run workspace-doctor.sh --install-git-hooks";;
+      3) note "git lanes not installed — to install: workspace-doctor.sh --install-git-hooks";;
+      *) note "git lane audit unavailable";;
+    esac
+  fi
   _dev="$(python3 "$WS/09-tools/profile_resolve.py" device --json 2>/dev/null | python3 -c 'import json,sys;print(json.load(sys.stdin)["device"]["id"])' 2>/dev/null)"
   if [ -n "$_dev" ] && [ "$_dev" != unknown ]; then
     # devices.json declares this device's home and brain; tools use the live values, this reports drift.
