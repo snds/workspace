@@ -85,5 +85,7 @@ STANDING RULES (in force immediately):
 $RULES"
 fi
 [ "${MISSES:-0}" -gt 0 ] 2>/dev/null && echo "NOTICE: $MISSES un-acknowledged bootstrap MISS(es) — see ~/.claude/ws-state/audit.log; run workspace-doctor."
-[ -x "$WS/00-bootstrap/doctor/workspace-doctor.sh" ] && ( "$WS/00-bootstrap/doctor/workspace-doctor.sh" --quick --quiet >/dev/null 2>&1 & )
+# W1-6 (H20, walls F-11): only the PINNED doctor runs here; no pin wrapper = no doctor run, never the checkout's.
+D="$HOME/.config/snds-workspace/bin/ws-doctor"
+[ -x "$D" ] && ( "$D" --quick --quiet >/dev/null 2>&1 & )
 exit 0
