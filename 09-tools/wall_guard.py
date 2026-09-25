@@ -508,9 +508,12 @@ class ShellScan:
     """What one command text does, as the guard needs it: normalized simple commands for the
     resolver's parser, plus the findings the parser does not label."""
 
-    def __init__(self, home: Path, cwd: Optional[str]):
+    def __init__(self, home: Path, cwd: Optional[str], tmpdir: Optional[str] = None):
         self.home = home
         self.cwd0 = cwd
+        # The host's TMPDIR, used to place `$TMPDIR` targets unless this command assigns TMPDIR itself.
+        self.tmpdir = tmpdir if tmpdir and os.path.isabs(tmpdir) else None
+        self.assigned: set = set()            # env names this command sets, exports or unsets so far
         self.simples: List[List[str]] = []
         self.tamper: List[str] = []           # R6 reasons
         self.candidates: List[str] = []       # R6c reasons
@@ -676,21 +679,37 @@ class ShellScan:
                 name = pr._split_assign(a)[0] if pr._ASSIGN_RE.match(a) else a
                 self._env_name(name, "unset" if tool == "unset" else "set")
         if tool in ("cd", "pushd", "popd"):
-            self.simples.append(head + toks[i:])
             dest = [a for a in args if not a.startswith("-") or a == "-"]
             if tool == "cd" and dest and dest[0] != "-":
-                return _expand(dest[0], self.home, cwd), True
+                target = self._path(dest[0], cwd)
+                # Hand the resolver the place already worked out ($HOME, ~, $TMPDIR), not the raw word
+                # it cannot expand; an unresolved target keeps the raw word (most restrictive).
+                j = args.index(dest[0])
+                self.simples.append(head + [toks[i]] + args[:j] + [target or dest[0]] + args[j + 1:])
+                return target, True
+            self.simples.append(head + toks[i:])
             return "\x00unknown", True
         self._program(tool, args, head, cwd)
         self.simples.append(head + [toks[i]] + args)
         return cwd, False
 
     def _env_name(self, name: str, how: str) -> None:
+        self.assigned.add(name.rstrip("+"))
         if _is_tamper_env(name):
             self.tamper.append(f"{how} {name.rstrip('+')} (the walls' git config, identity, WS_*, gh belt or HOME)")
 
     def _write(self, raw: str, cwd: Optional[str]) -> None:
-        self.writes.append((raw, _expand(raw, self.home, cwd)))
+        self.writes.append((raw, self._path(raw, cwd)))
+
+    def _path(self, raw: str, cwd: Optional[str]) -> Optional[str]:
+        """_expand, plus `$TMPDIR` from the host env when this command has not assigned TMPDIR."""
+        s = raw
+        if self.tmpdir and "TMPDIR" not in self.assigned:
+            for pre in ("${TMPDIR}", "$TMPDIR"):
+                if s == pre or s.startswith(pre + "/"):
+                    s = self.tmpdir + s[len(pre):]
+                    break
+        return _expand(s, self.home, cwd)
 
     def _program(self, tool: str, args: List[str], head: List[str], cwd: Optional[str]) -> None:
         if tool == "git":
@@ -1025,7 +1044,7 @@ def decide(action: dict, ctx: Ctx) -> dict:
     if not agent:
         return _combine(findings, ctx, notices)       # P00: humans are not policy-gated
     if kind == "shell":
-        scan = ShellScan(ctx.home, ctx.cwd)
+        scan = ShellScan(ctx.home, ctx.cwd, (ctx.env or {}).get("TMPDIR"))
         scan.scan(str(action.get("command") or ""))
         for r in dict.fromkeys(scan.tamper):
             findings.append(_finding("R6", "deny", f"tamper: {r}"))

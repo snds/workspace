@@ -215,6 +215,20 @@ CORPUS: C = [
     ("r1-subshell-cd-then-absolute", "claude-code", "claude-code.bash",
      {"command": "(cd {PERS}) ; git -C {PERS} commit -m x", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None,
      {}),
+    # cd targets the guard can place: $HOME, ~ and the host's $TMPDIR (unless the command assigns TMPDIR)
+    ("r1-cd-home-var-personal", "claude-code", "claude-code.bash",
+     {"command": "cd \"$HOME/Projects/pat-app\" && ls", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None, {}),
+    ("r1-cd-home-var-employer", "claude-code", "claude-code.bash",
+     {"command": "cd $HOME/Projects/acme-widget && git log -1", "cwd": "PERS"}, "claude", "claude", "dev-a", "route",
+     "R1", {}),
+    ("r1-cd-tmpdir-scratch", "claude-code", "claude-code.bash",
+     {"command": "cd $TMPDIR && python3 x.py", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None,
+     {"env": {"TMPDIR": "{SCRATCH}"}}),
+    ("r1-cd-tmpdir-reassigned", "claude-code", "claude-code.bash",
+     {"command": "TMPDIR={EMP}; cd $TMPDIR && git log -1", "cwd": "PERS"}, "claude", "claude", "dev-a", "route", "R1",
+     {"env": {"TMPDIR": "{SCRATCH}"}}),
+    ("r1-cd-tmpdir-no-host-value", "claude-code", "claude-code.bash",
+     {"command": "cd $TMPDIR && git log -1", "cwd": "PERS"}, "claude", "claude", "dev-a", "route", "R1", {}),
     # R6 tamper (every family)
     ("r6-config-count", "claude-code", "claude-code.bash", {"command": "GIT_CONFIG_COUNT=0 git commit -m x",
                                                             "cwd": "PERS"}, "claude", "claude", "dev-a", "deny", "R6",
@@ -400,6 +414,8 @@ def run_case(wg, w: dict, case, *, budget: float = 30.0) -> Tuple[int, str, str,
         kw[k] = v if k == "cwd" else expand(v, w)
     p = payload(golden, w, **kw)
     env = dict(w["env"], **ENV_KINDS[env_kind])
+    extra = case[9] if len(case) > 9 else {}
+    env.update({k: expand(v, w) for k, v in (extra.get("env") or {}).items()})
     return wg.run_hook(host, p, env=env, ancestry=ANC_KINDS[anc_kind], home=w["home"], root=w["root"],
                        device=device, cache=w["cache"], budget=budget, record=True)
 
