@@ -211,7 +211,7 @@
         ]
       },
       "outcome": "deny",
-      "reason": "run the vetted script instead"
+      "reason": "Claude runs no git in employer repos; only vetted housekeeping (e.g. prune-our-branches.py) runs there, and Cursor or Codex do the rest"
     },
     {
       "id": "P12-claude-employer-route",

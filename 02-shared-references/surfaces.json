@@ -213,17 +213,16 @@
           "how": "TestIntentRun"
         },
         "H15": {
-          "mode": "enforced-when-installed",
+          "mode": "enforced-partial",
           "rules": "R1, R3 and R6 enforce at tool time once Sean installs the claude-code shims: a PreToolUse matcher generated from the tool families (shell, file writes, the terminal panel, browser control, desktop control, the filesystem MCP and the employer tracker connector) plus static permission rules (employer checkouts and employer vault folders, workspace control state, the Claude settings files, and the invariant belts); R2, R4, R6c and R7 log a would-deny only during the rollout window; the tracker connector is report-only until decision 3; desktop control has no account policy (WALL-C1); text parsing can be evaded (H17-R10) and the guard fails open on its own errors (H17-R8 class)",
           "decision": null,
           "verified_by": [
             "fixture:TestWallGuard",
-            "probe:wallguard-claude-code@work-mbp"
-          ],
-          "planned_verified_by": [
+            "probe:wallguard-claude-code@work-mbp",
             "probe:wallguard-claude-code@personal-mbp"
           ],
-          "how": "installed and live-probed on the Work MBP (2026-09-24: all five goldens match); enforced-partial once the Personal MBP install and its live probe record match too; the fixture corpus covers the rest"
+          "planned_verified_by": [],
+          "how": "installed and live-probed on both Macs (2026-09-24: all five goldens match on each); partial per the rules text"
         },
         "H16": {
           "mode": "enforced",
@@ -740,10 +739,11 @@
           "decision": null,
           "verified_by": [
             "fixture:TestWallGuard",
-            "probe:wallguard-cursor@work-mbp"
+            "probe:wallguard-cursor@work-mbp",
+            "probe:wallguard-cursor@personal-mbp"
           ],
           "planned_verified_by": [],
-          "how": "installed and live-probed on the Work MBP (2026-09-24: all five goldens match); partial per the rules text"
+          "how": "installed and live-probed on both Macs (2026-09-24: all five goldens match); partial per the rules text"
         },
         "H16": {
           "mode": "enforced-when-installed",
@@ -1050,10 +1050,11 @@
           "decision": null,
           "verified_by": [
             "fixture:TestWallGuard",
-            "probe:wallguard-codex@work-mbp"
+            "probe:wallguard-codex@work-mbp",
+            "probe:wallguard-codex@personal-mbp"
           ],
           "planned_verified_by": [],
-          "how": "hooks trusted and PreToolUse firing on the desktop app's shell tool, shown by the Work MBP live probe (2026-09-24: all five goldens match); enforced where Sean installs and trusts the hooks"
+          "how": "hooks trusted and PreToolUse firing on the desktop app's shell tool, shown by the live probes on both Macs (2026-09-24: all five goldens match); enforced where Sean installs and trusts the hooks"
         },
         "H16": {
           "mode": "enforced-when-installed",
