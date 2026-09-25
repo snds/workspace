@@ -909,7 +909,9 @@ def overlay_install_cases(pr, rs) -> list:
         (base / "bin").mkdir(parents=True)
         shutil.copyfile(DIST / "ws-hook", base / "bin" / "ws-hook")
         (base / "bin" / "ws-hook").chmod(0o755)
-        (base / "lib" / "x").mkdir(parents=True)
+        (base / "lib" / "x" / "09-tools").mkdir(parents=True)
+        # the installer refuses a pin without ws_hook's env-file step (D-W1-4); pin the real one
+        shutil.copyfile(ROOT / "09-tools" / "ws_hook.py", base / "lib" / "x" / "09-tools" / "ws_hook.py")
         (base / "lib" / "current").symlink_to(base / "lib" / "x")
         (base / "control").mkdir()
         dev = pr.current_device().get("id") or "unknown"
