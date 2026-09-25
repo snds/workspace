@@ -55,12 +55,32 @@ esac
 # leaves $STATE/overlay.<sid>. Once that channel is installed, a Claude Code session (verified by the
 # pinned ws-hook) that ends without the marker ran without the overlay: log NOOVERLAY for the doctor.
 # One-shot and no-transcript sessions are exempt, as above. Declared residual (H17-R7): a session
-# with hooks off runs no SessionEnd hook either, so it logs nothing here.
-if { [ "$R" = 0 ] || [ "$R" = 1 ]; } && [ -f "$HOME/.config/snds-workspace/claude-overlay.env" ] && [ -x "$W" ]; then
+# with hooks off runs no SessionEnd hook either, so it logs nothing here. A session whose transcript
+# starts before the channel was installed could not have had it (a first install): not counted. No
+# readable start time counts (conservative).
+ENVF="$HOME/.config/snds-workspace/claude-overlay.env"
+if { [ "$R" = 0 ] || [ "$R" = 1 ]; } && [ -f "$ENVF" ] && [ -x "$W" ]; then
   case "${SID:-}" in
     ''|*[!A-Za-z0-9_.-]*) : ;;
     *) printf '%s' "$INPUT" | "$W" host --skip-unless claude-code >/dev/null 2>&1
-       [ "$?" = 0 ] && [ ! -e "$STATE/overlay.$SID" ] && echo "$TS NOOVERLAY $SID" >> "$LOG" ;;
+       if [ "$?" = 0 ] && [ ! -e "$STATE/overlay.$SID" ]; then
+         python3 - "$TP" "$ENVF" <<'PY' >/dev/null 2>&1 && echo "$TS NOOVERLAY $SID" >> "$LOG"
+import datetime as dt, json, os, sys
+start = None
+for line in open(sys.argv[1], encoding="utf-8", errors="replace"):
+    try:
+        ts = json.loads(line).get("timestamp")
+    except Exception:
+        continue
+    if isinstance(ts, str):
+        try:
+            start = dt.datetime.fromisoformat(ts.replace("Z", "+00:00")).timestamp()
+        except ValueError:
+            pass
+        break
+sys.exit(1 if start is not None and start < os.path.getmtime(sys.argv[2]) else 0)
+PY
+       fi ;;
   esac
 fi
 exit 0

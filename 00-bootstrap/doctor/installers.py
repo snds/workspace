@@ -682,10 +682,7 @@ def do_pin(ctx: Ctx) -> int:
 def do_shims(ctx: Ctx) -> int:
     surface = ctx.arg or ctx.surface
     if ctx.action == "uninstall":
-        extra = ()
-        if surface in (None, "cursor") and not ctx.probe:
-            extra = [ctx.home / ".claude" / "hooks" / n for n in RETIRED_CURSOR_SCRIPTS]
-        return _uninstall(ctx, extra=extra)
+        return _uninstall(ctx)      # a pure rollback: every target returns to its pre-install bytes
     outs = [o for o in _render_outputs(ctx)
             if (surface is None or o.get("surface") == surface)
             and bool(o.get("probe")) == ctx.probe]
@@ -696,6 +693,11 @@ def do_shims(ctx: Ctx) -> int:
             continue
         targets.append(t)
         targets += _script_deps(ctx, t[1])
+    if targets and surface in (None, "cursor") and not ctx.probe:
+        # Wave-0 Cursor scripts the current hooks no longer reference: the install retires them (with a
+        # backup, so an uninstall restores them). The doctor's retired-script note points here.
+        targets += [(ctx.home / ".claude" / "hooks" / n, None) for n in RETIRED_CURSOR_SCRIPTS
+                    if _state(ctx.home / ".claude" / "hooks" / n) is not None]
     if not targets:
         raise MissingSource(f"no installable outputs for surface={surface or 'all'}"
                             f"{' (probe)' if ctx.probe else ''}")
@@ -1660,6 +1662,8 @@ def self_test() -> int:
             self.assertFalse((base / "bin" / "ws-hook").exists())
 
         def test_shims_cursor_pin_first_probe_merge_and_retired_cleanup(self):
+            # 2026-09-25: the retired-script note used to send Sean to --uninstall-shims=cursor, which
+            # rolled hooks.json back to its pre-guard backup. The install now retires the scripts.
             hooks = self.home / ".cursor" / "hooks.json"
             hooks.parent.mkdir(parents=True)
             hooks.write_text('{"version": 1, "hooks": {"stop": [{"command": "mine"}]}}\n')
@@ -1670,6 +1674,8 @@ def self_test() -> int:
             rc, out, err = self.run_inst("shims=cursor")
             self.assertEqual(rc, 0, out + err)
             self.assertIn("pin missing: installing it first", out)
+            self.assertFalse(retired.exists(), "the install retires the wave-0 Cursor script")
+            self.assertTrue(list(retired.parent.glob("cursor-reassert.sh.ws-bak.*")))
             self.assertTrue((self.home / ".config/snds-workspace/lib/current").exists())
             self.assertEqual(hooks.read_bytes(),
                              (self.repo / "00-bootstrap/dist/cursor-hooks.json").read_bytes())
@@ -1689,8 +1695,7 @@ def self_test() -> int:
             self.assertEqual(rc, 0, out + err)
             self.assertEqual(hooks.read_bytes(), original)
             self.assertFalse(script.exists())
-            self.assertFalse(retired.exists())
-            self.assertTrue(list(retired.parent.glob("cursor-reassert.sh.ws-bak.*")))
+            self.assertEqual(retired.read_text(), "#!/bin/sh\n", "uninstall is a pure rollback")
 
         def _seed_overlay_ready(self, probe_env=False, probe=True, config_hooks=True, env_file_pin=True):
             self.install_pin()
@@ -2600,7 +2605,7 @@ def self_test() -> int:
             self.assert_report_unchanged()
             self.assertEqual(self.stub_calls(), "")
             for flag in ("--install-shims=cursor", "--install-claude-overlay", "--install-plugin",
-                         "--install-launchd", "--uninstall-shims=cursor", "--install-shims=codex",
+                         "--install-launchd", "--install-shims=codex",
                          "--install-projects-pointer"):
                 self.assertIn(flag, r.stdout)
 

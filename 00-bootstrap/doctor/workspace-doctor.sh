@@ -187,7 +187,7 @@ report_file "$DIST/cursor-hooks.json" "$HOME/.cursor/hooks.json" "--install-shim
 [ -d "$HOME/.codex" ] && report_file "$DIST/codex-AGENTS.md" "$HOME/.codex/AGENTS.md" "--install-shims=codex"
 [ -d "$HOME/Projects" ] && report_file "$DIST/projects-AGENTS.md" "$HOME/Projects/AGENTS.md" "--install-projects-pointer"
 for _r in cursor-prompt-route cursor-reassert cursor-sessionend cursor-subagent-stop; do
-  [ -f "$HOME/.claude/hooks/$_r.sh" ] && note "retired script still installed: ~/.claude/hooks/$_r.sh — run workspace-doctor.sh --uninstall-shims=cursor"
+  [ -f "$HOME/.claude/hooks/$_r.sh" ] && note "retired script still installed: ~/.claude/hooks/$_r.sh — run workspace-doctor.sh --install-shims=cursor (retires it with a backup)"
 done
 PL="$HOME/Library/LaunchAgents/design.snds.workspace-doctor.plist"
 if [ -f "$PL" ]; then

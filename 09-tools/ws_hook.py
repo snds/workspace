@@ -2002,7 +2002,19 @@ def shell_golden_cases() -> list:
         tp1 = tmp / ".claude" / "projects" / "fx" / "sess-0010.jsonl"
         tp1.write_text(transcript_miss.read_text(encoding="utf-8"), encoding="utf-8")
         ended = claude("SessionEnd", cwd=ws, transcript=tp, sid="sess-0009")
+        stamped = lambda ts: "".join(json.dumps(dict(json.loads(ln), timestamp=ts)) + "\n"  # noqa: E731
+                                     for ln in transcript_ok.read_text(encoding="utf-8").splitlines())
+        tp_old = tmp / ".claude" / "projects" / "fx" / "sess-0012.jsonl"
+        tp_old.write_text(stamped("2020-01-01T00:00:00.000Z"), encoding="utf-8")
+        tp_new = tmp / ".claude" / "projects" / "fx" / "sess-0013.jsonl"
+        tp_new.write_text(stamped("2099-01-01T00:00:00.000Z"), encoding="utf-8")
         audit_cases = [
+            ("claude session started before the channel was installed: no NOOVERLAY",
+             claude("SessionEnd", cwd=ws, transcript=tp_old, sid="sess-0012"), chan, None,
+             ["OK   sess-0012 cwd=" + str(ws)]),
+            ("claude session started after the channel was installed, no marker: NOOVERLAY",
+             claude("SessionEnd", cwd=ws, transcript=tp_new, sid="sess-0013"), chan, None,
+             ["OK   sess-0013 cwd=" + str(ws), "NOOVERLAY sess-0013"]),
             ("claude, channel installed, no marker: NOOVERLAY", ended, chan, None,
              ["OK   sess-0009 cwd=" + str(ws), "NOOVERLAY sess-0009"]),
             ("claude, channel installed, marker present: no NOOVERLAY", ended, chan, {"overlay.sess-0009": "x\n"},
