@@ -1548,6 +1548,78 @@ class TestEntryPoints(unittest.TestCase):
         self.assertTrue(cw({"AGENTS.md": 32_000, "00-bootstrap/dist/BEACON.md": 1_000}, baseline=40_000)[0])
 
 
+class TestParityGate(unittest.TestCase):
+    """W1-11: shared components reach claude-code, cursor and codex, or carry a live waiver."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.wh = load("09-tools/workspace-harness.py")
+
+    @staticmethod
+    def table(gate="report", shared_cell=None, wave=3):
+        cell = {"mode": "advisory"} if shared_cell is None else shared_cell
+        cov = {"HS": {"mode": "enforced"}, "HR": {"mode": "advisory"}}
+        return {
+            "components": ["HS", "HR"], "current_wave": wave, "parity_gate": gate,
+            "component_scopes": {"HS": {"scope": "shared", "reason": "every agent"},
+                                 "HR": {"scope": "claude-restriction", "reason": "holds Claude back"}},
+            "minimum_surfaces": ["claude-code", "claude-chat", "cursor", "codex"],
+            "surfaces": [
+                {"id": "claude-code", "hookable": True, "coverage": dict(cov)},
+                {"id": "claude-chat", "hookable": False, "coverage": {"HS": {"mode": "backstop-only"},
+                                                                     "HR": {"mode": "backstop-only"}}},
+                {"id": "cursor", "hookable": True, "coverage": {**cov, "HS": cell}},
+                {"id": "codex", "hookable": True, "coverage": dict(cov)},
+            ],
+        }
+
+    def gaps(self, t):
+        return [(g["component"], g["surface"]) for g in self.wh.parity_gaps(t)["gaps"]]
+
+    def test_required_surfaces_are_hookable_minimum_rows(self):
+        self.assertEqual(self.wh.parity_required_surfaces(self.table()), ["claude-code", "cursor", "codex"])
+
+    def test_shared_advisory_gap_flagged(self):
+        self.assertEqual(self.gaps(self.table()), [("HS", "cursor")])
+        self.assertEqual(self.gaps(self.table(shared_cell={"mode": "unverified"})), [("HS", "cursor")])
+        t = self.table()
+        del t["surfaces"][2]["coverage"]["HS"]
+        self.assertEqual([g["mode"] for g in self.wh.parity_gaps(t)["gaps"]], ["missing"])
+
+    def test_claude_restriction_ignored(self):
+        self.assertNotIn("HR", [c for c, _s in self.gaps(self.table())])
+
+    def test_waiver_honoured(self):
+        t = self.table("enforce", {"mode": "advisory", "parity_waiver": {"reason": "long tail", "until": "wave-3"}})
+        res = self.wh.check_component_parity(t)
+        self.assertEqual(res["failures"], [])
+        self.assertEqual(len(res["waived"]), 1)
+
+    def test_expired_waiver_fails(self):
+        t = self.table("enforce", {"mode": "advisory", "parity_waiver": {"reason": "long tail", "until": "wave-2"}})
+        res = self.wh.check_component_parity(t)
+        self.assertTrue(any("waiver expired" in f for f in res["failures"]), res["failures"])
+
+    def test_malformed_waiver_and_scope_fail_in_report_mode(self):
+        t = self.table(shared_cell={"mode": "advisory", "parity_waiver": {"until": "soon"}})
+        self.assertTrue(self.wh.check_component_parity(t)["failures"])
+        t = self.table()
+        t["component_scopes"]["HS"]["scope"] = "maybe"
+        self.assertTrue(self.wh.check_component_parity(t)["failures"])
+
+    def test_enforce_fails_report_passes(self):
+        self.assertTrue(self.wh.check_component_parity(self.table("enforce"))["failures"])
+        rep = self.wh.check_component_parity(self.table("report"))
+        self.assertEqual(rep["failures"], [])
+        self.assertEqual(len(rep["reported"]), 1)
+        self.assertIn("report-only", rep["note"])
+
+    def test_live_table_is_well_formed_and_every_component_scoped(self):
+        t = json.loads((ROOT_DIR / "02-shared-references" / "surfaces.json").read_text(encoding="utf-8"))
+        self.assertEqual(self.wh.parity_gaps(t)["errors"], [])
+        self.assertEqual(sorted(t["component_scopes"]), sorted(t["components"]))
+
+
 class TestWsHook(unittest.TestCase):
     """G3a: payload goldens, dialects, dedupe, budget, fail-open, redaction, host filter, floor adapter, N1."""
 

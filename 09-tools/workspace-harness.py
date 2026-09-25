@@ -21,6 +21,7 @@ Usage:
   python3 09-tools/workspace-harness.py --tokens
   python3 09-tools/workspace-harness.py --json
   python3 09-tools/workspace-harness.py --stamp          # write the report stamp
+  python3 09-tools/workspace-harness.py --parity         # component parity gaps (W1-11), plain words
   python3 09-tools/workspace-harness.py --self-test      # police the harness itself
 
 Exit: 0 all green · 1 a lane failed · 2 the harness could not run.
@@ -695,6 +696,134 @@ def check_entry_points(root: Path = ROOT, files: list | None = None) -> dict:
     return {"check": "entry-points", "scanned": scanned, "failures": fails}
 
 
+# W1-11 parity gate. A shared component (every agent should get it) that is missing, advisory or
+# unverified on a required surface is a gap; a claude-restriction component (it exists to hold
+# Claude back) is ignored by design. Required surfaces are the hookable rows of
+# surfaces.json `minimum_surfaces`, the same derivation evaluate-surface-trajectories.py uses:
+# a hookless surface (Claude Chat) can never carry local enforcement, so its honest ceiling is
+# the backstop and it cannot be held to parity. The table holds the scopes, the current wave and
+# the gate mode, so W1-V flips `parity_gate` to enforce without a code change.
+SURFACES_TABLE = ROOT / "02-shared-references" / "surfaces.json"
+PARITY_SCOPES = ("shared", "claude-restriction")
+PARITY_GATE_MODES = ("report", "enforce")
+PARITY_GAP_MODES = ("missing", "advisory", "unverified")
+PARITY_WAVE_RE = re.compile(r"^wave-(\d+)$")
+
+
+def parity_required_surfaces(t: dict) -> list:
+    rows = {r.get("id"): r for r in t.get("surfaces") or [] if isinstance(r, dict)}
+    return [s for s in t.get("minimum_surfaces") or [] if (rows.get(s) or {}).get("hookable")]
+
+
+def parity_gaps(t: dict) -> dict:
+    """(errors, gaps, waived, surfaces). errors are a malformed gate (they fail in both modes);
+    gaps fail only under parity_gate=enforce. Each gap or waiver is a dict with component,
+    surface, mode, waiver and problem."""
+    errors, gaps, waived = [], [], []
+    gate = t.get("parity_gate", "report")
+    if gate not in PARITY_GATE_MODES:
+        errors.append(f"parity_gate {gate!r} is not one of {', '.join(PARITY_GATE_MODES)}")
+    wave = t.get("current_wave")
+    if not isinstance(wave, int) or isinstance(wave, bool) or wave < 0:
+        errors.append(f"current_wave {wave!r} must be a non-negative integer")
+        wave = None
+    comps = [c for c in t.get("components") or [] if isinstance(c, str)]
+    scopes = t.get("component_scopes")
+    if not isinstance(scopes, dict):
+        errors.append("component_scopes missing or not an object")
+        scopes = {}
+    for c, entry in scopes.items():
+        if c not in comps:
+            errors.append(f"component_scopes.{c}: not a declared component")
+        elif not isinstance(entry, dict) or entry.get("scope") not in PARITY_SCOPES:
+            errors.append(f"component_scopes.{c}: scope must be one of {', '.join(PARITY_SCOPES)}")
+        elif not (isinstance(entry.get("reason"), str) and entry["reason"].strip()):
+            errors.append(f"component_scopes.{c}: needs a one-line reason")
+    surfaces = parity_required_surfaces(t)
+    rows = {r.get("id"): r for r in t.get("surfaces") or [] if isinstance(r, dict)}
+    for c in comps:
+        entry = scopes.get(c) if isinstance(scopes.get(c), dict) else {}
+        scope = entry.get("scope")
+        if scope == "claude-restriction":
+            continue
+        if scope is None:
+            gaps.append({"component": c, "surface": "-", "mode": "-", "waiver": None,
+                         "problem": "no scope declared; held to parity as shared until classified"})
+        for sid in surfaces:
+            cell = ((rows.get(sid) or {}).get("coverage") or {}).get(c)
+            mode = cell.get("mode", "missing") if isinstance(cell, dict) else "missing"
+            waiver = cell.get("parity_waiver") if isinstance(cell, dict) else None
+            row = {"component": c, "surface": sid, "mode": mode, "waiver": waiver}
+            if waiver is not None:
+                m = PARITY_WAVE_RE.match(str(waiver.get("until", ""))) if isinstance(waiver, dict) else None
+                if not (m and isinstance(waiver.get("reason"), str) and waiver["reason"].strip()):
+                    errors.append(f"{sid}.{c}.parity_waiver: needs a reason and until: wave-N")
+                    continue
+                if mode not in PARITY_GAP_MODES:
+                    gaps.append({**row, "problem": "waiver on a covered cell; remove it"})
+                elif wave is not None and int(m.group(1)) < wave:
+                    gaps.append({**row, "problem": f"waiver expired ({waiver['until']}, current wave {wave})"})
+                else:
+                    waived.append({**row, "problem": "waived"})
+                continue
+            if mode in PARITY_GAP_MODES:
+                gaps.append({**row, "problem": "shared component below parity"})
+    return {"errors": errors, "gaps": gaps, "waived": waived, "surfaces": surfaces,
+            "gate": gate, "wave": wave}
+
+
+def _parity_line(g: dict) -> str:
+    w = g.get("waiver")
+    wtxt = f"waiver until {w.get('until')}: {w.get('reason')}" if isinstance(w, dict) else "no waiver"
+    return f"{g['component']} on {g['surface']}: {g['mode']}, {wtxt} ({g['problem']})"
+
+
+def check_component_parity(table: dict | None = None) -> dict:
+    """W1-11: shared components reach every required surface, or carry a live waiver."""
+    if table is None:
+        try:
+            table = json.loads(SURFACES_TABLE.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            return {"check": "component-parity", "scanned": 0,
+                    "failures": [f"surfaces.json unreadable ({exc.__class__.__name__})"]}
+    r = parity_gaps(table)
+    lines = [_parity_line(g) for g in r["gaps"]]
+    enforce = r["gate"] == "enforce"
+    out = {"check": "component-parity",
+           "scanned": len(table.get("components") or []) * len(r["surfaces"]),
+           "failures": r["errors"] + (lines if enforce else []),
+           "gaps": r["gaps"], "waived": r["waived"], "gate": r["gate"]}
+    if not enforce:
+        out["note"] = f"report-only: {len(lines)} gap(s), {len(r['waived'])} waived; --parity lists them"
+        out["reported"] = lines
+    return out
+
+
+def print_parity(res: dict) -> None:
+    try:
+        t = json.loads(SURFACES_TABLE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        print("\n".join(f"  ✗ {f}" for f in res["failures"]) + "\nparity: FAIL")
+        return
+    r = parity_gaps(t)
+    scopes = t.get("component_scopes") or {}
+    print(f"component parity (W1-11) — gate: {r['gate']}, current wave: {r['wave']}, "
+          f"required surfaces: {', '.join(r['surfaces'])}\n")
+    print(f"{'component':<10} {'surface':<12} {'current mode':<16} waiver")
+    for g in r["gaps"] + r["waived"]:
+        w = g.get("waiver")
+        wtxt = f"until {w.get('until')}: {w.get('reason')}" if isinstance(w, dict) else "none"
+        extra = "" if g["problem"] in ("shared component below parity", "waived") else f"  [{g['problem']}]"
+        print(f"{g['component']:<10} {g['surface']:<12} {g['mode']:<16} {wtxt}{extra}")
+    held = sorted(c for c, e in scopes.items() if isinstance(e, dict) and e.get("scope") == "claude-restriction")
+    print(f"\n{len(r['gaps'])} gap(s), {len(r['waived'])} waived. "
+          f"Not held to parity (claude-restriction): {', '.join(held) or 'none'}.")
+    for e in r["errors"]:
+        print(f"  ✗ {e}")
+    verdict = "FAIL" if res["failures"] else "PASS"
+    print(f"parity: {verdict}" + (" (report-only; W1-V flips parity_gate to enforce)" if r["gate"] == "report" else ""))
+
+
 def run_connections() -> dict:
     if not REGISTRY.exists():
         return {"lane": "connections", "failed": 1,
@@ -712,6 +841,7 @@ def run_connections() -> dict:
         check_named_detectors(),
         check_single_sources(),
         check_entry_points(),
+        check_component_parity(),
     ]
     return {"lane": "connections",
             "failed": sum(1 for c in checks if c["failures"]),
@@ -948,6 +1078,8 @@ def print_report(report: dict) -> None:
                 print(f"        · {f}")
             if len(chk["failures"]) > 12:
                 print(f"        … {len(chk['failures']) - 12} more")
+            for line in chk.get("reported", []):
+                print(f"        ! {line}")
         print()
 
     t = report.get("tokens")
@@ -1249,6 +1381,32 @@ def self_test() -> int:
            len(ambient_notes("self-test SKIP: x (ps not permitted (sandbox): y) — not a pass")) == 1)
     expect("clean gate output carries no ambient note", ambient_notes("OK all 74 checks") == [])
 
+    # W1-11 parity gate on a synthetic table (clock-free: waves are data, not dates)
+    def ptable(gate="report", waiver=None, scope="shared"):
+        cell = {"mode": "advisory"}
+        if waiver:
+            cell["parity_waiver"] = waiver
+        return {"components": ["HS", "HR"], "current_wave": 2, "parity_gate": gate,
+                "component_scopes": {"HS": {"scope": scope, "reason": "r"},
+                                     "HR": {"scope": "claude-restriction", "reason": "r"}},
+                "minimum_surfaces": ["a", "chat"],
+                "surfaces": [{"id": "a", "hookable": True, "coverage": {"HS": cell, "HR": {"mode": "advisory"}}},
+                             {"id": "chat", "hookable": False, "coverage": {"HS": {"mode": "advisory"}}}]}
+    rep = check_component_parity(ptable())
+    expect("parity: report mode lists a shared advisory gap and passes",
+           not rep["failures"] and len(rep["reported"]) == 1 and "HS on a" in rep["reported"][0])
+    expect("parity: enforce mode fails the same gap", check_component_parity(ptable("enforce"))["failures"])
+    expect("parity: claude-restriction and hookless surfaces are not held to parity",
+           [g["component"] + g["surface"] for g in rep["gaps"]] == ["HSa"])
+    expect("parity: a live waiver is honoured",
+           not check_component_parity(ptable("enforce", {"reason": "x", "until": "wave-2"}))["failures"])
+    expect("parity: an expired waiver fails",
+           check_component_parity(ptable("enforce", {"reason": "x", "until": "wave-1"}))["failures"])
+    expect("parity: a bad scope fails even in report mode",
+           check_component_parity(ptable(scope="maybe"))["failures"])
+    expect("parity: the live table is well-formed", not parity_gaps(json.loads(
+        SURFACES_TABLE.read_text(encoding="utf-8")))["errors"])
+
     for name in failures:
         print(f"  ✗ {name}")
     if failures:
@@ -1269,10 +1427,19 @@ def main() -> int:
     ap.add_argument("--stamp", action="store_true", help="write the report stamp")
     ap.add_argument("--verbose", action="store_true", help="show output of failing gates")
     ap.add_argument("--self-test", action="store_true", help="police the harness itself")
+    ap.add_argument("--parity", action="store_true",
+                    help="list the component parity gaps (W1-11) in plain words")
     args = ap.parse_args()
 
     if args.self_test:
         return self_test()
+    if args.parity:
+        res = check_component_parity()
+        if args.json:
+            print(json.dumps(res, indent=2))
+        else:
+            print_parity(res)
+        return 1 if res["failures"] else 0
 
     if not REGISTRY.exists():
         print("workspace-harness: skills.registry.json missing — run build-registry.py first",

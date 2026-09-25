@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "doc": "Surface registry (H16). Source for render_shims.py and for profile_resolve detection. Never auto-loaded. This repo is public, so coverage rules state known gaps at class level with a stable ID; the runnable detail stays in held (decision-public-residual-detail).",
+  "doc": "Surface registry (H16). Source for render_shims.py and for profile_resolve detection. Never auto-loaded. This repo is public, so coverage rules state known gaps at class level with a stable ID; the runnable detail stays in held (decision-public-residual-detail). component_scopes gives each component a scope: shared (every agent should get it) or claude-restriction (it exists to hold Claude back, so a non-Claude gap is by design), each with a one-line reason. The parity gate (workspace-harness.py check_component_parity, --parity) flags a shared component whose cell on a hookable minimum surface is missing, advisory or unverified, unless the cell carries parity_waiver {reason, until: wave-N}; a waiver whose wave is before current_wave is itself a gap. parity_gate is report (list gaps, pass) or enforce (gaps fail).",
   "coverage_modes": [
     "enforced",
     "enforced-partial",
@@ -30,6 +30,58 @@
     "H24",
     "H25"
   ],
+  "component_scopes": {
+    "H1": {
+      "scope": "shared",
+      "reason": "Regenerating derived files is every committer's job; a stale registry misroutes every agent, not only Claude."
+    },
+    "H2": {
+      "scope": "shared",
+      "reason": "One resolver says which context profile a repo has for every agent; the lanes and guards on every host call it."
+    },
+    "H3": {
+      "scope": "shared",
+      "reason": "intent-run is the multi-agent coordination CLI; every agent that runs it needs the same hardening."
+    },
+    "H15": {
+      "scope": "shared",
+      "reason": "The wall guard is one engine rendered into every hooked host; only its rules differ per family."
+    },
+    "H16": {
+      "scope": "shared",
+      "reason": "The surface registry renders every host's shims; it is the parity source itself."
+    },
+    "H17": {
+      "scope": "claude-restriction",
+      "reason": "The Claude overlay (identity include, employer transport block, git floor) exists to hold Claude out of employer work; other families take the device identity rule by design, and H18 carries the shared identity lane."
+    },
+    "H18": {
+      "scope": "shared",
+      "reason": "Git lanes run for every local committer by design: employer identity at commit and push, the workspace consistency lane."
+    },
+    "H19": {
+      "scope": "shared",
+      "reason": "The neutral hook core is the one entry point every hooked host calls."
+    },
+    "H20": {
+      "scope": "shared",
+      "reason": "Portable homes exist to bring the Claude-only workflows to every agent."
+    },
+    "H22": {
+      "scope": "shared",
+      "reason": "Context-profile action classes (no self-merge, no default-branch push on employer repos) bind every agent; vetted housekeeping is only the Claude-facing slice."
+    },
+    "H24": {
+      "scope": "shared",
+      "reason": "Installers refuse every agent shell, not only Claude's; only a human installs."
+    },
+    "H25": {
+      "scope": "shared",
+      "reason": "Any committer can leak employer substance into this public vault; Cursor and Codex, the employer-approved tools, are the likelier path."
+    }
+  },
+  "current_wave": 1,
+  "parity_gate": "report",
   "families": {
     "claude": {
       "wall_rank": 100,
