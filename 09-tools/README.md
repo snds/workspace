@@ -497,9 +497,29 @@ Global config-based git lanes for every local committer (H18): one rendered incl
 
 `lane_cases.py`: temp-HOME fixtures for the git lanes, installed by the real installer; employer-shaped, personal, unknown-owner and workspace-shaped temp repos over local bare remotes, byte-identical checks including `.git/`, audit findings and the declared bypass residuals (git >= 2.54; otherwise the cases skip).
 
+H15 adds the wall guard's outputs: the pre-tool registrations for Claude Code (matcher generated from `tool_families`), Cursor and Codex, the Codex rules-file belt, `wall-belts.json` (paste-only lists for hosts without hooks) and `claude-permissions-template.json`. `--emit claude-permissions --device ID` expands the template for one device (employer checkouts from the checkout cache, employer vault folders from the vault) on stdout; nothing machine-specific is committed. The table checks refuse a report-only R1, R3 or R6 and a host override that relaxes a rule.
+
+## wall_guard.py
+
+The workspace-owned wall guard (H15): one `decide()` over the action-policy table for every hooked host. Host payloads (Claude Code, Cursor, Codex, VS Code, Gemini, Copilot CLI, Windsurf, Cline) become shell, file, MCP or URL actions; the verdict renders in the host's dialect (a route renders as deny plus a handoff line). Which rules enforce and which only log a would-deny to `telemetry/wall-guard.jsonl` is `surfaces.json` `wall_guard.rules` (R1, R3 and R6 enforce; R2, R4, R6c and R7 are report-only during the rollout window). A detection discount needs a verified host payload; no environment variable turns a deny into an allow. It fails open on its own errors (declared, H17-R8 class), and text parsing can be evaded (H17-R10).
+
+```bash
+python3 09-tools/wall_guard.py decide --host claude-code --command "git status" [--cwd DIR] [--json]
+python3 09-tools/wall_guard.py report [--days 14] [--json]     # would-deny counts for the rollout decision
+python3 09-tools/wall_guard.py probe-setup                     # human: scratch repos for the live probes
+python3 09-tools/wall_guard.py probe-record --host cursor      # human: writes probes/wallguard-<host>@<device>.json
+python3 09-tools/wall_guard.py --self-test
+```
+
+`ws-hook-repo.sh` is the repo-relative entry for committed shims (a cloud VM has no `$HOME` wrapper). The corpus, host goldens and the floor, lane and belt agreement cases live in `fixtures/wall_guard/`; `TestWallGuard` in test-validators.py is the exit-gate class.
+
 ## fixtures/identity/
 
 Synthetic identity tables, the v5 overlay golden and `floor_cases.py`: hook-level floor, hasconfig include and `--install-claude-overlay` fixtures on a temp HOME (git >= 2.54 for the floor; otherwise the cases skip).
+
+## fixtures/wall_guard/
+
+`cases.py` builds a synthetic world (temp HOME, synthetic owners, real git repos, a pinned fixture script, a checkout cache) and runs one corpus through the host payload templates in `goldens/`, the Claude git floor, H18's lane entrypoint when present, and the belts. Used by `wall_guard.py --self-test` and TestWallGuard.
 
 ## fixtures/nightly/
 
