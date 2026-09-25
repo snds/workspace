@@ -122,6 +122,11 @@ could tell it to do something harmful.* Lead with that sentence next time.
 - **Why:** on 2026-09-23 I was given publish commands as an option while wave B was still running.
   I ran them, and `main` was published before the fix round landed. Early commands read as
   "do this now".
+- **One copyable block per command** (set 2026-09-24). Every command I should run gets its own
+  fenced block (`bash` for a terminal, `text` for a message I paste into an agent), never several
+  commands in one block and never a command only inline in prose. Put the "what it should show"
+  note after the block. **Why:** I copy each block with its copy button and paste it straight into
+  a terminal or an agent chat; anything else makes me retype or trim.
 
 ## Working Principles (DS / design-engineering work)
 _Migrated 2026-07-09 from the machine-local `~/.claude/CLAUDE.md` (FX-15) — these are standing
