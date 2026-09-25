@@ -1336,8 +1336,9 @@ class TestPinLib(unittest.TestCase):
 
     def test_pinned_paths_single_home(self):
         pin_lib = load("00-bootstrap/doctor/pin_lib.py")
-        self.assertEqual(len(pin_lib.PINNED_PATHS), 9)
+        self.assertEqual(len(pin_lib.PINNED_PATHS), 10)  # H18 (wave 1) added 09-tools/git_lanes.py
         self.assertIn("09-tools/profile_resolve.py", pin_lib.PINNED_PATHS)
+        self.assertIn("09-tools/git_lanes.py", pin_lib.PINNED_PATHS)
 
 
 class TestInstaller(unittest.TestCase):
