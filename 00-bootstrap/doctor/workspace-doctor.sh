@@ -107,13 +107,13 @@ heal_file() { # $1=dist source  $2=target  $3=exec|plain — HEAL class only; at
   # without -p, unzip and Time Machine all strip the exec bit. Test it explicitly.
   if [ -f "$2" ] && [ "$(sha "$1")" = "$(sha "$2")" ]; then
     if [ "$3" = exec ] && [ ! -x "$2" ]; then
-      if [ "$CHECK" -eq 1 ]; then flag "DRIFT: $2 not executable"; return; fi
+      if [ "$CHECK" -eq 1 ]; then flag "DRIFT: $2 not executable — run workspace-doctor.sh (no flags) to heal it"; return; fi
       if chmod +x "$2" 2>/dev/null; then DRIFT=1; say "REPAIRED: $2 (restored +x)"
       else flag "REPAIR FAILED (chmod): $2"; fi
     fi
     return
   fi
-  if [ "$CHECK" -eq 1 ]; then flag "DRIFT: $2"; return; fi
+  if [ "$CHECK" -eq 1 ]; then flag "DRIFT: $2 differs from the pinned copy — run workspace-doctor.sh (no flags) to heal it"; return; fi
   if ! mkdir -p "$(dirname "$2")" 2>/dev/null; then flag "REPAIR FAILED (mkdir): $2"; return; fi
   local TMP; TMP="$(dirname "$2")/.ws-tmp.$$"
   if ! cp "$1" "$TMP" 2>/dev/null; then rm -f "$TMP"; flag "REPAIR FAILED (cp): $2"; return; fi
