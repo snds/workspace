@@ -51,7 +51,7 @@ if str(HERE) not in sys.path:
 import merge_settings  # noqa: E402 — sibling module, same directory
 import pin_lib  # noqa: E402
 
-NAMES = ("pin", "shims", "git-hooks", "identity", "claude-overlay", "sandbox-roots",
+NAMES = ("pin", "shims", "git-hooks", "identity", "claude-overlay", "claude-permissions", "sandbox-roots",
          "plugin", "projects-pointer", "launchd")
 ACTIONS = ("install", "uninstall")
 # Cursor scripts retired in wave 0 (T1 archives the dist copies). Installed copies are
@@ -922,6 +922,45 @@ EMPLOYER_NOIDENT_INC = (
 )
 
 
+def _permission_rules(ctx: Ctx) -> dict:
+    """H15: the Claude deny/ask rules for employer checkouts and employer vault folders, rendered for
+    this device by render_shims.py (the rules name paths, so they are rendered per device, never tracked)."""
+    rs = ctx.repo / "00-bootstrap" / "doctor" / "render_shims.py"
+    if not rs.is_file():
+        raise MissingSource("render_shims.py absent")
+    dev = ctx.pr().current_device()["id"]
+    try:
+        p = subprocess.run([sys.executable, str(rs), "--emit", "claude-permissions", "--device", dev],
+                           capture_output=True, text=True, timeout=RENDER_TIMEOUT,
+                           env=dict(os.environ, HOME=str(ctx.home)))
+        data = json.loads(p.stdout) if p.returncode == 0 else None
+    except (OSError, subprocess.SubprocessError, ValueError):
+        data = None
+    rules = (data or {}).get("permissions")
+    if not isinstance(rules, dict):
+        raise MissingSource("render_shims.py --emit claude-permissions failed")
+    return rules
+
+
+def do_claude_permissions(ctx: Ctx) -> int:
+    """Merge the rendered deny/ask rules into ~/.claude/settings.json `permissions`, keeping every
+    existing rule; uninstall restores the pre-install backup byte for byte."""
+    if ctx.action == "uninstall":
+        return _uninstall(ctx)
+    rules = _permission_rules(ctx)
+    dst = ctx.home / ".claude" / "settings.json"
+    tgt = _json_load(dst, missing={})
+    if not isinstance(tgt, dict):
+        raise InstallerError(f"{dst} is not a JSON object (fix by hand)")
+    perms = dict(tgt.get("permissions") or {})
+    for key in ("deny", "ask"):
+        cur = list(perms.get(key) or [])
+        perms[key] = cur + [r for r in rules.get(key) or [] if r not in cur]
+    old = _state(dst)
+    return _apply(ctx, [(dst, _file_state(merge_settings.dump(dict(tgt, permissions=perms)).encode("utf-8"),
+                                          old[2] if old and old[0] == "file" else 0o600))])
+
+
 def do_claude_overlay(ctx: Ctx) -> int:
     if ctx.action == "uninstall":
         return _uninstall(ctx)
@@ -1084,7 +1123,8 @@ def do_git_hooks(ctx: Ctx) -> int:
 
 HANDLERS = {
     "pin": do_pin, "shims": do_shims, "git-hooks": do_git_hooks, "identity": do_identity,
-    "claude-overlay": do_claude_overlay, "sandbox-roots": do_sandbox_roots,
+    "claude-overlay": do_claude_overlay, "claude-permissions": do_claude_permissions,
+    "sandbox-roots": do_sandbox_roots,
     "plugin": do_plugin, "projects-pointer": do_projects_pointer, "launchd": do_launchd,
 }
 
@@ -1508,6 +1548,29 @@ def self_test() -> int:
                 _render_target(ctx, out)
             self.assertIn("sandbox_workspace_write", str(cm.exception))
             self.assertIn("writable_roots", str(cm.exception))
+
+        def test_claude_permissions_merge_and_uninstall(self):
+            sj = self.home / ".claude" / "settings.json"
+            sj.parent.mkdir(parents=True, exist_ok=True)
+            mine = {"permissions": {"deny": ["Bash(rm -rf /)"]}, "env": {"EDITOR": "vi"}}
+            sj.write_text(json.dumps(mine, indent=2) + "\n")
+            before = sj.read_bytes()
+            fake = {"deny": ["Read(/x/emp/**)", "Bash(rm -rf /)"], "ask": ["Edit(/x/emp2/**)"]}
+            saved = globals()["_permission_rules"]
+            globals()["_permission_rules"] = lambda _ctx: fake
+            try:
+                rc, out, err = self.run_inst("claude-permissions")
+                self.assertEqual(rc, 0, out + err)
+                got = json.loads(sj.read_text())
+                self.assertEqual(got["permissions"]["deny"], ["Bash(rm -rf /)", "Read(/x/emp/**)"])  # kept + added, no dup
+                self.assertEqual(got["permissions"]["ask"], ["Edit(/x/emp2/**)"])
+                self.assertEqual(got["env"], {"EDITOR": "vi"})
+                self.assertEqual(self.run_inst("claude-permissions")[0], 3)                      # nothing to do
+                rc, out, err = self.run_inst("claude-permissions", "uninstall")
+                self.assertEqual(rc, 0, out + err)
+                self.assertEqual(sj.read_bytes(), before)                                         # byte-exact
+            finally:
+                globals()["_permission_rules"] = saved
 
         def test_codex_managed_block_splices_into_an_existing_table(self):
             # Work MBP 2026-09-24: the Codex app had written its own [shell_environment_policy.set].

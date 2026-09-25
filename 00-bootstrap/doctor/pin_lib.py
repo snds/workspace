@@ -45,6 +45,7 @@ PINNED_PATHS = [
     "09-tools/ws_hook.py",
     "09-tools/profile_resolve.py",
     "09-tools/git_lanes.py",
+    "09-tools/wall_guard.py",
     "02-shared-references/surfaces.json",
     "02-shared-references/devices.json",
     "02-shared-references/delivery-playbooks/context-remotes.json",

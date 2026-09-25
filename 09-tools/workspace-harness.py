@@ -132,6 +132,7 @@ QUALITY_CHAIN = [
     ("vault-health.py", []),
     ("profile_resolve.py", ["--self-test"]),
     ("git_lanes.py", ["--self-test"]),
+    ("wall_guard.py", ["--self-test"]),
     ("profile_resolve.py", ["validate-tables", "--require-all"]),
     ("prune-our-branches.py", ["--self-test"]),
     ("../00-bootstrap/doctor/pin_lib.py", ["--self-test"]),
