@@ -1,0 +1,192 @@
+{
+  "doc": "Invariant-only wall belts (H15), rendered from 09-tools/wall_guard.py BELT_INVARIANTS: each entry is a command prefix the wall guard also denies, so no belt is stricter than the guard. Paste-only for hosts with static lists and no hooks: Warp (denylist regexes), Zed (always_deny regexes), OpenCode (bash permission globs set to deny). Formats are from vendor docs, [UNVERIFIED] until installed.",
+  "invariants": [
+    {
+      "id": "hook-skip",
+      "argv": [
+        "git",
+        "commit",
+        "--no-verify"
+      ],
+      "why": "git's hook-skip option skips the workspace git floor (R6)"
+    },
+    {
+      "id": "hook-skip",
+      "argv": [
+        "git",
+        "commit",
+        "--no-verif"
+      ],
+      "why": "git's hook-skip option skips the workspace git floor (R6)"
+    },
+    {
+      "id": "hook-skip",
+      "argv": [
+        "git",
+        "commit",
+        "--no-veri"
+      ],
+      "why": "git's hook-skip option skips the workspace git floor (R6)"
+    },
+    {
+      "id": "hook-skip",
+      "argv": [
+        "git",
+        "push",
+        "--no-verify"
+      ],
+      "why": "git's hook-skip option skips the workspace git floor (R6)"
+    },
+    {
+      "id": "hook-skip",
+      "argv": [
+        "git",
+        "push",
+        "--no-verif"
+      ],
+      "why": "git's hook-skip option skips the workspace git floor (R6)"
+    },
+    {
+      "id": "hook-skip",
+      "argv": [
+        "git",
+        "push",
+        "--no-veri"
+      ],
+      "why": "git's hook-skip option skips the workspace git floor (R6)"
+    },
+    {
+      "id": "hook-skip",
+      "argv": [
+        "git",
+        "merge",
+        "--no-verify"
+      ],
+      "why": "git's hook-skip option skips the workspace git floor (R6)"
+    },
+    {
+      "id": "hook-skip",
+      "argv": [
+        "git",
+        "merge",
+        "--no-verif"
+      ],
+      "why": "git's hook-skip option skips the workspace git floor (R6)"
+    },
+    {
+      "id": "hook-skip",
+      "argv": [
+        "git",
+        "merge",
+        "--no-veri"
+      ],
+      "why": "git's hook-skip option skips the workspace git floor (R6)"
+    },
+    {
+      "id": "commit-n",
+      "argv": [
+        "git",
+        "commit",
+        "-n"
+      ],
+      "why": "git commit -n skips the commit hooks (R6)"
+    },
+    {
+      "id": "floor-off",
+      "argv": [
+        "git",
+        "-c",
+        "hook.ws-claude-wall.enabled=false"
+      ],
+      "why": "switches the workspace git floor off for one command (R6)"
+    },
+    {
+      "id": "config-count",
+      "argv": [
+        "GIT_CONFIG_COUNT=0"
+      ],
+      "why": "drops the overlay's env-scope git config for one command (R6)"
+    },
+    {
+      "id": "env-scrub",
+      "argv": [
+        "env",
+        "-i"
+      ],
+      "why": "scrubs the environment the walls live in (R6)"
+    }
+  ],
+  "warp_denylist": [
+    "^git\\s+commit\\s+\\-\\-no\\-verify(\\s|$)",
+    "^git\\s+commit\\s+\\-\\-no\\-verif(\\s|$)",
+    "^git\\s+commit\\s+\\-\\-no\\-veri(\\s|$)",
+    "^git\\s+push\\s+\\-\\-no\\-verify(\\s|$)",
+    "^git\\s+push\\s+\\-\\-no\\-verif(\\s|$)",
+    "^git\\s+push\\s+\\-\\-no\\-veri(\\s|$)",
+    "^git\\s+merge\\s+\\-\\-no\\-verify(\\s|$)",
+    "^git\\s+merge\\s+\\-\\-no\\-verif(\\s|$)",
+    "^git\\s+merge\\s+\\-\\-no\\-veri(\\s|$)",
+    "^git\\s+commit\\s+\\-n(\\s|$)",
+    "^git\\s+\\-c\\s+hook\\.ws\\-claude\\-wall\\.enabled=false(\\s|$)",
+    "^GIT_CONFIG_COUNT=0(\\s|$)",
+    "^env\\s+\\-i(\\s|$)"
+  ],
+  "zed_always_deny": [
+    "^git\\s+commit\\s+\\-\\-no\\-verify(\\s|$)",
+    "^git\\s+commit\\s+\\-\\-no\\-verif(\\s|$)",
+    "^git\\s+commit\\s+\\-\\-no\\-veri(\\s|$)",
+    "^git\\s+push\\s+\\-\\-no\\-verify(\\s|$)",
+    "^git\\s+push\\s+\\-\\-no\\-verif(\\s|$)",
+    "^git\\s+push\\s+\\-\\-no\\-veri(\\s|$)",
+    "^git\\s+merge\\s+\\-\\-no\\-verify(\\s|$)",
+    "^git\\s+merge\\s+\\-\\-no\\-verif(\\s|$)",
+    "^git\\s+merge\\s+\\-\\-no\\-veri(\\s|$)",
+    "^git\\s+commit\\s+\\-n(\\s|$)",
+    "^git\\s+\\-c\\s+hook\\.ws\\-claude\\-wall\\.enabled=false(\\s|$)",
+    "^GIT_CONFIG_COUNT=0(\\s|$)",
+    "^env\\s+\\-i(\\s|$)"
+  ],
+  "opencode_bash_deny": [
+    "git commit --no-verify",
+    "git commit --no-verify *",
+    "git commit --no-verif",
+    "git commit --no-verif *",
+    "git commit --no-veri",
+    "git commit --no-veri *",
+    "git push --no-verify",
+    "git push --no-verify *",
+    "git push --no-verif",
+    "git push --no-verif *",
+    "git push --no-veri",
+    "git push --no-veri *",
+    "git merge --no-verify",
+    "git merge --no-verify *",
+    "git merge --no-verif",
+    "git merge --no-verif *",
+    "git merge --no-veri",
+    "git merge --no-veri *",
+    "git commit -n",
+    "git commit -n *",
+    "git -c hook.ws-claude-wall.enabled=false",
+    "git -c hook.ws-claude-wall.enabled=false *",
+    "GIT_CONFIG_COUNT=0",
+    "GIT_CONFIG_COUNT=0 *",
+    "env -i",
+    "env -i *"
+  ],
+  "claude_bash_deny": [
+    "Bash(git commit --no-verify:*)",
+    "Bash(git commit --no-verif:*)",
+    "Bash(git commit --no-veri:*)",
+    "Bash(git push --no-verify:*)",
+    "Bash(git push --no-verif:*)",
+    "Bash(git push --no-veri:*)",
+    "Bash(git merge --no-verify:*)",
+    "Bash(git merge --no-verif:*)",
+    "Bash(git merge --no-veri:*)",
+    "Bash(git commit -n:*)",
+    "Bash(git -c hook.ws-claude-wall.enabled=false:*)",
+    "Bash(GIT_CONFIG_COUNT=0:*)",
+    "Bash(env -i:*)"
+  ]
+}

@@ -1674,7 +1674,9 @@
       "pre-compact": "preCompact",
       "session-end": "sessionEnd",
       "subagent-stop": "subagentStop",
-      "pre-tool": "beforeShellExecution"
+      "pre-tool": "preToolUse",
+      "pre-shell": "beforeShellExecution",
+      "pre-mcp": "beforeMCPExecution"
     },
     "codex-hooks": {
       "session-start": "SessionStart",
@@ -1951,6 +1953,24 @@
       ]
     },
     {
+      "id": "codex-user",
+      "scope": "user",
+      "install_path": "~/.codex/hooks.json",
+      "format": "codex-hooks",
+      "output": "00-bootstrap/dist/codex-hooks.json",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_mode": "merge-hook-entries",
+      "cwd_context": [
+        "workspace",
+        "other"
+      ],
+      "loaded_by": [
+        "codex"
+      ]
+    },
+    {
       "id": "probe-claude-user",
       "scope": "user",
       "install_path": "~/.claude/settings.json",
@@ -2153,6 +2173,19 @@
       "defers_to": null
     },
     {
+      "id": "claude-user.pre-tool",
+      "layer": "claude-user",
+      "event": "pre-tool",
+      "command": "ws-guard-claude",
+      "timeout": 5,
+      "matcher": "@tool_families:claude",
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
       "id": "claude-project.session-start",
       "layer": "claude-project",
       "event": "session-start",
@@ -2255,12 +2288,56 @@
       "defers_to": null
     },
     {
+      "id": "cursor-user.pre-shell",
+      "layer": "cursor-user",
+      "event": "pre-shell",
+      "command": "ws-guard-cursor",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "cursor-user.pre-tool",
+      "layer": "cursor-user",
+      "event": "pre-tool",
+      "command": "ws-guard-cursor",
+      "timeout": 5,
+      "matcher": "Shell|Write",
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "cursor-user.pre-mcp",
+      "layer": "cursor-user",
+      "event": "pre-mcp",
+      "command": "ws-guard-cursor",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
       "id": "cursor-project.subagent-stop",
       "layer": "cursor-project",
       "event": "subagent-stop",
       "command": "cursor-subagent-stop-project",
       "timeout": null,
       "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "codex-user.pre-tool",
+      "layer": "codex-user",
+      "event": "pre-tool",
+      "command": "ws-guard-codex",
+      "timeout": 5,
+      "matcher": "^Bash$|apply_patch|mcp__.*",
       "host_skip": [],
       "claim_group": null,
       "defers_to": null
@@ -2506,6 +2583,58 @@
       "surface": "cursor",
       "probe": false,
       "render": "cursor-sandbox"
+    },
+    {
+      "id": "codex-user-hooks",
+      "path": "00-bootstrap/dist/codex-hooks.json",
+      "layer": "codex-user",
+      "owned_keys": [
+        "hooks"
+      ],
+      "install_path": "~/.codex/hooks.json",
+      "install_mode": "merge-hook-entries",
+      "surface": "codex",
+      "probe": false,
+      "render": "hooks"
+    },
+    {
+      "id": "codex-wall-rules",
+      "path": "00-bootstrap/dist/codex-workspace-wall.rules",
+      "layer": null,
+      "owned_keys": [
+        "whole-file"
+      ],
+      "install_path": "~/.codex/rules/workspace-wall.rules",
+      "install_mode": "whole-file",
+      "surface": "codex",
+      "probe": false,
+      "render": "codex-rules"
+    },
+    {
+      "id": "claude-permissions-template",
+      "path": "00-bootstrap/dist/claude-permissions-template.json",
+      "layer": null,
+      "owned_keys": [
+        "whole-file"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": "claude-code",
+      "probe": false,
+      "render": "claude-permissions"
+    },
+    {
+      "id": "wall-belts",
+      "path": "00-bootstrap/dist/wall-belts.json",
+      "layer": null,
+      "owned_keys": [
+        "whole-file"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": null,
+      "probe": false,
+      "render": "wall-belts"
     },
     {
       "id": "probe-claude-code",

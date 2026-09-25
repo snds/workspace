@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^Bash$|apply_patch|mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/snds-workspace/bin/ws-hook --host codex --event pre-tool",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

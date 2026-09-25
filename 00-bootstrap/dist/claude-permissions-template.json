@@ -1,0 +1,41 @@
+{
+  "doc": "Claude permission rules for the wall guard (H15, H25 carry-over). Rendered by render_shims.py; do not edit. `static` rules apply on every device. `per_device` rules are templates: `--emit claude-permissions --device ID` expands {employer_checkout} from the machine-local checkout cache and {employer_vault_folder} from the vault's 07-projects folders whose Context profile is employer (or whose name matches an employer path glob), and prints the device's rules; nothing machine-specific is ever committed. Read rules apply best-effort to Grep, Glob and the Bash file commands Claude recognises; the PreToolUse guard covers writes.",
+  "static": {
+    "deny": [
+      "Read(~/.config/snds-workspace/control/**)",
+      "Edit(~/.config/snds-workspace/control/**)",
+      "Edit(~/.gitconfig)",
+      "Edit(~/.cursor/hooks.json)",
+      "Edit(~/.codex/hooks.json)",
+      "Edit(~/.codex/config.toml)",
+      "Bash(git commit --no-verify:*)",
+      "Bash(git commit --no-verif:*)",
+      "Bash(git commit --no-veri:*)",
+      "Bash(git push --no-verify:*)",
+      "Bash(git push --no-verif:*)",
+      "Bash(git push --no-veri:*)",
+      "Bash(git merge --no-verify:*)",
+      "Bash(git merge --no-verif:*)",
+      "Bash(git merge --no-veri:*)",
+      "Bash(git commit -n:*)",
+      "Bash(git -c hook.ws-claude-wall.enabled=false:*)",
+      "Bash(GIT_CONFIG_COUNT=0:*)",
+      "Bash(env -i:*)"
+    ],
+    "ask": [
+      "Edit(~/.claude/settings*.json)"
+    ]
+  },
+  "per_device": {
+    "deny": [
+      "Read({employer_checkout}/**)",
+      "Edit({employer_checkout}/**)",
+      "Read({employer_vault_folder}/**)",
+      "Edit({employer_vault_folder}/**)"
+    ],
+    "sources": {
+      "employer_checkout": "checkout cache rows (telemetry/checkouts.json) with owner_class employer",
+      "employer_vault_folder": "07-projects/* whose SESSION-STATE Context profile starts with centric-, or whose name matches an employer_path_globs entry"
+    }
+  }
+}

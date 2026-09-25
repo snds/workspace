@@ -174,6 +174,7 @@ Registrations (one effective registration per surface, event and behaviour):
 | claude-user.session-start | session-start | ws-user-sessionstart | cursor | claude-boot |
 | claude-user.user-prompt | user-prompt | ws-user-reassert | cursor | - |
 | claude-user.session-end | session-end | ws-user-audit | cursor | - |
+| claude-user.pre-tool | pre-tool | ws-guard-claude | cursor | - |
 | claude-project.session-start | session-start | dispatcher | cursor | - |
 | claude-project.pre-tool | pre-tool | dispatcher | cursor | - |
 | claude-project.user-prompt | user-prompt | dispatcher | cursor | - |
@@ -182,7 +183,11 @@ Registrations (one effective registration per surface, event and behaviour):
 | claude-project.session-end | session-end | dispatcher | cursor | - |
 | snds-plugin.session-start | session-start | ws-user-sessionstart | cursor | claude-boot |
 | cursor-user.session-start | session-start | cursor-sessionstart | - | - |
+| cursor-user.pre-shell | pre-shell | ws-guard-cursor | - | - |
+| cursor-user.pre-tool | pre-tool | ws-guard-cursor | - | - |
+| cursor-user.pre-mcp | pre-mcp | ws-guard-cursor | - | - |
 | cursor-project.subagent-stop | subagent-stop | cursor-subagent-stop-project | - | - |
+| codex-user.pre-tool | pre-tool | ws-guard-codex | - | - |
 | probe-claude-user.session-start | session-start | ws-hook-probe | - | ws-probe |
 | probe-claude-user.user-prompt | user-prompt | ws-hook-probe | - | ws-probe |
 | probe-claude-user.stop | stop | ws-hook-probe | - | ws-probe |
@@ -208,6 +213,10 @@ Rendered outputs (installers read this mapping from `render_shims.py --list --js
 | snds-plugin-hooks | `00-bootstrap/dist/plugin-hooks.json` | whole-file | `~/.claude/local-plugins/snds-local/snds/hooks/hooks.json` | - |
 | codex-config-fragment | `00-bootstrap/dist/codex-config-fragment.toml` | managed-block | `~/.codex/config.toml` | - |
 | cursor-sandbox-fragment | `00-bootstrap/dist/cursor-sandbox-fragment.json` | whole-file | - | - |
+| codex-user-hooks | `00-bootstrap/dist/codex-hooks.json` | merge-hook-entries | `~/.codex/hooks.json` | - |
+| codex-wall-rules | `00-bootstrap/dist/codex-workspace-wall.rules` | whole-file | `~/.codex/rules/workspace-wall.rules` | - |
+| claude-permissions-template | `00-bootstrap/dist/claude-permissions-template.json` | whole-file | - | - |
+| wall-belts | `00-bootstrap/dist/wall-belts.json` | whole-file | - | - |
 | probe-claude-code | `00-bootstrap/dist/probe/claude-code.json` | merge-hook-entries | `~/.claude/settings.json` | - |
 | probe-cursor | `00-bootstrap/dist/probe/cursor.json` | merge-hook-entries | `~/.cursor/hooks.json` | - |
 | probe-codex | `00-bootstrap/dist/probe/codex.json` | merge-hook-entries | `~/.codex/hooks.json` | - |

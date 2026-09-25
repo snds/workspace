@@ -5,6 +5,25 @@
       {
         "command": "$HOME/.claude/hooks/cursor-sessionstart.sh"
       }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "$HOME/.config/snds-workspace/bin/ws-hook --host cursor --event pre-tool",
+        "timeout": 5
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "$HOME/.config/snds-workspace/bin/ws-hook --host cursor --event pre-tool",
+        "matcher": "Shell|Write",
+        "timeout": 5
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": "$HOME/.config/snds-workspace/bin/ws-hook --host cursor --event pre-tool",
+        "timeout": 5
+      }
     ]
   }
 }

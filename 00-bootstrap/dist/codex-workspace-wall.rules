@@ -1,0 +1,33 @@
+# snds-workspace wall belt (H15). Rendered by 00-bootstrap/doctor/render_shims.py from
+# 09-tools/wall_guard.py BELT_INVARIANTS; do not edit by hand. Forbidden invariants only: each
+# prefix is one the wall guard also denies, so this file is never stricter than the guard.
+
+prefix_rule(
+    pattern = ["git", ["commit", "push", "merge"], ["--no-verify", "--no-verif", "--no-veri"]],
+    decision = "forbidden",
+    justification = "git's hook-skip option skips the workspace git floor (R6)",
+)
+
+prefix_rule(
+    pattern = ["git", "commit", "-n"],
+    decision = "forbidden",
+    justification = "git commit -n skips the commit hooks (R6)",
+)
+
+prefix_rule(
+    pattern = ["git", "-c", "hook.ws-claude-wall.enabled=false"],
+    decision = "forbidden",
+    justification = "switches the workspace git floor off for one command (R6)",
+)
+
+prefix_rule(
+    pattern = ["GIT_CONFIG_COUNT=0"],
+    decision = "forbidden",
+    justification = "drops the overlay's env-scope git config for one command (R6)",
+)
+
+prefix_rule(
+    pattern = ["env", "-i"],
+    decision = "forbidden",
+    justification = "scrubs the environment the walls live in (R6)",
+)

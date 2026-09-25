@@ -32,6 +32,18 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|mcp__terminal__run_in_terminal|mcp__workspace__bash|Write|Edit|MultiEdit|NotebookEdit|mcp__workspace-fs__.*|mcp__claude-in-chrome__.*|mcp__computer-use__.*|mcp__linear-c8__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/snds-workspace/bin/ws-hook --host claude-code --event pre-tool",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "env": {
