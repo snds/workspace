@@ -1721,8 +1721,8 @@ def _vault_project_dirs() -> list[tuple[Path, str | None]]:
         return out
     conduct = _conduct()
     for d in kids:
-        if d.name.startswith((".", "_")) or not d.is_dir():
-            continue
+        if d.name.startswith((".", "_")) or not d.is_dir() or not re.match(r"\d{2}-", d.name):
+            continue            # vault projects are NN-name folders; plans/, todos/ are not projects
         try:
             os.listdir(d)
         except OSError:
