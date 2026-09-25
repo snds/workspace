@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # Where the epistemic notes live. Inbound links are counted across the WHOLE vault,
 # but only these dirs are checked FOR being orphans / stale / dangling.
 SCOPE = ["06-context/memory", "08-knowledge", "02-shared-references"]
-LINK_SOURCES = ["01-frameworks", "02-shared-references", "03-skills", "04-preferences",
+LINK_SOURCES = ["00-bootstrap", "01-frameworks", "02-shared-references", "03-skills", "04-preferences",
                 "06-context", "08-knowledge", "AGENTS.md", "CLAUDE.md", "README.md"]
 SKIP_PARTS = {"_archive", ".obsidian", "node_modules", "dist", ".git"}
 

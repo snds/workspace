@@ -387,7 +387,9 @@
         }
       },
       "non_user_envelopes": [
-        "<task-notification>"
+        "<task-notification>",
+        "Another Claude session sent a message:",
+        "<agent-message"
       ]
     },
     {

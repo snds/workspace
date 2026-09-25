@@ -34,6 +34,55 @@ _The dispatcher reads the most recent date from this file to decide whether to s
 
 ## Entries
 
+## 2026-09-25 — Work MacBook Pro
+
+**Scope:** full seven-surface ECC. Nine deterministic probes, then three parallel judgment passes (contract/frameworks/MOCs · context/pending/handoffs · skills/hooks/harness). `audit_skip` honored. Employer folders not read.
+**Findings:** 25 total — P0: 2, P1: 10, P2: 13
+
+**P0 (workflow-breaking):**
+- Routing hook treated subagent hand-back (`agent-message`) turns as user turns and injected ~20 unrelated routes (X2 regression; `daa0e94` only covered `<task-notification>`).
+- `^pc-19` Figma PAT still unrevoked, 113 days, in a public repo. Sean-side.
+
+**P1 (friction):**
+- `session-status.py` shows "(no state info)" for `18-bootstrap-generator`: history regex rejects `### YYYY-MM-DD HH:MM —`, fallback wants `**Current focus**:` (file has `**Current focus:**`). File also has two `_Last updated` lines.
+- `project-context.md`: `^pc-45` resolved (G5c `5b37fc3`); `^pc-47` done except the branch-ruleset offer; `^pc-48` X2 half fixed (`daa0e94` + this run), resume-nag half unverified.
+- `framework-check` SKILL says "eleven frameworks"; lenses #12–#18 never run.
+- `OBSIDIAN-SETUP.md:45` tells agents to read `skills.registry.json` (contract says never ingest; use `skill-loadset.py`).
+- `team-practices-and-decisions.md`: says "seventeen frameworks"; ~18 unfilled template placeholders (gate 1).
+- `_SKILLS.md` / `_HOME.md` say 292 skills (309); `_SKILLS.md:62` cites a nonexistent "skills sync / hash registry".
+- `03-skills/` root clutter: 4 symlink-as-text + 2 empty files (`obsidian-*`, `defuddle`, `json-canvas`, `find-skills`); `figma-api-pipeline/` = 7 stale duplicate copies (3 byte-identical to the resolved 2026-04-27 batch); `test-results/`.
+- Trigger overlap: "design system" loads ds-advisor + design-engineer + design-system-ops + ds; generic `audit` route fires beside every audit skill; `system health` vs `vault health`.
+- `role-and-context.md:46` still lists the retired Windows desktop; `13-legion` baton has no Live handoff / pointer to `planet-lab-independent` sub-handoff; `^pc-24` 04-claude-figma-plugin still has no SESSION-STATE and lists 12-MCS as deferred.
+- `_archive/ARCHIVE-LOG.md` row for missing `figma-plugin-patterns 2.md`; `03-skills/_archive/` (10 files) sits outside the provenance check.
+
+**P2 (polish):**
+- Stale `_Last updated`: `OBSIDIAN-SETUP.md`, `SURFACES.md`, `team-practices-and-decisions.md`.
+- `_FRAMEWORKS.md:40` "four-layer" lists three.
+- `_SKILLS.md` omits ~15 hubs; Dataview capped at `LIMIT 60`.
+- `_HOME.md:8-9` adapter list omits CURSOR / PERPLEXITY / Codex (link [[SURFACES]] instead).
+- `AGENTS.md` repeats the skill-loadset / never-ingest rule three times (auto-loaded cost).
+- `dispatcher.py:115-140` dead, drifted `KNOWLEDGE_HINTS` dict.
+- `MEMORY.md:16` + `fact-machine-layer-installs.md` still mention Windows / loaner.
+- `CRITICAL_FACTS.md:38` points machine labels at `[[CLAUDE]]` (now `devices.json`); employer orgs list only `c8/*`.
+- `role-and-context.md:43` / `user-preferences.md:206` say Bitbucket + MCP "not yet active".
+- `00-obsidian` baton dormant since 2026-04-25; `19-workspace-brain` focus line still names an employer PR.
+- Stale `.dirty`/`.touched` markers in `06-context/sessions/` (oldest Jul 30) — check the new closure sweeper clears them.
+- `ds-source-watch`: registry 20 sources vs snapshot 14 (23d old).
+- `^pc-04`/`^pc-13` in Recently resolved since 09-02; ~12 pre-July Active items with no progress.
+
+**Fixes applied this run:**
+- P0 routing: `surfaces.json` claude-code `non_user_envelopes` + `prompt_route.py` fallback now include the subagent hand-back frame; new fixture `claude-code.agent-message.json` + X2b self-test (37/37).
+- `vault-health.py` counts inbound links from `00-bootstrap/` (canonical docs live there); `SURFACES.md` now wikilinks [[trigger-routes-digest]]. Orphan warning cleared.
+
+**Carried forward:**
+- All P1/P2 above (need Sean's sign-off per /optimize Step 4).
+- Hygiene with Sean: REVOKE Figma PAT (`^pc-19`); `^pc-08` SHA purge.
+- Do not auto-enable nightly maintenance from this audit.
+
+**Skipped (opt-out `audit_skip: true`):** `_CHEATSHEET.md`, `08-knowledge/cross-domain/workflow-patterns.md`.
+
+---
+
 ## 2026-09-02 — Personal MacBook Pro
 
 **Scope:** full seven-surface ECC. Foundation reads + `audit_skip` honored. Judgment on top of probes.

@@ -1,6 +1,6 @@
 {
   "surfaces": [
-    {"id": "claude-code", "non_user_envelopes": ["<task-notification>"]},
+    {"id": "claude-code", "non_user_envelopes": ["<task-notification>", "Another Claude session sent a message:", "<agent-message"]},
     {"id": "cursor", "non_user_envelopes": []},
     {"id": "codex", "non_user_envelopes": ["<fixture-envelope>"]},
     {"id": "gemini-cli"}

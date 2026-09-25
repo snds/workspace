@@ -1,0 +1,7 @@
+{
+  "session_id": "sess-x2b",
+  "transcript_path": "/home/fixture/.claude/projects/-fixture/sess-x2b.jsonl",
+  "cwd": "fixture-cwd",
+  "hook_event_name": "UserPromptSubmit",
+  "prompt": "Another Claude session sent a message:\n<agent-message from=\"afixture\">\n[Subagent hand-back] Findings: the zero vector harness audit found no P0.\n</agent-message>"
+}

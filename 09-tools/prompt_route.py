@@ -61,7 +61,8 @@ POINTER_REL = (".config", "snds-workspace", "root")
 ALIAS_REL = (".claude", "workspace-brain-path")
 # Transitional: applies only while no surfaces.json row declares `non_user_envelopes`
 # (the table owner adds the key; then this dict is dead and the table alone decides).
-_FALLBACK_NON_USER_ENVELOPES = {"claude-code": ("<task-notification>",)}
+_FALLBACK_NON_USER_ENVELOPES = {"claude-code": ("<task-notification>", "Another Claude session sent a message:",
+                                                "<agent-message")}
 # Mirrors the claude-code `payload_keys_any` marker in surfaces.json (drift-checked by
 # --self-test). Only a payload carrying it lets CLAUDE_PROJECT_DIR name the brain.
 CLAUDE_PAYLOAD_MARKER = ("transcript_path", "/.claude/projects/")
@@ -543,7 +544,8 @@ def non_user_envelopes(host: str | None = None, brain: Path | None = None) -> tu
 def is_user_turn(prompt: str, payload: dict | None = None, host: str | None = None,
                  brain: Path | None = None) -> bool:
     """False for a turn the host injected itself (X2: Claude Code fires UserPromptSubmit on
-    background task-notification turns). Keyed on the declared envelope at the start."""
+    background task-notification turns, and X2b: on subagent hand-back agent-message turns).
+    Keyed on the declared envelope at the start."""
     text = (prompt or "").lstrip()
     return not any(text.startswith(env) for env in non_user_envelopes(host, brain))
 
@@ -654,6 +656,10 @@ def self_test_cases() -> list:
            route_prompt("<fixture-envelope> the zero vector plan", brain) == "")
         ok("X2: a host declared with no envelopes routes the text (cursor)",
            "zero-vector.md" in route_prompt(x2["prompt"], brain, host="cursor"))
+        x2b = _payload_fixture("claude-code.agent-message")
+        ok("X2b: a subagent hand-back (agent-message) is not a user turn (claude-code)",
+           not is_user_turn(x2b["prompt"], x2b, "claude-code", brain)
+           and route_payload(x2b, "claude-code", brain) == "")
         ok("X2: the envelope only counts at the start of the turn",
            is_user_turn("please explain <task-notification> tags", None, "claude-code", brain))
         ok("X2: a host row without the key gets no envelopes (gemini-cli)",
@@ -662,8 +668,8 @@ def self_test_cases() -> list:
         (nokey / "02-shared-references").mkdir(parents=True)
         (nokey / SURFACES_REL).write_text('{"surfaces": [{"id": "claude-code"}]}', encoding="utf-8")
         ok("X2: the transitional fallback applies only when no row declares envelopes",
-           non_user_envelopes("claude-code", nokey) == ("<task-notification>",)
-           and non_user_envelopes("claude-code", brain) == ("<task-notification>",)
+           non_user_envelopes("claude-code", nokey) == ("<task-notification>", "Another Claude session sent a message:", "<agent-message")
+           and non_user_envelopes("claude-code", brain) == ("<task-notification>", "Another Claude session sent a message:", "<agent-message")
            and non_user_envelopes("codex", brain) == ("<fixture-envelope>",))
 
         # Host payload adapters.

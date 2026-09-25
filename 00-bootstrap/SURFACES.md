@@ -20,7 +20,7 @@ _Last updated: 2026-09-23_
 | **Aider** | `.aider.conf.yml` `read:` (AGENTS.md, llms.txt, CONVENTIONS.md) | any | No | Root CONVENTIONS is a pointer; PR conventions stay in `.github/CONVENTIONS.md`. |
 | **Windsurf** | `.windsurf/rules/*.md` (`trigger: always_on`) + `AGENTS.md` | Cognition | Hook API yes; none wired | No `.windsurfrules`. AGENTS.md exceeds the 12,000-char rule limit, so `contract-core.md` is generated from its invariant sections. |
 | **Obsidian** | Folder = vault | n/a | n/a | Navigation, graph, daily notes. |
-| **Claude Desktop** | Filesystem MCP | Anthropic | n/a | Skills via AGENTS.md + `trigger-routes-digest.md`. |
+| **Claude Desktop** | Filesystem MCP | Anthropic | n/a | Skills via AGENTS.md + [[trigger-routes-digest]]. |
 | **Perplexity / generic MCP / human** | `llms.txt` → `AGENTS.md` → `skill-loadset.py` or `trigger-routes-digest.md` | any | n/a | Adapter: [[PERPLEXITY]]. |
 | **ChatGPT / Grok.com / Perplexity (no FS)** | none | various | n/a | Paste [web-session.md](adapters/web-session.md) + `dist/BEACON.md`. |
 | **Claude iOS** | None | Anthropic | n/a | Paste or describe; no local FS. |
