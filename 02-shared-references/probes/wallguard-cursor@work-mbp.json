@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "surface": "wallguard-cursor",
+  "device": "work-mbp",
+  "recorded_at": "2026-09-24",
+  "declared_host": "cursor",
+  "component": "H15",
+  "cases": {
+    "R6noverify": {
+      "expected": "deny",
+      "observed": "deny",
+      "rule": "R6",
+      "match": true
+    },
+    "R6count": {
+      "expected": "deny",
+      "observed": "not-seen",
+      "rule": "none",
+      "match": false
+    },
+    "allow": {
+      "expected": "none",
+      "observed": "not-seen",
+      "rule": "none",
+      "match": false
+    },
+    "R1meta": {
+      "expected": "none",
+      "observed": "not-seen",
+      "rule": "none",
+      "match": false
+    },
+    "R3ident": {
+      "expected": "deny",
+      "observed": "not-seen",
+      "rule": "none",
+      "match": false
+    }
+  },
+  "all_match": false
+}

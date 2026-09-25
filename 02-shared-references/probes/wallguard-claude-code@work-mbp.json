@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "surface": "wallguard-claude-code",
+  "device": "work-mbp",
+  "recorded_at": "2026-09-24",
+  "declared_host": "claude-code",
+  "component": "H15",
+  "cases": {
+    "R6noverify": {
+      "expected": "deny",
+      "observed": "deny",
+      "rule": "R6",
+      "match": true
+    },
+    "R6count": {
+      "expected": "deny",
+      "observed": "deny",
+      "rule": "R6",
+      "match": true
+    },
+    "allow": {
+      "expected": "none",
+      "observed": "none",
+      "rule": "none",
+      "match": true
+    },
+    "R1meta": {
+      "expected": "deny",
+      "observed": "deny",
+      "rule": "R1",
+      "match": true
+    },
+    "R3ident": {
+      "expected": "deny",
+      "observed": "deny",
+      "rule": "R1",
+      "match": true
+    }
+  },
+  "all_match": true
+}
