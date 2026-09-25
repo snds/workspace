@@ -168,7 +168,7 @@ Coverage on the minimum surfaces (scope: `shared` is held to parity on the hooka
 | H20 | shared | enforced | not-applicable | advisory | advisory |
 | H22 | shared | enforced-partial | backstop-only | advisory | advisory |
 | H24 | shared | enforced-partial | not-applicable | enforced-partial | enforced-partial |
-| H25 | shared | unverified | backstop-only | unverified | unverified |
+| H25 | shared | enforced-partial | backstop-only | enforced-when-installed | enforced-when-installed |
 
 Registrations (one effective registration per surface, event and behaviour):
 
