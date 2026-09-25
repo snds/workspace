@@ -160,6 +160,7 @@ Coverage on the minimum surfaces:
 | H1 | unverified | backstop-only | unverified | unverified |
 | H2 | enforced-partial | advisory | unverified | unverified |
 | H3 | enforced | not-applicable | enforced | enforced |
+| H15 | enforced-when-installed | backstop-only | enforced-when-installed | advisory |
 | H16 | enforced | advisory | enforced-when-installed | enforced-when-installed |
 | H17 | enforced-partial | backstop-only | advisory | advisory |
 | H19 | enforced-partial | not-applicable | enforced-partial | unverified |

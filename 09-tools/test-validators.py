@@ -1551,6 +1551,56 @@ class TestHostFilter(unittest.TestCase):
                 self.assertTrue(ok, detail)
 
 
+class TestWallGuard(unittest.TestCase):
+    """H15 exit gate: one corpus (09-tools/fixtures/wall_guard) through every host golden (Claude Code
+    incl. the terminal, browser, filesystem-MCP and tracker payloads; Cursor beforeShellExecution,
+    preToolUse and beforeMCPExecution; Codex with and without workdir and apply_patch; VS Code, Gemini,
+    Copilot CLI, Windsurf, Cline), the Claude git floor, H18's git-lane entrypoint when present, and the
+    generated belts; plus the item-9 matrix, R6 variants, nested chains, no env bypass, the HOME-empty
+    cloud shim, byte-identical employer repos, timeout and malformed-payload fail-open, and the rendered
+    shims and permission rules. A SKIP (the Codex app binary or H18's lanes absent) is not a pass."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.wg = load("wall_guard")
+        cls.rs = load("00-bootstrap/doctor/render_shims.py")
+        cls.cases = load("09-tools/fixtures/wall_guard/cases.py")
+        cls.results = cls.cases.all_cases(cls.wg, cls.rs)
+
+    def _run(self, group: str, minimum: int = 1):
+        rows = self.results[group]
+        self.assertGreaterEqual(len(rows), minimum, group)
+        for name, ok, detail in rows:
+            if ok is None:
+                continue
+            with self.subTest(case=name):
+                self.assertTrue(ok, detail)
+        skipped = [r for r in rows if r[1] is None]
+        if skipped:
+            self.skipTest(f"{len(skipped)} case(s) SKIPPED: {skipped[0][2]}")
+
+    def test_corpus_goldens(self):
+        self._run("corpus", 60)
+
+    def test_fail_open_log_and_rollout(self):
+        self._run("misc", 8)
+
+    def test_home_empty_cloud_shim(self):
+        self._run("home_empty", 3)
+
+    def test_belts_agree_with_core(self):
+        self._run("belts", 4)
+
+    def test_git_floor_agreement(self):
+        self._run("floor", 5)
+
+    def test_git_lane_agreement(self):
+        self._run("lanes", 1)
+
+    def test_rendered_shims_and_permissions(self):
+        self._run("outputs", 7)
+
+
 class TestEmployerSubstance(unittest.TestCase):
     """H25: employer-substance class of check-secrets (report-only in wave 0)."""
 

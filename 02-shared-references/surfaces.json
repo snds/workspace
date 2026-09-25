@@ -20,6 +20,7 @@
     "H1",
     "H2",
     "H3",
+    "H15",
     "H16",
     "H17",
     "H19",
@@ -207,6 +208,19 @@
           "planned_verified_by": [],
           "how": "TestIntentRun"
         },
+        "H15": {
+          "mode": "enforced-when-installed",
+          "rules": "R1, R3 and R6 enforce at tool time once Sean installs the claude-code shims: a PreToolUse matcher generated from the tool families (shell, file writes, the terminal panel, browser control, desktop control, the filesystem MCP and the employer tracker connector) plus static permission rules (employer checkouts and employer vault folders, workspace control state, the Claude settings files, and the invariant belts); R2, R4, R6c and R7 log a would-deny only during the rollout window; the tracker connector is report-only until decision 3; desktop control has no account policy (WALL-C1); text parsing can be evaded (H17-R10) and the guard fails open on its own errors (H17-R8 class)",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestWallGuard"
+          ],
+          "planned_verified_by": [
+            "probe:wallguard-claude-code@work-mbp",
+            "probe:wallguard-claude-code@personal-mbp"
+          ],
+          "how": "enforced-partial once installed and the live probe record matches the goldens; until then the fixture corpus is the evidence"
+        },
         "H16": {
           "mode": "enforced",
           "rules": "generation checked by render_shims --check; installation only through H24 installers",
@@ -306,6 +320,16 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "backstop-only",
+          "rules": "the repo-relative shim (09-tools/ws-hook-repo.sh) runs the guard with no home directory and passes the HOME-empty fixture, but it is not registered in the tracked project settings (Sean's decision); CI and credential scope carry cloud sessions",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestWallGuard"
+          ],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "unverified",
           "rules": "the tracked claude-project output rendered by render_shims reaches this surface without an install; loading unverified",
@@ -369,6 +393,14 @@
         "H3": {
           "mode": "not-applicable",
           "rules": "no execution; specs are linted in CI once committed",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H15": {
+          "mode": "backstop-only",
+          "rules": "credential scope, unverified until the H17 audit passes; instructions are advisory",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -467,6 +499,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "advisory",
+          "rules": "H21 will guard writes through its own server only; the Cowork shell, desktop control, the browser and Desktop Extensions are declared gaps",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
@@ -511,6 +551,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "advisory",
+          "rules": "covered by the claude-code matcher (URL-owner policy) only when Claude Code drives it; side-panel and chat use is unguarded",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
@@ -633,6 +681,18 @@
           "planned_verified_by": [],
           "how": "TestIntentRun"
         },
+        "H15": {
+          "mode": "enforced-when-installed",
+          "rules": "R3 and R6 enforce once Sean installs the cursor shims (beforeShellExecution, preToolUse on Shell and Write, beforeMCPExecution); R2, R4 and R7 log a would-deny only during the rollout window; R1 does not apply; the walls come from the verified host payload (D-W1-3) unless an inherited Claude overlay or Claude ancestry raises them",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestWallGuard"
+          ],
+          "planned_verified_by": [
+            "probe:wallguard-cursor@work-mbp"
+          ],
+          "how": "enforced-partial once installed and the live probe record matches the goldens"
+        },
         "H16": {
           "mode": "enforced-when-installed",
           "rules": "the rendered dist reaches the machine only through an explicit H24 installer",
@@ -728,6 +788,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] not installed; hooks in the CLI are undocumented",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "unverified",
           "rules": "the tracked cursor-project output rendered by render_shims reaches this surface without an install; loading unverified",
@@ -772,6 +840,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "backstop-only",
+          "rules": "the workspace's repo-relative shim is not registered in the tracked Cursor hooks (Sean's decision); employer repos: platform and employer CI",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "unverified",
           "rules": "the tracked cursor-project output rendered by render_shims reaches this surface without an install; loading unverified",
@@ -885,6 +961,18 @@
           "planned_verified_by": [],
           "how": "TestIntentRun"
         },
+        "H15": {
+          "mode": "advisory",
+          "rules": "the rules-file belt (forbidden invariants only) applies once installed; the PreToolUse shim is deny-only and inert until Sean trusts the user hooks and the plugin hooks in /hooks; R3 and R6 would enforce, R2, R4 and R7 report only; floor: the git lanes when installed",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestWallGuard"
+          ],
+          "planned_verified_by": [
+            "probe:wallguard-codex@work-mbp"
+          ],
+          "how": "enforced-when-installed once the hooks are trusted and a live probe shows PreToolUse firing on the desktop app's shell tool"
+        },
         "H16": {
           "mode": "enforced-when-installed",
           "rules": "installed through H24; hook trust is confirmed manually",
@@ -974,6 +1062,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "backstop-only",
+          "rules": "CI and employer protection",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
@@ -1030,6 +1126,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] no shim is rendered and the host is not installed; its payload golden in TestWallGuard comes from vendor docs",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
@@ -1090,6 +1194,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] the claude-user shim fires only if VS Code loads it; the walls stay unknown-agent or higher until its payload is probed (D-W1-3); R1 does not apply",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "unverified",
           "rules": "the tracked claude-project output rendered by render_shims reaches this surface without an install; loading unverified",
@@ -1151,6 +1263,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] no shim is rendered and the host is not installed; its payload golden in TestWallGuard comes from vendor docs",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
@@ -1195,6 +1315,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "backstop-only",
+          "rules": ".github/hooks is not committed; CI and employer protection",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
@@ -1257,6 +1385,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] no shim is rendered and the host is not installed; its payload golden in TestWallGuard comes from vendor docs",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
@@ -1316,6 +1452,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "backstop-only",
+          "rules": "the git lanes and the invariant belts",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
@@ -1375,6 +1519,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "backstop-only",
+          "rules": "the git lanes and the invariant belts (a denylist rendered in 00-bootstrap/dist/wall-belts.json, pasted by Sean)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
@@ -1437,6 +1589,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] no shim is rendered and the host is not installed; its payload golden in TestWallGuard comes from vendor docs",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
@@ -1496,6 +1656,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] loads the claude-user layer; no probe of its pre-tool payload",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
@@ -1549,6 +1717,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "advisory",
+          "rules": "paste pack; the servers protect the repos",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
@@ -1602,6 +1778,14 @@
         }
       ],
       "coverage": {
+        "H15": {
+          "mode": "advisory",
+          "rules": "no hooks; H21 replaces the filesystem MCP (decision)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
@@ -1640,6 +1824,14 @@
       "install_probe": null,
       "sources": [],
       "coverage": {
+        "H15": {
+          "mode": "not-applicable",
+          "rules": "humans are not policy-gated (P00)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H16": {
           "mode": "not-applicable",
           "rules": "rendered and installed only when install_probe passes",
