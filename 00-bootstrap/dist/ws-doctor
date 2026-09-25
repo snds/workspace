@@ -1,0 +1,7 @@
+#!/bin/sh
+# ws-doctor — byte-stable entry for the unattended doctor (snds-workspace, W1-6). SessionStart and
+# launchd run this, never the checkout's doctor. Behaviour lives in the pinned lib; nothing pinned
+# (or a pin without the doctor) runs nothing.
+D="$HOME/.config/snds-workspace/lib/current/00-bootstrap/doctor/workspace-doctor.sh"
+[ -f "$D" ] || exit 0
+exec /bin/bash "$D" "$@"

@@ -3272,6 +3272,9 @@
     },
     "00-bootstrap/dist/ws": {
       "sha256": "b53a29f01a2cd9b4b2b6ce6414a8b2bc2a424bf0c58c8bd26fdc9658923d2540"
+    },
+    "00-bootstrap/dist/ws-doctor": {
+      "sha256": "c4c2db2365adb39f74abd48b59364536a2366083866f3057d466fa8f7a81e00d"
     }
   }
 }

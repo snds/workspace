@@ -53,8 +53,21 @@ PINNED_PATHS = [
     "02-shared-references/vetted-scripts.json",
     "00-bootstrap/dist/ws-hook",
     "00-bootstrap/dist/ws",
+    # W1-6 (H20, walls F-11): the heal sources and the unattended doctor. The doctor heals the
+    # Claude injectors only from these pinned copies, and SessionStart/launchd run the pinned doctor
+    # (bin/ws-doctor), which executes only the pinned helpers below. installers.py is not pinned:
+    # it runs only by hand (TTY + human verdict), from the checkout it installs from.
+    "00-bootstrap/dist/workspace-sessionstart.sh",
+    "00-bootstrap/dist/workspace-reassert.sh",
+    "00-bootstrap/dist/workspace-audit.sh",
+    "00-bootstrap/dist/user-CLAUDE.md",
+    "00-bootstrap/dist/ws-doctor",
+    "00-bootstrap/doctor/workspace-doctor.sh",
+    "00-bootstrap/doctor/pin_lib.py",
+    "00-bootstrap/doctor/merge_settings.py",
+    "00-bootstrap/doctor/render_shims.py",
 ]
-WRAPPERS = ("ws-hook", "ws")
+WRAPPERS = ("ws-hook", "ws", "ws-doctor")
 VETTED_TABLE = "02-shared-references/vetted-scripts.json"
 GIT_TIMEOUT = 30
 
