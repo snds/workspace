@@ -2,48 +2,114 @@
   "schema_version": 1,
   "surface": "grok-build",
   "device": "personal-mbp",
-  "recorded_at": "2026-09-24",
+  "recorded_at": "2026-09-25",
   "declared_host": "grok-build",
   "hook_probe": {
     "status": "not-installed",
     "events": {}
   },
   "env_probe": {
-    "via": "terminal",
+    "via": null,
     "env_marker_names": [
-      "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
-      "CLAUDE_WORKSPACE_VAULT",
-      "GH_PAGER",
-      "GROK_AGENT",
-      "GROK_SESSION_ID",
-      "TERM_PROGRAM",
-      "TERM_PROGRAM_VERSION"
+      "CURSOR_AGENT",
+      "CURSOR_AGENT_STORE_FILES_DIR",
+      "CURSOR_AGENT_STORE_SHARED_PATHS",
+      "CURSOR_CONVERSATION_ID",
+      "CURSOR_LAYOUT",
+      "CURSOR_REQUEST_ID",
+      "CURSOR_RIPGREP_PATH",
+      "CURSOR_WORKSPACE_LABEL",
+      "VSCODE_CODE_CACHE_PATH",
+      "VSCODE_CRASH_REPORTER_PROCESS_TYPE",
+      "VSCODE_CWD",
+      "VSCODE_ESM_ENTRYPOINT",
+      "VSCODE_HANDLES_UNCAUGHT_ERRORS",
+      "VSCODE_IPC_HOOK",
+      "VSCODE_NLS_CONFIG",
+      "VSCODE_PID",
+      "VSCODE_PROCESS_TITLE"
     ],
     "env_values": {
-      "TERM_PROGRAM": "Apple_Terminal"
+      "CURSOR_AGENT": "1"
     },
     "env_presence": {
       "WS_CLAUDE_OVERLAY": false,
       "WS_SURFACE_FAMILY": false,
       "GIT_CONFIG_COUNT": false,
       "GH_CONFIG_DIR": false,
-      "CLAUDE_ENV_FILE": false
+      "CLAUDE_ENV_FILE": false,
+      "WS_OVERLAY_CHANNEL": false
+    }
+  },
+  "env_probes": {
+    "terminal": {
+      "via": "terminal",
+      "env_marker_names": [
+        "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+        "CLAUDE_WORKSPACE_VAULT",
+        "GH_PAGER",
+        "GROK_AGENT",
+        "GROK_SESSION_ID",
+        "TERM_PROGRAM",
+        "TERM_PROGRAM_VERSION"
+      ],
+      "env_values": {
+        "TERM_PROGRAM": "Apple_Terminal"
+      },
+      "env_presence": {
+        "WS_CLAUDE_OVERLAY": false,
+        "WS_SURFACE_FAMILY": false,
+        "GIT_CONFIG_COUNT": false,
+        "GH_CONFIG_DIR": false,
+        "CLAUDE_ENV_FILE": false
+      }
+    },
+    "agent-shell": {
+      "via": null,
+      "env_marker_names": [
+        "CURSOR_AGENT",
+        "CURSOR_AGENT_STORE_FILES_DIR",
+        "CURSOR_AGENT_STORE_SHARED_PATHS",
+        "CURSOR_CONVERSATION_ID",
+        "CURSOR_LAYOUT",
+        "CURSOR_REQUEST_ID",
+        "CURSOR_RIPGREP_PATH",
+        "CURSOR_WORKSPACE_LABEL",
+        "VSCODE_CODE_CACHE_PATH",
+        "VSCODE_CRASH_REPORTER_PROCESS_TYPE",
+        "VSCODE_CWD",
+        "VSCODE_ESM_ENTRYPOINT",
+        "VSCODE_HANDLES_UNCAUGHT_ERRORS",
+        "VSCODE_IPC_HOOK",
+        "VSCODE_NLS_CONFIG",
+        "VSCODE_PID",
+        "VSCODE_PROCESS_TITLE"
+      ],
+      "env_values": {
+        "CURSOR_AGENT": "1"
+      },
+      "env_presence": {
+        "WS_CLAUDE_OVERLAY": false,
+        "WS_SURFACE_FAMILY": false,
+        "GIT_CONFIG_COUNT": false,
+        "GH_CONFIG_DIR": false,
+        "CLAUDE_ENV_FILE": false,
+        "WS_OVERLAY_CHANNEL": false
+      }
     }
   },
   "ancestry_comm": [
     "zsh",
-    "grok",
-    "-zsh",
-    "login",
-    "Terminal",
+    "redacted",
+    "Cursor",
     "launchd"
   ],
   "detected": {
-    "acting_host": "unknown",
-    "family_for_walls": "claude",
-    "via": "none",
+    "acting_host": "cursor",
+    "family_for_walls": "cursor",
+    "via": "ancestry",
     "verified": false,
-    "conflict": true
+    "conflict": false
   },
   "detection_mismatch": true,
   "git_version": "2.55.0"
