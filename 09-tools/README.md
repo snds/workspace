@@ -477,7 +477,10 @@ pass/fail path.
   entry (hint / `_INDEX` `Triggers:` / `trigger_words`), do hub chains ascend in order,
   do `_INDEX` wikilinks resolve the way `prompt_route.py` resolves them, do the CLIs
   the contract names exist. Skills reachable only through their hub's prose are counted
-  and reported, not failed.
+  and reported, not failed. `component-parity` (W1-11) holds every `shared` component in
+  surfaces.json `component_scopes` to parity on the hookable minimum surfaces (claude-code,
+  cursor, codex): a missing, advisory or unverified cell is a gap unless it carries a live
+  `parity_waiver`. `parity_gate: report` lists gaps and passes; `enforce` fails them.
 - **tokens** prices the traversal: contract floor → session floor → load-set p50/p95/max
   → worst-case legal request → the banned-ingest number routing exists to avoid.
   `BUDGETS` are a regression gate; raising one is a deliberate, reviewable diff.
@@ -490,6 +493,7 @@ python3 09-tools/workspace-harness.py              # all three lanes
 python3 09-tools/workspace-harness.py --connections --tokens
 python3 09-tools/workspace-harness.py --json --stamp
 python3 09-tools/workspace-harness.py --self-test
+python3 09-tools/workspace-harness.py --parity         # parity gaps in plain words
 ```
 
 ## profile_resolve.py
