@@ -27,7 +27,7 @@ no line naming that repo's substance; it gets one `Employer repos (H25 limits):`
 {slug, status, PR URL if allowed} per repo. In a public workspace the slug is an opaque stable id and
 PR URLs are dropped. compact-sessions.py applies this at fold time; the sweeper before it commits.
 
-  closure.py plan --session SID [--json] [--family F]
+  closure.py plan --session SID|latest [--json] [--family F]
   closure.py fragment --session SID PATH        apply the H25 limits to one fragment in place
   closure.py sweep [--json] [--dry-run]         the session-start sweeper, by hand
   closure.py --self-test
@@ -743,6 +743,16 @@ def read_notices(home=None) -> List[str]:
 
 # --------------------------------------------------------------------------- CLI
 
+def resolve_session(sid: str, *, home=None) -> str:
+    """`latest` is the most recently written ledger (for an agent that does not know its host
+    session id); anything else is taken as given."""
+    if sid != "latest":
+        return sid
+    sess = telemetry(home) / "sessions"
+    files = sorted(sess.glob("*.touched"), key=_mtime) if sess.is_dir() else []
+    return files[-1].stem if files else "latest"
+
+
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if argv[:1] == ["--self-test"]:
@@ -761,6 +771,8 @@ def main(argv=None) -> int:
     s.add_argument("--dry-run", action="store_true")
     s.add_argument("--budget", type=float, default=30.0)
     a = ap.parse_args(argv)
+    if a.cmd in ("plan", "fragment"):
+        a.session = resolve_session(a.session)
     if a.cmd == "plan":
         res = plan(a.session, family=a.family)
         print(json.dumps(res, indent=2) if a.json else format_plan(res))

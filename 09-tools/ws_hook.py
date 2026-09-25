@@ -1952,6 +1952,13 @@ def ledger_cases() -> list:
            r.returncode == 0 and r.stdout == "" and r.stderr == ""
            and [x["path"] for x in read_ledger("s-cli", home=home)] == ["notes/touched.md"],
            f"{r.returncode} {r.stdout!r} {r.stderr!r}")
+        start = json.dumps(dict(_golden("cursor", "session-start"), conversation_id="s-sweep"))
+        r = _run_cli(full, ["sweep", "--host", "cursor", "--budget", "1"], stdin=start, home=home)
+        ok("CLI sweep with no closure module in the pin fails open with the Cursor noop",
+           r.returncode == 0 and r.stdout.strip() == "{}" and r.stderr == "", f"{r.returncode} {r.stdout!r} {r.stderr!r}")
+        r = _run_cli(full, ["sweep", "--host", "claude-code"], stdin=start, home=home)
+        ok("CLI sweep host filter: a Cursor payload on the Claude registration is silent",
+           r.returncode == 0 and r.stdout == "" and r.stderr == "", f"{r.returncode} {r.stdout!r} {r.stderr!r}")
     return results
 
 
@@ -2379,10 +2386,15 @@ def _sweep_main(argv) -> int:
         ap.add_argument("--budget", type=float)
         a = ap.parse_args(argv[1:])
         payload = _read_payload()
-        hint = payload_host_hint(payload, table=_payload_table())
-        if a.host != "auto" and hint and hint != a.host:
-            return 0            # host filter: another host's own registration sweeps
-        return run_sweep(a.host if a.host != "auto" else (hint or "unknown"), payload, budget=a.budget)
+        t = _payload_table()
+        hint = payload_host_hint(payload, table=t)
+        host = a.host if a.host != "auto" else (hint or "unknown")
+        if not (a.host != "auto" and hint and hint != a.host):   # host filter: the other host sweeps
+            run_sweep(host, payload, budget=a.budget)
+        text = noop((_row(t, host) or {}).get("dialect") or "none", table=t)
+        if text:
+            sys.stdout.write(text + "\n")
+        return 0
     except BaseException:  # noqa: BLE001 - a session start is never blocked
         return 0
 
