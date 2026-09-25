@@ -9,6 +9,8 @@
 #              not the passwd home)
 #   --install-<name>[=ARG] / --uninstall-<name>[=ARG] [--probe]
 #              exec installers.py (human-run, TTY + human verdict, diff + y/N, backups)
+#   --install-claude-overlay-retire-env   D-W1-4: drop the overlay from ~/.claude/settings.json env
+#              (refused until a live Claude-shell probe records WS_OVERLAY_CHANNEL)
 # HEAL class (the only unattended writes): ~/.claude/hooks/workspace-{sessionstart,
 # reassert,audit}.sh, ~/.claude/CLAUDE.md, ~/.claude/workspace-brain-path, ~/.claude/ws-state/.
 # Everything else the doctor looks at is REPORT class and names the installer to run.
@@ -164,8 +166,8 @@ else
   note "launchd job not installed — to install: workspace-doctor.sh --install-launchd"
 fi
 
-# 2. settings.json registrations and the Claude overlay (REPORT; replaced only by
-#    --install-claude-overlay, a full managed-key replace, never an unattended merge).
+# 2. settings.json registrations and the Claude overlay (REPORT; installed only by
+#    --install-claude-overlay and retired from settings env only by --install-claude-overlay-retire-env).
 SJ="$HOME/.claude/settings.json"
 if ! { grep -q workspace-sessionstart "$SJ" && grep -q workspace-reassert "$SJ" && grep -q workspace-audit "$SJ"; } 2>/dev/null; then
   flag "DRIFT: $SJ missing hook registrations — run workspace-doctor.sh --install-claude-overlay"
@@ -182,19 +184,53 @@ done
 if [ "$CHECK" -eq 1 ] && ! GH_CONFIG_DIR="$GHC" gh auth status >/dev/null 2>&1; then
   flag "NOTE: Claude gh config has no usable snds login on this machine — run: gh auth login (as snds), then gh auth switch back to this device's default account"
 fi
-if ! grep -q '"GIT_CONFIG_KEY_0"' "$SJ" 2>/dev/null && ! grep -q '"GIT_AUTHOR_EMAIL"' "$SJ" 2>/dev/null; then
-  flag "DRIFT: $SJ missing the Claude identity env overlay — run workspace-doctor.sh --install-claude-overlay"
-elif ! grep -q "\"WS_CLAUDE_OVERLAY\": \"$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["env"]["WS_CLAUDE_OVERLAY"])' "$DIST/settings-user-fragment.json" 2>/dev/null || echo v4)\"" "$SJ" 2>/dev/null || grep -q '"GIT_AUTHOR_EMAIL"' "$SJ" 2>/dev/null; then
-  flag "DRIFT: $SJ carries an outdated Claude identity overlay — run workspace-doctor.sh --install-claude-overlay (a full managed-key replace), then restart Claude sessions"
-fi
-if [ "$CHECK" -eq 1 ]; then
-  # Exact comparison of every installed overlay env key against dist (names only).
-  _d="$(python3 "$DOC/merge_settings.py" --replace-managed env --dry-run "$DIST/settings-user-fragment.json" "$SJ" 2>/dev/null)"; _rc=$?
-  case $_rc in
-    3) : ;;
-    0) flag "DRIFT: installed Claude overlay env differs from dist ($(printf '%s' "$_d" | sed 's/^differs: //' | tr '\n' ' ' | cut -c1-200)) — run workspace-doctor.sh --install-claude-overlay" ;;
-    *) note "overlay env comparison unavailable ($SJ unreadable?)" ;;
-  esac
+# D-W1-4: the overlay has two channels. The env-file channel (claude-overlay.env, copied into Claude
+# Code's session env file by the `ws-hook env-file` SessionStart entry) is Claude-only; the old settings
+# `env` block also reaches any host that imports Claude's settings env. Either channel is healthy; both
+# means the settings env is waiting to be retired (only after a live probe proves the env file).
+ENVF="$CFG/claude-overlay.env"
+_old=0; { grep -q '"GIT_CONFIG_KEY_0"' "$SJ" || grep -q '"GIT_AUTHOR_EMAIL"' "$SJ"; } 2>/dev/null && _old=1
+if [ -f "$ENVF" ]; then
+  cmp -s "$DIST/claude-overlay.env" "$ENVF" 2>/dev/null || \
+    flag "DRIFT: $ENVF differs from dist — run workspace-doctor.sh --install-claude-overlay"
+  grep -q 'ws-hook env-file' "$SJ" 2>/dev/null || \
+    flag "DRIFT: $SJ has no ws-hook env-file SessionStart entry, so the overlay never reaches Claude's shell — run workspace-doctor.sh --install-claude-overlay"
+  [ "$_old" -eq 1 ] && note "retire pending: $SJ still carries the overlay env (old channel); once a Claude shell probe records WS_OVERLAY_CHANNEL (ws_hook.py probe-env --host claude-code --record), run workspace-doctor.sh --install-claude-overlay-retire-env"
+elif [ "$_old" -eq 0 ]; then
+  flag "DRIFT: $SJ missing the Claude identity env overlay, and the env-file channel is not installed — run workspace-doctor.sh --install-claude-overlay"
+else
+  note "the Claude overlay still rides the settings env, which other hosts can import (D4) — install the env-file channel: workspace-doctor.sh --install-claude-overlay"
+  _v="$(sed -n "s/^export WS_CLAUDE_OVERLAY='\(.*\)'\$/\1/p" "$DIST/claude-overlay.env" 2>/dev/null | head -1)"
+  if ! grep -q "\"WS_CLAUDE_OVERLAY\": \"${_v:-v4}\"" "$SJ" 2>/dev/null || grep -q '"GIT_AUTHOR_EMAIL"' "$SJ" 2>/dev/null; then
+    flag "DRIFT: $SJ carries an outdated Claude identity overlay — run workspace-doctor.sh --install-claude-overlay, live-probe a new Claude shell, then --install-claude-overlay-retire-env"
+  fi
+  if [ "$CHECK" -eq 1 ]; then
+    # Exact comparison of the settings overlay env against the dist overlay (the env file without its
+    # channel marker, rendered for this home as the old installer wrote it).
+    _d="$(python3 - "$DIST/claude-overlay.env" "$SJ" "$DOC" <<'PY' 2>/dev/null
+import json, re, sys
+sys.path.insert(0, sys.argv[3])
+import merge_settings as ms
+want = {}
+for ln in open(sys.argv[1], encoding="utf-8").read().splitlines():
+    m = re.match(r"^export ([A-Z][A-Z0-9_]*)='((?:[^']|'\\'')*)'$", ln)
+    if m:
+        want[m.group(1)] = m.group(2).replace("'\\''", "'")
+want.pop("WS_OVERLAY_CHANNEL", None)
+want = ms.expand_env_home({"env": want})["env"]
+got = json.load(open(sys.argv[2], encoding="utf-8")).get("env") or {}
+have = {k: v for k, v in got.items() if ms.is_managed_env(k)}
+diff = sorted(k for k in set(want) | set(have) if want.get(k) != have.get(k))
+print(" ".join(diff[:20]))
+sys.exit(1 if diff else 0)
+PY
+)"; _rc=$?
+    case $_rc in
+      0) : ;;
+      1) flag "DRIFT: installed Claude overlay env differs from dist ($(printf '%s' "$_d" | cut -c1-200)) — run workspace-doctor.sh --install-claude-overlay, then --install-claude-overlay-retire-env after a live probe" ;;
+      *) note "overlay env comparison unavailable ($SJ unreadable?)" ;;
+    esac
+  fi
 fi
 # Check EVERY settings layer, not just the user one. A temporary "turn hooks off"
 # most often lands in settings.local.json or the project file — precisely where the
@@ -290,6 +326,11 @@ if [ "$QUICK" -eq 0 ]; then
   # count everything retained, which is the conservative pre-ACK behaviour.
   M=$(awk -v m="$(cat "$STATE/ack-mark" 2>/dev/null)" '/ MISS /{ if ($1 "" > m "") n++ } END{print n+0}' "$LOG" 2>/dev/null)
   [ "${M:-0}" -gt 0 ] 2>/dev/null && say "AUDIT: $M un-acknowledged MISS(es) — inspect $LOG, then: workspace-doctor --ack"
+  # D-W1-4: NOOVERLAY = a Claude Code session that ended without the env-file overlay marker (its shell
+  # ran without the floor, the transport block and the gh belt). Same ACK boundary as MISS. A session
+  # with hooks off logs nothing (no SessionEnd either): the disableAllHooks alert and the canary cover it.
+  NO=$(awk -v m="$(cat "$STATE/ack-mark" 2>/dev/null)" '/ NOOVERLAY /{ if ($1 "" > m "") n++ } END{print n+0}' "$LOG" 2>/dev/null)
+  [ "${NO:-0}" -gt 0 ] 2>/dev/null && flag "ALERT: $NO Claude session(s) ran without the overlay — inspect $LOG and $TEL/overlay-env.jsonl, then: workspace-doctor --ack"
 
   # 7. Chat-surface staleness: nag until Sean re-pastes and acks
   [ "$(cat "$DIST/BEACON.md" "$DIST/cursor-user-rules.txt" 2>/dev/null | shasum -a 256 | cut -d' ' -f1)" != "$(cat "$STATE/chat-beacon.sha" 2>/dev/null)" ] && \
@@ -300,7 +341,7 @@ if [ "$QUICK" -eq 0 ]; then
 
   if [ "$CHECK" -eq 0 ]; then
     # 8. State hygiene (HEAL: ws-state only; log rotation fixes eternal-NOTICE)
-    find "$STATE" \( -name 'boot.*' -o -name 'count.*' -o -name 'ok.*' -o -name 'scan.*' -o -name 'nag.*' \) -mtime +14 -exec rm -rf {} + 2>/dev/null
+    find "$STATE" \( -name 'boot.*' -o -name 'count.*' -o -name 'ok.*' -o -name 'scan.*' -o -name 'nag.*' -o -name 'overlay.*' \) -mtime +14 -exec rm -rf {} + 2>/dev/null
     # Rotation must NOT refresh the log mtime: the canary at step 6 reads that mtime
     # to decide "sessions ran but the audit is silent". -r copies the pre-rotation
     # mtime back onto the rotated file.

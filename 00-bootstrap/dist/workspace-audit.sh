@@ -51,4 +51,16 @@ case $R in
   1) echo "$TS MISS ${SID:-?} cwd=${CWD:-?}" >> "$LOG" ;;
   *) echo "$TS SKIP ${SID:-?} parse-error"   >> "$LOG" ;;
 esac
+# D-W1-4: the Claude overlay reaches the shell only through the env-file SessionStart step, which
+# leaves $STATE/overlay.<sid>. Once that channel is installed, a Claude Code session (verified by the
+# pinned ws-hook) that ends without the marker ran without the overlay: log NOOVERLAY for the doctor.
+# One-shot and no-transcript sessions are exempt, as above. Declared residual (H17-R7): a session
+# with hooks off runs no SessionEnd hook either, so it logs nothing here.
+if { [ "$R" = 0 ] || [ "$R" = 1 ]; } && [ -f "$HOME/.config/snds-workspace/claude-overlay.env" ] && [ -x "$W" ]; then
+  case "${SID:-}" in
+    ''|*[!A-Za-z0-9_.-]*) : ;;
+    *) printf '%s' "$INPUT" | "$W" host --skip-unless claude-code >/dev/null 2>&1
+       [ "$?" = 0 ] && [ ! -e "$STATE/overlay.$SID" ] && echo "$TS NOOVERLAY $SID" >> "$LOG" ;;
+  esac
+fi
 exit 0

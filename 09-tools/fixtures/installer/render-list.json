@@ -3,6 +3,7 @@
   "cmd": "list",
   "outputs": [
     {"id": "claude-user-fragment", "path": "00-bootstrap/dist/settings-user-fragment.json", "layer": "claude-user", "install_path": "~/.claude/settings.json", "install_mode": "claude-settings-keys", "surface": "claude-code", "probe": false, "keys": ["hooks"]},
+    {"id": "claude-overlay-env", "path": "00-bootstrap/dist/claude-overlay.env", "layer": null, "install_path": null, "install_mode": "whole-file", "surface": "claude-code", "probe": false, "keys": ["whole-file"]},
     {"id": "claude-project-settings", "path": ".claude/settings.json", "layer": "claude-project", "install_path": ".claude/settings.json", "install_mode": "tracked", "surface": "claude-code", "probe": false, "keys": ["hooks"]},
     {"id": "cursor-user-hooks", "path": "00-bootstrap/dist/cursor-hooks.json", "layer": "cursor-user", "install_path": "~/.cursor/hooks.json", "install_mode": "whole-file", "surface": "cursor", "probe": false, "keys": []},
     {"id": "probe-cursor", "path": "00-bootstrap/dist/probe/cursor.json", "layer": "cursor-user", "install_path": "~/.cursor/hooks.json", "install_mode": "merge-hook-entries", "surface": "cursor", "probe": true, "keys": []},

@@ -9,8 +9,14 @@
 inherited stdio; the shell reads only the exit code. The unattended doctor never installs.
 
 Names: pin, shims, git-hooks (H18: the global git lanes include from dist/git/lanes plus one
-managed include block in ~/.gitconfig), identity, claude-overlay, sandbox-roots, plugin,
-projects-pointer (~/Projects/AGENTS.md from dist/projects-AGENTS.md), launchd.
+managed include block in ~/.gitconfig), identity, claude-overlay, claude-overlay-retire-env,
+sandbox-roots, plugin, projects-pointer (~/Projects/AGENTS.md from dist/projects-AGENTS.md), launchd.
+
+claude-overlay (D-W1-4) installs the overlay env file (~/.config/snds-workspace/claude-overlay.env),
+the hooks-only settings keys (with the `ws-hook env-file` SessionStart entry that copies the file into
+Claude Code's session env file), the git includes and the Claude gh config. It never removes an
+overlay env block already in ~/.claude/settings.json: claude-overlay-retire-env does that, separately,
+and only once this device's claude-code probe record shows WS_OVERLAY_CHANNEL from a live Claude shell.
 The Codex beacon (~/.codex/AGENTS.md) is a whole-file output of `shims=codex`.
 
 Common contract (every name, both actions):
@@ -51,8 +57,8 @@ if str(HERE) not in sys.path:
 import merge_settings  # noqa: E402 — sibling module, same directory
 import pin_lib  # noqa: E402
 
-NAMES = ("pin", "shims", "git-hooks", "identity", "claude-overlay", "claude-permissions", "sandbox-roots",
-         "plugin", "projects-pointer", "launchd")
+NAMES = ("pin", "shims", "git-hooks", "identity", "claude-overlay", "claude-overlay-retire-env",
+         "claude-permissions", "sandbox-roots", "plugin", "projects-pointer", "launchd")
 ACTIONS = ("install", "uninstall")
 # Cursor scripts retired in wave 0 (T1 archives the dist copies). Installed copies are
 # removed, with a backup, by `--uninstall-shims=cursor`.
@@ -60,6 +66,16 @@ RETIRED_CURSOR_SCRIPTS = ("cursor-prompt-route.sh", "cursor-reassert.sh",
                           "cursor-sessionend.sh", "cursor-subagent-stop.sh")
 LAUNCHD_LABEL = "design.snds.workspace-doctor"
 OVERLAY_OUTPUT_ID = "claude-user-fragment"
+# D-W1-4: the overlay itself is the env-file output, installed here and copied into Claude Code's
+# session env file by the `ws-hook env-file` SessionStart registration.
+OVERLAY_ENV_OUTPUT_ID = "claude-overlay-env"
+OVERLAY_ENV_FILE = "claude-overlay.env"                  # under ws_paths()["base"]
+OVERLAY_CHANNEL_NAME = "WS_OVERLAY_CHANNEL"               # set only by the env-file channel
+ENV_FILE_HOOK = "ws-hook env-file"
+# The env names the overlay owns, in any channel. The leak refusal and the settings-env retire use
+# exactly these; every other env name is left alone.
+OVERLAY_ENV_MARKERS = ("WS_CLAUDE_OVERLAY", "WS_SURFACE_FAMILY", OVERLAY_CHANNEL_NAME, "GH_CONFIG_DIR")
+OVERLAY_GIT_CONFIG_RE = re.compile(r"^GIT_CONFIG_(?:COUNT|KEY_[0-9]+|VALUE_[0-9]+)$")
 # The overlay goes into the file this surfaces.json layer installs. Every non-Claude host in
 # its loaded_by list that is installed here needs a clean probe record first.
 OVERLAY_LAYER_ID = "claude-user"
@@ -891,13 +907,66 @@ def overlay_refusals(ctx: Ctx) -> list:
             reasons.append(f"probe {s}@{dev} shows env import of the Claude overlay "
                            "(WS_CLAUDE_OVERLAY present)")
             continue
-        # On a device without the overlay, WS_CLAUDE_OVERLAY is absent everywhere, so its absence
-        # proves nothing. Any name from Claude's own settings env in another host's shell does.
+        # Another host that imports Claude's settings env gets whatever overlay names are in it. The
+        # env-file channel (D-W1-4) puts none there, so only a leaked overlay name refuses; other names
+        # from Claude's settings env in that shell (the Personal MBP shape) are not the overlay.
         names = set().union(*[set(e.get("env_marker_names") or []) for e in envps]) if envps else set()
-        leaked = sorted(names & claude_env)
+        leaked = sorted(n for n in names & claude_env if is_overlay_env_name(n))
         if leaked:
             reasons.append(f"probe {s}@{dev} shows env import of Claude settings env ({', '.join(leaked)}); "
-                           "the overlay would reach that host (D4: needs the Claude-only env-file channel)")
+                           "the overlay in the settings env reaches that host (retire it after the env-file "
+                           "channel is live: --install-claude-overlay-retire-env)")
+    reasons += channel_leak_refusals(ctx, dev)
+    return reasons
+
+
+def is_overlay_env_name(name) -> bool:
+    return isinstance(name, str) and (name in OVERLAY_ENV_MARKERS or bool(OVERLAY_GIT_CONFIG_RE.match(name)))
+
+
+def _env_views(rec) -> list:
+    """Every env view a probe record keeps: env_probe, env_probes (one per via), hook-probe events."""
+    if not isinstance(rec, dict):
+        return []
+    views = [rec.get("env_probe"), *((rec.get("env_probes") or {}).values())]
+    hp = rec.get("hook_probe")
+    if isinstance(hp, dict):
+        views += list((hp.get("events") or {}).values())
+    return [v for v in views if isinstance(v, dict)]
+
+
+def _shows_channel(view: dict) -> bool:
+    return ((view.get("env_presence") or {}).get(OVERLAY_CHANNEL_NAME) is True
+            or OVERLAY_CHANNEL_NAME in (view.get("env_marker_names") or []))
+
+
+def _surface_rows(ctx: Ctx) -> dict:
+    try:
+        table = ctx.pr().load_table("surfaces")
+    except Exception:  # noqa: BLE001 - overlay_probe_surfaces already refuses on a missing table
+        return {}
+    rows = table.get("surfaces") if isinstance(table, dict) else None
+    return {r.get("id"): r for r in rows or [] if isinstance(r, dict)}
+
+
+def channel_leak_refusals(ctx: Ctx, dev: str) -> list:
+    """WS_OVERLAY_CHANNEL is set only by the Claude env-file channel. Any non-Claude probe record of
+    this device that shows it means the channel reached another host: refuse."""
+    rows = _surface_rows(ctx)
+    reasons = []
+    suffix = f"@{dev}.json"
+    for f in sorted((ctx.repo / PROBES_DIR).glob(f"*{suffix}")):
+        sid = f.name[:-len(suffix)]
+        if (rows.get(sid) or {}).get("family") == CLAUDE_FAMILY:
+            continue
+        try:
+            rec = json.loads(f.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            reasons.append(f"probe record unreadable: {sid}@{dev}")
+            continue
+        if any(_shows_channel(v) for v in _env_views(rec)):
+            reasons.append(f"probe {sid}@{dev} shows {OVERLAY_CHANNEL_NAME}: the Claude env-file overlay "
+                           "reached a non-Claude shell")
     return reasons
 
 
@@ -962,18 +1031,23 @@ def do_claude_permissions(ctx: Ctx) -> int:
 
 
 def do_claude_overlay(ctx: Ctx) -> int:
+    """D-W1-4: the env file, the hooks-only settings keys and the git and gh files. The settings `env`
+    is never touched here (install the new channel first; claude-overlay-retire-env removes the old)."""
     if ctx.action == "uninstall":
         return _uninstall(ctx)
     reasons = overlay_refusals(ctx)
     if reasons:
         raise RefusedError("; ".join(reasons))
-    outs = [o for o in _render_outputs(ctx) if o.get("id") == OVERLAY_OUTPUT_ID]
-    if not outs:
-        raise MissingSource(f"render list has no {OVERLAY_OUTPUT_ID} output")
-    out = dict(outs[0])
+    outs = {o.get("id"): o for o in _render_outputs(ctx)}
+    for oid in (OVERLAY_OUTPUT_ID, OVERLAY_ENV_OUTPUT_ID):
+        if oid not in outs:
+            raise MissingSource(f"render list has no {oid} output")
+    out = dict(outs[OVERLAY_OUTPUT_ID])
     out["install_mode"] = "claude-settings-keys"
-    targets = [_render_target(ctx, out, keys=["env", "hooks"])]
+    targets = [_render_target(ctx, out, keys=["hooks"])]
     base = ctx.paths()["base"]
+    envf = _src(ctx, outs[OVERLAY_ENV_OUTPUT_ID].get("path") or "")
+    targets.append((base / OVERLAY_ENV_FILE, _file_state(envf.read_bytes(), 0o644)))
     for sub, mode in (("git", 0o644), ("gh-claude", 0o600)):
         d = ctx.repo / "00-bootstrap" / "dist" / sub
         if d.is_dir():
@@ -982,6 +1056,66 @@ def do_claude_overlay(ctx: Ctx) -> int:
                     targets.append((base / sub / f.name, _file_state(f.read_bytes(), mode)))
     targets.append((base / "git" / EMPLOYER_NOIDENT_NAME, _file_state(EMPLOYER_NOIDENT_INC.encode("utf-8"), 0o644)))
     return _apply(ctx, targets)
+
+
+def _settings_hooks_text(obj) -> str:
+    return json.dumps(obj.get("hooks")) if isinstance(obj, dict) else ""
+
+
+def retire_env_refusals(ctx: Ctx, settings) -> list:
+    """The old channel goes only after the new one is proven on this device: the env file installed, its
+    SessionStart entry registered, and a live Claude-shell probe that shows WS_OVERLAY_CHANNEL."""
+    reasons = []
+    if not (ctx.paths()["base"] / OVERLAY_ENV_FILE).is_file():
+        reasons.append(f"~/.config/snds-workspace/{OVERLAY_ENV_FILE} not installed (run --install-claude-overlay)")
+    if ENV_FILE_HOOK not in _settings_hooks_text(settings):
+        reasons.append("~/.claude/settings.json has no `ws-hook env-file` SessionStart entry "
+                       "(run --install-claude-overlay)")
+    try:
+        dev = ctx.pr().current_device().get("id") or "unknown"
+    except Exception as e:  # noqa: BLE001
+        return reasons + [f"device unresolved ({type(e).__name__})"]
+    f = _probe_file(ctx, "claude-code", dev)
+    try:
+        rec = json.loads(f.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        rec = None
+    envps = []
+    if isinstance(rec, dict):
+        envps = [e for e in [rec.get("env_probe"), *(rec.get("env_probes") or {}).values()] if isinstance(e, dict)]
+    if not any(_shows_channel(e) for e in envps):
+        reasons.append(f"{PROBES_DIR}/claude-code@{dev}.json has no env probe with {OVERLAY_CHANNEL_NAME}: from a "
+                       "new Claude session's shell, run python3 09-tools/ws_hook.py probe-env --host claude-code "
+                       "--record, then commit the record")
+    return reasons
+
+
+def do_claude_overlay_retire_env(ctx: Ctx) -> int:
+    """Remove only the overlay's env names from ~/.claude/settings.json (every other env name and
+    settings key stays). Uninstall restores the pre-retire bytes."""
+    if ctx.action == "uninstall":
+        return _uninstall(ctx)
+    dst = ctx.home / ".claude" / "settings.json"
+    tgt = _json_load(dst, missing=None)
+    if tgt is None:
+        raise MissingSource(f"{dst} absent")
+    if not isinstance(tgt, dict):
+        raise InstallerError(f"{dst} is not a JSON object (fix by hand)")
+    reasons = retire_env_refusals(ctx, tgt)
+    if reasons:
+        raise RefusedError("; ".join(reasons))
+    env = tgt.get("env")
+    if not isinstance(env, dict) or not any(is_overlay_env_name(k) for k in env):
+        print(f"nothing to do: no overlay env names in {dst}")
+        return 3
+    new = dict(tgt)
+    kept = {k: v for k, v in env.items() if not is_overlay_env_name(k)}
+    if kept:
+        new["env"] = kept
+    else:
+        new.pop("env")
+    old = _state(dst)
+    return _apply(ctx, [(dst, _file_state(merge_settings.dump(new).encode("utf-8"), old[2]))])
 
 
 def do_sandbox_roots(ctx: Ctx) -> int:
@@ -1123,7 +1257,8 @@ def do_git_hooks(ctx: Ctx) -> int:
 
 HANDLERS = {
     "pin": do_pin, "shims": do_shims, "git-hooks": do_git_hooks, "identity": do_identity,
-    "claude-overlay": do_claude_overlay, "claude-permissions": do_claude_permissions,
+    "claude-overlay": do_claude_overlay, "claude-overlay-retire-env": do_claude_overlay_retire_env,
+    "claude-permissions": do_claude_permissions,
     "sandbox-roots": do_sandbox_roots,
     "plugin": do_plugin, "projects-pointer": do_projects_pointer, "launchd": do_launchd,
 }
@@ -1226,6 +1361,18 @@ def overlay_table(*, grok_probe=_KEEP, extra_loaded_by=()) -> dict:
                        {"id": "cursor-user", "loaded_by": ["cursor", "cursor-cli"]}]}
 
 
+def dist_overlay_env() -> dict:
+    """The settings-env overlay the old channel installed: the dist env file without its channel marker."""
+    env = {}
+    text = (VAULT_ROOT / "00-bootstrap" / "dist" / OVERLAY_ENV_FILE).read_text(encoding="utf-8")
+    for ln in text.splitlines():
+        m = re.match(r"^export ([A-Z][A-Z0-9_]*)='((?:[^']|'\\'')*)'$", ln)
+        if m:
+            env[m.group(1)] = m.group(2).replace("'\\''", "'")
+    env.pop(OVERLAY_CHANNEL_NAME, None)
+    return env
+
+
 def self_test() -> int:
     import contextlib
     import io
@@ -1242,8 +1389,8 @@ def self_test() -> int:
                 files[str(f.relative_to(src))] = f.read_bytes()
         # The overlay must yield exactly the TRACKED dist keys, so the real fragment is read
         # (read-only) from this checkout instead of a fixture copy.
-        frag = VAULT_ROOT / "00-bootstrap" / "dist" / "settings-user-fragment.json"
-        files["00-bootstrap/dist/settings-user-fragment.json"] = frag.read_bytes()
+        for rel in ("00-bootstrap/dist/settings-user-fragment.json", "00-bootstrap/dist/claude-overlay.env"):
+            files[rel] = (VAULT_ROOT / rel).read_bytes()
         repo = pin_lib.make_repo(td, files)
         for rel in ("00-bootstrap/dist/ws-hook", "00-bootstrap/dist/ws",
                     "00-bootstrap/dist/cursor-sessionstart.sh"):
@@ -1615,13 +1762,14 @@ def self_test() -> int:
             rc, out, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
             self.assertEqual(rc, 0, out + err)
             got = json.loads(sj.read_text())
-            frag = merge_settings.expand_env_home(json.loads(
-                (self.repo / "00-bootstrap/dist/settings-user-fragment.json").read_text()), self.home)
-            managed = {k: v for k, v in got["env"].items() if merge_settings.is_managed_env(k)}
-            self.assertEqual(managed, frag["env"])
-            self.assertEqual(got["env"]["EDITOR"], "vi")                 # user key kept
+            self.assertEqual(got["env"], json.loads(stale)["env"])     # D-W1-4: install never touches env
+            self.assertEqual(got["model"], "fixture")
+            envf = self.home / ".config/snds-workspace" / OVERLAY_ENV_FILE
+            self.assertEqual(envf.read_bytes(), (self.repo / "00-bootstrap/dist/claude-overlay.env").read_bytes())
+            self.assertEqual(envf.stat().st_mode & 0o777, 0o644)
             cmds = [h["command"] for g in got["hooks"]["SessionStart"] for h in g["hooks"]]
             self.assertEqual(sum("workspace-sessionstart" in c for c in cmds), 1)
+            self.assertEqual(sum(ENV_FILE_HOOK in c for c in cmds), 1)    # the env-file entry
             self.assertIn("my-own-hook.sh", " ".join(cmds))               # user hook kept
             ni = self.home / ".config/snds-workspace/git" / EMPLOYER_NOIDENT_NAME
             self.assertEqual(ni.read_text(), EMPLOYER_NOIDENT_INC)          # the employer no-identity include
@@ -1652,23 +1800,146 @@ def self_test() -> int:
             self.assertIn("copilot-vscode@dev-a", err)
             self.assertNotIn("cursor@dev-a", err)
 
-        def test_overlay_refuses_claude_settings_env_import_before_first_install(self):
-            # Personal MBP 2026-09-24: no overlay yet, so WS_CLAUDE_OVERLAY was absent everywhere, but
-            # Codex desktop and Grok Build shells carried names from Claude's settings env.
+        def test_overlay_personal_mbp_shape_proceeds_past_a_non_overlay_settings_env_import(self):
+            # Personal MBP 2026-09-24: Grok Build (and Codex) shells carry names from Claude's settings env.
+            # D4 refused the settings-env overlay there; the env-file channel puts no overlay name in the
+            # settings env, so only a leaked OVERLAY name refuses now (D-W1-4).
+            self._seed_overlay_ready()
+            grok = lambda n: f"/x/{n}" if n in ("grok", "claude") else None  # noqa: E731
+            self._seed_probe("grok-build")
+            sj = self.home / ".claude" / "settings.json"
+            sj.parent.mkdir(parents=True, exist_ok=True)
+            sj.write_text(json.dumps({"env": {"CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1", "CLAUDE_WORKSPACE_VAULT": "1"}}))
+            f = self.repo / PROBES_DIR / "grok-build@dev-a.json"
+            rec = json.loads(f.read_text())
+            rec["env_probe"]["env_marker_names"] = ["CLAUDE_CODE_DISABLE_AUTO_MEMORY", "CLAUDE_WORKSPACE_VAULT",
+                                                    "GROK_AGENT"]
+            f.write_text(json.dumps(rec))
+            rc, out, err = self.run_inst("claude-overlay", which=grok)
+            self.assertEqual(rc, 0, out + err)
+            self.assertEqual(json.loads(sj.read_text())["env"],
+                             {"CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1", "CLAUDE_WORKSPACE_VAULT": "1"})
+            self.assertEqual(self.run_inst("claude-overlay", "uninstall")[0], 0)
+            # An overlay name in Claude's settings env that the other shell also carries still refuses.
+            sj.write_text(json.dumps({"env": {"CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1", "GH_CONFIG_DIR": "/x/gh"}}))
+            rec["env_probe"]["env_marker_names"] += ["GH_CONFIG_DIR"]
+            f.write_text(json.dumps(rec))
+            rc, _o, err = self.run_inst("claude-overlay", which=grok)
+            self.assertEqual(rc, 4)
+            self.assertIn("env import of Claude settings env (GH_CONFIG_DIR)", err)
+            self.assertNotIn("CLAUDE_CODE_DISABLE_AUTO_MEMORY", err)
+
+        def test_overlay_refuses_when_the_channel_marker_reached_another_host(self):
+            self._seed_overlay_ready()
+            d = self.repo / PROBES_DIR
+            codex = json.loads((FIXTURES / "probe-cursor.json").read_text())
+            codex["surface"] = "codex"
+            codex["hook_probe"] = {"status": "recorded", "events": {"session-start": {
+                "env_marker_names": ["CODEX_THREAD_ID", OVERLAY_CHANNEL_NAME], "env_presence": {}}}}
+            (d / "codex@dev-a.json").write_text(json.dumps(codex))
+            self.surfaces = dict(overlay_table(), surfaces=overlay_table()["surfaces"] + [
+                {"id": "codex", "family": "codex"}])
+            rc, _o, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
+            self.assertEqual(rc, 4)
+            self.assertIn(f"probe codex@dev-a shows {OVERLAY_CHANNEL_NAME}", err)
+            (d / "codex@dev-a.json").unlink()
+            claude = json.loads((FIXTURES / "probe-cursor.json").read_text())
+            claude["surface"] = "claude-code"
+            claude["env_probe"]["env_presence"][OVERLAY_CHANNEL_NAME] = True
+            (d / "claude-code@dev-a.json").write_text(json.dumps(claude))
+            rc, out, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)   # Claude's own record is the point
+            self.assertEqual(rc, 0, out + err)
+
+        def _seed_live_channel_probe(self, present=True, via="env_probes"):
+            rec = json.loads((FIXTURES / "probe-cursor.json").read_text())
+            rec["surface"] = "claude-code"
+            view = dict(rec["env_probe"], env_marker_names=["AI_AGENT", "WS_CLAUDE_OVERLAY"]
+                        + ([OVERLAY_CHANNEL_NAME] if present else []))
+            if via == "env_probes":
+                rec["env_probes"] = {"agent-shell": view}
+            else:
+                rec["env_probe"] = view
+            d = self.repo / PROBES_DIR
+            d.mkdir(parents=True, exist_ok=True)
+            (d / "claude-code@dev-a.json").write_text(json.dumps(rec))
+
+        def test_work_mbp_migration_install_then_retire_with_no_gap(self):
             self._seed_overlay_ready()
             sj = self.home / ".claude" / "settings.json"
             sj.parent.mkdir(parents=True, exist_ok=True)
-            sj.write_text(json.dumps({"env": {"CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"}}))
-            rc, out, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
-            self.assertEqual(rc, 0, out + err)                   # the seeded cursor shell carries none of it
-            self.run_inst("claude-overlay", "uninstall")
-            f = self.repo / PROBES_DIR / "cursor@dev-a.json"
-            rec = json.loads(f.read_text())
-            rec["env_probe"]["env_marker_names"] = ["CLAUDE_CODE_DISABLE_AUTO_MEMORY", "TERM_PROGRAM"]
-            f.write_text(json.dumps(rec))
-            rc, _o, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
+            envf = (self.repo / "00-bootstrap/dist/claude-overlay.env").read_text()
+            old_env = {"EDITOR": "vi", "CLAUDE_WORKSPACE_VAULT": "1", "WS_CLAUDE_OVERLAY": "v5",
+                       "WS_SURFACE_FAMILY": "claude", "GH_CONFIG_DIR": "/h/gh", "GIT_CONFIG_COUNT": "2",
+                       "GIT_CONFIG_KEY_0": "a.b", "GIT_CONFIG_VALUE_0": "c", "GIT_CONFIG_KEY_1": "d.e",
+                       "GIT_CONFIG_VALUE_1": "f", "WS_OTHER": "kept", "GIT_CONFIG_PARAMETERS": "kept"}
+            sj.write_text(json.dumps({"permissions": {"deny": ["Bash(x)"]}, "env": old_env, "model": "m"}, indent=2) + "\n")
+            original = sj.read_bytes()
+            # Retire before the new channel exists: refused, nothing written.
+            rc, _o, err = self.run_inst("claude-overlay-retire-env")
             self.assertEqual(rc, 4)
-            self.assertIn("env import of Claude settings env (CLAUDE_CODE_DISABLE_AUTO_MEMORY)", err)
+            self.assertIn(OVERLAY_ENV_FILE, err)
+            self.assertIn("env-file", err)
+            self.assertEqual(sj.read_bytes(), original)
+            # 1. Install the new channel: the old settings env is kept (no gap).
+            rc, out, err = self.run_inst("claude-overlay", which=CURSOR_ONLY)
+            self.assertEqual(rc, 0, out + err)
+            installed = sj.read_bytes()
+            self.assertEqual(json.loads(installed)["env"], old_env)
+            self.assertTrue("export WS_OVERLAY_CHANNEL='env-file'" in envf)
+            # 2. Retire without a live probe: refused.
+            rc, _o, err = self.run_inst("claude-overlay-retire-env")
+            self.assertEqual(rc, 4)
+            self.assertIn(f"claude-code@dev-a.json has no env probe with {OVERLAY_CHANNEL_NAME}", err)
+            self._seed_live_channel_probe(present=False)
+            self.assertEqual(self.run_inst("claude-overlay-retire-env")[0], 4)
+            self.assertEqual(sj.read_bytes(), installed)
+            # 3. A live probe from a Claude shell shows the channel: retire removes only overlay names.
+            self._seed_live_channel_probe(present=True)
+            rc, out, err = self.run_inst("claude-overlay-retire-env")
+            self.assertEqual(rc, 0, out + err)
+            got = json.loads(sj.read_text())
+            self.assertEqual(got["env"], {"EDITOR": "vi", "CLAUDE_WORKSPACE_VAULT": "1", "WS_OTHER": "kept",
+                                          "GIT_CONFIG_PARAMETERS": "kept"})
+            self.assertEqual(got["permissions"], {"deny": ["Bash(x)"]})
+            self.assertEqual(got["model"], "m")
+            self.assertEqual(got["hooks"], json.loads(installed)["hooks"])
+            self.assertEqual(self.run_inst("claude-overlay-retire-env")[0], 3)     # nothing left to retire
+            # The overlay uninstall waits for the retire uninstall; that one restores the bytes exactly.
+            rc, _o, err = self.run_inst("claude-overlay", "uninstall")
+            self.assertEqual(rc, 4)
+            self.assertIn("claude-overlay-retire-env", err)
+            rc, out, err = self.run_inst("claude-overlay-retire-env", "uninstall")
+            self.assertEqual(rc, 0, out + err)
+            self.assertEqual(sj.read_bytes(), installed)
+            rc, out, err = self.run_inst("claude-overlay", "uninstall")
+            self.assertEqual(rc, 0, out + err)
+            self.assertEqual(sj.read_bytes(), original)
+            self.assertFalse((self.home / ".config/snds-workspace" / OVERLAY_ENV_FILE).exists())
+
+        def test_retire_drops_an_env_block_that_held_only_the_overlay(self):
+            self._seed_overlay_ready()
+            sj = self.home / ".claude" / "settings.json"
+            sj.parent.mkdir(parents=True, exist_ok=True)
+            sj.write_text(json.dumps({"env": {"WS_CLAUDE_OVERLAY": "v5", "GIT_CONFIG_COUNT": "0"}}))
+            self.assertEqual(self.run_inst("claude-overlay", which=CURSOR_ONLY)[0], 0)
+            self._seed_live_channel_probe(via="env_probe")
+            rc, out, err = self.run_inst("claude-overlay-retire-env")
+            self.assertEqual(rc, 0, out + err)
+            self.assertNotIn("env", json.loads(sj.read_text()))
+
+        def test_retire_refuses_without_the_env_file_hook_entry(self):
+            self._seed_overlay_ready()
+            self._seed_live_channel_probe()
+            base = self.home / ".config/snds-workspace"
+            (base / OVERLAY_ENV_FILE).write_text("x")
+            sj = self.home / ".claude" / "settings.json"
+            sj.parent.mkdir(parents=True, exist_ok=True)
+            sj.write_text(json.dumps({"env": {"WS_CLAUDE_OVERLAY": "v5"}, "hooks": {}}))
+            rc, _o, err = self.run_inst("claude-overlay-retire-env")
+            self.assertEqual(rc, 4)
+            self.assertIn("no `ws-hook env-file` SessionStart entry", err)
+            self.assertNotIn(OVERLAY_ENV_FILE + " not installed", err)
+            self.assertNotIn("no env probe", err)
 
         def test_overlay_reads_every_per_via_env_probe(self):
             self._seed_overlay_ready()
@@ -1892,8 +2163,7 @@ def self_test() -> int:
         def test_stale_v1_env_yields_exactly_dist_keys(self):
             stale = json.loads((FIXTURES / "settings-v1-stale.json").read_text())
             self.assertIn("GIT_AUTHOR_EMAIL", stale["env"])
-            frag = merge_settings.expand_env_home(json.loads(
-                (VAULT_ROOT / "00-bootstrap/dist/settings-user-fragment.json").read_text()), "/h")
+            frag = merge_settings.expand_env_home({"env": dist_overlay_env()}, "/h")
             new = merge_settings.replace_managed(stale, frag, ["env", "hooks"])
             managed = {k: v for k, v in new["env"].items() if merge_settings.is_managed_env(k)}
             self.assertEqual(managed, frag["env"])
@@ -2149,12 +2419,54 @@ def self_test() -> int:
             self.assertEqual((self.home / ".claude" / "workspace-brain-path").read_text().strip(), real)
 
         def test_current_overlay_is_not_reported_outdated(self):
-            frag = merge_settings.expand_env_home(json.loads(
-                (self.ws / "00-bootstrap/dist/settings-user-fragment.json").read_text()), self.home)
+            frag = merge_settings.expand_env_home({"env": dist_overlay_env()}, self.home)
             (self.home / ".claude/settings.json").write_text(json.dumps({"env": frag["env"]}, indent=2) + "\n")
-            r = self.doctor()
+            r = self.doctor("--check")
             self.assertNotIn("outdated Claude identity overlay", r.stdout + r.stderr)
             self.assertNotIn("missing the Claude identity env overlay", r.stdout + r.stderr)
+            self.assertNotIn("overlay env differs", r.stdout + r.stderr)
+            self.assertIn("still rides the settings env", r.stdout)       # the old channel alone: a NOTE
+
+        def _settings_with_hooks(self, env=None, env_file_hook=True):
+            frag = json.loads((self.ws / "00-bootstrap/dist/settings-user-fragment.json").read_text())
+            if not env_file_hook:
+                for groups in frag["hooks"].values():
+                    for g in groups:
+                        g["hooks"] = [h for h in g["hooks"] if ENV_FILE_HOOK not in h["command"]]
+            obj = dict(frag, **({"env": env} if env else {}))
+            (self.home / ".claude/settings.json").write_text(json.dumps(obj, indent=2) + "\n")
+
+        def test_env_file_channel_health_and_retire_pending(self):
+            envf = self.home / ".config/snds-workspace" / OVERLAY_ENV_FILE
+            shutil.copy2(self.ws / "00-bootstrap/dist/claude-overlay.env", envf)
+            self._settings_with_hooks()
+            r = self.doctor("--check")
+            out = r.stdout + r.stderr
+            for bad in ("claude-overlay.env differs", "no ws-hook env-file", "missing the Claude identity env overlay",
+                        "outdated Claude identity overlay", "retire pending"):
+                self.assertNotIn(bad, out)
+            self._settings_with_hooks(env=merge_settings.expand_env_home({"env": dist_overlay_env()}, self.home)["env"])
+            r = self.doctor()
+            self.assertIn("retire pending", r.stdout)                     # both channels: a NOTE, not drift
+            self.assertIn("--install-claude-overlay-retire-env", r.stdout)
+            self._settings_with_hooks(env_file_hook=False)
+            envf.write_text(envf.read_text() + "export WS_X='y'\n")
+            r = self.doctor("--check")
+            self.assertEqual(r.returncode, 1)
+            self.assertIn(f"{OVERLAY_ENV_FILE} differs from dist", r.stdout)
+            self.assertIn("no ws-hook env-file SessionStart entry", r.stdout)
+
+        def test_nooverlay_sessions_are_counted_since_the_ack(self):
+            state = self.home / ".claude/ws-state"
+            state.mkdir(parents=True, exist_ok=True)
+            (state / "ack-mark").write_text("2026-09-20T00:00:00\n")
+            (state / "audit.log").write_text("2026-09-19T10:00:00 NOOVERLAY old-sess\n"
+                                             "2026-09-21T10:00:00 OK   s1 cwd=/x\n"
+                                             "2026-09-21T10:00:00 NOOVERLAY s1\n"
+                                             "2026-09-22T10:00:00 NOOVERLAY s2\n")
+            r = self.doctor("--check")
+            self.assertEqual(r.returncode, 1)
+            self.assertIn("ALERT: 2 Claude session(s) ran without the overlay", r.stdout)
 
         def test_quick_never_runs_installers(self):
             r = self.doctor("--quick", "--install-plugin")

@@ -103,7 +103,8 @@
     "CURSOR_AGENT",
     "AI_AGENT",
     "WS_SURFACE_FAMILY",
-    "WS_CLAUDE_OVERLAY"
+    "WS_CLAUDE_OVERLAY",
+    "WS_OVERLAY_CHANNEL"
   ],
   "surfaces": [
     {
@@ -153,7 +154,7 @@
           }
         ]
       },
-      "family_marker_channel": "claude-settings-env",
+      "family_marker_channel": "claude-session-env-file",
       "sandbox": null,
       "plugin_layers": [
         {
@@ -238,7 +239,7 @@
         },
         "H17": {
           "mode": "enforced-partial",
-          "rules": "in force once Sean installs the rendered v5 overlay (G4e): the Claude identity comes only from an identity include that matches personal remotes; employer remotes hit the transport block; a Claude-only gh config is the gh belt; a config-based git hook (the floor) blocks I1 over the pushed range, I2 outside vetted housekeeping, IR1 (in any other repo, an employer identity on a Claude commit or merge commit, or on any commit in a Claude push) and not-positively-personal under projects_root. These local layers are seatbelts: they stop ordinary and accidental employer pushes, not a process that deliberately evades git's own configuration (H17-R10). Declared residuals, at class level; exact shapes, fixtures and status are in the held H17 residual register. H17-R1: git's own hook-skip and hook-disable options, given directly or through an alias or a config include, skip the floor for one command; for ordinary employer network pushes the transport block still holds (see H17-R10); H15 (wave 1) denies the per-command forms at tool time, and H18 lanes (wave 1) detect them after the fact in the workspace; an alias written into a repository's or the user's config is not labelled. H17-R2: dropping or changing the overlay's git env config for one command can remove the floor, the transport block or both; dropped wholesale, that command falls back to the device's normal git setup; H15 (wave 1) denies the known forms at tool time, and evasion stays a residual behind server-side protection and human review. H17-R3: changing one command's environment (search path, gh config or token, identity variables) can route around the floor or the gh belt; the floor's pre-push identity check still reads each pushed commit's real identity; the gh form never passes through git, so neither the floor nor the transport block sees it and only server-side protection and review remain; H15 (wave 1) denies the labelled forms. H17-R4: the vetted-housekeeping exception recognizes its script from process details that a process can fake; it still needs a matching intent line (see H17-R5), and for ordinary employer network pushes the transport block still holds (see H17-R10); no close is planned yet. H17-R5: the vetted-housekeeping exception trusts a local receipt file that the Bash sandbox does not write when the session is rooted in the workspace or a project, so an agent acting outside that sandbox (a sandbox-off command or an approved file-tool write) could forge it; H15's static deny rules (wave 1) add a second layer. H17-R6: some employer remote URL spellings are not rewritten by the transport block, so the floor is their only local layer; the transport block cannot close this, and H15 (wave 1) adds a tool-time check. H17-R7: a documented minimal launch mode of Claude Code skips hooks; whether it also drops the overlay env, and so the floor, is not known; the wave-0 probe window (G3b) could not answer it, because that mode needs an API-key sign-in the Work MBP does not use; no close is planned until a device can run that mode. H17-R8: the floor fails open on unexpected errors, timeouts and a missing install, by design, so a broken floor never blocks personal work; where it cannot read facts it needs (the repository's remote config, the process table) it blocks instead; for ordinary employer network pushes the transport block still holds (see H17-R10); no close is planned. H17-R9: another URL rewrite that matches an employer remote, given for one command or written into any git config file (the repository's, the user's or the system's), can undo the transport block for that remote, depending on its kind, its length and where it is set; the floor still runs unless combined with another residual; H15 (wave 1) denies the per-command form; the file-based forms are not labelled, and the doctor's check mode reports those it can see in the user's and the system's files, but not rewrites behind a conditional include. H17-R10: a process that deliberately evades git's own configuration (a lower-level push command, a remote helper, shell indirection, or another home directory or config scope) can pass both the transport block and the floor; the local layers are not a boundary against that; where a device holds an employer credential that any process can use, that credential carries the push; the barriers are employer server-side protection and human PR review; no local close is planned (a per-use approval on the employer credential was considered and declined, Sean 2026-09-23). H17-R11: the floor sees only commit, merge-commit and push events, so other local git that changes refs or worktrees on an employer repo reaches no local layer; H15 (wave 1) evaluates it at tool time. H17-R12: outside projects_root the floor allows commits and pushes in a repo with a remote whose owner is not declared personal, although the action policy denies authoring and publishing there (P22); H15 (wave 1) enforces P22 at tool time. Tool time today: the classifier labels the per-command forms of H17-R1, H17-R2, the search-path and gh forms of H17-R3 and the per-command form of H17-R9 as hook_bypass, and the P05 policy row denies them, but nothing evaluates that policy at tool time until H15 ships (wave 1); the identity-variable form of H17-R3, H17-R4, H17-R5, the repo-config form of H17-R1 and the file-based forms of H17-R9 are not labelled, and shell indirection hides commands from the classifier (H17-R10). For employer git remotes the transport block stops ordinary pushes (it covers git transport only; H17-R2, H17-R6, H17-R9 and H17-R10 get past it); the barriers are employer server-side protection and human PR review, and credential scope helps only on routes that use Claude's personal credential",
+          "rules": "in force once Sean installs the rendered v5 overlay (G4e); since D-W1-4 it reaches Claude's shell through Claude Code's session env file, written at session start by a Claude-only startup hook, not through Claude's settings env, which other hosts on a device can import: the Claude identity comes only from an identity include that matches personal remotes; employer remotes hit the transport block; a Claude-only gh config is the gh belt; a config-based git hook (the floor) blocks I1 over the pushed range, I2 outside vetted housekeeping, IR1 (in any other repo, an employer identity on a Claude commit or merge commit, or on any commit in a Claude push) and not-positively-personal under projects_root. These local layers are seatbelts: they stop ordinary and accidental employer pushes, not a process that deliberately evades git's own configuration (H17-R10). Declared residuals, at class level; exact shapes, fixtures and status are in the held H17 residual register. H17-R1: git's own hook-skip and hook-disable options, given directly or through an alias or a config include, skip the floor for one command; for ordinary employer network pushes the transport block still holds (see H17-R10); H15 (wave 1) denies the per-command forms at tool time, and H18 lanes (wave 1) detect them after the fact in the workspace; an alias written into a repository's or the user's config is not labelled. H17-R2: dropping or changing the overlay's git env config for one command can remove the floor, the transport block or both; dropped wholesale, that command falls back to the device's normal git setup; H15 (wave 1) denies the known forms at tool time, and evasion stays a residual behind server-side protection and human review. H17-R3: changing one command's environment (search path, gh config or token, identity variables) can route around the floor or the gh belt; the floor's pre-push identity check still reads each pushed commit's real identity; the gh form never passes through git, so neither the floor nor the transport block sees it and only server-side protection and review remain; H15 (wave 1) denies the labelled forms. H17-R4: the vetted-housekeeping exception recognizes its script from process details that a process can fake; it still needs a matching intent line (see H17-R5), and for ordinary employer network pushes the transport block still holds (see H17-R10); no close is planned yet. H17-R5: the vetted-housekeeping exception trusts a local receipt file that the Bash sandbox does not write when the session is rooted in the workspace or a project, so an agent acting outside that sandbox (a sandbox-off command or an approved file-tool write) could forge it; H15's static deny rules (wave 1) add a second layer. H17-R6: some employer remote URL spellings are not rewritten by the transport block, so the floor is their only local layer; the transport block cannot close this, and H15 (wave 1) adds a tool-time check. H17-R7: a Claude Code session whose startup hooks do not run (hooks turned off, or a documented minimal launch mode that skips hooks) gets no overlay, and so no floor, transport block or gh belt, because the overlay arrives only through that hook (accepted, D-W1-4); the SessionEnd audit logs a session that ran without it and the doctor reports the count, but a session with hooks off runs no SessionEnd hook either, so there the doctor's disabled-hooks alert and its silent-audit canary are the signals; the H18 git lanes stay the floor; no close is planned. H17-R8: the floor fails open on unexpected errors, timeouts and a missing install, by design, so a broken floor never blocks personal work; where it cannot read facts it needs (the repository's remote config, the process table) it blocks instead; for ordinary employer network pushes the transport block still holds (see H17-R10); no close is planned. H17-R9: another URL rewrite that matches an employer remote, given for one command or written into any git config file (the repository's, the user's or the system's), can undo the transport block for that remote, depending on its kind, its length and where it is set; the floor still runs unless combined with another residual; H15 (wave 1) denies the per-command form; the file-based forms are not labelled, and the doctor's check mode reports those it can see in the user's and the system's files, but not rewrites behind a conditional include. H17-R10: a process that deliberately evades git's own configuration (a lower-level push command, a remote helper, shell indirection, or another home directory or config scope) can pass both the transport block and the floor; the local layers are not a boundary against that; where a device holds an employer credential that any process can use, that credential carries the push; the barriers are employer server-side protection and human PR review; no local close is planned (a per-use approval on the employer credential was considered and declined, Sean 2026-09-23). H17-R11: the floor sees only commit, merge-commit and push events, so other local git that changes refs or worktrees on an employer repo reaches no local layer; H15 (wave 1) evaluates it at tool time. H17-R12: outside projects_root the floor allows commits and pushes in a repo with a remote whose owner is not declared personal, although the action policy denies authoring and publishing there (P22); H15 (wave 1) enforces P22 at tool time. H17-R13: the session env file reaches only Claude's shell tool: hooks, MCP servers and the terminal panel never get the overlay, and some shell calls the host runs with a scrubbed credential environment skip it; the H18 git lanes are the floor on those paths; no close is planned. Tool time today: the classifier labels the per-command forms of H17-R1, H17-R2, the search-path and gh forms of H17-R3 and the per-command form of H17-R9 as hook_bypass, and the P05 policy row denies them, but nothing evaluates that policy at tool time until H15 ships (wave 1); the identity-variable form of H17-R3, H17-R4, H17-R5, the repo-config form of H17-R1 and the file-based forms of H17-R9 are not labelled, and shell indirection hides commands from the classifier (H17-R10). For employer git remotes the transport block stops ordinary pushes (it covers git transport only; H17-R2, H17-R6, H17-R9 and H17-R10 get past it); the barriers are employer server-side protection and human PR review, and credential scope helps only on routes that use Claude's personal credential",
           "decision": null,
           "verified_by": [
             "fixture:TestIdentity",
@@ -248,7 +249,7 @@
             "probe:claude-code@work-mbp"
           ],
           "planned_verified_by": [],
-          "how": "fixtures prove the rendered overlay; the claude-code probe record, re-taken from the agent shell after G4e (2026-09-24), shows WS_CLAUDE_OVERLAY=v5, GIT_CONFIG_COUNT and GH_CONFIG_DIR present, which proves the install. Partial because of the declared residuals H17-R1 to H17-R12"
+          "how": "fixtures prove the rendered overlay; the claude-code probe record, re-taken from the agent shell after G4e (2026-09-24), shows WS_CLAUDE_OVERLAY=v5, GIT_CONFIG_COUNT and GH_CONFIG_DIR present, which proves the install. D-W1-4 moves the overlay to the session env file on both Macs: a live probe from a Claude shell that shows WS_OVERLAY_CHANNEL=env-file proves the new channel on that Mac and gates retiring the settings env there (--install-claude-overlay-retire-env). Partial because of the declared residuals H17-R1 to H17-R13"
         },
         "H19": {
           "mode": "enforced-partial",
@@ -2483,6 +2484,16 @@
         "fixture:TestHostFilter"
       ]
     },
+    "ws-overlay-env-file": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook env-file --host claude-code",
+      "behaviour": "overlay-env-file",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "selftest:09-tools/ws_hook.py"
+      ]
+    },
     "dispatcher": {
       "template": "d=\"${CLAUDE_PROJECT_DIR:-}/.claude/hooks/dispatcher.py\"; [ -n \"${CLAUDE_PROJECT_DIR:-}\" ] && [ -f \"$d\" ] && command -v python3 >/dev/null 2>&1 || exit 0; exec python3 \"$d\" {event}",
       "behaviour_by_event": {
@@ -2566,6 +2577,19 @@
       ],
       "claim_group": "claude-boot",
       "defers_to": "claude-project.session-start"
+    },
+    {
+      "id": "claude-user.env-file",
+      "layer": "claude-user",
+      "event": "session-start",
+      "command": "ws-overlay-env-file",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [
+        "cursor"
+      ],
+      "claim_group": null,
+      "defers_to": null
     },
     {
       "id": "claude-user.user-prompt",
@@ -2908,7 +2932,20 @@
       "install_mode": "claude-settings-keys",
       "surface": "claude-code",
       "probe": false,
-      "render": "hooks",
+      "render": "hooks"
+    },
+    {
+      "id": "claude-overlay-env",
+      "path": "00-bootstrap/dist/claude-overlay.env",
+      "layer": null,
+      "owned_keys": [
+        "whole-file"
+      ],
+      "install_path": null,
+      "install_mode": "whole-file",
+      "surface": "claude-code",
+      "probe": false,
+      "render": "claude-overlay-env",
       "overlay": "v5"
     },
     {

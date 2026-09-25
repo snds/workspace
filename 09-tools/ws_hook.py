@@ -10,6 +10,7 @@ imports its sibling `profile_resolve.py`; tables resolve relative to that copy.
   ws_hook.py host --skip-any H[,H...]                                 stdin: payload JSON (optional)
   ws_hook.py host --skip-unless H[,H...]                              stdin: payload JSON (optional)
   ws_hook.py host --skip-unless-layer LAYER                           stdin: payload JSON (optional)
+  ws_hook.py env-file --host claude-code                              stdin: SessionStart payload JSON
   ws_hook.py probe-env --host H [--via terminal|run_in_terminal] [--record]
   ws_hook.py probe-promote --host H [--device D]
   ws_hook.py --self-test
@@ -26,6 +27,10 @@ LAYER` is `--skip-unless` with the set read from surfaces.json: the `loaded_by` 
 unknown layer, a layer with no hosts or a missing table gives 2. The boot shim uses it with
 `claude-project`, so the hosts it defers for are exactly the table's.
 
+`env-file` (D-W1-4) delivers the Claude overlay through Claude Code's session env file: it copies
+the validated exports of the installed ~/.config/snds-workspace/claude-overlay.env into the file
+named by CLAUDE_ENV_FILE, as one delimited block. It never prints and always exits 0.
+
 Stdlib only; Python 3.9+.
 """
 
@@ -39,8 +44,10 @@ import io
 import json
 import os
 import re
+import shlex
 import shutil
 import socket
+import stat
 import subprocess
 import sys
 import tempfile
@@ -54,8 +61,10 @@ ROOT = TOOLS.parent
 EVENTS = ("session-start", "user-prompt", "pre-tool", "post-tool", "stop", "subagent-stop",
           "pre-compact", "session-end")
 REDACT_RE = re.compile(r"^[A-Za-z0-9_.:+ ()-]{0,80}$")
+# WS_OVERLAY_CHANNEL is set only by the env-file channel (D-W1-4), so a probe record shows which
+# channel delivered the Claude overlay to that shell.
 ENV_PRESENCE_KEYS = ("WS_CLAUDE_OVERLAY", "WS_SURFACE_FAMILY", "GIT_CONFIG_COUNT", "GH_CONFIG_DIR",
-                     "CLAUDE_ENV_FILE")
+                     "CLAUDE_ENV_FILE", "WS_OVERLAY_CHANNEL")
 PROBES_REL = "02-shared-references/probes"
 PAYLOAD_FIXTURES_REL = "09-tools/fixtures/ws_hook/payloads"
 BASELINE_FIXTURES_REL = "09-tools/fixtures/ws_hook/baseline-2ff02e7"
@@ -897,6 +906,219 @@ def _read_lines(stdin=None) -> list:
         return []
 
 
+# --------------------------------------------------------------------------- D-W1-4: the overlay env file
+
+# Claude Code hands SessionStart hooks a file in CLAUDE_ENV_FILE and prepends its contents to every
+# Bash tool command of that session. Other hosts never set it, so the overlay stays Claude-only even
+# where another host imports Claude's settings env. Only the Bash tool reads the file: hooks, MCP
+# servers and the terminal panel never get the overlay (H17-R13), and a session whose SessionStart
+# hooks did not run gets none (H17-R7; the SessionEnd audit logs NOOVERLAY for the doctor).
+OVERLAY_ENV_NAME = "claude-overlay.env"            # under ws_paths()["base"]; --install-claude-overlay
+OVERLAY_BEGIN = "# BEGIN snds-workspace overlay"
+OVERLAY_END = "# END snds-workspace overlay"
+OVERLAY_TELEMETRY = "overlay-env.jsonl"
+OVERLAY_SOURCE_MAX = 256 * 1024
+OVERLAY_NAME_RE = re.compile(r"^(?:WS_[A-Z0-9_]+|GH_CONFIG_DIR|GIT_CONFIG_COUNT|GIT_CONFIG_(?:KEY|VALUE)_[0-9]+)$")
+OVERLAY_LINE_RE = re.compile(r"^export ([A-Z][A-Z0-9_]*)='((?:[^'\x00-\x1f\x7f]|'\\'')*)'$")
+OVERLAY_SID_RE = re.compile(r"^[A-Za-z0-9_.-]{1,128}$")
+HOME_BIND = 'H="$HOME";'           # merge_settings.HOME_BIND: the floor command binds its install home
+
+
+class _EnvFileSkip(Exception):
+    """The env-file step does nothing; the message is the telemetry reason."""
+
+
+def _sq(value: str) -> str:
+    return "'" + value.replace("'", "'\\''") + "'"
+
+
+def parse_overlay_env(text: str) -> list:
+    """[(name, value)] from the installed overlay file. Blank and `#` lines are skipped; every other
+    line must be `export NAME='value'` with NAME an overlay name, once. Anything else refuses."""
+    pairs, seen = [], set()
+    for i, ln in enumerate(text.splitlines(), 1):
+        if not ln.strip() or ln.startswith("#"):
+            continue
+        m = OVERLAY_LINE_RE.match(ln)
+        if not m:
+            raise _EnvFileSkip(f"installed overlay line {i} is not a strict export line")
+        name = m.group(1)
+        if not OVERLAY_NAME_RE.match(name):
+            raise _EnvFileSkip(f"installed overlay line {i} names a non-overlay variable")
+        if name in seen:
+            raise _EnvFileSkip(f"installed overlay line {i} repeats a name")
+        seen.add(name)
+        pairs.append((name, m.group(2).replace("'\\''", "'")))
+    if not pairs:
+        raise _EnvFileSkip("installed overlay file has no export lines")
+    return pairs
+
+
+def _expand_home(value: str, home: Path) -> str:
+    """As merge_settings.expand_env_home: `~/` becomes the home (gh does not expand it), and the
+    floor command's `H="$HOME";` binds this home, so a caller's HOME= cannot re-route the wrapper."""
+    h = str(home)
+    if value.startswith("~/"):
+        return os.path.join(h, value[2:])
+    if value.startswith(HOME_BIND):
+        return f"H={shlex.quote(h)};" + value[len(HOME_BIND):]
+    return value
+
+
+def overlay_block(pairs: list, home: Path) -> str:
+    lines = [OVERLAY_BEGIN,
+             "# Written by ws-hook env-file (snds-workspace, D-W1-4) at every SessionStart; do not edit."]
+    lines += [f"export {n}={_sq(_expand_home(v, home))}" for n, v in pairs]
+    lines.append(OVERLAY_END)
+    return "\n".join(lines) + "\n"
+
+
+def splice_overlay_block(current: str, block: str) -> str:
+    """current with every block of ours removed and `block` appended, so our exports come last.
+    Foreign lines are kept as they are. An unterminated block of ours refuses."""
+    out, inside = [], False
+    for ln in current.splitlines(keepends=True):
+        s = ln.rstrip("\n")
+        if not inside and s == OVERLAY_BEGIN:
+            inside = True
+            continue
+        if inside:
+            if s == OVERLAY_END:
+                inside = False
+            continue
+        out.append(ln)
+    if inside:
+        raise _EnvFileSkip("unterminated overlay block in the session env file")
+    text = "".join(out)
+    if text and not text.endswith("\n"):
+        text += "\n"
+    return text + block
+
+
+def _session_env_target(target: str, home: Path) -> Path:
+    p = Path(target)
+    if not p.is_absolute():
+        raise _EnvFileSkip("CLAUDE_ENV_FILE is not an absolute path")
+    try:
+        base = (home / ".claude" / "session-env").resolve(strict=True)
+        parent = p.parent.resolve(strict=True)
+    except (OSError, RuntimeError):
+        raise _EnvFileSkip("CLAUDE_ENV_FILE is not under ~/.claude/session-env") from None
+    if parent != base and base not in parent.parents:
+        raise _EnvFileSkip("CLAUDE_ENV_FILE is not under ~/.claude/session-env")
+    if p.is_symlink() or (p.exists() and not p.is_file()):
+        raise _EnvFileSkip("CLAUDE_ENV_FILE is not a regular file")
+    return parent / p.name
+
+
+def _read_overlay_source(src: Path) -> list:
+    try:
+        st = os.lstat(src)
+    except OSError:
+        raise _EnvFileSkip("overlay env file not installed") from None
+    if not stat.S_ISREG(st.st_mode):
+        raise _EnvFileSkip("installed overlay env file is not a regular file")
+    if st.st_mode & 0o022:
+        raise _EnvFileSkip("installed overlay env file is group- or world-writable")
+    if hasattr(os, "getuid") and st.st_uid != os.getuid():
+        raise _EnvFileSkip("installed overlay env file is owned by another user")
+    if st.st_size > OVERLAY_SOURCE_MAX:
+        raise _EnvFileSkip("installed overlay env file is too large")
+    try:
+        text = src.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        raise _EnvFileSkip("installed overlay env file is unreadable") from None
+    return parse_overlay_env(text)
+
+
+def _overlay_telemetry(home: Path, rec: dict) -> None:
+    tele = _telemetry(home)
+    if tele is None:
+        return
+    try:
+        with open(tele / OVERLAY_TELEMETRY, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(rec, separators=(",", ":")) + "\n")
+    except OSError:
+        pass
+
+
+def env_file(host_arg, payload, *, env=None, home=None, table=_UNSET_TABLE) -> str:
+    """Write the overlay block into CLAUDE_ENV_FILE: "written", "noop" or "error". Never raises and
+    never prints. Acts only for --host claude-code, a claude-code payload, a CLAUDE_ENV_FILE under
+    ~/.claude/session-env and an installed overlay file whose every line validates. On success it
+    leaves ~/.claude/ws-state/overlay.<session_id>, which the SessionEnd audit looks for."""
+    env = os.environ if env is None else env
+    home = Path(home) if home is not None else Path.home()
+    p = payload if isinstance(payload, dict) else {}
+    sid = p.get("session_id")
+    sid = sid if isinstance(sid, str) and OVERLAY_SID_RE.match(sid) else None
+    status, reason, n = "noop", "", 0
+    try:
+        if host_arg != "claude-code":
+            raise _EnvFileSkip("host is not claude-code")
+        target = env.get("CLAUDE_ENV_FILE") or ""
+        if not target:
+            raise _EnvFileSkip("CLAUDE_ENV_FILE unset")
+        tpath = _session_env_target(target, home)
+        t = _surfaces() if table is _UNSET_TABLE else table
+        if not t:
+            raise _EnvFileSkip("surfaces table unavailable")
+        if payload_host_hint(p, table=t) != "claude-code":
+            raise _EnvFileSkip("payload is not a claude-code payload")
+        paths = _ws_paths(home)
+        if not paths:
+            raise _EnvFileSkip("profile_resolve unavailable")
+        pairs = _read_overlay_source(Path(paths["base"]) / OVERLAY_ENV_NAME)
+        try:
+            cur = tpath.read_text(encoding="utf-8") if tpath.exists() else ""
+            mode = (tpath.stat().st_mode & 0o777) if tpath.exists() else 0o600
+        except (OSError, UnicodeDecodeError):
+            raise _EnvFileSkip("session env file unreadable") from None
+        new = splice_overlay_block(cur, overlay_block(pairs, home))
+        fd, tmp = tempfile.mkstemp(prefix=".ws-overlay-", dir=str(tpath.parent))
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as fh:
+                fh.write(new)
+            os.chmod(tmp, mode)
+            os.replace(tmp, tpath)
+        except BaseException:
+            try:
+                os.unlink(tmp)
+            except OSError:
+                pass
+            raise
+        status, n = "written", len(pairs)
+        if sid:
+            state = home / ".claude" / "ws-state"
+            state.mkdir(parents=True, exist_ok=True)
+            stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            (state / f"overlay.{sid}").write_text(f"{stamp} env-file {n}\n", encoding="utf-8")
+    except _EnvFileSkip as exc:
+        reason = str(exc)
+    except Exception as exc:  # noqa: BLE001 - fails open: the host session always starts
+        status, reason = "error", exc.__class__.__name__
+    try:
+        src = p.get("source")
+        _overlay_telemetry(home, {
+            "schema_version": 1, "ts": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "event": "env-file", "host": _safe(host_arg), "result": status, "reason": reason or None,
+            "session": sid, "source": _safe(src) if src else None, "exports": n})
+    except Exception:  # noqa: BLE001
+        pass
+    return status
+
+
+def _env_file_main(argv) -> int:
+    """`env-file --host H`: exit 0 and nothing on stdout (SessionStart stdout becomes model context),
+    whatever happens."""
+    try:
+        host = argv[2] if len(argv) == 3 and argv[1] == "--host" else None
+        env_file(host, _read_payload())
+    except BaseException:  # noqa: BLE001
+        pass
+    return 0
+
+
 # --------------------------------------------------------------------------- self-test fakes
 
 class _FakePR:
@@ -1461,6 +1683,126 @@ def self_test_cases() -> list:
                             env=dict(base_env, CLAUDE_PROJECT_DIR=str(fake_proj)), timeout=20)
         ok("N1: a present dispatcher still runs with its event", r3.returncode == 0 and r3.stdout.startswith("ran "),
            f"{r3.returncode} {r3.stdout!r} {r3.stderr!r}")
+    results += env_file_cases(table)
+    return results
+
+
+OVERLAY_SAMPLE = (
+    "# fixture overlay (header comment)\n"
+    f"{OVERLAY_BEGIN}\n"
+    "export WS_CLAUDE_OVERLAY='v5'\n"
+    "export WS_SURFACE_FAMILY='claude'\n"
+    "export WS_OVERLAY_CHANNEL='env-file'\n"
+    "export GH_CONFIG_DIR='~/.config/snds-workspace/gh-claude'\n"
+    "export GIT_CONFIG_COUNT='2'\n"
+    "export GIT_CONFIG_KEY_0='hook.ws-claude-wall.command'\n"
+    "export GIT_CONFIG_VALUE_0='H=\"$HOME\"; W=\"$H/x\"; exec \"$W\"'\n"
+    "export GIT_CONFIG_KEY_1='x.quote'\n"
+    "export GIT_CONFIG_VALUE_1='it'\\''s'\n"
+    f"{OVERLAY_END}\n"
+)
+
+
+def env_file_cases(table: dict) -> list:
+    """D-W1-4: the env-file step. Happy path, idempotent re-run, foreign lines kept, and every no-op
+    branch (each leaves the session env file untouched and names its reason in telemetry)."""
+    results = []
+
+    def ok(name, cond, detail=""):
+        results.append((f"env-file: {name}", bool(cond), "" if cond else detail))
+
+    with tempfile.TemporaryDirectory(prefix="ws-hook-envfile-") as tmpd:
+        tmp = Path(tmpd).resolve()
+        home = tmp / "home"
+        base = home / ".config" / "snds-workspace"
+        (base / "telemetry").mkdir(parents=True)
+        sess = home / ".claude" / "session-env" / "sess-0001"
+        sess.mkdir(parents=True)
+        src = base / OVERLAY_ENV_NAME
+        src.write_text(OVERLAY_SAMPLE, encoding="utf-8")
+        os.chmod(src, 0o644)
+        target = sess / "sessionstart-hook-1.sh"
+        claude_p = _golden("claude-code", "session-start")
+        tele = base / "telemetry" / OVERLAY_TELEMETRY
+
+        def last_reason():
+            try:
+                return json.loads(tele.read_text(encoding="utf-8").splitlines()[-1]).get("reason")
+            except (OSError, ValueError, IndexError):
+                return None
+
+        def run(env=None, payload=None, host="claude-code"):
+            e = {"CLAUDE_ENV_FILE": str(target)} if env is None else env
+            with _with_pr(_FakePR(home)):
+                return env_file(host, claude_p if payload is None else payload, env=e, home=home, table=table)
+
+        target.write_text("export FOREIGN_BEFORE=1\n", encoding="utf-8")
+        st = run()
+        text = target.read_text(encoding="utf-8")
+        ok("happy path writes the block", st == "written" and text.count(OVERLAY_BEGIN) == 1
+           and text.startswith("export FOREIGN_BEFORE=1\n") and text.endswith(OVERLAY_END + "\n"), f"{st} {text!r}")
+        ok("~/ and the floor home bind are rendered to the home",
+           f"export GH_CONFIG_DIR='{home}/.config/snds-workspace/gh-claude'" in text
+           and f"export GIT_CONFIG_VALUE_0='H={shlex.quote(str(home))}; W=\"$H/x\"; exec \"$W\"'" in text
+           and "~/" not in text, text)
+        ok("a marker names the session", (home / ".claude" / "ws-state" / "overlay.sess-0001").is_file())
+        r = subprocess.run(["bash", "-c", f". {shlex.quote(str(target))}; printf '%s|%s|%s' \"$WS_OVERLAY_CHANNEL\" "
+                            "\"$GIT_CONFIG_VALUE_1\" \"$GIT_CONFIG_COUNT\""], capture_output=True, text=True, timeout=20)
+        ok("the written file sources in bash with exact values", r.stdout == "env-file|it's|2", repr(r.stdout))
+        with open(target, "a", encoding="utf-8") as fh:
+            fh.write("export FOREIGN_AFTER=2\n")
+        st = run()
+        text = target.read_text(encoding="utf-8")
+        ok("a re-run keeps one block and every foreign line",
+           st == "written" and text.count(OVERLAY_BEGIN) == 1 and text.count(OVERLAY_END) == 1
+           and "export FOREIGN_BEFORE=1\n" in text and "export FOREIGN_AFTER=2\n" in text
+           and text.index("FOREIGN_AFTER") < text.index(OVERLAY_BEGIN), text)
+        ok("telemetry records the write", json.loads(tele.read_text().splitlines()[-1]).get("result") == "written")
+
+        before = target.read_bytes()
+
+        def noop_case(name, needle, **kw):
+            st = run(**kw)
+            ok(f"{name} is a no-op", st == "noop" and target.read_bytes() == before and needle in (last_reason() or ""),
+               f"{st} reason={last_reason()!r}")
+
+        noop_case("CLAUDE_ENV_FILE unset", "unset", env={})
+        outside = tmp / "elsewhere.sh"
+        outside.write_text("", encoding="utf-8")
+        noop_case("a path outside ~/.claude/session-env", "not under", env={"CLAUDE_ENV_FILE": str(outside)})
+        ok("the outside file stays empty", outside.read_text() == "")
+        noop_case("a relative path", "absolute", env={"CLAUDE_ENV_FILE": "session-env/x.sh"})
+        noop_case("a codex payload", "not a claude-code payload", payload=_golden("codex", "session-start"))
+        noop_case("an unverified payload", "not a claude-code payload", payload={"session_id": "sess-0001"})
+        noop_case("another --host", "host is not claude-code", host="codex")
+        for label, bad in (("a non-overlay name", "export PATH='/tmp'\n"),
+                           ("a double-quoted value", 'export WS_X="$(id)"\n'),
+                           ("a trailing command", "export WS_X='a'; id\n"),
+                           ("a repeated name", "export WS_X='a'\nexport WS_X='b'\n")):
+            src.write_text(OVERLAY_SAMPLE + bad, encoding="utf-8")
+            noop_case(f"a bad installed line ({label})", "installed overlay line")
+        src.write_text(OVERLAY_SAMPLE, encoding="utf-8")
+        os.chmod(src, 0o666)
+        noop_case("a world-writable installed file", "writable")
+        os.chmod(src, 0o644)
+        src.unlink()
+        noop_case("no installed file", "not installed")
+        src.write_text(OVERLAY_SAMPLE, encoding="utf-8")
+        os.chmod(src, 0o644)
+        target.write_text(f"export A=1\n{OVERLAY_BEGIN}\nexport WS_X='a'\n", encoding="utf-8")
+        before = target.read_bytes()
+        noop_case("an unterminated block of ours", "unterminated")
+
+        # The CLI: nothing on stdout, exit 0, even with no payload or a broken argument list.
+        script = _fixture_tree(tmp / "cli", with_pr=True)
+        target.write_text("", encoding="utf-8")
+        r = _run_cli(script, ["env-file", "--host", "claude-code"], stdin=json.dumps(claude_p), home=home,
+                     extra_env={"CLAUDE_ENV_FILE": str(target)})
+        ok("CLI writes the block silently", r.returncode == 0 and r.stdout == "" and r.stderr == ""
+           and target.read_text().count(OVERLAY_BEGIN) == 1, f"{r.returncode} {r.stdout!r} {r.stderr!r}")
+        r = _run_cli(script, ["env-file"], stdin="not json", home=home, extra_env={"CLAUDE_ENV_FILE": str(target)})
+        ok("CLI usage error exits 0 silently", r.returncode == 0 and r.stdout == "" and r.stderr == "",
+           f"{r.returncode} {r.stdout!r} {r.stderr!r}")
     return results
 
 
@@ -1482,7 +1824,7 @@ def _baseline_script(name: str) -> bytes:
 
 
 def _shell_run(script: bytes, payload: str, *, tmp: Path, ws: Path, tag: str, pin_rc=None, pre_state=None,
-               real_pin=False):
+               real_pin=False, home_files=None):
     """(rc, stdout, audit lines) of one shim run in a temp home.
 
     pin_rc installs a stand-in ws-hook that always exits pin_rc. real_pin installs the byte-stable
@@ -1506,6 +1848,10 @@ def _shell_run(script: bytes, payload: str, *, tmp: Path, ws: Path, tag: str, pi
         shutil.copy2(ROOT / "00-bootstrap" / "dist" / "ws-hook", cfg / "bin" / "ws-hook")
         (cfg / "bin" / "ws-hook").chmod(0o755)
         (cfg / "lib" / "current").symlink_to(ROOT, target_is_directory=True)
+    for rel, text in (home_files or {}).items():
+        p = home / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text, encoding="utf-8")
     path = tmp / f"script-{tag}.sh"
     path.write_bytes(script)
     env = {"HOME": str(home), "PATH": os.environ.get("PATH", "/usr/bin:/bin"), "LANG": "C", "LC_ALL": "C",
@@ -1643,6 +1989,36 @@ def shell_golden_cases() -> list:
         n += 1
         got = _shell_run(new, json.dumps(cursor_in), tmp=tmp, ws=ws, tag=f"{n}-new", real_pin=True)
         results.append((f"{name} cursor inside, real pin: exits 0 with no output", got == (0, "", []), f"got={got!r}"))
+
+        # D-W1-4, the audit's one addition: with the env-file channel installed, a verified Claude Code
+        # session that ends without its overlay marker logs NOOVERLAY after its usual line. The cases
+        # above (no channel installed) stay byte-identical to 2ff02e7.
+        name = "workspace-audit.sh"
+        new = (ROOT / "00-bootstrap" / "dist" / name).read_bytes()
+        chan = {f".config/snds-workspace/{OVERLAY_ENV_NAME}": OVERLAY_SAMPLE}
+        tp = tmp / ".claude" / "projects" / "fx" / "sess-0009.jsonl"
+        tp.parent.mkdir(parents=True, exist_ok=True)
+        tp.write_text(transcript_ok.read_text(encoding="utf-8"), encoding="utf-8")
+        tp1 = tmp / ".claude" / "projects" / "fx" / "sess-0010.jsonl"
+        tp1.write_text(transcript_miss.read_text(encoding="utf-8"), encoding="utf-8")
+        ended = claude("SessionEnd", cwd=ws, transcript=tp, sid="sess-0009")
+        audit_cases = [
+            ("claude, channel installed, no marker: NOOVERLAY", ended, chan, None,
+             ["OK   sess-0009 cwd=" + str(ws), "NOOVERLAY sess-0009"]),
+            ("claude, channel installed, marker present: no NOOVERLAY", ended, chan, {"overlay.sess-0009": "x\n"},
+             ["OK   sess-0009 cwd=" + str(ws)]),
+            ("claude, channel not installed: no NOOVERLAY", ended, None, None, ["OK   sess-0009 cwd=" + str(ws)]),
+            ("claude one-shot, channel installed: exempt", claude("SessionEnd", cwd=ws, transcript=tp1, sid="sess-0010"),
+             chan, None, ["SKIP sess-0010 one-shot"]),
+            ("codex with a transcript, channel installed: not Claude Code",
+             shaped("codex", "session-start", hook_event_name="SessionEnd", session_id="sess-0011",
+                    transcript_path=str(transcript_ok), cwd=str(ws)), chan, None, ["OK   sess-0011 cwd=" + str(ws)]),
+        ]
+        for label, payload, files, pre, want_log in audit_cases:
+            n += 1
+            got = _shell_run(new, json.dumps(payload), tmp=tmp, ws=ws, tag=f"{n}-audit", real_pin=True,
+                             home_files=files, pre_state=pre)
+            results.append((f"{name} {label}", got == (0, "", want_log), f"got={got!r}"))
     return results
 
 
@@ -1683,6 +2059,8 @@ def main(argv=None) -> int:
         spec = a.skip_unless if unless else a.skip_any
         hosts = {h.strip() for h in spec.split(",") if h.strip()}
         return host_skip_any(hosts, payload, unless=unless)
+    if argv[:1] == ["env-file"]:
+        return _env_file_main(argv)
     if argv[:1] == ["probe-env"]:
         ap = argparse.ArgumentParser(prog="ws_hook.py probe-env")
         ap.add_argument("--host", required=True)

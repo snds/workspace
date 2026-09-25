@@ -869,8 +869,9 @@ def _bare_worktree_cases(lab: Lab, pr, penv: dict) -> list:
 
 # --------------------------------------------------------------------------- TestOverlay (installer path)
 
-INSTALL_CASES = ["install: --install-claude-overlay lands the v5 env on a temp HOME through installers.run",
-                 "install: the installed env is a full-key replace (stale managed keys gone, user keys kept)",
+INSTALL_CASES = ["install: --install-claude-overlay lands the v5 env file and its env-file SessionStart entry on a "
+                 "temp HOME through installers.run, and the hook renders it to the bound v5 env",
+                 "install: the settings env is never touched (D-W1-4: the old channel stays until the retire step)",
                  "install: refused under an agent marker, a Claude ancestor and without a TTY (exit 4, nothing written)",
                  "install: the diff is printed and the answer N writes nothing",
                  "install: launchctl, gh and osascript are never called"]
@@ -896,7 +897,7 @@ def overlay_install_cases(pr, rs) -> list:
             s.write_text(f"#!/bin/sh\necho {name} >> '{log}'\nexit 0\n", encoding="utf-8")
             s.chmod(0o755)
         os.environ["PATH"] = f"{stubs}{os.pathsep}{saved_path}"
-        for rel in ("00-bootstrap/dist/settings-user-fragment.json",):
+        for rel in ("00-bootstrap/dist/settings-user-fragment.json", "00-bootstrap/dist/claude-overlay.env"):
             (repo / rel).parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / rel, repo / rel)
         for sub in ("git", "gh-claude"):
@@ -949,21 +950,24 @@ def overlay_install_cases(pr, rs) -> list:
                     f"rc={rc_n}"))
         rc, o, e = run()
         got = json.loads(sj.read_text(encoding="utf-8"))
-        frag = ms.expand_env_home(json.loads((ROOT / "00-bootstrap/dist/settings-user-fragment.json")
-                                             .read_text(encoding="utf-8")), home)
-        managed = {k: v for k, v in got.get("env", {}).items() if ms.is_managed_env(k)}
-        env = got.get("env", {})
+        installed = base / "claude-overlay.env"
+        wh = load("09-tools/ws_hook.py", "ws_hook_install_cases")
+        env = {k: wh._expand_home(v, home) for k, v in wh.parse_overlay_env(installed.read_text(encoding="utf-8"))} \
+            if installed.is_file() else {}
+        want = ms.expand_env_home({"env": dict(rs.overlay_env(*rs.identity_tables(ROOT), "v5"))}, home)["env"]
         keys = [env.get(f"GIT_CONFIG_KEY_{i}") for i in range(int(env.get("GIT_CONFIG_COUNT", "0")))]
         cmd_i = next((i for i, k in enumerate(keys) if k == f"hook.{FLOOR}.command"), None)
         bound = cmd_i is not None and env.get(f"GIT_CONFIG_VALUE_{cmd_i}", "").startswith(f"H={home};") \
             and "$HOME" not in env.get(f"GIT_CONFIG_VALUE_{cmd_i}", "")
-        good = (rc == 0 and bound and managed == frag["env"] and env.get("WS_CLAUDE_OVERLAY") == "v5"
-                and env.get("WS_SURFACE_FAMILY") == "claude" and f"hook.{FLOOR}.command" in keys
+        cmds = [h.get("command", "") for g in (got.get("hooks") or {}).get("SessionStart") or [] for h in g.get("hooks") or []]
+        good = (rc == 0 and bound and installed.read_bytes() == (DIST / "claude-overlay.env").read_bytes()
+                and {k: v for k, v in env.items() if k != "WS_OVERLAY_CHANNEL"} == want
+                and env.get("WS_OVERLAY_CHANNEL") == "env-file" and env.get("WS_SURFACE_FAMILY") == "claude"
                 and env.get("GH_CONFIG_DIR", "").startswith(str(home))
+                and sum("ws-hook env-file --host claude-code" in c for c in cmds) == 1
                 and (base / "git" / "claude-identity.inc").is_file())
         out.append((INSTALL_CASES[0], good, f"rc={rc} {e[-200:]}"))
-        out.append((INSTALL_CASES[1], env.get("EDITOR") == "vi" and "GIT_AUTHOR_EMAIL" not in env
-                    and "x.y" not in keys, str(sorted(k for k in env if not k.startswith("GIT_CONFIG_")))))
+        out.append((INSTALL_CASES[1], got.get("env") == stale["env"], str(sorted(got.get("env") or {}))))
         out.append((INSTALL_CASES[4], not log.exists(), log.read_text() if log.exists() else ""))
     except Exception as exc:  # noqa: BLE001 - a broken fixture must fail, not crash the suite
         out.append(("install: fixture ran", False, f"{exc.__class__.__name__}: {exc}"))
