@@ -14,6 +14,11 @@
 # HEAL class (the only unattended writes): ~/.claude/hooks/workspace-{sessionstart,
 # reassert,audit}.sh, ~/.claude/CLAUDE.md, ~/.claude/workspace-brain-path, ~/.claude/ws-state/.
 # Everything else the doctor looks at is REPORT class and names the installer to run.
+# W1-6 (H20, walls F-11): the injectors and the user CLAUDE.md heal ONLY from the pinned lib
+# (~/.config/snds-workspace/lib/current, adopted by a human --install-pin), never from the checkout.
+# Nothing pinned = report only. SessionStart and launchd run the PINNED doctor (bin/ws-doctor), and
+# every helper the doctor executes comes from beside the doctor itself (CODE), so the pinned doctor
+# runs only pinned code. Installers are the one exception: human-run, they exec the checkout's.
 set -u
 # Resolve the workspace root (FX-14 — no hardcoded path): brain-path file first,
 # then candidate list; AGENTS.md presence is the test.
@@ -29,6 +34,11 @@ _p="$(cd "$WS" 2>/dev/null && { /bin/pwd -P 2>/dev/null || pwd -P; })"   # getcw
 [ -n "$_p" ] && [ "$(printf '%s' "$_p" | tr '[:upper:]' '[:lower:]')" = "$(printf '%s' "$WS" | tr '[:upper:]' '[:lower:]')" ] && WS="$_p"
 DIST="$WS/00-bootstrap/dist"
 DOC="$WS/00-bootstrap/doctor"
+# CODE = the tree this doctor file lives in (lib/<sha> when run as bin/ws-doctor; the checkout when a
+# human runs it there). Helpers execute from CODE only, never from $WS.
+CODE="$(cd "$(dirname "$0")/../.." 2>/dev/null && { /bin/pwd -P 2>/dev/null || pwd -P; })"
+[ -n "$CODE" ] && [ -f "$CODE/00-bootstrap/doctor/workspace-doctor.sh" ] || CODE="$WS"
+CDOC="$CODE/00-bootstrap/doctor"
 STATE="$HOME/.claude/ws-state"; LOG="$STATE/audit.log"
 CFG="$HOME/.config/snds-workspace"; TEL="$CFG/telemetry"; LIBC="$CFG/lib/current"
 QUICK=0; CHECK=0; QUIET=0; NOLC=0; DRIFT=0; ALERTS=""; INST=""; INST_ARGS=()
@@ -107,7 +117,9 @@ heal_file() { # $1=dist source  $2=target  $3=exec|plain — HEAL class only; at
   if ! mkdir -p "$(dirname "$2")" 2>/dev/null; then flag "REPAIR FAILED (mkdir): $2"; return; fi
   local TMP; TMP="$(dirname "$2")/.ws-tmp.$$"
   if ! cp "$1" "$TMP" 2>/dev/null; then rm -f "$TMP"; flag "REPAIR FAILED (cp): $2"; return; fi
-  if [ "$3" = exec ]; then chmod +x "$TMP"; fi
+  # The pinned source is sealed 0444; the healed copy is owner-writable (0755/0644) so the .bak
+  # generation below can still be refreshed next time.
+  if [ "$3" = exec ]; then chmod 0755 "$TMP"; else chmod 0644 "$TMP"; fi
   # Keep one generation of whatever we're about to replace. ~/.claude/CLAUDE.md is a
   # file a human edits by hand; without this, a hand edit is silently reverted.
   [ -f "$2" ] && cp -p "$2" "$2.bak" 2>/dev/null
@@ -138,11 +150,33 @@ report_file() { # $1=dist source  $2=installed target  $3=installer flag  [$4=js
 }
 
 # 1. HEAL class: Claude-only context injectors (they only print context; atomic mv fixes
-#    the self-overwrite race — L1 spawns me while running).
-heal_file "$DIST/workspace-sessionstart.sh" "$HOME/.claude/hooks/workspace-sessionstart.sh" exec
-heal_file "$DIST/workspace-reassert.sh"     "$HOME/.claude/hooks/workspace-reassert.sh"     exec
-heal_file "$DIST/workspace-audit.sh"        "$HOME/.claude/hooks/workspace-audit.sh"        exec
-heal_file "$DIST/user-CLAUDE.md"            "$HOME/.claude/CLAUDE.md"                       plain
+#    the self-overwrite race — L1 spawns me while running). W1-6 (H20, walls F-11): the source is
+#    ONLY the pinned lib. No pin, or a pin without the file, writes nothing and says so; a checkout
+#    that differs from the pin is reported, never healed from.
+PDIST="$LIBC/00-bootstrap/dist"
+[ -d "$LIBC" ] || note "nothing pinned — the Claude injectors (~/.claude/hooks/workspace-*.sh, ~/.claude/CLAUDE.md) are not healed (report only); to adopt: workspace-doctor.sh --install-pin"
+heal_pinned() { # $1=dist file name  $2=target  $3=exec|plain
+  [ -d "$LIBC" ] || return 0
+  if [ ! -f "$PDIST/$1" ]; then
+    note "the pinned lib has no 00-bootstrap/dist/$1 (the pin predates W1-6), so $2 is not healed — re-pin to adopt: workspace-doctor.sh --install-pin"
+    return
+  fi
+  cmp -s "$DIST/$1" "$PDIST/$1" 2>/dev/null || \
+    note "vault differs from pin: 00-bootstrap/dist/$1 — $2 stays at the pinned copy; re-pin to adopt: workspace-doctor.sh --install-pin"
+  heal_file "$PDIST/$1" "$2" "$3"
+}
+heal_pinned workspace-sessionstart.sh "$HOME/.claude/hooks/workspace-sessionstart.sh" exec
+heal_pinned workspace-reassert.sh     "$HOME/.claude/hooks/workspace-reassert.sh"     exec
+heal_pinned workspace-audit.sh        "$HOME/.claude/hooks/workspace-audit.sh"        exec
+heal_pinned user-CLAUDE.md            "$HOME/.claude/CLAUDE.md"                       plain
+# The unattended doctor itself and what it executes: a checkout copy ahead of the pin is not run.
+if [ -d "$LIBC" ]; then
+  for _f in doctor/workspace-doctor.sh doctor/pin_lib.py doctor/merge_settings.py doctor/render_shims.py dist/ws-doctor; do
+    [ -f "$LIBC/00-bootstrap/$_f" ] || continue
+    cmp -s "$WS/00-bootstrap/$_f" "$LIBC/00-bootstrap/$_f" 2>/dev/null || \
+      note "vault differs from pin: 00-bootstrap/$_f — the unattended doctor runs the pinned copy; re-pin to adopt: workspace-doctor.sh --install-pin"
+  done
+fi
 
 # 1b. REPORT class: anything that runs in other hosts or employer cwds is installed only
 #     by a human (installers.py). The doctor compares and names the installer.
@@ -207,7 +241,7 @@ else
   if [ "$CHECK" -eq 1 ]; then
     # Exact comparison of the settings overlay env against the dist overlay (the env file without its
     # channel marker, rendered for this home as the old installer wrote it).
-    _d="$(python3 - "$DIST/claude-overlay.env" "$SJ" "$DOC" <<'PY' 2>/dev/null
+    _d="$(python3 - "$DIST/claude-overlay.env" "$SJ" "$CDOC" <<'PY' 2>/dev/null
 import json, re, sys
 sys.path.insert(0, sys.argv[3])
 import merge_settings as ms
@@ -249,26 +283,26 @@ PLUG="$HOME/.claude/local-plugins/snds-local/snds"
 
 # 4b. --check extras: pin lag, git capabilities, probe records (NOTEs, never drift).
 if [ "$CHECK" -eq 1 ]; then
-  _lag="$(python3 "$DOC/pin_lib.py" lag --home "$HOME" --repo "$WS" 2>/dev/null)"; _rc=$?
+  _lag="$(python3 "$CDOC/pin_lib.py" lag --home "$HOME" --repo "$WS" 2>/dev/null)"; _rc=$?
   case $_rc in
     0) _n="$(printf '%s\n' "$_lag" | sed -n 's/^commits_behind_on_pinned_paths: //p')"
        [ "${_n:-0}" != "0" ] && note "pinned lib lags HEAD by $_n commit(s) on pinned paths — run workspace-doctor.sh --install-pin";;
     3) note "nothing pinned — run workspace-doctor.sh --install-pin";;
     *) note "pin lag unavailable";;
   esac
-  python3 "$WS/09-tools/profile_resolve.py" gitcaps --check-recorded >/dev/null 2>&1; _rc=$?
+  python3 "$CODE/09-tools/profile_resolve.py" gitcaps --check-recorded >/dev/null 2>&1; _rc=$?
   case $_rc in 0) : ;; 1) note "git capability record missing or stale — run profile_resolve.py gitcaps --record";;
     *) note "gitcaps unavailable";; esac
   # H17-R9: a URL rewrite in a git config file can undo the Claude overlay's transport block.
-  python3 "$DOC/render_shims.py" --rewrite-audit >/dev/null 2>&1; _rc=$?
+  python3 "$CDOC/render_shims.py" --rewrite-audit >/dev/null 2>&1; _rc=$?
   case $_rc in 0) : ;; 1) note "a git config file rewrites an employer URL, so the transport block may not apply — run render_shims.py --rewrite-audit";;
     *) note "rewrite audit unavailable";; esac
   # H18: the global git lanes (REPORT; installed only by --install-git-hooks). The audit reads git config at
   # every scope, globally and per cached checkout: any entry that replaces, clears or disables a lane, or a
   # lane key outside the lane include, is drift. From an agent chain it skips
   # non-personal checkouts.
-  if [ -f "$WS/09-tools/git_lanes.py" ]; then
-    _la="$(python3 "$WS/09-tools/git_lanes.py" audit --cache 2>/dev/null)"; _rc=$?
+  if [ -f "$CODE/09-tools/git_lanes.py" ]; then
+    _la="$(python3 "$CODE/09-tools/git_lanes.py" audit --cache 2>/dev/null)"; _rc=$?
     case $_rc in
       0) : ;;
       1) printf '%s\n' "$_la" | grep '^FINDING: ' | head -5 | while IFS= read -r _l; do say "  $_l"; done
@@ -277,13 +311,13 @@ if [ "$CHECK" -eq 1 ]; then
       *) note "git lane audit unavailable";;
     esac
   fi
-  _dev="$(python3 "$WS/09-tools/profile_resolve.py" device --json 2>/dev/null | python3 -c 'import json,sys;print(json.load(sys.stdin)["device"]["id"])' 2>/dev/null)"
+  _dev="$(python3 "$CODE/09-tools/profile_resolve.py" device --json 2>/dev/null | python3 -c 'import json,sys;print(json.load(sys.stdin)["device"]["id"])' 2>/dev/null)"
   if [ -n "$_dev" ] && [ "$_dev" != unknown ]; then
     # devices.json declares this device's home and brain; tools use the live values, this reports drift.
-    python3 - "$WS" "$_dev" <<'PY' 2>/dev/null | while IFS= read -r _l; do note "$_l"; done
+    python3 - "$WS" "$_dev" "$CODE" <<'PY' 2>/dev/null | while IFS= read -r _l; do note "$_l"; done
 import json, os, sys
-ws, dev = sys.argv[1], sys.argv[2]
-rows = json.load(open(os.path.join(ws, "02-shared-references", "devices.json"), encoding="utf-8")).get("devices") or []
+ws, dev, code = sys.argv[1], sys.argv[2], sys.argv[3]
+rows = json.load(open(os.path.join(code, "02-shared-references", "devices.json"), encoding="utf-8")).get("devices") or []
 row = next((r for r in rows if isinstance(r, dict) and r.get("id") == dev), None) or {}
 home = os.path.expanduser("~")
 cf = lambda p: os.path.realpath(p).rstrip("/").casefold()
@@ -353,9 +387,9 @@ if [ "$QUICK" -eq 0 ]; then
   # 9. --quiet (launchd) extras: telemetry only, and only when --install-pin created it.
   if [ "$QUIET" -eq 1 ] && [ "$CHECK" -eq 0 ]; then
     if [ -d "$TEL" ]; then
-      if [ -f "$DOC/render_shims.py" ]; then
-        _dev="$(python3 "$WS/09-tools/profile_resolve.py" device --json 2>/dev/null | python3 -c 'import json,sys;print(json.load(sys.stdin)["device"]["id"])' 2>/dev/null)"
-        python3 "$DOC/render_shims.py" --install-state --json 2>/dev/null | \
+      if [ -f "$CDOC/render_shims.py" ]; then
+        _dev="$(python3 "$CODE/09-tools/profile_resolve.py" device --json 2>/dev/null | python3 -c 'import json,sys;print(json.load(sys.stdin)["device"]["id"])' 2>/dev/null)"
+        python3 "$CDOC/render_shims.py" --install-state --json 2>/dev/null | \
           WS_DEV="${_dev:-unknown}" python3 -c '
 import datetime, json, os, sys
 d = json.load(sys.stdin)
@@ -374,7 +408,6 @@ open(t, "w").write(json.dumps(out, indent=2) + "\n"); os.replace(t, p)' "$TEL/in
     fi
   fi
 fi
-[ "$QUICK" -eq 0 ] && [ "$CHECK" -eq 0 ] && [ ! -e "$LIBC" ] && note "nothing pinned — run workspace-doctor.sh --install-pin"
 
 [ "$CHECK" -eq 0 ] && date +%Y-%m-%dT%H:%M:%S > "$STATE/doctor-last-run"
 if [ "$DRIFT" -eq 0 ]; then say "workspace-doctor: all layers healthy."

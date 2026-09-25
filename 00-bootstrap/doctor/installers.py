@@ -633,7 +633,8 @@ def _settings_reference_ws_hook(ctx: Ctx) -> bool:
 
 def do_pin(ctx: Ctx) -> int:
     p = ctx.paths()
-    targets = [p["lib_current"], p["bin"] / "ws-hook", p["bin"] / "ws", p["root_file"]]
+    # bin/ws-doctor (W1-6) is the pinned doctor entry SessionStart and launchd run.
+    targets = [p["lib_current"], *(p["bin"] / n for n in pin_lib.WRAPPERS), p["root_file"]]
     if ctx.action == "uninstall":
         if _settings_reference_ws_hook(ctx):
             raise RefusedError("~/.claude/settings.json still references bin/ws-hook "
@@ -2182,6 +2183,146 @@ def self_test() -> int:
             self.assertEqual(self.run_inst("plugin=x")[0], 2)
             self.assertEqual(self.run_inst("plugin", "reinstall")[0], 2)
 
+    class TestHealFromPin(Base):
+        """W1-6 (H20, walls F-11): the doctor heals the Claude injectors and ~/.claude/CLAUDE.md only
+        from the pinned lib, SessionStart/launchd run only the pinned doctor (bin/ws-doctor), and a
+        vault edit never reaches the home unattended. The pin goes through the spied write primitive;
+        the doctor runs as a subprocess against a temp HOME and the heal targets are hashed."""
+
+        HEAL = {"00-bootstrap/dist/workspace-sessionstart.sh": ".claude/hooks/workspace-sessionstart.sh",
+                "00-bootstrap/dist/workspace-reassert.sh": ".claude/hooks/workspace-reassert.sh",
+                "00-bootstrap/dist/workspace-audit.sh": ".claude/hooks/workspace-audit.sh",
+                "00-bootstrap/dist/user-CLAUDE.md": ".claude/CLAUDE.md"}
+        CODE = ("00-bootstrap/doctor/workspace-doctor.sh", "00-bootstrap/doctor/pin_lib.py",
+                "00-bootstrap/doctor/merge_settings.py", "00-bootstrap/doctor/render_shims.py",
+                "00-bootstrap/dist/ws-doctor")
+        MODES = (("--quick", "--quiet"), ("--quick",), ("--check",), ("--quiet",), ())
+        EDIT = "\n# W1-6 fixture: a vault edit that must never reach the home unattended\n"
+
+        def setUp(self):
+            super().setUp()
+            for rel in (*self.HEAL, *self.CODE):
+                dst = self.repo / rel
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(VAULT_ROOT / rel, dst)
+            (self.repo / "AGENTS.md").write_text("fixture\n")
+            pin_lib.commit_all(self.repo, "w1-6 fixture")
+            (self.home / ".claude").mkdir(parents=True, exist_ok=True)
+            (self.home / ".claude" / "workspace-brain-path").write_text(f"{self.repo}\n")
+            self.bin = self.home / ".config" / "snds-workspace" / "bin"
+
+        def run_sh(self, argv, stdin=""):
+            env = {k: v for k, v in os.environ.items() if not k.startswith("WS_")}
+            env["HOME"] = str(self.home)
+            return subprocess.run(argv, capture_output=True, text=True, env=env, input=stdin, timeout=120)
+
+        def doctor(self, *args, pinned=True):
+            exe = [str(self.bin / "ws-doctor")] if pinned else \
+                ["bash", str(self.repo / "00-bootstrap/doctor/workspace-doctor.sh")]
+            return self.run_sh([*exe, *args])
+
+        def heal_snapshot(self):
+            snap = {}
+            for p in sorted((self.home / ".claude").rglob("*")):
+                rel = str(p.relative_to(self.home))
+                if p.is_file() and (rel.startswith(".claude/hooks/") or rel.startswith(".claude/CLAUDE.md")):
+                    snap[rel] = p.read_bytes()
+            return snap
+
+        def edit_vault(self, *, doctor):
+            for rel in self.HEAL:
+                with open(self.repo / rel, "a") as f:
+                    f.write(self.EDIT)
+            if doctor:   # an edited doctor that would write into the home if it were ever run
+                d = self.repo / "00-bootstrap/doctor/workspace-doctor.sh"
+                d.write_text(d.read_text().replace(
+                    "set -u\n", 'set -u\ntouch "$HOME/.claude/hooks/EVIL"; echo evil > "$HOME/.claude/CLAUDE.md"\n', 1))
+
+        def assert_every_mode_leaves_the_home(self, *, pinned, drift):
+            for mode in self.MODES:
+                before = self.heal_snapshot()
+                r = self.doctor(*mode, pinned=pinned)
+                self.assertIn(r.returncode, (0, 1), f"{mode}: {r.stdout}{r.stderr}")
+                self.assertEqual(self.heal_snapshot(), before, f"{mode} changed a heal target: {r.stdout}")
+                self.assertFalse((self.home / ".claude/hooks/EVIL").exists(), f"{mode} ran the vault doctor")
+                if "--quiet" not in mode:
+                    for d in drift:
+                        self.assertIn(f"vault differs from pin: {d}", r.stdout, f"{mode}: {r.stdout}")
+
+        def test_pin_installs_ws_doctor_and_uninstall_is_byte_exact(self):
+            self.install_pin()
+            self.assertEqual((self.bin / "ws-doctor").read_bytes(),
+                             (VAULT_ROOT / "00-bootstrap/dist/ws-doctor").read_bytes())
+            self.assertTrue(os.access(self.bin / "ws-doctor", os.X_OK))
+            self.assertIn(str(self.bin / "ws-doctor"), [r["target"] for r in self.log()])
+            lib = self.home / ".config/snds-workspace/lib/current"
+            for rel in (*self.HEAL, *self.CODE):
+                self.assertTrue((lib / rel).is_file(), f"{rel} not pinned")
+            rc, out, err = self.run_inst("pin", "uninstall")
+            self.assertEqual(rc, 0, out + err)
+            self.assertFalse((self.bin / "ws-doctor").exists())
+            self.assertFalse(os.path.lexists(lib))
+
+        def test_pinned_doctor_heals_from_the_pin_and_never_from_the_vault(self):
+            self.install_pin()
+            r = self.doctor()
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            for rel, tgt in self.HEAL.items():                  # heals, from the pinned bytes
+                self.assertEqual((self.home / tgt).read_bytes(), (VAULT_ROOT / rel).read_bytes(), tgt)
+            self.assertTrue(os.access(self.home / ".claude/hooks/workspace-audit.sh", os.X_OK))
+            self.edit_vault(doctor=True)
+            (self.home / ".claude/hooks/workspace-reassert.sh").write_text("stale\n")
+            r = self.doctor()                                   # still heals, from the pin only
+            self.assertEqual((self.home / ".claude/hooks/workspace-reassert.sh").read_bytes(),
+                             (VAULT_ROOT / "00-bootstrap/dist/workspace-reassert.sh").read_bytes())
+            self.assert_every_mode_leaves_the_home(pinned=True, drift=(
+                "00-bootstrap/dist/workspace-sessionstart.sh", "00-bootstrap/dist/workspace-reassert.sh",
+                "00-bootstrap/dist/workspace-audit.sh", "00-bootstrap/dist/user-CLAUDE.md",
+                "00-bootstrap/doctor/workspace-doctor.sh"))
+
+        def test_checkout_doctor_heals_only_from_the_pin(self):
+            self.install_pin()
+            self.doctor()
+            self.edit_vault(doctor=False)
+            self.assert_every_mode_leaves_the_home(pinned=False, drift=(
+                "00-bootstrap/dist/workspace-sessionstart.sh", "00-bootstrap/dist/user-CLAUDE.md"))
+
+        def test_no_pin_writes_nothing_and_says_so(self):
+            for mode in self.MODES:
+                r = self.doctor(*mode, pinned=False)
+                self.assertEqual(self.heal_snapshot(), {}, f"{mode}: {r.stdout}{r.stderr}")
+                if "--quiet" not in mode:
+                    self.assertIn("nothing pinned — the Claude injectors", r.stdout, f"{mode}: {r.stdout}")
+            self.assertFalse((self.bin / "ws-doctor").exists())
+            self.assertEqual(self.run_sh(["sh", str(VAULT_ROOT / "00-bootstrap/dist/ws-doctor")]).returncode, 0)
+
+        def test_sessionstart_runs_no_doctor_without_the_pinned_wrapper(self):
+            import time
+            d = self.repo / "00-bootstrap/doctor/workspace-doctor.sh"
+            d.write_text('#!/bin/sh\ntouch "$HOME/checkout-doctor-ran"\n')
+            os.chmod(d, 0o755)
+            shim = str(VAULT_ROOT / "00-bootstrap/dist/workspace-sessionstart.sh")
+
+            def start(sid):
+                payload = json.dumps({"session_id": sid, "source": "startup", "cwd": str(self.td)})
+                r = self.run_sh(["bash", shim], stdin=payload)
+                self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+                self.assertIn("[ws-bootstrap:startup]", r.stdout)
+
+            start("sess-no-wrapper")
+            time.sleep(1.5)
+            self.assertFalse((self.home / "checkout-doctor-ran").exists(), "fell back to the checkout doctor")
+            self.bin.mkdir(parents=True)                        # positive control: the wrapper runs
+            (self.bin / "ws-doctor").write_text('#!/bin/sh\ntouch "$HOME/pinned-doctor-ran"\n')
+            os.chmod(self.bin / "ws-doctor", 0o755)
+            start("sess-wrapper")
+            for _ in range(100):
+                if (self.home / "pinned-doctor-ran").exists():
+                    break
+                time.sleep(0.1)
+            self.assertTrue((self.home / "pinned-doctor-ran").exists())
+            self.assertFalse((self.home / "checkout-doctor-ran").exists())
+
     class TestOverlayReplace(unittest.TestCase):
         def test_floor_command_is_bound_to_the_install_home(self):
             cmd = 'H="$HOME"; W="$H/.config/snds-workspace/bin/ws-hook"; exec env HOME="$H" "$W"'
@@ -2289,6 +2430,12 @@ def self_test() -> int:
                 p.write_text(text)
             (h / ".config/snds-workspace/telemetry").mkdir(parents=True)
             os.symlink("fake", h / ".config/snds-workspace/lib/current")
+            # W1-6: the heal sources come from the pin only; the fake pin's copies are marked so a
+            # healed file proves its source.
+            pdist = h / ".config/snds-workspace/lib/fake/00-bootstrap/dist"
+            pdist.mkdir(parents=True)
+            for f in ("workspace-sessionstart.sh", "workspace-reassert.sh", "workspace-audit.sh", "user-CLAUDE.md"):
+                (pdist / f).write_bytes((dist / f).read_bytes() + b"# pinned fixture copy\n")
             self.report = {rel: (h / rel).read_bytes() for rel in seeds}
             self.stubs = self.td / "stubs"
             self.stubs.mkdir()
@@ -2337,9 +2484,10 @@ def self_test() -> int:
             self.assertFalse((self.home / ".config/snds-workspace/telemetry/install-state.json").exists())
             for rel in set(self.snapshot()) - set(before):
                 self.assertTrue(self.heal_or_allowed(rel, False), f"unexpected write: {rel}")
-            # HEAL class still heals
+            # HEAL class still heals, from the pinned copy (W1-6), never the checkout's
             self.assertEqual((self.home / ".claude/hooks/workspace-sessionstart.sh").read_bytes(),
-                             (self.ws / "00-bootstrap/dist/workspace-sessionstart.sh").read_bytes())
+                             (self.home / ".config/snds-workspace/lib/fake/00-bootstrap/dist/"
+                              "workspace-sessionstart.sh").read_bytes())
 
         def test_quiet_reports_only_scans_pinned_and_writes_install_state(self):
             before = self.snapshot()
@@ -2509,7 +2657,7 @@ def self_test() -> int:
 
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
-    for cls in (TestInstaller, TestOverlayReplace, TestDoctorModes):
+    for cls in (TestInstaller, TestHealFromPin, TestOverlayReplace, TestDoctorModes):
         suite.addTests(loader.loadTestsFromTestCase(cls))
     res = unittest.TextTestRunner(verbosity=1).run(suite)
     return 0 if res.wasSuccessful() else 1
