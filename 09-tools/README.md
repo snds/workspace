@@ -100,8 +100,17 @@ Stamp: `07-projects/19-workspace-brain/reports/skill-routing-harness.stamp`.
 
 ## build-local-skill-plugin.py
 
-Mirrors curated hubs from `03-skills/` into a local Claude Code plugin so they appear as
-native `/snds:<name>` slash commands. Claude-specific ergonomics; optional.
+Generates every non-canonical copy of a workspace skill (H20). `--wrappers` writes the tracked
+pointer wrappers for the workspace workflows (`.claude/skills/`, `.agents/skills/`); `--plugin`
+builds the local `snds` plugin (curated hubs as `/snds:<name>` plus workflow wrappers; the only
+mode that touches `~/.claude`); `--user --out DIR --root ABS_CHECKOUT` writes user-level wrappers
+for the installer; `--check` fails on wrapper drift or a hand-made entry not on
+`02-shared-references/skill-wrapper-allowlist.json` (D15). No arguments prints help and does nothing.
+
+```
+python3 09-tools/build-local-skill-plugin.py --check
+python3 09-tools/build-local-skill-plugin.py --self-test
+```
 
 ## check-terminology.py
 

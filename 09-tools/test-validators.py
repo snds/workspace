@@ -1913,6 +1913,40 @@ class TestScopedCommitH1(unittest.TestCase):
             d.git, d.in_git_repo = orig
 
 
+class TestSkillHomes(unittest.TestCase):
+    """H20 / D15: every workflow has one 03-skills home; the tracked .claude/.agents copies are
+    generated pointer wrappers (no drift, at most 10 lines); nothing hand-made sits under those
+    roots unless the allowlist gives a reason. The self-test runs every mode in a temp HOME."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.b = load("build-local-skill-plugin")
+
+    def test_live_tree_has_no_drift(self):
+        self.assertEqual(self.b.check(ROOT_DIR), [])
+
+    def test_every_workflow_has_a_home(self):
+        for name in self.b.WORKFLOWS:
+            with self.subTest(name=name):
+                self.assertTrue((ROOT_DIR / "03-skills" / name / "SKILL.md").is_file())
+
+    def test_hubs_and_workflows_are_disjoint(self):
+        self.assertFalse(set(self.b.HUBS) & set(self.b.WORKFLOWS))
+
+    def test_self_test_passes(self):
+        r = subprocess.run([sys.executable, str(TOOLS / "build-local-skill-plugin.py"), "--self-test"],
+                           capture_output=True, text=True, timeout=300)
+        self.assertEqual(r.returncode, 0, r.stdout[-2000:] + r.stderr[-1000:])
+
+    def test_no_args_is_help_only(self):
+        with tempfile.TemporaryDirectory() as home:
+            r = subprocess.run([sys.executable, str(TOOLS / "build-local-skill-plugin.py")],
+                               capture_output=True, text=True, timeout=60, env={**os.environ, "HOME": home})
+            self.assertEqual(r.returncode, 0)
+            self.assertIn("--user", r.stdout)
+            self.assertEqual(list(Path(home).iterdir()), [])
+
+
 def main(argv: list) -> int:
     strict = "--strict-skips" in argv
     names = [a for a in argv if a != "--strict-skips"]

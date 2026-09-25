@@ -44,6 +44,11 @@
 !.claude/
 !.claude/**
 
+# Generated workflow pointer wrappers for Codex/Cursor (H20; 09-tools/build-local-skill-plugin.py).
+!.agents/
+!.agents/skills/
+!.agents/skills/**
+
 !.cursor/
 !.cursor/**
 !.cursorignore

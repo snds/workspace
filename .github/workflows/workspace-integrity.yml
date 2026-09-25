@@ -65,6 +65,7 @@ on:
       - ".cursor/hooks/**"
       - "00-bootstrap/doctor/**"
       - "09-tools/build-local-skill-plugin.py"
+      - "02-shared-references/skill-wrapper-allowlist.json"
       - "09-tools/fixtures/installer/**"
       - "09-tools/profile_resolve.py"
       - "02-shared-references/devices.json"
@@ -132,6 +133,7 @@ on:
       - ".cursor/hooks/**"
       - "00-bootstrap/doctor/**"
       - "09-tools/build-local-skill-plugin.py"
+      - "02-shared-references/skill-wrapper-allowlist.json"
       - "09-tools/fixtures/installer/**"
       - "09-tools/profile_resolve.py"
       - "02-shared-references/devices.json"
@@ -176,6 +178,8 @@ jobs:
         run: python3 09-tools/skill-loadset.py --self-test
       - name: Command-hub L3 table
         run: python3 09-tools/close-out-dispatch.py --check
+      - name: Skill wrappers (one 03-skills home, no drift, no hand-made entries; H20/D15)
+        run: python3 09-tools/build-local-skill-plugin.py --check
       - name: Layer 0 JSON schema
         run: python3 09-tools/validate-layer0-schema.py --check
       - name: Session-start ritual card
