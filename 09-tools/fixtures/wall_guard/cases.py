@@ -522,6 +522,27 @@ def misc_cases(wg, w: dict) -> list:
     res.append(("a host override never relaxes an enforced rule",
                 wg.rule_mode(cfg, "R6", "cursor") == "enforce" and wg.rule_mode(cfg, "R2", "cursor") == "enforce",
                 str(cfg)))
+    # the live-probe commands decide as their goldens say, and probe-record reads them back from the log
+    probe_ok = []
+    for pc in wg.PROBE_CASES:
+        cmd = pc["command"].replace(wg.PROBE_ROOT + "/scratch", str(w["SCRATCH"])) \
+            .replace(wg.PROBE_ROOT + "/emp-personal", str(w["EMP_P"])).replace(wg.PROBE_ROOT + "/emp", str(w["EMP"]))
+        for host, golden, env_kind in (("claude-code", "claude-code.bash", "claude"),
+                                       ("cursor", "cursor.before-shell", "cursor"), ("codex", "codex.bash", "codex")):
+            case = (f"probe-{pc['id']}", host, golden, {"command": cmd, "cwd": "SCRATCH"}, env_kind,
+                    {"claude-code": "claude", "cursor": "cursor", "codex": "codex"}[host], "dev-a", "", None, {})
+            d = run_case(wg, w, case)[3] or {"decision": "none"}
+            got = "deny" if d.get("decision") in ("deny", "route") else d.get("decision")
+            want = pc["expect"].get(host, pc["expect"].get("*"))
+            probe_ok.append((pc["id"], host, got == want, got, want))
+    bad = [p for p in probe_ok if not p[2]]
+    res.append(("live-probe commands decide as their goldens say on every host", not bad, str(bad)))
+    recs = {}
+    for host in ("claude-code", "cursor", "codex"):
+        rc, rec = wg.probe_record(host, device="dev-a", home=w["home"], root=w["root"], write=False)
+        recs[host] = (rc, rec.get("all_match"))
+    res.append(("probe-record reads the logged probe decisions back (all match, redacted)",
+                all(v == (0, True) for v in recs.values()), str(recs)))
     # vault folders: the H25 deny set
     names = sorted(d.name for d in wg.employer_vault_folders(w["root"]))
     res.append(("employer vault folders: profile or glob, never a personal folder",

@@ -1478,13 +1478,16 @@ def probe_record(host: str, *, device: Optional[str] = None, home: Optional[Path
     rows = [r for r in read_log(home) if r.get("host") == host and r.get("probe")]
     seen: Dict[str, dict] = {}
     for r in rows:
-        seen[r["probe"]] = r
+        if not str(r.get("decision", "")).startswith("would-"):   # report-only rows ride along; the verdict row decides
+            seen[r["probe"]] = r
     cases = {}
     ok = True
     for c in PROBE_CASES:
         want = c["expect"].get(host, c["expect"].get("*"))
         got = seen.get(c["id"])
         observed = got.get("decision") if got else "not-seen"
+        if observed == "route":
+            observed = "deny"               # a route renders as deny on every host
         match = observed == want
         ok = ok and match
         cases[c["id"]] = {"expected": want, "observed": observed, "rule": (got or {}).get("rule") or "none",
