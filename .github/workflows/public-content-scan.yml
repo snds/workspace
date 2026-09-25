@@ -1,0 +1,23 @@
+name: public-content-scan
+
+# This repository is public. The secret-shape scan and the employer-substance baseline (H25) run on
+# EVERY push to main and every pull request, with no path filter: workspace-integrity.yml only runs
+# when a watched path changes, so a leak in any other file would otherwise reach CI unscanned.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Secret shape scan
+        run: python3 09-tools/check-secrets.py
+      - name: Employer-substance baseline (H25, blocking; a count above the baseline fails)
+        run: python3 09-tools/check-secrets.py --class employer-substance --baseline-check
