@@ -18,6 +18,15 @@
             "timeout": 5
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/snds-workspace/bin/ws-hook sweep --host claude-code",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
@@ -49,6 +58,18 @@
           {
             "type": "command",
             "command": "$HOME/.config/snds-workspace/bin/ws-hook --host claude-code --event pre-tool",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/snds-workspace/bin/ws-hook --host claude-code --event post-tool",
             "timeout": 5
           }
         ]

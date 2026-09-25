@@ -4,6 +4,10 @@
     "sessionStart": [
       {
         "command": "$HOME/.claude/hooks/cursor-sessionstart.sh"
+      },
+      {
+        "command": "$HOME/.config/snds-workspace/bin/ws-hook sweep --host cursor",
+        "timeout": 10
       }
     ],
     "beforeShellExecution": [
@@ -22,6 +26,18 @@
     "beforeMCPExecution": [
       {
         "command": "$HOME/.config/snds-workspace/bin/ws-hook --host cursor --event pre-tool",
+        "timeout": 5
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": "$HOME/.config/snds-workspace/bin/ws-hook --host cursor --event post-tool",
+        "timeout": 5
+      }
+    ],
+    "afterShellExecution": [
+      {
+        "command": "$HOME/.config/snds-workspace/bin/ws-hook --host cursor --event post-tool",
         "timeout": 5
       }
     ]

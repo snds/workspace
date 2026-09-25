@@ -169,6 +169,7 @@ Coverage on the minimum surfaces (scope: `shared` is held to parity on the hooka
 | H22 | shared | enforced-partial | backstop-only | advisory | advisory |
 | H24 | shared | enforced-partial | not-applicable | enforced-partial | enforced-partial |
 | H25 | shared | unverified | backstop-only | unverified | unverified |
+| H23 | shared | enforced-partial | not-applicable | enforced-partial | enforced-partial |
 
 Registrations (one effective registration per surface, event and behaviour):
 
@@ -179,6 +180,8 @@ Registrations (one effective registration per surface, event and behaviour):
 | claude-user.user-prompt | user-prompt | ws-user-reassert | cursor | - |
 | claude-user.session-end | session-end | ws-user-audit | cursor | - |
 | claude-user.pre-tool | pre-tool | ws-guard-claude | cursor | - |
+| claude-user.post-tool | post-tool | ws-ledger-claude | cursor | - |
+| claude-user.sweep | session-start | ws-sweep-claude | cursor | - |
 | claude-project.session-start | session-start | dispatcher | cursor | - |
 | claude-project.pre-tool | pre-tool | dispatcher | cursor | - |
 | claude-project.user-prompt | user-prompt | dispatcher | cursor | - |
@@ -190,8 +193,13 @@ Registrations (one effective registration per surface, event and behaviour):
 | cursor-user.pre-shell | pre-shell | ws-guard-cursor | - | - |
 | cursor-user.pre-tool | pre-tool | ws-guard-cursor | - | - |
 | cursor-user.pre-mcp | pre-mcp | ws-guard-cursor | - | - |
+| cursor-user.post-edit | post-edit | ws-ledger-cursor | - | - |
+| cursor-user.post-shell | post-shell | ws-ledger-cursor | - | - |
+| cursor-user.sweep | session-start | ws-sweep-cursor | - | - |
 | cursor-project.subagent-stop | subagent-stop | cursor-subagent-stop-project | - | - |
 | codex-user.pre-tool | pre-tool | ws-guard-codex | - | - |
+| codex-user.post-tool | post-tool | ws-ledger-codex | - | - |
+| codex-user.sweep | session-start | ws-sweep-codex | - | - |
 | probe-claude-user.session-start | session-start | ws-hook-probe | - | ws-probe |
 | probe-claude-user.user-prompt | user-prompt | ws-hook-probe | - | ws-probe |
 | probe-claude-user.stop | stop | ws-hook-probe | - | ws-probe |

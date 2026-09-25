@@ -8,5 +8,6 @@ case "${1:-}" in
   intent) shift; exec python3 "$R/09-tools/intent-run.py" "$@";;
   status) shift; exec python3 "$R/09-tools/session-status.py" "$@";;
   route) shift; exec python3 "$R/09-tools/prompt_route.py" "$@";;
-  *) echo "usage: ws hook|resolve|intent|status|route ..." >&2; exit 2;;
+  closure) shift; exec python3 "$R/09-tools/closure.py" "$@";;
+  *) echo "usage: ws hook|resolve|intent|status|route|closure ..." >&2; exit 2;;
 esac
