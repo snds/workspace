@@ -1,0 +1,409 @@
+---
+name: session-end
+description: >
+  End-of-session protocol. Writes the Session Block as a fragment (06-context/sessions/<id>.md;
+  compaction folds it into session-log.md), updates project-context.md, runs skills sync, commits
+  and pushes to Git, then prunes merged branches we authored. Invoked as /session-end or triggered
+  by "end of session" / "wrap up" / "done for today".
+aliases: [session-end]
+triggers: ["/session-end", "end of session", "end the session", "session done", "done for today", "logging off", "let's close out"]
+tier: cross-cutting
+rigor_role: command-hub
+domain: workspace
+related: [side-chat-handback, reconcile, self-improve, open-agent-engine, mission-fit]
+surfaces: ["*"]
+spec_version: "2.2"
+---
+
+# /session-end — Close out the session cleanly
+
+> Canonical home for every surface. The `.claude/skills/session-end/` and `.agents/skills/session-end/` copies (and the snds plugin's) are generated pointer wrappers (`09-tools/build-local-skill-plugin.py`); edit this file, never a wrapper.
+
+Writes a Session Block, updates project context, commits to Git, pushes to remote.
+On Claude Code the `SessionEnd` hook will catch and commit anything not committed explicitly,
+but the block itself needs the agent to author — the hook can't know what was decided.
+
+## Trigger phrases
+
+Invoke explicitly as `/session-end`, or auto-trigger on any of:
+"end of session", "wrap up", "session done", "that's it for now", "done for today",
+"let's close out", "logging off".
+
+## Surface detection (run first, before any other step)
+
+Run this probe to identify the current surface:
+
+```bash
+printf "CURSOR:%s\nTERM_PROG:%s\nVSCODE_PID:%s\nCC_ENTRY:%s\nCLAUDE_PROJ:%s\nDESKTOP:%s\nPARENT:%s\n" \
+  "${CURSOR_TRACE:-}" "${TERM_PROGRAM:-}" "${VSCODE_PID:-}" \
+  "${CLAUDE_CODE_ENTRYPOINT:-}" "${CLAUDE_PROJECT_DIR:-}" "${CLAUDE_DESKTOP_APP:-}" \
+  "$(ps -p $PPID -o comm= 2>/dev/null)"
+```
+
+Decision table (first match wins):
+
+| Signal | Surface label |
+|---|---|
+| `CURSOR_TRACE` set OR `TERM_PROGRAM=cursor` | `Cursor` |
+| `VSCODE_PID` set AND parent process contains `Cursor` | `Cursor` |
+| `VSCODE_PID` set OR `CLAUDE_CODE_ENTRYPOINT=ide` | `VS Code + Claude Code` |
+| `CLAUDE_CODE_ENTRYPOINT=cli` | `Claude Code CLI` |
+| `CLAUDE_PROJECT_DIR` set, no above signals | `Claude Code` |
+| `CLAUDE_DESKTOP_APP` set | `Claude Desktop / Cowork` |
+| No Claude signals and you are another host (Codex, Gemini, Copilot, …) | that host's name, e.g. `Codex` |
+| No signals (web session, hooks not running) | `claude.ai web` |
+
+**Note on Cursor vs VS Code:** Cursor is built on VS Code and sets `VSCODE_PID`, so
+the parent process check (`ps -p $PPID -o comm=`) is the reliable discriminator when
+`CURSOR_TRACE` and `TERM_PROGRAM` are both unset. If `ps` is unavailable, fall back
+to contextual signals — if `brain.mdc` rules are loaded, you are in Cursor.
+
+Resolve machine label from `hostname` per the standard table. Together these give
+you the **session signature**: `{Machine label} / {Surface}` — e.g. `Work MacBook Pro / Cursor`.
+
+## Protocol
+
+### Step 0.5 — Externalize Cursor-local context (Cursor surface only)
+
+Cursor canvases and other durable chat artifacts live under `~/.cursor/projects/` until copied.
+That folder is **not** this git tree; Cursor will not compile vault copies.
+
+```
+python3 09-tools/cursor-externalize.py
+```
+
+Copies personal `.canvas.tsx` into git-tracked `07-projects/…/canvases/` (workspace-brain,
+LCARS, MediaSentinel). Employer canvases copy into that repo's `canvases/` — never into
+this vault. `flavours-` / `guided-setup-` move off a mixed `~/Projects` slug into
+`saas-plm-prototype`. Skips Legion, ephemeral Cursor windows, and a missing employer
+checkout. Unmapped named slugs fail `--check` (not silent). Commit the **vault** copies
+with the session; do not auto-commit employer repos. Do **not** copy agent-transcripts,
+MCP caches, or `~/.cursor` plugin state into the vault.
+
+Then report pending drop-folder files (do not promote):
+
+```
+python3 09-tools/artifact-ingest.py --check
+```
+
+If this session produced a durable fact that only exists in Cursor/claude-mem private memory,
+route it per [[workspace-ontology]] / [[decision-externalize-everything-to-workspace]] before
+writing the Session Block. Other vendor Canvas/Artifact/HTML panels follow the vendor-surface
+row in [[workspace-ontology]] / [[decision-vendor-surface-artifacts]] (write-through; harvest
+CLIs above; do not fake harvest in CI — A10).
+
+### Step 1 — Generate Session Block
+
+Draft using the Session Block format (see template below). Base it on:
+- Files modified this session (via `git status` + `git diff`)
+- Decisions stated by Sean in the conversation
+- Pending items added or resolved
+- Project status changes
+- Next actions for any active project
+
+One line per entry. Omit empty sections.
+
+### Step 1.5 — Consequential evidence line (false-success hygiene)
+
+If this session claimed **consequential** completion — employer push/PR merge ask, Figma
+library publish, external send, credential/billing change, delete/destructive data, or any
+side effect outside the chat — add **one** `Evidence:` line to the Session Block:
+
+```
+Evidence:
+  - {what was verified} @ {owning system / path / PR / node / issue} — {verified | unverified | blocked}
+```
+
+Rules:
+- Prefer a **read-back from the owning system** (diff+CI, opened file, published library, tracker
+  receipt) over the agent's own closing sentence. See [[mission-fit]].
+- If access was missing and the honest status was blocked, write `blocked` — never dress a
+  substitute as verified.
+- **Omit the whole `Evidence:` section** when the session had no consequential side effects
+  (ordinary docs/skills edits inside this workspace do not require it).
+- Do **not** run a full `/mission-fit` audit here — one line of continuity only.
+
+### Step 2 — Write a session FRAGMENT (not the shared log directly)
+
+To stay collision-free across concurrent sessions/machines/surfaces, **do NOT edit
+`session-log.md` by hand.** Write your block to its own fragment file:
+
+```
+06-context/sessions/{YYYY-MM-DD}-{machine-slug}-{short-random}.md
+```
+
+- `machine-slug`: lowercase, e.g. `voyager`, `work`, `enterprise` (from the machine label).
+- `short-random`: any unique 4–6 char token so two same-day sessions never collide.
+
+The fragment is your Session Block plus a **`SessionID:` line** matching the filename
+stem (the compactor dedupes on it). Write a `### heading` above it too:
+
+```
+### {YYYY-MM-DD} — {short session title}
+
+SessionID: {YYYY-MM-DD}-{machine-slug}-{short-random}
+--- SESSION BLOCK ---
+Date: {YYYY-MM-DD}
+Machine: {machine label}
+Surface: {surface}
+Project(s): …
+Summary: …
+--- END BLOCK ---
+```
+
+That's it — disjoint files can't conflict. `09-tools/compact-sessions.py` folds the
+fragment into `session-log.md` (newest-first, idempotent) at session-end and the next
+session-start; you don't touch the shared log. (If `06-context/sessions/` doesn't
+exist yet on an older checkout, fall back to prepending under `## Session Entries`.)
+
+### Step 3 — Update project-context.md (only if needed)
+
+Apply pending adds/resolves and project status changes. Skip if no changes.
+
+### Step 4 — Update artifact-registry.md (only if files were created/modified)
+
+For any file created or modified in `07-projects/` this session, update or add its
+entry in `06-context/artifact-registry.md`. Keep the `- **Purpose**:` / `- **Last modified**:`
+shape — agents QUERY this file (`09-tools/artifact-find.py`) rather than reading it, so format
+drift makes queries miss silently. Verify with `python3 09-tools/artifact-find.py --check`.
+
+### Step 5 — Harvest knowledge (if warranted)
+
+Scan the session for durable insights — decisions whose *why* isn't captured elsewhere,
+discovered constraints, validated patterns, research synthesis. If found, write or update
+an entry in `08-knowledge/{domain}/` and update `08-knowledge/_INDEX.md`.
+Skip for purely mechanical sessions.
+
+```yaml
+---
+tags: [domain-tag, topic-tag]
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+status: working | stable | superseded
+confidence: high | medium | low | speculative
+sources: [session-log date, project name]
+related_skills: [skill-name]
+related_projects: [project-name]
+---
+```
+
+### Step 5.5 — File the residue into the agent queue (if a lane is provisioned)
+
+The Session Block records what happened; the **Open Agent Engine** turns what *didn't* happen into
+claimable work. Skip this step entirely if no lane is provisioned — check
+`06-context/open-engine/README.md` for the lane index, and `python3 00-bootstrap/doctor/linear-lanes.py`
+for live state.
+
+For each `Next:` item worth surviving the session, create one `Agent Todo` issue in the correct lane:
+
+- **Pointer-shaped, always.** Title plus a reference to where the substance lives — never the substance
+  itself. This holds on every lane, not just movement-only ones; a queue that accumulates content
+  becomes a second source of truth.
+- **Set `state` explicitly.** Never rely on the tracker's create-default; an issue that lands outside
+  `Agent Todo` is invisible to every future run.
+- **Lane-qualify ids** in the Session Block (`personal:SEA-12`), never bare — team keys collide across
+  lanes.
+- **Release any claim this session still holds.** An issue left in `Agent Working` at session end is an
+  orphaned lock with no timeout; nothing frees it but a later run noticing.
+- **Update the ledger heartbeat in place** — same comment id, never a second comment.
+
+Then reference the filed ids from the Session Block's `Next:` lines instead of restating the work. A
+next action recorded only as prose has no status, no owner, and no way to be declared dead — which is
+how a pending list reaches forty items.
+
+Full procedure: `03-skills/open-agent-engine/SKILL.md` → "Ritual integration".
+
+### Step 6 — Regenerate the skill registry
+
+If any `SKILL.md` frontmatter changed this session, run
+`python3 09-tools/build-registry.py` and commit the regenerated
+`03-skills/skills.registry.json` alongside the session log. No Drive/mount sync —
+git is the source of truth.
+
+### Step 7 — Commit + push (session changes only)
+
+Use the session signature from surface detection in the commit message:
+
+```bash
+git add -A -- .claude .agents CLAUDE.md 06-context 01-frameworks 02-shared-references \
+               03-skills 04-preferences 00-bootstrap 08-knowledge \
+               _HOME.md _PROJECTS.md _SKILLS.md _FRAMEWORKS.md _CONTEXT.md
+git commit -m "session: {YYYY-MM-DD} [{session signature}] — {one-line summary}"
+git push
+```
+
+Example: `session: 2026-05-04 [Work MacBook Pro / Cursor] — data table cell anatomy`
+
+The `[Machine / Surface]` tag in every commit message makes each file's origin
+queryable via `git log -1 --format="%s" -- {filepath}`.
+
+If `git push` fails, surface the error and stop. Don't retry.
+
+### Step 7.5 — Orphaned changes audit
+
+After the session commit, check for remaining dirty tracked files:
+
+```bash
+cd "."
+git status --short
+```
+
+**If the working tree is clean:** output the confirm line (Step 8) and stop.
+
+**If dirty files remain:** for each file, look up its last commit to determine origin:
+
+```bash
+git log -1 --format="%s" -- {filepath}
+```
+
+Extract the `[Machine / Surface]` tag from the commit message if present.
+Files with no prior commit (untracked) are attributed to the current session's
+machine but marked as `surface: unknown`.
+
+Group by origin and present:
+
+```
+⚠ Uncommitted workspace changes not from this session:
+
+  {Machine label} / {Surface} (last committed {date}):
+    • {filepath}
+    • {filepath}
+
+  Commit these as a housekeeping pass? (yes / no / show diff)
+```
+
+- **yes** → `git add {files}` + `git commit -m "workspace: housekeeping [{origin}] — {date}"` + push
+- **show diff** → `git diff {files}`, then ask again
+- **no** → leave dirty, note them in the session block under a `Deferred commits:` section
+  so the next session knows they're intentionally pending
+
+Do not auto-commit. Always ask. These files belong to another session's context
+and committing them silently under the wrong message corrupts the audit trail.
+
+### Step 7.6 — Prune our merged branches
+
+Engineering hygiene. After the session commit, delete leftover git branches **we**
+opened whose PRs have already merged. Never delete someone else's branch, an open
+PR, the default branch, or a branch with unpushed unique commits.
+
+```
+python3 09-tools/prune-our-branches.py --apply
+```
+
+Default scan: this workspace plus the script's `DEFAULT_SLUGS`, each resolved on this
+device through `profile_resolve.py where` (a slug not on this device is a skip with a
+notice). Dry-run first only if `gh` is unavailable. Report keep-reasons (dirty leftover
+worktree, not our merged PR, a diverged default branch — reported, never reset). Do not
+`--force` worktree removal. Employer repos: deleting a merged branch we authored is
+hygiene, not a self-merge.
+
+It is a **vetted script** (`02-shared-references/vetted-scripts.json`, DECISIONS-2 item 9).
+Every remote action and deletion writes an intent line and a receipt (repo slug, action,
+credential class; never a token) to `~/.config/snds-workspace/control/receipts.jsonl`.
+From a **Claude** session, a repo that is not positively personal runs only through this
+vetted path, and only while the pinned lib holds this file's blob
+(`python3 09-tools/profile_resolve.py vetted-status prune-our-branches` prints `vetted`);
+otherwise it is skipped with a notice and zero git or gh calls. The Claude floor proves the
+vetted shape from the process table, so a sandboxed Bash that denies `ps` blocks the remote
+deletion with "ancestry unavailable": run this one command with the sandbox off. Never hand-compose the
+equivalent git or gh commands in an employer repo from Claude: the action policy denies
+that. The session block reports counts and credential classes only; receipt lines stay
+machine-local.
+
+### Step 8 — Confirm
+
+```
+✓ Session logged and pushed — {N} files committed.
+```
+
+---
+
+## Session Block Template
+
+```
+--- SESSION BLOCK ---
+Date: {YYYY-MM-DD}
+Machine: {Work MacBook Pro | Personal MacBook Pro | Windows Desktop}
+Surface: {Cursor | Codex | Claude Code CLI | Claude Code | VS Code + Claude Code | Claude Desktop / Cowork | claude.ai web}
+Project(s): {project name(s) worked on this session}
+Artifacts:
+  - {filename_vN.N_YYYY-MM-DD.ext} — {one-line description}
+Decisions:
+  - {decision made, rationale in one line}
+Evidence:
+  - {consequential claim} @ {owning system} — {verified | unverified | blocked}
+  ← omit entire Evidence: section when no consequential side effects
+Pending added:
+  - {new item}
+Pending resolved:
+  - {item completed}
+Project status changes:
+  - {project name}: {old status} → {new status}
+Deferred commits:
+  - {filepath} — pending, owned by {Machine / Surface}
+Next:
+  - {specific next action}
+--- END BLOCK ---
+```
+
+Omit any section with no content. Keep entries to one line.
+`Deferred commits:` only appears when Step 7.5 results in a "no" answer.
+
+---
+
+## Cursor surface overrides
+
+When running in Cursor (detected via surface detection or `brain.mdc` context):
+
+- **Step 0.5** — run `python3 09-tools/cursor-externalize.py` (canvases → vault copies) then `python3 09-tools/artifact-ingest.py --check` (pending inbox; do not promote). Other vendor panels: write-through per [[decision-vendor-surface-artifacts]], not CI harvest.
+- **Step 6** — run `python3 09-tools/build-registry.py` from the terminal if skills changed.
+- **Skip the SessionEnd hook reference** — hooks are Claude Code only.
+- **Read/write files via the filesystem**; use the terminal for git.
+- **Surface detection probe** still applies — run it in terminal.
+- Confirm line: `✓ Session logged and pushed — {N} files committed. Obsidian will reflect on next focus.`
+
+All other steps including 7.5 and 7.6 run identically.
+
+---
+
+## Notes
+
+- **Never ask Sean which machine he's on.** Resolve from `hostname`.
+- **Newest-first** in session-log.md. workspace-bootstrap reads top-down.
+- **Trivial sessions** (no decisions, no file changes, no artifacts): write a **nano block**
+  instead of a full session block, then commit it. A nano block preserves cross-surface
+  continuity — without it, every surface shows a stale "last session" date.
+
+  ```
+  --- NANO BLOCK ---
+  Date: {YYYY-MM-DD}
+  Machine: {label}
+  Surface: {surface}
+  Context load only — no decisions or artifacts.
+  --- END BLOCK ---
+  ```
+
+  Commit with: `session: {date} [{signature}] — context load only`
+  Still run Step 7.5 after — orphaned changes can exist even in trivial sessions.
+- The `[Machine / Surface]` commit tag is how future sessions attribute dirty files.
+  Old commits without it will show `surface: unknown` — that's expected during transition.
+
+## Worktree auto-cleanup (informational)
+
+The `SessionEnd` hook auto-removes Drive-resident worktrees whose branches are
+fully merged into `main`. Worktrees with unmerged commits, detached HEAD, or
+located off-Drive are skipped. A stale-checkout state triggers the auto-commit
+safety guard before cleanup runs.
+
+## Close-out detector (L3)
+
+`python3 09-tools/close-out-dispatch.py --hub session-end --run` runs `session-status.py --check`
+(the next session's card still renders: git sha, pending count) and `artifact-find.py --check`
+(Step 4's registry shape). It does not prove the push landed: the `git push` result is that
+evidence, and a failed push is reported, never retried.
+
+## Related
+- peer ↔ [[side-chat-handback]]
+- peer ↔ [[reconcile]]
+- peer ↔ [[new-project]]
+- peer ↔ [[today]]

@@ -252,3 +252,4 @@ tools · data reach · permissions · quality bar · proof path · supervision �
 - peer ↔ [[side-chat-handback]]
 - peer ↔ [[intent-coordination]]
 - peer ↔ [[self-improve]]
+- peer ↔ [[optimize]]

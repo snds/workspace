@@ -10,9 +10,9 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 302,
+    "total": 309,
     "by_tier": {
-      "cross-cutting": 46,
+      "cross-cutting": 53,
       "foundation": 22,
       "hub": 47,
       "spoke": 187
@@ -2664,6 +2664,33 @@
       "rigor_role": null,
       "hash": "sha256:e1d7b34544cab1417d63af1d4574fd413fea9a6f3f74a3f61dd3ffbeeb72b43f"
     },
+    "framework-check": {
+      "path": "03-skills/framework-check/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "qa",
+        "close-out",
+        "failure-mode-premortem"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "/framework-check",
+        "framework check",
+        "run through the frameworks",
+        "framework critique"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:42eb4cf8e23d56fb699854b96f2250e6fa9b178c5ae5302ba7b557ee13f74c06"
+    },
     "fw-angular": {
       "path": "03-skills/fw-angular/SKILL.md",
       "tier": "spoke",
@@ -3472,7 +3499,34 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:bd9f72aa5e87d4b8457b26f76c5d4a08799296811c1d618d6875024cb3b103ca"
+      "hash": "sha256:d8c2b5ea8aa5571d0eb09f640a7e38a2eba209943e6634ba0368e79a4199e6b8"
+    },
+    "health": {
+      "path": "03-skills/health/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "optimize",
+        "self-improve"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "/health",
+        "vault health",
+        "check the graph",
+        "find orphans",
+        "find stale notes"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:746b4bb0b3c9ebc6eaf68229f7a151eb5a0760a0159941d9fcf8a9261cc288f5"
     },
     "ia-content-strategy": {
       "path": "03-skills/ia-content-strategy/SKILL.md",
@@ -5385,6 +5439,32 @@
       "rigor_role": null,
       "hash": "sha256:7f2765e04d76bc21f4ce0d428d1c1460915ca79f23c67745e33c939b58428320"
     },
+    "new-project": {
+      "path": "03-skills/new-project/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "session-end",
+        "workspace-bootstrap"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "/new-project",
+        "scaffold new project",
+        "scaffold a new project",
+        "start a new project"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:f1482f3d4ccfb116f189d2b050d679c0de9088b4c4172d72e19ddc6fff084135"
+    },
     "omni-project": {
       "path": "03-skills/omni-project/SKILL.md",
       "tier": "hub",
@@ -5443,6 +5523,36 @@
       "defers_to": [],
       "rigor_role": null,
       "hash": "sha256:3efe2ddb6f083af5dae36d7e39ac5d775aee0582c1c45b99af46148a3bc13b15"
+    },
+    "optimize": {
+      "path": "03-skills/optimize/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "health",
+        "self-improve",
+        "harness-map",
+        "close-out"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "/optimize",
+        "audit the brain",
+        "brain audit",
+        "workflow audit",
+        "system error correction",
+        "review the workspace foundations"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": "command-hub",
+      "hash": "sha256:80c7aabe6fe339c3fa73d27639b436d175e071d008172bc1bb45e43516a7cf95"
     },
     "plan-ahead": {
       "path": "03-skills/plan-ahead/SKILL.md",
@@ -5835,7 +5945,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": "command-hub",
-      "hash": "sha256:4866dd5401ea7d7b35ccd7f7af922da6dea79264691c62eea6b23d9bcef531cf"
+      "hash": "sha256:af70df830950bda6592602d27617c11a1fa4503ed371a2e403db80e847585b06"
     },
     "realtime-render-performance": {
       "path": "03-skills/realtime-render-performance/SKILL.md",
@@ -5954,6 +6064,33 @@
       "defers_to": [],
       "rigor_role": null,
       "hash": "sha256:c6d2631684a6e52b22b61ae08726d03e048481dde01a4cd27348d3c4e2a8ba2e"
+    },
+    "reconcile": {
+      "path": "03-skills/reconcile/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "session-end",
+        "workspace-bootstrap"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "/reconcile",
+        "reconcile sessions",
+        "end of day sync",
+        "merge sessions",
+        "consolidate sessions"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:5f3e315390f72f4a8547de7a5082f85952ae5a86f443e07d61cad502b90a955e"
     },
     "redesign": {
       "path": "03-skills/redesign/SKILL.md",
@@ -6565,7 +6702,39 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": "command-hub",
-      "hash": "sha256:0a286e8704c973783023b5317bda7f03197a877f2c59259399e218f146803f63"
+      "hash": "sha256:556afbcb98742712f2f653996bb056b926c9b38f9141259caf982285c4d6ed19"
+    },
+    "session-end": {
+      "path": "03-skills/session-end/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "side-chat-handback",
+        "reconcile",
+        "self-improve",
+        "open-agent-engine",
+        "mission-fit"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "/session-end",
+        "end of session",
+        "end the session",
+        "session done",
+        "done for today",
+        "logging off",
+        "let's close out"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": "command-hub",
+      "hash": "sha256:cdbbd2f2e72c702ecfbbee0915f6984dd2da2d896232059209783e197aac2b8c"
     },
     "shadow-quality-craft": {
       "path": "03-skills/shadow-quality-craft/SKILL.md",
@@ -6637,7 +6806,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:10a8f08bf390d41504877fd0ab77cdbe3ea3969debd6a86e736517ea712f4fa5"
+      "hash": "sha256:705f006d26095327931161c3a6685b0751c0ac5f89078165b01207df8837a6bd"
     },
     "skill-placement": {
       "path": "03-skills/skill-placement/SKILL.md",
@@ -6772,6 +6941,31 @@
       "defers_to": [],
       "rigor_role": null,
       "hash": "sha256:481ea8a09d5d97e9665eada1a664c950322603c667dbbfad24084d1e60d8d107"
+    },
+    "today": {
+      "path": "03-skills/today/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "session-end",
+        "workspace-bootstrap"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "/today",
+        "daily note",
+        "plan my day"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:3ecef89729d6f9df6669fdf29d2e2f0950548b53b782d18f2a80268a952849ad"
     },
     "token-architecture": {
       "path": "03-skills/token-architecture/SKILL.md",
@@ -8855,6 +9049,9 @@
       "design-foundations",
       "found-typography"
     ],
+    "framework-check": [
+      "framework-check"
+    ],
     "fw-angular": [
       "eng-foundations",
       "lead-frontend-engineer",
@@ -9016,6 +9213,9 @@
     ],
     "harness-map": [
       "harness-map"
+    ],
+    "health": [
+      "health"
     ],
     "ia-content-strategy": [
       "design-foundations",
@@ -9342,11 +9542,17 @@
     "native-visual-eval": [
       "native-visual-eval"
     ],
+    "new-project": [
+      "new-project"
+    ],
     "omni-project": [
       "omni-project"
     ],
     "open-agent-engine": [
       "open-agent-engine"
+    ],
+    "optimize": [
+      "optimize"
     ],
     "plan-ahead": [
       "plan-ahead"
@@ -9426,6 +9632,9 @@
     "realtime-visual-craft": [
       "realtime-visual-craft"
     ],
+    "reconcile": [
+      "reconcile"
+    ],
     "redesign": [
       "design-foundations",
       "redesign"
@@ -9493,6 +9702,9 @@
     "self-improve": [
       "self-improve"
     ],
+    "session-end": [
+      "session-end"
+    ],
     "shadow-quality-craft": [
       "realtime-visual-craft",
       "shadow-quality-craft"
@@ -9533,6 +9745,9 @@
       "science-foundations",
       "lead-game-developer",
       "threejs-vfx-atmosphere"
+    ],
+    "today": [
+      "today"
     ],
     "token-architecture": [
       "design-foundations",

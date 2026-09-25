@@ -129,6 +129,7 @@ Surfaces' native "create a skill" flows are **insufficient** if they skip this a
 | Motion / Type / Graphic / Infod / Icon | #02 + craft notes | `/motion`, `/type`, lead protocols | `/qa` lenses + toolkit scripts | design-foundations → leads → spokes | visual-qa discipline spokes |
 | Figma | #09 + DS ops | `/figma` | MCP + source-audit | `figma` hub → `figma-*` | Defers-to contracts |
 | Career / Obsidian / Adobe / Vision / Science | thin L1 in hub or knowledge | wrapper hubs | validators / CLI where applicable | foundation or cross-cutting | doctrine precedence + routing rows |
+| Workspace ops (session / audit workflows) | #08 + AGENTS.md handoff protocol | `optimize`, `session-end` (command hubs; one `03-skills` home, generated wrappers per surface) | `close-out-dispatch.py` rows + `build-local-skill-plugin.py --check` | cross-cutting, no foundation (by design) | `self-improve` heals; doctrine precedence |
 | Multi-agent coordination | #17 | `intent-coordination` | `intent-run.py` gate/ready/verify | skills via `load_chains` per task | Intent.app optional; doctrine wins |
 
 Update this table when a cluster gains or loses a layer.

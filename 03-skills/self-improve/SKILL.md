@@ -94,3 +94,5 @@ the mint still cannot hit the bar.
 
 ## Related
 - peer ↔ [[close-out]] · [[plan-ahead]] · [[mission-fit]] · [[harness-map]] · [[failure-mode-premortem]]
+- peer ↔ [[optimize]]
+- peer ↔ [[health]]

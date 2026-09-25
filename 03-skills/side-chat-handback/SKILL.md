@@ -178,3 +178,4 @@ Wired in: `.cursor/rules/brain.mdc`, `04-preferences/user-preferences.md`, and t
 - peer ↔ [[open-agent-engine]]
 - peer ↔ [[harness-map]]
 - peer ↔ [[intent-coordination]]
+- peer ↔ [[session-end]]
