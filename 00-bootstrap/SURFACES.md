@@ -174,6 +174,7 @@ Registrations (one effective registration per surface, event and behaviour):
 | Registration | Event | Command | Host skip | Claim group |
 |---|---|---|---|---|
 | claude-user.session-start | session-start | ws-user-sessionstart | cursor | claude-boot |
+| claude-user.env-file | session-start | ws-overlay-env-file | cursor | - |
 | claude-user.user-prompt | user-prompt | ws-user-reassert | cursor | - |
 | claude-user.session-end | session-end | ws-user-audit | cursor | - |
 | claude-user.pre-tool | pre-tool | ws-guard-claude | cursor | - |
@@ -203,11 +204,12 @@ Registrations (one effective registration per surface, event and behaviour):
 | probe-codex-user.user-prompt | user-prompt | ws-hook-probe | - | ws-probe |
 | probe-codex-user.stop | stop | ws-hook-probe | - | ws-probe |
 
-Rendered outputs (installers read this mapping from `render_shims.py --list --json`; an `overlay` output also renders the Claude overlay env, which only `--install-claude-overlay` installs):
+Rendered outputs (installers read this mapping from `render_shims.py --list --json`; the `overlay` output is the Claude overlay env file, which only `--install-claude-overlay` installs):
 
 | Output | Path | Install mode | Installs to | Overlay |
 |---|---|---|---|---|
-| claude-user-fragment | `00-bootstrap/dist/settings-user-fragment.json` | claude-settings-keys | `~/.claude/settings.json` | v5 |
+| claude-user-fragment | `00-bootstrap/dist/settings-user-fragment.json` | claude-settings-keys | `~/.claude/settings.json` | - |
+| claude-overlay-env | `00-bootstrap/dist/claude-overlay.env` | whole-file | - | v5 |
 | claude-identity-inc | `00-bootstrap/dist/git/claude-identity.inc` | whole-file | - | - |
 | claude-project-settings | `.claude/settings.json` | tracked | `.claude/settings.json` | - |
 | cursor-user-hooks | `00-bootstrap/dist/cursor-hooks.json` | whole-file | `~/.cursor/hooks.json` | - |

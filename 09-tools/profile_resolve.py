@@ -4195,17 +4195,21 @@ def _overlay_env(base: dict, blocked: str, prefixes: List[str], extra: Optional[
 
 
 def _v4_fixture_env(base: dict) -> Optional[dict]:
-    """Today's installed v4 fragment env, with its employer owners swapped for synthetic ones.
+    """Today's rendered overlay env, with its employer owners swapped for synthetic ones.
 
-    Reads 00-bootstrap/dist/settings-user-fragment.json and the committed context-remotes table in
-    memory only; nothing employer-named is written or printed.
+    Reads 00-bootstrap/dist/claude-overlay.env (D-W1-4: the overlay left the settings fragment) and the
+    committed context-remotes table in memory only; nothing employer-named is written or printed.
     """
     try:
-        frag = json.loads((ROOT / "00-bootstrap" / "dist" / "settings-user-fragment.json").read_text(encoding="utf-8"))
+        text = (ROOT / "00-bootstrap" / "dist" / "claude-overlay.env").read_text(encoding="utf-8")
         cr = load_table("context-remotes")
     except (OSError, ValueError):
         return None
-    env_in = frag.get("env") or {}
+    env_in = {}
+    for ln in text.splitlines():
+        m = re.match(r"^export ([A-Z][A-Z0-9_]*)='((?:[^']|'\\'')*)'$", ln)
+        if m:
+            env_in[m.group(1)] = m.group(2).replace("'\\''", "'")
     if "GIT_CONFIG_COUNT" not in env_in:
         return None
     swap = {}
@@ -4511,7 +4515,7 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
         kept4 = [(v4[f"GIT_CONFIG_KEY_{i}"], v4[f"GIT_CONFIG_VALUE_{i}"]) for i in range(n4)
                  if not v4[f"GIT_CONFIG_KEY_{i}"].startswith(f"url.{realb}.")]
         got4 = [(lv4[f"GIT_CONFIG_KEY_{i}"], lv4[f"GIT_CONFIG_VALUE_{i}"]) for i in range(int(lv4["GIT_CONFIG_COUNT"]))]
-        ok(got4 == kept4 and len(got4) < n4, "lift_env over today's v4 fragment drops exactly its transport block")
+        ok(got4 == kept4 and len(got4) < n4, "lift_env over today's rendered overlay drops exactly its transport block")
 
     # ---- vetted_status and the pinned lock
     script_rel = "09-tools/fixture-housekeeper.py"

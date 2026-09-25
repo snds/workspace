@@ -1210,8 +1210,11 @@ class TestOverlay(unittest.TestCase):
     def test_tracked_fragment_is_the_v5_render(self):
         cr, dev = self.rs.identity_tables(ROOT_DIR)
         frag = json.loads((ROOT_DIR / "00-bootstrap/dist/settings-user-fragment.json").read_text(encoding="utf-8"))
-        env = frag["env"]
-        self.assertEqual(env, dict(self.rs.overlay_env(cr, dev, "v5")))
+        self.assertNotIn("env", frag)          # D-W1-4: other hosts import Claude's settings env
+        envf = (ROOT_DIR / "00-bootstrap/dist/claude-overlay.env").read_text(encoding="utf-8")
+        self.assertEqual(envf, self.rs.render_overlay_env_file(cr, dev, "v5"))
+        env = dict(self.rs.overlay_env_file_pairs(cr, dev, "v5"))
+        self.assertEqual(env, dict(self.rs.overlay_env(cr, dev, "v5"), WS_OVERLAY_CHANNEL="env-file"))
         self.assertEqual(env["WS_CLAUDE_OVERLAY"], "v5")
         self.assertFalse([k for k in env if k.startswith(("GIT_AUTHOR_", "GIT_COMMITTER_"))])
         inc = (ROOT_DIR / "00-bootstrap/dist/git/claude-identity.inc").read_text(encoding="utf-8")

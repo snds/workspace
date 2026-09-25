@@ -32,10 +32,12 @@ Usage:
   render_shims.py --rewrite-audit [--json]
   render_shims.py --self-test
 
-H17 (T8) adds two emitters. The Claude overlay env inside settings-user-fragment.json is rendered
-from context-remotes.json and devices.json (the output row's `overlay` names the layout version;
-`owned_keys` stays ["hooks"] so --install-shims never writes the env: only the Sean-run
---install-claude-overlay does). `claude-identity.inc` is rendered from the Claude identity rule, and
+H17 (T8) adds two emitters. The Claude overlay is rendered from context-remotes.json and
+devices.json into dist/claude-overlay.env (render `claude-overlay-env`; the output row's `overlay`
+names the layout version). Since D-W1-4 it is no longer the `env` block of settings-user-fragment.json
+(other hosts import Claude's settings env): only the Sean-run --install-claude-overlay installs it, to
+~/.config/snds-workspace/claude-overlay.env, and the `ws-hook env-file` SessionStart hook copies it into
+Claude Code's session env file (CLAUDE_ENV_FILE), which reaches only Claude's shell tool. `claude-identity.inc` is rendered from the Claude identity rule, and
 `--emit identity-inc --device ID` prints one device's default identity include for --install-identity.
 `--rewrite-audit` (H17-R9, report-only, read by `workspace-doctor.sh --check`) reads the git config
 files, not the overlay env, and reports URL rewrites that can undo the employer transport block.
@@ -88,11 +90,12 @@ MATCHER_TOKEN_RE = re.compile(r"^@tool_families:([a-z-]+)$")
 GUARD_REL = "09-tools/wall_guard.py"
 KINDS = {"cli-agent", "ide-agent", "desktop-app", "cloud-agent", "chat", "browser", "mcp-client", "human"}
 DIALECTS = {"claude", "cursor", "codex", "plain", "none"}
-CHANNELS = {"claude-settings-env", "codex-shell-environment-policy", "cursor-sessionstart-env", "none"}
+CHANNELS = {"claude-settings-env", "claude-session-env-file", "codex-shell-environment-policy",
+            "cursor-sessionstart-env", "none"}
 INSTALL_MODES = {"tracked", "whole-file", "claude-settings-keys", "merge-hook-entries", "managed-block"}
 ANCESTRY_MATCH = {"exact", "prefix"}
 RENDERS = {"hooks", "codex-config", "cursor-sandbox", "surfaces-md-block", "identity-inc", "beacon",
-           "contract-core", "codex-rules", "claude-permissions", "wall-belts"}
+           "contract-core", "codex-rules", "claude-permissions", "wall-belts", "claude-overlay-env"}
 CONTRACT_REL = "AGENTS.md"
 WINDSURF_RULE_MAX_CHARS = 12_000   # Windsurf's per-rule character limit (H6)
 CWD_CONTEXTS = ("workspace", "other")
@@ -172,8 +175,12 @@ def check_table(t: dict) -> list:
             errors.append(f"output {o.get('id')}: invalid install_mode")
         if o.get("render", "hooks") not in RENDERS:
             errors.append(f"output {o.get('id')}: invalid render {o.get('render')!r}")
-        if "overlay" in o and (o.get("overlay") not in OVERLAY_VERSIONS or o.get("render", "hooks") != "hooks"):
-            errors.append(f"output {o.get('id')}: overlay must be one of {list(OVERLAY_VERSIONS)} on a hooks output")
+        if "overlay" in o and (o.get("overlay") not in OVERLAY_VERSIONS or o.get("render") != "claude-overlay-env"):
+            errors.append(f"output {o.get('id')}: overlay must be one of {list(OVERLAY_VERSIONS)} on a "
+                          "claude-overlay-env output")
+        if o.get("render") == "claude-overlay-env" and (o.get("overlay") not in OVERLAY_VERSIONS or o.get("install_path")):
+            errors.append(f"output {o.get('id')}: the overlay env file names its overlay version and is installed "
+                          "only by --install-claude-overlay (no install_path)")
         if "env" in (o.get("owned_keys") or []):
             errors.append(f"output {o.get('id')}: env is never an owned (shim-installable) key; "
                           "the overlay is installed only by --install-claude-overlay")
@@ -522,9 +529,10 @@ def _render_hooks_output(t: dict, out: dict, root: Path) -> str:
         except (OSError, ValueError) as exc:
             raise DataError(f"output {out['id']}: base file unreadable: {exc}") from exc
         base["hooks"] = hooks
-        if out.get("overlay"):
-            cr, dev = identity_tables(root)
-            base["env"] = overlay_env(cr, dev, out["overlay"])
+        # D-W1-4: the user fragment carries no env block (it held only the overlay, which is now the
+        # claude-overlay-env output). A tracked project file keeps its own env.
+        if out.get("install_mode") == "claude-settings-keys":
+            base.pop("env", None)
         return canonical(base)
     if fmt_name == "cursor-hooks":
         return canonical(OrderedDict([("version", 1), ("hooks", hooks)]))
@@ -762,6 +770,47 @@ def overlay_env(cr: dict, dev: dict, version: str = "v5") -> "OrderedDict":
         env[f"GIT_CONFIG_KEY_{i}"] = k
         env[f"GIT_CONFIG_VALUE_{i}"] = v
     return env
+
+
+# D-W1-4: the overlay as a shell file for Claude Code's session env file. ws_hook.py (env-file) parses
+# it strictly: `#` lines, then one `export NAME='value'` per overlay name. WS_OVERLAY_CHANNEL marks the
+# channel, so a live probe shows the env file (not the settings env) delivered the overlay; the
+# overlay pairs and WS_CLAUDE_OVERLAY stay v5.
+OVERLAY_ENV_BEGIN = "# BEGIN snds-workspace overlay"
+OVERLAY_ENV_END = "# END snds-workspace overlay"
+OVERLAY_CHANNEL = ("WS_OVERLAY_CHANNEL", "env-file")
+
+
+def _shell_quote(value: str) -> str:
+    return "'" + value.replace("'", "'\\''") + "'"
+
+
+def overlay_env_file_pairs(cr: dict, dev: dict, version: str = "v5") -> list:
+    """The overlay env pairs with the channel marker after the markers, before GH_CONFIG_DIR."""
+    items = list(overlay_env(cr, dev, version).items())
+    at = next(i for i, (k, _v) in enumerate(items) if k == "GH_CONFIG_DIR")
+    return items[:at] + [OVERLAY_CHANNEL] + items[at:]
+
+
+def render_overlay_env_file(cr: dict, dev: dict, version: str = "v5") -> str:
+    lines = [
+        "# snds-workspace Claude overlay (H17, D-W1-4). Rendered by 00-bootstrap/doctor/render_shims.py from",
+        "# context-remotes.json and devices.json; do not edit by hand. --install-claude-overlay copies it to",
+        "# ~/.config/snds-workspace/claude-overlay.env; the `ws-hook env-file` SessionStart hook validates every",
+        "# line and writes the block, with ~/ rendered to the home, into Claude Code's session env file.",
+        OVERLAY_ENV_BEGIN,
+    ]
+    for k, v in overlay_env_file_pairs(cr, dev, version):
+        if any(ord(c) < 0x20 or ord(c) == 0x7f for c in v):
+            raise DataError(f"overlay env file: {k} has a control character")
+        lines.append(f"export {k}={_shell_quote(v)}")
+    lines.append(OVERLAY_ENV_END)
+    return "\n".join(lines) + "\n"
+
+
+def _render_overlay_env_output(out: dict, root: Path) -> str:
+    cr, dev = identity_tables(root)
+    return render_overlay_env_file(cr, dev, out.get("overlay") or "v5")
 
 
 FILE_SCOPES = ("system", "global", "local", "worktree")
@@ -1056,8 +1105,8 @@ def render_md_block(t: dict) -> str:
     for r in t.get("registrations") or []:
         lines.append(f"| {r['id']} | {r['event']} | {r['command']} | "
                      f"{', '.join(r.get('host_skip') or []) or '-'} | {r.get('claim_group') or '-'} |")
-    lines += ["", "Rendered outputs (installers read this mapping from `render_shims.py --list --json`; an "
-              "`overlay` output also renders the Claude overlay env, which only `--install-claude-overlay` installs):",
+    lines += ["", "Rendered outputs (installers read this mapping from `render_shims.py --list --json`; the "
+              "`overlay` output is the Claude overlay env file, which only `--install-claude-overlay` installs):",
               "", "| Output | Path | Install mode | Installs to | Overlay |", "|---|---|---|---|---|"]
     for o in t.get("outputs") or []:
         lines.append(f"| {o.get('id')} | `{o.get('path')}` | {o.get('install_mode')} | "
@@ -1203,6 +1252,8 @@ def render_output(t: dict, out: dict, root: Path = ROOT) -> str:
         return render_claude_permissions_template(root)
     if kind == "wall-belts":
         return render_wall_belts(root)
+    if kind == "claude-overlay-env":
+        return _render_overlay_env_output(out, root)
     if kind == "surfaces-md-block":
         try:
             current = (root / out["path"]).read_text(encoding="utf-8")
@@ -1941,6 +1992,14 @@ def overlay_cases() -> list:
     results.append(("outputs: env is never a shim-installable owned key; overlay versions are closed",
                     any("env is never an owned" in e for e in errs) and any("overlay must be one of" in e for e in errs),
                     str(errs)))
+    t["outputs"] = [{"id": "h", "install_mode": "claude-settings-keys", "render": "hooks", "overlay": "v5"},
+                    {"id": "e", "install_mode": "whole-file", "render": "claude-overlay-env", "overlay": "v5",
+                     "install_path": "~/.config/snds-workspace/claude-overlay.env"}]
+    errs = check_table(t)
+    results.append(("outputs: the overlay sits only on the env-file output, which shims never install (D-W1-4)",
+                    any(e.startswith("output h: overlay must be one of") for e in errs)
+                    and any(e.startswith("output e: the overlay env file") for e in errs), str(errs)))
+    results += overlay_env_file_cases(cr, dev)
     try:
         pr = _pr_module()
         det = pr.detect_surface(env={"AI_AGENT": "claude-code_2-1-280_agent", "CLAUDECODE": "1"}, ancestry=[],
@@ -1967,6 +2026,57 @@ def overlay_cases() -> list:
         except (DataError, ValueError) as exc:
             results.append(("overlay: v4 env and claude-identity.inc reproduced byte-for-byte from the tables", False,
                             str(exc)))
+    return results
+
+
+def _load_module(name: str, path: Path):
+    import importlib.util  # noqa: PLC0415
+    spec = importlib.util.spec_from_file_location(name, path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def overlay_env_file_cases(cr: dict, dev: dict) -> list:
+    """D-W1-4: the env file carries exactly the v5 overlay plus the channel marker, passes the ws-hook
+    env-file parser, and after the hook's home rendering equals what the settings installer wrote."""
+    results = []
+    text = render_overlay_env_file(cr, dev, "v5")
+    pairs = overlay_env_file_pairs(cr, dev, "v5")
+    env = overlay_env(cr, dev, "v5")
+    results.append(("overlay env file: the v5 pairs plus WS_OVERLAY_CHANNEL=env-file, nothing else",
+                    dict(pairs) == dict(env, WS_OVERLAY_CHANNEL="env-file") and len(pairs) == len(env) + 1
+                    and text.count(OVERLAY_ENV_BEGIN) == 1 and text.endswith(OVERLAY_ENV_END + "\n"), ""))
+    try:
+        wh = _load_module("ws_hook_for_render", ROOT / "09-tools" / "ws_hook.py")
+        ms = _load_module("merge_settings_for_render", Path(__file__).resolve().parent / "merge_settings.py")
+    except Exception as exc:  # noqa: BLE001
+        return results + [("overlay env file: ws_hook and merge_settings load", False, str(exc))]
+    try:
+        parsed = wh.parse_overlay_env(text)
+        results.append(("overlay env file: the ws-hook env-file parser reads every line back exactly",
+                        parsed == pairs and wh.OVERLAY_BEGIN == OVERLAY_ENV_BEGIN and wh.OVERLAY_END == OVERLAY_ENV_END,
+                        ""))
+    except Exception as exc:  # noqa: BLE001
+        results.append(("overlay env file: the ws-hook env-file parser reads every line back exactly", False, str(exc)))
+        return results
+    home = Path("/Users/fixture o'hare")
+    hooked = {k: wh._expand_home(v, home) for k, v in parsed}
+    settings = ms.expand_env_home({"env": dict(env)}, home)["env"]
+    results.append(("overlay env file: the hook's ~/ and floor-home rendering equals the settings installer's",
+                    {k: v for k, v in hooked.items() if k != "WS_OVERLAY_CHANNEL"} == settings, ""))
+    with tempfile.TemporaryDirectory(prefix="rs-envfile-") as td:
+        f = Path(td) / "block.sh"
+        f.write_text(wh.overlay_block(parsed, home), encoding="utf-8")
+        probe = [k for k in ("GH_CONFIG_DIR", "GIT_CONFIG_COUNT", "WS_OVERLAY_CHANNEL")]
+        floor_i = next(i for i in range(int(env["GIT_CONFIG_COUNT"]))
+                       if env[f"GIT_CONFIG_KEY_{i}"] == f"hook.{FLOOR_HOOK}.command")
+        probe.append(f"GIT_CONFIG_VALUE_{floor_i}")
+        script = f". '{f}'; " + "; ".join(f"printf '%s\\0' \"${k}\"" for k in probe)
+        r = subprocess.run(["bash", "-c", script], capture_output=True, text=True, timeout=20)
+        got = r.stdout.split("\0")[:-1]
+        results.append(("overlay env file: the written block sources in bash to the installer's exact values",
+                        got == [hooked[k] for k in probe], f"{got!r}"))
     return results
 
 
