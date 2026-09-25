@@ -25,6 +25,7 @@
     "H17",
     "H18",
     "H19",
+    "H20",
     "H22",
     "H24",
     "H25"
@@ -262,6 +263,17 @@
           "planned_verified_by": [],
           "how": "the claude-code probe record (G3b, 2026-09-24) shows the hook core firing on session-start, user-prompt, stop and session-end with the host detected from the payload and no detection mismatch; the ws_hook.py self-test passes. Partial because the core is registered only for probes in wave 0"
         },
+        "H20": {
+          "mode": "enforced",
+          "rules": "workflow bodies live once in 03-skills; the tracked .claude/skills copies are generated pointer wrappers, and build-local-skill-plugin --check fails on drift, a wrapper over 10 lines, or any hand-made entry not on the reasoned allowlist (D15); outside the workspace the snds plugin carries absolute-path wrappers",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestSkillHomes",
+            "selftest:09-tools/build-local-skill-plugin.py"
+          ],
+          "planned_verified_by": [],
+          "how": "--check runs in the harness quality chain and the workspace-integrity CI job; TestSkillHomes pins it and the self-test exercises every mode in a temp HOME. The plugin wrappers reach other cwds once Sean reruns --plugin"
+        },
         "H22": {
           "mode": "enforced-partial",
           "rules": "model-composed employer network git fails at the installed transport block; vetted housekeeping runs only through vetted_context (pinned blob check, policy via=vetted, receipts); composed local git reaches the floor only at commit, merge-commit and push, so other composed local git on an employer repo stays advisory until H15 (wave 1; H17-R11); composed gh stays advisory until the gh belt is installed; each registered action runs only its declared argv shapes; the vetted remote deletion needs a readable process table (a ps-denying sandbox blocks it)",
@@ -363,6 +375,17 @@
           "planned_verified_by": [],
           "how": ""
         },
+        "H20": {
+          "mode": "unverified",
+          "rules": "the tracked .claude/skills wrappers ship with the clone and point at 03-skills in the same tree; loading unverified",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestSkillHomes",
+            "selftest:09-tools/build-local-skill-plugin.py"
+          ],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H18": {
           "mode": "backstop-only",
           "rules": "this surface does not commit on a local device; employer server-side protection, human PR review and CI are the barriers",
@@ -451,6 +474,14 @@
         "H19": {
           "mode": "not-applicable",
           "rules": "no hooks; Cowork needs a synced plugin (inference)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H20": {
+          "mode": "not-applicable",
+          "rules": "no local skill folders; 03-skills files reach chat only through project knowledge",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -558,6 +589,14 @@
           "planned_verified_by": [],
           "how": ""
         },
+        "H20": {
+          "mode": "not-applicable",
+          "rules": "no local skill folders",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H18": {
           "mode": "backstop-only",
           "rules": "this surface does not commit on a local device; employer server-side protection, human PR review and CI are the barriers",
@@ -614,6 +653,14 @@
         "H19": {
           "mode": "not-applicable",
           "rules": "no local hook surface",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H20": {
+          "mode": "not-applicable",
+          "rules": "no local skill folders",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -777,6 +824,18 @@
           "planned_verified_by": [],
           "how": "the cursor probe record (G3b, 2026-09-24) shows the user-level hooks firing on session-start, user-prompt and stop with the host detected from the payload. Partial: no session-end event, no session baseline in wave 0, and Cursor's CLAUDE_PROJECT_DIR alias ranks it as Claude for the walls (tighten-only, L-01)"
         },
+        "H20": {
+          "mode": "advisory",
+          "rules": "inside the workspace the tracked .agents/skills and .claude/skills wrappers point at 03-skills (loading unverified); from any other cwd only once the installer writes the user-level wrappers (--user)",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestSkillHomes"
+          ],
+          "planned_verified_by": [
+            "fixture:TestUserSkillWrappers"
+          ],
+          "how": "raise to enforced-when-installed when the installer's user-wrapper test lands and a Cursor load is probed"
+        },
         "H22": {
           "mode": "advisory",
           "rules": "`profile_resolve.py policy` is a voluntary, report-only CLI; merge and default-branch denial is not enforced here; employer branch protection is the real wall",
@@ -876,6 +935,16 @@
           "planned_verified_by": [],
           "how": ""
         },
+        "H20": {
+          "mode": "advisory",
+          "rules": "as cursor: tracked wrappers inside the workspace, user-level wrappers once installed; loading unverified",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestSkillHomes"
+          ],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H18": {
           "mode": "enforced-when-installed",
           "rules": "global config-based git lanes (git >= 2.54) for every local committer, chosen by repo profile: employer repos take only employer identities at commit and push (I1), the workspace runs its consistency lane, a Claude chain gets the Claude floor first; installed only by Sean (--install-git-hooks); an infrastructure error or timeout allows with a notice; the declared per-command bypasses stay residuals behind server-side protection",
@@ -936,6 +1005,16 @@
           "rules": "only the committed .cursor/hooks.json runs; unverified",
           "decision": null,
           "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H20": {
+          "mode": "unverified",
+          "rules": "the tracked wrappers ship with the clone; loading unverified",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestSkillHomes"
+          ],
           "planned_verified_by": [],
           "how": ""
         },
@@ -1088,6 +1167,18 @@
           "planned_verified_by": [],
           "how": "held back: the codex probe record exists but its hook probe is not-installed (Codex in the ChatGPT app did not fire the hooks), so the record proves the shell env only. Stays unverified until a Codex host that loads the hooks records a hook probe"
         },
+        "H20": {
+          "mode": "advisory",
+          "rules": "inside the workspace Codex reads the tracked .agents/skills wrappers; the snds plugin carries absolute-path wrappers; from any other cwd only once the installer writes the user-level wrappers (--user)",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestSkillHomes"
+          ],
+          "planned_verified_by": [
+            "fixture:TestUserSkillWrappers"
+          ],
+          "how": "raise to enforced-when-installed when the installer's user-wrapper test lands and a Codex load is probed"
+        },
         "H22": {
           "mode": "advisory",
           "rules": "as Cursor; the hooks are also untrusted",
@@ -1181,6 +1272,16 @@
           "planned_verified_by": [],
           "how": ""
         },
+        "H20": {
+          "mode": "unverified",
+          "rules": "the tracked .agents/skills wrappers ship with the clone; loading unverified",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestSkillHomes"
+          ],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H18": {
           "mode": "backstop-only",
           "rules": "this surface does not commit on a local device; employer server-side protection, human PR review and CI are the barriers",
@@ -1249,6 +1350,14 @@
         "H19": {
           "mode": "advisory",
           "rules": "unverified; through its own shims when installed",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H20": {
+          "mode": "advisory",
+          "rules": "no skill folder of its own; reaches the workflows through AGENTS.md, skill-loadset.py and 03-skills/<name>/SKILL.md",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1328,6 +1437,14 @@
         "H19": {
           "mode": "advisory",
           "rules": "unverified until a live probe; made safe by N1",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H20": {
+          "mode": "advisory",
+          "rules": "may read the tracked .claude/skills wrappers inside the workspace (unverified); otherwise reaches the workflows through AGENTS.md, skill-loadset.py and 03-skills/<name>/SKILL.md",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1413,6 +1530,14 @@
           "planned_verified_by": [],
           "how": ""
         },
+        "H20": {
+          "mode": "advisory",
+          "rules": "no skill folder of its own; reaches the workflows through AGENTS.md, skill-loadset.py and 03-skills/<name>/SKILL.md",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H18": {
           "mode": "enforced-when-installed",
           "rules": "global config-based git lanes (git >= 2.54) for every local committer, chosen by repo profile: employer repos take only employer identities at commit and push (I1), the workspace runs its consistency lane, a Claude chain gets the Claude floor first; installed only by Sean (--install-git-hooks); an infrastructure error or timeout allows with a notice; the declared per-command bypasses stay residuals behind server-side protection",
@@ -1471,6 +1596,14 @@
         "H19": {
           "mode": "not-applicable",
           "rules": "no local hook surface",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H20": {
+          "mode": "advisory",
+          "rules": "no skill folder of its own; reaches the workflows through AGENTS.md, skill-loadset.py and 03-skills/<name>/SKILL.md",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1555,6 +1688,14 @@
           "planned_verified_by": [],
           "how": ""
         },
+        "H20": {
+          "mode": "advisory",
+          "rules": "no skill folder of its own; reaches the workflows through AGENTS.md, skill-loadset.py and 03-skills/<name>/SKILL.md",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H18": {
           "mode": "enforced-when-installed",
           "rules": "global config-based git lanes (git >= 2.54) for every local committer, chosen by repo profile: employer repos take only employer identities at commit and push (I1), the workspace runs its consistency lane, a Claude chain gets the Claude floor first; installed only by Sean (--install-git-hooks); an infrastructure error or timeout allows with a notice; the declared per-command bypasses stay residuals behind server-side protection",
@@ -1633,6 +1774,14 @@
           "planned_verified_by": [],
           "how": ""
         },
+        "H20": {
+          "mode": "advisory",
+          "rules": "no skill folder of its own; reaches the workflows through AGENTS.md, skill-loadset.py and 03-skills/<name>/SKILL.md",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H18": {
           "mode": "enforced-when-installed",
           "rules": "global config-based git lanes (git >= 2.54) for every local committer, chosen by repo profile: employer repos take only employer identities at commit and push (I1), the workspace runs its consistency lane, a Claude chain gets the Claude floor first; installed only by Sean (--install-git-hooks); an infrastructure error or timeout allows with a notice; the declared per-command bypasses stay residuals behind server-side protection",
@@ -1706,6 +1855,14 @@
         "H19": {
           "mode": "not-applicable",
           "rules": "no hook API",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H20": {
+          "mode": "advisory",
+          "rules": "no skill folder of its own; reaches the workflows through AGENTS.md, skill-loadset.py and 03-skills/<name>/SKILL.md",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1792,6 +1949,14 @@
           "planned_verified_by": [],
           "how": ""
         },
+        "H20": {
+          "mode": "advisory",
+          "rules": "no skill folder of its own; reaches the workflows through AGENTS.md, skill-loadset.py and 03-skills/<name>/SKILL.md",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H18": {
           "mode": "enforced-when-installed",
           "rules": "global config-based git lanes (git >= 2.54) for every local committer, chosen by repo profile: employer repos take only employer identities at commit and push (I1), the workspace runs its consistency lane, a Claude chain gets the Claude floor first; installed only by Sean (--install-git-hooks); an infrastructure error or timeout allows with a notice; the declared per-command bypasses stay residuals behind server-side protection",
@@ -1870,6 +2035,14 @@
           "planned_verified_by": [],
           "how": ""
         },
+        "H20": {
+          "mode": "advisory",
+          "rules": "no skill folder of its own; reaches the workflows through AGENTS.md, skill-loadset.py and 03-skills/<name>/SKILL.md",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H18": {
           "mode": "enforced-when-installed",
           "rules": "global config-based git lanes (git >= 2.54) for every local committer, chosen by repo profile: employer repos take only employer identities at commit and push (I1), the workspace runs its consistency lane, a Claude chain gets the Claude floor first; installed only by Sean (--install-git-hooks); an infrastructure error or timeout allows with a notice; the declared per-command bypasses stay residuals behind server-side protection",
@@ -1937,6 +2110,14 @@
         "H19": {
           "mode": "not-applicable",
           "rules": "no local hook surface",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H20": {
+          "mode": "not-applicable",
+          "rules": "no local skill folders",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -2012,6 +2193,14 @@
           "planned_verified_by": [],
           "how": ""
         },
+        "H20": {
+          "mode": "advisory",
+          "rules": "no skill folder of its own; reaches the workflows through AGENTS.md, skill-loadset.py and 03-skills/<name>/SKILL.md",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H18": {
           "mode": "backstop-only",
           "rules": "this surface does not commit on a local device; employer server-side protection, human PR review and CI are the barriers",
@@ -2062,6 +2251,14 @@
         "H19": {
           "mode": "not-applicable",
           "rules": "no local hook surface",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H20": {
+          "mode": "not-applicable",
+          "rules": "reads 03-skills directly; no wrapper layer",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],

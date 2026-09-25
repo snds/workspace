@@ -118,7 +118,7 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `visual qa constitution` | 02-shared-references/domain-constitutions/dc-visual-qa.yaml + 03-skills/visual-prove-engine/SKILL.md |
 | `configuration collapse` | 08-knowledge/design/nathan-curtis-ds-ops-substack.md — slots over prop sprawl; AI-ready composition |
 | `figma slots` | 08-knowledge/design/nathan-curtis-ds-ops-substack.md — slots over prop sprawl; AI-ready composition |
-| `maintenance loop` | 08-knowledge/cross-domain/nate-jones-harness-enrichments.md + .claude/skills/optimize/SKILL.md |
+| `maintenance loop` | 08-knowledge/cross-domain/nate-jones-harness-enrichments.md + 03-skills/optimize/SKILL.md |
 | `skill one-job` | 08-knowledge/cross-domain/nate-jones-harness-enrichments.md — keep/rewrite/remove imported skills |
 | `handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write the gitignored parent inbox for pickup |
 | `/handback` | 03-skills/side-chat-handback/SKILL.md — end side chat; write the gitignored parent inbox for pickup |
@@ -413,15 +413,20 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `close-out` | cross-cutting | `close-out`, `self-police`, `prove-gate`, `human visual qa`, `named detector`, `llm qa` (+1) | `close-out` |
 | `designparser` | cross-cutting | `designparser`, `designparser rules`, `what rules apply`, `suggest_rules_for_context`, `evaluate_design` | `design-foundations` → `designparser` |
 | `failure-mode-premortem` | cross-cutting | `pre-mortem`, `premortem`, `failure mode`, `what could go wrong`, `before we build`, `red team` (+11) | `failure-mode-premortem` |
+| `framework-check` | cross-cutting | `/framework-check`, `framework check`, `run through the frameworks`, `framework critique` | `framework-check` |
 | `github-guardrails` | cross-cutting | `github guardrails`, `git guardrails`, `force push`, `git rebase`, `open a pull request`, `request review` (+3) | `github-guardrails` |
 | `harness-map` | cross-cutting | `harness map`, `map the harness`, `clean my harness`, `clean my ai harness`, `ai harness audit`, `what's shaping the agent` (+2) | `harness-map` |
+| `health` | cross-cutting | `/health`, `vault health`, `check the graph`, `find orphans`, `find stale notes` | `health` |
 | `intent-coordination` | cross-cutting | `living spec`, `intent coordination`, `intentapp`, `intentapp.dev`, `coordinate agents`, `agent orchestration` (+3) | `intent-coordination` |
 | `interactive-capture-eval` | cross-cutting | `interactive capture`, `flythrough capture`, `record path`, `extract frames`, `ffmpeg frames`, `motion qa` (+6) | `interactive-capture-eval` |
 | `mission-fit` | cross-cutting | `mission fit`, `mission-fit`, `false success`, `false-success`, `can this agent finish`, `trust done` (+3) | `mission-fit` |
 | `native-visual-eval` | cross-cutting | `native resolution`, `high-res screenshot`, `downsample`, `downscaled`, `capture and chunk`, `1:1 pixels` (+12) | `native-visual-eval` |
+| `new-project` | cross-cutting | `/new-project`, `scaffold new project`, `scaffold a new project`, `start a new project` | `new-project` |
 | `open-agent-engine` | cross-cutting | `open engine`, `agent engine`, `agent queue`, `run the queue`, `queue runner`, `agent ledger` (+5) | `open-agent-engine` |
+| `optimize` | cross-cutting | `/optimize`, `audit the brain`, `brain audit`, `workflow audit`, `system error correction`, `review the workspace foundations` | `optimize` |
 | `plan-ahead` | cross-cutting | `order of operations`, `cds then proto`, `consume cds`, `pages build`, `follow up`, `overlay vs main` (+9) | `plan-ahead` |
 | `process-plugins` | cross-cutting | `tdd`, `test driven development`, `write the test first`, `red green refactor`, `verification before completion`, `am i done` (+11) | `process-plugins` |
+| `reconcile` | cross-cutting | `/reconcile`, `end of day sync`, `merge sessions`, `consolidate sessions` | `reconcile` |
 | `render-qa-toolkit` | cross-cutting | `render qa`, `perfcapture`, `frame budget`, `pass attribution`, `native grid`, `false color exposure` (+7) | `realtime-visual-craft` → `render-qa-toolkit` |
 | `rendering-guild` | cross-cutting | `rendering guild`, `convene guild`, `render guild`, `light td`, `material td`, `shadow td` (+4) | `rendering-guild` |
 | `sec-appsec-owasp` | cross-cutting | `owasp`, `injection`, `sql injection`, `xss`, `csrf`, `ssrf` (+12) | `eng-foundations` → `lead-security-architect` → `sec-appsec-owasp` |
@@ -429,8 +434,10 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `sec-supply-chain` | cross-cutting | `supply chain`, `dependency`, `sbom`, `provenance`, `slsa`, `sigstore` (+12) | `eng-foundations` → `lead-security-architect` → `sec-supply-chain` |
 | `sec-threat-modeling` | cross-cutting | `threat model`, `stride`, `pasta`, `attack tree`, `trust boundary`, `data flow diagram` (+8) | `eng-foundations` → `lead-security-architect` → `sec-threat-modeling` |
 | `self-improve` | cross-cutting | `self-improve`, `self-improving`, `self-heal`, `self-healing`, `self-correcting`, `connective tissue` (+2) | `self-improve` |
+| `session-end` | cross-cutting | `/session-end`, `end of session`, `end the session`, `session done`, `done for today`, `logging off` (+1) | `session-end` |
 | `side-chat-handback` | cross-cutting | `handback`, `/handback`, `end side chat`, `close side chat`, `hand this back`, `hand back` (+2) | `side-chat-handback` |
 | `skill-placement` | cross-cutting | `create a skill`, `generate skill`, `make a skill`, `new skill`, `skill placement` | `skill-placement` |
+| `today` | cross-cutting | `/today`, `daily note`, `plan my day` | `today` |
 | `visual-prove-engine` | cross-cutting | `prove this build`, `cuespec`, `measured verdict`, `visual prove`, `rank builds`, `improvement ledger` (+11) | `design-foundations` → `lead-visual-qa` → `visual-prove-engine` |
 | `visual-qa-dataviz` | cross-cutting | `chart review`, `chart audit`, `dataviz qa`, `graph review`, `data table review`, `dashboard review` (+4) | `design-foundations` → `lead-visual-qa` → `visual-qa-dataviz` |
 | `visual-qa-motion` | cross-cutting | `motion qa`, `motion review`, `animation review`, `animation audit`, `jank review`, `janky animation` (+7) | `design-foundations` → `lead-visual-qa` → `visual-qa-motion` |
@@ -439,4 +446,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 315 · Registry rows: 101_
+_Curated routes: 315 · Registry rows: 108_

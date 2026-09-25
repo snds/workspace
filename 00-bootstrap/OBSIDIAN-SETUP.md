@@ -38,7 +38,8 @@ and history layer across machines.
 
 **Claude Code** — `cd` into the checkout, run `claude`. `CLAUDE.md` loads automatically; the `SessionStart`
 hook injects `06-context/*` heads; slash commands (`/today`, `/session-end`, `/reconcile`, `/new-project`,
-`/framework-check`) come from `.claude/skills/`; `SessionEnd` commits + pushes. These are Claude-adapter
+`/framework-check`) are generated wrappers in `.claude/skills/` over `03-skills/<name>/SKILL.md`, the one
+home every agent reads; `SessionEnd` commits + pushes. These are Claude-adapter
 ergonomics — the workspace works without them (the portable session protocol in framework 08 covers it).
 
 **Any other agent** — reads `llms.txt` → [[AGENTS]] → `03-skills/skills.registry.json`, then follows the

@@ -77,8 +77,8 @@ from the skill `## Related` graph) connected and trustworthy. Full spec:
 - **Freshness** — every durable claim is *timeless* / *dated* (`as of YYYY-MM`) / *pointer*; past-horizon
   or unverifiable → `#stale`.
 - **Retrieval preamble** — durable notes open with a `## For future agent` block (TL;DR + key claims + as-of).
-- **Check it:** `/health` (→ `09-tools/vault-health.py`) reports orphans, `#stale`/aging claims, and
-  dangling typed edges. Run it periodically and inside `/optimize`; it can be automated via the
+- **Check it:** [[health]] (`/health` → `09-tools/vault-health.py`) reports orphans, `#stale`/aging claims, and
+  dangling typed edges. Run it periodically and inside [[optimize]] (`/optimize`); it can be automated via the
   opt-in [[nightly-maintenance-recipe]].
 
 ---

@@ -80,6 +80,20 @@ HUB_DETECTORS: dict[str, tuple[Step, ...]] = {
         _cli("evaluate-surface-trajectories.py", "--check"),
         _cli("vault-health.py"),
     ),
+    # Periodic full brain audit. These are the Step 1.6 probes that have a CLI; the judgment
+    # findings (contradictions, staleness, consolidation) are critique and stay unverified here.
+    "optimize": (
+        _cli("validate-links.py"),
+        _cli("build-registry.py", "--check"),
+        _cli("validate-workspace.py"),
+        _cli("vault-health.py"),
+    ),
+    # End-of-session protocol. The card must still render for the next session and the artifact
+    # registry must stay queryable (Step 4). The push result itself is the evidence it landed.
+    "session-end": (
+        _cli("session-status.py", "--check"),
+        _cli("artifact-find.py", "--check"),
+    ),
     "ds": (
         _cli("validate-integrity.py"),
         _skip(

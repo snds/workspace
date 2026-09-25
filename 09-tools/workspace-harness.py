@@ -127,6 +127,8 @@ QUALITY_CHAIN = [
     ("validate-layer0-schema.py", ["--check"]),
     ("skill-loadset.py", ["--self-test"]),
     ("close-out-dispatch.py", ["--check"]),
+    ("build-local-skill-plugin.py", ["--check"]),
+    ("build-local-skill-plugin.py", ["--self-test"]),
     ("session-status.py", ["--check"]),
     ("check-secrets.py", []),
     ("vault-health.py", []),

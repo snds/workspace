@@ -163,8 +163,8 @@ Any **parent / main** agent — before continuing substantive work on a turn —
 4. Mark consumed: set `status: consumed` **or** delete the file.
 5. If **Open Engine** names an issue, treat it as queued work to acknowledge — do not auto-claim at pickup.
 
-Wired in: `.cursor/rules/brain.mdc`, `04-preferences/user-preferences.md`, and the Claude
-`/handback` slash command under `.claude/skills/side-chat-handback/`.
+Wired in: `.cursor/rules/brain.mdc`, `04-preferences/user-preferences.md`, and the generated
+`side-chat-handback` wrappers in `.claude/skills/` and `.agents/skills/` (they point here).
 
 ## Anti-patterns
 
@@ -178,3 +178,4 @@ Wired in: `.cursor/rules/brain.mdc`, `04-preferences/user-preferences.md`, and t
 - peer ↔ [[open-agent-engine]]
 - peer ↔ [[harness-map]]
 - peer ↔ [[intent-coordination]]
+- peer ↔ [[session-end]]

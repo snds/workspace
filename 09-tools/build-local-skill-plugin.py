@@ -1,47 +1,67 @@
 #!/usr/bin/env python3
 """
-build-local-skill-plugin.py — mirror curated 03-skills/ hubs into a LOCAL Claude
-Code plugin so they surface as native `/snds:<name>` slash commands.
+build-local-skill-plugin.py — generate every non-canonical copy of a workspace skill.
 
-Why this exists
----------------
-`03-skills/` (in the portable git checkout — the source of truth) defines Sean's
-hub/spoke skill network. Those skills are available to the *model* but are NOT
-installable local Claude Code plugins, so they never appear in the interactive `/`
-autocomplete menu.
+`03-skills/<name>/SKILL.md` is the one home of every skill (H20). Hosts that discover
+skills from their own folders get generated copies, never hand-kept forks:
 
-This script does that for local Claude Code: it COPIES a curated set of hub skills
-out of the checkout's `03-skills/` into a self-contained plugin under
-`~/.claude/local-plugins/` (kept outside the repo so the generated mirror isn't
-committed back into the workspace as duplicate skill copies), then writes the
-marketplace + plugin manifests. Re-run it after any refactor so the slash commands
-reflect the current checkout.
+  --wrappers   tracked pointer wrappers for the workspace workflows, in
+               `.claude/skills/<name>/SKILL.md` (Claude Code) and `.agents/skills/<name>/SKILL.md`
+               (Codex; Cursor reads it too), each pointing at the 03-skills home by a RELATIVE path.
+  --plugin     the local `snds` plugin under ~/.claude/local-plugins/snds-local (Claude Code and
+               Codex consume it): full copies of the curated HUBS as `/snds:<hub>`, plus pointer
+               wrappers (ABSOLUTE path into this checkout) for the workflows. The only mode that
+               touches ~/.claude, and the only directory it ever clears is its own
+               PLUGIN_DIR/skills. Plugin hooks are not written here (H24:
+               `workspace-doctor.sh --install-plugin`).
+  --user --out DIR --root ABS_CHECKOUT
+               user-level wrappers (ABSOLUTE canonical paths under ABS_CHECKOUT) written to
+               DIR/<name>/SKILL.md and nothing else. The installer names DIR; this tool never
+               picks a home directory on its own.
+  --check      exit 1 on drift: a tracked wrapper that differs from what --wrappers would write,
+               a tracked wrapper over 10 lines, or (D15) any tracked entry under .claude/skills or
+               .agents/skills that is neither a generated wrapper backed by a 03-skills home nor on
+               02-shared-references/skill-wrapper-allowlist.json (with a reason). Prints every drift.
+  --self-test  exercises every mode against a temporary HOME and a temporary checkout.
 
-After running, register it once per machine:
+No arguments (or --help) prints this help and touches nothing.
 
+`--user` contract (the installer builds on it):
+  args     --user --out DIR --root ABS_CHECKOUT [--json]
+           ABS_CHECKOUT must be absolute and hold AGENTS.md plus 03-skills/<name>/SKILL.md for
+           every workflow. DIR is created if missing.
+  output   DIR/<name>/SKILL.md for each workflow in WORKFLOWS; each file is a generated wrapper
+           (marker line) whose Canonical line is ABS_CHECKOUT/03-skills/<name>/SKILL.md.
+  safety   refuses (and writes nothing at all) when any target SKILL.md exists without the
+           generated marker, or when DIR/<name> or the target is a symlink. Existing generated
+           wrappers are rewritten in place. Generated wrappers for names no longer in WORKFLOWS
+           are reported as `stale`, never deleted.
+  stdout   one line per file: `wrote|unchanged|stale <path>`; with --json one object
+           {"out", "root", "written", "unchanged", "stale", "refused": [{"path", "reason"}]}.
+  exit     0 ok · 1 refused, or ABS_CHECKOUT is not a workspace checkout · 2 usage error.
+
+After --plugin, register once per machine (then restart Claude Code):
     claude plugin marketplace add ~/.claude/local-plugins/snds-local
     claude plugin install snds@snds-local
-    # then restart Claude Code
-
-Re-run this script any time you edit a hub's SKILL.md or change the HUBS list.
-It rebuilds the plugin's skills/ dir from scratch, so removed hubs disappear.
-
-Single source of truth stays `03-skills/`. This is a generated mirror.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
+import os
+import re
 import shutil
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 # --- Config -----------------------------------------------------------------
 
-# Curated operational hub skills (entry points), not the spokes. Edit this list
-# to add/remove commands, then re-run. Names must match dir names in 03-skills/.
-# Include the `figma` hub so employer-repo Cursor sessions see doctrine (semantic +
-# theme/mode tokens; plugins = mechanics) even when Brain is not folder 1.
+# Curated operational hub skills (entry points), copied whole into the plugin as
+# /snds:<hub>. Names must match dir names in 03-skills/. Include the `figma` hub so
+# employer-repo Cursor sessions see doctrine even when Brain is not folder 1.
 HUBS = [
     # Workspace / session ops
     "workspace-bootstrap",
@@ -69,101 +89,617 @@ HUBS = [
     "lead-product-manager",
 ]
 
+# Workspace workflows (formerly Claude-only slash skills). Each has its one home in
+# 03-skills/<name>/SKILL.md; every host copy is a generated pointer wrapper.
+WORKFLOWS = [
+    "framework-check",
+    "harness-map",
+    "health",
+    "mission-fit",
+    "new-project",
+    "optimize",
+    "reconcile",
+    "session-end",
+    "side-chat-handback",
+    "today",
+]
+
+TRACKED_ROOTS = (".claude/skills", ".agents/skills")
+ALLOWLIST_REL = "02-shared-references/skill-wrapper-allowlist.json"
+MAX_WRAPPER_LINES = 10
+MARKER_PREFIX = "<!-- generated by 09-tools/build-local-skill-plugin.py"
+
 MARKETPLACE_NAME = "snds-local"
 PLUGIN_NAME = "snds"  # command prefix -> /snds:<skill>
-PLUGIN_VERSION = "0.3.1"  # 0.3.1: ships the figma authoring hub (doctrine before vendor plugins)
-
-# --- Paths ------------------------------------------------------------------
+PLUGIN_VERSION = "0.4.0"  # 0.4.0: workflow pointer wrappers (H20); argparse, no-arg run is help only
 
 SCRIPT_DIR = Path(__file__).resolve().parent           # .../09-tools
 WORKSPACE_ROOT = SCRIPT_DIR.parent                      # workspace root
-SRC_SKILLS = WORKSPACE_ROOT / "03-skills"
 
-DEST_ROOT = Path.home() / ".claude" / "local-plugins" / MARKETPLACE_NAME
-PLUGIN_DIR = DEST_ROOT / PLUGIN_NAME
-SKILLS_DIR = PLUGIN_DIR / "skills"
+EXIT_OK, EXIT_FAIL, EXIT_USAGE = 0, 1, 2
 
 
-def main() -> int:
-    if not SRC_SKILLS.is_dir():
-        print(f"ERROR: source skills dir not found: {SRC_SKILLS}", file=sys.stderr)
-        return 1
+# --- Wrapper rendering -------------------------------------------------------
 
-    # Validate every hub before we touch anything.
-    missing = [h for h in HUBS if not (SRC_SKILLS / h / "SKILL.md").is_file()]
-    if missing:
-        print("ERROR: these hubs have no SKILL.md in 03-skills/:", file=sys.stderr)
-        for h in missing:
-            print(f"  - {h}", file=sys.stderr)
-        return 1
+def marker(name: str) -> str:
+    return f"{MARKER_PREFIX} — edit 03-skills/{name}/SKILL.md instead -->"
 
-    # Clean rebuild of the skills dir so removed hubs disappear.
-    if SKILLS_DIR.exists():
-        shutil.rmtree(SKILLS_DIR)
-    SKILLS_DIR.mkdir(parents=True, exist_ok=True)
 
-    copied = []
-    for h in HUBS:
-        src = SRC_SKILLS / h
-        dst = SKILLS_DIR / h
-        # Copy the whole skill dir (SKILL.md + any supporting files/scripts).
-        shutil.copytree(src, dst, ignore=shutil.ignore_patterns(".git", "__pycache__"))
-        copied.append(h)
+def canonical_rel(name: str) -> str:
+    return f"03-skills/{name}/SKILL.md"
 
-    # Plugin hooks (formerly "L4" of the bootstrap guarantee) are NOT copied here any
-    # more. They run in every host that loads the plugin (Claude Code, Cursor, Codex) and
-    # in any cwd, so installing them is an explicit, human-run step with a diff, backup
-    # and uninstall path (H24): `workspace-doctor.sh --install-plugin`.
-    hooks_note = (
-        "NOTE: plugin hooks are not copied by this script. To install or refresh them, "
-        "run 00-bootstrap/doctor/workspace-doctor.sh --install-plugin in a plain terminal."
+
+def read_description(skill_md: Path) -> str:
+    """The frontmatter `description`, folded to one line (handles `>`/`|` blocks and quotes)."""
+    text = skill_md.read_text(encoding="utf-8")
+    m = re.match(r"^---\n(.*?)\n---\n", text, re.S)
+    if not m:
+        raise ValueError(f"{skill_md}: no frontmatter")
+    lines = m.group(1).split("\n")
+    for i, line in enumerate(lines):
+        dm = re.match(r"^description:\s*(.*)$", line)
+        if not dm:
+            continue
+        value = dm.group(1).strip()
+        if value in (">", "|", ">-", "|-", ">+", "|+"):
+            parts = []
+            for nxt in lines[i + 1:]:
+                if nxt and not nxt.startswith((" ", "\t")):
+                    break
+                parts.append(nxt.strip())
+            return " ".join(p for p in parts if p)
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+            value = value[1:-1]
+        return value
+    raise ValueError(f"{skill_md}: no description")
+
+
+def render_wrapper(name: str, description: str, canonical: str, root_hint: bool) -> str:
+    where = canonical
+    if root_hint:
+        where += f" (from the workspace root: {canonical_rel(name)})"
+    return (
+        "---\n"
+        f"name: {name}\n"
+        f"description: {json.dumps(description, ensure_ascii=False)}\n"
+        "---\n"
+        "\n"
+        f"Canonical: {where} — read and follow it.\n"
+        f"{marker(name)}\n"
     )
 
-    # Plugin manifest.
+
+def tracked_wrapper(root: Path, name: str) -> str:
+    desc = read_description(root / canonical_rel(name))
+    return render_wrapper(name, desc, f"../../../{canonical_rel(name)}", root_hint=True)
+
+
+def absolute_wrapper(root: Path, name: str) -> str:
+    desc = read_description(root / canonical_rel(name))
+    return render_wrapper(name, desc, str(root / canonical_rel(name)), root_hint=False)
+
+
+def is_generated(text: str) -> bool:
+    return any(line.startswith(MARKER_PREFIX) for line in text.splitlines())
+
+
+def _write_if_changed(path: Path, text: str) -> bool:
+    if path.is_file() and path.read_text(encoding="utf-8") == text:
+        return False
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=".SKILL.", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            fh.write(text)
+        os.replace(tmp, path)
+    except BaseException:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+        raise
+    return True
+
+
+def _missing_canonicals(root: Path) -> list[str]:
+    return [n for n in WORKFLOWS if not (root / canonical_rel(n)).is_file()]
+
+
+# --- --wrappers ------------------------------------------------------------------
+
+def write_tracked_wrappers(root: Path = WORKSPACE_ROOT) -> int:
+    missing = _missing_canonicals(root)
+    if missing:
+        print("ERROR: no 03-skills home for: " + ", ".join(missing), file=sys.stderr)
+        return EXIT_FAIL
+    for rel_root in TRACKED_ROOTS:
+        for name in WORKFLOWS:
+            path = root / rel_root / name / "SKILL.md"
+            changed = _write_if_changed(path, tracked_wrapper(root, name))
+            print(f"{'wrote' if changed else 'unchanged'} {path.relative_to(root)}")
+    return EXIT_OK
+
+
+# --- --check (drift + D15) -----------------------------------------------------------
+
+def _tracked_paths(root: Path) -> list[str] | None:
+    """Tracked paths under TRACKED_ROOTS, or None when root is not a git checkout."""
+    if not (root / ".git").exists():
+        return None
+    try:
+        r = subprocess.run(["git", "ls-files", "-z", "--", *TRACKED_ROOTS], cwd=root,
+                           capture_output=True, timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if r.returncode != 0:
+        return None
+    return [p for p in r.stdout.decode("utf-8", "replace").split("\0") if p]
+
+
+def _walk_paths(root: Path) -> list[str]:
+    """Filesystem fallback (exported tree / self-test): every file or symlink under the roots."""
+    out = []
+    for rel_root in TRACKED_ROOTS:
+        base = root / rel_root
+        if not base.is_dir():
+            continue
+        for entry in sorted(base.iterdir()):
+            if entry.is_symlink() or entry.is_file():
+                out.append(f"{rel_root}/{entry.name}")
+                continue
+            for dirpath, dirnames, filenames in os.walk(entry):
+                for fn in sorted(filenames):
+                    out.append(str((Path(dirpath) / fn).relative_to(root)))
+    return out
+
+
+def load_allowlist(root: Path) -> tuple[dict[str, str], list[str]]:
+    """({entry path: reason}, errors)."""
+    path = root / ALLOWLIST_REL
+    if not path.is_file():
+        return {}, []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return {}, [f"{ALLOWLIST_REL}: unreadable ({exc})"]
+    errors, out = [], {}
+    for i, row in enumerate(data.get("entries") or []):
+        p, reason = (row or {}).get("path"), (row or {}).get("reason")
+        if not isinstance(p, str) or not any(p.startswith(r + "/") for r in TRACKED_ROOTS) or p.count("/") != 2:
+            errors.append(f"{ALLOWLIST_REL}: entries[{i}] path must be <skills root>/<entry>")
+            continue
+        if not isinstance(reason, str) or not reason.strip():
+            errors.append(f"{ALLOWLIST_REL}: {p} needs a reason")
+            continue
+        out[p] = reason
+    return out, errors
+
+
+def check(root: Path = WORKSPACE_ROOT) -> list[str]:
+    """Every drift as one line; empty list means clean."""
+    errors: list[str] = []
+    for name in _missing_canonicals(root):
+        errors.append(f"{canonical_rel(name)}: missing (a workflow needs its 03-skills home)")
+
+    paths = _tracked_paths(root)
+    if paths is None:
+        paths = _walk_paths(root)
+    entries: dict[str, list[str]] = {}
+    for p in paths:
+        for rel_root in TRACKED_ROOTS:
+            if p.startswith(rel_root + "/"):
+                head = p[len(rel_root) + 1:].split("/", 1)[0]
+                entries.setdefault(f"{rel_root}/{head}", []).append(p)
+
+    allow, allow_errors = load_allowlist(root)
+    errors.extend(allow_errors)
+    for p in sorted(allow):
+        if p not in entries:
+            errors.append(f"{p}: stale allowlist entry (nothing tracked there) — drop it from {ALLOWLIST_REL}")
+
+    # Every workflow wrapper must exist in every tracked root and match the render.
+    for rel_root in TRACKED_ROOTS:
+        for name in WORKFLOWS:
+            entry = f"{rel_root}/{name}"
+            if not (root / canonical_rel(name)).is_file():
+                continue
+            if entry not in entries:
+                errors.append(f"{entry}/SKILL.md: missing generated wrapper — run --wrappers")
+                continue
+            path = root / entry / "SKILL.md"
+            want = tracked_wrapper(root, name)
+            have = path.read_text(encoding="utf-8") if path.is_file() else None
+            if have != want:
+                errors.append(f"{entry}/SKILL.md: drifted from 03-skills/{name}/SKILL.md — run --wrappers")
+
+    # D15: every tracked entry is a generated wrapper backed by a 03-skills home, or allowlisted.
+    for entry, files in sorted(entries.items()):
+        if entry in allow:
+            continue
+        name = entry.rsplit("/", 1)[1]
+        skill = f"{entry}/SKILL.md"
+        path = root / skill
+        if skill not in files or path.is_symlink() or not path.is_file():
+            errors.append(f"{entry}: hand-made skill entry — not a generated wrapper and not in {ALLOWLIST_REL}")
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        if not is_generated(text):
+            errors.append(f"{skill}: hand-made SKILL.md — give it a 03-skills home and regenerate, "
+                          f"or allowlist it with a reason in {ALLOWLIST_REL}")
+            continue
+        n_lines = len(text.splitlines())
+        if n_lines > MAX_WRAPPER_LINES:
+            errors.append(f"{skill}: generated wrapper is {n_lines} lines (max {MAX_WRAPPER_LINES})")
+        if not (root / canonical_rel(name)).is_file():
+            errors.append(f"{skill}: generated wrapper with no 03-skills home")
+        elif name not in WORKFLOWS:
+            errors.append(f"{skill}: generated wrapper for {name}, which is not in WORKFLOWS")
+        extra = [f for f in files if f != skill]
+        if extra:
+            errors.append(f"{entry}: files beside a generated wrapper: {', '.join(extra)}")
+    return errors
+
+
+def run_check(root: Path = WORKSPACE_ROOT) -> int:
+    errors = check(root)
+    for e in errors:
+        print(f"  ✗ {e}", file=sys.stderr)
+    if errors:
+        print(f"build-local-skill-plugin --check: {len(errors)} drift(s)", file=sys.stderr)
+        return EXIT_FAIL
+    print(f"OK skill wrappers — {len(WORKFLOWS)} workflows × {len(TRACKED_ROOTS)} roots match 03-skills; "
+          "no hand-made entries outside the allowlist")
+    return EXIT_OK
+
+
+# --- --user --------------------------------------------------------------------
+
+def write_user_wrappers(out: Path, root: Path, as_json: bool = False) -> int:
+    report = {"out": str(out), "root": str(root), "written": [], "unchanged": [], "stale": [], "refused": []}
+
+    def done(rc: int) -> int:
+        if as_json:
+            print(json.dumps(report, indent=2))
+        else:
+            for key in ("written", "unchanged", "stale"):
+                word = {"written": "wrote"}.get(key, key)
+                for p in report[key]:
+                    print(f"{word} {p}")
+            for r in report["refused"]:
+                print(f"refused {r['path']}: {r['reason']}", file=sys.stderr)
+        return rc
+
+    if not (root / "AGENTS.md").is_file():
+        report["refused"].append({"path": str(root), "reason": "not a workspace checkout (no AGENTS.md)"})
+        return done(EXIT_FAIL)
+    missing = _missing_canonicals(root)
+    if missing:
+        report["refused"].append({"path": str(root), "reason": "no 03-skills home for " + ", ".join(missing)})
+        return done(EXIT_FAIL)
+    if out.is_symlink() or (out.exists() and not out.is_dir()):
+        report["refused"].append({"path": str(out), "reason": "--out is a symlink or not a directory"})
+        return done(EXIT_FAIL)
+
+    plan = []
+    for name in WORKFLOWS:
+        d = out / name
+        target = d / "SKILL.md"
+        if d.is_symlink():
+            report["refused"].append({"path": str(d), "reason": "is a symlink; will not write through it"})
+            continue
+        if target.is_symlink():
+            report["refused"].append({"path": str(target), "reason": "is a symlink; will not write through it"})
+            continue
+        if target.exists():
+            if not target.is_file():
+                report["refused"].append({"path": str(target), "reason": "exists and is not a file"})
+                continue
+            if not is_generated(target.read_text(encoding="utf-8", errors="replace")):
+                report["refused"].append({"path": str(target), "reason": "exists and is not a generated wrapper"})
+                continue
+        plan.append((target, absolute_wrapper(root, name)))
+    if report["refused"]:
+        return done(EXIT_FAIL)
+
+    for target, text in plan:
+        (report["written"] if _write_if_changed(target, text) else report["unchanged"]).append(str(target))
+    if out.is_dir():
+        for d in sorted(out.iterdir()):
+            f = d / "SKILL.md"
+            if d.name not in WORKFLOWS and not d.is_symlink() and f.is_file() and not f.is_symlink():
+                if is_generated(f.read_text(encoding="utf-8", errors="replace")):
+                    report["stale"].append(str(f))
+    return done(EXIT_OK)
+
+
+# --- --plugin --------------------------------------------------------------------
+
+def plugin_paths(home: Path) -> tuple[Path, Path, Path]:
+    dest_root = home / ".claude" / "local-plugins" / MARKETPLACE_NAME
+    plugin_dir = dest_root / PLUGIN_NAME
+    return dest_root, plugin_dir, plugin_dir / "skills"
+
+
+def build_plugin(root: Path = WORKSPACE_ROOT, home: Path | None = None) -> int:
+    home = home or Path.home()
+    dest_root, plugin_dir, skills_dir = plugin_paths(home)
+    src = root / "03-skills"
+    overlap = sorted(set(HUBS) & set(WORKFLOWS))
+    if overlap:
+        print("ERROR: HUBS and WORKFLOWS overlap: " + ", ".join(overlap), file=sys.stderr)
+        return EXIT_FAIL
+    missing = [h for h in HUBS if not (src / h / "SKILL.md").is_file()] + _missing_canonicals(root)
+    if missing:
+        print("ERROR: these skills have no SKILL.md in 03-skills/:", file=sys.stderr)
+        for h in missing:
+            print(f"  - {h}", file=sys.stderr)
+        return EXIT_FAIL
+
+    # The only directory this tool ever clears: its own PLUGIN_DIR/skills, never through a symlink.
+    for p in (home / ".claude", home / ".claude" / "local-plugins", dest_root, plugin_dir, skills_dir):
+        if p.is_symlink():
+            print(f"ERROR: {p} is a symlink; refusing to rebuild through it", file=sys.stderr)
+            return EXIT_FAIL
+    expected = (home / ".claude" / "local-plugins" / MARKETPLACE_NAME / PLUGIN_NAME / "skills")
+    if skills_dir != expected or skills_dir.name != "skills":
+        print(f"ERROR: unexpected skills dir {skills_dir}", file=sys.stderr)
+        return EXIT_FAIL
+    if skills_dir.exists():
+        shutil.rmtree(skills_dir)
+    skills_dir.mkdir(parents=True, exist_ok=True)
+
+    for h in HUBS:
+        shutil.copytree(src / h, skills_dir / h, ignore=shutil.ignore_patterns(".git", "__pycache__"))
+    for name in WORKFLOWS:
+        _write_if_changed(skills_dir / name / "SKILL.md", absolute_wrapper(root, name))
+
     plugin_manifest = {
         "name": PLUGIN_NAME,
         "description": "Sean's curated operational hub skills, mirrored from the "
-        "Claude Workspace 03-skills/ network for native slash-command access.",
+        "Claude Workspace 03-skills/ network for native slash-command access, plus pointer "
+        "wrappers for the workspace workflows.",
         "version": PLUGIN_VERSION,
         "keywords": ["design-systems", "figma", "workspace", "qa", "legion", "icon-fonts"],
     }
-    (PLUGIN_DIR / ".claude-plugin").mkdir(parents=True, exist_ok=True)
-    (PLUGIN_DIR / ".claude-plugin" / "plugin.json").write_text(
-        json.dumps(plugin_manifest, indent=2) + "\n", encoding="utf-8"
-    )
-
-    # Marketplace manifest. Relative source resolves from the marketplace root.
+    (plugin_dir / ".claude-plugin").mkdir(parents=True, exist_ok=True)
+    (plugin_dir / ".claude-plugin" / "plugin.json").write_text(
+        json.dumps(plugin_manifest, indent=2) + "\n", encoding="utf-8")
     marketplace_manifest = {
         "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
         "name": MARKETPLACE_NAME,
         "description": "Local mirror of curated Claude Workspace hub skills.",
-        "owner": {"name": "Sean Sands", "email": "hello@snds.design"},
-        "plugins": [
-            {
-                "name": PLUGIN_NAME,
-                "source": f"./{PLUGIN_NAME}",
-                "description": "Curated operational hub skills "
-                "(design systems, Figma, icon fonts, QA, Legion, Omni, workspace ops).",
-            }
-        ],
+        "owner": {"name": "Sean Sands"},
+        "plugins": [{
+            "name": PLUGIN_NAME,
+            "source": f"./{PLUGIN_NAME}",
+            "description": "Curated operational hub skills "
+            "(design systems, Figma, icon fonts, QA, Legion, Omni, workspace ops).",
+        }],
     }
-    (DEST_ROOT / ".claude-plugin").mkdir(parents=True, exist_ok=True)
-    (DEST_ROOT / ".claude-plugin" / "marketplace.json").write_text(
-        json.dumps(marketplace_manifest, indent=2) + "\n", encoding="utf-8"
-    )
+    (dest_root / ".claude-plugin").mkdir(parents=True, exist_ok=True)
+    (dest_root / ".claude-plugin" / "marketplace.json").write_text(
+        json.dumps(marketplace_manifest, indent=2) + "\n", encoding="utf-8")
 
-    print(hooks_note)
-    print(f"Built local plugin '{PLUGIN_NAME}' with {len(copied)} skills at:")
-    print(f"  {DEST_ROOT}")
-    print()
-    print("Skills mirrored:")
-    for h in copied:
+    print("NOTE: plugin hooks are not copied by this script. To install or refresh them, "
+          "run 00-bootstrap/doctor/workspace-doctor.sh --install-plugin in a plain terminal.")
+    print(f"Built local plugin '{PLUGIN_NAME}' v{PLUGIN_VERSION} at:\n  {dest_root}\n")
+    print("Hubs mirrored:")
+    for h in HUBS:
         print(f"  /{PLUGIN_NAME}:{h}")
-    print()
-    print("Next steps (run once per machine, then restart Claude Code):")
-    print(f"  claude plugin marketplace add {DEST_ROOT}")
+    print("Workflow wrappers:")
+    for n in WORKFLOWS:
+        print(f"  /{PLUGIN_NAME}:{n} -> {root / canonical_rel(n)}")
+    print("\nNext steps (run once per machine, then restart Claude Code):")
+    print(f"  claude plugin marketplace add {dest_root}")
     print(f"  claude plugin install {PLUGIN_NAME}@{MARKETPLACE_NAME}")
-    return 0
+    return EXIT_OK
+
+
+# --- self-test -------------------------------------------------------------------
+
+def _fake_checkout(base: Path) -> Path:
+    root = base / "checkout"
+    (root / "03-skills").mkdir(parents=True)
+    (root / "AGENTS.md").write_text("# fake\n", encoding="utf-8")
+    for name in WORKFLOWS:
+        d = root / "03-skills" / name
+        d.mkdir()
+        (d / "SKILL.md").write_text(
+            f"---\nname: {name}\ndescription: >\n  Fake {name} for the self-test,\n"
+            f"  with a \"quoted\" word.\n---\n\n# {name}\n", encoding="utf-8")
+    return root
+
+
+def self_test() -> int:
+    results: list[tuple[str, bool, str]] = []
+
+    def ok(name: str, cond: bool, detail: str = "") -> None:
+        results.append((name, bool(cond), detail))
+
+    me = Path(__file__).resolve()
+    with tempfile.TemporaryDirectory(prefix="blsp-selftest-") as tmp:
+        base = Path(tmp)
+        home = base / "home"
+        home.mkdir()
+        env = {**os.environ, "HOME": str(home)}
+
+        def run(*args: str):
+            return subprocess.run([sys.executable, str(me), *args], env=env,
+                                  capture_output=True, text=True, timeout=120)
+
+        # 1. no args / --help: help only, nothing written anywhere.
+        for args in ((), ("--help",)):
+            r = run(*args)
+            ok(f"help-only {args or '(none)'}", r.returncode == 0 and "--user" in r.stdout
+               and not any(home.iterdir()), f"rc={r.returncode}")
+
+        # 2. --plugin against the temp HOME and the real checkout (read-only use of 03-skills).
+        _, plugin_dir, skills_dir = plugin_paths(home)
+        sentinel_hooks = plugin_dir / "hooks" / "hooks.json"
+        sentinel_hooks.parent.mkdir(parents=True)
+        sentinel_hooks.write_text("{}\n", encoding="utf-8")
+        neighbour = home / ".claude" / "local-plugins" / "other" / "keep.txt"
+        neighbour.parent.mkdir(parents=True)
+        neighbour.write_text("keep\n", encoding="utf-8")
+        (skills_dir / "retired-hub").mkdir(parents=True)
+        r = run("--plugin")
+        ok("plugin builds", r.returncode == 0, r.stderr[-400:])
+        ok("plugin clears only its skills dir", sentinel_hooks.is_file() and neighbour.is_file()
+           and not (skills_dir / "retired-hub").exists())
+        ok("plugin copies hubs", all((skills_dir / h / "SKILL.md").is_file() for h in HUBS))
+        wf = skills_dir / "optimize" / "SKILL.md"
+        wtext = wf.read_text(encoding="utf-8") if wf.is_file() else ""
+        ok("plugin workflow wrapper is absolute + generated",
+           f"Canonical: {WORKSPACE_ROOT / canonical_rel('optimize')}" in wtext and is_generated(wtext)
+           and len(wtext.splitlines()) <= MAX_WRAPPER_LINES, wtext)
+        manifest = plugin_dir / ".claude-plugin" / "plugin.json"
+        ok("plugin manifest version", manifest.is_file()
+           and json.loads(manifest.read_text())["version"] == PLUGIN_VERSION)
+        ok("plugin manifest has no email", "@" not in (home / ".claude" / "local-plugins" / MARKETPLACE_NAME
+                                                       / ".claude-plugin" / "marketplace.json").read_text())
+        # a symlinked skills dir is refused, never cleared through
+        real_target = base / "elsewhere"
+        real_target.mkdir()
+        (real_target / "precious.txt").write_text("x", encoding="utf-8")
+        shutil.rmtree(skills_dir)
+        skills_dir.symlink_to(real_target)
+        r = run("--plugin")
+        ok("plugin refuses a symlinked skills dir", r.returncode == 1 and (real_target / "precious.txt").is_file())
+        skills_dir.unlink()
+
+        # 3. --user contract.
+        fake = _fake_checkout(base)
+        out = base / "userskills"
+        r = run("--user", "--out", str(out), "--root", str(fake), "--json")
+        rep = json.loads(r.stdout) if r.returncode == 0 else {}
+        ok("user writes every workflow", r.returncode == 0 and len(rep.get("written", [])) == len(WORKFLOWS),
+           r.stderr)
+        t = (out / "today" / "SKILL.md").read_text(encoding="utf-8") if (out / "today" / "SKILL.md").is_file() else ""
+        ok("user wrapper is absolute", f"Canonical: {fake / canonical_rel('today')} — read and follow it." in t, t)
+        ok("user wrapper keeps quoted description", '\\"quoted\\"' in t, t)
+        ok("user writes nothing else", sorted(p.name for p in out.iterdir()) == sorted(WORKFLOWS)
+           and all(len(list((out / n).iterdir())) == 1 for n in WORKFLOWS))
+        r = run("--user", "--out", str(out), "--root", str(fake))
+        ok("user rerun is unchanged", r.returncode == 0 and r.stdout.count("unchanged ") == len(WORKFLOWS), r.stdout)
+        (out / "old-flow").mkdir()
+        (out / "old-flow" / "SKILL.md").write_text(t.replace("today", "old-flow"), encoding="utf-8")
+        r = run("--user", "--out", str(out), "--root", str(fake))
+        ok("user reports stale, keeps it", r.returncode == 0 and "stale " in r.stdout
+           and (out / "old-flow" / "SKILL.md").is_file(), r.stdout)
+        (out / "optimize" / "SKILL.md").write_text("---\nname: optimize\n---\nmine\n", encoding="utf-8")
+        before = (out / "today" / "SKILL.md").stat().st_mtime_ns
+        (fake / "03-skills" / "today" / "SKILL.md").write_text(
+            "---\nname: today\ndescription: changed\n---\n", encoding="utf-8")
+        r = run("--user", "--out", str(out), "--root", str(fake))
+        ok("user refuses a hand-made target and writes nothing", r.returncode == 1
+           and (out / "optimize" / "SKILL.md").read_text() == "---\nname: optimize\n---\nmine\n"
+           and (out / "today" / "SKILL.md").stat().st_mtime_ns == before, r.stderr)
+        link_out = base / "linkout"
+        link_out.mkdir()
+        (link_out / "today").symlink_to(real_target)
+        r = run("--user", "--out", str(link_out), "--root", str(fake))
+        ok("user refuses a symlinked entry", r.returncode == 1 and not (real_target / "SKILL.md").exists())
+        r = run("--user", "--out", str(base / "o2"), "--root", "relative/path")
+        ok("user relative root is usage error", r.returncode == 2 and not (base / "o2").exists())
+        r = run("--user", "--root", str(fake))
+        ok("user without --out is usage error", r.returncode == 2)
+        r = run("--user", "--out", str(base / "o3"), "--root", str(base))
+        ok("user non-checkout root refused", r.returncode == 1 and not (base / "o3").exists())
+        r = run("--check", "--user")
+        ok("modes are exclusive", r.returncode == 2)
+
+        # 4. --check on a temp checkout (filesystem walk; no git).
+        fake2 = _fake_checkout(base / "c2")
+        write_tracked_wrappers_quiet(fake2)
+        ok("check clean", check(fake2) == [], "; ".join(check(fake2)))
+        w = fake2 / ".claude" / "skills" / "health" / "SKILL.md"
+        w.write_text(w.read_text() + "extra\n", encoding="utf-8")
+        ok("check flags drift", any("health" in e and "drifted" in e for e in check(fake2)))
+        w.write_text(tracked_wrapper(fake2, "health") + "\n" * 5, encoding="utf-8")
+        ok("check flags long wrapper", any("lines (max" in e for e in check(fake2)))
+        write_tracked_wrappers_quiet(fake2)
+        hand = fake2 / ".agents" / "skills" / "mine" / "SKILL.md"
+        hand.parent.mkdir(parents=True)
+        hand.write_text("---\nname: mine\n---\n", encoding="utf-8")
+        ok("check flags hand-made (D15)", any("hand-made SKILL.md" in e for e in check(fake2)))
+        (fake2 / ALLOWLIST_REL).parent.mkdir(parents=True, exist_ok=True)
+        (fake2 / ALLOWLIST_REL).write_text(json.dumps({"entries": [
+            {"path": ".agents/skills/mine", "reason": "test"}]}), encoding="utf-8")
+        ok("allowlist clears it", check(fake2) == [], "; ".join(check(fake2)))
+        (fake2 / ALLOWLIST_REL).write_text(json.dumps({"entries": [
+            {"path": ".agents/skills/mine", "reason": "test"},
+            {"path": ".claude/skills/gone", "reason": "old"}]}), encoding="utf-8")
+        ok("stale allowlist flagged", any("stale allowlist" in e for e in check(fake2)))
+        (fake2 / ALLOWLIST_REL).write_text(json.dumps({"entries": [
+            {"path": ".agents/skills/mine", "reason": " "}]}), encoding="utf-8")
+        ok("allowlist needs a reason", any("needs a reason" in e for e in check(fake2)))
+        (fake2 / ALLOWLIST_REL).write_text(json.dumps({"entries": [
+            {"path": ".agents/skills/mine", "reason": "test"}]}), encoding="utf-8")
+        orphan = fake2 / ".claude" / "skills" / "ghost" / "SKILL.md"
+        orphan.parent.mkdir(parents=True)
+        orphan.write_text(tracked_wrapper(fake2, "health").replace("health", "ghost"), encoding="utf-8")
+        ok("wrapper without a home flagged", any("no 03-skills home" in e for e in check(fake2)))
+        orphan.unlink()
+        orphan.parent.rmdir()
+        (fake2 / ".claude" / "skills" / "today" / "notes.md").write_text("x", encoding="utf-8")
+        ok("extra files beside a wrapper flagged", any("files beside" in e for e in check(fake2)))
+
+    failed = [r for r in results if not r[1]]
+    for name, passed, detail in results:
+        print(f"  {'✓' if passed else '✗'} {name}" + ("" if passed or not detail else f" — {detail[:300]}"))
+    print(f"build-local-skill-plugin self-test: {len(results) - len(failed)}/{len(results)} passed")
+    return EXIT_FAIL if failed else EXIT_OK
+
+
+def write_tracked_wrappers_quiet(root: Path) -> None:
+    for rel_root in TRACKED_ROOTS:
+        for name in WORKFLOWS:
+            _write_if_changed(root / rel_root / name / "SKILL.md", tracked_wrapper(root, name))
+
+
+# --- CLI -------------------------------------------------------------------------
+
+def build_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(
+        prog="build-local-skill-plugin.py",
+        description=__doc__.split("\n\n", 1)[1],
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    mode = p.add_mutually_exclusive_group()
+    mode.add_argument("--wrappers", action="store_true", help="write the tracked .claude/.agents wrappers")
+    mode.add_argument("--plugin", action="store_true", help="build the snds plugin under ~/.claude/local-plugins")
+    mode.add_argument("--user", action="store_true", help="write user-level wrappers into --out")
+    mode.add_argument("--check", action="store_true", help="exit 1 on wrapper drift or a hand-made skill entry")
+    mode.add_argument("--self-test", action="store_true", help="exercise every mode in a temp HOME")
+    p.add_argument("--out", help="--user: directory to write <name>/SKILL.md into")
+    p.add_argument("--root", help="--user: absolute path of the workspace checkout the wrappers point at")
+    p.add_argument("--json", action="store_true", help="--user: print a JSON report")
+    return p
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
+    argv = sys.argv[1:] if argv is None else argv
+    if not argv:
+        parser.print_help()
+        return EXIT_OK
+    args = parser.parse_args(argv)
+    if (args.out or args.root or args.json) and not args.user:
+        parser.error("--out, --root and --json go with --user")
+    if args.wrappers:
+        return write_tracked_wrappers()
+    if args.plugin:
+        return build_plugin()
+    if args.check:
+        return run_check()
+    if args.self_test:
+        return self_test()
+    if args.user:
+        if not args.out or not args.root:
+            parser.error("--user needs --out DIR and --root ABS_CHECKOUT")
+        if not os.path.isabs(args.root):
+            parser.error("--root must be an absolute path")
+        return write_user_wrappers(Path(args.out).absolute(), Path(args.root), as_json=args.json)
+    parser.print_help()
+    return EXIT_OK
 
 
 if __name__ == "__main__":

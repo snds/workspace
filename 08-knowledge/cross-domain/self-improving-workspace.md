@@ -1,10 +1,10 @@
 ---
 tags: [workspace, self-improve, error-correction, routing, ontology]
 created: 2026-09-11
-updated: 2026-09-11
+updated: 2026-09-25
 status: working
 confidence: high
-sources: [01-frameworks/08-workspace-contribution-framework.md, 03-skills/close-out/SKILL.md, 08-knowledge/research/agentic-error-correction-foundations.md, .claude/skills/optimize/SKILL.md]
+sources: [01-frameworks/08-workspace-contribution-framework.md, 03-skills/close-out/SKILL.md, 08-knowledge/research/agentic-error-correction-foundations.md, 03-skills/optimize/SKILL.md]
 related_skills: [self-improve, close-out, harness-map, mission-fit, plan-ahead]
 related_projects: [19-workspace-brain]
 relations:
@@ -25,7 +25,7 @@ relations:
 | Mode | What we had | Hole |
 |---|---|---|
 | **Correct** | #06 detector check, validators, routing fixtures, `vqa calibrate`, close-out capture/assess/correct | Same-model Self-Refine is not correction ([[agentic-error-correction-foundations]]) |
-| **Heal** | CI, `build-*` chain, nightly fold/rebuild, `vault-health.py` | Nightly reports, does not rewrite. `/optimize` `/health` want Sean sign-off and live under `.claude/skills/` (Cursor/Perplexity never load them) |
+| **Heal** | CI, `build-*` chain, nightly fold/rebuild, `vault-health.py` | Nightly reports, does not rewrite. `/optimize` `/health` want Sean sign-off for judgment fixes. Until 2026-09-25 they lived only under `.claude/skills/` (Cursor/Perplexity never loaded them); H20 gave them `03-skills` homes with generated wrappers |
 | **Improve** | #11 ledger from Sean-caught visual bugs; close-out mints **QA detectors**; session-end commits residue | No per-session path for transferable process, corollary graph edges, research-worthy skillsets, new spokes, or Layer-0 keys discovered in the work |
 
 Cross-surface/device sync is already git. A mint that stays in one chat does not exist on the other machine. Employer wall is unchanged.

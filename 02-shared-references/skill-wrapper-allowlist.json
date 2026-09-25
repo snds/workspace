@@ -1,0 +1,15 @@
+{
+  "doc": "D15 allowlist (H20). Tracked entries under .claude/skills or .agents/skills that are neither a generated pointer wrapper nor backed by a 03-skills home. Every entry needs a reason; an entry whose path is no longer tracked fails the check. Checked by 09-tools/build-local-skill-plugin.py --check.",
+  "entries": [
+    {"path": ".claude/skills/copilot-fetch-x", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills, metadata copilot-builtin-version); the plugin owns the body"},
+    {"path": ".claude/skills/copilot-read-pdf", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills, metadata copilot-builtin-version); the plugin owns the body"},
+    {"path": ".claude/skills/copilot-web-fetch", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills, metadata copilot-builtin-version); the plugin owns the body"},
+    {"path": ".claude/skills/copilot-web-search", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills, metadata copilot-builtin-version); the plugin owns the body"},
+    {"path": ".claude/skills/copilot-youtube-transcript", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills, metadata copilot-builtin-version); the plugin owns the body"},
+    {"path": ".claude/skills/json-canvas", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills; upstream MIT skill, metadata copilot-upstream-revision); the plugin owns the body"},
+    {"path": ".claude/skills/obsidian-bases", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills; upstream skill); the plugin owns the body"},
+    {"path": ".claude/skills/obsidian-cli", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills; upstream skill); the plugin owns the body"},
+    {"path": ".claude/skills/obsidian-markdown", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills; upstream skill); the plugin owns the body"},
+    {"path": ".claude/skills/openartifacts-publish", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills, metadata copilot-builtin-version); the plugin owns the body"}
+  ]
+}

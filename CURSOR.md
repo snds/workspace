@@ -70,7 +70,8 @@ Fail-open. Structured-output / subagent turns skip the ritual line (see BEACON e
 - **MCP:** configure in Cursor Settings → MCP (or `~/.cursor/mcp.json`). See
   [capability-registry.md](02-shared-references/capability-registry.md) for per-surface install.
   Linear lanes / Figma are not assumed present until configured on this machine.
-- `.claude/skills/` slash commands are Claude-only; use `.cursor/agents/` + `skill-loadset.py` instead.
+- Workflows (`optimize`, `session-end`, `health`, …) live in `03-skills/<name>/SKILL.md`; `.agents/skills/`
+  holds generated pointer wrappers. Route everything else with `.cursor/agents/` + `skill-loadset.py`.
 
 ## Surface posture
 
