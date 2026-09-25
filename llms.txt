@@ -9,8 +9,8 @@
 ## Start here (read in order)
 - [AGENTS.md](AGENTS.md): the universal agent contract — folder semantics, read order, the skill
   loading-precedence algorithm, and the bootstrap-on-a-checkout protocol.
-- Route a request: shells run `python3 09-tools/skill-loadset.py "<request>"`. RULES-ONLY readers
-  (no python) read [trigger-routes-digest.md](02-shared-references/trigger-routes-digest.md).
+- Route a request: pipe it to `ws route --stdin` or run `python3 09-tools/skill-loadset.py "…"`.
+  No python: read [trigger-routes-digest.md](02-shared-references/trigger-routes-digest.md).
   Never ingest `03-skills/skills.registry.json` or the generated `trigger-routes.md`.
 - [workspace-ontology.md](02-shared-references/workspace-ontology.md): vocabulary + the
   "where does this belong?" routing map. Read before writing anything.

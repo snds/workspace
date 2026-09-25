@@ -403,6 +403,25 @@ python3 09-tools/validate-evidence-grades.py
 python3 09-tools/validate-evidence-grades.py --strict
 ```
 
+## prompt_route.py
+
+The one Layer-0 matcher (H7). Every surface routes through it: the Claude dispatcher
+(import), `ws_hook.py --event user-prompt` (subprocess), the Cursor compat shim, and every
+hookless shell through the neutral `ws route --stdin` (the Cursor and Codex steers). It
+reads the brain checkout (neutral pointer first), never the cwd, so it works from any repo
+and writes nothing there. A non-user turn (surfaces.json `non_user_envelopes`, e.g. a
+background task notification, X2) routes nothing; a non-curated single-word trigger inside
+a matched multiword key is suppressed (longest match); curated gates never are.
+
+```
+ws route --stdin <<'EOF'
+<the request>
+EOF
+python3 09-tools/prompt_route.py --stdin --payload --host cursor < payload.json
+python3 09-tools/prompt_route.py --utterance "…" --format json
+python3 09-tools/prompt_route.py --self-test      # hermetic: fixtures/prompt_route/
+```
+
 ## evaluate-surface-trajectories.py
 
 Per-surface routing trajectories. `evaluate-skill-routing.py` proves the **matcher**
@@ -412,14 +431,17 @@ command that surface really invokes.
 | Surface | Entry point |
 |---|---|
 | `claude-code` | `.claude/hooks/dispatcher.py user-prompt` (stdin JSON, `CLAUDE_PROJECT_DIR`) |
-| `cursor` | `09-tools/cursor-prompt-route.py` (compatibility shim; the live `beforeSubmitPrompt` registration is retired) |
+| `cursor`, `codex` | the steer `ws route --stdin <<'EOF' … EOF` through `/bin/sh` and the real `00-bootstrap/dist/ws`, scrubbed env |
+| `cursor-hook` | `09-tools/cursor-prompt-route.py` (compatibility shim; the live `beforeSubmitPrompt` registration is retired) |
 | `shell-agent` | `09-tools/skill-loadset.py --json` — any agent with a shell and no hook |
+| `claude-chat`, `aider` | literal readers: the route source their entry files name (digest or `trigger-routes.json`) |
 | `hookless` | no executable path (web ChatGPT/Grok/Perplexity); its adapter file is asserted statically |
 
-Per case: `expect_paths`, `forbid_paths`, `expect_header`, `expect_empty`, and **`parity`** —
-the hook surfaces must deliver an identical set of workspace paths. Plus a structural
-one-matcher guard: the Claude hook must delegate to `prompt_route`, never fork the tier
-machinery again.
+Per case: `expect_paths`, `forbid_paths`, `expect_header`, `expect_empty`, `cwd`
+(`employer-shaped`: a temp repo that must stay byte-identical and never reach the payload),
+and **`parity`** — the parity surfaces (surfaces.json hookable `minimum_surfaces`) must
+deliver an identical set of workspace paths. Plus structure: an AST one-matcher guard over
+every entry point and registered user-prompt command, the steer lines, and digest drift.
 
 Why: on 2026-09-15, six of the 48 routing fixtures delivered a different file set on Claude
 Code than on Cursor. Cursor had no Layer-1 lexical fallback; the Claude hook dropped a
@@ -479,7 +501,7 @@ Human-run installers behind workspace-doctor.sh --install-*/--uninstall-*: refus
 
 ## ws_hook.py
 
-Neutral hook core (H19): payload adapters, host filters, dedupe claims, budgeted session-start card, output dialects, redacted probes (`probe-env`, `probe-promote`) and the `--host git --floor claude` adapter. `--self-test`, `--self-test-shell`.
+Neutral hook core (H19): payload adapters, host filters, dedupe claims, budgeted session-start card, output dialects, redacted probes (`probe-env`, `probe-promote`) and the `--host git --floor claude` adapter. `--event user-prompt` runs the vault's `prompt_route.py` (H7) and renders its hints in the host dialect. `--self-test`, `--self-test-shell`.
 
 Host filters read the payload on stdin and exit 3 only on verified evidence, 2 when no host is verified: `host --skip-any H[,H...]` exits 3 when the acting host is in the set and 0 when a verified host is outside it; `host --skip-unless H[,H...]` is the complement (3 when a verified host is outside the set, 0 when it is in it); `host --skip-unless-layer LAYER` is `--skip-unless` with the set read from surfaces.json, the `loaded_by` of that layer (an unknown layer gives 2). The boot shim `workspace-sessionstart.sh` uses `--skip-unless-layer claude-project` inside the workspace, so it defers to the project hook only for the hosts that load that layer.
 

@@ -1535,6 +1535,38 @@ class TestWsHook(unittest.TestCase):
                 self.assertTrue(ok, detail)
 
 
+class TestLayer0Routing(unittest.TestCase):
+    """H7: one matcher on every surface — stdin CLI, host payload adapters, is_user_turn (X2),
+    longest-match suppression, brain resolution from any cwd, and the table-driven trajectory
+    parity (including employer-shaped cwds on cursor and codex)."""
+
+    def test_prompt_route_cases(self):
+        pr = load("prompt_route")
+        cases = pr.self_test_cases()
+        self.assertGreater(len(cases), 30)
+        for name, ok, detail in cases:
+            with self.subTest(case=name):
+                self.assertTrue(ok, detail)
+
+    def test_trajectories(self):
+        tool = TOOLS / "evaluate-surface-trajectories.py"
+        for args in (["--self-test"], ["--check"]):
+            with self.subTest(args=args):
+                r = subprocess.run([sys.executable, str(tool), *args], capture_output=True, text=True,
+                                   cwd=str(ROOT_DIR), timeout=600)
+                self.assertEqual(r.returncode, 0, r.stdout[-2000:] + r.stderr[-1000:])
+
+    def test_trajectory_corpus_covers_h7(self):
+        rows = [json.loads(ln) for ln in (ROOT_DIR / "02-shared-references" / "surface-trajectory-cases.jsonl")
+                .read_text(encoding="utf-8").splitlines() if ln.strip()]
+        employer = {s for r in rows if r.get("cwd") == "employer-shaped" for s in r.get("surfaces", [])}
+        self.assertTrue({"cursor", "codex"} <= employer, employer)
+        x2 = [r for r in rows if r.get("expect_empty") and r["utterance"].lstrip().startswith("<task-notification>")]
+        self.assertTrue(x2 and "claude-code" in x2[0]["surfaces"], x2)
+        self.assertTrue(any(r.get("forbid_paths") and "zero vector" in r["utterance"] for r in rows))
+        self.assertTrue(any({"claude-chat", "aider"} <= set(r.get("surfaces", [])) for r in rows))
+
+
 class TestHostFilter(unittest.TestCase):
     """G2b: boot output byte-identical to 2ff02e7 with and without a pin, except the recorded L-08
     case: Codex inside the workspace with a verified pin gets the card 2ff02e7 gives it outside the
