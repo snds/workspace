@@ -2,14 +2,14 @@
   "schema_version": 1,
   "surface": "codex",
   "device": "personal-mbp",
-  "recorded_at": "2026-09-24",
+  "recorded_at": "2026-09-25",
   "declared_host": "codex",
   "hook_probe": {
     "status": "not-installed",
     "events": {}
   },
   "env_probe": {
-    "via": "terminal",
+    "via": null,
     "env_marker_names": [
       "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
       "CLAUDE_WORKSPACE_VAULT",
@@ -25,15 +25,81 @@
       "CODEX_SHELL",
       "CODEX_THREAD_ID",
       "CODEX_VERSION",
-      "GH_PAGER"
+      "GH_PAGER",
+      "WS_SURFACE_FAMILY"
     ],
-    "env_values": {},
+    "env_values": {
+      "WS_SURFACE_FAMILY": "codex"
+    },
     "env_presence": {
       "WS_CLAUDE_OVERLAY": false,
-      "WS_SURFACE_FAMILY": false,
+      "WS_SURFACE_FAMILY": true,
       "GIT_CONFIG_COUNT": false,
       "GH_CONFIG_DIR": false,
-      "CLAUDE_ENV_FILE": false
+      "CLAUDE_ENV_FILE": false,
+      "WS_OVERLAY_CHANNEL": false
+    }
+  },
+  "env_probes": {
+    "terminal": {
+      "via": "terminal",
+      "env_marker_names": [
+        "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+        "CLAUDE_WORKSPACE_VAULT",
+        "CODEX_APP_TOOLS_PIPE_PATH",
+        "CODEX_CI",
+        "CODEX_INTERNAL_ORIGINATOR_OVERRIDE",
+        "CODEX_MCP_NODE_PATH",
+        "CODEX_PERMISSION_PROFILE",
+        "CODEX_SAGE_BACKFILL_TRACKER_TAB_REUSE",
+        "CODEX_SANDBOX",
+        "CODEX_SANDBOX_NETWORK_DISABLED",
+        "CODEX_SESSION_ID",
+        "CODEX_SHELL",
+        "CODEX_THREAD_ID",
+        "CODEX_VERSION",
+        "GH_PAGER"
+      ],
+      "env_values": {},
+      "env_presence": {
+        "WS_CLAUDE_OVERLAY": false,
+        "WS_SURFACE_FAMILY": false,
+        "GIT_CONFIG_COUNT": false,
+        "GH_CONFIG_DIR": false,
+        "CLAUDE_ENV_FILE": false
+      }
+    },
+    "agent-shell": {
+      "via": null,
+      "env_marker_names": [
+        "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+        "CLAUDE_WORKSPACE_VAULT",
+        "CODEX_APP_TOOLS_PIPE_PATH",
+        "CODEX_CI",
+        "CODEX_INTERNAL_ORIGINATOR_OVERRIDE",
+        "CODEX_MCP_NODE_PATH",
+        "CODEX_PERMISSION_PROFILE",
+        "CODEX_SAGE_BACKFILL_TRACKER_TAB_REUSE",
+        "CODEX_SANDBOX",
+        "CODEX_SANDBOX_NETWORK_DISABLED",
+        "CODEX_SESSION_ID",
+        "CODEX_SHELL",
+        "CODEX_THREAD_ID",
+        "CODEX_VERSION",
+        "GH_PAGER",
+        "WS_SURFACE_FAMILY"
+      ],
+      "env_values": {
+        "WS_SURFACE_FAMILY": "codex"
+      },
+      "env_presence": {
+        "WS_CLAUDE_OVERLAY": false,
+        "WS_SURFACE_FAMILY": true,
+        "GIT_CONFIG_COUNT": false,
+        "GH_CONFIG_DIR": false,
+        "CLAUDE_ENV_FILE": false,
+        "WS_OVERLAY_CHANNEL": false
+      }
     }
   },
   "ancestry_comm": [],
@@ -45,5 +111,5 @@
     "conflict": true
   },
   "detection_mismatch": false,
-  "git_version": "2.50.1"
+  "git_version": "2.55.0"
 }
