@@ -54,7 +54,8 @@ Any model may write behind the gates in `01-agent-controller.mdc` / AGENTS.md. N
 
 ## Skills & conventions
 
-Route skills; don't bulk-load. Compute the load set with
+Route skills; don't bulk-load. For a work request run `ws route --stdin <<'EOF'` … `EOF` (the
+request on stdin, never as an argument), then load what it prints. Load set:
 `python3 09-tools/skill-loadset.py "<utterance>"`. After produce, run
 `python3 09-tools/close-out-dispatch.py --from-prompt "<utterance>" --run`
 (exit 0 is not verified for SKIP classes). Layer 0 miss: that loadset CLI, then
