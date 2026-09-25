@@ -5,7 +5,7 @@ created: 2026-09-04
 profile: personal-solo
 lane:
 northstar: https://intentapp.dev
-approval: approved 2026-09-04 by Sean
+approval: approved 2026-09-25 by Sean
 ---
 
 # Intent spec — living-spec runner + optional Intent app
