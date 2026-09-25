@@ -6733,7 +6733,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": "command-hub",
-      "hash": "sha256:cdbbd2f2e72c702ecfbbee0915f6984dd2da2d896232059209783e197aac2b8c"
+      "hash": "sha256:0f28c01ca93fa5e75fefa1d4b171da20a76d1c7ef45c61e82ef7be7bcc84e9bd"
     },
     "shadow-quality-craft": {
       "path": "03-skills/shadow-quality-craft/SKILL.md",
