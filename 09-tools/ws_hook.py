@@ -1824,7 +1824,7 @@ def _baseline_script(name: str) -> bytes:
 
 
 def _shell_run(script: bytes, payload: str, *, tmp: Path, ws: Path, tag: str, pin_rc=None, pre_state=None,
-               real_pin=False):
+               real_pin=False, home_files=None):
     """(rc, stdout, audit lines) of one shim run in a temp home.
 
     pin_rc installs a stand-in ws-hook that always exits pin_rc. real_pin installs the byte-stable
@@ -1848,6 +1848,10 @@ def _shell_run(script: bytes, payload: str, *, tmp: Path, ws: Path, tag: str, pi
         shutil.copy2(ROOT / "00-bootstrap" / "dist" / "ws-hook", cfg / "bin" / "ws-hook")
         (cfg / "bin" / "ws-hook").chmod(0o755)
         (cfg / "lib" / "current").symlink_to(ROOT, target_is_directory=True)
+    for rel, text in (home_files or {}).items():
+        p = home / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text, encoding="utf-8")
     path = tmp / f"script-{tag}.sh"
     path.write_bytes(script)
     env = {"HOME": str(home), "PATH": os.environ.get("PATH", "/usr/bin:/bin"), "LANG": "C", "LC_ALL": "C",
@@ -1985,6 +1989,36 @@ def shell_golden_cases() -> list:
         n += 1
         got = _shell_run(new, json.dumps(cursor_in), tmp=tmp, ws=ws, tag=f"{n}-new", real_pin=True)
         results.append((f"{name} cursor inside, real pin: exits 0 with no output", got == (0, "", []), f"got={got!r}"))
+
+        # D-W1-4, the audit's one addition: with the env-file channel installed, a verified Claude Code
+        # session that ends without its overlay marker logs NOOVERLAY after its usual line. The cases
+        # above (no channel installed) stay byte-identical to 2ff02e7.
+        name = "workspace-audit.sh"
+        new = (ROOT / "00-bootstrap" / "dist" / name).read_bytes()
+        chan = {f".config/snds-workspace/{OVERLAY_ENV_NAME}": OVERLAY_SAMPLE}
+        tp = tmp / ".claude" / "projects" / "fx" / "sess-0009.jsonl"
+        tp.parent.mkdir(parents=True, exist_ok=True)
+        tp.write_text(transcript_ok.read_text(encoding="utf-8"), encoding="utf-8")
+        tp1 = tmp / ".claude" / "projects" / "fx" / "sess-0010.jsonl"
+        tp1.write_text(transcript_miss.read_text(encoding="utf-8"), encoding="utf-8")
+        ended = claude("SessionEnd", cwd=ws, transcript=tp, sid="sess-0009")
+        audit_cases = [
+            ("claude, channel installed, no marker: NOOVERLAY", ended, chan, None,
+             ["OK   sess-0009 cwd=" + str(ws), "NOOVERLAY sess-0009"]),
+            ("claude, channel installed, marker present: no NOOVERLAY", ended, chan, {"overlay.sess-0009": "x\n"},
+             ["OK   sess-0009 cwd=" + str(ws)]),
+            ("claude, channel not installed: no NOOVERLAY", ended, None, None, ["OK   sess-0009 cwd=" + str(ws)]),
+            ("claude one-shot, channel installed: exempt", claude("SessionEnd", cwd=ws, transcript=tp1, sid="sess-0010"),
+             chan, None, ["SKIP sess-0010 one-shot"]),
+            ("codex with a transcript, channel installed: not Claude Code",
+             shaped("codex", "session-start", hook_event_name="SessionEnd", session_id="sess-0011",
+                    transcript_path=str(transcript_ok), cwd=str(ws)), chan, None, ["OK   sess-0011 cwd=" + str(ws)]),
+        ]
+        for label, payload, files, pre, want_log in audit_cases:
+            n += 1
+            got = _shell_run(new, json.dumps(payload), tmp=tmp, ws=ws, tag=f"{n}-audit", real_pin=True,
+                             home_files=files, pre_state=pre)
+            results.append((f"{name} {label}", got == (0, "", want_log), f"got={got!r}"))
     return results
 
 
