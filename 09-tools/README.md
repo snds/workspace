@@ -489,6 +489,14 @@ Renders every hook registration file from 02-shared-references/surfaces.json (H1
 
 H17 adds the Claude overlay env emitter (`overlay` output field, v4 reproduction kept for proof; `--emit overlay-env`), the `claude-identity-inc` output and `--emit identity-inc --device ID`. `--rewrite-audit [--json]` is report-only (residual H17-R9): it reads the git config files, not the overlay env, and reports URL rewrites that can undo the transport block; `workspace-doctor.sh --check` prints a NOTE when it finds one.
 
+## git_lanes.py
+
+Global config-based git lanes for every local committer (H18): one rendered include (`render [--check]` → `00-bootstrap/dist/git/lanes/ws-lanes.inc`, four `hook.ws-lane-*` hooks for pre-commit, commit-msg, pre-merge-commit and pre-push) that only a human installs with `workspace-doctor.sh --install-git-hooks` (git >= 2.54; the installer refuses without a pinned `git_lanes.py` or without a `git@<device>` record showing config hooks). Each lane execs the pinned copy (`hook EVENT`), decides without writing anything, and picks its lane by repo profile: employer (I1 over the commit identity and every commit and tag in a pushed range; R2 report-only), workspace (plus the H1 `nightly.py --lane pre-commit`), personal (device-mismatch flag only), unknown (agents WARN). A Claude chain first gets `profile_resolve.floor_decide`, so a lane is never weaker than the Claude floor. Infrastructure errors allow with a notice. `audit [--repo DIR]... [--cache]` is the `workspace-doctor.sh --check` detector for config entries, at any scope, that replace, clear or disable a lane, and for lane keys outside the include (exit 0 clean, 1 findings, 3 not installed). `--self-test` runs unit cases plus `fixtures/git_lanes/lane_cases.py`; TestGitLanes runs the same fixtures.
+
+## fixtures/git_lanes/
+
+`lane_cases.py`: temp-HOME fixtures for the git lanes, installed by the real installer; employer-shaped, personal, unknown-owner and workspace-shaped temp repos over local bare remotes, byte-identical checks including `.git/`, audit findings and the declared bypass residuals (git >= 2.54; otherwise the cases skip).
+
 ## fixtures/identity/
 
 Synthetic identity tables, the v5 overlay golden and `floor_cases.py`: hook-level floor, hasconfig include and `--install-claude-overlay` fixtures on a temp HOME (git >= 2.54 for the floor; otherwise the cases skip).
