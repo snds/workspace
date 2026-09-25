@@ -24,7 +24,13 @@ Usage:
   python3 09-tools/check-secrets.py --check
   python3 09-tools/check-secrets.py --class employer-substance [--report|--baseline-check|--write-baseline]
       [--staged] [--json] [--root DIR]
+  python3 09-tools/check-secrets.py --class workspace-leak [PATH ...] [--stdin] [--json] [--root DIR]
   python3 09-tools/check-secrets.py --self-test
+
+Third class, `workspace-leak` (H4): flags workspace-only content (vault paths, `^pc-` ids,
+vault refs, workspace taxonomy keys such as `profile:`, context-profile names, beacon text)
+in a neutral employer render or a fixture of one. Default targets: tracked `*.neutral.md`.
+`intent-run init --frame` pre-scans every neutral render with it. Exit 1 on any hit.
 
 Exit codes (employer-substance): 0 ok · 1 baseline exceeded / growth refused ·
 2 usage or tables unreadable · 3 baseline absent.
@@ -712,10 +718,85 @@ def run_employer(
     return finish(0)
 
 
+# ---------------------------------------------------------------------------
+# Third class: workspace-leak (H4). Workspace-only content in a neutral employer render.
+# ---------------------------------------------------------------------------
+
+WS_LEAK_CLASS = "workspace-leak"
+WS_VAULT_DIRS = ("00-bootstrap", "01-frameworks", "02-shared-references", "03-skills", "04-preferences",
+                 "05-artifacts", "06-context", "07-projects", "08-knowledge", "09-tools", "_archive")
+WS_LEAK_RULES: tuple[tuple[str, re.Pattern[str]], ...] = (
+    ("ws-vault-path", re.compile(r"(?<![\w.-])(?:" + "|".join(re.escape(d) for d in WS_VAULT_DIRS) + r")/")),
+    ("ws-vault-ref", re.compile(r"\bvault:[A-Za-z0-9_.-]+|\[\[[^\]\n]+\]\]")),
+    ("ws-pc-id", re.compile(r"(?<![\w-])\^?pc-\d{1,4}\b")),
+    ("ws-taxonomy-key", re.compile(r"^\s*#?\s*(?:profile|lane|vault_project|context_profile)\s*:", re.IGNORECASE)),
+    ("ws-beacon", re.compile(r"WORKSPACE-BEACON|\[workspace: (?:LOADED|RULES-ONLY|UNREACHABLE)|<!-- ws-only -->")),
+)
+# Globs of tracked files that hold a neutral render (or a fixture of one); scanned by default.
+WS_LEAK_GLOBS = ("*.neutral.md", "*.neutral.txt")
+
+
+def _conduct_terms(root: Path) -> list[str]:
+    """The context-profile names (workspace taxonomy) from the declared table; [] if unreadable."""
+    try:
+        obj = json.loads((root / REMOTES_REL).read_text(encoding="utf-8"))
+        return [t for t in obj.get("conduct_order") or [] if isinstance(t, str) and t]
+    except (OSError, ValueError):
+        return []
+
+
+def workspace_leak_scan(text: str, *, terms: Optional[list[str]] = None) -> list[tuple[int, str]]:
+    """(line, rule) hits; matched text is never returned. terms: extra taxonomy words (profile names)."""
+    term_rx = None
+    if terms is None:
+        terms = _conduct_terms(ROOT)
+    if terms:
+        term_rx = re.compile(r"(?<![\w-])(?:" + "|".join(re.escape(t) for t in terms) + r")(?![\w-])")
+    hits: list[tuple[int, str]] = []
+    for i, line in enumerate(text.splitlines(), 1):
+        for name, rx in WS_LEAK_RULES:
+            if rx.search(line):
+                hits.append((i, name))
+        if term_rx is not None and term_rx.search(line):
+            hits.append((i, "ws-taxonomy-term"))
+    return hits
+
+
+def run_workspace_leak(args: argparse.Namespace) -> int:
+    root = Path(args.root).resolve() if args.root else ROOT
+    terms = _conduct_terms(root)
+    sources: list[tuple[str, str]] = []
+    if args.stdin:
+        sources.append(("<stdin>", sys.stdin.read()))
+    targets = [Path(p) for p in args.paths]
+    if not targets and not args.stdin:
+        raw = _git_out(root, "ls-files", "-z") or b""
+        for rel in raw.decode("utf-8", errors="replace").split("\0"):
+            if rel and any(fnmatchcase(Path(rel).name, g) for g in WS_LEAK_GLOBS):
+                targets.append(root / rel)
+    for t in targets:
+        try:
+            sources.append((str(t), t.read_text(encoding="utf-8")))
+        except (OSError, UnicodeDecodeError):
+            print(f"{t}: unreadable", file=sys.stderr)
+            return 2
+    found = {name: workspace_leak_scan(text, terms=terms) for name, text in sources}
+    total = sum(len(v) for v in found.values())
+    if args.json:
+        print(_dump({"schema_version": 1, "cmd": WS_LEAK_CLASS, "files": len(sources),
+                     "hits": [{"path": n, "line": ln, "rule": r} for n, v in found.items() for ln, r in v]}), end="")
+    else:
+        for name, hits in found.items():
+            for line, rule in hits:
+                print(f"{name}:{line} {rule}")
+        print(f"workspace-leak: {len(sources)} file(s), {total} hit(s)")
+    return 1 if total else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Secret shape scan on tracked files")
     parser.add_argument("--check", action="store_true")
-    parser.add_argument("--class", dest="klass", choices=["secrets", EMP_CLASS], default="secrets")
+    parser.add_argument("--class", dest="klass", choices=["secrets", EMP_CLASS, WS_LEAK_CLASS], default="secrets")
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--report", action="store_true")
     mode.add_argument("--baseline-check", action="store_true")
@@ -724,6 +805,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--root", default="")
     parser.add_argument("--self-test", action="store_true")
+    parser.add_argument("--stdin", action="store_true", help="workspace-leak: scan stdin")
+    parser.add_argument("paths", nargs="*", help="workspace-leak: files to scan (default: tracked *.neutral.md)")
     return parser
 
 
@@ -733,6 +816,12 @@ def main(argv: Optional[list[str]] = None, *, resolver: Any = "auto", home: Opti
     if args.self_test:
         return self_test()
     emp_only = args.report or args.baseline_check or args.write_baseline or args.staged or args.json or args.root
+    if args.klass == WS_LEAK_CLASS:
+        if args.report or args.baseline_check or args.write_baseline or args.staged:
+            parser.error("workspace-leak takes paths, --stdin, --json and --root only")
+        return run_workspace_leak(args)
+    if args.paths or args.stdin:
+        parser.error("paths and --stdin need --class workspace-leak")
     if args.klass == EMP_CLASS:
         return run_employer(args, resolver=_resolver() if resolver == "auto" else resolver, home=home)
     if emp_only:
@@ -973,6 +1062,37 @@ def self_test() -> int:
             check("--staged --write-baseline is a usage error", rc == 2, f"rc={rc}")
         except (OSError, subprocess.SubprocessError) as exc:
             check("staged fixture git", False, repr(exc))
+
+    # workspace-leak (H4): planted workspace-only content is flagged; the clean neutral fixture and
+    # the template's neutral render pass; the workspace render of the same template does not.
+    leak_dir = TOOLS / "fixtures" / "workspace_leak"
+    terms = ["personal-solo", "sample-design", "sample-engineering"]
+    planted = workspace_leak_scan((leak_dir / "planted.txt").read_text(encoding="utf-8"), terms=terms)
+    want = sorted(tuple(x) for x in json.loads((leak_dir / "expected.json").read_text(encoding="utf-8"))["planted.txt"])
+    check("workspace-leak: planted hits match expected.json", sorted(planted) == want, f"got {sorted(planted)}")
+    for rule in ("ws-vault-path", "ws-vault-ref", "ws-pc-id", "ws-taxonomy-key", "ws-beacon", "ws-taxonomy-term"):
+        check(f"workspace-leak: {rule} flagged", any(r == rule for _, r in planted))
+    clean = workspace_leak_scan((leak_dir / "clean.neutral.txt").read_text(encoding="utf-8"), terms=terms)
+    check("workspace-leak: clean neutral fixture passes", clean == [], f"got {clean}")
+    try:
+        import importlib.util as _ilu
+        _sp = _ilu.spec_from_file_location("intent_run_ws", TOOLS / "intent-run.py")
+        _ir = _ilu.module_from_spec(_sp)
+        _sp.loader.exec_module(_ir)
+        neutral = _ir.render_project_intent(neutral=True)
+        full = _ir.render_project_intent(neutral=False)
+        check("workspace-leak: template neutral render passes", workspace_leak_scan(neutral, terms=terms) == [])
+        check("workspace-leak: neutral render has no profile:", "profile:" not in neutral)
+        check("workspace-leak: workspace render is flagged", bool(workspace_leak_scan(full, terms=terms)))
+    except (OSError, ImportError, AttributeError) as exc:
+        check("workspace-leak: intent-run render import", False, repr(exc))
+    rc, text = _run_captured(["--class", WS_LEAK_CLASS, str(leak_dir / "planted.txt")], None,
+                             Path(tempfile.gettempdir()))
+    check("workspace-leak CLI: planted → exit 1, path:line rule only", rc == 1 and "planted.txt:" in text
+          and not leaks(text), f"rc={rc}")
+    rc, _ = _run_captured(["--class", WS_LEAK_CLASS, str(leak_dir / "clean.neutral.txt")], None,
+                          Path(tempfile.gettempdir()))
+    check("workspace-leak CLI: clean → exit 0", rc == 0, f"rc={rc}")
 
     # Usage: employer-only flags without the class → exit 2.
     rc, _ = _run_captured(["--report"], None, Path(tempfile.gettempdir()))

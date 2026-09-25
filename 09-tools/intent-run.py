@@ -11,15 +11,25 @@ shlex + shell=False from a pinned cwd, an allowlist in automated contexts, and a
 self-tested invariant that this file never passes commit / push / merge / reset /
 stash / rebase to git.
 
+H4/H5: PROJECT.md project intent (init --frame, a --neutral render pre-scanned by
+check-secrets' workspace-leak class, inheritance by remote slug within one owner
+class), lifecycle-scaled lint with git provenance on approvals, human-only approve,
+next, and verify --record stamped with surface, family, via and device.
+
 Usage:
   python3 09-tools/intent-run.py doctor
   python3 09-tools/intent-run.py daemon [status|workspace.list]
   python3 09-tools/intent-run.py init [--path PATH]
+  python3 09-tools/intent-run.py init --frame --repo DIR [--neutral] [--stdout] [--inherits SLUG]
+                                 [--inherits-context SLUG#AGENTS.md[,vault:ID]] [--lifecycle L]
+  python3 09-tools/intent-run.py lint (--repo DIR | --spec PATH | --all)
+  python3 09-tools/intent-run.py next [--repo DIR]
+  python3 09-tools/intent-run.py approve (--repo DIR | --spec PATH) --by NAME [--note TEXT]
   python3 09-tools/intent-run.py status [--spec PATH]
   python3 09-tools/intent-run.py gate [--spec PATH]
   python3 09-tools/intent-run.py ready [--spec PATH]
   python3 09-tools/intent-run.py worktree add TASK_ID [--spec PATH] [--repo DIR]
-  python3 09-tools/intent-run.py verify [--spec PATH] [--run] [--root DIR]
+  python3 09-tools/intent-run.py verify [--spec PATH] [--run] [--root DIR] [--record]
   python3 09-tools/intent-run.py scope-audit --spec PATH (--task ID --rev A..B | --wave-merges)
                                  [--ref REF] [--root DIR] [--json]
   python3 09-tools/intent-run.py open-app
@@ -632,6 +642,11 @@ def cmd_gate(spec_path: Path) -> int:
             print(f"  • {lab}", file=sys.stderr)
     for level, msg in lint_spec(spec):
         print(f"LINT {level} — {msg}", file=sys.stderr)
+    for level, msg in lint_provenance(spec_path, spec["meta"], 2):
+        if level == "ERROR":
+            print(msg, file=sys.stderr)
+            return 1
+        print(f"LINT {level} — {msg}", file=sys.stderr)
     print("ok — spec approved; implementor waves may start")
     return 0
 
@@ -726,6 +741,7 @@ def cmd_verify(
     *,
     automated: bool | None = None,
     proc_cwd: Path | None = None,
+    record: bool = False,
 ) -> int:
     spec = load_spec(spec_path)
     if not spec["checks"]:
@@ -748,27 +764,33 @@ def cmd_verify(
     counts = {"PASS": 0, "FAIL": 0, "SKIP": 0, "NOT_EXPOSED": 0, "HUMAN": 0, "HUMAN-ATTESTED": 0}
     say(f"verify cwd: {vroot} ({why_root})")
     say(f"context: {'automated' if automated else 'interactive'} ({ctx_src})")
-    for c in spec["checks"]:
+    results: list[tuple[int, str, str]] = []
+    for idx, c in enumerate(spec["checks"], 1):
         status, reason, argv = classify_check(c, automated=automated, tracked=tracked)
         label = c["label"]
         if status == "SKIP":
             say(f"SKIP ({reason}): {label}")
             counts["SKIP"] += 1
+            results.append((idx, label, "SKIP"))
             continue
         if status in ("HUMAN", "HUMAN-ATTESTED"):
             say(f"{status}: {label}")
             counts[status] += 1
+            results.append((idx, label, status))
             continue
         if status == "BAD":
             say(f"FAIL ({reason}): {label}")
             counts["FAIL"] += 1
+            results.append((idx, label, "FAIL"))
             continue
         if status == "NOT_EXPOSED":
             say(f"NOT_EXPOSED ({reason}): {label}")
             counts["NOT_EXPOSED"] += 1
+            results.append((idx, label, "NOT_EXPOSED"))
             continue
         say(f"{'RUN' if run else 'CMD'} {c['measure']}")
         if not run:
+            results.append((idx, label, "CMD"))
             continue
         try:
             rc = subprocess.run(argv, cwd=str(vroot), shell=False, timeout=MEASURE_TIMEOUT,
@@ -782,15 +804,19 @@ def cmd_verify(
         if rc != 0:
             say(f"FAIL exit {rc}: {label}")
             counts["FAIL"] += 1
+            results.append((idx, label, "FAIL"))
         else:
             say(f"PASS {label}")
             counts["PASS"] += 1
+            results.append((idx, label, "PASS"))
     human_total = counts["HUMAN"] + counts["HUMAN-ATTESTED"]
     say(
         f"summary: pass={counts['PASS']} fail={counts['FAIL']} skip={counts['SKIP']} "
         f"not_exposed={counts['NOT_EXPOSED']} human={human_total} "
         f"(attested {counts['HUMAN-ATTESTED']})"
     )
+    if record:
+        verify_record(spec_path, results, dict(counts), run)
     if not run:
         say("dry — pass --run to execute measures")
         return 0
@@ -1286,6 +1312,810 @@ def cmd_install_app(dry: bool) -> int:
         return 0
     print(f"downloaded {archive}")
     return 0
+
+
+# ---------------------------------------------------------------------------
+# H4 — project intent (PROJECT.md) · H5 — lint / approve / next / verify --record
+# ---------------------------------------------------------------------------
+
+PROJECT_FILE = "PROJECT.md"
+PROJECT_TEMPLATE = ROOT / "00-bootstrap" / "templates" / "project-intent.md"
+POINTER_LINE = "Project intent: PROJECT.md (problem, audience, knowns/unknowns, scope)."
+POINTER_RE = re.compile(r"(?im)^\W*Project intent:\W*PROJECT\.md\b")
+README_POINTER_RE = re.compile(r"(?im)^\W*Project intent:\**\s*`?(?P<target>[^`\s]+)`?(?P<rest>.*)$")
+LIFECYCLES = ("discover", "define", "build", "operate")
+PROJECT_KEYS = ("profile", "lifecycle", "inherits", "inherits_context", "approval")
+PROJECT_INTENT_SECTIONS = ("Problem & audience", "Knowns & unknowns", "Out of scope & later")
+CLAIM_LABELS = ("known", "inferred", "assumed", "unknown", "conflicted")
+KNOWNS_COLUMNS = ("claim", "label", "tier", "evidence", "decision_rule")
+TIER_RE = re.compile(r"^T[1-5]$", re.IGNORECASE)
+HUMAN_MARK_RE = re.compile(r"\[HUMAN:[^\]]*\]")
+NA_RE = re.compile(r"^n/a\b", re.IGNORECASE)
+NA_REASON_RE = re.compile(r"^n/a\s*\((.+)\)\s*\.?$", re.IGNORECASE)
+INHERITS_RE = re.compile(
+    r"^(?P<slug>[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)(?:#(?P<path>[^@\s,]+))?(?:@(?P<ref>[^\s,]+))?$"
+)
+INTENT_MAX_LINES = 40
+INHERIT_MAX_DEPTH = 3
+WS_ONLY_MARK = "<!-- ws-only -->"
+CHILD_SENTENCE = "Intent and context are defined by the parent repository named in `inherits`."
+CONDUCT_FALLBACK = ("personal-solo",)  # the table is authoritative; unknown profiles rank strictest
+# Agent evidence in the commit that introduced an approval (H5 provenance).
+AGENT_EVIDENCE = (
+    ("claude", re.compile(r"(?im)^co-authored-by:[^\n]*\b(claude|anthropic)\b|noreply@anthropic\.com"
+                          r"|generated with \[?claude")),
+    ("cursor", re.compile(r"(?im)^co-authored-by:[^\n]*\bcursor\b|cursoragent@cursor\.com")),
+    ("workspace-agent", re.compile(r"(?im)^workspace-agent:[ \t]*(?!none\b|human\b)\S+")),
+    ("other-agent", re.compile(r"(?im)^co-authored-by:[^\n]*\b(codex|openai|copilot|gemini|devin|jules)\b")),
+)
+AUTO_COMMIT_SUBJECT = "session: auto-commit"
+
+# Resolver context: tests point these at a fixture root, temp HOME and hostname.
+_PR_KW: dict = {"root": None, "home": None, "hostname": None}
+_DETECTION_OVERRIDE: dict | None = None
+_HUMAN_OVERRIDE: bool | None = None
+_READS: list | None = None  # self-test spy: parent reads (path, source)
+
+
+def _pr():
+    return _import_profile_resolve()
+
+
+def _detection() -> dict:
+    if _DETECTION_OVERRIDE is not None:
+        return dict(_DETECTION_OVERRIDE)
+    try:
+        return _pr().detect_surface(root=_PR_KW.get("root"))
+    except Exception:  # fail closed: an undetermined chain is walled like an agent
+        return {"acting_host": "unknown", "family": "unknown-agent", "family_for_walls": "unknown-agent",
+                "via": "none", "agent_possible": True}
+
+
+def _restricted(det: dict) -> bool:
+    """A Claude chain (or an undetermined agent) never reads or writes non-personal repos."""
+    return det.get("family_for_walls") in ("claude", "unknown-agent")
+
+
+def _resolve_repo(target) -> dict:
+    return _pr().repo_resolve(str(target), root=_PR_KW.get("root"), home=_PR_KW.get("home"),
+                              detection=_detection())
+
+
+def _policy(repo, action_class: str, det: dict) -> dict:
+    return _pr().policy(repo=str(repo), action_class=action_class, root=_PR_KW.get("root"),
+                        home=_PR_KW.get("home"), hostname=_PR_KW.get("hostname"), detection=det)
+
+
+def _where(slug: str, det: dict) -> dict:
+    # A non-Claude miss rescans live; profile_resolve itself refuses the scan under an agent chain.
+    return _pr().where(slug, root=_PR_KW.get("root"), home=_PR_KW.get("home"), rescan=not _restricted(det),
+                       detection=det, hostname=_PR_KW.get("hostname"))
+
+
+def _conduct() -> list[str]:
+    try:
+        t = _pr().load_table("context-remotes", root=_PR_KW.get("root"))
+        order = list(t.get("conduct_order") or [])
+        return order or list(CONDUCT_FALLBACK)
+    except Exception:
+        return list(CONDUCT_FALLBACK)
+
+
+def _conduct_rank(profile: str | None, conduct: list[str]) -> int:
+    """Total order over profiles; anything unknown ranks most restrictive."""
+    return conduct.index(profile) if profile in conduct else len(conduct)
+
+
+def _origin_slug(res: dict) -> str | None:
+    rems = res.get("remotes") or []
+    for r in rems:
+        if r.get("name") == "origin" and r.get("slug"):
+            return r["slug"]
+    for r in rems:
+        if r.get("slug"):
+            return r["slug"]
+    return None
+
+
+def _subsection(text: str, heading: str) -> str:
+    pat = re.compile(rf"^###\s+{re.escape(heading)}\s*$", re.IGNORECASE | re.M)
+    m = pat.search(text)
+    if not m:
+        return ""
+    start = m.end()
+    nxt = re.search(r"^#{2,3}\s+\S", text[start:], re.M)
+    return text[start : start + nxt.start()] if nxt else text[start:]
+
+
+def parse_intent(text: str) -> dict:
+    """PROJECT.md or a README `## Project intent` block: frontmatter + the block."""
+    meta, body, comments = _split_frontmatter_ex(text)
+    has_block = bool(re.search(r"^##\s+Project intent\s*$", body, re.IGNORECASE | re.M))
+    block = _section(body, "Project intent") if has_block else ""
+    lines = block.strip("\n").splitlines()
+    subs = {name: _subsection(block, name) for name in PROJECT_INTENT_SECTIONS}
+    present = {name: bool(re.search(rf"^###\s+{re.escape(name)}\s*$", block, re.IGNORECASE | re.M))
+               for name in PROJECT_INTENT_SECTIONS}
+    knowns = _parse_table(subs["Knowns & unknowns"])
+    return {"meta": meta, "meta_comments": comments, "body": body, "has_block": has_block, "block": block,
+            "block_lines": len(lines), "sections": subs, "present": present, "knowns": knowns}
+
+
+def lint_intent(doc: dict, *, kind: str = "project") -> list[tuple[str, str]]:
+    """Text-only lint of one intent home, scaled by lifecycle (discover warns; define and later error)."""
+    out: list[tuple[str, str]] = []
+    meta = doc["meta"]
+    life = (meta.get("lifecycle") or "").strip().lower()
+    if life not in LIFECYCLES:
+        out.append(("ERROR", f"lifecycle {life or '(missing)'!r} is not one of {'|'.join(LIFECYCLES)}"))
+        stage = len(LIFECYCLES)
+    else:
+        stage = LIFECYCLES.index(life)
+    strict = "ERROR" if stage >= 1 else "WARN"
+    if kind == "project":
+        for key in meta:
+            if key not in PROJECT_KEYS:
+                out.append(("WARN", f"frontmatter key {key!r} is not in the PROJECT.md grammar"))
+    inherits = (meta.get("inherits") or "").strip()
+    if inherits and not INHERITS_RE.match(inherits):
+        out.append(("ERROR", f"inherits {inherits!r} is not <owner>/<repo>[#path][@ref]"))
+    if not doc["has_block"]:
+        if not inherits:
+            out.append(("ERROR", "no `## Project intent` block (and no `inherits:`)"))
+        return out + _lint_approval(meta, doc.get("meta_comments"), stage)
+    if doc["block_lines"] > INTENT_MAX_LINES:
+        out.append(("ERROR", f"`## Project intent` is {doc['block_lines']} lines (max {INTENT_MAX_LINES})"))
+    if inherits and not any(doc["present"].values()):
+        return out + _lint_approval(meta, doc.get("meta_comments"), stage)
+    for name in PROJECT_INTENT_SECTIONS:
+        if not doc["present"][name]:
+            out.append((strict, f"missing `### {name}`"))
+            continue
+        content = [ln.strip() for ln in doc["sections"][name].splitlines() if ln.strip()]
+        if not content:
+            out.append((strict, f"`### {name}` is empty (write it, or `n/a (reason)`)"))
+        elif len(content) == 1 and NA_RE.match(content[0]) and not NA_REASON_RE.match(content[0]):
+            out.append(("ERROR", f"`### {name}`: `n/a` needs a reason: `n/a (reason)`"))
+    marks = len(HUMAN_MARK_RE.findall(doc["block"]))
+    if marks:
+        out.append((strict, f"{marks} unresolved [HUMAN: …] marker(s)"))
+    if doc["present"]["Knowns & unknowns"]:
+        sec = doc["sections"]["Knowns & unknowns"]
+        if NA_REASON_RE.match(sec.strip()):
+            pass
+        elif not doc["knowns"]:
+            out.append((strict, "Knowns & unknowns has no claim | label | tier | evidence | decision rule table"))
+        else:
+            cols = set(doc["knowns"][0])
+            missing = [c for c in KNOWNS_COLUMNS if c not in cols]
+            if missing:
+                out.append(("ERROR", f"knowns table lacks column(s): {', '.join(missing)}"))
+            for i, row in enumerate(doc["knowns"], 1):
+                label = (row.get("label") or "").strip().lower()
+                tier = (row.get("tier") or "").strip()
+                if label not in CLAIM_LABELS and not HUMAN_MARK_RE.search(label):
+                    out.append(("ERROR", f"knowns row {i}: label {label!r} is not one of {'|'.join(CLAIM_LABELS)}"))
+                if not TIER_RE.match(tier) and not NA_RE.match(tier) and not HUMAN_MARK_RE.search(tier):
+                    out.append(("ERROR", f"knowns row {i}: tier {tier!r} is not T1..T5"))
+                rule = (row.get("decision_rule") or "").strip()
+                if label != "known" and (not rule or rule in ("-", "—")):
+                    out.append((strict, f"knowns row {i}: a {label or 'claim'} needs a decision rule written "
+                                        "before the evidence"))
+    return out + _lint_approval(meta, doc.get("meta_comments"), stage)
+
+
+def _lint_approval(meta: dict, comments: dict | None, stage: int) -> list[tuple[str, str]]:
+    out: list[tuple[str, str]] = []
+    if not (meta.get("approval") or "").strip():
+        if stage >= 2 and stage < len(LIFECYCLES):
+            out.append(("ERROR", f"lifecycle {LIFECYCLES[stage]} needs an approval (intent-run approve)"))
+        return out
+    det = approval_detail(meta, comments)
+    out += [("ERROR", e) for e in det["errors"]] + [("WARN", w) for w in det["warnings"]]
+    if stage >= 2 and stage < len(LIFECYCLES) and not det["ok"]:
+        out.append(("ERROR", f"lifecycle {LIFECYCLES[stage]} needs an approval, not {det['value']!r}"))
+    return out
+
+
+def has_trailer_lane(top: Path) -> bool:
+    """True when a commit-msg lane (the H18 `ws-lane-*` hook) is configured for this repo."""
+    r = _git(["config", "--get-regexp", r"^hook\..*\.event$"], top)
+    if r.returncode != 0:
+        return False
+    for line in r.stdout.splitlines():
+        key, _, val = line.partition(" ")
+        if val.strip() == "commit-msg" and key.lower().startswith("hook.ws-lane"):
+            return True
+    return False
+
+
+def approval_provenance(path: Path, value: str) -> dict:
+    """Find the commit that introduced the approval (git log -S) and read its agent evidence.
+
+    status: agent | ok | unknown (no trailer lane) | uncommitted | no-git
+    """
+    top = _toplevel(path)
+    if top is None:
+        return {"status": "no-git", "sha": None, "evidence": None}
+    try:
+        rel = path.resolve().relative_to(top).as_posix()
+    except ValueError:
+        return {"status": "no-git", "sha": None, "evidence": None}
+    hit = None
+    for needle in (f"approval: {value}", "approval:"):
+        r = _git(["log", f"-S{needle}", "--format=%H%x1f%s%x1f%B%x1e", "--", rel], top)
+        recs = [x for x in r.stdout.split("\x1e") if x.strip()] if r.returncode == 0 else []
+        if recs:
+            hit = recs[0].strip("\n").split("\x1f")
+            break
+    if hit is None:
+        return {"status": "uncommitted", "sha": None, "evidence": None}
+    sha, subject, body = (hit + ["", "", ""])[:3]
+    for name, rx in AGENT_EVIDENCE:
+        if rx.search(body):
+            return {"status": "agent", "sha": sha, "evidence": f"{name} trailer"}
+    if subject.strip().startswith(AUTO_COMMIT_SUBJECT):
+        return {"status": "agent", "sha": sha, "evidence": "recorded agent chain (session auto-commit)"}
+    if not has_trailer_lane(top):
+        return {"status": "unknown", "sha": sha, "evidence": None}
+    return {"status": "ok", "sha": sha, "evidence": None}
+
+
+def lint_provenance(path: Path, meta: dict, stage: int) -> list[tuple[str, str]]:
+    det = approval_detail(meta)
+    if det["kind"] not in ("approved", "waived"):
+        return []
+    prov = approval_provenance(path, det["value"])
+    st = prov["status"]
+    sha = (prov["sha"] or "")[:9]
+    if st == "agent":
+        lvl = "ERROR" if stage >= 1 else "WARN"
+        return [(lvl, f"BLOCKED — approval introduced by {sha} carries agent evidence ({prov['evidence']}); "
+                      "an approval must be a human commit")]
+    if st == "unknown":
+        return [("WARN", f"provenance unknown — {sha} has no agent trailer, but this repo runs no trailer lane")]
+    if st == "uncommitted":
+        return [("WARN", "approval is not committed yet; provenance unknown until a human commit carries it")]
+    return []
+
+
+def resolve_inheritance(child: dict, meta: dict, det: dict, *, depth: int = 1,
+                        seen: frozenset = frozenset()) -> list[tuple[str, str]]:
+    """Inheritance by remote slug. The order is the wall: classes from the table, conduct, then a read.
+
+    child: {slug, owner_class, profile}. Parent text is held in memory only, never written.
+    """
+    out: list[tuple[str, str]] = []
+    val = (meta.get("inherits") or "").strip()
+    ctx = (meta.get("inherits_context") or "").strip()
+    if ctx:
+        for part in [p.strip() for p in ctx.split(",") if p.strip()]:
+            if part.startswith("vault:"):
+                pid = part[len("vault:"):].strip()
+                if child.get("owner_class") != "personal":
+                    out.append(("ERROR", "inherits_context: a vault: pointer is personal-only"))
+                elif not pid or not (ROOT / "07-projects" / pid).is_dir():
+                    out.append(("ERROR", f"inherits_context vault:{pid} is not a vault project on disk (drift)"))
+            elif not INHERITS_RE.match(part):
+                out.append(("ERROR", f"inherits_context part {part!r} is not <owner>/<repo>#AGENTS.md"))
+            elif not val or INHERITS_RE.match(part).group("slug").casefold() != \
+                    (INHERITS_RE.match(val).group("slug").casefold() if INHERITS_RE.match(val) else ""):
+                out.append(("WARN", f"inherits_context {part!r} names a different slug than inherits"))
+    if not val:
+        return out
+    m = INHERITS_RE.match(val)
+    if not m:
+        return out + [("ERROR", f"inherits {val!r} is not <owner>/<repo>[#path][@ref]")]
+    slug = m.group("slug").casefold()
+    here = frozenset(seen | ({child["slug"]} if child.get("slug") else set()))
+    if slug in here:
+        return out + [("ERROR", f"inheritance cycle at {slug}")]
+    if depth > INHERIT_MAX_DEPTH:
+        return out + [("ERROR", f"inheritance deeper than {INHERIT_MAX_DEPTH} at {slug}")]
+    try:
+        pres = _resolve_repo(slug)  # table only for a slug: no parent read yet
+    except Exception as exc:
+        return out + [("ERROR", f"resolver unavailable for {slug} ({type(exc).__name__}); fail-closed")]
+    c_cls, p_cls = child.get("owner_class"), pres.get("owner_class")
+    if c_cls != p_cls or c_cls not in ("personal", "employer"):
+        return out + [("ERROR", f"cross-owner inheritance: child is {c_cls}, parent {slug} is {p_cls} "
+                                "(only personal→personal or employer→employer; nothing was read)")]
+    conduct = _conduct()
+    if _conduct_rank(child.get("profile"), conduct) < _conduct_rank(pres.get("profile"), conduct):
+        return out + [("ERROR", f"child conduct {child.get('profile')} is looser than parent {slug} "
+                                f"({pres.get('profile')})")]
+    if c_cls != "personal" and _restricted(det):
+        return out + [("WARN", f"parent {slug} is not read from this chain (route: cursor|codex)")]
+    w = _where(slug, det)
+    if not w.get("paths"):
+        return out + [("WARN", f"parent {slug} not on this device ({w.get('status')})")]
+    checkout = Path(w["paths"][0])
+    relp = m.group("path") or PROJECT_FILE
+    rev = m.group("ref") or "origin/HEAD"
+    r = _git(["show", f"{rev}:{relp}"], checkout)
+    if r.returncode == 0:
+        text, src = r.stdout, rev
+    elif (checkout / relp).is_file():
+        text, src = (checkout / relp).read_text(encoding="utf-8"), "working-tree"
+        out.append(("WARN", f"parent {slug}: {rev}:{relp} missing; read the working tree"))
+    else:
+        return out + [("WARN", f"parent {slug} has no {relp} at {rev} or in its working tree")]
+    if _READS is not None:
+        _READS.append((str(checkout), src))
+    parent = parse_intent(text)
+    for lvl, msg in lint_intent(parent):
+        if lvl == "ERROR":
+            out.append(("WARN", f"parent {slug}: {msg}"))
+    out += resolve_inheritance({"slug": slug, "owner_class": p_cls, "profile": pres.get("profile")},
+                               parent["meta"], det, depth=depth + 1, seen=here)
+    return out
+
+
+def _profile_drift(meta: dict, res: dict, ss_profile: str | None) -> list[tuple[str, str]]:
+    out: list[tuple[str, str]] = []
+    declared = (meta.get("profile") or "").strip()
+    if not declared:
+        return out
+    conduct = _conduct()
+    if declared not in conduct:
+        return [("ERROR", f"profile {declared!r} is not a context profile ({'|'.join(conduct)})")]
+    if res.get("owner_class") != "personal":
+        out.append(("ERROR", "profile: is for personal repos only (the context table is authoritative)"))
+    for c in res.get("conflicts") or []:
+        if "PROJECT.md profile" in c:
+            out.append(("ERROR", f"{c} (drift: profile may only tighten)"))
+    if ss_profile and _conduct_rank(declared, conduct) < _conduct_rank(ss_profile, conduct):
+        out.append(("ERROR", f"profile {declared} is looser than the SESSION-STATE declaration {ss_profile}"))
+    return out
+
+
+def _session_state_profile(project_dir: Path) -> str | None:
+    try:
+        text = (project_dir / "SESSION-STATE.md").read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return None
+    conduct = _conduct()
+    for line in text.splitlines():
+        if "context profile" in line.casefold():
+            for tok in re.findall(r"`([^`]+)`", line):
+                if tok in conduct:
+                    return tok
+    return None
+
+
+def lint_home(path: Path, *, kind: str, res: dict, det: dict, repo_top: Path | None,
+              ss_profile: str | None = None) -> list[tuple[str, str]]:
+    """Full lint of one intent home: text, pointers, drift, provenance, employer approvals, inheritance."""
+    doc = parse_intent(path.read_text(encoding="utf-8"))
+    out = lint_intent(doc, kind=kind)
+    meta = doc["meta"]
+    life = (meta.get("lifecycle") or "").strip().lower()
+    stage = LIFECYCLES.index(life) if life in LIFECYCLES else len(LIFECYCLES)
+    if repo_top is not None:
+        agents = repo_top / "AGENTS.md"
+        if not agents.is_file():
+            out.append(("WARN", "no AGENTS.md: add the pointer line so every agent finds PROJECT.md"))
+        elif not POINTER_RE.search(agents.read_text(encoding="utf-8", errors="replace")):
+            out.append(("ERROR", f"AGENTS.md lacks the pointer line: {POINTER_LINE}"))
+        override = repo_top / "AGENTS.override.md"
+        if override.is_file() and not POINTER_RE.search(override.read_text(encoding="utf-8", errors="replace")):
+            out.append(("ERROR", "AGENTS.override.md lacks the pointer line (Codex reads it instead of AGENTS.md)"))
+    out += _profile_drift(meta, res, ss_profile)
+    det_a = approval_detail(meta, doc.get("meta_comments"))
+    if res.get("owner_class") == "employer" and det_a["kind"] not in ("approved-pr", "pending"):
+        out.append(("ERROR", "employer intent accepts only `approved via PR <n>`"))
+    elif det_a["kind"] in ("approved", "waived"):
+        out += lint_provenance(path, meta, stage)
+    child = {"slug": _origin_slug(res), "owner_class": res.get("owner_class"), "profile": res.get("profile")}
+    out += resolve_inheritance(child, meta, det)
+    return out
+
+
+def _vault_project_dirs() -> list[tuple[Path, str | None]]:
+    """Readable, personal vault projects. Read-denied (employer) folders are skipped silently."""
+    base = ROOT / "07-projects"
+    out: list[tuple[Path, str | None]] = []
+    try:
+        kids = sorted(base.iterdir())
+    except OSError:
+        return out
+    conduct = _conduct()
+    for d in kids:
+        if d.name.startswith((".", "_")) or not d.is_dir():
+            continue
+        try:
+            os.listdir(d)
+        except OSError:
+            continue
+        ss = _session_state_profile(d)
+        if ss and ss != conduct[0]:
+            continue  # declared non-personal: never linted from here
+        out.append((d, ss))
+    return out
+
+
+def lint_vault_project(d: Path, ss_profile: str | None, det: dict, res_ws: dict) -> list[tuple[str, str]]:
+    pm, readme = d / PROJECT_FILE, d / "README.md"
+    rtext = ""
+    if readme.is_file():
+        try:
+            rtext = readme.read_text(encoding="utf-8")
+        except OSError:
+            rtext = ""
+    block = bool(re.search(r"^##\s+Project intent\s*$", rtext, re.IGNORECASE | re.M))
+    if pm.is_file() and block:
+        return [("ERROR", "one home: both PROJECT.md and a README `## Project intent` block exist")]
+    if pm.is_file():
+        return lint_home(pm, kind="project", res=res_ws, det=det, repo_top=None, ss_profile=ss_profile)
+    if block:
+        return lint_home(readme, kind="readme", res=res_ws, det=det, repo_top=None, ss_profile=ss_profile)
+    pm_ptr = README_POINTER_RE.search(rtext)
+    if pm_ptr:
+        target = pm_ptr.group("target").rstrip(".,;")
+        if NA_RE.match(target):
+            if not NA_REASON_RE.match((target + pm_ptr.group("rest")).strip()):
+                return [("ERROR", "`Project intent: n/a` needs a reason")]
+            return [("INFO", "intent: n/a (reason given)")]
+        slug = target.split(":", 1)[0]
+        if not INHERITS_RE.match(slug):
+            return [("ERROR", f"README pointer {target!r} is not <owner>/<repo>:PROJECT.md")]
+        w = _where(slug.casefold(), det)
+        if not w.get("paths"):
+            return [("WARN", f"intent lives in {slug}; that checkout is not on this device ({w.get('status')})")]
+        return lint_repo(Path(w["paths"][0]), det, missing_ok=True)
+    return [("WARN", "no intent home (PROJECT.md, a README `## Project intent` block, or a README pointer)")]
+
+
+def lint_repo(top: Path, det: dict, *, missing_ok: bool = False) -> list[tuple[str, str]]:
+    try:
+        if _restricted(det):
+            pol = _policy(top, "content-read", det)
+            if pol.get("outcome") != "allow":
+                return [("REFUSED", pol.get("reason") or "not allowed from this chain")]
+        res = _resolve_repo(top)
+    except Exception as exc:
+        return [("ERROR", f"resolver unavailable ({type(exc).__name__}); fail-closed")]
+    pm = top / PROJECT_FILE
+    if not pm.is_file():
+        return [("WARN" if missing_ok else "ERROR",
+                 f"no {PROJECT_FILE}; frame one: python3 09-tools/intent-run.py init --frame --repo {top}")]
+    return lint_home(pm, kind="project", res=res, det=det, repo_top=top)
+
+
+def _print_findings(where_label: str, findings: list[tuple[str, str]]) -> tuple[int, int]:
+    errs = sum(1 for lvl, _ in findings if lvl in ("ERROR", "REFUSED"))
+    warns = sum(1 for lvl, _ in findings if lvl == "WARN")
+    if not findings:
+        print(f"{where_label}: ok")
+    for lvl, msg in findings:
+        print(f"{where_label}: {lvl} {msg}")
+    return errs, warns
+
+
+def cmd_lint(*, repo: str | None, spec: str | None, all_: bool) -> int:
+    det = _detection()
+    errs = warns = 0
+    if spec:
+        sp = Path(spec).expanduser().resolve()
+        doc = load_spec(sp)
+        findings = lint_spec(doc)
+        try:
+            res = _resolve_repo(sp.parent)
+        except Exception:
+            res = {}
+        a = approval_detail(doc["meta"], doc.get("meta_comments"))
+        if res.get("owner_class") == "employer" and a["kind"] not in ("approved-pr", "pending"):
+            findings.append(("ERROR", "employer specs accept only `approved via PR <n>`"))
+        elif a["kind"] in ("approved", "waived"):
+            findings += lint_provenance(sp, doc["meta"], 2)
+        e, w = _print_findings(str(sp), findings)
+        return 1 if e else 0
+    if repo and not all_:
+        top = _toplevel(Path(repo).expanduser().resolve()) or Path(repo).expanduser().resolve()
+        e, w = _print_findings(str(top), lint_repo(top, det))
+        return 1 if e else 0
+    if not all_:
+        top = _toplevel(Path.cwd())
+        if top is None:
+            print("lint: pass --repo DIR, --spec PATH or --all", file=sys.stderr)
+            return 2
+        e, w = _print_findings(str(top), lint_repo(top, det))
+        return 1 if e else 0
+    try:
+        res_ws = _resolve_repo(ROOT)
+    except Exception:
+        res_ws = {"owner_class": "unknown", "profile": _conduct()[-1], "remotes": []}
+    homes = 0
+    for d, ss in _vault_project_dirs():
+        homes += 1
+        e, w = _print_findings(d.relative_to(ROOT).as_posix(), lint_vault_project(d, ss, det, res_ws))
+        errs, warns = errs + e, warns + w
+    skipped = 0
+    cache = None
+    try:
+        pr = _pr()
+        dev = pr.current_device(hostname=_PR_KW.get("hostname"), root=_PR_KW.get("root"))["id"]
+        cache = pr._load_cache(None, _PR_KW.get("home"))
+        if cache is not None and cache.get("device") not in (None, dev):
+            print("lint --all: checkout cache belongs to another device; checkouts skipped")
+            cache = None
+    except Exception as exc:
+        print(f"lint --all: checkout cache unavailable ({type(exc).__name__})")
+    for co in (cache or {}).get("checkouts") or []:
+        p = Path(str(co.get("path") or ""))
+        if not p.is_dir():
+            continue
+        try:
+            if _pr().is_workspace_checkout(p, root=_PR_KW.get("root"), home=_PR_KW.get("home")):
+                continue  # the vault projects above cover the workspace
+        except Exception:
+            pass
+        if co.get("owner_class") != "personal" and _restricted(det):
+            skipped += 1
+            continue
+        homes += 1
+        e, w = _print_findings(str(p), lint_repo(p, det, missing_ok=True))
+        errs, warns = errs + e, warns + w
+    print(f"lint --all: {homes} home(s), {errs} error(s), {warns} warning(s); "
+          f"{skipped} non-personal checkout(s) skipped from this chain")
+    return 1 if errs else 0
+
+
+def _intent_target(repo: str | None, spec: str | None) -> Path:
+    if spec:
+        return Path(spec).expanduser().resolve()
+    base = Path(repo).expanduser().resolve() if repo else Path.cwd()
+    if (base / PROJECT_FILE).is_file():
+        return base / PROJECT_FILE
+    readme = base / "README.md"
+    if readme.is_file() and re.search(r"^##\s+Project intent\s*$", readme.read_text(encoding="utf-8"),
+                                      re.IGNORECASE | re.M):
+        return readme
+    top = _toplevel(base)
+    if top is not None and (top / PROJECT_FILE).is_file():
+        return top / PROJECT_FILE
+    return base / PROJECT_FILE
+
+
+def cmd_next(repo: str | None) -> int:
+    target = _intent_target(repo, None)
+    if not target.is_file():
+        print(f"next: frame the intent — python3 09-tools/intent-run.py init --frame --repo {target.parent}")
+        return 0
+    doc = parse_intent(target.read_text(encoding="utf-8"))
+    findings = lint_intent(doc, kind="project" if target.name == PROJECT_FILE else "readme")
+    errors = [m for lvl, m in findings if lvl == "ERROR"]
+    life = (doc["meta"].get("lifecycle") or "").strip().lower()
+    if errors:
+        print(f"next: fix — {errors[0]}")
+        return 1
+    steps = {
+        "discover": "resolve the [HUMAN: …] markers and write a decision rule for every non-known claim, "
+                    "then set lifecycle: define",
+        "define": "a human approves: python3 09-tools/intent-run.py approve --repo <dir> --by <name> "
+                  "(employer repos: `approved via PR <n>`), then set lifecycle: build",
+        "build": "verify against the living spec: python3 09-tools/intent-run.py verify --run --record",
+        "operate": "keep the knowns table current; re-run intent-run lint when a claim changes",
+    }
+    print(f"next ({life}): {steps.get(life, 'set a lifecycle: ' + '|'.join(LIFECYCLES))}")
+    return 0
+
+
+def _set_frontmatter_key(text: str, key: str, value: str) -> str:
+    line = f"{key}: {value}"
+    if not text.startswith("---"):
+        return f"---\n{line}\n---\n\n" + text
+    end = text.find("\n---", 3)
+    head, tail = text[: end], text[end:]
+    rx = re.compile(rf"(?m)^{re.escape(key)}\s*:.*$")
+    if rx.search(head):
+        head = rx.sub(line.replace("\\", "\\\\"), head, count=1)
+    else:
+        head = head.rstrip("\n") + "\n" + line
+    return head + tail
+
+
+def cmd_approve(*, repo: str | None, spec: str | None, by: str, note: str | None) -> int:
+    """Human-only, personal-solo only. Writes the approval line; the human commits it."""
+    human = _HUMAN_OVERRIDE
+    if human is None:
+        try:
+            human = bool(_pr().agent_check().get("human"))
+        except Exception:
+            human = False
+    if not human:
+        print("REFUSED — approve needs a human at a terminal (an agent cannot approve its own plan)",
+              file=sys.stderr)
+        return 4
+    if not re.fullmatch(r"[^\s#]+", by or "") or (note and "#" in note):
+        print("approve: --by is one word without '#', and --note has no '#'", file=sys.stderr)
+        return 2
+    target = _intent_target(repo, spec)
+    if not target.is_file():
+        print(f"approve: no intent home or spec at {target}", file=sys.stderr)
+        return 2
+    try:
+        res = _resolve_repo(target.parent)
+    except Exception as exc:
+        print(f"REFUSED — resolver unavailable ({type(exc).__name__})", file=sys.stderr)
+        return 4
+    if not res.get("positively_personal"):
+        print("REFUSED — approve writes only in personal-solo repos; employer approvals are "
+              "`approved via PR <n>` recorded by the PR", file=sys.stderr)
+        return 4
+    import datetime as _dt
+    value = f"approved {_dt.date.today().isoformat()} by {by}" + (f" {note.strip()}" if note else "")
+    target.write_text(_set_frontmatter_key(target.read_text(encoding="utf-8"), "approval", value),
+                      encoding="utf-8")
+    print(f"wrote approval to {target}: {value}")
+    print("Commit it yourself, as a human commit with no agent trailer; lint checks the provenance.")
+    return 0
+
+
+def render_project_intent(*, neutral: bool, lifecycle: str = "discover", inherits: str | None = None,
+                          inherits_context: str | None = None) -> str:
+    """The template, rendered. --neutral drops ws-only lines (and so every `profile:`)."""
+    raw = PROJECT_TEMPLATE.read_text(encoding="utf-8")
+    lines = []
+    for ln in raw.splitlines():
+        if WS_ONLY_MARK in ln:
+            if neutral:
+                continue
+            ln = ln.replace(" " + WS_ONLY_MARK, "").replace(WS_ONLY_MARK, "")
+        if ln.startswith("lifecycle:"):
+            ln = f"lifecycle: {lifecycle}"
+        lines.append(ln)
+    text = "\n".join(lines).rstrip("\n") + "\n"
+    if inherits:
+        ctx = inherits_context
+        if neutral and ctx:
+            ctx = ", ".join(p.strip() for p in ctx.split(",") if not p.strip().startswith("vault:")) or None
+        extra = f"inherits: {inherits}\n" + (f"inherits_context: {ctx}\n" if ctx else "")
+        meta_end = text.find("\n---", 3)
+        head = text[: meta_end + 4]
+        head = head[: -4].rstrip("\n") + "\n" + extra + "---"
+        text = head + "\n\n## Project intent\n\n" + CHILD_SENTENCE + "\n"
+    return text
+
+
+def _load_check_secrets():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("check_secrets_ws", TOOLS / "check-secrets.py")
+    mod = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def workspace_leak_hits(text: str) -> list[tuple[int, str]]:
+    return _load_check_secrets().workspace_leak_scan(text)
+
+
+def _ensure_pointer(path: Path, *, create: bool) -> str:
+    if path.is_file():
+        text = path.read_text(encoding="utf-8")
+        if POINTER_RE.search(text):
+            return "present"
+        path.write_text(text.rstrip("\n") + "\n\n" + POINTER_LINE + "\n", encoding="utf-8")
+        return "added"
+    if not create:
+        return "absent"
+    path.write_text("# AGENTS.md\n\n" + POINTER_LINE + "\n", encoding="utf-8")
+    return "created"
+
+
+def cmd_init_frame(repo: str | None, *, neutral: bool = False, stdout: bool = False,
+                   inherits: str | None = None, inherits_context: str | None = None,
+                   lifecycle: str = "discover") -> int:
+    if lifecycle not in LIFECYCLES:
+        print(f"init --frame: --lifecycle is one of {'|'.join(LIFECYCLES)}", file=sys.stderr)
+        return 2
+    if inherits and not INHERITS_RE.match(inherits):
+        print("init --frame: --inherits is <owner>/<repo>[#path][@ref]", file=sys.stderr)
+        return 2
+    det = _detection()
+    top = Path(repo).expanduser().resolve() if repo else Path.cwd().resolve()
+    try:
+        if _restricted(det):
+            # The Claude refusal runs through the action policy before anything in the repo is read.
+            pol = _policy(top, "author", det)
+            if pol.get("outcome") != "allow" or not (pol.get("facts") or {}).get("positively_personal"):
+                route = " or ".join(pol.get("route_to") or []) or "cursor or codex"
+                print(f"REFUSED — {pol.get('reason') or 'not positively personal'}", file=sys.stderr)
+                print(f"route: {route} runs `intent-run init --frame --repo <path> --neutral --stdout` "
+                      "and lands it by branch → PR → human review", file=sys.stderr)
+                return 4
+        res = _resolve_repo(top)
+    except Exception as exc:
+        print(f"REFUSED — resolver unavailable ({type(exc).__name__}); fail-closed", file=sys.stderr)
+        return 4
+    personal = bool(res.get("positively_personal"))
+    use_neutral = neutral or not personal
+    text = render_project_intent(neutral=use_neutral, lifecycle=lifecycle, inherits=inherits,
+                                 inherits_context=inherits_context)
+    if use_neutral:
+        hits = workspace_leak_hits(text)
+        if hits:
+            for line, rule in hits:
+                print(f"PROJECT.md:{line} {rule}", file=sys.stderr)
+            print("init --frame: the neutral render failed the workspace-leak scan", file=sys.stderr)
+            return 1
+    if stdout or not personal:
+        print(text, end="")
+        if not personal:
+            print("not positively personal: printed for a branch → PR; nothing was written", file=sys.stderr)
+        return 0
+    pm = top / PROJECT_FILE
+    if pm.exists():
+        print(f"exists: {pm}")
+    else:
+        pm.write_text(text, encoding="utf-8")
+        print(f"wrote {pm}")
+    print(f"AGENTS.md pointer: {_ensure_pointer(top / 'AGENTS.md', create=True)}")
+    ov = _ensure_pointer(top / "AGENTS.override.md", create=False)
+    if ov != "absent":
+        print(f"AGENTS.override.md pointer: {ov}")
+    print("Fill the [HUMAN: …] markers, then: python3 09-tools/intent-run.py lint --repo " + str(top))
+    return 0
+
+
+def _sha256(data: bytes) -> str:
+    import hashlib
+    return hashlib.sha256(data).hexdigest()
+
+
+def verify_record(spec_path: Path, results: list[tuple[int, str, str]], counts: dict, run: bool) -> Path | None:
+    """Append a verify record. Personal/workspace: <spec>.verify.jsonl beside the spec.
+    Anything else: counts, ids and hashes only, under ~/.config/snds-workspace/state/telemetry/<slug>/."""
+    import datetime as _dt
+    det = _detection()
+    try:
+        pr = _pr()
+        device = pr.current_device(hostname=_PR_KW.get("hostname"), root=_PR_KW.get("root"))["id"]
+    except Exception:
+        pr, device = None, "unknown"
+    try:
+        res = _resolve_repo(spec_path.parent)
+    except Exception:
+        res = {}
+    personal = bool(res.get("positively_personal"))
+    if not personal and pr is not None:
+        try:
+            personal = bool(pr.is_workspace_checkout(spec_path.parent, root=_PR_KW.get("root"),
+                                                     home=_PR_KW.get("home")))
+        except Exception:
+            personal = False
+    base = {"schema_version": 1, "ts": _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "surface": det.get("acting_host"), "family": det.get("family"), "via": det.get("via"),
+            "device": device, "run": run, "counts": counts}
+    if personal:
+        rec = dict(base, spec=spec_path.name,
+                   checks=[{"id": i, "label": lab, "status": st} for i, lab, st in results])
+        dest = spec_path.with_name(spec_path.stem + ".verify.jsonl")
+    else:
+        slug = _origin_slug(res) or "_unknown"
+        rec = dict(base, slug=slug, spec_sha256=_sha256(spec_path.read_bytes()),
+                   checks=[{"id": i, "label_sha256": _sha256(lab.encode("utf-8"))[:16], "status": st}
+                           for i, lab, st in results])
+        home = Path(_PR_KW.get("home") or Path.home())
+        dest = home / ".config" / "snds-workspace" / "state" / "telemetry"
+        for part in slug.split("/"):
+            dest = dest / re.sub(r"[^A-Za-z0-9_.-]", "_", part)
+        dest = dest / "verify.jsonl"
+        top = _toplevel(spec_path)
+        for guard in [p for p in (top, spec_path.parent) if p is not None]:
+            if dest.resolve().is_relative_to(guard.resolve()):
+                print("verify --record: refused a record path inside the repo", file=sys.stderr)
+                return None
+    try:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        with open(dest, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(rec, ensure_ascii=False, separators=(",", ":")) + "\n")
+    except OSError as exc:
+        print(f"verify --record: not written ({type(exc).__name__})", file=sys.stderr)
+        return None
+    print(f"verify record: {dest}")
+    return dest
 
 
 # ---------------------------------------------------------------------------
@@ -1877,6 +2707,295 @@ def _st_scope_audit() -> None:
         assert "NOTE unaudited direct commit" in out and "wave0(T0): table rows" in out, (rc, out)
 
 
+CLAUDE_DET = {"acting_host": "claude-code", "family": "claude", "family_for_walls": "claude", "via": "ancestry",
+              "verified": True, "agent_possible": True}
+CURSOR_DET = {"acting_host": "cursor", "family": "cursor", "family_for_walls": "cursor", "via": "env",
+              "verified": True, "agent_possible": False}
+LANE_CFG = '[hook "ws-lane-commit-msg"]\n\tcommand = true\n\tevent = commit-msg\n'
+
+
+@contextlib.contextmanager
+def _pr_context(root: Path, home: Path, det: dict, human: bool | None = None):
+    global _DETECTION_OVERRIDE, _HUMAN_OVERRIDE, _READS
+    saved = (dict(_PR_KW), _DETECTION_OVERRIDE, _HUMAN_OVERRIDE, _READS)
+    _PR_KW.update(root=root, home=home, hostname="host-a")
+    _DETECTION_OVERRIDE, _HUMAN_OVERRIDE, _READS = det, human, []
+    try:
+        yield
+    finally:
+        _PR_KW.clear()
+        _PR_KW.update(saved[0])
+        _DETECTION_OVERRIDE, _HUMAN_OVERRIDE, _READS = saved[1], saved[2], saved[3]
+
+
+def _pr_fixture_root(td: Path) -> tuple[Path, Path, list[str]]:
+    """Synthetic tables (pat-sample personal, acme-corp employer), a temp HOME with telemetry/."""
+    pr = _pr()
+    root = td / "fxroot"
+    for name, src in (("devices", "profile_resolve"), ("context-remotes", "profile_resolve"),
+                      ("surfaces", "profile_resolve"), ("action-policy", "action_policy"),
+                      ("vetted-scripts", "action_policy")):
+        dest = root / pr.TABLE_PATHS[name]
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text((TOOLS / "fixtures" / src / f"{name}.json").read_text(encoding="utf-8"), encoding="utf-8")
+    cr_path = root / pr.TABLE_PATHS["context-remotes"]
+    cr = json.loads(cr_path.read_text(encoding="utf-8"))
+    conduct = list(cr["conduct_order"])
+    cr["repos"].append({"slug": "pat-sample/strict", "host": "github.com", "role": "personal",
+                        "profile": conduct[1], "visibility": "private", "beacon": False, "vault_project": None})
+    cr_path.write_text(json.dumps(cr, indent=2) + "\n", encoding="utf-8")
+    (root / "AGENTS.md").write_text("# fixture workspace\n", encoding="utf-8")
+    home = td / "home"
+    (home / ".config" / "snds-workspace" / "telemetry").mkdir(parents=True, exist_ok=True)
+    return root, home, conduct
+
+
+def _fx_cache(home: Path, repos: dict) -> None:
+    """repos: slug -> checkout path. Rewritten before each case (a live rescan may replace it)."""
+    doc = {"schema_version": 1, "device": "dev-a", "generated_at": "2026-01-01T00:00:00Z", "generated_by": "human",
+           "projects_root": str(home / "Projects"),
+           "checkouts": [{"path": str(p), "kind": "repo", "owner_class": "personal", "default_branch": None,
+                          "remotes": [{"name": "origin", "form": "https", "host": "github.com", "slug": s}]}
+                         for s, p in repos.items()]}
+    for co in doc["checkouts"]:
+        if co["remotes"][0]["slug"].startswith("acme-corp/"):
+            co["owner_class"] = "employer"
+    (home / ".config" / "snds-workspace" / "telemetry" / "checkouts.json").write_text(json.dumps(doc), encoding="utf-8")
+
+
+def _fx_intent(lifecycle: str = "define", extra_meta: str = "", sentinel: str = "") -> str:
+    return (f"---\nlifecycle: {lifecycle}\n{extra_meta}---\n\n## Project intent\n\n### Problem & audience\n\n"
+            f"A synthetic problem for a synthetic audience. {sentinel}\n\n### Knowns & unknowns\n\n"
+            "| claim | label | tier | evidence | decision rule |\n|---|---|---|---|---|\n"
+            "| People want the widget | assumed | T4 | two interviews | if fewer than 3 of 5 confirm, drop it |\n\n"
+            "### Out of scope & later\n\nn/a (fixture)\n")
+
+
+def _fx_repo(td: Path, name: str, slug: str, files: dict | None = None, *, msg: str = "init",
+             lane: bool = False, agents: bool = True) -> Path:
+    repo, env = _new_repo(td, name)
+    _run_fixture_git(["remote", "add", "origin", f"https://github.com/{slug}.git"], repo, env)
+    if lane:
+        with open(repo / ".git" / "config", "a", encoding="utf-8") as fh:
+            fh.write(LANE_CFG)
+    files = dict(files or {})
+    if agents:
+        files.setdefault("AGENTS.md", "# agents\n\n" + POINTER_LINE + "\n")
+    h = _History(repo, env)
+    mark = h.commit("main", msg, files)
+    h.flush()
+    sha = h.sha(mark)
+    _run_fixture_git(["update-ref", "refs/remotes/origin/main", sha], repo, env)
+    _run_fixture_git(["symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/main"], repo, env)
+    for rel, content in files.items():
+        (repo / rel).parent.mkdir(parents=True, exist_ok=True)
+        (repo / rel).write_text(content, encoding="utf-8")
+    return repo
+
+
+def _levels(findings: list[tuple[str, str]], level: str) -> list[str]:
+    return [m for lvl, m in findings if lvl == level]
+
+
+def _snapshot(top: Path) -> dict:
+    return {p.relative_to(top).as_posix(): p.read_bytes() for p in sorted(top.rglob("*")) if p.is_file()}
+
+
+def _st_project_frame() -> None:
+    import builtins
+    from unittest import mock
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        root, home, _ = _pr_fixture_root(td)
+        projects = home / "Projects"  # under projects_root a Claude chain resolves from the cache only
+        projects.mkdir()
+        emp = _fx_repo(projects, "emp", "acme-corp/widget", {"README.md": "x\n"})
+        mine = _fx_repo(td, "mine", "pat-sample/child", {"README.md": "x\n"}, agents=False)
+        _fx_cache(home, {"acme-corp/widget": emp})
+        # Claude chain + not-personal repo: refused through the policy, nothing in the repo read or written.
+        before = _snapshot(emp)
+        seen: list[str] = []
+        real_open = builtins.open
+
+        def spy(file, *a, **kw):
+            seen.append(str(file))
+            return real_open(file, *a, **kw)
+
+        with _pr_context(root, home, CLAUDE_DET), mock.patch("builtins.open", spy), mock.patch("io.open", spy):
+            rc, out = _quiet(cmd_init_frame, str(emp))
+        assert rc == 4 and "REFUSED" in out and "route" in out, (rc, out)
+        read_in_repo = [p for p in seen if p.startswith(str(emp) + "/") and not p.startswith(str(emp / ".git"))]
+        assert not read_in_repo, read_in_repo
+        assert _snapshot(emp) == before, "refused init changed the employer repo"
+        # Non-Claude surface + not-personal repo: the neutral render on stdout, never written.
+        with _pr_context(root, home, CURSOR_DET):
+            rc, out = _quiet(cmd_init_frame, str(emp))
+        assert rc == 0 and "## Project intent" in out and "profile:" not in out, out
+        assert "nothing was written" in out and _snapshot(emp) == before
+        assert workspace_leak_hits(render_project_intent(neutral=True)) == []
+        assert workspace_leak_hits(render_project_intent(neutral=False)), "workspace render should be flagged"
+        # Claude chain + personal repo: PROJECT.md and the AGENTS.md pointer are written.
+        with _pr_context(root, home, CLAUDE_DET):
+            rc, out = _quiet(cmd_init_frame, str(mine))
+            assert rc == 0 and (mine / PROJECT_FILE).is_file(), out
+            assert POINTER_RE.search((mine / "AGENTS.md").read_text(encoding="utf-8"))
+            f = lint_repo(mine, CLAUDE_DET)
+            assert not _levels(f, "ERROR"), f  # a fresh frame is fine at discover...
+            pm = mine / PROJECT_FILE
+            pm.write_text(pm.read_text(encoding="utf-8").replace("lifecycle: discover", "lifecycle: define"),
+                          encoding="utf-8")
+            f = lint_repo(mine, CLAUDE_DET)
+            assert any("[HUMAN" in m for m in _levels(f, "ERROR")), f  # ...and fails from define onward
+            pm.write_text(_fx_intent(), encoding="utf-8")
+            assert not _levels(lint_repo(mine, CLAUDE_DET), "ERROR")
+            (mine / "AGENTS.override.md").write_text("# override\n", encoding="utf-8")
+            f = lint_repo(mine, CLAUDE_DET)
+            assert any("AGENTS.override.md" in m for m in _levels(f, "ERROR")), f
+            rc, _ = _quiet(cmd_init_frame, str(mine))
+            assert rc == 0 and not _levels(lint_repo(mine, CLAUDE_DET), "ERROR")
+            rc, out = _quiet(cmd_lint, repo=str(mine), spec=None, all_=False)
+            assert rc == 0, out
+            pm.write_text(_fx_intent(extra_meta="profile: nonsense\n"), encoding="utf-8")
+            assert _levels(lint_repo(mine, CLAUDE_DET), "ERROR")
+
+
+def _st_project_inheritance() -> None:
+    global _READS
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        root, home, conduct = _pr_fixture_root(td)
+        sentinel = "PARENT-SENTINEL-7f3a"
+        parent = _fx_repo(td, "parent", "pat-sample/parent", {PROJECT_FILE: _fx_intent(sentinel=sentinel)})
+        (parent / PROJECT_FILE).write_text(_fx_intent(sentinel="WORKTREE-ONLY"), encoding="utf-8")
+
+        def child_of(name: str, slug: str, parent_slug: str) -> Path:
+            meta = f"inherits: {parent_slug}\n"
+            return _fx_repo(td, name, slug,
+                            {PROJECT_FILE: f"---\nlifecycle: define\n{meta}---\n\n## Project intent\n\n"
+                                           f"{CHILD_SENTENCE}\n"})
+
+        c_ok = child_of("c-ok", "pat-sample/child", "pat-sample/parent")
+        c_cross = child_of("c-cross", "pat-sample/cross", "acme-corp/widget")
+        c_strict = child_of("c-strict", "pat-sample/loose", "pat-sample/strict")
+        c_absent = child_of("c-absent", "pat-sample/lonely", "pat-sample/missing")
+        cyc_a = child_of("cyc-a", "pat-sample/cyc-a", "pat-sample/cyc-b")
+        cyc_b = child_of("cyc-b", "pat-sample/cyc-b", "pat-sample/cyc-a")
+        d = [child_of(f"d{i}", f"pat-sample/d{i}", f"pat-sample/d{i + 1}") for i in range(5)]
+        cache = {"pat-sample/parent": parent, "pat-sample/cyc-a": cyc_a, "pat-sample/cyc-b": cyc_b}
+        cache.update({f"pat-sample/d{i}": d[i] for i in range(5)})
+        with _pr_context(root, home, CLAUDE_DET):
+            _fx_cache(home, cache)
+            f = lint_repo(c_ok, CLAUDE_DET)
+            assert not _levels(f, "ERROR"), f
+            assert _READS == [(str(parent), "origin/HEAD")], _READS  # origin/HEAD preferred over the tree
+            _READS = []
+            f = lint_repo(c_cross, CLAUDE_DET)
+            assert any("cross-owner" in m for m in _levels(f, "ERROR")) and _READS == [], (f, _READS)
+            f = lint_repo(c_strict, CLAUDE_DET)
+            assert any("looser" in m for m in _levels(f, "ERROR")) and _READS == [], (f, _READS)
+            f = lint_repo(c_absent, CLAUDE_DET)
+            assert not _levels(f, "ERROR") and any("not on this device" in m for m in _levels(f, "WARN")), f
+            rc, _ = _quiet(cmd_lint, repo=str(c_absent), spec=None, all_=False)
+            assert rc == 0
+            f = lint_repo(cyc_a, CLAUDE_DET)
+            assert any("cycle" in m for m in _levels(f, "ERROR")), f
+            f = lint_repo(d[0], CLAUDE_DET)
+            assert any("deeper than" in m for m in _levels(f, "ERROR")), f
+            # A missing origin/HEAD falls back to the working tree with a WARN.
+            _run_fixture_git(["symbolic-ref", "--delete", "refs/remotes/origin/HEAD"], parent, _fixture_env(home))
+            _READS = []
+            f = lint_repo(c_ok, CLAUDE_DET)
+            assert _READS == [(str(parent), "working-tree")] and any("working tree" in m for m in _levels(f, "WARN"))
+        # Parent intent text is never written anywhere outside the parent checkout.
+        for p in td.rglob("*"):
+            if p.is_file() and not str(p).startswith(str(parent)):
+                assert sentinel.encode() not in p.read_bytes(), f"parent text cached at {p}"
+
+
+def _st_provenance() -> None:
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        root, home, _ = _pr_fixture_root(td)
+        approved = _fx_intent(extra_meta="approval: approved 2026-01-02 by Pat\n")
+        cases = [
+            ("cursor", "Co-authored-by: Cursor <cursoragent@cursor.com>", True, "ERROR", "BLOCKED"),
+            ("codex", "Workspace-Agent: codex", True, "ERROR", "BLOCKED"),
+            ("claude", "Co-Authored-By: Claude <noreply@anthropic.com>", True, "ERROR", "BLOCKED"),
+            ("nolane", "", False, "WARN", "provenance unknown"),
+            ("human", "", True, None, None),
+        ]
+        with _pr_context(root, home, CLAUDE_DET):
+            for name, trailer, lane, level, needle in cases:
+                msg = "intent: approve" + (f"\n\n{trailer}\n" if trailer else "\n")
+                repo = _fx_repo(td, f"prov-{name}", f"pat-sample/prov-{name}", {PROJECT_FILE: approved},
+                                msg=msg, lane=lane)
+                f = lint_repo(repo, CLAUDE_DET)
+                prov = [(lvl, m) for lvl, m in f if "provenance" in m or "BLOCKED" in m]
+                if level is None:
+                    assert not prov and not _levels(f, "ERROR"), (name, f)
+                else:
+                    assert any(lvl == level and needle in m for lvl, m in prov), (name, f)
+            # The gate refuses a spec whose approval came from an agent-marked commit.
+            spec_text = "---\nprofile: personal-solo\napproval: approved 2026-01-02 by Pat\n---\n# s\n"
+            repo = _fx_repo(td, "gate", "pat-sample/gate", {"docs/INTENT.md": spec_text},
+                            msg="spec\n\nCo-authored-by: Cursor <cursoragent@cursor.com>\n", lane=True)
+            rc, out = _quiet(cmd_gate, repo / "docs" / "INTENT.md")
+            assert rc == 1 and "BLOCKED" in out, out
+        # Employer intent accepts only `approved via PR <n>` (read by a non-Claude surface).
+        with _pr_context(root, home, CURSOR_DET):
+            ok = _fx_repo(td, "emp-pr", "acme-corp/pr-ok",
+                          {PROJECT_FILE: _fx_intent(extra_meta="approval: approved via PR 12\n")})
+            assert not _levels(lint_repo(ok, CURSOR_DET), "ERROR")
+            bad = _fx_repo(td, "emp-date", "acme-corp/pr-bad", {PROJECT_FILE: approved})
+            assert any("approved via PR" in m for m in _levels(lint_repo(bad, CURSOR_DET), "ERROR"))
+        # A Claude chain never lints an employer repo: the policy routes it.
+        with _pr_context(root, home, CLAUDE_DET):
+            f = lint_repo(ok, CLAUDE_DET)
+            assert f and f[0][0] == "REFUSED", f
+
+
+def _st_approve_and_record() -> None:
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        root, home, _ = _pr_fixture_root(td)
+        mine = _fx_repo(td, "mine", "pat-sample/appr", {PROJECT_FILE: _fx_intent()})
+        emp = _fx_repo(td, "emp", "acme-corp/rec", {"docs/INTENT.md": "x\n"})
+        with _pr_context(root, home, CLAUDE_DET, human=False):
+            rc, out = _quiet(cmd_approve, repo=str(mine), spec=None, by="Pat", note=None)
+            assert rc == 4 and "human" in out, out
+        with _pr_context(root, home, CURSOR_DET, human=True):
+            rc, out = _quiet(cmd_approve, repo=str(mine), spec=None, by="Pat", note=None)
+            assert rc == 0 and "approval: approved " in (mine / PROJECT_FILE).read_text(encoding="utf-8"), out
+            (emp / PROJECT_FILE).write_text(_fx_intent(), encoding="utf-8")
+            rc, out = _quiet(cmd_approve, repo=str(emp), spec=None, by="Pat", note=None)
+            assert rc == 4 and "approved via PR" in out, out
+            (emp / PROJECT_FILE).unlink()
+            rc, out = _quiet(cmd_next, str(mine))
+            assert rc == 0 and "next (define)" in out, out
+        # verify --record: an employer record lands outside the repo; the repo stays byte-identical.
+        spec_text = ("---\nprofile: p\napproval: approved via PR 3\n---\n## Fidelity / acceptance checklist\n\n"
+                     "- [ ] secret-label-alpha -- measure: python3 09-tools/none.py\n"
+                     "- [ ] reviewed -- measure: human: look\n")
+        (emp / "docs" / "INTENT.md").write_text(spec_text, encoding="utf-8")
+        before = _snapshot(emp)
+        with _pr_context(root, home, CURSOR_DET):
+            rc, out = _quiet(cmd_verify, emp / "docs" / "INTENT.md", False, str(emp), automated=True, record=True)
+        dest = home / ".config" / "snds-workspace" / "state" / "telemetry" / "acme-corp" / "rec" / "verify.jsonl"
+        assert dest.is_file(), out
+        assert _snapshot(emp) == before, "verify --record changed the employer repo (incl. .git/)"
+        rec = json.loads(dest.read_text(encoding="utf-8").splitlines()[-1])
+        assert {"surface", "family", "via", "device"} <= set(rec) and rec["family"] == "cursor", rec
+        assert "secret-label-alpha" not in dest.read_text(encoding="utf-8") and "label" not in rec["checks"][0]
+        # A personal record sits beside the spec, with labels.
+        (mine / "docs").mkdir(exist_ok=True)
+        (mine / "docs" / "INTENT.md").write_text(spec_text, encoding="utf-8")
+        with _pr_context(root, home, CLAUDE_DET):
+            rc, out = _quiet(cmd_verify, mine / "docs" / "INTENT.md", False, str(mine), automated=True, record=True)
+        local = mine / "docs" / "INTENT.verify.jsonl"
+        assert local.is_file() and "secret-label-alpha" in local.read_text(encoding="utf-8"), out
+        assert json.loads(local.read_text(encoding="utf-8"))["device"] == "dev-a"
+
+
 SELF_TESTS = (
     ("no-git-write invariant", _st_invariant),
     ("parser cases", _st_parser),
@@ -1884,6 +3003,10 @@ SELF_TESTS = (
     ("held-spec parity", _st_held_parity),
     ("verify hardening", _st_verify),
     ("scope-audit", _st_scope_audit),
+    ("project intent: frame, neutral render, pointers, Claude refusal", _st_project_frame),
+    ("project intent: inheritance", _st_project_inheritance),
+    ("approval provenance", _st_provenance),
+    ("approve, next, verify --record", _st_approve_and_record),
 )
 
 
@@ -1937,6 +3060,24 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("doctor")
     p_init = sub.add_parser("init")
     p_init.add_argument("--path")
+    p_init.add_argument("--frame", action="store_true", help="frame PROJECT.md (project intent) in --repo")
+    p_init.add_argument("--repo")
+    p_init.add_argument("--neutral", action="store_true", help="the employer-safe render (no profile:)")
+    p_init.add_argument("--stdout", action="store_true")
+    p_init.add_argument("--inherits")
+    p_init.add_argument("--inherits-context")
+    p_init.add_argument("--lifecycle", default="discover")
+    p_lint = sub.add_parser("lint")
+    p_lint.add_argument("--repo")
+    p_lint.add_argument("--spec")
+    p_lint.add_argument("--all", action="store_true")
+    p_next = sub.add_parser("next")
+    p_next.add_argument("--repo")
+    p_appr = sub.add_parser("approve")
+    p_appr.add_argument("--repo")
+    p_appr.add_argument("--spec")
+    p_appr.add_argument("--by", required=True)
+    p_appr.add_argument("--note")
     p_status = sub.add_parser("status")
     p_status.add_argument("--spec")
     p_gate = sub.add_parser("gate")
@@ -1953,6 +3094,7 @@ def main(argv: list[str] | None = None) -> int:
     p_ver.add_argument("--spec")
     p_ver.add_argument("--run", action="store_true")
     p_ver.add_argument("--root", help="checkout used as measure cwd and for git ls-files exposure")
+    p_ver.add_argument("--record", action="store_true", help="append a verify record (surface, family, device)")
     p_sa = sub.add_parser("scope-audit")
     p_sa.add_argument("--spec", required=True)
     p_sa.add_argument("--task")
@@ -1977,7 +3119,16 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "doctor":
         return cmd_doctor()
     if args.cmd == "init":
+        if args.frame:
+            return cmd_init_frame(args.repo, neutral=args.neutral, stdout=args.stdout, inherits=args.inherits,
+                                  inherits_context=args.inherits_context, lifecycle=args.lifecycle)
         return cmd_init(args.path)
+    if args.cmd == "lint":
+        return cmd_lint(repo=args.repo, spec=args.spec, all_=args.all)
+    if args.cmd == "next":
+        return cmd_next(args.repo)
+    if args.cmd == "approve":
+        return cmd_approve(repo=args.repo, spec=args.spec, by=args.by, note=args.note)
     if args.cmd == "open-app":
         return cmd_open_app()
     if args.cmd == "install-app":
@@ -2009,7 +3160,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "worktree":
         return cmd_worktree_add(spec, args.task_id, args.repo)
     if args.cmd == "verify":
-        return cmd_verify(spec, args.run, args.root)
+        return cmd_verify(spec, args.run, args.root, record=args.record)
     return 2
 
 

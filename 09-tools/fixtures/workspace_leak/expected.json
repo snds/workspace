@@ -1,0 +1,4 @@
+{
+  "doc": "Expected [line, rule] hits for planted.txt with the taxonomy terms personal-solo, sample-design and sample-engineering. Synthetic.",
+  "planted.txt": [[2, "ws-vault-path"], [3, "ws-vault-ref"], [4, "ws-pc-id"], [5, "ws-taxonomy-key"], [5, "ws-taxonomy-term"], [6, "ws-beacon"], [7, "ws-taxonomy-term"]]
+}

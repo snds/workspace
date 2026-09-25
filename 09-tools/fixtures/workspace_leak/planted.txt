@@ -1,0 +1,8 @@
+Synthetic fixture for check-secrets --class workspace-leak (H4). Not real content.
+See 07-projects/99-sample/SESSION-STATE.md for state.
+Context lives in vault:99-sample and [[sample-note]].
+Tracked as ^pc-42 in the queue.
+profile: personal-solo
+<!-- WORKSPACE-BEACON v3 -->
+Conduct: sample-engineering applies here.
+This line is neutral engineer prose.
