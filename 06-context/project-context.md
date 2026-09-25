@@ -1,7 +1,7 @@
 # Project Context — Sean Sands
 _Authoritative source: this file (06-context/project-context.md)_
 _Written by any agent — the git checkout is the source of truth._
-_Last updated: 2026-09-23_
+_Last updated: 2026-09-25_
 
 > **Platform note (2026-06-16):** the workspace itself was refactored to be portable, git-native, and
 > LLM/surface/device-agnostic, then consolidated onto `main` at `github.com/snds/workspace` (16-PR stack,
@@ -49,7 +49,6 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 - [ ] **Refresh `05-artifacts/active/trigger-cheatsheet_v1.0_2026-06-01.html` to v1.1..** Detail → [project-context-detail.md#pc-21](project-context-detail.md#pc-21). ^pc-21
 - [ ] **Add `design-system-ops` to the semantic-overlap reconciliation..** Detail → [project-context-detail.md#pc-22](project-context-detail.md#pc-22). ^pc-22
 - [ ] **Document the now-complete six-hub operation-grammar surface..** Detail → [project-context-detail.md#pc-23](project-context-detail.md#pc-23). ^pc-23
-- [ ] **Seed `07-projects/04-claude-figma-plugin/SESSION-STATE.md`.** Active project; bring it up to parity with the four seeded on 2026-04-21. Remaining seeds (03-omni, 12-MCS, 15-DavinciRemake) are deferred until those projects are next touched. ^pc-24
 - [ ] **Act on Opus 4.7+ skill audit findings..** Detail → [project-context-detail.md#pc-25](project-context-detail.md#pc-25). ^pc-25
 - [ ] **Add framework-layer pointers to key skills.** The six highest-leverage skills (`workspace-bootstrap`, `ds-advisor`, `design-engineer`, `figma-canvas-designer`, `variable-icon-font-architect`, `lead-art-director`) should reference the relevant frameworks on demand. Pattern documented in the audit report. Bundle with the audit-findings session. ^pc-26
 - [ ] **Data table cell anatomy + state matrix..** Detail → [project-context-detail.md#pc-27](project-context-detail.md#pc-27). ^pc-27
@@ -65,29 +64,11 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 - [ ] **28 individual pattern entries pending graduation at `08-knowledge/design/{slug}.md`.** Graduate one-by-one as Centric work creates demand; the master entry already references their target paths and serves as their parent until materialized. ^pc-37
 - [ ] **Stream C re-audit scheduled ~2027-Q3** (12-18 months). Emerging patterns C4 NL-workflow / C5 canvases / C7 true-merge will mature significantly. ^pc-38
 - [ ] **▶ WORK LAPTOP ONLY — Migrate MCS research → `saas-plm-analysis` employer repo.** (Added 2026-09-04 from Personal MBP.) `12-MCS` is empty on personal + the repo is unreachable there; content + access live on the Centric work laptop. Full playbook in [07-projects/12-MCS/SESSION-STATE.md](../07-projects/12-MCS/SESSION-STATE.md). Sean authorized **PR + commit + merge** directly (doc-only employer repo). Review Olga's uploads first; place with context; then leave a workspace pointer stub. ^pc-44
-- [ ] **Zero-Vector harness v1.1 — wave 0 published; human steps left.** (Added 2026-09-22.)
-  - Waves A and B and the verified fix round are on `main`. Sean published them on 2026-09-23.
-  - Sean's decisions (2026-09-23): the heal path stays a declared residual until wave 1 pins it (walls F-11). The floor keeps blocking the vetted prune when `ps` is denied, so that one command runs with the sandbox off (tests F-07). The employer email domain is `centricsoftware.com` (D5). Three H25 items move to wave 1 (D7).
-  - Decided 2026-09-23 (Sean): walls F-14, gap detail follows the repo's visibility. In this public vault a known gap is written at class level with a stable ID (H17-R1 to H17-R10); the recipe and machine posture stay held ([decision](memory/decision-public-residual-detail.md)). D6: `00-context-profiles.md` says "cited by the agent". The work email address is handled with wave 1 (^pc-47).
-  - Human steps: `--install-pin`, probes in Claude Code, Cursor, Codex and VS Code, the Personal MBP identity checks, the v5 overlay install, and one vetted prune with the sandbox off.
-  - Spec (held locally): `.claude/state/held/INTENT-wave0-2026-09.md`. Plan: [notes/zero-vector-harness-plan_2026-09-22.md](../07-projects/19-workspace-brain/notes/zero-vector-harness-plan_2026-09-22.md).
-  - Re-verification (2026-09-23) fixed 19 findings; no wall opened. Minor follow-ups that fail closed or tighten tests are queued in the held spec: tag identities in the push check, worktrees of bare repositories, the block message for fork workflows, relative-path worktrees, and three fixture gaps.
-
-  ^pc-45
 - [ ] **Three Claude Code installs on the Work MBP produce false version-change notices.** (Added 2026-09-22.) `~/.local/bin/claude` is 2.1.280, Homebrew `/opt/homebrew/bin/claude` is a stale 2.1.173, and the desktop app's bundled binary is ~2.1.131. `_check_claude_version_change()` (dispatcher.py:394) keeps one pin per machine, but each surface's PATH resolves a different binary, so the notice flips. Fix: key the pin by resolved binary path (or list all installs), and decide whether to remove the stale Homebrew copy. Logged as X3 in the harness plan. ^pc-46
-- [ ] **`snds/workspace` is PUBLIC; Sean decided 2026-09-22 to KEEP IT PUBLIC and scrub going forward (option a).** Next:
-  - H25's employer-substance scan lands in wave 0 and gates new tracked employer detail.
-  - The v1.1 detail and surface research stay local (`.claude/state/held/`). Only a copy rewritten to class level (F-14), with the recipes and machine posture removed and read by Sean, may be published; passing that scan alone is not enough ([decision](memory/decision-public-residual-detail.md)).
-  - A free branch ruleset (block force-push and deletion on `main`) is offered to Sean.
-  - History is not rewritten.
-  - The vault's "private" claims are corrected (project-registry, 00-obsidian), and the workspace carries the `visibility: public` flag in 00-context-profiles.
-  - Found 2026-09-23: a work email address on the employer domain sits on 5 lines in 3 tracked files (the work git-config template, the identity setup script, the session-log archive). The employer-substance scan does not count addresses on that domain yet; adding the domain to `employer_substance.domains` would surface 12 hits in 8 files. Sean, 2026-09-23: handled with wave 1 (H25 scrub; the two setup files will read the address from a local, untracked file, and the employer-substance scan starts counting that domain).
-
-  ^pc-47
-- [ ] **Two prompt-hook false positives (Claude Code).** (Added 2026-09-23.)
-  - The prompt router fires on background task-notification turns (X2 in the harness plan). On 2026-09-23 notification text matched the employer name, "vector", "lens" and "baseline", and injected unrelated skills and employer knowledge pointers.
+- [ ] **`snds/workspace` is PUBLIC (kept public, scrub going forward); one step open: offer Sean the free branch ruleset (block force-push + deletion on `main`).** Done: email scrub `a32d08a`; employer-substance scan counts the work domain `78addf3`/`b1fd9ba` and runs in CI `909aaa6`; "private" claims corrected; `visibility: public` flag in 00-context-profiles. Detail → [project-context-detail.md#pc-47](project-context-detail.md#pc-47). ^pc-47
+- [ ] **Prompt-hook false positive: ritual nag after resume (Claude Code).** (Added 2026-09-23. The router half, X2, is fixed: task notifications `daa0e94`, subagent hand-backs X2b `a65973c`.)
   - The ritual nag (`00-bootstrap/dist/workspace-reassert.sh`) said "never emitted" on a resumed session whose transcript already had the token in an assistant reply. It scans from a saved offset per session id; the resume path likely leaves that offset or the session id out of step. Low cost (one nag, a late ritual line), but it can train agents to ignore the nag.
-  - Fix: skip routing and the nag when the prompt is a task notification, and check the scan offset on resume.
+  - Fix: check the scan offset on resume.
 
   ^pc-48
 - [ ] **F-14 posture scrub, second pass.** (Added 2026-09-23.) The same rule moves the remaining
@@ -106,12 +87,14 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 - [ ] **Populate `team-practices-and-decisions.md`.** Fills in passively as decisions surface; not a discrete task. Scaffold lives at `01-frameworks/team-practices-and-decisions.md`. ^pc-40
 - [ ] **TanStack Table inline editing reference implementation.** Live artifact for design-dev handoff. No recent traction; resurface when handoff need arises. ^pc-41
 - [ ] **Greenfield PLM SaaS redesign architecture exploration.** Vite/React SPA + TanStack Query stack; monorepo direction. Exploratory; no near-term deadline. ^pc-42
-- [ ] **Seed SESSION-STATE.md for 03-omni, 12-MCS, 15-DavinciRemake.** Pre-seed deferred — create on demand when each project is next active. ^pc-43
+- [ ] **Seed SESSION-STATE.md for 03-omni, 15-DavinciRemake.** (12-MCS has one since 2026-09-04.) Pre-seed deferred — create on demand when each project is next active. ^pc-43
 
 ### Recently resolved (prune at next /optimize)
 
-Moved out of Active on 2026-09-02. Anchors stay. Do not delete.
+Moved out of Active on 2026-09-02 (^pc-45, ^pc-24 on 2026-09-25). Anchors stay. Do not delete.
 
+- [x] **Seed `07-projects/04-claude-figma-plugin/SESSION-STATE.md`.** DONE 2026-09-25 (/optimize) — baton seeded, project marked dormant. Remaining seeds (03-omni, 15-DavinciRemake) stay deferred under ^pc-43. ^pc-24
+- [x] **Zero-Vector harness v1.1 wave 0.** DONE 2026-09-24 — all wave 0 gates closed (G5c `5b37fc3`). Leftover: Personal MBP Claude overlay moved to wave 1 (D4). Detail → [project-context-detail.md#pc-45](project-context-detail.md#pc-45). ^pc-45
 - [x] **Extract a tool-neutral trigger-routes reference (FX-8 deferred half).** DONE 2026-07-30 — `02-shared-references/trigger-routes.json` is the curated source; `trigger-routes.md` generated by `09-tools/build-trigger-routes.py`; Claude dispatcher loads the JSON; AGENTS.md / CURSOR.md / llms.txt / brain.mdc point at it. ^pc-04
 - [x] **Paste the workspace beacon: Cursor User Rules + Perplexity Space (Work MBP).** Cursor User Rules BEACON pasted 2026-07-30 (Composer / Cursor / Work MBP) + `workspace-doctor --ack-chat`. Perplexity Space still open if/when that surface is used on this machine. Added 2026-07-06; split 2026-07-09. ^pc-13
 

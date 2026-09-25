@@ -291,7 +291,7 @@ def active_projects(projects_dir: Path | None = None) -> list[tuple[str, str, st
         after = text.split("## Session history", 1)
         if len(after) == 2:
             m2 = re.search(
-                r"^###\s+\d{4}-\d{2}-\d{2}\s+[—–-]\s+(.+?)\s*$",
+                r"^###\s+\d{4}-\d{2}-\d{2}(?:\s+\d{1,2}:\d{2})?\s+[—–-]\s+(.+?)\s*$",
                 after[1],
                 re.MULTILINE,
             )
@@ -299,7 +299,7 @@ def active_projects(projects_dir: Path | None = None) -> list[tuple[str, str, st
                 title = m2.group(1).strip()
         if not title:
             hm = re.search(
-                r"^\s*-\s+\*\*Current focus\*\*:\s*(.+)$",
+                r"^\s*-\s+\*\*Current focus(?::\*\*|\*\*:)\s*(.+)$",
                 text,
                 re.MULTILINE,
             )
@@ -615,7 +615,8 @@ def _pinned(mods: list, consts: dict, doctor: Path, label: str):
     """Point every module at the same tree, a temp doctor dir, a fixed clock and label."""
     saved = []
     for mod in mods:
-        keep = {k: getattr(mod, k) for k in (*_PATH_CONSTS, "DOCTOR_STATE", "datetime", "machine_label")}
+        keep = {k: getattr(mod, k) for k in (*_PATH_CONSTS, "DOCTOR_STATE", "datetime", "machine_label",
+                                             "active_projects")}
         if hasattr(mod, "CLOSURE_NOTICES"):
             keep["CLOSURE_NOTICES"] = mod.CLOSURE_NOTICES
             mod.CLOSURE_NOTICES = doctor / "closure-notices.json"
@@ -625,6 +626,9 @@ def _pinned(mods: list, consts: dict, doctor: Path, label: str):
         mod.DOCTOR_STATE = doctor
         mod.datetime = _FixedDateTime
         mod.machine_label = lambda *a, **k: label
+        # Project-line parsing (timed headings, `**Current focus:**`) evolved past the oracle on
+        # purpose; share the live parser so the oracle still pins everything else byte-for-byte.
+        mod.active_projects = active_projects
     try:
         yield
     finally:
@@ -872,6 +876,24 @@ def self_test() -> int:
         pc = Path(td) / "pc.md"
         pc.write_text("- [ ] Acme x\n- [ ] acmex y\n- [x] acme z\n- [ ] (acme-corp)\n", encoding="utf-8")
         check("count_pending_employer", count_pending_employer(["acme"], pc) == 2)
+
+    # 6. active_projects: timed history headings; focus colon inside or outside the bold.
+    with tempfile.TemporaryDirectory() as td:
+        pd = Path(td)
+        cases = {
+            "a-timed": ("_Last updated: 2026-09-17_\n\n## Session history\n\n"
+                        "### 2026-07-22 21:20 — checkpoint (launcher)\n", "checkpoint (launcher)"),
+            "b-dated": ("## Session history\n\n### 2026-07-22 — plain title\n", "plain title"),
+            "c-colon-in": ("- **Current focus:** inside colon\n", "inside colon"),
+            "d-colon-out": ("- **Current focus**: outside colon\n", "outside colon"),
+        }
+        for name, (body, _) in cases.items():
+            (pd / name).mkdir()
+            (pd / name / "SESSION-STATE.md").write_text(body, encoding="utf-8")
+        got = {n: (u, t) for n, u, t in active_projects(pd)}
+        for name, (_, want) in cases.items():
+            check(f"active_projects {name}", got.get(name, ("", ""))[1] == want, repr(got.get(name)))
+        check("active_projects updated", got["a-timed"][0] == "2026-09-17")
 
     for f in failures:
         print(f"  ✗ {f}", file=sys.stderr)

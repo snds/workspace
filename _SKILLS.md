@@ -9,7 +9,7 @@ Two skill systems coexist by design.
 
 ## `03-skills/` — skill library (full hub/spoke network)
 
-These live in `03-skills/{skill-name}/SKILL.md`. 292 skills in the generated graph.
+These live in `03-skills/{skill-name}/SKILL.md`. 300+ skills in the generated graph (exact count: `skills.registry.json` → `counts.total`).
 Loaded per the precedence algorithm in `AGENTS.md`; the machine graph is
 `skills.registry.json` (generated from frontmatter by `09-tools/build-registry.py`).
 Synced across machines via git.
@@ -59,6 +59,6 @@ SORT file.name ASC
 
 ## Adding a skill
 
-**For Claude Desktop:** create `03-skills/{name}/SKILL.md` using the template at `00-bootstrap/templates/skill.md`. Run skills sync (automatic on session boot) so the hash registry picks it up.
+**Any surface:** create `03-skills/{name}/SKILL.md` using the template at `00-bootstrap/templates/skill.md` (frontmatter per [[skill-frontmatter]]), then run `python3 09-tools/nightly.py --phases rebuild` so the registry and Related blocks pick it up.
 
 **For a workflow slash command (every surface):** create `03-skills/{name}/SKILL.md`, add the name to `WORKFLOWS` in `09-tools/build-local-skill-plugin.py`, then run it with `--wrappers`. Never hand-write `.claude/skills/` or `.agents/skills/` (`--check` fails on it).

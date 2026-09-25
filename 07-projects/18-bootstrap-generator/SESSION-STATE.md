@@ -12,8 +12,6 @@
 _Last updated: 2026-09-17 — Path B picker + Windows zip on Desktop._
 
 
-_Last updated: 2026-07-27 — v0.2 R1 shipped (numbered taxonomy as the generator DEFAULT + neutral automation port); earlier: colleague-feedback pass ( broader `wsx scan` detection incl. ChatGPT/desktop chat apps, connective **MOC layer** so the emitted vault graph is no longer islands, `projects/` per-project documentation tree + `wsx project`, and `wsx upgrade` corrective pass for already-generated workspaces; earlier: permission-free `launch.py` + per-OS zips, scan gate + BYO-tokens, authoring framework, `wsx remote`, expertise calibration, two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
-
 ### 2026-07-23 — colleague feedback (four asks, all built + dogfooded)
 
 1. **Detect ChatGPT / all popular LLM tools** — `scan.py` now splits detection into **coding agents** (Claude Code, Cursor, Codex, Gemini-CLI, Copilot, Windsurf, Zed, Aider, Amazon Q, Continue/Cline/Roo/Cody — via PATH + config + macOS `.app` + editor-extension globs) and **chat/desktop apps** (ChatGPT, Claude desktop, Perplexity, Copilot, Msty, Cherry Studio → `pack` surface). Local-LLM probes gained GPT4All + TextGen. `_suggest` prefers a coding surface, falls back to `pack` for chat-only.
@@ -274,6 +272,8 @@ P5 64fec3a · P5-followup fc3f1d8 · cheatsheet+diagnose 4fbaeb1 · P6 01f330b �
 ## Session history (append-only)
 
 _Newest first._
+
+_Prior stamp (superseded 2026-09-17): 2026-07-27 — v0.2 R1 shipped (numbered taxonomy as the generator DEFAULT + neutral automation port); earlier: colleague-feedback pass ( broader `wsx scan` detection incl. ChatGPT/desktop chat apps, connective **MOC layer** so the emitted vault graph is no longer islands, `projects/` per-project documentation tree + `wsx project`, and `wsx upgrade` corrective pass for already-generated workspaces; earlier: permission-free `launch.py` + per-OS zips, scan gate + BYO-tokens, authoring framework, `wsx remote`, expertise calibration, two-track sourcing, emit mcp, Resolver Phase 2, turn-key Path A)_
 
 ### 2026-07-22 21:20 — checkpoint (permission-free launcher + per-OS distribution zips)
 

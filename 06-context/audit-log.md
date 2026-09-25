@@ -73,9 +73,20 @@ _The dispatcher reads the most recent date from this file to decide whether to s
 **Fixes applied this run:**
 - P0 routing: `surfaces.json` claude-code `non_user_envelopes` + `prompt_route.py` fallback now include the subagent hand-back frame; new fixture `claude-code.agent-message.json` + X2b self-test (37/37).
 - `vault-health.py` counts inbound links from `00-bootstrap/` (canonical docs live there); `SURFACES.md` now wikilinks [[trigger-routes-digest]]. Orphan warning cleared.
+- All P1 (Sean: "All p1"), second commit:
+  - `session-status.py` parses `### DATE HH:MM —` headings and `**Current focus:**`; self-test 82 checks. 18-bootstrap baton's stale second `_Last updated` folded into history.
+  - `project-context.md`: ^pc-45 and ^pc-24 → Recently resolved; ^pc-47 cut to the branch-ruleset step, ^pc-48 cut to the resume-nag half; full text moved to `project-context-detail.md#pc-45/#pc-47`; 12-MCS dropped from ^pc-24/^pc-43.
+  - `framework-check` covers all eighteen frameworks (#12–#18 as situational lenses); wrappers regenerated.
+  - `OBSIDIAN-SETUP.md` → `skill-loadset.py`; `_SKILLS.md`/`_HOME.md` drift-proof skill count + real "adding a skill" step.
+  - `team-practices-and-decisions.md`: frontmatter `status: draft`, scaffold callout, eighteen; framework #05 qualifier. Placeholders remain for Sean to fill (^pc-40).
+  - Archived 22 files (03-skills root dead links/empties, `figma-api-pipeline/` 6 of 7, `test-results/`, `03-skills/_archive/` → `_archive/03-skills-archive/`); ARCHIVE-LOG rows + `figma-plugin-patterns 2.md` removal note (`cec76a8`). `figma-api-router.md` kept: stale-but-useful → `_archive/2026-09-25-optimize/REVIEW-NEEDED.md`.
+  - `design-system-ops` trigger `system health` → `ds health` / `design system health`; two routing cases (54/54).
+  - `role-and-context.md` hardware line; Legion baton pointer + sub-handoff date and 04-claude-figma-plugin baton seeded (both local-only, gitignored).
 
 **Carried forward:**
-- All P1/P2 above (need Sean's sign-off per /optimize Step 4).
+- All P2 above (need Sean's sign-off per /optimize Step 4).
+- Curated routes are never suppressed by a longer match (tested design), so "design system ops" still also loads the `design system` gate. Change only by Sean's decision.
+- `figma-api-router.md` merge review (REVIEW-NEEDED).
 - Hygiene with Sean: REVOKE Figma PAT (`^pc-19`); `^pc-08` SHA purge.
 - Do not auto-enable nightly maintenance from this audit.
 

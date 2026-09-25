@@ -191,3 +191,35 @@ _Long substance for pending items, graduated from `project-context.md` 2026-08-0
 - [ ] **Re-privatize the workspace-repo author email (Personal MBP only — Windows retired 2026-09-15)..** During the 2026-06-04 reconcile push, GitHub blocked the push because Personal MBP commits use `hello@snds.design` in plaintext metadata. Worked around by flipping the GitHub "Block command line pushes that expose my email" toggle OFF — Sean wants this re-enabled later. Long-term fix: set repo-local `user.email` on Personal MBP (and Windows) to `570874+snds@users.noreply.github.com` (the form Work MBP already uses), and migrate the deployed identity convention into `00-bootstrap/setup/gitconfig.personal.template` so it propagates per-machine. Auth scoping rule: **superseded on the Centric laptop as of 2026-07-20** — see memory [[feedback-credential-scoping]]. The old formulation ("Centric repos → Centric auth; ANY personal/workspace surface → personal `snds` auth, all devices") now holds only on non-Centric machines. On `CS-K746DRWXY1` every repo action uses the Centric account, *including* commits to `snds/workspace` (the Centric account is a contributor there). This pending item's remaining scope is therefore Personal MBP + Windows only.
 
 ^pc-39
+
+---
+
+## pc-45
+
+_Full text moved here by /optimize 2026-09-25 when the item resolved._
+
+- [ ] **Zero-Vector harness v1.1 — wave 0 published; human steps left.** (Added 2026-09-22.)
+  - Waves A and B and the verified fix round are on `main`. Sean published them on 2026-09-23.
+  - Sean's decisions (2026-09-23): the heal path stays a declared residual until wave 1 pins it (walls F-11). The floor keeps blocking the vetted prune when `ps` is denied, so that one command runs with the sandbox off (tests F-07). The employer email domain is `centricsoftware.com` (D5). Three H25 items move to wave 1 (D7).
+  - Decided 2026-09-23 (Sean): walls F-14, gap detail follows the repo's visibility. In this public vault a known gap is written at class level with a stable ID (H17-R1 to H17-R10); the recipe and machine posture stay held ([decision](memory/decision-public-residual-detail.md)). D6: `00-context-profiles.md` says "cited by the agent". The work email address is handled with wave 1 (^pc-47).
+  - Human steps: `--install-pin`, probes in Claude Code, Cursor, Codex and VS Code, the Personal MBP identity checks, the v5 overlay install, and one vetted prune with the sandbox off.
+  - Spec (held locally): `.claude/state/held/INTENT-wave0-2026-09.md`. Plan: [notes/zero-vector-harness-plan_2026-09-22.md](../07-projects/19-workspace-brain/notes/zero-vector-harness-plan_2026-09-22.md).
+  - Re-verification (2026-09-23) fixed 19 findings; no wall opened. Minor follow-ups that fail closed or tighten tests are queued in the held spec: tag identities in the push check, worktrees of bare repositories, the block message for fork workflows, relative-path worktrees, and three fixture gaps.
+
+  ^pc-45
+
+---
+
+## pc-47
+
+_Full text moved here by /optimize 2026-09-25; the Active stub keeps the one open step._
+
+- [ ] **`snds/workspace` is PUBLIC; Sean decided 2026-09-22 to KEEP IT PUBLIC and scrub going forward (option a).** Next:
+  - H25's employer-substance scan lands in wave 0 and gates new tracked employer detail.
+  - The v1.1 detail and surface research stay local (`.claude/state/held/`). Only a copy rewritten to class level (F-14), with the recipes and machine posture removed and read by Sean, may be published; passing that scan alone is not enough ([decision](memory/decision-public-residual-detail.md)).
+  - A free branch ruleset (block force-push and deletion on `main`) is offered to Sean.
+  - History is not rewritten.
+  - The vault's "private" claims are corrected (project-registry, 00-obsidian), and the workspace carries the `visibility: public` flag in 00-context-profiles.
+  - Found 2026-09-23: a work email address on the employer domain sits on 5 lines in 3 tracked files (the work git-config template, the identity setup script, the session-log archive). The employer-substance scan does not count addresses on that domain yet; adding the domain to `employer_substance.domains` would surface 12 hits in 8 files. Sean, 2026-09-23: handled with wave 1 (H25 scrub; the two setup files will read the address from a local, untracked file, and the employer-substance scan starts counting that domain).
+
+  ^pc-47

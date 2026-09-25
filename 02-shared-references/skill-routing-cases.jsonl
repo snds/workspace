@@ -50,3 +50,5 @@
 {"id": "subatomic-three-tier", "utterance": "Help me design a three-tier tokens architecture for four brands with dark mode.", "expect_skills": ["token-architecture"], "why": "three-tier token design routes to the Subatomic procedure spoke"}
 {"id": "subatomic-publish-tier1", "utterance": "Should we publish tier 1 tokens to product teams or keep them internal?", "expect_skills": ["token-architecture"], "why": "publishing tier 1 is a Subatomic chapter-5 decision"}
 {"id": "subatomic-core-not-core-tokens", "utterance": "The core problem is that our sprint timing slipped again.", "forbid_skills": ["token-architecture"], "why": "'core' alone is not the 'core tokens' trigger"}
+{"id": "vault-health-not-ds-ops", "utterance": "check system health of the vault", "forbid_skills": ["design-system-ops"], "why": "bare 'system health' is vault/workspace health, not design-system ops (optimize 2026-09-25)"}
+{"id": "ds-health-routes-ds-ops", "utterance": "run a design system health check on our tokens", "expect_skills": ["design-system-ops"], "why": "design-system health still reaches the ops hub"}

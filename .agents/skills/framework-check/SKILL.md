@@ -1,6 +1,6 @@
 ---
 name: framework-check
-description: "Runs current work through the eleven operating frameworks as a structured critique pass — the six core lenses always, plus the situational lenses (Integration, Workspace Contribution, Component & Pattern, Perception Integrity, Anticipatory Failure Analysis) when the work touches their domain. Invoked as /framework-check or \"run through the frameworks\" / \"framework critique\"."
+description: "Runs current work through every operating framework listed in 01-frameworks/00-README.md (eighteen as of 2026-09) as a structured critique pass — the six core lenses always, plus the situational lenses (Integration, Workspace Contribution, Component & Pattern, Perception Integrity, Anticipatory Failure Analysis, Realtime Photoreal, Domain Rigor Stack, Engineering, Analysis, Security, Intent Coordination, Design Systems × AI) when the work touches their domain. Invoked as /framework-check or \"run through the frameworks\" / \"framework critique\"."
 ---
 
 Canonical: ../../../03-skills/framework-check/SKILL.md (from the workspace root: 03-skills/framework-check/SKILL.md) — read and follow it.

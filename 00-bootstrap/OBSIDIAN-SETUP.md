@@ -1,6 +1,6 @@
 # Workspace + Obsidian — Setup & Architecture
 
-_Last updated: 2026-09-02_
+_Last updated: 2026-09-25_
 
 The workspace doubles as an Obsidian vault. One folder on disk serves several consumers simultaneously;
 the **git checkout is the source of truth** and the plain filesystem is the contract. The universal
@@ -42,8 +42,8 @@ hook injects `06-context/*` heads; slash commands (`/today`, `/session-end`, `/r
 home every agent reads; `SessionEnd` commits + pushes. These are Claude-adapter
 ergonomics — the workspace works without them (the portable session protocol in framework 08 covers it).
 
-**Any other agent** — reads `llms.txt` → [[AGENTS]] → `03-skills/skills.registry.json`, then follows the
-loading-precedence algorithm. No hooks required.
+**Any other agent** — reads `llms.txt` → [[AGENTS]], then runs `python3 09-tools/skill-loadset.py "<utterance>"`
+(the loading-precedence algorithm; never ingest `03-skills/skills.registry.json`). No hooks required.
 
 ## Sync topology
 

@@ -2,13 +2,13 @@
 name: design-system-ops
 description: >-
   Design system operations command hub — token audits, drift detection, governance,
-  deprecation, system health, stakeholder briefs. Use when running a design system
+  deprecation, design-system health, stakeholder briefs. Use when running a design system
   (not merely consuming one): "audit tokens", "drift check", "DS governance",
-  "deprecation plan", "system health", "theme audit", "docs coverage". Wraps the
+  "deprecation plan", "design-system health", "theme audit", "docs coverage". Wraps the
   vendored skills/commands in this directory. Not for component authoring
   (design-engineer) or DS strategy (ds-advisor).
 aliases: [design-system-ops]
-triggers: [design system ops, token audit, audit my tokens, drift detection, ds governance, system health, deprecation plan, theme audit, docs coverage]
+triggers: [design system ops, token audit, audit my tokens, drift detection, ds governance, ds health, design system health, deprecation plan, theme audit, docs coverage]
 tier: hub
 domain: design
 prerequisites: [design-foundations]

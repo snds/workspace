@@ -362,7 +362,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `adobe-app-builder` | hub | `adobe app builder`, `app builder`, `aio cli`, `aio app init`, `aio app deploy`, `adobe i/o runtime` (+9) | `eng-foundations` → `adobe-app-builder` |
 | `arch-guild` | hub | `arch guild`, `architecture review`, `multi-voice review`, `dijkstra`, `lamport`, `knuth` (+1) | `eng-foundations` → `arch-guild` |
 | `design-engineer` | hub | `design engineer`, `component architecture`, `component api`, `figma component`, `component variants`, `componentization` (+12) | `design-foundations` → `design-engineer` |
-| `design-system-ops` | hub | `design system ops`, `token audit`, `audit my tokens`, `drift detection`, `ds governance`, `system health` (+3) | `design-foundations` → `design-system-ops` |
+| `design-system-ops` | hub | `design system ops`, `token audit`, `audit my tokens`, `drift detection`, `ds governance`, `ds health` (+4) | `design-foundations` → `design-system-ops` |
 | `ds` | hub | `ds hub`, `design system decision`, `token decision`, `write the ddr` | `design-foundations` → `ds` |
 | `ds-advisor` | hub | `design system`, `design systems`, `PLM`, `component audit`, `token architecture`, `design token` (+7) | `design-foundations` → `ds-advisor` |
 | `ds-generation-pipeline` | hub | `generate a design system`, `scaffold ds artifacts`, `ds generation pipeline` | `design-foundations` → `ds-generation-pipeline` |

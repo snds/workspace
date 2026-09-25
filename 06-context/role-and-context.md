@@ -43,7 +43,7 @@ Design system work is cross-team and cross-vertical. Components must serve diver
 - **Version control:** Bitbucket (Jira for PM)
 - **Frontend frameworks in codebase:** Vue (primary), React, React Native, Angular
 - **Design tokens:** Design token pipeline (Figma Variables → Style Dictionary or equivalent)
-- **Hardware:** Work MacBook, personal MacBook, personal Windows desktop
+- **Hardware:** Work MacBook, personal MacBook (Windows desktop retired 2026-09-15; fleet in `02-shared-references/devices.json`)
 
 ---
 

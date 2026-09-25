@@ -1,12 +1,18 @@
+---
+title: Team Practices and Decisions
+status: draft
+updated: 2026-09-25
+---
+
 # Team Practices and Decisions
 
 _Location: `01-frameworks/team-practices-and-decisions.md`_
 _Maintainer: Sean Sands_
-_Last updated: 2026-09-02_
+_Last updated: 2026-09-25_
 
 A layered reference for code-level craft and design-engineering conventions, organized so that *which* team I'm on and *when* a practice was adopted are both surfaceable. Read by the Last-Mile Craft Framework (section: Code-level craft) as the authoritative source for team-specific conventions that override or extend the general best-practices baseline.
 
-This is a living document. Unlike the seventeen frameworks, it changes frequently — when team composition shifts, when a convention gets revisited, when historical context becomes newly relevant.
+This is a living document. Unlike the frameworks listed in [00-README.md](00-README.md) (eighteen as of 2026-09), it changes frequently — when team composition shifts, when a convention gets revisited, when historical context becomes newly relevant.
 
 ---
 
@@ -24,6 +30,9 @@ Loading order for the LLM: active layer first (it's the authoritative overlay), 
 ---
 
 ## 1. Active layer — current team non-negotiables
+
+> [!warning] Unfilled scaffold (status: draft)
+> This active layer is an unfilled scaffold awaiting Sean's input. Every bracketed `[…]` entry below is a template placeholder, not a team decision. It is **not authoritative until filled** — until then, fall back to the best-practices baseline (§2) and do not cite these placeholders as conventions.
 
 _Team: [current team name]. Effective from: [YYYY-MM-DD]. Active maintainer: Sean._
 
@@ -219,7 +228,7 @@ Conventions Sean has seen succeed across multiple teams. Not binding on current 
 
 ---
 
-## Integration with the seventeen frameworks
+## Integration with the frameworks (see [00-README.md](00-README.md))
 
 - **Last-Mile Craft Framework** (05) references this document as the authoritative source for team-specific code-level craft conventions that override or extend the general best-practices baseline.
 - **Collaboration and Critique Framework** (03) references this document indirectly — the shared archive of disagreements and outcomes may feed into updating the active layer when a prediction plays out and a team convention needs to change.

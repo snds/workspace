@@ -1,10 +1,11 @@
 ---
 name: framework-check
 description: >
-  Runs current work through the eleven operating frameworks as a structured critique pass — the
-  six core lenses always, plus the situational lenses (Integration, Workspace Contribution,
-  Component & Pattern, Perception Integrity, Anticipatory Failure Analysis) when the work touches
-  their domain. Invoked as /framework-check or "run through the frameworks" / "framework critique".
+  Runs current work through every operating framework listed in 01-frameworks/00-README.md
+  (eighteen as of 2026-09) as a structured critique pass — the six core lenses always, plus the
+  situational lenses (Integration, Workspace Contribution, Component & Pattern, Perception
+  Integrity, Anticipatory Failure Analysis, Realtime Photoreal, Domain Rigor Stack, Engineering,
+  Analysis, Security, Intent Coordination, Design Systems × AI) when the work touches their domain. Invoked as /framework-check or "run through the frameworks" / "framework critique".
 aliases: [framework-check]
 triggers: ["/framework-check", "framework check", "run through the frameworks", "framework critique"]
 tier: cross-cutting
@@ -22,8 +23,8 @@ Takes the current work-in-progress (the thing Sean is asking about, or the most
 recent artifact) and runs it through the operating frameworks. Each produces a short
 critique — what the framework values, what it sees here, what it flags.
 
-The **six core lenses (01–06)** always run. The **four situational lenses (07–10)**
-run only when the work touches their domain — otherwise they're listed once under
+The **six core lenses (01–06)** always run. The **situational lenses (07 onward — every other
+framework in `01-frameworks/00-README.md`, eighteen total as of 2026-09)** run only when the work touches their domain — otherwise they're listed once under
 "Not applicable" rather than padded with manufactured critique.
 
 ## Trigger phrases
@@ -41,7 +42,7 @@ Confirm the target before critiquing.
 
 ### Step 2 — Load frameworks
 
-`01-frameworks/00-README.md` carries compressed summaries of all eleven — read it first if you
+`01-frameworks/00-README.md` carries compressed summaries of every framework — read it first if you
 need the quick version, then load the full files for the lenses in scope.
 
 **Core lenses — always read (or verify already loaded):**
@@ -58,6 +59,13 @@ need the quick version, then load the full files for the lenses in scope.
 - `01-frameworks/09-component-and-pattern-framework.md` — any component/pattern decision, component docs/schema, tokens, the AI-legible / `DESIGN.md` layer.
 - `01-frameworks/10-perception-integrity.md` — any judgment of fine visual detail (a render, screenshot, artifact, reference, image asset).
 - `01-frameworks/11-anticipatory-failure-analysis.md` — the target proposes or builds a technique with a visible failure surface (shader, post-process, render, generator, layout, motion), or claims a visual is "ready"/"matches the reference".
+- `01-frameworks/12-realtime-photoreal-operational-framework.md` — realtime 3D / game / shader / lighting / material / post / LOD work, or any claim a scene matches film or AAA northstar reference.
+- `01-frameworks/13-domain-rigor-stack.md` — the target creates or materially expands a skill foundation/hub/spoke, command hub, plugin wrapper, or domain operating framework, or asks whether a domain cluster is "complete".
+- `01-frameworks/14-engineering-operating-model.md` — FE/BE/DevOps/mobile implementation, API or schema changes, CI/CD, migrations, incidents, performance, or an engineering-feasibility claim.
+- `01-frameworks/15-analysis-operating-model.md` — any analysis, metric, experiment, model, forecast, dashboard, evaluation, or argument that leans on a quantitative claim.
+- `01-frameworks/16-security-operating-model.md` — auth/authz, trust boundaries, multi-tenancy, untrusted input, secrets, dependencies, CI/CD pipeline, PII, integrations/webhooks, or incident response.
+- `01-frameworks/17-intent-coordination-operating-model.md` — two or more agents/worktrees share the job, or a multi-file outcome needs a living spec rather than the chat thread.
+- `01-frameworks/18-design-systems-ai-operating-model.md` — AI attaching to a design system: generated UI, AI-legible component contracts, or what must be true before generated UI ships.
 
 (If a core file is missing, flag it and continue with the rest.)
 
@@ -102,7 +110,8 @@ Output exactly this structure. One paragraph per framework, not more:
 
 {Include a block here ONLY for each situational lens (07 Integration · 08 Workspace
 Contribution · 09 Component & Pattern · 10 Perception Integrity · 11 Anticipatory Failure
-Analysis) whose domain the target touches — same Values / Sees here / Flags shape. List the rest on a single line:
+Analysis · 12 Realtime Photoreal · 13 Domain Rigor Stack · 14 Engineering · 15 Analysis ·
+16 Security · 17 Intent Coordination · 18 Design Systems × AI) whose domain the target touches — same Values / Sees here / Flags shape. List the rest on a single line:
 "**Not applicable:** 07 Integration, 08 Workspace Contribution (target isn't repo-bound
 or a workspace edit)." If none apply, replace this whole section with that one line.}
 
@@ -126,7 +135,7 @@ decide whether to save, act, or discard.
 ## Notes
 
 - **Keep it short.** Six core one-paragraph critiques + only the situational lenses
-  that apply + one cross-tension paragraph + one next-action line. Don't run all eleven
+  that apply + one cross-tension paragraph + one next-action line. Don't run all eighteen
   by reflex — the situational gating is what keeps it on one screen.
 - **Avoid hedging.** If a framework has nothing useful to say about the target,
   say "No specific flag — target is outside this framework's scope." Don't

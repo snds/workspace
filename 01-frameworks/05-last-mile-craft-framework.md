@@ -201,7 +201,7 @@ Key disciplines:
 - Inconsistent component API shapes across a library.
 - Missing or outdated component documentation.
 
-The `team-practices-and-decisions.md` document captures the active team's specific choices on all of the above, with a best-practices baseline, historical archive from previous teams, and cross-team patterns that have proven durable. It's the authoritative source for what "good" looks like at the current team, while this framework's general guidance remains the portable baseline.
+The `team-practices-and-decisions.md` document captures the active team's specific choices on all of the above, with a best-practices baseline, historical archive from previous teams, and cross-team patterns that have proven durable. It's the authoritative source for what "good" looks like at the current team, while this framework's general guidance remains the portable baseline. (As of 2026-09-25 its active layer is an unfilled scaffold — not authoritative until Sean fills it; use this framework's baseline meanwhile.)
 
 ---
 

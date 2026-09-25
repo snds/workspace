@@ -1190,7 +1190,8 @@
         "audit my tokens",
         "drift detection",
         "ds governance",
-        "system health",
+        "ds health",
+        "design system health",
         "deprecation plan",
         "theme audit",
         "docs coverage"
@@ -1206,7 +1207,7 @@
         "design-engineer"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:82f13b0ecd5fba4478c1c61330ca609396330799995473096acc9a75a5534f78"
+      "hash": "sha256:607f8c86e4759e0c6fd9aae82b9520cba24c569b699034e2ef94a6ba037d641a"
     },
     "designparser": {
       "path": "03-skills/designparser/SKILL.md",
@@ -2689,7 +2690,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:42eb4cf8e23d56fb699854b96f2250e6fa9b178c5ae5302ba7b557ee13f74c06"
+      "hash": "sha256:1aadf5b75e89836b1c3a2e82f58599c2409cdf865f87160d721987b078bb4682"
     },
     "fw-angular": {
       "path": "03-skills/fw-angular/SKILL.md",
