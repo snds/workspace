@@ -71,6 +71,11 @@ Standing project home for vault work: `07-projects/19-workspace-brain/` Live han
    consequential `done`. Domain L3 as named (`vqa`, validators, CI).
 6. **Land.** [#07](../../01-frameworks/07-integration-and-review-framework.md) + profile
    (no auto-commit / self-merge on `centric-engineering`). Point Live handoff at the spec.
+7. **Project intent.** `intent-run.py init --frame --repo DIR` frames `PROJECT.md` + the `AGENTS.md`
+   pointer (personal-solo only; a Claude chain on anything else is routed to cursor|codex; they land
+   the `--neutral` render by PR). `lint --repo DIR` / `--all` scales by lifecycle and checks
+   inheritance and approval provenance; `approve` is human-only; `next` names the next step;
+   `verify --record` stamps surface and device. Grammar: [[intent-spec]].
 
 ## Done-gates
 

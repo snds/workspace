@@ -4052,7 +4052,7 @@
         "framework-08"
       ],
       "rigor_role": "command-hub",
-      "hash": "sha256:ecd6188c1061310b5ed0bb2245a21da4800115e35f6e3a1f4643a47183e8bbab"
+      "hash": "sha256:dba76f4ea4a9d1aa242ed2aa2d2075dea85c4a67c8728b47ab71e488fb2486ee"
     },
     "interactive-capture-eval": {
       "path": "03-skills/interactive-capture-eval/SKILL.md",

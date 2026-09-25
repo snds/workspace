@@ -7,6 +7,8 @@
 # Enrolling = (1) add the repo path to dist/beacon-repos.txt AND (2) write the
 # WORKSPACE-BEACON block into that repo's CLAUDE.md — always both, atomically,
 # because a listed repo with no beacon block makes the doctor raise DRIFT alerts.
+# It also appends `@AGENTS.md` to that CLAUDE.md when missing (H4: the repo's
+# AGENTS.md carries the `Project intent: PROJECT.md` pointer).
 #
 # Classification is mechanical and delegated to the declared resolver
 # (09-tools/profile_resolve.py over context-remotes.json and devices.json; walls are the
@@ -56,10 +58,19 @@ ensure_beacon_block() { # $1=repo-path
   echo "    beacon block: written to $cm"
 }
 
+ensure_agents_import() { # $1=repo-path — personal repos only (enroll is reached only for them)
+  # H4: Claude reads the repo's AGENTS.md (and its `Project intent: PROJECT.md` pointer) through @AGENTS.md.
+  local cm="$1/CLAUDE.md"
+  if grep -qxF "@AGENTS.md" "$cm" 2>/dev/null; then echo "    @AGENTS.md: already present"; return 0; fi
+  printf '\n@AGENTS.md\n' >> "$cm" || return 1
+  echo "    @AGENTS.md: added to $cm"
+}
+
 enroll() { # $1=repo-path $2=do_commit(0/1)
   local repo="$1"
   listed "$repo" || { printf '%s\n' "$repo" >> "$LIST"; echo "    beacon-repos.txt: added"; }
-  listed "$repo" && ensure_beacon_block "$repo" || { echo "    ERROR enrolling $repo"; return 1; }
+  listed "$repo" && ensure_beacon_block "$repo" && ensure_agents_import "$repo" \
+    || { echo "    ERROR enrolling $repo"; return 1; }
   if [ "$2" = 1 ]; then
     if git -C "$repo" add CLAUDE.md 2>/dev/null && \
        ! git -C "$repo" diff --cached --quiet -- CLAUDE.md; then

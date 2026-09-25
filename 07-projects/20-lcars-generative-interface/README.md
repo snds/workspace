@@ -21,3 +21,5 @@ LLM-forward adaptive console/shell that recomposes **TNG-era LCARS** surfaces fr
 ## For future agent
 
 Read `SESSION-STATE.md` Live handoff first, then `SPEC.md`, then the v1 plan at `docs/superpowers/plans/2026-08-07-lcars-generative-interface-v1.md`. Do not invent chrome outside the constitution. App code lives in `~/Projects/lcars-generative-interface`, not this vault.
+
+- **Project intent:** `snds/lcars:PROJECT.md` (the intent lives in the app repo; frame it there with `intent-run.py init --frame`)

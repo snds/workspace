@@ -438,6 +438,36 @@ approval: pending
                 self.assertEqual(rc, 1, out)
                 self.assertIn("held: held/x.md", out)
 
+    # H4/H5 — synthetic owners only (pat-sample personal, acme-corp employer), temp HOME, real git repos.
+    def _run_case(self, name):
+        from unittest import mock
+        ir = load("intent-run")
+        with tempfile.TemporaryDirectory() as td:
+            with mock.patch.dict(os.environ, self._isolated_env(td)):
+                getattr(ir, name)()
+
+    def test_project_frame_neutral_render_and_claude_refusal(self):
+        self._run_case("_st_project_frame")
+
+    def test_project_inheritance_classes_cycle_depth_absent(self):
+        self._run_case("_st_project_inheritance")
+
+    def test_approval_provenance_trailers_and_employer_pr(self):
+        self._run_case("_st_provenance")
+
+    def test_approve_next_and_verify_record_outside_employer_repo(self):
+        self._run_case("_st_approve_and_record")
+
+    def test_project_intent_lint_is_lifecycle_scaled(self):
+        ir = load("intent-run")
+        fresh = ir.parse_intent(ir.render_project_intent(neutral=True))
+        self.assertNotIn("profile:", ir.render_project_intent(neutral=True))
+        self.assertFalse([m for lvl, m in ir.lint_intent(fresh) if lvl == "ERROR"])
+        defined = ir.parse_intent(ir.render_project_intent(neutral=True, lifecycle="define"))
+        self.assertTrue([m for lvl, m in ir.lint_intent(defined) if lvl == "ERROR"])
+        built = ir.parse_intent(ir._fx_intent(lifecycle="build"))
+        self.assertTrue(any("approval" in m for lvl, m in ir.lint_intent(built) if lvl == "ERROR"))
+
 
 class TestPromptRouteFollowthrough(unittest.TestCase):
     """Produce language must inject close-out; empty Layer 0 on work verbs must not be silent."""

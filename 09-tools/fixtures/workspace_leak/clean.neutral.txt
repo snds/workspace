@@ -1,0 +1,9 @@
+---
+lifecycle: define
+inherits: acme-corp/sample-parent
+inherits_context: acme-corp/sample-parent#AGENTS.md
+---
+
+## Project intent
+
+Intent and context are defined by the parent repository named in `inherits`.

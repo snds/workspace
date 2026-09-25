@@ -35,3 +35,5 @@ the editable version of the read-only render-pipeline visualizer the author
 built there.
 
 See `06-context/project-context.md` for the registry entry.
+
+- **Project intent:** n/a (the ShadeGraph repo has no remote yet; frame its PROJECT.md there once it has one)

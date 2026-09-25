@@ -24,3 +24,6 @@
 # it would corrupt sections; those reconcile deliberately.
 06-context/session-log.md merge=union
 06-context/audit-log.md merge=union
+
+# Verify records (intent-run verify --record, H5) are append-only JSONL: keep both sides. Workspace only.
+*.verify.jsonl merge=union

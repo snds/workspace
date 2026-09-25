@@ -6,6 +6,7 @@ status: Active
 triggers: [subatomic course, subatomic design tokens, brad frost tokens course, frost token course]
 frameworks: [qa-operating-model, research-and-evidence, workspace-contribution]
 created: 2026-09-23
+lifecycle: define
 ---
 
 # 23-subatomic-design-tokens-course
@@ -19,6 +20,26 @@ Original notes and synthesis from Brad Frost & Ian Frost, **Subatomic: The Compl
 - **Source:** https://courses.bradfrost.com/courses/take/subatomic-design-tokens/lessons/62108387-welcome
 - **Graduated doctrine (2026-09-23):** [[design-token-architecture]] · [[token-architecture]] · `09-tools/token-audit.py`
 - **Sibling course:** [[22-ai-design-systems-course]] (AI and Design Systems)
+
+## Project intent
+
+### Problem & audience
+
+Turn the Subatomic design tokens course into original notes and a synthesis, and graduate a token
+architecture doctrine plus a detector. The audience is Sean's design-system work.
+
+### Knowns & unknowns
+
+| claim | label | tier | evidence | decision rule |
+|---|---|---|---|---|
+| Capture is complete (372 of 372 items) | known | T1 | SESSION-STATE TL;DR | — |
+| `token-audit.py` is calibrated on the course demo repo only | known | T1 | SESSION-STATE TL;DR | — |
+| `token-audit.py` holds up on a real product token source | unknown | T5 | not run yet | if its first real run flags more false positives than findings, recalibrate before wider use |
+
+### Out of scope & later
+
+Raw course files in the vault (they live in the Projects directory); running the tool on employer
+repos from this vault. Later: value-level Figma-to-code parity (TA014) and a variable-scope probe.
 
 ## Raw course materials (outside the workspace)
 
