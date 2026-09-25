@@ -304,7 +304,10 @@
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
         }
-      }
+      },
+      "non_user_envelopes": [
+        "<task-notification>"
+      ]
     },
     {
       "id": "claude-code-cloud",
@@ -368,7 +371,8 @@
           "planned_verified_by": [],
           "how": "no local git lane applies"
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "claude-chat",
@@ -484,7 +488,8 @@
           "planned_verified_by": [],
           "how": "no local git lane applies"
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "claude-chat-desktop",
@@ -561,7 +566,8 @@
           "planned_verified_by": [],
           "how": "no local git lane applies"
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "claude-in-chrome",
@@ -621,7 +627,8 @@
           "planned_verified_by": [],
           "how": "no local git lane applies"
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "cursor",
@@ -810,7 +817,8 @@
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "cursor-cli",
@@ -878,7 +886,8 @@
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "cursor-cloud",
@@ -938,7 +947,8 @@
           "planned_verified_by": [],
           "how": "no local git lane applies"
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "codex",
@@ -1118,7 +1128,8 @@
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "codex-cloud",
@@ -1178,7 +1189,8 @@
           "planned_verified_by": [],
           "how": "no local git lane applies"
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "gemini-cli",
@@ -1252,7 +1264,8 @@
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "copilot-vscode",
@@ -1330,7 +1343,8 @@
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "copilot-cli",
@@ -1409,7 +1423,8 @@
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "copilot-cloud-agent",
@@ -1469,7 +1484,8 @@
           "planned_verified_by": [],
           "how": "no local git lane applies"
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "windsurf",
@@ -1549,7 +1565,8 @@
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "aider",
@@ -1626,7 +1643,8 @@
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "warp",
@@ -1703,7 +1721,8 @@
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "other-local-agents",
@@ -1783,7 +1802,8 @@
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "grok-build",
@@ -1860,7 +1880,8 @@
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "web-chat",
@@ -1929,7 +1950,8 @@
           "planned_verified_by": [],
           "how": "no local git lane applies"
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "mcp-clients",
@@ -1998,7 +2020,8 @@
           "planned_verified_by": [],
           "how": "no local git lane applies"
         }
-      }
+      },
+      "non_user_envelopes": []
     },
     {
       "id": "human",
@@ -2054,7 +2077,8 @@
           "planned_verified_by": [],
           "how": "TestGitLanes runs the lanes installed by the real installer in a temp HOME against employer-shaped, personal and workspace-shaped temp repos. Enforced once Sean installs them on each Mac (human step)."
         }
-      }
+      },
+      "non_user_envelopes": []
     }
   ],
   "formats": {
@@ -3211,7 +3235,7 @@
       "sha256": "35ce5d895a865e9881e5d6c8a42bef5643f6bcebfc4545275ed8d9c4b8cc4b32"
     },
     "00-bootstrap/dist/ws": {
-      "sha256": "c955a7eb7942c90a656bc3577e462f04c605ccae163a594ee2edb1b785faa6ef"
+      "sha256": "b53a29f01a2cd9b4b2b6ce6414a8b2bc2a424bf0c58c8bd26fdc9658923d2540"
     }
   }
 }

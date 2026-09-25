@@ -77,8 +77,8 @@ ALWAYS_LOADED_BYTES_CEILING = {
     # the Codex beacon is held to the old shared beacon's 1,515 B (it counts toward the Codex
     # window); the ~/Projects pointer to the spec's 1 KiB; the Cursor paste to its first render.
     "00-bootstrap/dist/codex-AGENTS.md": 1_515,
-    "00-bootstrap/dist/projects-AGENTS.md": 1_024,
-    "00-bootstrap/dist/cursor-user-rules.txt": 670,
+    "00-bootstrap/dist/projects-AGENTS.md": 1_038,  # Sean 2026-09-24: +the `ws route` steer line (H7)
+    "00-bootstrap/dist/cursor-user-rules.txt": 692,  # +the `ws route` steer line (H7)
 }
 # The files that can sit at ~/.codex/AGENTS.md: the Codex beacon, or the shared paste beacon
 # that was installed there before H6. The worst case counts the larger.

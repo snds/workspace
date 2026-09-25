@@ -13,5 +13,5 @@ STANDING RULES (in force even before loading):
 - Durable context/learnings/decisions are written to the workspace, never to local agent memory.
 - Employer repos never receive personal-workspace content, and workspace content is never pasted into employer surfaces.
 - Codex: employer work only via a feature branch + PR for human review; never merge or push to the default branch.
-- Neutral commands: `ws status` (session card) · `ws resolve repo <path>` (personal or employer).
+- Neutral: `ws status` · `ws resolve repo <path>` · work request: `ws route --stdin <<'EOF'`…`EOF`, load its output.
 <!-- /WORKSPACE-BEACON -->

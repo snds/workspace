@@ -7,4 +7,4 @@ Before working in a repo, run `ws resolve repo <path>`; its profile sets the rul
 - Figma work uses real library components, never hand-built shapes.
 - Durable context/learnings/decisions are written to the workspace, never to local agent memory.
 - Employer repos never receive personal-workspace content, and workspace content is never pasted into employer surfaces.
-- Neutral commands: `ws status` (session card) · `ws resolve repo <path>` (personal or employer).
+- Neutral: `ws status` · `ws resolve repo <path>` · work request: `ws route --stdin <<'EOF'`…`EOF`, load its output.

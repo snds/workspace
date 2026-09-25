@@ -26,7 +26,7 @@
       "- Employer repos never receive personal-workspace content, and workspace content is never pasted into employer surfaces."
     ],
     "ws": [
-      "- Neutral commands: `ws status` (session card) \u00b7 `ws resolve repo <path>` (personal or employer)."
+      "- Neutral: `ws status` \u00b7 `ws resolve repo <path>` \u00b7 work request: `ws route --stdin <<'EOF'`\u2026`EOF`, load its output."
     ],
     "cursor_head": [
       "WORKSPACE (github.com/snds/workspace, local ~/Projects/workspace) holds my rules, skills and session state; its AGENTS.md is the contract. Read it before working there."
@@ -125,7 +125,7 @@
         "codex",
         "cursor"
       ],
-      "max_bytes": 1024
+      "max_bytes": 1038
     },
     "rules": {
       "parts": [

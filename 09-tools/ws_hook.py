@@ -771,9 +771,12 @@ def _quiet(fn):
 
 def handle_event(host_arg, event, payload, *, probe=False, budget=None, home=None, env=None,
                  optional_steps=None, out=None) -> int:
-    """Always returns 0. Output only when there is a decision."""
+    """0, or the guard's exit code on a pre-tool deny (Codex and Windsurf block with 2). Output only
+    when there is a decision."""
     out = out or sys.stdout
     start = time.monotonic()
+    if event == "pre-tool" and not probe:
+        return run_guard(host_arg, payload, env=env, home=home, out=out)
     try:
         t = _surfaces()
         if t is None:
@@ -813,6 +816,25 @@ def handle_event(host_arg, event, payload, *, probe=False, budget=None, home=Non
         return 0
     except Exception:
         return 0
+
+
+def run_guard(host_arg, payload, *, env=None, home=None, out=None, err=None) -> int:
+    """Pre-tool: the H15 wall guard (the sibling wall_guard.py in the pinned lib). Fails open."""
+    out = out or sys.stdout
+    err = err or sys.stderr
+    try:
+        if str(TOOLS) not in sys.path:
+            sys.path.insert(0, str(TOOLS))
+        import wall_guard  # noqa: PLC0415
+        rc, text, why, _dec = wall_guard.run_hook(host_arg, payload, env=env, home=home)
+    except BaseException:  # noqa: BLE001 - a missing or broken guard never blocks a host
+        return 0
+    if text:
+        out.write(text + "\n")
+        out.flush()
+    if why:
+        err.write(why + "\n")
+    return rc
 
 
 def run_floor(hook_args, stdin_lines, *, budget=FLOOR_BUDGET_S, err=None) -> int:
