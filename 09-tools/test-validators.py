@@ -1180,7 +1180,7 @@ class TestIdentity(unittest.TestCase):
         """D5 (2026-09-23): the employer mail domain, matched exactly and casefolded; personal markers win."""
         dev, d5 = self.pr.load_table("devices"), "centricsoftware.com"
         self.assertIn(d5, dev["employer_allowlist"]["email_domains"])
-        for addr, want in ((f"user@{d5}", "employer"), ("USER@CentricSoftware.COM", "employer"),
+        for addr, want in ((f"user@{d5}", "employer"), (f"USER@{d5.upper()}", "employer"),
                            (f"user@{d5}.evil.io", "other"), (f"user@not{d5}", "other"), (f"user@mail.{d5}", "other")):
             with self.subTest(addr=addr):
                 self.assertEqual(self.pr.email_class(addr, dev), want)
@@ -1758,7 +1758,7 @@ class TestWallGuard(unittest.TestCase):
 
 
 class TestEmployerSubstance(unittest.TestCase):
-    """H25: employer-substance class of check-secrets (report-only in wave 0)."""
+    """H25: employer-substance class of check-secrets (blocking against the baseline since W1-10)."""
 
     def _quiet(self, fn, *a, **kw):
         import contextlib
@@ -1805,6 +1805,42 @@ class TestEmployerSubstance(unittest.TestCase):
             self.assertEqual(rc, 0)
             self.assertIn("notes/planted.md:3 emp-url", out.getvalue())
             self.assertNotIn("zz-planted", out.getvalue())
+
+    def test_email_counts_full_addresses_only(self):
+        # D-W1-5: a full address on the declared mail domain counts (synthetic domain only).
+        cs = load("check-secrets")
+        table = json.loads(
+            (TOOLS / "fixtures" / "employer_substance" / "context-remotes.json").read_text(encoding="utf-8")
+        )
+        rules = cs.EmpRules(table, ["acme-mail.example"])
+        text = (
+            "zz@acme-mail.example\n"
+            "Mixed.Case@Acme-Mail.Example\n"
+            "bare acme-mail.example and @acme-mail.example\n"
+            "sub ops@mail.acme-mail.example lookalike x@acme-mail.example.evil\n"
+        )
+        self.assertEqual(rules.scan_text(text), [(1, "emp-email"), (2, "emp-email")])
+        self.assertEqual(cs.EmpRules(table).scan_text(text), [])
+
+    def test_lane_blocks_above_baseline(self):
+        # W1-10: the workspace pre-commit lane runs the staged scan; exit 1 blocks as H25,
+        # any other failure allows with a notice (CI re-checks), a missing script is a no-op.
+        gl = load("git_lanes")
+        with tempfile.TemporaryDirectory() as td:
+            top = Path(td)
+            base = {"decision": "allow", "rule": None, "reason": "", "notices": [], "lane": "workspace"}
+            self.assertEqual(gl._emp_lane(dict(base, notices=[]), top, dict(os.environ))["decision"], "allow")
+            (top / "09-tools").mkdir()
+            stub = top / "09-tools" / "check-secrets.py"
+            stub.write_text("import sys\nsys.stderr.write('  x a.md emp-email 1 > baseline 0\\n')\n"
+                            "sys.exit(1)\n", encoding="utf-8")
+            out = gl._emp_lane(dict(base, notices=[]), top, dict(os.environ))
+            self.assertEqual((out["decision"], out["rule"]), ("block", "H25"))
+            self.assertIn("a.md emp-email", out["reason"])
+            stub.write_text("import sys\nsys.exit(2)\n", encoding="utf-8")
+            out = gl._emp_lane(dict(base, notices=[]), top, dict(os.environ))
+            self.assertEqual(out["decision"], "allow")
+            self.assertTrue(any("H25" in n for n in out["notices"]))
 
     def test_live_baseline_not_exceeded(self):
         # G7a: the committed baseline holds on the live tree (real tables, temp HOME for the cache).

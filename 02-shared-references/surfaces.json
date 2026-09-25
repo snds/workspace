@@ -354,14 +354,14 @@
           "how": "TestInstaller: every installer, for both actions, refuses the agent markers TestInstaller pins (one env marker each for Cursor, Codex, Gemini and Claude, the CI marker, the family override and a Claude process in the ancestry), an undetermined verdict and a missing TTY. It does not run every marker the table declares. Its heal-from-pin fixture edits the heal scripts, the user CLAUDE.md and the doctor in the checkout after a pin, runs the doctor in every mode and finds no heal target changed and the drift reported; with no pin nothing is written; without the pinned doctor entry SessionStart runs no doctor. Partial until each device re-pins and reinstalls its scheduled job (a human step)"
         },
         "H25": {
-          "mode": "unverified",
-          "rules": "report-only employer-substance scan when the lane is installed, plus a CI backstop; the fragment limits, the Cursor/Codex inventory and the static Claude deny rules ship in wave 1 with H23, H4 and H15",
-          "decision": "D7, Sean 2026-09-23: three H25 parts move to wave 1",
+          "mode": "enforced-partial",
+          "rules": "the employer-substance scan blocks against its baseline (a count above it fails; full addresses on the employer mail domain count from a zero baseline, a bare mention of the domain never does): the workspace git lane runs it over the staged files when installed, and CI runs it over the tree; the fragment limits, the Cursor/Codex inventory and the static Claude deny rules ship in wave 1 with H23, H4 and H15",
+          "decision": "D7, Sean 2026-09-23: three H25 parts move to wave 1. D-W1-5, Sean 2026-09-24: count full employer-domain addresses only, baseline zero; H25 blocks after it (W1-10)",
           "verified_by": [
             "fixture:TestEmployerSubstance"
           ],
           "planned_verified_by": [],
-          "how": "enforced-when-installed once the H18 pre-commit lane installer ships (wave 1) and Sean makes the allowlist decision. Until then the scan is report-only. TestEmployerSubstance already passes"
+          "how": "TestEmployerSubstance: planted URL, path, slug, quote and address fixtures are flagged and a count above the baseline exits 1, bare domain mentions pass, output never prints matched text, and the workspace lane blocks as H25 on exit 1 and allows with a notice on any other failure. Enforced in the lane once Sean installs the git lanes on a device; CI runs on pushes whose paths its workflow watches. Partial until the three wave 1 parts ship"
         },
         "H18": {
           "mode": "enforced-when-installed",
@@ -957,14 +957,14 @@
           "how": "TestInstaller: every installer, for both actions, refuses the agent markers TestInstaller pins (one env marker each for Cursor, Codex, Gemini and Claude, the CI marker, the family override and a Claude process in the ancestry), an undetermined verdict and a missing TTY. It does not run every marker the table declares. Its heal-from-pin fixture covers the Claude user hook scripts (see claude-code H24). Partial until each device re-pins and reinstalls its scheduled job (the claude-code H24 residual)"
         },
         "H25": {
-          "mode": "unverified",
-          "rules": "report-only first, when installed",
+          "mode": "enforced-when-installed",
+          "rules": "the employer-substance scan over the staged files blocks against its baseline in the workspace git lane, when installed; CI runs it over the tree",
           "decision": null,
           "verified_by": [
             "fixture:TestEmployerSubstance"
           ],
           "planned_verified_by": [],
-          "how": "enforced-when-installed once the H18 pre-commit lane installer ships (wave 1); report-only first. TestEmployerSubstance already passes"
+          "how": "TestEmployerSubstance proves the scan, the baseline ratchet and the lane's H25 block; enforced once Sean installs the git lanes on a device"
         },
         "H18": {
           "mode": "enforced-when-installed",
@@ -1327,14 +1327,14 @@
           "how": "TestInstaller: every installer, for both actions, refuses the agent markers TestInstaller pins (one env marker each for Cursor, Codex, Gemini and Claude, the CI marker, the family override and a Claude process in the ancestry), an undetermined verdict and a missing TTY. It does not run every marker the table declares. Its heal-from-pin fixture covers the Claude user hook scripts (see claude-code H24). Partial until each device re-pins and reinstalls its scheduled job (the claude-code H24 residual). Until the codex probe record exists, recognizing a Codex shell rests on an unverified env marker or a missing TTY"
         },
         "H25": {
-          "mode": "unverified",
-          "rules": "report-only first, when installed",
+          "mode": "enforced-when-installed",
+          "rules": "the employer-substance scan over the staged files blocks against its baseline in the workspace git lane, when installed; CI runs it over the tree",
           "decision": null,
           "verified_by": [
             "fixture:TestEmployerSubstance"
           ],
           "planned_verified_by": [],
-          "how": "enforced-when-installed once the H18 pre-commit lane installer ships (wave 1); report-only first. TestEmployerSubstance already passes"
+          "how": "TestEmployerSubstance proves the scan, the baseline ratchet and the lane's H25 block; enforced once Sean installs the git lanes on a device"
         },
         "H18": {
           "mode": "enforced-when-installed",
