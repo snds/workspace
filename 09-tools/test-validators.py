@@ -1274,6 +1274,33 @@ class TestFloorDecisions(unittest.TestCase):
             self.skipTest(f"{len(skipped)} case(s) SKIPPED: {skipped[0][2]}")
 
 
+class TestGitLanes(unittest.TestCase):
+    """H18: the global config-based git lanes, installed by the real installer into a temp HOME. In an
+    employer-shaped temp repo an I1 commit and a Claude-chain commit are blocked with the repo byte-identical
+    (including .git/), a rebase-created personal commit is blocked at pre-push, personal repos pass; the
+    doctor --check audit finds config entries that replace, clear or disable a lane;
+    the declared bypasses are recorded as residuals. git < 2.54 SKIPs (never a pass)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.gl = load("git_lanes")
+        cls.lc = load("09-tools/fixtures/git_lanes/lane_cases.py")
+
+    def test_rendered_include_is_current(self):
+        self.assertEqual(self.gl.cmd_render(True), 0, "run python3 09-tools/git_lanes.py render")
+
+    def test_lane_cases(self):
+        cases = self.lc.lane_cases()
+        for name, passed, detail in cases:
+            if passed is None:
+                continue
+            with self.subTest(case=name):
+                self.assertTrue(passed, detail)
+        skipped = [c for c in cases if c[1] is None]
+        if skipped:
+            self.skipTest(f"{len(skipped)} case(s) SKIPPED: {skipped[0][2]}")
+
+
 class TestPinLib(unittest.TestCase):
     """H24 pin_lib: its own fixture suite, plus the real-home guard against the REAL
     profile_resolve verdict (never a human verdict with confirm_real_home=True)."""
