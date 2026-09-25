@@ -276,13 +276,13 @@
         },
         "H24": {
           "mode": "enforced-partial",
-          "rules": "installers refuse Claude processes. Declared residual until wave 1: the doctor heals the Claude-only injectors (user hook scripts and the user CLAUDE.md) from the checkout, not the pinned lib, and its SessionStart and scheduled runs use the checkout doctor; wave 1 pins both with H20",
-          "decision": "Sean 2026-09-23: accepted as a declared residual; pinned in wave 1",
+          "rules": "installers refuse Claude processes. The doctor heals the Claude-only injectors (user hook scripts and the user CLAUDE.md) only from the pinned lib a human adopted, never from the checkout, and reports a checkout that differs from the pin; with nothing pinned it only reports. SessionStart and the scheduled run use the pinned doctor entry, which runs only pinned code, and never fall back to the checkout doctor (H20). Declared residual until each device re-pins and reinstalls its scheduled job: until then the installed SessionStart hook and scheduled job still start the checkout doctor, which heals only from the pin",
+          "decision": "Sean 2026-09-23: accepted as a declared residual; pinned in wave 1. D-W1-6: heal only from the pin, SessionStart and the scheduled run use the pinned doctor, no pin reports only; Sean reinstalls the scheduled job",
           "verified_by": [
             "fixture:TestInstaller"
           ],
           "planned_verified_by": [],
-          "how": "TestInstaller: every installer, for both actions, refuses the agent markers TestInstaller pins (one env marker each for Cursor, Codex, Gemini and Claude, the CI marker, the family override and a Claude process in the ancestry), an undetermined verdict and a missing TTY. It does not run every marker the table declares. Partial because of the declared heal residual in rules; wave 1 pins it"
+          "how": "TestInstaller: every installer, for both actions, refuses the agent markers TestInstaller pins (one env marker each for Cursor, Codex, Gemini and Claude, the CI marker, the family override and a Claude process in the ancestry), an undetermined verdict and a missing TTY. It does not run every marker the table declares. Its heal-from-pin fixture edits the heal scripts, the user CLAUDE.md and the doctor in the checkout after a pin, runs the doctor in every mode and finds no heal target changed and the drift reported; with no pin nothing is written; without the pinned doctor entry SessionStart runs no doctor. Partial until each device re-pins and reinstalls its scheduled job (a human step)"
         },
         "H25": {
           "mode": "unverified",
@@ -789,13 +789,13 @@
         },
         "H24": {
           "mode": "enforced-partial",
-          "rules": "installers refuse Cursor agent shells; the Claude user hook scripts Cursor loads carry the claude-code H24 heal residual until wave 1",
-          "decision": "Sean 2026-09-23: as claude-code H24",
+          "rules": "installers refuse Cursor agent shells; the Claude user hook scripts Cursor loads heal only from the pinned lib and start only the pinned doctor, with the claude-code H24 residual until the device re-pins and reinstalls its scheduled job",
+          "decision": "Sean 2026-09-23 and D-W1-6: as claude-code H24",
           "verified_by": [
             "fixture:TestInstaller"
           ],
           "planned_verified_by": [],
-          "how": "TestInstaller: every installer, for both actions, refuses the agent markers TestInstaller pins (one env marker each for Cursor, Codex, Gemini and Claude, the CI marker, the family override and a Claude process in the ancestry), an undetermined verdict and a missing TTY. It does not run every marker the table declares. Partial because of the declared heal residual in rules; wave 1 pins it"
+          "how": "TestInstaller: every installer, for both actions, refuses the agent markers TestInstaller pins (one env marker each for Cursor, Codex, Gemini and Claude, the CI marker, the family override and a Claude process in the ancestry), an undetermined verdict and a missing TTY. It does not run every marker the table declares. Its heal-from-pin fixture covers the Claude user hook scripts (see claude-code H24). Partial until each device re-pins and reinstalls its scheduled job (the claude-code H24 residual)"
         },
         "H25": {
           "mode": "unverified",
@@ -1100,13 +1100,13 @@
         },
         "H24": {
           "mode": "enforced-partial",
-          "rules": "installers refuse Codex shells; the Claude user hook scripts Codex reaches through the snds plugin carry the claude-code H24 heal residual until wave 1",
-          "decision": "Sean 2026-09-23: as claude-code H24",
+          "rules": "installers refuse Codex shells; the Claude user hook scripts Codex reaches through the snds plugin heal only from the pinned lib and start only the pinned doctor, with the claude-code H24 residual until the device re-pins and reinstalls its scheduled job",
+          "decision": "Sean 2026-09-23 and D-W1-6: as claude-code H24",
           "verified_by": [
             "fixture:TestInstaller"
           ],
           "planned_verified_by": [],
-          "how": "TestInstaller: every installer, for both actions, refuses the agent markers TestInstaller pins (one env marker each for Cursor, Codex, Gemini and Claude, the CI marker, the family override and a Claude process in the ancestry), an undetermined verdict and a missing TTY. It does not run every marker the table declares. Partial because of the declared heal residual in rules; wave 1 pins it. Until the codex probe record exists, recognizing a Codex shell rests on an unverified env marker or a missing TTY"
+          "how": "TestInstaller: every installer, for both actions, refuses the agent markers TestInstaller pins (one env marker each for Cursor, Codex, Gemini and Claude, the CI marker, the family override and a Claude process in the ancestry), an undetermined verdict and a missing TTY. It does not run every marker the table declares. Its heal-from-pin fixture covers the Claude user hook scripts (see claude-code H24). Partial until each device re-pins and reinstalls its scheduled job (the claude-code H24 residual). Until the codex probe record exists, recognizing a Codex shell rests on an unverified env marker or a missing TTY"
         },
         "H25": {
           "mode": "unverified",

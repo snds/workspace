@@ -59,7 +59,7 @@ Installing is a human step:
 | File | Goes to | How |
 |---|---|---|
 | `dist/BEACON.md` | claude.ai preferences, Workspace project, Perplexity Space | paste, then `--ack-chat` |
-| `dist/user-CLAUDE.md` | `~/.claude/CLAUDE.md` (Claude: personal-only) | the doctor heals it |
+| `dist/user-CLAUDE.md` | `~/.claude/CLAUDE.md` (Claude: personal-only) | the doctor heals it from the pinned copy (`--install-pin` adopts a new one) |
 | `dist/codex-AGENTS.md` | `~/.codex/AGENTS.md` (counts toward the 32 KiB Codex window) | `workspace-doctor.sh --install-shims=codex` |
 | `dist/cursor-user-rules.txt` | Cursor Settings → Rules (advisory) | paste, then `--ack-chat` |
 | `dist/projects-AGENTS.md` | `~/Projects/AGENTS.md` (machine-local pointer, ≤1 KiB) | `workspace-doctor.sh --install-projects-pointer` |
@@ -104,7 +104,7 @@ Paths are relative to the file. Brain must stay first so Cursor loads `.cursor/r
 | MCP not configured on a machine | Install per capability-registry; Open Engine Linear needs Cursor MCP |
 | Worktrees (Claude desktop) | Prefer CLI for canonical session-end |
 | iOS / web no FS | BEACON / paste `00-bootstrap/adapters/web-session.md`; RULES-ONLY ritual |
-| Claude injector heal reads the checkout | Declared residual in wave 0: the doctor refreshes the Claude-only injectors (hook scripts and the user CLAUDE.md) from the checkout, not the pinned copy, and its session-start and scheduled runs use the checkout's doctor. Wave 1 pins them with H20. |
+| Claude injector heal pinned (H20) | Wave 1: the doctor refreshes the Claude-only injectors (hook scripts and the user CLAUDE.md) only from the pinned copy and reports a checkout that differs; nothing pinned = report only. Session-start and scheduled runs use the pinned doctor (`bin/ws-doctor`). Residual until each device re-pins (`--install-pin`) and reinstalls its scheduled job (`--install-launchd`): until then the old hook and job start the checkout's doctor, which heals only from the pin. |
 
 ---
 
