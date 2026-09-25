@@ -1,0 +1,9 @@
+{
+  "session_id": "sess-wg",
+  "hook_event_name": "BeforeTool",
+  "cwd": "{CWD}",
+  "tool_name": "run_shell_command",
+  "tool_input": {
+    "command": "{COMMAND}"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "hookName": "PreToolUse",
+  "taskId": "t-wg",
+  "cwd": "{CWD}",
+  "preToolUse": {
+    "toolName": "execute_command",
+    "parameters": {
+      "command": "{COMMAND}"
+    }
+  }
+}

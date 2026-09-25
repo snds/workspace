@@ -558,7 +558,7 @@
         "payload_keys_any": [
           {
             "key": "cursor_version",
-            "verified": false
+            "verified": true
           }
         ]
       },
@@ -1701,6 +1701,153 @@
       "verified": false
     }
   },
+  "tool_families": [
+    {
+      "id": "shell",
+      "kind": "shell",
+      "names": [
+        "Bash",
+        "Shell",
+        "bash",
+        "shell",
+        "run_shell_command",
+        "execute_command",
+        "exec_command",
+        "run_command",
+        "runTerminalCommand",
+        "run_in_terminal"
+      ],
+      "mcp_suffixes": [
+        "__run_in_terminal",
+        "__bash"
+      ],
+      "command_keys": [
+        "command",
+        "cmd",
+        "command_line"
+      ],
+      "cwd_keys": [
+        "workdir",
+        "cwd",
+        "directory"
+      ],
+      "claude_matcher": [
+        "Bash",
+        "mcp__terminal__run_in_terminal",
+        "mcp__workspace__bash"
+      ]
+    },
+    {
+      "id": "file-write",
+      "kind": "file",
+      "op": "write",
+      "names": [
+        "Write",
+        "Edit",
+        "MultiEdit",
+        "NotebookEdit",
+        "apply_patch",
+        "write_file",
+        "edit_file",
+        "move_file",
+        "create_directory",
+        "replace",
+        "write_to_file",
+        "replace_in_file",
+        "create_file"
+      ],
+      "path_keys": [
+        "file_path",
+        "notebook_path",
+        "path",
+        "filePath",
+        "source",
+        "destination"
+      ],
+      "claude_matcher": [
+        "Write",
+        "Edit",
+        "MultiEdit",
+        "NotebookEdit"
+      ]
+    },
+    {
+      "id": "file-read",
+      "kind": "file",
+      "op": "read",
+      "names": [
+        "read_file",
+        "read_text_file",
+        "read_media_file",
+        "read_multiple_files",
+        "list_directory",
+        "list_directory_with_sizes",
+        "directory_tree",
+        "search_files",
+        "get_file_info"
+      ],
+      "path_keys": [
+        "path",
+        "paths"
+      ],
+      "claude_matcher": []
+    },
+    {
+      "id": "workspace-fs",
+      "kind": "server",
+      "server": "workspace-fs",
+      "claude_matcher": [
+        "mcp__workspace-fs__.*"
+      ]
+    },
+    {
+      "id": "claude-in-chrome",
+      "kind": "url",
+      "server": "claude-in-chrome",
+      "url_keys": [
+        "url"
+      ],
+      "claude_matcher": [
+        "mcp__claude-in-chrome__.*"
+      ]
+    },
+    {
+      "id": "computer-use",
+      "kind": "mcp",
+      "server": "computer-use",
+      "owner_class": null,
+      "claude_matcher": [
+        "mcp__computer-use__.*"
+      ]
+    },
+    {
+      "id": "employer-tracker",
+      "kind": "mcp",
+      "server": "linear-c8",
+      "owner_class": "employer",
+      "rollout": "report",
+      "decision": "harness decision 3 (keep, scope or remove the employer tracker connector) is Sean's; until then the guard logs a would-deny and allows",
+      "claude_matcher": [
+        "mcp__linear-c8__.*"
+      ]
+    }
+  ],
+  "wall_guard": {
+    "doc": "H15 rollout: which rules enforce and which only log a would-deny (telemetry/wall-guard.jsonl). R1, R3 and R6 enforce from install; R2, R4, R6c and R7 are report-only for the rollout window. A host override may only raise a report-only rule to enforce, on Sean's decision.",
+    "budget_s": 4.5,
+    "rules": {
+      "R1": "enforce",
+      "R2": "report",
+      "R3": "enforce",
+      "R4": "report",
+      "R6": "enforce",
+      "R6c": "report",
+      "R7": "report"
+    },
+    "host_overrides": {},
+    "report_window_days": 14,
+    "stricter_belts": []
+  },
   "layers": [
     {
       "id": "claude-user",
@@ -1932,6 +2079,36 @@
       ],
       "verified_by": [
         "selftest:09-tools/ws_hook.py"
+      ]
+    },
+    "ws-guard-claude": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook --host claude-code --event pre-tool",
+      "behaviour": "wall-guard",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestWallGuard"
+      ]
+    },
+    "ws-guard-cursor": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook --host cursor --event pre-tool",
+      "behaviour": "wall-guard",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestWallGuard"
+      ]
+    },
+    "ws-guard-codex": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook --host codex --event pre-tool",
+      "behaviour": "wall-guard",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "fixture:TestWallGuard"
       ]
     }
   },

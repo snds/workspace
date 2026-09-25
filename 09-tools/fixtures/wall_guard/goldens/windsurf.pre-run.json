@@ -1,0 +1,8 @@
+{
+  "agent_action_name": "pre_run_command",
+  "trajectory_id": "t-wg",
+  "tool_info": {
+    "command_line": "{COMMAND}",
+    "cwd": "{CWD}"
+  }
+}

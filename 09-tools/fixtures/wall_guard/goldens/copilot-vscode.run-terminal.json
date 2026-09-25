@@ -1,0 +1,9 @@
+{
+  "sessionId": "sess-wg",
+  "hookEventName": "PreToolUse",
+  "cwd": "{CWD}",
+  "tool_name": "runTerminalCommand",
+  "tool_input": {
+    "command": "{COMMAND}"
+  }
+}

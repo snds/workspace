@@ -1,0 +1,14 @@
+{
+  "session_id": "sess-wg",
+  "transcript_path": "/fixture/.claude/projects/p/sess-wg.jsonl",
+  "cwd": "{CWD}",
+  "permission_mode": "default",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "mcp__computer-use__left_click",
+  "tool_input": {
+    "coordinate": [
+      1,
+      2
+    ]
+  }
+}

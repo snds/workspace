@@ -1,0 +1,6 @@
+{
+  "timestamp": 1,
+  "cwd": "{CWD}",
+  "toolName": "bash",
+  "toolArgs": "{\"command\": \"{COMMAND}\"}"
+}

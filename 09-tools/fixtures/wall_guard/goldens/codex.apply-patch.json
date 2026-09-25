@@ -1,0 +1,10 @@
+{
+  "session_id": "sess-wg",
+  "thread_id": "thr-wg",
+  "cwd": "{CWD}",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "apply_patch",
+  "tool_input": {
+    "input": "*** Begin Patch\n*** Update File: {PATH}\n@@\n-a\n+b\n*** End Patch\n"
+  }
+}

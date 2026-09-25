@@ -1,0 +1,11 @@
+{
+  "conversation_id": "conv-wg",
+  "generation_id": "gen-wg",
+  "cursor_version": "3.21.16",
+  "workspace_roots": [
+    "{CWD}"
+  ],
+  "hook_event_name": "beforeMCPExecution",
+  "tool_name": "write_file",
+  "tool_input": "{\"path\": \"{PATH}\", \"content\": \"x\"}"
+}

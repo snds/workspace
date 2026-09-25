@@ -1,0 +1,11 @@
+{
+  "session_id": "sess-wg",
+  "thread_id": "thr-wg",
+  "cwd": "{HOME}",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Bash",
+  "tool_input": {
+    "command": "{COMMAND}",
+    "workdir": "{CWD}"
+  }
+}

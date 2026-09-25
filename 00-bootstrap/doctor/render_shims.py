@@ -28,6 +28,7 @@ Usage:
   render_shims.py --install-state --json
   render_shims.py --verify-canonical REV
   render_shims.py --emit identity-inc --device ID
+  render_shims.py --emit claude-permissions --device ID
   render_shims.py --rewrite-audit [--json]
   render_shims.py --self-test
 
@@ -38,6 +39,13 @@ from context-remotes.json and devices.json (the output row's `overlay` names the
 `--emit identity-inc --device ID` prints one device's default identity include for --install-identity.
 `--rewrite-audit` (H17-R9, report-only, read by `workspace-doctor.sh --check`) reads the git config
 files, not the overlay env, and reports URL rewrites that can undo the employer transport block.
+
+H15 adds the wall guard's outputs: PreToolUse / beforeShellExecution / preToolUse / beforeMCPExecution
+registrations that run `ws-hook --host H --event pre-tool` (the Claude matcher is generated from
+`tool_families`), the Codex rules-file belt and the belt lists (from 09-tools/wall_guard.py
+BELT_INVARIANTS), and the Claude permissions template. The template is never installed whole:
+`--emit claude-permissions --device ID` expands it for one device from the checkout cache and the
+vault's employer folders, on stdout only.
 
 Exit: 0 clean; 1 drift or a violation; 2 data or usage error; 3 --rev has no render_shims.py.
 Stdlib only; Python 3.9+.
@@ -71,13 +79,20 @@ TOP_KEYS = [
     "never_markers", "agent_possible_env", "probe_env_name_prefixes", "probe_env_value_allowlist",
     "surfaces", "formats", "dialects", "layers", "commands", "registrations", "outputs", "wrappers",
 ]
+# H15: optional keys (the render fixtures predate them). tool_families feeds the generated Claude
+# PreToolUse matcher and the guard's payload reader; wall_guard holds the rollout modes.
+OPTIONAL_TOP_KEYS = ["tool_families", "wall_guard"]
+TOOL_FAMILY_KINDS = {"shell", "file", "server", "url", "mcp"}
+WALL_MODES = {"enforce", "report"}
+MATCHER_TOKEN_RE = re.compile(r"^@tool_families:([a-z-]+)$")
+GUARD_REL = "09-tools/wall_guard.py"
 KINDS = {"cli-agent", "ide-agent", "desktop-app", "cloud-agent", "chat", "browser", "mcp-client", "human"}
 DIALECTS = {"claude", "cursor", "codex", "plain", "none"}
 CHANNELS = {"claude-settings-env", "codex-shell-environment-policy", "cursor-sessionstart-env", "none"}
 INSTALL_MODES = {"tracked", "whole-file", "claude-settings-keys", "merge-hook-entries", "managed-block"}
 ANCESTRY_MATCH = {"exact", "prefix"}
 RENDERS = {"hooks", "codex-config", "cursor-sandbox", "surfaces-md-block", "identity-inc", "beacon",
-           "contract-core"}
+           "contract-core", "codex-rules", "claude-permissions", "wall-belts"}
 CONTRACT_REL = "AGENTS.md"
 WINDSURF_RULE_MAX_CHARS = 12_000   # Windsurf's per-rule character limit (H6)
 CWD_CONTEXTS = ("workspace", "other")
@@ -116,7 +131,7 @@ def load_table(root: Path = ROOT) -> dict:
 def check_table(t: dict) -> list:
     errors = []
     keys = list(t.keys())
-    unknown = [k for k in keys if k not in TOP_KEYS]
+    unknown = [k for k in keys if k not in TOP_KEYS and k not in OPTIONAL_TOP_KEYS]
     missing = [k for k in TOP_KEYS if k not in t]
     if unknown:
         errors.append(f"table: unknown top-level key(s): {', '.join(unknown)}")
@@ -162,6 +177,53 @@ def check_table(t: dict) -> list:
         if "env" in (o.get("owned_keys") or []):
             errors.append(f"output {o.get('id')}: env is never an owned (shim-installable) key; "
                           "the overlay is installed only by --install-claude-overlay")
+        if o.get("render") == "claude-permissions" and o.get("install_path"):
+            errors.append(f"output {o.get('id')}: the permissions template is rendered per device at install "
+                          "time (--emit claude-permissions); it never installs whole")
+    errors += check_guard_tables(t)
+    return errors
+
+
+def check_guard_tables(t: dict) -> list:
+    """H15 shapes: tool families (ids unique, kinds known, list-valued keys) and the rollout modes.
+    The table can never put R1, R3 or R6 in report mode, and a host override only raises a rule."""
+    errors = []
+    fams = t.get("tool_families")
+    if fams is not None:
+        if not isinstance(fams, list):
+            return ["tool_families: must be a list"]
+        seen = set()
+        for i, f in enumerate(fams):
+            if not isinstance(f, dict) or not isinstance(f.get("id"), str):
+                errors.append(f"tool_families[{i}]: needs a string id")
+                continue
+            if f["id"] in seen:
+                errors.append(f"tool_families: duplicate id {f['id']}")
+            seen.add(f["id"])
+            if f.get("kind") not in TOOL_FAMILY_KINDS:
+                errors.append(f"tool_families.{f['id']}: invalid kind {f.get('kind')!r}")
+            for k in ("names", "claude_matcher", "path_keys", "command_keys", "cwd_keys", "url_keys", "mcp_suffixes"):
+                v = f.get(k)
+                if v is not None and not (isinstance(v, list) and all(isinstance(x, str) for x in v)):
+                    errors.append(f"tool_families.{f['id']}.{k}: must be a list of strings")
+            if f.get("rollout") not in (None, "report"):
+                errors.append(f"tool_families.{f['id']}.rollout: only 'report' may be declared")
+    wg = t.get("wall_guard")
+    if wg is not None:
+        rules = wg.get("rules") if isinstance(wg, dict) else None
+        if not isinstance(rules, dict):
+            errors.append("wall_guard.rules: must be an object")
+        else:
+            for k, v in rules.items():
+                if v not in WALL_MODES:
+                    errors.append(f"wall_guard.rules.{k}: mode must be enforce or report")
+            for k in ("R1", "R3", "R6"):
+                if rules.get(k) != "enforce":
+                    errors.append(f"wall_guard.rules.{k}: enforces from install (plan H15); never report")
+        for host, over in ((wg.get("host_overrides") if isinstance(wg, dict) else None) or {}).items():
+            for k, v in (over or {}).items():
+                if v != "enforce":
+                    errors.append(f"wall_guard.host_overrides.{host}.{k}: an override only raises a rule to enforce")
     return errors
 
 
@@ -405,25 +467,42 @@ def render_hooks(t: dict, lid: str) -> dict:
             raise DataError(f"registration {r['id']}: event {r['event']} not in format {fmt_name}")
         name = fmt[r["event"]]
         cmd = command_text(t, r)
+        matcher = expand_matcher(t, r.get("matcher"))
         if fmt_name in CLAUDE_LIKE:
             entry = OrderedDict([("type", "command"), ("command", cmd)])
             if r.get("timeout") is not None:
                 entry["timeout"] = r["timeout"]
             group = OrderedDict()
-            if r.get("matcher") is not None:
-                group["matcher"] = r["matcher"]
+            if matcher is not None:
+                group["matcher"] = matcher
             group["hooks"] = [entry]
             hooks.setdefault(name, []).append(group)
         elif fmt_name == "cursor-hooks":
             entry = OrderedDict([("command", cmd)])
-            if r.get("matcher") is not None:
-                entry["matcher"] = r["matcher"]
+            if matcher is not None:
+                entry["matcher"] = matcher
             if r.get("timeout") is not None:
                 entry["timeout"] = r["timeout"]
             hooks.setdefault(name, []).append(entry)
         else:
             raise DataError(f"layer {lid}: no renderer for format {fmt_name}")
     return hooks
+
+
+def expand_matcher(t: dict, matcher):
+    """`@tool_families:claude` -> the Claude PreToolUse matcher generated from the tool families."""
+    m = MATCHER_TOKEN_RE.match(matcher or "") if isinstance(matcher, str) else None
+    if not m:
+        return matcher
+    key = f"{m.group(1)}_matcher"
+    parts = []
+    for f in t.get("tool_families") or []:
+        for x in (f or {}).get(key) or []:
+            if x not in parts:
+                parts.append(x)
+    if not parts:
+        raise DataError(f"matcher {matcher}: no tool family declares {key}")
+    return "|".join(parts)
 
 
 def _render_hooks_output(t: dict, out: dict, root: Path) -> str:
@@ -998,6 +1077,112 @@ def _splice_md(current: str, block: str) -> str:
     return current[:b] + block + current[end:]
 
 
+def _guard_module(root: Path = ROOT):
+    """09-tools/wall_guard.py (the belts and the vault-folder rule live there)."""
+    import importlib.util  # noqa: PLC0415
+
+    path = ROOT / GUARD_REL
+    name = "wall_guard"
+    have = sys.modules.get(name)
+    if have is not None and getattr(have, "__file__", None) and Path(have.__file__).resolve() == path.resolve():
+        return have
+    spec = importlib.util.spec_from_file_location(name, path)
+    if spec is None or spec.loader is None:
+        raise DataError(f"{GUARD_REL} unavailable")
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod
+    try:
+        spec.loader.exec_module(mod)
+    except (OSError, SyntaxError, ImportError) as exc:
+        sys.modules.pop(name, None)
+        raise DataError(f"{GUARD_REL} unavailable ({exc.__class__.__name__})") from exc
+    return mod
+
+
+PERMISSIONS_DOC = (
+    "Claude permission rules for the wall guard (H15, H25 carry-over). Rendered by render_shims.py; do not edit. "
+    "`static` rules apply on every device. `per_device` rules are templates: `--emit claude-permissions --device "
+    "ID` expands {employer_checkout} from the machine-local checkout cache and {employer_vault_folder} from the "
+    "vault's 07-projects folders whose Context profile is employer (or whose name matches an employer path "
+    "glob), and prints the device's rules; nothing machine-specific is ever committed. Read rules apply "
+    "best-effort to Grep, Glob and the Bash file commands Claude recognises; the PreToolUse guard covers writes.")
+CONTROL_REL = "~/.config/snds-workspace/control"
+R6_EDIT_DENY = ("~/.gitconfig", "~/.cursor/hooks.json", "~/.codex/hooks.json", "~/.codex/config.toml")
+SETTINGS_ASK = ("~/.claude/settings*.json",)
+
+
+def claude_permissions_template(root: Path = ROOT) -> "OrderedDict":
+    wg = _guard_module(root)
+    deny = [f"Read({CONTROL_REL}/**)", f"Edit({CONTROL_REL}/**)"]
+    deny += [f"Edit({p})" for p in R6_EDIT_DENY]
+    deny += wg.claude_bash_rules()
+    return OrderedDict([
+        ("doc", PERMISSIONS_DOC),
+        ("static", OrderedDict([("deny", deny), ("ask", [f"Edit({p})" for p in SETTINGS_ASK])])),
+        ("per_device", OrderedDict([
+            ("deny", ["Read({employer_checkout}/**)", "Edit({employer_checkout}/**)",
+                      "Read({employer_vault_folder}/**)", "Edit({employer_vault_folder}/**)"]),
+            ("sources", OrderedDict([
+                ("employer_checkout", "checkout cache rows (telemetry/checkouts.json) with owner_class employer"),
+                ("employer_vault_folder", "07-projects/* whose SESSION-STATE Context profile starts with centric-, "
+                                          "or whose name matches an employer_path_globs entry"),
+            ])),
+        ])),
+    ])
+
+
+def render_claude_permissions_template(root: Path = ROOT) -> str:
+    return canonical(claude_permissions_template(root))
+
+
+def _perm_path(p, home: Path) -> str:
+    """A permission-rule path: ~/ under the home, // for any other absolute path."""
+    s = os.path.normpath(str(p))
+    h = os.path.normpath(str(home))
+    if s == h or s.startswith(h + "/"):
+        return "~" + s[len(h):]
+    return "/" + s if s.startswith("/") else s
+
+
+def render_claude_permissions(root: Path = ROOT, *, home=None, vault=None, cache=None) -> "OrderedDict":
+    """One device's rules: the static set plus the expanded per-device set (stdout only, never committed)."""
+    home = Path(home) if home else Path.home()
+    tmpl = claude_permissions_template(root)
+    wg = _guard_module(root)
+    pr = _pr_module()
+    vroot = Path(vault) if vault else wg.vault_root(None, home)
+    folders = [str(d) for d in wg.employer_vault_folders(vroot)]
+    c = cache if isinstance(cache, dict) else pr._load_cache(cache, home)
+    checkouts = [str(co.get("path")) for co in (c or {}).get("checkouts") or []
+                 if isinstance(co, dict) and co.get("owner_class") == "employer" and co.get("path")]
+    deny = list(tmpl["static"]["deny"])
+    for rule in tmpl["per_device"]["deny"]:
+        if "{employer_checkout}" in rule:
+            deny += [rule.replace("{employer_checkout}", _perm_path(p, home)) for p in checkouts]
+        elif "{employer_vault_folder}" in rule:
+            deny += [rule.replace("{employer_vault_folder}", _perm_path(p, home)) for p in folders]
+    return OrderedDict([("permissions", OrderedDict([("deny", deny), ("ask", list(tmpl["static"]["ask"]))])),
+                        ("counts", OrderedDict([("employer_checkouts", len(checkouts)),
+                                                ("employer_vault_folders", len(folders))]))])
+
+
+def render_wall_belts(root: Path = ROOT) -> str:
+    wg = _guard_module(root)
+    lists = wg.belt_lists()
+    return canonical(OrderedDict([
+        ("doc", "Invariant-only wall belts (H15), rendered from 09-tools/wall_guard.py BELT_INVARIANTS: each entry is "
+                "a command prefix the wall guard also denies, so no belt is stricter than the guard. Paste-only for "
+                "hosts with static lists and no hooks: Warp (denylist regexes), Zed (always_deny regexes), OpenCode "
+                "(bash permission globs set to deny). Formats are from vendor docs, [UNVERIFIED] until installed."),
+        ("invariants", [OrderedDict([("id", iid), ("argv", pre), ("why", why)])
+                        for iid, pre, why in wg.belt_prefixes()]),
+        ("warp_denylist", lists["regex"]),
+        ("zed_always_deny", lists["regex"]),
+        ("opencode_bash_deny", lists["glob"]),
+        ("claude_bash_deny", wg.claude_bash_rules()),
+    ]))
+
+
 def render_output(t: dict, out: dict, root: Path = ROOT) -> str:
     kind = out.get("render", "hooks")
     if kind == "hooks":
@@ -1012,6 +1197,12 @@ def render_output(t: dict, out: dict, root: Path = ROOT) -> str:
         return render_beacon(t, out.get("beacon") or "", root)
     if kind == "contract-core":
         return render_contract_core(out, root)
+    if kind == "codex-rules":
+        return _guard_module(root).render_codex_rules()
+    if kind == "claude-permissions":
+        return render_claude_permissions_template(root)
+    if kind == "wall-belts":
+        return render_wall_belts(root)
     if kind == "surfaces-md-block":
         try:
             current = (root / out["path"]).read_text(encoding="utf-8")
@@ -1414,6 +1605,7 @@ def self_test_cases() -> list:
                  only=["outputs"], post=lambda r: (r / "out" / "user.json").write_text(
                      (r / "out" / "user.json").read_text(encoding="utf-8").replace("15", "16"), encoding="utf-8"))
     _mutate_case(results, "unknown top-level key", lambda t: t.__setitem__("extra", 1), "unknown top-level key")
+    results += guard_table_cases()
 
     results += beacon_cases()
     results += overlay_cases()
@@ -1443,6 +1635,35 @@ def self_test_cases() -> list:
                             rc_ok == 0 and rc_bad == 1, f"ok={rc_ok} bad={rc_bad}"))
         except (DataError, OSError, subprocess.SubprocessError) as exc:
             results.append(("git fixtures", False, str(exc)))
+    return results
+
+
+def guard_table_cases() -> list:
+    """H15 table rules: R1/R3/R6 never report-only, overrides only raise, the matcher token expands."""
+    results = []
+    good = {"tool_families": [{"id": "shell", "kind": "shell", "claude_matcher": ["Bash", "mcp__t__run"]},
+                              {"id": "w", "kind": "file", "claude_matcher": ["Write", "Bash"]}],
+            "wall_guard": {"rules": {"R1": "enforce", "R2": "report", "R3": "enforce", "R6": "enforce"},
+                           "host_overrides": {"cursor": {"R2": "enforce"}}}}
+    results.append(("guard tables: a well-formed table is clean", check_guard_tables(good) == [],
+                    str(check_guard_tables(good))))
+    relaxed = json.loads(json.dumps(good))
+    relaxed["wall_guard"]["rules"]["R6"] = "report"
+    relaxed["wall_guard"]["host_overrides"]["cursor"]["R3"] = "report"
+    errs = check_guard_tables(relaxed)
+    results.append(("guard tables: R6 report-only and an override that relaxes both fail",
+                    any("R6" in e for e in errs) and any("only raises" in e for e in errs), str(errs)))
+    dup = {"tool_families": [{"id": "a", "kind": "shell"}, {"id": "a", "kind": "teleport"}]}
+    errs = check_guard_tables(dup)
+    results.append(("guard tables: duplicate id and unknown kind fail",
+                    any("duplicate" in e for e in errs) and any("invalid kind" in e for e in errs), str(errs)))
+    m = expand_matcher(good, "@tool_families:claude")
+    results.append(("matcher token expands in table order without duplicates", m == "Bash|mcp__t__run|Write", m))
+    try:
+        expand_matcher({"tool_families": []}, "@tool_families:claude")
+        results.append(("an empty matcher expansion is a data error", False, "no DataError"))
+    except DataError:
+        results.append(("an empty matcher expansion is a data error", True, ""))
     return results
 
 
@@ -1781,11 +2002,20 @@ def _emit(report: dict, as_json: bool, cmd: str) -> None:
         print(f"ok render_shims {cmd}: clean" + (f" ({', '.join(extra)})" if extra else ""))
 
 
-def emit(kind: str, root: Path = ROOT, *, device=None, overlay=None, out=None) -> int:
+def emit(kind: str, root: Path = ROOT, *, device=None, overlay=None, out=None, home=None) -> int:
     """--emit identity-inc --device ID: that device's default identity include on stdout (exit 3 when
-    the device has none). --emit overlay-env [--overlay v4|v5]: the overlay env JSON (read-only)."""
+    the device has none). --emit overlay-env [--overlay v4|v5]: the overlay env JSON (read-only).
+    --emit claude-permissions --device ID: that device's Claude permission rules (static + per device)."""
     out = out or sys.stdout
     try:
+        if kind == "claude-permissions":
+            if not device:
+                print("usage: --emit claude-permissions --device ID", file=sys.stderr)
+                return 2
+            rules = render_claude_permissions(root, home=home)
+            rules["device"] = device
+            out.write(canonical(rules))
+            return 0
         cr, dev = identity_tables(root)
         if kind == "identity-inc":
             if not device:
@@ -1815,7 +2045,7 @@ def main(argv=None) -> int:
     mode.add_argument("--install-state", action="store_true")
     mode.add_argument("--verify-canonical", metavar="REV")
     mode.add_argument("--self-test", action="store_true")
-    mode.add_argument("--emit", choices=["identity-inc", "overlay-env"])
+    mode.add_argument("--emit", choices=["identity-inc", "overlay-env", "claude-permissions"])
     mode.add_argument("--rewrite-audit", action="store_true")
     ap.add_argument("--device")
     ap.add_argument("--overlay", choices=list(OVERLAY_VERSIONS))
