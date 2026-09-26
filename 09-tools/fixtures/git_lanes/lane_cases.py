@@ -118,6 +118,13 @@ class Lab:
             shutil.copyfile(path, dst)
         (self.lib / "09-tools").mkdir(parents=True, exist_ok=True)
         shutil.copyfile(TOOLS / "git_lanes.py", self.lib / "09-tools" / "git_lanes.py")
+        # W2-0 item 2: every lane enters through the pinned bin/ws-hook → ws_hook.py lane EVENT.
+        shutil.copyfile(TOOLS / "ws_hook.py", self.lib / "09-tools" / "ws_hook.py")
+        wh = self.base / "bin" / "ws-hook"
+        wh.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / "00-bootstrap" / "dist" / "ws-hook", wh)
+        wh.chmod(0o755)
+        (self.base / "telemetry").mkdir(parents=True, exist_ok=True)
         (self.lib / "09-tools" / "profile_resolve.py").write_text(
             (TOOLS / "profile_resolve.py").read_text(encoding="utf-8") + PS_STUB, encoding="utf-8")
         (self.lib / "vetted.lock.json").write_text(json.dumps({"schema_version": 1, "scripts": []}), encoding="utf-8")
@@ -136,21 +143,21 @@ class Lab:
         (self.base / "root").write_text(f"{ws}\n", encoding="utf-8")
         return ws
 
-    def install(self) -> tuple:
-        """The lanes through the real installer (git-hooks), into this temp HOME only."""
+    def install(self, name: str = "git-hooks") -> tuple:
+        """The lanes through the real installer (git-hooks, or git-hooks=block), into this temp HOME only."""
         inst = load(ROOT / "00-bootstrap" / "doctor" / "installers.py", "lane_fx_installers")
         dev = inst.pin_lib._PR_LOADER().current_device().get("id") or "unknown"
         repo = self.tmp / "vault"
-        (repo / "02-shared-references" / "probes").mkdir(parents=True)
+        (repo / "02-shared-references" / "probes").mkdir(parents=True, exist_ok=True)
         (repo / "02-shared-references" / "probes" / f"git@{dev}.json").write_text(json.dumps(
             {"schema_version": 1, "surface": "git", "device": dev, "git_version": ".".join(map(str, git_version())),
              "hasconfig": True, "config_hooks": True, "recorded_at": "2026-09-24"}), encoding="utf-8")
         dist = repo / "00-bootstrap" / "dist" / "git" / "lanes" / "ws-lanes.inc"
-        dist.parent.mkdir(parents=True)
+        dist.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / "00-bootstrap" / "dist" / "git" / "lanes" / "ws-lanes.inc", dist)
         out, err = io.StringIO(), io.StringIO()
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
-            rc = inst.run("git-hooks", "install", home=self.home, repo=repo, agent_check=lambda: dict(HUMAN),
+            rc = inst.run(name, "install", home=self.home, repo=repo, agent_check=lambda: dict(HUMAN),
                           isatty=dict(TTY), confirm=lambda _p: "y")
         return rc, out.getvalue() + err.getvalue()
 
@@ -240,6 +247,8 @@ CASES = [
     "byte-identical apart from git's own commit",
     "trailer (H10): a workspace commit carries Workspace-Lane <surface>/<family>/<device>; a personal repo gets one "
     "only after it opts in (ws.laneTrailer), an unknown-owner repo never",
+    "ws-hook entry (W2-0 item 2): every rendered lane runs `bin/ws-hook lane EVENT`; with bin/ws-hook absent, or "
+    "a broken git_lanes.py in the pin, the lane still allows (fail-open)",
 ]
 TRAILER = "Workspace-Lane"
 # Measurements, never pass/fail: the 300 ms target depends on the host (python start, bytecode, ps, git spawns).
@@ -422,6 +431,25 @@ def lane_cases() -> list:
         r = lab.g(lab.env, "commit", "--allow-empty", "-q", "-m", "no pin", cwd=emp)
         cur_link.symlink_to(lab.lib.name)
         out.append((CASES[18], r.returncode == 0, f"rc={r.returncode} {r.stderr[-200:]}"))
+        inc_text = (lab.home / ".config" / "snds-workspace" / "git" / "lanes" / "ws-lanes.inc").read_text(encoding="utf-8")
+        via_entry = all(f"lane {ev}" in inc_text for ev in ("pre-commit", "commit-msg", "pre-merge-commit", "pre-push",
+                                                             "prepare-commit-msg", "post-commit")) and "bin/ws-hook" in inc_text
+        wh = lab.base / "bin" / "ws-hook"
+        wh_bytes = wh.read_bytes()
+        wh.unlink()
+        r_nohook = lab.g(lab.env, "commit", "--allow-empty", "-q", "-m", "no ws-hook", cwd=emp)
+        wh.write_bytes(wh_bytes)
+        wh.chmod(0o755)
+        lane_src = lab.lib / "09-tools" / "git_lanes.py"
+        good_src = lane_src.read_bytes()
+        lane_src.write_text("raise SystemExit(1)\n", encoding="utf-8")
+        r_broken = lab.g(lab.env, "commit", "--allow-empty", "-q", "-m", "broken lane module", cwd=emp)
+        lane_src.write_bytes(good_src)
+        r_back = lab.g(lab.env, "commit", "--allow-empty", "-q", "-m", "lane back", cwd=emp)
+        out.append((CASES[24], via_entry and r_nohook.returncode == 0 and r_broken.returncode == 0
+                    and "allowing" in r_broken.stderr and r_back.returncode != 0 and "[I1]" in r_back.stderr,
+                    f"via={via_entry} no-hook={r_nohook.returncode} broken={r_broken.returncode} "
+                    f"{r_broken.stderr[-160:]} back={r_back.returncode}"))
         lab.g(lab.env, "config", "user.email", lab.mail("acme-id"), cwd=emp)
 
         # in-process (real ancestry input, no ps)
@@ -470,7 +498,9 @@ def lane_cases() -> list:
 
 
 def run_all() -> list:
-    return lane_cases()
+    """The H18 lane cases, then the H11 gate cases (gate_cases.py, the same Lab)."""
+    gate = load(FX / "gate_cases.py", "lane_fx_gate_cases")
+    return lane_cases() + [(f"gate: {n}", p, d) for n, p, d in gate.gate_cases()]
 
 
 if __name__ == "__main__":

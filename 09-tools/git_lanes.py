@@ -4,22 +4,39 @@
 The lanes are git >= 2.54 config-based hooks (`hook.<name>.command` / `.event` / `.enabled`) in one
 rendered include that only Sean installs, through `workspace-doctor.sh --install-git-hooks` (the
 installers.py `git-hooks` name: TTY + human verdict, diff + y/N, backup, byte-for-byte uninstall).
-Every lane execs the PINNED copy of this file (`~/.config/snds-workspace/lib/current/09-tools/`), so
-Cursor, Codex, Copilot, other local agents and humans all pass the same boundary. The Claude floor
+Every lane enters through the one pinned entry point, `~/.config/snds-workspace/bin/ws-hook lane EVENT`
+(W2-0 item 2), which runs the PINNED copy of this file (`~/.config/snds-workspace/lib/current/09-tools/`),
+so Cursor, Codex, Copilot, other local agents and humans all pass the same boundary and the include
+stays byte-stable while the lanes evolve. No ws-hook (no pin) means the lane allows. The Claude floor
 (`ws-claude-wall`, from the Claude overlay) is a second channel and keeps its own semantics: for a
 Claude chain the lane calls the same `profile_resolve.floor_decide`, so a lane is never weaker.
 
-  git_lanes.py hook EVENT [HOOK_ARGS...]     stdin: pre-push ref lines (what the rendered command runs)
+  git_lanes.py hook EVENT [HOOK_ARGS...]     stdin: pre-push ref lines (what `ws-hook lane EVENT` runs)
   git_lanes.py hook prepare-commit-msg FILE [SOURCE [SHA]]   the H10 trailer lane (below)
+  git_lanes.py hook post-commit              the H11 post-commit verify (detached; never blocks)
+  git_lanes.py gate-verify --top DIR --tree T --head H --range R [--via V] [--budget S]
+  git_lanes.py gate-notice [--top DIR]       the one-line last-gate notice (card, stop hooks), or nothing
   git_lanes.py render [--check]              write/check 00-bootstrap/dist/git/lanes/ws-lanes.inc
   git_lanes.py audit [--repo DIR]... [--cache] [--home DIR] [--json]
   git_lanes.py --self-test
 
-Lanes are stateless deciders: they read the repo and the pinned tables and write nothing, anywhere.
-The one writer is the H10 trailer lane (prepare-commit-msg): in the workspace, and in a positively
-personal repo that opts in (`git config ws.laneTrailer true`), it adds `Workspace-Lane:
-<surface>/<family>/<device>` to the message file git hands it, and nothing else. Never in an employer
-repo, never in an unknown one; any error writes nothing and allows.
+Lanes are deciders: they read the repo and the pinned tables and write nothing into a repo's tracked
+state. The H10 trailer lane (prepare-commit-msg) writes only the message file git hands it: in the
+workspace, and in a positively personal repo that opts in (`git config ws.laneTrailer true`), it adds
+`Workspace-Lane: <surface>/<family>/<device>`. Never in an employer repo, never in an unknown one; any
+error writes nothing and allows.
+
+H11, the gate at commit and push (workspace lane only; every write goes to the workspace's gitignored
+`.workspace/state/`): post-commit detaches `nightly.py --phases verify --from-diff --range HEAD~1..HEAD
+--fast` and records the result for HEAD's tree in `last-gate.json` (a ring of the last 50 runs).
+pre-push reuses that record on a tree-hash match, otherwise runs `nightly.py --phases verify --from-diff
+--range <upstream>..<pushed> --fast --budget 20` itself. It is REPORT-ONLY: it blocks only when Sean's
+installer set `ws.pushgate = block` in the managed ~/.gitconfig block on that machine (a repo-local
+value never counts), and then only on a red (CHARGED) verify. WS_PUSH_GATE=off switches the gate lanes
+off. WS_GATE_BYPASS='<reason>' lets a held push through only when no agent is in the process ancestry
+(profile_resolve.agent_check with the hook's non-TTY stdin set aside); an honoured or refused bypass
+is recorded in the ring and in receipts.jsonl. Every gate line ends in `[gate:<verdict>@<tree12>]`,
+a suffix that depends only on the tree and its verdict, so it is identical whichever chain pushed.
 The lane is chosen by the repo profile (profile_resolve):
   employer   I1 over the commit identity (pre-commit, commit-msg, pre-merge-commit) and over every
              commit and annotated tag in a pushed range (author AND committer on the employer
@@ -51,6 +68,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -63,8 +81,11 @@ TRAILER_EVENT = "prepare-commit-msg"      # H10: the one lane that writes (the m
 TRAILER_KEY = "Workspace-Lane"
 TRAILER_OPTIN = "ws.laneTrailer"          # a personal repo's own opt-in (repo-local git config)
 TRAILER_BUDGET_S = 5.0
+GATE_EVENT = "post-commit"                # H11: the detached verify (never blocks)
 LANE_PREFIX = "ws-lane-"
-LANES: Tuple[Tuple[str, str], ...] = tuple((LANE_PREFIX + ev, ev) for ev in LANE_EVENTS + (TRAILER_EVENT,))
+LANES: Tuple[Tuple[str, str], ...] = tuple((LANE_PREFIX + ev, ev)
+                                           for ev in LANE_EVENTS + (TRAILER_EVENT, GATE_EVENT))
+WS_HOOK_REL = ".config/snds-workspace/bin/ws-hook"     # the one pinned entry point (under HOME)
 DIST_INCLUDE_REL = "00-bootstrap/dist/git/lanes/ws-lanes.inc"
 INSTALL_INCLUDE_REL = ".config/snds-workspace/git/lanes/ws-lanes.inc"   # under HOME
 PINNED_SELF_REL = ".config/snds-workspace/lib/current/09-tools/git_lanes.py"
@@ -76,6 +97,21 @@ EMP_TIMEOUT_S = 30.0
 GIT_TIMEOUT_S = 10
 TAG = "ws-lanes"
 AGENT_FAMILIES_R2 = ("cursor", "codex", "copilot", "gemini", "unknown-agent")
+# H11 gate
+GATE_STATE_DIR = ".workspace/state"                     # gitignored, workspace only
+GATE_FILE = "last-gate.json"
+RECEIPTS_FILE = "receipts.jsonl"                        # close-out-dispatch.py RECEIPTS_REL
+GATE_RING = 50
+GATE_BUDGET_S = 20.0                                    # nightly --budget for the pre-push verify
+GATE_POST_BUDGET_S = 20.0                               # the detached post-commit verify
+GATE_LOCK_STALE_S = 180.0
+POST_BUDGET_S = 6.0                                     # the post-commit hook process itself
+PUSHGATE_KEY = "ws.pushgate"
+KILL_ENV = "WS_PUSH_GATE"
+BYPASS_ENV = "WS_GATE_BYPASS"
+EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+GATE_VERDICTS = ("green", "red")                        # a record reusable on a tree match
+GATE_FIX = "python3 09-tools/nightly.py --phases verify --from-diff --range @{u}..HEAD --fast"
 
 _PR = None      # test seam: a stand-in profile_resolve module
 
@@ -84,10 +120,13 @@ _PR = None      # test seam: a stand-in profile_resolve module
 
 
 def lane_command(event: str) -> str:
-    """The shell command git runs for one lane. It carries no "$@": git appends the hook args.
-    `python3 -I -S` keeps PYTHONPATH, site and user site hooks out of the pinned lib (and starts faster)."""
-    return (f'L="$HOME/{PINNED_SELF_REL}"; command -v python3 >/dev/null 2>&1 || exit 0; '
-            f'[ -f "$L" ] || exit 0; exec python3 -I -S "$L" hook {event}')
+    """The shell command git runs for one lane: the one pinned entry point, `bin/ws-hook lane EVENT`,
+    which runs the pinned ws_hook.py, which runs the pinned sibling of this file. It carries no "$@":
+    git appends the hook args. No ws-hook (no pin) allows. The PYTHON* startup variables are dropped so
+    a caller's PYTHONPATH cannot route the pinned lib elsewhere."""
+    return (f'W="$HOME/{WS_HOOK_REL}"; [ -x "$W" ] || exit 0; '
+            'exec env -u PYTHONPATH -u PYTHONHOME -u PYTHONSTARTUP -u PYTHONINSPECT -u PYTHONUSERBASE '
+            f'"$W" lane {event}')
 
 
 def _cfg_quote(value: str) -> str:
@@ -99,8 +138,8 @@ def render_include() -> str:
     lines = [
         "# snds-workspace git lanes (H18). Generated by 09-tools/git_lanes.py render; do not edit.",
         "# Installed only by a human: workspace-doctor.sh --install-git-hooks (included from ~/.gitconfig).",
-        "# Global config-based hooks (git >= 2.54). Each lane execs the pinned git_lanes.py; with no",
-        "# python3 or no pin the lane allows. Audit: python3 09-tools/git_lanes.py audit.",
+        "# Global config-based hooks (git >= 2.54). Each lane execs the pinned bin/ws-hook, which runs the",
+        "# pinned git_lanes.py; with no pin the lane allows. Audit: python3 09-tools/git_lanes.py audit.",
     ]
     for name, event in LANES:
         lines += [f'[hook "{name}"]', f"\tcommand = {_cfg_quote(lane_command(event))}",
@@ -345,11 +384,418 @@ def _emp_lane(base: dict, top: Path, e: dict) -> dict:
     return base
 
 
+# --------------------------------------------------------------------------- H11 gate
+
+
+def _now() -> str:
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+
+def _git_out(top: Path, args: List[str], env: Optional[dict] = None, git: str = "git") -> Optional[str]:
+    try:
+        r = subprocess.run([git, "-C", str(top), *args], capture_output=True, text=True, timeout=GIT_TIMEOUT_S,
+                           env=_clean_env(env))
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return r.stdout.strip() if r.returncode == 0 else None
+
+
+def tree_of(top: Path, rev: str, env: Optional[dict] = None, git: str = "git") -> Optional[str]:
+    return _git_out(top, ["rev-parse", "-q", "--verify", f"{rev}^{{tree}}"], env, git) or None
+
+
+def _detector(name: Any) -> str:
+    return re.sub(r"[^A-Za-z0-9._-]+", "-", str(name)).strip("-") or "unknown"
+
+
+def gate_suffix(tree: Optional[str], status: str, detectors: Any = ()) -> str:
+    """`[gate:<verdict>@<tree12>]`: the tree and its verdict only, never the chain that pushed."""
+    verdict = str(status)
+    dets = sorted({_detector(d) for d in detectors or []})
+    if status == "red" and dets:
+        verdict = "red:" + ",".join(dets)
+    return f"[gate:{verdict}@{(tree or 'unknown')[:12]}]"
+
+
+def _state_dir(top: Path) -> Path:
+    return Path(top) / GATE_STATE_DIR
+
+
+def read_gate(top: Path) -> dict:
+    try:
+        obj = json.loads((_state_dir(top) / GATE_FILE).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return obj if isinstance(obj, dict) else {}
+
+
+def gate_for_tree(rec: dict, tree: Optional[str]) -> Optional[dict]:
+    """The newest green/red verify of `tree` in the record (current entry, then the ring)."""
+    if not tree:
+        return None
+    cur = rec.get("gate")
+    if rec.get("tree") == tree and isinstance(cur, dict) and cur.get("status") in GATE_VERDICTS:
+        return cur
+    for r in reversed([x for x in rec.get("ring") or [] if isinstance(x, dict)]):
+        if r.get("tree") == tree and r.get("status") in GATE_VERDICTS and not r.get("event"):
+            return r
+    return None
+
+
+def write_gate(top: Path, tree: str, head: Optional[str], entry: dict) -> None:
+    """Atomic write of last-gate.json: this entry becomes current and joins the ring (last 50).
+    A SessionEnd `nightly` field for the same tree is kept. Fails quiet."""
+    try:
+        d = _state_dir(top)
+        d.mkdir(parents=True, exist_ok=True)
+        rec = read_gate(top)
+        row = dict(entry, tree=tree, head=head)
+        ring = [x for x in rec.get("ring") or [] if isinstance(x, dict)][-(GATE_RING - 1):] + [row]
+        new = {"schema_version": 2, "head": head, "tree": tree, "ts": row.get("ts") or _now(), "gate": row,
+               "held": bool(row.get("held")), "ring": ring}
+        if rec.get("tree") == tree and isinstance(rec.get("nightly"), dict):
+            new["nightly"] = rec["nightly"]
+        tmp = d / f".{GATE_FILE}.{os.getpid()}.tmp"
+        tmp.write_text(json.dumps(new, indent=2) + "\n", encoding="utf-8")
+        os.replace(tmp, d / GATE_FILE)
+    except OSError:
+        pass
+
+
+def note_gate_event(top: Path, tree: str, head: Optional[str], base: dict, **event: Any) -> None:
+    """Record a hold or a bypass against the verdict it acted on (the ring keeps both)."""
+    entry = {k: base.get(k) for k in ("status", "detectors", "range")}
+    entry.update(event, via="pre-push", ts=_now())
+    write_gate(top, tree, head, entry)
+
+
+def _lock(top: Path, tree: str) -> Optional[Path]:
+    """O_EXCL lock for one in-flight verify of a tree; a lock older than GATE_LOCK_STALE_S is broken."""
+    p = _state_dir(top) / f"gate-{tree[:16]}.lock"
+    try:
+        p.parent.mkdir(parents=True, exist_ok=True)
+        if p.exists() and time.time() - p.stat().st_mtime > GATE_LOCK_STALE_S:
+            p.unlink()
+        fd = os.open(str(p), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+        os.write(fd, f"{os.getpid()}\n".encode())
+        os.close(fd)
+        return p
+    except FileExistsError:
+        return None
+    except OSError:
+        return None
+
+
+def run_verify(top: Path, rng: str, *, env: Optional[dict] = None, budget: float = GATE_BUDGET_S,
+               via: str = "pre-push") -> dict:
+    """`nightly.py --phases verify --from-diff --range R --fast --budget B --json` from the checkout.
+    {status: green|red|skipped|error, detectors, why}."""
+    script = Path(top) / "09-tools" / "nightly.py"
+    if not script.is_file():
+        return {"status": "error", "detectors": [], "why": "no 09-tools/nightly.py in this checkout"}
+    e = _clean_env(env)
+    try:
+        r = subprocess.run([sys.executable, str(script), "--phases", "verify", "--from-diff", "--range", rng, "--fast",
+                            "--budget", f"{budget:g}", "--json", "--via", via], cwd=str(top), env=e,
+                           capture_output=True, text=True, timeout=budget + 15)
+    except subprocess.TimeoutExpired:
+        return {"status": "skipped", "detectors": [], "why": f"verify outlasted {budget:g}s"}
+    except (OSError, subprocess.SubprocessError) as exc:
+        return {"status": "error", "detectors": [], "why": f"verify could not run ({exc.__class__.__name__})"}
+    try:
+        rep = json.loads(r.stdout)
+    except ValueError:
+        return {"status": "error", "detectors": [], "why": f"verify exited {r.returncode} without a report"}
+    st = rep.get("status") if isinstance(rep, dict) else None
+    charged = [c for ph in rep.get("phases") or [] if isinstance(ph, dict) for c in ph.get("charged") or []]
+    if st == "ok":
+        return {"status": "green", "detectors": [], "why": ""}
+    if st == "fail":
+        return {"status": "red", "detectors": charged or ["close-out-dispatch.py"], "why": ""}
+    if st == "skipped":
+        return {"status": "skipped", "detectors": [], "why": "a diff-selected step SKIPPED (budget or timeout)"}
+    return {"status": "error", "detectors": [], "why": f"verify status {st!r}"}
+
+
+def verify_tree(top: Path, tree: str, head: Optional[str], rng: str, *, env: Optional[dict] = None,
+                budget: float = GATE_BUDGET_S, via: str = "pre-push", wait: bool = True, runner=None) -> dict:
+    """Reuse a green/red record for this tree; else run the verify once (lock) and record it. A run
+    already in flight for the tree is awaited (wait=True) up to the budget, never duplicated."""
+    hit = gate_for_tree(read_gate(top), tree)
+    if hit:
+        return dict(hit, reused=True)
+    lock = _lock(top, tree)
+    if lock is None:
+        deadline = time.monotonic() + (budget if wait else 0)
+        while time.monotonic() < deadline:
+            time.sleep(0.25)
+            hit = gate_for_tree(read_gate(top), tree)
+            if hit:
+                return dict(hit, reused=True)
+        return {"status": "skipped", "detectors": [], "why": "another verify of this tree is still running"}
+    t0 = time.monotonic()
+    try:
+        res = (runner or run_verify)(top, rng, env=env, budget=budget, via=via)
+        entry = {"status": res.get("status") or "error", "detectors": sorted(set(res.get("detectors") or [])),
+                 "why": res.get("why") or "", "via": via, "range": rng,
+                 "secs": round(time.monotonic() - t0, 2), "ts": _now()}
+        write_gate(top, tree, head, entry)
+        return entry
+    finally:
+        try:
+            lock.unlink()
+        except OSError:
+            pass
+
+
+def pushgate_mode(top: Path, env: Optional[dict] = None, git: str = "git") -> Tuple[str, List[str]]:
+    """('block'|'report', notices). Only the installer's value counts: the last `ws.pushgate` entry at
+    global scope from ~/.gitconfig itself. A value at any other scope never enables or disables the
+    hold, and is named in a notice (and in `audit`)."""
+    e = _clean_env(env)
+    home = Path(e.get("HOME") or Path.home())
+    try:
+        r = subprocess.run([git, "-C", str(top), "config", "--show-scope", "--show-origin", "-z", "--get-regexp",
+                            r"^ws\.pushgate$"], capture_output=True, timeout=GIT_TIMEOUT_S, env=e)
+    except (OSError, subprocess.SubprocessError):
+        return "report", ["ws.pushgate unreadable; report-only"]
+    ents = parse_listing(r.stdout) if r.returncode == 0 else []
+    notes, mode = [], "report"
+    gc = _cf(home / ".gitconfig")
+    for ent in ents:
+        p = _origin_path(ent["origin"], Path(top))
+        if ent["scope"] == "global" and p is not None and _cf(p) == gc:
+            mode = "block" if str(ent["value"] or "").strip().lower() == "block" else "report"
+        else:
+            notes.append(f"{PUSHGATE_KEY} at {ent['scope']} scope ({ent['origin']}) is ignored; only the "
+                         "installer's ~/.gitconfig block sets the hold")
+    return mode, notes
+
+
+def bypass_allowed(env: dict, ancestry: Optional[list], root: Optional[Path] = None) -> Tuple[bool, str]:
+    """WS_GATE_BYPASS counts only with no agent in the process ancestry: profile_resolve.agent_check with
+    the hook's own stdio set aside (git hands a pre-push hook the ref list, not a TTY). Undetermined
+    (no process table) refuses."""
+    try:
+        v = _pr().agent_check(env=env, ancestry=ancestry, isatty={"stdin": True, "stdout": True}, root=root)
+    except Exception as exc:  # noqa: BLE001
+        return False, f"undetermined ({exc.__class__.__name__})"
+    ok = bool(v.get("human") and v.get("determined"))
+    return ok, ", ".join(str(x) for x in v.get("reasons") or []) or ("human" if ok else "undetermined")
+
+
+def _safe_text(s: Any, n: int = 120) -> str:
+    return re.sub(r"[^ -~]+", " ", str(s or "")).strip()[:n]
+
+
+def write_gate_receipt(top: Path, *, det: dict, head: Optional[str], result: str, reason: str,
+                       root: Optional[Path] = None) -> None:
+    """One receipts.jsonl row for a bypass (honoured or refused). Workspace only, never in CI; ids and
+    a short sanitised reason only. Fails quiet."""
+    if os.environ.get("GITHUB_ACTIONS") or not (Path(top) / "AGENTS.md").is_file():
+        return
+    try:
+        device = _pr().current_device(root=root).get("id") or "unknown"
+    except Exception:  # noqa: BLE001
+        device = "unknown"
+    row = {"ts": _now(), "surface": str(det.get("acting_host") or "unknown"),
+           "family": str(det.get("family_for_walls") or "unknown"), "via": "pre-push", "device": device,
+           "repo_slug": None, "action_class": "gate-bypass", "credential": "none", "head": head or "unknown",
+           "classes": [], "verdict": {"result": result, "reason": _safe_text(reason)}}
+    try:
+        d = _state_dir(top)
+        d.mkdir(parents=True, exist_ok=True)
+        with open(d / RECEIPTS_FILE, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(row, sort_keys=True) + "\n")
+    except OSError:
+        pass
+
+
+def _gate_off(env: dict) -> bool:
+    return str(env.get(KILL_ENV, "")).strip().lower() == "off"
+
+
+def _push_range(top: Path, local: str, remote_sha: str, env: dict, git: str) -> str:
+    zero = re.fullmatch(r"0+", remote_sha or "") is not None
+    if not zero and _git_out(top, ["cat-file", "-e", f"{remote_sha}^{{commit}}"], env, git) is not None:
+        return f"{remote_sha}..{local}"
+    up = _git_out(top, ["rev-parse", "-q", "--verify", "@{u}"], env, git)
+    if up:
+        base = _git_out(top, ["merge-base", up, local], env, git)
+        if base:
+            return f"{base}..{local}"
+    parent = _git_out(top, ["rev-parse", "-q", "--verify", f"{local}~1"], env, git)
+    return f"{parent or EMPTY_TREE}..{local}"
+
+
+def gate_push(base: dict, top: Path, stdin_lines: List[str], e: dict, det: dict, *, ancestry: Optional[list] = None,
+              root: Optional[Path] = None, git: str = "git", runner=None, budget: float = GATE_BUDGET_S) -> dict:
+    """The pre-push gate (workspace lane). Report-only unless the installer's ws.pushgate is `block`;
+    then a red verify holds the push, unless a human-only WS_GATE_BYPASS lets it through."""
+    refs = []
+    for ln in stdin_lines:
+        parts = str(ln).split()
+        if len(parts) == 4 and not re.fullmatch(r"0+", parts[1]):
+            refs.append((parts[1], parts[3]))
+    if not refs:
+        return base
+    if _gate_off(e):
+        for local, _r in refs[:1]:
+            base["notices"].append(f"pre-push gate off ({KILL_ENV}=off); this push is not verified "
+                                   f"{gate_suffix(tree_of(top, local, e, git), 'off')}")
+        return base
+    mode, notes = pushgate_mode(top, e, git)
+    base["notices"] += notes
+    label = "blocking" if mode == "block" else "report-only"
+    seen = set()
+    deadline = time.monotonic() + budget
+    for local, remote_sha in refs:
+        tree = tree_of(top, local, e, git)
+        if not tree or tree in seen:
+            continue
+        seen.add(tree)
+        rng = _push_range(top, local, remote_sha, e, git)
+        left = max(1.0, deadline - time.monotonic())
+        g = verify_tree(top, tree, local, rng, env=e, budget=left, via="pre-push", runner=runner)
+        st, dets = g.get("status") or "error", list(g.get("detectors") or [])
+        sfx = gate_suffix(tree, st, dets)
+        how = " (reused)" if g.get("reused") else ""
+        if st == "green":
+            base["notices"].append(f"pre-push gate ({label}): green{how} {sfx}")
+            continue
+        if st != "red":
+            base["notices"].append(f"pre-push gate ({label}): {st}, not verified — {g.get('why') or 'no verdict'}; "
+                                   f"allowing {sfx}")
+            continue
+        red = f"red{how} — charged {', '.join(dets) or 'unknown'}"
+        if mode != "block":
+            base["notices"].append(f"pre-push gate (report-only): {red}; the push goes ahead. Fix: {GATE_FIX} {sfx}")
+            continue
+        reason = str(e.get(BYPASS_ENV, "") or "").strip()
+        if reason:
+            ok, why = bypass_allowed(e, ancestry, root)
+            write_gate_receipt(top, det=det, head=local, result="bypass" if ok else "bypass-refused", reason=reason,
+                               root=root)
+            note_gate_event(top, tree, local, g, event="bypass" if ok else "bypass-refused",
+                            bypass=_safe_text(reason), held=not ok)
+            if ok:
+                base["notices"].append(f"pre-push gate (blocking): {red}; allowed by {BYPASS_ENV} (recorded) {sfx}")
+                continue
+            return _block(base, "GATE", f"pre-push gate: {red}; {BYPASS_ENV} refused — an agent or an undetermined "
+                                        f"process is in the ancestry ({why}); the refusal is recorded. Fix: "
+                                        f"{GATE_FIX} {sfx}", "workspace")
+        note_gate_event(top, tree, local, g, event="held", held=True)
+        return _block(base, "GATE", f"pre-push gate: {red}; push held ({PUSHGATE_KEY}=block on this machine). Fix: "
+                                    f"{GATE_FIX}, then push again (a human in a plain terminal may set "
+                                    f"{BYPASS_ENV}='<reason>') {sfx}", "workspace")
+    return base
+
+
+def _sequencing(gitdir: Optional[Path], env: dict) -> bool:
+    """A rebase, cherry-pick, am or revert is replaying commits: post-commit stays quiet."""
+    if re.search(r"\b(rebase|cherry-pick|am|revert)\b", str(env.get("GIT_REFLOG_ACTION", ""))):
+        return True
+    if gitdir is None:
+        return False
+    return any((Path(gitdir) / n).exists() for n in ("rebase-merge", "rebase-apply", "CHERRY_PICK_HEAD",
+                                                     "REVERT_HEAD", "sequencer"))
+
+
+def post_commit_decide(*, env: Optional[dict] = None, ancestry: Optional[list] = None, root: Optional[Path] = None,
+                       home: Optional[Path] = None, cwd: Optional[Any] = None, git: str = "git") -> dict:
+    """{action: none|reuse|spawn, line, top, tree, head, range}. Workspace lane only."""
+    pr = _pr()
+    e = dict(os.environ if env is None else env)
+    none = {"action": "none", "line": None}
+    if _gate_off(e):
+        return none
+    here = pr._real(cwd if cwd is not None else os.getcwd())
+    det = pr.detect_surface(env=e, ancestry=ancestry, root=root)
+    facts = _classify(pr, here, e, det, [], GATE_EVENT, root, home, git)
+    top = facts.get("top")
+    if top is None or facts["employer"] or facts["role"] != "workspace" or _sequencing(facts.get("gitdir"), e):
+        return none
+    head = _git_out(top, ["rev-parse", "HEAD"], e, git)
+    tree = tree_of(top, "HEAD", e, git)
+    if not head or not tree:
+        return none
+    hit = gate_for_tree(read_gate(top), tree)
+    if hit:
+        return {"action": "reuse", "top": top, "tree": tree, "head": head,
+                "line": f"post-commit gate: {hit.get('status')} (this tree was already verified) "
+                        f"{gate_suffix(tree, hit.get('status') or 'error', hit.get('detectors'))}"}
+    parent = _git_out(top, ["rev-parse", "-q", "--verify", "HEAD~1"], e, git)
+    return {"action": "spawn", "top": top, "tree": tree, "head": head, "range": f"{parent or EMPTY_TREE}..{head}",
+            "env": e, "line": f"post-commit gate: verify started in the background {gate_suffix(tree, 'pending')}"}
+
+
+def spawn_verify(d: dict) -> bool:
+    """Detach `git_lanes.py gate-verify` (its own session; stdio closed) and return at once."""
+    try:
+        subprocess.Popen([sys.executable, "-I", "-S", str(Path(__file__).resolve()), "gate-verify", "--top",
+                          str(d["top"]), "--tree", d["tree"], "--head", d["head"], "--range", d["range"],
+                          "--via", "post-commit", "--budget", f"{GATE_POST_BUDGET_S:g}"],
+                         cwd=str(d["top"]), env=_clean_env(d.get("env")), stdin=subprocess.DEVNULL,
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        return True
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
+def run_post_commit(*, err=None, decide=None, spawn=None, budget: float = POST_BUDGET_S) -> int:
+    """The post-commit path: always exit 0, at most one line."""
+    err = err or sys.stderr
+    box: dict = {}
+
+    def work():
+        try:
+            box["v"] = (decide or post_commit_decide)()
+        except BaseException as exc:  # noqa: BLE001
+            box["e"] = exc
+
+    th = threading.Thread(target=work, daemon=True)
+    th.start()
+    th.join(budget)
+    v = box.get("v") if isinstance(box.get("v"), dict) else None
+    if th.is_alive() or "e" in box or not v or v.get("action") == "none":
+        return 0
+    if v.get("action") == "spawn" and not (spawn or spawn_verify)(v):
+        print(f"{TAG}: post-commit gate could not start the verify; the pre-push gate runs it", file=err)
+        return 0
+    if v.get("line"):
+        print(f"{TAG}: {v['line']}", file=err)
+    return 0
+
+
+def gate_notice(top: Path, *, env: Optional[dict] = None, git: str = "git") -> Optional[str]:
+    """One line for the card and the stop hooks, or None: HEAD's tree is red or did not verify, or
+    HEAD is unpushed and no gate covered its tree (only once a gate has run in this checkout)."""
+    rec = read_gate(top)
+    if not rec.get("gate") and not rec.get("ring"):
+        return None
+    tree = tree_of(top, "HEAD", env, git)
+    if not tree:
+        return None
+    cur = rec.get("gate") if rec.get("tree") == tree and isinstance(rec.get("gate"), dict) else None
+    hit = gate_for_tree(rec, tree)
+    if hit and hit.get("status") == "red":
+        return (f"Last gate red for HEAD: {', '.join(hit.get('detectors') or []) or 'unknown'} "
+                f"{gate_suffix(tree, 'red', hit.get('detectors'))} — fix, then `{GATE_FIX}`")
+    if hit:
+        return None
+    ahead = _git_out(top, ["rev-list", "--count", "@{u}..HEAD"], env, git)
+    if not ahead or not ahead.isdigit() or int(ahead) == 0:
+        return None
+    st = (cur or {}).get("status") or "unverified"
+    return f"HEAD is not gate-verified ({st}) {gate_suffix(tree, st)} — run `{GATE_FIX}`"
+
+
 def lane_decide(event: str, hook_args: Optional[list] = None, stdin_lines: Optional[list] = None, *,
                 env: Optional[dict] = None, ancestry: Optional[list] = None, root: Optional[Path] = None,
                 home: Optional[Path] = None, cwd: Optional[Any] = None, hostname: Optional[str] = None,
-                git: str = "git", heal: bool = True) -> dict:
-    """{decision: allow|block, rule, reason, notices[], lane, family, repo_class}. Stateless."""
+                git: str = "git", heal: bool = True, gate: bool = True, gate_runner=None) -> dict:
+    """{decision: allow|block, rule, reason, notices[], lane, family, repo_class}. Only the workspace
+    pre-push gate writes (its own gitignored state)."""
     pr = _pr()
     args = [str(a) for a in hook_args or []]
     lines = [str(x) for x in stdin_lines or []]
@@ -407,6 +853,8 @@ def lane_decide(event: str, hook_args: Optional[list] = None, stdin_lines: Optio
             base["notices"].append(f"WARN: this repo's owner is not declared personal ({facts['owner_class']}); "
                                    "an agent works here only with Sean's say-so (run profile_resolve.py scan in "
                                    "a plain terminal, or declare the owner in context-remotes.json)")
+    if event == "pre-push" and top is not None and base["lane"] == "workspace" and gate:
+        return gate_push(base, top, lines, e, det, ancestry=ancestry, root=root, git=git, runner=gate_runner)
     if event == "pre-commit" and top is not None:
         try:
             idn = pr.identity(repo=str(top), root=root, env=e, ancestry=ancestry, home=home, hostname=hostname,
@@ -636,13 +1084,23 @@ def findings_for(entries: List[dict], *, home: Path, where: str, cwd: Optional[P
     for name in sorted(set(eff) - set(want)):
         out.append(f"{where}: unexpected hook {name} uses the reserved {LANE_PREFIX} prefix "
                    f"({eff[name]['last'].get('command') or eff[name]['last']})")
+    gc = _cf(home / ".gitconfig")
+    for ent in entries:
+        if ent["key"].lower() != PUSHGATE_KEY:
+            continue
+        p = _origin_path(ent["origin"], cwd)
+        if ent["scope"] != "global" or p is None or _cf(p) != gc:
+            out.append(f"{where}: {PUSHGATE_KEY} set outside the installer's ~/.gitconfig block ({ent['scope']} "
+                       f"{ent['origin']}); the gate ignores it — remove it (workspace-doctor.sh "
+                       "--install-git-hooks=block sets the hold)")
     return list(dict.fromkeys(out))
 
 
 def _listing(cwd: Path, env: dict, git: str) -> Optional[List[dict]]:
     try:
-        r = subprocess.run([git, "config", "--show-scope", "--show-origin", "-z", "--get-regexp", r"^hook\."],
-                           cwd=str(cwd), env=env, capture_output=True, timeout=GIT_TIMEOUT_S)
+        r = subprocess.run([git, "config", "--show-scope", "--show-origin", "-z", "--get-regexp",
+                            r"^hook\.|^ws\.pushgate$"], cwd=str(cwd), env=env, capture_output=True,
+                           timeout=GIT_TIMEOUT_S)
     except (OSError, subprocess.SubprocessError):
         return None
     if r.returncode not in (0, 1):
@@ -693,6 +1151,9 @@ def audit(*, repos: Optional[List[str]] = None, use_cache: bool = False, home: O
             findings.append(f"{inc} unreadable")
         if _inside_repo(inc) is not None:
             findings.append(f"{inc} lies inside a git repository (the lanes must not live in a repo)")
+        if not os.access(home / WS_HOOK_REL, os.X_OK):
+            findings.append(f"~/{WS_HOOK_REL} missing or not executable: every lane allows (run workspace-doctor.sh "
+                            "--install-pin)")
     with tempfile.TemporaryDirectory(prefix="ws-lanes-audit-") as td:
         neutral = Path(td)
         ents = _listing(neutral, e, git)
@@ -786,16 +1247,17 @@ def main(argv: Optional[List[str]] = None) -> int:
         if len(argv) < 2:
             return 0
         event, hook_args = argv[1], argv[2:]
-        if event == TRAILER_EVENT:
+        if event in (TRAILER_EVENT, GATE_EVENT):
             try:
-                return run_trailer(hook_args)
+                return run_trailer(hook_args) if event == TRAILER_EVENT else run_post_commit()
             except BaseException as exc:  # noqa: BLE001
                 if isinstance(exc, KeyboardInterrupt):
                     raise
                 return 0
-        # pre-commit may run the workspace's H25 scan and H1 lane (their own timeouts); every other event
-        # gets the lane budget.
-        budget = LANE_BUDGET_S + (EMP_TIMEOUT_S + HEAL_TIMEOUT_S if event == "pre-commit" else 0)
+        # pre-commit may run the workspace's H25 scan and H1 lane, pre-push the H11 gate (their own
+        # timeouts); every other event gets the lane budget.
+        budget = LANE_BUDGET_S + (EMP_TIMEOUT_S + HEAL_TIMEOUT_S if event == "pre-commit" else 0) + (
+            GATE_BUDGET_S + 20 if event == "pre-push" else 0)
         try:
             return run_hook(event, hook_args, _read_lines() if event == "pre-push" else [], budget=budget)
         except BaseException as exc:  # noqa: BLE001
@@ -803,6 +1265,29 @@ def main(argv: Optional[List[str]] = None) -> int:
                 raise
             print(f"{TAG}: {exc.__class__.__name__} in the lane; allowing", file=sys.stderr)
             return 0
+    if argv[:1] == ["gate-verify"]:
+        # The detached post-commit verify: never raises, always 0.
+        try:
+            gp = argparse.ArgumentParser(prog="git_lanes.py gate-verify")
+            for k in ("--top", "--tree", "--head", "--range"):
+                gp.add_argument(k, required=True)
+            gp.add_argument("--via", default="post-commit")
+            gp.add_argument("--budget", type=float, default=GATE_POST_BUDGET_S)
+            ns = gp.parse_args(argv[1:])
+            verify_tree(Path(ns.top), ns.tree, ns.head, ns.range, budget=ns.budget, via=ns.via, wait=False)
+        except BaseException as exc:  # noqa: BLE001
+            if isinstance(exc, KeyboardInterrupt):
+                raise
+        return 0
+    if argv[:1] == ["gate-notice"]:
+        top = Path(argv[argv.index("--top") + 1]) if "--top" in argv[:-1] else ROOT
+        try:
+            line = gate_notice(top)
+        except Exception:  # noqa: BLE001 - a notice is best effort
+            line = None
+        if line:
+            print(line)
+        return 0
     ap = argparse.ArgumentParser(prog="git_lanes.py")
     sub = ap.add_subparsers(dest="cmd")
     r = sub.add_parser("render")
@@ -921,6 +1406,19 @@ def self_test() -> int:
         body = m.read_text(encoding="utf-8")
         ok(body.count(TRAILER_KEY) == 1 and "codex/codex/dev-b" in body, f"run_trailer: replaces, never stacks ({body!r})")
     ok(_lane_token("a b/c") == "a-b-c" and _lane_token(None) == "unknown", "trailer value tokens are sanitised")
+    # H11 gate: the suffix is the tree and its verdict only; detector order never changes it.
+    t = "0123456789abcdef" * 2
+    ok(gate_suffix(t, "red", ["b.py", "a b.py", "b.py"]) == "[gate:red:a-b.py,b.py@0123456789ab]",
+       "gate suffix: red with sorted, sanitised, deduped detectors")
+    ok(gate_suffix(t, "green", ["x"]) == "[gate:green@0123456789ab]" and gate_suffix(None, "off") ==
+       "[gate:off@unknown]", "gate suffix: green ignores detectors; no tree is 'unknown'")
+    ok("lane post-commit" in inc and all(f"lane {ev}" in inc for _n, ev in LANES) and inc.count("bin/ws-hook") ==
+       len(LANES), "render: every lane enters through bin/ws-hook lane EVENT")
+    rec = {"tree": "T1", "gate": {"status": "skipped"}, "ring": [{"tree": "T1", "status": "red", "detectors": ["d"]},
+                                                                {"tree": "T2", "status": "green"}]}
+    ok((gate_for_tree(rec, "T1") or {}).get("status") == "red" and (gate_for_tree(rec, "T2") or {}).get("status") ==
+       "green" and gate_for_tree(rec, "T3") is None and gate_for_tree(rec, None) is None,
+       "gate record: a skipped current entry falls back to the ring's verdict for the same tree")
     helper = TOOLS / "fixtures" / "git_lanes" / "lane_cases.py"
     if not helper.is_file():
         print("self-test SKIP: git-lane fixtures absent (a pinned copy) — not a pass", file=sys.stderr)
