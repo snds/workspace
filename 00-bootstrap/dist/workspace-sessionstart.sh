@@ -41,7 +41,7 @@ fi
 RULES="$(cat "$WS/00-bootstrap/dist/RULES.txt" 2>/dev/null)"
 [ -n "$RULES" ] || RULES="- Figma: real library components only.
 - Durable writes go to the workspace, never local agent memory.
-- Employer repos (c8/*) never receive personal-workspace content."
+- Employer repos never receive personal-workspace content."
 
 # If cwd is any checkout/worktree of the workspace, report THAT checkout's SHA.
 LIVE="$WS"

@@ -9,7 +9,7 @@ relations:
 ---
 
 ## For future agent
-- **TL;DR:** Claude Artifacts, ChatGPT/Gemini canvases, HTML previews, and chat-generated docs are vendor panels, not the source of truth. Filesystem agents write the vault file as the original. Cursor `.canvas.tsx` is dual-home (live compile path + git-tracked copy). Web surfaces emit a copy-ready block with a suggested path. Do not scrape vendor UIs. Do not copy `c8/*` canvases into this vault.
+- **TL;DR:** Claude Artifacts, ChatGPT/Gemini canvases, HTML previews, and chat-generated docs are vendor panels, not the source of truth. Filesystem agents write the vault file as the original. Cursor `.canvas.tsx` is dual-home (live compile path + git-tracked copy). Web surfaces emit a copy-ready block with a suggested path. Do not scrape vendor UIs. Do not copy employer-repo canvases into this vault.
 - **As of:** 2026-09 · **Status:** current
 
 ## Context — what forced a choice
@@ -22,7 +22,7 @@ LLMs park standalone analytical output in surface-specific stores: Cursor `~/.cu
 - **Cursor `.canvas.tsx`:** dual-home. The IDE compiles only from `~/.cursor/projects/<slug>/canvases/`. The git-tracked copy under `07-projects/…/canvases/` is the portable source of truth (`python3 09-tools/cursor-externalize.py` at session-end). Do not refuse Cursor canvases; do not treat the live path as the only copy. Prefer a vault `md`/`html` when a live canvas is not required for interactivity.
 - **HTML** that is a rich deliverable **stays HTML** (self-contained, per artifact-standards). Do not mandate Markdown conversion.
 - **Web / no-filesystem surfaces:** emit a copy-ready fenced block plus a suggested `context_descriptor_vN.N_YYYY-MM-DD.ext` path. Do not scrape claude.ai / chatgpt.com / Gemini.
-- **Employer wall:** never copy `c8/*` / Centric canvases into `snds/workspace`. Copy them into that repo's `canvases/` directory instead (`cursor-externalize.py`).
+- **Employer wall:** never copy employer-repo canvases into `snds/workspace`. Copy them into that repo's `canvases/` directory instead (`cursor-externalize.py`).
 - **This slice is the contract plus harvest.** `cursor-externalize.py` copies Cursor canvases (unmapped slugs fail `--check`). `artifact-ingest.py` lands clipboard / drop-folder / downloaded files. Skill: [[artifact-ingest]].
 
 ## Rationale — why, and what we rejected

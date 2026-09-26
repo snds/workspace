@@ -31,7 +31,7 @@ with the code, is readable by every agent working in it on any surface, and sync
   **remote slug** (e.g. `cpes-software/saas-plm-prototype`), never a path. Each device (Work MBP
   `/Users/sean.sands/Projects`, Personal MBP `/Users/snds/Projects`) resolves the local checkout
   itself; see [[decision-llm-inclusive-harness]] §5.
-- **Employer repos** (`centric-engineering`: cpes-software/*, c8, Centric Bitbucket): the intent file
+- **Employer repos** (the `centric-engineering` profile): the intent file
   arrives only by branch → PR → human review. It is written in neutral engineer voice with no
   personal-workspace content (skill names, vault paths, beacon text). Nothing in it is copied back
   into the tracked vault.

@@ -657,7 +657,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": "load-chain",
-      "hash": "sha256:425d53a40cd600cecadc55e5b7ef979c3cfc7deef4b0f49c96696de249a78b77"
+      "hash": "sha256:927cb6a7f998e9d16e891cbcaf5425cfd60a53c1134715bfb8101742894b8d1a"
     },
     "atmospheric-scattering-and-clouds": {
       "path": "03-skills/atmospheric-scattering-and-clouds/SKILL.md",
@@ -1059,7 +1059,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:d2fa6decf091e5a8ff9071e899acfc513000db8f4a1246104823da59a7fd39e3"
+      "hash": "sha256:c9dc4627c104e995fc589068a4a08b2ec380d7a5fe4dba38b04508f29f7c33c7"
     },
     "data-foundations": {
       "path": "03-skills/data-foundations/SKILL.md",
@@ -6702,7 +6702,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": "command-hub",
-      "hash": "sha256:556afbcb98742712f2f653996bb056b926c9b38f9141259caf982285c4d6ed19"
+      "hash": "sha256:86e2a78046f24be0f5f46d20f19bd58cb863f684b90b60e0c5bc331151c9c266"
     },
     "session-end": {
       "path": "03-skills/session-end/SKILL.md",
