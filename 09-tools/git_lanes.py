@@ -35,7 +35,10 @@ installer set `ws.pushgate = block` in the managed ~/.gitconfig block on that ma
 value never counts), and then only on a red (CHARGED) verify. WS_PUSH_GATE=off switches the gate lanes
 off. WS_GATE_BYPASS='<reason>' lets a held push through only when no agent is in the process ancestry
 (profile_resolve.agent_check with the hook's non-TTY stdin set aside); an honoured or refused bypass
-is recorded in the ring and in receipts.jsonl. Every gate line ends in `[gate:<verdict>@<tree12>]`,
+is recorded in the ring and in receipts.jsonl. WS_GATE_NOWAIT=1 (Claude's SessionEnd push, which has a
+hard budget) makes a report-only push reuse a recorded verdict or else detach the verify and go at once:
+the tree is still verified exactly once and its verdict lands in the ring, where the card and the stop
+hooks read it; under `block` it is ignored (the hold needs the verdict). Every gate line ends in `[gate:<verdict>@<tree12>]`,
 a suffix that depends only on the tree and its verdict, so it is identical whichever chain pushed.
 The lane is chosen by the repo profile (profile_resolve):
   employer   I1 over the commit identity (pre-commit, commit-msg, pre-merge-commit) and over every
@@ -109,6 +112,7 @@ POST_BUDGET_S = 6.0                                     # the post-commit hook p
 PUSHGATE_KEY = "ws.pushgate"
 KILL_ENV = "WS_PUSH_GATE"
 BYPASS_ENV = "WS_GATE_BYPASS"
+NOWAIT_ENV = "WS_GATE_NOWAIT"                           # report-only: never wait on the push (SessionEnd)
 EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
 GATE_VERDICTS = ("green", "red")                        # a record reusable on a tree match
 GATE_FIX = "python3 09-tools/nightly.py --phases verify --from-diff --range @{u}..HEAD --fast"
@@ -648,6 +652,10 @@ def gate_push(base: dict, top: Path, stdin_lines: List[str], e: dict, det: dict,
     mode, notes = pushgate_mode(top, e, git)
     base["notices"] += notes
     label = "blocking" if mode == "block" else "report-only"
+    nowait = str(e.get(NOWAIT_ENV, "")).strip().lower() in ("1", "true", "yes", "on")
+    if nowait and mode == "block":
+        base["notices"].append(f"{NOWAIT_ENV} ignored: {PUSHGATE_KEY}=block needs the verdict before the push")
+        nowait = False
     seen = set()
     deadline = time.monotonic() + budget
     for local, remote_sha in refs:
@@ -657,7 +665,16 @@ def gate_push(base: dict, top: Path, stdin_lines: List[str], e: dict, det: dict,
         seen.add(tree)
         rng = _push_range(top, local, remote_sha, e, git)
         left = max(1.0, deadline - time.monotonic())
-        g = verify_tree(top, tree, local, rng, env=e, budget=left, via="pre-push", runner=runner)
+        hit = gate_for_tree(read_gate(top), tree) if nowait else None
+        if nowait and not hit:
+            started = spawn_verify({"top": top, "tree": tree, "head": local, "range": rng, "env": e}, via="pre-push")
+            how = ("the verify runs detached and records its verdict for this tree" if started
+                   else f"the verify could not start; run {GATE_FIX}")
+            base["notices"].append(f"pre-push gate (report-only, {NOWAIT_ENV}): not awaited — {how} "
+                                   f"{gate_suffix(tree, 'pending')}")
+            continue
+        g = dict(hit, reused=True) if hit else verify_tree(top, tree, local, rng, env=e, budget=left,
+                                                           via="pre-push", runner=runner)
         st, dets = g.get("status") or "error", list(g.get("detectors") or [])
         sfx = gate_suffix(tree, st, dets)
         how = " (reused)" if g.get("reused") else ""
@@ -730,12 +747,13 @@ def post_commit_decide(*, env: Optional[dict] = None, ancestry: Optional[list] =
             "env": e, "line": f"post-commit gate: verify started in the background {gate_suffix(tree, 'pending')}"}
 
 
-def spawn_verify(d: dict) -> bool:
-    """Detach `git_lanes.py gate-verify` (its own session; stdio closed) and return at once."""
+def spawn_verify(d: dict, via: str = "post-commit") -> bool:
+    """Detach `git_lanes.py gate-verify` (its own session; stdio closed) and return at once. A verify
+    of the same tree already in flight holds the lock, so the detached one exits without a second run."""
     try:
         subprocess.Popen([sys.executable, "-I", "-S", str(Path(__file__).resolve()), "gate-verify", "--top",
                           str(d["top"]), "--tree", d["tree"], "--head", d["head"], "--range", d["range"],
-                          "--via", "post-commit", "--budget", f"{GATE_POST_BUDGET_S:g}"],
+                          "--via", via, "--budget", f"{GATE_POST_BUDGET_S:g}"],
                          cwd=str(d["top"]), env=_clean_env(d.get("env")), stdin=subprocess.DEVNULL,
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
         return True

@@ -58,6 +58,9 @@ CASES = [
     "followup_message), Codex stdout stays empty (no continue/decision), Claude gets one systemMessage; a "
     "session outside the workspace gets nothing",
     "post-commit: quiet while a rebase, cherry-pick, am or revert replays commits; `commit (amend)` is not one",
+    "WS_GATE_NOWAIT (report-only, the SessionEnd push): an unverified tree pushes at once with a pending line; "
+    "the detached verify still records that tree's verdict (via pre-push), exactly once",
+    "WS_GATE_NOWAIT under ws.pushgate block is ignored: a red tree stays held",
 ]
 
 
@@ -185,10 +188,29 @@ def gate_cases() -> list:
                     and _suffix(r.stderr).startswith("[gate:red:build-registry.py@"),
                     f"rc={r.returncode} {r.stderr[-300:]}"))
 
+        # NOWAIT (report-only): no record for the tree -> push at once, the verify detaches and records
+        commit(off, red=True)
+        t_nw, calls_nw = tree(), _calls(home)
+        r = lab.g(dict(chains["claude"], WS_GATE_NOWAIT="1"), "push", "origin", "main", cwd=ws)
+        deadline = time.monotonic() + 60
+        while time.monotonic() < deadline and not any(
+                x.get("tree") == t_nw and x.get("status") == "red" for x in _gate(ws).get("ring") or []):
+            time.sleep(0.25)
+        time.sleep(0.5)
+        rec_nw = [x for x in _gate(ws).get("ring") or [] if x.get("tree") == t_nw]
+        out.append((CASES[12], r.returncode == 0 and remote() == head() and "not awaited" in r.stderr
+                    and _suffix(r.stderr) == f"[gate:pending@{t_nw[:12]}]" and len(rec_nw) == 1
+                    and rec_nw[0].get("via") == "pre-push" and rec_nw[0].get("status") == "red"
+                    and _calls(home) == calls_nw + 1,
+                    f"rc={r.returncode} {r.stderr[-240:]} ring={rec_nw} calls={_calls(home) - calls_nw}"))
+
         # block mode through the real installer
         rc_b, log_b = lab.install("git-hooks=block")
         commit(off, red=True)
         held_head, before = head(), remote()
+        r_nw = lab.g(dict(chains["claude"], WS_GATE_NOWAIT="1"), "push", "origin", "main", cwd=ws)
+        out.append((CASES[13], r_nw.returncode != 0 and "[GATE]" in r_nw.stderr and "ignored" in r_nw.stderr
+                    and remote() == before, f"rc={r_nw.returncode} {r_nw.stderr[-240:]}"))
         r = lab.g(chains["cursor"], "push", "origin", "main", cwd=ws)
         ring = _gate(ws).get("ring") or []
         held = r.returncode != 0 and "[GATE]" in r.stderr and remote() == before and any(

@@ -520,6 +520,15 @@ class TestRemediation(unittest.TestCase):
     def test_register_lint_planted_cases(self):
         self._run(self.ir._st_remediation_lint)
 
+    def test_unused_closure_warns_not_errors(self):
+        base = (TOOLS / "fixtures" / "intent_run" / "remediation-spec.md").read_text(encoding="utf-8")
+        self.assertEqual([m for lvl, m in self.ir.lint_remediation(self.ir.parse_spec(base)) if lvl == "WARN"], [])
+        stale = base.replace("- C-002: judgment: Pat\n", "- C-002: judgment: Pat\n- C-003: judgment: Sam\n")
+        self.assertNotEqual(stale, base)
+        found = self.ir.lint_remediation(self.ir.parse_spec(stale))
+        self.assertEqual([m for lvl, m in found if lvl == "ERROR"], [])
+        self.assertTrue(any("C-003" in m and "no findings row" in m for lvl, m in found if lvl == "WARN"), found)
+
     def test_blocked_by_gate_and_loop_breaker(self):
         self._run(self.ir._st_remediation_gate_loop)
 

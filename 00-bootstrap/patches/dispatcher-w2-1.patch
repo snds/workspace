@@ -1,0 +1,65 @@
+--- a/.claude/hooks/dispatcher.py
++++ b/.claude/hooks/dispatcher.py
+@@ -177,7 +177,7 @@
+ 
+ 
+ def git(*args: str, check: bool = False,
+-        timeout: float = GIT_TIMEOUT_S) -> subprocess.CompletedProcess:
++        timeout: float = GIT_TIMEOUT_S, env: dict | None = None) -> subprocess.CompletedProcess:
+     """Run git in the workspace. A timeout returns exit 124 instead of raising."""
+     try:
+         return subprocess.run(
+@@ -186,6 +186,7 @@
+             text=True,
+             check=check,
+             timeout=timeout,
++            env=env,
+         )
+     except subprocess.TimeoutExpired:
+         return subprocess.CompletedProcess(["git", *args], 124, stdout="",
+@@ -1468,7 +1469,9 @@
+             sys.stderr.write("[session-end] push deferred: SessionEnd budget spent; "
+                              "your commit is safe locally.\n")
+             return False
+-        push = git("push", timeout=budget)
++        # H11: a report-only pre-push gate reuses this tree's verdict or detaches the verify
++        # instead of waiting up to 20 s for it (git_lanes WS_GATE_NOWAIT; ignored under block).
++        push = git("push", timeout=budget, env=dict(os.environ, WS_GATE_NOWAIT="1"))
+         if push.returncode == 0:
+             return True
+         err = ((push.stderr or "") + (push.stdout or "")).lower()
+@@ -1551,17 +1554,29 @@
+ 
+ 
+ def _write_last_gate(nightly_status: str) -> None:
+-    """Record the gate result for the exact post-commit HEAD tree (workspace only,
+-    gitignored). A later pre-push short-circuits only on a matching tree hash."""
++    """Record this rebuild's status for the exact post-commit HEAD tree (workspace only,
++    gitignored) as the `nightly` field. The H11 verify record (`gate`, `ring`, written by
++    git_lanes) is kept, never clobbered; a `gate` for another tree is dropped from the
++    top level only (the ring still holds it). A rebuild is not a verify: pre-push reuses
++    only a `gate`/`ring` verdict for the tree."""
+     try:
+         head = git("rev-parse", "HEAD").stdout.strip()
+         tree = git("rev-parse", "HEAD^{tree}").stdout.strip()
+         if not head or not tree:
+             return
+         LAST_GATE.parent.mkdir(parents=True, exist_ok=True)
+-        data = {"schema_version": 1, "head": head, "tree": tree,
+-                "nightly": {"status": nightly_status, "phases": ["rebuild"]},
+-                "ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
++        try:
++            data = json.loads(LAST_GATE.read_text(encoding="utf-8"))
++        except (OSError, ValueError):
++            data = {}
++        if not isinstance(data, dict):
++            data = {}
++        if data.get("tree") != tree:
++            data.pop("gate", None)
++            data.pop("held", None)
++        data.update({"schema_version": data.get("schema_version") or 1, "head": head, "tree": tree,
++                     "nightly": {"status": nightly_status, "phases": ["rebuild"]},
++                     "ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")})
+         tmp = LAST_GATE.with_suffix(".json.tmp")
+         tmp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+         os.replace(tmp, LAST_GATE)
