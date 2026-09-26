@@ -110,7 +110,7 @@ QUALITY_STEP_TIMEOUT_S = 300.0   # one hanging self-test must not hang the chain
 # Per-step overrides, each a deliberate diff. test-validators runs every fixture suite that builds real
 # git repos (floor, identity, installers); it measured 309 s outside the sandbox on 2026-09-24 after the
 # wave-1 floor cases, so it gets 600 s. Every other step keeps the 300 s hang guard.
-QUALITY_STEP_TIMEOUT_OVERRIDE_S = {"test-validators.py": 600.0}
+QUALITY_STEP_TIMEOUT_OVERRIDE_S = {"test-validators.py": 1200.0}  # 558 s measured 2026-09-25 (179 tests)
 QUALITY_CHAIN = [
     ("build-related.py", ["--check"]),
     ("build-registry.py", ["--check"]),
