@@ -876,14 +876,27 @@ def _lane_token(v: Any) -> str:
     return t or "unknown"
 
 
+def _controlling_tty() -> dict:
+    try:
+        fd = os.open("/dev/tty", os.O_RDWR | os.O_NOCTTY)
+    except OSError:
+        return {"stdin": False, "stdout": False}
+    os.close(fd)
+    return {"stdin": True, "stdout": True}
+
+
 def trailer_decide(hook_args: Optional[list] = None, *, env: Optional[dict] = None, ancestry: Optional[list] = None,
                    root: Optional[Path] = None, home: Optional[Path] = None, cwd: Optional[Any] = None,
-                   git: str = "git") -> dict:
+                   git: str = "git", isatty: Optional[dict] = None) -> dict:
     """{write, value, reason, lane}. Workspace: always; positively personal + opted in: yes; else no."""
     pr = _pr()
     e = dict(os.environ if env is None else env)
     here = pr._real(cwd if cwd is not None else os.getcwd())
-    det = pr.detect_surface(env=e, ancestry=ancestry, root=root)
+    # The trailer is a label, never a permission. Git runs hooks with no tty on stdin, so a person at a
+    # terminal would read as "unknown"; a controlling terminal that opens is the signal an agent shell
+    # lacks. Agent markers and ancestry still win inside detect_surface.
+    det = pr.detect_surface(env=e, ancestry=ancestry, root=root,
+                            isatty=_controlling_tty() if isatty is None else isatty)
     facts = _classify(pr, here, e, det, [], TRAILER_EVENT, root, home, git)
     top = facts.get("top")
     no = {"write": False, "value": None, "lane": None}

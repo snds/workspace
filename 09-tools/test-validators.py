@@ -1036,6 +1036,16 @@ class TestCloseOutDispatch(unittest.TestCase):
                 else:
                     self.assertEqual(body, "subject\n")
                     self.assertEqual(before, sorted(p.name for p in repos[slug].rglob("*")))
+            # A person at a terminal (hooks get no tty on stdin; the controlling terminal is the signal) reads
+            # as human; without one the label stays unknown; agent markers still win over the terminal.
+            human_env = {k: v for k, v in env.items() if k != "CURSOR_AGENT"}
+            term = [{"comm": "git"}, {"comm": "zsh"}, {"comm": "login"}, {"comm": "Terminal"}]
+            tty, notty = {"stdin": True, "stdout": True}, {"stdin": False, "stdout": False}
+            for e, anc, t, want in ((human_env, term, tty, "human/human/"), (human_env, term, notty, "unknown/unknown/"),
+                                    (dict(human_env, CLAUDECODE="1"), term[:-1] + [{"comm": "claude"}], tty,
+                                     "claude-code/claude/")):
+                v = gl.trailer_decide([], env=e, ancestry=anc, root=lib, home=home, cwd=repos["pat-sample/ws"], isatty=t)
+                self.assertTrue(v["write"] and v["value"].startswith(want), (want, v))
             gl._PR = None
 
 
