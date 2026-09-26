@@ -21,6 +21,7 @@
     "H2",
     "H3",
     "H8",
+    "H9",
     "H10",
     "H15",
     "H16",
@@ -49,6 +50,10 @@
     "H8": {
       "scope": "shared",
       "reason": "The remediation loop (recon, findings register, packets, verdict) is vendor-neutral by design: any agent runs the CLI, and a packet is any vendor's cloud-task body."
+    },
+    "H9": {
+      "scope": "shared",
+      "reason": "Write scope is task data every implementor carries, whatever its vendor: the lint, the gate, the diff check and the pre-write report read the same task graph for every agent."
     },
     "H10": {
       "scope": "shared",
@@ -424,6 +429,21 @@
             "reason": "a voluntary CLI: nothing on the host runs recon, findings, packet or verdict unprompted, so the cell stays advisory. The in-tool rules (policy-routed recon, the register lint, self-contained packets, the Blocked-over-Fit verdict) are fixture-verified by TestRemediation. The enforcing point is the commit and push lane plus CI over committed specs (H11 lands report-only in wave 2 and blocks by opt-in in wave 3).",
             "until": "wave-3"
           }
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "report-only accelerator: the installed pre-tool shim (the guard's own registration; its matcher covers Write, Edit, MultiEdit and NotebookEdit) runs the scope step after the guard allows; lint and gate refuse overlapping parallel writes; direct commits are backstop-only (CI scope --range on PRs)",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestIntentScope",
+            "selftest:09-tools/intent-run.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestIntentScope and intent-run --self-test run the disjoint-wave lint, the gate refusal, branch- and range-keyed scope, --check-path (pointer, enforce exit, fail-open, the 50 ms budget), the employer pointer outside a byte-identical tree, and the same result from the Claude, Cursor, Codex, VS Code and Windsurf pre-write goldens; the ws_hook step is proven not to change the guard's exit code or stdout",
+          "parity_waiver": {
+            "reason": "report-only by plan: in wave 2 a pre-write scope finding goes to stderr and scope.jsonl and never changes a host decision, so the cell stays advisory. The in-tool rules (disjoint-wave lint, gate refusal, scope --branch/--range, the per-profile pointer) are fixture-verified by TestIntentScope. Blocking lands in wave 3 as a per-machine opt-in that honours a task's `enforce: true`; CI `scope --range` on PRs is the backstop for everything else.",
+            "until": "wave-3"
+          }
         }
       },
       "non_user_envelopes": [
@@ -524,6 +544,14 @@
         "H8": {
           "mode": "backstop-only",
           "rules": "a packet brief is the task body; CI lints the committed spec",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
+          "mode": "backstop-only",
+          "rules": "no shim is registered for cloud sessions; CI scope --range on PRs",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -683,6 +711,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "not-applicable",
+          "rules": "no tasks and no writes to a checkout",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -793,6 +829,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "not-applicable",
+          "rules": "no tasks; no pre-write event reaches the scope step",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -880,6 +924,14 @@
           "how": ""
         },
         "H8": {
+          "mode": "not-applicable",
+          "rules": "no repository or shell",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
           "mode": "not-applicable",
           "rules": "no repository or shell",
           "decision": null,
@@ -1136,6 +1188,21 @@
             "reason": "a voluntary CLI: nothing on the host runs recon, findings, packet or verdict unprompted, so the cell stays advisory. The in-tool rules (policy-routed recon, the register lint, self-contained packets, the Blocked-over-Fit verdict) are fixture-verified by TestRemediation. The enforcing point is the commit and push lane plus CI over committed specs (H11 lands report-only in wave 2 and blocks by opt-in in wave 3).",
             "until": "wave-3"
           }
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "report-only accelerator on the installed preToolUse Write shim (the guard's registration); the CLI and CI scope --range on PRs",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestIntentScope",
+            "selftest:09-tools/intent-run.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestIntentScope and intent-run --self-test run the disjoint-wave lint, the gate refusal, branch- and range-keyed scope, --check-path (pointer, enforce exit, fail-open, the 50 ms budget), the employer pointer outside a byte-identical tree, and the same result from the Claude, Cursor, Codex, VS Code and Windsurf pre-write goldens; the ws_hook step is proven not to change the guard's exit code or stdout",
+          "parity_waiver": {
+            "reason": "report-only by plan: in wave 2 a pre-write scope finding goes to stderr and scope.jsonl and never changes a host decision, so the cell stays advisory. The in-tool rules (disjoint-wave lint, gate refusal, scope --branch/--range, the per-profile pointer) are fixture-verified by TestIntentScope. Blocking lands in wave 3 as a per-machine opt-in that honours a task's `enforce: true`; CI `scope --range` on PRs is the backstop for everything else.",
+            "until": "wave-3"
+          }
         }
       },
       "non_user_envelopes": []
@@ -1243,6 +1310,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] a voluntary CLI where a shell runs it; hooks in the CLI are undocumented",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1334,6 +1409,14 @@
         "H8": {
           "mode": "backstop-only",
           "rules": "a packet brief is the task body; CI lints the committed spec",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
+          "mode": "backstop-only",
+          "rules": "CI scope --range on PRs",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1583,6 +1666,21 @@
             "reason": "a voluntary CLI: nothing on the host runs recon, findings, packet or verdict unprompted, so the cell stays advisory. The in-tool rules (policy-routed recon, the register lint, self-contained packets, the Blocked-over-Fit verdict) are fixture-verified by TestRemediation. The enforcing point is the commit and push lane plus CI over committed specs (H11 lands report-only in wave 2 and blocks by opt-in in wave 3).",
             "until": "wave-3"
           }
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "report-only accelerator on the PreToolUse apply_patch shim once Sean trusts the hooks (the guard's registration); CI scope --range on PRs",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestIntentScope",
+            "selftest:09-tools/intent-run.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestIntentScope and intent-run --self-test run the disjoint-wave lint, the gate refusal, branch- and range-keyed scope, --check-path (pointer, enforce exit, fail-open, the 50 ms budget), the employer pointer outside a byte-identical tree, and the same result from the Claude, Cursor, Codex, VS Code and Windsurf pre-write goldens; the ws_hook step is proven not to change the guard's exit code or stdout",
+          "parity_waiver": {
+            "reason": "report-only by plan: in wave 2 a pre-write scope finding goes to stderr and scope.jsonl and never changes a host decision, so the cell stays advisory. The in-tool rules (disjoint-wave lint, gate refusal, scope --branch/--range, the per-profile pointer) are fixture-verified by TestIntentScope. Blocking lands in wave 3 as a per-machine opt-in that honours a task's `enforce: true`; CI `scope --range` on PRs is the backstop for everything else.",
+            "until": "wave-3"
+          }
         }
       },
       "non_user_envelopes": []
@@ -1674,6 +1772,14 @@
         "H8": {
           "mode": "backstop-only",
           "rules": "a packet brief is the task body; CI lints the committed spec",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
+          "mode": "backstop-only",
+          "rules": "CI scope --range on PRs",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1799,6 +1905,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] no shim is rendered; a voluntary CLI where a shell runs it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1920,6 +2034,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] the pre-write golden comes from vendor docs and no probe has seen the payload; a voluntary CLI otherwise",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2036,6 +2158,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] no shim is rendered; a voluntary CLI where a shell runs it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2125,6 +2255,14 @@
         "H8": {
           "mode": "backstop-only",
           "rules": "a packet brief is the task body; CI lints the committed spec",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
+          "mode": "backstop-only",
+          "rules": "CI scope --range on PRs",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -2248,6 +2386,14 @@
         "H8": {
           "mode": "advisory",
           "rules": "a voluntary CLI where a shell runs it; no host event invokes it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] no shim is rendered; its pre_write_code golden comes from vendor docs; a voluntary CLI otherwise",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -2376,6 +2522,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; CI scope --range on PRs",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2492,6 +2646,14 @@
         "H8": {
           "mode": "advisory",
           "rules": "a voluntary CLI where a shell runs it; no host event invokes it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; CI scope --range on PRs",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -2613,6 +2775,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] a voluntary CLI where a shell runs it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2727,6 +2897,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] loads the claude-user layer; no probe of its pre-write payload",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2835,6 +3013,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "not-applicable",
+          "rules": "no execution and no checkout",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2937,6 +3123,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "not-applicable",
+          "rules": "the workspace MCP exposes no task or scope verbs",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -3026,6 +3220,14 @@
         "H8": {
           "mode": "advisory",
           "rules": "Sean runs the CLI; approving a register is human-only (intent-run approve)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "Sean runs scope and gate; the active-task pointer is set by worktree add or scope --set",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -3494,30 +3696,36 @@
       "template": "$HOME/.config/snds-workspace/bin/ws-hook --host claude-code --event pre-tool",
       "behaviour": "wall-guard",
       "implements": [
-        "host_filter"
+        "host_filter",
+        "scope_report"
       ],
       "verified_by": [
-        "fixture:TestWallGuard"
+        "fixture:TestWallGuard",
+        "fixture:TestIntentScope"
       ]
     },
     "ws-guard-cursor": {
       "template": "$HOME/.config/snds-workspace/bin/ws-hook --host cursor --event pre-tool",
       "behaviour": "wall-guard",
       "implements": [
-        "host_filter"
+        "host_filter",
+        "scope_report"
       ],
       "verified_by": [
-        "fixture:TestWallGuard"
+        "fixture:TestWallGuard",
+        "fixture:TestIntentScope"
       ]
     },
     "ws-guard-codex": {
       "template": "$HOME/.config/snds-workspace/bin/ws-hook --host codex --event pre-tool",
       "behaviour": "wall-guard",
       "implements": [
-        "host_filter"
+        "host_filter",
+        "scope_report"
       ],
       "verified_by": [
-        "fixture:TestWallGuard"
+        "fixture:TestWallGuard",
+        "fixture:TestIntentScope"
       ]
     },
     "ws-ledger-claude": {
