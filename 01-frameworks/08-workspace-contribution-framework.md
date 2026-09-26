@@ -279,7 +279,9 @@ baton. Record durable insights/facts in the moment (knowledge/memory), not just 
    follow the vendor-surface ontology row / [[decision-vendor-surface-artifacts]] (write-through;
    do not fake `~/.cursor` harvest in CI). Do not auto-commit employer repos.
 5. If a generated artifact changed (frontmatter edited), regenerate `skills.registry.json` + Related blocks.
-6. Commit + push reviewable diffs.
+6. Commit + push reviewable diffs. Where the git lanes are installed, the push carries one H11
+   `pre-push gate` line (`[gate:<verdict>@<tree>]`): report-only by default; a red verdict is fixed or
+   named in the session block, and a held push (per-machine opt-in) is reported, never bypassed by an agent.
 
 **Concurrent agents.** If two agents touched the same project in parallel, run the reconcile protocol to
 merge their session blocks + handoff state into one thread; flag genuine conflicts rather than overwriting.
