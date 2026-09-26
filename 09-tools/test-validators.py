@@ -553,6 +553,98 @@ class TestRemediation(unittest.TestCase):
         self.assertLessEqual(len(veg.status_census()), veg.STATUS_CEILING)
 
 
+class TestIntentScope(unittest.TestCase):
+    """H9: write scope as task data — disjoint-wave lint, scope --branch/--range, --check-path, the
+    per-profile active-task pointer and the report-only pre-write step (synthetic owners, temp HOME)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.ir = load("intent-run")
+        cls.ir._MEASURE_STDIO = subprocess.DEVNULL
+        cls.sc = cls.ir.intent_scope
+
+    def _run(self, fn):
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as home:
+            env = {"HOME": home, "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull}
+            with mock.patch.dict(os.environ, env):
+                return fn()
+
+    def test_disjoint_wave_lint_and_gate(self):
+        self._run(self.ir._st_scope_lint)
+
+    def test_branch_and_range_scope(self):
+        self._run(self.ir._st_scope_branch_range)
+
+    def test_check_path_pointer_enforce_fail_open_budget(self):
+        self._run(self.ir._st_scope_check_path)
+
+    def test_employer_pointer_outside_repo_byte_identical(self):
+        self._run(self.ir._st_scope_employer_pointer)
+
+    def test_denylist_preserve_generated_contract_status(self):
+        self._run(self.ir._st_scope_denylist_contract)
+
+    def test_accelerator_parity_across_host_goldens(self):
+        self._run(self.ir._st_scope_accelerator_parity)
+
+    def test_lockfile_denylist_is_check_secrets_skip_names(self):
+        self.assertEqual(set(self.sc.LOCKFILES), set(load("check-secrets").SKIP_NAMES))
+
+    def test_scope_kernel_is_pinned(self):
+        pin = load("00-bootstrap/doctor/pin_lib.py")
+        self.assertIn("09-tools/intent_scope.py", pin.PINNED_PATHS)
+
+    def test_pre_tool_scope_step_never_changes_the_guard_decision(self):
+        """ws_hook: the scope report runs only after an allowing guard and changes neither the exit code
+        nor stdout; the real guard's output is identical with and without an active task."""
+        import contextlib
+        import io
+        from unittest import mock
+        wh = load("ws_hook")
+        wg_mod = __import__("wall_guard")
+
+        def run(host, payload, home):
+            out, err = io.StringIO(), io.StringIO()
+            with contextlib.redirect_stderr(err):
+                rc = wh.handle_event(host, "pre-tool", payload, home=home, out=out)
+            return rc, out.getvalue(), err.getvalue()
+
+        def body():
+            with tempfile.TemporaryDirectory() as tds:
+                td = Path(tds).resolve()
+                home = td / "home"
+                repo = td / "ws"
+                (repo / ".git").mkdir(parents=True)
+                self.ir._ws_shape(repo)
+                spec = repo / "docs" / "INTENT.md"
+                spec.parent.mkdir(parents=True)
+                spec.write_text(self.ir._scope_spec("| T1 | implementor | worktree | - | | src/** | |\n"),
+                                encoding="utf-8")
+                target = str(repo / "README.md")
+                for golden, host in (("claude-code.write", "claude-code"), ("cursor.pre-tool-write", "cursor"),
+                                     ("codex.apply-patch", "codex")):
+                    payload = self.ir.scope_golden(golden, path=target, cwd=str(repo))
+                    self.sc.clear_pointer(repo)
+                    before = run(host, payload, home)
+                    self.sc.write_pointer(repo, spec, "T1")
+                    after = run(host, payload, home)
+                    self.assertEqual(before[:2], after[:2], golden)       # rc and stdout unchanged
+                    for decision, text in (("allow", ""), ("deny", '{"deny": true}')):
+                        fake = (0, text, "", {"decision": decision})
+                        with mock.patch.object(wg_mod, "run_hook", return_value=fake):
+                            rc, out, err = run(host, payload, home)
+                        self.assertEqual((rc, out.strip()), (0, text), (golden, decision))
+                        self.assertEqual("ws-scope" in err, decision == "allow", (golden, decision, err))
+                    with mock.patch.object(self.sc, "report_payload", side_effect=RuntimeError("boom")), \
+                            mock.patch.object(wg_mod, "run_hook", return_value=(0, "", "", {"decision": "allow"})):
+                        self.assertEqual(run(host, payload, home)[:2], (0, ""))   # a broken step fails open
+                row = (repo / ".workspace" / "state" / "scope.jsonl").read_text(encoding="utf-8").splitlines()[-1]
+                self.assertEqual(json.loads(row)["path"], "README.md")
+
+        self._run(body)
+
+
 class TestPromptRouteFollowthrough(unittest.TestCase):
     """Produce language must inject close-out; empty Layer 0 on work verbs must not be silent."""
 

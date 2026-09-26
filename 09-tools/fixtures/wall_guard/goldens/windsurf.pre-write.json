@@ -1,0 +1,13 @@
+{
+  "agent_action_name": "pre_write_code",
+  "trajectory_id": "t-wg",
+  "tool_info": {
+    "file_path": "{PATH}",
+    "edits": [
+      {
+        "old_string": "a",
+        "new_string": "b"
+      }
+    ]
+  }
+}

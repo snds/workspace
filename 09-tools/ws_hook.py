@@ -38,6 +38,11 @@ without importing profile_resolve; it never prints. `sweep` (and the session-sta
 pinned sibling closure.py sweeper within its budget: a dead session's mechanical workspace
 leftovers are committed, substantive ones become a card notice. Both fail open.
 
+H9: after the guard has written its output on an allowed pre-tool event, the pinned sibling
+intent_scope.py checks each path the payload writes against the active task's declared scope and
+reports (stderr + scope.jsonl beside the active-task pointer). Report-only on every host: it never
+changes the exit code or stdout, and it fails open.
+
 Stdlib only; Python 3.9+.
 """
 
@@ -1027,7 +1032,20 @@ def run_guard(host_arg, payload, *, env=None, home=None, out=None, err=None) -> 
         out.flush()
     if why:
         err.write(why + "\n")
+    if rc == 0 and (_dec or {}).get("decision") not in ("deny", "ask", "route"):
+        scope_report(host_arg, payload, home=home, err=err)
     return rc
+
+
+def scope_report(host_arg, payload, *, home=None, err=None) -> None:
+    """H9, report-only: the pinned sibling intent_scope checks each path the payload writes against
+    the active task's declared scope, logs and prints findings to stderr. It runs after the guard's
+    output is written and never touches the exit code or stdout; it fails open."""
+    try:
+        import intent_scope  # noqa: PLC0415
+        intent_scope.report_payload(host_arg, payload, table=_surfaces(), home=home, err=err)
+    except BaseException:  # noqa: BLE001 - scope reporting never affects a host
+        pass
 
 
 def run_floor(hook_args, stdin_lines, *, budget=FLOOR_BUDGET_S, err=None) -> int:

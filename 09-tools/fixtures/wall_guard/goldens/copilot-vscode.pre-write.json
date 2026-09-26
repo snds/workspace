@@ -1,0 +1,10 @@
+{
+  "sessionId": "sess-wg",
+  "hookEventName": "PreToolUse",
+  "cwd": "{CWD}",
+  "tool_name": "create_file",
+  "tool_input": {
+    "filePath": "{PATH}",
+    "content": "fixture\n"
+  }
+}
