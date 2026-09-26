@@ -422,7 +422,7 @@ class Server:
     # ------------------------------------------------------------------ tools
 
     def t_session_status(self, a: dict) -> str:
-        label = f"{self.client.get('name') or 'MCP client'} via {SERVER_NAME}"
+        label = f"{self.host} ({self.client.get('name') or 'MCP client'}) via {SERVER_NAME}"
         return self._cli("09-tools/session-status.py", ["--surface", label, "--via", SERVER_NAME,
                                                         "--family", self.family])
 
