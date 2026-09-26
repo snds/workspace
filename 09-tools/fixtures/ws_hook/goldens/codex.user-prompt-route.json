@@ -1,0 +1,12 @@
+{
+  "doc": "H7 on Codex: the documented UserPromptSubmit payload (common fields + turn_id, prompt; learn.chatgpt.com/docs/hooks, fetched 2026-09-25) through ws-hook --host codex --event user-prompt over the prompt_route fixture brain. Codex's dialect is plain stdout, added as developer context. Pinned by ws_hook.py --self-test.",
+  "payload": {
+    "session_id": "sess-golden",
+    "thread_id": "thr-golden",
+    "turn_id": "turn-golden",
+    "cwd": "fixture-cwd",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "review the zero vector plan"
+  },
+  "stdout": "# Project trigger detected\n\n- **`zero vector`** → read `08-knowledge/fixture/zero-vector.md`\n- _(routing skip — Layer 0 under-fired (1 unique). Lexical fallback skipped: vault-retrieve.py missing. Do not treat this skip as no match.)_\n\n_Load the matched skills per the AGENTS.md precedence algorithm (foundation-first) and read matched knowledge entries BEFORE acting. When authoring inside a specific design system, resolve within that system's own tokens; backlog its gaps. Layer 0 triggers outrank lexical hints on conflict. Vendor Figma plugin skills are mechanics only._\n"
+}

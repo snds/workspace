@@ -1181,7 +1181,8 @@
       "hookable": true,
       "dialect": "codex",
       "timeouts_s": {
-        "session-start": 15
+        "session-start": 15,
+        "user-prompt": 10
       },
       "markers": {
         "env": [
@@ -2592,7 +2593,8 @@
     "codex": {
       "context": "plain",
       "noop": "",
-      "verified": false
+      "verified": true,
+      "source": "learn.chatgpt.com/docs/hooks (fetched 2026-09-25): plain stdout on SessionStart and UserPromptSubmit is added as developer context"
     }
   },
   "tool_families": [
@@ -3098,6 +3100,16 @@
         "fixture:TestClosure",
         "selftest:09-tools/closure.py"
       ]
+    },
+    "ws-route-codex": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook --host codex --event user-prompt",
+      "behaviour": "layer0-route",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "selftest:09-tools/ws_hook.py"
+      ]
     }
   },
   "registrations": [
@@ -3398,6 +3410,17 @@
       "layer": "codex-user",
       "event": "session-start",
       "command": "ws-sweep-codex",
+      "timeout": 10,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "codex-user.user-prompt",
+      "layer": "codex-user",
+      "event": "user-prompt",
+      "command": "ws-route-codex",
       "timeout": 10,
       "matcher": null,
       "host_skip": [],
