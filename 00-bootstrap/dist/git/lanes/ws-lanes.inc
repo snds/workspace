@@ -18,3 +18,7 @@
 	command = "L=\"$HOME/.config/snds-workspace/lib/current/09-tools/git_lanes.py\"; command -v python3 >/dev/null 2>&1 || exit 0; [ -f \"$L\" ] || exit 0; exec python3 -I -S \"$L\" hook pre-push"
 	event = pre-push
 	enabled = true
+[hook "ws-lane-prepare-commit-msg"]
+	command = "L=\"$HOME/.config/snds-workspace/lib/current/09-tools/git_lanes.py\"; command -v python3 >/dev/null 2>&1 || exit 0; [ -f \"$L\" ] || exit 0; exec python3 -I -S \"$L\" hook prepare-commit-msg"
+	event = prepare-commit-msg
+	enabled = true

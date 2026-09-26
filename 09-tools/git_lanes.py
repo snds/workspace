@@ -10,11 +10,16 @@ Cursor, Codex, Copilot, other local agents and humans all pass the same boundary
 Claude chain the lane calls the same `profile_resolve.floor_decide`, so a lane is never weaker.
 
   git_lanes.py hook EVENT [HOOK_ARGS...]     stdin: pre-push ref lines (what the rendered command runs)
+  git_lanes.py hook prepare-commit-msg FILE [SOURCE [SHA]]   the H10 trailer lane (below)
   git_lanes.py render [--check]              write/check 00-bootstrap/dist/git/lanes/ws-lanes.inc
   git_lanes.py audit [--repo DIR]... [--cache] [--home DIR] [--json]
   git_lanes.py --self-test
 
 Lanes are stateless deciders: they read the repo and the pinned tables and write nothing, anywhere.
+The one writer is the H10 trailer lane (prepare-commit-msg): in the workspace, and in a positively
+personal repo that opts in (`git config ws.laneTrailer true`), it adds `Workspace-Lane:
+<surface>/<family>/<device>` to the message file git hands it, and nothing else. Never in an employer
+repo, never in an unknown one; any error writes nothing and allows.
 The lane is chosen by the repo profile (profile_resolve):
   employer   I1 over the commit identity (pre-commit, commit-msg, pre-merge-commit) and over every
              commit and annotated tag in a pushed range (author AND committer on the employer
@@ -54,8 +59,12 @@ sys.dont_write_bytecode = True          # the pinned lib is read-only; never lit
 TOOLS = Path(__file__).resolve().parent
 ROOT = TOOLS.parent
 LANE_EVENTS = ("pre-commit", "commit-msg", "pre-merge-commit", "pre-push")
+TRAILER_EVENT = "prepare-commit-msg"      # H10: the one lane that writes (the message file only)
+TRAILER_KEY = "Workspace-Lane"
+TRAILER_OPTIN = "ws.laneTrailer"          # a personal repo's own opt-in (repo-local git config)
+TRAILER_BUDGET_S = 5.0
 LANE_PREFIX = "ws-lane-"
-LANES: Tuple[Tuple[str, str], ...] = tuple((LANE_PREFIX + ev, ev) for ev in LANE_EVENTS)
+LANES: Tuple[Tuple[str, str], ...] = tuple((LANE_PREFIX + ev, ev) for ev in LANE_EVENTS + (TRAILER_EVENT,))
 DIST_INCLUDE_REL = "00-bootstrap/dist/git/lanes/ws-lanes.inc"
 INSTALL_INCLUDE_REL = ".config/snds-workspace/git/lanes/ws-lanes.inc"   # under HOME
 PINNED_SELF_REL = ".config/snds-workspace/lib/current/09-tools/git_lanes.py"
@@ -414,6 +423,78 @@ def lane_decide(event: str, hook_args: Optional[list] = None, stdin_lines: Optio
     return base
 
 
+def _lane_token(v: Any) -> str:
+    t = re.sub(r"[^A-Za-z0-9._-]+", "-", str(v or "").strip()).strip("-")
+    return t or "unknown"
+
+
+def trailer_decide(hook_args: Optional[list] = None, *, env: Optional[dict] = None, ancestry: Optional[list] = None,
+                   root: Optional[Path] = None, home: Optional[Path] = None, cwd: Optional[Any] = None,
+                   git: str = "git") -> dict:
+    """{write, value, reason, lane}. Workspace: always; positively personal + opted in: yes; else no."""
+    pr = _pr()
+    e = dict(os.environ if env is None else env)
+    here = pr._real(cwd if cwd is not None else os.getcwd())
+    det = pr.detect_surface(env=e, ancestry=ancestry, root=root)
+    facts = _classify(pr, here, e, det, [], TRAILER_EVENT, root, home, git)
+    top = facts.get("top")
+    no = {"write": False, "value": None, "lane": None}
+    if top is None:
+        return dict(no, reason="not inside a work tree")
+    if facts["employer"]:
+        return dict(no, lane="employer", reason="employer repo: never a trailer")
+    if facts["role"] == "workspace":
+        lane = "workspace"
+    elif facts["positively_personal"]:
+        try:
+            r = subprocess.run([git, "-C", str(top), "config", "--bool", "--get", TRAILER_OPTIN], capture_output=True,
+                               text=True, timeout=GIT_TIMEOUT_S, env=_clean_env(e))
+            opted = r.stdout.strip() == "true"
+        except (OSError, subprocess.SubprocessError):
+            opted = False
+        if not opted:
+            return dict(no, lane="personal", reason=f"personal repo without {TRAILER_OPTIN}=true")
+        lane = "personal"
+    else:
+        return dict(no, lane="unknown", reason="owner not declared personal")
+    try:
+        device = pr.current_device(root=root).get("id") or "unknown"
+    except Exception:  # noqa: BLE001
+        device = "unknown"
+    value = "/".join(_lane_token(x) for x in (det.get("acting_host"), det.get("family_for_walls"), device))
+    return {"write": True, "value": value, "lane": lane, "reason": "", "top": str(top)}
+
+
+def run_trailer(hook_args: List[str], *, err=None, decide=None, budget: float = TRAILER_BUDGET_S,
+                git: str = "git") -> int:
+    """The prepare-commit-msg path: always exit 0. Writes the trailer only when trailer_decide says so."""
+    err = err or sys.stderr
+    if not hook_args:
+        return 0
+    msg = Path(hook_args[0])
+    box: dict = {}
+
+    def work():
+        try:
+            box["v"] = (decide or trailer_decide)(hook_args[1:])
+        except BaseException as exc:  # noqa: BLE001
+            box["e"] = exc
+
+    th = threading.Thread(target=work, daemon=True)
+    th.start()
+    th.join(budget)
+    v = box.get("v") if isinstance(box.get("v"), dict) else None
+    if th.is_alive() or "e" in box or not v or not v.get("write"):
+        return 0
+    try:
+        subprocess.run([git, "interpret-trailers", "--in-place", "--if-exists", "replace", "--trailer",
+                        f"{TRAILER_KEY}: {v['value']}", str(msg)], capture_output=True, text=True,
+                       timeout=GIT_TIMEOUT_S, env=_clean_env())
+    except (OSError, subprocess.SubprocessError) as exc:
+        print(f"{TAG}: trailer not written ({exc.__class__.__name__})", file=err)
+    return 0
+
+
 def run_hook(event: str, hook_args: List[str], stdin_lines: List[str], *, budget: float = LANE_BUDGET_S,
              err=None, decide=None) -> int:
     """The hook path: 1 on a block, 0 otherwise (an exception or a timeout allows with a notice)."""
@@ -705,6 +786,13 @@ def main(argv: Optional[List[str]] = None) -> int:
         if len(argv) < 2:
             return 0
         event, hook_args = argv[1], argv[2:]
+        if event == TRAILER_EVENT:
+            try:
+                return run_trailer(hook_args)
+            except BaseException as exc:  # noqa: BLE001
+                if isinstance(exc, KeyboardInterrupt):
+                    raise
+                return 0
         # pre-commit may run the workspace's H25 scan and H1 lane (their own timeouts); every other event
         # gets the lane budget.
         budget = LANE_BUDGET_S + (EMP_TIMEOUT_S + HEAL_TIMEOUT_S if event == "pre-commit" else 0)
@@ -759,7 +847,7 @@ def self_test() -> int:
             print(f"FAIL {label}", file=sys.stderr)
 
     inc = render_include()
-    ok(inc.count("[hook \"ws-lane-") == len(LANE_EVENTS), "render: one hook section per lane event")
+    ok(inc.count("[hook \"ws-lane-") == len(LANES), "render: one hook section per lane event")
     ok("\"$@\"" not in inc, "render: no \"$@\" (git appends the hook args itself)")
     ok(cmd_render(True) == 0, f"render --check: {DIST_INCLUDE_REL} is current")
     with tempfile.TemporaryDirectory() as td:
@@ -815,6 +903,24 @@ def self_test() -> int:
     err = io.StringIO()
     rc = run_hook("pre-commit", [], [], err=err, decide=lambda *_a: __import__("time").sleep(2), budget=0.2)
     ok(rc == 0 and "timed out" in err.getvalue(), "run_hook: a timeout allows with a notice")
+    # H10 trailer lane: always exit 0; writes only on write=True; an error or a timeout writes nothing.
+    with tempfile.TemporaryDirectory() as td:
+        m = Path(td) / "MSG"
+        for label, fn, want in (
+                ("write adds the trailer", lambda _a: {"write": True, "value": "cursor/cursor/dev-a"},
+                 f"{TRAILER_KEY}: cursor/cursor/dev-a"),
+                ("write=False leaves the message", lambda _a: {"write": False}, None),
+                ("an exception writes nothing", lambda _a: 1 / 0, None),
+                ("a timeout writes nothing", lambda _a: __import__("time").sleep(2), None)):
+            m.write_text("subject\n", encoding="utf-8")
+            rc = run_trailer([str(m), "message"], err=io.StringIO(), decide=fn, budget=0.3)
+            body = m.read_text(encoding="utf-8")
+            ok(rc == 0 and ((want in body) if want else body == "subject\n"), f"run_trailer: {label} ({body!r})")
+        m.write_text(f"subject\n\n{TRAILER_KEY}: old/old/old\n", encoding="utf-8")
+        run_trailer([str(m)], err=io.StringIO(), decide=lambda _a: {"write": True, "value": "codex/codex/dev-b"})
+        body = m.read_text(encoding="utf-8")
+        ok(body.count(TRAILER_KEY) == 1 and "codex/codex/dev-b" in body, f"run_trailer: replaces, never stacks ({body!r})")
+    ok(_lane_token("a b/c") == "a-b-c" and _lane_token(None) == "unknown", "trailer value tokens are sanitised")
     helper = TOOLS / "fixtures" / "git_lanes" / "lane_cases.py"
     if not helper.is_file():
         print("self-test SKIP: git-lane fixtures absent (a pinned copy) — not a pass", file=sys.stderr)
