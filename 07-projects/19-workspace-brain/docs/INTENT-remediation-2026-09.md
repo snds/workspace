@@ -157,9 +157,9 @@ recorded as RESOLVED decisions, so the register holds every ID the reports minte
 |---|---|---|---|---|---|---|---|---|
 | T0 | coordinator | intent-coordination | n/a | - | | 07-projects/19-workspace-brain/docs/INTENT-remediation-2026-09.md | | this register approved |
 | T1 | implementor | close-out | worktree | T0 | | 03-skills/*/SKILL.md, 03-skills/skills.registry.json | .claude/hooks/** | nine command hubs name close-out |
-| T2 | implementor | close-out | worktree | T0 | | 09-tools/close-out-dispatch.py, 09-tools/test-validators.py | .claude/hooks/** | the planted skip-only row fails `--check` |
+| T2 | implementor | close-out | worktree | T0, T3 | | 09-tools/close-out-dispatch.py, 09-tools/test-validators.py | .claude/hooks/** | the planted skip-only row fails `--check` |
 | T3 | implementor | intent-coordination | worktree | T0 | | 09-tools/prompt_route.py, 09-tools/test-validators.py | .claude/hooks/** | a governed_by lens reaches the routed output |
-| T4 | implementor | lead-product-manager | worktree | T0 | | 03-skills/lead-product-manager/SKILL.md, 03-skills/lead-frontend-engineer/SKILL.md, 03-skills/skills.registry.json | .claude/hooks/** | routing cases for the new triggers pass |
+| T4 | implementor | lead-product-manager | worktree | T0, T1 | | 03-skills/lead-product-manager/SKILL.md, 03-skills/lead-frontend-engineer/SKILL.md, 03-skills/skills.registry.json | .claude/hooks/** | routing cases for the new triggers pass |
 | V1 | verifier | mission-fit | read-only vs implementor tree | T1, T2, T3, T4 | | none | | `intent-run verdict --branch <b> --run` per packet branch |
 
 ## Packets
@@ -230,7 +230,9 @@ recorded as RESOLVED decisions, so the register holds every ID the reports minte
 
 ## Waves
 
-- Wave 1 (parallel after approval): T1, T3, T4. T2 waits for the wave-2 dispatch work in the same file.
+- Wave 1 (parallel after approval): T1, T3. T4 follows T1 (both rewrite `03-skills/skills.registry.json`
+  and T1's `03-skills/*/SKILL.md` covers T4's files); T2 follows T3 (both edit `09-tools/test-validators.py`)
+  and also waits for the wave-2 dispatch work in its own file.
 - Verify: V1 runs `python3 09-tools/intent-run.py verdict --spec 07-projects/19-workspace-brain/docs/INTENT-remediation-2026-09.md --branch <packet branch> --run` from a checkout of that branch.
 - F-046 is held (risk high, severity low): no packet until wave 2's scope work settles the CLI.
 
@@ -247,3 +249,6 @@ recorded as RESOLVED decisions, so the register holds every ID the reports minte
 
 - 2026-09-25 — Claude Opus 5.5 / Claude Code / Work MBP: register created by W2-1 from the three
   2026-09-11 reports and their two follow-ups; each row's state read from the tree the same day.
+- 2026-09-25 — Claude Opus 5.5 / Claude Code / Work MBP (W2-3, H9): the disjoint-wave lint found two
+  parallel pairs with overlapping writes (T1/T4 on the skill registry, T2/T3 on the validator suite);
+  T4 now depends on T1 and T2 on T3. Approval was still pending, so no approved plan changed.

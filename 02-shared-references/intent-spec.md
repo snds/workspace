@@ -82,6 +82,22 @@ reality changes. Designed intent (outcome + northstar) changes only with Sean's 
   `gate` refuses while a `blocked_by` upstream is Unfit or Blocked; `ready` / `worktree add` hold a task
   with 3 FAIL verify records since its newest Previous attempts entry. Dated reports are never edited:
   `validate-evidence-grades.py --status` flags one whose status claims closure that no register row cites.
+- **Write scope (H9, kernel `09-tools/intent_scope.py`).** `writes` and `forbids` share the `writes`
+  grammar; a literal path covers what is under it; a token with whitespace is prose (a prose `writes`
+  cell is not machine-checkable; prose `forbids` contribute their backticked paths). Optional `enforce`
+  column (`true`) and frontmatter `generated:` (globs allowed anywhere) and `contract:` (paths).
+  `lint` / `gate` ERROR on two implementors of one wave (a `wave` cell, else dependency depth; neither
+  depends on the other; not verified) whose writes intersect, and on a verifier that declares writes.
+  `ready` releases a second parallel implementor only when every `contract:` path is committed at HEAD.
+  `scope --branch B [--base REF] | --range A..B` (read-only; task from `--task`, an `intent/<ID>` branch
+  or the active task) reports forbidden, H8 Preserve, the sensitive denylist (lockfiles, manifests,
+  `.github/workflows/**`, `.env*`, `*.pem`) unless a writes entry owns it explicitly, and paths outside
+  writes: exit 0 clean, 1 findings, 3 nothing changed, 4 refused. `status` shows `scope=pass|fail|
+  unchecked` per recorded branch. The active task (`worktree add` or `scope --set`) is
+  `.workspace/state/active-task` in the workspace and `~/.config/snds-workspace/state/telemetry/<slug>/
+  active-task` elsewhere (never inside the repo). `scope --check-path PATH` is the pre-write accelerator:
+  it fails open, stays under 50 ms, and exits 1 only when the task says `enforce: true`; the hook step
+  is report-only on every host (stderr + `scope.jsonl` beside the pointer).
 - **`scope-audit`.** Checks each integration merge (or a `--task ID --rev A..B` range) against the
   task's `writes` plus the integrator's, the spec's `**HELD:**` set, JSON selectors, and unreverted
   `session: auto-commit` commits. Exit 0 clean, 1 violation, 3 nothing to audit.
