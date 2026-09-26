@@ -16,14 +16,23 @@ check-secrets' workspace-leak class, inheritance by remote slug within one owner
 class), lifecycle-scaled lint with git provenance on approvals, human-only approve,
 next, and verify --record stamped with surface, family, via and device.
 
+H8: the remediation loop. init --recon writes a read-only recon card (content-read
+policy first: a Claude chain on a non-personal repo is routed; employer recon goes to
+stdout), a findings register with closures and a preserve list, vendor-neutral
+self-contained packets, and a mission-fit verdict keyed to a branch or range.
+
 Usage:
   python3 09-tools/intent-run.py doctor
   python3 09-tools/intent-run.py daemon [status|workspace.list]
   python3 09-tools/intent-run.py init [--path PATH]
   python3 09-tools/intent-run.py init --frame --repo DIR [--neutral] [--stdout] [--inherits SLUG]
                                  [--inherits-context SLUG#AGENTS.md[,vault:ID]] [--lifecycle L]
-  python3 09-tools/intent-run.py lint (--repo DIR | --spec PATH | --all)
-  python3 09-tools/intent-run.py next [--repo DIR]
+  python3 09-tools/intent-run.py init --recon [--repo DIR] [--spec PATH] [--stdout]
+  python3 09-tools/intent-run.py lint (--repo DIR | --spec PATH [--since REF] [--run-closures] | --all)
+  python3 09-tools/intent-run.py next [--repo DIR | --spec PATH]
+  python3 09-tools/intent-run.py findings [--spec PATH] [--status OPEN|RESOLVED|DEFERRED] [--json]
+  python3 09-tools/intent-run.py packet --format prompt|json (T<n> | F-NNN) [--spec PATH]
+  python3 09-tools/intent-run.py verdict [--spec PATH] [--branch B [--base REF] | --range A..B] [--run] [--json]
   python3 09-tools/intent-run.py approve (--repo DIR | --spec PATH) --by NAME [--note TEXT]
   python3 09-tools/intent-run.py status [--spec PATH]
   python3 09-tools/intent-run.py gate [--spec PATH]
@@ -647,6 +656,15 @@ def cmd_gate(spec_path: Path) -> int:
             print(msg, file=sys.stderr)
             return 1
         print(f"LINT {level} — {msg}", file=sys.stderr)
+    for ref, hit in blocked_by_paths(spec, spec_path):
+        if hit is None:
+            print(f"BLOCKED — blocked_by {ref!r} does not resolve", file=sys.stderr)
+            return 1
+        up = parse_spec(hit.read_text(encoding="utf-8"))
+        v = compute_verdict(up, closures=closure_results(up, run=False, runnable=False))
+        if v["verdict"] in ("Unfit", "Blocked"):
+            print(f"BLOCKED — upstream {ref} is {v['verdict']}: {'; '.join(v['reasons'][:3])}", file=sys.stderr)
+            return 1
     print("ok — spec approved; implementor waves may start")
     return 0
 
@@ -655,7 +673,14 @@ def cmd_ready(spec_path: Path) -> int:
     spec = load_spec(spec_path)
     if cmd_gate(spec_path) != 0:
         return 1
-    ready = ready_implementors(spec)
+    ready = []
+    for t in ready_implementors(spec):
+        tripped, n, since = loop_breaker(spec_path, spec, t.get("id") or "")
+        if tripped:
+            print(f"HELD (loop-breaker): {t.get('id')} has {n} FAIL verify records since "
+                  f"{since or 'the start'}; add a Previous attempts entry to its packet first")
+            continue
+        ready.append(t)
     if not ready:
         print("no implementor tasks ready (held on deps or none defined)")
         return 0
@@ -677,6 +702,11 @@ def cmd_worktree_add(spec_path: Path, task_id: str, repo: str | None) -> int:
         return 1
     if task_status(task, spec["meta"], by_id) != "ready":
         print(f"task {task_id} is not ready (deps or role)", file=sys.stderr)
+        return 1
+    tripped, n, since = loop_breaker(spec_path, spec, task_id)
+    if tripped:
+        print(f"REFUSED (loop-breaker) — {task_id} has {n} FAIL verify records since {since or 'the start'}; "
+              "record what changed under the packet's Previous attempts first", file=sys.stderr)
         return 1
     isol = (task.get("isolation") or "worktree").lower()
     if isol not in ("worktree", "git worktree"):
@@ -1792,13 +1822,44 @@ def _print_findings(where_label: str, findings: list[tuple[str, str]]) -> tuple[
     return errs, warns
 
 
-def cmd_lint(*, repo: str | None, spec: str | None, all_: bool) -> int:
+def _lint_remediation_run(sp: Path, doc: dict, run_closures: bool) -> list[tuple[str, str]]:
+    if not run_closures:
+        return []
+    top = _toplevel(sp) or sp.parent
+    automated, _ = automated_context()
+    res = closure_results(doc, run=True, runnable=True, vroot=top, automated=automated)
+    out = [("ERROR", f"{f}: REGRESSED — its RESOLVED closure now fails") for f, s in res.items() if s == "FAIL"]
+    out += [("WARN", f"{f}: closure NOT_EXPOSED here (automated allowlist)") for f, s in res.items()
+            if s == "NOT_EXPOSED"]
+    return out
+
+
+def _vault_remediation_specs(d: Path) -> list[Path]:
+    out = []
+    docs = d / "docs"
+    for p in sorted(docs.glob("INTENT*.md")) if docs.is_dir() else []:
+        try:
+            if is_remediation(load_spec(p)):
+                out.append(p)
+        except OSError:
+            continue
+    return out
+
+
+def cmd_lint(*, repo: str | None, spec: str | None, all_: bool, since: str | None = None,
+             run_closures: bool = False) -> int:
     det = _detection()
     errs = warns = 0
     if spec:
         sp = Path(spec).expanduser().resolve()
+        why = _content_gate(sp.parent, det)
+        if why:
+            print(f"{sp}: REFUSED {why}")
+            return 1
         doc = load_spec(sp)
         findings = lint_spec(doc)
+        if is_remediation(doc):
+            findings += lint_remediation(doc, sp, since=since) + _lint_remediation_run(sp, doc, run_closures)
         try:
             res = _resolve_repo(sp.parent)
         except Exception:
@@ -1830,6 +1891,11 @@ def cmd_lint(*, repo: str | None, spec: str | None, all_: bool) -> int:
         homes += 1
         e, w = _print_findings(d.relative_to(ROOT).as_posix(), lint_vault_project(d, ss, det, res_ws))
         errs, warns = errs + e, warns + w
+        for sp in _vault_remediation_specs(d):
+            doc = load_spec(sp)
+            f = lint_spec(doc) + lint_remediation(doc, sp) + _lint_remediation_run(sp, doc, run_closures)
+            e, w = _print_findings(sp.relative_to(ROOT).as_posix(), f)
+            errs, warns = errs + e, warns + w
     skipped = 0
     cache = None
     try:
@@ -2116,6 +2182,1018 @@ def verify_record(spec_path: Path, results: list[tuple[int, str, str]], counts: 
         return None
     print(f"verify record: {dest}")
     return dest
+
+
+# ---------------------------------------------------------------------------
+# H8 — remediation: recon card, findings register, preserve list, packets, verdict
+# ---------------------------------------------------------------------------
+
+SEVERITIES = ("Critical", "High", "Medium", "Low")
+A11Y_SEVERITY = {"blocker": "Critical", "major": "High", "minor": "Medium", "nit": "Low"}
+FINDING_STATUSES = ("OPEN", "RESOLVED", "DEFERRED")
+FINDING_COLUMNS = ("id", "sev", "status", "origin", "observed", "expected", "evidence", "closure",
+                   "closed_by", "revisit")
+RISK_BANDS = ("low", "medium", "high")
+FINDING_ID_RE = re.compile(r"^F-\d{3,}$")
+CLOSURE_ID_RE = re.compile(r"^C-\d{3,}$")
+CLOSURE_LINE_RE = re.compile(r"^[-*]\s+(C-\d{3,})\s*:\s*(measure|judgment)\s*:\s*(.*?)\s*$", re.IGNORECASE)
+ORIGIN_RE = re.compile(r"^(?:recon|external|[a-z0-9][a-z0-9._-]*#[A-Za-z0-9._-]+)$")
+WHEN_RE = re.compile(r"^(?:(?P<date>\d{4}-\d{2}-\d{2})|on:\s*\S.*)$", re.IGNORECASE)
+DATE_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
+PACKET_HEAD_RE = re.compile(r"^###\s+(?P<id>[A-Za-z][\w.-]*)(?:\s+[—–:-]+\s*|\s*$)(?P<title>.*)$")
+PACKET_FIELD_RE = re.compile(r"^[-*]\s+\**(?P<key>[A-Za-z][A-Za-z -]*?)\**\s*:\s*\**\s*(?P<val>.*?)\s*$")
+PACKET_ORDER = ("outcome", "context", "findings", "sources", "acceptance", "output", "boundaries",
+                "last verified state", "non-goals", "verification", "rollback", "bail point", "previous attempts")
+PACKET_REQUIRED = ("outcome", "findings", "acceptance", "last verified state", "non-goals", "verification",
+                   "rollback", "bail point", "previous attempts")
+LOOP_BREAKER_FAILS = 3
+RERECON_COMMITS = 50
+RECON_START = "<!-- intent:recon:start -->"
+RECON_END = "<!-- intent:recon:end -->"
+BLANK_CELLS = ("", "-", "—", "n/a", "none")
+# A packet is a brief for a cold agent in another tool: these shapes mean it leans on context it lacks.
+PACKET_LEAN_RE = (
+    ("a wikilink", re.compile(r"\[\[")),
+    ("a home-relative path", re.compile(r"(?<![\w.])~/")),
+    ("an absolute user path", re.compile(r"/(?:Users|home)/\w")),
+    ("local-only agent state", re.compile(r"\.claude/state\b|\bheld/")),
+    ("a pointer to the spec instead of its content", re.compile(r"\bsee (?:the )?(?:spec|above|intent)\b", re.I)),
+)
+
+
+def _blank(v: str | None) -> bool:
+    return (v or "").strip().lower() in BLANK_CELLS
+
+
+def norm_sev(raw: str | None) -> str | None:
+    """Critical/High/Medium/Low (the ds-advisor DDR scale); a11y blocker/major/minor/nit map 1:1."""
+    low = (raw or "").strip().strip("*").lower()
+    if low in A11Y_SEVERITY:
+        return A11Y_SEVERITY[low]
+    for s in SEVERITIES:
+        if low == s.lower():
+            return s
+    return None
+
+
+def is_remediation(spec: dict) -> bool:
+    kind = (spec["meta"].get("kind") or "").strip().lower()
+    return kind == "remediation" or bool(re.search(r"^##\s+Findings\s*$", spec["body"], re.IGNORECASE | re.M))
+
+
+def parse_packets(section: str) -> dict[str, dict]:
+    """`### T<n> — title` blocks of `- key: value` fields; indented bullets extend the last field."""
+    packets: dict[str, dict] = {}
+    cur: dict | None = None
+    last: str | None = None
+    for raw in section.splitlines():
+        m = PACKET_HEAD_RE.match(raw.strip()) if raw.startswith("###") else None
+        if m:
+            cur = {"id": m.group("id"), "title": m.group("title").strip(), "fields": {}}
+            packets[m.group("id").upper()] = cur
+            last = None
+            continue
+        if cur is None or not raw.strip():
+            continue
+        indented = raw[:1].isspace()
+        fm = PACKET_FIELD_RE.match(raw.strip())
+        if fm and not indented:
+            last = re.sub(r"\s+", " ", fm.group("key").strip().lower())
+            cur["fields"][last] = [fm.group("val")] if fm.group("val") else []
+        elif last is not None:
+            item = re.sub(r"^[-*]\s+", "", raw.strip())
+            cur["fields"][last].append(item)
+    return packets
+
+
+def _field(p: dict | None, key: str) -> list[str]:
+    return [v for v in ((p or {}).get("fields") or {}).get(key, []) if v.strip()]
+
+
+def parse_recon_block(body: str) -> dict:
+    i, j = body.find(RECON_START), body.find(RECON_END)
+    if i < 0 or j < i:
+        return {"present": False, "source_sha": None}
+    block = body[i:j]
+    m = re.search(r"source_sha:\s*`?([0-9a-f]{7,40})`?", block)
+    return {"present": True, "source_sha": m.group(1) if m else None}
+
+
+def parse_remediation(spec: dict) -> dict:
+    body = spec["body"]
+    fsec = _section(body, "Findings")
+    rows = _parse_table(fsec)
+    closures: dict[str, dict] = {}
+    dupes: list[str] = []
+    for line in _subsection(fsec, "Closures").splitlines():
+        m = CLOSURE_LINE_RE.match(line.strip())
+        if m:
+            cid = m.group(1).upper()
+            if cid in closures:
+                dupes.append(cid)
+            closures[cid] = {"kind": m.group(2).lower(), "value": m.group(3).strip()}
+    return {"rows": rows, "closures": closures, "closure_dupes": dupes,
+            "preserve": _parse_table(_section(body, "Preserve")),
+            "packets": parse_packets(_section(body, "Packets")),
+            "recon": parse_recon_block(body)}
+
+
+def _finding_ids(cell: str) -> list[str]:
+    return [t.strip().upper() for t in re.split(r"[,;\s]+", cell or "") if t.strip()]
+
+
+def _today():
+    import datetime as _dt
+    return _dt.date.today()
+
+
+def _when_problem(value: str, what: str) -> tuple[str, str] | None:
+    v = (value or "").strip()
+    m = WHEN_RE.match(v)
+    if not m:
+        return ("ERROR", f"{what} {v!r} is not a date (YYYY-MM-DD) or `on: <trigger>`")
+    if m.group("date") and m.group("date") < _today().isoformat():
+        return ("WARN", f"{what} {m.group('date')} has passed")
+    return None
+
+
+def _git_text_at(top: Path, ref: str, rel: str) -> str | None:
+    r = _git(["show", f"{ref}:{rel}"], top)
+    return r.stdout if r.returncode == 0 else None
+
+
+def _rel_to_top(path: Path) -> tuple[Path | None, str | None]:
+    top = _toplevel(path)
+    if top is None:
+        return None, None
+    try:
+        return top, path.resolve().relative_to(top).as_posix()
+    except ValueError:
+        return top, None
+
+
+def blocked_by_paths(spec: dict, spec_path: Path | None) -> list[tuple[str, Path | None]]:
+    out: list[tuple[str, Path | None]] = []
+    raw = (spec["meta"].get("blocked_by") or "").strip()
+    if not raw or raw.lower() in BLANK_CELLS:
+        return out
+    for ref in [r.strip() for r in raw.split(",") if r.strip()]:
+        hit = None
+        if spec_path is not None:
+            top = _toplevel(spec_path)
+            for base in [spec_path.parent] + ([top] if top else []):
+                cand = (base / ref).resolve()
+                if cand.is_file():
+                    hit = cand
+                    break
+        out.append((ref, hit))
+    return out
+
+
+def lint_remediation(spec: dict, spec_path: Path | None = None, *, since: str | None = None) -> list[tuple[str, str]]:
+    """The findings register, closures, packets, preserve list and recon freshness."""
+    rem = parse_remediation(spec)
+    out: list[tuple[str, str]] = []
+    rows = rem["rows"]
+    if not rows:
+        out.append(("ERROR", "remediation spec has no `## Findings` table"))
+    else:
+        missing = [c for c in FINDING_COLUMNS if c not in rows[0]]
+        if missing:
+            out.append(("ERROR", f"findings table lacks column(s): {', '.join(missing)}"))
+    seen: set[str] = set()
+    open_rows = []
+    for r in rows:
+        fid = (r.get("id") or "").strip()
+        tag = fid or "(no id)"
+        if not FINDING_ID_RE.match(fid):
+            out.append(("ERROR", f"{tag}: id is not F-NNN"))
+        elif fid in seen:
+            out.append(("ERROR", f"{fid}: duplicate finding id (ids are never reused)"))
+        seen.add(fid)
+        if norm_sev(r.get("sev")) is None:
+            out.append(("ERROR", f"{tag}: sev {r.get('sev')!r} is not Critical|High|Medium|Low "
+                                 "(or an a11y blocker|major|minor|nit)"))
+        st = (r.get("status") or "").strip().upper()
+        if st not in FINDING_STATUSES:
+            out.append(("ERROR", f"{tag}: status {r.get('status')!r} is not OPEN|RESOLVED|DEFERRED"))
+        if st == "OPEN":
+            open_rows.append(fid)
+        if not ORIGIN_RE.match((r.get("origin") or "").strip()):
+            out.append(("ERROR", f"{tag}: origin {r.get('origin')!r} is not <report-slug>#<ID>, recon or external"))
+        cl = (r.get("closure") or "").strip()
+        if not _blank(cl):
+            if not CLOSURE_ID_RE.match(cl):
+                out.append(("ERROR", f"{tag}: closure {cl!r} is not a C-ID into `### Closures` "
+                                     "(never a command inside a cell)"))
+            elif cl.upper() not in rem["closures"]:
+                out.append(("ERROR", f"{tag}: closure {cl} is not defined under `### Closures`"))
+        elif st == "RESOLVED":
+            out.append(("ERROR", f"{tag}: RESOLVED needs a closure (a C-ID)"))
+        if st == "RESOLVED" and _blank(r.get("closed_by")):
+            out.append(("ERROR", f"{tag}: RESOLVED needs closed_by (a sha, a verify record or a decision note)"))
+        if st == "DEFERRED":
+            if _blank(r.get("closed_by")):
+                out.append(("ERROR", f"{tag}: DEFERRED needs a reason in closed_by"))
+            if _blank(r.get("revisit")):
+                out.append(("ERROR", f"{tag}: DEFERRED needs a revisit (a date or `on: <trigger>`)"))
+            else:
+                p = _when_problem(r.get("revisit") or "", f"{tag}: revisit")
+                if p:
+                    out.append(p)
+        risk = (r.get("risk") or "").strip().lower()
+        if risk and risk not in BLANK_CELLS and risk not in RISK_BANDS:
+            out.append(("ERROR", f"{tag}: risk {risk!r} is not low|medium|high"))
+    for cid in rem["closure_dupes"]:
+        out.append(("ERROR", f"closure {cid} is defined twice"))
+    for cid, c in rem["closures"].items():
+        if not c["value"]:
+            out.append(("ERROR", f"closure {cid}: an empty {c['kind']}"))
+    if (spec["meta"].get("status") or "").strip().lower() == "closed" and open_rows:
+        out.append(("ERROR", f"status: closed is refused while {len(open_rows)} row(s) are OPEN "
+                             f"({', '.join(open_rows[:5])})"))
+    packets = rem["packets"]
+    task_ids = set()
+    for t in spec["tasks"]:
+        tid = (t.get("id") or "").strip()
+        task_ids.add(tid.upper())
+        if (t.get("role") or "").strip().lower() == "implementor" and tid.upper() not in packets:
+            out.append(("ERROR", f"implementor {tid} has no packet (`### {tid}` under `## Packets`)"))
+    for pid, p in packets.items():
+        for key in PACKET_REQUIRED:
+            if not _field(p, key):
+                out.append(("ERROR", f"packet {p['id']}: missing `{key}`"))
+        for fid in _finding_ids(" ".join(_field(p, "findings"))):
+            if fid not in seen:
+                out.append(("ERROR", f"packet {p['id']}: finding {fid} is not in the register"))
+        if pid not in task_ids:
+            out.append(("WARN", f"packet {p['id']} has no Task graph row"))
+    for i, row in enumerate(rem["preserve"], 1):
+        glob = (row.get("glob") or "").strip()
+        if not glob:
+            out.append(("ERROR", f"preserve row {i}: no glob"))
+        if _blank(row.get("until")):
+            out.append(("ERROR", f"preserve {glob or i}: no `until` (a date or `on: <trigger>`)"))
+        else:
+            p = _when_problem(row.get("until") or "", f"preserve {glob or i}: until")
+            if p:
+                out.append(("WARN", p[1] + " (expired)") if p[0] == "WARN" else p)
+    for ref, hit in blocked_by_paths(spec, spec_path):
+        if hit is None:
+            out.append(("ERROR", f"blocked_by {ref!r} does not resolve to a spec file"))
+    sha = rem["recon"]["source_sha"]
+    if spec_path is not None and sha:
+        top = _toplevel(spec_path)
+        if top is not None:
+            paths = [p.strip() for p in (spec["meta"].get("recon_paths") or "").split(",") if p.strip()]
+            r = _git(["rev-list", "--count", f"{sha}..HEAD", "--", *paths], top)
+            if r.returncode != 0:
+                out.append(("WARN", f"recon source_sha {sha[:9]} is not in this history: re-recon"))
+            elif int(r.stdout.strip() or 0) > RERECON_COMMITS:
+                out.append(("WARN", f"re-recon: source_sha {sha[:9]} is {r.stdout.strip()} commits behind "
+                                    f"(> {RERECON_COMMITS}) on the declared paths"))
+    elif rem["recon"]["present"] and not sha:
+        out.append(("WARN", "recon block has no source_sha: re-recon"))
+    if since and spec_path is not None:
+        top, rel = _rel_to_top(spec_path)
+        old = _git_text_at(top, since, rel) if top and rel else None
+        if old is None:
+            out.append(("WARN", f"--since {since}: the spec is absent at that ref"))
+        else:
+            before = {(r.get("id") or "").strip() for r in parse_remediation(parse_spec(old))["rows"]}
+            gone = sorted(x for x in before - seen if x)
+            if gone:
+                out.append(("ERROR", f"silent drop: {', '.join(gone)} vanished since {since} "
+                                     "(defer or resolve a finding; never delete it)"))
+    return out
+
+
+# --- the loop-breaker -------------------------------------------------------
+
+
+def loop_breaker(spec_path: Path, spec: dict, task_id: str) -> tuple[bool, int, str | None]:
+    """(tripped, fails, since). FAIL verify records naming the task since its newest Previous attempt."""
+    if not is_remediation(spec):
+        return False, 0, None
+    p = parse_remediation(spec)["packets"].get(task_id.upper())
+    dates = DATE_RE.findall(" ".join(_field(p, "previous attempts")))
+    since = max(dates) if dates else None
+    rec = spec_path.with_name(spec_path.stem + ".verify.jsonl")
+    fails = 0
+    tok = re.compile(rf"(?<![\w-]){re.escape(task_id)}(?![\w-])", re.IGNORECASE)
+    try:
+        lines = rec.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        lines = []
+    for line in lines:
+        try:
+            r = json.loads(line)
+        except ValueError:
+            continue
+        if since and str(r.get("ts") or "")[:10] <= since:
+            continue
+        if any(c.get("status") == "FAIL" and tok.search(str(c.get("label") or "")) for c in r.get("checks") or []):
+            fails += 1
+    return fails >= LOOP_BREAKER_FAILS, fails, since
+
+
+# --- the content-read gate ---------------------------------------------------
+
+
+def _content_gate(target: Path, det: dict) -> str | None:
+    """None when this chain may read the target's content; else the refusal with its route."""
+    if not _restricted(det):
+        return None
+    try:
+        pol = _policy(target, "content-read", det)
+    except Exception as exc:
+        return f"resolver unavailable ({type(exc).__name__}); fail-closed"
+    if pol.get("outcome") != "allow":
+        route = " or ".join(pol.get("route_to") or []) or "cursor or codex"
+        return f"{pol.get('reason') or 'not allowed from this chain'} — route: {route}"
+    return None
+
+
+def _personal(top: Path, res: dict) -> bool:
+    if res.get("positively_personal"):
+        return True
+    try:
+        return bool(_pr().is_workspace_checkout(top, root=_PR_KW.get("root"), home=_PR_KW.get("home")))
+    except Exception:
+        return False
+
+
+# --- recon -------------------------------------------------------------------
+
+RECON_SKIP_DIRS = frozenset((".git", "node_modules", ".venv", "venv", "__pycache__", "dist", "build", ".next",
+                             ".cache", "target", ".obsidian", ".smart-env", "vendor", "coverage", ".tox"))
+SECRET_NAME_RE = re.compile(
+    r"(?:^|/)(?:\.env(?:\.[^/]*)?|[^/]*\.(?:pem|key|p12|pfx|keystore|jks)|id_(?:rsa|dsa|ecdsa|ed25519)|"
+    r"\.npmrc|\.pypirc|\.netrc|credentials(?:\.[^/]*)?|secrets?(?:\.[^/]*)?)$", re.IGNORECASE)
+LANG_BY_EXT = {
+    ".py": "Python", ".js": "JavaScript", ".mjs": "JavaScript", ".cjs": "JavaScript", ".jsx": "JavaScript",
+    ".ts": "TypeScript", ".tsx": "TypeScript", ".go": "Go", ".rs": "Rust", ".rb": "Ruby", ".java": "Java",
+    ".kt": "Kotlin", ".swift": "Swift", ".c": "C", ".h": "C", ".cc": "C++", ".cpp": "C++", ".hpp": "C++",
+    ".cs": "C#", ".php": "PHP", ".sh": "Shell", ".bash": "Shell", ".zsh": "Shell", ".vue": "Vue",
+    ".svelte": "Svelte", ".css": "CSS", ".scss": "CSS", ".html": "HTML", ".lua": "Lua", ".dart": "Dart",
+}
+MANIFESTS = ("package.json", "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "Pipfile",
+             "Cargo.toml", "go.mod", "Gemfile", "pom.xml", "build.gradle", "build.gradle.kts", "composer.json",
+             "Package.swift", "deno.json", "Makefile", "justfile")
+LOCKFILES = {"package-lock.json": "package.json", "yarn.lock": "package.json", "pnpm-lock.yaml": "package.json",
+             "poetry.lock": "pyproject.toml", "uv.lock": "pyproject.toml", "Pipfile.lock": "Pipfile",
+             "Cargo.lock": "Cargo.toml", "go.sum": "go.mod", "Gemfile.lock": "Gemfile",
+             "composer.lock": "composer.json"}
+MONOREPO_MARKERS = ("pnpm-workspace.yaml", "lerna.json", "nx.json", "turbo.json", "go.work", "rush.json")
+LINT_CONFIGS = re.compile(r"^(?:\.eslintrc(?:\.\w+)?|eslint\.config\.\w+|\.prettierrc(?:\.\w+)?|ruff\.toml|\.ruff\.toml|"
+                          r"\.flake8|\.pre-commit-config\.yaml|\.golangci\.ya?ml|rustfmt\.toml|biome\.json|"
+                          r"\.stylelintrc(?:\.\w+)?|\.markdownlint(?:\.\w+)?)$")
+CONVENTION_FILES = ("AGENTS.md", "AGENTS.override.md", "CLAUDE.md", "CONTRIBUTING.md", PROJECT_FILE, "README.md",
+                    "CODEOWNERS", ".github/CODEOWNERS", ".editorconfig")
+CI_RE = re.compile(r"^(?:\.github/workflows/[^/]+\.ya?ml|\.gitlab-ci\.yml|\.circleci/config\.yml|Jenkinsfile|"
+                   r"azure-pipelines\.yml|\.buildkite/[^/]+)$")
+TEST_NAME_RE = re.compile(r"(?:^|/)(?:tests?|__tests__|spec)/|(?:^|/)test_[^/]+\.py$|_test\.(?:py|go)$|"
+                          r"\.(?:test|spec)\.[jt]sx?$")
+LONG_FILE_FLOOR = 200
+RECON_FILE_CAP = 2_000_000
+
+
+def _recon_files(top: Path) -> list[str]:
+    """The committed tree at HEAD (read-only: no index refresh), else the index, else a walk."""
+    r = _git(["ls-tree", "-r", "-z", "--name-only", "HEAD"], top, timeout=60)
+    if r.returncode != 0 or not r.stdout:
+        r = _git(["ls-files", "-z"], top, timeout=60)
+    if r.returncode == 0 and r.stdout:
+        files = [p for p in r.stdout.split("\0") if p]
+    else:
+        files = []
+        for dp, dns, fns in os.walk(top):
+            dns[:] = [d for d in dns if d not in RECON_SKIP_DIRS]
+            files += [Path(dp, f).relative_to(top).as_posix() for f in fns]
+    return sorted(f for f in files if not RECON_SKIP_DIRS.intersection(f.split("/")[:-1]))
+
+
+def _line_count(p: Path) -> int | None:
+    """Lines in a text file, or None (binary, a symlink, unreadable). Never called on a secret name."""
+    try:
+        if p.is_symlink() or not p.is_file():
+            return None
+        with open(p, "rb") as fh:
+            data = fh.read(RECON_FILE_CAP + 1)
+    except OSError:
+        return None
+    if b"\0" in data[:8192]:
+        return None
+    return data.count(b"\n") + (1 if data and not data.endswith(b"\n") else 0)
+
+
+def _p99(values: list[int]) -> float:
+    s = sorted(values)
+    if not s:
+        return 0.0
+    pos = 0.99 * (len(s) - 1)
+    lo = int(pos)
+    hi = min(lo + 1, len(s) - 1)
+    return s[lo] + (s[hi] - s[lo]) * (pos - lo)
+
+
+def _last_change(top: Path, rel: str) -> int:
+    r = _git(["log", "-1", "--format=%ct", "--", rel], top)
+    if r.returncode == 0 and r.stdout.strip().isdigit():
+        return int(r.stdout.strip())
+    try:
+        return int((top / rel).stat().st_mtime)
+    except OSError:
+        return 0
+
+
+def _read_small(p: Path, cap: int = 400_000) -> str:
+    try:
+        with open(p, "rb") as fh:
+            return fh.read(cap).decode("utf-8", errors="replace")
+    except OSError:
+        return ""
+
+
+def build_recon(top: Path, res: dict) -> tuple[dict, list[str]]:
+    """The recon facts, and the secret-shaped names (stdout only; never opened, never stored)."""
+    files = _recon_files(top)
+    secrets = [f for f in files if SECRET_NAME_RE.search(f)]
+    safe = [f for f in files if f not in set(secrets)]
+    names = {f.rsplit("/", 1)[-1] for f in safe}
+    langs: dict[str, int] = {}
+    for f in safe:
+        lang = LANG_BY_EXT.get(Path(f).suffix.lower())
+        if lang:
+            langs[lang] = langs.get(lang, 0) + 1
+    counts: dict[str, int] = {}
+    binary = 0
+    for f in safe:
+        n = _line_count(top / f)
+        if n is None:
+            binary += 1
+        else:
+            counts[f] = n
+    p99 = _p99(list(counts.values()))
+    long_files = sorted(((n, f) for f, n in counts.items() if n > p99 and n >= LONG_FILE_FLOOR), reverse=True)
+    manifests = [f for f in safe if f.rsplit("/", 1)[-1] in MANIFESTS]
+    root_pkg = top / "package.json" if "package.json" in safe else None
+    pkg: dict = {}
+    if root_pkg is not None:
+        try:
+            pkg = json.loads(_read_small(root_pkg) or "{}")
+        except ValueError:
+            pkg = {}
+    scripts = pkg.get("scripts") if isinstance(pkg.get("scripts"), dict) else {}
+    runner = "pnpm" if "pnpm-lock.yaml" in safe else "yarn" if "yarn.lock" in safe else "npm"
+    pyproject = _read_small(top / "pyproject.toml") if "pyproject.toml" in safe else ""
+    makefile = _read_small(top / "Makefile") if "Makefile" in safe else ""
+    make_targets = [t for t in re.findall(r"(?m)^([A-Za-z][\w.-]*)\s*:(?!=)", makefile)][:8]
+    build, test = [], []
+    if "build" in scripts:
+        build.append(f"{runner} run build")
+    if "[build-system]" in pyproject:
+        build.append("python -m build")
+    if make_targets:
+        build.append("make " + "|".join(make_targets))
+    if "test" in scripts:
+        test.append(f"{runner} test")
+    if "[tool.pytest" in pyproject:
+        test.append("pytest")
+    if "test" in make_targets:
+        test.append("make test")
+    test_files = [f for f in safe if TEST_NAME_RE.search(f)]
+    ci = [f for f in safe if CI_RE.match(f)]
+    lint = sorted({f for f in safe if "/" not in f and LINT_CONFIGS.match(f)}
+                  | ({"pyproject.toml [tool.ruff]"} if "[tool.ruff" in pyproject else set()))
+    conventions = [c for c in CONVENTION_FILES if c in safe]
+    stale = []
+    for f in safe:
+        base = f.rsplit("/", 1)[-1]
+        if base in LOCKFILES:
+            man = (f.rsplit("/", 1)[0] + "/" if "/" in f else "") + LOCKFILES[base]
+            if man in safe and _last_change(top, f) < _last_change(top, man):
+                stale.append(f"{f} older than {man}")
+    mono = sorted({f for f in safe if f.rsplit("/", 1)[-1] in MONOREPO_MARKERS})
+    if isinstance(pkg.get("workspaces"), (list, dict)):
+        mono.append("package.json workspaces")
+    if re.search(r"(?m)^\[workspace\]", _read_small(top / "Cargo.toml") if "Cargo.toml" in safe else ""):
+        mono.append("Cargo.toml [workspace]")
+    head = _git(["rev-parse", "HEAD"], top)
+    branch = _git(["rev-parse", "--abbrev-ref", "HEAD"], top)
+    when = _git(["log", "-1", "--format=%cs"], top)
+    facts = {
+        "source_sha": head.stdout.strip() if head.returncode == 0 else None,
+        "branch": branch.stdout.strip() if branch.returncode == 0 else None,
+        "date": when.stdout.strip() if when.returncode == 0 else None,
+        "repo": _origin_slug(res) or top.name, "owner_class": res.get("owner_class"), "profile": res.get("profile"),
+        "files": len(files), "text_files": len(counts), "binary_files": binary,
+        "languages": sorted(langs.items(), key=lambda kv: (-kv[1], kv[0])),
+        "manifests": manifests, "build": build, "test": test, "test_files": len(test_files), "ci": ci,
+        "lint": lint, "conventions": conventions, "secret_count": len(secrets),
+        "p99": round(p99), "long_files": [(f, n) for n, f in long_files], "stale_locks": stale, "monorepo": mono,
+    }
+    return facts, secrets
+
+
+def _list_cell(items: list[str], cap: int = 8) -> str:
+    if not items:
+        return "none found"
+    more = f" (+{len(items) - cap} more)" if len(items) > cap else ""
+    return ", ".join(f"`{i}`" for i in items[:cap]) + more
+
+
+def render_recon(f: dict) -> str:
+    langs = ", ".join(f"{k} {v}" for k, v in f["languages"]) or "none detected"
+    rows = [
+        ("languages (file counts by extension)", langs, "inferred"),
+        ("manifests", _list_cell(f["manifests"]), "known"),
+        ("build", _list_cell(f["build"]), "known" if f["build"] else "assumed"),
+        ("test commands", _list_cell(f["test"]), "known" if f["test"] else "assumed"),
+        ("test files (by name)", str(f["test_files"]), "assumed"),
+        ("CI", _list_cell(f["ci"]), "known"),
+        ("lint / format config", _list_cell(f["lint"]), "known"),
+        ("conventions", _list_cell(f["conventions"]), "known"),
+        ("secret-shaped filenames", f"{f['secret_count']} (names printed to stdout only; never opened)", "assumed"),
+    ]
+    hazards = []
+    if f["long_files"]:
+        top5 = ", ".join(f"`{p}` ({n})" for p, n in f["long_files"][:5])
+        more = f" (+{len(f['long_files']) - 5} more)" if len(f["long_files"]) > 5 else ""
+        hazards.append(("long files", f"{len(f['long_files'])} above this repo's p99 ({f['p99']} lines, floor "
+                                      f"{LONG_FILE_FLOOR}): {top5}{more}", "inferred"))
+    if f["stale_locks"]:
+        hazards.append(("lockfile older than its manifest", "; ".join(f["stale_locks"][:5]), "inferred"))
+    if len(f["languages"]) >= 3:
+        hazards.append(("three or more languages", ", ".join(k for k, _ in f["languages"]), "inferred"))
+    if f["monorepo"]:
+        hazards.append(("monorepo markers", _list_cell(f["monorepo"]), "known"))
+    out = [RECON_START, "", "Regenerated by `intent-run init --recon`; edits inside these markers are overwritten.",
+           "", f"- source_sha: `{f['source_sha']}` (branch `{f['branch']}`, committed {f['date']})",
+           f"- repo: `{f['repo']}` · owner class: {f['owner_class']} · profile: {f['profile']}",
+           f"- files: {f['files']} tracked ({f['text_files']} text, {f['binary_files']} binary or unreadable)",
+           "", "| signal | value | label |", "|---|---|---|"]
+    out += [f"| {a} | {b.replace('|', chr(92) + '|')} | {c} |" for a, b, c in rows]
+    out += ["", "| hazard | detail | label |", "|---|---|---|"]
+    out += ([f"| {a} | {b.replace('|', chr(92) + '|')} | {c} |" for a, b, c in hazards]
+            or ["| none | no hazard crossed this repo's own thresholds | inferred |"])
+    out += ["", "Labels: known = read from a manifest or config; inferred = counted; assumed = naming only.",
+            "", RECON_END]
+    return "\n".join(out) + "\n"
+
+
+def _place_recon(text: str, block: str) -> str:
+    i, j = text.find(RECON_START), text.find(RECON_END)
+    if i >= 0 and j > i:
+        return text[:i] + block.rstrip("\n") + text[j + len(RECON_END):]
+    m = re.search(r"^##\s+Recon\s*$", text, re.IGNORECASE | re.M)
+    if m:
+        rest = text[m.end():].lstrip("\n")
+        return text[: m.end()] + "\n\n" + block + ("\n" + rest if rest.strip() else "")
+    return text.rstrip("\n") + "\n\n## Recon\n\n" + block
+
+
+def cmd_init_recon(repo: str | None, *, spec: str | None = None, stdout: bool = False) -> int:
+    """A read-only recon card. Content-read policy first: a Claude chain on a non-personal repo is routed."""
+    det = _detection()
+    top0 = Path(repo).expanduser().resolve() if repo else Path.cwd().resolve()
+    why = _content_gate(top0, det)
+    if why:
+        print(f"REFUSED — {why}", file=sys.stderr)
+        print("route: that surface runs `intent-run init --recon --repo <path>`; the card goes to stdout and "
+              "nothing is committed by default", file=sys.stderr)
+        return 4
+    top = _toplevel(top0)
+    if top is None:
+        print(f"init --recon: {top0} is not a git repo", file=sys.stderr)
+        return 2
+    try:
+        res = _resolve_repo(top)
+    except Exception as exc:
+        print(f"REFUSED — resolver unavailable ({type(exc).__name__}); fail-closed", file=sys.stderr)
+        return 4
+    personal = _personal(top, res)
+    facts, secrets = build_recon(top, res)
+    block = render_recon(facts)
+    note = ("secret-shaped filenames (stdout only, never opened): " + ", ".join(secrets)) if secrets else ""
+    if stdout or not personal:
+        print(block, end="")
+        if note:
+            print(note)
+        if not personal:
+            print("not positively personal: printed only; nothing was written or committed", file=sys.stderr)
+        return 0
+    dest = Path(spec).expanduser().resolve() if spec else top / "docs" / "RECON.md"
+    try:
+        dest.relative_to(top)
+    except ValueError:
+        print(f"init --recon: {dest} is outside {top}", file=sys.stderr)
+        return 2
+    if dest.exists():
+        dest.write_text(_place_recon(dest.read_text(encoding="utf-8"), block), encoding="utf-8")
+    else:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text("# Recon\n\n" + block, encoding="utf-8")
+    print(f"wrote recon card to {dest} (source_sha {str(facts['source_sha'])[:9]})")
+    if note:
+        print(note)
+    return 0
+
+
+# --- verdict -----------------------------------------------------------------
+
+
+def closure_results(spec: dict, *, run: bool, runnable: bool, vroot: Path | None = None,
+                    automated: bool = True) -> dict[str, str]:
+    """RESOLVED rows' closures → PASS | FAIL | NOT_EXPOSED | UNRUN | ATTESTED | NONE."""
+    rem = parse_remediation(spec)
+    tracked = tracked_tool_scripts(vroot) if (run and runnable and vroot) else set()
+    out: dict[str, str] = {}
+    cache: dict[str, str] = {}
+    for r in rem["rows"]:
+        fid = (r.get("id") or "").strip()
+        if (r.get("status") or "").strip().upper() != "RESOLVED":
+            continue
+        c = rem["closures"].get((r.get("closure") or "").strip().upper())
+        if c is None:
+            out[fid] = "NONE"
+            continue
+        if c["kind"] == "judgment":
+            out[fid] = "ATTESTED"
+            continue
+        if not run:
+            out[fid] = "UNRUN"
+            continue
+        if not runnable:
+            out[fid] = "NOT_EXPOSED"
+            continue
+        if c["value"] in cache:
+            out[fid] = cache[c["value"]]
+            continue
+        status, _, argv = classify_check({"measure": c["value"]}, automated=automated, tracked=tracked)
+        if status == "RUN":
+            try:
+                rc = subprocess.run(argv, cwd=str(vroot), shell=False, timeout=MEASURE_TIMEOUT,
+                                    stdout=_MEASURE_STDIO, stderr=_MEASURE_STDIO).returncode
+            except (OSError, subprocess.TimeoutExpired):
+                rc = 126
+            status = "PASS" if rc == 0 else "FAIL"
+        elif status == "BAD":
+            status = "FAIL"
+        elif status not in ("NOT_EXPOSED",):
+            status = "NOT_EXPOSED"
+        cache[c["value"]] = status
+        out[fid] = status
+    return out
+
+
+def compute_verdict(spec: dict, *, closures: dict[str, str], prior: dict | None = None) -> dict:
+    """mission-fit verdict: Fit (0), Fit with gaps (0), Unfit (1), Blocked (2). Blocked beats a plausible Fit."""
+    rows = {(r.get("id") or "").strip(): r for r in parse_remediation(spec)["rows"]}
+    sev = {fid: norm_sev(r.get("sev")) for fid, r in rows.items()}
+    st = {fid: (r.get("status") or "").strip().upper() for fid, r in rows.items()}
+    hi = ("Critical", "High")
+    reasons: list[str] = []
+    open_hi = [f for f in rows if st[f] == "OPEN" and sev[f] in hi]
+    regressed = [f for f, s in closures.items() if s == "FAIL"]
+    dropped: list[str] = []
+    reopened: list[str] = []
+    resolved_in_range: list[str] = []
+    if prior is not None:
+        prows = {(r.get("id") or "").strip(): r for r in parse_remediation(prior)["rows"]}
+        pst = {f: (r.get("status") or "").strip().upper() for f, r in prows.items()}
+        dropped = sorted(f for f in prows if f and f not in rows)
+        reopened = sorted(f for f in rows if pst.get(f) == "RESOLVED" and st[f] == "OPEN")
+        resolved_in_range = sorted(f for f in rows if st[f] == "RESOLVED" and pst.get(f) != "RESOLVED")
+    blocked = [f for f, s in closures.items() if s in ("UNRUN", "NOT_EXPOSED") and sev.get(f) in hi]
+    gaps = [f for f in rows if (st[f] == "OPEN" and sev[f] not in hi) or st[f] == "DEFERRED"]
+    for f in open_hi:
+        reasons.append(f"{f} {sev[f]} OPEN")
+    for f in regressed:
+        reasons.append(f"{f} REGRESSED (its closure now fails)")
+    for f in reopened:
+        reasons.append(f"{f} REGRESSED (RESOLVED before the range, OPEN at its tip)")
+    for f in dropped:
+        reasons.append(f"{f} dropped from the register (silent drop)")
+    for f in blocked:
+        why = "not run: pass --run on a checkout of the keyed ref" if closures[f] == "UNRUN" else "not exposed here"
+        reasons.append(f"{f} {sev[f]} RESOLVED but its closure is {closures[f]} ({why})")
+    for f in gaps:
+        extra = f" (revisit {rows[f].get('revisit')})" if st[f] == "DEFERRED" else ""
+        reasons.append(f"{f} {sev[f] or '?'} {st[f]}{extra}")
+    if open_hi or regressed or reopened or dropped:
+        word, code = "Unfit", 1
+    elif blocked:
+        word, code = "Blocked", 2
+    elif gaps:
+        word, code = "Fit with gaps", 0
+    else:
+        word, code = "Fit", 0
+    counts = {s: sum(1 for f in rows if st[f] == s) for s in FINDING_STATUSES}
+    return {"verdict": word, "exit": code, "counts": counts, "open_critical_high": open_hi,
+            "regressed": sorted(set(regressed) | set(reopened)), "dropped": dropped, "blocked": blocked,
+            "gaps": gaps, "resolved_in_range": resolved_in_range, "closures": closures, "reasons": reasons}
+
+
+def _rev(top: Path, ref: str) -> str | None:
+    r = _git(["rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}"], top)
+    return r.stdout.strip() if r.returncode == 0 and r.stdout.strip() else None
+
+
+def _cited_ids(top: Path, rng: str) -> list[str]:
+    r = _git(["log", "--format=%s%n%b", rng], top, timeout=30)
+    if r.returncode != 0:
+        return []
+    return sorted(set(re.findall(r"\b(?:F-\d{3,}|T\d+[\w.-]*)\b", r.stdout)))
+
+
+def cmd_verdict(spec_path: Path, *, branch: str | None = None, rng: str | None = None, run: bool = False,
+                as_json: bool = False, base: str | None = None, automated: bool | None = None) -> int:
+    det = _detection()
+    why = _content_gate(spec_path.parent, det)
+    if why:
+        print(f"REFUSED — {why}", file=sys.stderr)
+        return 4
+    top, rel = _rel_to_top(spec_path)
+    key = "working tree"
+    prior_text = None
+    tip = None
+    commits = []
+    if branch or rng:
+        if top is None or rel is None:
+            print("verdict: --branch/--range need the spec inside a git repo", file=sys.stderr)
+            return 2
+        if branch:
+            tip_ref = branch
+            base_ref = base or ("main" if _rev(top, "main") else "HEAD")
+            mb = _git(["merge-base", base_ref, branch], top)
+            start = mb.stdout.strip() if mb.returncode == 0 else None
+            key = f"branch {branch} (since merge-base with {base_ref})"
+        else:
+            if ".." not in rng:
+                print("verdict: --range is A..B", file=sys.stderr)
+                return 2
+            start, tip_ref = rng.split("..", 1)
+            key = f"range {rng}"
+        tip = _rev(top, tip_ref)
+        if tip is None:
+            print(f"verdict: Blocked — {tip_ref} does not resolve here (fetch it first)")
+            return 2
+        text = _git_text_at(top, tip, rel)
+        if text is None:
+            print(f"verdict: Blocked — the spec {rel} is absent at {tip_ref}")
+            return 2
+        if start:
+            prior_text = _git_text_at(top, start, rel)
+            commits = _cited_ids(top, f"{start}..{tip}")
+    else:
+        text = spec_path.read_text(encoding="utf-8")
+    spec = parse_spec(text)
+    if not is_remediation(spec):
+        print("verdict: not a remediation spec (no `## Findings` register)", file=sys.stderr)
+        return 2
+    runnable = tip is None or (top is not None and _rev(top, "HEAD") == tip)
+    vroot = top or spec_path.parent
+    if automated is None and run:
+        automated, _ = automated_context()
+    res = compute_verdict(spec, closures=closure_results(spec, run=run, runnable=runnable, vroot=vroot,
+                                                          automated=bool(automated)),
+                          prior=parse_spec(prior_text) if prior_text is not None else None)
+    res.update(spec=rel or str(spec_path), key=key, tip=tip, cites=commits)
+    if as_json:
+        print(json.dumps(res, indent=2))
+        return res["exit"]
+    c = res["counts"]
+    print(f"verdict: {res['verdict']} (exit {res['exit']})")
+    print(f"spec: {res['spec']} · key: {key}" + (f" @ {tip[:9]}" if tip else ""))
+    print(f"findings: open={c['OPEN']} resolved={c['RESOLVED']} deferred={c['DEFERRED']} · "
+          f"critical/high open={len(res['open_critical_high'])}")
+    if prior_text is not None or branch or rng:
+        print(f"range: resolved={', '.join(res['resolved_in_range']) or 'none'} · "
+              f"regressed={', '.join(res['regressed']) or 'none'} · dropped={', '.join(res['dropped']) or 'none'} · "
+              f"commits cite={', '.join(commits) or 'none'}")
+    for line in res["reasons"]:
+        print(f"  - {line}")
+    return res["exit"]
+
+
+# --- findings, next, packet --------------------------------------------------
+
+
+def _ordered_open(spec: dict) -> list[dict]:
+    rows = [r for r in parse_remediation(spec)["rows"] if (r.get("status") or "").strip().upper() == "OPEN"]
+
+    def key(r):
+        risk = (r.get("risk") or "").strip().lower()
+        band = RISK_BANDS.index(risk) if risk in RISK_BANDS else 1
+        s = norm_sev(r.get("sev"))
+        return band, SEVERITIES.index(s) if s else len(SEVERITIES), (r.get("id") or "")
+    return sorted(rows, key=key)
+
+
+def _packet_for(rem: dict, fid: str) -> dict | None:
+    for p in rem["packets"].values():
+        if fid.upper() in _finding_ids(" ".join(_field(p, "findings"))):
+            return p
+    return None
+
+
+def cmd_findings(spec_path: Path, *, status: str | None = None, as_json: bool = False) -> int:
+    why = _content_gate(spec_path.parent, _detection())
+    if why:
+        print(f"REFUSED — {why}", file=sys.stderr)
+        return 4
+    spec = load_spec(spec_path)
+    rem = parse_remediation(spec)
+    rows = [r for r in rem["rows"] if not status or (r.get("status") or "").strip().upper() == status.upper()]
+    lint = lint_remediation(spec, spec_path)
+    if as_json:
+        print(json.dumps({"findings": rows, "closures": rem["closures"], "preserve": rem["preserve"],
+                          "packets": sorted(p["id"] for p in rem["packets"].values()),
+                          "lint": [{"level": lv, "message": m} for lv, m in lint]}, indent=2))
+    else:
+        for r in rows:
+            p = _packet_for(rem, r.get("id") or "")
+            print(f"{(r.get('id') or '?'):6} {(norm_sev(r.get('sev')) or '?'):8} {(r.get('status') or '?').upper():9}"
+                  f" {(r.get('origin') or ''):38} {'→ ' + p['id'] if p else ''}")
+        counts = {s: sum(1 for r in rem["rows"] if (r.get("status") or "").strip().upper() == s)
+                  for s in FINDING_STATUSES}
+        print(f"register: {len(rem['rows'])} finding(s) · " + " ".join(f"{k.lower()}={v}" for k, v in counts.items())
+              + f" · packets={len(rem['packets'])} · preserve={len(rem['preserve'])}")
+        for lv, m in lint:
+            print(f"lint {lv}: {m}")
+    return 1 if any(lv == "ERROR" for lv, _ in lint) else 0
+
+
+def cmd_next_remediation(spec_path: Path) -> int:
+    spec = load_spec(spec_path)
+    rem = parse_remediation(spec)
+    by_id = index_tasks(spec["tasks"])
+    ordered = _ordered_open(spec)
+    if not ordered:
+        print("next: no OPEN findings — run `intent-run verdict --spec <spec> --run` for the mission-fit verdict")
+        return 0
+    lines = []
+    for r in ordered:
+        fid = (r.get("id") or "").strip()
+        p = _packet_for(rem, fid)
+        if p is None:
+            state = "no packet (write `### T<n>` under `## Packets`)"
+        else:
+            t = by_id.get(p["id"]) or by_id.get(p["id"].upper())
+            tripped, n, _ = loop_breaker(spec_path, spec, p["id"])
+            if tripped:
+                state = f"{p['id']} loop-breaker ({n} FAIL records): add a Previous attempts entry first"
+            else:
+                state = f"{p['id']} {task_status(t, spec['meta'], by_id) if t else 'no task row'}"
+        lines.append((fid, r, state))
+    fid, r, state = lines[0]
+    print(f"next: {fid} ({norm_sev(r.get('sev'))}, risk {(r.get('risk') or 'medium').strip().lower()}) → {state}")
+    if not state.startswith("no packet"):
+        print(f"      brief: python3 09-tools/intent-run.py packet --format prompt {state.split()[0]} --spec {spec_path}")
+    for fid, r, state in lines[1:10]:
+        print(f"  then {fid} ({norm_sev(r.get('sev'))}) → {state}")
+    return 0
+
+
+def packet_problems(text: str) -> list[str]:
+    return [f"leans on {name}: {m.group(0)!r}" for name, rx in PACKET_LEAN_RE for m in [rx.search(text)] if m]
+
+
+def _synth_packet(row: dict, rem: dict) -> dict:
+    fid = (row.get("id") or "").strip()
+    cl = rem["closures"].get((row.get("closure") or "").strip().upper())
+    ver = [cl["value"]] if cl and cl["kind"] == "measure" else []
+    return {"id": fid, "title": (row.get("observed") or fid)[:80], "synthetic": True, "fields": {
+        "outcome": [row.get("expected") or ""], "findings": [fid], "acceptance": [row.get("expected") or ""],
+        "last verified state": [], "non-goals": ["anything outside this finding"], "verification": ver,
+        "rollback": ["discard the branch"], "previous attempts": ["none recorded"],
+        "bail point": ["the fix needs a path outside the scope below, or a verify command cannot run here"]}}
+
+
+def build_packet(spec_path: Path, spec: dict, ident: str) -> dict:
+    rem = parse_remediation(spec)
+    rows = {(r.get("id") or "").strip().upper(): r for r in rem["rows"]}
+    ident_u = ident.strip().upper()
+    if ident_u in rem["packets"]:
+        p = rem["packets"][ident_u]
+    elif ident_u in rows:
+        p = _packet_for(rem, ident_u) or _synth_packet(rows[ident_u], rem)
+    else:
+        raise KeyError(ident)
+    fids = _finding_ids(" ".join(_field(p, "findings")))
+    task = index_tasks(spec["tasks"]).get(p["id"]) or index_tasks(spec["tasks"]).get(p["id"].upper()) or {}
+    top = _toplevel(spec_path)
+    try:
+        res = _resolve_repo(top) if top else {}
+    except Exception:
+        res = {}
+    repo = _origin_slug(res) or (top.name if top else spec_path.parent.name)
+    sha = " ".join(_field(p, "last verified state")).strip("` ")
+    if not sha and top is not None:
+        h = _git(["rev-parse", "HEAD"], top)
+        sha = h.stdout.strip() if h.returncode == 0 else ""
+    verify: list[str] = []
+    for v in _field(p, "verification"):
+        v = v.strip().strip("`")
+        if v and v not in verify:
+            verify.append(v)
+    findings = []
+    for fid in fids:
+        r = rows.get(fid) or {}
+        cl = rem["closures"].get((r.get("closure") or "").strip().upper())
+        if cl and cl["kind"] == "measure" and cl["value"] not in verify:
+            verify.append(cl["value"])
+        findings.append({"id": fid, "sev": norm_sev(r.get("sev")), "observed": r.get("observed") or "",
+                         "expected": r.get("expected") or "", "evidence": r.get("evidence") or ""})
+    writes = [t for t in _split_depth0(task.get("writes") or "") if not _blank(t)]
+    forbids = [t for t in _split_depth0(task.get("forbids") or "") if not _blank(t)]
+    preserve = [{"glob": (x.get("glob") or "").strip("` "), "why": x.get("why") or "", "until": x.get("until") or ""}
+                for x in rem["preserve"] if (x.get("glob") or "").strip()]
+    return {"id": p["id"], "title": p.get("title") or "", "repo": repo, "base": sha, "fields": p["fields"],
+            "synthetic": bool(p.get("synthetic")), "findings": findings, "writes": writes, "forbids": forbids,
+            "preserve": preserve, "verify": verify, "owner_class": res.get("owner_class")}
+
+
+def render_packet_prompt(pk: dict) -> str:
+    f = pk["fields"]
+
+    def txt(key: str, default: str = "n/a") -> str:
+        vals = [v for v in f.get(key, []) if v.strip()]
+        return "\n".join(vals) if vals else default
+
+    def bullets(items: list[str], default: str) -> list[str]:
+        return [f"- {i}" for i in items] if items else [f"- {default}"]
+
+    title = f"Task brief {pk['id']}" + (f": {pk['title']}" if pk["title"] else "")
+    out = [f"# {title}", "",
+           f"You are a coding agent working in the git repository `{pk['repo']}`. This brief is self-contained: "
+           "everything you need is below, and nothing outside this repository is required. Work on a new "
+           f"branch from commit `{pk['base'] or 'the default branch tip'}`; never push to the default branch.", "",
+           "## Goal", "", txt("outcome"), ""]
+    if f.get("context"):
+        out += ["## Context", "", txt("context"), ""]
+    out += ["## Findings to resolve", ""]
+    for x in pk["findings"]:
+        out.append(f"- {x['id']} ({x['sev'] or 'unrated'}): observed: {x['observed']} · expected: {x['expected']}"
+                   + (f" · evidence: {x['evidence']}" if not _blank(x["evidence"]) else ""))
+    if not pk["findings"]:
+        out.append("- none linked")
+    out += ["", "## Scope", ""]
+    out += [f"- May write: {', '.join(f'`{w}`' for w in pk['writes']) if pk['writes'] else 'only what the goal needs'}",
+            f"- Must not touch: {', '.join(f'`{w}`' for w in pk['forbids']) if pk['forbids'] else 'anything the goal does not need'}"]
+    for x in pk["preserve"]:
+        until = re.sub(r"^on:\s*", "", x["until"].strip(), flags=re.IGNORECASE)
+        out.append(f"- Preserve `{x['glob']}` unchanged: {x['why']} (until {until})")
+    if f.get("boundaries"):
+        out.append(f"- {txt('boundaries')}")
+    out += ["", "## Non-goals", ""] + bullets([v for v in f.get("non-goals", []) if v.strip()], "none stated")
+    out += ["", "## Acceptance", ""]
+    out += bullets([v for v in f.get("acceptance", []) if v.strip()] + [f"{x['id']}: {x['expected']}"
+                                                                        for x in pk["findings"] if x["expected"]],
+                   "the verify commands pass")
+    out += ["", "## Verify", "", "Run each command from the repository root; every one must exit 0.", ""]
+    out += bullets([f"`{v}`" for v in pk["verify"]], "no command: say so in the report, and do not claim done")
+    if f.get("output"):
+        out += ["", "## Output", "", txt("output")]
+    out += ["", "## Rollback", "", txt("rollback", "discard the branch"),
+            "", "## Bail point", "",
+            "Stop and report `blocked` (never a plausible substitute) when: " + txt("bail point", "a step is impossible"),
+            "", "## Previous attempts", "", txt("previous attempts", "none recorded"),
+            "", "## Report back", "",
+            "Reply with the branch name, the commits, each Verify command with its exit code, and the finding ids "
+            "you believe resolved. If you could not finish, say `blocked` and why."]
+    return "\n".join(out).rstrip("\n") + "\n"
+
+
+def cmd_packet(spec_path: Path, ident: str, *, fmt: str = "prompt") -> int:
+    det = _detection()
+    why = _content_gate(spec_path.parent, det)
+    if why:
+        print(f"REFUSED — {why}", file=sys.stderr)
+        return 4
+    spec = load_spec(spec_path)
+    try:
+        pk = build_packet(spec_path, spec, ident)
+    except KeyError:
+        print(f"packet: {ident} is neither a packet (### T<n>) nor a finding (F-NNN) in {spec_path.name}",
+              file=sys.stderr)
+        return 2
+    if fmt == "json":
+        print(json.dumps(pk, indent=2))
+        return 0
+    text = render_packet_prompt(pk)
+    problems = packet_problems(text)
+    if pk.get("owner_class") != "personal":
+        problems += [f"workspace-leak: line {ln} {rule}" for ln, rule in workspace_leak_hits(text)]
+    if problems:
+        for p in problems:
+            print(f"packet {pk['id']}: not self-contained — {p}", file=sys.stderr)
+        return 1
+    if pk["synthetic"]:
+        print(f"packet: {ident} has no packet; this brief is synthesized from the finding alone", file=sys.stderr)
+    print(text, end="")
+    return 0
 
 
 # ---------------------------------------------------------------------------
@@ -2996,6 +4074,248 @@ def _st_approve_and_record() -> None:
         assert json.loads(local.read_text(encoding="utf-8"))["device"] == "dev-a"
 
 
+def _rem_text() -> str:
+    return (FIXTURES / "remediation-spec.md").read_text(encoding="utf-8")
+
+
+def _rem_errors(text: str, **kw) -> list[str]:
+    return _levels(lint_remediation(parse_spec(text), **kw), "ERROR")
+
+
+def _st_remediation_lint() -> None:
+    base = _rem_text()
+    assert not _rem_errors(base), _rem_errors(base)
+    planted = {
+        "duplicate id": base.replace("| F-003 | minor", "| F-002 | minor"),
+        "RESOLVED without closed_by": base.replace("| C-002 | abc1234 |", "| C-002 | - |"),
+        "RESOLVED without closure": base.replace("| C-002 | abc1234 |", "| - | abc1234 |"),
+        "DEFERRED without revisit": base.replace("| on: the v2 branch opens |", "| - |"),
+        "DEFERRED without reason": base.replace("| not worth it before v2 |", "| - |"),
+        "closed with an OPEN row": base.replace("status: open", "status: closed"),
+        "implementor without packet": base.replace("### T1 — Make", "### T9 — Make"),
+        "preserve without until": base.replace("| on: a squash release |", "| |"),
+        "command in a closure cell": base.replace("| C-001 | - | - | low |", "| python3 x.py | - | - | low |"),
+        "unknown closure": base.replace("| C-001 | - | - | low |", "| C-009 | - | - | low |"),
+        "bad severity": base.replace("| F-001 | High |", "| F-001 | Urgent |"),
+        "bad origin": base.replace("| widget-audit#A1 |", "| widget audit A1 |"),
+        "packet missing a field": base.replace("- bail point: the fix needs a change under migrations/\n", ""),
+        "packet names an unknown finding": base.replace("- findings: F-001", "- findings: F-001, F-042"),
+        "blocked_by that does not resolve": base.replace("status: open", "status: open\nblocked_by: nowhere.md"),
+    }
+    for name, text in planted.items():
+        assert text != base, f"{name}: the plant did not apply"
+        assert _rem_errors(text, spec_path=FIXTURES / "remediation-spec.md"), f"{name}: no ERROR"
+    # a11y severities map 1:1; namespaced origins with the same ID coexist.
+    assert [norm_sev(x) for x in ("blocker", "major", "minor", "nit")] == list(SEVERITIES)
+    twin = base.replace("| F-002 | Medium | RESOLVED | widget-audit#A2 |",
+                        "| F-002 | Medium | RESOLVED | process-rigor-gaps#R2 |").replace(
+        "| F-001 | High | OPEN | widget-audit#A1 |", "| F-001 | High | OPEN | workspace-automation-review#R2 |")
+    assert not _rem_errors(twin), _rem_errors(twin)
+    # An expired preserve entry and a passed revisit WARN, not ERROR.
+    old = base.replace("| on: a squash release |", "| 2001-01-01 |")
+    f = lint_remediation(parse_spec(old))
+    assert not _levels(f, "ERROR") and any("expired" in m for m in _levels(f, "WARN")), f
+    # --since: a finding id that vanished is a silent drop (temp git repo).
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        repo, env = _new_repo(td, "since")
+        h = _History(repo, env)
+        h.commit("main", "spec", {"docs/INTENT-remediation.md": base})
+        h.flush()
+        sp = repo / "docs" / "INTENT-remediation.md"
+        sp.parent.mkdir(parents=True)
+        dropped = "\n".join(ln for ln in base.splitlines() if not ln.startswith("| F-003 ")) + "\n"
+        sp.write_text(dropped, encoding="utf-8")
+        f = lint_remediation(parse_spec(dropped), sp, since="main")
+        assert any("silent drop" in m and "F-003" in m for m in _levels(f, "ERROR")), f
+        sp.write_text(base, encoding="utf-8")
+        assert not _rem_errors(base, spec_path=sp, since="main")
+
+
+def _st_remediation_gate_loop() -> None:
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        root, home, _ = _pr_fixture_root(td)
+        base = _rem_text()
+        up_unfit = base  # F-001 is an OPEN High: Unfit
+        up_fit = base.replace("| F-001 | High | OPEN |", "| F-001 | High | DEFERRED |").replace(
+            "| C-001 | - | - | low |", "| C-001 | waiting on CI | on: CI exists | low |")
+        down = base.replace("status: open", "status: open\nblocked_by: upstream.md")
+        repo = _fx_repo(td, "gate", "pat-sample/gate", {"docs/INTENT.md": down, "docs/upstream.md": up_unfit})
+        spec = repo / "docs" / "INTENT.md"
+        with _pr_context(root, home, CURSOR_DET):
+            rc, out = _quiet(cmd_gate, spec)
+            assert rc == 1 and "upstream upstream.md is Unfit" in out, out
+            (repo / "docs" / "upstream.md").write_text(up_fit, encoding="utf-8")
+            rc, out = _quiet(cmd_gate, spec)
+            assert rc == 0, out
+            # Loop-breaker: 3 FAIL records naming T1 since its newest Previous attempts entry.
+            rec = spec.with_name("INTENT.verify.jsonl")
+            fail = {"ts": "2026-01-05T00:00:00Z", "checks": [{"id": 1, "label": "T1 lint gate", "status": "FAIL"}]}
+            rec.write_text("\n".join(json.dumps(fail) for _ in range(3)) + "\n", encoding="utf-8")
+            rc, out = _quiet(cmd_worktree_add, spec, "T1", str(repo))
+            assert rc == 1 and "loop-breaker" in out, out
+            rc, out = _quiet(cmd_ready, spec)
+            assert "HELD (loop-breaker)" in out and "no implementor tasks ready" in out, out
+            spec.write_text(spec.read_text(encoding="utf-8").replace(
+                "- previous attempts: none", "- previous attempts: 2026-01-06 — the log pipe swallowed the exit code"),
+                encoding="utf-8")
+            assert loop_breaker(spec, load_spec(spec), "T1")[0] is False
+            assert not (td / "gate.intent-T1").exists()
+
+
+def _st_remediation_recon() -> None:
+    import builtins
+    from unittest import mock
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        root, home, _ = _pr_fixture_root(td)
+        projects = home / "Projects"
+        projects.mkdir()
+        files = {
+            "package.json": json.dumps({"name": "w", "scripts": {"test": "node t.js", "build": "node b.js"}}),
+            "package-lock.json": "{}\n", "README.md": "# w\n", ".env": "TOKEN=synthetic\n",
+            "src/big.py": "x = 1\n" * 1200, "src/a.py": "a = 1\n" * 10, "src/b.ts": "let b = 1\n",
+            "src/c.sh": "echo c\n", "tests/test_a.py": "def test_a():\n    pass\n",
+            ".github/workflows/ci.yml": "on: push\n",
+        }
+        mine = _fx_repo(td, "mine", "pat-sample/recon", files)
+        emp = _fx_repo(projects, "emp", "acme-corp/recon", files)
+        _fx_cache(home, {"acme-corp/recon": emp})
+        seen: list[str] = []
+        real_open = builtins.open
+
+        def spy(file, *a, **kw):
+            seen.append(str(file))
+            return real_open(file, *a, **kw)
+
+        # Claude chain + employer repo: routed through the content-read policy; the tree stays byte-identical.
+        before = _snapshot(emp)
+        with _pr_context(root, home, CLAUDE_DET), mock.patch("builtins.open", spy), mock.patch("io.open", spy):
+            rc, out = _quiet(cmd_init_recon, str(emp))
+        assert rc == 4 and "REFUSED" in out and "route" in out, (rc, out)
+        read_in_repo = [p for p in seen if p.startswith(str(emp) + "/") and not p.startswith(str(emp / ".git"))]
+        assert not read_in_repo, read_in_repo
+        assert _snapshot(emp) == before, "a routed recon changed the employer repo (incl. .git/)"
+        # Non-Claude surface + employer repo: the card goes to stdout; nothing is written.
+        with _pr_context(root, home, CURSOR_DET):
+            rc, out = _quiet(cmd_init_recon, str(emp))
+        assert rc == 0 and RECON_START in out and "nothing was written" in out, out
+        assert _snapshot(emp) == before, "an employer recon wrote into the repo"
+        # Claude chain + personal repo: stored in docs/; .env never opened; the card holds a count, not names.
+        seen.clear()
+        with _pr_context(root, home, CLAUDE_DET), mock.patch("builtins.open", spy), mock.patch("io.open", spy):
+            rc, out = _quiet(cmd_init_recon, str(mine))
+        assert rc == 0 and "wrote recon card" in out, out
+        assert not [p for p in seen if p.endswith("/.env")], "recon opened a secret-shaped file"
+        card = (mine / "docs" / "RECON.md").read_text(encoding="utf-8")
+        head = _git(["rev-parse", "HEAD"], mine).stdout.strip()
+        assert f"source_sha: `{head}`" in card, card
+        assert "| secret-shaped filenames | 1 (" in card and ".env" not in card, card
+        assert ".env" in out, "secret-shaped names belong on stdout"
+        for needle in ("src/big.py", "package.json", "npm test", "npm run build", ".github/workflows/ci.yml",
+                       "three or more languages", "| known |", "| inferred |", "| assumed |"):
+            assert needle in card, (needle, card)
+        # A re-run regenerates the block in place; --spec targets a remediation spec's Recon section.
+        spec = mine / "docs" / "INTENT-remediation.md"
+        spec.write_text(_rem_text(), encoding="utf-8")
+        with _pr_context(root, home, CLAUDE_DET):
+            assert _quiet(cmd_init_recon, str(mine))[0] == 0
+            assert (mine / "docs" / "RECON.md").read_text(encoding="utf-8").count(RECON_START) == 1
+            rc, _ = _quiet(cmd_init_recon, str(mine), spec=str(spec))
+            text = spec.read_text(encoding="utf-8")
+            assert rc == 0 and text.count(RECON_START) == 1 and text.index(RECON_START) < text.index("## Findings")
+            assert parse_remediation(parse_spec(text))["recon"]["source_sha"] == head
+            assert not _levels(lint_remediation(parse_spec(text), spec), "ERROR")
+
+
+def _st_remediation_packet() -> None:
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        root, home, _ = _pr_fixture_root(td)
+        repo = _fx_repo(td, "widget", "pat-sample/widget", {"docs/INTENT-remediation.md": _rem_text()})
+        spec = repo / "docs" / "INTENT-remediation.md"
+        with _pr_context(root, home, CURSOR_DET):
+            rc, out = _quiet(cmd_packet, spec, "T1")
+            golden = (FIXTURES / "remediation-packet.golden.md").read_text(encoding="utf-8")
+            assert rc == 0 and out == golden, out
+            assert packet_problems(out) == []
+            # A finding id resolves to its packet; a finding without one gets a synthesized brief.
+            assert _quiet(cmd_packet, spec, "F-001")[1] == golden
+            rc, out = _quiet(cmd_packet, spec, "F-003")
+            assert rc == 0 and "synthesized" in out and "F-003" in out and packet_problems(out) == [], out
+            assert _quiet(cmd_packet, spec, "T7")[0] == 2
+        # A brief that leans on context the cold agent lacks is refused.
+        leaning = _rem_text().replace("- context: The build", "- context: see the spec and [[notes]]; The build")
+        spec.write_text(leaning, encoding="utf-8")
+        with _pr_context(root, home, CURSOR_DET):
+            rc, out = _quiet(cmd_packet, spec, "T1")
+        assert rc == 1 and "not self-contained" in out, out
+        # A Claude chain never reads an employer spec: routed before any read.
+        emp = _fx_repo(td, "emp", "acme-corp/widget", {"docs/INTENT-remediation.md": _rem_text()})
+        with _pr_context(root, home, CLAUDE_DET):
+            rc, out = _quiet(cmd_packet, emp / "docs" / "INTENT-remediation.md", "T1")
+        assert rc == 4 and "REFUSED" in out, out
+
+
+def _st_remediation_verdict() -> None:
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        root, home, _ = _pr_fixture_root(td)
+        base = _rem_text()
+        rel = "docs/INTENT-remediation.md"
+        fixed = base.replace("| F-001 | High | OPEN |", "| F-001 | High | RESOLVED |").replace(
+            "| C-001 | - | - | low |", "| C-002 | feedc0de | - | low |")
+        dropped = "\n".join(ln for ln in base.splitlines() if not ln.startswith("| F-003 ")) + "\n"
+        reopened = base.replace("| F-002 | Medium | RESOLVED |", "| F-002 | Medium | OPEN |")
+        gated = fixed.replace("| C-002 | feedc0de |", "| C-001 | feedc0de |")
+        repo, env = _new_repo(td, "verdict")
+        _run_fixture_git(["remote", "add", "origin", "https://github.com/pat-sample/verdict.git"], repo, env)
+        h = _History(repo, env)
+        m0 = h.commit("main", "remediation spec", {rel: base})
+        h.commit("fix-lint", "T1: fail the build on lint errors (F-001)", {rel: fixed}, frm=m0)
+        h.commit("drop", "tidy the register", {rel: dropped}, frm=m0)
+        h.commit("reopen", "reopen", {rel: reopened}, frm=m0)
+        h.commit("gated", "resolve F-001 with a measured closure", {rel: gated}, frm=m0)
+        h.flush()
+        spec = repo / rel
+        spec.parent.mkdir(parents=True)
+        spec.write_text(base, encoding="utf-8")
+        with _pr_context(root, home, CURSOR_DET):
+            rc, out = _quiet(cmd_verdict, spec)
+            assert rc == 1 and "verdict: Unfit" in out and "F-001 High OPEN" in out, out
+            rc, out = _quiet(cmd_verdict, spec, branch="fix-lint")
+            assert rc == 0 and "verdict: Fit with gaps" in out, out
+            assert "key: branch fix-lint" in out and "resolved=F-001" in out and "F-001, T1" in out, out
+            rc, out = _quiet(cmd_verdict, spec, branch="drop")
+            assert rc == 1 and "dropped=F-003" in out and "silent drop" in out, out
+            rc, out = _quiet(cmd_verdict, spec, rng="main..reopen")
+            assert rc == 1 and "regressed=F-002" in out, out
+            # A High row resolved by a measure that was not run is Blocked, never a plausible Fit.
+            rc, out = _quiet(cmd_verdict, spec, branch="gated")
+            assert rc == 2 and "verdict: Blocked" in out and "UNRUN" in out, out
+            rc, out = _quiet(cmd_verdict, spec, branch="gated", run=True)
+            assert rc == 2 and "NOT_EXPOSED" in out, out  # the keyed ref is not the checkout
+            rc, out = _quiet(cmd_verdict, spec, branch="nope")
+            assert rc == 2 and "Blocked" in out, out
+            rc, out = _quiet(cmd_verdict, spec, branch="fix-lint", as_json=True)
+            doc = json.loads(out)
+            assert doc["verdict"] == "Fit with gaps" and doc["tip"] and doc["resolved_in_range"] == ["F-001"], doc
+        # A RESOLVED row whose allowlisted closure now fails is REGRESSED (Unfit).
+        (repo / "09-tools").mkdir()
+        (repo / "09-tools" / "lint_gate.py").write_text("raise SystemExit(1)\n", encoding="utf-8")
+        _run_fixture_git(["add", "09-tools/lint_gate.py"], repo, env)
+        spec.write_text(gated, encoding="utf-8")
+        sp = parse_spec(gated)
+        res = closure_results(sp, run=True, runnable=True, vroot=repo, automated=True)
+        assert res.get("F-001") == "FAIL", res
+        v = compute_verdict(sp, closures=res)
+        assert v["verdict"] == "Unfit" and "F-001" in v["regressed"], v
+        (repo / "09-tools" / "lint_gate.py").write_text("raise SystemExit(0)\n", encoding="utf-8")
+        v = compute_verdict(sp, closures=closure_results(sp, run=True, runnable=True, vroot=repo, automated=True))
+        assert v["verdict"] == "Fit with gaps", v
+
+
 SELF_TESTS = (
     ("no-git-write invariant", _st_invariant),
     ("parser cases", _st_parser),
@@ -3007,6 +4327,11 @@ SELF_TESTS = (
     ("project intent: inheritance", _st_project_inheritance),
     ("approval provenance", _st_provenance),
     ("approve, next, verify --record", _st_approve_and_record),
+    ("remediation: findings register lint (v1.0 planted cases)", _st_remediation_lint),
+    ("remediation: blocked_by gate and the loop-breaker", _st_remediation_gate_loop),
+    ("remediation: recon card, policy-routed and byte-identical", _st_remediation_recon),
+    ("remediation: golden self-contained packet", _st_remediation_packet),
+    ("remediation: branch- and range-keyed verdict", _st_remediation_verdict),
 )
 
 
@@ -3067,12 +4392,32 @@ def main(argv: list[str] | None = None) -> int:
     p_init.add_argument("--inherits")
     p_init.add_argument("--inherits-context")
     p_init.add_argument("--lifecycle", default="discover")
+    p_init.add_argument("--recon", action="store_true", help="a read-only recon card for --repo (H8)")
+    p_init.add_argument("--spec", help="with --recon: the remediation spec whose recon block is regenerated")
     p_lint = sub.add_parser("lint")
     p_lint.add_argument("--repo")
     p_lint.add_argument("--spec")
     p_lint.add_argument("--all", action="store_true")
+    p_lint.add_argument("--since", help="with --spec: fail if a finding id vanished since REF")
+    p_lint.add_argument("--run-closures", action="store_true", help="re-run RESOLVED closures; a failure is REGRESSED")
     p_next = sub.add_parser("next")
     p_next.add_argument("--repo")
+    p_next.add_argument("--spec", help="a remediation spec: the next finding by risk band, then severity")
+    p_find = sub.add_parser("findings")
+    p_find.add_argument("--spec")
+    p_find.add_argument("--status", choices=FINDING_STATUSES)
+    p_find.add_argument("--json", action="store_true")
+    p_pk = sub.add_parser("packet")
+    p_pk.add_argument("ident", help="a packet id (T<n>) or a finding id (F-NNN)")
+    p_pk.add_argument("--spec")
+    p_pk.add_argument("--format", choices=("prompt", "json"), default="prompt")
+    p_vd = sub.add_parser("verdict")
+    p_vd.add_argument("--spec")
+    p_vd.add_argument("--branch")
+    p_vd.add_argument("--base", help="with --branch: the ref the branch is compared against (default main)")
+    p_vd.add_argument("--range", dest="rng")
+    p_vd.add_argument("--run", action="store_true", help="run RESOLVED rows' closures (keyed ref must be HEAD)")
+    p_vd.add_argument("--json", action="store_true")
     p_appr = sub.add_parser("approve")
     p_appr.add_argument("--repo")
     p_appr.add_argument("--spec")
@@ -3119,13 +4464,18 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "doctor":
         return cmd_doctor()
     if args.cmd == "init":
+        if args.recon:
+            return cmd_init_recon(args.repo, spec=args.spec, stdout=args.stdout)
         if args.frame:
             return cmd_init_frame(args.repo, neutral=args.neutral, stdout=args.stdout, inherits=args.inherits,
                                   inherits_context=args.inherits_context, lifecycle=args.lifecycle)
         return cmd_init(args.path)
     if args.cmd == "lint":
-        return cmd_lint(repo=args.repo, spec=args.spec, all_=args.all)
+        return cmd_lint(repo=args.repo, spec=args.spec, all_=args.all, since=args.since,
+                        run_closures=args.run_closures)
     if args.cmd == "next":
+        if args.spec:
+            return cmd_next_remediation(Path(args.spec).expanduser().resolve())
         return cmd_next(args.repo)
     if args.cmd == "approve":
         return cmd_approve(repo=args.repo, spec=args.spec, by=args.by, note=args.note)
@@ -3151,6 +4501,15 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_scope_audit(spec_p, task=args.task, rev=args.rev, wave_merges=args.wave_merges,
                                ref=args.ref, root=args.root, as_json=args.json)
     spec = find_spec(getattr(args, "spec", None))
+    if args.cmd == "findings":
+        return cmd_findings(spec, status=args.status, as_json=args.json)
+    if args.cmd == "packet":
+        return cmd_packet(spec, args.ident, fmt=args.format)
+    if args.cmd == "verdict":
+        if args.branch and args.rng:
+            print("verdict: pass --branch or --range, not both", file=sys.stderr)
+            return 2
+        return cmd_verdict(spec, branch=args.branch, rng=args.rng, run=args.run, as_json=args.json, base=args.base)
     if args.cmd == "status":
         return cmd_status(spec)
     if args.cmd == "gate":
