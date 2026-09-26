@@ -1,0 +1,126 @@
+name: gate-selection
+
+# H10: diff-computed gate selection. `close-out-dispatch.py --from-diff` maps the changed paths to
+# DIFF_CLASSES and runs only the QUALITY_CHAIN steps those classes select. With --baseline, a
+# whole-tree validator's failure is charged only when it adds error lines the merge-base lacks.
+# `close-out-dispatch.py --check` fails when a class glob is missing from the path filter below, so
+# a filter gap is a red check, never a silent skip. The schedule and dispatch triggers are the
+# backstop for commits no local lane saw (cloud agents, Chat, a machine without the lanes). The
+# unlaned count and the identity audit are report-only and print counts, never identities or paths.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "03-skills/**"
+      - "09-tools/**"
+      - "ruff.toml"
+      - ".claude/**"
+      - ".agents/**"
+      - "00-bootstrap/**"
+      - "02-shared-references/**"
+      - ".cursor/**"
+      - ".cursorignore"
+      - ".gemini/**"
+      - ".windsurf/**"
+      - ".aider.conf.yml"
+      - "copilot/**"
+      - "**/*.md"
+      - "llms.txt"
+      - "01-frameworks/**"
+      - "04-preferences/**"
+      - "05-artifacts/**"
+      - "06-context/**"
+      - "07-projects/**"
+      - "08-knowledge/**"
+      - "_archive/**"
+      - ".obsidian/**"
+      - ".github/**"
+      - ".gitignore"
+      - ".gitattributes"
+  pull_request:
+    paths:
+      - "03-skills/**"
+      - "09-tools/**"
+      - "ruff.toml"
+      - ".claude/**"
+      - ".agents/**"
+      - "00-bootstrap/**"
+      - "02-shared-references/**"
+      - ".cursor/**"
+      - ".cursorignore"
+      - ".gemini/**"
+      - ".windsurf/**"
+      - ".aider.conf.yml"
+      - "copilot/**"
+      - "**/*.md"
+      - "llms.txt"
+      - "01-frameworks/**"
+      - "04-preferences/**"
+      - "05-artifacts/**"
+      - "06-context/**"
+      - "07-projects/**"
+      - "08-knowledge/**"
+      - "_archive/**"
+      - ".obsidian/**"
+      - ".github/**"
+      - ".gitignore"
+      - ".gitattributes"
+  schedule:
+    - cron: "23 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the range, the merge-base baseline and the session-status oracle need history
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Git >= 2.54 (config hooks; lane fixtures SKIP below it, and a SKIP is never green)
+        run: |
+          sudo add-apt-repository -y ppa:git-core/ppa
+          sudo apt-get update -q
+          sudo apt-get install -y -q git
+          git --version
+      - name: Diff classes sound (chain steps, workflow filters, tracked, hook, instruction and plugin paths)
+        run: python3 09-tools/close-out-dispatch.py --check
+      - name: Range for this event
+        id: range
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$EVENT" = "pull_request" ] && [ -n "$PR_BASE" ]; then
+            base="$PR_BASE"
+          elif [ "$EVENT" = "push" ] && [ -n "$PUSH_BEFORE" ] && ! printf '%s' "$PUSH_BEFORE" | grep -q '^0*$' \
+               && git cat-file -e "$PUSH_BEFORE^{commit}" 2>/dev/null; then
+            base="$PUSH_BEFORE"
+          else
+            base="$(git rev-list -1 --before='25 hours ago' HEAD)"
+            [ -n "$base" ] || base="$(git rev-list --max-parents=0 HEAD | tail -1)"
+          fi
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+          echo "mergebase=$(git merge-base "$base" HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Diff-selected gates (only errors new against the merge-base are charged)
+        env:
+          BASE: ${{ steps.range.outputs.base }}
+          MERGEBASE: ${{ steps.range.outputs.mergebase }}
+        run: python3 09-tools/close-out-dispatch.py --from-diff --range "$BASE...HEAD" --run --baseline "$MERGEBASE" --via ci
+      - name: Unlaned commits (report-only; commits with no Workspace-Lane trailer)
+        env:
+          BASE: ${{ steps.range.outputs.base }}
+        run: |
+          python3 09-tools/close-out-dispatch.py --unlaned --range "$BASE..HEAD"
+          python3 09-tools/close-out-dispatch.py --unlaned --range HEAD --since epoch
+      - name: Identity audit (report-only; counts only)
+        env:
+          BASE: ${{ steps.range.outputs.base }}
+        run: python3 09-tools/close-out-dispatch.py --identity-audit --range "$BASE..HEAD"
