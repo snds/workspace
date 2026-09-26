@@ -10,7 +10,7 @@ relations:
 
 ## For future agent
 - **TL;DR:** Scripts that the next agent never runs are theater. Load set = `skill-loadset.py`. After produce = `close-out-dispatch.py --run`. Command-hub L3 coverage = `close-out-dispatch.py --check`. Layer 0 JSON = `validate-layer0-schema.py`. Secrets = `check-secrets.py`. Followthrough, adapters, bootstrap, CI, and close-out step 2 name those CLIs.
-- **As of:** 2026-09 · **Status:** current
+- **As of:** 2026-09 (corrected 2026-09-25, see the end) · **Status:** current
 
 ## Context — what forced a choice
 Process-rigor and the automation review mapped jobs that should become scripts. Minting them without attach points would recreate the silent-hub problem: files exist, no load edge.
@@ -23,3 +23,6 @@ Pasting close-out into 47 hubs (R3). LLM-as-judge merge gate (R1). Requiring `go
 
 ## Consequences — what this commits us to
 New command hubs must get a `HUB_DETECTORS` row or `close-out-dispatch.py --check` fails. A8 (Figma bind probe) still waits for a produce that cannot refuse `Color/*`. Do not treat dispatch exit 0 as visual verified when SKIP lines remain.
+
+## As-of correction — 2026-09-25
+The A8 sentence above was true on 2026-09-11 and went stale: A8 landed 2026-09-15 (`figma-bind-probe.py`, report figma-bind-probe_v1.0), and A4, A5 and A9 landed the same day (automation-second-wave_v1.0). The current state of every recommendation from the 2026-09-11 reports lives in the findings register `07-projects/19-workspace-brain/docs/INTENT-remediation-2026-09.md`, not in this note or the reports' status lines.

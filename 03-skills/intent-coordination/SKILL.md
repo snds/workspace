@@ -76,6 +76,9 @@ Standing project home for vault work: `07-projects/19-workspace-brain/` Live han
    the `--neutral` render by PR). `lint --repo DIR` / `--all` scales by lifecycle and checks
    inheritance and approval provenance; `approve` is human-only; `next` names the next step;
    `verify --record` stamps surface and device. Grammar: [[intent-spec]].
+8. **Remediate.** `init --recon --repo DIR` (read-only card; policy-routed), a `kind: remediation`
+   spec (findings register, closures, preserve list), `findings` / `next --spec`, then
+   `packet --format prompt T<n>` as any agent's task body and `verdict --branch B --run` as the verifier.
 
 ## Done-gates
 

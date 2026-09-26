@@ -124,6 +124,7 @@ QUALITY_CHAIN = [
     ("validate-capabilities.py", ["--check"]),
     ("validate-evidence-grades.py", []),
     ("validate-evidence-grades.py", ["--self-test"]),
+    ("validate-evidence-grades.py", ["--status"]),
     ("artifact-find.py", ["--check"]),
     ("artifact-find.py", ["--self-test"]),
     ("figma-bind-probe.py", ["--self-test"]),

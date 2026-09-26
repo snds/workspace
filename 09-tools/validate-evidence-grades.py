@@ -24,18 +24,28 @@ wolf is a lint people route around.
 Skills are exempt: `03-skills/` DEFINES this vocabulary, so using the words there is the
 point rather than a claim.
 
+`--status` (H8) is the report-to-register lane. A versioned report is a dated snapshot and is
+never edited to say what happened next; the current state of its recommendations lives in a
+findings register (a remediation spec's `## Findings` table, see intent-spec). The lane walks
+git-tracked report roots only and flags a versioned report whose frontmatter `status:` pairs a
+closure word (applied, resolved, closed, …) with an ID range or list while no tracked findings
+row cites the report in `origin` or `closed_by`. Resolution runs one way: register → report.
+It is report-only against a census ceiling: it fails only when the count rises above it.
+
 Usage:
   python3 09-tools/validate-evidence-grades.py
   python3 09-tools/validate-evidence-grades.py --strict     # also enforce pre-registration
+  python3 09-tools/validate-evidence-grades.py --status     # report → findings-register census
   python3 09-tools/validate-evidence-grades.py --self-test
 
-Exit: 0 clean · 1 a report claims a grade it cannot support.
+Exit: 0 clean · 1 a report claims a grade it cannot support (or --status rose above the ceiling).
 """
 
 from __future__ import annotations
 
 import argparse
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -77,6 +87,144 @@ PREREG_FIELDS = [
     ("duration", r"\bduration\b"),
     ("stopping rule", r"stopping rule"),
 ]
+
+
+# --status: the census ceiling may only go down (raise it only with a deliberate diff).
+STATUS_CEILING = 0
+VERSIONED_RE = re.compile(r"^(?P<slug>.+?)_v\d+\.\d+_\d{4}-\d{2}-\d{2}\.md$")
+CLOSURE_WORD_RE = re.compile(r"\b(applied|resolved|closed|fixed|landed|done|completed?)\b", re.I)
+ID_SPAN_RE = re.compile(r"\b[A-Z]{0,3}\d+\s*[–-]\s*[A-Z]{0,3}\d+\b|\b[A-Z]+\d+(?:\s*[,/]\s*[A-Z]+\d+)+")
+ISO_DATE_RE = re.compile(r"\b\d{4}-\d{2}-\d{2}\b")
+
+
+def _tracked(root: Path, *pathspecs: str) -> list[str]:
+    r = subprocess.run(["git", "ls-files", "-z", "--", *pathspecs], cwd=str(root), capture_output=True,
+                       text=True, timeout=30)
+    return [p for p in r.stdout.split("\0") if p] if r.returncode == 0 else []
+
+
+def _frontmatter_status(text: str) -> str:
+    if not text.startswith("---"):
+        return ""
+    end = text.find("\n---", 3)
+    for line in text[3:end if end > 0 else 0].splitlines():
+        if line.lower().startswith("status:"):
+            return line.split(":", 1)[1].strip()
+    return ""
+
+
+def status_claims(status: str) -> bool:
+    """True when a status pairs a closure word with an ID range or list (dates are not ranges)."""
+    bare = ISO_DATE_RE.sub(" ", status)
+    return bool(CLOSURE_WORD_RE.search(bare) and ID_SPAN_RE.search(bare))
+
+
+def _register_cells(text: str) -> list[str]:
+    """origin and closed_by cells of the `## Findings` table in one document."""
+    m = re.search(r"^##\s+Findings\s*$", text, re.M | re.I)
+    if not m:
+        return []
+    header: list[str] | None = None
+    cells: list[str] = []
+    for line in text[m.end():].splitlines():
+        line = line.strip()
+        if line.startswith("## "):
+            break
+        if not line.startswith("|"):
+            if header:
+                break
+            continue
+        row = [c.strip() for c in re.split(r"(?<!\\)\|", line.strip("|"))]
+        if all(set(c) <= set("-: ") for c in row):
+            continue
+        if header is None:
+            header = [re.sub(r"[^a-z0-9]+", "_", c.lower()).strip("_") for c in row]
+            continue
+        for key in ("origin", "closed_by"):
+            if key in header and header.index(key) < len(row):
+                cells.append(row[header.index(key)])
+    return cells
+
+
+def status_census(root: Path = ROOT) -> list[str]:
+    """Versioned, tracked reports whose status claims closure that no tracked findings row cites."""
+    reports = [p for p in _tracked(root, *REPORT_ROOTS)
+               if p.endswith(".md") and VERSIONED_RE.match(p.rsplit("/", 1)[-1])
+               and not any(part in SKIP_PARTS for part in p.split("/"))]
+    cells: list[str] = []
+    for p in _tracked(root, "*.md"):
+        try:
+            text = (root / p).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        if "## Findings" in text:
+            cells += _register_cells(text)
+    cited = " ".join(cells)
+    flagged = []
+    for p in reports:
+        try:
+            status = _frontmatter_status((root / p).read_text(encoding="utf-8", errors="replace"))
+        except OSError:
+            continue
+        slug = VERSIONED_RE.match(p.rsplit("/", 1)[-1]).group("slug")
+        if status_claims(status) and not re.search(rf"(?<![\w-]){re.escape(slug)}(?=#|_v\d|[^\w-]|$)", cited):
+            flagged.append(f"{p}: status claims closure ({status[:70]}) but no tracked findings row cites "
+                           f"`{slug}` in origin or closed_by")
+    return flagged
+
+
+def run_status(root: Path = ROOT, ceiling: int = STATUS_CEILING) -> int:
+    flagged = status_census(root)
+    for f in flagged:
+        print(f"  · {f}")
+    over = len(flagged) > ceiling
+    print(f"{'✗' if over else '✓'} report status census — {len(flagged)} uncited closure claim(s) "
+          f"(ceiling {ceiling}); register → report, never the reverse")
+    return 1 if over else 0
+
+
+def _status_self_test() -> list[str]:
+    """Replay the real shape: a report whose status says applied while one rec waited, uncited."""
+    import contextlib
+    import io
+    import os
+    import tempfile
+    bad: list[str] = []
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    env.update({"GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull})
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td)
+
+        def git(*args):
+            subprocess.run(["git", *args], cwd=td, env=env, capture_output=True, timeout=30, check=True)
+
+        git("init", "-q", "-b", "main")
+        rep = root / "07-projects" / "01-x" / "reports" / "auto-review_v1.0_2026-01-01.md"
+        rep.parent.mkdir(parents=True)
+        rep.write_text("---\nstatus: first wave applied 2026-01-01 — A1, A2 wired; A8 deferred\n---\n# r\n")
+        untracked = root / "05-artifacts" / "active" / "emp_review_v1.0_2026-01-01.md"
+        untracked.parent.mkdir(parents=True)
+        untracked.write_text("---\nstatus: applied — recs 1–9\n---\n")
+        git("add", str(rep.relative_to(root)))
+        flagged = status_census(root)
+        if len(flagged) != 1 or "auto-review" not in flagged[0]:
+            bad.append(f"status: an uncited applied+IDs report is flagged once, an untracked one never ({flagged})")
+        with contextlib.redirect_stdout(io.StringIO()):
+            ceiling_ok = run_status(root, ceiling=0) == 1 and run_status(root, ceiling=1) == 0
+        if not ceiling_ok:
+            bad.append("status: the ceiling decides the exit")
+        spec = root / "07-projects" / "01-x" / "docs" / "INTENT-remediation.md"
+        spec.parent.mkdir(parents=True)
+        spec.write_text("---\nkind: remediation\n---\n## Findings\n\n| id | status | origin | closed_by |\n"
+                        "|---|---|---|---|\n| F-001 | RESOLVED | auto-review#A8 | probe_v1.0 |\n")
+        if len(status_census(root)) != 1:
+            bad.append("status: an untracked register row must not clear the flag")
+        git("add", str(spec.relative_to(root)))
+        if status_census(root):
+            bad.append(f"status: a tracked citing RESOLVED row clears the flag ({status_census(root)})")
+        if status_claims("applied 2026-09-11") or not status_claims("applied — recs R1–R16"):
+            bad.append("status: dates are not ranges; R1–R16 is")
+    return bad
 
 
 def report_files(root: Path = ROOT):
@@ -151,6 +299,7 @@ def self_test() -> int:
     expect("strict ignores a lone experiment-word in a routing table",
            not audit_text(one_word, strict=True))
 
+    failures += _status_self_test()
     for name in failures:
         print(f"  ✗ {name}")
     if failures:
@@ -166,10 +315,14 @@ def main() -> int:
     ap.add_argument("--strict", action="store_true",
                     help="also require pre-registration fields on quantitative VERIFIED claims")
     ap.add_argument("--self-test", action="store_true")
+    ap.add_argument("--status", action="store_true",
+                    help="report → findings-register census over tracked versioned reports (H8)")
     args = ap.parse_args()
 
     if args.self_test:
         return self_test()
+    if args.status:
+        return run_status()
 
     errors, scanned = [], 0
     for path in report_files():
