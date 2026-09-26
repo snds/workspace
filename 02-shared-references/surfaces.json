@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "doc": "Surface registry (H16). Source for render_shims.py and for profile_resolve detection. Never auto-loaded. This repo is public, so coverage rules state known gaps at class level with a stable ID; the runnable detail stays in held (decision-public-residual-detail). component_scopes gives each component a scope: shared (every agent should get it) or claude-restriction (it exists to hold Claude back, so a non-Claude gap is by design), each with a one-line reason. The parity gate (workspace-harness.py check_component_parity, --parity) flags a shared component whose cell on a hookable minimum surface is missing, advisory or unverified, unless the cell carries parity_waiver {reason, until: wave-N}; a waiver whose wave is before current_wave is itself a gap. parity_gate is report (list gaps, pass) or enforce (gaps fail).",
+  "doc": "Surface registry (H16). Source for render_shims.py and for profile_resolve detection. Never auto-loaded. This repo is public, so coverage rules state known gaps at class level with a stable ID; the runnable detail stays in held (decision-public-residual-detail). component_scopes gives each component a scope: shared (every agent should get it) or claude-restriction (it exists to hold Claude back, so a non-Claude gap is by design), each with a one-line reason. The parity gate (workspace-harness.py check_component_parity, --parity) flags a shared component whose cell on a hookable minimum surface is missing, advisory or unverified, unless the cell carries parity_waiver {reason, until: wave-N}; a waiver whose wave is before current_wave is itself a gap. parity_gate is report (list gaps, pass) or enforce (gaps fail). A surface row's adapters lists its native-filename adapter files as {path, role: md|config}; validate-workspace.py and evaluate-surface-trajectories.py derive their adapter lists from them (an md adapter on a dialect-none row is hookless), so a new adapter needs a row entry, not a code edit.",
   "coverage_modes": [
     "enforced",
     "enforced-partial",
@@ -488,6 +488,12 @@
       "hookable": false,
       "dialect": "none",
       "timeouts_s": {},
+      "adapters": [
+        {
+          "path": "00-bootstrap/adapters/web-session.md",
+          "role": "md"
+        }
+      ],
       "markers": {
         "env": [],
         "ancestry": [],
@@ -1478,6 +1484,16 @@
       "hookable": true,
       "dialect": "none",
       "timeouts_s": {},
+      "adapters": [
+        {
+          "path": "GEMINI.md",
+          "role": "md"
+        },
+        {
+          "path": ".gemini/settings.json",
+          "role": "config"
+        }
+      ],
       "markers": {
         "env": [
           {
@@ -1571,6 +1587,12 @@
       "timeouts_s": {
         "session-start": 15
       },
+      "adapters": [
+        {
+          "path": ".github/copilot-instructions.md",
+          "role": "md"
+        }
+      ],
       "markers": {
         "env": [],
         "ancestry": [],
@@ -1837,6 +1859,12 @@
       "hookable": true,
       "dialect": "none",
       "timeouts_s": {},
+      "adapters": [
+        {
+          "path": ".windsurf/rules/workspace.md",
+          "role": "md"
+        }
+      ],
       "markers": {
         "env": [
           {
@@ -1934,6 +1962,16 @@
       "hookable": false,
       "dialect": "none",
       "timeouts_s": {},
+      "adapters": [
+        {
+          "path": "CONVENTIONS.md",
+          "role": "md"
+        },
+        {
+          "path": ".aider.conf.yml",
+          "role": "config"
+        }
+      ],
       "markers": {
         "env": [
           {
@@ -2028,6 +2066,12 @@
       "hookable": false,
       "dialect": "none",
       "timeouts_s": {},
+      "adapters": [
+        {
+          "path": "WARP.md",
+          "role": "md"
+        }
+      ],
       "markers": {
         "env": [
           {
@@ -2313,6 +2357,12 @@
       "hookable": false,
       "dialect": "none",
       "timeouts_s": {},
+      "adapters": [
+        {
+          "path": "PERPLEXITY.md",
+          "role": "md"
+        }
+      ],
       "markers": {
         "env": [
           {
