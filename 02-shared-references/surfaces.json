@@ -1533,7 +1533,13 @@
             "verified": false
           }
         ],
-        "ancestry": [],
+        "ancestry": [
+          {
+            "comm": "codex",
+            "match": "exact",
+            "verified": false
+          }
+        ],
         "payload_keys_any": [
           {
             "key": "thread_id",
