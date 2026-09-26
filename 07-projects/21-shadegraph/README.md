@@ -36,4 +36,4 @@ built there.
 
 See `06-context/project-context.md` for the registry entry.
 
-- **Project intent:** n/a (the ShadeGraph repo has no remote yet; frame its PROJECT.md there once it has one)
+- **Project intent:** `snds/shadegraph:PROJECT.md` (the intent lives in the code repo; frame it there with `intent-run.py init --frame`)
