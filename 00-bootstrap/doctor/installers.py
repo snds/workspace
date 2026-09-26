@@ -8,8 +8,8 @@
 `workspace-doctor.sh --install-<name>[=ARG]` / `--uninstall-<name>[=ARG]` exec this with
 inherited stdio; the shell reads only the exit code. The unattended doctor never installs.
 
-Names: pin, shims, git-hooks (H18: the global git lanes include from dist/git/lanes plus one
-managed include block in ~/.gitconfig), identity, claude-overlay, claude-overlay-retire-env,
+Names: pin, shims, git-hooks[=block] (H18: the global git lanes include from dist/git/lanes plus one
+managed include block in ~/.gitconfig; H11: `=block` also sets ws.pushgate there), identity, claude-overlay, claude-overlay-retire-env,
 sandbox-roots, plugin, projects-pointer (~/Projects/AGENTS.md from dist/projects-AGENTS.md), launchd.
 
 claude-overlay (D-W1-4) installs the overlay env file (~/.config/snds-workspace/claude-overlay.env),
