@@ -1,6 +1,6 @@
 # Task brief T1: Make lint errors fail the build
 
-You are a coding agent working in the git repository `pat-sample/widget`. This brief is self-contained: everything you need is below, and nothing outside this repository is required. Work on a new branch from commit `1111111111111111111111111111111111111111`; never push to the default branch.
+You are a coding agent working in the git repository `pat-sample/widget`. This brief is self-contained: everything you need is below, and nothing outside this repository is required. Work on a new branch from the default branch's current tip; never push to the default branch. The findings were verified at commit `1111111111111111111111111111111111111111`; if the tip has moved, confirm they still hold.
 
 ## Goal
 

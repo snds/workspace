@@ -2956,14 +2956,17 @@ def closure_results(spec: dict, *, run: bool, runnable: bool, vroot: Path | None
     return out
 
 
-def compute_verdict(spec: dict, *, closures: dict[str, str], prior: dict | None = None) -> dict:
-    """mission-fit verdict: Fit (0), Fit with gaps (0), Unfit (1), Blocked (2). Blocked beats a plausible Fit."""
+def compute_verdict(spec: dict, *, closures: dict[str, str], prior: dict | None = None,
+                    scope: set | None = None) -> dict:
+    """mission-fit verdict: Fit (0), Fit with gaps (0), Unfit (1), Blocked (2). Blocked beats a plausible Fit.
+    scope (a packet's findings): open rows count only inside it; regressions, reopens and drops count anywhere."""
     rows = {(r.get("id") or "").strip(): r for r in parse_remediation(spec)["rows"]}
     sev = {fid: norm_sev(r.get("sev")) for fid, r in rows.items()}
     st = {fid: (r.get("status") or "").strip().upper() for fid, r in rows.items()}
     hi = ("Critical", "High")
     reasons: list[str] = []
-    open_hi = [f for f in rows if st[f] == "OPEN" and sev[f] in hi]
+    inside = (lambda f: f in scope) if scope else (lambda f: True)  # noqa: E731
+    open_hi = [f for f in rows if st[f] == "OPEN" and sev[f] in hi and inside(f)]
     regressed = [f for f, s in closures.items() if s == "FAIL"]
     dropped: list[str] = []
     reopened: list[str] = []
@@ -2975,7 +2978,7 @@ def compute_verdict(spec: dict, *, closures: dict[str, str], prior: dict | None 
         reopened = sorted(f for f in rows if pst.get(f) == "RESOLVED" and st[f] == "OPEN")
         resolved_in_range = sorted(f for f in rows if st[f] == "RESOLVED" and pst.get(f) != "RESOLVED")
     blocked = [f for f, s in closures.items() if s in ("UNRUN", "NOT_EXPOSED") and sev.get(f) in hi]
-    gaps = [f for f in rows if (st[f] == "OPEN" and sev[f] not in hi) or st[f] == "DEFERRED"]
+    gaps = [f for f in rows if inside(f) and ((st[f] == "OPEN" and sev[f] not in hi) or st[f] == "DEFERRED")]
     for f in open_hi:
         reasons.append(f"{f} {sev[f]} OPEN")
     for f in regressed:
@@ -3017,7 +3020,8 @@ def _cited_ids(top: Path, rng: str) -> list[str]:
 
 
 def cmd_verdict(spec_path: Path, *, branch: str | None = None, rng: str | None = None, run: bool = False,
-                as_json: bool = False, base: str | None = None, automated: bool | None = None) -> int:
+                as_json: bool = False, base: str | None = None, automated: bool | None = None,
+                packet: str | None = None) -> int:
     det = _detection()
     why = _content_gate(spec_path.parent, det)
     if why:
@@ -3049,6 +3053,14 @@ def cmd_verdict(spec_path: Path, *, branch: str | None = None, rng: str | None =
             print(f"verdict: Blocked — {tip_ref} does not resolve here (fetch it first)")
             return 2
         text = _git_text_at(top, tip, rel)
+        spec_note = None
+        if text is None and branch:
+            # A branch cut before the spec was written (e.g. from the recon commit a packet named) is judged
+            # against the approved spec on its base, and says so. A range has no base to borrow from.
+            b = _rev(top, base_ref)
+            text = _git_text_at(top, b, rel) if b else None
+            if text is not None:
+                spec_note = f"the spec is absent at {tip_ref}; judged against {rel} at {base_ref}"
         if text is None:
             print(f"verdict: Blocked — the spec {rel} is absent at {tip_ref}")
             return 2
@@ -3057,24 +3069,41 @@ def cmd_verdict(spec_path: Path, *, branch: str | None = None, rng: str | None =
             commits = _cited_ids(top, f"{start}..{tip}")
     else:
         text = spec_path.read_text(encoding="utf-8")
+        spec_note = None
     spec = parse_spec(text)
     if not is_remediation(spec):
         print("verdict: not a remediation spec (no `## Findings` register)", file=sys.stderr)
         return 2
+    scope = None
+    if packet:
+        pk = parse_remediation(spec)["packets"].get(packet.upper())
+        if pk is None:
+            print(f"verdict: no packet {packet} in the spec", file=sys.stderr)
+            return 2
+        scope = set(_finding_ids(" ".join(_field(pk, "findings"))))
     runnable = tip is None or (top is not None and _rev(top, "HEAD") == tip)
     vroot = top or spec_path.parent
     if automated is None and run:
         automated, _ = automated_context()
     res = compute_verdict(spec, closures=closure_results(spec, run=run, runnable=runnable, vroot=vroot,
                                                           automated=bool(automated)),
-                          prior=parse_spec(prior_text) if prior_text is not None else None)
+                          prior=parse_spec(prior_text) if prior_text is not None else None, scope=scope)
     res.update(spec=rel or str(spec_path), key=key, tip=tip, cites=commits)
+    if scope is not None:
+        res["packet"] = {"id": packet.upper(), "findings": sorted(scope)}
+    if (branch or rng) and spec_note:
+        res["spec_note"] = spec_note
     if as_json:
         print(json.dumps(res, indent=2))
         return res["exit"]
     c = res["counts"]
     print(f"verdict: {res['verdict']} (exit {res['exit']})")
+    if res.get("spec_note"):
+        print(f"  note: {res['spec_note']}")
     print(f"spec: {res['spec']} · key: {key}" + (f" @ {tip[:9]}" if tip else ""))
+    if res.get("packet"):
+        print(f"packet: {res['packet']['id']} · judged findings: {', '.join(res['packet']['findings']) or 'none'} "
+              "(regressions and drops count anywhere)")
     print(f"findings: open={c['OPEN']} resolved={c['RESOLVED']} deferred={c['DEFERRED']} · "
           f"critical/high open={len(res['open_critical_high'])}")
     if prior_text is not None or branch or rng:
@@ -3238,7 +3267,9 @@ def render_packet_prompt(pk: dict) -> str:
     out = [f"# {title}", "",
            f"You are a coding agent working in the git repository `{pk['repo']}`. This brief is self-contained: "
            "everything you need is below, and nothing outside this repository is required. Work on a new "
-           f"branch from commit `{pk['base'] or 'the default branch tip'}`; never push to the default branch.", "",
+           "branch from the default branch's current tip; never push to the default branch."
+           + (f" The findings were verified at commit `{pk['base']}`; if the tip has moved, confirm they still hold."
+              if pk["base"] else ""), "",
            "## Goal", "", txt("outcome"), ""]
     if f.get("context"):
         out += ["## Context", "", txt("context"), ""]
@@ -4389,6 +4420,8 @@ def _st_remediation_verdict() -> None:
         h.commit("drop", "tidy the register", {rel: dropped}, frm=m0)
         h.commit("reopen", "reopen", {rel: reopened}, frm=m0)
         h.commit("gated", "resolve F-001 with a measured closure", {rel: gated}, frm=m0)
+        h.commit("prespec", "code-only change on a branch without the spec", {"src.txt": "x\n"}, frm=m0,
+                 deletes=(rel,))
         h.flush()
         spec = repo / rel
         spec.parent.mkdir(parents=True)
@@ -4410,6 +4443,18 @@ def _st_remediation_verdict() -> None:
             assert rc == 2 and "NOT_EXPOSED" in out, out  # the keyed ref is not the checkout
             rc, out = _quiet(cmd_verdict, spec, branch="nope")
             assert rc == 2 and "Blocked" in out, out
+            # --packet judges only that packet's findings: the deferred F-003 outside T1 no longer makes a gap,
+            # while the whole register still reports it; an unknown packet is a usage error.
+            rc, out = _quiet(cmd_verdict, spec, branch="fix-lint", packet="T1")
+            assert rc == 0 and "verdict: Fit (exit 0)" in out and "packet: T1" in out, out
+            rc, out = _quiet(cmd_verdict, spec, packet="T1")
+            assert rc == 1 and "verdict: Unfit" in out, out   # F-001 (High) is T1's own finding, still OPEN
+            rc, _out = _quiet(cmd_verdict, spec, packet="T9")
+            assert rc == 2, _out
+            # A branch cut before the spec existed is judged against the approved spec on its base, noted.
+            rc, out = _quiet(cmd_verdict, spec, branch="prespec", as_json=True)
+            doc = json.loads(out)
+            assert "absent at prespec" in (doc.get("spec_note") or "") and doc["verdict"] != "Blocked", doc
             rc, out = _quiet(cmd_verdict, spec, branch="fix-lint", as_json=True)
             doc = json.loads(out)
             assert doc["verdict"] == "Fit with gaps" and doc["tip"] and doc["resolved_in_range"] == ["F-001"], doc
@@ -4819,6 +4864,7 @@ def main(argv: list[str] | None = None) -> int:
     p_vd.add_argument("--range", dest="rng")
     p_vd.add_argument("--run", action="store_true", help="run RESOLVED rows' closures (keyed ref must be HEAD)")
     p_vd.add_argument("--json", action="store_true")
+    p_vd.add_argument("--packet", help="judge one packet's findings (T<n>); regressions and drops still count anywhere")
     p_appr = sub.add_parser("approve")
     p_appr.add_argument("--repo")
     p_appr.add_argument("--spec")
@@ -4932,7 +4978,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.branch and args.rng:
             print("verdict: pass --branch or --range, not both", file=sys.stderr)
             return 2
-        return cmd_verdict(spec, branch=args.branch, rng=args.rng, run=args.run, as_json=args.json, base=args.base)
+        return cmd_verdict(spec, branch=args.branch, rng=args.rng, run=args.run, as_json=args.json, base=args.base,
+                           packet=args.packet)
     if args.cmd == "status":
         return cmd_status(spec)
     if args.cmd == "gate":
