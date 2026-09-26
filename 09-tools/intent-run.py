@@ -2517,6 +2517,11 @@ def lint_remediation(spec: dict, spec_path: Path | None = None, *, since: str | 
     for cid, c in rem["closures"].items():
         if not c["value"]:
             out.append(("ERROR", f"closure {cid}: an empty {c['kind']}"))
+    used = {(r.get("closure") or "").strip().upper() for r in rows}
+    unused = [cid for cid in rem["closures"] if cid not in used]
+    if unused:
+        out.append(("WARN", f"closure(s) {', '.join(unused)} defined under `### Closures` but no findings "
+                            "row names them (a replaced closure? drop it or point a row at it)"))
     if (spec["meta"].get("status") or "").strip().lower() == "closed" and open_rows:
         out.append(("ERROR", f"status: closed is refused while {len(open_rows)} row(s) are OPEN "
                              f"({', '.join(open_rows[:5])})"))
@@ -4254,6 +4259,12 @@ def _st_remediation_lint() -> None:
                         "| F-002 | Medium | RESOLVED | process-rigor-gaps#R2 |").replace(
         "| F-001 | High | OPEN | widget-audit#A1 |", "| F-001 | High | OPEN | workspace-automation-review#R2 |")
     assert not _rem_errors(twin), _rem_errors(twin)
+    # The fixture is warning-free; a closure no row names WARNs (not ERROR) and names the id.
+    assert not _levels(lint_remediation(parse_spec(base)), "WARN"), lint_remediation(parse_spec(base))
+    stale = base.replace("- C-002: judgment: Pat\n", "- C-002: judgment: Pat\n- C-003: judgment: Sam\n")
+    assert stale != base, "unused closure: the plant did not apply"
+    f = lint_remediation(parse_spec(stale))
+    assert not _levels(f, "ERROR") and any("C-003" in m and "no findings row" in m for m in _levels(f, "WARN")), f
     # An expired preserve entry and a passed revisit WARN, not ERROR.
     old = base.replace("| on: a squash release |", "| 2001-01-01 |")
     f = lint_remediation(parse_spec(old))
