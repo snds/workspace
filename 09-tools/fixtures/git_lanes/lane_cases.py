@@ -236,7 +236,12 @@ CASES = [
     "in-process (Sean 2026-09-24): a Cursor shell that also carries CLAUDE_CODE_SSE_PORT (an IDE terminal "
     "with the Claude extension, as the work-mbp cursor probe records) keeps Cursor's walls, and its "
     "employer-identity commit on an employer repo is allowed",
+    "trailer (H10): an employer-repo commit carries no Workspace-Lane trailer and the lane leaves the employer repo "
+    "byte-identical apart from git's own commit",
+    "trailer (H10): a workspace commit carries Workspace-Lane <surface>/<family>/<device>; a personal repo gets one "
+    "only after it opts in (ws.laneTrailer), an unknown-owner repo never",
 ]
+TRAILER = "Workspace-Lane"
 # Measurements, never pass/fail: the 300 ms target depends on the host (python start, bytecode, ps, git spawns).
 REPORT: list = []
 
@@ -253,7 +258,7 @@ def lane_cases() -> list:
         emp = lab.clone("acme-corp/widget", "emp", email_id="acme-id")
         gc = (lab.home / ".gitconfig").read_text(encoding="utf-8")
         listed = {ev: f"ws-lane-{ev}" in lab.g(lab.env, "hook", "list", ev, cwd=emp).stdout
-                  for ev in ("pre-commit", "commit-msg", "pre-merge-commit", "pre-push")}
+                  for ev in ("pre-commit", "commit-msg", "pre-merge-commit", "pre-push", "prepare-commit-msg")}
         out.append((CASES[0], rc == 0 and "insteadOf" in gc and "path = ~/.config/snds-workspace/git/lanes/ws-lanes.inc"
                     in gc and all(listed.values()), f"rc={rc} listed={listed} {log[-300:]}"))
 
@@ -284,8 +289,17 @@ def lane_cases() -> list:
         # Cursor feature-branch commit passes
         lab.g(lab.env, "switch", "-q", "-c", "feat/x", cwd=emp)
         cur = dict(lab.env, CURSOR_AGENT="1")
+        lab.stage(emp, "cursor.txt")
+        before = snapshot(emp)
         r = lab.g(cur, "commit", "-q", "-m", "cursor work", cwd=emp)
         out.append((CASES[5], r.returncode == 0, f"rc={r.returncode} {r.stderr[-300:]}"))
+        body = lab.g(lab.env, "log", "-1", "--format=%B", cwd=emp).stdout
+        # git's own commit touches HEAD, the branch ref, the logs, the index, objects and COMMIT_EDITMSG;
+        # the lane may add nothing else (no config, no hook, no state file anywhere in the repo).
+        own = (".git/logs/", ".git/refs/heads/", ".git/objects/", ".git/index", ".git/COMMIT_EDITMSG", ".git/ORIG_HEAD",
+               ".git/HEAD")
+        extra = [c for c in diff_snap(before, snapshot(emp)) if not any(str(c).startswith(o) for o in own)]
+        trailer_emp = (r.returncode == 0 and TRAILER not in body and not extra, f"body={body!r} extra={extra[:5]}")
 
         # rebase-created personal commit, pre-push
         before_ref = lab.ref("acme-corp/widget", "feat/x")
@@ -315,11 +329,16 @@ def lane_cases() -> list:
             p = lab.g(env, "push", "-q", "origin", "main", cwd=mine)
             res.append((label, c.returncode, p.returncode, (c.stderr + p.stderr)[-160:]))
         out.append((CASES[9], all(c == 0 and p == 0 for _l, c, p, _e in res), str(res)))
+        mine_plain = lab.g(lab.env, "log", "-3", "--format=%B", cwd=mine).stdout
+        lab.g(lab.env, "config", "ws.laneTrailer", "true", cwd=mine)
+        lab.g(cur, "commit", "--allow-empty", "-q", "-m", "opted in", cwd=mine)
+        mine_opt = lab.g(lab.env, "log", "-1", "--format=%(trailers:key=" + TRAILER + ",valueonly)", cwd=mine).stdout.strip()
 
         # unknown owner
         unk = lab.clone("someone-else/lib", "unk", email_id="pat")
         r_agent = lab.g(cur, "commit", "--allow-empty", "-m", "agent", cwd=unk)
         r_human = lab.g(lab.env, "commit", "--allow-empty", "-m", "human", cwd=unk)
+        unk_body = lab.g(lab.env, "log", "-2", "--format=%B", cwd=unk).stdout
         out.append((CASES[10], r_agent.returncode == 0 and "WARN" in r_agent.stderr and r_human.returncode == 0
                     and "WARN" not in r_human.stderr, f"agent={r_agent.returncode} {r_agent.stderr[-200:]} "
                                                       f"human={r_human.returncode} {r_human.stderr[-200:]}"))
@@ -334,6 +353,14 @@ def lane_cases() -> list:
         r2 = lab.g(lab.env, "commit", "-q", "-m", "clean", cwd=lab.ws)
         out.append((CASES[11], r1.returncode != 0 and "[H1]" in r1.stderr and r2.returncode == 0,
                     f"stale={r1.returncode} {r1.stderr[-200:]} clean={r2.returncode} {r2.stderr[-200:]}"))
+        ws_lane = lab.g(lab.env, "log", "-1", "--format=%(trailers:key=" + TRAILER + ",valueonly)", cwd=lab.ws).stdout.strip()
+        r3 = lab.g(cur, "commit", "--allow-empty", "-q", "-m", "cursor in the workspace", cwd=lab.ws)
+        ws_cursor = lab.g(lab.env, "log", "-1", "--format=%(trailers:key=" + TRAILER + ",valueonly)", cwd=lab.ws).stdout.strip()
+        out.append((CASES[22], trailer_emp[0], trailer_emp[1]))
+        out.append((CASES[23], len(ws_lane.split("/")) == 3 and r3.returncode == 0 and ws_cursor.startswith("cursor/cursor/")
+                    and TRAILER not in mine_plain and mine_opt.startswith("cursor/cursor/") and TRAILER not in unk_body,
+                    f"ws={ws_lane!r} ws_cursor={ws_cursor!r} personal_plain={TRAILER in mine_plain} "
+                    f"personal_opted={mine_opt!r} unknown={TRAILER in unk_body}"))
 
         # husky beside the lanes
         marker = lab.tmp / "husky-ran"

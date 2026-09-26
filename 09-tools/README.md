@@ -303,10 +303,30 @@ executes CLI detectors; SKIP classes are not verified; exit 2 is honest skip onl
 ```
 python3 09-tools/close-out-dispatch.py --from-prompt "build this in figma" --run
 python3 09-tools/close-out-dispatch.py --hub qa --run
+python3 09-tools/close-out-dispatch.py --from-diff [--staged | --range A..B | --paths P...] [--run] [--fast] [--baseline REF]
+python3 09-tools/close-out-dispatch.py --compliance [--range A..B]
+python3 09-tools/close-out-dispatch.py --unlaned [--range A..B] [--since epoch]
+python3 09-tools/close-out-dispatch.py --identity-audit [--range A..B]
 python3 09-tools/close-out-dispatch.py --check
+python3 09-tools/close-out-dispatch.py --self-test
 ```
 
 Produce-language followthrough in `prompt_route.py` names this CLI. Close-out step 2 runs it first.
+
+H10 (diff-computed gates): `DIFF_CLASSES` maps changed paths to classes (skills, layer0, tools, hooks,
+surface-config incl. the plugin layer, identity-tables, specs, entry-points, context, references, markdown,
+projects, ci, all) and each class to QUALITY_CHAIN step names from `workspace-harness.py`, so no flag is
+invented here. A failing step the class owns is CHARGED (exit 1); a whole-tree validator is CHARGED only
+when it names a changed path or a deleted stem, or with `--baseline REF` adds error lines REF lacks;
+everything else is AMBIENT (printed, exit 0). A timeout or spent `--budget` is SKIPPED (exit 2). SENSITIVE
+paths (workflows, settings, surfaces/devices/context-remotes/action-policy/vetted-scripts tables) are
+flagged. `--check` also fails on a class glob missing from every workflow path filter, a chain step in no
+class, and a tracked, hook, instruction or plugin path in no class. Every local `--run` appends one receipt
+`{ts, surface, family, via, device, repo_slug, action_class, credential, head, classes, verdict}` (counts
+and ids only) to the gitignored `.workspace/state/receipts.jsonl`; CI and employer repos never get one.
+`--compliance` joins receipts with the `Workspace-Lane` commit trailers per surface (Codex's transcript
+column is an honest SKIP). CI: `.github/workflows/gate-selection.yml` (filters, schedule, dispatch,
+unlaned count, identity audit).
 
 ## validate-layer0-schema.py
 
@@ -331,7 +351,7 @@ python3 09-tools/session-status.py --json
 python3 09-tools/session-status.py --check
 ```
 
-Session-start card; --family auto|claude|cursor|codex (Claude shows only personal-* projects: centric-* ones collapse to one count, projects with no declared profile to another, and the pending line splits; the Cursor shim passes --family cursor); label from profile_resolve.device_label(); --self-test runs the 2ff02e7 oracle.
+Session-start card; one conditional `CI:` line (H10) shows the latest origin/main check-run conclusion, read anonymously from api.github.com (3 s, silent on failure, no credential; `WS_CARD_OFFLINE=1` skips it; `--check` never reads the network) and the unlaned-commit count since the lane epoch; --family auto|claude|cursor|codex (Claude shows only personal-* projects: centric-* ones collapse to one count, projects with no declared profile to another, and the pending line splits; the Cursor shim passes --family cursor); label from profile_resolve.device_label(); --self-test runs the 2ff02e7 oracle.
 
 ## check-secrets.py
 
@@ -532,7 +552,7 @@ H17 adds the Claude overlay env emitter (`overlay` output field, v4 reproduction
 
 ## git_lanes.py
 
-Global config-based git lanes for every local committer (H18): one rendered include (`render [--check]` → `00-bootstrap/dist/git/lanes/ws-lanes.inc`, four `hook.ws-lane-*` hooks for pre-commit, commit-msg, pre-merge-commit and pre-push) that only a human installs with `workspace-doctor.sh --install-git-hooks` (git >= 2.54; the installer refuses without a pinned `git_lanes.py` or without a `git@<device>` record showing config hooks). Each lane execs the pinned copy (`hook EVENT`), decides without writing anything, and picks its lane by repo profile: employer (I1 over the commit identity and every commit and tag in a pushed range; R2 report-only), workspace (plus the H1 `nightly.py --lane pre-commit`), personal (device-mismatch flag only), unknown (agents WARN). A Claude chain first gets `profile_resolve.floor_decide`, so a lane is never weaker than the Claude floor. Infrastructure errors allow with a notice. `audit [--repo DIR]... [--cache]` is the `workspace-doctor.sh --check` detector for config entries, at any scope, that replace, clear or disable a lane, and for lane keys outside the include (exit 0 clean, 1 findings, 3 not installed). `--self-test` runs unit cases plus `fixtures/git_lanes/lane_cases.py`; TestGitLanes runs the same fixtures.
+Global config-based git lanes for every local committer (H18): one rendered include (`render [--check]` → `00-bootstrap/dist/git/lanes/ws-lanes.inc`, five `hook.ws-lane-*` hooks for pre-commit, commit-msg, pre-merge-commit, pre-push and prepare-commit-msg) that only a human installs with `workspace-doctor.sh --install-git-hooks` (git >= 2.54; the installer refuses without a pinned `git_lanes.py` or without a `git@<device>` record showing config hooks). Each lane execs the pinned copy (`hook EVENT`), decides without writing anything, and picks its lane by repo profile: employer (I1 over the commit identity and every commit and tag in a pushed range; R2 report-only), workspace (plus the H1 `nightly.py --lane pre-commit`), personal (device-mismatch flag only), unknown (agents WARN). The one writer is the H10 trailer lane (prepare-commit-msg): in the workspace, and in a positively personal repo that opts in with `git config ws.laneTrailer true`, it adds `Workspace-Lane: <surface>/<family>/<device>` to the message file and nothing else; never in an employer or unknown-owner repo; any error writes nothing. A Claude chain first gets `profile_resolve.floor_decide`, so a lane is never weaker than the Claude floor. Infrastructure errors allow with a notice. `audit [--repo DIR]... [--cache]` is the `workspace-doctor.sh --check` detector for config entries, at any scope, that replace, clear or disable a lane, and for lane keys outside the include (exit 0 clean, 1 findings, 3 not installed). `--self-test` runs unit cases plus `fixtures/git_lanes/lane_cases.py`; TestGitLanes runs the same fixtures.
 
 ## fixtures/git_lanes/
 
