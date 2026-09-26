@@ -47,6 +47,7 @@ PINNED_PATHS = [
     "09-tools/git_lanes.py",
     "09-tools/wall_guard.py",
     "09-tools/closure.py",       # H23: the session-start sweeper commits from a hook, so it runs pinned
+    "09-tools/intent_scope.py",  # H9: the report-only pre-write scope step runs in the pre-tool hook
     "02-shared-references/surfaces.json",
     "02-shared-references/devices.json",
     "02-shared-references/delivery-playbooks/context-remotes.json",
