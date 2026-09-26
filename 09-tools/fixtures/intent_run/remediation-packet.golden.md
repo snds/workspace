@@ -18,7 +18,7 @@ The build pipes lint output to a log and carries on.
 
 - May write: `scripts/build.sh`, `09-tools/lint_gate.py`
 - Must not touch: `migrations/**`
-- Preserve `migrations/**` unchanged: applied migrations are history (until a squash release)
+- Preserve `migrations/**`: applied migrations are history: never edit one (until a squash release)
 
 ## Non-goals
 

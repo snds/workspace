@@ -35,7 +35,7 @@ The synthetic audit report `widget-audit_v1.0_2026-01-01.md`.
 
 | glob | why | until |
 |---|---|---|
-| migrations/** | applied migrations are history | on: a squash release |
+| migrations/** | applied migrations are history: never edit one | on: a squash release |
 
 ## Fidelity / acceptance checklist
 
