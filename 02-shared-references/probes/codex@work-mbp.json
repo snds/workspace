@@ -2,11 +2,96 @@
   "schema_version": 1,
   "surface": "codex",
   "device": "work-mbp",
-  "recorded_at": "2026-09-24",
+  "recorded_at": "2026-09-26",
   "declared_host": "codex",
   "hook_probe": {
-    "status": "not-installed",
-    "events": {}
+    "status": "recorded",
+    "events": {
+      "session-start": {
+        "payload_keys": [
+          "cwd",
+          "hook_event_name",
+          "model",
+          "permission_mode",
+          "session_id",
+          "source",
+          "transcript_path"
+        ],
+        "env_marker_names": [
+          "CODEX_APP_TOOLS_PIPE_PATH",
+          "CODEX_INTERNAL_ORIGINATOR_OVERRIDE",
+          "CODEX_MCP_NODE_PATH",
+          "CODEX_SAGE_BACKFILL_TRACKER_TAB_REUSE",
+          "CODEX_SHELL",
+          "CODEX_TECTONIC_PATH"
+        ],
+        "env_presence": {
+          "WS_CLAUDE_OVERLAY": false,
+          "WS_SURFACE_FAMILY": false,
+          "GIT_CONFIG_COUNT": false,
+          "GH_CONFIG_DIR": false,
+          "CLAUDE_ENV_FILE": false,
+          "WS_OVERLAY_CHANNEL": false
+        }
+      },
+      "user-prompt": {
+        "payload_keys": [
+          "cwd",
+          "hook_event_name",
+          "model",
+          "permission_mode",
+          "prompt",
+          "session_id",
+          "transcript_path",
+          "turn_id"
+        ],
+        "env_marker_names": [
+          "CODEX_APP_TOOLS_PIPE_PATH",
+          "CODEX_INTERNAL_ORIGINATOR_OVERRIDE",
+          "CODEX_MCP_NODE_PATH",
+          "CODEX_SAGE_BACKFILL_TRACKER_TAB_REUSE",
+          "CODEX_SHELL",
+          "CODEX_TECTONIC_PATH"
+        ],
+        "env_presence": {
+          "WS_CLAUDE_OVERLAY": false,
+          "WS_SURFACE_FAMILY": false,
+          "GIT_CONFIG_COUNT": false,
+          "GH_CONFIG_DIR": false,
+          "CLAUDE_ENV_FILE": false,
+          "WS_OVERLAY_CHANNEL": false
+        }
+      },
+      "stop": {
+        "payload_keys": [
+          "cwd",
+          "hook_event_name",
+          "last_assistant_message",
+          "model",
+          "permission_mode",
+          "session_id",
+          "stop_hook_active",
+          "transcript_path",
+          "turn_id"
+        ],
+        "env_marker_names": [
+          "CODEX_APP_TOOLS_PIPE_PATH",
+          "CODEX_INTERNAL_ORIGINATOR_OVERRIDE",
+          "CODEX_MCP_NODE_PATH",
+          "CODEX_SAGE_BACKFILL_TRACKER_TAB_REUSE",
+          "CODEX_SHELL",
+          "CODEX_TECTONIC_PATH"
+        ],
+        "env_presence": {
+          "WS_CLAUDE_OVERLAY": false,
+          "WS_SURFACE_FAMILY": false,
+          "GIT_CONFIG_COUNT": false,
+          "GH_CONFIG_DIR": false,
+          "CLAUDE_ENV_FILE": false,
+          "WS_OVERLAY_CHANNEL": false
+        }
+      }
+    }
   },
   "env_probe": {
     "via": "terminal",
@@ -34,11 +119,43 @@
       "CLAUDE_ENV_FILE": false
     }
   },
-  "ancestry_comm": [],
+  "env_probes": {
+    "terminal": {
+      "via": "terminal",
+      "env_marker_names": [
+        "CODEX_APP_TOOLS_PIPE_PATH",
+        "CODEX_CI",
+        "CODEX_INTERNAL_ORIGINATOR_OVERRIDE",
+        "CODEX_MCP_NODE_PATH",
+        "CODEX_PERMISSION_PROFILE",
+        "CODEX_SAGE_BACKFILL_TRACKER_TAB_REUSE",
+        "CODEX_SANDBOX",
+        "CODEX_SANDBOX_NETWORK_DISABLED",
+        "CODEX_SESSION_ID",
+        "CODEX_SHELL",
+        "CODEX_THREAD_ID",
+        "CODEX_VERSION",
+        "GH_PAGER"
+      ],
+      "env_values": {},
+      "env_presence": {
+        "WS_CLAUDE_OVERLAY": false,
+        "WS_SURFACE_FAMILY": false,
+        "GIT_CONFIG_COUNT": false,
+        "GH_CONFIG_DIR": false,
+        "CLAUDE_ENV_FILE": false
+      }
+    }
+  },
+  "ancestry_comm": [
+    "codex",
+    "ChatGPT",
+    "launchd"
+  ],
   "detected": {
     "acting_host": "codex",
     "family_for_walls": "codex",
-    "via": "env",
+    "via": "ancestry",
     "verified": false,
     "conflict": false
   },

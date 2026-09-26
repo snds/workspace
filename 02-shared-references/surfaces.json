@@ -1761,7 +1761,7 @@
           "how": "enforced-when-installed once the H18 identity lanes ship (wave 1). TestIdentity already verifies the report-only identity check"
         },
         "H19": {
-          "mode": "enforced-partial",
+          "mode": "enforced-when-installed",
           "rules": "trusted user hooks run the ws-hook entry into the pinned hook core; trust is a manual step per device; no session baseline in wave 0",
           "decision": null,
           "verified_by": [
@@ -1771,7 +1771,7 @@
             "probe:wallguard-codex@personal-mbp"
           ],
           "planned_verified_by": [],
-          "how": "the codex pre-tool shim is ws-hook --host codex --event pre-tool, which ws_hook.handle_event routes to the guard; the wallguard-codex probes (2026-09-24, both Macs) hold decision rows logged only on that hook path, so Codex fires the hook core. Partial: the codex probe records still show the probe hook layer not installed, so session-start, user-prompt and stop are not yet shown firing on Codex; trust stays a manual step"
+          "how": "the codex pre-tool shim is ws-hook --host codex --event pre-tool, which ws_hook.handle_event routes to the guard; the wallguard-codex probes (2026-09-24, both Macs) hold decision rows logged only on that hook path; the codex@work-mbp probe (2026-09-26) records session-start, user-prompt and stop firing, detected as codex via its process ancestry with no mismatch. Hooks need trusting once per device in Codex's /hooks"
         },
         "H20": {
           "mode": "enforced-when-installed",
