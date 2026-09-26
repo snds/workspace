@@ -1412,7 +1412,7 @@ def self_test() -> int:
        "gate suffix: red with sorted, sanitised, deduped detectors")
     ok(gate_suffix(t, "green", ["x"]) == "[gate:green@0123456789ab]" and gate_suffix(None, "off") ==
        "[gate:off@unknown]", "gate suffix: green ignores detectors; no tree is 'unknown'")
-    ok("lane post-commit" in inc and all(f"lane {ev}" in inc for _n, ev in LANES) and inc.count("bin/ws-hook") ==
+    ok("lane post-commit" in inc and all(f"lane {ev}" in inc for _n, ev in LANES) and inc.count(WS_HOOK_REL) ==
        len(LANES), "render: every lane enters through bin/ws-hook lane EVENT")
     rec = {"tree": "T1", "gate": {"status": "skipped"}, "ring": [{"tree": "T1", "status": "red", "detectors": ["d"]},
                                                                 {"tree": "T2", "status": "green"}]}
