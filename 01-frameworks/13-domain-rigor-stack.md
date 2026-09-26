@@ -130,7 +130,7 @@ Surfaces' native "create a skill" flows are **insufficient** if they skip this a
 | Figma | #09 + DS ops | `/figma` | MCP + source-audit | `figma` hub → `figma-*` | Defers-to contracts |
 | Career / Obsidian / Adobe / Vision / Science | thin L1 in hub or knowledge | wrapper hubs | validators / CLI where applicable | foundation or cross-cutting | doctrine precedence + routing rows |
 | Workspace ops (session / audit workflows) | #08 + AGENTS.md handoff protocol | `optimize`, `session-end` (command hubs; one `03-skills` home, generated wrappers per surface) | `close-out-dispatch.py` rows + `build-local-skill-plugin.py --check` | cross-cutting, no foundation (by design) | `self-improve` heals; doctrine precedence |
-| Multi-agent coordination | #17 | `intent-coordination` (verbs: gate/ready/verify, lint/approve/next, `verify --record`) | `intent-run.py --self-test` (HUB_DETECTORS) | skills via `load_chains` per task | Intent.app optional; doctrine wins; mission-fit verifies |
+| Multi-agent coordination | #17 | `intent-coordination` (verbs: gate/ready/verify, lint/approve/next, `verify --record`; remediation: `init --recon`, findings, `packet --format prompt`, `verdict --branch/--range`) | `intent-run.py --self-test` (HUB_DETECTORS) | skills via `load_chains` per task | Intent.app optional; doctrine wins; mission-fit verifies |
 
 Update this table when a cluster gains or loses a layer.
 

@@ -469,6 +469,59 @@ approval: pending
         self.assertTrue(any("approval" in m for lvl, m in ir.lint_intent(built) if lvl == "ERROR"))
 
 
+class TestRemediation(unittest.TestCase):
+    """H8: recon card, findings register, packets, verdict (synthetic owners, temp HOME, real temp repos)."""
+
+    DOGFOOD = ROOT_DIR / "07-projects" / "19-workspace-brain" / "docs" / "INTENT-remediation-2026-09.md"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.ir = load("intent-run")
+        cls.ir._MEASURE_STDIO = subprocess.DEVNULL
+
+    def _run(self, fn):
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as home:
+            env = {"HOME": home, "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull}
+            with mock.patch.dict(os.environ, env):
+                fn()
+
+    def test_register_lint_planted_cases(self):
+        self._run(self.ir._st_remediation_lint)
+
+    def test_blocked_by_gate_and_loop_breaker(self):
+        self._run(self.ir._st_remediation_gate_loop)
+
+    def test_recon_claude_routes_employer_tree_byte_identical(self):
+        """Claude chain on acme-corp → route, tree identical; Cursor → stdout only; pat-sample → docs/."""
+        self._run(self.ir._st_remediation_recon)
+
+    def test_golden_self_contained_packet(self):
+        self._run(self.ir._st_remediation_packet)
+
+    def test_branch_and_range_keyed_verdict(self):
+        self._run(self.ir._st_remediation_verdict)
+
+    def test_packet_leaning_shapes_are_refused(self):
+        for text in ("see the spec for details", "read [[intent-spec]]", "open ~/notes.md",
+                     "the plan is in .claude/state/held/x.md"):
+            self.assertTrue(self.ir.packet_problems(text), text)
+        golden = (TOOLS / "fixtures" / "intent_run" / "remediation-packet.golden.md").read_text(encoding="utf-8")
+        self.assertEqual(self.ir.packet_problems(golden), [])
+
+    def test_dogfood_register_is_lint_clean(self):
+        spec = self.ir.load_spec(self.DOGFOOD)
+        self.assertTrue(self.ir.is_remediation(spec))
+        errors = [m for lvl, m in self.ir.lint_spec(spec) + self.ir.lint_remediation(spec, self.DOGFOOD)
+                  if lvl == "ERROR"]
+        self.assertEqual(errors, [])
+
+    def test_evidence_grades_status_census(self):
+        veg = load("validate-evidence-grades")
+        self.assertEqual(veg._status_self_test(), [])
+        self.assertLessEqual(len(veg.status_census()), veg.STATUS_CEILING)
+
+
 class TestPromptRouteFollowthrough(unittest.TestCase):
     """Produce language must inject close-out; empty Layer 0 on work verbs must not be silent."""
 

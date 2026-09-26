@@ -20,6 +20,7 @@
     "H1",
     "H2",
     "H3",
+    "H8",
     "H15",
     "H16",
     "H17",
@@ -43,6 +44,10 @@
     "H3": {
       "scope": "shared",
       "reason": "intent-run is the multi-agent coordination CLI; every agent that runs it needs the same hardening."
+    },
+    "H8": {
+      "scope": "shared",
+      "reason": "The remediation loop (recon, findings register, packets, verdict) is vendor-neutral by design: any agent runs the CLI, and a packet is any vendor's cloud-task body."
     },
     "H15": {
       "scope": "shared",
@@ -387,6 +392,21 @@
           ],
           "planned_verified_by": [],
           "how": "TestClosure: the plan matrix per repo class and family (Claude employer repos get a handoff and no git, spied), the sweeper commits only mechanical unclaimed workspace paths under the resolved identity, fragment limits at fold and sweep, ledger parity from the Claude golden. Partial until installed and until the dispatcher defers to closure"
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "personal repos: a voluntary CLI; recon of a non-personal repo is refused through the content-read policy and routed to cursor|codex; lint on the committed spec is the backstop",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRemediation",
+            "selftest:09-tools/intent-run.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRemediation and intent-run --self-test run the recon, lint, packet and verdict cases; the workspace's own register (07-projects/19-workspace-brain/docs/INTENT-remediation-2026-09.md) is the dogfood",
+          "parity_waiver": {
+            "reason": "a voluntary CLI: nothing on the host runs recon, findings, packet or verdict unprompted, so the cell stays advisory. The in-tool rules (policy-routed recon, the register lint, self-contained packets, the Blocked-over-Fit verdict) are fixture-verified by TestRemediation. The enforcing point is the commit and push lane plus CI over committed specs (H11 lands report-only in wave 2 and blocks by opt-in in wave 3).",
+            "until": "wave-3"
+          }
         }
       },
       "non_user_envelopes": [
@@ -471,6 +491,14 @@
         "H23": {
           "mode": "advisory",
           "rules": "no user hooks, so no ledger or sweeper; /session-end runs `ws closure plan`, which falls back to git status in the cloud clone",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H8": {
+          "mode": "backstop-only",
+          "rules": "a packet brief is the task body; CI lints the committed spec",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -608,6 +636,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "no execution: copy-ready findings rows that a local surface commits; CI lints them",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -702,6 +738,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "as claude-chat: copy-ready findings rows committed by a local surface",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -775,6 +819,14 @@
         "H23": {
           "mode": "not-applicable",
           "rules": "no local repos or commits",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H8": {
+          "mode": "not-applicable",
+          "rules": "no repository or shell",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1002,6 +1054,21 @@
           ],
           "planned_verified_by": [],
           "how": "TestClosure: ledger parity from the Cursor afterFileEdit and afterShellExecution goldens, a Cursor session's leftover fragment swept by the next start on another surface, employer repos closed by a feature branch and a PR. Partial until installed"
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; no host event invokes it; employer recon prints to stdout and nothing is written or committed; a neutral render lands only by branch, PR and human review",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRemediation",
+            "selftest:09-tools/intent-run.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRemediation and intent-run --self-test run the recon, lint, packet and verdict cases; the workspace's own register (07-projects/19-workspace-brain/docs/INTENT-remediation-2026-09.md) is the dogfood",
+          "parity_waiver": {
+            "reason": "a voluntary CLI: nothing on the host runs recon, findings, packet or verdict unprompted, so the cell stays advisory. The in-tool rules (policy-routed recon, the register lint, self-contained packets, the Blocked-over-Fit verdict) are fixture-verified by TestRemediation. The enforcing point is the commit and push lane plus CI over committed specs (H11 lands report-only in wave 2 and blocks by opt-in in wave 3).",
+            "until": "wave-3"
+          }
         }
       },
       "non_user_envelopes": []
@@ -1089,6 +1156,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; no host event invokes it; employer recon prints to stdout",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1164,6 +1239,14 @@
         "H23": {
           "mode": "advisory",
           "rules": "project-level hooks only, so no ledger or sweeper; /session-end runs `ws closure plan`",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H8": {
+          "mode": "backstop-only",
+          "rules": "a packet brief is the task body; CI lints the committed spec",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1385,6 +1468,21 @@
           ],
           "planned_verified_by": [],
           "how": "TestClosure: ledger parity from the Codex apply_patch and Bash goldens, a Codex leftover fragment swept by a Cursor start. Partial until installed and trusted"
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; no host event invokes it; employer recon prints to stdout and nothing is written or committed",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRemediation",
+            "selftest:09-tools/intent-run.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRemediation and intent-run --self-test run the recon, lint, packet and verdict cases; the workspace's own register (07-projects/19-workspace-brain/docs/INTENT-remediation-2026-09.md) is the dogfood",
+          "parity_waiver": {
+            "reason": "a voluntary CLI: nothing on the host runs recon, findings, packet or verdict unprompted, so the cell stays advisory. The in-tool rules (policy-routed recon, the register lint, self-contained packets, the Blocked-over-Fit verdict) are fixture-verified by TestRemediation. The enforcing point is the commit and push lane plus CI over committed specs (H11 lands report-only in wave 2 and blocks by opt-in in wave 3).",
+            "until": "wave-3"
+          }
         }
       },
       "non_user_envelopes": []
@@ -1460,6 +1558,14 @@
         "H23": {
           "mode": "advisory",
           "rules": "no local hooks; /session-end runs `ws closure plan` in the cloud checkout",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H8": {
+          "mode": "backstop-only",
+          "rules": "a packet brief is the task body; CI lints the committed spec",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1555,6 +1661,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; no host event invokes it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1646,6 +1760,14 @@
         "H23": {
           "mode": "advisory",
           "rules": "loads the Claude user layer, but the Claude ledger registration filters its payload out; /session-end runs `ws closure plan` (git status fallback)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; no host event invokes it",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1746,6 +1868,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; no host event invokes it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1819,6 +1949,14 @@
         "H23": {
           "mode": "not-applicable",
           "rules": "no local device; server-side review closes its PRs",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H8": {
+          "mode": "backstop-only",
+          "rules": "a packet brief is the task body; CI lints the committed spec",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1920,6 +2058,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; no host event invokes it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2014,6 +2160,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; no host event invokes it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2104,6 +2258,14 @@
         "H23": {
           "mode": "advisory",
           "rules": "no hooks; the session-end protocol applies (git status fallback)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; no host event invokes it",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -2205,6 +2367,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; no host event invokes it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2299,6 +2469,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; no host event invokes it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2381,6 +2559,14 @@
         "H23": {
           "mode": "not-applicable",
           "rules": "no local repos or commits",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "no execution: copy-ready findings rows that a local surface commits",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -2471,6 +2657,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H8": {
+          "mode": "not-applicable",
+          "rules": "the workspace MCP exposes no remediation verbs",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2540,6 +2734,14 @@
         "H23": {
           "mode": "advisory",
           "rules": "`ws closure plan` and `closure.py sweep` by hand; a human's own commits are not policy-gated (P00)",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H8": {
+          "mode": "advisory",
+          "rules": "Sean runs the CLI; approving a register is human-only (intent-run approve)",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],

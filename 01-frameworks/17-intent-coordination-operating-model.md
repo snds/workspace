@@ -61,7 +61,7 @@ intent  →  spec (approve)  →  isolate + implement (waves)  →  verify vs sp
 
 **Done-gate.** Every checklist item is measured, attested, or explicitly waived with owner. Author prose is not the verdict. [[mission-fit]] `done` is a claim about the world.
 
-**L3 enforcement:** `python3 09-tools/intent-run.py` (`gate`, `ready`, `worktree add`, `verify`). The Intent desktop app (`install-app` / `open-app`) is optional GUI over the same protocol, not a substitute for the spec file.
+**L3 enforcement:** `python3 09-tools/intent-run.py` (`gate`, `ready`, `worktree add`, `verify`; the remediation loop adds `init --recon`, `findings`, `packet --format prompt` and `verdict`). The Intent desktop app (`install-app` / `open-app`) is optional GUI over the same protocol, not a substitute for the spec file.
 
 Then land per [#07](07-integration-and-review-framework.md) and the context profile (employer: branch → PR → human review; never auto-merge).
 

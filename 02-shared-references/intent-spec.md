@@ -61,6 +61,27 @@ reality changes. Designed intent (outcome + northstar) changes only with Sean's 
   intent and specs accept only `approved via PR <n>`. Records: `<spec>.verify.jsonl` (workspace,
   `merge=union`); employer records hold counts, ids and hashes under
   `~/.config/snds-workspace/state/telemetry/<slug>/`, never in the repo.
+- **Remediation specs (H8, `kind: remediation`).** Template:
+  [intent-remediation.md](../00-bootstrap/templates/intent-remediation.md). `## Recon` holds the
+  `<!-- intent:recon:start -->` block that `init --recon --repo DIR [--spec PATH]` regenerates (read-only;
+  content-read policy first, so a Claude chain on a non-personal repo is routed; employer recon goes to
+  stdout; the card stores a count of secret-shaped names, never the names). `## Findings` is the findings
+  register: `id | sev | status | origin | observed | expected | evidence | closure | closed_by | revisit`
+  (+ optional `risk` low|medium|high). Ids `F-NNN`, never reused; sev Critical|High|Medium|Low (a11y
+  blocker|major|minor|nit map 1:1); status OPEN|RESOLVED|DEFERRED; origin `<report-slug>#<ID>`, `recon` or
+  `external`; closure is a `C-NNN` into `### Closures` (`- C-001: measure: <cmd>` or `judgment: <who>`),
+  never a command in a cell. RESOLVED needs closure + closed_by; DEFERRED needs closed_by (the reason) +
+  revisit (a date or `on: <trigger>`). `## Preserve` is `glob | why | until`. `## Packets` holds one
+  `### T<n> — title` per implementor with `- outcome/context/findings/acceptance/last verified state/
+  non-goals/verification/rollback/bail point/previous attempts:` fields. Lint refuses `status: closed`
+  with an OPEN row, an implementor without a packet, a preserve row without `until`, an unresolved
+  `blocked_by:`, and (`--since REF`) a finding that vanished; `--run-closures` marks a failing RESOLVED
+  closure REGRESSED. `packet --format prompt T<n>|F-NNN` prints a self-contained brief for any agent;
+  `verdict [--branch B | --range A..B] [--run]` is the mission-fit verdict (Fit / Fit with gaps exit 0,
+  Unfit 1, Blocked 2: a High or Critical closure that did not run is Blocked, never a plausible Fit);
+  `gate` refuses while a `blocked_by` upstream is Unfit or Blocked; `ready` / `worktree add` hold a task
+  with 3 FAIL verify records since its newest Previous attempts entry. Dated reports are never edited:
+  `validate-evidence-grades.py --status` flags one whose status claims closure that no register row cites.
 - **`scope-audit`.** Checks each integration merge (or a `--task ID --rev A..B` range) against the
   task's `writes` plus the integrator's, the spec's `**HELD:**` set, JSON selectors, and unreverted
   `session: auto-commit` commits. Exit 0 clean, 1 violation, 3 nothing to audit.
@@ -71,7 +92,8 @@ reality changes. Designed intent (outcome + northstar) changes only with Sean's 
 |---|---|
 | `07-projects/<id>/` | that folder, usually `docs/INTENT.md` |
 | An external git repo | that repo (never copy employer substance into this vault) |
-| Workspace-brain itself | `07-projects/19-workspace-brain/docs/` |
+| Workspace-brain itself | `07-projects/19-workspace-brain/docs/` (remediation: `INTENT-remediation-<yyyy-mm>.md`) |
+| An employer repo's remediation | stdout by default; a neutral render lands only by branch → PR from a non-Claude surface |
 
 Live handoff **points at** the spec; it does not duplicate it.
 

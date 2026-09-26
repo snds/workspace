@@ -9,9 +9,9 @@ date: 2026-08-07
 Durable copies of harness / mission audits and enrichment briefs for this project
 (`07-projects/19-workspace-brain/`).
 
-Primary write path for skill reports remains `05-artifacts/active/` (versioned filenames).
-Copy or dual-write here when the report should live beside the project for Obsidian
-navigation.
+This folder is the tracked write path for workspace-brain reports. `05-artifacts/active/` is
+gitignored and machine-local: a report written only there never reaches the other Mac, so a
+report that should outlive the session lands here (versioned filename, never edited after the fact).
 
 | Artifact | Filename pattern |
 |---|---|
@@ -19,14 +19,14 @@ navigation.
 | [[mission-fit]] | `mission-fit_vN.N_YYYY-MM-DD.md` |
 | Substack enrichment brief | `substack-enrichment-brief_vN.N_YYYY-MM-DD.md` |
 
-## Current reports
+## Finding a report
 
-| File | Notes |
-|---|---|
-| [harness-map_v2.0_2026-09-11.md](./harness-map_v2.0_2026-09-11.md) | Load-miss map — what a cold LLM never loads vs over-loads. Recs 1–15. |
-| [process-rigor-gaps_v1.0_2026-09-11.md](./process-rigor-gaps_v1.0_2026-09-11.md) | Process-rigor map — doctrine that exists but does not attach. Recs R1–R16. |
-| [workspace-automation-review_v1.0_2026-09-11.md](./workspace-automation-review_v1.0_2026-09-11.md) | Scripts vs LLM judgment — recs A1–A10 mint, R1–R3 refuse. Map-only. |
-| [substack-enrichment-brief_v1.0_2026-08-07.md](./substack-enrichment-brief_v1.0_2026-08-07.md) | Nate + Curtis scan — pointers + landing suggestions only (no paywalled bodies) |
+The index is the artifact registry, not a table here:
+`python3 09-tools/artifact-find.py --path 19-workspace-brain/reports`.
+
+A report is a dated snapshot. What happened to its recommendations afterwards lives in the
+findings register [`../docs/INTENT-remediation-2026-09.md`](../docs/INTENT-remediation-2026-09.md),
+never in an edit to the report's `status:` line (`validate-evidence-grades.py --status` checks it).
 
 ## `harness-map.stamp` convention
 
