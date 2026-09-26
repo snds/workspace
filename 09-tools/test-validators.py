@@ -1835,9 +1835,9 @@ class TestPinLib(unittest.TestCase):
     def test_pinned_paths_single_home(self):
         pin_lib = load("00-bootstrap/doctor/pin_lib.py")
         # wave 1 added 09-tools/git_lanes.py (H18), wall_guard.py (H15), and W1-6 (H20, walls F-11) the
-        # heal sources, the pinned doctor entry and the doctor with every helper it executes; H23 closure.py.
-        self.assertEqual(len(pin_lib.PINNED_PATHS), 21)
-        self.assertEqual(len(set(pin_lib.PINNED_PATHS)), 21)
+        # heal sources, the pinned doctor entry and the doctor with every helper it executes; H23 closure.py; wave 2 H9 intent_scope.py.
+        self.assertEqual(len(pin_lib.PINNED_PATHS), 22)
+        self.assertEqual(len(set(pin_lib.PINNED_PATHS)), 22)
         self.assertIn("09-tools/closure.py", pin_lib.PINNED_PATHS)
         self.assertIn("09-tools/profile_resolve.py", pin_lib.PINNED_PATHS)
         self.assertIn("09-tools/git_lanes.py", pin_lib.PINNED_PATHS)

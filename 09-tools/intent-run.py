@@ -275,7 +275,7 @@ def lint_spec(spec: dict) -> list[tuple[str, str]]:
     det = approval_detail(spec["meta"], spec.get("meta_comments"))
     out = [("ERROR", e) for e in det["errors"]]
     out += [("WARN", w) for w in det["warnings"]]
-    out += intent_scope.lint_scope(spec["tasks"])  # H9: disjoint waves, read-only verifiers
+    out += intent_scope.lint_scope(spec.get("tasks") or [])  # H9: disjoint waves, read-only verifiers
     return out
 
 
