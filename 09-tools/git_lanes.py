@@ -589,10 +589,11 @@ def _safe_text(s: Any, n: int = 120) -> str:
 
 
 def write_gate_receipt(top: Path, *, det: dict, head: Optional[str], result: str, reason: str,
-                       root: Optional[Path] = None) -> None:
+                       root: Optional[Path] = None, env: Optional[dict] = None) -> None:
     """One receipts.jsonl row for a bypass (honoured or refused). Workspace only, never in CI; ids and
-    a short sanitised reason only. Fails quiet."""
-    if os.environ.get("GITHUB_ACTIONS") or not (Path(top) / "AGENTS.md").is_file():
+    a short sanitised reason only. Fails quiet. `env` is the hook's own environment (the one the gate
+    decided under), so the CI test is the same one the decision saw."""
+    if (os.environ if env is None else env).get("GITHUB_ACTIONS") or not (Path(top) / "AGENTS.md").is_file():
         return
     try:
         device = _pr().current_device(root=root).get("id") or "unknown"
@@ -675,7 +676,7 @@ def gate_push(base: dict, top: Path, stdin_lines: List[str], e: dict, det: dict,
         if reason:
             ok, why = bypass_allowed(e, ancestry, root)
             write_gate_receipt(top, det=det, head=local, result="bypass" if ok else "bypass-refused", reason=reason,
-                               root=root)
+                               root=root, env=e)
             note_gate_event(top, tree, local, g, event="bypass" if ok else "bypass-refused",
                             bypass=_safe_text(reason), held=not ok)
             if ok:
