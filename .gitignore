@@ -124,6 +124,7 @@
 !09-tools/skill-loadset.py
 !09-tools/close-out-dispatch.py
 !09-tools/check-secrets.py
+!09-tools/backup-projects.py
 !09-tools/validate-layer0-schema.py
 !09-tools/session-status.py
 !09-tools/generate-display-svg.py
