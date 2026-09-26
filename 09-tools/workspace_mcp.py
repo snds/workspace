@@ -133,6 +133,8 @@ def client_family(name: Optional[str]) -> Tuple[str, str]:
     n = (name or "").casefold()
     if n.startswith("claude"):
         return "claude", ("claude-code" if "code" in n else "claude-chat-desktop")
+    if n.startswith("local-agent-mode"):  # the Claude desktop app's Code tab (observed live 2026-09-26)
+        return "claude", "claude-code"
     if "cursor" in n:
         return "cursor", "cursor"
     if "codex" in n:
@@ -865,6 +867,7 @@ def self_test_cases() -> List[Tuple[str, bool, str]]:
            (srv.family, srv.host))
         ok("clientInfo mapping for other clients", client_family("claude-code") == ("claude", "claude-code")
            and client_family("codex-mcp-client") == ("codex", "codex")
+           and client_family("local-agent-mode-workspace-mcp") == ("claude", "claude-code")
            and client_family("some-local-model") == ("unknown-agent", "mcp-clients"), "")
 
         text, err = call(srv, "write_file", {"path": "07-projects/zz-emp-fixture/new.md", "content": "x\n"})
