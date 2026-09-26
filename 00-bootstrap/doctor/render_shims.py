@@ -49,6 +49,10 @@ BELT_INVARIANTS), and the Claude permissions template. The template is never ins
 `--emit claude-permissions --device ID` expands it for one device from the checkout cache and the
 vault's employer folders, on stdout only.
 
+H21 adds the workspace MCP registrations (render `mcp-registration`, install_mode `mcp-servers`,
+00-bootstrap/dist/mcp/): one entry per host in its own config format, with `replaces` naming the entry the
+human-run `--install-mcp=<surface>` puts it in place of (workspace-fs). `--install-shims` never installs them.
+
 Exit: 0 clean; 1 drift or a violation; 2 data or usage error; 3 --rev has no render_shims.py.
 Stdlib only; Python 3.9+.
 """
@@ -94,15 +98,23 @@ KINDS = {"cli-agent", "ide-agent", "desktop-app", "cloud-agent", "chat", "browse
 DIALECTS = {"claude", "cursor", "codex", "plain", "none"}
 CHANNELS = {"claude-settings-env", "claude-session-env-file", "codex-shell-environment-policy",
             "cursor-sessionstart-env", "none"}
-INSTALL_MODES = {"tracked", "whole-file", "claude-settings-keys", "merge-hook-entries", "managed-block"}
+INSTALL_MODES = {"tracked", "whole-file", "claude-settings-keys", "merge-hook-entries", "managed-block",
+                 "mcp-servers"}
 ANCESTRY_MATCH = {"exact", "prefix"}
 RENDERS = {"hooks", "codex-config", "cursor-sandbox", "surfaces-md-block", "identity-inc", "beacon",
-           "contract-core", "codex-rules", "claude-permissions", "wall-belts", "claude-overlay-env"}
+           "contract-core", "codex-rules", "claude-permissions", "wall-belts", "claude-overlay-env",
+           "mcp-registration"}
 CONTRACT_REL = "AGENTS.md"
 WINDSURF_RULE_MAX_CHARS = 12_000   # Windsurf's per-rule character limit (H6)
 CWD_CONTEXTS = ("workspace", "other")
 CHECK_AREAS = ("coverage", "outputs", "registrations", "wrappers")
 TELEMETRY_ROOT = "~/.config/snds-workspace/telemetry"
+# H21: the workspace MCP server registration. {vault} is the checkout the installer runs from; the
+# installer also resolves `python3` to an absolute interpreter (GUI hosts start with a short PATH).
+MCP_SERVER_REL = "09-tools/workspace_mcp.py"
+MCP_VAULT_TOKEN = "{vault}"
+MCP_TOML_BEGIN = "# BEGIN workspace-mcp (installers.py mcp; do not edit)"
+MCP_TOML_END = "# END workspace-mcp"
 MD_BEGIN = "<!-- BEGIN GENERATED: surfaces -->"
 MD_END = "<!-- END GENERATED: surfaces -->"
 REF_RE = re.compile(r"^(probe|fixture|selftest):(.+)$")
@@ -186,6 +198,13 @@ def check_table(t: dict) -> list:
         if "env" in (o.get("owned_keys") or []):
             errors.append(f"output {o.get('id')}: env is never an owned (shim-installable) key; "
                           "the overlay is installed only by --install-claude-overlay")
+        if (o.get("render") == "mcp-registration") != (o.get("install_mode") == "mcp-servers"):
+            errors.append(f"output {o.get('id')}: render mcp-registration and install_mode mcp-servers go together")
+        if o.get("render") == "mcp-registration":
+            if not (isinstance(o.get("server"), str) and o["server"] and o.get("install_path") and o.get("surface")):
+                errors.append(f"output {o.get('id')}: an MCP registration names its server, install_path and surface")
+            if not (isinstance(o.get("replaces"), list) and all(isinstance(x, str) and x for x in o["replaces"])):
+                errors.append(f"output {o.get('id')}: replaces must be a list of MCP server names")
         if o.get("render") == "claude-permissions" and o.get("install_path"):
             errors.append(f"output {o.get('id')}: the permissions template is rendered per device at install "
                           "time (--emit claude-permissions); it never installs whole")
@@ -558,6 +577,19 @@ def _render_codex_config(t: dict) -> str:
         break
     lines.append("# END snds-workspace")
     return "\n".join(lines) + "\n"
+
+
+def _render_mcp_registration(out: dict) -> str:
+    """H21: the workspace MCP server entry for one host, in that host's config format. The installer
+    (--install-mcp=<surface>) puts it in place of the entries named by `replaces` (workspace-fs)."""
+    server = str(out.get("server"))
+    args = [f"{MCP_VAULT_TOKEN}/{MCP_SERVER_REL}"]
+    if str(out.get("install_path") or "").endswith(".toml"):
+        lines = [MCP_TOML_BEGIN, f"[mcp_servers.{server}]", 'command = "python3"',
+                 "args = [" + ", ".join(json.dumps(a) for a in args) + "]", MCP_TOML_END]
+        return "\n".join(lines) + "\n"
+    return canonical(OrderedDict([("mcpServers", OrderedDict([(server, OrderedDict(
+        [("command", "python3"), ("args", args)]))]))]))
 
 
 def _render_cursor_sandbox(t: dict) -> str:
@@ -1245,6 +1277,8 @@ def render_output(t: dict, out: dict, root: Path = ROOT) -> str:
         return _render_codex_config(t)
     if kind == "cursor-sandbox":
         return _render_cursor_sandbox(t)
+    if kind == "mcp-registration":
+        return _render_mcp_registration(out)
     if kind == "identity-inc":
         return _render_identity_inc(out, root)
     if kind == "beacon":
@@ -1374,7 +1408,9 @@ def list_outputs(t: dict) -> list:
     return [OrderedDict([("id", o.get("id")), ("path", o.get("path")), ("layer", o.get("layer")),
                          ("install_path", o.get("install_path")), ("install_mode", o.get("install_mode")),
                          ("surface", o.get("surface")), ("probe", bool(o.get("probe"))),
-                         ("keys", list(o.get("owned_keys") or []))])
+                         ("keys", list(o.get("owned_keys") or []))]
+                        + ([("server", o.get("server")), ("replaces", list(o.get("replaces") or []))]
+                           if o.get("render") == "mcp-registration" else []))
             for o in t.get("outputs") or []]
 
 

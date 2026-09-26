@@ -10,7 +10,10 @@ inherited stdio; the shell reads only the exit code. The unattended doctor never
 
 Names: pin, shims, git-hooks[=block] (H18: the global git lanes include from dist/git/lanes plus one
 managed include block in ~/.gitconfig; H11: `=block` also sets ws.pushgate there), identity, claude-overlay, claude-overlay-retire-env,
-sandbox-roots, plugin, projects-pointer (~/Projects/AGENTS.md from dist/projects-AGENTS.md), launchd.
+sandbox-roots, plugin, projects-pointer (~/Projects/AGENTS.md from dist/projects-AGENTS.md), launchd,
+mcp=HOST (H21: the workspace MCP server registration for HOST, one of claude-chat-desktop, claude-code
+or codex, put in place of the workspace-fs entry it replaces; uninstall restores the file byte for byte,
+or, when the host rewrote the file since, restores only the replaced entry and removes ours).
 
 claude-overlay (D-W1-4) installs the overlay env file (~/.config/snds-workspace/claude-overlay.env),
 the hooks-only settings keys (with the `ws-hook env-file` SessionStart entry that copies the file into
@@ -59,7 +62,7 @@ import merge_settings  # noqa: E402 — sibling module, same directory
 import pin_lib  # noqa: E402
 
 NAMES = ("pin", "shims", "git-hooks", "identity", "claude-overlay", "claude-overlay-retire-env",
-         "claude-permissions", "sandbox-roots", "plugin", "projects-pointer", "user-skills", "launchd")
+         "claude-permissions", "sandbox-roots", "plugin", "projects-pointer", "user-skills", "launchd", "mcp")
 ACTIONS = ("install", "uninstall")
 # Cursor scripts retired in wave 0 (T1 archives the dist copies). Installed copies are
 # removed, with a backup, by `--uninstall-shims=cursor`.
@@ -85,6 +88,9 @@ SURFACE_ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 PROBES_DIR = "02-shared-references/probes"
 HOOK_SCRIPT_RE = re.compile(r"(?:\$HOME|~)/\.claude/hooks/([A-Za-z0-9._-]+\.sh)")
 RENDER_TIMEOUT = 30
+# H21: hosts that take the workspace MCP registration (render_shims outputs with install_mode mcp-servers).
+MCP_HOSTS = ("claude-chat-desktop", "claude-code", "codex")
+MCP_MODE = "mcp-servers"
 
 
 class InstallerError(Exception):
@@ -355,11 +361,14 @@ def _label_matches(label: str, ctx: Ctx) -> bool:
     return True
 
 
-def _uninstall(ctx: Ctx, *, extra=(), before=None, after=None) -> int:
+def _uninstall(ctx: Ctx, *, extra=(), before=None, after=None, rebase=None) -> int:
     """Replay the log per target (install pushes, uninstall pops). The installs of this
     installer on top of a target's stack are undone together: the target returns to the
     backup named by the lowest of them, byte-for-byte, or is removed if that install
-    created it. A target whose top install belongs to another installer is refused."""
+    created it. A target whose top install belongs to another installer is refused.
+
+    `rebase(path, current, backup)` (H21 only): when the target changed since the install (a host app
+    rewrites its own config), undo only this installer's keys on the current file instead of refusing."""
     stacks, order = {}, []
     for rec in read_log(ctx):
         t = rec["target"]
@@ -385,14 +394,18 @@ def _uninstall(ctx: Ctx, *, extra=(), before=None, after=None) -> int:
             run_.append(st.pop())
         path = Path(t)
         cur = _state(path)
-        if _state_sha(cur) != run_[0].get("sha_after"):
-            raise RefusedError(f"foreign edits since install: {t}")
         low = run_[-1]
         want = None
         if low.get("backup"):
             want = _state(Path(low["backup"]))
             if want is None:
                 raise InstallerError(f"backup missing: {low['backup']}")
+        if _state_sha(cur) != run_[0].get("sha_after"):
+            if rebase is None:
+                raise RefusedError(f"foreign edits since install: {t}")
+            want = rebase(path, cur, want)
+            print(f"note: {t} changed since the install; undoing only the managed entry (keyed), "
+                  "not restoring the whole file")
         plan.append((path, cur, want, low.get("backup"), len(run_)))
     for path in extra:
         cur = _state(path)
@@ -685,7 +698,7 @@ def do_shims(ctx: Ctx) -> int:
         return _uninstall(ctx)      # a pure rollback: every target returns to its pre-install bytes
     outs = [o for o in _render_outputs(ctx)
             if (surface is None or o.get("surface") == surface)
-            and bool(o.get("probe")) == ctx.probe]
+            and bool(o.get("probe")) == ctx.probe and o.get("install_mode") != MCP_MODE]
     targets = []
     for o in outs:
         t = _render_target(ctx, o)
@@ -1318,12 +1331,208 @@ def do_git_hooks(ctx: Ctx) -> int:
                         (gc, _file_state(new.encode("utf-8"), old[2] if old else 0o644))])
 
 
+# --------------------------------------------------------------------------- H21 workspace MCP
+
+_MCP_HEADER_RE = re.compile(r'^\s*\[\s*mcp_servers\.(?:"([^"]+)"|([A-Za-z0-9_-]+))(\.[^\]]*)?\s*\]\s*(?:#.*)?$')
+_ANY_HEADER_RE = re.compile(r"^\s*\[")
+
+
+def _mcp_json_dump(obj) -> bytes:
+    return (json.dumps(obj, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+
+
+def _mcp_entry(ctx: Ctx, out: dict) -> tuple:
+    """(server key, the rendered entry text with {vault} and python3 resolved for this machine)."""
+    src = _src(ctx, out.get("path") or "").read_text(encoding="utf-8")
+    vault = str(ctx.repo.resolve())
+    py = ctx.which("python3") or "python3"
+    text = src.replace("{vault}", vault.replace("\\", "\\\\").replace('"', '\\"'))
+    text = text.replace('"command": "python3"', f'"command": {json.dumps(py)}')
+    text = text.replace('command = "python3"', f"command = {json.dumps(py)}")
+    return str(out.get("server")), text
+
+
+def _mcp_json_swap(servers: dict, key: str, entry, drop: list) -> dict:
+    """servers with `drop` names and any old `key` removed and `key` placed where the first of them was."""
+    out, placed = {}, False
+    for name, val in servers.items():
+        if name == key or name in drop:
+            if not placed:
+                out[key], placed = entry, True
+            continue
+        out[name] = val
+    if not placed:
+        out[key] = entry
+    return out
+
+
+def _toml_tables(lines: list, names: set) -> list:
+    """[(start, stop)] line spans of the [mcp_servers.<name>] tables (and their subtables) for names."""
+    spans, i = [], 0
+    while i < len(lines):
+        m = _MCP_HEADER_RE.match(lines[i].rstrip("\n"))
+        if m and (m.group(1) or m.group(2)) in names:
+            name, j = m.group(1) or m.group(2), i + 1
+            while j < len(lines):
+                h = lines[j].rstrip("\n")
+                if _ANY_HEADER_RE.match(h) or h.startswith("# BEGIN ") or h.startswith("# END "):
+                    m2 = _MCP_HEADER_RE.match(h)
+                    if not (m2 and (m2.group(1) or m2.group(2)) == name and m2.group(3)):
+                        break
+                j += 1
+            spans.append((i, j))
+            i = j
+            continue
+        i += 1
+    return spans
+
+
+def _toml_check(dst: Path, text: str) -> None:
+    try:
+        import tomllib  # noqa: PLC0415 - optional (python 3.11+)
+    except ImportError:
+        return
+    try:
+        tomllib.loads(text)
+    except tomllib.TOMLDecodeError as e:
+        raise InstallerError(f"{dst}: the MCP block would make invalid TOML ({e}) (fix by hand)") from e
+
+
+def _mcp_block_span(lines: list, begin: str, end: str):
+    try:
+        b = next(i for i, ln in enumerate(lines) if ln.rstrip("\n") == begin)
+        e = next(i for i, ln in enumerate(lines) if i > b and ln.rstrip("\n") == end)
+        return b, e + 1
+    except StopIteration:
+        return None
+
+
+def _mcp_install_state(ctx: Ctx, out: dict, dst: Path):
+    key, text = _mcp_entry(ctx, out)
+    drop = [str(x) for x in out.get("replaces") or []]
+    old = _state(dst)
+    if old is not None and old[0] != "file":
+        raise InstallerError(f"{dst} is a symlink; refusing to rewrite it (fix by hand)")
+    mode = old[2] if old else (0o600 if dst.name == ".claude.json" else 0o644)
+    if dst.suffix == ".toml":
+        body = text if text.endswith("\n") else text + "\n"
+        blines = [ln for ln in body.splitlines() if ln.strip()]
+        begin, end = blines[0], blines[-1]
+        lines = old[1].decode("utf-8").splitlines(True) if old else []
+        span = _mcp_block_span(lines, begin, end)
+        at = None
+        if span:
+            at = span[0]
+            del lines[span[0]:span[1]]
+        if _toml_tables(lines, {key}):
+            raise InstallerError(f"{dst}: [mcp_servers.{key}] already exists outside the managed block (fix by hand)")
+        for a, b in reversed(_toml_tables(lines, set(drop))):
+            del lines[a:b]
+            at = a if at is None or a < at else at
+        if at is None:
+            if lines and not lines[-1].endswith("\n"):
+                lines[-1] += "\n"
+            if lines and lines[-1].strip():
+                lines.append("\n")
+            at = len(lines)
+        lines[at:at] = [body] + (["\n"] if at < len(lines) and lines[at].strip() else [])
+        new = "".join(lines)
+        _toml_check(dst, new)
+        return _file_state(new.encode("utf-8"), mode)
+    obj = _json_load(dst, missing={})
+    if not isinstance(obj, dict) or not isinstance(obj.get("mcpServers", {}), dict):
+        raise InstallerError(f"{dst}: not a JSON object with an mcpServers object (fix by hand)")
+    entry = json.loads(text)["mcpServers"][key]
+    obj["mcpServers"] = _mcp_json_swap(dict(obj.get("mcpServers") or {}), key, entry, drop)
+    return _file_state(_mcp_json_dump(obj), mode)
+
+
+def _mcp_rebase(ctx: Ctx, out: dict):
+    """Keyed undo for a host-rewritten config: drop our entry, put back the replaced entries the
+    pre-install backup held (their exact values; for TOML their exact lines)."""
+    key = str(out.get("server"))
+    drop = [str(x) for x in out.get("replaces") or []]
+
+    def rebase(path: Path, cur, backup):
+        if cur is None or cur[0] != "file":
+            return backup
+        if path.suffix == ".toml":
+            _k, text = _mcp_entry(ctx, out)
+            blines = [ln for ln in text.splitlines() if ln.strip()]
+            lines = cur[1].decode("utf-8").splitlines(True)
+            span = _mcp_block_span(lines, blines[0], blines[-1])
+            at = len(lines)
+            if span:
+                at = span[0]
+                del lines[span[0]:span[1]]
+            present = {n for n in drop if _toml_tables(lines, {n})}
+            if backup is not None and backup[0] == "file":
+                blines_b = backup[1].decode("utf-8").splitlines(True)
+                for a, b in _toml_tables(blines_b, set(drop) - present):
+                    chunk = blines_b[a:b]
+                    lines[at:at] = chunk
+                    at += len(chunk)
+            new = "".join(lines)
+            _toml_check(path, new)
+            return _file_state(new.encode("utf-8"), cur[2])
+        try:
+            obj = json.loads(cur[1].decode("utf-8"))
+        except ValueError as e:
+            raise InstallerError(f"unparseable {path}: {e} (fix by hand; never clobbered)") from e
+        servers = dict(obj.get("mcpServers") or {}) if isinstance(obj, dict) else {}
+        old = {}
+        if backup is not None and backup[0] == "file":
+            try:
+                old = dict((json.loads(backup[1].decode("utf-8")) or {}).get("mcpServers") or {})
+            except ValueError:
+                old = {}
+        restored, out_s, placed = {n: old[n] for n in drop if n in old and n not in servers}, {}, False
+        for name, val in servers.items():
+            if name == key:
+                out_s.update(restored)
+                placed = True
+                continue
+            out_s[name] = val
+        if not placed:
+            out_s.update(restored)
+        if out_s or "mcpServers" in (json.loads(backup[1].decode("utf-8")) if backup else {}):
+            obj["mcpServers"] = out_s
+        else:
+            obj.pop("mcpServers", None)
+        if backup is None and obj == {}:
+            return None
+        return _file_state(_mcp_json_dump(obj), cur[2])
+    return rebase
+
+
+def do_mcp(ctx: Ctx) -> int:
+    """H21: --install-mcp=HOST puts the workspace MCP server (09-tools/workspace_mcp.py in this checkout)
+    in HOST's MCP config in place of workspace-fs. Uninstall restores the pre-install file byte for byte,
+    or, when the host app rewrote the file since, only the replaced entry (keyed)."""
+    host = ctx.arg
+    if host not in MCP_HOSTS:
+        raise InstallerError(f"name a host: --install-mcp=<{'|'.join(MCP_HOSTS)}>")
+    outs = [o for o in _render_outputs(ctx) if o.get("install_mode") == MCP_MODE and o.get("surface") == host]
+    if not outs:
+        raise MissingSource(f"no MCP registration output for {host} in the render list")
+    out = outs[0]
+    if ctx.action == "uninstall":
+        return _uninstall(ctx, rebase=_mcp_rebase(ctx, out))
+    dst = ctx.expand(out.get("install_path") or "")
+    if dst is None:
+        raise MissingSource(f"{out.get('id')}: no install_path")
+    if not dst.parent.is_dir() or (host == "claude-code" and not dst.exists()):
+        raise MissingSource(f"{host} is not set up on this machine ({dst} absent)")
+    return _apply(ctx, [(dst, _mcp_install_state(ctx, out, dst))])
+
+
 HANDLERS = {
     "pin": do_pin, "shims": do_shims, "git-hooks": do_git_hooks, "identity": do_identity,
     "claude-overlay": do_claude_overlay, "claude-overlay-retire-env": do_claude_overlay_retire_env,
     "claude-permissions": do_claude_permissions,
     "sandbox-roots": do_sandbox_roots,
     "plugin": do_plugin, "projects-pointer": do_projects_pointer, "user-skills": do_user_skills, "launchd": do_launchd,
+    "mcp": do_mcp,
 }
 
 
@@ -1333,8 +1542,8 @@ def run(name, action, *, home, repo, agent_check=None, isatty=None, confirm=None
         which=None, sha=None, surface=None, probe=False, render_list=None,
         app_exists=None) -> int:
     base, _, arg = str(name).partition("=")
-    if base not in NAMES or action not in ACTIONS or (arg and base not in ("pin", "shims", "git-hooks")) or (
-            base == "git-hooks" and arg not in ("", *PUSHGATE_MODES)):
+    if base not in NAMES or action not in ACTIONS or (arg and base not in ("pin", "shims", "git-hooks", "mcp")) or (
+            base == "git-hooks" and arg not in ("", *PUSHGATE_MODES)) or (base == "mcp" and arg and arg not in MCP_HOSTS):
         print(f"usage: installers.py install|uninstall NAME[=ARG]; NAME in {', '.join(NAMES)}",
               file=sys.stderr)
         return 2
@@ -2266,6 +2475,126 @@ def self_test() -> int:
             self.assertEqual(self.run_inst("plugin=x")[0], 2)
             self.assertEqual(self.run_inst("plugin", "reinstall")[0], 2)
 
+    class TestMcpInstall(Base):
+        """H21: --install-mcp=HOST replaces workspace-fs with the workspace MCP server; uninstall is
+        byte-exact, or keyed when the host rewrote its config since."""
+
+        FS = {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem", "/somewhere"]}
+
+        def setUp(self):
+            super().setUp()
+            live = json.loads(subprocess.run([sys.executable, str(HERE / "render_shims.py"), "--list", "--json"],
+                                             capture_output=True, text=True, timeout=RENDER_TIMEOUT).stdout)
+            self.mcp_outs = [o for o in live["outputs"] if o.get("install_mode") == MCP_MODE]
+            self.assertEqual(sorted(o["surface"] for o in self.mcp_outs), sorted(MCP_HOSTS))
+            for o in self.mcp_outs:
+                dst = self.repo / o["path"]
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                dst.write_bytes((VAULT_ROOT / o["path"]).read_bytes())
+            self.render = {"outputs": list(self.render.get("outputs") or []) + self.mcp_outs}
+
+        def mcp(self, host, action="install", **kw):
+            kw.setdefault("which", lambda n: "/usr/bin/python3" if n == "python3" else None)
+            return self.run_inst(f"mcp={host}", action, **kw)
+
+        def desktop(self):
+            return self.home / "Library" / "Application Support" / "Claude" / "claude_desktop_config.json"
+
+        def test_usage_and_missing_host(self):
+            self.assertEqual(self.run_inst("mcp=bogus")[0], 2)
+            rc, out, err = self.run_inst("mcp")
+            self.assertEqual(rc, 1, out + err)
+            self.assertIn("name a host", err)
+            self.assertEqual(self.mcp("claude-code")[0], 3)          # no ~/.claude.json: not set up here
+
+        def test_desktop_replace_and_byte_exact_uninstall(self):
+            tgt = self.desktop()
+            tgt.parent.mkdir(parents=True)
+            original = json.dumps({"mcpServers": {"a": {"command": "a"}, "workspace-fs": self.FS,
+                                                  "b": {"command": "b"}}, "preferences": {"x": 1}}).encode() + b"\n"
+            tgt.write_bytes(original)
+            os.chmod(tgt, 0o600)
+            rc, out, err = self.mcp("claude-chat-desktop")
+            self.assertEqual(rc, 0, out + err)
+            got = json.loads(tgt.read_text())
+            self.assertEqual(list(got["mcpServers"]), ["a", "workspace-mcp", "b"])
+            self.assertEqual(got["mcpServers"]["workspace-mcp"],
+                             {"command": "/usr/bin/python3",
+                              "args": [str(self.repo.resolve() / "09-tools" / "workspace_mcp.py")]})
+            self.assertEqual(got["preferences"], {"x": 1})
+            self.assertEqual(Path(f"{tgt}.ws-bak.20260922T200000Z").read_bytes(), original)
+            self.assertEqual(self.log()[-1]["installer"], "--install-mcp=claude-chat-desktop")
+            self.assertEqual(self.mcp("claude-chat-desktop")[0], 3)  # idempotent
+            rc, out, err = self.mcp("claude-chat-desktop", "uninstall")
+            self.assertEqual(rc, 0, out + err)
+            self.assertEqual(tgt.read_bytes(), original)
+            self.assertEqual(tgt.stat().st_mode & 0o777, 0o600)
+            self.assertEqual(self.mcp("claude-chat-desktop", "uninstall")[0], 3)
+
+        def test_desktop_keyed_uninstall_after_host_rewrite(self):
+            tgt = self.desktop()
+            tgt.parent.mkdir(parents=True)
+            tgt.write_text(json.dumps({"mcpServers": {"workspace-fs": self.FS}, "preferences": {"x": 1}}))
+            self.assertEqual(self.mcp("claude-chat-desktop")[0], 0)
+            obj = json.loads(tgt.read_text())
+            obj["preferences"]["x"] = 2                               # the app rewrote its config
+            tgt.write_text(json.dumps(obj, indent=4))
+            rc, out, err = self.mcp("claude-chat-desktop", "uninstall")
+            self.assertEqual(rc, 0, out + err)
+            self.assertIn("keyed", out)
+            got = json.loads(tgt.read_text())
+            self.assertEqual(got, {"mcpServers": {"workspace-fs": self.FS}, "preferences": {"x": 2}})
+
+        def test_created_file_is_removed_on_uninstall(self):
+            self.desktop().parent.mkdir(parents=True)
+            self.assertEqual(self.mcp("claude-chat-desktop")[0], 0)
+            self.assertIn("workspace-mcp", json.loads(self.desktop().read_text())["mcpServers"])
+            self.assertEqual(self.mcp("claude-chat-desktop", "uninstall")[0], 0)
+            self.assertFalse(self.desktop().exists())
+
+        def test_codex_toml_replace_and_uninstall(self):
+            tgt = self.home / ".codex" / "config.toml"
+            tgt.parent.mkdir()
+            original = ('model = "x"\n\n[mcp_servers.a]\ncommand = "a"\n\n'
+                        '[mcp_servers.workspace-fs]\ncommand = "npx"\nargs = ["-y", "fs", "/somewhere"]\n\n'
+                        '[mcp_servers.workspace-fs.env]\nK = "v"\n\n[mcp_servers.b]\ncommand = "b"\n').encode()
+            tgt.write_bytes(original)
+            rc, out, err = self.mcp("codex")
+            self.assertEqual(rc, 0, out + err)
+            text = tgt.read_text()
+            self.assertNotIn("workspace-fs", text)
+            self.assertLess(text.index("[mcp_servers.a]"), text.index("[mcp_servers.workspace-mcp]"))
+            self.assertLess(text.index("[mcp_servers.workspace-mcp]"), text.index("[mcp_servers.b]"))
+            self.assertIn(str(self.repo.resolve() / "09-tools" / "workspace_mcp.py"), text)
+            try:
+                import tomllib
+            except ImportError:
+                tomllib = None
+            if tomllib is not None:
+                cfg = tomllib.loads(text)
+                self.assertEqual(sorted(cfg["mcp_servers"]), ["a", "b", "workspace-mcp"])
+                self.assertEqual(cfg["mcp_servers"]["workspace-mcp"]["command"], "/usr/bin/python3")
+            self.assertEqual(self.mcp("codex")[0], 3)
+            self.assertEqual(self.mcp("codex", "uninstall")[0], 0)
+            self.assertEqual(tgt.read_bytes(), original)
+            # keyed: the host appends a table after the install; uninstall keeps it and restores workspace-fs
+            self.assertEqual(self.mcp("codex")[0], 0)
+            tgt.write_text(tgt.read_text() + '\n[mcp_servers.c]\ncommand = "c"\n')
+            rc, out, err = self.mcp("codex", "uninstall")
+            self.assertEqual(rc, 0, out + err)
+            text = tgt.read_text()
+            self.assertNotIn("workspace-mcp", text)
+            self.assertIn('[mcp_servers.workspace-fs.env]\nK = "v"\n', text)
+            self.assertIn("[mcp_servers.c]", text)
+            if tomllib is not None:
+                self.assertEqual(sorted(tomllib.loads(text)["mcp_servers"]), ["a", "b", "c", "workspace-fs"])
+
+        def test_shims_never_install_the_mcp_registration(self):
+            outs = [o for o in self.render["outputs"] if o.get("surface") == "codex"]
+            self.assertTrue(any(o.get("install_mode") == MCP_MODE for o in outs))
+            src = Path(__file__).read_text(encoding="utf-8")
+            self.assertIn('and o.get("install_mode") != MCP_MODE]', src)
+
     class TestUserSkillWrappers(Base):
         """H20: --install-user-skills writes ~/.agents/skills/<name>/SKILL.md pointer wrappers with absolute
         Canonical paths into the checkout, refuses to overwrite a hand-written skill, and uninstalls
@@ -2789,7 +3118,8 @@ def self_test() -> int:
 
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
-    for cls in (TestInstaller, TestUserSkillWrappers, TestHealFromPin, TestOverlayReplace, TestDoctorModes):
+    for cls in (TestInstaller, TestMcpInstall, TestUserSkillWrappers, TestHealFromPin, TestOverlayReplace,
+                TestDoctorModes):
         suite.addTests(loader.loadTestsFromTestCase(cls))
     res = unittest.TextTestRunner(verbosity=1).run(suite)
     return 0 if res.wasSuccessful() else 1

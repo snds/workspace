@@ -1,0 +1,5 @@
+# BEGIN workspace-mcp (installers.py mcp; do not edit)
+[mcp_servers.workspace-mcp]
+command = "python3"
+args = ["{vault}/09-tools/workspace_mcp.py"]
+# END workspace-mcp
