@@ -21,6 +21,11 @@ policy first: a Claude chain on a non-personal repo is routed; employer recon go
 stdout), a findings register with closures and a preserve list, vendor-neutral
 self-contained packets, and a mission-fit verdict keyed to a branch or range.
 
+H9: write scope as task data. `writes` / `forbids` / `enforce` task-graph cells, a disjoint-wave lint
+(gate refuses two parallel implementors with overlapping writes, or a verifier that writes), `scope
+--branch|--range` (read-only diff vs the declared scope), and `scope --check-path` for the report-only
+pre-write accelerators. The kernel and the active-task pointer live in the sibling intent_scope.py.
+
 Usage:
   python3 09-tools/intent-run.py doctor
   python3 09-tools/intent-run.py daemon [status|workspace.list]
@@ -41,6 +46,10 @@ Usage:
   python3 09-tools/intent-run.py verify [--spec PATH] [--run] [--root DIR] [--record]
   python3 09-tools/intent-run.py scope-audit --spec PATH (--task ID --rev A..B | --wave-merges)
                                  [--ref REF] [--root DIR] [--json]
+  python3 09-tools/intent-run.py scope (--branch B [--base REF] | --range A..B) [--spec PATH] [--task ID]
+                                 [--repo DIR] [--json]
+  python3 09-tools/intent-run.py scope --check-path PATH [--cwd DIR] [--json]
+  python3 09-tools/intent-run.py scope (--set TASK [--spec PATH] | --clear | --show) [--repo DIR]
   python3 09-tools/intent-run.py open-app
   python3 09-tools/intent-run.py install-app [--dry-run]
   python3 09-tools/intent-run.py --self-test
@@ -61,9 +70,21 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import urllib.request
-import zipfile
 from pathlib import Path
+
+_TOOLS_DIR = str(Path(__file__).resolve().parent)
+if _TOOLS_DIR not in sys.path:
+    sys.path.insert(0, _TOOLS_DIR)
+import intent_scope  # noqa: E402 - the H9 kernel, a sibling shared with the pinned hook lib
+from intent_scope import (  # noqa: E402
+    _expand_braces,
+    _glob_re,
+    _is_glob,
+    _parse_table,
+    _section,
+    _split_depth0,
+    parse_write_token,
+)
 
 ROOT = Path(__file__).resolve().parent.parent
 TOOLS = Path(__file__).resolve().parent
@@ -171,63 +192,6 @@ def _split_frontmatter(text: str) -> tuple[dict[str, str], str]:
     return meta, body
 
 
-def _split_row(line: str) -> list[str]:
-    """Split a markdown table row on unescaped pipes; `\\|` becomes a literal pipe."""
-    inner = line.strip()
-    if inner.startswith("|"):
-        inner = inner[1:]
-    if inner.endswith("|") and not inner.endswith("\\|"):
-        inner = inner[:-1]
-    cells: list[str] = []
-    buf: list[str] = []
-    i = 0
-    while i < len(inner):
-        ch = inner[i]
-        if ch == "\\" and i + 1 < len(inner) and inner[i + 1] == "|":
-            buf.append("|")
-            i += 2
-            continue
-        if ch == "|":
-            cells.append("".join(buf).strip())
-            buf = []
-            i += 1
-            continue
-        buf.append(ch)
-        i += 1
-    cells.append("".join(buf).strip())
-    return cells
-
-
-def _parse_table(section: str) -> list[dict[str, str]]:
-    rows: list[dict[str, str]] = []
-    header: list[str] | None = None
-    for line in section.splitlines():
-        line = line.strip()
-        if not line.startswith("|"):
-            if header and rows:
-                break
-            continue
-        cells = _split_row(line)
-        if all(set(c) <= set("-: ") and c for c in cells):
-            continue
-        if header is None:
-            header = [re.sub(r"[^a-z0-9]+", "_", c.lower()).strip("_") for c in cells]
-            continue
-        rec = {header[i]: cells[i] if i < len(cells) else "" for i in range(len(header))}
-        rows.append(rec)
-    return rows
-
-
-def _section(body: str, heading: str) -> str:
-    pat = re.compile(rf"^##\s+{re.escape(heading)}\s*$", re.IGNORECASE | re.M)
-    m = pat.search(body)
-    if not m:
-        return ""
-    start = m.end()
-    nxt = re.search(r"^##\s+\S", body[start:], re.M)
-    return body[start : start + nxt.start()] if nxt else body[start:]
-
-
 def parse_spec(text: str) -> dict:
     meta, body, comments = _split_frontmatter_ex(text)
     tasks = _parse_table(_section(body, "Task graph"))
@@ -311,6 +275,7 @@ def lint_spec(spec: dict) -> list[tuple[str, str]]:
     det = approval_detail(spec["meta"], spec.get("meta_comments"))
     out = [("ERROR", e) for e in det["errors"]]
     out += [("WARN", w) for w in det["warnings"]]
+    out += intent_scope.lint_scope(spec.get("tasks") or [])  # H9: disjoint waves, read-only verifiers
     return out
 
 
@@ -608,12 +573,16 @@ def cmd_status(spec_path: Path) -> int:
     print(f"approval: {meta.get('approval') or '(unset)'} → {'ok' if approval_ok(meta) else 'BLOCKED'}")
     print(f"northstar: {meta.get('northstar') or '(unset)'}")
     by_id = index_tasks(spec["tasks"])
+    wts = load_state(spec_path).get("worktrees") or {}
     print("tasks:")
     for t in spec["tasks"]:
         st = task_status(t, meta, by_id)
+        sc = task_scope_state(spec_path, t.get("id") or "", wts)
+        if st == "verified" and sc == "fail":
+            st = "scope-fail"  # a task never shows verified while its branch is out of scope (H9)
         print(
             f"  {t.get('id','?'):4} {st:9} {(t.get('role') or ''):12} "
-            f"deps={t.get('depends_on') or '—'} isol={t.get('isolation') or ''}"
+            f"deps={t.get('depends_on') or '—'} isol={t.get('isolation') or ''} scope={sc}"
         )
     print("checklist:")
     for c in spec["checks"]:
@@ -628,6 +597,38 @@ def cmd_status(spec_path: Path) -> int:
         for tid, info in state["worktrees"].items():
             print(f"  {tid}: {info.get('path')} ({info.get('branch')})")
     return 0 if approval_ok(meta) else 1
+
+
+def task_scope_state(spec_path: Path, task_id: str, worktrees: dict) -> str:
+    """pass | fail | unchecked for a task's recorded branch against its declared scope (read-only)."""
+    info = worktrees.get(task_id) if task_id else None
+    top = _toplevel(spec_path)
+    if not info or not info.get("branch") or top is None:
+        return "unchecked"
+    try:
+        base_ref = "main" if _rev(top, "main") else "HEAD"
+        mb = _git(["merge-base", base_ref, info["branch"]], top)
+        d = _git(["diff", "--name-only", "--no-renames", mb.stdout.strip(), info["branch"]], top)
+        if mb.returncode != 0 or d.returncode != 0:
+            return "unchecked"
+        sc = intent_scope.spec_scope(spec_path.read_text(encoding="utf-8"), task_id)
+        paths = [p for p in d.stdout.splitlines() if p.strip()]
+        return "fail" if any(intent_scope.evaluate(sc, p) for p in paths) else "pass"
+    except (KeyError, OSError):
+        return "unchecked"
+
+
+def contract_missing(spec_path: Path, meta: dict) -> tuple[list[str], list[str]]:
+    """(declared contract paths, those not committed at HEAD or with uncommitted changes)."""
+    declared = [t.strip().strip("`") for t in _split_depth0(meta.get("contract") or "")
+                if t.strip() and t.strip().lower() not in BLANK_CELLS]
+    top = _toplevel(spec_path)
+    missing = []
+    for p in declared:
+        if top is None or _git(["cat-file", "-e", f"HEAD:{p}"], top).returncode != 0 \
+                or _git(["diff", "--quiet", "HEAD", "--", p], top).returncode != 0:
+            missing.append(p)
+    return declared, missing
 
 
 def cmd_gate(spec_path: Path) -> int:
@@ -651,6 +652,10 @@ def cmd_gate(spec_path: Path) -> int:
             print(f"  • {lab}", file=sys.stderr)
     for level, msg in lint_spec(spec):
         print(f"LINT {level} — {msg}", file=sys.stderr)
+    scope_errors = [m for lv, m in intent_scope.lint_scope(spec["tasks"]) if lv == "ERROR"]
+    if scope_errors:
+        print("BLOCKED — write scopes are not disjoint (H9); fix the task graph first", file=sys.stderr)
+        return 1
     for level, msg in lint_provenance(spec_path, spec["meta"], 2):
         if level == "ERROR":
             print(msg, file=sys.stderr)
@@ -681,6 +686,14 @@ def cmd_ready(spec_path: Path) -> int:
                   f"{since or 'the start'}; add a Previous attempts entry to its packet first")
             continue
         ready.append(t)
+    if len(ready) > 1:
+        declared, missing = contract_missing(spec_path, spec["meta"])
+        if not declared or missing:
+            why = f"uncommitted: {', '.join(missing)}" if declared else "the spec declares no `contract:` paths"
+            for t in ready[1:]:
+                print(f"HELD (contract): {t.get('id')} — parallel fan-out needs every contract path committed "
+                      f"at HEAD ({why})")
+            ready = ready[:1]
     if not ready:
         print("no implementor tasks ready (held on deps or none defined)")
         return 0
@@ -737,6 +750,11 @@ def cmd_worktree_add(spec_path: Path, task_id: str, repo: str | None) -> int:
     }
     save_state(spec_path, state)
     print(f"worktree {dest} branch {branch}")
+    try:
+        ptr = intent_scope.write_pointer(dest, spec_path, task_id)
+        print(f"active task: {task_id} (pointer {ptr})")
+    except Exception as exc:  # noqa: BLE001 - the pointer only feeds report-only accelerators
+        print(f"active task not set ({type(exc).__name__}); run `scope --set {task_id}` in the worktree")
     print("Implementor cwd is that path. Do not write in the parent dirty tree.")
     return 0
 
@@ -864,72 +882,6 @@ def cmd_verify(
 
 class ScopeError(ValueError):
     pass
-
-
-def _split_depth0(cell: str) -> list[str]:
-    out: list[str] = []
-    buf: list[str] = []
-    depth = 0
-    for ch in cell:
-        if ch in "[{":
-            depth += 1
-        elif ch in "]}":
-            depth = max(0, depth - 1)
-        if ch == "," and depth == 0:
-            out.append("".join(buf).strip())
-            buf = []
-            continue
-        buf.append(ch)
-    out.append("".join(buf).strip())
-    return [t for t in out if t]
-
-
-def _expand_braces(pat: str) -> list[str]:
-    m = re.search(r"\{([^{}]*)\}", pat)
-    if not m:
-        return [pat]
-    out: list[str] = []
-    for alt in m.group(1).split(","):
-        out.extend(_expand_braces(pat[: m.start()] + alt.strip() + pat[m.end() :]))
-    return out
-
-
-def _glob_re(pat: str) -> re.Pattern:
-    i = 0
-    out = []
-    while i < len(pat):
-        if pat.startswith("**/", i):
-            out.append("(?:.*/)?")
-            i += 3
-        elif pat.startswith("**", i):
-            out.append(".*")
-            i += 2
-        elif pat[i] == "*":
-            out.append("[^/]*")
-            i += 1
-        elif pat[i] == "?":
-            out.append("[^/]")
-            i += 1
-        else:
-            out.append(re.escape(pat[i]))
-            i += 1
-    return re.compile("^" + "".join(out) + "$")
-
-
-def _is_glob(pat: str) -> bool:
-    return any(ch in pat for ch in "*?")
-
-
-def parse_write_token(tok: str) -> dict:
-    tok = tok.strip().strip("`")
-    m = re.fullmatch(r"@(\S+)", tok)
-    if m:
-        return {"kind": "ref", "id": m.group(1)}
-    m = re.fullmatch(r"(.+?)\[(.*)\]", tok)
-    if m:
-        sels = [s.strip() for s in _split_depth0(m.group(2)) if s.strip()]
-        return {"kind": "path", "path": m.group(1).strip(), "selectors": sels}
-    return {"kind": "path", "path": tok, "selectors": None}
 
 
 def task_writes(spec: dict, task_id: str, _seen: set[str] | None = None) -> list[dict]:
@@ -1254,6 +1206,160 @@ def _emit_audit(records: list[dict], as_json: bool, *, mode: str, nothing: bool 
     return rc
 
 
+# ---------------------------------------------------------------------------
+# H9 — scope: the diff (or one path) against the task's declared writes / forbids
+# ---------------------------------------------------------------------------
+
+
+def _scope_home() -> Path | None:
+    return Path(_PR_KW["home"]) if _PR_KW.get("home") else None
+
+
+def cmd_scope_check_path(path: str, *, cwd: str | None = None, as_json: bool = False) -> int:
+    """The pre-write accelerator's CLI form. Fails open (exit 0) on every error; exit 1 only for a
+    finding on a task whose `enforce` cell is true."""
+    res = intent_scope.check_path(path, cwd=cwd, home=_scope_home())
+    if as_json:
+        print(json.dumps(res, ensure_ascii=False))
+    elif res["status"] == "outside":
+        print(intent_scope.message(res))
+    return 1 if res["block"] else 0
+
+
+def _scope_top(repo: str | None) -> Path | None:
+    return intent_scope.find_top(Path(repo).expanduser() if repo else Path.cwd())
+
+
+def cmd_scope_pointer(action: str, *, task: str | None = None, spec: str | None = None,
+                      repo: str | None = None, as_json: bool = False) -> int:
+    top = _scope_top(repo)
+    if top is None:
+        print("scope: not inside a git checkout (pass --repo DIR)", file=sys.stderr)
+        return 2
+    home = _scope_home()
+    where = intent_scope.pointer_path(top, home=home)
+    if action == "clear":
+        gone = intent_scope.clear_pointer(top, home=home)
+        print(f"active task cleared ({where})" if gone else f"no active task ({where})")
+        return 0
+    if action == "show":
+        ptr = intent_scope.read_pointer(top, home=home)
+        if as_json:
+            print(json.dumps({"pointer": str(where), "active": ptr}))
+        else:
+            print(f"active task: {ptr['task']} · spec {ptr['spec']} · set {ptr.get('set_at')}" if ptr
+                  else "no active task")
+            print(f"pointer: {where}")
+        return 0
+    why = _content_gate(top, _detection())
+    if why:
+        print(f"REFUSED — {why}", file=sys.stderr)
+        return 4
+    sp = find_spec(spec)
+    try:
+        sc = intent_scope.spec_scope(sp.read_text(encoding="utf-8"), task or "")
+        dest = intent_scope.write_pointer(top, sp, sc["task"], home=home)
+    except KeyError as exc:
+        print(f"scope: {exc.args[0]}", file=sys.stderr)
+        return 2
+    except PermissionError as exc:
+        print(f"scope: {exc}", file=sys.stderr)
+        return 4
+    print(f"active task: {sc['task']} ({'enforce' if sc['enforce'] else 'report-only'})")
+    print(f"pointer: {dest}")
+    for p in sc["prose_writes"]:
+        print(f"  NOTE writes token is prose, not a path: {p}")
+    return 0
+
+
+def cmd_scope_diff(*, spec: str | None, task: str | None, branch: str | None, base: str | None,
+                   rng: str | None, repo: str | None, as_json: bool = False) -> int:
+    """Read-only: every path the branch (since its merge-base) or range changed, against the task's
+    writes and forbids. Exit 0 clean, 1 findings, 2 usage or git error, 3 nothing changed,
+    4 refused (content-read policy)."""
+    def fail(msg: str, rc: int = 2) -> int:
+        if as_json:
+            print(json.dumps({"schema_version": 1, "cmd": "scope", "error": msg, "exit": rc}))
+        else:
+            print(f"scope: {msg}", file=sys.stderr)
+        return rc
+
+    top = _toplevel(Path(repo).expanduser().resolve() if repo else Path.cwd())
+    if top is None:
+        return fail("not inside a git checkout (pass --repo DIR)")
+    why = _content_gate(top, _detection())
+    if why:
+        return fail(f"REFUSED — {why}", 4)
+    ptr = intent_scope.read_pointer(top, home=_scope_home())
+    if not task and branch:
+        m = re.fullmatch(r"(?:refs/heads/)?intent/(\S+)", branch)
+        task = m.group(1) if m else None
+    task = task or (ptr or {}).get("task")
+    if not task:
+        return fail("no task: pass --task ID, use an intent/<ID> branch, or set the active task")
+    sp = Path(spec).expanduser().resolve() if spec else (Path(ptr["spec"]) if ptr else find_spec(None))
+    if branch:
+        base_ref = base or ("main" if _rev(top, "main") else "HEAD")
+        mb = _git(["merge-base", base_ref, branch], top)
+        if mb.returncode != 0:
+            return fail(f"no merge-base between {base_ref} and {branch}")
+        start, tip_ref, key = mb.stdout.strip(), branch, f"branch {branch} (since merge-base with {base_ref})"
+    else:
+        if not rng or ".." not in rng:
+            return fail("--range is A..B")
+        a, tip_ref = rng.split("..", 1)
+        a, tip_ref = a or "HEAD", tip_ref or "HEAD"
+        mb = _git(["merge-base", a, tip_ref], top)
+        start, key = (mb.stdout.strip() if mb.returncode == 0 else a), f"range {rng}"
+    tip = _rev(top, tip_ref)
+    if tip is None or _rev(top, start) is None:
+        return fail(f"{tip_ref if tip is None else start} does not resolve here (fetch it first)")
+    d = _git(["diff", "--name-only", "--no-renames", start, tip], top, timeout=60)
+    if d.returncode != 0:
+        return fail(f"git diff failed: {d.stderr.strip()[:200]}")
+    paths = [p for p in d.stdout.splitlines() if p.strip()]
+    try:
+        rel = sp.resolve().relative_to(top).as_posix()
+    except ValueError:
+        rel = None
+    text = (_git_text_at(top, tip, rel) if rel else None)
+    source = f"{rel} @ {tip[:9]}" if text is not None else str(sp)
+    if text is None:
+        if not sp.is_file():
+            return fail(f"spec not found: {sp}")
+        text = sp.read_text(encoding="utf-8")
+    try:
+        sc = intent_scope.spec_scope(text, task)
+    except KeyError as exc:
+        return fail(str(exc.args[0]))
+    findings = [f for p in paths for f in intent_scope.evaluate(sc, p)]
+    notes = []
+    if not sc["checkable"]:
+        notes.append("writes cell is prose or absent: only forbids are checked"
+                     + (f" ({'; '.join(sc['prose_writes'])})" if sc["prose_writes"] else ""))
+    sels = sorted({e["path"] for e in sc["writes"] if e["selectors"]})
+    if sels:
+        notes.append(f"selector writes are checked at file level here ({', '.join(sels)}); "
+                     "scope-audit checks JSON selectors")
+    rc = 3 if not paths else (1 if findings else 0)
+    if as_json:
+        print(json.dumps({"schema_version": 1, "cmd": "scope", "task": sc["task"], "key": key, "tip": tip,
+                          "spec": source, "paths": len(paths), "findings": findings, "notes": notes,
+                          "enforce": sc["enforce"], "exit": rc}, indent=2, ensure_ascii=False))
+        return rc
+    print(f"scope: task {sc['task']} · {key} @ {tip[:9]} · {len(paths)} path(s) · spec {source}")
+    labels = {"forbidden": ("FORBIDDEN", "forbids {}"), "preserve": ("PRESERVE", "preserve list {}"),
+              "sensitive": ("SENSITIVE", "denylist {}, not owned by an explicit writes entry"),
+              "outside-writes": ("OUTSIDE", "not in writes")}
+    for f in findings:
+        tag, what = labels.get(f["kind"], (f["kind"].upper(), "{}"))
+        print(f"  {tag} {f['path']} ({what.format(f.get('rule'))})")
+    for n in notes:
+        print(f"  NOTE {n}")
+    print("scope: nothing changed" if rc == 3 else f"scope: {len(findings)} finding(s)")
+    return rc
+
+
 def cmd_open_app() -> int:
     app = find_app()
     if app is None:
@@ -1291,6 +1397,8 @@ def _pick_asset(assets: list[dict], system: str, machine: str) -> dict | None:
 
 
 def cmd_install_app(dry: bool) -> int:
+    import urllib.request  # noqa: PLC0415 - lazy: keeps `scope --check-path` start-up small
+    import zipfile  # noqa: PLC0415
     existing = find_app()
     if existing:
         print(f"already installed: {existing}")
@@ -3504,6 +3612,8 @@ def _st_held_parity() -> str:
 def _st_invariant() -> None:
     own = git_write_violations(Path(__file__).read_text(encoding="utf-8"))
     assert not own, own
+    kernel = Path(intent_scope.__file__)
+    assert "subprocess" not in kernel.read_text(encoding="utf-8"), "intent_scope.py must never shell out"
     planted = "import subprocess\nsubprocess.run(['git','commit'])\n"
     assert git_write_violations(planted), "planted list form not detected"
     assert git_write_violations("import subprocess\nsubprocess.run('git push origin', shell=True)\n")
@@ -3514,6 +3624,7 @@ def _st_invariant() -> None:
     with tempfile.TemporaryDirectory() as td:
         copy = Path(td) / "09-tools" / "intent-run.py"
         copy.parent.mkdir()
+        shutil.copy2(kernel, copy.parent / kernel.name)
         copy.write_text(Path(__file__).read_text(encoding="utf-8")
                         + "\n\ndef _planted():\n    subprocess.run(['git','commit'])\n", encoding="utf-8")
         env = dict(os.environ, INTENT_RUN_SELFTEST_ONLY="invariant")
@@ -4317,6 +4428,289 @@ def _st_remediation_verdict() -> None:
         assert v["verdict"] == "Fit with gaps", v
 
 
+# --- H9: scope -----------------------------------------------------------------------------
+
+SCOPE_GOLDENS = ("claude-code.write", "cursor.pre-tool-write", "codex.apply-patch", "copilot-vscode.pre-write",
+                 "windsurf.pre-write")
+
+
+def _scope_spec(rows: str, extra_cols: str = "", extra_sep: str = "") -> str:
+    return ("---\ntitle: scope fixture\nprofile: personal-solo\napproval: pending\n---\n\n# scope fixture\n\n"
+            "## Task graph\n\n"
+            f"| id | role | isolation | depends_on | status | writes | forbids{extra_cols} |\n"
+            f"|---|---|---|---|---|---|---{extra_sep}|\n" + rows + "\n## Changelog\n\n- 2026-01-01 — created\n")
+
+
+def scope_golden(name: str, *, path: str, cwd: str) -> dict:
+    text = (TOOLS / "fixtures" / "wall_guard" / "goldens" / f"{name}.json").read_text(encoding="utf-8")
+    for key, val in (("PATH", path), ("CWD", cwd)):
+        text = text.replace("{" + key + "}", json.dumps(val)[1:-1])
+    return json.loads(text)
+
+
+def _ws_shape(top: Path) -> None:
+    """The plain-file shape intent_scope.is_workspace reads (a synthetic workspace checkout)."""
+    for rel in ("AGENTS.md", "02-shared-references/surfaces.json", "09-tools/intent-run.py"):
+        (top / rel).parent.mkdir(parents=True, exist_ok=True)
+        (top / rel).write_text("{}\n" if rel.endswith(".json") else "# fixture\n", encoding="utf-8")
+
+
+def _st_scope_lint() -> None:
+    gi = intent_scope.globs_intersect
+    for p, q, want in (("03-skills/*/SKILL.md", "03-skills/x/SKILL.md", True), ("a/*.md", "a/*.py", False),
+                       ("a/**/b.md", "a/b.md", True), ("a/*", "a/x/y", False), ("x/**/y", "x/**/z", False)):
+        assert gi(p, q) is want, (p, q)
+    rows = ("| T0 | coordinator | n/a | - | | docs/INTENT.md | |\n"
+            "| T1 | implementor | worktree | T0 | | src/a/**, data.json[rows.a] | |\n"
+            "| T2 | implementor | worktree | T0 | | src/a/x.py | |\n"
+            "| T3 | implementor | worktree | T0 | | src/b/**, data.json[rows.b] | |\n"
+            "| T4 | implementor | worktree | T1 | | src/a/y.py | |\n"
+            "| T5 | implementor | worktree | T0 | verified | src/b/z.py | |\n"
+            "| V1 | verifier | read-only | T1, T2, T3 | | notes.md | |\n")
+    errs = _levels(lint_spec(parse_spec(_scope_spec(rows))), "ERROR")
+    assert any("T1 and T2" in e and "src/a/**" in e for e in errs), errs      # parallel, overlapping
+    assert not any("T1 and T3" in e for e in errs), errs                       # disjoint selectors
+    assert not any("T4" in e for e in errs), errs                              # T4 depends on T1
+    assert not any("T5" in e for e in errs), errs                              # verified: no longer runs
+    assert any("verifier V1 declares writes" in e for e in errs), errs
+    assert len(errs) == 2, errs
+    # An explicit wave column overrides the dependency depth; prose tokens are never compared.
+    rows = ("| T1 | implementor | worktree | - | | lib/**, per item | | 1 |\n"
+            "| T2 | implementor | worktree | T9 | | lib/core.py | | 2 |\n"
+            "| T3 | implementor | worktree | - | | per item | | 1 |\n")
+    errs = _levels(lint_spec(parse_spec(_scope_spec(rows, " | wave", "|---"))), "ERROR")
+    assert errs == [], errs
+    with tempfile.TemporaryDirectory() as tds:
+        sp = Path(tds) / "INTENT.md"
+        sp.write_text(_scope_spec("| T1 | implementor | worktree | - | | a/** | |\n"
+                                  "| T2 | implementor | worktree | - | | a/b.md | |\n")
+                      .replace("approval: pending", "approval: approved 2026-01-01 by Sean"), encoding="utf-8")
+        rc, out = _quiet(cmd_gate, sp)
+        assert rc == 1 and "not disjoint" in out, out
+
+
+def _scope_repo(td: Path) -> tuple[Path, dict, Path, str, str]:
+    repo, env = _new_repo(td, "scoped")
+    _run_fixture_git(["remote", "add", "origin", "https://github.com/pat-sample/scoped.git"], repo, env)
+    rel = "docs/INTENT.md"
+    spec_text = _scope_spec("| T1 | implementor | worktree | - | | src/**, docs/notes.md | src/secret/** |\n"
+                            "| T2 | implementor | worktree | T1 | | per item | `vendor/` (never) |\n")
+    h = _History(repo, env)
+    m0 = h.commit("main", "base", {rel: spec_text, "src/a.py": "a\n", "README.md": "r\n"})
+    h.commit("intent/T1", "T1 work", {"src/a.py": "a2\n", "src/b.py": "b\n"}, frm=m0)
+    m2 = h.commit("stray", "T1 strays", {"src/a.py": "a3\n", "README.md": "r2\n", "src/secret/k.txt": "k\n"},
+                  frm=m0)
+    h.commit("prose", "T2", {"src/c.py": "c\n", "vendor/lib.js": "v\n"}, frm=m0)
+    h.flush()
+    spec = repo / rel
+    spec.parent.mkdir(parents=True)
+    spec.write_text(spec_text, encoding="utf-8")
+    return repo, env, spec, h.sha(m0), h.sha(m2)
+
+
+def _st_scope_branch_range() -> None:
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        root, home, _ = _pr_fixture_root(td)
+        repo, env, spec, base, stray = _scope_repo(td)
+        with _pr_context(root, home, CURSOR_DET):
+            # The task comes from the intent/<ID> branch name; everything stays inside writes.
+            rc, out = _quiet(cmd_scope_diff, spec=str(spec), task=None, branch="intent/T1", base="main",
+                             rng=None, repo=str(repo))
+            assert rc == 0 and "task T1" in out and "0 finding(s)" in out and "2 path(s)" in out, out
+            rc, out = _quiet(cmd_scope_diff, spec=str(spec), task="T1", branch="stray", base="main", rng=None,
+                             repo=str(repo))
+            assert rc == 1 and "OUTSIDE README.md" in out and "FORBIDDEN src/secret/k.txt" in out, out
+            assert "OUTSIDE src/a.py" not in out, out
+            rc, out = _quiet(cmd_scope_diff, spec=str(spec), task="T1", branch=None, base=None,
+                             rng=f"{base}..{stray}", repo=str(repo), as_json=True)
+            doc = json.loads(out)
+            kinds = sorted((f["kind"], f["path"]) for f in doc["findings"])
+            assert rc == 1 and kinds == [("forbidden", "src/secret/k.txt"), ("outside-writes", "README.md")], doc
+            assert doc["spec"].startswith("docs/INTENT.md @ "), doc   # read at the tip, not the work tree
+            # Prose writes: only forbids are checked, and the note says so.
+            rc, out = _quiet(cmd_scope_diff, spec=str(spec), task="T2", branch="prose", base="main", rng=None,
+                             repo=str(repo))
+            assert rc == 1 and "FORBIDDEN vendor/lib.js" in out and "OUTSIDE" not in out and "prose" in out, out
+            rc, out = _quiet(cmd_scope_diff, spec=str(spec), task="T1", branch=None, base=None,
+                             rng="main..main", repo=str(repo))
+            assert rc == 3 and "nothing changed" in out, out
+            rc, out = _quiet(cmd_scope_diff, spec=str(spec), task="T1", branch="nope", base="main", rng=None,
+                             repo=str(repo))
+            assert rc == 2, out
+            rc, out = _quiet(cmd_scope_diff, spec=str(spec), task="T9", branch="stray", base="main", rng=None,
+                             repo=str(repo))
+            assert rc == 2 and "unknown task" in out, out
+
+
+def _st_scope_check_path() -> None:
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        home = td / "home"
+        repo, env = _new_repo(td, "ws")
+        _ws_shape(repo)
+        spec = repo / "docs" / "INTENT.md"
+        spec.parent.mkdir(parents=True)
+        spec.write_text(_scope_spec("| T1 | implementor | worktree | - | | src/**, docs/ | src/gen/** | |\n"
+                                    "| T2 | implementor | worktree | - | | lib/** | | true |\n",
+                                    " | enforce", "|---"), encoding="utf-8")
+        target = repo / "src" / "a.py"
+        res = intent_scope.check_path(target, home=home)
+        assert res["status"] == "no-task" and not res["findings"], res
+        ptr = intent_scope.write_pointer(repo, spec, "T1", home=home)
+        assert ptr == repo / ".workspace" / "state" / "active-task", ptr
+        assert intent_scope.check_path(target, home=home)["status"] == "in-scope"
+        assert intent_scope.check_path(repo / "docs" / "x.md", home=home)["status"] == "in-scope"
+        res = intent_scope.check_path("README.md", cwd=str(repo), home=home)
+        assert res["status"] == "outside" and res["findings"][0]["kind"] == "outside-writes" and not res["block"], res
+        res = intent_scope.check_path(repo / "src" / "gen" / "x.py", home=home)
+        assert [f["kind"] for f in res["findings"]] == ["forbidden"], res
+        assert intent_scope.check_path(td / "elsewhere.txt", home=home)["status"] == "no-repo"
+        with _pr_context(td, home, CURSOR_DET):
+            rc, out = _quiet(cmd_scope_check_path, str(repo / "README.md"))
+            assert rc == 0 and "report-only" in out and "outside-writes" in out, out   # report-only exit 0
+            intent_scope.write_pointer(repo, spec, "T2", home=home)
+            rc, out = _quiet(cmd_scope_check_path, str(repo / "README.md"))
+            assert rc == 1 and "[enforce]" in out, out                                # enforce: true
+            rc, out = _quiet(cmd_scope_check_path, str(repo / "lib" / "x.py"))
+            assert rc == 0 and out == "", out
+            rc, out = _quiet(cmd_scope_pointer, "show", repo=str(repo))
+            assert "active task: T2" in out, out
+            rc, out = _quiet(cmd_scope_pointer, "clear", repo=str(repo))
+            assert rc == 0 and "cleared" in out and not ptr.exists(), out
+        # Fails open: a spec that vanished, a task that no longer exists, a zero budget.
+        intent_scope.write_pointer(repo, spec, "T1", home=home)
+        assert intent_scope.check_path(repo / "README.md", home=home, budget=0.0)["status"] == "timeout"
+        intent_scope.write_pointer(repo, spec, "T9", home=home)
+        res = intent_scope.check_path(repo / "README.md", home=home)
+        assert res["status"] == "error" and not res["block"], res
+        intent_scope.write_pointer(repo, spec, "T1", home=home)
+        spec.rename(spec.with_suffix(".gone"))
+        res = intent_scope.check_path(repo / "README.md", home=home)
+        assert res["status"] == "error" and not res["findings"], res
+        spec.with_suffix(".gone").rename(spec)
+        # Budget: each warm check stays under 50 ms.
+        times = [intent_scope.check_path(repo / "src" / f"f{i}.py", home=home)["elapsed_ms"] for i in range(25)]
+        assert max(times[1:]) < intent_scope.CHECK_BUDGET_S * 1000, times
+        # The pointer is gitignored state in the workspace: git never lists it.
+        (repo / ".gitignore").write_text(".workspace/\n", encoding="utf-8")
+        st = _run_fixture_git(["status", "--porcelain", "--untracked-files=all"], repo, env)
+        assert ".workspace" not in st, st
+
+
+def _st_scope_employer_pointer() -> None:
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        root, home, _ = _pr_fixture_root(td)
+        spec_text = _scope_spec("| T1 | implementor | worktree | - | | src/** | |\n")
+        repo = _fx_repo(td, "widget", "acme-corp/widget", {"src/a.py": "a\n", "docs/INTENT.md": spec_text},
+                        agents=False)
+        before = _snapshot(repo)
+        ptr = intent_scope.write_pointer(repo, repo / "docs" / "INTENT.md", "T1", home=home)
+        want = home / ".config" / "snds-workspace" / "state" / "telemetry" / "acme-corp" / "widget" / "active-task"
+        assert ptr == want and not ptr.resolve().is_relative_to(repo), ptr
+        res = intent_scope.check_path(repo / "README.md", home=home)
+        assert res["status"] == "outside", res
+        log = intent_scope.log_finding(res, host="cursor", home=home)
+        assert log == want.with_name("scope.jsonl"), log
+        row = json.loads(log.read_text(encoding="utf-8").splitlines()[-1])
+        assert "path" not in row and len(row["path_sha256"]) == 16, row             # a hash, never the path
+        out = io.StringIO()
+        payload = scope_golden("cursor.pre-tool-write", path=str(repo / "README.md"), cwd=str(repo))
+        results = intent_scope.report_payload("cursor", payload, table=_pr().load_table("surfaces"), home=home,
+                                              err=out)
+        assert [r["status"] for r in results] == ["outside"] and "ws-scope" in out.getvalue(), results
+        assert _snapshot(repo) == before, "the employer tree changed"
+        # A Claude chain is refused before reading anything for set / branch / range.
+        with _pr_context(root, home, CLAUDE_DET):
+            rc, msg = _quiet(cmd_scope_pointer, "set", task="T1", spec=str(repo / "docs" / "INTENT.md"),
+                             repo=str(repo))
+            assert rc == 4 and "REFUSED" in msg, msg
+            rc, msg = _quiet(cmd_scope_diff, spec=None, task="T1", branch=None, base=None, rng="HEAD..HEAD",
+                             repo=str(repo))
+            assert rc == 4 and "REFUSED" in msg, msg
+        # Refused outright: a pointer path that would land inside a non-workspace repo.
+        try:
+            intent_scope.write_pointer(repo, repo / "docs" / "INTENT.md", "T1", home=repo)
+            raise AssertionError("pointer written inside the employer repo")
+        except PermissionError:
+            pass
+        assert _snapshot(repo) == before, "the employer tree changed"
+
+
+def _st_scope_denylist_contract() -> None:
+    """v1.0 mechanics: sensitive denylist unless explicitly owned, Preserve paths, generated globs,
+    `\\|` in a glob cell, contract-gated fan-out in ready, and scope on status."""
+    head = ("---\ntitle: t\nprofile: personal-solo\napproval: approved 2026-01-01 by Sean\n"
+            "generated: gen/**, docs/registry.json\ncontract: api/contract.md\n---\n\n# t\n\n")
+    text = head + ("## Preserve\n\n| glob | why | until |\n|---|---|---|\n| migrations/** | history | on: squash |\n\n"
+                   "## Task graph\n\n| id | role | isolation | depends_on | status | writes | forbids |\n"
+                   "|---|---|---|---|---|---|---|\n"
+                   "| T1 | implementor | worktree | - | | src/**, **/package.json, .github/workflows/** | |\n"
+                   "| T2 | implementor | worktree | - | | lib/a\\|b.py | |\n")
+    sc = intent_scope.spec_scope(text, "T1")
+    kinds = {p: [f["kind"] for f in intent_scope.evaluate(sc, p)] for p in (
+        "src/package-lock.json", "src/package.json", ".github/workflows/ci.yml", "migrations/001.sql",
+        "gen/out.txt", "docs/registry.json", "src/.env.local", "src/ok.py")}
+    assert kinds == {"src/package-lock.json": ["sensitive"], "src/package.json": [], ".github/workflows/ci.yml": [],
+                     "migrations/001.sql": ["preserve", "outside-writes"], "gen/out.txt": [],
+                     "docs/registry.json": [], "src/.env.local": ["sensitive"], "src/ok.py": []}, kinds
+    assert [e["path"] for e in intent_scope.spec_scope(text, "T2")["writes"]] == ["lib/a|b.py"]
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        root, home, _ = _pr_fixture_root(td)
+        repo, env = _new_repo(td, "fan")
+        _run_fixture_git(["remote", "add", "origin", "https://github.com/pat-sample/fan.git"], repo, env)
+        h = _History(repo, env)
+        m0 = h.commit("main", "spec", {"docs/INTENT.md": text})
+        h.commit("intent/T1", "T1", {"src/package-lock.json": "{}\n"}, frm=m0)
+        h.flush()
+        spec = repo / "docs" / "INTENT.md"
+        spec.parent.mkdir(parents=True)
+        spec.write_text(text, encoding="utf-8")
+        with _pr_context(root, home, CURSOR_DET):
+            rc, out = _quiet(cmd_ready, spec)
+            assert "HELD (contract): T2" in out and "uncommitted: api/contract.md" in out and "  T1 " in out, out
+            h.commit("main", "contract", {"api/contract.md": "# contract\n"}, frm=h.sha(m0))
+            h.flush()
+            (repo / "api").mkdir()
+            (repo / "api" / "contract.md").write_text("# contract\n", encoding="utf-8")
+            _run_fixture_git(["add", "api/contract.md", "docs/INTENT.md"], repo, env)   # match HEAD
+            rc, out = _quiet(cmd_ready, spec)
+            assert "HELD" not in out and "  T1 " in out and "  T2 " in out, out
+            save_state(spec, {"worktrees": {"T1": {"path": str(repo), "branch": "intent/T1", "repo": str(repo)}}})
+            rc, out = _quiet(cmd_status, spec)
+            assert re.search(r"T1 .* scope=fail", out) and re.search(r"T2 .* scope=unchecked", out), out
+            rc, out = _quiet(cmd_scope_diff, spec=str(spec), task=None, branch="intent/T1", base="main", rng=None,
+                             repo=str(repo))
+            assert rc == 1 and "SENSITIVE src/package-lock.json" in out, out
+
+
+def _st_scope_accelerator_parity() -> str:
+    """The five hosts' golden pre-write payloads reach the same check with the same result."""
+    with tempfile.TemporaryDirectory() as tds:
+        td = Path(tds).resolve()
+        home = td / "home"
+        repo, _env = _new_repo(td, "ws")
+        _ws_shape(repo)
+        spec = repo / "docs" / "INTENT.md"
+        spec.parent.mkdir(parents=True)
+        spec.write_text(_scope_spec("| T1 | implementor | worktree | - | | src/** | src/gen/** |\n"), encoding="utf-8")
+        intent_scope.write_pointer(repo, spec, "T1", home=home)
+        table = _pr().load_table("surfaces")
+        seen = {}
+        for rel in ("src/ok.py", "README.md", "src/gen/x.py"):
+            for g in SCOPE_GOLDENS:
+                payload = scope_golden(g, path=str(repo / rel), cwd=str(repo))
+                paths, _cwd = intent_scope.write_paths(payload, table)
+                assert paths == [str(repo / rel)], (g, paths)
+                res = intent_scope.report_payload(g.split(".")[0], payload, table=table, home=home, log=False)
+                seen.setdefault(rel, set()).add(json.dumps([(r["status"], [f["kind"] for f in r["findings"]])
+                                                            for r in res]))
+        assert all(len(v) == 1 for v in seen.values()), seen
+        return f"{len(SCOPE_GOLDENS)} goldens agree on {len(seen)} paths"
+
+
 SELF_TESTS = (
     ("no-git-write invariant", _st_invariant),
     ("parser cases", _st_parser),
@@ -4333,6 +4727,12 @@ SELF_TESTS = (
     ("remediation: recon card, policy-routed and byte-identical", _st_remediation_recon),
     ("remediation: golden self-contained packet", _st_remediation_packet),
     ("remediation: branch- and range-keyed verdict", _st_remediation_verdict),
+    ("scope: globs, disjoint-wave lint, read-only verifier, gate", _st_scope_lint),
+    ("scope: branch- and range-keyed diff vs writes/forbids", _st_scope_branch_range),
+    ("scope: --check-path, pointer, enforce, fail-open, budget", _st_scope_check_path),
+    ("scope: employer pointer outside the repo, tree byte-identical", _st_scope_employer_pointer),
+    ("scope: denylist, preserve, generated, contract-gated ready, status", _st_scope_denylist_contract),
+    ("scope: accelerator parity across five host goldens", _st_scope_accelerator_parity),
 )
 
 
@@ -4449,6 +4849,20 @@ def main(argv: list[str] | None = None) -> int:
     p_sa.add_argument("--ref", default="main", help="branch whose first-parent merges are audited")
     p_sa.add_argument("--root", help="checkout to audit (default: git toplevel of the cwd)")
     p_sa.add_argument("--json", action="store_true")
+    p_sc = sub.add_parser("scope", help="H9: a diff or one path against the task's writes/forbids")
+    p_sc_mode = p_sc.add_mutually_exclusive_group(required=True)
+    p_sc_mode.add_argument("--check-path", metavar="PATH", help="pre-write accelerator: one path (fails open)")
+    p_sc_mode.add_argument("--branch")
+    p_sc_mode.add_argument("--range", dest="rng", metavar="A..B")
+    p_sc_mode.add_argument("--set", dest="set_task", metavar="TASK", help="set the active task for --repo")
+    p_sc_mode.add_argument("--clear", action="store_true", help="clear the active task for --repo")
+    p_sc_mode.add_argument("--show", action="store_true", help="print the active task for --repo")
+    p_sc.add_argument("--spec")
+    p_sc.add_argument("--task")
+    p_sc.add_argument("--base", help="with --branch: the ref compared against (default main)")
+    p_sc.add_argument("--repo", help="checkout (default: the cwd's)")
+    p_sc.add_argument("--cwd", help="with --check-path: resolve a relative PATH from here")
+    p_sc.add_argument("--json", action="store_true")
     sub.add_parser("open-app")
     p_ins = sub.add_parser("install-app")
     p_ins.add_argument("--dry-run", action="store_true")
@@ -4501,6 +4915,14 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         return cmd_scope_audit(spec_p, task=args.task, rev=args.rev, wave_merges=args.wave_merges,
                                ref=args.ref, root=args.root, as_json=args.json)
+    if args.cmd == "scope":
+        if args.check_path:
+            return cmd_scope_check_path(args.check_path, cwd=args.cwd, as_json=args.json)
+        if args.set_task or args.clear or args.show:
+            action = "set" if args.set_task else ("clear" if args.clear else "show")
+            return cmd_scope_pointer(action, task=args.set_task, spec=args.spec, repo=args.repo, as_json=args.json)
+        return cmd_scope_diff(spec=args.spec, task=args.task, branch=args.branch, base=args.base, rng=args.rng,
+                              repo=args.repo, as_json=args.json)
     spec = find_spec(getattr(args, "spec", None))
     if args.cmd == "findings":
         return cmd_findings(spec, status=args.status, as_json=args.json)

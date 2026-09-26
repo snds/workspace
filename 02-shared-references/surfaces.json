@@ -21,6 +21,7 @@
     "H2",
     "H3",
     "H8",
+    "H9",
     "H10",
     "H15",
     "H16",
@@ -98,6 +99,10 @@
     "H11": {
       "scope": "shared",
       "reason": "The gate at commit and push is every committer's: the lanes run the same diff-selected verify for Claude, Cursor, Codex, other agents and humans, and CI plus the schedule back the surfaces no lane reaches."
+    },
+    "H9": {
+      "scope": "shared",
+      "reason": "Write scope is task data every implementor carries, whatever its vendor: the lint, the gate, the diff check and the pre-write report read the same task graph for every agent."
     }
   },
   "current_wave": 2,
@@ -444,6 +449,21 @@
             "reason": "report-only by default: the post-commit verify and the pre-push gate run for every local committer once Sean installs the lanes, but a red verify only holds a push on a machine where Sean opts in (--install-git-hooks=block sets ws.pushgate). The lane behaviour is fixture-verified by TestGateLanes; the per-machine blocking opt-ins are wave 3.",
             "until": "wave-3"
           }
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "report-only accelerator: the installed pre-tool shim (the guard's own registration; its matcher covers Write, Edit, MultiEdit and NotebookEdit) runs the scope step after the guard allows; lint and gate refuse overlapping parallel writes; direct commits are backstop-only (CI scope --range on PRs)",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestIntentScope",
+            "selftest:09-tools/intent-run.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestIntentScope and intent-run --self-test run the disjoint-wave lint, the gate refusal, branch- and range-keyed scope, --check-path (pointer, enforce exit, fail-open, the 50 ms budget), the employer pointer outside a byte-identical tree, and the same result from the Claude, Cursor, Codex, VS Code and Windsurf pre-write goldens; the ws_hook step is proven not to change the guard's exit code or stdout",
+          "parity_waiver": {
+            "reason": "report-only by plan: in wave 2 a pre-write scope finding goes to stderr and scope.jsonl and never changes a host decision, so the cell stays advisory. The in-tool rules (disjoint-wave lint, gate refusal, scope --branch/--range, the per-profile pointer) are fixture-verified by TestIntentScope. Blocking lands in wave 3 as a per-machine opt-in that honours a task's `enforce: true`; CI `scope --range` on PRs is the backstop for everything else.",
+            "until": "wave-3"
+          }
         }
       },
       "non_user_envelopes": [
@@ -552,6 +572,14 @@
         "H11": {
           "mode": "backstop-only",
           "rules": "no user git lanes in the cloud clone; CI plus the schedule",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
+          "mode": "backstop-only",
+          "rules": "no shim is registered for cloud sessions; CI scope --range on PRs",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -719,6 +747,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "not-applicable",
+          "rules": "no tasks and no writes to a checkout",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -837,6 +873,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "not-applicable",
+          "rules": "no tasks; no pre-write event reaches the scope step",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -934,6 +978,14 @@
         "H11": {
           "mode": "not-applicable",
           "rules": "no local repos or commits",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
+          "mode": "not-applicable",
+          "rules": "no repository or shell",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1204,6 +1256,21 @@
             "reason": "report-only by default: the post-commit verify and the pre-push gate run for every local committer once Sean installs the lanes, but a red verify only holds a push on a machine where Sean opts in (--install-git-hooks=block sets ws.pushgate). The lane behaviour is fixture-verified by TestGateLanes; the per-machine blocking opt-ins are wave 3.",
             "until": "wave-3"
           }
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "report-only accelerator on the installed preToolUse Write shim (the guard's registration); the CLI and CI scope --range on PRs",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestIntentScope",
+            "selftest:09-tools/intent-run.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestIntentScope and intent-run --self-test run the disjoint-wave lint, the gate refusal, branch- and range-keyed scope, --check-path (pointer, enforce exit, fail-open, the 50 ms budget), the employer pointer outside a byte-identical tree, and the same result from the Claude, Cursor, Codex, VS Code and Windsurf pre-write goldens; the ws_hook step is proven not to change the guard's exit code or stdout",
+          "parity_waiver": {
+            "reason": "report-only by plan: in wave 2 a pre-write scope finding goes to stderr and scope.jsonl and never changes a host decision, so the cell stays advisory. The in-tool rules (disjoint-wave lint, gate refusal, scope --branch/--range, the per-profile pointer) are fixture-verified by TestIntentScope. Blocking lands in wave 3 as a per-machine opt-in that honours a task's `enforce: true`; CI `scope --range` on PRs is the backstop for everything else.",
+            "until": "wave-3"
+          }
         }
       },
       "non_user_envelopes": []
@@ -1322,6 +1389,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] a voluntary CLI where a shell runs it; hooks in the CLI are undocumented",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1421,6 +1496,14 @@
         "H11": {
           "mode": "backstop-only",
           "rules": "no user git lanes in the cloud VM; CI plus the schedule",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
+          "mode": "backstop-only",
+          "rules": "CI scope --range on PRs",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1686,6 +1769,21 @@
             "reason": "report-only by default: the post-commit verify and the pre-push gate run for every local committer once Sean installs the lanes, but a red verify only holds a push on a machine where Sean opts in (--install-git-hooks=block sets ws.pushgate). The lane behaviour is fixture-verified by TestGateLanes; the per-machine blocking opt-ins are wave 3.",
             "until": "wave-3"
           }
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "report-only accelerator on the PreToolUse apply_patch shim once Sean trusts the hooks (the guard's registration); CI scope --range on PRs",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestIntentScope",
+            "selftest:09-tools/intent-run.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestIntentScope and intent-run --self-test run the disjoint-wave lint, the gate refusal, branch- and range-keyed scope, --check-path (pointer, enforce exit, fail-open, the 50 ms budget), the employer pointer outside a byte-identical tree, and the same result from the Claude, Cursor, Codex, VS Code and Windsurf pre-write goldens; the ws_hook step is proven not to change the guard's exit code or stdout",
+          "parity_waiver": {
+            "reason": "report-only by plan: in wave 2 a pre-write scope finding goes to stderr and scope.jsonl and never changes a host decision, so the cell stays advisory. The in-tool rules (disjoint-wave lint, gate refusal, scope --branch/--range, the per-profile pointer) are fixture-verified by TestIntentScope. Blocking lands in wave 3 as a per-machine opt-in that honours a task's `enforce: true`; CI `scope --range` on PRs is the backstop for everything else.",
+            "until": "wave-3"
+          }
         }
       },
       "non_user_envelopes": []
@@ -1785,6 +1883,14 @@
         "H11": {
           "mode": "backstop-only",
           "rules": "no local hooks; CI plus the schedule",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
+          "mode": "backstop-only",
+          "rules": "CI scope --range on PRs",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1921,6 +2027,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] no shim is rendered; a voluntary CLI where a shell runs it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2053,6 +2167,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] the pre-write golden comes from vendor docs and no probe has seen the payload; a voluntary CLI otherwise",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2180,6 +2302,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] no shim is rendered; a voluntary CLI where a shell runs it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2277,6 +2407,14 @@
         "H11": {
           "mode": "backstop-only",
           "rules": "server-side commits; CI plus the schedule",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
+          "mode": "backstop-only",
+          "rules": "CI scope --range on PRs",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -2415,6 +2553,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] no shim is rendered; its pre_write_code golden comes from vendor docs; a voluntary CLI otherwise",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2543,6 +2689,14 @@
         "H11": {
           "mode": "backstop-only",
           "rules": "post-commit notice plus the report-only pre-push gate when the lanes are installed (aider's default --no-verify skips pre-commit, not post-commit or pre-push), and CI",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; CI scope --range on PRs",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -2678,6 +2832,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "a voluntary CLI where a shell runs it; CI scope --range on PRs",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2806,6 +2968,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] a voluntary CLI where a shell runs it",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2931,6 +3101,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "[UNVERIFIED] loads the claude-user layer; no probe of its pre-write payload",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -3047,6 +3225,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "not-applicable",
+          "rules": "no execution and no checkout",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -3157,6 +3343,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H9": {
+          "mode": "not-applicable",
+          "rules": "the workspace MCP exposes no task or scope verbs",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -3261,6 +3455,14 @@
           ],
           "planned_verified_by": [],
           "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
+        },
+        "H9": {
+          "mode": "advisory",
+          "rules": "Sean runs scope and gate; the active-task pointer is set by worktree add or scope --set",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -3726,30 +3928,36 @@
       "template": "$HOME/.config/snds-workspace/bin/ws-hook --host claude-code --event pre-tool",
       "behaviour": "wall-guard",
       "implements": [
-        "host_filter"
+        "host_filter",
+        "scope_report"
       ],
       "verified_by": [
-        "fixture:TestWallGuard"
+        "fixture:TestWallGuard",
+        "fixture:TestIntentScope"
       ]
     },
     "ws-guard-cursor": {
       "template": "$HOME/.config/snds-workspace/bin/ws-hook --host cursor --event pre-tool",
       "behaviour": "wall-guard",
       "implements": [
-        "host_filter"
+        "host_filter",
+        "scope_report"
       ],
       "verified_by": [
-        "fixture:TestWallGuard"
+        "fixture:TestWallGuard",
+        "fixture:TestIntentScope"
       ]
     },
     "ws-guard-codex": {
       "template": "$HOME/.config/snds-workspace/bin/ws-hook --host codex --event pre-tool",
       "behaviour": "wall-guard",
       "implements": [
-        "host_filter"
+        "host_filter",
+        "scope_report"
       ],
       "verified_by": [
-        "fixture:TestWallGuard"
+        "fixture:TestWallGuard",
+        "fixture:TestIntentScope"
       ]
     },
     "ws-ledger-claude": {

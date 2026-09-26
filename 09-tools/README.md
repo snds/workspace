@@ -275,8 +275,14 @@ python3 09-tools/intent-run.py ready --spec docs/INTENT.md
 python3 09-tools/intent-run.py worktree add T1 --spec docs/INTENT.md
 python3 09-tools/intent-run.py verify --spec docs/INTENT.md
 python3 09-tools/intent-run.py verify --spec docs/INTENT.md --run
+python3 09-tools/intent-run.py scope --branch intent/T1        # diff vs T1's writes/forbids (H9)
+python3 09-tools/intent-run.py scope --check-path src/a.py     # pre-write accelerator; fails open
+python3 09-tools/intent-run.py scope --set T1 --spec docs/INTENT.md   # active task (worktree add sets it)
 python3 09-tools/intent-run.py install-app   # optional GUI; macOS copies Intent.app
 ```
+
+H9 write scope: `intent_scope.py` is the stdlib kernel (grammar, disjoint-wave lint, active-task
+pointer, per-path check) shared with the pinned `ws_hook` pre-tool step, which reports only.
 
 Measures are printed unless `--run`. Never auto-commit. Context profile on the spec still governs landing.
 
