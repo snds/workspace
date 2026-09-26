@@ -2655,6 +2655,91 @@ class TestUserSkillWrappers(unittest.TestCase):
             self.assertEqual(list((home / ".agents/skills").rglob("SKILL.md")), [])
 
 
+class TestBackupProjects(unittest.TestCase):
+    """backup-projects.py: discovery (leaf vs container), the personal-only wall, secret and size
+    blockers, private by default, the human-only apply with a stub gh, and the existing-repo skip."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load("backup-projects")
+
+    def setUp(self):
+        self._td = tempfile.TemporaryDirectory()
+        self.tmp = Path(self._td.name)
+        self.tables, self.root = self.m.build_fixture(self.tmp)
+        self.env, self.log = self.m.stub_env(self.tmp, existing="pat-sample/design-ideas")
+
+    def tearDown(self):
+        self.m._HUMAN_OVERRIDE = None
+        self._td.cleanup()
+
+    def _plan(self, public=(), host=None):
+        return self.m.plan(self.root, public=list(public), tables_root=self.tables,
+                           hostname=host or self.m.PERSONAL_HOST, env=self.env)
+
+    def _apply(self, p, only, human):
+        self.m._HUMAN_OVERRIDE = human
+        lines = []
+        rc = self.m.apply(p, only=only, ask=lambda _q: "y", env=self.env, tables_root=self.tables,
+                          hostname=self.m.PERSONAL_HOST, out=lines.append)
+        calls = self.log.read_text(encoding="utf-8").splitlines() if self.log.exists() else []
+        return rc, lines, calls
+
+    def test_self_test(self):
+        self.assertEqual(self.m.self_test(), 0)
+
+    def test_candidate_skip_and_blocked_lists(self):
+        before = sorted(str(x) for x in self.root.rglob("*"))
+        p = self._plan()
+        ready = sorted(e["rel"] for e in p["candidates"] if not e["blockers"])
+        blocked = {e["rel"]: " ".join(e["blockers"]) for e in p["candidates"] if e["blockers"]}
+        skipped = {s["rel"]: s["reason"] for s in p["skipped"]}
+        self.assertEqual(ready, ["Design Ideas", "leaf-notes", "mixed/sketches", "public-leak"])
+        self.assertEqual(sorted(blocked), ["big-assets", "keys-in-text", "with-env"])
+        self.assertIn("secret-shaped file .env", blocked["with-env"])
+        self.assertIn("over 50 MB", blocked["big-assets"])
+        self.assertIn("aws-access-key", blocked["keys-in-text"])
+        self.assertEqual(sorted(skipped), ["acme-notes", "clientwork/drafts"])
+        self.assertIn("employer glob", skipped["acme-notes"])
+        self.assertIn("employer owner", skipped["clientwork/drafts"])
+        seen = [e["rel"] for e in p["candidates"]] + list(skipped)
+        for bad in ("inrepo", "inrepo/sub", "mixed", "mixed/tool-repo", "node_modules", ".hidden", "clientwork"):
+            self.assertNotIn(bad, seen)
+        self.assertTrue(all(e["visibility"] == "private" for e in p["candidates"]))
+        self.assertEqual(sorted(str(x) for x in self.root.rglob("*")), before, "the dry run wrote something")
+
+    def test_public_scan_and_employer_device(self):
+        p = self._plan(public=["public-leak", "leaf-notes"])
+        c = {e["rel"]: e for e in p["candidates"]}
+        self.assertTrue(any("employer substance" in b for b in c["public-leak"]["blockers"]))
+        self.assertEqual(c["leaf-notes"]["visibility"], "public")
+        self.assertEqual(c["mixed/sketches"]["visibility"], "private")
+        pe = self._plan(host=self.m.EMPLOYER_HOST)
+        self.assertEqual(pe["candidates"], [])
+        self.assertTrue(all("not personal" in s["reason"] for s in pe["skipped"]))
+
+    def test_apply_refuses_under_agent_verdict(self):
+        rc, lines, calls = self._apply(self._plan(), [], human=False)
+        self.assertEqual(rc, 4)
+        self.assertIn("REFUSED", lines[0])
+        self.assertEqual(calls, [])
+        self.assertFalse((self.root / "leaf-notes" / ".git").exists())
+
+    def test_apply_with_stub_gh(self):
+        p = self._plan(public=["leaf-notes"])
+        rc, lines, calls = self._apply(p, ["leaf-notes", "mixed/sketches", "Design Ideas", "with-env"], human=True)
+        self.assertEqual(rc, 0, lines)
+        creates = [c for c in calls if c.startswith("repo create")]
+        self.assertEqual(sorted(c.split()[2:4] for c in creates),
+                         [["pat-sample/leaf-notes", "--public"], ["pat-sample/sketches", "--private"]])
+        self.assertTrue(all(c.endswith("--push") and "--source" in c for c in creates))
+        self.assertTrue(any("already exists" in ln for ln in lines))
+        self.assertFalse((self.root / "Design Ideas" / ".git").exists())
+        self.assertFalse((self.root / "with-env" / ".git").exists())
+        self.assertTrue((self.root / "leaf-notes" / ".git").is_dir())
+        self.assertNotIn("leaf-notes", [e["rel"] for e in self._plan()["candidates"]])
+
+
 class TestSkillHomes(unittest.TestCase):
     """H20 / D15: every workflow has one 03-skills home; the tracked .claude/.agents copies are
     generated pointer wrappers (no drift, at most 10 lines); nothing hand-made sits under those

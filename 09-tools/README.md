@@ -370,6 +370,15 @@ python3 09-tools/check-secrets.py
 
 Secret-shape scan (exit 1 on a hit) plus --class employer-substance (H25, report-only): emp-url/emp-path/emp-slug/emp-quote as path:line rule, --baseline-check / --write-baseline ratchet, --self-test.
 
+## backup-projects.py
+
+Finds leaf project folders under the projects root with no git repo and, only on `--apply` by a human at a terminal (agent_check), turns each into a repo and pushes it to a new private `gh repo create <personal owner>/<name>` repo; the default run is a read-only dry run, only positively personal folders qualify (profile_resolve tables, employer globs, neighbouring repos), secret/size blockers reuse check-secrets, `--public NAME` is per folder, existing GitHub repos are skipped; `--self-test`, TestBackupProjects.
+
+```
+python3 09-tools/backup-projects.py                                   # dry run
+python3 09-tools/backup-projects.py --apply [--only NAME,...] [--public NAME,...]
+```
+
 ## artifact-find.py
 
 C2 — query the artifact registry instead of ingesting it.
