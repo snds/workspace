@@ -2689,6 +2689,182 @@ class TestSkillHomes(unittest.TestCase):
             self.assertEqual(list(Path(home).iterdir()), [])
 
 
+class TestRuleOfThree(unittest.TestCase):
+    """H14: the rule-of-three instance log and growth check. The v1.0 cases, an unknown surface id,
+    grandfathered debt against new growth, and the add CLI stamping surface from detect_surface."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.r3 = load("rule_of_three")
+
+    GIT_ENV = {"GIT_CONFIG_NOSYSTEM": "1", "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@example.invalid",
+               "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@example.invalid"}
+
+    def _git(self, root, *args):
+        env = {**os.environ, **self.GIT_ENV, "HOME": str(root.parent), "GIT_CONFIG_GLOBAL": os.devnull}
+        return subprocess.run(["git", "-c", "core.hooksPath=/dev/null", *args], cwd=root, env=env,
+                              capture_output=True, text=True, timeout=30, check=True).stdout.strip()
+
+    def _repo(self, td):
+        root = Path(td) / "repo"
+        (root / "02-shared-references").mkdir(parents=True)
+        (root / "06-context").mkdir()
+        (root / "09-tools").mkdir()
+        for rel in (self.r3.SURFACES_REL, self.r3.DEVICES_REL):
+            (root / rel).write_text((ROOT_DIR / rel).read_text(encoding="utf-8"), encoding="utf-8")
+        (root / "09-tools" / "fix.py").write_text("x = 1\n", encoding="utf-8")
+        (root / "06-context" / "session-log.md").write_text("# log\n", encoding="utf-8")
+        (root / ".gitignore").write_text("local.md\n", encoding="utf-8")
+        (root / "local.md").write_text("ignored\n", encoding="utf-8")
+        self._git(root, "init", "-q", "-b", "main")
+        self._git(root, "add", "-A")
+        self._git(root, "commit", "-q", "-m", "seed")
+        return root, self._git(root, "rev-parse", "HEAD")
+
+    @staticmethod
+    def row(ref, surface="claude-code", target=None, pattern="same-fix", family="claude"):
+        r = {"ts": "2026-01-01T00:00:00Z", "pattern": pattern, "instance_ref": ref, "surface": surface,
+             "family": family, "device": "unknown"}
+        if target:
+            r["target"] = target
+        return json.dumps(r)
+
+    def ctx(self, rows, baseline=None, prev=None, hubs=None, frameworks=None, detectors=(), resolve=None):
+        known = {"aaaaaaa", "bbbbbbb", "ccccccc", "09-tools/fix.py", "03-skills/new/SKILL.md"}
+        return {"rows": list(enumerate(rows, 1)), "surfaces": {"claude-code", "cursor", "codex"},
+                "families": {"claude", "cursor", "codex"}, "devices": {"unknown"},
+                "resolve": resolve or (lambda ref: None if ref in known else "dangling"),
+                "baseline": self.r3.empty_baseline() if baseline is None else baseline,
+                "base_baseline": prev, "base_ref": "HEAD", "hubs": hubs or {},
+                "hub_detectors": set(detectors), "frameworks": frameworks or {}}
+
+    HUB = {"new": {"path": "03-skills/new/SKILL.md", "tier": "hub", "rigor_role": None}}
+
+    def fails(self, ctx):
+        return self.r3.evaluate(ctx)["failures"]
+
+    # v1.0 cases
+    def test_new_hub_with_fewer_than_three_rows_fails(self):
+        rows = [self.row(x, target="03-skills/new/SKILL.md") for x in ("aaaaaaa", "bbbbbbb")]
+        self.assertTrue(any("new hub new" in f for f in self.fails(self.ctx(rows, hubs=self.HUB))))
+
+    def test_three_resolvable_rows_pass(self):
+        rows = [self.row(x, target="03-skills/new/SKILL.md") for x in ("aaaaaaa", "bbbbbbb", "ccccccc")]
+        self.assertEqual(self.fails(self.ctx(rows, hubs=self.HUB)), [])
+
+    def test_command_hub_with_detector_row_passes(self):
+        hubs = {"new": {**self.HUB["new"], "rigor_role": "command-hub"}}
+        self.assertEqual(self.fails(self.ctx([], hubs=hubs, detectors=["new"])), [])
+        self.assertTrue(self.fails(self.ctx([], hubs=hubs, detectors=[])))
+
+    def test_dangling_sha_and_session_log_anchor_fail(self):
+        with tempfile.TemporaryDirectory() as td:
+            root, head = self._repo(td)
+            res = self.r3.make_resolver(root)
+            self.assertIsNone(res(head))
+            self.assertIsNone(res(head[:7]))
+            self.assertIsNone(res("09-tools/fix.py"))
+            self.assertIsNotNone(res("0123456789abcdef0123456789abcdef01234567"))
+            self.assertIsNotNone(res("06-context/session-log.md"))
+            self.assertIsNotNone(res("09-tools/fix.py#L1"))
+            self.assertIsNotNone(res("local.md"), "a gitignored file is not clone-visible")
+            self.assertIsNotNone(res("../outside.md"))
+            ctx = self.ctx([self.row("0123456789abcdef0123456789abcdef01234567")], resolve=res)
+            self.assertTrue(any("does not resolve" in f for f in self.fails(ctx)))
+
+    def test_baseline_that_grew_fails(self):
+        grown = {"hubs": ["new"], "frameworks": [], "unresolved_patterns": []}
+        self.assertTrue(any("baseline grew" in f for f in self.fails(
+            self.ctx([], grown, prev=self.r3.empty_baseline(), hubs=self.HUB))))
+        self.assertEqual(self.fails(self.ctx([], grown, prev=grown, hubs=self.HUB)), [])
+
+    def test_new_framework_needs_three_consumers(self):
+        self.assertTrue(self.fails(self.ctx([], frameworks={"01-frameworks/99-x.md": 2})))
+        self.assertEqual(self.fails(self.ctx([], frameworks={"01-frameworks/99-x.md": 3})), [])
+
+    def test_framework_consumers_count_paths_and_wikilinks(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "01-frameworks").mkdir()
+            (root / "01-frameworks" / "99-x.md").write_text("[[99-x]] self\n", encoding="utf-8")
+            (root / "01-frameworks" / "98-y.md").write_text("see [[99-x|X]]\n", encoding="utf-8")
+            for i, body in enumerate(("uses 01-frameworks/99-x.md", "[[99-x]]", "[[99-xyz]] only")):
+                d = root / "03-skills" / f"s{i}"
+                d.mkdir(parents=True)
+                (d / "SKILL.md").write_text(body + "\n", encoding="utf-8")
+            self.assertEqual(self.r3.framework_consumers(root, "01-frameworks/99-x.md"), 3)
+
+    # W3-2 additions
+    def test_unknown_surface_id_fails(self):
+        f = self.fails(self.ctx([self.row("aaaaaaa", surface="unknown")]))
+        self.assertTrue(any("surface 'unknown' is not a surfaces.json id" in x for x in f))
+
+    def test_bad_rows_fail(self):
+        bad = ["not json", json.dumps({"pattern": "x"}),
+               json.dumps({**json.loads(self.row("aaaaaaa")), "extra": 1}),
+               json.dumps({**json.loads(self.row("aaaaaaa")), "ts": "yesterday"})]
+        for i, raw in enumerate(bad):
+            with self.subTest(i=i):
+                self.assertTrue(self.fails(self.ctx([raw])))
+        dup = [self.row("aaaaaaa"), self.row("aaaaaaa")]
+        self.assertTrue(any("duplicate" in f for f in self.fails(self.ctx(dup))))
+
+    def test_existing_debt_passes_new_growth_fails(self):
+        three = [self.row(x) for x in ("aaaaaaa", "bbbbbbb", "ccccccc")]
+        debt = {"hubs": [], "frameworks": [], "unresolved_patterns": ["same-fix"]}
+        self.assertTrue(any("no resolution" in f for f in self.fails(self.ctx(three))))
+        self.assertEqual(self.fails(self.ctx(three, debt, prev=debt)), [])
+        self.assertTrue(any("baseline grew" in f for f in self.fails(
+            self.ctx(three, debt, prev=self.r3.empty_baseline()))), "grandfathering new debt is growth")
+        two = three[:2]
+        self.assertEqual(self.fails(self.ctx(two)), [], "two instances are only watched")
+        resolved = two + [self.row("ccccccc", target="09-tools/fix.py")]
+        self.assertEqual(self.fails(self.ctx(resolved)), [])
+
+    def test_next_baseline_only_shrinks(self):
+        c = self.ctx([], baseline={"hubs": ["old"], "frameworks": [], "unresolved_patterns": []},
+                     hubs={**self.HUB, "old": self.HUB["new"]})
+        nb = self.r3.next_baseline(c, self.r3.evaluate(c))
+        self.assertEqual(nb["hubs"], ["old"])
+
+    @staticmethod
+    def _args():
+        return argparse_namespace(pattern="same-fix", evidence="09-tools/fix.py", target=None, note=None,
+                                  print=False)
+
+    def test_cli_stamps_surface_from_detect_surface(self):
+        with tempfile.TemporaryDirectory() as td:
+            root, _ = self._repo(td)
+            stamp = {"surface": "cursor", "family": "cursor", "device": "unknown"}
+            self.assertEqual(self.r3.cmd_add(self._args(), root, detect=lambda _r: stamp), 0)
+            rows = [json.loads(ln) for ln in (root / self.r3.LOG_REL).read_text().splitlines()]
+            self.assertEqual((rows[0]["surface"], rows[0]["family"]), ("cursor", "cursor"))
+            self.assertRegex(rows[0]["ts"], self.r3.TS_RE.pattern)
+            self.assertEqual(self.r3.cmd_add(self._args(), root, detect=lambda _r: stamp), 1, "duplicate")
+            unknown = {"surface": "unknown", "family": "unknown", "device": "unknown"}
+            args = argparse_namespace(pattern="other-fix", evidence="09-tools/fix.py", target=None,
+                                      note=None, print=False)
+            self.assertEqual(self.r3.cmd_add(args, root, detect=lambda _r: unknown), 1)
+            self.assertEqual(len((root / self.r3.LOG_REL).read_text().splitlines()), 1)
+
+    def test_default_detect_is_profile_resolve_detect_surface(self):
+        pr = load("profile_resolve")
+        det = pr.detect_surface(root=ROOT_DIR)
+        got = self.r3._detect(ROOT_DIR)
+        self.assertEqual(got["surface"], det.get("acting_host") or "unknown")
+        self.assertEqual(got["family"], det.get("family") or "unknown")
+
+    def test_live_log_and_baseline_pass(self):
+        res = self.r3.check(ROOT_DIR, env={})
+        self.assertEqual(res["failures"], [])
+        self.assertGreater(res["rows"], 0)
+
+
+def argparse_namespace(**kw):
+    import argparse
+    return argparse.Namespace(**kw)
+
+
 def main(argv: list) -> int:
     strict = "--strict-skips" in argv
     names = [a for a in argv if a != "--strict-skips"]

@@ -70,6 +70,12 @@ change that, do not mint ([[experiment-validity-baseline]]).
 spoke. Corollary means the sibling is findable without Sean naming it. Do not
 densify the graph past token value.
 
+**Rule of three.** A repeated gap earns a row before it earns a layer:
+`python3 09-tools/rule_of_three.py add --pattern <slug> --evidence <path-or-sha>` (stamps surface,
+family, device; no shell: emit the row as copy-ready JSON). On the third, mint the smallest class
+above and add that row with `--target <path>`; the harness (`check_rule_of_three`) fails an
+unresolved third instance and a new hub, foundation or framework without that evidence.
+
 ## When to invoke
 
 After [[close-out]] when the gap was not only a visual detector. On session-end
