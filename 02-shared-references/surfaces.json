@@ -95,7 +95,7 @@
       "reason": "Every surface closes a session the same way, per repo it touched, and any surface's next start tidies what a crashed or forgetful session left behind."
     }
   },
-  "current_wave": 1,
+  "current_wave": 2,
   "parity_gate": "enforce",
   "families": {
     "claude": {
