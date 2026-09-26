@@ -31,7 +31,8 @@
     "H22",
     "H24",
     "H25",
-    "H23"
+    "H23",
+    "H11"
   ],
   "component_scopes": {
     "H1": {
@@ -93,6 +94,10 @@
     "H23": {
       "scope": "shared",
       "reason": "Every surface closes a session the same way, per repo it touched, and any surface's next start tidies what a crashed or forgetful session left behind."
+    },
+    "H11": {
+      "scope": "shared",
+      "reason": "The gate at commit and push is every committer's: the lanes run the same diff-selected verify for Claude, Cursor, Codex, other agents and humans, and CI plus the schedule back the surfaces no lane reaches."
     }
   },
   "current_wave": 2,
@@ -424,6 +429,21 @@
             "reason": "a voluntary CLI: nothing on the host runs recon, findings, packet or verdict unprompted, so the cell stays advisory. The in-tool rules (policy-routed recon, the register lint, self-contained packets, the Blocked-over-Fit verdict) are fixture-verified by TestRemediation. The enforcing point is the commit and push lane plus CI over committed specs (H11 lands report-only in wave 2 and blocks by opt-in in wave 3).",
             "until": "wave-3"
           }
+        },
+        "H11": {
+          "mode": "advisory",
+          "rules": "post-commit verify and a report-only pre-push gate (git lanes through bin/ws-hook, once Sean installs them): a red verify is reported with its [gate:...] suffix and blocks only where Sean's installer set ws.pushgate=block; WS_PUSH_GATE=off switches it off; WS_GATE_BYPASS counts only with no agent in the ancestry and is recorded; CI is the backstop; the Claude project Stop hook stays the dispatcher's, and the card carries the last-gate line",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestGateLanes",
+            "selftest:09-tools/git_lanes.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice.",
+          "parity_waiver": {
+            "reason": "report-only by default: the post-commit verify and the pre-push gate run for every local committer once Sean installs the lanes, but a red verify only holds a push on a machine where Sean opts in (--install-git-hooks=block sets ws.pushgate). The lane behaviour is fixture-verified by TestGateLanes; the per-machine blocking opt-ins are wave 3.",
+            "until": "wave-3"
+          }
         }
       },
       "non_user_envelopes": [
@@ -524,6 +544,14 @@
         "H8": {
           "mode": "backstop-only",
           "rules": "a packet brief is the task body; CI lints the committed spec",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H11": {
+          "mode": "backstop-only",
+          "rules": "no user git lanes in the cloud clone; CI plus the schedule",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -683,6 +711,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "backstop-only",
+          "rules": "no local commits; CI plus the last-gate line on the next card",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -793,6 +829,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "backstop-only",
+          "rules": "no local commits; CI plus the last-gate line on the next card",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -886,6 +930,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "not-applicable",
+          "rules": "no local repos or commits",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -899,7 +951,8 @@
       "hookable": true,
       "dialect": "cursor",
       "timeouts_s": {
-        "session-start": 15
+        "session-start": 15,
+        "stop": 5
       },
       "markers": {
         "env": [
@@ -1136,6 +1189,21 @@
             "reason": "a voluntary CLI: nothing on the host runs recon, findings, packet or verdict unprompted, so the cell stays advisory. The in-tool rules (policy-routed recon, the register lint, self-contained packets, the Blocked-over-Fit verdict) are fixture-verified by TestRemediation. The enforcing point is the commit and push lane plus CI over committed specs (H11 lands report-only in wave 2 and blocks by opt-in in wave 3).",
             "until": "wave-3"
           }
+        },
+        "H11": {
+          "mode": "advisory",
+          "rules": "post-commit verify and a report-only pre-push gate (git lanes through bin/ws-hook, once Sean installs them): a red verify is reported with its [gate:...] suffix and blocks only where Sean's installer set ws.pushgate=block; WS_PUSH_GATE=off switches it off; WS_GATE_BYPASS counts only with no agent in the ancestry and is recorded; CI is the backstop; the Cursor stop hook is a notice-only accelerator (one stderr line, the {} no-op on stdout, never a followup_message); sessionEnd stays unregistered",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestGateLanes",
+            "selftest:09-tools/git_lanes.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice.",
+          "parity_waiver": {
+            "reason": "report-only by default: the post-commit verify and the pre-push gate run for every local committer once Sean installs the lanes, but a red verify only holds a push on a machine where Sean opts in (--install-git-hooks=block sets ws.pushgate). The lane behaviour is fixture-verified by TestGateLanes; the per-machine blocking opt-ins are wave 3.",
+            "until": "wave-3"
+          }
         }
       },
       "non_user_envelopes": []
@@ -1243,6 +1311,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "advisory",
+          "rules": "post-commit verify and a report-only pre-push gate (git lanes through bin/ws-hook, once Sean installs them): a red verify is reported with its [gate:...] suffix and blocks only where Sean's installer set ws.pushgate=block; WS_PUSH_GATE=off switches it off; WS_GATE_BYPASS counts only with no agent in the ancestry and is recorded; CI is the backstop",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestGateLanes",
+            "selftest:09-tools/git_lanes.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
         }
       },
       "non_user_envelopes": []
@@ -1338,6 +1417,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "backstop-only",
+          "rules": "no user git lanes in the cloud VM; CI plus the schedule",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -1352,7 +1439,8 @@
       "dialect": "codex",
       "timeouts_s": {
         "session-start": 15,
-        "user-prompt": 10
+        "user-prompt": 10,
+        "stop": 5
       },
       "markers": {
         "env": [
@@ -1583,6 +1671,21 @@
             "reason": "a voluntary CLI: nothing on the host runs recon, findings, packet or verdict unprompted, so the cell stays advisory. The in-tool rules (policy-routed recon, the register lint, self-contained packets, the Blocked-over-Fit verdict) are fixture-verified by TestRemediation. The enforcing point is the commit and push lane plus CI over committed specs (H11 lands report-only in wave 2 and blocks by opt-in in wave 3).",
             "until": "wave-3"
           }
+        },
+        "H11": {
+          "mode": "advisory",
+          "rules": "post-commit verify and a report-only pre-push gate (git lanes through bin/ws-hook, once Sean installs them): a red verify is reported with its [gate:...] suffix and blocks only where Sean's installer set ws.pushgate=block; WS_PUSH_GATE=off switches it off; WS_GATE_BYPASS counts only with no agent in the ancestry and is recorded; CI is the backstop; the Codex Stop hook is a notice-only accelerator (one stderr line, never a continue or decision); SessionEnd stays unregistered (it fires only after 30 idle minutes)",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestGateLanes",
+            "selftest:09-tools/git_lanes.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice.",
+          "parity_waiver": {
+            "reason": "report-only by default: the post-commit verify and the pre-push gate run for every local committer once Sean installs the lanes, but a red verify only holds a push on a machine where Sean opts in (--install-git-hooks=block sets ws.pushgate). The lane behaviour is fixture-verified by TestGateLanes; the per-machine blocking opt-ins are wave 3.",
+            "until": "wave-3"
+          }
         }
       },
       "non_user_envelopes": []
@@ -1674,6 +1777,14 @@
         "H8": {
           "mode": "backstop-only",
           "rules": "a packet brief is the task body; CI lints the committed spec",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H11": {
+          "mode": "backstop-only",
+          "rules": "no local hooks; CI plus the schedule",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -1799,6 +1910,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "advisory",
+          "rules": "post-commit verify and a report-only pre-push gate (git lanes through bin/ws-hook, once Sean installs them): a red verify is reported with its [gate:...] suffix and blocks only where Sean's installer set ws.pushgate=block; WS_PUSH_GATE=off switches it off; WS_GATE_BYPASS counts only with no agent in the ancestry and is recorded; CI is the backstop",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestGateLanes",
+            "selftest:09-tools/git_lanes.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
         }
       },
       "non_user_envelopes": []
@@ -1920,6 +2042,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "advisory",
+          "rules": "post-commit verify and a report-only pre-push gate (git lanes through bin/ws-hook, once Sean installs them): a red verify is reported with its [gate:...] suffix and blocks only where Sean's installer set ws.pushgate=block; WS_PUSH_GATE=off switches it off; WS_GATE_BYPASS counts only with no agent in the ancestry and is recorded; CI is the backstop",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestGateLanes",
+            "selftest:09-tools/git_lanes.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
         }
       },
       "non_user_envelopes": []
@@ -2036,6 +2169,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "advisory",
+          "rules": "post-commit verify and a report-only pre-push gate (git lanes through bin/ws-hook, once Sean installs them): a red verify is reported with its [gate:...] suffix and blocks only where Sean's installer set ws.pushgate=block; WS_PUSH_GATE=off switches it off; WS_GATE_BYPASS counts only with no agent in the ancestry and is recorded; CI is the backstop",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestGateLanes",
+            "selftest:09-tools/git_lanes.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
         }
       },
       "non_user_envelopes": []
@@ -2125,6 +2269,14 @@
         "H8": {
           "mode": "backstop-only",
           "rules": "a packet brief is the task body; CI lints the committed spec",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H11": {
+          "mode": "backstop-only",
+          "rules": "server-side commits; CI plus the schedule",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -2252,6 +2404,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "advisory",
+          "rules": "post-commit verify and a report-only pre-push gate (git lanes through bin/ws-hook, once Sean installs them): a red verify is reported with its [gate:...] suffix and blocks only where Sean's installer set ws.pushgate=block; WS_PUSH_GATE=off switches it off; WS_GATE_BYPASS counts only with no agent in the ancestry and is recorded; CI is the backstop",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestGateLanes",
+            "selftest:09-tools/git_lanes.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
         }
       },
       "non_user_envelopes": []
@@ -2376,6 +2539,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "backstop-only",
+          "rules": "post-commit notice plus the report-only pre-push gate when the lanes are installed (aider's default --no-verify skips pre-commit, not post-commit or pre-push), and CI",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2496,6 +2667,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "advisory",
+          "rules": "post-commit verify and a report-only pre-push gate (git lanes through bin/ws-hook, once Sean installs them): a red verify is reported with its [gate:...] suffix and blocks only where Sean's installer set ws.pushgate=block; WS_PUSH_GATE=off switches it off; WS_GATE_BYPASS counts only with no agent in the ancestry and is recorded; CI is the backstop",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestGateLanes",
+            "selftest:09-tools/git_lanes.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
         }
       },
       "non_user_envelopes": []
@@ -2613,6 +2795,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "advisory",
+          "rules": "post-commit verify and a report-only pre-push gate (git lanes through bin/ws-hook, once Sean installs them): a red verify is reported with its [gate:...] suffix and blocks only where Sean's installer set ws.pushgate=block; WS_PUSH_GATE=off switches it off; WS_GATE_BYPASS counts only with no agent in the ancestry and is recorded; CI is the backstop",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestGateLanes",
+            "selftest:09-tools/git_lanes.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
         }
       },
       "non_user_envelopes": []
@@ -2727,6 +2920,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "advisory",
+          "rules": "post-commit verify and a report-only pre-push gate (git lanes through bin/ws-hook, once Sean installs them): a red verify is reported with its [gate:...] suffix and blocks only where Sean's installer set ws.pushgate=block; WS_PUSH_GATE=off switches it off; WS_GATE_BYPASS counts only with no agent in the ancestry and is recorded; CI is the backstop",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestGateLanes",
+            "selftest:09-tools/git_lanes.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
         }
       },
       "non_user_envelopes": []
@@ -2835,6 +3039,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "not-applicable",
+          "rules": "no local repos or commits",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -2937,6 +3149,14 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "not-applicable",
+          "rules": "no session of their own on a local repo",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
         }
       },
       "non_user_envelopes": []
@@ -3030,6 +3250,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H11": {
+          "mode": "advisory",
+          "rules": "post-commit verify and a report-only pre-push gate (git lanes through bin/ws-hook, once Sean installs them): a red verify is reported with its [gate:...] suffix and blocks only where Sean's installer set ws.pushgate=block; WS_PUSH_GATE=off switches it off; WS_GATE_BYPASS counts only with no agent in the ancestry and is recorded; CI is the backstop; Sean's own pushes are where WS_GATE_BYPASS can count",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestGateLanes",
+            "selftest:09-tools/git_lanes.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestGateLanes runs the lanes installed by the real installer in a temp HOME against a workspace-shaped repo with a stand-in verify: post-commit records the tree, the [gate:...] suffix is identical under the human, Claude, Cursor and Codex chains, a verified tree is reused, report-only never blocks, ws.pushgate=block holds only a red push, the agent-chain bypass is refused and recorded, the kill switch is honoured, and stop hooks emit at most one notice."
         }
       },
       "non_user_envelopes": []
@@ -3054,7 +3285,8 @@
       "pre-shell": "beforeShellExecution",
       "pre-mcp": "beforeMCPExecution",
       "post-edit": "afterFileEdit",
-      "post-shell": "afterShellExecution"
+      "post-shell": "afterShellExecution",
+      "stop": "stop"
     },
     "codex-hooks": {
       "session-start": "SessionStart",
@@ -3595,6 +3827,28 @@
       "verified_by": [
         "selftest:09-tools/ws_hook.py"
       ]
+    },
+    "ws-gate-cursor": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook --host cursor --event stop",
+      "behaviour": "gate-notice",
+      "implements": [
+        "host_filter",
+        "claim"
+      ],
+      "verified_by": [
+        "fixture:TestGateLanes"
+      ]
+    },
+    "ws-gate-codex": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook --host codex --event stop",
+      "behaviour": "gate-notice",
+      "implements": [
+        "host_filter",
+        "claim"
+      ],
+      "verified_by": [
+        "fixture:TestGateLanes"
+      ]
     }
   },
   "registrations": [
@@ -3858,6 +4112,17 @@
       "defers_to": null
     },
     {
+      "id": "cursor-user.stop",
+      "layer": "cursor-user",
+      "event": "stop",
+      "command": "ws-gate-cursor",
+      "timeout": 5,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
       "id": "cursor-project.subagent-stop",
       "layer": "cursor-project",
       "event": "subagent-stop",
@@ -3907,6 +4172,17 @@
       "event": "user-prompt",
       "command": "ws-route-codex",
       "timeout": 10,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "codex-user.stop",
+      "layer": "codex-user",
+      "event": "stop",
+      "command": "ws-gate-codex",
+      "timeout": 5,
       "matcher": null,
       "host_skip": [],
       "claim_group": null,
