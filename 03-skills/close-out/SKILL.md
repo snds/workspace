@@ -51,7 +51,10 @@ produced an artifact). After analysis/PM claims. Not for a question with no writ
    will not hunt screenshots.
 2. **Self-validate** — run `python3 09-tools/close-out-dispatch.py --from-prompt "<user prompt>" --run`
    first. That CLI is the named-detector table (command-hub L3). Exit 0 is not
-   verified for SKIP classes; exit 2 is honest skip only. Then name any extra
+   verified for SKIP classes; exit 2 is honest skip only. When the work is a vault
+   write, also run `close-out-dispatch.py --from-diff --run`: the gates the diff
+   selects from QUALITY_CHAIN (CHARGED fails, AMBIENT prints, SKIPPED is not green;
+   it leaves a receipt for per-surface compliance). Then name any extra
    detector the table could not run (`vqa prove`, axe/contrast, Pages
    `cds-exports-check`, MCP bind inspect). Honest skip beats a fake pass.
 3. **Self-confirm** — #06: no `verified`/`done` language without that detector.

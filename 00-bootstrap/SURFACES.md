@@ -160,6 +160,7 @@ Coverage on the minimum surfaces (scope: `shared` is held to parity on the hooka
 | H1 | shared | enforced-when-installed | backstop-only | enforced-when-installed | enforced-when-installed |
 | H2 | shared | enforced-partial | advisory | enforced-when-installed | enforced-when-installed |
 | H3 | shared | enforced | not-applicable | enforced | enforced |
+| H10 | shared | enforced-when-installed | backstop-only | enforced-when-installed | enforced-when-installed |
 | H15 | shared | enforced-partial | backstop-only | enforced-partial | enforced-when-installed |
 | H16 | shared | enforced | advisory | enforced-when-installed | enforced-when-installed |
 | H17 | claude-restriction | enforced-partial | backstop-only | advisory | advisory |

@@ -35,7 +35,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -128,6 +130,7 @@ QUALITY_CHAIN = [
     ("validate-layer0-schema.py", ["--check"]),
     ("skill-loadset.py", ["--self-test"]),
     ("close-out-dispatch.py", ["--check"]),
+    ("close-out-dispatch.py", ["--self-test"]),
     ("build-local-skill-plugin.py", ["--check"]),
     ("build-local-skill-plugin.py", ["--self-test"]),
     ("session-status.py", ["--check"]),
@@ -246,8 +249,35 @@ def run_quality(verbose: bool = False) -> dict:
             "last": tail[-1] if tail else "",
             "output": "\n".join(tail[-12:]) if (verbose and not ok) else "",
         })
+    lint = run_ruff()
+    failed += 1 if lint["status"] == "FAIL" else 0
+    results.append(lint)
     return {"lane": "quality", "failed": failed, "checks": results,
             "environment": [{"note": n, "gates": g} for n, g in seen.items()]}
+
+
+def run_ruff() -> dict:
+    """CI's first step is `ruff check`; a lint error there stops every later CI step, so the local run
+    lints too (found 2026-09-25: CI red all day while this harness stayed green). ruff is CI-only, never
+    a vault runtime dependency: absent -> SKIPPED with the reason, never a silent pass."""
+    exe = os.environ.get("HARNESS_RUFF") or shutil.which("ruff")
+    if not exe:
+        return {"tool": "ruff check", "status": "SKIPPED", "exit": None, "seconds": 0.0,
+                "last": "ruff not installed (CI lints on push; `brew install ruff` or set HARNESS_RUFF to match CI)",
+                "output": ""}
+    start = time.monotonic()
+    try:
+        proc = subprocess.run([exe, "check", "--quiet", "."], capture_output=True, text=True, cwd=str(ROOT),
+                              timeout=QUALITY_STEP_TIMEOUT_S)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {"tool": "ruff check", "status": "SKIPPED", "exit": None, "seconds": 0.0,
+                "last": f"ruff could not run ({type(exc).__name__})", "output": ""}
+    tail = [ln for ln in (proc.stdout + proc.stderr).strip().splitlines()
+            if "Operation not permitted" not in ln]      # sandbox-denied folders are not lint results
+    ok = proc.returncode == 0
+    return {"tool": "ruff check", "status": "ok" if ok else "FAIL", "exit": proc.returncode,
+            "seconds": round(time.monotonic() - start, 2), "last": tail[-1] if tail else "",
+            "output": "\n".join(tail[-12:]) if not ok else ""}
 
 
 # -------------------------------------------------------------------- lane: connections

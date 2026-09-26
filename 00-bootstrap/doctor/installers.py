@@ -46,8 +46,8 @@ import os
 import re
 import shutil
 import subprocess
-import tempfile
 import sys
+import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -552,7 +552,7 @@ def _splice_toml_tables(dst: Path, cur: str, body: str, begin: str, end: str) ->
         m = _TOML_HEADER_RE.match(ln.rstrip("\n"))
         if m:
             headers.setdefault(m.group(1).strip(), i)
-    sections, keep = [], []            # block sections: (table, [key lines])
+    sections = []                      # block sections: (table, [key lines])
     inner = body.splitlines(keepends=True)
     try:
         b0 = next(i for i, ln in enumerate(inner) if ln.rstrip("\n") == begin)

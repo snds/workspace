@@ -48,6 +48,12 @@ def load(name: str):
     return mod
 
 
+def urllib_opener_no_proxy():
+    """An opener that never routes a loopback stub through an environment proxy."""
+    import urllib.request
+    return urllib.request.build_opener(urllib.request.ProxyHandler({}))
+
+
 class TestValidatorFixtures(unittest.TestCase):
     def test_workspace_rejects_unindexed_knowledge(self):
         vw = load("validate-workspace")
@@ -579,7 +585,7 @@ class TestCloseOutDispatch(unittest.TestCase):
         self.assertIn("figma-mcp-capture", plan)
         self.assertIn("SKIP `figma-mcp-capture`", plan)
         self.assertIn("CLI `figma-bind-probe.py --self-test`", plan)
-        self.assertEqual(d.run_hubs(["lead-mobile-engineer"]), 2)
+        self.assertEqual(d._run_hubs(["lead-mobile-engineer"]), 2)  # _run_hubs: no receipt from a test
 
     def test_figma_probe_refuses_planted_violations(self):
         probe = load("figma-bind-probe")
@@ -597,6 +603,295 @@ class TestCloseOutDispatch(unittest.TestCase):
         data = json.loads(d.REGISTRY.read_text(encoding="utf-8"))
         hubs = d.hubs_for_prompt("build this in figma", data)
         self.assertIn("figma", hubs)
+
+    # ---- H10: diff-computed gates, receipts, trailers, compliance, the card's CI line ----------
+
+    _FAKE_GEN = ("import pathlib, sys\n"
+                 "if pathlib.Path('stale').exists():\n"
+                 "    print('registry stale: 03-skills/x/SKILL.md changed', file=sys.stderr); sys.exit(1)\n")
+    _FAKE_TREE = ("import pathlib, sys\n"
+                  "e = pathlib.Path('errors.txt')\n"
+                  "lines = [x for x in e.read_text().splitlines() if x.strip()] if e.exists() else []\n"
+                  "print('\\n'.join(lines), file=sys.stderr); sys.exit(1 if lines else 0)\n")
+    _FAKE_SLEEP = "import time; time.sleep(5)\n"
+
+    def _gate_tree(self, td):
+        root = Path(td)
+        (root / "09-tools").mkdir()
+        (root / "09-tools" / "gen.py").write_text(self._FAKE_GEN, encoding="utf-8")
+        (root / "09-tools" / "tree.py").write_text(self._FAKE_TREE, encoding="utf-8")
+        (root / "09-tools" / "sleepy.py").write_text(self._FAKE_SLEEP, encoding="utf-8")
+        steps = {"gen.py --check": ("gen.py", ["--check"]), "tree.py": ("tree.py", []), "sleepy.py": ("sleepy.py", [])}
+        classes = {"skills": {"globs": ["03-skills/**"], "owns": ["gen.py --check"], "tree": ["tree.py"]},
+                   "markdown": {"globs": ["**/*.md"], "owns": [], "tree": ["tree.py"]},
+                   "slow": {"globs": ["slow/**"], "owns": [], "tree": ["sleepy.py"]}}
+        return root, steps, classes
+
+    def _git(self, root, *args, env=None):
+        e = dict(os.environ, GIT_CONFIG_GLOBAL="/dev/null", GIT_CONFIG_NOSYSTEM="1", GIT_AUTHOR_NAME="Pat Sample",
+                 GIT_AUTHOR_EMAIL="pat@example.invalid", GIT_COMMITTER_NAME="Pat Sample",
+                 GIT_COMMITTER_EMAIL="pat@example.invalid", **(env or {}))
+        r = subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True, env=e, timeout=60)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        return r.stdout.strip()
+
+    def test_h10_cursor_replay_stale_registry_is_charged(self):
+        # (a) a SKILL.md edit with a stale registry exits 1, charged to skills via its own generator.
+        d = load("close-out-dispatch")
+        with tempfile.TemporaryDirectory() as td:
+            root, steps, classes = self._gate_tree(td)
+            (root / "stale").write_text("1", encoding="utf-8")
+            res = d.run_gate({"changed": ["03-skills/x/SKILL.md"]}, root=root, classes=classes, steps=steps)
+            gen = next(r for r in res["results"] if r["step"] == "gen.py --check")
+            self.assertEqual((res["rc"], gen["status"]), (1, "CHARGED"), res)
+            self.assertIn("owned by class skills", gen["why"])
+
+    def test_h10_docs_only_diff_runs_only_markdown_steps(self):
+        # (b) on the live table: a docs-only diff selects no owned generator and no tool self-test.
+        d = load("close-out-dispatch")
+        sel = d.select_steps(["01-frameworks/06-qa-operating-model.md"])
+        self.assertEqual(sel["classes"], ["markdown", "all"])
+        allowed = set(d.DIFF_CLASSES["markdown"]["tree"]) | set(d.DIFF_CLASSES["all"]["tree"])
+        self.assertTrue(sel["steps"] and all(n in allowed and o is None for n, o in sel["steps"]), sel)
+
+    def test_h10_filter_and_plugin_gaps_fail_check(self):
+        # (c) a filter gap and a plugin path outside surface-config FAIL --check on the live table.
+        d = load("close-out-dispatch")
+        self.assertEqual(d.check_diff_classes(), [])
+        wfs = d.read_workflows(d.ROOT)
+        cut = {}
+        for name, w in wfs.items():
+            w = dict(w)
+            if w.get("push"):
+                w["push"] = [f for f in w["push"] if f not in (".claude/**", ".claude/hooks/**")]
+            cut[name] = w
+        errs = d.check_diff_classes(workflows=cut)
+        self.assertTrue(any("filter gap" in e and ".claude/hooks/**" in e for e in errs), errs)
+        sc = dict(d.DIFF_CLASSES["surface-config"])
+        sc["globs"] = [g for g in sc["globs"] if g not in (".claude/skills/**", "00-bootstrap/dist/**")]
+        errs = d.check_diff_classes(classes=dict(d.DIFF_CLASSES, **{"surface-config": sc}))
+        self.assertTrue(any(e.startswith("plugin path ") for e in errs), errs)
+        self.assertTrue(any("00-bootstrap/dist/plugin-hooks.json" in e for e in errs), errs)
+        gate = dict(wfs[d.GATE_WORKFLOW], schedule=False)
+        errs = d.check_diff_classes(workflows=dict(wfs, **{d.GATE_WORKFLOW: gate}))
+        self.assertTrue(any("schedule" in e for e in errs), errs)
+
+    def test_h10_invented_step_fails_check(self):
+        # (d) a class naming build-registry.py --self-test (not in QUALITY_CHAIN) FAILs --check.
+        d = load("close-out-dispatch")
+        sk = dict(d.DIFF_CLASSES["skills"], owns=list(d.DIFF_CLASSES["skills"]["owns"]) + ["build-registry.py --self-test"])
+        errs = d.check_diff_classes(classes=dict(d.DIFF_CLASSES, skills=sk))
+        self.assertTrue(any("build-registry.py --self-test" in e and "QUALITY_CHAIN" in e for e in errs), errs)
+
+    def test_h10_sleeping_step_is_skipped_exit_2(self):
+        # (e)
+        d = load("close-out-dispatch")
+        with tempfile.TemporaryDirectory() as td:
+            root, steps, classes = self._gate_tree(td)
+            res = d.run_gate({"changed": ["slow/x"]}, root=root, classes=classes, steps=steps, step_timeout=0.5)
+            self.assertEqual(res["rc"], 2, res)
+            self.assertEqual(res["results"][0]["status"], "SKIPPED")
+
+    def test_h10_error_outside_the_diff_is_ambient(self):
+        # (f) an integrity error on an untracked file outside the diff is AMBIENT: printed, exit 0.
+        d = load("close-out-dispatch")
+        with tempfile.TemporaryDirectory() as td:
+            root, steps, classes = self._gate_tree(td)
+            (root / "errors.txt").write_text("scratch/untracked-note.md: dangling link\n", encoding="utf-8")
+            res = d.run_gate({"changed": ["docs/a.md"]}, root=root, classes=classes, steps=steps)
+            self.assertEqual((res["rc"], res["results"][0]["status"]), (0, "AMBIENT"), res)
+            self.assertIn("AMBIENT", d.format_gate(res))
+
+    def test_h10_deleted_note_linked_from_unchanged_file_is_charged(self):
+        # (g) whole-tree validators name the file CONTAINING the dangling link; the deleted stem charges it.
+        d = load("close-out-dispatch")
+        with tempfile.TemporaryDirectory() as td:
+            root, steps, classes = self._gate_tree(td)
+            (root / "errors.txt").write_text("docs/unchanged.md: dangling wikilink [[gone-note]]\n", encoding="utf-8")
+            res = d.run_gate({"changed": [], "deleted": ["docs/gone-note.md"]}, root=root, classes=classes, steps=steps)
+            self.assertEqual((res["rc"], res["results"][0]["status"]), (1, "CHARGED"), res)
+
+    def test_h10_touch_list_leaves_other_sessions_paths_ambient(self):
+        # (h) with a touch-list, an error on another session's path is AMBIENT even though it is in the diff.
+        d = load("close-out-dispatch")
+        with tempfile.TemporaryDirectory() as td:
+            root, steps, classes = self._gate_tree(td)
+            (root / "errors.txt").write_text("docs/theirs.md: smell\n", encoding="utf-8")
+            paths = {"changed": ["docs/mine.md", "docs/theirs.md"]}
+            res = d.run_gate(paths, root=root, classes=classes, steps=steps, touched=["docs/mine.md"])
+            self.assertEqual((res["rc"], res["results"][0]["status"]), (0, "AMBIENT"), res)
+            res = d.run_gate(paths, root=root, classes=classes, steps=steps)
+            self.assertEqual(res["rc"], 1, res)
+
+    def test_h10_new_project_folder_is_classed(self):
+        # (i)
+        d = load("close-out-dispatch")
+        tracked = d._tracked(d.ROOT) + ["07-projects/99-new/notes.txt", "07-projects/99-new/PROJECT.md"]
+        self.assertEqual([e for e in d.check_diff_classes(tracked=tracked) if "99-new" in e], [])
+
+    def test_h10_baseline_charges_only_new_errors(self):
+        d = load("close-out-dispatch")
+        with tempfile.TemporaryDirectory() as td:
+            root, steps, classes = self._gate_tree(td)
+            self._git(root, "init", "-q", "-b", "main")
+            (root / "errors.txt").write_text("docs/old.md: known smell\n", encoding="utf-8")
+            self._git(root, "add", "-A")
+            self._git(root, "commit", "-q", "-m", "base")
+            base = self._git(root, "rev-parse", "HEAD")
+            res = d.run_gate({"changed": ["docs/old.md"]}, root=root, classes=classes, steps=steps, baseline=base)
+            self.assertEqual((res["rc"], res["results"][0]["status"]), (0, "AMBIENT"), res)
+            (root / "errors.txt").write_text("docs/old.md: known smell\ndocs/else.md: new smell\n", encoding="utf-8")
+            res = d.run_gate({"changed": ["docs/x.md"]}, root=root, classes=classes, steps=steps, baseline=base)
+            self.assertEqual((res["rc"], res["results"][0]["status"]), (1, "CHARGED"), res)
+
+    def test_h10_receipt_trailer_join_three_surfaces(self):
+        # Receipts x trailers over a synthetic repo: Claude Code gated, Cursor ungated, Codex laned with its
+        # transcript column an honest SKIP; the unlaned count covers the one untrailered commit.
+        d = load("close-out-dispatch")
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            self._git(root, "init", "-q", "-b", "main")
+            self._git(root, "commit", "-q", "--allow-empty", "-m", "base")
+            heads = {}
+            for lane in ("claude-code/claude/dev-a", "cursor/cursor/dev-a", "codex/codex/dev-b", None):
+                parent = self._git(root, "rev-parse", "HEAD")
+                extra = ["--trailer", f"{d.TRAILER_KEY}: {lane}"] if lane else []
+                self._git(root, "commit", "-q", "--allow-empty", "-m", f"work {lane}", *extra)
+                heads[lane] = parent
+            receipts = [d.make_receipt({"surface": "claude-code", "family": "claude", "device": "dev-a",
+                                        "repo_slug": "pat-sample/ws"}, via="t", head=heads["claude-code/claude/dev-a"],
+                                       classes=["markdown"], verdict={"result": "pass"}),
+                        d.make_receipt({"surface": "cursor", "family": "cursor", "device": "dev-a",
+                                        "repo_slug": "pat-sample/ws"}, via="t", head="0" * 40, classes=["tools"],
+                                       verdict={"result": "pass"})]
+            commits = d.read_commits(root, "HEAD~4..HEAD")
+            res = d.compliance(receipts, commits)
+            rows = {r["surface"]: r for r in res["rows"]}
+            self.assertEqual((rows["claude-code"]["commits"], rows["claude-code"]["gated"]), (1, 1), rows)
+            self.assertEqual((rows["cursor"]["commits"], rows["cursor"]["gated"], rows["cursor"]["receipts"]), (1, 0, 1))
+            self.assertEqual(rows["codex"]["commits"], 1)
+            self.assertTrue(rows["codex"]["transcripts"].startswith("SKIP"))
+            self.assertEqual(res["unlaned"], 1)
+            out = d.format_compliance(res, "HEAD~4..HEAD")
+            self.assertIn("codex", out)
+            self.assertIn("transcripts=SKIP", out)
+            for secret_shape in ("@", "/Users/", "http"):
+                self.assertNotIn(secret_shape, json.dumps(receipts))
+
+    def test_h10_unlaned_count_on_a_synthetic_range(self):
+        d = load("close-out-dispatch")
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            self._git(root, "init", "-q", "-b", "main")
+            self._git(root, "commit", "-q", "--allow-empty", "-m", "old")
+            start = self._git(root, "rev-parse", "HEAD")
+            for i, lane in enumerate(["cursor/cursor/dev-a", None, None, "claude-code/claude/dev-a", "bad-value"]):
+                extra = ["--trailer", f"{d.TRAILER_KEY}: {lane}"] if lane else []
+                self._git(root, "commit", "-q", "--allow-empty", "-m", f"c{i}", *extra)
+            self.assertEqual(d.unlaned(d.read_commits(root, f"{start}..HEAD")), 3)
+
+    def test_h10_card_ci_read_against_a_stub_server(self):
+        # Offline-safe: a local stub stands in for api.github.com; the request must carry no credential even
+        # with a token in the environment. A sandbox that denies local binding SKIPs (never a pass).
+        import http.server
+        import threading
+        ss = load("session-status")
+        seen = []
+
+        class H(http.server.BaseHTTPRequestHandler):
+            def do_GET(self):  # noqa: N802
+                seen.append((self.path, {k.lower(): v for k, v in self.headers.items()}))
+                body = json.dumps({"total_count": 2, "check_runs": [
+                    {"name": "gate-selection", "status": "completed", "conclusion": "failure"},
+                    {"name": "check", "status": "completed", "conclusion": "success"}]}).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, *_a):
+                pass
+
+        try:
+            srv = http.server.HTTPServer(("127.0.0.1", 0), H)
+        except OSError as exc:
+            self.skipTest(f"local binding denied here ({exc}); run outside the sandbox")
+        th = threading.Thread(target=srv.serve_forever, daemon=True)
+        th.start()
+        saved = {k: os.environ.get(k) for k in ("GITHUB_TOKEN", "GH_TOKEN")}
+        os.environ["GITHUB_TOKEN"] = os.environ["GH_TOKEN"] = "fixture-not-a-token"
+        try:
+            base = f"http://127.0.0.1:{srv.server_address[1]}"
+            data = ss.fetch_check_runs("pat-sample/ws", base=base, opener=urllib_opener_no_proxy())
+            self.assertEqual(ss.ci_conclusion(data), "failure (gate-selection)")
+            self.assertEqual(seen[0][0], "/repos/pat-sample/ws/commits/main/check-runs?per_page=100")
+            self.assertNotIn("authorization", seen[0][1])
+            srv.shutdown()
+            srv.server_close()
+            t0 = __import__("time").monotonic()
+            self.assertIsNone(ss.fetch_check_runs("pat-sample/ws", base=base, timeout=1.0, opener=urllib_opener_no_proxy()))
+            self.assertLess(__import__("time").monotonic() - t0, 3.5)
+        finally:
+            for k, v in saved.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
+
+    def test_h10_constants_agree(self):
+        d = load("close-out-dispatch")
+        ss = load("session-status")
+        gl = load("git_lanes")
+        self.assertEqual(d.TRAILER_KEY, ss.TRAILER_KEY)
+        self.assertEqual(d.TRAILER_KEY, gl.TRAILER_KEY)
+        self.assertEqual(d.UNLANED_SINCE, ss.UNLANED_SINCE)
+        self.assertIn("close-out-dispatch.py --from-diff", (ROOT_DIR / d.GATE_WORKFLOW).read_text(encoding="utf-8"))
+
+    def test_h10_trailer_lane_never_writes_in_an_employer_repo(self):
+        # In-process over the fixture tables: an acme-corp (employer) repo gets write=False and the message
+        # file stays byte-identical; the pat-sample workspace-role repo gets a trailer.
+        import io
+        import shutil
+        gl = load("git_lanes")
+        pr_mod = load("profile_resolve")
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(os.path.realpath(td))
+            home = tmp / "home"
+            home.mkdir()
+            lib = tmp / "lib"
+            src = {"devices": TOOLS / "fixtures/identity/devices.json",
+                   "context-remotes": TOOLS / "fixtures/identity/context-remotes.json",
+                   "surfaces": TOOLS / "fixtures/profile_resolve/surfaces.json",
+                   "action-policy": TOOLS / "fixtures/action_policy/action-policy.json",
+                   "vetted-scripts": TOOLS / "fixtures/action_policy/vetted-scripts.json"}
+            for name, path in src.items():
+                dst = lib / pr_mod.TABLE_PATHS[name]
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(path, dst)
+            env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(home), "GIT_CONFIG_NOSYSTEM": "1",
+                   "GIT_CONFIG_GLOBAL": "/dev/null", "CURSOR_AGENT": "1"}
+            repos = {}
+            for slug in ("acme-corp/widget", "pat-sample/ws"):
+                r = tmp / slug.replace("/", "-")
+                r.mkdir()
+                self._git(r, "init", "-q", "-b", "main")
+                self._git(r, "remote", "add", "origin", f"git@github.com:{slug}.git")
+                repos[slug] = r
+            gl._PR = None
+            for slug, want in (("acme-corp/widget", False), ("pat-sample/ws", True)):
+                v = gl.trailer_decide([], env=env, ancestry=[], root=lib, home=home, cwd=repos[slug])
+                self.assertEqual(v["write"], want, (slug, v))
+                msg = repos[slug] / "MSG"
+                msg.write_text("subject\n", encoding="utf-8")
+                before = sorted(p.name for p in repos[slug].rglob("*"))
+                gl.run_trailer([str(msg)], err=io.StringIO(), decide=lambda _a, _v=v: _v)
+                body = msg.read_text(encoding="utf-8")
+                if want:
+                    self.assertIn(f"{gl.TRAILER_KEY}: cursor/cursor/", body)
+                else:
+                    self.assertEqual(body, "subject\n")
+                    self.assertEqual(before, sorted(p.name for p in repos[slug].rglob("*")))
+            gl._PR = None
 
 
 class TestCheckSecrets(unittest.TestCase):

@@ -1059,7 +1059,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:c9dc4627c104e995fc589068a4a08b2ec380d7a5fe4dba38b04508f29f7c33c7"
+      "hash": "sha256:91acb3c88c9765f674c304e50c66f23d4fb5d537a2b8945e7b9102814438c879"
     },
     "data-foundations": {
       "path": "03-skills/data-foundations/SKILL.md",
