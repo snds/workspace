@@ -2620,8 +2620,8 @@ def build_recon(top: Path, res: dict) -> tuple[dict, list[str]]:
     """The recon facts, and the secret-shaped names (stdout only; never opened, never stored)."""
     files = _recon_files(top)
     secrets = [f for f in files if SECRET_NAME_RE.search(f)]
-    safe = [f for f in files if f not in set(secrets)]
-    names = {f.rsplit("/", 1)[-1] for f in safe}
+    secret_set = set(secrets)
+    safe = [f for f in files if f not in secret_set]
     langs: dict[str, int] = {}
     for f in safe:
         lang = LANG_BY_EXT.get(Path(f).suffix.lower())
