@@ -33,7 +33,8 @@
     "H24",
     "H25",
     "H23",
-    "H11"
+    "H11",
+    "H14"
   ],
   "component_scopes": {
     "H1": {
@@ -103,6 +104,10 @@
     "H9": {
       "scope": "shared",
       "reason": "Write scope is task data every implementor carries, whatever its vendor: the lint, the gate, the diff check and the pre-write report read the same task graph for every agent."
+    },
+    "H14": {
+      "scope": "shared",
+      "reason": "The rule of three is vault evolution from normal use on any surface: every agent that hits a repeated gap appends a row, and the growth check holds every committer's new hubs, foundations and frameworks to the same evidence."
     }
   },
   "current_wave": 2,
@@ -464,6 +469,17 @@
             "reason": "report-only by plan: in wave 2 a pre-write scope finding goes to stderr and scope.jsonl and never changes a host decision, so the cell stays advisory. The in-tool rules (disjoint-wave lint, gate refusal, scope --branch/--range, the per-profile pointer) are fixture-verified by TestIntentScope. Blocking lands in wave 3 as a per-machine opt-in that honours a task's `enforce: true`; CI `scope --range` on PRs is the backstop for everything else.",
             "until": "wave-3"
           }
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": [
@@ -584,6 +600,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -755,6 +782,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "advisory",
+          "rules": "no shell: the chat emits a copy-ready row (the add --print shape, surface claude-chat) for a human to append; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -881,6 +919,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "no local shell for the add CLI: a row is pasted by a human or a shell surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -990,6 +1039,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "no local shell for the add CLI: a row is pasted by a human or a shell surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -1271,6 +1331,17 @@
             "reason": "report-only by plan: in wave 2 a pre-write scope finding goes to stderr and scope.jsonl and never changes a host decision, so the cell stays advisory. The in-tool rules (disjoint-wave lint, gate refusal, scope --branch/--range, the per-profile pointer) are fixture-verified by TestIntentScope. Blocking lands in wave 3 as a per-machine opt-in that honours a task's `enforce: true`; CI `scope --range` on PRs is the backstop for everything else.",
             "until": "wave-3"
           }
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -1397,6 +1468,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -1508,6 +1590,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -1790,6 +1883,17 @@
             "reason": "report-only by plan: in wave 2 a pre-write scope finding goes to stderr and scope.jsonl and never changes a host decision, so the cell stays advisory. The in-tool rules (disjoint-wave lint, gate refusal, scope --branch/--range, the per-profile pointer) are fixture-verified by TestIntentScope. Blocking lands in wave 3 as a per-machine opt-in that honours a task's `enforce: true`; CI `scope --range` on PRs is the backstop for everything else.",
             "until": "wave-3"
           }
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -1901,6 +2005,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "no local shell for the add CLI: a row is pasted by a human or a shell surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -2041,6 +2156,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -2181,6 +2307,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -2316,6 +2453,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -2425,6 +2573,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "no local shell for the add CLI: a row is pasted by a human or a shell surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -2567,6 +2726,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -2707,6 +2877,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -2846,6 +3027,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -2982,6 +3174,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -3115,6 +3318,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -3239,6 +3453,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "no local shell for the add CLI: a row is pasted by a human or a shell surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -3357,6 +3582,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "no local shell for the add CLI: a row is pasted by a human or a shell surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []
@@ -3469,6 +3705,17 @@
           "verified_by": [],
           "planned_verified_by": [],
           "how": ""
+        },
+        "H14": {
+          "mode": "backstop-only",
+          "rules": "rows appended with rule_of_three.py add, which stamps this surface from detect_surface; check_rule_of_three runs in CI (workspace-harness --connections, the baseline compared with the push's before or the PR base); it is not in the pre-commit lane",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestRuleOfThree",
+            "selftest:09-tools/workspace-harness.py"
+          ],
+          "planned_verified_by": [],
+          "how": "TestRuleOfThree and the harness self-test run the v1.0 cases (fewer than three rows for a new hub fails, three resolvable rows pass, a command-hub with a HUB_DETECTORS row passes, a dangling SHA and a session-log anchor fail, a grown baseline fails, a new framework with two consumers fails and with three passes), an unknown surface id failing, grandfathered debt passing while new unresolved growth fails, and the add CLI stamping surface, family and device from detect_surface"
         }
       },
       "non_user_envelopes": []

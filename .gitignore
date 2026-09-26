@@ -139,6 +139,8 @@
 !09-tools/git_lanes.py
 !09-tools/wall_guard.py
 !09-tools/closure.py
+!09-tools/rule_of_three.py
+!09-tools/rule-of-three.baseline.json
 !09-tools/ws-hook-repo.sh
 !09-tools/eslint-off-system/
 !09-tools/eslint-off-system/**

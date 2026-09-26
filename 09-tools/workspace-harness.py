@@ -861,6 +861,33 @@ def print_parity(res: dict) -> None:
     print(f"parity: {verdict}" + (" (report-only; W1-V flips parity_gate to enforce)" if r["gate"] == "report" else ""))
 
 
+# H14 rule-of-three. The log, row schema, baseline and growth semantics live in
+# rule_of_three.py (one home; its CLI appends rows from any surface); this is the lane's wrapper.
+def _rule_of_three():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("rule_of_three", TOOLS / "rule_of_three.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def check_rule_of_three(root: Path = ROOT, ctx: dict | None = None) -> dict:
+    """H14: rows valid (known surface, resolvable evidence), no pattern at three instances without
+    a resolution unless grandfathered, no new hub/foundation/framework without the evidence, and a
+    baseline that only shrinks."""
+    try:
+        r3 = _rule_of_three()
+        res = r3.evaluate(ctx) if ctx is not None else r3.check(root)
+    except Exception as exc:  # noqa: BLE001 - a crash here is a red check, not a harness abort
+        return {"check": "rule-of-three", "scanned": 0,
+                "failures": [f"rule_of_three.py could not run ({exc.__class__.__name__}: {exc})"]}
+    out = {"check": "rule-of-three", "scanned": res["rows"], "failures": res["failures"]}
+    debt = sorted(n for n, p in res["patterns"].items() if p["status"] == "debt")
+    note = f"{len(res['patterns'])} pattern(s)" + (f", {len(debt)} grandfathered ({', '.join(debt)})" if debt else "")
+    out["note"] = "; ".join([note] + res["notes"])
+    return out
+
+
 def run_connections() -> dict:
     if not REGISTRY.exists():
         return {"lane": "connections", "failed": 1,
@@ -879,6 +906,7 @@ def run_connections() -> dict:
         check_single_sources(),
         check_entry_points(),
         check_component_parity(),
+        check_rule_of_three(),
     ]
     return {"lane": "connections",
             "failed": sum(1 for c in checks if c["failures"]),
@@ -1443,6 +1471,56 @@ def self_test() -> int:
            check_component_parity(ptable(scope="maybe"))["failures"])
     expect("parity: the live table is well-formed", not parity_gaps(json.loads(
         SURFACES_TABLE.read_text(encoding="utf-8")))["errors"])
+
+    # H14 rule-of-three on synthetic data (clock-free: ts values are fixed strings)
+    def r3ctx(rows, baseline=None, prev=None, hubs=None, frameworks=None, detectors=()):
+        def resolve(ref):
+            if "session-log" in ref or "#" in ref:
+                return "anchor"
+            known = {"aaaaaaa", "bbbbbbb", "ccccccc", "t/fix.py", "03-skills/new/SKILL.md"}
+            return None if ref in known else "dangling"
+        return {"rows": list(enumerate(rows, 1)), "surfaces": {"claude-code", "cursor"},
+                "families": {"claude", "cursor"}, "devices": {"unknown"}, "resolve": resolve,
+                "baseline": baseline if baseline is not None else {"hubs": [], "frameworks": [],
+                                                                    "unresolved_patterns": []},
+                "base_baseline": prev, "base_ref": "HEAD", "hubs": hubs or {},
+                "hub_detectors": set(detectors), "frameworks": frameworks or {}}
+
+    def r3row(ref, surface="claude-code", target=None, pattern="same-fix"):
+        r = {"ts": "2026-01-01T00:00:00Z", "pattern": pattern, "instance_ref": ref,
+             "surface": surface, "family": "claude", "device": "unknown"}
+        if target:
+            r["target"] = target
+        return json.dumps(r)
+
+    three = [r3row("aaaaaaa"), r3row("bbbbbbb"), r3row("ccccccc")]
+    grandfathered = {"hubs": [], "frameworks": [], "unresolved_patterns": ["same-fix"]}
+    expect("r3: three instances with no resolution fail", check_rule_of_three(ctx=r3ctx(three))["failures"])
+    expect("r3: grandfathered debt passes",
+           not check_rule_of_three(ctx=r3ctx(three, grandfathered))["failures"])
+    expect("r3: a recorded resolution passes", not check_rule_of_three(ctx=r3ctx(
+        three[:2] + [r3row("ccccccc", target="t/fix.py")]))["failures"])
+    expect("r3: an unknown surface id fails",
+           check_rule_of_three(ctx=r3ctx([r3row("aaaaaaa", "nope")]))["failures"])
+    expect("r3: a dangling SHA fails", check_rule_of_three(ctx=r3ctx([r3row("deadbee")]))["failures"])
+    expect("r3: a session-log anchor fails",
+           check_rule_of_three(ctx=r3ctx([r3row("06-context/session-log.md#x")]))["failures"])
+    hub = {"new": {"path": "03-skills/new/SKILL.md", "tier": "hub", "rigor_role": None}}
+    expect("r3: a new hub with no rows fails", check_rule_of_three(ctx=r3ctx([], hubs=hub))["failures"])
+    hub_rows = [r3row(x, target="03-skills/new/SKILL.md", pattern="hub-need")
+                for x in ("aaaaaaa", "bbbbbbb", "ccccccc")]
+    expect("r3: a new hub with three targeting rows passes",
+           not check_rule_of_three(ctx=r3ctx(hub_rows, hubs=hub))["failures"])
+    cmd = {"new": {**hub["new"], "rigor_role": "command-hub"}}
+    expect("r3: a command-hub with a HUB_DETECTORS row passes",
+           not check_rule_of_three(ctx=r3ctx([], hubs=cmd, detectors=["new"]))["failures"])
+    expect("r3: a new framework with 2 consumers fails",
+           check_rule_of_three(ctx=r3ctx([], frameworks={"01-frameworks/99-x.md": 2}))["failures"])
+    expect("r3: a new framework with 3 consumers passes",
+           not check_rule_of_three(ctx=r3ctx([], frameworks={"01-frameworks/99-x.md": 3}))["failures"])
+    grown = {"hubs": ["new"], "frameworks": [], "unresolved_patterns": []}
+    expect("r3: a baseline that grew relative to the base ref fails",
+           check_rule_of_three(ctx=r3ctx([], grown, prev={"hubs": []}, hubs=hub))["failures"])
 
     for name in failures:
         print(f"  ✗ {name}")

@@ -6702,7 +6702,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": "command-hub",
-      "hash": "sha256:86e2a78046f24be0f5f46d20f19bd58cb863f684b90b60e0c5bc331151c9c266"
+      "hash": "sha256:f198884e8f85baa9763211e6b924c8f13029ae328905a7dfab4c973e9d9e3a4c"
     },
     "session-end": {
       "path": "03-skills/session-end/SKILL.md",

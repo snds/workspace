@@ -40,6 +40,9 @@ on:
       - "09-tools/fixtures/wall_guard/**"
       - "09-tools/vault-health.py"
       - "09-tools/workspace-harness.py"
+      - "09-tools/rule_of_three.py"
+      - "09-tools/rule-of-three.baseline.json"
+      - "06-context/rule-of-three.jsonl"
       - "09-tools/evaluate-surface-trajectories.py"
       - "09-tools/validate-evidence-grades.py"
       - "09-tools/nightly.py"
@@ -110,6 +113,9 @@ on:
       - "09-tools/fixtures/wall_guard/**"
       - "09-tools/vault-health.py"
       - "09-tools/workspace-harness.py"
+      - "09-tools/rule_of_three.py"
+      - "09-tools/rule-of-three.baseline.json"
+      - "06-context/rule-of-three.jsonl"
       - "09-tools/evaluate-surface-trajectories.py"
       - "09-tools/validate-evidence-grades.py"
       - "09-tools/nightly.py"
@@ -195,6 +201,9 @@ jobs:
       - name: Harness self-test (the detectors must be able to fail)
         run: python3 09-tools/workspace-harness.py --self-test
       - name: Reachability, connection solidity, traversal token budget
+        env:
+          # H14: the rule-of-three baseline may only shrink relative to the push's before / the PR base
+          WS_RULE3_BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: python3 09-tools/workspace-harness.py --connections --tokens
       - name: Per-surface trajectories (every surface delivers the same context)
         run: python3 09-tools/evaluate-surface-trajectories.py --self-test
