@@ -17,7 +17,8 @@ Safety, in order:
      employer checkout from the checkout cache. When unsure, it is skipped.
   2. The default run is a dry run: it prints the plan and writes nothing.
   3. Repos are private. `--public NAME[,NAME...]` makes only the named folders public.
-  4. A folder is blocked (with the reason) when it holds a secret-shaped file (.env*, *.pem,
+  4. A folder is blocked (with the reason) when it holds a secret-shaped file (.env*, *.pem, router or
+     device backups such as *.unf,
      *.key, id_rsa*, *.p12, credentials JSON and similar), content that check-secrets.py's
      secret patterns match, or any file over 50 MB. A public folder is also scanned with
      check-secrets' employer-substance rules and blocked on any hit.
@@ -81,6 +82,9 @@ SECRET_NAME_GLOBS = (
     ".env", ".env.*", "*.pem", "*.key", "id_rsa*", "id_dsa*", "id_ecdsa*", "id_ed25519*", "*.p12", "*.pfx",
     "*.jks", "*.keystore", "credentials.json", "*credentials*.json", "client_secret*.json",
     "*service-account*.json", "*service_account*.json", ".netrc", ".pypirc",
+    # device and vault backups that carry network or account secrets (a UniFi .unf backup slipped through, 2026-09-26)
+    "*.unf", "*.supp", "autobackup_*", "config-export*", "*.ovpn", "*.kdbx", "*.ppk", "*.mobileconfig",
+    "*.tfstate", "*.tfstate.*",
 )
 SECRET_NAME_ALLOW_SUFFIXES = (".example",)
 COMMIT_MESSAGE = "Initial backup of {folder} (backup-projects.py)"
@@ -769,6 +773,7 @@ def build_fixture(tmp: Path) -> Tuple[Path, Path]:
     _fake_repo(root / "clientwork" / "widget", "https://github.com/acme-corp/widget.git")
     _w(root / "clientwork" / "drafts" / "d.md", "next to an employer repo\n")
     _w(root / "with-env" / ".env", "TOKEN=x\n")
+    _w(root / "router-backup" / "autobackup_1.unf", "binary\n")
     _w(root / "with-env" / "app.py", "print(1)\n")
     big = root / "big-assets" / "movie.bin"
     big.parent.mkdir(parents=True, exist_ok=True)
@@ -831,7 +836,7 @@ def self_test() -> int:
         skipped = {s["rel"]: s["reason"] for s in p["skipped"]}
         ready = sorted(r for r, e in cands.items() if not e["blockers"])
         ok(ready == ["Design Ideas", "leaf-notes", "mixed/sketches", "public-leak"], f"ready list {ready}")
-        ok(sorted(r for r, e in cands.items() if e["blockers"]) == ["big-assets", "keys-in-text", "with-env"],
+        ok(sorted(r for r, e in cands.items() if e["blockers"]) == ["big-assets", "keys-in-text", "router-backup", "with-env"],
            "blocked list")
         ok(sorted(skipped) == ["acme-notes", "clientwork/drafts"], f"skipped list {sorted(skipped)}")
         ok("employer glob" in skipped.get("acme-notes", ""), "acme-notes skipped by employer glob")
@@ -847,7 +852,7 @@ def self_test() -> int:
         ok(any("employer substance" in b for b in pc["public-leak"]["blockers"]), "public: employer substance blocks")
         ok(pc["leaf-notes"]["visibility"] == "public" and not pc["leaf-notes"]["blockers"], "public by name only")
         pe = plan(root, public=[], tables_root=tables, hostname=EMPLOYER_HOST, env=env)
-        ok(not pe["candidates"] and len(pe["skipped"]) == 9, "employer device: every folder skipped")
+        ok(not pe["candidates"] and len(pe["skipped"]) == 10, "employer device: every folder skipped")
         _HUMAN_OVERRIDE = False
         try:
             rc = apply(p, only=[], ask=lambda _q: "y", env=env, tables_root=tables, hostname=PERSONAL_HOST,

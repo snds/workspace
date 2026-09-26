@@ -2727,7 +2727,7 @@ class TestBackupProjects(unittest.TestCase):
         blocked = {e["rel"]: " ".join(e["blockers"]) for e in p["candidates"] if e["blockers"]}
         skipped = {s["rel"]: s["reason"] for s in p["skipped"]}
         self.assertEqual(ready, ["Design Ideas", "leaf-notes", "mixed/sketches", "public-leak"])
-        self.assertEqual(sorted(blocked), ["big-assets", "keys-in-text", "with-env"])
+        self.assertEqual(sorted(blocked), ["big-assets", "keys-in-text", "router-backup", "with-env"])
         self.assertIn("secret-shaped file .env", blocked["with-env"])
         self.assertIn("over 50 MB", blocked["big-assets"])
         self.assertIn("aws-access-key", blocked["keys-in-text"])
