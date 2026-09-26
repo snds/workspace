@@ -59,4 +59,4 @@ platform-relative Projects directory, **never** in this portable workspace:
 
 Read `SESSION-STATE.md` Live handoff first, then `synthesis/running.md`. Notes are original; never paste
 transcript text into the workspace (short attributed quotes only). Personal-workspace content — never copy
-into `c8/*` employer repos.
+into employer repos.

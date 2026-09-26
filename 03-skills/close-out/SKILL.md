@@ -37,7 +37,7 @@ your own work, or (b) the mint still cannot make the QA process usable.
 
 Leave-the-building (external publish, employer merge, spend, delete) stays
 [[mission-fit]] — this skill does not waive that. Never push this mint path
-into employer (`c8/*`) repos.
+into employer repos.
 
 ## When to use
 

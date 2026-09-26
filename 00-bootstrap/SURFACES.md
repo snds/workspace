@@ -201,6 +201,7 @@ Registrations (one effective registration per surface, event and behaviour):
 | codex-user.pre-tool | pre-tool | ws-guard-codex | - | - |
 | codex-user.post-tool | post-tool | ws-ledger-codex | - | - |
 | codex-user.sweep | session-start | ws-sweep-codex | - | - |
+| codex-user.user-prompt | user-prompt | ws-route-codex | - | - |
 | probe-claude-user.session-start | session-start | ws-hook-probe | - | ws-probe |
 | probe-claude-user.user-prompt | user-prompt | ws-hook-probe | - | ws-probe |
 | probe-claude-user.stop | stop | ws-hook-probe | - | ws-probe |

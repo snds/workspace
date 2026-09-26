@@ -12,7 +12,8 @@ Checks:
      never silently miss an entry (added 2026-07-08 after unindexed entries were found).      [error]
   4. TOOL ADAPTERS      — native-filename pointers at AGENTS.md exist, mention close-out, and
      stay short (added 2026-09-11 so Gemini/Copilot/Warp/Aider/Windsurf/web packs cannot drift
-     into a second contract).                                                                [error]
+     into a second contract). The adapter list is derived from `surfaces[].adapters` in
+     02-shared-references/surfaces.json, never kept here.                                   [error]
 
 Stdlib-only. See 01-frameworks/08-workspace-contribution-framework.md (Archive + Memory protocols).
 
@@ -20,6 +21,7 @@ Usage:
   python3 09-tools/validate-workspace.py
 """
 
+import json
 import sys
 from pathlib import Path
 
@@ -31,19 +33,31 @@ MEMORY_INDEX = MEMORY_DIR / "MEMORY.md"
 KNOWLEDGE_DIR = ROOT / "08-knowledge"
 KNOWLEDGE_INDEX = KNOWLEDGE_DIR / "_INDEX.md"
 
-ADAPTER_MD = [
-    "GEMINI.md",
-    "WARP.md",
-    "CONVENTIONS.md",
-    "PERPLEXITY.md",
-    ".github/copilot-instructions.md",
-    ".windsurf/rules/workspace.md",
-    "00-bootstrap/adapters/web-session.md",
-]
-ADAPTER_CONFIG = [
-    ".gemini/settings.json",
-    ".aider.conf.yml",
-]
+SURFACES_JSON = ROOT / "02-shared-references" / "surfaces.json"
+
+
+def adapter_lists(table=None, root=None):
+    """(md adapters, config adapters) from the `adapters` of every surfaces.json row, in row
+    order, deduped. A new surface's adapter needs a table entry, not an edit here. None when the
+    table cannot be read (the caller reports it)."""
+    if table is None:
+        try:
+            path = SURFACES_JSON if root is None else root / "02-shared-references" / "surfaces.json"
+            table = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return None
+    md, config = [], []
+    for row in (table or {}).get("surfaces") or []:
+        for a in (row.get("adapters") or []) if isinstance(row, dict) else []:
+            rel = a.get("path") if isinstance(a, dict) else None
+            bucket = config if (a or {}).get("role") == "config" else md
+            if rel and rel not in md and rel not in config:
+                bucket.append(rel)
+    return md, config
+
+
+_LISTS = adapter_lists() or ([], [])
+ADAPTER_MD, ADAPTER_CONFIG = list(_LISTS[0]), list(_LISTS[1])
 MAX_ADAPTER_LINES = 40
 MAX_WEB_SESSION_LINES = 80
 
@@ -109,8 +123,15 @@ def check_knowledge(errors, knowledge_dir=None, knowledge_index=None, root=None)
 def check_adapters(errors, root=None, files=None, configs=None):
     """Native-filename adapters must exist, point at AGENTS.md, and stay thin."""
     root = ROOT if root is None else root
-    files = ADAPTER_MD if files is None else files
-    configs = ADAPTER_CONFIG if configs is None else configs
+    if files is None or configs is None:
+        lists = adapter_lists(root=root)
+        if lists is None:
+            errors.append("02-shared-references/surfaces.json unreadable: the adapter list comes from its rows")
+            return
+        files = lists[0] if files is None else files
+        configs = lists[1] if configs is None else configs
+        if not files:
+            errors.append("surfaces.json declares no adapters (surfaces[].adapters)")
     for rel in files:
         path = root / rel
         if not path.is_file():

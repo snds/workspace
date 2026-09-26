@@ -81,7 +81,7 @@ Official Figma MCP ≠ Console MCP (write path clones outside sets, missed icon 
 
 ---
 
-## Centric-shaped homework (do not paste into c8/*)
+## Centric-shaped homework (do not paste into employer repos)
 
 Keep these as personal-workspace prompts; execute inside employer repos under that profile:
 

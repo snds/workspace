@@ -117,6 +117,31 @@ class TestValidatorFixtures(unittest.TestCase):
             self.assertTrue(any("AGENTS.md" in e for e in errors), errors)
             self.assertTrue(any("close-out" in e for e in errors), errors)
 
+    def test_new_surface_row_adapters_reach_both_scripts(self):
+        """W2-0: a new surfaces.json row with adapters is picked up by validate-workspace.py and
+        evaluate-surface-trajectories.py with no edit to either script."""
+        vw = load("validate-workspace")
+        traj = load("evaluate-surface-trajectories")
+        live = json.loads((ROOT_DIR / "02-shared-references" / "surfaces.json").read_text(encoding="utf-8"))
+        before_md, before_cfg = vw.adapter_lists(live)
+        self.assertEqual(set(before_md) | set(before_cfg), set(vw.ADAPTER_MD) | set(vw.ADAPTER_CONFIG))
+        self.assertIn("PERPLEXITY.md", traj.HOOKLESS_ADAPTERS)
+        table = json.loads(json.dumps(live))
+        table["surfaces"].append({"id": "new-agent", "dialect": "none", "hookable": False,
+                                  "adapters": [{"path": "NEWAGENT.md", "role": "md"},
+                                               {"path": ".newagent.toml", "role": "config"}]})
+        md, cfg = vw.adapter_lists(table)
+        self.assertEqual((md[:-1], md[-1], cfg[-1]), (before_md, "NEWAGENT.md", ".newagent.toml"))
+        self.assertEqual(traj.hookless_adapters(table)[-1], "NEWAGENT.md")
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "02-shared-references").mkdir()
+            (root / "02-shared-references" / "surfaces.json").write_text(json.dumps(table), encoding="utf-8")
+            errors = []
+            vw.check_adapters(errors, root=root)
+            self.assertIn("missing tool adapter: NEWAGENT.md", errors)
+            self.assertIn("missing tool adapter config: .newagent.toml", errors)
+
     def test_links_rejects_dangling_related(self):
         vl = load("validate-links")
         with tempfile.TemporaryDirectory() as td:

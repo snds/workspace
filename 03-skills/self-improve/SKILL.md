@@ -30,7 +30,7 @@ Doctrine homes: [[agentic-error-correction-foundations]] (independent refuse) ·
 misses) · [[experiment-validity-baseline]] (decision rule before minting).
 
 Git is the sync. A mint that is not committed here does not exist on the other
-machine. Never employer (`c8/*`). Never a parallel brain.
+machine. Never employer repos. Never a parallel brain.
 
 ## Three modes (run only the ones this session evidenced)
 
