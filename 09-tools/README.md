@@ -580,6 +580,20 @@ python3 09-tools/wall_guard.py --self-test
 
 `ws-hook-repo.sh` is the repo-relative entry for committed shims (a cloud VM has no `$HOME` wrapper). The corpus, host goldens and the floor, lane and belt agreement cases live in `fixtures/wall_guard/`; `TestWallGuard` in test-validators.py is the exit-gate class.
 
+## workspace_mcp.py
+
+The workspace MCP server for MCP-only hosts (H21; decision D-W3-3 replaces workspace-fs with it): stdio JSON-RPC, stdlib only, no HTTP transport. Read tools run the same CLIs every surface runs: `session_status` (session-status.py for the client's family), `route` (prompt_route.py; the output equals the CLI's), `loadset`, `resolve` (status fields only), `policy` (the answer only, never recorded), `guard_check` (wall_guard.decide plus the server's own verdict), `context_load`, `skills_load`, and the vault-only `read_file`, `list_directory` and `search_files`. Writes go through `write_file`, `edit_file` and `session_end` (a `06-context/sessions/<id>.md` fragment) only: vault-only (root = the nearest ancestor holding AGENTS.md), no symlink followed, and refused for employer vault folders (`wall_guard.employer_vault_folders`), generated files (`closure.GENERATED`, the skill-wrapper roots and marker, every render_shims output), wall and control files, the pinned guard code and the server itself, and content that adds secret or employer-substance hits. Every write is stamped with the MCP clientInfo (Claude* -> family claude) and appended to the H23 touch ledger. Employer folders are refused and hidden for every client (clientInfo is self-reported, so nothing loosens on it). Declared gaps: only writes through this server are guarded; the Cowork shell, desktop control, the browser and Desktop Extensions write around it.
+
+```bash
+python3 09-tools/workspace_mcp.py --self-test           # TestWorkspaceMcp runs the same cases
+workspace-doctor.sh --install-mcp=claude-chat-desktop   # human-run: replaces workspace-fs (backed up)
+workspace-doctor.sh --install-mcp=claude-code           # user MCP config (~/.claude.json)
+workspace-doctor.sh --install-mcp=codex                 # replaces [mcp_servers.workspace-fs] in ~/.codex/config.toml
+workspace-doctor.sh --uninstall-mcp=<host>              # byte-exact restore, or keyed if the host rewrote the file
+```
+
+The registration snippets are rendered by `render_shims.py` (`render: mcp-registration`, `00-bootstrap/dist/mcp/`); `--install-shims` never installs them.
+
 ## fixtures/identity/
 
 Synthetic identity tables, the v5 overlay golden and `floor_cases.py`: hook-level floor, hasconfig include and `--install-claude-overlay` fixtures on a temp HOME (git >= 2.54 for the floor; otherwise the cases skip).

@@ -432,6 +432,20 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
       "fallback": "degrade",
       "fallback_note": "Use Unreal as a northstar reference ([[adapter-unreal]]) without the editor bridge. Do not claim actors were spawned.",
       "powers": ["adapter-unreal"]
+    },
+    "workspace-mcp": {
+      "kind": "mcp",
+      "provides": "The workspace's own MCP server (H21, 09-tools/workspace_mcp.py): the session card, routing, load sets and the resolver's answers, vault-only reads, and guarded, attributed vault writes and session fragments for MCP-only hosts. Replaces the generic filesystem server (workspace-fs).",
+      "detect": { "method": "mcp-tool-present", "match": "mcp__workspace-mcp__*" },
+      "install": {
+        "claude-chat": "Claude Desktop only (web and mobile reach remote MCP servers only): a human runs `workspace-doctor.sh --install-mcp=claude-chat-desktop`, which replaces workspace-fs in claude_desktop_config.json (backed up). Claude Code desktop sessions inherit it.",
+        "claude-code": "A human runs `workspace-doctor.sh --install-mcp=claude-code` (user MCP config).",
+        "codex": "A human runs `workspace-doctor.sh --install-mcp=codex`, which replaces [mcp_servers.workspace-fs] in ~/.codex/config.toml (backed up).",
+        "generic": "Register a stdio server: command `python3`, args `[<vault>/09-tools/workspace_mcp.py]` (the snippets are in 00-bootstrap/dist/mcp/)."
+      },
+      "fallback": "degrade",
+      "fallback_note": "Without it, MCP-only hosts read the pasted context (RULES-ONLY ritual) and write nothing to the vault; a local shell surface runs the same CLIs directly.",
+      "powers": []
     }
   }
 }
@@ -562,6 +576,9 @@ inside the app bundle, so a missing `codex` on PATH is not a missing install.
   mix.
 - **unreal-agentbridge** — powers [[adapter-unreal]]. UE 5.6 + Tempo. Northstar matching
   does not require it.
+- **workspace-mcp** — the workspace's own server for MCP-only hosts (H21). No skill requires it: it is
+  the contract's entry for hosts without a shell (session card, routing, guarded vault writes). Its
+  installer replaces workspace-fs and uninstalls byte-exact; see `09-tools/README.md` → workspace_mcp.py.
 
 ## Adding a capability
 

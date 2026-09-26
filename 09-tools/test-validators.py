@@ -2310,6 +2310,38 @@ class TestWallGuard(unittest.TestCase):
         self._run("outputs", 7)
 
 
+class TestWorkspaceMcp(unittest.TestCase):
+    """H21: the workspace MCP server. The JSON-RPC handshake over real stdio; employer-folder, generated-file,
+    guard-file and path-escape (.., absolute, ~, symlink) writes refused; employer folders hidden from reads,
+    listings and searches; secret-shaped content refused; the ledger line carries the clientInfo and the
+    Claude family; session_end writes one fragment; route equals the prompt_route CLI output. The MCP
+    registration installer (replace workspace-fs, byte-exact and keyed uninstall) runs in TestInstaller."""
+
+    def test_self_test_cases(self):
+        mod = load("workspace_mcp")
+        cases = mod.self_test_cases()
+        self.assertGreater(len(cases), 30)
+        for name, ok, detail in cases:
+            with self.subTest(case=name):
+                self.assertTrue(ok, detail)
+
+    def test_tool_roster_matches_the_plan(self):
+        mod = load("workspace_mcp")
+        for name in ("session_status", "route", "loadset", "resolve", "policy", "context_load", "skills_load",
+                     "guard_check", "write_file", "session_end", "read_file", "list_directory", "search_files"):
+            self.assertIn(name, mod.TOOL_NAMES)
+
+    def test_registration_outputs_replace_workspace_fs(self):
+        rs = load("00-bootstrap/doctor/render_shims.py")
+        t = rs.load_table(ROOT_DIR)
+        outs = [o for o in t["outputs"] if o.get("render") == "mcp-registration"]
+        self.assertEqual(sorted(o["surface"] for o in outs), ["claude-chat-desktop", "claude-code", "codex"])
+        for o in outs:
+            with self.subTest(output=o["id"]):
+                self.assertEqual((o["install_mode"], o["replaces"]), ("mcp-servers", ["workspace-fs"]))
+                self.assertIn("09-tools/workspace_mcp.py", rs.render_output(t, o, ROOT_DIR))
+
+
 class TestEmployerSubstance(unittest.TestCase):
     """H25: employer-substance class of check-secrets (blocking against the baseline since W1-10)."""
 

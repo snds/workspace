@@ -174,6 +174,7 @@ Coverage on the minimum surfaces (scope: `shared` is held to parity on the hooka
 | H25 | shared | enforced-partial | backstop-only | enforced-when-installed | enforced-when-installed |
 | H23 | shared | enforced-partial | not-applicable | enforced-partial | enforced-partial |
 | H11 | shared | advisory | backstop-only | advisory | advisory |
+| H21 | shared | advisory | not-applicable | advisory | advisory |
 
 Registrations (one effective registration per surface, event and behaviour):
 
@@ -240,6 +241,9 @@ Rendered outputs (installers read this mapping from `render_shims.py --list --js
 | probe-claude-code | `00-bootstrap/dist/probe/claude-code.json` | merge-hook-entries | `~/.claude/settings.json` | - |
 | probe-cursor | `00-bootstrap/dist/probe/cursor.json` | merge-hook-entries | `~/.cursor/hooks.json` | - |
 | probe-codex | `00-bootstrap/dist/probe/codex.json` | merge-hook-entries | `~/.codex/hooks.json` | - |
+| mcp-claude-desktop | `00-bootstrap/dist/mcp/claude-chat-desktop.json` | mcp-servers | `~/Library/Application Support/Claude/claude_desktop_config.json` | - |
+| mcp-claude-code | `00-bootstrap/dist/mcp/claude-code.json` | mcp-servers | `~/.claude.json` | - |
+| mcp-codex | `00-bootstrap/dist/mcp/codex.toml` | mcp-servers | `~/.codex/config.toml` | - |
 | beacon-paste | `00-bootstrap/dist/BEACON.md` | whole-file | - | - |
 | beacon-claude-user | `00-bootstrap/dist/user-CLAUDE.md` | whole-file | - | - |
 | beacon-codex | `00-bootstrap/dist/codex-AGENTS.md` | whole-file | `~/.codex/AGENTS.md` | - |
