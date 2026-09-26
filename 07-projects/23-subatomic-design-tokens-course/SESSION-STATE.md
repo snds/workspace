@@ -15,7 +15,7 @@ _Last updated: 2026-09-23 — capture complete; doctrine graduated_
 - **Next action**: Optional backlog — (1) value-level Figma↔code parity in TA014 (px↔rem, unitless LH, per-mode alias resolution); (2) MCP-driven Figma probe for variable scopes / publish set (tier 1 unscoped + hidden); (3) run `token-audit.py` against a real product token source (not employer repos from this vault — copy the tool into the product repo per the independence contract)
 - **Open decisions**: none
 - **Blocked on**: nothing
-- **In-flight / do-not-touch**: never commit raw course media/transcripts into the vault; never paste into `c8/*`; Figma "duplicate" links in `files/04-*` would create files in Sean's Figma account — only on request
+- **In-flight / do-not-touch**: never commit raw course media/transcripts into the vault; never paste into employer repos; Figma "duplicate" links in `files/04-*` would create files in Sean's Figma account — only on request
 - **Agent thread**: `Claude Opus 5.5 / Claude Code / Work MBP (2026-09-23): capture + synthesis + graduation` · `(2026-09-24): review + fixes`
 
 ### Environment

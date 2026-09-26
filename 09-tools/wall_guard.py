@@ -54,7 +54,6 @@ import os
 import re
 import shlex
 import sys
-import tempfile
 import threading
 import time
 from pathlib import Path

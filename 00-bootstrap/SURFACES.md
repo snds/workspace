@@ -161,6 +161,7 @@ Coverage on the minimum surfaces (scope: `shared` is held to parity on the hooka
 | H2 | shared | enforced-partial | advisory | enforced-when-installed | enforced-when-installed |
 | H3 | shared | enforced | not-applicable | enforced | enforced |
 | H8 | shared | advisory | advisory | advisory | advisory |
+| H10 | shared | enforced-when-installed | backstop-only | enforced-when-installed | enforced-when-installed |
 | H15 | shared | enforced-partial | backstop-only | enforced-partial | enforced-when-installed |
 | H16 | shared | enforced | advisory | enforced-when-installed | enforced-when-installed |
 | H17 | claude-restriction | enforced-partial | backstop-only | advisory | advisory |
@@ -201,6 +202,7 @@ Registrations (one effective registration per surface, event and behaviour):
 | codex-user.pre-tool | pre-tool | ws-guard-codex | - | - |
 | codex-user.post-tool | post-tool | ws-ledger-codex | - | - |
 | codex-user.sweep | session-start | ws-sweep-codex | - | - |
+| codex-user.user-prompt | user-prompt | ws-route-codex | - | - |
 | probe-claude-user.session-start | session-start | ws-hook-probe | - | ws-probe |
 | probe-claude-user.user-prompt | user-prompt | ws-hook-probe | - | ws-probe |
 | probe-claude-user.stop | stop | ws-hook-probe | - | ws-probe |

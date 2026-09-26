@@ -1511,7 +1511,8 @@ def self_test_cases() -> list:
             buf4 = io.StringIO()
             handle_event("auto", "session-start", dict(_golden("codex", "session-start"), session_id="sess-cdx"),
                          home=home, out=buf4, optional_steps=[])
-            ok("codex (unverified dialect) gets nothing", buf4.getvalue() == "", buf4.getvalue())
+            ok("codex session-start gets the card as plain text", buf4.getvalue().startswith("CARD for "),
+               buf4.getvalue())
             # H7: user-prompt routes through the vault's prompt_route (the one matcher).
             buf5 = io.StringIO()
             handle_event("auto", "user-prompt", _golden("claude-code", "user-prompt"), home=home, out=buf5)
@@ -1543,7 +1544,15 @@ def self_test_cases() -> list:
             buf10 = io.StringIO()
             handle_event("auto", "user-prompt", dict(_golden("codex", "user-prompt"), session_id="sess-rx",
                                                      prompt="review the zero vector plan"), home=home, out=buf10)
-            ok("codex user-prompt (unverified dialect) gets nothing", buf10.getvalue() == "", buf10.getvalue())
+            ok("codex user-prompt routes as plain text", buf10.getvalue().startswith("# Project trigger detected")
+               and "zero-vector.md" in buf10.getvalue(), buf10.getvalue())
+            # H7 golden: the documented Codex UserPromptSubmit payload -> exact routing stdout.
+            gold = json.loads((ROOT / "09-tools" / "fixtures" / "ws_hook" / "goldens" /
+                               "codex.user-prompt-route.json").read_text(encoding="utf-8"))
+            buf10g = io.StringIO()
+            handle_event("codex", "user-prompt", gold["payload"], home=home, out=buf10g)
+            ok("golden codex.user-prompt-route: stdout matches", buf10g.getvalue() == gold["stdout"],
+               repr(buf10g.getvalue()))
             (vroot / "09-tools" / "prompt_route.py").rename(vroot / "09-tools" / "prompt_route.off")
             buf11 = io.StringIO()
             handle_event("auto", "user-prompt", dict(routed, session_id="sess-noroute"), home=home, out=buf11)

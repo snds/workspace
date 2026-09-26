@@ -13,8 +13,8 @@ extensions, web), Claude Chat (web, desktop, mobile), Claude in Chrome and Cowor
 - Claude commits as `Sean Sands <570874+snds@users.noreply.github.com>` and authenticates with the
   personal key, including on the Work MBP.
 - It does no substantive employer work. It does not read, map or edit employer code, and it does not
-  commit to or open PRs against employer repos (cpes-software/*, c8*, Centric Bitbucket,
-  design-system).
+  commit to or open PRs against employer repos (the `centric-engineering` profile;
+  `ws resolve repo` names it).
 - **Housekeeping is allowed, with receipts:** pruning merged `@me` branches, fast-forwarding `main`
   and removing clean merged worktrees. It runs only through vetted scripts, never through commands
   Claude composes itself, and each run prints a receipt naming the repo, the action and the

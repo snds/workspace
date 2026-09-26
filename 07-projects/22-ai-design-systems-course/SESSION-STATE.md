@@ -15,7 +15,7 @@ _Last updated: 2026-09-11 — course notes committed; Frost canon graduated into
 - **Next action**: Optional caption-gap revisits (Ch6 selling, Ch5 A2UI, early jams) if tracks appear; do not re-transcribe pointer extras
 - **Open decisions**: none
 - **Blocked on**: nothing
-- **In-flight / do-not-touch**: don't invent captions for no-caption files; don't paste this into `c8/*`
+- **In-flight / do-not-touch**: don't invent captions for no-caption files; don't paste this into employer repos
 - **Agent thread**: `Cursor Grok / Cursor (2026-09-11): doctrine graduation`
 
 ### Environment

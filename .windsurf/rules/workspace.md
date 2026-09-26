@@ -14,4 +14,4 @@ _Thin pointer. Do not add `.windsurfrules` — some IDEs first-match that filena
 3. `python3 09-tools/skill-loadset.py "…"` — ordered SKILL.md paths. Do not ingest the registry.
 4. Match `02-shared-references/trigger-routes.json`.
 5. After producing: `python3 09-tools/close-out-dispatch.py --from-prompt "…" --run` then `03-skills/close-out/SKILL.md` / `self-improve`. SKIP ≠ verified.
-6. Durable learnings go in the vault, never Windsurf memory. Never mix this vault into employer `c8/*`.
+6. Durable learnings go in the vault, never Windsurf memory. Never mix this vault into employer repos.

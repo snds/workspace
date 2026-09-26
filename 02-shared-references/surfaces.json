@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "doc": "Surface registry (H16). Source for render_shims.py and for profile_resolve detection. Never auto-loaded. This repo is public, so coverage rules state known gaps at class level with a stable ID; the runnable detail stays in held (decision-public-residual-detail). component_scopes gives each component a scope: shared (every agent should get it) or claude-restriction (it exists to hold Claude back, so a non-Claude gap is by design), each with a one-line reason. The parity gate (workspace-harness.py check_component_parity, --parity) flags a shared component whose cell on a hookable minimum surface is missing, advisory or unverified, unless the cell carries parity_waiver {reason, until: wave-N}; a waiver whose wave is before current_wave is itself a gap. parity_gate is report (list gaps, pass) or enforce (gaps fail).",
+  "doc": "Surface registry (H16). Source for render_shims.py and for profile_resolve detection. Never auto-loaded. This repo is public, so coverage rules state known gaps at class level with a stable ID; the runnable detail stays in held (decision-public-residual-detail). component_scopes gives each component a scope: shared (every agent should get it) or claude-restriction (it exists to hold Claude back, so a non-Claude gap is by design), each with a one-line reason. The parity gate (workspace-harness.py check_component_parity, --parity) flags a shared component whose cell on a hookable minimum surface is missing, advisory or unverified, unless the cell carries parity_waiver {reason, until: wave-N}; a waiver whose wave is before current_wave is itself a gap. parity_gate is report (list gaps, pass) or enforce (gaps fail). A surface row's adapters lists its native-filename adapter files as {path, role: md|config}; validate-workspace.py and evaluate-surface-trajectories.py derive their adapter lists from them (an md adapter on a dialect-none row is hookless), so a new adapter needs a row entry, not a code edit.",
   "coverage_modes": [
     "enforced",
     "enforced-partial",
@@ -21,6 +21,7 @@
     "H2",
     "H3",
     "H8",
+    "H10",
     "H15",
     "H16",
     "H17",
@@ -48,6 +49,10 @@
     "H8": {
       "scope": "shared",
       "reason": "The remediation loop (recon, findings register, packets, verdict) is vendor-neutral by design: any agent runs the CLI, and a packet is any vendor's cloud-task body."
+    },
+    "H10": {
+      "scope": "shared",
+      "reason": "Every surface's commits are gated from the diff, carry the lane trailer and count toward per-surface compliance; CI is the backstop for the ones no lane saw."
     },
     "H15": {
       "scope": "shared",
@@ -279,6 +284,18 @@
           "planned_verified_by": [],
           "how": "TestIntentRun"
         },
+        "H10": {
+          "mode": "enforced-when-installed",
+          "rules": "diff-selected gates through close-out-dispatch --from-diff (a receipt per local run) and the Workspace-Lane trailer from the git lanes once Sean installs them (--install-git-hooks); without the lanes, CI (gate-selection.yml) is the backstop and the commit counts as unlaned; the Claude chain gets the same trailer lane as every committer",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestCloseOutDispatch",
+            "selftest:09-tools/close-out-dispatch.py",
+            "fixture:TestGitLanes"
+          ],
+          "planned_verified_by": [],
+          "how": "TestCloseOutDispatch covers diff selection, CHARGED vs AMBIENT (touch-list and merge-base baseline), filter and plugin-path gaps, the receipt/trailer join and the unlaned count; TestGitLanes runs the prepare-commit-msg trailer lane end to end in temp repos (workspace yes, opted-in personal yes, employer and unknown owners never)"
+        },
         "H15": {
           "mode": "enforced-partial",
           "rules": "R1, R3 and R6 enforce at tool time once Sean installs the claude-code shims: a PreToolUse matcher generated from the tool families (shell, file writes, the terminal panel, browser control, desktop control, the filesystem MCP and the employer tracker connector) plus static permission rules (employer checkouts and employer vault folders, workspace control state, the Claude settings files, and the invariant belts); R2, R4, R6c and R7 log a would-deny only during the rollout window; the tracker connector is report-only until decision 3; desktop control has no account policy (WALL-C1); text parsing can be evaded (H17-R10) and the guard fails open on its own errors (H17-R8 class)",
@@ -443,6 +460,14 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "backstop-only",
+          "rules": "no user git lanes in the cloud clone; CI plus the schedule, and its commits count as unlaned",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H15": {
           "mode": "backstop-only",
           "rules": "the repo-relative shim (09-tools/ws-hook-repo.sh) runs the guard with no home directory and passes the HOME-empty fixture, but it is not registered in the tracked project settings (Sean's decision); CI and credential scope carry cloud sessions",
@@ -516,6 +541,12 @@
       "hookable": false,
       "dialect": "none",
       "timeouts_s": {},
+      "adapters": [
+        {
+          "path": "00-bootstrap/adapters/web-session.md",
+          "role": "md"
+        }
+      ],
       "markers": {
         "env": [],
         "ancestry": [],
@@ -552,6 +583,14 @@
         "H3": {
           "mode": "not-applicable",
           "rules": "no execution; specs are linted in CI once committed",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
+        "H10": {
+          "mode": "backstop-only",
+          "rules": "no local commits; CI checks what lands, and the verdict shows on the next card",
           "decision": null,
           "verified_by": [],
           "planned_verified_by": [],
@@ -691,6 +730,14 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "backstop-only",
+          "rules": "no local commits; CI checks what lands, and the verdict shows on the next card",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H15": {
           "mode": "advisory",
           "rules": "H21 will guard writes through its own server only; the Cowork shell, desktop control, the browser and Desktop Extensions are declared gaps",
@@ -776,6 +823,14 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "not-applicable",
+          "rules": "no local repos or commits",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H15": {
           "mode": "advisory",
           "rules": "covered by the claude-code matcher (URL-owner policy) only when Claude Code drives it; side-panel and chat use is unguarded",
@@ -946,6 +1001,18 @@
           "planned_verified_by": [],
           "how": "TestIntentRun"
         },
+        "H10": {
+          "mode": "enforced-when-installed",
+          "rules": "diff-selected gates through close-out-dispatch --from-diff (a receipt per local run) and the Workspace-Lane trailer from the git lanes once Sean installs them (--install-git-hooks); without the lanes, CI (gate-selection.yml) is the backstop and the commit counts as unlaned",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestCloseOutDispatch",
+            "selftest:09-tools/close-out-dispatch.py",
+            "fixture:TestGitLanes"
+          ],
+          "planned_verified_by": [],
+          "how": "TestCloseOutDispatch covers diff selection, CHARGED vs AMBIENT (touch-list and merge-base baseline), filter and plugin-path gaps, the receipt/trailer join and the unlaned count; TestGitLanes runs the prepare-commit-msg trailer lane end to end in temp repos (workspace yes, opted-in personal yes, employer and unknown owners never)"
+        },
         "H15": {
           "mode": "enforced-partial",
           "rules": "R3 and R6 enforce once Sean installs the cursor shims (beforeShellExecution, preToolUse on Shell and Write, beforeMCPExecution); R2, R4 and R7 log a would-deny only during the rollout window; R1 does not apply; the walls come from the verified host payload (D-W1-3) unless an inherited Claude overlay or Claude ancestry raises them",
@@ -1105,6 +1172,18 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "enforced-when-installed",
+          "rules": "diff-selected gates through close-out-dispatch --from-diff (a receipt per local run) and the Workspace-Lane trailer from the git lanes once Sean installs them (--install-git-hooks); without the lanes, CI (gate-selection.yml) is the backstop and the commit counts as unlaned",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestCloseOutDispatch",
+            "selftest:09-tools/close-out-dispatch.py",
+            "fixture:TestGitLanes"
+          ],
+          "planned_verified_by": [],
+          "how": "TestCloseOutDispatch covers diff selection, CHARGED vs AMBIENT (touch-list and merge-base baseline), filter and plugin-path gaps, the receipt/trailer join and the unlaned count; TestGitLanes runs the prepare-commit-msg trailer lane end to end in temp repos (workspace yes, opted-in personal yes, employer and unknown owners never)"
+        },
         "H15": {
           "mode": "advisory",
           "rules": "[UNVERIFIED] not installed; hooks in the CLI are undocumented",
@@ -1194,6 +1273,14 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "backstop-only",
+          "rules": "no user git lanes in the cloud VM; CI plus the schedule, and its commits count as unlaned",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H15": {
           "mode": "backstop-only",
           "rules": "the workspace's repo-relative shim is not registered in the tracked Cursor hooks (Sean's decision); employer repos: platform and employer CI",
@@ -1264,7 +1351,8 @@
       "hookable": true,
       "dialect": "codex",
       "timeouts_s": {
-        "session-start": 15
+        "session-start": 15,
+        "user-prompt": 10
       },
       "markers": {
         "env": [
@@ -1356,6 +1444,18 @@
           ],
           "planned_verified_by": [],
           "how": "TestIntentRun"
+        },
+        "H10": {
+          "mode": "enforced-when-installed",
+          "rules": "diff-selected gates through close-out-dispatch --from-diff (a receipt per local run) and the Workspace-Lane trailer from the git lanes once Sean installs them (--install-git-hooks); without the lanes, CI (gate-selection.yml) is the backstop and the commit counts as unlaned; Codex transcripts are not read, so its compliance column is an honest SKIP",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestCloseOutDispatch",
+            "selftest:09-tools/close-out-dispatch.py",
+            "fixture:TestGitLanes"
+          ],
+          "planned_verified_by": [],
+          "how": "TestCloseOutDispatch covers diff selection, CHARGED vs AMBIENT (touch-list and merge-base baseline), filter and plugin-path gaps, the receipt/trailer join and the unlaned count; TestGitLanes runs the prepare-commit-msg trailer lane end to end in temp repos (workspace yes, opted-in personal yes, employer and unknown owners never)"
         },
         "H15": {
           "mode": "enforced-when-installed",
@@ -1513,6 +1613,14 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "backstop-only",
+          "rules": "no local hooks; CI plus the schedule, and its commits count as unlaned",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H15": {
           "mode": "backstop-only",
           "rules": "CI and employer protection",
@@ -1583,6 +1691,16 @@
       "hookable": true,
       "dialect": "none",
       "timeouts_s": {},
+      "adapters": [
+        {
+          "path": "GEMINI.md",
+          "role": "md"
+        },
+        {
+          "path": ".gemini/settings.json",
+          "role": "config"
+        }
+      ],
       "markers": {
         "env": [
           {
@@ -1612,6 +1730,18 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "enforced-when-installed",
+          "rules": "diff-selected gates through close-out-dispatch --from-diff (a receipt per local run) and the Workspace-Lane trailer from the git lanes once Sean installs them (--install-git-hooks); without the lanes, CI (gate-selection.yml) is the backstop and the commit counts as unlaned",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestCloseOutDispatch",
+            "selftest:09-tools/close-out-dispatch.py",
+            "fixture:TestGitLanes"
+          ],
+          "planned_verified_by": [],
+          "how": "TestCloseOutDispatch covers diff selection, CHARGED vs AMBIENT (touch-list and merge-base baseline), filter and plugin-path gaps, the receipt/trailer join and the unlaned count; TestGitLanes runs the prepare-commit-msg trailer lane end to end in temp repos (workspace yes, opted-in personal yes, employer and unknown owners never)"
+        },
         "H15": {
           "mode": "advisory",
           "rules": "[UNVERIFIED] no shim is rendered and the host is not installed; its payload golden in TestWallGuard comes from vendor docs",
@@ -1684,6 +1814,12 @@
       "timeouts_s": {
         "session-start": 15
       },
+      "adapters": [
+        {
+          "path": ".github/copilot-instructions.md",
+          "role": "md"
+        }
+      ],
       "markers": {
         "env": [],
         "ancestry": [],
@@ -1715,6 +1851,18 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "enforced-when-installed",
+          "rules": "diff-selected gates through close-out-dispatch --from-diff (a receipt per local run) and the Workspace-Lane trailer from the git lanes once Sean installs them (--install-git-hooks); without the lanes, CI (gate-selection.yml) is the backstop and the commit counts as unlaned",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestCloseOutDispatch",
+            "selftest:09-tools/close-out-dispatch.py",
+            "fixture:TestGitLanes"
+          ],
+          "planned_verified_by": [],
+          "how": "TestCloseOutDispatch covers diff selection, CHARGED vs AMBIENT (touch-list and merge-base baseline), filter and plugin-path gaps, the receipt/trailer join and the unlaned count; TestGitLanes runs the prepare-commit-msg trailer lane end to end in temp repos (workspace yes, opted-in personal yes, employer and unknown owners never)"
+        },
         "H15": {
           "mode": "advisory",
           "rules": "[UNVERIFIED] the claude-user shim fires only if VS Code loads it; the walls stay unknown-agent or higher until its payload is probed (D-W1-3); R1 does not apply",
@@ -1819,6 +1967,18 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "enforced-when-installed",
+          "rules": "diff-selected gates through close-out-dispatch --from-diff (a receipt per local run) and the Workspace-Lane trailer from the git lanes once Sean installs them (--install-git-hooks); without the lanes, CI (gate-selection.yml) is the backstop and the commit counts as unlaned",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestCloseOutDispatch",
+            "selftest:09-tools/close-out-dispatch.py",
+            "fixture:TestGitLanes"
+          ],
+          "planned_verified_by": [],
+          "how": "TestCloseOutDispatch covers diff selection, CHARGED vs AMBIENT (touch-list and merge-base baseline), filter and plugin-path gaps, the receipt/trailer join and the unlaned count; TestGitLanes runs the prepare-commit-msg trailer lane end to end in temp repos (workspace yes, opted-in personal yes, employer and unknown owners never)"
+        },
         "H15": {
           "mode": "advisory",
           "rules": "[UNVERIFIED] no shim is rendered and the host is not installed; its payload golden in TestWallGuard comes from vendor docs",
@@ -1906,6 +2066,14 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "backstop-only",
+          "rules": "server-side commits; CI plus the schedule, and its commits count as unlaned",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H15": {
           "mode": "backstop-only",
           "rules": ".github/hooks is not committed; CI and employer protection",
@@ -1974,6 +2142,12 @@
       "hookable": true,
       "dialect": "none",
       "timeouts_s": {},
+      "adapters": [
+        {
+          "path": ".windsurf/rules/workspace.md",
+          "role": "md"
+        }
+      ],
       "markers": {
         "env": [
           {
@@ -2009,6 +2183,18 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "enforced-when-installed",
+          "rules": "diff-selected gates through close-out-dispatch --from-diff (a receipt per local run) and the Workspace-Lane trailer from the git lanes once Sean installs them (--install-git-hooks); without the lanes, CI (gate-selection.yml) is the backstop and the commit counts as unlaned",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestCloseOutDispatch",
+            "selftest:09-tools/close-out-dispatch.py",
+            "fixture:TestGitLanes"
+          ],
+          "planned_verified_by": [],
+          "how": "TestCloseOutDispatch covers diff selection, CHARGED vs AMBIENT (touch-list and merge-base baseline), filter and plugin-path gaps, the receipt/trailer join and the unlaned count; TestGitLanes runs the prepare-commit-msg trailer lane end to end in temp repos (workspace yes, opted-in personal yes, employer and unknown owners never)"
+        },
         "H15": {
           "mode": "advisory",
           "rules": "[UNVERIFIED] no shim is rendered and the host is not installed; its payload golden in TestWallGuard comes from vendor docs",
@@ -2079,6 +2265,16 @@
       "hookable": false,
       "dialect": "none",
       "timeouts_s": {},
+      "adapters": [
+        {
+          "path": "CONVENTIONS.md",
+          "role": "md"
+        },
+        {
+          "path": ".aider.conf.yml",
+          "role": "config"
+        }
+      ],
       "markers": {
         "env": [
           {
@@ -2111,6 +2307,18 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "enforced-when-installed",
+          "rules": "diff-selected gates through close-out-dispatch --from-diff (a receipt per local run) and the Workspace-Lane trailer from the git lanes once Sean installs them (--install-git-hooks); without the lanes, CI (gate-selection.yml) is the backstop and the commit counts as unlaned; aider's default --no-verify skips pre-commit and commit-msg but not prepare-commit-msg",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestCloseOutDispatch",
+            "selftest:09-tools/close-out-dispatch.py",
+            "fixture:TestGitLanes"
+          ],
+          "planned_verified_by": [],
+          "how": "TestCloseOutDispatch covers diff selection, CHARGED vs AMBIENT (touch-list and merge-base baseline), filter and plugin-path gaps, the receipt/trailer join and the unlaned count; TestGitLanes runs the prepare-commit-msg trailer lane end to end in temp repos (workspace yes, opted-in personal yes, employer and unknown owners never)"
+        },
         "H15": {
           "mode": "backstop-only",
           "rules": "the git lanes and the invariant belts",
@@ -2181,6 +2389,12 @@
       "hookable": false,
       "dialect": "none",
       "timeouts_s": {},
+      "adapters": [
+        {
+          "path": "WARP.md",
+          "role": "md"
+        }
+      ],
       "markers": {
         "env": [
           {
@@ -2213,6 +2427,18 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "enforced-when-installed",
+          "rules": "diff-selected gates through close-out-dispatch --from-diff (a receipt per local run) and the Workspace-Lane trailer from the git lanes once Sean installs them (--install-git-hooks); without the lanes, CI (gate-selection.yml) is the backstop and the commit counts as unlaned",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestCloseOutDispatch",
+            "selftest:09-tools/close-out-dispatch.py",
+            "fixture:TestGitLanes"
+          ],
+          "planned_verified_by": [],
+          "how": "TestCloseOutDispatch covers diff selection, CHARGED vs AMBIENT (touch-list and merge-base baseline), filter and plugin-path gaps, the receipt/trailer join and the unlaned count; TestGitLanes runs the prepare-commit-msg trailer lane end to end in temp repos (workspace yes, opted-in personal yes, employer and unknown owners never)"
+        },
         "H15": {
           "mode": "backstop-only",
           "rules": "the git lanes and the invariant belts (a denylist rendered in 00-bootstrap/dist/wall-belts.json, pasted by Sean)",
@@ -2318,6 +2544,18 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "enforced-when-installed",
+          "rules": "diff-selected gates through close-out-dispatch --from-diff (a receipt per local run) and the Workspace-Lane trailer from the git lanes once Sean installs them (--install-git-hooks); without the lanes, CI (gate-selection.yml) is the backstop and the commit counts as unlaned",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestCloseOutDispatch",
+            "selftest:09-tools/close-out-dispatch.py",
+            "fixture:TestGitLanes"
+          ],
+          "planned_verified_by": [],
+          "how": "TestCloseOutDispatch covers diff selection, CHARGED vs AMBIENT (touch-list and merge-base baseline), filter and plugin-path gaps, the receipt/trailer join and the unlaned count; TestGitLanes runs the prepare-commit-msg trailer lane end to end in temp repos (workspace yes, opted-in personal yes, employer and unknown owners never)"
+        },
         "H15": {
           "mode": "advisory",
           "rules": "[UNVERIFIED] no shim is rendered and the host is not installed; its payload golden in TestWallGuard comes from vendor docs",
@@ -2420,6 +2658,18 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "enforced-when-installed",
+          "rules": "diff-selected gates through close-out-dispatch --from-diff (a receipt per local run) and the Workspace-Lane trailer from the git lanes once Sean installs them (--install-git-hooks); without the lanes, CI (gate-selection.yml) is the backstop and the commit counts as unlaned",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestCloseOutDispatch",
+            "selftest:09-tools/close-out-dispatch.py",
+            "fixture:TestGitLanes"
+          ],
+          "planned_verified_by": [],
+          "how": "TestCloseOutDispatch covers diff selection, CHARGED vs AMBIENT (touch-list and merge-base baseline), filter and plugin-path gaps, the receipt/trailer join and the unlaned count; TestGitLanes runs the prepare-commit-msg trailer lane end to end in temp repos (workspace yes, opted-in personal yes, employer and unknown owners never)"
+        },
         "H15": {
           "mode": "advisory",
           "rules": "[UNVERIFIED] loads the claude-user layer; no probe of its pre-tool payload",
@@ -2490,6 +2740,12 @@
       "hookable": false,
       "dialect": "none",
       "timeouts_s": {},
+      "adapters": [
+        {
+          "path": "PERPLEXITY.md",
+          "role": "md"
+        }
+      ],
       "markers": {
         "env": [
           {
@@ -2516,6 +2772,14 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "not-applicable",
+          "rules": "no local repos or commits",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H15": {
           "mode": "advisory",
           "rules": "paste pack; the servers protect the repos",
@@ -2610,6 +2874,14 @@
         }
       ],
       "coverage": {
+        "H10": {
+          "mode": "not-applicable",
+          "rules": "no session of their own on a local repo",
+          "decision": null,
+          "verified_by": [],
+          "planned_verified_by": [],
+          "how": ""
+        },
         "H15": {
           "mode": "advisory",
           "rules": "no hooks; H21 replaces the filesystem MCP (decision)",
@@ -2689,6 +2961,18 @@
       "install_probe": null,
       "sources": [],
       "coverage": {
+        "H10": {
+          "mode": "enforced-when-installed",
+          "rules": "diff-selected gates through close-out-dispatch --from-diff (a receipt per local run) and the Workspace-Lane trailer from the git lanes once Sean installs them (--install-git-hooks); without the lanes, CI (gate-selection.yml) is the backstop and the commit counts as unlaned",
+          "decision": null,
+          "verified_by": [
+            "fixture:TestCloseOutDispatch",
+            "selftest:09-tools/close-out-dispatch.py",
+            "fixture:TestGitLanes"
+          ],
+          "planned_verified_by": [],
+          "how": "TestCloseOutDispatch covers diff selection, CHARGED vs AMBIENT (touch-list and merge-base baseline), filter and plugin-path gaps, the receipt/trailer join and the unlaned count; TestGitLanes runs the prepare-commit-msg trailer lane end to end in temp repos (workspace yes, opted-in personal yes, employer and unknown owners never)"
+        },
         "H15": {
           "mode": "not-applicable",
           "rules": "humans are not policy-gated (P00)",
@@ -2794,7 +3078,8 @@
     "codex": {
       "context": "plain",
       "noop": "",
-      "verified": false
+      "verified": true,
+      "source": "learn.chatgpt.com/docs/hooks (fetched 2026-09-25): plain stdout on SessionStart and UserPromptSubmit is added as developer context"
     }
   },
   "tool_families": [
@@ -3300,6 +3585,16 @@
         "fixture:TestClosure",
         "selftest:09-tools/closure.py"
       ]
+    },
+    "ws-route-codex": {
+      "template": "$HOME/.config/snds-workspace/bin/ws-hook --host codex --event user-prompt",
+      "behaviour": "layer0-route",
+      "implements": [
+        "host_filter"
+      ],
+      "verified_by": [
+        "selftest:09-tools/ws_hook.py"
+      ]
     }
   },
   "registrations": [
@@ -3600,6 +3895,17 @@
       "layer": "codex-user",
       "event": "session-start",
       "command": "ws-sweep-codex",
+      "timeout": 10,
+      "matcher": null,
+      "host_skip": [],
+      "claim_group": null,
+      "defers_to": null
+    },
+    {
+      "id": "codex-user.user-prompt",
+      "layer": "codex-user",
+      "event": "user-prompt",
+      "command": "ws-route-codex",
       "timeout": 10,
       "matcher": null,
       "host_skip": [],

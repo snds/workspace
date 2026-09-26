@@ -45,7 +45,7 @@ Drop-folder. Session-end harvest of Cursor canvases. "Don't leave this in ChatGP
 - Figma canvas / component sets → [[figma]] / `$FIGMA_GENERATE_ROUTE`
 - Research JTBD/persona/journey artifacts → `$ARTIFACT_ROUTE`
 - Scraping claude.ai / chatgpt.com / Gemini
-- Employer (`c8/*`, `cpes-software`) canvases — never into `snds/workspace`
+- Employer-repo canvases — never into `snds/workspace`
 
 ## Behavior
 

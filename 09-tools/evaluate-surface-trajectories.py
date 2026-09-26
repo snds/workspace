@@ -34,7 +34,8 @@ appear in the payload (routing context only, never employer substance).
 
 Structural checks: one matcher behind every entry point (AST) and every registered
 user-prompt command (surfaces.json commands), the steer text where it is declared, digest
-drift, and the hookless adapters.
+drift, and the hookless adapters. The adapter list, the hook files and the user-prompt event
+names all come from surfaces.json (surfaces[].adapters, outputs, formats), never from here.
 
 Usage:
   python3 09-tools/evaluate-surface-trajectories.py           # run corpus
@@ -85,15 +86,8 @@ STEER_RENDERED = {"cursor": "00-bootstrap/dist/cursor-user-rules.txt",
                   "codex": "00-bootstrap/dist/codex-AGENTS.md"}
 
 # Every hookless adapter must name the workspace entry points itself — that file is the
-# only thing reaching the model when no hook exists. surfaces.json does not (yet) carry
-# per-surface entry files, so this list stays here.
-HOOKLESS_ADAPTERS = [
-    "PERPLEXITY.md",
-    "GEMINI.md",
-    "WARP.md",
-    "CONVENTIONS.md",
-    "00-bootstrap/adapters/web-session.md",
-]
+# only thing reaching the model when no hook exists. The list (HOOKLESS_ADAPTERS, below the
+# table readers) comes from surfaces.json `surfaces[].adapters`.
 HOOKLESS_MUST_NAME = ["AGENTS.md"]
 
 # Literal readers (D7): no python, no hook. They follow only what their entry files say.
@@ -108,9 +102,7 @@ EMPLOYER_REMOTE = "git@github.com:acme-corp/employer-shaped.git"   # unknown own
 # The matcher's internals. No entry point may define or call them; they live in prompt_route.
 MATCHER_INTERNALS = {"_curated_hits", "_knowledge_hint_hits", "_registry_trigger_hits",
                      "_knowledge_index_hits", "collect", "suppress_contained", "TIER_CAPS"}
-USER_PROMPT_EVENTS = {"UserPromptSubmit", "beforeSubmitPrompt"}
-HOOK_FILES = [".claude/settings.json", ".cursor/hooks.json", "00-bootstrap/dist/settings-user-fragment.json",
-              "00-bootstrap/dist/plugin-hooks.json", "00-bootstrap/dist/cursor-hooks.json"]
+# USER_PROMPT_EVENTS and HOOK_FILES are derived from surfaces.json below (formats, outputs).
 ROUTING_ENTRY_TOKENS = ("/.claude/hooks/dispatcher.py", "/bin/ws-hook")
 
 
@@ -142,7 +134,42 @@ def host_markers(host: str, table: dict | None = None) -> dict:
     return {}
 
 
+def hookless_adapters(table: dict | None = None) -> list:
+    """The md adapters (surfaces[].adapters, role md) of rows whose dialect is `none`: no hook
+    output reaches the model there, so the adapter file is the only way in. A new surface row
+    with an adapter is picked up here without a code edit."""
+    t = _table() if table is None else table
+    out = []
+    for r in t.get("surfaces") or []:
+        if not isinstance(r, dict) or r.get("dialect", "none") != "none":
+            continue
+        for a in r.get("adapters") or []:
+            rel = a.get("path") if isinstance(a, dict) else None
+            if rel and a.get("role", "md") == "md" and rel not in out:
+                out.append(rel)
+    return out
+
+
+def hook_files(table: dict | None = None) -> list:
+    """Every non-probe output that renders a hook layer (a JSON file with a `hooks` key)."""
+    t = _table() if table is None else table
+    layers = {lay.get("id") for lay in t.get("layers") or [] if isinstance(lay, dict)}
+    return [o["path"] for o in t.get("outputs") or []
+            if isinstance(o, dict) and o.get("path") and o.get("layer") in layers
+            and o.get("render", "hooks") == "hooks" and not o.get("probe")]
+
+
+def user_prompt_events(table: dict | None = None) -> set:
+    """Each hook format's native name for the neutral user-prompt event."""
+    t = _table() if table is None else table
+    return {f["user-prompt"] for f in (t.get("formats") or {}).values()
+            if isinstance(f, dict) and f.get("user-prompt")}
+
+
 PARITY_SURFACES = parity_surfaces()
+HOOKLESS_ADAPTERS = hookless_adapters()
+HOOK_FILES = hook_files()
+USER_PROMPT_EVENTS = user_prompt_events()
 
 
 # ---------------------------------------------------------------------- sandbox
@@ -525,7 +552,7 @@ def check_digest(root: Path = ROOT) -> list[str]:
 
 def check_hookless_adapters() -> list[str]:
     """A surface with no hook gets only what its adapter file says. Assert it says it."""
-    fails = []
+    fails = [] if HOOKLESS_ADAPTERS else ["surfaces.json yields no hookless adapters (surfaces[].adapters)"]
     for rel in HOOKLESS_ADAPTERS:
         path = ROOT / rel
         if not path.exists():
@@ -580,6 +607,22 @@ def self_test() -> int:
     expect("host markers come from the table", host_markers("c", fake) == {"C_AGENT": "1"})
     expect("the live table yields claude-code, cursor and codex",
            set(PARITY_SURFACES) >= {"claude-code", "cursor", "codex"})
+    fake_adapters = {"surfaces": [
+        {"id": "hooked", "dialect": "claude", "adapters": [{"path": "HOOKED.md", "role": "md"}]},
+        {"id": "new-agent", "dialect": "none", "adapters": [{"path": "NEWAGENT.md", "role": "md"},
+                                                            {"path": ".newagent.toml", "role": "config"}]}],
+        "layers": [{"id": "new-user"}], "formats": {"new-hooks": {"user-prompt": "OnPrompt"}},
+        "outputs": [{"path": "dist/new-hooks.json", "layer": "new-user"},
+                    {"path": "dist/probe/new.json", "layer": "new-user", "probe": True},
+                    {"path": "dist/NEW.md", "layer": None, "render": "beacon"}]}
+    expect("hookless adapters come from the table (md adapters on dialect-none rows)",
+           hookless_adapters(fake_adapters) == ["NEWAGENT.md"])
+    expect("hook files come from the table (non-probe hook outputs)",
+           hook_files(fake_adapters) == ["dist/new-hooks.json"])
+    expect("user-prompt event names come from the table", user_prompt_events(fake_adapters) == {"OnPrompt"})
+    expect("the live table yields the hookless adapters and the codex hook file",
+           "PERPLEXITY.md" in HOOKLESS_ADAPTERS and "00-bootstrap/dist/codex-hooks.json" in HOOK_FILES
+           and {"UserPromptSubmit", "beforeSubmitPrompt"} <= USER_PROMPT_EVENTS)
 
     real = {"id": "t", "utterance": "figma component variants",
             "surfaces": ["cursor"], "expect_paths": ["03-skills/figma/SKILL.md"]}

@@ -16,11 +16,10 @@ import io
 import json
 import os
 import subprocess
-import sys
 import tempfile
 import time
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, List
 
 HERE = Path(__file__).resolve().parent
 TOOLS = HERE.parents[1]

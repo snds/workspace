@@ -24,6 +24,12 @@ detection finds no evidence), a mistyped `--family`, a surface id passed as a fa
 and any family when the table cannot be read. AGENTS.md says unresolvable means the
 most restrictive profile. The machine label comes from `profile_resolve.device_label()`;
 if that import fails the label is the raw short hostname. Fail-open throughout.
+
+H10: one conditional line, `- **CI:** …`, shows the latest origin/main check-run conclusion,
+read ANONYMOUSLY from api.github.com (the repo is public; no credential, no token from the
+environment, 3 s timeout, silent on any failure; WS_CARD_OFFLINE=1 skips the read), plus the
+count of unlaned commits on origin/main (no Workspace-Lane trailer) since the lane epoch.
+The line is absent when neither is known, so the card is otherwise byte-identical.
 """
 
 from __future__ import annotations
@@ -39,6 +45,8 @@ import socket
 import subprocess
 import sys
 import tempfile
+import threading
+import urllib.request
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
@@ -72,6 +80,14 @@ EMPLOYER_HANDLERS = "Cursor/Codex"
 RESTRICTIVE_FAMILIES = ("claude", "unknown-agent")
 ORACLE_SHA = "2ff02e7"
 _UNSET: Any = object()
+# H10: the CI line. Constants mirror close-out-dispatch.py (TRAILER_KEY, UNLANED_SINCE; TestCloseOutDispatch
+# asserts they agree).
+GITHUB_API = "https://api.github.com"
+CI_TIMEOUT_S = 3.0
+TRAILER_KEY = "Workspace-Lane"
+UNLANED_SINCE = "2026-09-26"
+CI_FAILING = ("failure", "timed_out", "cancelled", "action_required", "startup_failure", "stale")
+SLUG_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 
 
 def _resolver() -> Any:
@@ -217,6 +233,90 @@ def git_state() -> dict:
             + (f" · {unpushed} unpushed" if unpushed else "")
         ),
     }
+
+
+def repo_slug(root: Optional[Path] = None) -> Optional[str]:
+    """owner/repo from the origin remote (any host form), or None."""
+    url = ""
+    try:
+        r = subprocess.run(["git", "-C", str(root or ROOT), "remote", "get-url", "origin"], capture_output=True,
+                           text=True, timeout=4)
+        url = (r.stdout or "").strip() if r.returncode == 0 else ""
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    m = re.search(r"[:/]([^/:]+)/([^/]+?)(?:\.git)?/?$", url)
+    slug = f"{m.group(1)}/{m.group(2)}" if m else None
+    return slug if slug and SLUG_RE.match(slug) else None
+
+
+def fetch_check_runs(slug: str, *, base: str = GITHUB_API, timeout: float = CI_TIMEOUT_S,
+                     opener: Any = None) -> Optional[dict]:
+    """GET /repos/<slug>/commits/main/check-runs with NO credential. None on any failure."""
+    if not slug or not SLUG_RE.match(slug):
+        return None
+    req = urllib.request.Request(
+        f"{base.rstrip('/')}/repos/{slug}/commits/main/check-runs?per_page=100",
+        headers={"Accept": "application/vnd.github+json", "User-Agent": "snds-workspace-session-card"},
+    )
+    try:
+        op = opener if opener is not None else urllib.request.build_opener()
+        with op.open(req, timeout=timeout) as resp:
+            data = json.loads(resp.read(2_000_000).decode("utf-8", errors="replace"))
+        return data if isinstance(data, dict) else None
+    except Exception:  # noqa: BLE001 - the card never fails on the network
+        return None
+
+
+def ci_conclusion(data: Optional[dict]) -> Optional[str]:
+    runs = [r for r in (data or {}).get("check_runs") or [] if isinstance(r, dict)]
+    if not runs:
+        return None
+    if any(r.get("status") != "completed" for r in runs):
+        return "running"
+    bad = sorted({str(r.get("name") or "?") for r in runs if r.get("conclusion") in CI_FAILING})
+    if bad:
+        more = f" +{len(bad) - 1}" if len(bad) > 1 else ""
+        return f"failure ({bad[0]}{more})"
+    return "success"
+
+
+def unlaned_count(root: Optional[Path] = None, since: str = UNLANED_SINCE) -> Optional[int]:
+    """Non-merge commits on origin/main (else HEAD) since the lane epoch with no lane trailer."""
+    root = root or ROOT
+    for ref in ("origin/main", "HEAD"):
+        try:
+            r = subprocess.run(["git", "-C", str(root), "log", ref, "--no-merges", f"--since={since}", "-n", "500",
+                                f"--format=%(trailers:key={TRAILER_KEY},valueonly)%x1e"],
+                               capture_output=True, text=True, timeout=4)
+        except (OSError, subprocess.TimeoutExpired):
+            return None
+        if r.returncode == 0:
+            return sum(1 for rec in r.stdout.split("\x1e")[:-1] if not rec.strip())
+    return None
+
+
+def ci_line(root: Optional[Path] = None, *, base: str = GITHUB_API, opener: Any = None,
+            offline: Optional[bool] = None) -> Optional[str]:
+    """The card's conditional CI line, or None. The read runs in a thread capped at the timeout."""
+    offline = os.environ.get("WS_CARD_OFFLINE") == "1" if offline is None else offline
+    box: dict = {}
+    th = None
+    if not offline:
+        slug = repo_slug(root)
+        if slug:
+            th = threading.Thread(target=lambda: box.update(v=fetch_check_runs(slug, base=base, opener=opener)),
+                                  daemon=True)
+            th.start()
+    n = unlaned_count(root)
+    if th is not None:
+        th.join(CI_TIMEOUT_S + 0.2)
+    concl = ci_conclusion(box.get("v"))
+    parts = []
+    if concl:
+        parts.append(f"origin/main {concl}")
+    if n:
+        parts.append(f"{n} unlaned since {UNLANED_SINCE}")
+    return " · ".join(parts) or None
 
 
 def count_pending(path: Path | None = None) -> int:
@@ -418,7 +518,8 @@ def _notices() -> list[str]:
 
 
 def collect(
-    surface: str = "", via: str = "session-status", family: str = "auto", *, resolver: Any = _UNSET
+    surface: str = "", via: str = "session-status", family: str = "auto", *, resolver: Any = _UNSET,
+    no_network: bool = False,
 ) -> dict:
     pr = _resolver() if resolver is _UNSET else resolver
     now = datetime.now().astimezone()
@@ -459,6 +560,10 @@ def collect(
     data["employer_projects_hidden"] = hidden
     data["undeclared_projects_hidden"] = undeclared
     data["pending_employer"] = pending_employer
+    try:
+        data["ci"] = None if no_network else ci_line()
+    except Exception:  # noqa: BLE001
+        data["ci"] = None
     return data
 
 
@@ -499,6 +604,8 @@ def format_card(data: dict) -> str:
             lines.append(f"  - {undeclared} projects with no declared Context profile — hidden here until "
                          "their SESSION-STATE declares one")
     lines.append(f"- **Git:** {data['git_line']}")
+    if data.get("ci"):
+        lines.append(f"- **CI:** {data['ci']}")
     lines.append("")
     lines.append("What's on the agenda today?")
     return "\n".join(lines)
@@ -520,7 +627,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     args = parser.parse_args(argv)
     if args.self_test:
         return self_test()
-    data = collect(surface=args.surface, via=args.via, family=args.family)
+    data = collect(surface=args.surface, via=args.via, family=args.family, no_network=args.check)
     if args.check:
         if not data["sha"] or data["sha"] == "?":
             print("session-status FAIL: no git sha", file=sys.stderr)
@@ -617,6 +724,10 @@ def _pinned(mods: list, consts: dict, doctor: Path, label: str):
     for mod in mods:
         keep = {k: getattr(mod, k) for k in (*_PATH_CONSTS, "DOCTOR_STATE", "datetime", "machine_label",
                                              "active_projects")}
+        if hasattr(mod, "ci_line"):
+            # The CI line is network state, pinned off like the clock; its own cases run below.
+            keep["ci_line"] = mod.ci_line
+            mod.ci_line = lambda *a, **k: None
         if hasattr(mod, "CLOSURE_NOTICES"):
             keep["CLOSURE_NOTICES"] = mod.CLOSURE_NOTICES
             mod.CLOSURE_NOTICES = doctor / "closure-notices.json"
@@ -866,6 +977,46 @@ def self_test() -> int:
         check("import failure → resolver None", _resolver() is None)
         check("import failure → raw short hostname", machine_label() == socket.gethostname().split(".", 1)[0])
         check("import failure → family unknown", resolve_family("auto") == "unknown")
+
+    # 3b. H10 CI line, offline: an injected opener stands in for api.github.com.
+    class _Resp:
+        def __init__(self, body):
+            self.body = body
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def read(self, _n=-1):
+            return self.body
+
+    class _Opener:
+        def __init__(self, body=None, exc=None):
+            self.body, self.exc, self.seen = body, exc, []
+
+        def open(self, req, timeout=None):
+            self.seen.append((req.full_url, dict(req.header_items()), timeout))
+            if self.exc:
+                raise self.exc
+            return _Resp(self.body)
+
+    ok_body = json.dumps({"check_runs": [{"name": "a", "status": "completed", "conclusion": "success"},
+                                         {"name": "b", "status": "completed", "conclusion": "skipped"}]}).encode()
+    op = _Opener(ok_body)
+    got = fetch_check_runs("pat-sample/ws", base="http://stub.invalid", opener=op)
+    url, headers, tmo = op.seen[0]
+    check("ci read is anonymous (no Authorization header) with the 3 s timeout",
+          got is not None and not any(k.lower() == "authorization" for k in headers) and tmo == CI_TIMEOUT_S
+          and url.endswith("/repos/pat-sample/ws/commits/main/check-runs?per_page=100"), f"{url} {headers} {tmo}")
+    check("ci conclusion success", ci_conclusion(got) == "success")
+    check("ci conclusion failure names the run", ci_conclusion({"check_runs": [
+        {"name": "gate-selection", "status": "completed", "conclusion": "failure"},
+        {"name": "x", "status": "completed", "conclusion": "success"}]}) == "failure (gate-selection)")
+    check("ci conclusion running", ci_conclusion({"check_runs": [{"name": "x", "status": "queued"}]}) == "running")
+    check("ci read fails quiet", fetch_check_runs("pat-sample/ws", opener=_Opener(exc=OSError("down"))) is None
+          and fetch_check_runs("bad slug/x y", opener=_Opener(ok_body)) is None and ci_conclusion(None) is None)
 
     # 4. No hostname→label literal remains in this module.
     src = Path(__file__).read_text(encoding="utf-8")
