@@ -7,6 +7,7 @@ imports its sibling `profile_resolve.py`; tables resolve relative to that copy.
 
   ws_hook.py --host HOST --event EVENT [--probe] [--budget SECONDS]   stdin: host payload JSON
   ws_hook.py --host git --floor claude [GIT_HOOK_ARGS...]             stdin: pre-push ref lines
+  ws_hook.py lane EVENT [GIT_HOOK_ARGS...]                            the H18/H11 git lanes (git_lanes.py)
   ws_hook.py host --skip-any H[,H...]                                 stdin: payload JSON (optional)
   ws_hook.py host --skip-unless H[,H...]                              stdin: payload JSON (optional)
   ws_hook.py host --skip-unless-layer LAYER                           stdin: payload JSON (optional)
@@ -48,6 +49,7 @@ import contextlib
 import datetime as dt
 import getpass
 import hashlib
+import importlib.util
 import io
 import json
 import os
@@ -989,6 +991,8 @@ def handle_event(host_arg, event, payload, *, probe=False, budget=None, home=Non
             return 0
         if event == "user-prompt":
             return _route_event(host, row, dialect, payload, n, t, budget, home, out, start)
+        if event == "stop":
+            return stop_notice(host or "unknown", dialect, n, home=home, out=out)
         if event != "session-start":
             return 0            # other events observe only
         if not claim(n["session"], event, n["turn"] or "0", host=host or "unknown", home=home):
@@ -1009,6 +1013,82 @@ def handle_event(host_arg, event, payload, *, probe=False, budget=None, home=Non
         return 0
     except Exception:
         return 0
+
+
+def _git_lanes():
+    """The sibling git_lanes.py in the pinned lib, or None (callers then allow / stay silent)."""
+    try:
+        spec = importlib.util.spec_from_file_location("ws_hook_git_lanes", TOOLS / "git_lanes.py")
+        if spec is None or spec.loader is None:
+            return None
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+    except BaseException:  # noqa: BLE001 - a broken lane module never blocks git or a host
+        return None
+
+
+def _lane_main(argv, *, err=None) -> int:
+    """`ws_hook.py lane EVENT [HOOK_ARGS...]`: the git lanes through the one pinned entry (W2-0 item 2).
+    git_lanes' hook path decides (exit 1 blocks); a missing or broken module, or any error, allows."""
+    err = err or sys.stderr
+    gl = _git_lanes()
+    if gl is None:
+        print("ws-lanes: git_lanes.py unavailable in the pinned lib; allowing", file=err)
+        return 0
+    try:
+        return 1 if gl.main(["hook", *argv[1:]]) == 1 else 0
+    except KeyboardInterrupt:
+        raise
+    except BaseException as exc:  # noqa: BLE001
+        print(f"ws-lanes: {exc.__class__.__name__} in the lane; allowing", file=err)
+        return 0
+
+
+def _workspace_top(cwd: str, home=None) -> Optional[Path]:
+    """The work tree holding cwd when it is the workspace (or one of its worktrees), else None."""
+    vroot = _vault_root(home)
+    if not vroot or not cwd:
+        return None
+    try:
+        r = subprocess.run(["git", "-C", cwd, "rev-parse", "--show-toplevel"], capture_output=True, text=True,
+                           timeout=GIT_TIMEOUT_S)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    top = Path(r.stdout.strip()) if r.returncode == 0 and r.stdout.strip() else None
+    if top is None or not (top / "AGENTS.md").is_file():
+        return None
+    real, base = os.path.realpath(top), os.path.realpath(vroot)
+    return top if real == base or real.startswith(base + os.sep) else None
+
+
+def stop_notice(host, dialect, n, *, home=None, out=None, err=None) -> int:
+    """H11: a vendor stop hook is a notice-only accelerator. At most one line (the last-gate notice for
+    the workspace checkout the session is in), once per session per notice. Never a Cursor
+    followup_message, never a Codex continue or decision: Cursor gets its `{}` no-op on stdout, Codex
+    nothing, and the line goes to stderr; Claude gets it as a systemMessage. Always 0."""
+    out = out or sys.stdout
+    err = err or sys.stderr
+    line = None
+    try:
+        top = _workspace_top(n.get("cwd") or os.getcwd(), home)
+        gl = _git_lanes() if top is not None else None
+        line = gl.gate_notice(top) if gl is not None else None
+        if line and not claim(n.get("session") or "", "stop-gate", hashlib.sha1(line.encode()).hexdigest()[:12],
+                              host=host, home=home):
+            line = None
+    except Exception:  # noqa: BLE001 - a stop hook never fails the host
+        line = None
+    if dialect == "claude":
+        if line:
+            out.write(json.dumps({"systemMessage": f"ws-gate: {line}"}, ensure_ascii=False) + "\n")
+        return 0
+    text = noop(dialect)
+    if text:
+        out.write(text + "\n")
+    if line:
+        err.write(f"ws-gate: {line}\n")
+    return 0
 
 
 def run_guard(host_arg, payload, *, env=None, home=None, out=None, err=None) -> int:
@@ -2378,6 +2458,8 @@ def main(argv=None) -> int:
         except SystemExit:
             return 2
         return probe_promote(a.host, device=a.device)
+    if argv[:1] == ["lane"]:
+        return _lane_main(argv)
     try:
         return _hook_main(argv)
     except KeyboardInterrupt:

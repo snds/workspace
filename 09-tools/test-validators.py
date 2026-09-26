@@ -1707,6 +1707,45 @@ class TestGitLanes(unittest.TestCase):
             self.skipTest(f"{len(skipped)} case(s) SKIPPED: {skipped[0][2]}")
 
 
+class TestGateLanes(unittest.TestCase):
+    """H11: the gate at commit and push. In a temp HOME with the lanes installed by the real installer and a
+    stand-in nightly verify: post-commit records HEAD's tree; the pre-push `[gate:...]` suffix is identical
+    under the human, Claude, Cursor and Codex chains; a verified tree is reused, never re-run; report-only
+    never blocks; the installer's `ws.pushgate = block` holds only a red push; WS_GATE_BYPASS is refused
+    under an agent chain and recorded when honoured; WS_PUSH_GATE=off is honoured; stop hooks emit at most
+    one notice. git < 2.54 SKIPs (never a pass)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.gc = load("09-tools/fixtures/git_lanes/gate_cases.py")
+        cls.nightly = load("nightly")
+
+    def test_gate_cases(self):
+        cases = self.gc.gate_cases()
+        for name, passed, detail in cases:
+            if passed is None:
+                continue
+            with self.subTest(case=name):
+                self.assertTrue(passed, detail)
+        skipped = [c for c in cases if c[1] is None]
+        if skipped:
+            self.skipTest(f"{len(skipped)} case(s) SKIPPED: {skipped[0][2]}")
+
+    def test_nightly_from_diff_maps_to_the_diff_gate(self):
+        import argparse
+        import contextlib
+        import io
+        ns = argparse.Namespace(via="pre-push", range="@{u}..HEAD", fast=True)
+        self.assertEqual(self.nightly.diff_gate_args(ns, 20.0),
+                         ["--from-diff", "--run", "--json", "--via", "pre-push", "--range", "@{u}..HEAD", "--fast",
+                          "--budget", "18.0"])
+        out = json.dumps({"results": [{"step": "a.py", "status": "CHARGED"}, {"step": "b.py", "status": "AMBIENT"}]})
+        self.assertEqual(self.nightly.gate_charged(out), ["a.py"])
+        self.assertEqual(self.nightly.gate_charged("not json"), [])
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(self.nightly.main(["--phases", "verify", "--range", "A..B"]), 2)
+
+
 class TestPinLib(unittest.TestCase):
     """H24 pin_lib: its own fixture suite, plus the real-home guard against the REAL
     profile_resolve verdict (never a human verdict with confirm_real_home=True)."""

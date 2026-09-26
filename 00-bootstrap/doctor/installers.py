@@ -8,8 +8,8 @@
 `workspace-doctor.sh --install-<name>[=ARG]` / `--uninstall-<name>[=ARG]` exec this with
 inherited stdio; the shell reads only the exit code. The unattended doctor never installs.
 
-Names: pin, shims, git-hooks (H18: the global git lanes include from dist/git/lanes plus one
-managed include block in ~/.gitconfig), identity, claude-overlay, claude-overlay-retire-env,
+Names: pin, shims, git-hooks[=block] (H18: the global git lanes include from dist/git/lanes plus one
+managed include block in ~/.gitconfig; H11: `=block` also sets ws.pushgate there), identity, claude-overlay, claude-overlay-retire-env,
 sandbox-roots, plugin, projects-pointer (~/Projects/AGENTS.md from dist/projects-AGENTS.md), launchd.
 
 claude-overlay (D-W1-4) installs the overlay env file (~/.config/snds-workspace/claude-overlay.env),
@@ -1235,6 +1235,10 @@ GIT_LANES_INC = ".config/snds-workspace/git/lanes/ws-lanes.inc"          # under
 GIT_LANES_PINNED = "09-tools/git_lanes.py"                               # under lib/current
 GIT_LANES_BEGIN = "# BEGIN snds-workspace git lanes (installers.py git-hooks; do not edit)"
 GIT_LANES_END = "# END snds-workspace git lanes"
+GIT_WS_HOOK = "09-tools/ws_hook.py"                                      # the lanes' pinned entry (W2-0 #2)
+# H11: `--install-git-hooks=block` adds `[ws] pushgate = block` to the managed block (this machine holds a
+# push on a red pre-push verify); `--install-git-hooks` (or `=report`) writes the block without it.
+PUSHGATE_MODES = ("report", "block")
 
 
 def _in_git_repo(path: Path):
@@ -1259,6 +1263,9 @@ def git_hooks_refusals(ctx: Ctx) -> list:
     if not (p["lib_current"] / GIT_LANES_PINNED).is_file():
         reasons.append(f"the pinned lib has no {GIT_LANES_PINNED} (it must be in pin_lib.PINNED_PATHS; "
                        "then run workspace-doctor.sh --install-pin), so the lanes would silently allow everything")
+    if not (p["lib_current"] / GIT_WS_HOOK).is_file() or not os.access(p["bin"] / "ws-hook", os.X_OK):
+        reasons.append(f"the lanes enter through bin/ws-hook and the pinned {GIT_WS_HOOK}; one is missing (run "
+                       "workspace-doctor.sh --install-pin), so the lanes would silently allow everything")
     try:
         dev = ctx.pr().current_device().get("id") or "unknown"
     except Exception as e:  # noqa: BLE001
@@ -1278,8 +1285,9 @@ def git_hooks_refusals(ctx: Ctx) -> list:
     return reasons
 
 
-def gitconfig_with_lanes(cur: str, home: Path) -> str:
-    block = f"{GIT_LANES_BEGIN}\n[include]\n\tpath = ~/{GIT_LANES_INC}\n{GIT_LANES_END}\n"
+def gitconfig_with_lanes(cur: str, home: Path, pushgate: str = "report") -> str:
+    hold = "[ws]\n\tpushgate = block\n" if pushgate == "block" else ""
+    block = f"{GIT_LANES_BEGIN}\n[include]\n\tpath = ~/{GIT_LANES_INC}\n{hold}{GIT_LANES_END}\n"
     rx = re.compile(re.escape(GIT_LANES_BEGIN) + r".*?" + re.escape(GIT_LANES_END) + r"\n?", re.S)
     if rx.search(cur):
         return rx.sub(lambda _m: block, cur, count=1)
@@ -1290,7 +1298,8 @@ def do_git_hooks(ctx: Ctx) -> int:
     """--install-git-hooks: the include file plus one managed include block in ~/.gitconfig.
     Refuses unless the pinned lib carries git_lanes.py and this device's git record shows config
     hooks (git >= 2.54). Uninstall restores ~/.gitconfig byte-for-byte (or removes it if the
-    installer created it) and removes the include."""
+    installer created it) and removes the include. `git-hooks=block` (H11) also sets `ws.pushgate = block`
+    inside the managed block: this machine then holds a push whose pre-push verify is red."""
     if ctx.action == "uninstall":
         return _uninstall(ctx)
     src = _src(ctx, GIT_LANES_DIST)
@@ -1304,7 +1313,7 @@ def do_git_hooks(ctx: Ctx) -> int:
         cur = old[1].decode("utf-8") if old else ""
     except UnicodeDecodeError as e:
         raise InstallerError(f"{gc} is not UTF-8 (fix by hand)") from e
-    new = gitconfig_with_lanes(cur, ctx.home)
+    new = gitconfig_with_lanes(cur, ctx.home, ctx.arg or "report")
     return _apply(ctx, [(inc, _file_state(src.read_bytes(), 0o644)),
                         (gc, _file_state(new.encode("utf-8"), old[2] if old else 0o644))])
 
@@ -1324,7 +1333,8 @@ def run(name, action, *, home, repo, agent_check=None, isatty=None, confirm=None
         which=None, sha=None, surface=None, probe=False, render_list=None,
         app_exists=None) -> int:
     base, _, arg = str(name).partition("=")
-    if base not in NAMES or action not in ACTIONS or (arg and base not in ("pin", "shims")):
+    if base not in NAMES or action not in ACTIONS or (arg and base not in ("pin", "shims", "git-hooks")) or (
+            base == "git-hooks" and arg not in ("", *PUSHGATE_MODES)):
         print(f"usage: installers.py install|uninstall NAME[=ARG]; NAME in {', '.join(NAMES)}",
               file=sys.stderr)
         return 2
@@ -2126,6 +2136,11 @@ def self_test() -> int:
             (lib / "09-tools").mkdir(parents=True, exist_ok=True)
             if pinned:
                 (lib / GIT_LANES_PINNED).write_text("# fixture pinned lane\n")
+                (lib / GIT_WS_HOOK).write_text("# fixture pinned entry\n")
+                wh = self.home / ".config/snds-workspace/bin/ws-hook"
+                wh.parent.mkdir(parents=True, exist_ok=True)
+                wh.write_text("#!/bin/sh\nexit 0\n")
+                wh.chmod(0o755)
             cur = self.home / ".config/snds-workspace/lib/current"
             if os.path.lexists(cur):
                 cur.unlink()
@@ -2166,6 +2181,29 @@ def self_test() -> int:
             self.assertEqual(self.run_inst("git-hooks", "uninstall")[0], 0)
             self.assertFalse(gc.exists())
             self.assertFalse(inc.exists())
+
+        def test_git_hooks_pushgate_block(self):
+            """H11: =block adds ws.pushgate inside the managed block; a plain install drops it again."""
+            self._seed_git_lanes()
+            gc = self.home / ".gitconfig"
+            gc.write_text("[user]\n\tname = Someone\n")
+            self.assertEqual(self.run_inst("git-hooks=nonsense")[0], 2)
+            rc, out, err = self.run_inst("git-hooks=block")
+            self.assertEqual(rc, 0, out + err)
+            text = gc.read_text()
+            block = text[text.index(GIT_LANES_BEGIN):text.index(GIT_LANES_END)]
+            self.assertIn("[ws]\n\tpushgate = block\n", block)
+            self.assertEqual(self.run_inst("git-hooks=block")[0], 3)               # idempotent
+            self.assertEqual(self.run_inst("git-hooks")[0], 0)                     # back to report-only
+            self.assertNotIn("pushgate", gc.read_text())
+            self.assertEqual(gitconfig_with_lanes("", self.home, "report"), gitconfig_with_lanes("", self.home))
+
+        def test_git_hooks_needs_ws_hook_entry(self):
+            self._seed_git_lanes()
+            (self.home / ".config/snds-workspace/bin/ws-hook").unlink()
+            rc, _o, err = self.run_inst("git-hooks")
+            self.assertEqual(rc, 4)
+            self.assertIn("enter through bin/ws-hook", err)
 
         def test_git_hooks_foreign_edit_refuses_uninstall(self):
             self._seed_git_lanes()
@@ -2634,6 +2672,10 @@ def self_test() -> int:
             shutil.copy2(dist, inc)
             gc = self.home / ".gitconfig"
             gc.write_text(gitconfig_with_lanes("", self.home))
+            wh = self.home / ".config/snds-workspace/bin/ws-hook"          # the lanes' one pinned entry
+            wh.parent.mkdir(parents=True, exist_ok=True)
+            wh.write_text("#!/bin/sh\nexit 0\n")
+            wh.chmod(0o755)
             r = self.doctor("--check")
             self.assertNotIn("git lanes", r.stdout, r.stdout)
             gc.write_text(gc.read_text() + '[hook "ws-lane-pre-push"]\n\tenabled = false\n')

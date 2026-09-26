@@ -40,6 +40,12 @@
         "command": "$HOME/.config/snds-workspace/bin/ws-hook --host cursor --event post-tool",
         "timeout": 5
       }
+    ],
+    "stop": [
+      {
+        "command": "$HOME/.config/snds-workspace/bin/ws-hook --host cursor --event stop",
+        "timeout": 5
+      }
     ]
   }
 }

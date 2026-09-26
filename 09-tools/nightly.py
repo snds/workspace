@@ -16,7 +16,11 @@ Phases (run in this order; default fold,rebuild,verify,watch):
              2. build-related          (rewrites Related blocks from the registry)
              3. build-registry again   (skipped when step 2 wrote 0 files)
              4. build-trigger-routes
-  verify   workspace-harness.py — the whole gate chain. Read-only.
+  verify   workspace-harness.py — the whole gate chain. Read-only. With --from-diff (H11) the
+           verify step is close-out-dispatch.py --from-diff --run instead: only the QUALITY_CHAIN
+           steps the diff selects (--range R, else the working tree against HEAD; --fast drops the
+           slow ones). CHARGED failures fail it, a SKIPPED step gives exit 3, and the report lists
+           the charged step names under the step's `charged`.
   watch    ds-source-watch.py --check — advisory. Never --fetch from here.
   commit   opt-in (`--phases ...,commit` or `--commit`). Stages exactly the paths this
            run WROTE, and refuses unless the run's status is ok.
@@ -39,6 +43,8 @@ Usage:
   python3 09-tools/nightly.py --phases rebuild --json  # the fixpoint, with written paths
   python3 09-tools/nightly.py --check --phases rebuild # generators in --check mode; writes nothing
   python3 09-tools/nightly.py --lane pre-commit        # stateless pre-commit lane (git hook)
+  python3 09-tools/nightly.py --phases verify --from-diff --range @{u}..HEAD --fast --budget 20 --json
+                                                       # the H11 gate the git lanes run
   python3 09-tools/nightly.py --self-test
 
 Exit: 0 clean · 1 a FAIL (or drift under --check) · 2 could not run · 3 SKIPPED present
@@ -247,8 +253,8 @@ def resolve_scope(scope: str, root: Path = ROOT) -> set[str] | None:
 
 
 def run_step(script: str, args: list[str], timeout: float | None,
-             tools: Path = TOOLS, root: Path = ROOT) -> tuple[int | None, str, float, bool]:
-    """(exit, last line, seconds, timed_out). Exit None when it timed out."""
+             tools: Path = TOOLS, root: Path = ROOT, sink: dict | None = None) -> tuple[int | None, str, float, bool]:
+    """(exit, last line, seconds, timed_out). Exit None when it timed out. `sink` receives stdout."""
     target = tools / script
     if not target.exists():
         return 127, f"missing: 09-tools/{script}", 0.0, False
@@ -258,8 +264,32 @@ def run_step(script: str, args: list[str], timeout: float | None,
                               text=True, cwd=str(root), timeout=timeout)
     except subprocess.TimeoutExpired:
         return None, f"timed out after {timeout:.1f}s", round(time.monotonic() - start, 2), True
+    if sink is not None:
+        sink["stdout"] = proc.stdout
     out = (proc.stdout + proc.stderr).strip().splitlines()
     return proc.returncode, (out[-1] if out else ""), round(time.monotonic() - start, 2), False
+
+
+def diff_gate_args(args: argparse.Namespace, timeout: float | None) -> list[str]:
+    """close-out-dispatch.py arguments for the --from-diff verify step (H11)."""
+    out = ["--from-diff", "--run", "--json", "--via", args.via or "nightly"]
+    if args.range:
+        out += ["--range", args.range]
+    if args.fast:
+        out.append("--fast")
+    if timeout is not None:
+        out += ["--budget", f"{max(1.0, timeout - 2.0):.1f}"]
+    return out
+
+
+def gate_charged(stdout: str) -> list[str]:
+    """The CHARGED step names from close-out-dispatch --from-diff --json output ([] when unparseable)."""
+    try:
+        obj = json.loads(stdout)
+    except ValueError:
+        return []
+    rows = obj.get("results") if isinstance(obj, dict) else None
+    return [str(r.get("step")) for r in rows or [] if isinstance(r, dict) and r.get("status") == "CHARGED"]
 
 
 def commit_written(paths: list[str]) -> tuple[int, str]:
@@ -346,11 +376,22 @@ def run(args: argparse.Namespace) -> tuple[int, dict]:
             step_timeout = step.get("default_timeout", DEFAULT_STEP_TIMEOUT)
         by_budget = remaining is not None and remaining < step_timeout
         timeout = remaining if by_budget else step_timeout
+        tool, sink = step["tool"], None
+        if step["phase"] == "verify" and getattr(args, "from_diff", False):
+            tool, cmd_args, sink = "close-out-dispatch.py", diff_gate_args(args, timeout), {}
+            entry["tool"] = tool
         before = snapshot()
-        code, last, secs, timed_out = run_step(step["tool"], list(cmd_args or []), timeout)
+        code, last, secs, timed_out = run_step(tool, list(cmd_args or []), timeout, sink=sink)
         after = snapshot()
         wrote = written_between(before, after)
         entry.update(exit=code, seconds=secs, last=last, written=wrote)
+        if sink is not None:
+            entry["charged"] = gate_charged(sink.get("stdout") or "")
+            if code == 2:
+                # close-out-dispatch exit 2: a step SKIPPED or nothing ran. Never green, never red.
+                entry.update(status="SKIPPED", last=f"diff gate skipped — {last}")
+                skipped.append({"phase": step["phase"], "tool": tool, "reason": "a diff-selected step SKIPPED"})
+                continue
         for p in wrote:
             if p not in written_all:
                 written_all.append(p)
@@ -528,6 +569,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--dry-run", action="store_true", help="print the plan, run nothing")
     ap.add_argument("--json", action="store_true", help="machine-readable report")
     ap.add_argument("--lane", choices=["pre-commit"], help="stateless git-hook lane")
+    ap.add_argument("--from-diff", action="store_true",
+                    help="verify runs close-out-dispatch --from-diff (the diff-selected gate), not the whole harness")
+    ap.add_argument("--range", default=None, help="with --from-diff: the revision range to diff (A..B)")
+    ap.add_argument("--fast", action="store_true", help="with --from-diff: drop the steps measured over 5 s")
+    ap.add_argument("--via", default=None, help="with --from-diff: who invoked the gate (receipt field)")
     ap.add_argument("--self-test", action="store_true", help="run the fixtures")
     args = ap.parse_args(argv)
 
@@ -535,6 +581,9 @@ def main(argv: list[str] | None = None) -> int:
         return _self_test()
     if args.lane == "pre-commit":
         return lane_pre_commit()
+    if (args.range or args.fast or args.via) and not args.from_diff:
+        print("nightly: --range, --fast and --via need --from-diff", file=sys.stderr)
+        return 2
     try:
         phases = _ordered_phases(args.phases, args.commit)
     except ValueError as exc:
@@ -546,13 +595,16 @@ def main(argv: list[str] | None = None) -> int:
             if step["phase"] not in phases:
                 continue
             extra = step["check_args"] if args.check else step["args"]
+            tool = step["tool"]
+            if step["phase"] == "verify" and args.from_diff:
+                tool, extra = "close-out-dispatch.py", diff_gate_args(args, args.budget)
             if step.get("fixpoint"):
                 note = "fixpoint pass; skipped when build-related wrote 0 files"
             else:
                 note = " ".join(filter(None, [
                     "MUTATES" if step["mutating"] and not args.check else "read-only",
                     "advisory" if step["advisory"] else ""]))
-            print(f"  [{step['phase']:<7}] python3 09-tools/{step['tool']} "
+            print(f"  [{step['phase']:<7}] python3 09-tools/{tool} "
                   f"{' '.join(extra or [])}  ({note})")
         print(f"  [commit ] {'yes (written paths only)' if 'commit' in phases else 'skipped'}")
         print(f"  scope: {args.scope}")

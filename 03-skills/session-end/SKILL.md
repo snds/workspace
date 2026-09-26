@@ -269,6 +269,13 @@ queryable via `git log -1 --format="%s" -- {filepath}`.
 
 If `git push` fails, surface the error and stop. Don't retry.
 
+**Gate (H11).** With the git lanes installed, the commit starts a background verify and the push
+prints one `pre-push gate` line ending in `[gate:<verdict>@<tree>]`. Report-only by default: a red
+line never stops the push, so fix it (`python3 09-tools/nightly.py --phases verify --from-diff
+--range @{u}..HEAD --fast`) or name it in the Session Block. A held push (`[GATE]`, only where Sean
+set `--install-git-hooks=block`) is a failed push: surface it, never retry, never set
+`WS_GATE_BYPASS` (it is refused under an agent chain and recorded).
+
 ### Step 7.5 — Orphaned changes audit
 
 After the session commit, check for remaining dirty tracked files:

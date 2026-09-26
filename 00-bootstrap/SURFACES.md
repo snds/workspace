@@ -172,6 +172,7 @@ Coverage on the minimum surfaces (scope: `shared` is held to parity on the hooka
 | H24 | shared | enforced-partial | not-applicable | enforced-partial | enforced-partial |
 | H25 | shared | enforced-partial | backstop-only | enforced-when-installed | enforced-when-installed |
 | H23 | shared | enforced-partial | not-applicable | enforced-partial | enforced-partial |
+| H11 | shared | advisory | backstop-only | advisory | advisory |
 
 Registrations (one effective registration per surface, event and behaviour):
 
@@ -198,11 +199,13 @@ Registrations (one effective registration per surface, event and behaviour):
 | cursor-user.post-edit | post-edit | ws-ledger-cursor | - | - |
 | cursor-user.post-shell | post-shell | ws-ledger-cursor | - | - |
 | cursor-user.sweep | session-start | ws-sweep-cursor | - | - |
+| cursor-user.stop | stop | ws-gate-cursor | - | - |
 | cursor-project.subagent-stop | subagent-stop | cursor-subagent-stop-project | - | - |
 | codex-user.pre-tool | pre-tool | ws-guard-codex | - | - |
 | codex-user.post-tool | post-tool | ws-ledger-codex | - | - |
 | codex-user.sweep | session-start | ws-sweep-codex | - | - |
 | codex-user.user-prompt | user-prompt | ws-route-codex | - | - |
+| codex-user.stop | stop | ws-gate-codex | - | - |
 | probe-claude-user.session-start | session-start | ws-hook-probe | - | ws-probe |
 | probe-claude-user.user-prompt | user-prompt | ws-hook-probe | - | ws-probe |
 | probe-claude-user.stop | stop | ws-hook-probe | - | ws-probe |

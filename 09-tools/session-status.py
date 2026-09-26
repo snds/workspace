@@ -70,6 +70,9 @@ DOCTOR_STATE = Path.home() / ".claude" / "ws-state"
 # H23: the session-start sweeper's notices (09-tools/closure.py), one per dead session with
 # substantive uncommitted work. Machine-local; read only.
 CLOSURE_NOTICES = Path.home() / ".config" / "snds-workspace" / "telemetry" / "closure-notices.json"
+# H11: one conditional line when HEAD's last gate is red or did not verify (git_lanes.gate_notice reads the
+# gitignored .workspace/state/last-gate.json). 1.5 s budget; a timeout says so instead of staying silent.
+GATE_NOTICE_BUDGET_S = 1.5
 
 EMPLOYER_PROFILE_PREFIX = "centric-"
 PERSONAL_PROFILE_PREFIX = "personal-"
@@ -475,6 +478,30 @@ def closure_notices() -> list[str]:
         return []
 
 
+def gate_notices(root: Optional[Path] = None, budget: float = GATE_NOTICE_BUDGET_S) -> list[str]:
+    """H11: git_lanes.gate_notice for this checkout, at most one line. Fail-open."""
+    box: dict = {}
+    top = root if root is not None else ROOT
+
+    def work() -> None:
+        try:
+            spec = importlib.util.spec_from_file_location("ws_card_git_lanes", TOOLS / "git_lanes.py")
+            if spec is None or spec.loader is None:
+                return
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            box["v"] = mod.gate_notice(top)
+        except Exception:  # noqa: BLE001 - a card line is best effort
+            pass
+
+    th = threading.Thread(target=work, daemon=True)
+    th.start()
+    th.join(budget)
+    if th.is_alive():
+        return ["Last-gate check skipped (budget)."]
+    return [str(box["v"])] if box.get("v") else []
+
+
 def _notices() -> list[str]:
     out: list[str] = []
     out += closure_notices()
@@ -507,6 +534,7 @@ def _notices() -> list[str]:
     git = git_state()
     if git["unpushed"]:
         out.append(f"{git['unpushed']} unpushed commit(s) — other machines are stale until push.")
+    out += gate_notices()
     if SIDE_CHAT.is_file():
         try:
             head = SIDE_CHAT.read_text(encoding="utf-8", errors="replace")[:400]
@@ -731,6 +759,10 @@ def _pinned(mods: list, consts: dict, doctor: Path, label: str):
         if hasattr(mod, "CLOSURE_NOTICES"):
             keep["CLOSURE_NOTICES"] = mod.CLOSURE_NOTICES
             mod.CLOSURE_NOTICES = doctor / "closure-notices.json"
+        if hasattr(mod, "gate_notices"):
+            # The H11 gate line reads machine-local gate state; its own cases run below.
+            keep["gate_notices"] = mod.gate_notices
+            mod.gate_notices = lambda *a, **k: []
         saved.append((mod, keep))
         for k, v in consts.items():
             setattr(mod, k, v)
@@ -1045,6 +1077,26 @@ def self_test() -> int:
         for name, (_, want) in cases.items():
             check(f"active_projects {name}", got.get(name, ("", ""))[1] == want, repr(got.get(name)))
         check("active_projects updated", got["a-timed"][0] == "2026-09-17")
+
+    # 7. H11 gate line: red for HEAD → one line with the suffix; green → none; unreadable → none.
+    with tempfile.TemporaryDirectory() as td:
+        repo = Path(td)
+        genv = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": td, "GIT_CONFIG_NOSYSTEM": "1",
+                "GIT_AUTHOR_NAME": "Pat", "GIT_AUTHOR_EMAIL": "pat@example.invalid",
+                "GIT_COMMITTER_NAME": "Pat", "GIT_COMMITTER_EMAIL": "pat@example.invalid"}
+        for args in (["init", "-q", "-b", "main"], ["commit", "-q", "--allow-empty", "-m", "base"]):
+            subprocess.run(["git", "-C", str(repo), *args], env=genv, capture_output=True, timeout=30)
+        tree = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD^{tree}"], env=genv, capture_output=True,
+                              text=True, timeout=30).stdout.strip()
+        state = repo / ".workspace" / "state"
+        state.mkdir(parents=True)
+        check("gate line absent without a record", gate_notices(repo, budget=10) == [])
+        for status, want in (("red", True), ("green", False)):
+            (state / "last-gate.json").write_text(json.dumps({"tree": tree, "gate": {
+                "status": status, "detectors": ["build-registry.py"] if status == "red" else []}}), encoding="utf-8")
+            got = gate_notices(repo, budget=10)
+            check(f"gate line for a {status} HEAD", bool(got) == want and (not want or (
+                len(got) == 1 and f"[gate:red:build-registry.py@{tree[:12]}]" in got[0])), repr(got))
 
     for f in failures:
         print(f"  ✗ {f}", file=sys.stderr)
