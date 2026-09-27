@@ -22,6 +22,8 @@ Usage:
   python3 09-tools/profile_resolve.py identity [--repo PATH] [--family auto|F] [--device auto|ID] [--json]
   python3 09-tools/profile_resolve.py override --task S --repo O/R --identity ID --ttl 8h --reason TEXT
                                       | --list | --revoke ID [--json]
+  python3 09-tools/profile_resolve.py owners list [--json]
+  python3 09-tools/profile_resolve.py owners set FOLDER work|personal | owners unset FOLDER   (human, TTY)
   python3 09-tools/profile_resolve.py floor --event pre-commit|commit-msg|pre-merge-commit|pre-push
                                       [--remote NAME URL] [--json]   (stdin: pre-push ref lines)
   python3 09-tools/profile_resolve.py --self-test [--stub-chain]
@@ -40,6 +42,11 @@ I2; exit 1) and the device-mismatch flag. `override` is Sean's express override:
 non-employer repos only, and it suppresses only that flag. `floor` (and floor_decide(), which the
 pinned ws_hook calls from the overlay's config hook) blocks I1, I2 and not-positively-personal
 under projects_root, allows the vetted housekeeping shape, and fails open on infrastructure errors.
+
+W3-3: `owners` reads and (human-only) writes the device-local owner overlay
+~/.config/snds-workspace/control/owners.json for non-git folders under projects_root: employer
+entries tighten like an employer path glob; personal entries loosen only a verified non-git folder
+on the device the file names. Folder names live only in that file, never in this repo.
 """
 
 from __future__ import annotations
@@ -1102,6 +1109,229 @@ def _now_z() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+# --------------------------------------------------------------------------- owner overlay (W3-3)
+#
+# A per-device, local-only owner declaration for folders under projects_root that no git remote
+# classifies (non-git folders). It lives in control/owners.json, which only a human writes (agents
+# never write control/: wall_guard R6), and is never committed: naming work folders in this public
+# repo would leak employer project names. "employer" entries tighten exactly like an
+# employer_path_glob hit, anywhere and on any device. "personal" entries only loosen a folder that
+# is not inside a git repo, matches no employer glob (itself or anything beneath it), holds no
+# employer overlay entry, no employer or unknown-owner repo and no such checkout-cache entry beneath
+# it, declares no stricter PROJECT.md, and only on the device the file names. Anything else is
+# ignored with a reason. Conflicts: most restrictive wins.
+
+OWNER_OVERLAY_CLASSES = ("employer", "personal")
+OWNER_OVERLAY_WORDS = {"work": "employer", "personal": "personal"}
+OVERLAY_WALK_MAX_DIRS = 4000
+OVERLAY_PRUNE_DIRS = frozenset({"node_modules", ".venv", "venv", "__pycache__", "dist", "build", ".cache"})
+_OVERLAY_OK_NEIGHBOURS = ("personal", "third-party")
+
+
+class OwnersError(ValueError):
+    """A usage error in `owners set|unset`."""
+
+
+def owner_overlay_path(*, home: Optional[Path] = None) -> Path:
+    return ws_paths(home=home)["control"] / "owners.json"
+
+
+def _overlay_key_error(key: Any) -> Optional[str]:
+    if not isinstance(key, str) or not key.strip():
+        return "empty folder key"
+    k = key.replace("\\", "/")
+    if k.startswith(("/", "~")) or re.match(r"^[A-Za-z]:", k):
+        return "must be relative to projects_root"
+    if any(p in ("", ".", "..") for p in k.rstrip("/").split("/")):
+        return "must not hold empty, '.' or '..' segments"
+    return None
+
+
+def _overlay_parts(key: str) -> Tuple[str, ...]:
+    return tuple(p.casefold() for p in key.replace("\\", "/").rstrip("/").split("/"))
+
+
+def validate_owner_overlay(obj: Any, *, device_ids: Optional[set] = None) -> List[str]:
+    """Errors for an owners.json object (closed keys, like the committed tables)."""
+    if not isinstance(obj, dict):
+        return ["top level is not an object"]
+    errors: List[str] = []
+    _check_row(obj, "owners", {"schema_version": (_INT, True), "device": (_STR, True), "folders": (_DICT, True)},
+               errors)
+    if obj.get("schema_version") != SCHEMA_VERSION or isinstance(obj.get("schema_version"), bool):
+        errors.append(f"schema_version must be {SCHEMA_VERSION}")
+    if device_ids is not None and isinstance(obj.get("device"), str) and obj["device"] not in device_ids:
+        errors.append("device: not a devices.json id")
+    seen: Dict[Tuple[str, ...], str] = {}
+    for k, v in (obj.get("folders") if isinstance(obj.get("folders"), dict) else {}).items():
+        err = _overlay_key_error(k)
+        if err:
+            errors.append(f"folders[{k!r}]: {err}")
+            continue
+        if v not in OWNER_OVERLAY_CLASSES:
+            errors.append(f"folders[{k!r}]: must be one of {list(OWNER_OVERLAY_CLASSES)}")
+        parts = _overlay_parts(k)
+        if parts in seen:
+            errors.append(f"folders[{k!r}]: duplicates {seen[parts]!r} (keys compare case-insensitively)")
+        seen[parts] = k
+    return errors
+
+
+def load_owner_overlay(*, home: Optional[Path] = None, root: Optional[Path] = None) -> dict:
+    """{path, present, ok, device, device_ok, errors, entries: [(parts, key, class)]}. Fail-closed: an
+    unreadable or structurally invalid file yields no entries; one bad entry drops only that entry."""
+    path = owner_overlay_path(home=home)
+    out: Dict[str, Any] = {"path": path, "present": False, "ok": True, "device": None, "device_ok": False,
+                           "errors": [], "entries": []}
+    try:
+        text = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return out
+    except OSError as exc:
+        out.update(present=True, ok=False, errors=[f"unreadable ({exc.__class__.__name__})"])
+        return out
+    out["present"] = True
+    try:
+        obj = json.loads(text)
+    except ValueError:
+        out.update(ok=False, errors=["invalid JSON"])
+        return out
+    dev_t = _try_table("devices", root)
+    ids = {str(r.get("id")) for r in (dev_t or {}).get("devices") or [] if isinstance(r, dict)} if dev_t else None
+    errs = validate_owner_overlay(obj, device_ids=ids)
+    out["errors"] = errs
+    out["ok"] = not errs
+    if not isinstance(obj, dict) or not isinstance(obj.get("folders"), dict) or \
+            obj.get("schema_version") != SCHEMA_VERSION or isinstance(obj.get("schema_version"), bool):
+        return out
+    out["device"] = obj.get("device") if isinstance(obj.get("device"), str) else None
+    out["device_ok"] = bool(out["device"]) and (ids is None or out["device"] in ids)
+    seen = set()
+    for k, v in obj["folders"].items():
+        if _overlay_key_error(k) or v not in OWNER_OVERLAY_CLASSES or _overlay_parts(k) in seen:
+            continue
+        seen.add(_overlay_parts(k))
+        out["entries"].append((_overlay_parts(k), k.replace("\\", "/").rstrip("/"), v))
+    return out
+
+
+def _rel_parts(p: Path, prr: Path) -> Optional[Tuple[str, ...]]:
+    if not _is_under(p, prr) or _cf(p) == _cf(prr):
+        return None
+    return tuple(x.casefold() for x in p.parts[len(prr.parts):])
+
+
+def _glob_may_hit_beneath(parts: Tuple[str, ...], globs: List[str]) -> Optional[str]:
+    """A multi-segment employer glob whose leading segments match this folder: something beneath it can hit."""
+    for g in globs:
+        gp = [x.casefold() for x in str(g).split("/")]
+        if len(gp) > len(parts) and all(fnmatch.fnmatchcase(parts[i], gp[i]) for i in range(len(parts))):
+            return g
+    return None
+
+
+def _overlay_repo_ok(repo: Path, *, restricted: bool, cache: Optional[dict], root: Optional[Path],
+                     home: Optional[Path], detection: Optional[dict]) -> Tuple[bool, str]:
+    """A repo beneath a declared personal folder must be positively personal or a third-party clone.
+    An agent chain never opens it: the checkout cache is the only witness."""
+    if restricted:
+        for c in (cache or {}).get("checkouts") or []:
+            if isinstance(c, dict) and isinstance(c.get("path"), str) and _cf(_real(c["path"])) == _cf(repo):
+                cls = str(c.get("owner_class"))
+                return cls in _OVERLAY_OK_NEIGHBOURS, f"{cls} owner (checkout cache)"
+        return False, "not in the checkout cache (an agent chain never opens it; run profile_resolve.py scan)"
+    try:
+        res = repo_resolve(str(repo), root=root, home=home, detection=detection, cache=cache)
+    except Exception as exc:  # noqa: BLE001
+        return False, f"undetermined ({exc.__class__.__name__})"
+    cls = str(res.get("owner_class"))
+    return bool(res.get("positively_personal")) or cls == "third-party", f"{cls} owner"
+
+
+def _overlay_personal_ok(folder: Path, path: Path, prr: Path, ov: dict, *, table: dict, conduct: List[str],
+                         restricted: bool, cache: Any, root: Optional[Path], home: Optional[Path],
+                         hostname: Optional[str], detection: Optional[dict]) -> Tuple[bool, str]:
+    """(applies, reason) for a personal entry. Every check fails closed; the reason never names a folder."""
+    dev = current_device(hostname=hostname, root=root)["id"]
+    if not ov.get("device_ok") or ov.get("device") != dev:
+        return False, "owners.json belongs to another device (or names no declared device)"
+    if not folder.is_dir():
+        return False, "the declared folder does not exist"
+    if _find_top(folder) is not None or _find_top(path) is not None or _workspace_kind(path, root, home) is not None:
+        return False, "inside a git repository: its remotes decide"
+    globs = [str(g) for g in table.get("employer_path_globs") or []]
+    fparts = _rel_parts(folder, prr) or ()
+    g = _glob_hit(folder, prr, globs) or _glob_hit(path, prr, globs) or _glob_may_hit_beneath(fparts, globs)
+    if g:
+        return False, f"matches employer glob {g!r} (at or beneath the folder)"
+    for parts, _key, cls in ov.get("entries") or []:
+        if cls == "employer" and len(parts) > len(fparts) and parts[:len(fparts)] == fparts:
+            return False, "an employer overlay entry sits beneath the folder"
+    pmp = _project_md_profile(folder, conduct) if conduct else None
+    if pmp and pmp != conduct[0]:
+        return False, f"PROJECT.md declares {pmp}"
+    c = _load_cache(cache, home)
+    for co in (c or {}).get("checkouts") or []:
+        if isinstance(co, dict) and isinstance(co.get("path"), str) and _is_under(_real(co["path"]), folder) \
+                and co.get("owner_class") not in _OVERLAY_OK_NEIGHBOURS:
+            return False, f"an {co.get('owner_class')} checkout sits beneath the folder (checkout cache)"
+    # a stat-only walk beneath the folder: glob hits and repos (never descending into a repo)
+    stack, seen = [folder], 0
+    while stack:
+        d = stack.pop()
+        try:
+            kids = sorted(os.scandir(d), key=lambda e: e.name)
+        except OSError:
+            return False, "a directory beneath the folder is unreadable"
+        for e in kids:
+            try:
+                if not e.is_dir(follow_symlinks=False) or e.name == ".git" or e.name in OVERLAY_PRUNE_DIRS:
+                    continue
+            except OSError:
+                return False, "a directory beneath the folder is unreadable"
+            seen += 1
+            if seen > OVERLAY_WALK_MAX_DIRS:
+                return False, f"more than {OVERLAY_WALK_MAX_DIRS} directories beneath the folder: not verified"
+            k = Path(e.path)
+            g = _glob_hit(k, prr, globs)
+            if g:
+                return False, f"matches employer glob {g!r} (at or beneath the folder)"
+            if (k / ".git").exists() or _is_bare_repo(k):
+                ok, why = _overlay_repo_ok(k, restricted=restricted, cache=c, root=root, home=home,
+                                           detection=detection)
+                if not ok:
+                    return False, f"a repo beneath the folder is not positively personal ({why})"
+                continue
+            stack.append(k)
+    return True, "declared personal on this device; no repo, glob or employer entry says otherwise"
+
+
+def _overlay_decide(path: Path, prr: Path, *, top: Optional[Path], table: dict, conduct: List[str],
+                    restricted: bool, cache: Any, root: Optional[Path], home: Optional[Path],
+                    hostname: Optional[str], detection: Optional[dict]) -> Optional[dict]:
+    """{declared, effect: tighten|loosen|None, reason} for a path under projects_root, or None (no entry)."""
+    rel = _rel_parts(path, prr)
+    if rel is None:
+        return None
+    ov = load_owner_overlay(home=home, root=root)
+    hits = [(parts, key, cls) for parts, key, cls in ov["entries"] if rel[:len(parts)] == parts]
+    if not hits:
+        return None
+    if any(cls == "employer" for _p, _k, cls in hits):
+        return {"declared": "employer", "effect": "tighten",
+                "reason": "owner overlay: the folder is declared employer (device-local, tighten-only)"}
+    parts, _key, _cls = max(hits, key=lambda h: len(h[0]))
+    if top is not None:
+        return {"declared": "personal", "effect": None,
+                "reason": "owner overlay: personal ignored (inside a git repository: its remotes decide)"}
+    folder = prr.joinpath(*path.parts[len(prr.parts):len(prr.parts) + len(parts)])
+    ok, why = _overlay_personal_ok(folder, path, prr, ov, table=table, conduct=conduct, restricted=restricted,
+                                   cache=cache, root=root, home=home, hostname=hostname, detection=detection)
+    if ok:
+        return {"declared": "personal", "effect": "loosen", "reason": f"owner overlay: {why}"}
+    return {"declared": "personal", "effect": None, "reason": f"owner overlay: personal ignored ({why})"}
+
+
 # --------------------------------------------------------------------------- repo walls
 
 
@@ -1126,14 +1356,14 @@ def _looks_like_slug(s: str) -> bool:
 
 
 def _resolve(path_or_slug: str, *, root: Optional[Path], home: Optional[Path], detection: Optional[dict],
-             cache: Any) -> Tuple[dict, str]:
+             cache: Any, hostname: Optional[str] = None) -> Tuple[dict, str]:
     table = _try_table("context-remotes", root)
     conduct = list((table or {}).get("conduct_order") or ["personal-solo", "centric-design", "centric-engineering"])
     unknown_conduct = ((table or {}).get("unknown_owner") or {}).get("conduct") or conduct[-1]
     res: Dict[str, Any] = {
         "path": None, "in_projects_root": False, "source": "none", "remotes": [], "owner_class": "unknown",
         "role": "unknown", "profile": unknown_conduct, "positively_personal": False, "conflict": False,
-        "conflicts": [], "reasons": [],
+        "conflicts": [], "reasons": [], "owner_overlay": None,
     }
     if table is None:
         res["reasons"].append("context-remotes table unavailable: not positively personal")
@@ -1145,7 +1375,19 @@ def _resolve(path_or_slug: str, *, root: Optional[Path], home: Optional[Path], d
     top: Optional[Path] = None
     kind = "path"
     ws_kind = None
-    pr = projects_root(root=root, home=home)
+    overlay: Optional[dict] = None
+    pr = projects_root(root=root, home=home, hostname=hostname)
+
+    def _ov(t: Optional[Path]) -> Optional[dict]:
+        if not res["in_projects_root"]:
+            return None
+        try:
+            return _overlay_decide(p, _real(pr), top=t, table=table, conduct=conduct, restricted=restricted,
+                                   cache=cache, root=root, home=home, hostname=hostname, detection=det)
+        except Exception as exc:  # noqa: BLE001 - an overlay error never loosens
+            return {"declared": "unknown", "effect": None,
+                    "reason": f"owner overlay: undetermined ({exc.__class__.__name__})"}
+
     if "://" in s or (not os.path.exists(s) and _SCP_RE.match(s) and not _looks_like_slug(s)):
         kind = "url"
         remotes = _remotes_from_urls([("url", s)], root)
@@ -1178,10 +1420,18 @@ def _resolve(path_or_slug: str, *, root: Optional[Path], home: Optional[Path], d
         elif res["in_projects_root"] and restricted:
             hit = _cache_lookup(p, _load_cache(cache, home))
             if hit is None:
-                res["reasons"].append(
-                    "agent chain: path under projects_root is resolved from the cache only; cache miss means "
-                    "not positively personal (run profile_resolve.py scan in a plain terminal)"
-                )
+                overlay = _ov(None)
+                if overlay is None or overlay["effect"] is None:
+                    res["reasons"].append(
+                        "agent chain: path under projects_root is resolved from the cache only; cache miss means "
+                        "not positively personal (run profile_resolve.py scan in a plain terminal)"
+                    )
+                    if overlay is not None:
+                        res["owner_overlay"] = overlay
+                        res["reasons"].append(overlay["reason"])
+                    return res, kind
+                res["source"] = "owner-overlay"
+                _apply_walls(res, table, conduct, unknown_conduct, [], None, pr, None, restricted, root, kind, overlay)
                 return res, kind
             res["source"] = "cache"
             top = Path(hit["path"])
@@ -1200,19 +1450,28 @@ def _resolve(path_or_slug: str, *, root: Optional[Path], home: Optional[Path], d
             top = _find_top(p)
             if top is None:
                 res["reasons"].append("not a git repository")
+                overlay = _ov(None)
+                if overlay is None or overlay["effect"] is None:
+                    if overlay is not None:
+                        res["owner_overlay"] = overlay
+                        res["reasons"].append(overlay["reason"])
+                    return res, kind
+                res["source"] = "owner-overlay"
+                _apply_walls(res, table, conduct, unknown_conduct, [], None, pr, None, restricted, root, kind, overlay)
                 return res, kind
             pairs, err = _read_git_config_remotes(top)
             if err:
                 res["reasons"].append(err)
             res["source"] = "live"
             remotes = _remotes_from_urls(pairs, root)
-    _apply_walls(res, table, conduct, unknown_conduct, remotes, top, pr, ws_kind, restricted, root, kind)
+        overlay = _ov(top)
+    _apply_walls(res, table, conduct, unknown_conduct, remotes, top, pr, ws_kind, restricted, root, kind, overlay)
     return res, kind
 
 
 def _apply_walls(res: dict, table: dict, conduct: List[str], unknown_conduct: str, remotes: List[dict],
                  top: Optional[Path], pr: Path, ws_kind: Optional[str], restricted: bool,
-                 root: Optional[Path], kind: str) -> None:
+                 root: Optional[Path], kind: str, overlay: Optional[dict] = None) -> None:
     classes: List[str] = []
     profiles: List[Optional[str]] = []
     out_remotes = []
@@ -1248,6 +1507,9 @@ def _apply_walls(res: dict, table: dict, conduct: List[str], unknown_conduct: st
         overall = "personal"
         profiles.append(conduct[0])
         res["reasons"].append("workspace checkout with no remotes")
+    elif top is None and overlay is not None and overlay.get("effect") == "loosen":
+        overall = "personal"
+        profiles.append(conduct[0])
     else:
         overall = "unknown"
         res["reasons"].append("no remotes: not positively personal")
@@ -1258,6 +1520,15 @@ def _apply_walls(res: dict, table: dict, conduct: List[str], unknown_conduct: st
             if overall == "personal":
                 res["conflicts"].append(f"path matches employer glob {glob!r} but remotes are personal")
             res["reasons"].append(f"path matches employer glob {glob!r} (tighten-only)")
+            overall = "employer"
+            profiles.append(unknown_conduct)
+    if overlay is not None:
+        res["owner_overlay"] = overlay
+        res["reasons"].append(overlay["reason"])
+        if overlay.get("effect") == "tighten":
+            if overall == "personal":
+                res["conflicts"].append("owner overlay declares employer but remotes are personal "
+                                        "(most restrictive wins)")
             overall = "employer"
             profiles.append(unknown_conduct)
     row = None
@@ -1295,13 +1566,16 @@ def _apply_walls(res: dict, table: dict, conduct: List[str], unknown_conduct: st
     else:
         res["role"] = overall
     res["positively_personal"] = bool(overall == "personal" and profile == conduct[0] and not glob)
+    if overlay is not None and overlay.get("effect") == "tighten":
+        res["positively_personal"] = False
     res["conflict"] = bool(res["conflicts"])
 
 
 def repo_resolve(path_or_slug: str, *, root: Optional[Path] = None, home: Optional[Path] = None,
-                 detection: Optional[dict] = None, cache: Any = None) -> dict:
-    """The `repo` JSON: walls are the most restrictive of every source. Fail-closed."""
-    return _resolve(path_or_slug, root=root, home=home, detection=detection, cache=cache)[0]
+                 detection: Optional[dict] = None, cache: Any = None, hostname: Optional[str] = None) -> dict:
+    """The `repo` JSON: walls are the most restrictive of every source. Fail-closed. `hostname` is the
+    device seam the owner overlay's personal entries must match (tests; None = this host)."""
+    return _resolve(path_or_slug, root=root, home=home, detection=detection, cache=cache, hostname=hostname)[0]
 
 
 def classify_word(res: dict) -> str:
@@ -2603,7 +2877,7 @@ def policy(*, repo: str, action_class: Optional[str] = None, command: Optional[s
     walls_det = dict(det, family_for_walls=walls) if walls != det.get("family_for_walls") else det
     dev_id = current_device(hostname=hostname, root=root)["id"] if device == "auto" else device
     base = _resolved if _resolved is not None else repo_resolve(repo, root=root, home=home, detection=walls_det,
-                                                                cache=cache)
+                                                                cache=cache, hostname=hostname)
     repo_is_path = base.get("path") is not None and not _looks_like_slug(str(repo))
     if command is not None:
         invs = classify_command(command, cwd=base.get("path") if repo_is_path else None, root=root,
@@ -2628,7 +2902,8 @@ def policy(*, repo: str, action_class: Optional[str] = None, command: Optional[s
             target = _abs_hint(base["path"], inv["cwd_hint"])
         if target and _cf(_real(target) if not _looks_like_slug(target) else target) != _cf(base.get("path") or ""):
             if target not in resolved:
-                resolved[target] = repo_resolve(target, root=root, home=home, detection=walls_det, cache=cache)
+                resolved[target] = repo_resolve(target, root=root, home=home, detection=walls_det, cache=cache,
+                                                hostname=hostname)
             res = resolved[target]
         else:
             res = base
@@ -3300,6 +3575,134 @@ def override(*, task: Optional[str] = None, repo: Optional[str] = None, identity
     return {"exit": EXIT_OK, "override": new, "overrides": rows, "refused": False, "reasons": []}
 
 
+# --------------------------------------------------------------------------- owners (W3-3 CLI)
+
+
+def owners_list(*, home: Optional[Path] = None, root: Optional[Path] = None, hostname: Optional[str] = None,
+                detection: Optional[dict] = None, cache: Any = None) -> dict:
+    """Any caller. Each entry with its effective status. Under a Claude chain employer folder names are
+    withheld (employer substance never enters a Claude context)."""
+    det = detection if detection is not None else detect_surface(root=root)
+    claude = det.get("family_for_walls") == "claude" or det.get("family") == "claude"
+    ov = load_owner_overlay(home=home, root=root)
+    dev = current_device(hostname=hostname, root=root)["id"]
+    prr = _real(projects_root(root=root, home=home, hostname=hostname))
+    table = _try_table("context-remotes", root) or {}
+    conduct = list(table.get("conduct_order") or [])
+    restricted = _restricted(det, root)
+    rows, n_emp = [], 0
+    for parts, key, cls in sorted(ov["entries"], key=lambda e: e[1].casefold()):
+        if cls == "employer":
+            n_emp += 1
+            rows.append({"folder": f"(employer folder {n_emp}: name withheld from a Claude chain)" if claude else key,
+                         "class": cls, "applies": True, "reason": "tighten-only: applies on every device"})
+            continue
+        folder = prr.joinpath(*key.split("/"))
+        try:
+            ok, why = _overlay_personal_ok(folder, folder, prr, ov, table=table, conduct=conduct,
+                                           restricted=restricted, cache=cache, root=root, home=home,
+                                           hostname=hostname, detection=det)
+        except Exception as exc:  # noqa: BLE001
+            ok, why = False, f"undetermined ({exc.__class__.__name__})"
+        rows.append({"folder": key, "class": cls, "applies": ok, "reason": why})
+    return {"path": str(ov["path"]), "present": ov["present"], "ok": ov["ok"], "errors": ov["errors"],
+            "device": ov["device"], "this_device": dev, "folders": rows}
+
+
+def _owners_key(folder: str, prr: Path) -> str:
+    raw = str(folder or "").strip()
+    if not raw:
+        raise OwnersError("owners set|unset takes a folder (relative to projects_root, or a path under it)")
+    if raw.startswith(("/", "~")):
+        p = Path(os.path.expanduser(raw))
+        p = Path(os.path.normpath(str(p if p.is_absolute() else Path.cwd() / p)))
+        rp = _real(p)
+        if not _is_under(rp, prr) or _cf(rp) == _cf(prr):
+            raise OwnersError("the folder must be under projects_root")
+        raw = "/".join(rp.parts[len(prr.parts):])
+    key = raw.replace("\\", "/").rstrip("/")
+    err = _overlay_key_error(key)
+    if err:
+        raise OwnersError(f"folder {err}")
+    return key
+
+
+def _owners_write(path: Path, device: str, folders: Dict[str, str]) -> None:
+    tmp = path.with_name(path.name + ".tmp")
+    fd = os.open(str(tmp), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8") as fh:
+        fh.write(json.dumps({"schema_version": SCHEMA_VERSION, "device": device,
+                             "folders": dict(sorted(folders.items(), key=lambda kv: kv[0].casefold()))},
+                            indent=2, ensure_ascii=False) + "\n")
+    os.replace(tmp, path)
+
+
+def owners_set(folder: str, word: Optional[str] = None, *, unset: bool = False, home: Optional[Path] = None,
+               root: Optional[Path] = None, hostname: Optional[str] = None, env: Optional[dict] = None,
+               ancestry: Optional[list] = None, isatty: Optional[dict] = None, cache: Any = None) -> dict:
+    """`owners set FOLDER work|personal` / `owners unset FOLDER`: a human at a terminal only, for both
+    words (control/ is the human-only directory; see 09-tools/README.md). Returns {exit, refused, reasons,
+    folders}. Writes control/owners.json (0600, atomic); never creates control/."""
+    e = dict(os.environ if env is None else env)
+    cls = None
+    if not unset:
+        cls = OWNER_OVERLAY_WORDS.get(str(word or "").strip().casefold())
+        if cls is None:
+            raise OwnersError("owners set takes work or personal")
+    prr = _real(projects_root(root=root, home=home, hostname=hostname))
+    key = _owners_key(folder, prr)
+    reasons = _override_refusals(env=e, ancestry=ancestry, isatty=isatty, root=root)
+    if reasons:
+        return {"exit": EXIT_REFUSED, "refused": True, "folders": None,
+                "reasons": ["owners set/unset needs Sean at a terminal (control/ is human-only)"] + reasons}
+    if not ws_paths(home=home)["control"].is_dir():
+        return {"exit": EXIT_NOTFOUND, "refused": False, "folders": None,
+                "reasons": ["control/ is absent (a human runs workspace-doctor.sh --install-pin)"]}
+    dev = current_device(hostname=hostname, root=root)
+    if not dev.get("hostname_known") or dev.get("id") in (None, "unknown"):
+        return {"exit": EXIT_REFUSED, "refused": True, "folders": None,
+                "reasons": ["this device is not declared in devices.json"]}
+    ov = load_owner_overlay(home=home, root=root)
+    path = ov["path"]
+    folders: Dict[str, str] = {}
+    if ov["present"]:
+        if not ov["ok"]:
+            return {"exit": EXIT_REFUSED, "refused": True, "folders": None,
+                    "reasons": [f"owners.json is invalid ({'; '.join(ov['errors'])}): fix or remove it by hand"]}
+        if ov["device"] != dev["id"]:
+            return {"exit": EXIT_REFUSED, "refused": True, "folders": None,
+                    "reasons": [f"owners.json belongs to device {ov['device']}, this is {dev['id']}: "
+                                "remove it by hand to start this device's overlay"]}
+        folders = {k: c for _p, k, c in ov["entries"]}
+    parts = _overlay_parts(key)
+    existing = next((k for k in folders if _overlay_parts(k) == parts), None)
+    if unset:
+        if existing is None:
+            return {"exit": EXIT_NOTFOUND, "refused": False, "folders": folders, "reasons": ["no such entry"]}
+        del folders[existing]
+    else:
+        fpath = prr.joinpath(*key.split("/"))
+        if not fpath.is_dir() or _cf(_real(fpath)) != _cf(fpath):
+            return {"exit": EXIT_REFUSED, "refused": True, "folders": folders,
+                    "reasons": ["the folder must be an existing directory under projects_root (no symlink)"]}
+        if existing is not None:
+            del folders[existing]
+        if cls == "personal":
+            trial = dict(ov, device=dev["id"], device_ok=True,
+                         entries=[(_overlay_parts(k), k, c) for k, c in folders.items()])
+            det = detect_surface(env=e, ancestry=ancestry, isatty=isatty, root=root)
+            table = _try_table("context-remotes", root) or {}
+            ok, why = _overlay_personal_ok(fpath, fpath, prr, trial, table=table,
+                                           conduct=list(table.get("conduct_order") or []), restricted=False,
+                                           cache=cache, root=root, home=home, hostname=hostname, detection=det)
+            if not ok:
+                return {"exit": EXIT_REFUSED, "refused": True, "folders": folders,
+                        "reasons": [f"personal refused: {why}"]}
+        folders[key] = cls
+    _owners_write(path, dev["id"], folders)
+    return {"exit": EXIT_OK, "refused": False, "folders": folders, "reasons": []}
+
+
 # --------------------------------------------------------------------------- Claude git floor (T8, H17/H18)
 
 
@@ -3909,6 +4312,10 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--identity")
     p.add_argument("--ttl", default="8h")
     p.add_argument("--reason")
+    p = sub.add_parser("owners", parents=[common])
+    p.add_argument("action", choices=["list", "set", "unset"])
+    p.add_argument("folder", nargs="?")
+    p.add_argument("word", nargs="?", choices=sorted(OWNER_OVERLAY_WORDS))
     p = sub.add_parser("floor", parents=[common])
     p.add_argument("--event", required=True, choices=list(FLOOR_EVENTS))
     p.add_argument("--remote", nargs=2, metavar=("NAME", "URL"))
@@ -4012,6 +4419,25 @@ def main(argv: Optional[List[str]] = None) -> int:
             if r["refused"]:
                 print(f"override refused: {'; '.join(r['reasons'])}", file=sys.stderr)
             _emit(cmd, {k: r[k] for k in ("override", "overrides", "refused", "reasons")}, as_json)
+            return int(r["exit"])
+        if cmd == "owners":
+            if args.action == "list":
+                r = owners_list(root=root)
+                _emit(cmd, r, as_json)
+                if not r["present"]:
+                    return EXIT_NOTFOUND
+                return EXIT_OK if r["ok"] else EXIT_FAIL
+            if args.action == "set" and not args.word:
+                print("profile_resolve owners: set takes FOLDER work|personal", file=sys.stderr)
+                return EXIT_USAGE
+            try:
+                r = owners_set(args.folder or "", args.word, unset=args.action == "unset", root=root)
+            except OwnersError as exc:
+                print(f"profile_resolve owners: {exc}", file=sys.stderr)
+                return EXIT_USAGE
+            if r["exit"] != EXIT_OK:
+                print(f"owners {args.action} refused: {'; '.join(r['reasons'])}", file=sys.stderr)
+            _emit(cmd, {k: r[k] for k in ("refused", "reasons", "folders")}, as_json)
             return int(r["exit"])
         if cmd == "floor":
             lines = [] if args.event != "pre-push" or sys.stdin.isatty() else \
