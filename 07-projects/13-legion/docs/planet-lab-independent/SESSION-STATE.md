@@ -16,6 +16,12 @@ Current next action: continue phase-six continuous-flight acceptance using the n
 
 Do not touch the active Legion implementation or fold this experiment into it without Sean's instruction. Existing Legion dirty changes belong to other work. The main project handoff retains its own history; this scoped baton carries only the independent experiment.
 
+## Living roadmap (2026-09-27)
+
+Sean requested a regularly reviewable artifact of the complete generative compiler plan, updated as work progresses. Stable artifact in the implementation repository: `PlanetCompiler/roadmap.html`; single editable source: `PlanetCompiler/docs/ROADMAP.md`; rebuild with `python3 scripts/build-roadmap.py` from that repository. Open the HTML directly offline, or use the local preview at `http://127.0.0.1:8772/roadmap.html` while its server is running. README and project AGENTS point to it.
+
+Maintain this same artifact after meaningful implementation or review checkpoints and whenever scope, acceptance or blockers change. Update the date, current focus, affected checklist items, evidence links and change log. Separate implemented/tested experiments from production and human acceptance; do not invent a completion percentage. The initial artifact preserves all eleven steps, six delivery milestones and 109 checklist entries (eight established experiments, 101 remaining tasks). Milestone A remains in progress; creating the roadmap advances no implementation status. Updates are part of normal project work, not a background automation.
+
 ## Native phase 6 — initial scale milestone / live handoff (2026-09-26)
 
 Agent · Surface · Machine: Codex / Codex desktop / Personal MacBook Pro. User authorization: “Let's move into the next stage for planetary scale. Make sure the test globe has some kinds of surface details as points of reference.” Implementation remains exclusively in `~/Projects/PlanetCompiler`, personal-solo; no Legion changes.
