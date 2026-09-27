@@ -1477,6 +1477,163 @@ class TestProfileResolve(unittest.TestCase):
         self.assertIn(res["source"], ("workspace-root", "linked-worktree"))
         self.assertEqual(self.mod.classify_word(res), "personal")
 
+    # ---- W3-3: the device-local owner overlay (fixture folder names only; real ones never enter the repo)
+
+    SHELL = [{"comm": "zsh"}, {"comm": "Terminal"}, {"comm": "launchd"}]
+    TTY = {"stdin": True, "stdout": True}
+
+    def _overlay_world(self):
+        td = tempfile.TemporaryDirectory()
+        self.addCleanup(td.cleanup)
+        tmp = Path(os.path.realpath(td.name))
+        root = self.mod._fixture_root(tmp)
+        home = tmp / "home-a"
+        projects = home / "Projects"
+        self.mod.ws_paths(home=home)["control"].mkdir(parents=True)
+        w = self.mod._write
+        w(projects / "loose-work" / "a.txt", "x\n")
+        w(projects / "loose-own" / "sub" / "b.txt", "x\n")
+        self.mod._fake_repo(projects / "loose-own" / "own-repo", {"origin": "https://github.com/pat-sample/own.git"})
+        w(projects / "loose-mixed" / "c.txt", "x\n")
+        self.mod._fake_repo(projects / "loose-mixed" / "job", {"origin": "https://github.com/acme-corp/job.git"})
+        w(projects / "loose-globbed" / "acme-sub" / "d.txt", "x\n")
+        w(projects / "acme-notes" / "e.txt", "x\n")
+        human = self.mod.detect_surface(env={}, ancestry=self.SHELL, isatty=self.TTY)
+        claude = self.mod.detect_surface(env={"CLAUDECODE": "1"}, ancestry=[{"comm": "claude"}],
+                                         isatty={"stdin": False, "stdout": False})
+        return root, home, projects, human, claude
+
+    def _write_overlay(self, home, device, folders):
+        self.mod._write(self.mod.owner_overlay_path(home=home),
+                        json.dumps({"schema_version": 1, "device": device, "folders": folders}))
+
+    def _res(self, root, home, path, det, host="host-a", cache=None):
+        return self.mod.repo_resolve(str(path), root=root, home=home, detection=det, hostname=host,
+                                     cache=cache if cache is not None else {"checkouts": []})
+
+    def test_owner_overlay_employer_tightens(self):
+        root, home, projects, human, claude = self._overlay_world()
+        target = projects / "loose-work" / "a.txt"
+        self.assertEqual(self.mod.classify_word(self._res(root, home, target, human)), "unknown")
+        self._write_overlay(home, "dev-b", {"loose-work": "employer"})   # tighten ignores the device
+        for det in (human, claude):
+            r = self._res(root, home, target, det)
+            self.assertEqual((r["owner_class"], r["source"], r["positively_personal"]),
+                             ("employer", "owner-overlay", False))
+        # a personal repo inside a declared work folder: most restrictive wins, with a conflict
+        self.mod._fake_repo(projects / "loose-work" / "mine", {"origin": "https://github.com/pat-sample/m.git"})
+        r = self._res(root, home, projects / "loose-work" / "mine", human)
+        self.assertEqual(r["owner_class"], "employer")
+        self.assertTrue(r["conflict"])
+        self.assertNotIn("loose-work", json.dumps(r["reasons"]), "reasons never name a folder")
+
+    def test_owner_overlay_personal_loosens_only_non_git(self):
+        root, home, projects, human, claude = self._overlay_world()
+        self._write_overlay(home, "dev-a", {"loose-own": "personal"})
+        r = self._res(root, home, projects / "loose-own" / "sub" / "b.txt", human)
+        self.assertTrue(r["positively_personal"], r["reasons"])
+        self.assertEqual(self.mod.classify_word(r), "personal")
+        # inside the repo beneath: its remotes decide, the overlay does not
+        r = self._res(root, home, projects / "loose-own" / "own-repo", human)
+        self.assertEqual(r["source"], "live")
+        self.assertIsNone(r["owner_overlay"]["effect"])
+        # an agent chain never opens the repo beneath: without a cache row the loosen is refused ...
+        r = self._res(root, home, projects / "loose-own" / "sub", claude)
+        self.assertEqual(self.mod.classify_word(r), "unknown")
+        self.assertIn("checkout cache", r["owner_overlay"]["reason"])
+        # ... and with a personal cache row it applies
+        cache = {"checkouts": [{"path": str(projects / "loose-own" / "own-repo"), "owner_class": "personal",
+                                "remotes": []}]}
+        r = self._res(root, home, projects / "loose-own" / "sub", claude, cache=cache)
+        self.assertEqual(self.mod.classify_word(r), "personal", r["reasons"])
+
+    def test_owner_overlay_personal_refused(self):
+        root, home, projects, human, claude = self._overlay_world()
+        self._write_overlay(home, "dev-a", {"loose-mixed": "personal", "loose-globbed": "personal",
+                                            "acme-notes": "personal"})
+        cases = {"loose-mixed": (projects / "loose-mixed" / "c.txt", "employer owner"),
+                 "loose-globbed": (projects / "loose-globbed", "employer glob"),
+                 "acme-notes": (projects / "acme-notes" / "e.txt", "employer glob")}
+        for name, (path, why) in cases.items():
+            with self.subTest(folder=name):
+                r = self._res(root, home, path, human)
+                self.assertFalse(r["positively_personal"])
+                self.assertIn(why, r["owner_overlay"]["reason"])
+        # an employer checkout beneath, known only from the cache, also refuses
+        self._write_overlay(home, "dev-a", {"loose-own": "personal"})
+        cache = {"checkouts": [{"path": str(projects / "loose-own" / "own-repo"), "owner_class": "employer",
+                                "remotes": []}]}
+        r = self._res(root, home, projects / "loose-own" / "sub", claude, cache=cache)
+        self.assertIn("employer checkout", r["owner_overlay"]["reason"])
+        # an employer overlay entry beneath a personal one: most restrictive wins for both
+        self._write_overlay(home, "dev-a", {"loose-own": "personal", "loose-own/sub": "employer"})
+        r = self._res(root, home, projects / "loose-own" / "sub" / "b.txt", human)
+        self.assertEqual(r["owner_class"], "employer")
+
+    def test_owner_overlay_device_mismatch_ignored(self):
+        root, home, projects, human, _claude = self._overlay_world()
+        self._write_overlay(home, "dev-b", {"loose-own": "personal"})
+        r = self._res(root, home, projects / "loose-own" / "sub", human, host="host-a")
+        self.assertEqual(self.mod.classify_word(r), "unknown")
+        self.assertIn("another device", r["owner_overlay"]["reason"])
+        self.assertEqual(self.mod.classify_word(self._res(root, home, projects / "loose-own" / "sub", human,
+                                                          host="host-b")), "personal")
+
+    def test_owner_overlay_validation(self):
+        v = self.mod.validate_owner_overlay
+        self.assertEqual(v({"schema_version": 1, "device": "dev-a", "folders": {"a": "employer", "b/c": "personal"}},
+                           device_ids={"dev-a"}), [])
+        bad = v({"schema_version": 2, "device": "dev-z", "folders": {"../x": "employer", "/abs": "personal",
+                                                                    "y": "work", "A": "employer", "a": "personal"},
+                 "extra": 1}, device_ids={"dev-a"})
+        for frag in ("schema_version", "device", "'..'", "relative", "must be one of", "duplicates", "unknown key"):
+            self.assertTrue(any(frag in e for e in bad), (frag, bad))
+
+    def test_owners_set_is_human_only(self):
+        root, home, projects, human, _claude = self._overlay_world()
+        path = self.mod.owner_overlay_path(home=home)
+        kw = {"root": root, "home": home, "hostname": "host-a"}
+        for word in ("work", "personal"):
+            r = self.mod.owners_set("loose-work", word, env={"CLAUDECODE": "1"}, ancestry=[{"comm": "claude"}],
+                                    isatty={"stdin": False, "stdout": False}, **kw)
+            self.assertEqual((r["exit"], r["refused"], r["folders"]), (4, True, None))
+            self.assertIn("needs Sean at a terminal", r["reasons"][0])
+        r = self.mod.owners_set("loose-work", unset=True, env={"CI": "1"}, ancestry=self.SHELL, isatty=self.TTY, **kw)
+        self.assertEqual(r["exit"], 4)
+        self.assertFalse(path.exists(), "a refused set wrote the overlay")
+        human_kw = dict(kw, env={}, ancestry=self.SHELL, isatty=self.TTY)
+        self.assertEqual(self.mod.owners_set("loose-work", "work", **human_kw)["exit"], 0)
+        self.assertEqual(self.mod.owners_set(str(projects / "loose-own"), "personal", **human_kw)["exit"], 0)
+        r = self.mod.owners_set("loose-mixed", "personal", **human_kw)
+        self.assertEqual(r["exit"], 4)
+        self.assertIn("personal refused", r["reasons"][0])
+        obj = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(obj, {"schema_version": 1, "device": "dev-a",
+                               "folders": {"loose-own": "personal", "loose-work": "employer"}})
+        self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+        self.assertEqual(self.mod.owners_set("loose-work", unset=True, **human_kw)["exit"], 0)
+        self.assertEqual(self.mod.owners_set("loose-work", unset=True, **human_kw)["exit"], 3)
+        with self.assertRaises(self.mod.OwnersError):
+            self.mod.owners_set("../elsewhere", "work", **human_kw)
+        # list is any caller; a Claude chain never sees an employer folder name
+        self.assertEqual(self.mod.owners_set("loose-work", "work", **human_kw)["exit"], 0)
+        det = self.mod.detect_surface(env={"CLAUDECODE": "1"}, ancestry=[{"comm": "claude"}],
+                                      isatty={"stdin": False, "stdout": False})
+        lst = self.mod.owners_list(root=root, home=home, hostname="host-a", detection=det)
+        self.assertNotIn("loose-work", json.dumps(lst))
+        self.assertIn("loose-own", json.dumps(lst))
+        # control/ absent: never created
+        bare = Path(self._overlay_tmp()) / "bare-home"
+        r = self.mod.owners_set("x", "work", root=root, home=bare, hostname="host-a", env={}, ancestry=self.SHELL,
+                                isatty=self.TTY)
+        self.assertEqual(r["exit"], 3)
+        self.assertFalse((bare / ".config").exists())
+
+    def _overlay_tmp(self):
+        td = tempfile.TemporaryDirectory()
+        self.addCleanup(td.cleanup)
+        return td.name
+
     @unittest.skipUnless(os.environ.get("CI"), "real stub-ancestor chain runs in CI only")
     def test_stub_ancestor_chain(self):
         rc = self.mod.self_test(stub_chain=True)
@@ -2308,6 +2465,37 @@ class TestWallGuard(unittest.TestCase):
 
     def test_rendered_shims_and_permissions(self):
         self._run("outputs", 7)
+
+    def test_r4_owner_overlay_classifies(self):
+        """W3-3: a non-git folder under projects_root is R4 would-ask until the device-local owner overlay
+        declares it; an employer entry makes it a classified employer decision (R2 for Cursor, R1 route
+        for Claude). A personal entry for another device changes nothing."""
+        pr = sys.modules.get("profile_resolve") or load("profile_resolve")
+        with tempfile.TemporaryDirectory() as td:
+            w = self.cases.build_world(pr, Path(td))
+            loose = w["projects"] / "loose-folder"
+            self.cases._w(loose / "notes.md", "x\n")
+
+            def go(host, golden, kind):
+                case = ("w3-3", host, golden, {"path": str(loose / "notes.md"), "cwd": "PERS"}, kind, kind, "dev-a",
+                        "", None, {})
+                d = self.cases.run_case(self.wg, w, case)[3] or {}
+                return (d.get("decision"), d.get("rule"), d.get("policy_rule"),
+                        sorted((f["rule"], f["outcome"]) for f in d.get("report_only") or []))
+
+            def overlay(device, cls):
+                self.cases._w(pr.owner_overlay_path(home=w["home"]),
+                              json.dumps({"schema_version": 1, "device": device, "folders": {"loose-folder": cls}}))
+
+            self.assertEqual(go("cursor", "cursor.pre-tool-write", "cursor")[3], [("R4", "ask")])
+            overlay("dev-b", "personal")   # a fixture device, never this host
+            self.assertEqual(go("cursor", "cursor.pre-tool-write", "cursor")[3], [("R4", "ask")])
+            overlay("dev-a", "employer")
+            cur = go("cursor", "cursor.pre-tool-write", "cursor")
+            self.assertNotIn("R4", [r for r, _o in cur[3]], cur)
+            self.assertIn(("R2", "deny"), cur[3], cur)
+            cl = go("claude-code", "claude-code.write", "claude")
+            self.assertEqual(cl[:3], ("route", "R1", "P12-claude-employer-route"), cl)
 
 
 class TestWorkspaceMcp(unittest.TestCase):

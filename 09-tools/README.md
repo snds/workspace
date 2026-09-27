@@ -539,6 +539,26 @@ H22 adds `policy` (action-class policy over the committed action-policy.json, mo
 
 H17 adds `identity` (expected identity, I1/I2 hits, device-mismatch flag), `override` (human-only, TTY, <=24h, non-employer; suppresses the flag only) and `floor` / `floor_decide` (the Claude git floor behind the v5 overlay's config-based floor hook).
 
+### Owner overlay (W3-3): non-git folders under projects_root
+
+A folder with no git remote has no owner in `context-remotes.json`, so the resolver calls it `unknown` and wall_guard R4 reports a would-ask. Its owner is declared per device in `~/.config/snds-workspace/control/owners.json`, never in this repo: naming work folders here would leak employer project names, and the public table stays class-level.
+
+```json
+{"schema_version": 1, "device": "<devices.json id>", "folders": {"<path relative to projects_root>": "employer|personal"}}
+```
+
+- `employer` tightens exactly like an `employer_path_globs` hit, on any device, including a repo inside the folder.
+- `personal` loosens only a folder that is not inside a git repo, when the file's device is this device, no employer glob matches the folder or anything beneath it, no employer overlay entry sits beneath it, its `PROJECT.md` declares nothing stricter, and every repo beneath it is positively personal or a third-party clone (the backup-projects checks). An agent chain never opens those repos, so only the checkout cache vouches for them. A path inside a repo beneath the folder is decided by that repo's remotes. Otherwise the entry is ignored and the reason says why (reasons never name the folder). Conflicts: most restrictive wins.
+- `owners list` works for any caller. Under a Claude chain, employer folder names are withheld.
+- `owners set FOLDER work|personal` and `owners unset FOLDER` need Sean at a terminal (`agent_check` plus no Claude family, the `override` test). An agent is refused for `work` too: `control/` is the human-only directory that wall_guard R6 guards, an employer entry records a work folder name, and an agent can already tighten through `PROJECT.md`. `set personal` runs the loosen checks first and refuses if they fail. The file is written 0600 and atomically, and `control/` is never created (run `workspace-doctor.sh --install-pin`).
+
+```bash
+python3 09-tools/profile_resolve.py owners list
+python3 09-tools/profile_resolve.py owners set "<folder>" work
+python3 09-tools/profile_resolve.py owners set "<folder>" personal
+python3 09-tools/profile_resolve.py owners unset "<folder>"
+```
+
 ## 00-bootstrap/doctor/pin_lib.py
 
 Pinned lib under ~/.config/snds-workspace: pin/current/lag with the real-home guard; --self-test.
