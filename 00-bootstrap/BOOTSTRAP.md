@@ -73,7 +73,9 @@ Installers are explicit and human-run, one per invocation, each with an uninstal
 `launchd`. The flags exec `00-bootstrap/doctor/installers.py`, which refuses (exit 4) without a TTY
 on stdin and stdout or when an agent is detected or possible, prints a diff, asks `Apply? [y/N]`,
 backs each target up to `<target>.ws-bak.<UTC>` and logs to `control/install-log.jsonl`. Uninstall
-restores those backups byte-for-byte. `--install-pin` copies the pinned paths at one commit into
+restores those backups byte-for-byte. `--uninstall-shims=SURFACE --probe` also works when the
+regular shims were installed after the probe: it then removes only the probe hook entries from the
+merged file and takes the probe layer out of the log, so the shims rollback stays byte-exact. `--install-pin` copies the pinned paths at one commit into
 `~/.config/snds-workspace/lib/<sha>/` (`pin_lib.py`); hooks run that copy, never the live tree.
 Run installers in a plain terminal, never from an agent session.
 

@@ -236,6 +236,8 @@ def check_guard_tables(t: dict) -> list:
                     errors.append(f"tool_families.{f['id']}.{k}: must be a list of strings")
             if f.get("rollout") not in (None, "report"):
                 errors.append(f"tool_families.{f['id']}.rollout: only 'report' may be declared")
+            if f.get("path_base") not in (None, "vault"):
+                errors.append(f"tool_families.{f['id']}.path_base: only 'vault' may be declared")
     wg = t.get("wall_guard")
     if wg is not None:
         rules = wg.get("rules") if isinstance(wg, dict) else None
