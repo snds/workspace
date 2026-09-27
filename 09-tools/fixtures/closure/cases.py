@@ -310,6 +310,20 @@ def _sweeper_live(c, pr, tmp: Path, ok) -> None:
     dres = c.sweep(home=home, root=ws, current_sid="alive", host="claude-code", dry_run=True, hostname="host-b")
     ok("dry-run reports and commits nothing", _head(ws) == _git(ws, "rev-parse", "HEAD").stdout.strip()
        and not any(x.get("sha") for x in dres["committed"]), json.dumps(dres))
+    # local probe telemetry retention: old records go, recent ones and non-record files stay
+    probes = w["tele"] / "probes"
+    probes.mkdir(parents=True, exist_ok=True)
+    stale, fresh, other = probes / "2026-01-01-old.json", probes / "2026-09-25-new.json", probes / "notes.txt"
+    for f in (stale, fresh, other):
+        f.write_text("{}\n")
+    past = time.time() - c.PROBE_MAX_AGE_S - 86400
+    os.utime(stale, (past, past))
+    os.utime(other, (past, past))
+    c.sweep(home=home, root=ws, current_sid="alive", host="claude-code", dry_run=True, hostname="host-b")
+    ok("dry-run prunes no probe telemetry", stale.is_file())
+    res = c.sweep(home=home, root=ws, current_sid="alive", host="claude-code", hostname="host-b")
+    ok("the sweeper prunes probe telemetry older than PROBE_MAX_AGE_S and keeps the rest",
+       not stale.exists() and fresh.is_file() and other.is_file() and res.get("probes_pruned") == 1, json.dumps(res))
 
 
 # --------------------------------------------------------------------------- H25

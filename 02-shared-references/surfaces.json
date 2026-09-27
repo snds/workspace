@@ -3959,6 +3959,16 @@
       ]
     },
     {
+      "id": "workspace-mcp",
+      "kind": "server",
+      "server": "workspace-mcp",
+      "doc": "H21 workspace MCP (replaces workspace-fs where --install-mcp ran; workspace-fs stays listed for hosts that still have it). Its write_file/edit_file and read tools classify through the file families by bare name, like workspace-fs; their paths are vault-relative, so path_base vault resolves them against the vault root, not the session cwd. The server guards its own writes too; this is the second layer.",
+      "path_base": "vault",
+      "claude_matcher": [
+        "mcp__workspace-mcp__.*"
+      ]
+    },
+    {
       "id": "claude-in-chrome",
       "kind": "url",
       "server": "claude-in-chrome",

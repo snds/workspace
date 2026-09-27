@@ -327,6 +327,16 @@ CORPUS: C = [
      {"path": "{VAULT_EMP}/SESSION-STATE.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "route", "R1", {}),
     ("r1-vault-personal-folder", "claude-code", "claude-code.workspace-fs-write",
      {"path": "{ROOT}/07-projects/43-own/notes.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None, {}),
+    # the workspace MCP (H21): the same file classification as workspace-fs; its paths are vault-relative
+    ("r1-vault-folder-write-workspace-mcp", "claude-code", "claude-code.workspace-mcp-write",
+     {"path": "{VAULT_EMP}/notes.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "route", "R1", {}),
+    ("r1-vault-folder-relative-workspace-mcp", "claude-code", "claude-code.workspace-mcp-write",
+     {"path": "07-projects/42-acme-work/notes.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "route", "R1", {}),
+    ("r1-vault-folder-edit-workspace-mcp", "claude-code", "claude-code.workspace-mcp-edit",
+     {"path": "07-projects/42-acme-work/SESSION-STATE.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "route",
+     "R1", {}),
+    ("r1-vault-personal-folder-workspace-mcp", "claude-code", "claude-code.workspace-mcp-write",
+     {"path": "07-projects/43-own/notes.md", "cwd": "EMP"}, "claude", "claude", "dev-a", "none", None, {}),
     # Claude tool families
     ("r1-terminal-panel", "claude-code", "claude-code.terminal", {"command": "git -C {EMP} status", "cwd": "PERS"},
      "claude", "claude", "dev-a", "deny", "R1", {}),
@@ -769,7 +779,7 @@ def output_cases(wg, rs, w: dict) -> list:
     pre = (frag.get("hooks") or {}).get("PreToolUse") or []
     matcher = pre[0].get("matcher") if pre else ""
     need = ["Bash", "Write", "Edit", "mcp__terminal__run_in_terminal", "mcp__claude-in-chrome__.*",
-            "mcp__computer-use__.*", "mcp__workspace-fs__.*", "mcp__linear-c8__.*"]
+            "mcp__computer-use__.*", "mcp__workspace-fs__.*", "mcp__workspace-mcp__.*", "mcp__linear-c8__.*"]
     res.append(("claude PreToolUse matcher is generated from the tool families",
                 all(x in (matcher or "").split("|") for x in need) and matcher == rs.expand_matcher(
                     t, "@tool_families:claude"), matcher))

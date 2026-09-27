@@ -357,6 +357,9 @@ def extract(payload: dict, t: Optional[dict]) -> Tuple[str, str, List[dict], Opt
                                                       r"resolve|mark|retire|restore|share|unshare|transition|edit)",
                                                       bare) else "read"})
             return event, tool, actions, cwd
+    # a server family may declare that its path arguments are relative to the vault root (workspace-mcp)
+    vault_rel = any(f.get("kind") == "server" and server and f.get("server") == server
+                    and f.get("path_base") == "vault" for f in fams)
     for fam in fams:
         if fam.get("kind") != "file" or bare not in (fam.get("names") or []):
             continue
@@ -371,7 +374,8 @@ def extract(payload: dict, t: Optional[dict]) -> Tuple[str, str, List[dict], Opt
         if bare == "apply_patch":
             paths += _patch_paths(_first(tin, ["patch", "input", "command"]) or "")
         for path in dict.fromkeys(paths):
-            actions.append({"kind": "file", "op": fam.get("op", "write"), "path": path})
+            actions.append({"kind": "file", "op": fam.get("op", "write"), "path": path,
+                            **({"base": "vault"} if vault_rel else {})})
         if bare == "apply_patch" and not paths:
             actions.append({"kind": "file", "op": "write", "path": None})
         return event, tool, actions, cwd
@@ -1085,7 +1089,8 @@ def decide(action: dict, ctx: Ctx) -> dict:
         findings += _identity_findings(ctx, scan, invs)
         findings += _launch_findings(ctx, scan, walls)
     elif kind == "file":
-        path = _expand(str(action.get("path") or ""), ctx.home, ctx.cwd) if action.get("path") else None
+        base = str(vault_root(ctx.root, ctx.home)) if action.get("base") == "vault" else ctx.cwd
+        path = _expand(str(action.get("path") or ""), ctx.home, base) if action.get("path") else None
         write = action.get("op") == "write"
         if write:
             pc = protected_class(path, ctx.home)

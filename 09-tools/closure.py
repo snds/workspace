@@ -20,7 +20,8 @@ The sweeper runs at session start on any verified surface (`ws-hook sweep`). For
 MECHANICAL workspace leftovers (its 06-context/sessions fragment and the fold/rebuild outputs) that no
 live session claims, in the workspace only, under the resolved identity; it never pushes (pushing is
 closure's job, run by an agent or a human who can see a rejection). Substantive leftovers become one
-card notice each (session-status reads telemetry/closure-notices.json).
+card notice each (session-status reads telemetry/closure-notices.json). It also prunes local probe
+telemetry (telemetry/probes/*.json) older than PROBE_MAX_AGE_S.
 
 H25: a fragment written by a session whose ledger touched a repo that is not positively personal keeps
 no line naming that repo's substance; it gets one `Employer repos (H25 limits):` section holding
@@ -52,6 +53,10 @@ TOOLS = Path(__file__).resolve().parent
 ROOT = TOOLS.parent
 IDLE_S = 4 * 3600
 LEDGER_MAX_AGE_S = 14 * 86400
+# Local probe telemetry (telemetry/probes/*.json, written by `ws-hook --probe` and probe-env). The
+# evidence that matters is promoted into the tracked 02-shared-references/probes records; the local
+# copies older than this are pruned by the sweeper.
+PROBE_MAX_AGE_S = 30 * 86400
 GIT_TIMEOUT_S = 10.0
 NOTICES_NAME = "closure-notices.json"
 FRAGMENT_RE = re.compile(r"^06-context/sessions/(?!README\.md$)[^/]+\.md$")
@@ -651,11 +656,13 @@ def sweep(*, home=None, root=None, current_sid: str = "", host: str = "unknown",
     out: Dict[str, Any] = {"committed": [], "notices": [], "skipped": [], "workspace": None}
     tele = telemetry(home)
     sess = tele / "sessions"
+    now = time.time() if now is None else now
+    if not dry_run:
+        out["probes_pruned"] = _prune_probes(tele, now)
     ws = workspace_root(home=home, root=root)
     if ws is None or not sess.is_dir():
         return out
     out["workspace"] = str(ws)
-    now = time.time() if now is None else now
     sids = [p.stem for p in sorted(sess.glob("*.touched"))]
     live, dead = {}, []
     for sid in sids:
@@ -735,6 +742,23 @@ def _prune_closed(sess: Path, now: float) -> None:
                 f.unlink()
             except OSError:
                 pass
+
+
+def _prune_probes(tele: Path, now: float) -> int:
+    """Remove local probe records older than PROBE_MAX_AGE_S (regular files only). Fail-open."""
+    n = 0
+    d = tele / "probes"
+    if not d.is_dir() or d.is_symlink():
+        return 0
+    for f in d.glob("*.json"):
+        if f.is_symlink() or not f.is_file() or _mtime(f) >= now - PROBE_MAX_AGE_S:
+            continue
+        try:
+            f.unlink()
+            n += 1
+        except OSError:
+            pass
+    return n
 
 
 def _write_notices(tele: Path, notices: List[dict]) -> None:

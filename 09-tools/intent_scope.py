@@ -766,8 +766,14 @@ def write_paths(payload: dict, table: Optional[dict]) -> Tuple[List[str], Option
             sys.path.insert(0, here)
         import wall_guard as wg  # noqa: PLC0415
     _event, _tool, actions, cwd = wg.extract(payload, table)
-    paths = [a["path"] for a in actions
-             if a.get("kind") == "file" and a.get("op") == "write" and a.get("path")]
+    paths = []
+    for a in actions:
+        if a.get("kind") != "file" or a.get("op") != "write" or not a.get("path"):
+            continue
+        p = str(a["path"])
+        if a.get("base") == "vault" and not os.path.isabs(p) and not p.startswith(("~", "$")):
+            p = os.path.join(str(wg.vault_root(None, None)), p)   # workspace-mcp paths are vault-relative
+        paths.append(p)
     return list(dict.fromkeys(paths)), (str(cwd) if cwd else None)
 
 

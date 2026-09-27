@@ -31,7 +31,9 @@ Common contract (every name, both actions):
   4. back up each existing target to `<target>.ws-bak.<UTC>`;
   5. write atomically and append control/install-log.jsonl;
   6. uninstall restores the backup named by the most recent install-log entry for each
-     target byte-for-byte, or removes a file the installer created.
+     target byte-for-byte, or removes a file the installer created. `shims --probe` alone may
+     also be taken out from under a later layer (the regular shims): only the probe hook entries
+     leave the merged file, the log gets a `remove-layer` record and the layers above are rebased.
 
 Exit codes: 0 applied · 1 declined or failed · 2 usage · 3 nothing to do / source absent ·
 4 refused (precondition, agent, no TTY, foreign edits).
@@ -91,6 +93,8 @@ RENDER_TIMEOUT = 30
 # H21: hosts that take the workspace MCP registration (render_shims outputs with install_mode mcp-servers).
 MCP_HOSTS = ("claude-chat-desktop", "claude-code", "codex")
 MCP_MODE = "mcp-servers"
+# A lower layer taken out from under another installer's layer (probe hooks under the shims).
+REMOVE_LAYER = "remove-layer"
 
 
 class InstallerError(Exception):
@@ -361,33 +365,127 @@ def _label_matches(label: str, ctx: Ctx) -> bool:
     return True
 
 
-def _uninstall(ctx: Ctx, *, extra=(), before=None, after=None, rebase=None) -> int:
-    """Replay the log per target (install pushes, uninstall pops). The installs of this
-    installer on top of a target's stack are undone together: the target returns to the
-    backup named by the lowest of them, byte-for-byte, or is removed if that install
-    created it. A target whose top install belongs to another installer is refused.
-
-    `rebase(path, current, backup)` (H21 only): when the target changed since the install (a host app
-    rewrites its own config), undo only this installer's keys on the current file instead of refusing."""
+def _replay(ctx: Ctx) -> tuple:
+    """(stacks, order): the per-target install stacks the log replays to. An install pushes, an
+    uninstall pops, and a remove-layer (a lower layer taken out from under another installer's layer)
+    drops the recorded stack indexes and rebases the entries above them."""
     stacks, order = {}, []
     for rec in read_log(ctx):
         t = rec["target"]
         st = stacks.setdefault(t, [])
-        if rec.get("action") == "install":
+        act = rec.get("action")
+        if act == "install":
             st.append(rec)
             if _label_matches(rec.get("installer", ""), ctx) and t not in order:
                 order.append(t)
+        elif act == REMOVE_LAYER:
+            idx = [i for i in rec.get("removed_idx") or [] if isinstance(i, int)]
+            labels = rec.get("removed_installers") or []
+            if not idx or len(idx) != len(labels) or max(idx) >= len(st) or \
+                    [st[i].get("installer") for i in idx] != labels:
+                continue                     # not the stack it was recorded against: ignore, never guess
+            for i in sorted(idx, reverse=True):
+                del st[i]
+            for i, upd in (rec.get("rebased") or {}).items():
+                n = int(i) if str(i).isdecimal() else -1
+                if 0 <= n < len(st) and isinstance(upd, dict):
+                    st[n] = dict(st[n], **{k: upd[k] for k in ("backup", "sha_after") if k in upd})
         elif st:
             st.pop()
-    plan = []
+    return stacks, order
+
+
+def _remove_layer_plan(ctx: Ctx, t: str, st: list, strip) -> tuple:
+    """Take this installer's entries out of a target whose top layer belongs to another installer
+    (probe hooks installed before the regular shims). Only the entries `strip` identifies are
+    removed from the current file; every other entry is kept as is. The layers above are rebased so
+    their own later uninstall still rolls back byte for byte, without our entries.
+
+    Returns (path, cur, want, meta, new backup states); meta goes into the remove-layer log record."""
+    path = Path(t)
+    cur = _state(path)
+    idx = [i for i, r in enumerate(st) if _label_matches(r.get("installer", ""), ctx)]
+    lo = idx[0]
+    want = strip(path, cur)
+    kept = [(i, r) for i, r in enumerate(st) if i not in idx]
+    new_states = {}                                  # kept entry above lo -> (old backup, new backup)
+    for i, r in kept:
+        if i < lo:
+            continue
+        b = Path(r["backup"]) if r.get("backup") else None
+        bst = _state(b) if b else None
+        if b and bst is None:
+            raise InstallerError(f"backup missing: {r['backup']}")
+        if i - 1 in idx and _state_sha(bst) == st[i - 1].get("sha_after"):
+            # nothing changed between our layer and this install: its backup minus our entries is
+            # exactly the state before our lowest contiguous entry (byte for byte, or absent)
+            j = i - 1
+            while j - 1 in idx:
+                j -= 1
+            low = st[j].get("backup")
+            nst = _state(Path(low)) if low else None
+            if low and nst is None:
+                raise InstallerError(f"backup missing: {low}")
+        else:
+            nst = strip(path, bst) if bst is not None else None
+        new_states[i] = (bst, nst)
+    new_pos = {i: n for n, (i, _r) in enumerate(kept)}
+    above = [i for i, _r in kept if i >= lo]
+    rebased, new_baks = {}, []
+    for k, i in enumerate(above):
+        bst, nst = new_states[i]
+        upd = {}
+        if not _same(bst, nst):
+            upd["backup"] = len(new_baks)            # resolved to a written backup path at apply time
+            new_baks.append(nst)
+        nxt = above[k + 1] if k + 1 < len(above) else None
+        if nxt is None:
+            if st[i].get("sha_after") == _state_sha(cur):
+                upd["sha_after"] = _state_sha(want)
+        else:
+            nb, nn = new_states[nxt]
+            if st[i].get("sha_after") == _state_sha(nb):
+                upd["sha_after"] = _state_sha(nn)
+        if upd:
+            rebased[str(new_pos[i])] = upd
+    meta = {"removed_idx": idx, "removed_installers": [st[i].get("installer") for i in idx],
+            "rebased": rebased}
+    return path, cur, want, meta, new_baks
+
+
+def _log_remove_layer(ctx: Ctx, label: str, path: Path, backup, before, after, meta: dict) -> None:
+    p = ctx.paths()
+    pin_lib.fs("mkdir", p["base"], 0o755)
+    pin_lib.fs("mkdir", p["control"], 0o700)
+    rec = {"ts": ctx.ts(), "installer": label, "action": REMOVE_LAYER, "target": str(path),
+           "backup": str(backup) if backup else None, "sha_before": _state_sha(before),
+           "sha_after": _state_sha(after), "pinned_sha": _pinned_sha(ctx), **meta}
+    pin_lib.fs("append", _log_path(ctx), (json.dumps(rec) + "\n").encode("utf-8"))
+
+
+def _uninstall(ctx: Ctx, *, extra=(), before=None, after=None, rebase=None, strip=None) -> int:
+    """Replay the log per target (install pushes, uninstall pops). The installs of this
+    installer on top of a target's stack are undone together: the target returns to the
+    backup named by the lowest of them, byte-for-byte, or is removed if that install
+    created it. A target whose top install belongs to another installer is refused, unless
+    `strip` is given.
+
+    `rebase(path, current, backup)` (H21 only): when the target changed since the install (a host app
+    rewrites its own config), undo only this installer's keys on the current file instead of refusing.
+    `strip(path, state)` (probe hooks only): when another installer's layer sits on top, remove only
+    this installer's entries from the current file and take its layer out of the stack record."""
+    stacks, order = _replay(ctx)
+    plan, layers = [], []
     for t in order:
         st = stacks[t]
         if not st:
             continue
         if not _label_matches(st[-1].get("installer", ""), ctx):
             if any(_label_matches(r.get("installer", ""), ctx) for r in st):
-                raise RefusedError(f"{t} was last changed by {st[-1].get('installer')}; "
-                                   "uninstall that first")
+                if strip is None:
+                    raise RefusedError(f"{t} was last changed by {st[-1].get('installer')}; "
+                                       "uninstall that first")
+                layers.append(_remove_layer_plan(ctx, t, st, strip))
             continue
         run_ = []
         while st and _label_matches(st[-1].get("installer", ""), ctx):
@@ -411,10 +509,14 @@ def _uninstall(ctx: Ctx, *, extra=(), before=None, after=None, rebase=None) -> i
         cur = _state(path)
         if cur is not None and str(path) not in order:
             plan.append((path, cur, None, "__take__", 1))
-    if not plan:
+    if not plan and not layers:
         print(f"nothing to do: no recorded install for {ctx.label()}")
         return 3
     for path, cur, want, _b, _n in plan:
+        _print_diff(path, cur, want)
+    for path, cur, want, _m, _nb in layers:
+        print(f"note: another installer's layer is on top of {path}; removing only this installer's "
+              "entries, every other entry stays as it is")
         _print_diff(path, cur, want)
     if not _confirmed(ctx):
         print("not applied")
@@ -429,6 +531,18 @@ def _uninstall(ctx: Ctx, *, extra=(), before=None, after=None, rebase=None) -> i
         for _ in range(n):
             _log(ctx, label, "uninstall", path, bak, cur, want)
         print(("restored: " if want is not None else "removed: ") + str(path))
+    for path, cur, want, meta, new_baks in layers:
+        written = [_backup(ctx, path, s) if s is not None else None for s in new_baks]
+        for upd in meta["rebased"].values():
+            if "backup" in upd:
+                w = written[upd["backup"]]
+                upd["backup"] = str(w) if w else None
+        bak = None
+        if not _same(cur, want):
+            bak = _backup(ctx, path, cur)
+            _write_state(path, want)
+        _log_remove_layer(ctx, label, path, bak, cur, want, meta)
+        print(f"removed this installer's entries: {path}" + (f" (backup {bak})" if bak else " (none were left)"))
     if after:
         after()
     return 0
@@ -692,8 +806,103 @@ def do_pin(ctx: Ctx) -> int:
     return 0
 
 
+PROBE_CMD_RE = re.compile(r"(?:^|[/\s])ws-hook\s.*\s--probe(?:\s|$)")
+
+
+def _is_probe_cmd(cmd, cmds) -> bool:
+    return isinstance(cmd, str) and (cmd in cmds or bool(PROBE_CMD_RE.search(cmd)))
+
+
+def strip_probe_entries(obj, cmds=frozenset()):
+    """(new object, removed count): `obj` without the probe hook registrations. A probe entry is one
+    whose command is a generated probe command (`cmds`, from the probe fragments) or a pinned ws-hook
+    run with --probe. Grouped entries (Claude Code, Codex: {"hooks": [{command}]}) lose only probe
+    commands and are dropped when nothing else is left in them; flat entries (Cursor: {command}) are
+    dropped. An event list emptied by the removal is dropped too. Everything else is left as is."""
+    if not isinstance(obj, dict) or not isinstance(obj.get("hooks"), dict):
+        return obj, 0
+    out, n = dict(obj), 0
+    hooks = {}
+    for ev, entries in obj["hooks"].items():
+        if not isinstance(entries, list):
+            hooks[ev] = entries
+            continue
+        kept = []
+        for e in entries:
+            if isinstance(e, dict) and isinstance(e.get("hooks"), list):
+                inner = [h for h in e["hooks"] if not (isinstance(h, dict) and _is_probe_cmd(h.get("command"), cmds))]
+                if len(inner) != len(e["hooks"]):
+                    n += len(e["hooks"]) - len(inner)
+                    if not inner:
+                        continue
+                    e = dict(e, hooks=inner)
+                kept.append(e)
+            elif isinstance(e, dict) and _is_probe_cmd(e.get("command"), cmds):
+                n += 1
+            else:
+                kept.append(e)
+        if kept or not entries:
+            hooks[ev] = kept
+    out["hooks"] = hooks
+    return out, n
+
+
+def _probe_strip(ctx: Ctx, surface):
+    """strip(path, state) for `--uninstall-shims[=S] --probe` under another layer: the file state with
+    the probe registrations of the probe outputs that install into `path` removed. The render list
+    is read only when a strip is needed (an on-top uninstall never reads it)."""
+    cache = {}
+
+    def commands() -> dict:
+        if "c" not in cache:
+            cache["c"] = _probe_commands(ctx, surface)
+        return cache["c"]
+
+    def strip(path: Path, st):
+        if st is None:
+            return None
+        if st[0] != "file":
+            raise InstallerError(f"{path} is a symlink; remove the probe entries by hand")
+        try:
+            obj = json.loads(st[1].decode("utf-8"))
+        except ValueError as e:
+            raise InstallerError(f"unparseable {path}: {e} (fix by hand; never clobbered)") from e
+        new, n = strip_probe_entries(obj, frozenset(commands().get(str(path), ())))
+        if n == 0:
+            return st
+        return _file_state(merge_settings.dump(new).encode("utf-8"), st[2])
+    return strip
+
+
+def _probe_commands(ctx: Ctx, surface) -> dict:
+    """{install path: the generated probe commands the probe fragments register there}."""
+    cmds_by_path = {}
+    for o in _render_outputs(ctx):
+        if not o.get("probe") or (surface is not None and o.get("surface") != surface):
+            continue
+        dst = ctx.expand(o.get("install_path") or "")
+        src = ctx.repo / (o.get("path") or "")
+        if dst is None or not src.is_file():
+            continue
+        try:
+            frag, _ = merge_settings.expand_home_strings(json.loads(src.read_text(encoding="utf-8")), ctx.home)
+        except ValueError:
+            continue
+        cmds = cmds_by_path.setdefault(str(dst), set())
+        for entries in (frag.get("hooks") or {}).values():
+            for e in entries if isinstance(entries, list) else []:
+                for h in (e.get("hooks") if isinstance(e, dict) and isinstance(e.get("hooks"), list) else [e]):
+                    if isinstance(h, dict) and isinstance(h.get("command"), str):
+                        cmds.add(h["command"])
+    return cmds_by_path
+
+
 def do_shims(ctx: Ctx) -> int:
     surface = ctx.arg or ctx.surface
+    if ctx.action == "uninstall" and ctx.probe:
+        # on top: a byte-exact rollback; under another layer (the shims installed after the probe):
+        # only the probe entries leave the merged file
+        return _uninstall(ctx, strip=_probe_strip(ctx, surface))
     if ctx.action == "uninstall":
         return _uninstall(ctx)      # a pure rollback: every target returns to its pre-install bytes
     outs = [o for o in _render_outputs(ctx)
@@ -1915,6 +2124,129 @@ def self_test() -> int:
             self.assertEqual(hooks.read_bytes(), original)
             self.assertFalse(script.exists())
             self.assertEqual(retired.read_text(), "#!/bin/sh\n", "uninstall is a pure rollback")
+
+        def _codex_probe_world(self, *, existing=True):
+            """The Codex shims + probe outputs merged into one ~/.codex/hooks.json (the Work MBP case)."""
+            dist = self.repo / "00-bootstrap" / "dist"
+            (dist / "probe").mkdir(exist_ok=True)
+            ws_hook = "$HOME/.config/snds-workspace/bin/ws-hook"
+            (dist / "codex-hooks.json").write_text(merge_settings.dump({"hooks": {
+                "PreToolUse": [{"matcher": "^Bash$", "hooks": [
+                    {"type": "command", "command": f"{ws_hook} --host codex --event pre-tool", "timeout": 5}]}],
+                "SessionStart": [{"hooks": [
+                    {"type": "command", "command": f"{ws_hook} --host codex --event session-start", "timeout": 5}]}]}}))
+            (dist / "probe" / "codex.json").write_bytes((VAULT_ROOT / "00-bootstrap/dist/probe/codex.json").read_bytes())
+            self.render = {"outputs": [
+                {"id": "codex-user-hooks", "path": "00-bootstrap/dist/codex-hooks.json",
+                 "install_path": "~/.codex/hooks.json", "install_mode": "merge-hook-entries", "surface": "codex",
+                 "probe": False, "keys": ["hooks"]},
+                {"id": "probe-codex", "path": "00-bootstrap/dist/probe/codex.json",
+                 "install_path": "~/.codex/hooks.json", "install_mode": "merge-hook-entries", "surface": "codex",
+                 "probe": True, "keys": ["hooks"]}]}
+            hooks = self.home / ".codex" / "hooks.json"
+            if existing:
+                hooks.parent.mkdir(parents=True)
+                hooks.write_text(merge_settings.dump({"hooks": {"SessionStart": [
+                    {"hooks": [{"type": "command", "command": "my-own-start", "timeout": 9}]}]}}))
+            return hooks
+
+        def _probe_cmds(self, path):
+            text = path.read_text()
+            return [ln for ln in text.splitlines() if "--probe" in ln]
+
+        def test_probe_under_shims_uninstall_removes_only_probe_entries(self):
+            hooks = self._codex_probe_world()
+            original = hooks.read_bytes()
+            self.assertEqual(self.run_inst("shims=codex", probe=True)[0], 0)
+            self.assertTrue(self._probe_cmds(hooks))
+            rc, out, err = self.run_inst("shims=codex")
+            self.assertEqual(rc, 0, out + err)
+            with_both = json.loads(hooks.read_text())
+            # what the shims alone would have made of the original file
+            frag, _ = merge_settings.expand_home_strings(
+                json.loads((self.repo / "00-bootstrap/dist/codex-hooks.json").read_text()), self.home)
+            shims_only = merge_settings.dump(merge_settings.merge_hook_entries(json.loads(original), frag)).encode()
+            rc, out, err = self.run_inst("shims=codex", "uninstall", probe=True)
+            self.assertEqual(rc, 0, out + err)
+            self.assertNotIn("uninstall that first", err)
+            self.assertIn("removing only this installer's entries", out)
+            self.assertEqual(self._probe_cmds(hooks), [])
+            self.assertEqual(hooks.read_bytes(), shims_only)
+            after = json.loads(hooks.read_text())
+            for ev in ("SessionStart", "PreToolUse"):
+                self.assertEqual([e for e in after["hooks"][ev]],
+                                 [e for e in with_both["hooks"][ev]
+                                  if not any("--probe" in h.get("command", "") for h in e.get("hooks", []))], ev)
+            rec = self.log()[-1]
+            self.assertEqual((rec["action"], rec["installer"]), ("remove-layer", "--uninstall-shims=codex --probe"))
+            self.assertEqual(rec["removed_installers"], ["--install-shims=codex --probe"])
+            self.assertEqual(self.run_inst("shims=codex", "uninstall", probe=True)[0], 3)   # layer is gone
+            # a later probe reinstall goes on top and rolls back byte for byte
+            removed = hooks.read_bytes()
+            self.assertEqual(self.run_inst("shims=codex", probe=True)[0], 0)
+            self.assertTrue(self._probe_cmds(hooks))
+            self.assertEqual(self.run_inst("shims=codex", "uninstall", probe=True)[0], 0)
+            self.assertEqual(hooks.read_bytes(), removed)
+            self.assertEqual(self.log()[-1]["action"], "uninstall")
+            # the shims layer was rebased: its own uninstall is still a byte-exact rollback, without probes
+            rc, out, err = self.run_inst("shims=codex", "uninstall")
+            self.assertEqual(rc, 0, out + err)
+            self.assertEqual(hooks.read_bytes(), original)
+
+        def test_probe_on_top_of_shims_is_byte_exact(self):
+            hooks = self._codex_probe_world()
+            original = hooks.read_bytes()
+            self.assertEqual(self.run_inst("shims=codex")[0], 0)
+            after_shims = hooks.read_bytes()
+            self.assertEqual(self.run_inst("shims=codex", probe=True)[0], 0)
+            self.assertNotEqual(hooks.read_bytes(), after_shims)
+            rc, out, err = self.run_inst("shims=codex", "uninstall", probe=True)
+            self.assertEqual(rc, 0, out + err)
+            self.assertEqual(hooks.read_bytes(), after_shims)
+            self.assertEqual(self.log()[-1]["action"], "uninstall")
+            self.assertEqual(self.run_inst("shims=codex", "uninstall")[0], 0)
+            self.assertEqual(hooks.read_bytes(), original)
+
+        def test_probe_created_file_under_shims(self):
+            hooks = self._codex_probe_world(existing=False)
+            self.assertEqual(self.run_inst("shims=codex", probe=True)[0], 0)
+            self.assertEqual(self.run_inst("shims=codex")[0], 0)
+            rc, out, err = self.run_inst("shims=codex", "uninstall", probe=True)
+            self.assertEqual(rc, 0, out + err)
+            self.assertEqual(self._probe_cmds(hooks), [])
+            self.assertIn("--event pre-tool", hooks.read_text())
+            rc, out, err = self.run_inst("shims=codex", "uninstall")
+            self.assertEqual(rc, 0, out + err)
+            self.assertFalse(hooks.exists(), "the file neither layer found is removed again")
+
+        def test_probe_under_whole_file_shims_cursor(self):
+            # the Cursor shims replace hooks.json whole, so no probe entry is left to remove: the layer
+            # record goes, the file is untouched, and the shims rollback returns the pre-probe bytes
+            hooks = self.home / ".cursor" / "hooks.json"
+            hooks.parent.mkdir(parents=True)
+            hooks.write_text('{"version": 1, "hooks": {"stop": [{"command": "mine"}]}}\n')
+            original = hooks.read_bytes()
+            self.assertEqual(self.run_inst("shims=cursor", probe=True)[0], 0)
+            self.assertEqual(self.run_inst("shims=cursor")[0], 0)
+            after_shims = hooks.read_bytes()
+            rc, out, err = self.run_inst("shims=cursor", "uninstall", probe=True)
+            self.assertEqual(rc, 0, out + err)
+            self.assertIn("none were left", out)
+            self.assertEqual(hooks.read_bytes(), after_shims)
+            self.assertEqual(self.run_inst("shims=cursor", "uninstall")[0], 0)
+            self.assertEqual(hooks.read_bytes(), original)
+
+        def test_strip_probe_entries_shapes(self):
+            grouped = {"hooks": {"Stop": [{"hooks": [
+                {"type": "command", "command": "/h/.config/snds-workspace/bin/ws-hook --host auto --event stop --probe"},
+                {"type": "command", "command": "keep-me"}]}]}}
+            new, n = strip_probe_entries(grouped)
+            self.assertEqual((n, new["hooks"]["Stop"]), (1, [{"hooks": [{"type": "command", "command": "keep-me"}]}]))
+            flat = {"version": 1, "hooks": {"stop": [{"command": "x ws-hook --event stop --probe"}], "keep": []}}
+            new, n = strip_probe_entries(flat)
+            self.assertEqual((n, new), (1, {"version": 1, "hooks": {"keep": []}}))
+            other = {"hooks": {"Stop": [{"command": "ws-hook --event stop"}, {"command": "my --probe tool"}]}}
+            self.assertEqual(strip_probe_entries(other), (other, 0))
 
         def _seed_overlay_ready(self, probe_env=False, probe=True, config_hooks=True, env_file_pin=True):
             self.install_pin()
