@@ -34,8 +34,8 @@ Sanctioned exceptions exist (SECTION chrome, deliberate negative overlaps) but d
 they are *noted, not silently left* — so `allow` entries require a written reason, and an
 allowance without one is itself a failure.
 
-**An empty capture is not a pass.** Nothing to verify exits 2, never 0. That is the whole
-difference between a detector and a green tick.
+**An empty capture is not a pass.** Nothing to verify exits 2, never 0. `--self-test`
+proves this script against fixtures. It is not a pass on the node you just wrote.
 
 Usage:
   python3 09-tools/figma-bind-probe.py --emit-template

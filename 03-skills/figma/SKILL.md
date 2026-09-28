@@ -131,24 +131,76 @@ resolve).
 
 ## Execution protocol
 
+These gates are the default path for every generate or edit of a component, set, variant, or nested `_Part`. They are not a later audit.
+
+**Not an exemption:** an existing file, a recipe, a wrap, an instance of an existing primitive, a "small" component, or a one-shot append. `skillNames` on `use_figma` is telemetry. It does not load skills and it does not satisfy Gate 0.
+
+**Not required:** Phase 0–2 of vendor `figma-generate-library` when the file already has tokens. Gates 2 and 5 still apply.
+
+### Gate 0 — Doctrine load
+
+No `use_figma` write until this hub and [[design-engineer]] are loaded in this turn. Vendor skills (`figma-use`, `figma-generate-library`, `figma-generate-design`) cannot be the first Figma skill.
+
+### Gate 1 — Tokens exist
+
+Inspect Foundations / Semantics / Density, or the target system's equivalent, before binding. A missing semantic or density token is created as an alias in that system, then bound. Never bind `Color/*` primitives on a component.
+
+### Gate 2 — Bind before ship
+
+Every auto-layout node inside a `COMPONENT` or `COMPONENT_SET` binds padding, gap, radius, fill, stroke, and type size. `paddingLeft` / `paddingRight` / `paddingTop` / `paddingBottom`, `itemSpacing`, and radius stay numeric only when no `space/*` or density token exists — and a zero is not exempt when one does. Prefer a variable handle (`setBoundVariable`, or `$fig` when that channel accepts one) over `figma.create*` plus a numeric auto-layout assignment. Negative overlap (avatar stack, trailing cluster) may stay literal; record an `allow` entry with a reason.
+
+### Gate 3 — Catalog placement
+
+Owning `SECTION`, no AABB overlap, Title Case with spaces. `$fig.section()` at `(0,0)` with the default 496² is a defect.
+
+### Gate 4 — Modes vs physical variants
+
+Style axes become variable modes ([[figma-modes-for-variants]]). A physical `VARIANT` is only for structure. Nested chrome is an instance of a library atom, not a drawn duplicate. Text Styles apply only when Size/Density are not driving type ([[figma-ds-surface-authoring]] rules 12, 20, 21).
+
+### Gate 5 — Prove
+
+After **each** component, not after the batch:
+
+1. `python3 09-tools/figma-bind-probe.py --emit-template`
+2. Write that node's `get_variable_defs` and `get_metadata` (plus per-node bindings) to a scratchpad capture.
+3. `python3 09-tools/figma-bind-probe.py --capture <scratchpad>/cap.json`
+
+The probe refuses `Color/*`, raw spacing and radius (zeros included), and rects-instead-of-instances. **Exit 2 means nothing was verified, which is not done.** Screenshot the node. `figma-bind-probe.py --self-test` proves the script, not the node. [[close-out]] exit 0 does not replace the capture: the capture step stays a labelled skip. Pixels still go through `vqa prove` when a cuespec exists.
+
+### Gate 6 — No silent skip
+
+If a gate cannot run (MCP down, probe missing, token collection absent), stop and report the blocker. Do not ship unbound chrome.
+
+### Order
+
 1. **Parse** verb/target/modifiers; default `generate`, auto-`--kind`.
-2. **Load this hub + [[design-engineer]] first** (doctrine: semantic + theme/mode tokens). Then load the gating figma-* protocol skill — then vendor plugin skills / MCP tools become callable.
+2. **Gate 0.** Then the matching figma-* spoke. Vendor skills after that.
 3. **`--dry`?** Report the skill + MCP plan and stop.
-4. **Acquire** the target (code scan / MCP read of the Figma node / token-file parse).
-5. **Run** the base procedure. Apply variables/styles — never raw values (token-first). For `--kind component|library`: load [[figma-modes-for-variants]] (style axes → modes, not cartesian variants); instance real subcomponents / nested `_Part`s; parent into the owning catalog SECTION; AABB-reflow siblings; Text Styles only when Size/Density are not driving type ([[figma-ds-surface-authoring]] rules 12, 20, 21).
-6. **Emit** the report (authored artifacts or audit findings).
-7. **Prove-gate (generate):** invoke [[close-out]] — capture (MCP inspect + native-zoom
-   screenshot) → assess → correct and re-prove. **The assess step is a detector, not a
-   judgement call:** `python3 09-tools/figma-bind-probe.py --emit-template` prints the
-   `get_variable_defs` / `get_metadata` calls, then
-   `figma-bind-probe.py --capture <scratchpad>/cap.json` refuses `Color/*` primitives, raw
-   values (zeros are not exempt), and rects-instead-of-instances, and warns on
-   density-unaware control tokens. **Exit 2 means nothing was verified — that is not a
-   pass.** Captures go to your scratchpad — transient, file-specific artifacts, not fixtures. Pixels still go through `vqa prove` when a cuespec exists. Missing
-   detector → mint it and push to this workspace. **Do not page Sean** unless self-critique
-   is failing or that mint still cannot hit the accuracy/perf bar.
-8. **Hand off**: `spec` → design-engineer; system-token decisions → `/ds`. After any produce,
-   load `governed_by` lenses (`qa`, `a11y-visual`).
+4. **Gate 1.** Acquire the target (code, MCP read, or token file) and the collections.
+5. **Gates 2–4.** Author bound. Do not leave numeric padding.
+6. **Gate 5** on that component before starting the next. **Gate 6** if a step cannot run.
+7. **Emit** named layers, where they sit, the probe exit code, and the screenshot.
+8. **Hand off:** `spec` → design-engineer; system-token decisions → `/ds`. After produce, load `governed_by` lenses (`qa`, `a11y-visual`). Missing detector → mint it and push here. **Do not page Sean** unless self-critique is failing or that mint still cannot hit the bar.
+
+## When to mint a gate vs edit one
+
+Figma-only. Do not add a framework for this cluster. Promote the "knowledge vs enforcement" row to [[13-domain-rigor-stack]] only after a third domain hits the same skip.
+
+| Change | Where | When |
+|---|---|---|
+| New reusable "when X, refuse / prove Y" | This hub's prove-gate, or [[figma-component-generation]] | The failure happened twice, or one failure is structural (agents will repeat it) |
+| New instrumented check | `09-tools/` detector + Gate 5 | Prose already exists and agents skip it (the bind-probe pattern) |
+| Cross-domain "knowledge vs enforcement" | [[13-domain-rigor-stack]] | Only if 3+ domains need it |
+| One-off fact about tools or MCP | `06-context/memory/` `type: decision` | Example: `skillNames` is logging |
+| Validated construction pattern | `08-knowledge/design/` | After a real pass with evidence |
+| Behavioral default | `04-preferences/` | Only on Sean's explicit signal |
+| Plugin vendor text | Do not fork it | Wrap here; the vendor skill is mechanics |
+
+Mint a gate only when all three are true: an existing gate cannot name the failure, you can state the detector (script, inspect query, or hard stop), and you know the owner skill that loads before the write.
+
+Edit a gate when the rule is right and agents skip it (add a detector or a load-order hook, not a second paragraph), when an example contradicts the rule (fix the example), or when a real exception exists (name it in the owner skill; default stays fail-closed).
+
+Never duplicate this hub's gates into five spokes, put employer library specifics in the vault, or treat a green `--self-test` as a pass on the node just written.
 
 ## POC scope note
 

@@ -39,7 +39,10 @@ module, or a design decision record — is evaluated through both lenses simulta
 > component. Missing token → create a semantic alias in that system, then bind.
 > Vendor Figma plugin skills (`figma-use`, `figma-generate-library`,
 > `figma-generate-design`) are mechanics only — this skill and `03-skills/figma/SKILL.md`
-> win on doctrine.
+> win on doctrine. Load both before any `use_figma` write. `skillNames` on that call
+> is telemetry and does not execute skills. An existing file, recipe, wrap, instance,
+> or small edit is not an exemption. Construction gates and the per-component probe
+> live in [[figma]] (Gates 0–6).
 
 > **Context-based DS (Frost / Pitre).** Designers own the first code draft against the
 > **published** library, on a design branch, with a named context-engineer review.

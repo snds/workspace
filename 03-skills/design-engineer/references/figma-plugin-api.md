@@ -146,10 +146,13 @@ componentSet.layoutMode = 'HORIZONTAL';
 componentSet.layoutWrap = 'WRAP';
 componentSet.primaryAxisSizingMode = 'FIXED';
 componentSet.counterAxisSizingMode = 'AUTO';
-componentSet.itemSpacing = 16;
-componentSet.counterAxisSpacing = 16;
-componentSet.paddingLeft = componentSet.paddingRight =
-  componentSet.paddingTop = componentSet.paddingBottom = 16;
+// Catalog chrome still binds when a space token exists, including a zero.
+componentSet.setBoundVariable('itemSpacing', spacingMd);
+componentSet.setBoundVariable('counterAxisSpacing', spacingMd);
+componentSet.setBoundVariable('paddingLeft', spacingMd);
+componentSet.setBoundVariable('paddingRight', spacingMd);
+componentSet.setBoundVariable('paddingTop', spacingMd);
+componentSet.setBoundVariable('paddingBottom', spacingMd);
 ```
 
 ### Variant naming

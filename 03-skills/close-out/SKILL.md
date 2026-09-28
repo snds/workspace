@@ -128,13 +128,16 @@ research-worthy skillset) → invoke [[self-improve]]. Do not grow this file.
 
 Loop until pass or interrupt:
 
-1. **Capture** — MCP inspect (fills/strokes/instances/variant matrix) **and** a
-   native-zoom screenshot of the authored node (`get_screenshot` on the node,
-   subject filling the frame — not the page thumbnail).
-2. **Assess** — construction (binary): fills/strokes bound to semantic + mode
-   tokens — refuse `Color/*` on components; controls are library or `local/…`
-   instances, not rectangles; variant matrix complete. Pixels: `vqa prove` /
-   toolkit when a reference or cuespec exists. Load `a11y-visual` (contrast/CVD).
+1. **Capture** — per component, not per batch. `python3 09-tools/figma-bind-probe.py --emit-template`
+   prints the calls. Write `get_variable_defs` + `get_metadata` (and bindings) to a scratchpad
+   file, **and** take a native-zoom screenshot of that node (`get_screenshot`, subject filling
+   the frame — not the page thumbnail).
+2. **Assess** — `python3 09-tools/figma-bind-probe.py --capture <scratchpad>/cap.json`.
+   Exit 2 is not a pass. `--self-test` proves the script, not the node. Close-out's
+   capture row stays a labelled skip; a green close-out does not replace this capture.
+   Construction bar: semantic + mode binds, refuse `Color/*`, refuse raw spacing/radius
+   (zeros included), instances not rectangles, variant matrix complete. Pixels: `vqa prove`
+   when a reference or cuespec exists. Load `a11y-visual` (contrast/CVD).
    Screenshot-as-VLM-caption is critique, not a detector.
 3. **Correct** — rebind, replace rects with instances, complete the matrix,
    nudge; recapture; reassess. Cannot-fix (missing token, MCP write rejected,

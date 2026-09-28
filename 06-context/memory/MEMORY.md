@@ -43,6 +43,7 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[decision-defer-dense-vault-retrieval]] — `decision` · defer embedding/dense Layer-2 vault retrieval until `vault-retrieve.py --eval` shows paraphrase gaps lexical cannot fix (13/13 green 2026-08-05).
 - [[decision-intent-coordination-standard]] — `decision` · multi-agent work uses a living spec + `intent-run.py`; Intent.app is optional GUI.
 - [[decision-capture-and-assess-split]] — `decision` · MCP-gated checks split at the tool boundary: the agent captures, `figma-bind-probe.py` judges; the capture stays a labelled SKIP and exit 2 is not a pass.
+- [[decision-figma-construction-gates]] — `decision` · `skillNames` does not enforce; wrap/recipe/existing-file is not an exemption; per-component `--capture` is mandatory (2026-09-28).
 - [[decision-indexes-are-queried-not-read]] — `decision` · every index gets a retrieval CLI (`artifact-find.py`, `skill-loadset.py`, knowledge-hints) and the token budget drops with it, so reverting to a whole-file read fails CI.
 - [[decision-lint-narrow-or-not-at-all]] — `decision` · automation-layer lints stay narrow (ruff E9/F/I; evidence grades need a legend + named detector); a check that reports non-defects gets routed around.
 - [[decision-shadcn-lint-independent-service]] — `decision` · `@shadcn/lint` is a product-repo DS lint service, independent of vault validators and eslint-off-system; token-tier overlay lives beside it.

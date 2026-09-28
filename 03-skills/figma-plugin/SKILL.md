@@ -118,9 +118,13 @@ frame.layoutMode = 'HORIZONTAL';
 frame.layoutWrap = 'WRAP';  // Requires recent API version
 frame.primaryAxisSizingMode = 'FIXED';
 frame.counterAxisSizingMode = 'AUTO';
-frame.itemSpacing = 16;
-frame.counterAxisSpacing = 16;
-frame.paddingLeft = frame.paddingRight = frame.paddingTop = frame.paddingBottom = 16;
+// Library components bind these. A literal 16 is not done — see 03-skills/figma/SKILL.md Gate 2.
+frame.setBoundVariable('itemSpacing', spacingMd);
+frame.setBoundVariable('counterAxisSpacing', spacingMd);
+frame.setBoundVariable('paddingLeft', spacingMd);
+frame.setBoundVariable('paddingRight', spacingMd);
+frame.setBoundVariable('paddingTop', spacingMd);
+frame.setBoundVariable('paddingBottom', spacingMd);
 ```
 
 ## SVG Import

@@ -40,9 +40,16 @@ spec_version: "2.3"
 > `.fontSize`, leave `textStyleId` empty and let those modes own type. Apply a
 > library Text Style only when no sizing/density system is in play. Doctrine:
 > [[figma-ds-surface-authoring]] rules 12, 20, and 21.
+>
+> **Not an exemption.** An existing file, a recipe, a wrap, an instance of an
+> existing primitive, a "small" component, or a one-shot append still runs
+> [[figma]] Gates 0–6. `skillNames` on `use_figma` is telemetry and does not
+> load those skills. Examples below bind spacing and radius. A numeric
+> `paddingLeft`, `itemSpacing`, or radius — including 0 — is not finished
+> when a `space/*` or density token exists.
 
 ## When to Use This Skill
-Use when creating Figma components, component sets, variants, or any structured component system. This skill covers component creation, variant combinations, and auto-layout best practices. Structural examples below may show numeric padding for the Plugin API — production authoring binds tokens, including zeros.
+Use when creating Figma components, component sets, variants, or any structured component system. Run [[figma]] Gates 0–6: load the hub before `use_figma`, bind before ship, and prove each component with `figma-bind-probe.py --capture` (exit 2 is not done).
 
 ## Component Creation Fundamentals
 
@@ -53,15 +60,15 @@ const component = figma.createComponent()
 component.name = 'Button' // Component name
 component.description = 'Primary action button with multiple states and sizes'
 
-// Set up auto-layout (recommended for all components)
+// Set up auto-layout, then bind. Do not assign padding, gap, or radius as numbers.
 component.layoutMode = 'HORIZONTAL' // or 'VERTICAL'
 component.primaryAxisAlignItems = 'CENTER' // or 'MIN', 'MAX'
 component.counterAxisAlignItems = 'CENTER' // or 'MIN', 'MAX'
-component.paddingLeft = 16
-component.paddingRight = 16
-component.paddingTop = 8
-component.paddingBottom = 8
-component.itemSpacing = 8 // Gap between children
+component.setBoundVariable('paddingLeft', spaceMd)
+component.setBoundVariable('paddingRight', spaceMd)
+component.setBoundVariable('paddingTop', spaceSm)
+component.setBoundVariable('paddingBottom', spaceSm)
+component.setBoundVariable('itemSpacing', spaceSm)
 ```
 
 ### Component Best Practices
@@ -146,18 +153,12 @@ component.counterAxisAlignItems = 'CENTER'    // Horizontal alignment
 
 ### Spacing and Padding
 ```javascript
-// Internal spacing
-component.itemSpacing = 8           // Gap between children
-component.counterAxisSpacing = 4    // Cross-axis gap (grid layouts)
-
-// External padding
-component.paddingTop = 12
-component.paddingRight = 16
-component.paddingBottom = 12
-component.paddingLeft = 16
-
-// Bind to variables for consistency
+// Bind gap and padding. A literal, including 0, is unbound when space/* or a density token exists.
 component.setBoundVariable('itemSpacing', gapSpacingVar)
+component.setBoundVariable('counterAxisSpacing', gapSpacingVar)
+component.setBoundVariable('paddingTop', paddingYVar)
+component.setBoundVariable('paddingRight', paddingXVar)
+component.setBoundVariable('paddingBottom', paddingYVar)
 component.setBoundVariable('paddingLeft', paddingXVar)
 ```
 
@@ -407,10 +408,10 @@ listItem.name = 'ListItem'
 listItem.layoutMode = 'HORIZONTAL'
 listItem.primaryAxisAlignItems = 'CENTER'
 listItem.counterAxisAlignItems = 'CENTER'
-listItem.paddingLeft = 16
-listItem.paddingRight = 16
-listItem.paddingTop = 12
-listItem.paddingBottom = 12
+listItem.setBoundVariable('paddingLeft', spaceMd)
+listItem.setBoundVariable('paddingRight', spaceMd)
+listItem.setBoundVariable('paddingTop', spaceSm)
+listItem.setBoundVariable('paddingBottom', spaceSm)
 
 // Load font first
 await figma.loadFontAsync({ family: 'Inter', style: 'Regular' })
@@ -427,7 +428,7 @@ list.layoutMode = 'VERTICAL'
 list.primaryAxisSizingMode = 'AUTO'
 list.counterAxisSizingMode = 'FIXED'
 list.resize(320, 10) // Width fixed, height hugs
-list.itemSpacing = 0
+list.setBoundVariable('itemSpacing', space0) // zero still binds when space-0 exists
 
 // Add instances of inner component
 for (let i = 0; i < 3; i++) {

@@ -35,7 +35,9 @@ requires: [figma-mcp]
 > **Hard gate.** Bind every bindable paint/type/spacing value to the **target
 > system's semantic + theme/mode tokens**. Never `Color/*` primitives on
 > components/sets/variants. Vendor `figma-use` / `figma-generate-library` are
-> mechanics; this spoke + [[figma]] + [[design-engineer]] own doctrine.
+> mechanics; [[figma]] + [[design-engineer]] own doctrine and must load first.
+> Existing file, recipe, wrap, and small edit are not exemptions. `skillNames`
+> does not execute skills. Construction gates: [[figma]] Gates 0–6.
 
 Generate and modify UI designs directly on the Figma canvas through a structured
 ideation workflow. Outputs mid-fidelity screens using design system components
@@ -234,11 +236,12 @@ frame.resize(1440, 900); // Desktop default — adjust per brief
 frame.layoutMode = "VERTICAL";
 frame.primaryAxisAlignItems = "MIN";
 frame.counterAxisAlignItems = "MIN";
-frame.paddingTop = 0;
-frame.paddingBottom = 0;
-frame.paddingLeft = 0;
-frame.paddingRight = 0;
-frame.itemSpacing = 0;
+// Zero padding still binds when space-0 (or the density equivalent) exists.
+frame.setBoundVariable("paddingTop", space0);
+frame.setBoundVariable("paddingBottom", space0);
+frame.setBoundVariable("paddingLeft", space0);
+frame.setBoundVariable("paddingRight", space0);
+frame.setBoundVariable("itemSpacing", space0);
 page.appendChild(frame);
 ```
 
