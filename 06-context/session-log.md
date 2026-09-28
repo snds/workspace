@@ -47,6 +47,52 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+
+### 2026-09-27 — PlanetCompiler living roadmap
+SessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe-roadmap
+
+--- SESSION BLOCK ---
+Date: 2026-09-27
+Agent: Codex
+Surface: Codex desktop
+Machine: Personal MacBook Pro
+Project(s): PlanetCompiler
+
+Created a stable offline HTML roadmap and editable Markdown source in PlanetCompiler at Sean's request. Preserved the full eleven-step plan, six milestones, acceptance gates and 109 checklist entries. Added maintenance instructions to the local AGENTS, README and canonical handoff so future implementation/review checkpoints update the same artifact. Milestone A remains in progress; no production acceptance was inferred. No background automation was created.
+
+Continuation: Sean directed execution through the roadmap. Added exact resident component reuse and stage/age timing telemetry. Retained all 384 actual components on repeat pose. Five-route cadence 119.76/s; camera gaps improved markedly. Preserved a 45 ms outlier, two non-reproducing repeats, and a lifecycle harness setup failure corrected in a separate passing 53-check run. Core Debug/Release 12/12 pass; seven route records verify and ten scheduling corruptions fail. Updated the living roadmap with two scoped tested tasks; milestone A is still open. Full evidence is PlanetCompiler/evidence/phase-6/reuse/.
+
+Paths: PlanetCompiler/roadmap.html; PlanetCompiler/docs/ROADMAP.md; PlanetCompiler/scripts/build-roadmap.py. Canonical handoff: 07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md.
+--- END BLOCK ---
+
+### 2026-09-26 — PlanetCompiler true-scale landmark fixture
+SessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe-phase6
+
+--- SESSION BLOCK ---
+Date: 2026-09-26
+Agent: Codex
+Surface: Codex desktop
+Machine: Personal MacBook Pro
+Project(s): PlanetCompiler; independent Planet Lab scoped handoff
+
+Summary: Sean authorized planetary scale with surface reference details. Implemented a complete Earth-radius synthetic cube-sphere with adaptive patch-local geometry, continent/ridge/rolling references, north crater island and distance bands. Native controls reach orbit, approach, low pass, face edge and opposite side. Legion unchanged.
+
+Evidence: Debug and Release pass 12/12 portable suites. Native seven-pose run passes 53/53 checks, including running archive fingerprint and observed pending-stop restoration. Reviewed seven original images; crater is recognizable but markings alias and some local views have weak contrast. No independent adversarial or human phase-six acceptance. Complete final source/binary/artifact hashes are in `evidence/phase-6/manifest.json`.
+
+Correction: Unreal initially skipped relinking a modified external library. Preserved the stale capture run, added archive-dependent compile identity and runtime hash, rebuilt and reverified.
+
+Continuous flights: Added five bounded 20-second routes and actual viewport render-thread callback timestamps. Weighted cadence 119.30/s at 2027 × 1090; worst interval 32.56 ms. This is not GPU presentation FPS. Five real route records verify; twelve planted corruptions fail. A separate six-image descent is excluded from timing. Native build passed. New evidence/source/binary manifest lives in `evidence/phase-6/flight/`; baseline manifest remains historical.
+
+Runtime: Unreal remains open at the crater low view, localhost MCP 8765. New report: http://127.0.0.1:8771/flight/proofboard.html. Prior evidence remains unchanged.
+
+Limits/next: Instrument preparation/upload/publication delay and assess visible detail transitions. Low flights replaced terrain 22 times/20 seconds; camera-to-committed-preparation distance reached 7.26 km at the corner, not a certified geometry error. Collision, streaming/cache, GPU presentation, continuous visual and photographic/geological acceptance remain open.
+
+Commit blocker: The user refreshed ownership cache, but no-remote PlanetCompiler remains unknown. ws-lanes still refuses commit. Requested human-terminal `python3 ~/Projects/workspace/09-tools/profile_resolve.py owners set PlanetCompiler personal`; resolver requires human TTY. No bypass. Stage flight changes together with the already-staged baseline before retrying local commit. Last project commit cdb16a4; no remote.
+
+Handoff: `07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md`.
+--- END BLOCK ---
+
 ### 2026-09-24 — Subatomic token-audit: adversarial review, fixes, PR #20
 
 SessionID: 2026-09-24-work-sub9r2
@@ -770,62 +816,4 @@ Pending added:
 
 Next:
 - Review and merge the cui tickets. Nothing else blocks this icon program.
---- END BLOCK ---
-
-### 2026-09-15 — Unattended runner: decided not to build it; guard stays
-
-SessionID: 2026-09-15-work-mbp-runner-decision
---- SESSION BLOCK ---
-Date: 2026-09-15
-Machine: Work MacBook Pro (main, going forward)
-Surface: Claude Code (Mac desktop app)
-Agent: Claude Opus 5
-Project(s): 19-workspace-brain
-
-Summary: Sean asked whether to delete the unattended runner and its tasks as an orphaned
-artifact that reports stale. Checked before answering: nothing reports it stale (0 notices,
-vault-health clean across 170 notes), there is no timer, no cron entry, no launchd agent, and
-no queue item. The only artifact is `09-tools/check-unattended-runner-gate.py`.
-
-Recommendation given and taken: keep the gate, close the question. The gate is a lock, not a
-feature — it refuses unsafe unattended runs and is silent otherwise. The risk it blocks does
-not depend on a runner existing, because `/schedule`, the `CronCreate` tool and any headless
-`claude -p` run can reach an unattended path by accident. Deleting a lock because the door is
-unused is backwards. It also costs nothing at rest: `09-tools/` is not auto-loaded, so zero
-tokens per session.
-
-The actual irritant was one baton line reading "authorized-but-unbuilt", which looks like a
-pending task for something nobody intends to do. Replaced with a decided line pointing at
-[[decision-no-unattended-runner]], which also records what a safe first version would look
-like if the answer ever changes: one lane, tools removed rather than granted, and only
-tickets Sean wrote himself.
---- END BLOCK ---
-
-### 2026-09-15 — Plain language is now a standing requirement
-
-SessionID: 2026-09-15-work-mbp-plain-language
---- SESSION BLOCK ---
-Date: 2026-09-15
-Machine: Work MacBook Pro (main, going forward)
-Surface: Claude Code (Mac desktop app)
-Agent: Claude Opus 5
-Project(s): 19-workspace-brain
-
-Summary: Sean said an explanation went over his head and asked for plain language as a
-durable rule, giving ADHD and autism as the reason.
-
-Recorded in two places. `04-preferences/user-preferences.md` → Response Style holds the full
-rule: it outranks every other style note in that file, plain does not mean shallow (keep the
-depth, change the packaging), and it lists concrete do/avoid items plus the worked example
-that caused it. `06-context/CRITICAL_FACTS.md` carries a three-line version, because that
-file loads on every session and this applies to every reply.
-
-The failure it came from, kept as the example: an explanation of the unattended runner used
-`--allowed-tools`, `--strict-mcp-config`, "prompt-injection path" and "lane-scoped" with no
-definitions, stacked four abstract numbered points, and never said the simple thing first —
-that it reads job tickets and does the work on its own, and is switched off because a ticket
-could tell it to do something harmful.
-
-Session floor went 14,778 → 15,480, still inside the 17,000 budget. Worth the tokens: it is
-an accessibility requirement, not a style tweak.
 --- END BLOCK ---
