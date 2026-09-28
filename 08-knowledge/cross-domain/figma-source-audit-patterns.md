@@ -116,6 +116,10 @@ variables are *aliased* to foundation variables or hold literal values).
 
 - **Working as intended.** Hidden indicators / scroll buttons render correctly per `figma-component-composition-from-react.md`. Designers can flip `visible` to inspect.
 
+### Leftover variants and catalog slack
+
+A style-only physical set (Status × Shape, Object True/False, Size as a variant) is leftover once those axes live as modes. Canvas examples of the same component are `Docs ·`, not unnamed siblings that read as members of the set. After the delete, hug the section to content + 80 — do not keep the old bbox. Folded components are `Deprecated ·` and leave the live category row (`visible=false` in Primitives is not a deprecation). Detector: `figma-bind-probe.py` R8.
+
 ---
 
 ## Per-component recommendations (selected highlights)

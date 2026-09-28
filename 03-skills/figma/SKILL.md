@@ -27,7 +27,7 @@ triggers: [figma, in figma, build in figma, component set, library file, generat
 defers_to: [design-engineer]
 governed_by: [qa, a11y-visual]
 rigor_role: command-hub
-spec_version: "2.2"
+spec_version: "2.3"
 tier: hub
 domain: design
 prerequisites: [design-foundations]
@@ -165,11 +165,13 @@ Hugging does not turn density off. A raw unlocked pixel on that axis does. Never
 
 **Negative overlap.** `itemSpacing` below 0 (avatar stack, trailing cluster) may stay a literal. Say why on the node description. Do not invent a negative space token.
 
-**Modes.** Style axes are component-scoped variable collections, one mode per value. The collection cap is 20. Before `addMode`, count. At the cap, remap a redundant alias or add a named recipe instance. Do not drop a host-facing value. A physical `VARIANT` is only for true structure. `BOOLEAN` for part presence. Nested chrome is an instance of a library atom, not a drawn duplicate.
+**Modes.** Style axes are component-scoped variable collections, one mode per value. The collection cap is 20. Before `addMode`, count. At the cap, remap a redundant alias or add a named recipe instance. Do not drop a host-facing value. A physical `VARIANT` is only for true structure. `BOOLEAN` for part presence. Nested chrome is an instance of a library atom, not a drawn duplicate. After uncombining a style axis, delete the leftover variants, hug the section, and prefix remaining canvas examples `Docs ·`. A hidden hole in the live catalog is not a deprecation — name it `Deprecated ·` and keep it with the other Deprecated sections.
 
 ### Gate 3 — Catalog placement
 
 Owning `SECTION`, no AABB overlap, Title Case with spaces. `$fig.section()` at `(0,0)` with the default 496² is a defect. Measure sibling boxes, grow the parent category, and restack page-level category sections with the library gap (typically 80). The six category names are Primitives, Inputs, Layout, Navigation, Overlays, and Feedback.
+
+**Cleanup is part of placement.** After adding, removing, or uncombining variants: hug the section to the content AABB plus 80 pad; do not leave the old bbox. Instance siblings of the main are `Docs ·` examples, not unnamed extras that read as variants. Folded components are `Deprecated ·` and sit with Native Dialog / other Deprecated sections — not a `visible=false` tile in the live row.
 
 ### Gate 4 — From code
 
@@ -180,10 +182,10 @@ Read the implementation, variant map, stories, and docs before drawing. Skim hos
 After **each** component, not after the batch:
 
 1. `python3 09-tools/figma-bind-probe.py --emit-template`
-2. Write that node's `get_variable_defs` and `get_metadata`, per-node bindings, and a `layout` object (`sizingVertical`, `paddingTop`, `paddingBottom`, `heightBound`). Add `sections` when placing a catalog, and `collections` with mode counts when you touch a variable collection.
+2. Write that node's `get_variable_defs` and `get_metadata`, per-node bindings, and a `layout` object (`sizingVertical`, `paddingTop`, `paddingBottom`, `heightBound`). Add `sections` when placing a catalog, and `collections` with mode counts when you touch a variable collection. Add `cleanup` (sets / section content AABB / orphans / hiddenInCatalog) when you add, remove, or uncombine variants or resize a catalog section.
 3. `python3 09-tools/figma-bind-probe.py --capture <scratchpad>/cap.json`
 
-The probe refuses `Color/*`, raw spacing, radius, and height (zeros included), rects-instead-of-instances, a FIXED axis with padding and no height token, a hug that also locks height, overlapping sections, the 496² default section, and a collection over 20 modes. **Exit 2 means nothing was verified, which is not done.** Screenshot the node. `figma-bind-probe.py --self-test` proves the script, not the node. [[close-out]] exit 0 does not replace the capture. Pixels still go through `vqa prove` when a cuespec exists.
+The probe refuses `Color/*`, raw spacing, radius, and height (zeros included), rects-instead-of-instances, a FIXED axis with padding and no height token, a hug that also locks height, overlapping sections, the 496² default section, a collection over 20 modes, leftover style-only variant sets, section slack past pad 80, orphan stickers not named `Docs ·`, and hidden sections in a live category without a `Deprecated ·` prefix. **Exit 2 means nothing was verified, which is not done.** Screenshot the node. `figma-bind-probe.py --self-test` proves the script, not the node. [[close-out]] exit 0 does not replace the capture. Pixels still go through `vqa prove` when a cuespec exists.
 
 ### Gate 6 — No silent skip
 
@@ -207,7 +209,7 @@ Figma-only. Do not add a framework for this cluster. Promote the "knowledge vs e
 | Change | Where | When |
 |---|---|---|
 | New reusable "when X, refuse / prove Y" | This hub's prove-gate, or [[figma-component-generation]] | The failure happened twice, or one failure is structural (agents will repeat it) |
-| New instrumented check | `09-tools/` detector + Gate 5 | Prose already exists and agents skip it (hug/slot, section overlap, and the 20-mode cap are this pattern) |
+| New instrumented check | `09-tools/` detector + Gate 5 | Prose already exists and agents skip it (hug/slot, section overlap, the 20-mode cap, leftover variants / section hug / Docs · vs Deprecated ·) |
 | Workaround catalog | [[figma-source-audit-patterns]] | After a real code-to-canvas pass |
 | Cross-domain "knowledge vs enforcement" | [[13-domain-rigor-stack]] | Only if 3+ domains need it |
 | One-off fact about tools or MCP | `06-context/memory/` `type: decision` | Example: `skillNames` is logging |
