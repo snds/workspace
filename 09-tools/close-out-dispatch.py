@@ -124,9 +124,10 @@ HUB_DETECTORS: dict[str, tuple[Step, ...]] = {
         # the skip is the capture step, the probe is the assess step A8 minted.
         _skip(
             "figma-mcp-capture",
-            "Agent step: get_variable_defs + get_metadata on the node you just wrote, into "
-            "your scratchpad (transient artifact, not a fixture). "
-            "`figma-bind-probe.py --emit-template` prints the calls.",
+            "Agent step, per component: get_variable_defs + get_metadata into a scratchpad "
+            "capture, then `figma-bind-probe.py --capture` (exit 2 is not a pass). "
+            "`--emit-template` prints the calls. This skip is not a node pass, and "
+            "`--self-test` below only proves the script.",
         ),
         _cli("figma-bind-probe.py", "--self-test"),
         _skip("vqa-prove", "vqa prove BUILD CUESPEC when a reference exists."),

@@ -147,10 +147,10 @@ frame.minHeight = 100 // Now works
 **Cause**: Setting auto-layout properties without enabling auto-layout
 **Fix**: Set `layoutMode` before auto-layout properties
 ```javascript
-// ✅ CORRECT order
+// ✅ CORRECT order — enable auto-layout, then bind. A literal is not the lesson.
 frame.layoutMode = 'HORIZONTAL' // First: enable auto-layout
-frame.itemSpacing = 16 // Then: set spacing
-frame.paddingTop = 12 // Then: set padding
+frame.setBoundVariable('itemSpacing', spacingMd) // Then: bind spacing
+frame.setBoundVariable('paddingTop', spacingSm) // Then: bind padding
 ```
 
 ## Component and Variant Errors

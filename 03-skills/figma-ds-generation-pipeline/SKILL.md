@@ -18,7 +18,7 @@ Use when generating complete design systems in Figma with proper dependency orde
 ## The Five-Phase Dependency Chain
 **Variables → Styles → Components → Documentation → Validation**
 
-Each phase must complete successfully before the next begins. Breaking this order causes cascade failures.
+Each phase must complete successfully before the next begins **on a from-scratch file**. When Foundations / Semantics / Density (or the target equivalent) already exist, skip Phase 0–2. [[figma]] Gates 2 and 5 still apply to every component.
 
 ## Pre-Pipeline Setup
 
@@ -447,15 +447,10 @@ await useFigma({
   fileKey,
   description: 'Phase 3: Generate core components with variable bindings',
   code: `
-    // Verify previous phases complete
+    // Existing token system: do not block on Phase 0–2. Gates 2 and 5 in the
+    // figma hub still apply to every component written below.
     const relaunchData = figma.root.getRelaunchData()
-    
-    if (relaunchData.phase2Complete !== 'true') {
-      throw new Error('Phase 2 must complete before Phase 3')
-    }
-    
-    // Get semantic variables for component binding
-    const semanticIds = JSON.parse(relaunchData.semanticVariableIds)
+    const semanticIds = JSON.parse(relaunchData.semanticVariableIds || '{}')
     const getSemanticVar = (name) => figma.variables.getVariableById(semanticIds[name])
     
     // Create Button component with variants
@@ -470,16 +465,16 @@ await useFigma({
           const button = figma.createComponent()
           button.name = \`Size=\${size}, Variant=\${variant}, State=\${state}\`
           
-          // Set up auto-layout
           button.layoutMode = 'HORIZONTAL'
           button.primaryAxisAlignItems = 'CENTER'
           button.counterAxisAlignItems = 'CENTER'
-          button.paddingLeft = size === 'Small' ? 12 : size === 'Medium' ? 16 : 20
-          button.paddingRight = size === 'Small' ? 12 : size === 'Medium' ? 16 : 20
-          button.paddingTop = size === 'Small' ? 6 : size === 'Medium' ? 8 : 10
-          button.paddingBottom = size === 'Small' ? 6 : size === 'Medium' ? 8 : 10
-          button.itemSpacing = 8
-          button.cornerRadius = 6
+          // Bind padding, gap, and radius. Size-only FLOAT swaps are modes, not literals.
+          button.setBoundVariable('paddingLeft', getSemanticVar('padding-x/md'))
+          button.setBoundVariable('paddingRight', getSemanticVar('padding-x/md'))
+          button.setBoundVariable('paddingTop', getSemanticVar('padding-y/md'))
+          button.setBoundVariable('paddingBottom', getSemanticVar('padding-y/md'))
+          button.setBoundVariable('itemSpacing', getSemanticVar('gap/sm'))
+          button.setBoundVariable('cornerRadius', getSemanticVar('control-radius/md'))
           
           // Bind background color based on variant and state
           let bgVar, textVar
@@ -501,7 +496,7 @@ await useFigma({
           text.name = 'Label'
           text.characters = 'Button'
           text.fontName = { family: 'Inter', style: size === 'Small' ? 'Medium' : 'Bold' }
-          text.fontSize = size === 'Small' ? 14 : size === 'Medium' ? 16 : 18
+          text.setBoundVariable('fontSize', getSemanticVar('type-size/md'))
           
           // Bind text color
           const textFill = { type: 'SOLID', color: { r: 0, g: 0, b: 0 } }
@@ -528,12 +523,12 @@ await useFigma({
     card.layoutMode = 'VERTICAL'
     card.primaryAxisAlignItems = 'MIN'
     card.counterAxisAlignItems = 'FILL'
-    card.paddingTop = 24
-    card.paddingRight = 24
-    card.paddingBottom = 24
-    card.paddingLeft = 24
-    card.itemSpacing = 16
-    card.cornerRadius = 8
+    card.setBoundVariable('paddingTop', getSemanticVar('space/lg'))
+    card.setBoundVariable('paddingRight', getSemanticVar('space/lg'))
+    card.setBoundVariable('paddingBottom', getSemanticVar('space/lg'))
+    card.setBoundVariable('paddingLeft', getSemanticVar('space/lg'))
+    card.setBoundVariable('itemSpacing', getSemanticVar('space/md'))
+    card.setBoundVariable('cornerRadius', getSemanticVar('radius/md'))
     card.resize(320, 200)
     
     // Bind card background
@@ -545,7 +540,7 @@ await useFigma({
     const cardStroke = { type: 'SOLID', color: { r: 0.8, g: 0.8, b: 0.8 } }
     const boundCardStroke = figma.variables.setBoundVariableForPaint(cardStroke, 'color', getSemanticVar('border/primary'))
     card.strokes = [boundCardStroke]
-    card.strokeWeight = 1
+    card.setBoundVariable('strokeWeight', getSemanticVar('border-width/sm'))
     
     figma.root.setRelaunchData({
       ...relaunchData,
@@ -712,7 +707,8 @@ console.log('Final validation:', finalValidation)
 
 ### Phase 3 Validation
 - [ ] Components use auto-layout
-- [ ] Variable bindings on component properties
+- [ ] Padding, gap, radius, fill, stroke, and type size are bound (zeros included)
+- [ ] After each component: `python3 09-tools/figma-bind-probe.py --capture` (exit 2 is not a pass)
 - [ ] Variant naming follows Property=Value format
 - [ ] Component descriptions added
 
@@ -917,14 +913,14 @@ await useFigma({
         input.primaryAxisSizingMode = 'AUTO'
         input.counterAxisSizingMode = 'FIXED'
         input.resize(280, 10) // Width fixed, height hugs
-        input.itemSpacing = 4
+        input.setBoundVariable('itemSpacing', getSemanticVar('gap/xs'))
         
         // Label
         const label = figma.createText()
         label.name = 'Label'
         label.characters = 'Label'
         label.fontName = { family: 'Inter', style: 'Medium' }
-        label.fontSize = size === 'Small' ? 12 : 14
+        label.setBoundVariable('fontSize', getSemanticVar('type-size/sm'))
         
         const labelFill = { type: 'SOLID', color: { r: 0, g: 0, b: 0 } }
         const boundLabelFill = figma.variables.setBoundVariableForPaint(
@@ -939,11 +935,11 @@ await useFigma({
         field.layoutMode = 'HORIZONTAL'
         field.primaryAxisAlignItems = 'CENTER'
         field.counterAxisAlignItems = 'CENTER'
-        field.paddingLeft = 12
-        field.paddingRight = 12
-        field.paddingTop = size === 'Small' ? 6 : 8
-        field.paddingBottom = size === 'Small' ? 6 : 8
-        field.cornerRadius = 6
+        field.setBoundVariable('paddingLeft', getSemanticVar('padding-x/sm'))
+        field.setBoundVariable('paddingRight', getSemanticVar('padding-x/sm'))
+        field.setBoundVariable('paddingTop', getSemanticVar('padding-y/sm'))
+        field.setBoundVariable('paddingBottom', getSemanticVar('padding-y/sm'))
+        field.setBoundVariable('cornerRadius', getSemanticVar('control-radius/sm'))
         field.layoutSizingHorizontal = 'FILL'
         
         // Field background
@@ -962,14 +958,16 @@ await useFigma({
           fieldStroke, 'color', borderVar
         )
         field.strokes = [boundFieldStroke]
-        field.strokeWeight = state === 'Focus' ? 2 : 1
+        field.setBoundVariable('strokeWeight', state === 'Focus'
+          ? getSemanticVar('border-width/md')
+          : getSemanticVar('border-width/sm'))
         
         // Placeholder text
         const placeholder = figma.createText()
         placeholder.name = 'Value'
         placeholder.characters = 'Placeholder text'
         placeholder.fontName = { family: 'Inter', style: 'Regular' }
-        placeholder.fontSize = size === 'Small' ? 14 : 16
+        placeholder.setBoundVariable('fontSize', getSemanticVar('type-size/md'))
         placeholder.layoutSizingHorizontal = 'FILL'
         
         const placeholderFill = { type: 'SOLID', color: { r: 0, g: 0, b: 0 } }
@@ -988,7 +986,7 @@ await useFigma({
           helper.name = 'Helper Text'
           helper.characters = 'Error message'
           helper.fontName = { family: 'Inter', style: 'Regular' }
-          helper.fontSize = 12
+          helper.setBoundVariable('fontSize', getSemanticVar('type-size/sm'))
           
           const helperFill = { type: 'SOLID', color: { r: 0, g: 0, b: 0 } }
           const boundHelperFill = figma.variables.setBoundVariableForPaint(

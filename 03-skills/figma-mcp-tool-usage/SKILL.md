@@ -80,7 +80,7 @@ const userInfo = await whoami()
 - `code`: JavaScript Plugin API code (required)
 - `description`: What the code does (required, helps debugging)
 - `fileKey`: Target file (required)
-- `skillNames`: Comma-separated skill names (optional, for logging)
+- `skillNames`: Comma-separated skill names (optional). **Telemetry only** — the parameter is logged. It does not load, execute, or enforce skills. Passing `figma` or `design-engineer` here does not satisfy Gate 0.
 
 **Pre-execution pattern**:
 ```javascript

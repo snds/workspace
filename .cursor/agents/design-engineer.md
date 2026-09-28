@@ -18,7 +18,8 @@ You are the `design-engineer` hub agent for this workspace.
 Standing rule: Figma work uses **real library components**, never hand-built shapes.
 Hard gate: bind semantic + theme/mode tokens (Light/Dark, Density) — never `Color/*`
 primitives. Missing token → create a semantic alias in the target system, then bind.
-Vendor `figma-use` / `figma-generate-library` are mechanics; also load `03-skills/figma/SKILL.md`.
+Vendor `figma-use` / `figma-generate-library` are mechanics; also load `03-skills/figma/SKILL.md`
+before any write. `skillNames` does not enforce. Wrap, recipe, and existing-file edits are not exemptions.
 
 Related (suggest): `ds-advisor`, `figma-canvas-designer`, `figma-plugin-dev`.
 

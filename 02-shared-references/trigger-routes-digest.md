@@ -59,7 +59,7 @@ Shells run `python3 09-tools/skill-loadset.py "<request>"` instead. Never ingest
 - skill one-job → `08-knowledge/cross-domain/nate-jones-harness-enrichments.md`
 - handback, /handback, end side chat, close side chat, hand this back → `03-skills/side-chat-handback/SKILL.md`
 - figma plugin → `03-skills/figma-plugin-dev/SKILL.md`
-- figma, in figma, build in figma, component set, library file, stickersheet → `03-skills/figma/SKILL.md` + `03-skills/design-engineer/SKILL.md` + `03-skills/figma-component-generation/SKILL.md` + `03-skills/figma-canvas-designer/SKILL.md` + `08-knowledge/design/figma-ds-surface-authoring.md`
+- figma, in figma, build in figma, component set, library file, stickersheet → `03-skills/figma/SKILL.md` + `03-skills/design-engineer/SKILL.md` + `03-skills/figma-component-generation/SKILL.md` + `03-skills/figma-canvas-designer/SKILL.md` + `08-knowledge/design/figma-ds-surface-authoring.md` + `09-tools/figma-bind-probe.py`
 - design system → `01-frameworks/18-design-systems-ai-operating-model.md` + `03-skills/ds-advisor/SKILL.md` + `08-knowledge/design/ds-parent-owns-shared-defects.md` + `03-skills/ai-design-systems/SKILL.md`
 - design systems → `01-frameworks/18-design-systems-ai-operating-model.md` + `03-skills/ds-advisor/SKILL.md` + `08-knowledge/design/ds-parent-owns-shared-defects.md`
 - parent vs host, cds or proto, consuming app → `08-knowledge/design/ds-parent-owns-shared-defects.md`

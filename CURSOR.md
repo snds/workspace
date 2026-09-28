@@ -8,6 +8,9 @@ multi-agent handoff live in AGENTS.md — not duplicated here._
 
 - **Canonical always-on rule:** `.cursor/rules/brain.mdc` (`alwaysApply: true`) injects the contract
   framing into every request for every model. Write gates: `.cursor/rules/01-agent-controller.mdc`.
+  Figma writes: `.cursor/rules/figma-construction.mdc` — Read `03-skills/figma/SKILL.md` before any
+  canvas write. Cursor does not auto-load that hub from `available_skills`. Do not hand-edit
+  `~/.cursor` to add this; the project rule is the copy that fires.
   If both this file and `brain.mdc` are present, follow `brain.mdc` for Cursor mechanics; defer to
   [AGENTS.md](AGENTS.md) for everything else. **One home (harness-map #3):** do not paste standing law
   into User Rules beyond the thin BEACON; do not treat [CLAUDE.md](CLAUDE.md) as Cursor always-on
