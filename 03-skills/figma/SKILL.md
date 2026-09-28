@@ -147,25 +147,43 @@ Inspect Foundations / Semantics / Density, or the target system's equivalent, be
 
 ### Gate 2 — Bind before ship
 
-Every auto-layout node inside a `COMPONENT` or `COMPONENT_SET` binds padding, gap, radius, fill, stroke, and type size. `paddingLeft` / `paddingRight` / `paddingTop` / `paddingBottom`, `itemSpacing`, and radius stay numeric only when no `space/*` or density token exists — and a zero is not exempt when one does. Prefer a variable handle (`setBoundVariable`, or `$fig` when that channel accepts one) over `figma.create*` plus a numeric auto-layout assignment. Negative overlap (avatar stack, trailing cluster) may stay literal; record an `allow` entry with a reason.
+Every auto-layout node inside a `COMPONENT` or `COMPONENT_SET` binds padding, gap, radius, fill, stroke, and type size. `paddingLeft` / `paddingRight` / `paddingTop` / `paddingBottom`, `itemSpacing`, radius, and height stay numeric only when no token exists — and a zero is not exempt when one does. Prefer a variable handle (`setBoundVariable`, or `$fig` when that channel accepts one) over `figma.create*` plus a numeric auto-layout assignment.
+
+**Axis (choose one per edge):**
+
+| Intent | `layoutSizing` | Size source |
+|---|---|---|
+| Compose to content | `HUG` | padding + children. Density remaps pad, type, icon, and gap. No height token on the parent. |
+| Align to the control grid | `FIXED` | bound to `control-height/*` or Component / Size.height. Padding is inset inside that slot. |
+| Fill the parent | `FILL` | the parent owns the slot (viewport, plot, editor canvas). |
+
+Hugging does not turn density off. A raw unlocked pixel on that axis does. Never a FIXED height with no variable. Never hug a slot control and expect padding plus type size to equal `control-height` — those are different rungs.
+
+**Density is the whole ladder**, not padding alone: padding, gap, control-height, type-size, icon-size, radius, container padding. File Density modes and a component Size axis stay separate. Do not collapse them into one mode, and do not drop control-height to look more tokenized.
+
+**Type.** If the component binds `type-size/*`, `control-font-size/*`, or Component / Size.fontSize, leave `textStyleId` empty. A library Text Style applies only when no sizing or density type axis exists.
+
+**Negative overlap.** `itemSpacing` below 0 (avatar stack, trailing cluster) may stay a literal. Say why on the node description. Do not invent a negative space token.
+
+**Modes.** Style axes are component-scoped variable collections, one mode per value. The collection cap is 20. Before `addMode`, count. At the cap, remap a redundant alias or add a named recipe instance. Do not drop a host-facing value. A physical `VARIANT` is only for true structure. `BOOLEAN` for part presence. Nested chrome is an instance of a library atom, not a drawn duplicate.
 
 ### Gate 3 — Catalog placement
 
-Owning `SECTION`, no AABB overlap, Title Case with spaces. `$fig.section()` at `(0,0)` with the default 496² is a defect.
+Owning `SECTION`, no AABB overlap, Title Case with spaces. `$fig.section()` at `(0,0)` with the default 496² is a defect. Measure sibling boxes, grow the parent category, and restack page-level category sections with the library gap (typically 80). The six category names are Primitives, Inputs, Layout, Navigation, Overlays, and Feedback.
 
-### Gate 4 — Modes vs physical variants
+### Gate 4 — From code
 
-Style axes become variable modes ([[figma-modes-for-variants]]). A physical `VARIANT` is only for structure. Nested chrome is an instance of a library atom, not a drawn duplicate. Text Styles apply only when Size/Density are not driving type ([[figma-ds-surface-authoring]] rules 12, 20, 21).
+Read the implementation, variant map, stories, and docs before drawing. Skim hosts only to see which variant strings and tokens they pass. Classify the source: pure alias, passthrough, styled wrapper, variant map, compound, or recipe on a parent. If the anatomy is a public primitive plus props or slots, instance that primitive. A new `COMPONENT` is only for structure an instance cannot carry. Bind what the code remaps (padding and gap tokens, slot height, hug, fill, radius, type size, semantic color). Code-only behavior (hover-within, peer, keyboard, draft-until-done) gets a legal stand-in and a one-line description, not fake chrome. The stand-in catalog is [[figma-source-audit-patterns]]. Construction steps: [[figma-component-generation]].
 
 ### Gate 5 — Prove
 
 After **each** component, not after the batch:
 
 1. `python3 09-tools/figma-bind-probe.py --emit-template`
-2. Write that node's `get_variable_defs` and `get_metadata` (plus per-node bindings) to a scratchpad capture.
+2. Write that node's `get_variable_defs` and `get_metadata`, per-node bindings, and a `layout` object (`sizingVertical`, `paddingTop`, `paddingBottom`, `heightBound`). Add `sections` when placing a catalog, and `collections` with mode counts when you touch a variable collection.
 3. `python3 09-tools/figma-bind-probe.py --capture <scratchpad>/cap.json`
 
-The probe refuses `Color/*`, raw spacing and radius (zeros included), and rects-instead-of-instances. **Exit 2 means nothing was verified, which is not done.** Screenshot the node. `figma-bind-probe.py --self-test` proves the script, not the node. [[close-out]] exit 0 does not replace the capture: the capture step stays a labelled skip. Pixels still go through `vqa prove` when a cuespec exists.
+The probe refuses `Color/*`, raw spacing, radius, and height (zeros included), rects-instead-of-instances, a FIXED axis with padding and no height token, a hug that also locks height, overlapping sections, the 496² default section, and a collection over 20 modes. **Exit 2 means nothing was verified, which is not done.** Screenshot the node. `figma-bind-probe.py --self-test` proves the script, not the node. [[close-out]] exit 0 does not replace the capture. Pixels still go through `vqa prove` when a cuespec exists.
 
 ### Gate 6 — No silent skip
 
@@ -177,7 +195,7 @@ If a gate cannot run (MCP down, probe missing, token collection absent), stop an
 2. **Gate 0.** Then the matching figma-* spoke. Vendor skills after that.
 3. **`--dry`?** Report the skill + MCP plan and stop.
 4. **Gate 1.** Acquire the target (code, MCP read, or token file) and the collections.
-5. **Gates 2–4.** Author bound. Do not leave numeric padding.
+5. **Gates 2–4.** Choose hug, slot, or fill. Bind. Count modes before adding one.
 6. **Gate 5** on that component before starting the next. **Gate 6** if a step cannot run.
 7. **Emit** named layers, where they sit, the probe exit code, and the screenshot.
 8. **Hand off:** `spec` → design-engineer; system-token decisions → `/ds`. After produce, load `governed_by` lenses (`qa`, `a11y-visual`). Missing detector → mint it and push here. **Do not page Sean** unless self-critique is failing or that mint still cannot hit the bar.
@@ -189,7 +207,8 @@ Figma-only. Do not add a framework for this cluster. Promote the "knowledge vs e
 | Change | Where | When |
 |---|---|---|
 | New reusable "when X, refuse / prove Y" | This hub's prove-gate, or [[figma-component-generation]] | The failure happened twice, or one failure is structural (agents will repeat it) |
-| New instrumented check | `09-tools/` detector + Gate 5 | Prose already exists and agents skip it (the bind-probe pattern) |
+| New instrumented check | `09-tools/` detector + Gate 5 | Prose already exists and agents skip it (hug/slot, section overlap, and the 20-mode cap are this pattern) |
+| Workaround catalog | [[figma-source-audit-patterns]] | After a real code-to-canvas pass |
 | Cross-domain "knowledge vs enforcement" | [[13-domain-rigor-stack]] | Only if 3+ domains need it |
 | One-off fact about tools or MCP | `06-context/memory/` `type: decision` | Example: `skillNames` is logging |
 | Validated construction pattern | `08-knowledge/design/` | After a real pass with evidence |

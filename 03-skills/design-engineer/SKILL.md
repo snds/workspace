@@ -42,7 +42,9 @@ module, or a design decision record — is evaluated through both lenses simulta
 > win on doctrine. Load both before any `use_figma` write. `skillNames` on that call
 > is telemetry and does not execute skills. An existing file, recipe, wrap, instance,
 > or small edit is not an exemption. Construction gates and the per-component probe
-> live in [[figma]] (Gates 0–6).
+> live in [[figma]] (Gates 0–6). A compose axis hugs (padding + children, no parent
+> height token). A slot axis is `FIXED` and binds height to `control-height/*` or
+> Size.height. Padding inside a slot is inset, not the row height.
 
 > **Context-based DS (Frost / Pitre).** Designers own the first code draft against the
 > **published** library, on a design branch, with a named context-engineer review.

@@ -29,6 +29,16 @@ Rules, all from [[figma-ds-surface-authoring]] and the `figma` hub hard gate:
                                `type-size/*` over a Density-unaware Radii/Spacing alias
                                (standing rule, Sean 2026-08-06). A warning, not a failure:
                                general surface radius may legitimately use the Radii ladder.
+  R5 hug-slot (FAIL)           Each auto-layout axis is HUG (pad + children), FIXED bound
+                               to `control-height/*` or `Size.height`, or FILL. FIXED with
+                               vertical padding and no height token is the unbound bar.
+                               HUG plus a height lock is a stray lock. A COMPONENT with no
+                               `layout` object was not checked.
+  R6 section-aabb (FAIL)       Catalog sections must not overlap. A section at (0,0)
+                               sized 496² is the default `$fig.section()` defect.
+  R7 mode-cap (FAIL)           A variable collection with more than 20 modes is over the
+                               Figma cap. 20 is the last legal mode, not a reason to drop
+                               a host-facing value.
 
 Sanctioned exceptions exist (SECTION chrome, deliberate negative overlaps) but doctrine says
 they are *noted, not silently left* — so `allow` entries require a written reason, and an
@@ -94,7 +104,19 @@ CAPTURE_TEMPLATE = {
             "type": "INSTANCE",
             "bindings": {"fill": "surface/action/primary", "cornerRadius": "control-radius/sm"},
             "raw": {},
+            "layout": {
+                "sizingVertical": "FIXED",
+                "paddingTop": 0,
+                "paddingBottom": 0,
+                "heightBound": "control-height/md",
+            },
         }
+    ],
+    "sections": [
+        {"name": "Inputs", "x": 0, "y": 80, "width": 1200, "height": 800}
+    ],
+    "collections": [
+        {"name": "Example / Variant", "modes": 12}
     ],
     "allow": [
         {"pattern": "Section Chrome/*", "reason": "Figma SECTION chrome — sanctioned raw (rule 13)"}
@@ -113,9 +135,16 @@ EMIT_HELP = """# Figma bind probe — capture, then judge
 2. Write the capture to your SCRATCHPAD. It is a transient, file-specific artifact — not a
    fixture, and not something to commit.
 
-3. python3 09-tools/figma-bind-probe.py --capture <scratchpad>/cap.json
+3. On each component node set `layout`: sizingVertical (HUG, FIXED, or FILL),
+   paddingTop, paddingBottom, and heightBound (the token, or null).
+   When you placed catalog sections, set `sections` (name, x, y, width, height).
+   When you touched a variable collection, set `collections` ({name, modes}).
+
+4. python3 09-tools/figma-bind-probe.py --capture <scratchpad>/cap.json
 
 Exit 2 means the capture had nothing to verify. That is not a pass — go back to step 1.
+R5 fails a FIXED axis with padding and no height token, and a HUG axis that also locks height.
+R6 fails overlapping sections and a 496² section at (0,0). R7 fails a collection with more than 20 modes.
 
 Skeleton:
 """
@@ -227,6 +256,21 @@ def check_raw_values(capture: dict) -> list[str]:
     for node in capture.get("nodes") or []:
         who = node.get("name", node.get("id", "?"))
         for prop, value in (node.get("raw") or {}).items():
+            key = str(prop).replace("-", "").replace("_", "").lower()
+            try:
+                num = float(value)
+            except (TypeError, ValueError):
+                num = None
+            if num is not None and num < 0 and key in {"itemspacing", "gap", "counteraxisspacing"}:
+                note = str(node.get("description") or "").strip()
+                if note or _allowed(who, allows) or _allowed(str(prop), allows):
+                    continue
+                fails.append(
+                    f"R2 negative overlap: {who}.{prop} = {value!r} may stay a literal only when "
+                    f"the node description says why (avatar stack, trailing cluster). Do not invent "
+                    f"a negative space token."
+                )
+                continue
             fails.append(
                 f"R2 raw value: {who}.{prop} = {value!r} is not bound. Zeros are not exempt "
                 f"(pad/gap 0 -> `space-0`, radius 0 -> `radius-none`, stroke 0 -> "
@@ -277,6 +321,137 @@ def check_density(capture: dict) -> list[str]:
                     f"Spacious works without pinning Radii."
                 )
     return warns
+
+
+HEIGHT_TOKEN = re.compile(r"(control-height(/|$))|([/.]height$)", re.I)
+MODE_CAP = 20
+
+
+def _pad_sum(layout: dict) -> float:
+    try:
+        return float(layout.get("paddingTop") or 0) + float(layout.get("paddingBottom") or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _height_ok(bound: str) -> bool:
+    return bool(HEIGHT_TOKEN.search(bound.strip()))
+
+
+def check_hug_slot(capture: dict) -> tuple[list[str], bool]:
+    """R5 — hug composes; a slot binds height; fill belongs to the parent."""
+    fails = []
+    saw = False
+    for node in capture.get("nodes") or []:
+        who = node.get("name", node.get("id", "?"))
+        kind = str(node.get("type", "")).upper()
+        layout = node.get("layout")
+        if not isinstance(layout, dict):
+            if kind in {"COMPONENT", "COMPONENT_SET"}:
+                saw = True
+                fails.append(
+                    f"R5 axis not captured: {who} is a {kind} with no layout. Record "
+                    f"sizingVertical, padding, and heightBound before calling this a pass."
+                )
+            continue
+        saw = True
+        sizing = str(layout.get("sizingVertical") or "").upper()
+        bound = str(layout.get("heightBound") or "").strip()
+        if sizing == "HUG":
+            if bound or layout.get("heightLiteral"):
+                fails.append(
+                    f"R5 stray height lock: {who} hugs content and also locks height"
+                    f"{(' -> `' + bound + '`') if bound else ''}. Compose from padding and "
+                    f"children; do not add a height token on the parent."
+                )
+        elif sizing == "FIXED":
+            if not bound:
+                if _pad_sum(layout) > 0:
+                    fails.append(
+                        f"R5 unbound slot: {who} is FIXED with vertical padding and no height "
+                        f"token. Padding is inset, not the row height. Bind `control-height/*` "
+                        f"or Component / Size.height, or hug."
+                    )
+                else:
+                    fails.append(
+                        f"R5 unbound slot: {who} is FIXED with no height token. A literal "
+                        f"height is not on the control grid."
+                    )
+            elif not _height_ok(bound):
+                fails.append(
+                    f"R5 height token: {who} height -> `{bound}`. Slot height binds "
+                    f"`control-height/*` or Component / Size.height."
+                )
+        elif sizing == "FILL":
+            pass
+        else:
+            fails.append(
+                f"R5 unknown sizing: {who} sizingVertical={sizing or '(missing)'} "
+                f"(HUG, FIXED, or FILL)."
+            )
+    return fails, saw
+
+
+def _box(section: dict) -> tuple[float, float, float, float] | None:
+    try:
+        x, y = float(section["x"]), float(section["y"])
+        w, h = float(section["width"]), float(section["height"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    return x, y, w, h
+
+
+def check_sections(capture: dict) -> tuple[list[str], bool]:
+    """R6 — catalog sections do not overlap, and the default 496² section is a defect."""
+    sections = capture.get("sections")
+    if not sections:
+        return [], False
+    fails = []
+    boxes = []
+    for section in sections:
+        name = section.get("name", "?")
+        box = _box(section)
+        if box is None:
+            fails.append(f"R6 section: `{name}` is missing x, y, width, or height.")
+            continue
+        x, y, w, h = box
+        if x == 0 and y == 0 and w == 496 and h == 496:
+            fails.append(
+                f"R6 default section: `{name}` is at (0,0) sized 496². Place it in the "
+                f"owning category and restack siblings."
+            )
+        boxes.append((name, box))
+    for i, (an, a) in enumerate(boxes):
+        ax, ay, aw, ah = a
+        for bn, b in boxes[i + 1:]:
+            bx, by, bw, bh = b
+            if ax < bx + bw and bx < ax + aw and ay < by + bh and by < ay + ah:
+                fails.append(
+                    f"R6 overlap: `{an}` and `{bn}` intersect. Grow or restack the "
+                    f"category sections; touching edges are fine."
+                )
+    return fails, True
+
+
+def check_mode_cap(capture: dict) -> tuple[list[str], bool]:
+    """R7 — 20 modes is the cap. The 21st mode means a value was about to be dropped or overflowed."""
+    collections = capture.get("collections")
+    if not collections:
+        return [], False
+    fails = []
+    for col in collections:
+        name = col.get("name", "?")
+        try:
+            count = int(col.get("modes"))
+        except (TypeError, ValueError):
+            fails.append(f"R7 mode cap: `{name}` has no numeric mode count.")
+            continue
+        if count > MODE_CAP:
+            fails.append(
+                f"R7 mode cap: `{name}` has {count} modes (cap {MODE_CAP}). Remap a "
+                f"redundant alias or add a recipe instance. Do not drop a host-facing value."
+            )
+    return fails, True
 
 
 # Real get_metadata output (2026-09-15) is <frame id name x y width height> with <symbol>
@@ -335,6 +510,15 @@ def evaluate(capture: dict) -> dict:
         failures += check_instances(cap)
 
     warnings = check_density(cap) if has_nodes else []
+    for checker, label in (
+        (check_hug_slot, "R5 hug-slot"),
+        (check_sections, "R6 section-aabb"),
+        (check_mode_cap, "R7 mode-cap"),
+    ):
+        found, ran = checker(cap)
+        if ran:
+            verified.append(label)
+            failures += found
     return {"failures": failures, "warnings": warnings, "verified": verified,
             "counted": {"variables": len(cap.get("variables") or {}),
                         "nodes": len(cap.get("nodes") or [])}}
@@ -459,6 +643,61 @@ def self_test() -> int:
     expect("metadata-only capture still verifies something", meta["verified"])
     expect("malformed XML degrades to nothing verified",
            not evaluate({"metadata_xml": "<not xml"})["verified"])
+
+    footer = {"nodes": [{"name": "Action Bar", "type": "COMPONENT",
+                         "layout": {"sizingVertical": "FIXED", "paddingTop": 6,
+                                    "paddingBottom": 6, "heightBound": None}}]}
+    expect("R5 fails FIXED padding with no height token",
+           any("R5 unbound slot" in f and "Action Bar" in f for f in evaluate(footer)["failures"]))
+
+    slot = {"nodes": [{"name": "Text Field", "type": "COMPONENT",
+                       "layout": {"sizingVertical": "FIXED", "paddingTop": 0, "paddingBottom": 0,
+                                  "heightBound": "control-height/md"}}]}
+    expect("R5 passes a slot bound to control-height", not evaluate(slot)["failures"])
+    expect("R5 ran on a layout capture", "R5 hug-slot" in evaluate(slot)["verified"])
+
+    hug = {"nodes": [{"name": "Cluster", "type": "COMPONENT",
+                      "layout": {"sizingVertical": "HUG", "paddingTop": 8, "paddingBottom": 8,
+                                 "heightBound": ""}}]}
+    expect("R5 passes a hug with no height lock", not evaluate(hug)["failures"])
+
+    stray = {"nodes": [{"name": "Cluster", "type": "COMPONENT",
+                        "layout": {"sizingVertical": "HUG", "heightLiteral": True}}]}
+    expect("R5 fails a hug that also locks height",
+           any("R5 stray height lock" in f for f in evaluate(stray)["failures"]))
+
+    missing = {"nodes": [{"name": "Bare", "type": "COMPONENT"}]}
+    expect("R5 fails a component with no layout object",
+           any("R5 axis not captured" in f for f in evaluate(missing)["failures"]))
+
+    overlap = {"sections": [
+        {"name": "Inputs", "x": 0, "y": 0, "width": 400, "height": 200},
+        {"name": "Layout", "x": 100, "y": 50, "width": 400, "height": 200},
+    ]}
+    expect("R6 fails intersecting sections",
+           any("R6 overlap" in f for f in evaluate(overlap)["failures"]))
+    stacked = {"sections": [
+        {"name": "Primitives", "x": 0, "y": 80, "width": 800, "height": 400},
+        {"name": "Inputs", "x": 0, "y": 560, "width": 800, "height": 400},
+    ]}
+    expect("R6 allows a gap between sections", not evaluate(stacked)["failures"])
+    expect("R6 ran when sections were captured", "R6 section-aabb" in evaluate(stacked)["verified"])
+    default_section = {"sections": [{"name": "New", "x": 0, "y": 0, "width": 496, "height": 496}]}
+    expect("R6 fails the default 496 section",
+           any("R6 default section" in f for f in evaluate(default_section)["failures"]))
+
+    over = {"collections": [{"name": "Example / Variant", "modes": 21}]}
+    expect("R7 fails 21 modes", any("R7 mode cap" in f and "21" in f for f in evaluate(over)["failures"]))
+    at_cap = {"collections": [{"name": "Example / Variant", "modes": 20}]}
+    expect("R7 allows 20 modes", not evaluate(at_cap)["failures"])
+
+    neg = {"nodes": [{"name": "Avatar Stack", "type": "FRAME", "raw": {"itemSpacing": -8}}]}
+    expect("R2 rejects an unnoted negative gap",
+           any("R2 negative overlap" in f for f in evaluate(neg)["failures"]))
+    noted = {"nodes": [{"name": "Avatar Stack", "type": "FRAME", "raw": {"itemSpacing": -8},
+                        "description": "Trailing cluster overlaps by design."}]}
+    expect("R2 allows a described negative gap",
+           not any("negative overlap" in f for f in evaluate(noted)["failures"]))
 
     for name in failures:
         print(f"  ✗ {name}")

@@ -133,10 +133,12 @@ Loop until pass or interrupt:
    file, **and** take a native-zoom screenshot of that node (`get_screenshot`, subject filling
    the frame — not the page thumbnail).
 2. **Assess** — `python3 09-tools/figma-bind-probe.py --capture <scratchpad>/cap.json`.
-   Exit 2 is not a pass. `--self-test` proves the script, not the node. Close-out's
-   capture row stays a labelled skip; a green close-out does not replace this capture.
-   Construction bar: semantic + mode binds, refuse `Color/*`, refuse raw spacing/radius
-   (zeros included), instances not rectangles, variant matrix complete. Pixels: `vqa prove`
+   The capture includes `layout` on each component, `sections` when the catalog moved,
+   and `collections` mode counts. Exit 2 is not a pass. `--self-test` proves the script, not the node.
+   Close-out's capture row stays a labelled skip; a green close-out does not replace this capture.
+   Construction bar: semantic + mode binds, refuse `Color/*`, refuse raw spacing/radius/height
+   (zeros included), refuse a FIXED axis with padding and no height token, instances not rectangles,
+   no section overlap, no collection over 20 modes. Pixels: `vqa prove`
    when a reference or cuespec exists. Load `a11y-visual` (contrast/CVD).
    Screenshot-as-VLM-caption is critique, not a detector.
 3. **Correct** — rebind, replace rects with instances, complete the matrix,

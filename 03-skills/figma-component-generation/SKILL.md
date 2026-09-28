@@ -49,7 +49,28 @@ spec_version: "2.3"
 > when a `space/*` or density token exists.
 
 ## When to Use This Skill
-Use when creating Figma components, component sets, variants, or any structured component system. Run [[figma]] Gates 0–6: load the hub before `use_figma`, bind before ship, and prove each component with `figma-bind-probe.py --capture` (exit 2 is not done).
+Use when creating Figma components, component sets, variants, or any structured component system. Run [[figma]] Gates 0–6: load the hub before `use_figma`, choose hug / slot / fill, bind before ship, and prove each component with `figma-bind-probe.py --capture` (exit 2 is not done). The capture's `layout` object is part of that prove.
+
+## From code
+
+Read the implementation, the variant map, stories, and docs first. Skim consuming apps only for the variant strings and tokens they pass. Do not invent chrome the code does not have.
+
+1. **Shape.** Pure alias, passthrough, styled wrapper, variant map, compound, or recipe on a parent. A recipe (a public export that wraps a primitive with slots or behavior) is an instance of that primitive plus overrides. A new `COMPONENT` is only for structure an instance cannot carry.
+2. **Bind the remap.** Padding and gap utilities bind `space/*` or density padding/gap. A height utility on the control grid binds `control-height/*` or Component / Size.height and the axis is `FIXED`. No height utility means `HUG`. `w-full` / flex-grow is `FILL`. Radius utilities bind a radius token. Type-size utilities bind `type-size/*` or Size.fontSize and do not also apply a Text Style. Semantic color utilities bind semantic color variables, never a color primitive.
+3. **Code-only behavior** gets a stand-in from [[figma-source-audit-patterns]] and one sentence on `component.description`. Hover-within, peer selectors, keyboard chords, and draft-until-done are not extra variants and not detached paint.
+4. **Parts.** Repeated inner UI is a `_Part` or an instance of an existing atom. Do not redraw a chip, button, icon, or field.
+5. **Mode cap.** Count modes before `addMode`. More than 20 is a stop: remap a redundant alias or add a recipe instance. Do not drop a value the host already passes.
+6. **Prove.** After each component, capture `layout` (and `sections` / `collections` when those changed) and run the bind probe. Exit 2 is not done.
+
+## Axis
+
+| Intent | Sizing | What is bound |
+|---|---|---|
+| Compose (action bar, cluster) | `HUG` | padding, gap, type, icon. No parent height token. |
+| Slot (one-line control) | `FIXED` | height → `control-height/*` or Size.height. Padding is inset. |
+| Fill (plot, canvas, viewport) | `FILL` | the parent owns the size. |
+
+Density remaps the ladder (padding, gap, control-height, type-size, icon-size, radius). File Density modes and the component Size axis both stay. A zero padding still binds when a zero token exists. Negative `itemSpacing` stays a literal only with a description of why.
 
 ## Component Creation Fundamentals
 

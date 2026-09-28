@@ -1,7 +1,7 @@
 ---
 tags: [figma, shadcn, react, design-engineer, audit, components, variants]
 created: 2026-05-08
-updated: 2026-05-08
+updated: 2026-09-28
 status: working
 confidence: medium
 sources: [09-figma-repo-sync-plugin sessions, full-file Figma audit 2026-05-08]
@@ -15,9 +15,9 @@ What we've learned reviewing a fully-generated centric-ui Figma library against 
 
 ---
 
-## Source-shape taxonomy (every shadcn component fits one of five)
+## Source-shape taxonomy
 
-When auditing a generated component, the first question is "which shape does the source take?" Five shapes recur across centric-ui and shadcn at large; each has different generation considerations.
+When auditing a generated component, the first question is which shape the source takes. Six shapes recur; each generates differently.
 
 | Shape | Recognise it by | Typical examples | What it should produce in Figma |
 |---|---|---|---|
@@ -26,6 +26,7 @@ When auditing a generated component, the first question is "which shape does the
 | **Styled wrapper (single)** | Arrow body, has `cn()`, lives alone in its file | `Checkbox`, `Switch`, `Label`, `Skeleton`, `Separator`, `Input`, `Textarea`, `Badge` | One public Component with anatomy from the body + props as Figma component properties. |
 | **CVA component** | Calls `cva(...)` for variant classes | `Button`, sometimes `Badge` | One public Component with variant axes as **modes** in component-scoped collections (per `figma-modes-for-variants`). |
 | **Compound** | ≥ 2 PascalCase declarations with arrow bodies | `Select`, `Card`, `Dialog`, `Tabs`, `Popover`, `Sheet`, `Sidebar`, `Form`, `Table`, `AlertDialog`, `Avatar`, `Tooltip` | Multiple Components in a section: a public parent (assembled from the canonical story) + private `.Sub` wrappers + private `.Aux` for `*Indicator`-style patterns. |
+| **Recipe on a parent** | A public export wraps a primitive with slots or behavior | record chip, status marker | Instance the parent atom and override modes. Do not draw a second capsule. |
 
 Most "weirdness" we encounter in audits stems from misclassifying the shape. The new compound rule (≥ 2 components with arrow bodies, regardless of `cn()`) catches the passthrough-compound case (Collapsible). The body-presence test catches the alias filter (Dialog's root re-export is excluded so we don't generate `.Dialog` accidentally).
 
@@ -148,11 +149,44 @@ These are the patterns the audit confirms, useful as durable advice:
 6. **Multi-state components want a "spec grid" alongside the published Component.** The Component is the source of truth; the spec grid is the *reference visual* showing all states/variants without designers having to flip modes/variants. Ship both.
 7. **Passthrough compounds need story-driven content** to be useful. Without it, they're 100×100 grey boxes. The story is the content.
 8. **Sections by source path + horizontal layout** is the right organization at the file level. Inside a section: parent at top, subs/auxes in a grid below. Don't deviate per-component without strong reason.
-9. **All multi-section Figma pages stack sections horizontally, never vertically.** Sections grow tall (component anatomies, icon grids, spec frames all pile up vertically inside a section). Stacking the *sections themselves* vertically too forces nested scrolling: scroll-down inside the section, then scroll-down again to find the next section, with no way to see what's coming. Horizontal layout puts sections side-by-side at `y = 0` so the canvas reads like a bookshelf — pan right to browse categories, scroll down inside a section to browse its contents. This applies to the Components page (per-source sections), the Icons page (per-category sections), and any future page with N comparable sections. Confirmed 2026-05-08 after the Material Symbols icon library was first generated vertically and proved unusable to skim.
+9. **Category sections stack with a measured gap.** Place each category in the owning section, Title Case with spaces. Measure sibling boxes. Restack so they do not intersect; the usual gap is 80. A section created at (0,0) sized 496² is a defect. Short sections (an icon shelf) may sit in a row instead. Do not overlap either way.
 10. **Figma stores ComponentNode property keys as `name#hash`, not `name`** — even on bare `COMPONENT` nodes (not just `COMPONENT_SET` variant properties). Every existence-check helper for component properties MUST match either the exact `name` OR any key starting with `name + "#"`. A `hasOwnProperty(defs, name)` check alone returns false when Figma has rewritten the key with a hash, and the surrounding addComponentProperty call then silently appends a numeric suffix on the *display* side. The audit on 2026-05-08 found CheckboxIndicator with 14 SLOTs, DialogContent with 28+, Input with 24 — all because the dedup helper missed the hash form.
 11. **Generator fixes need a one-shot migration path for pre-fix artifacts.** The 2026-05-08 audit found three classes of stale data that landed before their respective fixes and were never cleaned up: (a) duplicate component properties from pre-dedup runs, (b) garbage-named slots from the pre-conditional-rendering JSX-encoded names (`error_____span_className__text_xs_text_cds_red_500…`), (c) private `.Dialog`/`.Sheet`/`.Sidebar` parents from the pre-alias-parent-collision compound detection. The new code prevents future occurrences but doesn't sweep what's already there. Every generator fix that changes WHAT gets created should ship with a paired CLEANUP pass that runs once at the start of the next generation and removes the obsolete artifacts.
 12. **Foundation token coverage must match the source palette, not just shadcn defaults.** centric-ui adds `info`/`success`/`warning`/`danger`/`purple` on top of shadcn's standard set. The foundation scaffold only ships shadcn defaults, so per-mode CVA values for those extra tokens fall back to literal grey. The visible bug: Button spec grid renders info/success/warning cells as near-white pills. Audit any source palette before treating the foundation as authoritative; the foundation is the *upper bound* of color tokens, not just a baseline.
 13. **CVA size axes can be structural, not just stylistic.** shadcn's Button uses `size: { default, sm, lg, icon, icon-sm, icon-lg }`. The `icon-*` values aren't just smaller paddings — they're a different *shape* (square, no label). Treating size as a pure token-shift axis (height/padding variables) renders icon variants with the regular label still visible, overflowing the box. Detect axis values whose names start with `icon` and either suppress the label in those modes via property reference, or split them out as a separate VARIANT axis.
+
+---
+
+## Axis model — hug, slot, fill
+
+Every auto-layout edge picks one model. Density stays on in all three.
+
+| Intent | Sizing | Size comes from |
+|---|---|---|
+| Compose to content (action bar, cluster, record chip) | `HUG` | padding + type + icon. No height token on the parent. |
+| Share a control row (text field, button) | `FIXED` | `control-height/*` or Component / Size.height. Padding is inset inside the slot. |
+| Fill a parent (plot, editor canvas, viewport) | `FILL` | the parent owns the slot. |
+
+A FIXED height with vertical padding and no height variable ignores the padding: the row is a literal, and Compact/Spacious cannot remap it. Hugging a slot control does not reproduce `control-height`; padding and type size are different rungs from the height rung. File Density modes and the component Size axis both stay. Do not collapse them, and do not drop control-height to look more tokenized.
+
+Negative `itemSpacing` (avatar stack, trailing cluster) may stay a literal. The node description says why. There is no negative space token.
+
+## Workaround catalog — code the canvas cannot run
+
+Each published component that needs a stand-in says so in one description line.
+
+| Code behavior | Legal stand-in | Do not |
+|---|---|---|
+| `:hover`, group-hover, hover-within | `State=Hover`, or an absolute overlay instance pinned to the slot it covers | Hide a glyph with opacity when it must stay in flow |
+| `:focus-visible` | `State=Focus` plus the ring token | Skip focus |
+| Disabled | `State=Disabled` plus the opacity or disabled token | An unbound grey |
+| Open menu or picker | A sibling `_Part`, default closed | A second public component |
+| Draft-until-done, or other JS state | Description; a `BOOLEAN` only when chrome actually changes | Extra variants for app state |
+| Keyboard chord, modifier click | Description | An extra variant |
+| Absolute overlay that hugs actions | Overlay `HUG`, then absolute, pinned to the trailing edge | A fixed inset that misses the sticky slot |
+| Native control vs styled control | Instance of the styled control (the recipe) | A new chrome primitive |
+| Selectors the canvas cannot see (peer, in-slot, space between unknown children) | Description plus the closest auto-layout | Detach and paint |
+| Two density axes (file density × component size) | File Density modes and Component / Size modes | One combined mode |
 
 ---
 

@@ -125,7 +125,8 @@ HUB_DETECTORS: dict[str, tuple[Step, ...]] = {
         _skip(
             "figma-mcp-capture",
             "Agent step, per component: get_variable_defs + get_metadata into a scratchpad "
-            "capture, then `figma-bind-probe.py --capture` (exit 2 is not a pass). "
+            "capture with a layout object (sizing, padding, heightBound), then "
+            "`figma-bind-probe.py --capture` (exit 2 is not a pass). "
             "`--emit-template` prints the calls. This skip is not a node pass, and "
             "`--self-test` below only proves the script.",
         ),
