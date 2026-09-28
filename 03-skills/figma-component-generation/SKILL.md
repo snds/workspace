@@ -15,7 +15,7 @@ hub: figma
 prerequisites: [figma]
 related: [design-engineer, figma-modes-for-variants]
 defers_to: [figma, design-engineer]
-spec_version: "2.3"
+spec_version: "2.4"
 ---
 
 # Figma Component and Variant Generation
@@ -35,7 +35,9 @@ spec_version: "2.3"
 > `_Component/Part` (or an instance of an existing library atom — Badge, Icon,
 > Button), never a hand-drawn duplicate. Place the result in the **owning
 > catalog SECTION** (create it if needed); measure sibling AABBs; grow/reflow
-> colliding sections. **Text Style iff no Size/Density type axis** (rule 21): if
+> colliding sections. After uncombining or deleting variants, hug that section
+> (content + 80 pad), prefix leftover canvas examples `Docs ·`, and move folded
+> components to `Deprecated ·`. **Text Style iff no Size/Density type axis** (rule 21): if
 > the component binds `type-size/*`, `control-font-size/*`, or `Component / Size`
 > `.fontSize`, leave `textStyleId` empty and let those modes own type. Apply a
 > library Text Style only when no sizing/density system is in play. Doctrine:
@@ -60,7 +62,7 @@ Read the implementation, the variant map, stories, and docs first. Skim consumin
 3. **Code-only behavior** gets a stand-in from [[figma-source-audit-patterns]] and one sentence on `component.description`. Hover-within, peer selectors, keyboard chords, and draft-until-done are not extra variants and not detached paint.
 4. **Parts.** Repeated inner UI is a `_Part` or an instance of an existing atom. Do not redraw a chip, button, icon, or field.
 5. **Mode cap.** Count modes before `addMode`. More than 20 is a stop: remap a redundant alias or add a recipe instance. Do not drop a value the host already passes.
-6. **Prove.** After each component, capture `layout` (and `sections` / `collections` when those changed) and run the bind probe. Exit 2 is not done.
+6. **Prove.** After each component, capture `layout` (and `sections` / `collections` / `cleanup` when those changed) and run the bind probe. Exit 2 is not done.
 
 ## Axis
 

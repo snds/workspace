@@ -46,7 +46,7 @@ Grade these against the source. The probe is the detector; this list is what to 
 - **Tokens.** Same role as the code: semantic color, density padding/gap, radius, type size. A Text Style that fights a Size font-size binding fails. Hex and unbound padding fail.
 - **Modes.** One component-scoped collection per style axis. Cap 20. File Density stays a separate axis from component Size.
 - **Code-only.** Record the stand-in from [[figma-source-audit-patterns]] on the component description. Do not add a variant for keyboard, peer, or draft state.
-- **Catalog.** Owning section, Title Case, no AABB overlap, not the 496² default at the origin.
+- **Catalog.** Owning section, Title Case, no AABB overlap, not the 496² default at the origin. After a variant edit: hug the section, `Docs ·` examples, `Deprecated ·` for folded components. R8 in the bind probe.
 
 This skill operates **above** the dual-lens defaults from
 [`design-engineer`](../../01-frameworks/00-README.md). Both lenses apply throughout —

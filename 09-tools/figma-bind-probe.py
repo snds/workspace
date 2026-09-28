@@ -39,6 +39,12 @@ Rules, all from [[figma-ds-surface-authoring]] and the `figma` hub hard gate:
   R7 mode-cap (FAIL)           A variable collection with more than 20 modes is over the
                                Figma cap. 20 is the last legal mode, not a reason to drop
                                a host-facing value.
+  R8 leftover-cleanup (FAIL)   After a write: no style-only physical set (Status/Shape/
+                               Object/Size/Color/Tone with no State/anatomy axis).
+                               Section hug is content AABB + 80 pad (16px slack).
+                               Instance siblings of a component/set are `Docs ·` examples
+                               or they are leftover variants. Hidden sections in a live
+                               category are named `Deprecated · …`.
 
 Sanctioned exceptions exist (SECTION chrome, deliberate negative overlaps) but doctrine says
 they are *noted, not silently left* — so `allow` entries require a written reason, and an
@@ -118,6 +124,25 @@ CAPTURE_TEMPLATE = {
     "collections": [
         {"name": "Example / Variant", "modes": 12}
     ],
+    "cleanup": {
+        "sets": [
+            {"name": "Status Pill", "axes": ["State"], "variantCount": 3}
+        ],
+        "sections": [
+            {
+                "name": "Status Pill",
+                "width": 816, "height": 276,
+                "contentX": 80, "contentY": 80,
+                "contentMaxX": 736, "contentMaxY": 196
+            }
+        ],
+        "orphans": [
+            {"name": "Docs · Extra", "set": "Filter Chip"}
+        ],
+        "hiddenInCatalog": [
+            {"name": "Deprecated · Experimental Badge", "parent": "Overlays", "visible": False}
+        ]
+    },
     "allow": [
         {"pattern": "Section Chrome/*", "reason": "Figma SECTION chrome — sanctioned raw (rule 13)"}
     ],
@@ -145,6 +170,7 @@ EMIT_HELP = """# Figma bind probe — capture, then judge
 Exit 2 means the capture had nothing to verify. That is not a pass — go back to step 1.
 R5 fails a FIXED axis with padding and no height token, and a HUG axis that also locks height.
 R6 fails overlapping sections and a 496² section at (0,0). R7 fails a collection with more than 20 modes.
+R8 fails leftover style-only variant sets, section slack past pad 80, instance-siblings not named Docs ·, and hidden sections still in a live category without a Deprecated · prefix. When you add, remove, or uncombine variants — or resize a catalog section — set `cleanup`.
 
 Skeleton:
 """
@@ -454,6 +480,130 @@ def check_mode_cap(capture: dict) -> tuple[list[str], bool]:
     return fails, True
 
 
+STYLE_AXES = {"status", "shape", "object", "size", "color", "tone"}
+STRUCT_AXES = {"state", "preferred", "orientation", "layout", "side", "position",
+               "checked", "pressed", "required"}
+LIVE_CATEGORIES = {"primitives", "inputs", "layout", "navigation", "overlays", "feedback"}
+SECTION_PAD = 80
+SECTION_SLACK = 16
+
+
+def _axis_names(axes) -> list[str]:
+    if isinstance(axes, dict):
+        return [str(k) for k in axes.keys()]
+    if isinstance(axes, (list, tuple)):
+        return [str(a) for a in axes]
+    return []
+
+
+def _is_docs_name(name: str) -> bool:
+    low = (name or "").strip().lower()
+    return low.startswith("docs ") or low.startswith("docs·") or low.startswith("docs/")
+
+
+def _is_deprecated_name(name: str) -> bool:
+    return (name or "").strip().lower().startswith("deprecated")
+
+
+def _style_only_set(name: str, axes, variant_count) -> str | None:
+    names = [a.lower() for a in _axis_names(axes)]
+    if not names:
+        return None
+    style = [a for a in names if a in STYLE_AXES]
+    struct = [a for a in names if a in STRUCT_AXES]
+    try:
+        n = int(variant_count or 0)
+    except (TypeError, ValueError):
+        n = 0
+    if style and not struct and n > 1:
+        return (
+            f"R8 leftover variants: `{name}` is a {n}-set on {', '.join(style)} with no "
+            f"structure axis. Collapse to modes + TEXT; physical variants are for "
+            f"State/anatomy only."
+        )
+    return None
+
+
+def check_cleanup(capture: dict) -> tuple[list[str], bool]:
+    """R8 — leftover style-only sets, section slack, orphan stickers, hidden-in-catalog."""
+    fails: list[str] = []
+    saw = False
+
+    for node in capture.get("nodes") or []:
+        kind = str(node.get("type", "")).upper()
+        if kind != "COMPONENT_SET":
+            continue
+        axes = node.get("variantAxes") or node.get("variantGroupProperties")
+        if not axes:
+            continue
+        saw = True
+        msg = _style_only_set(
+            str(node.get("name", node.get("id", "?"))),
+            axes,
+            node.get("variantCount"),
+        )
+        if msg:
+            fails.append(msg)
+
+    cleanup = capture.get("cleanup")
+    if not cleanup:
+        return fails, saw
+    saw = True
+
+    for s in cleanup.get("sets") or []:
+        msg = _style_only_set(str(s.get("name", "?")), s.get("axes"), s.get("variantCount"))
+        if msg:
+            fails.append(msg)
+
+    for sec in cleanup.get("sections") or []:
+        name = sec.get("name", "?")
+        try:
+            w, h = float(sec["width"]), float(sec["height"])
+            cx, cy = float(sec["contentX"]), float(sec["contentY"])
+            mx, my = float(sec["contentMaxX"]), float(sec["contentMaxY"])
+        except (KeyError, TypeError, ValueError):
+            fails.append(
+                f"R8 section slack: `{name}` needs width, height, contentX, contentY, "
+                f"contentMaxX, contentMaxY."
+            )
+            continue
+        if abs(cx - SECTION_PAD) > SECTION_SLACK or abs(cy - SECTION_PAD) > SECTION_SLACK:
+            fails.append(
+                f"R8 section origin: `{name}` content starts at ({cx:.0f},{cy:.0f}); "
+                f"expected pad {SECTION_PAD}."
+            )
+        extra_w = w - (mx + SECTION_PAD)
+        extra_h = h - (my + SECTION_PAD)
+        if extra_w > SECTION_SLACK or extra_h > SECTION_SLACK:
+            fails.append(
+                f"R8 section slack: `{name}` is {w:.0f}×{h:.0f} with content to "
+                f"({mx:.0f},{my:.0f}). Hug to content + {SECTION_PAD} pad."
+            )
+
+    for orphan in cleanup.get("orphans") or []:
+        name = str(orphan.get("name", "?"))
+        if _is_docs_name(name) or _is_deprecated_name(name):
+            continue
+        host = orphan.get("set") or orphan.get("component") or "the main"
+        fails.append(
+            f"R8 orphan sticker: `{name}` sits next to `{host}` and is not a Docs · "
+            f"example. Delete it, prefix Docs ·, or fold the axis into a mode."
+        )
+
+    for hidden in cleanup.get("hiddenInCatalog") or []:
+        parent = str(hidden.get("parent", "")).strip().lower()
+        visible = hidden.get("visible")
+        name = str(hidden.get("name", "?"))
+        if visible is False and parent in LIVE_CATEGORIES and not _is_deprecated_name(name):
+            fails.append(
+                f"R8 hidden in live catalog: `{name}` is hidden inside `{hidden.get('parent')}`. "
+                f"Rename Deprecated · … and keep it out of the live row (or move it next "
+                f"to the other Deprecated sections)."
+            )
+
+    return fails, saw
+
+
 # Real get_metadata output (2026-09-15) is <frame id name x y width height> with <symbol>
 # children: the TAG is the layer type and there is no paint attribute whatsoever. So a shape
 # here is judged by existence and position in the tree, never by "is it painted" — the
@@ -514,6 +664,7 @@ def evaluate(capture: dict) -> dict:
         (check_hug_slot, "R5 hug-slot"),
         (check_sections, "R6 section-aabb"),
         (check_mode_cap, "R7 mode-cap"),
+        (check_cleanup, "R8 leftover-cleanup"),
     ):
         found, ran = checker(cap)
         if ran:
@@ -690,6 +841,50 @@ def self_test() -> int:
     expect("R7 fails 21 modes", any("R7 mode cap" in f and "21" in f for f in evaluate(over)["failures"]))
     at_cap = {"collections": [{"name": "Example / Variant", "modes": 20}]}
     expect("R7 allows 20 modes", not evaluate(at_cap)["failures"])
+
+    leftover = {"nodes": [{"name": "Status Pill", "type": "COMPONENT_SET",
+                           "variantAxes": ["Status", "Shape"], "variantCount": 12,
+                           "layout": {"sizingVertical": "HUG"}}]}
+    expect("R8 fails a style-only Status×Shape set",
+           any("R8 leftover variants" in f and "Status Pill" in f
+               for f in evaluate(leftover)["failures"]))
+    state_set = {"nodes": [{"name": "Object Chip", "type": "COMPONENT_SET",
+                            "variantAxes": ["Preferred", "State"], "variantCount": 4,
+                            "layout": {"sizingVertical": "HUG"}}]}
+    expect("R8 allows a structure axis", not evaluate(state_set)["failures"])
+
+    slack = {"cleanup": {"sections": [{
+        "name": "Type Tag", "width": 330, "height": 222,
+        "contentX": 100, "contentY": 100, "contentMaxX": 231, "contentMaxY": 120,
+    }]}}
+    slack_fails = evaluate(slack)["failures"]
+    expect("R8 fails a padded-wrong origin",
+           any("R8 section origin" in f and "Type Tag" in f for f in slack_fails))
+    expect("R8 fails leftover section slack",
+           any("R8 section slack" in f and "Type Tag" in f for f in slack_fails))
+    hugged = {"cleanup": {"sections": [{
+        "name": "Type Tag", "width": 246, "height": 180,
+        "contentX": 80, "contentY": 80, "contentMaxX": 166, "contentMaxY": 100,
+    }]}}
+    expect("R8 allows content + 80 pad", not evaluate(hugged)["failures"])
+
+    orphan = {"cleanup": {"orphans": [{"name": "Field", "set": "Object Chip"}]}}
+    expect("R8 fails a Field sticker next to the set",
+           any("R8 orphan sticker" in f and "Field" in f for f in evaluate(orphan)["failures"]))
+    docs = {"cleanup": {"orphans": [{"name": "Docs · Extra", "set": "Filter Chip"}]}}
+    expect("R8 allows a Docs · sticker", not evaluate(docs)["failures"])
+
+    hidden_live = {"cleanup": {"hiddenInCatalog": [
+        {"name": "Experimental Badge", "parent": "Primitives", "visible": False},
+    ]}}
+    expect("R8 fails a hidden recipe left in Primitives",
+           any("R8 hidden in live catalog" in f for f in evaluate(hidden_live)["failures"]))
+    hidden_ok = {"cleanup": {"hiddenInCatalog": [
+        {"name": "Deprecated · Experimental Badge", "parent": "Overlays", "visible": False},
+    ]}}
+    expect("R8 allows Deprecated · in Overlays", not evaluate(hidden_ok)["failures"])
+    expect("R8 ran when cleanup was captured",
+           "R8 leftover-cleanup" in evaluate(hugged)["verified"])
 
     neg = {"nodes": [{"name": "Avatar Stack", "type": "FRAME", "raw": {"itemSpacing": -8}}]}
     expect("R2 rejects an unnoted negative gap",

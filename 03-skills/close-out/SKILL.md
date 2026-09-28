@@ -138,7 +138,8 @@ Loop until pass or interrupt:
    Close-out's capture row stays a labelled skip; a green close-out does not replace this capture.
    Construction bar: semantic + mode binds, refuse `Color/*`, refuse raw spacing/radius/height
    (zeros included), refuse a FIXED axis with padding and no height token, instances not rectangles,
-   no section overlap, no collection over 20 modes. Pixels: `vqa prove`
+   no section overlap, no collection over 20 modes, no leftover style-only variant set, no
+   unhugged section slack, no unnamed sticker beside a set, no hidden hole in a live category. Pixels: `vqa prove`
    when a reference or cuespec exists. Load `a11y-visual` (contrast/CVD).
    Screenshot-as-VLM-caption is critique, not a detector.
 3. **Correct** — rebind, replace rects with instances, complete the matrix,
