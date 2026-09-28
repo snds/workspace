@@ -34,7 +34,19 @@ in the companion knowledge entry
 read it before starting an audit so you don't re-discover the standard gap set.
 After the audit, invoke [[close-out]]. Construction assess is
 `python3 09-tools/figma-bind-probe.py --capture` (exit 2 is not a pass) per [[figma]] Gate 5.
-Page Sean only if you cannot be critical or the inspect/screenshot loop is unusable.
+The capture includes `layout` (hug, slot, or fill), `sections` when the catalog moved, and
+`collections` mode counts. Page Sean only if you cannot be critical or the inspect/screenshot loop is unusable.
+
+## Construction checks (audit)
+
+Grade these against the source. The probe is the detector; this list is what to put in the capture.
+
+- **Shape.** Alias, passthrough, styled wrapper, variant map, compound, or recipe-on-parent. A recipe instances the parent atom.
+- **Axis.** `HUG` when the code has no height utility. `FIXED` plus `control-height/*` or Size.height when the code sets a control height. `FILL` when the code grows to the parent. FIXED with vertical padding and an unbound height fails.
+- **Tokens.** Same role as the code: semantic color, density padding/gap, radius, type size. A Text Style that fights a Size font-size binding fails. Hex and unbound padding fail.
+- **Modes.** One component-scoped collection per style axis. Cap 20. File Density stays a separate axis from component Size.
+- **Code-only.** Record the stand-in from [[figma-source-audit-patterns]] on the component description. Do not add a variant for keyboard, peer, or draft state.
+- **Catalog.** Owning section, Title Case, no AABB overlap, not the 496² default at the origin.
 
 This skill operates **above** the dual-lens defaults from
 [`design-engineer`](../../01-frameworks/00-README.md). Both lenses apply throughout —
