@@ -51,6 +51,26 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+### 2026-09-30 — Catalogue leftover primitives
+
+SessionID: 2026-09-30-work-n8p4
+HostSession: 96ff1652-9409-4c69-925c-b886a0451f97
+--- SESSION BLOCK ---
+Date: 2026-09-30
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): employer repo (see H25)
+Summary: Closed leftover catalogue docs work. Substance stays on the employer tracker.
+Evidence:
+  - employer pull request merge and CI success read back from the tracker — verified
+Pending resolved:
+  - Remaining shipped primitives get docs pages and Storybook entries.
+Next:
+  - Continue remaining waves when asked. Do not bump the host pin.
+Employer repos (H25 limits):
+  - emp-58e872c4 — branch-pr
+--- END BLOCK ---
+
 ### 2026-09-30 — close employer session
 
 SessionID: 2026-09-30-work-mbp-k4m9
