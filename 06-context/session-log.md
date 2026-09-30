@@ -49,6 +49,26 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+
+### 2026-09-30 — close employer session
+
+SessionID: 2026-09-30-work-mbp-k4m9
+HostSession: e99647e9-a32b-43b0-a19e-9300741158c6
+--- SESSION BLOCK ---
+Date: 2026-09-30
+Machine: Work MacBook Pro
+Surface: Cursor
+Project(s): employer repo (see H25)
+Summary: Closed the session. Substance stays on the employer tracker.
+Evidence:
+  - merge and issue-close receipts read back from the employer tracker — verified
+Next:
+  - Human review of the open employer pull request
+Employer repos (H25 limits):
+  - emp-fa196873 — branch-pr
+--- END BLOCK ---
+
 ### 2026-09-29 — Intent declarations for human review
 
 SessionID: 2026-09-29-work-k4m2
