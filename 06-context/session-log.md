@@ -49,6 +49,40 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+
+### 2026-09-29 — DS consume remaining-work handoff
+
+SessionID: 2026-09-29-work-r9k2x
+HostSession: 03653851-8292-4714-a63a-7729fa35f75a
+--- SESSION BLOCK ---
+Date: 2026-09-29
+Machine: Work MacBook Pro
+Surface: Cursor
+Summary: Locked viewer Close (screen-corner, larger icon, X centered). Landed stacking as a one-off raise, not named rungs. Filed Photo Viewer as a catalog add. Made plain voice and visual-ask-shot standing law. Handed remaining work to a new session.
+Artifacts:
+  - 03-skills/plain-voice/SKILL.md — how to write to Sean
+  - 03-skills/visual-ask-shot/SKILL.md — no visual question without a picture
+Decisions:
+  - Viewer Close sits in the top-right of the screen at the larger icon size.
+  - Ordinary notices wait behind the viewer; catastrophe is an Alert, not a toast over Close.
+  - Photo Viewer is still a Dialog recipe until the catalog add ships.
+  - Named stacking rungs wait for that catalog add (or a dedicated follow-up), not another one-off raise.
+Evidence:
+Pending added:
+Pending resolved:
+  - Viewer above sheet and Close placement (#70, #74)
+  - Remaining-work session prompt delivered
+Project status changes:
+  - Employer DS consume: Close chrome landed; remaining tracker items are #71 then #69 #68 #47 #72
+Next:
+  - New Cursor session: paste the remaining-work prompt from this chat (start with #71 vs main)
+Employer repos (H25 limits):
+  - emp-fa196873 — branch-pr
+  - emp-95addf9e — branch-pr
+  - emp-f0d5b1d5 — branch-pr
+--- END BLOCK ---
+
 ### 2026-09-27 — PlanetCompiler living roadmap
 SessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe-roadmap
 
@@ -784,36 +818,4 @@ Next:
   - Sean publish Figma library
   - Commit/PR cds token work only if Sean asks
   - Wave 1 leftover stays out: ChipMultiSelect, TypeTag, OutlinedValueChips
---- END BLOCK ---
-
-### 2026-09-15 — CDS Material Symbols Icon; proto consume; cui next
-
-SessionID: 2026-09-15-work-mbp-cds-icons
---- SESSION BLOCK ---
-Date: 2026-09-15
-Machine: Work MacBook Pro (main, going forward)
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): cpes-software/cds, saas-plm-prototype
-Context profile: centric-engineering
-
-Summary: Implemented CDS `Icon` as Material Symbols ligatures (`name`, `size`, `filled`; axes from `iconAxes`). Dropped Lucide in CDS. Proto replaced Lucide with `@centric/ui/icon`. Hosts that still pass `Icon={Component}` keep compiling.
-
-Decisions:
-- Ligature `name` is the CDS path. `IconGlyph` still accepts a `className` slot so Lucide hosts type-check without bringing `lucide-react` back.
-- Glyph text sits in an inner `aria-hidden` span so it is not the control name.
-- Preferred / close / mill / style metaphors: `keep`, `close`/`delete`, `apartment`, `checkroom`.
-- centric-ui waits until CDS + proto are on main; that is now true. Remaining work is cui tickets.
-
-Artifacts:
-- cds #39 merged — Icon + drop Lucide
-- cds #40 merged — host slots + accname
-- saas-plm-prototype #80 merged — proto consume
-
-Pending added:
-- centric-ui consume `@centric/ui/icon` (Sean’s cui tickets — review + merge)
-- Optional: palette accordion nested `<button>`; light-mode / toast / BOM icon pass
-
-Next:
-- Review and merge the cui tickets. Nothing else blocks this icon program.
 --- END BLOCK ---

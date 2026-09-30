@@ -1,5 +1,5 @@
 # User Preferences — Sean Sands
-**Last updated:** 2026-09-15
+**Last updated:** 2026-09-29
 
 ---
 
@@ -55,10 +55,19 @@ or bridged to design, don't force a bad analogy: give me a good source to read a
 
 ## Response Style
 
-### Plain language is a requirement, not a preference (set 2026-09-15)
+### Plain language is a requirement, not a preference (set 2026-09-15; restated 2026-09-29)
 
 Sean is ADHD and autistic. Dense, jargon-heavy, clause-stacked writing is genuinely hard to
 read — not merely less pleasant. This rule **outranks every other style note in this file.**
+It is standing law in `AGENTS.md`, not optional polish. Agents in employer repos still owe it
+on anything written *to Sean* (plans, reviews, chat). PR bodies and commit messages may stay
+engineer-voiced.
+
+**Shape: TL;DR, then explain like I'm five, with my specialties.** I am a principal
+design-systems designer. Talk to me at that altitude. Do not teach me tokens, variants,
+states, anatomy, slots, Figma, or component architecture. Do not talk to me as if I live in
+git, CI, or overlay stacking. Those get a one-line “what it does” in ordinary words first,
+then the name.
 
 **Plain does not mean shallow.** Keep the depth and the rigour. Change the packaging.
 

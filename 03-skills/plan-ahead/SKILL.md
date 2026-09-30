@@ -14,7 +14,7 @@ aliases: [plan-ahead, order-of-operations, cds-then-proto]
 triggers: [order of operations, cds then proto, consume cds, pages build, follow up, overlay vs main, first breaker, dual repo, squash leftover, re-export, implement this, open a pr, pull request, fix ci, merge conflict]
 tier: cross-cutting
 domain: workspace
-related: [workspace-bootstrap, failure-mode-premortem, close-out, self-improve]
+related: [workspace-bootstrap, failure-mode-premortem, close-out, self-improve, plain-voice, visual-ask-shot]
 surfaces: ["*"]
 spec_version: "2.2"
 ---
@@ -22,6 +22,7 @@ spec_version: "2.2"
 # Plan Ahead
 
 Print the sequence before executing. Name what can fail *later* while the local tree looks green.
+Write that sequence in [[plain-voice]]: TL;DR first, then ordinary words, then the name.
 
 ## Purpose
 

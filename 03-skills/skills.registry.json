@@ -10,9 +10,9 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 309,
+    "total": 311,
     "by_tier": {
-      "cross-cutting": 53,
+      "cross-cutting": 55,
       "foundation": 22,
       "hub": 47,
       "spoke": 187
@@ -5555,6 +5555,42 @@
       "rigor_role": "command-hub",
       "hash": "sha256:80c7aabe6fe339c3fa73d27639b436d175e071d008172bc1bb45e43516a7cf95"
     },
+    "plain-voice": {
+      "path": "03-skills/plain-voice/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "workspace",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "plan-ahead",
+        "canonical-docs-voice",
+        "workspace-bootstrap",
+        "visual-ask-shot"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "plan",
+        "review",
+        "explain",
+        "status",
+        "what's left",
+        "canvas",
+        "pull request",
+        "issue",
+        "jargon",
+        "plain language",
+        "TL;DR",
+        "less technical"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:7f3503e0467f7f7095c7316c4585d414d9b21db0acf6d7e3994cdaba56ece0ce"
+    },
     "plan-ahead": {
       "path": "03-skills/plan-ahead/SKILL.md",
       "tier": "cross-cutting",
@@ -5565,7 +5601,9 @@
         "workspace-bootstrap",
         "failure-mode-premortem",
         "close-out",
-        "self-improve"
+        "self-improve",
+        "plain-voice",
+        "visual-ask-shot"
       ],
       "governed_by": [],
       "governs": [],
@@ -5592,7 +5630,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:27e7af83a34f2f2ead3861578142fecdba56422ad74e93e40e99a6fb8324b4bc"
+      "hash": "sha256:74cf5585faa6d926faf616581f1c8a0c7f75c6333d97dea5c2278c3b7ce8a9d4"
     },
     "planetary-terrain-lod": {
       "path": "03-skills/planetary-terrain-lod/SKILL.md",
@@ -7994,6 +8032,45 @@
       "rigor_role": null,
       "hash": "sha256:0b11e095ea9d692b2581853b48dc141c8156b546e5a127367ea02706e798af65"
     },
+    "visual-ask-shot": {
+      "path": "03-skills/visual-ask-shot/SKILL.md",
+      "tier": "cross-cutting",
+      "domain": "design",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "plain-voice",
+        "plan-ahead",
+        "native-visual-eval",
+        "lead-visual-qa",
+        "visual-first-documentation"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "screenshot",
+        "visual",
+        "Close",
+        "hover",
+        "stacking",
+        "lightbox",
+        "photo viewer",
+        "does this look",
+        "placement",
+        "spacing",
+        "overlay",
+        "sheet",
+        "dialog",
+        "chip"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:2f86e9eb7aa5d2e752cd3b9e202f0921f6921081e675b50965a9f1dc291b98fb"
+    },
     "visual-prove-engine": {
       "path": "03-skills/visual-prove-engine/SKILL.md",
       "tier": "cross-cutting",
@@ -9554,6 +9631,9 @@
     "optimize": [
       "optimize"
     ],
+    "plain-voice": [
+      "plain-voice"
+    ],
     "plan-ahead": [
       "plan-ahead"
     ],
@@ -9945,6 +10025,9 @@
     ],
     "vision-foundations": [
       "vision-foundations"
+    ],
+    "visual-ask-shot": [
+      "visual-ask-shot"
     ],
     "visual-prove-engine": [
       "design-foundations",

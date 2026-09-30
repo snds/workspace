@@ -50,7 +50,10 @@ Prefer replacing jargon over defining it: "the system checks every five minutes"
 Every substantive explanation offers three levels, in this order:
 
 1. **Plain english** (default, always present). What it does and why it matters, in the
-   reader's vocabulary. Barney-the-dinosaur simple is acceptable; condescending is not.
+   reader's vocabulary. TL;DR first. Then explain like a capable principal DS designer who
+   is not an engineer — not like a junior, and not like a backend peer. Barney-the-dinosaur
+   simple is acceptable; condescending is not. Standing law: `AGENTS.md` Core rules +
+   `04-preferences/user-preferences.md` → Response Style. Skill: [[plain-voice]].
 2. **How it works** (one step down). A picture, analogy, or annotated diagram — the mental
    model, not the implementation.
 3. **Full detail** (on request or one click away). The actual technical trace, for the moment

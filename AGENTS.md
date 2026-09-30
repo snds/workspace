@@ -67,6 +67,8 @@ The workspace is both a knowledge base and an execution environment.
 - Keep human-readable markdown and machine-readable manifests aligned. Frontmatter is the source of
   truth for the skill graph; `03-skills/skills.registry.json` is generated from it, never hand-edited.
 - Favor idempotent updates, deterministic naming, and reviewable diffs.
+- **Plain voice to Sean is standing law.** Lead with a one-sentence answer (TL;DR). Then explain like a principal design-systems designer, not an engineer: tokens, variants, states, anatomy, slots are native; anything else (stacking, CI, git, overlays) gets a one-line “what it does” before its name. Short sentences. One idea each. Full rule: [user-preferences.md](04-preferences/user-preferences.md) → Response Style, and [01-audience-contract.md](02-shared-references/delivery-playbooks/01-audience-contract.md). Skill: `03-skills/plain-voice/SKILL.md`.
+- **Visual asks carry a picture.** Do not ask Sean a placement, stacking, hover, or Close question without the shot: reuse the issue/PR image, or capture Storybook / the host / Figma from the correct source. Skill: `03-skills/visual-ask-shot/SKILL.md`.
 - **Token frugality is a #1 priority.** This brain must never cost more tokens than the value it adds.
   Read the **head** of a log, never a whole growing file (`session-log.md` is bounded by archival; older
   history is in `session-log-archive.md`, read only on demand). Load a skill only when its trigger fires;

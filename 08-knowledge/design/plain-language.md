@@ -1,10 +1,10 @@
 ---
 tags: [language, writing, terminology, design-systems]
 created: 2026-09-14
-updated: 2026-09-14
+updated: 2026-09-29
 status: stable
 confidence: high
-related_skills: [ds-advisor, design-engineer]
+related_skills: [ds-advisor, design-engineer, plain-voice]
 relations:
   relates-to: ["[[decision-pattern-uniqueness]]", "[[canonical-documentation]]"]
 trigger_words:
@@ -39,4 +39,21 @@ Name the thing by what the user does, then by the component they can open in the
 | Document sheet | Print preview (page or a gated region) |
 
 Applies in chat, docs, specs, and canvas labels. Same bar in engineering and PM writing.
+
+## Chat and plans (2026-09-29)
+
+Plans, reviews, and explanations *to Sean* use the same bar as the terminology table, plus
+the packaging in `04-preferences/user-preferences.md` → Response Style.
+
+1. **TL;DR** — one sentence. What is true, or what to do.
+2. **Explain** — short sentences, one idea each. Design-system vocabulary stays. Engineering
+   vocabulary (stacking, CI, pin, overlay, git SHA) is defined in ordinary words the first
+   time: what it *does*, then the name.
+3. **Detail** — file names, class strings, and test assertions after the picture is clear.
+
+Anti-pattern: a plan that leads with `z-[200]`, `belowSearch`, and “Pages clones main” before
+saying the picture opens behind the sheet.
+
+Full audience model: `02-shared-references/delivery-playbooks/01-audience-contract.md`.
+Skill: [[plain-voice]].
 ---

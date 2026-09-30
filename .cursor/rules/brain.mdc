@@ -64,6 +64,10 @@ request on stdin, never as an argument), then load what it prints. Load set:
 Archive don't delete. Never rename `SKILL.md` (use `aliases`). Never hand-edit generated files
 (`skills.registry.json`, `trigger-routes.md`).
 
+**Plain voice:** TL;DR first, then explain for a principal DS designer. Native: tokens / variants / anatomy. Other jargon gets “what it does” before the name. `04-preferences/user-preferences.md` → Response Style. Skill: `03-skills/plain-voice/SKILL.md`.
+
+**Visual asks:** no placement/stacking/Close question without a shot. Reuse the issue/PR image, or capture the correct source. Skill: `03-skills/visual-ask-shot/SKILL.md`.
+
 **Order of operations:** before executing multi-step / dual-repo / consume work, print numbered
 steps and the first later-breaker (overlay ≠ Pages `main`). Skill: `03-skills/plan-ahead/SKILL.md`.
 Agent: `.cursor/agents/plan-ahead.md`.

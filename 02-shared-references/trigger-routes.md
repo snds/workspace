@@ -424,6 +424,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `new-project` | cross-cutting | `/new-project`, `scaffold new project`, `scaffold a new project`, `start a new project` | `new-project` |
 | `open-agent-engine` | cross-cutting | `open engine`, `agent engine`, `agent queue`, `run the queue`, `queue runner`, `agent ledger` (+5) | `open-agent-engine` |
 | `optimize` | cross-cutting | `/optimize`, `audit the brain`, `brain audit`, `workflow audit`, `system error correction`, `review the workspace foundations` | `optimize` |
+| `plain-voice` | cross-cutting | `plan`, `review`, `explain`, `status`, `what's left`, `canvas` (+6) | `plain-voice` |
 | `plan-ahead` | cross-cutting | `order of operations`, `cds then proto`, `consume cds`, `pages build`, `follow up`, `overlay vs main` (+9) | `plan-ahead` |
 | `process-plugins` | cross-cutting | `tdd`, `test driven development`, `write the test first`, `red green refactor`, `verification before completion`, `am i done` (+11) | `process-plugins` |
 | `reconcile` | cross-cutting | `/reconcile`, `end of day sync`, `merge sessions`, `consolidate sessions` | `reconcile` |
@@ -438,6 +439,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `side-chat-handback` | cross-cutting | `handback`, `/handback`, `end side chat`, `close side chat`, `hand this back`, `hand back` (+2) | `side-chat-handback` |
 | `skill-placement` | cross-cutting | `create a skill`, `generate skill`, `make a skill`, `new skill`, `skill placement` | `skill-placement` |
 | `today` | cross-cutting | `/today`, `daily note`, `plan my day` | `today` |
+| `visual-ask-shot` | cross-cutting | `screenshot`, `visual`, `Close`, `hover`, `stacking`, `lightbox` (+8) | `visual-ask-shot` |
 | `visual-prove-engine` | cross-cutting | `prove this build`, `cuespec`, `measured verdict`, `visual prove`, `rank builds`, `improvement ledger` (+11) | `design-foundations` → `lead-visual-qa` → `visual-prove-engine` |
 | `visual-qa-dataviz` | cross-cutting | `chart review`, `chart audit`, `dataviz qa`, `graph review`, `data table review`, `dashboard review` (+4) | `design-foundations` → `lead-visual-qa` → `visual-qa-dataviz` |
 | `visual-qa-motion` | cross-cutting | `motion qa`, `motion review`, `animation review`, `animation audit`, `jank review`, `janky animation` (+7) | `design-foundations` → `lead-visual-qa` → `visual-qa-motion` |
@@ -446,4 +448,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 315 · Registry rows: 108_
+_Curated routes: 315 · Registry rows: 110_
