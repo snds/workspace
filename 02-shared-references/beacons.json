@@ -23,7 +23,8 @@
     "rules": [
       "- Figma work uses real library components, never hand-built shapes.",
       "- Durable context/learnings/decisions are written to the workspace, never to local agent memory.",
-      "- Employer repos never receive personal-workspace content, and workspace content is never pasted into employer surfaces."
+      "- Employer repos never receive personal-workspace content, and workspace content is never pasted into employer surfaces.",
+      "- Plain language on every reply, in every project and folder: answer first, one idea per sentence, ordinary words, expand jargon on first use. Keep the depth. Full text: 04-preferences/user-preferences.md (Response Style)."
     ],
     "ws": [
       "- Neutral: `ws status` \u00b7 `ws resolve repo <path>` \u00b7 work request: `ws route --stdin <<'EOF'`\u2026`EOF`, load its output."
@@ -68,7 +69,7 @@
       "families": [
         "claude"
       ],
-      "max_bytes": 1515
+      "max_bytes": 1737
     },
     "claude": {
       "parts": [
@@ -83,7 +84,7 @@
       "families": [
         "claude"
       ],
-      "max_bytes": 1515
+      "max_bytes": 1738
     },
     "codex": {
       "parts": [
@@ -99,7 +100,7 @@
       "families": [
         "codex"
       ],
-      "max_bytes": 1515
+      "max_bytes": 1711
     },
     "cursor-user-rules": {
       "parts": [
@@ -125,14 +126,14 @@
         "codex",
         "cursor"
       ],
-      "max_bytes": 1038
+      "max_bytes": 1261
     },
     "rules": {
       "parts": [
         "rules"
       ],
       "families": [],
-      "max_bytes": 293
+      "max_bytes": 509
     }
   }
 }

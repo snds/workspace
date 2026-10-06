@@ -186,6 +186,7 @@ report_file "$DIST/cursor-hooks.json" "$HOME/.cursor/hooks.json" "--install-shim
 # H6 per-family beacons: the Codex user beacon and the machine-local ~/Projects pointer.
 [ -d "$HOME/.codex" ] && report_file "$DIST/codex-AGENTS.md" "$HOME/.codex/AGENTS.md" "--install-shims=codex"
 [ -d "$HOME/Projects" ] && report_file "$DIST/projects-AGENTS.md" "$HOME/Projects/AGENTS.md" "--install-projects-pointer"
+report_file "$DIST/user-CLAUDE.md" "$HOME/AGENTS.md" "--install-home-beacon"
 for _r in cursor-prompt-route cursor-reassert cursor-sessionend cursor-subagent-stop; do
   [ -f "$HOME/.claude/hooks/$_r.sh" ] && note "retired script still installed: ~/.claude/hooks/$_r.sh — run workspace-doctor.sh --install-shims=cursor (retires it with a backup)"
 done

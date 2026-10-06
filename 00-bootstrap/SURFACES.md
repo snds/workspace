@@ -62,8 +62,9 @@ Installing is a human step:
 | `dist/user-CLAUDE.md` | `~/.claude/CLAUDE.md` (Claude: personal-only) | the doctor heals it from the pinned copy (`--install-pin` adopts a new one) |
 | `dist/codex-AGENTS.md` | `~/.codex/AGENTS.md` (counts toward the 32 KiB Codex window) | `workspace-doctor.sh --install-shims=codex` |
 | `dist/cursor-user-rules.txt` | Cursor Settings → Rules (advisory) | paste, then `--ack-chat` |
-| `dist/projects-AGENTS.md` | `~/Projects/AGENTS.md` (machine-local pointer, ≤1 KiB) | `workspace-doctor.sh --install-projects-pointer` |
-| `dist/RULES.txt` | standing rules the SessionStart hooks inject | none (read from the checkout) |
+| `dist/projects-AGENTS.md` | `~/Projects/AGENTS.md` (machine-local pointer; cap is `beacons.json`) | `workspace-doctor.sh --install-projects-pointer` |
+| `dist/user-CLAUDE.md` | `~/AGENTS.md` (Cursor walks ancestors, so every folder under home sees it) | `workspace-doctor.sh --install-home-beacon` |
+| `dist/RULES.txt` | standing rules the SessionStart hooks inject, any folder | none (read from the checkout) |
 
 `workspace-doctor.sh --check` compares the installed Codex beacon and `~/Projects` pointer with dist.
 
@@ -97,7 +98,8 @@ Paths are relative to the file. Brain must stay first so Cursor loads `.cursor/r
 
 | Gap | Status / workaround |
 |---|---|
-| Cursor sessionStart was ABI-only | 2026-09-11: hook injects `session-status.py` (notices + all projects + pending) |
+| Cursor sessionStart was ABI-only | 2026-09-11: hook injects `session-status.py` (notices + all projects + pending). 2026-10-06: the same hook also prints the standing rules, including plain language, on every folder. |
+| Plain language only inside the workspace checkout | The standing sentence is `beacons.json` `rules`. Hooks print `RULES.txt` from any folder. `~/AGENTS.md` and `~/Projects/AGENTS.md` are the ancestor copies. Employer repos do not carry the rule. |
 | Cursor ≠ Claude slash skills | Use `.cursor/agents/` + `skill-loadset.py` |
 | Compaction dropping ritual | `preCompact` reassert retired 2026-09-22 (output never reached the model); the H7 `ws route` steer replaces it in wave 1 |
 | Parent `~/Projects` as root | Reopen workspace or move agent to Brain root |

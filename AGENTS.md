@@ -45,6 +45,12 @@ The workspace is both a knowledge base and an execution environment.
 - **Portable-first.** No mechanism here may depend on a single vendor, device, surface, or cloud
   drive. The git checkout is the source of truth; the plain filesystem is the I/O layer. Any capable
   agent must be able to work here by reading this contract — nothing else required.
+- **Plain language is standing.** It applies to every reply, in every project and every folder,
+  on every surface. Answer first. One idea per sentence. Ordinary words. Expand jargon the first
+  time you use it. Keep the depth. The full rule is
+  [04-preferences/user-preferences.md](04-preferences/user-preferences.md). The sentence surfaces
+  inject is the `rules` block in [beacons.json](02-shared-references/beacons.json). The project
+  you have open does not carry this rule.
 - **Externalize everything; keep nothing durable in private memory.** No durable content — learnings,
   insights, workflows, decisions, project context, assets — may live inside any single agent's
   private/internal memory (Claude Code's `.claude` memory, a Chat profile, a Design session, a

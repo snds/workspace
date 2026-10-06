@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ws-bootstrap/cursor v3 — sessionStart injects session-status.py (notices + all
-# projects + pending). Contract verified against cursor.com/docs/hooks: discard
+# projects + pending) and the standing rules from dist/RULES.txt (any folder). Contract verified against cursor.com/docs/hooks: discard
 # stdin JSON; stdout {"additional_context": "..."} into initial system context.
 # User-global registration lives at ~/.cursor/hooks.json (doctor copies this file).
 set -u
@@ -32,7 +32,9 @@ if [ -f "$WS/09-tools/session-status.py" ]; then
   # rank this Cursor session as Claude and hide the employer projects Cursor handles.
   CARD=$(python3 "$WS/09-tools/session-status.py" --surface Cursor --via cursor-hook/startup --family cursor 2>/dev/null || true)
   if [ -n "${CARD:-}" ]; then
-    printf '%s\n' "Emit this session-start card as your first reply in a NEW session. Do not shrink Active projects. Skip on continuations and Task workers / structured-output.
+    printf '%s\n' "Standing rules, in force on every reply, in every project and folder: ${RULES}
+
+Emit this session-start card as your first reply in a NEW session. Do not shrink Active projects. Skip on continuations and Task workers / structured-output.
 
 ${CARD}" | emit_json
     exit 0

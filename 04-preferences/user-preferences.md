@@ -1,5 +1,5 @@
 # User Preferences — Sean Sands
-**Last updated:** 2026-09-15
+**Last updated:** 2026-10-06
 
 ---
 
@@ -59,6 +59,12 @@ or bridged to design, don't force a bad analogy: give me a good source to read a
 
 Sean is ADHD and autistic. Dense, jargon-heavy, clause-stacked writing is genuinely hard to
 read — not merely less pleasant. This rule **outranks every other style note in this file.**
+
+Every surface injects one standing sentence before it opens this file. That sentence is the
+`rules` block in `02-shared-references/beacons.json`. `render_shims.py` writes it into the
+beacons and into `00-bootstrap/dist/RULES.txt`. Session hooks print that file on any folder.
+The project you have open does not carry a copy. Change the sentence in `beacons.json`, then
+render. Do not paste this file into an employer repo.
 
 **Plain does not mean shallow.** Keep the depth and the rigour. Change the packaging.
 

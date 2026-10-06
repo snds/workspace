@@ -67,21 +67,21 @@ CODEX_DOC_MAX_BYTES = 32_768   # Codex project_doc_max_bytes default
 CODEX_MIN_HEADROOM_BYTES = 3_072  # wave 1 exit gate (H6)
 
 ALWAYS_LOADED_BYTES_CEILING = {
-    "AGENTS.md": 26_044,  # re-pinned after the H6 cuts (wave 1, 2026-09-24)
+    "AGENTS.md": 26_525,  # +standing plain-language bullet (2026-10-06)
     "CLAUDE.md": 5_769,
     "CURSOR.md": 6_153,
     ".cursor/rules/brain.mdc": 3_592,
     ".cursor/rules/01-agent-controller.mdc": 1_218,
     ".cursor/rules/02-workspace-filesystem.mdc": 1_602,
-    "00-bootstrap/dist/user-CLAUDE.md": 1_515,
-    "00-bootstrap/dist/BEACON.md": 1_515,
-    "00-bootstrap/dist/RULES.txt": 293,
+    "00-bootstrap/dist/user-CLAUDE.md": 1_738,  # +plain-language standing rule (2026-10-06)
+    "00-bootstrap/dist/BEACON.md": 1_737,  # +plain-language standing rule (2026-10-06)
+    "00-bootstrap/dist/RULES.txt": 509,  # +plain-language standing rule (2026-10-06)
     # H6 per-family renders (wave 1, 2026-09-24). New files, so these are new pins, not raises:
     # the Codex beacon is held to the old shared beacon's 1,515 B (it counts toward the Codex
     # window); the ~/Projects pointer to the spec's 1 KiB; the Cursor paste to its first render.
-    "00-bootstrap/dist/codex-AGENTS.md": 1_515,
-    "00-bootstrap/dist/projects-AGENTS.md": 1_038,  # Sean 2026-09-24: +the `ws route` steer line (H7)
-    "00-bootstrap/dist/cursor-user-rules.txt": 692,  # +the `ws route` steer line (H7)
+    "00-bootstrap/dist/codex-AGENTS.md": 1_711,  # +plain-language standing rule (2026-10-06)
+    "00-bootstrap/dist/projects-AGENTS.md": 1_261,  # +plain-language standing rule (2026-10-06)
+    "00-bootstrap/dist/cursor-user-rules.txt": 915,  # +plain-language standing rule (2026-10-06)
 }
 # The files that can sit at ~/.codex/AGENTS.md: the Codex beacon, or the shared paste beacon
 # that was installed there before H6. The worst case counts the larger.
@@ -655,12 +655,15 @@ def check_single_sources(root: Path = ROOT, files: list | None = None) -> dict:
 # H6 entry points. Each rendered beacon must carry its family's wall; each tuple is satisfied
 # by one line that contains every token.
 BEACON_RULES = {
-    "00-bootstrap/dist/BEACON.md": [("Claude", "personal-only")],
-    "00-bootstrap/dist/user-CLAUDE.md": [("Claude", "personal-only")],
-    "00-bootstrap/dist/codex-AGENTS.md": [("Codex", "feature branch", "PR"), ("ws status",)],
-    "00-bootstrap/dist/cursor-user-rules.txt": [("Cursor", "feature branch", "PR")],
+    "00-bootstrap/dist/BEACON.md": [("Claude", "personal-only"), ("Plain language",)],
+    "00-bootstrap/dist/user-CLAUDE.md": [("Claude", "personal-only"), ("Plain language",)],
+    "00-bootstrap/dist/codex-AGENTS.md": [("Codex", "feature branch", "PR"), ("ws status",),
+                                          ("Plain language",)],
+    "00-bootstrap/dist/cursor-user-rules.txt": [("Cursor", "feature branch", "PR"), ("Plain language",)],
     "00-bootstrap/dist/projects-AGENTS.md": [("Claude", "personal-only"), ("Codex", "feature branch", "PR"),
-                                             ("Cursor", "feature branch", "PR"), ("ws status",)],
+                                             ("Cursor", "feature branch", "PR"), ("ws status",),
+                                             ("Plain language",)],
+    "00-bootstrap/dist/RULES.txt": [("Plain language",)],
 }
 # Facts restated somewhere they have gone stale (observed drift only). Each: id, pattern,
 # where to look (path globs; "*" = tracked text), and the correction the failure names.
@@ -707,6 +710,12 @@ def check_entry_points(root: Path = ROOT, files: list | None = None) -> dict:
             fails.append(f"{rel}: uses alwaysApply; Windsurf reads `trigger: always_on`")
         elif not re.search(r"^trigger:", head, re.M):
             fails.append(f"{rel}: no `trigger:` frontmatter, so Windsurf may never load it")
+    hook = root / "00-bootstrap" / "dist" / "cursor-sessionstart.sh"
+    if hook.is_file():
+        scanned += 1
+        if "Standing rules, in force on every reply" not in hook.read_text(encoding="utf-8"):
+            fails.append("00-bootstrap/dist/cursor-sessionstart.sh drops standing rules on the "
+                         "session-status path")
     for hook in sorted((root / ".cursor" / "hooks").glob("*")):
         twin = root / "00-bootstrap" / "dist" / hook.name
         if not (hook.is_file() and twin.is_file()):
@@ -1215,9 +1224,9 @@ def write_stamp(report: dict) -> None:
 
 def _plant_entry_points(root: Path) -> list:
     """A minimal clean tree for check_entry_points; returns its 'tracked' file list."""
-    walls = {"claude": "- Claude surfaces are personal-only.",
-             "codex": "- Codex: employer work only via a feature branch + PR.",
-             "cursor": "- Cursor: employer work only via a feature branch + PR.",
+    walls = {"claude": "- Claude surfaces are personal-only.\n- Plain language on every reply.",
+             "codex": "- Codex: employer work only via a feature branch + PR.\n- Plain language on every reply.",
+             "cursor": "- Cursor: employer work only via a feature branch + PR.\n- Plain language on every reply.",
              "ws": "- `ws status` prints the card."}
     body = {
         "llms.txt": "# x\n\n## Start here\n- [AGENTS.md](AGENTS.md)\n- run skill-loadset; never ingest "
@@ -1227,6 +1236,7 @@ def _plant_entry_points(root: Path) -> list:
         "00-bootstrap/dist/codex-AGENTS.md": walls["codex"] + "\n" + walls["ws"],
         "00-bootstrap/dist/cursor-user-rules.txt": walls["cursor"],
         "00-bootstrap/dist/projects-AGENTS.md": "\n".join(walls.values()),
+        "00-bootstrap/dist/RULES.txt": "- Plain language on every reply.\n",
         ".windsurf/rules/workspace.md": "---\ntrigger: always_on\n---\nread AGENTS.md\n",
         "notes/fact.md": "Remote: snds/workspace (**public**)\n",
     }
@@ -1256,7 +1266,9 @@ def _entry_point_fixtures() -> list:
         ("a stale 'private' restatement is flagged (H6)", "[workspace-private]",
          write("notes/old.md", "Git remote: `https://github.com/snds/workspace` (**private**)\n")),
         ("the 'c8/* only' beacon wording is flagged (H6)", "[beacon-c8-only]",
-         write("00-bootstrap/dist/RULES.txt", "- Employer repos (c8/*) never receive it.\n")),
+         write("00-bootstrap/dist/RULES.txt", "- Employer repos (c8/*) never receive it.\n- Plain language on every reply.\n")),
+        ("a beacon missing the plain-language rule fails", "Plain language",
+         write("00-bootstrap/dist/BEACON.md", "- Claude surfaces are personal-only.\n")),
         ("a divergent tracked hook copy fails (H6)", "diverges from 00-bootstrap/dist",
          lambda root, files: [write(".cursor/hooks/x.sh", "#!/bin/sh\necho a\necho b\n")(root, files),
                               write("00-bootstrap/dist/x.sh", "#!/bin/sh\necho c\n")(root, files)]),

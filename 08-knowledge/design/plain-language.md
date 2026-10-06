@@ -39,4 +39,6 @@ Name the thing by what the user does, then by the component they can open in the
 | Document sheet | Print preview (page or a gated region) |
 
 Applies in chat, docs, specs, and canvas labels. Same bar in engineering and PM writing.
+
+The standing sentence every surface injects, in every folder, is the `rules` block in `02-shared-references/beacons.json`. The full packaging rule (answer first, one idea per sentence) is `04-preferences/user-preferences.md`. Why the injection is not a per-project file: [[decision-plain-language-is-standing]].
 ---
