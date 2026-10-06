@@ -4,10 +4,11 @@
 One decide() over the action-policy table, reached from every hooked host through a generated shim.
 Hosts differ only in how a payload arrives and how a decision is rendered; the rules are the same:
 
-  R1  a Claude-family process in the chain: the action-policy rules P10-P22 (employer targets route
-      to Cursor or Codex, merge is human-only, model-composed meta and housekeeping name the vetted
-      script, a target that is not positively personal is refused). The Claude-only static file rules
-      for employer vault folders are mirrored here for the file and MCP tools.
+  R1  a Claude-family process in the chain: every action-policy denial, enforced. Since 2026-10-06
+      Claude is an employer-approved surface (decision-claude-employer-surface): on the work device it
+      meets P30-P32 like Cursor and Codex (branch -> PR -> human review, merge is human-only); off it,
+      P40 and the not-positively-personal rules refuse. Employer vault folders, employer MCP channels
+      and employer browser hosts are refused for Claude only off the work device.
   R2  non-Claude agents on employer repos (P30-P32, P40): branch -> PR -> human review.
   R3  I1: a personal effective identity never commits on an employer repo (any family).
   R4  an unknown or conflicted repo for a non-Claude agent: ask where the host can, deny elsewhere.
@@ -17,7 +18,8 @@ Hosts differ only in how a payload arrives and how a decision is rendered; the r
   R6c candidate tamper shapes (repo aliases, URL rewrites and identity keys written to git config, and
       agent edits of .git/config, .git/hooks, the pinned lib and the hook scripts): report-only
       labels until Sean decides to enforce them.
-  R7  a Claude chain launching another agent CLI or app: denied for employer targets, else a notice.
+  R7  a Claude chain launching another agent CLI or app: a notice (the child inherits the overlay and
+      is classified Claude; since 2026-10-06 that carries the same employer rules).
 
 Which rules enforce and which only log a would-deny is data: surfaces.json `wall_guard.rules`
 (R1, R3 and R6 enforce from install; R2, R4, R6c and R7 are report-only during the rollout window).
@@ -909,6 +911,21 @@ def vault_root(root: Optional[Path], home: Optional[Path]) -> Path:
         return ROOT
 
 
+def _work_device(ctx: "Ctx") -> bool:
+    """True when ctx.device is a declared device whose default identity is an employer identity (the
+    Work MBP; dev-a in the fixtures). An unknown device is never the work device."""
+    try:
+        dev_t = _pr().load_table("devices", root=ctx.root)
+    except Exception:  # noqa: BLE001 - no table: most restrictive
+        return False
+    row = next((d for d in dev_t.get("devices") or [] if isinstance(d, dict) and d.get("id") == ctx.device), None)
+    if row is None:
+        return False
+    ident = next((i for i in dev_t.get("identities") or [] if isinstance(i, dict)
+                  and i.get("id") == row.get("default_identity")), None)
+    return bool(ident and ident.get("class") == "employer")
+
+
 def _vault_folder_hit(path: Optional[str], root: Optional[Path], home: Optional[Path] = None) -> Optional[Path]:
     if not path:
         return None
@@ -1000,11 +1017,9 @@ def _vetted_row(script: Optional[str], ctx: Ctx) -> Optional[dict]:
 
 
 def _identity_findings(ctx: Ctx, scan: ShellScan, invs: List[dict]) -> List[dict]:
-    """R3 (I1): a personal effective identity on an employer repo. Never for a Claude chain: R1 already
-    refuses Claude on employer repos, and a Claude process never opens an employer checkout to decide."""
+    """R3 (I1): a personal effective identity on an employer repo, for every family, Claude included
+    (Claude is an employer-approved surface since 2026-10-06; personal content still never lands there)."""
     pr = _pr()
-    if ctx.det.get("family_for_walls") == "claude":
-        return []
     out: List[dict] = []
     try:
         dev_t = pr.load_table("devices", root=ctx.root)
@@ -1081,9 +1096,6 @@ def decide(action: dict, ctx: Ctx) -> dict:
             d = _policy(ctx, repo=repo, command=norm)
             f = _map_policy(d, walls)
             if f:
-                if f["policy_rule"] == "P11-claude-employer-composed":
-                    names = _vetted_names(ctx)
-                    f["reason"] = f"{f['reason']} ({names})" if names else f["reason"]
                 findings.append(f)
         findings += _url_findings(ctx, invs, walls)
         findings += _identity_findings(ctx, scan, invs)
@@ -1097,9 +1109,9 @@ def decide(action: dict, ctx: Ctx) -> dict:
             if pc:
                 findings.append(_finding("R6" if pc[0] != "report" else "R6c", "ask" if pc[0] == "ask" else "deny",
                                          pc[1]))
-        if walls == "claude" and _vault_folder_hit(path, ctx.root, ctx.home):
-            findings.append(_finding("R1", "route", "an employer vault folder: Claude never reads or writes it",
-                                     route_to=["cursor", "codex"]))
+        if walls == "claude" and _vault_folder_hit(path, ctx.root, ctx.home) and not _work_device(ctx):
+            findings.append(_finding("R1", "deny", "an employer vault folder off the work device: employer work "
+                                                   "stays on the Work MBP"))
         target = _target_dir(path) if path else (ctx.cwd or os.getcwd())
         if target:
             d = _policy(ctx, repo=target, action_class="author" if write else "content-read")
@@ -1107,9 +1119,9 @@ def decide(action: dict, ctx: Ctx) -> dict:
             if f:
                 findings.append(f)
     elif kind == "mcp":
-        if action.get("owner_class") == "employer" and walls == "claude":
-            f = _finding("R1", "route", f"{action.get('server')} is an employer channel: employer content-read "
-                                        "and authoring route to Cursor or Codex", route_to=["cursor", "codex"])
+        if action.get("owner_class") == "employer" and walls == "claude" and not _work_device(ctx):
+            f = _finding("R1", "deny", f"{action.get('server')} is an employer channel off the work device: "
+                                       "employer work stays on the Work MBP")
             if action.get("rollout") == "report":
                 f["mode"] = "report"
             findings.append(f)
@@ -1189,33 +1201,21 @@ def _gh_api_writes(argv: List[str]) -> bool:
 
 
 def _launch_findings(ctx: Ctx, scan: ShellScan, walls: str) -> List[dict]:
-    pr = _pr()
     out: List[dict] = []
     if walls != "claude":
         return out
     for ln in scan.launches:
         what = ln.get("app") or ln.get("tool")
-        employer = False
-        for tgt in [ln.get("cwd") or ctx.cwd] + list(ln.get("paths") or []):
-            if not tgt or str(tgt).startswith("\x00"):
-                continue
-            res = pr.repo_resolve(_target_dir(tgt) or tgt, root=ctx.root, home=ctx.home, detection=ctx.det,
-                                  cache=ctx.cache)
-            employer = employer or res.get("owner_class") == "employer"
-        if employer:
-            out.append(_finding("R7", "deny", f"a Claude chain launching {what} on an employer target: open it "
-                                              "yourself so it is not classified Claude"))
-        else:
-            out.append(_finding("R7", "allow", f"{what} launched from a Claude chain inherits the overlay and is "
-                                               f"classified Claude; for a GUI launch use `open -a <App>`"))
+        out.append(_finding("R7", "allow", f"{what} launched from a Claude chain inherits the overlay and is "
+                                           f"classified Claude; for a GUI launch use `open -a <App>`"))
     return out
 
 
 def _url_owner_findings(ctx: Ctx, url: str, walls: str, rollout: Optional[str]) -> List[dict]:
     """URL-owner policy for browser control driven from Claude Code: employer hosts are employer
-    content-read (route)."""
+    content-read, refused off the work device (allowed on it since 2026-10-06)."""
     pr = _pr()
-    if walls != "claude" or not url:
+    if walls != "claude" or not url or _work_device(ctx):
         return []
     from urllib.parse import urlparse
 
@@ -1234,8 +1234,8 @@ def _url_owner_findings(ctx: Ctx, url: str, walls: str, rollout: Optional[str]) 
         return []
     if cls != "employer":
         return []
-    f = _finding("R1", "route", "an employer host in the browser is employer content-read: route to Cursor or Codex",
-                 route_to=["cursor", "codex"])
+    f = _finding("R1", "deny", "an employer host in the browser off the work device: employer work stays on "
+                               "the Work MBP")
     if rollout == "report":
         f["mode"] = "report"
     return [f]
@@ -1290,7 +1290,7 @@ def reason_text(dec: dict) -> str:
     pol = f" {dec['policy_rule']}" if dec.get("policy_rule") else ""
     text = f"workspace wall guard [{tag}{pol}]: {dec.get('reason') or 'refused'}"
     if dec.get("decision") == "route" or dec.get("route_to"):
-        text += f" — hand this to {' or '.join(dec.get('route_to') or ['cursor', 'codex'])} (a handoff line was logged)"
+        text += f" — hand this to {' or '.join(dec.get('route_to') or ['an approved surface'])} (a handoff line was logged)"
     return text
 
 
@@ -1458,7 +1458,7 @@ PROBE_CASES = [
     {"id": "allow", "command": f"git -C {PROBE_ROOT}/scratch status # wallguard-probe-allow",
      "expect": {"*": "none"}},
     {"id": "R1meta", "command": f"git -C {PROBE_ROOT}/emp status # wallguard-probe-R1meta",
-     "expect": {"claude-code": "deny", "cursor": "none", "codex": "none"}},
+     "expect": {"*": "none"}},
     {"id": "R3ident", "command": f"git -C {PROBE_ROOT}/emp-personal commit --allow-empty -m wallguard-probe-R3ident",
      "expect": {"claude-code": "deny", "cursor": "deny", "codex": "deny"}},
 ]

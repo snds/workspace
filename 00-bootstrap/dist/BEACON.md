@@ -13,5 +13,5 @@ STANDING RULES (in force even before loading):
 - Durable context/learnings/decisions are written to the workspace, never to local agent memory.
 - Employer repos never receive personal-workspace content, and workspace content is never pasted into employer surfaces.
 - Plain language on every reply, in every project and folder: answer first, one idea per sentence, ordinary words, expand jargon on first use. Keep the depth. Full text: 04-preferences/user-preferences.md (Response Style).
-- Claude surfaces are personal-only: no substantive employer work (reading, mapping, editing, commits, PRs in employer repos); vetted, receipted housekeeping (merged-branch prune) is allowed.
+- Claude: employer work only on the Work MBP, via a feature branch + PR for human review; never merge or push to the default branch; no employer content in personal memory.
 <!-- /WORKSPACE-BEACON -->

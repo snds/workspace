@@ -106,6 +106,11 @@ def build_world(pr, tmp: Path) -> dict:
     w = {"tmp": tmp, "home": home, "root": root, "projects": projects, "env": env}
     w["EMP"] = _repo(env, projects / "acme-widget", "git@github.com:acme-corp/widget.git", EMP_EMAIL)
     w["EMP_P"] = _repo(env, projects / "acme-tools", "git@github.com:acme-corp/tools.git", PERS_EMAIL)
+    # employer repos on a feature branch (2026-10-06): Claude may author there, so R3 (I1) is what decides
+    w["EMP_F"] = _repo(env, projects / "acme-kit", "git@github.com:acme-corp/kit.git", EMP_EMAIL)
+    _git(env, "symbolic-ref", "HEAD", "refs/heads/feat/kit", cwd=w["EMP_F"])
+    w["EMP_PF"] = _repo(env, projects / "acme-docs", "git@github.com:acme-corp/docs.git", PERS_EMAIL)
+    _git(env, "symbolic-ref", "HEAD", "refs/heads/feat/docs", cwd=w["EMP_PF"])
     w["PERS"] = _repo(env, projects / "pat-app", "https://github.com/pat-sample/app.git", PERS_EMAIL)
     w["UNK_IN"] = _repo(env, projects / "stranger", "https://github.com/oss-upstream/lib.git", PERS_EMAIL)
     w["SCRATCH"] = _repo(env, tmp / "scratch", None, PERS_EMAIL)
@@ -163,7 +168,7 @@ def payload(golden: str, w: dict, **kw: str) -> dict:
 
 
 def expand(text: str, w: dict) -> str:
-    for k in ("EMP_P", "EMP", "PERS", "UNK_IN", "SCRATCH", "OSS_OUT", "ROOT", "HOME", "VAULT_EMP"):
+    for k in ("EMP_PF", "EMP_P", "EMP_F", "EMP", "PERS", "UNK_IN", "SCRATCH", "OSS_OUT", "ROOT", "HOME", "VAULT_EMP"):
         text = text.replace("{" + k + "}", str(w[k]))
     return text
 
@@ -174,17 +179,37 @@ def expand(text: str, w: dict) -> str:
 #  expected decision, expected rule or None, extra checks)
 C = List[Tuple[str, str, str, Dict[str, str], str, str, str, str, Optional[str], Dict[str, Any]]]
 CORPUS: C = [
-    # item-9 matrix, Claude chain
+    # item-9 matrix, Claude chain. Since 2026-10-06 Claude is an employer-approved surface
+    # (decision-claude-employer-surface): on the work device (dev-a) it meets P30-P32 like Cursor and Codex;
+    # off it, P40 and the not-positively-personal rules refuse.
     ("r1-composed-meta", "claude-code", "claude-code.bash", {"command": "git -C {EMP} status", "cwd": "PERS"},
-     "claude", "claude", "dev-a", "deny", "R1", {"policy": "P11-claude-employer-composed", "reason_has": "vetted"}),
+     "claude", "claude", "dev-a", "none", None, {}),
+    ("r1-composed-meta-off-work-device", "claude-code", "claude-code.bash",
+     {"command": "git -C {EMP} status", "cwd": "PERS"}, "claude", "claude", "dev-b", "deny", "R1",
+     {"policy": "P20-claude-not-personal-under-root"}),
     ("r1-composed-push-delete", "claude-code", "claude-code.bash",
-     {"command": "git -C {EMP} push origin --delete feat/done", "cwd": "PERS"}, "claude", "claude", "dev-a", "deny",
-     "R1", {"policy": "P11-claude-employer-composed"}),
-    ("r1-content-read-routes", "claude-code", "claude-code.bash", {"command": "git -C {EMP} show HEAD", "cwd": "PERS"},
-     "claude", "claude", "dev-a", "route", "R1", {"policy": "P12-claude-employer-route", "handoff": True}),
+     {"command": "git -C {EMP} push origin --delete feat/done", "cwd": "PERS"}, "claude", "claude", "dev-a", "none",
+     None, {}),
+    ("r1-content-read-employer", "claude-code", "claude-code.bash", {"command": "git -C {EMP} show HEAD",
+                                                                     "cwd": "PERS"},
+     "claude", "claude", "dev-a", "none", None, {}),
+    ("r1-push-employer-default-denied", "claude-code", "claude-code.bash",
+     {"command": "git -C {EMP} push origin main", "cwd": "PERS"}, "claude", "claude", "dev-a", "deny", "R1", {}),
+    ("r1-author-employer-feature-branch", "claude-code", "claude-code.bash", {"command": "git commit -m x",
+                                                                              "cwd": "EMP_F"},
+     "claude", "claude", "dev-a", "none", None, {}),
+    ("r1-author-employer-off-work-device", "claude-code", "claude-code.bash",
+     {"command": "git -C {EMP} commit -m x", "cwd": "PERS"}, "claude", "claude", "dev-b", "deny", "R1",
+     {"policy": "P40-agent-personal-mbp-employer"}),
     ("r1-merge-human-only", "claude-code", "claude-code.bash",
      {"command": "gh pr merge 3 -R acme-corp/widget", "cwd": "PERS"}, "claude", "claude", "dev-a", "deny", "R1",
-     {"policy": "P13-claude-employer-merge"}),
+     {"policy": "P30-cc-work-employer-merge"}),
+    # The wall that stays: personal content never lands in an employer repo, Claude included (R3, I1)
+    ("r3-claude-personal-identity-employer", "claude-code", "claude-code.bash",
+     {"command": "git commit -m x", "cwd": "EMP_PF"}, "claude", "claude", "dev-a", "deny", "R3", {}),
+    ("r3-claude-personal-author-flag", "claude-code", "claude-code.bash",
+     {"command": f"git commit --author 'P <{PERS_EMAIL}>' -m x", "cwd": "EMP_F"}, "claude", "claude", "dev-a",
+     "deny", "R3", {}),
     ("r1-vetted-prune-allows", "claude-code", "claude-code.bash",
      {"command": "python3 -I {ROOT}/09-tools/fixture-housekeeper.py --repo {EMP}", "cwd": "PERS"}, "claude", "claude",
      "dev-a", "none", None, {"notice_has": "vetted"}),
@@ -203,15 +228,16 @@ CORPUS: C = [
     ("h17-r12-undeclared-owner-read", "claude-code", "claude-code.bash", {"command": "git show HEAD", "cwd": "OSS_OUT"},
      "claude", "claude", "dev-a", "none", None, {}),
     ("h17-r11-local-branch-delete", "claude-code", "claude-code.bash",
-     {"command": "git -C {EMP} branch -D feat/done", "cwd": "PERS"}, "claude", "claude", "dev-a", "route", "R1", {}),
+     {"command": "git -C {EMP} branch -D feat/done", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None, {}),
     ("h17-r6-mixed-case-url", "claude-code", "claude-code.bash",
      {"command": "git push https://github.com/ACME-Corp/widget.git HEAD:x", "cwd": "PERS"}, "claude", "claude",
-     "dev-a", "route", "R1", {}),
+     "dev-a", "deny", "R1", {"policy": "P31-cc-work-employer-default"}),
     ("r1-clone-employer", "claude-code", "claude-code.bash",
      {"command": "git clone git@github.com:acme-corp/widget.git {SCRATCH}/w", "cwd": "SCRATCH"}, "claude", "claude",
-     "dev-a", "route", "R1", {}),
-    ("r1-cd-then-git", "claude-code", "claude-code.bash", {"command": "cd {EMP} && git log -1", "cwd": "PERS"},
-     "claude", "claude", "dev-a", "route", "R1", {}),
+     "dev-a", "none", None, {}),
+    ("r1-cd-then-git", "claude-code", "claude-code.bash", {"command": "cd {EMP} && git push origin main",
+                                                           "cwd": "PERS"},
+     "claude", "claude", "dev-a", "deny", "R1", {}),
     ("r1-subshell-cd-then-absolute", "claude-code", "claude-code.bash",
      {"command": "(cd {PERS}) ; git -C {PERS} commit -m x", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None,
      {}),
@@ -219,16 +245,16 @@ CORPUS: C = [
     ("r1-cd-home-var-personal", "claude-code", "claude-code.bash",
      {"command": "cd \"$HOME/Projects/pat-app\" && ls", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None, {}),
     ("r1-cd-home-var-employer", "claude-code", "claude-code.bash",
-     {"command": "cd $HOME/Projects/acme-widget && git log -1", "cwd": "PERS"}, "claude", "claude", "dev-a", "route",
-     "R1", {}),
+     {"command": "cd $HOME/Projects/acme-widget && git push origin main", "cwd": "PERS"}, "claude", "claude", "dev-a",
+     "deny", "R1", {}),
     ("r1-cd-tmpdir-scratch", "claude-code", "claude-code.bash",
      {"command": "cd $TMPDIR && python3 x.py", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None,
      {"env": {"TMPDIR": "{SCRATCH}"}}),
     ("r1-cd-tmpdir-reassigned", "claude-code", "claude-code.bash",
-     {"command": "TMPDIR={EMP}; cd $TMPDIR && git log -1", "cwd": "PERS"}, "claude", "claude", "dev-a", "route", "R1",
-     {"env": {"TMPDIR": "{SCRATCH}"}}),
+     {"command": "TMPDIR={EMP}; cd $TMPDIR && git push origin main", "cwd": "PERS"}, "claude", "claude", "dev-a",
+     "deny", "R1", {"env": {"TMPDIR": "{SCRATCH}"}}),
     ("r1-cd-tmpdir-no-host-value", "claude-code", "claude-code.bash",
-     {"command": "cd $TMPDIR && git log -1", "cwd": "PERS"}, "claude", "claude", "dev-a", "route", "R1", {}),
+     {"command": "cd $TMPDIR && git push origin main", "cwd": "PERS"}, "claude", "claude", "dev-a", "deny", "R1", {}),
     # R6 tamper (every family)
     ("r6-config-count", "claude-code", "claude-code.bash", {"command": "GIT_CONFIG_COUNT=0 git commit -m x",
                                                             "cwd": "PERS"}, "claude", "claude", "dev-a", "deny", "R6",
@@ -306,7 +332,8 @@ CORPUS: C = [
     ("r6-no-env-bypass", "claude-code", "claude-code.bash", {"command": "WS_WALL_OK=1 git commit --no-verify -m x",
                                                              "cwd": "PERS"}, "bypass-env", "claude", "dev-a", "deny",
      "R6", {}),
-    ("r1-no-env-bypass", "claude-code", "claude-code.bash", {"command": "git -C {EMP} status", "cwd": "PERS"},
+    ("r1-no-env-bypass", "claude-code", "claude-code.bash", {"command": "git -C {EMP} push origin main",
+                                                             "cwd": "PERS"},
      "bypass-env", "claude", "dev-a", "deny", "R1", {}),
     # file tools
     ("r6-write-codex-config", "claude-code", "claude-code.write", {"path": "{HOME}/.codex/config.toml", "cwd": "PERS"},
@@ -320,40 +347,52 @@ CORPUS: C = [
                                                                         "cwd": "PERS"}, "claude", "claude", "dev-a",
      "none", None, {}),
     ("r1-write-employer-file", "claude-code", "claude-code.write", {"path": "{EMP}/README.md", "cwd": "PERS"},
-     "claude", "claude", "dev-a", "route", "R1", {}),
+     "claude", "claude", "dev-a", "deny", "R1", {"policy": "P31-cc-work-employer-default"}),
+    ("r1-write-employer-file-off-work-device", "claude-code", "claude-code.write",
+     {"path": "{EMP}/README.md", "cwd": "PERS"}, "claude", "claude", "dev-b", "deny", "R1",
+     {"policy": "P40-agent-personal-mbp-employer"}),
     ("r1-vault-folder-write", "claude-code", "claude-code.workspace-fs-write",
-     {"path": "{VAULT_EMP}/notes.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "route", "R1", {}),
+     {"path": "{VAULT_EMP}/notes.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None, {}),
     ("r1-vault-folder-read", "claude-code", "claude-code.workspace-fs-read",
-     {"path": "{VAULT_EMP}/SESSION-STATE.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "route", "R1", {}),
+     {"path": "{VAULT_EMP}/SESSION-STATE.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None, {}),
+    ("r1-vault-folder-read-off-work-device", "claude-code", "claude-code.workspace-fs-read",
+     {"path": "{VAULT_EMP}/SESSION-STATE.md", "cwd": "PERS"}, "claude", "claude", "dev-b", "deny", "R1",
+     {"reason_has": "Work MBP"}),
     ("r1-vault-personal-folder", "claude-code", "claude-code.workspace-fs-write",
      {"path": "{ROOT}/07-projects/43-own/notes.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None, {}),
     # the workspace MCP (H21): the same file classification as workspace-fs; its paths are vault-relative
     ("r1-vault-folder-write-workspace-mcp", "claude-code", "claude-code.workspace-mcp-write",
-     {"path": "{VAULT_EMP}/notes.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "route", "R1", {}),
+     {"path": "{VAULT_EMP}/notes.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None, {}),
     ("r1-vault-folder-relative-workspace-mcp", "claude-code", "claude-code.workspace-mcp-write",
-     {"path": "07-projects/42-acme-work/notes.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "route", "R1", {}),
+     {"path": "07-projects/42-acme-work/notes.md", "cwd": "PERS"}, "claude", "claude", "dev-b", "deny", "R1", {}),
     ("r1-vault-folder-edit-workspace-mcp", "claude-code", "claude-code.workspace-mcp-edit",
-     {"path": "07-projects/42-acme-work/SESSION-STATE.md", "cwd": "PERS"}, "claude", "claude", "dev-a", "route",
+     {"path": "07-projects/42-acme-work/SESSION-STATE.md", "cwd": "PERS"}, "claude", "claude", "dev-b", "deny",
      "R1", {}),
     ("r1-vault-personal-folder-workspace-mcp", "claude-code", "claude-code.workspace-mcp-write",
      {"path": "07-projects/43-own/notes.md", "cwd": "EMP"}, "claude", "claude", "dev-a", "none", None, {}),
     # Claude tool families
-    ("r1-terminal-panel", "claude-code", "claude-code.terminal", {"command": "git -C {EMP} status", "cwd": "PERS"},
+    ("r1-terminal-panel", "claude-code", "claude-code.terminal", {"command": "git -C {EMP} push origin main",
+                                                                  "cwd": "PERS"},
      "claude", "claude", "dev-a", "deny", "R1", {}),
     ("r1-chrome-employer-url", "claude-code", "claude-code.chrome-navigate",
-     {"url": "https://github.com/acme-corp/widget/pull/1", "cwd": "PERS"}, "claude", "claude", "dev-a", "route", "R1",
+     {"url": "https://github.com/acme-corp/widget/pull/1", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None,
+     {}),
+    ("r1-chrome-employer-url-off-work-device", "claude-code", "claude-code.chrome-navigate",
+     {"url": "https://github.com/acme-corp/widget/pull/1", "cwd": "PERS"}, "claude", "claude", "dev-b", "deny", "R1",
      {}),
     ("r1-chrome-personal-url", "claude-code", "claude-code.chrome-navigate",
      {"url": "https://github.com/pat-sample/app", "cwd": "PERS"}, "claude", "claude", "dev-a", "none", None, {}),
-    ("r1-tracker-report-only", "claude-code", "claude-code.tracker", {"cwd": "PERS"}, "claude", "claude", "dev-a",
+    ("r1-tracker-work-device", "claude-code", "claude-code.tracker", {"cwd": "PERS"}, "claude", "claude", "dev-a",
+     "none", None, {"report": []}),
+    ("r1-tracker-report-only", "claude-code", "claude-code.tracker", {"cwd": "PERS"}, "claude", "claude", "dev-b",
      "none", None, {"report": ["R1"]}),
     ("computer-use-no-policy", "claude-code", "claude-code.computer-use", {"cwd": "PERS"}, "claude", "claude", "dev-a",
      "none", None, {}),
     # R7
     ("r7-launch-personal-notice", "claude-code", "claude-code.bash", {"command": "codex exec hello", "cwd": "PERS"},
      "claude", "claude", "dev-a", "none", None, {"notice_has": "R7"}),
-    ("r7-launch-employer-report", "claude-code", "claude-code.bash", {"command": "cursor {EMP}", "cwd": "PERS"},
-     "claude", "claude", "dev-a", "none", None, {"report": ["R7"]}),
+    ("r7-launch-employer-notice", "claude-code", "claude-code.bash", {"command": "cursor {EMP}", "cwd": "PERS"},
+     "claude", "claude", "dev-a", "none", None, {"notice_has": "R7"}),
     # Cursor (R2/R3/R6; the walls come from the verified payload)
     ("cursor-r2-default-branch-report", "cursor", "cursor.before-shell", {"command": "git commit -m x", "cwd": "EMP"},
      "cursor", "cursor", "dev-a", "none", None, {"report": ["R2"], "walls": "cursor", "discount": True}),
@@ -373,7 +412,8 @@ CORPUS: C = [
      "R3", {}),
     ("cursor-meta-employer-none", "cursor", "cursor.before-shell", {"command": "git -C {EMP} status", "cwd": "PERS"},
      "cursor", "cursor", "dev-a", "none", None, {"walls": "cursor"}),
-    ("cursor-inherited-overlay", "cursor", "cursor.before-shell", {"command": "git -C {EMP} status", "cwd": "PERS"},
+    ("cursor-inherited-overlay", "cursor", "cursor.before-shell", {"command": "git -C {EMP} push origin main",
+                                                                   "cwd": "PERS"},
      "cursor+overlay", "cursor", "dev-a", "deny", "R1", {"walls": "claude", "notice_has": "conflict"}),
     ("cursor-write-hooks", "cursor", "cursor.pre-tool-write", {"path": "{HOME}/.cursor/hooks.json", "cwd": "PERS"},
      "cursor", "cursor", "dev-a", "deny", "R6", {}),
@@ -396,11 +436,11 @@ CORPUS: C = [
      {"rc": 2}),
     ("codex-r3-personal-identity", "codex", "codex.bash", {"command": "git commit -m x", "cwd": "EMP_P"},
      "codex", "codex", "dev-a", "deny", "R3", {"rc": 2}),
-    ("codex-under-claude-chain", "codex", "codex.bash", {"command": "git -C {EMP} status", "cwd": "PERS"},
+    ("codex-under-claude-chain", "codex", "codex.bash", {"command": "git -C {EMP} push origin main", "cwd": "PERS"},
      "codex", "claude-codex", "dev-a", "deny", "R1", {"walls": "claude", "rc": 2}),
     ("claude-payload-with-other-markers", "claude-code", "claude-code.bash",
-     {"command": "git -C {EMP} status", "cwd": "PERS"}, "claude+codex-marker", "claude", "dev-a", "deny", "R1",
-     {"walls": "claude"}),
+     {"command": "git -C {EMP} push origin main", "cwd": "PERS"}, "claude+codex-marker", "claude", "dev-a", "deny",
+     "R1", {"walls": "claude"}),
     # other hosts (goldens from vendor docs, UNVERIFIED)
     ("vscode-never-claude-host", "copilot-vscode", "copilot-vscode.run-terminal",
      {"command": "git commit --no-verify -m x", "cwd": "PERS"}, "vscode", "none", "dev-a", "deny", "R6",
@@ -699,7 +739,10 @@ def belt_cases(wg, w: dict, codex_bin: Optional[Path] = None) -> list:
 
 FLOOR_CASES = [
     # (repo key, guard decision for a plain `git commit`, floor decision, declared difference)
-    ("EMP", "deny", "block", None),
+    ("EMP", "deny", "allow", "the floor allows a local commit on the employer default branch and refuses its push "
+                             "(I2); the guard refuses the commit at tool time (P31; Claude since 2026-10-06)"),
+    ("EMP_F", "none", "allow", None),          # employer feature branch, employer identity (2026-10-06)
+    ("EMP_PF", "deny", "block", None),         # employer repo, personal identity: I1 at both layers
     ("PERS", "none", "allow", None),
     ("UNK_IN", "deny", "block", None),
     ("SCRATCH", "none", "allow", None),
@@ -750,7 +793,8 @@ def lane_cases(wg, w: dict) -> list:
     rows = (("EMP_P", "cursor", "cursor.before-shell", "block", "cursor-shell"),   # R3 (I1) both
             ("EMP", "cursor", "cursor.before-shell", "allow", "cursor-shell"),     # R2 report-only both
             ("PERS", "cursor", "cursor.before-shell", "allow", "cursor-shell"),
-            ("EMP", "claude", "claude-code.bash", "block", "claude"),              # R1 / the Claude floor
+            ("EMP_PF", "claude", "claude-code.bash", "block", "claude"),           # R3 (I1) / the Claude floor
+            ("EMP_F", "claude", "claude-code.bash", "allow", "claude"),            # employer-approved since 2026-10-06
             ("PERS", "claude", "claude-code.bash", "allow", "claude"))
     for key, kind, golden, lane_want, shell_kind in rows:
         host = "cursor" if kind == "cursor" else "claude-code"

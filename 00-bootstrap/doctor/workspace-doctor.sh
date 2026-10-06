@@ -207,7 +207,7 @@ SJ="$HOME/.claude/settings.json"
 if ! { grep -q workspace-sessionstart "$SJ" && grep -q workspace-reassert "$SJ" && grep -q workspace-audit "$SJ"; } 2>/dev/null; then
   flag "DRIFT: $SJ missing hook registrations — run workspace-doctor.sh --install-claude-overlay"
 fi
-# Claude surfaces are personal-only; see 06-context/memory/feedback-credential-scoping.md.
+# Claude commits as the personal identity in personal repos (IR1); see 06-context/memory/feedback-credential-scoping.md.
 INC="$CFG/git/claude-identity.inc"
 cmp -s "$DIST/git/claude-identity.inc" "$INC" 2>/dev/null || \
   flag "DRIFT: $INC missing or differs from dist — run workspace-doctor.sh --install-claude-overlay"

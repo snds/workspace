@@ -243,7 +243,10 @@ def _run(cmd: list[str], stdin: str = "", *, cwd: Path = ROOT, env: dict | None 
 
 
 def deliver_claude_code(utterance: str, cwd: Path = ROOT) -> str:
-    """Claude runs only in the workspace here (the walls keep it out of employer repos)."""
+    """The workspace's project dispatcher, so the workspace only. Claude may work in employer repos since
+    2026-10-06 (decision-claude-employer-surface), but this harness does not yet prove the routes reach it
+    there (the sandbox has no brain pointer for the dispatcher): a declared gap, so an employer-shaped cwd
+    stays out of scope for claude-code here."""
     if not DISPATCHER.exists():
         return ""
     env = dict(os.environ, CLAUDE_PROJECT_DIR=str(ROOT))
@@ -350,7 +353,8 @@ SURFACES = {
     "claude-chat": deliver_claude_chat,
     "aider": deliver_aider,
 }
-# Surfaces that may run with an employer-shaped cwd (Claude never works there).
+# Surfaces that may run with an employer-shaped cwd. claude-code is not one yet: this harness does not prove
+# its routes there (gap declared in decision-claude-employer-surface, 2026-10-06).
 EMPLOYER_CWD_SURFACES = {"cursor", "codex", "cursor-hook"}
 
 
@@ -642,7 +646,7 @@ def self_test() -> int:
 
     expect("unknown surface is an error",
            evaluate_case({"id": "t", "utterance": "x", "surfaces": ["nope"]}))
-    expect("claude-code in an employer-shaped cwd is an error",
+    expect("claude-code in an employer-shaped cwd is an error (the declared prompt-hook gap)",
            evaluate_case({"id": "t", "utterance": "x", "surfaces": ["claude-code"], "cwd": "employer-shaped"}))
 
     # Parity is the centerpiece, so prove it fails on a planted divergence rather than

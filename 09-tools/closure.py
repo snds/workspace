@@ -67,7 +67,7 @@ H25_HEADER = "Employer repos (H25 limits):"
 WORKSPACE_STEPS = ("fold", "rebuild", "verify", "commit", "push")
 # Families whose sessions get the handoff (never git) on a repo that is not positively personal, and
 # whose closure reads only the workspace and positively personal repos (session-status's restrictive set).
-RESTRICTIVE = ("claude", "unknown-agent")
+RESTRICTIVE = ("unknown-agent",)  # Claude left this list on 2026-10-06 (decision-claude-employer-surface)
 
 
 # --------------------------------------------------------------------------- siblings
@@ -241,7 +241,8 @@ def restricted(family: str) -> bool:
 
 
 def _may_read(cls: str, family: str) -> bool:
-    """A Claude session reads (git status, HEAD files) only the workspace and positively personal repos."""
+    """A restricted session (an unnamed agent) reads (git status, HEAD files) only the workspace and positively
+    personal repos."""
     return cls in ("workspace", "personal") or not restricted(family)
 
 
@@ -289,7 +290,7 @@ def _handoff_entry(e: dict, *, home=None) -> dict:
     except Exception:  # noqa: BLE001
         vet = "unknown"
     cmds = ["python3 09-tools/prune-our-branches.py --apply"] if vet == "vetted" else []
-    notes = ["write a handoff note (slug and status only) for Cursor or Codex; this session runs no git here"]
+    notes = ["write a handoff note (slug and status only) for Claude, Cursor or Codex; this session runs no git here"]
     if vet != "vetted":
         notes.append(f"vetted housekeeping unavailable (prune-our-branches: {vet})")
     return {"action": "handoff", "steps": ["handoff-note"] + (["vetted-housekeeping"] if cmds else []),

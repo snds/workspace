@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "doc": "Action-class policy, DECISIONS-2 item 9 (binding, confirmed 2026-09-22; P19/P21/P22/P40 set by Sean 2026-09-23). First matching rule wins.",
+  "doc": "Action-class policy, DECISIONS-2 item 9 (binding, confirmed 2026-09-22; P19/P21/P22/P40 set by Sean 2026-09-23; Claude joined the employer-approved surfaces 2026-10-06, decision-claude-employer-surface: P11-P14 retired, P30-P33 cover claude). First matching rule wins.",
   "action_classes": [
     "meta",
     "housekeeping",
@@ -19,6 +19,7 @@
   "unknown_verb_class": "author",
   "default_outcome": "deny",
   "route_targets": [
+    "claude",
     "cursor",
     "codex"
   ],
@@ -193,51 +194,38 @@
       },
       "outcome": "allow",
       "receipt": true,
-      "note": "Sean 2026-09-22: keep housekeeping allowed for Claude with receipts"
+      "note": "Sean 2026-09-22: vetted housekeeping keeps its receipts; since 2026-10-06 the rest of Claude's employer work falls to P30-P32"
     },
     {
-      "id": "P11-claude-employer-composed",
+      "id": "P40-agent-personal-mbp-employer",
       "when": {
-        "walls_family": [
-          "claude"
+        "chain_has_agent": true,
+        "device": [
+          "personal-mbp"
         ],
         "owner_class": [
           "employer"
         ],
         "action_class": [
-          "meta",
-          "housekeeping"
-        ],
-        "via": [
-          "composed"
+          "author",
+          "publish",
+          "merge"
         ]
       },
       "outcome": "deny",
-      "reason": "Claude runs no git in employer repos; only vetted housekeeping (e.g. prune-our-branches.py) runs there, and Cursor or Codex do the rest"
+      "reason": "employer work stays on the Work MBP",
+      "note": "Sean 2026-09-23"
     },
     {
-      "id": "P12-claude-employer-route",
+      "id": "P30-cc-work-employer-merge",
       "when": {
         "walls_family": [
-          "claude"
+          "claude",
+          "cursor",
+          "codex"
         ],
-        "owner_class": [
-          "employer"
-        ],
-        "action_class": [
-          "content-read",
-          "author",
-          "publish"
-        ]
-      },
-      "outcome": "route",
-      "note": "Cursor/Codex are the employer-approved surfaces"
-    },
-    {
-      "id": "P13-claude-employer-merge",
-      "when": {
-        "walls_family": [
-          "claude"
+        "device": [
+          "work-mbp"
         ],
         "owner_class": [
           "employer"
@@ -250,16 +238,62 @@
       "reason": "merge is human-only"
     },
     {
-      "id": "P14-claude-employer-other",
+      "id": "P31-cc-work-employer-default",
       "when": {
         "walls_family": [
-          "claude"
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "work-mbp"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "author",
+          "publish"
+        ],
+        "target_ref": [
+          "default",
+          "unknown"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "employer work goes branch -> PR -> human review"
+    },
+    {
+      "id": "P32-cc-work-employer",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "work-mbp"
         ],
         "owner_class": [
           "employer"
         ]
       },
-      "outcome": "deny"
+      "outcome": "allow",
+      "note": "Sean 2026-10-06: Claude, Cursor and Codex are the employer-approved surfaces on the Work MBP (centric-engineering: branch -> PR -> human review)"
+    },
+    {
+      "id": "P33-cc-no-remote-outside-root",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "under_projects_root": false,
+        "has_remote": false
+      },
+      "outcome": "allow",
+      "note": "Sean 2026-09-24: mirrors P19 for Cursor and Codex (local scratch/temp dirs); removes R4 would-ask noise from the rollout data"
     },
     {
       "id": "P20-claude-not-personal-under-root",
@@ -290,6 +324,10 @@
         "walls_family": [
           "claude"
         ],
+        "owner_class": [
+          "third-party",
+          "unknown"
+        ],
         "positively_personal": false,
         "under_projects_root": false,
         "action_class": [
@@ -299,7 +337,7 @@
         "has_remote": true
       },
       "outcome": "allow",
-      "note": "Sean 2026-09-23: study outside code (e.g. OSS clones in scratch dirs), never change it"
+      "note": "Sean 2026-09-23: study outside code (e.g. OSS clones in scratch dirs), never change it; scoped to third-party and unknown owners 2026-10-06 so an employer checkout off the Work MBP stays denied"
     },
     {
       "id": "P22-claude-unknown-owner-outside-root-other",
@@ -313,100 +351,6 @@
       },
       "outcome": "deny",
       "reason": "owner not declared personal: declare it in context-remotes.json first"
-    },
-    {
-      "id": "P40-agent-personal-mbp-employer",
-      "when": {
-        "chain_has_agent": true,
-        "device": [
-          "personal-mbp"
-        ],
-        "owner_class": [
-          "employer"
-        ],
-        "action_class": [
-          "author",
-          "publish",
-          "merge"
-        ]
-      },
-      "outcome": "deny",
-      "reason": "employer work stays on the Work MBP",
-      "note": "Sean 2026-09-23"
-    },
-    {
-      "id": "P30-cc-work-employer-merge",
-      "when": {
-        "walls_family": [
-          "cursor",
-          "codex"
-        ],
-        "device": [
-          "work-mbp"
-        ],
-        "owner_class": [
-          "employer"
-        ],
-        "action_class": [
-          "merge"
-        ]
-      },
-      "outcome": "deny",
-      "reason": "merge is human-only"
-    },
-    {
-      "id": "P31-cc-work-employer-default",
-      "when": {
-        "walls_family": [
-          "cursor",
-          "codex"
-        ],
-        "device": [
-          "work-mbp"
-        ],
-        "owner_class": [
-          "employer"
-        ],
-        "action_class": [
-          "author",
-          "publish"
-        ],
-        "target_ref": [
-          "default",
-          "unknown"
-        ]
-      },
-      "outcome": "deny",
-      "reason": "employer work goes branch -> PR -> human review"
-    },
-    {
-      "id": "P32-cc-work-employer",
-      "when": {
-        "walls_family": [
-          "cursor",
-          "codex"
-        ],
-        "device": [
-          "work-mbp"
-        ],
-        "owner_class": [
-          "employer"
-        ]
-      },
-      "outcome": "allow"
-    },
-    {
-      "id": "P33-cc-no-remote-outside-root",
-      "when": {
-        "walls_family": [
-          "cursor",
-          "codex"
-        ],
-        "under_projects_root": false,
-        "has_remote": false
-      },
-      "outcome": "allow",
-      "note": "Sean 2026-09-24: mirrors P19 for Cursor and Codex (local scratch/temp dirs); removes R4 would-ask noise from the rollout data"
     },
     {
       "id": "P50-personal",

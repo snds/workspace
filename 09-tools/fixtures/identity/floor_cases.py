@@ -87,9 +87,8 @@ class Lab:
             (self.base / d).mkdir(parents=True, exist_ok=True)
         (self.base / "git" / "claude-identity.inc").write_text(rs.render_claude_identity_inc(self.dev), encoding="utf-8")
         inst = load("00-bootstrap/doctor/installers.py", "installers")
-        noident = getattr(inst, "EMPLOYER_NOIDENT_INC", None)
-        if noident is not None:
-            (self.base / "git" / inst.EMPLOYER_NOIDENT_NAME).write_text(noident, encoding="utf-8")
+        (self.base / "git" / inst.EMPLOYER_INC_NAME).write_text(rs.render_claude_employer_inc(self.dev),
+                                                                encoding="utf-8")
         self.ws.mkdir(parents=True, exist_ok=True)
         (self.ws / "AGENTS.md").write_text("# fixture workspace\n", encoding="utf-8")
         self.script = self.ws / SCRIPT_REL
@@ -164,6 +163,11 @@ class Lab:
         return dict(env, GIT_AUTHOR_NAME="Acme Worker", GIT_AUTHOR_EMAIL=self.acme_mail(),
                     GIT_COMMITTER_NAME="Acme Worker", GIT_COMMITTER_EMAIL=self.acme_mail())
 
+    def with_pat(self, env: dict) -> dict:
+        """An explicit personal identity: what the floor must refuse on an employer repo (I1)."""
+        return dict(env, GIT_AUTHOR_NAME="Pat Sample", GIT_AUTHOR_EMAIL=self.pat_mail(),
+                    GIT_COMMITTER_NAME="Pat Sample", GIT_COMMITTER_EMAIL=self.pat_mail())
+
     def pat_mail(self) -> str:
         return next(i["email"] for i in self.dev["identities"] if i["id"] == "pat")
 
@@ -199,8 +203,10 @@ IDENTITY_CASES = ["identity: pat-sample remote gets the include identity (scp, a
                   "identity: acme-corp remote never gets the include identity",
                   "identity: identity() reports I1 for a personal identity in an employer repo",
                   "identity: no remote gets no overlay identity",
-                  "identity: an employer repo that also has a personal remote gets no personal identity",
-                  "identity: cherry-pick and revert on such a repo cannot create a personal-identity commit"]
+                  "identity: an employer repo that also has a personal remote gets the employer identity, never the "
+                  "personal one",
+                  "identity: cherry-pick and revert on such a repo record only the employer identity, never a "
+                  "personal one"]
 
 
 def identity_cases(pr, rs) -> list:
@@ -245,7 +251,7 @@ def identity_cases(pr, rs) -> list:
         lab.g(lab.base_env, "remote", "add", "origin", "git@github.com:acme-corp/w.git", cwd=dual)
         lab.g(lab.base_env, "remote", "add", "fork", "https://github.com/pat-sample/w.git", cwd=dual)
         got = lab.g(env, "config", "--get", "user.email", cwd=dual).stdout.strip()
-        out.append((IDENTITY_CASES[4], got != lab.pat_mail(), got or "(unset)"))
+        out.append((IDENTITY_CASES[4], got == lab.acme_mail(), got or "(unset)"))
         benv = dict(env, GIT_AUTHOR_NAME="Acme Worker", GIT_AUTHOR_EMAIL=lab.acme_mail(),
                     GIT_COMMITTER_NAME="Acme Worker", GIT_COMMITTER_EMAIL=lab.acme_mail())
         for i in range(2):
@@ -258,7 +264,7 @@ def identity_cases(pr, rs) -> list:
         who = {lab.g(lab.base_env, "log", "-1", "--format=%ae|%ce", ref, cwd=dual).stdout.strip()
                for ref in ("HEAD", "side")}
         made_personal = any(lab.pat_mail() in w for w in who)
-        out.append((IDENTITY_CASES[5], cp.returncode != 0 and rv.returncode != 0 and not made_personal,
+        out.append((IDENTITY_CASES[5], not made_personal and any(lab.acme_mail() in w for w in who),
                     f"cherry-pick={cp.returncode} revert={rv.returncode} idents={who} {cp.stderr[-160:]}"))
     finally:
         _cleanup(td)
@@ -289,8 +295,8 @@ def claude_floor_cases(pr, rs) -> list:
         out.append((FLOOR_CASES[0], all(listed.values()), str(listed)))
         lab.g(lab.base_env, "config", f"hook.{FLOOR}.command", "exit 0", cwd=clone)
         lab.g(lab.base_env, "config", f"hook.{FLOOR}.enabled", "false", cwd=clone)
-        r = lab.g(env, "commit", "--allow-empty", "-m", "should block", cwd=clone)
-        out.append((FLOOR_CASES[1], r.returncode != 0 and "[I2]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
+        r = lab.g(lab.with_pat(env), "commit", "--allow-empty", "-m", "should block", cwd=clone)
+        out.append((FLOOR_CASES[1], r.returncode != 0 and "[I1]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
         lab.g(lab.base_env, "config", "--unset-all", f"hook.{FLOOR}.command", cwd=clone)
         lab.g(lab.base_env, "config", "--unset-all", f"hook.{FLOOR}.enabled", cwd=clone)
         w = lab.base / "bin" / "ws-hook"
@@ -319,30 +325,35 @@ def claude_floor_cases(pr, rs) -> list:
 
 # --------------------------------------------------------------------------- TestFloorDecisions
 
-DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked with [I2] and the ref survives",
+DECISION_CASES = ["decisions: a model-composed employer feature-branch delete reaches the remote (2026-10-06), and a "
+                  "push to the employer default branch is blocked with [I2] and main survives",
                   "decisions: a rebase-created personal-identity commit is blocked at pre-push with [I1]",
                   "decisions: an uncached personal-looking repo under projects_root is blocked [not-positively-personal]",
-                  "decisions: the vetted shape (registered script, pinned blob, intent line) deletes the branch",
+                  "decisions: the vetted housekeeper (registered script, pinned blob, intent line) deletes the branch",
                   "bypass: -c hook.ws-claude-wall.enabled=false skips the floor (declared residual)",
                   "bypass: push --no-verify skips the floor (declared residual)",
                   "bypass: commit --no-verify skips the floor (declared residual)",
                   "bypass: GIT_CONFIG_COUNT=0 removes the floor with the overlay (declared residual)",
                   "bypass: classify marks each bypass hook_bypass and the P05 fixture row denies it",
-                  "bypass: with the transport block active the same employer push fails at transport, not the floor",
-                  "decisions: a bare-mirror push --delete to the employer URL is blocked [I2] and the ref survives",
+                  "transport: today's overlay carries no employer transport block, so an employer feature-branch "
+                  "delete passes the floor and reaches the remote",
+                  "decisions: a bare-mirror push that deletes the employer default branch is blocked [I2] and the "
+                  "branch survives",
                   "decisions: a GIT_DIR push to the employer default branch from outside the work tree is blocked [I2]",
                   "decisions: an employer remote seen only through [include], a legacy section or an inline comment "
-                  "blocks the commit [I2]",
-                  "decisions: a modified copy of the vetted script at the same relative path is not vetted",
-                  "decisions: the genuine vetted script run without -I (PYTHONPATH injection possible) is not vetted",
-                  "decisions: HOME=<elsewhere> git commit on an employer repo still reaches the floor [I2]",
-                  "decisions: PYTHONPATH with a sitecustomize that exits 0 does not silence the floor [I2]",
-                  "transport: every declared employer URL form (ssh alias, ports, :/owner, www) is rewritten to the "
-                  "blocked scheme; mixed case and ssh.github.com classify employer at the floor",
-                  "identity: under the overlay a composed commit on an employer repo has no identity to commit with",
+                  "still classifies employer: a personal-identity commit there is blocked [I1]",
+                  "decisions: a modified copy of the vetted script earns nothing special: the floor judges its push "
+                  "(a feature-branch delete) on its own merits",
+                  "decisions: the genuine vetted script run without -I earns nothing special: the floor judges its "
+                  "push on its own merits",
+                  "decisions: HOME=<elsewhere> git commit on an employer repo still reaches the floor [I1]",
+                  "decisions: PYTHONPATH with a sitecustomize that exits 0 does not silence the floor [I1]",
+                  "transport: no employer URL form is rewritten any more (2026-10-06); mixed case and ssh.github.com "
+                  "still classify employer at the floor",
+                  "identity: under the overlay a composed commit on an employer repo records the employer identity",
                   "decisions: a Claude commit in a personal linked worktree under projects_root is allowed "
                   "(git exports GIT_DIR to its hooks)",
-                  "decisions: a Claude commit in an employer linked worktree is blocked [I2]",
+                  "decisions: a Claude commit in an employer linked worktree with a personal identity is blocked [I1]",
                   "decisions: with the device's employer identity in ~/.gitconfig, a Claude commit in a no-remote "
                   "repo, a third-party repo and a personal repo whose remote form the include misses is blocked [IR1]",
                   "decisions: with the same ~/.gitconfig, a personal repo the include matches commits as the "
@@ -362,12 +373,13 @@ DECISION_CASES = ["decisions: a model-composed employer push --delete is blocked
                   "decisions: a Claude commit in a linked worktree outside projects_root of an unknown-owner checkout "
                   "under it is blocked [not-positively-personal]",
                   "decisions: a Claude commit in a linked worktree outside projects_root of a checkout under it that "
-                  "matches an employer path glob is blocked [I2]",
+                  "matches an employer path glob is classified employer: a personal identity there is blocked [I1]",
                   "decisions: a linked worktree's admin dir used as GIT_DIR from another cwd locates that worktree",
                   "decisions: a Claude push of an annotated tag whose tagger is the employer identity is blocked "
                   "[IR1]; the same tag with the personal tagger pushes",
                   "decisions: scan records bare repos under projects_root, so a Claude commit in a personal bare "
-                  "repo's linked worktree is allowed and one in an employer bare repo's worktree stays blocked [I2]",
+                  "repo's linked worktree is allowed and a personal-identity one in an employer bare repo's worktree "
+                  "stays blocked [I1]",
                   "decisions: a Claude push to a personal fork of a branch carrying an upstream commit with an "
                   "employer author stays blocked [IR1], and the reason names the upstream remote it is already on",
                   "decisions: a --relative-paths linked worktree's admin dir used as GIT_DIR from another cwd locates "
@@ -399,12 +411,18 @@ def floor_decision_cases(pr, rs) -> list:
     try:
         lifted = lab.overlay(lifted=True)
         full = lab.overlay()
-        clone, bare, genv = lab.employer(("feat/done", "feat/b1", "feat/b2", "feat/b4", "feat/m1", "feat/col",
-                                          "feat/col2"))
+        clone, bare, genv = lab.employer(("feat/done", "feat/c0", "feat/b1", "feat/b2", "feat/b4", "feat/m1",
+                                          "feat/col", "feat/col2"))
         ps_ok = ps_permitted()
-        r = lab.g(lifted, "push", "origin", "--delete", "feat/done", cwd=clone)
-        out.append((DECISION_CASES[0], r.returncode != 0 and "[I2]" in r.stderr and lab.has_ref(bare, "feat/done"),
-                    f"rc={r.returncode} {r.stderr[-300:]}"))
+        r = lab.g(lifted, "push", "origin", "--delete", "feat/c0", cwd=clone)
+        tip0 = lab.g(genv, "--git-dir", str(bare), "rev-parse", "refs/heads/main").stdout.strip()
+        lab.g(genv, "commit", "-q", "--allow-empty", "-m", "on main", cwd=clone)
+        rm = lab.g(lifted, "push", "origin", "main", cwd=clone)
+        tip1 = lab.g(genv, "--git-dir", str(bare), "rev-parse", "refs/heads/main").stdout.strip()
+        lab.g(genv, "reset", "-q", "--hard", "HEAD~1", cwd=clone)
+        out.append((DECISION_CASES[0], r.returncode == 0 and not lab.has_ref(bare, "feat/c0") and rm.returncode != 0
+                    and "[I2]" in rm.stderr and tip0 == tip1,
+                    f"delete rc={r.returncode} main rc={rm.returncode} {rm.stderr[-300:]}"))
         lab.g(genv, "switch", "-q", "-c", "feat/r", "main", cwd=clone)
         lab.g(genv, "commit", "-q", "--allow-empty", "-m", "employer work", cwd=clone)
         lab.g(genv, "commit", "-q", "--allow-empty", "-m", "base moves", cwd=clone)
@@ -463,18 +481,16 @@ def floor_decision_cases(pr, rs) -> list:
         out.append((DECISION_CASES[8], all(b and o == "deny" and str(rid).startswith("P05") for b, o, rid in verdicts),
                     str(verdicts)))
         r1 = lab.g(full, "push", "origin", "--delete", "feat/b4", cwd=clone)
-        r2 = lab.g(full, "-c", f"hook.{FLOOR}.enabled=false", "push", "origin", "--delete", "feat/b4", cwd=clone)
         scheme = str(lab.cr["blocked_scheme"]).split("://", 1)[0]
-        out.append((DECISION_CASES[9], r1.returncode != 0 and r2.returncode != 0 and lab.has_ref(bare, "feat/b4")
-                    and FLOOR not in r1.stderr and scheme in r1.stderr + r2.stderr,
-                    f"{r1.returncode}/{r2.returncode} {r1.stderr[-200:]}"))
+        out.append((DECISION_CASES[9], r1.returncode == 0 and not lab.has_ref(bare, "feat/b4")
+                    and scheme not in r1.stderr, f"{r1.returncode} {r1.stderr[-200:]}"))
         emp_url = "git@github.com:acme-corp/widget.git"
         nowhere = lab.tmp / "nowhere"
         nowhere.mkdir(exist_ok=True)
         mirror = lab.tmp / "mirror.git"
         lab.g(genv, "clone", "-q", "--bare", str(bare), str(mirror))
-        r = lab.g(lifted, "--git-dir", str(mirror), "push", emp_url, "--delete", "feat/m1", cwd=nowhere)
-        out.append((DECISION_CASES[10], r.returncode != 0 and "[I2]" in r.stderr and lab.has_ref(bare, "feat/m1"),
+        r = lab.g(lifted, "--git-dir", str(mirror), "push", emp_url, "--delete", "main", cwd=nowhere)
+        out.append((DECISION_CASES[10], r.returncode != 0 and "[I2]" in r.stderr and lab.has_ref(bare, "main"),
                     f"rc={r.returncode} {r.stderr[-300:]}"))
         before = lab.g(genv, "--git-dir", str(bare), "rev-parse", "refs/heads/main").stdout.strip()
         lab.g(genv, "commit", "-q", "--allow-empty", "-m", "employer default push", cwd=clone)
@@ -496,8 +512,8 @@ def floor_decision_cases(pr, rs) -> list:
             with open(cfg, "a", encoding="utf-8") as fh:
                 fh.write(text)
             seen = lab.g(genv, "config", "--get", "remote.origin.url", cwd=rp).stdout.strip()
-            r = lab.g(lab.with_ident(lifted), "commit", "--allow-empty", "-m", "x", cwd=rp)
-            got[name] = (seen == "git@github.com:acme-corp/w.git", r.returncode, "[I2]" in r.stderr)
+            r = lab.g(lab.with_pat(lifted), "commit", "--allow-empty", "-m", "x", cwd=rp)
+            got[name] = (seen == "git@github.com:acme-corp/w.git", r.returncode, "[I1]" in r.stderr)
         out.append((DECISION_CASES[12], all(s and rc != 0 and hit for s, rc, hit in got.values()), str(got)))
         if ps_ok:
             evil = lab.tmp / "evil"
@@ -506,43 +522,43 @@ def floor_decision_cases(pr, rs) -> list:
             copy.write_text(HOUSEKEEPER + "# modified copy\n", encoding="utf-8")
             v = subprocess.run([py, "-I", SCRIPT_REL, str(clone), "feat/col"], cwd=str(evil), env=lifted,
                                capture_output=True, text=True, timeout=120)
-            out.append((DECISION_CASES[13], v.returncode != 0 and lab.has_ref(bare, "feat/col")
+            out.append((DECISION_CASES[13], v.returncode == 0 and not lab.has_ref(bare, "feat/col")
                         and "wall: vetted housekeeping" not in v.stderr, f"rc={v.returncode} {v.stderr[-300:]}"))
             inj = lab.tmp / "inject"
             inj.mkdir(exist_ok=True)
             v = subprocess.run([py, str(lab.script), str(clone), "feat/col2"], env=dict(lifted, PYTHONPATH=str(inj)),
                                capture_output=True, text=True, timeout=120)
-            out.append((DECISION_CASES[14], v.returncode != 0 and lab.has_ref(bare, "feat/col2")
+            out.append((DECISION_CASES[14], v.returncode == 0 and not lab.has_ref(bare, "feat/col2")
                         and "wall: vetted housekeeping" not in v.stderr, f"rc={v.returncode} {v.stderr[-300:]}"))
         else:
             for n in VETTED_CASES[1:]:
                 out.append((n, None, "ps not permitted (sandbox): the vetted shape cannot be proven here"))
         fake_home = lab.tmp / "fake-home"
         fake_home.mkdir(exist_ok=True)
-        r = lab.g(lab.with_ident(dict(lifted, HOME=str(fake_home))), "commit", "--allow-empty", "-m", "home override",
+        r = lab.g(lab.with_pat(dict(lifted, HOME=str(fake_home))), "commit", "--allow-empty", "-m", "home override",
                   cwd=clone)
-        out.append((DECISION_CASES[15], r.returncode != 0 and "[I2]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
+        out.append((DECISION_CASES[15], r.returncode != 0 and "[I1]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
         site = lab.tmp / "site-inject"
         site.mkdir(exist_ok=True)
         (site / "sitecustomize.py").write_text("import os\nos._exit(0)\n", encoding="utf-8")
-        r = lab.g(lab.with_ident(dict(lifted, PYTHONPATH=str(site))), "commit", "--allow-empty", "-m", "site inject",
+        r = lab.g(lab.with_pat(dict(lifted, PYTHONPATH=str(site))), "commit", "--allow-empty", "-m", "site inject",
                   cwd=clone)
-        out.append((DECISION_CASES[16], r.returncode != 0 and "[I2]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
+        out.append((DECISION_CASES[16], r.returncode != 0 and "[I1]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
         forms = ["ssh://git@github-work/acme-corp/w.git", "ssh://github-work/acme-corp/w.git",
                  "ssh://git@github.com:22/acme-corp/w.git", "https://github.com:443/acme-corp/w",
                  "git@github.com:/acme-corp/w.git", "ssh://git@ssh.github.com:443/acme-corp/w.git",
                  "https://www.github.com/acme-corp/w", "git@github.com:ACME-CORP/w.git", "ssh://github.com/acme-corp/w"]
         bl = str(lab.cr["blocked_scheme"])
-        miss = [u for u in forms if not lab.g(full, "ls-remote", "--get-url", u).stdout.strip().startswith(bl)]
+        hit = [u for u in forms if lab.g(full, "ls-remote", "--get-url", u).stdout.strip().startswith(bl)]
         floor_cls = {u: pr._push_url_class(u, lab.lib) for u in ("https://github.com/AcMe-CoRp/w",
                                                                  "ssh://git@ssh.github.com:443/acme-corp/w.git",
                                                                  "https://www.github.com/acme-corp/w")}
-        out.append((DECISION_CASES[17], not miss and all(c == "employer" for c in floor_cls.values()),
-                    f"not rewritten: {miss} floor: {floor_cls}"))
-        r = lab.g(lifted, "commit", "--allow-empty", "-m", "no identity", cwd=clone)
-        out.append((DECISION_CASES[18], r.returncode != 0 and lab.g(lifted, "config", "--get", "user.email",
-                                                                    cwd=clone).stdout.strip() == "",
-                    f"rc={r.returncode} {r.stderr[-200:]}"))
+        out.append((DECISION_CASES[17], not hit and all(c == "employer" for c in floor_cls.values()),
+                    f"still rewritten: {hit} floor: {floor_cls}"))
+        r = lab.g(lifted, "commit", "--allow-empty", "-m", "employer identity", cwd=clone)
+        who = lab.g(genv, "log", "-1", "--format=%ae|%ce", cwd=clone).stdout.strip()
+        out.append((DECISION_CASES[18], r.returncode == 0 and who == f"{lab.acme_mail()}|{lab.acme_mail()}",
+                    f"rc={r.returncode} idents={who} {r.stderr[-200:]}"))
         # Linked worktrees: git exports GIT_DIR=<main>/.git/worktrees/<name> to every hook it runs there.
         root_file = lab.base / "root"
         saved_root = root_file.read_text(encoding="utf-8")
@@ -563,8 +579,8 @@ def floor_decision_cases(pr, rs) -> list:
             root_file.write_text(saved_root, encoding="utf-8")
         ewt = lab.tmp / "emp-wt"
         lab.g(genv, "worktree", "add", "-q", "-b", "feat/wt", str(ewt), "main", cwd=clone)
-        r = lab.g(lab.with_ident(lifted), "commit", "--allow-empty", "-m", "employer worktree", cwd=ewt)
-        out.append((DECISION_CASES[20], ewt.is_dir() and r.returncode != 0 and "[I2]" in r.stderr,
+        r = lab.g(lab.with_pat(lifted), "commit", "--allow-empty", "-m", "employer worktree", cwd=ewt)
+        out.append((DECISION_CASES[20], ewt.is_dir() and r.returncode != 0 and "[I1]" in r.stderr,
                     f"rc={r.returncode} {r.stderr[-300:]}"))
         # IR1: the device default identity (IR2 on an employer-default device) never reaches a Claude commit.
         gc = lab.home / ".gitconfig"
@@ -773,7 +789,7 @@ def _outside_worktree_cases(lab: Lab, pr, penv: dict) -> list:
         mine, tool, ds = res["wt-mine"], res["wt-tool"], res["acme-ds"]
         out.append((DECISION_CASES[28], mine[0] == 0 and "blocked" not in str(mine[1]), str(mine)))
         out.append((DECISION_CASES[29], tool[0] != 0 and "[not-positively-personal]" in str(tool[1]), str(tool)))
-        out.append((DECISION_CASES[30], ds[0] != 0 and "[I2]" in str(ds[1]), str(ds)))
+        out.append((DECISION_CASES[30], ds[0] != 0 and "[I1]" in str(ds[1]), str(ds)))
         main, wt = got["wt-tool"]
         admin = main / ".git" / "worktrees" / wt.name
         elsewhere = lab.tmp / "elsewhere-cwd"
@@ -855,10 +871,10 @@ def _bare_worktree_cases(lab: Lab, pr, penv: dict) -> list:
         rows = {os.path.basename(c["path"]): c["owner_class"] for c in ((sc.get("_doc") or {}).get("checkouts") or [])
                 if c.get("kind") == "bare"}
         r = lab.g(penv, "commit", "--allow-empty", "-m", "claude commit in a bare repo's worktree", cwd=wt)
-        e = lab.g(lab.with_ident(penv), "commit", "--allow-empty", "-m", "employer bare worktree", cwd=ewt)
+        e = lab.g(penv, "commit", "--allow-empty", "-m", "employer bare worktree, personal identity", cwd=ewt)
         out.append((DECISION_CASES[33], sc.get("written") and rows == {"bare-mine.git": "personal",
                                                                      "bare-theirs.git": "employer"}
-                    and r.returncode == 0 and "blocked" not in r.stderr and e.returncode != 0 and "[I2]" in e.stderr,
+                    and r.returncode == 0 and "blocked" not in r.stderr and e.returncode != 0 and "[I1]" in e.stderr,
                     f"written={sc.get('written')} rows={rows} rc={r.returncode} {r.stderr[-300:]} "
                     f"employer rc={e.returncode} {e.stderr[-200:]}"))
     finally:

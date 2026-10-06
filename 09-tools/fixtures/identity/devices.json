@@ -88,6 +88,7 @@
       "id": "IR1",
       "family": "claude",
       "device": "*",
+      "repo_class": "personal",
       "identity": "pat",
       "overridable": false
     },
@@ -114,7 +115,7 @@
     },
     {
       "id": "I2",
-      "text": "A Claude-family actor never commits or pushes on an employer repo outside vetted housekeeping."
+      "text": "An agent, Claude included, publishes to an employer repo only through a feature branch and a human-reviewed PR: it never pushes the default branch and never merges there."
     }
   ]
 }

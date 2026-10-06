@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "doc": "Remote-keyed context table (H2). Employers at owner level only; employer repos are never listed.",
+  "doc": "Remote-keyed context table (H2). Employers at owner level only; employer repos are never listed. blocked_scheme is a legacy marker since 2026-10-06 (decision-claude-employer-surface): the overlay no longer emits the employer transport block, and tools keep the scheme only to recognize and strip a block from overlays installed before then.",
   "conduct_order": [
     "personal-solo",
     "centric-design",

@@ -7,6 +7,10 @@ related: [[zero-vector-design-methodology]]
 
 # Zero-Vector-informed harness plan — v1.1 (2026-09-22)
 
+> **Amended 2026-10-06** ([[decision-claude-employer-surface]]): Claude is now an employer-approved
+> surface. Decision 4, decision 2 of 2026-09-23, the T6 row and the H8 note below are revised in place;
+> the original wording is quoted beside each change.
+
 Standing home: this project.
 - Methodology synthesis: `08-knowledge/cross-domain/zero-vector-design-methodology.md`.
 - v1.0 detail (public): `reports/zero-vector-harness-detail_v1.0_2026-09-22.md`.
@@ -26,10 +30,13 @@ Standing home: this project.
 3. **Project intent lives in each repo** as `PROJECT.md`, with a pointer from the repo's
    `AGENTS.md`. Projects without a repo keep their intent in the vault. `centric-ui` inherits
    `saas-plm-prototype`'s intent. See [[decision-project-intent-in-repo]].
-4. **Identity is (surface family, device).** Every Claude surface is **personal-only** (`snds`) on
-   every device, with no substantive employer work, but housekeeping is allowed with receipts.
-   Cursor and Codex are the **employer-approved** surfaces, with full harness access including
-   mapping and recon. Every other surface follows the device. See [[feedback-credential-scoping]].
+4. **Identity is keyed by device; conduct by repo remote** (revised 2026-10-06). Claude, Cursor and
+   Codex are the **employer-approved** surfaces, with full harness access including mapping and recon,
+   under `centric-engineering` on the Work MBP. Claude's overlay keeps `snds` on personal remotes and
+   the employer identity on employer remotes. See [[feedback-credential-scoping]] and
+   [[decision-claude-employer-surface]]. _Was (2026-09-22): "Every Claude surface is personal-only
+   (`snds`) on every device, with no substantive employer work, but housekeeping is allowed with
+   receipts. Cursor and Codex are the employer-approved surfaces."_
 5. **The guard is workspace-owned and LLM-agnostic.** One decision function works over declared
    tables, and every host reaches it through a generated shim.
 
@@ -42,10 +49,11 @@ Wave 0 is published. These answers close its open items.
    and scheduled runs use the checkout's doctor. Until wave 1 that is a declared residual.
 2. **The Claude git floor keeps blocking** the vetted branch-prune push when it cannot read the
    process table, for example inside Claude Code's Bash sandbox. That one command runs with the
-   sandbox off.
+   sandbox off. _Superseded 2026-10-06: the floor no longer reads the process table for employer
+   pushes; it allows feature-branch updates and deletions and refuses the default branch (I2)._
 3. **Employer email domain:** `centricsoftware.com`. Sean will say if the employer changes.
 4. **Three H25 parts move to wave 1**, because each needs a wave-1 component: the limits on
-   fragments from employer-touched sessions (H23), the Cursor/Codex inventory of workspace-derived
+   fragments from employer-touched sessions (H23), the employer-surface inventory of workspace-derived
    files in employer repos (H4), and the static Claude deny rules for employer vault folders (H15).
 
 5. **Gap detail follows the repo's visibility** (walls F-14). This vault is public, so a known gap
@@ -84,7 +92,7 @@ enforcement only at the lowest tier that actually blocks.
 | T3 tool-time shims | Claude `PreToolUse`, Cursor `beforeShellExecution`, Codex `PreToolUse` (once trusted), generated static belts | yes, on hooked hosts |
 | T4 git boundary | a Claude git floor (in the overlay) and global config-based hooks (git ≥ 2.54), which every local committer passes | yes (a human can bypass them) |
 | T5 server side | CI + a force-push/deletion ruleset on the workspace | CI detects; the ruleset blocks |
-| T6 credential scope | the personal account holds no employer grants; the Claude GitHub App and connectors are personal-only | yes (the server refuses access) |
+| T6 credential scope | the personal GitHub account holds no employer grants; Centric repos are reached only with the Centric account (the `github-work` SSH alias, the device-default gh); the personal Claude GitHub App and connectors are never granted employer repos (revised 2026-10-06; was "the Claude GitHub App and connectors are personal-only") | yes (the server refuses access) |
 
 ## Surface coverage at a glance
 
@@ -148,12 +156,12 @@ The full spec is held locally (`INTENT-wave1-2026-09.md`), like wave 0's.
   the scheduled doctor run (a declared residual until then)
 - H23 surface- and device-aware session closure per touched repo, plus H25's limits on fragments
   from employer-touched sessions
-- H4 `PROJECT.md` intent in each repo, with inheritance, plus H25's one-time Cursor/Codex inventory
+- H4 `PROJECT.md` intent in each repo, with inheritance, plus H25's one-time employer-surface inventory
   of workspace-derived files in employer repos
 - H5 intent lint, approve and verify
 
 **Wave 2: close the loops, report-only.**
-- H8 remediation spec (recon is Cursor/Codex-only for employer repos)
+- H8 remediation spec (recon runs from an employer-approved surface for employer repos: Claude, Cursor or Codex since 2026-10-06)
 - H9 write-set scope
 - H10 diff-computed gates and per-surface compliance
 - H11 gate lanes

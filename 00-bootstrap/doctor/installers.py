@@ -1222,12 +1222,10 @@ def _claude_settings_env_names(ctx: Ctx) -> set:
     return names
 
 
-EMPLOYER_NOIDENT_NAME = "claude-employer-noident.inc"
-EMPLOYER_NOIDENT_INC = (
-    "# Claude overlay (snds-workspace): included for every employer remote form AFTER the personal\n"
-    "# includes, so an employer repo that also has a personal remote gets no identity at all.\n"
-    "[user]\n\tuseConfigOnly = true\n\tname =\n\temail =\n"
-)
+# Until 2026-10-06 the overlay included a blank-identity file here (claude-employer-noident.inc); it is now
+# rendered as dist/git/claude-employer-identity.inc and installed with the rest of dist/git
+# (decision-claude-employer-surface). The old file, if present, is no longer referenced.
+EMPLOYER_INC_NAME = "claude-employer-identity.inc"
 
 
 def _permission_rules(ctx: Ctx) -> dict:
@@ -1293,7 +1291,8 @@ def do_claude_overlay(ctx: Ctx) -> int:
             for f in sorted(d.iterdir()):
                 if f.is_file():
                     targets.append((base / sub / f.name, _file_state(f.read_bytes(), mode)))
-    targets.append((base / "git" / EMPLOYER_NOIDENT_NAME, _file_state(EMPLOYER_NOIDENT_INC.encode("utf-8"), 0o644)))
+    if not any(tgt.name == EMPLOYER_INC_NAME for tgt, _st in targets):
+        raise MissingSource(f"dist/git/{EMPLOYER_INC_NAME} absent (run render_shims.py --write)")
     return _apply(ctx, targets)
 
 
@@ -1887,7 +1886,8 @@ def self_test() -> int:
                 files[str(f.relative_to(src))] = f.read_bytes()
         # The overlay must yield exactly the TRACKED dist keys, so the real fragment is read
         # (read-only) from this checkout instead of a fixture copy.
-        for rel in ("00-bootstrap/dist/settings-user-fragment.json", "00-bootstrap/dist/claude-overlay.env"):
+        for rel in ("00-bootstrap/dist/settings-user-fragment.json", "00-bootstrap/dist/claude-overlay.env",
+                    f"00-bootstrap/dist/git/{EMPLOYER_INC_NAME}"):
             files[rel] = (VAULT_ROOT / rel).read_bytes()
         repo = pin_lib.make_repo(td, files)
         for rel in ("00-bootstrap/dist/ws-hook", "00-bootstrap/dist/ws",
@@ -2429,9 +2429,8 @@ def self_test() -> int:
             self.assertEqual(sum("workspace-sessionstart" in c for c in cmds), 1)
             self.assertEqual(sum(ENV_FILE_HOOK in c for c in cmds), 1)    # the env-file entry
             self.assertIn("my-own-hook.sh", " ".join(cmds))               # user hook kept
-            ni = self.home / ".config/snds-workspace/git" / EMPLOYER_NOIDENT_NAME
-            self.assertEqual(ni.read_text(), EMPLOYER_NOIDENT_INC)          # the employer no-identity include
-            self.assertIn("useConfigOnly = true", EMPLOYER_NOIDENT_INC)
+            ni = self.home / ".config/snds-workspace/git" / EMPLOYER_INC_NAME
+            self.assertIn("useConfigOnly = true", ni.read_text())          # the employer identity include
             self.assertTrue((self.home / ".config/snds-workspace/git/claude-identity.inc").is_file())
             self.assertTrue((self.home / ".config/snds-workspace/gh-claude/config.yml").is_file())
             self.assertEqual(self.run_inst("claude-overlay", which=CURSOR_ONLY)[0], 3)
@@ -3207,6 +3206,7 @@ def self_test() -> int:
                     shutil.copy2(f, dist / f.name)
             (dist / "git").mkdir()
             shutil.copy2(real_dist / "git" / "claude-identity.inc", dist / "git" / "claude-identity.inc")
+            shutil.copy2(real_dist / "git" / EMPLOYER_INC_NAME, dist / "git" / EMPLOYER_INC_NAME)
             (dist / "gh-claude").mkdir()
             for f in ("hosts.yml", "config.yml"):
                 (dist / "gh-claude" / f).write_text("fixture: true\n")

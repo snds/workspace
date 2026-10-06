@@ -59,7 +59,7 @@ Installing is a human step:
 | File | Goes to | How |
 |---|---|---|
 | `dist/BEACON.md` | claude.ai preferences, Workspace project, Perplexity Space | paste, then `--ack-chat` |
-| `dist/user-CLAUDE.md` | `~/.claude/CLAUDE.md` (Claude: personal-only) | the doctor heals it from the pinned copy (`--install-pin` adopts a new one) |
+| `dist/user-CLAUDE.md` | `~/.claude/CLAUDE.md` (Claude user beacon) | the doctor heals it from the pinned copy (`--install-pin` adopts a new one) |
 | `dist/codex-AGENTS.md` | `~/.codex/AGENTS.md` (counts toward the 32 KiB Codex window) | `workspace-doctor.sh --install-shims=codex` |
 | `dist/cursor-user-rules.txt` | Cursor Settings → Rules (advisory) | paste, then `--ack-chat` |
 | `dist/projects-AGENTS.md` | `~/Projects/AGENTS.md` (machine-local pointer; cap is `beacons.json`) | `workspace-doctor.sh --install-projects-pointer` |
@@ -231,6 +231,7 @@ Rendered outputs (installers read this mapping from `render_shims.py --list --js
 | claude-user-fragment | `00-bootstrap/dist/settings-user-fragment.json` | claude-settings-keys | `~/.claude/settings.json` | - |
 | claude-overlay-env | `00-bootstrap/dist/claude-overlay.env` | whole-file | - | v5 |
 | claude-identity-inc | `00-bootstrap/dist/git/claude-identity.inc` | whole-file | - | - |
+| claude-employer-identity-inc | `00-bootstrap/dist/git/claude-employer-identity.inc` | whole-file | - | - |
 | claude-project-settings | `.claude/settings.json` | tracked | `.claude/settings.json` | - |
 | cursor-user-hooks | `00-bootstrap/dist/cursor-hooks.json` | whole-file | `~/.cursor/hooks.json` | - |
 | cursor-project-hooks | `.cursor/hooks.json` | tracked | `.cursor/hooks.json` | - |

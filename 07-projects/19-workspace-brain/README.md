@@ -44,5 +44,5 @@ agent surface that works in the workspace.
 
 ### Out of scope & later
 
-Employer repo work runs in Cursor or Codex, never from this project. Later: the rest of wave 1 and
+Employer repo work runs in Claude, Cursor or Codex under `centric-engineering`, never from this project. Later: the rest of wave 1 and
 the human install steps named in the Live handoff.

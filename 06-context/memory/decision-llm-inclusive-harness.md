@@ -50,10 +50,11 @@ Claude Code-specific.
    A repo that isn't checked out on this device is reported as "not on this device", never as an
    error.
 
-   **Identity is keyed by (surface family, device).** Every **Claude** surface is personal-only on every
-   device: it uses `snds` and does no employer work. Every other surface follows the device: on the
-   Work MBP it is work/Centric unless Sean expressly overrides for a task, and on the Personal MBP it
-   is personal (`snds`). Surface shims only apply the resolved row ([[feedback-credential-scoping]]).
+   **Identity is keyed by device, for every surface family.** On the Work MBP a surface is
+   work/Centric unless Sean expressly overrides for a task; on the Personal MBP it is personal
+   (`snds`); conduct follows the repo remote. Surface shims only apply the resolved row
+   ([[feedback-credential-scoping]]). _(2026-10-06: Claude's personal-only exception, in force from
+   2026-09-22, is retired; see [[decision-claude-employer-surface]].)_
 
 ## Rationale — why, and what we rejected
 Rejected: Claude-first with other surfaces as "later". The contract already says no tool is

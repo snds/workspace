@@ -27,6 +27,8 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 
 ### Active (next actions)
 
+- [ ] **Roll out Claude as an employer surface on each Mac (human steps).** (Added 2026-10-06.) Decision: [[decision-claude-employer-surface]]. On the Work MBP and the Personal MBP: run `00-bootstrap/doctor/workspace-doctor.sh --install-claude-overlay` from a plain terminal, then start a fresh Claude session; until then the installed v5 overlay still blocks employer remotes. Re-paste `00-bootstrap/dist/BEACON.md` into the claude.ai profile preferences, `workspace-doctor.sh --install-pin` to heal `~/.claude/CLAUDE.md`, and re-emit `render_shims.py --emit claude-permissions --device work-mbp`. Open: Claude's Centric pushes use the `github-work` SSH alias, which ^pc-09 says can time out; the overlay's HTTPS credential helper names only `snds`, so there is no HTTPS fallback for Centric from Claude yet. Open: the surface-trajectory harness does not yet prove Claude Code's prompt routes in an employer-shaped folder. Open (Sean's call): personal-account Centric work falls under consumer terms, and claude.ai memory can file Centric facts. ^pc-50
+
 - [ ] **SaaS PLM prototype — DataTable contract, then the TanStack replacement..** (Added 2026-07-28.) Next: Olga reviews #13; deepen Materials lab toward the full column set post-merge; revisit the contract as acceptance checklist; WP-0 memo drafte Detail → [project-context-detail.md#pc-01](project-context-detail.md#pc-01). ^pc-01
 
 - [ ] **Silence the two recurring beacon-enroll NOTEs (Work MBP main, `CS-K746DRWXY1`)..** (Added 2026-07-28.) Detail → [project-context-detail.md#pc-02](project-context-detail.md#pc-02). ^pc-02

@@ -162,9 +162,9 @@ def _plan_matrix(c, pr, tmp: Path, ok) -> None:
         ("workspace", "codex"): ("workspace", "pat"),
         ("personal", "claude"): ("commit-push", "pat"), ("personal", "cursor"): ("commit-push", "pat"),
         ("personal", "codex"): ("commit-push", "pat"),
-        ("employer", "claude"): ("handoff", None), ("employer", "cursor"): ("branch-pr", None),
+        ("employer", "claude"): ("branch-pr", None), ("employer", "cursor"): ("branch-pr", None),
         ("employer", "codex"): ("branch-pr", None),
-        ("unknown", "claude"): ("handoff", None), ("unknown", "cursor"): ("branch-pr", None),
+        ("unknown", "claude"): ("branch-pr", None), ("unknown", "cursor"): ("branch-pr", None),
         ("unknown", "codex"): ("branch-pr", None),
     }
     repos = {"workspace": ws, "personal": w["PERS"], "employer": w["EMP"], "unknown": w["UNK_IN"]}
@@ -173,8 +173,7 @@ def _plan_matrix(c, pr, tmp: Path, ok) -> None:
         sid = f"m-{cls}-{fam}"
         path = "notes/idea.md" if cls == "workspace" else "README.md"
         ledger(w, sid, [rec(repos[cls], path, hosts[fam])])
-        with Spy() as spy:
-            p = c.plan(sid, home=home, root=ws, hostname="host-b")
+        p = c.plan(sid, home=home, root=ws, hostname="host-b")
         row = next((r for r in p["repos"] if r["repo"] == os.path.realpath(repos[cls])), None)
         good = row is not None and row["class"] == cls and row["action"] == action and p["family"] == fam
         if ident:
@@ -187,19 +186,16 @@ def _plan_matrix(c, pr, tmp: Path, ok) -> None:
             ok(f"plan {cls} x {fam}: a feature branch first; never the default branch",
                row["steps"][0] == "feature-branch" and any("never commit or push the default branch" in n
                                                            for n in row["notes"]), json.dumps(row))
-        if fam == "claude" and cls in ("employer", "unknown"):
-            ok(f"plan {cls} x claude: no git in that repo; commands are the vetted script only",
-               not spy.touched(repos[cls]) and all(x.startswith("python3 09-tools/prune-our-branches.py")
-                                                   for x in row["commands"]), str(spy.touched(repos[cls])))
-            ok(f"plan {cls} x claude: H25 limits flagged", p["h25_fragment_limits"] is True)
+        if cls in ("employer", "unknown"):
+            ok(f"plan {cls} x {fam}: H25 limits flagged", p["h25_fragment_limits"] is True)
     # the device matters: the employer repo from Cursor on the work device takes the employer identity
     ledger(w, "m-dev-a", [rec(w["EMP"], "README.md", "cursor")])
     p = c.plan("m-dev-a", home=home, root=ws, hostname="host-a")
     ok("plan employer x cursor on dev-a: the employer allowlist identity",
        p["repos"][0]["identity"] == "acme-id" and p["device"] == "dev-a", json.dumps(p["repos"][0]))
     text = c.format_plan(c.plan("m-employer-claude", home=home, root=ws, hostname="host-b"))
-    ok("text plan names the action per repo and the H25 limits",
-       "[employer] -> handoff" in text and "H25:" in text, text)
+    ok("text plan names the action per repo and the H25 limits (Claude closes employer work by branch and PR "
+       "since 2026-10-06)", "[employer] -> branch-pr" in text and "H25:" in text, text)
     mixed = "m-mixed"
     ledger(w, mixed, [rec(ws, "notes/idea.md", "cursor"), rec(ws, "notes/idea.md", "claude-code")])
     ok("a session seen from two families closes under the tighter walls",
@@ -213,11 +209,15 @@ def _fallback(c, pr, tmp: Path, ok) -> None:
         _w(w[key] / "README.md", "dirty\n")
     _w(ws / "notes" / "idea.md", "dirty\n")
     with Spy() as spy:
-        p = c.plan("no-ledger", family="claude", home=home, root=ws, hostname="host-b")
+        p = c.plan("no-ledger", family="unknown-agent", home=home, root=ws, hostname="host-b")
     got = {r["class"] for r in p["repos"]}
-    ok("fallback (no ledger, Claude): git status over the workspace and positively personal repos only",
+    ok("fallback (no ledger, unknown agent): git status over the workspace and positively personal repos only",
        p["source"] == "fallback-git-status" and got == {"workspace", "personal"}, json.dumps(p["repos"]))
-    ok("fallback (Claude) runs no git in the employer repo", not spy.touched(w["EMP"]), str(spy.touched(w["EMP"])))
+    ok("fallback (unknown agent) runs no git in the employer repo", not spy.touched(w["EMP"]),
+       str(spy.touched(w["EMP"])))
+    p = c.plan("no-ledger", family="claude", home=home, root=ws, hostname="host-b")
+    ok("fallback (Claude) includes the dirty employer repo, closed by branch and PR (2026-10-06)",
+       any(r["class"] == "employer" and r["action"] == "branch-pr" for r in p["repos"]), json.dumps(p["repos"]))
     p = c.plan("no-ledger", family="cursor", home=home, root=ws, hostname="host-b")
     ok("fallback (Cursor) includes the dirty employer repo, closed by branch and PR",
        any(r["class"] == "employer" and r["action"] == "branch-pr" for r in p["repos"]), json.dumps(p["repos"]))
@@ -355,11 +355,11 @@ def _h25(c, pr, tmp: Path, ok) -> None:
                             family="cursor", public=False, tokens=c.employer_tokens(lim, root=ws))
     ok("H25: a private workspace keeps the slug and an allowed PR URL",
        "  - acme-corp/widget — branch-pr — https://github.com/acme-corp/widget/pull/7" in priv, priv)
-    cl = c.limit_fragment(EMP_FRAGMENT, [dict(lim[0], pr_url="https://x/pull/1", status=None)], family="claude",
-                          public=False, tokens=c.employer_tokens(lim, root=ws))
-    ok("H25: a Claude session's employer repo reads handoff and never carries a PR URL",
+    cl = c.limit_fragment(EMP_FRAGMENT, [dict(lim[0], pr_url="https://x/pull/1", status=None)],
+                          family="unknown-agent", public=False, tokens=c.employer_tokens(lim, root=ws))
+    ok("H25: an unknown agent's employer repo reads handoff and never carries a PR URL",
        "— handoff" in cl and "https://x/pull/1" not in cl, cl)
-    ok("H25: a personal-only session's fragment is untouched",
+    ok("H25: a session that touched no employer repo keeps its fragment untouched",
        c.limit_fragment(EMP_FRAGMENT, [], family="cursor", public=True, tokens=[]) == EMP_FRAGMENT)
     # the fragment writer (compact-sessions fold) and the sweeper both enforce it
     cs = _load("compact_sessions_for_closure", TOOLS / "compact-sessions.py")

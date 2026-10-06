@@ -904,7 +904,7 @@ def format_compliance(res: dict, rng: str) -> str:
 
 def identity_audit(commits: list[dict], devices: dict) -> dict:
     """Counts only: commits whose author or committer is not a declared identity or known agent bot, and
-    Claude-laned commits not made with a personal identity (IR1)."""
+    Claude-laned commits not made with a personal identity (IR1: Claude in a personal repo, this vault)."""
     ids = {str(i.get("email", "")).casefold(): str(i.get("class")) for i in devices.get("identities") or []}
     bots = ("cursoragent@cursor.com", "noreply@github.com", "github-actions[bot]@users.noreply.github.com")
     undeclared = claude_non_personal = 0

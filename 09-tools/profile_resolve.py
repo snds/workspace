@@ -305,6 +305,7 @@ IDENTITY_CLASSES = ("employer", "personal")
 IDENTITY_TRANSPORTS = ("ssh", "https")
 IDENTITY_MISMATCH = ("flag",)
 IDENTITY_OVERRIDE_SCOPES = ("non-employer-repos-only",)
+IDENTITY_RULE_REPO_CLASSES = ("personal", "employer", "third-party", "unknown")
 
 
 def _validate_identity_keys(obj: dict, errors: List[str], device_ids: set, aliases: set) -> None:
@@ -359,7 +360,8 @@ def _validate_identity_keys(obj: dict, errors: List[str], device_ids: set, alias
             if str((ids.get(iid) or {}).get("email", "")).casefold() in marked:
                 errors.append(f"employer_allowlist: {iid!r} carries a personal-marker email")
     rule_spec = {"id": (_STR, True), "family": (_STR, True), "device": (_STR, True), "identity": (_STR, True),
-                 "overridable": (_BOOL, False), "mismatch": (_STR, False), "override_suppresses": (_STR, False)}
+                 "repo_class": (_STR, False), "overridable": (_BOOL, False), "mismatch": (_STR, False),
+                 "override_suppresses": (_STR, False)}
     seen_rules: set = set()
     for i, row in enumerate(_rows(obj, "identity_rules", errors)):
         where = f"identity_rules[{i}]"
@@ -375,6 +377,8 @@ def _validate_identity_keys(obj: dict, errors: List[str], device_ids: set, alias
             errors.append(f"{where}.mismatch: must be one of {list(IDENTITY_MISMATCH)}")
         if "override_suppresses" in row and row.get("override_suppresses") not in IDENTITY_OVERRIDE_SCOPES:
             errors.append(f"{where}.override_suppresses: must be one of {list(IDENTITY_OVERRIDE_SCOPES)}")
+        if "repo_class" in row and row.get("repo_class") not in IDENTITY_RULE_REPO_CLASSES:
+            errors.append(f"{where}.repo_class: must be one of {list(IDENTITY_RULE_REPO_CLASSES)}")
         if row.get("overridable") is False and "override_suppresses" in row:
             errors.append(f"{where}: a non-overridable rule cannot name override_suppresses")
     inv_ids: set = set()
@@ -2692,13 +2696,18 @@ def verb_class(inv: dict, table: dict) -> Tuple[str, Optional[str]]:
 
 
 def _may_read_repo_files(path: Path, det: dict, root: Optional[Path], home: Optional[Path]) -> bool:
-    """The Claude-chain read rule, applied to HEAD reads as well as to config reads."""
+    """The Claude-chain read rule, applied to HEAD reads as well as to config reads. Under projects_root a
+    restricted chain reads only the workspace and checkouts a human scan already cached (2026-10-06: an
+    employer checkout's HEAD decides its branch rule now that Claude may author there; an uncached
+    checkout stays unread, so a planted .git cannot claim a class)."""
     if not _restricted(det, root):
         return True
     if _workspace_kind(path, root, home) is not None:
         return True
     pr = projects_root(root=root, home=home)
-    return not _is_under(path, pr)
+    if not _is_under(path, pr):
+        return True
+    return _cache_lookup(_real(path), _load_cache(None, home)) is not None
 
 
 def _abs_hint(cwd: Optional[Any], hint: Optional[str]) -> Optional[str]:
@@ -3329,10 +3338,13 @@ def _identity_id_of(email: Optional[str], dev_t: dict) -> Optional[str]:
     return None
 
 
-def identity_rule(family: str, device_id: str, dev_t: dict) -> Optional[dict]:
-    """First identity rule whose family and device match ('*' matches any)."""
+def identity_rule(family: str, device_id: str, dev_t: dict, repo_class: Optional[str] = None) -> Optional[dict]:
+    """First identity rule whose family and device match ('*' matches any). A rule that names a
+    repo_class matches only a repo of that class, so it never matches when no repo is given."""
     for r in dev_t.get("identity_rules") or []:
         if not isinstance(r, dict):
+            continue
+        if "repo_class" in r and r.get("repo_class") != repo_class:
             continue
         if r.get("family") in ("*", family) and r.get("device") in ("*", device_id):
             return r
@@ -3402,8 +3414,9 @@ def identity(*, repo: Optional[str] = None, family: str = "auto", device: str = 
              isatty: Optional[dict] = None, hostname: Optional[str] = None, detection: Optional[dict] = None,
              cache: Any = None, now: Any = None, git: str = "git") -> dict:
     """The `identity` JSON (3c): expected, allowed[], effective{name,email_class}, invariants_hit[],
-    flag, override, repo_class. Claude family -> the IR1 identity on every device; other families ->
-    the device default. Only I1/I2 are invariants; a device mismatch is a flag."""
+    flag, override, repo_class. Every family takes the first matching identity rule: Claude in a
+    personal repo -> IR1 (the personal identity, every device); otherwise the device default (IR2/IR3).
+    An employer repo allows only employer identities (I1). A device mismatch is a flag."""
     dev_t = load_table("devices", root=root)
     t = _surfaces_or_fallback(root)
     fams = t.get("families") or {}
@@ -3416,7 +3429,6 @@ def identity(*, repo: Optional[str] = None, family: str = "auto", device: str = 
     notices: List[str] = []
     if dev_id == "unknown" or cur.get("notice"):
         notices.append(cur.get("notice") or "unknown device: most restrictive rules, no default identity")
-    rule = identity_rule(walls, dev_id, dev_t)
     ids = _identities(dev_t)
     emp_ids = [i for i in (dev_t.get("employer_allowlist") or {}).get("identity_ids") or [] if i in ids]
     res: Optional[dict] = None
@@ -3424,17 +3436,15 @@ def identity(*, repo: Optional[str] = None, family: str = "auto", device: str = 
     if repo:
         res = repo_resolve(repo, root=root, home=home, detection=walls_det, cache=cache)
         repo_class = res.get("owner_class")
+    rule = identity_rule(walls, dev_id, dev_t, repo_class)
     expected = rule.get("identity") if rule else None
     if repo_class == "employer":
-        allowed = [] if walls == "claude" else list(emp_ids)
-        if walls == "claude":
-            expected = None
-            notices.append("I2: a Claude-family actor never authors on an employer repo (route to Cursor or Codex)")
-        elif expected not in allowed:
+        allowed = list(emp_ids)
+        if expected not in allowed:
             if expected:
                 notices.append(f"I1: the device default {expected} is not on the employer allowlist here")
             expected = allowed[0] if allowed else None
-    elif walls == "claude":
+    elif rule and rule.get("overridable") is False:
         allowed = [expected] if expected else []
     else:
         allowed = list(ids)
@@ -3451,8 +3461,6 @@ def identity(*, repo: Optional[str] = None, family: str = "auto", device: str = 
     hits: List[str] = []
     if repo_class == "employer" and eff["email_class"] not in (None, "employer"):
         hits.append("I1")
-    if repo_class == "employer" and walls == "claude":
-        hits.append("I2")
     flag = None
     ovr = None
     if rule and eff["email_class"] is not None and eff["identity"] != expected and "I1" not in hits:
@@ -3499,9 +3507,6 @@ def _override_refusals(*, env: dict, ancestry: Optional[list], isatty: Optional[
     ac = agent_check(env=env, ancestry=ancestry, isatty=isatty, root=root)
     if not (ac.get("human") and ac.get("determined")):
         reasons += list(ac.get("reasons") or ["undetermined"])
-    det = detect_surface(env=env, ancestry=ancestry, isatty=isatty, root=root)
-    if det.get("family_for_walls") == "claude" or det.get("family") == "claude":
-        reasons.append("claude family: Claude identity (IR1) is never overridable")
     return list(dict.fromkeys(reasons))
 
 
@@ -3580,10 +3585,9 @@ def override(*, task: Optional[str] = None, repo: Optional[str] = None, identity
 
 def owners_list(*, home: Optional[Path] = None, root: Optional[Path] = None, hostname: Optional[str] = None,
                 detection: Optional[dict] = None, cache: Any = None) -> dict:
-    """Any caller. Each entry with its effective status. Under a Claude chain employer folder names are
-    withheld (employer substance never enters a Claude context)."""
+    """Any caller. Each entry with its effective status. Employer folder names are listed for every
+    family (Claude is an employer-approved surface since 2026-10-06)."""
     det = detection if detection is not None else detect_surface(root=root)
-    claude = det.get("family_for_walls") == "claude" or det.get("family") == "claude"
     ov = load_owner_overlay(home=home, root=root)
     dev = current_device(hostname=hostname, root=root)["id"]
     prr = _real(projects_root(root=root, home=home, hostname=hostname))
@@ -3594,7 +3598,7 @@ def owners_list(*, home: Optional[Path] = None, root: Optional[Path] = None, hos
     for parts, key, cls in sorted(ov["entries"], key=lambda e: e[1].casefold()):
         if cls == "employer":
             n_emp += 1
-            rows.append({"folder": f"(employer folder {n_emp}: name withheld from a Claude chain)" if claude else key,
+            rows.append({"folder": key,
                          "class": cls, "applies": True, "reason": "tighten-only: applies on every device"})
             continue
         folder = prr.joinpath(*key.split("/"))
@@ -4059,10 +4063,12 @@ def floor_decide(event: str, hook_args: list, stdin_lines: list, *, env: Optiona
                  git: str = "git") -> dict:
     """The Claude git floor: {decision: allow|block, rule, reason, notice}.
 
-    Employer repo: every commit event blocks (I2); pre-push allows only the vetted housekeeping
-    shape (all ref lines delete non-default branches, the nearest python ancestor runs a
-    registered script whose blob matches the pinned lock, and that pid wrote an intent line for
-    exactly those refs), after an I1 identity check over every commit in the pushed range.
+    Employer repo (Claude is an employer-approved surface since 2026-10-06,
+    decision-claude-employer-surface): a commit event records only an employer identity (I1), and
+    pre-push runs an I1 identity check over every commit and tag in the pushed range, then allows
+    only feature-branch updates and deletions (I2, the centric-engineering conduct: no push to the
+    default branch, to a branch whose default cannot be read, or to a non-branch ref; work goes
+    branch -> PR -> human review).
     Any other repo: a commit event whose author or committer identity is an employer identity
     blocks, and so does a push whose range (the I1 range reader) holds a commit with an employer
     author or committer, which catches commits no commit hook saw (revert, cherry-pick, rebase,
@@ -4075,7 +4081,8 @@ def floor_decide(event: str, hook_args: list, stdin_lines: list, *, env: Optiona
     names that remote. An unreadable range or tag allows with a notice, as for I1.
     Not positively personal under projects_root blocks; a linked worktree is classified by its own
     top and by its main checkout (under projects_root when either is). An infrastructure error
-    allows, with a notice (fail-open): the transport block stays the barrier for employer remotes.
+    allows, with a notice (fail-open); for employer remotes the policy rules (P30-P32, P40) and the
+    server's branch protection are the other barriers.
     """
     try:
         return _floor(event, list(hook_args or []), list(stdin_lines or []), env=env, ancestry=ancestry, root=root,
@@ -4099,8 +4106,8 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
     gitdir, top = _floor_locate(here, e, git)
     if gitdir is None and top is None:
         if url_cls == "employer":
-            return _floor_block("I2", "pre-push: a Claude-family push to an employer remote from an unlocatable "
-                                      "repository; route this work to Cursor or Codex")
+            return _floor_block("I2", "pre-push: a push to an employer remote from an unlocatable repository; "
+                                      "push from the employer checkout on a feature branch")
         return _floor_allow("not inside a repository; allowing")
     det = {"family": "claude", "family_for_walls": "claude", "agent_possible": True}
     if top is not None:
@@ -4177,14 +4184,20 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
         outside = None if not (res.get("remotes") or cfg_urls) else \
             f"{res.get('owner_class')} repo outside projects_root; the floor allows it"
         return _floor_allow("; ".join(m for m in (ir1_notice, outside) if m) or None)
+    dev_t = _try_table("devices", root) or {}
     if event != "pre-push":
-        return _floor_block("I2", f"{event}: a Claude-family actor never commits on an employer repo; "
-                                  "route this work to Cursor or Codex")
+        for role, em in _commit_idents(here, e, git):
+            cls = email_class(em, dev_t)
+            if cls != "employer":
+                what = "a personal identity" if cls == "personal" else "an identity not on the employer allowlist"
+                return _floor_block("I1", f"{event}: the {role} identity is {what}; an employer repo takes only "
+                                          "employer identities (I1); use the repo's Centric user.name and "
+                                          "user.email, then retry")
+        return _floor_allow(None)
     lines = _push_lines(stdin_lines)
     remote = str(hook_args[0]) if hook_args else "origin"
     genv = _floor_git_env(e)
     notice = None
-    dev_t = _try_table("devices", root) or {}
     for ln in lines:
         if ln.get("bad"):
             continue
@@ -4203,32 +4216,20 @@ def _floor(event: str, hook_args: List[str], stdin_lines: List[str], *, env: Opt
             if cls != "employer":
                 what = "a personal identity" if cls == "personal" else "an identity not on the employer allowlist"
                 return _floor_block("I1", f"{kind} {sha[:12]} in the push has {what} as {role}; "
-                                          "an employer repo takes only employer identities (rewrite it in "
-                                          "Cursor or Codex with the employer identity)")
+                                          "an employer repo takes only employer identities (rewrite it with the "
+                                          "employer identity)")
     _cur, dflt = _repo_heads(top) if top is not None else (None, None)
-    all_deletes = bool(lines) and all(
-        not ln.get("bad") and _ZERO_SHA_RE.match(ln["local_sha"]) and ln["remote_ref"].startswith("refs/heads/")
-        and _ref_kind(ln["remote_ref"], dflt) == "non-default" for ln in lines)
-    if ancestry is None:
-        raw, err = _walk_ancestry_ex(None, ps, 12)
-        if err:
-            return _floor_block("I2", f"a Claude-family push to an employer repo: ancestry unavailable ({err}), so "
-                                      "vetted housekeeping cannot be verified; run the vetted script with the "
-                                      "sandbox off for that one command, or route to Cursor or Codex")
-        chain = _norm_chain(raw)
-    else:
-        chain = _norm_chain(ancestry)
-    anc, why = _vetted_ancestor(chain, home=home, root=root)
-    if anc is None:
-        return _floor_block("I2", f"a Claude-family push to an employer repo outside vetted housekeeping ({why}); "
-                                  "run the vetted script (prune-our-branches) or route to Cursor or Codex")
-    if not all_deletes:
-        return _floor_block("housekeeping-shape", f"{anc['script']} may push only deletions of non-default branches")
-    refs = [ln["remote_ref"] for ln in lines]
-    if not _intent_matches(anc["pid"], str(anc["script"]), refs, home):
-        return _floor_block("housekeeping-shape", f"no intent line from {anc['script']} (pid {anc['pid']}) for "
-                                                  "exactly these refs")
-    return _floor_allow(notice or f"vetted housekeeping by {anc['script']}")
+    for ln in lines:
+        ref = str(ln.get("remote_ref") or "")
+        if ln.get("bad") or not ref.startswith("refs/heads/"):
+            return _floor_block("I2", f"pre-push: '{ref or 'an unreadable ref'}' is not a feature branch; on an "
+                                      "employer repo an agent pushes only feature branches (centric-engineering: "
+                                      "branch -> PR -> human review)")
+        if _ref_kind(ref, dflt) != "non-default":
+            return _floor_block("I2", f"pre-push: '{ref}' is the default branch (or the default cannot be read); "
+                                      "an agent never pushes it on an employer repo (centric-engineering: "
+                                      "branch -> PR -> human review)")
+    return _floor_allow(notice)
 
 
 # --------------------------------------------------------------------------- CLI
@@ -4489,8 +4490,7 @@ def _fixture_root(tmp: Path) -> Path:
 
 AP_FIXTURES = TOOLS / "fixtures" / "action_policy"
 CLAUDE_ANC = [{"comm": "claude"}]
-_ORACLE_ORDER = ("P00", "P05", "P10", "P11", "P12", "P13", "P14", "P20", "P19", "P21", "P22", "P40", "P30", "P31",
-                 "P32", "P33", "P50")
+_ORACLE_ORDER = ("P00", "P05", "P10", "P40", "P30", "P31", "P32", "P33", "P20", "P19", "P21", "P22", "P50")
 
 
 def _t7_fixture_root(tmp: Path) -> Path:
@@ -4506,36 +4506,33 @@ def _t7_fixture_root(tmp: Path) -> Path:
 
 
 def _oracle(f: dict) -> str:
-    """Item 9 written out independently of the table (dev-a = work, dev-b = personal)."""
+    """Item 9 written out independently of the table (dev-a = work, dev-b = personal). Claude joined
+    Cursor and Codex as an employer-approved surface on 2026-10-06 (decision-claude-employer-surface)."""
     fam, dev, oc, ac = f["walls_family"], f["device"], f["owner_class"], f["action_class"]
     agent = f["chain_has_agent"]
+    approved = ("claude", "cursor", "codex")
     if not agent:
         return "allow"
     if f["hook_bypass"]:
         return "deny"
-    if fam == "claude":
-        if oc == "employer":
-            if ac in ("meta", "housekeeping"):
-                return "allow" if (dev == "dev-a" and f["via"] == "vetted") else "deny"
-            if ac in ("content-read", "author", "publish"):
-                return "route"
-            return "deny"
-        if not f["positively_personal"] and f["under_projects_root"]:
-            return "deny"
-        if not f["under_projects_root"] and not f["has_remote"]:
-            return "allow"
-        if not f["positively_personal"] and not f["under_projects_root"]:
-            return "allow" if ac in ("meta", "content-read") else "deny"
+    if fam == "claude" and oc == "employer" and dev == "dev-a" and ac in ("meta", "housekeeping") \
+            and f["via"] == "vetted":
+        return "allow"  # P10: vetted housekeeping keeps its receipt
     if dev == "dev-b" and oc == "employer" and ac in ("author", "publish", "merge"):
         return "deny"
-    if fam in ("cursor", "codex") and dev == "dev-a" and oc == "employer":
+    if fam in approved and dev == "dev-a" and oc == "employer":
         if ac == "merge":
             return "deny"
         if ac in ("author", "publish") and f["target_ref"] in ("default", "unknown"):
             return "deny"
         return "allow"
-    if fam in ("cursor", "codex") and not f["under_projects_root"] and not f["has_remote"]:
+    if fam in approved and not f["under_projects_root"] and not f["has_remote"]:
         return "allow"  # P33 (Sean 2026-09-24): local scratch dirs, as P19 is for Claude
+    if fam == "claude":
+        if not f["positively_personal"] and f["under_projects_root"]:
+            return "deny"
+        if not f["positively_personal"] and not f["under_projects_root"]:
+            return "allow" if (ac in ("meta", "content-read") and oc in ("third-party", "unknown")) else "deny"
     if oc == "personal":
         return "allow"
     return "deny"
@@ -4733,7 +4730,8 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     d = policy_decide({"walls_family": "claude", "device": "dev-a", "owner_class": "unknown", "action_class": "meta",
                        "positively_personal": False, "under_projects_root": False, "has_remote": False,
                        "chain_has_agent": True, "hook_bypass": False}, table)
-    ok(d["rule_id"] == "P19-claude-no-remote-outside-root" and d["outcome"] == "allow", "P19 row")
+    ok(d["rule_id"] == "P33-cc-no-remote-outside-root" and d["outcome"] == "allow",
+       "P33 row (covers Claude since 2026-10-06; P19 stays as the Claude belt behind it)")
     d = policy_decide({"walls_family": "claude", "device": "dev-a", "owner_class": "third-party",
                        "action_class": "content-read", "positively_personal": False, "under_projects_root": False,
                        "has_remote": True, "chain_has_agent": True, "hook_bypass": False}, table)
@@ -4754,11 +4752,18 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
             ({"walls_family": "claude", "device": "work-mbp", "owner_class": "employer", "action_class": "housekeeping",
               "via": "vetted", "chain_has_agent": True, "hook_bypass": False}, "allow"),
             ({"walls_family": "claude", "device": "work-mbp", "owner_class": "employer", "action_class": "housekeeping",
-              "via": "composed", "chain_has_agent": True, "hook_bypass": False}, "deny"),
+              "via": "composed", "chain_has_agent": True, "hook_bypass": False}, "allow"),
             ({"walls_family": "claude", "device": "personal-mbp", "owner_class": "employer", "action_class": "meta",
-              "via": "vetted", "chain_has_agent": True, "hook_bypass": False}, "deny"),
+              "via": "vetted", "positively_personal": False, "under_projects_root": True,
+              "chain_has_agent": True, "hook_bypass": False}, "deny"),
             ({"walls_family": "claude", "device": "work-mbp", "owner_class": "employer", "action_class": "author",
-              "via": "composed", "chain_has_agent": True, "hook_bypass": False}, "route"),
+              "via": "composed", "target_ref": "non-default", "chain_has_agent": True, "hook_bypass": False}, "allow"),
+            ({"walls_family": "claude", "device": "work-mbp", "owner_class": "employer", "action_class": "publish",
+              "target_ref": "default", "chain_has_agent": True, "hook_bypass": False}, "deny"),
+            ({"walls_family": "claude", "device": "work-mbp", "owner_class": "employer", "action_class": "merge",
+              "chain_has_agent": True, "hook_bypass": False}, "deny"),
+            ({"walls_family": "claude", "device": "personal-mbp", "owner_class": "employer", "action_class": "author",
+              "chain_has_agent": True, "hook_bypass": False}, "deny"),
             ({"walls_family": "cursor", "device": "work-mbp", "owner_class": "employer", "action_class": "merge",
               "chain_has_agent": True, "hook_bypass": False}, "deny"),
             ({"walls_family": "cursor", "device": "work-mbp", "owner_class": "employer", "action_class": "publish",
@@ -4855,27 +4860,33 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
         return policy(root=root, home=home, detection=det, **kw)
 
     r = pol(claude, command="git push origin --delete feat/done")
-    ok(r["outcome"] == "deny" and r["rule_id"] == "P11-claude-employer-composed",
-       f"composed push --delete under a Claude chain is denied: {r['rule_id']}")
+    ok(r["outcome"] == "allow" and r["rule_id"] == "P32-cc-work-employer" and not r["receipt"],
+       f"composed feature-branch delete under a Claude chain on the work device is allowed (P32): {r['rule_id']}")
+    r = pol(claude, command="git push origin --delete feat/done", device="dev-b")
+    ok(r["outcome"] == "deny", f"the same delete off the work device is denied: {r['rule_id']}")
     r = pol(detect_surface(env={"WS_VETTED": "1", "WS_WALL_OK": "1"}, ancestry=CLAUDE_ANC, isatty=HUMAN_TTY, root=root),
             command="WS_VETTED=1 WS_WALL_OK=1 git push origin --delete feat/done")
-    ok(r["outcome"] == "deny" and r["facts"]["via"] == "composed", "hand-set WS_VETTED / WS_WALL_OK is denied")
+    ok(r["facts"]["via"] == "composed" and not r["receipt"], "hand-set WS_VETTED / WS_WALL_OK stays composed")
     r = pol(claude, command="git push origin --delete feat/done", via="vetted")
     ok(r["outcome"] == "allow" and r["rule_id"] == "P10-claude-employer-vetted" and r["receipt"], "vetted what-if: P10")
     r = pol(claude, command="git push origin --delete feat/done", via="vetted", device="dev-b")
     ok(r["outcome"] == "deny", "vetted housekeeping is work-device only")
     hof = ws_paths(home=home)["telemetry"] / "handoffs.jsonl"
-    r = pol(claude, command="git commit -m x")
-    ok(r["outcome"] == "route" and r["route_to"] == ["cursor", "codex"] and "route: cursor or codex" in r["reason"]
-       and not r["handoff_written"], "author on employer routes; no telemetry/ means no handoff write")
     ws_paths(home=home)["telemetry"].mkdir(parents=True, exist_ok=True)
     r = pol(claude, command="git commit -m x")
-    lines = hof.read_text(encoding="utf-8").splitlines() if hof.exists() else []
-    ok(r["handoff_written"] and len(lines) == 1 and json.loads(lines[0])["repo_slug"] == "acme-corp/widget"
-       and "/" not in json.loads(lines[0])["summary"], "a route on a Claude host appends one handoff (no paths)")
+    ok(r["outcome"] == "deny" and r["rule_id"] == "P31-cc-work-employer-default" and not r["handoff_written"],
+       f"Claude author on the employer default branch is denied (P31), no route: {r['rule_id']}")
+    _g(genv, "switch", "-q", "feat/done", cwd=emp)
+    r = pol(claude, command="git commit -m x")
+    ok(r["outcome"] == "allow" and r["rule_id"] == "P32-cc-work-employer",
+       f"Claude author on an employer feature branch is allowed (P32): {r['rule_id']}")
+    r = pol(claude, command="gh pr merge 1")
+    ok(r["outcome"] == "deny" and r["rule_id"] == "P30-cc-work-employer-merge", "Claude merge on employer is denied (P30)")
+    _g(genv, "switch", "-q", "main", cwd=emp)
+    ok(not hof.exists(), "no rule routes Claude any more, so no handoff line is written")
     r = pol(claude, command="git fetch && git commit -m x")
     ok(r["outcome"] == "deny", "multi-invocation: the most restrictive outcome wins")
-    r = pol(claude, repo=str(pers), command=f"cd {emp} && git push origin --delete feat/done")
+    r = pol(claude, repo=str(pers), command=f"cd {emp} && git push origin main")
     ok(r["outcome"] == "deny" and r["facts"]["owner_class"] == "employer", "cd into another repo is evaluated there")
     for text, why in ((f"GIT_DIR={emp}/.git git push origin main", "GIT_DIR= prefix"),
                       (f"env GIT_DIR={emp}/.git git push origin main", "env GIT_DIR="),
@@ -4943,7 +4954,8 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
         kept4 = [(v4[f"GIT_CONFIG_KEY_{i}"], v4[f"GIT_CONFIG_VALUE_{i}"]) for i in range(n4)
                  if not v4[f"GIT_CONFIG_KEY_{i}"].startswith(f"url.{realb}.")]
         got4 = [(lv4[f"GIT_CONFIG_KEY_{i}"], lv4[f"GIT_CONFIG_VALUE_{i}"]) for i in range(int(lv4["GIT_CONFIG_COUNT"]))]
-        ok(got4 == kept4 and len(got4) < n4, "lift_env over today's rendered overlay drops exactly its transport block")
+        ok(got4 == kept4 and len(got4) == n4,
+           "today's rendered overlay carries no transport block (retired 2026-10-06), so lift_env keeps every pair")
 
     # ---- vetted_status and the pinned lock
     script_rel = "09-tools/fixture-housekeeper.py"
@@ -4965,7 +4977,9 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     still = _g(genv, "--git-dir", str(bare), "show-ref", "--verify", "--quiet", "refs/heads/feat/done").returncode == 0
     ok(comp.returncode != 0 and still, "the transport block makes a composed employer push --delete fail")
     printed: List[str] = []
-    with vetted_context("fixture-housekeeper", str(emp), script, home=home, root=root, detection=claude, device="dev-a",
+    # Off the work device (dev-b) a composed employer delete is denied, so a hash mismatch, which runs as
+    # composed, cannot borrow the vetted allowance. On dev-a composed is allowed since 2026-10-06 (P32).
+    with vetted_context("fixture-housekeeper", str(emp), script, home=home, root=root, detection=claude, device="dev-b",
                         env=base_env, out=printed.append) as ctx:
         denied = ctx.run(["git", "push", "origin", "--delete", "feat/done"], action="remote-branch-delete",
                          refs=["refs/heads/feat/done"])
@@ -5050,7 +5064,7 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     ok(vetted_status("fixture-housekeeper", home=home, root=root)["status"] == "vetted",
        "removing the vault row without a pin advance keeps the pinned registration")
     _write(root / TABLE_PATHS["vetted-scripts"], (AP_FIXTURES / "vetted-scripts.json").read_text(encoding="utf-8"))
-    with vetted_context("fixture-housekeeper", str(emp), script, home=home, root=root, detection=claude, device="dev-a",
+    with vetted_context("fixture-housekeeper", str(emp), script, home=home, root=root, detection=claude, device="dev-b",
                         env=base_env, out=None, assume_unpinned=True) as ctx:
         r = ctx.run(["git", "fetch", "origin"], action="fetch")
     ok(r.returncode == 126 and ctx.status["status"] == "unpinned", "the vault-module fallback is always unpinned")
@@ -5059,14 +5073,14 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
         r = ctx.run(["git", "fetch", "origin"], action="fetch")
     ok(r.returncode == 0, "a human run is not policy-gated even unpinned")
 
-    # ---- today's v4 overlay: composed fails, the lifted env succeeds (synthetic owners)
+    # ---- today's rendered overlay: no transport block since 2026-10-06, so a composed employer
+    # feature-branch delete reaches the remote (the floor and the policy decide; synthetic owners)
     if v4 is not None:
         emp2, bare2, _e = _employer_pair(tmp, home, slug="acme-corp/gadget")
         comp = _g(v4, "push", "origin", "--delete", "feat/done", cwd=emp2)
-        lifted_run = _g(lift_env(v4), "push", "origin", "--delete", "feat/done", cwd=emp2)
         gone = _g(genv, "--git-dir", str(bare2), "show-ref", "--verify", "--quiet", "refs/heads/feat/done").returncode != 0
-        ok(comp.returncode != 0 and lifted_run.returncode == 0 and gone,
-           "present-state regression: v4's transport block fails a composed push --delete; the lifted env succeeds")
+        ok(comp.returncode == 0 and gone,
+           "present-state regression: today's overlay lets a composed employer feature-branch delete through")
 
     # ---- receipts are machine-local and never create control/
     try:
@@ -5120,7 +5134,7 @@ def _t8_repo(where: Path, url: Optional[str], email: Optional[str], home: Path, 
 
 def _t8_oracle(fam: str, dev: str, repo_cls: str, eff: str, ovr_for: Optional[str]) -> Tuple[Optional[str], List[str], bool]:
     """(expected, invariants_hit, flag raised) written out from the plan, independent of the table."""
-    if fam == "claude":
+    if fam == "claude" and repo_cls == "personal":
         expected, rule, overridable = "pat", "IR1", False
     elif dev == "dev-a":
         expected, rule, overridable = "acme-id", "IR2", True
@@ -5130,11 +5144,9 @@ def _t8_oracle(fam: str, dev: str, repo_cls: str, eff: str, ovr_for: Optional[st
         expected, rule, overridable = None, None, False
     hits: List[str] = []
     if repo_cls == "employer":
-        expected = None if fam == "claude" else "acme-id"
+        expected = "acme-id"
         if eff != "acme-id":
             hits.append("I1")
-        if fam == "claude":
-            hits.append("I2")
     flag = rule is not None and eff != expected and "I1" not in hits
     if flag and overridable and repo_cls != "employer" and ovr_for == eff:
         flag = False
@@ -5224,7 +5236,11 @@ def _t8_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     ok(mism == 0, "identity matrix matches the oracle (family x device x repo x effective x override)")
     r = identity(repo=str(repos[("employer", "acme-id")]), family="claude", device="dev-a", root=root, env=genv,
                  home=home, detection=human)
-    ok(r["allowed"] == [] and "I2" in r["invariants_hit"], "Claude on an employer repo: no identity allowed, I2")
+    ok(r["allowed"] == ["acme-id"] and r["expected"] == "acme-id" and not r["invariants_hit"],
+       "Claude on an employer repo: the employer identity, no invariant hit (2026-10-06)")
+    r = identity(repo=str(repos[("employer", "pat")]), family="claude", device="dev-a", root=root, env=genv,
+                 home=home, detection=human)
+    ok("I1" in r["invariants_hit"], "Claude with a personal identity on an employer repo still hits I1")
     # The I1 check reads the allowlisted domain: an author at exactly that domain is employer (no I1, but
     # still flagged as an undeclared identity); an author at a lookalike domain is other and hits I1.
     for label, mail, want_cls, want_hits in (("an allowlisted-domain", "y@acme-corp.example", "employer", []),
@@ -5302,13 +5318,21 @@ def _t8_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     ok(floor("pre-commit", root)["decision"] == "allow", "floor: the workspace commits")
     for ev in ("pre-commit", "commit-msg", "pre-merge-commit"):
         d = floor(ev, emp, ["x"] if ev == "commit-msg" else [])
-        ok(d["decision"] == "block" and d["rule"] == "I2", f"floor: employer {ev} blocks I2: {d}")
+        ok(d["decision"] == "allow", f"floor: employer {ev} with the employer identity is allowed (2026-10-06): {d}")
+        penv = dict(fenv, GIT_AUTHOR_NAME="Pat", GIT_AUTHOR_EMAIL=pat_mail)
+        d = floor_decide(ev, ["x"] if ev == "commit-msg" else [], [], env=penv, ancestry=CLAUDE_ANC, root=root,
+                         home=home, cwd=emp)
+        ok(d["decision"] == "block" and d["rule"] == "I1",
+           f"floor: personal content into an employer repo stays blocked: {ev} with a personal author blocks I1: {d}")
     _g(fenv, "commit", "-q", "--allow-empty", "-m", "base", cwd=emp)
     head = _g(fenv, "rev-parse", "HEAD", cwd=emp).stdout.strip()
     zero = "0" * 40
     d = floor("pre-push", emp, ["origin", "git@github.com:acme-corp/w.git"],
               [f"(delete) {zero} refs/heads/feat/done {head}"], anc=[{"comm": "git"}, {"comm": "zsh"}, {"comm": "claude"}])
-    ok(d["decision"] == "block" and d["rule"] == "I2", f"floor: model-composed employer push --delete blocks I2: {d}")
+    ok(d["decision"] == "allow", f"floor: a composed employer feature-branch delete is allowed: {d}")
+    d = floor("pre-push", emp, ["origin", "git@github.com:acme-corp/w.git"],
+              [f"refs/heads/feat/x {head} refs/heads/feat/x {zero}"])
+    ok(d["decision"] == "allow", f"floor: an employer feature-branch push with employer commits is allowed: {d}")
     _g(fenv, "-c", f"user.email={pat_mail}", "commit", "-q", "--allow-empty", "-m", "personal", cwd=emp)
     top = _g(fenv, "rev-parse", "HEAD", cwd=emp).stdout.strip()
     d = floor("pre-push", emp, ["origin", "git@github.com:acme-corp/w.git"],
@@ -5317,8 +5341,9 @@ def _t8_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     d = floor("pre-push", emp, ["origin", "/somewhere/local.git"], [f"refs/heads/main {top} refs/heads/main {zero}"])
     ok(d["decision"] == "block" and d["rule"] == "I1", f"floor: I1 over a new branch (no remote sha): {d}")
     blocked = str(load_table("context-remotes", root=root)["blocked_scheme"])
-    d = floor("pre-push", pers, ["origin", blocked + "w.git"], [f"(delete) {zero} refs/heads/x {head}"])
-    ok(d["decision"] == "block", f"floor: a blocked-scheme URL is employer: {d}")
+    d = floor("pre-push", pers, ["origin", blocked + "w.git"], [f"(delete) {zero} refs/heads/main {head}"])
+    ok(d["decision"] == "block" and d["rule"] == "I2",
+       f"floor: a legacy blocked-scheme URL still classifies employer (its default branch blocks): {d}")
     uncached = _t8_repo(home / "Projects" / "looks-mine", "git@github.com:pat-sample/looks-mine.git", pat_mail, home)
     d = floor("pre-commit", uncached, cache={"checkouts": []})
     ok(d["decision"] == "block" and d["rule"] == "not-positively-personal" and "scan" in d["reason"],
@@ -5338,55 +5363,25 @@ def _t8_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     ok(d["decision"] == "allow" and "infrastructure error" in (d["notice"] or ""), "floor: infrastructure errors allow")
     ok(floor("post-checkout", emp)["decision"] == "allow", "floor: an unknown event allows")
 
-    # ---- the vetted housekeeping shape
-    script = _write(root / "09-tools" / "fixture-housekeeper.py", "# fixture housekeeper v1\n")
-    _pin_fixture(home, root, "09-tools/fixture-housekeeper.py", git_blob_sha(script))
-    _write(ws_paths(home=home)["root_file"], f"{root}\n")
-    ctrl = ws_paths(home=home)["control"]
-
-    def intent(pid: int, refs: List[str], script_id: str = "fixture-housekeeper") -> None:
-        _append_jsonl(ctrl / "receipts.jsonl", {"type": "intent", "ts": _now_z(), "pid": pid, "ppid": 1,
-                                               "script": script_id, "script_blob": git_blob_sha(script),
-                                               "repo_slug": "acme-corp/w", "action_class": "housekeeping",
-                                               "action": "remote-branch-delete", "refs": refs})
-
-    vet = [{"pid": 900, "comm": "git", "args": "git push origin --delete feat/done"},
-           {"pid": 4242, "comm": "Python", "args": f"/usr/bin/python3 -I {script} --apply"},
-           {"pid": 10, "comm": "claude", "args": "claude"}]
+    # ---- centric-engineering at the floor: feature branches only, whatever the ancestry (2026-10-06)
     dl = [f"(delete) {zero} refs/heads/feat/done {head}"]
-    intent(4242, ["refs/heads/feat/done"])
-    d = floor("pre-push", emp, ["origin", "git@github.com:acme-corp/w.git"], dl, anc=vet)
-    ok(d["decision"] == "allow" and "vetted" in (d["notice"] or ""), f"floor: the vetted shape is allowed: {d}")
-    rel = [dict(vet[0]), dict(vet[1], args="python3 -I 09-tools/fixture-housekeeper.py"), vet[2]]
-    d = floor("pre-push", emp, ["origin", "u"], dl, anc=rel)
-    ok(d["rule"] == "I2" and "relative" in d["reason"], f"floor: a relative script path is never vetted: {d}")
-    noi = [dict(vet[0]), dict(vet[1], args=f"/usr/bin/python3 {script} --apply"), vet[2]]
-    d = floor("pre-push", emp, ["origin", "u"], dl, anc=noi)
-    ok(d["rule"] == "I2" and "-I" in d["reason"], f"floor: a vetted script run without -I is not vetted: {d}")
 
     def ps_denied(_cols: str) -> str:
         raise PermissionError("operation not permitted")
 
     d = floor_decide("pre-push", ["origin", "u"], dl, env=fenv, ancestry=None, ps=ps_denied, root=root, home=home,
                      cwd=emp)
-    ok(d["rule"] == "I2" and "ancestry unavailable" in d["reason"] and "sandbox" in d["reason"],
-       f"floor: a denied ps names the cause instead of 'model-composed': {d}")
-    d = floor("pre-push", emp, ["origin", "u"], [f"(delete) {zero} refs/heads/feat/other {head}"], anc=vet)
-    ok(d["rule"] == "housekeeping-shape", f"floor: refs that differ from the intent line block: {d}")
-    d = floor("pre-push", emp, ["origin", "u"], [f"(delete) {zero} refs/heads/main {head}"], anc=vet)
-    ok(d["rule"] == "housekeeping-shape", f"floor: deleting the default branch blocks: {d}")
-    d = floor("pre-push", emp, ["origin", "u"], [f"refs/heads/main {head} refs/heads/main {zero}"], anc=vet)
-    ok(d["decision"] == "block", f"floor: a vetted non-delete push blocks: {d}")
-    ok(floor("pre-push", emp, ["origin", "u"], dl, anc=[vet[0], dict(vet[1], pid=5555), vet[2]])["rule"]
-       == "housekeeping-shape", "floor: an intent line from another pid does not count")
-    intent(4343, ["refs/heads/feat/done"])
-    fake = [vet[0], {"pid": 4343, "comm": "python3", "args": f"python3 {tmp}/elsewhere-copy.py"}, vet[2]]
-    ok(floor("pre-push", emp, ["origin", "u"], dl, anc=fake)["rule"] == "I2",
-       "floor: an unregistered python script is model-composed (I2)")
-    _write(script, "# edited, not pinned\n")
-    d = floor("pre-push", emp, ["origin", "u"], dl, anc=vet)
-    ok(d["rule"] == "I2" and "differ" in d["reason"], f"floor: a hash mismatch is not vetted: {d}")
-    _write(script, "# fixture housekeeper v1\n")
+    ok(d["decision"] == "allow", f"floor: a feature-branch delete needs no ancestry (a denied ps is no block): {d}")
+    d = floor("pre-push", emp, ["origin", "u"], [f"(delete) {zero} refs/heads/main {head}"])
+    ok(d["decision"] == "block" and d["rule"] == "I2", f"floor: deleting the default branch blocks I2: {d}")
+    d = floor("pre-push", emp, ["origin", "u"], [f"refs/heads/main {head} refs/heads/main {zero}"])
+    ok(d["decision"] == "block" and d["rule"] == "I2" and "default branch" in d["reason"],
+       f"floor: a push to the employer default branch blocks I2: {d}")
+    d = floor("pre-push", emp, ["origin", "u"], [f"refs/tags/v1 {head} refs/tags/v1 {zero}"])
+    ok(d["decision"] == "block" and d["rule"] == "I2", f"floor: a tag push to an employer repo blocks I2: {d}")
+    d = floor("pre-push", emp, ["origin", "u"], [f"refs/heads/feat/a {head} refs/heads/feat/a {zero}",
+                                                  f"refs/heads/main {head} refs/heads/main {zero}"])
+    ok(d["decision"] == "block" and d["rule"] == "I2", f"floor: one default-branch line blocks the whole push: {d}")
     ok(all(r in FLOOR_RULES for r in ("I1", "I2", "IR1", "housekeeping-shape", "not-positively-personal")),
        "floor rule ids")
 

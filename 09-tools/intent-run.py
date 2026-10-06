@@ -1510,8 +1510,9 @@ def _detection() -> dict:
 
 
 def _restricted(det: dict) -> bool:
-    """A Claude chain (or an undetermined agent) never reads or writes non-personal repos."""
-    return det.get("family_for_walls") in ("claude", "unknown-agent")
+    """An undetermined agent never reads or writes non-personal repos. Claude left this wall on 2026-10-06
+    (decision-claude-employer-surface): it now meets employer repos like Cursor and Codex."""
+    return det.get("family_for_walls") == "unknown-agent"
 
 
 def _resolve_repo(target) -> dict:
@@ -1763,7 +1764,7 @@ def resolve_inheritance(child: dict, meta: dict, det: dict, *, depth: int = 1,
         return out + [("ERROR", f"child conduct {child.get('profile')} is looser than parent {slug} "
                                 f"({pres.get('profile')})")]
     if c_cls != "personal" and _restricted(det):
-        return out + [("WARN", f"parent {slug} is not read from this chain (route: cursor|codex)")]
+        return out + [("WARN", f"parent {slug} is not read from this chain (route: claude|cursor|codex)")]
     w = _where(slug, det)
     if not w.get("paths"):
         return out + [("WARN", f"parent {slug} not on this device ({w.get('status')})")]
@@ -2194,7 +2195,7 @@ def cmd_init_frame(repo: str | None, *, neutral: bool = False, stdout: bool = Fa
             # The Claude refusal runs through the action policy before anything in the repo is read.
             pol = _policy(top, "author", det)
             if pol.get("outcome") != "allow" or not (pol.get("facts") or {}).get("positively_personal"):
-                route = " or ".join(pol.get("route_to") or []) or "cursor or codex"
+                route = " or ".join(pol.get("route_to") or []) or "claude, cursor or codex"
                 print(f"REFUSED — {pol.get('reason') or 'not positively personal'}", file=sys.stderr)
                 print(f"route: {route} runs `intent-run init --frame --repo <path> --neutral --stdout` "
                       "and lands it by branch → PR → human review", file=sys.stderr)
@@ -2622,7 +2623,7 @@ def _content_gate(target: Path, det: dict) -> str | None:
     except Exception as exc:
         return f"resolver unavailable ({type(exc).__name__}); fail-closed"
     if pol.get("outcome") != "allow":
-        route = " or ".join(pol.get("route_to") or []) or "cursor or codex"
+        route = " or ".join(pol.get("route_to") or []) or "claude, cursor or codex"
         return f"{pol.get('reason') or 'not allowed from this chain'} — route: {route}"
     return None
 
@@ -3935,6 +3936,10 @@ def _st_scope_audit() -> None:
 
 CLAUDE_DET = {"acting_host": "claude-code", "family": "claude", "family_for_walls": "claude", "via": "ancestry",
               "verified": True, "agent_possible": True}
+# The restricted exemplar: an agent the surfaces table cannot name. Claude was the exemplar until 2026-10-06
+# (decision-claude-employer-surface); it now meets employer repos like Cursor.
+RESTRICTED_DET = {"acting_host": "unknown", "family": "unknown-agent", "family_for_walls": "unknown-agent",
+                  "via": "none", "verified": False, "agent_possible": True}
 CURSOR_DET = {"acting_host": "cursor", "family": "cursor", "family_for_walls": "cursor", "via": "env",
               "verified": True, "agent_possible": False}
 LANE_CFG = '[hook "ws-lane-commit-msg"]\n\tcommand = true\n\tevent = commit-msg\n'
@@ -4038,7 +4043,7 @@ def _st_project_frame() -> None:
         emp = _fx_repo(projects, "emp", "acme-corp/widget", {"README.md": "x\n"})
         mine = _fx_repo(td, "mine", "pat-sample/child", {"README.md": "x\n"}, agents=False)
         _fx_cache(home, {"acme-corp/widget": emp})
-        # Claude chain + not-personal repo: refused through the policy, nothing in the repo read or written.
+        # Restricted chain + not-personal repo: refused through the policy, nothing in the repo read or written.
         before = _snapshot(emp)
         seen: list[str] = []
         real_open = builtins.open
@@ -4047,17 +4052,19 @@ def _st_project_frame() -> None:
             seen.append(str(file))
             return real_open(file, *a, **kw)
 
-        with _pr_context(root, home, CLAUDE_DET), mock.patch("builtins.open", spy), mock.patch("io.open", spy):
+        with _pr_context(root, home, RESTRICTED_DET), mock.patch("builtins.open", spy), mock.patch("io.open", spy):
             rc, out = _quiet(cmd_init_frame, str(emp))
         assert rc == 4 and "REFUSED" in out and "route" in out, (rc, out)
         read_in_repo = [p for p in seen if p.startswith(str(emp) + "/") and not p.startswith(str(emp / ".git"))]
         assert not read_in_repo, read_in_repo
         assert _snapshot(emp) == before, "refused init changed the employer repo"
-        # Non-Claude surface + not-personal repo: the neutral render on stdout, never written.
-        with _pr_context(root, home, CURSOR_DET):
-            rc, out = _quiet(cmd_init_frame, str(emp))
-        assert rc == 0 and "## Project intent" in out and "profile:" not in out, out
-        assert "nothing was written" in out and _snapshot(emp) == before
+        # An approved surface (Cursor; Claude since 2026-10-06) + not-personal repo: the neutral render on
+        # stdout, never written.
+        for det in (CURSOR_DET, CLAUDE_DET):
+            with _pr_context(root, home, det):
+                rc, out = _quiet(cmd_init_frame, str(emp))
+            assert rc == 0 and "## Project intent" in out and "profile:" not in out, (det["family"], out)
+            assert "nothing was written" in out and _snapshot(emp) == before, det["family"]
         assert workspace_leak_hits(render_project_intent(neutral=True)) == []
         assert workspace_leak_hits(render_project_intent(neutral=False)), "workspace render should be flagged"
         # Claude chain + personal repo: PROJECT.md and the AGENTS.md pointer are written.
@@ -4174,10 +4181,12 @@ def _st_provenance() -> None:
             assert not _levels(lint_repo(ok, CURSOR_DET), "ERROR")
             bad = _fx_repo(td, "emp-date", "acme-corp/pr-bad", {PROJECT_FILE: approved})
             assert any("approved via PR" in m for m in _levels(lint_repo(bad, CURSOR_DET), "ERROR"))
-        # A Claude chain never lints an employer repo: the policy routes it.
-        with _pr_context(root, home, CLAUDE_DET):
-            f = lint_repo(ok, CLAUDE_DET)
+        # A restricted chain never lints an employer repo: the policy refuses it. Claude lints it like Cursor.
+        with _pr_context(root, home, RESTRICTED_DET):
+            f = lint_repo(ok, RESTRICTED_DET)
             assert f and f[0][0] == "REFUSED", f
+        with _pr_context(root, home, CLAUDE_DET):
+            assert not _levels(lint_repo(ok, CLAUDE_DET), "ERROR")
 
 
 def _st_approve_and_record() -> None:
@@ -4343,19 +4352,21 @@ def _st_remediation_recon() -> None:
             seen.append(str(file))
             return real_open(file, *a, **kw)
 
-        # Claude chain + employer repo: routed through the content-read policy; the tree stays byte-identical.
+        # Restricted chain + employer repo: refused through the content-read policy; the tree stays byte-identical.
         before = _snapshot(emp)
-        with _pr_context(root, home, CLAUDE_DET), mock.patch("builtins.open", spy), mock.patch("io.open", spy):
+        with _pr_context(root, home, RESTRICTED_DET), mock.patch("builtins.open", spy), mock.patch("io.open", spy):
             rc, out = _quiet(cmd_init_recon, str(emp))
         assert rc == 4 and "REFUSED" in out and "route" in out, (rc, out)
         read_in_repo = [p for p in seen if p.startswith(str(emp) + "/") and not p.startswith(str(emp / ".git"))]
         assert not read_in_repo, read_in_repo
         assert _snapshot(emp) == before, "a routed recon changed the employer repo (incl. .git/)"
-        # Non-Claude surface + employer repo: the card goes to stdout; nothing is written.
-        with _pr_context(root, home, CURSOR_DET):
-            rc, out = _quiet(cmd_init_recon, str(emp))
-        assert rc == 0 and RECON_START in out and "nothing was written" in out, out
-        assert _snapshot(emp) == before, "an employer recon wrote into the repo"
+        # An approved surface (Cursor; Claude since 2026-10-06) + employer repo: the card goes to stdout;
+        # nothing is written.
+        for det in (CURSOR_DET, CLAUDE_DET):
+            with _pr_context(root, home, det):
+                rc, out = _quiet(cmd_init_recon, str(emp))
+            assert rc == 0 and RECON_START in out and "nothing was written" in out, (det["family"], out)
+            assert _snapshot(emp) == before, "an employer recon wrote into the repo"
         # Claude chain + personal repo: stored in docs/; .env never opened; the card holds a count, not names.
         seen.clear()
         with _pr_context(root, home, CLAUDE_DET), mock.patch("builtins.open", spy), mock.patch("io.open", spy):
@@ -4405,9 +4416,9 @@ def _st_remediation_packet() -> None:
         with _pr_context(root, home, CURSOR_DET):
             rc, out = _quiet(cmd_packet, spec, "T1")
         assert rc == 1 and "not self-contained" in out, out
-        # A Claude chain never reads an employer spec: routed before any read.
+        # A restricted chain never reads an employer spec: refused before any read.
         emp = _fx_repo(td, "emp", "acme-corp/widget", {"docs/INTENT-remediation.md": _rem_text()})
-        with _pr_context(root, home, CLAUDE_DET):
+        with _pr_context(root, home, RESTRICTED_DET):
             rc, out = _quiet(cmd_packet, emp / "docs" / "INTENT-remediation.md", "T1")
         assert rc == 4 and "REFUSED" in out, out
 
@@ -4677,8 +4688,8 @@ def _st_scope_employer_pointer() -> None:
                                               err=out)
         assert [r["status"] for r in results] == ["outside"] and "ws-scope" in out.getvalue(), results
         assert _snapshot(repo) == before, "the employer tree changed"
-        # A Claude chain is refused before reading anything for set / branch / range.
-        with _pr_context(root, home, CLAUDE_DET):
+        # A restricted chain is refused before reading anything for set / branch / range.
+        with _pr_context(root, home, RESTRICTED_DET):
             rc, msg = _quiet(cmd_scope_pointer, "set", task="T1", spec=str(repo / "docs" / "INTENT.md"),
                              repo=str(repo))
             assert rc == 4 and "REFUSED" in msg, msg

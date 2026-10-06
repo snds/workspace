@@ -1254,7 +1254,7 @@ class TestSessionStatus(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stderr)
         ctx = json.loads(r.stdout)["additional_context"]
         self.assertIn("workspace: LOADED", ctx)
-        self.assertNotIn("handled by Cursor/Codex", ctx)
+        self.assertNotIn("employer projects — handled by", ctx)  # Cursor gets the full card
 
     def test_import_failure_label_is_short_hostname(self):
         import socket
@@ -1615,12 +1615,13 @@ class TestProfileResolve(unittest.TestCase):
         self.assertEqual(self.mod.owners_set("loose-work", unset=True, **human_kw)["exit"], 3)
         with self.assertRaises(self.mod.OwnersError):
             self.mod.owners_set("../elsewhere", "work", **human_kw)
-        # list is any caller; a Claude chain never sees an employer folder name
+        # list is any caller; since 2026-10-06 a Claude chain sees employer folder names too
+        # (decision-claude-employer-surface)
         self.assertEqual(self.mod.owners_set("loose-work", "work", **human_kw)["exit"], 0)
         det = self.mod.detect_surface(env={"CLAUDECODE": "1"}, ancestry=[{"comm": "claude"}],
                                       isatty={"stdin": False, "stdout": False})
         lst = self.mod.owners_list(root=root, home=home, hostname="host-a", detection=det)
-        self.assertNotIn("loose-work", json.dumps(lst))
+        self.assertIn("loose-work", json.dumps(lst))
         self.assertIn("loose-own", json.dumps(lst))
         # control/ absent: never created
         bare = Path(self._overlay_tmp()) / "bare-home"
@@ -1697,14 +1698,20 @@ class TestActionPolicy(unittest.TestCase):
         base = {"walls_family": "claude", "device": "work-mbp", "positively_personal": False,
                 "under_projects_root": False, "chain_has_agent": True, "hook_bypass": False}
         d = self.mod.policy_decide(dict(base, owner_class="unknown", action_class="author", has_remote=False), t)
-        self.assertEqual((d["rule_id"][:3], d["outcome"]), ("P19", "allow"))
+        self.assertEqual((d["rule_id"][:3], d["outcome"]), ("P33", "allow"))  # P33 covers Claude since 2026-10-06
         d = self.mod.policy_decide(dict(base, owner_class="third-party", action_class="meta", has_remote=True), t)
         self.assertEqual((d["rule_id"][:3], d["outcome"]), ("P21", "allow"))
         d = self.mod.policy_decide(dict(base, owner_class="third-party", action_class="publish", has_remote=True), t)
         self.assertEqual((d["rule_id"][:3], d["outcome"]), ("P22", "deny"))
-        d = self.mod.policy_decide({"walls_family": "cursor", "device": "personal-mbp", "owner_class": "employer",
-                                    "action_class": "author", "chain_has_agent": True, "hook_bypass": False}, t)
-        self.assertEqual((d["rule_id"][:3], d["outcome"]), ("P40", "deny"))
+        d = self.mod.policy_decide(dict(base, owner_class="employer", action_class="meta", has_remote=True), t)
+        self.assertEqual((d["rule_id"][:3], d["outcome"]), ("P32", "allow"))
+        d = self.mod.policy_decide(dict(base, owner_class="employer", action_class="content-read", has_remote=True,
+                                        device="personal-mbp"), t)
+        self.assertEqual((d["rule_id"][:3], d["outcome"]), ("P22", "deny"))  # P21 is third-party/unknown only
+        for fam in ("cursor", "claude"):
+            d = self.mod.policy_decide({"walls_family": fam, "device": "personal-mbp", "owner_class": "employer",
+                                        "action_class": "author", "chain_has_agent": True, "hook_bypass": False}, t)
+            self.assertEqual((d["rule_id"][:3], d["outcome"]), ("P40", "deny"), fam)
 
     def test_verb_map_and_hook_bypass(self):
         tmp = self._tmp()
@@ -1726,7 +1733,7 @@ class TestActionPolicy(unittest.TestCase):
         inv = self.mod.parse_command("cd /r && bash -lc \"command /usr/bin/git -C sub fetch\"")
         self.assertEqual((inv[0]["tool"], inv[0]["argv"], inv[0]["cwd_hint"]), ("git", ["fetch"], "/r/sub"))
 
-    def test_hand_set_markers_and_composed_push_delete_denied(self):
+    def test_hand_set_markers_and_claude_employer_rows(self):
         tmp = self._tmp()
         root = self.mod._t7_fixture_root(tmp)
         home = tmp / "t7-home"
@@ -1735,10 +1742,15 @@ class TestActionPolicy(unittest.TestCase):
                                       isatty={"stdin": True, "stdout": True}, root=root)
         r = self.mod.policy(repo=str(emp), command="WS_VETTED=1 WS_WALL_OK=1 git push origin --delete feat/done",
                             root=root, home=home, detection=det, device="dev-a")
-        self.assertEqual((r["outcome"], r["rule_id"]), ("deny", "P11-claude-employer-composed"))
+        # hand-set markers never make it vetted: composed, so no receipt (P32 since 2026-10-06, not P10)
+        self.assertEqual((r["outcome"], r["rule_id"], r["receipt"], r["facts"]["via"]),
+                         ("allow", "P32-cc-work-employer", False, "composed"))
         r = self.mod.policy(repo=str(emp), command="git commit -m x", root=root, home=home, detection=det,
                             device="dev-a", record=False)
-        self.assertEqual((r["outcome"], r["route_to"]), ("route", ["cursor", "codex"]))
+        self.assertEqual((r["outcome"], r["rule_id"]), ("deny", "P31-cc-work-employer-default"))
+        r = self.mod.policy(repo=str(emp), command="git push origin --delete feat/done", root=root, home=home,
+                            detection=det, device="dev-b", record=False)
+        self.assertEqual(r["outcome"], "deny")
 
 
 class TestVettedContext(unittest.TestCase):
@@ -1796,6 +1808,8 @@ class TestVettedContext(unittest.TestCase):
         self.assertFalse((home / ".config").exists())
 
     def test_present_state_v4_regression(self):
+        """Today's rendered overlay carries no employer transport block (retired 2026-10-06), so a composed
+        employer feature-branch delete reaches the remote; lift_env still strips a legacy block."""
         tmp = self._tmp()
         home = tmp / "home"
         v4 = self.mod._v4_fixture_env(self.mod._git_env(home))
@@ -1803,9 +1817,7 @@ class TestVettedContext(unittest.TestCase):
             self.skipTest("no v4 fragment in this checkout")
         emp, bare, genv = self.mod._employer_pair(tmp, home)
         composed = self.mod._g(v4, "push", "origin", "--delete", "feat/done", cwd=emp)
-        self.assertNotEqual(composed.returncode, 0)
-        lifted = self.mod._g(self.mod.lift_env(v4), "push", "origin", "--delete", "feat/done", cwd=emp)
-        self.assertEqual(lifted.returncode, 0, lifted.stderr)
+        self.assertEqual(composed.returncode, 0, composed.stderr)
         gone = self.mod._g(genv, "--git-dir", str(bare), "show-ref", "--verify", "--quiet", "refs/heads/feat/done")
         self.assertNotEqual(gone.returncode, 0)
 
@@ -1841,8 +1853,11 @@ class TestIdentity(unittest.TestCase):
         res = self.pr.validate_tables(require_all=True)["tables"]["devices"]
         self.assertTrue(res["ok"], res["errors"])
         dev = self.pr.load_table("devices")
-        rule = self.pr.identity_rule("claude", "work-mbp", dev)
+        rule = self.pr.identity_rule("claude", "work-mbp", dev, "personal")
         self.assertEqual((rule["id"], rule["identity"], rule.get("overridable")), ("IR1", "snds", False))
+        # Since 2026-10-06 Claude follows the device outside personal repos (decision-claude-employer-surface).
+        self.assertEqual(self.pr.identity_rule("claude", "work-mbp", dev, "employer")["id"], "IR2")
+        self.assertEqual(self.pr.identity_rule("claude", "work-mbp", dev)["identity"], "centric")
         self.assertEqual(self.pr.identity_rule("cursor", "work-mbp", dev)["identity"], "centric")
         self.assertEqual(self.pr.identity_rule("codex", "personal-mbp", dev)["identity"], "snds")
         self.assertIsNone(self.pr.identity_rule("cursor", "unknown", dev))
@@ -2346,7 +2361,8 @@ class TestWsHook(unittest.TestCase):
 class TestClosure(unittest.TestCase):
     """H23 + H25: the closure plan per repo class x family, the session-start sweeper (mechanical,
     unclaimed, workspace-only commits; a Cursor leftover swept by another surface's start), no git in
-    an employer repo from Claude (spied), ledger parity from the Claude, Cursor and Codex post-tool
+    an employer repo from an unnamed agent (spied; Claude closes employer work by branch and PR since 2026-10-06),
+    ledger parity from the Claude, Cursor and Codex post-tool
     goldens, and fragment limits for employer-touched sessions. Synthetic owners; temp HOME only."""
 
     def test_closure_cases(self):
@@ -2468,8 +2484,8 @@ class TestWallGuard(unittest.TestCase):
 
     def test_r4_owner_overlay_classifies(self):
         """W3-3: a non-git folder under projects_root is R4 would-ask until the device-local owner overlay
-        declares it; an employer entry makes it a classified employer decision (R2 for Cursor, R1 route
-        for Claude). A personal entry for another device changes nothing."""
+        declares it; an employer entry makes it a classified employer decision (R2 for Cursor, R1 for
+        Claude, the same P31 row since 2026-10-06). A personal entry for another device changes nothing."""
         pr = sys.modules.get("profile_resolve") or load("profile_resolve")
         with tempfile.TemporaryDirectory() as td:
             w = self.cases.build_world(pr, Path(td))
@@ -2495,7 +2511,9 @@ class TestWallGuard(unittest.TestCase):
             self.assertNotIn("R4", [r for r, _o in cur[3]], cur)
             self.assertIn(("R2", "deny"), cur[3], cur)
             cl = go("claude-code", "claude-code.write", "claude")
-            self.assertEqual(cl[:3], ("route", "R1", "P12-claude-employer-route"), cl)
+            # Since 2026-10-06 Claude meets the employer rows like Cursor; a non-git folder has no branch, so
+            # authoring there is the unknown-target default-branch rule, enforced for Claude (R1).
+            self.assertEqual(cl[:3], ("deny", "R1", "P31-cc-work-employer-default"), cl)
 
 
 class TestWorkspaceMcp(unittest.TestCase):

@@ -19,6 +19,7 @@
   "unknown_verb_class": "author",
   "default_outcome": "deny",
   "route_targets": [
+    "claude",
     "cursor",
     "codex"
   ],
@@ -194,47 +195,34 @@
       "receipt": true
     },
     {
-      "id": "P11-claude-employer-composed",
+      "id": "P40-agent-personal-mbp-employer",
       "when": {
-        "walls_family": [
-          "claude"
+        "chain_has_agent": true,
+        "device": [
+          "dev-b"
         ],
         "owner_class": [
           "employer"
         ],
         "action_class": [
-          "meta",
-          "housekeeping"
-        ],
-        "via": [
-          "composed"
+          "author",
+          "publish",
+          "merge"
         ]
       },
       "outcome": "deny",
-      "reason": "Claude runs no git in employer repos; only vetted housekeeping (e.g. prune-our-branches.py) runs there, and Cursor or Codex do the rest"
+      "reason": "employer work stays on the Work MBP"
     },
     {
-      "id": "P12-claude-employer-route",
+      "id": "P30-cc-work-employer-merge",
       "when": {
         "walls_family": [
-          "claude"
+          "claude",
+          "cursor",
+          "codex"
         ],
-        "owner_class": [
-          "employer"
-        ],
-        "action_class": [
-          "content-read",
-          "author",
-          "publish"
-        ]
-      },
-      "outcome": "route"
-    },
-    {
-      "id": "P13-claude-employer-merge",
-      "when": {
-        "walls_family": [
-          "claude"
+        "device": [
+          "dev-a"
         ],
         "owner_class": [
           "employer"
@@ -247,16 +235,60 @@
       "reason": "merge is human-only"
     },
     {
-      "id": "P14-claude-employer-other",
+      "id": "P31-cc-work-employer-default",
       "when": {
         "walls_family": [
-          "claude"
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "dev-a"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "author",
+          "publish"
+        ],
+        "target_ref": [
+          "default",
+          "unknown"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "employer work goes branch -> PR -> human review"
+    },
+    {
+      "id": "P32-cc-work-employer",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "dev-a"
         ],
         "owner_class": [
           "employer"
         ]
       },
-      "outcome": "deny"
+      "outcome": "allow"
+    },
+    {
+      "id": "P33-cc-no-remote-outside-root",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "under_projects_root": false,
+        "has_remote": false
+      },
+      "outcome": "allow"
     },
     {
       "id": "P20-claude-not-personal-under-root",
@@ -286,6 +318,10 @@
         "walls_family": [
           "claude"
         ],
+        "owner_class": [
+          "third-party",
+          "unknown"
+        ],
         "positively_personal": false,
         "under_projects_root": false,
         "action_class": [
@@ -308,99 +344,6 @@
       },
       "outcome": "deny",
       "reason": "owner not declared personal: declare it in context-remotes.json first"
-    },
-    {
-      "id": "P40-agent-personal-mbp-employer",
-      "when": {
-        "chain_has_agent": true,
-        "device": [
-          "dev-b"
-        ],
-        "owner_class": [
-          "employer"
-        ],
-        "action_class": [
-          "author",
-          "publish",
-          "merge"
-        ]
-      },
-      "outcome": "deny",
-      "reason": "employer work stays on the Work MBP"
-    },
-    {
-      "id": "P30-cc-work-employer-merge",
-      "when": {
-        "walls_family": [
-          "cursor",
-          "codex"
-        ],
-        "device": [
-          "dev-a"
-        ],
-        "owner_class": [
-          "employer"
-        ],
-        "action_class": [
-          "merge"
-        ]
-      },
-      "outcome": "deny",
-      "reason": "merge is human-only"
-    },
-    {
-      "id": "P31-cc-work-employer-default",
-      "when": {
-        "walls_family": [
-          "cursor",
-          "codex"
-        ],
-        "device": [
-          "dev-a"
-        ],
-        "owner_class": [
-          "employer"
-        ],
-        "action_class": [
-          "author",
-          "publish"
-        ],
-        "target_ref": [
-          "default",
-          "unknown"
-        ]
-      },
-      "outcome": "deny",
-      "reason": "employer work goes branch -> PR -> human review"
-    },
-    {
-      "id": "P32-cc-work-employer",
-      "when": {
-        "walls_family": [
-          "cursor",
-          "codex"
-        ],
-        "device": [
-          "dev-a"
-        ],
-        "owner_class": [
-          "employer"
-        ]
-      },
-      "outcome": "allow"
-    },
-    {
-      "id": "P33-cc-no-remote-outside-root",
-      "when": {
-        "walls_family": [
-          "cursor",
-          "codex"
-        ],
-        "under_projects_root": false,
-        "has_remote": false
-      },
-      "outcome": "allow",
-      "note": "Sean 2026-09-24: mirrors P19 for Cursor and Codex (local scratch/temp dirs); removes R4 would-ask noise from the rollout data"
     },
     {
       "id": "P50-personal",

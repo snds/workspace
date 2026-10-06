@@ -221,9 +221,10 @@ CASES = [
     "employer I1: a commit with a personal identity is blocked [I1], names the expected identity, and the repo "
     "stays byte-identical including .git/",
     "employer I1: a commit with an identity off the employer allowlist is blocked [I1]",
-    "employer Claude chain: a WS_SURFACE_FAMILY=claude commit with the employer identity is blocked [I2] and the "
-    "repo stays byte-identical including .git/",
-    "employer Claude chain: an agent-possible env (CLAUDECODE) alone tightens to the Claude floor [I2]",
+    "employer Claude chain (2026-10-06): a WS_SURFACE_FAMILY=claude commit with the employer identity passes, and the "
+    "lanes add nothing to the repo beyond git's own commit",
+    "employer Claude chain: an agent-possible env (CLAUDECODE) alone tightens to the Claude floor, which blocks a "
+    "personal identity [I1]",
     "employer: a Cursor commit with the employer identity on a feature branch passes",
     "employer pre-push: a rebase-created personal-identity commit is blocked [I1] and the remote ref is unchanged",
     "employer pre-push: employer-identity commits push",
@@ -238,7 +239,8 @@ CASES = [
     "residual: a repo-local empty event= really disables the lane (why the audit exists)",
     "residual: --no-verify and -c hook.ws-lane-pre-commit.enabled=false skip the lane (declared; H15 R6 and CI)",
     "fail-open: with the pin absent the lane allows (declared; the installer refuses without a pinned lane)",
-    "in-process: a claude process in the ancestry gets the Claude floor [I2] on an employer repo",
+    "in-process: a claude process in the ancestry meets the Claude floor first on an employer repo: the employer "
+    "identity passes (2026-10-06) and a personal identity is blocked [I1]",
     "in-process: the device-mismatch flag is a notice, never a block",
     "in-process (Sean 2026-09-24): a Cursor shell that also carries CLAUDE_CODE_SSE_PORT (an IDE terminal "
     "with the Claude extension, as the work-mbp cursor probe records) keeps Cursor's walls, and its "
@@ -286,14 +288,19 @@ def lane_cases() -> list:
                     f"rc={r.returncode} {r.stderr[-300:]}"))
         lab.g(lab.env, "config", "user.email", lab.mail("acme-id"), cwd=emp)
 
-        # Claude chain in the employer repo
+        # Claude chain in the employer repo (an employer-approved surface since 2026-10-06)
         before = snapshot(emp)
-        r = lab.g(dict(lab.env, WS_SURFACE_FAMILY="claude"), "commit", "-m", "claude on employer", cwd=emp)
-        changed = diff_snap(before, snapshot(emp))
-        out.append((CASES[3], r.returncode != 0 and "[I2]" in r.stderr and not changed,
-                    f"rc={r.returncode} changed={changed[:5]} {r.stderr[-300:]}"))
-        r = lab.g(dict(lab.env, CLAUDECODE="1"), "commit", "-m", "claude env on employer", cwd=emp)
-        out.append((CASES[4], r.returncode != 0 and "[I2]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
+        r = lab.g(dict(lab.env, WS_SURFACE_FAMILY="claude"), "commit", "--allow-empty", "-m", "claude on employer",
+                  cwd=emp)
+        own = (".git/logs/", ".git/refs/heads/", ".git/objects/", ".git/index", ".git/COMMIT_EDITMSG", ".git/ORIG_HEAD",
+               ".git/HEAD")
+        extra = [c for c in diff_snap(before, snapshot(emp)) if not any(str(c).startswith(o) for o in own)]
+        out.append((CASES[3], r.returncode == 0 and not extra, f"rc={r.returncode} extra={extra[:5]} {r.stderr[-300:]}"))
+        if r.returncode == 0:
+            lab.g(lab.env, "reset", "-q", "--soft", "HEAD~1", cwd=emp)
+        r = lab.g(lab.ident(dict(lab.env, CLAUDECODE="1"), "pat"), "commit", "--allow-empty", "-m",
+                  "claude env, personal identity", cwd=emp)
+        out.append((CASES[4], r.returncode != 0 and "[I1]" in r.stderr, f"rc={r.returncode} {r.stderr[-300:]}"))
 
         # Cursor feature-branch commit passes
         lab.g(lab.env, "switch", "-q", "-c", "feat/x", cwd=emp)
@@ -456,8 +463,11 @@ def lane_cases() -> list:
         gl._PR = None
         d = gl.lane_decide("pre-commit", [], [], env=lab.ident(lab.env, "acme-id"), ancestry=[{"comm": "claude"}],
                            root=lab.lib, home=lab.home, cwd=emp)
-        out.append((CASES[19], d["decision"] == "block" and d["rule"] == "I2" and d["lane"] == "claude-floor",
-                    json.dumps(d)[:300]))
+        dp = gl.lane_decide("pre-commit", [], [], env=lab.ident(lab.env, "pat"), ancestry=[{"comm": "claude"}],
+                            root=lab.lib, home=lab.home, cwd=emp)
+        out.append((CASES[19], d["decision"] == "allow" and d["family"] == "claude" and d["lane"] == "employer"
+                    and dp["decision"] == "block" and dp["rule"] == "I1" and dp["lane"] == "claude-floor",
+                    json.dumps(d)[:200] + " | " + json.dumps(dp)[:200]))
         lab.g(lab.env, "config", "user.email", lab.mail("acme-id"), cwd=mine)
         d = gl.lane_decide("pre-commit", [], [], env=lab.env, ancestry=[], root=lab.lib, home=lab.home, cwd=mine,
                            hostname="host-b", heal=False)

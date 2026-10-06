@@ -241,8 +241,8 @@ repo, resolved through `profile_resolve` for this surface and device. Do exactly
 | `workspace` | this workspace | Step 7 below: fold, rebuild, verify, commit, push, under the identity it names |
 | `commit-push` | positively personal | commit and push on its branch under the identity it names |
 | `hold` | personal, no identity resolved | commit nothing there; report the reason in the Session Block |
-| `handoff` | not positively personal, from Claude | a handoff note (slug and status only) in the project's Live handoff; run only the vetted command it lists; **no git** |
-| `branch-pr` | employer or not positively personal, from Cursor/Codex | feature branch, commit, push the branch, open a PR; never the default branch; a human merges |
+| `handoff` | not positively personal, from an agent the surfaces table cannot name | a handoff note (slug and status only) in the project's Live handoff; run only the vetted command it lists; **no git** |
+| `branch-pr` | employer or not positively personal, from Claude, Cursor or Codex (Claude since 2026-10-06) | feature branch, commit, push the branch, open a PR; never the default branch; a human merges |
 
 If the plan prints the **H25** line, this session touched a repo that is not positively personal, so
 your fragment may hold only `{slug, status, PR URL if allowed}` for it. Run
@@ -337,15 +337,14 @@ hygiene, not a self-merge.
 It is a **vetted script** (`02-shared-references/vetted-scripts.json`, DECISIONS-2 item 9).
 Every remote action and deletion writes an intent line and a receipt (repo slug, action,
 credential class; never a token) to `~/.config/snds-workspace/control/receipts.jsonl`.
-From a **Claude** session, a repo that is not positively personal runs only through this
+From an **agent** session, a repo that is not positively personal runs only through this
 vetted path, and only while the pinned lib holds this file's blob
 (`python3 09-tools/profile_resolve.py vetted-status prune-our-branches` prints `vetted`);
-otherwise it is skipped with a notice and zero git or gh calls. The Claude floor proves the
-vetted shape from the process table, so a sandboxed Bash that denies `ps` blocks the remote
-deletion with "ancestry unavailable": run this one command with the sandbox off. Never hand-compose the
-equivalent git or gh commands in an employer repo from Claude: the action policy denies
-that. The session block reports counts and credential classes only; receipt lines stay
-machine-local.
+otherwise it is skipped with a notice and zero git or gh calls. Since 2026-10-06 the Claude
+floor no longer requires the vetted shape for an employer push: it allows feature-branch updates
+and deletions and refuses the default branch (I2), so the vetted path is what writes the receipt,
+not what unlocks the push. The session block reports counts and credential classes only;
+receipt lines stay machine-local.
 
 ### Step 8 — Confirm
 

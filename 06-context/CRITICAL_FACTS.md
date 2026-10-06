@@ -28,8 +28,10 @@ screen, it's doing too much and the overflow belongs in `memory/` or a framework
   2. Durable context / learnings / decisions go to the **workspace**, never to local agent memory
      (see [[decision-externalize-everything-to-workspace]]).
   3. **Employer repos never receive personal-workspace content**, and workspace content
-     is never pasted into employer surfaces. **Claude surfaces are personal-only on every device:**
-     they never do employer work and always commit as `snds` ([[feedback-credential-scoping]]).
+     is never pasted into employer surfaces. Every surface, Claude included, follows the device
+     and the repo: Centric repos run under `centric-engineering` (branch → PR → human review) on the
+     Work MBP; credentials stay scoped per repo ([[decision-claude-employer-surface]],
+     [[feedback-credential-scoping]]).
 - **Session start is mandatory:** emit `09-tools/session-status.py` (notices + all
   projects + pending). The ABI line `[workspace: LOADED · …]` is machine-ABI (SessionEnd audit).
   Do not shrink Active projects. Continuations skip the card.

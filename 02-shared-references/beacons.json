@@ -51,7 +51,7 @@
     ]
   },
   "family_rules": {
-    "claude": "- Claude surfaces are personal-only: no substantive employer work (reading, mapping, editing, commits, PRs in employer repos); vetted, receipted housekeeping (merged-branch prune) is allowed.",
+    "claude": "- Claude: employer work only on the Work MBP, via a feature branch + PR for human review; never merge or push to the default branch; no employer content in personal memory.",
     "codex": "- Codex: employer work only via a feature branch + PR for human review; never merge or push to the default branch.",
     "cursor": "- Cursor: employer work only via a feature branch + PR for human review; never merge or push to the default branch."
   },

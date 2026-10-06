@@ -9,16 +9,17 @@ Usage:
   python3 09-tools/session-status.py --surface Cursor --via cursor-hook/startup
   python3 09-tools/session-status.py --json
   python3 09-tools/session-status.py --check
-  python3 09-tools/session-status.py --family claude|cursor|codex|auto
+  python3 09-tools/session-status.py --family claude|cursor|codex|unknown-agent|auto
   python3 09-tools/session-status.py --self-test
 
-Family-aware (H25): when the walls family is `claude`, projects whose SESSION-STATE
+Family-aware (H25): when the walls family is restrictive (`unknown-agent`; `claude` was too until
+2026-10-06, decision-claude-employer-surface), projects whose SESSION-STATE
 `Context profile` starts with `centric-` collapse to one count line, projects with no
 `personal-*` profile (missing or unrecognised) collapse to a second count line (the
 fail-safe default in 00-context-profiles.md), and the pending line adds the
 employer-keyword count. The full card (today's, byte for byte) is an allowlist: only
-the families the surfaces.json `families` table lists, minus `claude` and
-`unknown-agent` (today cursor, codex, gemini, copilot and human). Every other value
+the families the surfaces.json `families` table lists, minus `unknown-agent` (today
+claude, cursor, codex, gemini, copilot and human). Every other value
 gets the restrictive card: `unknown-agent`, `unknown` (the resolver will not import or
 detection finds no evidence), a mistyped `--family`, a surface id passed as a family,
 and any family when the table cannot be read. AGENTS.md says unresolvable means the
@@ -76,11 +77,11 @@ GATE_NOTICE_BUDGET_S = 1.5
 
 EMPLOYER_PROFILE_PREFIX = "centric-"
 PERSONAL_PROFILE_PREFIX = "personal-"
-EMPLOYER_HANDLERS = "Cursor/Codex"
+EMPLOYER_HANDLERS = "Claude, Cursor or Codex"
 # Named families that always get the restrictive card, as profile_resolve._restricted treats them
 # (tighten-only). The full card is an allowlist (full_card_families): every value the surfaces.json
 # `families` table does not list, `unknown` included, gets the restrictive card too.
-RESTRICTIVE_FAMILIES = ("claude", "unknown-agent")
+RESTRICTIVE_FAMILIES = ("unknown-agent",)
 ORACLE_SHA = "2ff02e7"
 _UNSET: Any = object()
 # H10: the CI line. Constants mirror close-out-dispatch.py (TRAILER_KEY, UNLANED_SINCE; TestCloseOutDispatch
@@ -648,8 +649,8 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument(
         "--family", default="auto",
         help="walls family: auto (profile_resolve.detect_surface), claude, cursor, codex, …; "
-             "only the surfaces.json families other than claude and unknown-agent get the full card, "
-             "every other value gets the restrictive (claude) card",
+             "only the surfaces.json families other than unknown-agent get the full card, "
+             "every other value gets the restrictive card",
     )
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args(argv)
@@ -861,13 +862,13 @@ def self_test() -> int:
         tree = tmp / "tree"
         _synthetic_tree(tree)
 
-        # 0. The full-card allowlist is the surfaces.json families table minus claude and
-        #    unknown-agent, read through the real resolver.
+        # 0. The full-card allowlist is the surfaces.json families table minus unknown-agent, read
+        #    through the real resolver (Claude joined it on 2026-10-06).
         live = _live_families()
         allow = frozenset(k for k in live if k not in RESTRICTIVE_FAMILIES)
-        check("allowlist is the table's families minus claude and unknown-agent",
+        check("allowlist is the table's families minus unknown-agent",
               full_card_families(resolver=_FakeResolver()) == allow
-              and allow == {"cursor", "codex", "gemini", "copilot", "human"}, str(sorted(allow)))
+              and allow == {"claude", "cursor", "codex", "gemini", "copilot", "human"}, str(sorted(allow)))
         check("allowlist through the real profile_resolve.load_table",
               full_card_families() == allow, str(sorted(full_card_families())))
         check("no allowlist without the table", full_card_families(resolver=None) == frozenset()
@@ -889,17 +890,17 @@ def self_test() -> int:
                         got = format_card(collect(surface="S", via="V", family=fam, resolver=res))
                         check(f"oracle {label_root} family={fam} detected={res.family}",
                               got == want, "card differs from the 2ff02e7 module")
-                    claude = format_card(collect(surface="S", via="V", family="claude",
-                                                 resolver=_FakeResolver()))
+                    restr = format_card(collect(surface="S", via="V", family="unknown-agent",
+                                                resolver=_FakeResolver()))
                     ritual = [ln for ln in want.splitlines() if ln.startswith("[workspace: ")]
                     check(f"ritual line unchanged ({label_root})",
-                          bool(ritual) and ritual[0] in claude.splitlines())
+                          bool(ritual) and ritual[0] in restr.splitlines())
                     if root == tree:
                         unknown = format_card(collect(surface="S", via="V", family="auto", resolver=None))
                         check("unknown family no longer renders the 2ff02e7 full card (synthetic tree)",
                               unknown != want)
 
-        # 1b. Any family off the allowlist → the restrictive (claude) card for the same resolver
+        # 1b. Any family off the allowlist → the restrictive card for the same resolver
         #     state: a failed import, a broken resolver, detection with no evidence, an agent the
         #     table cannot name, a mistyped or surface-id --family, and a named family without the table.
         for label_root, root in (("real tree", ROOT), ("synthetic tree", tree)):
@@ -920,47 +921,47 @@ def self_test() -> int:
                      _FakeResolver()),
                 ):
                     got = format_card(collect(surface="S", via="V", family=fam, resolver=res))
-                    want = format_card(collect(surface="S", via="V", family="claude", resolver=twin))
+                    want = format_card(collect(surface="S", via="V", family="unknown-agent", resolver=twin))
                     check(f"off the allowlist ({why}, {label_root}) renders the restrictive card", got == want,
-                          "card differs from the claude card")
+                          "card differs from the restrictive card")
         with _pinned([me], _consts_for(tree), doctor, label), _no_resolver_import():
             data = collect(surface="S", via="V", family="auto")
             card = format_card(data)
             check("import failure → restrictive card end to end",
                   data["family"] == "unknown" and data["employer_projects_hidden"] == 2
                   and data["undeclared_projects_hidden"] == 2 and "ZZ-EMPLOYER-FOCUS" not in card
-                  and "  - 2 employer projects — handled by Cursor/Codex" in card.splitlines(), card)
+                  and "  - 2 employer projects — handled by Claude, Cursor or Codex" in card.splitlines(), card)
             check("import failure → no pending split without tables",
                   "- **Pending:** 4 items → 06-context/project-context.md" in card.splitlines(), card)
 
-        # 2. --family claude hides centric-* projects and prints the counts.
+        # 2. --family unknown-agent hides centric-* projects and prints the counts.
         with _pinned([me], _consts_for(tree), doctor, label):
-            fake = _FakeResolver()
-            data = collect(surface="S", via="V", family="claude", resolver=fake)
+            fake = _FakeResolver(family="unknown-agent")
+            data = collect(surface="S", via="V", family="unknown-agent", resolver=fake)
             card = format_card(data)
             names = [p["name"] for p in data["projects"]]
-            check("claude shows only personal-* projects", names == ["01-alpha"], str(names))
-            check("claude card has no employer focus lines (an unprofiled employer project included)",
+            check("restrictive shows only personal-* projects", names == ["01-alpha"], str(names))
+            check("restrictive card has no employer focus lines (an unprofiled employer project included)",
                   "ZZ-EMPLOYER-FOCUS" not in card)
-            check("claude card count line",
-                  "  - 2 employer projects — handled by Cursor/Codex" in card.splitlines(), card)
-            check("claude card undeclared line",
+            check("restrictive card count line",
+                  "  - 2 employer projects — handled by Claude, Cursor or Codex" in card.splitlines(), card)
+            check("restrictive card undeclared line",
                   "  - 2 projects with no declared Context profile — hidden here until their SESSION-STATE "
                   "declares one" in card.splitlines(), card)
-            check("claude pending line",
-                  "- **Pending:** 4 items (2 employer — handled by Cursor/Codex) → "
+            check("restrictive pending line",
+                  "- **Pending:** 4 items (2 employer — handled by Claude, Cursor or Codex) → "
                   "06-context/project-context.md" in card.splitlines(), card)
-            check("claude header counts all projects", "- **Active projects (5):**" in card.splitlines())
-            check("json fields", data["family"] == "claude" and data["employer_projects_hidden"] == 2
+            check("restrictive header counts all projects", "- **Active projects (5):**" in card.splitlines())
+            check("json fields", data["family"] == "unknown-agent" and data["employer_projects_hidden"] == 2
                   and data["undeclared_projects_hidden"] == 2 and data["pending_employer"] == 2,
                   json.dumps({k: data[k] for k in (
                       "family", "employer_projects_hidden", "undeclared_projects_hidden", "pending_employer")}))
             auto = collect(surface="S", via="V", family="auto", resolver=fake)
-            check("auto uses detect_surface family_for_walls", auto["family"] == "claude"
+            check("auto uses detect_surface family_for_walls", auto["family"] == "unknown-agent"
                   and auto["employer_projects_hidden"] == 2)
-            nokw = format_card(collect(surface="S", via="V", family="claude",
+            nokw = format_card(collect(surface="S", via="V", family="unknown-agent",
                                        resolver=_FakeResolver(broken=True)))
-            check("claude without tables still hides, no split", "ZZ-EMPLOYER-FOCUS" not in nokw
+            check("restrictive without tables still hides, no split", "ZZ-EMPLOYER-FOCUS" not in nokw
                   and "- **Pending:** 4 items → 06-context/project-context.md" in nokw.splitlines())
             cur = collect(surface="S", via="V", family="cursor", resolver=fake)
             check("cursor json fields", cur["family"] == "cursor" and cur["employer_projects_hidden"] == 0
@@ -970,12 +971,12 @@ def self_test() -> int:
                 real_resolver = globals()["_resolver"]
                 globals()["_resolver"] = lambda: fake
                 try:
-                    rc = main(["--json", "--family", "claude", "--surface", "S"])
+                    rc = main(["--json", "--family", "unknown-agent", "--surface", "S"])
                 finally:
                     globals()["_resolver"] = real_resolver
             try:
                 j = json.loads(out.getvalue())
-                check("cli --json --family claude", rc == 0 and j["family"] == "claude"
+                check("cli --json --family unknown-agent", rc == 0 and j["family"] == "unknown-agent"
                       and j["employer_projects_hidden"] == 2 and j["pending_employer"] == 2)
             except (ValueError, KeyError) as exc:
                 check("cli json parses", False, repr(exc))
@@ -991,15 +992,15 @@ def self_test() -> int:
                     globals()["_resolver"] = real
                 return buf.getvalue()
 
-            restrictive = cli_card("--family", "claude")
-            check("cli claude card is restrictive", "ZZ-EMPLOYER-FOCUS" not in restrictive
-                  and "  - 2 employer projects — handled by Cursor/Codex" in restrictive.splitlines(), restrictive)
-            for fam in ("foo", "claude-code", "unknown-agent"):
+            restrictive = cli_card("--family", "unknown-agent")
+            check("cli unknown-agent card is restrictive", "ZZ-EMPLOYER-FOCUS" not in restrictive
+                  and "  - 2 employer projects — handled by Claude, Cursor or Codex" in restrictive.splitlines(), restrictive)
+            for fam in ("foo", "claude-code"):
                 check(f"cli --family {fam} gives the restrictive card", cli_card("--family", fam) == restrictive)
             for fam in sorted(allow):
                 card = cli_card("--family", fam)
                 check(f"cli --family {fam} gives the full card", card != restrictive
-                      and "ZZ-EMPLOYER-FOCUS" in card and "handled by Cursor/Codex" not in card, card)
+                      and "ZZ-EMPLOYER-FOCUS" in card and "handled by Claude, Cursor or Codex" not in card, card)
 
     # 3. The label: device_label when the resolver loads; raw short hostname when the import fails.
     check("label from device_label", machine_label(resolver=_FakeResolver(label="Dev B")) == "Dev B")

@@ -101,7 +101,8 @@ CHANNELS = {"claude-settings-env", "claude-session-env-file", "codex-shell-envir
 INSTALL_MODES = {"tracked", "whole-file", "claude-settings-keys", "merge-hook-entries", "managed-block",
                  "mcp-servers"}
 ANCESTRY_MATCH = {"exact", "prefix"}
-RENDERS = {"hooks", "codex-config", "cursor-sandbox", "surfaces-md-block", "identity-inc", "beacon",
+RENDERS = {"hooks", "codex-config", "cursor-sandbox", "surfaces-md-block", "identity-inc", "employer-identity-inc",
+           "beacon",
            "contract-core", "codex-rules", "claude-permissions", "wall-belts", "claude-overlay-env",
            "mcp-registration"}
 CONTRACT_REL = "AGENTS.md"
@@ -607,10 +608,13 @@ def _render_cursor_sandbox(t: dict) -> str:
 OVERLAY_VERSIONS = ("v4", "v5")
 OVERLAY_INCLUDE = "~/.config/snds-workspace/git/claude-identity.inc"
 OVERLAY_GH_DIR = "~/.config/snds-workspace/gh-claude"
-# Written by installers.py (EMPLOYER_NOIDENT_INC). Included AFTER the personal includes for every
-# employer remote form, so a repo with both an employer and a personal remote (a fork) gets a blank
-# identity with useConfigOnly: commit, cherry-pick, revert and am cannot mint a personal identity there.
-OVERLAY_NOIDENT = "~/.config/snds-workspace/git/claude-employer-noident.inc"
+# Rendered to dist/git/claude-employer-identity.inc (render employer-identity-inc) and installed beside
+# claude-identity.inc. Included AFTER the personal includes for every employer remote form, so any repo
+# with an employer remote, a fork with a personal remote included, commits as the employer identity with
+# useConfigOnly: commit, cherry-pick, revert and am cannot mint a personal identity there (I1). Until
+# 2026-10-06 this include blanked the identity (claude-employer-noident.inc), because Claude did no
+# employer work; decision-claude-employer-surface.
+OVERLAY_NOIDENT = "~/.config/snds-workspace/git/claude-employer-identity.inc"
 FLOOR_HOOK = "ws-claude-wall"
 # git appends "$@" to a config hook command itself, so the command never carries it. The guard
 # makes a missing pin (no bin/ws-hook) a no-op instead of a failed commit. The installer renders the
@@ -625,6 +629,8 @@ CASE_VARIANTS = ("declared", "lower", "upper", "capitalized")
 # The v4 employer layout (per host), kept only so the emitter can prove it reproduces the
 # installed v4 bytes from the tables before the data moves to v5.
 _V4_EMPLOYER_FORMS = {"github.com": ("scp-alias", "scp", "https"), "bitbucket.org": ("scp", "https", "ssh")}
+# Historic v4 bytes, reproduced byte for byte by the self-test from V4_REV; the rule it states was retired
+# on 2026-10-06 (decision-claude-employer-surface). Never render it for a new install.
 IDENTITY_INC_HEADER_V4 = (
     "# Claude surfaces are personal-only (06-context/memory/feedback-credential-scoping.md).\n"
     "# Included ONLY for repos whose remote is an snds/* URL (includeIf hasconfig in the\n"
@@ -632,7 +638,8 @@ IDENTITY_INC_HEADER_V4 = (
     "# (git forbids them inside hasconfig includes).\n"
 )
 IDENTITY_INC_HEADER = (
-    "# Claude surfaces are personal-only (06-context/memory/feedback-credential-scoping.md).\n"
+    "# Claude commits in personal repos as the personal identity (IR1, devices.json;\n"
+    "# 06-context/memory/feedback-credential-scoping.md).\n"
     "# Included for repos with an snds/* remote (includeIf hasconfig in the Claude env overlay).\n"
     "# A repo that also has an employer remote gets a later no-identity include, so this\n"
     "# identity never applies there. No remote URLs in this file (git forbids them inside\n"
@@ -714,10 +721,34 @@ def _employer_prefixes(owner: str, host: str, user: str, forms: list, aliases: l
     return out
 
 
+def employer_remote_prefixes(cr: dict, dev: dict, version: str = "v5") -> list:
+    """Every declared employer remote prefix (owners x forms x case, deduplicated). v5 uses them for
+    the no-identity includes; the rewrite audit uses them to find a legacy transport block's undoers
+    on machines whose installed overlay predates 2026-10-06."""
+    accounts = []
+    for ident in dev.get("identities") or []:
+        for acct in ident.get("accounts") or []:
+            if acct not in accounts:
+                accounts.append(acct)
+    if "git" not in accounts:
+        accounts.append("git")
+    out = []
+    for o in [o for o in cr.get("owners") or [] if isinstance(o, dict) and o.get("class") == "employer"]:
+        user, forms, aliases = _host_facts(cr, dev, o["host"])
+        for pre in _employer_prefixes(o["owner"], o["host"], user, forms, aliases, accounts, version):
+            if pre not in out:
+                out.append(pre)
+    return out
+
+
 def overlay_pairs(cr: dict, dev: dict, version: str = "v5") -> list:
     """The overlay's GIT_CONFIG (key, value) pairs, in the H17 order:
-    personal hasconfig includes; personal https insteadOf; credential helper reset; the employer
-    transport block; (v5) the guarded Claude floor hook."""
+    personal hasconfig includes; (v5) the employer no-identity includes; personal https insteadOf;
+    credential helper reset; (v4 only) the employer transport block; (v5) the guarded Claude floor hook.
+
+    v5 carries no transport block since 2026-10-06 (decision-claude-employer-surface): Claude is an
+    employer-approved surface, so employer remotes resolve normally and the floor enforces I1 and the
+    centric-engineering branch rule. v4 keeps the block only to reproduce the old installed bytes."""
     if version not in OVERLAY_VERSIONS:
         raise DataError(f"unknown overlay version {version!r}")
     blocked = cr.get("blocked_scheme")
@@ -780,7 +811,7 @@ def overlay_pairs(cr: dict, dev: dict, version: str = "v5") -> list:
     if "git" not in accounts:
         accounts.append("git")
     seen = set()
-    for o in employer:
+    for o in employer if version == "v4" else []:
         user, forms, aliases = _host_facts(cr, dev, o["host"])
         for pre in _employer_prefixes(o["owner"], o["host"], user, forms, aliases, accounts, version):
             if pre not in seen:
@@ -863,7 +894,7 @@ def rewrite_conflicts(cr: dict, dev: dict, entries: list, version: str = "v5") -
     and git rewrites a URL only once. Returns [(scope, key, value, why)]; command-scope entries (the
     overlay itself and -c) are skipped."""
     blocked = cr.get("blocked_scheme")
-    prefixes = [v for k, v in overlay_pairs(cr, dev, version) if k == f"url.{blocked}.insteadOf"]
+    prefixes = employer_remote_prefixes(cr, dev, version)
     out = []
     for scope, key, value in entries:
         if scope not in FILE_SCOPES or not key.lower().startswith("url."):
@@ -950,7 +981,8 @@ def _identity_row(dev: dict, iid: str) -> dict:
 
 
 def claude_identity_id(dev: dict) -> str:
-    """The identity of the Claude-family rule (IR1: claude -> the personal identity on every device)."""
+    """The identity of the Claude-family rule (IR1: claude in a personal repo -> the personal identity on
+    every device). The overlay applies it only to repos with a personal remote."""
     for r in dev.get("identity_rules") or []:
         if isinstance(r, dict) and r.get("family") == "claude" and r.get("device") == "*":
             return str(r.get("identity"))
@@ -959,6 +991,33 @@ def claude_identity_id(dev: dict) -> str:
 
 def _user_block(row: dict) -> str:
     return f"[user]\n\tname = {row['name']}\n\temail = {row['email']}\n"
+
+
+EMPLOYER_INC_HEADER = (
+    "# Claude commits in employer repos as the employer identity (I1; decision-claude-employer-surface).\n"
+    "# Included for every employer remote form, after the personal include (includeIf hasconfig in the\n"
+    "# Claude env overlay), so a repo with an employer remote never takes the personal identity.\n"
+    "# No remote URLs in this file (git forbids them inside hasconfig includes).\n"
+)
+
+
+def employer_identity_id(dev: dict) -> str:
+    """The first identity on the employer allowlist (devices.json employer_allowlist.identity_ids)."""
+    for iid in (dev.get("employer_allowlist") or {}).get("identity_ids") or []:
+        return str(iid)
+    raise DataError("devices: the employer allowlist names no identity")
+
+
+def render_claude_employer_inc(dev: dict) -> str:
+    row = _identity_row(dev, employer_identity_id(dev))
+    if row.get("class") != "employer":
+        raise DataError("the Claude employer include must carry an employer identity")
+    return EMPLOYER_INC_HEADER + f"[user]\n\tuseConfigOnly = true\n\tname = {row['name']}\n\temail = {row['email']}\n"
+
+
+def _render_employer_inc(out: dict, root: Path) -> str:
+    _cr, dev = identity_tables(root)
+    return render_claude_employer_inc(dev)
 
 
 def render_claude_identity_inc(dev: dict, version: str = "v5") -> str:
@@ -984,10 +1043,10 @@ def render_device_identity_inc(dev: dict, device_id: str):
         return None
     row = _identity_row(dev, iid)
     return (f"# snds-workspace device identity for {device_id} (render_shims.py --emit identity-inc).\n"
-            "# Non-Claude surfaces and humans on this device commit as this identity unless a repo sets\n"
-            "# its own. Claude surfaces get claude-identity.inc only in repos with a personal remote, and\n"
-            "# the Claude floor refuses an employer identity on a Claude commit or merge commit, and on\n"
-            "# any commit in a Claude push to a non-employer remote (IR1).\n"
+            "# Every surface on this device commits as this identity unless a repo sets its own. Claude\n"
+            "# also gets claude-identity.inc in repos with a personal remote (IR1), and the Claude floor\n"
+            "# refuses a personal identity in an employer repo (I1) and an employer identity on a Claude\n"
+            "# commit or push in a personal repo (IR1).\n"
             + _user_block(row))
 
 
@@ -1192,7 +1251,8 @@ PERMISSIONS_DOC = (
     "`static` rules apply on every device. `per_device` rules are templates: `--emit claude-permissions --device "
     "ID` expands {employer_checkout} from the machine-local checkout cache and {employer_vault_folder} from the "
     "vault's 07-projects folders whose Context profile is employer (or whose name matches an employer path "
-    "glob), and prints the device's rules; nothing machine-specific is ever committed. Read rules apply "
+    "glob), and prints the device's rules; on the work device (default identity employer) they are not expanded, "
+    "since Claude works employer checkouts there (2026-10-06). Nothing machine-specific is ever committed. Read rules apply "
     "best-effort to Grep, Glob and the Bash file commands Claude recognises; the PreToolUse guard covers writes.")
 CONTROL_REL = "~/.config/snds-workspace/control"
 R6_EDIT_DENY = ("~/.gitconfig", "~/.cursor/hooks.json", "~/.codex/hooks.json", "~/.codex/config.toml")
@@ -1232,10 +1292,29 @@ def _perm_path(p, home: Path) -> str:
     return "/" + s if s.startswith("/") else s
 
 
-def render_claude_permissions(root: Path = ROOT, *, home=None, vault=None, cache=None) -> "OrderedDict":
-    """One device's rules: the static set plus the expanded per-device set (stdout only, never committed)."""
+def _work_device(root: Path, device) -> bool:
+    """A declared device whose default identity is an employer identity (the Work MBP)."""
+    try:
+        _cr, dev = identity_tables(root)
+    except DataError:
+        return False
+    row = next((d for d in dev.get("devices") or [] if isinstance(d, dict) and d.get("id") == device), None)
+    ident = next((i for i in dev.get("identities") or [] if isinstance(i, dict)
+                  and row is not None and i.get("id") == row.get("default_identity")), None)
+    return bool(ident and ident.get("class") == "employer")
+
+
+def render_claude_permissions(root: Path = ROOT, *, home=None, vault=None, cache=None, device=None) -> "OrderedDict":
+    """One device's rules: the static set plus the expanded per-device set (stdout only, never committed).
+    On the work device the employer denies are not expanded: since 2026-10-06 Claude works employer
+    checkouts and employer vault folders there (decision-claude-employer-surface)."""
     home = Path(home) if home else Path.home()
     tmpl = claude_permissions_template(root)
+    if device is not None and _work_device(root, device):
+        return OrderedDict([("permissions", OrderedDict([("deny", list(tmpl["static"]["deny"])),
+                                                         ("ask", list(tmpl["static"]["ask"]))])),
+                            ("counts", OrderedDict([("employer_checkouts", 0), ("employer_vault_folders", 0)])),
+                            ("work_device", True)])
     wg = _guard_module(root)
     pr = _pr_module()
     vroot = Path(vault) if vault else wg.vault_root(None, home)
@@ -1283,6 +1362,8 @@ def render_output(t: dict, out: dict, root: Path = ROOT) -> str:
         return _render_mcp_registration(out)
     if kind == "identity-inc":
         return _render_identity_inc(out, root)
+    if kind == "employer-identity-inc":
+        return _render_employer_inc(out, root)
     if kind == "beacon":
         return render_beacon(t, out.get("beacon") or "", root)
     if kind == "contract-core":
@@ -1767,7 +1848,7 @@ def beacon_cases() -> list:
     results = []
     fam = next(iter(_fixture_base()["families"]))
     beacons = {"blocks": {"open": ["<!-- WORKSPACE-BEACON v3 · {variant} -->"], "rules": ["- rule"]},
-               "family_rules": {fam: f"- {fam}: personal-only"},
+               "family_rules": {fam: f"- {fam}: feature branch + PR"},
                "variants": {"fx": {"parts": ["open", "rules", "family_rules"], "families": [fam],
                                    "max_bytes": 200}}}
     row = {"id": "fx-beacon", "path": "out/beacon.md", "layer": None, "owned_keys": ["whole-file"],
@@ -1974,8 +2055,12 @@ def overlay_cases() -> list:
             if alias:
                 forms += [f"git@{alias}:{o}/", f"{alias}:{o}/", f"ssh://git@{alias}/{o}/", f"ssh://{alias}/{o}/"]
             want |= set(forms)
-    results.append(("overlay: employer blocks equal owners x forms x case, deduplicated",
-                    set(emp) == want and len(emp) == len(set(emp)), f"missing={sorted(want - set(emp))} extra={sorted(set(emp) - want)}"))
+    pre_all = employer_remote_prefixes(cr, dev, "v5")
+    results.append(("overlay: no employer transport block in v5 (retired 2026-10-06, decision-claude-employer-surface)",
+                    emp == [], str(emp[:3])))
+    results.append(("overlay: employer prefixes equal owners x forms x case, deduplicated",
+                    set(pre_all) == want and len(pre_all) == len(set(pre_all)),
+                    f"missing={sorted(want - set(pre_all))} extra={sorted(set(pre_all) - want)}"))
     inc = [k for k, v in pairs if k.startswith("includeIf.hasconfig:remote.*.url:") and v == OVERLAY_INCLUDE]
     want_inc = {f"includeIf.hasconfig:remote.*.url:{p}.path" for p in (
         "git@github.com:pat-sample/**", "git@github-work:pat-sample/**", "https://github.com/pat-sample/**",
@@ -1986,7 +2071,7 @@ def overlay_cases() -> list:
     last_personal = max(i for i, (k, v) in enumerate(pairs) if v == OVERLAY_INCLUDE)
     first_ni = min((i for i, (k, v) in enumerate(pairs) if v == OVERLAY_NOIDENT), default=-1)
     want_ni = {f"includeIf.hasconfig:remote.*.url:{w}**.path" for w in want}
-    results.append(("overlay: every employer block form also gets the no-identity include, after the personal ones",
+    results.append(("overlay: every employer remote form gets the employer identity include, after the personal ones",
                     set(ni) == want_ni and first_ni > last_personal, f"missing={sorted(want_ni - set(ni))[:3]}"))
     results.append(("overlay: no GIT_AUTHOR_* or GIT_COMMITTER_* key, in env or in pairs",
                     not any(k.startswith(("GIT_AUTHOR_", "GIT_COMMITTER_")) for k in env)
@@ -2005,8 +2090,8 @@ def overlay_cases() -> list:
                 else "floor" if k.startswith("hook.") else "?")
         if not kinds or kinds[-1] != kind:
             kinds.append(kind)
-    results.append(("overlay: GIT_CONFIG order is include, https insteadOf, helper reset, block, floor",
-                    kinds == ["include", "https", "helper", "block", "floor"], str(kinds)))
+    results.append(("overlay: GIT_CONFIG order is include, https insteadOf, helper reset, floor",
+                    kinds == ["include", "https", "helper", "floor"], str(kinds)))
     helper = [v for k, v in pairs if k.startswith("credential.")]
     results.append(("overlay: the credential helper is reset, then gh", helper == ["", "!gh auth git-credential"],
                     str(helper)))
@@ -2019,7 +2104,9 @@ def overlay_cases() -> list:
                     and render_device_identity_inc(dev, "dev-a") == golden["identity_inc"]["dev-a"]
                     and render_device_identity_inc(dev, "dev-b") == golden["identity_inc"]["dev-b"]
                     and render_device_identity_inc(dev, "unknown") is None
-                    and "http" not in golden["claude_identity_inc"], ""))
+                    and render_claude_employer_inc(dev) == golden["claude_employer_inc"]
+                    and "useConfigOnly = true" in golden["claude_employer_inc"]
+                    and "http" not in golden["claude_identity_inc"] + golden["claude_employer_inc"], ""))
     bad = json.loads(json.dumps(dev))
     bad["identity_rules"][0]["identity"] = "acme-id"
     try:
@@ -2165,7 +2252,7 @@ def emit(kind: str, root: Path = ROOT, *, device=None, overlay=None, out=None, h
             if not device:
                 print("usage: --emit claude-permissions --device ID", file=sys.stderr)
                 return 2
-            rules = render_claude_permissions(root, home=home)
+            rules = render_claude_permissions(root, home=home, device=device)
             rules["device"] = device
             out.write(canonical(rules))
             return 0

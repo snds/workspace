@@ -655,12 +655,12 @@ def check_single_sources(root: Path = ROOT, files: list | None = None) -> dict:
 # H6 entry points. Each rendered beacon must carry its family's wall; each tuple is satisfied
 # by one line that contains every token.
 BEACON_RULES = {
-    "00-bootstrap/dist/BEACON.md": [("Claude", "personal-only"), ("Plain language",)],
-    "00-bootstrap/dist/user-CLAUDE.md": [("Claude", "personal-only"), ("Plain language",)],
+    "00-bootstrap/dist/BEACON.md": [("Claude", "feature branch", "PR"), ("Plain language",)],
+    "00-bootstrap/dist/user-CLAUDE.md": [("Claude", "feature branch", "PR"), ("Plain language",)],
     "00-bootstrap/dist/codex-AGENTS.md": [("Codex", "feature branch", "PR"), ("ws status",),
                                           ("Plain language",)],
     "00-bootstrap/dist/cursor-user-rules.txt": [("Cursor", "feature branch", "PR"), ("Plain language",)],
-    "00-bootstrap/dist/projects-AGENTS.md": [("Claude", "personal-only"), ("Codex", "feature branch", "PR"),
+    "00-bootstrap/dist/projects-AGENTS.md": [("Claude", "feature branch", "PR"), ("Codex", "feature branch", "PR"),
                                              ("Cursor", "feature branch", "PR"), ("ws status",),
                                              ("Plain language",)],
     "00-bootstrap/dist/RULES.txt": [("Plain language",)],
@@ -1224,7 +1224,7 @@ def write_stamp(report: dict) -> None:
 
 def _plant_entry_points(root: Path) -> list:
     """A minimal clean tree for check_entry_points; returns its 'tracked' file list."""
-    walls = {"claude": "- Claude surfaces are personal-only.\n- Plain language on every reply.",
+    walls = {"claude": "- Claude: employer work only via a feature branch + PR.\n- Plain language on every reply.",
              "codex": "- Codex: employer work only via a feature branch + PR.\n- Plain language on every reply.",
              "cursor": "- Cursor: employer work only via a feature branch + PR.\n- Plain language on every reply.",
              "ws": "- `ws status` prints the card."}
@@ -1257,7 +1257,7 @@ def _entry_point_fixtures() -> list:
     return [
         ("an llms.txt Start-here that links the registry fails (H6)", "llms.txt Start-here links",
          write("llms.txt", "## Start here\n- [reg](03-skills/skills.registry.json)\n")),
-        ("a beacon missing the Claude personal-only rule fails (H6)", "Claude + personal-only",
+        ("a beacon missing the Claude branch-and-PR rule fails (H6)", "Claude + feature branch + PR",
          write("00-bootstrap/dist/user-CLAUDE.md", "- Figma work uses real library components.\n")),
         ("a Codex beacon without the feature-branch rule fails (H6)", "Codex + feature branch + PR",
          write("00-bootstrap/dist/codex-AGENTS.md", "- `ws status` prints the card.\n")),
@@ -1268,7 +1268,7 @@ def _entry_point_fixtures() -> list:
         ("the 'c8/* only' beacon wording is flagged (H6)", "[beacon-c8-only]",
          write("00-bootstrap/dist/RULES.txt", "- Employer repos (c8/*) never receive it.\n- Plain language on every reply.\n")),
         ("a beacon missing the plain-language rule fails", "Plain language",
-         write("00-bootstrap/dist/BEACON.md", "- Claude surfaces are personal-only.\n")),
+         write("00-bootstrap/dist/BEACON.md", "- Claude: employer work only via a feature branch + PR.\n")),
         ("a divergent tracked hook copy fails (H6)", "diverges from 00-bootstrap/dist",
          lambda root, files: [write(".cursor/hooks/x.sh", "#!/bin/sh\necho a\necho b\n")(root, files),
                               write("00-bootstrap/dist/x.sh", "#!/bin/sh\necho c\n")(root, files)]),
