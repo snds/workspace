@@ -20,6 +20,7 @@ relations:
 - **Centric takeaways:** section "Ideas for the Centric design system"; consolidated in [[centric-ds-ideas-from-ds-survey]].
 - **As of:** 2026-10-08 (dated: package versions below) · **Status:** current
 - **Audience:** `for: all`
+- **Update 2026-10-08 (profile fixes):** Changed: blue is info now, so the profile has no brand palette. Chakra's default palette is gray; a page has to set `colorPalette` before the brand pick drives anything.
 
 ## At a glance
 

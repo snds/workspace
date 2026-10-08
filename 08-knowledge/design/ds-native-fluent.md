@@ -20,6 +20,7 @@ relations:
 - **Centric takeaways:** section "Ideas for the Centric design system"; consolidated in [[centric-ds-ideas-from-ds-survey]].
 - **As of:** 2026-10-08 (dated: package versions below) · **Status:** current
 - **Audience:** `for: all`
+- **Update 2026-10-08 (profile fixes):** Profiled from the full native page: compound brand (radio dot, checkbox) and the success and warning tokens are solved.
 
 ## At a glance
 

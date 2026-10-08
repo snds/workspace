@@ -20,6 +20,7 @@ relations:
 - **Centric takeaways:** section "Ideas for the Centric design system"; consolidated in [[centric-ds-ideas-from-ds-survey]].
 - **As of:** 2026-10-08 (dated: package versions below) · **Status:** current
 - **Audience:** `for: all`
+- **Update 2026-10-08 (profile fixes):** Fixed: the native page feeds the solved values into the ThemeProvider theme, so the hover, pressed, and disabled colors CDS blends in JS follow. Warning and positive are now probed from the real banners and tags. Still by design: the informational banner is the primary color.
 
 In this repo, "cds" means Coinbase's design system. It is not the Centric design
 system. Section 6 is the only place Centric comes up.

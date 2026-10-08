@@ -20,6 +20,7 @@ relations:
 - **Centric takeaways:** section "Ideas for the Centric design system"; consolidated in [[centric-ds-ideas-from-ds-survey]].
 - **As of:** 2026-10-08 (dated: package versions below) · **Status:** current
 - **Audience:** `for: all`
+- **Update 2026-10-08 (profile fixes):** Fixed: the blue tag is info, not brand. Profiled from the full native page, including success and warning notifications.
 
 In this repo, Carbon's CSS prefix `cds--` and its `--cds-*` variables have nothing to
 do with the "cds" page, which is Coinbase. They have nothing to do with the Centric

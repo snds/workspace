@@ -20,6 +20,7 @@ relations:
 - **Centric takeaways:** section "Ideas for the Centric design system"; consolidated in [[centric-ds-ideas-from-ds-survey]].
 - **As of:** 2026-10-08 (dated: package versions below) · **Status:** current
 - **Audience:** `for: all`
+- **Update 2026-10-08 (profile fixes):** Fixed: outline and link buttons stay outlined (the base `.btn` value is now read as transparent); warning text and the success border match stock; `alert-info` and the `-rgb` channel variables (links, badges, tables) are themed. Still stock: the checked checkbox fill and focus rings (build-time literals).
 
 ## At a glance
 

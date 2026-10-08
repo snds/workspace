@@ -20,6 +20,7 @@ relations:
 - **Centric takeaways:** section "Ideas for the Centric design system"; consolidated in [[centric-ds-ideas-from-ds-survey]].
 - **As of:** 2026-10-08 (dated: package versions below) · **Status:** current
 - **Audience:** `for: all`
+- **Update 2026-10-08 (profile fixes):** Fixed: the native page feeds the solved values into `ConfigProvider` tokens, so the Tabs ink bar, a checked Radio, and the selected Menu item follow the brand. Info background is info, not brand-tinted neutral.
 
 ## At a glance
 

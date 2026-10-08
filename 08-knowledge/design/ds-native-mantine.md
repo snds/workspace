@@ -20,6 +20,7 @@ relations:
 - **Centric takeaways:** section "Ideas for the Centric design system"; consolidated in [[centric-ds-ideas-from-ds-survey]].
 - **As of:** 2026-10-08 (dated: package versions below) · **Status:** current
 - **Audience:** `for: all`
+- **Update 2026-10-08 (profile fixes):** Fixed: dark placeholder keeps stock contrast (its parent is now the page, not light-only white); the outline keeps its hue; blue alerts are info, not brand. Gray and dark shades are probed, since components paint them directly.
 
 ## At a glance
 

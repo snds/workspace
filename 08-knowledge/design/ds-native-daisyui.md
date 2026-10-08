@@ -20,6 +20,7 @@ relations:
 - **Centric takeaways:** section "Ideas for the Centric design system"; consolidated in [[centric-ds-ideas-from-ds-survey]].
 - **As of:** 2026-10-08 (dated: package versions below) · **Status:** current
 - **Audience:** `for: all`
+- **Update 2026-10-08 (profile fixes):** Fixed: `--color-primary` is the brand solid again (pairs are grouped by property). `--color-secondary` follows the brand, since the engine has one brand color; before, it fell to the danger hue.
 
 ## At a glance
 

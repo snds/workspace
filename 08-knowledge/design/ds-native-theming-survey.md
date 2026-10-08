@@ -34,7 +34,7 @@ relations:
 - **TL;DR:** We themed 13 popular design systems with one solved color theme, each rendering its own real components on its own page. Where a system makes its state colors decides whether a runtime theme reaches them. Separate state tokens, runtime `color-mix()`, and opacity all follow a CSS-variable theme. Build-time literals (Bootstrap's Sass) and colors computed in JS (Ant Design, Coinbase CDS) don't. The second big finding: most systems tie info to brand somewhere, so changing the brand moves the meaning of info.
 - **Key claims:** the taxonomy tables below. Each system's detail is in its `ds-native-<id>` entry.
 - **Centric takeaways:** [[centric-ds-ideas-from-ds-survey]].
-- **As of:** 2026-10-08 (package versions in each entry) · **Status:** current
+- **As of:** 2026-10-08 (package versions in each entry; probe fixes same day) · **Status:** current
 - **Audience:** `for: all`
 
 ## How the survey was run (timeless method)
@@ -102,14 +102,19 @@ relations:
 - **Size the frame to its content.** The page reports its height through a `ResizeObserver`, so the app page scrolls, not the frame. Native pages must not use `100vh`.
 - **Solve in the browser.** The engine uses Vite-only imports (`import.meta.glob`), so screenshot scripts solve in the page through the dev server, not in Node.
 
-## Open follow-ups in Emphasis Engine (dated: 2026-10-08, pointer)
-- **Profile fixes to make:**
-  - Bootstrap: outline and link buttons go solid; the warning text-emphasis solves to white.
-  - Mantine: the dark placeholder solves to the text color; the outline loses its hue.
-  - Atlassian: `--ds-border` is transparent in dark; brand-bold is missing.
-  - Radix: `--accent-track` is unsolved.
-  - Ant Design: component tokens are missing.
-- **Bigger changes to consider:**
-  - Status families that never alias brand.
-  - A `render(mode, values)` hook so JS-themed systems (Coinbase CDS, Ant Design) can take solved values in their theme object.
-- Each system's `docs/systems/<id>.md` has its list.
+## Probing a design system from outside: what went wrong, and the fix (timeless)
+These were found by theming real pages, then fixed in Emphasis Engine's probe and generator on 2026-10-08.
+1. **Read a scoped variable's value from the rule that declares it.** Don't read it off the first matching element. Bootstrap's `.btn { --bs-btn-bg: transparent }` reads blue off a `.btn-primary`, and outline buttons then theme solid.
+2. **Confirm every trace with a second, shuffled sentinel assignment.** A build-time literal can sit near a blend of two sentinels by chance. Two unrelated assignments won't both agree.
+3. **Group painted pairs by property as well as by colors.** An outline and a fill with the same colors are different jobs.
+4. **Keep the system's source order when you override scoped variables with `!important`.** Base before variant, or the base wins.
+5. **Read every channel format.** That includes comma triplets (`13, 110, 253`) used through `rgba(var(--x-rgb), a)`.
+6. **Names beat chroma for status.** Look in the selector too. Pale status tints have almost no chroma, and `.alert-success` names the role the variable doesn't. Blue is info, and brand comes from brand words.
+7. **A variable's parent must be under it in both modes.** Otherwise use the page. A variable unpainted in one mode keeps its stock offset.
+8. **Systems that compute states in JS need the theme object, not only CSS variables.** Ant Design's algorithm and Coinbase CDS's ThemeProvider re-derive hover, pressed, and component tokens from it.
+9. **Measure the real page, not a minimal harness.** Every alert, badge, row, and header that ships gets probed. A harness only covers what someone remembered to put in it.
+
+Still as each system designed it:
+- Primer and Coinbase CDS tie info to brand.
+- Chakra has no brand palette by default.
+- Bootstrap's checked states and focus rings are build-time literals.

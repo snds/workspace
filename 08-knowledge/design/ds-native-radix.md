@@ -20,6 +20,7 @@ relations:
 - **Centric takeaways:** section "Ideas for the Centric design system"; consolidated in [[centric-ds-ideas-from-ds-survey]].
 - **As of:** 2026-10-08 (dated: package versions below) · **Status:** current
 - **Audience:** `for: all`
+- **Update 2026-10-08 (profile fixes):** Fixed: `--accent-track` (switch, slider, and progress tracks) is an alias of step 9, and `--accent-surface` is solved, so the switch follows the brand.
 
 ## At a glance
 
