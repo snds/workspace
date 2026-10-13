@@ -190,6 +190,11 @@
 !07-projects/23-subatomic-design-tokens-course/
 !07-projects/23-subatomic-design-tokens-course/**
 
+# Mailbird, working name (2026-10-13): baton only. Code lives in <Projects>/Mailbird
+# (github.com/snds/Mailbird).
+!07-projects/24-mailbird/
+!07-projects/24-mailbird/**
+
 # Track Omni project CONTEXT only (2026-09-04). Code moved to ~/Projects/omni
 # (github.com/snds/omni). This folder is a pointer stub — no app code here.
 !07-projects/03-omni/
