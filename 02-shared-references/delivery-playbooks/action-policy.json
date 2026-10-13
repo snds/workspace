@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "doc": "Action-class policy, DECISIONS-2 item 9 (binding, confirmed 2026-09-22; P19/P21/P22/P40 set by Sean 2026-09-23; Claude joined the employer-approved surfaces 2026-10-06, decision-claude-employer-surface: P11-P14 retired, P30-P33 cover claude; 2026-10-12: P34-P36 give an undeclared owner under projects_root on the Work MBP the same centric-engineering conduct). First matching rule wins.",
+  "doc": "Action-class policy, DECISIONS-2 item 9 (binding, confirmed 2026-09-22; P19/P21/P22/P40 set by Sean 2026-09-23; Claude joined the employer-approved surfaces 2026-10-06, decision-claude-employer-surface: P11-P14 retired, P30-P33 cover claude; 2026-10-12: P34-P36 give an undeclared owner under projects_root on the Work MBP the same centric-engineering conduct). 2026-10-12: P29 lets Claude merge through the vetted pr-desk script after Sean's review. First matching rule wins.",
   "action_classes": [
     "meta",
     "housekeeping",
@@ -215,6 +215,29 @@
       "outcome": "deny",
       "reason": "employer work stays on the Work MBP",
       "note": "Sean 2026-09-23"
+    },
+    {
+      "id": "P29-claude-employer-vetted-merge",
+      "when": {
+        "walls_family": [
+          "claude"
+        ],
+        "device": [
+          "work-mbp"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "merge"
+        ],
+        "via": [
+          "vetted"
+        ]
+      },
+      "outcome": "allow",
+      "receipt": true,
+      "note": "Sean 2026-10-12: Claude merges a PR after Sean's review, only through the vetted pr-desk script (open, mergeable, every check green, his approval recorded in the receipt); every other merge stays human-only (P30)"
     },
     {
       "id": "P30-cc-work-employer-merge",

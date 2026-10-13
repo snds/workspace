@@ -1768,6 +1768,9 @@ class TestVettedContext(unittest.TestCase):
     def test_prune_self_test(self):
         self.assertEqual(load("prune-our-branches").self_test(), 0)
 
+    def test_pr_desk_self_test(self):
+        self.assertEqual(load("pr-desk").self_test(), 0)
+
     def test_lift_env_drops_only_the_transport_block(self):
         env = {"HOME": "/h", "WS_SURFACE_FAMILY": "claude", "GH_CONFIG_DIR": "/h/gh", "GIT_AUTHOR_NAME": "x",
                "GIT_COMMITTER_EMAIL": "y", "GIT_CONFIG_COUNT": "3",

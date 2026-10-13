@@ -118,6 +118,7 @@
 !09-tools/cursor-prompt-route.py
 !09-tools/cursor-externalize.py
 !09-tools/prune-our-branches.py
+!09-tools/pr-desk.py
 !09-tools/artifact-ingest.py
 !09-tools/intent-run.py
 !09-tools/intent_scope.py

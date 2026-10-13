@@ -1,7 +1,7 @@
 # ~/Projects — machine-local pointer (rendered; do not hand-edit)
 Repos live here; the contract is ./workspace/AGENTS.md.
 Before working in a repo, run `ws resolve repo <path>`; its profile sets the rules.
-- Claude: employer work only on the Work MBP, via a feature branch + PR for human review; never merge or push to the default branch; no employer content in personal memory.
+- Claude: employer work only on the Work MBP, via a feature branch + PR for human review; merge only on Sean's OK; never push to the default branch; no employer content in personal memory.
 - Codex: employer work only via a feature branch + PR for human review; never merge or push to the default branch.
 - Cursor: employer work only via a feature branch + PR for human review; never merge or push to the default branch.
 - Figma work uses real library components, never hand-built shapes.

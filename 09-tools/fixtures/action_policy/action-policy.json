@@ -214,6 +214,28 @@
       "reason": "employer work stays on the Work MBP"
     },
     {
+      "id": "P29-claude-employer-vetted-merge",
+      "when": {
+        "walls_family": [
+          "claude"
+        ],
+        "device": [
+          "dev-a"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "merge"
+        ],
+        "via": [
+          "vetted"
+        ]
+      },
+      "outcome": "allow",
+      "receipt": true
+    },
+    {
       "id": "P30-cc-work-employer-merge",
       "when": {
         "walls_family": [

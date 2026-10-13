@@ -122,5 +122,19 @@ None of them depends on which vendor's model is typing.
   pushes denied on the default branch or with no branch (a folder without git); everything else
   allowed. Declared third-party owners under the root, and every undeclared owner off the Work
   MBP, still fall to P20. Takes effect only after a human `--install-pin`.
+- **Amendment 2026-10-12 (Sean: "update the workspace rules so you can merge after my review as well
+  as access the repo PRs, their status, and inquire about any fixes"; "I would be the engineer that
+  would be reviewing this").** Claude reads employer PRs and merges them after Sean's review, only
+  through the vetted script `09-tools/pr-desk.py` (status, checks, failed-run logs, comments, merge).
+  - **Why a script:** `gh` on an employer repo needs the device's default account, and the walls never
+    let an agent unset GH_CONFIG_DIR by hand (R6). The vetted runner lifts it per registered action,
+    with an intent line and a receipt, so the wall stays.
+  - **Merge gate (in the script):** Sean's approval in his words (`--approved`, kept in the receipt);
+    the PR open, not a draft, mergeable, not blocked; every check passed or skipped; base is the
+    default branch and head is not. Squash, merge, or rebase only (no `--admin`).
+  - **Policy:** P29 allows the merge class for Claude on the Work MBP, employer owner, via vetted
+    only, with a receipt. Every other merge stays human-only (P30). The beacon line now reads "merge
+    only on Sean's OK; never push to the default branch".
+  - Takes effect after a human `--install-pin` (the guard and the script check the pinned bytes).
 - **WALL-C1 narrows.** The employer connector is no longer limited to movement-only use for Claude,
   so H15's "deny the employer connector to Claude" is retired as a goal.

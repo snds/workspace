@@ -4490,7 +4490,7 @@ def _fixture_root(tmp: Path) -> Path:
 
 AP_FIXTURES = TOOLS / "fixtures" / "action_policy"
 CLAUDE_ANC = [{"comm": "claude"}]
-_ORACLE_ORDER = ("P00", "P05", "P10", "P40", "P30", "P31", "P32", "P33", "P34", "P35", "P36", "P20", "P19", "P21",
+_ORACLE_ORDER = ("P00", "P05", "P10", "P40", "P29", "P30", "P31", "P32", "P33", "P34", "P35", "P36", "P20", "P19", "P21",
                  "P22", "P50")
 
 
@@ -4521,6 +4521,8 @@ def _oracle(f: dict) -> str:
         return "allow"  # P10: vetted housekeeping keeps its receipt
     if dev == "dev-b" and oc == "employer" and ac in ("author", "publish", "merge"):
         return "deny"
+    if fam == "claude" and dev == "dev-a" and oc == "employer" and ac == "merge" and f["via"] == "vetted":
+        return "allow"  # P29 (Sean 2026-10-12): merge after his review, only through the vetted pr-desk script
     # P30-P32 for employer owners; P34-P36 (Sean 2026-10-12) give an undeclared owner under projects_root
     # the same centric-engineering conduct on the work device
     if fam in approved and dev == "dev-a" and (oc == "employer" or (oc == "unknown" and f["under_projects_root"])):
