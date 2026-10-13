@@ -3809,14 +3809,18 @@ def _floor_git_env(env: dict) -> dict:
 
 def _range_idents(top: Path, line: dict, remote: str, env: dict, git: str,
                   gitdir: Optional[Path] = None) -> Optional[List[Tuple[str, str, str]]]:
-    """(sha, author email, committer email) for every commit the ref line would publish; None on error."""
+    """(sha, author email, committer email) for every commit the ref line would publish; None on error.
+
+    Commits the remote already has are not published by this push, so they are left out: a feature branch
+    that merged main carries main's commits (some committed by GitHub itself), and judging those again
+    blocked pushes for identities that were never this session's."""
     if _ZERO_SHA_RE.match(line["local_sha"]):
         return []
     fmt = (["--git-dir", str(gitdir)] if gitdir is not None else []) + [
         "-c", "log.showSignature=false", "log", "--no-color", "--format=%H%x00%ae%x00%ce"]
     r = None
     if not _ZERO_SHA_RE.match(line["remote_sha"]):
-        r = _git_run(fmt + [f"{line['remote_sha']}..{line['local_sha']}"], top, env, git)
+        r = _git_run(fmt + [line["local_sha"], f"^{line['remote_sha']}", "--not", f"--remotes={remote}"], top, env, git)
     if r is None or r.returncode != 0:
         r = _git_run(fmt + [line["local_sha"], "--not", f"--remotes={remote}"], top, env, git)
     if r is None or r.returncode != 0:
@@ -5454,6 +5458,24 @@ def _t8_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     d = floor("pre-push", emp, ["origin", "git@github.com:acme-corp/w.git"],
               [f"refs/heads/main {top} refs/heads/main {head}"])
     ok(d["decision"] == "block" and d["rule"] == "I1", f"floor: a personal commit in the pushed range blocks I1: {d}")
+    # Merged-in commits the remote already has (main's, committed by GitHub) are not this push's (2026-10-13).
+    _g(fenv, "checkout", "-q", "-b", "gh-main", head, cwd=emp)
+    gh = dict(fenv, GIT_COMMITTER_NAME="GitHub", GIT_COMMITTER_EMAIL="noreply@github.com")
+    _g(gh, "commit", "-q", "--allow-empty", "-m", "squash-merged on GitHub", cwd=emp)
+    ghsha = _g(fenv, "rev-parse", "HEAD", cwd=emp).stdout.strip()
+    _g(fenv, "update-ref", "refs/remotes/origin/main", ghsha, cwd=emp)
+    _g(fenv, "checkout", "-q", "-b", "feat/merged", head, cwd=emp)
+    _g(fenv, "merge", "-q", "--no-ff", "--no-edit", "gh-main", cwd=emp)
+    merged = _g(fenv, "rev-parse", "HEAD", cwd=emp).stdout.strip()
+    d = floor("pre-push", emp, ["origin", "git@github.com:acme-corp/w.git"],
+              [f"refs/heads/feat/merged {merged} refs/heads/feat/merged {head}"])
+    ok(d["decision"] == "allow", f"floor: merged-in commits the remote already has are not judged again: {d}")
+    _g(fenv, "-c", f"user.email={pat_mail}", "commit", "-q", "--allow-empty", "-m", "personal on top", cwd=emp)
+    ontop = _g(fenv, "rev-parse", "HEAD", cwd=emp).stdout.strip()
+    d = floor("pre-push", emp, ["origin", "git@github.com:acme-corp/w.git"],
+              [f"refs/heads/feat/merged {ontop} refs/heads/feat/merged {head}"])
+    ok(d["decision"] == "block" and d["rule"] == "I1", f"floor: a new personal commit on top of a merge still blocks I1: {d}")
+    _g(fenv, "update-ref", "-d", "refs/remotes/origin/main", cwd=emp)
     d = floor("pre-push", emp, ["origin", "/somewhere/local.git"], [f"refs/heads/main {top} refs/heads/main {zero}"])
     ok(d["decision"] == "block" and d["rule"] == "I1", f"floor: I1 over a new branch (no remote sha): {d}")
     blocked = str(load_table("context-remotes", root=root)["blocked_scheme"])
