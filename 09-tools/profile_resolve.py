@@ -1694,6 +1694,60 @@ def scan(*, root: Optional[Path] = None, home: Optional[Path] = None, depth: int
     return out
 
 
+def scan_worktrees(*, root: Optional[Path] = None, home: Optional[Path] = None, write: bool = True,
+                   hostname: Optional[str] = None) -> dict:
+    """Agent-allowed (Sean 2026-10-13): add the linked worktrees of checkouts a human scan already cached,
+    and drop cached worktrees that no longer exist. Never adds a repo: each new entry is a worktree of a
+    cached checkout (its <common>/worktrees/<name>/gitdir names it, and its .git file points back) and
+    copies that checkout's remotes and owner class. Reads files only; no git subprocess."""
+    target = _cache_path(home)
+    try:
+        doc = json.loads(target.read_text(encoding="utf-8"))
+        assert isinstance(doc, dict) and isinstance(doc.get("checkouts"), list)
+    except (OSError, ValueError, AssertionError):
+        return {"written": False, "added": [], "dropped": [], "reasons": ["no human scan cached yet (run scan as a human first)"]}
+    pr = projects_root(root=root, home=home, hostname=hostname)
+    have = {_cf(_real(c.get("path", ""))) for c in doc["checkouts"]}
+    added, dropped = [], []
+    for c in list(doc["checkouts"]):
+        if c.get("kind") == "linked-worktree" and not Path(c.get("path", "")).exists():
+            doc["checkouts"].remove(c)
+            dropped.append(c.get("path"))
+    for c in list(doc["checkouts"]):
+        if c.get("kind") not in ("repo", "bare"):
+            continue
+        base = Path(c["path"])
+        common = base if c.get("kind") == "bare" else base / ".git"
+        try:
+            names = sorted(p for p in (common / "worktrees").iterdir() if p.is_dir())
+        except OSError:
+            continue
+        for wtd in names:
+            try:
+                dotgit = Path((wtd / "gitdir").read_text(encoding="utf-8").strip())
+                wt = dotgit.parent
+                back = dotgit.read_text(encoding="utf-8").strip()
+            except OSError:
+                continue
+            if not back.startswith("gitdir:") or _cf(_real(back[len("gitdir:"):].strip())) != _cf(_real(wtd)):
+                continue
+            if _cf(_real(wt)) in have or not _is_under(_real(wt), pr):
+                continue
+            entry = {"path": str(_real(wt)), "kind": "linked-worktree", "remotes": c.get("remotes") or [],
+                     "owner_class": c.get("owner_class", "unknown"), "default_branch": None, "added_by": "scan-worktrees"}
+            doc["checkouts"].append(entry)
+            have.add(_cf(_real(wt)))
+            added.append(entry["path"])
+    out = {"written": False, "added": added, "dropped": dropped, "reasons": []}
+    if write and (added or dropped):
+        try:
+            _write_json_atomic(target, doc)
+            out["written"] = True
+        except OSError as exc:
+            out["reasons"].append(f"cache not written ({exc.__class__.__name__})")
+    return out
+
+
 def where(slug: str, *, root: Optional[Path] = None, home: Optional[Path] = None, rescan: bool = True,
           detection: Optional[dict] = None, hostname: Optional[str] = None) -> dict:
     det = detection if detection is not None else detect_surface(root=root)
@@ -4294,6 +4348,7 @@ def _parser() -> argparse.ArgumentParser:
     p = sub.add_parser("scan", parents=[common])
     p.add_argument("--report", action="store_true")
     p.add_argument("--depth", type=int, default=2)
+    p = sub.add_parser("scan-worktrees", parents=[common])
     p = sub.add_parser("audit", parents=[common])
     p.add_argument("--report", action="store_true")
     p = sub.add_parser("detect", parents=[common])
@@ -4368,6 +4423,10 @@ def main(argv: Optional[List[str]] = None) -> int:
             w = where(args.slug, root=root, rescan=not args.no_rescan)
             _emit(cmd, w, as_json)
             return EXIT_OK if w["status"] == "found" else EXIT_NOTFOUND
+        if cmd == "scan-worktrees":
+            w = scan_worktrees(root=root)
+            _emit(cmd, w, as_json)
+            return EXIT_OK if not w["reasons"] else EXIT_REFUSED
         if cmd == "scan":
             s = scan(root=root, depth=args.depth)
             if args.report and not as_json and s.get("_doc"):
@@ -4698,6 +4757,31 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     root = _t7_fixture_root(tmp)
     home = tmp / "t7-home"
     table = load_table("action-policy", root=root)
+
+    # ---- scan-worktrees: adds worktrees of cached checkouts only, never a new repo; drops gone worktrees
+    projects = home / "Projects"
+    genv = dict(os.environ, GIT_CONFIG_NOSYSTEM="1", HOME=str(home))
+    def g(*a: str) -> None:
+        subprocess.run(["git", *a], capture_output=True, env=genv, timeout=30, check=False)
+    known, stranger = projects / "known", projects / "stranger"
+    for d in (known, stranger):
+        d.mkdir(parents=True, exist_ok=True)
+        g("-C", str(d), "init", "-q", "-b", "main")
+        g("-C", str(d), "-c", "user.email=f@x", "-c", "user.name=F", "commit", "-q", "--allow-empty", "-m", "x")
+    g("-C", str(known), "worktree", "add", "-q", "-b", "feat/a", str(projects / "known-wt"))
+    g("-C", str(stranger), "worktree", "add", "-q", "-b", "feat/b", str(projects / "stranger-wt"))
+    cache = _cache_path(home)
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    gone = projects / "gone-wt"
+    _write_json_atomic(cache, {"schema_version": 1, "checkouts": [
+        {"path": str(_real(known)), "kind": "repo", "remotes": [{"name": "origin", "slug": "acme-corp/known"}], "owner_class": "employer", "default_branch": None},
+        {"path": str(gone), "kind": "linked-worktree", "remotes": [], "owner_class": "employer", "default_branch": None}]})
+    sw = scan_worktrees(root=root, home=home)
+    paths = {c["path"]: c for c in json.loads(cache.read_text(encoding="utf-8"))["checkouts"]}
+    wt = str(_real(projects / "known-wt"))
+    ok(wt in paths and paths[wt]["owner_class"] == "employer" and paths[wt]["kind"] == "linked-worktree", "scan-worktrees adds a cached repo's worktree with its owner")
+    ok(str(_real(projects / "stranger-wt")) not in paths and str(_real(stranger)) not in paths, "scan-worktrees never registers an uncached repo or its worktree")
+    ok(str(gone) not in paths and sw["dropped"] == [str(gone)], "scan-worktrees drops a worktree that is gone")
 
     # ---- argv shapes: <n> inside an API path matches digits only; other embedded placeholders never match
     api = ["gh", "api", "repos/{owner}/{repo}/pulls/<n>/comments"]

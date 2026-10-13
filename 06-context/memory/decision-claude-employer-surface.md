@@ -151,5 +151,10 @@ None of them depends on which vendor's model is typing.
     (forward only), and every self-test in AGENT_PIN_CHECKS passes at HEAD. Each pin is logged with
     its approval in control/pin-log.jsonl. The pin is the guard's trust anchor; these checks, the
     forward-only rule and Sean's per-pin OK are what keep an agent from pinning a weaker guard.
+- **Amendment 2026-10-13 (Sean: "yes let you run it yourself", on registering new worktrees).**
+  `profile_resolve.py scan-worktrees` is agent-allowed: it adds only linked worktrees of checkouts a
+  human scan already cached (their remotes and owner class copied), and drops cached worktrees that
+  are gone. The full `scan` stays human-only, so the set of repos an agent may read never grows
+  without Sean.
 - **WALL-C1 narrows.** The employer connector is no longer limited to movement-only use for Claude,
   so H15's "deny the employer connector to Claude" is retired as a goal.
