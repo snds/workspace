@@ -12,7 +12,9 @@ Actions (one per subcommand):
   status    the PR's state, mergeability, review decision, branches, and check rollup   (content-read)
   checks    every check with its state and link                                        (content-read)
   logs      the failed steps' log of one workflow run (`gh run view <id> --log-failed`) (content-read)
-  comments  review comments and reviews                                                 (content-read)
+  comments  PR comments and review summaries                                           (content-read)
+  review-comments  inline review comments on the diff (CodeQL posts its findings here)  (content-read)
+  alerts    open code-scanning alerts on the PR's merge ref (rule, file, line, message) (content-read)
   merge     merge it — refused unless all of these hold:                                (merge)
               - Sean approved it in his own words, passed as --approved "…" (recorded in the receipt);
               - the PR is open, not a draft, and GitHub calls it mergeable (no conflicts, not blocked);
@@ -26,6 +28,8 @@ Usage:
   python3 09-tools/pr-desk.py checks   --repo /path/to/checkout --pr 87
   python3 09-tools/pr-desk.py logs     --repo /path/to/checkout --run 1234567890
   python3 09-tools/pr-desk.py comments --repo /path/to/checkout --pr 87
+  python3 09-tools/pr-desk.py review-comments --repo /path/to/checkout --pr 87
+  python3 09-tools/pr-desk.py alerts   --repo /path/to/checkout --pr 87
   python3 09-tools/pr-desk.py merge    --repo /path/to/checkout --pr 87 --method squash --approved "merge it"
   python3 09-tools/pr-desk.py --self-test
 """
@@ -97,6 +101,10 @@ def argv_for(action: str, *, pr: Optional[int] = None, run: Optional[str] = None
         return ["gh", "run", "view", str(run), "--log-failed"]
     if action == "comments":
         return ["gh", "pr", "view", str(pr), "--json", "comments,reviews"]
+    if action == "review-comments":
+        return ["gh", "api", "--paginate", f"repos/{{owner}}/{{repo}}/pulls/{int(pr)}/comments"]
+    if action == "alerts":
+        return ["gh", "api", "--paginate", f"repos/{{owner}}/{{repo}}/code-scanning/alerts?ref=refs/pull/{int(pr)}/merge&state=open"]
     if action == "merge":
         return ["gh", "pr", "merge", str(pr), f"--{method}"]
     raise ValueError(f"unknown action {action!r}")
@@ -234,14 +242,15 @@ def self_test() -> int:
     row = next((r for r in reg.get("scripts") or [] if r.get("id") == SCRIPT_ID), None)
     ok(row is not None, "pr-desk is registered in vetted-scripts.json")
     if row:
-        cases = [("status", {"pr": 87}), ("checks", {"pr": 87}), ("logs", {"run": "18311452763"}), ("comments", {"pr": 87})]
+        cases = [("status", {"pr": 87}), ("checks", {"pr": 87}), ("logs", {"run": "18311452763"}), ("comments", {"pr": 87}),
+                 ("review-comments", {"pr": 87}), ("alerts", {"pr": 87})]
         cases += [("merge", {"pr": 87, "method": m}) for m in METHODS]
         for act, kw in cases:
             shapes = (row.get("argv") or {}).get(act) or []
             ok(any(vault.argv_matches_shape(argv_for(act, **kw), s) for s in shapes), f"{act} argv matches a registered shape")
             ok(act in (row.get("actions") or {}), f"{act} is a registered action")
         ok(row.get("actions", {}).get("merge") == "merge", "merge is registered as the merge class")
-        ok(all(row["actions"][a] == "content-read" for a in ("status", "checks", "logs", "comments")), "reads are content-read")
+        ok(all(row["actions"][a] == "content-read" for a in ("status", "checks", "logs", "comments", "review-comments", "alerts")), "reads are content-read")
         ok(not vault.argv_matches_shape(["gh", "pr", "merge", "87", "--admin"], (row.get("argv") or {}).get("merge", [[]])[0]), "--admin is not a merge shape")
         ok(not any(vault.argv_matches_shape(["gh", "pr", "merge", "87", "--squash", "--admin"], s) for s in (row.get("argv") or {}).get("merge", [])), "no extra merge flags")
 
@@ -291,7 +300,7 @@ def main() -> int:
     if "--self-test" in sys.argv[1:]:
         return self_test()
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("action", choices=("status", "checks", "logs", "comments", "merge"))
+    parser.add_argument("action", choices=("status", "checks", "logs", "comments", "review-comments", "alerts", "merge"))
     parser.add_argument("--repo", type=Path, required=True, help="the checkout (gh reads the repo from its origin)")
     parser.add_argument("--pr", type=int, help="pull request number")
     parser.add_argument("--run", dest="run_id", help="workflow run id (logs)")

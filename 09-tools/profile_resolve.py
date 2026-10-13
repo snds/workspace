@@ -3121,15 +3121,28 @@ _SHAPE_TOKENS = {
 }
 
 
+def _embedded_shape(t: str) -> Optional["re.Pattern[str]"]:
+    """A literal token with only <n> inside it (`repos/{owner}/{repo}/pulls/<n>/comments`): the literal
+    parts must match exactly and each <n> is digits. Any other placeholder inside a token is not allowed."""
+    if "<n>" not in t or t == "<n>" or re.search(r"<(?!n>)[a-z]+>", t):
+        return None
+    return re.compile("".join("[0-9]{1,6}" if p == "<n>" else re.escape(p) for p in re.split(r"(<n>)", t)))
+
+
 def argv_matches_shape(argv: List[str], shape: List[str]) -> bool:
     """Exact-length match: literal tokens equal, <ref>/<n>/<path> placeholders by pattern (no options,
-    no refspec colons or leading +)."""
+    no refspec colons or leading +), and <n> inside an otherwise literal token (an API path)."""
     if len(argv) != len(shape):
         return False
     for a, t in zip(argv, shape):
         rx = _SHAPE_TOKENS.get(t)
         if rx is not None:
             if not rx.match(str(a)) or ":" in str(a):
+                return False
+            continue
+        emb = _embedded_shape(t)
+        if emb is not None:
+            if not emb.fullmatch(str(a)):
                 return False
         elif str(a) != t:
             return False
@@ -4682,6 +4695,14 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     root = _t7_fixture_root(tmp)
     home = tmp / "t7-home"
     table = load_table("action-policy", root=root)
+
+    # ---- argv shapes: <n> inside an API path matches digits only; other embedded placeholders never match
+    api = ["gh", "api", "repos/{owner}/{repo}/pulls/<n>/comments"]
+    ok(argv_matches_shape(["gh", "api", "repos/{owner}/{repo}/pulls/87/comments"], api), "shape: <n> inside a path matches")
+    ok(not argv_matches_shape(["gh", "api", "repos/{owner}/{repo}/pulls/87/merge"], api), "shape: the literal tail must match")
+    ok(not argv_matches_shape(["gh", "api", "repos/{owner}/{repo}/pulls/87;x/comments"], api), "shape: <n> is digits only")
+    ok(not argv_matches_shape(["gh", "api", "repos/evil/x/pulls/1/comments"], api), "shape: the literal head must match")
+    ok(not argv_matches_shape(["gh", "api", "repos/a/b"], ["gh", "api", "repos/<ref>/b"]), "shape: only <n> may sit inside a token")
 
     # ---- tables: schema only; T7 never writes the committed rows
     v = validate_tables(root=root, require_all=False)

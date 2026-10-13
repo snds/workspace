@@ -139,7 +139,9 @@
         "checks": "content-read",
         "logs": "content-read",
         "comments": "content-read",
-        "merge": "merge"
+        "merge": "merge",
+        "review-comments": "content-read",
+        "alerts": "content-read"
       },
       "needs_employer_gh": true,
       "approved": "Sean 2026-10-12: read PRs, their CI and comments, and merge after his review (\"I would be the engineer that would be reviewing this\")",
@@ -204,6 +206,22 @@
             "merge",
             "<n>",
             "--rebase"
+          ]
+        ],
+        "review-comments": [
+          [
+            "gh",
+            "api",
+            "--paginate",
+            "repos/{owner}/{repo}/pulls/<n>/comments"
+          ]
+        ],
+        "alerts": [
+          [
+            "gh",
+            "api",
+            "--paginate",
+            "repos/{owner}/{repo}/code-scanning/alerts?ref=refs/pull/<n>/merge&state=open"
           ]
         ]
       }
