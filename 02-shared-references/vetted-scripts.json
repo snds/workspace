@@ -132,6 +132,7 @@
       "path": "09-tools/pr-desk.py",
       "action_classes": [
         "content-read",
+        "publish",
         "merge"
       ],
       "actions": {
@@ -141,10 +142,12 @@
         "comments": "content-read",
         "merge": "merge",
         "review-comments": "content-read",
-        "alerts": "content-read"
+        "alerts": "content-read",
+        "push": "publish",
+        "create": "publish"
       },
       "needs_employer_gh": true,
-      "approved": "Sean 2026-10-12: read PRs, their CI and comments, and merge after his review (\"I would be the engineer that would be reviewing this\")",
+      "approved": "Sean 2026-10-12: read PRs, their CI and comments, and merge after his review (\"I would be the engineer that would be reviewing this\"); Sean 2026-10-13: push feature branches and open PRs in the two repos in scope",
       "argv": {
         "status": [
           [
@@ -222,6 +225,46 @@
             "api",
             "--paginate",
             "repos/{owner}/{repo}/code-scanning/alerts?ref=refs/pull/<n>/merge&state=open"
+          ]
+        ],
+        "push": [
+          [
+            "git",
+            "-c",
+            "credential.helper=",
+            "-c",
+            "credential.helper=!gh auth git-credential",
+            "push",
+            "-u",
+            "origin",
+            "<ref>"
+          ],
+          [
+            "git",
+            "-c",
+            "credential.helper=",
+            "-c",
+            "credential.helper=!gh auth git-credential",
+            "push",
+            "--dry-run",
+            "-u",
+            "origin",
+            "<ref>"
+          ]
+        ],
+        "create": [
+          [
+            "gh",
+            "pr",
+            "create",
+            "--base",
+            "<ref>",
+            "--head",
+            "<ref>",
+            "--title",
+            "<text>",
+            "--body-file",
+            "<path>"
           ]
         ]
       }

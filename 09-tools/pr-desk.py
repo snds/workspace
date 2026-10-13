@@ -15,6 +15,11 @@ Actions (one per subcommand):
   comments  PR comments and review summaries                                           (content-read)
   review-comments  inline review comments on the diff (CodeQL posts its findings here)  (content-read)
   alerts    open code-scanning alerts on the PR's merge ref (rule, file, line, message) (content-read)
+  push      push the checked-out feature branch to origin (never the default branch,   (publish)
+            never --force), with the device's default gh account as the credential;
+            --dry-run checks access without pushing
+  create    open a PR from the checked-out branch into the default branch, with a      (publish)
+            title and a body file
   merge     merge it — refused unless all of these hold:                                (merge)
               - Sean approved it in his own words, passed as --approved "…" (recorded in the receipt);
               - the PR is open, not a draft, and GitHub calls it mergeable (no conflicts, not blocked);
@@ -23,6 +28,9 @@ Actions (one per subcommand):
             Merge is human-only for every agent except through this script (action policy P29, Sean
             2026-10-12: "I would be the engineer that would be reviewing this").
 
+Scope: push, create and merge work only in the repos prune-our-branches names (DEFAULT_SLUGS, read from
+that file, so no new repo name is written here); the read actions work on any employer checkout.
+
 Usage:
   python3 09-tools/pr-desk.py status   --repo /path/to/checkout --pr 87
   python3 09-tools/pr-desk.py checks   --repo /path/to/checkout --pr 87
@@ -30,12 +38,15 @@ Usage:
   python3 09-tools/pr-desk.py comments --repo /path/to/checkout --pr 87
   python3 09-tools/pr-desk.py review-comments --repo /path/to/checkout --pr 87
   python3 09-tools/pr-desk.py alerts   --repo /path/to/checkout --pr 87
+  python3 09-tools/pr-desk.py push     --repo /path/to/checkout [--dry-run]
+  python3 09-tools/pr-desk.py create   --repo /path/to/checkout --title "…" --body-file /path/to/body.md
   python3 09-tools/pr-desk.py merge    --repo /path/to/checkout --pr 87 --method squash --approved "merge it"
   python3 09-tools/pr-desk.py --self-test
 """
 from __future__ import annotations
 
 import argparse
+import ast
 import importlib.util
 import json
 import os
@@ -92,7 +103,29 @@ def _vault_resolver() -> Any:
 # --------------------------------------------------------------------------- argv (must match the registry)
 
 
-def argv_for(action: str, *, pr: Optional[int] = None, run: Optional[str] = None, method: str = "squash") -> List[str]:
+# Sean's OK covers creating a credential-bearing push; the helper is gh, run with the default account.
+GH_CREDENTIAL = ["-c", "credential.helper=", "-c", "credential.helper=!gh auth git-credential"]
+NEVER_PUSHED = {"main", "master", "HEAD", "develop"}
+
+
+def scope_slugs() -> set:
+    """The repos push/create/merge may act in: prune-our-branches' DEFAULT_SLUGS, read as a literal."""
+    try:
+        tree = ast.parse((Path(__file__).resolve().parent / "prune-our-branches.py").read_text(encoding="utf-8"))
+        for node in tree.body:
+            if isinstance(node, ast.Assign) and any(getattr(t, "id", "") == "DEFAULT_SLUGS" for t in node.targets):
+                return {str(x).casefold() for x in ast.literal_eval(node.value)}
+    except (OSError, SyntaxError, ValueError):
+        pass
+    return set()
+
+
+def argv_for(action: str, *, pr: Optional[int] = None, run: Optional[str] = None, method: str = "squash",
+             branch: str = "", base: str = "", title: str = "", body_file: str = "", dry_run: bool = False) -> List[str]:
+    if action == "push":
+        return ["git", *GH_CREDENTIAL, "push", *(["--dry-run"] if dry_run else []), "-u", "origin", branch]
+    if action == "create":
+        return ["gh", "pr", "create", "--base", base, "--head", branch, "--title", title, "--body-file", body_file]
     if action == "status":
         return ["gh", "pr", "view", str(pr), "--json", STATUS_FIELDS]
     if action == "checks":
@@ -165,6 +198,7 @@ def _claude_chain(det: dict) -> bool:
 
 
 def run(action: str, repo: Path, *, pr: Optional[int], run_id: Optional[str], method: str, approved: str,
+        title: str = "", body_file: str = "", dry_run: bool = False,
         out: Callable[[str], None] = print, home: Optional[Path] = None, runner: Any = None, env: Optional[dict] = None,
         detection: Optional[dict] = None, pinned: Any = "auto", resolver: Any = "auto",
         script: Optional[Path] = None) -> int:
@@ -195,6 +229,27 @@ def run(action: str, repo: Path, *, pr: Optional[int], run_id: Optional[str], me
             p = ctx.run(argv, act, refs=refs, needs_employer_gh=employer_gh, timeout=NETWORK_TIMEOUT_S)
             return p.returncode, p.stdout or "", p.stderr or ""
 
+        writes = action in ("push", "create", "merge")
+        slug = str(ctx.slug or "").casefold()
+        if writes and slug not in scope_slugs():
+            out(f"pr-desk: {action} works only in the repos in scope ({', '.join(sorted(scope_slugs())) or 'none found'}); this is {slug or 'an unknown repo'}")
+            return 4
+        if action in ("push", "create"):
+            p = ctx.query(["git", "symbolic-ref", "--short", "HEAD"])
+            branch = (p.stdout or "").strip() if p.returncode == 0 else ""
+            dflt = _default_branch(ctx) or "main"
+            if not branch or branch in NEVER_PUSHED or branch == dflt:
+                out(f"pr-desk: {action} refused: the checkout is on {branch or 'a detached HEAD'}; only a feature branch, never {dflt}")
+                return 4
+            if action == "push":
+                rc, so, se = call("push", argv_for("push", branch=branch, dry_run=dry_run), [branch])
+            else:
+                if not title.strip() or not body_file or not Path(body_file).is_file():
+                    out("pr-desk: create needs --title and an existing --body-file")
+                    return 2
+                rc, so, se = call("create", argv_for("create", branch=branch, base=dflt, title=" ".join(title.split()), body_file=str(Path(body_file).resolve())), [branch])
+            out((so + se).strip() or (f"{action} ok" if rc == 0 else f"{action} failed ({rc})"))
+            return 0 if rc == 0 else 1
         if action == "merge":
             rc, so, se = call("status", argv_for("status", pr=pr), [f"pr-{pr}"])
             if rc != 0:
@@ -245,11 +300,17 @@ def self_test() -> int:
         cases = [("status", {"pr": 87}), ("checks", {"pr": 87}), ("logs", {"run": "18311452763"}), ("comments", {"pr": 87}),
                  ("review-comments", {"pr": 87}), ("alerts", {"pr": 87})]
         cases += [("merge", {"pr": 87, "method": m}) for m in METHODS]
+        cases += [("push", {"branch": "feat/x"}), ("push", {"branch": "feat/x", "dry_run": True}),
+                  ("create", {"branch": "feat/x", "base": "main", "title": "DS suite: review cards", "body_file": "/tmp/body.md"})]
         for act, kw in cases:
             shapes = (row.get("argv") or {}).get(act) or []
             ok(any(vault.argv_matches_shape(argv_for(act, **kw), s) for s in shapes), f"{act} argv matches a registered shape")
             ok(act in (row.get("actions") or {}), f"{act} is a registered action")
         ok(row.get("actions", {}).get("merge") == "merge", "merge is registered as the merge class")
+        ok(row.get("actions", {}).get("push") == "publish" and row.get("actions", {}).get("create") == "publish", "push and create are publish")
+        ok(not any(vault.argv_matches_shape(["git", *GH_CREDENTIAL, "push", "--force", "-u", "origin", "feat/x"], s) for s in (row.get("argv") or {}).get("push", [])), "--force is not a push shape")
+        ok(not any(vault.argv_matches_shape(["git", *GH_CREDENTIAL, "push", "-u", "origin", "feat/x:main"], s) for s in (row.get("argv") or {}).get("push", [])), "a refspec onto another branch is not a push shape")
+        ok(len(scope_slugs()) == 2, "the scope is the two repos prune-our-branches names")
         ok(all(row["actions"][a] == "content-read" for a in ("status", "checks", "logs", "comments", "review-comments", "alerts")), "reads are content-read")
         ok(not vault.argv_matches_shape(["gh", "pr", "merge", "87", "--admin"], (row.get("argv") or {}).get("merge", [[]])[0]), "--admin is not a merge shape")
         ok(not any(vault.argv_matches_shape(["gh", "pr", "merge", "87", "--squash", "--admin"], s) for s in (row.get("argv") or {}).get("merge", [])), "no extra merge flags")
@@ -300,7 +361,10 @@ def main() -> int:
     if "--self-test" in sys.argv[1:]:
         return self_test()
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("action", choices=("status", "checks", "logs", "comments", "review-comments", "alerts", "merge"))
+    parser.add_argument("action", choices=("status", "checks", "logs", "comments", "review-comments", "alerts", "push", "create", "merge"))
+    parser.add_argument("--title", default="", help="PR title (create)")
+    parser.add_argument("--body-file", default="", help="PR body file (create)")
+    parser.add_argument("--dry-run", action="store_true", help="check push access without pushing (push)")
     parser.add_argument("--repo", type=Path, required=True, help="the checkout (gh reads the repo from its origin)")
     parser.add_argument("--pr", type=int, help="pull request number")
     parser.add_argument("--run", dest="run_id", help="workflow run id (logs)")
@@ -309,9 +373,10 @@ def main() -> int:
     args = parser.parse_args()
     if args.action == "logs" and not (args.run_id and args.run_id.isdigit()):
         parser.error("logs needs --run <numeric run id>")
-    if args.action != "logs" and not args.pr:
+    if args.action not in ("logs", "push", "create") and not args.pr:
         parser.error(f"{args.action} needs --pr <number>")
-    return run(args.action, args.repo, pr=args.pr, run_id=args.run_id, method=args.method, approved=args.approved)
+    return run(args.action, args.repo, pr=args.pr, run_id=args.run_id, method=args.method, approved=args.approved,
+               title=args.title, body_file=args.body_file, dry_run=args.dry_run)
 
 
 if __name__ == "__main__":

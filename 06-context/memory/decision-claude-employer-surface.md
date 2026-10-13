@@ -136,5 +136,20 @@ None of them depends on which vendor's model is typing.
     only, with a receipt. Every other merge stays human-only (P30). The beacon line now reads "merge
     only on Sean's OK; never push to the default branch".
   - Takes effect after a human `--install-pin` (the guard and the script check the pinned bytes).
+- **Amendment 2026-10-13 (Sean: "build 1 and 2 but for CDS and the prototype repos, in specific, allow
+  the ability to pin and merge as I am the only engineer reviewing this code directly").**
+  - **Push and open PRs:** `pr-desk push` (the checked-out feature branch only; never the default
+    branch, `main`, `master` or `develop`; never `--force`; no refspecs) and `pr-desk create` (into the
+    default branch, title + body file). Credential: `gh auth git-credential` under the device's default
+    gh account, set per call; publish class, so P31/P32 judge it by the checked-out branch (policy()
+    now computes target_ref for publish as it does for author and merge).
+  - **Scope:** push, create and merge act only in the two repos prune-our-branches already names
+    (read from that file, so no new repo name lands in this public vault). Reads stay open to any
+    employer checkout.
+  - **Agent pin:** `pin_lib.py agent-pin --approved "<Sean's words>"`, run from the pinned lib. Refused
+    unless the checkout is on main, the pinned paths are committed, HEAD descends from the current pin
+    (forward only), and every self-test in AGENT_PIN_CHECKS passes at HEAD. Each pin is logged with
+    its approval in control/pin-log.jsonl. The pin is the guard's trust anchor; these checks, the
+    forward-only rule and Sean's per-pin OK are what keep an agent from pinning a weaker guard.
 - **WALL-C1 narrows.** The employer connector is no longer limited to movement-only use for Claude,
   so H15's "deny the employer connector to Claude" is retired as a goal.

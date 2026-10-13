@@ -2893,8 +2893,9 @@ def policy(*, repo: str, action_class: Optional[str] = None, command: Optional[s
                                 detection=walls_det, home=home)
     else:
         tr = "none"
-        if action_class in ("author", "merge") and repo_is_path and _may_read_repo_files(_real(base["path"]), walls_det,
-                                                                                         root, home):
+        # publish (a push, a PR) is judged by the branch that is checked out, like author and merge
+        if action_class in ("author", "merge", "publish") and repo_is_path and _may_read_repo_files(_real(base["path"]), walls_det,
+                                                                                                    root, home):
             cur, dflt = _repo_heads(base["path"])
             tr = _ref_kind(cur, dflt)
         elif action_class in ("author", "merge", "publish"):
@@ -3118,6 +3119,8 @@ _SHAPE_TOKENS = {
     "<ref>": re.compile(r"^[A-Za-z0-9_@][A-Za-z0-9._/@-]*$"),
     "<n>": re.compile(r"^[0-9]{1,6}$"),
     "<path>": re.compile(r"^[^-\s][^\s]*$"),
+    # One line of prose (a PR title): no leading dash, no newline, at most 200 characters.
+    "<text>": re.compile(r"^[^-\n\r][^\n\r]{0,199}$"),
 }
 
 
@@ -3137,7 +3140,7 @@ def argv_matches_shape(argv: List[str], shape: List[str]) -> bool:
     for a, t in zip(argv, shape):
         rx = _SHAPE_TOKENS.get(t)
         if rx is not None:
-            if not rx.match(str(a)) or ":" in str(a):
+            if not rx.match(str(a)) or (t != "<text>" and ":" in str(a)):
                 return False
             continue
         emb = _embedded_shape(t)
@@ -4703,6 +4706,9 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     ok(not argv_matches_shape(["gh", "api", "repos/{owner}/{repo}/pulls/87;x/comments"], api), "shape: <n> is digits only")
     ok(not argv_matches_shape(["gh", "api", "repos/evil/x/pulls/1/comments"], api), "shape: the literal head must match")
     ok(not argv_matches_shape(["gh", "api", "repos/a/b"], ["gh", "api", "repos/<ref>/b"]), "shape: only <n> may sit inside a token")
+    ok(argv_matches_shape(["--title", "DS suite: review cards"], ["--title", "<text>"]), "shape: <text> takes one line with colons")
+    ok(not argv_matches_shape(["--title", "--admin"], ["--title", "<text>"]), "shape: <text> never starts with a dash")
+    ok(not argv_matches_shape(["--title", "a\nb"], ["--title", "<text>"]), "shape: <text> is one line")
 
     # ---- tables: schema only; T7 never writes the committed rows
     v = validate_tables(root=root, require_all=False)

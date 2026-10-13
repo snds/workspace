@@ -8,6 +8,7 @@ flips lib/current atomically and copies the byte-stable wrappers into bin/.
   pin_lib.py pin [--sha SHA|HEAD] [--repo DIR] --home DIR [--json]
   pin_lib.py current --home DIR [--json]
   pin_lib.py lag --home DIR [--repo DIR] [--json]
+  pin_lib.py agent-pin --repo DIR --home DIR --approved "Sean's OK"   (run from the pinned lib; see agent_pin)
   pin_lib.py --self-test
 
 Exit codes: 0 ok · 1 fail · 2 usage/infrastructure error · 3 nothing pinned · 4 refused.
@@ -329,6 +330,76 @@ def pin(sha="HEAD", *, repo, home, confirm_real_home=False, agent_check=None) ->
         return _pin(sha, repo=repo, home=home)
 
 
+# The checks an agent pin runs at the commit it pins (from the checkout, which must match that commit
+# on every pinned path). Exit 0 from each is required.
+AGENT_PIN_CHECKS = (
+    ("09-tools/profile_resolve.py", "--self-test"),
+    ("09-tools/wall_guard.py", "--self-test"),
+    ("00-bootstrap/doctor/render_shims.py", "--check"),
+    ("00-bootstrap/doctor/pin_lib.py", "--self-test"),
+    ("09-tools/prune-our-branches.py", "--self-test"),
+    ("09-tools/pr-desk.py", "--self-test"),
+)
+
+
+def agent_pin_refusals(*, repo, home, approved: str, here: Path = None) -> list:
+    """Every reason an agent may not advance the pin now (empty = allowed). Sean 2026-10-12: he is the
+    only reviewer, so Claude pins after his OK — but only forward, only main, only clean, only green."""
+    reasons = []
+    if not str(approved or "").strip():
+        reasons.append("no approval: pass Sean's own words with --approved")
+    paths = ws_paths(home)
+    lib = paths["lib_current"].parent
+    here = _real(here if here is not None else HERE)
+    if is_real_home(home) and not _under(here, _real(lib)):
+        reasons.append("agent-pin runs only from the pinned lib (the code being replaced decides, not the code arriving)")
+    try:
+        branch = _git(repo, "symbolic-ref", "--short", "HEAD").strip()
+    except PinError:
+        branch = ""
+    if branch != "main":
+        reasons.append(f"the checkout is on {branch or 'a detached HEAD'}, not main")
+    if _git(repo, "status", "--porcelain", "--", *PINNED_PATHS).strip():
+        reasons.append("pinned paths have uncommitted changes: commit them first")
+    cur = current(home=home)
+    if cur.get("pinned"):
+        head = _git(repo, "rev-parse", "HEAD").strip()
+        ok = subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor", cur["sha"], head],
+                            capture_output=True, timeout=GIT_TIMEOUT).returncode == 0
+        if not ok:
+            reasons.append(f"HEAD {head[:7]} does not descend from the pinned {cur['sha'][:7]}: an agent pin only moves forward")
+    return reasons
+
+
+def agent_pin(*, repo, home, approved: str, here: Path = None, run_checks: bool = True, runner=None) -> dict:
+    """Pin the checkout's main HEAD for an agent, after Sean's OK. Refuses (RefusedError) unless
+    agent_pin_refusals() is empty and every AGENT_PIN_CHECKS command passes at that commit. Logs the
+    pin, the previous pin and the approval to control/pin-log.jsonl."""
+    reasons = agent_pin_refusals(repo=repo, home=home, approved=approved, here=here)
+    if reasons:
+        raise RefusedError("; ".join(reasons))
+    if run_checks:
+        run = runner or (lambda argv: subprocess.run(argv, cwd=str(repo), capture_output=True, text=True, timeout=900))
+        failed = []
+        for script, flag in AGENT_PIN_CHECKS:
+            if not (Path(repo) / script).is_file():
+                continue
+            p = run([sys.executable, str(Path(repo) / script), flag])
+            if p.returncode != 0:
+                failed.append(f"{script} {flag} (exit {p.returncode})")
+        if failed:
+            raise RefusedError("checks failed at HEAD: " + "; ".join(failed))
+    before = current(home=home).get("sha")
+    with armed(home) if is_real_home(home) else _null():
+        out = _pin("HEAD", repo=repo, home=home)
+        line = {"ts": _utc(), "by": "agent", "sha": out["sha"], "from": before,
+                "approved": " ".join(str(approved).split())[:200]}
+        fs("append", ws_paths(home)["control"] / "pin-log.jsonl", (json.dumps(line, ensure_ascii=False) + "\n").encode("utf-8"), 0o600)
+    out["cmd"] = "agent-pin"
+    out["from"] = before
+    return out
+
+
 class _null:
     def __enter__(self):
         return self
@@ -441,6 +512,11 @@ def main(argv=None) -> int:
     c = sub.add_parser("current")
     c.add_argument("--home", required=True)
     c.add_argument("--json", action="store_true")
+    ag = sub.add_parser("agent-pin")
+    ag.add_argument("--repo", required=True)
+    ag.add_argument("--home", required=True)
+    ag.add_argument("--approved", required=True, help="Sean's OK, in his words")
+    ag.add_argument("--json", action="store_true")
     lg = sub.add_parser("lag")
     lg.add_argument("--home", required=True)
     lg.add_argument("--repo", default=str(VAULT_ROOT))
@@ -455,6 +531,9 @@ def main(argv=None) -> int:
     try:
         if a.cmd == "pin":
             _emit(pin(a.sha, repo=a.repo, home=a.home), a.json)
+            return 0
+        if a.cmd == "agent-pin":
+            _emit(agent_pin(repo=a.repo, home=a.home, approved=a.approved), a.json)
             return 0
         if a.cmd == "current":
             r = current(home=a.home)
@@ -640,6 +719,33 @@ def self_test() -> int:
                 with self.assertRaises(RefusedError):
                     pin(repo=self.repo, home=self.home, agent_check=lambda v=v: v)
             self.assertFalse(self.base().exists())
+
+        def test_agent_pin_forward_clean_green_approved(self):
+            r1 = pin(repo=self.repo, home=self.home, agent_check=lambda: HUMAN)
+            (self.repo / "09-tools" / "ws_hook.py").write_text("print('v2')\n")
+            commit_all(self.repo, "v2")
+            ap = dict(repo=self.repo, home=self.home, here=self.base() / "lib" / "x")   # temp home: location not enforced
+            with self.assertRaises(RefusedError):                                     # no approval
+                agent_pin(approved="  ", run_checks=False, **ap)
+            with self.assertRaises(RefusedError):                                     # a failing check
+                agent_pin(approved="ok", runner=lambda argv: subprocess.CompletedProcess(argv, 1), **ap)
+            (self.repo / "09-tools" / "ws_hook.py").write_text("print('dirty')\n")
+            with self.assertRaises(RefusedError):                                     # uncommitted pinned path
+                agent_pin(approved="ok", run_checks=False, **ap)
+            _fixture_git("-C", str(self.repo), "checkout", "-q", "--", "09-tools/ws_hook.py")
+            _fixture_git("-C", str(self.repo), "switch", "-q", "-c", "side")
+            with self.assertRaises(RefusedError):                                     # not on main
+                agent_pin(approved="ok", run_checks=False, **ap)
+            _fixture_git("-C", str(self.repo), "switch", "-q", "main")
+            r2 = agent_pin(approved="pin it", run_checks=False, **ap)
+            self.assertEqual(r2["from"], r1["sha"])
+            self.assertEqual(current(home=self.home)["sha"], r2["sha"])
+            log = [json.loads(x) for x in (self.base() / "control" / "pin-log.jsonl").read_text().splitlines()]
+            self.assertEqual((log[-1]["by"], log[-1]["approved"], log[-1]["from"]), ("agent", "pin it", r1["sha"]))
+            _fixture_git("-C", str(self.repo), "reset", "-q", "--hard", "HEAD~1")
+            with self.assertRaises(RefusedError):                                     # backwards
+                agent_pin(approved="ok", run_checks=False, **ap)
+            self.assertEqual(current(home=self.home)["sha"], r2["sha"])
 
         def test_nothing_pinned(self):
             self.assertFalse(current(home=self.home)["pinned"])
