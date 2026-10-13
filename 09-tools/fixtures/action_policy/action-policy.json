@@ -291,6 +291,73 @@
       "outcome": "allow"
     },
     {
+      "id": "P34-cc-work-unknown-under-root-merge",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "dev-a"
+        ],
+        "owner_class": [
+          "unknown"
+        ],
+        "under_projects_root": true,
+        "action_class": [
+          "merge"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "merge is human-only"
+    },
+    {
+      "id": "P35-cc-work-unknown-under-root-default",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "dev-a"
+        ],
+        "owner_class": [
+          "unknown"
+        ],
+        "under_projects_root": true,
+        "action_class": [
+          "author",
+          "publish"
+        ],
+        "target_ref": [
+          "default",
+          "unknown"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "undeclared owner work goes branch -> PR -> human review"
+    },
+    {
+      "id": "P36-cc-work-unknown-under-root",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "dev-a"
+        ],
+        "owner_class": [
+          "unknown"
+        ],
+        "under_projects_root": true
+      },
+      "outcome": "allow"
+    },
+    {
       "id": "P20-claude-not-personal-under-root",
       "when": {
         "walls_family": [

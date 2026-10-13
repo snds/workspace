@@ -113,6 +113,12 @@ def build_world(pr, tmp: Path) -> dict:
     _git(env, "symbolic-ref", "HEAD", "refs/heads/feat/docs", cwd=w["EMP_PF"])
     w["PERS"] = _repo(env, projects / "pat-app", "https://github.com/pat-sample/app.git", PERS_EMAIL)
     w["UNK_IN"] = _repo(env, projects / "stranger", "https://github.com/oss-upstream/lib.git", PERS_EMAIL)
+    # undeclared owners under projects_root (2026-10-12): centric-engineering conduct on the work device (P34-P36)
+    w["UNK_D"] = _repo(env, projects / "mystery-app", "https://github.com/undeclared-org/app.git", EMP_EMAIL)
+    w["UNK_F"] = _repo(env, projects / "mystery-kit", "https://github.com/undeclared-org/kit.git", EMP_EMAIL)
+    _git(env, "symbolic-ref", "HEAD", "refs/heads/feat/kit", cwd=w["UNK_F"])
+    w["UNK_LOCAL"] = _repo(env, projects / "local-tool", None, EMP_EMAIL)
+    _git(env, "symbolic-ref", "HEAD", "refs/heads/feat/tool", cwd=w["UNK_LOCAL"])
     w["SCRATCH"] = _repo(env, tmp / "scratch", None, PERS_EMAIL)
     w["OSS_OUT"] = _repo(env, tmp / "oss", "https://github.com/someone-else/tool.git", PERS_EMAIL)
     w["ROOT"] = root
@@ -168,7 +174,8 @@ def payload(golden: str, w: dict, **kw: str) -> dict:
 
 
 def expand(text: str, w: dict) -> str:
-    for k in ("EMP_PF", "EMP_P", "EMP_F", "EMP", "PERS", "UNK_IN", "SCRATCH", "OSS_OUT", "ROOT", "HOME", "VAULT_EMP"):
+    for k in ("EMP_PF", "EMP_P", "EMP_F", "EMP", "PERS", "UNK_IN", "UNK_D", "UNK_F", "UNK_LOCAL", "SCRATCH", "OSS_OUT",
+              "ROOT", "HOME", "VAULT_EMP"):
         text = text.replace("{" + k + "}", str(w[k]))
     return text
 
@@ -220,6 +227,18 @@ CORPUS: C = [
      "claude", "claude", "dev-a", "none", None, {}),
     ("r1-not-personal-under-root", "claude-code", "claude-code.bash", {"command": "git commit -m x", "cwd": "UNK_IN"},
      "claude", "claude", "dev-a", "deny", "R1", {"policy": "P20-claude-not-personal-under-root"}),
+    ("r1-unknown-under-root-off-work-device", "claude-code", "claude-code.bash",
+     {"command": "git commit -m x", "cwd": "UNK_F"}, "claude", "claude", "dev-b", "deny", "R1",
+     {"policy": "P20-claude-not-personal-under-root"}),
+    ("r1-unknown-under-root-default-branch", "claude-code", "claude-code.bash",
+     {"command": "git commit -m x", "cwd": "UNK_D"}, "claude", "claude", "dev-a", "deny", "R1",
+     {"policy": "P35-cc-work-unknown-under-root-default"}),
+    ("r1-unknown-under-root-feature-branch", "claude-code", "claude-code.bash",
+     {"command": "git commit -m x", "cwd": "UNK_F"}, "claude", "claude", "dev-a", "none", None, {}),
+    ("r1-unknown-under-root-read", "claude-code", "claude-code.bash", {"command": "git show HEAD", "cwd": "UNK_D"},
+     "claude", "claude", "dev-a", "none", None, {}),
+    ("r1-no-remote-under-root-feature-branch", "claude-code", "claude-code.bash",
+     {"command": "npm test", "cwd": "UNK_LOCAL"}, "claude", "claude", "dev-a", "none", None, {}),
     ("r1-scratch-outside-root", "claude-code", "claude-code.bash", {"command": "git commit -m x", "cwd": "SCRATCH"},
      "claude", "claude", "dev-a", "none", None, {}),
     ("h17-r12-undeclared-owner-commit", "claude-code", "claude-code.bash",

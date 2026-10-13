@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "doc": "Action-class policy, DECISIONS-2 item 9 (binding, confirmed 2026-09-22; P19/P21/P22/P40 set by Sean 2026-09-23; Claude joined the employer-approved surfaces 2026-10-06, decision-claude-employer-surface: P11-P14 retired, P30-P33 cover claude). First matching rule wins.",
+  "doc": "Action-class policy, DECISIONS-2 item 9 (binding, confirmed 2026-09-22; P19/P21/P22/P40 set by Sean 2026-09-23; Claude joined the employer-approved surfaces 2026-10-06, decision-claude-employer-surface: P11-P14 retired, P30-P33 cover claude; 2026-10-12: P34-P36 give an undeclared owner under projects_root on the Work MBP the same centric-engineering conduct). First matching rule wins.",
   "action_classes": [
     "meta",
     "housekeeping",
@@ -294,6 +294,74 @@
       },
       "outcome": "allow",
       "note": "Sean 2026-09-24: mirrors P19 for Cursor and Codex (local scratch/temp dirs); removes R4 would-ask noise from the rollout data"
+    },
+    {
+      "id": "P34-cc-work-unknown-under-root-merge",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "work-mbp"
+        ],
+        "owner_class": [
+          "unknown"
+        ],
+        "under_projects_root": true,
+        "action_class": [
+          "merge"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "merge is human-only"
+    },
+    {
+      "id": "P35-cc-work-unknown-under-root-default",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "work-mbp"
+        ],
+        "owner_class": [
+          "unknown"
+        ],
+        "under_projects_root": true,
+        "action_class": [
+          "author",
+          "publish"
+        ],
+        "target_ref": [
+          "default",
+          "unknown"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "undeclared owner = centric-engineering: work goes branch -> PR -> human review (git init and switch to a feature branch first)"
+    },
+    {
+      "id": "P36-cc-work-unknown-under-root",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "work-mbp"
+        ],
+        "owner_class": [
+          "unknown"
+        ],
+        "under_projects_root": true
+      },
+      "outcome": "allow",
+      "note": "Sean 2026-10-12: an undeclared owner under projects_root on the Work MBP gets centric-engineering conduct (context-remotes unknown_owner), like P30-P32, instead of P20's flat deny"
     },
     {
       "id": "P20-claude-not-personal-under-root",

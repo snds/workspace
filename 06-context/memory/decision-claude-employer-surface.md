@@ -114,5 +114,13 @@ None of them depends on which vendor's model is typing.
   under consumer terms. The claude.ai memory pass can file Centric facts into personal memory
   unless memory is off for those chats. The content wall above is the rule. Whether that is enough
   is open.
+- **Amendment 2026-10-12 (Sean: "fix the workspace rules and guards so that you can work in
+  employer repos").** P20 still denied Claude in any repo under `projects_root` whose owner was
+  not declared, including local folders with no remote. That contradicted point 2 above
+  ("any owner that is not declared is `centric-engineering`"). New rules P34–P36 give Claude,
+  Cursor and Codex the P30–P32 conduct there, on the Work MBP only: merge denied; writes and
+  pushes denied on the default branch or with no branch (a folder without git); everything else
+  allowed. Declared third-party owners under the root, and every undeclared owner off the Work
+  MBP, still fall to P20. Takes effect only after a human `--install-pin`.
 - **WALL-C1 narrows.** The employer connector is no longer limited to movement-only use for Claude,
   so H15's "deny the employer connector to Claude" is retired as a goal.
