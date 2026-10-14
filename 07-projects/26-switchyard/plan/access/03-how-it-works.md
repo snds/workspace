@@ -1,5 +1,5 @@
 ---
-title: Switchyard — How it works
+title: Personas & access — How it works
 type: plan
 project: 26-switchyard
 status: draft

@@ -1,5 +1,5 @@
 ---
-title: Switchyard — Security
+title: Personas & access — Security
 type: plan
 project: 26-switchyard
 status: draft

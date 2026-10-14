@@ -1,5 +1,5 @@
 ---
-title: Switchyard — Systems
+title: Personas & access — Systems
 type: plan
 project: 26-switchyard
 status: draft
@@ -168,7 +168,7 @@ The daemon, CLI and app talk over the socket or pipe using length-prefixed JSON-
 | Logging | `tracing` with a redaction layer | Secret types can't be printed |
 | Hub | `axum` + SQLite in a Docker image | Small, one container |
 
-These are candidates. Phase 0 confirms them with spikes. See the [Implementation plan](06-implementation-plan.md).
+These are candidates. Phase 0 confirms them with spikes. See the [Implementation plan](06-phases.md).
 
 **Rejected:**
 

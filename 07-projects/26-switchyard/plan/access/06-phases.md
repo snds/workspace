@@ -1,12 +1,12 @@
 ---
-title: Switchyard — Implementation plan
+title: Personas & access — Phases
 type: plan
 project: 26-switchyard
 status: draft
 updated: 2026-10-14
 ---
 
-# Implementation plan
+# Phases (Personas & access)
 
 **TL;DR:** The plan has five phases plus a separate Vaultwarden track. Each phase ships something you use every day, on Mac and Windows, before the next one starts. The order is:
 
@@ -212,7 +212,7 @@ Sizes are in **focused weeks**: full-time-equivalent weeks of building with agen
 - Two or more months of daily personal use.
 - A market check.
 - A name and trademark check.
-- The decision recorded in the [decision log](decisions.md).
+- The decision recorded in the [decision log](../decisions.md).
 
 **Build:**
 
@@ -224,7 +224,7 @@ Sizes are in **focused weeks**: full-time-equivalent weeks of building with agen
 - External security audit.
 - A decision on a Linux client.
 
-Details in [Commercial path](07-commercial-path.md).
+Details in [Commercial path](../08-commercial-path.md).
 
 ---
 
@@ -252,6 +252,4 @@ It is independent of the phases. Start it now.
 
 ## First steps
 
-1. **You:** confirm the three assumptions in the [overview](00-overview.md#assumptions-to-confirm): Windows PC personal-only, the meaning of "account thresholds," and the employer policy check.
-2. **You or me:** start Vaultwarden step V1. It needs nothing from the build.
-3. **Me, on your go:** Phase 0. Create the repo and run spikes SP1–SP6.
+These phases now run as **Stage 4** of the app [roadmap](../07-roadmap.md). Phase 1 (Watch) can ship earlier, with the Stage 2 tray. Sean confirmed all three assumptions on 2026-10-14 (see the [overview](00-overview.md#confirmed-by-sean-2026-10-14)). The Vaultwarden track can start at any time.

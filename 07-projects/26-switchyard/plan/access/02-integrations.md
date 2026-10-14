@@ -1,5 +1,5 @@
 ---
-title: Switchyard — Integrations and dependencies
+title: Personas & access — Integrations and dependencies
 type: plan
 project: 26-switchyard
 status: draft
@@ -131,7 +131,7 @@ Secret Service (GNOME Keyring or KWallet), a systemd user service, `SO_PEERCRED`
 - **Bitwarden:** use the `bw` CLI (GPL-3.0) as a separate program. **Don't link Bitwarden's SDK.** Its license limits use to apps for Bitwarden's own servers (2024 reports say that excludes alternative servers such as Vaultwarden) and forbids selling the result. Re-check the current terms in Phase 0.
 - **Tauri, `rmcp`, RustCrypto, `reqwest`:** MIT or Apache-2.0.
 - **CI enforces an allowlist** of permissive licenses through `cargo-deny`, so the commercial option stays open.
-- **Switchyard's own license** is decided at the commercial gate. See [Commercial path](07-commercial-path.md).
+- **Switchyard's own license** is decided at the commercial gate. See [Commercial path](../08-commercial-path.md).
 
 ## Risk register
 
