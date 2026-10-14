@@ -1,7 +1,7 @@
 ---
-title: Switchyard — Create and import
+title: Synapse — Create and import
 type: plan
-project: 26-switchyard
+project: 26-synapse
 status: draft
 updated: 2026-10-14
 ---

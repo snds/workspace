@@ -1,14 +1,14 @@
 ---
 title: Personas & access — How it works
 type: plan
-project: 26-switchyard
+project: 26-synapse
 status: draft
 updated: 2026-10-14
 ---
 
 # How it works
 
-**TL;DR:** You set rules once. Each tool asks Switchyard through a door it already has. Switchyard checks who is asking and where, picks the identity from the rules, and hands over that one credential for that one request. It writes the decision to a log and tells you when anything looks wrong.
+**TL;DR:** You set rules once. Each tool asks Synapse through a door it already has. Synapse checks who is asking and where, picks the identity from the rules, and hands over that one credential for that one request. It writes the decision to a log and tells you when anything looks wrong.
 
 ## The policy: rules you write once
 
@@ -88,7 +88,7 @@ service = "jira"
 where = "repo:github.com/<employer org>/*"
 use = "jira-employer"
 
-# Walls: never overridable, not even with `syd as`
+# Walls: never overridable, not even with `sy as`
 [[walls]]
 never = "personal identity in employer context"
 
@@ -119,7 +119,7 @@ mcp_deny = ["delete_*"]
 4. **Check the limits.** Is this identity's class allowed on this device? Is the calling surface allowed? Is a wall crossed? Is a presence check due? Is a threshold hit?
 5. **Release or refuse.** A refusal returns one plain sentence to the tool and sends you a notification with a fix.
 
-`syd explain <url or folder>` prints these steps. The app's **Rule tester** shows the same reasoning.
+`sy explain <url or folder>` prints these steps. The app's **Rule tester** shows the same reasoning.
 
 ## Request flows
 
@@ -129,8 +129,8 @@ mcp_deny = ["delete_*"]
 sequenceDiagram
   participant U as You or an agent
   participant G as git
-  participant H as syd helper
-  participant D as sydd daemon
+  participant H as sy helper
+  participant D as sy-access daemon
   participant K as Secure storage
   participant GH as GitHub
   U->>G: git push
@@ -146,7 +146,7 @@ sequenceDiagram
   GH-->>G: accepted
 ```
 
-If GitHub rejects the token, git tells the helper to erase it. Switchyard marks the identity unhealthy and notifies you: "Personal GitHub token was rejected. Reconnect?"
+If GitHub rejects the token, git tells the helper to erase it. Synapse marks the identity unhealthy and notifies you: "Personal GitHub token was rejected. Reconnect?"
 
 ### `gh` commands
 
@@ -160,10 +160,10 @@ If GitHub rejects the token, git tells the helper to erase it. Switchyard marks 
 
 HTTPS is the default transport, because SSH to github.com is unreliable on some networks. SSH still works:
 
-1. git runs `syd ssh` as its SSH command, and the arguments include the repo path.
+1. git runs `sy ssh` as its SSH command, and the arguments include the repo path.
 2. The wrapper asks the daemon which identity owns that path.
 3. It runs `ssh` with only that identity's key (`IdentitiesOnly`). That stops the agent from offering every key, which can sign you in as the wrong GitHub account.
-4. Keys come from the device's SSH agent: the Bitwarden desktop agent for personal keys, and a device-local key for employer ones. A Switchyard agent with one key per identity is a later option.
+4. Keys come from the device's SSH agent: the Bitwarden desktop agent for personal keys, and a device-local key for employer ones. A Synapse agent with one key per identity is a later option.
 
 No host aliases such as `github-work` are needed, and remotes stay as plain GitHub URLs.
 
@@ -172,8 +172,8 @@ No host aliases such as `github-work` are needed, and remotes stay as plain GitH
 ```mermaid
 sequenceDiagram
   participant A as Agent app
-  participant R as syd mcp relay
-  participant D as sydd gateway
+  participant R as sy mcp relay
+  participant D as sy-access gateway
   participant L as Linear MCP server
   A->>R: start relay in project folder
   R->>D: open session with folder and process chain
@@ -192,18 +192,18 @@ The agent app and the model never see the token. When a tool policy says "ask," 
 
 ### Other command-line tools
 
-`syd run -- jira issue list` places secrets into the command's environment from references in a small per-project file or in the policy:
+`sy run -- jira issue list` places secrets into the command's environment from references in a small per-project file or in the policy:
 
 ```toml
 [run.jira]
-env = { JIRA_API_TOKEN = "syd://jira-employer/token" }
+env = { JIRA_API_TOKEN = "sy://jira-employer/token" }
 ```
 
 This replaces 1Password's `op run` and shell plugins.
 
 ### One-off override
 
-`syd as gh-personal -- gh repo create my-new-thing` uses a named identity once.
+`sy as gh-personal -- gh repo create my-new-thing` uses a named identity once.
 
 - It always needs a presence check.
 - It is always logged.
@@ -215,7 +215,7 @@ An agent in an employer repo is told, through a poisoned README, to run `git rem
 
 1. The repo has an employer remote, so the whole repo is employer context.
 2. The new remote routes to `gh-personal`, a personal identity. The wall refuses it.
-3. The push fails, with this message: "Switchyard refused: personal credentials can't be used from an employer repo."
+3. The push fails, with this message: "Synapse refused: personal credentials can't be used from an employer repo."
 4. You get a **critical** notification naming the repo, the remote and the app that ran it.
 5. The employer identity isn't routed to `snds/*`, so it can't be used either. Both paths are closed.
 
@@ -248,7 +248,7 @@ An agent in an employer repo is told, through a poisoned README, to run `git rem
 | Token expiring | Stored expiry against the threshold | Daily | Warning |
 | Wrong commit identity | Author email of new commits in known repos against the routed identity | On new commits, at least every 30 minutes | Critical if personal in employer |
 | git config drift | Helper, `useHttpPath`, includes and `sshCommand` still in place | On file change | Warning |
-| Surface adapter drift | Each connected app's config still points at Switchyard | On file change and daily | Warning |
+| Surface adapter drift | Each connected app's config still points at Synapse | On file change and daily | Warning |
 | MCP upstream reachable | Connect and list tools per identity | Every 15 minutes | Warning |
 | Vaultwarden | Reachable, version at or above the latest security release, certificate expiry. Backup age once the hub exists (Phase 4). | Every 6 hours | Warning, or critical if a security update is behind |
 | Hub and sync | Reachable, policy version current | Hourly | Info, then warning after 3 days stale |
@@ -290,28 +290,28 @@ Each notification carries one action, such as "Reconnect," "Open rule," "Show de
 ## The command line
 
 ```text
-syd status                     health summary, same as the Overview screen
-syd explain <url|folder>       which identity, and why
-syd as <identity> -- <cmd>     one-off override (presence check, logged, can't cross walls)
-syd run -- <cmd>               run with secret references resolved
-syd lock                       lock all classes now
-syd identity add|list|remove
-syd surface list|connect|disconnect <name>
-syd device enroll|list|remove
-syd doctor                     self-check: config, PATH, git, adapters, storage
-syd uninstall                  restore the git config, PATH and app configs saved at install
+sy status                     health summary, same as the Overview screen
+sy explain <url|folder>       which identity, and why
+sy as <identity> -- <cmd>     one-off override (presence check, logged, can't cross walls)
+sy run -- <cmd>               run with secret references resolved
+sy lock                       lock all classes now
+sy identity add|list|remove
+sy surface list|connect|disconnect <name>
+sy device enroll|list|remove
+sy doctor                     self-check: config, PATH, git, adapters, storage
+sy uninstall                  restore the git config, PATH and app configs saved at install
 ```
 
 ## When things fail
 
 | Situation | What happens |
 |---|---|
-| Daemon not running | Tools fail closed: "Switchyard isn't running. Start it from the menu bar." The OS restarts the daemon. |
+| Daemon not running | Tools fail closed: "Synapse isn't running. Start it from the menu bar." The OS restarts the daemon. |
 | Locked after a restart | The request waits up to 30 seconds for Touch ID or Windows Hello, then fails |
 | No rule matches | Refused. The notification offers "Add a rule for github.com/foo/*" with an identity picker. |
 | Provider down | The tool shows the provider's error. Overview shows provider status. |
 | Hub down | Nothing changes locally. Sync resumes later. |
-| Vaultwarden down | Nothing changes for Switchyard. Bitwarden apps keep their cached vault. |
+| Vaultwarden down | Nothing changes for Synapse. Bitwarden apps keep their cached vault. |
 | Policy fails to validate | The last good policy stays active. You get a notification naming the problem. |
 
 ## Device lifecycle
@@ -350,6 +350,6 @@ The new device gets rules, never tokens. It signs in to each identity itself, so
 
 1. On any admin device, open **Devices → Remove**, with a presence check.
 2. A new fleet key and a new signed device list without that device go out. The removed device can't read anything new.
-3. **Revocation checklist:** Switchyard revokes what provider APIs allow and opens the right settings pages for the rest, tracking each item to done.
+3. **Revocation checklist:** Synapse revokes what provider APIs allow and opens the right settings pages for the rest, tracking each item to done.
 4. If the removed device comes back online, it receives a signed removal notice and wipes its local secrets. This is best effort. Revocation is the real protection.
 5. If you lose the only admin device, the recovery kit restores admin rights.

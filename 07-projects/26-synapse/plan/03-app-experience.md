@@ -1,7 +1,7 @@
 ---
-title: Switchyard — App experience
+title: Synapse — App experience
 type: plan
-project: 26-switchyard
+project: 26-synapse
 status: draft
 updated: 2026-10-14
 ---

@@ -1,7 +1,7 @@
 ---
-title: Switchyard — Commercial path
+title: Synapse — Commercial path
 type: plan
-project: 26-switchyard
+project: 26-synapse
 status: draft
 updated: 2026-10-14
 ---
@@ -10,7 +10,7 @@ updated: 2026-10-14
 
 **TL;DR:** Build it for yourself first, with product-grade security. The GUI workspace generator is no longer a commercial add-on. Create and Import are core, built in Stage 3. If you decide to sell the app, Stage 7 adds:
 
-- Switchyard's own app registrations with each provider
+- Synapse's own app registrations with each provider
 - a hosted hub that still can't read user data
 - a starter library of generic skills and domains
 - the business pieces around all of that
@@ -28,17 +28,17 @@ Stages 0–6 don't need to be redone. Nothing here starts until you make a go de
 
 | Area | For you now | As a product |
 |---|---|---|
-| Provider apps | A GitHub App you register yourself, `gh` import, pasted tokens | Switchyard registers a GitHub App, a Linear OAuth app and an Atlassian OAuth app. Each provider has its own review. |
+| Provider apps | A GitHub App you register yourself, `gh` import, pasted tokens | Synapse registers a GitHub App, a Linear OAuth app and an Atlassian OAuth app. Each provider has its own review. |
 | Hub | Self-hosted on Unraid | Hosted by us, end-to-end encrypted, plus a self-host option |
 | Starting content | Your workspace | A starter library of generic domains, skills, frameworks and checks, built from your workspace's **patterns** with none of its personal or employer content |
 | Onboarding | The Create and Import flows | The same flows, plus first-run guidance, sample workspaces and a guided first import |
-| Agents | Your own agent accounts | Still the user's own agents and accounts. Switchyard doesn't resell model access at first. |
+| Agents | Your own agent accounts | Still the user's own agents and accounts. Synapse doesn't resell model access at first. |
 | Distribution | Signed builds from CI | Website, auto-update channels, Homebrew cask, winget |
 | Plugins | Your own | A plugin directory with review and signing |
 | Support | You | Docs, a redacted diagnostics bundle, issue intake |
 | Security | Internal tests | External audit before launch, then a bug bounty, a security page and a disclosure policy |
 | Legal | None | Privacy policy, terms, data-processing terms for teams, export rules for encryption software (to check) |
-| Name | Switchyard (working name) | Trademark search first. A discontinued JBoss project was called SwitchYard. |
+| Name | Synapse (codename) | Trademark search first. "Synapse" is already used by several software products, so the public name will likely differ. The [name ledger](../NAMING.md) makes the swap mechanical. |
 
 ## Create and import, as a product feature
 

@@ -243,12 +243,12 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 
 ---
 
-### Switchyard — Credential Router
-**Status:** Planning — plan set drafted (2026-10-14)
-**Summary:** Mac + Windows background app that gives every tool the right login per project. Rules route git, `gh`, SSH, CLIs and agent MCP access to the right identity. Secrets stay in each device's secure storage, and only rules sync. Menu-bar or tray health alerts. Personal for now, built to product-grade security, with an optional commercial path (GUI workspace generator over `wsx`). Rust + Tauri 2 (same stack as Fontface). Vaultwarden on Unraid replaces 1Password as the password manager.
-**Folder:** `07-projects/26-switchyard/` (plan in `plan/`, moves to the repo `docs/` in Phase 0)
-**Triggers:** switchyard, credential router, multi-account gh, gh auth switch, vaultwarden migration
-**Next:** Sean reviews the plan and answers three open questions (Windows PC personal-only, "account thresholds," employer IT policy). Then Phase 0 spikes. See [[07-projects/26-switchyard/SESSION-STATE|SESSION-STATE]].
+### Synapse — Workspace App (codename; was Switchyard)
+**Status:** Planning — plan set v2.0 after the 2026-10-14 reframe
+**Summary:** A desktop app and tray service for Mac and Windows that makes an AI workspace visible and manageable over plain files (standard agent formats, Obsidian-compatible). It runs the doctor, harness and optimize without an agent, and a connected agent adds judgment. Modules: library, 2D/3D graph, domains and skills (Domain and Area become first-class), health, projects, Personas & access (the original credential router), integrations, agents, plugins. Create (generator, successor to `wsx`) and Import (agentic deep scan with a coverage ledger) are measured by scorecards. Sean's workspace is the north star. Rust + Tauri 2, same stack as Fontface.
+**Folder:** `07-projects/26-synapse/` (`plan/` + `plan/access/`; moves to the repo `docs/` in Stage 0)
+**Triggers:** synapse, switchyard, workspace app, workspace generator gui, credential router, multi-account gh, gh auth switch, vaultwarden migration
+**Next:** Sean reviews the big picture. On his go, Stage 0: model v1, sandbox snapshot, first deep scan and domain map, baselines. See [[07-projects/26-synapse/SESSION-STATE|SESSION-STATE]].
 
 ---
 
