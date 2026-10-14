@@ -1,6 +1,6 @@
 # SESSION-STATE — Mailbird, working name (24-mailbird)
 
-_Last updated: 2026-10-14 — checkpoint (PRs #1–#9 merged; Phase 5 groundwork in PR #10)_
+_Last updated: 2026-10-14 — checkpoint (PRs #1–#10 merged; Phase 6 web gateway in PR #11)_
 
 ---
 
@@ -11,16 +11,17 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#9 merged; Phase 5 groundwork
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 5 mobile groundwork, in review as PR #10 (`phase-5-mobile`). Sean picked both options for new mail on phones: periodic checks, or a self-hosted push relay in Docker. The device spike (5b) is next, on his Mac and phones.
-- **Working set**: `tools/push-relay/` (relay, Docker, README), `crates/core/src/net/{push_relay,graph,jmap}.rs`,
-  `apps/web/src-tauri/src/{push,workers}.rs`, `apps/web/src/components/virtual-list.tsx`, `apps/web/src/features/push-settings.tsx`,
-  `apps/web/src/lib/keyboard-inset.ts`, `docs/decisions/0015-mobile-groundwork.md`, `docs/mobile-spike.md`.
-- **Last action**: Merged PR #9 on Sean's word, then built the Phase 5 groundwork:
-  - A push relay with APNs, FCM, and UnifiedPush, watching IMAP, JMAP, and Outlook, with sealed secrets.
-  - Shell seams: `set_push_target` and `background_pass`.
-  - A virtualized, paging mail list (lifts the old 200-row cap) and a keyboard-safe composer.
-  - Tests caught a relay-client status bug, now fixed. Docker: only the runtime stage was checked here.
-- **Next action**: Merge PR #10 only on Sean's explicit word. Then the device spike (`docs/mobile-spike.md`) on Sean's Mac and phones, which needs his hardware; or other work (the product rename, Gmail labels).
+- **Current focus**: Phase 6, the web gateway, in review as PR #11 (`phase-6-gateway`). It's a self-hosted server (Docker) that gives the browser real accounts. Sean said "merge then continue phases": PR #10 is merged. The device spike (5b) waits on his Mac and phones.
+- **Working set**: `crates/app/` (shared commands, `Host` and `SecretStore` traits, `dispatch`), `apps/gateway/` (server, Docker, README),
+  `apps/web/src-tauri/src/lib.rs` (now one `core` command), `apps/web/src/core/client.ts` (one command table, gateway transport),
+  `apps/web/src/features/{gateway-sign-in,accounts}.tsx`, `docs/decisions/0016-web-gateway.md`, `.github/workflows/ci.yml`.
+- **Last action**: Merged PR #10 on Sean's word, then built Phase 6:
+  - Moved all 62 desktop commands into `crates/app` behind one dispatcher. The Tauri shell is now one `core` command.
+  - Built the gateway: password sign-in, the CSRF header, live events, sealed secrets, security headers, and Docker.
+  - Browser run against real Dovecot and SMTP passed. All 13 earlier Playwright suites pass.
+  - Found that the relay's Docker image never built with `--locked`. Fixed it, and added a CI `images` job.
+- **Next action**: Watch PR #11 CI. The new `images` job is the first full Docker build, since this environment can't fetch inside containers. Merge only on Sean's explicit word.
+  Then: the device spike (`docs/mobile-spike.md`) on Sean's hardware; or gateway follow-ups (a public OAuth return address once Google/Microsoft apps are verified, browser notifications); or the product rename, or Gmail labels.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
   Calendar follow-ups: free/busy, COUNTER, and missed-reminder catch-up.
@@ -31,7 +32,7 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#9 merged; Phase 5 groundwork
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), all merged.
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), all merged; Phase 6 in PR #11.
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
@@ -42,17 +43,17 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#9 merged; Phase 5 groundwork
   bootstrap admin is synthetic (its Email/query fails), so tests use a real `tester@localhost.test`.
   GitHub release downloads are blocked in cloud sessions, so the script builds from source.
 - **Gotcha**: never `pkill -f <pattern>` from a shell whose own command line contains the pattern.
-  Use `pgrep -x`.
+  Use `pgrep -x`, or an anchored `pgrep -f '^target/…'`.
 - **Gotcha**: Sonner restores focus to the pre-toast element when a toast unmounts, which steals
   focus from a dialog opened by a toast action. The composer reclaims focus for its first second.
 - **Gotcha**: Stalwart serves CalDAV/CardDAV on the same :8080 listener (`/.well-known/caldav` → `/dav/cal`), so the DAV test reuses `start-jmap.sh`.
 - **Gotcha**: calcard pairs overrides with their series by SEQUENCE. Strip SEQUENCE before `expand_dates`, or a bumped override duplicates its occurrence.
 - **Gotcha**: Hocuspocus allows one provider per document name per socket, and a destroyed provider's close can unsubscribe its replacement. Use `sessionAwareness: true`, and never pass `onSynced: undefined` (it replaces the default handler).
 - **Gotcha**: never run `cargo fmt` here: the repo isn't rustfmt-formatted, and it rewrites every file. Format only new files, with `rustfmt --config max_width=180,use_small_heuristics=Max`.
-- **Gotcha**: Docker works here (`sudo dockerd &`), but containers can't use the agent proxy, so image builds can't fetch crates. Build the binary on the host and test the runtime stage.
+- **Gotcha**: Docker works here (`sudo dockerd &`), but containers can't use the agent proxy, so image builds can't fetch crates. Build the binary on the host and test the runtime stage. Stubbing a Cargo workspace member in a Dockerfile prunes `Cargo.lock`, so those builds can't use `--locked`.
 - **Gotcha**: the cloud disk fills from `target/` (about 20 GB). Use `CARGO_INCREMENTAL=0`, or delete `target/debug/incremental`.
 - **Gotcha**: the shadcn registry host may be blocked by cloud network policy. Components come from
   a shadcn-ui/ui git clone through `tools/shadcn-material/transform.mjs`.
 
 ### VCS state
-- `phase-5-mobile`: Phase 5 groundwork, in PR #10. `main` has Phases 0 through 4b.
+- `phase-6-gateway`: Phase 6 web gateway, in PR #11. `main` has Phases 0 through 5.
