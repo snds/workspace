@@ -139,6 +139,27 @@
     "course capture": "08-knowledge/cross-domain/in-app-browser-bulk-capture.md",
     "bulk download course": "08-knowledge/cross-domain/in-app-browser-bulk-capture.md",
     "thinkific": "08-knowledge/cross-domain/in-app-browser-bulk-capture.md",
-    "wistia": "08-knowledge/cross-domain/in-app-browser-bulk-capture.md"
+    "wistia": "08-knowledge/cross-domain/in-app-browser-bulk-capture.md",
+    "emphasis engine": "08-knowledge/design/ds-native-theming-survey.md",
+    "design system comparison": "08-knowledge/design/ds-native-theming-survey.md",
+    "theming from outside": "08-knowledge/design/ds-native-theming-survey.md",
+    "ibm carbon": "08-knowledge/design/ds-native-carbon.md",
+    "fluent 2": "08-knowledge/design/ds-native-fluent.md",
+    "fluentui": "08-knowledge/design/ds-native-fluent.md",
+    "primer": "08-knowledge/design/ds-native-primer.md",
+    "material 3": "08-knowledge/design/ds-native-material.md",
+    "material web": "08-knowledge/design/ds-native-material.md",
+    "ant design": "08-knowledge/design/ds-native-antd.md",
+    "antd": "08-knowledge/design/ds-native-antd.md",
+    "chakra": "08-knowledge/design/ds-native-chakra.md",
+    "mantine": "08-knowledge/design/ds-native-mantine.md",
+    "daisyui": "08-knowledge/design/ds-native-daisyui.md",
+    "bootstrap 5": "08-knowledge/design/ds-native-bootstrap.md",
+    "atlaskit": "08-knowledge/design/ds-native-atlassian.md",
+    "atlassian design": "08-knowledge/design/ds-native-atlassian.md",
+    "radix themes": "08-knowledge/design/ds-native-radix.md",
+    "coinbase": "08-knowledge/design/ds-native-cds.md",
+    "status tokens": "08-knowledge/design/centric-ds-ideas-from-ds-survey.md",
+    "state tokens": "08-knowledge/design/centric-ds-ideas-from-ds-survey.md"
   }
 }
