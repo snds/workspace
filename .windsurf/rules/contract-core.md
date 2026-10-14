@@ -36,7 +36,7 @@ On the **first reply of a new session**, emit the stdout of:
 
 That card is what Claude Code already shows: notices (bootstrap MISSes, stale audit, unpushed commits), then last session, pending count, **every** `07-projects/*/SESSION-STATE.md`, git state. Do not shrink it to one Active project. Do not skip it because the user asked something simple. Continuations and Task workers skip it. Surfaces without a shell: say `[workspace: RULES-ONLY · via:<surface>]` and still name pending + the active project's Live handoff if those files were pasted.
 
-The ABI line `[workspace: LOADED · …]` is frozen (SessionEnd audit). The card's `via:` is `cursor-hook`, `project-hook/startup`, or `session-status` when the agent ran the CLI itself.
+The ABI line `[workspace: LOADED · …]` is frozen (SessionEnd audit). The card's `via:` is `<user|project|cursor>-hook/<source>`, or `session-status` when the agent ran the CLI itself.
 
 ### Handoff protocol (tool-neutral — every agent follows this)
 1. **On entry** — read this contract, then the active project's `SESSION-STATE.md` **Live handoff** block
@@ -76,35 +76,27 @@ Avoid by default:
 
 ## Adapter model
 
-Agent-specific files are thin adapters over this one contract, not separate contracts; the per-tool list is
-[00-bootstrap/SURFACES.md](../../00-bootstrap/SURFACES.md). Onboard from `00-bootstrap/adapters/_ADAPTER-TEMPLATE.md`.
+Tool files (`CLAUDE.md`, `CURSOR.md`, `PERPLEXITY.md`, `GEMINI.md`, `WARP.md`, …; list in
+[00-bootstrap/SURFACES.md](../../00-bootstrap/SURFACES.md)) are thin adapters over this one contract, not
+peers or forks. Each says only how its tool executes the contract, never holds logic or state the
+contract lacks, and no tool is privileged. No adapter is needed for full fidelity.
+Onboard from `00-bootstrap/adapters/_ADAPTER-TEMPLATE.md`.
 Never symlink this contract onto an adapter's filename (some tools concatenate every instruction file).
 Never add `.cursorrules` / `.windsurfrules` / `.clinerules` (first-match can hide this file).
-No adapter is needed for full fidelity; adapters never fork the model or hold state the contract lacks.
 
 ## Write-quality gates
 
-**Any capable agent may write here — not just Claude — but every write must clear these gates.** Open
-participation is safe *because* correctness is enforced by deterministic validation + CI, not by which model
-holds the pen. These gates apply to every agent on every surface (Cursor's GPT/Gemini, a local model, a
-human), and they are what let dynamic multi-agent work stay one coherent contract instead of degrading.
+**Any capable agent may write here — not just Claude — but every write, on every surface, clears four
+gates.** Detail: [framework 08](../../01-frameworks/08-workspace-contribution-framework.md) → Write-quality gates.
 
-1. **Quality** — output must **meet or exceed** the workspace documentation standard: complete (no stubs,
-   TODOs, or unfilled template tokens), in the file's established structure and voice, valid frontmatter.
-   Follow Last-Mile Craft (framework 05) + the QA Operating Model (framework 06).
-2. **Intent integrity (no loss)** — read and understand a file's intent *before* editing; after, verify no
-   data, context, or intent was silently dropped. Preserve meaning unless deliberately superseding (gate 4).
-3. **Cross-link continuity** — a change to one file must update **every** related/cross-linked file
-   (frontmatter edges, `## Related`, foundations, MOCs, knowledge refs, prose mentions), then regenerate the
-   registry + Related and pass the validators. A change that orphans a reference is incomplete.
-4. **No zombies — archive-or-regenerate** — if a change is so dramatic the old file no longer makes sense,
-   **archive** it with provenance (`_archive/` + `ARCHIVE-LOG.md`), **generate** the replacement, and
-   **repoint** all cross-links. Never leave an orphaned, superseded-but-live, half-updated, or stub file.
+1. **Quality** — complete (no stubs, TODOs or template tokens), valid frontmatter, in the file's structure and voice (frameworks 05 + 06).
+2. **Intent integrity (no loss)** — understand a file's intent before editing; drop nothing silently.
+3. **Cross-link continuity** — update every cross-linked file, regenerate, pass the validators.
+4. **No zombies — archive-or-regenerate** — archive with provenance, generate the replacement, repoint links.
 
 **Embedded, not commit-only.** Done on a vault write means the relevant validators ran in this session,
 not only that files were saved. Commit/CI is the backstop.
 
 **Enforcement (before claiming a write complete; CI runs it too):** `python3 09-tools/nightly.py --phases rebuild`
 (owns the rebuild fixpoint; never hand-sequence the generators), then `python3 09-tools/workspace-harness.py`
-(every gate in order, reachability, token budgets). Chain + per-layer detail: framework 08. Gate 2 stays with the
-authoring agent + PR review.
+(every gate in order, reachability, token budgets). Gate 2 stays with the authoring agent + PR review.

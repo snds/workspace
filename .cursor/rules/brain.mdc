@@ -18,17 +18,16 @@ the Claude Code adapter (ritual format + slash skills). If Cursor injects it any
 Before continuing substantive work in a **parent / main** thread: if
 `06-context/side-chat-inbox.md` exists and frontmatter `status` is `pending`, read it first, fold
 **For the parent** into the reply (or act on it), then set `status: consumed` or delete the file.
-Written by `/handback` / [[side-chat-handback]] from a side chat — no copy/paste required. Not a
+Written by [[side-chat-handback]] ("hand this back") from a side chat — no copy/paste required. Not a
 session-end. Skill: `03-skills/side-chat-handback/SKILL.md`.
 
 ## Session start
 
 Before the first reply in a new session:
 
-1. Root = directory containing `AGENTS.md`. Read: `AGENTS.md` → `06-context/` (role, **project-context
-   stubs only** — not `project-context-detail.md` / `project-registry.md` unless the task needs them —
-   session-log head, `memory/MEMORY.md`). Active project: read `SESSION-STATE.md` **Live handoff** first.
-   Also run the side-chat inbox check above.
+1. Root = directory containing `AGENTS.md`. Read per AGENTS.md → Canonical read order
+   (`06-context/CRITICAL_FACTS.md` first; project-context **stubs only**; session-log head only), then
+   the active project's `SESSION-STATE.md` **Live handoff**. Also run the side-chat inbox check above.
 2. **Notices** come from `session-status.py` (bootstrap MISSes, stale audit, harness map, unpushed).
    Do not skip them. Do not ingest `project-context-detail.md` at boot.
 3. Run `python3 09-tools/session-status.py --surface Cursor --via cursor-hook/startup`

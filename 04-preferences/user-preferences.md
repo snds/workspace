@@ -1,5 +1,5 @@
 # User Preferences — Sean Sands
-**Last updated:** 2026-10-06
+**Last updated:** 2026-10-14
 
 ---
 
@@ -31,7 +31,8 @@ or bridged to design, don't force a bad analogy: give me a good source to read a
 **optional corollary** instead. Never assume the technical fluency; never condescend either.
 
 ## Output Format Defaults
-- Primary content in artifact windows when output is a document, spec, or visual
+- A document, spec, or visual is delivered as a vault (or `Projects`) file; an artifact window is only a
+  view of that file, never the deliverable ([[decision-vendor-surface-artifacts]])
 - No supporting documentation or meta-commentary unless asked
 - Tables, specs, briefs — use that format directly, no preamble
 - **Outstanding items are a numbered list (2026-09-15).** Whenever summarizing leftover work, open questions, follow-ups, blockers, or "what's left," use a numbered list of specific actions (verb + object). Do not use bullets, paragraphs, or unlabeled dumps for that job. Same shape as the [[plan-ahead]] pre-execution sequence; this rule is for status, not only for starting work. **Unblocked first:** actions that do not wait on review, merge, or another person come before review-blocked items. Do not lead a leftover list with "wait for PR review" when other work can proceed.
@@ -186,7 +187,7 @@ defaults, applied without being re-asked._
 When a conversation branches into a **side-chat or "by the way" detour** (a tangent off the main
 task), **close it with the handback skill** — do not ask Sean to copy/paste into the parent.
 
-- **Side chat end:** run [[side-chat-handback]] (`/handback`, "end side chat", "hand this back").
+- **Side chat end:** run [[side-chat-handback]] (`/side-chat-handback`, or say "handback", "end side chat", "hand this back").
   It writes `06-context/side-chat-inbox.md` (`status: pending`) with a one-paragraph **For the
   parent** note + on-disk pointers. Optional clipboard. Not a `/session-end`.
 - **Parent pickup:** before continuing substantive work, if that inbox exists and is `pending`,
@@ -223,5 +224,6 @@ Will indicate context; ask if ambiguous.
 - Tribal knowledge held by manager (different time zone, limited availability)
 - Confluence exists but is largely a dumping ground — treat as Suspect by default
 - Time and resource pressure is the norm, not the exception
-- Jira + Bitbucket in use; MCP integration planned but not yet active
+- Code lives on GitHub (an employer org) and Bitbucket; Jira + Confluence are reachable through the
+  Atlassian connector
 - Figma is the center of all UI/UX knowledge

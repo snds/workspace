@@ -11,7 +11,7 @@
   loading-precedence algorithm, and the bootstrap-on-a-checkout protocol.
 - Route a request: pipe it to `ws route --stdin` or run `python3 09-tools/skill-loadset.py "…"`.
   No python: read [trigger-routes-digest.md](02-shared-references/trigger-routes-digest.md).
-  Never ingest `03-skills/skills.registry.json` or the generated `trigger-routes.md`.
+  Never-ingest rules: AGENTS.md → Canonical read order + Skill loading precedence.
 - [workspace-ontology.md](02-shared-references/workspace-ontology.md): vocabulary + the
   "where does this belong?" routing map. Read before writing anything.
 
@@ -46,12 +46,13 @@
   [PERPLEXITY.md](PERPLEXITY.md) — Perplexity · [GEMINI.md](GEMINI.md) — Gemini CLI ·
   [WARP.md](WARP.md) — Warp · [.github/copilot-instructions.md](.github/copilot-instructions.md) —
   Copilot Chat · [web-session.md](00-bootstrap/adapters/web-session.md) — ChatGPT / Grok.com.
+  Codex reads AGENTS.md natively, plus the `~/.codex/AGENTS.md` beacon and `codex-hooks.json`.
   A new tool needs no adapter to work at full fidelity; it just executes the AGENTS.md contract.
   Do not symlink AGENTS.md onto vendor filenames.
 
 ## Generate / validate
 - `python3 09-tools/build-registry.py` — regenerate the skill registry from frontmatter (stdlib-only).
-- `python3 09-tools/skill-loadset.py "…"` — compute the AGENTS.md load set; do not ingest the registry.
+- `python3 09-tools/skill-loadset.py "…"` — compute the AGENTS.md load set.
 - `python3 09-tools/close-out-dispatch.py --from-prompt "…" --run` — named L3 after produce; SKIP ≠ verified.
 - `python3 09-tools/close-out-dispatch.py --check` — every command hub has a named detector.
 - `python3 09-tools/validate-layer0-schema.py --check` — refuse malformed Layer 0 JSON.

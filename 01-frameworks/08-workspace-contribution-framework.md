@@ -90,7 +90,7 @@ Canonical copy + rationale in [[workspace-ontology]]. Compressed here for quick 
 | The thing is… | Layer | 
 |---|---|
 | Active project state / pending work | `06-context/project-context.md` + project `SESSION-STATE.md` |
-| What happened this session | `06-context/session-log.md` |
+| What happened this session | `06-context/sessions/<id>.md` fragment (folded into `session-log.md`) |
 | A durable, non-project fact about Sean's world / the working relationship | `06-context/memory/` |
 | A stable, deliberately set behavioral default | `04-preferences/user-preferences.md` |
 | A validated domain insight learned from real work | `08-knowledge/<domain>/` |
@@ -162,11 +162,14 @@ Each layer: what belongs · when to add vs. extend · what never goes here · th
 - **How:** edit `user-preferences.md`; keep entries terse and rule-shaped.
 
 ### `06-context/` — operational state
-- **Belongs:** `role-and-context` (who Sean is), `project-context` (active projects + pending),
-  `session-log` (append-only history), `artifact-registry` (structural file index), `relational-context`.
+- **Belongs:** `CRITICAL_FACTS` (the hot cache read first), `role-and-context` (who Sean is),
+  `project-context` (active projects + pending), `session-log` (append-only history, folded from
+  `sessions/` fragments), `artifact-registry` (structural file index), `relational-context`.
 - **When:** project/session state changes; at session end.
 - **Never:** durable non-project facts (→ `memory/`); domain insight (→ `knowledge`).
-- **How:** append session blocks newest-first; keep `project-context` the authoritative pending list.
+- **How:** write each session block as a fragment in `06-context/sessions/<id>.md` (compaction folds it
+  into `session-log.md` newest-first; never hand-edit the log); keep `project-context` the
+  authoritative pending list.
 
 ### `06-context/memory/` — durable non-project memory (see §Memory)
 ### `08-knowledge/` — learned domain insight
@@ -215,7 +218,8 @@ typed, portable store any agent reads and writes.
   patterns (→ `knowledge`), deliberate behavioral defaults (→ `preferences`).
 - **How:** one fact per file in `06-context/memory/`, frontmatter `type` (`fact`|`feedback`|`reference`|
   `decision`), `description`, `created`, `confidence`; body holds the fact and links related memories
-  with `[[ ]]`. Add a one-line pointer to `MEMORY.md` (the index loaded at session start). Template:
+  with `[[ ]]`. Add a one-line pointer to `MEMORY.md` (the index agents check before relying on or adding a
+  durable fact; nothing loads it automatically). Template:
   `06-context/memory/_template.md`.
 - **Before adding:** check `MEMORY.md` for an existing entry to extend rather than duplicate. Delete
   (archive) memories that turn out wrong.
@@ -247,9 +251,10 @@ adapter (e.g. a Claude hook) may automate this, but the protocol is the contract
 **Session start — read (and inherit the thread), frugally:**
 0. Emit `python3 09-tools/session-status.py` (notices + all projects + pending). Skip on continuations / Task workers.
 1. `llms.txt` → `AGENTS.md` (contract). Do not ingest `03-skills/skills.registry.json`.
-2. `06-context/`: `role-and-context`, `project-context` (head), **head of `session-log`** (it's bounded;
-   old blocks are in `session-log-archive.md`, read only on demand), `memory/MEMORY.md`. Never read a whole
-   growing log — token frugality is a #1 priority.
+2. Context in the order [[AGENTS]] → "Canonical read order" fixes: `CRITICAL_FACTS` first, then
+   `role-and-context`, `project-context` (stubs/head), **head of `session-log`** (it's bounded; old blocks
+   are in `session-log-archive.md`, read only on demand), `user-preferences`. `memory/MEMORY.md` is on
+   demand. Never read a whole growing log — token frugality is a #1 priority.
 3. The active project's `SESSION-STATE.md` — **read the Live handoff block first**; you now hold the same
    context the previous agent had. Identify yourself (Agent · Surface · Machine) for attribution.
 

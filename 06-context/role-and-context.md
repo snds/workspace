@@ -40,10 +40,11 @@ Design system work is cross-team and cross-vertical. Components must serve diver
 ## Tools & Stack
 
 - **Design:** Figma (primary), with plugin development in TypeScript
-- **Version control:** Bitbucket (Jira for PM)
+- **Version control:** GitHub (an employer org) and Bitbucket
+- **PM + docs:** Jira and Confluence, reachable through the Atlassian connector
 - **Frontend frameworks in codebase:** Vue (primary), React, React Native, Angular
 - **Design tokens:** Design token pipeline (Figma Variables → Style Dictionary or equivalent)
-- **Hardware:** Work MacBook, personal MacBook (Windows desktop retired 2026-09-15; fleet in `02-shared-references/devices.json`)
+- **Hardware:** Work MacBook, personal MacBook, and the personal Windows desktop `Enterprise` (back in use 2026-10-14 after being marked retired on 2026-09-15; fleet in `02-shared-references/devices.json`)
 
 ---
 

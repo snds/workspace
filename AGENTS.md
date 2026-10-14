@@ -1,10 +1,7 @@
 # AGENTS.md — Universal Agent Context
 
 _Status: **canonical** universal cross-agent contract for this workspace._
-_spec_version: 1.0 · Owner: Sean Sands_
-_This is the authoritative contract. Tool-specific files (`CLAUDE.md`, `CURSOR.md`, `PERPLEXITY.md`,
-`GEMINI.md`, `WARP.md`, and the other thin adapters listed under Adapter model) are layers over it,
-not peers to it. Machine entry point: [llms.txt](llms.txt)._
+_spec_version: 1.0 · Owner: Sean Sands · Machine entry point: [llms.txt](llms.txt)._
 
 ---
 
@@ -20,8 +17,6 @@ Its job is to help any capable system understand:
 - how skills are discovered
 - how project-local instructions interact with workspace-level rules
 - how to write safely without breaking existing Claude support
-
-Tool-specific adapters such as `CLAUDE.md` and `PERPLEXITY.md` should be treated as implementation layers on top of this contract, not replacements for it.
 
 ---
 
@@ -63,10 +58,6 @@ The workspace is both a knowledge base and an execution environment.
   ([decision-vendor-surface-artifacts](06-context/memory/decision-vendor-surface-artifacts.md)).
   Rationale + full routing:
   [decision-externalize-everything-to-workspace](06-context/memory/decision-externalize-everything-to-workspace.md).
-- **Adapters, not forks.** Tool-specific files (`CLAUDE.md`, `CURSOR.md`, `PERPLEXITY.md`,
-  `GEMINI.md`, and the other stubs under Adapter model) describe
-  only how that tool executes this contract. They never hold logic the contract lacks, and no tool is
-  privileged over another.
 - Prefer additive changes over destructive ones; when retiring something, archive it with provenance
   (see [Mutation policy](#mutation-policy)).
 - Use canonical files already in the workspace before inventing new sources of truth.
@@ -109,27 +100,27 @@ When entering the workspace without prior context, read in this order:
 
 1. [llms.txt](llms.txt) — machine entry point
 2. `AGENTS.md` (this file)
-3. `python3 09-tools/skill-loadset.py "<utterance>"` — ordered `SKILL.md` paths for this
-   request. Do **not** ingest `03-skills/skills.registry.json` (~55k tokens). Lookup
-   `load_chains[name]` only if the CLI is unavailable.
-4. [trigger-routes.json](02-shared-references/trigger-routes.json) — curated high-leverage
+3. Context, in `06-context/`: [CRITICAL_FACTS.md](06-context/CRITICAL_FACTS.md) first, then
+   `role-and-context.md`, `project-context.md` stubs (`project-context-detail.md` and
+   `project-registry.md` on demand), the **head** of `session-log.md`; then
+   [user-preferences.md](04-preferences/user-preferences.md). On demand only: `memory/MEMORY.md`
+   (index) and `artifact-registry.md` (query `python3 09-tools/artifact-find.py "<terms>"`; never ingest).
+4. The active project's `SESSION-STATE.md` — its **Live handoff** block first
+5. The request's skill load set — see [Skill loading precedence](#skill-loading-precedence)
+6. [trigger-routes.json](02-shared-references/trigger-routes.json) — curated high-leverage
    trigger → load hints (shared via `09-tools/prompt_route.py`). Do
    not ingest the generated [trigger-routes.md](02-shared-references/trigger-routes.md).
-5. Match knowledge via [knowledge-hints.json](02-shared-references/knowledge-hints.json)
+7. Match knowledge via [knowledge-hints.json](02-shared-references/knowledge-hints.json)
    and `_INDEX.md` `Triggers:` lists — read **matched entries only**, never the whole index.
-6. [workspace-ontology.md](02-shared-references/workspace-ontology.md) — vocabulary + routing map
-7. Delivery playbooks, in their own load order: resolve the context profile FIRST
+8. [workspace-ontology.md](02-shared-references/workspace-ontology.md) — vocabulary + routing map
+9. Delivery playbooks, in their own load order: resolve the context profile FIRST
    ([00-context-profiles.md](02-shared-references/delivery-playbooks/00-context-profiles.md)),
    then the audience contract (01), then the medium playbook the request's own words imply
    (02 diagrams · 03 data/charts · 04 documents/specs · 05 Proofboard) — see
    [delivery-playbooks/README.md](02-shared-references/delivery-playbooks/README.md)
-8. Root helper files such as `_HOME.md`, `_CONTEXT.md`, `_FRAMEWORKS.md`, `_SKILLS.md`
-9. `06-context/` — durable context + memory (`memory/MEMORY.md` index). `artifact-registry.md`
-   is an INDEX: query it with `python3 09-tools/artifact-find.py "<terms>"`, never ingest it.
-10. Shared references in `02-shared-references/` and preferences in `04-preferences/` when relevant
-11. Project-local context files for the active project; skill files when performing specialized work
+10. Shared references in `02-shared-references/` when relevant; skill files when performing specialized work
 
-If a task is clearly project-scoped, move to the nearest project root and read local context immediately after these workspace files.
+If a task is clearly project-scoped, read that project per [Project contract](#project-contract) right after step 4.
 
 ## Session-start ritual (every surface)
 
@@ -139,7 +130,7 @@ On the **first reply of a new session**, emit the stdout of:
 
 That card is what Claude Code already shows: notices (bootstrap MISSes, stale audit, unpushed commits), then last session, pending count, **every** `07-projects/*/SESSION-STATE.md`, git state. Do not shrink it to one Active project. Do not skip it because the user asked something simple. Continuations and Task workers skip it. Surfaces without a shell: say `[workspace: RULES-ONLY · via:<surface>]` and still name pending + the active project's Live handoff if those files were pasted.
 
-The ABI line `[workspace: LOADED · …]` is frozen (SessionEnd audit). The card's `via:` is `cursor-hook`, `project-hook/startup`, or `session-status` when the agent ran the CLI itself.
+The ABI line `[workspace: LOADED · …]` is frozen (SessionEnd audit). The card's `via:` is `<user|project|cursor>-hook/<source>`, or `session-status` when the agent ran the CLI itself.
 
 ---
 
@@ -157,7 +148,7 @@ The ABI line `[workspace: LOADED · …]` is frozen (SessionEnd audit). The card
 - `09-tools/` — scripts, generators, validators, automation
 - `_archive/` — retired files, each with provenance in `ARCHIVE-LOG.md`
 
-Root helper files (`_HOME.md`, `_SKILLS.md`, …) and per-domain MOCs are Obsidian navigation shortcuts, not replacements for the canonical registry/manifests.
+Root helper files (`_HOME.md`, `_SKILLS.md`, …) and per-domain MOCs are Obsidian navigation for humans (their Dataview blocks render nothing outside Obsidian), not replacements for the canonical registry/manifests.
 
 ---
 
@@ -199,10 +190,9 @@ Any new or materially improved skill hub/spoke/addendum must satisfy the **Domai
 
 Skills are discoverable by both humans and machines through one generated graph:
 
-1. `python3 09-tools/skill-loadset.py "<utterance>"` — runtime load set (do not ingest the
-   generated graph). `03-skills/skills.registry.json` is the lookup the CLI uses
-   (tiers, prerequisites, related, triggers, precomputed `load_chains`). Generated from
-   frontmatter by `09-tools/build-registry.py`.
+1. `03-skills/skills.registry.json` — the graph (tiers, prerequisites, related, triggers,
+   precomputed `load_chains`), generated from frontmatter by `09-tools/build-registry.py`;
+   agents reach it through `skill-loadset.py` (below).
 2. [trigger-routes.json](02-shared-references/trigger-routes.json) (+ generated
    [trigger-routes.md](02-shared-references/trigger-routes.md)) — curated high-leverage routes
    shared by the Claude dispatcher through `09-tools/prompt_route.py` (which resolves the
@@ -232,7 +222,7 @@ load_set(message, registry):
   return ordered, suggestions, lenses
 ```
 
-Do **not** ingest `skills.registry.json`. Compute the same `load_set` with:
+Do **not** ingest `skills.registry.json` (~55k tokens). Compute the same `load_set` with:
 
 `python3 09-tools/skill-loadset.py "<utterance>"`
 
@@ -255,8 +245,8 @@ Hubs and foundations must declare `triggers` (registry CI).
 Vendor Figma plugin skills are mechanics only; workspace `figma` + `design-engineer` own
 token/component doctrine.
 
-Worked example — "dark-mode palette for this dashboard" →
-`design-foundations` → `lead-ui-designer` → `uid-color-for-ui` (suggests `ds-advisor`, `uid-surface-depth`).
+Worked example — "dark-mode palette for this dashboard" → `design-foundations` → `found-color` →
+`lead-ui-designer` → `uid-color-for-ui` (lenses after produce: `qa`, `a11y-visual`).
 
 ---
 
@@ -274,12 +264,11 @@ Each project under `07-projects/` should be interpretable by any agent.
 
 Preferred local discovery order:
 
-1. `README.md`
-2. project-level agent adapter files such as `CLAUDE.md`
-3. local config or context files such as `.visual-qa-context.yaml`
-4. supporting specs, plans, or notes
-
-For future normalization, each project should eventually expose a universal local context file such as `PROJECT.md`, `AGENT-CONTEXT.md`, or a manifest-backed equivalent.
+1. `SESSION-STATE.md` — its **Live handoff** block first
+2. `README.md`
+3. project-level agent adapter files such as `CLAUDE.md`
+4. local config or context files such as `.visual-qa-context.yaml`
+5. supporting specs, plans, or notes
 
 ---
 
@@ -324,11 +313,13 @@ When adding structure, prefer formats that are friendly to both markdown readers
 
 ## Adapter model
 
-Agent-specific files are thin adapters over this one contract, not separate contracts; the per-tool list is
-[00-bootstrap/SURFACES.md](00-bootstrap/SURFACES.md). Onboard from `00-bootstrap/adapters/_ADAPTER-TEMPLATE.md`.
+Tool files (`CLAUDE.md`, `CURSOR.md`, `PERPLEXITY.md`, `GEMINI.md`, `WARP.md`, …; list in
+[00-bootstrap/SURFACES.md](00-bootstrap/SURFACES.md)) are thin adapters over this one contract, not
+peers or forks. Each says only how its tool executes the contract, never holds logic or state the
+contract lacks, and no tool is privileged. No adapter is needed for full fidelity.
+Onboard from `00-bootstrap/adapters/_ADAPTER-TEMPLATE.md`.
 Never symlink this contract onto an adapter's filename (some tools concatenate every instruction file).
 Never add `.cursorrules` / `.windsurfrules` / `.clinerules` (first-match can hide this file).
-No adapter is needed for full fidelity; adapters never fork the model or hold state the contract lacks.
 
 ---
 
@@ -354,7 +345,7 @@ context store; it updates the shared one so the next agent inherits an unbroken 
 | State | Holds | Cadence |
 |---|---|---|
 | Active project `SESSION-STATE.md` (its **Live handoff** block) | "pick up exactly here": current focus, working set, last action, next action, open decisions, blocked-on, in-flight/do-not-touch | updated **continuously** + at every handoff |
-| `06-context/side-chat-inbox.md` | mid-session side-chat → parent continuity (one pending paragraph + pointers) | written by `/handback` / [[side-chat-handback]]; parent marks `consumed`. Gitignored. Not a session-end. |
+| `06-context/side-chat-inbox.md` | mid-session side-chat → parent continuity (one pending paragraph + pointers) | written by [[side-chat-handback]] (`/side-chat-handback`); parent marks `consumed`. Gitignored. Not a session-end. |
 | `06-context/sessions/<id>.md` fragment | this session's block (a disjoint file per session) | written at session end; compaction folds it into `session-log.md` |
 | `06-context/session-log.md` (+ `session-log-archive.md`) | chronological history, newest-first, attributed; **bounded** (old blocks archived) | folded from fragments; read the **head** only |
 | `06-context/memory/` | durable, non-project facts + decisions | when a durable fact emerges |
@@ -397,27 +388,17 @@ Full per-layer protocol: `01-frameworks/08-workspace-contribution-framework.md` 
 
 ## Write-quality gates
 
-**Any capable agent may write here — not just Claude — but every write must clear these gates.** Open
-participation is safe *because* correctness is enforced by deterministic validation + CI, not by which model
-holds the pen. These gates apply to every agent on every surface (Cursor's GPT/Gemini, a local model, a
-human), and they are what let dynamic multi-agent work stay one coherent contract instead of degrading.
+**Any capable agent may write here — not just Claude — but every write, on every surface, clears four
+gates.** Detail: [framework 08](01-frameworks/08-workspace-contribution-framework.md) → Write-quality gates.
 
-1. **Quality** — output must **meet or exceed** the workspace documentation standard: complete (no stubs,
-   TODOs, or unfilled template tokens), in the file's established structure and voice, valid frontmatter.
-   Follow Last-Mile Craft (framework 05) + the QA Operating Model (framework 06).
-2. **Intent integrity (no loss)** — read and understand a file's intent *before* editing; after, verify no
-   data, context, or intent was silently dropped. Preserve meaning unless deliberately superseding (gate 4).
-3. **Cross-link continuity** — a change to one file must update **every** related/cross-linked file
-   (frontmatter edges, `## Related`, foundations, MOCs, knowledge refs, prose mentions), then regenerate the
-   registry + Related and pass the validators. A change that orphans a reference is incomplete.
-4. **No zombies — archive-or-regenerate** — if a change is so dramatic the old file no longer makes sense,
-   **archive** it with provenance (`_archive/` + `ARCHIVE-LOG.md`), **generate** the replacement, and
-   **repoint** all cross-links. Never leave an orphaned, superseded-but-live, half-updated, or stub file.
+1. **Quality** — complete (no stubs, TODOs or template tokens), valid frontmatter, in the file's structure and voice (frameworks 05 + 06).
+2. **Intent integrity (no loss)** — understand a file's intent before editing; drop nothing silently.
+3. **Cross-link continuity** — update every cross-linked file, regenerate, pass the validators.
+4. **No zombies — archive-or-regenerate** — archive with provenance, generate the replacement, repoint links.
 
 **Embedded, not commit-only.** Done on a vault write means the relevant validators ran in this session,
 not only that files were saved. Commit/CI is the backstop.
 
 **Enforcement (before claiming a write complete; CI runs it too):** `python3 09-tools/nightly.py --phases rebuild`
 (owns the rebuild fixpoint; never hand-sequence the generators), then `python3 09-tools/workspace-harness.py`
-(every gate in order, reachability, token budgets). Chain + per-layer detail: framework 08. Gate 2 stays with the
-authoring agent + PR review.
+(every gate in order, reachability, token budgets). Gate 2 stays with the authoring agent + PR review.

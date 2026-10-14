@@ -11,10 +11,11 @@ Everything an agent needs to know before acting. All files in `06-context/`.
 
 | File | Purpose | Who writes |
 |---|---|---|
+| [[06-context/CRITICAL_FACTS]] | Hot cache of facts never to re-derive — **read first** ([[AGENTS]] → Canonical read order) | Any agent (keep it a screenful) |
 | [[06-context/role-and-context]] | Who Sean is, his work, specializations | Sean (rarely changes) |
 | [[04-preferences/user-preferences]] | Communication style, tone, conventions | Sean |
 | [[06-context/project-context]] | Active projects + pending items (authoritative) | Any agent (via session-end) |
-| [[06-context/session-log]] | Session blocks, newest-first | Any agent (via session-end) |
+| [[06-context/session-log]] | Session blocks, newest-first (folded from `sessions/` fragments) | Any agent (via session-end) |
 | [[06-context/artifact-registry]] | Structural index of project files — **query with `09-tools/artifact-find.py`, do not read whole** | Any agent (via session-end write 4) |
 | [[06-context/memory/MEMORY]] | Durable non-project facts + decisions index | Any agent (when a durable fact emerges) |
 
@@ -35,8 +36,8 @@ See [[06-context/project-context]] § Pending Items. Authoritative list.
 ## How context flows
 
 1. **Session start** — emit `python3 09-tools/session-status.py` (Claude/Cursor hooks inject it; if they miss, run the CLI). Then [[AGENTS]] + context heads.
-2. **During session** — The agent reads specific files as needed. Triggers like `legion` or `centric` route attention to specific skills.
-3. **Session end** — Session-end writes a Session Block to session-log.md, updates project-context.md, updates artifact-registry.md, commits, pushes. Claude Code slash: `/session-end`.
+2. **During session** — The agent reads specific files as needed. Triggers like `legion` or `centric plm` route attention to specific skills.
+3. **Session end** — Session-end writes the Session Block as a fragment in `06-context/sessions/<id>.md` (compaction folds it into session-log.md), updates project-context.md, updates artifact-registry.md, commits, pushes. Claude Code slash: `/session-end`.
 
 ## Why these files are in Git (and artifacts aren't)
 

@@ -19,9 +19,8 @@ multi-agent handoff live in AGENTS.md — not duplicated here._
   `00-bootstrap/workspaces/*.code-workspace` file with **Brain as the first folder**. Opening a
   parent (`~/Projects`) alone does not attach `brain.mdc` — use **move agent to workspace root** or
   reopen via the `.code-workspace` file.
-- **Context:** read `06-context/` (role, **project-context stubs** only at start — detail/registry
-  on demand, session-log head, `memory/MEMORY.md`)
-  and `04-preferences/user-preferences.md` at session start per framework 08.
+- **Context:** at session start, read per [AGENTS.md](AGENTS.md) → Canonical read order
+  (`06-context/CRITICAL_FACTS.md` first; project-context **stubs** only; session-log head).
 - **Skills:** Cursor has no Claude slash commands. Route via
   `python3 09-tools/skill-loadset.py "<utterance>"` (never ingest the registry or `trigger-routes.md`).
   After producing, run `python3 09-tools/close-out-dispatch.py --from-prompt "<utterance>" --run`.
@@ -42,13 +41,16 @@ multi-agent handoff live in AGENTS.md — not duplicated here._
 
 | Layer | Location | Events |
 |---|---|---|
-| User-global (installer) | `~/.cursor/hooks.json` ← `00-bootstrap/dist/cursor-hooks.json` | `sessionStart` |
+| User-global (installer) | `~/.cursor/hooks.json` ← `00-bootstrap/dist/cursor-hooks.json` | `sessionStart` · `beforeShellExecution` · `preToolUse` · `beforeMCPExecution` · `afterFileEdit` · `afterShellExecution` · `stop` |
 | Project (repo) | `.cursor/hooks.json` | `subagentStop` |
 
-Generated from `02-shared-references/surfaces.json`; see the block in `00-bootstrap/SURFACES.md`.
+Generated from `02-shared-references/surfaces.json`; per-event commands are in the generated
+Registrations table of `00-bootstrap/SURFACES.md`.
 
 - **sessionStart** — injects `session-status.py` ritual card (notices + all projects + pending).
   Emit that card as the first reply. Fallback ABI: `[workspace: LOADED · … · via:cursor-hook]`.
+- **Shell / tool / MCP / edit / stop** — `ws-guard-cursor`, `ws-ledger-cursor`, `ws-gate-cursor`
+  (plus a `ws-sweep-cursor` sweep on sessionStart).
 - **subagentStop** — nudge parent to fold Task results into the baton.
 
 Scripts: `.cursor/hooks/*.sh` (project) and `00-bootstrap/dist/cursor-*.sh` (`--install-shims`).

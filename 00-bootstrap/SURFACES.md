@@ -2,7 +2,7 @@
 
 _The brain (this workspace) is consumed by multiple tools simultaneously. Each surface has its own context-discovery mechanism. This doc maps what each surface reads, how to launch it against the brain, and known gaps._
 
-_Last updated: 2026-09-23_
+_Last updated: 2026-10-14_
 
 ---
 
@@ -12,15 +12,16 @@ _Last updated: 2026-09-23_
 |---|---|---|---|---|
 | **Claude Code (CLI)** | Walks up parents from CWD → `CLAUDE.md` + `.claude/` | Anthropic | Full dispatcher + slash skills + SessionStart/End | Richest hook automation. Not the only surface that may mutate the vault. |
 | **Claude Code (desktop, Code tab)** | Same, plus per-session worktree under `.claude/worktrees/` | Anthropic | Yes — state on worktree branch until merged | Prefer CLI for canonical continuity. |
-| **Cursor** | `.cursor/rules/*.mdc` on **first** workspace folder + project/user hooks | Cursor models (Claude/GPT/Gemini/…) | `sessionStart` (user) · `subagentStop` (project) · `.cursor/agents/` | Open Brain first or use `*.code-workspace`. Adapter: [[CURSOR]]. |
+| **Cursor** | `.cursor/rules/*.mdc` on **first** workspace folder + project/user hooks | Cursor models (Claude/GPT/Gemini/…) | User: seven events (Registrations below) · project: `subagentStop` · `.cursor/agents/` | Open Brain first or use `*.code-workspace`. Adapter: [[CURSOR]]. |
 | **VS Code** + Claude Code ext | Same as CLI | Anthropic | Yes | IDE UI over the CLI hooks. |
+| **Codex** | `AGENTS.md` natively + `~/.codex/AGENTS.md` beacon (one 32 KiB window) | OpenAI | `codex-hooks.json` → `~/.codex/hooks.json` (Registrations below) · workspace MCP | No adapter file. `workspace-doctor.sh --install-shims=codex`. |
 | **VS Code** + Copilot | `.github/copilot-instructions.md` + `AGENTS.md` | OpenAI | Hook API yes; none wired | Thin pointer → AGENTS.md. |
 | **Gemini CLI** | `GEMINI.md` + `.gemini/settings.json` (`context.fileName` = `AGENTS.md`) | Google | Hook API yes; none wired | Thin pointer; settings load the contract. |
 | **Warp** | `WARP.md` | Warp | No | Thin pointer → AGENTS.md. |
 | **Aider** | `.aider.conf.yml` `read:` (AGENTS.md, llms.txt, CONVENTIONS.md) | any | No | Root CONVENTIONS is a pointer; PR conventions stay in `.github/CONVENTIONS.md`. |
 | **Windsurf** | `.windsurf/rules/*.md` (`trigger: always_on`) + `AGENTS.md` | Cognition | Hook API yes; none wired | No `.windsurfrules`. AGENTS.md exceeds the 12,000-char rule limit, so `contract-core.md` is generated from its invariant sections. |
 | **Obsidian** | Folder = vault | n/a | n/a | Navigation, graph, daily notes. |
-| **Claude Desktop** | Filesystem MCP | Anthropic | n/a | Skills via AGENTS.md + [[trigger-routes-digest]]. |
+| **Claude Desktop** | Workspace MCP (H21; replaced `workspace-fs`) | Anthropic | n/a | `workspace-doctor.sh --install-mcp=claude-chat-desktop`. Skills via AGENTS.md + [[trigger-routes-digest]]. |
 | **Perplexity / generic MCP / human** | `llms.txt` → `AGENTS.md` → `skill-loadset.py` or `trigger-routes-digest.md` | any | n/a | Adapter: [[PERPLEXITY]]. |
 | **ChatGPT / Grok.com / Perplexity (no FS)** | none | various | n/a | Paste [web-session.md](adapters/web-session.md) + `dist/BEACON.md`. |
 | **Claude iOS** | None | Anthropic | n/a | Paste or describe; no local FS. |
@@ -47,7 +48,7 @@ Do **not** open only `~/Projects` as the root if you need brain rules — attach
 
 ### VS Code / Obsidian / Claude Desktop / iOS
 
-Unchanged from prior practice: multi-root `.code-workspace` for VS Code; Obsidian opens the vault; Desktop uses filesystem MCP; iOS is paste-only.
+Multi-root `.code-workspace` for VS Code; Obsidian opens the vault; Claude Desktop uses the workspace MCP server (`workspace-doctor.sh --install-mcp=claude-chat-desktop`, human-run); iOS is paste-only.
 
 ---
 
@@ -87,7 +88,7 @@ Paths are relative to the file. Brain must stay first so Cursor loads `.cursor/r
 ## How Cursor finds the brain
 
 1. First folder root → `.cursor/rules/*.mdc` (`brain.mdc` alwaysApply).
-2. User `~/.cursor/hooks.json` `sessionStart` → `cursor-sessionstart.sh` injects `session-status.py` (doctor-managed).
+2. User `~/.cursor/hooks.json` `sessionStart` → `cursor-sessionstart.sh` injects `session-status.py` (doctor-managed). The same file registers the guard, ledger and stop-gate events (Registrations below).
 3. Project `.cursor/hooks.json` → subagent-stop nudge. The preCompact, sessionEnd and beforeSubmitPrompt shims were retired on 2026-09-22 (their output never reached the model).
 4. Agent follows ritual in `brain.mdc`; routes skills via `python3 09-tools/skill-loadset.py "<utterance>"`.
 5. Task tool may spawn `.cursor/agents/*` (hub load chains).
