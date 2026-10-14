@@ -133,6 +133,20 @@ could tell it to do something harmful.* Lead with that sentence next time.
   commands in one block and never a command only inline in prose. Put the "what it should show"
   note after the block. **Why:** I copy each block with its copy button and paste it straight into
   a terminal or an agent chat; anything else makes me retype or trim.
+- **Full absolute paths in every command, starting with the `cd`** (set 2026-10-12). Each block
+  is one line that first goes to the folder the command belongs in, then runs it:
+  `cd /Users/<me>/Projects/<folder> && <command with absolute paths>`. Never `~/...`, a relative
+  path, or a bare script name that only works from one folder. The line must run as-is from any
+  terminal. **Why:** I paste straight into whatever terminal is open; a command that depends on
+  where I am fails. **Re-stated 2026-10-13** after an agent gave `~/...` paths and no `cd`
+  (Fontface session): this applies to every command for me, including one-liners like `gh auth
+  switch` whose folder doesn't matter. Start them with the `cd` to the related project anyway.
+- **Run it yourself before you give it to me** (set 2026-10-14). Paste the exact line into your own
+  shell first and fix whatever stops it (a script that isn't executable, a wrong path, a missing
+  install or pin) before it reaches me. Where only a human may finish it (a TTY + human-verdict
+  installer), run it up to that gate and say so. Anything you could not run, say plainly is untested.
+  **Why:** on 2026-10-13 I got three `workspace-doctor.sh` commands with `~/` paths and no `cd`, and
+  the script wasn't even executable, so none of them ran.
 
 ## Working Principles (DS / design-engineering work)
 _Migrated 2026-07-09 from the machine-local `~/.claude/CLAUDE.md` (FX-15) — these are standing

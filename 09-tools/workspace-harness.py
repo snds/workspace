@@ -73,15 +73,15 @@ ALWAYS_LOADED_BYTES_CEILING = {
     ".cursor/rules/brain.mdc": 3_592,
     ".cursor/rules/01-agent-controller.mdc": 1_218,
     ".cursor/rules/02-workspace-filesystem.mdc": 1_602,
-    "00-bootstrap/dist/user-CLAUDE.md": 1_738,  # +plain-language standing rule (2026-10-06)
-    "00-bootstrap/dist/BEACON.md": 1_737,  # +plain-language standing rule (2026-10-06)
-    "00-bootstrap/dist/RULES.txt": 509,  # +plain-language standing rule (2026-10-06)
+    "00-bootstrap/dist/user-CLAUDE.md": 1_984,  # +commands-for-Sean standing rule (2026-10-14) and +plain-language standing rule (2026-10-06)
+    "00-bootstrap/dist/BEACON.md": 1_983,  # +commands-for-Sean standing rule (2026-10-14) and +plain-language standing rule (2026-10-06)
+    "00-bootstrap/dist/RULES.txt": 755,  # +commands-for-Sean standing rule (2026-10-14) and +plain-language standing rule (2026-10-06)
     # H6 per-family renders (wave 1, 2026-09-24). New files, so these are new pins, not raises:
     # the Codex beacon is held to the old shared beacon's 1,515 B (it counts toward the Codex
     # window); the ~/Projects pointer to the spec's 1 KiB; the Cursor paste to its first render.
-    "00-bootstrap/dist/codex-AGENTS.md": 1_711,  # +plain-language standing rule (2026-10-06)
-    "00-bootstrap/dist/projects-AGENTS.md": 1_261,  # +plain-language standing rule (2026-10-06)
-    "00-bootstrap/dist/cursor-user-rules.txt": 915,  # +plain-language standing rule (2026-10-06)
+    "00-bootstrap/dist/codex-AGENTS.md": 1_957,  # +commands-for-Sean standing rule (2026-10-14) and +plain-language standing rule (2026-10-06)
+    "00-bootstrap/dist/projects-AGENTS.md": 1_507,  # +commands-for-Sean standing rule (2026-10-14) and +plain-language standing rule (2026-10-06)
+    "00-bootstrap/dist/cursor-user-rules.txt": 1_161,  # +commands-for-Sean standing rule (2026-10-14) and +plain-language standing rule (2026-10-06)
 }
 # The files that can sit at ~/.codex/AGENTS.md: the Codex beacon, or the shared paste beacon
 # that was installed there before H6. The worst case counts the larger.

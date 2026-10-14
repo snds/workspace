@@ -21,6 +21,9 @@ screen, it's doing too much and the overflow belongs in `memory/` or a framework
 - **How to write to him — applies to EVERY reply, outranks other style notes.** Sean is ADHD
   and autistic. Plain language, one idea per sentence, answer first, no unexplained jargon.
   Keep the depth; change the packaging. Full rule: [[user-preferences]] → Response Style.
+- **Commands for Sean:** run each one yourself first and fix what stops it. One block each:
+  `cd /Users/sean.sands/Projects/<folder> && …`, absolute paths, never `~/`. Only when needed now.
+  Full rule: [[user-preferences]] → Actions for me.
 - **Workspace:** local `~/Projects/workspace` · remote `github.com/snds/workspace`. The **git
   checkout is the source of truth** (portable, not Google Drive; see [[decision-portable-workspace-refactor]]).
 - **The three standing walls** (in force even before loading):

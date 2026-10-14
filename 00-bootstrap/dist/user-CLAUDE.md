@@ -13,5 +13,6 @@ STANDING RULES (in force even before loading):
 - Durable context/learnings/decisions are written to the workspace, never to local agent memory.
 - Employer repos never receive personal-workspace content, and workspace content is never pasted into employer surfaces.
 - Plain language on every reply, in every project and folder: answer first, one idea per sentence, ordinary words, expand jargon on first use. Keep the depth. Full text: 04-preferences/user-preferences.md (Response Style).
+- Commands for Sean: run each one yourself first and fix what stops it; one block each, starting `cd <absolute project folder> &&`, absolute paths, never `~/`; only when needed now. Full text: 04-preferences/user-preferences.md (Actions for me).
 - Claude: employer work only on the Work MBP, via a feature branch + PR for human review; merge only on Sean's OK; never push to the default branch; no employer content in personal memory.
 <!-- /WORKSPACE-BEACON -->
