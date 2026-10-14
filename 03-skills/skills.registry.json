@@ -4823,7 +4823,8 @@
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "the game"
+        "legion game",
+        "game project"
       ],
       "surfaces": [
         "*"
@@ -4831,7 +4832,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:ea2db6d1d1d9ce330233b4371d672472fcacc3ef92d036c1cd94ef51cfa33613"
+      "hash": "sha256:502dcea72bb5dd6789668256124aaa41bf44ec41ee900ae5fd8b40d67b800149"
     },
     "material-symbols-project": {
       "path": "03-skills/material-symbols-project/SKILL.md",
@@ -7528,7 +7529,8 @@
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "who is this for",
+        "who is this product for",
+        "who are we designing for",
         "designing this for",
         "do we know enough"
       ],
@@ -7538,7 +7540,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:791571e841240e5864d9dbbc46ee66aeeb81f54dd8ba4cb265d1884ebcb2b0c8"
+      "hash": "sha256:6a5617ba8866b4b3574d5f2d460a8ac089b52ce366dd2168bf35b181af0d9057"
     },
     "ux-service-design": {
       "path": "03-skills/ux-service-design/SKILL.md",

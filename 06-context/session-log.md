@@ -51,6 +51,157 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+
+### 2026-10-14 — Fontface renumbered 24 → 25; its baton now syncs through git
+
+SessionID: 2026-10-14-work-mbp-renum25
+--- SESSION BLOCK ---
+Date: 2026-10-14
+Machine: Work MacBook Pro
+Surface: Claude Code (desktop) · side session of the GitHub-route landing session
+Agent: Claude Opus 5.5
+Project(s): 25-fontface, 24-mailbird (index only)
+Summary: Two projects held number 24. Mailbird (2026-10-13) was already on GitHub; Fontface
+(2026-10-12) was older but had never been committed, because `.gitignore` had no allow-entry for
+its folder. Sean chose: Mailbird keeps 24, Fontface moves to 25 (same rule as 22: whoever reaches
+GitHub first keeps the number), and Fontface's baton is now tracked like 21–24. The folder was
+untracked, so it moved with a plain `mv`, not `git mv`; Mailbird did not change at all.
+Decisions: project numbers go to whoever reaches origin first (now applied twice: 22, 25).
+Changed: 07-projects/25-fontface/{README,SESSION-STATE}.md (renamed from 24-fontface, now tracked),
+.gitignore (allow-entry), _PROJECTS.md, 06-context/project-registry.md, 06-context/project-context.md.
+Verification: no `24-fontface` references remain except the history note. validate-integrity went
+from 3 errors (the untracked Fontface links) to 0. nightly rebuild wrote 0 files.
+Incident: a sibling session's accidental `git reset --hard` at 07:37 PDT wiped the three index
+edits. The Fontface files and .gitignore were restored by that session; the three index edits were
+rebuilt from this session's transcript (the staged Fontface lines plus the 25 renumber). Nothing lost.
+Pending: none for the renumber.
+--- END BLOCK ---
+
+### 2026-10-13 — Walls: one GitHub route for every surface; file edits are their own class
+
+SessionID: 2026-10-14-work-mbp-ghroute
+--- SESSION BLOCK ---
+Date: 2026-10-13 (landed 2026-10-14)
+Machine: Work MacBook Pro
+Surface: Claude Code (desktop) · session cb042892-48fa-4e0e-864c-1fec1fe4e8fd
+Agent: Claude Opus 5.5
+Project(s): 19-workspace-brain (walls)
+Summary: Sean was blocked switching GitHub accounts, fighting the gates, and unable to comment,
+open issues or merge. Diagnosis: six stacked gate layers. Claude's gh knew only `snds`; gh cannot
+verify TLS or read the keychain inside Claude Code's sandbox; P31 denied plain file edits on an
+employer default branch; the auto-mode profile named ~/fontface as the only trusted repo; and
+GitHub never lets Sean approve his own PRs, which Claude opens as him. Built (Sean chose "Build all
+four", merge after a GitHub rule change): 09-tools/gh_route.py (pinned) routes every GitHub login by
+repo owner for git (bin/git-credential-ws) and gh (bin/gh, linked as ~/.local/bin/gh); overlay v6;
+the lanes include carries the route and sends routed owners' SSH forms over HTTPS; file writes are
+class `edit` (never branch-checked); commit and push on default stay denied. Merged origin/main and
+pushed main (7 stuck local commits went up).
+Decisions: decision-claude-employer-surface amendment 2026-10-13. The employer insteadOf lives only in
+the lanes include, not the tracked overlay (H25 employer-substance). No admin-override merges.
+Changed: 09-tools/{gh_route,git_lanes,wall_guard,profile_resolve,pr-desk,test-validators}.py,
+00-bootstrap/doctor/{pin_lib,installers,render_shims}.py, 00-bootstrap/dist/{gh,git-credential-ws,
+claude-overlay.env,git/lanes/ws-lanes.inc}, devices.json, surfaces.json, action-policy.json (+fixture),
+fixtures (wall_guard, git_lanes, identity), .gitignore, the decision note.
+Verification: pin checks 7/7 (profile_resolve 406/406 outside the sandbox), installers 72/72,
+git_lanes 67/67, render_shims 67/67, affected test-validators classes green, ruff clean,
+employer-substance clean. Harness red only on pre-existing items (evidence-grades census from the
+mechanization review) and sandbox-environment timeouts (nightly 74/74 outside the sandbox).
+Pending: Sean runs --install-pin, --install-git-hooks, --install-claude-overlay (in that order) and
+starts a fresh session; updates the auto-mode profile and /sandbox (gh, git) himself; changes GitHub
+rules on the two merge-list repos. Then ^pc-09 and ^pc-50 can close after one real Centric push.
+Incident: a stray `git reset` during landing unstaged other sessions' work on main; restored exactly
+from the landing stash's index tree (no content lost). Two projects share number 24 (mailbird, fontface).
+--- END BLOCK ---
+
+### 2026-10-13 — Mailbird (working name): research + Phase 0 foundation
+
+SessionID: 2026-10-13-cloud-mb24
+--- SESSION BLOCK ---
+Date: 2026-10-13
+Machine: Claude cloud session (no local device)
+Surface: Claude Code (web) · session_0144yFcMoSfdF3X1gnyuaC76
+Agent: Claude Opus 5.5
+Project(s): 24-mailbird (github.com/snds/Mailbird, personal-solo, public)
+Summary: Started a cross-platform PIM super app with mail, calendar, contacts, and notes.
+Research covered competitors and protocols. The OSS license audit verified every dependency. Then
+the scaffold went up: a React + shadcn (Base UI, Nova) mobile-first shell, 3-tier tokens, Material
+Symbols through a local shadcn transform, a Tauri 2 shell, and a Rust capability matrix. It is in
+PR #1.
+Decisions: the Material Symbols variable font is drawn inside an <svg>, which keeps shadcn's svg
+selectors and the live axes. Icon axes are @property tokens. Tauri 2 everywhere, with Capacitor as
+the mobile fallback. Mail stays on the device to limit Google CASA scope. Notes are Markdown + Yjs,
+with import instead of sync for Keep and Apple Notes.
+Changed: 07-projects/24-mailbird/{README,SESSION-STATE}.md, _PROJECTS.md.
+Verification: in the code repo, lint, build, cargo test (4), and cargo check of the shell pass.
+Phone, tablet, and desktop screenshots checked.
+Pending: product rename (name collides with Mailbird, Inc.); Tauri mobile spike.
+--- END BLOCK ---
+
+### 2026-10-08 — Emphasis Engine: native examples for 12 design systems + knowledge survey
+
+SessionID: 2026-10-08-cloud-ee7n4t
+--- SESSION BLOCK ---
+Date: 2026-10-08
+Machine: Claude cloud session (no local device)
+Surface: Claude (claude.ai, cloud workspace) · session_013599uzq7Yw95BjZS2GJFrB
+Agent: Claude Opus 5.5
+Project(s): emphasis-engine (github.com/snds/emphasis-engine, personal-solo)
+Summary: Built native example pages for 12 design systems in Emphasis Engine. Each one uses the
+system's own components and guidelines and lives on its own iframe page. The app sends the solved
+theme by postMessage, and a service worker precaches every page. Earlier the same day: a
+Photos-style phone editor, with a tick scrubber, color strips, a bottom dock and sheets. Recorded
+what theming each system taught us as knowledge entries, plus ranked ideas for the Centric design
+system.
+Decisions: info must never alias brand. Component tokens must be var() references. The kit's
+restore never overwrites provider-written variables.
+Changed: 08-knowledge/design/ds-native-theming-survey.md (hub), ds-native-<13 systems>.md,
+centric-ds-ideas-from-ds-survey.md, 08-knowledge/_INDEX.md, 02-shared-references/knowledge-hints.json.
+Verification: vault-health clean; validate-integrity, validate-links, build-related, check-secrets
+(incl. employer-substance baseline), validate-workspace, and the dispatcher self-test all pass.
+Later the same session: fixed the profile bugs at the root, in the probe and generator. Generated
+profiles are now probed from the native pages. Each trace is confirmed by a second sentinel pass.
+Scoped stock values are read from the declaring rule, and status names beat chroma (selectors
+count). Ant Design and Coinbase CDS take the solved values in their theme objects. The lessons are
+in the survey entry's "Probing a design system from outside" section.
+Pending: none for this thread.
+--- END BLOCK ---
+
+### 2026-10-06 — Claude becomes an employer-approved surface
+
+SessionID: 2026-10-06-work-mbp-cl7e01
+--- SESSION BLOCK ---
+Date: 2026-10-06
+Machine: Work MacBook Pro
+Surface: Claude Desktop / Cowork (linked to this computer; tests run in a cloud copy with git 2.54)
+Agent: Claude Opus 5.5
+Project(s): 19-workspace-brain
+Summary: Centric moved its agent tooling to Claude. Retired the "every Claude surface is personal-only"
+rule. Claude now follows the same device and identity model as Cursor and Codex, and Centric repos
+run under centric-engineering (branch → PR → human review). Kept the walls: personal content never
+lands in an employer repo (I1 at the floor and in the guard, now for Claude too); conduct binds Claude
+through P30–P32 and a new floor rule that refuses employer default-branch, unreadable-default and
+non-branch pushes (I2); credentials stay scoped per repo (snds over HTTPS with Claude's gh; Centric over
+the github-work SSH alias and the device-default gh).
+Decisions: [[decision-claude-employer-surface]] (new; supersedes the Claude exception in
+[[feedback-credential-scoping]], whose old text is quoted in its History). Sean said the Claude login
+account is not an identity key: a personal account may do Centric work when the content stays in
+Centric repos and project folders. Work devices = Work MBP only (default). No employer content in
+personal claude.ai memory, Projects or artifacts (default).
+Changed: action-policy (P11–P14 retired, P30–P33 cover claude, P21 scoped to third-party/unknown),
+devices (IR1 personal repos only, I2 all-agent branch rule), profile_resolve (identity, floor, cached
+HEAD reads), wall_guard (R3 for Claude; off-device R1 denies; R7 notice), render_shims (no transport
+block; employer identity include; work-device permissions), installers, session-status, closure,
+intent-run, beacons and every dist beacon, docs, and the wall_guard, identity, closure, git-lane and
+action-policy fixtures. New wall_guard cases prove a personal identity into an employer repo is still
+denied (R3) for Claude.
+Verification: nightly --phases rebuild OK; workspace-harness all lanes PASS (44 quality gates,
+connections, tokens) with git 2.54, where the hook-level floor fixtures run instead of skipping.
+Committed separately first: the in-flight plain-language change (ec31408).
+Next: ^pc-50 — reinstall the Claude overlay on each Mac, re-paste BEACON.md into the claude.ai profile,
+--install-pin; Centric HTTPS fallback for Claude; prove Claude Code prompt routes in an employer cwd.
+--- END BLOCK ---
+
 ### 2026-09-30 — Catalogue leftover primitives
 
 SessionID: 2026-09-30-work-n8p4
@@ -649,234 +800,4 @@ Pending resolved: (none fully closed)
 Next:
   - Human review/merge #87 and #179; assign Alex on #179.
   - #88 harness still draft — rebase after #87 if still wanted.
---- END BLOCK ---
-
-### 2026-09-17 — wsx Path B picker + Windows handoff zip
-
-SessionID: 2026-09-17-work-wsxpc
---- SESSION BLOCK ---
-Date: 2026-09-17
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 18-bootstrap-generator
-Summary: Path B launcher now auto-detects folder-capable apps, ranks a platform default (Cursor on Windows/Linux, Claude Code on Mac), emits all adapters, and can open the generator folder with a paste-ready prompt. Built per-OS zips; Windows copy placed on Desktop for PC colleague testing.
-Artifacts:
-  - wsx-generator-windows.zip — 267 KB handoff on Desktop (also dist/; gitignored)
-Decisions:
-  - Interview still starts from the generator folder, not the new workspace dest.
-  - Windows ranking prefers Cursor.exe under %LOCALAPPDATA% even when `cursor` is not on PATH.
-  - VS Code is offered only if it can actually launch (config-only ~/.vscode is skipped).
-Evidence:
-  - Desktop zip @ /Users/sean.sands/Desktop/wsx-generator-windows.zip — verified (267 KB, 17 Sep 10:39)
-  - Linear Agent Todo for colleague test @ linear-personal — blocked (MCP needsAuth)
-Next:
-  - Colleague tests start.bat on PC; expect Cursor default + paste prompt.
-  - Colleague/Olga full wsx path when asked — 07-projects/18-bootstrap-generator/SESSION-STATE.md.
---- END BLOCK ---
-
-### 2026-09-17 — Guided Setup Other-chat wrap-up (employer proto)
-
-SessionID: 2026-09-17-work-gs-other-chat
---- SESSION BLOCK ---
-Date: 2026-09-17
-Agent: Cursor Grok 4.6
-Surface: Cursor
-Machine: Work MacBook Pro
-Project(s): employer saas-plm-prototype (centric-engineering)
-Summary: Closed an Aug 20 Other-chat pass on `feat/guided-setup-live`. Wrap-ups now render as markdown, stay conversational, close with Continue instead of “shall we?”, and name the next card or rail step. Shipped as `5ac6a09` and opened [PR #56](https://github.com/cpes-software/saas-plm-prototype/pull/56). No employer detail written into this vault.
-Decisions:
-  - Other-chat wrap-up copy is next-screen aware (sub-step title in-group; rail label when crossing groups).
-  - Employer delivery stays branch → PR → human review; this session did not merge.
-Next:
-  - Human review of https://github.com/cpes-software/saas-plm-prototype/pull/56
---- END BLOCK ---
-
-### 2026-09-17 — session-end (Figma catalog thread + wsx Path B launcher)
-
-SessionID: 2026-09-17-work-k7m2
---- SESSION BLOCK ---
-Date: 2026-09-17
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 02-centricPLM, 18-bootstrap-generator, 19-workspace-brain
-Summary: Closed the 2026-09-16 Figma catalog thread (overlap reflow, modes-for-variants, Text Styles iff no Size/Density — already on `main`). Folded leftover `wsx` Path B work: `launch.py` detects folder-capable apps, offers to open the generator folder, emits all adapters; `scan.py` gains folder-capable/open helpers; README Path B + Linux.
-Decisions:
-  - CDS `apps/docs/AGENTS.md` / `CLAUDE.md` left untracked (employer repo, `centric-engineering` — no auto-commit).
-  - Interview still starts from the generator folder, not the new workspace dest.
-Next:
-  - Colleague/Olga `wsx` path when asked.
---- END BLOCK ---
-
-### 2026-09-17 — Figma Icons page pack + section A–Z
-
-SessionID: 2026-09-17-work-figma-icons
---- SESSION BLOCK ---
-Date: 2026-09-17
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.5
-Project(s): 02-centricPLM
-Summary: On Centric SaaS PLM DS Figma (`o6o1ZuGHxDow2vHLuYXT6X` Icons page `4:2`), packed icons into the existing 12-col grid (80×72, origin 32,64) after erroneous icon deletions left gaps, then ordered all 27 category sections A–Z left-to-right. Earlier in this thread (Aug): field-overlay/control-radius parity plan + Proto #18 / cui #225 / #179 PRs — treat as prior history; this baton is Icons hygiene done.
-Decisions:
-  - Icons within a section sort A–Z then pack row-major; section width hugs used columns (`40 + cols*80`).
-  - Section gutter stays 96px; do not invent a new Icons layout system.
-Evidence:
-  - Figma Icons page verified: 0 grid gaps, 27 sections alphabetical (action…travel)
-Next:
-  - Sean visual spot-check of Icons page in Figma; publish library if needed.
-  - Code parity backlog remains in `08-knowledge/design/figma-to-code-parity-plan-2026-08-06.md` (P1+ still open where not already landed).
---- END BLOCK ---
-
-### 2026-09-17 — CDS shadcn consume waves on cds main
-
-SessionID: 2026-09-17-work-shadcn-consume
---- SESSION BLOCK ---
-Date: 2026-09-17
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 02-centricPLM
-Summary: Consumed leftover shadcn UI into `@centric/ui` on cds (Calendar/DatePicker wave, then Combobox/menus wave). #44 stacked onto a feature base after #43 merged, so Combobox never hit `main` until cherry-pick #45.
-Decisions:
-  - DatePicker is Popover + Calendar; no shadcn DatePicker root. Density cells; Material Symbols `Icon`; no local focus rings; no Lucide.
-  - Do not replace Progress/Toaster or CDS `Field`/`EmptyState`/Sheet. Drawer is the swipe bottom sheet only.
-  - Stacked PRs that merge after the base is on `main` must be re-landed onto `main` (cherry-pick), not treated as done.
-Evidence:
-  - cds #43 + #45 merged @ https://github.com/cpes-software/cds — verified (`origin/main` `4dfb957`, CI green)
-  - #44 merged to `feat/consume-shadcn-calendar-datepicker`, not `main` — verified via `gh pr view 44`
-Project status changes:
-  - 02-centricPLM: shadcn UI consume complete on cds `main` except skip-list (Field collision, EmptyState, chart, carousel, chat kit).
-Next:
-  - Hosts import new `@centric/ui` subpaths from cds `main` (calendar, date-picker, combobox, input-group, drawer, input-otp, menubar, navigation-menu, item, direction, plus wave-1 primitives).
-  - Skip-list stays unless Sean asks. Restore cds stash `wip icon font host load` if still wanted.
---- END BLOCK ---
-
-### 2026-09-17 — Brand-soft tokens landed on cds main
-
-SessionID: 2026-09-17-work-pr42
---- SESSION BLOCK ---
-Date: 2026-09-17
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): cds (cpes-software/cds); 02-centricPLM
-Summary: After Sean published the Figma library, the brand-soft map was committed off origin/main as `feat/primary-soft-tokens` (`2a12726`) and opened as cds [#42](https://github.com/cpes-software/cds/pull/42). That PR is merged (2026-09-16). The original cds checkout's other WIP was left alone. cds HEAD in this window is now `feat/land-shadcn-combobox-on-main`.
-Decisions:
-  - Token commit was isolated from charting/docs WIP via a worktree so PR 30's merged branch was not reused.
-Evidence:
-  - cds [#42](https://github.com/cpes-software/cds/pull/42) merged @ GitHub — verified
-  - Figma library publish — verified (Sean)
-Pending resolved:
-  - Commit/PR cds primary-soft mapping
-  - Publish the SaaS PLM Figma library (this wave)
-Next:
-  - Wave 1 leftover still out: ChipMultiSelect, TypeTag, OutlinedValueChips
-  - Do not mix combobox-land WIP with token follow-ups
---- END BLOCK ---
-
-### 2026-09-16 — CDS Figma catalog reflow + construction rules
-
-SessionID: 2026-09-16-work-figma-catalog
---- SESSION BLOCK ---
-Date: 2026-09-16
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 02-centricPLM, 19-workspace-brain
-Summary: Un-collided new catalog sections in Centric SaaS PLM Figma (`o6o1ZuGHxDow2vHLuYXT6X`); rebuilt Filter Chip / Spinner / Step Glyph / Chart Frame / Flow Canvas with subcomponents and style axes as modes. Text-style sweep applied then fully reverted. Construction rule: Text Styles iff the component has no Size/Density type axis — those modes own `fontSize`.
-Decisions:
-  - Catalog SECTION ownership + AABB reflow is rule 20 ([[figma-ds-surface-authoring]]); generate cannot skip [[figma-modes-for-variants]].
-  - Text Styles do not apply when Size or Density drives type (rule 21). Verified: a style dual-binds then replaces `Button / Size`.`fontSize`.
-  - Table / Data Table stays out of this Figma file.
-Pending added:
-Pending resolved:
-Project status changes:
-  - 02-centricPLM: Figma catalog overlap + modes land in the file; vault rules on `main` (`d414136`…`f6090f9`). Publish still manual (^pc-18).
-Next:
-  - Publish the centric-ui Figma library (Sean, Assets panel).
-  - Continue Base UI / docs / Storybook parity on CDS as needed; Table later.
---- END BLOCK ---
-
-### 2026-09-15 — portable session-status card closed; doctor MISSes acked
-
-SessionID: 2026-09-15-work-ssack
---- SESSION BLOCK ---
-Date: 2026-09-15
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 19-workspace-brain
-Summary: Closed the leftover 2026-09-11 Cursor thread that shipped `session-status.py` (`46d207a`) so every LLM emits Claude's notices + all projects + pending card. Acknowledged 3 bootstrap MISSes on this Work MBP (`workspace-doctor.sh --ack`); `session-status.py --check` now reports 0 notices. Layer 0 no longer treats "make sure" as produce. Did not rewrite Live handoff — later 2026-09-15 sessions already own lint:ds / brand-soft.
-Decisions:
-  - Session-start card is `09-tools/session-status.py` on every surface; continuations skip it. [[decision-session-status-card]]
-  - Doctor ACK is machine-local (`~/.claude/ws-state/ack-mark`), not a git write.
-Pending added:
-Pending resolved:
-Next:
-  - Next new Cursor session on this machine should show 0 MISS notices on the boot card.
---- END BLOCK ---
-
-### 2026-09-15 — Brand-soft tokens: Figma and code share one map
-
-SessionID: 2026-09-15-work-cdsmap
---- SESSION BLOCK ---
-Date: 2026-09-15
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): cds (cpes-software/cds); Figma SaaS PLM DS; 02-centricPLM
-Summary: Closed the Wave 1 semantic/component token map. Figma `action/primary/soft*` and `Object Chip / Color` publish WEB `var(--sem-primary-soft*)`; cds consumes Tailwind `bg-primary-soft` / `text-primary-soft-foreground` / `border-primary-soft-border`. Data Summary hover stays `interaction/primary/hover`. Nested Chip Cluster instance overrides needed a second rebind. cds uncommitted; Figma library unpublished.
-Decisions:
-  - Brand-soft = Blue/3 fill, Blue/11 text, Blue/6 border — same recipe as status-soft, brand hue. Not info-soft cyan.
-  - Component Color collections alias semantics. Code does not mint `--object-chip-*` CSS vars.
-  - Labelled-value hover wash is the interaction overlay, not the chip fill.
-  - Rebind nested instance paint overrides; main-set rebind does not clear them.
-Evidence:
-  - Figma Compact Rest + Editable Hover variable defs @ o6o1ZuGHxDow2vHLuYXT6X — verified
-  - cds ObjectChip / DataSummary / LockedField / ChipCluster tests 31/31 — verified
-  - Figma library publish — unverified (Sean, manual)
-  - cds commit/PR — unverified (not asked; employer repo)
-Pending added:
-  - Publish the SaaS PLM Figma library after Wave 1 rebind
-  - When asked: commit/PR cds primary-soft mapping
-Pending resolved:
-  - Wave 1 Figma paints no longer bind Color/Blue primitives on Object Chip, Chip Cluster, Data Summary hover
-Next:
-  - Sean publish Figma library
-  - Commit/PR cds token work only if Sean asks
-  - Wave 1 leftover stays out: ChipMultiSelect, TypeTag, OutlinedValueChips
---- END BLOCK ---
-
-### 2026-09-15 — CDS Material Symbols Icon; proto consume; cui next
-
-SessionID: 2026-09-15-work-mbp-cds-icons
---- SESSION BLOCK ---
-Date: 2026-09-15
-Machine: Work MacBook Pro (main, going forward)
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): cpes-software/cds, saas-plm-prototype
-Context profile: centric-engineering
-
-Summary: Implemented CDS `Icon` as Material Symbols ligatures (`name`, `size`, `filled`; axes from `iconAxes`). Dropped Lucide in CDS. Proto replaced Lucide with `@centric/ui/icon`. Hosts that still pass `Icon={Component}` keep compiling.
-
-Decisions:
-- Ligature `name` is the CDS path. `IconGlyph` still accepts a `className` slot so Lucide hosts type-check without bringing `lucide-react` back.
-- Glyph text sits in an inner `aria-hidden` span so it is not the control name.
-- Preferred / close / mill / style metaphors: `keep`, `close`/`delete`, `apartment`, `checkroom`.
-- centric-ui waits until CDS + proto are on main; that is now true. Remaining work is cui tickets.
-
-Artifacts:
-- cds #39 merged — Icon + drop Lucide
-- cds #40 merged — host slots + accname
-- saas-plm-prototype #80 merged — proto consume
-
-Pending added:
-- centric-ui consume `@centric/ui/icon` (Sean’s cui tickets — review + merge)
-- Optional: palette accordion nested `<button>`; light-mode / toast / BOM icon pass
-
-Next:
-- Review and merge the cui tickets. Nothing else blocks this icon program.
 --- END BLOCK ---
