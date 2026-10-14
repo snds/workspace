@@ -225,6 +225,15 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 
 ---
 
+### Switchyard — Credential Router
+**Status:** Planning — plan set drafted (2026-10-14)
+**Summary:** Mac + Windows background app that gives every tool the right login per project. Rules route git, `gh`, SSH, CLIs and agent MCP access to the right identity. Secrets stay in each device's secure storage, and only rules sync. Menu-bar or tray health alerts. Personal for now, built to product-grade security, with an optional commercial path (GUI workspace generator over `wsx`). Rust + Tauri 2 (same stack as Fontface). Vaultwarden on Unraid replaces 1Password as the password manager.
+**Folder:** `07-projects/26-switchyard/` (plan in `plan/`, moves to the repo `docs/` in Phase 0)
+**Triggers:** switchyard, credential router, multi-account gh, gh auth switch, vaultwarden migration
+**Next:** Sean reviews the plan and answers three open questions (Windows PC personal-only, "account thresholds," employer IT policy). Then Phase 0 spikes. See [[07-projects/26-switchyard/SESSION-STATE|SESSION-STATE]].
+
+---
+
 ### Workspace Brain
 **Status:** Active
 **Summary:** Standing home for sessions whose subject is the workspace itself (validation, fix, migration, infrastructure). Established 2026-07-09 per the workspace-work project-home rule in framework #08 (FX-13); git-tracked for cross-machine continuity.
