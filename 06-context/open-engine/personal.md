@@ -119,7 +119,7 @@ orphan the issue. `project-context.md` is now the substance store for these.
 |---|---|---|
 | `^pc-02` | `personal:SEA-9` | Silence the two beacon-enroll NOTEs |
 | `^pc-03` | `personal:SEA-10` | Machine-layer installs on remaining machines |
-| `^pc-04` | `personal:SEA-11` | Tool-neutral trigger-routes reference — **closed 2026-08-05** (accepted; substance already Done in vault) |
+| `^pc-04` | `personal:SEA-11` | Tool-neutral trigger-routes reference — **closed 2026-08-05** (accepted; substance already Done in vault). Text kept at `project-context-detail.md#pc-04` so the stub can leave `project-context.md` (2026-10-14) |
 | `^pc-09` | `personal:SEA-12` | SSH to github.com:22 timing out |
 | `^pc-10` | `personal:SEA-13` | "Context is King" foundation refinements |
 | `^pc-12` | `personal:SEA-14` | 2026-07-08 audit carry-forwards (b–e) |
@@ -140,6 +140,8 @@ orphan the issue. `project-context.md` is now the substance store for these.
 | `^pc-39` | `personal:SEA-29` | Re-privatize workspace-repo author email |
 | `^pc-40` | `personal:SEA-30` | Populate team-practices-and-decisions |
 | `^pc-43` | `personal:SEA-31` | Seed SESSION-STATE for 03/12/15 |
+
+This table records the 2026-07-30 migration only. Anchors added to `project-context.md` later (`^pc-44` onward) are not mapped here.
 
 **The collision hazard, live:** `personal:SEA-9` is the beacon-NOTE item; `c8:SEA-9` is a centric-ui
 PR. Same bare id, different lanes, different work. This table is why every id above is qualified.

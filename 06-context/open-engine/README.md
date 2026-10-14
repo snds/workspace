@@ -33,7 +33,7 @@ this table is itself a finding. The fenced `json` block is canonical and machine
 |---|---|---|
 | `CS-K746DRWXY1` | Work MacBook Pro (main) | `personal`, `c8` |
 | `Voyager-2.local` | Personal MacBook Pro | `personal` |
-| `Enterprise` | Windows Desktop (retired 2026-09-15) | `personal` |
+| `Enterprise` | Windows Desktop (back in use 2026-10-14) | `personal` |
 
 A lane registered on a machine that does **not** expect it is drift in the dangerous direction — it
 means an employer connection exists on a personal device, or vice versa. The detector reports that as

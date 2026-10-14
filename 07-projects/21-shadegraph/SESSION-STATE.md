@@ -12,8 +12,11 @@ _Last updated: 2026-09-04 08:10 — checkpoint (project seeded + scaffolded)_
   lives in `~/Projects/ShadeGraph` (`snds/*`, its own git repo); this vault
   folder holds docs + baton only (like 13-legion). Legion is the first consumer
   (planet materials). Scaffold + design plan done; Phase 1 (graph MVP) is next.
-- **Current focus**: Just completed Phase 0 — repo scaffold + contracts +
-  comprehensive design plan.
+- **Current focus**: dormant since 2026-09-26 (last recorded activity: the H8
+  remediation live run on this repo). Phase 0 (scaffold + contracts + design
+  plan) is done; Phase 1 (graph MVP) is next. Resume on the Personal MBP, where
+  the code checkout lives. (Baton note 2026-10-14, /optimize — Claude Opus 5.5 ·
+  Claude Code · Work MacBook Pro.)
 - **Working set**: Code → `~/Projects/ShadeGraph/src/{model,compiler,nodes,preview,ui,adapters/legion}`. Plan → `docs/DESIGN-PLAN.md`.
 - **Last action**: Wrote model/compiler/registry/preview contracts, app shell,
   Legion adapter plan, and `docs/DESIGN-PLAN.md` — by Claude Opus · Claude Code · Personal MacBook Pro.
@@ -23,9 +26,12 @@ _Last updated: 2026-09-04 08:10 — checkpoint (project seeded + scaffolded)_
 - **Open decisions**: (1) name "ShadeGraph" is provisional; (2) state lib
   zustand vs custom; (3) WGSL via hand emitters vs TSL-as-IR; (4) Legion
   live-bridge in Phase 4 vs export-only. See DESIGN-PLAN §11.
-- **Blocked on**: nothing. `pnpm install` not yet run.
-- **In-flight / do-not-touch**: `~/Projects/ShadeGraph` has no commit yet and no
-  `node_modules`; deps unverified against registry until install.
+- **Blocked on**: nothing.
+- **In-flight / do-not-touch**: nothing known. Corrected 2026-10-14: the repo
+  has commits and a remote, `snds/shadegraph` (`9b11035`, 2026-09-26). On
+  2026-09-26 a Zero-Vector H8 live run here produced 9 findings and two PRs
+  (CI and model id), both merged green (rollout checklist W2-5). Whether
+  `pnpm install` has run since is not recorded.
 - **Agent thread**: Claude Opus/Claude Code (2026-09-04): researched vgpu +
   Prism article + industry node editors; scaffolded repo; wrote design plan.
 
@@ -42,7 +48,7 @@ _Last updated: 2026-09-04 08:10 — checkpoint (project seeded + scaffolded)_
 - **Build / Test**: not run
 
 ### VCS state
-- **Code repo**: `~/Projects/ShadeGraph` — `git init` done, **no commits yet**, no remote.
+- **Code repo**: `~/Projects/ShadeGraph` — remote `snds/shadegraph`, with commits and two merged PRs as of 2026-09-26 (`9b11035`; checklist W2-5). The 2026-09-04 "no commits yet, no remote" note was stale.
 - **Vault**: tracked in `snds/workspace`; this folder committed at session-end.
 - **Uncommitted changes**: yes — all scaffold files new/untracked.
 - **Test state**: not run.
@@ -59,6 +65,10 @@ _Last updated: 2026-09-04 08:10 — checkpoint (project seeded + scaffolded)_
 ---
 
 ## Session history (append-only)
+
+### 2026-10-14 — dormant since 2026-09-26; stale VCS notes corrected (/optimize)
+
+**Agent**: Claude Opus 5.5 · Claude Code · Work MacBook Pro. No project work. The "no commits yet, no remote" notes were stale: the repo has a remote, `snds/shadegraph` (`9b11035`), and two merged PRs from the 2026-09-26 H8 live run.
 
 ### 2026-09-04 08:10 — checkpoint
 

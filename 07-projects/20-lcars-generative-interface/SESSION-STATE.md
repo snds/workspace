@@ -19,7 +19,7 @@ _Last updated: 2026-09-03 — session-end after Onori rails + off-system lint_
 ### Live handoff (the baton — any agent reads this FIRST, updates it on every handoff)
 
 - **TL;DR (for future agent)**: Live T3 from pack catalog (`src/catalog/system/`). App `main` @ `a133bb4` (ahead 2, not pushed): pack catalog + off-system ESLint (`npm run lint`). Capture via workspace `vqa capture`. Literal SYS47 separate. Isolation: `--assistance off`. Pills=controls; spine=bars; 8px family / 24px groups.
-- **Current focus**: Session closed. Next = `personal:SEA-33` live T3 review.
+- **Current focus**: dormant since 2026-09-03 (session closed). Resume = `personal:SEA-33` live T3 review on the Personal MBP, where the app checkout lives (`a133bb4` was 2 ahead of origin, unpushed, at last check; not re-checked 2026-10-14 — the Work MBP has no app checkout). (Baton note 2026-10-14, /optimize — Claude Opus 5.5 · Claude Code · Work MacBook Pro.)
 - **Working set**:
   - App: catalog + `LiveDisplay.tsx` + `eslint/off-system/` @ `a133bb4`; `scripts/capture-sys47.mjs` → workspace vqa
   - Vault: `docs/content-groups.md`; prove via `03-skills/visual-prove-engine/vqa.py`

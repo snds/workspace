@@ -108,7 +108,7 @@ Multiple machines, all consuming the same git-synced workspace:
 | `seansands.local` | Work MacBook Pro | macOS |
 | `CS-KQ23N94M0W` | Work MacBook Pro (loaner, retired 2026-09-23) | macOS |
 | `CS-K746DRWXY1` | Work MacBook Pro (main) | macOS |
-| `Enterprise` | Windows Desktop (retired 2026-09-15) | Windows 11 |
+| `Enterprise` | Windows Desktop (back in use 2026-10-14) | Windows 11 |
 
 Git identity is repo-local: `snds` / `570874+snds@users.noreply.github.com`. This keeps the workspace commits separate from work-machine git defaults and preserves email privacy in the public commit log.
 

@@ -8,6 +8,9 @@ _Last updated: 2026-04-25 — checkpoint (post-restructure)_
 
 ## Current state (rewritten atomically — no stale fields)
 
+### 🤝 Live handoff (the baton — any agent reads this FIRST)
+- **Current focus**: dormant since 2026-04-25. The integration it set up is live: the workspace repo has long been committed and pushed, git is the sync layer and Obsidian reads the vault. The Environment, VCS and Open work fields below are the 2026-04-25 checkpoint, kept as history. Resume = only when Obsidian-integration work comes up; start from `README.md` in this folder. (Baton note 2026-10-14, /optimize — Claude Opus 5.5 · Claude Code · Work MacBook Pro.)
+
 ### Environment
 - **Context profile**: `personal-solo` — this workspace (00-context-profiles.md Examples row); direct commits expected.
 - **Machine**: `Enterprise` (Windows Desktop)
@@ -54,6 +57,10 @@ _Last updated: 2026-04-25 — checkpoint (post-restructure)_
 ---
 
 ## Session history (append-only)
+
+### 2026-10-14 — dormant since 2026-04-25; integration live (baton note, /optimize)
+
+**Agent**: Claude Opus 5.5 · Claude Code · Work MacBook Pro. No project work. Added a one-line Live handoff saying the project is dormant and the fields below are the 2026-04-25 checkpoint.
 
 ### 2026-04-25 — checkpoint (post-restructure)
 

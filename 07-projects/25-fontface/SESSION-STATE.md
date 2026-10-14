@@ -1,6 +1,6 @@
 # SESSION-STATE — Fontface (25-fontface)
 
-_Last updated: 2026-10-12 (evening) — checkpoint (settings + title bar + tags UI on branch `settings-and-titlebar`; Typeface tags imported into Sean's real library)_
+_Last updated: 2026-10-14 — renumbered 24 → 25; `main` = `826c574` public on `snds/fontface`; next is Sean's on-screen check of the build_
 
 ---
 
@@ -8,7 +8,7 @@ _Last updated: 2026-10-12 (evening) — checkpoint (settings + title bar + tags 
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST)
 
-- **TL;DR (for future agent)**: Clean-room Mac font manager replacing Typeface (no subscription). Tauri 2 + React. Phase 1 is built; the first user test found scanning bugs, and the fix is in progress. See [[07-projects/25-fontface/README|README]].
+- **TL;DR (for future agent)**: Clean-room Mac font manager replacing Typeface (no subscription). Tauri 2 + React. Phase 1 is built, the scan fixes from the first user test landed, and everything since (views + Google Fonts, settings and title bar, tags, Purchases, preview profiles, Google icon fonts) is merged on `main` = `826c574`, public on GitHub (checked 2026-10-14: only `main`, in sync with origin). See [[07-projects/25-fontface/README|README]].
 - **Published 2026-10-13: https://github.com/snds/fontface (PUBLIC), `main` = `c71009c`.**
   - **Created and pushed as `snds`**, after Sean switched Claude's gh config back to `snds`. It had `sean-sands-centric` active, against the credential-scoping rule.
   - **History was rewritten before publishing.** One test line named the employer's OneDrive folder. It's now a generic work/school OneDrive check that skips `/CloudStorage/OneDrive-*` except `OneDrive-Personal`.
@@ -18,7 +18,7 @@ _Last updated: 2026-10-12 (evening) — checkpoint (settings + title bar + tags 
 - **Second rewrite, pushed 2026-10-13: `main` = `826c574` on GitHub.**
   - **What changed:** Sean's folder names were made generic in every commit (`Creative/Fonts` → `Design/Fonts`, `04-Creative/05-Fonts` → `Archive/Fonts`).
   - **How it went out:** force-pushed as `snds` with `--force-with-lease`. The local backups are deleted.
-  - **Lesson 1:** Claude's `gh-claude/hosts.yml` had drifted from the dist master. `sean-sands-centric` was added and set active, and it flipped back about 15 minutes after a manual `gh auth switch`. Restoring the file with the installer fixed it, and the result matches dist. Run it with `/bin/bash`: `workspace-doctor.sh` has no execute bit (`-rw-------`), so running it directly gives "permission denied".
+  - **Lesson 1:** Claude's `gh-claude/hosts.yml` had drifted from the dist master. `sean-sands-centric` was added and set active, and it flipped back about 15 minutes after a manual `gh auth switch`. Restoring the file with the installer fixed it, and the result matches dist. ~~Run it with `/bin/bash`: `workspace-doctor.sh` has no execute bit~~ — stale: the execute bit was fixed in `c59bbbe` (2026-10-14).
   - **Lesson 2:** something writes Centric into Claude's gh config, probably a session doing employer gh work without `env -u GH_CONFIG_DIR`. It's worth hardening the workspace against this.
 - **`4b4e625` (pre-rewrite): icon fonts with plain letters (Material Symbols, Google Symbols) preview as icons. `PREVIEW_REV` = 3.**
 - **`565444e` (2026-10-13): Google icon fonts added on top of `ccf6cd1`.**
@@ -64,7 +64,7 @@ _Last updated: 2026-10-12 (evening) — checkpoint (settings + title bar + tags 
   - **Lesson 2:** the agent sandbox and the auto-mode classifier block agents from writing the real library DB. Sean runs that step himself (the `import_typeface_backups` ignored test with `FONTFACE_APPLY_TO` and `FONTFACE_REAL_LIBRARY=yes`).
   - **Not imported:** the Apr 2025 export has 7 tags the later backups dropped: Designer, Mainstays, Pixel, Global, Icons, Utility and Sci-Fi/Aliens. Whether to import them is Sean's call.
 - **Working set**: `~/Projects/fontface`. Docs: `docs/ARCHITECTURE.md`, `docs/FEATURES.md`, `docs/TAGS.md`, `docs/INTEGRATIONS.md`.
-- **Last action**: committed `a6f0539` and the merge `92c4967` on `settings-and-titlebar`. Ran the real Typeface import with Sean. — by Claude Opus · Claude Code · Work MacBook Pro.
+- **Last action**: 2026-10-13 — Google icon fonts and icon-font previews (`826c574`) pushed to `snds/fontface` after the two history rewrites; worktrees and merged branches removed. Earlier (2026-10-12): `settings-and-titlebar` merged and the real Typeface import run with Sean. — by Claude Opus · Claude Code · Work MacBook Pro.
 - **Purchases watcher (built 2026-10-12)**:
   - Watches `~/Downloads` and any added folders (FSEvents via `notify`). Each top-level zip, folder or font file is one "find".
   - Store detection from the download's source address (`kMDItemWhereFroms`; Windows `Zone.Identifier` planned), or the user picks.
@@ -86,8 +86,8 @@ _Last updated: 2026-10-12 (evening) — checkpoint (settings + title bar + tags 
   - A font another app turns off mid-session is recorded as off.
   - Previews come from `local()` for installed fonts. Other fonts use a LIFO fetch of 6 that drops rows scrolled away; a cloud file returns 503 and a file over 96 MB returns 413. Collection reads are serialized.
   - 24 Rust tests pass. The real-library migration and the CoreText round trip are both verified.
-- **Next action**: Finish the fixes from the merge review, then merge `settings-and-titlebar` into `main` and rebuild. Then Sean tries the build on screen: title bar, settings, tags, Purchases. Older items still open: (1) installed fonts disabled in Font Book still show as on; latent, since no font on this Mac is disabled. (2) Turning on every family would register 206 PostScript names twice, almost all a variable font plus its static Regular; macOS accepts this. (3) document.fonts eviction.
-- **Open decisions**: (1) add `<repo>/PROJECT.md` and move the README intent block there; (2) when to push to `snds/fontface` (nothing pushed yet; ask Sean).
+- **Next action**: Sean tries the build on screen: title bar, settings, tags, tag groups, sync between two Macs, previews, Purchases (the merge-review fixes and the `settings-and-titlebar` merge are done, in `ccf6cd1`). Older items still open: (1) installed fonts disabled in Font Book still show as on; latent, since no font on this Mac is disabled. (2) Turning on every family would register 206 PostScript names twice, almost all a variable font plus its static Regular; macOS accepts this. (3) document.fonts eviction.
+- **Open decisions**: (1) add `<repo>/PROJECT.md` and move the README intent block there; ~~(2) when to push to `snds/fontface`~~ — done 2026-10-13 (public).
 - **Blocked on**: nothing.
 - **In-flight / do-not-touch**: none. The worktrees `.claude/worktrees/tags-and-colors-dda0ca` and `tags-sidebar-ui-81297a` are merged and can be cleaned up.
 - **Built 2026-10-12 (views + services)**:

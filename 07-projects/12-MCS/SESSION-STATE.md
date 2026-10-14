@@ -8,6 +8,8 @@ _Last updated: 2026-09-04 — checkpoint (cross-device migration action queued f
 
 ### 🤝 Live handoff (the baton — READ FIRST)
 
+- **Current focus**: dormant since 2026-09-23 (CDS analytics addendum below); the ^pc-44 migration is still queued. Resume = the "Next action" list below, on the Work MBP. (Baton note 2026-10-14, /optimize — Claude Opus 5.5 · Claude Code · Work MacBook Pro.)
+
 > ⚠️ **CROSS-DEVICE ACTION — RUN THIS ON THE WORK LAPTOP (Centric machine, likely Cursor surface).**
 > This migration was identified on the Personal MacBook Pro on 2026-09-04, but the MCS content is
 > **not present there** (`07-projects/12-MCS/` is empty on personal) and the target employer repo is
@@ -49,6 +51,10 @@ _Last updated: 2026-09-04 — checkpoint (cross-device migration action queued f
 ---
 
 ## Session history (append-only)
+
+### 2026-10-14 — dormant since 2026-09-23; ^pc-44 migration still queued (baton note, /optimize)
+
+**Agent**: Claude Opus 5.5 · Claude Code · Work MacBook Pro. No project work; added a one-line dormant note to the Live handoff.
 
 ### 2026-09-04 — checkpoint (queued from Personal MacBook Pro)
 

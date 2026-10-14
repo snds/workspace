@@ -1,5 +1,7 @@
 # SESSION-STATE — Portable Bootstrap Generator
 
+_Last updated: 2026-09-17 — Path B picker + Windows zip on Desktop._
+
 ### 🤝 Live handoff (the baton)
 
 - **Current focus:** Path B surface picker + Windows handoff zip. Waves 0–7 still proved (`wsx` 0.3.0).
@@ -8,8 +10,6 @@
 - **Next action:** Colleague tests `start.bat` on PC (Cursor default). Then Olga/full path when asked.
 - **Do-not-touch:** `wsx upgrade` / `restructure` on Sean's real vault; do not copy personal trigger tables, employer org names, or Cursor slug tables into templates; never emit `.cursorrules` / `.windsurfrules` / `.clinerules`.
 - **Agent thread:** Cursor Grok 4.6 / Cursor / Work MBP (2026-09-17 session-end).
-
-_Last updated: 2026-09-17 — Path B picker + Windows zip on Desktop._
 
 
 ### 2026-07-23 — colleague feedback (four asks, all built + dogfooded)

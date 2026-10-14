@@ -217,11 +217,29 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 ---
 
 ### Fontface — Font Manager
-**Status:** Active — Phase 1 built; scan fixes in progress (2026-10-12)
+**Status:** Active — Phase 1, the scan fixes and the follow-on features merged; public at `snds/fontface` (2026-10-14)
 **Summary:** Clean-room, subscription-free Mac font manager replacing Typeface (which turns fonts off without Pro). No Typeface code or binaries; parity judged against its public feature list. Tauri 2 (Rust + React 19/TS/Vite), shadcn/ui (Base UI, Tailwind v4), Material Symbols Rounded, IBM Plex. SQLite library; CoreText persistent user-scope activation per file. Windows designed for, not built. Code `~/Projects/fontface` (git, remote `snds/fontface`).
 **Folder:** `07-projects/25-fontface/` (baton + pointers) · design docs in the repo `docs/`
 **Triggers:** fontface, font manager, typeface replacement
-**Next:** Finish the scan fixes from the first user test (online-only Google Drive files read one at a time, no progress, duplicate rescans), then retest. See [[07-projects/25-fontface/SESSION-STATE|SESSION-STATE]].
+**Next:** Sean's on-screen check of the build (title bar, settings, tags, sync between two Macs, previews, Purchases). The scan fixes from the first user test (online-only Google Drive files, no progress, duplicate rescans) landed 2026-10-12; `main` = `826c574`. See [[07-projects/25-fontface/SESSION-STATE|SESSION-STATE]].
+
+---
+
+### Mailbird (working name) — PIM Super App
+**Status:** Active — PRs #1–#13 merged; Phase 9 ("connected calendar") in review as PR #14 (2026-10-14)
+**Summary:** Open-source, ad-free PIM "super app": mail, calendar, contacts and notes in one calm app. Mobile-first; runs on the web plus Tauri shells. React 19 + Vite + Tailwind v4 + shadcn/ui (Base UI) over a Rust core. Code `snds/Mailbird` (public, `personal-solo`); research, license audit, architecture and ADRs live in the repo `docs/`. The name collides with Mailbird, Inc. — rename before release (ADR-0006).
+**Folder:** `07-projects/24-mailbird/` (baton + pointers) · code at `Projects/Mailbird`
+**Triggers:** mailbird, pim super app, email calendar contacts notes app, mail client
+**Next:** Watch PR #14's CI; merge only on Sean's word. Then the device spike (`docs/mobile-spike.md`) or more harvest items. Sean registers a Google OAuth client and a Microsoft Entra app for real sign-ins. See [[07-projects/24-mailbird/SESSION-STATE|SESSION-STATE]].
+
+---
+
+### Emphasis Engine — Perceptual Color System Generator (knowledge-only)
+**Status:** Knowledge-only in this vault — last session 2026-10-08 (Claude cloud)
+**Summary:** Pick a theme, a base neutral and a chart seed; the engine solves a full UI and data-viz color system for light and dark mode, every swatch traced to a contrast target (APCA Lc for text, fills and strokes; OKLCH lightness for surfaces; flat and live-alpha layers). Native example pages for 12 design systems test how a runtime theme reaches real components. Code `snds/emphasis-engine` (`~/Projects/emphasis-engine`, `personal-solo`).
+**Folder:** none — no `07-projects/` folder; the repo carries its own docs
+**Knowledge:** [[ds-native-theming-survey]] (hub) + the per-system `ds-native-*` entries; session block 2026-10-08 in `06-context/session-log.md`
+**Next:** none recorded. Create a project folder only when work resumes.
 
 ---
 

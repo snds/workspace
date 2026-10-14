@@ -1,8 +1,8 @@
 ---
 type: feedback
-description: Identity is device-based for every surface, Claude included (2026-10-06) — Work MBP → Centric, Personal MBP → snds; conduct follows the repo remote; personal identity never lands in employer repos and credentials stay scoped per repo
+description: Identity is device-based for every surface, Claude included (2026-10-06) — Work MBP → Centric, Personal MBP → snds; conduct follows the repo remote; personal identity never lands in employer repos; credentials follow the repo owner through gh_route.py on every surface (2026-10-13)
 created: 2026-07-20
-updated: 2026-10-06
+updated: 2026-10-13
 confidence: high
 relations:
   builds-on: ["[[decision-claude-employer-surface]]"]
@@ -15,8 +15,9 @@ relations:
 History below.
 
 - **Work MBP** (`CS-K746DRWXY1`; also `seansands.local`): work/employer by default, using the
-  Centric identity `Sean Sands <271648271+sean-sands-centric@users.noreply.github.com>` over the
-  `github-work` SSH alias, unless Sean expressly overrides for one task (IR2).
+  Centric identity `Sean Sands <271648271+sean-sands-centric@users.noreply.github.com>`, unless Sean
+  expressly overrides for one task (IR2). Its credential comes from `gh_route.py` (below); before
+  2026-10-13 it was the `github-work` SSH alias.
 - **Personal MBP** (`Voyager-2.local`): personal (`snds`) (IR3).
 - **Conduct follows the repo remote.** `snds/*` → `personal-solo`. Centric owners and undeclared
   owners → `centric-engineering`: feature branch → PR → human review, no self-merge, no push to the
@@ -28,34 +29,39 @@ Centric account and grants for Centric repos, never crossed within one session.
 
 ## How it is applied
 
-- **Claude:** the user-scope env overlay, rendered to `00-bootstrap/dist/claude-overlay.env` and
-  installed by `ws-doctor --install-claude-overlay` (a human runs it).
+Since 2026-10-13 (`fd5d1ab`, [[decision-claude-employer-surface]] amendment 2026-10-13; installed by
+Sean 2026-10-14: pin → git-hooks → Claude overlay v6, ^pc-50):
+
+- **Every surface, Claude included: the GitHub account follows the repo owner.**
+  `09-tools/gh_route.py` (pinned) picks the account from the repo's owner: `snds/*` gets `snds`, the
+  Centric org gets the employer account, any other owner gets nothing.
+  - Git reaches it as the credential helper `bin/git-credential-ws`: overlay v6 for Claude, the git
+    lanes include for Terminal, Cursor and Codex.
+  - `gh` reaches it through `bin/gh`, linked first on PATH as `~/.local/bin/gh`.
+  - SSH forms of both owners fetch over HTTPS, so the `github-work` SSH alias is no longer the
+    route (^pc-09).
+  - A repo can only receive its own owner's token, and a `gh` call that names two owners is
+    refused. Per-device credential and network detail is held.
+- **No surface switches accounts by hand.** No `gh auth switch` before a call, no
+  `env -u GH_CONFIG_DIR`. Logging in is still `gh auth login` / `gh auth refresh` (the router passes
+  `gh auth` through unchanged); follow the doctor's login note, which names the account and ends with
+  `gh auth switch` back to the device default.
+- **Claude identity:** the user-scope env overlay (v6), rendered to
+  `00-bootstrap/dist/claude-overlay.env` and installed by `ws-doctor --install-claude-overlay` (a
+  human runs it).
   - `snds/*` remotes get `snds` from `includeIf hasconfig` via
     `~/.config/snds-workspace/git/claude-identity.inc`. A repo with any employer remote gets a later
     no-identity include, so `snds` never applies there; the repo-local Centric identity does.
-  - `snds/*` traffic goes over **HTTPS** (overlay v4, Sean 2026-09-22), because SSH to github.com
-    is unreliable on some networks (^pc-09). The overlay resets the `https://github.com`
-    credential-helper list and uses `!gh auth git-credential` through Claude's own gh config, which
-    names only `snds`. Centric remotes use the `github-work` SSH alias and its Centric key.
-    Per-device credential and network detail is held.
   - Since 2026-10-06 the overlay no longer rewrites employer remotes to an unresolvable scheme.
-    Machines still running an older overlay keep that block until the overlay is reinstalled.
     `context-remotes.json` `blocked_scheme` is kept as the legacy marker the tools strip.
   - The Claude git floor (`ws-hook --floor claude`) still enforces I1 on employer commits and
     pushes, and refuses a push that writes the default branch of an employer repo.
-- **Claude's `gh`:** Claude's gh config names only `snds`. A `gh` call on a Centric repo uses the
-  device-default account: the vetted env drops `GH_CONFIG_DIR` (`lift_env(needs_employer_gh=True)`),
-  and by hand it is `env -u GH_CONFIG_DIR gh …`.
-  - The machine-default gh config keeps the device's default account (`devices.json`) **active**,
-    because Cursor, Codex, the terminal and Claude's employer calls all share it. Per-device account
-    state is held.
-  - After any `gh auth login`, run `gh auth switch` back to the device default. Logging in makes the
-    new account active for every surface.
 - **Tracker connectors stay attached to Claude** (Sean, 2026-09-22): the personal one and the
   employer one. Since 2026-10-06 Claude may use the employer connector for employer work on the Work
   MBP. Employer substance it reads there stays in employer surfaces, never in personal memory or
   this vault.
-- **Everyone else:** repo-local git config (Centric noreply on the Work MBP).
+- **Everyone else:** the same route through the lanes include; identity is repo-local git config
+  (Centric noreply on the Work MBP).
 - **Employer email domain (Sean, 2026-09-23):** `centricsoftware.com`. Any address on that domain
   counts as employer in the identity checks (`devices.json` `employer_allowlist.email_domains`,
   beside the Centric identity id). Sean will say if the employer changes. Do not guess a new one.
@@ -68,6 +74,36 @@ The workspace is the shared layer both identities write to, so which identity wr
 device, and which conduct applies follows the repo.
 
 ## History (superseded, kept for provenance)
+
+- **2026-10-06 → 2026-10-13 (superseded by `gh_route.py`, `fd5d1ab`):** how Claude's credentials
+  were applied before the one GitHub route. Kept verbatim for provenance:
+
+  > ## How it is applied
+  >
+  > - **Claude:** the user-scope env overlay, rendered to `00-bootstrap/dist/claude-overlay.env` and
+  >   installed by `ws-doctor --install-claude-overlay` (a human runs it).
+  >   - `snds/*` remotes get `snds` from `includeIf hasconfig` via
+  >     `~/.config/snds-workspace/git/claude-identity.inc`. A repo with any employer remote gets a later
+  >     no-identity include, so `snds` never applies there; the repo-local Centric identity does.
+  >   - `snds/*` traffic goes over **HTTPS** (overlay v4, Sean 2026-09-22), because SSH to github.com
+  >     is unreliable on some networks (^pc-09). The overlay resets the `https://github.com`
+  >     credential-helper list and uses `!gh auth git-credential` through Claude's own gh config, which
+  >     names only `snds`. Centric remotes use the `github-work` SSH alias and its Centric key.
+  >     Per-device credential and network detail is held.
+  >   - Since 2026-10-06 the overlay no longer rewrites employer remotes to an unresolvable scheme.
+  >     Machines still running an older overlay keep that block until the overlay is reinstalled.
+  >     `context-remotes.json` `blocked_scheme` is kept as the legacy marker the tools strip.
+  >   - The Claude git floor (`ws-hook --floor claude`) still enforces I1 on employer commits and
+  >     pushes, and refuses a push that writes the default branch of an employer repo.
+  > - **Claude's `gh`:** Claude's gh config names only `snds`. A `gh` call on a Centric repo uses the
+  >   device-default account: the vetted env drops `GH_CONFIG_DIR` (`lift_env(needs_employer_gh=True)`),
+  >   and by hand it is `env -u GH_CONFIG_DIR gh …`.
+  >   - The machine-default gh config keeps the device's default account (`devices.json`) **active**,
+  >     because Cursor, Codex, the terminal and Claude's employer calls all share it. Per-device account
+  >     state is held.
+  >   - After any `gh auth login`, run `gh auth switch` back to the device default. Logging in makes the
+  >     new account active for every surface.
+  > - **Everyone else:** repo-local git config (Centric noreply on the Work MBP).
 
 - **2026-09-22 → 2026-10-06 (superseded by [[decision-claude-employer-surface]]):** the Claude exception.
   Its rule text, kept verbatim for provenance:
