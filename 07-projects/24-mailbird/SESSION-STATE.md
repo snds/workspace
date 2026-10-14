@@ -1,6 +1,6 @@
 # SESSION-STATE — Mailbird, working name (24-mailbird)
 
-_Last updated: 2026-10-14 — checkpoint (PRs #1–#9 merged; Phase 5 scope pending Sean)_
+_Last updated: 2026-10-14 — checkpoint (PRs #1–#9 merged; Phase 5 groundwork in PR #10)_
 
 ---
 
@@ -11,16 +11,16 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#9 merged; Phase 5 scope pend
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phases 0–4b are merged (PRs #1–#9). Phase 5 (mobile) is waiting on Sean's call on scope, because this cloud machine can't build or run mobile apps.
-- **Working set**: `crates/core/src/net/{graph,graph_pim,oauth}.rs`, `crates/core/src/ical.rs` (`shape`),
-  `crates/core/tests/graph.rs` (fake Graph + token server), `apps/web/src-tauri/src/{oauth_commands,workers}.rs`,
-  `apps/web/src/features/oauth-sign-in.tsx`, `docs/decisions/0014-microsoft.md`, `docs/microsoft-setup.md`.
-- **Last action**: Merged PR #8 (Sean confirmed after the fact), then built and verified Phase 4b (Microsoft):
-  - Sign-in with a localhost redirect, answered on both loopback addresses; identity from /me.
-  - Graph mail on the `RemoteBatch` contract: per-folder delta with immutable ids, MIME send, polling.
-  - Outlook calendars and contacts translated to iCalendar and vCard behind the DAV contract (new `DavOutcome::Created`).
-  - The fake Graph test caught three bugs, all fixed. Not yet tried against real Microsoft.
-- **Next action**: Sean picks Phase 5's scope. Groundwork here (mobile entry point, platform seams, 10k-row list and keyboard checks in phone emulation, push ADR), or allow dl.google.com for Android builds, or other work first. The device spike itself (ADR-0002 criteria) needs his Mac and phones. The mobile push design needs a server decision.
+- **Current focus**: Phase 5 mobile groundwork, in review as PR #10 (`phase-5-mobile`). Sean picked both options for new mail on phones: periodic checks, or a self-hosted push relay in Docker. The device spike (5b) is next, on his Mac and phones.
+- **Working set**: `tools/push-relay/` (relay, Docker, README), `crates/core/src/net/{push_relay,graph,jmap}.rs`,
+  `apps/web/src-tauri/src/{push,workers}.rs`, `apps/web/src/components/virtual-list.tsx`, `apps/web/src/features/push-settings.tsx`,
+  `apps/web/src/lib/keyboard-inset.ts`, `docs/decisions/0015-mobile-groundwork.md`, `docs/mobile-spike.md`.
+- **Last action**: Merged PR #9 on Sean's word, then built the Phase 5 groundwork:
+  - A push relay with APNs, FCM, and UnifiedPush, watching IMAP, JMAP, and Outlook, with sealed secrets.
+  - Shell seams: `set_push_target` and `background_pass`.
+  - A virtualized, paging mail list (lifts the old 200-row cap) and a keyboard-safe composer.
+  - Tests caught a relay-client status bug, now fixed. Docker: only the runtime stage was checked here.
+- **Next action**: Merge PR #10 only on Sean's explicit word. Then the device spike (`docs/mobile-spike.md`) on Sean's Mac and phones, which needs his hardware; or other work (the product rename, Gmail labels).
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
   Calendar follow-ups: free/busy, COUNTER, and missed-reminder catch-up.
@@ -49,9 +49,10 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#9 merged; Phase 5 scope pend
 - **Gotcha**: calcard pairs overrides with their series by SEQUENCE. Strip SEQUENCE before `expand_dates`, or a bumped override duplicates its occurrence.
 - **Gotcha**: Hocuspocus allows one provider per document name per socket, and a destroyed provider's close can unsubscribe its replacement. Use `sessionAwareness: true`, and never pass `onSynced: undefined` (it replaces the default handler).
 - **Gotcha**: never run `cargo fmt` here: the repo isn't rustfmt-formatted, and it rewrites every file. Format only new files, with `rustfmt --config max_width=180,use_small_heuristics=Max`.
+- **Gotcha**: Docker works here (`sudo dockerd &`), but containers can't use the agent proxy, so image builds can't fetch crates. Build the binary on the host and test the runtime stage.
 - **Gotcha**: the cloud disk fills from `target/` (about 20 GB). Use `CARGO_INCREMENTAL=0`, or delete `target/debug/incremental`.
 - **Gotcha**: the shadcn registry host may be blocked by cloud network policy. Components come from
   a shadcn-ui/ui git clone through `tools/shadcn-material/transform.mjs`.
 
 ### VCS state
-- `main` has Phases 0 through 4b; no open branches.
+- `phase-5-mobile`: Phase 5 groundwork, in PR #10. `main` has Phases 0 through 4b.
