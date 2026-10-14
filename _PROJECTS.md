@@ -58,10 +58,11 @@ files only** — gitignored Live handoffs stay machine-local (load-miss rec 8).
 - [[07-projects/01-mediaservices/canvases/README|01-mediaservices]] (SESSION-STATE is machine-local)
 - `07-projects/02-centricPLM/` — machine-local SESSION-STATE / README
 - [[07-projects/03-omni/README|03-omni]]
-- `07-projects/04-claude-figma-plugin/` · `07-projects/05-C8-PLM/` — machine-local
-- `07-projects/09-figma-repo-sync-plugin/` · `07-projects/10-centric-UX-research/` — machine-local
+- `07-projects/04-claude-figma-plugin/` · `07-projects/05-C8-PLM/` · `07-projects/27-unraidTheme/` — machine-local (`27-unraidTheme` was `04-unraidTheme` until 2026-10-14, renumbered so no two projects share a number)
+- `07-projects/06-context-aware-DS/` · `07-projects/07-algo-DS-tool/` · `07-projects/08-customDesk/` — machine-local
+- `07-projects/09-figma-repo-sync-plugin/` · `07-projects/10-centric-UX-research/` · `07-projects/11-lexical-react-native/` — machine-local
 - [[07-projects/12-MCS/SESSION-STATE|12-MCS]]
-- `07-projects/13-legion/` · `07-projects/14-variable-icon-font-generator/` · `07-projects/15-DavinciRemake/` · `07-projects/16-CDS Figma-Code Audit/` — machine-local
+- `07-projects/13-legion/` · `07-projects/14-variable-icon-font-generator/` · `07-projects/15-DavinciRemake/` · `07-projects/16-CDS Figma-Code Audit/` · `07-projects/17-data table/` — machine-local
 - [[07-projects/18-bootstrap-generator/SESSION-STATE|18-bootstrap-generator]] · [[07-projects/18-bootstrap-generator/README|18-bootstrap-generator README]]
 - [[07-projects/19-workspace-brain/SESSION-STATE|19-workspace-brain]] · [[07-projects/19-workspace-brain/README|19-workspace-brain README]]
 - [[07-projects/20-lcars-generative-interface/SESSION-STATE|20-lcars-generative-interface]] · [[07-projects/20-lcars-generative-interface/README|20-lcars README]]

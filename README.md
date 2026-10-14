@@ -9,7 +9,7 @@
 
 **An AI that interviews you, then builds you your own "second brain" — notes, knowledge, and a personal assistant that actually knows you.**
 
-> ⚠️ **Early days.** This is a real project, but it's just getting started. The design is written down (see [SPEC.md](SPEC.md)), and the building has only just begun. Read this as *"here's the plan and how it will work,"* not *"here's a finished app you can install today."* Where something doesn't exist yet, this README says so plainly.
+> ⚠️ **Early days.** This is a real project, but it's just getting started. The design is written down (see [SPEC.md](07-projects/18-bootstrap-generator/SPEC.md)), and the building has only just begun. Read this as *"here's the plan and how it will work,"* not *"here's a finished app you can install today."* Where something doesn't exist yet, this README says so plainly.
 
 ---
 
@@ -120,7 +120,7 @@ This is the **intended flow**. Some pieces work today and some are still being b
 
 **The shape of it:** you talk to the **brain** (a Skill that runs the interview and makes the judgment calls), and the brain directs the **hands** — a small command-line helper called **`wsx`** that actually creates files, syncs them, and double-checks everything. You mostly talk to the brain; the hands do the plumbing.
 
-> 🚧 **Status: early.** The design for all of this is written ([SPEC.md](SPEC.md)). The actual tool — the Skill and `wsx` — is **just starting to be built**, so you can't run the full flow end-to-end yet. The steps below are the planned path.
+> 🚧 **Status: early.** The design for all of this is written ([SPEC.md](07-projects/18-bootstrap-generator/SPEC.md)). The actual tool — the Skill and `wsx` — is **just starting to be built**, so you can't run the full flow end-to-end yet. The steps below are the planned path.
 
 1. **Install the prerequisites.** From the list above: Claude, Obsidian, and GitHub Desktop. *(Available now — these are existing apps.)*
 
@@ -143,7 +143,7 @@ This is the **intended flow**. Some pieces work today and some are still being b
 
 ## How it works under the hood (optional)
 
-You can skip this section entirely. In short: the **brain** is a "Skill" (a folder of instructions the AI loads for this task) that conducts the interview and makes the judgment calls, while the **hands** are a small command-line tool, `wsx`, that does the mechanical work — creating files, syncing through Git, and verifying nothing's broken. The output folder is built to be three things at once (a readable Obsidian vault, a version-tracked Git repo, and an AI-aware context store), and it reaches multiple AI tools through MCP, the "one standard plug" described above. The full design — every decision, format, and guardrail — lives in **[SPEC.md](SPEC.md)**.
+You can skip this section entirely. In short: the **brain** is a "Skill" (a folder of instructions the AI loads for this task) that conducts the interview and makes the judgment calls, while the **hands** are a small command-line tool, `wsx`, that does the mechanical work — creating files, syncing through Git, and verifying nothing's broken. The output folder is built to be three things at once (a readable Obsidian vault, a version-tracked Git repo, and an AI-aware context store), and it reaches multiple AI tools through MCP, the "one standard plug" described above. The full design — every decision, format, and guardrail — lives in **[SPEC.md](07-projects/18-bootstrap-generator/SPEC.md)**.
 
 ---
 
@@ -162,7 +162,7 @@ In short: the tool errs on the side of keeping your private life private, and as
 ## Status & what's next
 
 **Where things stand (mid-2026):**
-- ✅ **The design is written.** The spec is at version 0.2 — see [SPEC.md](SPEC.md).
+- ✅ **The design is written.** The spec is at version 0.2 — see [SPEC.md](07-projects/18-bootstrap-generator/SPEC.md).
 - 🚧 **The build is just starting.** The brain (the interview Skill) and the hands (`wsx`) are early. You can't yet run the full interview-to-folder flow.
 - 📦 **Packaging is in progress.** This will become its own shareable download, separate from any private workspace.
 
@@ -171,7 +171,7 @@ In short: the tool errs on the side of keeping your private life private, and as
 - A first version of `wsx` that creates and syncs your folder.
 - A smoother, less-technical setup path (the goal is to retire the "this part is techie" warnings).
 
-Current working state and notes are tracked in **[SESSION-STATE.md](SESSION-STATE.md)**.
+Current working state and notes are tracked in **[SESSION-STATE.md](07-projects/18-bootstrap-generator/SESSION-STATE.md)**.
 
 ---
 
@@ -190,15 +190,15 @@ No, not unless you choose it. Personal context is **walled off and kept local by
 No — his personal workspace lives in a **private** repository you can't copy, and it's hand-built for him. This generator is the shareable, *make-your-own* version. That's the whole reason it exists.
 
 **Can I really use this today?**
-Not the full thing yet — it's **early**. The design is done; the tool is being built. You can install the prerequisites now and read the plan in [SPEC.md](SPEC.md), but the start-to-finish flow isn't ready. Watch [SESSION-STATE.md](SESSION-STATE.md) for progress.
+Not the full thing yet — it's **early**. The design is done; the tool is being built. You can install the prerequisites now and read the plan in [SPEC.md](07-projects/18-bootstrap-generator/SPEC.md), but the start-to-finish flow isn't ready. Watch [SESSION-STATE.md](07-projects/18-bootstrap-generator/SESSION-STATE.md) for progress.
 
 ---
 
 ## Links & references
 
-**The plan (in this folder)**
-- [SPEC.md](SPEC.md) — the full design (v0.2).
-- [SESSION-STATE.md](SESSION-STATE.md) — current working state and progress.
+**The plan (in `07-projects/18-bootstrap-generator/`)**
+- [SPEC.md](07-projects/18-bootstrap-generator/SPEC.md) — the full design (v0.2).
+- [SESSION-STATE.md](07-projects/18-bootstrap-generator/SESSION-STATE.md) — current working state and progress.
 
 **Your notebook (Obsidian)**
 - [Download Obsidian](https://obsidian.md/download)

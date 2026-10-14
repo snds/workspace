@@ -5,15 +5,18 @@ tags: [moc, home]
 # Workspace — Home
 
 The front door. From here you can reach everything. Any agent enters via [[AGENTS]].
-Claude Code also reads [[CLAUDE]] (its adapter) at session start. Gemini / Copilot / Warp /
-Aider / Windsurf have thin native-filename pointers; web chats paste `00-bootstrap/adapters/web-session.md`.
-You read this.
+Each tool has a thin adapter over that one contract — full matrix in [[00-bootstrap/SURFACES|SURFACES]]:
+Claude Code reads [[CLAUDE]] at session start; Cursor reads [[CURSOR]] + `.cursor/rules/`;
+Perplexity and generic MCP clients use [[PERPLEXITY]]; Codex reads `AGENTS.md` (workflow wrappers in
+`.agents/skills/`); Gemini / Copilot / Warp / Aider / Windsurf have thin native-filename pointers;
+web chats paste `00-bootstrap/adapters/web-session.md`. You read this.
 
 ## Operating layer
 
+- [[_MOC|Map of Content]] — the layered index: skill tiers, domain entry points, the system layer
 - [[_FRAMEWORKS|Frameworks]] — the eighteen that govern every project
 - [[_CONTEXT|Context]] — who, what, where, when (role, preferences, sessions, artifacts)
-- [[_SKILLS|Skills]] — 300+ skill library (exact count: `skills.registry.json` → `counts.total`), hub and spokes
+- [[_SKILLS|Skills]] — 300+ skill library (exact count: `skills.registry.json` → `counts.total`), hub and spokes, plus the ten workflow slash commands
 - [[_PROJECTS|Projects]] — active work across all domains
 - [[_CHEATSHEET|Cheatsheet]] — slash commands, trigger phrases, Obsidian shortcuts
 
@@ -47,7 +50,7 @@ short mode
 
 ```dataview
 TABLE file.mtime AS "Modified", file.folder AS "Folder"
-FROM "06-context" OR "01-frameworks" OR "03-skills" OR "07-projects" OR ".claude/skills"
+FROM "06-context" OR "01-frameworks" OR "03-skills" OR "07-projects"
 WHERE file.mtime > date(today) - dur(14 days)
 SORT file.mtime DESC
 LIMIT 20

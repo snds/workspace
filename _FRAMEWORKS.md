@@ -37,7 +37,7 @@ Job-context methods (not project values): [[domain-constitutions]] · [[constitu
 
 ## Supporting docs
 
-- **[[01-frameworks/team-practices-and-decisions|Team practices and decisions]]** — four-layer structure (active / archive / cross-team patterns). Scaffolded 2026-04-21; populated as patterns surface.
+- **[[01-frameworks/team-practices-and-decisions|Team practices and decisions]]** — four-layer structure (active team layer / best-practices baseline / historical archive / cross-team patterns). Scaffolded 2026-04-21; the active layer is still an unfilled scaffold awaiting Sean's input, so the baseline governs until it is filled.
 - **[[01-frameworks/_session-state-template|SESSION-STATE template]]** — spec for per-project operational state files.
 - **[[01-frameworks/_migration-audit-notes_2026-04-21|_migration-audit-notes]]** — preservation-biased edit rationale from the 2026-04-21 migration (historical).
 

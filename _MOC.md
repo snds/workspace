@@ -63,7 +63,7 @@ SORT file.name ASC
 - **Job-context constitutions** → [[domain-constitutions]] · [[constitution-spec]] · [[dsds-constitution]]
 
 ## Other maps
-- [[_HOME]] — daily front door · [[_SKILLS]] — full skill list · [[_FRAMEWORKS]] — operating frameworks
+- [[_HOME]] — daily front door · [[_SKILLS]] — full skill list (every `SKILL.md` via Dataview, static links to every hub and foundation, the ten workflow commands) · [[_FRAMEWORKS]] — operating frameworks
 - [[_CONTEXT]] — role/project/session/memory · [[_PROJECTS]] — projects · [[_CHEATSHEET]] — quick reference
 - [[00-bootstrap/BOOTSTRAP|BOOTSTRAP]] · [[00-bootstrap/OBSIDIAN-SETUP|OBSIDIAN-SETUP]] · [[00-bootstrap/SURFACES|SURFACES]]
 

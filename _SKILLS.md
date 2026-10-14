@@ -22,40 +22,50 @@ TABLE WITHOUT ID
 FROM "03-skills"
 WHERE file.name = "SKILL"
 SORT file.mtime DESC
-LIMIT 60
 ```
 
 ### Hubs and spoke clusters
 
+Static links, so the graph reaches every foundation and hub (Dataview builds no graph edges). Exact
+lists by tier: [[_MOC]] (Dataview, from frontmatter).
+
 - **Domain rigor (meta):** [[01-frameworks/13-domain-rigor-stack|framework #13]] — mandatory L1–L5 for any new/improved hub
-- **Design systems:** [[03-skills/ds-advisor/SKILL|ds-advisor]] (strategy) → [[03-skills/ai-design-systems/SKILL|ai-design-systems]] (AI×DS procedure, framework #18) · [[03-skills/design-engineer/SKILL|design-engineer]] · [[03-skills/design-system-ops/SKILL|design-system-ops]] · [[03-skills/ux-component-library/SKILL|ux-component-library]]
-- **Figma:** [[03-skills/figma-canvas-designer/SKILL|figma-canvas-designer]], [[03-skills/figma-plugin-dev/SKILL|figma-plugin-dev]]
-- **Engineering:** [[03-skills/eng/SKILL|eng]] → leads + [[03-skills/arch-guild/SKILL|arch-guild]]; mobile via [[03-skills/lead-mobile-engineer/SKILL|lead-mobile-engineer]]
+- **Foundations (load first):** design [[03-skills/design-foundations/SKILL|design-foundations]] → [[03-skills/found-color/SKILL|found-color]] · [[03-skills/found-composition/SKILL|found-composition]] · [[03-skills/found-hierarchy/SKILL|found-hierarchy]] · [[03-skills/found-perception/SKILL|found-perception]] · [[03-skills/found-typography/SKILL|found-typography]]; engineering [[03-skills/eng-foundations/SKILL|eng-foundations]]; product [[03-skills/product-foundations/SKILL|product-foundations]]; data [[03-skills/data-foundations/SKILL|data-foundations]]; science [[03-skills/science-foundations/SKILL|science-foundations]] → [[03-skills/sci-linear-algebra/SKILL|sci-linear-algebra]] · [[03-skills/sci-numerical-methods/SKILL|sci-numerical-methods]] · [[03-skills/sci-physics-simulation/SKILL|sci-physics-simulation]] · [[03-skills/sci-probability-stochastic/SKILL|sci-probability-stochastic]]; game [[03-skills/game-foundations/SKILL|game-foundations]]; imaging [[03-skills/imaging-foundations/SKILL|imaging-foundations]] → [[03-skills/img-cinematography/SKILL|img-cinematography]] · [[03-skills/img-optics-light/SKILL|img-optics-light]] · [[03-skills/img-photography/SKILL|img-photography]] · [[03-skills/img-photoreal-rendering/SKILL|img-photoreal-rendering]] · [[03-skills/img-vfx/SKILL|img-vfx]]; vision [[03-skills/vision-foundations/SKILL|vision-foundations]]
+- **Design disciplines:** [[03-skills/lead-ui-designer/SKILL|lead-ui-designer]] · [[03-skills/lead-ux-designer/SKILL|lead-ux-designer]] · [[03-skills/lead-information-architect/SKILL|lead-information-architect]] · [[03-skills/lead-information-designer/SKILL|lead-information-designer]] · [[03-skills/lead-graphic-designer/SKILL|lead-graphic-designer]] · [[03-skills/lead-3d-designer/SKILL|lead-3d-designer]]; type [[03-skills/lead-type-designer/SKILL|lead-type-designer]] + [[03-skills/type/SKILL|type]] (type systems + letterform craft); icons and vectors [[03-skills/lead-icon-artist/SKILL|lead-icon-artist]] · [[03-skills/lead-vector-designer/SKILL|lead-vector-designer]] · [[03-skills/lead-technical-digital-artist/SKILL|lead-technical-digital-artist]]; end-to-end site/app redesign [[03-skills/redesign/SKILL|redesign]]
+- **Design systems:** [[03-skills/ds-advisor/SKILL|ds-advisor]] (strategy) → [[03-skills/ai-design-systems/SKILL|ai-design-systems]] (AI×DS procedure, framework #18) · [[03-skills/design-engineer/SKILL|design-engineer]] · [[03-skills/design-system-ops/SKILL|design-system-ops]] · [[03-skills/ux-component-library/SKILL|ux-component-library]] · [[03-skills/ds/SKILL|ds]] (DS operations hub) · generation [[03-skills/ds-generation-pipeline/SKILL|ds-generation-pipeline]] + [[03-skills/gen-manifest/SKILL|gen-manifest]] (dependency manifest)
+- **Figma:** [[03-skills/figma/SKILL|figma]] (authoring + Code Connect hub; API-surface choice in [[03-skills/figma-api-router/SKILL|figma-api-router]]) · [[03-skills/figma-canvas-designer/SKILL|figma-canvas-designer]], [[03-skills/figma-plugin-dev/SKILL|figma-plugin-dev]]
+- **Engineering:** [[03-skills/eng/SKILL|eng]] → leads [[03-skills/lead-frontend-engineer/SKILL|lead-frontend-engineer]] · [[03-skills/lead-backend-engineer/SKILL|lead-backend-engineer]] · [[03-skills/lead-devops-engineer/SKILL|lead-devops-engineer]] + [[03-skills/arch-guild/SKILL|arch-guild]]; mobile via [[03-skills/lead-mobile-engineer/SKILL|lead-mobile-engineer]]; platform hubs [[03-skills/adobe-app-builder/SKILL|adobe-app-builder]] (Adobe I/O Runtime extensions) · [[03-skills/python-cross-platform-gui/SKILL|python-cross-platform-gui]] (tkinter desktop tools)
 - **Security:** [[03-skills/lead-security-architect/SKILL|lead-security-architect]] → `sec-*` (framework #16)
 - **Accessibility:** [[03-skills/lead-accessibility-architect/SKILL|lead-accessibility-architect]] + [[03-skills/a11y-audit-toolkit/SKILL|a11y-audit-toolkit]]
 - **Analysis / DS / PM:** framework #15 → [[03-skills/lead-data-scientist/SKILL|lead-data-scientist]] / [[03-skills/lead-product-manager/SKILL|lead-product-manager]]
+- **Project hubs:** [[03-skills/omni-project/SKILL|omni-project]] (Omni design-to-production platform)
 - **Legion game:** [[03-skills/legion-project/SKILL|legion-project]] → [[03-skills/lead-game-designer/SKILL|lead-game-designer]] / [[03-skills/lead-art-director/SKILL|lead-art-director]] / [[03-skills/lead-game-developer/SKILL|lead-game-developer]]
 - **Realtime photoreal:** [[03-skills/realtime-visual-craft/SKILL|realtime-visual-craft]] + [[03-skills/render-qa-toolkit/SKILL|render-qa-toolkit]] + [[03-skills/interactive-capture-eval/SKILL|interactive-capture-eval]] + [[03-skills/rendering-guild/SKILL|rendering-guild]] (framework #12)
-- **Icon fonts:** [[03-skills/variable-icon-font-architect/SKILL|variable-icon-font-architect]] + math spokes
+- **Icon fonts:** [[03-skills/variable-icon-font-architect/SKILL|variable-icon-font-architect]] + math spokes; Material Symbols automation [[03-skills/material-symbols-project/SKILL|material-symbols-project]] → [[03-skills/google-fonts-scraper/SKILL|google-fonts-scraper]] · [[03-skills/material-symbols-suite/SKILL|material-symbols-suite]] · [[03-skills/material-symbols-svg-export/SKILL|material-symbols-svg-export]]; glyph → SVG [[03-skills/svg-font-extraction/SKILL|svg-font-extraction]]
 - **Motion / display graphics:** [[03-skills/lead-motion-designer/SKILL|lead-motion-designer]] → [[03-skills/motion-graphic-systems/SKILL|motion-graphic-systems]] · [[03-skills/motion-programmatic-video/SKILL|motion-programmatic-video]] + implementation [[03-skills/motion/SKILL|motion]]; still craft via [[03-skills/lead-graphic-designer/SKILL|lead-graphic-designer]] → [[03-skills/gd-display-graphics/SKILL|gd-display-graphics]] · [[03-skills/gd-generation-tooling/SKILL|gd-generation-tooling]] (live SVG, not flattened plates). Law: [[display-graphic-motion-systems]]
-- **Visual QA:** [[03-skills/native-visual-eval/SKILL|native-visual-eval]] (native-resolution capture — the precondition; framework #10's method) + [[03-skills/visual-qa-toolkit/SKILL|visual-qa-toolkit]] (instrumented measurement) + [[03-skills/visual-prove-engine/SKILL|visual-prove-engine]] (contract verdicts, altitudes A–G) + [[03-skills/play-prove/SKILL|play-prove]] (headless balance / feel) + [[03-skills/a11y-audit-toolkit/SKILL|a11y-audit-toolkit]] + [[03-skills/lead-visual-qa/SKILL|lead-visual-qa]] (judgment) + discipline lenses [[03-skills/visual-qa-dataviz/SKILL|visual-qa-dataviz]] · [[03-skills/visual-qa-motion/SKILL|visual-qa-motion]] · [[03-skills/visual-qa-type/SKILL|visual-qa-type]]
+- **Visual QA:** [[03-skills/qa/SKILL|qa]] (QA hub: visual, structural, functional) · [[03-skills/native-visual-eval/SKILL|native-visual-eval]] (native-resolution capture — the precondition; framework #10's method) + [[03-skills/visual-qa-toolkit/SKILL|visual-qa-toolkit]] (instrumented measurement) + [[03-skills/visual-prove-engine/SKILL|visual-prove-engine]] (contract verdicts, altitudes A–G) + [[03-skills/play-prove/SKILL|play-prove]] (headless balance / feel) + [[03-skills/a11y-audit-toolkit/SKILL|a11y-audit-toolkit]] + [[03-skills/lead-visual-qa/SKILL|lead-visual-qa]] (judgment) + discipline lenses [[03-skills/visual-qa-dataviz/SKILL|visual-qa-dataviz]] · [[03-skills/visual-qa-motion/SKILL|visual-qa-motion]] · [[03-skills/visual-qa-type/SKILL|visual-qa-type]]
 - **Measurement (instrumented, per substrate):** [[03-skills/visual-qa-toolkit/SKILL|visual-qa-toolkit]] (pixels) + [[03-skills/a11y-audit-toolkit/SKILL|a11y-audit-toolkit]] (DOM/WCAG) + [[03-skills/fe-perf-harness/SKILL|fe-perf-harness]] (CWV budgets) + [[03-skills/render-qa-toolkit/SKILL|render-qa-toolkit]] (rendered frames) — each degrades to a stated manual path rather than a silent pass
-- **Career:** [[03-skills/career-ops-job-search/SKILL|career-ops-job-search]] (wrappers → `~/.agents/skills`)
-- **Workspace mgmt:** [[03-skills/workspace-bootstrap/SKILL|workspace-bootstrap]] (session handshake) + [[03-skills/side-chat-handback/SKILL|side-chat-handback]] (`/handback` — side chat → parent inbox) + [[03-skills/open-agent-engine/SKILL|open-agent-engine]] (work movement — queue, ledger, receipts; lanes in [[06-context/open-engine/README|open-engine]]) + [[03-skills/harness-map/SKILL|harness-map]] (map the AI setup before cleaning) + [[03-skills/mission-fit/SKILL|mission-fit]] (jobs vs harness; false-success checks before trusting `done`) + [[03-skills/close-out/SKILL|close-out]] (QA loop; mint missing detectors; page Sean iff self-critique or mint fails) + [[03-skills/self-improve/SKILL|self-improve]] (correct / heal / improve through ordinary use) + [[03-skills/plan-ahead/SKILL|plan-ahead]] (order of operations before write) + [[03-skills/artifact-ingest/SKILL|artifact-ingest]] (vendor Canvas/Artifact/HTML → vault; write-through + harvest CLIs)
+- **Career:** [[03-skills/job-search-strategist/SKILL|job-search-strategist]] (strategy hub) · [[03-skills/career-ops-job-search/SKILL|career-ops-job-search]] (wrappers → `~/.agents/skills`)
+- **Workspace mgmt:** [[03-skills/workspace-bootstrap/SKILL|workspace-bootstrap]] (session handshake) + [[03-skills/side-chat-handback/SKILL|side-chat-handback]] (`/side-chat-handback` — side chat → parent inbox) + [[03-skills/open-agent-engine/SKILL|open-agent-engine]] (work movement — queue, ledger, receipts; lanes in [[06-context/open-engine/README|open-engine]]) + [[03-skills/harness-map/SKILL|harness-map]] (map the AI setup before cleaning) + [[03-skills/mission-fit/SKILL|mission-fit]] (jobs vs harness; false-success checks before trusting `done`) + [[03-skills/close-out/SKILL|close-out]] (QA loop; mint missing detectors; page Sean iff self-critique or mint fails) + [[03-skills/self-improve/SKILL|self-improve]] (correct / heal / improve through ordinary use) + [[03-skills/plan-ahead/SKILL|plan-ahead]] (order of operations before write) + [[03-skills/artifact-ingest/SKILL|artifact-ingest]] (vendor Canvas/Artifact/HTML → vault; write-through + harvest CLIs)
 - **Process plugins:** [[03-skills/process-plugins/SKILL|process-plugins]] (pstack/superpowers precedence)
 
 ## Workflows — one home, generated wrappers
 
-[[03-skills/optimize/SKILL|optimize]] · [[03-skills/health/SKILL|health]] · [[03-skills/session-end/SKILL|session-end]] · [[03-skills/reconcile/SKILL|reconcile]] · [[03-skills/today/SKILL|today]] · [[03-skills/new-project/SKILL|new-project]] · [[03-skills/framework-check/SKILL|framework-check]] live in `03-skills/` like every skill. `.claude/skills/` (Claude `/name`) and `.agents/skills/` (Codex, Cursor) hold generated pointer wrappers (`09-tools/build-local-skill-plugin.py --wrappers`); the table below lists them.
+The ten workflow slash commands live in `03-skills/` like every skill. `.claude/skills/` (Claude `/name`)
+and `.agents/skills/` (Codex, Cursor) hold generated pointer wrappers
+(`09-tools/build-local-skill-plugin.py --wrappers`, list = `WORKFLOWS` in that script). Obsidian
+ignores dot-folders, so this list is static — each link opens the skill's one home.
 
-```dataview
-TABLE WITHOUT ID
-  file.link AS "Skill",
-  description AS "Description"
-FROM ".claude/skills"
-WHERE file.name = "SKILL"
-SORT file.name ASC
-```
+- `/today` → [[03-skills/today/SKILL|today]] — daily note; carries open tasks forward
+- `/session-end` → [[03-skills/session-end/SKILL|session-end]] — session fragment, project context, commit + push
+- `/side-chat-handback` → [[03-skills/side-chat-handback/SKILL|side-chat-handback]] — close a side chat and hand the outcome back to the parent
+- `/reconcile` → [[03-skills/reconcile/SKILL|reconcile]] — merge same-day session blocks from several machines
+- `/new-project` → [[03-skills/new-project/SKILL|new-project]] — scaffold a project under `07-projects/`
+- `/framework-check` → [[03-skills/framework-check/SKILL|framework-check]] — run work through the operating frameworks
+- `/optimize` → [[03-skills/optimize/SKILL|optimize]] — full workspace audit
+- `/health` → [[03-skills/health/SKILL|health]] — graph hygiene: orphans, stale notes, dangling edges
+- `/harness-map` → [[03-skills/harness-map/SKILL|harness-map]] — map the AI harness before cleaning or upgrading it
+- `/mission-fit` → [[03-skills/mission-fit/SKILL|mission-fit]] — can the harness finish a real job; false-success checks
 
 ## Adding a skill
 

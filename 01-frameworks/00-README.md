@@ -345,6 +345,8 @@ The core operating lenses (01–06) are layered, not parallel — they compose i
 
 ## Also in this folder
 
+- [[01-frameworks/team-practices-and-decisions|team-practices-and-decisions]] — Living reference for code-level craft conventions in four layers: active team non-negotiables, the portable best-practices baseline, a historical archive of past teams, and cross-team patterns. Framework #05 reads it for team-specific overrides. The active layer is still an unfilled scaffold, so the baseline governs until Sean fills it.
+- [[01-frameworks/_session-state-template|_session-state-template]] — The spec and copyable template for each project's `SESSION-STATE.md`, including the **Live handoff** block every agent reads on entry and rewrites on exit (see the handoff protocol in [[AGENTS]]).
 - [[01-frameworks/_migration-audit-notes_2026-04-21|_migration-audit-notes]] — Preservation-biased token-optimization audit from the migration session. Tracks what was cut, what was considered but preserved, and why. Useful reference if future passes need to see the editing rationale.
 
 ## Related workspace docs

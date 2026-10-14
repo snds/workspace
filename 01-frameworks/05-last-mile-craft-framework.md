@@ -480,7 +480,7 @@ The file is append-only for checkpoint history; the "current state" section at t
 
 The workspace-bootstrap skill reads `SESSION-STATE.md` automatically when loading a project's context. When a new session opens with *"let's continue Legion work"* or similar, I already know the last session was on `Voyager-2.local`, the Three.js dev server was running at port 5173, we were mid-way through implementing thruster VFX, and you had a specific question about the atmospheric shader pending.
 
-The implementation details of this — extending the bootstrap skill, defining the state file template formally, seeding each active project with an initial state file — are scoped for tomorrow's migration and audit session.
+This is built. The state file's formal spec and copyable template live in [`_session-state-template.md`](_session-state-template.md), and each project's `SESSION-STATE.md` opens with the **Live handoff** block that every agent reads on entry and rewrites on exit (the handoff protocol in `AGENTS.md` → Multi-agent continuity & handoff). At session start, `09-tools/session-status.py` and the SessionStart hook read every `07-projects/*/SESSION-STATE.md` and print each project's last update in the session-start card.
 
 ### Token economics of operational state
 
@@ -515,7 +515,7 @@ This framework is the meta-layer. Tactical execution lives in the skill network.
 - **`figma-canvas-designer`** — canvas execution. When the framework identifies that something needs to be produced or modified in Figma, this skill does the work.
 - **`variable-icon-font-architect`** — icon system construction. Owns the tactical execution of icon and variable font last-mile discipline.
 - **`figma-plugin-dev`** — tooling-level craft. When we're building plugins that enforce last-mile discipline automatically, this skill runs the build.
-- **`workspace-bootstrap`** — session continuity. Extended (in scope for tomorrow) to load `SESSION-STATE.md` automatically and maintain operational state across sessions.
+- **`workspace-bootstrap`** — session continuity. Loads the active project's `SESSION-STATE.md` (its Live handoff block, per [`_session-state-template.md`](_session-state-template.md)) and keeps operational state current across sessions; the SessionStart hook and `09-tools/session-status.py` surface every project's state automatically.
 - **`native-visual-eval`** — the implementation surface for the perception-integrity precondition (§2.5 above, now its own framework [#10](10-perception-integrity.md)). Same-tick canvas/WebGL readback, the zoom-the-subject technique, the 1:1 chunk-and-Read loop, the static-asset crop rule. Standalone — no visual-QA-hub dependency — so the discipline is always cheap to invoke. Capture native here *before* measuring with `visual-qa-toolkit` or judging with `lead-visual-qa`.
 - **`visual-qa-toolkit`** — the implementation surface for enforcement mechanism #3 above. Ten standalone Python scripts, starter configs for default/Centric/Legion contexts, a consolidated-report runner, and annotated-image outputs. Makes augmented perception a standing capability rather than ad-hoc code each time.
 
