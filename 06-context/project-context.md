@@ -13,7 +13,7 @@ _Last updated: 2026-10-14_
 ## Pending Items
 
 > **⚠️ Migrated to the Open Agent Engine 2026-07-30 — do not delete items from this list.**
-> Every item carries a stable Obsidian block anchor (`^pc-NN`; anchors run `^pc-01`–`^pc-53`). The
+> Every item carries a stable Obsidian block anchor (`^pc-NN`; anchors run `^pc-01`–`^pc-54`). The
 > 2026-07-30 migration covered the first 43: 38 got a Linear issue whose **only** pointer is that
 > anchor (23 on the personal lane, 15 on the employer lane) and 5 were not migrated — the reasons are
 > listed in the same table. Anchors added since (`^pc-44` onward) have no mapped issue. Deleting an
@@ -82,6 +82,7 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 - [ ] **Review and merge the mechanization branches.** (Added 2026-10-14, Sean approved.) 18 commits from the 2026-10-13 mechanization review sit unmerged. `worktree-b-fixes-b1-b10` (16 commits: fixes B1–B11 + follow-ons) must be rebased over main first: main redid two of its fixes as `aa8d6e1` and `6f69724` and has moved since (a 2026-10-14 merge-tree shows conflicts in 7 files). `claude/kind-diffie-41820e` (2 commits: M25 writes lane) merges cleanly. Then re-pin (`workspace-doctor.sh --install-pin`). Baton: [19-workspace-brain](../07-projects/19-workspace-brain/SESSION-STATE.md). ^pc-51
 - [ ] **Save PlanetCompiler phase-6 work (data-loss risk).** (Added 2026-10-14, Sean approved.) Sean-side, on the Personal MBP: `python3 09-tools/profile_resolve.py owners set PlanetCompiler personal` (project ownership blocks commits until then), commit the phase-6 increment, and consider a private remote (`09-tools/backup-projects.py`). The work has sat uncommitted for 2+ weeks with no remote. Baton: [independent planet handoff](../07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md). ^pc-52
 - [ ] **Set up the machine layer on Enterprise (Windows desktop).** (Added 2026-10-14.) Sean confirmed 2026-10-14 that Enterprise, his personal Windows desktop, is back in use; it had been marked retired on 2026-09-15. `devices.json` already registers it (`eae4eb1`, identity rule IR4). The shims and the doctor are bash, so it needs a Windows install route first (Git Bash or WSL), then `--install-pin` and the rest. Record the checkout path in [[fact-machine-layer-installs]]. This reopens harness-map Rec 13's Windows half. ^pc-53
+- [ ] **Decide DSDS 0.20 → 0.22.** (Added 2026-10-14.) The 2026-10-14 `ds-source-watch` re-fetch found upstream DSDS at 0.22.0, a breaking release and the last planned one before 1.0 (`purpose`/`metadata.context` fold into `description`; `uses` replaces `composes`/`depends-on`/`part-of`/`implements`; `related` → `alternatives`; 23 `rel` values → 14). `02-shared-references/dsds/workspace-ds-constitution.dsds.yaml` pins 0.20.0 and stays valid against that frozen schema. Sean's call: stay pinned, or migrate (upstream ships `migrate-to-0.22.js`; dsds-mcp 0.5.0 reads 0.22 only). Snapshot: `07-projects/19-workspace-brain/reports/ds-source-watch/latest.json`. ^pc-54
 
 ### Deferred (resurface on context match)
 

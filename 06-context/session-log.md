@@ -53,6 +53,48 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+
+### 2026-10-14 — Doctor fixes, /optimize audit applied, trigger review
+
+SessionID: 2026-10-14-work-optrev
+HostSession: 3931acbb-a691-4c1f-b44a-eab73c9a54ee
+--- SESSION BLOCK ---
+Date: 2026-10-14
+Machine: Work MacBook Pro
+Surface: Claude Code
+Agent: Claude Opus 5.5
+Project(s): 19-workspace-brain (workspace infrastructure); pending lines for 13-legion, 24-mailbird, 25-fontface
+Summary: Verified Sean's pin / git-hooks / overlay v6 install, fixed two doctor gaps, ran /optimize (53 findings), applied every fix through five parallel passes, then narrowed 22 bare-word triggers. Enterprise is active again.
+Artifacts:
+  - d3c4788 — doctor: the session-start hook heals from workspace sessions; `--check` splits no-login / API-unreachable / refused-token
+  - a799ef7 + 0e02416 — routing: filler-phrase lint in every source; 25 bare-word triggers narrowed; 119/119 routing cases
+  - 2e655db — /optimize audit-log entry (P0 4 · P1 22 · P2 27)
+  - d47c37f, 28d0e7b, 2f149d9, af219b4, 1108a00 — all audit fixes (routing + skill merges, contract shrink, maps, tools, context)
+  - 06-context/memory/fact-claude-code-sandbox-limits.md — sandbox blocks api.github.com, ps, xcrun cache
+  - 07-projects/19-workspace-brain/notes/zero-vector-rollout-checklist.md — exported from the claude.ai artifact
+Decisions:
+  - Enterprise (Sean's personal Windows desktop) is back in use; every Windows / Enterprise mention stays (Sean).
+  - Merging the two mechanization branches stays Sean's call (^pc-51).
+  - MEMORY.md stays on-demand; adding it to the start read breaks the 17,000 session-floor budget.
+  - The employer-substance baseline pools session-log.md + session-log-archive.md, so compaction cannot trip H25.
+Evidence:
+  - Install round + re-pin `1108a00` + doctor heal @ ~/.config/snds-workspace and ~/.claude (`workspace-doctor.sh --check`) — verified
+  - Full harness @ `workspace-harness.py` outside the sandbox — verified (PASS, 0 failing)
+  - Workspace pushes @ github.com/snds/workspace (main...origin/main; pre-push gate green) — verified
+Pending added:
+  - ^pc-51 merge the mechanization branches; ^pc-52 save PlanetCompiler phase 6; ^pc-53 Enterprise machine layer; ^pc-54 DSDS 0.20 → 0.22
+Pending resolved:
+  - ^pc-16 superseded; ^pc-04 pruned (SEA-11 closed); ^pc-12(d) Meridian collapse
+Project status changes:
+  - Enterprise PC: retired → active (machine layer not installed)
+  - 04-unraidTheme → 27-unraidTheme (machine-local)
+Next:
+  - Sean: rebase + merge `worktree-b-fixes-b1-b10` and merge `claude/kind-diffie-41820e`, then re-pin (^pc-51)
+  - Sean: one Centric push from Claude closes ^pc-50 + ^pc-09; DSDS decision (^pc-54); Enterprise install route (^pc-53)
+  - Open Agent Engine filing skipped: the personal Linear lane MCP did not connect this session; ^pc-51–^pc-54 have no issues yet
+--- END BLOCK ---
+
 ### 2026-10-14 — Fontface renumbered 24 → 25; its baton now syncs through git
 
 SessionID: 2026-10-14-work-mbp-renum25
@@ -729,75 +771,4 @@ Decisions:
   - Keep domain markup and 3D as separate surfaces. License-key SDKs are out while “no license” holds.
 Next:
   - Resume only if Sean asks. No c8 issue filed (movement-only; no employer home for an unsolicited rec).
---- END BLOCK ---
-
-### 2026-09-17 — Supplier Portal polish session close (proto)
-
-SessionID: 2026-09-17-work-supplier-portal-close
---- SESSION BLOCK ---
-Date: 2026-09-17
-Agent: Cursor Composer
-Surface: Cursor
-Machine: Work MacBook Pro (CS-K746DRWXY1)
-Project(s): saas-plm-prototype (cpes-software)
-Summary: Closed a resumed Supplier Portal polish thread. Work already on proto `main` via merged PRs #14–#16 (Aug 2026): single-company portal, My Home insights/welcome, LandingDataTable landings, seeded POs, host Header → Supplier Portal Demo, portal avatar email links, demo hash **push** for Back/Forward. No new uncommitted portal work from this baton; checkout was on `feat/page-composer-model` (untracked `canvases/` left alone).
-Decisions:
-  - Portal demo is Performance Fabrics only (no company switcher).
-  - Waiting On: Needs you / Awaiting buyer. Complete cards: Completed on + success hover.
-  - Demo navigations push `location.hash` (not `replaceState`) for Back/Forward.
-Artifacts:
-  - https://github.com/cpes-software/saas-plm-prototype/pull/14 (merged)
-  - https://github.com/cpes-software/saas-plm-prototype/pull/15 (merged)
-  - https://github.com/cpes-software/saas-plm-prototype/pull/16 (merged)
-Pending added:
-  - Optional: Sean Miro board catalog for further portal gaps (offered; board not sent).
-Next:
-  - If continuing portal: send Miro share/export, or pick next surface from proto HANDOVER.
-  - Unrelated: `feat/page-composer-model` + untracked `canvases/` — separate thread.
---- END BLOCK ---
-
-### 2026-09-17 — centric-ui workflowAuthor PR #282 closeout
-
-SessionID: 2026-09-17-work-wf282
---- SESSION BLOCK ---
-Date: 2026-09-17
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.5
-Project(s): 02-centricPLM (centric-ui workflowAuthor), saas-plm-prototype (pickup context only)
-Summary: Picked up Aug workflow-authoring thread; rebased `feat/workflow-author-typed-step-editors` onto main (clean); fixed Technical-mode test gating; marked PR #282 ready; Prettier quality-gate fix pushed. PR is MERGED (2026-08-14) with green checks. Logged durable auth fact: cloud Unauthorized API ≠ GH PAT.
-Decisions:
-  - Technical mode off by default; JSON rails / raw step JSON / Export opt-in; Common vs Advanced palette.
-  - Cloud API identity lives in `.env.local` as `VITE_API_KEY` + `VITE_SERVICE_NAME` — not a GitHub PAT.
-Evidence:
-  - PR #282 merged @ https://github.com/cpes-software/centric-ui/pull/282 (sha 06672954) — verified
-Pending resolved:
-  - Finish / land workflowAuthor typed editors + Technical mode (PR #282)
-Next:
-  - Optional wedges still open if product wants them: richer Call beyond HTTP; typed `for` / `fork` / `listen`.
-  - Earlier same-day baton (Figma Icons spot-check / library publish) still pending Sean review — see 02-centricPLM Live handoff.
---- END BLOCK ---
-
-### 2026-09-17 — centric-ui draft PRs (#87 / #179)
-
-SessionID: 2026-09-17-work-cui-drafts
---- SESSION BLOCK ---
-Date: 2026-09-17
-Agent: Cursor Grok 4.5
-Surface: Cursor
-Machine: Work MacBook Pro
-Project(s): centric-ui (cpes-software; employer)
-Summary: Triaged open drafts; promoted #87 (caution Badge/Button) after rebase onto main dropping redundant app.css (tokens already from #225); reviewed #225 gate as inherited main red; resolved #179 merge conflicts keeping main density + VITE_DEV_BACKEND_URL and retaining cloud-Keycloak→:3000 auto-bind.
-Artifacts:
-  - https://github.com/cpes-software/centric-ui/pull/87 — ready; +3 Badge/Button only
-  - https://github.com/cpes-software/centric-ui/pull/179 — MERGEABLE after conflict resolve
-Decisions:
-  - #87 app.css hunk dropped — caution tokens already on main via #225; Alert caution via #119.
-  - #179 keeps main density + serviceProxy; unique value is port-3000 auto-bind + env docs.
-  - #225 quality-gate red was shared main outage, not the token PR.
-Pending added: (none — pc-06 progressed in place)
-Pending resolved: (none fully closed)
-Next:
-  - Human review/merge #87 and #179; assign Alex on #179.
-  - #88 harness still draft — rebase after #87 if still wanted.
 --- END BLOCK ---

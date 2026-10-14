@@ -4,6 +4,78 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-09-17 — Supplier Portal polish session close (proto)
+
+SessionID: 2026-09-17-work-supplier-portal-close
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Agent: Cursor Composer
+Surface: Cursor
+Machine: Work MacBook Pro (CS-K746DRWXY1)
+Project(s): saas-plm-prototype (cpes-software)
+Summary: Closed a resumed Supplier Portal polish thread. Work already on proto `main` via merged PRs #14–#16 (Aug 2026): single-company portal, My Home insights/welcome, LandingDataTable landings, seeded POs, host Header → Supplier Portal Demo, portal avatar email links, demo hash **push** for Back/Forward. No new uncommitted portal work from this baton; checkout was on `feat/page-composer-model` (untracked `canvases/` left alone).
+Decisions:
+  - Portal demo is Performance Fabrics only (no company switcher).
+  - Waiting On: Needs you / Awaiting buyer. Complete cards: Completed on + success hover.
+  - Demo navigations push `location.hash` (not `replaceState`) for Back/Forward.
+Artifacts:
+  - https://github.com/cpes-software/saas-plm-prototype/pull/14 (merged)
+  - https://github.com/cpes-software/saas-plm-prototype/pull/15 (merged)
+  - https://github.com/cpes-software/saas-plm-prototype/pull/16 (merged)
+Pending added:
+  - Optional: Sean Miro board catalog for further portal gaps (offered; board not sent).
+Next:
+  - If continuing portal: send Miro share/export, or pick next surface from proto HANDOVER.
+  - Unrelated: `feat/page-composer-model` + untracked `canvases/` — separate thread.
+--- END BLOCK ---
+
+### 2026-09-17 — centric-ui workflowAuthor PR #282 closeout
+
+SessionID: 2026-09-17-work-wf282
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.5
+Project(s): 02-centricPLM (centric-ui workflowAuthor), saas-plm-prototype (pickup context only)
+Summary: Picked up Aug workflow-authoring thread; rebased `feat/workflow-author-typed-step-editors` onto main (clean); fixed Technical-mode test gating; marked PR #282 ready; Prettier quality-gate fix pushed. PR is MERGED (2026-08-14) with green checks. Logged durable auth fact: cloud Unauthorized API ≠ GH PAT.
+Decisions:
+  - Technical mode off by default; JSON rails / raw step JSON / Export opt-in; Common vs Advanced palette.
+  - Cloud API identity lives in `.env.local` as `VITE_API_KEY` + `VITE_SERVICE_NAME` — not a GitHub PAT.
+Evidence:
+  - PR #282 merged @ https://github.com/cpes-software/centric-ui/pull/282 (sha 06672954) — verified
+Pending resolved:
+  - Finish / land workflowAuthor typed editors + Technical mode (PR #282)
+Next:
+  - Optional wedges still open if product wants them: richer Call beyond HTTP; typed `for` / `fork` / `listen`.
+  - Earlier same-day baton (Figma Icons spot-check / library publish) still pending Sean review — see 02-centricPLM Live handoff.
+--- END BLOCK ---
+
+### 2026-09-17 — centric-ui draft PRs (#87 / #179)
+
+SessionID: 2026-09-17-work-cui-drafts
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Agent: Cursor Grok 4.5
+Surface: Cursor
+Machine: Work MacBook Pro
+Project(s): centric-ui (cpes-software; employer)
+Summary: Triaged open drafts; promoted #87 (caution Badge/Button) after rebase onto main dropping redundant app.css (tokens already from #225); reviewed #225 gate as inherited main red; resolved #179 merge conflicts keeping main density + VITE_DEV_BACKEND_URL and retaining cloud-Keycloak→:3000 auto-bind.
+Artifacts:
+  - https://github.com/cpes-software/centric-ui/pull/87 — ready; +3 Badge/Button only
+  - https://github.com/cpes-software/centric-ui/pull/179 — MERGEABLE after conflict resolve
+Decisions:
+  - #87 app.css hunk dropped — caution tokens already on main via #225; Alert caution via #119.
+  - #179 keeps main density + serviceProxy; unique value is port-3000 auto-bind + env docs.
+  - #225 quality-gate red was shared main outage, not the token PR.
+Pending added: (none — pc-06 progressed in place)
+Pending resolved: (none fully closed)
+Next:
+  - Human review/merge #87 and #179; assign Alex on #179.
+  - #88 harness still draft — rebase after #87 if still wanted.
+--- END BLOCK ---
+
+
 ### 2026-09-17 — wsx Path B picker + Windows handoff zip
 
 SessionID: 2026-09-17-work-wsxpc

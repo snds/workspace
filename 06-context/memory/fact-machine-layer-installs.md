@@ -14,7 +14,7 @@ at `066edac`) must be installed **per machine**. State as known:
 | Machine | Installed | Date | Notes |
 |---|---|---|---|
 | Personal MacBook Pro (`Voyager-2.local`) | ✅ yes | 2026-07-09 | Fix session FX-1. Doctor run clean; Drive-era hooks retired; beacon CLAUDE.md; launchd loaded. Parent-dir acceptance test GREEN. |
-| Work MacBook Pro (main, `CS-K746DRWXY1`) | 🟡 partial | 2026-09-22 | Per-device install detail is held (F-14). Still needed: ^pc-03, the wave-0 human steps in ^pc-45, and removing the retired Cursor scripts (the doctor names the step while any remain installed). |
+| Work MacBook Pro (main, `CS-K746DRWXY1`) | 🟡 mostly | 2026-10-14 | `--install-pin` (`1108a00`), `--install-git-hooks` and `--install-claude-overlay` (v6) run by Sean, plus one plain doctor run; the session-start hook and `~/.claude/CLAUDE.md` are healed (verified with `--check`). Still open: `--install-launchd` (the doctor timer is not loaded), and the Codex / `~/Projects` / home beacon drift the doctor names. Per-device detail is held (F-14). |
 | ~~Work MacBook Pro (loaner, `CS-KQ23N94M0W`)~~ | **RETIRED** | 2026-09-23 | **No longer in use (Sean, 2026-09-23).** Removed from `devices.json`; the Work MBP (main) is the only work machine. |
 | Windows Desktop (`Enterprise`) | ⬜ not installed | 2026-10-14 | **Back in active use: Sean's personal desktop (Sean, 2026-10-14).** This reverses the 2026-09-15 retirement ("being sold — out of the fleet"). It needs the Windows install route (the shims are bash; `devices.json` gives home `/c/Users/SNDS`), so harness-map Rec 13's Windows half is open again. Its Work-MBP half stays done (Cursor's prompt hook is registered; detail held, F-14; verified 2026-09-15). |
 
