@@ -4,6 +4,238 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-09-17 — wsx Path B picker + Windows handoff zip
+
+SessionID: 2026-09-17-work-wsxpc
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 18-bootstrap-generator
+Summary: Path B launcher now auto-detects folder-capable apps, ranks a platform default (Cursor on Windows/Linux, Claude Code on Mac), emits all adapters, and can open the generator folder with a paste-ready prompt. Built per-OS zips; Windows copy placed on Desktop for PC colleague testing.
+Artifacts:
+  - wsx-generator-windows.zip — 267 KB handoff on Desktop (also dist/; gitignored)
+Decisions:
+  - Interview still starts from the generator folder, not the new workspace dest.
+  - Windows ranking prefers Cursor.exe under %LOCALAPPDATA% even when `cursor` is not on PATH.
+  - VS Code is offered only if it can actually launch (config-only ~/.vscode is skipped).
+Evidence:
+  - Desktop zip @ /Users/sean.sands/Desktop/wsx-generator-windows.zip — verified (267 KB, 17 Sep 10:39)
+  - Linear Agent Todo for colleague test @ linear-personal — blocked (MCP needsAuth)
+Next:
+  - Colleague tests start.bat on PC; expect Cursor default + paste prompt.
+  - Colleague/Olga full wsx path when asked — 07-projects/18-bootstrap-generator/SESSION-STATE.md.
+--- END BLOCK ---
+
+### 2026-09-17 — Guided Setup Other-chat wrap-up (employer proto)
+
+SessionID: 2026-09-17-work-gs-other-chat
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Agent: Cursor Grok 4.6
+Surface: Cursor
+Machine: Work MacBook Pro
+Project(s): employer saas-plm-prototype (centric-engineering)
+Summary: Closed an Aug 20 Other-chat pass on `feat/guided-setup-live`. Wrap-ups now render as markdown, stay conversational, close with Continue instead of “shall we?”, and name the next card or rail step. Shipped as `5ac6a09` and opened PR #56 in the employer repo. No employer detail written into this vault.
+Decisions:
+  - Other-chat wrap-up copy is next-screen aware (sub-step title in-group; rail label when crossing groups).
+  - Employer delivery stays branch → PR → human review; this session did not merge.
+Next:
+  - Human review of PR #56 in the employer repo
+--- END BLOCK ---
+
+### 2026-09-17 — session-end (Figma catalog thread + wsx Path B launcher)
+
+SessionID: 2026-09-17-work-k7m2
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 02-centricPLM, 18-bootstrap-generator, 19-workspace-brain
+Summary: Closed the 2026-09-16 Figma catalog thread (overlap reflow, modes-for-variants, Text Styles iff no Size/Density — already on `main`). Folded leftover `wsx` Path B work: `launch.py` detects folder-capable apps, offers to open the generator folder, emits all adapters; `scan.py` gains folder-capable/open helpers; README Path B + Linux.
+Decisions:
+  - CDS `apps/docs/AGENTS.md` / `CLAUDE.md` left untracked (employer repo, `centric-engineering` — no auto-commit).
+  - Interview still starts from the generator folder, not the new workspace dest.
+Next:
+  - Colleague/Olga `wsx` path when asked.
+--- END BLOCK ---
+
+### 2026-09-17 — Figma Icons page pack + section A–Z
+
+SessionID: 2026-09-17-work-figma-icons
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.5
+Project(s): 02-centricPLM
+Summary: On Centric SaaS PLM DS Figma (`o6o1ZuGHxDow2vHLuYXT6X` Icons page `4:2`), packed icons into the existing 12-col grid (80×72, origin 32,64) after erroneous icon deletions left gaps, then ordered all 27 category sections A–Z left-to-right. Earlier in this thread (Aug): field-overlay/control-radius parity plan + Proto #18 / cui #225 / #179 PRs — treat as prior history; this baton is Icons hygiene done.
+Decisions:
+  - Icons within a section sort A–Z then pack row-major; section width hugs used columns (`40 + cols*80`).
+  - Section gutter stays 96px; do not invent a new Icons layout system.
+Evidence:
+  - Figma Icons page verified: 0 grid gaps, 27 sections alphabetical (action…travel)
+Next:
+  - Sean visual spot-check of Icons page in Figma; publish library if needed.
+  - Code parity backlog remains in `08-knowledge/design/figma-to-code-parity-plan-2026-08-06.md` (P1+ still open where not already landed).
+--- END BLOCK ---
+
+### 2026-09-17 — CDS shadcn consume waves on cds main
+
+SessionID: 2026-09-17-work-shadcn-consume
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 02-centricPLM
+Summary: Consumed leftover shadcn UI into `@centric/ui` on cds (Calendar/DatePicker wave, then Combobox/menus wave). #44 stacked onto a feature base after #43 merged, so Combobox never hit `main` until cherry-pick #45.
+Decisions:
+  - DatePicker is Popover + Calendar; no shadcn DatePicker root. Density cells; Material Symbols `Icon`; no local focus rings; no Lucide.
+  - Do not replace Progress/Toaster or CDS `Field`/`EmptyState`/Sheet. Drawer is the swipe bottom sheet only.
+  - Stacked PRs that merge after the base is on `main` must be re-landed onto `main` (cherry-pick), not treated as done.
+Evidence:
+  - cds #43 + #45 merged in the employer repo — verified (`origin/main` `4dfb957`, CI green)
+  - #44 merged to `feat/consume-shadcn-calendar-datepicker`, not `main` — verified via `gh pr view 44`
+Project status changes:
+  - 02-centricPLM: shadcn UI consume complete on cds `main` except skip-list (Field collision, EmptyState, chart, carousel, chat kit).
+Next:
+  - Hosts import new `@centric/ui` subpaths from cds `main` (calendar, date-picker, combobox, input-group, drawer, input-otp, menubar, navigation-menu, item, direction, plus wave-1 primitives).
+  - Skip-list stays unless Sean asks. Restore cds stash `wip icon font host load` if still wanted.
+--- END BLOCK ---
+
+### 2026-09-17 — Brand-soft tokens landed on cds main
+
+SessionID: 2026-09-17-work-pr42
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): cds (employer repo); 02-centricPLM
+Summary: After Sean published the Figma library, the brand-soft map was committed off origin/main as `feat/primary-soft-tokens` (`2a12726`) and opened as cds #42 in the employer repo. That PR is merged (2026-09-16). The original cds checkout's other WIP was left alone. cds HEAD in this window is now `feat/land-shadcn-combobox-on-main`.
+Decisions:
+  - Token commit was isolated from charting/docs WIP via a worktree so PR 30's merged branch was not reused.
+Evidence:
+  - cds #42 merged in the employer repo — verified
+  - Figma library publish — verified (Sean)
+Pending resolved:
+  - Commit/PR cds primary-soft mapping
+  - Publish the SaaS PLM Figma library (this wave)
+Next:
+  - Wave 1 leftover still out: ChipMultiSelect, TypeTag, OutlinedValueChips
+  - Do not mix combobox-land WIP with token follow-ups
+--- END BLOCK ---
+
+
+### 2026-09-16 — CDS Figma catalog reflow + construction rules
+
+SessionID: 2026-09-16-work-figma-catalog
+--- SESSION BLOCK ---
+Date: 2026-09-16
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 02-centricPLM, 19-workspace-brain
+Summary: Un-collided new catalog sections in Centric SaaS PLM Figma (`o6o1ZuGHxDow2vHLuYXT6X`); rebuilt Filter Chip / Spinner / Step Glyph / Chart Frame / Flow Canvas with subcomponents and style axes as modes. Text-style sweep applied then fully reverted. Construction rule: Text Styles iff the component has no Size/Density type axis — those modes own `fontSize`.
+Decisions:
+  - Catalog SECTION ownership + AABB reflow is rule 20 ([[figma-ds-surface-authoring]]); generate cannot skip [[figma-modes-for-variants]].
+  - Text Styles do not apply when Size or Density drives type (rule 21). Verified: a style dual-binds then replaces `Button / Size`.`fontSize`.
+  - Table / Data Table stays out of this Figma file.
+Pending added:
+Pending resolved:
+Project status changes:
+  - 02-centricPLM: Figma catalog overlap + modes land in the file; vault rules on `main` (`d414136`…`f6090f9`). Publish still manual (^pc-18).
+Next:
+  - Publish the centric-ui Figma library (Sean, Assets panel).
+  - Continue Base UI / docs / Storybook parity on CDS as needed; Table later.
+--- END BLOCK ---
+
+### 2026-09-15 — portable session-status card closed; doctor MISSes acked
+
+SessionID: 2026-09-15-work-ssack
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain
+Summary: Closed the leftover 2026-09-11 Cursor thread that shipped `session-status.py` (`46d207a`) so every LLM emits Claude's notices + all projects + pending card. Acknowledged 3 bootstrap MISSes on this Work MBP (`workspace-doctor.sh --ack`); `session-status.py --check` now reports 0 notices. Layer 0 no longer treats "make sure" as produce. Did not rewrite Live handoff — later 2026-09-15 sessions already own lint:ds / brand-soft.
+Decisions:
+  - Session-start card is `09-tools/session-status.py` on every surface; continuations skip it. [[decision-session-status-card]]
+  - Doctor ACK is machine-local (`~/.claude/ws-state/ack-mark`), not a git write.
+Pending added:
+Pending resolved:
+Next:
+  - Next new Cursor session on this machine should show 0 MISS notices on the boot card.
+--- END BLOCK ---
+
+### 2026-09-15 — Brand-soft tokens: Figma and code share one map
+
+SessionID: 2026-09-15-work-cdsmap
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): cds (employer repo); Figma SaaS PLM DS; 02-centricPLM
+Summary: Closed the Wave 1 semantic/component token map. Figma `action/primary/soft*` and `Object Chip / Color` publish WEB `var(--sem-primary-soft*)`; cds consumes Tailwind `bg-primary-soft` / `text-primary-soft-foreground` / `border-primary-soft-border`. Data Summary hover stays `interaction/primary/hover`. Nested Chip Cluster instance overrides needed a second rebind. cds uncommitted; Figma library unpublished.
+Decisions:
+  - Brand-soft = Blue/3 fill, Blue/11 text, Blue/6 border — same recipe as status-soft, brand hue. Not info-soft cyan.
+  - Component Color collections alias semantics. Code does not mint `--object-chip-*` CSS vars.
+  - Labelled-value hover wash is the interaction overlay, not the chip fill.
+  - Rebind nested instance paint overrides; main-set rebind does not clear them.
+Evidence:
+  - Figma Compact Rest + Editable Hover variable defs @ o6o1ZuGHxDow2vHLuYXT6X — verified
+  - cds ObjectChip / DataSummary / LockedField / ChipCluster tests 31/31 — verified
+  - Figma library publish — unverified (Sean, manual)
+  - cds commit/PR — unverified (not asked; employer repo)
+Pending added:
+  - Publish the SaaS PLM Figma library after Wave 1 rebind
+  - When asked: commit/PR cds primary-soft mapping
+Pending resolved:
+  - Wave 1 Figma paints no longer bind Color/Blue primitives on Object Chip, Chip Cluster, Data Summary hover
+Next:
+  - Sean publish Figma library
+  - Commit/PR cds token work only if Sean asks
+  - Wave 1 leftover stays out: ChipMultiSelect, TypeTag, OutlinedValueChips
+--- END BLOCK ---
+
+### 2026-09-15 — CDS Material Symbols Icon; proto consume; cui next
+
+SessionID: 2026-09-15-work-mbp-cds-icons
+--- SESSION BLOCK ---
+Date: 2026-09-15
+Machine: Work MacBook Pro (main, going forward)
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): cds, saas-plm-prototype (employer repos)
+Context profile: centric-engineering
+
+Summary: Implemented CDS `Icon` as Material Symbols ligatures (`name`, `size`, `filled`; axes from `iconAxes`). Dropped Lucide in CDS. Proto replaced Lucide with `@centric/ui/icon`. Hosts that still pass `Icon={Component}` keep compiling.
+
+Decisions:
+- Ligature `name` is the CDS path. `IconGlyph` still accepts a `className` slot so Lucide hosts type-check without bringing `lucide-react` back.
+- Glyph text sits in an inner `aria-hidden` span so it is not the control name.
+- Preferred / close / mill / style metaphors: `keep`, `close`/`delete`, `apartment`, `checkroom`.
+- centric-ui waits until CDS + proto are on main; that is now true. Remaining work is cui tickets.
+
+Artifacts:
+- cds #39 merged — Icon + drop Lucide
+- cds #40 merged — host slots + accname
+- saas-plm-prototype #80 merged — proto consume
+
+Pending added:
+- centric-ui consume `@centric/ui/icon` (Sean’s cui tickets — review + merge)
+- Optional: palette accordion nested `<button>`; light-mode / toast / BOM icon pass
+
+Next:
+- Review and merge the cui tickets. Nothing else blocks this icon program.
+--- END BLOCK ---
+
+
 ### 2026-09-15 — Unattended runner: decided not to build it; guard stays
 
 SessionID: 2026-09-15-work-mbp-runner-decision

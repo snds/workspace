@@ -4,7 +4,7 @@ version: "1.0"
 date: 2026-10-13
 surface: Claude Opus 5.5 + Claude Code (Mac desktop app), Work MacBook Pro
 sha: 33ece99
-status: proposed — nothing applied; IDs M1–M25 and B1–B10 are new
+status: proposed — no changes made yet; IDs M1–M25 and B1–B10 are new
 companion: workspace-automation-review_v1.0_2026-09-11.md, automation-second-wave_v1.0_2026-09-15.md
 ---
 
