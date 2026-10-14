@@ -50,7 +50,6 @@ import ast
 import importlib.util
 import json
 import os
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Callable, List, Optional, Tuple
