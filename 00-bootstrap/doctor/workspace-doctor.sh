@@ -216,8 +216,19 @@ for _f in hosts.yml config.yml; do
   cmp -s "$DIST/gh-claude/$_f" "$GHC/$_f" 2>/dev/null || \
     flag "DRIFT: $GHC/$_f missing or differs from dist — run workspace-doctor.sh --install-claude-overlay"
 done
+# `gh auth status` fails alike for no login, a refused token and an unreachable api.github.com (a
+# sandboxed shell's network filter, offline), so it is only the trigger. `gh auth token` reads the stored
+# login offline; then one API probe splits the rest. 2026-10-14: inside Claude's sandbox the old single
+# test sent Sean to `gh auth login` for a login that worked.
 if [ "$CHECK" -eq 1 ] && ! GH_CONFIG_DIR="$GHC" gh auth status >/dev/null 2>&1; then
-  flag "NOTE: Claude gh config has no usable snds login on this machine — run: gh auth login (as snds), then gh auth switch back to this device's default account"
+  if ! GH_CONFIG_DIR="$GHC" gh auth token >/dev/null 2>&1; then
+    flag "NOTE: Claude gh config has no usable snds login on this machine — run: gh auth login (as snds), then gh auth switch back to this device's default account"
+  else
+    case "$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' https://api.github.com/zen 2>/dev/null)" in
+      ""|000) note "Claude gh login not verified: this shell cannot reach api.github.com (a sandbox network filter, offline, or no curl); a login is stored — re-run --check from the macOS Terminal to verify it";;
+      *) flag "NOTE: GitHub refused Claude's stored snds token — run: gh auth refresh -h github.com (as snds), then gh auth switch back to this device's default account";;
+    esac
+  fi
 fi
 # D-W1-4: the overlay has two channels. The env-file channel (claude-overlay.env, copied into Claude
 # Code's session env file by the `ws-hook env-file` SessionStart entry) is Claude-only; the old settings

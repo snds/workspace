@@ -30,6 +30,10 @@ emit() {  # atomic claim, then print; loser of the user-vs-plugin race stays sil
   fi
   printf '%s\n' "$1"
 }
+# W1-6 (H20, walls F-11): only the PINNED doctor runs here; no pin wrapper = no doctor run, never the checkout's.
+# Every exit after the card runs it, the in-workspace deferral included (it used to return first, so
+# sessions opened in the workspace never healed the pinned injectors or ~/.claude/CLAUDE.md).
+doctor() { D="$HOME/.config/snds-workspace/bin/ws-doctor"; [ -x "$D" ] && ( "$D" --quick --quiet >/dev/null 2>&1 & ); return 0; }
 
 if [ ! -f "$WS/AGENTS.md" ]; then
   emit "[ws-bootstrap:$SRC] WORKSPACE CHECKOUT MISSING at $WS.
@@ -67,6 +71,7 @@ if [ "$LIVE" != "$WS" ] || { [ -n "$CWD" ] && case "$CWD" in "$WS"|"$WS"/*) true
     if [ -z "$NOPROJ" ]; then
       emit "[ws-bootstrap:$SRC] In-workspace session; project hook supplies full context. Ritual line for your first reply: [workspace: LOADED · $BRANCH@$SHA · $TODAY · via:project-hook/$SRC]"
       [ "${MISSES:-0}" -gt 0 ] 2>/dev/null && echo "NOTICE: $MISSES un-acknowledged bootstrap MISS(es) — run workspace-doctor."
+      doctor
       exit 0
     fi
   fi
@@ -85,7 +90,5 @@ STANDING RULES (in force immediately):
 $RULES"
 fi
 [ "${MISSES:-0}" -gt 0 ] 2>/dev/null && echo "NOTICE: $MISSES un-acknowledged bootstrap MISS(es) — see ~/.claude/ws-state/audit.log; run workspace-doctor."
-# W1-6 (H20, walls F-11): only the PINNED doctor runs here; no pin wrapper = no doctor run, never the checkout's.
-D="$HOME/.config/snds-workspace/bin/ws-doctor"
-[ -x "$D" ] && ( "$D" --quick --quiet >/dev/null 2>&1 & )
+doctor
 exit 0

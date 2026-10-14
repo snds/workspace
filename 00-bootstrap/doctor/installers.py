@@ -3157,6 +3157,26 @@ def self_test() -> int:
             self.assertTrue((self.home / "pinned-doctor-ran").exists())
             self.assertFalse((self.home / "checkout-doctor-ran").exists())
 
+        def test_sessionstart_runs_the_pinned_doctor_in_workspace_sessions(self):
+            # 2026-10-14: the in-workspace deferral returned before the doctor spawn, so a session opened in
+            # the workspace never healed ~/.claude/CLAUDE.md from a fresh pin (and launchd was not loaded).
+            import time
+            (self.repo / ".claude/hooks").mkdir(parents=True)
+            (self.repo / ".claude/hooks/dispatcher.py").write_text("# fixture\n")
+            (self.repo / ".claude/settings.json").write_text('{"hooks": {"x": "dispatcher.py"}}\n')
+            self.bin.mkdir(parents=True)
+            (self.bin / "ws-doctor").write_text('#!/bin/sh\ntouch "$HOME/pinned-doctor-ran"\n')
+            os.chmod(self.bin / "ws-doctor", 0o755)
+            payload = json.dumps({"session_id": "sess-in-ws", "source": "startup", "cwd": str(self.repo)})
+            r = self.run_sh(["bash", str(VAULT_ROOT / "00-bootstrap/dist/workspace-sessionstart.sh")], stdin=payload)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            self.assertIn("In-workspace session; project hook supplies full context", r.stdout)
+            for _ in range(100):
+                if (self.home / "pinned-doctor-ran").exists():
+                    break
+                time.sleep(0.1)
+            self.assertTrue((self.home / "pinned-doctor-ran").exists(), "in-workspace session skipped the doctor")
+
     class TestOverlayReplace(unittest.TestCase):
         def test_floor_command_is_bound_to_the_install_home(self):
             cmd = 'H="$HOME"; W="$H/.config/snds-workspace/bin/ws-hook"; exec env HOME="$H" "$W"'
@@ -3391,6 +3411,28 @@ def self_test() -> int:
             self.assertIn("DRIFT: git lanes shadowed, disabled or stale", r.stdout)
             self.assertIn("ws-lane-pre-push disabled", r.stdout)
             self.assertEqual(self.snapshot(), before)
+
+        def test_check_tells_a_missing_gh_login_from_an_unreachable_api(self):
+            """2026-10-14: `gh auth status` failing is only the trigger. No stored token is the login NOTE; a
+            stored token with api.github.com unreachable (Claude's sandbox) is 'not verified', never the
+            login NOTE; a reachable API that still fails is the refresh NOTE."""
+            m = self.td / "gh-case"
+            (self.stubs / "gh").write_text(
+                f"#!/bin/sh\ncase \"$1 $2\" in\n  'auth status') exit 1;;\n"
+                f"  'auth token') grep -q notoken '{m}' && exit 1; echo stub-token; exit 0;;\nesac\nexit 0\n")
+            (self.stubs / "curl").write_text(
+                f"#!/bin/sh\ngrep -q offline '{m}' && {{ printf 000; exit 7; }}\nprintf 200\n")
+            os.chmod(self.stubs / "curl", 0o755)
+            seen = {}
+            for case in ("notoken", "offline", "refused"):
+                m.write_text(case)
+                seen[case] = self.doctor("--check").stdout
+            self.assertIn("has no usable snds login", seen["notoken"])
+            self.assertNotIn("has no usable snds login", seen["offline"])
+            self.assertIn("NOTE: Claude gh login not verified: this shell cannot reach api.github.com", seen["offline"])
+            self.assertNotIn("has no usable snds login", seen["refused"])
+            self.assertIn("NOTE: GitHub refused Claude's stored snds token", seen["refused"])
+            self.assertNotIn("stub-token", "".join(seen.values()))     # the token never reaches the report
 
         def test_check_maps_the_rewrite_audit_exit_code(self):
             """T10 rerun T-01: exit 1 is the H17-R9 NOTE, any other failure is 'unavailable', 0 is silent."""
