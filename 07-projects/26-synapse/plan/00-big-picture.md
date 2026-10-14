@@ -1,14 +1,14 @@
 ---
-title: Switchyard — Big picture
+title: Synapse — Big picture
 type: plan
-project: 26-switchyard
+project: 26-synapse
 status: draft
 updated: 2026-10-14
 ---
 
 # The big picture
 
-**TL;DR:** Switchyard is a desktop app with an always-on tray service. It turns an AI workspace into something you can see, check and manage yourself. An AI workspace here means a folder of markdown, rules and scripts that agents read.
+**TL;DR:** Synapse is a desktop app with an always-on tray service. It turns an AI workspace into something you can see, check and manage yourself. An AI workspace here means a folder of markdown, rules and scripts that agents read.
 
 - **It edits the plain files directly,** the same ones agents and Obsidian use, so both keep working.
 - **It runs its checks without an agent.** A connected agent adds judgment on top.
@@ -18,7 +18,7 @@ updated: 2026-10-14
 
 Your workspace is the reference the app is measured against.
 
-_"Switchyard" is still a working name. It now names the whole app. A switchyard routes trains onto the right tracks; this app routes work, knowledge and logins to the right persona, domain and tool._
+_"Synapse" is the codename (renamed from Synapse on 2026-10-14). A synapse is where signals pass between nerve cells; this app is where work, knowledge and logins pass between personas, domains and tools. Every place the name appears is tracked in the [name ledger](../NAMING.md), so a legal or branding change is a mechanical swap._
 
 ## What changed today, and why
 
@@ -193,7 +193,7 @@ The full rules are in the [workspace model](01-workspace-model.md#domains-areas-
 
 ## Open decisions
 
-1. **The name.**
+1. **The public name.** "Synapse" is a codename. Several software products already use the word, so a public name needs a trademark check. The [name ledger](../NAMING.md) makes the swap mechanical.
 2. **Frontmatter placement.**
    - Your extra fields (`tier`, `hub`, `domain`) sit at the top level today.
    - The Agent Skills format may expect extras under a `metadata` block.

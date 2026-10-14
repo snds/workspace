@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render the Switchyard plan set (plan/*.md) into one self-contained HTML page.
+"""Render the Synapse plan set (plan/*.md) into one self-contained HTML page.
 
 Usage: python3 build-plan-html.py <plan_dir> <out_html>
 
@@ -251,7 +251,7 @@ def build(plan_dir, out_path):
         src = strip_frontmatter((plan_dir / path).read_text(encoding="utf-8"))
         lines = src.splitlines()
         title = next((l[2:].strip() for l in lines if l.startswith("# ")), short)
-        title = re.sub(r"^(Switchyard|Personas & access)\s+—\s+", "", title)
+        title = re.sub(r"^(Synapse|Personas & access)\s+—\s+", "", title)
         did = doc_id(path)
         groups.setdefault(group, []).append(
             f'<li><a href="#{did}"><span class="num">{num}</span>{html.escape(short)}</a></li>'
@@ -270,7 +270,7 @@ def build(plan_dir, out_path):
     out_path.write_text(page, encoding="utf-8")
 
 
-TEMPLATE = """<title>Switchyard Plan</title>
+TEMPLATE = """<title>Synapse Plan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@87,600;87,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
@@ -370,7 +370,7 @@ footer { grid-column: 2; padding-top: 22px; font-family: var(--mono); font-size:
 <div class="page">
   <header class="masthead">
     <div class="meta"><span>Plan set v2.0</span><span class="status">Draft for review</span><span>2026-10-14</span><span>Sean Sands</span></div>
-    <h1>Switchyard</h1>
+    <h1>Synapse</h1>
     <p class="lede">A desktop app and tray service for Mac and Windows that makes an AI workspace visible and manageable. It reads and writes the same plain files agents and Obsidian use. It runs its checks without an agent, creates and imports workspaces with measured results, and keeps each persona's accounts and tools apart.</p>
     <ul class="facts">
       <li><b>Platforms</b>macOS and Windows</li>
@@ -384,7 +384,7 @@ footer { grid-column: 2; padding-top: 22px; font-family: var(--mono); font-size:
     {{NAV}}
   </nav>
   <main>{{SECTIONS}}</main>
-  <footer>Generated from 07-projects/26-switchyard/plan/ by tools/build-plan-html.py. Edit the markdown, then rebuild.</footer>
+  <footer>Generated from 07-projects/26-synapse/plan/ by tools/build-plan-html.py. Edit the markdown, then rebuild.</footer>
 </div>
 """
 

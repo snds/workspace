@@ -1,7 +1,7 @@
 ---
 title: Personas & access — Vaultwarden on Unraid
 type: plan
-project: 26-switchyard
+project: 26-synapse
 status: draft
 updated: 2026-10-14
 ---
@@ -14,20 +14,20 @@ updated: 2026-10-14
 - per-folder command-line logins (shell plugins)
 - Claude signing in to websites without seeing the password
 
-Switchyard replaces the first two. Nothing replaces the third yet. Run Vaultwarden only on your Tailscale network, keep it updated, and test restoring from backup before you cancel 1Password.
+Synapse replaces the first two. Nothing replaces the third yet. Run Vaultwarden only on your Tailscale network, keep it updated, and test restoring from backup before you cancel 1Password.
 
 ## Its role in the system
 
 - **Vaultwarden** is your password manager and holds the recovery kit.
-- **Switchyard** routes credentials for development tools.
+- **Synapse** routes credentials for development tools.
 
 They meet in three places only:
 
-1. **Setup-time import.** When you add an identity, Switchyard can read a stored token from Vaultwarden through the `bw` CLI while you are present, then lock the vault again.
-2. **Recovery kit.** Switchyard's fleet recovery key is saved there as a secure note.
+1. **Setup-time import.** When you add an identity, Synapse can read a stored token from Vaultwarden through the `bw` CLI while you are present, then lock the vault again.
+2. **Recovery kit.** Synapse's fleet recovery key is saved there as a secure note.
 3. **Health checks.** Watch checks the server's reachability, version and certificate, and later its backup age.
 
-Switchyard never needs Vaultwarden to run. Employer secrets never go into it.
+Synapse never needs Vaultwarden to run. Employer secrets never go into it.
 
 ## Feature parity for your use
 
@@ -44,8 +44,8 @@ Vaultwarden is a community-built server that speaks the Bitwarden protocol. You 
 | Emergency access | Yes | Yes, needs email (SMTP) set up for invitations |
 | SSH agent with keys in the vault | Yes | Partly. Bitwarden desktop has one. Older Vaultwarden versions need two experimental flags. With several keys, pick one key per host. |
 | Command-line access | Yes, `op` | Yes, `bw`, against your own server |
-| Run commands with secrets injected | Yes, `op run` and secret references | No. Bitwarden's Secrets Manager isn't in Vaultwarden. **Switchyard's `syd run` replaces this.** |
-| Per-folder CLI logins | Yes, shell plugins | No. **Switchyard's routing replaces this.** |
+| Run commands with secrets injected | Yes, `op run` and secret references | No. Bitwarden's Secrets Manager isn't in Vaultwarden. **Synapse's `sy run` replaces this.** |
+| Per-folder CLI logins | Yes, shell plugins | No. **Synapse's routing replaces this.** |
 | Claude signs in without seeing the password | Yes, wired up today | No equivalent. Bitwarden's MCP server hands secrets to the agent, which is weaker. |
 | Travel mode (hide vaults at borders) | Yes | No |
 | Who patches the server | 1Password | You |
@@ -63,7 +63,7 @@ flowchart LR
     PH["Phone"]
     subgraph UNRAID["Unraid server"]
       VW["Vaultwarden container, HTTPS through Tailscale Serve"]
-      HUBC["Switchyard hub container, Phase 4"]
+      HUBC["Synapse hub container, Phase 4"]
       BK["Nightly backup job"]
       AP[("appdata on the cache pool")]
     end
@@ -153,7 +153,7 @@ flowchart LR
 - **Client drift:** Bitwarden apps sometimes need features Vaultwarden hasn't built yet. Hold back app updates when release notes warn of this.
 - **Single box:** if Unraid dies, the off-site backup and the monthly export are your way back. That is why the restore test matters.
 
-## What Switchyard watches
+## What Synapse watches
 
 - **Reachability:** the vault answers over Tailscale.
 - **Version:** read from the server and compared with the latest Vaultwarden release. Critical if a security release is missing.

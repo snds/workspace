@@ -1,7 +1,7 @@
 ---
-title: Switchyard — Roadmap
+title: Synapse — Roadmap
 type: plan
-project: 26-switchyard
+project: 26-synapse
 status: draft
 updated: 2026-10-14
 ---
@@ -85,7 +85,8 @@ This is a long project. That is why every stage has to be useful on its own. Sta
   - the 3D graph on the Windows PC
   - the file watcher alongside Obsidian Linter
   - `tool.json` written for five existing tools
-- **The repo:** `~/Projects/switchyard` with remote `snds/switchyard`. These plans move to its `docs/`.
+- **The repo:** `~/Projects/synapse` with remote `snds/synapse`. These plans move to its `docs/`.
+- **Name ledger:** one brand file for every user-facing use of the name, neutral `sy` internal identifiers, and a check that lists every place the codename appears and fails on any it doesn't know about. This keeps a rename for branding or legal reasons mechanical. See decision D37.
 
 **Exit:**
 

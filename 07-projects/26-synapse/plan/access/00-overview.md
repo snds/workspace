@@ -1,18 +1,18 @@
 ---
 title: Personas & access — Overview
 type: plan
-project: 26-switchyard
+project: 26-synapse
 status: draft
 updated: 2026-10-14
 ---
 
 # Personas & access — Overview
 
-> **Module of the workspace app (2026-10-14).** This folder was the whole Switchyard plan until Sean widened the product to a desktop workspace app. It is now the **Personas & access** module of that app. The design here still holds. Start with the [big picture](../00-big-picture.md), then read these pages for the depth on accounts, logins and devices. Below, "Switchyard" means this module.
+> **Module of the workspace app (2026-10-14).** This folder was the whole plan (then codenamed Synapse) until Sean widened the product to a desktop workspace app, now codenamed Synapse. It is the **Personas & access** module of that app. The design here still holds. Start with the [big picture](../00-big-picture.md), then read these pages for the depth on accounts, logins and devices. Below, "Synapse" means the app this module belongs to.
 
 **TL;DR:** This module gives every tool the right login for the project it is working in, on Mac and Windows. You sign in once per account on each device. Rules you write once decide which account each request gets. When something goes wrong, the menu bar or system tray tells you.
 
-_Working name. See [Commercial path](../08-commercial-path.md) for the trademark check._
+_Codename. See the [name ledger](../../NAMING.md) and the [commercial path](../08-commercial-path.md) for the trademark check._
 
 ## The problem
 
@@ -28,13 +28,13 @@ Today the workspace holds this together by hand:
 
 It works, but each new tool or device adds another place for it to break. Errors show up late, usually as a failed push or a commit under the wrong name. Agent apps add a second version of the problem: most of them allow one account per tracker, such as one Linear account, even when you have two.
 
-## What Switchyard does
+## What Synapse does
 
 It has five jobs.
 
 1. **Routes logins.** It decides the identity for each request from context, mostly the repo's remote. There is no "current account" to flip.
 2. **Holds secrets safely.** Tokens live in each device's own secure storage (macOS Keychain, Windows TPM-protected store). They never sync.
-3. **Connects tools.** git, `gh`, SSH and other command-line tools ask Switchyard through doors they already have. Agent apps reach Linear, Jira and GitHub through a local gateway that adds the right account.
+3. **Connects tools.** git, `gh`, SSH and other command-line tools ask Synapse through doors they already have. Agent apps reach Linear, Jira and GitHub through a local gateway that adds the right account.
 4. **Watches health.** It checks tokens, configs, commits and your Vaultwarden server, then notifies you before a tool fails.
 5. **Keeps devices in step.** Enrolled devices share the same rules. They never share secrets.
 
@@ -51,7 +51,7 @@ It has five jobs.
 
 - **Not a password manager.** Vaultwarden does that job. See [Vaultwarden](05-vaultwarden.md).
 - **No browser autofill** and no website logins.
-- **No control over hosted surfaces.** claude.ai connectors and cloud agents sign in on the vendor's servers. Switchyard can list them and remind you. It can't hand them a login.
+- **No control over hosted surfaces.** claude.ai connectors and cloud agents sign in on the vendor's servers. Synapse can list them and remind you. It can't hand them a login.
 - **Not a secrets manager for deployed apps.** Production secrets for your apps belong in their own systems.
 - **Not device management.** It doesn't manage OS settings, updates or other apps.
 - **It never works around employer controls.** It works inside SSO (single sign-on), org app restrictions and token approval flows.
@@ -60,7 +60,7 @@ It has five jobs.
 
 | You said | What it means for the plan |
 |---|---|
-| Look into Bitwarden through Vaultwarden on Unraid | Vaultwarden replaces 1Password as your password manager. Switchyard integrates with it but never needs it to run. Details in [Vaultwarden](05-vaultwarden.md). |
+| Look into Bitwarden through Vaultwarden on Unraid | Vaultwarden replaces 1Password as your password manager. Synapse integrates with it but never needs it to run. Details in [Vaultwarden](05-vaultwarden.md). |
 | Cover both cases | The Work MBP holds personal and employer identities from the start. Strict walls keep them apart. |
 | Include Windows | Mac and Windows ship together in every phase. The Mac-only SwiftUI idea is dropped in favour of Rust + Tauri 2, the same stack as Fontface. |
 | Just for me, but secure regardless | Security is designed as if it were a product from day one. Product work (phase 5) waits for a go decision. |
@@ -102,7 +102,7 @@ The full decision log is in [decisions.md](../decisions.md).
 | 1Password shell plugins + SSH agent | Per-folder CLI logins, SSH keys | You want to leave 1Password. No MCP account routing. |
 | Existing MCP gateways (for example Docker's MCP Toolkit) | Central MCP credentials | Not routed by project or wall |
 
-None of these routes identity by project across git, `gh`, SSH and MCP together, with health checks and multi-device rules. That gap is what Switchyard fills.
+None of these routes identity by project across git, `gh`, SSH and MCP together, with health checks and multi-device rules. That gap is what this module fills.
 
 ## Glossary
 
@@ -111,11 +111,11 @@ None of these routes identity by project across git, `gh`, SSH and MCP together,
 - **Route rule:** "requests for X use identity Y."
 - **Wall:** a rule that can never be overridden, such as "personal identities are never used in employer repos."
 - **Surface:** an app or tool that does work for you, such as Claude Code, Cursor, the terminal or the Claude desktop app.
-- **Adapter:** the small piece that connects one surface to Switchyard.
-- **Daemon:** the background program that holds secrets and makes decisions (`sydd`).
+- **Adapter:** the small piece that connects one surface to Synapse.
+- **Daemon:** the background program that holds secrets and makes decisions (`sy-access`).
 - **Shim:** a stand-in program that tools call instead of the real one. It asks the daemon, then runs the real tool.
 - **MCP (Model Context Protocol):** the standard way AI agents call outside tools such as Linear or Jira.
-- **Gateway:** Switchyard's MCP relay. It adds the right account and keeps the token away from the agent.
+- **Gateway:** Synapse's MCP relay. It adds the right account and keeps the token away from the agent.
 - **Hub:** an optional server on Unraid that passes encrypted rules between devices.
 - **Fleet:** your set of enrolled devices.
 - **Presence check:** Touch ID, Windows Hello or your login password, required before a sensitive action.

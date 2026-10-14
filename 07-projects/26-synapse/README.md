@@ -1,13 +1,16 @@
 ---
-title: Switchyard
+title: Synapse
+aliases: [Switchyard]
 type: project
 status: Planning
-triggers: [switchyard, workspace app, workspace generator gui, credential router, multi-account gh, gh auth switch, vaultwarden migration]
+triggers: [synapse, switchyard, workspace app, workspace generator gui, credential router, multi-account gh, gh auth switch, vaultwarden migration]
 frameworks: [engineering-operating-model, security-operating-model, qa-operating-model, ui-ux-operational, workspace-contribution, domain-rigor-stack]
 related_projects: [18-bootstrap-generator, 19-workspace-brain, 25-fontface]
 ---
 
-# Switchyard (26-switchyard)
+# Synapse (26-synapse)
+
+_Codename. It was "Switchyard" until 2026-10-14 (decision D37). Every place the name appears will be tracked in a name ledger built in Stage 0, so a rename for branding or legal reasons is mechanical._
 
 A desktop app and tray service for Mac and Windows that makes an AI workspace visible and manageable.
 
@@ -16,12 +19,12 @@ A desktop app and tray service for Mac and Windows that makes an AI workspace vi
 - It creates and imports workspaces, with measured results.
 - It keeps each persona's accounts and tools apart.
 
-Sean's workspace is the north star. "Switchyard" is a working name.
+Sean's workspace is the north star. "Synapse" is a working name.
 
 - **Status:** Planning. The plan set is at v2.0, after the 2026-10-14 reframe. Nothing is built.
 - **Context profile:** `personal-solo`.
-- **Code repo:** none yet. Stage 0 creates `~/Projects/switchyard` (remote `snds/switchyard`) and moves `plan/` into its `docs/`. This folder then keeps the baton and pointers, as with Fontface.
-- **Baton:** [[07-projects/26-switchyard/SESSION-STATE|SESSION-STATE]].
+- **Code repo:** none yet. Stage 0 creates `~/Projects/synapse` (remote `snds/synapse`) and moves `plan/` into its `docs/`. This folder then keeps the baton and pointers, as with Fontface.
+- **Baton:** [[07-projects/26-synapse/SESSION-STATE|SESSION-STATE]].
 
 ## Plan
 
@@ -37,7 +40,7 @@ Sean's workspace is the north star. "Switchyard" is a working name.
 10. [Decision log](plan/decisions.md)
 11. Personas & access module: [plan/access/](plan/access/00-overview.md). This was the original credential plan: systems, integrations, flows, security, Vaultwarden, phases.
 
-**Readable copy:** https://claude.ai/artifact/VoPXvWfgPkc8ArsmtmESHt. It is built from `plan/` by `tools/build-plan-html.py` into `05-artifacts/active/switchyard-plan_v2.0_2026-10-14.html`. Artifacts aren't git-tracked. Edit the markdown, never the HTML.
+**Readable copy:** https://claude.ai/artifact/VoPXvWfgPkc8ArsmtmESHt. It is built from `plan/` by `tools/build-plan-html.py` into `05-artifacts/active/synapse-plan_v2.1_2026-10-14.html`. Artifacts aren't git-tracked. Edit the markdown, never the HTML.
 
 **Origin:** the one-page proposal, https://claude.ai/artifact/24mgDkXvtmu12rCcHJM5Be.
 

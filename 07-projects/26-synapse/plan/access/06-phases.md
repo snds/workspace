@@ -1,7 +1,7 @@
 ---
 title: Personas & access — Phases
 type: plan
-project: 26-switchyard
+project: 26-synapse
 status: draft
 updated: 2026-10-14
 ---
@@ -56,7 +56,7 @@ Sizes are in **focused weeks**: full-time-equivalent weeks of building with agen
 
 - It works on **macOS and Windows**: Work MBP, Personal MBP and the Windows PC.
 - [Security](04-security.md) has been re-reviewed and updated. The phase's red-team scenarios are scripted and pass.
-- `syd uninstall` returns the machine to its state before install.
+- `sy uninstall` returns the machine to its state before install.
 - Docs match the build.
 - It ships as a signed release from CI.
 
@@ -68,10 +68,10 @@ Sizes are in **focused weeks**: full-time-equivalent weeks of building with agen
 
 **Work:**
 
-- Create `~/Projects/switchyard` and the private repo `snds/switchyard`. Move these plan docs into `docs/`. This vault folder then keeps the baton and pointers, the same pattern as Fontface.
+- Create `~/Projects/synapse` and the private repo `snds/synapse`. Move these plan docs into `docs/`. This vault folder then keeps the baton and pointers, the same pattern as Fontface.
 - Set up the Rust workspace and the Tauri 2 shell. CI runs on Mac and Windows runners with `cargo-deny` and `cargo-audit`.
 - **Signing:** Apple Developer ID and notarization in CI. Choose the Windows signing route. A signed "hello" build must install cleanly on both OSes.
-- **Policy schema v1:** the validator, the rule tester logic in `syd-core`, and example policies.
+- **Policy schema v1:** the validator, the rule tester logic in `sy-core`, and example policies.
 - **Re-check licenses,** especially Bitwarden's SDK terms. Confirm the `bw` CLI route.
 - **Employer check:** confirm that IT policy allows a personal tool to hold employer credentials on the Work MBP.
 
@@ -84,7 +84,7 @@ Sizes are in **focused weeks**: full-time-equivalent weeks of building with agen
 | SP3 | Do keychain access groups work for a Developer-ID-signed CLI and daemon? Secure Enclave wrapping? On Windows, a TPM-held key and a Windows Hello unlock? |
 | SP4 | Can an `rmcp` stdio relay reach Linear's hosted MCP server with OAuth (dynamic registration) and with a bearer token, with two Linear accounts side by side? |
 | SP5 | Do agent shells pick up the PATH shim and `GH_TOKEN` (Claude Code, Cursor, Codex) on Mac and Windows, including non-interactive shells? |
-| SP6 | Windows: does Switchyard coexist with Git Credential Manager? Which ssh does `core.sshCommand` reach (Windows' own or Git for Windows' copy)? |
+| SP6 | Windows: does Synapse coexist with Git Credential Manager? Which ssh does `core.sshCommand` reach (Windows' own or Git for Windows' copy)? |
 
 **Exit:** every spike answered, or the design changed to match what we learned. Signed builds install on both OSes. Schema v1 frozen.
 
@@ -92,7 +92,7 @@ Sizes are in **focused weeks**: full-time-equivalent weeks of building with agen
 
 ## Phase 1: Watch (read-only)
 
-**Goal:** see every credential problem before a tool fails, on every device. Switchyard reads status only. It doesn't store or hand out credentials yet.
+**Goal:** see every credential problem before a tool fails, on every device. Synapse reads status only. It doesn't store or hand out credentials yet.
 
 **Build:**
 
@@ -107,7 +107,7 @@ Sizes are in **focused weeks**: full-time-equivalent weeks of building with agen
   - Vaultwarden reachability, version and certificate
   - disk encryption
   - clock skew
-- **CLI:** `syd status`, `syd doctor`.
+- **CLI:** `sy status`, `sy doctor`.
 
 **Exit:**
 
@@ -136,12 +136,12 @@ Sizes are in **focused weeks**: full-time-equivalent weeks of building with agen
   - git credential helper
   - commit identity includes
   - `gh` shim
-  - `syd ssh`
-  - `syd run` with secret references
-  - `syd as` and `syd explain`
+  - `sy ssh`
+  - `sy run` with secret references
+  - `sy as` and `sy explain`
 - **Audit log** with a hash chain.
 - **App screens:** Identities, Rules with the rule tester, Activity.
-- **Installer and `syd uninstall`:** back up and restore git config, PATH and app configs.
+- **Installer and `sy uninstall`:** back up and restore git config, PATH and app configs.
 
 **Rollout order:**
 
@@ -164,7 +164,7 @@ Sizes are in **focused weeks**: full-time-equivalent weeks of building with agen
 
 **Build:**
 
-- **Gateway** in the daemon, plus the `syd mcp` relay.
+- **Gateway** in the daemon, plus the `sy mcp` relay.
 - **A general MCP OAuth client,** one sign-in per identity, using dynamic registration and PKCE (a safeguard for browser-based OAuth).
 - **Upstream modes:** remote with OAuth, remote with a bearer token, local process.
 - **Tool policies:** allow, deny, read-only, ask first. "Ask first" prompts arrive as notifications.
@@ -216,7 +216,7 @@ Sizes are in **focused weeks**: full-time-equivalent weeks of building with agen
 
 **Build:**
 
-- Switchyard's own app registrations with GitHub, Linear and Atlassian.
+- Synapse's own app registrations with GitHub, Linear and Atlassian.
 - A hosted, still zero-knowledge, hub with a self-host option.
 - Guided onboarding with the GUI workspace generator.
 - Licensing and billing, a docs site, update channels, Homebrew cask and winget.

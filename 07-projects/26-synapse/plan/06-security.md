@@ -1,7 +1,7 @@
 ---
-title: Switchyard — Security
+title: Synapse — Security
 type: plan
-project: 26-switchyard
+project: 26-synapse
 status: draft
 updated: 2026-10-14
 ---

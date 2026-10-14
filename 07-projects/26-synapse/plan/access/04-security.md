@@ -1,20 +1,20 @@
 ---
 title: Personas & access — Security
 type: plan
-project: 26-switchyard
+project: 26-synapse
 status: draft
 updated: 2026-10-14
 ---
 
 # Security
 
-**TL;DR:** Switchyard holds every login you have, so it is designed as if someone is always trying to steal them. It makes five commitments:
+**TL;DR:** Synapse holds every login you have, so it is designed as if someone is always trying to steal them. It makes five commitments:
 
 1. Secrets never leave the device that earned them.
 2. The rules decide who gets a credential, never the caller.
 3. Every hand-out is checked, kept to the minimum and logged.
 4. Anything that syncs is encrypted, so the server learns nothing.
-5. What Switchyard can't protect is written down here, not hidden.
+5. What Synapse can't protect is written down here, not hidden.
 
 This applies the same way while it's only for you and if it ever becomes a product.
 
@@ -39,7 +39,7 @@ This applies the same way while it's only for you and if it ever becomes a produ
 | T3 | Lost or stolen device | Medium | A laptop left in a taxi, asleep or powered off |
 | T4 | Network attacker | Low to medium | Café Wi-Fi intercepting sync or vault traffic |
 | T5 | Compromised Unraid server or hub | Low to medium | An attacker replays old rules or slips in a rogue device |
-| T6 | Compromised Switchyard update or dependency | Low, high impact | A malicious crate or a hijacked release |
+| T6 | Compromised Synapse update or dependency | Low, high impact | A malicious crate or a hijacked release |
 | T7 | Your own mistakes | **High** | Signing into the wrong account, committing under the wrong email, pasting a token in the wrong place |
 | T8 | Side-channel leaks | Medium | Tokens in logs, crash dumps, shell history, process listings, screenshots |
 | T9 | A removed device keeps access | Medium | An old laptop still holding working tokens |
@@ -52,15 +52,15 @@ T1 and T7 are the most likely. They drive most of the design.
 ```mermaid
 flowchart TB
   subgraph SESSION["Your user session on one device"]
-    subgraph TRUSTED["Trusted: Switchyard's signed code"]
-      D["sydd daemon"]
-      S["syd helper, shims and relay"]
+    subgraph TRUSTED["Trusted: Synapse's signed code"]
+      D["sy-access daemon"]
+      S["sy helper, shims and relay"]
     end
     subgraph CALLERS["Untrusted callers"]
       AG["Agent apps and the models behind them"]
       SC["Scripts, packages, other apps"]
     end
-    UI["Switchyard app webview, no secrets"]
+    UI["Synapse app webview, no secrets"]
   end
   HW[("Secure Enclave or TPM, OS secure storage")]
   HUB["Hub: untrusted storage, ciphertext only"]
@@ -74,7 +74,7 @@ flowchart TB
   D -->|"Tailscale plus end-to-end encryption"| HUB
 ```
 
-Callers are never trusted. Switchyard's own helper programs are trusted code, but the requests they carry come from untrusted callers. The daemon makes every decision itself.
+Callers are never trusted. Synapse's own helper programs are trusted code, but the requests they carry come from untrusted callers. The daemon makes every decision itself.
 
 ## Controls
 
@@ -82,7 +82,7 @@ Callers are never trusted. Switchyard's own helper programs are trusted code, bu
 
 **Mac:**
 
-- **Keychain items in Switchyard's access group.** Only programs signed with Switchyard's developer team ID can read them.
+- **Keychain items in Synapse's access group.** Only programs signed with Synapse's developer team ID can read them.
 - **Marked "this device only."** They never sync to iCloud Keychain and never restore to another Mac from a backup.
 - **Two vault keys, one per class, wrapped by a Secure Enclave key.**
   - **Personal class key:** unlocks with your login session.
@@ -90,8 +90,8 @@ Callers are never trusted. Switchyard's own helper programs are trusted code, bu
 
 **Windows:**
 
-- **Credential Manager is weaker.** Any program running as you can read its entries. So Switchyard doesn't rely on it.
-- **Encrypted vault file instead.** Switchyard encrypts its secrets with its own vault keys and stores them in that file.
+- **Credential Manager is weaker.** Any program running as you can read its entries. So Synapse doesn't rely on it.
+- **Encrypted vault file instead.** Synapse encrypts its secrets with its own vault keys and stores them in that file.
 - **Vault keys protected by a non-exportable TPM key.**
 - **Employer class key unlocks through Windows Hello.** This uses a Hello signature, a technique password-manager plugins already use. Phase 0 tests it.
 - **Data stays local.** It lives in `%LOCALAPPDATA%`, never in a roaming profile.
@@ -108,13 +108,13 @@ Callers are never trusted. Switchyard's own helper programs are trusted code, bu
 
 ### 2. Release: who gets a secret, and when
 
-- **The rule decides, never the caller.** Callers send context (a URL and a folder). They can't name an identity. The one exception, `syd as`, always needs a presence check, is always logged, and can't cross a wall.
+- **The rule decides, never the caller.** Callers send context (a URL and a folder). They can't name an identity. The one exception, `sy as`, always needs a presence check, is always logged, and can't cross a wall.
 - **Walls are absolute:**
   - Personal identities are never released in employer context.
   - Employer identities never exist on devices not classed for them.
   - A repo with **any** employer remote counts as employer for **every** remote. This blocks the "add a personal remote and push" exfiltration path.
 - **Caller checks.** For every connection, the daemon asks the OS for the caller's process, finds its program file and verifies its code signature.
-  - Only Switchyard's own signed helpers may request credentials.
+  - Only Synapse's own signed helpers may request credentials.
   - A script that talks to the socket directly is refused and reported.
   - This doesn't stop a script from running `git` itself. Walls, presence checks and thresholds cover that case.
 - **Surface awareness.** The daemon walks the caller's parent processes to see which app started it: Claude Code, Cursor, Terminal and so on.
@@ -122,7 +122,7 @@ Callers are never trusted. Switchyard's own helper programs are trusted code, bu
   - The log records the surface for every decision.
 - **Presence checks** (Touch ID, Windows Hello or password) are required for:
   - the first use of an employer identity in each interval
-  - every `syd as` override
+  - every `sy as` override
   - adding or removing identities, devices or rules
   - accepting a policy change that came from another device
 - **Least privilege.**
@@ -139,7 +139,7 @@ Callers are never trusted. Switchyard's own helper programs are trusted code, bu
   - git gets the token through the helper's output pipe, not the environment or a file.
   - `gh` gets it in its own process environment only.
   - Agents never get it. The gateway attaches it upstream.
-- **MCP tool policy.** Each identity can allow or deny tools, run read-only, or "ask first" before writes. Switchyard can't clean the text that tracker items contain, and that text may itself carry injected instructions. It limits what an agent can **do** with that account.
+- **MCP tool policy.** Each identity can allow or deny tools, run read-only, or "ask first" before writes. Synapse can't clean the text that tracker items contain, and that text may itself carry injected instructions. It limits what an agent can **do** with that account.
 
 ### 3. Local channels
 
@@ -178,7 +178,7 @@ Callers are never trusted. Switchyard's own helper programs are trusted code, bu
 ### 5. Vaultwarden
 
 - **Not a runtime dependency.** If Unraid is down, git still works.
-- **Switchyard never stores your master password or a `bw` session key.**
+- **Synapse never stores your master password or a `bw` session key.**
   - It uses the `bw` CLI only for actions you start and are present for: importing a credential, saving the recovery kit.
   - It locks the vault immediately afterwards.
 - **Never `bw serve`.** Its local web API has no authentication. Any program on the machine could read the unlocked vault through it.
@@ -248,10 +248,10 @@ Callers are never trusted. Switchyard's own helper programs are trusted code, bu
 | T9 Removed device | Key rotation, per-device tokens, revocation checklist | Tokens that can't be revoked by API until you do it by hand |
 | T10 Vendor | Zero-knowledge design, no telemetry by default, published security docs, external audit | Trust in signed updates |
 
-## What Switchyard can't protect
+## What Synapse can't protect
 
 1. **A program running as you that can inject code into allowed programs can act as them.** Hardened runtime on Mac and signature checks raise the bar. They don't remove the risk.
-2. **A manipulated agent can still do harm with the right identity in the right repo**, such as pushing a bad commit to your own project. Switchyard limits the blast radius. It doesn't judge intent.
+2. **A manipulated agent can still do harm with the right identity in the right repo**, such as pushing a bad commit to your own project. Synapse limits the blast radius. It doesn't judge intent.
 3. **Hosted surfaces** sign in on vendor servers, out of reach.
 4. **Windows isolates apps less than macOS does.** The encrypted vault and Hello gating narrow the gap, but don't close it.
 5. **Some tokens are long-lived** because the provider or employer gives no choice (`gh` imports, Linear API keys). They are watched and rotated, not eliminated.
@@ -269,10 +269,10 @@ Callers are never trusted. Switchyard's own helper programs are trusted code, bu
 
 | ID | Scenario | Expected |
 |---|---|---|
-| S1 | Agent in a personal repo asks for the employer GitHub token through `syd as`, without presence | Refused, alert |
+| S1 | Agent in a personal repo asks for the employer GitHub token through `sy as`, without presence | Refused, alert |
 | S2 | Agent adds a personal remote to an employer repo and pushes | Refused by wall, critical alert |
 | S3 | Script connects to the socket directly, posing as the git helper | Refused by caller check, alert |
-| S4 | Script reads Switchyard's keychain items with `security` | OS denies or prompts |
+| S4 | Script reads Synapse's keychain items with `security` | OS denies or prompts |
 | S5 | Hub serves an older policy | Refused as rollback, alert |
 | S6 | Hub injects a rogue enrollment | No approval or phrase mismatch, so rejected |
 | S7 | Removed device tries to sync | Refused, and it wipes on notice |
@@ -288,5 +288,5 @@ Callers are never trusted. Switchyard's own helper programs are trusted code, bu
 
 - **Ask first.** Confirm with your employer's IT or security policy that a personal tool may hold employer credentials on the Work MBP. Do this before Phase 2 runs there.
 - **Employer data stays on the Work MBP.** Employer identities, tokens, audit entries and repo names never go to Vaultwarden, the hub, the Windows PC or the Personal MBP.
-- **Switchyard works inside employer controls,** never around them: SSO authorization, org app restrictions and token approval flows.
+- **Synapse works inside employer controls,** never around them: SSO authorization, org app restrictions and token approval flows.
 - **It complements the workspace's existing rule** that personal identity never appears on an employer commit. It doesn't replace that rule.

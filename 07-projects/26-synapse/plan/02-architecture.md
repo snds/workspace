@@ -1,7 +1,7 @@
 ---
-title: Switchyard — Architecture
+title: Synapse — Architecture
 type: plan
-project: 26-switchyard
+project: 26-synapse
 status: draft
 updated: 2026-10-14
 ---
@@ -192,7 +192,7 @@ The hub from the access module. It passes encrypted policy and device lists betw
 ## Repository layout (planned)
 
 ```text
-switchyard/
+synapse/
   crates/
     sy-model/      node types, edges, schemas, layout maps
     sy-index/      parser and SQLite index
