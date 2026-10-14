@@ -216,6 +216,15 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 
 ---
 
+### Fontface — Font Manager
+**Status:** Active — Phase 1 built; scan fixes in progress (2026-10-12)
+**Summary:** Clean-room, subscription-free Mac font manager replacing Typeface (which turns fonts off without Pro). No Typeface code or binaries; parity judged against its public feature list. Tauri 2 (Rust + React 19/TS/Vite), shadcn/ui (Base UI, Tailwind v4), Material Symbols Rounded, IBM Plex. SQLite library; CoreText persistent user-scope activation per file. Windows designed for, not built. Code `~/Projects/fontface` (git, remote `snds/fontface`).
+**Folder:** `07-projects/25-fontface/` (baton + pointers) · design docs in the repo `docs/`
+**Triggers:** fontface, font manager, typeface replacement
+**Next:** Finish the scan fixes from the first user test (online-only Google Drive files read one at a time, no progress, duplicate rescans), then retest. See [[07-projects/25-fontface/SESSION-STATE|SESSION-STATE]].
+
+---
+
 ### Workspace Brain
 **Status:** Active
 **Summary:** Standing home for sessions whose subject is the workspace itself (validation, fix, migration, infrastructure). Established 2026-07-09 per the workspace-work project-home rule in framework #08 (FX-13); git-tracked for cross-machine continuity.
