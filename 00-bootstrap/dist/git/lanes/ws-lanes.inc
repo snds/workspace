@@ -26,3 +26,17 @@
 	command = "W=\"$HOME/.config/snds-workspace/bin/ws-hook\"; [ -x \"$W\" ] || exit 0; exec env -u PYTHONPATH -u PYTHONHOME -u PYTHONSTARTUP -u PYTHONINSPECT -u PYTHONUSERBASE \"$W\" lane post-commit"
 	event = post-commit
 	enabled = true
+# GitHub route (2026-10-13): every GitHub HTTPS remote gets its owner's gh account from the
+# pinned gh_route.py (bin/git-credential-ws); SSH forms of routed owners fetch over HTTPS too.
+[credential "https://github.com"]
+	useHttpPath = "true"
+	helper =
+	helper = "!\"$HOME/.config/snds-workspace/bin/git-credential-ws\""
+[url "https://github.com/snds/"]
+	insteadOf = "git@github.com:snds/"
+	insteadOf = "git@github-work:snds/"
+	insteadOf = "ssh://git@github.com/snds/"
+[url "https://github.com/cpes-software/"]
+	insteadOf = "git@github.com:cpes-software/"
+	insteadOf = "git@github-work:cpes-software/"
+	insteadOf = "ssh://git@github.com/cpes-software/"

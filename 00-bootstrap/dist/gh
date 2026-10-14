@@ -1,0 +1,15 @@
+#!/bin/sh
+L="$HOME/.config/snds-workspace/lib/current/09-tools/gh_route.py"
+# gh — the workspace GitHub route (snds-workspace). Byte-stable; do not edit. The pinned gh_route.py picks
+# the gh account from the repo's owner. With no pin (or no python3) the real gh runs unchanged.
+if command -v python3 >/dev/null 2>&1 && [ -f "$L" ]; then
+  exec env -u PYTHONPATH -u PYTHONHOME -u PYTHONSTARTUP -u PYTHONINSPECT -u PYTHONUSERBASE python3 "$L" gh "$@"
+fi
+IFS=:
+for d in $PATH; do
+  [ -x "$d/gh" ] || continue
+  head -c 400 "$d/gh" 2>/dev/null | grep -q gh_route.py && continue
+  exec "$d/gh" "$@"
+done
+echo "gh: not found on PATH" >&2
+exit 127

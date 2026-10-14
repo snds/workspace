@@ -47,8 +47,8 @@
         "sean-sands-centric"
       ],
       "push": {
-        "transport": "ssh",
-        "alias": "github-work"
+        "transport": "https",
+        "credential": "gh-route"
       }
     },
     {
@@ -61,7 +61,7 @@
       ],
       "push": {
         "transport": "https",
-        "credential": "gh:gh-claude"
+        "credential": "gh-route"
       }
     }
   ],

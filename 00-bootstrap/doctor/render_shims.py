@@ -605,9 +605,16 @@ def _render_cursor_sandbox(t: dict) -> str:
 
 # --------------------------------------------------------------------------- H17 overlay (T8)
 
-OVERLAY_VERSIONS = ("v4", "v5")
+OVERLAY_VERSIONS = ("v4", "v5", "v6")
 OVERLAY_INCLUDE = "~/.config/snds-workspace/git/claude-identity.inc"
+# v6 keeps GH_CONFIG_DIR as the fallback when the gh route wrapper is not on PATH (gh then knows only the
+# personal account); with the wrapper, 09-tools/gh_route.py picks the account by the repo's owner.
 OVERLAY_GH_DIR = "~/.config/snds-workspace/gh-claude"
+# v6 (2026-10-13, Sean: push Centric and personal work from the Work MBP on every surface): every routable
+# host's credential helper is the pinned route (an absolute path once ws-hook renders ~/). Employer SSH forms
+# reach HTTPS through the global lanes include, not this file. Mirrors gh_route.ROUTE_HOSTS.
+ROUTE_HOSTS = ("github.com",)
+ROUTE_HELPER = "~/.config/snds-workspace/bin/git-credential-ws"
 # Rendered to dist/git/claude-employer-identity.inc (render employer-identity-inc) and installed beside
 # claude-identity.inc. Included AFTER the personal includes for every employer remote form, so any repo
 # with an employer remote, a fork with a personal remote included, commits as the employer identity with
@@ -797,12 +804,19 @@ def overlay_pairs(cr: dict, dev: dict, version: str = "v5") -> list:
         if "ssh" in forms:
             srcs.append(f"ssh://{user}@{h}/{n}/")
         pairs += [(f"url.https://{h}/{n}/.insteadOf", s) for s in srcs]
+    # v6 carries no employer insteadOf: the global lanes include (git_lanes render, read by Claude's git
+    # too) sends employer SSH forms to HTTPS, so no employer slug lands in this tracked file (H25).
     hosts_seen = []
-    for o in personal:
-        if o["host"] not in hosts_seen:
+    for o in personal + (employer if version == "v6" else []):
+        if o["host"] not in hosts_seen and (version != "v6" or o["host"] in ROUTE_HOSTS):
             hosts_seen.append(o["host"])
     for h in hosts_seen:
-        pairs += [(f"credential.https://{h}.helper", ""), (f"credential.https://{h}.helper", "!gh auth git-credential")]
+        if version == "v6":
+            pairs += [(f"credential.https://{h}.useHttpPath", "true"), (f"credential.https://{h}.helper", ""),
+                      (f"credential.https://{h}.helper", ROUTE_HELPER)]
+        else:
+            pairs += [(f"credential.https://{h}.helper", ""),
+                      (f"credential.https://{h}.helper", "!gh auth git-credential")]
     accounts = []
     for ident in dev.get("identities") or []:
         for acct in ident.get("accounts") or []:

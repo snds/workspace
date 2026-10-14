@@ -148,7 +148,16 @@ def render_include() -> str:
     for name, event in LANES:
         lines += [f'[hook "{name}"]', f"\tcommand = {_cfg_quote(lane_command(event))}",
                   f"\tevent = {event}", "\tenabled = true"]
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines) + "\n" + _gh_route().gitconfig_text()
+
+
+def _gh_route():
+    """The pinned sibling gh_route.py (the route's one home for owners, aliases and the helper line)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("ws_gh_route", Path(__file__).resolve().parent / "gh_route.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    return mod
 
 
 def gitconfig_block(home: Path) -> str:

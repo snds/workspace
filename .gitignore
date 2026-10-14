@@ -140,6 +140,7 @@
 !09-tools/profile_resolve.py
 !09-tools/git_lanes.py
 !09-tools/wall_guard.py
+!09-tools/gh_route.py
 !09-tools/closure.py
 !09-tools/rule_of_three.py
 !09-tools/rule-of-three.baseline.json

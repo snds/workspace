@@ -158,3 +158,25 @@ None of them depends on which vendor's model is typing.
   without Sean.
 - **WALL-C1 narrows.** The employer connector is no longer limited to movement-only use for Claude,
   so H15's "deny the employer connector to Claude" is retired as a goal.
+- **Amendment 2026-10-13 (Sean: "I need to be able to push both Centric and Personal work from my work
+  laptop ... regardless of agentic surface"; "I am constantly fighting with ... the workspace gating";
+  he chose "Build all four" and "merge after a GitHub rule change", no admin override).**
+  - **One GitHub route for every surface.** `09-tools/gh_route.py` (pinned) picks the gh account from
+    the repo's owner: `snds/*` gets `snds`, `cpes-software/*` gets the employer account, any other owner
+    gets nothing. Git reaches it as the credential helper `bin/git-credential-ws` (the lanes include for
+    Terminal, Cursor and Codex; overlay v6 for Claude). `gh` reaches it through `bin/gh`, linked first on
+    PATH as `~/.local/bin/gh`. SSH forms of both owners fetch over HTTPS, which retires the
+    `github-work` timeout (^pc-09) and the missing HTTPS fallback (^pc-50) once installed. No surface
+    switches accounts by hand. The credential wall holds by construction: a repo can only receive its
+    own owner's token, and a gh call that names two owners is refused.
+  - **File edits are their own class (`edit`).** Writing a file is never branch-checked, so Claude,
+    Cursor and Codex can edit an employer checkout on its default branch. Committing and pushing there
+    stay denied (P31), and P40 keeps `edit` off the Personal MBP. `gh` comments, reviews and issues were
+    already allowed by P32 from a checkout; they failed only because Claude's gh knew one account.
+  - **Merge list unchanged in code.** Claude merges only in the two repos pr-desk names, only after
+    Sean's OK, only through pr-desk. Every other employer repo stays human-merge. Sean changes those two
+    repos' GitHub rules so his own PRs can merge without a second approver (GitHub never lets an author
+    approve their own PR, and Claude opens PRs as him).
+  - **Still blocked:** pushing or committing on an employer default branch, force pushes, hook skips,
+    a personal identity on employer commits, `gh api` writes and `gh repo` admin verbs on employer repos.
+  - Takes effect after a human `--install-pin`, `--install-git-hooks` and `--install-claude-overlay`.

@@ -1896,16 +1896,29 @@ class TestOverlay(unittest.TestCase):
             with self.subTest(case=name):
                 self.assertTrue(passed, detail)
 
-    def test_tracked_fragment_is_the_v5_render(self):
+    def test_tracked_fragment_is_the_v6_render(self):
         cr, dev = self.rs.identity_tables(ROOT_DIR)
         frag = json.loads((ROOT_DIR / "00-bootstrap/dist/settings-user-fragment.json").read_text(encoding="utf-8"))
         self.assertNotIn("env", frag)          # D-W1-4: other hosts import Claude's settings env
         envf = (ROOT_DIR / "00-bootstrap/dist/claude-overlay.env").read_text(encoding="utf-8")
-        self.assertEqual(envf, self.rs.render_overlay_env_file(cr, dev, "v5"))
-        env = dict(self.rs.overlay_env_file_pairs(cr, dev, "v5"))
-        self.assertEqual(env, dict(self.rs.overlay_env(cr, dev, "v5"), WS_OVERLAY_CHANNEL="env-file"))
-        self.assertEqual(env["WS_CLAUDE_OVERLAY"], "v5")
+        self.assertEqual(envf, self.rs.render_overlay_env_file(cr, dev, "v6"))
+        env = dict(self.rs.overlay_env_file_pairs(cr, dev, "v6"))
+        self.assertEqual(env, dict(self.rs.overlay_env(cr, dev, "v6"), WS_OVERLAY_CHANNEL="env-file"))
+        self.assertEqual(env["WS_CLAUDE_OVERLAY"], "v6")
         self.assertFalse([k for k in env if k.startswith(("GIT_AUTHOR_", "GIT_COMMITTER_"))])
+        # v6 (2026-10-13): the GitHub route is the only credential helper; employer SSH forms reach HTTPS
+        # through the global lanes include (no employer slug in this tracked file, H25); v5 is unchanged.
+        pairs = [(env[f"GIT_CONFIG_KEY_{i}"], env[f"GIT_CONFIG_VALUE_{i}"]) for i in range(int(env["GIT_CONFIG_COUNT"]))]
+        helpers = [v for k, v in pairs if k == "credential.https://github.com.helper"]
+        self.assertEqual(helpers, ["", self.rs.ROUTE_HELPER])
+        self.assertIn(("credential.https://github.com.useHttpPath", "true"), pairs)
+        emp = [o["owner"] for o in cr["owners"] if o["class"] == "employer" and o["host"] == "github.com"]
+        lanes = (ROOT_DIR / "00-bootstrap/dist/git/lanes/ws-lanes.inc").read_text(encoding="utf-8")
+        for owner in emp:
+            self.assertFalse([k for k, _v in pairs if k.startswith(f"url.https://github.com/{owner}/")])
+            self.assertIn(f'insteadOf = "git@github-work:{owner}/"', lanes)
+        self.assertNotIn("!gh auth git-credential", [v for _k, v in self.rs.overlay_pairs(cr, dev, "v6")])
+        self.assertIn("!gh auth git-credential", [v for _k, v in self.rs.overlay_pairs(cr, dev, "v5")])
         inc = (ROOT_DIR / "00-bootstrap/dist/git/claude-identity.inc").read_text(encoding="utf-8")
         self.assertEqual(inc, self.rs.render_claude_identity_inc(dev))
 
@@ -2068,9 +2081,13 @@ class TestPinLib(unittest.TestCase):
     def test_pinned_paths_single_home(self):
         pin_lib = load("00-bootstrap/doctor/pin_lib.py")
         # wave 1 added 09-tools/git_lanes.py (H18), wall_guard.py (H15), and W1-6 (H20, walls F-11) the
-        # heal sources, the pinned doctor entry and the doctor with every helper it executes; H23 closure.py; wave 2 H9 intent_scope.py.
-        self.assertEqual(len(pin_lib.PINNED_PATHS), 22)
-        self.assertEqual(len(set(pin_lib.PINNED_PATHS)), 22)
+        # heal sources, the pinned doctor entry and the doctor with every helper it executes; H23 closure.py; wave 2 H9 intent_scope.py;
+        # 2026-10-13 the GitHub route (gh_route.py and its two byte-stable wrappers, dist/gh and dist/git-credential-ws).
+        self.assertEqual(len(pin_lib.PINNED_PATHS), 25)
+        self.assertEqual(len(set(pin_lib.PINNED_PATHS)), 25)
+        for rel in ("09-tools/gh_route.py", "00-bootstrap/dist/gh", "00-bootstrap/dist/git-credential-ws"):
+            self.assertIn(rel, pin_lib.PINNED_PATHS)
+        self.assertTrue({"gh", "git-credential-ws"} <= set(pin_lib.WRAPPERS))
         self.assertIn("09-tools/closure.py", pin_lib.PINNED_PATHS)
         self.assertIn("09-tools/profile_resolve.py", pin_lib.PINNED_PATHS)
         self.assertIn("09-tools/git_lanes.py", pin_lib.PINNED_PATHS)
@@ -2506,17 +2523,19 @@ class TestWallGuard(unittest.TestCase):
                 self.cases._w(pr.owner_overlay_path(home=w["home"]),
                               json.dumps({"schema_version": 1, "device": device, "folders": {"loose-folder": cls}}))
 
-            self.assertEqual(go("cursor", "cursor.pre-tool-write", "cursor")[3], [("R4", "ask")])
+            # 2026-10-13: a file write is `edit`, which P36 allows for an undeclared owner under projects_root
+            # on the work device, so the unclassified folder no longer raises the R4 would-ask
+            self.assertEqual(go("cursor", "cursor.pre-tool-write", "cursor")[3], [])
             overlay("dev-b", "personal")   # a fixture device, never this host
-            self.assertEqual(go("cursor", "cursor.pre-tool-write", "cursor")[3], [("R4", "ask")])
+            self.assertEqual(go("cursor", "cursor.pre-tool-write", "cursor")[3], [])
             overlay("dev-a", "employer")
             cur = go("cursor", "cursor.pre-tool-write", "cursor")
             self.assertNotIn("R4", [r for r, _o in cur[3]], cur)
-            self.assertIn(("R2", "deny"), cur[3], cur)
+            self.assertNotIn(("R2", "deny"), cur[3], cur)
             cl = go("claude-code", "claude-code.write", "claude")
-            # Since 2026-10-06 Claude meets the employer rows like Cursor; a non-git folder has no branch, so
-            # authoring there is the unknown-target default-branch rule, enforced for Claude (R1).
-            self.assertEqual(cl[:3], ("deny", "R1", "P31-cc-work-employer-default"), cl)
+            # Since 2026-10-06 Claude meets the employer rows like Cursor. Since 2026-10-13 a file write is
+            # `edit`, which no branch rule judges, so writing in a classified employer folder is allowed.
+            self.assertEqual(cl[:2], ("none", None), cl)
 
 
 class TestWorkspaceMcp(unittest.TestCase):

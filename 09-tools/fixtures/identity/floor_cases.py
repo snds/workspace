@@ -885,8 +885,8 @@ def _bare_worktree_cases(lab: Lab, pr, penv: dict) -> list:
 
 # --------------------------------------------------------------------------- TestOverlay (installer path)
 
-INSTALL_CASES = ["install: --install-claude-overlay lands the v5 env file and its env-file SessionStart entry on a "
-                 "temp HOME through installers.run, and the hook renders it to the bound v5 env",
+INSTALL_CASES = ["install: --install-claude-overlay lands the v6 env file and its env-file SessionStart entry on a "
+                 "temp HOME through installers.run, and the hook renders it to the bound v6 env",
                  "install: the settings env is never touched (D-W1-4: the old channel stays until the retire step)",
                  "install: refused under an agent marker, a Claude ancestor and without a TTY (exit 4, nothing written)",
                  "install: the diff is printed and the answer N writes nothing",
@@ -972,7 +972,7 @@ def overlay_install_cases(pr, rs) -> list:
         wh = load("09-tools/ws_hook.py", "ws_hook_install_cases")
         env = {k: wh._expand_home(v, home) for k, v in wh.parse_overlay_env(installed.read_text(encoding="utf-8"))} \
             if installed.is_file() else {}
-        want = ms.expand_env_home({"env": dict(rs.overlay_env(*rs.identity_tables(ROOT), "v5"))}, home)["env"]
+        want = ms.expand_env_home({"env": dict(rs.overlay_env(*rs.identity_tables(ROOT), "v6"))}, home)["env"]
         keys = [env.get(f"GIT_CONFIG_KEY_{i}") for i in range(int(env.get("GIT_CONFIG_COUNT", "0")))]
         cmd_i = next((i for i, k in enumerate(keys) if k == f"hook.{FLOOR}.command"), None)
         bound = cmd_i is not None and env.get(f"GIT_CONFIG_VALUE_{cmd_i}", "").startswith(f"H={home};") \

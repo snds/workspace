@@ -229,7 +229,7 @@ Rendered outputs (installers read this mapping from `render_shims.py --list --js
 | Output | Path | Install mode | Installs to | Overlay |
 |---|---|---|---|---|
 | claude-user-fragment | `00-bootstrap/dist/settings-user-fragment.json` | claude-settings-keys | `~/.claude/settings.json` | - |
-| claude-overlay-env | `00-bootstrap/dist/claude-overlay.env` | whole-file | - | v5 |
+| claude-overlay-env | `00-bootstrap/dist/claude-overlay.env` | whole-file | - | v6 |
 | claude-identity-inc | `00-bootstrap/dist/git/claude-identity.inc` | whole-file | - | - |
 | claude-employer-identity-inc | `00-bootstrap/dist/git/claude-employer-identity.inc` | whole-file | - | - |
 | claude-project-settings | `.claude/settings.json` | tracked | `.claude/settings.json` | - |

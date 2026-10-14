@@ -1469,6 +1469,8 @@ def do_no_source(ctx: Ctx) -> int:
 GIT_LANES_DIST = "00-bootstrap/dist/git/lanes/ws-lanes.inc"
 GIT_LANES_INC = ".config/snds-workspace/git/lanes/ws-lanes.inc"          # under HOME
 GIT_LANES_PINNED = "09-tools/git_lanes.py"                               # under lib/current
+GH_ROUTE_WRAPPERS = ("gh", "git-credential-ws")                          # pin_lib.WRAPPERS, in bin/
+GH_ROUTE_LINK = ".local/bin/gh"                                             # under HOME; first on PATH
 GIT_LANES_BEGIN = "# BEGIN snds-workspace git lanes (installers.py git-hooks; do not edit)"
 GIT_LANES_END = "# END snds-workspace git lanes"
 GIT_WS_HOOK = "09-tools/ws_hook.py"                                      # the lanes' pinned entry (W2-0 #2)
@@ -1518,6 +1520,16 @@ def git_hooks_refusals(ctx: Ctx) -> list:
                        f"the include block from {GIT_LANES_DIST}'s header by hand, or replace the link with a file")
     if os.environ.get("GIT_CONFIG_GLOBAL") and ctx.real:
         reasons.append("GIT_CONFIG_GLOBAL is set in this shell, so git would not read ~/.gitconfig; unset it first")
+    # the GitHub route (2026-10-13): the lanes include names bin/git-credential-ws, and every surface's gh
+    # reaches bin/gh through a ~/.local/bin link (first on PATH on both Macs)
+    for name in GH_ROUTE_WRAPPERS:
+        if not os.access(p["bin"] / name, os.X_OK):
+            reasons.append(f"bin/{name} is missing (run workspace-doctor.sh --install-pin first), so GitHub logins "
+                           "would have no route")
+    link = ctx.home / GH_ROUTE_LINK
+    want = str(p["bin"] / "gh")
+    if (os.path.islink(link) and os.readlink(link) != want) or (link.exists() and not os.path.islink(link)):
+        reasons.append(f"{link} already exists and is not the workspace gh route; move it aside first")
     return reasons
 
 
@@ -1551,7 +1563,8 @@ def do_git_hooks(ctx: Ctx) -> int:
         raise InstallerError(f"{gc} is not UTF-8 (fix by hand)") from e
     new = gitconfig_with_lanes(cur, ctx.home, ctx.arg or "report")
     return _apply(ctx, [(inc, _file_state(src.read_bytes(), 0o644)),
-                        (gc, _file_state(new.encode("utf-8"), old[2] if old else 0o644))])
+                        (gc, _file_state(new.encode("utf-8"), old[2] if old else 0o644)),
+                        (ctx.home / GH_ROUTE_LINK, ("link", str(ctx.paths()["bin"] / "gh")))])
 
 
 # --------------------------------------------------------------------------- H21 workspace MCP
@@ -2706,10 +2719,11 @@ def self_test() -> int:
             if pinned:
                 (lib / GIT_LANES_PINNED).write_text("# fixture pinned lane\n")
                 (lib / GIT_WS_HOOK).write_text("# fixture pinned entry\n")
-                wh = self.home / ".config/snds-workspace/bin/ws-hook"
-                wh.parent.mkdir(parents=True, exist_ok=True)
-                wh.write_text("#!/bin/sh\nexit 0\n")
-                wh.chmod(0o755)
+                for name in ("ws-hook",) + GH_ROUTE_WRAPPERS:
+                    wh = self.home / ".config/snds-workspace/bin" / name
+                    wh.parent.mkdir(parents=True, exist_ok=True)
+                    wh.write_text("#!/bin/sh\nexit 0\n")
+                    wh.chmod(0o755)
             cur = self.home / ".config/snds-workspace/lib/current"
             if os.path.lexists(cur):
                 cur.unlink()
@@ -2739,11 +2753,14 @@ def self_test() -> int:
             self.assertTrue(text.startswith(original.decode() + "\n"), text)       # user content kept
             self.assertIn(f"\tpath = ~/{GIT_LANES_INC}\n", text)
             self.assertEqual(gc.stat().st_mode & 0o777, 0o600)
+            link = self.home / GH_ROUTE_LINK                                    # the gh route on PATH
+            self.assertEqual(os.readlink(link), str(self.home / ".config/snds-workspace/bin/gh"))
             self.assertEqual(self.run_inst("git-hooks")[0], 3)                     # idempotent
             rc, out, err = self.run_inst("git-hooks", "uninstall")
             self.assertEqual(rc, 0, out + err)
             self.assertEqual(gc.read_bytes(), original)
             self.assertFalse(inc.exists())
+            self.assertFalse(os.path.lexists(link))
             gc.unlink()                                                            # no ~/.gitconfig at all
             self.assertEqual(self.run_inst("git-hooks")[0], 0)
             self.assertTrue(gc.is_file())

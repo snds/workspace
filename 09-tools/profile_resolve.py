@@ -484,7 +484,7 @@ POLICY_OUTCOMES = ("allow", "deny", "route", "undecided")
 POLICY_VIA = ("vetted", "composed")
 POLICY_TARGET_REFS = ("default", "non-default", "unknown", "none")
 VERB_TARGET_REFS = ("default", "non-default")
-ACTION_CLASSES = ("meta", "housekeeping", "content-read", "author", "publish", "merge")
+ACTION_CLASSES = ("meta", "housekeeping", "content-read", "edit", "author", "publish", "merge")
 _VERB_KEYS: Dict[str, Tuple[tuple, bool]] = {
     "id": (_STR, True), "tool": (_STR, True), "argv": (_LIST, False), "op": (_STR, False),
     "flags_any": (_LIST, False), "flags_none": (_LIST, False), "target_ref": (_STR, False), "class": (_STR, True),
@@ -4598,7 +4598,7 @@ def _oracle(f: dict) -> str:
     if fam == "claude" and oc == "employer" and dev == "dev-a" and ac in ("meta", "housekeeping") \
             and f["via"] == "vetted":
         return "allow"  # P10: vetted housekeeping keeps its receipt
-    if dev == "dev-b" and oc == "employer" and ac in ("author", "publish", "merge"):
+    if dev == "dev-b" and oc == "employer" and ac in ("edit", "author", "publish", "merge"):
         return "deny"
     if fam == "claude" and dev == "dev-a" and oc == "employer" and ac == "merge" and f["via"] == "vetted":
         return "allow"  # P29 (Sean 2026-10-12): merge after his review, only through the vetted pr-desk script
@@ -4965,7 +4965,7 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     p = parse_command("git --git-dir=/r/.git log")
     ok(p[0]["cwd_hint"] == "/r" and p[0]["argv"] == ["log"], "--git-dir")
     ok(parse_command("git commit -m 'unbalanced")[0]["tool"] == "?", "unparseable -> one unknown invocation")
-    ok(cls("echo hi > notes.txt")[0][0] == "author", "a redirect write is fs-write (author)")
+    ok(cls("echo hi > notes.txt")[0][0] == "edit", "a redirect write is fs-write (edit)")
 
     # ---- policy() on temp repos, injected detections
     claude = detect_surface(env={}, ancestry=CLAUDE_ANC, isatty=HUMAN_TTY, root=root)
@@ -5197,6 +5197,9 @@ def _t7_self_test(tmp: Path, ok: Callable[[Any, str], None]) -> None:
     # feature-branch delete reaches the remote (the floor and the policy decide; synthetic owners)
     if v4 is not None:
         emp2, bare2, _e = _employer_pair(tmp, home, slug="acme-corp/gadget")
+        # overlay v6 sends routed owners' SSH forms to HTTPS (the GitHub route); the longest insteadOf wins
+        # whatever its scope, so this repo-exact one keeps the stand-in remote local
+        _g(genv, "config", f"url.file://{bare2}.insteadOf", "git@github.com:acme-corp/gadget.git", cwd=emp2)
         comp = _g(v4, "push", "origin", "--delete", "feat/done", cwd=emp2)
         gone = _g(genv, "--git-dir", str(bare2), "show-ref", "--verify", "--quiet", "refs/heads/feat/done").returncode != 0
         ok(comp.returncode == 0 and gone,

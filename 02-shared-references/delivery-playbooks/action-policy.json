@@ -1,10 +1,11 @@
 {
   "schema_version": 1,
-  "doc": "Action-class policy, DECISIONS-2 item 9 (binding, confirmed 2026-09-22; P19/P21/P22/P40 set by Sean 2026-09-23; Claude joined the employer-approved surfaces 2026-10-06, decision-claude-employer-surface: P11-P14 retired, P30-P33 cover claude; 2026-10-12: P34-P36 give an undeclared owner under projects_root on the Work MBP the same centric-engineering conduct). 2026-10-12: P29 lets Claude merge through the vetted pr-desk script after Sean's review. First matching rule wins.",
+  "doc": "Action-class policy, DECISIONS-2 item 9 (binding, confirmed 2026-09-22; P19/P21/P22/P40 set by Sean 2026-09-23; Claude joined the employer-approved surfaces 2026-10-06, decision-claude-employer-surface: P11-P14 retired, P30-P33 cover claude; 2026-10-12: P34-P36 give an undeclared owner under projects_root on the Work MBP the same centric-engineering conduct). 2026-10-12: P29 lets Claude merge through the vetted pr-desk script after Sean's review. First matching rule wins. 2026-10-13 (Sean: build the allowed-unless-blocked fix): file writes are class `edit`, never branch-checked, so editing a file on an employer default branch is allowed; committing and pushing there stay denied (P31). P40 keeps edit off the Personal MBP.",
   "action_classes": [
     "meta",
     "housekeeping",
     "content-read",
+    "edit",
     "author",
     "publish",
     "merge"
@@ -151,7 +152,7 @@
       "id": "fs-write",
       "tool": "fs",
       "op": "write",
-      "class": "author"
+      "class": "edit"
     }
   ],
   "rules": [
@@ -207,6 +208,7 @@
           "employer"
         ],
         "action_class": [
+          "edit",
           "author",
           "publish",
           "merge"

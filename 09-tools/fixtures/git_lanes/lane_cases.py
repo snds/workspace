@@ -120,10 +120,14 @@ class Lab:
         shutil.copyfile(TOOLS / "git_lanes.py", self.lib / "09-tools" / "git_lanes.py")
         # W2-0 item 2: every lane enters through the pinned bin/ws-hook → ws_hook.py lane EVENT.
         shutil.copyfile(TOOLS / "ws_hook.py", self.lib / "09-tools" / "ws_hook.py")
-        wh = self.base / "bin" / "ws-hook"
-        wh.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(ROOT / "00-bootstrap" / "dist" / "ws-hook", wh)
-        wh.chmod(0o755)
+        # 2026-10-13: the GitHub route rides in the same pin (git_lanes renders its sections; the installer
+        # links bin/gh), so the fixture pin carries gh_route.py and both wrappers like the real one
+        shutil.copyfile(TOOLS / "gh_route.py", self.lib / "09-tools" / "gh_route.py")
+        for name in ("ws-hook", "gh", "git-credential-ws"):
+            wh = self.base / "bin" / name
+            wh.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / "00-bootstrap" / "dist" / name, wh)
+            wh.chmod(0o755)
         (self.base / "telemetry").mkdir(parents=True, exist_ok=True)
         (self.lib / "09-tools" / "profile_resolve.py").write_text(
             (TOOLS / "profile_resolve.py").read_text(encoding="utf-8") + PS_STUB, encoding="utf-8")

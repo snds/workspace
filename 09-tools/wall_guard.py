@@ -1114,7 +1114,8 @@ def decide(action: dict, ctx: Ctx) -> dict:
                                                    "stays on the Work MBP"))
         target = _target_dir(path) if path else (ctx.cwd or os.getcwd())
         if target:
-            d = _policy(ctx, repo=target, action_class="author" if write else "content-read")
+            # a file write is `edit` (2026-10-13): never branch-checked; commit and push carry the branch rule
+            d = _policy(ctx, repo=target, action_class="edit" if write else "content-read")
             f = _map_policy(d, walls)
             if f:
                 findings.append(f)

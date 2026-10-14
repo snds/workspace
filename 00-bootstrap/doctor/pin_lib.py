@@ -49,6 +49,7 @@ PINNED_PATHS = [
     "09-tools/wall_guard.py",
     "09-tools/closure.py",       # H23: the session-start sweeper commits from a hook, so it runs pinned
     "09-tools/intent_scope.py",  # H9: the report-only pre-write scope step runs in the pre-tool hook
+    "09-tools/gh_route.py",      # 2026-10-13: bin/gh and bin/git-credential-ws pick the account by repo owner
     "02-shared-references/surfaces.json",
     "02-shared-references/devices.json",
     "02-shared-references/delivery-playbooks/context-remotes.json",
@@ -56,6 +57,8 @@ PINNED_PATHS = [
     "02-shared-references/vetted-scripts.json",
     "00-bootstrap/dist/ws-hook",
     "00-bootstrap/dist/ws",
+    "00-bootstrap/dist/gh",
+    "00-bootstrap/dist/git-credential-ws",
     # W1-6 (H20, walls F-11): the heal sources and the unattended doctor. The doctor heals the
     # Claude injectors only from these pinned copies, and SessionStart/launchd run the pinned doctor
     # (bin/ws-doctor), which executes only the pinned helpers below. installers.py is not pinned:
@@ -70,7 +73,7 @@ PINNED_PATHS = [
     "00-bootstrap/doctor/merge_settings.py",
     "00-bootstrap/doctor/render_shims.py",
 ]
-WRAPPERS = ("ws-hook", "ws", "ws-doctor")
+WRAPPERS = ("ws-hook", "ws", "ws-doctor", "gh", "git-credential-ws")
 VETTED_TABLE = "02-shared-references/vetted-scripts.json"
 GIT_TIMEOUT = 30
 
@@ -339,6 +342,7 @@ AGENT_PIN_CHECKS = (
     ("00-bootstrap/doctor/pin_lib.py", "--self-test"),
     ("09-tools/prune-our-branches.py", "--self-test"),
     ("09-tools/pr-desk.py", "--self-test"),
+    ("09-tools/gh_route.py", "--self-test"),
 )
 
 

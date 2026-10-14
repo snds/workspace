@@ -365,8 +365,9 @@ CORPUS: C = [
     ("r1-write-new-personal-file", "claude-code", "claude-code.write", {"path": "{PERS}/new/dir/file.md",
                                                                         "cwd": "PERS"}, "claude", "claude", "dev-a",
      "none", None, {}),
+    # 2026-10-13: a file write is `edit`, never branch-checked; committing on the default branch stays P31
     ("r1-write-employer-file", "claude-code", "claude-code.write", {"path": "{EMP}/README.md", "cwd": "PERS"},
-     "claude", "claude", "dev-a", "deny", "R1", {"policy": "P31-cc-work-employer-default"}),
+     "claude", "claude", "dev-a", "none", None, {}),
     ("r1-write-employer-file-off-work-device", "claude-code", "claude-code.write",
      {"path": "{EMP}/README.md", "cwd": "PERS"}, "claude", "claude", "dev-b", "deny", "R1",
      {"policy": "P40-agent-personal-mbp-employer"}),

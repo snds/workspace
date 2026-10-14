@@ -5,6 +5,7 @@
     "meta",
     "housekeeping",
     "content-read",
+    "edit",
     "author",
     "publish",
     "merge"
@@ -151,7 +152,7 @@
       "id": "fs-write",
       "tool": "fs",
       "op": "write",
-      "class": "author"
+      "class": "edit"
     }
   ],
   "rules": [
@@ -205,6 +206,7 @@
           "employer"
         ],
         "action_class": [
+          "edit",
           "author",
           "publish",
           "merge"
