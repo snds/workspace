@@ -1,6 +1,6 @@
 # SESSION-STATE — Mailbird, working name (24-mailbird)
 
-_Last updated: 2026-10-14 — checkpoint (PRs #1–#5 merged; Phase 2b in PR #6)_
+_Last updated: 2026-10-14 — checkpoint (PRs #1–#6 merged; Phase 3 in PR #7)_
 
 ---
 
@@ -11,18 +11,18 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#5 merged; Phase 2b in PR #6)
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 2b calendar depth, in review as PR #6 (`phase-2b-calendar`). PRs #1–#5 are merged.
-- **Working set**: `crates/core/src/{ical,itip,invite_store,pim_store,mime}.rs`, `crates/core/src/net/dav.rs`,
-  `apps/web/src-tauri/src/{workers,pim_commands}.rs`, `apps/web/src/features/calendar/{month-grid,event-editor,event-detail,reminders,reminder-watcher}.tsx|ts`,
-  `apps/web/src/features/mail/invite-card.tsx`, `docs/decisions/0011-calendar-depth.md`.
-- **Last action**: Built and verified Phase 2b:
-  - Occurrence edits (this event, or this and following).
-  - VALARM reminders with OS notifications.
-  - iTIP/iMIP invitations. Servers with CalDAV scheduling send the mail; otherwise it goes through the outbox.
-  - Month view.
-  - A composer focus-race fix.
-- **Next action**: Merge PR #6, then Phase 3 (notes: Tiptap, Markdown storage, Yjs relay, Apple Notes and Keep import).
-  Calendar follow-ups that remain: free/busy, COUNTER, and missed-reminder catch-up.
+- **Current focus**: Phase 3 notes, in review as PR #7 (`phase-3-notes`). PRs #1–#6 are merged.
+- **Working set**: `crates/core/src/{notes_store,notes_import}.rs`, `apps/web/src-tauri/src/notes_commands.rs`,
+  `apps/web/src/features/notes/*` (editor, sync, ydoc, import, relay dialog), `apps/web/src/core/demo-notes.ts`,
+  `tools/notes-relay/` (Hocuspocus relay + test), `docs/decisions/0012-notes.md`.
+- **Last action**: Merged PR #6, then built and verified Phase 3:
+  - Notes stored as Markdown and edited as Yjs, with checklists and the first line as the title.
+  - Live sync through a self-hosted Hocuspocus relay: one record index, plus one Yjs document per note.
+  - Links to events, contacts, and conversations.
+  - Import from Keep Takeout and Markdown folders.
+- **Next action**: Merge PR #7, then Phase 4 (Gmail API + Google verification, Microsoft Graph).
+  Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
+  Calendar follow-ups: free/busy, COUNTER, and missed-reminder catch-up.
 - **Open decisions**: (1) the product name, which collides with Mailbird, Inc. (ADR-0006);
   (2) the Tauri mobile spike vs Capacitor (ADR-0002); (3) when to subset the Material Symbols font
   (ADR-0003); (4) whether to keep Apache-2.0 for the repo license.
@@ -30,7 +30,7 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#5 merged; Phase 2b in PR #6)
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), all merged; Phase 2b (PR #6).
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), all merged; Phase 3 (PR #7).
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
@@ -46,8 +46,9 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#5 merged; Phase 2b in PR #6)
   focus from a dialog opened by a toast action. The composer reclaims focus for its first second.
 - **Gotcha**: Stalwart serves CalDAV/CardDAV on the same :8080 listener (`/.well-known/caldav` → `/dav/cal`), so the DAV test reuses `start-jmap.sh`.
 - **Gotcha**: calcard pairs overrides with their series by SEQUENCE. Strip SEQUENCE before `expand_dates`, or a bumped override duplicates its occurrence.
+- **Gotcha**: Hocuspocus allows one provider per document name per socket, and a destroyed provider's close can unsubscribe its replacement. Use `sessionAwareness: true`, and never pass `onSynced: undefined` (it replaces the default handler).
 - **Gotcha**: the shadcn registry host may be blocked by cloud network policy. Components come from
   a shadcn-ui/ui git clone through `tools/shadcn-material/transform.mjs`.
 
 ### VCS state
-- `phase-2b-calendar`: Phase 2b, in PR #6. `main` has Phases 0 through 2.
+- `phase-3-notes`: Phase 3, in PR #7. `main` has Phases 0 through 2b.
