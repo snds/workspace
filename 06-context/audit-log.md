@@ -34,6 +34,88 @@ _The dispatcher reads the most recent date from this file to decide whether to s
 
 ## Entries
 
+## 2026-10-14 — Work MacBook Pro
+
+**Scope:** full seven-surface ECC. `workspace-harness.py` (44 quality gates, 12 connection checks, token budgets), `ds-source-watch --check`, then three parallel read-only judgment passes (contract/frameworks/MOCs · context/pending/handoffs · skills/hooks/routing). `audit_skip` honored. Employer folders not read. Same session also shipped two requested doctor fixes (below).
+**Findings:** 53 total — P0: 4, P1: 22, P2: 27
+
+**P0 (workflow-breaking):**
+- `legion-project` trigger `the game` (article + noun) loaded Legion on "the game starts at 7, block my calendar".
+- Curated route `what should i use for` (all filler words) sent "…for the hero image background" to model routing.
+- `ux-research-synthesis` trigger `who is this for` (all filler words; found by the new lint).
+- `19-workspace-brain` baton says the mechanization review has "Nothing applied yet", but 18 commits sit unmerged: `worktree-b-fixes-b1-b10` (16; now conflicts with main in `validate-evidence-grades.py` + `user-preferences.md`, since main redid two fixes as `aa8d6e1`/`6f69724`) and `claude/kind-diffie-41820e` (2, M25 writes lane; merges clean).
+
+**P1 (friction):**
+- Route `centric` matches "user-centric" and injects Centric PLM context + 2 employer knowledge files.
+- Routes `warning` / `invalid` / `legible` load 4 colour/a11y skills on "I got a warning from npm install".
+- Route `follow up` carries a CDS-specific squash note on "follow up with Dana by email".
+- Science/imaging triggers fire on everyday words: basis, projection, rotation, mvp, transform, integration, constraint, dynamics, light, lens, orb.
+- Six docs (incl. `00-bootstrap/templates/project-readme.md`, `new-project` SKILL) tell agents to edit dispatcher `TRIGGER_WORDS`/`KNOWLEDGE_HINTS`, which no longer exist.
+- Four different session-start read orders (AGENTS, CLAUDE, fw08, brain.mdc/CURSOR); CRITICAL_FACTS "read FIRST" lives only in CLAUDE.md.
+- `CLAUDE.md:39` and `CRITICAL_FACTS.md:7` claim auto-loading no hook performs.
+- `AGENTS.md` sits exactly at its 26,525-byte ceiling with duplicated blocks (write-quality gates ≈ fw08; "adapters are thin" ×4; loadset rule ×3): any addition fails the harness.
+- `user-preferences.md:34` "primary content in artifact windows" contradicts the externalize / vendor-artifact rule.
+- `fw08:166-169` and `_CONTEXT.md:39` say append to session-log; the contract says write a fragment.
+- `SURFACES.md` still says Filesystem MCP (now workspace-mcp, H21); no Codex row; `llms.txt` omits Codex.
+- `AGENTS.md` project contract omits SESSION-STATE.md (the handoff protocol reads it first).
+- `memory/feedback-credential-scoping.md` + `MEMORY.md:20` still describe manual gh account switching (superseded by the 10-13 gh_route).
+- `^pc-50` / `^pc-09` predate the 10-13 gh route and today's v6 install (close after one Centric push from Claude).
+- `19-workspace-brain` Live handoff stale since 09-24; focus still names an employer PR.
+- `24-mailbird` and Emphasis Engine missing from project-context Active Projects and project-registry.
+- PlanetCompiler (13-legion planet-lab) phase-6 work uncommitted 2+ weeks, no remote; blocker is Sean-side `profile_resolve.py owners set PlanetCompiler personal` (Personal MBP).
+- `04-claude-figma-plugin` and `13-legion` batons untracked (no `.gitignore` allow-entry): machine-local only.
+- `^pc-16` superseded (radix re-landed via #82–84); `^pc-17` next step done (#121); `^pc-03` detail still names Windows + Cursor paste; `^pc-20` path `08-tools` → `09-tools`; `^pc-14` cache version.
+- `artifact-registry.md` not updated since 09-17: gh_route, pr-desk, git_lanes, wall_guard, closure, workspace_mcp, backup-projects, mechanization-review report, 24/25 project folders missing.
+- `ds-source-watch` snapshot 42 days old; registry 20 sources vs snapshot 14 (needs `--fetch`).
+- Session-log compaction moves employer PR links / org slugs from `session-log.md` into `session-log-archive.md`, which has its own per-file employer-substance baseline, so every such compaction trips the H25 gate (hand-cleared in `395ebdb` this morning; recurred at this session's start). Fix at the source: scrub or count the pair as one pool.
+
+**P2 (polish):**
+- Stale dates: `SURFACES.md`, `CRITICAL_FACTS.md:17` ("As of 2026-07"), `user-preferences.md:2`, `project-context.md:4` (banner still "43 items / 38 issues").
+- `_FRAMEWORKS.md:40` "four-layer" lists three (carried).
+- `_SKILLS.md` `LIMIT 60`; 27/47 hubs and all foundations unlinked; 15 hubs in no root MOC; `_MOC.md` orphaned yet says "start here" (carried, worse).
+- `_HOME.md:8-9` adapter list omits Cursor / Perplexity / Codex (carried).
+- Loadset / never-ingest rule ×3 in AGENTS.md, plus CLAUDE.md:81, llms.txt:14,54 (carried).
+- `CRITICAL_FACTS.md:43` machine labels → [[CLAUDE]] (now devices.json) (carried, half fixed).
+- `role-and-context.md:43` Bitbucket only; `user-preferences.md:226` MCP "not yet active" (Atlassian tools present; GitHub cpes-software) (carried).
+- `team-practices-and-decisions.md` placeholders (^pc-40) (carried).
+- `MEMORY.md:16`, `fact-machine-layer-installs.md:18,45` still mention Windows / loaner (carried).
+- Dormant/malformed batons: 00-obsidian, 09 (no Live handoff), 14 (12 placeholders), 20, 21 (says "no commits"), 12, 18 (`_Last updated` below baton), 25 (dates, stale exec-bit lesson) (carried, grown).
+- 23 stale `.dirty`/`.touched` markers in `06-context/sessions/` (fix B1 is on the unmerged branch) (carried).
+- `session-log.md` blank-line run grows each compaction (fix B2 on the unmerged branch).
+- `^pc-04` prunable (SEA-11 closed); `^pc-13`/`^pc-24` need Linear closes; ~29 Active items >60 days; `^pc-10` needs re-scope; `^pc-46` cites a line number; `^pc-01` stub truncated (carried, grown).
+- `artifact-registry.md` dead paths (Meridian header, resolver script, Drive note) and stale sizes / "overlay v5".
+- Zero-Vector checklist lives only in a claude.ai artifact DB (not durable; Cursor/Codex cannot reach it).
+- `dispatcher.py:469-573` three uncalled notice functions + unused `SKILLS_REGISTRY`.
+- `session-status.py:530` routing-harness notice checks the stamp exists, not `--stale` (which exits 1 today).
+- `AGENTS.md:258-259` worked example drifted; `:142` `via:` values incomplete; `:126` MOC read step returns nothing outside Obsidian.
+- `CURSOR.md:45` / `SURFACES.md:15` list 1 of 7 Cursor hook events.
+- `_SKILLS.md` / `_HOME.md:50` Dataview over `.claude/skills` is always empty (dot-folder ignored).
+- Root `README.md` links to SPEC.md / SESSION-STATE.md that live only in `18-bootstrap-generator`.
+- `00-README.md` folder list incomplete; `fw05:483,518` future tense for built things; `fw02:81` dangling [[dc-motion]]; `fw08:219` says MEMORY.md is loaded.
+- `_PROJECTS.md` graph index misses 6 machine-local folders; two `04-` project folders.
+- `/handback` named as a command in 4 places (the wrapper is `/side-chat-handback`).
+- `google-fonts-scraper` and `google-fonts-web-scraping` are two hubs for one job.
+- Worktree `claude/eager-proskuriakova-63bf69` prunable (merged).
+- `figma-api-router.md` merge review still pending (carried).
+
+**Fixes applied this run:**
+- Requested doctor fixes: (1) `dist/workspace-sessionstart.sh` now spawns the pinned doctor on the in-workspace path too (it returned first, so workspace sessions never healed `~/.claude/CLAUDE.md`); (2) `workspace-doctor.sh --check` splits "no stored login" / "api.github.com unreachable (sandbox network filter)" / "token refused" instead of one false "no usable snds login". Two installer self-tests added; the first fails on the old hook.
+- P0 routing: `legion-project` → `[legion game, game project]`; curated `what should i use for` removed (`which model` / `pick a model` / `best model for` cover it); `ux-research-synthesis` → `who is this product for` / `who are we designing for`. Four routing cases (58/58).
+- Detector: `evaluate-skill-routing.py --lint` now checks curated keys and flags filler-only / article+noun phrases in every source; `test-validators.py` plants all three shapes.
+- Earlier this session (correction): `gh` "token invalid" inside Claude's sandbox is the network filter blocking api.github.com, not the keychain.
+- Harness: 3 gates failed only in the sandbox (`ps` denied; xcrun cache). Outside it `nightly --self-test` 74/74 and `profile_resolve --self-test` 406/406 pass; `test-validators.py`'s one failure was the compaction overage below.
+- Session-log archive: this session's compaction moved four blocks naming the employer org/repo and PR URLs; each now says "the employer DS repo" / "prototype repo" and keeps the PR number (emp-url 17→13, emp-slug 22→≤18; baseline not grown).
+
+**Carried forward:**
+- P0 baton/branches: Sean reviews and merges `worktree-b-fixes-b1-b10` (rebase over `aa8d6e1` + `6f69724`) and `claude/kind-diffie-41820e`; then re-pin.
+- All P1 and P2 above (need Sean's sign-off per /optimize Step 4).
+- Sean-side: re-pin + one plain doctor run to adopt the doctor fixes; `^pc-19` Figma PAT revoke (132 days); `^pc-08` SHA purge; PlanetCompiler owner declaration.
+- Do not auto-enable nightly maintenance from this audit.
+
+**Skipped (opt-out `audit_skip: true`):** `_CHEATSHEET.md`, `08-knowledge/cross-domain/workflow-patterns.md`.
+
+---
+
 ## 2026-09-25 — Work MacBook Pro
 
 **Scope:** full seven-surface ECC. Nine deterministic probes, then three parallel judgment passes (contract/frameworks/MOCs · context/pending/handoffs · skills/hooks/harness). `audit_skip` honored. Employer folders not read.
