@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-25",
-  "generated_from": "8d6fb753db3ea34d3c99c0bace7357b60e243c52",
+  "generated_at": "2026-10-14",
+  "generated_from": "6dc174608f540f54872846475bab518439127ded",
   "rules": [
     "emp-url",
     "emp-path",
@@ -10,9 +10,9 @@
     "emp-email"
   ],
   "totals": {
-    "emp-url": 52,
+    "emp-url": 46,
     "emp-path": 22,
-    "emp-slug": 60,
+    "emp-slug": 55,
     "emp-quote": 2,
     "emp-email": 0
   },
@@ -61,13 +61,13 @@
       "emp-slug": 18
     },
     "06-context/session-log.md": {
-      "emp-url": 19,
+      "emp-url": 15,
       "emp-path": 2,
-      "emp-slug": 7
+      "emp-slug": 3
     },
     "07-projects/19-workspace-brain/SESSION-STATE.md": {
-      "emp-url": 4,
-      "emp-slug": 2
+      "emp-url": 2,
+      "emp-slug": 1
     },
     "07-projects/19-workspace-brain/reports/zero-vector-harness-detail_v1.0_2026-09-22.md": {
       "emp-slug": 1

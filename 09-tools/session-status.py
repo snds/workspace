@@ -464,6 +464,35 @@ def _stamp_age_days(path: Path, key: str = "date") -> int | None:
     return (date.today() - last).days
 
 
+def routing_stamp_stale(stamp: Optional[Path] = None, graph_hash: Any = None) -> Optional[str]:
+    """Why the skill-routing harness stamp is stale, or None when it is current or the check cannot
+    run (fail-open). The same comparison as `evaluate-skill-routing.py --stale`: the stamp's `hash:`
+    against that module's graph_hash() (imported in-process, never copied; ~30 ms), then a last
+    `result:` other than pass. `graph_hash` is injectable for the self-test."""
+    path = ROUTING_STAMP if stamp is None else stamp
+    try:
+        fields: dict[str, str] = {}
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if ":" in line:
+                k, v = line.split(":", 1)
+                fields[k.strip()] = v.strip()
+        if graph_hash is None:
+            spec = importlib.util.spec_from_file_location("ws_card_skill_routing", TOOLS / "evaluate-skill-routing.py")
+            if spec is None or spec.loader is None:
+                return None
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            graph_hash = mod.graph_hash
+        current = str(graph_hash())
+    except Exception:  # noqa: BLE001 - a card line is best effort
+        return None
+    if fields.get("hash") != current:
+        return "routing graph changed since the last run"
+    if fields.get("result") != "pass":
+        return "last run did not pass"
+    return None
+
+
 def notices() -> list[str]:
     try:
         return _notices()
@@ -532,6 +561,13 @@ def _notices() -> list[str]:
             "Skill-routing harness stamp missing — run "
             "`python3 09-tools/evaluate-skill-routing.py` (not a blocker)."
         )
+    else:
+        why = routing_stamp_stale()
+        if why:
+            out.append(
+                f"Skill-routing harness stamp is stale ({why}) — run "
+                "`python3 09-tools/evaluate-skill-routing.py` (not a blocker)."
+            )
     git = git_state()
     if git["unpushed"]:
         out.append(f"{git['unpushed']} unpushed commit(s) — other machines are stale until push.")
@@ -764,6 +800,11 @@ def _pinned(mods: list, consts: dict, doctor: Path, label: str):
             # The H11 gate line reads machine-local gate state; its own cases run below.
             keep["gate_notices"] = mod.gate_notices
             mod.gate_notices = lambda *a, **k: []
+        if hasattr(mod, "routing_stamp_stale"):
+            # The stale-stamp line hashes the live routing graph, which moves under other work; the
+            # oracle predates it. Pinned off here; its own cases (planted stamps) run below.
+            keep["routing_stamp_stale"] = mod.routing_stamp_stale
+            mod.routing_stamp_stale = lambda *a, **k: None
         saved.append((mod, keep))
         for k, v in consts.items():
             setattr(mod, k, v)
@@ -1098,6 +1139,45 @@ def self_test() -> int:
             got = gate_notices(repo, budget=10)
             check(f"gate line for a {status} HEAD", bool(got) == want and (not want or (
                 len(got) == 1 and f"[gate:red:build-registry.py@{tree[:12]}]" in got[0])), repr(got))
+
+    # 8. Skill-routing stamp (the retired dispatcher's `--stale` run): a planted stamp whose hash no
+    #    longer matches the routing graph, or whose last run failed, fires the stale line; a current
+    #    pass is silent; anything unreadable fails open; a missing stamp keeps the missing line.
+    with tempfile.TemporaryDirectory() as td:
+        troot = Path(td)
+        consts = _consts_for(troot)
+        stamp = consts["ROUTING_STAMP"]
+        stamp.parent.mkdir(parents=True)
+        fixed = lambda: "feedc0de00000000"  # noqa: E731
+        stale_why = "routing graph changed since the last run"
+        stamp.write_text("date: 2026-01-01\nhash: 0123456789abcdef\nresult: pass\n", encoding="utf-8")
+        check("routing stamp: hash drift → stale", routing_stamp_stale(stamp, fixed) == stale_why)
+        stamp.write_text("date: 2026-01-01\nhash: feedc0de00000000\nresult: fail\n", encoding="utf-8")
+        check("routing stamp: failed last run → stale",
+              routing_stamp_stale(stamp, fixed) == "last run did not pass")
+        stamp.write_text("date: 2026-01-01\nhash: feedc0de00000000\nresult: pass\n", encoding="utf-8")
+        check("routing stamp: current pass → silent", routing_stamp_stale(stamp, fixed) is None)
+        check("routing stamp: hash error fails open", routing_stamp_stale(stamp, lambda: 1 / 0) is None)
+        check("routing stamp: missing file fails open", routing_stamp_stale(troot / "none.stamp", fixed) is None)
+        stamp.write_text("date: 2026-01-01\nhash: 0000000000000000\nresult: pass\n", encoding="utf-8")
+        check("routing stamp: live graph_hash import flags a planted stamp", routing_stamp_stale(stamp) == stale_why)
+        doctor = troot / "home" / ".claude" / "ws-state"
+        doctor.mkdir(parents=True)
+        real_stale = routing_stamp_stale
+        with _pinned([me], consts, doctor, label):
+            globals()["routing_stamp_stale"] = lambda *a, **k: real_stale(*a, graph_hash=fixed)
+            lines = _notices()
+            check("routing stamp: planted stale stamp → one card notice",
+                  sum("Skill-routing harness stamp is stale" in n for n in lines) == 1, repr(lines))
+            stamp.write_text("date: 2026-01-01\nhash: feedc0de00000000\nresult: pass\n", encoding="utf-8")
+            lines = _notices()
+            check("routing stamp: current stamp → no routing notice",
+                  not any("Skill-routing" in n for n in lines), repr(lines))
+            stamp.unlink()
+            lines = _notices()
+            check("routing stamp: missing stamp → the missing line only",
+                  any("Skill-routing harness stamp missing" in n for n in lines)
+                  and not any("stamp is stale" in n for n in lines), repr(lines))
 
     for f in failures:
         print(f"  ✗ {f}", file=sys.stderr)

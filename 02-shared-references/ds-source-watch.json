@@ -103,7 +103,7 @@
     {
       "id": "mcp-spec",
       "name": "Model Context Protocol specification",
-      "url": "https://modelcontextprotocol.io/specification/2025-06-18",
+      "url": "https://modelcontextprotocol.io/specification/latest",
       "owners": ["Anthropic", "MCP"],
       "affects": ["agentic", "harness"],
       "why": "Agent-to-tool / agent-to-context protocol."
@@ -127,7 +127,7 @@
     {
       "id": "polar-orbit-adr-0004",
       "name": "Polar ADR-0004 — Frontend UI is authored with Orbit Box and design tokens",
-      "url": "https://handbook.polar.sh/engineering-and-design/frontend/architecture-decision-records-adrs/adr-0004-frontend-ui-is-authored-with-orbit-box-and-design-tokens",
+      "url": "https://handbook.polar.sh/engineering/decisions/0004-orbit-box-design-system",
       "owners": ["Polar"],
       "affects": ["specs"],
       "why": "Companion ADR to the Orbit post. Mechanism is Polar-internal."

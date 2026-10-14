@@ -1,24 +1,24 @@
 {
-  "checked_at": "2026-09-02T04:37:25Z",
+  "checked_at": "2026-10-14T20:00:02Z",
   "registry": "02-shared-references/ds-source-watch.json",
   "sources": {
     "dsds-home": {
       "ok": true,
       "status": 200,
-      "etag": "\"2043de77bd90b2c3f44ee5a16c9e74ea-ssl\"",
+      "etag": "\"3be2b0773466aa93fde0800bf8540395-ssl\"",
       "last_modified": null,
-      "hash": "2d0e1820bf94b17b",
-      "bytes": 10397,
+      "hash": "b28a1770022058ec",
+      "bytes": 38155,
       "error": null,
       "url": "https://designsystemdocspec.org"
     },
     "dsds-schema": {
       "ok": true,
       "status": 200,
-      "etag": "\"8e189dadc2232a86f8933b1deee73c01-ssl\"",
+      "etag": "\"30d4bcda8c381802bd85c11784a36054-ssl\"",
       "last_modified": null,
-      "hash": "c05ec46179022be0",
-      "bytes": 80714,
+      "hash": "4a36e1a78c0192e9",
+      "bytes": 110011,
       "error": null,
       "url": "https://designsystemdocspec.org/schema"
     },
@@ -35,10 +35,10 @@
     "dsds-github": {
       "ok": true,
       "status": 200,
-      "etag": "W/\"5e5c1e2659fa69f4c892454aaa88ed02\"",
+      "etag": "W/\"6b3f2e5fb79514477821ab559668c420\"",
       "last_modified": null,
-      "hash": "b723d2bcf9bbdbeb",
-      "bytes": 403647,
+      "hash": "1001d2237cf0c869",
+      "bytes": 386634,
       "error": null,
       "url": "https://github.com/somerandomdude/design-system-documentation-schema"
     },
@@ -46,19 +46,19 @@
       "ok": true,
       "status": 200,
       "etag": null,
-      "last_modified": null,
-      "hash": "07ccfa88feb10253",
-      "bytes": 228879,
+      "last_modified": "Wed, 14 Oct 2026 19:59:08 GMT",
+      "hash": "132fb3551262a039",
+      "bytes": 262307,
       "error": null,
       "url": "https://grokkingthesystemdesign.com/guides/agentic-system-design/"
     },
     "awesome-agentic": {
       "ok": true,
       "status": 200,
-      "etag": "\"81816fb6ebed67aaf8a3e34c07fdf76f395b91e093368b8d6ab5c3ec84369e09\"",
+      "etag": "\"a1384c17da6976af2d8c3e88bf2246cbc3117f7d9c4f2502369fd2fcd23eb98b\"",
       "last_modified": null,
-      "hash": "efff4288a81dbafe",
-      "bytes": 8550,
+      "hash": "fc561ad1c738d728",
+      "bytes": 4982,
       "error": null,
       "url": "https://raw.githubusercontent.com/gtzheng/Awesome-Agentic-System-Design/main/README.md"
     },
@@ -75,10 +75,10 @@
     "ai-created-ui": {
       "ok": true,
       "status": 200,
-      "etag": "\"22a056d88d1cd4d138d4a37dd61aeac9\"",
+      "etag": "\"92361b52e68c45ed191b143ab62c3399\"",
       "last_modified": null,
-      "hash": "f85b5a90f50ada14",
-      "bytes": 432637,
+      "hash": "f8510fa2b2cf20d8",
+      "bytes": 85659,
       "error": null,
       "url": "https://ui.ai-created.com"
     },
@@ -87,8 +87,8 @@
       "status": 200,
       "etag": null,
       "last_modified": null,
-      "hash": "377a4d184fbf6761",
-      "bytes": 194276,
+      "hash": "3700f7364e370ddf",
+      "bytes": 208249,
       "error": null,
       "url": "https://nathanacurtis.substack.com/p/component-contracts-and-schemas"
     },
@@ -97,8 +97,8 @@
       "status": 200,
       "etag": null,
       "last_modified": null,
-      "hash": "17ff8f86c6280a8a",
-      "bytes": 252219,
+      "hash": "1acd3e0939227fe6",
+      "bytes": 267669,
       "error": null,
       "url": "https://nathanacurtis.substack.com/p/configuration-collapse"
     },
@@ -107,8 +107,8 @@
       "status": 200,
       "etag": null,
       "last_modified": null,
-      "hash": "6af78ae9404edfc6",
-      "bytes": 67493,
+      "hash": "f3793aaf1901a028",
+      "bytes": 81301,
       "error": null,
       "url": "https://nathanacurtis.substack.com"
     },
@@ -117,18 +117,18 @@
       "status": 200,
       "etag": null,
       "last_modified": null,
-      "hash": "1445567079328daa",
-      "bytes": 211314,
+      "hash": "a531234d2ecb7a89",
+      "bytes": 175185,
       "error": null,
       "url": "https://www.anthropic.com/engineering/building-effective-agents"
     },
     "mcp-spec": {
       "ok": true,
       "status": 200,
-      "etag": null,
+      "etag": "W/\"wjvpxu63xo6tkn\"",
       "last_modified": null,
-      "hash": "0aeb05eb246c7e23",
-      "bytes": 286471,
+      "hash": "af36bf0dfc941769",
+      "bytes": 318380,
       "error": null,
       "url": "https://modelcontextprotocol.io/specification/2025-06-18"
     },
@@ -137,10 +137,70 @@
       "status": 200,
       "etag": null,
       "last_modified": null,
-      "hash": "561228f538e82617",
-      "bytes": 69331,
+      "hash": "b79cb3e10c05b0d0",
+      "bytes": 67390,
       "error": null,
       "url": "https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/"
+    },
+    "polar-orbit-llm-safe": {
+      "ok": true,
+      "status": 200,
+      "etag": "\"622b6529ffffd448ecbc497e9cf3dc7b\"",
+      "last_modified": null,
+      "hash": "0663632a1240931f",
+      "bytes": 189861,
+      "error": null,
+      "url": "https://polar.sh/blog/orbit-llm-safe-design-system"
+    },
+    "polar-orbit-adr-0004": {
+      "ok": false,
+      "status": 404,
+      "etag": null,
+      "last_modified": null,
+      "hash": null,
+      "bytes": 0,
+      "error": "HTTP 404",
+      "url": "https://handbook.polar.sh/engineering-and-design/frontend/architecture-decision-records-adrs/adr-0004-frontend-ui-is-authored-with-orbit-box-and-design-tokens"
+    },
+    "rupert-contrast-color-tokens": {
+      "ok": true,
+      "status": 200,
+      "etag": "\"c6bfc96e168de294489599b4b9ed349a-ssl\"",
+      "last_modified": null,
+      "hash": "db9341479685d706",
+      "bytes": 22869,
+      "error": null,
+      "url": "https://daverupert.com/2026/01/contrast-color-with-custom-design-tokens/"
+    },
+    "onori-ds-evals": {
+      "ok": true,
+      "status": 200,
+      "etag": null,
+      "last_modified": null,
+      "hash": "e7dbd93a3c5b5a3c",
+      "bytes": 268108,
+      "error": null,
+      "url": "https://www.sanity.io/engineering/design-system-evals"
+    },
+    "design-system-agent-tester": {
+      "ok": true,
+      "status": 200,
+      "etag": "W/\"f7aa238b8c2baa8b067cba9899beb1a6\"",
+      "last_modified": null,
+      "hash": "f56123cd34bb785d",
+      "bytes": 353433,
+      "error": null,
+      "url": "https://github.com/sanity-labs/design-system-agent-tester"
+    },
+    "designparser-mcp": {
+      "ok": true,
+      "status": 200,
+      "etag": "W/\"6491b8d57cfef496075f2b71033c9d06\"",
+      "last_modified": null,
+      "hash": "0263822ebc675276",
+      "bytes": 319952,
+      "error": null,
+      "url": "https://github.com/designparser/designparser-mcp"
     }
   }
 }

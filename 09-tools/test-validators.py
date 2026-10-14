@@ -2672,6 +2672,68 @@ class TestEmployerSubstance(unittest.TestCase):
             self.assertEqual(out["decision"], "allow")
             self.assertTrue(any("H25" in n for n in out["notices"]))
 
+    def test_session_log_pool_move_passes_new_hit_fails(self):
+        # Compaction moves hits from the session log into its archive: the pair is ONE baseline pool.
+        cs = load("check-secrets")
+        log_rel, arch_rel = "06-context/session-log.md", "06-context/session-log-archive.md"
+        self.assertIn((log_rel, arch_rel), cs.BASELINE_POOLS)
+        label = f"{log_rel}+{arch_rel}"
+        baseline = {"paths": {log_rel: {"emp-url": 5, "emp-slug": 2}, arch_rel: {"emp-url": 3},
+                              "notes/a.md": {"emp-url": 1}}}
+        moved = {log_rel: {"emp-url": 1}, arch_rel: {"emp-url": 7, "emp-slug": 2}, "notes/a.md": {"emp-url": 1}}
+        self.assertEqual(cs.baseline_growth(moved, baseline), [])
+        self.assertEqual(cs.baseline_shrink(moved, baseline), 0)
+        self.assertEqual(cs.baseline_growth(moved, baseline, only={arch_rel}), [])
+        new_in_arch = dict(moved, **{arch_rel: {"emp-url": 8, "emp-slug": 2}})
+        self.assertEqual(cs.baseline_growth(new_in_arch, baseline), [(label, "emp-url", 9, 8)])
+        new_in_log = dict(moved, **{log_rel: {"emp-url": 1, "emp-quote": 1}})
+        self.assertEqual(cs.baseline_growth(new_in_log, baseline, only={log_rel}), [(label, "emp-quote", 1, 0)])
+        # Files outside the pool stay per-file: a hit moving between two notes still fails.
+        per_file = dict(moved, **{"notes/a.md": {}, "notes/b.md": {"emp-url": 1}})
+        self.assertEqual(cs.baseline_growth(per_file, baseline), [("notes/b.md", "emp-url", 1, 0)])
+        # A real removal from the pool still asks for a lower baseline (once per rule).
+        self.assertEqual(cs.baseline_shrink({arch_rel: {"emp-url": 7}, "notes/a.md": {"emp-url": 1}}, baseline), 2)
+
+    def test_session_log_pool_staged_reads_index(self):
+        # The pre-commit lane runs --staged: a pool member that is not staged is counted from the index.
+        import shutil
+        cs = load("check-secrets")
+        fx = TOOLS / "fixtures" / "employer_substance"
+        log_rel, arch_rel = cs.BASELINE_POOLS[0]
+        with tempfile.TemporaryDirectory() as td:
+            home, repo = Path(td) / "home", Path(td) / "repo"
+            home.mkdir()
+            (repo / "06-context").mkdir(parents=True)
+            (repo / cs.REMOTES_REL).parent.mkdir(parents=True)
+            shutil.copy(fx / "context-remotes.json", repo / cs.REMOTES_REL)
+            env = dict(os.environ, HOME=str(home), GIT_CONFIG_NOSYSTEM="1")
+
+            def git(*a):
+                subprocess.run(["git", "-C", str(repo), *a], env=env, check=True, timeout=30, capture_output=True)
+
+            try:
+                subprocess.run(["git", "init", "-q", str(repo)], env=env, check=True, timeout=30, capture_output=True)
+            except (OSError, subprocess.SubprocessError) as exc:
+                self.skipTest(f"git unavailable ({exc.__class__.__name__})")
+            planted = (fx / "planted.md").read_text(encoding="utf-8")
+            (repo / log_rel).write_text(planted, encoding="utf-8")
+            (repo / arch_rel).write_text("# archive\n", encoding="utf-8")
+            git("add", log_rel, arch_rel)
+            fake = cs._FakeResolver(home)
+            argv = ["--class", "employer-substance", "--root", str(repo)]
+            self.assertEqual(self._quiet(cs.main, argv + ["--write-baseline"], resolver=fake, home=home), 0)
+            (repo / log_rel).write_text("# log\n", encoding="utf-8")
+            (repo / arch_rel).write_text("# archive\n" + planted, encoding="utf-8")
+            check = argv + ["--baseline-check", "--staged"]
+            git("add", arch_rel)  # archive half only: the index still holds the log's hits
+            self.assertEqual(self._quiet(cs.main, check, resolver=fake, home=home), 1)
+            git("add", log_rel)  # both halves: a move, not growth
+            self.assertEqual(self._quiet(cs.main, check, resolver=fake, home=home), 0)
+            (repo / arch_rel).write_text("# archive\n" + planted + (fx / "growth.md").read_text(encoding="utf-8"),
+                                         encoding="utf-8")
+            git("add", arch_rel)
+            self.assertEqual(self._quiet(cs.main, check, resolver=fake, home=home), 1)
+
     def test_live_baseline_not_exceeded(self):
         # G7a: the committed baseline holds on the live tree (real tables, temp HOME for the cache).
         cs = load("check-secrets")

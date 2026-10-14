@@ -17,7 +17,11 @@ identity checks use), read through `profile_resolve.load_table`. Output is
 `--baseline-check` fails on any count above it (the workspace pre-commit lane runs it
 with `--staged`; CI runs it on the full tree) and names counts below it so the
 baseline gets lowered with `--write-baseline`. Cache-derived slug hits stay
-informational (never compared with the baseline).
+informational (never compared with the baseline). Files that hand hits to each other by
+design form one baseline pool (`BASELINE_POOLS`): session-log compaction moves blocks from
+`06-context/session-log.md` into `session-log-archive.md`, so that pair is compared as one
+— its combined count per rule may not exceed its combined baseline. Every other file is
+compared on its own. A pool's growth line names it as `a+b`.
 
 Usage:
   python3 09-tools/check-secrets.py
@@ -194,6 +198,13 @@ EMP_RULES: tuple[str, ...] = ("emp-url", "emp-path", "emp-slug", "emp-quote", "e
 BASELINE_REL = "02-shared-references/employer-substance-baseline.json"
 REMOTES_REL = "02-shared-references/delivery-playbooks/context-remotes.json"
 EMP_EXCLUDE = frozenset({BASELINE_REL, REMOTES_REL})
+# Files whose hits move between each other by design. Compaction (compact-sessions.py) moves
+# old session blocks from the live log into its archive; per-file counts would rise in the
+# archive although nothing was added. Each tuple is ONE pool: its combined (rule) count is
+# compared with its combined baseline. Every file outside a pool stays per-file.
+BASELINE_POOLS: tuple[tuple[str, ...], ...] = (
+    ("06-context/session-log.md", "06-context/session-log-archive.md"),
+)
 QUOTE_WINDOW = 3
 # Web routes that make an employer URL PR-, issue-, blob- or tree-level.
 URL_KINDS = (
@@ -570,31 +581,87 @@ def _load_baseline(root: Path) -> Optional[dict]:
     return data
 
 
-def baseline_shrink(paths: dict, baseline: dict) -> int:
-    """How many baseline (path, rule) counts the tree now sits below (full-tree scans only)."""
+def pool_label(pool: tuple[str, ...]) -> str:
+    """How a baseline pool is named in growth lines and the JSON envelope."""
+    return "+".join(pool)
+
+
+def _cap(base: dict, rel: str, rule: str) -> int:
+    allowed = base.get(rel)
+    cap = allowed.get(rule, 0) if isinstance(allowed, dict) else 0
+    return cap if isinstance(cap, int) else 0
+
+
+def _pool_sum(counts: dict, pool: tuple[str, ...], rule: str) -> int:
+    return sum(counts.get(rel, {}).get(rule, 0) if isinstance(counts.get(rel), dict) else 0 for rel in pool)
+
+
+def baseline_shrink(paths: dict, baseline: dict, *,
+                    pools: tuple[tuple[str, ...], ...] = BASELINE_POOLS) -> int:
+    """How many baseline (path, rule) counts the tree now sits below (full-tree scans only).
+    A pool counts once per rule, when its combined count sits below its combined baseline."""
+    base = baseline.get("paths") or {}
+    pooled = {rel for pool in pools for rel in pool}
     n = 0
-    for rel, allowed in (baseline.get("paths") or {}).items():
-        if not isinstance(allowed, dict):
+    for rel, allowed in base.items():
+        if rel in pooled or not isinstance(allowed, dict):
             continue
         for rule, cap in allowed.items():
             if isinstance(cap, int) and paths.get(rel, {}).get(rule, 0) < cap:
                 n += 1
+    for pool in pools:
+        for rule in EMP_RULES:
+            if _pool_sum(paths, pool, rule) < _pool_sum(base, pool, rule):
+                n += 1
     return n
 
 
-def baseline_growth(paths: dict, baseline: dict, *, only: Optional[set] = None) -> list[tuple[str, str, int, int]]:
-    """(path, rule, now, allowed) for every count above the baseline or new."""
+def baseline_growth(paths: dict, baseline: dict, *, only: Optional[set] = None,
+                    pools: tuple[tuple[str, ...], ...] = BASELINE_POOLS) -> list[tuple[str, str, int, int]]:
+    """(path, rule, now, allowed) for every count above the baseline or new. A pool is compared
+    whole — (pool_label, rule, combined now, combined allowed) — when `only` is None or names
+    any of its members."""
     base = baseline.get("paths", {})
+    pooled = {rel for pool in pools for rel in pool}
     grew: list[tuple[str, str, int, int]] = []
     for rel in sorted(paths):
-        if only is not None and rel not in only:
+        if rel in pooled or (only is not None and rel not in only):
             continue
-        allowed = base.get(rel, {}) if isinstance(base.get(rel), dict) else {}
         for rule, n in paths[rel].items():
-            cap = allowed.get(rule, 0) if isinstance(allowed.get(rule, 0), int) else 0
+            cap = _cap(base, rel, rule)
             if n > cap:
                 grew.append((rel, rule, n, cap))
+    for pool in pools:
+        if only is not None and not (set(pool) & only):
+            continue
+        for rule in EMP_RULES:
+            n, cap = _pool_sum(paths, pool, rule), _pool_sum(base, pool, rule)
+            if n > cap:
+                grew.append((pool_label(pool), rule, n, cap))
     return grew
+
+
+def pool_counts_from_index(rules: "EmpRules", root: Path, paths: dict, only: set,
+                           pools: tuple[tuple[str, ...], ...] = BASELINE_POOLS) -> dict:
+    """A staged scan sees only staged files. A pool the staged set touches is compared whole, so
+    each member missing from `paths` is counted from the index (`git show :rel`) — the state the
+    commit would land. Returns a new paths dict; the findings list is not changed."""
+    out = dict(paths)
+    for pool in pools:
+        if not (set(pool) & only):
+            continue
+        for rel in pool:
+            if rel in out:
+                continue
+            text = _decode_text(_git_out(root, "show", f":{rel}"))
+            if text is None:
+                continue
+            per: dict[str, int] = {}
+            for _line, rule in rules.scan_text(text):
+                per[rule] = per.get(rule, 0) + 1
+            if per:
+                out[rel] = {r: per[r] for r in EMP_RULES if per.get(r)}
+    return out
 
 
 def _head_sha(root: Path) -> str:
@@ -671,7 +738,8 @@ def run_employer(
             env["error"] = "baseline absent"
             return finish(3)
         only = set(found) if args.staged else None
-        grew = baseline_growth(paths, baseline, only=only)
+        compare = pool_counts_from_index(rules, root, paths, only) if only is not None else paths
+        grew = baseline_growth(compare, baseline, only=only)
         env["growth"] = [{"path": p, "rule": r, "count": n, "baseline": c} for p, r, n, c in grew]
         for p, r, n, c in grew:
             print(f"  ✗ {p} {r} {n} > baseline {c}", file=sys.stderr)
@@ -1035,6 +1103,43 @@ def self_test() -> int:
                   and len(env_after["cache_derived"]["hits"]) >= 1)
         except (ValueError, KeyError) as exc:
             check("cache-derived json", False, repr(exc))
+
+        # Baseline pool: compaction moves hits from the session log into its archive. Moving them
+        # passes and does not nag for a rewrite; a new hit in either file fails, named by the pool;
+        # files outside a pool stay per-file.
+        proot = tmp / "pool"
+        (proot / "06-context").mkdir(parents=True)
+        (proot / "notes").mkdir()
+        (proot / Path(REMOTES_REL).parent).mkdir(parents=True)
+        shutil.copy(FIXTURES / "context-remotes.json", proot / REMOTES_REL)
+        shutil.copy(FIXTURES / "devices.json", proot / DEVICES_REL)
+        log_rel, arch_rel = BASELINE_POOLS[0]
+        planted_text = (FIXTURES / "planted.md").read_text(encoding="utf-8")
+        (proot / log_rel).write_text(planted_text, encoding="utf-8")
+        (proot / arch_rel).write_text("# archive\n", encoding="utf-8")
+        (proot / "notes" / "a.md").write_text(planted_text, encoding="utf-8")
+        pargv = ["--class", EMP_CLASS, "--baseline-check", "--root", str(proot)]
+        rc, _ = _run_captured(["--class", EMP_CLASS, "--write-baseline", "--root", str(proot)], fake, home)
+        check("pool: baseline written", rc == 0, f"rc={rc}")
+        (proot / log_rel).write_text("# log\n", encoding="utf-8")
+        (proot / arch_rel).write_text("# archive\n" + planted_text, encoding="utf-8")
+        rc, text = _run_captured(pargv, fake, home)
+        check("pool: log → archive move passes", rc == 0, f"rc={rc} {text[-200:]}")
+        check("pool: a move does not ask for a lower baseline", "below the baseline" not in text, text[-200:])
+        (proot / arch_rel).write_text("# archive\n" + planted_text + grow, encoding="utf-8")
+        rc, text = _run_captured(pargv, fake, home)
+        check("pool: new hit in the archive fails, named by the pool",
+              rc == 1 and f"{log_rel}+{arch_rel}" in text, f"rc={rc}")
+        check("pool: growth output never prints planted text", not leaks(text))
+        (proot / arch_rel).write_text("# archive\n" + planted_text, encoding="utf-8")
+        (proot / log_rel).write_text("# log\n" + grow, encoding="utf-8")
+        rc, _ = _run_captured(pargv, fake, home)
+        check("pool: new hit in the log fails", rc == 1, f"rc={rc}")
+        (proot / log_rel).write_text("# log\n", encoding="utf-8")
+        (proot / "notes" / "a.md").unlink()
+        (proot / "notes" / "b.md").write_text(planted_text, encoding="utf-8")
+        rc, _ = _run_captured(pargv, fake, home)
+        check("pool: files outside a pool stay per-file", rc == 1, f"rc={rc}")
 
         # --staged reads the index, not the working tree.
         git_env = dict(os.environ, HOME=str(home), GIT_CONFIG_NOSYSTEM="1",

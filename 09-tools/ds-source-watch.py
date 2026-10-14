@@ -109,6 +109,10 @@ def fetch_all(reg) -> dict:
         is_new = bool(result["ok"] and not old.get("hash"))
         failed = not result["ok"]
         state = "failed" if failed else ("changed" if changed else ("new" if is_new else "unchanged"))
+        if failed and old.get("hash"):
+            # A failed fetch (timeout, truncated read, 404) keeps the last good hash, so the next
+            # good fetch still diffs against it instead of reporting the source as new.
+            result = {**result, **{k: old.get(k) for k in ("hash", "bytes", "etag", "last_modified")}}
         rec = {
             **result,
             "id": sid,
