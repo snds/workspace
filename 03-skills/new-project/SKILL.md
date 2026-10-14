@@ -92,9 +92,11 @@ frameworks: [aesthetic-lens, ui-ux-operational, ...]
 ### Step 6 — Register trigger words (if any)
 
 If trigger words were provided, add them to `routes` in
-`02-shared-references/trigger-routes.json` (every surface's Layer-0 matcher reads it through
-`09-tools/prompt_route.py`; the Claude dispatcher's `TRIGGER_WORDS` loads the same file), then run
-`python3 09-tools/build-trigger-routes.py`. Otherwise skip.
+`02-shared-references/trigger-routes.json` (every surface's Layer-0 matcher, the Claude dispatcher
+included, reads it through `09-tools/prompt_route.py`), then run
+`python3 09-tools/build-trigger-routes.py`. Add a positive case to
+`02-shared-references/skill-routing-cases.jsonl` and run `python3 09-tools/evaluate-skill-routing.py`.
+Otherwise skip.
 
 ### Step 7 — Confirm
 

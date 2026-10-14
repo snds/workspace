@@ -40,7 +40,7 @@ Mostly transparent. There's a small core worth keeping handy.
 | "wrap up", "end of session", "done for today" | `/session-end` |
 | "reconcile sessions", "end of day sync" | `/reconcile` |
 | "legion", "the game", "bobiverse" | Legion project skills |
-| "centric", "PLM", "data table" | Centric DS context |
+| "centric plm", "centric software", "data table" | Centric DS context |
 | "icon font", "centricsymbols" | Variable icon font skills |
 | "figma plugin" | Figma plugin dev skill |
 | "omni" | Omni project skill |

@@ -1,7 +1,7 @@
 ---
 tags: [workspace, knowledge-vault, surfacing, dispatcher, architecture]
 created: 2026-04-29
-updated: 2026-04-29
+updated: 2026-10-14
 status: stable
 confidence: high
 sources: [session-log 2026-04-29]
@@ -40,14 +40,14 @@ A write-only vault is a graveyard. The challenge is getting entries *read* at th
 
 ### Tier 2: UserPromptSubmit — Trigger-word hints
 **Problem solved:** "I know the knowledge exists but didn't remember to check before answering."
-**Mechanism:** the dispatcher matches prompts against (a) a small curated `KNOWLEDGE_HINTS` dict, and — since 2026-07-08 — (b) the `Triggers:` lists declared on `08-knowledge/_INDEX.md` entry lines, parsed at runtime. When a prompt matches, the hook injects a per-entry reminder *before Claude responds*.
+**Mechanism:** the shared Layer-0 matcher (`09-tools/prompt_route.py`, called by the Claude dispatcher and every other surface) matches prompts against (a) the small curated `02-shared-references/knowledge-hints.json` map, and — since 2026-07-08 — (b) the `Triggers:` lists declared on `08-knowledge/_INDEX.md` entry lines, parsed at runtime. When a prompt matches, the hook injects a per-entry reminder *before Claude responds*.
 **Why it fires before Claude responds:** The `UserPromptSubmit` hook runs between the user's message and Claude's response. This is the only hook with the right timing to intercept and add context before work begins.
 **Why _INDEX.md is the source:** an entry's routing lives on the same line that indexes it, so adding an entry and adding its triggers is one edit — no separately-maintained mirror table to drift (the pre-2026-07-08 hand-synced dicts DID drift, which contributed to a real failure; see audit-log 2026-07-08).
 
 ### Tier 3: CLAUDE.md rule — Explicit instruction
 **Problem solved:** "The trigger word wasn't in the prompt but the work is clearly in a domain with a knowledge entry."
 **Mechanism:** CLAUDE.md contains an explicit instruction: before substantive domain work, check the index and read the relevant entry.
-**Why this is needed:** Trigger words are keyword matches — they fail when the user asks about something in an indirect way ("can you help me with the PLM work" vs. "centric"). The CLAUDE.md rule is a judgment-level instruction that covers the gap.
+**Why this is needed:** Trigger words are keyword matches — they fail when the user asks about something in an indirect way ("can you help me with the PLM work" vs. "centric plm"). The CLAUDE.md rule is a judgment-level instruction that covers the gap.
 
 ---
 

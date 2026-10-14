@@ -38,21 +38,13 @@ WORKSPACE_ROOT = Path(_project_dir) if _project_dir else Path(__file__).resolve(
 CONTEXT_DIR = WORKSPACE_ROOT / "06-context"
 SESSION_LOG = CONTEXT_DIR / "session-log.md"
 PROJECT_CONTEXT = CONTEXT_DIR / "project-context.md"
-AUDIT_LOG = CONTEXT_DIR / "audit-log.md"
-HARNESS_MAP_STAMP = (
-    WORKSPACE_ROOT / "07-projects" / "19-workspace-brain" / "reports" / "harness-map.stamp"
-)
-SKILL_ROUTING_EVAL = WORKSPACE_ROOT / "09-tools" / "evaluate-skill-routing.py"
 STATE_DIR = WORKSPACE_ROOT / ".claude" / "state"
 CLAUDE_VERSION_PIN = STATE_DIR / "claude-version"
 DESYNC_NOTICE = STATE_DIR / "desync-notice.md"
 KNOWLEDGE_DIR = WORKSPACE_ROOT / "08-knowledge"
 KNOWLEDGE_INDEX = KNOWLEDGE_DIR / "_INDEX.md"
-SKILLS_REGISTRY = WORKSPACE_ROOT / "03-skills" / "skills.registry.json"
 
 CLAUDE_CODE_CHANGELOG_URL = "https://github.com/anthropics/claude-code/releases"
-AUDIT_STALE_DAYS = 14
-HARNESS_MAP_STALE_DAYS = 30  # Notice only after a first map exists (stamp present)
 
 # Files where session edits reliably land. When the auto-commit's broad `git add -A`
 # would risk committing phantom or stale deletions, the session-end hook falls back
@@ -536,113 +528,6 @@ def _check_claude_version_change() -> str:
         f"sandboxing, settings.json schema, worktree behavior), document it in pending items "
         f"in `06-context/project-context.md` so it's surfaced next session."
     )
-
-
-def _check_audit_staleness() -> str:
-    """Return a notice if the workspace audit hasn't been run within AUDIT_STALE_DAYS.
-
-    Reads the most recent date from 06-context/audit-log.md. Returns "" if log is missing
-    (treat as fresh — no nag until first audit) or if last audit is within threshold.
-    """
-    if not AUDIT_LOG.exists():
-        return ""
-    try:
-        text = AUDIT_LOG.read_text(encoding="utf-8", errors="replace")
-        m = re.search(r"^##\s+(\d{4})-(\d{2})-(\d{2})\b", text, re.MULTILINE)
-        if not m:
-            return ""
-        last_audit = datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)), tzinfo=timezone.utc)
-        now_utc = datetime.now(timezone.utc)
-        days = (now_utc - last_audit).days
-        if days < AUDIT_STALE_DAYS:
-            return ""
-        if days >= AUDIT_STALE_DAYS * 2:
-            # Escalation tier: the plain nag was ignored for 72 days once (2026-07-08)
-            # and the un-audited drift contributed to a real failure. Past 2x the
-            # threshold, the notice demands scheduling, not just awareness.
-            return (
-                f"P0 — workspace audit is {days} days overdue (threshold: {AUDIT_STALE_DAYS} days). "
-                f"Un-audited drift has caused real failures before (see audit-log 2026-07-08). "
-                f"Propose running `/optimize` THIS session before starting new work, and say so "
-                f"explicitly in your first reply — do not let this notice pass silently."
-            )
-        return (
-            f"Workspace audit is stale — last audit was {days} days ago "
-            f"(threshold: {AUDIT_STALE_DAYS} days). Run `/optimize` to review the brain "
-            f"for stale items, contradictions, drift, and consolidation opportunities."
-        )
-    except Exception:
-        return ""
-
-
-def _check_harness_map_staleness() -> str:
-    """Return a notice if the last harness-map is older than HARNESS_MAP_STALE_DAYS.
-
-    Silent when the stamp is missing — no nag before the first map (see harness-map skill).
-    Stamp path: 07-projects/19-workspace-brain/reports/harness-map.stamp
-    """
-    if not HARNESS_MAP_STAMP.exists():
-        return ""
-    try:
-        text = HARNESS_MAP_STAMP.read_text(encoding="utf-8", errors="replace")
-        m = re.search(r"^date:\s*(\d{4})-(\d{2})-(\d{2})\b", text, re.MULTILINE)
-        if not m:
-            return ""
-        last = datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)), tzinfo=timezone.utc)
-        days = (datetime.now(timezone.utc) - last).days
-        if days < HARNESS_MAP_STALE_DAYS:
-            return ""
-        return (
-            f"Harness map is stale — last map was {days} days ago "
-            f"(threshold: {HARNESS_MAP_STALE_DAYS} days). Run `/harness-map` when convenient "
-            f"(read-only; not a blocker for ordinary work)."
-        )
-    except Exception:
-        return ""
-
-
-def _check_skill_routing_harness() -> str:
-    """If the routing graph drifted, run the adversarial corpus. Fail-open.
-
-    Silent when the stamp is current and last result is pass. Not a daemon:
-    session start + write-quality gate + /health + /optimize + live --utterance.
-    """
-    if not SKILL_ROUTING_EVAL.exists():
-        return ""
-    try:
-        stale = subprocess.run(
-            [sys.executable, str(SKILL_ROUTING_EVAL), "--stale"],
-            cwd=WORKSPACE_ROOT,
-            capture_output=True,
-            text=True,
-            timeout=8,
-        )
-        if stale.returncode == 0:
-            return ""
-        check = subprocess.run(
-            [sys.executable, str(SKILL_ROUTING_EVAL), "--check"],
-            cwd=WORKSPACE_ROOT,
-            capture_output=True,
-            text=True,
-            timeout=20,
-        )
-        if check.returncode == 0:
-            subprocess.run(
-                [sys.executable, str(SKILL_ROUTING_EVAL)],
-                cwd=WORKSPACE_ROOT,
-                capture_output=True,
-                text=True,
-                timeout=20,
-            )
-            return ""
-        summary = (check.stdout or check.stderr or "routing corpus failed").strip().splitlines()
-        head = summary[0] if summary else "routing corpus failed"
-        return (
-            f"Skill-routing harness failed — {head}. "
-            "Run `python3 09-tools/evaluate-skill-routing.py` (not a blocker)."
-        )
-    except Exception:
-        return ""
 
 
 def _classify_worktree_state() -> dict:

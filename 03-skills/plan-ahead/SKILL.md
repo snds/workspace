@@ -3,7 +3,7 @@ name: plan-ahead
 description: >
   Print a numbered order of operations and name the first later-breaker BEFORE
   writing code. Use on multi-step work, dual-repo consume (cds then proto),
-  follow-ups after a squash-merge, Pages / CI vs local overlay, "what's the
+  follow-up PRs after a squash-merge, Pages / CI vs local overlay, "what's the
   sequence?", "don't get ahead of me", PR pairs, implement/fix-CI/merge work,
   or any ask that can succeed locally and fail in CI. The workspace should be
   ahead of Sean on planning — he should never learn the breaker from a red
@@ -11,7 +11,7 @@ description: >
   skill is the sequence and CI-contract half. Fetch before claiming the next
   framework or project integer.
 aliases: [plan-ahead, order-of-operations, cds-then-proto]
-triggers: [order of operations, cds then proto, consume cds, pages build, follow up, overlay vs main, first breaker, dual repo, squash leftover, re-export, implement this, open a pr, pull request, fix ci, merge conflict]
+triggers: [order of operations, cds then proto, consume cds, pages build, follow-up pr, overlay vs main, first breaker, dual repo, squash leftover, re-export, implement this, open a pr, pull request, fix ci, merge conflict]
 tier: cross-cutting
 domain: workspace
 related: [workspace-bootstrap, failure-mode-premortem, close-out, self-improve]

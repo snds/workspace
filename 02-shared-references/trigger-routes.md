@@ -22,7 +22,8 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `refine` | 01-frameworks/06-qa-operating-model.md — pre-output gate: load BEFORE the work |
 | `legion` | 03-skills/legion-project/SKILL.md + appropriate hub (lead-game-designer / lead-art-director / lead-game-developer) |
 | `bobiverse` | 03-skills/legion-project/SKILL.md |
-| `centric` | Centric PLM project context — see 06-context/project-context.md; ds-advisor hub |
+| `centric plm` | Centric PLM project context — see 06-context/project-context.md; ds-advisor hub |
+| `centric software` | Centric PLM project context — see 06-context/project-context.md; ds-advisor hub |
 | `data table` | Data table cell anatomy work — cross-reference 06-context/artifact-registry.md; knowledge: 08-knowledge/design/enterprise-saas-design-patterns.md |
 | `icon font` | 03-skills/variable-icon-font-architect/SKILL.md + math spokes |
 | `centricsymbols` | 03-skills/variable-icon-font-architect/SKILL.md |
@@ -136,8 +137,8 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `DESIGN.md` | 01-frameworks/09-component-and-pattern-framework.md — in-repo component schema / token contract |
 | `field validation` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `validation state` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
-| `invalid` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
-| `warning` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
+| `invalid state` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
+| `warning state` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `error state` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `status color` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `status colors` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
@@ -147,7 +148,7 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `accessibility` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `contrast` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `legibility` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
-| `legible` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
+| `legible text` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `wcag` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `apca` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
 | `color blind` | FOUNDATIONS FIRST: 03-skills/design-foundations/SKILL.md + 03-skills/found-color/SKILL.md + 03-skills/a11y-visual/SKILL.md + 03-skills/uid-color-for-ui/SKILL.md (system-agnostic… |
@@ -248,7 +249,7 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `cds then proto` | 03-skills/plan-ahead/SKILL.md — CDS PR onto main, then proto consume. Local overlay ≠ Pages cds main. |
 | `consume cds` | 03-skills/plan-ahead/SKILL.md + 08-knowledge/design/ds-parent-owns-shared-defects.md — do not export * from a path cds main does not export; shared defects land in the parent |
 | `pages build` | 03-skills/plan-ahead/SKILL.md + 08-knowledge/engineering/cds-host-consume-order.md — Pages vendors cds main; overlay symlink can lie |
-| `follow up` | 03-skills/plan-ahead/SKILL.md — squash leftovers land on cds main first (Toaster / SplitDragHandle / ChipMultiSelect) |
+| `follow-up pr` | 03-skills/plan-ahead/SKILL.md — print order of operations + first later-breaker before writing |
 | `overlay vs main` | 08-knowledge/engineering/cds-host-consume-order.md |
 | `first breaker` | 03-skills/plan-ahead/SKILL.md |
 | `re-export` | 03-skills/plan-ahead/SKILL.md — @centric/ui/X needs exports["./X"] on cds main |
@@ -345,18 +346,18 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `found-perception` | foundation | `gestalt`, `figure ground`, `visual perception`, `pre-attentive`, `visual weight`, `optical adjustment` (+4) | `design-foundations` → `found-perception` |
 | `found-typography` | foundation | `typography`, `type hierarchy`, `type scale`, `leading`, `measure`, `letterform` (+4) | `design-foundations` → `found-typography` |
 | `game-foundations` | foundation | `game design`, `core loop`, `game feel`, `player experience`, `game balance`, `progression` (+4) | `game-foundations` |
-| `imaging-foundations` | foundation | `light`, `optics`, `exposure`, `camera`, `lens`, `pbr` (+11) | `imaging-foundations` |
+| `imaging-foundations` | foundation | `light transport`, `optics`, `exposure`, `camera`, `camera lens`, `pbr` (+11) | `imaging-foundations` |
 | `img-cinematography` | foundation | `cinematography`, `shot`, `framing`, `composition`, `camera movement`, `dolly` (+8) | `imaging-foundations` → `img-cinematography` |
 | `img-optics-light` | foundation | `radiometry`, `photometry`, `irradiance`, `radiance`, `flux`, `inverse square` (+7) | `imaging-foundations` → `img-optics-light` |
 | `img-photography` | foundation | `exposure`, `aperture`, `f-stop`, `shutter speed`, `iso`, `depth of field` (+9) | `imaging-foundations` → `img-photography` |
 | `img-photoreal-rendering` | foundation | `pbr`, `physically based rendering`, `brdf`, `metallic roughness`, `global illumination`, `ray tracing` (+10) | `imaging-foundations` → `img-photoreal-rendering` |
 | `img-vfx` | foundation | `vfx`, `particles`, `particle system`, `simulation`, `fluid`, `smoke` (+9) | `imaging-foundations` → `img-vfx` |
 | `product-foundations` | foundation | `product strategy`, `outcomes over output`, `jobs to be done`, `jtbd`, `prioritization`, `discovery` (+2) | `product-foundations` |
-| `sci-linear-algebra` | foundation | `vector`, `matrix`, `quaternion`, `dot product`, `cross product`, `transform` (+7) | `science-foundations` → `sci-linear-algebra` |
+| `sci-linear-algebra` | foundation | `vector math`, `unit vector`, `matrix`, `quaternion`, `dot product`, `cross product` (+9) | `science-foundations` → `sci-linear-algebra` |
 | `sci-numerical-methods` | foundation | `floating point`, `epsilon`, `interpolation`, `lerp`, `easing`, `numerical integration` (+7) | `science-foundations` → `sci-numerical-methods` |
-| `sci-physics-simulation` | foundation | `physics`, `simulation`, `rigid body`, `collision detection`, `collision response`, `impulse` (+9) | `science-foundations` → `sci-physics-simulation` |
+| `sci-physics-simulation` | foundation | `physics`, `simulation`, `rigid body`, `collision detection`, `collision response`, `impulse` (+10) | `science-foundations` → `sci-physics-simulation` |
 | `sci-probability-stochastic` | foundation | `probability`, `distribution`, `random`, `rng`, `seed`, `sampling` (+7) | `science-foundations` → `sci-probability-stochastic` |
-| `science-foundations` | foundation | `math`, `physics`, `linear algebra`, `vector`, `matrix`, `quaternion` (+8) | `science-foundations` |
+| `science-foundations` | foundation | `math`, `physics`, `linear algebra`, `vector math`, `matrix`, `quaternion` (+8) | `science-foundations` |
 | `vision-foundations` | foundation | `computer vision`, `machine vision`, `image classification`, `object detection`, `image segmentation`, `feature extraction` (+9) | `vision-foundations` |
 | `adobe-app-builder` | hub | `adobe app builder`, `app builder`, `aio cli`, `aio app init`, `aio app deploy`, `adobe i/o runtime` (+9) | `eng-foundations` → `adobe-app-builder` |
 | `arch-guild` | hub | `arch guild`, `architecture review`, `multi-voice review`, `dijkstra`, `lamport`, `knuth` (+1) | `eng-foundations` → `arch-guild` |
@@ -368,8 +369,6 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `eng` | hub | `eng`, `engineering delivery`, `shape contract`, `ship service`, `harden auth`, `rollback plan` (+1) | `eng-foundations` → `eng` |
 | `figma` | hub | `figma`, `in figma`, `build in figma`, `component set`, `library file`, `generate a library` (+3) | `design-foundations` → `figma` |
 | `gen-manifest` | hub | `gen manifest`, `generation manifest` | `design-foundations` → `gen-manifest` |
-| `google-fonts-scraper` | hub | `google fonts scraper` | `google-fonts-scraper` |
-| `google-fonts-web-scraping` | hub | `google fonts scraping` | `google-fonts-web-scraping` |
 | `job-search-strategist` | hub | `job search strategy`, `career positioning`, `target companies` | `job-search-strategist` |
 | `lead-3d-designer` | hub | `3d designer`, `dcc scene`, `blender scene` | `design-foundations` → `lead-3d-designer` |
 | `lead-accessibility-architect` | hub | `accessibility architect`, `wcag audit`, `screen reader path`, `inclusive design` | `design-foundations` → `lead-accessibility-architect` |
@@ -423,7 +422,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `new-project` | cross-cutting | `/new-project`, `scaffold new project`, `scaffold a new project`, `start a new project` | `new-project` |
 | `open-agent-engine` | cross-cutting | `open engine`, `agent engine`, `agent queue`, `run the queue`, `queue runner`, `agent ledger` (+5) | `open-agent-engine` |
 | `optimize` | cross-cutting | `/optimize`, `audit the brain`, `brain audit`, `workflow audit`, `system error correction`, `review the workspace foundations` | `optimize` |
-| `plan-ahead` | cross-cutting | `order of operations`, `cds then proto`, `consume cds`, `pages build`, `follow up`, `overlay vs main` (+9) | `plan-ahead` |
+| `plan-ahead` | cross-cutting | `order of operations`, `cds then proto`, `consume cds`, `pages build`, `follow-up pr`, `overlay vs main` (+9) | `plan-ahead` |
 | `process-plugins` | cross-cutting | `tdd`, `test driven development`, `write the test first`, `red green refactor`, `verification before completion`, `am i done` (+11) | `process-plugins` |
 | `reconcile` | cross-cutting | `/reconcile`, `end of day sync`, `merge sessions`, `consolidate sessions` | `reconcile` |
 | `render-qa-toolkit` | cross-cutting | `render qa`, `perfcapture`, `frame budget`, `pass attribution`, `native grid`, `false color exposure` (+7) | `realtime-visual-craft` → `render-qa-toolkit` |
@@ -445,4 +444,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 314 · Registry rows: 108_
+_Curated routes: 315 · Registry rows: 106_

@@ -93,10 +93,12 @@ Two hooks make the vault active rather than passive:
 1. **SessionStart** — `_INDEX.md` is loaded into every session's context automatically.
    Claude knows what entries exist from the moment the session opens.
 
-2. **UserPromptSubmit** — `KNOWLEDGE_HINTS` in `dispatcher.py` maps trigger keywords
-   (same ones used for skill routing) to entry paths. When a prompt contains "legion",
-   "centric", "icon font", etc., the dispatcher injects a reminder to read the relevant
-   entry *before proceeding*. The reminder appears alongside any skill hint.
+2. **UserPromptSubmit** — `09-tools/prompt_route.py` (the one Layer-0 matcher every surface
+   runs, the Claude dispatcher included) maps trigger keywords to entry paths from two
+   sources: the curated `02-shared-references/knowledge-hints.json` map and the `Triggers:`
+   lists on `_INDEX.md` entry lines. When a prompt contains "legion", "centric plm",
+   "icon font", etc., the hook injects a reminder to read the relevant entry *before
+   proceeding*. The reminder appears alongside any skill hint.
 
 3. **CLAUDE.md rule** — Before substantive domain work, Claude is instructed to check
    the index and read the relevant entry. This is the last line of defense if a trigger
@@ -125,9 +127,14 @@ Do NOT write entries for:
 
 ### Adding new triggers
 
-To surface a new entry automatically on prompt match, add an entry to `KNOWLEDGE_HINTS`
-in `.claude/hooks/dispatcher.py`. Format: `"keyword": "08-knowledge/domain/file.md"`.
-Also add to `TRIGGER_WORDS` if a skill should also load.
+To surface a new entry automatically on prompt match, add backticked terms to its `Triggers:`
+list on the `_INDEX.md` entry line (preferred: routing lives on the line that indexes it). For a
+curated hint, add a row to `02-shared-references/knowledge-hints.json`. Format:
+`"keyword": "08-knowledge/domain/file.md"`. If a skill should also load, add the term to that
+skill's `triggers:` frontmatter (then `python3 09-tools/build-registry.py`) or a row to
+`02-shared-references/trigger-routes.json` (then `python3 09-tools/build-trigger-routes.py`).
+Add a case to `02-shared-references/skill-routing-cases.jsonl` and run
+`python3 09-tools/evaluate-skill-routing.py`.
 
 ---
 

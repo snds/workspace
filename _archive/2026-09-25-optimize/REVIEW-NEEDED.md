@@ -17,3 +17,7 @@ but the canonical `03-skills/figma-api-router/SKILL.md` has since been rewritten
 
 **Action for Sean:** check these facts against current Figma docs, merge the ones that still hold into
 `03-skills/figma-api-router/SKILL.md`, then archive the loose file and the now-empty `figma-api-pipeline/` folder.
+
+## Resolved — 2026-10-14
+
+Resolved 2026-10-14 (/optimize fix pass). Every listed section was checked against current Figma docs and merged into `03-skills/figma-api-router/SKILL.md` (at-a-glance matrix, MCP tool selection, file access patterns, rate-limit warning signs, size limits). Two lines were corrected rather than copied: the rate-limit tier is set by seat type + endpoint tier + the file's plan (not "file wins" alone), and "429 → switch to MCP" now applies to writes only. The loose file and the emptied `figma-api-pipeline/` folder are archived at `_archive/2026-10-14-optimize/figma-api-pipeline/` (ARCHIVE-LOG row).

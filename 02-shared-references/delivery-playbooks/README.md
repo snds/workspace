@@ -85,8 +85,9 @@ If any check fails, the deliverable isn't ready.
 
 A playbook that never loads is shelfware. These are the places that make it fire:
 
-- **Prompt triggers** — `.claude/hooks/dispatcher.py` `TRIGGER_WORDS` surfaces this directory
-  when a prompt contains diagram/flow/walkthrough/proofboard/playbook-class words.
+- **Prompt triggers** — curated rows in `02-shared-references/trigger-routes.json` (read by every
+  surface through `09-tools/prompt_route.py`) surface this directory when a prompt contains
+  diagram/flow/walkthrough/proofboard/playbook-class words.
 - **Pre-output gate** — [[06-qa-operating-model]] §4 carries a context-and-medium check that
   points here.
 - **SESSION-STATE** — each project declares its `Context profile` in the Environment block

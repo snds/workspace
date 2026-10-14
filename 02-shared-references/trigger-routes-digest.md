@@ -9,7 +9,7 @@ Shells run `python3 09-tools/skill-loadset.py "<request>"` instead. Never ingest
 
 - audit, review, critique, qa pass, refine → `01-frameworks/06-qa-operating-model.md`
 - legion, bobiverse → `03-skills/legion-project/SKILL.md`
-- centric → `06-context/project-context.md`
+- centric plm, centric software → `06-context/project-context.md`
 - data table → `06-context/artifact-registry.md` + `08-knowledge/design/enterprise-saas-design-patterns.md`
 - icon font, centricsymbols → `03-skills/variable-icon-font-architect/SKILL.md`
 - omni → `03-skills/omni-project/SKILL.md`
@@ -65,7 +65,7 @@ Shells run `python3 09-tools/skill-loadset.py "<request>"` instead. Never ingest
 - parent vs host, cds or proto, consuming app → `08-knowledge/design/ds-parent-owns-shared-defects.md`
 - component contract → `01-frameworks/09-component-and-pattern-framework.md` + `08-knowledge/design/component-contracts-and-schemas.md`
 - DESIGN.md → `01-frameworks/09-component-and-pattern-framework.md`
-- field validation, validation state, invalid, warning, error state, status color, status colors, semantic token, semantic tokens, a11y, accessibility, contrast, legibility, legible, wcag, apca, color blind, color-blind, cvd, contrast-color → `03-skills/design-foundations/SKILL.md` + `03-skills/found-color/SKILL.md` + `03-skills/a11y-visual/SKILL.md` + `03-skills/uid-color-for-ui/SKILL.md`
+- field validation, validation state, invalid state, warning state, error state, status color, status colors, semantic token, semantic tokens, a11y, accessibility, contrast, legibility, legible text, wcag, apca, color blind, color-blind, cvd, contrast-color → `03-skills/design-foundations/SKILL.md` + `03-skills/found-color/SKILL.md` + `03-skills/a11y-visual/SKILL.md` + `03-skills/uid-color-for-ui/SKILL.md`
 - diagram, flowchart, how does it work, show me the steps → `02-shared-references/delivery-playbooks/02-diagrams-and-flows.md` + `02-shared-references/delivery-playbooks/00-context-profiles.md`
 - user journey, journey map, customer journey, experience map, jtbd, jobs to be done, jobs-to-be-done, service blueprint, service design, user story, user stories, use case, use cases, user flow, task flow, site map, persona, which artifact → `02-shared-references/delivery-playbooks/06-research-and-design-artifacts.md`
 - walkthrough → `02-shared-references/delivery-playbooks/README.md`
@@ -99,7 +99,7 @@ Shells run `python3 09-tools/skill-loadset.py "<request>"` instead. Never ingest
 - live svg, illustration generation, flattened png → `03-skills/gd-generation-tooling/SKILL.md`
 - display grammar → `03-skills/gd-generation-tooling/SKILL.md` + `03-skills/gd-display-graphics/SKILL.md`
 - which model, pick a model, best model for, model selection, model routing, ollama model, local model, cursor model, codex model, grok or claude, effort tier, switch models → `02-shared-references/model-routing.md`
-- order of operations, cds then proto, follow up, first breaker, re-export, implement this, fix ci, merge conflict → `03-skills/plan-ahead/SKILL.md`
+- order of operations, cds then proto, follow-up pr, first breaker, re-export, implement this, fix ci, merge conflict → `03-skills/plan-ahead/SKILL.md`
 - consume cds → `03-skills/plan-ahead/SKILL.md` + `08-knowledge/design/ds-parent-owns-shared-defects.md`
 - pages build → `03-skills/plan-ahead/SKILL.md` + `08-knowledge/engineering/cds-host-consume-order.md`
 - overlay vs main → `08-knowledge/engineering/cds-host-consume-order.md`
@@ -128,4 +128,4 @@ Shells run `python3 09-tools/skill-loadset.py "<request>"` instead. Never ingest
 - no-raw-colors → `08-knowledge/engineering/shadcn-lint-token-tiers.md`
 - subatomic course → `07-projects/23-subatomic-design-tokens-course/` + `08-knowledge/design/design-token-architecture.md` + `03-skills/token-architecture/SKILL.md`
 
-_Routes: 314 · targets: 120_
+_Routes: 315 · targets: 120_

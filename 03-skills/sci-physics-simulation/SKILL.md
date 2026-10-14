@@ -5,10 +5,10 @@ description: >
   (F=ma), rigid bodies (linear + angular), the fixed-timestep loop, collision detection
   (broad/narrow phase) and response (impulses, restitution, friction), and constraints.
   The physics a game engine actually runs. Triggers: physics, simulation, rigid body,
-  collision detection, collision response, impulse, restitution, friction, constraint,
-  fixed timestep, kinematics, dynamics, broadphase, AABB, GJK.
+  collision detection, collision response, impulse, restitution, friction coefficient,
+  constraint solver, fixed timestep, kinematics, rigid-body dynamics, broadphase, AABB, GJK.
 aliases: [sci-physics-simulation]
-triggers: [physics, simulation, rigid body, collision detection, collision response, impulse, restitution, friction, constraint, fixed timestep, kinematics, dynamics, broadphase, aabb, gjk]
+triggers: [physics, simulation, rigid body, collision detection, collision response, impulse, restitution, friction coefficient, constraint solver, physics constraint, fixed timestep, kinematics, rigid-body dynamics, broadphase, aabb, gjk]
 tier: foundation
 hub: science-foundations
 domain: science

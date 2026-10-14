@@ -13,6 +13,8 @@ domain: design
 
 This suite is the Material Symbols *automation* path (export, scrape, Figma plugin).
 Interpolation-safe variable icon fonts live in [[variable-icon-font-architect]].
+Part 2 (Metadata Scraper) technique — the metadata API, virtual scrolling, flyout tags — lives
+in the [[google-fonts-scraper]] spoke.
 
 ---
 
@@ -251,4 +253,4 @@ Transform for SVG export: `scale(1, -1)` only — no translate.
 4. Compare counts: SVGs = metadata icons = Figma components
 
 ## Related
-- spoke → [[material-symbols-suite]] · [[material-symbols-svg-export]]
+- spoke → [[google-fonts-scraper]] · [[material-symbols-suite]] · [[material-symbols-svg-export]]

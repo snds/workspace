@@ -34,7 +34,7 @@ Planning / Active / Paused / Archived
 [HUMAN: what this project will not do now, and what waits for later.]
 
 ## Trigger words
-<!-- Words that route Claude's attention to this project. Edit .claude/hooks/dispatcher.py TRIGGER_WORDS to wire them up. -->
+<!-- Words that route attention to this project. Wire them up as `routes` rows in 02-shared-references/trigger-routes.json (every surface reads it through 09-tools/prompt_route.py), then run python3 09-tools/build-trigger-routes.py. -->
 - 
 
 ## Frameworks active

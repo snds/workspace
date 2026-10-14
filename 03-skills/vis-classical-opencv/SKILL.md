@@ -6,9 +6,9 @@ description: >
   feature detection + matching (SIFT/ORB/AKAZE); geometric vision — camera calibration, undistortion,
   homography, epipolar geometry, stereo, optical flow, pose (PnP). Reach here when the answer is
   geometry or signal processing, not a neural net. Triggers: opencv, image processing, filtering,
-  edges, contours, feature matching, SIFT, ORB, homography, calibration, optical flow, stereo, PnP.
+  edges, contours, feature matching, SIFT, ORB features, homography, calibration, optical flow, stereo, PnP.
 aliases: [vis-classical-opencv, opencv, classical-cv]
-triggers: [opencv, image processing, gaussian blur, canny, contours, morphology, color space, feature matching, sift, orb, akaze, homography, camera calibration, undistortion, epipolar, stereo, optical flow, pnp, pose estimation]
+triggers: [opencv, image processing, gaussian blur, canny, contours, morphology, color space, feature matching, sift, orb features, orb descriptor, akaze, homography, camera calibration, undistortion, epipolar, stereo, optical flow, pnp, pose estimation]
 tier: spoke
 hub: vision-foundations
 domain: vision

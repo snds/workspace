@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 309,
+    "total": 308,
     "by_tier": {
       "cross-cutting": 53,
       "foundation": 22,
-      "hub": 47,
-      "spoke": 187
+      "hub": 45,
+      "spoke": 188
     }
   },
   "skills": {
@@ -2132,7 +2132,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:2a12a5c98fdbfb3be1633b08d145f58b8fe033d15120ff8aec9ae3fd113f0663"
+      "hash": "sha256:634349560508e35e5a960af6405c69a5755fe968f67cc5ad731eda7c24ed7c03"
     },
     "figma-canvas-designer": {
       "path": "03-skills/figma-canvas-designer/SKILL.md",
@@ -3393,34 +3393,17 @@
     },
     "google-fonts-scraper": {
       "path": "03-skills/google-fonts-scraper/SKILL.md",
-      "tier": "hub",
+      "tier": "spoke",
       "domain": "design",
-      "hub": null,
-      "prerequisites": [],
+      "hub": "material-symbols-project",
+      "prerequisites": [
+        "material-symbols-project"
+      ],
       "related": [],
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "google fonts scraper"
-      ],
-      "surfaces": [
-        "*"
-      ],
-      "requires": [],
-      "defers_to": [],
-      "rigor_role": null,
-      "hash": "sha256:bead44980b44220a651f5828650215e8f7252bf9d26f3c05735f24953a6d360d"
-    },
-    "google-fonts-web-scraping": {
-      "path": "03-skills/google-fonts-web-scraping/SKILL.md",
-      "tier": "hub",
-      "domain": "design",
-      "hub": null,
-      "prerequisites": [],
-      "related": [],
-      "governed_by": [],
-      "governs": [],
-      "triggers": [
+        "google fonts scraper",
         "google fonts scraping"
       ],
       "surfaces": [
@@ -3429,7 +3412,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:437789af8d8fec089fc4c6c6e8beeb7348df35750b41d4e301b91ead0da452db"
+      "hash": "sha256:317e911e34b0b9842ffa97ed331be55d9d391e8e8849746779f3ffc2d415b9f5"
     },
     "gpu-capture-tooling": {
       "path": "03-skills/gpu-capture-tooling/SKILL.md",
@@ -3679,11 +3662,11 @@
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "light",
+        "light transport",
         "optics",
         "exposure",
         "camera",
-        "lens",
+        "camera lens",
         "pbr",
         "brdf",
         "global illumination",
@@ -3703,7 +3686,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:e54dbbca3a22a4ab6e8520aba943eb86f7ff6f6e6d0278a2b85e3081bd2f7557"
+      "hash": "sha256:7b97f54e1edfa9810f3d2db1b19a852eb12dff249b7303f589d2b1d4ff065342"
     },
     "img-cinematography": {
       "path": "03-skills/img-cinematography/SKILL.md",
@@ -3793,7 +3776,7 @@
         "white balance",
         "ev",
         "sensor",
-        "lens",
+        "camera lens",
         "motion blur"
       ],
       "surfaces": [
@@ -3802,7 +3785,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:dc75e06173703fd419258534fb92b2da023c2b7df0eed1164a59cfc356398cb7"
+      "hash": "sha256:6a8452f9a397d9f4bcd8b45d36ffcf496037d30e2ffba2b140695e2b774e7c9e"
     },
     "img-photoreal-rendering": {
       "path": "03-skills/img-photoreal-rendering/SKILL.md",
@@ -4853,7 +4836,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:7b33958126da0df73db9325a69695a63c4b049741ae1fc90f194c0d4c53c9b0d"
+      "hash": "sha256:a46e4f499046288dd47f86769ad3baa24751ff03cc04db5b72669b86da7b8851"
     },
     "material-symbols-suite": {
       "path": "03-skills/material-symbols-suite/SKILL.md",
@@ -5465,7 +5448,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:f1482f3d4ccfb116f189d2b050d679c0de9088b4c4172d72e19ddc6fff084135"
+      "hash": "sha256:7501327a4155089b78baa5e6c194b2163af484248d1c2743bb020bda09d3b39c"
     },
     "omni-project": {
       "path": "03-skills/omni-project/SKILL.md",
@@ -5575,7 +5558,7 @@
         "cds then proto",
         "consume cds",
         "pages build",
-        "follow up",
+        "follow-up pr",
         "overlay vs main",
         "first breaker",
         "dual repo",
@@ -5593,7 +5576,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:27e7af83a34f2f2ead3861578142fecdba56422ad74e93e40e99a6fb8324b4bc"
+      "hash": "sha256:1153ca2f70f7904837069b6ad2b139953add5ecc3c5171abded2fcac31946171"
     },
     "planetary-terrain-lod": {
       "path": "03-skills/planetary-terrain-lod/SKILL.md",
@@ -6320,16 +6303,18 @@
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "vector",
+        "vector math",
+        "unit vector",
         "matrix",
         "quaternion",
         "dot product",
         "cross product",
-        "transform",
-        "rotation",
-        "basis",
-        "projection",
-        "mvp",
+        "transform matrix",
+        "affine transform",
+        "rotation matrix",
+        "change of basis",
+        "projection matrix",
+        "mvp matrix",
         "homogeneous coordinates",
         "slerp",
         "normal matrix"
@@ -6340,7 +6325,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:315b298c64dfd1ad57345f55296fece221d8464a88c08e7a2f6d415f78eb99c0"
+      "hash": "sha256:227b3f120bdbb6172a469d1bb444dfedad83ac71325ada7a10637772b6b6bee4"
     },
     "sci-numerical-methods": {
       "path": "03-skills/sci-numerical-methods/SKILL.md",
@@ -6391,11 +6376,12 @@
         "collision response",
         "impulse",
         "restitution",
-        "friction",
-        "constraint",
+        "friction coefficient",
+        "constraint solver",
+        "physics constraint",
         "fixed timestep",
         "kinematics",
-        "dynamics",
+        "rigid-body dynamics",
         "broadphase",
         "aabb",
         "gjk"
@@ -6406,7 +6392,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:d009939850684410c64a7d6af650767ff7c7582842c162d3e3ea4e2fbf031294"
+      "hash": "sha256:ba70dc6e7466632db126d728ba5ce9bae582520170f5e5a0720aa71611d0eb41"
     },
     "sci-probability-stochastic": {
       "path": "03-skills/sci-probability-stochastic/SKILL.md",
@@ -6453,17 +6439,17 @@
         "math",
         "physics",
         "linear algebra",
-        "vector",
+        "vector math",
         "matrix",
         "quaternion",
-        "transform",
+        "transform matrix",
         "simulation",
         "numerical methods",
-        "integration",
+        "numerical integration",
         "probability",
         "monte carlo",
-        "collision",
-        "mechanics"
+        "collision detection",
+        "classical mechanics"
       ],
       "surfaces": [
         "*"
@@ -6471,7 +6457,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:37a5154fc0e738532a71c0fe4b7ce3999b2ac65d8d27c2ef1e81a222797ecf19"
+      "hash": "sha256:5b6ff0822f3c5d61aa0f2fcee4e52c2d1fac152c195500986f139f4c1666f02e"
     },
     "sec-appsec-owasp": {
       "path": "03-skills/sec-appsec-owasp/SKILL.md",
@@ -7787,7 +7773,8 @@
         "color space",
         "feature matching",
         "sift",
-        "orb",
+        "orb features",
+        "orb descriptor",
         "akaze",
         "homography",
         "camera calibration",
@@ -7804,7 +7791,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:eb03ab29fe68cae9c7a1600eeba163abe8c94c343710bddd725f69eed498a24f"
+      "hash": "sha256:8ad76ba55fdb95667e7718fed1a0794da5b971f562689f9be5dff6c94d3bf8a0"
     },
     "vis-detection-tracking": {
       "path": "03-skills/vis-detection-tracking/SKILL.md",
@@ -9204,10 +9191,8 @@
       "glsl-shader-architect"
     ],
     "google-fonts-scraper": [
+      "material-symbols-project",
       "google-fonts-scraper"
-    ],
-    "google-fonts-web-scraping": [
-      "google-fonts-web-scraping"
     ],
     "gpu-capture-tooling": [
       "realtime-visual-craft",

@@ -93,7 +93,7 @@ The `UserPromptSubmit` hook loads context automatically when certain words appea
 |--------------|-----------|
 | `audit`, `review`, `critique`, `qa pass`, `refine` | `01-frameworks/06-qa-operating-model.md` — pre-output gate, BEFORE the work |
 | `legion`, `the game`, `bobiverse` | `legion-project` skill + relevant sub-hub |
-| `centric`, `PLM`, `data table` | Centric DS context, Ark UI notes |
+| `centric plm`, `centric software`, `data table` | Centric DS context, Ark UI notes |
 | `icon font`, `centricsymbols`, `variable axis` | `variable-icon-font-architect` skill |
 | `figma plugin`, `plugin dev` | `figma-plugin-dev` skill |
 | `omni` | `omni-project` skill |

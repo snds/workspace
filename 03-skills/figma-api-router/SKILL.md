@@ -20,6 +20,16 @@ spec_version: "2.0"
 
 Figma exposes three distinct API surfaces with different capabilities, execution contexts, and trade-offs. Use this decision matrix to route to the correct API:
 
+| Need | MCP Server (`use_figma`) | Plugin API | REST API |
+|------|-------------------------|-------------|-----------|
+| **AI agent workflows** | ✅ Primary choice | ❌ Not accessible | ⚠️ Limited writes |
+| **Real-time design creation** | ✅ Via `use_figma` | ✅ Direct access | ❌ Read-only design |
+| **Cross-file operations** | ⚠️ One file per call | ❌ Current file only | ✅ Any accessible file |
+| **CI/CD token syncing** | ❌ Session-dependent | ❌ Editor-dependent | ✅ HTTP-based |
+| **Bulk variable operations** | ⚠️ 50K char limit per call | ⚠️ Loop through API | ✅ Atomic bulk (Enterprise) |
+| **Component/variant creation** | ✅ Via `use_figma` | ✅ Direct | ❌ Not supported |
+| **Style generation** | ✅ Via `use_figma` | ✅ Direct | ❌ Not supported |
+
 ### When to Use MCP Server (use_figma tool)
 
 **✅ Use MCP Server When:**
@@ -32,13 +42,13 @@ Figma exposes three distinct API surfaces with different capabilities, execution
 
 **🔧 Technical Details:**
 - Execution: AI agent → MCP protocol → Plugin API JavaScript
-- Code limit: 50,000 characters per call
+- Code limit: 50,000 characters per call — over that, split the work across several `use_figma` calls, or move bulk variable work to the REST API (Enterprise)
 - Response limit: ~20KB output
 - Write tools rate-limit exempt during beta
 - Authentication: OAuth 2.0 (remote) or desktop session (local)
 
 **📍 File Scope:**
-- Remote server: Any file via URL
+- Remote server: Any file via URL, one file per call (cross-file work = one call per file)
 - Desktop server: Current open file only
 - Figma must be open for desktop mode
 
@@ -57,6 +67,7 @@ Figma exposes three distinct API surfaces with different capabilities, execution
 - Authentication: User session (no tokens required)
 - Rate limits: None
 - Variables: Full CRUD operations
+
 ### When to Use REST API
 
 **✅ Use REST API When:**
@@ -111,6 +122,16 @@ SCENARIO: "AI agent creates components based on specifications"
 
 ---
 
+## MCP Tool Selection
+
+**For reads:** `get_design_context` (structured code + design context for a node), `get_metadata` (node overview), `get_variable_defs` (token extraction), `get_screenshot` (visuals).
+
+**Before writes:** `search_design_system` — check the connected libraries for an existing component, variable, or style before creating a new one.
+
+**For writes:** `use_figma` (Plugin API JavaScript), `create_new_file` (new files).
+
+---
+
 ## Authentication Decision Tree
 
 ### For MCP Server
@@ -130,6 +151,14 @@ SCENARIO: "AI agent creates components based on specifications"
 
 ---
 
+## File Access Patterns
+
+- **Local file (`localFileKey=...`)**: Desktop MCP server only — no other surface can reach it
+- **Cloud file (`figma.com/design/<fileKey>/...`)**: Any API surface works
+- **Branch file (`figma.com/design/<fileKey>/branch/<branchKey>/...`)**: Use the `branchKey` as the `fileKey`
+
+---
+
 ## Rate Limit Considerations
 
 | API Surface | Limits | Write Operations |
@@ -144,6 +173,21 @@ SCENARIO: "AI agent creates components based on specifications"
 - **Tier 3**: POST variables, metadata (50-150/min)
 
 *Limits scale with plan: Professional < Organization < Enterprise*
+
+### Rate Limit Warning Signs
+- **429 Too Many Requests**: Wait the number of seconds in the `Retry-After` header, then resend. For writes, moving the job to MCP `use_figma` also avoids the limit (writes are exempt during beta); MCP reads still count against Tier 1 limits, so switching surfaces does not help a read-heavy job.
+- **Limit lower than expected**: Three things set it — the requester's seat type (Dev/Full seats get more than View/Collab), the endpoint's tier, and the plan of the file being requested. A file in a lower-plan workspace gets that plan's limits even when the requesting user sits on a higher plan. The 429 response's `X-Figma-Plan-Tier` and `X-Figma-Rate-Limit-Type` headers say which limit hit.
+- **403 "Limited by Figma plan" / "Incorrect account type"**: The Variables REST endpoints need a full member of an Enterprise org (POST also needs edit access to the file).
+
+---
+
+## Size Limits
+
+| Surface | Limit | Over the limit |
+|---|---|---|
+| MCP `use_figma` code | 50,000 characters per call | Split into several calls, or REST bulk (Enterprise) |
+| MCP response | ~20KB output | Narrow the read (one node, `get_metadata` first) |
+| REST Variables bulk (`POST /v1/files/:key/variables`) | 4MB request body | 413 error — split the payload |
 
 ---
 

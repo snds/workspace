@@ -58,13 +58,6 @@
       "required": false
     },
     {
-      "name": "google-fonts-web-scraping",
-      "skill_file": "03-skills/google-fonts-web-scraping/google-fonts-web-scraping.skill",
-      "skill_md": "03-skills/google-fonts-web-scraping/SKILL.md",
-      "installed": false,
-      "required": false
-    },
-    {
       "name": "material-symbols-project",
       "skill_file": "03-skills/material-symbols-project/material-symbols-project.skill",
       "skill_md": "03-skills/material-symbols-project/SKILL.md",
