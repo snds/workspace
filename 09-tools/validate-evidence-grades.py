@@ -95,6 +95,12 @@ VERSIONED_RE = re.compile(r"^(?P<slug>.+?)_v\d+\.\d+_\d{4}-\d{2}-\d{2}\.md$")
 CLOSURE_WORD_RE = re.compile(r"\b(applied|resolved|closed|fixed|landed|done|completed?)\b", re.I)
 ID_SPAN_RE = re.compile(r"\b[A-Z]{0,3}\d+\s*[–-]\s*[A-Z]{0,3}\d+\b|\b[A-Z]+\d+(?:\s*[,/]\s*[A-Z]+\d+)+")
 ISO_DATE_RE = re.compile(r"\b\d{4}-\d{2}-\d{2}\b")
+# A closure word is negated when a negator sits in the last few words of its own clause
+# ("nothing applied", "not yet applied", "none resolved", "no M-series findings closed").
+# Unspaced en dashes are ID ranges (M1–M25), so only spaced dashes and em dashes end a clause.
+NEGATOR_RE = re.compile(r"^(?:not|no|none|nothing|never|nor|neither|cannot|\w+n['’]t)$", re.I)
+CLAUSE_SPLIT_RE = re.compile(r"[;,.:()|!?]|—|\s[–-]\s|\b(?:and|but|while|whereas|though|although|then)\b", re.I)
+NEGATION_WINDOW = 4
 
 
 def _tracked(root: Path, *pathspecs: str) -> list[str]:
@@ -113,10 +119,18 @@ def _frontmatter_status(text: str) -> str:
     return ""
 
 
+def _negated(prefix: str) -> bool:
+    """True when the clause leading up to a closure word carries a negator in its last few words."""
+    clause = CLAUSE_SPLIT_RE.split(prefix)[-1]
+    words = [w for w in re.split(r"[\s/-]+", clause) if w][-NEGATION_WINDOW:]
+    return any(NEGATOR_RE.match(w) for w in words)
+
+
 def status_claims(status: str) -> bool:
-    """True when a status pairs a closure word with an ID range or list (dates are not ranges)."""
+    """True when a status pairs an un-negated closure word with an ID range or list (dates are not ranges)."""
     bare = ISO_DATE_RE.sub(" ", status)
-    return bool(CLOSURE_WORD_RE.search(bare) and ID_SPAN_RE.search(bare))
+    closes = any(not _negated(bare[:m.start()]) for m in CLOSURE_WORD_RE.finditer(bare))
+    return bool(closes and ID_SPAN_RE.search(bare))
 
 
 def _register_cells(text: str) -> list[str]:
@@ -224,6 +238,19 @@ def _status_self_test() -> list[str]:
             bad.append(f"status: a tracked citing RESOLVED row clears the flag ({status_census(root)})")
         if status_claims("applied 2026-09-11") or not status_claims("applied — recs R1–R16"):
             bad.append("status: dates are not ranges; R1–R16 is")
+    negated = ["proposed — nothing applied; IDs M1–M25 and B1–B10 are new",
+               "draft — fixes F1–F4 not yet applied", "none resolved — R1–R9 open",
+               "no M-series findings closed; M1–M25 queued", "nothing has been applied to A1, A2",
+               "R1–R5 haven't landed", "none of M1–M5 resolved"]
+    claims = ["applied — recs R1–R16", "first wave applied — A1, A2 wired; A8 deferred",
+              "no regressions; fixes F1–F3 applied", "nothing deferred — R1–R16 applied",
+              "no blockers and R1–R3 applied", "R1–R4 applied; R5–R9 not yet applied"]
+    for s in negated:
+        if status_claims(s):
+            bad.append(f"status: a negated closure word is not a claim ({s!r})")
+    for s in claims:
+        if not status_claims(s):
+            bad.append(f"status: a negator in another clause must not hide the claim ({s!r})")
     return bad
 
 
