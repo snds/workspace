@@ -11,18 +11,18 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#12 merged; Phase 8 calm inbo
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 10 ("contacts depth") is in review as PR #15 (`phase-10-contacts`). Sean said "merge then continue phases" again, so PR #14 is merged (squash 8cd4069). Phase 10 takes the contact rows of the research harvest: signature parsing and enrichment, labels, restore, and vCard/QR sharing.
-- **Working set**: `crates/core/src/{signature,contacts_store}.rs`, `crates/core/src/net/graph_pim.rs` (Outlook categories), `crates/app/src/pim_commands.rs`,
-  `apps/web/src/features/contacts/{contact-editor,contact-detail,index,share,recently-deleted}.tsx`, `apps/web/src/features/mail/signature-suggestion.tsx`, `apps/web/src/core/demo-signature.ts`, `docs/decisions/0020-contacts-depth.md`.
-- **Last action**: Merged PR #14 on Sean's word, then built Phase 10:
-  - Signatures are read by a header-free heuristic (sign-off or `-- `, quotes cut). They're always reviewed in the editor: Paste a signature, or a suggestion under a message that only fills blanks and skips newsletters.
-  - Schema v10 adds `contacts.labels` (vCard CATEGORIES, Outlook categories) and `contacts_trash` (30 days; restore keeps the UID and calls off a pending server delete).
-  - Share: a `.vcf` file (Downloads in the apps, a browser download on the gateway), the share sheet, and a QR code from the core (`qrcode` crate).
-  - Tests: Rust 175 (pim-core 159), the new demo suite `phase10` (25 checks) plus the 15 earlier suites, and a new gateway e2e on real Dovecot.
-  - Fixed: the open card refetched itself after a delete (400s); Edit dropped labels.
-  - Env note: the session's disk filled mid-phase. Clearing `target/debug` (14 GB of stale builds) fixed it; Dovecot and the SMTP sink had to be restarted.
-- **Next action**: Watch PR #15's CI. Merge only on Sean's explicit word.
-  Then: the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or more harvest items: smart groups (rule-based), iCloud/Google contact groups as labels, bundles and grouped newsletters, sender-data sync between devices, free/busy and COUNTER, a public OAuth return address for the gateway. Or the product rename.
+- **Current focus**: Phase 11 ("calendar planning") is in review as PR #16 (`phase-11-planning`). Sean said "merge then continue phases" again, so PR #15 is merged (squash e021fa0). Phase 11 takes the calendar planning rows of the research harvest: clashes on invitations, propose a new time, availability, and calendar sets.
+- **Working set**: `crates/core/src/{itip,planning_store,invite_store}.rs` (COUNTER/DECLINECOUNTER, clashes, find a time, sets), `crates/app/src/pim_commands.rs`,
+  `apps/web/src/features/mail/{invite-card,invite-planning}.tsx`, `apps/web/src/features/calendar/{find-a-time,calendar-sets}.tsx`, `docs/decisions/0021-calendar-planning.md`.
+- **Last action**: Merged PR #15 on Sean's word, then built Phase 11:
+  - Invitations list the timed events they clash with (all-day ones don't count).
+  - Propose new time sends an iTIP COUNTER. As organizer you accept (the event moves, SEQUENCE bumps, everyone gets the REQUEST, everyone but the proposer is asked again) or keep the original (DECLINECOUNTER).
+  - Find a time searches your own calendars only, over two weeks, two suggestions a day.
+  - Calendar sets are saved visibility in the core's settings.
+  - Tests: Rust 182 (pim-core 165), the new demo suite `phase11` (18 checks) plus the 16 earlier suites, and a new gateway e2e on real Dovecot + SMTP (a real COUNTER email).
+  - Fixed: conversations didn't refresh on calendar changes, so clashes went stale.
+- **Next action**: Watch PR #16's CI. Merge only on Sean's explicit word.
+  Then: guests' free/busy (CalDAV VFREEBUSY, Google freeBusy, Graph getSchedule) needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or more harvest items: user-defined split inbox, bundles and grouped newsletters, scheduling links, interesting calendars (holiday subscriptions), smart contact groups, sender-data sync. Or the product rename.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
   Test-harness note: the shared Dovecot mailbox and SMTP sink keep state between runs; clear them before re-running the gateway suites.
@@ -33,7 +33,7 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#12 merged; Phase 8 calm inbo
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), all merged; Phase 10 in PR #15.
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), all merged; Phase 11 in PR #16.
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
