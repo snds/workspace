@@ -28,6 +28,19 @@
       "projects_root": "Projects",
       "brain": "Projects/Workspace",
       "default_identity": "snds"
+    },
+    {
+      "id": "enterprise-pc",
+      "label": "Enterprise PC",
+      "hostnames": [
+        "Enterprise"
+      ],
+      "hostname_labels": {},
+      "os": "windows",
+      "home": "/c/Users/SNDS",
+      "projects_root": "Projects",
+      "brain": "Projects/workspace",
+      "default_identity": "snds"
     }
   ],
   "ssh_aliases": [
@@ -102,6 +115,13 @@
       "id": "IR3",
       "family": "*",
       "device": "personal-mbp",
+      "identity": "snds",
+      "mismatch": "flag"
+    },
+    {
+      "id": "IR4",
+      "family": "*",
+      "device": "enterprise-pc",
       "identity": "snds",
       "mismatch": "flag"
     }
