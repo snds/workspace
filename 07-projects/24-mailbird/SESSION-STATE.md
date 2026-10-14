@@ -1,6 +1,6 @@
 # SESSION-STATE — Mailbird, working name (24-mailbird)
 
-_Last updated: 2026-10-14 — checkpoint (PRs #1–#10 merged; Phase 6 web gateway in PR #11)_
+_Last updated: 2026-10-14 — checkpoint (PRs #1–#12 merged; Phase 8 calm inbox in PR #13)_
 
 ---
 
@@ -11,17 +11,18 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#10 merged; Phase 6 web gatew
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 6, the web gateway, in review as PR #11 (`phase-6-gateway`). It's a self-hosted server (Docker) that gives the browser real accounts. Sean said "merge then continue phases": PR #10 is merged. The device spike (5b) waits on his Mac and phones.
-- **Working set**: `crates/app/` (shared commands, `Host` and `SecretStore` traits, `dispatch`), `apps/gateway/` (server, Docker, README),
-  `apps/web/src-tauri/src/lib.rs` (now one `core` command), `apps/web/src/core/client.ts` (one command table, gateway transport),
-  `apps/web/src/features/{gateway-sign-in,accounts}.tsx`, `docs/decisions/0016-web-gateway.md`, `.github/workflows/ci.yml`.
-- **Last action**: Merged PR #10 on Sean's word, then built Phase 6:
-  - Moved all 62 desktop commands into `crates/app` behind one dispatcher. The Tauri shell is now one `core` command.
-  - Built the gateway: password sign-in, the CSRF header, live events, sealed secrets, security headers, and Docker.
-  - Browser run against real Dovecot and SMTP passed. All 13 earlier Playwright suites pass.
-  - Found that the relay's Docker image never built with `--locked`. Fixed it, and added a CI `images` job.
-- **Next action**: Watch PR #11 CI. The new `images` job is the first full Docker build, since this environment can't fetch inside containers. Merge only on Sean's explicit word.
-  Then: the device spike (`docs/mobile-spike.md`) on Sean's hardware; or gateway follow-ups (a public OAuth return address once Google/Microsoft apps are verified, browser notifications); or the product rename, or Gmail labels.
+- **Current focus**: Phase 8 ("calm inbox") is in review as PR #13 (`phase-8-calm-inbox`). Sean said "merge then continue phases" again, so PR #12 is merged. Phase 8 takes the next research items: HEY's Screener, Spark's People/Updates/Newsletters, and block sender.
+- **Working set**: `crates/core/src/{sender_store,triage}.rs`, `crates/app/src/sender_commands.rs`, `crates/app/src/workers.rs` (the quick second sync pass),
+  `apps/web/src/features/{screener-settings.tsx,mail/sender-actions.ts,mail/lanes.ts}`, `docs/decisions/0018-calm-inbox.md`.
+- **Last action**: Merged PR #12 on Sean's word, then built Phase 8:
+  - Schema v8 adds `senders` (keyed by lowercased address across accounts) and a message `category`.
+  - The Screener is opt-in and holds only mail that arrives after it's turned on.
+  - Screen out and block archive on the server, on arrival too.
+  - Categories come from headers only.
+  - Tests: core 141, and the new demo suite `phase8` plus the 14 earlier suites all pass. The gateway e2e on real Dovecot shows Archive moves on the server.
+  - Fixed: menu radio items now close the menu; category Undo; the reader closing on screen-out; ⌘K input focus; rule-made ops waiting a full sync pass.
+- **Next action**: Watch PR #13's CI. Merge only on Sean's explicit word.
+  Then: the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or more harvest items: bundles and grouped newsletters, sender-data sync between devices, Gmail labels, a public OAuth return address for the gateway. Or the product rename.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
   Calendar follow-ups: free/busy, COUNTER, and missed-reminder catch-up.
@@ -32,7 +33,7 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#10 merged; Phase 6 web gatew
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), all merged; Phase 6 in PR #11.
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), all merged; Phase 8 in PR #13.
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
@@ -52,8 +53,10 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#10 merged; Phase 6 web gatew
 - **Gotcha**: never run `cargo fmt` here: the repo isn't rustfmt-formatted, and it rewrites every file. Format only new files, with `rustfmt --config max_width=180,use_small_heuristics=Max`.
 - **Gotcha**: Docker works here (`sudo dockerd &`), but containers can't use the agent proxy, so image builds can't fetch crates. Build the binary on the host and test the runtime stage. Stubbing a Cargo workspace member in a Dockerfile prunes `Cargo.lock`, so those builds can't use `--locked`.
 - **Gotcha**: the cloud disk fills from `target/` (about 20 GB). Use `CARGO_INCREMENTAL=0`, or delete `target/debug/incremental`.
+- **Gotcha**: React events cross portals. A dialog opened inside the composer's `<form>` must stop submit and keydown propagation, or it sends the message. shadcn's base `CommandDialog` needs its children wrapped in `<Command>`.
+- **Gotcha**: TanStack `mutate(args, { onSuccess })` per-call callbacks don't run if the component unmounts first. Close a view after the toast, not before. Base UI menu radio items need `closeOnClick`.
 - **Gotcha**: the shadcn registry host may be blocked by cloud network policy. Components come from
   a shadcn-ui/ui git clone through `tools/shadcn-material/transform.mjs`.
 
 ### VCS state
-- `phase-6-gateway`: Phase 6 web gateway, in PR #11. `main` has Phases 0 through 5.
+- `phase-8-calm-inbox`: Phase 8, in PR #13. `main` has Phases 0 through 7.
