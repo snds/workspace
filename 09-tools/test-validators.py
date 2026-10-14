@@ -2874,19 +2874,77 @@ class TestScopedCommitH1(unittest.TestCase):
             (ws / ".claude" / "worktrees" / "n").mkdir(parents=True)
             (Path(td) / "ws.intent-x").mkdir()
             orig = (d.WORKSPACE_ROOT, d.git, d.in_git_repo, d._list_worktrees,
-                    d._branch_fully_merged_into_main)
+                    d._branch_fully_merged_into_main, d._worktree_keep_reason)
             d.WORKSPACE_ROOT, d.git, d.in_git_repo = ws, self._Git(), (lambda: True)
             d._list_worktrees = lambda: [
                 {"path": str(ws), "branch": "refs/heads/main"},
                 {"path": str(Path(td) / "ws.intent-x"), "branch": "refs/heads/intent/x"},
                 {"path": str(ws / ".claude" / "worktrees" / "n"), "branch": "refs/heads/n"}]
             d._branch_fully_merged_into_main = lambda b: True
+            d._worktree_keep_reason = lambda p, e: ("", False)
             try:
                 cleaned, _ = d._cleanup_stale_worktrees()
             finally:
                 (d.WORKSPACE_ROOT, d.git, d.in_git_repo, d._list_worktrees,
-                 d._branch_fully_merged_into_main) = orig
+                 d._branch_fully_merged_into_main, d._worktree_keep_reason) = orig
             self.assertEqual(cleaned, ["n"])
+
+    def test_cleanup_keeps_live_dirty_and_locked_worktrees(self):
+        """2026-10-14: a fresh session worktree (always merged) was force-removed twice, once
+        with an uncommitted edit. Only an idle, clean, unlocked merged worktree may go, and a
+        folder that is not its own worktree root is never acted on."""
+        import time
+        from unittest import mock
+        d = self._dispatcher()
+        env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+        env.update({"GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull})
+        with tempfile.TemporaryDirectory() as td:
+            ws = Path(td).resolve() / "ws"
+            ws.mkdir()
+
+            def g(*args):
+                subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args], cwd=ws,
+                               env=env, capture_output=True, timeout=30, check=True)
+
+            g("init", "-q", "-b", "main")
+            (ws / "f.txt").write_text("x\n", encoding="utf-8")
+            g("add", "f.txt")
+            g("commit", "-q", "-m", "init")
+            wts = ws / ".claude" / "worktrees"
+            for name in ("fresh", "dirty", "locked", "idle"):
+                g("worktree", "add", "-q", "-b", name, str(wts / name), "main")
+            (wts / "dirty" / "f.txt").write_text("edited\n", encoding="utf-8")
+            (wts / "idle" / ".claude" / ".cc-writes").mkdir(parents=True)
+            (wts / "idle" / ".claude" / ".cc-writes" / "w").write_text("log\n", encoding="utf-8")
+            g("worktree", "lock", str(wts / "locked"))
+            ghost = wts / "ghost"
+            ghost.mkdir()
+            old = time.time() - 7 * 24 * 3600
+            for name in ("dirty", "locked", "idle"):
+                tree, admin = wts / name, ws / ".git" / "worktrees" / name
+                for p in (tree, tree / ".claude" / ".cc-writes", admin, admin / "index",
+                          admin / "HEAD", admin / "logs" / "HEAD"):
+                    if p.exists():
+                        os.utime(p, (old, old))
+            listed = d._list_worktrees
+            orig = (d.WORKSPACE_ROOT, d._list_worktrees)
+            d.WORKSPACE_ROOT = ws
+            d._list_worktrees = lambda: listed() + [{"path": str(ghost), "branch": "refs/heads/main"}]
+            try:
+                with mock.patch.dict(os.environ, env, clear=True):
+                    cleaned, skipped = d._cleanup_stale_worktrees()
+            finally:
+                d.WORKSPACE_ROOT, d._list_worktrees = orig
+            self.assertEqual(cleaned, ["idle"])
+            self.assertFalse((wts / "idle").exists())
+            self.assertEqual((wts / "dirty" / "f.txt").read_text(encoding="utf-8"), "edited\n")
+            for name in ("fresh", "locked"):
+                self.assertTrue((wts / name / "f.txt").exists(), name)
+                self.assertFalse(any(s.startswith(f"{wts / name}:") for s in skipped), skipped)
+            self.assertEqual(len(skipped), 2, skipped)
+            self.assertTrue(any(s.startswith(f"{wts / 'dirty'}: 1 uncommitted change(s)") for s in skipped))
+            self.assertTrue(any(s.startswith(f"{ghost}: not its own worktree root") for s in skipped))
+            self.assertTrue(ghost.is_dir())
 
     def test_session_end_on_intent_branch_never_commits(self):
         d = self._dispatcher()

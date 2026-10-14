@@ -9,9 +9,11 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import socket
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -90,6 +92,13 @@ def case_session_start(c: fx.Checks, d: Path, tmp: Path, env: dict) -> None:
     fx.git(repo, "worktree", "add", "-q", "-b", "intent/x", str(sibling), env=env)
     nested = repo / ".claude" / "worktrees" / "merged"
     fx.git(repo, "worktree", "add", "-q", "-b", "merged-nested", str(nested), env=env)
+    fresh = repo / ".claude" / "worktrees" / "fresh"
+    fx.git(repo, "worktree", "add", "-q", "-b", "fresh-nested", str(fresh), env=env)
+    old = time.time() - 7 * 24 * 3600  # idle well past RECENT_WORKTREE_HOURS
+    admin = repo / ".git" / "worktrees" / "merged"
+    for p in (nested, admin, admin / "index", admin / "HEAD", admin / "logs" / "HEAD"):
+        if p.exists():
+            os.utime(p, (old, old))
     pl = fx.payload("claude-code.session-start")
     r = _run(d, repo, env, "session-start", pl)
     c.check(r.returncode == 0 and "hookSpecificOutput" in r.stdout,
@@ -97,7 +106,8 @@ def case_session_start(c: fx.Checks, d: Path, tmp: Path, env: dict) -> None:
     c.check(sibling.is_dir() and fx.git(repo, "rev-parse", "--verify", "-q", "intent/x", env=env,
                                         check=False).returncode == 0,
             "a sibling <root>.intent-x worktree with an empty branch is never removed")
-    c.check(not nested.exists(), "a nested, fully merged worktree is still cleaned (control)")
+    c.check(not nested.exists(), "a nested, fully merged, idle worktree is still cleaned (control)")
+    c.check(fresh.is_dir(), "a nested, merged but freshly made worktree stays (it may back a live session)")
     base = repo / ".workspace" / "state" / "sessions" / f"{pl['session_id']}.json"
     c.check(base.is_file(), "session-start writes the session baseline via ws_hook.write_baseline")
     # SessionEnd on intent/x makes no commit.

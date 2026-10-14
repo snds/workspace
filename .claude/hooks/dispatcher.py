@@ -213,7 +213,8 @@ def _is_inside_linked_worktree() -> bool:
 def _list_worktrees() -> list[dict]:
     """Parse `git worktree list --porcelain` into a list of dicts.
 
-    Each entry: {"path": str, "head": str, "branch": str, "bare": bool, "detached": bool}.
+    Each entry: {"path": str, "head": str, "branch": str, "bare": bool, "detached": bool}, plus
+    "locked" / "prunable" (git's reason text, possibly "") when git reports them.
     Branch is the full ref name ("refs/heads/foo") or "" for detached / bare.
     """
     r = git("worktree", "list", "--porcelain")
@@ -237,6 +238,9 @@ def _list_worktrees() -> list[dict]:
             current["bare"] = True
         elif line == "detached":
             current["detached"] = True
+        elif line.partition(" ")[0] in ("locked", "prunable"):
+            key, _, reason = line.partition(" ")
+            current[key] = reason
     if current:
         entries.append(current)
     return entries
@@ -250,6 +254,61 @@ def _branch_fully_merged_into_main(branch_ref: str) -> bool:
     return r.returncode == 0 and not r.stdout.strip()
 
 
+# A merged worktree used this recently may back a live session: a fresh session worktree
+# starts at main's tip, so it always counts as merged. Idle ones are still cleaned.
+RECENT_WORKTREE_HOURS = 72.0
+# Claude Code's per-worktree write log. `!.claude/**` un-ignores it, so it shows as untracked;
+# it is never work, so it neither blocks cleanup nor counts as a change.
+CC_WRITES = ".claude/.cc-writes"
+
+
+def _worktree_idle_hours(path: str) -> float | None:
+    """Hours since the newest sign of use: the folder, its git admin files, Claude's write log."""
+    root = Path(path)
+    probes = [root, root / CC_WRITES]
+    admin = git("-C", path, "rev-parse", "--absolute-git-dir").stdout.strip()
+    if admin:
+        probes += [Path(admin), Path(admin) / "index", Path(admin) / "HEAD", Path(admin) / "logs" / "HEAD"]
+    stamps = []
+    for p in probes:
+        try:
+            stamps.append(p.stat().st_mtime)
+        except OSError:
+            continue
+    return (time.time() - max(stamps)) / 3600 if stamps else None
+
+
+def _worktree_keep_reason(path: str, entry: dict) -> tuple[str, bool]:
+    """(reason, needs_review) for keeping a merged worktree; ("", False) means it may go.
+
+    Locked or recently used worktrees may back a live session, so they stay without a notice.
+    Uncommitted work stays and is reported. The root check runs first because
+    `git -C <folder>` on a folder that is not a worktree walks up to the parent checkout.
+    """
+    if "locked" in entry:
+        return "locked", False
+    if "prunable" in entry:
+        return "folder is gone; `git worktree prune` clears the stale entry", True
+    top = git("-C", path, "rev-parse", "--show-toplevel").stdout.strip()
+    try:
+        rooted = bool(top) and Path(top).resolve() == Path(path).resolve()
+    except Exception:
+        rooted = False
+    if not rooted:
+        return "not its own worktree root; manual cleanup required", True
+    idle = _worktree_idle_hours(path)
+    if idle is None or idle < RECENT_WORKTREE_HOURS:
+        return "recently used; may back a live session", False
+    # GIT_OPTIONAL_LOCKS=0: status must not rewrite the index, or the tree would look freshly used.
+    st = git("-C", path, "status", "--porcelain", "--", ".", f":(exclude){CC_WRITES}",
+             timeout=GIT_WRITE_TIMEOUT_S, env={**os.environ, "GIT_OPTIONAL_LOCKS": "0"})
+    if st.returncode != 0:
+        return "`git status` failed; manual review needed", True
+    if st.stdout.strip():
+        return f"{len(st.stdout.splitlines())} uncommitted change(s); manual review needed", True
+    return "", False
+
+
 def _cleanup_stale_worktrees() -> tuple[list[str], list[str]]:
     """Auto-remove fully-merged Drive-resident worktrees.
 
@@ -257,8 +316,14 @@ def _cleanup_stale_worktrees() -> tuple[list[str], list[str]]:
     - Nested: path lies under WORKSPACE_ROOT + os.sep. Worktrees elsewhere (e.g.
       ~/.claude-worktrees/, or sibling `<root>.intent-*` wave worktrees) are skipped —
       those may be parked work the user wants to keep.
-    - Branch fully merged into main: `main..branch` is empty. Means main has every
-      commit, so removing the worktree's working-tree copy loses nothing.
+    - Branch fully merged into main: `main..branch` is empty. Not enough on its own: a
+      fresh session worktree starts at main's tip, and a merged branch can still hold
+      uncommitted work (2026-10-14: a live session's worktree was force-removed twice,
+      the second time with an edit in it). So it must also be:
+    - Unlocked and idle for RECENT_WORKTREE_HOURS. Claude locks session worktrees, and
+      recent use may mean a live session. These stay without a notice.
+    - Clean apart from Claude's write log (.claude/.cc-writes). Dirty trees stay and are
+      reported for manual review.
     - Not the current worktree: git refuses self-removal anyway, but skip explicitly.
     - Not the main working tree: never auto-remove the canonical checkout.
 
@@ -318,7 +383,14 @@ def _cleanup_stale_worktrees() -> tuple[list[str], list[str]]:
         if not _branch_fully_merged_into_main(branch):
             skipped.append(f"{path}: {branch} has commits not in main; manual review needed")
             continue
+        keep, review = _worktree_keep_reason(path, entry)
+        if keep:
+            if review:
+                skipped.append(f"{path}: {keep}")
+            continue
 
+        # --force only clears Claude's untracked write log: the checks above proved the tree
+        # is otherwise clean, unlocked and idle.
         rm = git("worktree", "remove", "--force", path, timeout=GIT_WRITE_TIMEOUT_S)
         if rm.returncode != 0:
             skipped.append(f"{path}: `git worktree remove` failed — {rm.stderr.strip()}")
