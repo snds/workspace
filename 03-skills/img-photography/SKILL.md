@@ -4,11 +4,12 @@ description: >
   The camera as a physical instrument — the exposure triangle (aperture, shutter, ISO),
   the sensor + dynamic range, the lens (focal length, field of view, depth of field, bokeh,
   aberrations), white balance, and why HDR capture + tonemapping exist. The basis for a
-  physically-based virtual camera. Triggers: exposure, aperture, f-stop, shutter speed, ISO,
-  depth of field, bokeh, focal length, field of view, dynamic range, white balance, EV,
-  sensor, camera lens, motion blur.
+  physically-based virtual camera. Triggers: exposure triangle, exposure value, exposure
+  compensation, overexposed, underexposed, aperture, f-stop, shutter speed, ISO sensitivity, ISO setting,
+  depth of field, bokeh, focal length, field of view, dynamic range, white balance, EV stops, camera sensor,
+  image sensor, sensor size, camera lens, motion blur.
 aliases: [img-photography]
-triggers: [exposure, aperture, f-stop, shutter speed, iso, depth of field, bokeh, focal length, field of view, dynamic range, white balance, ev, sensor, camera lens, motion blur]
+triggers: [exposure triangle, exposure value, exposure compensation, overexposed, underexposed, aperture, f-stop, shutter speed, iso sensitivity, iso setting, depth of field, bokeh, focal length, field of view, dynamic range, white balance, ev stops, camera sensor, image sensor, sensor size, camera lens, motion blur]
 tier: foundation
 hub: imaging-foundations
 domain: imaging

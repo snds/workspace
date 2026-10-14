@@ -5,11 +5,11 @@ description: >
   and machine learning — linear algebra, numerical methods, classical mechanics, and
   probability. Load before any specialty that does real math: a game engine, a shader,
   a physics step, an ML model. The substrate beneath game development, real-time
-  rendering, and data science. Triggers: math, physics, linear algebra, vector math, matrix,
-  quaternion, simulation, numerical methods, numerical integration, probability, Monte Carlo,
-  collision detection.
+  rendering, and data science. Triggers: applied math, physics engine, game physics,
+  physics simulation, linear algebra, vector math, matrix math, quaternion, numerical simulation,
+  numerical methods, numerical integration, probability distribution, Monte Carlo, collision detection.
 aliases: [science-foundations]
-triggers: [math, physics, linear algebra, vector math, matrix, quaternion, transform matrix, simulation, numerical methods, numerical integration, probability, monte carlo, collision detection, classical mechanics]
+triggers: [applied math, physics engine, game physics, physics simulation, linear algebra, vector math, matrix math, quaternion, transform matrix, numerical simulation, numerical methods, numerical integration, probability distribution, monte carlo, collision detection, classical mechanics]
 tier: foundation
 domain: science
 surfaces: ["*"]

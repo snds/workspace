@@ -5,10 +5,11 @@ description: >
   lifetime), simulation-driven FX (fluids, smoke/fire, cloth, destruction), volumetrics
   (fog, god rays, atmospheric scattering), shader-driven effects, and compositing (additive
   vs. alpha, bloom, the "sell it" layering). The theory beneath real-time VFX. Triggers: vfx,
-  particles, particle system, simulation, fluid, smoke, fire, volumetrics, god rays,
-  atmospheric scattering, compositing, bloom, dissolve, trail, emitter.
+  particles, particle system, fluid simulation, smoke simulation, smoke effect, fire effect, volumetrics,
+  god rays, atmospheric scattering, compositing, bloom pass, bloom effect, dissolve shader, particle trail,
+  particle emitter.
 aliases: [img-vfx]
-triggers: [vfx, particles, particle system, simulation, fluid, smoke, fire effect, volumetrics, god rays, atmospheric scattering, compositing, bloom, dissolve, trail, emitter]
+triggers: [vfx, particles, particle system, fluid simulation, smoke simulation, smoke effect, fire effect, volumetrics, god rays, atmospheric scattering, compositing, bloom pass, bloom effect, dissolve shader, particle trail, particle emitter]
 tier: foundation
 hub: imaging-foundations
 domain: imaging

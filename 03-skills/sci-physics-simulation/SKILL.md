@@ -4,11 +4,12 @@ description: >
   Context-free classical mechanics for real-time simulation — kinematics + dynamics
   (F=ma), rigid bodies (linear + angular), the fixed-timestep loop, collision detection
   (broad/narrow phase) and response (impulses, restitution, friction), and constraints.
-  The physics a game engine actually runs. Triggers: physics, simulation, rigid body,
-  collision detection, collision response, impulse, restitution, friction coefficient,
+  The physics a game engine actually runs. Triggers: physics engine, game physics, physics
+  simulation, rigid body, collision detection, collision response, collision impulse, impulse solver,
+  apply an impulse, restitution, friction coefficient,
   constraint solver, fixed timestep, kinematics, rigid-body dynamics, broadphase, AABB, GJK.
 aliases: [sci-physics-simulation]
-triggers: [physics, simulation, rigid body, collision detection, collision response, impulse, restitution, friction coefficient, constraint solver, physics constraint, fixed timestep, kinematics, rigid-body dynamics, broadphase, aabb, gjk]
+triggers: [physics engine, game physics, physics simulation, rigid body, collision detection, collision response, collision impulse, impulse solver, apply an impulse, restitution, friction coefficient, constraint solver, physics constraint, fixed timestep, kinematics, rigid-body dynamics, broadphase, aabb, gjk]
 tier: foundation
 hub: science-foundations
 domain: science

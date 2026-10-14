@@ -5,11 +5,11 @@ description: >
   captures it, how a renderer simulates it photorealistically, and how cinematography +
   VFX compose it. Load before any lighting, material, shader, rendering, or camera work.
   Engine-agnostic principle with explicit Three.js/WebGPU corollaries — the route to pull
-  Unreal/Unity-grade photorealism into a web engine. Triggers: light transport, optics, exposure,
-  camera, camera lens, PBR, BRDF, global illumination, ray tracing, path tracing, tonemapping,
+  Unreal/Unity-grade photorealism into a web engine. Triggers: light transport, optics, auto exposure,
+  exposure value, virtual camera, physical camera, camera model, camera lens, PBR, BRDF, global illumination, ray tracing, path tracing, tonemapping,
   HDR, cinematography, VFX, photorealism, rendering equation.
 aliases: [imaging-foundations]
-triggers: [light transport, optics, exposure, camera, camera lens, pbr, brdf, global illumination, ray tracing, path tracing, tonemapping, hdr, cinematography, vfx, photorealism, rendering equation, image based lighting]
+triggers: [light transport, optics, auto exposure, exposure value, virtual camera, physical camera, camera model, camera lens, pbr, brdf, global illumination, ray tracing, path tracing, tonemapping, hdr, cinematography, vfx, photorealism, rendering equation, image based lighting]
 tier: foundation
 domain: imaging
 surfaces: ["*"]

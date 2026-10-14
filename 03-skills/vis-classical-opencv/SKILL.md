@@ -5,10 +5,11 @@ description: >
   backbone under every deep pipeline. Filtering, edges, contours, morphology, color spaces;
   feature detection + matching (SIFT/ORB/AKAZE); geometric vision — camera calibration, undistortion,
   homography, epipolar geometry, stereo, optical flow, pose (PnP). Reach here when the answer is
-  geometry or signal processing, not a neural net. Triggers: opencv, image processing, filtering,
-  edges, contours, feature matching, SIFT, ORB features, homography, calibration, optical flow, stereo, PnP.
+  geometry or signal processing, not a neural net. Triggers: opencv, image processing, gaussian kernel,
+  gaussian filter, cvtColor, HSV threshold, contours, feature matching, SIFT, ORB features, homography,
+  camera calibration, optical flow, stereo vision, stereo matching, stereo depth, stereo rectification, PnP.
 aliases: [vis-classical-opencv, opencv, classical-cv]
-triggers: [opencv, image processing, gaussian blur, canny, contours, morphology, color space, feature matching, sift, orb features, orb descriptor, akaze, homography, camera calibration, undistortion, epipolar, stereo, optical flow, pnp, pose estimation]
+triggers: [opencv, image processing, gaussian kernel, gaussian filter, canny, contours, morphology, cvtcolor, hsv threshold, feature matching, sift, orb features, orb descriptor, akaze, homography, camera calibration, undistortion, epipolar, stereo vision, stereo matching, stereo depth, stereo rectification, stereo camera, optical flow, pnp, pose estimation]
 tier: spoke
 hub: vision-foundations
 domain: vision

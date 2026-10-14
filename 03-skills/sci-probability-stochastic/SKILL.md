@@ -4,10 +4,12 @@ description: >
   Context-free probability + stochastic methods — distributions, sampling, seeded RNG,
   coherent noise (Perlin/simplex/value/worley), and Monte Carlo. The math behind
   procedural generation, particle/VFX variation, AI decision-making, and the sampling
-  core of ML/rendering. Triggers: probability, distribution, random, RNG, seed, sampling,
-  noise, Perlin, simplex, procedural generation, Monte Carlo, weighted random, gaussian.
+  core of ML/rendering. Triggers: probability distribution, probability theory,
+  normal distribution, uniform distribution, random number, pseudo random, RNG, random seed, seeded random,
+  importance sampling, stratified sampling, noise function, value noise, gradient noise, Perlin, simplex,
+  procedural generation, Monte Carlo, weighted random, gaussian distribution.
 aliases: [sci-probability-stochastic]
-triggers: [probability, distribution, random, rng, seed, sampling, noise, perlin, simplex, procedural generation, monte carlo, weighted random, gaussian]
+triggers: [probability distribution, probability theory, normal distribution, uniform distribution, random number, pseudo random, rng, random seed, seeded random, importance sampling, stratified sampling, noise function, value noise, gradient noise, perlin, simplex, procedural generation, monte carlo, weighted random, gaussian distribution]
 tier: foundation
 hub: science-foundations
 domain: science

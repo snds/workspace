@@ -3664,8 +3664,11 @@
       "triggers": [
         "light transport",
         "optics",
-        "exposure",
-        "camera",
+        "auto exposure",
+        "exposure value",
+        "virtual camera",
+        "physical camera",
+        "camera model",
         "camera lens",
         "pbr",
         "brdf",
@@ -3686,7 +3689,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:7b97f54e1edfa9810f3d2db1b19a852eb12dff249b7303f589d2b1d4ff065342"
+      "hash": "sha256:d60fa74363341e6d81d9f95857f4e44f8a26554ec376a32a75dd63467c425101"
     },
     "img-cinematography": {
       "path": "03-skills/img-cinematography/SKILL.md",
@@ -3763,19 +3766,26 @@
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "exposure",
+        "exposure triangle",
+        "exposure value",
+        "exposure compensation",
+        "overexposed",
+        "underexposed",
         "aperture",
         "f-stop",
         "shutter speed",
-        "iso",
+        "iso sensitivity",
+        "iso setting",
         "depth of field",
         "bokeh",
         "focal length",
         "field of view",
         "dynamic range",
         "white balance",
-        "ev",
-        "sensor",
+        "ev stops",
+        "camera sensor",
+        "image sensor",
+        "sensor size",
         "camera lens",
         "motion blur"
       ],
@@ -3785,7 +3795,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:6a8452f9a397d9f4bcd8b45d36ffcf496037d30e2ffba2b140695e2b774e7c9e"
+      "hash": "sha256:646b7f36a6ebe337104d99fb3f5a88fa705c6bc9a564c5d8cf85e59f7ba41a4e"
     },
     "img-photoreal-rendering": {
       "path": "03-skills/img-photoreal-rendering/SKILL.md",
@@ -3835,18 +3845,19 @@
         "vfx",
         "particles",
         "particle system",
-        "simulation",
-        "fluid",
-        "smoke",
+        "fluid simulation",
+        "smoke simulation",
+        "smoke effect",
         "fire effect",
         "volumetrics",
         "god rays",
         "atmospheric scattering",
         "compositing",
-        "bloom",
-        "dissolve",
-        "trail",
-        "emitter"
+        "bloom pass",
+        "bloom effect",
+        "dissolve shader",
+        "particle trail",
+        "particle emitter"
       ],
       "surfaces": [
         "*"
@@ -3854,7 +3865,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:2ebe1f10b3e22a8da4d74917bb76f852f570dc71758dc377d7ac5981746afcac"
+      "hash": "sha256:e0b9acb5e5a9b67e4e69084f933877737990ddf6a3d472115e676f7c8cdf81b2"
     },
     "infod-dashboard-patterns": {
       "path": "03-skills/infod-dashboard-patterns/SKILL.md",
@@ -6305,7 +6316,10 @@
       "triggers": [
         "vector math",
         "unit vector",
-        "matrix",
+        "matrix math",
+        "matrix multiplication",
+        "4x4 matrix",
+        "inverse matrix",
         "quaternion",
         "dot product",
         "cross product",
@@ -6325,7 +6339,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:227b3f120bdbb6172a469d1bb444dfedad83ac71325ada7a10637772b6b6bee4"
+      "hash": "sha256:6d21c7bb0970d811678d1779d56b142aa7808e24bd1f4113f33991ec75aeea1e"
     },
     "sci-numerical-methods": {
       "path": "03-skills/sci-numerical-methods/SKILL.md",
@@ -6369,12 +6383,15 @@
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "physics",
-        "simulation",
+        "physics engine",
+        "game physics",
+        "physics simulation",
         "rigid body",
         "collision detection",
         "collision response",
-        "impulse",
+        "collision impulse",
+        "impulse solver",
+        "apply an impulse",
         "restitution",
         "friction coefficient",
         "constraint solver",
@@ -6392,7 +6409,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:ba70dc6e7466632db126d728ba5ce9bae582520170f5e5a0720aa71611d0eb41"
+      "hash": "sha256:78237c9e0f6c1eb8f6f9f3cc3e9a31a355517c3608e13a0f2cc5e5fb222a9dd0"
     },
     "sci-probability-stochastic": {
       "path": "03-skills/sci-probability-stochastic/SKILL.md",
@@ -6404,19 +6421,26 @@
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "probability",
-        "distribution",
-        "random",
+        "probability distribution",
+        "probability theory",
+        "normal distribution",
+        "uniform distribution",
+        "random number",
+        "pseudo random",
         "rng",
-        "seed",
-        "sampling",
-        "noise",
+        "random seed",
+        "seeded random",
+        "importance sampling",
+        "stratified sampling",
+        "noise function",
+        "value noise",
+        "gradient noise",
         "perlin",
         "simplex",
         "procedural generation",
         "monte carlo",
         "weighted random",
-        "gaussian"
+        "gaussian distribution"
       ],
       "surfaces": [
         "*"
@@ -6424,7 +6448,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:0c6c0beec6a1953cb0db5bc3c7859ec5d6d3294687a06edb28b002c686c52493"
+      "hash": "sha256:b4111dd9fb8c00c4e79977378730a57bf7ae91a46fcd1c584f4521099b12c70f"
     },
     "science-foundations": {
       "path": "03-skills/science-foundations/SKILL.md",
@@ -6436,17 +6460,19 @@
       "governed_by": [],
       "governs": [],
       "triggers": [
-        "math",
-        "physics",
+        "applied math",
+        "physics engine",
+        "game physics",
+        "physics simulation",
         "linear algebra",
         "vector math",
-        "matrix",
+        "matrix math",
         "quaternion",
         "transform matrix",
-        "simulation",
+        "numerical simulation",
         "numerical methods",
         "numerical integration",
-        "probability",
+        "probability distribution",
         "monte carlo",
         "collision detection",
         "classical mechanics"
@@ -6457,7 +6483,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:5b6ff0822f3c5d61aa0f2fcee4e52c2d1fac152c195500986f139f4c1666f02e"
+      "hash": "sha256:77d28a45e2e6e8caa3e09f0631ccaa7843d03d1fc8da6f2a64bc9c5c30a037a9"
     },
     "sec-appsec-owasp": {
       "path": "03-skills/sec-appsec-owasp/SKILL.md",
@@ -7766,11 +7792,13 @@
       "triggers": [
         "opencv",
         "image processing",
-        "gaussian blur",
+        "gaussian kernel",
+        "gaussian filter",
         "canny",
         "contours",
         "morphology",
-        "color space",
+        "cvtcolor",
+        "hsv threshold",
         "feature matching",
         "sift",
         "orb features",
@@ -7780,7 +7808,11 @@
         "camera calibration",
         "undistortion",
         "epipolar",
-        "stereo",
+        "stereo vision",
+        "stereo matching",
+        "stereo depth",
+        "stereo rectification",
+        "stereo camera",
         "optical flow",
         "pnp",
         "pose estimation"
@@ -7791,7 +7823,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:8ad76ba55fdb95667e7718fed1a0794da5b971f562689f9be5dff6c94d3bf8a0"
+      "hash": "sha256:60d485e856b0adee67291e3998fcfe54cab6232288a14ed9dfbe29e5ff4ba00d"
     },
     "vis-detection-tracking": {
       "path": "03-skills/vis-detection-tracking/SKILL.md",

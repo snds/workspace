@@ -4,10 +4,11 @@ description: >
   Context-free linear algebra for spatial computing — vectors, matrices, quaternions,
   bases and change-of-basis, affine vs. linear transforms, projection, and the camera/MVP
   pipeline. The backbone of every engine, shader, and rendering path. Triggers: vector math,
-  matrix, quaternion, dot/cross product, transform matrix, affine transform, rotation matrix,
-  change of basis, projection matrix, MVP matrix, homogeneous coordinates, normal matrix, SLERP.
+  matrix math, matrix multiplication, 4x4 matrix, inverse matrix, quaternion, dot/cross product,
+  transform matrix, affine transform, rotation matrix, change of basis, projection matrix, MVP matrix,
+  homogeneous coordinates, normal matrix, SLERP.
 aliases: [sci-linear-algebra]
-triggers: [vector math, unit vector, matrix, quaternion, dot product, cross product, transform matrix, affine transform, rotation matrix, change of basis, projection matrix, mvp matrix, homogeneous coordinates, slerp, normal matrix]
+triggers: [vector math, unit vector, matrix math, matrix multiplication, 4x4 matrix, inverse matrix, quaternion, dot product, cross product, transform matrix, affine transform, rotation matrix, change of basis, projection matrix, mvp matrix, homogeneous coordinates, slerp, normal matrix]
 tier: foundation
 hub: science-foundations
 domain: science

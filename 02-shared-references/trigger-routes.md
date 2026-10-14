@@ -346,18 +346,18 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `found-perception` | foundation | `gestalt`, `figure ground`, `visual perception`, `pre-attentive`, `visual weight`, `optical adjustment` (+4) | `design-foundations` → `found-perception` |
 | `found-typography` | foundation | `typography`, `type hierarchy`, `type scale`, `leading`, `measure`, `letterform` (+4) | `design-foundations` → `found-typography` |
 | `game-foundations` | foundation | `game design`, `core loop`, `game feel`, `player experience`, `game balance`, `progression` (+4) | `game-foundations` |
-| `imaging-foundations` | foundation | `light transport`, `optics`, `exposure`, `camera`, `camera lens`, `pbr` (+11) | `imaging-foundations` |
+| `imaging-foundations` | foundation | `light transport`, `optics`, `auto exposure`, `exposure value`, `virtual camera`, `physical camera` (+14) | `imaging-foundations` |
 | `img-cinematography` | foundation | `cinematography`, `shot`, `framing`, `composition`, `camera movement`, `dolly` (+8) | `imaging-foundations` → `img-cinematography` |
 | `img-optics-light` | foundation | `radiometry`, `photometry`, `irradiance`, `radiance`, `flux`, `inverse square` (+7) | `imaging-foundations` → `img-optics-light` |
-| `img-photography` | foundation | `exposure`, `aperture`, `f-stop`, `shutter speed`, `iso`, `depth of field` (+9) | `imaging-foundations` → `img-photography` |
+| `img-photography` | foundation | `exposure triangle`, `exposure value`, `exposure compensation`, `overexposed`, `underexposed`, `aperture` (+16) | `imaging-foundations` → `img-photography` |
 | `img-photoreal-rendering` | foundation | `pbr`, `physically based rendering`, `brdf`, `metallic roughness`, `global illumination`, `ray tracing` (+10) | `imaging-foundations` → `img-photoreal-rendering` |
-| `img-vfx` | foundation | `vfx`, `particles`, `particle system`, `simulation`, `fluid`, `smoke` (+9) | `imaging-foundations` → `img-vfx` |
+| `img-vfx` | foundation | `vfx`, `particles`, `particle system`, `fluid simulation`, `smoke simulation`, `smoke effect` (+10) | `imaging-foundations` → `img-vfx` |
 | `product-foundations` | foundation | `product strategy`, `outcomes over output`, `jobs to be done`, `jtbd`, `prioritization`, `discovery` (+2) | `product-foundations` |
-| `sci-linear-algebra` | foundation | `vector math`, `unit vector`, `matrix`, `quaternion`, `dot product`, `cross product` (+9) | `science-foundations` → `sci-linear-algebra` |
+| `sci-linear-algebra` | foundation | `vector math`, `unit vector`, `matrix math`, `matrix multiplication`, `4x4 matrix`, `inverse matrix` (+12) | `science-foundations` → `sci-linear-algebra` |
 | `sci-numerical-methods` | foundation | `floating point`, `epsilon`, `interpolation`, `lerp`, `easing`, `numerical integration` (+7) | `science-foundations` → `sci-numerical-methods` |
-| `sci-physics-simulation` | foundation | `physics`, `simulation`, `rigid body`, `collision detection`, `collision response`, `impulse` (+10) | `science-foundations` → `sci-physics-simulation` |
-| `sci-probability-stochastic` | foundation | `probability`, `distribution`, `random`, `rng`, `seed`, `sampling` (+7) | `science-foundations` → `sci-probability-stochastic` |
-| `science-foundations` | foundation | `math`, `physics`, `linear algebra`, `vector math`, `matrix`, `quaternion` (+8) | `science-foundations` |
+| `sci-physics-simulation` | foundation | `physics engine`, `game physics`, `physics simulation`, `rigid body`, `collision detection`, `collision response` (+13) | `science-foundations` → `sci-physics-simulation` |
+| `sci-probability-stochastic` | foundation | `probability distribution`, `probability theory`, `normal distribution`, `uniform distribution`, `random number`, `pseudo random` (+14) | `science-foundations` → `sci-probability-stochastic` |
+| `science-foundations` | foundation | `applied math`, `physics engine`, `game physics`, `physics simulation`, `linear algebra`, `vector math` (+10) | `science-foundations` |
 | `vision-foundations` | foundation | `computer vision`, `machine vision`, `image classification`, `object detection`, `image segmentation`, `feature extraction` (+9) | `vision-foundations` |
 | `adobe-app-builder` | hub | `adobe app builder`, `app builder`, `aio cli`, `aio app init`, `aio app deploy`, `adobe i/o runtime` (+9) | `eng-foundations` → `adobe-app-builder` |
 | `arch-guild` | hub | `arch guild`, `architecture review`, `multi-voice review`, `dijkstra`, `lamport`, `knuth` (+1) | `eng-foundations` → `arch-guild` |
