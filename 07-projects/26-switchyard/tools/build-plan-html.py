@@ -9,32 +9,38 @@ rules, inline code, bold, italics and links. Links between plan files become
 in-page anchors. Edit the markdown and re-run; never edit the HTML by hand.
 """
 import html
+import os
 import re
 import sys
 from pathlib import Path
 
 ORDER = [
-    ("00-overview.md", "Overview"),
-    ("01-systems.md", "Systems"),
-    ("02-integrations.md", "Integrations"),
-    ("03-how-it-works.md", "How it works"),
-    ("04-security.md", "Security"),
-    ("05-vaultwarden.md", "Vaultwarden"),
-    ("06-implementation-plan.md", "Plan and phases"),
-    ("07-commercial-path.md", "Commercial path"),
-    ("decisions.md", "Decision log"),
+    # (path relative to plan/, nav label, section number, nav group)
+    ("00-big-picture.md", "Big picture", "00", "Plan"),
+    ("01-workspace-model.md", "Workspace model", "01", "Plan"),
+    ("02-architecture.md", "Architecture", "02", "Plan"),
+    ("03-app-experience.md", "App experience", "03", "Plan"),
+    ("04-generator-and-importer.md", "Create and import", "04", "Plan"),
+    ("05-measurement.md", "Measurement", "05", "Plan"),
+    ("06-security.md", "Security", "06", "Plan"),
+    ("07-roadmap.md", "Roadmap", "07", "Plan"),
+    ("08-commercial-path.md", "Commercial path", "08", "Plan"),
+    ("decisions.md", "Decision log", "—", "Plan"),
+    ("access/00-overview.md", "Overview", "A0", "Personas & access module"),
+    ("access/01-systems.md", "Systems", "A1", "Personas & access module"),
+    ("access/02-integrations.md", "Integrations", "A2", "Personas & access module"),
+    ("access/03-how-it-works.md", "How it works", "A3", "Personas & access module"),
+    ("access/04-security.md", "Security", "A4", "Personas & access module"),
+    ("access/05-vaultwarden.md", "Vaultwarden", "A5", "Personas & access module"),
+    ("access/06-phases.md", "Phases", "A6", "Personas & access module"),
 ]
-FILES = {name for name, _ in ORDER}
+IDS = {path: "d" + re.sub(r"[^a-z0-9]", "", num.lower()) if num != "—" else "dlog" for path, _, num, _ in ORDER}
 
 LIST_RE = re.compile(r"^(\s*)([-*]|\d+\.)(\s+)(.*)$")
 
 
-def doc_id(name):
-    return "d" + name[:2] if name[0].isdigit() else "dlog"
-
-
-def doc_num(name):
-    return name[:2] if name[0].isdigit() else "—"
+def doc_id(doc):
+    return IDS[doc]
 
 
 def slug(text):
@@ -53,10 +59,9 @@ def resolve(href, doc):
     if href.startswith("#"):
         return f"#{doc_id(doc)}-{href[1:]}"
     path, _, frag = href.partition("#")
-    name = Path(path).name
-    if name in FILES:
-        target = doc_id(name)
-        return f"#{target}-{frag}" if frag else f"#{target}"
+    target = os.path.normpath(os.path.join(os.path.dirname(doc), path)).replace(os.sep, "/")
+    if target in IDS:
+        return f"#{IDS[target]}-{frag}" if frag else f"#{IDS[target]}"
     return None
 
 
@@ -241,23 +246,27 @@ def strip_frontmatter(text):
 
 
 def build(plan_dir, out_path):
-    sections, nav = [], []
-    for name, short in ORDER:
-        src = strip_frontmatter((plan_dir / name).read_text(encoding="utf-8"))
+    sections, groups = [], {}
+    for path, short, num, group in ORDER:
+        src = strip_frontmatter((plan_dir / path).read_text(encoding="utf-8"))
         lines = src.splitlines()
         title = next((l[2:].strip() for l in lines if l.startswith("# ")), short)
-        title = re.sub(r"^Switchyard\s+—\s+", "", title)
-        did = doc_id(name)
-        nav.append(
-            f'<li><a href="#{did}"><span class="num">{doc_num(name)}</span>{html.escape(short)}</a></li>'
+        title = re.sub(r"^(Switchyard|Personas & access)\s+—\s+", "", title)
+        did = doc_id(path)
+        groups.setdefault(group, []).append(
+            f'<li><a href="#{did}"><span class="num">{num}</span>{html.escape(short)}</a></li>'
         )
+        kicker = '<span class="kicker">Personas &amp; access module</span>' if path.startswith("access/") else ""
         sections.append(
             f'<section class="doc" id="{did}" aria-labelledby="{did}-title">'
-            f'<header class="doc-head"><span class="doc-num">{doc_num(name)}</span>'
-            f'<h2 id="{did}-title">{inline(title, name)}</h2></header>'
-            f"{render(lines, name)}</section>"
+            f'<header class="doc-head"><span class="doc-num">{num}</span>'
+            f'<div>{kicker}<h2 id="{did}-title">{inline(title, path)}</h2></div></header>'
+            f"{render(lines, path)}</section>"
         )
-    page = TEMPLATE.replace("{{NAV}}", "".join(nav)).replace("{{SECTIONS}}", "".join(sections))
+    nav = "".join(
+        f'<h2>{html.escape(g)}</h2><ol>{"".join(items)}</ol>' for g, items in groups.items()
+    )
+    page = TEMPLATE.replace("{{NAV}}", nav).replace("{{SECTIONS}}", "".join(sections))
     out_path.write_text(page, encoding="utf-8")
 
 
@@ -295,7 +304,7 @@ TEMPLATE = """<title>Switchyard Plan</title>
 }
 html { scroll-behavior: smooth; scroll-padding-top: 16px; }
 body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.62; }
-.page { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 36px 72px; display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 0 48px; }
+.page { max-width: 1200px; margin: 0 auto; padding-inline: 20px; padding-block: 36px 72px; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 0 44px; }
 .masthead { grid-column: 1 / -1; display: grid; gap: 12px; padding-bottom: 26px; margin-bottom: 8px; border-bottom: 2px solid var(--fg); }
 .meta { font-family: var(--mono); font-size: 12.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 16px; }
 .meta .status { color: var(--signal); font-weight: 500; }
@@ -304,7 +313,9 @@ h1 { font-family: var(--display); font-weight: 700; font-stretch: 87%; font-size
 .facts { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 4px 0 0; padding: 0; list-style: none; font-size: 14px; color: var(--muted); }
 .facts b { font-family: var(--mono); font-weight: 500; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-right: 6px; }
 nav.toc { position: sticky; top: 16px; align-self: start; padding-top: 22px; }
-nav.toc h2 { font-family: var(--mono); font-size: 11.5px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+nav.toc h2 { font-family: var(--mono); font-size: 11.5px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 18px 0 8px; }
+nav.toc h2:first-child { margin-top: 0; }
+.kicker { display: block; font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--signal); margin-bottom: 4px; }
 nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
 nav.toc a { display: flex; gap: 10px; align-items: baseline; padding: 5px 8px; border-radius: 4px; color: var(--fg); text-decoration: none; font-size: 14.5px; }
 nav.toc a:hover { background: var(--accent-soft); }
@@ -347,6 +358,7 @@ footer { grid-column: 2; padding-top: 22px; font-family: var(--mono); font-size:
   .page { grid-template-columns: minmax(0, 1fr); }
   nav.toc { position: static; padding-top: 14px; }
   nav.toc ol { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; }
+  nav.toc h2 { margin: 10px 0 6px; }
   nav.toc a { white-space: nowrap; border: 1px solid var(--rule); background: var(--surface); }
   footer { grid-column: 1; }
   .lede { font-size: 17px; }
@@ -357,19 +369,19 @@ footer { grid-column: 2; padding-top: 22px; font-family: var(--mono); font-size:
 
 <div class="page">
   <header class="masthead">
-    <div class="meta"><span>Plan set v1.0</span><span class="status">Draft for review</span><span>2026-10-14</span><span>Sean Sands</span></div>
+    <div class="meta"><span>Plan set v2.0</span><span class="status">Draft for review</span><span>2026-10-14</span><span>Sean Sands</span></div>
     <h1>Switchyard</h1>
-    <p class="lede">A background app for Mac and Windows that gives every tool the right login for the project it is working in. Rules pick the account. Secrets stay on each device. Problems show up in the menu bar or tray before a tool fails.</p>
+    <p class="lede">A desktop app and tray service for Mac and Windows that makes an AI workspace visible and manageable. It reads and writes the same plain files agents and Obsidian use. It runs its checks without an agent, creates and imports workspaces with measured results, and keeps each persona's accounts and tools apart.</p>
     <ul class="facts">
       <li><b>Platforms</b>macOS and Windows</li>
+      <li><b>Source of truth</b>plain files in git</li>
       <li><b>Stack</b>Rust and Tauri 2</li>
-      <li><b>Passwords</b>Vaultwarden on Unraid</li>
-      <li><b>Phases</b>0–4 personal, 5 if commercial</li>
+      <li><b>North star</b>your workspace</li>
+      <li><b>Stages</b>0–6 personal, 7 if commercial</li>
     </ul>
   </header>
   <nav class="toc" aria-label="Plan documents">
-    <h2>Contents</h2>
-    <ol>{{NAV}}</ol>
+    {{NAV}}
   </nav>
   <main>{{SECTIONS}}</main>
   <footer>Generated from 07-projects/26-switchyard/plan/ by tools/build-plan-html.py. Edit the markdown, then rebuild.</footer>

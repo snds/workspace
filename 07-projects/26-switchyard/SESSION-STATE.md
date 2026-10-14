@@ -13,8 +13,8 @@ _Last updated: 2026-10-14 — checkpoint (plan set drafted)_
 - **Working set**: `07-projects/26-switchyard/plan/*.md` (source). `05-artifacts/active/switchyard-plan_v1.0_2026-10-14.html` (generated readable copy).
 - **Last action**: Wrote the plan set: overview, systems, integrations, how it works, security, Vaultwarden, implementation plan, commercial path and decision log. Published the readable copy. By Claude Opus 5.5 · Claude Code · Work MBP.
 - **Next action**: After Sean's go, run Phase 0. Create `~/Projects/switchyard` and `snds/switchyard`, move `plan/` to `docs/`, set up CI and signing, and run spikes SP1–SP6 (see `plan/06-implementation-plan.md`). Track V1 (deploy Vaultwarden) can start at any time.
-- **Open decisions**: Windows PC personal-only? Meaning of "account thresholds" (assumed: per-account limits). Employer IT policy check before Phase 2 on the Work MBP.
-- **Blocked on**: Sean's review.
+- **Open decisions**: Sean answered all three on 2026-10-14. (1) The Windows PC is personal-only. (2) Thresholds mean per-account limits, and users define what counts as personal or employer: either one surface per persona, or duplicate installs of the same surface (for example two Claude desktop apps). (3) Employer IT allows it. **Pivot proposed:** merge Switchyard and the `wsx` generator into one desktop workspace app, with the credential routing as one part. Sean's workspace is the north star, there is an importer, and output must be measurable. Claude played the pivot back to Sean; his confirmation is pending before any plan rewrite.
+- **Blocked on**: Sean confirming the read-back of the pivot.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude/Claude Code (2026-10-14): feasibility, then one-page proposal, then full plan set.
 

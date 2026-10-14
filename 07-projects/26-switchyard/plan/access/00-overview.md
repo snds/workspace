@@ -1,16 +1,18 @@
 ---
-title: Switchyard — Overview
+title: Personas & access — Overview
 type: plan
 project: 26-switchyard
 status: draft
 updated: 2026-10-14
 ---
 
-# Switchyard — Overview
+# Personas & access — Overview
 
-**TL;DR:** Switchyard is a background app for Mac and Windows. It gives every tool the right login for the project it is working in. You sign in once per account on each device. Rules you write once decide which account each request gets. When something goes wrong, the menu bar or system tray tells you.
+> **Module of the workspace app (2026-10-14).** This folder was the whole Switchyard plan until Sean widened the product to a desktop workspace app. It is now the **Personas & access** module of that app. The design here still holds. Start with the [big picture](../00-big-picture.md), then read these pages for the depth on accounts, logins and devices. Below, "Switchyard" means this module.
 
-_Working name. See [Commercial path](07-commercial-path.md) for the trademark check._
+**TL;DR:** This module gives every tool the right login for the project it is working in, on Mac and Windows. You sign in once per account on each device. Rules you write once decide which account each request gets. When something goes wrong, the menu bar or system tray tells you.
+
+_Working name. See [Commercial path](../08-commercial-path.md) for the trademark check._
 
 ## The problem
 
@@ -64,13 +66,23 @@ It has five jobs.
 | Just for me, but secure regardless | Security is designed as if it were a product from day one. Product work (phase 5) waits for a go decision. |
 | If commercial, add a GUI workspace generator | The product path adds guided setup: workspace, accounts, per-account limits and logins in one flow, built over the `wsx` engine from project 18. |
 
-The full decision log is in [decisions.md](decisions.md).
+The full decision log is in [decisions.md](../decisions.md).
 
-## Assumptions to confirm
+## Confirmed by Sean (2026-10-14)
 
 - **The Windows PC is personal-only.** Employer identities never live there.
-- **"Account thresholds" means per-account limits.** These cover which devices and tools may use an account, the largest token permissions allowed, the longest token lifetime, how often Touch ID or Windows Hello is required, and when to alert. The plan is built on this reading.
-- **Your employer allows it.** Holding employer logins in a personal tool on a managed laptop may need IT approval. Phase 1 only reads status. Phase 2 is the first phase that stores employer tokens.
+- **"Account thresholds" means per-account limits:**
+  - which devices and tools may use an account
+  - the largest token permissions allowed
+  - the longest token lifetime
+  - how often Touch ID or Windows Hello is required
+  - when to alert
+- **Users define their own personas.** Work and personal are defaults, not the only options. A persona's walls can be held two ways:
+  - **By surface:** one app per persona, for example Cursor for work only.
+  - **By duplicate installs:** two copies of the same app, such as two Claude desktop apps, each signed into a different account.
+
+  The surface model treats each install as its own **instance** tied to one persona. See the [workspace model](../01-workspace-model.md).
+- **Your employer allows it.** IT approval is confirmed for holding employer logins on the Work MBP.
 
 ## How we'll know it works
 
@@ -109,14 +121,14 @@ None of these routes identity by project across git, `gh`, SSH and MCP together,
 - **Presence check:** Touch ID, Windows Hello or your login password, required before a sensitive action.
 - **Threshold:** a per-account limit or alert level.
 
-## Plan documents
+## Module documents
 
 1. [Overview](00-overview.md), this page
-2. [Systems](01-systems.md): what we build and how the parts fit
+2. [Systems](01-systems.md): the access parts and how they fit
 3. [Integrations and dependencies](02-integrations.md): providers, tools, platforms, infrastructure, risks
-4. [How it works](03-how-it-works.md): rules, request flows, health checks, the app, device lifecycle
-5. [Security](04-security.md): threat model, controls, limits, testing
+4. [How it works](03-how-it-works.md): rules, request flows, health checks, screens, device lifecycle
+5. [Security](04-security.md): credential threat model, controls, limits, testing
 6. [Vaultwarden](05-vaultwarden.md): parity, Unraid deployment, 1Password migration
-7. [Implementation plan](06-implementation-plan.md): phases, exit criteria, first steps
-8. [Commercial path](07-commercial-path.md): what changes if it becomes a product
-9. [Decision log](decisions.md)
+7. [Phases](06-phases.md): this module's internal phases. The [roadmap](../07-roadmap.md) places them in the whole build.
+
+App-level documents: [big picture](../00-big-picture.md), [commercial path](../08-commercial-path.md), [decision log](../decisions.md).
