@@ -231,7 +231,6 @@
     "best model for": "02-shared-references/model-routing.md — resolve surface → work context → effort tier before picking; native models first",
     "model selection": "02-shared-references/model-routing.md — resolve surface → work context → effort tier before picking; native models first",
     "model routing": "02-shared-references/model-routing.md — full surface × work context × effort tier map",
-    "what should i use for": "02-shared-references/model-routing.md — resolve surface → work context → effort tier before picking; native models first",
     "ollama model": "02-shared-references/model-routing.md — local model roster; M3 Max 36GB fit constraints; effort + speed per model",
     "local model": "02-shared-references/model-routing.md — local model roster; M3 Max 36GB fit constraints; effort + speed per model",
     "cursor model": "02-shared-references/model-routing.md — Cursor surface; Grok is native default; Claude draws stipend",

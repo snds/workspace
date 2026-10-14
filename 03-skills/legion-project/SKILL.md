@@ -2,7 +2,7 @@
 name: legion-project
 description: >
   Persistent project context for the Legion game. Load this skill IMMEDIATELY whenever the
-  user says "legion", "Legion", "the game", "my game", "game project", or any reference to
+  user says "legion", "Legion", "legion game", "my game", "game project", or any reference to
   Legion game development. This is the foundation skill — it provides design pillars, visual
   identity, tech stack, and project state that all other Legion skills depend on. Also trigger
   on: game design, combat systems, factory mechanics, exploration, AI behavior, resource economy,
@@ -14,7 +14,7 @@ description: >
   lead-game-developer) based on the topic. If the topic is unclear, load lead-game-designer
   as the default.
 aliases: [legion-project]
-triggers: [the game]
+triggers: [legion game, game project]
 spec_version: "2.0"
 tier: hub
 domain: game

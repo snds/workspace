@@ -84,8 +84,22 @@ STOPWORDS = frozenset(
         "if",
     }
 )
+# Lint only (matching still uses STOPWORDS): a multi-word trigger made wholly of these, or an article plus
+# one word, fires on ordinary sentences ("the game starts at 7", "what should i use for the hero image").
+FILLER = STOPWORDS | frozenset(
+    "what which who whom whose how when where why should would could can will shall may might must use used "
+    "using are was were been am my your our their his her its they them us he she so up out all any some "
+    "about there here have has had get got go make does did just not no yes now then than too very one "
+    "thing things way like want need".split()
+)
+ARTICLES = frozenset({"a", "an", "the"})
 
 WORD_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9'/-]*")
+
+
+def filler_phrase(trigger: str) -> bool:
+    toks = [t.lower() for t in WORD_RE.findall(trigger)]
+    return len(toks) > 1 and (all(t in FILLER for t in toks) or (len(toks) == 2 and toks[0] in ARTICLES))
 
 
 def load_curated() -> dict[str, str]:
@@ -234,11 +248,19 @@ def lint_triggers() -> list[str]:
                 errors.append(f"stopword trigger `{t}` on {name}")
             elif len(low) < 2:
                 errors.append(f"too-short trigger `{t}` on {name}")
+            elif filler_phrase(low):
+                errors.append(f"filler-phrase trigger `{t}` on {name}")
     for name, triggers in load_index_triggers().items():
         for t in triggers:
             low = t.strip().lower()
             if low in STOPWORDS:
                 errors.append(f"stopword index trigger `{t}` on [[{name}]]")
+            elif filler_phrase(low):
+                errors.append(f"filler-phrase index trigger `{t}` on [[{name}]]")
+    for t in load_curated():
+        low = t.strip().lower()
+        if low in STOPWORDS or filler_phrase(low):
+            errors.append(f"stopword/filler curated route `{t}` in trigger-routes.json")
     return errors
 
 

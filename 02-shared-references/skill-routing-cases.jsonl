@@ -52,3 +52,7 @@
 {"id": "subatomic-core-not-core-tokens", "utterance": "The core problem is that our sprint timing slipped again.", "forbid_skills": ["token-architecture"], "why": "'core' alone is not the 'core tokens' trigger"}
 {"id": "vault-health-not-ds-ops", "utterance": "check system health of the vault", "forbid_skills": ["design-system-ops"], "why": "bare 'system health' is vault/workspace health, not design-system ops (optimize 2026-09-25)"}
 {"id": "ds-health-routes-ds-ops", "utterance": "run a design system health check on our tokens", "expect_skills": ["design-system-ops"], "why": "design-system health still reaches the ops hub"}
+{"id": "filler-article-the-game", "utterance": "the game starts at 7, block my calendar", "forbid_skills": ["legion-project"], "why": "article + generic noun is not a Legion trigger (/optimize 2026-10-14)"}
+{"id": "filler-what-should-i-use-for", "utterance": "what should i use for the hero image background", "forbid_routes": ["what should i use for"], "why": "filler phrase must not route to model selection (/optimize 2026-10-14)"}
+{"id": "filler-who-is-this-for", "utterance": "who is this for? there's a package on my desk", "forbid_skills": ["ux-research-synthesis"], "why": "filler phrase must not load the UX research chain (/optimize 2026-10-14)"}
+{"id": "legion-game-positive", "utterance": "add a new faction to the legion game", "expect_skills": ["legion-project"], "why": "the narrowed Legion trigger still fires"}

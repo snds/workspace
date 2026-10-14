@@ -238,7 +238,6 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `best model for` | 02-shared-references/model-routing.md — resolve surface → work context → effort tier before picking; native models first |
 | `model selection` | 02-shared-references/model-routing.md — resolve surface → work context → effort tier before picking; native models first |
 | `model routing` | 02-shared-references/model-routing.md — full surface × work context × effort tier map |
-| `what should i use for` | 02-shared-references/model-routing.md — resolve surface → work context → effort tier before picking; native models first |
 | `ollama model` | 02-shared-references/model-routing.md — local model roster; M3 Max 36GB fit constraints; effort + speed per model |
 | `local model` | 02-shared-references/model-routing.md — local model roster; M3 Max 36GB fit constraints; effort + speed per model |
 | `cursor model` | 02-shared-references/model-routing.md — Cursor surface; Grok is native default; Claude draws stipend |
@@ -395,7 +394,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `lead-ux-designer` | hub | `challenge this`, `tear this apart`, `information architecture`, `enterprise ux`, `how should this work`, `user flow` | `design-foundations` → `lead-ux-designer` |
 | `lead-vector-designer` | hub | `vector designer`, `bezier path`, `svg illustration` | `design-foundations` → `lead-vector-designer` |
 | `lead-visual-qa` | hub | `lead visual qa`, `pixel review`, `last mile craft`, `does this look right` | `design-foundations` → `lead-visual-qa` |
-| `legion-project` | hub | `the game` | `imaging-foundations` → `science-foundations` → `legion-project` |
+| `legion-project` | hub | `legion game`, `game project` | `imaging-foundations` → `science-foundations` → `legion-project` |
 | `material-symbols-project` | hub | `material symbols project`, `icon automation suite` | `material-symbols-project` |
 | `motion` | hub | `motion hub`, `implement this scroll animation`, `gsap scrolltrigger`, `motion implementation` | `design-foundations` → `motion` |
 | `omni-project` | hub | `omni app`, `omni project` | `omni-project` |
@@ -446,4 +445,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 315 · Registry rows: 108_
+_Curated routes: 314 · Registry rows: 108_

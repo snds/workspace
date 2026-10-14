@@ -98,7 +98,7 @@ Shells run `python3 09-tools/skill-loadset.py "<request>"` instead. Never ingest
 - scientific illustration, textbook illustration, editorial illustration, exploded view → `03-skills/gd-image-composition/SKILL.md`
 - live svg, illustration generation, flattened png → `03-skills/gd-generation-tooling/SKILL.md`
 - display grammar → `03-skills/gd-generation-tooling/SKILL.md` + `03-skills/gd-display-graphics/SKILL.md`
-- which model, pick a model, best model for, model selection, model routing, what should i use for, ollama model, local model, cursor model, codex model, grok or claude, effort tier, switch models → `02-shared-references/model-routing.md`
+- which model, pick a model, best model for, model selection, model routing, ollama model, local model, cursor model, codex model, grok or claude, effort tier, switch models → `02-shared-references/model-routing.md`
 - order of operations, cds then proto, follow up, first breaker, re-export, implement this, fix ci, merge conflict → `03-skills/plan-ahead/SKILL.md`
 - consume cds → `03-skills/plan-ahead/SKILL.md` + `08-knowledge/design/ds-parent-owns-shared-defects.md`
 - pages build → `03-skills/plan-ahead/SKILL.md` + `08-knowledge/engineering/cds-host-consume-order.md`
@@ -128,4 +128,4 @@ Shells run `python3 09-tools/skill-loadset.py "<request>"` instead. Never ingest
 - no-raw-colors → `08-knowledge/engineering/shadcn-lint-token-tiers.md`
 - subatomic course → `07-projects/23-subatomic-design-tokens-course/` + `08-knowledge/design/design-token-architecture.md` + `03-skills/token-architecture/SKILL.md`
 
-_Routes: 315 · targets: 120_
+_Routes: 314 · targets: 120_

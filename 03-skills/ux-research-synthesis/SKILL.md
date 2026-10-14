@@ -15,7 +15,7 @@ description: >
   about generating or making sense of evidence about user behavior and needs in an
   enterprise context.
 aliases: [ux-research-synthesis]
-triggers: [who is this for, designing this for, do we know enough]
+triggers: [who is this product for, who are we designing for, designing this for, do we know enough]
 tier: spoke
 domain: design
 hub: lead-ux-designer

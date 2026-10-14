@@ -276,6 +276,23 @@ class TestValidatorFixtures(unittest.TestCase):
             ev.load_registry = original
         self.assertTrue(any("stopword" in e and "fake-skill" in e for e in errors), errors)
 
+    def test_routing_lint_rejects_filler_phrases_in_every_source(self):
+        """/optimize 2026-10-14: `the game`, `who is this for` and the curated `what should i use for` fired
+        on ordinary sentences while the single-token lint passed."""
+        ev = load("evaluate-skill-routing")
+        saved = ev.load_registry, ev.load_index_triggers, ev.load_curated
+        ev.load_registry = lambda: {"fake-skill": ["the game", "who is this for", "legion game"]}
+        ev.load_index_triggers = lambda: {"fake-note": ["what should i do"]}
+        ev.load_curated = lambda: {"what should i use for": "x", "which model": "x"}
+        try:
+            errors = ev.lint_triggers()
+        finally:
+            ev.load_registry, ev.load_index_triggers, ev.load_curated = saved
+        for needle in ("`the game` on fake-skill", "`who is this for` on fake-skill",
+                       "`what should i do` on [[fake-note]]", "curated route `what should i use for`"):
+            self.assertTrue(any(needle in e for e in errors), (needle, errors))
+        self.assertFalse(any("legion game" in e or "which model" in e for e in errors), errors)
+
     def test_routing_detects_missing_expected_skill(self):
         ev = load("evaluate-skill-routing")
         errors = ev.eval_case(
