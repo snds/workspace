@@ -243,6 +243,15 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 
 ---
 
+### Lockdown — Password manager, passkey provider, authenticator (working name)
+**Status:** Research done 2026-10-15; nothing built; Planning
+**Summary:** A cross-platform password manager, passkey provider, and authenticator for iOS, Android, Mac, Windows, Linux, browsers, and a self-hostable server. It targets feature parity with 1Password, Bitwarden, Proton Pass, Vaultwarden, and Apple Passwords, then beats them on trust (hostile-server threat model, OPAQUE login, Secret Key by default, hybrid post-quantum key wrapping, key transparency, anti-rollback manifests) and on breadth ("every way you sign in": passkeys with OS-run cross-device QR, standard and Steam codes, TV/console device-code activation, a "sign in with" map). Steam QR approval and trade confirmations ship as a fenced, opt-in bridge; Battle.net, Adobe, Discord, and all vendor push emulation are declined in favour of passkeys. Rust core, Tauri 2 desktop, native SwiftUI and Compose, MV3 extension, one Rust server binary for cloud and self-host. One design-token source feeding three UI stacks.
+**Folder:** `07-projects/28-lockdown/` (baton + pointers) · research in the repo `~/Projects/lockdown` (private `snds/lockdown`), `docs/research/2026-10-15/` (brief, 201-feature matrix, fact-check verdicts, report page, seven reports)
+**Triggers:** lockdown, password manager, passkey provider, steam guard, vendor login bridge, credential exchange, tv activation, device code login
+**Next:** Sean decides positioning, the Steam bridge, and team size; then a plan set modelled on Synapse's `docs/plan/`. See [[07-projects/28-lockdown/SESSION-STATE|SESSION-STATE]].
+
+---
+
 ### Synapse — Workspace App (codename; was Switchyard)
 **Status:** Stage 0 (model and map) started 2026-10-14; plan set v2.5
 **Summary:** A desktop app and tray service for Mac and Windows that makes an AI workspace visible and manageable over plain files (standard agent formats, Obsidian-compatible). It runs the doctor, harness and optimize without an agent, and a connected agent adds judgment. Modules: library, 2D/3D graph, domains and skills (Domain and Area become first-class), health, projects, Personas & access (the original credential router), integrations, agents, plugins. Create (generator, successor to `wsx`) and Import (agentic deep scan with a coverage ledger) are measured by scorecards. Sean's workspace is the north star. Rust + Tauri 2, same stack as Fontface.

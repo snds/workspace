@@ -419,6 +419,10 @@ Choosing the right component is half the job; the other half is how they combine
 
 ---
 
+### 7a. Pattern-candidate detection (standing rule, 2026-10-15)
+
+A system must notice its own patterns. A mechanical detector scans real composition (code import graph and JSX; Figma instance nesting) and raises any arrangement of two or more components that repeats three or more times across two or more hosts. Candidates are judged by [[decision-pattern-uniqueness]] (pattern · variant · snowflake) and written as suggestion records; nothing is auto-created. The detector is one library with one output schema, shared by the design-system analytics tool, `component-audit`, `drift-detection`, and Figma. Full rule: [[decision-pattern-candidate-detection]].
+
 ## 8. Cross-cutting foundations & universal laws
 
 These held across all 62 components. They are the rationale behind the trees — and the citable "why" that `DESIGN.md` prose and component docs should carry. (Facet 11 of the schema resolves *per component* against these dimensions.)

@@ -55,6 +55,23 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+
+### 2026-10-15 — Lockdown research dossier and project scaffold
+
+SessionID: 2026-10-15-vm-lockdn1
+--- SESSION BLOCK ---
+Date: 2026-10-15
+Machine: cloud VM (Claude Code on the web)
+Surface: Claude Code (cloud session)
+Agent: Claude Opus 5.5, then Claude Fable 5.1 after a mid-session model switch
+Project(s): 28-lockdown (new)
+Summary: Sean asked for a feature-for-feature replication plan for 1Password, Bitwarden, Proton Pass, and Vaultwarden, plus Apple Passwords and other ecosystems, with the extra idea of signing in through vendors' own systems (Steam QR, Adobe, Battle.net). Ran four parallel research agents, then a verify-and-synthesise workflow: three gap sweeps (missed competitors, novel features, more login bridges), eight skeptical fact-checkers over 45 claims, a 201-feature matrix across 9 products, an 11,600-word brief, and a critic pass that reconciled both against the fact-check. Built a report page with a filterable matrix and published it (https://claude.ai/artifact/PT8FzNxTVLzrUr3AdVWHry). Pushed the research as the first commit on snds/lockdown main (e6d9248; the repo was empty, so no PR). Scaffolded 07-projects/28-lockdown (28 because 27 is the machine-local unraidTheme) and registered it in project-context, project-registry, _PROJECTS, and .gitignore.
+Key findings: being an OS passkey provider gives cross-device QR sign-in for free on iOS (Apple staff confirmed) and on Android 14+; Steam QR approval is feasible via a tolerated reverse-engineered protocol and only authenticator removal costs the 15-day hold; Battle.net and Adobe should use passkeys; TV device-code activation (RFC 8628) is the legitimate generalisation; the security bar is the ETH Zurich hostile-server model.
+Corrections from the fact-check: Proton Pass SSH agent has shipped; Apple's AI password change slipped past iOS 27.0; 1Password Mac AutoFill is GA since 2026-08-11; Windows passkey plug-ins were announced for 1Password and Bitwarden the same day.
+Open: Sean's three decisions (positioning, Steam bridge, team size). close-out-dispatch found no command hub for this prompt (SKIP, not verified).
+--- END BLOCK ---
+
 ### 2026-10-14 — Doctor fixes, /optimize audit applied, trigger review
 
 SessionID: 2026-10-14-work-optrev
@@ -753,22 +770,4 @@ Pending resolved:
   - Pages gate so overlay-ahead cannot hide missing `main` exports
 Next:
   - centric-ui host-chrome consume only if Sean names it (employer proto HANDOVER).
---- END BLOCK ---
-
-### 2026-09-17 — collaborative canvas rec (employer ui)
-
-SessionID: 2026-09-17-work-cvrec
---- SESSION BLOCK ---
-Date: 2026-09-17
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 02-centricPLM (centric-ui advisory)
-Summary: Closed an Aug 19 Cursor thread on a license-free collaborative canvas for PLM (review, whiteboard, vision board, print markup, optional 3D). Recommendation only — no employer code, PR, or spike. No employer architecture written into this vault.
-Decisions:
-  - Embed the MIT editor; do not buy a vendor workspace product as the PLM canvas.
-  - Own a session/room plus pluggable surfaces; do not search for one library that also does 3D.
-  - Keep domain markup and 3D as separate surfaces. License-key SDKs are out while “no license” holds.
-Next:
-  - Resume only if Sean asks. No c8 issue filed (movement-only; no employer home for an unsolicited rec).
 --- END BLOCK ---
