@@ -1,6 +1,6 @@
 # SESSION-STATE — Synapse
 
-_Last updated: 2026-10-14 — Stage 0: model v1 draft done, awaiting Sean review_
+_Last updated: 2026-10-14 — Stage 0: first deep scan running (11 passes)_
 
 ---
 
@@ -9,14 +9,14 @@ _Last updated: 2026-10-14 — Stage 0: model v1 draft done, awaiting Sean review
 ### 🤝 Live handoff (the baton)
 
 - **TL;DR (for future agent)**: Synapse (codename; was Switchyard) is a planned desktop workspace app with a tray service, for Mac and Windows. It makes an AI workspace visible and manageable over plain files, runs checks without an agent, creates and imports workspaces with scorecards, and walls personas. The credential router is its Personas & access module (`plan/access/`). Planning only; nothing built.
-- **Current focus**: **Stage 0: model v1 draft is done and waiting for Sean's review** (repo `a2057a8`). D54–D62 are proposed.
+- **Current focus**: **Stage 0 item 9: the first deep scan of the T1 snapshot is running.** 11 read-only agent passes (p1–p11) run in parallel per `docs/stage-0/scan-protocol-v1.md`. Model v1 and D54–D62 are approved. The routing oracle is done (5,488 requests, deterministic).
 - **Working set**: Repo `~/Projects/synapse`: `docs/plan/`, `docs/stage-0/STAGE-0.md`, `scripts/`, `corpus/`. T1 snapshot: `~/Projects/synapse-sandbox/t1-workspace@4e2b6cf/` (read-only, local only). Readable copy: https://claude.ai/artifact/VoPXvWfgPkc8ArsmtmESHt.
-- **Last action**: Wrote workspace model v1: `docs/model/model-v1.md` (contract), 20 JSON Schemas with 24 examples (`scripts/check-schemas.py` passes), and the layout map for Sean's dialect (100% of T1 typed). `scripts/model-fit.py` shows the fit after the mechanical migration: skills 296/348, memory 43/47, knowledge 119/126, projects 10/12. Remaining failures are D53 or real defects listed in `docs/stage-0/model-fit-v0.md`. Aligned the plan (`sy:` markers, 8-character IDs, the vault's relation types). Raw fit results stay local (`~/Projects/synapse-sandbox/`) because some paths name the employer. D52 and D53 approved. By Claude Opus 5.5 · Claude Code · Work MBP.
-- **Next action**: Sean reviews model v1 and D54–D62. In parallel: the routing oracle (item 8), then the scan protocol and first deep scan (item 9), the surface catalog schema (item 7), and the standards check (item 4).
+- **Last action**: Built the routing oracle (repo `b49bc55`): 119/119 workspace routing cases pass, 9 routing gaps found, two builds byte-identical. Wrote the scan protocol, the finding and ledger schemas, and `scripts/scan-prepass.py` (graph of 2,160 nodes and 6,286 edges, 200 rule-based findings, 11 packets covering 730 files). Launched 11 deep-scan passes. Wrote `scripts/scan-assemble.py` (100% coverage check, schema validation, de-duplication). By Claude Opus 5.5 · Claude Code · Work MBP.
+- **Next action**: As each pass returns, save its JSON to `~/Projects/synapse-sandbox/scan-t1@4e2b6cf-v1/passes/pN.json`. Then run `scripts/scan-assemble.py`, re-ask any pass with incomplete coverage, synthesize the cross-domain findings and the domain and area map, and commit a cleaned summary plus the domain-map proposal for Sean's review.
 - **Naming rule (standing)**: Use "Synapse" for the app from now on. Any new place the name appears (file, path, identifier, artifact title) must later be listed in the Stage 0 name ledger. User-facing text takes the name from one brand file. Internal identifiers use the neutral `sy` prefix. **No ledger scan has been run yet, by Sean's choice.** Places the name appears today: this folder's docs and paths, the build script's title, `.gitignore`, `06-context/project-registry.md`, `06-context/project-context.md`, and the published plan's title. The old name stays in decision rows D1–D36, this file's history, git history and the one-page proposal artifact, all as history.
 - **Open decisions**: D54–D62 (model v1, proposed); D51; the public name; generator engine; plugin runtime; the domain map (after the first scan); Apple Developer Program membership.
 - **Blocked on**: nothing for model v1. Sean's side: Cloudflare Pages plus a Squarespace CNAME for `id.snds.design` (instructions given 2026-10-14); his YubiKey's model (it needs FIDO2: YubiKey 5, Security Key or Bio series); the Windows PC later for the spikes.
-- **In-flight / do-not-touch**: none.
+- **In-flight / do-not-touch**: Scan output folder `~/Projects/synapse-sandbox/scan-t1@4e2b6cf-v1/` (local only; it holds employer terms). The T1 snapshot is read-only.
 - **Agent thread**: Claude/Claude Code (2026-10-14): feasibility, then one-page proposal, then credential plan v1, then reframe to the workspace app (plan v2.0), then codename Synapse (plan v2.1).
 
 ### Environment
