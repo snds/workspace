@@ -11,7 +11,7 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 25 ("links that keep up") is in review as PR #30 (`phase-25`). Sean said "merge and continue", so PR #29 is merged (squash 98d675a). Phase 25 closes ADR-0034's two gaps: renames update [[links]] (offered, never silent), and linking a note to an event/person/conversation from the note.
+- **Current focus**: Phase 25 ("links that keep up") is in review as PR #30 (`phase-25`). Sean said "merge and continue", so PR #29 is merged (squash 98d675a). Phase 25 closes ADR-0034's two gaps: renames update wikilinks (offered, never silent), and linking a note to an event/person/conversation from the note.
 - **Working set**: `apps/web/src/features/notes/rename-links.ts` (`renameInDoc`, `renameLinks` via each note's Yjs doc), `note-detail.tsx` (rename offer, Link button), `link-picker.tsx`; `crates/core/src/notes_store.rs` (`notes_linking_to`); `docs/decisions/0035-links-that-keep-up.md`.
 - **Last action**: Merged PR #29 on Sean's word, then built Phase 25. Tests: core (201), app dispatch, demo `phase25` (24 checks), all 28 earlier suites incl. notes-sync (fresh relay), `gateway-p25`.
 - **Next action**: Watch PR #30's CI. Merge only on Sean's explicit word.
