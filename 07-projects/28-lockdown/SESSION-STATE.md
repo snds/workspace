@@ -9,11 +9,11 @@ _Last updated: 2026-10-15 — Sean's decisions D1–D9 recorded (checkpoint)_
 ### 🤝 Live handoff (the baton)
 
 - **TL;DR (for future agent)**: Lockdown is a planned cross-platform password manager, passkey provider, and authenticator meant to meet and beat 1Password, Bitwarden, Proton Pass, Vaultwarden, and Apple Passwords. Research is done and in the repo. Nothing built. Three decisions wait on Sean.
-- **Current focus**: Sean decided (D1–D9, repo `docs/plan/decisions.md`): all three positioning layers; a Lockdown × Mailbird ecosystem that works alone; shared persona contract; enclave pairing; locked notes recoverable with the Lockdown kit; shared plugin doctrine; self-host bundle as value-add; vendor bridges to a maybe backlog; feature-complete v1. Next is the plan set.
+- **Current focus**: Sean decided (D1–D10, repo `docs/plan/decisions.md`): all three positioning layers; a Lockdown × Mailbird ecosystem that works alone; shared persona contract; enclave pairing; locked notes recoverable with the Lockdown kit; shared plugin doctrine; self-host bundle as value-add; vendor bridges to a maybe backlog; feature-complete v1. Next is the plan set.
 - **Working set**: Repo `~/Projects/lockdown`: `docs/plan/decisions.md`, `docs/plan/00-ecosystem.md` (contract sketch), `docs/research/2026-10-15/` (brief, matrix, verification, report, seven reports). Readable copy: https://claude.ai/artifact/PT8FzNxTVLzrUr3AdVWHry.
 - **Last action**: Recorded D1–D9 and the ecosystem sketch (repo `81d5c84`). Earlier: ran four parallel research passes, three gap sweeps, eight fact-check passes, a matrix and brief synthesis, and a critic pass. Built and published the report page. Pushed everything as the first commit on `main` (`e6d9248`). Scaffolded this project. By Claude Fable 5.1 · Claude Code (cloud) · vm.
-- **Next action**: Write the plan set in `docs/plan/` the way Synapse did: big picture, model (incl. the shared identity schema), architecture, security, self-host bundle, roadmap re-estimated for a feature-complete v1 (D9). First settle who owns the persona schema (Synapse, Mailbird or Lockdown). Then resolve the brief §7 blockers (Apple export-list rules, Android hybrid on real devices).
-- **Open decisions**: who owns the persona schema (Synapse, Mailbird or Lockdown); team size and timeline under D9; the name (no trademark check); licence; whether the self-host bundle ships under one name; whether TV device-code activation is v1 or backlog.
+- **Next action**: Write the plan set in `docs/plan/` the way Synapse did: big picture, model (incl. the shared identity schema), architecture, security, self-host bundle, roadmap re-estimated for a feature-complete v1 (D9). Start with the shared identity crate's format (D10). Then resolve the brief §7 blockers (Apple export-list rules, Android hybrid on real devices).
+- **Open decisions**: (persona-schema owner resolved by D10: a shared Rust crate, Lockdown as reference implementation) team size and timeline under D9; the name (no trademark check); licence; whether the self-host bundle ships under one name; whether TV device-code activation is v1 or backlog.
 - **Blocked on**: nothing.
 - **In-flight / do-not-touch**: nothing. The research scratch files on the cloud VM are gone once the session ends; the repo holds the canonical copies.
 - **Agent thread**: Claude Fable 5.1/Claude Code cloud (2026-10-15): research dossier, report page, repo first commit, project scaffold; next = Sean's three decisions.
@@ -37,7 +37,7 @@ _Last updated: 2026-10-15 — Sean's decisions D1–D9 recorded (checkpoint)_
 
 ### Open work and paused threads
 - **Currently in progress**: nothing
-- **Pending questions**: persona-schema owner; team and timeline for a feature-complete v1
+- **Pending questions**: team and timeline for a feature-complete v1
 - **What's needed to resume**: read `docs/plan/decisions.md` and `00-ecosystem.md`, then start the plan set. The matrix is the feature backlog; under D9 treat every parity row as v1.
 
 ---
