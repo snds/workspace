@@ -71,6 +71,8 @@ files only** — gitignored Live handoffs stay machine-local (load-miss rec 8).
 - [[07-projects/23-subatomic-design-tokens-course/SESSION-STATE|23-subatomic-design-tokens-course]] · [[07-projects/23-subatomic-design-tokens-course/README|23-course README]]
 - [[07-projects/24-mailbird/SESSION-STATE|24-mailbird]] · [[07-projects/24-mailbird/README|24-mailbird README]]
 - [[07-projects/25-fontface/SESSION-STATE|25-fontface]] · [[07-projects/25-fontface/README|25-fontface README]]
+- [[07-projects/26-synapse/SESSION-STATE|26-synapse]] · [[07-projects/26-synapse/README|26-synapse README]]
+- [[07-projects/28-lockdown/SESSION-STATE|28-lockdown]] · [[07-projects/28-lockdown/README|28-lockdown README]]
 
 ## Notes
 

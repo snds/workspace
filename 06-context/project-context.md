@@ -1,7 +1,7 @@
 # Project Context — Sean Sands
 _Authoritative source: this file (06-context/project-context.md)_
 _Written by any agent — the git checkout is the source of truth._
-_Last updated: 2026-10-14_
+_Last updated: 2026-10-15_
 
 > **Platform note (2026-06-16):** the workspace itself was refactored to be portable, git-native, and
 > LLM/surface/device-agnostic, then consolidated onto `main` at `github.com/snds/workspace` (16-PR stack,
@@ -113,6 +113,8 @@ Moved out of Active on 2026-09-02 (^pc-45, ^pc-24 on 2026-09-25, ^pc-16 on 2026-
 
 _Narratives live in [project-registry.md](project-registry.md) (load on demand)._
 _For live focus, prefer the active project's `SESSION-STATE.md` **Live handoff**._
+
+- **Lockdown (2026-10-15, new; working name):** A cross-platform password manager, passkey provider, and authenticator meant to meet and beat 1Password, Bitwarden, Proton Pass, Vaultwarden, and Apple Passwords, signing people in through each service's own supported login (passkeys, codes, TV activation) with Steam as the one fenced, opt-in private bridge. **Research done; nothing built.** Three decisions wait on Sean: positioning, the Steam bridge, team size. Research at `~/Projects/lockdown` (private `snds/lockdown`, `docs/research/2026-10-15/`). Live state → [28-lockdown handoff](../07-projects/28-lockdown/SESSION-STATE.md).
 
 - **Synapse (2026-10-14, new; codename, was Switchyard):** A desktop workspace app with a tray service, for Mac and Windows. It makes the workspace visible and manageable over plain files, runs checks without an agent, creates and imports workspaces with scorecards, and walls personas. **Stage 0 (model and map) started.** Code and plan at `~/Projects/synapse` (private `snds/synapse`; plan in `docs/plan/`). Live state → [26-synapse handoff](../07-projects/26-synapse/SESSION-STATE.md).
 

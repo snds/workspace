@@ -4,6 +4,25 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-09-17 — collaborative canvas rec (employer ui)
+
+SessionID: 2026-09-17-work-cvrec
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 02-centricPLM (centric-ui advisory)
+Summary: Closed an Aug 19 Cursor thread on a license-free collaborative canvas for PLM (review, whiteboard, vision board, print markup, optional 3D). Recommendation only — no employer code, PR, or spike. No employer architecture written into this vault.
+Decisions:
+  - Embed the MIT editor; do not buy a vendor workspace product as the PLM canvas.
+  - Own a session/room plus pluggable surfaces; do not search for one library that also does 3D.
+  - Keep domain markup and 3D as separate surfaces. License-key SDKs are out while “no license” holds.
+Next:
+  - Resume only if Sean asks. No c8 issue filed (movement-only; no employer home for an unsolicited rec).
+--- END BLOCK ---
+
+
 ### 2026-09-17 — Supplier Portal polish session close (proto)
 
 SessionID: 2026-09-17-work-supplier-portal-close
