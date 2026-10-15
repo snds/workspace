@@ -1,6 +1,6 @@
 # SESSION-STATE — Mailbird, working name (24-mailbird)
 
-_Last updated: 2026-10-15 — checkpoint (PRs #1–#20 merged; Phase 16 scheduling links in PR #21)_
+_Last updated: 2026-10-15 — checkpoint (PRs #1–#21 merged; Phase 17 faces and sources in PR #22)_
 
 ---
 
@@ -11,16 +11,15 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#20 merged; Phase 16 scheduli
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 16 ("scheduling links") is in review as PR #21 (`phase-16`). Sean said "merge then continue phases", so PR #20 is merged (squash 208dbf0). Phase 16 takes the harvest row "Scheduling links / booking pages".
-- **Working set**: `crates/core/src/booking_store.rs` (links, free slots, booking, caps), `apps/gateway/src/lib.rs` (the sessionless `/api/book/{token}` routes), `apps/web/src/features/booking/page.tsx` (the public page at `/book/{token}`), `apps/web/src/features/calendar/booking-links.tsx`, `docs/decisions/0026-scheduling-links.md`.
-- **Last action**: Merged PR #20 on Sean's word, then built Phase 16:
-  - Booking links with unguessable tokens. The public page shows only free half-hour starts, in the visitor's time zone.
-  - A booking is re-checked against free times and capped at 10 per link per day. It becomes an event, and invites the booker when the calendar is on a mail account.
-  - The gateway's only sessionless routes: one read and one write, token shape checked, the CSRF header required, a global limit, no-store.
-  - Tests: core, the gateway HTTP test, the demo suite `phase16` (15 checks) plus the 21 earlier suites, and `gateway-p16` (a never-signed-in phone books; its page only calls `/api/book/`).
-  - Fixed: a 24:00 day end had no slots, and the preview showed stale times.
-- **Next action**: Watch PR #21's CI. Merge only on Sean's explicit word.
-  Then, the remaining harvest: tasks time-blocked on the calendar, travel time, contact source badges and photos, regional holidays, remappable keys, rescheduling or cancelling bookings. Guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename.
+- **Current focus**: Phase 17 ("faces and sources") is in review as PR #22 (`phase-17`). Sean said "merge then continue phases", so PR #21 is merged (squash e85cd42). Phase 17 takes the harvest row "contact source badges and photos".
+- **Working set**: `crates/core/src/vcard.rs` (PHOTO lines), `crates/core/src/contacts_store.rs` (`contact_copies`, `contact_photos`), `apps/web/src/features/contacts/contact-editor.tsx` (photo field), `contact-detail.tsx` ("Also in"), `apps/web/src/features/mail/index.tsx` + `conversation-view.tsx` (sender faces), `docs/decisions/0027-faces-and-sources.md`.
+- **Last action**: Merged PR #21 on Sean's word, then built Phase 17:
+  - Contact photos: add, change, or remove. The app crops to a 256 px square JPEG; the vCard stores it (up to 150 KB).
+  - Sender faces in the mail list and conversation, matched by address.
+  - Source badges on contact rows when two or more books show; an "Also in" row links copies of the same person in other books.
+  - Tests: core (184), the demo suite `phase17` (14 checks) plus the 22 earlier suites, and `gateway-p17`.
+- **Next action**: Watch PR #22's CI. Merge only on Sean's explicit word.
+  Then, the remaining harvest: tasks time-blocked on the calendar, travel time, regional holidays, remappable keys, rescheduling or cancelling bookings. Guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
   Test-harness note: clear the shared Dovecot mailbox and SMTP sink before gateway suites (`seed_p12.py reset`). Both test servers, and the vite preview, stop when the container restarts; restart them first.
@@ -31,7 +30,7 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#20 merged; Phase 16 scheduli
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), all merged; Phase 16 in PR #21.
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), all merged; Phase 17 in PR #22.
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
