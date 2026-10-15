@@ -73,6 +73,7 @@ files only** — gitignored Live handoffs stay machine-local (load-miss rec 8).
 - [[07-projects/25-fontface/SESSION-STATE|25-fontface]] · [[07-projects/25-fontface/README|25-fontface README]]
 - [[07-projects/26-synapse/SESSION-STATE|26-synapse]] · [[07-projects/26-synapse/README|26-synapse README]]
 - [[07-projects/28-lockdown/SESSION-STATE|28-lockdown]] · [[07-projects/28-lockdown/README|28-lockdown README]]
+- [[07-projects/29-unicron/SESSION-STATE|29-unicron]] · [[07-projects/29-unicron/README|29-unicron README]]
 
 ## Notes
 

@@ -243,6 +243,15 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 
 ---
 
+### Unicron + DSA — Shared design system and its analytics library (working names)
+**Status:** Scaffolding, started 2026-10-15
+**Summary:** Unicron is the one design system shared by Mailbird, Synapse, and Lockdown (Lockdown D14): React 19, Vite 8, Tailwind v4, shadcn/ui on Base UI, Material Symbols, three-tier DTCG tokens, seeded from Mailbird. DSA (`@snds/dsa`) is the clean-room analytics library that implements [[decision-pattern-candidate-detection]]: a composition graph from code, pattern-candidate suggestion records, adoption and correct-use metrics, and a CI ratchet. DSA is the home for all design-system detection, analysis, and analytics work; employer systems may consume it later as a dependency.
+**Folder:** `07-projects/29-unicron/` (baton) · code in `~/Projects/unicron` (`snds/unicron`) and `~/Projects/dsa` (`snds/dsa`), both public
+**Triggers:** unicron, shared design system, dsa, design system analytics, pattern candidate, pattern detection, ds ratchet
+**Next:** verify builds; confirm the dsa git dependency; first `ds:patterns` run on the playground. See [[07-projects/29-unicron/SESSION-STATE|SESSION-STATE]].
+
+---
+
 ### Lockdown — Password manager, passkey provider, authenticator (working name)
 **Status:** Research done 2026-10-15; nothing built; Planning
 **Summary:** A cross-platform password manager, passkey provider, and authenticator for iOS, Android, Mac, Windows, Linux, browsers, and a self-hostable server. It targets feature parity with 1Password, Bitwarden, Proton Pass, Vaultwarden, and Apple Passwords, then beats them on trust (hostile-server threat model, OPAQUE login, Secret Key by default, hybrid post-quantum key wrapping, key transparency, anti-rollback manifests) and on breadth ("every way you sign in": passkeys with OS-run cross-device QR, standard and Steam codes, TV/console device-code activation, a "sign in with" map). Steam QR approval and trade confirmations ship as a fenced, opt-in bridge; Battle.net, Adobe, Discord, and all vendor push emulation are declined in favour of passkeys. Rust core, Tauri 2 desktop, native SwiftUI and Compose, MV3 extension, one Rust server binary for cloud and self-host. One design-token source feeding three UI stacks.
