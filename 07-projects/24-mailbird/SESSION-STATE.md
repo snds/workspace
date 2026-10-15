@@ -11,16 +11,15 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 21 ("change a booking") is in review as PR #26 (`phase-21`). Sean said "merge and continue phases", so PR #25 is merged (squash 7fbe865). Phase 21 takes the remaining harvest item "rescheduling or cancelling bookings".
-- **Working set**: `crates/core/src/booking_store.rs` (`BookingRecord`, `managed_booking`, `change_booking`, `book(.., manage_base)`), `apps/gateway/src/lib.rs` (`/api/book/{token}/b/{code}`, `Config.public_url` from `GATEWAY_PUBLIC_URL`), `apps/web/src/features/booking/page.tsx` (`ManageBookingPage`, the confirmation's link), `docs/decisions/0031-change-a-booking.md`.
-- **Last action**: Merged PR #25 on Sean's word, then built Phase 21:
-  - Each booking gets a 32-hex code that must match its link. The booker's page reschedules within free times (own event counted free, five moves max) or cancels. The event moves or goes, and the invite follows.
-  - The manage link is in invitations only when `GATEWAY_PUBLIC_URL` is set; it's never taken from the request.
-  - Other Mailbirds' booking links read as manage links (Phase 20's parser).
-  - Tests: core (194), the gateway HTTP test, the demo suite `phase21` (10 checks), all earlier suites, `gateway-p21` (a phone books, moves, cancels), and `gateway-p16`.
-  - Phase 20's list check now uses tomorrow's Teams call (time-of-day independent).
-- **Next action**: Watch PR #26's CI. Merge only on Sean's explicit word.
-  Then, the remaining harvest: creating Zoom/Teams meetings (needs their OAuth apps), regional holidays, remappable keys. Guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename.
+- **Current focus**: Phase 22 ("your keys") is in review as PR #27 (`phase-22`). Sean said "merge and continue", so PR #26 is merged (squash 60f88d7). Phase 22 takes the remaining harvest item "remappable keys" (the gap ADR-0025 left open).
+- **Working set**: `crates/core/src/grammar.rs` (`KEY_COMMANDS`, `KeyBindings`, `key_bindings`, `set_key_bindings`), `apps/web/src/lib/keys.ts` (the web's command table, `rebind` swap, `keyLabel`, `ariaKey`), `apps/web/src/features/grammar.tsx` (`KeyRow` capture), `features/mail/use-shortcuts.ts`, `features/calendar/index.tsx`, `docs/decisions/0032-your-keys.md`.
+- **Last action**: Merged PR #26 on Sean's word, then built Phase 22:
+  - Every single key in Mail and Calendar is changeable: press the key button, then the new key. A taken key swaps, Shift counts, and ⌘/Ctrl/Alt, Space, Enter, and ? are refused. Esc cancels, and Remove key appears while you choose.
+  - The swipe-only actions (next week, remind, newsletters) can get keys. Calendar's keys are listed, and ? works there too. Esc, ?, and ⌘K are fixed.
+  - Keys are stored in the core, only where they differ from the defaults, so later defaults still arrive unless they clash.
+  - Tests: core (196), app dispatch, the demo suite `phase22` (20 checks), all 24 earlier suites, and `gateway-p22` (desktop to tablet, refusals, reset).
+- **Next action**: Watch PR #27's CI. Merge only on Sean's explicit word.
+  Then, the remaining harvest: creating Zoom/Teams meetings (needs their OAuth apps), regional holidays. Guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
   Test-harness note: clear the shared Dovecot mailbox and SMTP sink before gateway suites (`seed_p12.py reset`). Both test servers, and the vite preview, stop when the container restarts; restart them first.
@@ -31,7 +30,7 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), Phase 19 (PR #24), Phase 20 (PR #25), all merged; Phase 21 in PR #26.
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), Phase 19 (PR #24), Phase 20 (PR #25), Phase 21 (PR #26), all merged; Phase 22 in PR #27.
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
