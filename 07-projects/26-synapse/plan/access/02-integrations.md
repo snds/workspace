@@ -122,7 +122,7 @@ Secret Service (GNOME Keyring or KWallet), a systemd user service, `SO_PEERCRED`
 
 | Project | Relationship |
 |---|---|
-| 18 — bootstrap generator (`wsx`) | Shares the surface catalog. Already has a remote → scope → identity map (`context/remotes.json`, `gitscope.py`). Synapse's route rules should absorb that model so there is one source. The commercial GUI workspace generator is a front end over `wsx`. |
+| 18 — bootstrap generator (`wsx`) | Shares the surface catalog. Already has a remote → scope → identity map (`context/remotes.json`, `gitscope.py`). Synapse's route rules should absorb that model so there is one source. The app's Create and Import (core features, not commercial extras) succeed `wsx`; see [Create and import](../04-generator-and-importer.md). |
 | 25 — Fontface | Same stack. Share the Tauri shell patterns, signing, notarization and the release pipeline. |
 | The workspace | Consumer only. Once the Phase 2 broker is stable, the workspace can retire its own credential overlay. That is the workspace's decision, outside this project. |
 

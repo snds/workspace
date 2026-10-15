@@ -40,7 +40,7 @@ Sean's workspace is the north star. "Synapse" is a working name.
 10. [Decision log](plan/decisions.md)
 11. Personas & access module: [plan/access/](plan/access/00-overview.md). This was the original credential plan: systems, integrations, flows, security, Vaultwarden, phases.
 
-**Readable copy:** https://claude.ai/artifact/VoPXvWfgPkc8ArsmtmESHt. It is built from `plan/` by `tools/build-plan-html.py` into `05-artifacts/active/synapse-plan_v2.1_2026-10-14.html`. Artifacts aren't git-tracked. Edit the markdown, never the HTML.
+**Readable copy:** https://claude.ai/artifact/VoPXvWfgPkc8ArsmtmESHt. It is built from `plan/` by `tools/build-plan-html.py` into `05-artifacts/active/synapse-plan_v2.4_2026-10-14.html`. Artifacts aren't git-tracked. Edit the markdown, never the HTML.
 
 **Origin:** the one-page proposal, https://claude.ai/artifact/24mgDkXvtmu12rCcHJM5Be.
 

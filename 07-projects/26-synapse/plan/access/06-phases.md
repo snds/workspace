@@ -218,7 +218,7 @@ Sizes are in **focused weeks**: full-time-equivalent weeks of building with agen
 
 - Synapse's own app registrations with GitHub, Linear and Atlassian.
 - A hosted, still zero-knowledge, hub with a self-host option.
-- Guided onboarding with the GUI workspace generator.
+- Guided onboarding that builds on Create and Import, which are core features built in Stage 3, not product extras.
 - Licensing and billing, a docs site, update channels, Homebrew cask and winget.
 - Privacy policy and terms.
 - External security audit.

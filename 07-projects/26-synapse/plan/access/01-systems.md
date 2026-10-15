@@ -53,7 +53,7 @@ The daemon is the only part that sees secrets. It runs as your user account and 
 - **Watch:** runs scheduled health checks and sends events to the app.
 - **Audit:** writes a tamper-evident log of every decision.
 - **Sync client:** talks to the hub when one is set up.
-- **Adapters:** writes and checks the config files of each connected surface.
+- **Adapters:** hands its MCP gateway entries to the app's [Surface installer](../02-architecture.md#9-surface-installer), which writes and checks each surface's config files.
 
 **How it starts:**
 

@@ -61,6 +61,8 @@ _Legend: the cylinder is stored data. Rectangles are steps. The diamond is your 
 | 7. Resolve | For each domain: pull an existing skill, adapt one, or write one new. Then reconcile overlaps. | `resolver.py`, `registry.py` |
 | 8. Plan, review, write, score | The shared middle | `scaffold.py`, `adapters.py`, `bridges.py`, `moc.py` |
 
+**Every generated workspace starts with** permanent IDs, a home for each fact, and views in place of hand-kept lists. Values are stored in standard forms.
+
 **Without an agent,** steps 1–6 are forms, and step 7 picks from a template library. **With an agent,** steps 1–6 can be an interview, and step 7 can write skills at your level for each domain.
 
 ### Patterns from your workspace that every generated workspace gets
@@ -84,6 +86,8 @@ These are the **refinements** you asked to carry over. They are general patterns
 
 One canonical workspace, with a generated adapter for each app: Claude Code, Cursor, Codex and `AGENTS.md`, Gemini, Windsurf, an MCP runtime, and a paste pack for chat-only tools. Adapters are always regenerated, never edited. This is `wsx`'s degradation ladder, kept: native tools first, then the CLI, then a paste pack.
 
+The [Surface installer](02-architecture.md#9-surface-installer) places these on each device and checks that each app loads them.
+
 ## Import (the importer and scanner)
 
 ### Safety first
@@ -100,7 +104,7 @@ One canonical workspace, with a generated adapter for each app: Claude Code, Cur
 | Stage | Who | What happens | Output |
 |---|---|---|---|
 | A. Discover | Engine | Find the root, detect the dialect (numbered folders, a plain Obsidian vault, a Cursor rules repo, an old `wsx` layout), read the git state | Layout map |
-| B. Inventory | Engine | Parse every file: frontmatter, links, headings, code blocks, manifests. Classify what the rules can. List everything else as unclassified. | Inventory with candidate nodes and edges |
+| B. Inventory | Engine | Parse every file: frontmatter, links, headings, code blocks, manifests. Assign permanent IDs. Classify what the rules can. List everything else as unclassified. Find facts copied by hand into several places. | Inventory with candidate nodes, edges and facts |
 | C. Deep scan | **Agent** | Start at the entry points (`AGENTS.md`, `llms.txt`, routes, MOCs). Follow every edge and link. Read bodies. Judge the whole structure. | Findings in a fixed schema |
 | D. Map | Engine + agent findings | Propose the model: node types, domains and areas, edges, fixes. Each comes with confidence and evidence. | Proposals |
 | E. Review | You | Accept, edit or reject. Bulk-accept high-confidence mechanical fixes. | An approved plan |
@@ -124,6 +128,8 @@ The scan considers the whole graph, not one file at a time:
 - **Token hotspots:** files read too often or too large.
 - **Wall leaks:** employer text in personal areas.
 - **Tools without manifests,** and checks with no owner.
+- **Facts copied by hand that disagree,** such as stale statuses, old names and old paths. Each comes with a proposal to make the copies generated views or tracked mentions.
+- **Values in local formats** where a standard form belongs, such as "Oct 14" in a field that should hold `2026-10-14`.
 
 **Every finding** carries:
 
@@ -157,6 +163,7 @@ When the agent finds the same kind of issue more than once, that issue becomes a
 | `09-tools/` | Tools (each needs a `tool.json`) and the checks they implement |
 | `00-bootstrap/` | Workspace setup, doctor and adapter sources |
 | Root `_*.md` hubs (MOCs) | Views the app regenerates |
+| `project-context.md` Active Projects, `project-registry.md` | Generated views of each project's baton, ending hand-copied statuses |
 | `.claude/`, `.cursor/`, `.windsurf/` | Generated adapters |
 | `05-artifacts/` | Artifacts |
 | `_archive/` | Archive, read-only |

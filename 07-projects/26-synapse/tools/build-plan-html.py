@@ -369,7 +369,7 @@ footer { grid-column: 2; padding-top: 22px; font-family: var(--mono); font-size:
 
 <div class="page">
   <header class="masthead">
-    <div class="meta"><span>Plan set v2.0</span><span class="status">Draft for review</span><span>2026-10-14</span><span>Sean Sands</span></div>
+    <div class="meta"><span>Plan set v2.4</span><span class="status">Draft for review</span><span>2026-10-14</span><span>Sean Sands</span></div>
     <h1>Synapse</h1>
     <p class="lede">A desktop app and tray service for Mac and Windows that makes an AI workspace visible and manageable. It reads and writes the same plain files agents and Obsidian use. It runs its checks without an agent, creates and imports workspaces with measured results, and keeps each persona's accounts and tools apart.</p>
     <ul class="facts">

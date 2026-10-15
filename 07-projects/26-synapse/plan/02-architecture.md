@@ -71,7 +71,8 @@ A Rust library with no user interface and no secrets. Every other part uses it, 
 
 | Component | Job |
 |---|---|
-| **Parser** | Reads markdown, frontmatter, wikilinks, JSON manifests and tool manifests into typed nodes and edges, using the layout map for this workspace's dialect |
+| **Parser** | Reads markdown, frontmatter, wikilinks, JSON manifests and tool manifests into typed nodes and edges, using the layout map for this workspace's dialect. Assigns and tracks permanent IDs, so a moved file is seen as a move. |
+| **Facts** | Knows each fact's home and every view, slot and tracked mention of it. Runs the impact review on any change, updates views and slots after approval, and finds stale copies. |
 | **Index** | SQLite with full-text search: nodes, edges, check results, issues, runs, scorecards. A cache in the app's data folder, never in the workspace. Rebuilt from files at any time. |
 | **Checks** | Runs the model's built-in checks, and collects results from workspace tools |
 | **Router** | Turns a request into an ordered load set (foundations first), suggestions and after-work lenses, matching `skill-loadset.py` exactly |
@@ -93,6 +94,7 @@ Runs as you from login: a LaunchAgent on Mac, a logon task on Windows. It never 
 | **Plugin host** | Loads plugins and enforces the permissions they declare |
 | **Local API** | How the app and CLI talk to the service: a socket on Mac, a named pipe on Windows, with caller checks |
 | **Notifications** | Sends health, conformance and job events to the app |
+| **Surface installer** | Detects agent apps and keeps their rules, skills and tool connections in place. See [Surface installer](#9-surface-installer). |
 
 ## 3. Access process (`sy-access`)
 
@@ -100,11 +102,14 @@ This is the Personas & access module: the login broker, the MCP gateway, secure 
 
 It runs as a **separate process** from the tray service for one reason: the service runs your tools, plugins and agent jobs, and those are the parts most likely to have bugs or be misled. Keeping secrets in their own small process means none of those can read a token.
 
+It also holds the fleet key, the persona keys for sealed notes and the recovery backup. It owns unlocking and lock timeouts for the whole app. See [Accounts, linking and encryption](06-security.md#accounts-linking-and-encryption).
+
 ## 4. Desktop app
 
 Built with Tauri 2: a Rust shell around a React and TypeScript interface. It shows the [modules](03-app-experience.md) and talks to the service and the access process through their local APIs.
 
 - **It holds no secrets** and can't read them.
+- **It formats values for this device's region,** detected from the OS's own settings and changeable in Settings. Files keep the standard forms.
 - **The web view loads no remote content.** It accepts only the commands it is allowed.
 - **Several workspaces** can be open, each tied to one or more personas. An employer workspace only opens on devices its persona allows.
 
@@ -164,6 +169,74 @@ WebAssembly components are the alternative, decided in Stage 5.
 
 The hub from the access module. It passes encrypted policy and device lists between devices on your Tailscale network. **Workspace files sync through git as they do today.** The hub only carries what git shouldn't: device enrollment, access policy and health summaries.
 
+## 9. Surface installer
+
+**The job:** put the workspace's rules, skills and tool connections where each agent app reads them, on every device. You never hunt through an app's settings.
+
+**Write once, deliver everywhere.**
+
+- **Rules** are written once, in `AGENTS.md` form.
+- **Skills** are written in `SKILL.md` form.
+- **Tool connections** (MCP servers) live in one list.
+
+Each app then gets them in the format and location it reads.
+
+**The surface catalog** is one shared file, used by both Synapse and `wsx`. It starts from your `surfaces.json` (22 surfaces) and `SURFACES.md`. For each app on each OS it holds:
+
+| Field | Example |
+|---|---|
+| How to tell it's installed | An app bundle, a command on the PATH, a config folder |
+| Where it reads, at each level | Organization (admin-managed), user, project |
+| What each place accepts | Rules, skills, MCP servers, commands, hooks |
+| File format | Markdown, `.mdc`, JSON, TOML |
+| Limits | Codex reads up to 32 KB of `AGENTS.md` text |
+| Which level wins | The app's own order of precedence |
+| Writable or guided | A file Synapse can write, or a settings screen that needs a guided paste |
+| Test signal | How to confirm the app loaded the rules |
+
+**Finding apps the catalog doesn't know yet.** OS conventions point to likely config folders:
+
+- **Mac:** `~/Library/Application Support`
+- **Windows:** `%APPDATA%` and `%LOCALAPPDATA%`
+- **Linux:** `~/.config`
+
+Many agent tools use their own folders in your home directory instead (`~/.claude`, `~/.codex`, `~/.gemini`). So anything found this way stays marked unverified until it's confirmed.
+
+**Placement rules:**
+
+- **Point, don't copy.** If an app reads `AGENTS.md` or `SKILL.md` natively, point it at the source instead of copying.
+- **Thin pointers, never symlinks.** Otherwise, write a thin generated pointer file. Some apps merge every instruction file they find, and would read a symlinked file twice.
+- **Never overwrite your content.** Merge entries into JSON or TOML configs, and use marked blocks in Markdown. Back up before the first write.
+- **Keep an install record:** what was written, where, and its fingerprint. That drives drift alerts and a clean uninstall.
+- **Never touch admin-managed settings.**
+
+**Top-down layering.** The workspace contract goes to each app's user level, then persona rules, then project rules, mapped onto the app's own order of precedence.
+
+**Walls.**
+
+- Employer rules only go to work apps, or to the work copy of an app installed twice.
+- Personal workspace files never go into an employer repo. A project-level file there would be a pull request, if anything.
+
+**One review, then automatic.**
+
+- The first run shows one screen: "Found Claude Code, Cursor, Codex and Gemini CLI. Connect all?"
+- After that, the installer keeps everything current and tells you when an app rewrites its config.
+- The first write isn't silent, because another app's config is a place where injected instructions could persist.
+
+**Checking the last mile.**
+
+- **Every app:** the file is present, valid and under the app's limit.
+- **Command-line agents:** an optional quick test looks for the session-start line (`[workspace: LOADED …]`), which your workspace already uses as a test signal.
+- **Desktop apps:** a one-click test.
+
+**Where it can't automate:**
+
+- **Web and hosted apps** (claude.ai, ChatGPT, cloud agents) have no local files. They get a ready-made upload or paste bundle with guided steps, or an API where the vendor offers one.
+- **Apps that keep rules in their own database** get a guided paste.
+- **Vendors move file locations.** Catalog updates and drift alerts keep up with that.
+
+**One installer for everything.** The access process doesn't write app configs itself. It hands its MCP gateway entries to the installer as one more thing to place.
+
 ## Technology
 
 | Layer | Choice | Why |
@@ -174,13 +247,16 @@ The hub from the access module. It passes encrypted policy and device lists betw
 | Markdown editing | CodeMirror 6 | The editor Obsidian is built on, so raw markdown round-trips cleanly |
 | 2D graph | Sigma.js with Graphology (WebGL) | Handles thousands of nodes smoothly |
 | 3D graph | three.js through react-three-fiber, with a 3D force layout | Mature, fast, works on both OSes |
-| Index | SQLite with FTS5 full-text search | One file, fast, rebuildable |
+| Index | SQLite with FTS5 full-text search, plus a tokenizer for languages written without spaces | One file, fast, rebuildable |
+| Region formatting | ICU4X (Unicode CLDR data) in Rust, the `Intl` API in the interface | Standard rules for dates, numbers and money. Used for display only. |
 | File watching | `notify` crate | Native file events on each OS |
 | git | git CLI first, `gitoxide` where speed matters | Matches what you run by hand |
 | MCP | `rmcp`, the official Rust SDK, for both server (bridge) and client (gateway) | Tracks the spec |
 | Schemas | JSON Schema, checked in Rust | The same schemas agents and other tools can read |
 | Workspace tools | Run as they are (Python today) through `tool.json` | Nothing is rewritten just to fit |
 | Access | As specified in [access/01-systems](access/01-systems.md#technology-choices) | — |
+| Unlock | LocalAuthentication with the Secure Enclave (Mac), Windows Hello with the TPM (Windows) | Native Touch ID and Hello, with password or PIN fallback |
+| Encryption format | `age`, through the Rust `rage` library, for sealed notes and backups | An open format, so data is never locked to Synapse |
 
 ## Performance targets
 

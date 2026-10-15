@@ -73,7 +73,12 @@ This is a long project. That is why every stage has to be useful on its own. Sta
 
 **Deliverables:**
 
-- **Workspace model v1:** the spec plus JSON Schemas for every node type, including Domain, Area, Persona, Tool and Surface instances.
+- **Workspace model v1:** the spec plus JSON Schemas for every node type, including Domain, Area, Persona, Tool, Surface instances, Fact and View.
+- **Facts model:** permanent IDs, fact homes, views, slots and tracked mentions, and live versus pinned.
+- **Values model:** standard storage forms and the region-detection order.
+- **Agent Skills check:** confirm whether `metadata` may hold lists, then settle the skill frontmatter migration.
+- **Surface catalog schema:** merge `surfaces.json` and `wsx scan`'s detection into one shared catalog, verified for each app on Mac and Windows.
+- **Unlock and recovery spikes:** Touch ID and Windows Hello unlock from the Tauri app, passkey PRF on Mac, Windows, Bitwarden-stored passkeys and a YubiKey, the domain file passkeys need, and the `age` format for sealed notes.
 - **Standards check:** current Agent Skills, `AGENTS.md` and MCP specs, and the frontmatter placement decision.
 - **A sandbox snapshot** of your workspace at a pinned commit.
 - **The first deep scan.** An agent session follows a written scan protocol, the manual version of the future scan job, on that snapshot. It produces a findings report, a coverage ledger and a **proposed domain and area map** for your review.
@@ -86,7 +91,7 @@ This is a long project. That is why every stage has to be useful on its own. Sta
   - the file watcher alongside Obsidian Linter
   - `tool.json` written for five existing tools
 - **The repo:** `~/Projects/synapse` with remote `snds/synapse`. These plans move to its `docs/`.
-- **Name ledger:** one brand file for every user-facing use of the name, neutral `sy` internal identifiers, and a check that lists every place the codename appears and fails on any it doesn't know about. This keeps a rename for branding or legal reasons mechanical. See decision D37.
+- **Name ledger as the first fact:** the codename's home in a brand file, every place it appears tracked, and neutral `sy` internal identifiers. A check fails on any appearance it doesn't know about. See decisions D37 and D43.
 
 **Exit:**
 
@@ -102,7 +107,8 @@ This is a long project. That is why every stage has to be useful on its own. Sta
 
 **Deliverables:**
 
-- Parser and index.
+- Parser and index, with permanent IDs.
+- The facts engine: impact review, view and slot updates, the drift check.
 - Checks: the core validators ported, the rest wrapped through `tool.json`.
 - A router that matches `skill-loadset.py`.
 - The tool runner.
@@ -127,6 +133,9 @@ This is a long project. That is why every stage has to be useful on its own. Sta
 - Screens: Home, Library, Domains & skills with the load simulator, Health, Projects, and the 2D graph.
 - The file watcher with conformance proposals.
 - Notifications.
+- The impact review screen, the where-is-this-used panel, and Region and formats settings.
+- The Surface installer's detection and a read-only Agent apps screen: what's installed, what each app reads, what's missing.
+- App lock with Touch ID and Windows Hello, plus Settings → Security: idle timeout, lock on screen lock and sleep, hidden notification details.
 - Optional: the access module's read-only Watch phase, since the tray now exists.
 
 **Exit:**
@@ -146,6 +155,7 @@ This is a long project. That is why every stage has to be useful on its own. Sta
 - The import pipeline, with the deep scan as an agent job.
 - Create (the generator, version 2), with forms and an agent interview.
 - Scorecards, with corpus T1–T4 running in CI.
+- The Surface installer's writes: one review, then automatic placement, install records, tests and a clean uninstall.
 - The fix-back flow to your workspace.
 
 **Exit:**
@@ -164,6 +174,7 @@ This is a long project. That is why every stage has to be useful on its own. Sta
 
 - The access module's phases: Watch → Broker → Gateway ([access/06-phases](access/06-phases.md)).
 - Personas and app instances in the model, including duplicate installs.
+- Persona-aware placement: each app install gets only its persona's rules and tools.
 - The Integrations screen.
 
 **Exit:** as in the access phases, plus a duplicate-install setup (two Claude desktop apps, one per persona) routed correctly.
@@ -177,6 +188,7 @@ This is a long project. That is why every stage has to be useful on its own. Sta
 **Deliverables:**
 
 - Agent bridge version 2.
+- Sealed notes, opened through the bridge with a named prompt and Touch ID or Hello.
 - Agent jobs beyond scanning: optimize with judgment, skill drafting, overlap reconciliation, all on schedules.
 - Plugin system version 1.
 - The 3D graph.
@@ -195,7 +207,8 @@ This is a long project. That is why every stage has to be useful on its own. Sta
 
 **Deliverables:**
 
-- The access module's fleet phase: hub, enrollment, removal, recovery kit.
+- The access module's fleet phase: hub, linking by QR or short code with a safety phrase, removal, the recovery passkey, the printed recovery key, the optional passphrase backup.
+- Optional encrypted sync for workspace files.
 - Per-device workspace settings.
 
 **Exit:** as in the access phases.
@@ -204,7 +217,7 @@ This is a long project. That is why every stage has to be useful on its own. Sta
 
 ## Stage 7: Product readiness
 
-Only after the go decision. See [Commercial path](08-commercial-path.md).
+Only after the go decision. Adds hosted sign-in (SSO and passkeys) for commercial accounts, never tied to unlocking data, and offline license files. See [Commercial path](08-commercial-path.md).
 
 ---
 
@@ -215,7 +228,7 @@ Only after the go decision. See [Commercial path](08-commercial-path.md).
 | Measurement | Corpus, scorecards, gates | From Stage 0. Gates tighten each stage. |
 | Security | Threat review and scenarios | Start of every stage |
 | Vaultwarden | Deploy, back up, trial, cut over ([access/05-vaultwarden](access/05-vaultwarden.md)) | Any time. Independent of code. |
-| Fix-back | Scanner findings proposed to your workspace | From Stage 0's first scan |
+| Fix-back | Scanner findings proposed to your workspace. First candidates: make `project-context.md` Active Projects and the project registry generated views of the batons. | From Stage 0's first scan |
 
 ## What you'll be asked for
 

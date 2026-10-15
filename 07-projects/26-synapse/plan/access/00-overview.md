@@ -8,11 +8,11 @@ updated: 2026-10-14
 
 # Personas & access — Overview
 
-> **Module of the workspace app (2026-10-14).** This folder was the whole plan (then codenamed Synapse) until Sean widened the product to a desktop workspace app, now codenamed Synapse. It is the **Personas & access** module of that app. The design here still holds. Start with the [big picture](../00-big-picture.md), then read these pages for the depth on accounts, logins and devices. Below, "Synapse" means the app this module belongs to.
+> **Module of the workspace app (2026-10-14).** This folder was the whole plan (then codenamed Switchyard) until Sean widened the product to a desktop workspace app, now codenamed Synapse. It is the **Personas & access** module of that app. The design here still holds. Start with the [big picture](../00-big-picture.md), then read these pages for the depth on accounts, logins and devices. Below, "Synapse" means the app this module belongs to.
 
 **TL;DR:** This module gives every tool the right login for the project it is working in, on Mac and Windows. You sign in once per account on each device. Rules you write once decide which account each request gets. When something goes wrong, the menu bar or system tray tells you.
 
-_Codename. See the [name ledger](../../NAMING.md) and the [commercial path](../08-commercial-path.md) for the trademark check._
+_Codename. The name is a tracked [fact](../01-workspace-model.md#facts-one-source-many-places); see the [commercial path](../08-commercial-path.md) for the trademark check._
 
 ## The problem
 
@@ -64,7 +64,7 @@ It has five jobs.
 | Cover both cases | The Work MBP holds personal and employer identities from the start. Strict walls keep them apart. |
 | Include Windows | Mac and Windows ship together in every phase. The Mac-only SwiftUI idea is dropped in favour of Rust + Tauri 2, the same stack as Fontface. |
 | Just for me, but secure regardless | Security is designed as if it were a product from day one. Product work (phase 5) waits for a go decision. |
-| If commercial, add a GUI workspace generator | The product path adds guided setup: workspace, accounts, per-account limits and logins in one flow, built over the `wsx` engine from project 18. |
+| If commercial, add a GUI workspace generator | **Changed later the same day:** the GUI generator is now a key part of the tool for everyone, not a commercial extra. See [Create and import](../04-generator-and-importer.md) and decision D34. |
 
 The full decision log is in [decisions.md](../decisions.md).
 

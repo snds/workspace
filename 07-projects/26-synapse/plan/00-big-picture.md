@@ -18,15 +18,15 @@ updated: 2026-10-14
 
 Your workspace is the reference the app is measured against.
 
-_"Synapse" is the codename (renamed from Synapse on 2026-10-14). A synapse is where signals pass between nerve cells; this app is where work, knowledge and logins pass between personas, domains and tools. Every place the name appears is tracked in the [name ledger](../NAMING.md), so a legal or branding change is a mechanical swap._
+_"Synapse" is the codename (renamed from Switchyard on 2026-10-14). A synapse is where signals pass between nerve cells; this app is where work, knowledge and logins pass between personas, domains and tools. The name is itself a tracked fact (see [facts](01-workspace-model.md#facts-one-source-many-places)), so a legal or branding change is a mechanical swap._
 
 ## What changed today, and why
 
-| | This morning | Now |
+| | Earlier today (replaced) | Now |
 |---|---|---|
 | The product | A credential router | A workspace app. Credential routing is one module, **Personas & access**. |
 | The real problem | Tools use the wrong account | The workspace is powerful but invisible. Seeing or steering it takes long sessions with an agent. |
-| The generator | A later add-on, if sold | Core. Create, import and measure workspaces. |
+| The generator | A later add-on, only if sold | **A key part of the tool for everyone,** not a commercial extra. Create, import and measure workspaces, built in Stage 3. |
 | Your workspace | Something the tool serves | The north star, the first import and the test reference |
 
 ## The product on one page
@@ -74,34 +74,49 @@ _Legend: cylinders are stored data. Rectangles are parts or steps. Arrows show w
 1. **Files are the source of truth.**
    - The app reads and writes the formats agents and AI-focused users already use: `AGENTS.md`, `SKILL.md` (the open Agent Skills format), MCP, `llms.txt`, and markdown with YAML frontmatter and `[[wikilinks]]`.
    - Any index the app builds is a cache. It can be deleted and rebuilt from the files.
-2. **Scripts live in the workspace in their own language.**
+2. **Readable without Synapse.**
+   - Every file reads correctly and completely with the app uninstalled.
+   - Synapse adds no new syntax, only HTML comments where it must, and most files have none.
+   - See [readable without Synapse](01-workspace-model.md#readable-without-synapse).
+3. **One source for every fact.**
+   - Names, statuses, paths and next actions live in one place.
+   - Other places are generated from that place, linked to it, or tracked against it, like design-system instances.
+   - Changes show their impact before anything is written, and history stays frozen.
+   - See [facts](01-workspace-model.md#facts-one-source-many-places).
+4. **Stored standard, shown local.**
+   - Dates, numbers and money are stored in standard forms, in files too.
+   - The app formats them for your region, detected from your OS settings without prompts and always changeable.
+   - See [values and formats](01-workspace-model.md#values-languages-and-formats).
+5. **Scripts live in the workspace in their own language.**
    - Python, Rust, TypeScript or whatever an agent chose.
    - Each one carries a small manifest saying how to run it, so the app and any agent can use it.
-3. **Agent optional, agent enhanced.**
+6. **Agent optional, agent enhanced.**
    - Checks, routing and fixes run as plain programs.
    - A connected agent adds judgment.
    - **Agents discover; code enforces.** When an agent finds the same kind of problem twice, it becomes a deterministic check. This is your workspace's close-out and self-improve rule, built into the product.
-4. **Your workspace is the north star.** Generated and imported workspaces must handle the kind of work yours does. Fixes found along the way flow back to yours, through its normal review.
-5. **Measured, not assumed.** Every create, import and scan run produces a scorecard. Releases have number gates.
-6. **Never edit silently.**
+7. **Your workspace is the north star.** Generated and imported workspaces must handle the kind of work yours does. Fixes found along the way flow back to yours, through its normal review.
+8. **Measured, not assumed.** Every create, import and scan run produces a scorecard. Releases have number gates.
+9. **Never edit silently.**
    - Edits from Obsidian, agents or git are welcome.
    - If one breaks the structure, the app proposes a fix and you accept it.
-7. **Personas are walls you define.** Work and personal are defaults. You can split by app, or by separate installs of the same app.
-8. **Product-grade security from day one,** whether it stays personal or is sold.
-9. **Mac and Windows from the start.** Linux is designed for and comes later.
+10. **Personas are walls you define.** Work and personal are defaults. You can split by app, or by separate installs of the same app.
+11. **Standards first.** Synapse stays inside the Agent Skills spec and plain Markdown. It adds value through conventions that degrade gracefully, never through a private format.
+12. **Product-grade security and privacy from day one,** whether it stays personal or is sold. There's no account for personal use. Desktops unlock with Touch ID or Windows Hello. Keys never leave your devices unencrypted.
+13. **Mac and Windows from the start.** Linux is designed for and comes later.
 
 ## The modules
 
 | Module | What you do there | Grows from (in your workspace today) |
 |---|---|---|
 | **Home** | Status, pending items, projects, health at a glance | The session-start card (`session-status.py`) |
-| **Library** | Read and edit notes, with frontmatter shown as form fields, backlinks and outlines | Obsidian and the vault conventions |
+| **Library** | Read and edit notes, with frontmatter shown as form fields, backlinks and outlines. See where any fact is used. | Obsidian and the vault conventions |
 | **Graph** | 2D and 3D maps of domains, skills, knowledge and projects | Obsidian's graph, the Juggl plugin |
 | **Domains & skills** | Browse domains → areas → hubs → spokes, foundations, lenses and frameworks. See exactly what a request would load. | `skills.registry.json`, `skill-loadset.py`, `trigger-routes.json` |
-| **Health** | Run and read the doctor, harness, validators and optimize. Fix issues. | `workspace-harness.py`, `ws-doctor`, `nightly.py`, `/optimize` |
+| **Health** | Run and read the doctor, harness, validators and optimize. Fix issues, including stale copies of facts. | `workspace-harness.py`, `ws-doctor`, `nightly.py`, `/optimize` |
 | **Projects** | Batons, next actions, pending items, sessions | `SESSION-STATE.md`, `project-context.md`, the session log |
 | **Personas & access** | Personas, accounts, app installs, walls, limits | This morning's plan, now in [access/](access/00-overview.md) |
 | **Integrations** | MCP, CLI and API connections per persona | `capability-registry`, MCP configs |
+| **Agent apps** | See which agent apps are installed, connect them in one step, and keep their rules, skills and tools in place | `surfaces.json`, `SURFACES.md`, the doctor's installs, `wsx scan` |
 | **Create** | Make a new workspace through guided setup | `wsx` 0.3 (project 18) |
 | **Import** | Bring in an existing workspace and find its issues | `wsx examine`, `consume`, `diagnose`, `restructure` |
 | **Agents** | Connect agents, give them jobs, review what they propose | `workspace_mcp.py`, the Claude hooks |
@@ -193,11 +208,8 @@ The full rules are in the [workspace model](01-workspace-model.md#domains-areas-
 
 ## Open decisions
 
-1. **The public name.** "Synapse" is a codename. Several software products already use the word, so a public name needs a trademark check. The [name ledger](../NAMING.md) makes the swap mechanical.
-2. **Frontmatter placement.**
-   - Your extra fields (`tier`, `hub`, `domain`) sit at the top level today.
-   - The Agent Skills format may expect extras under a `metadata` block.
-   - Stage 0 checks the current spec. Recommendation: keep them at the top level unless the standard rejects that.
+1. **The public name.** "Synapse" is a codename. Several software products already use the word, so a public name needs a trademark check. The name is a tracked [fact](01-workspace-model.md#facts-one-source-many-places), so the swap is mechanical.
+2. **Frontmatter placement.** Leaning: move workspace fields (`tier`, `hub`, `domain`, `triggers` and the rest) under `metadata`, which the Agent Skills spec reserves for them (D40). Stage 0 confirms whether lists are allowed there. If not, routing lists move to a small file inside each skill folder.
 3. **Generator engine.**
    - Recommendation: build the new model, parser and checks in the Rust core from the start.
    - Keep running the existing Python tools through manifests.

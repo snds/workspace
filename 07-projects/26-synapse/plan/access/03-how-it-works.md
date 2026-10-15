@@ -326,6 +326,8 @@ sy uninstall                  restore the git config, PATH and app configs saved
 
 ### Adding a device
 
+_App-wide linking, desktop unlock, lock timeouts and recovery are specified in [Accounts, linking and encryption](../06-security.md#accounts-linking-and-encryption). The flow below is the same exchange._
+
 ```mermaid
 sequenceDiagram
   participant N as New device

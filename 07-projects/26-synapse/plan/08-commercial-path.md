@@ -28,6 +28,7 @@ Stages 0–6 don't need to be redone. Nothing here starts until you make a go de
 
 | Area | For you now | As a product |
 |---|---|---|
+| Accounts | None. Your devices are your identity. | Hosted sign-in (Apple, Google, Microsoft, GitHub, passkeys) for billing, hosted sync and teams. It never unlocks data. Licenses are signed files that work offline. |
 | Provider apps | A GitHub App you register yourself, `gh` import, pasted tokens | Synapse registers a GitHub App, a Linear OAuth app and an Atlassian OAuth app. Each provider has its own review. |
 | Hub | Self-hosted on Unraid | Hosted by us, end-to-end encrypted, plus a self-host option |
 | Starting content | Your workspace | A starter library of generic domains, skills, frameworks and checks, built from your workspace's **patterns** with none of its personal or employer content |
@@ -38,7 +39,7 @@ Stages 0–6 don't need to be redone. Nothing here starts until you make a go de
 | Support | You | Docs, a redacted diagnostics bundle, issue intake |
 | Security | Internal tests | External audit before launch, then a bug bounty, a security page and a disclosure policy |
 | Legal | None | Privacy policy, terms, data-processing terms for teams, export rules for encryption software (to check) |
-| Name | Synapse (codename) | Trademark search first. "Synapse" is already used by several software products, so the public name will likely differ. The [name ledger](../NAMING.md) makes the swap mechanical. |
+| Name | Synapse (codename) | Trademark search first. "Synapse" is already used by several software products, so the public name will likely differ. The name is a tracked [fact](01-workspace-model.md#facts-one-source-many-places), so the swap is mechanical. |
 
 ## Create and import, as a product feature
 

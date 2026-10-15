@@ -23,6 +23,7 @@ flowchart TB
   WIN --> PROJ["Projects"]
   WIN --> PER["Personas & access"]
   WIN --> INT["Integrations"]
+  WIN --> APPS["Agent apps"]
   WIN --> AGT["Agents"]
   WIN --> CRE["Create"]
   WIN --> IMP["Import"]
@@ -54,18 +55,19 @@ _Legend: each box is a place in the app. Arrows show where you can go from where
 | Screen | What's on it |
 |---|---|
 | **Home** | The session card as a page: last session, pending items, every project's next action, health summary, recent agent jobs |
-| **Library** | A file tree in your layout. A markdown editor with live preview (CodeMirror 6, as in Obsidian). Frontmatter shown as a form bound to the schema, with plain-text editing always available. Backlinks, outline, wikilink autocomplete. A conformance badge per file. |
+| **Library** | A file tree in your layout. A markdown editor with live preview (CodeMirror 6, as in Obsidian). Frontmatter shown as a form bound to the schema, with plain-text editing always available. Backlinks, outline, wikilink autocomplete. A conformance badge per file. A **where-is-this-used** panel for any fact. |
 | **Graph** | 2D and 3D views of the same model. Domains are regions and areas are clusters, with spokes around their hub. Filters by type, domain, persona, freshness and issues. Edge colours by kind (hard load, soft link, lens, typed relation). Click any node to open it. A list view shows the same data for anyone who can't or doesn't want to use the graph. |
 | **Domains & skills** | Domains → areas → hubs → spokes, plus foundations, lenses and frameworks. A skill page shows the rendered document beside its **contract**: triggers, edges, what governs it, check status. A **load simulator**: type a request and see the ordered load set, suggestions, after-work lenses and token cost. |
 | **Health** | One issue list by severity, each with the check that found it, the nodes affected and a fix. Buttons for doctor, harness, nightly rebuild, optimize, and optimize with an agent when one is connected. History and trends. Generator and importer scorecards. |
 | **Projects** | A board of projects with their batons: focus, next action, open decisions, blocked on. Pending items. Session history. |
 | **Personas & access** | Personas, accounts, app installs, walls and limits. Specified in [access/03-how-it-works](access/03-how-it-works.md#the-app). |
 | **Integrations** | Per persona: each MCP server, CLI and API connection, its account and its status |
+| **Agent apps** | Every detected agent app and install, the persona each belongs to, what's connected (rules, skills, tools), test results, drift alerts, and guided steps for apps without files |
 | **Agents** | Connected agents, the job queue, job history with inputs, outputs and cost, and each agent's permissions |
 | **Create** | The guided generator. See journey 4. |
 | **Import** | The guided importer. See journey 3. |
 | **Plugins** | Installed plugins, their permissions, on/off, updates waiting for review |
-| **Settings** | Workspaces, devices, schedules, notifications, appearance, updates |
+| **Settings** | Workspaces, devices, schedules, notifications, appearance, updates. **Security:** unlock with Touch ID or Windows Hello, lock timeouts for the app, secret classes and sealed notes, linked devices, recovery. **Region and formats:** detected from the OS on first run, without prompts, and changeable per device or persona. |
 
 ## Key journeys
 
@@ -138,6 +140,35 @@ In Domains & skills, you type "dark-mode palette for this dashboard." The simula
 3. `uid-color-for-ui`
 
 It also shows the suggestions (`ds-advisor`, `uid-surface-depth`), the lenses that run after the work, and the token cost. This is the worked example in your `AGENTS.md`, made visible.
+
+### 6. Changing a fact everywhere
+
+You rename a project in its own file. The impact review lists:
+
+- the views and slots that will update
+- the plain mentions it found, as proposals
+- the history entries it will leave alone
+- the wikilinks it will repoint
+
+You accept, and it's done. This morning's two-dozen-file rename becomes one reviewed step. The flow is in the [workspace model](01-workspace-model.md#facts-one-source-many-places).
+
+### 7. Connecting your agent apps
+
+1. **On first run,** Synapse finds your agent apps.
+2. **It shows one screen:** what it found, what it will place in each, and which persona each copy belongs to.
+3. **You click Connect all.**
+4. **It does the work:** writes the files, runs a quick test where it can, and lists anything that needs a guided step, such as claude.ai's preferences.
+
+From then on, it keeps them current. The details are in the [architecture](02-architecture.md#9-surface-installer).
+
+### 8. Adding a device
+
+1. **Install Synapse on the new desktop.** It shows a QR code and a short code.
+2. **On a device that's already linked,** scan or type the code.
+3. **Check the safety phrase.** Both screens show the same one. Confirm with Touch ID or Windows Hello.
+4. **The new device joins.** It then walks you through signing in to each account it's allowed. Each is a quick browser approval.
+
+The details are in [Accounts, linking and encryption](06-security.md#accounts-linking-and-encryption).
 
 ## Design and accessibility
 

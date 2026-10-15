@@ -27,6 +27,12 @@ updated: 2026-10-14
 | 11 | **Agent dependence** | Are plain rules catching more over time? | Share of findings caught by deterministic checks | Rises every release |
 | 12 | **Task equivalence** | Can the output do the same work? | A fixed set of real tasks run by an agent against source and output, graded by a rubric with your spot checks | Equal or better on at least 90% of tasks. Run per release, not per commit. |
 | 13 | **Review load** | How much does a person have to check? | Proposals per 100 files and the share you accept | Tracked; acceptance should rise |
+| 14 | **Fact consistency** | After a change, is anything live still stale? | Views and slots that disagree with their source after the impact review is applied | 0 |
+| 15 | **Drift detection** | Does the check find hand-copied values that went stale? | Seeded stale copies with an answer key | Recall at least 90%, precision at least 80% |
+| 16 | **Identity survival** | Do renames and moves outside the app keep identity? | Files moved in Finder, Obsidian or git, checked against their IDs | 100% |
+| 17 | **Value round trip** | Do formats lose or change data? | Format a standard value for each supported locale, parse it back, compare. Also check that changing only a device's region changes no files. | 100% match; 0 file changes |
+| 18 | **Surface reach** | Does every connected app actually load the rules? | The test signal for each app and install | 100% of file-based apps. Guided ones are tracked. |
+| 19 | **Install safety** | Does connecting or removing harm your own config? | Each app's config compared before install and after uninstall; your own lines checked for changes | Identical after uninstall. 0 of your lines changed. |
 
 ## Test workspaces (the corpus)
 
@@ -34,7 +40,7 @@ updated: 2026-10-14
 |---|---|---|
 | **T1: Your workspace** | A snapshot at a pinned commit, in a sandbox folder. Employer project notes stay inside it and never enter any shared corpus. | Your Mac only, on demand and before each release |
 | **T2: Generated workspaces** | About 10 profiles, including `wsx`'s "Priya Nair" persona, a work-only engineer, a personal-only hobbyist, and a mixed user with three personas | CI on every change |
-| **T3: Seeded breakage** | Copies of T1 and T2 with scripted damage: a hub edge removed, a knowledge entry orphaned, a skill duplicated, a wrong tier, a stale date, employer text in a personal area, a load-chain cycle, a missing tool manifest. Each carries an answer key. | CI. T1-based copies stay local. |
+| **T3: Seeded breakage** | Copies of T1 and T2 with scripted damage: a hub edge removed, a knowledge entry orphaned, a skill duplicated, a wrong tier, a stale date, employer text in a personal area, a load-chain cycle, a missing tool manifest, stale copies of a status or name, a file renamed outside the app, a date written in a local format. Each carries an answer key. | CI. T1-based copies stay local. |
 | **T4: Other formats** | A plain Obsidian vault, a repo with only `AGENTS.md`, a Cursor rules repo, a Claude Code skills folder, an old flat `wsx` workspace | CI |
 
 ## The scorecard
