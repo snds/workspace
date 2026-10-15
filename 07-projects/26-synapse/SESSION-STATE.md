@@ -1,6 +1,6 @@
 # SESSION-STATE — Synapse
 
-_Last updated: 2026-10-14 — Stage 0: first deep scan done; domain map awaiting Sean_
+_Last updated: 2026-10-14 — Stage 0: domain map approved, item 11 done_
 
 ---
 
@@ -9,13 +9,13 @@ _Last updated: 2026-10-14 — Stage 0: first deep scan done; domain map awaiting
 ### 🤝 Live handoff (the baton)
 
 - **TL;DR (for future agent)**: Synapse (codename; was Switchyard) is a planned desktop workspace app with a tray service, for Mac and Windows. It makes an AI workspace visible and manageable over plain files, runs checks without an agent, creates and imports workspaces with scorecards, and walls personas. The credential router is its Personas & access module (`plan/access/`). Planning only; nothing built.
-- **Current focus**: **Stage 0: the first deep scan is done** (repo `0736a5e`). Sean reviews `docs/stage-0/domain-map-proposal-v1.md` (10 decisions) and `docs/stage-0/scan-v1-report.md`.
+- **Current focus**: **Stage 0.** Domain map v1 approved (D68, all 10 decisions, plus D66 and D67). Item 11 is done (repo `5b04660`). Remaining Stage 0 items: 7 (surface catalog schema), 4 (standards check), 10 (name ledger as the first fact), and the spikes.
 - **Working set**: Repo `~/Projects/synapse`: `docs/plan/`, `docs/stage-0/STAGE-0.md`, `scripts/`, `corpus/`. T1 snapshot: `~/Projects/synapse-sandbox/t1-workspace@4e2b6cf/` (read-only, local only). Readable copy: https://claude.ai/artifact/VoPXvWfgPkc8ArsmtmESHt.
-- **Last action**: Added D67 (repo `8b782e3`), per Sean's condition on the domain map: domains organize and never wall off. A new on-demand `uses` edge, plus shared capability areas (vision → computer vision, quality → visual measurement), let any visual domain reach computer vision and vice versa. Model v1 §5.1, the schemas, and a new 'Crossing domains' section in the domain map. Before that: the first deep scan (730/730, 639 findings) and the domain map with 10 decisions. By Claude Opus 5.5 · Claude Code · Work MBP.
-- **Next action**: After Sean's domain-map decisions: Stage 0 item 11 (refine the Create and Import diagrams from the scan), item 7 (surface catalog schema), item 4 (standards check), the name ledger as the first fact (item 10), then the spikes. Windows PC spikes need Sean.
+- **Last action**: Recorded Sean's approval of all 10 domain-map decisions (D68) and D66. Item 11: redrew the Create and Import diagrams. Import is now the 11 stages that ran, with two feedback loops. Added the lessons table, Create defaults learned from the scan (with a Create gate of no high findings), and measurement metric 20, scan cost (about 6.1 million tokens and 35 minutes for 730 files). By Claude Opus 5.5 · Claude Code · Work MBP.
+- **Next action**: Stage 0 item 7: the surface catalog schema (merge `surfaces.json` with `wsx scan` detection, then verify each app's locations on Mac). Then item 4 (standards check: AGENTS.md, MCP, llms.txt versions), item 10 (name ledger), and the spikes. Tell Sean before the Windows PC spikes.
 - **Naming rule (standing)**: Use "Synapse" for the app from now on. Any new place the name appears (file, path, identifier, artifact title) must later be listed in the Stage 0 name ledger. User-facing text takes the name from one brand file. Internal identifiers use the neutral `sy` prefix. **No ledger scan has been run yet, by Sean's choice.** Places the name appears today: this folder's docs and paths, the build script's title, `.gitignore`, `06-context/project-registry.md`, `06-context/project-context.md`, and the published plan's title. The old name stays in decision rows D1–D36, this file's history, git history and the one-page proposal artifact, all as history.
-- **Open decisions**: Sean's explicit OK on the 10 domain-map decisions, now that D67 meets his cross-domain condition; D51; the public name; generator engine; plugin runtime; Apple Developer Program membership.
-- **Blocked on**: Sean's domain-map review. Not blocking Stage 0: the sensitive-data cleanup is deferred to after Stage 3 (D63, D65). Recommended now regardless: rotate the API key a memory note says still needs rotating, and review Google Drive link sharing for the personal files that note names.
+- **Open decisions**: D51; the public name; generator engine; plugin runtime; Apple Developer Program membership; `python-cross-platform-gui` (spoke or project skill).
+- **Blocked on**: nothing. Sensitive-data cleanup is deferred to after Stage 3 (D63, D65). Recommended now regardless: rotate the API key a memory note names, and review Drive link sharing.
 - **In-flight / do-not-touch**: Scan output folder `~/Projects/synapse-sandbox/scan-t1@4e2b6cf-v1/` (local only; it holds employer terms). The T1 snapshot is read-only.
 - **Agent thread**: Claude/Claude Code (2026-10-14): feasibility, then one-page proposal, then credential plan v1, then reframe to the workspace app (plan v2.0), then codename Synapse (plan v2.1).
 
