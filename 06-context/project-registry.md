@@ -248,7 +248,7 @@ centric-ui component work, and the `ai-knowledge/mappings` layer against the C8�
 **Summary:** A desktop app and tray service for Mac and Windows that makes an AI workspace visible and manageable over plain files (standard agent formats, Obsidian-compatible). It runs the doctor, harness and optimize without an agent, and a connected agent adds judgment. Modules: library, 2D/3D graph, domains and skills (Domain and Area become first-class), health, projects, Personas & access (the original credential router), integrations, agents, plugins. Create (generator, successor to `wsx`) and Import (agentic deep scan with a coverage ledger) are measured by scorecards. Sean's workspace is the north star. Rust + Tauri 2, same stack as Fontface.
 **Folder:** `07-projects/26-synapse/` (baton + pointers) · code and plan in the repo `~/Projects/synapse` (private `snds/synapse`), plan in `docs/plan/`, Stage 0 tracker in `docs/stage-0/STAGE-0.md`
 **Triggers:** synapse, switchyard, workspace app, workspace generator gui, credential router, multi-account gh, gh auth switch, vaultwarden migration
-**Next:** Stage 0 item 5, workspace model v1 and schemas. Then the routing oracle, the first deep scan of the T1 snapshot, and the domain map for Sean's review. See [[07-projects/26-synapse/SESSION-STATE|SESSION-STATE]].
+**Next:** Stage 0 spikes (items 1–11 done; Windows checks wait for Sean's PC). See [[07-projects/26-synapse/SESSION-STATE|SESSION-STATE]].
 
 ---
 
