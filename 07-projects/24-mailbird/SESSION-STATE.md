@@ -1,6 +1,6 @@
 # SESSION-STATE — Mailbird, working name (24-mailbird)
 
-_Last updated: 2026-10-15 — checkpoint (PRs #1–#18 merged; Phase 14 interesting calendars in PR #19)_
+_Last updated: 2026-10-15 — checkpoint (PRs #1–#19 merged; Phase 15 one action grammar in PR #20)_
 
 ---
 
@@ -11,16 +11,15 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#18 merged; Phase 14 interest
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 14 ("interesting calendars") is in review as PR #19 (`phase-14`). Sean said "merge then continue phases", so PR #18 is merged (squash 993f530). Phase 14 takes the harvest row "Interesting calendars (holidays, sports)": holidays and moon phases, computed on the device.
-- **Working set**: `crates/core/src/interesting.rs` (holiday rules, Easter, Meeus moon phases, read-only `interesting:*` collections), `crates/core/src/pim_store.rs` (occurrences, event prefix, local-calendar check), `crates/app/src/pim_commands.rs`,
-  `apps/web/src/features/calendar/{interesting,index}.tsx`, `apps/web/src/core/demo-interesting.ts`, `docs/decisions/0024-interesting-calendars.md`.
-- **Last action**: Merged PR #18 on Sean's word, then built Phase 14:
-  - National holidays for 13 countries (AU BR CA FR DE IE IT MX NL PT ES GB US), with US observed days and GB/IE/CA/AU substitute days.
-  - Moon phases (within about 2 minutes of USNO times).
-  - Read-only device calendars generated when read, grouped under "Holidays and more", with a catalog that puts your region first. Nothing is fetched.
-  - Tests: pim-core 177, the new demo suite `phase14` (12 checks) plus the 19 earlier suites, and a new `gateway-p14`.
-- **Next action**: Watch PR #19's CI. Merge only on Sean's explicit word.
-  Then, the remaining harvest: scheduling links (the gateway could host booking pages), tasks time-blocked on the calendar, travel time, contact source badges and photos, swipe gestures, regional holidays. Guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename.
+- **Current focus**: Phase 15 ("one action grammar") is in review as PR #20 (`phase-15`). Sean said "merge then continue phases", so PR #19 is merged (squash 384a913). Phase 15 takes design principle 4 and the harvest row "Configurable swipe gestures".
+- **Working set**: `crates/core/src/grammar.rs` (the `swipe_actions` setting), `crates/app/src/{commands,dispatch}.rs`, `apps/web/src/features/mail/{vocabulary.ts,swipe-row.tsx,use-shortcuts.ts,index.tsx}`, `apps/web/src/features/grammar.tsx`, `docs/decisions/0025-one-action-grammar.md`.
+- **Last action**: Merged PR #19 on Sean's word, then built Phase 15:
+  - One mail action vocabulary shared by swipes, keys, the toolbar, and ⌘K.
+  - Four swipe slots (short and long, each way; long takes over past two thirds), stored and validated in the core, with Apple Mail defaults.
+  - The "Shortcuts and gestures" dialog opens from ?, ⌘K, and Settings. H snoozes.
+  - Tests: Rust, the new demo suite `phase15` (12 checks) plus the 20 earlier suites, and a new `gateway-p15` (desktop mapping used by a separately signed-in phone on real IMAP).
+- **Next action**: Watch PR #20's CI. Merge only on Sean's explicit word.
+  Then, the remaining harvest: scheduling links (the gateway could host booking pages), tasks time-blocked on the calendar, travel time, contact source badges and photos, regional holidays, remappable keys. Guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
   Test-harness note: clear the shared Dovecot mailbox and SMTP sink before gateway suites (`seed_p12.py reset`). Both test servers, and the vite preview, stop when the container restarts; restart them first.
@@ -31,7 +30,7 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#18 merged; Phase 14 interest
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), all merged; Phase 14 in PR #19.
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), all merged; Phase 15 in PR #20.
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
