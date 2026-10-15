@@ -1,6 +1,6 @@
 # SESSION-STATE — Mailbird, working name (24-mailbird)
 
-_Last updated: 2026-10-15 — checkpoint (PRs #1–#23 merged; Phase 19 travel and time zones in PR #24)_
+_Last updated: 2026-10-15 — checkpoint (PRs #1–#24 merged; Phase 20 meeting services in PR #25)_
 
 ---
 
@@ -11,17 +11,17 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#23 merged; Phase 19 travel a
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 19 ("travel and time zones") is in review as PR #24 (`phase-19`). Sean said "merge and continue", so PR #23 is merged (squash cc09240). Phase 19 takes the harvest rows "Travel time and leave-now alerts" and "Time-zone-aware event creation".
-- **Working set**: `crates/core/src/ical.rs` (`X-APPLE-TRAVEL-DURATION` read/write), `crates/core/src/pim_store.rs` (schema v12 `travel` column, leave reminders), `planning_store.rs` + `booking_store.rs` (travel is busy), `apps/web/src/lib/zoned.ts`, `apps/web/src/features/calendar/event-editor.tsx` (Time zone + Travel rows), `time-grid.tsx` (travel band), `docs/decisions/0029-travel-and-time-zones.md`.
-- **Last action**: Merged PR #23 on Sean's word, then built Phase 19:
-  - Travel time is stored as Apple's property, so iCloud agrees. One occurrence can have its own.
-  - It's drawn as a hatched band above the event and counted as busy by Find a time and booking pages.
-  - "Time to leave" alerts come from the core's reminder worker (`DueReminder.leave`).
-  - The editor has a time zone picker. Edits now reopen in the event's own zone; before, saving moved other-zone events into the device's zone.
-  - Tests: core (188), the demo suite `phase19` (17 checks, including a live toast), all earlier suites, and `gateway-p19`.
-  - Test pitfall: the Playwright browser zone (Lisbon) and the node clock (UTC) differ. Compute times inside the page.
-- **Next action**: Watch PR #24's CI. Merge only on Sean's explicit word.
-  Then, the remaining harvest: regional holidays, remappable keys, rescheduling or cancelling bookings. Guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename.
+- **Current focus**: Phase 20 ("meeting services") is in review as PR #25 (`phase-20`). Sean said "merge when ready but feel free to continue" and asked for Zoom, Calendly, Teams, and other meeting services: parse invites into the event, and open the right app or browser. PR #24 is merged (squash b6185f5).
+- **Working set**: `crates/core/src/meeting.rs` (`meeting_info`, `manage_links`, `app_link`, `openable` allowlist, `MeetingPrefs`), `crates/core/src/ical.rs` (conference props, `Instance.meeting_url` from the description too), `apps/web/src/lib/meeting-info.ts` (demo port), `apps/web/src/features/calendar/meeting-panel.tsx`, `join-button.tsx`, `features/meeting-settings.tsx`, `docs/decisions/0030-meeting-services.md`.
+- **Last action**: Merged PR #24 on Sean's word, then built Phase 20:
+  - Calls are read from the invite: service, Zoom/Teams app link, ID, passcode, `tel:` one-tap dial-in, and Calendly/Cal.com/SavvyCal/Acuity/Doodle manage links.
+  - Join opens the app by default (setting "Open video calls in their apps"). Desktop goes through the core's `open_meeting` allowlist.
+  - The call panel shows on events and mail invites. The editor recognizes pasted invites and offers "Add video call" (Jitsi).
+  - Tests: core (193), the demo suite `phase20` (21 checks), all earlier suites (Phase 9's Join test updated to expect the app link; editor tests use the exact "Add"), and `gateway-p20`.
+  - Phase 19's live-alert test now waits 150 s (minute rounding made it flaky).
+  - Not built: creating Zoom/Teams meetings needs their OAuth apps. Noted in ADR-0030 as later.
+- **Next action**: Watch PR #25's CI. Merge only on Sean's explicit word.
+  Then, the remaining harvest: creating Zoom/Teams meetings (needs their OAuth apps), regional holidays, remappable keys, rescheduling or cancelling bookings. Guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
   Test-harness note: clear the shared Dovecot mailbox and SMTP sink before gateway suites (`seed_p12.py reset`). Both test servers, and the vite preview, stop when the container restarts; restart them first.
@@ -32,7 +32,7 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#23 merged; Phase 19 travel a
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), all merged; Phase 19 in PR #24.
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), Phase 19 (PR #24), all merged; Phase 20 in PR #25.
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
