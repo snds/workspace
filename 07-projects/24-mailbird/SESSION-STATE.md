@@ -1,6 +1,6 @@
 # SESSION-STATE — Mailbird, working name (24-mailbird)
 
-_Last updated: 2026-10-15 — checkpoint (PRs #1–#17 merged; Phase 13 contacts in PR #18)_
+_Last updated: 2026-10-15 — checkpoint (PRs #1–#18 merged; Phase 14 interesting calendars in PR #19)_
 
 ---
 
@@ -11,19 +11,19 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#17 merged; Phase 13 contacts
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 13 ("contacts that look after themselves") is in review as PR #18 (`phase-13`). Sean said "merge then continue phases", so PR #17 is merged (squash 30449e7). Phase 13 takes two harvest rows (smart groups and restore to a point in time) plus the Phase 12 Undo follow-up.
-- **Working set**: `crates/core/src/people_store.rs` (smart groups, contact history triggers, restore), `crates/core/src/store.rs` (schema v11, `thread_memory`), `crates/app/src/pim_commands.rs`,
-  `apps/web/src/features/contacts/{smart-groups,restore,index}.tsx`, `apps/web/src/core/demo-pim.ts`, `docs/decisions/0023-contacts-that-keep-themselves.md`.
-- **Last action**: Merged PR #17 on Sean's word, then built Phase 13:
-  - Smart groups are saved rules (labels, company, domain plus subdomains, phone, birthday, in touch in N days), evaluated on read.
-  - Contact history comes from SQLite triggers (edits, merges, deletes, sync), kept 30 days. Restore contacts previews by name, then reverts. Added cards go to Recently deleted, and read-only books are skipped. Undo works by mark.
-  - Thread memory: a dropped row's conversation is remembered by Message-ID, so the server's Archive copy rejoins it, and the ordinary Archive Undo now works after the move (this was the Phase 12 follow-up).
-  - Tests: pim-core 173, the new demo suite `phase13` (16 checks) plus the 18 earlier suites, a new `gateway-p13` on real Dovecot, and `gateway-p12` re-run.
-- **Next action**: Watch PR #18's CI. Merge only on Sean's explicit word.
-  Then, the remaining harvest: scheduling links (the gateway could host booking pages), interesting calendars (holidays computed offline), tasks time-blocked on the calendar, travel time, contact source badges, swipe gestures. Guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename.
+- **Current focus**: Phase 14 ("interesting calendars") is in review as PR #19 (`phase-14`). Sean said "merge then continue phases", so PR #18 is merged (squash 993f530). Phase 14 takes the harvest row "Interesting calendars (holidays, sports)": holidays and moon phases, computed on the device.
+- **Working set**: `crates/core/src/interesting.rs` (holiday rules, Easter, Meeus moon phases, read-only `interesting:*` collections), `crates/core/src/pim_store.rs` (occurrences, event prefix, local-calendar check), `crates/app/src/pim_commands.rs`,
+  `apps/web/src/features/calendar/{interesting,index}.tsx`, `apps/web/src/core/demo-interesting.ts`, `docs/decisions/0024-interesting-calendars.md`.
+- **Last action**: Merged PR #18 on Sean's word, then built Phase 14:
+  - National holidays for 13 countries (AU BR CA FR DE IE IT MX NL PT ES GB US), with US observed days and GB/IE/CA/AU substitute days.
+  - Moon phases (within about 2 minutes of USNO times).
+  - Read-only device calendars generated when read, grouped under "Holidays and more", with a catalog that puts your region first. Nothing is fetched.
+  - Tests: pim-core 177, the new demo suite `phase14` (12 checks) plus the 19 earlier suites, and a new `gateway-p14`.
+- **Next action**: Watch PR #19's CI. Merge only on Sean's explicit word.
+  Then, the remaining harvest: scheduling links (the gateway could host booking pages), tasks time-blocked on the calendar, travel time, contact source badges and photos, swipe gestures, regional holidays. Guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
-  Test-harness note: the shared Dovecot mailbox and SMTP sink keep state between runs; clear them before re-running the gateway suites (`seed_p12.py reset`). Both test servers stop when the container restarts; restart them before gateway suites.
+  Test-harness note: clear the shared Dovecot mailbox and SMTP sink before gateway suites (`seed_p12.py reset`). Both test servers, and the vite preview, stop when the container restarts; restart them first.
 - **Open decisions**: (1) the product name, which collides with Mailbird, Inc. (ADR-0006). Google verification is blocked on it;
   (2) the Tauri mobile spike vs Capacitor (ADR-0002); (3) when to subset the Material Symbols font
   (ADR-0003); (4) whether to keep Apache-2.0 for the repo license.
@@ -31,7 +31,7 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#17 merged; Phase 13 contacts
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), all merged; Phase 13 in PR #18.
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), all merged; Phase 14 in PR #19.
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
