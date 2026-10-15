@@ -1,0 +1,40 @@
+{
+  "id": "n-sefts6e3",
+  "name": "build-local-skill-plugin",
+  "description": "Generates every copy of a workspace skill that hosts discover from their own folders: pointer wrappers in the workspace, and a local plugin in the home folder. --check fails when a tracked wrapper has drifted from what it would write.",
+  "language": "python",
+  "entry": "build-local-skill-plugin.py",
+  "runtime": "python>=3",
+  "safety": "read-only",
+  "network": false,
+  "implements": [
+    "generated.untouched"
+  ],
+  "run": {
+    "check": [
+      "--check"
+    ],
+    "wrappers": {
+      "args": [
+        "--wrappers"
+      ],
+      "safety": "writes-workspace",
+      "description": "Writes the tracked pointer wrappers"
+    },
+    "plugin": {
+      "args": [
+        "--plugin"
+      ],
+      "safety": "writes-outside",
+      "description": "Writes the local plugin under the home folder"
+    },
+    "self-test": {
+      "args": [
+        "--self-test"
+      ],
+      "description": "Writes only to a temporary folder"
+    }
+  },
+  "output": "exit-code",
+  "timeout_s": 120
+}

@@ -1,0 +1,54 @@
+{
+  "id": "n-r1azxevm",
+  "name": "workspace-harness",
+  "description": "One report card for quality (runs the enforcement chain), connections (graph checks) and token cost (traversal budgets). Writes a stamp file only with --stamp.",
+  "language": "python",
+  "entry": "workspace-harness.py",
+  "runtime": "python>=3.10",
+  "safety": "read-only",
+  "network": false,
+  "implements": [
+    "tokens.budget"
+  ],
+  "run": {
+    "full": [],
+    "quality": [
+      "--quality"
+    ],
+    "connections": [
+      "--connections"
+    ],
+    "tokens": [
+      "--tokens"
+    ],
+    "json": {
+      "args": [
+        "--json"
+      ],
+      "output": "json"
+    },
+    "stamp": {
+      "args": [
+        "--stamp"
+      ],
+      "safety": "writes-workspace",
+      "description": "Also writes the report stamp into the workspace"
+    },
+    "self-test": {
+      "args": [
+        "--self-test"
+      ],
+      "output": "exit-code"
+    },
+    "check": {
+      "args": [
+        "--tokens"
+      ],
+      "output": "exit-code",
+      "timeout_s": 120,
+      "description": "Token budgets only: the fast lane"
+    }
+  },
+  "output": "text-report",
+  "timeout_s": 600
+}

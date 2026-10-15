@@ -1,0 +1,15 @@
+{
+  "id": "n-aw74592j",
+  "name": "validate-workspace",
+  "description": "Governance checks: every archived file has provenance in the archive log, and every memory and knowledge entry is listed in its index.",
+  "language": "python",
+  "entry": "validate-workspace.py",
+  "runtime": "python>=3",
+  "safety": "read-only",
+  "network": false,
+  "run": {
+    "default": []
+  },
+  "output": "exit-code",
+  "timeout_s": 60
+}

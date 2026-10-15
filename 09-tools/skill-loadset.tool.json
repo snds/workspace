@@ -1,0 +1,36 @@
+{
+  "id": "n-66gxefyc",
+  "name": "skill-loadset",
+  "description": "Computes the AGENTS.md load set for a request (matched skills, ordered load paths, suggestions, close-out command) without reading the skill registry.",
+  "language": "python",
+  "entry": "skill-loadset.py",
+  "runtime": "python>=3.10",
+  "safety": "read-only",
+  "network": false,
+  "run": {
+    "default": [
+      "{prompt}"
+    ],
+    "json": {
+      "args": [
+        "--json",
+        "{prompt}"
+      ],
+      "output": "json"
+    },
+    "self-test": {
+      "args": [
+        "--self-test"
+      ],
+      "output": "exit-code"
+    }
+  },
+  "output": "text-report",
+  "timeout_s": 10,
+  "params": {
+    "prompt": {
+      "description": "The request to route",
+      "required": true
+    }
+  }
+}

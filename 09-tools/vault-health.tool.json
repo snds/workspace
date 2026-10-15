@@ -1,0 +1,26 @@
+{
+  "id": "n-fxt0pj09",
+  "name": "vault-health",
+  "description": "Freshness and typed-edge hygiene for knowledge, memory and context: stale notes, dangling relations, unreachable entries.",
+  "language": "python",
+  "entry": "vault-health.py",
+  "runtime": "python>=3",
+  "safety": "read-only",
+  "network": false,
+  "implements": [
+    "freshness.stale",
+    "links.resolve"
+  ],
+  "run": {
+    "default": [],
+    "strict": {
+      "args": [
+        "--strict"
+      ],
+      "output": "exit-code"
+    },
+    "check": []
+  },
+  "output": "text-report",
+  "timeout_s": 30
+}

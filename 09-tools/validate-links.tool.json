@@ -1,0 +1,26 @@
+{
+  "id": "n-1xaajwce",
+  "name": "validate-links",
+  "description": "The typed `## Related` graph in skills: every target exists, typed relations are reciprocated, and design and engineering spokes reach a foundation (a warning).",
+  "language": "python",
+  "entry": "validate-links.py",
+  "runtime": "python>=3",
+  "safety": "read-only",
+  "network": false,
+  "implements": [
+    "links.resolve",
+    "links.reciprocal",
+    "skills.foundation-link"
+  ],
+  "run": {
+    "check": [],
+    "strict": {
+      "args": [
+        "--strict"
+      ],
+      "description": "Also fails on warnings"
+    }
+  },
+  "output": "exit-code",
+  "timeout_s": 60
+}

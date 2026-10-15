@@ -1,0 +1,49 @@
+{
+  "id": "n-6f2882tt",
+  "name": "session-status",
+  "description": "The session-start card: notices, last session, pending work, every project baton, git state, and CI status. CI status comes from GitHub's public API without credentials.",
+  "language": "python",
+  "entry": "session-status.py",
+  "runtime": "python>=3",
+  "safety": "read-only",
+  "network": true,
+  "run": {
+    "default": [
+      "--surface",
+      "{surface}",
+      "--via",
+      "{via}"
+    ],
+    "json": {
+      "args": [
+        "--json"
+      ],
+      "output": "json"
+    },
+    "check": {
+      "args": [
+        "--check"
+      ],
+      "output": "exit-code"
+    },
+    "self-test": {
+      "args": [
+        "--self-test"
+      ],
+      "network": false,
+      "output": "exit-code"
+    }
+  },
+  "output": "text-report",
+  "timeout_s": 15,
+  "params": {
+    "surface": {
+      "description": "The app this session runs in",
+      "default": ""
+    },
+    "via": {
+      "description": "How the card was triggered",
+      "default": "session-status"
+    }
+  }
+}

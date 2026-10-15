@@ -1,0 +1,25 @@
+{
+  "id": "n-7rartbf2",
+  "name": "build-registry",
+  "description": "Builds 03-skills/skills.registry.json from skill frontmatter: the skill graph, cycle and dangling checks, and precomputed load chains. --check fails when the committed registry has drifted.",
+  "language": "python",
+  "entry": "build-registry.py",
+  "runtime": "python>=3",
+  "safety": "writes-workspace",
+  "network": false,
+  "implements": [
+    "chain.acyclic"
+  ],
+  "run": {
+    "build": [],
+    "check": {
+      "args": [
+        "--check"
+      ],
+      "safety": "read-only",
+      "description": "Fails when the committed registry has drifted"
+    }
+  },
+  "output": "exit-code",
+  "timeout_s": 30
+}

@@ -152,6 +152,8 @@
 !09-tools/shadcn-lint/**
 !09-tools/fixtures/
 !09-tools/fixtures/**
+# Tool manifests (model v1 §11, Synapse Stage 1 item 6): what each script's runs do, for the tool runner.
+!09-tools/*.tool.json
 
 # Track only the 00-obsidian integration project; other projects stay local.
 !07-projects/

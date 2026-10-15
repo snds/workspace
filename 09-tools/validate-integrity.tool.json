@@ -1,0 +1,29 @@
+{
+  "id": "n-gp3ts02g",
+  "name": "validate-integrity",
+  "description": "The write-quality gate: skill names match their folders, every wikilink resolves, superseded files live in _archive/, and authored files hold no unfilled template tokens. Stub-marker lines and thin skill descriptions are warnings.",
+  "language": "python",
+  "entry": "validate-integrity.py",
+  "runtime": "python>=3",
+  "safety": "read-only",
+  "network": false,
+  "implements": [
+    "links.resolve",
+    "lifecycle.superseded",
+    "quality.scaffold",
+    "quality.stub-marker",
+    "skills.thin-description",
+    "skills.spec"
+  ],
+  "run": {
+    "check": [],
+    "strict": {
+      "args": [
+        "--strict"
+      ],
+      "description": "Also fails on warnings"
+    }
+  },
+  "output": "exit-code",
+  "timeout_s": 120
+}
