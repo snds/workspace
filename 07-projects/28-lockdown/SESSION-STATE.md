@@ -1,6 +1,6 @@
 # SESSION-STATE — Lockdown
 
-_Last updated: 2026-10-15 — Sean's decisions D1–D9 recorded (checkpoint)_
+_Last updated: 2026-10-15 — plan set v0.1 written (checkpoint)_
 
 ---
 
@@ -9,11 +9,11 @@ _Last updated: 2026-10-15 — Sean's decisions D1–D9 recorded (checkpoint)_
 ### 🤝 Live handoff (the baton)
 
 - **TL;DR (for future agent)**: Lockdown is a planned cross-platform password manager, passkey provider, and authenticator meant to meet and beat 1Password, Bitwarden, Proton Pass, Vaultwarden, and Apple Passwords. Research is done and in the repo. Nothing built. Three decisions wait on Sean.
-- **Current focus**: Sean decided (D1–D13, D14 proposed, repo `docs/plan/decisions.md`): all three positioning layers; a Lockdown × Mailbird ecosystem that works alone; shared persona contract; enclave pairing; locked notes recoverable with the Lockdown kit; shared plugin doctrine; self-host bundle as value-add; vendor bridges to a maybe backlog; feature-complete v1. Next is the plan set.
-- **Working set**: Repo `~/Projects/lockdown`: `docs/plan/decisions.md`, `docs/plan/00-ecosystem.md` (contract sketch), `docs/research/2026-10-15/` (brief, matrix, verification, report, seven reports). Readable copy: https://claude.ai/artifact/PT8FzNxTVLzrUr3AdVWHry.
+- **Current focus**: **Plan set v0.1 is in the repo** (`docs/plan/00`–`06` + `decisions.md`, about 22k words). Identity crate format v1.1 is the keystone. Roadmap under D9: v1 = 122 features, ~155 person-months, recommended 10–12 engineers with a staged ramp, v1 in 15–18 months. Earlier today Sean decided (D1–D13, D14 confirmed by action, repo `docs/plan/decisions.md`): all three positioning layers; a Lockdown × Mailbird ecosystem that works alone; shared persona contract; enclave pairing; locked notes recoverable with the Lockdown kit; shared plugin doctrine; self-host bundle as value-add; vendor bridges to a maybe backlog; feature-complete v1. Next is the plan set.
+- **Working set**: Repo `~/Projects/lockdown`: `docs/plan/` (00–06, decisions), `docs/research/2026-10-15/` (brief, matrix, verification, report, seven reports). Readable copy: https://claude.ai/artifact/PT8FzNxTVLzrUr3AdVWHry.
 - **Last action**: Recorded D1–D9 and the ecosystem sketch (repo `81d5c84`). Earlier: ran four parallel research passes, three gap sweeps, eight fact-check passes, a matrix and brief synthesis, and a critic pass. Built and published the report page. Pushed everything as the first commit on `main` (`e6d9248`). Scaffolded this project. By Claude Fable 5.1 · Claude Code (cloud) · vm.
-- **Next action**: Write the plan set in `docs/plan/` the way Synapse did: big picture, model (incl. the shared identity schema), architecture, security, self-host bundle, roadmap re-estimated for a feature-complete v1 (D9). Start with the shared identity crate's format (D10–D12; it is built in Mailbird first). Then resolve the brief §7 blockers (Apple export-list rules, Android hybrid on real devices).
-- **Open decisions**: **D14 (one shared design system, Mailbird's as base) conflicts with Synapse D87 (each project grows its own) — Sean to confirm the reversal before Synapse changes course;** team size and timeline under D9; the name (no trademark check); licence; whether the self-host bundle ships under one name; whether TV device-code activation is v1 or backlog.
+- **Next action**: Sean reads `00-big-picture.md`, `01-identity.md` §0 and §11, and `06-roadmap.md` §3 (staffing), and answers the open questions below. Then: hand `01-identity.md` §10 to the Mailbird session as the build order for the identity crate; open the trademark check on the names; resolve the brief §7 blockers (Apple export-list rules, Android hybrid on real devices).
+- **Open decisions**: staffing scenario (roadmap recommends 10–12 with a ramp; 6–8 means 20–24 months; 4–5 cannot deliver D9); ecosystem identifier name (App Group / package family) and whether Android apps share one signing key (01-identity §11); TV device-code flow in v1 or v1.x; developer-tools parity rows in v1 (+~10 PM) or v1.x; audit firm budget by month 6; team size and timeline under D9; the name (no trademark check); licence; whether the self-host bundle ships under one name; whether TV device-code activation is v1 or backlog.
 - **Blocked on**: nothing.
 - **In-flight / do-not-touch**: nothing. The research scratch files on the cloud VM are gone once the session ends; the repo holds the canonical copies.
 - **Agent thread**: Claude Fable 5.1/Claude Code cloud (2026-10-15): research dossier, report page, repo first commit, project scaffold; next = Sean's three decisions.

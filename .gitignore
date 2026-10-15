@@ -212,6 +212,10 @@
 !07-projects/28-lockdown/
 !07-projects/28-lockdown/**
 
+# Unicron + DSA (2026-10-15): baton only. Code in <Projects>/unicron and <Projects>/dsa (github.com/snds/*).
+!07-projects/29-unicron/
+!07-projects/29-unicron/**
+
 # Track Omni project CONTEXT only (2026-09-04). Code moved to ~/Projects/omni
 # (github.com/snds/omni). This folder is a pointer stub — no app code here.
 !07-projects/03-omni/

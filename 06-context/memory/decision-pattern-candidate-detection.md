@@ -30,4 +30,4 @@ Pattern documentation is the most under-done part of every design system. Patter
 
 - Rule: this note. Hub: [[01-frameworks/09-component-and-pattern-framework|framework 09]] §7a.
 - First implementation target: the shared Mailbird / Synapse / Lockdown design system (Lockdown D14), then the design-system analytics tool reuses it.
-- Open: the detector's repo and language (likely TypeScript for the code graph, with a Figma plugin adapter).
+- Reference implementation: `snds/dsa` (`@snds/dsa`, TypeScript, ts-morph for the code graph; Figma adapter planned). Decided 2026-10-15. Vault project: [[07-projects/29-unicron/README|29-unicron]].
