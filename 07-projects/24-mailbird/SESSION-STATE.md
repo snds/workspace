@@ -1,6 +1,6 @@
 # SESSION-STATE — Mailbird, working name (24-mailbird)
 
-_Last updated: 2026-10-15 — checkpoint (PRs #1–#21 merged; Phase 17 faces and sources in PR #22)_
+_Last updated: 2026-10-15 — checkpoint (PRs #1–#22 merged; Phase 18 tasks on the calendar in PR #23)_
 
 ---
 
@@ -11,15 +11,17 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#21 merged; Phase 17 faces an
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 17 ("faces and sources") is in review as PR #22 (`phase-17`). Sean said "merge then continue phases", so PR #21 is merged (squash e85cd42). Phase 17 takes the harvest row "contact source badges and photos".
-- **Working set**: `crates/core/src/vcard.rs` (PHOTO lines), `crates/core/src/contacts_store.rs` (`contact_copies`, `contact_photos`), `apps/web/src/features/contacts/contact-editor.tsx` (photo field), `contact-detail.tsx` ("Also in"), `apps/web/src/features/mail/index.tsx` + `conversation-view.tsx` (sender faces), `docs/decisions/0027-faces-and-sources.md`.
-- **Last action**: Merged PR #21 on Sean's word, then built Phase 17:
-  - Contact photos: add, change, or remove. The app crops to a 256 px square JPEG; the vCard stores it (up to 150 KB).
-  - Sender faces in the mail list and conversation, matched by address.
-  - Source badges on contact rows when two or more books show; an "Also in" row links copies of the same person in other books.
-  - Tests: core (184), the demo suite `phase17` (14 checks) plus the 22 earlier suites, and `gateway-p17`.
-- **Next action**: Watch PR #22's CI. Merge only on Sean's explicit word.
-  Then, the remaining harvest: tasks time-blocked on the calendar, travel time, regional holidays, remappable keys, rescheduling or cancelling bookings. Guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename.
+- **Current focus**: Phase 18 ("tasks on the calendar") is in review as PR #23 (`phase-18`). Sean said "merge then continue phases", so PR #22 is merged (squash da94493). Phase 18 takes the harvest rows "Tasks time-blocked on the calendar" and "Checklists that auto-sort completed items".
+- **Working set**: `crates/core/src/tasks_store.rs` (`note_tasks`, `notes_prefs`), `apps/web/src/features/notes/checklists.ts` (sort plugin, `setTaskDone` over Yjs), `apps/web/src/features/calendar/tasks.tsx` (Tasks panel, plan sheet), `docs/decisions/0028-tasks-on-the-calendar.md`.
+- **Last action**: Merged PR #22 on Sean's word, then built Phase 18:
+  - Tasks are notes' checklist items (no separate store). They're listed in the calendar sidebar with their note.
+  - Plan creates an ordinary event titled with the task, linked from the note. That link is what makes a task "planned".
+  - Checking off from the calendar edits the note's Yjs document. The item is found by its index, confirmed by its words. Undo is offered.
+  - Checked items move below the open ones (on by default; a core setting in Notes' More menu).
+  - Tests: core (186), the demo suite `phase18` (19 checks), all earlier suites, `phase18-sync` (two devices through the relay), and `gateway-p18`.
+  - Known limit: two devices moving the same item at once can duplicate it (Yjs moves are delete plus insert).
+- **Next action**: Watch PR #23's CI. Merge only on Sean's explicit word.
+  Then, the remaining harvest: travel time, regional holidays, remappable keys, rescheduling or cancelling bookings. Guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
   Test-harness note: clear the shared Dovecot mailbox and SMTP sink before gateway suites (`seed_p12.py reset`). Both test servers, and the vite preview, stop when the container restarts; restart them first.
@@ -30,7 +32,7 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#21 merged; Phase 17 faces an
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), all merged; Phase 17 in PR #22.
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), all merged; Phase 18 in PR #23.
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
