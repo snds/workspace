@@ -1,6 +1,6 @@
 # SESSION-STATE — Lockdown
 
-_Last updated: 2026-10-15 — seeded after the research dossier (checkpoint)_
+_Last updated: 2026-10-15 — Sean's decisions D1–D9 recorded (checkpoint)_
 
 ---
 
@@ -9,12 +9,12 @@ _Last updated: 2026-10-15 — seeded after the research dossier (checkpoint)_
 ### 🤝 Live handoff (the baton)
 
 - **TL;DR (for future agent)**: Lockdown is a planned cross-platform password manager, passkey provider, and authenticator meant to meet and beat 1Password, Bitwarden, Proton Pass, Vaultwarden, and Apple Passwords. Research is done and in the repo. Nothing built. Three decisions wait on Sean.
-- **Current focus**: Sean reads the brief and decides positioning, the Steam bridge, and team size.
-- **Working set**: Repo `~/Projects/lockdown`: `docs/research/2026-10-15/` (brief, matrix, verification, report, seven reports). Readable copy: https://claude.ai/artifact/PT8FzNxTVLzrUr3AdVWHry.
-- **Last action**: Ran four parallel research passes, three gap sweeps, eight fact-check passes, a matrix and brief synthesis, and a critic pass. Built and published the report page. Pushed everything as the first commit on `main` (`e6d9248`). Scaffolded this project. By Claude Fable 5.1 · Claude Code (cloud) · vm.
-- **Next action**: Sean answers three questions. (1) Positioning: recommended "Every way you sign in. Locked down, even from us." (2) Steam bridge: ship opt-in in v1.x, or cut for zero legal risk. (3) Team size: the roadmap assumes 6 to 8 engineers and 12 to 18 months for v1. Then: write `docs/plan/` (decision log, model, architecture) the way Synapse did, and resolve the open questions in brief §7 that block a spec (Battle.net passkey date, Apple's export-list rules, Android hybrid on real devices).
-- **Open decisions**: positioning (A, B, or C); Steam bridge yes or no; team size; the name (no trademark check); licence (OSI for apps, something that keeps self-hosting free for the server); whether to fold Synapse's Personas & access module into Lockdown or keep them separate.
-- **Blocked on**: Sean's input on the three questions.
+- **Current focus**: Sean decided (D1–D9, repo `docs/plan/decisions.md`): all three positioning layers; a Lockdown × Mailbird ecosystem that works alone; shared persona contract; enclave pairing; locked notes recoverable with the Lockdown kit; shared plugin doctrine; self-host bundle as value-add; vendor bridges to a maybe backlog; feature-complete v1. Next is the plan set.
+- **Working set**: Repo `~/Projects/lockdown`: `docs/plan/decisions.md`, `docs/plan/00-ecosystem.md` (contract sketch), `docs/research/2026-10-15/` (brief, matrix, verification, report, seven reports). Readable copy: https://claude.ai/artifact/PT8FzNxTVLzrUr3AdVWHry.
+- **Last action**: Recorded D1–D9 and the ecosystem sketch (repo `81d5c84`). Earlier: ran four parallel research passes, three gap sweeps, eight fact-check passes, a matrix and brief synthesis, and a critic pass. Built and published the report page. Pushed everything as the first commit on `main` (`e6d9248`). Scaffolded this project. By Claude Fable 5.1 · Claude Code (cloud) · vm.
+- **Next action**: Write the plan set in `docs/plan/` the way Synapse did: big picture, model (incl. the shared identity schema), architecture, security, self-host bundle, roadmap re-estimated for a feature-complete v1 (D9). First settle who owns the persona schema (Synapse, Mailbird or Lockdown). Then resolve the brief §7 blockers (Apple export-list rules, Android hybrid on real devices).
+- **Open decisions**: who owns the persona schema (Synapse, Mailbird or Lockdown); team size and timeline under D9; the name (no trademark check); licence; whether the self-host bundle ships under one name; whether TV device-code activation is v1 or backlog.
+- **Blocked on**: nothing.
 - **In-flight / do-not-touch**: nothing. The research scratch files on the cloud VM are gone once the session ends; the repo holds the canonical copies.
 - **Agent thread**: Claude Fable 5.1/Claude Code cloud (2026-10-15): research dossier, report page, repo first commit, project scaffold; next = Sean's three decisions.
 
@@ -37,8 +37,8 @@ _Last updated: 2026-10-15 — seeded after the research dossier (checkpoint)_
 
 ### Open work and paused threads
 - **Currently in progress**: nothing
-- **Pending questions**: the three decisions above
-- **What's needed to resume**: read the brief's §1 and §2, then answer the three questions. The matrix is the feature backlog; filter by phase v1.
+- **Pending questions**: persona-schema owner; team and timeline for a feature-complete v1
+- **What's needed to resume**: read `docs/plan/decisions.md` and `00-ecosystem.md`, then start the plan set. The matrix is the feature backlog; under D9 treat every parity row as v1.
 
 ---
 
@@ -55,8 +55,9 @@ _Last updated: 2026-10-15 — seeded after the research dossier (checkpoint)_
 - Repo `snds/lockdown` initialised with the research as its first commit.
 - Project folder seeded and registered in the workspace.
 
-**Decisions made**:
-- None by Sean yet. The brief recommends: lead with breadth, prove with security, keep open source and free export as policy; Steam opt-in in v1.x; decline Battle.net, Adobe, Discord, and all vendor push emulation.
+**Decisions made** (later the same day):
+- D1–D9 in the repo decision log: all three positioning layers; ecosystem with Mailbird that works alone; vendor bridges parked; feature-complete v1.
+- Earlier: none. The brief recommends: lead with breadth, prove with security, keep open source and free export as policy; Steam opt-in in v1.x; decline Battle.net, Adobe, Discord, and all vendor push emulation.
 
 **Next resumption needs**:
 - Sean's answers to the three questions. Then the plan set, modelled on Synapse's `docs/plan/`.

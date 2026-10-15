@@ -21,7 +21,7 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a
   Test-harness note: start the notes relay with a fresh data dir for each notes-sync run. Clear the shared Dovecot mailbox and SMTP sink before gateway suites (`seed_p12.py reset`). Both test servers, and the vite preview, stop when the container restarts; restart them first.
 - **Open decisions**: (1) the product name, which collides with Mailbird, Inc. (ADR-0006). Google verification is blocked on it;
   (2) the Tauri mobile spike vs Capacitor (ADR-0002); (3) when to subset the Material Symbols font
-  (ADR-0003); (4) whether to keep Apache-2.0 for the repo license.
+  (ADR-0003); (4) whether to keep Apache-2.0 for the repo license. (5) **Scope add from Lockdown (2026-10-15, Sean):** a self-host bundle with a mail server, DNS tooling and 3-2-1 backup lives in Mailbird's scope; locked notes get a Lockdown recovery path when linked (Lockdown D5, D7; see `snds/lockdown` `docs/plan/00-ecosystem.md`). Not scheduled yet.
 - **Blocked on**: nothing. No TLS round trip against a live provider has been tested yet, because
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
