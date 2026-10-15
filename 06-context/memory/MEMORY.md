@@ -30,6 +30,7 @@ New entry: copy `_template.md`, fill it in, add a line below.
 - [[decision-frost-ds-ai-operating-model]] — `decision` · framework #18 + `ai-design-systems` spoke: Frost/Southleft DS×AI as L1 (#18) beside #09 (2026-09-11).
 - [[decision-gdrive-numbered-taxonomy]] — `decision` · My Drive top level is `01-Documents`…`12-Adult` + `99-Review`, ordered by irreplaceability; `00` reserved for Sean; moves-only, dupes staged not deleted; executed + verified 2026-10-13 (artifacts in `Projects/files-reorg`).
 - [[decision-pattern-uniqueness]] — `decision` · jobs you can tell apart without domain nouns are different patterns; a parent component's usage is not a new pattern (2026-09-14).
+- [[decision-pattern-candidate-detection]] — `decision` · every design system runs a detector that finds compositions repeating 3+ times across 2+ hosts and suggests them as pattern candidates; one library, one schema, reused by the DS analytics tool (2026-10-15).
 - [[decision-visual-first-documentation]] — `decision` · a definition without a picture is unfinished; live components or a labeled schematic, never a text dump (2026-09-14). Method: [[visual-first-documentation]].
 - [[decision-plan-ahead-order-of-operations]] — `decision` · print numbered order + first later-breaker before executing multi-step / dual-repo work; overlay ≠ Pages `main` (2026-09-11).
 - [[decision-visual-qa-interrupt]] — `decision` · mint missing QA detectors and push; page Sean only if self-critique is failing or mint still cannot hit the bar (2026-09-11).
