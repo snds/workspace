@@ -1,6 +1,6 @@
 # SESSION-STATE — Synapse
 
-_Last updated: 2026-10-15 — Stage 1 started; item 1 done (CI green); D85_
+_Last updated: 2026-10-15 — Stage 1 items 1–2 done, CI green_
 
 ---
 
@@ -9,10 +9,10 @@ _Last updated: 2026-10-15 — Stage 1 started; item 1 done (CI green); D85_
 ### 🤝 Live handoff (the baton)
 
 - **TL;DR (for future agent)**: Synapse (codename; was Switchyard) is a planned desktop workspace app with a tray service, for Mac and Windows. It makes an AI workspace visible and manageable over plain files, runs checks without an agent, creates and imports workspaces with scorecards, and walls personas. The credential router is its Personas & access module (`plan/access/`). Planning only; nothing built.
-- **Current focus**: **Stage 1 (engine) in progress, app joins early (D85).** Item 1 is done: Cargo workspace under `crates/` and CI green on Linux, macOS and Windows. Item 2 (model types in `sy-model`) is next. After it, the Stage 2 app shell starts in parallel on generated types.
+- **Current focus**: **Stage 1 (engine), app joins early (D85).** Items 1 and 2 are done, with CI green on Linux, macOS and Windows (repo `e9426ff`). Next: item 3 (parser and index), and the Stage 2 app-shell track, which can start now that generated types exist.
 - **Working set**: Repo `~/Projects/synapse`: `docs/plan/`, `docs/stage-0/STAGE-0.md`, `brand/`, `catalog/`, `schemas/v1/`, `scripts/`, `corpus/`. T1 snapshot: `~/Projects/synapse-sandbox/t1-workspace@4e2b6cf/` (read-only, local only). Readable copy (plan set v2.12): https://claude.ai/artifact/VoPXvWfgPkc8ArsmtmESHt.
-- **Last action**: Sean chose engine first, app joins early (D85). Stage 1 item 1: Cargo workspace (sy-model, sy-index, sy-route, sy-check, sy-write, sy), toolchain pinned to 1.99.0, sy-model starts with ID validation (D59), `sy --version`. CI: Linux checks (fmt, clippy, schemas, name ledger, editor round trip, app build) plus `cargo test` on macOS and Windows, all green on the first run. Added `.gitattributes` so the edge-case fixtures stay byte-exact on Windows. By Claude Opus 5.5 · Claude Code · Work MBP.
-- **Next action**: Stage 1 item 2: model types in `sy-model` (schemas embedded and validated offline, ID generator, value forms, node types and edges, the layout-map loader, generated TypeScript types for the app track). Still waiting on: Apple support (membership), the Windows PC (tell Sean before starting), YubiKey firmware version, and Sean's answer on fixing Emphasis Engine's dark accent in its repo.
+- **Last action**: Stage 1 item 2 in `sy-model`: all 25 schemas validated offline (embedded, no fetching, format checks on; agrees with `check-schemas.py` on every example and data file); ID generator; standard value forms; node types and edges; the layout classifier, which matches the Python logic on 323 committed samples and all 2,161 T1 files (it found a `**` edge case Python treats specially); TypeScript types generated into `app/src/generated`, with a CI staleness check. One slip: a commit went out with a name-ledger error and was fixed a minute later (`40ac051`); commits now gate on the ledger's exit code. By Claude Opus 5.5 · Claude Code · Work MBP.
+- **Next action**: Stage 1 item 3 (parser and index in `sy-index`) and the app-shell track (Tauri wrapper, TanStack Router, the shared registry D83, screens on generated types). Still waiting on: Apple support (membership), the Windows PC (tell Sean before starting), YubiKey firmware version, and Sean's answer on fixing Emphasis Engine's dark accent in its repo.
 - **Naming rule (standing)**: Use "Synapse" for the app. Its one home is `brand/brand.json` in the repo (fact `n-v1jhd2e8.name`). Every other appearance is listed in `brand/name-ledger.json`. After adding the name anywhere (repo or vault), run `python3 scripts/name-ledger.py --vault ~/Projects/workspace` from the repo, then `--write` once reviewed. Identifiers never carry the name (D37): use the `sy` prefix.
 - **Open decisions**: whether to fix Emphasis Engine's dark accent in its repo; Apple Developer Program (blocked; Sean emailed Apple support); the public name (trademark check not done); generator engine; plugin runtime; `python-cross-platform-gui` (spoke or project skill).
 - **Blocked on**: nothing. Sensitive-data cleanup is deferred to after Stage 3 (D63, D65). Recommended now regardless: rotate the API key a memory note names, and review Drive link sharing.
@@ -52,3 +52,4 @@ _Last updated: 2026-10-15 — Stage 1 started; item 1 done (CI green); D85_
 - **2026-10-15** — Sean approved D79 and D80. Discussed the app's front end (same base as Fontface and Mailbird, plus router, query cache, Emphasis Engine theme).
 - **2026-10-15** — Sean approved D81–D84. UI prototype built and checked (`8e0b8e2`).
 - **2026-10-15** — D85: engine first, app joins early. Stage 1 item 1 done (`4f1eebb`), CI green on Linux, macOS and Windows.
+- **2026-10-15** — Stage 1 item 2 done (`e9426ff`), CI green on all three platforms.
