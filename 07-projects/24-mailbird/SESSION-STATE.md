@@ -1,6 +1,6 @@
 # SESSION-STATE — Mailbird, working name (24-mailbird)
 
-_Last updated: 2026-10-14 — checkpoint (PRs #1–#12 merged; Phase 8 calm inbox in PR #13)_
+_Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a booking in PR #26)_
 
 ---
 
@@ -11,21 +11,14 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#12 merged; Phase 8 calm inbo
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 11 ("calendar planning") is in review as PR #16 (`phase-11-planning`). Sean said "merge then continue phases" again, so PR #15 is merged (squash e021fa0). Phase 11 takes the calendar planning rows of the research harvest: clashes on invitations, propose a new time, availability, and calendar sets.
-- **Working set**: `crates/core/src/{itip,planning_store,invite_store}.rs` (COUNTER/DECLINECOUNTER, clashes, find a time, sets), `crates/app/src/pim_commands.rs`,
-  `apps/web/src/features/mail/{invite-card,invite-planning}.tsx`, `apps/web/src/features/calendar/{find-a-time,calendar-sets}.tsx`, `docs/decisions/0021-calendar-planning.md`.
-- **Last action**: Merged PR #15 on Sean's word, then built Phase 11:
-  - Invitations list the timed events they clash with (all-day ones don't count).
-  - Propose new time sends an iTIP COUNTER. As organizer you accept (the event moves, SEQUENCE bumps, everyone gets the REQUEST, everyone but the proposer is asked again) or keep the original (DECLINECOUNTER).
-  - Find a time searches your own calendars only, over two weeks, two suggestions a day.
-  - Calendar sets are saved visibility in the core's settings.
-  - Tests: Rust 182 (pim-core 165), the new demo suite `phase11` (18 checks) plus the 16 earlier suites, and a new gateway e2e on real Dovecot + SMTP (a real COUNTER email).
-  - Fixed: conversations didn't refresh on calendar changes, so clashes went stale.
-- **Next action**: Watch PR #16's CI. Merge only on Sean's explicit word.
-  Then: guests' free/busy (CalDAV VFREEBUSY, Google freeBusy, Graph getSchedule) needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or more harvest items: user-defined split inbox, bundles and grouped newsletters, scheduling links, interesting calendars (holiday subscriptions), smart contact groups, sender-data sync. Or the product rename.
+- **Current focus**: Phase 24 ("connected notes") is in review as PR #29 (`phase-24`). Sean said "merge and continue", so PR #28 is merged (squash d709eb0). With the calendar/contacts harvest done, Phase 24 takes three notes items from competitive-analysis §3: wikilinks + backlinks, local-first Markdown files, and Markdown export.
+- **Working set**: `apps/web/src/features/notes/wikilink.ts` (WikiLink inline atom + Markdown tokenizer, paste/input rules, `linkPlainWikiText`), `wiki-links.ts` / `wiki-suggest.tsx` (the `[[` list, `openWikiLink`), `note-detail.tsx` (`LinkedFrom`), `lib/zip.ts`; `crates/core/src/notes_store.rs` (`wikilinks`, `note_backlinks`, `find_note`, `export_notes`, `ExportedNote`); `crates/app/src/notes_commands.rs` (`save_notes_export` → Downloads folder); `docs/decisions/0034-connected-notes.md`.
+- **Last action**: Merged PR #28 on Sean's word, then built Phase 24. Tests: core (201), app dispatch, demo `phase24` (26 checks), all earlier suites incl. both notes-sync suites (fresh relay needed per run), `gateway-p24`.
+- **Next action**: Watch PR #29's CI. Merge only on Sean's explicit word.
+  Then, remaining notes harvest: rename-updates-links (via each note's Yjs doc), link a note to an event/contact/thread from the note side, graph view, pinned/color grid, locked notes, location/time reminders, Quick Note. Mail: tracker blocking exists; shared drafts and AI are open. Contacts: quick actions (call/message/video), sender profile pane. Creating Zoom/Teams meetings needs their OAuth apps. Or the device spike, or the product rename.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
-  Test-harness note: the shared Dovecot mailbox and SMTP sink keep state between runs; clear them before re-running the gateway suites.
+  Test-harness note: start the notes relay with a fresh data dir for each notes-sync run. Clear the shared Dovecot mailbox and SMTP sink before gateway suites (`seed_p12.py reset`). Both test servers, and the vite preview, stop when the container restarts; restart them first.
 - **Open decisions**: (1) the product name, which collides with Mailbird, Inc. (ADR-0006). Google verification is blocked on it;
   (2) the Tauri mobile spike vs Capacitor (ADR-0002); (3) when to subset the Material Symbols font
   (ADR-0003); (4) whether to keep Apache-2.0 for the repo license.
@@ -33,7 +26,7 @@ _Last updated: 2026-10-14 — checkpoint (PRs #1–#12 merged; Phase 8 calm inbo
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), all merged; Phase 11 in PR #16.
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), Phase 19 (PR #24), Phase 20 (PR #25), Phase 21 (PR #26), Phase 22 (PR #27), Phase 23 (PR #28), all merged; Phase 24 in PR #29.
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
