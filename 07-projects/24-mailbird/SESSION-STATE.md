@@ -11,15 +11,13 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 22 ("your keys") is in review as PR #27 (`phase-22`). Sean said "merge and continue", so PR #26 is merged (squash 60f88d7). Phase 22 takes the remaining harvest item "remappable keys" (the gap ADR-0025 left open).
-- **Working set**: `crates/core/src/grammar.rs` (`KEY_COMMANDS`, `KeyBindings`, `key_bindings`, `set_key_bindings`), `apps/web/src/lib/keys.ts` (the web's command table, `rebind` swap, `keyLabel`, `ariaKey`), `apps/web/src/features/grammar.tsx` (`KeyRow` capture), `features/mail/use-shortcuts.ts`, `features/calendar/index.tsx`, `docs/decisions/0032-your-keys.md`.
-- **Last action**: Merged PR #26 on Sean's word, then built Phase 22:
-  - Every single key in Mail and Calendar is changeable: press the key button, then the new key. A taken key swaps, Shift counts, and ⌘/Ctrl/Alt, Space, Enter, and ? are refused. Esc cancels, and Remove key appears while you choose.
-  - The swipe-only actions (next week, remind, newsletters) can get keys. Calendar's keys are listed, and ? works there too. Esc, ?, and ⌘K are fixed.
-  - Keys are stored in the core, only where they differ from the defaults, so later defaults still arrive unless they clash.
-  - Tests: core (196), app dispatch, the demo suite `phase22` (20 checks), all 24 earlier suites, and `gateway-p22` (desktop to tablet, refusals, reset).
-- **Next action**: Watch PR #27's CI. Merge only on Sean's explicit word.
-  Then, the remaining harvest: creating Zoom/Teams meetings (needs their OAuth apps), regional holidays. Guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename.
+- **Current focus**: Phase 23 ("regional holidays") is in review as PR #28 (`phase-23`). Sean said "merge and continue", so PR #27 is merged (squash d74f3b7). Phase 23 takes the remaining harvest item "regional holidays".
+- **Working set**: `crates/core/src/interesting.rs` (`REGIONS`, `Rule`, `EXTRAS`, `DROPS`, `holidays_in`, `set_holiday_region`, setting `holiday_regions`), `apps/web/src/core/demo-interesting.ts` (the same table), `apps/web/src/features/calendar/interesting.tsx` (Region picker), `docs/decisions/0033-regional-holidays.md`.
+- **Last action**: Merged PR #27 on Sean's word, then built Phase 23:
+  - 40 regions with fixed rules (DE Länder, UK nations, CA provinces, AU states, Alsace-Moselle, Azores, Madeira). The picker appears under an added country; picking renames the calendar and adds the region's days (and drops national days it doesn't keep). Spain, Italy, Brazil, and US states are left out (set by decree).
+  - Tests: core (198), app dispatch, demo `phase23` (18 checks), all earlier suites (`phase14` badge rename, `phase21` race fix), `gateway-p23`.
+- **Next action**: Watch PR #28's CI. Merge only on Sean's explicit word.
+  Then: the harvest is nearly done. Left: creating Zoom/Teams meetings (needs their OAuth apps); guests' free/busy needs real servers. Or the device spike (`docs/mobile-spike.md`) on Sean's hardware. Or the product rename. Next candidate: re-read competitive-analysis §3/§5 for anything not yet harvested.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
   Test-harness note: clear the shared Dovecot mailbox and SMTP sink before gateway suites (`seed_p12.py reset`). Both test servers, and the vite preview, stop when the container restarts; restart them first.
@@ -30,7 +28,7 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), Phase 19 (PR #24), Phase 20 (PR #25), Phase 21 (PR #26), all merged; Phase 22 in PR #27.
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), Phase 19 (PR #24), Phase 20 (PR #25), Phase 21 (PR #26), Phase 22 (PR #27), all merged; Phase 23 in PR #28.
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
