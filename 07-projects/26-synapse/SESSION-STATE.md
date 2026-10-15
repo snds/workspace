@@ -1,6 +1,6 @@
 # SESSION-STATE — Synapse
 
-_Last updated: 2026-10-15 — Stage 1 item 4 (router) done: oracle 5,488/5,488_
+_Last updated: 2026-10-15 — Stage 1 item 5 (checks) 10 of 11 built, parity proven; D88 proposed_
 
 ---
 
@@ -9,18 +9,18 @@ _Last updated: 2026-10-15 — Stage 1 item 4 (router) done: oracle 5,488/5,488_
 ### 🤝 Live handoff (the baton)
 
 - **TL;DR (for future agent)**: Synapse (codename; was Switchyard) is a planned desktop workspace app with a tray service, for Mac and Windows. It makes an AI workspace visible and manageable over plain files, runs checks without an agent, creates and imports workspaces with scorecards, and walls personas. The credential router is its Personas & access module (`plan/access/`). Stage 1 (the engine) is being built, and the desktop app already reads the real index.
-- **Current focus**: **Stage 1 (engine), app joins early (D85).** Items 1–4 are done, and the app shell reads the real index. Latest: the router (repo `79b149d`, CI green on Linux, macOS and Windows). Next: item 5 (built-in checks).
+- **Current focus**: **Stage 1 (engine), app joins early (D85).** Items 1–4 are done; item 5 (built-in checks) has 10 of its 11 Rust checks plus every rule of today's link and integrity validators (repo `aa29f1d`, CI green on all three platforms). The app's Health runs them. Next: `names.ledger` with item 7.
 - **Working set**: Repo `~/Projects/synapse`: `crates/` (sy-model, sy-index, sy CLI), `app/` (interface) and `app/src-tauri/` (sy-app), `docs/stage-1/STAGE-1.md`, `docs/plan/`, `brand/`, `catalog/`, `schemas/v1/`, `scripts/`. T1 snapshot: `~/Projects/synapse-sandbox/t1-workspace@4e2b6cf/` (read-only, local only). Readable copy (plan set v2.12): https://claude.ai/artifact/VoPXvWfgPkc8ArsmtmESHt.
-- **Last action**: Stage 1 item 4, the router (repo `79b149d`):
-  - `sy-route` ports `skill-loadset.py` and Layer 0 of `prompt_route.py` rule for rule; `sy route <workspace> "<request>"` prints the load set and hints.
-  - E2: 5,488 / 5,488 oracle requests identical in every field. E5: 0.79 ms for the slowest answer (target 50 ms).
-  - A deliberate break (registry cap 1) failed exactly the 70 requests it should, so the test has teeth.
-  - Finding: the oracle barely exercises the tier caps (at most 2 registry hints per request). Unit tests cover them.
-  - Earlier today: the app shell on the real index (`90f0b91`). Sean likes it and has UI thoughts for later; keep building to plan until he raises them.
+- **Last action**: Stage 1 item 5, built-in checks (repo `e1881d2` → `aa29f1d`):
+  - `sy-check` + `sy check <workspace> --layout <file>`; issues in the finding schema's shape; the app's Health now shows them.
+  - Built: coverage, structure.schema, identity.present/unique, skills.spec (official validator rules + aliases), description length, chain.acyclic, frontmatter.portable, links.resolve, values.standard-form, plus ported integrity/link rules (reciprocal, superseded, scaffold, stub, thin description, foundation link).
+  - Parity: frontmatter.portable = standards-lint.py on T1 exactly (1,013 files, every rule's totals and files). Links/integrity = both Python validators: 0/0 on the live vault, 39/39 on a clone with planted defects (`scripts/integrity-parity.py`). Deliberate breaks fail the tests.
+  - Live workspace: 52 high (the D53 long descriptions), 1 medium (nested repo `03-omni`), 5 info (migration-pending groups + a template). About 0.2 s.
+  - **D88 proposed:** before migration, v3-only rules are one grouped "migration pending" item each; real defects keep full severity.
   - By Claude Opus 5.5 · Claude Code · Work MBP.
-- **Next action**: Stage 1 item 5 (built-in checks in `sy-check`, model §12). When Sean is ready, take his UI feedback on the app shell. Still waiting on: Apple support (membership), the Windows PC (tell Sean before starting), YubiKey firmware version.
+- **Next action**: Sean approves or changes D88. Then `names.ledger` in Rust with item 7 (E7: reproduce `scripts/name-ledger.py`), then item 6 (tool runner). Take Sean's UI feedback when he's ready. Still waiting on: Apple support (membership), the Windows PC (tell Sean before starting), YubiKey firmware version.
 - **Naming rule (standing)**: Use "Synapse" for the app. Its one home is `brand/brand.json` in the repo (fact `n-v1jhd2e8.name`). Every other appearance is listed in `brand/name-ledger.json`. After adding the name anywhere (repo or vault), run `python3 scripts/name-ledger.py --vault ~/Projects/workspace` from the repo, then `--write` once reviewed. Identifiers never carry the name (D37): use the `sy` prefix.
-- **Open decisions**: Apple Developer Program (blocked; Sean emailed Apple support); the public name (trademark check not done); generator engine; plugin runtime; `python-cross-platform-gui` (spoke or project skill).
+- **Open decisions**: D88 (grouping v3-only rules before migration); Apple Developer Program (blocked; Sean emailed Apple support); the public name (trademark check not done); generator engine; plugin runtime; `python-cross-platform-gui` (spoke or project skill).
 - **Blocked on**: nothing. Sensitive-data cleanup is deferred to after Stage 3 (D63, D65). Recommended now regardless: rotate the API key a memory note names, and review Drive link sharing.
 - **In-flight / do-not-touch**: Scan output folder `~/Projects/synapse-sandbox/scan-t1@4e2b6cf-v1/` (local only; it holds employer terms). Probe results `~/Projects/synapse-sandbox/surface-probe-*.json` (local only; installed apps and versions). The T1 snapshot is read-only.
 - **Agent thread**: Claude/Claude Code (2026-10-14): feasibility, then one-page proposal, then credential plan v1, then reframe to the workspace app (plan v2.0), then codename Synapse (plan v2.1).
@@ -64,3 +64,4 @@ _Last updated: 2026-10-15 — Stage 1 item 4 (router) done: oracle 5,488/5,488_
 - **2026-10-15** — Sean approved D86. On the component registry he chose no shared registry: each project starts from shadcn and grows its own design system and components (D87, replacing D83; repo `c771964`).
 - **2026-10-15** — App shell on the real index (`90f0b91`): Tauri crate `sy-app`, the `overview` command, router and query, live Home and Health, Synapse's own title bar, brand-named bundle. CI green on all three platforms.
 - **2026-10-15** — Sean: "Looking great"; UI thoughts to come later, keep to the plan. Stage 1 item 4 done (`79b149d`): the router matches the oracle 5,488/5,488, 0.79 ms at most.
+- **2026-10-15** — Stage 1 item 5: `sy-check` with 10 of 11 Rust checks and the ported link/integrity rules; parity with standards-lint (T1) and both validators (39/39 planted); Health runs the checks (`e1881d2`…`aa29f1d`). D88 proposed.
