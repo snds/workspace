@@ -1,6 +1,6 @@
 # SESSION-STATE — Synapse
 
-_Last updated: 2026-10-15 — Stage 1 item 5 (checks) 10 of 11 built, parity proven; D88 proposed_
+_Last updated: 2026-10-15 — Stage 1 item 5 checks 10/11 with parity; D88 approved; D89 (shared Unicron design system) replaces D87_
 
 ---
 
@@ -16,11 +16,12 @@ _Last updated: 2026-10-15 — Stage 1 item 5 (checks) 10 of 11 built, parity pro
   - Built: coverage, structure.schema, identity.present/unique, skills.spec (official validator rules + aliases), description length, chain.acyclic, frontmatter.portable, links.resolve, values.standard-form, plus ported integrity/link rules (reciprocal, superseded, scaffold, stub, thin description, foundation link).
   - Parity: frontmatter.portable = standards-lint.py on T1 exactly (1,013 files, every rule's totals and files). Links/integrity = both Python validators: 0/0 on the live vault, 39/39 on a clone with planted defects (`scripts/integrity-parity.py`). Deliberate breaks fail the tests.
   - Live workspace: 52 high (the D53 long descriptions), 1 medium (nested repo `03-omni`), 5 info (migration-pending groups + a template). About 0.2 s.
-  - **D88 proposed:** before migration, v3-only rules are one grouped "migration pending" item each; real defects keep full severity.
+  - **D88 approved by Sean:** before migration, v3-only rules are one grouped "migration pending" item each; real defects keep full severity.
+  - **D89 (Sean, replaces D87; Lockdown D14):** Synapse's interface moves onto Unicron (`snds/unicron`, the shared design system on Mailbird's stack) once it's ready. Engine work continues; the interface keeps its current components until then. Logged in the repo (`7f18260`).
   - By Claude Opus 5.5 · Claude Code · Work MBP.
-- **Next action**: Sean approves or changes D88. Then `names.ledger` in Rust with item 7 (E7: reproduce `scripts/name-ledger.py`), then item 6 (tool runner). Take Sean's UI feedback when he's ready. Still waiting on: Apple support (membership), the Windows PC (tell Sean before starting), YubiKey firmware version.
+- **Next action**: `names.ledger` in Rust with item 7 (E7: reproduce `scripts/name-ledger.py`), then item 6 (tool runner). Take Sean's UI feedback when he's ready. Still waiting on: Apple support (membership), the Windows PC (tell Sean before starting), YubiKey firmware version.
 - **Naming rule (standing)**: Use "Synapse" for the app. Its one home is `brand/brand.json` in the repo (fact `n-v1jhd2e8.name`). Every other appearance is listed in `brand/name-ledger.json`. After adding the name anywhere (repo or vault), run `python3 scripts/name-ledger.py --vault ~/Projects/workspace` from the repo, then `--write` once reviewed. Identifiers never carry the name (D37): use the `sy` prefix.
-- **Open decisions**: **D87 is superseded by Sean's 2026-10-15 direction (Lockdown D14): one shared design system, `snds/unicron`, Mailbird's stack as base; Synapse rebuilds onto it. Log the reversal in the Synapse decision log (needs the repo; not reachable from the cloud session).** _(Recorded by the 29-unicron cloud session in `e16f7f2`; not yet confirmed with Sean in the Synapse thread, where he chose D87 the same day. Ask before changing the decision log.)_ D88 (grouping v3-only rules before migration); Apple Developer Program (blocked; Sean emailed Apple support); the public name (trademark check not done); generator engine; plugin runtime; `python-cross-platform-gui` (spoke or project skill).
+- **Open decisions**: Apple Developer Program (blocked; Sean emailed Apple support); the public name (trademark check not done); generator engine; plugin runtime; `python-cross-platform-gui` (spoke or project skill).
 - **Blocked on**: nothing. Sensitive-data cleanup is deferred to after Stage 3 (D63, D65). Recommended now regardless: rotate the API key a memory note names, and review Drive link sharing.
 - **In-flight / do-not-touch**: Scan output folder `~/Projects/synapse-sandbox/scan-t1@4e2b6cf-v1/` (local only; it holds employer terms). Probe results `~/Projects/synapse-sandbox/surface-probe-*.json` (local only; installed apps and versions). The T1 snapshot is read-only.
 - **Agent thread**: Claude/Claude Code (2026-10-14): feasibility, then one-page proposal, then credential plan v1, then reframe to the workspace app (plan v2.0), then codename Synapse (plan v2.1).
@@ -65,3 +66,4 @@ _Last updated: 2026-10-15 — Stage 1 item 5 (checks) 10 of 11 built, parity pro
 - **2026-10-15** — App shell on the real index (`90f0b91`): Tauri crate `sy-app`, the `overview` command, router and query, live Home and Health, Synapse's own title bar, brand-named bundle. CI green on all three platforms.
 - **2026-10-15** — Sean: "Looking great"; UI thoughts to come later, keep to the plan. Stage 1 item 4 done (`79b149d`): the router matches the oracle 5,488/5,488, 0.79 ms at most.
 - **2026-10-15** — Stage 1 item 5: `sy-check` with 10 of 11 Rust checks and the ported link/integrity rules; parity with standards-lint (T1) and both validators (39/39 planted); Health runs the checks (`e1881d2`…`aa29f1d`). D88 proposed.
+- **2026-10-15** — Merged a note from the 29-unicron cloud session saying D87 was reversed (Lockdown D14). Sean confirmed: D89 replaces D87, Synapse moves onto Unicron when it's ready. Sean approved D88 (`7f18260`).
