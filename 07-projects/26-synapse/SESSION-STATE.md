@@ -1,6 +1,6 @@
 # SESSION-STATE — Synapse
 
-_Last updated: 2026-10-15 — Stage 1 items 1–2 done, CI green_
+_Last updated: 2026-10-15 — Stage 1 items 1–3 done, CI green; D86 proposed_
 
 ---
 
@@ -9,12 +9,12 @@ _Last updated: 2026-10-15 — Stage 1 items 1–2 done, CI green_
 ### 🤝 Live handoff (the baton)
 
 - **TL;DR (for future agent)**: Synapse (codename; was Switchyard) is a planned desktop workspace app with a tray service, for Mac and Windows. It makes an AI workspace visible and manageable over plain files, runs checks without an agent, creates and imports workspaces with scorecards, and walls personas. The credential router is its Personas & access module (`plan/access/`). Planning only; nothing built.
-- **Current focus**: **Stage 1 (engine), app joins early (D85).** Items 1 and 2 are done, with CI green on Linux, macOS and Windows (repo `e9426ff`). Next: item 3 (parser and index), and the Stage 2 app-shell track, which can start now that generated types exist.
+- **Current focus**: **Stage 1 (engine), app joins early (D85).** Items 1–3 are done, with CI green on Linux, macOS and Windows (repo `4ba93e6`). Next: the app shell on the real index, then item 4 (router).
 - **Working set**: Repo `~/Projects/synapse`: `docs/plan/`, `docs/stage-0/STAGE-0.md`, `brand/`, `catalog/`, `schemas/v1/`, `scripts/`, `corpus/`. T1 snapshot: `~/Projects/synapse-sandbox/t1-workspace@4e2b6cf/` (read-only, local only). Readable copy (plan set v2.12): https://claude.ai/artifact/VoPXvWfgPkc8ArsmtmESHt.
-- **Last action**: Stage 1 item 2 in `sy-model`: all 25 schemas validated offline (embedded, no fetching, format checks on; agrees with `check-schemas.py` on every example and data file); ID generator; standard value forms; node types and edges; the layout classifier, which matches the Python logic on 323 committed samples and all 2,161 T1 files (it found a `**` edge case Python treats specially); TypeScript types generated into `app/src/generated`, with a CI staleness check. One slip: a commit went out with a name-ledger error and was fixed a minute later (`40ac051`); commits now gate on the ledger's exit code. By Claude Opus 5.5 · Claude Code · Work MBP.
-- **Next action**: Stage 1 item 3 (parser and index in `sy-index`) and the app-shell track (Tauri wrapper, TanStack Router, the shared registry D83, screens on generated types). Still waiting on: Apple support (membership), the Windows PC (tell Sean before starting), YubiKey firmware version.
+- **Last action**: Stage 1 item 3: `sy-index` (parser and SQLite index in the app's data folder, incremental by size, modified time and hash, moves by ID, invalid YAML recorded as an issue) and `sy index`. T1: full index 0.83–0.94 s, 100% of 2,161 accounted for, matching Stage 0. Live workspace: 1,900 files, 100%, no-change refresh 0.13 s. Found that `07-projects/03-omni` is a nested git repository (987 files): it's now recorded as a boundary and never indexed (D86, proposed). Earlier: the Emphasis Engine accent was already fixed upstream; Synapse's theme was regenerated with the engine's accessibility switches on. By Claude Opus 5.5 · Claude Code · Work MBP.
+- **Next action**: Sean approves D86 and decides where the shared component registry lives (D83). Then the app shell on the real index: Tauri 2 wrapper, TanStack Router, Home and Health from `sy-index`. Then item 4 (router). Still waiting on: Apple support (membership), the Windows PC (tell Sean before starting), YubiKey firmware version.
 - **Naming rule (standing)**: Use "Synapse" for the app. Its one home is `brand/brand.json` in the repo (fact `n-v1jhd2e8.name`). Every other appearance is listed in `brand/name-ledger.json`. After adding the name anywhere (repo or vault), run `python3 scripts/name-ledger.py --vault ~/Projects/workspace` from the repo, then `--write` once reviewed. Identifiers never carry the name (D37): use the `sy` prefix.
-- **Open decisions**: Apple Developer Program (blocked; Sean emailed Apple support); the public name (trademark check not done); generator engine; plugin runtime; `python-cross-platform-gui` (spoke or project skill).
+- **Open decisions**: D86 (nested repositories are boundaries); where the shared shadcn registry lives (D83); Apple Developer Program (blocked; Sean emailed Apple support); the public name (trademark check not done); generator engine; plugin runtime; `python-cross-platform-gui` (spoke or project skill).
 - **Blocked on**: nothing. Sensitive-data cleanup is deferred to after Stage 3 (D63, D65). Recommended now regardless: rotate the API key a memory note names, and review Drive link sharing.
 - **In-flight / do-not-touch**: Scan output folder `~/Projects/synapse-sandbox/scan-t1@4e2b6cf-v1/` (local only; it holds employer terms). Probe results `~/Projects/synapse-sandbox/surface-probe-*.json` (local only; installed apps and versions). The T1 snapshot is read-only.
 - **Agent thread**: Claude/Claude Code (2026-10-14): feasibility, then one-page proposal, then credential plan v1, then reframe to the workspace app (plan v2.0), then codename Synapse (plan v2.1).
@@ -54,3 +54,4 @@ _Last updated: 2026-10-15 — Stage 1 items 1–2 done, CI green_
 - **2026-10-15** — D85: engine first, app joins early. Stage 1 item 1 done (`4f1eebb`), CI green on Linux, macOS and Windows.
 - **2026-10-15** — Stage 1 item 2 done (`e9426ff`), CI green on all three platforms.
 - **2026-10-15** — Emphasis Engine dark-accent bug: already fixed upstream (parity output); a separate session added a guard test (emphasis-engine `d527149`). Synapse's theme regenerated through Vite's loader with all four accessibility switches on; stopgap removed (repo `7df7347`).
+- **2026-10-15** — Stage 1 item 3 done (`4ba93e6`), CI green on all three platforms. D86 proposed.
