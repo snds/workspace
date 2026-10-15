@@ -13,7 +13,7 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
 - **Current focus**: Phase 26 ("who's writing", the sender profile) is in review as PR #31 (`phase-26`). Sean said "merge and continue", so PR #30 is merged (squash 47f5fac). Phase 26 takes the contacts harvest item "Sender profile in the mail pane" (Superhuman); quick actions already existed on cards.
 - **Working set**: `crates/core/src/connected_store.rs` (`sender_profile`, `activity_for`), `model.rs` (`SenderProfile`), `apps/web/src/features/mail/sender-profile.tsx`, `conversation-view.tsx` (`@container` column at `@4xl`, `AboutSender` sheet, `onOpenThread`), `contacts/contact-detail.tsx` (`Action`, `Activity` exported, `onThread`), `docs/decisions/0036-sender-profile.md`.
-- **Last action**: Merged PR #30 on Sean's word, then built Phase 26. Tests: core (202), app dispatch, demo `phase26` (13 checks), all 29 earlier suites, `gateway-p26` (API-level; no Dovecot running).
+- **Last action**: Merged PR #30 on Sean's word, then built Phase 26. Sean's review asked for a real phone metaphor for the sheet: added `AdaptiveSheetContent` (bottom sheet on phones, side panel from `sm`), used by the profile sheet and the phone Calendars sheet; pushed to PR #31 (5170542). Tests: core (202), app dispatch, demo `phase26` (13 checks), all 29 earlier suites, `gateway-p26` (API-level; no Dovecot running).
 - **Next action**: Watch PR #31's CI. Merge only on Sean's explicit word.
   Then, remaining harvest: notes graph view, pinned/color card grid, locked notes, location/time reminders, Quick Note; mail shared drafts and opt-in AI; sender local time (needs storing the Date header offset). Creating Zoom/Teams meetings needs their OAuth apps. Or the device spike, or the product rename.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
@@ -27,6 +27,9 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
   Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), Phase 19 (PR #24), Phase 20 (PR #25), Phase 21 (PR #26), Phase 22 (PR #27), Phase 23 (PR #28), Phase 24 (PR #29), Phase 25 (PR #30), all merged; Phase 26 in PR #31.
+
+### Design rules (from Sean's reviews)
+- **Sheets on phones are bottom sheets** (2026-10-15, PR #31): full width, slide up from the bottom, size to content and stop short of the top, rounded top corners, grab handle (drag down to dismiss), and a floating close button at the bottom for thumb reach (Apple's newer controls). From `sm` up the same component is a side panel. Use `AdaptiveSheetContent` (`apps/web/src/components/ui/sheet.tsx`, tokens `--c-sheet-*`) for any new sheet; don't hand-build a phone variant. Media query for overlays (the viewport is their container); container queries for in-layout components.
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
