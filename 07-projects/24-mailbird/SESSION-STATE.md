@@ -11,11 +11,11 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 24 ("connected notes") is in review as PR #29 (`phase-24`). Sean said "merge and continue", so PR #28 is merged (squash d709eb0). With the calendar/contacts harvest done, Phase 24 takes three notes items from competitive-analysis §3: wikilinks + backlinks, local-first Markdown files, and Markdown export.
-- **Working set**: `apps/web/src/features/notes/wikilink.ts` (WikiLink inline atom + Markdown tokenizer, paste/input rules, `linkPlainWikiText`), `wiki-links.ts` / `wiki-suggest.tsx` (the `[[` list, `openWikiLink`), `note-detail.tsx` (`LinkedFrom`), `lib/zip.ts`; `crates/core/src/notes_store.rs` (`wikilinks`, `note_backlinks`, `find_note`, `export_notes`, `ExportedNote`); `crates/app/src/notes_commands.rs` (`save_notes_export` → Downloads folder); `docs/decisions/0034-connected-notes.md`.
-- **Last action**: Merged PR #28 on Sean's word, then built Phase 24. Tests: core (201), app dispatch, demo `phase24` (26 checks), all earlier suites incl. both notes-sync suites (fresh relay needed per run), `gateway-p24`.
-- **Next action**: Watch PR #29's CI. Merge only on Sean's explicit word.
-  Then, remaining notes harvest: rename-updates-links (via each note's Yjs doc), link a note to an event/contact/thread from the note side, graph view, pinned/color grid, locked notes, location/time reminders, Quick Note. Mail: tracker blocking exists; shared drafts and AI are open. Contacts: quick actions (call/message/video), sender profile pane. Creating Zoom/Teams meetings needs their OAuth apps. Or the device spike, or the product rename.
+- **Current focus**: Phase 25 ("links that keep up") is in review as PR #30 (`phase-25`). Sean said "merge and continue", so PR #29 is merged (squash 98d675a). Phase 25 closes ADR-0034's two gaps: renames update [[links]] (offered, never silent), and linking a note to an event/person/conversation from the note.
+- **Working set**: `apps/web/src/features/notes/rename-links.ts` (`renameInDoc`, `renameLinks` via each note's Yjs doc), `note-detail.tsx` (rename offer, Link button), `link-picker.tsx`; `crates/core/src/notes_store.rs` (`notes_linking_to`); `docs/decisions/0035-links-that-keep-up.md`.
+- **Last action**: Merged PR #29 on Sean's word, then built Phase 25. Tests: core (201), app dispatch, demo `phase25` (24 checks), all 28 earlier suites incl. notes-sync (fresh relay), `gateway-p25`.
+- **Next action**: Watch PR #30's CI. Merge only on Sean's explicit word.
+  Then, remaining harvest: notes graph view, pinned/color card grid, locked notes, location/time reminders, Quick Note; contacts quick actions (call/message/video) and the sender profile pane; mail shared drafts and opt-in AI. Creating Zoom/Teams meetings needs their OAuth apps. Or the device spike, or the product rename.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Notes follow-ups: end-to-end encryption to the relay, images, linking from the note side, and export.
   Test-harness note: start the notes relay with a fresh data dir for each notes-sync run. Clear the shared Dovecot mailbox and SMTP sink before gateway suites (`seed_p12.py reset`). Both test servers, and the vite preview, stop when the container restarts; restart them first.
@@ -26,7 +26,7 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), Phase 19 (PR #24), Phase 20 (PR #25), Phase 21 (PR #26), Phase 22 (PR #27), Phase 23 (PR #28), all merged; Phase 24 in PR #29.
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), Phase 19 (PR #24), Phase 20 (PR #25), Phase 21 (PR #26), Phase 22 (PR #27), Phase 23 (PR #28), Phase 24 (PR #29), all merged; Phase 25 in PR #30.
 
 ### Environment
 - **Context profile**: `personal-solo` + `visibility: public`.
