@@ -1,6 +1,6 @@
 ---
 type: feedback
-description: "Vendor / vendored" has two legitimate senses — commercial supplier, and engineering (copy external code into the repo). Do not ban the engineering sense. Still never call our own bespoke code "vendored".
+description: "\"Vendor / vendored\" has two legitimate senses — commercial supplier, and engineering (copy external code into the repo). Do not ban the engineering sense. Still never call our own bespoke code \"vendored\"."
 created: 2026-07-21
 updated: 2026-07-30
 confidence: high

@@ -2,7 +2,8 @@
 title: Zero-Vector-informed harness plan (v1.1, LLM- and device-inclusive)
 date: 2026-09-22
 status: wave 0 closed 2026-09-24 (all gates, G5c included); wave 1 under way
-related: [[zero-vector-design-methodology]]
+related:
+  - "[[zero-vector-design-methodology]]"
 ---
 
 # Zero-Vector-informed harness plan — v1.1 (2026-09-22)

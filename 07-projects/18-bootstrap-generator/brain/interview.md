@@ -2,7 +2,7 @@
 title: The Interview — Canonical Playbook
 role: brain
 status: draft
-version: 0.1
+version: "0.1"
 date: 2026-06-13
 audience: any AI agent conducting the bootstrap interview
 emits_to: profile.yaml (via `wsx profile set`)

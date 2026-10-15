@@ -6,21 +6,15 @@
 > one vendor's — can enter, orient, and work here by following the universal contract below.
 > Nothing here depends on Google Drive, a vendor-specific file bridge, or a specific assistant.
 
-## Start here (read in order)
-- [AGENTS.md](AGENTS.md): the universal agent contract — folder semantics, read order, the skill
-  loading-precedence algorithm, and the bootstrap-on-a-checkout protocol.
-- Route a request: pipe it to `ws route --stdin` or run `python3 09-tools/skill-loadset.py "…"`.
-  No python: read [trigger-routes-digest.md](02-shared-references/trigger-routes-digest.md).
-  Never-ingest rules: AGENTS.md → Canonical read order + Skill loading precedence.
-- [workspace-ontology.md](02-shared-references/workspace-ontology.md): vocabulary + the
-  "where does this belong?" routing map. Read before writing anything.
+How to work here:
 
-## How to work here
 - Resolve the workspace root as the directory containing `AGENTS.md`. The git checkout is the
   source of truth — read and write plain files; commit reviewable diffs.
 - On a **new session**, emit `python3 09-tools/session-status.py` (notices + all
   projects + pending). Continuations skip it. That is how every LLM — not only Claude —
   reminds Sean of open work and what needs improvement.
+- Route a request: pipe it to `ws route --stdin` or run `python3 09-tools/skill-loadset.py "…"`.
+  Never-ingest rules: AGENTS.md → Canonical read order + Skill loading precedence.
 - To answer a request: match it to skills (via `triggers`/`description`), then load the skill plus
   its `load_chains` ancestors in order (foundation → hub → spoke). See AGENTS.md for the algorithm.
 - **Multi-agent continuity:** this is one unified contract for *every* agent (not just Claude/Cursor/
@@ -34,26 +28,37 @@
   learning, decision, project note, and asset routes to a workspace layer (or the platform `Projects`
   dir for actual repos/working files) per the routing map. This is an AGENTS.md Core rule; the only
   thing any agent keeps internally is a pointer back here.
+- **Adapters** are thin, optional layers over AGENTS.md. A new tool needs no adapter to work at full
+  fidelity; it just executes the AGENTS.md contract. Codex reads AGENTS.md natively, plus the
+  `~/.codex/AGENTS.md` beacon and `codex-hooks.json`. Do not symlink AGENTS.md onto vendor filenames.
+
+## Start here (read in order)
+- [AGENTS.md](AGENTS.md): the universal agent contract — folder semantics, read order, the skill
+  loading-precedence algorithm, and the bootstrap-on-a-checkout protocol.
+- [trigger-routes-digest.md](02-shared-references/trigger-routes-digest.md): only when you can't run
+  python; otherwise route with `ws route` or `skill-loadset.py` as above.
+- [workspace-ontology.md](02-shared-references/workspace-ontology.md): vocabulary + the
+  "where does this belong?" routing map. Read before writing anything.
 
 ## Contracts + specs
 - [skill-frontmatter.md](02-shared-references/skill-frontmatter.md): the SKILL.md frontmatter v2 spec.
 - [skills.registry.schema.json](03-skills/skills.registry.schema.json): JSON Schema for the registry.
-- [epistemic-standards.md](02-shared-references/epistemic-standards.md),
-  [artifact-standards.md](02-shared-references/artifact-standards.md): reasoning + output standards.
+- [epistemic-standards.md](02-shared-references/epistemic-standards.md): reasoning standards.
+- [artifact-standards.md](02-shared-references/artifact-standards.md): output standards.
 
 ## Per-tool adapters (thin layers over AGENTS.md; optional)
-- [CLAUDE.md](CLAUDE.md) — Claude Code / Desktop · [CURSOR.md](CURSOR.md) — Cursor ·
-  [PERPLEXITY.md](PERPLEXITY.md) — Perplexity · [GEMINI.md](GEMINI.md) — Gemini CLI ·
-  [WARP.md](WARP.md) — Warp · [.github/copilot-instructions.md](.github/copilot-instructions.md) —
-  Copilot Chat · [web-session.md](00-bootstrap/adapters/web-session.md) — ChatGPT / Grok.com.
-  Codex reads AGENTS.md natively, plus the `~/.codex/AGENTS.md` beacon and `codex-hooks.json`.
-  A new tool needs no adapter to work at full fidelity; it just executes the AGENTS.md contract.
-  Do not symlink AGENTS.md onto vendor filenames.
+- [CLAUDE.md](CLAUDE.md): Claude Code / Desktop
+- [CURSOR.md](CURSOR.md): Cursor
+- [PERPLEXITY.md](PERPLEXITY.md): Perplexity
+- [GEMINI.md](GEMINI.md): Gemini CLI
+- [WARP.md](WARP.md): Warp
+- [.github/copilot-instructions.md](.github/copilot-instructions.md): Copilot Chat
+- [web-session.md](00-bootstrap/adapters/web-session.md): ChatGPT / Grok.com
 
 ## Generate / validate
-- `python3 09-tools/build-registry.py` — regenerate the skill registry from frontmatter (stdlib-only).
-- `python3 09-tools/skill-loadset.py "…"` — compute the AGENTS.md load set.
-- `python3 09-tools/close-out-dispatch.py --from-prompt "…" --run` — named L3 after produce; SKIP ≠ verified.
-- `python3 09-tools/close-out-dispatch.py --check` — every command hub has a named detector.
-- `python3 09-tools/validate-layer0-schema.py --check` — refuse malformed Layer 0 JSON.
-- `python3 09-tools/check-secrets.py` — known secret shapes on tracked files.
+- [build-registry.py](09-tools/build-registry.py): regenerate the skill registry from frontmatter (stdlib-only).
+- [skill-loadset.py](09-tools/skill-loadset.py): compute the AGENTS.md load set (`python3 09-tools/skill-loadset.py "…"`).
+- [close-out-dispatch.py](09-tools/close-out-dispatch.py): `--from-prompt "…" --run` runs the named L3 after
+  produce (SKIP ≠ verified); `--check` confirms every command hub has a named detector.
+- [validate-layer0-schema.py](09-tools/validate-layer0-schema.py): `--check` refuses malformed Layer 0 JSON.
+- [check-secrets.py](09-tools/check-secrets.py): known secret shapes on tracked files.

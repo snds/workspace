@@ -2,7 +2,8 @@
 title: Error-correction research working brief
 date: 2026-08-26
 status: working
-related: [[agentic-error-correction-foundations]]
+related:
+  - "[[agentic-error-correction-foundations]]"
 ---
 
 # Error-correction research (2026-08-26)

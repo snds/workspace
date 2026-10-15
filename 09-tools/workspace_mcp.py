@@ -29,13 +29,19 @@ Write tools are guarded and attributed:
       wall or control file (wall_guard.protected_class against the home and the vault), the pinned guard
       code (pin_lib.PINNED_PATHS) and this server, git internals, and content that raises the secret or
       employer-substance hit count of the file (check-secrets.py rules; the baseline can only shrink).
-      Every write is stamped with the MCP clientInfo (name and version from initialize; Claude* maps to
-      family claude) and recorded in the H23 touch ledger
+      Every write is stamped with the MCP clientInfo (name and version from initialize, or from each
+      request's _meta in the 2026-07-28 protocol; Claude* maps to family claude) and recorded in the H23
+      touch ledger
       (~/.config/snds-workspace/telemetry/sessions/<sid>.touched; nothing until telemetry/ exists).
   session_end   writes a 06-context/sessions/<id>.md fragment (compaction folds it; never the log).
 
 Reads refuse the same employer vault folders and hide them from listings and searches, for every
 client: clientInfo is self-reported, so no refusal loosens on it (tighten-only).
+
+Protocol: dual-era (MCP 2026-07-28 and the handshake versions 2024-11-05 to 2025-11-25). A request whose
+_meta names io.modelcontextprotocol/protocolVersion is served statelessly (server/discover, resultType,
+ttlMs/cacheScope on tools/list, serverInfo in each result's _meta, -32022 for an unsupported version);
+initialize selects the legacy handshake for the process. Roots, Sampling and Logging are never used.
 
 Declared gaps: the server guards only writes made through its own tools. Cowork's shell, computer use,
 the browser and Desktop Extensions write around it; a host that keeps workspace-fs registered next
@@ -66,9 +72,15 @@ from typing import Any, Dict, List, Optional, Tuple
 
 TOOLS = Path(__file__).resolve().parent
 SERVER_NAME = "workspace-mcp"
-SERVER_VERSION = "1.0"
+SERVER_VERSION = "1.1"
 SERVER_REL = "09-tools/workspace_mcp.py"
-PROTOCOLS = ("2025-06-18", "2025-03-26", "2024-11-05")
+PROTOCOLS = ("2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05")  # legacy: the initialize handshake
+MODERN_PROTOCOLS = ("2026-07-28",)  # per-request _meta, no session (D69 in the Synapse plan)
+META_VERSION = "io.modelcontextprotocol/protocolVersion"
+META_CLIENT = "io.modelcontextprotocol/clientInfo"
+META_SERVER = "io.modelcontextprotocol/serverInfo"
+UNSUPPORTED_VERSION = -32022
+LIST_TTL_MS = 300_000
 CLI_TIMEOUT_S = 60
 MAX_READ_BYTES = 1_000_000
 MAX_WRITE_BYTES = 2_000_000
@@ -725,11 +737,67 @@ def _err(mid: Any, code: int, message: str) -> dict:
     return {"jsonrpc": "2.0", "id": mid, "error": {"code": code, "message": message}}
 
 
+def _tool_list() -> list:
+    return [{"name": n, "description": d, "inputSchema": s} for n, d, s, _f in TOOLS_SPEC]
+
+
+def _call_tool(server: Server, mid: Any, params: dict) -> Tuple[Optional[dict], Optional[dict]]:
+    """(result, error): the tool result, or a protocol error for an unknown tool."""
+    name = params.get("name")
+    spec = next((t for t in TOOLS_SPEC if t[0] == name), None)
+    if spec is None:
+        return None, _err(mid, -32602, f"unknown tool: {name}")
+    args = params.get("arguments") if isinstance(params.get("arguments"), dict) else {}
+    try:
+        text, is_err = getattr(server, spec[3])(args), False
+    except Refused as e:
+        text, is_err = f"refused: {e}", True
+    except Exception as e:  # noqa: BLE001 - a tool error is a result, not a protocol error
+        text, is_err = f"error: {type(e).__name__}: {e}", True
+    return {"content": [{"type": "text", "text": text}], "isError": is_err}, None
+
+
+def _complete(mid: Any, result: dict) -> dict:
+    """A modern (2026-07-28) result: resultType, plus the server's identity in _meta."""
+    return _ok(mid, {"resultType": "complete", **result,
+                     "_meta": {META_SERVER: {"name": SERVER_NAME, "version": SERVER_VERSION}}})
+
+
+def handle_modern(server: Server, mid: Any, method: Any, params: dict, meta: dict) -> Optional[dict]:
+    """Stateless 2026-07-28: every request carries its version and client identity in _meta."""
+    want = meta.get(META_VERSION)
+    if not (method == "server/discover" and want is None) and want not in MODERN_PROTOCOLS:
+        return {"jsonrpc": "2.0", "id": mid, "error": {
+            "code": UNSUPPORTED_VERSION, "message": "Unsupported protocol version",
+            "data": {"supported": list(MODERN_PROTOCOLS + PROTOCOLS), "requested": want}}}
+    info = meta.get(META_CLIENT)
+    if isinstance(info, dict):
+        name, ver = str(info.get("name") or "")[:80] or None, str(info.get("version") or "")[:40] or None
+        if server.sid is None or server.client != {"name": name, "version": ver}:
+            server.set_client(info)  # a new identity starts a new session id; repeats keep it
+    if method == "server/discover":
+        return _complete(mid, {"supportedVersions": list(MODERN_PROTOCOLS + PROTOCOLS), "capabilities": {"tools": {}},
+                               "instructions": INSTRUCTIONS, "ttlMs": LIST_TTL_MS, "cacheScope": "private"})
+    if method == "tools/list":
+        return _complete(mid, {"tools": _tool_list(), "ttlMs": LIST_TTL_MS, "cacheScope": "private"})
+    if method == "tools/call":
+        result, error = _call_tool(server, mid, params)
+        return error if error is not None else _complete(mid, result)
+    if isinstance(method, str) and method.startswith("notifications/"):
+        return None
+    if mid is not None:
+        return _err(mid, -32601, f"unknown method: {method}")
+    return None
+
+
 def handle(server: Server, msg: Any) -> Optional[dict]:
     if not isinstance(msg, dict):
         return _err(None, -32600, "invalid request")
     mid, method = msg.get("id"), msg.get("method")
     params = msg.get("params") if isinstance(msg.get("params"), dict) else {}
+    meta = params.get("_meta") if isinstance(params.get("_meta"), dict) else {}
+    if method == "server/discover" or META_VERSION in meta:
+        return handle_modern(server, mid, method, params, meta)
     if method == "initialize":
         server.set_client(params.get("clientInfo"))
         want = params.get("protocolVersion")
@@ -742,20 +810,10 @@ def handle(server: Server, msg: Any) -> Optional[dict]:
     if method == "ping":
         return _ok(mid, {})
     if method == "tools/list":
-        return _ok(mid, {"tools": [{"name": n, "description": d, "inputSchema": s} for n, d, s, _f in TOOLS_SPEC]})
+        return _ok(mid, {"tools": _tool_list()})
     if method == "tools/call":
-        name = params.get("name")
-        spec = next((t for t in TOOLS_SPEC if t[0] == name), None)
-        if spec is None:
-            return _err(mid, -32602, f"unknown tool: {name}")
-        args = params.get("arguments") if isinstance(params.get("arguments"), dict) else {}
-        try:
-            text, is_err = getattr(server, spec[3])(args), False
-        except Refused as e:
-            text, is_err = f"refused: {e}", True
-        except Exception as e:  # noqa: BLE001 - a tool error is a result, not a protocol error
-            text, is_err = f"error: {type(e).__name__}: {e}", True
-        return _ok(mid, {"content": [{"type": "text", "text": text}], "isError": is_err})
+        result, error = _call_tool(server, mid, params)
+        return error if error is not None else _ok(mid, result)
     if mid is not None:
         return _err(mid, -32601, f"unknown method: {method}")
     return None
@@ -858,6 +916,54 @@ def self_test_cases() -> List[Tuple[str, bool, str]]:
         ok("handshake: a notification gets no reply; unknown method and bad JSON are errors",
            len(resp) == 5 and (by_id.get(4) or {}).get("error", {}).get("code") == -32601
            and (by_id.get(None) or {}).get("error", {}).get("code") == -32700, [r.get("id") for r in resp])
+
+        # 1b. the 2026-07-28 protocol over real stdio: discover, list, call, bad version, removed ping,
+        #     and the 2025-11-25 handshake for a legacy client
+        cm = {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+              "io.modelcontextprotocol/clientInfo": {"name": "codex-mcp-client", "version": "2.0"},
+              "io.modelcontextprotocol/clientCapabilities": {}}
+        mm = [{"jsonrpc": "2.0", "id": "d", "method": "server/discover", "params": {"_meta": cm}},
+              {"jsonrpc": "2.0", "id": "l", "method": "tools/list", "params": {"_meta": cm}},
+              {"jsonrpc": "2.0", "id": "c", "method": "tools/call",
+               "params": {"_meta": cm, "name": "read_file", "arguments": {"path": "07-projects/01-personal/notes.md"}}},
+              {"jsonrpc": "2.0", "id": "v", "method": "tools/list",
+               "params": {"_meta": dict(cm, **{"io.modelcontextprotocol/protocolVersion": "1900-01-01"})}},
+              {"jsonrpc": "2.0", "id": "p", "method": "ping", "params": {"_meta": cm}}]
+        p = subprocess.run([sys.executable, str(Path(__file__).resolve()), "--root", str(vault), "--home", str(home)],
+                           input="".join(json.dumps(m) + "\n" for m in mm), capture_output=True, text=True, timeout=60)
+        try:
+            mr = {r.get("id"): r for r in (json.loads(ln) for ln in p.stdout.splitlines() if ln.strip())}
+        except ValueError:
+            mr = {}
+        disc = (mr.get("d") or {}).get("result") or {}
+        ok("modern: server/discover lists versions, tools and identity",
+           disc.get("resultType") == "complete" and disc.get("supportedVersions", [None])[0] == "2026-07-28"
+           and "2025-11-25" in disc.get("supportedVersions", []) and "tools" in disc.get("capabilities", {})
+           and disc.get("_meta", {}).get(META_SERVER, {}).get("name") == SERVER_NAME, p.stdout[:300] + p.stderr[-300:])
+        lst = (mr.get("l") or {}).get("result") or {}
+        ok("modern: tools/list is complete and cacheable, in a fixed order",
+           lst.get("resultType") == "complete" and lst.get("ttlMs") == LIST_TTL_MS and lst.get("cacheScope") == "private"
+           and tuple(t["name"] for t in lst.get("tools", [])) == TOOL_NAMES, lst.keys())
+        mc = (mr.get("c") or {}).get("result") or {}
+        ok("modern: tools/call reads a vault file without a handshake",
+           mc.get("resultType") == "complete" and mc.get("content", [{}])[0].get("text") == "hello\n" and not mc.get("isError"), mc)
+        bad = (mr.get("v") or {}).get("error") or {}
+        ok("modern: an unsupported version is refused with -32022 and the supported list",
+           bad.get("code") == UNSUPPORTED_VERSION and bad.get("data", {}).get("requested") == "1900-01-01"
+           and "2026-07-28" in bad.get("data", {}).get("supported", []), bad)
+        ok("modern: ping is gone in 2026-07-28", (mr.get("p") or {}).get("error", {}).get("code") == -32601, mr.get("p"))
+        s2 = Server(root=vault, home=home, now=fixed)
+        r = handle(s2, {"jsonrpc": "2.0", "id": 1, "method": "initialize",
+                        "params": {"protocolVersion": "2025-11-25", "clientInfo": {"name": "cursor", "version": "3"}}})
+        ok("legacy: a 2025-11-25 client still gets the handshake", (r or {}).get("result", {}).get("protocolVersion") == "2025-11-25"
+           and "resultType" not in (r or {}).get("result", {}), r)
+        s3 = Server(root=vault, home=home, now=fixed)
+        for i in range(3):
+            handle(s3, {"jsonrpc": "2.0", "id": i, "method": "tools/list", "params": {"_meta": cm}})
+            if i == 0:
+                first_sid = s3.sid
+        ok("modern: repeated requests from one client keep one session id", s3.sid == first_sid and s3.family == "codex",
+           (first_sid, s3.sid, s3.family))
 
         # in-process server for the guard cases
         srv = Server(root=vault, home=home, now=fixed)

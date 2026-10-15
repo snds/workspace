@@ -2,7 +2,8 @@
 title: Zero-Vector rollout checklist (vault copy)
 date: 2026-10-14
 status: wave 3 open; waves 0–2 closed (wave 1 closed 2026-09-25, f95d992; wave 2 closed 2026-09-26)
-related: [[zero-vector-harness-plan_2026-09-22]]
+related:
+  - "[[zero-vector-harness-plan_2026-09-22]]"
 ---
 
 # Zero-Vector rollout checklist — vault copy (2026-10-14)

@@ -1,6 +1,6 @@
 ---
 status: draft
-version: 0.2
+version: "0.2"
 date: 2026-06-13
 tags: [bootstrap-generator, skills, workspace-system, spec, portability]
 derived-from: "[[workspace-bootstrap]]"

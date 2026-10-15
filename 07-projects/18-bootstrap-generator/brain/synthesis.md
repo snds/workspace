@@ -1,6 +1,6 @@
 ---
 status: draft
-version: 0.1
+version: "0.1"
 date: 2026-06-13
 tags: [bootstrap-generator, brain, synthesis, profile, interview]
 part-of: "[[SPEC]]"

@@ -1,6 +1,6 @@
 ---
 type: fact
-description: Per-machine install state of the 00-bootstrap machine layer (v2 hooks + doctor). Fleet: Personal MBP, Work MBP and the Windows desktop `Enterprise` (back in use 2026-10-14; not yet installed).
+description: "Per-machine install state of the 00-bootstrap machine layer (v2 hooks + doctor). Fleet: Personal MBP, Work MBP and the Windows desktop `Enterprise` (back in use 2026-10-14; not yet installed)."
 created: 2026-07-09
 updated: 2026-10-14
 confidence: high

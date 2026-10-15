@@ -1,6 +1,6 @@
 ---
 title: Harness map — workspace core + Cursor
-version: 1.0
+version: "1.0"
 date: 2026-08-07
 surface: Cursor + workspace-core
 branch: main

@@ -1,5 +1,5 @@
 ---
-title: Curriculum — Subatomic: The Complete Guide To Design Tokens
+title: "Curriculum — Subatomic: The Complete Guide To Design Tokens"
 project: 23-subatomic-design-tokens-course
 as-of: 2026-09-23
 generated-from: "<Projects>/subatomic-design-tokens-course/manifest/manifest.json"

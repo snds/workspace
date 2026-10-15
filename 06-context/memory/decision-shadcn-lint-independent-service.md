@@ -1,6 +1,6 @@
 ---
 type: decision
-description: @shadcn/lint is a product-repo design-system lint service, independent of vault validators and of eslint-off-system; token-tier overlay lives beside it, not inside either.
+description: "@shadcn/lint is a product-repo design-system lint service, independent of vault validators and of eslint-off-system; token-tier overlay lives beside it, not inside either."
 created: 2026-09-15
 confidence: high
 relations:

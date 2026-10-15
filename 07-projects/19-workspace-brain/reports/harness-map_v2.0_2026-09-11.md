@@ -1,6 +1,6 @@
 ---
 title: Harness map — agent load-miss (workspace core + Cursor)
-version: 2.0
+version: "2.0"
 date: 2026-09-11
 surface: Cursor + workspace-core
 branch: main

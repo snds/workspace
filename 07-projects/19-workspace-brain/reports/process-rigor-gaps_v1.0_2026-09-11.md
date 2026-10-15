@@ -1,6 +1,6 @@
 ---
 title: Process rigor gaps — whole workspace
-version: 1.0
+version: "1.0"
 date: 2026-09-11
 surface: Cursor + workspace-core
 branch: main

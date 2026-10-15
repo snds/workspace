@@ -1,7 +1,7 @@
 ---
 title: LCARS Generative Interface Design
 status: approved
-version: 0.1
+version: "0.1"
 date: 2026-08-07
 tags: [lcars, generative-ui, scene-ir, okudagram, spec]
 project: "[[20-lcars-generative-interface]]"
