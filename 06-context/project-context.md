@@ -114,7 +114,7 @@ Moved out of Active on 2026-09-02 (^pc-45, ^pc-24 on 2026-09-25, ^pc-16 on 2026-
 _Narratives live in [project-registry.md](project-registry.md) (load on demand)._
 _For live focus, prefer the active project's `SESSION-STATE.md` **Live handoff**._
 
-- **Synapse (2026-10-14, new; codename, was Switchyard):** A desktop workspace app with a tray service, for Mac and Windows. It makes the workspace visible and manageable over plain files, runs checks without an agent, creates and imports workspaces with scorecards, and walls personas. The credential router is now its Personas & access module. Planning only; plan v2.0 in `07-projects/26-synapse/plan/`. Next: Sean's review, then Stage 0. Live state → [26-synapse handoff](../07-projects/26-synapse/SESSION-STATE.md).
+- **Synapse (2026-10-14, new; codename, was Switchyard):** A desktop workspace app with a tray service, for Mac and Windows. It makes the workspace visible and manageable over plain files, runs checks without an agent, creates and imports workspaces with scorecards, and walls personas. **Stage 0 (model and map) started.** Code and plan at `~/Projects/synapse` (private `snds/synapse`; plan in `docs/plan/`). Live state → [26-synapse handoff](../07-projects/26-synapse/SESSION-STATE.md).
 
 - **Fontface (2026-10-14):** clean-room Mac font manager replacing Typeface. Phase 1, the scan fixes from the first user test, library views + Google Fonts, settings and title bar, tags, Purchases, preview profiles and Google icon fonts are all merged; `main` = `826c574`, public at `snds/fontface`. Next: Sean's on-screen check of the build (title bar, settings, tags, sync, previews, Purchases). Live state → [25-fontface handoff](../07-projects/25-fontface/SESSION-STATE.md).
 
