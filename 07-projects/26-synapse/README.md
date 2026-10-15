@@ -38,7 +38,7 @@ Sean's workspace is the north star.
 | `docs/stage-0/STAGE-0.md` | Stage 0 tracker |
 | `scripts/build-plan-html.py` | Builds the readable page from `docs/plan/` |
 
-**Readable copy:** https://claude.ai/artifact/VoPXvWfgPkc8ArsmtmESHt. It is built by `scripts/build-plan-html.py` into `05-artifacts/active/synapse-plan_v2.13_2026-10-15.html`. Artifacts aren't git-tracked. Edit the markdown in the repo, never the HTML.
+**Readable copy:** https://claude.ai/artifact/VoPXvWfgPkc8ArsmtmESHt. It is built by `scripts/build-plan-html.py` into `05-artifacts/active/synapse-plan_v2.14_2026-10-15.html`. Artifacts aren't git-tracked. Edit the markdown in the repo, never the HTML.
 
 **Provenance:** the plan was written in this folder (`plan/`, `tools/`) and moved to the repo on 2026-10-14. The last vault copy is at workspace commit `4e2b6cf`. The one-page origin proposal is at https://claude.ai/artifact/24mgDkXvtmu12rCcHJM5Be.
 
