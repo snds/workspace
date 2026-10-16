@@ -1,6 +1,6 @@
 # SESSION-STATE — Mailbird, working name (24-mailbird)
 
-_Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a booking in PR #26)_
+_Last updated: 2026-10-16 — checkpoint (PRs through #47 merged; unicron packages in PR #48)_
 
 ---
 
@@ -11,13 +11,13 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 39 (the identity holds the locked-notes key, ADR-0051) is merged as Mailbird #45 (397a7b8). The identity handshake (#46, ADR-0050) is merged. The identity crate is extracted to `snds/ecosystem-identity`; the Lockdown session opens the swap PR (crates/identity removed, git dep pinned by rev). Don't touch the root Cargo.toml, crates/identity, or crates/app/Cargo.toml until that lands. Crate API changes now go to snds/ecosystem-identity. Roadmap: https://claude.ai/artifact/RuSar7aj6GxqcgHzmXv61x.
+- **Current focus**: Phase 40, unicron as versioned packages (ADR-0052), is open as Mailbird #48 on branch `unicron-packages`: `@unicron/ui` 0.2.0 and `@unicron/tokens` 0.1.0 from GitHub release tarballs (hash-pinned; one tokens override in `pnpm-workspace.yaml`). The submodule, `deps:build`, and the local `tools/shadcn-material` copy are gone. 68 screens and 133 tokens identical, ratchet 241/2/0/0, 39/39 suites pass. Merge only on Sean's word.
 - **Working set**:
-  - unicron: `packages/ui/src/components/icon-button.tsx`, `icon.tsx` (`tone`), `ui/button.tsx` (`shape`, `ghost-muted`, `ghost-destructive`), `ui/dialog.tsx` (`DialogActions`, `DialogAction`, title Back button, corner close hidden on phones with a Cancel), `ui/sheet.tsx` (`fullscreen`), `docs/03-components.md`, `docs/04-patterns.md` (promotion log).
-  - Mailbird: ~45 files in `apps/web/src`, `.dsa/baseline.json` (241/2/0/0), `docs/decisions/0048-design-system-cleanup.md`.
-  - Scratch: before/after captures in the Mailbird scratchpad (`capture-ds.mjs`, `cmp.mjs`, and the `ds-before` and `ds-after2` folders), plus the codemod at `scratchpad/codemod.py`.
-- **Last action**: On Sean's word: merged #46, rebased #45 onto the labelled app-key API (`app_keys`, `retire_envelope`, with the whole `Head` stored), renumbered its ADR to 0051, and merged it when CI was green. Freed disk by deleting `target/debug` (18 GB, rebuildable).
-- **Next action**: Product work: 40 graph view, 41 menu-bar mini calendar, 42 power settings. Also: move off the unicron submodule at 0.2.0, and the raw-button DS sweep. Shared notes can now build on the identity's persona keys.
+  - Mailbird #48: `apps/web/package.json`, `pnpm-workspace.yaml`, `pnpm-lock.yaml`, `.github/workflows/ci.yml`, `apps/gateway/Dockerfile`, `dsa.config.json`, README, `docs/architecture.md`, `docs/decisions/0052-unicron-packages.md`.
+  - Upgrading unicron later: change the version in the two tarball URLs, `pnpm install`, then the screen comparison and `pnpm ds:ratchet`.
+  - Scratch: `capture.mjs`, `capture-ds.mjs`, and `cmp.mjs` in the Mailbird scratchpad `pw` folder; `sub-before`/`sub-after` captures; `regress.sh` (39 suites, longer than the 10-minute background limit, so run it in two halves).
+- **Last action**: Removed the unicron submodule per unicron's `docs/05-consuming.md` §7, verified (screens, tokens, frozen install, a clean-folder replay of the Dockerfile's web stage, ratchet, 39 suites), opened PR #48, subscribed, and set a 50-minute check-in (trig_01YFvhCLML9Q2zjcvhcrgY3v).
+- **Next action**: Merge #48 on Sean's word (squash, after CI is green; then delete the check-in and unsubscribe). Then product work: 41 graph view, 42 menu-bar mini calendar, 43 power settings, 44 shared notes (builds on the identity's persona keys), and the raw-button DS sweep (43 raw `<button>`s in 24 files).
   Follow-ups: drop orphaned images after a grace period, a full-screen image view, multi-page scans, more OCR languages, native scanners (VisionKit / ML Kit) in the device spike.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Test-harness note: start the notes relay with a fresh (new, never-used) data dir for each sync run — don't `rm -rf` a variable path (the safety check blocks it). Clear the shared Dovecot mailbox and SMTP sink before gateway suites (`seed_p12.py reset`). Test servers and the vite preview stop when the container restarts. The cloud proxy blocks codeload.github.com tarballs, so use `git+https` git deps, never `github:`. The built-in browser can't open container localhost; preview through the Artifact (vite build --base ./; tesseract's `.gz` model isn't a servable type, so text reading is off there). The host wraps the page in its own skeleton with unlayered `body{background:#fff;color:#000;font:14px system}`, which beats the app's `@layer base`: keep the preview-only `<style>` in the published index.html (`:root{color-scheme:light dark} body{font:inherit;background:var(--background);color:var(--foreground)}`) or dark mode breaks.
@@ -28,7 +28,7 @@ _Last updated: 2026-10-15 — checkpoint (PRs #1–#25 merged; Phase 21 change a
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), Phase 19 (PR #24), Phase 20 (PR #25), Phase 21 (PR #26), Phase 22 (PR #27), Phase 23 (PR #28), Phase 24 (PR #29), Phase 25 (PR #30), Phase 26 (PR #31), Phase 27 (PR #32), Phase 28 (PR #33), Phase 29 (PR #34), Phase 30 (PR #35), Phase 31 (PR #36), Phase 32 (PR #37), Phase 33 (PR #38), Phase 34 (PR #39), Phase 35 (PR #40), Phase 36 (PR #41), all merged; Unicron in PR #42.
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), Phase 19 (PR #24), Phase 20 (PR #25), Phase 21 (PR #26), Phase 22 (PR #27), Phase 23 (PR #28), Phase 24 (PR #29), Phase 25 (PR #30), Phase 26 (PR #31), Phase 27 (PR #32), Phase 28 (PR #33), Phase 29 (PR #34), Phase 30 (PR #35), Phase 31 (PR #36), Phase 32 (PR #37), Phase 33 (PR #38), Phase 34 (PR #39), Phase 35 (PR #40), Phase 36 (PR #41), Phase 37 (PR #42), Phase 38 (PR #43), identity crate (#46, #47), Phase 39 (PR #45), all merged; Phase 40 unicron packages in PR #48 (2026-10-16).
 
 ### Design rules (from Sean's reviews)
 - **Menus are frosted glass** (2026-10-15, DSA review): never override a menu to solid.
