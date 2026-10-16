@@ -1,6 +1,6 @@
 # SESSION-STATE — Synapse
 
-_Last updated: 2026-10-15 — Stage 1 item 6 (tool runner) done; next: the move onto Unicron (D89)_
+_Last updated: 2026-10-15 — Unicron move up for review: snds/synapse#1 (D90); then Stage 1 item 7_
 
 ---
 
@@ -9,7 +9,7 @@ _Last updated: 2026-10-15 — Stage 1 item 6 (tool runner) done; next: the move 
 ### 🤝 Live handoff (the baton)
 
 - **TL;DR (for future agent)**: Synapse (codename; was Switchyard) is a planned desktop workspace app with a tray service, for Mac and Windows. It makes an AI workspace visible and manageable over plain files, runs checks without an agent, creates and imports workspaces with scorecards, and walls personas. The credential router is its Personas & access module (`plan/access/`). Stage 1 (the engine) is being built, and the desktop app already reads the real index.
-- **Current focus**: **Stage 1 (engine), app joins early (D85).** Items 1–4 and 6 are done; item 5 has 10 of 11 checks (the last, `names.ledger`, comes with item 7). Latest: the tool runner (repo `4ca464a`). Next: move the interface onto Unicron (D89), then item 7.
+- **Current focus**: **Stage 1 (engine), app joins early (D85).** Items 1–4 and 6 are done; item 5 has 10 of 11 checks (the last, `names.ledger`, comes with item 7). Latest: the move onto Unicron, in review as PR snds/synapse#1 (branch `unicron`, `7d78d2f`; D90). Next: Sean's review of #1, then item 7.
 - **Working set**: Repo `~/Projects/synapse`: `crates/` (sy-model, sy-index, sy CLI), `app/` (interface) and `app/src-tauri/` (sy-app), `docs/stage-1/STAGE-1.md`, `docs/plan/`, `brand/`, `catalog/`, `schemas/v1/`, `scripts/`. T1 snapshot: `~/Projects/synapse-sandbox/t1-workspace@4e2b6cf/` (read-only, local only). Readable copy (plan set v2.12): https://claude.ai/artifact/VoPXvWfgPkc8ArsmtmESHt.
 - **Last action**: Stage 1 item 6, the tool runner (repo `4ca464a`):
   - `sy-check/tools`: reads `tool.json` manifests, fills `{params}`, enforces safety (writing runs need `--allow-write`; only the person's own workspaces, D80), runs with timeouts, collects exit code, text or JSON.
@@ -17,13 +17,10 @@ _Last updated: 2026-10-15 — Stage 1 item 6 (tool runner) done; next: the move 
   - Ten manifests written beside their scripts in this vault's `09-tools/` (the spike's five + validate-integrity, validate-links, validate-workspace, check-secrets, build-local-skill-plugin); `.gitignore` now tracks `09-tools/*.tool.json`. Live: seven checking tools run in ~4 s, all pass.
   - Item 5 before it: 10 of 11 checks with parity (standards-lint on T1; both link/integrity validators, 39/39 planted). D88 approved; D89 replaces D87.
   - By Claude Opus 5.5 · Claude Code · Work MBP.
-- **Next action**: **Move Synapse's interface onto Unicron (D89).** Requested by the Lockdown/Unicron session (`session_01DG9oy7EGG6unMww4vC7sSH`, on Sean's instruction), scheduled right after item 6:
-  1. Read `snds/unicron` `docs/05-consuming.md` and `docs/06-contributing.md`. Consume `@unicron/tokens` and `@unicron/ui` as versioned deps once the `@unicron/*@0.1.0` GitHub Releases exist (tarball URLs; npm later). Until then, design work only, no dependency swap.
-  2. A Synapse app-extension layer: its own semantic roles (health states, graph node kinds, tray/menu-bar surfaces, persona wall colours) as tokens aliasing Unicron's tiers, per `packages/tokens/examples/app-extension.css`. No raw values; Unicron's token lint rules.
-  3. Rebuild the shell onto Unicron primitives; keep Synapse-noun pieces local. Add `@snds/dsa` (`dsa.config.json` with `system.packages ["@unicron/ui"]`, ds:scan/ds:patterns/ds:ratchet, commit `.dsa/baseline.json`, ratchet in CI); send the first `dsa patterns` summary to that session. Propose candidates upstream as Unicron PRs with the template, never a fork.
-  4. A persona-wall UI is a likely shared pattern (Lockdown D13): propose it upstream early if built.
-  5. Record the adoption as D90+ with the version pin and the support-window rule from 06-contributing. Sean's word before merging; no employer names in public repos. Reply to that session with the PR number when the swap is up (this session had no tool to reply).
-  Then Stage 1 item 7 (facts engine, with `names.ledger`, E7). Take Sean's UI feedback when he's ready. Still waiting on: Apple support (membership), the Windows PC (tell Sean before starting), YubiKey firmware version.
+- **Next action**: **Sean reviews PR snds/synapse#1** (the Unicron move, D90 proposed); merge only on his word. What it does: `@unicron/ui` + `@unicron/tokens` 0.1.0 from release tarballs (exact pins, npm override; support window = current and previous minor); `app/src/app-extension.css` status roles from Unicron hue angles (measured 5.61:1+ light, 8.00:1+ dark); local shadcn copies, Emphasis Engine theme (D82, superseded) and IBM Plex removed; Badge/Kbd/Empty/ToggleGroup in place of hand-built pieces; `@snds/dsa` ratchet in CI (baseline 23 class overrides, 0 look-alikes; `dsa patterns`: 0 candidates of 48 compositions).
+  - **Owed to the Lockdown/Unicron session** (`session_01DG9oy7EGG6unMww4vC7sSH`): the PR number (snds/synapse#1) and the first `dsa patterns` summary (0 candidates). This session had no tool to message it; Sean or a session with the remote-messaging tool should pass it on.
+  - **Upstream asks to file once Sean agrees:** (1) Unicron core contrast: muted text 4.39/4.06:1 on sidebar/accent (light), focus ring at 50% 1.54:1 light / 1.88:1 dark, pressed toggle ~1.1:1 (corrected locally in the meantime); (2) a title-bar-aware dialog for desktop apps; (3) docs/05's `next-themes` example trips React 19's script warning; (4) `@snds/dsa` release tarballs so npm consumers don't need pnpm.
+  - Then Stage 1 item 7 (facts engine, with `names.ledger`, E7). Take Sean's UI feedback when he's ready. Still waiting on: Apple support (membership), the Windows PC (tell Sean before starting), YubiKey firmware version.
 - **Naming rule (standing)**: Use "Synapse" for the app. Its one home is `brand/brand.json` in the repo (fact `n-v1jhd2e8.name`). Every other appearance is listed in `brand/name-ledger.json`. After adding the name anywhere (repo or vault), run `python3 scripts/name-ledger.py --vault ~/Projects/workspace` from the repo, then `--write` once reviewed. Identifiers never carry the name (D37): use the `sy` prefix.
 - **Open decisions**: Apple Developer Program (blocked; Sean emailed Apple support); the public name (trademark check not done); generator engine; plugin runtime; `python-cross-platform-gui` (spoke or project skill).
 - **Blocked on**: nothing. Sensitive-data cleanup is deferred to after Stage 3 (D63, D65). Recommended now regardless: rotate the API key a memory note names, and review Drive link sharing.
@@ -72,3 +69,4 @@ _Last updated: 2026-10-15 — Stage 1 item 6 (tool runner) done; next: the move 
 - **2026-10-15** — Stage 1 item 5: `sy-check` with 10 of 11 Rust checks and the ported link/integrity rules; parity with standards-lint (T1) and both validators (39/39 planted); Health runs the checks (`e1881d2`…`aa29f1d`). D88 proposed.
 - **2026-10-15** — Merged a note from the 29-unicron cloud session saying D87 was reversed (Lockdown D14). Sean confirmed: D89 replaces D87, Synapse moves onto Unicron when it's ready. Sean approved D88 (`7f18260`).
 - **2026-10-15** — Stage 1 item 6 done (`4ca464a`): the tool runner, `sy tool list|run`, `sy check --tools`; ten tool manifests added to this vault's `09-tools/`. The Lockdown/Unicron session asked for the Unicron move (D89) as the next Synapse item; recorded above.
+- **2026-10-15** — Unicron move done on branch `unicron`, PR snds/synapse#1 (D90 proposed): Unicron 0.1.0 packages, the app's extension layer (measured contrast), primitives in place of hand-built pieces, dsa ratchet in CI. Awaiting Sean's review.
