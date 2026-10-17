@@ -422,7 +422,7 @@ focus). Manual is safer for tabs that trigger expensive data fetches.
 
 | SC | Level | What to check |
 |----|-------|--------------|
-| 1.4.3 Contrast | AA | 4.5:1 normal text, 3:1 large text (18pt or 14pt bold). Use APCA for more accurate prediction. |
+| 1.4.3 Contrast | AA | 4.5:1 normal text, 3:1 large text (18pt or 14pt bold). This is the fallback: judge by APCA first ([[a11y-visual]]), and still pass this wherever a conformance claim is made. |
 | 1.4.4 Resize Text | AA | 200% browser zoom without horizontal scrolling or loss of content. CSS `px` for `font-size` fails this. Use `rem`. |
 | 1.4.11 Non-text Contrast | AA | UI components and graphical objects need 3:1 against adjacent background. Focus indicators included. |
 | 2.1.1 Keyboard | A | All functionality operable by keyboard. No keyboard traps except intentional modals. |

@@ -13,7 +13,7 @@ _Last updated: 2026-10-15_
 ## Pending Items
 
 > **⚠️ Migrated to the Open Agent Engine 2026-07-30 — do not delete items from this list.**
-> Every item carries a stable Obsidian block anchor (`^pc-NN`; anchors run `^pc-01`–`^pc-54`). The
+> Every item carries a stable Obsidian block anchor (`^pc-NN`; anchors run `^pc-01`–`^pc-55`). The
 > 2026-07-30 migration covered the first 43: 38 got a Linear issue whose **only** pointer is that
 > anchor (23 on the personal lane, 15 on the employer lane) and 5 were not migrated — the reasons are
 > listed in the same table. Anchors added since (`^pc-44` onward) have no mapped issue. Deleting an
@@ -29,6 +29,7 @@ _Triaged 2026-04-27 into three buckets: **Active** (next actions), **Deferred** 
 
 ### Active (next actions)
 
+- [ ] **Add APCA to the vault's pixel contrast tool (`visual-qa-toolkit/scripts/qa_contrast.py`).** (Added 2026-10-17.) Contrast is APCA-first everywhere ([[decision-apca-primary-wcag-fallback]]), but this tool measures WCAG only. Read the `apca-w3` Limited W3 License before porting it into this public repo (no changes to its constants, the current algorithm only, an audit right); calling the npm `apca-w3` at check time may be the safer shape. ^pc-55
 - [ ] **Roll out Claude as an employer surface on each Mac (human steps).** (Added 2026-10-06; restated 2026-10-14.) Decision: [[decision-claude-employer-surface]] (amendments 2026-10-13). Human steps, in the 2026-10-13 order, from a plain terminal: (1) `00-bootstrap/doctor/workspace-doctor.sh --install-pin`, (2) `--install-git-hooks`, (3) `--install-claude-overlay` (v6, which carries the one GitHub route `09-tools/gh_route.py`, `fd5d1ab`), then a fresh Claude session. **Sean ran all three on 2026-10-14 (verified).** The route replaces the `github-work` SSH alias for Centric pushes (^pc-09) and gives Claude the HTTPS fallback it lacked. Not confirmed: the re-paste of `00-bootstrap/dist/BEACON.md` into the claude.ai profile preferences and the re-emit of `render_shims.py --emit claude-permissions --device work-mbp`. Open: the surface-trajectory harness does not yet prove Claude Code's prompt routes in an employer-shaped folder. Open (Sean's call): personal-account Centric work falls under consumer terms, and claude.ai memory can file Centric facts. Closes with ^pc-09 after one real Centric push from Claude. ^pc-50
 
 - [ ] **SaaS PLM prototype — DataTable contract, then the TanStack replacement.** (Added 2026-07-28.) Next: Olga reviews #13; deepen Materials lab toward the full column set post-merge; revisit the contract as acceptance checklist; WP-0 memo still unsent. Detail → [project-context-detail.md#pc-01](project-context-detail.md#pc-01). ^pc-01

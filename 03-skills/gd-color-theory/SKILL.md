@@ -247,9 +247,9 @@ reliably distinguish red from green. This makes red/green status color systems
 2. **Test with simulation.** Figma's accessibility plugins and tools like
    Sim Daltonism simulate CVD. Use them.
 
-3. **Verify contrast.** WCAG 2.1 AA requires 4.5:1 contrast for normal text,
-   3:1 for large text. APCA (WCAG 3.0 draft) provides a more nuanced
-   perceptual model. Use APCA for new work.
+3. **Verify contrast.** Judge by APCA first (the WCAG 3.0 draft's perceptual
+   model; floors in [[a11y-visual]]). WCAG 2.1 AA (4.5:1 normal text, 3:1 large
+   text) is the fallback, and still has to pass where a conformance claim is made.
 
 4. **Status colors need hue separation and value separation.** Success green,
    warning amber, and error red must be distinguishable in CVD simulation.

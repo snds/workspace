@@ -154,8 +154,10 @@ or legally required, but directionally important:
 - **Timeline**: Still in development as of 2025; expected to coexist with WCAG 2.x
   for many years
 
-**Current recommendation**: Design to WCAG 2.2 AA; adopt APCA as supplementary
-contrast verification; monitor WCAG 3.0 drafts for emerging best practices.
+**Current recommendation**: Design contrast to APCA first (Sean's rule, 2026-10-17; see
+[[decision-apca-primary-wcag-fallback]]), with WCAG 2.2 AA as the fallback. Conformance
+claims, VPATs and ACRs still cite WCAG 2.x, so WCAG 2.2 AA must pass wherever a claim is
+made; APCA being primary never lowers that floor. Monitor WCAG 3.0 drafts.
 
 ---
 

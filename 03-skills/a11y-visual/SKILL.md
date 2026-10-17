@@ -134,9 +134,12 @@ significantly more accurate at predicting whether text is actually readable:
 - APCA is asymmetric: light text on dark vs. dark text on light have different
   perceptual weight curves
 
-**Current recommendation**: Meet WCAG 1.4.3 (required) and verify with APCA (best
-practice). Use Lc (lightness contrast) ≥ 60 for body text, ≥ 45 for large/bold text,
-≥ 30 for UI elements as APCA starting targets.
+**Current rule (Sean, 2026-10-17): APCA is primary; WCAG 2.x is the fallback.** Judge
+contrast by APCA Lc (lightness contrast) first, everywhere: Lc ≥ 60 for body text, ≥ 45
+for large/bold text, ≥ 30 for UI elements, and APCA Bronze's Lc 75 for text under 16px.
+Fall back to WCAG 1.4.3 only where an APCA target can't be met. Where a deliverable needs
+a conformance claim, WCAG 2.x AA must still pass, because that's what VPATs and the law
+cite. See [[decision-apca-primary-wcag-fallback]].
 
 **Tier note (2026-07-08)**: the values above are the accessibility FLOOR — the bare
 minimum any delivered artifact must meet. Working *targets* for comfortable reading sit
@@ -145,7 +148,10 @@ higher: see the APCA threshold table in `design-engineer/references/visual-desig
 concerns). Stricter targets in [[radix-derived-color-system]] (~Lc 90 body) are
 Radix-scale-specific and apply only to Radix-derived palettes.
 
-**Tools**: APCA Contrast Calculator (apcalc.github.io), Polypane, Stark.
+**Tools**: APCA Contrast Calculator (apcalc.github.io), Polypane, Stark. Automated: axe-core
+has no APCA rule (its `color-contrast` is WCAG's ratio); `apca-check` (Stack Exchange, MIT)
+adds APCA Bronze and Silver+ rules to axe on the reference `apca-w3`. Gate on Bronze and
+report WCAG as the fallback. Mind the `apca-w3` license terms in the decision note.
 
 **CSS pairing (not a substitute):** native `contrast-color()` returns black/white only.
 Map onto semantic text tokens and still measure APCA. See [[uid-color-for-ui]]

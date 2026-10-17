@@ -329,10 +329,11 @@ APCA is more perceptually accurate than the WCAG contrast ratio formula, particu
 for body text and large displays. APCA Lc 60 is approximately equivalent to WCAG 4.5:1
 but with better correlation to actual perceptual experience at different sizes.
 
-Use APCA alongside WCAG for body text decisions. WCAG remains the legal compliance
-standard in most jurisdictions — meet it. Use APCA to calibrate decisions where the
-WCAG formula produces counterintuitive results (e.g., very light text on very light
-backgrounds that pass WCAG but look unreadable).
+Judge contrast by APCA first; WCAG is the fallback (Sean's rule, 2026-10-17; see
+[[decision-apca-primary-wcag-fallback]]). WCAG remains the legal compliance standard in
+most jurisdictions, so where a conformance claim is made it must still pass. APCA catches
+what the WCAG formula misses (e.g., small mid-gray text on dark surfaces that passes WCAG
+but reads poorly, or very light text on very light backgrounds).
 
 ### Colorblind simulation testing
 

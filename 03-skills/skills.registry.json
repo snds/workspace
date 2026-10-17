@@ -257,7 +257,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:b16273f51dd250e6f6f00c6d592f1f02f40b922323be79597e9792f8d88397b7"
+      "hash": "sha256:ecdbdc1a23bf5785d54008db86796c555a50bc5c4ffdc84e80eea942507b6fda"
     },
     "a11y-motor-physical": {
       "path": "03-skills/a11y-motor-physical/SKILL.md",
@@ -335,7 +335,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:6bb3b1de7eecb0fd5bc0cc0589c91b397b7e01aa8bb27350047c374932f87155"
+      "hash": "sha256:6f4ceeaf2d6baf281a4eb37d7edba8264e4a5a97dea020823b136e2c41a4471f"
     },
     "adapter-unity-hdrp": {
       "path": "03-skills/adapter-unity-hdrp/SKILL.md",
@@ -1874,7 +1874,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:c38aa34394b51be51a9d1aba34ca8c62772355565a34a49b925fd1eca824744f"
+      "hash": "sha256:7522cb474dfc16cda7ee2868a6e64de53b3e68dd924b7712e883b5006d88e2f2"
     },
     "fe-api-integration": {
       "path": "03-skills/fe-api-integration/SKILL.md",
@@ -3124,7 +3124,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:22d29db531e007f31f0883bd9d7cb521b7d7e9f55180639fa03995fa34c5bc1e"
+      "hash": "sha256:97dc0c43326ddb663260c26c7c45356c835175579e41b0178234f87098d12226"
     },
     "gd-display-graphics": {
       "path": "03-skills/gd-display-graphics/SKILL.md",
@@ -7379,7 +7379,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:30e592ea92356769224da8b558a7bc1695e7685da84cb44cbfc002bb40259546"
+      "hash": "sha256:b62c35bf9929f7e64355b2f3a4983177084ee5ed0b8d41c8760bebf0e52dc34f"
     },
     "ux-ai-product-design": {
       "path": "03-skills/ux-ai-product-design/SKILL.md",
