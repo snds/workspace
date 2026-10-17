@@ -30,7 +30,7 @@ relations:
 ## Context — what forced a choice
 The workspace said it two ways. [[radix-derived-color-system]] and framework #06 already put APCA
 first, while [[a11y-visual]], [[a11y-legal-compliance]] and [[ux-accessibility]] said "meet WCAG,
-verify with APCA". The first APCA run on the desktop app (snds/synapse, Stage 2 S10) showed why it
+verify with APCA". The first APCA run on the Stage 2 desktop app (its S10 gate) showed why it
 matters: WCAG passed every element, while 365 fell under APCA's minimum. Most were dark-mode muted
 text that WCAG rates 7.7:1 but reads at Lc 49-52 at 11-14px.
 
