@@ -20,6 +20,11 @@ relations:
   `apca-check` (Stack Exchange, MIT) adds APCA Bronze and Silver+ rules to axe, built on the
   reference `apca-w3`. Gate on Bronze; report WCAG `color-contrast` as the fallback and
   Silver+ as the target. Neither covers non-text contrast; that stays with the visual review.
+- **By element kind (Emphasis Engine's method, adopted in Unicron 2026-10-17, snds/unicron#27):**
+  measure every pair a component paints, through its own opacity and mixes, and hold it to its
+  kind's floor: reading text Lc 75 (APCA Bronze, under 16px), labels on fills and tints Lc 60,
+  solids Lc 30, control borders and focus 3:1 as drawn (no calibrated APCA target for 1px lines).
+  A role points at the weakest ramp step that clears every recipe it paints.
 - **As of:** 2026-10 · **Status:** current
 
 ## Context — what forced a choice
