@@ -26,8 +26,12 @@ _Last updated: 2026-10-15 — 0.1.0 released; PRs #2 and #3 ready for Sean (chec
 - **Open decisions**: npm publishing (scope `@snds`, `@unicron`); name trademark checks; whether Synapse's D87 ("each project grows its own") is formally reversed in the Synapse repo (Sean acted on D14 by creating unicron, so treat D14 as confirmed by action, but the Synapse log still says D87).
 - **Blocked on**: nothing.
 - **0.8.0 / tokens 0.6.0 released (#32 + Version Packages #33, 21:19 UTC):** SecretField `multiline` + `name`/`required`/`onBlur`, `secretStrengthFromScore`, `CommandItemAction` (⌘↵), `Command match="keywords"`, `Skeleton variant="row"` (`--c-skeleton-row-height`), Dialog size mapping documented. Known, documented not fixed: cmdk folds an `Icon`'s glyph name into an item's search text when no explicit `value` is given.
+<<<<<<< Updated upstream
 - **0.9.0 released (#36 + Version Packages #37, 22:15 UTC):** CodeDisplay gains SecretField's copy reference (`onCopy` → `{ hash }`, `clipboardHolds`, `onClipboardClear(ref)` → boolean); "Cleared" only after a real clear. Lockdown is on it.
 - **Open contrast misses (core-owned, measured by Lockdown 2026-10-17):** `--destructive` as text on a selected row Lc 74.1 light / 74.5 dark (Bronze 75); light `--warning` (amber.400) fill against `--sidebar` Lc 27 (solid floor 30). Neither is drawn by Lockdown today; the Synapse session (contrast owner) was inactive when this was found.
+=======
+- **Contrast misses closed — tokens 0.7.0 / ui 0.8.1 (#34 + Version Packages #35, 21:59 UTC):** the two misses Lockdown measured. `--destructive` → new `red.700` (light) / `red.200` (dark): text on a selected row now Lc 76+ (was 74.1 / 74.5), label on its own tint 75 / 72. Light `--warning` → new `amber.450`: the fill reads Lc 31+ against page, sidebar and a selected row (was 27 on the sidebar), its label 62. `red.600`/`red.300` stay, unchanged. `contrast.mjs`: 119 gated recipes, all pass (adds destructive on selected rows, status fills as solids, red in the accent text table). Synapse is on it (`1c78164`, no app change). Mailbird and Lockdown: plain bump, no code change; destructive text and the light warning fill shift slightly in screenshots. Done by the Synapse session (Claude Opus 5.5 · Claude Code · Work MBP).
+>>>>>>> Stashed changes
 - **In-flight / do-not-touch**: nothing. The four contrast waivers and the hairline question were closed by #27 (control borders now 3:1).
 - **Agent thread**: Claude Fable 5.1/Claude Code cloud (2026-10-15): project created, both repos scaffolded; next = verify and wire.
 
