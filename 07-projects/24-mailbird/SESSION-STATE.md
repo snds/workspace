@@ -1,6 +1,6 @@
 # SESSION-STATE — Mailbird, working name (24-mailbird)
 
-_Last updated: 2026-10-16 — checkpoint (PRs through #48 merged; Phase 41 map of notes in PR #49)_
+_Last updated: 2026-10-17 — checkpoint (PRs through #49 merged; next: Phase 42 menu-bar mini calendar)_
 
 ---
 
@@ -11,13 +11,13 @@ _Last updated: 2026-10-16 — checkpoint (PRs through #48 merged; Phase 41 map o
 - **TL;DR (for future agent)**: An open-source, ad-free PIM "super app" with mail, calendar,
   contacts, and notes. It is mobile-first and runs on the web plus Tauri shells. The code is in
   `snds/Mailbird`, and its docs/ folder holds the research, license audit, architecture, and ADRs.
-- **Current focus**: Phase 41, the map of notes (ADR-0053), is open as Mailbird #49 on branch `graph-view`. Phase 40 (unicron packages, ADR-0052) merged as #48 (b2116ac). The map: `note_graph(query)` in the core, `NotesPrefs.graph`, `features/notes/note-graph.tsx` + `graph-layout.ts` (deterministic settled layout), and a shared `useOpenLink`. Merge only on Sean's word.
+- **Current focus**: Phase 41, the map of notes (ADR-0053), is merged as Mailbird #49 (39917c7). Nothing is in review. Next up is Phase 42, the menu-bar mini calendar.
 - **Working set**:
   - Mailbird #49: `crates/core/src/notes_store.rs` (`note_graph`), `tasks_store.rs` (`graph` pref), app dispatch, `apps/web/src/features/notes/{note-graph.tsx,graph-layout.ts,use-open-link.ts,index.tsx,note-detail.tsx}`, `core/{client,queries,types,demo-notes}.ts`, `docs/decisions/0053-map-of-notes.md`.
   - Upgrading unicron: change the version in the two tarball URLs (`apps/web/package.json`, the tokens override in `pnpm-workspace.yaml`), `pnpm install`, then the screen comparison and `pnpm ds:ratchet`.
   - Scratch: `pw/phase41.mjs` and `pw/gateway-p41.mjs` in the Mailbird scratchpad; `regress.sh` now runs 40 suites (about 25 minutes, so run it in the background with a 30-minute timeout). Never run prettier here: there's no config, and its defaults reflow whole files.
-- **Last action**: Merged #48 on Sean's word. Built Phase 41, verified it (core 223, app dispatch, clippy, phase41 37 checks, gateway-p41, 40/40 suites, ratchet unchanged), opened PR #49, subscribed, and set a 50-minute check-in.
-- **Next action**: Merge #49 on Sean's word (squash, after CI is green; then delete the check-in and unsubscribe). Then 42 menu-bar mini calendar, 43 power settings, 44 shared notes, and the raw-button DS sweep. Map follow-ups: a local graph inside a note, ghost nodes for links to notes not yet written, and a wider split when a note is open.
+- **Last action**: On Sean's word, merged #49 (squash, CI green) and unsubscribed. The one-shot check-in had already fired.
+- **Next action**: 42 menu-bar mini calendar (desktop tray; the cloud tests cover less of it), 43 power settings, 44 shared notes, and the raw-button DS sweep. Map follow-ups: a local graph inside a note, ghost nodes for links to notes not yet written, and a wider split when a note is open.
   Follow-ups: drop orphaned images after a grace period, a full-screen image view, multi-page scans, more OCR languages, native scanners (VisionKit / ML Kit) in the device spike.
   Sean must register a Google OAuth client and a Microsoft Entra app for real sign-ins (`docs/google-verification.md`, `docs/microsoft-setup.md`).
   Test-harness note: start the notes relay with a fresh (new, never-used) data dir for each sync run — don't `rm -rf` a variable path (the safety check blocks it). Clear the shared Dovecot mailbox and SMTP sink before gateway suites (`seed_p12.py reset`). Test servers and the vite preview stop when the container restarts. The cloud proxy blocks codeload.github.com tarballs, so use `git+https` git deps, never `github:`. The built-in browser can't open container localhost; preview through the Artifact (vite build --base ./; tesseract's `.gz` model isn't a servable type, so text reading is off there). The host wraps the page in its own skeleton with unlayered `body{background:#fff;color:#000;font:14px system}`, which beats the app's `@layer base`: keep the preview-only `<style>` in the published index.html (`:root{color-scheme:light dark} body{font:inherit;background:var(--background);color:var(--foreground)}`) or dark mode breaks.
@@ -28,7 +28,7 @@ _Last updated: 2026-10-16 — checkpoint (PRs through #48 merged; Phase 41 map o
   cloud egress blocks it.
 - **In-flight / do-not-touch**: none.
 - **Agent thread**: Claude Opus 5.5 / Claude Code cloud (2026-10-13): research, Phase 0 (PR #1),
-  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), Phase 19 (PR #24), Phase 20 (PR #25), Phase 21 (PR #26), Phase 22 (PR #27), Phase 23 (PR #28), Phase 24 (PR #29), Phase 25 (PR #30), Phase 26 (PR #31), Phase 27 (PR #32), Phase 28 (PR #33), Phase 29 (PR #34), Phase 30 (PR #35), Phase 31 (PR #36), Phase 32 (PR #37), Phase 33 (PR #38), Phase 34 (PR #39), Phase 35 (PR #40), Phase 36 (PR #41), Phase 37 (PR #42), Phase 38 (PR #43), identity crate (#46, #47), Phase 39 (PR #45), Phase 40 (PR #48), all merged; Phase 41 map of notes in PR #49 (2026-10-16).
+  Phase 1 (PR #2), Phase 1b (PR #3), Phase 1c (PR #4), Phase 2 (PR #5), Phase 2b (PR #6), Phase 3 (PR #7), Phase 4 (PR #8), Phase 4b (PR #9), Phase 5 (PR #10), Phase 6 (PR #11), Phase 7 (PR #12), Phase 8 (PR #13), Phase 9 (PR #14), Phase 10 (PR #15), Phase 11 (PR #16), Phase 12 (PR #17), Phase 13 (PR #18), Phase 14 (PR #19), Phase 15 (PR #20), Phase 16 (PR #21), Phase 17 (PR #22), Phase 18 (PR #23), Phase 19 (PR #24), Phase 20 (PR #25), Phase 21 (PR #26), Phase 22 (PR #27), Phase 23 (PR #28), Phase 24 (PR #29), Phase 25 (PR #30), Phase 26 (PR #31), Phase 27 (PR #32), Phase 28 (PR #33), Phase 29 (PR #34), Phase 30 (PR #35), Phase 31 (PR #36), Phase 32 (PR #37), Phase 33 (PR #38), Phase 34 (PR #39), Phase 35 (PR #40), Phase 36 (PR #41), Phase 37 (PR #42), Phase 38 (PR #43), identity crate (#46, #47), Phase 39 (PR #45), Phase 40 (PR #48), Phase 41 (PR #49), all merged (2026-10-17).
 
 ### Design rules (from Sean's reviews)
 - **Menus are frosted glass** (2026-10-15, DSA review): never override a menu to solid.
