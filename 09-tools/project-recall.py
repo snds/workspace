@@ -17,10 +17,10 @@ long-term, then newest. It reads only the project you name (no global index), so
 project never lands in a shared one.
 
 Usage:
-    python3 09-tools/project-recall.py 26-synapse
-    python3 09-tools/project-recall.py synapse "apple developer"
-    python3 09-tools/project-recall.py 26 "baton split" --tier long --limit 5
-    python3 09-tools/project-recall.py 26 "unicron" --json
+    python3 09-tools/project-recall.py 29-unicron
+    python3 09-tools/project-recall.py unicron "contrast misses"
+    python3 09-tools/project-recall.py 29 "release" --tier long --limit 5
+    python3 09-tools/project-recall.py 29 "tokens" --json
 """
 
 from __future__ import annotations

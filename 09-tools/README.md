@@ -96,9 +96,9 @@ git history). Without words: where each tier lives and how much is there. With w
 search across all of them. Reads only the project you name.
 
 ```
-python3 09-tools/project-recall.py 26-synapse
-python3 09-tools/project-recall.py synapse "apple developer" --limit 5
-python3 09-tools/project-recall.py 26 "baton split" --tier long --json
+python3 09-tools/project-recall.py 29-unicron
+python3 09-tools/project-recall.py unicron "contrast misses" --limit 5
+python3 09-tools/project-recall.py 29 "release" --tier long --json
 ```
 
 ## evaluate-skill-routing.py
