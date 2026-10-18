@@ -47,6 +47,7 @@ _Last updated: 2026-10-18 — wave 1 (security center, organization, extension, 
   - `slice/sharing` in `/home/user/ld-share`: shared vaults, permissions, item sharing, share and request links, fill-only, family, emergency access, the sharing half of key transparency; doc 18, D185–D199.
   - `slice/passkeys` in `/home/user/ld-pk`: create and use passkeys through the extension, management, Signal API, conditional mediation; doc 19, D200–D214.
   - Builders don't edit decisions, the checklist or the README; the coordinator folds each merge.
+  - **Disk rule (learned 2026-10-18):** parallel builders must all export `CARGO_PROFILE_DEV_DEBUG=line-tables-only` with the shared target and `CARGO_INCREMENTAL=0`. Full debug info made test binaries up to 400 MB, and three builders wrote about 13 GB in ten minutes. To free space, pause every builder, check `pgrep rustc` is empty, then prune or clear `target/debug` and resume. The top-level binaries in `target/debug` are shared, so copy them aside before end-to-end runs.
   - Done since wave 1: unicron ui 0.12.0 / tokens 0.7.0 (#6, also fixes the density flash), checklist corrections `c6eb584`.
 - **Next action**: fold each wave-2 PR as it lands. Then server hardening (TLS, PQ transport, single container, push; doc 20, D215+) once disk allows a fourth builder.
 - **Agent thread**: Claude Fable 5.1/Claude Code cloud (2026-10-15): research dossier, report page, repo first commit, project scaffold; next = Sean's three decisions.
