@@ -257,7 +257,7 @@ phases. Locked decisions: ingestion = consent+quarantine+scan; project adoption 
 
 ## Session history (append-only)
 
-_Older entries are in [history/](history/), by month; the app's Projects timeline joins them with this file._
+_Older entries are in [history/README.md](history/README.md), the long-term tier, by month; the app's Projects timeline joins them with this file._
 
 _Newest first._
 

@@ -346,6 +346,8 @@ context store; it updates the shared one so the next agent inherits an unbroken 
 |---|---|---|
 | Active project `SESSION-STATE.md` (its **Live handoff** block) | "pick up exactly here": current focus, working set, last action, next action, open decisions, blocked-on, in-flight/do-not-touch | updated **continuously** + at every handoff |
 | `07-projects/<p>/history/YYYY-MM.md` | a baton's older history, by month, once the baton passes 12 KB (all but the newest 5 history entries, finished log notes) | moved by the workspace app's `batons.size` fix or by hand; read on demand |
+
+**Memory tiers** ([decision-memory-tiers](06-context/memory/decision-memory-tiers.md)): **current** (Live handoff, session-log head) is read every session; **recent** (a baton's history section, `session-log.md`) when the question is about lately; **long-term** (`history/` via its `README.md` index, `session-log-archive.md`, `project-context-detail.md`, memory, git) is queried with `python3 09-tools/project-recall.py <project> "<words>"` for anything older or any when/why — never assumed empty.
 | `06-context/side-chat-inbox.md` | mid-session side-chat → parent continuity (one pending paragraph + pointers) | written by [[side-chat-handback]] (`/side-chat-handback`); parent marks `consumed`. Gitignored. Not a session-end. |
 | `06-context/sessions/<id>.md` fragment | this session's block (a disjoint file per session) | written at session end; compaction folds it into `session-log.md` |
 | `06-context/session-log.md` (+ `session-log-archive.md`) | chronological history, newest-first, attributed; **bounded** (old blocks archived) | folded from fragments; read the **head** only |

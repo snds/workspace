@@ -163,7 +163,7 @@ Deferred: installed fonts that are disabled in Font Book (they still show as on)
 
 ## Session history (append-only)
 
-_Older entries are in [history/](history/), by month; the app's Projects timeline joins them with this file._
+_Older entries are in [history/README.md](history/README.md), the long-term tier, by month; the app's Projects timeline joins them with this file._
 
 ### 2026-10-14 — renumbered 24 → 25; baton now git-tracked
 

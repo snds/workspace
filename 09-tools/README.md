@@ -78,6 +78,29 @@ python3 09-tools/build-trigger-routes.py
 python3 09-tools/build-trigger-routes.py --check
 ```
 
+## build-history-index.py
+
+Keeps each project's long-term tier linked ([decision-memory-tiers](../06-context/memory/decision-memory-tiers.md)):
+writes `07-projects/<p>/history/README.md` (each month, newest first, with its entries), puts the
+back-links in each month file, and points the baton at the index. Runs in the nightly rebuild.
+
+```
+python3 09-tools/build-history-index.py
+python3 09-tools/build-history-index.py --check
+```
+
+## project-recall.py
+
+One project's context in its three tiers (current, recent, long-term) plus the record (its baton's
+git history). Without words: where each tier lives and how much is there. With words: one ranked
+search across all of them. Reads only the project you name.
+
+```
+python3 09-tools/project-recall.py 26-synapse
+python3 09-tools/project-recall.py synapse "apple developer" --limit 5
+python3 09-tools/project-recall.py 26 "baton split" --tier long --json
+```
+
 ## evaluate-skill-routing.py
 
 Adversarial Layer 0 harness. Replays curated utterances in

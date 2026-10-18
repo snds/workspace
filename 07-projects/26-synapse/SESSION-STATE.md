@@ -43,7 +43,7 @@ _Last updated: 2026-10-15 — Unicron move up for review: snds/synapse#1 (D90); 
 
 ## History (append-only)
 
-_Older entries are in [history/](history/), by month; the app's Projects timeline joins them with this file._
+_Older entries are in [history/README.md](history/README.md), the long-term tier, by month; the app's Projects timeline joins them with this file._
 
 - **2026-10-16** — Stage 2 items 5–14 built except the signing-dependent parts: conformance, every screen (Home, Projects, Health, Domains & skills, Library, graph, impact review, Agent apps, Settings), and the lock's engine. S3 and S5 pass. Sigma 3 chosen over the new Sigma 4. By Claude Opus 5.5 · Claude Code · Work MBP.
 

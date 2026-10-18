@@ -16,6 +16,7 @@ Phases (run in this order; default fold,rebuild,verify,watch):
              2. build-related          (rewrites Related blocks from the registry)
              3. build-registry again   (skipped when step 2 wrote 0 files)
              4. build-trigger-routes
+             5. build-history-index   (each project's history/README.md, links both ways)
   verify   workspace-harness.py — the whole gate chain. Read-only. With --from-diff (H11) the
            verify step is close-out-dispatch.py --from-diff --run instead: only the QUALITY_CHAIN
            steps the diff selects (--range R, else the working tree against HEAD; --fast drops the
@@ -91,6 +92,10 @@ PHASES: list[dict] = [
     {"phase": "rebuild", "tool": "build-registry.py", "args": [], "check_args": None,
      "mutating": True, "advisory": False, "fixpoint": True},
     {"phase": "rebuild", "tool": "build-trigger-routes.py", "args": [], "check_args": ["--check"],
+     "mutating": True, "advisory": False},
+    # Each project's long-term tier stays linked: history/README.md and the links both ways
+    # (decision-memory-tiers).
+    {"phase": "rebuild", "tool": "build-history-index.py", "args": [], "check_args": ["--check"],
      "mutating": True, "advisory": False},
     {"phase": "verify", "tool": "workspace-harness.py", "args": [], "check_args": [],
      "mutating": False, "advisory": False, "default_timeout": VERIFY_STEP_TIMEOUT},

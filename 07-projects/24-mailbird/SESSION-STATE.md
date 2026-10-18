@@ -67,4 +67,4 @@ _Last updated: 2026-10-18 — checkpoint (all PRs through #66 merged; nothing op
 
 ## History
 
-_Older entries are in [history/](history/), by month; the app's Projects timeline joins them with this file._
+_Older entries are in [history/README.md](history/README.md), the long-term tier, by month; the app's Projects timeline joins them with this file._

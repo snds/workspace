@@ -46,7 +46,7 @@ _Last updated: 2026-10-14 — install round done; two mechanization branches awa
 
 ## Session history (append-only)
 
-_Older entries are in [history/](history/), by month; the app's Projects timeline joins them with this file._
+_Older entries are in [history/README.md](history/README.md), the long-term tier, by month; the app's Projects timeline joins them with this file._
 
 ### 2026-10-14 — install round done; B-fixes + M25 branches await merge (baton rewrite)
 
