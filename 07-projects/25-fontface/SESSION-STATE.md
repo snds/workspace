@@ -29,18 +29,6 @@ _Last updated: 2026-10-14 — renumbered 24 → 25; `main` = `826c574` public on
   - **Checks:** 251 Rust tests and 35 UI tests pass.
   - **Open:** Material Symbols in the main library list draws its name in letters, not icons. Fixing that needs a library-wide preview rule plus a `PREVIEW_REV` bump.
   - **Housekeeping:** all worktrees and merged branches removed (2026-10-13). Only `main` remains.
-- **`ccf6cd1` (2026-10-12, late): everything else merged.**
-  - **What's in it:**
-    - Purchases watcher and follow-ups.
-    - Tags with colors, import/export and the sidebar tag controls.
-    - Settings screen and the seamless title bar.
-    - Variable filter.
-    - Tag groups (My tags / Built-in).
-    - Desktop sync (another session's branch; groups now sync too).
-    - Preview profiles: real-glyph samples for symbol, Expert and script fonts, clip-free fitting, and a Characters grid.
-  - **Checks:** 240 Rust tests, 30 node UI tests, tsc and the app build all pass.
-  - **Each feature went through:** an adversarial review → fix → recheck.
-  - **Key late fix:** the UI connection now uses IMMEDIATE transactions. Without that, tag and sync writes failed with "database is locked" while the launch preview backfill held the write lock.
 - **Preview profiles:**
   - **Code:** `src-tauri/src/preview/` (`face_previews` side table, `PREVIEW_REV`=2, backfill at launch, on-demand reader lanes), plus `src/previewFit.ts`, `previewQueue.ts` and `components/PreviewText.tsx`/`CharacterGrid.tsx`.
   - **Design and evidence:** in the agent scratchpad only. The design is summarised in `docs/ARCHITECTURE.md`.
@@ -174,6 +162,8 @@ Deferred: installed fonts that are disabled in Font Book (they still show as on)
 ---
 
 ## Session history (append-only)
+
+_Older entries are in [history/](history/), by month; the app's Projects timeline joins them with this file._
 
 ### 2026-10-14 — renumbered 24 → 25; baton now git-tracked
 
