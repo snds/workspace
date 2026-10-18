@@ -161,6 +161,13 @@ def snapshot(root: Path = ROOT) -> dict[str, str]:
         files.extend(sorted(ctx.glob("session-log*.md")))
         if (ctx / "sessions").is_dir():
             files.extend(sorted((ctx / "sessions").glob("*.md")))
+    # Batons and their history (D98): build-history-index writes pointers, back-links and indexes.
+    # Only paths git would track, so a run never stages an ignored (employer) baton.
+    listed = _git(["ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", "07-projects"], root=root)
+    if listed is not None and listed.returncode == 0:
+        for rel in sorted(set(listed.stdout.split("\0"))):
+            if rel.endswith("/SESSION-STATE.md") or ("/history/" in rel and rel.endswith(".md")):
+                files.append(root / rel)
     out: dict[str, str] = {}
     for f in files:
         try:
@@ -466,6 +473,58 @@ def _lane_matches(path: str) -> bool:
     return (path.startswith("03-skills/") and path.endswith("/SKILL.md")) or path in LANE_SOURCES
 
 
+def _is_baton_path(path: str) -> bool:
+    return path.startswith("07-projects/") and (
+        path.endswith("/SESSION-STATE.md") or ("/history/" in path and path.endswith(".md")))
+
+
+def _lane_batons(root: Path, staged: list[str], timeout: float) -> int:
+    """The baton part of the lane (D98): the history indexes, as committed, are current.
+
+    Exports the staged batons and history files (with build-history-index.py) and runs its
+    --check there. A staged baton over 12 KB is a notice, not a refusal (another session may own
+    it). Exit 1 with two fix lines on a stale index; infrastructure errors fail open.
+    """
+    batons = [p for p in staged if _is_baton_path(p)]
+    if not batons:
+        return 0
+    listed = _git(["ls-files", "-z", "--", "07-projects"], root=root)
+    if listed is None or listed.returncode != 0:
+        return 0
+    every = _z_paths(listed.stdout)
+    paths = [p for p in every if _is_baton_path(p)]
+    # Each baton folder's README.md: the index takes the project's title from it.
+    folders = {p.rsplit("/", 1)[0] for p in paths if p.endswith("/SESSION-STATE.md")}
+    paths += [p for p in every if p.endswith("/README.md") and p.rsplit("/", 1)[0] in folders]
+    with tempfile.TemporaryDirectory(prefix="nightly-lane-batons-") as td:
+        prefix = str(Path(td) / "tree") + os.sep
+        try:
+            exp = subprocess.run(["git", "checkout-index", "-z", "--stdin", f"--prefix={prefix}"],
+                                 cwd=str(root), input="\0".join(paths) + "\0", capture_output=True,
+                                 text=True, timeout=GIT_TIMEOUT)
+        except (OSError, subprocess.TimeoutExpired):
+            return 0
+        if exp.returncode != 0:
+            return 0
+        tree = Path(prefix)
+        for rel in batons:
+            f = tree / rel
+            if rel.endswith("SESSION-STATE.md") and f.is_file() and f.stat().st_size > 12 * 1024:
+                print(f"nightly lane: {rel} is {f.stat().st_size / 1024:.1f} KB, over the 12 KB baton limit "
+                      "(D98); move older history to history/YYYY-MM.md word for word", file=sys.stderr)
+        tools = tree / "09-tools"
+        tools.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(TOOLS / "build-history-index.py", tools / "build-history-index.py")
+        code, _last, _secs, timed_out = run_step("build-history-index.py", ["--check"], timeout, tools=tools, root=tree)
+        if timed_out or code == 127 or code == 0:
+            return 0
+    print("nightly lane: a baton's history index is stale for what's staged (D98); commit refused. Fix:",
+          file=sys.stderr)
+    print("python3 09-tools/build-history-index.py", file=sys.stderr)
+    print("git add -- <the files it wrote>", file=sys.stderr)
+    return 1
+
+
 def lane_pre_commit(root: Path = ROOT, timeout: float = DEFAULT_STEP_TIMEOUT) -> int:
     """Stateless pre-commit lane. Checks the generators against the INDEX being committed.
 
@@ -477,7 +536,10 @@ def lane_pre_commit(root: Path = ROOT, timeout: float = DEFAULT_STEP_TIMEOUT) ->
     if staged is None or staged.returncode != 0:
         print("nightly lane: could not read the index; skipped (CI re-checks)", file=sys.stderr)
         return 0
-    if not any(_lane_matches(p) for p in _z_paths(staged.stdout)):
+    staged_paths = _z_paths(staged.stdout)
+    if _lane_batons(root, staged_paths, timeout):
+        return 1
+    if not any(_lane_matches(p) for p in staged_paths):
         return 0
     listed = _git(["ls-files", "-z", "--", *LANE_EXPORT], root=root)
     if listed is None or listed.returncode != 0:

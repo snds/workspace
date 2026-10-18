@@ -54,7 +54,9 @@ Parse the highest `NN`, increment. If `07-projects/` is empty, start at `00`.
 └── notes/                       # freeform notes folder (Obsidian-friendly)
 ```
 
-Seed `SESSION-STATE.md` from `01-frameworks/_session-state-template.md`.
+Seed `SESSION-STATE.md` from `01-frameworks/_session-state-template.md`. Its older history will
+later move to `history/YYYY-MM.md` beside it (D98, 12 KB limit). If you allowlist the project in
+`.gitignore` file by file (as 12-MCS and 13-legion are), allowlist `history/` with the baton.
 Seed `README.md` with summary, status, trigger words, framework refs, and
 a link back to the project-context.md entry.
 

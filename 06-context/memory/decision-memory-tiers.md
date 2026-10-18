@@ -1,6 +1,6 @@
 ---
 type: decision
-description: Every store of context has three tiers — current (read every session), recent (read when the question is about lately), long-term (queried on demand, never assumed empty). Batons split by month past 12 KB, with a linked history index; project-recall.py searches one project's tiers.
+description: Every store of context has three tiers — current (read every session), recent (read when the question is about lately), long-term (queried on demand, never assumed empty). Batons split by month past 12 KB, with a linked history index; validate-batons.py holds every agent to it; the app fixes batons by itself when nothing is lost; project-recall.py searches one project's tiers.
 created: 2026-10-18
 confidence: high
 relations:
@@ -41,6 +41,21 @@ relations:
   out on purpose (employer projects stay out of any shared index).
 - **The workspace app shows the same tiers.** Its Projects timeline labels every entry current,
   recent, long-term or record, and its resume prompt names the long-term index when there is one.
+- **Every agent keeps the convention, app or no app** (Sean, 2026-10-18, after an adversarial
+  review). `09-tools/validate-batons.py` runs in the harness, CI and the pre-commit lane: a stale
+  index, a dangling pointer, or a tracked baton whose `history/` is git-ignored fails; size over
+  12 KB warns, and so does the session-start card. `--lossless` proves a hand-made move kept every
+  word. The template, `session-end` (Step 2.5), framework 08, the bootstrap and new-project skills
+  and every adapter carry the rule. The workspace MCP server refuses hand edits to an index and
+  says when a baton it wrote is over 12 KB.
+- **Scoped batons count.** A `SESSION-STATE.md` deeper in a project (`docs/<thread>/`) is a baton
+  with its own `history/`; every tool above and the app cover it.
+- **The app fixes batons by itself** (the workspace app's D100). Its `batons.size` and
+  `batons.index` fixes are written without review once the baton has been still for two minutes,
+  and only when nothing is lost: every word of the baton and its month files is still there and
+  the standing fields read the same. A fix that would lose anything waits for review. Each fix is
+  kept as an applied proposal, so it can be undone, and the guard against fighting another writer
+  applies.
 
 ## Consequences
 - A session-start read stays small: the Live handoff and the session-log head, as before.

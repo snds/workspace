@@ -79,7 +79,7 @@ Consult before any write. Mirrored (compressed) in [[AGENTS]] and expanded with 
 | If the thing is… | It goes to… | Write rule |
 |---|---|---|
 | Active project state / pending work | `06-context/project-context.md` + project `SESSION-STATE.md` | per-project, operational |
-| A baton's older history (past 12 KB) | project `history/YYYY-MM.md`, beside `SESSION-STATE.md` | per-project, append-only, read on demand |
+| A baton's older history (past 12 KB) | `history/YYYY-MM.md` beside the `SESSION-STATE.md` (a project's, or a scoped one deeper in it); `history/README.md` is its generated index | moved word for word (the app does it by itself); `validate-batons.py` gates it; search with `project-recall.py` |
 | What happened this session | `06-context/sessions/<id>.md` fragment (compaction folds it into `session-log.md`) | one fragment per session; never append to the log directly |
 | A durable, non-project fact about Sean's world (tools, accounts, environment, working relationship) | `06-context/memory/` (typed entry) | one fact/file + `MEMORY.md` index |
 | A stable, deliberate behavioral default (tone, format, terminology) | `04-preferences/user-preferences.md` | only on explicit user signal |

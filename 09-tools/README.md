@@ -81,8 +81,10 @@ python3 09-tools/build-trigger-routes.py --check
 ## build-history-index.py
 
 Keeps each project's long-term tier linked ([decision-memory-tiers](../06-context/memory/decision-memory-tiers.md)):
-writes `07-projects/<p>/history/README.md` (each month, newest first, with its entries), puts the
-back-links in each month file, and points the baton at the index. Runs in the nightly rebuild.
+writes `history/README.md` beside every baton that has a `history/` folder (a project's own, or a
+scoped one deeper in it, such as `07-projects/13-legion/docs/planet-lab-independent/`), puts the
+back-links in each month file, and points the baton at the index. Runs in the nightly rebuild and the
+pre-commit lane (`--check`, when a baton or history file is staged).
 
 ```
 python3 09-tools/build-history-index.py
@@ -92,13 +94,27 @@ python3 09-tools/build-history-index.py --check
 ## project-recall.py
 
 One project's context in its three tiers (current, recent, long-term) plus the record (its baton's
-git history). Without words: where each tier lives and how much is there. With words: one ranked
-search across all of them. Reads only the project you name.
+git history), scoped batons and their `history/` included. Without words: where each tier lives and
+how much is there. With words: one ranked search across all of them. Reads only the project you name.
 
 ```
 python3 09-tools/project-recall.py 29-unicron
 python3 09-tools/project-recall.py unicron "contrast misses" --limit 5
 python3 09-tools/project-recall.py 29 "release" --tier long --json
+```
+
+## validate-batons.py
+
+The baton convention for every agent, with or without the workspace app (D98). Fails when the
+long-term tier isn't linked (stale index, missing back-link or pointer), when a baton points to a
+`history/` that isn't there, or when a tracked baton's history files are git-ignored. Warns on a baton
+over 12 KB (with its biggest parts) and on one with no Live handoff. `--lossless` checks a hand-made
+move against HEAD: every word still in the baton plus its month files. In the harness and CI.
+
+```
+python3 09-tools/validate-batons.py
+python3 09-tools/validate-batons.py --lossless 07-projects/13-legion/SESSION-STATE.md
+python3 09-tools/validate-batons.py --self-test
 ```
 
 ## evaluate-skill-routing.py

@@ -16,6 +16,7 @@ Typeface turns fonts off without a Pro subscription; Fontface never will.
 - **Code repo:** `~/Projects/fontface` (git, remote `snds/fontface`; resolves as personal-solo after Sean's `profile_resolve.py scan` on 2026-10-12). No commits yet.
 - **This folder:** baton + pointers only. Design docs live in the repo: `docs/ARCHITECTURE.md`, `docs/FEATURES.md`.
 - **Baton:** [[07-projects/25-fontface/SESSION-STATE|SESSION-STATE]]. Registry: `06-context/project-registry.md`.
+- **Notes:** [[07-projects/25-fontface/notes/license-recovery-learnings_2026-10-13|License recovery learnings]] (YWFT and Monotype vendor findings, reconcile rules, EULA pitfalls, the proposed license registry and vendor adapters, and how each maps onto Fontface today).
 
 ## Project intent
 

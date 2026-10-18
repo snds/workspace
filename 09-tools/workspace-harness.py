@@ -139,6 +139,8 @@ QUALITY_CHAIN = [
     ("build-local-skill-plugin.py", ["--check"]),
     ("build-local-skill-plugin.py", ["--self-test"]),
     ("session-status.py", ["--check"]),
+    ("validate-batons.py", []),
+    ("validate-batons.py", ["--self-test"]),
     ("check-secrets.py", []),
     ("vault-health.py", []),
     ("profile_resolve.py", ["--self-test"]),

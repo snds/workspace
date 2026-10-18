@@ -105,6 +105,7 @@
 !09-tools/build-trigger-routes.py
 !09-tools/build-history-index.py
 !09-tools/project-recall.py
+!09-tools/validate-batons.py
 !09-tools/build-local-skill-plugin.py
 !09-tools/compact-sessions.py
 !09-tools/vault-health.py
@@ -230,13 +231,26 @@
 # stay OUT of the workspace repo. Only SESSION-STATE.md (context, no customer data) syncs.
 !07-projects/12-MCS/
 !07-projects/12-MCS/SESSION-STATE.md
+!07-projects/12-MCS/history/
+!07-projects/12-MCS/history/**
 
 # 04-claude-figma-plugin + 13-legion: track ONLY the baton (2026-10-14 /optimize), like 12-MCS.
 # 04's plugin source stays local; Legion's code lives in its own repo (~/Projects/Legion).
+# A tracked baton's history/ is tracked with it (D98): it holds the baton's own older text, and a
+# pointer to an untracked index would dangle on every other machine. validate-batons.py checks it.
 !07-projects/04-claude-figma-plugin/
 !07-projects/04-claude-figma-plugin/SESSION-STATE.md
+!07-projects/04-claude-figma-plugin/history/
+!07-projects/04-claude-figma-plugin/history/**
 !07-projects/13-legion/
 !07-projects/13-legion/SESSION-STATE.md
+!07-projects/13-legion/history/
+!07-projects/13-legion/history/**
+!07-projects/13-legion/docs/
+!07-projects/13-legion/docs/planet-lab-independent/
+!07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md
+!07-projects/13-legion/docs/planet-lab-independent/history/
+!07-projects/13-legion/docs/planet-lab-independent/history/**
 
 # MediaSentinel is otherwise git-local; track only Cursor canvas copies.
 !07-projects/01-mediaservices/

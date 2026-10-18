@@ -392,15 +392,18 @@ def active_projects(projects_dir: Path | None = None) -> list[tuple[str, str, st
         if m:
             updated = m.group(1)
         title = ""
-        after = text.split("## Session history", 1)
+        # The history section: "## Session history", or "## History" as the history tools add it.
+        after = re.split(r"^## .*[Hh]istory.*$", text, maxsplit=1, flags=re.MULTILINE)
         if len(after) == 2:
             m2 = re.search(
-                r"^###\s+\d{4}-\d{2}-\d{2}(?:\s+\d{1,2}:\d{2})?\s+[—–-]\s+(.+?)\s*$",
+                r"^(?:###\s+|-\s+\*\*)\d{4}-\d{2}-\d{2}(?:\s+\d{1,2}:\d{2})?(?:\*\*)?\s+[—–-]\s+(.+?)\s*$",
                 after[1],
                 re.MULTILINE,
             )
             if m2:
                 title = m2.group(1).strip()
+                if len(title) > 100:
+                    title = title[:99].rstrip() + "…"
         if not title:
             hm = re.search(
                 r"^\s*-\s+\*\*Current focus(?::\*\*|\*\*:)\s*(.+)$",
@@ -532,9 +535,36 @@ def gate_notices(root: Optional[Path] = None, budget: float = GATE_NOTICE_BUDGET
     return [str(box["v"])] if box.get("v") else []
 
 
+BATON_LIMIT = 12 * 1024
+BATON_SKIP = {".claude", ".git", "node_modules", "history", "_archive", ".smart-env"}
+
+
+def big_batons(projects_dir: Path | None = None) -> list[tuple[str, int]]:
+    """(path under 07-projects, bytes) for each baton over 12 KB, scoped ones too (D98)."""
+    base = projects_dir or (ROOT / "07-projects")
+    if not base.is_dir():
+        return []
+    out = []
+    for b in base.rglob("SESSION-STATE.md"):
+        parts = b.relative_to(base).parts
+        if any(p in BATON_SKIP for p in parts[:-1]):
+            continue
+        try:
+            size = b.stat().st_size
+        except OSError:
+            continue
+        if size > BATON_LIMIT:
+            out.append(("/".join(parts[:-1]), size))
+    return sorted(out, key=lambda x: -x[1])
+
+
 def _notices() -> list[str]:
     out: list[str] = []
     out += closure_notices()
+    big = big_batons()
+    if big:
+        names = ", ".join(f"{n} {s // 1024} KB" for n, s in big[:4]) + (" …" if len(big) > 4 else "")
+        out.append(f"{len(big)} baton(s) over 12 KB (D98): {names} — python3 09-tools/validate-batons.py")
     misses = doctor_misses()
     if misses:
         out.append(

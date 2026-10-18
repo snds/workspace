@@ -29,7 +29,9 @@ multi-agent handoff live in AGENTS.md — not duplicated here._
   or say that Layer 0 missed. Empty retrieve or a failed CLI is not "nothing in the vault."
 - **Continuity:** on entry, read the active project's `SESSION-STATE.md` **Live handoff**; on
   handoff/pause/end, update it + write a `06-context/sessions/<id>.md` fragment (not a direct
-  `session-log.md` append). Stamp `Agent · Surface · Machine`. On session-end also run
+  `session-log.md` append). Stamp `Agent · Surface · Machine`. Keep the baton under 12 KB
+  (`validate-batons.py`; older history → `history/`, D98); for anything older than lately, search
+  every tier with `project-recall.py` before saying there's no record. On session-end also run
   `python3 09-tools/cursor-externalize.py` so Cursor canvases are copied into git-tracked
   `07-projects/…/canvases/` (employer canvases → that repo's `canvases/`, never this vault).
   Cursor still compiles only from `~/.cursor/projects/…`. The live

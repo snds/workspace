@@ -2,9 +2,11 @@
 """
 build-history-index.py
 
-Keeps each project's long-term tier linked ([[decision-memory-tiers]]). For every
-07-projects/<p>/history/ folder it writes history/README.md, the index: each month newest
-first, with its entries. It also makes sure the links run both ways:
+Keeps each project's long-term tier linked ([[decision-memory-tiers]]). For every baton
+(07-projects/<p>/SESSION-STATE.md, or a scoped one deeper in the project, such as
+07-projects/<p>/docs/<thread>/SESSION-STATE.md) with a history/ folder beside it, it writes
+history/README.md, the index: each month newest first, with its entries. It also makes sure
+the links run both ways:
 
   - the baton points to history/README.md (once, in its history section);
   - each month file links back to the index and the baton.
@@ -105,12 +107,26 @@ def with_pointer(baton: str) -> str:
     return baton.rstrip("\n") + "\n\n## History\n\n" + POINTER + "\n"
 
 
+# Folders a baton search never enters: tool state, copies, dependencies and history itself.
+SKIP = {".claude", ".git", "node_modules", "history", "_archive", ".smart-env"}
+
+
+def baton_folders() -> list[Path]:
+    """Every folder under 07-projects that holds a baton, project roots and scoped batons alike."""
+    out = []
+    for baton in PROJECTS.rglob("SESSION-STATE.md"):
+        rel = baton.relative_to(PROJECTS).parts
+        if not any(part in SKIP for part in rel[:-1]):
+            out.append(baton.parent)
+    return sorted(out)
+
+
 def plan() -> dict[Path, str]:
     """Every file that would change, with its new text."""
     changes: dict[Path, str] = {}
     if not PROJECTS.is_dir():
         return changes
-    for folder in sorted(p for p in PROJECTS.iterdir() if p.is_dir()):
+    for folder in baton_folders():
         hist = folder / "history"
         if not hist.is_dir():
             continue

@@ -5,11 +5,14 @@ project-recall.py
 One project's context in three tiers ([[decision-memory-tiers]]), so an agent asked about
 anything older than "lately" looks everywhere before saying there's no record.
 
-  current    the baton's Live handoff
+  current    the baton's Live handoff and its other standing sections
   recent     the baton's history section; session-log.md blocks and unfolded fragments naming it
   long-term  history/YYYY-MM.md; session-log-archive.md blocks naming it; project-context-detail
              sections naming it
   record     the baton's git history, back to the project's first commit
+
+A project can also hold scoped batons deeper in its folder (docs/<thread>/SESSION-STATE.md,
+with its own history/ beside it). Each one is read the same way, its source path shown.
 
 Without words it prints where each tier lives and how much is there. With words it searches
 every tier and ranks what it finds: more of the words first, then current before recent before
@@ -128,19 +131,76 @@ def label(b: str) -> str:
     return m.group(1).strip(" :") if m else b[2:60]
 
 
-def gather(folder: Path) -> list[Unit]:
+SKIP = {".claude", ".git", "node_modules", "history", "_archive", ".smart-env"}
+
+
+def batons(folder: Path) -> list[Path]:
+    """The project's baton first, then any scoped batons deeper in it."""
+    found = [folder / "SESSION-STATE.md"]
+    for b in sorted(folder.rglob("SESSION-STATE.md")):
+        rel = b.relative_to(folder).parts
+        if b != found[0] and not any(part in SKIP for part in rel[:-1]):
+            found.append(b)
+    return found
+
+
+def h2_or_h3_sections(text: str) -> list[tuple[str, str]]:
+    """(heading, body) for every `##` and `###` section, each to the next heading at its level or above."""
+    lines = text.splitlines()
+    out = []
+    for i, line in enumerate(lines):
+        m = re.match(r"^(#{2,3}) (.*)$", line)
+        if not m:
+            continue
+        level, body = len(m.group(1)), []
+        for l in lines[i + 1:]:
+            n = re.match(r"^(#{1,6}) ", l)
+            if n and len(n.group(1)) <= level:
+                break
+            body.append(l)
+        out.append((m.group(2).strip(), "\n".join(body).strip()))
+    return out
+
+
+def baton_units(path: Path) -> list[Unit]:
+    """A baton's current tier (Live handoff + standing sections) and recent tier (its history section)."""
     units: list[Unit] = []
-    baton_path = folder / "SESSION-STATE.md"
-    baton = baton_path.read_text(encoding="utf-8", errors="replace")
+    baton = path.read_text(encoding="utf-8", errors="replace")
     live_level = next((len(m.group(1)) for m in re.finditer(r"^(#{1,6}) .*live handoff", baton, re.I | re.M)), 3)
-    for b in bullets(section(baton, "live handoff", live_level)):
-        units.append(Unit("current", date_in(b.splitlines()[0]), label(b), b, rel(baton_path)))
+    live = section(baton, "live handoff", live_level)
+    if live_level == 1:
+        # A whole-file handoff (`# … — live handoff`): its lead, up to the first `##`.
+        live = re.split(r"(?m)^## ", live, maxsplit=1)[0]
+    found = bullets(live)
+    for b in found:
+        units.append(Unit("current", date_in(b.splitlines()[0]), label(b), b, rel(path)))
+    if not found and live.strip():
+        units.append(Unit("current", date_in(live[:400]), "Live handoff", live.strip(), rel(path)))
+    for head, body in h2_or_h3_sections(baton):
+        low = head.lower()
+        if "live handoff" in low or "history" in low or "current state" == low.split("(")[0].strip():
+            continue
+        if re.match(r"^\d{4}-\d{2}-\d{2}", head) and section(baton, "history", 2).find(head) >= 0:
+            continue
+        units.append(Unit("current", date_in(head), head, body, rel(path)))
     hist = section(baton, "history", 2)
     for head, body in h3_blocks(hist):
-        units.append(Unit("recent", date_in(head), head, body, rel(baton_path)))
+        units.append(Unit("recent", date_in(head), head, body, rel(path)))
     for b in bullets(hist):
         if re.match(r"^- \*\*\d{4}-\d{2}-\d{2}", b):
-            units.append(Unit("recent", date_in(b), b[2:100], b, rel(baton_path)))
+            units.append(Unit("recent", date_in(b), b[2:100], b, rel(path)))
+    for month in sorted((path.parent / "history").glob("*.md")):
+        if month.name == "README.md":
+            continue
+        for head, body in h3_blocks(month.read_text(encoding="utf-8", errors="replace")):
+            units.append(Unit("long-term", date_in(head), head, body, rel(month)))
+    return units
+
+
+def gather(folder: Path) -> list[Unit]:
+    units: list[Unit] = []
+    for b in batons(folder):
+        units += baton_units(b)
     name = folder.name
     logs = [(CONTEXT / "session-log.md", "recent"), (CONTEXT / "session-log-archive.md", "long-term")]
     logs += [(p, "recent") for p in sorted((CONTEXT / "sessions").glob("*.md")) if p.name != "README.md"]
@@ -150,11 +210,6 @@ def gather(folder: Path) -> list[Unit]:
         for head, body in h3_blocks(path.read_text(encoding="utf-8", errors="replace")):
             if re.search(rf"^Project(?:\(s\))?:.*\b{re.escape(name)}\b", body, re.M):
                 units.append(Unit(tier, date_in(head), head, body, rel(path)))
-    for month in sorted((folder / "history").glob("*.md")):
-        if month.name == "README.md":
-            continue
-        for head, body in h3_blocks(month.read_text(encoding="utf-8", errors="replace")):
-            units.append(Unit("long-term", date_in(head), head, body, rel(month)))
     detail = CONTEXT / "project-context-detail.md"
     if detail.is_file():
         words = {name.lower(), name.split("-", 1)[-1].lower()}
@@ -162,16 +217,17 @@ def gather(folder: Path) -> list[Unit]:
         for head, body in h3_blocks(text):
             if any(w in head.lower() for w in words):
                 units.append(Unit("long-term", date_in(head), head, body, rel(detail)))
-    try:
-        log = subprocess.run(
-            ["git", "-C", str(WORKSPACE), "log", "--follow", "--format=%aI%x1f%s", "--", rel(baton_path)],
-            capture_output=True, text=True, timeout=20,
-        ).stdout
-    except (OSError, subprocess.TimeoutExpired):
-        log = ""
-    for line in log.splitlines():
-        when, _, subject = line.partition("\x1f")
-        units.append(Unit("record", when[:10], subject, subject, f"git log -- {rel(baton_path)}"))
+    for b in batons(folder):
+        try:
+            log = subprocess.run(
+                ["git", "-C", str(WORKSPACE), "log", "--follow", "--format=%aI%x1f%s", "--", rel(b)],
+                capture_output=True, text=True, timeout=20,
+            ).stdout
+        except (OSError, subprocess.TimeoutExpired):
+            log = ""
+        for line in log.splitlines():
+            when, _, subject = line.partition("\x1f")
+            units.append(Unit("record", when[:10], subject, subject, f"git log -- {rel(b)}"))
     return units
 
 
@@ -190,12 +246,14 @@ def tier_map(folder: Path, units: list[Unit]) -> str:
     months = sorted(p.stem for p in (folder / "history").glob("*.md") if p.name != "README.md")
     lines = [
         f"{folder.name}: context in three tiers ([[decision-memory-tiers]])",
-        f"  current    {count('current'):4} Live handoff fields      {rel(baton)} ({baton.stat().st_size / 1024:.1f} KB)",
+        f"  current    {count('current'):4} Live handoff + sections  {rel(baton)} ({baton.stat().st_size / 1024:.1f} KB)",
         f"  recent     {count('recent'):4} history and session entries   the baton's history section, session-log.md, fragments",
         f"  long-term  {count('long-term'):4} entries                   "
         + (f"{rel(folder / 'history' / 'README.md')} ({', '.join(reversed(months))})" if months else "no history/ yet")
         + ", session-log-archive.md, project-context-detail.md",
         f"  record     {count('record'):4} baton commits             git log -- {rel(baton)}",
+        *[f"  scoped     {rel(b)} ({b.stat().st_size / 1024:.1f} KB), its own history/ beside it"
+          for b in batons(folder)[1:]],
         "Search them all: python3 09-tools/project-recall.py " + folder.name + ' "<words>"',
     ]
     return "\n".join(lines)

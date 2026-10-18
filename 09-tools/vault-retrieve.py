@@ -824,7 +824,8 @@ def run_eval(root: Path, golden_path: Path, quiet: bool = False) -> int:
 
 def format_text(hits: list[dict]) -> str:
     if not hits:
-        return "vault-retrieve: no matches."
+        return ("vault-retrieve: no matches. It doesn't read 07-projects: for a project's past, search every "
+                "tier with python3 09-tools/project-recall.py <project> \"<words>\".")
     lines = [f"vault-retrieve: {len(hits)} hit(s)", ""]
     for i, h in enumerate(hits, 1):
         via = h.get("via", "fts")

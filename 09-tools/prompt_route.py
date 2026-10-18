@@ -455,7 +455,8 @@ FOLLOWTHROUGH_LAYER0_MISS = (
     "before producing. Continuations already in-flight: stay on the baton. "
     "Do not announce this miss as the answer. Do not freestyle doctrine. "
     "CLI: `python3 09-tools/skill-loadset.py \"…\"` then "
-    "`python3 09-tools/vault-retrieve.py \"…\"`."
+    "`python3 09-tools/vault-retrieve.py \"…\"`; for a project's past, "
+    "`python3 09-tools/project-recall.py <project> \"…\"`."
 )
 
 

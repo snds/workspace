@@ -5459,7 +5459,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:7501327a4155089b78baa5e6c194b2163af484248d1c2743bb020bda09d3b39c"
+      "hash": "sha256:413f1a845ff293c34e8b27f863b116cd7562f473cfdbd7232d6445e79da726c1"
     },
     "omni-project": {
       "path": "03-skills/omni-project/SKILL.md",
@@ -6747,7 +6747,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": "command-hub",
-      "hash": "sha256:95b2da59d441ae509ef09913fed5384a83c6e9cea84b1bbc9c941b7b83bac8b8"
+      "hash": "sha256:c05b8bb1d1847f5fae18d5538c7bb08a2f344b0c494caf5a40d7c6a689718ae0"
     },
     "shadow-quality-craft": {
       "path": "03-skills/shadow-quality-craft/SKILL.md",
@@ -8592,7 +8592,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:44520a5b93777eecdeb0facc864343a4041a5e284a1d7dc8c64e5209f5977743"
+      "hash": "sha256:5ee3f038893658d2b41ed6d7b0614bfa84e6b6cee9ca627a6c2eaab88f41b49a"
     }
   },
   "load_chains": {

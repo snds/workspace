@@ -256,7 +256,9 @@ adapter (e.g. a Claude hook) may automate this, but the protocol is the contract
    are in `session-log-archive.md`, read only on demand), `user-preferences`. `memory/MEMORY.md` is on
    demand. Never read a whole growing log — token frugality is a #1 priority.
 3. The active project's `SESSION-STATE.md` — **read the Live handoff block first**; you now hold the same
-   context the previous agent had. Identify yourself (Agent · Surface · Machine) for attribution.
+   context the previous agent had. Identify yourself (Agent · Surface · Machine) for attribution. That is
+   the current tier; for anything older, search every tier (`python3 09-tools/project-recall.py <project>
+   "<words>"`) before saying there's no record ([[decision-memory-tiers]]).
 
 **During — work the shared state.** Compute the skill load set via the precedence algorithm (`AGENTS.md`).
 Keep the active project's **Live handoff block current** as focus/working-set/decisions change — it is the
@@ -276,7 +278,9 @@ baton. Record durable insights/facts in the moment (knowledge/memory), not just 
    concurrent sessions/machines/surfaces; compaction folds them into `session-log.md` and archives old
    blocks. **Do not hand-edit `session-log.md`** (append-only, `merge=union`, bounded by archival).
 2. Apply any project status / pending changes to `06-context/project-context.md`.
-3. Update the active project's `SESSION-STATE.md` (incl. the Live handoff block).
+3. Update the active project's `SESSION-STATE.md` (incl. the Live handoff block), then keep it under 12 KB:
+   `python3 09-tools/validate-batons.py`; past it, older history moves word for word to `history/` (D98;
+   `session-end` Step 2.5 has the steps, and the workspace app does the move by itself).
 4. On Cursor: `python3 09-tools/cursor-externalize.py` so live `~/.cursor/projects/*/canvases/` copies
    land in git-tracked project folders (personal → this vault; employer → that repo's `canvases/`).
    Cursor will not compile the git copies. Then

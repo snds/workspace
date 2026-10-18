@@ -17,7 +17,15 @@ Per-project operational continuity between sessions. Each active project maintai
 
 ## File structure
 
-Two sections. The first is atomically rewritten each update (no stale fields accumulate). The second is append-only history.
+Two sections. The first is atomically rewritten each update (no stale fields accumulate). The second is history, newest first.
+
+**Size limit: 12 KB** (about three thousand tokens; D98, [[decision-memory-tiers]]). Every agent reads the baton at the start of every session, so its size is paid each time. Past 12 KB, older history moves out, **word for word**, to `history/YYYY-MM.md` beside the baton:
+
+- all but the newest 5 history entries, each as a `### YYYY-MM-DD — title` block;
+- finished, dated notes in the Live handoff (DONE, landed, merged, shipped…) and dated `##` sections that say they're finished;
+- the baton keeps one pointer line in its history section, and `history/README.md` (generated — never hand-edited) indexes the months.
+
+The workspace app does this by itself once the baton has been still for two minutes, and only when nothing would be lost. Without the app: move the entries by hand, then run `python3 09-tools/build-history-index.py` and `python3 09-tools/validate-batons.py --lossless`. What's still over the limit after that is the Live handoff: trim it by hand. A scoped baton deeper in a project (`docs/<thread>/SESSION-STATE.md`) follows the same rules with its own `history/`. If the project folder is allowlisted line by line in `.gitignore`, allowlist its `history/` too.
 
 ```markdown
 # SESSION-STATE — [Project Name]
@@ -87,9 +95,9 @@ _Last updated: [YYYY-MM-DD HH:MM] — [update reason: rolling | checkpoint | wra
 
 ---
 
-## Session history (append-only)
+## Session history
 
-_Newest first. Each entry is a checkpoint — silent rolling updates aren't logged here; only explicit checkpoints and wrap-ups._
+_Newest first, at most 5 entries (older ones move to `history/`). Each entry is a checkpoint — silent rolling updates aren't logged here; only explicit checkpoints and wrap-ups._
 
 ### [YYYY-MM-DD HH:MM] — [wrap-up | checkpoint]
 
@@ -125,7 +133,7 @@ Three update modes, handled by the workspace-bootstrap skill:
 
 3. **Explicit wrap-up checkpoint.** When Sean signals *"we're done"*, *"let's stop here"*, *"end of day"*, or similar — or Claude infers a clean stopping point — Claude writes a final *wrap-up* entry with crisp resumption context.
 
-The "Current state" section is rewritten atomically on every update (silent or checkpoint). The "Session history" section is append-only, newest first.
+The "Current state" section is rewritten atomically on every update (silent or checkpoint). The "Session history" section gets a new entry at the top, newest first; past 12 KB the oldest move to `history/` (see File structure).
 
 ---
 
@@ -133,7 +141,7 @@ The "Current state" section is rewritten atomically on every update (silent or c
 
 ### At session start
 
-When the bootstrap skill resolves which project is active (from explicit user mention or from session-log's last entry), it reads that project's `SESSION-STATE.md` and surfaces the "Current state" section + the most recent session-history entry. This gives Claude operational context without requiring Sean to re-explain what was running, which machine, etc.
+When the bootstrap skill resolves which project is active (from explicit user mention or from session-log's last entry), it reads that project's `SESSION-STATE.md` and surfaces the "Current state" section + the most recent session-history entry. This gives Claude operational context without requiring Sean to re-explain what was running, which machine, etc. That is the **current** tier. For anything older — "when did we…", "why did we…", "last time…" — search every tier before saying there's no record: `python3 09-tools/project-recall.py <project> "<words>"` (the baton, its `history/`, the session logs and their archive, project-context-detail, git).
 
 Surface example at boot:
 
@@ -166,7 +174,7 @@ Claude writes a wrap-up entry when Sean signals stop or when 30 min of inactivit
 
 For a project that doesn't yet have a `SESSION-STATE.md`:
 
-1. Copy this template into `[project-folder]/SESSION-STATE.md`.
+1. Copy this template into `[project-folder]/SESSION-STATE.md`. (The pointer to `history/README.md` is added by the tools when history first moves out.)
 2. Fill in the "Current state" section with what's actually known at the time of seeding.
 3. Add a seeding entry to session history: *"Seeded by [who] on [date]. Initial state reflects [what]."*
 

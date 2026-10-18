@@ -25,6 +25,8 @@ on:
       - "09-tools/check-secrets.py"
       - "09-tools/validate-layer0-schema.py"
       - "09-tools/session-status.py"
+      - "09-tools/validate-batons.py"
+      - "09-tools/build-history-index.py"
       - "09-tools/prompt_route.py"
       - "09-tools/fixtures/prompt_route/**"
       - ".cursor/rules/**"
@@ -98,6 +100,8 @@ on:
       - "09-tools/check-secrets.py"
       - "09-tools/validate-layer0-schema.py"
       - "09-tools/session-status.py"
+      - "09-tools/validate-batons.py"
+      - "09-tools/build-history-index.py"
       - "09-tools/prompt_route.py"
       - "09-tools/fixtures/prompt_route/**"
       - ".cursor/rules/**"
@@ -194,6 +198,10 @@ jobs:
         run: python3 09-tools/validate-layer0-schema.py --check
       - name: Session-start ritual card
         run: python3 09-tools/session-status.py --check
+      - name: Batons (D98 — history linked and tracked; size is a warning)
+        run: |
+          python3 09-tools/validate-batons.py --self-test
+          python3 09-tools/validate-batons.py
       - name: Secret shape scan
         run: python3 09-tools/check-secrets.py
       - name: Epistemic graph hygiene (dangling typed edges, orphans, stale claims)

@@ -162,6 +162,26 @@ fragment into `session-log.md` (newest-first, idempotent) at session-end and the
 session-start; you don't touch the shared log. (If `06-context/sessions/` doesn't
 exist yet on an older checkout, fall back to prepending under `## Session Entries`.)
 
+### Step 2.5 — Pass the baton (every project this session worked in)
+
+Rewrite the project's `SESSION-STATE.md` **Live handoff** atomically: Last action (stamped Agent ·
+Surface · Machine), Next action, Open decisions, Blocked on, In-flight, Agent thread. Add a dated
+entry at the top of its history section only for a checkpoint or wrap-up. Then keep it under
+**12 KB** (D98, [[decision-memory-tiers]]):
+
+```
+python3 09-tools/validate-batons.py
+```
+
+If it warns that this baton is over 12 KB: move all but the newest 5 history entries (and finished,
+dated Live handoff notes) to `history/YYYY-MM.md` beside it, **word for word**, as `### YYYY-MM-DD —
+title` blocks; then run `python3 09-tools/build-history-index.py` and
+`python3 09-tools/validate-batons.py --lossless` (it must print `ok`). Still over? Trim the Live
+handoff by hand — never drop a fact; move it. The workspace app makes the history move by itself
+when it's running, so on a machine with the app you can leave the move to it. Don't rewrite another
+session's Live handoff by judgment; mechanical moves only. A baton in a project allowlisted line by
+line in `.gitignore` needs its `history/` allowlisted too (the validator fails otherwise).
+
 ### Step 3 — Update project-context.md (only if needed)
 
 Apply pending adds/resolves and project status changes. Skip if no changes.

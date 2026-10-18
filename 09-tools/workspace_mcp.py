@@ -84,6 +84,7 @@ LIST_TTL_MS = 300_000
 CLI_TIMEOUT_S = 60
 MAX_READ_BYTES = 1_000_000
 MAX_WRITE_BYTES = 2_000_000
+BATON_LIMIT = 12 * 1024  # a baton past this is split into history/ (D98)
 MAX_SEARCH_RESULTS = 200
 LOG_HEAD_LINES = 80
 SKILL_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
@@ -322,6 +323,9 @@ class Server:
             return f"the generated-file and guard tables are unavailable ({type(e).__name__}); nothing is written"
         if rel in exact:
             return "a generated file: edit its source and run the rebuild (python3 09-tools/nightly.py --phases rebuild)"
+        if rel.startswith("07-projects/") and rel.endswith("/history/README.md"):
+            return ("a baton's history index, generated (D98): edit the month files beside it, then run "
+                    "python3 09-tools/build-history-index.py")
         for r in roots:
             if rel == r or rel.startswith(r.rstrip("/") + "/"):
                 return f"a generated skill wrapper under {r} (build-local-skill-plugin.py); edit 03-skills/<name>/SKILL.md"
@@ -412,7 +416,12 @@ class Server:
         os.chmod(tmp, mode)
         os.replace(tmp, absp)
         logged = self.record(rel, tool)
-        return f"wrote {rel} ({len(data)} bytes){'' if logged else '; touch ledger not installed'}"
+        note = ""
+        if rel.endswith("SESSION-STATE.md") and len(data) > BATON_LIMIT:
+            note = (f"; this baton is {len(data) / 1024:.1f} KB, over the 12 KB limit (D98): move older history to "
+                    "history/YYYY-MM.md word for word, run python3 09-tools/build-history-index.py, then "
+                    "python3 09-tools/validate-batons.py --lossless")
+        return f"wrote {rel} ({len(data)} bytes){'' if logged else '; touch ledger not installed'}{note}"
 
     # ------------------------------------------------------------------ CLIs
 

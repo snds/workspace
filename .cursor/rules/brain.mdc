@@ -39,7 +39,7 @@ Machine labels: `02-shared-references/devices.json`.
 ## Model swap / resume
 
 Re-anchor: re-read Live handoff + load skills (`skill-loadset.py`) before acting.
-Update Live handoff on meaningful change (`Cursor · {model}`).
+Update Live handoff on meaningful change (`Cursor · {model}`). Baton ≤12 KB (`validate-batons.py`, D98); older → `project-recall.py`.
 
 ## Parallel Task agents
 

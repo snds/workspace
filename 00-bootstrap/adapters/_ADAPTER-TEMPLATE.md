@@ -30,7 +30,8 @@ the multi-agent handoff protocol all live in AGENTS.md and are not duplicated he
   After producing: `python3 09-tools/close-out-dispatch.py --from-prompt "…" --run`.
 - **Continuity:** on entry, read the active project's `SESSION-STATE.md` **Live handoff** block; on
   handoff/pause/end, update it + write a `06-context/sessions/<id>.md` fragment stamped `Agent · Surface · Machine`. This is
-  what keeps a multi-agent project a single unified thread.
+  what keeps a multi-agent project a single unified thread. Keep the baton under 12 KB (`validate-batons.py`;
+  older history → `history/`, D98) and search every tier with `project-recall.py` before saying there's no record.
 
 ## <Tool>-specific mechanics
 - **Auto-load mechanism:** [how this tool loads context — rule file, system prompt, plugin, manual paste]

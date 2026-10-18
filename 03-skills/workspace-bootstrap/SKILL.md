@@ -87,9 +87,11 @@ post-processing/VFX → `threejs-vfx-atmosphere`; Three WebGPU/TSL → `webgpu-a
 Triggered by "end of session", "wrap up", "done for today", or any closing signal. Follow framework 08's
 *portable session protocol* — write via the filesystem, commit reviewable diffs:
 
-1. Append a **Session Block** to `06-context/session-log.md` (newest-first).
+1. Write a **Session Block** as a fragment, `06-context/sessions/<id>.md` (never a direct append to
+   `session-log.md`; compaction folds it in).
 2. Apply project status / pending changes to `06-context/project-context.md`.
-3. Update the active project's `SESSION-STATE.md`.
+3. Update the active project's `SESSION-STATE.md` Live handoff, and keep it under 12 KB:
+   `python3 09-tools/validate-batons.py` (D98; the move is in `session-end` Step 2.5).
 4. If frontmatter changed, regenerate `03-skills/skills.registry.json`.
 5. Record durable non-project facts in `06-context/memory/`; learned domain insight in `08-knowledge/`.
 6. Commit + push.

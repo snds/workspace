@@ -2,8 +2,10 @@
 
 _The long-term tier of [the baton](../SESSION-STATE.md): what it moved out once it passed 12 KB. Generated; don't edit by hand. Newest month first._
 
-## [2026-10](2026-10.md) — 31 entries
+## [2026-10](2026-10.md) — 33 entries
 
+- 2026-10-18 — Memory tiers and the baton split (D98, D99)
+- 2026-10-17 — Sean's UI review, round 1 (F1–F11), built
 - 2026-10-17 — Earlier
 - 2026-10-15 — Identity host live: Sean set up Cloudflare Pages and an Access Bypass policy; checked from outside (
 - 2026-10-15 — Apple Developer Program: account page shows the free tier; enroll is blocked ("already associated wi
