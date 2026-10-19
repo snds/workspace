@@ -1,6 +1,74 @@
 # SESSION-STATE — Fontface (25-fontface)
 
-_Last updated: 2026-10-14 — renumbered 24 → 25; `main` = `826c574` public on `snds/fontface`; next is Sean's on-screen check of the build_
+_Last updated: 2026-10-19 — library redesign stages M1a–M5 done and merged into local `main` (`104b165`), not pushed; next is Google previews_
+
+### Progress 2026-10-18/19: library redesign on branch `library-redesign` (merged into local `main`, not pushed)
+- **M1a done:** commits `69bd71a`, `9a22e09` and `c2b6793`.
+  - The font page opens with double-click or Return, with Back via ⌘[, Esc or the mouse.
+  - Tabs: Specimen, Characters (with search), Axes and Info. The DetailPanel is retired, and `Family.id` was added.
+  - Review: 16 confirmed findings fixed, then 3 more from the recheck.
+- **M1b done:** commits `532a3c7` and `f3e70cf`.
+  - Tiles, Rows and Table (⌘1/2/3), View options, sort, a "Group styles into families" toggle, ⌘=/⌘−, `fonts.added_at` with a backfill, and a font-memory cap of 500.
+  - `list_fonts` now sorts in Rust: 28 ms, down from 37 ms.
+  - Review: 13 confirmed findings fixed, and the recheck was clean.
+- **M2 done:** commits `0adc3e4`, `5b935fd` and `2298f31`.
+  - Smart entries: All Fonts, Your Fonts, Recently Added, Active, Not Tagged.
+  - One flat Sources list. A subfolder picker in the toolbar replaces the trees, and Google and Purchases rows list library fonts with Browse.
+  - Eight font states, each with a mark, a tooltip and screen-reader text. New `reveal_folder` command.
+  - Review: 16 confirmed findings fixed, plus 1 from the recheck. 156 UI tests and 265 Rust tests pass.
+- **M3 done:** commits `f52caa5`, `f7bdb8d`, `04aede2`, `d37d446` and `b5899ae`, after one review and four fix rounds.
+  - Families are grouped by name, plus the Family groups page with All, Suggested and Your changes.
+  - Choices live in the `family_overrides` and `family_rules` tables. They stay local for now; sync comes later.
+  - Library result: 3,443 own-name families become 2,700 grouped, with 89 suggestions.
+  - Invariants held: folder paths, row order and which copy is on never change grouping. With the setting off, results nest inside the on-setting families (checks I1, I2 and I2s are all 0).
+  - Known limit: one made-up chain case with grouping off, which isn't in Sean's library.
+  - 227 UI tests and 272 Rust tests pass.
+  - The diff harness was kept only in /tmp (`/tmp/claude-502/m3r3`, scratchpad `h4`), so it's not durable.
+- **M4 done:** commits `a47ff4a`, `72f0ad7` and `5a41361`.
+  - Quick tags (⌘T), Compare (2–8 fonts) and Pair pages with Back, and one font action set everywhere (right-click, font page More, native Font menu).
+  - Native View menu, with a guard against shortcuts firing twice.
+  - Option-click for the other activation mode, and ⌘↩ / ⌥⌘↩ / ⇧⌘↩ shortcuts.
+  - Remove from Library…: files are kept on disk. They go into a `removed.rs` side table that scans skip, and can be put back.
+  - ⌘I/⌘T follow the typed letter (Dvorak-safe).
+  - Review: 16 findings fixed, plus 2 more from the recheck. 266 UI tests and 276 Rust tests pass.
+- **Merged 2026-10-19 (Sean: "Merge and continue through stage 6"):** local `main` was fast-forwarded to `5a41361` (stages M1a–M4) with `git update-ref`, without switching the working tree.
+  - Not pushed. `origin/main` is still `826c574`.
+  - Stage 6 (M5) gets merged the same way when its recheck is clean.
+- **M5 done:** commits `cfd992a`, `3edd208` and `104b165`.
+  - Preview styling options, an OpenType tab (feature switches with samples, scripts, languages), named instances on Axes, and full Info (embedding, languages, last turned on).
+  - Review: 10 findings; the recheck found 8 fixed, 2 partial and 2 new. I fixed the last 4 directly in `104b165`:
+    - Feature samples now share one work limit per face (400,000 steps), counted in tag order and once per distinct lookup list. Empty coverage ranges count too. Measured: macOS's own 865 faces with layout tables use 11,000 steps at most (Noto Sans Myanmar). The crafted 2,048-feature test took 28 s on the old code; it now takes well under a second.
+    - The Apple-features (AAT, `morx`) note shows whenever a font has `morx`, so every style of a family says the same. Marion Bold's GSUB fractions used to hide it.
+    - A feature row's sample goes through `featureSampleText`, and its test was checked to fail when case is wrongly applied.
+  - 298 UI tests and 301 Rust tests pass; tsc is clean; the app bundle builds.
+- **Merged 2026-10-19:** local `main` fast-forwarded to `104b165` (M1a–M5) with `git update-ref`. Not pushed: `origin/main` is still `826c574`. Ask Sean before pushing.
+- **Not yet checked in the running app:** everything in M1a–M5. The agent sandbox can't launch it; Sean opens `src-tauri/target/release/bundle/macos/Fontface.app`.
+- **Next:** Google previews (ON by default): step 1 library match, step 2 CSS2 `text=` name files via `ff://`, then Adobe CoreText images. The vendor feature stays on hold.
+- **2026-10-19, Google previews stage started** on branch `google-previews` (from `104b165`). Sean: "The Google Fonts should automatically go to preview even if nothing is installed."
+  - Scope: library match, on-by-default online name previews (CSS2 `text=`, cached under `app_cache_dir()/google-previews`, served via `ff://localhost/google/<id>/<token>/<kind>`), script samples for families that can't draw their names, an alphabet file for typed text, the Settings switch with a privacy note and "Clear preview cache", and docs.
+  - Out of scope: Adobe CoreText images, and a Google family detail page using the full file.
+  - Workflow `wf_a7aef7ad-3d1`: Rust and UI builders → integrator (all checks plus a live Google test) → 3 reviewers, each checked by a skeptic → fixer → recheck.
+  - **Queued right after it (Sean, 2026-10-19):** a "yours first" sort on cloud catalog pages (Google now, and later any other catalog). Families you have, whether downloaded through Fontface or your own copy, go to the top; the switch turns it off so standard sorting returns. It's on by default, remembered in settings, with a quiet divider between the two groups. It waits because the builders are editing `GoogleFontsPanel.tsx` now.
+
+### Decisions 2026-10-18 (Sean)
+- **Vendor accounts feature: ON HOLD.** The design is in [[07-projects/25-fontface/notes/vendor-accounts-design_2026-10-18]], awaiting D1–D7.
+  - INTEGRATIONS.md still forbids signing in inside the app.
+  - The `ff://` hardening is listed as M0 there.
+- **Library redesign first** ([[07-projects/25-fontface/notes/library-ui-plan_2026-10-18]]). Build order: M1a font page + Back → M1b Tiles/Table/View options → M2 smart entries, flat Sources, states → M3 family grouping → M4 quick tags/Compare/Pair/menus → M5 OpenType/Axes/Info/styling.
+  - **Opening a font:** double-click or Return opens the font page. A single click only selects.
+  - **Source rows:** Google Fonts and Purchases open your library fonts from that source, plus a Browse button for the catalog. This is the plan's recommendation, taken as the default.
+  - **Width/optical words** (Condensed, Narrow, Display…) are suggested only, never merged automatically. This is also the plan's recommendation.
+    - **Reversed 2026-10-19 (Sean):** "Typeface does this by default, including 'recommendations.' As long as the grouping can be toggled off as part of view settings, I think it's fine to do without having to interrupt the user in any way."
+    - Built on branch `claude/auto-family-groups`, commit `55088b6` (not merged, not pushed). Every suggestion is now applied as a whole-family automatic group. No confirmation dialogs; Undo instead.
+    - The switch moved to View options. The Family groups page's "Automatic" tab lists each group with its reason and Keep separate.
+    - Your Keep separate, or any style you placed yourself, keeps that family as you set it.
+    - Copy of the library: 2,700 → 2,514 families. Not yet clicked through in the app.
+- **Google previews: ON by default,** with a notice in Settings saying what Google sees. Sean chose this over the opt-in recommendation. The recommendation is in [[07-projects/25-fontface/notes/remote-font-previews-recommendation_2026-10-18]].
+  - Step 1 is the library match: 644 families preview locally.
+  - Step 2 is the CSS2 `text=` name files, cached and served via `ff://`.
+  - Adobe uses CoreText images; Adobe fonts that aren't on link out.
+  - This comes after the redesign's first stages.
+- **Learnings note:** [[07-projects/25-fontface/notes/license-recovery-learnings_2026-10-13]] stays private. A general `docs/VENDORS.md` comes only if the vendor feature resumes.
 
 ---
 
