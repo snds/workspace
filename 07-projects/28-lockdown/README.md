@@ -13,7 +13,8 @@ _Working name. No trademark check yet._
 
 A cross-platform password manager, passkey provider, and authenticator. The goal is to meet and beat 1Password, Bitwarden, Proton Pass, Vaultwarden, and Apple Passwords, and to sign people in through each service's own supported login (passkeys, one-time codes, TV activation codes), with Steam as the one fenced, opt-in private bridge.
 
-- **Status:** research done (2026-10-15). Nothing built. Next is Sean's call on positioning, the Steam bridge, and team size.
+- **Status:** desktop and web build waves 1–5 landed (main `90be789`, 357 decisions, twenty-eight slices). What remains waits on Sean or on OS-level and native-mobile work.
+- **Status page:** https://claude.ai/artifact/662Gqj3VZUFpjSnvsfgEqp — every ask, next build, feature, flagged decision, and slice, each with a `#id` link. Source `roadmap.html`, rebuilt by `build-roadmap.py --repo ~/Projects/lockdown`. Charts stay on the dashboard, https://claude.ai/artifact/9gVWpq3tPqx83JZDjBtk4a.
 - **Context profile:** `personal-solo`. Repo remote is `snds/lockdown` (private).
 - **Code repo:** `~/Projects/lockdown`, remote `snds/lockdown`. First commit `e6d9248` holds the research only.
 - **This folder:** baton and pointers only. Research, brief, and matrix live in the repo, the same as Fontface and Synapse.
