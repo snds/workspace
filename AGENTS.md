@@ -46,6 +46,10 @@ The workspace is both a knowledge base and an execution environment.
   [04-preferences/user-preferences.md](04-preferences/user-preferences.md). The sentence surfaces
   inject is the `rules` block in [beacons.json](02-shared-references/beacons.json). The project
   you have open does not carry this rule.
+- **Link tracked items.** A reply that mentions a step, exit test, decision, ask or open item links
+  to that line: the project's status page with `#<item id>`, or a GitHub link with an anchor. It
+  must open on Sean's Macs, the Windows PC and his iPhone, so a local path or app link never stands
+  alone. Full rule: [user-preferences.md](04-preferences/user-preferences.md) (Linked references).
 - **Externalize everything; keep nothing durable in private memory.** No durable content — learnings,
   insights, workflows, decisions, project context, assets — may live inside any single agent's
   private/internal memory (Claude Code's `.claude` memory, a Chat profile, a Design session, a

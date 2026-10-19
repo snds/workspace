@@ -95,6 +95,27 @@ access, no development environment, and no prior context. Apply this by default.
 - If the content requires dynamic data loading (JSON, CSV), bundle the data inline
   as a JavaScript variable inside the HTML file.
 
+### Status pages (set 2026-10-19)
+A status page is a project's one published view of where things stand: its stages, steps, exit
+tests, decisions, what waits on Sean, and what's open. Replies link into it line by line
+([[user-preferences]] → Linked references), so every line must be linkable on Sean's Macs, the
+Windows PC and his iPhone.
+- **Publish it as a claude.ai artifact** and keep its source in the project folder
+  (`07-projects/<NN>-<name>/roadmap.html`). The published link goes on the page's wrapper:
+  `data-status-page="https://claude.ai/artifact/<id>"`.
+- **Every line item has an id:** `stage-3`, `s3-go-agent-runs`, `test-c8`, `ask-deep-scan`,
+  `built-…`, `open-…`. Use lower-case letters, digits and hyphens only. The artifact host passes
+  only a plain `#anchor` through to the page, and Synapse uses the id as a query value (D107).
+- **Ids are permanent.** Change an item's words, never its id. Mark a finished item done instead
+  of deleting it, so old links still land.
+- **Each item links to itself** (a `#`, or its number), and the link copies the full address.
+- **Arriving on `#id`** scrolls to the item, highlights it and opens its details. This also works
+  when the address changes after the page has loaded (`hashchange`).
+- **An item that asks Sean for something carries its context on the page:** what it is, why it
+  matters, what it costs, and what he does. A long one goes in a "What this means" disclosure.
+- **Checked by** `python3 09-tools/validate-status-anchors.py`, which runs in the harness. The
+  reference page is `07-projects/26-synapse/roadmap.html`: copy its link CSS block and its script.
+
 ### Documents (specs, reports, decision records)
 - Prefer `.html` for rich formatting that opens in any browser.
 - Use `.md` when the destination is a developer tool (GitHub, Confluence) or when

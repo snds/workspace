@@ -25,6 +25,9 @@ and the overflow belongs in `memory/` or a framework._
 - **Commands for Sean:** run each one yourself first and fix what stops it. One block each:
   `cd /Users/sean.sands/Projects/<folder> && …`, absolute paths, never `~/`. Only when needed now.
   Full rule: [[user-preferences]] → Actions for me.
+- **Link every tracked item you mention** (a step, exit test, decision, ask, open item) to its
+  line: the status page with `#<item id>`, or a GitHub anchor. It must open on his iPhone too.
+  Full rule: [[user-preferences]] → Linked references.
 - **Workspace:** local `~/Projects/workspace` · remote `github.com/snds/workspace`. The **git
   checkout is the source of truth** (portable, not Google Drive; see [[decision-portable-workspace-refactor]]).
 - **The three standing walls** (in force even before loading):

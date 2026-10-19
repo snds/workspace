@@ -149,6 +149,32 @@ could tell it to do something harmful.* Lead with that sentence next time.
   **Why:** on 2026-10-13 I got three `workspace-doctor.sh` commands with `~/` paths and no `cd`, and
   the script wasn't even executable, so none of them ran.
 
+### Linked references: link every tracked item you mention (set 2026-10-19)
+- **When a reply mentions a tracked item, link to that item's line.** A tracked item is anything
+  on a project's status page or in its plan: a stage, a step, an exit test, a decision, something
+  waiting on me, an open item. Example: [the first deep scan](https://claude.ai/artifact/Hi7e7nZvP19sL2DwW94JBp#ask-deep-scan).
+- **The link has to open on every device I use:** the Work and Personal MacBook Pros, the Windows
+  desktop and my iPhone. Use one of these:
+  1. the project's published status page with `#<item id>` (a claude.ai artifact link);
+  2. a GitHub web link with an anchor: a heading (`decisions.md#d107`) or a line pinned to a commit
+     (`blob/<sha>/path?plain=1#L42`, so the line doesn't move).
+  A local file link, a vault path or an app link (`sy-app://…`) may come along, never alone. None
+  of them opens on the phone.
+- **If the item has no line to link to, give it one first.** Add it to the project's status page
+  with a permanent id, then link. A project without a status page links to its baton or plan on
+  GitHub (form 2). This applies to every project the workspace runs, the workspace itself included:
+  its pending items are in `06-context/project-context.md` on GitHub.
+- **The reply still says what the item is.** The link shows where it sits. The words say what it
+  is, why it matters, and what I do, if anything. A bare label like "the deep scan, then the other
+  agent runs" fails this rule even with a link.
+- **Employer work** links to the employer's own surfaces (its repo, its tickets). Never copy an
+  employer item onto a personal status page to make it linkable.
+- **The page side:** status pages follow [artifact-standards.md](../02-shared-references/artifact-standards.md)
+  ("Status pages"), checked by `09-tools/validate-status-anchors.py`. Synapse's app gives every item
+  the same kind of link (Synapse D107).
+- **Why:** on 2026-10-19 a Synapse reply listed "The deep scan, then the other agent runs" with no
+  context and nothing to click. I couldn't tell what it meant or where it sat on the status page.
+
 ## Working Principles (DS / design-engineering work)
 _Migrated 2026-07-09 from the machine-local `~/.claude/CLAUDE.md` (FX-15) — these are standing
 defaults, applied without being re-asked._

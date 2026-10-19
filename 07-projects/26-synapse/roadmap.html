@@ -103,7 +103,7 @@ ul.steps li:last-child { border-bottom: 0; }
 .test.wait .id { color: var(--part); }
 .test.fail .id { color: var(--fail); }
 
-ul.asks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: 10px; }
+ul.asks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: 10px; align-items: start; }
 ul.asks li { display: flex; flex-direction: column; gap: 3px; padding: 12px 14px; border-left: 3px solid var(--part); background: var(--surface); border-radius: 0 8px 8px 0; min-width: 0; }
 ul.asks li b { font-weight: 600; }
 ul.asks li span { color: var(--muted); font-size: 0.9rem; }
@@ -117,6 +117,28 @@ ul.asks.quiet li .kind { color: var(--muted); }
 .tracks th { font: 600 0.75rem var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
 .scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
 footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 16px; display: flex; flex-direction: column; gap: 4px; }
+
+/* Every line item has a permanent id. Its number or its # copies a link to it; arriving on #id
+   scrolls to the item, highlights it and opens its details. */
+[id] { scroll-margin-block: 24px; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.pin { font: 500 0.8rem var(--font-mono); color: var(--muted); text-decoration: none; padding: 0 3px; opacity: 0.75; }
+.pin:hover, .pin:focus-visible { color: var(--accent); opacity: 1; }
+a.node { text-decoration: none; }
+a.node:hover { border-color: var(--accent); }
+.test a.id { text-decoration: none; }
+.test a.id:hover { text-decoration: underline; }
+.is-target { outline: 2px solid var(--accent); outline-offset: 2px; background: color-mix(in oklch, var(--accent) 9%, var(--surface)); border-radius: 8px; }
+ul.steps li.is-target { outline-offset: -1px; padding-inline: 6px; }
+.stage.is-target { outline: none; background: none; }
+.stage.is-target > .body > .head { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+@media (prefers-reduced-motion: no-preference) { .is-target { transition: background-color 0.4s; } }
+details.more { margin-top: 4px; }
+details.more summary { cursor: pointer; color: var(--accent); font-size: 0.88rem; width: fit-content; }
+.more-body { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; font-size: 0.9rem; max-width: 64ch; }
+.more-body b { font-weight: 600; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); max-width: calc(100% - 32px); background: var(--fg); color: var(--bg); padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; overflow-wrap: anywhere; user-select: text; z-index: 10; }
 @media (max-width: 30rem) {
   .stage { grid-template-columns: 2rem minmax(0, 1fr); gap: 0 10px; }
   .node { width: 1.9rem; height: 1.9rem; font-size: 0.8rem; }
@@ -125,7 +147,7 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
 }
 </style>
 
-<div class="wrap">
+<div class="wrap" data-status-page="https://claude.ai/artifact/Hi7e7nZvP19sL2DwW94JBp">
   <header>
     <h1>Synapse Roadmap</h1>
     <p class="answer"><strong>Stage 1 is done, Stage 0 nearly, and Stages 2 and 3 are built.</strong> Import and Create are built end to end, with their screens, the scorecard, merge into this workspace, fix-back and the Surface installer. Stage 3's scorecard passes 6 of 12; four tests wait for agent runs that cost model use, so they wait for your go. What's left in Stages 0 and 2 is checking and signing, and most of it needs you or hardware. The last stage runs only if you decide to sell it.</p>
@@ -153,172 +175,172 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
     <p class="lede">Each stage ships something you use, on Mac and Windows. Sizes are focused weeks: full-time weeks of building with agent help. Stages 3 and 4 can run in either order.</p>
     <ol class="stages">
 
-      <li class="stage done">
-        <div class="rail"><span class="node">0</span></div>
+      <li class="stage done" id="stage-0">
+        <div class="rail"><a class="node" href="#stage-0" aria-label="Copy a link to Stage 0">0</a></div>
         <div class="body">
           <div class="head"><span class="t">Model and map</span><span class="chip now">Done but for 3 spikes</span></div>
           <p class="goal">The workspace model v1 and its schemas, the first deep scan of your workspace, measurement baselines, and 5 of 8 spikes. You approved the domain map (D68).</p>
           <div class="card">
             <h3>Steps left</h3>
             <ul class="steps">
-              <li><i class="mark you"></i><span>The 3D graph at 2,000 nodes on the Windows PC</span><span class="who you">Windows PC</span></li>
-              <li><i class="mark you"></i><span>Touch ID and Windows Hello unlock from the app (D72)</span><span class="who you">Apple team, Windows PC</span></li>
-              <li><i class="mark you"></i><span>Passkey recovery with PRF, from a platform passkey and the YubiKey (D70, D71)</span><span class="who you">Apple team, Windows PC</span></li>
-              <li><i class="mark part"></i><span>The surface catalog, verified on Windows<span class="note">Done on the Mac: 39 surfaces, 90 read locations.</span></span><span class="who you">Windows PC</span></li>
+              <li id="s0-graph-2000-nodes"><i class="mark you"></i><span>The 3D graph at 2,000 nodes on the Windows PC <a class="pin" href="#s0-graph-2000-nodes" aria-label="Copy a link to The 3D graph at 2,000 nodes on the Windows PC">#</a></span><span class="who you">Windows PC</span></li>
+              <li id="s0-touch-id-windows-hello"><i class="mark you"></i><span>Touch ID and Windows Hello unlock from the app (D72) <a class="pin" href="#s0-touch-id-windows-hello" aria-label="Copy a link to Touch ID and Windows Hello unlock from the app (D72)">#</a></span><span class="who you">Apple team, Windows PC</span></li>
+              <li id="s0-passkey-recovery-prf-platform"><i class="mark you"></i><span>Passkey recovery with PRF, from a platform passkey and the YubiKey (D70, D71) <a class="pin" href="#s0-passkey-recovery-prf-platform" aria-label="Copy a link to Passkey recovery with PRF, from a platform passkey and the YubiKey (D70, D71)">#</a></span><span class="who you">Apple team, Windows PC</span></li>
+              <li id="s0-surface-catalog-verified-windows"><i class="mark part"></i><span>The surface catalog, verified on Windows <a class="pin" href="#s0-surface-catalog-verified-windows" aria-label="Copy a link to The surface catalog, verified on Windows">#</a><span class="note">Done on the Mac: 39 surfaces, 90 read locations.</span></span><span class="who you">Windows PC</span></li>
             </ul>
           </div>
           <p class="exit">These need the same hardware as Stage 2's last steps, so they're done in the same sessions.</p>
         </div>
       </li>
 
-      <li class="stage done">
-        <div class="rail"><span class="node">1</span></div>
+      <li class="stage done" id="stage-1">
+        <div class="rail"><a class="node" href="#stage-1" aria-label="Copy a link to Stage 1">1</a></div>
         <div class="body">
           <div class="head"><span class="t">Core engine and CLI</span><span class="chip done">Done</span></div>
           <p class="goal">The index, the facts engine, the checks, the router, the tool runner, the writer with proposals, and the <code>sy</code> command. It finds every issue today's validators find, and its load sets match <code>skill-loadset.py</code> on every request.</p>
         </div>
       </li>
 
-      <li class="stage now">
-        <div class="rail"><span class="node">2</span></div>
+      <li class="stage now" id="stage-2">
+        <div class="rail"><a class="node" href="#stage-2" aria-label="Copy a link to Stage 2">2</a></div>
         <div class="body">
           <div class="head"><span class="t">App and tray</span><span class="chip now">Built · checking and signing left</span><span class="chip size">8–10 wk planned · about 12 sized</span></div>
           <p class="goal">See and manage the workspace without asking an agent. The service, the local API, every screen, the Library's editor, the graph, the impact review, Agent apps, Settings and the lock are built. UI review round 1 (F1–F11) is done, and so are today's notes: one bar height (F12) and a graph that turns all the way round (F13). Health runs the workspace's own tools, skills have pages, Windows CI builds the app, and the Mac bundle carries the service with an uninstaller. Batons fix themselves when nothing is lost (D98–D100).</p>
           <div class="card">
             <h3>Exit tests</h3>
             <div class="tests">
-              <div class="test wait"><span class="id">S1</span><span>Two weeks of daily use · your tally</span></div>
-              <div class="test wait"><span class="id">S2</span><span>Obsidian round trip, live</span></div>
-              <div class="test pass"><span class="id">S3</span><span>Editor changes no bytes</span></div>
-              <div class="test pass"><span class="id">S4</span><span>Issues show in under 1 s</span></div>
-              <div class="test pass"><span class="id">S5</span><span>No drift after an impact review</span></div>
-              <div class="test pass"><span class="id">S6</span><span>Moved files keep their IDs</span></div>
-              <div class="test pass"><span class="id">S7</span><span>Values read back in every region</span></div>
-              <div class="test pass"><span class="id">S8</span><span>Agent apps found on the Mac</span></div>
-              <div class="test pass"><span class="id">S9</span><span>Service under 100 MB, 1% CPU</span></div>
-              <div class="test wait"><span class="id">S10</span><span>Keyboard and screen reader · automated half passes</span></div>
-              <div class="test wait"><span class="id">S11</span><span>Windows matches the Mac</span></div>
-              <div class="test wait"><span class="id">S12</span><span>Clean uninstall</span></div>
-              <div class="test pass"><span class="id">S13</span><span>Only you reach the service</span></div>
-              <div class="test pass"><span class="id">S14</span><span>Locked means locked · with a test key</span></div>
+              <div class="test wait" id="test-s1"><a class="id" href="#test-s1" aria-label="Copy a link to exit test S1">S1</a><span>Two weeks of daily use · your tally</span></div>
+              <div class="test wait" id="test-s2"><a class="id" href="#test-s2" aria-label="Copy a link to exit test S2">S2</a><span>Obsidian round trip, live</span></div>
+              <div class="test pass" id="test-s3"><a class="id" href="#test-s3" aria-label="Copy a link to exit test S3">S3</a><span>Editor changes no bytes</span></div>
+              <div class="test pass" id="test-s4"><a class="id" href="#test-s4" aria-label="Copy a link to exit test S4">S4</a><span>Issues show in under 1 s</span></div>
+              <div class="test pass" id="test-s5"><a class="id" href="#test-s5" aria-label="Copy a link to exit test S5">S5</a><span>No drift after an impact review</span></div>
+              <div class="test pass" id="test-s6"><a class="id" href="#test-s6" aria-label="Copy a link to exit test S6">S6</a><span>Moved files keep their IDs</span></div>
+              <div class="test pass" id="test-s7"><a class="id" href="#test-s7" aria-label="Copy a link to exit test S7">S7</a><span>Values read back in every region</span></div>
+              <div class="test pass" id="test-s8"><a class="id" href="#test-s8" aria-label="Copy a link to exit test S8">S8</a><span>Agent apps found on the Mac</span></div>
+              <div class="test pass" id="test-s9"><a class="id" href="#test-s9" aria-label="Copy a link to exit test S9">S9</a><span>Service under 100 MB, 1% CPU</span></div>
+              <div class="test wait" id="test-s10"><a class="id" href="#test-s10" aria-label="Copy a link to exit test S10">S10</a><span>Keyboard and screen reader · automated half passes</span></div>
+              <div class="test wait" id="test-s11"><a class="id" href="#test-s11" aria-label="Copy a link to exit test S11">S11</a><span>Windows matches the Mac</span></div>
+              <div class="test wait" id="test-s12"><a class="id" href="#test-s12" aria-label="Copy a link to exit test S12">S12</a><span>Clean uninstall</span></div>
+              <div class="test pass" id="test-s13"><a class="id" href="#test-s13" aria-label="Copy a link to exit test S13">S13</a><span>Only you reach the service</span></div>
+              <div class="test pass" id="test-s14"><a class="id" href="#test-s14" aria-label="Copy a link to exit test S14">S14</a><span>Locked means locked · with a test key</span></div>
             </div>
           </div>
           <div class="card">
             <h3>Steps left</h3>
             <ul class="steps">
-              <li><i class="mark part"></i><span>UI review, round 2<span class="note">Round 1 is built, and so is today's bar fix: every pane bar is one 48 px height, and the Graph's filters fit one row (F12).</span></span><span class="who you">You, then Claude</span></li>
-              <li><i class="mark you"></i><span>Decide the small type sizes<span class="note">Every screen passes APCA Bronze. Silver would flag the 11–12 px labels: keep them, or raise them.</span></span><span class="who you">You</span></li>
-              <li><i class="mark you"></i><span>Keyboard-only and VoiceOver walk-through (S10)</span><span class="who you">You</span></li>
-              <li><i class="mark you"></i><span>Obsidian open while the app writes, on a test vault (S2)<span class="note">The test vault is made. Four commands in the checklist point the service at it, compare it after and put it back.</span></span><span class="who you">You</span></li>
-              <li><i class="mark you"></i><span>An Apple team<span class="note">Unlocks Touch ID, native notifications and the app bundle. Try Xcode's free Personal Team first.</span></span><span class="who you">You</span></li>
-              <li><i class="mark open"></i><span>Touch ID key, lock on screen lock and sleep, the helper app, notifications<span class="note">Built as soon as there's a team.</span></span><span class="who claude">Claude</span></li>
-              <li><i class="mark you"></i><span>Windows PC time: the Hello spike (D72) and every exit test on the PC (S11)</span><span class="who you">You + Claude</span></li>
-              <li><i class="mark you"></i><span>Choose Windows signing, and create the updater's key (D94)</span><span class="who you">You</span></li>
-              <li><i class="mark part"></i><span>Signed builds in CI, the updater, the uninstall (S12)<span class="note">Built: the unsigned Mac bundle, Windows CI's unsigned build, <code>sy-service --uninstall</code> and the S12 check. Waiting: signing, and where updates are published.</span></span><span class="who claude">Claude</span></li>
-              <li><i class="mark you"></i><span>S13 from another account: one command, refused</span><span class="who you">You</span></li>
-              <li><i class="mark you"></i><span>S1: check status in the app for 10 working days</span><span class="who you">You</span></li>
+              <li id="s2-ui-review-round-2"><i class="mark part"></i><span>UI review, round 2 <a class="pin" href="#s2-ui-review-round-2" aria-label="Copy a link to UI review, round 2">#</a><span class="note">Round 1 is built, and so is today's bar fix: every pane bar is one 48 px height, and the Graph's filters fit one row (F12).</span></span><span class="who you">You, then Claude</span></li>
+              <li id="s2-decide-small-type-sizes"><i class="mark you"></i><span>Decide the small type sizes <a class="pin" href="#s2-decide-small-type-sizes" aria-label="Copy a link to Decide the small type sizes">#</a><span class="note">Every screen passes APCA Bronze. Silver would flag the 11–12 px labels: keep them, or raise them.</span></span><span class="who you">You</span></li>
+              <li id="s2-keyboard-only-voiceover-walk"><i class="mark you"></i><span>Keyboard-only and VoiceOver walk-through (S10) <a class="pin" href="#s2-keyboard-only-voiceover-walk" aria-label="Copy a link to Keyboard-only and VoiceOver walk-through (S10)">#</a></span><span class="who you">You</span></li>
+              <li id="s2-obsidian-open-while-app"><i class="mark you"></i><span>Obsidian open while the app writes, on a test vault (S2) <a class="pin" href="#s2-obsidian-open-while-app" aria-label="Copy a link to Obsidian open while the app writes, on a test vault (S2)">#</a><span class="note">The test vault is made. Four commands in the checklist point the service at it, compare it after and put it back.</span></span><span class="who you">You</span></li>
+              <li id="s2-apple-team"><i class="mark you"></i><span>An Apple team <a class="pin" href="#s2-apple-team" aria-label="Copy a link to An Apple team">#</a><span class="note">Unlocks Touch ID, native notifications and the app bundle. Try Xcode's free Personal Team first.</span></span><span class="who you">You</span></li>
+              <li id="s2-touch-id-key-lock"><i class="mark open"></i><span>Touch ID key, lock on screen lock and sleep, the helper app, notifications <a class="pin" href="#s2-touch-id-key-lock" aria-label="Copy a link to Touch ID key, lock on screen lock and sleep, the helper app, notifications">#</a><span class="note">Built as soon as there's a team.</span></span><span class="who claude">Claude</span></li>
+              <li id="s2-windows-pc-time-hello"><i class="mark you"></i><span>Windows PC time: the Hello spike (D72) and every exit test on the PC (S11) <a class="pin" href="#s2-windows-pc-time-hello" aria-label="Copy a link to Windows PC time: the Hello spike (D72) and every exit test on the PC (S11)">#</a></span><span class="who you">You + Claude</span></li>
+              <li id="s2-windows-signing-updater-key"><i class="mark you"></i><span>Choose Windows signing, and create the updater's key (D94) <a class="pin" href="#s2-windows-signing-updater-key" aria-label="Copy a link to Choose Windows signing, and create the updater&#x27;s key (D94)">#</a></span><span class="who you">You</span></li>
+              <li id="s2-signed-builds-ci-updater"><i class="mark part"></i><span>Signed builds in CI, the updater, the uninstall (S12) <a class="pin" href="#s2-signed-builds-ci-updater" aria-label="Copy a link to Signed builds in CI, the updater, the uninstall (S12)">#</a><span class="note">Built: the unsigned Mac bundle, Windows CI's unsigned build, <code>sy-service --uninstall</code> and the S12 check. Waiting: signing, and where updates are published.</span></span><span class="who claude">Claude</span></li>
+              <li id="s2-s13-another-account"><i class="mark you"></i><span>S13 from another account: one command, refused <a class="pin" href="#s2-s13-another-account" aria-label="Copy a link to S13 from another account: one command, refused">#</a></span><span class="who you">You</span></li>
+              <li id="s2-s1-daily-use"><i class="mark you"></i><span>S1: check status in the app for 10 working days <a class="pin" href="#s2-s1-daily-use" aria-label="Copy a link to S1: check status in the app for 10 working days">#</a></span><span class="who you">You</span></li>
             </ul>
           </div>
           <p class="exit"><b>Done when</b> S1–S14 pass on your Mac and the Windows PC, the security review is current, and there's a signed release.</p>
         </div>
       </li>
 
-      <li class="stage">
-        <div class="rail"><span class="node">3</span></div>
+      <li class="stage" id="stage-3">
+        <div class="rail"><a class="node" href="#stage-3" aria-label="Copy a link to Stage 3">3</a></div>
         <div class="body">
           <div class="head"><span class="t">Import, create, measure</span><span class="chip now">Built · agent runs, the Windows PC and two parts left</span><span class="chip size">8–12 wk planned · about 13 sized</span></div>
           <p class="goal">Bring workspaces in and create new ones, with proof.</p>
           <div class="card">
             <h3>Exit tests · 6 of 12 pass</h3>
             <div class="tests">
-              <div class="test pass"><span class="id">C1</span><span>Every file accounted for</span></div>
-              <div class="test pass"><span class="id">C2</span><span>Every link kept</span></div>
-              <div class="test fail"><span class="id">C3</span><span>No errors · fails on your workspace's own 52 over-long descriptions, which a copy keeps</span></div>
-              <div class="test pass"><span class="id">C4</span><span>Routing the same on 5,488 requests</span></div>
-              <div class="test pass"><span class="id">C5</span><span>No rise in token cost</span></div>
-              <div class="test pass"><span class="id">C6</span><span>The same result every time</span></div>
-              <div class="test pass"><span class="id">C7</span><span>Every planted defect found</span></div>
-              <div class="test wait"><span class="id">C8</span><span>Two scans agree · your go</span></div>
-              <div class="test wait"><span class="id">C9</span><span>Created workspaces pass · rule checks pass; scans need your go</span></div>
-              <div class="test wait"><span class="id">C10</span><span>Agents do tasks as well · your go</span></div>
-              <div class="test wait"><span class="id">C11</span><span>Installs reach each app · uninstall passes; reach needs the live test</span></div>
-              <div class="test fail"><span class="id">C12</span><span><code>wsx</code> parity · fails: 9 of 11 promises met</span></div>
+              <div class="test pass" id="test-c1"><a class="id" href="#test-c1" aria-label="Copy a link to exit test C1">C1</a><span>Every file accounted for</span></div>
+              <div class="test pass" id="test-c2"><a class="id" href="#test-c2" aria-label="Copy a link to exit test C2">C2</a><span>Every link kept</span></div>
+              <div class="test fail" id="test-c3"><a class="id" href="#test-c3" aria-label="Copy a link to exit test C3">C3</a><span>No errors · fails on your workspace's own 52 over-long descriptions, which a copy keeps</span></div>
+              <div class="test pass" id="test-c4"><a class="id" href="#test-c4" aria-label="Copy a link to exit test C4">C4</a><span>Routing the same on 5,488 requests</span></div>
+              <div class="test pass" id="test-c5"><a class="id" href="#test-c5" aria-label="Copy a link to exit test C5">C5</a><span>No rise in token cost</span></div>
+              <div class="test pass" id="test-c6"><a class="id" href="#test-c6" aria-label="Copy a link to exit test C6">C6</a><span>The same result every time</span></div>
+              <div class="test pass" id="test-c7"><a class="id" href="#test-c7" aria-label="Copy a link to exit test C7">C7</a><span>Every planted defect found</span></div>
+              <div class="test wait" id="test-c8"><a class="id" href="#test-c8" aria-label="Copy a link to exit test C8">C8</a><span>Two scans agree · your go</span></div>
+              <div class="test wait" id="test-c9"><a class="id" href="#test-c9" aria-label="Copy a link to exit test C9">C9</a><span>Created workspaces pass · rule checks pass; scans need your go</span></div>
+              <div class="test wait" id="test-c10"><a class="id" href="#test-c10" aria-label="Copy a link to exit test C10">C10</a><span>Agents do tasks as well · your go</span></div>
+              <div class="test wait" id="test-c11"><a class="id" href="#test-c11" aria-label="Copy a link to exit test C11">C11</a><span>Installs reach each app · uninstall passes; reach needs the live test</span></div>
+              <div class="test fail" id="test-c12"><a class="id" href="#test-c12" aria-label="Copy a link to exit test C12">C12</a><span><code>wsx</code> parity · fails: 9 of 11 promises met</span></div>
             </div>
           </div>
           <div class="card">
             <h3>Steps left</h3>
             <ul class="steps">
-              <li><i class="mark part"></i><span>The import pipeline, with the deep scan as an agent job<span class="note">Built: the workspace plan, snapshot and inventory in eight formats, the baseline (equal to today's routing on all 5,488 requests), the pre-pass, the deep scan with read-only agents and the deny-list gate, and the Import screen: confirm the cost, review each finding, write a new workspace and score it.</span></span><span class="who claude">Claude</span></li>
-              <li><i class="mark part"></i><span>Create: the generator, version 2, with forms and an agent interview<span class="note">Built: <code>sy create</code> and the Create screen (a workspace from a profile, skills at each domain's level, a git repository with its first commit), and an agent with no tools that writes each skill. Left: a library of finished skills to pull and adapt, and the interview, which needs Stage 5's agent bridge.</span></span><span class="who claude">Claude</span></li>
-              <li><i class="mark part"></i><span>Import into this workspace (D99)<span class="note">Built: the merge by type, its clash rules (yours kept by default), list unions, links rewritten, the inbox for near-duplicates, one proposal with undo. An agent's judgment of the inbox comes with the bridge.</span></span><span class="who claude">Claude</span></li>
-              <li><i class="mark part"></i><span>Scorecards, with corpus T1–T4 running in CI<span class="note">Built: <code>sy score</code> and Health → Create and import; T2 (ten generated workspaces), T3 on T2 and T4 in CI; your T1 scored on your Mac.</span></span><span class="who claude">Claude</span></li>
-              <li><i class="mark done">✓</i><span>The Surface installer's writes: one review, then automatic placement, records and a clean uninstall<span class="note">A marked block in each app's rules file, pointer skills when you pick them, and an uninstall that puts every file back byte for byte (Agent apps → Connect).</span></span><span class="who claude">Claude</span></li>
-              <li><i class="mark done">✓</i><span>The fix-back flow to your workspace<span class="note">A branch for your review, made beside your checkout, never pushed; an employer's workspace gets nothing.</span></span><span class="who claude">Claude</span></li>
-              <li><i class="mark part"></i><span><code>wsx</code> parity, then archiving project 18<span class="note">9 of 11 promises met, each with a test. Left: skills that cite their sources (the library) and an MCP server (Stage 5). Archiving is your call once both are met.</span></span><span class="who claude">Claude, then you</span></li>
-              <li><i class="mark you"></i><span>Say go for the agent runs: the first deep scan of your workspace (9 passes, about 5.8 million tokens), then C8–C10's</span><span class="who you">You</span></li>
-              <li><i class="mark you"></i><span>Choose the skill library: which finished skills Create pulls and adapts, and from where</span><span class="who you">You</span></li>
-              <li><i class="mark you"></i><span>Every exit test on the Windows PC (item 15)</span><span class="who you">You + Claude</span></li>
-              <li><i class="mark you"></i><span>Review the import proposals for your workspace, and pick the T2 test profiles</span><span class="who you">You</span></li>
+              <li id="s3-import-pipeline"><i class="mark part"></i><span>The import pipeline, with the deep scan as an agent job <a class="pin" href="#s3-import-pipeline" aria-label="Copy a link to The import pipeline, with the deep scan as an agent job">#</a><span class="note">Built: the workspace plan, snapshot and inventory in eight formats, the baseline (equal to today's routing on all 5,488 requests), the pre-pass, the deep scan with read-only agents and the deny-list gate, and the Import screen: confirm the cost, review each finding, write a new workspace and score it.</span></span><span class="who claude">Claude</span></li>
+              <li id="s3-create"><i class="mark part"></i><span>Create: the generator, version 2, with forms and an agent interview <a class="pin" href="#s3-create" aria-label="Copy a link to Create: the generator, version 2, with forms and an agent interview">#</a><span class="note">Built: <code>sy create</code> and the Create screen (a workspace from a profile, skills at each domain's level, a git repository with its first commit), and an agent with no tools that writes each skill. Left: a library of finished skills to pull and adapt, and the interview, which needs Stage 5's agent bridge.</span></span><span class="who claude">Claude</span></li>
+              <li id="s3-import-into-this-workspace"><i class="mark part"></i><span>Import into this workspace (D99) <a class="pin" href="#s3-import-into-this-workspace" aria-label="Copy a link to Import into this workspace (D99)">#</a><span class="note">Built: the merge by type, its clash rules (yours kept by default), list unions, links rewritten, the inbox for near-duplicates, one proposal with undo. An agent's judgment of the inbox comes with the bridge.</span></span><span class="who claude">Claude</span></li>
+              <li id="s3-scorecards-corpus-t1-t4"><i class="mark part"></i><span>Scorecards, with corpus T1–T4 running in CI <a class="pin" href="#s3-scorecards-corpus-t1-t4" aria-label="Copy a link to Scorecards, with corpus T1–T4 running in CI">#</a><span class="note">Built: <code>sy score</code> and Health → Create and import; T2 (ten generated workspaces), T3 on T2 and T4 in CI; your T1 scored on your Mac.</span></span><span class="who claude">Claude</span></li>
+              <li id="s3-surface-installer-writes"><i class="mark done">✓</i><span>The Surface installer's writes: one review, then automatic placement, records and a clean uninstall <a class="pin" href="#s3-surface-installer-writes" aria-label="Copy a link to The Surface installer&#x27;s writes: one review, then automatic placement, records and a clean uninstall">#</a><span class="note">A marked block in each app's rules file, pointer skills when you pick them, and an uninstall that puts every file back byte for byte (Agent apps → Connect).</span></span><span class="who claude">Claude</span></li>
+              <li id="s3-fix-back-flow-workspace"><i class="mark done">✓</i><span>The fix-back flow to your workspace <a class="pin" href="#s3-fix-back-flow-workspace" aria-label="Copy a link to The fix-back flow to your workspace">#</a><span class="note">A branch for your review, made beside your checkout, never pushed; an employer's workspace gets nothing.</span></span><span class="who claude">Claude</span></li>
+              <li id="s3-wsx-parity-then-archiving"><i class="mark part"></i><span><code>wsx</code> parity, then archiving project 18 <a class="pin" href="#s3-wsx-parity-then-archiving" aria-label="Copy a link to wsx parity, then archiving project 18">#</a><span class="note">9 of 11 promises met, each with a test. Left: skills that cite their sources (the library) and an MCP server (Stage 5). Archiving is your call once both are met.</span></span><span class="who claude">Claude, then you</span></li>
+              <li id="s3-go-agent-runs"><i class="mark you"></i><span>Say go for the agent runs: the first deep scan of your workspace (9 passes, about 5.8 million tokens), then C8–C10's <a class="pin" href="#s3-go-agent-runs" aria-label="Copy a link to Say go for the agent runs: the first deep scan of your workspace (9 passes, about 5.8 million tokens), then C8–C10&#x27;s">#</a><span class="note"><a href="#ask-deep-scan">What this means, and what you do</a></span></span><span class="who you">You</span></li>
+              <li id="s3-skill-library"><i class="mark you"></i><span>Choose the skill library: which finished skills Create pulls and adapts, and from where <a class="pin" href="#s3-skill-library" aria-label="Copy a link to Choose the skill library: which finished skills Create pulls and adapts, and from where">#</a></span><span class="who you">You</span></li>
+              <li id="s3-every-exit-test-windows"><i class="mark you"></i><span>Every exit test on the Windows PC (item 15) <a class="pin" href="#s3-every-exit-test-windows" aria-label="Copy a link to Every exit test on the Windows PC (item 15)">#</a></span><span class="who you">You + Claude</span></li>
+              <li id="s3-review-import-proposals"><i class="mark you"></i><span>Review the import proposals for your workspace, and pick the T2 test profiles <a class="pin" href="#s3-review-import-proposals" aria-label="Copy a link to Review the import proposals for your workspace, and pick the T2 test profiles">#</a></span><span class="who you">You</span></li>
             </ul>
           </div>
           <p class="exit"><b>Done when</b> your workspace round-trips within every starting gate, each T2 profile passes all checks, and <code>wsx</code> parity lets project 18 be archived into this one.</p>
         </div>
       </li>
 
-      <li class="stage">
-        <div class="rail"><span class="node">4</span></div>
+      <li class="stage" id="stage-4">
+        <div class="rail"><a class="node" href="#stage-4" aria-label="Copy a link to Stage 4">4</a></div>
         <div class="body">
           <div class="head"><span class="t">Personas and access</span><span class="chip">Not started</span><span class="chip size">10–15 wk</span></div>
           <p class="goal">The right login and the right tools for each persona, everywhere. If login trouble gets worse, its first two phases can move ahead of Stage 3.</p>
           <div class="card">
             <ul class="steps">
-              <li><i class="mark open"></i><span>The access module: Watch, then Broker, then Gateway</span><span class="who claude">Claude</span></li>
-              <li><i class="mark open"></i><span>Personas and app instances in the model, duplicate installs included</span><span class="who claude">Claude</span></li>
-              <li><i class="mark open"></i><span>Persona-aware placement: each app install gets only its persona's rules and tools</span><span class="who claude">Claude</span></li>
-              <li><i class="mark open"></i><span>Sealed facts (D64): the encrypted persona store, sealed slots, the write guard</span><span class="who claude">Claude</span></li>
-              <li><i class="mark open"></i><span>The Integrations screen<span class="note">Jira tickets become readable here; today they're links only.</span></span><span class="who claude">Claude</span></li>
-              <li><i class="mark you"></i><span>Sign in to your accounts, and set walls and limits</span><span class="who you">You</span></li>
+              <li id="s4-access-module-watch-then"><i class="mark open"></i><span>The access module: Watch, then Broker, then Gateway <a class="pin" href="#s4-access-module-watch-then" aria-label="Copy a link to The access module: Watch, then Broker, then Gateway">#</a></span><span class="who claude">Claude</span></li>
+              <li id="s4-personas-app-instances-model"><i class="mark open"></i><span>Personas and app instances in the model, duplicate installs included <a class="pin" href="#s4-personas-app-instances-model" aria-label="Copy a link to Personas and app instances in the model, duplicate installs included">#</a></span><span class="who claude">Claude</span></li>
+              <li id="s4-persona-aware-placement-each"><i class="mark open"></i><span>Persona-aware placement: each app install gets only its persona's rules and tools <a class="pin" href="#s4-persona-aware-placement-each" aria-label="Copy a link to Persona-aware placement: each app install gets only its persona&#x27;s rules and tools">#</a></span><span class="who claude">Claude</span></li>
+              <li id="s4-sealed-facts-d64-encrypted"><i class="mark open"></i><span>Sealed facts (D64): the encrypted persona store, sealed slots, the write guard <a class="pin" href="#s4-sealed-facts-d64-encrypted" aria-label="Copy a link to Sealed facts (D64): the encrypted persona store, sealed slots, the write guard">#</a></span><span class="who claude">Claude</span></li>
+              <li id="s4-integrations-screen"><i class="mark open"></i><span>The Integrations screen <a class="pin" href="#s4-integrations-screen" aria-label="Copy a link to The Integrations screen">#</a><span class="note">Jira tickets become readable here; today they're links only.</span></span><span class="who claude">Claude</span></li>
+              <li id="s4-sign-accounts-set-walls"><i class="mark you"></i><span>Sign in to your accounts, and set walls and limits <a class="pin" href="#s4-sign-accounts-set-walls" aria-label="Copy a link to Sign in to your accounts, and set walls and limits">#</a></span><span class="who you">You</span></li>
             </ul>
           </div>
           <p class="exit"><b>Done when</b> the access phases pass, and two Claude desktop apps, one per persona, are each routed correctly.</p>
         </div>
       </li>
 
-      <li class="stage">
-        <div class="rail"><span class="node">5</span></div>
+      <li class="stage" id="stage-5">
+        <div class="rail"><a class="node" href="#stage-5" aria-label="Copy a link to Stage 5">5</a></div>
         <div class="body">
           <div class="head"><span class="t">Agents, plugins, 3D</span><span class="chip">Not started</span><span class="chip size">8–10 wk</span></div>
           <p class="goal">The agent-enhanced half, and room to extend.</p>
           <div class="card">
             <ul class="steps">
-              <li><i class="mark open"></i><span>Agent bridge, version 2</span><span class="who claude">Claude</span></li>
-              <li><i class="mark open"></i><span>Sealed notes, opened through the bridge with a named prompt and Touch ID or Hello</span><span class="who claude">Claude</span></li>
-              <li><i class="mark open"></i><span>Scheduled agent jobs: optimize with judgment, skill drafting, overlap reconciliation</span><span class="who claude">Claude</span></li>
-              <li><i class="mark open"></i><span>Plugin system, version 1</span><span class="who claude">Claude</span></li>
-              <li><i class="mark part"></i><span>The 3D graph<span class="note">Built early in the UI review (F8). Its performance targets are measured here.</span></span><span class="who claude">Claude</span></li>
+              <li id="s5-agent-bridge-version-2"><i class="mark open"></i><span>Agent bridge, version 2 <a class="pin" href="#s5-agent-bridge-version-2" aria-label="Copy a link to Agent bridge, version 2">#</a></span><span class="who claude">Claude</span></li>
+              <li id="s5-sealed-notes-opened-through"><i class="mark open"></i><span>Sealed notes, opened through the bridge with a named prompt and Touch ID or Hello <a class="pin" href="#s5-sealed-notes-opened-through" aria-label="Copy a link to Sealed notes, opened through the bridge with a named prompt and Touch ID or Hello">#</a></span><span class="who claude">Claude</span></li>
+              <li id="s5-scheduled-agent-jobs-optimize"><i class="mark open"></i><span>Scheduled agent jobs: optimize with judgment, skill drafting, overlap reconciliation <a class="pin" href="#s5-scheduled-agent-jobs-optimize" aria-label="Copy a link to Scheduled agent jobs: optimize with judgment, skill drafting, overlap reconciliation">#</a></span><span class="who claude">Claude</span></li>
+              <li id="s5-plugin-system-version-1"><i class="mark open"></i><span>Plugin system, version 1 <a class="pin" href="#s5-plugin-system-version-1" aria-label="Copy a link to Plugin system, version 1">#</a></span><span class="who claude">Claude</span></li>
+              <li id="s5-3d-graph"><i class="mark part"></i><span>The 3D graph <a class="pin" href="#s5-3d-graph" aria-label="Copy a link to The 3D graph">#</a><span class="note">Built early in the UI review (F8). Its performance targets are measured here.</span></span><span class="who claude">Claude</span></li>
             </ul>
           </div>
           <p class="exit"><b>Done when</b> a nightly agent job runs for two weeks with every output as a proposal, one plugin of each kind exists, and the 3D graph meets its targets.</p>
         </div>
       </li>
 
-      <li class="stage">
-        <div class="rail"><span class="node">6</span></div>
+      <li class="stage" id="stage-6">
+        <div class="rail"><a class="node" href="#stage-6" aria-label="Copy a link to Stage 6">6</a></div>
         <div class="body">
           <div class="head"><span class="t">Fleet</span><span class="chip">Not started</span><span class="chip size">3–4 wk</span></div>
           <p class="goal">Your devices stay in step.</p>
           <div class="card">
             <ul class="steps">
-              <li><i class="mark open"></i><span>The hub, linking by QR or short code with a safety phrase, and removal</span><span class="who claude">Claude</span></li>
-              <li><i class="mark open"></i><span>The recovery passkey, a printed recovery key, an optional passphrase backup</span><span class="who claude">Claude</span></li>
-              <li><i class="mark open"></i><span>Optional encrypted sync for workspace files, and per-device settings</span><span class="who claude">Claude</span></li>
+              <li id="s6-hub-linking-qr-short"><i class="mark open"></i><span>The hub, linking by QR or short code with a safety phrase, and removal <a class="pin" href="#s6-hub-linking-qr-short" aria-label="Copy a link to The hub, linking by QR or short code with a safety phrase, and removal">#</a></span><span class="who claude">Claude</span></li>
+              <li id="s6-recovery-passkey-printed-recovery"><i class="mark open"></i><span>The recovery passkey, a printed recovery key, an optional passphrase backup <a class="pin" href="#s6-recovery-passkey-printed-recovery" aria-label="Copy a link to The recovery passkey, a printed recovery key, an optional passphrase backup">#</a></span><span class="who claude">Claude</span></li>
+              <li id="s6-optional-encrypted-sync-workspace"><i class="mark open"></i><span>Optional encrypted sync for workspace files, and per-device settings <a class="pin" href="#s6-optional-encrypted-sync-workspace" aria-label="Copy a link to Optional encrypted sync for workspace files, and per-device settings">#</a></span><span class="who claude">Claude</span></li>
             </ul>
           </div>
         </div>
       </li>
 
-      <li class="stage gate">
-        <div class="rail"><span class="node">7</span></div>
+      <li class="stage gate" id="stage-7">
+        <div class="rail"><a class="node" href="#stage-7" aria-label="Copy a link to Stage 7">7</a></div>
         <div class="body">
           <div class="head"><span class="t">Product readiness</span><span class="chip">Only on your go</span><span class="chip size">8–12+ wk</span></div>
           <p class="goal">Hosted sign-in for commercial accounts (never tied to unlocking data) and offline license files. It starts only if you decide to sell Synapse, and it needs a public name first.</p>
@@ -331,63 +353,75 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
     <h2 id="you">Waiting on you</h2>
     <p class="lede">In the order that unblocks the most. The first two need only a few minutes.</p>
     <ul class="asks">
-      <li><span class="kind">Look</span><b>UI review, round 2</b><span>Round 1 and the bar fix are built. Restart the dev server on 1430 to see them (it needs a fresh install for Unicron 0.13), and use "Use worst-case sample content" in the palette to see the sheets at their extremes.</span></li>
-      <li><span class="kind">Decide</span><b>The small type sizes</b><span>Keep the 11–12 px labels, which pass APCA Bronze, or raise them toward Silver's 14 px floor.</span></li>
-      <li><span class="kind">Set up</span><b>An Apple team</b><span>Xcode → Settings → Accounts → add your Apple ID gives a free Personal Team. Send Claude the 10-character team ID. The paid membership is still with Apple support.</span></li>
-      <li><span class="kind">Check</span><b>Your YubiKey's firmware</b><span>Yubico Authenticator or <code>ykman info</code>. The recovery passkey needs 5.2 or later (D71).</span></li>
-      <li><span class="kind">Decide</span><b>How Windows builds are signed</b><span>Microsoft's Artifact Signing, about $9.99 a month, or a commercial certificate, about $150–300 a year (D94).</span></li>
-      <li><span class="kind">Decide</span><b>Where updates are published</b><span>The repo is private, so its releases can't serve the updater. A public releases repo, or a Cloudflare bucket or Pages site. The updater's wiring waits on this.</span></li>
-      <li><span class="kind">Do</span><b>Keyboard and VoiceOver walk-through</b><span>Every screen by keyboard alone, then VoiceOver (⌘F5). Claude fixes what you find (S10).</span></li>
-      <li><span class="kind">Do</span><b>The Obsidian session</b><span>Obsidian on a test vault while the app writes: type, save, undo twice, rename (S2).</span></li>
-      <li><span class="kind">Hardware</span><b>Time on the Windows PC</b><span>The Hello spike (D72) and every exit test (S11). Claude tells you before starting.</span></li>
-      <li><span class="kind">Do</span><b>The updater's signing key</b><span>Created once and kept in your password manager, never in the repo. Claude gives you the command when it's time.</span></li>
-      <li><span class="kind">Do</span><b>S13 from another account</b><span>One <code>sudo -u nobody</code> command against the service's socket. It should say "Permission denied".</span></li>
-      <li><span class="kind">Try</span><b>Resume to the cloud, once</b><span>Built but untried, because a test starts a real cloud session.</span></li>
-      <li><span class="kind">Decide</span><b>The public name</b><span>"Synapse" is a codename. No trademark check yet; it's needed before any public use or a go on Stage 7.</span></li>
-      <li><span class="kind">Go</span><b>The first deep scan, then the other agent runs</b><span>Of your workspace's Stage 3 snapshot: 9 passes, about 5.8 million tokens, each stopping at $10 or 30 minutes. Say go and set a total cap. A deny list first: terms that must never leave your Mac, one per line. Then C8's second scan, C9's scans of the ten test workspaces, and one agent-written workspace.</span></li>
-      <li><span class="kind">Decide</span><b>Create's skill library</b><span>Which finished skills Create pulls and adapts for a new workspace, and from which sources. Each is cited. It's the last Create part that doesn't wait for Stage 5.</span></li>
-      <li><span class="kind">Decide</span><b>Foundations across skill chains</b><span>The contract says foundations load first. The routers do that within each chain, so 174 of 5,488 answers load a foundation after another skill. Sorting across chains changes those answers.</span></li>
-      <li><span class="kind">Confirm</span><b>Stage 3's decisions, D101–D105</b><span>Work proceeds on the recommendations: Create in the Rust core, Claude Code as the scan's agent, new folders only, the ten T2 profiles, and the template library.</span></li>
-      <li><span class="kind">Use</span><b>Two weeks of daily use (S1)</b><span>Check status in the app instead of asking an agent, and note what's missing.</span></li>
+      <li id="ask-ui-review-round-2"><span class="kind">Look</span><b>UI review, round 2 <a class="pin" href="#ask-ui-review-round-2" aria-label="Copy a link to UI review, round 2">#</a></b><span>Round 1 and the bar fix are built. Restart the dev server on 1430 to see them (it needs a fresh install for Unicron 0.13), and use "Use worst-case sample content" in the palette to see the sheets at their extremes.</span></li>
+      <li id="ask-small-type-sizes"><span class="kind">Decide</span><b>The small type sizes <a class="pin" href="#ask-small-type-sizes" aria-label="Copy a link to The small type sizes">#</a></b><span>Keep the 11–12 px labels, which pass APCA Bronze, or raise them toward Silver's 14 px floor.</span></li>
+      <li id="ask-apple-team"><span class="kind">Set up</span><b>An Apple team <a class="pin" href="#ask-apple-team" aria-label="Copy a link to An Apple team">#</a></b><span>Xcode → Settings → Accounts → add your Apple ID gives a free Personal Team. Send Claude the 10-character team ID. The paid membership is still with Apple support.</span></li>
+      <li id="ask-yubikey-firmware"><span class="kind">Check</span><b>Your YubiKey's firmware <a class="pin" href="#ask-yubikey-firmware" aria-label="Copy a link to Your YubiKey&#x27;s firmware">#</a></b><span>Yubico Authenticator or <code>ykman info</code>. The recovery passkey needs 5.2 or later (D71).</span></li>
+      <li id="ask-windows-signing"><span class="kind">Decide</span><b>How Windows builds are signed <a class="pin" href="#ask-windows-signing" aria-label="Copy a link to How Windows builds are signed">#</a></b><span>Microsoft's Artifact Signing, about $9.99 a month, or a commercial certificate, about $150–300 a year (D94).</span></li>
+      <li id="ask-where-updates-are-published"><span class="kind">Decide</span><b>Where updates are published <a class="pin" href="#ask-where-updates-are-published" aria-label="Copy a link to Where updates are published">#</a></b><span>The repo is private, so its releases can't serve the updater. A public releases repo, or a Cloudflare bucket or Pages site. The updater's wiring waits on this.</span></li>
+      <li id="ask-keyboard-voiceover-walk-through"><span class="kind">Do</span><b>Keyboard and VoiceOver walk-through <a class="pin" href="#ask-keyboard-voiceover-walk-through" aria-label="Copy a link to Keyboard and VoiceOver walk-through">#</a></b><span>Every screen by keyboard alone, then VoiceOver (⌘F5). Claude fixes what you find (S10).</span></li>
+      <li id="ask-obsidian-session"><span class="kind">Do</span><b>The Obsidian session <a class="pin" href="#ask-obsidian-session" aria-label="Copy a link to The Obsidian session">#</a></b><span>Obsidian on a test vault while the app writes: type, save, undo twice, rename (S2).</span></li>
+      <li id="ask-time-windows-pc"><span class="kind">Hardware</span><b>Time on the Windows PC <a class="pin" href="#ask-time-windows-pc" aria-label="Copy a link to Time on the Windows PC">#</a></b><span>The Hello spike (D72) and every exit test (S11). Claude tells you before starting.</span></li>
+      <li id="ask-updater-signing-key"><span class="kind">Do</span><b>The updater's signing key <a class="pin" href="#ask-updater-signing-key" aria-label="Copy a link to The updater&#x27;s signing key">#</a></b><span>Created once and kept in your password manager, never in the repo. Claude gives you the command when it's time.</span></li>
+      <li id="ask-s13-another-account"><span class="kind">Do</span><b>S13 from another account <a class="pin" href="#ask-s13-another-account" aria-label="Copy a link to S13 from another account">#</a></b><span>One <code>sudo -u nobody</code> command against the service's socket. It should say "Permission denied".</span></li>
+      <li id="ask-resume-cloud-once"><span class="kind">Try</span><b>Resume to the cloud, once <a class="pin" href="#ask-resume-cloud-once" aria-label="Copy a link to Resume to the cloud, once">#</a></b><span>Built but untried, because a test starts a real cloud session.</span></li>
+      <li id="ask-public-name"><span class="kind">Decide</span><b>The public name <a class="pin" href="#ask-public-name" aria-label="Copy a link to The public name">#</a></b><span>"Synapse" is a codename. No trademark check yet; it's needed before any public use or a go on Stage 7.</span></li>
+      <li id="ask-deep-scan"><span class="kind">Go</span><b>The first deep scan, then the other agent runs <a class="pin" href="#ask-deep-scan" aria-label="Copy a link to The first deep scan, then the other agent runs">#</a></b><span>Of your workspace's Stage 3 snapshot: 9 passes, about 5.8 million tokens, each stopping at $10 or 30 minutes. Say go and set a total cap. A deny list first: terms that must never leave your Mac, one per line. Then C8's second scan, C9's scans of the ten test workspaces, and one agent-written workspace.</span>
+        <details class="more">
+          <summary>What this means</summary>
+          <div class="more-body">
+            <p><b>What it is.</b> Import's careful read of your workspace before it brings it in. Claude Code reads your workspace's files in 9 batches, grouped by area, and lists the problems the free rule checks can't see: rules that contradict each other, skills that overlap or never load, out-of-date facts, unclear instructions. The rule checks already ran.</p>
+            <p><b>What it touches.</b> A read-only copy of your workspace, taken at commit <code>2ff55d4</code> and kept on your Mac. Each batch can only read files. It can't change anything, run commands, or reach the internet apart from the model.</p>
+            <p><b>What you get.</b> On the Import screen, each finding with its evidence and a proposed fix, to accept, edit or reject. Then a new copy of your workspace with those fixes, scored on the exit tests. Your real workspace doesn't change unless you later choose to merge.</p>
+            <p><b>Why it waits for you.</b> It runs on your Claude Code sign-in, so it counts against your Claude usage: about 5.8 million tokens in all. Each batch stops at $10 of usage or 30 minutes, and you set a cap for the whole run.</p>
+            <p><b>The deny list comes first.</b> A plain text file of words that must never leave your Mac: your employer's name, client and product names, private host names. The scan's summary is checked against it before it's written, and held back if a word appears. One word or phrase per line, in <code>~/Library/Application Support/design.snds.sy/deny-terms.txt</code>.</p>
+            <p><b>Then the other runs.</b> A second scan of the same copy, to see whether the two agree (<a href="#test-c8">C8</a>). Scans of the ten test workspaces Create made (<a href="#test-c9">C9</a>). An agent doing real tasks in your workspace and in the imported copy, compared (<a href="#test-c10">C10</a>).</p>
+            <p><b>What to say.</b> Once the list exists: "Go on the deep scan, with a total cap of $N."</p>
+          </div>
+        </details></li>
+      <li id="ask-skill-library"><span class="kind">Decide</span><b>Create's skill library <a class="pin" href="#ask-skill-library" aria-label="Copy a link to Create&#x27;s skill library">#</a></b><span>Which finished skills Create pulls and adapts for a new workspace, and from which sources. Each is cited. It's the last Create part that doesn't wait for Stage 5.</span></li>
+      <li id="ask-foundations-across-chains"><span class="kind">Decide</span><b>Foundations across skill chains <a class="pin" href="#ask-foundations-across-chains" aria-label="Copy a link to Foundations across skill chains">#</a></b><span>The contract says foundations load first. The routers do that within each chain, so 174 of 5,488 answers load a foundation after another skill. Sorting across chains changes those answers.</span></li>
+      <li id="ask-d101-d105"><span class="kind">Confirm</span><b>Stage 3's decisions, D101–D105 <a class="pin" href="#ask-d101-d105" aria-label="Copy a link to Stage 3&#x27;s decisions, D101–D105">#</a></b><span>Work proceeds on the recommendations: Create in the Rust core, Claude Code as the scan's agent, new folders only, the ten T2 profiles, and the template library.</span></li>
+      <li id="ask-two-weeks-daily-use"><span class="kind">Use</span><b>Two weeks of daily use (S1) <a class="pin" href="#ask-two-weeks-daily-use" aria-label="Copy a link to Two weeks of daily use (S1)">#</a></b><span>Check status in the app instead of asking an agent, and note what's missing.</span></li>
     </ul>
   </section>
 
   <section aria-labelledby="next">
     <h2 id="next">Built today, without you</h2>
     <ul class="asks claude">
-      <li><span class="kind">Item 7</span><b>Health runs the workspace's tools</b><span>Health → Tools: doctor, the harness and the generated-files check, each with its last run. The rebuild, which writes, asks first. A failed run's issues join the Issues tab.</span></li>
-      <li><span class="kind">Item 8</span><b>A skill's page</b><span>The document, read in the Library's live preview, beside its contract: triggers, edges, what it loads, what uses it, its checks.</span></li>
-      <li><span class="kind">Item 15</span><b>Windows CI builds the app</b><span>The unsigned app and the service, kept a week as a download for the Windows PC.</span></li>
-      <li><span class="kind">Item 16</span><b>The Mac bundle and the uninstall</b><span>The service as a helper app inside the app (no Dock icon), <code>sy-service --uninstall</code>, and the S12 check that found the web view's two leftover folders.</span></li>
-      <li><span class="kind">S2</span><b>The Obsidian test vault</b><span>A copy of T1b, ready, with commands to point the service at it, compare it after your session, and put it back.</span></li>
-      <li><span class="kind">F12 · F13</span><b>Bars and the graph</b><span>Every pane bar one height; the 3D graph turns over the top and underneath, lit from any side.</span></li>
-      <li><span class="kind">Stage 3 · 2–3</span><b>The workspace plan, snapshot and inventory</b><span>Any workspace in seven formats, snapshotted read-only and written back byte for byte.</span></li>
-      <li><span class="kind">Stage 3 · 4</span><b>Baseline and pre-pass</b><span>Today's routing recorded and proven stable; the files to read split into packets of up to 100 by domain and hub; every skill reachable.</span></li>
-      <li><span class="kind">Stage 3 · 5</span><b>The deep scan, ready</b><span>One read-only Claude Code pass per packet, cost shown first, budgets per pass, and a summary written only when it passes your deny list.</span></li>
-      <li><span class="kind">Stage 3 · 6–7</span><b>The Import screen and the scorecard</b><span>Five steps on one page, each finding to accept, edit or reject, a write that's scored on nine gates; Health lists every scorecard and its trend.</span></li>
-      <li><span class="kind">Stage 3 · 8</span><b>Ten generated test workspaces</b><span>Made by <code>wsx</code>, checked in CI: the engine routes each exactly as it routes itself, and finds every planted defect.</span></li>
-      <li><span class="kind">Stage 3 · 11, 13</span><b>Merge into this workspace, and fix-back</b><span>Bring a vault or workspace in as one change with undo; send accepted fixes back to your own workspace as a branch to review.</span></li>
-      <li><span class="kind">Stage 3 · 12</span><b>The Surface installer's writes</b><span>Connect an agent app to the workspace from Agent apps: a marked block in its rules file, recorded, and an uninstall that puts every file back exactly.</span></li>
-      <li><span class="kind">Stage 3 · 9–10</span><b>Create</b><span>A new workspace from a six-step profile, in the Rust core: skills at each domain's level, a git repository, a context pack for chats. An agent with no tools can write each skill, after showing the cost.</span></li>
-      <li><span class="kind">CI · D106</span><b>CI runs again, for less</b><span>Linux checks on every push, about 5 minutes; macOS and Windows nightly when something changed, about 30. The first run since item 6 passed.</span></li>
-      <li><span class="kind">Stage 3 · 14, 16</span><b><code>wsx</code> parity and the scorecard</b><span>9 of <code>wsx</code>'s 11 promises met, each with a test. Stage 3's scorecard: 6 of 12 pass, 2 fail, 4 wait for agent runs.</span></li>
+      <li id="built-health-runs-workspaces-tools"><span class="kind">Item 7</span><b>Health runs the workspace's tools <a class="pin" href="#built-health-runs-workspaces-tools" aria-label="Copy a link to Health runs the workspace&#x27;s tools">#</a></b><span>Health → Tools: doctor, the harness and the generated-files check, each with its last run. The rebuild, which writes, asks first. A failed run's issues join the Issues tab.</span></li>
+      <li id="built-skills-page"><span class="kind">Item 8</span><b>A skill's page <a class="pin" href="#built-skills-page" aria-label="Copy a link to A skill&#x27;s page">#</a></b><span>The document, read in the Library's live preview, beside its contract: triggers, edges, what it loads, what uses it, its checks.</span></li>
+      <li id="built-windows-ci-builds-app"><span class="kind">Item 15</span><b>Windows CI builds the app <a class="pin" href="#built-windows-ci-builds-app" aria-label="Copy a link to Windows CI builds the app">#</a></b><span>The unsigned app and the service, kept a week as a download for the Windows PC.</span></li>
+      <li id="built-mac-bundle-uninstall"><span class="kind">Item 16</span><b>The Mac bundle and the uninstall <a class="pin" href="#built-mac-bundle-uninstall" aria-label="Copy a link to The Mac bundle and the uninstall">#</a></b><span>The service as a helper app inside the app (no Dock icon), <code>sy-service --uninstall</code>, and the S12 check that found the web view's two leftover folders.</span></li>
+      <li id="built-obsidian-test-vault"><span class="kind">S2</span><b>The Obsidian test vault <a class="pin" href="#built-obsidian-test-vault" aria-label="Copy a link to The Obsidian test vault">#</a></b><span>A copy of T1b, ready, with commands to point the service at it, compare it after your session, and put it back.</span></li>
+      <li id="built-bars-graph"><span class="kind">F12 · F13</span><b>Bars and the graph <a class="pin" href="#built-bars-graph" aria-label="Copy a link to Bars and the graph">#</a></b><span>Every pane bar one height; the 3D graph turns over the top and underneath, lit from any side.</span></li>
+      <li id="built-workspace-plan-snapshot-inventory"><span class="kind">Stage 3 · 2–3</span><b>The workspace plan, snapshot and inventory <a class="pin" href="#built-workspace-plan-snapshot-inventory" aria-label="Copy a link to The workspace plan, snapshot and inventory">#</a></b><span>Any workspace in seven formats, snapshotted read-only and written back byte for byte.</span></li>
+      <li id="built-baseline-pre-pass"><span class="kind">Stage 3 · 4</span><b>Baseline and pre-pass <a class="pin" href="#built-baseline-pre-pass" aria-label="Copy a link to Baseline and pre-pass">#</a></b><span>Today's routing recorded and proven stable; the files to read split into packets of up to 100 by domain and hub; every skill reachable.</span></li>
+      <li id="built-deep-scan-ready"><span class="kind">Stage 3 · 5</span><b>The deep scan, ready <a class="pin" href="#built-deep-scan-ready" aria-label="Copy a link to The deep scan, ready">#</a></b><span>One read-only Claude Code pass per packet, cost shown first, budgets per pass, and a summary written only when it passes your deny list.</span></li>
+      <li id="built-import-screen-scorecard"><span class="kind">Stage 3 · 6–7</span><b>The Import screen and the scorecard <a class="pin" href="#built-import-screen-scorecard" aria-label="Copy a link to The Import screen and the scorecard">#</a></b><span>Five steps on one page, each finding to accept, edit or reject, a write that's scored on nine gates; Health lists every scorecard and its trend.</span></li>
+      <li id="built-ten-generated-test-workspaces"><span class="kind">Stage 3 · 8</span><b>Ten generated test workspaces <a class="pin" href="#built-ten-generated-test-workspaces" aria-label="Copy a link to Ten generated test workspaces">#</a></b><span>Made by <code>wsx</code>, checked in CI: the engine routes each exactly as it routes itself, and finds every planted defect.</span></li>
+      <li id="built-merge-into-this-workspace"><span class="kind">Stage 3 · 11, 13</span><b>Merge into this workspace, and fix-back <a class="pin" href="#built-merge-into-this-workspace" aria-label="Copy a link to Merge into this workspace, and fix-back">#</a></b><span>Bring a vault or workspace in as one change with undo; send accepted fixes back to your own workspace as a branch to review.</span></li>
+      <li id="built-surface-installer-writes"><span class="kind">Stage 3 · 12</span><b>The Surface installer's writes <a class="pin" href="#built-surface-installer-writes" aria-label="Copy a link to The Surface installer&#x27;s writes">#</a></b><span>Connect an agent app to the workspace from Agent apps: a marked block in its rules file, recorded, and an uninstall that puts every file back exactly.</span></li>
+      <li id="built-create"><span class="kind">Stage 3 · 9–10</span><b>Create <a class="pin" href="#built-create" aria-label="Copy a link to Create">#</a></b><span>A new workspace from a six-step profile, in the Rust core: skills at each domain's level, a git repository, a context pack for chats. An agent with no tools can write each skill, after showing the cost.</span></li>
+      <li id="built-ci-d106"><span class="kind">CI · D106</span><b>CI runs again, for less <a class="pin" href="#built-ci-d106" aria-label="Copy a link to CI runs again, for less">#</a></b><span>Linux checks on every push, about 5 minutes; macOS and Windows nightly when something changed, about 30. The first run since item 6 passed.</span></li>
+      <li id="built-wsx-parity-scorecard"><span class="kind">Stage 3 · 14, 16</span><b><code>wsx</code> parity and the scorecard <a class="pin" href="#built-wsx-parity-scorecard" aria-label="Copy a link to wsx parity and the scorecard">#</a></b><span>9 of <code>wsx</code>'s 11 promises met, each with a test. Stage 3's scorecard: 6 of 12 pass, 2 fail, 4 wait for agent runs.</span></li>
     </ul>
     <h3>Next, once you've decided</h3>
     <ul class="asks quiet">
-      <li><span class="kind">Apple team</span><b>Touch ID, notifications, the signed Mac release</b><span>The device key in the keychain, locking on sleep, native notifications.</span></li>
-      <li><span class="kind">Publishing</span><b>The updater</b><span>Its wiring, once updates have somewhere public to live.</span></li>
-      <li><span class="kind">Signing route</span><b>Signed builds in CI</b><span>Both systems, and the installers' uninstall step.</span></li>
+      <li id="next-touch-id-notifications-signed"><span class="kind">Apple team</span><b>Touch ID, notifications, the signed Mac release <a class="pin" href="#next-touch-id-notifications-signed" aria-label="Copy a link to Touch ID, notifications, the signed Mac release">#</a></b><span>The device key in the keychain, locking on sleep, native notifications.</span></li>
+      <li id="next-updater"><span class="kind">Publishing</span><b>The updater <a class="pin" href="#next-updater" aria-label="Copy a link to The updater">#</a></b><span>Its wiring, once updates have somewhere public to live.</span></li>
+      <li id="next-signed-builds-ci"><span class="kind">Signing route</span><b>Signed builds in CI <a class="pin" href="#next-signed-builds-ci" aria-label="Copy a link to Signed builds in CI">#</a></b><span>Both systems, and the installers' uninstall step.</span></li>
     </ul>
   </section>
 
   <section aria-labelledby="open">
     <h2 id="open">Other open items</h2>
     <ul class="asks quiet">
-      <li><span class="kind">Blocked</span><b>Apple Developer Program</b><span>Enrollment says the account is "already associated". You emailed Apple support.</span></li>
-      <li><span class="kind">Later</span><b>Choices for later stages</b><span>The plugin runtime (Stage 5), and whether <code>python-cross-platform-gui</code> is a spoke or a project skill.</span></li>
-      <li><span class="kind">Tidy</span><b>A second copy of this page</b><span>Published by mistake. Say so and Claude deletes it; this one stays.</span></li>
-      <li><span class="kind">After Stage 3</span><b>Sensitive-data cleanup (D63, D65)</b><span>Generalize the files that hold private specifics, move them into sealed facts, then decide on history and visibility. Recommended now regardless: rotate the API key a memory note names, and review Drive link sharing.</span></li>
-      <li><span class="kind">Workspace</span><b>Five batons over 12 KB</b><span>Bootstrap Generator 40 KB, Lockdown 21 KB, Fontface 18 KB, Workspace Brain 15 KB, Mailbird 12.4 KB. Each needs its own session to trim its Live handoff; the app and the session card flag them.</span></li>
+      <li id="open-apple-developer-program"><span class="kind">Blocked</span><b>Apple Developer Program <a class="pin" href="#open-apple-developer-program" aria-label="Copy a link to Apple Developer Program">#</a></b><span>Enrollment says the account is "already associated". You emailed Apple support.</span></li>
+      <li id="open-choices-later-stages"><span class="kind">Later</span><b>Choices for later stages <a class="pin" href="#open-choices-later-stages" aria-label="Copy a link to Choices for later stages">#</a></b><span>The plugin runtime (Stage 5), and whether <code>python-cross-platform-gui</code> is a spoke or a project skill.</span></li>
+      <li id="open-second-copy-this-page"><span class="kind">Tidy</span><b>A second copy of this page <a class="pin" href="#open-second-copy-this-page" aria-label="Copy a link to A second copy of this page">#</a></b><span>Published by mistake. Say so and Claude deletes it; this one stays.</span></li>
+      <li id="open-sensitive-data-cleanup-d63"><span class="kind">After Stage 3</span><b>Sensitive-data cleanup (D63, D65) <a class="pin" href="#open-sensitive-data-cleanup-d63" aria-label="Copy a link to Sensitive-data cleanup (D63, D65)">#</a></b><span>Generalize the files that hold private specifics, move them into sealed facts, then decide on history and visibility. Recommended now regardless: rotate the API key a memory note names, and review Drive link sharing.</span></li>
+      <li id="open-batons-over-12kb"><span class="kind">Workspace</span><b>Five batons over 12 KB <a class="pin" href="#open-batons-over-12kb" aria-label="Copy a link to Five batons over 12 KB">#</a></b><span>Bootstrap Generator 40 KB, Lockdown 21 KB, Fontface 18 KB, Workspace Brain 15 KB, Mailbird 12.4 KB. Each needs its own session to trim its Live handoff; the app and the session card flag them.</span></li>
     </ul>
   </section>
 
@@ -397,11 +431,11 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
       <table class="tracks">
         <thead><tr><th>Track</th><th>What</th><th>Where it stands</th></tr></thead>
         <tbody>
-          <tr><td>Measurement</td><td>Corpus, scorecards, gates</td><td>Stage 3's scorecard runs: 6 of 12 pass, 4 wait for agent runs; T2, T3 and T4 in CI, T1 on your Mac</td></tr>
-          <tr><td>Security</td><td>Threat review and test scenarios</td><td>Stage 2's review: ten threats, now with the self-fixing batons (D100)</td></tr>
-          <tr><td>Vaultwarden</td><td>Deploy, back up, trial, cut over</td><td>Any time; independent of code</td></tr>
-          <tr><td>Sensitive-data cleanup</td><td>Generalize private specifics into sealed facts</td><td>After Stage 3 (D65)</td></tr>
-          <tr><td>Fix-back</td><td>Scanner findings proposed to your workspace</td><td>Ongoing since Stage 0's first scan</td></tr>
+          <tr id="track-measurement"><td>Measurement <a class="pin" href="#track-measurement" aria-label="Copy a link to Measurement">#</a></td><td>Corpus, scorecards, gates</td><td>Stage 3's scorecard runs: 6 of 12 pass, 4 wait for agent runs; T2, T3 and T4 in CI, T1 on your Mac</td></tr>
+          <tr id="track-security"><td>Security <a class="pin" href="#track-security" aria-label="Copy a link to Security">#</a></td><td>Threat review and test scenarios</td><td>Stage 2's review: ten threats, now with the self-fixing batons (D100)</td></tr>
+          <tr id="track-vaultwarden"><td>Vaultwarden <a class="pin" href="#track-vaultwarden" aria-label="Copy a link to Vaultwarden">#</a></td><td>Deploy, back up, trial, cut over</td><td>Any time; independent of code</td></tr>
+          <tr id="track-sensitive-data-cleanup"><td>Sensitive-data cleanup <a class="pin" href="#track-sensitive-data-cleanup" aria-label="Copy a link to Sensitive-data cleanup">#</a></td><td>Generalize private specifics into sealed facts</td><td>After Stage 3 (D65)</td></tr>
+          <tr id="track-fix-back"><td>Fix-back <a class="pin" href="#track-fix-back" aria-label="Copy a link to Fix-back">#</a></td><td>Scanner findings proposed to your workspace</td><td>Ongoing since Stage 0's first scan</td></tr>
         </tbody>
       </table>
     </div>
@@ -410,5 +444,45 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
   <footer>
     <span>Sources: docs/plan/07-roadmap.md, docs/stage-2/STAGE-2.md and docs/plan/decisions.md in snds/synapse; the Stage 2 checklist and baton in the workspace's 26-synapse project.</span>
     <span>Sizes are the roadmap's estimates in focused weeks, and include about 30% for Windows.</span>
+    <span>Every line has its own link: tap its number or its # to copy it. The link opens this page at that line, on a Mac, the Windows PC or a phone.</span>
   </footer>
 </div>
+<div class="toast" role="status" aria-live="polite" hidden></div>
+<script>
+(() => {
+  const page = document.querySelector("[data-status-page]")?.dataset.statusPage || "";
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const toast = document.querySelector(".toast");
+  let timer;
+  const say = (text, ms) => {
+    toast.textContent = text; toast.hidden = false;
+    clearTimeout(timer); timer = setTimeout(() => { toast.hidden = true; }, ms);
+  };
+  const show = (id, smooth) => {
+    const el = id && document.getElementById(id);
+    if (!el) return;
+    document.querySelectorAll(".is-target").forEach(e => e.classList.remove("is-target"));
+    el.classList.add("is-target");
+    el.querySelectorAll("details").forEach(d => { d.open = true; });
+    el.scrollIntoView({ block: "center", behavior: smooth && !reduce ? "smooth" : "auto" });
+    if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
+    el.focus({ preventScroll: true });
+  };
+  const fromHash = smooth => show(decodeURIComponent(location.hash.slice(1)), smooth);
+  addEventListener("hashchange", () => fromHash(true));
+  fromHash(false);
+  // Web fonts can move things after the first scroll; settle on the item again.
+  document.fonts?.ready.then(() => fromHash(false));
+  document.addEventListener("click", async e => {
+    const a = e.target.closest("a.pin, a.node, .test a.id");
+    if (!a) return;
+    e.preventDefault();
+    const id = a.getAttribute("href").slice(1);
+    show(id, true);
+    try { history.replaceState(null, "", "#" + id); } catch (_) {}
+    const link = page + "#" + id;
+    try { await navigator.clipboard.writeText(link); say("Link copied: " + link, 2500); }
+    catch (_) { say("Copy this link: " + link, 8000); }
+  });
+})();
+</script>

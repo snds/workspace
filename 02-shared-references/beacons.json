@@ -25,7 +25,8 @@
       "- Durable context/learnings/decisions are written to the workspace, never to local agent memory.",
       "- Employer repos never receive personal-workspace content, and workspace content is never pasted into employer surfaces.",
       "- Plain language on every reply, in every project and folder: answer first, one idea per sentence, ordinary words, expand jargon on first use. Keep the depth. Full text: 04-preferences/user-preferences.md (Response Style).",
-      "- Commands for Sean: run each one yourself first and fix what stops it; one block each, starting `cd <absolute project folder> &&`, absolute paths, never `~/`; only when needed now. Full text: 04-preferences/user-preferences.md (Actions for me)."
+      "- Commands for Sean: run each one yourself first and fix what stops it; one block each, starting `cd <absolute project folder> &&`, absolute paths, never `~/`; only when needed now. Full text: 04-preferences/user-preferences.md (Actions for me).",
+      "- Link every tracked item you mention to its line (status page `#id` or a GitHub anchor), openable on Mac, Windows and iPhone. Full text: 04-preferences/user-preferences.md (Linked references)."
     ],
     "ws": [
       "- Neutral: `ws status` \u00b7 `ws resolve repo <path>` \u00b7 work request: `ws route --stdin <<'EOF'`\u2026`EOF`, load its output."
@@ -70,7 +71,7 @@
       "families": [
         "claude"
       ],
-      "max_bytes": 1983
+      "max_bytes": 2177
     },
     "claude": {
       "parts": [
@@ -85,7 +86,7 @@
       "families": [
         "claude"
       ],
-      "max_bytes": 1984
+      "max_bytes": 2178
     },
     "codex": {
       "parts": [
@@ -101,7 +102,7 @@
       "families": [
         "codex"
       ],
-      "max_bytes": 1957
+      "max_bytes": 2151
     },
     "cursor-user-rules": {
       "parts": [
@@ -113,7 +114,7 @@
       "families": [
         "cursor"
       ],
-      "max_bytes": 1270
+      "max_bytes": 1464
     },
     "projects-pointer": {
       "parts": [
@@ -127,14 +128,14 @@
         "codex",
         "cursor"
       ],
-      "max_bytes": 1507
+      "max_bytes": 1701
     },
     "rules": {
       "parts": [
         "rules"
       ],
       "families": [],
-      "max_bytes": 755
+      "max_bytes": 949
     }
   }
 }
