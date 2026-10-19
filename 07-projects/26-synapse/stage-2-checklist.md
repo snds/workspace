@@ -33,15 +33,35 @@ The automated half passes: 0 serious findings on 14 screens in both themes, and 
 
 The fight guard is built and tested. What's left is the live session the [watch-guard spike](https://github.com/snds/synapse/blob/main/spikes/watch-guard/RESULT.md) couldn't do: Obsidian open while the app writes. It runs on a test vault, never on your own.
 
-- [ ] **Claude makes the test vault** (a copy of T1b) and points the app at it.
-- [ ] **Open it in Obsidian** with your usual Linter settings (lint on save on, lint on file change off).
+- [x] **Claude makes the test vault** (a copy of T1b): done 2026-10-18, at `/Users/sean.sands/Projects/synapse-sandbox/s2-vault` (2,146 files, with the workspace's own `.obsidian` settings). Every file's hash is recorded.
+- [ ] **Point the service at it.** Quit the service from its menu, then:
+
+  ```bash
+  cd /Users/sean.sands/Projects/synapse && python3 scripts/s2-roundtrip.py point /Users/sean.sands/Projects/synapse-sandbox/s2-vault
+  ```
+
+  Then start the app as usual; it starts the service on the test vault.
+- [ ] **Open it in Obsidian** (Open folder as vault) with your usual Linter settings (lint on save on, lint on file change off).
 - [ ] **With the app running:**
   - [ ] Type in a note in Obsidian while the app applies a fix to the same note. The app waits out the quiet period and never overwrites your typing.
   - [ ] Save a note in Obsidian (the Linter runs) that has a waiting fix in the app. The fix is drafted again or set aside, and nothing is lost.
   - [ ] Edit a note in the app's Library while it's open in Obsidian. Obsidian shows the change, and nothing is duplicated or reverted.
   - [ ] Undo one of the app's fixes in Obsidian, twice within a minute. The app sets the file aside and asks.
   - [ ] Rename a note in Obsidian. It keeps its ID (S6).
-- [ ] **Pass:** 0 files changed outside the intended edits (Claude compares the test vault before and after), and the app stops and asks rather than fight.
+- [ ] **Compare,** naming each note you edited on purpose (one `--intended` per note):
+
+  ```bash
+  cd /Users/sean.sands/Projects/synapse && python3 scripts/s2-roundtrip.py compare /Users/sean.sands/Projects/synapse-sandbox/s2-vault --intended <path of a note you edited>
+  ```
+
+- [ ] **Put the service back on your workspace.** Quit it from its menu, then:
+
+  ```bash
+  cd /Users/sean.sands/Projects/synapse && python3 scripts/s2-roundtrip.py restore /Users/sean.sands/Projects/synapse-sandbox/s2-vault
+  ```
+
+  and start the app again.
+- [ ] **Pass:** 0 files changed outside the intended edits (the compare above; the scorecard reads its result), and the app stops and asks rather than fight.
 
 ## 4. An Apple team (items 5, 14, 16)
 
@@ -88,10 +108,10 @@ Claude tells you before starting, because it needs the PC for a while.
 ## 8. What Claude builds without you
 
 - [x] **Health's tool buttons (item 7):** run doctor, the harness and the nightly rebuild through the tool runner, with their results as issues. Done 2026-10-18: Health → Tools.
-- [ ] **A skill page (item 8):** a skill's document beside its contract: triggers, edges, what governs it, and its check status.
-- [ ] **Windows CI builds the desktop app too (item 15).** Today the Windows job tests the engine and the service but skips the app.
-- [ ] **An unsigned Mac app bundle** with the service inside as a helper app, so packaging, autostart from the bundle and the uninstall can be rehearsed before signing.
-- [ ] **The updater's wiring,** everything but the key.
+- [x] **A skill page (item 8):** a skill's document beside its contract: triggers, edges, what governs it, and its check status. Done 2026-10-18: a skill's sheet → Open the page.
+- [x] **Windows CI builds the desktop app too (item 15).** Done 2026-10-18: the `Desktop app (Windows)` job, whose unsigned build is kept a week as an artifact for the PC.
+- [x] **An unsigned Mac app bundle** with the service inside as a helper app, so packaging, autostart from the bundle and the uninstall can be rehearsed before signing. Done 2026-10-18 ([mac-bundle.md](https://github.com/snds/synapse/blob/main/docs/stage-2/mac-bundle.md)), with `sy-service --uninstall` and the S12 check `scripts/leftovers.py`.
+- [ ] **The updater's wiring,** everything but the key. Waits on a decision of yours: the repo is private, so its releases can't serve an updater. Where are updates published (a public releases repo, a Cloudflare bucket or Pages site)?
 - [ ] **Docs:** this list, STAGE-2.md and the scorecard updated as each item closes.
 
 ## Outcome
