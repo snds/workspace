@@ -160,6 +160,8 @@ could tell it to do something harmful.* Lead with that sentence next time.
      (`blob/<sha>/path?plain=1#L42`, so the line doesn't move).
   A local file link, a vault path or an app link (`sy-app://…`) may come along, never alone. None
   of them opens on the phone.
+- **A document an item points to must open on every device too.** Copy it into the status page
+  and link the item to it, or give a GitHub web link. A file path alone is a dead end on the phone.
 - **If the item has no line to link to, give it one first.** Add it to the project's status page
   with a permanent id, then link. A project without a status page links to its baton or plan on
   GitHub (form 2). This applies to every project the workspace runs, the workspace itself included:

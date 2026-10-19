@@ -111,6 +111,10 @@ Windows PC and his iPhone.
 - **Each item links to itself** (a `#`, or its number), and the link copies the full address.
 - **Arriving on `#id`** scrolls to the item, highlights it and opens its details. This also works
   when the address changes after the page has loaded (`hashchange`).
+- **A document a line item points to opens on any device.** Copy it into the page (a "Reference"
+  section, one `doc-…` id per document, its text in a `<details>`), and link the item to it with
+  `#doc-…`. Also give its GitHub web link, pinned to a commit. Never name a bare repo or vault path
+  (`docs/setup.md`) as the only way in: Sean can't open it on his iPhone. (Set 2026-10-19.)
 - **An item that asks Sean for something carries its context on the page:** what it is, why it
   matters, what it costs, and what he does. A long one goes in a "What this means" disclosure.
 - **Checked by** `python3 09-tools/validate-status-anchors.py`, which runs in the harness. The
