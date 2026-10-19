@@ -126,15 +126,15 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
 <div class="wrap">
   <header>
     <h1>Synapse Roadmap</h1>
-    <p class="answer"><strong>Stage 1 is done, Stage 0 nearly, and Stage 2 is built.</strong> What's left in both is checking and signing, and most of it needs you or hardware: an Apple team, the Windows PC, a signing route. Five stages follow; the last runs only if you decide to sell it.</p>
-    <p class="lede mono">Updated Oct 18, 2026 · repo at 34cbd8e, CI green on Mac, Windows and Linux, the Windows app build included · on Unicron ui 0.13.0</p>
+    <p class="answer"><strong>Stage 1 is done, Stage 0 nearly, Stage 2 is built, and Stage 3 is well under way.</strong> Import is built end to end, with its screen, scorecard, merge into this workspace and fix-back; the first deep scan of your workspace waits for your go because it costs model use. What's left in Stages 0 and 2 is checking and signing, and most of it needs you or hardware. The last stage runs only if you decide to sell it.</p>
+    <p class="lede mono">Updated Oct 18, 2026 · repo at d793b09 · CI last ran green at 2d0156f; GitHub has refused the jobs since (account billing), so every check ran locally · on Unicron ui 0.13.0</p>
   </header>
 
   <section aria-label="Summary">
     <div class="stats">
       <div class="stat"><b>1<small>/8</small></b><span>stages fully done (0–7); Stage 0 has 3 hardware spikes left</span></div>
       <div class="stat"><b>9<small>/14</small></b><span>Stage 2 exit tests passing</span></div>
-      <div class="stat"><b>14</b><span>items waiting on you</span></div>
+      <div class="stat"><b>18</b><span>items waiting on you</span></div>
       <div class="stat"><b>29–41</b><span>focused weeks after Stage 2, through Stage 6</span></div>
     </div>
     <div class="bar" role="img" aria-label="Stage 2 exit tests: 9 passing, 5 waiting, of 14">
@@ -224,16 +224,17 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
       <li class="stage">
         <div class="rail"><span class="node">3</span></div>
         <div class="body">
-          <div class="head"><span class="t">Import, create, measure</span><span class="chip">Not started</span><span class="chip size">8–12 wk</span></div>
+          <div class="head"><span class="t">Import, create, measure</span><span class="chip now">Under way · items 1–8, 11 and 13 built</span><span class="chip size">8–12 wk planned · about 13 sized</span></div>
           <p class="goal">Bring workspaces in and create new ones, with proof.</p>
           <div class="card">
             <ul class="steps">
-              <li><i class="mark open"></i><span>The import pipeline, with the deep scan as an agent job</span><span class="who claude">Claude</span></li>
+              <li><i class="mark part"></i><span>The import pipeline, with the deep scan as an agent job<span class="note">Built: the workspace plan, snapshot and inventory in eight formats, the baseline (equal to today's routing on all 5,488 requests), the pre-pass, the deep scan with read-only agents and the deny-list gate, and the Import screen: confirm the cost, review each finding, write a new workspace and score it.</span></span><span class="who claude">Claude</span></li>
               <li><i class="mark open"></i><span>Create: the generator, version 2, with forms and an agent interview</span><span class="who claude">Claude</span></li>
-              <li><i class="mark part"></i><span>Import into this workspace (D99)<span class="note">The control is built. The merge, its clash rules and the inbox for when no agent is connected come here.</span></span><span class="who claude">Claude</span></li>
-              <li><i class="mark open"></i><span>Scorecards, with corpus T1–T4 running in CI</span><span class="who claude">Claude</span></li>
+              <li><i class="mark part"></i><span>Import into this workspace (D99)<span class="note">Built: the merge by type, its clash rules (yours kept by default), list unions, links rewritten, the inbox for near-duplicates, one proposal with undo. An agent's judgment of the inbox comes with the bridge.</span></span><span class="who claude">Claude</span></li>
+              <li><i class="mark part"></i><span>Scorecards, with corpus T1–T4 running in CI<span class="note">Built: <code>sy score</code> and Health → Create and import; T2 (ten generated workspaces), T3 on T2 and T4 in CI; your T1 scored on your Mac.</span></span><span class="who claude">Claude</span></li>
               <li><i class="mark open"></i><span>The Surface installer's writes: one review, then automatic placement, records and a clean uninstall</span><span class="who claude">Claude</span></li>
-              <li><i class="mark open"></i><span>The fix-back flow to your workspace</span><span class="who claude">Claude</span></li>
+              <li><i class="mark done">✓</i><span>The fix-back flow to your workspace<span class="note">A branch for your review, made beside your checkout, never pushed; an employer's workspace gets nothing.</span></span><span class="who claude">Claude</span></li>
+              <li><i class="mark you"></i><span>Say go for the first deep scan of your workspace: 9 passes, about 5.8 million tokens</span><span class="who you">You</span></li>
               <li><i class="mark you"></i><span>Review the import proposals for your workspace, and pick the T2 test profiles</span><span class="who you">You</span></li>
             </ul>
           </div>
@@ -320,6 +321,10 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
       <li><span class="kind">Do</span><b>S13 from another account</b><span>One <code>sudo -u nobody</code> command against the service's socket. It should say "Permission denied".</span></li>
       <li><span class="kind">Try</span><b>Resume to the cloud, once</b><span>Built but untried, because a test starts a real cloud session.</span></li>
       <li><span class="kind">Decide</span><b>The public name</b><span>"Synapse" is a codename. No trademark check yet; it's needed before any public use or a go on Stage 7.</span></li>
+      <li><span class="kind">Fix</span><b>GitHub billing, so CI runs</b><span>Since item 6 GitHub hasn't started any job: "recent account payments have failed or your spending limit needs to be increased" (Settings → Billing & plans). Every check ran locally meanwhile.</span></li>
+      <li><span class="kind">Go</span><b>The first deep scan</b><span>Of your workspace's Stage 3 snapshot: 9 passes, about 5.8 million tokens, each stopping at $10 or 30 minutes. Say go and set a total cap. A deny list first: terms that must never leave your Mac, one per line.</span></li>
+      <li><span class="kind">Decide</span><b>Foundations across skill chains</b><span>The contract says foundations load first. The routers do that within each chain, so 174 of 5,488 answers load a foundation after another skill. Sorting across chains changes those answers.</span></li>
+      <li><span class="kind">Confirm</span><b>Stage 3's decisions, D101–D105</b><span>Work proceeds on the recommendations: Create in the Rust core, Claude Code as the scan's agent, new folders only, the ten T2 profiles, and the template library.</span></li>
       <li><span class="kind">Use</span><b>Two weeks of daily use (S1)</b><span>Check status in the app instead of asking an agent, and note what's missing.</span></li>
     </ul>
   </section>
@@ -333,6 +338,12 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
       <li><span class="kind">Item 16</span><b>The Mac bundle and the uninstall</b><span>The service as a helper app inside the app (no Dock icon), <code>sy-service --uninstall</code>, and the S12 check that found the web view's two leftover folders.</span></li>
       <li><span class="kind">S2</span><b>The Obsidian test vault</b><span>A copy of T1b, ready, with commands to point the service at it, compare it after your session, and put it back.</span></li>
       <li><span class="kind">F12 · F13</span><b>Bars and the graph</b><span>Every pane bar one height; the 3D graph turns over the top and underneath, lit from any side.</span></li>
+      <li><span class="kind">Stage 3 · 2–3</span><b>The workspace plan, snapshot and inventory</b><span>Any workspace in seven formats, snapshotted read-only and written back byte for byte.</span></li>
+      <li><span class="kind">Stage 3 · 4</span><b>Baseline and pre-pass</b><span>Today's routing recorded and proven stable; the files to read split into packets of up to 100 by domain and hub; every skill reachable.</span></li>
+      <li><span class="kind">Stage 3 · 5</span><b>The deep scan, ready</b><span>One read-only Claude Code pass per packet, cost shown first, budgets per pass, and a summary written only when it passes your deny list.</span></li>
+      <li><span class="kind">Stage 3 · 6–7</span><b>The Import screen and the scorecard</b><span>Five steps on one page, each finding to accept, edit or reject, a write that's scored on nine gates; Health lists every scorecard and its trend.</span></li>
+      <li><span class="kind">Stage 3 · 8</span><b>Ten generated test workspaces</b><span>Made by <code>wsx</code>, checked in CI: the engine routes each exactly as it routes itself, and finds every planted defect.</span></li>
+      <li><span class="kind">Stage 3 · 11, 13</span><b>Merge into this workspace, and fix-back</b><span>Bring a vault or workspace in as one change with undo; send accepted fixes back to your own workspace as a branch to review.</span></li>
     </ul>
     <h3>Next, once you've decided</h3>
     <ul class="asks quiet">

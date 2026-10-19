@@ -2,8 +2,10 @@
 
 _The long-term tier of [the baton](../SESSION-STATE.md): what it moved out once it passed 12 KB. Generated; don't edit by hand. Newest month first._
 
-## [2026-10](2026-10.md) — 35 entries
+## [2026-10](2026-10.md) — 37 entries
 
+- 2026-10-18 — Stage 3 items 1–5
+- 2026-10-18 — Stage 2's no-input items
 - 2026-10-18 — Pane bars at one height (F12) and the roadmap page
 - 2026-10-18 — Batons for every agent (D100)
 - 2026-10-18 — Memory tiers and the baton split (D98, D99)
