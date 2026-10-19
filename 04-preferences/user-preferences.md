@@ -160,6 +160,8 @@ could tell it to do something harmful.* Lead with that sentence next time.
      (`blob/<sha>/path?plain=1#L42`, so the line doesn't move).
   A local file link, a vault path or an app link (`sy-app://…`) may come along, never alone. None
   of them opens on the phone.
+- **A document an item points to must open on every device too.** Copy it into the status page
+  and link the item to it, or give a GitHub web link. A file path alone is a dead end on the phone.
 - **If the item has no line to link to, give it one first.** Add it to the project's status page
   with a permanent id, then link. A project without a status page links to its baton or plan on
   GitHub (form 2). This applies to every project the workspace runs, the workspace itself included:
@@ -170,9 +172,9 @@ could tell it to do something harmful.* Lead with that sentence next time.
 - **Employer work** links to the employer's own surfaces (its repo, its tickets). Never copy an
   employer item onto a personal status page to make it linkable.
 - **The page side:** status pages follow [artifact-standards.md](../02-shared-references/artifact-standards.md)
-  ("Status pages"), checked by `09-tools/validate-status-anchors.py`. Synapse's app gives every item
-  the same kind of link (Synapse D107).
-- **Why:** on 2026-10-19 a Synapse reply listed "The deep scan, then the other agent runs" with no
+  ("Status pages"), checked by `09-tools/validate-status-anchors.py`. The workspace app gives every
+  item the same kind of link.
+- **Why:** on 2026-10-19 a project reply listed "The deep scan, then the other agent runs" with no
   context and nothing to click. I couldn't tell what it meant or where it sat on the status page.
 
 ## Working Principles (DS / design-engineering work)

@@ -1,0 +1,781 @@
+<title>Mailbird Roadmap</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one reading column — summary, the latest phases, what needs you, then the full harvest by vertical. */
+:root {
+  --bg: oklch(0.985 0.003 260);
+  --surface: oklch(1 0 0);
+  --fg: oklch(0.2 0.01 260);
+  --muted: oklch(0.5 0.012 260);
+  --line: oklch(0.91 0.006 260);
+  --accent: oklch(0.55 0.17 255);
+  /* The app's own vertical hues (app-extension.css): one per area. */
+  --mail: oklch(0.6 0.19 255);
+  --calendar: oklch(0.63 0.2 25);
+  --contacts: oklch(0.6 0.14 160);
+  --notes: oklch(0.7 0.16 75);
+  --system: oklch(0.55 0.08 290);
+  --done: oklch(0.55 0.13 155);
+  --part: oklch(0.65 0.14 75);
+  --open: oklch(0.6 0.012 260);
+  --chip: oklch(0.955 0.006 260);
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: oklch(0.17 0.008 260); --surface: oklch(0.21 0.009 260); --fg: oklch(0.95 0.004 260); --muted: oklch(0.7 0.01 260);
+    --line: oklch(0.3 0.01 260); --accent: oklch(0.72 0.14 255);
+    --mail: oklch(0.72 0.15 255); --calendar: oklch(0.74 0.15 25); --contacts: oklch(0.74 0.12 160); --notes: oklch(0.82 0.14 80); --system: oklch(0.74 0.08 290);
+    --done: oklch(0.75 0.13 155); --part: oklch(0.8 0.13 80); --open: oklch(0.6 0.01 260); --chip: oklch(0.26 0.01 260);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: oklch(0.17 0.008 260); --surface: oklch(0.21 0.009 260); --fg: oklch(0.95 0.004 260); --muted: oklch(0.7 0.01 260);
+  --line: oklch(0.3 0.01 260); --accent: oklch(0.72 0.14 255);
+  --mail: oklch(0.72 0.15 255); --calendar: oklch(0.74 0.15 25); --contacts: oklch(0.74 0.12 160); --notes: oklch(0.82 0.14 80); --system: oklch(0.74 0.08 290);
+  --done: oklch(0.75 0.13 155); --part: oklch(0.8 0.13 80); --open: oklch(0.6 0.01 260); --chip: oklch(0.26 0.01 260);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.55 var(--font-body); }
+.wrap { max-width: 52rem; margin: 0 auto; padding-block: 40px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 40px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 1.25rem; font-weight: 600; }
+h3 { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 62ch; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+header { display: flex; flex-direction: column; gap: 12px; }
+.answer { font-size: 1.125rem; max-width: 62ch; }
+.answer strong { font-weight: 600; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.stat { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; }
+.stat b { font: 600 1.6rem/1.1 var(--font-mono); font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: 0.85rem; }
+.bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--chip); }
+.bar i { display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.85rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+section { display: flex; flex-direction: column; gap: 14px; }
+ol.phases { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.phase { display: grid; grid-template-columns: 3.25rem minmax(0, 1fr) auto; gap: 4px 12px; padding: 14px 16px; border-top: 1px solid var(--line); align-items: baseline; }
+.phase:first-child { border-top: 0; }
+.phase .n { font: 500 0.95rem var(--font-mono); color: var(--muted); }
+.phase .t { font-weight: 600; min-width: 0; }
+.phase .d { grid-column: 2 / -1; color: var(--muted); font-size: 0.9rem; min-width: 0; }
+.size { font: 500 0.75rem var(--font-mono); padding: 2px 8px; border-radius: 999px; background: var(--chip); color: var(--fg); white-space: nowrap; }
+.size.merged { background: var(--done); color: var(--surface); }
+.size.wait { background: transparent; border: 1px solid var(--part); color: var(--part); }
+.area { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 8px; vertical-align: 1px; }
+.divider { padding: 8px 16px; font: 500 0.75rem var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--chip); border-top: 1px solid var(--line); }
+.divider:first-child { border-top: 0; border-radius: 10px 10px 0 0; }
+ul.asks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+ul.asks li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; padding: 12px 14px; border-left: 3px solid var(--part); background: var(--surface); border-radius: 0 8px 8px 0; }
+ul.asks li b { font-weight: 600; }
+ul.asks li span { grid-column: 1 / -1; color: var(--muted); font-size: 0.9rem; }
+.groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 23rem), 1fr)); gap: 24px; align-items: start; }
+.group { display: flex; flex-direction: column; gap: 8px; }
+.group h3 .count { margin-left: auto; font: 500 0.8rem var(--font-mono); color: var(--muted); letter-spacing: 0; text-transform: none; }
+ul.items { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+ul.items li { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
+.mark { width: 14px; height: 14px; border-radius: 4px; display: inline-grid; place-items: center; font-size: 10px; line-height: 1; transform: translateY(2px); }
+.mark.done { background: var(--done); color: var(--surface); }
+.mark.part { background: linear-gradient(90deg, var(--part) 50%, transparent 50%); border: 1.5px solid var(--part); }
+.mark.open { border: 1.5px solid var(--open); }
+.where { font: 400 0.78rem var(--font-mono); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.where.next { color: var(--accent); }
+.note { display: block; color: var(--muted); font-size: 0.82rem; }
+footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 16px; }
+@media (max-width: 30rem) {
+  .phase { grid-template-columns: 2.75rem minmax(0, 1fr); }
+  .phase .size { grid-column: 2; justify-self: start; }
+}
+.pin { font: 500 0.8rem var(--font-mono); color: var(--muted); text-decoration: none; padding: 0 3px; opacity: 0.75; }
+.pin:hover, .pin:focus-visible { color: var(--accent); opacity: 1; }
+.is-target { outline: 2px solid var(--accent); outline-offset: 2px; background: color-mix(in oklch, var(--accent) 9%, var(--surface)); border-radius: 8px; }
+@media (prefers-reduced-motion: no-preference) { .is-target { transition: background-color 0.4s; } }
+ul.asks details { grid-column: 1 / -1; font-size: 0.9rem; }
+ul.asks summary { cursor: pointer; color: var(--accent); font-weight: 500; }
+ul.asks details p { margin-top: 6px; color: var(--fg); max-width: 62ch; }
+.doc { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.doc-title { text-transform: none; letter-spacing: 0; font-size: 1rem; }
+.doc-from { color: var(--muted); font-size: 0.85rem; }
+.doc summary { cursor: pointer; color: var(--accent); font-weight: 500; }
+.doc-body { margin-top: 10px; font-size: 0.92rem; overflow-wrap: anywhere; }
+.doc-body h2, .doc-body h3 { font-size: 0.95rem; margin: 16px 0 6px; text-transform: none; letter-spacing: 0; }
+.doc-body p, .doc-body ul, .doc-body ol { margin: 0 0 8px; }
+.doc-body ul, .doc-body ol { padding-left: 1.25rem; }
+.doc-body table { border-collapse: collapse; display: block; overflow-x: auto; font-size: 0.85rem; }
+.doc-body th, .doc-body td { border: 1px solid var(--line); padding: 4px 8px; text-align: left; vertical-align: top; }
+.doc-body pre { overflow-x: auto; background: var(--chip); padding: 8px; border-radius: 6px; }
+.doc-body code { font-family: var(--font-mono); font-size: 0.85em; }
+a { color: var(--accent); }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); max-width: calc(100% - 32px); background: var(--fg); color: var(--bg); padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; overflow-wrap: anywhere; user-select: text; z-index: 10; }
+</style>
+
+<div class="wrap" data-status-page="https://claude.ai/artifact/RuSar7aj6GxqcgHzmXv61x">
+  <header>
+    <h1>Mailbird Roadmap</h1>
+    <p class="answer"><strong>The software phases are done.</strong> Every planned phase through 49 is merged, and 58 of the harvest's 60 features are built. The two left are partly done, and both need real phones. What remains waits on hardware or on you, not on code.</p>
+    <p class="lede mono">Updated Oct 17, 2026 · 45–49 merged · follow-ups #60–#66 merged · nothing in review</p>
+  </header>
+
+  <section aria-label="Summary">
+    <div class="stats">
+      <div class="stat"><b>49</b><span>planned phases merged</span></div>
+      <div class="stat"><b>58<span class="mono" style="font-size:1rem;color:var(--muted)">/60</span></b><span>harvest features done</span></div>
+      <div class="stat"><b>0</b><span>PRs in review</span></div>
+      <div class="stat"><b>5</b><span>items waiting on you</span></div>
+    </div>
+    <div class="bar" role="img" aria-label="58 done, 2 partly done, of 60">
+      <i style="width:96.7%;background:var(--done)"></i><i style="width:3.3%;background:var(--part)"></i>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--done)"></i>Done · 58</span>
+      <span><i class="dot" style="background:var(--part)"></i>Partly done · 2</span>
+      <span><i class="dot" style="border:1.5px solid var(--open)"></i>Open · 0</span>
+    </div>
+  </section>
+
+  <section aria-labelledby="latest">
+    <h2 id="latest">Latest, and what's left</h2>
+    <p class="lede">The last planned phases, the follow-ups that came out of them, and the work only hardware can finish.</p>
+    <ol class="phases">
+      <li class="divider" id="group-just-merged">Just merged <a class="pin" href="#group-just-merged" aria-label="Copy a link to Just merged">#</a></li>
+      <li class="phase" id="built-unicron-0-9"><span class="n">—</span><span class="t"><i class="area" style="background:var(--system)"></i>unicron 0.9 <a class="pin" href="#built-unicron-0-9" aria-label="Copy a link to unicron 0.9">#</a></span><span class="size merged">Merged · PR #65</span><span class="d">Destructive text and the light warning fill read stronger. No code change; all 49 browser suites pass.</span></li>
+      <li class="phase" id="built-core-clipboard"><span class="n">—</span><span class="t"><i class="area" style="background:var(--notes)"></i>The core copies the key and saves images <a class="pin" href="#built-core-clipboard" aria-label="Copy a link to The core copies the key and saves images">#</a></span><span class="size merged">Merged · PR #66</span><span class="d">On the desktop and phone, the relay key is copied by the app's core, and the clear leaves anything you copied since. Save image in the viewer works there too.</span></li>
+      <li class="phase" id="phase-45-opt-in-ai"><span class="n">45</span><span class="t"><i class="area" style="background:var(--mail)"></i>Opt-in AI: summaries and smart reply <a class="pin" href="#phase-45-opt-in-ai" aria-label="Copy a link to Opt-in AI: summaries and smart reply">#</a></span><span class="size merged">Merged · PR #55</span><span class="d">Off by default. A model on your computer, or Claude or another service with your own key. Sent only when you ask.</span></li>
+      <li class="phase" id="phase-46-shared-drafts"><span class="n">46</span><span class="t"><i class="area" style="background:var(--mail)"></i>Shared drafts and team comments <a class="pin" href="#phase-46-shared-drafts" aria-label="Copy a link to Shared drafts and team comments">#</a></span><span class="size merged">Merged · PR #56</span><span class="d">Share a conversation by link: teammates comment and write the reply with you; you send it.</span></li>
+      <li class="phase" id="phase-47-presence-and-files"><span class="n">47</span><span class="t"><i class="area" style="background:var(--notes)"></i>Who's here, and files with shares <a class="pin" href="#phase-47-presence-and-files" aria-label="Copy a link to Who&#x27;s here, and files with shares">#</a></span><span class="size merged">Merged · PR #57</span><span class="d">See who else has a shared note or conversation open. A note's images travel with it; you choose which attachments teammates can download.</span></li>
+      <li class="phase" id="phase-48-e2e-sync"><span class="n">48</span><span class="t"><i class="area" style="background:var(--notes)"></i>End-to-end encrypted sync <a class="pin" href="#phase-48-e2e-sync" aria-label="Copy a link to End-to-end encrypted sync">#</a></span><span class="size merged">Merged · PR #58</span><span class="d">Turn it on and the relay keeps your notes and shares but can't read them.</span></li>
+      <li class="phase" id="phase-49-shared-inbox"><span class="n">49</span><span class="t"><i class="area" style="background:var(--mail)"></i>A shared inbox on the gateway <a class="pin" href="#phase-49-shared-inbox" aria-label="Copy a link to A shared inbox on the gateway">#</a></span><span class="size merged">Merged · PR #59</span><span class="d">Invite people to your gateway. Assign conversations, leave notes the customer never sees, and see who else is in one.</span></li>
+      <li class="phase" id="built-follow-ups-60-64"><span class="n">—</span><span class="t"><i class="area" style="background:var(--system)"></i>Follow-ups <a class="pin" href="#built-follow-ups-60-64" aria-label="Copy a link to Follow-ups">#</a></span><span class="size merged">Merged · #60–#64</span><span class="d">unicron 0.7 with readable area colors, the relay key in a secret field, unused note images cleared after 30 days, a full-screen image viewer, and multi-page scans.</span></li>
+      <li class="divider" id="group-left-hardware">Left: needs hardware <a class="pin" href="#group-left-hardware" aria-label="Copy a link to Left: needs hardware">#</a></li>
+      <li class="phase" id="open-device-spike"><span class="n">5b</span><span class="t"><i class="area" style="background:var(--system)"></i>Device spike and hardware session <a class="pin" href="#open-device-spike" aria-label="Copy a link to Device spike and hardware session">#</a></span><span class="size">M</span><span class="d">With Sean, on real devices: iOS and Android builds, location reminders, Apple Pencil, the menu-bar calendar on each desktop, native scanners, and the clipboard and Downloads on phones.</span></li>
+      <li class="phase" id="open-ocr-languages"><span class="n">—</span><span class="t"><i class="area" style="background:var(--notes)"></i>More languages for text in images <a class="pin" href="#open-ocr-languages" aria-label="Copy a link to More languages for text in images">#</a></span><span class="size">S</span><span class="d">Each language needs its model files downloaded, which the cloud sessions can't do.</span></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="you">
+    <h2 id="you">Waiting on you</h2>
+    <ul class="asks">
+      <li id="ask-product-name"><b>The product name <a class="pin" href="#ask-product-name" aria-label="Copy a link to The product name">#</a></b><span>"Mailbird" belongs to Mailbird, Inc. (<a href="#doc-product-name">ADR-0006, below</a>). Google's app verification is blocked until it changes.</span><details><summary>What this means</summary><p>“Mailbird” is Mailbird, Inc.’s trademark, so the project can’t ship under it. Google won’t verify the sign-in app until the name is final, and the name goes into the app id, the website and the OAuth consent screen. You pick a name; I rename the app and docs in one pass.</p></details></li>
+      <li id="ask-google-oauth"><b>A Google OAuth client <a class="pin" href="#ask-google-oauth" aria-label="Copy a link to A Google OAuth client">#</a></b><span>For real Gmail and Google sign-ins. Steps: <a href="#doc-google-verification">the Google setup guide</a>, on this page.</span><details><summary>What this means</summary><p>Real Gmail and Google Calendar sign-ins need an OAuth client in your Google Cloud account; I can’t create one. It’s free for testing (up to 100 test users) and needs Google’s verification to go public, which waits on the name. You follow <a href="#doc-google-verification">the Google setup guide</a> and paste me the client id.</p></details></li>
+      <li id="ask-microsoft-entra"><b>A Microsoft Entra app <a class="pin" href="#ask-microsoft-entra" aria-label="Copy a link to A Microsoft Entra app">#</a></b><span>For real Outlook and Microsoft 365 sign-ins. Steps: <a href="#doc-microsoft-setup">the Microsoft setup guide</a>, on this page.</span><details><summary>What this means</summary><p>Real Outlook and Microsoft 365 sign-ins need an app registration in Microsoft Entra; I can’t create one. It’s free and takes about ten minutes. You follow <a href="#doc-microsoft-setup">the Microsoft setup guide</a> and paste me the client id.</p></details></li>
+      <li id="ask-menu-bar-desktop-check"><b>A desktop check of the menu-bar calendar (42) <a class="pin" href="#ask-menu-bar-desktop-check" aria-label="Copy a link to A desktop check of the menu-bar calendar (42)">#</a></b><span>The tray icon, its window, and keep-running-on-close need macOS, Windows, and Linux. <a href="#doc-menu-bar-checklist">ADR-0054</a> has a 10-row checklist, on this page.</span><details><summary>What this means</summary><p>The tray icon, its mini window and keep-running-on-close only exist in a real desktop window, which the cloud sessions can’t open. On each of your Macs and the Windows PC, you run the app and go through <a href="#doc-menu-bar-checklist">ADR-0054’s 10-row checklist</a>; I fix whatever fails.</p></details></li>
+      <li id="ask-device-spike"><b>Real phones for the device spike (5b) <a class="pin" href="#ask-device-spike" aria-label="Copy a link to Real phones for the device spike (5b)">#</a></b><span>iOS and Android builds, location reminders, and Pencil handwriting can only be checked on hardware. The plan: <a href="#doc-mobile-spike">the device spike checklist</a>, on this page.</span><details><summary>What this means</summary><p>iOS and Android builds, location reminders, Apple Pencil, the native scanners, and copying and saving on a phone can only be checked on a device. You’ll need your iPhone (and an Android phone if you have one) and an Apple developer account for the iOS build (a free one installs on your own phone; TestFlight needs the paid one). We do it together in one session, following <a href="#doc-mobile-spike">the device spike checklist</a>.</p></details></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="harvest">
+    <h2 id="harvest">The harvest, feature by feature</h2>
+    <p class="lede">Every row of the competitive analysis §3, with the phase that built it.</p>
+    <div class="groups">
+      <div class="group">
+        <h3><i class="area" style="background:var(--mail)"></i>Mail<span class="count">18 of 18</span></h3>
+        <ul class="items">
+          <li id="mail-unified-inbox"><i class="mark done">✓</i><span>Unified inbox <a class="pin" href="#mail-unified-inbox" aria-label="Copy a link to Unified inbox">#</a></span><span class="where">1</span></li>
+          <li id="mail-smart-inbox-people-updates-newsletters"><i class="mark done">✓</i><span>Smart inbox (People, Updates, Newsletters) <a class="pin" href="#mail-smart-inbox-people-updates-newsletters" aria-label="Copy a link to Smart inbox (People, Updates, Newsletters)">#</a></span><span class="where">8</span></li>
+          <li id="mail-split-inbox-your-own-lanes"><i class="mark done">✓</i><span>Split inbox, your own lanes <a class="pin" href="#mail-split-inbox-your-own-lanes" aria-label="Copy a link to Split inbox, your own lanes">#</a></span><span class="where">12</span></li>
+          <li id="mail-screener-for-first-time-senders"><i class="mark done">✓</i><span>Screener for first-time senders <a class="pin" href="#mail-screener-for-first-time-senders" aria-label="Copy a link to Screener for first-time senders">#</a></span><span class="where">8</span></li>
+          <li id="mail-imbox-feed-paper-trail"><i class="mark done">✓</i><span>Imbox, Feed, Paper Trail <a class="pin" href="#mail-imbox-feed-paper-trail" aria-label="Copy a link to Imbox, Feed, Paper Trail">#</a><span class="note">As the People, Updates, and Newsletters lanes</span></span><span class="where">8</span></li>
+          <li id="mail-snooze"><i class="mark done">✓</i><span>Snooze <a class="pin" href="#mail-snooze" aria-label="Copy a link to Snooze">#</a></span><span class="where">1</span></li>
+          <li id="mail-send-later-in-their-time-zone-too"><i class="mark done">✓</i><span>Send later, in their time zone too <a class="pin" href="#mail-send-later-in-their-time-zone-too" aria-label="Copy a link to Send later, in their time zone too">#</a></span><span class="where">7 · 31</span></li>
+          <li id="mail-undo-send"><i class="mark done">✓</i><span>Undo send <a class="pin" href="#mail-undo-send" aria-label="Copy a link to Undo send">#</a></span><span class="where">1</span></li>
+          <li id="mail-follow-up-reminders"><i class="mark done">✓</i><span>Follow-up reminders <a class="pin" href="#mail-follow-up-reminders" aria-label="Copy a link to Follow-up reminders">#</a></span><span class="where">7</span></li>
+          <li id="mail-command-palette-and-keyboard-grammar"><i class="mark done">✓</i><span>Command palette and keyboard grammar <a class="pin" href="#mail-command-palette-and-keyboard-grammar" aria-label="Copy a link to Command palette and keyboard grammar">#</a></span><span class="where">7 · 15 · 22</span></li>
+          <li id="mail-configurable-swipe-gestures"><i class="mark done">✓</i><span>Configurable swipe gestures <a class="pin" href="#mail-configurable-swipe-gestures" aria-label="Copy a link to Configurable swipe gestures">#</a></span><span class="where">1b · 15</span></li>
+          <li id="mail-bundled-newsletters"><i class="mark done">✓</i><span>Bundled newsletters <a class="pin" href="#mail-bundled-newsletters" aria-label="Copy a link to Bundled newsletters">#</a></span><span class="where">12</span></li>
+          <li id="mail-tracker-and-pixel-blocking"><i class="mark done">✓</i><span>Tracker and pixel blocking <a class="pin" href="#mail-tracker-and-pixel-blocking" aria-label="Copy a link to Tracker and pixel blocking">#</a></span><span class="where">1</span></li>
+          <li id="mail-one-tap-unsubscribe-and-block"><i class="mark done">✓</i><span>One-tap unsubscribe and block <a class="pin" href="#mail-one-tap-unsubscribe-and-block" aria-label="Copy a link to One-tap unsubscribe and block">#</a></span><span class="where">7 · 8</span></li>
+          <li id="mail-templates-and-signatures"><i class="mark done">✓</i><span>Templates and signatures <a class="pin" href="#mail-templates-and-signatures" aria-label="Copy a link to Templates and signatures">#</a></span><span class="where">7</span></li>
+          <li id="mail-deep-power-settings"><i class="mark done">✓</i><span>Deep power settings <a class="pin" href="#mail-deep-power-settings" aria-label="Copy a link to Deep power settings">#</a></span><span class="where">43</span></li>
+          <li id="mail-ai-summaries-and-smart-reply-opt-in"><i class="mark done">✓</i><span>AI summaries and smart reply (opt-in) <a class="pin" href="#mail-ai-summaries-and-smart-reply-opt-in" aria-label="Copy a link to AI summaries and smart reply (opt-in)">#</a></span><span class="where">45</span></li>
+          <li id="mail-shared-drafts-and-team-comments"><i class="mark done">✓</i><span>Shared drafts and team comments <a class="pin" href="#mail-shared-drafts-and-team-comments" aria-label="Copy a link to Shared drafts and team comments">#</a><span class="note">Shared links (46) and a shared inbox (49)</span></span><span class="where">46 · 49</span></li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3><i class="area" style="background:var(--calendar)"></i>Calendar<span class="count">15 of 15</span></h3>
+        <ul class="items">
+          <li id="calendar-natural-language-event-entry"><i class="mark done">✓</i><span>Natural-language event entry <a class="pin" href="#calendar-natural-language-event-entry" aria-label="Copy a link to Natural-language event entry">#</a></span><span class="where">2</span></li>
+          <li id="calendar-scheduling-links-rebook-and-cancel"><i class="mark done">✓</i><span>Scheduling links, rebook and cancel <a class="pin" href="#calendar-scheduling-links-rebook-and-cancel" aria-label="Copy a link to Scheduling links, rebook and cancel">#</a></span><span class="where">16 · 21</span></li>
+          <li id="calendar-second-time-zone-in-the-gutter"><i class="mark done">✓</i><span>Second time zone in the gutter <a class="pin" href="#calendar-second-time-zone-in-the-gutter" aria-label="Copy a link to Second time zone in the gutter">#</a></span><span class="where">9</span></li>
+          <li id="calendar-time-zone-aware-event-creation"><i class="mark done">✓</i><span>Time-zone-aware event creation <a class="pin" href="#calendar-time-zone-aware-event-creation" aria-label="Copy a link to Time-zone-aware event creation">#</a></span><span class="where">19</span></li>
+          <li id="calendar-travel-time-and-time-to-leave-alerts"><i class="mark done">✓</i><span>Travel time and time-to-leave alerts <a class="pin" href="#calendar-travel-time-and-time-to-leave-alerts" aria-label="Copy a link to Travel time and time-to-leave alerts">#</a></span><span class="where">19</span></li>
+          <li id="calendar-availability-overlay-find-a-time"><i class="mark done">✓</i><span>Availability overlay (find a time) <a class="pin" href="#calendar-availability-overlay-find-a-time" aria-label="Copy a link to Availability overlay (find a time)">#</a></span><span class="where">11</span></li>
+          <li id="calendar-calendar-sets"><i class="mark done">✓</i><span>Calendar sets <a class="pin" href="#calendar-calendar-sets" aria-label="Copy a link to Calendar sets">#</a></span><span class="where">11</span></li>
+          <li id="calendar-google-icloud-and-exchange-in-one-view"><i class="mark done">✓</i><span>Google, iCloud, and Exchange in one view <a class="pin" href="#calendar-google-icloud-and-exchange-in-one-view" aria-label="Copy a link to Google, iCloud, and Exchange in one view">#</a></span><span class="where">2 · 4 · 4b</span></li>
+          <li id="calendar-tasks-time-blocked-on-the-calendar"><i class="mark done">✓</i><span>Tasks time-blocked on the calendar <a class="pin" href="#calendar-tasks-time-blocked-on-the-calendar" aria-label="Copy a link to Tasks time-blocked on the calendar">#</a></span><span class="where">18</span></li>
+          <li id="calendar-join-meeting-button"><i class="mark done">✓</i><span>Join-meeting button <a class="pin" href="#calendar-join-meeting-button" aria-label="Copy a link to Join-meeting button">#</a></span><span class="where">9 · 20</span></li>
+          <li id="calendar-propose-a-new-time"><i class="mark done">✓</i><span>Propose a new time <a class="pin" href="#calendar-propose-a-new-time" aria-label="Copy a link to Propose a new time">#</a></span><span class="where">11</span></li>
+          <li id="calendar-interesting-calendars-holidays-moon"><i class="mark done">✓</i><span>Interesting calendars (holidays, moon) <a class="pin" href="#calendar-interesting-calendars-holidays-moon" aria-label="Copy a link to Interesting calendars (holidays, moon)">#</a></span><span class="where">14 · 23</span></li>
+          <li id="calendar-keyboard-navigation-your-own-keys"><i class="mark done">✓</i><span>Keyboard navigation, your own keys <a class="pin" href="#calendar-keyboard-navigation-your-own-keys" aria-label="Copy a link to Keyboard navigation, your own keys">#</a></span><span class="where">15 · 22</span></li>
+          <li id="calendar-invitation-conflicts-in-the-thread"><i class="mark done">✓</i><span>Invitation conflicts in the thread <a class="pin" href="#calendar-invitation-conflicts-in-the-thread" aria-label="Copy a link to Invitation conflicts in the thread">#</a></span><span class="where">11</span></li>
+          <li id="calendar-menu-bar-mini-calendar"><i class="mark done">✓</i><span>Menu-bar mini calendar <a class="pin" href="#calendar-menu-bar-mini-calendar" aria-label="Copy a link to Menu-bar mini calendar">#</a><span class="note">Built; the tray gets checked on each desktop</span></span><span class="where">42</span></li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3><i class="area" style="background:var(--contacts)"></i>Contacts<span class="count">13 of 13</span></h3>
+        <ul class="items">
+          <li id="contacts-contacts-from-pasted-signatures"><i class="mark done">✓</i><span>Contacts from pasted signatures <a class="pin" href="#contacts-contacts-from-pasted-signatures" aria-label="Copy a link to Contacts from pasted signatures">#</a></span><span class="where">10</span></li>
+          <li id="contacts-duplicate-detection-and-merge"><i class="mark done">✓</i><span>Duplicate detection and merge <a class="pin" href="#contacts-duplicate-detection-and-merge" aria-label="Copy a link to Duplicate detection and merge">#</a></span><span class="where">2</span></li>
+          <li id="contacts-enrichment-from-email-signatures"><i class="mark done">✓</i><span>Enrichment from email signatures <a class="pin" href="#contacts-enrichment-from-email-signatures" aria-label="Copy a link to Enrichment from email signatures">#</a></span><span class="where">10</span></li>
+          <li id="contacts-smart-groups"><i class="mark done">✓</i><span>Smart groups <a class="pin" href="#contacts-smart-groups" aria-label="Copy a link to Smart groups">#</a></span><span class="where">13</span></li>
+          <li id="contacts-labels"><i class="mark done">✓</i><span>Labels <a class="pin" href="#contacts-labels" aria-label="Copy a link to Labels">#</a></span><span class="where">10</span></li>
+          <li id="contacts-quick-actions-email-call-message"><i class="mark done">✓</i><span>Quick actions (email, call, message) <a class="pin" href="#contacts-quick-actions-email-call-message" aria-label="Copy a link to Quick actions (email, call, message)">#</a></span><span class="where">9 · 26</span></li>
+          <li id="contacts-mail-and-meetings-with-each-person"><i class="mark done">✓</i><span>Mail and meetings with each person <a class="pin" href="#contacts-mail-and-meetings-with-each-person" aria-label="Copy a link to Mail and meetings with each person">#</a></span><span class="where">9</span></li>
+          <li id="contacts-birthdays-in-the-calendar"><i class="mark done">✓</i><span>Birthdays in the calendar <a class="pin" href="#contacts-birthdays-in-the-calendar" aria-label="Copy a link to Birthdays in the calendar">#</a></span><span class="where">9</span></li>
+          <li id="contacts-contact-photos"><i class="mark done">✓</i><span>Contact photos <a class="pin" href="#contacts-contact-photos" aria-label="Copy a link to Contact photos">#</a></span><span class="where">17</span></li>
+          <li id="contacts-source-badges"><i class="mark done">✓</i><span>Source badges <a class="pin" href="#contacts-source-badges" aria-label="Copy a link to Source badges">#</a></span><span class="where">17</span></li>
+          <li id="contacts-restore-to-a-point-in-time"><i class="mark done">✓</i><span>Restore to a point in time <a class="pin" href="#contacts-restore-to-a-point-in-time" aria-label="Copy a link to Restore to a point in time">#</a></span><span class="where">13</span></li>
+          <li id="contacts-vcard-and-qr-sharing"><i class="mark done">✓</i><span>vCard and QR sharing <a class="pin" href="#contacts-vcard-and-qr-sharing" aria-label="Copy a link to vCard and QR sharing">#</a></span><span class="where">10</span></li>
+          <li id="contacts-sender-profile-with-their-local-time"><i class="mark done">✓</i><span>Sender profile, with their local time <a class="pin" href="#contacts-sender-profile-with-their-local-time" aria-label="Copy a link to Sender profile, with their local time">#</a></span><span class="where">26 · 30</span></li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3><i class="area" style="background:var(--notes)"></i>Notes<span class="count">12 of 14</span></h3>
+        <ul class="items">
+          <li id="notes-quick-note-from-anywhere"><i class="mark done">✓</i><span>Quick Note from anywhere <a class="pin" href="#notes-quick-note-from-anywhere" aria-label="Copy a link to Quick Note from anywhere">#</a></span><span class="where">27</span></li>
+          <li id="notes-checked-items-sort-down"><i class="mark done">✓</i><span>Checked items sort down <a class="pin" href="#notes-checked-items-sort-down" aria-label="Copy a link to Checked items sort down">#</a></span><span class="where">18</span></li>
+          <li id="notes-backlinks-and-links"><i class="mark done">✓</i><span>Backlinks and [[links]] <a class="pin" href="#notes-backlinks-and-links" aria-label="Copy a link to Backlinks and [[links]]">#</a></span><span class="where">24 · 25</span></li>
+          <li id="notes-local-first-markdown-export"><i class="mark done">✓</i><span>Local-first Markdown, export <a class="pin" href="#notes-local-first-markdown-export" aria-label="Copy a link to Local-first Markdown, export">#</a></span><span class="where">3 · 24</span></li>
+          <li id="notes-color-and-pinned-card-grid"><i class="mark done">✓</i><span>Color and pinned card grid <a class="pin" href="#notes-color-and-pinned-card-grid" aria-label="Copy a link to Color and pinned card grid">#</a></span><span class="where">28</span></li>
+          <li id="notes-notes-linked-to-mail-events-people"><i class="mark done">✓</i><span>Notes linked to mail, events, people <a class="pin" href="#notes-notes-linked-to-mail-events-people" aria-label="Copy a link to Notes linked to mail, events, people">#</a></span><span class="where">3 · 25</span></li>
+          <li id="notes-typography-first-editor"><i class="mark done">✓</i><span>Typography-first editor <a class="pin" href="#notes-typography-first-editor" aria-label="Copy a link to Typography-first editor">#</a></span><span class="where">3</span></li>
+          <li id="notes-inline-tags-and-smart-folders"><i class="mark done">✓</i><span>Inline #tags and smart folders <a class="pin" href="#notes-inline-tags-and-smart-folders" aria-label="Copy a link to Inline #tags and smart folders">#</a></span><span class="where">3 · 32</span></li>
+          <li id="notes-location-and-time-reminders"><i class="mark part"></i><span>Location and time reminders <a class="pin" href="#notes-location-and-time-reminders" aria-label="Copy a link to Location and time reminders">#</a><span class="note">Time is done (29); location needs phones</span></span><span class="where next">→ 5b</span></li>
+          <li id="notes-locked-notes"><i class="mark done">✓</i><span>Locked notes <a class="pin" href="#notes-locked-notes" aria-label="Copy a link to Locked notes">#</a></span><span class="where">33</span></li>
+          <li id="notes-ocr-and-document-scanning"><i class="mark done">✓</i><span>OCR and document scanning <a class="pin" href="#notes-ocr-and-document-scanning" aria-label="Copy a link to OCR and document scanning">#</a><span class="note">Multi-page scans and a full-screen viewer added</span></span><span class="where">34 · 35</span></li>
+          <li id="notes-handwriting-and-sketches"><i class="mark done">✓</i><span>Handwriting and sketches <a class="pin" href="#notes-handwriting-and-sketches" aria-label="Copy a link to Handwriting and sketches">#</a><span class="note">Pen pressure works; Apple Pencil gets checked on hardware in 5b</span></span><span class="where">36</span></li>
+          <li id="notes-graph-and-canvas-views"><i class="mark part"></i><span>Graph and canvas views <a class="pin" href="#notes-graph-and-canvas-views" aria-label="Copy a link to Graph and canvas views">#</a><span class="note">The map is in; a canvas comes later</span></span><span class="where next">41 →</span></li>
+          <li id="notes-shared-notes"><i class="mark done">✓</i><span>Shared notes <a class="pin" href="#notes-shared-notes" aria-label="Copy a link to Shared notes">#</a><span class="note">By link, edit or view, end-to-end encrypted if you choose</span></span><span class="where">44 · 48</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="reference" id="reference-docs">
+    <h2 id="reference">Reference</h2>
+    <p class="lede">The guides and decisions the items above point to, copied in so they open on any device. Each also links to its file on GitHub.</p>
+      <article class="doc" id="doc-product-name">
+        <h3 class="doc-title">ADR-0006 · Product name <a class="pin" href="#doc-product-name" aria-label="Copy a link to ADR-0006 · Product name">#</a></h3>
+        <p class="doc-from">From <code>docs/decisions/0006-product-name.md</code> in snds/Mailbird, as of 45efcc1 · <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/decisions/0006-product-name.md">Open on GitHub</a></p>
+        <details><summary>Read it here</summary><div class="doc-body">
+<ul>
+<li><strong>Status:</strong> Open. Owner decision needed.</li>
+<li><strong>Date:</strong> 2026-10-13</li>
+</ul>
+<h2>Context</h2>
+<p><strong>Mailbird</strong> is a live commercial email client from Mailbird, Inc. It ships on Windows and macOS with freemium pricing, so the name collides with an active trademark in our exact category.</p>
+<h2>Decision so far</h2>
+<ul>
+<li>&quot;Mailbird&quot; is a <strong>working repo name only</strong>.</li>
+<li>Package and crate names are kept neutral where it&#39;s cheap:<ul>
+<li>Rust core: <code>pim-core</code>.</li>
+<li>Shell: <code>mailbird-shell</code>. Rename it with the product.</li>
+</ul>
+</li>
+<li>The app bundle identifier <code>design.snds.mailbird</code> must change before any store submission.</li>
+</ul>
+<h2>To do before any public release</h2>
+<ol>
+<li>Choose a name.</li>
+<li>Run a trademark search (USPTO and EUIPO, class 9/42).</li>
+<li>Check domain and store availability.</li>
+<li>Rename the repo, <code>productName</code>, <code>identifier</code>, and <code>index.html</code> title.</li>
+</ol>
+        </div></details>
+      </article>
+      <article class="doc" id="doc-google-verification">
+        <h3 class="doc-title">Google sign-in and verification <a class="pin" href="#doc-google-verification" aria-label="Copy a link to Google sign-in and verification">#</a></h3>
+        <p class="doc-from">From <code>docs/google-verification.md</code> in snds/Mailbird, as of 45efcc1 · <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/google-verification.md">Open on GitHub</a></p>
+        <details><summary>Read it here</summary><div class="doc-body">
+<p>Gmail, Google Calendar, and Google Contacts sign in with OAuth (see <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/decisions/0013-google.md">ADR-0013</a>). Google requires every app that does this to be registered, and an app that reads Gmail to be verified before the public can use it. This page covers both:</p>
+<ul>
+<li><strong>Using your own OAuth client.</strong> Works today, for you and up to 100 test users.</li>
+<li><strong>The verification checklist.</strong> Needed before the app ships with a built-in client for everyone.</li>
+</ul>
+<p>Google renames these console screens often. The steps say what each screen is for, so you can find it even if the label changes.</p>
+<h2>Use your own OAuth client</h2>
+<ol>
+<li><strong>Create a project</strong> in the <a href="https://console.cloud.google.com/">Google Cloud console</a>.</li>
+<li><strong>Enable these APIs</strong> (APIs &amp; Services → Library):<ul>
+<li>Gmail API</li>
+<li>CalDAV API</li>
+<li>Google Contacts CardDAV API</li>
+</ul>
+</li>
+<li><strong>Set up the consent screen</strong> (Google Auth Platform):<ul>
+<li><strong>User type:</strong> External.</li>
+<li><strong>Branding:</strong> your app name and support email.</li>
+<li><strong>Data access:</strong> add these scopes:<ul>
+<li><code>https://www.googleapis.com/auth/gmail.modify</code></li>
+<li><code>https://www.googleapis.com/auth/calendar</code></li>
+<li><code>https://www.googleapis.com/auth/carddav</code></li>
+<li><code>openid</code>, <code>email</code>, <code>profile</code></li>
+</ul>
+</li>
+<li><strong>Audience:</strong> leave the app in <strong>Testing</strong> and add your Google address as a test user.</li>
+</ul>
+</li>
+<li><strong>Create the client</strong> (Clients → Create client):<ul>
+<li><strong>Application type:</strong> <strong>Desktop app</strong>.</li>
+<li><strong>Copy</strong> the client ID and client secret.</li>
+</ul>
+</li>
+<li><strong>Add it to the app:</strong> Accounts → <strong>Gmail</strong> → paste both → <strong>Save client</strong> → <strong>Continue in browser</strong>.</li>
+</ol>
+<p>What to expect while the app is in Testing:</p>
+<ul>
+<li><strong>A warning page.</strong> Google shows &quot;Google hasn&#39;t verified this app&quot;. Choose <strong>Continue</strong> (it may be under <strong>Advanced</strong>) only for a copy of the app you built or trust.</li>
+<li><strong>Weekly sign-in.</strong> Google expires refresh tokens for Testing apps after 7 days. The account then shows <strong>Sign in again</strong>; one click reconnects it, and no mail is lost.</li>
+<li><strong>Test users only.</strong> Only the test users you listed can sign in.</li>
+</ul>
+<h3>Bake a client into a build</h3>
+<p>To ship a build with a client, set these at compile time:</p>
+<pre><code class="language-sh">MAILBIRD_GOOGLE_CLIENT_ID=… MAILBIRD_GOOGLE_CLIENT_SECRET=… pnpm tauri build
+</code></pre>
+<p>A client someone adds in the app always takes precedence over the built-in one.</p>
+<h2>Why these scopes</h2>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Google&#39;s class</th>
+<th>What the app does with it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>gmail.modify</code></td>
+<td><strong>Restricted</strong></td>
+<td>Reads mail, and sets read, starred, and archived labels. It also sends mail through the Gmail API, so no SMTP password is needed. It <strong>cannot</strong> delete mail permanently, which the narrower scope rules out.</td>
+</tr>
+<tr>
+<td><code>calendar</code></td>
+<td>Sensitive</td>
+<td>Reads and writes your calendars over CalDAV, including invitations and reminders.</td>
+</tr>
+<tr>
+<td><code>carddav</code></td>
+<td>Sensitive</td>
+<td>Reads and writes your contacts over CardDAV.</td>
+</tr>
+<tr>
+<td><code>openid email profile</code></td>
+<td>Non-sensitive</td>
+<td>Your name and address for the account list.</td>
+</tr>
+</tbody></table>
+<p><code>gmail.readonly</code> + <code>gmail.send</code> would be narrower, but they can&#39;t archive or mark mail read, which the app needs.</p>
+<h2>Verification checklist (before a public release)</h2>
+<p>Verification of a restricted scope is Google&#39;s longest review. Plan for weeks, not days.</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>A verified domain.</strong> The homepage and privacy policy must be on it (Search Console verification).</li>
+<li><input disabled="" type="checkbox"> <strong>A homepage</strong> that describes the app and links to the privacy policy.</li>
+<li><input disabled="" type="checkbox"> <strong>A privacy policy</strong> that names the Google data used, says where it&#39;s stored (on the device only), and includes Google&#39;s <a href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes">Limited Use</a> statement.</li>
+<li><input disabled="" type="checkbox"> <strong>Scope justifications:</strong> one paragraph per scope, matching the table above.</li>
+<li><input disabled="" type="checkbox"> <strong>A demo video</strong> (unlisted on YouTube). It should show:<ul>
+<li>the consent screen with the client ID visible;</li>
+<li>each scope in use (archive, read, send, a calendar edit, a contact edit);</li>
+<li>account removal revoking access.</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> <strong>Brand review:</strong> the app&#39;s name and logo can&#39;t suggest it&#39;s Google&#39;s. This depends on the rename in <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/decisions/0006-product-name.md">ADR-0006</a>.</li>
+<li><input disabled="" type="checkbox"> <strong>Security assessment:</strong><ul>
+<li>Restricted scopes normally require an annual third-party assessment (CASA).</li>
+<li>Apps whose restricted data never leaves the user&#39;s device can qualify for an exemption. The desktop and mobile apps are built that way: mail goes from Google straight to the device, and no server of ours sees it.</li>
+<li>Ask for the exemption during verification and confirm the current rule then.</li>
+<li>A hosted web gateway would not qualify (<a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/decisions/0004-protocols.md">ADR-0004</a>).</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> <strong>Publish</strong> the consent screen (Audience → Publish app) only after approval.</li>
+</ul>
+<h2>What the app already does for verification</h2>
+<ul>
+<li><strong>Sign-in happens in the system browser</strong> (RFC 8252), never in an embedded webview. It uses PKCE and a loopback redirect on <code>127.0.0.1</code>.</li>
+<li><strong>Tokens live in the OS keychain.</strong> Mail stays in the local database. Nothing goes to a server of ours.</li>
+<li><strong>Removing an account revokes its tokens</strong> with Google before deleting them.</li>
+<li><strong>The sign-in screen lists, in plain words, what Google will ask for.</strong></li>
+</ul>
+        </div></details>
+      </article>
+      <article class="doc" id="doc-microsoft-setup">
+        <h3 class="doc-title">Microsoft sign-in setup <a class="pin" href="#doc-microsoft-setup" aria-label="Copy a link to Microsoft sign-in setup">#</a></h3>
+        <p class="doc-from">From <code>docs/microsoft-setup.md</code> in snds/Mailbird, as of 45efcc1 · <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/microsoft-setup.md">Open on GitHub</a></p>
+        <details><summary>Read it here</summary><div class="doc-body">
+<p>Outlook.com, Hotmail, and Microsoft 365 accounts sign in with OAuth, and mail, calendars, and contacts go through Microsoft Graph (see <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/decisions/0014-microsoft.md">ADR-0014</a>). Microsoft requires every app that does this to be registered. This page covers:</p>
+<ul>
+<li><strong>Registering your own app.</strong> Works today, for personal and work or school accounts.</li>
+<li><strong>Publishing for everyone.</strong> What a public release needs.</li>
+</ul>
+<p>Microsoft renames these screens often. The steps say what each one is for, so you can find it if the label changes.</p>
+<h2>Register your own app</h2>
+<ol>
+<li><strong>Open App registrations</strong> in the <a href="https://entra.microsoft.com/">Microsoft Entra admin center</a> → Applications → App registrations → <strong>New registration</strong>.<ul>
+<li>A free personal Microsoft account works. Microsoft creates a directory for you on first visit.</li>
+</ul>
+</li>
+<li><strong>Name:</strong> anything, for example &quot;Mailbird (personal)&quot;.</li>
+<li><strong>Supported account types:</strong> <strong>Accounts in any organizational directory and personal Microsoft accounts</strong>.</li>
+<li><strong>Redirect URI:</strong><ul>
+<li><strong>Platform:</strong> Public client/native (mobile &amp; desktop).</li>
+<li><strong>URI:</strong> <code>http://localhost</code>. Microsoft ignores the port for <code>localhost</code>, and the app picks a free port each time.</li>
+</ul>
+</li>
+<li><strong>Register</strong>, then copy the <strong>Application (client) ID</strong> from the Overview page.</li>
+<li><strong>Authentication → Advanced settings:</strong> turn on <strong>Allow public client flows</strong>.<ul>
+<li>There&#39;s no client secret to make. An installed app can&#39;t keep one, and PKCE protects the sign-in instead.</li>
+</ul>
+</li>
+<li><strong>API permissions → Add a permission → Microsoft Graph → Delegated:</strong><ul>
+<li><code>Mail.ReadWrite</code></li>
+<li><code>Mail.Send</code></li>
+<li><code>Calendars.ReadWrite</code></li>
+<li><code>Contacts.ReadWrite</code></li>
+<li><code>offline_access</code>, <code>openid</code>, <code>email</code>, <code>profile</code> (usually already there as <code>User.Read</code>&#39;s companions)</li>
+</ul>
+</li>
+<li><strong>Add it to the app:</strong> Accounts → <strong>Outlook / Microsoft 365</strong> → paste the ID → <strong>Save app registration</strong> → <strong>Continue in browser</strong>.</li>
+</ol>
+<p>What to expect:</p>
+<ul>
+<li><strong>A consent page</strong> listing the permissions above. Personal accounts approve it themselves.</li>
+<li><strong>Work or school accounts</strong> may need an administrator to approve the app first (&quot;Need admin approval&quot;). That&#39;s the organization&#39;s policy, not an error in the app.</li>
+<li><strong>Your account picker.</strong> The app asks Microsoft to let you choose the account, so a browser signed in to several doesn&#39;t pick one silently.</li>
+<li><strong>Sign-ins last.</strong> Microsoft refresh tokens are renewed on each use. An account that sits unused for about 90 days, or whose password changes, shows <strong>Sign in again</strong>.</li>
+</ul>
+<h3>Bake a registration into a build</h3>
+<pre><code class="language-sh">MAILBIRD_MICROSOFT_CLIENT_ID=… pnpm tauri build
+</code></pre>
+<p>A registration someone adds in the app always takes precedence over the built-in one.</p>
+<h2>Removing an account</h2>
+<p>Microsoft has no way for an app to revoke its own sign-in. Removing the account deletes its tokens from this device. To revoke access everywhere:</p>
+<ul>
+<li><strong>Personal accounts:</strong> <a href="https://account.live.com/consent/Manage">account.live.com/consent/Manage</a>.</li>
+<li><strong>Work or school accounts:</strong> <a href="https://myapps.microsoft.com">myapps.microsoft.com</a> → the app → <strong>Revoke</strong>.</li>
+</ul>
+<h2>Why these permissions</h2>
+<table>
+<thead>
+<tr>
+<th>Permission</th>
+<th>What the app does with it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Mail.ReadWrite</code></td>
+<td>Reads mail, and sets read, flagged, and archived (a move to the Archive folder). It never deletes mail.</td>
+</tr>
+<tr>
+<td><code>Mail.Send</code></td>
+<td>Sends the message the app built, as MIME, so Outlook files the Sent copy itself.</td>
+</tr>
+<tr>
+<td><code>Calendars.ReadWrite</code></td>
+<td>Reads and writes your calendars, one-off edits to recurring events, and replies to invitations.</td>
+</tr>
+<tr>
+<td><code>Contacts.ReadWrite</code></td>
+<td>Reads and writes your contacts.</td>
+</tr>
+<tr>
+<td><code>offline_access openid email profile</code></td>
+<td>Keeps you signed in, and shows your name and address in the account list.</td>
+</tr>
+</tbody></table>
+<h2>Publishing for everyone</h2>
+<p>Unlike Google&#39;s restricted Gmail scopes, these permissions need no security assessment. A public release needs:</p>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>One registration for the app</strong>, baked into release builds.</li>
+<li><input disabled="" type="checkbox"> <strong>Publisher verification:</strong> a Microsoft Partner Network account tied to a verified domain. Without it, the consent page says &quot;unverified&quot;.</li>
+<li><input disabled="" type="checkbox"> <strong>A homepage and privacy policy</strong> linked from the registration&#39;s Branding page. They depend on the rename in <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/decisions/0006-product-name.md">ADR-0006</a>.</li>
+<li><input disabled="" type="checkbox"> <strong>Optional, for organizations:</strong> Microsoft 365 app certification. Some admins require it before approving an app.</li>
+</ul>
+        </div></details>
+      </article>
+      <article class="doc" id="doc-menu-bar-checklist">
+        <h3 class="doc-title">ADR-0054 · The menu-bar mini calendar (Phase 42) <a class="pin" href="#doc-menu-bar-checklist" aria-label="Copy a link to ADR-0054 · The menu-bar mini calendar (Phase 42)">#</a></h3>
+        <p class="doc-from">From <code>docs/decisions/0054-menu-bar-calendar.md</code> in snds/Mailbird, as of 45efcc1 · <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/decisions/0054-menu-bar-calendar.md">Open on GitHub</a></p>
+        <details><summary>Read it here</summary><div class="doc-body">
+<ul>
+<li><strong>Status:</strong> Accepted. The parts that need a real desktop wait on a hardware check (see the checklist below).</li>
+<li><strong>Date:</strong> 2026-10-17</li>
+<li><strong>Builds on:</strong> <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/decisions/0010-calendar-contacts.md">ADR-0010</a> (calendar, quick add), <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/decisions/0016-web-gateway.md">ADR-0016</a> (one dispatcher, a <code>Host</code> per platform), <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/decisions/0030-meeting-services.md">ADR-0030</a> (Join)</li>
+</ul>
+<p>Fantastical and Itsycal earned their place by answering &quot;what&#39;s next?&quot; without opening a calendar. This phase puts that in the desktop menu bar on macOS, and in the tray on Windows and Linux.</p>
+<h2>Decisions</h2>
+<h3>An icon, a line of text, and a small window</h3>
+<ul>
+<li><strong>The icon</strong> is a calendar glyph:<ul>
+<li><strong>On macOS</strong> it&#39;s a template image, so the menu bar draws it in its own ink, light or dark.</li>
+<li><strong>On Windows and Linux</strong> it&#39;s the app icon, which holds up on any taskbar.</li>
+</ul>
+</li>
+<li><strong>Beside the icon</strong>, the next event in a few words: &quot;Design review in 25 min&quot;, &quot;Standup now&quot;. This is on by default, and a switch turns it off for just the icon.<ul>
+<li>It shows in the macOS menu bar and on Linux panels that show a label.</li>
+<li>Windows trays have no room for text, so the same words go in the icon&#39;s tooltip there.</li>
+</ul>
+</li>
+<li><strong>A click opens the mini calendar under the icon,</strong> or above it when the taskbar is at the bottom. Clicking away closes it. It&#39;s 360×600 and has:<ul>
+<li>today&#39;s date;</li>
+<li><strong>Next up</strong>, with its time, place, and Join;</li>
+<li>the month, with a dot on every day that has something;</li>
+<li>the picked day&#39;s events (a click opens the event in the app);</li>
+<li>quick add (&quot;Coffee with Marcus today 4pm&quot;), the same field as in Calendar.</li>
+</ul>
+</li>
+<li><strong>Right-click</strong> gives Open Mailbird, New event…, and Quit Mailbird.</li>
+</ul>
+<h3>What &quot;next&quot; means</h3>
+<ul>
+<li><strong>The rule:</strong> the event on now, or else the next to start in the next 12 hours. An event starting within 5 minutes beats the one that&#39;s on now, because that&#39;s the one you need to leave for.</li>
+<li><strong>Not counted:</strong> all-day events and birthdays. They&#39;d crowd out the meeting you&#39;re about to miss.</li>
+<li><strong>Relative words</strong> (&quot;in 25 min&quot;, &quot;in 2 h 5 min&quot;, &quot;now&quot;). They need no clock format or time zone, and they read the same in every locale. The menu bar is brought up to date every 30 seconds.</li>
+<li><strong>One rule, written twice:</strong> <code>pim_app::menu_bar::next_up</code> for the menu bar, and <code>nextUp</code> in the web panel. The Rust tests and the browser suite check the same cases, so the two can&#39;t drift silently.</li>
+</ul>
+<h3>Closing the window keeps Mailbird running</h3>
+<ul>
+<li><strong>While the menu-bar calendar is on, closing the main window hides it.</strong> Mailbird stays in the menu bar or tray, so the calendar and reminders keep working. This is how menu-bar calendars behave, and it&#39;s spelled out under the switch in Settings.</li>
+<li><strong>Getting back:</strong> click the Dock icon (macOS), choose Open Mailbird from the tray menu, or click an event in the mini calendar. Quit is in the tray menu, and the usual quit shortcut still works.</li>
+<li><strong>Safety:</strong> closing only hides the window once the tray icon actually exists. A Linux desktop without a tray never ends up with a hidden window and no way back.</li>
+</ul>
+<h3>Where the logic lives</h3>
+<ul>
+<li><strong><code>pim_app::menu_bar</code> decides what to show:</strong><ul>
+<li>the prefs (<code>menubar.prefs</code>, both on by default);</li>
+<li>next up, and the words for it;</li>
+<li>the tooltip.</li>
+</ul>
+</li>
+<li><strong>The <code>Host</code> trait gains two hooks:</strong> <code>menu_bar(state)</code> and <code>show_app(jump)</code>.<ul>
+<li>The desktop shell (<code>src-tauri/src/menu_bar.rs</code>) draws the tray, places the window, and brings the main window forward.</li>
+<li>The gateway keeps the defaults: no tray, and a single window.</li>
+<li>So nearly all of this is tested without a desktop.</li>
+</ul>
+</li>
+<li><strong>The mini window is the same web app at <code>?mini</code>.</strong> It opens events in the main window through <code>show_app</code>, which sends an <code>app:jump</code> event there.<ul>
+<li>In a browser (the demo, or the gateway) there&#39;s only one window, so the mini page opens the app page in its place, carrying the jump.</li>
+<li>The main window opens the event, or the event editor for New event….</li>
+</ul>
+</li>
+<li><strong>Settings:</strong> &quot;Calendar in the menu bar&quot; and &quot;Show the next event&#39;s name&quot; sit under Accounts and settings, wherever the app runs on a device (not through a gateway).</li>
+</ul>
+<h2>Verification</h2>
+<ul>
+<li><strong>App</strong> (<code>cargo test -p pim-app</code>):<ul>
+<li>next up: what counts, the 12-hour window, the 5-minute handover, and the relative words;</li>
+<li>long names are shortened;</li>
+<li>the state follows the prefs.</li>
+<li>Through the dispatcher: the prefs default on, a change reaches the host at once, and <code>show_app</code> carries its jump to the host.</li>
+</ul>
+</li>
+<li><strong>Desktop shell:</strong> <code>cargo check</code> and <code>clippy -D warnings</code> pass on Linux with the tray feature. The macOS-only line (Dock reopen) can&#39;t be compiled here, because the sandbox has no Apple SDK.</li>
+<li><strong>Browser</strong> (<code>phase42</code>, 22 checks):<ul>
+<li><strong>The mini calendar:</strong> today&#39;s date, next up &quot;in 10 min&quot;, &quot;Now&quot; during the event, the next event within 5 minutes, tomorrow&#39;s first event late at night, and &quot;Nothing else&quot; on a quiet evening.</li>
+<li><strong>Using it:</strong> Join, picking a day, and quick add.</li>
+<li><strong>Opening the app:</strong> an event opens on that event, Open Mailbird opens the app, and New event… opens the editor.</li>
+<li><strong>Settings:</strong> both switches, and the second hides with the first.</li>
+<li><strong>Also:</strong> dark mode, and no console errors.</li>
+</ul>
+</li>
+<li><strong>Regression:</strong> all earlier browser suites pass. <code>tsc -b</code>, <code>oxlint</code>, and <code>vite build</code> are clean. The ratchet is unchanged at 241 / 2 / 0 / 0.</li>
+</ul>
+<h2>To check on real hardware</h2>
+<p>These need a desktop session, which the cloud sandbox doesn&#39;t have:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Check</th>
+<th>macOS</th>
+<th>Windows</th>
+<th>Linux (GNOME + AppIndicator, KDE)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>The icon appears at launch, in the menu bar&#39;s own ink (light and dark menu bar)</td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+</tr>
+<tr>
+<td>2</td>
+<td>The next event&#39;s name and &quot;in N min&quot; sit beside the icon, and move on within 30 s</td>
+<td>☐</td>
+<td>n/a (tooltip)</td>
+<td>☐ (label)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>A click opens the window under the icon (above it with a bottom taskbar), on the right monitor</td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Clicking away closes it; clicking the icon again toggles it</td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+</tr>
+<tr>
+<td>5</td>
+<td>An event in the mini window opens the main window on that event</td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Right-click: Open Mailbird, New event…, Quit Mailbird</td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Closing the main window keeps Mailbird in the menu bar or tray; reminders still fire</td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+</tr>
+<tr>
+<td>8</td>
+<td>The Dock icon brings the window back</td>
+<td>☐</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Turning the switch off removes the icon, and closing the window quits again</td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Without a tray (plain GNOME), nothing breaks, and closing the window quits</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>☐</td>
+</tr>
+</tbody></table>
+<h2>Consequences</h2>
+<ul>
+<li><strong>Closing the window no longer quits</strong> while the calendar is on. Anyone who wants the old behavior turns the switch off. The note under the switch says so.</li>
+<li><strong>Two copies of the next-up rule</strong> (Rust and TypeScript), kept honest by matching tests. Moving the panel&#39;s version to the core would cost the demo its own copy.</li>
+<li><strong>Follow-ups:</strong> an icon that shows today&#39;s date, like Fantastical&#39;s; keyboard shortcuts to open the mini calendar from anywhere; and declined invitations dropping out of next up (occurrences don&#39;t carry your response yet).</li>
+</ul>
+        </div></details>
+      </article>
+      <article class="doc" id="doc-mobile-spike">
+        <h3 class="doc-title">Mobile device spike <a class="pin" href="#doc-mobile-spike" aria-label="Copy a link to Mobile device spike">#</a></h3>
+        <p class="doc-from">From <code>docs/mobile-spike.md</code> in snds/Mailbird, as of 45efcc1 · <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/mobile-spike.md">Open on GitHub</a></p>
+        <details><summary>Read it here</summary><div class="doc-body">
+<p>The four exit criteria from <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/decisions/0002-shells.md">ADR-0002</a>, checked on real devices. Failing any of them moves mobile to Capacitor. The groundwork (<a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/decisions/0015-mobile-groundwork.md">ADR-0015</a>) is done, so the spike only has to cover what needs a phone.</p>
+<p><strong>Devices:</strong> one iPhone (iOS 18 or later), and one Android phone with Google Play services. Optionally a second Android phone without Google, for UnifiedPush.</p>
+<h2>0. Build</h2>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>macOS:</strong> Xcode, plus the Rust targets: <code>rustup target add aarch64-apple-ios aarch64-apple-ios-sim</code>.</li>
+<li><input disabled="" type="checkbox"> <strong>Android:</strong> Android Studio, the NDK, and the Rust targets: <code>rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android</code>.</li>
+<li><input disabled="" type="checkbox"> <strong>Scaffold:</strong> <code>pnpm tauri ios init</code> and <code>pnpm tauri android init</code> in <code>apps/web</code>. The app runs and the inbox shows sample mail.</li>
+<li><input disabled="" type="checkbox"> <strong>Add a real account</strong> (iCloud or Fastmail) and watch it sync.</li>
+</ul>
+<h2>1. Background sync</h2>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>iOS:</strong> register a <code>BGAppRefreshTask</code> that calls the <code>background_pass</code> command. Debug it with <code>e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@&quot;…&quot;]</code>.</li>
+<li><input disabled="" type="checkbox"> <strong>Android:</strong> schedule a periodic <code>WorkManager</code> job (15 minutes, the platform minimum) that calls <code>background_pass</code>.</li>
+<li><input disabled="" type="checkbox"> <strong>Pass:</strong> send yourself mail with the app closed. Within one background run there&#39;s a local notification, and the message is in the inbox when you open the app.</li>
+<li><input disabled="" type="checkbox"> <strong>Pass:</strong> a pass finishes within its 25-second budget on a slow network (<code>finished: true</code> in the result, or it stops cleanly).</li>
+</ul>
+<h2>2. Push</h2>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Relay up:</strong> start it with Docker on a server you own, behind https (<code>tools/push-relay/README.md</code>).</li>
+<li><input disabled="" type="checkbox"> <strong>iOS:</strong><ul>
+<li><input disabled="" type="checkbox"> Register for remote notifications, and pass the APNs token to <code>set_push_target</code> as <code>{&quot;platform&quot;:&quot;apns&quot;,&quot;token&quot;:…,&quot;sandbox&quot;:true}</code> for a debug build.</li>
+<li><input disabled="" type="checkbox"> Set up the relay with an APNs key.</li>
+<li><input disabled="" type="checkbox"> Handle the background push by calling <code>background_pass</code>.</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> <strong>Android with Google:</strong> get the FCM token, then <code>set_push_target</code> with <code>{&quot;platform&quot;:&quot;fcm&quot;,&quot;token&quot;:…}</code>. On a data message, run <code>background_pass</code>.</li>
+<li><input disabled="" type="checkbox"> <strong>Android without Google:</strong> register with a UnifiedPush distributor (ntfy) and enter its endpoint in the setting.</li>
+<li><input disabled="" type="checkbox"> <strong>Pass:</strong> with the app in the background, new mail notifies within about 10 seconds:<ul>
+<li><input disabled="" type="checkbox"> for an IMAP account,</li>
+<li><input disabled="" type="checkbox"> for a JMAP account,</li>
+<li><input disabled="" type="checkbox"> for an Outlook account (needs <code>RELAY_PUBLIC_URL</code>).</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> <strong>Pass:</strong> <strong>Send a test</strong> arrives. A deleted app&#39;s token gets forgotten by the relay.</li>
+<li><input disabled="" type="checkbox"> <strong>Note</strong> how iOS treats background pushes in Low Power Mode and after force-quit. This decides whether to add a Notification Service Extension.</li>
+</ul>
+<h2>3. Keychain</h2>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>iOS:</strong> passwords and OAuth tokens save and survive a restart (<code>keyring</code> with <code>apple-native</code>).</li>
+<li><input disabled="" type="checkbox"> <strong>Android:</strong> move to <code>keyring</code> 4 (Android Keystore). Same check.</li>
+<li><input disabled="" type="checkbox"> <strong>Pass:</strong> removing the app removes its secrets. Reinstalling asks you to sign in again.</li>
+</ul>
+<h2>4. Scrolling and input</h2>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>Long list:</strong> sync, or use the demo&#39;s <code>?bulk=10000</code>, then scroll the inbox top to bottom with Instruments (iOS) or the GPU profiler (Android).</li>
+<li><input disabled="" type="checkbox"> <strong>Pass:</strong> 60 fps on a mid-range phone, no dropped frames when a page loads, and swipe actions still work.</li>
+<li><input disabled="" type="checkbox"> <strong>Keyboard:</strong> open the composer and type in the body.</li>
+<li><input disabled="" type="checkbox"> <strong>Pass:</strong> the formatting bar and Send stay visible above the keyboard on both platforms, including with the keyboard&#39;s suggestion bar and after rotating.</li>
+</ul>
+<h2>Outcome</h2>
+<p>Record what passed, what didn&#39;t, and any workarounds in ADR-0002. Then either continue on Tauri mobile, or start the Capacitor fallback with UniFFI bindings to the same <code>pim-core</code>.</p>
+        </div></details>
+      </article>
+  </section>
+
+  <footer>Source: <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/research/competitive-analysis.md">the competitive analysis §3</a> and <a href="https://github.com/snds/Mailbird/blob/45efcc12538577603e5d5e9de3a577decae01f76/docs/decisions">the ADRs</a> in snds/Mailbird.</footer>
+</div>
+<div class="toast" role="status" aria-live="polite" hidden></div>
+<script>
+(() => {
+  const page = document.querySelector("[data-status-page]")?.dataset.statusPage || "";
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const toast = document.querySelector(".toast");
+  let timer;
+  const say = (text, ms) => {
+    toast.textContent = text; toast.hidden = false;
+    clearTimeout(timer); timer = setTimeout(() => { toast.hidden = true; }, ms);
+  };
+  const show = (id, smooth) => {
+    const el = id && document.getElementById(id);
+    if (!el) return;
+    document.querySelectorAll(".is-target").forEach(e => e.classList.remove("is-target"));
+    el.classList.add("is-target");
+    el.querySelectorAll("details").forEach(d => { d.open = true; });
+    el.scrollIntoView({ block: "center", behavior: smooth && !reduce ? "smooth" : "auto" });
+    if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
+    el.focus({ preventScroll: true });
+  };
+  const fromHash = smooth => show(decodeURIComponent(location.hash.slice(1)), smooth);
+  addEventListener("hashchange", () => fromHash(true));
+  fromHash(false);
+  // Web fonts can move things after the first scroll; settle on the item again.
+  document.fonts?.ready.then(() => fromHash(false));
+  document.addEventListener("click", async e => {
+    const a = e.target.closest("a.pin");
+    if (!a) return;
+    e.preventDefault();
+    const id = a.getAttribute("href").slice(1);
+    show(id, true);
+    try { history.replaceState(null, "", "#" + id); } catch (_) {}
+    const link = page + "#" + id;
+    try { await navigator.clipboard.writeText(link); say("Link copied: " + link, 2500); }
+    catch (_) { say("Copy this link: " + link, 8000); }
+  });
+})();
+</script>
+
