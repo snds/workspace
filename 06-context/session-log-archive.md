@@ -4,6 +4,50 @@ _Older session blocks, moved out of session-log.md to keep the live log token-ch
 
 ## Session Entries
 
+### 2026-09-17 — late close: cui PR 312 quality gate
+
+SessionID: 2026-09-17-work-pr312
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 02-centricPLM (centric-ui advisory)
+Summary: Closed an Aug 18 Cursor thread on cui [#312](https://github.com/cpes-software/centric-ui/pull/312) Quality gate. Knip `unused` failed: `@xyflow/react` is imported by FlowCanvas but marked optional in `packages/ui/package.json`. Typecheck, lint, format, duplicates, and tests passed. Verdict then was do-not-merge. PR later merged 2026-08-18 with the check still red. No employer code written this close.
+Decisions:
+  - Optional peer + unconditional import is a real knip fail, not a flake.
+  - Employer merge stays human-owned; this thread does not reopen #312.
+Evidence:
+  - Quality gate `unused` @ https://github.com/cpes-software/centric-ui/actions/runs/31852905498 — verified
+  - PR 312 MERGED 2026-08-18T14:31:38Z with Quality gate still FAILURE — verified
+Next:
+  - Resume only if Sean asks. Live baton stays lint:ds / cui #398.
+--- END BLOCK ---
+
+### 2026-09-17 — leftover cds consume closed (#77 / #78)
+
+SessionID: 2026-09-17-work-cds78
+--- SESSION BLOCK ---
+Date: 2026-09-17
+Machine: Work MacBook Pro
+Surface: Cursor
+Agent: Cursor Grok 4.6
+Project(s): 19-workspace-brain; employer saas-plm-prototype (#77, #78); cds (#35)
+Summary: Closed the leftover consume thread. cds #35 landed Toaster / `./sonner` / SplitDragHandle / ChipMultiSelect. Proto #77 merged host chrome without later commits; #78 cherry-picked the leftovers onto `main` (`adac92b`). Gate `cds-exports-check` is on proto `main`. Merge-before-late-push drops follow-ups the same way squash does. Workspace plan-ahead skill already on vault `main`.
+Decisions:
+  - Overlay ≠ Pages `main`; print numbered order + first later-breaker before dual-repo consume.
+  - centric-ui consume of host-chrome APIs is a later pass — do not start until Sean names it.
+Evidence:
+  - proto #78 MERGED @ https://github.com/cpes-software/saas-plm-prototype/pull/78 (`adac92b`, 2026-09-11) — verified
+  - proto #77 leftovers on `origin/main` @ `adac92b` ancestor — verified
+Pending resolved:
+  - cds #35 then proto re-export Toaster / SplitDragHandle / ChipMultiSelect
+  - Pages gate so overlay-ahead cannot hide missing `main` exports
+Next:
+  - centric-ui host-chrome consume only if Sean names it (employer proto HANDOVER).
+--- END BLOCK ---
+
+
 ### 2026-09-17 — collaborative canvas rec (employer ui)
 
 SessionID: 2026-09-17-work-cvrec
