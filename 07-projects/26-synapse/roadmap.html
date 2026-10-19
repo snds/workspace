@@ -15,6 +15,7 @@
   --done: oklch(0.53 0.13 155);
   --part: oklch(0.62 0.14 70);
   --open: oklch(0.6 0.012 220);
+  --fail: oklch(0.55 0.17 25);
   --chip: oklch(0.955 0.007 210);
   --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -23,14 +24,14 @@
   :root:not([data-theme="light"]) {
     --bg: oklch(0.17 0.009 220); --surface: oklch(0.21 0.01 220); --fg: oklch(0.95 0.004 210); --muted: oklch(0.71 0.012 210);
     --line: oklch(0.31 0.011 220); --accent: oklch(0.76 0.1 200);
-    --done: oklch(0.75 0.13 155); --part: oklch(0.8 0.13 75); --open: oklch(0.6 0.01 220); --chip: oklch(0.26 0.011 220);
+    --done: oklch(0.75 0.13 155); --part: oklch(0.8 0.13 75); --open: oklch(0.6 0.01 220); --fail: oklch(0.74 0.14 25); --chip: oklch(0.26 0.011 220);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: oklch(0.17 0.009 220); --surface: oklch(0.21 0.01 220); --fg: oklch(0.95 0.004 210); --muted: oklch(0.71 0.012 210);
   --line: oklch(0.31 0.011 220); --accent: oklch(0.76 0.1 200);
-  --done: oklch(0.75 0.13 155); --part: oklch(0.8 0.13 75); --open: oklch(0.6 0.01 220); --chip: oklch(0.26 0.011 220);
+  --done: oklch(0.75 0.13 155); --part: oklch(0.8 0.13 75); --open: oklch(0.6 0.01 220); --fail: oklch(0.74 0.14 25); --chip: oklch(0.26 0.011 220);
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -100,6 +101,7 @@ ul.steps li:last-child { border-bottom: 0; }
 .test .id { font: 600 0.78rem var(--font-mono); flex: none; }
 .test.pass .id { color: var(--done); }
 .test.wait .id { color: var(--part); }
+.test.fail .id { color: var(--fail); }
 
 ul.asks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: 10px; }
 ul.asks li { display: flex; flex-direction: column; gap: 3px; padding: 12px 14px; border-left: 3px solid var(--part); background: var(--surface); border-radius: 0 8px 8px 0; min-width: 0; }
@@ -126,15 +128,15 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
 <div class="wrap">
   <header>
     <h1>Synapse Roadmap</h1>
-    <p class="answer"><strong>Stage 1 is done, Stage 0 nearly, Stage 2 is built, and Stage 3 is well under way.</strong> Import is built end to end, with its screen, scorecard, merge into this workspace and fix-back; the first deep scan of your workspace waits for your go because it costs model use. What's left in Stages 0 and 2 is checking and signing, and most of it needs you or hardware. The last stage runs only if you decide to sell it.</p>
-    <p class="lede mono">Updated Oct 18, 2026 · repo at d793b09 · CI last ran green at 2d0156f; GitHub has refused the jobs since (account billing), so every check ran locally · on Unicron ui 0.13.0</p>
+    <p class="answer"><strong>Stage 1 is done, Stage 0 nearly, and Stages 2 and 3 are built.</strong> Import and Create are built end to end, with their screens, the scorecard, merge into this workspace, fix-back and the Surface installer. Stage 3's scorecard passes 6 of 12; four tests wait for agent runs that cost model use, so they wait for your go. What's left in Stages 0 and 2 is checking and signing, and most of it needs you or hardware. The last stage runs only if you decide to sell it.</p>
+    <p class="lede mono">Updated Oct 18, 2026 · repo at bd34aaa · CI last ran green at 2d0156f; GitHub has refused the jobs since (account billing), so every check ran locally · on Unicron ui 0.13.0</p>
   </header>
 
   <section aria-label="Summary">
     <div class="stats">
       <div class="stat"><b>1<small>/8</small></b><span>stages fully done (0–7); Stage 0 has 3 hardware spikes left</span></div>
       <div class="stat"><b>9<small>/14</small></b><span>Stage 2 exit tests passing</span></div>
-      <div class="stat"><b>18</b><span>items waiting on you</span></div>
+      <div class="stat"><b>19</b><span>items waiting on you</span></div>
       <div class="stat"><b>29–41</b><span>focused weeks after Stage 2, through Stage 6</span></div>
     </div>
     <div class="bar" role="img" aria-label="Stage 2 exit tests: 9 passing, 5 waiting, of 14">
@@ -224,17 +226,38 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
       <li class="stage">
         <div class="rail"><span class="node">3</span></div>
         <div class="body">
-          <div class="head"><span class="t">Import, create, measure</span><span class="chip now">Under way · items 1–8, 11 and 13 built</span><span class="chip size">8–12 wk planned · about 13 sized</span></div>
+          <div class="head"><span class="t">Import, create, measure</span><span class="chip now">Built · agent runs, the Windows PC and two parts left</span><span class="chip size">8–12 wk planned · about 13 sized</span></div>
           <p class="goal">Bring workspaces in and create new ones, with proof.</p>
           <div class="card">
+            <h3>Exit tests · 6 of 12 pass</h3>
+            <div class="tests">
+              <div class="test pass"><span class="id">C1</span><span>Every file accounted for</span></div>
+              <div class="test pass"><span class="id">C2</span><span>Every link kept</span></div>
+              <div class="test fail"><span class="id">C3</span><span>No errors · fails on your workspace's own 52 over-long descriptions, which a copy keeps</span></div>
+              <div class="test pass"><span class="id">C4</span><span>Routing the same on 5,488 requests</span></div>
+              <div class="test pass"><span class="id">C5</span><span>No rise in token cost</span></div>
+              <div class="test pass"><span class="id">C6</span><span>The same result every time</span></div>
+              <div class="test pass"><span class="id">C7</span><span>Every planted defect found</span></div>
+              <div class="test wait"><span class="id">C8</span><span>Two scans agree · your go</span></div>
+              <div class="test wait"><span class="id">C9</span><span>Created workspaces pass · rule checks pass; scans need your go</span></div>
+              <div class="test wait"><span class="id">C10</span><span>Agents do tasks as well · your go</span></div>
+              <div class="test wait"><span class="id">C11</span><span>Installs reach each app · uninstall passes; reach needs the live test</span></div>
+              <div class="test fail"><span class="id">C12</span><span><code>wsx</code> parity · fails: 9 of 11 promises met</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Steps left</h3>
             <ul class="steps">
               <li><i class="mark part"></i><span>The import pipeline, with the deep scan as an agent job<span class="note">Built: the workspace plan, snapshot and inventory in eight formats, the baseline (equal to today's routing on all 5,488 requests), the pre-pass, the deep scan with read-only agents and the deny-list gate, and the Import screen: confirm the cost, review each finding, write a new workspace and score it.</span></span><span class="who claude">Claude</span></li>
-              <li><i class="mark open"></i><span>Create: the generator, version 2, with forms and an agent interview</span><span class="who claude">Claude</span></li>
+              <li><i class="mark part"></i><span>Create: the generator, version 2, with forms and an agent interview<span class="note">Built: <code>sy create</code> and the Create screen (a workspace from a profile, skills at each domain's level, a git repository with its first commit), and an agent with no tools that writes each skill. Left: a library of finished skills to pull and adapt, and the interview, which needs Stage 5's agent bridge.</span></span><span class="who claude">Claude</span></li>
               <li><i class="mark part"></i><span>Import into this workspace (D99)<span class="note">Built: the merge by type, its clash rules (yours kept by default), list unions, links rewritten, the inbox for near-duplicates, one proposal with undo. An agent's judgment of the inbox comes with the bridge.</span></span><span class="who claude">Claude</span></li>
               <li><i class="mark part"></i><span>Scorecards, with corpus T1–T4 running in CI<span class="note">Built: <code>sy score</code> and Health → Create and import; T2 (ten generated workspaces), T3 on T2 and T4 in CI; your T1 scored on your Mac.</span></span><span class="who claude">Claude</span></li>
-              <li><i class="mark open"></i><span>The Surface installer's writes: one review, then automatic placement, records and a clean uninstall</span><span class="who claude">Claude</span></li>
+              <li><i class="mark done">✓</i><span>The Surface installer's writes: one review, then automatic placement, records and a clean uninstall<span class="note">A marked block in each app's rules file, pointer skills when you pick them, and an uninstall that puts every file back byte for byte (Agent apps → Connect).</span></span><span class="who claude">Claude</span></li>
               <li><i class="mark done">✓</i><span>The fix-back flow to your workspace<span class="note">A branch for your review, made beside your checkout, never pushed; an employer's workspace gets nothing.</span></span><span class="who claude">Claude</span></li>
-              <li><i class="mark you"></i><span>Say go for the first deep scan of your workspace: 9 passes, about 5.8 million tokens</span><span class="who you">You</span></li>
+              <li><i class="mark part"></i><span><code>wsx</code> parity, then archiving project 18<span class="note">9 of 11 promises met, each with a test. Left: skills that cite their sources (the library) and an MCP server (Stage 5). Archiving is your call once both are met.</span></span><span class="who claude">Claude, then you</span></li>
+              <li><i class="mark you"></i><span>Say go for the agent runs: the first deep scan of your workspace (9 passes, about 5.8 million tokens), then C8–C10's</span><span class="who you">You</span></li>
+              <li><i class="mark you"></i><span>Choose the skill library: which finished skills Create pulls and adapts, and from where</span><span class="who you">You</span></li>
+              <li><i class="mark you"></i><span>Every exit test on the Windows PC (item 15)</span><span class="who you">You + Claude</span></li>
               <li><i class="mark you"></i><span>Review the import proposals for your workspace, and pick the T2 test profiles</span><span class="who you">You</span></li>
             </ul>
           </div>
@@ -322,7 +345,8 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
       <li><span class="kind">Try</span><b>Resume to the cloud, once</b><span>Built but untried, because a test starts a real cloud session.</span></li>
       <li><span class="kind">Decide</span><b>The public name</b><span>"Synapse" is a codename. No trademark check yet; it's needed before any public use or a go on Stage 7.</span></li>
       <li><span class="kind">Fix</span><b>GitHub billing, so CI runs</b><span>Since item 6 GitHub hasn't started any job: "recent account payments have failed or your spending limit needs to be increased" (Settings → Billing & plans). Every check ran locally meanwhile.</span></li>
-      <li><span class="kind">Go</span><b>The first deep scan</b><span>Of your workspace's Stage 3 snapshot: 9 passes, about 5.8 million tokens, each stopping at $10 or 30 minutes. Say go and set a total cap. A deny list first: terms that must never leave your Mac, one per line.</span></li>
+      <li><span class="kind">Go</span><b>The first deep scan, then the other agent runs</b><span>Of your workspace's Stage 3 snapshot: 9 passes, about 5.8 million tokens, each stopping at $10 or 30 minutes. Say go and set a total cap. A deny list first: terms that must never leave your Mac, one per line. Then C8's second scan, C9's scans of the ten test workspaces, and one agent-written workspace.</span></li>
+      <li><span class="kind">Decide</span><b>Create's skill library</b><span>Which finished skills Create pulls and adapts for a new workspace, and from which sources. Each is cited. It's the last Create part that doesn't wait for Stage 5.</span></li>
       <li><span class="kind">Decide</span><b>Foundations across skill chains</b><span>The contract says foundations load first. The routers do that within each chain, so 174 of 5,488 answers load a foundation after another skill. Sorting across chains changes those answers.</span></li>
       <li><span class="kind">Confirm</span><b>Stage 3's decisions, D101–D105</b><span>Work proceeds on the recommendations: Create in the Rust core, Claude Code as the scan's agent, new folders only, the ten T2 profiles, and the template library.</span></li>
       <li><span class="kind">Use</span><b>Two weeks of daily use (S1)</b><span>Check status in the app instead of asking an agent, and note what's missing.</span></li>
@@ -344,6 +368,9 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
       <li><span class="kind">Stage 3 · 6–7</span><b>The Import screen and the scorecard</b><span>Five steps on one page, each finding to accept, edit or reject, a write that's scored on nine gates; Health lists every scorecard and its trend.</span></li>
       <li><span class="kind">Stage 3 · 8</span><b>Ten generated test workspaces</b><span>Made by <code>wsx</code>, checked in CI: the engine routes each exactly as it routes itself, and finds every planted defect.</span></li>
       <li><span class="kind">Stage 3 · 11, 13</span><b>Merge into this workspace, and fix-back</b><span>Bring a vault or workspace in as one change with undo; send accepted fixes back to your own workspace as a branch to review.</span></li>
+      <li><span class="kind">Stage 3 · 12</span><b>The Surface installer's writes</b><span>Connect an agent app to the workspace from Agent apps: a marked block in its rules file, recorded, and an uninstall that puts every file back exactly.</span></li>
+      <li><span class="kind">Stage 3 · 9–10</span><b>Create</b><span>A new workspace from a six-step profile, in the Rust core: skills at each domain's level, a git repository, a context pack for chats. An agent with no tools can write each skill, after showing the cost.</span></li>
+      <li><span class="kind">Stage 3 · 14, 16</span><b><code>wsx</code> parity and the scorecard</b><span>9 of <code>wsx</code>'s 11 promises met, each with a test. Stage 3's scorecard: 6 of 12 pass, 2 fail, 4 wait for agent runs.</span></li>
     </ul>
     <h3>Next, once you've decided</h3>
     <ul class="asks quiet">
@@ -357,7 +384,8 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
     <h2 id="open">Other open items</h2>
     <ul class="asks quiet">
       <li><span class="kind">Blocked</span><b>Apple Developer Program</b><span>Enrollment says the account is "already associated". You emailed Apple support.</span></li>
-      <li><span class="kind">Later</span><b>Choices for later stages</b><span>The generator's engine (Stage 3), the plugin runtime (Stage 5), and whether <code>python-cross-platform-gui</code> is a spoke or a project skill.</span></li>
+      <li><span class="kind">Later</span><b>Choices for later stages</b><span>The plugin runtime (Stage 5), and whether <code>python-cross-platform-gui</code> is a spoke or a project skill.</span></li>
+      <li><span class="kind">Tidy</span><b>A second copy of this page</b><span>Published by mistake. Say so and Claude deletes it; this one stays.</span></li>
       <li><span class="kind">After Stage 3</span><b>Sensitive-data cleanup (D63, D65)</b><span>Generalize the files that hold private specifics, move them into sealed facts, then decide on history and visibility. Recommended now regardless: rotate the API key a memory note names, and review Drive link sharing.</span></li>
       <li><span class="kind">Workspace</span><b>Five batons over 12 KB</b><span>Bootstrap Generator 40 KB, Lockdown 21 KB, Fontface 18 KB, Workspace Brain 15 KB, Mailbird 12.4 KB. Each needs its own session to trim its Live handoff; the app and the session card flag them.</span></li>
     </ul>
@@ -369,7 +397,7 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
       <table class="tracks">
         <thead><tr><th>Track</th><th>What</th><th>Where it stands</th></tr></thead>
         <tbody>
-          <tr><td>Measurement</td><td>Corpus, scorecards, gates</td><td>Stage 2's scorecard runs; corpus T1–T4 in CI comes with Stage 3</td></tr>
+          <tr><td>Measurement</td><td>Corpus, scorecards, gates</td><td>Stage 3's scorecard runs: 6 of 12 pass, 4 wait for agent runs; T2, T3 and T4 in CI, T1 on your Mac</td></tr>
           <tr><td>Security</td><td>Threat review and test scenarios</td><td>Stage 2's review: ten threats, now with the self-fixing batons (D100)</td></tr>
           <tr><td>Vaultwarden</td><td>Deploy, back up, trial, cut over</td><td>Any time; independent of code</td></tr>
           <tr><td>Sensitive-data cleanup</td><td>Generalize private specifics into sealed facts</td><td>After Stage 3 (D65)</td></tr>
