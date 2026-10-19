@@ -47,6 +47,8 @@ The ABI line `[workspace: LOADED · …]` is frozen (SessionEnd audit). The card
 3. **On handoff / pause / end** — rewrite the Live handoff block (atomically, no stale fields) and write your
    session block as a **fragment** (`06-context/sessions/<id>.md` with a `SessionID:` line) — not a direct
    append to `session-log.md`. Compaction folds it in. Leave the next agent a clean "next action."
+   A baton over 12 KB moves older history to `history/` word for word, then `build-history-index.py`
+   and `validate-batons.py --lossless` (the workspace app does this by itself).
    If this session hit a vault gap (missed route, broken edge, transferable process, missing spoke),
    invoke `03-skills/self-improve/SKILL.md` before leaving so the other machine inherits the mint.
 4. **Concurrent edits** — disjoint fragments + the `merge=union` log rarely conflict now, so concurrent

@@ -830,6 +830,11 @@ def _pinned(mods: list, consts: dict, doctor: Path, label: str):
             # The H11 gate line reads machine-local gate state; its own cases run below.
             keep["gate_notices"] = mod.gate_notices
             mod.gate_notices = lambda *a, **k: []
+        if hasattr(mod, "big_batons"):
+            # The baton-size line (D98) reads the live batons, which other sessions grow; the oracle
+            # predates it. Pinned off here; its own cases (planted batons) run below.
+            keep["big_batons"] = mod.big_batons
+            mod.big_batons = lambda *a, **k: []
         if hasattr(mod, "routing_stamp_stale"):
             # The stale-stamp line hashes the live routing graph, which moves under other work; the
             # oracle predates it. Pinned off here; its own cases (planted stamps) run below.
@@ -1208,6 +1213,33 @@ def self_test() -> int:
             check("routing stamp: missing stamp → the missing line only",
                   any("Skill-routing harness stamp missing" in n for n in lines)
                   and not any("stamp is stale" in n for n in lines), repr(lines))
+
+    # 9. Baton size line (D98): batons over 12 KB, a project's own and scoped ones deeper in it;
+    #    copies in history/ or .claude/ never count; one card line names them; none over → no line.
+    with tempfile.TemporaryDirectory() as td:
+        troot = Path(td)
+        projects = troot / "07-projects"
+        big = "x" * (BATON_LIMIT + 1)
+        for rel, text in (("a/SESSION-STATE.md", big), ("a/docs/lab/SESSION-STATE.md", big),
+                          ("b/SESSION-STATE.md", "small"), ("a/history/SESSION-STATE.md", big),
+                          ("a/.claude/worktrees/w/SESSION-STATE.md", big)):
+            f = projects / rel
+            f.parent.mkdir(parents=True, exist_ok=True)
+            f.write_text(text, encoding="utf-8")
+        got = sorted(n for n, _ in big_batons(projects))
+        check("baton size: project and scoped batons over 12 KB; copies skipped",
+              got == ["a", "a/docs/lab"], repr(got))
+        check("baton size: none over → none", big_batons(projects / "b") == [])
+        doctor = troot / "home" / ".claude" / "ws-state"
+        doctor.mkdir(parents=True)
+        real_big = big_batons
+        with _pinned([me], _consts_for(troot), doctor, label):
+            globals()["big_batons"] = lambda *a, **k: real_big(projects)
+            lines = _notices()
+            check("baton size: one card line naming them",
+                  sum("baton(s) over 12 KB" in n and "a/docs/lab" in n for n in lines) == 1, repr(lines))
+            globals()["big_batons"] = lambda *a, **k: []
+            check("baton size: none over → no card line", not any("over 12 KB" in n for n in _notices()))
 
     for f in failures:
         print(f"  ✗ {f}", file=sys.stderr)
