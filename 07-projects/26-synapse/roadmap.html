@@ -151,14 +151,14 @@ details.more summary { cursor: pointer; color: var(--accent); font-size: 0.88rem
   <header>
     <h1>Synapse Roadmap</h1>
     <p class="answer"><strong>Stage 1 is done, Stage 0 nearly, and Stages 2 and 3 are built.</strong> Import and Create are built end to end, with their screens, the scorecard, merge into this workspace, fix-back and the Surface installer. Stage 3's scorecard passes 6 of 12; four tests wait for agent runs that cost model use, so they wait for your go. What's left in Stages 0 and 2 is checking and signing, and most of it needs you or hardware. The last stage runs only if you decide to sell it.</p>
-    <p class="lede mono">Updated Oct 19, 2026 · repo at 1504732 · CI green again: Linux on every push, macOS and Windows nightly (D106) · on Unicron ui 0.13.0</p>
+    <p class="lede mono">Updated Oct 19, 2026 · repo at 27a1f95 · CI green again: Linux on every push, macOS and Windows nightly (D106) · on Unicron ui 0.13.0</p>
   </header>
 
   <section aria-label="Summary">
     <div class="stats">
       <div class="stat"><b>1<small>/8</small></b><span>stages fully done (0–7); Stage 0 has 3 hardware spikes left</span></div>
       <div class="stat"><b>9<small>/14</small></b><span>Stage 2 exit tests passing</span></div>
-      <div class="stat"><b>18</b><span>items waiting on you</span></div>
+      <div class="stat"><b>19</b><span>items waiting on you</span></div>
       <div class="stat"><b>29–41</b><span>focused weeks after Stage 2, through Stage 6</span></div>
     </div>
     <div class="bar" role="img" aria-label="Stage 2 exit tests: 9 passing, 5 waiting, of 14">
@@ -290,7 +290,7 @@ details.more summary { cursor: pointer; color: var(--accent); font-size: 0.88rem
       <li class="stage" id="stage-4">
         <div class="rail"><a class="node" href="#stage-4" aria-label="Copy a link to Stage 4">4</a></div>
         <div class="body">
-          <div class="head"><span class="t">Personas and access</span><span class="chip">Not started</span><span class="chip size">10–15 wk</span></div>
+          <div class="head"><span class="t">Personas and access</span><span class="chip">Plan drafted · waiting for your go</span><span class="chip size">10–15 wk planned · about 19 sized</span></div>
           <p class="goal">The right login and the right tools for each persona, everywhere. If login trouble gets worse, its first two phases can move ahead of Stage 3.</p>
           <div class="card">
             <ul class="steps">
@@ -383,6 +383,19 @@ details.more summary { cursor: pointer; color: var(--accent); font-size: 0.88rem
       <li id="ask-skill-library"><span class="kind">Decide</span><b>Create's skill library <a class="pin" href="#ask-skill-library" aria-label="Copy a link to Create&#x27;s skill library">#</a></b><span>Which finished skills Create pulls and adapts for a new workspace, and from which sources. Each is cited. It's the last Create part that doesn't wait for Stage 5.</span></li>
       <li id="ask-foundations-across-chains"><span class="kind">Decide</span><b>Foundations across skill chains <a class="pin" href="#ask-foundations-across-chains" aria-label="Copy a link to Foundations across skill chains">#</a></b><span>The contract says foundations load first. The routers do that within each chain, so 174 of 5,488 answers load a foundation after another skill. Sorting across chains changes those answers.</span></li>
       <li id="ask-d101-d105"><span class="kind">Confirm</span><b>Stage 3's decisions, D101–D105 <a class="pin" href="#ask-d101-d105" aria-label="Copy a link to Stage 3&#x27;s decisions, D101–D105">#</a></b><span>Work proceeds on the recommendations: Create in the Rust core, Claude Code as the scan's agent, new folders only, the ten T2 profiles, and the template library.</span></li>
+      <li id="ask-stage-4-go"><span class="kind">Go</span><b>Start Stage 4, Personas and access <a class="pin" href="#ask-stage-4-go" aria-label="Copy a link to Start Stage 4, Personas and access">#</a></b><span>The plan is drafted and waits for your go: the right sign-in for each persona, with no "active account" to flip. Nothing is built until you say so.</span>
+        <details class="more">
+          <summary>What this means</summary>
+          <div class="more-body">
+            <p><b>What it is.</b> A new background program that is the only part of the app ever holding a password or token. git, <code>gh</code>, SSH and agents get the right account for the repo or project they're in, decided by rules you write once. Today that's held together by hand: separate <code>gh</code> folders, git rules per remote, and switching back after every login.</p>
+            <p><b>What you get, in order.</b> First <b>Watch</b>: a warning before a token expires or a commit goes out under the wrong name, holding no secrets. Then <b>Broker</b>: the right identity for git, <code>gh</code> and SSH, personal accounts first. Then the <b>gateway</b>: agents use both Linear workspaces, Jira and GitHub through the right account without ever seeing a token. Beside them: two installs of one app tied to two personas, sealed facts for sensitive specifics, and the Integrations screen with externals.</p>
+            <p><b>Size.</b> About 19 focused weeks in 19 items. The roadmap said 10–15 because it counted the access phases alone.</p>
+            <p><b>What it asks of you.</b> An Apple team (it unlocks the signature check that employer accounts need, <a href="https://github.com/snds/synapse/blob/main/docs/plan/decisions.md#d110">D110</a>); a private GitHub App under your account for sign-in (<a href="https://github.com/snds/synapse/blob/main/docs/plan/decisions.md#d112">D112</a>); one sign-in per account as each part lands; Windows PC time; two weeks of daily use on all three devices.</p>
+            <p><b>Decisions to confirm.</b> <a href="https://github.com/snds/synapse/blob/main/docs/plan/decisions.md#d109">D109</a> the order; <a href="https://github.com/snds/synapse/blob/main/docs/plan/decisions.md#d110">D110</a> personal accounts only until builds are signed; <a href="https://github.com/snds/synapse/blob/main/docs/plan/decisions.md#d111">D111</a> sealed facts per device until the fleet; <a href="https://github.com/snds/synapse/blob/main/docs/plan/decisions.md#d112">D112</a> the GitHub App; <a href="https://github.com/snds/synapse/blob/main/docs/plan/decisions.md#d113">D113</a> one Integrations list per persona.</p>
+            <p><b>The plan.</b> <a href="https://github.com/snds/synapse/blob/main/docs/stage-4/STAGE-4.md">STAGE-4.md</a>: items, exit tests A1–A12, the spikes, and what earlier stages already give.</p>
+            <p><b>What to say.</b> "Go on Stage 4", with any decision you'd change.</p>
+          </div>
+        </details></li>
       <li id="ask-two-weeks-daily-use"><span class="kind">Use</span><b>Two weeks of daily use (S1) <a class="pin" href="#ask-two-weeks-daily-use" aria-label="Copy a link to Two weeks of daily use (S1)">#</a></b><span>Check status in the app instead of asking an agent, and note what's missing.</span></li>
     </ul>
   </section>
@@ -404,7 +417,8 @@ details.more summary { cursor: pointer; color: var(--accent); font-size: 0.88rem
       <li id="built-merge-into-this-workspace"><span class="kind">Stage 3 · 11, 13</span><b>Merge into this workspace, and fix-back <a class="pin" href="#built-merge-into-this-workspace" aria-label="Copy a link to Merge into this workspace, and fix-back">#</a></b><span>Bring a vault or workspace in as one change with undo; send accepted fixes back to your own workspace as a branch to review.</span></li>
       <li id="built-surface-installer-writes"><span class="kind">Stage 3 · 12</span><b>The Surface installer's writes <a class="pin" href="#built-surface-installer-writes" aria-label="Copy a link to The Surface installer&#x27;s writes">#</a></b><span>Connect an agent app to the workspace from Agent apps: a marked block in its rules file, recorded, and an uninstall that puts every file back exactly.</span></li>
       <li id="built-create"><span class="kind">Stage 3 · 9–10</span><b>Create <a class="pin" href="#built-create" aria-label="Copy a link to Create">#</a></b><span>A new workspace from a six-step profile, in the Rust core: skills at each domain's level, a git repository, a context pack for chats. An agent with no tools can write each skill, after showing the cost.</span></li>
-      <li id="built-d107-links"><span class="kind">D107</span><b>Links that land on the item <a class="pin" href="#built-d107-links" aria-label="Copy a link to Links that land on the item">#</a></b><span>A <code>sy-app://</code> link opens the app at an issue, a fix, a finding, a baton field or a line in a file. It only shows; it never acts. Copy link gives the app link and the GitHub link for your phone. A line on this page opens here at its anchor. On the Mac it works once the app is in Applications.</span></li>
+      <li id="built-d107-links"><span class="kind">D107</span><b>Links that land on the item <a class="pin" href="#built-d107-links" aria-label="Copy a link to Links that land on the item">#</a></b><span>A <code>sy-app://</code> link opens the app at an issue, a fix, a finding, a baton field or a line in a file. It only shows; it never acts. Copy link (or ⌘⇧C anywhere) gives the app link and the GitHub link for your phone. A line on this page opens here at its anchor. On the Mac it works once the app is in Applications.</span></li>
+      <li id="built-u5-gitignore"><span class="kind">Stage 3 · U5</span><b>Private files stay out of Import <a class="pin" href="#built-u5-gitignore" aria-label="Copy a link to Private files stay out of Import">#</a></b><span>A folder that isn't a git repository is now copied without what its own <code>.gitignore</code> keeps private, such as a walled personal file, so the deep scan never reads them. The Import screen says how many were left out.</span></li>
       <li id="built-ci-d106"><span class="kind">CI · D106</span><b>CI runs again, for less <a class="pin" href="#built-ci-d106" aria-label="Copy a link to CI runs again, for less">#</a></b><span>Linux checks on every push, about 5 minutes; macOS and Windows nightly when something changed, about 30. The first run since item 6 passed.</span></li>
       <li id="built-wsx-parity-scorecard"><span class="kind">Stage 3 · 14, 16</span><b><code>wsx</code> parity and the scorecard <a class="pin" href="#built-wsx-parity-scorecard" aria-label="Copy a link to wsx parity and the scorecard">#</a></b><span>9 of <code>wsx</code>'s 11 promises met, each with a test. Stage 3's scorecard: 6 of 12 pass, 2 fail, 4 wait for agent runs.</span></li>
     </ul>
