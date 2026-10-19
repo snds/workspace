@@ -5,7 +5,7 @@
   "language": "python",
   "entry": "externals.py",
   "runtime": "python>=3.8",
-  "safety": "read-only",
+  "safety": "writes-outside",
   "network": false,
   "run": {
     "default": [
