@@ -48,6 +48,25 @@ _Last updated: 2026-10-19 — library redesign stages M1a–M5 done and merged i
   - Scope: library match, on-by-default online name previews (CSS2 `text=`, cached under `app_cache_dir()/google-previews`, served via `ff://localhost/google/<id>/<token>/<kind>`), script samples for families that can't draw their names, an alphabet file for typed text, the Settings switch with a privacy note and "Clear preview cache", and docs.
   - Out of scope: Adobe CoreText images, and a Google family detail page using the full file.
   - Workflow `wf_a7aef7ad-3d1`: Rust and UI builders → integrator (all checks plus a live Google test) → 3 reviewers, each checked by a skeptic → fixer → recheck.
+  - **Done 2026-10-19:** `f24183a` build, `0ade625` review fixes (9 confirmed findings), `1a5c6ef` last recheck items, `32995c6` "Yours first". 329 UI tests and 331 Rust tests pass, the live Google test passes, and the app builds. Not seen in the running app yet.
+  - **Side sessions (all finished, each 1 commit on top of `104b165`, not merged):**
+    - `claude/remove-subfolder-picker` `6eb2ca3`: the picker is gone. Subfolder colors are hidden but kept in the DB.
+    - `claude/nested-inset` `234397a`: style rows inset 80px with a 1px rail at 28px; in the Table, 64px with a rail at 20px.
+    - `claude/auto-family-groups` `55088b6`: suggestions apply automatically (2,700 → 2,514 families); the switch is in View options; the Automatic tab has Keep separate; no dialogs.
+    - `claude/responsive-tiles` `62298a1`: min 2 columns; card ≥ 64 + 3.5×size px (≥180).
+    - `claude/tag-activation` `8b03619`: tag on/off including nested tags; built-in tags are read-only with "Make it my tag"; "Move to Built-in" removed; DS tooltips on tag actions. Its toast text still names Font Book, so fix that after the merge.
+    - `claude/no-competitor-names` `86c44aa`: "Font Book" became "macOS Fonts" and the Typeface wording is generic. Open: the `.typeface-backup` extension remains.
+  - **Dry-run merge onto `google-previews`:** 4 merge cleanly. `tag-activation` conflicts in `src/tags/menus.tsx`, and `no-competitor-names` in `src/tags/TagsSection.tsx`. Waiting for Sean's OK to merge.
+  - **Then:** the app-wide DS tooltip pass, plus a final competitor-name check.
+  - **Merged 2026-10-19 (Sean: "Merge all into main"):** local `main` = `6a8e33d`. It fast-forwarded to `google-previews`, then merged the 6 `claude/*` branches with merge commits.
+    - I resolved the 2 conflicts (`src/tags/menus.tsx` imports, and `src/tags/TagsSection.tsx`, keeping TextAction tips with neutral words).
+    - I neutralised 6 more competitor mentions the tag branch added (tagActions.ts, TagsSection.tsx). A final grep of the app text finds none.
+    - 338 UI tests and 332 Rust tests pass, and the app builds.
+    - Not pushed: `origin/main` is still `826c574`.
+    - The worktrees under `.claude/worktrees/` and their `claude/*` branches are still there. Cleaning them up waits for Sean's OK.
+  - **Tooltip pass running:** branch `tooltips` from `6a8e33d`, workflow `wf_b00e9b3e-010`.
+    - Order: a shared `Tip`/`TipItem` foundation, then 4 area agents, an integrator, coverage and quality reviewers each checked by a skeptic, a fixer, and a recheck.
+    - Rule: every action gets a DS tooltip, except a dialog's own Cancel/Close/Done.
   - **Queued right after it (Sean, 2026-10-19):** a "yours first" sort on cloud catalog pages (Google now, and later any other catalog). Families you have, whether downloaded through Fontface or your own copy, go to the top; the switch turns it off so standard sorting returns. It's on by default, remembered in settings, with a quiet divider between the two groups. It waits because the builders are editing `GoogleFontsPanel.tsx` now.
 
 ### Decisions 2026-10-18 (Sean)
