@@ -1,0 +1,292 @@
+<title>Mailbird Roadmap</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one reading column — summary, the latest phases, what needs you, then the full harvest by vertical. */
+:root {
+  --bg: oklch(0.985 0.003 260);
+  --surface: oklch(1 0 0);
+  --fg: oklch(0.2 0.01 260);
+  --muted: oklch(0.5 0.012 260);
+  --line: oklch(0.91 0.006 260);
+  --accent: oklch(0.55 0.17 255);
+  /* The app's own vertical hues (app-extension.css): one per area. */
+  --mail: oklch(0.6 0.19 255);
+  --calendar: oklch(0.63 0.2 25);
+  --contacts: oklch(0.6 0.14 160);
+  --notes: oklch(0.7 0.16 75);
+  --system: oklch(0.55 0.08 290);
+  --done: oklch(0.55 0.13 155);
+  --part: oklch(0.65 0.14 75);
+  --open: oklch(0.6 0.012 260);
+  --chip: oklch(0.955 0.006 260);
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: oklch(0.17 0.008 260); --surface: oklch(0.21 0.009 260); --fg: oklch(0.95 0.004 260); --muted: oklch(0.7 0.01 260);
+    --line: oklch(0.3 0.01 260); --accent: oklch(0.72 0.14 255);
+    --mail: oklch(0.72 0.15 255); --calendar: oklch(0.74 0.15 25); --contacts: oklch(0.74 0.12 160); --notes: oklch(0.82 0.14 80); --system: oklch(0.74 0.08 290);
+    --done: oklch(0.75 0.13 155); --part: oklch(0.8 0.13 80); --open: oklch(0.6 0.01 260); --chip: oklch(0.26 0.01 260);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: oklch(0.17 0.008 260); --surface: oklch(0.21 0.009 260); --fg: oklch(0.95 0.004 260); --muted: oklch(0.7 0.01 260);
+  --line: oklch(0.3 0.01 260); --accent: oklch(0.72 0.14 255);
+  --mail: oklch(0.72 0.15 255); --calendar: oklch(0.74 0.15 25); --contacts: oklch(0.74 0.12 160); --notes: oklch(0.82 0.14 80); --system: oklch(0.74 0.08 290);
+  --done: oklch(0.75 0.13 155); --part: oklch(0.8 0.13 80); --open: oklch(0.6 0.01 260); --chip: oklch(0.26 0.01 260);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.55 var(--font-body); }
+.wrap { max-width: 52rem; margin: 0 auto; padding-block: 40px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 40px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 1.25rem; font-weight: 600; }
+h3 { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 62ch; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+header { display: flex; flex-direction: column; gap: 12px; }
+.answer { font-size: 1.125rem; max-width: 62ch; }
+.answer strong { font-weight: 600; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.stat { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; }
+.stat b { font: 600 1.6rem/1.1 var(--font-mono); font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: 0.85rem; }
+.bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--chip); }
+.bar i { display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.85rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+section { display: flex; flex-direction: column; gap: 14px; }
+ol.phases { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.phase { display: grid; grid-template-columns: 3.25rem minmax(0, 1fr) auto; gap: 4px 12px; padding: 14px 16px; border-top: 1px solid var(--line); align-items: baseline; }
+.phase:first-child { border-top: 0; }
+.phase .n { font: 500 0.95rem var(--font-mono); color: var(--muted); }
+.phase .t { font-weight: 600; min-width: 0; }
+.phase .d { grid-column: 2 / -1; color: var(--muted); font-size: 0.9rem; min-width: 0; }
+.size { font: 500 0.75rem var(--font-mono); padding: 2px 8px; border-radius: 999px; background: var(--chip); color: var(--fg); white-space: nowrap; }
+.size.merged { background: var(--done); color: var(--surface); }
+.size.wait { background: transparent; border: 1px solid var(--part); color: var(--part); }
+.area { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 8px; vertical-align: 1px; }
+.divider { padding: 8px 16px; font: 500 0.75rem var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--chip); border-top: 1px solid var(--line); }
+.divider:first-child { border-top: 0; border-radius: 10px 10px 0 0; }
+ul.asks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+ul.asks li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; padding: 12px 14px; border-left: 3px solid var(--part); background: var(--surface); border-radius: 0 8px 8px 0; }
+ul.asks li b { font-weight: 600; }
+ul.asks li span { grid-column: 1 / -1; color: var(--muted); font-size: 0.9rem; }
+.groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 23rem), 1fr)); gap: 24px; align-items: start; }
+.group { display: flex; flex-direction: column; gap: 8px; }
+.group h3 .count { margin-left: auto; font: 500 0.8rem var(--font-mono); color: var(--muted); letter-spacing: 0; text-transform: none; }
+ul.items { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+ul.items li { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
+.mark { width: 14px; height: 14px; border-radius: 4px; display: inline-grid; place-items: center; font-size: 10px; line-height: 1; transform: translateY(2px); }
+.mark.done { background: var(--done); color: var(--surface); }
+.mark.part { background: linear-gradient(90deg, var(--part) 50%, transparent 50%); border: 1.5px solid var(--part); }
+.mark.open { border: 1.5px solid var(--open); }
+.where { font: 400 0.78rem var(--font-mono); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.where.next { color: var(--accent); }
+.note { display: block; color: var(--muted); font-size: 0.82rem; }
+footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 16px; }
+@media (max-width: 30rem) {
+  .phase { grid-template-columns: 2.75rem minmax(0, 1fr); }
+  .phase .size { grid-column: 2; justify-self: start; }
+}
+.pin { font: 500 0.8rem var(--font-mono); color: var(--muted); text-decoration: none; padding: 0 3px; opacity: 0.75; }
+.pin:hover, .pin:focus-visible { color: var(--accent); opacity: 1; }
+.is-target { outline: 2px solid var(--accent); outline-offset: 2px; background: color-mix(in oklch, var(--accent) 9%, var(--surface)); border-radius: 8px; }
+@media (prefers-reduced-motion: no-preference) { .is-target { transition: background-color 0.4s; } }
+ul.asks details { grid-column: 1 / -1; font-size: 0.9rem; }
+ul.asks summary { cursor: pointer; color: var(--accent); font-weight: 500; }
+ul.asks details p { margin-top: 6px; color: var(--fg); max-width: 62ch; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); max-width: calc(100% - 32px); background: var(--fg); color: var(--bg); padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; overflow-wrap: anywhere; user-select: text; z-index: 10; }
+</style>
+
+<div class="wrap" data-status-page="https://claude.ai/artifact/RuSar7aj6GxqcgHzmXv61x">
+  <header>
+    <h1>Mailbird Roadmap</h1>
+    <p class="answer"><strong>The software phases are done.</strong> Every planned phase through 49 is merged, and 58 of the harvest's 60 features are built. The two left are partly done, and both need real phones. What remains waits on hardware or on you, not on code.</p>
+    <p class="lede mono">Updated Oct 17, 2026 · 45–49 merged · follow-ups #60–#66 merged · nothing in review</p>
+  </header>
+
+  <section aria-label="Summary">
+    <div class="stats">
+      <div class="stat"><b>49</b><span>planned phases merged</span></div>
+      <div class="stat"><b>58<span class="mono" style="font-size:1rem;color:var(--muted)">/60</span></b><span>harvest features done</span></div>
+      <div class="stat"><b>0</b><span>PRs in review</span></div>
+      <div class="stat"><b>5</b><span>items waiting on you</span></div>
+    </div>
+    <div class="bar" role="img" aria-label="58 done, 2 partly done, of 60">
+      <i style="width:96.7%;background:var(--done)"></i><i style="width:3.3%;background:var(--part)"></i>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--done)"></i>Done · 58</span>
+      <span><i class="dot" style="background:var(--part)"></i>Partly done · 2</span>
+      <span><i class="dot" style="border:1.5px solid var(--open)"></i>Open · 0</span>
+    </div>
+  </section>
+
+  <section aria-labelledby="latest">
+    <h2 id="latest">Latest, and what's left</h2>
+    <p class="lede">The last planned phases, the follow-ups that came out of them, and the work only hardware can finish.</p>
+    <ol class="phases">
+      <li class="divider" id="group-just-merged">Just merged <a class="pin" href="#group-just-merged" aria-label="Copy a link to Just merged">#</a></li>
+      <li class="phase" id="built-unicron-0-9"><span class="n">—</span><span class="t"><i class="area" style="background:var(--system)"></i>unicron 0.9 <a class="pin" href="#built-unicron-0-9" aria-label="Copy a link to unicron 0.9">#</a></span><span class="size merged">Merged · PR #65</span><span class="d">Destructive text and the light warning fill read stronger. No code change; all 49 browser suites pass.</span></li>
+      <li class="phase" id="built-core-clipboard"><span class="n">—</span><span class="t"><i class="area" style="background:var(--notes)"></i>The core copies the key and saves images <a class="pin" href="#built-core-clipboard" aria-label="Copy a link to The core copies the key and saves images">#</a></span><span class="size merged">Merged · PR #66</span><span class="d">On the desktop and phone, the relay key is copied by the app's core, and the clear leaves anything you copied since. Save image in the viewer works there too.</span></li>
+      <li class="phase" id="phase-45-opt-in-ai"><span class="n">45</span><span class="t"><i class="area" style="background:var(--mail)"></i>Opt-in AI: summaries and smart reply <a class="pin" href="#phase-45-opt-in-ai" aria-label="Copy a link to Opt-in AI: summaries and smart reply">#</a></span><span class="size merged">Merged · PR #55</span><span class="d">Off by default. A model on your computer, or Claude or another service with your own key. Sent only when you ask.</span></li>
+      <li class="phase" id="phase-46-shared-drafts"><span class="n">46</span><span class="t"><i class="area" style="background:var(--mail)"></i>Shared drafts and team comments <a class="pin" href="#phase-46-shared-drafts" aria-label="Copy a link to Shared drafts and team comments">#</a></span><span class="size merged">Merged · PR #56</span><span class="d">Share a conversation by link: teammates comment and write the reply with you; you send it.</span></li>
+      <li class="phase" id="phase-47-presence-and-files"><span class="n">47</span><span class="t"><i class="area" style="background:var(--notes)"></i>Who's here, and files with shares <a class="pin" href="#phase-47-presence-and-files" aria-label="Copy a link to Who&#x27;s here, and files with shares">#</a></span><span class="size merged">Merged · PR #57</span><span class="d">See who else has a shared note or conversation open. A note's images travel with it; you choose which attachments teammates can download.</span></li>
+      <li class="phase" id="phase-48-e2e-sync"><span class="n">48</span><span class="t"><i class="area" style="background:var(--notes)"></i>End-to-end encrypted sync <a class="pin" href="#phase-48-e2e-sync" aria-label="Copy a link to End-to-end encrypted sync">#</a></span><span class="size merged">Merged · PR #58</span><span class="d">Turn it on and the relay keeps your notes and shares but can't read them.</span></li>
+      <li class="phase" id="phase-49-shared-inbox"><span class="n">49</span><span class="t"><i class="area" style="background:var(--mail)"></i>A shared inbox on the gateway <a class="pin" href="#phase-49-shared-inbox" aria-label="Copy a link to A shared inbox on the gateway">#</a></span><span class="size merged">Merged · PR #59</span><span class="d">Invite people to your gateway. Assign conversations, leave notes the customer never sees, and see who else is in one.</span></li>
+      <li class="phase" id="built-follow-ups-60-64"><span class="n">—</span><span class="t"><i class="area" style="background:var(--system)"></i>Follow-ups <a class="pin" href="#built-follow-ups-60-64" aria-label="Copy a link to Follow-ups">#</a></span><span class="size merged">Merged · #60–#64</span><span class="d">unicron 0.7 with readable area colors, the relay key in a secret field, unused note images cleared after 30 days, a full-screen image viewer, and multi-page scans.</span></li>
+      <li class="divider" id="group-left-hardware">Left: needs hardware <a class="pin" href="#group-left-hardware" aria-label="Copy a link to Left: needs hardware">#</a></li>
+      <li class="phase" id="open-device-spike"><span class="n">5b</span><span class="t"><i class="area" style="background:var(--system)"></i>Device spike and hardware session <a class="pin" href="#open-device-spike" aria-label="Copy a link to Device spike and hardware session">#</a></span><span class="size">M</span><span class="d">With Sean, on real devices: iOS and Android builds, location reminders, Apple Pencil, the menu-bar calendar on each desktop, native scanners, and the clipboard and Downloads on phones.</span></li>
+      <li class="phase" id="open-ocr-languages"><span class="n">—</span><span class="t"><i class="area" style="background:var(--notes)"></i>More languages for text in images <a class="pin" href="#open-ocr-languages" aria-label="Copy a link to More languages for text in images">#</a></span><span class="size">S</span><span class="d">Each language needs its model files downloaded, which the cloud sessions can't do.</span></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="you">
+    <h2 id="you">Waiting on you</h2>
+    <ul class="asks">
+      <li id="ask-product-name"><b>The product name <a class="pin" href="#ask-product-name" aria-label="Copy a link to The product name">#</a></b><span>"Mailbird" belongs to Mailbird, Inc. (ADR-0006). Google's app verification is blocked until it changes.</span><details><summary>What this means</summary><p>“Mailbird” is Mailbird, Inc.’s trademark, so the project can’t ship under it. Google won’t verify the sign-in app until the name is final, and the name goes into the app id, the website and the OAuth consent screen. You pick a name; I rename the app and docs in one pass.</p></details></li>
+      <li id="ask-google-oauth"><b>A Google OAuth client <a class="pin" href="#ask-google-oauth" aria-label="Copy a link to A Google OAuth client">#</a></b><span>For real Gmail and Google sign-ins. Steps are in docs/google-verification.md.</span><details><summary>What this means</summary><p>Real Gmail and Google Calendar sign-ins need an OAuth client in your Google Cloud account; I can’t create one. It’s free for testing (up to 100 test users) and needs Google’s verification to go public, which waits on the name. You follow docs/google-verification.md and paste me the client id.</p></details></li>
+      <li id="ask-microsoft-entra"><b>A Microsoft Entra app <a class="pin" href="#ask-microsoft-entra" aria-label="Copy a link to A Microsoft Entra app">#</a></b><span>For real Outlook and Microsoft 365 sign-ins. Steps are in docs/microsoft-setup.md.</span><details><summary>What this means</summary><p>Real Outlook and Microsoft 365 sign-ins need an app registration in Microsoft Entra; I can’t create one. It’s free and takes about ten minutes. You follow docs/microsoft-setup.md and paste me the client id.</p></details></li>
+      <li id="ask-menu-bar-desktop-check"><b>A desktop check of the menu-bar calendar (42) <a class="pin" href="#ask-menu-bar-desktop-check" aria-label="Copy a link to A desktop check of the menu-bar calendar (42)">#</a></b><span>The tray icon, its window, and keep-running-on-close need macOS, Windows, and Linux. ADR-0054 has a 10-row checklist.</span><details><summary>What this means</summary><p>The tray icon, its mini window and keep-running-on-close only exist in a real desktop window, which the cloud sessions can’t open. On each of your Macs and the Windows PC, you run the app and go through ADR-0054’s 10-row checklist; I fix whatever fails.</p></details></li>
+      <li id="ask-device-spike"><b>Real phones for the device spike (5b) <a class="pin" href="#ask-device-spike" aria-label="Copy a link to Real phones for the device spike (5b)">#</a></b><span>iOS and Android builds, location reminders, and Pencil handwriting can only be checked on hardware.</span><details><summary>What this means</summary><p>iOS and Android builds, location reminders, Apple Pencil, the native scanners, and copying and saving on a phone can only be checked on a device. You’ll need your iPhone (and an Android phone if you have one) and an Apple developer account for the iOS build (a free one installs on your own phone; TestFlight needs the paid one). We do it together in one session.</p></details></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="harvest">
+    <h2 id="harvest">The harvest, feature by feature</h2>
+    <p class="lede">Every row of the competitive analysis §3, with the phase that built it.</p>
+    <div class="groups">
+      <div class="group">
+        <h3><i class="area" style="background:var(--mail)"></i>Mail<span class="count">18 of 18</span></h3>
+        <ul class="items">
+          <li id="mail-unified-inbox"><i class="mark done">✓</i><span>Unified inbox <a class="pin" href="#mail-unified-inbox" aria-label="Copy a link to Unified inbox">#</a></span><span class="where">1</span></li>
+          <li id="mail-smart-inbox-people-updates-newsletters"><i class="mark done">✓</i><span>Smart inbox (People, Updates, Newsletters) <a class="pin" href="#mail-smart-inbox-people-updates-newsletters" aria-label="Copy a link to Smart inbox (People, Updates, Newsletters)">#</a></span><span class="where">8</span></li>
+          <li id="mail-split-inbox-your-own-lanes"><i class="mark done">✓</i><span>Split inbox, your own lanes <a class="pin" href="#mail-split-inbox-your-own-lanes" aria-label="Copy a link to Split inbox, your own lanes">#</a></span><span class="where">12</span></li>
+          <li id="mail-screener-for-first-time-senders"><i class="mark done">✓</i><span>Screener for first-time senders <a class="pin" href="#mail-screener-for-first-time-senders" aria-label="Copy a link to Screener for first-time senders">#</a></span><span class="where">8</span></li>
+          <li id="mail-imbox-feed-paper-trail"><i class="mark done">✓</i><span>Imbox, Feed, Paper Trail <a class="pin" href="#mail-imbox-feed-paper-trail" aria-label="Copy a link to Imbox, Feed, Paper Trail">#</a><span class="note">As the People, Updates, and Newsletters lanes</span></span><span class="where">8</span></li>
+          <li id="mail-snooze"><i class="mark done">✓</i><span>Snooze <a class="pin" href="#mail-snooze" aria-label="Copy a link to Snooze">#</a></span><span class="where">1</span></li>
+          <li id="mail-send-later-in-their-time-zone-too"><i class="mark done">✓</i><span>Send later, in their time zone too <a class="pin" href="#mail-send-later-in-their-time-zone-too" aria-label="Copy a link to Send later, in their time zone too">#</a></span><span class="where">7 · 31</span></li>
+          <li id="mail-undo-send"><i class="mark done">✓</i><span>Undo send <a class="pin" href="#mail-undo-send" aria-label="Copy a link to Undo send">#</a></span><span class="where">1</span></li>
+          <li id="mail-follow-up-reminders"><i class="mark done">✓</i><span>Follow-up reminders <a class="pin" href="#mail-follow-up-reminders" aria-label="Copy a link to Follow-up reminders">#</a></span><span class="where">7</span></li>
+          <li id="mail-command-palette-and-keyboard-grammar"><i class="mark done">✓</i><span>Command palette and keyboard grammar <a class="pin" href="#mail-command-palette-and-keyboard-grammar" aria-label="Copy a link to Command palette and keyboard grammar">#</a></span><span class="where">7 · 15 · 22</span></li>
+          <li id="mail-configurable-swipe-gestures"><i class="mark done">✓</i><span>Configurable swipe gestures <a class="pin" href="#mail-configurable-swipe-gestures" aria-label="Copy a link to Configurable swipe gestures">#</a></span><span class="where">1b · 15</span></li>
+          <li id="mail-bundled-newsletters"><i class="mark done">✓</i><span>Bundled newsletters <a class="pin" href="#mail-bundled-newsletters" aria-label="Copy a link to Bundled newsletters">#</a></span><span class="where">12</span></li>
+          <li id="mail-tracker-and-pixel-blocking"><i class="mark done">✓</i><span>Tracker and pixel blocking <a class="pin" href="#mail-tracker-and-pixel-blocking" aria-label="Copy a link to Tracker and pixel blocking">#</a></span><span class="where">1</span></li>
+          <li id="mail-one-tap-unsubscribe-and-block"><i class="mark done">✓</i><span>One-tap unsubscribe and block <a class="pin" href="#mail-one-tap-unsubscribe-and-block" aria-label="Copy a link to One-tap unsubscribe and block">#</a></span><span class="where">7 · 8</span></li>
+          <li id="mail-templates-and-signatures"><i class="mark done">✓</i><span>Templates and signatures <a class="pin" href="#mail-templates-and-signatures" aria-label="Copy a link to Templates and signatures">#</a></span><span class="where">7</span></li>
+          <li id="mail-deep-power-settings"><i class="mark done">✓</i><span>Deep power settings <a class="pin" href="#mail-deep-power-settings" aria-label="Copy a link to Deep power settings">#</a></span><span class="where">43</span></li>
+          <li id="mail-ai-summaries-and-smart-reply-opt-in"><i class="mark done">✓</i><span>AI summaries and smart reply (opt-in) <a class="pin" href="#mail-ai-summaries-and-smart-reply-opt-in" aria-label="Copy a link to AI summaries and smart reply (opt-in)">#</a></span><span class="where">45</span></li>
+          <li id="mail-shared-drafts-and-team-comments"><i class="mark done">✓</i><span>Shared drafts and team comments <a class="pin" href="#mail-shared-drafts-and-team-comments" aria-label="Copy a link to Shared drafts and team comments">#</a><span class="note">Shared links (46) and a shared inbox (49)</span></span><span class="where">46 · 49</span></li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3><i class="area" style="background:var(--calendar)"></i>Calendar<span class="count">15 of 15</span></h3>
+        <ul class="items">
+          <li id="calendar-natural-language-event-entry"><i class="mark done">✓</i><span>Natural-language event entry <a class="pin" href="#calendar-natural-language-event-entry" aria-label="Copy a link to Natural-language event entry">#</a></span><span class="where">2</span></li>
+          <li id="calendar-scheduling-links-rebook-and-cancel"><i class="mark done">✓</i><span>Scheduling links, rebook and cancel <a class="pin" href="#calendar-scheduling-links-rebook-and-cancel" aria-label="Copy a link to Scheduling links, rebook and cancel">#</a></span><span class="where">16 · 21</span></li>
+          <li id="calendar-second-time-zone-in-the-gutter"><i class="mark done">✓</i><span>Second time zone in the gutter <a class="pin" href="#calendar-second-time-zone-in-the-gutter" aria-label="Copy a link to Second time zone in the gutter">#</a></span><span class="where">9</span></li>
+          <li id="calendar-time-zone-aware-event-creation"><i class="mark done">✓</i><span>Time-zone-aware event creation <a class="pin" href="#calendar-time-zone-aware-event-creation" aria-label="Copy a link to Time-zone-aware event creation">#</a></span><span class="where">19</span></li>
+          <li id="calendar-travel-time-and-time-to-leave-alerts"><i class="mark done">✓</i><span>Travel time and time-to-leave alerts <a class="pin" href="#calendar-travel-time-and-time-to-leave-alerts" aria-label="Copy a link to Travel time and time-to-leave alerts">#</a></span><span class="where">19</span></li>
+          <li id="calendar-availability-overlay-find-a-time"><i class="mark done">✓</i><span>Availability overlay (find a time) <a class="pin" href="#calendar-availability-overlay-find-a-time" aria-label="Copy a link to Availability overlay (find a time)">#</a></span><span class="where">11</span></li>
+          <li id="calendar-calendar-sets"><i class="mark done">✓</i><span>Calendar sets <a class="pin" href="#calendar-calendar-sets" aria-label="Copy a link to Calendar sets">#</a></span><span class="where">11</span></li>
+          <li id="calendar-google-icloud-and-exchange-in-one-view"><i class="mark done">✓</i><span>Google, iCloud, and Exchange in one view <a class="pin" href="#calendar-google-icloud-and-exchange-in-one-view" aria-label="Copy a link to Google, iCloud, and Exchange in one view">#</a></span><span class="where">2 · 4 · 4b</span></li>
+          <li id="calendar-tasks-time-blocked-on-the-calendar"><i class="mark done">✓</i><span>Tasks time-blocked on the calendar <a class="pin" href="#calendar-tasks-time-blocked-on-the-calendar" aria-label="Copy a link to Tasks time-blocked on the calendar">#</a></span><span class="where">18</span></li>
+          <li id="calendar-join-meeting-button"><i class="mark done">✓</i><span>Join-meeting button <a class="pin" href="#calendar-join-meeting-button" aria-label="Copy a link to Join-meeting button">#</a></span><span class="where">9 · 20</span></li>
+          <li id="calendar-propose-a-new-time"><i class="mark done">✓</i><span>Propose a new time <a class="pin" href="#calendar-propose-a-new-time" aria-label="Copy a link to Propose a new time">#</a></span><span class="where">11</span></li>
+          <li id="calendar-interesting-calendars-holidays-moon"><i class="mark done">✓</i><span>Interesting calendars (holidays, moon) <a class="pin" href="#calendar-interesting-calendars-holidays-moon" aria-label="Copy a link to Interesting calendars (holidays, moon)">#</a></span><span class="where">14 · 23</span></li>
+          <li id="calendar-keyboard-navigation-your-own-keys"><i class="mark done">✓</i><span>Keyboard navigation, your own keys <a class="pin" href="#calendar-keyboard-navigation-your-own-keys" aria-label="Copy a link to Keyboard navigation, your own keys">#</a></span><span class="where">15 · 22</span></li>
+          <li id="calendar-invitation-conflicts-in-the-thread"><i class="mark done">✓</i><span>Invitation conflicts in the thread <a class="pin" href="#calendar-invitation-conflicts-in-the-thread" aria-label="Copy a link to Invitation conflicts in the thread">#</a></span><span class="where">11</span></li>
+          <li id="calendar-menu-bar-mini-calendar"><i class="mark done">✓</i><span>Menu-bar mini calendar <a class="pin" href="#calendar-menu-bar-mini-calendar" aria-label="Copy a link to Menu-bar mini calendar">#</a><span class="note">Built; the tray gets checked on each desktop</span></span><span class="where">42</span></li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3><i class="area" style="background:var(--contacts)"></i>Contacts<span class="count">13 of 13</span></h3>
+        <ul class="items">
+          <li id="contacts-contacts-from-pasted-signatures"><i class="mark done">✓</i><span>Contacts from pasted signatures <a class="pin" href="#contacts-contacts-from-pasted-signatures" aria-label="Copy a link to Contacts from pasted signatures">#</a></span><span class="where">10</span></li>
+          <li id="contacts-duplicate-detection-and-merge"><i class="mark done">✓</i><span>Duplicate detection and merge <a class="pin" href="#contacts-duplicate-detection-and-merge" aria-label="Copy a link to Duplicate detection and merge">#</a></span><span class="where">2</span></li>
+          <li id="contacts-enrichment-from-email-signatures"><i class="mark done">✓</i><span>Enrichment from email signatures <a class="pin" href="#contacts-enrichment-from-email-signatures" aria-label="Copy a link to Enrichment from email signatures">#</a></span><span class="where">10</span></li>
+          <li id="contacts-smart-groups"><i class="mark done">✓</i><span>Smart groups <a class="pin" href="#contacts-smart-groups" aria-label="Copy a link to Smart groups">#</a></span><span class="where">13</span></li>
+          <li id="contacts-labels"><i class="mark done">✓</i><span>Labels <a class="pin" href="#contacts-labels" aria-label="Copy a link to Labels">#</a></span><span class="where">10</span></li>
+          <li id="contacts-quick-actions-email-call-message"><i class="mark done">✓</i><span>Quick actions (email, call, message) <a class="pin" href="#contacts-quick-actions-email-call-message" aria-label="Copy a link to Quick actions (email, call, message)">#</a></span><span class="where">9 · 26</span></li>
+          <li id="contacts-mail-and-meetings-with-each-person"><i class="mark done">✓</i><span>Mail and meetings with each person <a class="pin" href="#contacts-mail-and-meetings-with-each-person" aria-label="Copy a link to Mail and meetings with each person">#</a></span><span class="where">9</span></li>
+          <li id="contacts-birthdays-in-the-calendar"><i class="mark done">✓</i><span>Birthdays in the calendar <a class="pin" href="#contacts-birthdays-in-the-calendar" aria-label="Copy a link to Birthdays in the calendar">#</a></span><span class="where">9</span></li>
+          <li id="contacts-contact-photos"><i class="mark done">✓</i><span>Contact photos <a class="pin" href="#contacts-contact-photos" aria-label="Copy a link to Contact photos">#</a></span><span class="where">17</span></li>
+          <li id="contacts-source-badges"><i class="mark done">✓</i><span>Source badges <a class="pin" href="#contacts-source-badges" aria-label="Copy a link to Source badges">#</a></span><span class="where">17</span></li>
+          <li id="contacts-restore-to-a-point-in-time"><i class="mark done">✓</i><span>Restore to a point in time <a class="pin" href="#contacts-restore-to-a-point-in-time" aria-label="Copy a link to Restore to a point in time">#</a></span><span class="where">13</span></li>
+          <li id="contacts-vcard-and-qr-sharing"><i class="mark done">✓</i><span>vCard and QR sharing <a class="pin" href="#contacts-vcard-and-qr-sharing" aria-label="Copy a link to vCard and QR sharing">#</a></span><span class="where">10</span></li>
+          <li id="contacts-sender-profile-with-their-local-time"><i class="mark done">✓</i><span>Sender profile, with their local time <a class="pin" href="#contacts-sender-profile-with-their-local-time" aria-label="Copy a link to Sender profile, with their local time">#</a></span><span class="where">26 · 30</span></li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3><i class="area" style="background:var(--notes)"></i>Notes<span class="count">12 of 14</span></h3>
+        <ul class="items">
+          <li id="notes-quick-note-from-anywhere"><i class="mark done">✓</i><span>Quick Note from anywhere <a class="pin" href="#notes-quick-note-from-anywhere" aria-label="Copy a link to Quick Note from anywhere">#</a></span><span class="where">27</span></li>
+          <li id="notes-checked-items-sort-down"><i class="mark done">✓</i><span>Checked items sort down <a class="pin" href="#notes-checked-items-sort-down" aria-label="Copy a link to Checked items sort down">#</a></span><span class="where">18</span></li>
+          <li id="notes-backlinks-and-links"><i class="mark done">✓</i><span>Backlinks and [[links]] <a class="pin" href="#notes-backlinks-and-links" aria-label="Copy a link to Backlinks and [[links]]">#</a></span><span class="where">24 · 25</span></li>
+          <li id="notes-local-first-markdown-export"><i class="mark done">✓</i><span>Local-first Markdown, export <a class="pin" href="#notes-local-first-markdown-export" aria-label="Copy a link to Local-first Markdown, export">#</a></span><span class="where">3 · 24</span></li>
+          <li id="notes-color-and-pinned-card-grid"><i class="mark done">✓</i><span>Color and pinned card grid <a class="pin" href="#notes-color-and-pinned-card-grid" aria-label="Copy a link to Color and pinned card grid">#</a></span><span class="where">28</span></li>
+          <li id="notes-notes-linked-to-mail-events-people"><i class="mark done">✓</i><span>Notes linked to mail, events, people <a class="pin" href="#notes-notes-linked-to-mail-events-people" aria-label="Copy a link to Notes linked to mail, events, people">#</a></span><span class="where">3 · 25</span></li>
+          <li id="notes-typography-first-editor"><i class="mark done">✓</i><span>Typography-first editor <a class="pin" href="#notes-typography-first-editor" aria-label="Copy a link to Typography-first editor">#</a></span><span class="where">3</span></li>
+          <li id="notes-inline-tags-and-smart-folders"><i class="mark done">✓</i><span>Inline #tags and smart folders <a class="pin" href="#notes-inline-tags-and-smart-folders" aria-label="Copy a link to Inline #tags and smart folders">#</a></span><span class="where">3 · 32</span></li>
+          <li id="notes-location-and-time-reminders"><i class="mark part"></i><span>Location and time reminders <a class="pin" href="#notes-location-and-time-reminders" aria-label="Copy a link to Location and time reminders">#</a><span class="note">Time is done (29); location needs phones</span></span><span class="where next">→ 5b</span></li>
+          <li id="notes-locked-notes"><i class="mark done">✓</i><span>Locked notes <a class="pin" href="#notes-locked-notes" aria-label="Copy a link to Locked notes">#</a></span><span class="where">33</span></li>
+          <li id="notes-ocr-and-document-scanning"><i class="mark done">✓</i><span>OCR and document scanning <a class="pin" href="#notes-ocr-and-document-scanning" aria-label="Copy a link to OCR and document scanning">#</a><span class="note">Multi-page scans and a full-screen viewer added</span></span><span class="where">34 · 35</span></li>
+          <li id="notes-handwriting-and-sketches"><i class="mark done">✓</i><span>Handwriting and sketches <a class="pin" href="#notes-handwriting-and-sketches" aria-label="Copy a link to Handwriting and sketches">#</a><span class="note">Pen pressure works; Apple Pencil gets checked on hardware in 5b</span></span><span class="where">36</span></li>
+          <li id="notes-graph-and-canvas-views"><i class="mark part"></i><span>Graph and canvas views <a class="pin" href="#notes-graph-and-canvas-views" aria-label="Copy a link to Graph and canvas views">#</a><span class="note">The map is in; a canvas comes later</span></span><span class="where next">41 →</span></li>
+          <li id="notes-shared-notes"><i class="mark done">✓</i><span>Shared notes <a class="pin" href="#notes-shared-notes" aria-label="Copy a link to Shared notes">#</a><span class="note">By link, edit or view, end-to-end encrypted if you choose</span></span><span class="where">44 · 48</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>Source: docs/research/competitive-analysis.md §3 and the ADRs in snds/Mailbird.</footer>
+</div>
+<div class="toast" role="status" aria-live="polite" hidden></div>
+<script>
+(() => {
+  const page = document.querySelector("[data-status-page]")?.dataset.statusPage || "";
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const toast = document.querySelector(".toast");
+  let timer;
+  const say = (text, ms) => {
+    toast.textContent = text; toast.hidden = false;
+    clearTimeout(timer); timer = setTimeout(() => { toast.hidden = true; }, ms);
+  };
+  const show = (id, smooth) => {
+    const el = id && document.getElementById(id);
+    if (!el) return;
+    document.querySelectorAll(".is-target").forEach(e => e.classList.remove("is-target"));
+    el.classList.add("is-target");
+    el.querySelectorAll("details").forEach(d => { d.open = true; });
+    el.scrollIntoView({ block: "center", behavior: smooth && !reduce ? "smooth" : "auto" });
+    if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
+    el.focus({ preventScroll: true });
+  };
+  const fromHash = smooth => show(decodeURIComponent(location.hash.slice(1)), smooth);
+  addEventListener("hashchange", () => fromHash(true));
+  fromHash(false);
+  // Web fonts can move things after the first scroll; settle on the item again.
+  document.fonts?.ready.then(() => fromHash(false));
+  document.addEventListener("click", async e => {
+    const a = e.target.closest("a.pin");
+    if (!a) return;
+    e.preventDefault();
+    const id = a.getAttribute("href").slice(1);
+    show(id, true);
+    try { history.replaceState(null, "", "#" + id); } catch (_) {}
+    const link = page + "#" + id;
+    try { await navigator.clipboard.writeText(link); say("Link copied: " + link, 2500); }
+    catch (_) { say("Copy this link: " + link, 8000); }
+  });
+})();
+</script>
+
