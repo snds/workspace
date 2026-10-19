@@ -1,0 +1,88 @@
+{
+  "spec_version": "1.0",
+  "doc": "Externals: other people's repos and packages this workspace uses. One entry per id; written by 09-tools/externals.py (add/update/remove), never by hand. Spec: 02-shared-references/externals-spec.md.",
+  "externals": {
+    "rea": {
+      "kind": "npm",
+      "package": "rea-agents",
+      "version": "6.7.0",
+      "integrity": "sha512-yhIx2ioJYYT1C/tONfYeitC6LhnKmCh+ZwRUOgYuhSc733lGhkkt73zhug9WmLgxoMdKuqIYGCoBfD4fXkOhFw==",
+      "bin": "rea",
+      "upstream": "https://github.com/morluto/rea",
+      "purpose": "REA: reverse-engineering CLI and MCP server (binaries, apps, JS bundles, firmware)",
+      "mcp": {
+        "name": "rea",
+        "args": [
+          "mcp"
+        ],
+        "hosts": [
+          "claude-code",
+          "cursor"
+        ]
+      },
+      "skills": [
+        {
+          "name": "reverse-engineer-anything",
+          "path": "skills/reverse-engineer-anything"
+        }
+      ],
+      "added": "2026-10-19",
+      "verify": {
+        "cli": [
+          [
+            "--version"
+          ],
+          [
+            "--help"
+          ],
+          [
+            "--llms"
+          ],
+          [
+            "--llms",
+            "--format",
+            "json"
+          ],
+          [
+            "setup",
+            "--help"
+          ],
+          [
+            "capabilities",
+            "--format",
+            "json"
+          ]
+        ],
+        "each_command": {
+          "list": [
+            "--llms",
+            "--format",
+            "json"
+          ],
+          "suffix": [
+            "--help"
+          ]
+        },
+        "fixture": {
+          "app/package.json": "{\"name\":\"fx-app\",\"version\":\"1.0.0\",\"main\":\"index.js\"}\n",
+          "app/index.js": "const greet = (n) => `hello ${n}`;\nmodule.exports = { greet, add: (a, b) => a + b };\n"
+        },
+        "functional": [
+          [
+            "analyze-javascript-application",
+            "{fixture}/app",
+            "--format",
+            "json"
+          ],
+          [
+            "inspect",
+            "{fixture}/app/index.js",
+            "--format",
+            "json"
+          ]
+        ]
+      }
+    }
+  },
+  "removed": []
+}

@@ -53,6 +53,9 @@
 !.cursor/**
 !.cursorignore
 
+# Project MCP servers for Claude Code (written by 09-tools/externals.py; code lives in <projects_root>/_externals).
+!.mcp.json
+
 !.obsidian/
 !.obsidian/**
 
@@ -131,6 +134,7 @@
 !09-tools/backup-projects.py
 !09-tools/validate-layer0-schema.py
 !09-tools/session-status.py
+!09-tools/externals.py
 !09-tools/generate-display-svg.py
 !09-tools/workspace-harness.py
 !09-tools/evaluate-surface-trajectories.py

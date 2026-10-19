@@ -10,6 +10,8 @@
     {"path": ".claude/skills/obsidian-bases", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills; upstream skill); the plugin owns the body"},
     {"path": ".claude/skills/obsidian-cli", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills; upstream skill); the plugin owns the body"},
     {"path": ".claude/skills/obsidian-markdown", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills; upstream skill); the plugin owns the body"},
-    {"path": ".claude/skills/openartifacts-publish", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills, metadata copilot-builtin-version); the plugin owns the body"}
+    {"path": ".claude/skills/openartifacts-publish", "reason": "vendor-installed: symlink the Obsidian Copilot plugin writes to its built-in skill pack (copilot/skills, metadata copilot-builtin-version); the plugin owns the body"},
+    {"path": ".claude/skills/reverse-engineer-anything", "reason": "external: symlink to the 'rea' external's own skill (02-shared-references/externals.json, 09-tools/externals.py); the upstream owns the body"},
+    {"path": ".agents/skills/reverse-engineer-anything", "reason": "external: symlink to the 'rea' external's own skill (02-shared-references/externals.json, 09-tools/externals.py); the upstream owns the body"}
   ]
 }
