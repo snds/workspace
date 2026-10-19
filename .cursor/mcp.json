@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "rea": {
+      "command": "python3",
+      "args": [
+        "09-tools/externals.py",
+        "exec",
+        "rea",
+        "--",
+        "mcp"
+      ]
+    }
+  }
+}

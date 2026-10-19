@@ -251,9 +251,16 @@ DIFF_CLASSES: dict[str, dict] = {
                   ".claude/settings.json", ".claude/skills/**", ".agents/skills/**", ".cursor/hooks.json",
                   ".cursor/hooks/**", ".cursor/settings.json", ".cursor/agents/**", ".cursorignore", ".gemini/**",
                   ".windsurf/**", ".aider.conf.yml", "copilot/**", "00-bootstrap/dist/**"],
-        "owns": ["../00-bootstrap/doctor/render_shims.py --check", "build-local-skill-plugin.py --check"],
+        "owns": ["../00-bootstrap/doctor/render_shims.py --check", "build-local-skill-plugin.py --check",
+                 "externals.py check"],
         "tree": ["../00-bootstrap/doctor/render_shims.py --self-test", "build-local-skill-plugin.py --self-test",
                  "evaluate-surface-trajectories.py --check", "ws_hook.py --self-test"],
+    },
+    # Other people's repos and packages: the manifest and the tracked wiring externals.py writes from it.
+    "externals": {
+        "globs": ["02-shared-references/externals.json", ".mcp.json", ".cursor/mcp.json"],
+        "owns": ["externals.py check"],
+        "tree": ["externals.py --self-test", "build-local-skill-plugin.py --check"],
     },
     "identity-tables": {
         "globs": ["02-shared-references/devices.json", "02-shared-references/delivery-playbooks/*.json",
