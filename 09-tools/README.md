@@ -103,6 +103,24 @@ python3 09-tools/project-recall.py unicron "contrast misses" --limit 5
 python3 09-tools/project-recall.py 29 "release" --tier long --json
 ```
 
+## externals.py
+
+Installs, updates in place, runs, verifies and removes **externals**: other people's repos and packages
+(MCP servers, CLIs, skill packs). The manifest `02-shared-references/externals.json` pins each one (npm
+version + sha512, or a git commit). The code goes to `<projects_root>/_externals/<id>`, linked at
+`.externals/<id>`. The tracked wiring (`.mcp.json`, `.cursor/mcp.json`, skill links) is written from the
+manifest. Spec: [externals-spec](../02-shared-references/externals-spec.md). Writes need `--yes`; every
+command takes `--json`.
+
+```
+python3 09-tools/externals.py list
+python3 09-tools/externals.py install --all --yes      # on each new device
+python3 09-tools/externals.py update rea --yes         # newest upstream, re-pinned
+python3 09-tools/externals.py verify rea               # live parity, inside vs outside the workspace
+python3 09-tools/externals.py check                    # CI: tracked wiring matches the manifest
+python3 09-tools/externals.py --self-test
+```
+
 ## validate-batons.py
 
 The baton convention for every agent, with or without the workspace app (D98). Fails when the

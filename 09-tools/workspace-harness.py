@@ -138,6 +138,8 @@ QUALITY_CHAIN = [
     ("close-out-dispatch.py", ["--self-test"]),
     ("build-local-skill-plugin.py", ["--check"]),
     ("build-local-skill-plugin.py", ["--self-test"]),
+    ("externals.py", ["check"]),
+    ("externals.py", ["--self-test"]),
     ("session-status.py", ["--check"]),
     ("validate-batons.py", []),
     ("validate-batons.py", ["--self-test"]),

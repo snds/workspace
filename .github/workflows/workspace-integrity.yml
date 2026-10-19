@@ -72,6 +72,10 @@ on:
       - ".cursor/hooks/**"
       - "00-bootstrap/doctor/**"
       - "09-tools/build-local-skill-plugin.py"
+      - "09-tools/externals.py"
+      - "02-shared-references/externals.json"
+      - ".mcp.json"
+      - ".cursor/mcp.json"
       - "02-shared-references/skill-wrapper-allowlist.json"
       - "09-tools/fixtures/installer/**"
       - "09-tools/profile_resolve.py"
@@ -147,6 +151,10 @@ on:
       - ".cursor/hooks/**"
       - "00-bootstrap/doctor/**"
       - "09-tools/build-local-skill-plugin.py"
+      - "09-tools/externals.py"
+      - "02-shared-references/externals.json"
+      - ".mcp.json"
+      - ".cursor/mcp.json"
       - "02-shared-references/skill-wrapper-allowlist.json"
       - "09-tools/fixtures/installer/**"
       - "09-tools/profile_resolve.py"
@@ -194,6 +202,10 @@ jobs:
         run: python3 09-tools/close-out-dispatch.py --check
       - name: Skill wrappers (one 03-skills home, no drift, no hand-made entries; H20/D15)
         run: python3 09-tools/build-local-skill-plugin.py --check
+      - name: Externals wiring matches the manifest (MCP entries, skill links, allowlist rows)
+        run: python3 09-tools/externals.py check
+      - name: Externals manager self-test (install, in-place update, refusal, rollback, remove)
+        run: python3 09-tools/externals.py --self-test
       - name: Layer 0 JSON schema
         run: python3 09-tools/validate-layer0-schema.py --check
       - name: Session-start ritual card

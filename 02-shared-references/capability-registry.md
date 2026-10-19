@@ -446,6 +446,19 @@ every id in the JSON is documented and that `powers` + `route` targets are real 
       "fallback": "degrade",
       "fallback_note": "Without it, MCP-only hosts read the pasted context (RULES-ONLY ritual) and write nothing to the vault; a local shell surface runs the same CLIs directly.",
       "powers": []
+    },
+    "rea-mcp": {
+      "kind": "mcp",
+      "provides": "REA (rea-agents, an external): reverse-engineering MCP server and CLI — shipped binaries, Electron/JavaScript apps, Android, firmware, WASM and browser evidence, with optional Ghidra/IDA/Hopper providers.",
+      "detect": { "method": "mcp-tool-present", "match": "mcp__rea__*" },
+      "install": {
+        "claude-code": "Already wired by the tracked .mcp.json (approve the `rea` project server once per machine). Fetch the pinned copy: `python3 09-tools/externals.py install rea --yes`; without it, the server starts through npx at the same pin.",
+        "cursor": "Already wired by the tracked .cursor/mcp.json; same install command.",
+        "generic": "Register a stdio server: command `python3`, args `[<vault>/09-tools/externals.py, exec, rea, --, mcp]`, started in the workspace root."
+      },
+      "fallback": "degrade",
+      "fallback_note": "Without the server, run the same commands as a CLI: `python3 09-tools/externals.py exec rea -- <command>` (output is identical; see `externals.py verify rea`). Without Node.js, REA is unavailable: say so.",
+      "powers": []
     }
   }
 }
@@ -579,6 +592,11 @@ inside the app bundle, so a missing `codex` on PATH is not a missing install.
 - **workspace-mcp** — the workspace's own server for MCP-only hosts (H21). No skill requires it: it is
   the contract's entry for hosts without a shell (session card, routing, guarded vault writes). Its
   installer replaces workspace-fs and uninstalls byte-exact; see `09-tools/README.md` → workspace_mcp.py.
+- **rea-mcp** — the first *external* ([[externals-spec]]): someone else's package, pinned in
+  `02-shared-references/externals.json` and wired by `09-tools/externals.py`. No workspace skill requires
+  it; its own upstream skill (`reverse-engineer-anything`) is linked into `.claude/skills/` and
+  `.agents/skills/` and carries the method. Its tools load on demand (deferred), so the per-session cost
+  is the server's tool names, not its 207 schemas.
 
 ## Adding a capability
 
