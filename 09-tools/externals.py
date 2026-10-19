@@ -1144,6 +1144,11 @@ def emit(r: Result, as_json: bool) -> None:
         print(f"  {'PASS' if c['ok'] else 'FAIL'}  {c['check']}" + (f" — {c['detail']}" if c.get("detail") and not c["ok"] else ""))
     for err in r.get("errors", []):
         print(f"  error  {err}")
+    if not r.get("error"):  # silence reads as failure to a person pasting the command
+        if r["action"] in MUTATING and not r["plan"]:
+            print("  ok     nothing to do: every external is installed at its pin and wired")
+        elif r["action"] == "check" and not r.get("errors"):
+            print("  ok     tracked wiring matches the manifest")
     if r["plan"] and not r["applied"] and r["action"] in MUTATING and not r.get("error"):
         print("  (dry run — nothing changed; pass --yes, and --expect-plan <plan_sha256> to bind it to this review)")
 
