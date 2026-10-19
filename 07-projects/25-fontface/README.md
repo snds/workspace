@@ -17,11 +17,12 @@ Typeface turns fonts off without a Pro subscription; Fontface never will.
 - **This folder:** baton + pointers only. Design docs live in the repo: `docs/ARCHITECTURE.md`, `docs/FEATURES.md`.
 - **Baton:** [[07-projects/25-fontface/SESSION-STATE|SESSION-STATE]]. Registry: `06-context/project-registry.md`.
 - **Notes:** [[07-projects/25-fontface/notes/license-recovery-learnings_2026-10-13|License recovery learnings]] (YWFT and Monotype vendor findings, reconcile rules, EULA pitfalls, the proposed license registry and vendor adapters, and how each maps onto Fontface today).
+- **Notes:** [[07-projects/25-fontface/notes/typeface-app-analysis_2026-10-19|Typeface app analysis]] (what Typeface 4.5.1 does inside: auto-activation, importers, formats, classification, Google sync, and a suggested backlog for Fontface).
 
 ## Project intent
 
 - **Problem:** Sean's font library should stay on without a subscription.
-- **Clean-room rule:** no Typeface code or binaries. Parity is judged only against Typeface's public feature list.
+- **Clean-room rule (dropped 2026-10-19, Sean):** Typeface's binary may now inform Fontface's design; see the analysis note below. Still no copied Typeface code, and binary-derived detail stays in this workspace, never in the public repo.
 - **Allowed import:** a planned importer reads Sean's own exported `.typeface-backup` files (his data) to bring over tags and collections.
 - **Scope:** Mac first. Windows is designed for but not built.
 - Move this block to `<repo>/PROJECT.md` once the repo is under git (vault points, repo holds).

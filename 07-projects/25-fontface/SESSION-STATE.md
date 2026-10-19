@@ -2,6 +2,12 @@
 
 _Last updated: 2026-10-19 — library redesign stages M1a–M5 done and merged into local `main` (`104b165`), not pushed; next is Google previews_
 
+### 2026-10-19: Typeface analysis brought in (Claude Opus · Claude Code · Work MBP)
+- **Decision (Sean):** the clean-room rule is dropped. Typeface's binary may inform Fontface. Still no copied Typeface code, and binary-derived detail stays in the workspace, not the public `snds/fontface` repo.
+- **Note:** [[07-projects/25-fontface/notes/typeface-app-analysis_2026-10-19|Typeface app analysis]], a static analysis of Typeface 4.5.1 with REA + Ghidra.
+- **Top findings for Fontface:** auto-activation (system route via CoreText requests, PostScript/full-name match, temporary activations, a WebKit/Calibri skip); importers for FontExplorer X, Suitcase / Connect Fonts, RightFont and FontBase; measured classification (x-height ratio, weight); Copy as CSS; duplicate precision.
+- **Next:** Sean picks which of the note's 7 suggested backlog rows go into `docs/FEATURES.md`. Nothing has been added to the repo yet.
+
 ### Progress 2026-10-18/19: library redesign on branch `library-redesign` (merged into local `main`, not pushed)
 - **M1a done:** commits `69bd71a`, `9a22e09` and `c2b6793`.
   - The font page opens with double-click or Return, with Back via ⌘[, Esc or the mouse.
@@ -64,6 +70,28 @@ _Last updated: 2026-10-19 — library redesign stages M1a–M5 done and merged i
     - 338 UI tests and 332 Rust tests pass, and the app builds.
     - Not pushed: `origin/main` is still `826c574`.
     - The worktrees under `.claude/worktrees/` and their `claude/*` branches are still there. Cleaning them up waits for Sean's OK.
+  - **2026-10-19, later:** the tooltip workflow stopped when the session ended, after its integrator committed `953a5cf`; the review steps never ran.
+    - Sean asked for Google Fonts to open straight to the catalog. A side session built it: `claude/google-catalog-home` `4374967`.
+      - The source view is the catalog, under the main toolbar, with the filter All / Downloaded / Active / Updates.
+      - Each row has Get / Update / Remove (with a 10 s Undo; Rust hides the folder as `.removed-<name>` and purges it at quit or launch) and an on/off switch.
+    - Sean OK'd "Merge both, rebuild, then review". Local `main` = `e1d23e8`: it fast-forwarded to `tooltips`, then merged the catalog branch.
+      - I resolved 6 conflicts. ChoiceGroup took the tooltips version and GoogleFontsPanel took the catalog version. The Toolbar `filter` slot and the ViewOptions LayoutSwitch now go through `Tip` with `disabledReason`. App's Browse is Purchases only now. The `tipShim` was deleted.
+      - 363 UI tests and 334 Rust tests pass, and the app is rebuilt.
+    - Review workflow `wf_3c7f7501-bb5` runs on branch `review-tooltips-catalog`, with three lenses: tooltip coverage, tooltip quality, and Google catalog correctness.
+    - **Done:** the review found 14 problems, the fixer fixed all 14 in `114b6b8`, and the recheck confirmed all fixed. I fixed its 3 low follow-ups myself in `ee962fd`.
+      - The font menu turns on Google's copy.
+      - A failed Refresh still says so.
+      - The wording is right for a single file.
+    - **The window-scroll bug Sean saw** is fixed in `cddbafd`: html/body `overflow:hidden`, `#root` `overflow:clip`, a scroll guard, and tooltips `positionMethod="fixed"`.
+    - **Local `main` = `ee962fd`.** 369 UI tests and 335 Rust tests pass, and the app is rebuilt. Not pushed.
+    - **Lesson:** 8 `Fontface.app` copies share the bundle id `design.snds.fontface`, and the old ones are in `.claude/worktrees/*`. Spotlight or the Dock can open an old one, which is why Sean once saw the old Google screen. Removing the merged worktrees, with Sean's OK, fixes this.
+    - **Baton housekeeping due:** this file is over 12 KB (D98). Move older history to `history/2026-10.md`.
+    - **Cleanup 2026-10-19 (Sean: "Yes, remove them"):**
+      - Removed the 7 merged worktrees under `.claude/worktrees/`, which held the old app copies.
+      - Deleted the branches `claude/*`, `tooltips` and `review-tooltips-catalog`.
+      - Archived the 7 finished side sessions.
+      - Left in place: `google-previews` and `library-redesign`, both merged.
+      - The only app build now is `src-tauri/target/release/bundle/macos/Fontface.app`.
   - **Tooltip pass running:** branch `tooltips` from `6a8e33d`, workflow `wf_b00e9b3e-010`.
     - Order: a shared `Tip`/`TipItem` foundation, then 4 area agents, an integrator, coverage and quality reviewers each checked by a skeptic, a fixer, and a recheck.
     - Rule: every action gets a DS tooltip, except a dialog's own Cancel/Close/Done.
@@ -267,6 +295,6 @@ _Older entries are in [history/README.md](history/README.md), the long-term tier
 - Tauri 2; Mac first; Windows designed for, not built.
 - shadcn/ui (Base UI, Tailwind v4), Material Symbols Rounded, IBM Plex Sans + Mono.
 - CoreText persistent user-scope activation, per file; nothing copied into `~/Library/Fonts`.
-- Clean-room: no Typeface code or binaries; parity against its public feature list only.
+- Clean-room: no Typeface code or binaries; parity against its public feature list only. **Superseded 2026-10-19 (Sean: "Ignore the clean-room rule. Provide all insights to inform the application development"):** see [[07-projects/25-fontface/notes/typeface-app-analysis_2026-10-19|Typeface app analysis]].
 
 **Next resumption needs**: finish the scan fix list; retest on the Drive folder; settle the repo move + git.
