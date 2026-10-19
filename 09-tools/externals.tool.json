@@ -1,0 +1,43 @@
+{
+  "id": "n-djt5kxht",
+  "name": "externals",
+  "description": "Other people's repos and packages this workspace uses (MCP servers, CLIs, skill packs), pinned in 02-shared-references/externals.json. These runs only read: what is installed on this device, whether the tracked wiring matches the manifest, the live parity proof, and the offline self-test. Adding, updating and removing take arguments and go through a reviewed plan (--expect-plan), not this runner.",
+  "language": "python",
+  "entry": "externals.py",
+  "runtime": "python>=3.8",
+  "safety": "read-only",
+  "network": false,
+  "run": {
+    "default": ["status", "--json"],
+    "status": {
+      "args": ["status", "--json"],
+      "safety": "read-only",
+      "output": "json",
+      "description": "Each external on this device: pinned vs installed (ok, missing, drift)"
+    },
+    "check": {
+      "args": ["check", "--json"],
+      "safety": "read-only",
+      "output": "json",
+      "timeout_s": 60,
+      "description": "Does the tracked wiring (.mcp.json, .cursor/mcp.json, skill links, allowlist rows) match the manifest? No network"
+    },
+    "verify-rea": {
+      "args": ["verify", "rea", "--json"],
+      "safety": "read-only",
+      "network": true,
+      "output": "json",
+      "timeout_s": 1200,
+      "description": "Live parity for REA: integrity, every file, every command, the MCP catalog, inside vs outside the workspace"
+    },
+    "self-test": {
+      "args": ["--self-test", "--json"],
+      "safety": "read-only",
+      "output": "json",
+      "timeout_s": 300,
+      "description": "Offline cases for the manager itself; case names are stable for a port to match"
+    }
+  },
+  "output": "json",
+  "timeout_s": 300
+}

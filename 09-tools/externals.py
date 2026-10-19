@@ -28,18 +28,24 @@ Kinds:
   externals.py verify ID [--json] [--quick]          live parity: identical inside and outside the workspace
   externals.py --self-test                           offline: a fake git upstream and a local npm tarball
 
-Mutating commands print the plan and change nothing without --yes. Every command takes --json and
-prints one object {"ok", "action", "id", "plan", "applied", "warnings", "error"} (the Synapse contract).
+Mutating commands print the plan and change nothing without --yes. The plan is a list of
+{op, path, detail} entries (a tracked write also carries before_sha256, the new text and a diff), the
+resolved pin, and plan_sha256; `--yes --expect-plan SHA` applies only that reviewed plan. One writer per
+device (a lock in the externals home); a second gets exit 4, error "busy". Every command takes --json
+and prints one object {"spec", "ok", "action", "id", "plan", "applied", "warnings", "error"} (the
+Synapse contract; `--self-test --json` prints {"cases": [{name, ok, detail}]}).
 
 Exit codes: 0 ok · 1 failed (or verify found a difference) · 2 usage · 3 not installed / nothing to do ·
-4 refused (local changes, integrity mismatch, unknown id).
+4 refused (local changes, integrity mismatch, plan changed, busy, name in use, unknown id).
 """
 from __future__ import annotations
 
 import argparse
 import base64
 import concurrent.futures as cf
+import contextlib
 import datetime as dt
+import difflib
 import hashlib
 import json
 import os
@@ -60,6 +66,7 @@ MANIFEST_REL = "02-shared-references/externals.json"
 ALLOWLIST_REL = "02-shared-references/skill-wrapper-allowlist.json"
 LINK_DIR = ".externals"
 STATE_FILE = ".ws-external.json"          # inside each install dir; per device, never tracked
+LOCK_FILE = ".externals.lock"             # in the externals home: one writer per device
 MCP_HOSTS = {"claude-code": ".mcp.json", "cursor": ".cursor/mcp.json"}
 SKILL_HOSTS = (".claude/skills", ".agents/skills")
 ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,40}$")
@@ -76,6 +83,10 @@ class Usage(Exception):
 
 class NotInstalled(Exception):
     """Nothing on this device to act on (exit 3)."""
+
+
+class Busy(Refused):
+    """Another writing run holds the lock (exit 4, error "busy")."""
 
 
 # --------------------------------------------------------------------------- paths
@@ -130,11 +141,6 @@ def load_manifest(ctx: Ctx) -> dict:
 MANIFEST_DOC = ("Externals: other people's repos and packages this workspace uses. One entry per id; "
                 "written by 09-tools/externals.py (add/update/remove), never by hand. "
                 "Spec: 02-shared-references/externals-spec.md.")
-
-
-def save_manifest(ctx: Ctx, m: dict) -> None:
-    m["externals"] = dict(sorted(m.get("externals", {}).items()))
-    atomic_write(ctx.manifest_path, json.dumps(m, indent=2, ensure_ascii=False) + "\n")
 
 
 def get_entry(m: dict, xid: str) -> dict:
@@ -391,9 +397,9 @@ def wiring(m: dict) -> Tuple[Dict[str, Dict[str, dict]], Dict[str, str], List[di
     return mcp, links, allow
 
 
-def owned_names(m: dict) -> Dict[str, set]:
+def owned_names(m: dict) -> Dict[str, Any]:
     """Every MCP name and skill link any manifest entry (live or removed) has ever claimed."""
-    names = {h: set() for h in MCP_HOSTS}
+    names: Dict[str, set] = {h: set() for h in MCP_HOSTS}
     skills = set()
     entries = list(m.get("externals", {}).items()) + [(r["id"], r["entry"]) for r in m.get("removed", [])]
     for xid, e in entries:
@@ -413,94 +419,215 @@ def read_json(path: Path, default: Any) -> Any:
         return default
 
 
-def write_allowlist(ctx: Ctx, rows: List[dict], owned: set) -> bool:
-    """Keep every row we don't own, byte for byte in the file's one-row-per-line layout."""
+def manifest_text(m: dict) -> str:
+    m = dict(m, externals=dict(sorted(m.get("externals", {}).items())))
+    return json.dumps(m, indent=2, ensure_ascii=False) + "\n"
+
+
+def allowlist_text(ctx: Ctx, rows: List[dict], owned: set) -> Optional[str]:
+    """Every row we don't own kept as is, in the file's one-row-per-line layout."""
     path = ctx.root / ALLOWLIST_REL
-    data = read_json(path, {"doc": "", "entries": []})
-    kept = [r for r in data.get("entries", []) if r["path"] not in owned]
-    entries = kept + rows
+    data = read_json(path, None)
+    if data is None and not rows:
+        return None
+    data = data or {"doc": "", "entries": []}
+    entries = [r for r in data.get("entries", []) if r["path"] not in owned] + rows
     lines = ",\n".join("    " + json.dumps(r, ensure_ascii=False) for r in entries)
-    text = "{\n  \"doc\": " + json.dumps(data.get("doc", ""), ensure_ascii=False) + ",\n  \"entries\": [\n" + lines + "\n  ]\n}\n"
-    if path.exists() and path.read_text(encoding="utf-8") == text:
-        return False
-    atomic_write(path, text)
-    return True
+    return "{\n  \"doc\": " + json.dumps(data.get("doc", ""), ensure_ascii=False) + ",\n  \"entries\": [\n" + lines + "\n  ]\n}\n"
 
 
-def apply_wiring(ctx: Ctx, m: dict) -> List[str]:
-    """Make the tracked files match the manifest. Touches only names an external owns."""
-    changed = []
+def desired_tracked(ctx: Ctx, m: dict) -> Dict[str, Tuple[str, Optional[str]]]:
+    """Every tracked path an external owns -> ("file", text) | ("link", target) | ("absent", None)."""
+    out: Dict[str, Tuple[str, Optional[str]]] = {MANIFEST_REL: ("file", manifest_text(m))}
     mcp, links, allow = wiring(m)
     owned = owned_names(m)
     for host, rel in MCP_HOSTS.items():
-        path = ctx.root / rel
-        data = read_json(path, None)
+        data = read_json(ctx.root / rel, None)
         if data is None and not mcp[host]:
             continue
         data = data or {}
         servers = data.setdefault("mcpServers", {})
-        before = json.dumps(data, sort_keys=True)
-        for name in owned["mcp"][host]:
-            if name not in mcp[host]:
-                servers.pop(name, None)
+        for name in owned["mcp"][host] - set(mcp[host]):
+            servers.pop(name, None)
         servers.update(mcp[host])
-        if json.dumps(data, sort_keys=True) != before or not path.exists():
-            atomic_write(path, json.dumps(data, indent=2) + "\n")
-            changed.append(rel)
+        cur = ctx.root / rel
+        if cur.exists() and json.loads(cur.read_text(encoding="utf-8")) == data:
+            continue  # same content: keep the file's own formatting
+        out[rel] = ("file", json.dumps(data, indent=2) + "\n")
     for rel in sorted(owned["skills"]):
+        out[rel] = ("link", links[rel]) if rel in links else ("absent", None)
+    txt = allowlist_text(ctx, allow, owned["skills"])
+    if txt is not None:
+        out[ALLOWLIST_REL] = ("file", txt)
+    return out
+
+
+def sha256_text(t: str) -> str:
+    return hashlib.sha256(t.encode("utf-8")).hexdigest()
+
+
+def tracked_changes(ctx: Ctx, m: dict) -> List[dict]:
+    """The plan entries that make the tracked files match manifest M, each with what it changes."""
+    ops = []
+    for rel, (kind, val) in desired_tracked(ctx, m).items():
         p = ctx.root / rel
-        want = links.get(rel)
-        have = os.readlink(p) if p.is_symlink() else None
-        if want == have:
+        have_link = os.readlink(p) if p.is_symlink() else None
+        if kind == "file":
+            before = p.read_text(encoding="utf-8") if p.is_file() and not p.is_symlink() else None
+            if before == val:
+                continue
+            diff = "".join(difflib.unified_diff((before or "").splitlines(True), val.splitlines(True),
+                                                f"a/{rel}", f"b/{rel}"))
+            ops.append({"op": "write", "path": rel, "tracked": True,
+                        "detail": "create" if before is None else "update",
+                        "before_sha256": sha256_text(before) if before is not None else None,
+                        "after_sha256": sha256_text(val), "after": val, "diff": diff})
+        elif kind == "link":
+            if have_link == val:
+                continue
+            if p.exists() and not p.is_symlink():
+                raise Refused(f"{rel} exists and is not a symlink an external owns; move it aside")
+            ops.append({"op": "link", "path": rel, "tracked": True, "detail": f"-> {val}", "target": val,
+                        "before": have_link})
+        elif have_link is not None or p.exists():
+            if not p.is_symlink():
+                raise Refused(f"{rel} exists and is not a symlink an external owns; move it aside")
+            ops.append({"op": "unlink", "path": rel, "tracked": True, "detail": f"was -> {have_link}",
+                        "before": have_link})
+    return ops
+
+
+def apply_tracked(ctx: Ctx, ops: List[dict]) -> List[str]:
+    """Write exactly what the plan showed. A tracked file that changed since the plan stops the run."""
+    done = []
+    for op in ops:
+        if not op.get("tracked"):
             continue
-        if p.exists() and not p.is_symlink():
-            raise Refused(f"{rel} exists and is not a symlink an external owns; move it aside")
-        if p.is_symlink():
-            p.unlink()
-        if want:
-            p.parent.mkdir(parents=True, exist_ok=True)
-            os.symlink(want, str(p), target_is_directory=True)
-        changed.append(rel)
-    if write_allowlist(ctx, allow, owned["skills"]):
-        changed.append(ALLOWLIST_REL)
-    return changed
+        p = ctx.root / op["path"]
+        if op["op"] == "write":
+            now_text = p.read_text(encoding="utf-8") if p.is_file() and not p.is_symlink() else None
+            if (sha256_text(now_text) if now_text is not None else None) != op["before_sha256"]:
+                raise Refused(f"{op['path']} changed since the plan was made; review again")
+            atomic_write(p, op["after"])
+        else:
+            if (os.readlink(p) if p.is_symlink() else None) != op["before"]:
+                raise Refused(f"{op['path']} changed since the plan was made; review again")
+            if p.is_symlink():
+                p.unlink()
+            if op["op"] == "link":
+                p.parent.mkdir(parents=True, exist_ok=True)
+                os.symlink(op["target"], str(p), target_is_directory=True)
+        done.append(op["path"])
+    return done
 
 
 def check_wiring(ctx: Ctx, m: dict) -> List[str]:
     errs = []
     for xid, e in m.get("externals", {}).items():
         errs += validate_entry(xid, e)
-    mcp, links, allow = wiring(m)
-    owned = owned_names(m)
-    for host, rel in MCP_HOSTS.items():
-        servers = (read_json(ctx.root / rel, {}) or {}).get("mcpServers", {})
-        for name, want in mcp[host].items():
-            if servers.get(name) != want:
-                errs.append(f"{rel}: mcpServers.{name} does not match the manifest (run externals.py install --all --yes)")
-        for name in owned["mcp"][host] - set(mcp[host]):
-            if name in servers:
-                errs.append(f"{rel}: mcpServers.{name} belongs to a removed external")
-    for rel in owned["skills"]:
-        p = ctx.root / rel
-        want = links.get(rel)
-        have = os.readlink(p) if p.is_symlink() else None
-        if want != have:
-            errs.append(f"{rel}: expected {'symlink -> ' + want if want else 'absent'}, found {have or ('a file' if p.exists() else 'nothing')}")
-    rows = {r["path"] for r in read_json(ctx.root / ALLOWLIST_REL, {"entries": []}).get("entries", [])}
-    for r in allow:
-        if r["path"] not in rows:
-            errs.append(f"{ALLOWLIST_REL}: missing row for {r['path']}")
-    for rel in owned["skills"] - set(links):
-        if rel in rows:
-            errs.append(f"{ALLOWLIST_REL}: stale row for removed {rel}")
+    try:
+        for op in tracked_changes(ctx, m):
+            if op["path"] != MANIFEST_REL:
+                errs.append(f"{op['path']}: does not match the manifest ({op['op']} {op['detail']}); "
+                            "run: python3 09-tools/externals.py install --all --yes")
+    except Refused as ex:
+        errs.append(str(ex))
     return errs
+
+
+# --------------------------------------------------------------------------- write lock
+
+@contextlib.contextmanager
+def write_lock(ctx: Ctx):
+    """One writer per device: the app and an agent at once must not interleave. Stale locks are taken over."""
+    ctx.home.mkdir(parents=True, exist_ok=True)
+    lock = ctx.home / LOCK_FILE
+    for _ in range(2):
+        try:
+            fd = os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            try:
+                held = json.loads(lock.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                held = {}
+            if lock_alive(held):
+                raise Busy(f"busy: another externals run holds {lock} (pid {held.get('pid')}, since {held.get('at')})")
+            lock.unlink(missing_ok=True)
+            continue
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump({"pid": os.getpid(), "at": now(), "root": str(ctx.root)}, f)
+        try:
+            yield
+        finally:
+            lock.unlink(missing_ok=True)
+        return
+    raise Busy(f"busy: could not take {lock}")
+
+
+def lock_alive(held: dict) -> bool:
+    try:
+        age = dt.datetime.now(dt.timezone.utc) - dt.datetime.strptime(held["at"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc)
+    except (KeyError, ValueError):
+        return False
+    if age > dt.timedelta(hours=6):
+        return False
+    if os.name == "nt":
+        return True
+    try:
+        os.kill(int(held["pid"]), 0)
+    except (ProcessLookupError, ValueError, TypeError):
+        return False
+    except PermissionError:
+        return True
+    return True
 
 
 # --------------------------------------------------------------------------- commands
 
 class Result(dict):
     def __init__(self, action: str, xid: Optional[str] = None):
-        super().__init__(ok=True, action=action, id=xid, plan=[], applied=[], warnings=[], error=None)
+        super().__init__(spec=SPEC_VERSION, ok=True, action=action, id=xid, plan=[], applied=[], warnings=[], error=None)
+
+
+def plan_sha256(plan: List[dict]) -> str:
+    return hashlib.sha256(json.dumps(plan, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
+
+
+def resolved_of(e: dict) -> dict:
+    return {"version": e["version"], "integrity": e["integrity"]} if e["kind"] == "npm" else {"commit": e["commit"]}
+
+
+def finish_plan(ctx: Ctx, a, r: Result, plan: List[dict]) -> bool:
+    """Record the plan and its hash. True when this run should apply it."""
+    r["plan"] = plan
+    r["plan_sha256"] = plan_sha256(plan)
+    expect = getattr(a, "expect_plan", None)
+    if expect and expect != r["plan_sha256"]:
+        raise Refused(f"the plan changed since review (expected {expect[:12]}…, now {r['plan_sha256'][:12]}…); review again")
+    return bool(a.yes)
+
+
+def fetch_op(ctx: Ctx, xid: str, e: dict) -> dict:
+    what = f"{e['package']}@{e['version']} {e['integrity']}" if e["kind"] == "npm" else f"{e['repo']} @ {e['commit']}"
+    return {"op": "fetch", "path": str(ctx.install_dir(xid)), "tracked": False, "detail": what,
+            "link": f"{LINK_DIR}/{xid}"}
+
+
+def skill_collisions(ctx: Ctx, m: dict, e: dict) -> List[str]:
+    """A skill name the workspace (or another external) already uses would shadow it in some scope."""
+    owned = owned_names(dict(m, removed=[]))["skills"]
+    out = []
+    for s in e.get("skills", []):
+        if (ctx.root / "03-skills" / s["name"]).exists():
+            out.append(f"{s['name']}: a workspace skill (03-skills/{s['name']}) already has this name")
+        for host in SKILL_HOSTS:
+            rel = f"{host}/{s['name']}"
+            p = ctx.root / rel
+            if rel in owned:
+                out.append(f"{s['name']}: another external already links {rel}")
+            elif p.exists() or p.is_symlink():
+                out.append(f"{s['name']}: {rel} already exists")
+    return out
 
 
 def cmd_add(ctx: Ctx, a, r: Result) -> int:
@@ -514,20 +641,19 @@ def cmd_add(ctx: Ctx, a, r: Result) -> int:
         if a.bin:
             e["bin"] = a.bin
     elif a.git:
-        e = {"kind": "git", "repo": a.git, "ref": a.ref or "HEAD"}
+        # `ref` is what `update` follows: a branch or tag. Pinning a commit follows the default branch.
+        ref = a.ref or "HEAD"
+        e = {"kind": "git", "repo": a.git, "ref": "HEAD" if re.fullmatch(r"[0-9a-f]{40}", ref) else ref}
         with tempfile.TemporaryDirectory() as td:
             run(["git", "clone", "--quiet", "--no-checkout", a.git, td], timeout=1800)
-            e["commit"] = git_resolve(Path(td), a.ref or "HEAD")
+            e["commit"] = git_resolve(Path(td), ref)
         if a.run:
             e["run"] = shlex.split(a.run)
     else:
         raise Usage("add needs --npm or --git")
-    if a.ignore_scripts:
-        e["ignore_scripts"] = True
-    if a.upstream:
-        e["upstream"] = a.upstream
-    if a.purpose:
-        e["purpose"] = a.purpose
+    for k, v in (("ignore_scripts", a.ignore_scripts or None), ("upstream", a.upstream), ("purpose", a.purpose)):
+        if v:
+            e[k] = v
     if a.mcp is not None:
         e["mcp"] = {"name": a.mcp_name or a.id, "args": shlex.split(a.mcp), "hosts": a.mcp_host or ["claude-code", "cursor"]}
     if a.skill:
@@ -536,49 +662,43 @@ def cmd_add(ctx: Ctx, a, r: Result) -> int:
     errs = validate_entry(a.id, e)
     if errs:
         raise Usage("; ".join(errs))
-    r["plan"] = [f"pin {a.id} at {pin_of(e)} in {MANIFEST_REL}", f"fetch into {ctx.install_dir(a.id)}",
-                 f"link {LINK_DIR}/{a.id}"] + [f"wire {x}" for x in plan_wiring_targets(a.id, e)]
-    r["entry"] = e
-    if not a.yes:
+    clash = skill_collisions(ctx, m, e)
+    if clash:
+        raise Refused("skill name already in use: " + "; ".join(clash))
+    m2 = json.loads(json.dumps(m))
+    m2["externals"][a.id] = e
+    r["resolved"] = resolved_of(e)
+    if not finish_plan(ctx, a, r, [fetch_op(ctx, a.id, e)] + tracked_changes(ctx, m2)):
         return 0
     do_fetch(ctx, a.id, e)
-    r["applied"].append(f"installed {pin_of(e)}")
-    m["externals"][a.id] = e
-    save_manifest(ctx, m)
-    r["applied"].append(MANIFEST_REL)
-    r["applied"] += apply_wiring(ctx, m)
+    r["applied"] = [f"installed {pin_of(e)}"] + apply_tracked(ctx, r["plan"])
     return 0
-
-
-def plan_wiring_targets(xid: str, e: dict) -> List[str]:
-    out = []
-    if e.get("mcp"):
-        out += [MCP_HOSTS[h] + f" mcpServers.{e['mcp'].get('name', xid)}" for h in e["mcp"].get("hosts", [])]
-    for s in e.get("skills", []):
-        out += [f"{h}/{s['name']} -> {LINK_DIR}/{xid}/{s['path']}" for h in SKILL_HOSTS]
-    return out
 
 
 def cmd_install(ctx: Ctx, a, r: Result) -> int:
     m = load_manifest(ctx)
     ids = list(m["externals"]) if a.all or not a.id else [a.id]
-    todo = []
+    plan = []
     for xid in ids:
         e = get_entry(m, xid)
         if installed_pin(ctx, xid, e) == pin_of(e) and ctx.pkg_root(xid, e).exists():
-            make_link(ctx, xid, e) if a.yes else None
+            if not ctx.link(xid).is_symlink():
+                plan.append({"op": "link", "path": f"{LINK_DIR}/{xid}", "tracked": False,
+                             "detail": f"-> {ctx.pkg_root(xid, e)}"})
             continue
-        todo.append(xid)
-        r["plan"].append(f"fetch {xid} {pin_of(e)} into {ctx.install_dir(xid)}")
-    wiring_drift = check_wiring(ctx, m)
-    if wiring_drift:
-        r["plan"].append("repair tracked wiring: " + "; ".join(wiring_drift))
-    if not a.yes:
-        return 0 if (todo or wiring_drift) else 3
-    for xid in todo:
-        do_fetch(ctx, xid, m["externals"][xid])
-        r["applied"].append(f"installed {xid}")
-    r["applied"] += apply_wiring(ctx, m)
+        plan.append(fetch_op(ctx, xid, e))
+    plan += tracked_changes(ctx, m)
+    if not finish_plan(ctx, a, r, plan):
+        return 0 if plan else 3
+    for op in plan:
+        xid = op.get("link", op["path"]).split("/")[-1]
+        if op["op"] == "fetch":
+            do_fetch(ctx, xid, m["externals"][xid])
+            r["applied"].append(f"installed {xid}")
+        elif op["op"] == "link" and not op["tracked"]:
+            make_link(ctx, xid, m["externals"][xid])
+            r["applied"].append(op["path"])
+    r["applied"] += apply_tracked(ctx, plan)
     return 0
 
 
@@ -596,17 +716,27 @@ def cmd_update(ctx: Ctx, a, r: Result) -> int:
         changes = git_local_changes(d)
         if changes and not a.force:
             raise Refused(f"{a.id} has local work an update could lose (--force to override):\n" + "\n".join(changes))
-        git(["fetch", "--quiet", "--tags", "--force", "origin"], d, timeout=1800)
+        git(["fetch", "--quiet", "--tags", "--force", "origin"], d, timeout=1800)  # refs only; the tree is untouched
         ref = a.to or e.get("ref") or "HEAD"
         if ref == "HEAD":
             ref = git(["rev-parse", "--abbrev-ref", "origin/HEAD"], d).split("/", 1)[-1]
-        new = dict(e, ref=ref, commit=git_resolve(d, ref))
+        commit = git_resolve(d, ref)
+        new = dict(e, commit=commit, ref=e.get("ref") if re.fullmatch(r"[0-9a-f]{40}", ref) else ref)
     r["from"], r["to"] = old, pin_of(new)
+    r["resolved"] = resolved_of(new)
     if pin_of(new) == old and installed_pin(ctx, a.id, e) == old:
-        r["plan"].append(f"{a.id} is already at {old}")
+        finish_plan(ctx, a, r, [])
+        r["warnings"].append(f"{a.id} is already at {old}")
         return 3
-    r["plan"].append(f"move {a.id} {old} -> {pin_of(new)}" + (" in place (git checkout)" if e["kind"] == "git" else " (staged, old copy kept for rollback)"))
-    if not a.yes:
+    new["updated"] = today()
+    m2 = json.loads(json.dumps(m))
+    m2["externals"][a.id] = new
+    if e["kind"] == "git":
+        first = {"op": "checkout", "path": str(ctx.install_dir(a.id)), "tracked": False,
+                 "detail": f"{old} -> {new['commit']} in place, then the build steps"}
+    else:
+        first = dict(fetch_op(ctx, a.id, new), detail=fetch_op(ctx, a.id, new)["detail"] + f" (replaces {old}; kept as .prev)")
+    if not finish_plan(ctx, a, r, [first] + tracked_changes(ctx, m2)):
         return 0
     if e["kind"] == "git":
         d = ctx.install_dir(a.id)
@@ -622,10 +752,7 @@ def cmd_update(ctx: Ctx, a, r: Result) -> int:
         atomic_write(d / STATE_FILE, json.dumps(st, indent=2) + "\n")
     else:
         do_fetch(ctx, a.id, new)
-    new["updated"] = today()
-    m["externals"][a.id] = new
-    save_manifest(ctx, m)
-    r["applied"] += [f"{a.id} at {pin_of(new)}", MANIFEST_REL] + apply_wiring(ctx, m)
+    r["applied"] = [f"{a.id} at {pin_of(new)}"] + apply_tracked(ctx, r["plan"])
     return 0
 
 
@@ -638,32 +765,33 @@ def cmd_rollback(ctx: Ctx, a, r: Result) -> int:
         prev = st.get("previous_commit")
         if not prev:
             raise NotInstalled(f"{a.id}: no previous commit recorded")
-        r["plan"].append(f"checkout {prev} in place and pin it")
-        if not a.yes:
-            return 0
-        git(["checkout", "--quiet", "--detach", prev], d)
-        git_build(e, d)
-        st.update({"commit": prev, "previous_commit": e["commit"], "installed_at": now()})
-        atomic_write(d / STATE_FILE, json.dumps(st, indent=2) + "\n")
         new = dict(e, commit=prev)
+        first = {"op": "checkout", "path": str(d), "tracked": False, "detail": f"{e['commit']} -> {prev} in place"}
     else:
         prevdir = d.with_name(d.name + ".prev")
         pst = read_state(ctx, a.id + ".prev") if prevdir.exists() else None
         if not pst:
             raise NotInstalled(f"{a.id}: no previous copy kept")
-        r["plan"].append(f"swap back to {pst['version']} and pin it")
-        if not a.yes:
-            return 0
+        new = dict(e, version=pst["version"], integrity=pst["integrity"])
+        first = {"op": "swap", "path": str(d), "tracked": False, "detail": f"{e['version']} -> {pst['version']} (from .prev)"}
+    new["updated"] = today()
+    m2 = json.loads(json.dumps(m))
+    m2["externals"][a.id] = new
+    r["resolved"] = resolved_of(new)
+    if not finish_plan(ctx, a, r, [first] + tracked_changes(ctx, m2)):
+        return 0
+    if e["kind"] == "git":
+        git(["checkout", "--quiet", "--detach", prev], d)
+        git_build(e, d)
+        st.update({"commit": prev, "previous_commit": e["commit"], "installed_at": now()})
+        atomic_write(d / STATE_FILE, json.dumps(st, indent=2) + "\n")
+    else:
         tmp = d.with_name(d.name + ".swap")
         os.replace(d, tmp)
         os.replace(prevdir, d)
         os.replace(tmp, prevdir)
-        new = dict(e, version=pst["version"], integrity=pst["integrity"])
-    new["updated"] = today()
-    m["externals"][a.id] = new
-    save_manifest(ctx, m)
     make_link(ctx, a.id, new)
-    r["applied"] += [f"{a.id} at {pin_of(new)}", MANIFEST_REL] + apply_wiring(ctx, m)
+    r["applied"] = [f"{a.id} at {pin_of(new)}"] + apply_tracked(ctx, r["plan"])
     return 0
 
 
@@ -677,15 +805,16 @@ def cmd_remove(ctx: Ctx, a, r: Result) -> int:
         changes = git_local_changes(d)
         if changes and not a.force:
             raise Refused(f"{a.id} has local work removal would delete (--force to override):\n" + "\n".join(changes))
-    r["plan"] = [f"unwire {x}" for x in plan_wiring_targets(a.id, e)] + [
-        f"delete {d} (re-fetchable from {e.get('upstream') or e.get('repo') or e.get('package')})",
-        f"unlink {LINK_DIR}/{a.id}", f"move the entry to 'removed' in {MANIFEST_REL} with the reason"]
-    if not a.yes:
+    m2 = json.loads(json.dumps(m))
+    del m2["externals"][a.id]
+    m2.setdefault("removed", []).append({"id": a.id, "removed": today(), "reason": a.reason, "entry": e})
+    src = e.get("upstream") or e.get("repo") or e.get("package")
+    plan = tracked_changes(ctx, m2) + [
+        {"op": "unlink", "path": f"{LINK_DIR}/{a.id}", "tracked": False, "detail": "the per-device link"},
+        {"op": "delete", "path": str(d), "tracked": False, "detail": f"re-fetchable from {src}"}]
+    if not finish_plan(ctx, a, r, plan):
         return 0
-    del m["externals"][a.id]
-    m.setdefault("removed", []).append({"id": a.id, "removed": today(), "reason": a.reason, "entry": e})
-    save_manifest(ctx, m)
-    r["applied"] += [MANIFEST_REL] + apply_wiring(ctx, m)
+    r["applied"] = apply_tracked(ctx, plan)
     link = ctx.link(a.id)
     if link.is_symlink() or link.exists():
         rmtree(link)
@@ -998,9 +1127,13 @@ def emit(r: Result, as_json: bool) -> None:
         print(json.dumps(r, indent=2))
         return
     if r.get("error"):
-        print(f"externals {r['action']}: {r['error']}", file=sys.stderr)
-    for line in r["plan"]:
-        print(f"  plan   {line}")
+        print(f"externals {r['action']}: {r['error']}" + (f" — {r['detail']}" if r.get("detail") else ""), file=sys.stderr)
+    for op in r["plan"]:
+        print(f"  plan   {op['op']:<8} {op['path']}  {op.get('detail', '')}")
+        for line in (op.get("diff") or "").splitlines():
+            print(f"           {line}")
+    if r.get("plan_sha256") and r["plan"]:
+        print(f"  plan_sha256 {r['plan_sha256']}")
     for line in r["applied"]:
         print(f"  done   {line}")
     for line in r["warnings"]:
@@ -1012,7 +1145,7 @@ def emit(r: Result, as_json: bool) -> None:
     for err in r.get("errors", []):
         print(f"  error  {err}")
     if r["plan"] and not r["applied"] and r["action"] in MUTATING and not r.get("error"):
-        print("  (dry run — nothing changed; pass --yes to apply)")
+        print("  (dry run — nothing changed; pass --yes, and --expect-plan <plan_sha256> to bind it to this review)")
 
 
 MUTATING = {"add", "install", "update", "rollback", "remove"}
@@ -1056,6 +1189,7 @@ def build_parser() -> argparse.ArgumentParser:
     for p in sub.choices.values():
         if p.prog.split()[-1] in MUTATING:
             p.add_argument("--yes", action="store_true")
+            p.add_argument("--expect-plan", metavar="SHA256", help="refuse (exit 4) unless the plan hashes to this")
             if "--json" not in p._option_string_actions:
                 p.add_argument("--json", action="store_true")
     return ap
@@ -1065,7 +1199,7 @@ def main(argv: Optional[List[str]] = None, ctx: Optional[Ctx] = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     ctx = ctx or Ctx()
     if argv[:1] == ["--self-test"]:
-        return self_test()
+        return self_test(as_json="--json" in argv)
     if argv[:1] == ["exec"]:
         if len(argv) < 2:
             print("usage: externals.py exec ID [-- ARGS...]", file=sys.stderr)
@@ -1088,7 +1222,14 @@ def main(argv: Optional[List[str]] = None, ctx: Optional[Ctx] = None) -> int:
     if a.cmd == "list":
         a.id = None
     try:
-        code = handlers[a.cmd](ctx, a, r)
+        if a.cmd in MUTATING:
+            with write_lock(ctx):
+                code = handlers[a.cmd](ctx, a, r)
+        else:
+            code = handlers[a.cmd](ctx, a, r)
+    except Busy as ex:
+        r.update(ok=False, error="busy", detail=str(ex))
+        code = 4
     except Usage as ex:
         r.update(ok=False, error=str(ex))
         code = 2
@@ -1109,15 +1250,16 @@ def main(argv: Optional[List[str]] = None, ctx: Optional[Ctx] = None) -> int:
 
 # --------------------------------------------------------------------------- self-test
 
-def self_test() -> int:
+def self_test(as_json: bool = False) -> int:
     """Offline end to end: a fake git upstream (install, in-place update, local-change refusal, rollback,
-    remove with provenance) and a local npm tarball (install, integrity refusal, exec, wiring, remove)."""
-    failures: List[str] = []
+    remove with provenance) and a local npm tarball (install, integrity refusal, exec, wiring, remove).
+    Case names are stable: a port of this tool (Synapse) matches them one for one."""
+    cases: List[dict] = []
 
-    def ok(cond: bool, what: str) -> None:
-        print(f"  {'ok  ' if cond else 'FAIL'} {what}")
-        if not cond:
-            failures.append(what)
+    def ok(cond: bool, what: str, detail: str = "") -> None:
+        cases.append({"name": what, "ok": bool(cond), "detail": detail})
+        if not as_json:
+            print(f"  {'ok  ' if cond else 'FAIL'} {what}")
 
     with tempfile.TemporaryDirectory(prefix="ws-ext-selftest-") as td:
         td = Path(td)
@@ -1156,9 +1298,32 @@ def self_test() -> int:
         code, r = call("add", "demo", "--git", str(up), "--ref", "main", "--run", "python3 {root}/tool.py",
                        "--mcp", "serve", "--skill", "demo=skills/demo")
         ok(code == 0 and not (home / "demo").exists(), "add without --yes is a dry run")
-        code, r = call("add", "demo", "--git", str(up), "--ref", "main", "--run", "python3 {root}/tool.py",
-                       "--mcp", "serve", "--skill", "demo=skills/demo", "--yes")
+        ok(r.get("spec") == SPEC_VERSION, "every --json object carries spec")
+        ops = {o["path"]: o for o in r["plan"]}
+        ok(all({"op", "path", "detail"} <= set(o) for o in r["plan"]) and r["plan"][0]["op"] == "fetch",
+           "plan entries are structured {op, path, detail}")
+        mj = ops.get(".mcp.json", {})
+        ok(mj.get("op") == "write" and mj.get("before_sha256") and "+++ b/.mcp.json" in mj.get("diff", "")
+           and "after" in mj, "a tracked write shows its before hash, new text and diff")
+        ok(ops.get(".claude/skills/demo", {}).get("op") == "link", "a skill link shows as a link op")
+        ok(re.fullmatch(r"[0-9a-f]{40}", r.get("resolved", {}).get("commit", "")) is not None, "the dry run reports the resolved pin")
+        add_args = ["add", "demo", "--git", str(up), "--ref", r["resolved"]["commit"], "--run", "python3 {root}/tool.py",
+                    "--mcp", "serve", "--skill", "demo=skills/demo"]
+        _, r2 = call(*add_args)
+        ok(r2["resolved"] == r["resolved"] and r2["plan"][0] == r["plan"][0], "applying at the resolved pin fetches the reviewed commit")
+        _, r3 = call(*add_args)
+        ok(r3["plan_sha256"] == r2["plan_sha256"], "the same inputs give the same plan_sha256")
+        code, r = call(*add_args, "--yes", "--expect-plan", "0" * 64)
+        ok(code == 4 and "plan changed" in (r.get("error") or "") and not (home / "demo").exists(),
+           "--expect-plan with another hash refuses and writes nothing")
+        home.mkdir(parents=True, exist_ok=True)
+        (home / LOCK_FILE).write_text(json.dumps({"pid": os.getpid(), "at": now()}))
+        code, r = call(*add_args, "--yes")
+        ok(code == 4 and r.get("error") == "busy" and not (home / "demo").exists(), "a second writer gets exit 4, error busy")
+        (home / LOCK_FILE).write_text(json.dumps({"pid": 999999999, "at": now()}))
+        code, r = call(*add_args, "--yes", "--expect-plan", r2["plan_sha256"])
         ok(code == 0 and (home / "demo" / "tool.py").exists(), "add --yes clones the pinned commit")
+        ok(not (home / LOCK_FILE).exists(), "a stale lock is taken over and released")
         m = load_manifest(ctx)
         ok(re.fullmatch(r"[0-9a-f]{40}", m["externals"]["demo"]["commit"] or "") is not None, "manifest pins a full sha")
         mcp = json.loads((ws / ".mcp.json").read_text())["mcpServers"]
@@ -1170,13 +1335,28 @@ def self_test() -> int:
         ok(".claude/skills/keep-me" in rows and ".agents/skills/demo" in rows, "allowlist keeps foreign rows and adds ours")
         code, r = call("check")
         ok(code == 0, "check passes after add")
+        (ws / "03-skills" / "clash").mkdir(parents=True)
+        code, r = call("add", "other", "--git", str(up), "--run", "python3 {root}/tool.py", "--skill", "clash=skills/demo")
+        ok(code == 4 and "already" in (r.get("error") or ""), "--skill refuses a name a workspace skill uses")
+        code, r = call("add", "other", "--git", str(up), "--run", "python3 {root}/tool.py", "--skill", "demo=skills/demo")
+        ok(code == 4 and "already" in (r.get("error") or ""), "--skill refuses a name another external links")
         p = run([sys.executable, str(ws / "09-tools/externals.py"), "exec", "demo", "--", "a", "b"], cwd=ws, check=False,
                 env=dict(os.environ, WS_EXTERNALS_HOME=str(home)))
         ok(p.stdout.strip() == "v1 a b", "exec runs the pinned checkout with args")
         # in-place update to a new upstream commit
         (up / "tool.py").write_text("import sys; print('v2', *sys.argv[1:])\n")
         git(["commit", "--quiet", "-am", "v2"], up)
-        code, r = call("update", "demo", "--yes")
+        v2 = git(["rev-parse", "HEAD"], up)
+        _, r = call("update", "demo", "--to", v2)
+        h = r.get("plan_sha256")
+        ok(r.get("resolved", {}).get("commit") == v2, "update's dry run reports the commit it will move to")
+        mp = ws / MANIFEST_REL
+        mp.write_text(mp.read_text() + "\n")
+        code, r = call("update", "demo", "--to", v2, "--yes", "--expect-plan", h)
+        ok(code == 4 and "plan changed" in (r.get("error") or ""), "a tracked file edited after review stops the apply")
+        mp.write_text(mp.read_text().rstrip("\n") + "\n")
+        _, r = call("update", "demo", "--to", v2)
+        code, r = call("update", "demo", "--to", v2, "--yes", "--expect-plan", r["plan_sha256"])
         ok(code == 0 and run([sys.executable, str(ws / "09-tools/externals.py"), "exec", "demo"], cwd=ws, check=False,
                              env=dict(os.environ, WS_EXTERNALS_HOME=str(home))).stdout.strip() == "v2", "update moves the checkout in place")
         ok(load_manifest(ctx)["externals"]["demo"]["commit"] == git(["rev-parse", "HEAD"], up), "update re-pins the manifest")
@@ -1199,7 +1379,7 @@ def self_test() -> int:
         mcpj["mcpServers"]["demo"]["args"] = ["evil"]
         (ws / ".mcp.json").write_text(json.dumps(mcpj))
         code, r = call("check")
-        ok(code == 1 and any("mcpServers.demo" in x for x in r["errors"]), "check catches a hand-edited MCP entry")
+        ok(code == 1 and any(x.startswith(".mcp.json") for x in r["errors"]), "check catches a hand-edited MCP entry")
         code, r = call("install", "--all", "--yes")
         code2, _ = call("check")
         ok(code == 0 and code2 == 0, "install --all repairs the wiring")
@@ -1241,11 +1421,17 @@ def self_test() -> int:
             code, r = call("remove", "hello", "--reason", "self-test", "--yes")
             ok(code == 0 and not (ws / ".claude/skills/hello").is_symlink(), "npm remove unwires")
         else:
-            print("  SKIP npm half: npm/node not on PATH — not a pass")
+            if not as_json:
+                print("  SKIP npm half: npm/node not on PATH — not a pass")
+            cases.append({"name": "npm half", "ok": True, "skipped": True, "detail": "npm/node not on PATH — not a pass"})
         code, r = call("check")
         ok(code == 0, "final check clean")
-    print(f"externals self-test: {'PASS' if not failures else 'FAIL (' + str(len(failures)) + ')'}")
-    return 1 if failures else 0
+    failed = [c for c in cases if not c["ok"]]
+    if as_json:
+        print(json.dumps({"spec": SPEC_VERSION, "ok": not failed, "action": "self-test", "cases": cases}, indent=2))
+    else:
+        print(f"externals self-test: {'PASS' if not failed else 'FAIL (' + str(len(failed)) + ')'} — {len(cases)} cases")
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":
