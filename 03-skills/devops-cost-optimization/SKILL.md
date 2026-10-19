@@ -488,16 +488,20 @@ background job that wasn't accounted for.
 
 ### GitHub Actions Minute Economics
 
-| Runner type | Cost per minute (2024) |
+| Runner type | Cost per minute (2026; 2024 in brackets) |
 |-------------|----------------------|
-| ubuntu-latest (2-core) | $0.008 |
-| ubuntu-latest-4-core | $0.016 |
-| macos-latest (3-core) | $0.08 |
-| windows-latest (2-core) | $0.016 |
+| ubuntu-latest (2-core) | $0.006 ($0.008) |
+| ubuntu-latest-4-core | $0.012 ($0.016) |
+| macos-latest (3- or 4-core) | $0.062 ($0.08) |
+| windows-latest (2-core) | $0.010 ($0.016) |
 
 macOS runners cost 10× more than Linux. Every job that runs on macOS by default
 is 10× more expensive. Audit macOS-required jobs — often tests that were written
 for macOS but don't require it.
+
+On a private repo the included minutes go fast: macOS counts about 10× and Windows 2× against
+them, each job rounds up to a minute, and larger runners never use them. Sean's private repos run
+macOS and Windows nightly, only when something changed: [[github-actions-private-repo-minutes]].
 
 ### Self-Hosted Runner Economics
 

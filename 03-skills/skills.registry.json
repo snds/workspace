@@ -1307,7 +1307,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:31d4b597f65dd7d6553fab9a1a599cb2c164950aa9029ea66fe3052bc6782fb8"
+      "hash": "sha256:12b1f2a4bcaaddfb1262dd197fee2d628b01b3f70fc0d994bcf1a5b5b030622c"
     },
     "devops-infrastructure-as-code": {
       "path": "03-skills/devops-infrastructure-as-code/SKILL.md",

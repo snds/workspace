@@ -164,6 +164,19 @@
     "shadcn colors": "08-knowledge/design/ds-native-shadcn.md",
     "coinbase": "08-knowledge/design/ds-native-cds.md",
     "status tokens": "08-knowledge/design/centric-ds-ideas-from-ds-survey.md",
-    "state tokens": "08-knowledge/design/centric-ds-ideas-from-ds-survey.md"
+    "state tokens": "08-knowledge/design/centric-ds-ideas-from-ds-survey.md",
+    "github actions": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
+    "github ci": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
+    "github workflow": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
+    "ci minutes": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
+    "actions minutes": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
+    "spending limit": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
+    "github billing": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
+    "ci.yml": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
+    "workflow_dispatch": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
+    "macos runner": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
+    "windows runner": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
+    "ci cost": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
+    "gh run": "08-knowledge/engineering/github-actions-private-repo-minutes.md"
   }
 }
