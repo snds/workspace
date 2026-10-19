@@ -1,0 +1,27 @@
+{
+  "id": "n-0yk5m433",
+  "name": "workspace-doctor",
+  "description": "Checks this machine's workspace setup: hooks, the pinned library, identities, launch agents and installs. By default it also heals the few items it may repair on its own; the check run only reports, and fails on drift.",
+  "language": "shell",
+  "entry": "workspace-doctor.sh",
+  "runtime": "bash>=3.2",
+  "safety": "writes-outside",
+  "network": true,
+  "run": {
+    "default": [],
+    "check": {
+      "args": ["--check"],
+      "safety": "read-only",
+      "timeout_s": 120,
+      "description": "Report only; writes nothing; fails on drift"
+    },
+    "quick": {
+      "args": ["--quick"],
+      "network": false,
+      "timeout_s": 30,
+      "description": "The session-start pass: skips the slow sections, heals only its own items"
+    }
+  },
+  "output": "text-report",
+  "timeout_s": 300
+}

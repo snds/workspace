@@ -87,7 +87,7 @@ Claude tells you before starting, because it needs the PC for a while.
 
 ## 8. What Claude builds without you
 
-- [ ] **Health's tool buttons (item 7):** run doctor, the harness and the nightly rebuild through the tool runner, with their results as issues.
+- [x] **Health's tool buttons (item 7):** run doctor, the harness and the nightly rebuild through the tool runner, with their results as issues. Done 2026-10-18: Health → Tools.
 - [ ] **A skill page (item 8):** a skill's document beside its contract: triggers, edges, what governs it, and its check status.
 - [ ] **Windows CI builds the desktop app too (item 15).** Today the Windows job tests the engine and the service but skips the app.
 - [ ] **An unsigned Mac app bundle** with the service inside as a helper app, so packaging, autostart from the bundle and the uninstall can be rehearsed before signing.

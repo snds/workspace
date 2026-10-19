@@ -1,0 +1,37 @@
+{
+  "id": "n-j87vvx4z",
+  "name": "nightly",
+  "description": "The workspace's maintenance pass: fold session fragments into the log, rebuild the generated files to a fixpoint (registry, related blocks, trigger routes, history indexes), then verify. The check run asks the generators whether anything is out of date and writes nothing.",
+  "language": "python",
+  "entry": "nightly.py",
+  "runtime": "python>=3.10",
+  "safety": "writes-workspace",
+  "network": false,
+  "run": {
+    "default": [],
+    "check": {
+      "args": ["--check", "--phases", "rebuild"],
+      "safety": "read-only",
+      "timeout_s": 300,
+      "description": "Is any generated file out of date? The generators in check mode; writes nothing"
+    },
+    "rebuild": {
+      "args": ["--phases", "rebuild", "--json"],
+      "output": "json",
+      "timeout_s": 300,
+      "description": "Rebuilds the generated files and lists what it wrote; never commits"
+    },
+    "dry-run": {
+      "args": ["--dry-run"],
+      "safety": "read-only",
+      "description": "Prints the plan; runs nothing"
+    },
+    "self-test": {
+      "args": ["--self-test"],
+      "safety": "read-only",
+      "output": "exit-code"
+    }
+  },
+  "output": "text-report",
+  "timeout_s": 900
+}
