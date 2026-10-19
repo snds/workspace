@@ -172,9 +172,9 @@ could tell it to do something harmful.* Lead with that sentence next time.
 - **Employer work** links to the employer's own surfaces (its repo, its tickets). Never copy an
   employer item onto a personal status page to make it linkable.
 - **The page side:** status pages follow [artifact-standards.md](../02-shared-references/artifact-standards.md)
-  ("Status pages"), checked by `09-tools/validate-status-anchors.py`. Synapse's app gives every item
-  the same kind of link (Synapse D107).
-- **Why:** on 2026-10-19 a Synapse reply listed "The deep scan, then the other agent runs" with no
+  ("Status pages"), checked by `09-tools/validate-status-anchors.py`. The workspace app gives every
+  item the same kind of link.
+- **Why:** on 2026-10-19 a project reply listed "The deep scan, then the other agent runs" with no
   context and nothing to click. I couldn't tell what it meant or where it sat on the status page.
 
 ## Working Principles (DS / design-engineering work)

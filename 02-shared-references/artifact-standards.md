@@ -105,7 +105,7 @@ Windows PC and his iPhone.
   `data-status-page="https://claude.ai/artifact/<id>"`.
 - **Every line item has an id:** `stage-3`, `s3-go-agent-runs`, `test-c8`, `ask-deep-scan`,
   `built-…`, `open-…`. Use lower-case letters, digits and hyphens only. The artifact host passes
-  only a plain `#anchor` through to the page, and Synapse uses the id as a query value (D107).
+  only a plain `#anchor` through to the page, and the workspace app uses the id as a query value.
 - **Ids are permanent.** Change an item's words, never its id. Mark a finished item done instead
   of deleting it, so old links still land.
 - **Each item links to itself** (a `#`, or its number), and the link copies the full address.
@@ -117,8 +117,9 @@ Windows PC and his iPhone.
   (`docs/setup.md`) as the only way in: Sean can't open it on his iPhone. (Set 2026-10-19.)
 - **An item that asks Sean for something carries its context on the page:** what it is, why it
   matters, what it costs, and what he does. A long one goes in a "What this means" disclosure.
-- **Checked by** `python3 09-tools/validate-status-anchors.py`, which runs in the harness. The
-  reference page is `07-projects/26-synapse/roadmap.html`: copy its link CSS block and its script.
+- **Checked by** `python3 09-tools/validate-status-anchors.py`, which runs in the harness. To
+  start a new page, copy the link CSS block and the script from a page that already passes:
+  `git grep -l data-status-page -- '*.html'` lists them.
 
 ### Documents (specs, reports, decision records)
 - Prefer `.html` for rich formatting that opens in any browser.
