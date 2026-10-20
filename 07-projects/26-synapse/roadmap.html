@@ -105,6 +105,9 @@ ul.steps li:last-child { border-bottom: 0; }
 
 ul.asks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: 10px; align-items: start; }
 ul.asks li { display: flex; flex-direction: column; gap: 3px; padding: 12px 14px; border-left: 3px solid var(--part); background: var(--surface); border-radius: 0 8px 8px 0; min-width: 0; }
+/* A finished ask stays, marked done, so old links still land on it. */
+ul.asks li.done { border-left-color: var(--done); }
+ul.asks li.done .kind { color: var(--done); }
 ul.asks li b { font-weight: 600; }
 ul.asks li span { color: var(--muted); font-size: 0.9rem; }
 ul.asks li .kind { font: 500 0.72rem var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--part); }
@@ -157,8 +160,8 @@ details.more summary { cursor: pointer; color: var(--accent); font-size: 0.88rem
   <section aria-label="Summary">
     <div class="stats">
       <div class="stat"><b>1<small>/8</small></b><span>stages fully done (0–7); Stage 0 has 3 hardware spikes left</span></div>
-      <div class="stat"><b>9<small>/14</small></b><span>Stage 2 exit tests passing</span></div>
-      <div class="stat"><b>19</b><span>items waiting on you</span></div>
+      <div class="stat"><b>10<small>/14</small></b><span>Stage 2 exit tests passing</span></div>
+      <div class="stat"><b>18</b><span>items waiting on you</span></div>
       <div class="stat"><b>29–41</b><span>focused weeks after Stage 2, through Stage 6</span></div>
     </div>
     <div class="bar" role="img" aria-label="Stage 2 exit tests: 9 passing, 5 waiting, of 14">
@@ -218,7 +221,7 @@ details.more summary { cursor: pointer; color: var(--accent); font-size: 0.88rem
               <div class="test pass" id="test-s7"><a class="id" href="#test-s7" aria-label="Copy a link to exit test S7">S7</a><span>Values read back in every region</span></div>
               <div class="test pass" id="test-s8"><a class="id" href="#test-s8" aria-label="Copy a link to exit test S8">S8</a><span>Agent apps found on the Mac</span></div>
               <div class="test pass" id="test-s9"><a class="id" href="#test-s9" aria-label="Copy a link to exit test S9">S9</a><span>Service under 100 MB, 1% CPU</span></div>
-              <div class="test wait" id="test-s10"><a class="id" href="#test-s10" aria-label="Copy a link to exit test S10">S10</a><span>Keyboard and screen reader · automated half passes</span></div>
+              <div class="test pass" id="test-s10"><a class="id" href="#test-s10" aria-label="Copy a link to exit test S10">S10</a><span>Keyboard and screen reader · passed Oct 19</span></div>
               <div class="test wait" id="test-s11"><a class="id" href="#test-s11" aria-label="Copy a link to exit test S11">S11</a><span>Windows matches the Mac</span></div>
               <div class="test wait" id="test-s12"><a class="id" href="#test-s12" aria-label="Copy a link to exit test S12">S12</a><span>Clean uninstall</span></div>
               <div class="test pass" id="test-s13"><a class="id" href="#test-s13" aria-label="Copy a link to exit test S13">S13</a><span>Only you reach the service</span></div>
@@ -230,7 +233,7 @@ details.more summary { cursor: pointer; color: var(--accent); font-size: 0.88rem
             <ul class="steps">
               <li id="s2-ui-review-round-2"><i class="mark part"></i><span>UI review, round 2 <a class="pin" href="#s2-ui-review-round-2" aria-label="Copy a link to UI review, round 2">#</a><span class="note">Round 1 is built, and so is today's bar fix: every pane bar is one 48 px height, and the Graph's filters fit one row (F12).</span></span><span class="who you">You, then Claude</span></li>
               <li id="s2-decide-small-type-sizes"><i class="mark you"></i><span>Decide the small type sizes <a class="pin" href="#s2-decide-small-type-sizes" aria-label="Copy a link to Decide the small type sizes">#</a><span class="note">Every screen passes APCA Bronze. Silver would flag the 11–12 px labels: keep them, or raise them.</span></span><span class="who you">You</span></li>
-              <li id="s2-keyboard-only-voiceover-walk"><i class="mark you"></i><span>Keyboard-only and VoiceOver walk-through (S10) <a class="pin" href="#s2-keyboard-only-voiceover-walk" aria-label="Copy a link to Keyboard-only and VoiceOver walk-through (S10)">#</a></span><span class="who you">You</span></li>
+              <li id="s2-keyboard-only-voiceover-walk"><i class="mark done">✓</i><span>Keyboard-only and VoiceOver walk-through (S10) <a class="pin" href="#s2-keyboard-only-voiceover-walk" aria-label="Copy a link to Keyboard-only and VoiceOver walk-through (S10)">#</a><span class="note">Done Oct 19: every screen by keyboard, then VoiceOver. Zero issues.</span></span><span class="who you">You</span></li>
               <li id="s2-obsidian-open-while-app"><i class="mark you"></i><span>Obsidian open while the app writes, on a test vault (S2) <a class="pin" href="#s2-obsidian-open-while-app" aria-label="Copy a link to Obsidian open while the app writes, on a test vault (S2)">#</a><span class="note">The test vault is made. Four commands in the checklist point the service at it, compare it after and put it back.</span></span><span class="who you">You</span></li>
               <li id="s2-apple-team"><i class="mark you"></i><span>An Apple team <a class="pin" href="#s2-apple-team" aria-label="Copy a link to An Apple team">#</a><span class="note">Unlocks Touch ID, native notifications and the app bundle. Try Xcode's free Personal Team first.</span></span><span class="who you">You</span></li>
               <li id="s2-touch-id-key-lock"><i class="mark open"></i><span>Touch ID key, lock on screen lock and sleep, the helper app, notifications <a class="pin" href="#s2-touch-id-key-lock" aria-label="Copy a link to Touch ID key, lock on screen lock and sleep, the helper app, notifications">#</a><span class="note">Built as soon as there's a team.</span></span><span class="who claude">Claude</span></li>
@@ -356,11 +359,11 @@ details.more summary { cursor: pointer; color: var(--accent); font-size: 0.88rem
     <ul class="asks">
       <li id="ask-ui-review-round-2"><span class="kind">Look</span><b>UI review, round 2 <a class="pin" href="#ask-ui-review-round-2" aria-label="Copy a link to UI review, round 2">#</a></b><span>Round 1 and the bar fix are built. Restart the dev server on 1430 to see them (it needs a fresh install for Unicron 0.13), and use "Use worst-case sample content" in the palette to see the sheets at their extremes.</span></li>
       <li id="ask-small-type-sizes"><span class="kind">Decide</span><b>The small type sizes <a class="pin" href="#ask-small-type-sizes" aria-label="Copy a link to The small type sizes">#</a></b><span>Keep the 11–12 px labels, which pass APCA Bronze, or raise them toward Silver's 14 px floor.</span></li>
-      <li id="ask-apple-team"><span class="kind">Set up</span><b>An Apple team <a class="pin" href="#ask-apple-team" aria-label="Copy a link to An Apple team">#</a></b><span>Xcode → Settings → Accounts → add your Apple ID gives a free Personal Team. Send Claude the 10-character team ID. The paid membership is still with Apple support.</span></li>
+      <li id="ask-apple-team"><span class="kind">Set up</span><b>An Apple team <a class="pin" href="#ask-apple-team" aria-label="Copy a link to An Apple team">#</a></b><span>Team ID received Oct 19 (the free route, while the paid membership is with Apple support). One click left: the signing certificate, under Xcode → Settings → Accounts → Manage Certificates.</span></li>
       <li id="ask-yubikey-firmware"><span class="kind">Check</span><b>Your YubiKey's firmware <a class="pin" href="#ask-yubikey-firmware" aria-label="Copy a link to Your YubiKey&#x27;s firmware">#</a></b><span>Yubico Authenticator or <code>ykman info</code>. The recovery passkey needs 5.2 or later (D71).</span></li>
       <li id="ask-windows-signing"><span class="kind">Decide</span><b>How Windows builds are signed <a class="pin" href="#ask-windows-signing" aria-label="Copy a link to How Windows builds are signed">#</a></b><span>Microsoft's Artifact Signing, about $9.99 a month, or a commercial certificate, about $150–300 a year (D94).</span></li>
       <li id="ask-where-updates-are-published"><span class="kind">Decide</span><b>Where updates are published <a class="pin" href="#ask-where-updates-are-published" aria-label="Copy a link to Where updates are published">#</a></b><span>The repo is private, so its releases can't serve the updater. A public releases repo, or a Cloudflare bucket or Pages site. The updater's wiring waits on this.</span></li>
-      <li id="ask-keyboard-voiceover-walk-through"><span class="kind">Do</span><b>Keyboard and VoiceOver walk-through <a class="pin" href="#ask-keyboard-voiceover-walk-through" aria-label="Copy a link to Keyboard and VoiceOver walk-through">#</a></b><span>Every screen by keyboard alone, then VoiceOver (⌘F5). Claude fixes what you find (S10).</span></li>
+      <li id="ask-keyboard-voiceover-walk-through" class="done"><span class="kind">Done Oct 19</span><b>Keyboard and VoiceOver walk-through <a class="pin" href="#ask-keyboard-voiceover-walk-through" aria-label="Copy a link to Keyboard and VoiceOver walk-through">#</a></b><span>Every screen by keyboard alone, then VoiceOver (⌘F5): zero issues. S10 passes.</span></li>
       <li id="ask-obsidian-session"><span class="kind">Do</span><b>The Obsidian session <a class="pin" href="#ask-obsidian-session" aria-label="Copy a link to The Obsidian session">#</a></b><span>Obsidian on a test vault while the app writes: type, save, undo twice, rename (S2).</span></li>
       <li id="ask-time-windows-pc"><span class="kind">Hardware</span><b>Time on the Windows PC <a class="pin" href="#ask-time-windows-pc" aria-label="Copy a link to Time on the Windows PC">#</a></b><span>The Hello spike (D72) and every exit test (S11). Claude tells you before starting.</span></li>
       <li id="ask-updater-signing-key"><span class="kind">Do</span><b>The updater's signing key <a class="pin" href="#ask-updater-signing-key" aria-label="Copy a link to The updater&#x27;s signing key">#</a></b><span>Created once and kept in your password manager, never in the repo. Claude gives you the command when it's time.</span></li>

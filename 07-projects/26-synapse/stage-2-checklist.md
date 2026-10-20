@@ -23,11 +23,11 @@ Stage 2's goal is to see and manage the workspace without asking an agent ([plan
 
 The automated half passes: 0 serious findings on 14 screens in both themes, and 0 elements under APCA Bronze. Automated checks find about a third of real problems, so a person finishes it.
 
-- [ ] **Keyboard only, on every screen:** reach and use every control with Tab, the arrows, Return, Escape and ⌘K. Focus is always visible, and nothing traps it.
-- [ ] **Library:** open a file, edit it, save with ⌘S, settle a merge, and open and accept an impact review.
-- [ ] **Graph:** find a node and follow its edges from the inspector. The list version does everything the canvas does.
-- [ ] **VoiceOver (⌘F5):** each screen's heading is read; the selected row is announced as current; the editor's text can be read; dialogs are announced and close with Escape.
-- [ ] **Pass:** 0 serious issues. Claude fixes anything you find, and the scorecard marks S10 passed.
+- [x] **Keyboard only, on every screen:** reach and use every control with Tab, the arrows, Return, Escape and ⌘K. Focus is always visible, and nothing traps it.
+- [x] **Library:** open a file, edit it, save with ⌘S, settle a merge, and open and accept an impact review.
+- [x] **Graph:** find a node and follow its edges from the inspector. The list version does everything the canvas does.
+- [x] **VoiceOver (⌘F5):** each screen's heading is read; the selected row is announced as current; the editor's text can be read; dialogs are announced and close with Escape.
+- [x] **Pass:** 0 serious issues. Claude fixes anything you find, and the scorecard marks S10 passed. **Done 2026-10-19:** Sean found zero issues; the scorecard reads it from `docs/stage-2/manual-checks.json`.
 
 ## 3. Obsidian round trip (S2)
 
