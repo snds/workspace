@@ -96,13 +96,13 @@ Claude tells you before starting, because it needs the PC for a while.
 
 ## 7. Two last checks
 
-- [ ] **S13 from another account.** With the service running, try its socket as the built-in `nobody` account (nothing is created):
+- [x] **S13 from another account.** With the service running, try its socket as the built-in `nobody` account (nothing is created):
 
   ```bash
   cd /Users/sean.sands/Projects/synapse && sudo -u nobody nc -U "/Users/sean.sands/Library/Application Support/design.snds.sy/run/service.sock"
   ```
 
-  **Pass:** refused ("Permission denied").
+  **Pass:** refused ("Permission denied"). **Done 2026-10-19** on the Personal MacBook Pro (as `/Users/snds/...`): refused, exit 1. `nc -v` printed no reason; `nobody` can't enter the home folder, and `run/` and the socket are owner-only. The scorecard reads it from `docs/stage-2/manual-checks.json`.
 - [ ] **S1, daily use:** for two weeks, check status in the app instead of asking an agent. **Pass:** 10 of 10 working days, and a note of what's missing.
 
 ## 8. What Claude builds without you
