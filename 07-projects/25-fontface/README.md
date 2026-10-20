@@ -10,7 +10,7 @@ related_projects: []
 # Fontface (25-fontface)
 
 A clean-room, subscription-free Mac font manager that replaces the Typeface app for Sean.
-Typeface turns fonts off without a Pro subscription; Fontface never will.
+Typeface keeps some actions behind its paid Pro tier (a one-time purchase, not a subscription, per the 2026-10-19 assessment); Fontface never puts turning fonts on behind a paywall. The clean-room rule was dropped on 2026-10-19 (see notes/typeface-app-analysis_2026-10-19 and notes/typeface-assessment_2026-10-19).
 
 - **Status:** Active. Phase 1 built; first user test found scanning bugs (fix in progress).
 - **Code repo:** `~/Projects/fontface` (git, remote `snds/fontface`; resolves as personal-solo after Sean's `profile_resolve.py scan` on 2026-10-12). No commits yet.

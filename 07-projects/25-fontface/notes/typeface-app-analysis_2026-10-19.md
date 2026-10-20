@@ -14,6 +14,16 @@ Two limits stay:
 - **No Typeface code is copied.** This note describes behaviour in our own words. Nothing here is decompiled code to paste.
 - **This note stays in the workspace.** The Fontface repo is public on GitHub, so binary-derived detail doesn't go into `docs/`. Fontface's own docs describe Fontface's design, not Typeface's.
 
+> **Corrections (2026-10-19, from [[07-projects/25-fontface/notes/typeface-assessment_2026-10-19]]):**
+> - Typeface Pro is a one-time purchase, not a subscription.
+> - Its App Store privacy label lists a user ID and usage data, so "no tracking found" is too strong.
+> - Auto-activated fonts mostly go to the asking app only.
+> - Connect's vault lives under `~/Library/Extensis/Connect Fonts/`.
+> - `FontCaseExtractor` may be an importer for the Fontcase app.
+> - `.typeface-license` is Typeface's own product licence.
+> - The "Style" classes follow declared data (PANOSE/IBM class), not measurements.
+> - The `xRatio` rule isn't a "large x-height" class.
+
 ## How sure each finding is
 
 - **Seen directly:** text in the program file, its bundle, its signature and its named methods. These are reliable.

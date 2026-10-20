@@ -1,277 +1,60 @@
 # SESSION-STATE — Fontface (25-fontface)
 
-_Last updated: 2026-10-19 — library redesign stages M1a–M5 done and merged into local `main` (`104b165`), not pushed; next is Google previews_
-
-### 2026-10-19: Typeface analysis brought in (Claude Opus · Claude Code · Work MBP)
-- **Decision (Sean):** the clean-room rule is dropped. Typeface's binary may inform Fontface. Still no copied Typeface code, and binary-derived detail stays in the workspace, not the public `snds/fontface` repo.
-- **Note:** [[07-projects/25-fontface/notes/typeface-app-analysis_2026-10-19|Typeface app analysis]], a static analysis of Typeface 4.5.1 with REA + Ghidra.
-- **Top findings for Fontface:** auto-activation (system route via CoreText requests, PostScript/full-name match, temporary activations, a WebKit/Calibri skip); importers for FontExplorer X, Suitcase / Connect Fonts, RightFont and FontBase; measured classification (x-height ratio, weight); Copy as CSS; duplicate precision.
-- **Next:** Sean picks which of the note's 7 suggested backlog rows go into `docs/FEATURES.md`. Nothing has been added to the repo yet.
-
-### Progress 2026-10-18/19: library redesign on branch `library-redesign` (merged into local `main`, not pushed)
-- **M1a done:** commits `69bd71a`, `9a22e09` and `c2b6793`.
-  - The font page opens with double-click or Return, with Back via ⌘[, Esc or the mouse.
-  - Tabs: Specimen, Characters (with search), Axes and Info. The DetailPanel is retired, and `Family.id` was added.
-  - Review: 16 confirmed findings fixed, then 3 more from the recheck.
-- **M1b done:** commits `532a3c7` and `f3e70cf`.
-  - Tiles, Rows and Table (⌘1/2/3), View options, sort, a "Group styles into families" toggle, ⌘=/⌘−, `fonts.added_at` with a backfill, and a font-memory cap of 500.
-  - `list_fonts` now sorts in Rust: 28 ms, down from 37 ms.
-  - Review: 13 confirmed findings fixed, and the recheck was clean.
-- **M2 done:** commits `0adc3e4`, `5b935fd` and `2298f31`.
-  - Smart entries: All Fonts, Your Fonts, Recently Added, Active, Not Tagged.
-  - One flat Sources list. A subfolder picker in the toolbar replaces the trees, and Google and Purchases rows list library fonts with Browse.
-  - Eight font states, each with a mark, a tooltip and screen-reader text. New `reveal_folder` command.
-  - Review: 16 confirmed findings fixed, plus 1 from the recheck. 156 UI tests and 265 Rust tests pass.
-- **M3 done:** commits `f52caa5`, `f7bdb8d`, `04aede2`, `d37d446` and `b5899ae`, after one review and four fix rounds.
-  - Families are grouped by name, plus the Family groups page with All, Suggested and Your changes.
-  - Choices live in the `family_overrides` and `family_rules` tables. They stay local for now; sync comes later.
-  - Library result: 3,443 own-name families become 2,700 grouped, with 89 suggestions.
-  - Invariants held: folder paths, row order and which copy is on never change grouping. With the setting off, results nest inside the on-setting families (checks I1, I2 and I2s are all 0).
-  - Known limit: one made-up chain case with grouping off, which isn't in Sean's library.
-  - 227 UI tests and 272 Rust tests pass.
-  - The diff harness was kept only in /tmp (`/tmp/claude-502/m3r3`, scratchpad `h4`), so it's not durable.
-- **M4 done:** commits `a47ff4a`, `72f0ad7` and `5a41361`.
-  - Quick tags (⌘T), Compare (2–8 fonts) and Pair pages with Back, and one font action set everywhere (right-click, font page More, native Font menu).
-  - Native View menu, with a guard against shortcuts firing twice.
-  - Option-click for the other activation mode, and ⌘↩ / ⌥⌘↩ / ⇧⌘↩ shortcuts.
-  - Remove from Library…: files are kept on disk. They go into a `removed.rs` side table that scans skip, and can be put back.
-  - ⌘I/⌘T follow the typed letter (Dvorak-safe).
-  - Review: 16 findings fixed, plus 2 more from the recheck. 266 UI tests and 276 Rust tests pass.
-- **Merged 2026-10-19 (Sean: "Merge and continue through stage 6"):** local `main` was fast-forwarded to `5a41361` (stages M1a–M4) with `git update-ref`, without switching the working tree.
-  - Not pushed. `origin/main` is still `826c574`.
-  - Stage 6 (M5) gets merged the same way when its recheck is clean.
-- **M5 done:** commits `cfd992a`, `3edd208` and `104b165`.
-  - Preview styling options, an OpenType tab (feature switches with samples, scripts, languages), named instances on Axes, and full Info (embedding, languages, last turned on).
-  - Review: 10 findings; the recheck found 8 fixed, 2 partial and 2 new. I fixed the last 4 directly in `104b165`:
-    - Feature samples now share one work limit per face (400,000 steps), counted in tag order and once per distinct lookup list. Empty coverage ranges count too. Measured: macOS's own 865 faces with layout tables use 11,000 steps at most (Noto Sans Myanmar). The crafted 2,048-feature test took 28 s on the old code; it now takes well under a second.
-    - The Apple-features (AAT, `morx`) note shows whenever a font has `morx`, so every style of a family says the same. Marion Bold's GSUB fractions used to hide it.
-    - A feature row's sample goes through `featureSampleText`, and its test was checked to fail when case is wrongly applied.
-  - 298 UI tests and 301 Rust tests pass; tsc is clean; the app bundle builds.
-- **Merged 2026-10-19:** local `main` fast-forwarded to `104b165` (M1a–M5) with `git update-ref`. Not pushed: `origin/main` is still `826c574`. Ask Sean before pushing.
-- **Not yet checked in the running app:** everything in M1a–M5. The agent sandbox can't launch it; Sean opens `src-tauri/target/release/bundle/macos/Fontface.app`.
-- **Next:** Google previews (ON by default): step 1 library match, step 2 CSS2 `text=` name files via `ff://`, then Adobe CoreText images. The vendor feature stays on hold.
-- **2026-10-19, Google previews stage started** on branch `google-previews` (from `104b165`). Sean: "The Google Fonts should automatically go to preview even if nothing is installed."
-  - Scope: library match, on-by-default online name previews (CSS2 `text=`, cached under `app_cache_dir()/google-previews`, served via `ff://localhost/google/<id>/<token>/<kind>`), script samples for families that can't draw their names, an alphabet file for typed text, the Settings switch with a privacy note and "Clear preview cache", and docs.
-  - Out of scope: Adobe CoreText images, and a Google family detail page using the full file.
-  - Workflow `wf_a7aef7ad-3d1`: Rust and UI builders → integrator (all checks plus a live Google test) → 3 reviewers, each checked by a skeptic → fixer → recheck.
-  - **Done 2026-10-19:** `f24183a` build, `0ade625` review fixes (9 confirmed findings), `1a5c6ef` last recheck items, `32995c6` "Yours first". 329 UI tests and 331 Rust tests pass, the live Google test passes, and the app builds. Not seen in the running app yet.
-  - **Side sessions (all finished, each 1 commit on top of `104b165`, not merged):**
-    - `claude/remove-subfolder-picker` `6eb2ca3`: the picker is gone. Subfolder colors are hidden but kept in the DB.
-    - `claude/nested-inset` `234397a`: style rows inset 80px with a 1px rail at 28px; in the Table, 64px with a rail at 20px.
-    - `claude/auto-family-groups` `55088b6`: suggestions apply automatically (2,700 → 2,514 families); the switch is in View options; the Automatic tab has Keep separate; no dialogs.
-    - `claude/responsive-tiles` `62298a1`: min 2 columns; card ≥ 64 + 3.5×size px (≥180).
-    - `claude/tag-activation` `8b03619`: tag on/off including nested tags; built-in tags are read-only with "Make it my tag"; "Move to Built-in" removed; DS tooltips on tag actions. Its toast text still names Font Book, so fix that after the merge.
-    - `claude/no-competitor-names` `86c44aa`: "Font Book" became "macOS Fonts" and the Typeface wording is generic. Open: the `.typeface-backup` extension remains.
-  - **Dry-run merge onto `google-previews`:** 4 merge cleanly. `tag-activation` conflicts in `src/tags/menus.tsx`, and `no-competitor-names` in `src/tags/TagsSection.tsx`. Waiting for Sean's OK to merge.
-  - **Then:** the app-wide DS tooltip pass, plus a final competitor-name check.
-  - **Merged 2026-10-19 (Sean: "Merge all into main"):** local `main` = `6a8e33d`. It fast-forwarded to `google-previews`, then merged the 6 `claude/*` branches with merge commits.
-    - I resolved the 2 conflicts (`src/tags/menus.tsx` imports, and `src/tags/TagsSection.tsx`, keeping TextAction tips with neutral words).
-    - I neutralised 6 more competitor mentions the tag branch added (tagActions.ts, TagsSection.tsx). A final grep of the app text finds none.
-    - 338 UI tests and 332 Rust tests pass, and the app builds.
-    - Not pushed: `origin/main` is still `826c574`.
-    - The worktrees under `.claude/worktrees/` and their `claude/*` branches are still there. Cleaning them up waits for Sean's OK.
-  - **2026-10-19, later:** the tooltip workflow stopped when the session ended, after its integrator committed `953a5cf`; the review steps never ran.
-    - Sean asked for Google Fonts to open straight to the catalog. A side session built it: `claude/google-catalog-home` `4374967`.
-      - The source view is the catalog, under the main toolbar, with the filter All / Downloaded / Active / Updates.
-      - Each row has Get / Update / Remove (with a 10 s Undo; Rust hides the folder as `.removed-<name>` and purges it at quit or launch) and an on/off switch.
-    - Sean OK'd "Merge both, rebuild, then review". Local `main` = `e1d23e8`: it fast-forwarded to `tooltips`, then merged the catalog branch.
-      - I resolved 6 conflicts. ChoiceGroup took the tooltips version and GoogleFontsPanel took the catalog version. The Toolbar `filter` slot and the ViewOptions LayoutSwitch now go through `Tip` with `disabledReason`. App's Browse is Purchases only now. The `tipShim` was deleted.
-      - 363 UI tests and 334 Rust tests pass, and the app is rebuilt.
-    - Review workflow `wf_3c7f7501-bb5` runs on branch `review-tooltips-catalog`, with three lenses: tooltip coverage, tooltip quality, and Google catalog correctness.
-    - **Done:** the review found 14 problems, the fixer fixed all 14 in `114b6b8`, and the recheck confirmed all fixed. I fixed its 3 low follow-ups myself in `ee962fd`.
-      - The font menu turns on Google's copy.
-      - A failed Refresh still says so.
-      - The wording is right for a single file.
-    - **The window-scroll bug Sean saw** is fixed in `cddbafd`: html/body `overflow:hidden`, `#root` `overflow:clip`, a scroll guard, and tooltips `positionMethod="fixed"`.
-    - **Local `main` = `ee962fd`.** 369 UI tests and 335 Rust tests pass, and the app is rebuilt. Not pushed.
-    - **Lesson:** 8 `Fontface.app` copies share the bundle id `design.snds.fontface`, and the old ones are in `.claude/worktrees/*`. Spotlight or the Dock can open an old one, which is why Sean once saw the old Google screen. Removing the merged worktrees, with Sean's OK, fixes this.
-    - **Baton housekeeping due:** this file is over 12 KB (D98). Move older history to `history/2026-10.md`.
-    - **Cleanup 2026-10-19 (Sean: "Yes, remove them"):**
-      - Removed the 7 merged worktrees under `.claude/worktrees/`, which held the old app copies.
-      - Deleted the branches `claude/*`, `tooltips` and `review-tooltips-catalog`.
-      - Archived the 7 finished side sessions.
-      - Left in place: `google-previews` and `library-redesign`, both merged.
-      - The only app build now is `src-tauri/target/release/bundle/macos/Fontface.app`.
-  - **Tooltip pass running:** branch `tooltips` from `6a8e33d`, workflow `wf_b00e9b3e-010`.
-    - Order: a shared `Tip`/`TipItem` foundation, then 4 area agents, an integrator, coverage and quality reviewers each checked by a skeptic, a fixer, and a recheck.
-    - Rule: every action gets a DS tooltip, except a dialog's own Cancel/Close/Done.
-  - **Queued right after it (Sean, 2026-10-19):** a "yours first" sort on cloud catalog pages (Google now, and later any other catalog). Families you have, whether downloaded through Fontface or your own copy, go to the top; the switch turns it off so standard sorting returns. It's on by default, remembered in settings, with a quiet divider between the two groups. It waits because the builders are editing `GoogleFontsPanel.tsx` now.
-
-### Decisions 2026-10-18 (Sean)
-- **Vendor accounts feature: ON HOLD.** The design is in [[07-projects/25-fontface/notes/vendor-accounts-design_2026-10-18]], awaiting D1–D7.
-  - INTEGRATIONS.md still forbids signing in inside the app.
-  - The `ff://` hardening is listed as M0 there.
-- **Library redesign first** ([[07-projects/25-fontface/notes/library-ui-plan_2026-10-18]]). Build order: M1a font page + Back → M1b Tiles/Table/View options → M2 smart entries, flat Sources, states → M3 family grouping → M4 quick tags/Compare/Pair/menus → M5 OpenType/Axes/Info/styling.
-  - **Opening a font:** double-click or Return opens the font page. A single click only selects.
-  - **Source rows:** Google Fonts and Purchases open your library fonts from that source, plus a Browse button for the catalog. This is the plan's recommendation, taken as the default.
-  - **Width/optical words** (Condensed, Narrow, Display…) are suggested only, never merged automatically. This is also the plan's recommendation.
-    - **Reversed 2026-10-19 (Sean):** "Typeface does this by default, including 'recommendations.' As long as the grouping can be toggled off as part of view settings, I think it's fine to do without having to interrupt the user in any way."
-    - Built on branch `claude/auto-family-groups`, commit `55088b6` (not merged, not pushed). Every suggestion is now applied as a whole-family automatic group. No confirmation dialogs; Undo instead.
-    - The switch moved to View options. The Family groups page's "Automatic" tab lists each group with its reason and Keep separate.
-    - Your Keep separate, or any style you placed yourself, keeps that family as you set it.
-    - Copy of the library: 2,700 → 2,514 families. Not yet clicked through in the app.
-- **Google previews: ON by default,** with a notice in Settings saying what Google sees. Sean chose this over the opt-in recommendation. The recommendation is in [[07-projects/25-fontface/notes/remote-font-previews-recommendation_2026-10-18]].
-  - Step 1 is the library match: 644 families preview locally.
-  - Step 2 is the CSS2 `text=` name files, cached and served via `ff://`.
-  - Adobe uses CoreText images; Adobe fonts that aren't on link out.
-  - This comes after the redesign's first stages.
-- **Learnings note:** [[07-projects/25-fontface/notes/license-recovery-learnings_2026-10-13]] stays private. A general `docs/VENDORS.md` comes only if the vendor feature resumes.
-
----
+_Last updated: 2026-10-20 — `main` = `5b46e35` pushed to GitHub (Sean's OK); first CI run; Unicron notice PR snds/unicron#52 open_
 
 ## Current state (rewritten atomically — no stale fields)
 
 ### 🤝 Live handoff (the baton — any agent reads this FIRST)
 
-- **TL;DR (for future agent)**: Clean-room Mac font manager replacing Typeface (no subscription). Tauri 2 + React. Phase 1 is built, the scan fixes from the first user test landed, and everything since (views + Google Fonts, settings and title bar, tags, Purchases, preview profiles, Google icon fonts) is merged on `main` = `826c574`, public on GitHub (checked 2026-10-14: only `main`, in sync with origin). See [[07-projects/25-fontface/README|README]].
-- **Published 2026-10-13: https://github.com/snds/fontface (PUBLIC), `main` = `c71009c`.**
-  - **Created and pushed as `snds`**, after Sean switched Claude's gh config back to `snds`. It had `sean-sands-centric` active, against the credential-scoping rule.
-  - **History was rewritten before publishing.** One test line named the employer's OneDrive folder. It's now a generic work/school OneDrive check that skips `/CloudStorage/OneDrive-*` except `OneDrive-Personal`.
-  - **Old SHAs no longer exist.** Every commit SHA from the first commit on differs from the ones in older notes; for example, the old `4b4e625` is now `c71009c`. The local backups (tag and `refs/original`) were deleted after the push.
-  - **Public-repo scan:** no secrets, no personal email, no `/Users/...` paths. It still mentions Sean's folder names (`04-Creative/05-Fonts`) as examples in docs and tests, plus Typeface's public bundle id.
-  - **Don't** `gh auth logout` the Centric account from `gh-claude`: the keyring token may be shared with the device-default gh config.
-- **Second rewrite, pushed 2026-10-13: `main` = `826c574` on GitHub.**
-  - **What changed:** Sean's folder names were made generic in every commit (`Creative/Fonts` → `Design/Fonts`, `04-Creative/05-Fonts` → `Archive/Fonts`).
-  - **How it went out:** force-pushed as `snds` with `--force-with-lease`. The local backups are deleted.
-  - **Lesson 1:** Claude's `gh-claude/hosts.yml` had drifted from the dist master. `sean-sands-centric` was added and set active, and it flipped back about 15 minutes after a manual `gh auth switch`. Restoring the file with the installer fixed it, and the result matches dist. ~~Run it with `/bin/bash`: `workspace-doctor.sh` has no execute bit~~ — stale: the execute bit was fixed in `c59bbbe` (2026-10-14).
-  - **Lesson 2:** something writes Centric into Claude's gh config, probably a session doing employer gh work without `env -u GH_CONFIG_DIR`. It's worth hardening the workspace against this.
-- **`4b4e625` (pre-rewrite): icon fonts with plain letters (Material Symbols, Google Symbols) preview as icons. `PREVIEW_REV` = 3.**
-- **`565444e` (2026-10-13): Google icon fonts added on top of `ccf6cd1`.**
-  - **Sources:** Material Icons in five styles and Material Symbols Outlined, Rounded and Sharp (variable), all from google/material-design-icons. The table is in `src-tauri/src/services/google/icons.rs`. The license is Apache 2.0, saved as LICENSE.txt.
-  - **Duplicate hidden:** the static "material-symbols" entry duplicates Outlined.
-  - **Updates:** decided by each file's ETag (a version tag from the server), checked after the catalog lock with a 5 s budget. Unchanged files are reused through a "not modified" answer.
-  - **Two Tone:** draws its colour palette correctly in dark mode.
-  - **Checks:** 251 Rust tests and 35 UI tests pass.
-  - **Open:** Material Symbols in the main library list draws its name in letters, not icons. Fixing that needs a library-wide preview rule plus a `PREVIEW_REV` bump.
-  - **Housekeeping:** all worktrees and merged branches removed (2026-10-13). Only `main` remains.
-- **Preview profiles:**
-  - **Code:** `src-tauri/src/preview/` (`face_previews` side table, `PREVIEW_REV`=2, backfill at launch, on-demand reader lanes), plus `src/previewFit.ts`, `previewQueue.ts` and `components/PreviewText.tsx`/`CharacterGrid.tsx`.
-  - **Design and evidence:** in the agent scratchpad only. The design is summarised in `docs/ARCHITECTURE.md`.
-  - **Whole-library pass, 12,167 faces:** 11,338 name / 44 trim / 56 case / 10 sample19 / 222 script / 159 symbols / 238 expert / 100 partial.
-- **Not yet checked on screen:** title bar, settings, tag groups, sync between two Macs, and previews. WKWebView canvas metrics are unverified too. Sean tries the build next.
-- **Settings/title bar (2026-10-12)**:
-  - **Title bar:** `tauri.macos.conf.json` uses an Overlay title bar with traffic lights at (20, 28). The 52px first row is a drag region, set up in `src/components/TitleBar.tsx`. Double-clicking it follows the macOS AppleActionOnDoubleClick setting through the `title_bar_double_click` command.
-  - **App menu:** Fontface ▸ Settings… (⌘,) emits `open-settings`.
-  - **Settings storage:** `src-tauri/src/settings.rs`, in the `app_settings` table. The settings screen lives in `src/settings/`.
-  - **Activation modes:** "persistent" or "temporary". Temporary uses CoreText session scope, tracked in a `temporary_activations` table. Restore at launch is always, ask or never. There's also "turn off all".
-  - **Other settings:**
-    - Keep running when the window is closed (macOS hides the window; the Dock reopens it).
-    - Open at login (a LaunchAgent in `login_item.rs`).
-    - Daily tag backups in `<app data>/Backups`, with rotation (`backups.rs`). Restore can add or replace.
-- **Review record:** a build of 3 agents, then a review (24 confirmed) → fixes → recheck. Then a merge review: 4 confirmed, being fixed now. 121 Rust tests pass. tsc is clean and the app builds. Nothing has been checked on screen yet, because the agent sandbox can't launch the app.
-- **Typeface tags imported into the real library (2026-10-12)**:
-  - **Backups used:** the May 2026 export (`05-Fonts/export-26-05-10-175600.typeface-backup`), then the Oct 1 backup.
-  - **Result:** 30 tags and 10,452 tag links. 4,591 styles are tagged. 5,285 links wait for fonts not in the library; nearly all are Google Fonts that Typeface kept in its own hidden folder, so re-run the import after adding them via Google Fonts.
-  - **Safety copy:** `~/Library/Application Support/design.snds.fontface/library.before-typeface-import.sqlite3`, the library from before the import, with no tags.
-  - **Lesson 1:** macOS blocks Terminal from reading another app's container (`~/Library/Containers/com.criminalbird.typeface`, "Operation not permitted"). Copy the backup out first.
-  - **Lesson 2:** the agent sandbox and the auto-mode classifier block agents from writing the real library DB. Sean runs that step himself (the `import_typeface_backups` ignored test with `FONTFACE_APPLY_TO` and `FONTFACE_REAL_LIBRARY=yes`).
-  - **Not imported:** the Apr 2025 export has 7 tags the later backups dropped: Designer, Mainstays, Pixel, Global, Icons, Utility and Sci-Fi/Aliens. Whether to import them is Sean's call.
-- **Working set**: `~/Projects/fontface`. Docs: `docs/ARCHITECTURE.md`, `docs/FEATURES.md`, `docs/TAGS.md`, `docs/INTEGRATIONS.md`.
-- **Last action**: 2026-10-13 — Google icon fonts and icon-font previews (`826c574`) pushed to `snds/fontface` after the two history rewrites; worktrees and merged branches removed. Earlier (2026-10-12): `settings-and-titlebar` merged and the real Typeface import run with Sean. — by Claude Opus · Claude Code · Work MacBook Pro.
-- **Purchases watcher (built 2026-10-12)**:
-  - Watches `~/Downloads` and any added folders (FSEvents via `notify`). Each top-level zip, folder or font file is one "find".
-  - Store detection from the download's source address (`kMDItemWhereFroms`; Windows `Zone.Identifier` planned), or the user picks.
-  - License files kept. Web/app/ebook fonts left out. OTF wins over TTF only for the same faces. Trial words flagged. Envato Elements marked subscription-bound.
-  - Imports go to `<app data>/Services/Purchases/<Store>/<Family>/` with a `.fontface-purchase.json` sidecar, then turn on in the library.
-  - Move detection (dev:inode + stamp), per-folder watch failures with retry on window focus, nested watch folders refused.
-  - Unreadable font files are listed on the find, never dropped silently.
-  - Lesson: `std::fs::copy` keeps macOS's compression on system fonts, and reading a fresh copy can fail with ENOATTR ("Attribute not found"). Tests copy fixtures as plain bytes.
-  - Still open: Replace offer (newer version of an imported download), 30-day trial reminder, "License transferred". Edge cases: an imported folder moved into a subfolder is offered again; loose files of one family land in separate folders; the worker drops its batch if its channel closes; `check_folders` has no single-flight guard.
-- **Tags session**: `fontface-tags` (local_4c374988-a9ce-44c1-992d-9a0e73282097) builds tags imported from other font managers, exports in common formats, and folder/tag colors with defaults for cloud and OS locations. Worktree `.claude/worktrees/tags-and-colors-dda0ca`.
-- **Review rounds (2026-10-12)**:
-  - **Round 1:** 27 confirmed findings.
-  - **Round 2:** 21 of those resolved. It also found 24 regressions, all fixed.
-  - **Round 3:** 24 of 30 resolved, plus 9 new low/medium issues, all fixed. It found that scan writers starve each other, so they now take turns through a process-wide `SCAN_WRITER` mutex. Lock order is scan write turn, then activation lock, then the DB mutex.
-- **Current state of the build:**
-  - Grouping is library-wide. A face key is PostScript name + variable + slant, or the file when there's no PostScript name. Copies merge across family names, so "Abaddon" and "Abaddon™" are one face.
-  - A family switch turns every face on. Collection-only faces pick a .ttc first.
-  - On/off requests are serialized in the UI and marked busy per file path.
-  - A font another app turns off mid-session is recorded as off.
-  - Previews come from `local()` for installed fonts. Other fonts use a LIFO fetch of 6 that drops rows scrolled away; a cloud file returns 503 and a file over 96 MB returns 413. Collection reads are serialized.
-  - 24 Rust tests pass. The real-library migration and the CoreText round trip are both verified.
-- **Next action**: Sean tries the build on screen: title bar, settings, tags, tag groups, sync between two Macs, previews, Purchases (the merge-review fixes and the `settings-and-titlebar` merge are done, in `ccf6cd1`). Older items still open: (1) installed fonts disabled in Font Book still show as on; latent, since no font on this Mac is disabled. (2) Turning on every family would register 206 PostScript names twice, almost all a variable font plus its static Regular; macOS accepts this. (3) document.fonts eviction.
-- **Open decisions**: (1) add `<repo>/PROJECT.md` and move the README intent block there; ~~(2) when to push to `snds/fontface`~~ — done 2026-10-13 (public).
-- **Blocked on**: nothing.
-- **In-flight / do-not-touch**: none. The worktrees `.claude/worktrees/tags-and-colors-dda0ca` and `tags-sidebar-ui-81297a` are merged and can be cleaned up.
-- **Built 2026-10-12 (views + services)**:
-  - Sidebar shows Library (All Fonts, Font Book with the OS folders nested), Services and Folders. An All/Active/Inactive filter sits in the toolbar.
-  - Google Fonts works without an API key:
-    - The Fontsource catalog is cached for a day, with a back-off after a failure.
-    - Full font files come from the google/fonts repo (`METADATA.pb` on raw.githubusercontent.com), and the license file is required.
-    - Downloads land in `<app data>/Services/Google Fonts` (folder kind `service`).
-    - An install is prepare, then commit, with a backup and rollback. Each family has its own lock.
-    - An update turns back on exactly the files that were on before.
-  - Adobe Fonts is read-only (detect-only):
-    - It lists only fonts Creative Cloud has turned on, read through the core-text descriptors and filtered by the `livetype` path.
-    - Guards keep the scanner (including through symlinks), add_folder, previews, activation and reveal away from Creative Cloud's font store, and the database purges any such rows.
-    - It hasn't been tested with Creative Cloud installed; CC isn't on this Mac.
-  - Plan and research: `docs/INTEGRATIONS.md`.
-  - The services review found 35 issues, all fixed. The recheck found 6 more and finished 3 partial fixes; all are fixed.
-    - The Adobe purge now runs once at startup (`db::purge_adobe_rows`), never in `db::open`, because writing in `db::open` collided with running scans.
-    - Catalog reads no longer wait behind a fetch (`try_lock`).
-    - Renamed files count as replacements on update.
-    - Install now reports accurate partial results.
-    - A shared `ChoiceGroup` radio group works with arrow keys.
-  - 32 Rust tests pass, plus the live Google test. The app bundle builds.
-- **Next (from INTEGRATIONS.md)**:
-  - Font Book: show deactivated fonts and collections.
-  - Purchases watcher follow-ups: Replace offer, trial reminder, "License transferred".
-  - Open fonts catalog: Fontsource, Noto, Nerd Fonts and open foundries.
-  - "Managed by" badges for Monotype Fonts, Connect and Fontstand.
-- **Agent thread**: Claude Opus/Claude Code (2026-10-12): chose stack, built Phase 1, ran user test, started scan fix.
-
-### First user test (2026-10-12)
-
-What Sean saw:
-1. macOS system font folders were not detected automatically.
-2. Adding his Google Drive fonts folder seemed to do nothing. Rescan did nothing. No loading state.
-
-Root cause: the folder holds ~14.8k files (~12k `.otf`/`.ttf`, plus ~1.1k Type 1 `.pfb`/`.pfm`, `.woff`/`.woff2`, `.eot`). All are online-only Google Drive placeholders (dataless files). The scanner read them one at a time (one download at a time), saved only every 200 files, and showed no progress while listing files. Rescan started a second scan.
-
-Sean's follow-up: the folder is set to "Available offline". Finder showed the Drive green check, plus macOS's download pie still in progress. By 10:00 all 15,511 files had downloaded.
-
-Fixes landed (2026-10-12):
-- **Scanner.**
-  - Discovery runs with progress events.
-  - 8 reader threads fail fast on online-only files (`setiopolicy_np` → EDEADLK). 3 detached download threads fetch those files.
-  - Commits run on a timer, and the list updates live.
-  - Cancel works, and duplicate scans are blocked; a second caller waits for the running scan's result.
-  - A read that fails never deletes a font's rows. `skipped_files` stops repeat re-reads and repeat toasts.
-  - Dead symlinks and hidden files no longer block cleanup.
-  - Files are stored under canonical real paths. A file is skipped when a symlink resolves it into another library folder.
-- **Folders.**
-  - The macOS font folders are added automatically as `kind='system'`, shown as Installed and always on.
-  - A user folder can't swallow them.
-- **On/off state.**
-  - The OS's view comes from `CTFontManagerCopyAvailableFontURLs`, canonicalized. CoreText returns paths with symlinks resolved, `/private` dropped, and NFD names.
-  - Every result is checked against the OS. A session-scope unregister is the fallback when another app still has the font on.
-  - A global activation lock serializes all changes.
-  - Reconcile runs at launch, and only for files that were unreachable at that point.
-- **Database.**
-  - DB v3 uses AUTOINCREMENT, so ids are never reused.
-  - Found during testing: bundled SQLite turns foreign keys ON by default, so the migration has to turn them off, or dropping `folders` deletes every font.
-  - All commands run async, off the main thread.
-- **UI.**
-  - Previews are keyed by file version. Installed fonts preview through `local()`, with at most 6 loads at once.
-  - Duplicate copies are grouped per PostScript name: turning a font on registers one copy, turning it off covers all copies.
-  - The list refreshes when the window regains focus and keeps its scroll position.
-  - Keyboard access and screen-reader announcements are handled.
-- **Format probe (macOS 27.0.1).** CoreText can activate WOFF, WOFF2, OTC and `.dfont` (FOND). It can't activate any Type 1 font (.pfb/.pfm/LWFN) or .eot.
-
-Deferred: installed fonts that are disabled in Font Book (they still show as on). document.fonts eviction. WOFF/WOFF2/.dfont metadata parsing.
+- **TL;DR (for future agent)**: Mac font manager replacing Typeface (no subscription). Tauri 2 + React 19, shadcn/ui `base-nova` on Base UI, Tailwind v4, Material Symbols Rounded, IBM Plex. Public repo https://github.com/snds/fontface: `main` = `5b46e35`, pushed 2026-10-20 as `snds` with Sean's OK, in sync with origin. It's Apache-2.0 with CI on macOS. Fontface is moving onto Unicron, Sean's shared design system. See [[07-projects/25-fontface/README|README]].
+- **What `main` holds since `a833670`** (details in today's session-history entry): the tooltip trim and monograms (`tooltip-trim`), licence, NOTICE and CI (`phase0`), the pre-push audit's 3 fixes, and the Characters tab's multi-block picker (`claude/char-blocks`) with the 3 fixes its review confirmed. tsc, 440 UI tests and 404 Rust tests pass, and the app is built from `5b46e35`.
+- **First CI run:** https://github.com/snds/fontface/actions/runs/39489328758. Typecheck, UI tests and build passed on GitHub; `cargo test` was still running when this was written.
+- **Unicron notice PR:** https://github.com/snds/unicron/pull/52 (branch `docs/personal-project-notice`, `d280439`, D1 option A2). A README notice, a new `CONTRIBUTING.md`, and a note in `docs/06-contributing.md`. Docs only, so no changeset. It merges only on Sean's OK. Made in a fresh clone under the session scratchpad, because the local `~/Projects/unicron` checkout is on branch `ui-text-roles`.
+- **Local branches, all merged into `main` and kept; cleanup waits for Sean's OK:** `integrate`, `phase0`, `tooltip-trim`, `claude/char-blocks` (worktree `.claude/worktrees/char-blocks`, side session `local_b09f8202`), `claude/tray`, `claude/purchases-optin`, `claude/translucency`, `dc-sidebar`, `dc-toolbar`, `dc-google-rows`, `declutter`, `google-previews`, `library-redesign`.
+- **Next action:**
+  1. Read the first CI run's result, and fix it if `cargo test` fails on GitHub's runner.
+  2. Sean tries the build: the Characters tab picker, tooltips, monograms, System Fonts.
+  3. The rest of Phase 0: a dsa baseline, baseline screenshots, and the macOS backdrop measurement.
+  4. With Sean's OK, clean up the merged branches and the char-blocks worktree, and archive the finished side sessions.
+- **Plan:** [[07-projects/25-fontface/notes/unicron-migration-plan_2026-10-20|Unicron migration plan]]: 109 items in 9 groups, phases 0–5, Unicron releases R1–R3, and the unified transparency spec. Glass contrast scripts: [[07-projects/25-fontface/notes/glass-contrast-scripts_2026-10-20]].
+  - **Decided (Sean, 2026-10-20):** D1 keep Unicron public with a "personal project" notice; D2 Fontface is Apache-2.0; D3 each app sets its font through a token, so Fontface keeps Plex; D6 Fontface takes Unicron's cooler greys.
+  - **Open:** D4, D5 and D7–D12, each gated to a phase in the plan.
+- **Rules in force (details in [history/2026-10.md](history/2026-10.md)):**
+  - Typeface's binary may inform Fontface. No Typeface code is copied, and binary-derived detail stays in the workspace, never in the public repo or Unicron.
+  - No competitor names in app text. Source icons are brand-free monograms: no Google, Adobe, Apple or Windows logos.
+  - Tooltips only label controls that have no visible label: the label, plus a shortcut if there is one. No sentences.
+  - View and preview settings are app-wide, search included. Only section-specific controls stay per section.
+  - Importers may read other font managers' sorting data, read-only, never their font files.
+- **Not yet checked in the running app:** most work since the library redesign. Agents can't launch it; Sean opens `src-tauri/target/release/bundle/macos/Fontface.app`.
+- **Backlog, not started:**
+  - Measured kinds (Sans, Serif, Script, Mono, Slab…) as filters and as read-only Built-in tags.
+  - Importers for FontBase, FontExplorer X and Suitcase/Connect; narrow `docs/INTEGRATIONS.md` (~:367, ~:427) to match.
+  - The auto-activation MVP, after real results from the listen-and-log test (`docs/AUTO-ACTIVATION-TEST.md`).
+  - Menu bar app: a single-instance guard for Windows.
+  - Vendor accounts: ON HOLD ([[07-projects/25-fontface/notes/vendor-accounts-design_2026-10-18]]).
+  - Purchases follow-ups: Replace offer, 30-day trial reminder, "License transferred".
+- **Open decisions**: Unicron D4, D5, D7–D12; whether to import the 7 tags only the Apr 2025 Typeface export has.
+- **Blocked on**: Sean's OK to merge and to push.
+- **In-flight / do-not-touch**: `.claude/worktrees/char-blocks` (side session `local_b09f8202`).
+- **Lessons that still bite:**
+  - Every `Fontface.app` copy shares the bundle id `design.snds.fontface`. Spotlight or the Dock can open an old copy left in a worktree, so remove merged worktrees.
+  - Claude's gh config has drifted to the Centric account before. Push to `snds/*` only as `snds`, and don't `gh auth logout` the Centric account.
+  - Agents never write Sean's real library DB; Sean runs that step. Agents never read Adobe Creative Cloud's font files.
+- **Last action**: 2026-10-20 — Unicron plan saved; Phase 0 groundwork committed on `phase0`; glass scripts saved; this baton moved its history to [history/2026-10.md](history/2026-10.md). — by Claude Opus · Claude Code · Work MacBook Pro.
 
 ### Environment
-- **Context profile**: `personal-solo`. `resolve` confirms personal for `~/Projects/fontface` (remote `snds/fontface`). Lesson: an agent can't see a new `~/Projects` folder as personal until Sean runs `09-tools/profile_resolve.py scan` in a plain terminal, because agents read classification from the cache only.
+- **Context profile**: `personal-solo`. `resolve` confirms personal for `~/Projects/fontface` (remote `snds/fontface`).
 - **Machine**: Work MacBook Pro (personal project).
-- **Project root (code)**: `~/Projects/fontface`
-- **Project root (baton)**: `07-projects/25-fontface/` (was `24-fontface` until 2026-10-14; see history)
+- **Project root (code)**: `~/Projects/fontface`. Docs: `docs/ARCHITECTURE.md`, `docs/FEATURES.md`, `docs/TAGS.md`, `docs/INTEGRATIONS.md`.
+- **Project root (baton)**: `07-projects/25-fontface/`.
+- **Checks**: `npx tsc --noEmit`; `npm run test:ui`; `cargo test` in `src-tauri` (agents use `CARGO_HOME=/tmp/claude-502/cargo-home` with `--offline`); `npx tauri build --bundles app`.
 
 ### Active servers and processes
-- **Dev server**: not running. **Build**: app bundle builds.
-- **Tests**: Rust — 45 pass, 5 ignored. Ignored tests run on request: the CoreText round trip, `real_db_migrates_without_loss` (FONTFACE_DB_COPY), the live Google test and two live watcher tests (FSEvents doesn't work inside the agent sandbox). TypeScript typecheck is clean.
+- **Dev server**: not running. **Build**: the app bundle builds.
+- **Tests**: 424 UI tests and 404 Rust tests pass on `tooltip-trim`. Ignored tests run on request: the CoreText round trip, the real-DB migration, the live Google test and the live watcher tests.
 
 ### VCS state
-- **Code repo**: `~/Projects/fontface`, remote `snds/fontface` (not pushed yet). `main` = `04fd9db` (Phase 1, views, Google/Adobe). `purchases-watcher` = `5c8c728`. `claude/tags-and-colors-dda0ca` = tags session's branch.
+- **Code repo**: `~/Projects/fontface`, remote `snds/fontface` (public). GitHub `main` = `826c574`; local `main` = `a833670`; branches as listed in the Live handoff.
 - **Vault**: tracked in `snds/workspace`; committed at session-end.
 
 ---
@@ -280,21 +63,23 @@ Deferred: installed fonts that are disabled in Font Book (they still show as on)
 
 _Older entries are in [history/README.md](history/README.md), the long-term tier, by month; the app's Projects timeline joins them with this file._
 
-### 2026-10-14 — renumbered 24 → 25; baton now git-tracked
+### 2026-10-20 — merged and pushed: tooltip trim, licence and CI, Characters tab picker
 
-**Why**: Mailbird reached GitHub first as `24-mailbird` (2026-10-13), and this folder had never been committed, so both projects held 24. Sean chose: Mailbird keeps 24, Fontface moves to 25. Same rule as 22 (whoever reaches GitHub first keeps the number).
-**Also**: `.gitignore` had no allow-entry for this folder, so the baton existed only on the Work MBP. Sean approved tracking it like 21–24.
+**Sean's OK** (2026-10-20, answering "Which of these should I do now?"): "Merge into main, Push main to GitHub, Unicron notice PR".
+**Merged:** local `main` fast-forwarded `a833670` → `5b46e35` with `git update-ref` (via `integrate`):
+- `tooltip-trim` `6350609`: `a7fa3f3` Tags always open, the (i) gone, 18px centred divider icons, built-in tags in the tag picker only when on, with a lock; `0db1386` and `7b77a40` the tooltip trim (204 `<Tip>` wrappers → 66, label only; `TipItem`, `disabledReason` and descriptions gone; `CutShort`); `6350609` the `Monogram` source icons and "System Fonts".
+- `phase0` `729e568`: Apache-2.0 `LICENSE`, `NOTICE`, `.github/workflows/ci.yml` (macOS: npm ci, typecheck, test:ui, build, cargo test --locked), licence fields, README Licence section.
+- `5100ad1`, the pre-push audit's fixes (workflow `wf_4c1b7c01-019`, read-only over `826c574..phase0`: no binary-derived detail, competitor names in app text, `/Users/...` paths, employer content or secrets): `docs/FEATURES.md:4` reads "Fontface contains no code, binaries or other files from Typeface"; ", as Typeface does" removed from `docs/FEATURES.md:131`; shadcn/ui's MIT text in `LICENSES/shadcn-ui.txt`, linked from `NOTICE`.
+- `ff405e5` merges `claude/char-blocks` `17b3c0d` (side session `local_b09f8202`): the Characters tab picks any number of Unicode blocks, shown as collapsible groups. The one conflict, in `src/components/CharacterGrid.tsx`, kept the branch's grouped grid and reapplied the tooltip trim ("Copy U+00DF · germandbls"); `BlockSelect`'s Clear tooltip lost the `describe` prop the trimmed `Tip` no longer has.
+- `5b46e35`, the 3 fixes its review confirmed (workflow `wf_790e38a6-6a1`, 3 lenses, 2 skeptics per finding; 5 other findings refuted): tick boxes in the block list now fill (`group-data-[selected]/item:`, because shadcn's `data-selected` variant matches only `"true"` and Base UI writes `""`; plan item P17); the trigger's hover colours apply only while enabled (dark mode's hover won over the disabled reset); every group's `CellTip` shares one last-close time (`cellTipClosedAt`), so the next group's tooltip opens at once.
+**Checks:** tsc, 440 UI tests, 404 Rust tests, `npm run build`, and the app bundle.
+**Pushed:** `git push origin main` (`826c574..5b46e35`, 83 commits). `gh_route.py which` confirmed `github.com/snds -> snds` first, and a `--dry-run` push passed.
+**Lessons:**
+- Inside the agent sandbox, `gh auth status` reports "The token in keyring is invalid" and `gh` API calls fail with "x509: OSStatus -26276". The sandbox blocks the keychain and certificate checks, and the token is fine. Git over HTTPS works in the sandbox through `git-credential-ws` (pass `allowed_domains` github.com). Public API reads work with plain `curl`. `gh pr create` needs the sandbox off, run through `gh_route.py gh …`.
+- The workspace wall guard denied a compound command that began `cd "$D" && … git commit` (rule P31, employer default branch): it couldn't resolve the folder from a shell variable. The same commit, run as `git -C <absolute path> commit` on the feature branch, was allowed.
 **By**: Claude Opus · Claude Code · Work MacBook Pro.
 
-### 2026-10-12 — checkpoint
+### 2026-10-20 — baton housekeeping
 
-**Focus**: Decide the stack, build Phase 1, run the first user test, record the project.
-**Machine**: Work MacBook Pro
-
-**Decisions made**:
-- Tauri 2; Mac first; Windows designed for, not built.
-- shadcn/ui (Base UI, Tailwind v4), Material Symbols Rounded, IBM Plex Sans + Mono.
-- CoreText persistent user-scope activation, per file; nothing copied into `~/Library/Fonts`.
-- Clean-room: no Typeface code or binaries; parity against its public feature list only. **Superseded 2026-10-19 (Sean: "Ignore the clean-room rule. Provide all insights to inform the application development"):** see [[07-projects/25-fontface/notes/typeface-app-analysis_2026-10-19|Typeface app analysis]].
-
-**Next resumption needs**: finish the scan fix list; retest on the Drive folder; settle the repo move + git.
+**What**: this file was 44 KB, over the 12 KB limit (D98). Every dated entry and the 2026-10-13 Live handoff moved word for word to [history/2026-10.md](history/2026-10.md), and the Live handoff was rewritten for today.
+**By**: Claude Opus · Claude Code · Work MacBook Pro.
