@@ -2,8 +2,9 @@
 
 _The long-term tier of [the baton](../SESSION-STATE.md): what it moved out once it passed 12 KB. Generated; don't edit by hand. Newest month first._
 
-## [2026-10](2026-10.md) — 40 entries
+## [2026-10](2026-10.md) — 41 entries
 
+- 2026-10-19 — to 2026-10-20 — S10, signing, item 14, S13, S2, icons
 - 2026-10-19 — Stage 3 items 9, 10, 12, 14, 16; D106–D108; U5; the Stage 4 draft
 - 2026-10-19 — CI's free minutes, then D106
 - 2026-10-18 — Stage 3 items 6–8, 11 and 13
