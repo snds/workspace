@@ -177,6 +177,10 @@
     "macos runner": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
     "windows runner": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
     "ci cost": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
-    "gh run": "08-knowledge/engineering/github-actions-private-repo-minutes.md"
+    "gh run": "08-knowledge/engineering/github-actions-private-repo-minutes.md",
+    "text emphasis": "08-knowledge/design/rendered-emphasis-vs-coded.md",
+    "emphasis levels": "08-knowledge/design/rendered-emphasis-vs-coded.md",
+    "low emphasis": "08-knowledge/design/rendered-emphasis-vs-coded.md",
+    "muted-foreground": "08-knowledge/design/rendered-emphasis-vs-coded.md"
   }
 }
