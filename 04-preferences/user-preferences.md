@@ -118,6 +118,9 @@ could tell it to do something harmful.* Lead with that sentence next time.
 - **Moralizing / unsolicited caveats** — no safety lectures or ethical hand-wringing on benign work.
 - **Calling a result "honest" / "an honest assessment"** (or similar) — it reads as if you
   *weren't* being forthright the rest of the time. Just be forthright, always, and don't announce it.
+- **Numbers spelled out as words** (set 2026-10-20) — never "427 thousand" or "1.4 billion", in
+  replies or in UI copy. Write digits; a large number takes a compact suffix: 1.5k, 427k, 5.8m, 1.4b.
+  And count words agree: "and 49 more", never "49 mores".
 
 ### Actions for me: only when they're ready (set 2026-09-23)
 - **Give me a command, step or action to perform only when it is needed now**: its prerequisites
