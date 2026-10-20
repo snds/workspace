@@ -23,6 +23,7 @@ Sean's workspace is the north star.
 
 - **Status:** Stage 0 (model and map), started 2026-10-14.
 - **Context profile:** `personal-solo`. Declared by Sean's `profile_resolve.py scan` on 2026-10-14.
+- **Cross-context by design (Sean, 2026-10-19):** the app manages personal and work personas alike, but the profile describes who owns and reviews the code, not what the app is about. The repo is Sean's personal one, so `personal-solo` stands (direct commits on main). Work specifics (employer names, hosts, accounts) never go into the repo or this folder; the app holds them per device, at run time. `profile_resolve.py scan` refuses inside any Claude session, the Claude app's Terminal panel included, by design: run it in macOS Terminal.
 - **Code repo:** `~/Projects/synapse`, remote `snds/synapse` (private). First commit `915b1c2`.
 - **This folder:** baton and pointers only. The plan and all design docs live in the repo, the same as Fontface.
 - **Baton:** [[07-projects/26-synapse/SESSION-STATE|SESSION-STATE]].
