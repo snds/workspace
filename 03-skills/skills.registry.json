@@ -6548,7 +6548,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:8d66a18f58680009a388b074de74677ac58376aad4b72d44e40aa119f94b3a4f"
+      "hash": "sha256:6bb076714e6f85835a6e82097e1a8d24f8d05b5b414019f8aabb230499283dc5"
     },
     "research-source-appraisal": {
       "path": "03-skills/research-source-appraisal/SKILL.md",

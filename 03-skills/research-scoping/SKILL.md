@@ -78,6 +78,7 @@ profile of those touched. Two prompts help:
 
 - *What's the most common way a careful person gets this wrong in this field?*
 - *Where does the best evidence live, and who controls access to it?*
+- *What does each tradition call this?* A term that several fields use ("intent", "model", "agent") returns one camp when searched alone; list each field's own word before searching.
 
 | Field | Load |
 |---|---|
@@ -94,7 +95,7 @@ profile of those touched. Two prompts help:
 Record wrong calls here via [[research-retro]], so the tiers sharpen with use. Each note: the ask,
 the tier chosen, the tier it should have been, the signal missed.
 
-- _(none yet: the first retros fill this)_
+- 2026-10-22 · "research intent in relation to agentic systems" · D2 · D2 was right · the polysemy of "intent" (seven traditions, seven meanings) was the signal; it also produced the synonym prompt in §3.
 
 ## Mistakes to avoid
 

@@ -187,6 +187,11 @@
     "how to cite": "08-knowledge/research/citing-sources.md",
     "dated claims": "08-knowledge/research/dated-claims.md",
     "as of date": "08-knowledge/research/dated-claims.md",
-    "claim freshness": "08-knowledge/research/dated-claims.md"
+    "claim freshness": "08-knowledge/research/dated-claims.md",
+    "intent drift": "08-knowledge/research/intent-in-agentic-systems.md",
+    "goal drift": "08-knowledge/research/intent-in-agentic-systems.md",
+    "agent intent": "08-knowledge/research/intent-in-agentic-systems.md",
+    "intent alignment": "08-knowledge/research/intent-in-agentic-systems.md",
+    "spec-driven development": "08-knowledge/research/intent-in-agentic-systems.md"
   }
 }
