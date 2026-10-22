@@ -1,6 +1,6 @@
 # SESSION-STATE — Fontface (25-fontface)
 
-_Last updated: 2026-10-20 — `main` = `5b46e35` pushed to GitHub (Sean's OK); first CI run; Unicron notice PR snds/unicron#52 open_
+_Last updated: 2026-10-20 — `main` = `5b46e35` pushed, CI green; branches and side sessions cleaned up; snds/unicron#51 and #52 wait for Sean to merge_
 
 ## Current state (rewritten atomically — no stale fields)
 
@@ -8,17 +8,18 @@ _Last updated: 2026-10-20 — `main` = `5b46e35` pushed to GitHub (Sean's OK); f
 
 - **TL;DR (for future agent)**: Mac font manager replacing Typeface (no subscription). Tauri 2 + React 19, shadcn/ui `base-nova` on Base UI, Tailwind v4, Material Symbols Rounded, IBM Plex. Public repo https://github.com/snds/fontface: `main` = `5b46e35`, pushed 2026-10-20 as `snds` with Sean's OK, in sync with origin. It's Apache-2.0 with CI on macOS. Fontface is moving onto Unicron, Sean's shared design system. See [[07-projects/25-fontface/README|README]].
 - **What `main` holds since `a833670`** (details in today's session-history entry): the tooltip trim and monograms (`tooltip-trim`), licence, NOTICE and CI (`phase0`), the pre-push audit's 3 fixes, and the Characters tab's multi-block picker (`claude/char-blocks`) with the 3 fixes its review confirmed. tsc, 440 UI tests and 404 Rust tests pass, and the app is built from `5b46e35`.
-- **First CI run:** https://github.com/snds/fontface/actions/runs/39489328758. Typecheck, UI tests and build passed on GitHub; `cargo test` was still running when this was written.
-- **Unicron notice PR:** https://github.com/snds/unicron/pull/52 (branch `docs/personal-project-notice`, `d280439`, D1 option A2). A README notice, a new `CONTRIBUTING.md`, and a note in `docs/06-contributing.md`. Docs only, so no changeset. It merges only on Sean's OK. Made in a fresh clone under the session scratchpad, because the local `~/Projects/unicron` checkout is on branch `ui-text-roles`.
-- **Local branches, all merged into `main` and kept; cleanup waits for Sean's OK:** `integrate`, `phase0`, `tooltip-trim`, `claude/char-blocks` (worktree `.claude/worktrees/char-blocks`, side session `local_b09f8202`), `claude/tray`, `claude/purchases-optin`, `claude/translucency`, `dc-sidebar`, `dc-toolbar`, `dc-google-rows`, `declutter`, `google-previews`, `library-redesign`.
+- **First CI run passed:** https://github.com/snds/fontface/actions/runs/39489328758 (typecheck, UI tests, build, `cargo test`, all on macOS).
+- **Unicron PRs merged by Sean (2026-10-20):** https://github.com/snds/unicron/pull/51 (text roles, icon case, sheet actions; `6c9e3d3`) and https://github.com/snds/unicron/pull/52 (the personal-project notice, D1; GitHub `main` = `72b853e`). The agent's own `gh pr merge` was refused (the sandbox breaks `gh`'s TLS check, and auto mode denied running it outside), so Sean merged them himself. The local `~/Projects/unicron` is on `main` at `6c9e3d3`, one behind GitHub (plan Phase 0 step 7: `git pull` there; the agent sandbox can't write that folder).
+- **Cleanup done 2026-10-20 (Sean: "Clean up any branches and side sessions as well"):** archived the 4 side sessions (tray, Downloads opt-in, transparency, Characters tab); removed the char-blocks worktree; deleted 19 local branches, all merged into `main` first (`git branch -d`). Fontface now has only `main`, locally and on GitHub. The only app build is `src-tauri/target/release/bundle/macos/Fontface.app`.
+- **In flight (2026-10-20):** workflow `wf_b7dc8f0f-0c6` builds the rest of Phase 0 on worktree branches `p0-dsa`, `p0-monogram`, `p0-screens`, `p0-probe`, merged by its integrator onto `phase0-measure` (worktrees under `.claude/worktrees/p0-*`). Pieces: the dsa baseline and a CI ratchet step; Monogram `letters` and a cut-out `fill`; `tools/screens/`, a headless-Chromium screenshot bench with a stand-in back end, which shoots the "before" set from `5b46e35`; `tools/glass/measure-macos-backdrop.swift`, which Sean runs because the sandbox can't capture the screen.
 - **Next action:**
-  1. Read the first CI run's result, and fix it if `cargo test` fails on GitHub's runner.
-  2. Sean tries the build: the Characters tab picker, tooltips, monograms, System Fonts.
-  3. The rest of Phase 0: a dsa baseline, baseline screenshots, and the macOS backdrop measurement.
-  4. With Sean's OK, clean up the merged branches and the char-blocks worktree, and archive the finished side sessions.
+  1. Review the `phase0-measure` result (adversarial review), fix, then ask Sean to merge and push.
+  2. Sean runs the backdrop probe; record its numbers in the plan (§5.11) and replace the guessed backdrops (#999999, #737373).
+  3. Sean tries the build: the Characters tab picker, tooltips, monograms, System Fonts.
 - **Plan:** [[07-projects/25-fontface/notes/unicron-migration-plan_2026-10-20|Unicron migration plan]]: 109 items in 9 groups, phases 0–5, Unicron releases R1–R3, and the unified transparency spec. Glass contrast scripts: [[07-projects/25-fontface/notes/glass-contrast-scripts_2026-10-20]].
-  - **Decided (Sean, 2026-10-20):** D1 keep Unicron public with a "personal project" notice; D2 Fontface is Apache-2.0; D3 each app sets its font through a token, so Fontface keeps Plex; D6 Fontface takes Unicron's cooler greys.
-  - **Open:** D4, D5 and D7–D12, each gated to a phase in the plan.
+  - **Decided (Sean, 2026-10-20):** D1 keep Unicron public with a "personal project" notice (done: snds/unicron#52 merged); D2 Fontface is Apache-2.0; D3 each app sets its font through a token, so Fontface keeps Plex; D6 Fontface takes Unicron's cooler greys; D9 a core `success` role; D11 the component is `Monogram`.
+  - **D7, decided as tiers (Sean, 2026-10-20), not Fontface's rule applied everywhere:** (1) a **label tooltip** is required system-wide on every control with no visible label, so people with cognitive needs can tell what the action is and infer its outcome; (2) a new **info tooltip** variant for longer information (past one short line or 2 lines): min and max width so text wraps, left-aligned, arrow near the first line rather than centred. Sean: "I wouldn't blanket apply the fontface tooltip rule to all tooltips system-wide. I'd create a tooltip variant that allows for the larger tooltip usecase and make sure the actions without labels rule is adhered system wide." Recorded in the plan's D7 row and item P3.
+  - **Open:** D4, D5, D8, D10 and D12, each gated to a phase in the plan.
 - **Rules in force (details in [history/2026-10.md](history/2026-10.md)):**
   - Typeface's binary may inform Fontface. No Typeface code is copied, and binary-derived detail stays in the workspace, never in the public repo or Unicron.
   - No competitor names in app text. Source icons are brand-free monograms: no Google, Adobe, Apple or Windows logos.
@@ -33,9 +34,9 @@ _Last updated: 2026-10-20 — `main` = `5b46e35` pushed to GitHub (Sean's OK); f
   - Menu bar app: a single-instance guard for Windows.
   - Vendor accounts: ON HOLD ([[07-projects/25-fontface/notes/vendor-accounts-design_2026-10-18]]).
   - Purchases follow-ups: Replace offer, 30-day trial reminder, "License transferred".
-- **Open decisions**: Unicron D4, D5, D7–D12; whether to import the 7 tags only the Apr 2025 Typeface export has.
-- **Blocked on**: Sean's OK to merge and to push.
-- **In-flight / do-not-touch**: `.claude/worktrees/char-blocks` (side session `local_b09f8202`).
+- **Open decisions**: Unicron D4, D5, D8, D10, D12; whether to import the 7 tags only the Apr 2025 Typeface export has.
+- **Blocked on**: nothing.
+- **In-flight / do-not-touch**: none.
 - **Lessons that still bite:**
   - Every `Fontface.app` copy shares the bundle id `design.snds.fontface`. Spotlight or the Dock can open an old copy left in a worktree, so remove merged worktrees.
   - Claude's gh config has drifted to the Centric account before. Push to `snds/*` only as `snds`, and don't `gh auth logout` the Centric account.
