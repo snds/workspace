@@ -1,18 +1,16 @@
 ---
 name: ds
 description: >-
-  Design-system operations hub — decisions, token architecture, component anatomy,
-  governance, and design/dev handoff. Use when the user wants to evaluate or evolve a
-  *system* (not a single screen): audit token coverage, decide variant/anatomy
-  questions, plan a migration or deprecation, draft a DDR, or turn findings into a
-  handoff spec. Trigger on "audit our tokens", "is this token architecture sound",
-  "should this be a variant or a prop", "plan the deprecation", "design-system health",
-  "token coverage", "write the DDR", "system governance", or any system-level design
-  decision. Also the explicit entry point for the `/ds` operation grammar
-  (`/ds <verb> <target> [--modifiers]`). Canonical owner of design-SYSTEM strategy +
-  token routing: it delegates decisions to ds-advisor and authoring to design-engineer.
-  Not for judging a rendered interface (use /qa), Figma canvas authoring (use /figma),
-  building one component's code (that's design-engineer directly), or backend work.
+  The design-system hub: the one entry for any design-system ask, and the `/ds` operation
+  grammar (`/ds <verb> <target> [--modifiers]`). Use when the work is about a *system*, not
+  a single screen: token architecture and naming, component specs (anatomy, variants,
+  states, props), governance and deprecation, audits and health, generation for a stack,
+  AI-ready design systems, docs voice, DDRs and strategy. It routes each ask to the one
+  spoke that owns it (table below) and holds the area's standards. Trigger on "design
+  system", "is this token architecture sound", "should this be a variant or a prop",
+  "plan the deprecation", "design-system health", "write the DDR", or any system-level
+  design decision. Not for judging a rendered interface (/qa), Figma canvas authoring
+  (/figma), or code-side component questions (design-engineer, a lens).
 user-invocable: true
 argument-hint: "[audit|triage|tokens|spec|generate|document] [target: packages/ui|tokens.json|component|diff|figma] [--lens tokens|anatomy|governance|a11y] [--level a|aa|aaa] [--out <path>] [--dry]"
 license: Apache-2.0
@@ -20,28 +18,53 @@ metadata:
   hub: true
   family: design-system
   poc: false
-  version: 0.1.0
-aliases: [ds]
-triggers: [ds hub, design system decision, token decision, write the ddr]
-related: [close-out]
+  version: 0.2.0
+aliases: [ds, design-system-hub]
+area: design-system
+triggers: [ds hub, design system, design systems, design system decision, token decision, write the ddr, token architecture, design token, design tokens, semantic token, semantic tokens, design-system health, our design system, system governance]
+related: [close-out, ux-component-library, infod-design-system-patterns, figma, design-engineer]
 governed_by: [qa]
 rigor_role: command-hub
 spec_version: "2.2"
 tier: hub
 domain: design
 prerequisites: [design-foundations]
-
 ---
 
-# /ds — Design-System Operations Hub
+# /ds — Design-System Hub
 
-The system-altitude hub. Where `/qa` judges a rendered surface and `design-engineer`
-authors a component, `/ds` operates on the **system**: tokens, anatomy, governance,
-and the decisions that bind them. It is a **wrapper** (three-way-contract wrapper layer):
-it owns trigger vocabulary, verb dispatch, and target parsing, then delegates the depth
-to the base skills — `ds-advisor` (strategy/decisions/DDRs), `design-engineer`
-(authoring), `fe-design-tokens` (token engineering), `ux-design-systems` (consumption
-patterns). It never duplicates a base's knowledge.
+The hub for the `design-system` area (one of six hubs until 2026-10-22; now the only one).
+Where `/qa` judges a rendered surface, `/ds` operates on the **system**: tokens, anatomy,
+governance, and the decisions that bind them. It owns the area's trigger vocabulary, verb
+dispatch and target parsing, and routes each ask to the **one spoke that owns it**. It never
+duplicates a spoke's knowledge.
+
+**Prefix rule.** `ds-` always means design system in this workspace. Data science uses
+`dsci-` (renamed 2026-10-22); any future "DS"-like collision follows that template:
+[[decision-skill-prefixes]].
+
+## Spokes — one home per subspecialty
+
+Load the one spoke the ask names; the load chain brings this hub and `design-foundations`
+first.
+
+| Subspecialty | Spoke | Typical asks |
+|---|---|---|
+| Strategy, triage, DDRs, stakeholders | `ds-advisor` | "too much to fix", "write the DDR", DS roadmap, PLM pattern triage |
+| Component spec: anatomy, slots, variants, states, props, behaviour | `ds-component-spec` | "what states does this need", "variant or a prop", "what else moves", system fit |
+| Token tiers, naming, governance, multi-brand | `token-architecture` | "name these semantic tokens", "is this token architecture sound" |
+| Ops over the vendored pack: audits, drift, deprecation, health | `design-system-ops` | "audit my tokens", "plan the deprecation", "design system health" |
+| Generation for a stack, and its order of operations | `ds-generation-pipeline` | "generate a design system for shadcn and Tailwind", a generation run |
+| AI-ready design systems (framework #18) | `ai-design-systems` | "make our design system AI-ready", agents as users, steel curtain |
+| Docs and changelog voice | `canonical-docs-voice` | component docs page, changelog note |
+| Upstream source watch | `ds-source-watch` | "what changed upstream" in a reference system |
+| Employer Storybook / UI workflow | `centric-ui-storybook`, `centric-ui-workflow` | (employer context only; see each spoke) |
+
+**Linked, not owned here:** choosing which existing component fits a screen →
+`ux-component-library` (UX); charts inside a design system → `infod-design-system-patterns`
+(information design); Figma authoring and variables → `figma`; token engineering in code →
+`fe-design-tokens`. **Lens:** `design-engineer` judges spec, generation and Storybook output
+at the design × code seam after it is produced.
 
 ## Operation grammar
 
@@ -60,11 +83,11 @@ Conversational invocation works too: "audit our token architecture" resolves to
 
 | Verb | Meaning here | Default base route |
 |---|---|---|
-| `audit` | Evaluate the system against an explicit standard → scored report (token coverage, anatomy completeness, governance gaps) | `ds-advisor` triage lens + `fe-design-tokens` |
+| `audit` | Evaluate the system against an explicit standard → scored report (token coverage, anatomy completeness, governance gaps) | `design-system-ops` + `fe-design-tokens` |
 | `triage` | Rank findings by severity × effort → phased plan with DDR stubs | `ds-advisor` |
-| `tokens` | Token-layer work: define, map (global→semantic→component), audit usage, fix tier violations | `fe-design-tokens` |
-| `spec` | Convert findings/decisions into a fix or handoff spec | hand off to `design-engineer` (authoring owner) |
-| `generate` | Scaffold a system artifact (token set, component skeleton, DDR, governance doc) | `design-engineer` / `ds-advisor` |
+| `tokens` | Token-layer work: define, map (global→semantic→component), audit usage, fix tier violations | `token-architecture` (+ `fe-design-tokens` in code) |
+| `spec` | Convert findings/decisions into a component or handoff spec | `ds-component-spec` (lens: `design-engineer`) |
+| `generate` | Scaffold a system artifact (token set, component skeleton, DDR, governance doc) | `ds-generation-pipeline` / `ds-advisor` (DDR) |
 | `document` | Author the system docs/decision record (DDR, usage guidance, migration guide) | `ds-advisor` (DDR) / `feynman`-style docs |
 
 > `audit` is *measured* (token coverage %, tier-violation counts, anatomy/state matrices);
@@ -92,14 +115,15 @@ Conversational invocation works too: "audit our token architecture" resolves to
 
 | Lens | Lead base | Adds |
 |---|---|---|
-| `tokens` | `fe-design-tokens` | DTCG validation, tier mapping, Style-Dictionary config |
-| `anatomy` | `design-engineer` | variant matrix, state contract, slot/prop decisions |
-| `governance` | `ds-advisor` | ownership model, contribution/deprecation policy, DDR |
-| `a11y` | `ds-advisor` + `visual-qa-accessibility` | system-level WCAG conformance posture |
+| `tokens` | `token-architecture` | tier mapping, naming, alias hygiene; `fe-design-tokens` for DTCG / Style-Dictionary |
+| `anatomy` | `ds-component-spec` | variant matrix, state contract, slot/prop decisions |
+| `governance` | `design-system-ops` | ownership model, contribution/deprecation policy; `ds-advisor` for the DDR |
+| `a11y` | `lead-accessibility-architect` + `visual-qa-accessibility` | system-level WCAG conformance posture |
 
 Token-architecture decisions (tier collapse, semantic-vs-component, alias hygiene) are a
-*decision* → `ds-advisor` authors the DDR; `fe-design-tokens` implements; `design-engineer`
-applies in components. This hub sequences that handoff.
+*decision* → `token-architecture` decides, `ds-advisor` records the DDR, `fe-design-tokens`
+implements, and `design-engineer` checks the result in components. This hub sequences that
+handoff.
 
 ## Disambiguation — who owns what (the precision contract)
 
@@ -107,7 +131,7 @@ applies in components. This hub sequences that handoff.
 request crosses the line:
 
 - **Judging/measuring a rendered interface** (contrast, spacing, "what's wrong with this screen") → `/qa`.
-- **Building or changing component code/variants/props** → `design-engineer` (authoring owner). `/ds spec` produces the fix list; design-engineer applies it.
+- **Building or changing component code** → `design-engineer` (lens; code-side questions). `/ds spec` (`ds-component-spec`) produces the spec; the code follows it.
 - **Figma canvas authoring / variable creation** → `/figma`.
 - **Generative redesign / making it bolder / live in-browser iteration** → `/redesign` / `impeccable`.
 
@@ -125,7 +149,7 @@ Method:   <token coverage scan | tier validation | anatomy matrix | governance c
 
 ### Findings  (severity: blocker | major | minor | nit)
 - [severity] <finding> — <evidence: measured value / tier violation / missing state>
-  Fix: <one line>  ·  Owner: <ds|design-engineer|ds-advisor>
+  Fix: <one line>  ·  Owner: <the owning spoke>
 
 ### Summary
 <count by severity>  ·  Score: <if audit>  ·  DDRs drafted: <ids if any>
@@ -138,19 +162,21 @@ Method:   <token coverage scan | tier validation | anatomy matrix | governance c
 
 1. **Parse** verb/target/modifiers. Fill defaults (`audit`, auto-lens). Ask once only if the target is missing and nothing is attached.
 2. **`--dry`?** Report the plan (bases + checks) and stop.
-3. **Route**: pick the lead base by lens; attach `fe-design-tokens` for any token measurement; `ds-advisor` for decisions/DDRs.
+3. **Route**: pick the owning spoke from the table above (by lens when given); attach `fe-design-tokens` for any token measurement; `ds-advisor` for decisions/DDRs.
 4. **Acquire** the target (source scan / token-file parse / Figma export / diff).
 5. **Run** the base procedure + measured checks. Prefer measured (coverage %, tier-violation counts) over eyeballed.
 6. **Emit** the shared report. Write to `--out` if given.
-7. **Hand off** when the verb implies change (`spec`/`generate` → design-engineer) or a governance decision (`document` → ds-advisor DDR).
+7. **Hand off** when the verb implies change (`spec` → `ds-component-spec`, `generate` → `ds-generation-pipeline`) or a governance decision (`document` → `ds-advisor` DDR).
 8. **Close-out** — invoke [[close-out]].
 
-## POC scope note
+## Scope note
 
-Sibling to the proven `/qa` hub, cloned from the same wrapper shape per
-`invokable-operations-spec_v0.2`. Keep this hub thin: depth lives in `ds-advisor`,
-`design-engineer`, and `fe-design-tokens`.
+Sibling to the `/qa` hub, cloned from the same wrapper shape per
+`invokable-operations-spec_v0.2`. Keep this hub thin (about 1,500 words): depth lives in
+the spokes above. Rearchitecture record:
+[design-skill-architecture](../../07-projects/19-workspace-brain/reports/design-skill-architecture_v1.0_2026-10-22.md).
 
 ## Related
 - foundation → [[design-foundations]]
+- spoke → [[ai-design-systems]] · [[canonical-docs-voice]] · [[centric-ui-storybook]] · [[centric-ui-workflow]] · [[design-system-ops]] · [[ds-advisor]] · [[ds-component-spec]] · [[ds-generation-pipeline]] · [[ds-source-watch]] · [[token-architecture]]
 - governed-by → [[qa]]

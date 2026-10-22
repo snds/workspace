@@ -39,7 +39,7 @@ This skill owns **client-side data fetching, transport, and data lifecycle**.
 - **API contract design, pagination contracts, error envelopes** → `be-api-design`
 - **WebSocket/SSE server implementation** → `be-integration-patterns`
 - **Loading state UX, skeleton screen design** → `ux-performance-perception`
-- **ML prediction API specifics** → `ds-ml-engineering`
+- **ML prediction API specifics** → `dsci-ml-engineering`
 
 ---
 
@@ -473,7 +473,7 @@ with error boundaries requires careful co-placement.
 | API contract, error envelope, versioning | `be-api-design` |
 | WebSocket/SSE server implementation | `be-integration-patterns` |
 | Loading state UX design, skeleton screens | `ux-performance-perception` |
-| ML prediction endpoints, streaming inference | `ds-ml-engineering` |
+| ML prediction endpoints, streaming inference | `dsci-ml-engineering` |
 
 ## Related
 - hub → [[lead-frontend-engineer]]

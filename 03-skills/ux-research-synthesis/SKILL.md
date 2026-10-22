@@ -28,9 +28,9 @@ spec_version: "2.1"
 Spoke skill in the `lead-ux-designer` network. Owns research method selection,
 enterprise interview design, synthesis methods, and the insight-to-design pipeline.
 
-Does not own: statistical experiment design (→ `ds-experimentation`), product analytics
-instrumentation (→ `ds-product-analytics`), IA-specific research methods like card
-sorting and tree testing (documented in `ux-information-architecture`). This spoke
+Does not own: statistical experiment design (→ `dsci-experimentation`), product analytics
+instrumentation (→ `dsci-product-analytics`), IA-specific research methods like card
+sorting and tree testing (documented in `lead-information-architect`). This spoke
 owns the qualitative and mixed-method research layer that informs design decisions.
 
 ## Anti-ceremony grounding
@@ -76,7 +76,7 @@ Use when you have a design and need to know whether it works for users.
 | **Usability testing** | Testing whether users can accomplish a task with a proposed design | Task success/failure; where confusion occurs; what vocabulary users use |
 | **Cognitive walkthrough** | Expert review of a design against a user task; can be done without participants | Heuristic failure list; predicted user errors |
 | **Expert review (heuristic evaluation)** | Quick audit against usability heuristics; identifies obvious problems before user testing | Heuristic violation list with severity ratings |
-| **Tree testing** | Validating IA findability (see `ux-information-architecture`) | Findability rates; navigation confusion points |
+| **Tree testing** | Validating IA findability (see `lead-information-architect`) | Findability rates; navigation confusion points |
 | **First-click testing** | Validating that users click the right element first for a given task | First-click success rate; where users click when wrong |
 
 ### Quantitative methods
@@ -350,9 +350,9 @@ not a research finding.
 
 ## Cross-Links
 
-- `ux-information-architecture` — card sorting and tree testing (IA-specific research methods)
-- `ds-experimentation` — quantitative experiment design; statistical power; A/B test protocol
-- `ds-product-analytics` — analytics analysis; behavioral data as research input
+- `lead-information-architect` — card sorting and tree testing (IA-specific research methods)
+- `dsci-experimentation` — quantitative experiment design; statistical power; A/B test protocol
+- `dsci-product-analytics` — analytics analysis; behavioral data as research input
 - `pm-discovery-research` — PM and UX research coordination; JTBD at the product level; participant alignment
 
 ---

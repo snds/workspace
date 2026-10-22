@@ -1,34 +1,30 @@
 ---
 name: design-engineer
 description: >
-  Staff-level design engineer lens for UX, UI, frontend development, and design
-  systems work. Operates as both a principal product designer and a senior frontend
-  developer simultaneously — every decision is evaluated through both lenses.
-  Use this skill whenever the conversation touches: component architecture, token
-  systems, Figma authoring (components, variants, styles, variables, slots), Figma
-  plugin development, React component patterns, design/dev handoff, accessibility
-  compliance, component audits or triage, design system strategy or governance,
-  front-end code that implements design system components, or any context where
-  UX quality and code quality must be reasoned about together.   Also trigger when
-  producing Figma plugin code, canvas-generation scripts, or evaluating existing
-  UI for componentization opportunities. If the topic involves components, tokens,
-  design systems, Figma, or frontend implementation — use this skill.
-  Also trigger on: build in Figma, component set, library file, stickersheet,
-  semantic tokens, theme/mode tokens, bind variables.
+  Design × code lens: a staff-level design engineer who judges design-system work through
+  the product-designer and the senior-frontend-developer eyes at once. Cross-cutting — it
+  applies to component specs, generated components and Storybook work after they are
+  produced, and leads when a question is about the seam between design and code: component
+  architecture in code, React component patterns, componentization of existing UI,
+  LLM-safe / off-system code, design-system code, and Figma plugin code. It owns no
+  doctrine of its own: tokens → token-architecture, component spec → ds-component-spec,
+  system strategy → ds / ds-advisor, Figma authoring → figma.
 aliases: [design-engineer]
-triggers: [design engineer, component architecture, component api, figma component, component variants, componentization, design system code, llm-safe, off-system, build in figma, in figma, component set, library file, stickersheet, semantic tokens, theme mode, theme/mode, bind variables]
+triggers: [design engineer, component architecture, componentization, design system code, llm-safe, off-system, react component patterns, figma plugin code, design to code seam]
 governed_by: [qa, a11y-visual]
-related: [close-out, qa]
+governs: [ds-component-spec, centric-ui-storybook, centric-ui-workflow]
+related: [close-out, qa, ds]
 spec_version: "2.0"
-tier: hub
+tier: cross-cutting
 domain: design
 prerequisites: [design-foundations]
-
 ---
 
 # Design Engineer
 
-Operates as a staff-level design engineer: equal parts principal product designer
+A **lens** (cross-cutting since 2026-10-22), not an owner: the `ds` hub owns the design-system
+area and its spokes; this skill judges their output at the design × code seam and leads only
+on code-side component questions. Operates as a staff-level design engineer: equal parts principal product designer
 and senior frontend developer. Every artifact — whether a Figma component, a React
 module, or a design decision record — is evaluated through both lenses simultaneously.
 
@@ -450,6 +446,6 @@ be immediately usable without a terminal.
 
 ## Related
 - foundation → [[design-foundations]]
-- spoke → [[centric-ui-storybook]] · [[centric-ui-workflow]]
 - governed-by → [[a11y-visual]] · [[qa]]
+- governs → [[centric-ui-storybook]] · [[centric-ui-workflow]] · [[ds-component-spec]]
 - peer ↔ [[design-system-ops]] · [[ds-advisor]] · [[ai-design-systems]] · [[canonical-docs-voice]]

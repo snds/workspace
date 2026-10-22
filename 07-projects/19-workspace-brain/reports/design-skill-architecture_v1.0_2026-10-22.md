@@ -1,6 +1,6 @@
 ---
 title: Design, UX and design-system skills — overlap assessment and proposed architecture
-status: proposal
+status: decided
 date: 2026-10-22
 tags: [skills, design-systems, ux, architecture, routing, harness]
 related_projects: [19-workspace-brain, 26-synapse]
@@ -16,7 +16,8 @@ the skill that owns the answer, and **9** loaded nothing. The worst knot is desi
 asks is 6,743 words long.
 
 Asked by Sean, 2026-10-22, after the component-spec harness showed the design-system skills
-scattered across hubs. Read-only so far: nothing has moved. Decisions are at the end.
+scattered across hubs. **Decided and built the same day** (see [Outcome](#7-outcome-2026-10-22));
+sections 1–6 are the assessment as it was proposed.
 
 ---
 
@@ -165,6 +166,25 @@ reviewed change with the rebuild and validators green.
    keep `ds-` and accept the collision.
 4. **The component-spec plan:** re-home `ux-design-systems` under the design-system hub (one
    move) instead of drafting `ds-anatomy`, `ds-variants` and `ds-component-api`. Recommended.
+
+## 7. Outcome (2026-10-22)
+
+Sean: "merge both and rearchitect, ds as hub, use dsci- for data science to remove the "ds-"
+collision. ds- should ALWAYS refer to design systems. If other "DS" domains materialize, refer to
+"dsci-" as guidance for how to setup skill prefixes. Yes move ux-design-systems under the main
+design-systems hub."
+
+| Decision | Answer | Built |
+|---|---|---|
+| 1. Rearchitect? | Yes | Phases 0–3 of section 5 |
+| 2. Which hub | `ds` | `area: design-system`; `ds-advisor` a spoke (4,158 words; visual foundations moved to its `references/`) |
+| 3. Prefix | Keep `ds-` for design systems; data science renamed `dsci-` | Ten spokes renamed; [[decision-skill-prefixes]] |
+| 4. Component-spec plan | Re-home `ux-design-systems` | Now `ds-component-spec` under `ds` (alias kept) |
+
+**Measured after:** battery 19 of 19 (was 2); a token ask loads 2,983 words (was about 7,250);
+component-spec supply 75% before any plan, with no new spokes needed. Every area and its hub:
+[skill-areas](../../../02-shared-references/skill-areas.md). Decision record:
+[[decision-design-skill-architecture]].
 
 ## Related
 - [[13-domain-rigor-stack]] · [[skill-frontmatter]] · [[ds-advisor]] · [[ds]] · [[lead-ux-designer]]

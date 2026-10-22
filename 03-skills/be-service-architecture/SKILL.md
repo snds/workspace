@@ -39,7 +39,7 @@ architecture**.
 - Kafka, message queues, webhook implementation → `be-integration-patterns`
 - API contract design between services → `be-api-design`
 - Service-to-service auth (client credentials flow) → `be-auth-patterns`
-- ML model serving as a service → `ds-ml-engineering`
+- ML model serving as a service → `dsci-ml-engineering`
 
 ---
 
@@ -406,8 +406,8 @@ user-facing symptoms they cause.
 | Kafka topic design, message queue patterns | `be-integration-patterns` |
 | API contract between services | `be-api-design` |
 | Service-to-service OAuth (client credentials) | `be-auth-patterns` |
-| ML model serving as a microservice | `ds-ml-engineering` |
-| Event data flowing to analytics pipeline | `ds-data-engineering` |
+| ML model serving as a microservice | `dsci-ml-engineering` |
+| Event data flowing to analytics pipeline | `dsci-data-engineering` |
 
 ## Related
 - hub → [[lead-backend-engineer]]

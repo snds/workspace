@@ -1,5 +1,5 @@
 ---
-name: ds-nlp-llm
+name: dsci-nlp-llm
 description: >
   NLP pipelines, text classification, embeddings, vector search, RAG architecture, LLM
   integration patterns, and evaluation for enterprise SaaS. Use this skill whenever the
@@ -12,8 +12,8 @@ description: >
   LLM fallback chains, PII detection, presidio, NER, spaCy, or any question about
   building NLP or LLM-powered features in an enterprise product at production scale.
   This skill covers NLP/LLM engineering — not general ML serving infrastructure
-  (ds-ml-engineering), not LLM as a product management decision (pm-platform-api).
-aliases: [ds-nlp-llm]
+  (dsci-ml-engineering), not LLM as a product management decision (pm-platform-api).
+aliases: [dsci-nlp-llm]
 spec_version: "2.0"
 tier: spoke
 domain: data
@@ -21,7 +21,7 @@ hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
 ---
 
-# DS: NLP & LLM Engineering
+# DSci: NLP & LLM Engineering
 
 Specialist lens for NLP pipelines and LLM integration in enterprise SaaS. Part of the
 lead-data-scientist skill network.
@@ -32,12 +32,12 @@ lead-data-scientist skill network.
 
 This skill owns **NLP pipeline engineering and LLM integration patterns**.
 
-- **ML serving infrastructure** → `ds-ml-engineering` (also load for serving a fine-tuned model)
+- **ML serving infrastructure** → `dsci-ml-engineering` (also load for serving a fine-tuned model)
 - **LLM capability as product strategy** → `pm-platform-api`
 - **LLM API key management** → also engage `be-auth-patterns`
 - **Streaming response handling in API design** → also engage `be-api-design`
 - **Prompt/response semantic caching** → also engage `be-caching-performance`
-- **Analytical NLP (topic modeling, sentiment on product data)** → `ds-product-analytics`
+- **Analytical NLP (topic modeling, sentiment on product data)** → `dsci-product-analytics`
 
 ---
 
@@ -331,7 +331,7 @@ data that cannot leave the tenant's data perimeter.
 - For caching → `be-caching-performance`
 - For API key management for third-party LLM services → `be-auth-patterns`
 - For LLM as product capability → `pm-platform-api`
-- For fine-tuned model deployment → `ds-ml-engineering`
+- For fine-tuned model deployment → `dsci-ml-engineering`
 
 ## Related
 - hub → [[lead-data-scientist]]

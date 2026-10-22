@@ -15,6 +15,7 @@ tier: spoke
 domain: design
 hub: figma
 prerequisites: [figma]
+triggers: [boolean property, variant or boolean, variants vs modes, variant property]
 ---
 
 # Modes for Variants — Collapsing Component Sets via Variable Modes

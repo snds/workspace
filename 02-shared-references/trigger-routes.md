@@ -191,11 +191,11 @@ Claude Code also injects curated matches via `.claude/hooks/dispatcher.py` (load
 | `full report` | 02-shared-references/delivery-playbooks/04-documents-and-specs.md — structure serves the second reader |
 | `challenge this` | 03-skills/lead-ux-designer/SKILL.md — challenge the premise before screens |
 | `tear this apart` | 03-skills/lead-ux-designer/SKILL.md — challenge the premise before screens |
-| `what else moves` | 03-skills/ux-design-systems/SKILL.md — ripple: confirmed vs possible; contained / shared / cross-journey / foundational |
+| `what else moves` | 03-skills/ds-component-spec/SKILL.md — ripple: confirmed vs possible; contained / shared / cross-journey / foundational |
 | `state sweep` | 03-skills/ux-interaction-design/SKILL.md — sweep by transition, not checklist |
 | `missing states` | 03-skills/ux-interaction-design/SKILL.md — sweep by transition, not checklist |
-| `system fit` | 03-skills/ux-design-systems/SKILL.md — reuse → compose → extend → create → feature-local |
-| `need a new component` | 03-skills/ux-design-systems/SKILL.md — system-fit ladder before a new primitive |
+| `system fit` | 03-skills/ds-component-spec/SKILL.md — reuse → compose → extend → create → feature-local |
+| `need a new component` | 03-skills/ds-component-spec/SKILL.md — system-fit ladder before a new primitive |
 | `design system ops` | 03-skills/design-system-ops/SKILL.md — ops hub (token/theme/docs/drift); strategy stays on ds-advisor |
 | `theme audit` | 03-skills/design-system-ops/SKILL.md — vendored theme-audit via the wrapper |
 | `docs coverage` | 03-skills/design-system-ops/SKILL.md — vendored docs-coverage via the wrapper |
@@ -362,17 +362,12 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `vision-foundations` | foundation | `computer vision`, `machine vision`, `image classification`, `object detection`, `image segmentation`, `feature extraction` (+9) | `vision-foundations` |
 | `adobe-app-builder` | hub | `adobe app builder`, `app builder`, `aio cli`, `aio app init`, `aio app deploy`, `adobe i/o runtime` (+9) | `eng-foundations` → `adobe-app-builder` |
 | `arch-guild` | hub | `arch guild`, `architecture review`, `multi-voice review`, `dijkstra`, `lamport`, `knuth` (+1) | `eng-foundations` → `arch-guild` |
-| `design-engineer` | hub | `design engineer`, `component architecture`, `component api`, `figma component`, `component variants`, `componentization` (+12) | `design-foundations` → `design-engineer` |
-| `design-system-ops` | hub | `design system ops`, `token audit`, `audit my tokens`, `drift detection`, `ds governance`, `ds health` (+4) | `design-foundations` → `design-system-ops` |
-| `ds` | hub | `ds hub`, `design system decision`, `token decision`, `write the ddr` | `design-foundations` → `ds` |
-| `ds-advisor` | hub | `design system`, `design systems`, `PLM`, `component audit`, `token architecture`, `design token` (+7) | `design-foundations` → `ds-advisor` |
-| `ds-generation-pipeline` | hub | `generate a design system`, `scaffold ds artifacts`, `ds generation pipeline` | `design-foundations` → `ds-generation-pipeline` |
+| `ds` | hub | `ds hub`, `design system`, `design systems`, `design system decision`, `token decision`, `write the ddr` (+8) | `design-foundations` → `ds` |
 | `eng` | hub | `eng`, `engineering delivery`, `shape contract`, `ship service`, `harden auth`, `rollback plan` (+1) | `eng-foundations` → `eng` |
-| `figma` | hub | `figma`, `in figma`, `build in figma`, `component set`, `library file`, `generate a library` (+3) | `design-foundations` → `figma` |
-| `gen-manifest` | hub | `gen manifest`, `generation manifest` | `design-foundations` → `gen-manifest` |
+| `figma` | hub | `figma`, `in figma`, `build in figma`, `component set`, `library file`, `generate a library` (+7) | `design-foundations` → `figma` |
 | `job-search-strategist` | hub | `job search strategy`, `career positioning`, `target companies` | `job-search-strategist` |
 | `lead-3d-designer` | hub | `3d designer`, `dcc scene`, `blender scene` | `design-foundations` → `lead-3d-designer` |
-| `lead-accessibility-architect` | hub | `accessibility architect`, `wcag audit`, `screen reader path`, `inclusive design` | `design-foundations` → `lead-accessibility-architect` |
+| `lead-accessibility-architect` | hub | `accessibility architect`, `wcag audit`, `screen reader path`, `inclusive design`, `is this accessible`, `modal accessible` (+2) | `design-foundations` → `lead-accessibility-architect` |
 | `lead-art-director` | hub | `art direction`, `visual direction`, `lookdev` | `game-foundations` → `imaging-foundations` → `lead-art-director` |
 | `lead-backend-engineer` | hub | `backend engineer`, `api contract`, `service boundary` | `eng-foundations` → `lead-backend-engineer` |
 | `lead-data-scientist` | hub | `what does the data say`, `experiment validity`, `decision owner`, `statistical claim` | `data-foundations` → `science-foundations` → `lead-data-scientist` |
@@ -407,10 +402,12 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `type` | hub | `type scale`, `type design`, `typeface pairing`, `typographic system`, `variable font axes` | `design-foundations` → `type` |
 | `variable-icon-font-architect` | hub | `variable axis`, `variable axes` | `design-foundations` → `lead-type-designer` → `variable-icon-font-architect` |
 | `a11y-audit-toolkit` | cross-cutting | `accessibility audit`, `a11y audit`, `axe`, `axe-core`, `pa11y`, `lighthouse accessibility` (+8) | `design-foundations` → `lead-accessibility-architect` → `a11y-audit-toolkit` |
+| `a11y-motor-physical` | cross-cutting | `focus order`, `tab order`, `keyboard navigation`, `focus trap`, `keyboard access` | `design-foundations` → `lead-accessibility-architect` → `a11y-motor-physical` |
 | `a11y-visual` | cross-cutting | `contrast`, `color contrast`, `color blindness`, `color vision deficiency`, `cvd`, `wcag` (+8) | `a11y-visual` |
 | `ai-video-generation` | cross-cutting | `ai video`, `text to video`, `image to video`, `animate image`, `generate video`, `video generation` (+8) | `imaging-foundations` → `ai-video-generation` |
 | `artifact-ingest` | cross-cutting | `vendor artifact`, `llm canvas`, `chatgpt canvas`, `claude artifact`, `html artifact`, `clipboard ingest` (+2) | `artifact-ingest` |
 | `close-out` | cross-cutting | `close-out`, `self-police`, `prove-gate`, `human visual qa`, `named detector`, `llm qa` (+1) | `close-out` |
+| `design-engineer` | cross-cutting | `design engineer`, `component architecture`, `componentization`, `design system code`, `llm-safe`, `off-system` (+3) | `design-foundations` → `design-engineer` |
 | `designparser` | cross-cutting | `designparser`, `designparser rules`, `what rules apply`, `suggest_rules_for_context`, `evaluate_design` | `design-foundations` → `designparser` |
 | `failure-mode-premortem` | cross-cutting | `pre-mortem`, `premortem`, `failure mode`, `what could go wrong`, `before we build`, `red team` (+11) | `failure-mode-premortem` |
 | `framework-check` | cross-cutting | `/framework-check`, `framework check`, `run through the frameworks`, `framework critique` | `framework-check` |
@@ -446,4 +443,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 315 · Registry rows: 108_
+_Curated routes: 315 · Registry rows: 105_

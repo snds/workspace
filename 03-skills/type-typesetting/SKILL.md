@@ -36,7 +36,7 @@ the font; typesetting deploys it.
 - **The typeface being set** → `type-letterform-construction`, `type-spacing-metrics`
 - **OpenType features to enable** → `type-opentype-text`
 - **Grid that typesetting sits within** → `lead-graphic-designer`/`gd-grid-and-layout`
-- **IA hierarchy expressed as typographic hierarchy** → `lead-ux-designer`/`ux-information-architecture`
+- **IA hierarchy expressed as typographic hierarchy** → `lead-information-architect`
 - **DS text style tokens** → `ds-advisor`
 
 ---
@@ -249,7 +249,7 @@ level has a defined relationship to the others.
 type system and the information architecture are the same structure expressed in
 different media. A three-level heading hierarchy with body text and captions maps
 directly to an IA with primary, secondary, and tertiary navigation, content, and
-annotation levels. Route to `lead-ux-designer`/`ux-information-architecture` when
+annotation levels. Route to `lead-information-architect` when
 the typographic hierarchy is unclear — the source of truth is the IA.
 
 ---
@@ -335,7 +335,7 @@ blockquote, .pull-quote {
 - `type-classification-history` — knowing the register and historical context of the face being set informs setting decisions (Bodoni needs more leading; humanist faces tolerate tighter tracking)
 - `lead-graphic-designer`/`gd-grid-and-layout` — typesetting sits within a grid; baseline grid theory is foundational
 - `ds-advisor` — typesetting knowledge translates into DS text style token design; the typographic system (scale + leading + tracking + measure) should be designed as a coordinated set
-- `lead-ux-designer`/`ux-information-architecture` — typographic hierarchy is the visual form of IA hierarchy; the two should be designed in parallel
+- `lead-information-architect` — typographic hierarchy is the visual form of IA hierarchy; the two should be designed in parallel
 - `lead-ux-designer`/`ux-interaction-design` — reading flow, cognitive load, and text legibility are user experience decisions grounded in typesetting quality
 
 ## Related

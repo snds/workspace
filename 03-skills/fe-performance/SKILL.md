@@ -33,7 +33,7 @@ This skill owns **technical performance measurement and optimization**.
 
 - **Perceived performance UX** (skeleton screens, optimistic UI design) → `ux-performance-perception`
 - **CDN strategy, cache headers, server response time** → `be-caching-performance`
-- **Web Vitals as instrumented product analytics** → `ds-product-analytics`
+- **Web Vitals as instrumented product analytics** → `dsci-product-analytics`
 - **Loading state taxonomy (what to show when)** → `fe-api-integration` + `ux-performance-perception`
 
 ---
@@ -323,7 +323,7 @@ rolling field data for public URLs.
 |-------|----------|
 | Perceived performance, skeleton screen design | `ux-performance-perception` |
 | CDN headers, server response time, cache strategy | `be-caching-performance` |
-| Web Vitals instrumentation as product analytics | `ds-product-analytics` |
+| Web Vitals instrumentation as product analytics | `dsci-product-analytics` |
 | Loading state taxonomy (skeleton vs. spinner decisions) | `fe-api-integration` |
 | Virtual scrolling for large datasets | `fe-data-visualization` |
 

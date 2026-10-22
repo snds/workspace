@@ -319,7 +319,7 @@ those sections genuinely require different navigation patterns.
 - `ux-research-synthesis` — mental model research methods; participant recruitment for IA research
 - `ux-accessibility` — keyboard navigation order; focus management at navigation level; skip links
 - `be-data-modeling` — data hierarchy constraints that shape IA decisions (what can be grouped with what)
-- `ds-product-analytics` — funnel drop-off, nav path analysis, time-to-task to validate IA decisions
+- `dsci-product-analytics` — funnel drop-off, nav path analysis, time-to-task to validate IA decisions
 - `pm-discovery-research` — IA decisions informed by user mental models; coordinate on research inputs
 
 ---

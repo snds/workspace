@@ -37,7 +37,7 @@ right decisions made by the right people at the right time.
 - **The roadmap content being presented** → `pm-roadmap-strategy`
 - **Discovery evidence supporting a recommendation** → `pm-discovery-research`
 - **Competitive context for a steering committee** → `pm-competitive-intelligence`
-- **Data visualization and analytical evidence** → `ds-executive-storytelling`
+- **Data visualization and analytical evidence** → `dsci-executive-storytelling`
 
 ---
 
@@ -346,7 +346,7 @@ opportunity to resolve it 1:1.
 
 ## Cross-Hub References
 
-- **Analytical evidence for executive presentations** → `ds-executive-storytelling`:
+- **Analytical evidence for executive presentations** → `dsci-executive-storytelling`:
   PM owns the recommendation framing; DS owns the visualization and analytical rigor
 - **Metrics and data for steering committee materials** → `pm-metrics-analytics`
 - **Roadmap presentations** → `pm-roadmap-strategy`: the content being

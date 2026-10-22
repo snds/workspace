@@ -16,6 +16,7 @@ description: >
 aliases: [lead-technical-digital-artist]
 tier: hub
 domain: design
+area: technical-art
 prerequisites: [design-foundations]
 related: [lead-icon-artist, lead-vector-designer, variable-icon-font-architect]
 triggers: [technical artist, lookdev pipeline, shader art]

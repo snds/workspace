@@ -19,6 +19,7 @@ description: >
 aliases: [lead-information-designer]
 tier: hub
 domain: design
+area: information-design
 prerequisites: [design-foundations]
 triggers: [information designer, infographic, data encoding]
 governed_by: [qa]
@@ -51,8 +52,8 @@ Precision matters here. Load this skill for:
 - Data communication and narrative structure
 
 Do **not** load this skill for:
-- **UX workflow design** — that is `lead-ux-designer` territory; `ux-data-visualization`
-  is the entry-level spoke that routes here when depth is needed
+- **UX workflow design** — that is `lead-ux-designer` territory (chart and dashboard asks
+  from UX work route here; the former `ux-data-visualization` spoke was folded in on 2026-10-22)
 - **Statistical modeling or metric definition** — load `lead-data-scientist`; this skill
   communicates what data science discovers, it does not discover it
 - **Design system token architecture** — load `ds-advisor`; this skill informs which
@@ -257,15 +258,15 @@ Red flags that trigger automatic spoke consultation:
 
 ### `lead-information-designer` → `lead-data-scientist`
 Information design communicates what data science discovers. The most frequent
-handoff points are `ds-product-analytics` (metric definitions, event taxonomies)
-and `ds-executive-storytelling` (what story the data tells; this hub handles how
+handoff points are `dsci-product-analytics` (metric definitions, event taxonomies)
+and `dsci-executive-storytelling` (what story the data tells; this hub handles how
 to tell it visually). Metric definitions must come from the DS side before the
 visualization can be designed with integrity.
 
 ### `lead-information-designer` → `lead-ux-designer`
-`ux-data-visualization` is the surface-level entry point that routes here for
-depth when chart type selection, encoding theory, or dashboard architecture is
-needed. `ux-information-architecture` is the structural layer that information
+This hub owns chart selection, dashboards and data tables for UX work too (the
+former `ux-data-visualization` spoke was folded into `infod-*` on 2026-10-22).
+Information architecture (`lead-information-architect`) is the structural layer that information
 design visualizes — IA decisions about what data surfaces where constrain the
 visualization design.
 

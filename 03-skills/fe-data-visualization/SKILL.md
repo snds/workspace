@@ -33,7 +33,7 @@ Part of the enterprise SaaS frontend engineering network.
 This skill owns **rendering fidelity, performance, and composition** of data
 surfaces.
 
-- **What to visualize, data encoding, chart type decisions** → `ux-data-visualization` + `ds-executive-storytelling`
+- **What to visualize, data encoding, chart type decisions** → `lead-information-designer` + `dsci-executive-storytelling`
 - **Performance at scale (bundle size, rendering strategies)** → `fe-performance`
 - **Cross-filter state architecture, server state for widgets** → `fe-state-management`
 - **API pagination contracts, filtering query design** → `be-api-design`
@@ -262,7 +262,7 @@ model breaks down. Options:
 
 In enterprise SaaS, WebGL is rarely necessary — if you're rendering 10k+ points
 in a scatter, the visualization design is probably wrong (aggregation or
-sampling should happen at the data layer). Route to `ds-executive-storytelling`
+sampling should happen at the data layer). Route to `dsci-executive-storytelling`
 if the data density is a design question.
 
 ---
@@ -329,11 +329,11 @@ The brush state is URL-serializable for shareable filter states.
 
 | Topic | Route to |
 |-------|----------|
-| What to visualize, data encoding, chart type | `ux-data-visualization` |
-| Why to visualize it, executive/stakeholder framing | `ds-executive-storytelling` |
+| What to visualize, data encoding, chart type | `lead-information-designer` |
+| Why to visualize it, executive/stakeholder framing | `dsci-executive-storytelling` |
 | Rendering performance at extreme scale | `fe-performance` |
 | Cross-filter state, server state per widget | `fe-state-management` |
-| Chart interaction event instrumentation | `ds-product-analytics` |
+| Chart interaction event instrumentation | `dsci-product-analytics` |
 
 ## Related
 - hub → [[lead-frontend-engineer]]

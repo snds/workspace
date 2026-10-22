@@ -1,5 +1,5 @@
 ---
-name: ds-data-governance
+name: dsci-data-governance
 description: >
   Data governance for enterprise SaaS. Staff/principal IC level. Use this skill whenever
   the conversation touches: data classification tiers, PII identification, GDPR Article
@@ -14,17 +14,17 @@ description: >
   stewardship model, data owners, data stewards, domain data ownership, data mesh, or any
   question about governing, cataloging, classifying, or controlling access to enterprise data.
   This skill covers governance policy and catalog design — not data pipeline engineering
-  (ds-data-engineering), not warehouse or BI tooling (ds-bi-platforms), not authentication
+  (dsci-data-engineering), not warehouse or BI tooling (dsci-bi-platforms), not authentication
   (be-auth-patterns).
 hub: lead-data-scientist
-aliases: [ds-data-governance]
+aliases: [dsci-data-governance]
 spec_version: "2.0"
 tier: spoke
 domain: data
 prerequisites: [lead-data-scientist]
 ---
 
-# DS: Data Governance
+# DSci: Data Governance
 
 Data governance for enterprise SaaS at staff/principal IC level. Part of the
 lead-data-scientist skill network.
@@ -36,8 +36,8 @@ lead-data-scientist skill network.
 This skill owns **data classification, cataloging, lineage, quality, retention, access
 governance, and stewardship**.
 
-- **Data pipeline engineering, dbt, warehouse design** → `ds-data-engineering`
-- **BI tool semantic layer, dashboard governance** → `ds-bi-platforms`
+- **Data pipeline engineering, dbt, warehouse design** → `dsci-data-engineering`
+- **BI tool semantic layer, dashboard governance** → `dsci-bi-platforms`
 - **Application-level auth, API key management** → `be-auth-patterns`
 - **Compliance legal strategy (not implementation)** → `pm-enterprise-gtm`
 - **GDPR / privacy as product feature** → `ux-ai-product-design` (data transparency UX)
@@ -417,8 +417,8 @@ coordination is genuinely efficient.
 
 ## Cross-Hub References
 
-- For data pipeline engineering, dbt, warehouse schema design → `ds-data-engineering`
-- For BI semantic layer and dashboard governance → `ds-bi-platforms`
+- For data pipeline engineering, dbt, warehouse schema design → `dsci-data-engineering`
+- For BI semantic layer and dashboard governance → `dsci-bi-platforms`
 - For application auth and API key management → `be-auth-patterns`
 - For compliance as enterprise sales and GTM motion → `pm-enterprise-gtm`
 - For legal compliance considerations (a11y parallel) → `a11y-legal-compliance`

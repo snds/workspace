@@ -10,12 +10,13 @@ description: >
   or any question about how navigation structure should be designed and organized.
   Distinguished from ia-taxonomy-classification (what the structure is) and
   ux-interaction-design (how navigation interactions behave).
-aliases: [ia-navigation-systems]
+aliases: [ia-navigation-systems, ux-information-architecture]
 tier: spoke
 domain: design
 hub: lead-information-architect
 prerequisites: [lead-information-architect]
 spec_version: "2.0"
+triggers: [navigation for a complex, enterprise navigation, app navigation, sidebar or top nav, sidebar vs top nav, breadcrumbs, wayfinding]
 ---
 
 # IA: Navigation Systems
@@ -181,6 +182,12 @@ Choose patterns based on:
   placed there has near-zero discoverability
 - Labels that overlap in meaning → users can't predict which section contains
   what they need
+- Products used mostly inside one section per session → the persistent bar
+  costs screen height for no switching benefit
+
+**Enterprise fit**: limited. Most enterprise products are too deep for top nav.
+It fits the "which product" layer of a multi-product suite, not feature-level
+navigation within a product (see `ia-enterprise-complexity` → umbrella navigation).
 
 ### Left Sidebar Navigation
 
@@ -195,6 +202,15 @@ enterprise applications with complex multi-level navigation.
 - Left placement (in LTR contexts) aligns with reading gravity and thumb
   reach on wide screens
 
+**Variants**:
+- Persistent visible sidebar — best for frequent navigation; stays visible while
+  users dwell in a section, reinforcing location
+- Collapsible sidebar — when the content area needs full width
+- Icon-only rail — secondary navigation, or where spatial memory can stand in for labels
+
+The pattern is so established in enterprise SaaS that deviating from it needs
+a strong reason.
+
 **Constraints**:
 - Sidebar takes horizontal space; content area is reduced
 - Nested sidebar levels beyond 3 deep become confusing
@@ -202,6 +218,7 @@ enterprise applications with complex multi-level navigation.
 
 **Failure modes**:
 - Sidebar items that reflect org structure rather than user tasks
+- A flat list of 40 ungrouped items — an IA (grouping) failure, not a sidebar failure
 - >3 levels of nesting without contextual breadcrumbs
 - Sidebar that changes structure based on context without clear indication
   to the user (context-sensitive navigation is powerful but disorienting
@@ -223,11 +240,15 @@ use case.
   flat-wide, not tree-deep)
 - Hover-only triggers on touch devices
 - Mega menu content that's not organized — a grid of 40 unlabeled links
+- Mega menus in task-oriented enterprise products: they work because users are
+  browsing, while expert users executing tasks already know where they're going.
+  Reserve them for enterprise documentation portals and large content libraries.
 
 ### Tabbed Navigation
 
 **Best for**: Sibling content within a section; mutually exclusive views of
-the same subject; parallel content structures.
+the same subject; parallel content structures. Canonical enterprise case: one
+record's organizational views (Details, Related Items, History, Activity).
 
 **Constraints**:
 - Tabs represent parallel, peer-level content — not a hierarchy
@@ -236,6 +257,7 @@ the same subject; parallel content structures.
 
 **Failure modes**:
 - Tabs used for deep hierarchies (they communicate peer relationships, not parent-child)
+- Tabs used to switch between top-level application sections (that's global/sidebar navigation's job)
 - Tab content that bleeds into other tab content conceptually (if users
   can't predict which tab something belongs to, the model is wrong)
 - Mobile tab overflow → horizontal scroll is not discoverable
@@ -245,8 +267,13 @@ the same subject; parallel content structures.
 **Best for**: Hierarchical location paths in systems with depth >3 levels.
 
 **Design requirements**:
-- Show **location hierarchy**, not history (browser history is Back for that)
+- Show **location hierarchy**, not history (browser history is Back for that).
+  In enterprise apps the same record is reached via search, navigation, deep
+  link, or related item — a history trail would differ per path; the hierarchy
+  is stable and lets users click up to the parent level
 - Each breadcrumb item should be a navigable link (except current page)
+- Long paths: truncate the middle, not the ends — keep the root and the current
+  item; collapse the middle into an expandable ellipsis
 - Keep breadcrumb labels consistent with navigation labels — label consistency
   is a direct IA quality metric
 
@@ -267,6 +294,55 @@ spokes to distinct task areas. Users return to hub to navigate to another spoke.
 - Hub becomes a cluttered landing page rather than a true navigational center
 - Spoke pages don't provide a clear path back to the hub (wayfinding breaks)
 - No cross-spoke navigation for related tasks (forces unnecessary hub visits)
+- Hub as a required intermediate step between every action — if users spend
+  ~90% of their time in the spokes, the hub is friction, not orientation
+
+**Enterprise fit**: strong for analytics and operational products ("check
+status → act → return to overview"), where the overview is genuinely useful.
+Weak for configuration or data-management products, where users work "inside"
+a record rather than surveying a landscape.
+
+### Step Indicators
+
+**Best for**: Multi-step tasks whose sequence is fixed and meaningful.
+
+**Design requirements**: Show the current step, completed steps, and remaining steps.
+
+**Failure mode**: Step indicators on workflows that aren't genuinely sequential.
+
+---
+
+## Structuring Within Navigation
+
+### Progressive Disclosure
+
+Show the minimum until the user signals intent to go deeper. In navigation:
+don't expand every sub-navigation section on load; let users open the section
+they need. The same rule shapes record views (key fields above the fold,
+secondary fields in tabs or expandable sections) and long forms.
+
+Progressive disclosure is not hiding. "Hidden" means visible when triggered;
+"missing" means users can't find it regardless. The depth must be reachable
+and the path to it obvious.
+
+### Chunking
+
+Miller's 7±2 is a model of working-memory load, not a rule about item counts.
+When a navigation section passes ~7 items, group it; the same applies to
+form sections and visible table columns. Groups must reflect real conceptual
+relationships — seven items that belong together are fine; arbitrary items
+grouped to hit a number are not.
+
+### Spatial Memory
+
+Users learn where things are; after the first sessions they navigate by
+spatial memory. Don't move navigation items or reorganize the sidebar between
+releases unless the IA is genuinely broken — every existing user pays the
+re-learning cost.
+
+When a reorganization is necessary: announce it in-product (not only in
+release notes), offer a "where did X go?" lookup for a transition period, and
+expect satisfaction metrics to dip temporarily.
 
 ---
 
@@ -280,12 +356,15 @@ Users must always know:
 ### Techniques
 
 **Active state design**: The current navigation item must be visually
-unambiguous at all levels — primary section, secondary section, current page.
+unambiguous at all levels — primary section, secondary section, current page —
+and distinct from both the hover and the default state.
 Weak active states are a pervasive enterprise IA failure.
 
 **Page title consistency**: The page title (H1) should match the navigation
 label that leads to it. If the nav item says "Styles" and the page title says
 "Style Management", there's a dissonance that creates orientation uncertainty.
+The page title is the highest-priority location signal: visible on load and
+specific ("Product Configurations", not "Dashboard").
 
 **URL structure as navigation aid**: Clean URLs communicate location
 hierarchy (`/products/styles/12345`). Opaque URLs (`/app?id=xyz&mode=3`)
@@ -380,6 +459,12 @@ Route to `ia-research-methods` for full protocols.
   navigation hierarchy; spatial composition that supports IA levels
 - **`lead-ux-designer`** → `ux-interaction-design`: Navigation interaction
   patterns — hover behaviors, transitions, focus management
+- **`lead-accessibility-architect`**: Keyboard navigation order, focus management at the
+  navigation level, skip links
+- **`be-data-modeling`**: Data hierarchy constraints that shape IA (what can be
+  grouped with what) — surface the constraint in the IA decision
+- **`dsci-product-analytics`**: Funnel drop-off, navigation path analysis, and
+  time-to-task to validate navigation decisions
 
 ---
 
@@ -387,6 +472,9 @@ Route to `ia-research-methods` for full protocols.
 
 - Kevin Lynch, *The Image of the City* (1960)
 - Peter Morville & Louis Rosenfeld, *Information Architecture for the World Wide Web*
+  (4th ed. retitled *Information Architecture: For the Web and Beyond*)
+- Abby Covert, *How to Make Sense of Any Mess*
+- Nielsen Norman Group — IA and navigation articles: https://www.nngroup.com/topic/ia/
 - Paul Mijksenaar, *Visual Function: An Introduction to Information Design* (1997)
 - Miller, "The Magical Number Seven, Plus or Minus Two" (1956)
 - Jakob Nielsen, useit.com navigation research

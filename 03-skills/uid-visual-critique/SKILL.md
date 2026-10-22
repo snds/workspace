@@ -32,7 +32,7 @@ visual design output and making judgment communicable and actionable.
 
 - **Design system compliance checks (tokens, components, patterns)** → `ds-advisor`
 - **Accessibility criteria in visual evaluation** → `lead-accessibility-architect`
-- **Usability/behavior evaluation of components** → `lead-ux-designer` / `ux-design-systems`
+- **Usability/behavior evaluation of components** → `lead-ux-designer` / `ds-component-spec`
 - **Semiotic and rhetorical analysis depth** → `gd-visual-communication`
 
 ---
@@ -354,7 +354,7 @@ useful if it also identifies which 3 to fix first.
 - `gd-visual-communication` — semiotic evaluation and visual rhetoric as evaluation depth
 - `ds-advisor` — design system compliance checks (tokens, components, documented patterns)
 - `lead-accessibility-architect` — accessibility criteria in visual evaluation (contrast, size)
-- `lead-ux-designer` / `ux-design-systems` — component and interaction pattern evaluation
+- `lead-ux-designer` / `ds-component-spec` — component and interaction pattern evaluation
 - `uid-visual-system` — evaluating against the defined visual language standard
 - `lead-visual-qa` / `visual-qa-ui-design` — when output is ready for a structured quality pass
 - `lead-icon-artist` — icon-specific critique (visual weight, metaphor, keyline adherence)

@@ -237,6 +237,19 @@ a depth/parallax illusion, is a vestibular risk. `prefers-reduced-motion` must
 disable these — not reduce them. Route to `lead-motion-designer`/`motion-accessibility`
 for animation design that respects this constraint.
 
+**Spec the no-motion state**: animation libraries honor `prefers-reduced-motion` unevenly
+and custom animation often ignores it, so the design spec names every animation that
+needs a reduced-motion alternative, and what it is. Loading and progress states are the
+ones most often missed:
+- Loading spinner → static skeleton screen
+- Shimmer placeholder → static grey block
+- Animated progress → static bar showing the current percentage
+- View transition → instant cut, or a short cross-fade where timing matters
+
+Flag large-area motion (parallax, auto-playing backgrounds, full-screen transitions) and
+very frequent updates (data refreshing at under 100ms intervals) in the spec as needing
+a reduced-motion alternative.
+
 ---
 
 ## Proprioceptive and Spatial Processing

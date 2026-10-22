@@ -19,6 +19,7 @@ description: >
 aliases: [lead-motion-designer]
 tier: hub
 domain: design
+area: motion
 prerequisites: [design-foundations]
 triggers: [motion designer, animation system, easing choice]
 governed_by: [qa]
@@ -27,6 +28,10 @@ spec_version: "2.0"
 ---
 
 # Lead Motion Designer
+
+**Doctrine, not implementation.** This hub owns what motion should be. Building it in code
+(GSAP, Motion, Lottie, Rive, WebGL) is the `/motion` command hub's job, which defers here on
+intent.
 
 **Hub skill** for the motion design skill network. Routes to 9 specialist spoke
 skills based on topic. This skill provides the first-principles foundation and
@@ -208,7 +213,7 @@ like a button) is a failure mode.
 ### `lead-motion-designer` → `lead-ux-designer`
 - `motion-transitions` ↔ `ux-interaction-design`: state change animations are
   interaction design decisions, not visual design afterthoughts
-- `motion-accessibility` ↔ `ux-accessibility`: motion accessibility is a
+- `motion-accessibility` ↔ `lead-accessibility-architect`: motion accessibility is a
   dimension of inclusive design
 - `motion-choreography` → `ux-performance-perception`: well-designed motion
   transitions and loading sequences directly affect perceived performance

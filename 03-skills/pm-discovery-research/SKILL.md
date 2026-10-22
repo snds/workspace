@@ -382,7 +382,7 @@ code. A requirement a reader can't understand cold is not a requirement.
 ## Cross-Hub References
 
 - **Which requirement/research artifact to produce + how to author it** → [[06-research-and-design-artifacts]]
-- **Experiment design / statistical validation** → `ds-experimentation`: when
+- **Experiment design / statistical validation** → `dsci-experimentation`: when
   qualitative discovery points to a hypothesis suitable for quantitative testing
 - **Translating opportunity findings into a roadmap** → `pm-roadmap-strategy`
 - **Communicating research findings to executives** → `pm-stakeholder-comms`

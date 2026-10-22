@@ -1,37 +1,40 @@
 ---
 name: design-system-ops
 description: >-
-  Design system operations command hub — token audits, drift detection, governance,
+  Design system operations command spoke of the `ds` hub — token audits, drift detection, governance,
   deprecation, design-system health, stakeholder briefs. Use when running a design system
   (not merely consuming one): "audit tokens", "drift check", "DS governance",
   "deprecation plan", "design-system health", "theme audit", "docs coverage". Wraps the
-  vendored skills/commands in this directory. Not for component authoring
-  (design-engineer) or DS strategy (ds-advisor).
+  vendored skills/commands in this directory. Not for component specs
+  (ds-component-spec), token naming (token-architecture) or DS strategy (ds-advisor).
 aliases: [design-system-ops]
-triggers: [design system ops, token audit, audit my tokens, drift detection, ds governance, ds health, design system health, deprecation plan, theme audit, docs coverage]
-tier: hub
+triggers: [design system ops, token audit, audit my tokens, drift detection, ds governance, ds health, design system health, deprecation plan, theme audit, docs coverage, plan the deprecation, deprecate this component, deprecation of this component]
+tier: spoke
 domain: design
-prerequisites: [design-foundations]
+hub: ds
+prerequisites: [ds]
 related: [ds-advisor, design-engineer, ux-component-library, figma, qa]
-defers_to: [framework-09, framework-13, ds-advisor, design-engineer]
+defers_to: [framework-09, framework-13, ds]
 rigor_role: command-hub
 surfaces: ["*"]
 spec_version: "2.3"
 ---
 
-# Design System Ops — Operations Hub
+# Design System Ops — Operations Spoke
 
-**Wrapper (L2)** over the vendored pack in this directory (`skills/`, `commands/`,
+A command spoke of [[ds]] (a hub of its own until 2026-10-22). **Wrapper (L2)** over the vendored pack in this directory (`skills/`, `commands/`,
 `knowledge-notes/`). Owns triggers and doctrine. Nested skills hold procedure depth.
 Pack landing page: [[03-skills/design-system-ops/README|design-system-ops README]].
 
 ## Owns vs defers
 
-| This hub | Defer to |
+| This spoke | Defer to |
 |---|---|
 | Token/drift/governance/ops workflows | — |
 | DS strategy / which system to build | [[ds-advisor]] |
-| Component authoring / implementation | [[design-engineer]] |
+| Component spec | [[ds-component-spec]] |
+| Token tiers and naming | [[token-architecture]] |
+| Code-side component questions | [[design-engineer]] (lens) |
 | Component schema / DESIGN.md | framework #09 |
 | Pixel QA of UI | `/qa` + [[visual-qa-toolkit]] |
 | AI×DS mortar / steel curtain / org arc | [[18-design-systems-ai-operating-model]] + [[ai-design-systems]] |
@@ -73,5 +76,5 @@ vendored notes as overriding #09.
 - [[09-component-and-pattern-framework]] · [[13-domain-rigor-stack]] · [[ds-advisor]] · [[design-engineer]]
 
 ## Related
-- foundation → [[design-foundations]]
+- hub → [[ds]]
 - peer ↔ [[ds-advisor]] · [[design-engineer]] · [[qa]] · [[figma]] · [[ai-design-systems]]

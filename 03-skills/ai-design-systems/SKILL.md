@@ -15,11 +15,11 @@ aliases: [ai-design-systems]
 triggers: [ai design system, ai and design systems, vibe coding, generative ui, gen ui, a2ui, steel curtain, on-rails, off-rails, context-based design system, ai as mortar, figmalint, story ui, agents as users, dual publish, design system inspection, ai-ready, console mcp]
 tier: spoke
 domain: design
-hub: ds-advisor
-prerequisites: [ds-advisor]
+hub: ds
+prerequisites: [ds]
 related: [design-engineer, design-system-ops, ds-generation-pipeline, ux-component-library]
 governed_by: [qa]
-defers_to: [framework-18, framework-09, framework-13, ds-advisor, design-engineer]
+defers_to: [framework-18, framework-09, framework-13, ds, design-engineer]
 rigor_role: command-hub
 surfaces: ["*"]
 spec_version: "2.2"
@@ -118,6 +118,6 @@ Copy [[18-design-systems-ai-operating-model]] — do not fork them here. If this
 - Plugin Figma skills are mechanics only.
 
 ## Related
-- hub → [[ds-advisor]]
+- hub → [[ds]]
 - governed-by → [[qa]]
 - peer ↔ [[design-engineer]] · [[design-system-ops]] · [[ds-generation-pipeline]] · [[ux-component-library]] · [[lead-accessibility-architect]]

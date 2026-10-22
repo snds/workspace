@@ -145,7 +145,7 @@ Skills and knowledge entries are complementary:
 - A **skill** says: "when you encounter X, do Y"
 - A **knowledge entry** says: "here's what we've learned about X from our actual work"
 
-Example: `ds-experimentation/SKILL.md` covers how to design an A/B test. A knowledge
+Example: `dsci-experimentation/SKILL.md` covers how to design an A/B test. A knowledge
 entry in `08-knowledge/data-science/experiment-learnings.md` might capture what specific
 experiment designs have worked or failed in our context, what the stakeholders actually
 care about, and where the canonical skill guidance doesn't quite fit our situation.

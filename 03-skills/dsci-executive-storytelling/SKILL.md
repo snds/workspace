@@ -1,5 +1,5 @@
 ---
-name: ds-executive-storytelling
+name: dsci-executive-storytelling
 description: >
   Translating data analysis into executive decisions, structuring data narratives,
   communicating uncertainty, and building executive-grade dashboards and briefings
@@ -12,8 +12,8 @@ description: >
   to the mean, structuring a data briefing, framing a business recommendation from
   analysis, or any question about how to make analytical findings land with business
   stakeholders who want decisions, not model metrics. This skill covers analytical
-  communication — not the analytical methods themselves (see other DS spokes).
-aliases: [ds-executive-storytelling]
+  communication — not the analytical methods themselves (see other DSci spokes).
+aliases: [dsci-executive-storytelling]
 spec_version: "2.0"
 tier: spoke
 domain: data
@@ -21,7 +21,7 @@ hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
 ---
 
-# DS: Executive Storytelling
+# DSci: Executive Storytelling
 
 Specialist lens for translating data science work into executive decisions in enterprise
 SaaS. Part of the lead-data-scientist skill network.
@@ -33,7 +33,7 @@ SaaS. Part of the lead-data-scientist skill network.
 This skill owns **how analytical findings are communicated and structured for business
 impact**.
 
-- **The analytical foundation of the findings** → appropriate DS spoke
+- **The analytical foundation of the findings** → appropriate DSci spoke
 - **PM alignment on what the exec needs to decide** → also engage `pm-stakeholder-comms`
 - **Metric definition and OKR ownership** → `pm-metrics-analytics`
 
@@ -45,13 +45,13 @@ right decision gets made.
 
 ## The Insight → Recommendation → Decision Chain
 
-Most DS work stops at insight. That is not enough.
+Most DSci work stops at insight. That is not enough.
 
 | Stage | Output | Who Owns It |
 |-------|--------|------------|
 | Analysis | Findings and evidence | Data Science |
 | **Insight** | What the findings mean for the business | Data Science |
-| **Recommendation** | What action the business should take | DS + PM / DS + Leadership |
+| **Recommendation** | What action the business should take | DSci + PM / DSci + Leadership |
 | **Decision** | Which option is chosen and why | Decision-maker (Exec, PM) |
 
 "Accounts in the bottom usage quartile have 3× higher churn rate" is a finding.
@@ -162,7 +162,7 @@ being made, not aesthetic preference or chart variety.
 | Board / C-suite | 3-5 charts max per briefing; no multi-panel; no log scales without explanation |
 | VP / Director | Can handle multi-panel, trend analysis, before/after comparisons |
 | PM / technical lead | Full analytical charts; cohort heatmaps; box plots; log scales fine |
-| DS / analyst | All chart types; raw model outputs acceptable |
+| DSci / analyst | All chart types; raw model outputs acceptable |
 
 ---
 
@@ -175,7 +175,7 @@ Uncertainty is not a weakness to hide — it is information the decision-maker n
 A churn forecast that says "8% of ARR will churn in Q4" without an uncertainty range:
 - Implies false precision
 - Prevents the decision-maker from stress-testing their plans
-- Makes DS look wrong when actuals come in at 10%
+- Makes DSci look wrong when actuals come in at 10%
 
 A forecast that says "our base case is 8%, with a reasonable range of 6-11%" enables
 the exec to plan for downside and know the confidence level of their planning assumptions.
@@ -307,14 +307,14 @@ If you can't complete the sentence "This means the business should..." or "This 
 the exec should be [more/less] concerned about X because...", the finding is not ready
 to present.
 
-Data without a "so what" is homework, not a briefing. The DS's job is to have done
+Data without a "so what" is homework, not a briefing. The DSci's job is to have done
 the thinking to get to the "so what" before the room gets together, not in the room.
 
 ---
 
 ## Cross-Hub References
 
-- For the analytical foundation of findings → appropriate DS spoke for the domain
+- For the analytical foundation of findings → appropriate DSci spoke for the domain
 - For PM alignment on recommendation framing and stakeholder management → `pm-stakeholder-comms`
 - For metric definition and OKR ownership → `pm-metrics-analytics`
 - For the visual communication craft — chart selection, data encoding, dashboard architecture, narrative visualization — route to `lead-information-designer`; this spoke provides the analytical story; `infod-narrative-design` and `infod-dashboard-patterns` provide the designed form it takes

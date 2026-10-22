@@ -202,7 +202,7 @@ Enterprise procurement commonly includes VPAT/accessibility requirements.
 WCAG 2.1 AA is the floor; 2.2 AA is where new work should target. This is not
 a post-launch audit item — it must be built in.
 
-Route to `fe-accessibility` for implementation specifics. Route to `ux-accessibility`
+Route to `fe-accessibility` for implementation specifics. Route to `lead-accessibility-architect`
 for design-layer decisions. Route to `fe-testing` for axe-core integration in CI.
 
 ---
@@ -215,9 +215,9 @@ for design-layer decisions. Route to `fe-testing` for axe-core integration in CI
 |--------------------------|----------|
 | Component API mirrors DS variant/state model | `ds-advisor` |
 | Design/code bridge: token consumption, Figma handoff | `design-engineer` |
-| Chart type selection, data encoding decisions | `ux-data-visualization` |
+| Chart type selection, data encoding decisions | `lead-information-designer` |
 | Loading state UX design, skeleton vs. spinner | `ux-performance-perception` |
-| Focus order, label copy, interaction model for ARIA | `ux-accessibility` |
+| Focus order, label copy, interaction model for ARIA | `lead-accessibility-architect` |
 | Deep a11y expertise — AT testing, WCAG depth, legal compliance | `lead-accessibility-architect` |
 | Form UX patterns, wizard flow design | `ux-interaction-design` |
 
@@ -235,10 +235,10 @@ for design-layer decisions. Route to `fe-testing` for axe-core integration in CI
 
 | When this topic comes up | Route to |
 |--------------------------|----------|
-| What to visualize, data encoding, chart type | `ds-executive-storytelling` |
-| ML prediction API consumption, streaming inference | `ds-ml-engineering` |
-| Web Vitals as product analytics instrumentation | `ds-product-analytics` |
-| Chart interaction event instrumentation | `ds-product-analytics` |
+| What to visualize, data encoding, chart type | `dsci-executive-storytelling` |
+| ML prediction API consumption, streaming inference | `dsci-ml-engineering` |
+| Web Vitals as product analytics instrumentation | `dsci-product-analytics` |
+| Chart interaction event instrumentation | `dsci-product-analytics` |
 
 ### FE → Framework-Specific Depth
 

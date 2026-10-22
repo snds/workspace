@@ -1,5 +1,5 @@
 ---
-name: ds-ml-engineering
+name: dsci-ml-engineering
 description: >
   Production ML systems, model lifecycle management, MLOps, and serving infrastructure
   for enterprise SaaS. Use this skill whenever the conversation touches: model training
@@ -9,9 +9,9 @@ description: >
   CI/CD for ML, shadow mode deployments, canary releases for models, train-serve skew,
   model cards, production evaluation, MLOps platform design, or any question about taking
   a model from research/notebook to production and keeping it healthy there. This skill
-  covers production ML engineering — not experiment design (ds-experimentation), not
-  analytical use of models (ds-product-analytics), not NLP-specific pipelines (ds-nlp-llm).
-aliases: [ds-ml-engineering]
+  covers production ML engineering — not experiment design (dsci-experimentation), not
+  analytical use of models (dsci-product-analytics), not NLP-specific pipelines (dsci-nlp-llm).
+aliases: [dsci-ml-engineering]
 spec_version: "2.0"
 tier: spoke
 domain: data
@@ -19,7 +19,7 @@ hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
 ---
 
-# DS: ML Engineering
+# DSci: ML Engineering
 
 Specialist lens for production ML systems in enterprise SaaS. Part of the lead-data-scientist
 skill network.
@@ -31,12 +31,12 @@ skill network.
 This skill owns **production ML engineering** — the systems, practices, and operational
 patterns that take models from research to production and keep them healthy there.
 
-- **Experiment design and causal inference** → `ds-experimentation`
-- **NLP/LLM-specific pipelines** → `ds-nlp-llm`
+- **Experiment design and causal inference** → `dsci-experimentation`
+- **NLP/LLM-specific pipelines** → `dsci-nlp-llm`
 - **Model serving as a microservice** → also load `be-service-architecture`
 - **Prediction caching / latency** → also load `be-caching-performance`
 - **ML API contract design** → also load `be-api-design`
-- **Analytical pipeline and data warehouse** → `ds-data-engineering`
+- **Analytical pipeline and data warehouse** → `dsci-data-engineering`
 
 ---
 
@@ -279,7 +279,7 @@ without one.
 | Known limitations | Edge cases, distribution ranges, failure modes |
 | Fairness evaluation | Performance across customer segments, account sizes, industries |
 | Monitoring plan | Drift metrics, alerting thresholds, review cadence |
-| Owners | Model owner, data owner, reviewing DS |
+| Owners | Model owner, data owner, reviewing DSci |
 
 ---
 
@@ -302,9 +302,9 @@ without one.
 - For model serving as microservice → `be-service-architecture`
 - For prediction caching and latency optimization → `be-caching-performance`
 - For ML API design and versioning in API contracts → `be-api-design`
-- For experiment design around model launches → `ds-experimentation`
-- For NLP/LLM-specific model patterns → `ds-nlp-llm`
-- For the data pipeline feeding training data → `ds-data-engineering`
+- For experiment design around model launches → `dsci-experimentation`
+- For NLP/LLM-specific model patterns → `dsci-nlp-llm`
+- For the data pipeline feeding training data → `dsci-data-engineering`
 
 ## Related
 - hub → [[lead-data-scientist]]

@@ -28,8 +28,8 @@ data visualization: chart type selection, visual encoding choices, dashboard arc
 and table design for data-dense enterprise interfaces.
 
 Does not own: rendering and implementation (→ `fe-data-visualization`), analytical
-methodology (→ `ds-executive-storytelling`), instrumentation of dashboard interactions
-(→ `ds-product-analytics`), API shape to support the chart (→ `be-api-design`).
+methodology (→ `dsci-executive-storytelling`), instrumentation of dashboard interactions
+(→ `dsci-product-analytics`), API shape to support the chart (→ `be-api-design`).
 Those constraints inform design decisions here but are decided elsewhere.
 
 ---
@@ -313,9 +313,9 @@ reduces the cognitive load of decoding each chart independently.
 ## Cross-Links
 
 - `fe-data-visualization` — rendering and performance constraints; library selection
-- `ds-executive-storytelling` — what data story to tell and why; analytical methodology
+- `dsci-executive-storytelling` — what data story to tell and why; analytical methodology
 - `be-api-design` — API response shape; aggregate vs. raw data; date bucketing constraints
-- `ds-product-analytics` — instrumentation of dashboard interactions; what to measure
+- `dsci-product-analytics` — instrumentation of dashboard interactions; what to measure
 - `ux-interaction-design` — cross-filter interactions as an interaction pattern; drill-down flows
 - `lead-information-designer` — for encoding theory depth (Bertin's retinal variables, Cleveland & McGill hierarchy), full chart taxonomy, dashboard architecture (KPI card anatomy, drill-down patterns), and narrative design; this spoke is the entry-level design-decision layer; route here for perceptual theory and discipline depth
 

@@ -47,7 +47,7 @@ TIER_RANK = {"foundation": 0, "hub": 1, "spoke": 2, "cross-cutting": 3, None: 4}
 LIST_KEYS = {"aliases", "triggers", "prerequisites", "related",
              "governed_by", "governs", "surfaces", "requires", "defers_to"}
 SCALAR_KEYS = {"name", "hub", "tier", "domain", "spec_version", "pinned_version",
-               "rigor_role"}
+               "rigor_role", "area"}
 
 
 # ---- minimal frontmatter parser -------------------------------------------
@@ -182,6 +182,7 @@ def read_skills():
             "requires": fm.get("requires", []),
             "defers_to": fm.get("defers_to", []),
             "rigor_role": fm.get("rigor_role"),
+            "area": fm.get("area"),
             "hash": compute_hash(skill_md),
             "dir": dir_name,
         }
@@ -323,6 +324,9 @@ def build():
             "rigor_role": rec.get("rigor_role"),
             "hash": rec["hash"],
         }
+        if rec.get("area"):
+            # The subspecialty area a hub owns (one hub per area); see skill-frontmatter.md.
+            registry["skills"][name]["area"] = rec["area"]
         if not errors:
             registry["load_chains"][name] = load_chain(name, skills)
         tier_counts[rec["tier"] or "unspecified"] = tier_counts.get(rec["tier"] or "unspecified", 0) + 1

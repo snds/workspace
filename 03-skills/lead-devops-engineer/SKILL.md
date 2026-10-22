@@ -70,7 +70,7 @@ Common routing patterns:
 - **Cloud cost or FinOps**: `devops-cost-optimization`
 - **Security scanning in pipeline**: `devops-ci-cd` (shift-left section); if the question is about network policy, IAM, or secrets management in infrastructure, also `devops-infrastructure-as-code`
 - **Secrets management**: `devops-infrastructure-as-code` (secrets in IaC) — for application-layer auth secrets, see `be-auth-patterns`
-- **MLOps pipelines**: `devops-ci-cd` — treat as a CI/CD variant; for ML-specific engineering, also see `ds-ml-engineering`
+- **MLOps pipelines**: `devops-ci-cd` — treat as a CI/CD variant; for ML-specific engineering, also see `dsci-ml-engineering`
 
 **Step 2**: Load the spoke from:
 ```
@@ -200,9 +200,9 @@ For the twelve-factor model in the context of service design, see `be-service-ar
 
 | When this topic comes up | Route to |
 |--------------------------|----------|
-| MLOps CI/CD pipelines | `devops-ci-cd` (treat as CI/CD variant) + `ds-ml-engineering` |
-| Data infrastructure provisioning (Spark, data lake, warehouse) | `devops-infrastructure-as-code` + `ds-data-engineering` |
-| ML model deployment and serving | `ds-ml-engineering` |
+| MLOps CI/CD pipelines | `devops-ci-cd` (treat as CI/CD variant) + `dsci-ml-engineering` |
+| Data infrastructure provisioning (Spark, data lake, warehouse) | `devops-infrastructure-as-code` + `dsci-data-engineering` |
+| ML model deployment and serving | `dsci-ml-engineering` |
 
 ### DevOps → Frontend Engineering
 

@@ -35,6 +35,26 @@ This spoke owns **chart type decisions** — what to use, when, and why not.
 
 ---
 
+## Selection by Relationship
+
+The chart type is a claim about the relationship in the data, not an aesthetic
+choice. Name the relationship first, then pick the encoding that makes it clearest.
+
+| Relationship | Primary encoding | Best chart(s) | Never use |
+|-------------|-----------------|---------------|-----------|
+| **Change over continuous time** | Position on shared axis | Line, area | Bars for a continuous series |
+| **Comparison between discrete items** | Position on shared axis | Horizontal bar, dot plot | Pie with >3 items |
+| **Part-to-whole** | Area / arc proportion | Stacked bar, treemap, waffle | Pie with >3 segments or when precision matters |
+| **Distribution** | Position + density | Histogram, box, violin | Bar chart of averages (hides spread) |
+| **Correlation** | Position on two axes | Scatter, bubble, slope | Heatmap unless both axes are categorical |
+| **Ranking** | Position on common scale | Horizontal bar (long labels), dot plot | Vertical bar with long labels |
+| **Flow between states** | Edge width ∝ volume | Sankey, alluvial | Any flow chart where the flow metaphor is not literally true |
+| **Composition change over time** | Stacked position | Grouped stacked bar (absolute), 100% bar (proportion) | One pie per period |
+| **Geographic distribution** | Map projection | Choropleth, proportional symbol → `infod-spatial-maps` | A map when geography is irrelevant to the insight |
+| **Network relationships** | Node + edge | Node-link → `infod-network-graphs` | Node-link when the count, not the connections, is the insight |
+
+---
+
 ## Chart Taxonomy
 
 ### Distribution — What does the data spread look like?
@@ -189,9 +209,24 @@ This spoke owns **chart type decisions** — what to use, when, and why not.
 - Use for: operational monitoring dashboards with 10–30 time series in
   limited vertical space; not for general audiences
 
+**Bar Chart (Time Periods)**
+- Use bars over time only when each period is a genuinely discrete event
+  (monthly totals with no meaningful interpolation between them)
+- Daily data over 12 months as bars encodes the wrong metaphor — bars imply
+  discrete categories, not continuous change; use a line
+
 **OHLC / Candlestick**
 - Open, High, Low, Close encoding for financial time series
 - Purpose-built for financial data; inappropriate outside that context
+
+### Flow — How does volume move between states?
+
+**Sankey / Alluvial Diagram**
+- Edge width proportional to the volume moving from one state or stage to the next
+- Use only when the flow metaphor is literally true: a conserved quantity that
+  actually moves between states (funnel stages, budget allocation, status transitions)
+- When not: unrelated categories joined by bands for visual effect; geographic
+  movement (use a flow map → `infod-spatial-maps`)
 
 ### Part-to-Whole — What percentage is each part?
 
@@ -231,7 +266,8 @@ scale can.
 |------------|---------------|
 | **Pie chart** | >5 slices; any two slices need precise comparison |
 | **3D chart** | Any quantitative data; always degrades accuracy |
-| **Dual-axis chart** | The two series use different units — almost always creates a false correlation by axis scaling; use two separate charts instead |
+| **Dual-axis chart** | The two series use different units — almost always creates a false correlation by axis scaling (the point where the lines cross moves with axis scaling, so it is arbitrary); use two separate charts instead. Exception: the axes are rationally related (two units of the same measurement) |
+| **Heatmap** | Either axis is continuous (e.g., time on X) — it conflates category with gradient; use a line chart. Heatmaps need both axes categorical |
 | **Stacked area (multiple series)** | More than 2 series; accurate reading of individual series is needed |
 | **Radar / Spider chart** | Any serious comparison; area and distance from center are both misleading; replace with parallel coordinates or small multiples bar |
 | **Bubble chart** | Precise magnitude comparison; use scatterplot + separate bar chart |
@@ -337,6 +373,8 @@ across subsets by position — the most perceptually accurate channel.
 - Edward Tufte — *The Visual Display of Quantitative Information* (1983)
 - Claus Wilke — *Fundamentals of Data Visualization* (2019): https://clauswilke.com/dataviz/
 - Alberto Cairo — *How Charts Lie* (2019)
+- Datawrapper Academy — chart type selection: https://academy.datawrapper.de/
+- Observable — data visualization patterns: https://observablehq.com/
 
 ## Related
 - hub → [[lead-information-designer]]

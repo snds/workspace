@@ -254,10 +254,10 @@ It's the *how* that carries across projects, so IA and interaction thinking stay
 | Search UX, faceted filtering, findability | `ia-search-findability` |
 | Content types, content modeling, editorial workflow | `ia-content-strategy` |
 | Multi-role, multi-product, admin versus end-user structure | `ia-enterprise-complexity` |
-| Practical IA inside a UX sprint (not deep theory) | `lead-ux-designer` → `ux-information-architecture` |
-| Quantitative validation, navigation path and search analytics | `ds-product-analytics` under [#15](15-analysis-operating-model.md) |
+| Practical IA inside a UX sprint (not deep theory) | `lead-information-architect` |
+| Quantitative validation, navigation path and search analytics | `dsci-product-analytics` under [#15](15-analysis-operating-model.md) |
 | Taxonomy storage pattern, content model to schema | `be-data-modeling` under [#14](14-engineering-operating-model.md) |
 
 Load 1 to 2 spokes for the stage in play, never the whole network. The pipeline is the contract; the spokes carry the method.
 
-Governed by [[13-domain-rigor-stack]]; measurement here pairs with research methods and analytics ([[lead-information-architect]] plus `ds-product-analytics`), not only visual QA.
+Governed by [[13-domain-rigor-stack]]; measurement here pairs with research methods and analytics ([[lead-information-architect]] plus `dsci-product-analytics`), not only visual QA.

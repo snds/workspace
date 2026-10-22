@@ -329,7 +329,7 @@ to shared capabilities at the start of the planning cycle, not mid-execution.
   narrative structure and 1-pager format for roadmap presentations
 - **Platform sequencing decisions** → `pm-platform-api`: when the roadmap
   item is a platform investment rather than a user-facing feature
-- **Usage forecasts and churn signals as roadmap inputs** → `ds-forecasting`
+- **Usage forecasts and churn signals as roadmap inputs** → `dsci-forecasting`
 
 ## Related
 - hub → [[lead-product-manager]]

@@ -41,8 +41,8 @@ API gateway patterns, data contract evolution, and iPaaS strategy**.
 
 - REST/GraphQL API design for your own API surface → `be-api-design`
 - Sagas, choreography, CQRS within service boundaries → `be-service-architecture`
-- Kafka as observability event source → cross-reference `ds-data-engineering`
-- Experiment event tracking infrastructure → `ds-experimentation`
+- Kafka as observability event source → cross-reference `dsci-data-engineering`
+- Experiment event tracking infrastructure → `dsci-experimentation`
 
 ---
 
@@ -464,9 +464,9 @@ which iPaaS platforms support but it's a worse enterprise experience.
 |-------|----------|
 | REST/GraphQL API design | `be-api-design` |
 | Saga pattern, CQRS, event sourcing | `be-service-architecture` |
-| Kafka topics as analytics pipeline sources | `ds-data-engineering` |
-| Event instrumentation for experiment tracking | `ds-experimentation` |
-| Event instrumentation for product metrics | `ds-product-analytics` |
+| Kafka topics as analytics pipeline sources | `dsci-data-engineering` |
+| Event instrumentation for experiment tracking | `dsci-experimentation` |
+| Event instrumentation for product metrics | `dsci-product-analytics` |
 | Platform integration strategy (roadmap) | `pm-platform-api` |
 | Event-driven metrics requirements | `pm-metrics-analytics` |
 

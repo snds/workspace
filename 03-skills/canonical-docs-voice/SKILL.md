@@ -23,8 +23,8 @@ triggers:
   - optional peer
 tier: spoke
 domain: design
-hub: ds-advisor
-prerequisites: [ds-advisor]
+hub: ds
+prerequisites: [ds]
 related: [design-engineer]
 surfaces: ["*"]
 spec_version: "2.3"
@@ -90,5 +90,5 @@ Then show the live canvas. Storybook remains the args-panel jump-out in the
 Open menu, not a substitute explained in the body.
 
 ## Related
-- hub → [[ds-advisor]]
+- hub → [[ds]]
 - peer ↔ [[design-engineer]]

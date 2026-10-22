@@ -12,14 +12,14 @@ description: >
   09-tools/token-audit.py. Strategy stays with ds-advisor; the Style Dictionary / Figma-sync pipeline
   with fe-design-tokens; drift/health ops with design-system-ops.
 aliases: [token-architecture, subatomic, three-tier-tokens]
-triggers: [subatomic, three-tier tokens, three tier tokens, token tiers, tier 3 tokens, tier-3 token, token naming algorithm, naming tokens, token naming convention, vanilla theme, core tokens, token czar, token czars, token governance, publish tier 1, token adoption, multi-brand tokens, new theme tokens, token-audit]
+triggers: [subatomic, three-tier tokens, three tier tokens, token tiers, tier 3 tokens, tier-3 token, token naming algorithm, naming tokens, token naming convention, vanilla theme, core tokens, token czar, token czars, token governance, publish tier 1, token adoption, multi-brand tokens, new theme tokens, token-audit, token architecture, semantic tokens, name these tokens, name these semantic tokens, token names]
 tier: spoke
 domain: design
-hub: ds-advisor
-prerequisites: [ds-advisor]
+hub: ds
+prerequisites: [ds]
 related: [fe-design-tokens, design-system-ops, design-engineer, ux-component-library, figma-variable-creation, ai-design-systems]
 governed_by: [qa, a11y-visual]
-defers_to: [framework-09, framework-13, ds-advisor]
+defers_to: [framework-09, framework-13, ds]
 rigor_role: command-hub
 surfaces: ["*"]
 spec_version: "2.2"
@@ -123,5 +123,5 @@ category or an assistive special case such as a focus ring also qualifies.
 in [[design-token-architecture]] — cite them rather than re-deciding.
 
 ## Related
-- hub → [[ds-advisor]]
+- hub → [[ds]]
 - governed-by → [[a11y-visual]] · [[qa]]

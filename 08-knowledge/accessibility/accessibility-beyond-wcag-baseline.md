@@ -5,7 +5,7 @@ updated: 2026-08-03
 status: working
 confidence: medium
 sources: [03-skills/lead-accessibility-architect/SKILL.md, 03-skills/a11y-visual/SKILL.md, 01-frameworks/10-perception-integrity.md, 08-knowledge/design/radix-derived-color-system.md, 08-knowledge/design/enterprise-saas-design-patterns.md]
-related_skills: [lead-accessibility-architect, a11y-visual, a11y-cognitive, a11y-motor-physical, a11y-neurodiversity, ux-accessibility, fe-accessibility, uid-color-for-ui]
+related_skills: [lead-accessibility-architect, a11y-visual, a11y-cognitive, a11y-motor-physical, a11y-neurodiversity, lead-accessibility-architect, fe-accessibility, uid-color-for-ui]
 related_projects: []
 relations:
   builds-on: ["[[radix-derived-color-system]]"]

@@ -20,8 +20,9 @@ description: >
 aliases: [lead-accessibility-architect]
 tier: hub
 domain: accessibility
+area: accessibility
 prerequisites: [design-foundations]
-triggers: [accessibility architect, wcag audit, screen reader path, inclusive design]
+triggers: [accessibility architect, wcag audit, screen reader path, inclusive design, is this accessible, modal accessible, is this modal accessible, accessibility review]
 spec_version: "2.0"
 
 ---
@@ -33,7 +34,7 @@ skills based on topic. This skill provides the foundational philosophy, populati
 statistics, and cross-cutting principles; spokes provide domain-specific depth.
 
 This hub is the **authoritative source** that other hubs defer to:
-- `ux-accessibility` spoke (in `lead-ux-designer`) routes here for deep expertise
+- UX design-layer accessibility asks route here (the former `ux-accessibility` spoke was folded into `a11y-*` on 2026-10-22)
 - `fe-accessibility` spoke (in `lead-frontend-engineer`) routes here for deep expertise
 - `motion-accessibility` spoke (in `lead-motion-designer`) routes here for vestibular/neurological depth
 - `uid-color-for-ui` (in `lead-ui-designer`) routes here for color accessibility depth
@@ -207,7 +208,6 @@ in a cast — and also help someone using their phone one-handed on a train.
 ## Cross-Hub References
 
 ### `lead-accessibility-architect` → `lead-ux-designer`
-- `ux-accessibility` spoke defers here for deep expertise
 - `a11y-cognitive` ↔ `ux-interaction-design`: cognitive accessibility directly constrains acceptable workflow complexity
 - `a11y-visual` ↔ `ux-research-synthesis`: include disabled users in research; AT-user research reveals failures invisible in standard usability testing
 

@@ -36,6 +36,10 @@ prerequisites: [design-foundations]
 
 # /type — Typography Hub
 
+**Owns implementation, not doctrine.** `/type` is the command hub for type *systems and
+setting* (scales, pairing, OpenType, typesetting). Letterform and typeface design doctrine
+is `lead-type-designer`'s; where they disagree on craft, it wins.
+
 Two altitudes under one roof: **type systems for screens** (scale, pairing, rhythm,
 readability) and **type design craft** (letterform construction, spacing/metrics,
 OpenType, variable axes, multi-script). It is a **wrapper** (three-way-contract wrapper

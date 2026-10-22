@@ -329,7 +329,7 @@ bugs, not documentation bugs.
   integration ecosystem strategy needs to be built out
 - **SSO/SCIM auth implementation** → `be-auth-patterns`: PM defines the
   requirements; backend implements the protocols
-- **AI/LLM capabilities as platform features** → `ds-nlp-llm`: when building
+- **AI/LLM capabilities as platform features** → `dsci-nlp-llm`: when building
   AI capabilities that need to be exposed via API
 - **Launch strategy for platform features** → `pm-enterprise-gtm`: table
   stakes checklist, launch readiness

@@ -28,6 +28,7 @@ hub: lead-ux-designer
 prerequisites: [lead-ux-designer]
 framework: "09-component-and-pattern-framework"
 spec_version: "2.1"
+triggers: [dialog vs sheet, sheet vs popover, dialog or sheet, which component should, component selection]
 ---
 
 # UX Component Library & Pattern Framework

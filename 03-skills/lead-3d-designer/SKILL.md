@@ -24,6 +24,7 @@ description: >
 aliases: [lead-3d-designer]
 tier: hub
 domain: design
+area: 3d
 prerequisites: [design-foundations]
 triggers: [3d designer, dcc scene, blender scene]
 spec_version: "2.0"

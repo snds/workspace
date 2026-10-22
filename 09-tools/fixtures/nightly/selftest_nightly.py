@@ -24,7 +24,7 @@ BETA = "03-skills/beta/SKILL.md"
 LANE_FIX_1 = "python3 09-tools/nightly.py --phases rebuild --scope staged --json"
 LANE_FIX_2 = 'git add -- <paths listed under "written">'
 FIXPOINT = ["build-registry.py", "build-related.py", "build-registry.py", "build-trigger-routes.py",
-            "build-history-index.py"]
+            "build-area-index.py", "build-history-index.py"]
 
 
 def _nightly(vault: Path, env: dict, *args: str, timeout: float = 120):
@@ -43,7 +43,8 @@ def _ledger(vault: Path, sid: str, paths: list[str]) -> None:
 
 def _checks_pass(tree: Path, env: dict) -> bool:
     for gen, args in (("build-registry.py", ["--check"]), ("build-related.py", ["--check"]),
-                      ("build-trigger-routes.py", ["--check"]), ("build-history-index.py", ["--check"])):
+                      ("build-trigger-routes.py", ["--check"]), ("build-area-index.py", ["--check"]),
+                      ("build-history-index.py", ["--check"])):
         if fx.py(tree / "09-tools" / gen, *args, cwd=tree, env=env).returncode != 0:
             return False
     return True
@@ -57,7 +58,7 @@ def case_fixpoint_clean(c: fx.Checks, base: Path, tmp: Path, env: dict) -> None:
     if not rep:
         return
     c.check([e["tool"] for e in rep["phases"]] == FIXPOINT, "fixpoint runs in order: "
-            "registry → related → registry → trigger-routes → history-index")
+            "registry → related → registry → trigger-routes → area-index → history-index")
     c.check(rep["phases"][2]["status"] == "noop", "second build-registry pass skipped when "
             "build-related wrote 0 files", rep["phases"][2]["status"])
     c.check(rep["written"] == [] and rep["fix"] is None, "clean tree: nothing written, no fix line")
@@ -174,7 +175,7 @@ def case_budget(c: fx.Checks, base: Path, tmp: Path, env: dict) -> None:
             "budget exhaustion gives exit 3", str(r.returncode))
     if rep:
         st = [(e["phase"], e["status"]) for e in rep["phases"]]
-        c.check(all(s == "SKIPPED" for _p, s in st) and len(st) == 6,
+        c.check(all(s == "SKIPPED" for _p, s in st) and len(st) == 7,
                 "budget exhaustion marks every remaining step SKIPPED", str(st))
         c.check(any(s["reason"] == "budget exhausted" for s in rep["skipped"]),
                 "skipped[] names the budget as the reason")

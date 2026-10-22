@@ -169,6 +169,9 @@ as an accessibility claim.
 - Icon-only buttons without 3:1 contrast between the icon and its background
 - Border-radius reducing the visible border width, causing a previously compliant
   border to fail 3:1 at the rounded corners
+- Checking contrast on white only. Test every real surface the element sits on
+  (secondary and raised surfaces, badges, selected rows, dark mode): a token pair that
+  passes on the page background can fail on the card it actually renders on
 
 ---
 
@@ -369,4 +372,4 @@ Before shipping any visual UI component:
 ---
 
 ## Related
-- governs → [[design-engineer]] · [[figma]] · [[gd-color-theory]] · [[lead-ui-designer]] · [[token-architecture]] · [[uid-color-for-ui]]
+- governs → [[design-engineer]] · [[ds-component-spec]] · [[figma]] · [[gd-color-theory]] · [[lead-ui-designer]] · [[token-architecture]] · [[uid-color-for-ui]]

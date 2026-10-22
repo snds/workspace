@@ -15,7 +15,7 @@ description: >
   question about the right API contract shape for a feature. Not for:
   authentication and authorization in APIs (be-auth-patterns), backend service
   decomposition (be-service-architecture), or ML prediction endpoint design
-  (ds-ml-engineering, though cross-referenced here).
+  (dsci-ml-engineering, though cross-referenced here).
 aliases: [be-api-design]
 tier: spoke
 domain: engineering
@@ -40,7 +40,7 @@ pagination, rate limiting, and documentation standards**.
 
 - Authentication and authorization in APIs → `be-auth-patterns`
 - Service-to-service architecture decisions → `be-service-architecture`
-- ML prediction API versioning and stability → `ds-ml-engineering`
+- ML prediction API versioning and stability → `dsci-ml-engineering`
 - Platform API strategy and product decisions → `pm-platform-api`
 
 ---
@@ -478,8 +478,8 @@ separately. The spec is the source of truth.
 |-------|----------|
 | API authentication, OAuth flows, JWT | `be-auth-patterns` |
 | Service decomposition, BFF pattern | `be-service-architecture` |
-| ML prediction endpoints | `ds-ml-engineering` |
-| LLM streaming API integration | `ds-nlp-llm` |
+| ML prediction endpoints | `dsci-ml-engineering` |
+| LLM streaming API integration | `dsci-nlp-llm` |
 | API product strategy | `pm-platform-api` |
 
 ## Related

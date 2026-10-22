@@ -38,7 +38,7 @@ GitOps (ArgoCD, Flux), and secrets in IaC**.
 - Application-layer auth secrets (JWT signing keys, OAuth credentials) → `be-auth-patterns`
 - Kubernetes resource authoring (Deployments, Helm charts) → `devops-container-orchestration`
 - CI pipeline for running `terraform plan/apply` → `devops-ci-cd` (Atlantis is covered here as the IaC-specific PR workflow)
-- Data infrastructure specifics (Spark, data lake design) → `ds-data-engineering`
+- Data infrastructure specifics (Spark, data lake design) → `dsci-data-engineering`
 
 ---
 
@@ -579,8 +579,8 @@ is too slow for application deployments. Use GitOps for that layer.
 | Helm chart authoring | `devops-container-orchestration` |
 | CI pipeline running Terraform | `devops-ci-cd` (Atlantis is here) |
 | Auth secrets at application layer | `be-auth-patterns` |
-| Data infrastructure specifics | `ds-data-engineering` |
-| MLOps infrastructure | `ds-ml-engineering` |
+| Data infrastructure specifics | `dsci-data-engineering` |
+| MLOps infrastructure | `dsci-ml-engineering` |
 | IaC cost (Reserved Instances, spot, right-sizing) | `devops-cost-optimization` |
 
 ## Related

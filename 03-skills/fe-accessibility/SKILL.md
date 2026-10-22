@@ -35,13 +35,13 @@ network.
 This skill owns **accessibility implementation** — ARIA in code, keyboard
 interaction patterns, focus management, and screen reader behavior.
 
-- **Accessibility design decisions** (focus order, label copy, interaction model) → `ux-accessibility`
+- **Accessibility design decisions** (focus order, label copy, interaction model) → `lead-accessibility-architect`
 - **Accessible component API design, headless UI ARIA** → `fe-component-architecture`
 - **Automated accessibility testing integration** → `fe-testing`
 
 **ARIA bugs often originate in design decisions.** Before assuming it's an
 implementation problem, confirm that the interaction model was designed with
-accessibility in mind. Route to `ux-accessibility` if the root cause is design.
+accessibility in mind. Route to `lead-accessibility-architect` if the root cause is design.
 
 ---
 
@@ -452,7 +452,7 @@ Route to `fe-testing` for integration patterns.
 
 | Topic | Route to |
 |-------|----------|
-| Accessibility design decisions, focus order, label copy | `ux-accessibility` |
+| Accessibility design decisions, focus order, label copy | `lead-accessibility-architect` |
 | ARIA in headless component primitives | `fe-component-architecture` |
 | jest-axe, Playwright accessibility, axe in CI | `fe-testing` |
 

@@ -14,7 +14,7 @@ description: >
   "how do I handle N selected items", "what's the feedback for this action", or any
   question about the detailed behavioral design of an interface.
 aliases: [ux-interaction-design]
-triggers: [state sweep, state-sweep, missing states]
+triggers: [state sweep, state-sweep, missing states, drag-and-drop, drag and drop, reordering interaction, interaction design, multi-step flow]
 tier: spoke
 domain: design
 hub: lead-ux-designer
@@ -27,9 +27,9 @@ spec_version: "2.1"
 Spoke skill in the `lead-ux-designer` network. Owns workflow design, form patterns,
 error states, edge cases, and interaction detail for enterprise SaaS.
 
-Does not own: navigation structure and IA (→ `ux-information-architecture`), loading
-state design (→ `ux-performance-perception`), component variant coverage (→ `ux-design-systems`),
-accessibility keyboard patterns (→ `ux-accessibility`). Those live in their respective spokes.
+Does not own: navigation structure and IA (→ `lead-information-architect`), loading
+state design (→ `ux-performance-perception`), component variant coverage (→ `ds-component-spec`),
+accessibility keyboard patterns (→ `lead-accessibility-architect`). Those live in their respective spokes.
 This spoke owns the behavioral logic of features once the user is inside a task or workflow.
 
 ---
@@ -271,7 +271,7 @@ Movement should convey relationship, not just decoration:
 
 Transitions should be perceptible but fast (150–300ms for most). Long transitions
 punish repeat users. All transitions must have a `prefers-reduced-motion` fallback
-(→ `ux-accessibility` for the reduced-motion design requirement).
+(→ `lead-accessibility-architect` for the reduced-motion design requirement).
 
 ---
 
@@ -358,9 +358,9 @@ A **directional flowchart** read start → finish:
 - [[06-research-and-design-artifacts]] — which artifact to produce (flow vs journey vs blueprint vs story) + authoring rules
 - `ux-service-design` — service blueprint (the workflow's front/back-stage mapped cousin); journey maps
 - `ux-performance-perception` — loading state taxonomy; skeleton screen design; long-running operations
-- `ux-information-architecture` — flow routing and navigation within workflows
-- `ux-design-systems` — component behavior spec for interactive elements used in workflows
-- `ux-accessibility` — keyboard interaction patterns; focus management in forms; error state accessibility
+- `lead-information-architect` — flow routing and navigation within workflows
+- `ds-component-spec` — component behavior spec for interactive elements used in workflows
+- `lead-accessibility-architect` — keyboard interaction patterns; focus management in forms; error state accessibility
 - `be-data-modeling` — form validation rules that reflect data model constraints; understanding what's feasible
 - `be-api-design` — error response structures that must support inline error display
 - `fe-state-management` — multi-step flow state; form dirty state tracking; optimistic UI feasibility

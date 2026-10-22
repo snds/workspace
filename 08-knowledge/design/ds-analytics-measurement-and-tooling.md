@@ -7,7 +7,7 @@ confidence: medium
 sources:
   - "Web research 2026-09-23 (two research passes; URLs inline; [search-only] = snippet, not fetched)"
   - "03-skills/design-system-ops/knowledge-notes/adoption-measurement.md (existing principles)"
-related_skills: [ds-advisor, design-system-ops, adoption-report, ds-bi-platforms, pm-metrics-analytics]
+related_skills: [ds-advisor, design-system-ops, adoption-report, dsci-bi-platforms, pm-metrics-analytics]
 related_projects: []
 relations:
   builds-on: ["[[ds-ops-governance-notes]]", "[[nathan-curtis-ds-ops-substack]]"]

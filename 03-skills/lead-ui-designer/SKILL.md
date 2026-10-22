@@ -14,6 +14,7 @@ description: >
 aliases: [lead-ui-designer]
 tier: hub
 domain: design
+area: ui
 prerequisites: [design-foundations]
 triggers: [ui design, visual design, color palette, type hierarchy, dark mode palette, elevation]
 governed_by: [qa, a11y-visual]
@@ -218,8 +219,8 @@ UI is the visual expression of UX structure. Every UX decision has a visual
 implication; every visual decision should support the UX intent.
 
 - `uid-spatial-composition` ↔ `ux-interaction-design`: layout composition must support interaction flows
-- `uid-type-for-screens` ↔ `ux-information-architecture`: typographic hierarchy expresses IA hierarchy
-- `uid-visual-system` ↔ `ux-design-systems`: visual system and component design are two sides of the same design system coin
+- `uid-type-for-screens` ↔ `lead-information-architect`: typographic hierarchy expresses IA hierarchy
+- `uid-visual-system` ↔ `ds-component-spec`: visual system and component design are two sides of the same design system coin
 
 If a conversation is primarily about what should be present on a screen, user
 goals, or navigation structure — route to `lead-ux-designer`. If it's about
