@@ -1,25 +1,30 @@
-# User research  -  confidence and method, not a recap of last study's quotes.
-# Statistical experiments live under #15 / data-foundations, not here.
+# Research  -  confidence and method, not a recap of last study's quotes.
+# Research in any field runs on #19 and lead-research (2026-10-22, Sean). User research with
+# participants stays on ux-research-synthesis. Statistical experiments live under #15 / data-foundations.
 schemaVersion: "domain-constitution/1.0"
 id: research
-name: User research
+name: Research (any field) and user research
 status: authored
 l1:
+  - 19-research-operating-model
   - 04-research-and-evidence-framework
   - 15-analysis-operating-model
-foundation: product-foundations
+foundation: research-foundations
 leads:
+  - lead-research
   - lead-ux-designer
-measurement: []
-command: []
+measurement:
+  - research-check
+command:
+  - lead-research
 complements:
   values: "Recordings, notes, quotes, survey items, and participant identities. Stay in the project, never in this file."
-  meaning: "This constitution + framework #04 confidence tiers + ux-research-synthesis method selection."
+  meaning: "This constitution + framework #19 pipeline and depth tiers + framework #04 confidence tiers; ux-research-synthesis for participant method selection."
   arbitration: "Named confidence tier. A claim without a tier is preference, not evidence. Quantitative claims inherit #15 validity gates."
   look: "Not applicable. Research artifacts follow delivery-playbooks research/design artifact rules."
   runtime: "Not applicable. Synthesis outputs feed UX/product decisions; they are not a shipped model."
 graphs:
-  skillLoad: "product-foundations + design-foundations → lead-ux-designer → ux-research-synthesis ; IA methods on ia-research-methods ; stats on lead-data-scientist"
+  skillLoad: "research-foundations → lead-research → research-* (scoping, review, appraisal, synthesis, a field spoke, retro) ; participants: product-foundations + design-foundations → lead-ux-designer → ux-research-synthesis ; IA methods on ia-research-methods ; stats on lead-data-scientist"
   epistemic: "08-knowledge/ (research findings as knowledge only when durable and de-identified)"
   artifact: "this file"
 shared:
@@ -57,7 +62,7 @@ entries:
     kind: system
     name: Research constitution
     for: agent
-    notes: "No dedicated research hub. Depth is a spoke of lead-ux-designer plus #04. That is enough connective tissue; do not invent lead-researcher."
+    notes: "Superseded 2026-10-22 by Sean's word (decision-research-network): research in any field gets its own hub, lead-research, under framework #19, with a field spoke per domain and a retro that feeds the workspace. User research keeps its home on lead-ux-designer → ux-research-synthesis. The rule kept from the old note: no new confidence language; #04's tiers only."
   - id: artifacts
     kind: entry
     name: Research artifacts
@@ -73,11 +78,11 @@ combos:
     mustNot: []
     why: "Mismatched methods produce data that looks useful and does not answer the question."
 refuse:
-  - "Inventing a sixth confidence language. Use #04's five tiers."
+  - "Inventing a sixth confidence language. Use #04's five tiers (a knowledge entry's low / medium / high is their summary, #19 §5)."
   - "Treating three quotes from one workshop as three independent users."
   - "Using research as a weapon to skip #02 pattern interrogation or #14 feasibility."
   - "Storing identifiable participant data in the portable vault."
 watch: []
 notes:
   for: agent
-  - "Measurement cell is empty on purpose. Research 'audit' is protocol + named tier, not a scanner. Calling it audit without artifacts is critique."
+  - "Measurement is research-check.py: the measurable shape of a finding (depth, tier, dated and identified sources, resolving citations, quote length, retro). Whether claims are supported by their sources stays judged. Calling that judgment an audit is still critique."

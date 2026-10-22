@@ -99,6 +99,6 @@ durable pattern. On `/optimize` P0 mechanical heals. Explicit: "self-improve",
 the mint still cannot hit the bar.
 
 ## Related
-- peer ↔ [[close-out]] · [[plan-ahead]] · [[mission-fit]] · [[harness-map]] · [[failure-mode-premortem]]
+- peer ↔ [[close-out]] · [[plan-ahead]] · [[mission-fit]] · [[harness-map]] · [[failure-mode-premortem]] · [[research-retro]]
 - peer ↔ [[optimize]]
 - peer ↔ [[health]]

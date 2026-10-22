@@ -1,0 +1,29 @@
+{
+  "id": "n-ffyprh46",
+  "name": "research-check",
+  "description": "A research finding's measurable shape (framework #19 \u00a74): depth and as-of stated, a framework #04 confidence tier, every source dated, identified and saying how it was checked, citations that resolve, quotes within 15 words, a retro present.",
+  "language": "python",
+  "entry": "research-check.py",
+  "runtime": "python>=3",
+  "safety": "read-only",
+  "network": false,
+  "implements": [
+    "research.depth",
+    "research.confidence-stated",
+    "research.dates",
+    "research.citations-resolve",
+    "research.quote-length",
+    "research.retro"
+  ],
+  "run": {
+    "check": [],
+    "self-test": {
+      "args": [
+        "--self-test"
+      ],
+      "description": "The planted fixtures: ten defects caught, no false fire"
+    }
+  },
+  "output": "exit-code",
+  "timeout_s": 30
+}

@@ -2,7 +2,7 @@
 name: framework-check
 description: >
   Runs current work through every operating framework listed in 01-frameworks/00-README.md
-  (eighteen as of 2026-09) as a structured critique pass — the six core lenses always, plus the
+  (nineteen as of 2026-10) as a structured critique pass — the six core lenses always, plus the
   situational lenses (Integration, Workspace Contribution, Component & Pattern, Perception
   Integrity, Anticipatory Failure Analysis, Realtime Photoreal, Domain Rigor Stack, Engineering,
   Analysis, Security, Intent Coordination, Design Systems × AI) when the work touches their domain. Invoked as /framework-check or "run through the frameworks" / "framework critique".
@@ -24,7 +24,7 @@ recent artifact) and runs it through the operating frameworks. Each produces a s
 critique — what the framework values, what it sees here, what it flags.
 
 The **six core lenses (01–06)** always run. The **situational lenses (07 onward — every other
-framework in `01-frameworks/00-README.md`, eighteen total as of 2026-09)** run only when the work touches their domain — otherwise they're listed once under
+framework in `01-frameworks/00-README.md`, nineteen total as of 2026-10)** run only when the work touches their domain — otherwise they're listed once under
 "Not applicable" rather than padded with manufactured critique.
 
 ## Trigger phrases
@@ -66,6 +66,7 @@ need the quick version, then load the full files for the lenses in scope.
 - `01-frameworks/16-security-operating-model.md` — auth/authz, trust boundaries, multi-tenancy, untrusted input, secrets, dependencies, CI/CD pipeline, PII, integrations/webhooks, or incident response.
 - `01-frameworks/17-intent-coordination-operating-model.md` — two or more agents/worktrees share the job, or a multi-file outcome needs a living spec rather than the chat thread.
 - `01-frameworks/18-design-systems-ai-operating-model.md` — AI attaching to a design system: generated UI, AI-legible component contracts, or what must be true before generated UI ships.
+- `01-frameworks/19-research-operating-model.md` — the target answers a question from sources, in any field: a literature review, a finding, a landscape scan, a claim that rests on outside evidence, or a choice of how deep to research.
 
 (If a core file is missing, flag it and continue with the rest.)
 
@@ -135,7 +136,7 @@ decide whether to save, act, or discard.
 ## Notes
 
 - **Keep it short.** Six core one-paragraph critiques + only the situational lenses
-  that apply + one cross-tension paragraph + one next-action line. Don't run all eighteen
+  that apply + one cross-tension paragraph + one next-action line. Don't run all nineteen
   by reflex — the situational gating is what keeps it on one screen.
 - **Avoid hedging.** If a framework has nothing useful to say about the target,
   say "No specific flag — target is outside this framework's scope." Don't

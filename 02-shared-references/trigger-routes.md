@@ -353,6 +353,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `img-photoreal-rendering` | foundation | `pbr`, `physically based rendering`, `brdf`, `metallic roughness`, `global illumination`, `ray tracing` (+10) | `imaging-foundations` → `img-photoreal-rendering` |
 | `img-vfx` | foundation | `vfx`, `particles`, `particle system`, `fluid simulation`, `smoke simulation`, `smoke effect` (+10) | `imaging-foundations` → `img-vfx` |
 | `product-foundations` | foundation | `product strategy`, `outcomes over output`, `jobs to be done`, `jtbd`, `prioritization`, `discovery` (+2) | `product-foundations` |
+| `research-foundations` | foundation | `research methodology`, `epistemics`, `what counts as evidence`, `primary vs secondary source`, `evidence hierarchy` | `research-foundations` |
 | `sci-linear-algebra` | foundation | `vector math`, `unit vector`, `matrix math`, `matrix multiplication`, `4x4 matrix`, `inverse matrix` (+12) | `science-foundations` → `sci-linear-algebra` |
 | `sci-numerical-methods` | foundation | `floating point`, `epsilon`, `interpolation`, `lerp`, `easing`, `numerical integration` (+7) | `science-foundations` → `sci-numerical-methods` |
 | `sci-physics-simulation` | foundation | `physics engine`, `game physics`, `physics simulation`, `rigid body`, `collision detection`, `collision response` (+13) | `science-foundations` → `sci-physics-simulation` |
@@ -386,6 +387,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `lead-mobile-engineer` | hub | `mobile engineering`, `mobile app`, `ios app`, `android app`, `react native`, `expo` (+13) | `eng-foundations` → `lead-mobile-engineer` |
 | `lead-motion-designer` | hub | `motion designer`, `animation system`, `easing choice` | `design-foundations` → `lead-motion-designer` |
 | `lead-product-manager` | hub | `product decision`, `prioritization tradeoff`, `roadmap tradeoff` | `product-foundations` → `lead-product-manager` |
+| `lead-research` | hub | `research this`, `literature review`, `what does the evidence say`, `research finding`, `deep research`, `research question` (+1) | `research-foundations` → `lead-research` |
 | `lead-security-architect` | hub | `appsec`, `threat model`, `authentication`, `authorization`, `oauth`, `owasp` (+11) | `eng-foundations` → `lead-security-architect` |
 | `lead-technical-digital-artist` | hub | `technical artist`, `lookdev pipeline`, `shader art` | `design-foundations` → `lead-technical-digital-artist` |
 | `lead-type-designer` | hub | `type designer`, `type family`, `letterform` | `design-foundations` → `lead-type-designer` |
@@ -444,4 +446,4 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 315 · Registry rows: 106_
+_Curated routes: 315 · Registry rows: 108_
