@@ -5,11 +5,11 @@ _Last updated: 2026-09-11_
 
 Eighteen top-level documents that govern how design, **components & patterns**, **design systems × AI**, collaboration, research, craft, QA, **perception integrity**, **anticipatory failure analysis**, **realtime photoreal operations**, **domain rigor for every skill hub**, **engineering / analysis / security operations**, **intent coordination**, integration, and **contribution to the workspace itself** get made across all projects. They sit above any project-specific skill or context. **#09 is the design-domain hub** for components and patterns; **#18 is the design-systems × AI operating model** (Frost/Southleft); **#17 is intent coordination**; **#13 is the meta-stack** every other domain must instantiate. They're the portable layer that stays consistent even when the specific work shifts.
 
-This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all eighteen full documents.
+This README is the orientation layer. Load it when you need to know which framework applies, or when you're working in a token-constrained context and want the compressed summary without loading all nineteen full documents.
 
 ---
 
-## The eighteen frameworks
+## The nineteen frameworks
 
 | # | Framework | Answers |
 |---|---|---|
@@ -31,6 +31,7 @@ This README is the orientation layer. Load it when you need to know which framew
 | 16 | **[[01-frameworks/16-security-operating-model|Security Operating Model]]** | How do we threat-model, build, scan, and monitor so security is a quality dimension? |
 | 17 | **[[01-frameworks/17-intent-coordination-operating-model|Intent Coordination Operating Model]]** | How do many agents stay aligned to designed intent (living spec, waves, verify)? |
 | 18 | **[[01-frameworks/18-design-systems-ai-operating-model|Design Systems × AI Operating Model]]** | What is the system, how may AI attach to it, and what must be true before generated UI ships? |
+| 19 | **[[01-frameworks/19-research-operating-model|Research Operating Model]]** | How deep should this research go, how is it run in this field, and what did the approach teach the workspace? |
 
 ---
 
@@ -340,6 +341,7 @@ The core operating lenses (01–06) are layered, not parallel — they compose i
 - **16 ⟂ all (security).** [[01-frameworks/16-security-operating-model|Security Operating Model]] is threat-model, scan, fail closed. Runs with #14 and #11.
 - **17 ⟂ all (multi-agent).** [[01-frameworks/17-intent-coordination-operating-model|Intent Coordination]] is living spec + waves + independent verify. Enforced by `intent-run.py`. Runs with #06, #07, #08, and [[open-agent-engine]].
 - **18 ⟂ DS + generated UI.** [[01-frameworks/18-design-systems-ai-operating-model|Design Systems × AI]] is the Frost/Southleft operating model: what a DS *is* (stool, solid-line graph), how AI attaches (mortar, not a parallel universe), and the steel curtain before vibe output ships. #09 still owns component intent; #18 owns the AI envelope around that body of intent. Routes *out* to `ai-design-systems` (procedure) and `ds-advisor` / `design-engineer` / `design-system-ops`.
+- **19 ⟂ all (research).** [[01-frameworks/19-research-operating-model|Research Operating Model]] is frame → scope the depth (D0–D4, proposing more or less) → profile the field → search → appraise → synthesize → report → retro. It uses #04's tiers and adds no confidence language; statistics hand over to #15; participant research stays with `ux-research-synthesis`. Its retro feeds approach lessons back into the workspace through `self-improve`. Routes *out* to `lead-research`; measured by `research-check.py`.
 
 ---
 
@@ -360,7 +362,7 @@ The core operating lenses (01–06) are layered, not parallel — they compose i
 
 ## Notes for LLMs loading this README
 
-**Token budget guidance.** The eighteen frameworks total substantial markdown. This README captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For any fine visual-detail judgment, load #10 (it's short, and its `native-visual-eval` skill carries no hub dependency). Before proposing or building any technique with a visible failure surface, load #11 (its `failure-mode-premortem` skill also carries no hub dependency). For realtime 3D / photoreal / frame-budget / flythrough work, load #12 (its `realtime-visual-craft` skill is the command surface). For branching, PR, or consolidation work, load #07. For multi-agent / living-spec work, load #17 and run `intent-run.py`. For AI generating or adopting UI through a design system, load **#18** (its `ai-design-systems` skill is the command surface) with #09 for component intent.
+**Token budget guidance.** The nineteen frameworks total substantial markdown. This README captures the core conviction and operating habits of each. If you have the budget for the full set, load the full set. If you're constrained, load this README plus whichever specific framework is most relevant to the task at hand. For QA / audit / review / iteration work, always load #06 in addition. For any fine visual-detail judgment, load #10 (it's short, and its `native-visual-eval` skill carries no hub dependency). Before proposing or building any technique with a visible failure surface, load #11 (its `failure-mode-premortem` skill also carries no hub dependency). For realtime 3D / photoreal / frame-budget / flythrough work, load #12 (its `realtime-visual-craft` skill is the command surface). For branching, PR, or consolidation work, load #07. For multi-agent / living-spec work, load #17 and run `intent-run.py`. For AI generating or adopting UI through a design system, load **#18** (its `ai-design-systems` skill is the command surface) with #09 for component intent.
 
 **When the README isn't enough.** The compressed summaries preserve the *what* but not the *why* — the examples, the canon references, the tier descriptions with thresholds, the principle-to-check translations. Any serious reasoning task in the framework's domain should load the full document.
 

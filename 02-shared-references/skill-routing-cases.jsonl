@@ -117,3 +117,8 @@
 {"id": "bare-sampling-positive", "utterance": "importance sampling for the path tracer", "expect_skills": ["sci-probability-stochastic"], "why": "qualified trigger still fires (2026-10-14 trigger review)"}
 {"id": "bare-seed-positive", "utterance": "set a random seed so the terrain is reproducible", "expect_skills": ["sci-probability-stochastic"], "why": "qualified trigger still fires (2026-10-14 trigger review)"}
 {"id": "bare-fluid-positive", "utterance": "fluid simulation for the river", "expect_skills": ["img-vfx"], "why": "qualified trigger still fires (2026-10-14 trigger review)"}
+{"id": "research-any-field", "utterance": "Research this for me: what does the evidence say about four-day work weeks and productivity?", "expect_skills": ["lead-research"], "why": "a general research ask routes to the research hub"}
+{"id": "research-depth", "utterance": "How deep should this go before we pick a vector database?", "expect_skills": ["research-scoping"], "why": "depth calibration is the scoping spoke"}
+{"id": "research-math-known", "utterance": "Is this result known, or did I just rediscover an old theorem?", "expect_skills": ["research-mathematical"], "why": "result status and prior work in mathematics"}
+{"id": "research-history", "utterance": "Do some historical research on where the phrase design system came from.", "expect_skills": ["research-historical"], "why": "origin of a term is historical research"}
+{"id": "research-not-ux-interviews", "utterance": "Synthesize these interview notes from our usability sessions.", "forbid_skills": ["research-qualitative", "lead-research"], "why": "participant research stays on ux-research-synthesis"}

@@ -125,6 +125,7 @@ Surfaces' native "create a skill" flows are **insufficient** if they skip this a
 | Accessibility | #02 (inclusive) + a11y done-gates | lead-a11y protocol | `a11y-audit-toolkit` | design/eng foundations → `lead-accessibility-architect` → `a11y-*` | `/qa --lens a11y` |
 | Security | #16 | lead-security protocol + threat-model contract | scanners via `requires` + review-security | `eng-foundations` → `lead-security-architect` → `sec-*` | security as sideways lens |
 | Engineering (FE/BE/DevOps) | #14 | `/eng` + ADRs/runbooks | perf/test/CI harnesses | `eng-foundations` → leads → `fe-*`/`be-*`/`devops-*` | arch-guild wrapper |
+| Research (any field) | #19 (uses #04 tiers) | `lead-research` execution protocol + report format | `research-check.py` (+ judged claim support) | `research-foundations` → `lead-research` → `research-*` | domain method spokes + #04/#15 precedence; `research-retro` → `self-improve` |
 | Analysis / DS / PM evidence | #15 | lead-DS / lead-PM protocols | experiment validity + data-quality checks | `data-foundations` / `product-foundations` → leads → spokes | peer review lenses |
 | Motion / Type / Graphic / Infod / Icon | #02 + craft notes | `/motion`, `/type`, lead protocols | `/qa` lenses + toolkit scripts | design-foundations → leads → spokes | visual-qa discipline spokes |
 | Figma | #09 + DS ops | `/figma` | MCP + source-audit | `figma` hub → `figma-*` | Defers-to contracts |

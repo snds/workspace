@@ -116,6 +116,9 @@ when new entries are written. Entries are grouped by domain, then listed alphabe
 
 _Raw research syntheses live in `research/` (double-nesting flattened 2026-07-23)._
 
+- [[citing-sources]] — How research findings cite: every outside claim, as close to its origin as was actually read, with who · when · what · where · identifier, and **how it was checked** (`Checked by search`, `Opened`, or `From training knowledge; not re-checked`). House format; `research-check.py` measures it. Triggers: `citations`, `citing sources`, `sources`, `evidence`, `reference list` (2026-10-22)
+- [[dated-claims]] — Research's use of the freshness rule in [[epistemic-standards]] §2: every source dated, every drifting claim `as of`, the finding's own `as of` on its Depth line, and re-check horizons by field (software 3–6 months … proved mathematics rarely). Triggers: `dated claims`, `freshness`, `stale claim`, `last checked` (2026-10-22)
+
 - [[glsl-shader-programming]] — GLSL shader programming reference for WebGL/Three.js (2026-06)
 - [[threejs-materials-deep-dive]] — Three.js PBR materials system complete reference (2026-06)
 - [[threejs-postprocessing-vfx]] — Three.js post-processing, particles, VFX pipelines (2026-06)

@@ -112,6 +112,16 @@ HUB_DETECTORS: dict[str, tuple[Step, ...]] = {
         _cli("session-status.py", "--check"),
         _cli("artifact-find.py", "--check"),
     ),
+    # Research (framework #19). The shape of a finding is measured; whether each claim is
+    # supported by what it cites is judged by the reviewer, so that half stays a named skip.
+    "lead-research": (
+        _cli("research-check.py", "--self-test"),
+        _skip(
+            "research-claim-support",
+            "Judged: read each cited passage against its claim (#19 §4 gate 7). Run "
+            "research-check.py <finding.md> on the finding itself before review.",
+        ),
+    ),
     "ds": (
         _cli("validate-integrity.py"),
         _skip(

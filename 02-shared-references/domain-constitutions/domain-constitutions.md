@@ -35,7 +35,7 @@ design-systems uses DSDS 0.20 as its portable file format.
 | design-systems | Design systems | #09 | `design-foundations` | [[dsds-constitution]] (DSDS 0.20) |
 | ux-ui | UX, UI, visual, interaction | #02 + #01 | `design-foundations` | [`dc-ux-ui.yaml`](dc-ux-ui.yaml) |
 | motion | Motion design | #02 | `design-foundations` | [`dc-motion.yaml`](dc-motion.yaml) |
-| research | User research | #04 + #15 | `product-foundations` | [`dc-research.yaml`](dc-research.yaml) |
+| research | Research (any field) and user research | #19 + #04 + #15 | `research-foundations` | [`dc-research.yaml`](dc-research.yaml) |
 | engineering | Front-end and back-end | #14 | `eng-foundations` | [`dc-engineering.yaml`](dc-engineering.yaml) |
 | game | Game design, development, engines | #12 + game-foundations | `game-foundations` | [`dc-game.yaml`](dc-game.yaml) |
 | imaging | 3D, environment, photoreal | #12 | `imaging-foundations` | [`dc-imaging.yaml`](dc-imaging.yaml) |

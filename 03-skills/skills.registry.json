@@ -10,12 +10,12 @@
     "cross-cutting": 3
   },
   "counts": {
-    "total": 308,
+    "total": 321,
     "by_tier": {
       "cross-cutting": 53,
-      "foundation": 22,
-      "hub": 45,
-      "spoke": 188
+      "foundation": 23,
+      "hub": 46,
+      "spoke": 199
     }
   },
   "skills": {
@@ -2690,7 +2690,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:1aadf5b75e89836b1c3a2e82f58599c2409cdf865f87160d721987b078bb4682"
+      "hash": "sha256:9bd696e0183c28acc4b11c3b9b46bba06eb6de8f8cc7a80292ff7ea8f4ff8724"
     },
     "fw-angular": {
       "path": "03-skills/fw-angular/SKILL.md",
@@ -4568,6 +4568,44 @@
       "rigor_role": null,
       "hash": "sha256:5601b3ee925da8d15e184b601357caa92effb1f84a12290b9f3990d2f055c2ca"
     },
+    "lead-research": {
+      "path": "03-skills/lead-research/SKILL.md",
+      "tier": "hub",
+      "domain": "research",
+      "hub": null,
+      "prerequisites": [
+        "research-foundations"
+      ],
+      "related": [
+        "ux-research-synthesis",
+        "ia-research-methods",
+        "pm-discovery-research",
+        "lead-data-scientist",
+        "self-improve"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "research this",
+        "literature review",
+        "what does the evidence say",
+        "research finding",
+        "deep research",
+        "research question",
+        "evidence review"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-04",
+        "framework-15",
+        "framework-19"
+      ],
+      "rigor_role": "command-hub",
+      "hash": "sha256:652fbb4fd02205f488ad320714c48199c782ee03d42309a9cd33142b28b87a7a"
+    },
     "lead-security-architect": {
       "path": "03-skills/lead-security-architect/SKILL.md",
       "tier": "hub",
@@ -6233,6 +6271,340 @@
       "rigor_role": null,
       "hash": "sha256:b625257a60ee8764dbc31776765bc28a6d07297d37d5c565fbd65fcace49690c"
     },
+    "research-computing": {
+      "path": "03-skills/research-computing/SKILL.md",
+      "tier": "spoke",
+      "domain": "research",
+      "hub": "lead-research",
+      "prerequisites": [
+        "lead-research"
+      ],
+      "related": [
+        "eng-foundations"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "technical research",
+        "library comparison",
+        "benchmark claims",
+        "prior art search",
+        "does it support",
+        "empirical software engineering"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:8df19085139bc0a20aa0f1b28263b175500aa71a6ee9d923abfad708a1e4a644"
+    },
+    "research-foundations": {
+      "path": "03-skills/research-foundations/SKILL.md",
+      "tier": "foundation",
+      "domain": "research",
+      "hub": null,
+      "prerequisites": [],
+      "related": [
+        "data-foundations",
+        "product-foundations",
+        "science-foundations"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "research methodology",
+        "epistemics",
+        "what counts as evidence",
+        "primary vs secondary source",
+        "evidence hierarchy"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:78a50d173cb0322bab2cb8794a733dea031752494b0b51d0acec7e023b08deb8"
+    },
+    "research-historical": {
+      "path": "03-skills/research-historical/SKILL.md",
+      "tier": "spoke",
+      "domain": "research",
+      "hub": "lead-research",
+      "prerequisites": [
+        "lead-research"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "historical research",
+        "archival research",
+        "history of the",
+        "primary source analysis",
+        "historiography"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:2d600e79b7dd6534fe0a5f7f7510ce722d72ac931170b9112084a098ad126e96"
+    },
+    "research-industry": {
+      "path": "03-skills/research-industry/SKILL.md",
+      "tier": "spoke",
+      "domain": "research",
+      "hub": "lead-research",
+      "prerequisites": [
+        "lead-research"
+      ],
+      "related": [
+        "product-foundations"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "competitive landscape",
+        "market research",
+        "grey literature",
+        "vendor claims",
+        "industry landscape",
+        "what are competitors doing"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:29454cadf3c2b90de49b88c312480e701a7fcd149dbfb298fc396508bf2d36ad"
+    },
+    "research-literature-review": {
+      "path": "03-skills/research-literature-review/SKILL.md",
+      "tier": "spoke",
+      "domain": "research",
+      "hub": "lead-research",
+      "prerequisites": [
+        "lead-research"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "systematic review",
+        "scoping review",
+        "search strategy",
+        "snowballing",
+        "prisma",
+        "what has been written about"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:d295048ddc670208ae2ae39ec9ec8d13105df13c49391b836c06bb5cbbf1089f"
+    },
+    "research-mathematical": {
+      "path": "03-skills/research-mathematical/SKILL.md",
+      "tier": "spoke",
+      "domain": "research",
+      "hub": "lead-research",
+      "prerequisites": [
+        "lead-research"
+      ],
+      "related": [
+        "science-foundations"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "is this result known",
+        "proof check",
+        "theorem search",
+        "oeis",
+        "mathematical literature"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:15cacbee9c50a72d138a3a17052280fa627a7b3d21ecc2a1639537e40e050a27"
+    },
+    "research-qualitative": {
+      "path": "03-skills/research-qualitative/SKILL.md",
+      "tier": "spoke",
+      "domain": "research",
+      "hub": "lead-research",
+      "prerequisites": [
+        "lead-research"
+      ],
+      "related": [
+        "ux-research-synthesis"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "qualitative research",
+        "thematic analysis",
+        "social science evidence",
+        "qualitative study",
+        "survey evidence"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:f3bfe5c32967a28168b99f4dc91e9e86b8d78161ffc99ea7bb959a4904873f48"
+    },
+    "research-retro": {
+      "path": "03-skills/research-retro/SKILL.md",
+      "tier": "spoke",
+      "domain": "research",
+      "hub": "lead-research",
+      "prerequisites": [
+        "lead-research"
+      ],
+      "related": [
+        "self-improve",
+        "close-out"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "research retro",
+        "research lessons",
+        "improve the research harness",
+        "what did this research teach"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:acc40b0484db0640d3a2fb9b7c82d07d899e95ba6d6f578108fd6a9a4bc98272"
+    },
+    "research-scientific": {
+      "path": "03-skills/research-scientific/SKILL.md",
+      "tier": "spoke",
+      "domain": "research",
+      "hub": "lead-research",
+      "prerequisites": [
+        "lead-research"
+      ],
+      "related": [
+        "lead-data-scientist"
+      ],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "what does the science say",
+        "replication crisis",
+        "preregistration",
+        "meta-analysis",
+        "study design quality"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-15"
+      ],
+      "rigor_role": null,
+      "hash": "sha256:7b540b97173ae8fa8ff626d646707f437fb957c970f60efe0e517e2c349df64c"
+    },
+    "research-scoping": {
+      "path": "03-skills/research-scoping/SKILL.md",
+      "tier": "spoke",
+      "domain": "research",
+      "hub": "lead-research",
+      "prerequisites": [
+        "lead-research"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "scope this research",
+        "research depth",
+        "how deep should this go",
+        "rapid review",
+        "research scope"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:8d66a18f58680009a388b074de74677ac58376aad4b72d44e40aa119f94b3a4f"
+    },
+    "research-source-appraisal": {
+      "path": "03-skills/research-source-appraisal/SKILL.md",
+      "tier": "spoke",
+      "domain": "research",
+      "hub": "lead-research",
+      "prerequisites": [
+        "lead-research"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "evaluate a source",
+        "source credibility",
+        "lateral reading",
+        "trace the claim",
+        "retracted paper",
+        "is this source reliable"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [],
+      "rigor_role": null,
+      "hash": "sha256:0dc14ead8e23d6f6c3aa39d1e2cf61574468b93c2ce9add848cfec180bb2db27"
+    },
+    "research-synthesis": {
+      "path": "03-skills/research-synthesis/SKILL.md",
+      "tier": "spoke",
+      "domain": "research",
+      "hub": "lead-research",
+      "prerequisites": [
+        "lead-research"
+      ],
+      "related": [],
+      "governed_by": [],
+      "governs": [],
+      "triggers": [
+        "evidence synthesis",
+        "conflicting evidence",
+        "state the confidence",
+        "how sure are we",
+        "weigh the evidence"
+      ],
+      "surfaces": [
+        "*"
+      ],
+      "requires": [],
+      "defers_to": [
+        "framework-04"
+      ],
+      "rigor_role": null,
+      "hash": "sha256:63b7dfdbac3b29ae021fafbeb8813e197e68b62e395381ecf9308922a500a9c1"
+    },
     "sci-astro-objects": {
       "path": "03-skills/sci-astro-objects/SKILL.md",
       "tier": "spoke",
@@ -6715,7 +7087,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": "command-hub",
-      "hash": "sha256:f198884e8f85baa9763211e6b924c8f13029ae328905a7dfab4c973e9d9e3a4c"
+      "hash": "sha256:d2be983f5fc372ac96e00496153d9e25d4a0d78cdcae1f308a84b6923f1c70a9"
     },
     "session-end": {
       "path": "03-skills/session-end/SKILL.md",
@@ -7552,7 +7924,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:6a5617ba8866b4b3574d5f2d460a8ac089b52ce366dd2168bf35b181af0d9057"
+      "hash": "sha256:3593c3bb50be6edad2c8f4d37e5b96aaaacde7acc408c71af36a180f807bfc41"
     },
     "ux-service-design": {
       "path": "03-skills/ux-service-design/SKILL.md",
@@ -9411,6 +9783,10 @@
       "product-foundations",
       "lead-product-manager"
     ],
+    "lead-research": [
+      "research-foundations",
+      "lead-research"
+    ],
     "lead-security-architect": [
       "eng-foundations",
       "lead-security-architect"
@@ -9670,6 +10046,64 @@
     ],
     "rendering-guild": [
       "rendering-guild"
+    ],
+    "research-computing": [
+      "research-foundations",
+      "lead-research",
+      "research-computing"
+    ],
+    "research-foundations": [
+      "research-foundations"
+    ],
+    "research-historical": [
+      "research-foundations",
+      "lead-research",
+      "research-historical"
+    ],
+    "research-industry": [
+      "research-foundations",
+      "lead-research",
+      "research-industry"
+    ],
+    "research-literature-review": [
+      "research-foundations",
+      "lead-research",
+      "research-literature-review"
+    ],
+    "research-mathematical": [
+      "research-foundations",
+      "lead-research",
+      "research-mathematical"
+    ],
+    "research-qualitative": [
+      "research-foundations",
+      "lead-research",
+      "research-qualitative"
+    ],
+    "research-retro": [
+      "research-foundations",
+      "lead-research",
+      "research-retro"
+    ],
+    "research-scientific": [
+      "research-foundations",
+      "lead-research",
+      "research-scientific"
+    ],
+    "research-scoping": [
+      "research-foundations",
+      "lead-research",
+      "research-scoping"
+    ],
+    "research-source-appraisal": [
+      "research-foundations",
+      "lead-research",
+      "research-source-appraisal"
+    ],
+    "research-synthesis": [
+      "research-foundations",
+      "lead-research",
+      "research-synthesis"
     ],
     "sci-astro-objects": [
       "science-foundations",

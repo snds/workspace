@@ -131,7 +131,13 @@ def hub_detector_keys(root: Path = ROOT) -> set:
     try:
         spec = importlib.util.spec_from_file_location("close_out_dispatch_r3", path)
         mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
+        # Registered first: the table's dataclasses resolve their module through sys.modules,
+        # and without it the import raised and every command-hub lost its exemption.
+        sys.modules[spec.name] = mod
+        try:
+            spec.loader.exec_module(mod)
+        finally:
+            sys.modules.pop(spec.name, None)
         return set(getattr(mod, "HUB_DETECTORS", {}).keys())
     except Exception:  # noqa: BLE001 - a missing or broken table means no exemptions, never a crash
         return set()
