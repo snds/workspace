@@ -8,7 +8,7 @@ related: [brand-text-vs-fill]
 # Rendered emphasis vs coded emphasis
 
 **Contrast checks validate the coded colour; the eye reads the drawn pixels.** Measured in WebKit (the
-Mac app engine) across Synapse on Unicron 0.14, about 2.3k text runs and icons, light and dark:
+Mac app engine) across the workspace app on Unicron 0.14, about 2.3k text runs and icons, light and dark:
 
 - **One low ink means one low level.** With only `foreground` and `muted-foreground`, seven
   low-emphasis jobs (overline, support text, meta, inactive tab, empty-state text, a key on a fill,
@@ -27,6 +27,6 @@ Mac app engine) across Synapse on Unicron 0.14, about 2.3k text runs and icons, 
 primary text (~106) holds three levels (≈81 / 93 / 106 coded, ≈70 / 84 / 98 drawn). Use all three,
 give each text role one level, and check separation on drawn pixels, not only floors on coded pairs.
 
-Tool: Synapse `scripts/emphasis-audit.swift` (WebKit, reads glyph pixels) and
+Tool: the workspace app repo's `scripts/emphasis-audit.swift` (WebKit, reads glyph pixels) and
 `scripts/emphasis-audit.mjs` (APCA per role). Emphasis Engine's own levels are `--<role>-text-1…5`
 (minimal → maximal; Lc 45/60/75/90/100 light, 45/60/75/85/90 dark).
