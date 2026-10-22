@@ -2,8 +2,10 @@
 
 _The long-term tier of [the baton](../SESSION-STATE.md): what it moved out once it passed 12 KB. Generated; don't edit by hand. Newest month first._
 
-## [2026-10](2026-10.md) — 42 entries
+## [2026-10](2026-10.md) — 44 entries
 
+- 2026-10-22 — The harness compiler, items 18–20
+- 2026-10-22 — Stage H planned and H0 built
 - 2026-10-20 — to 2026-10-21 — UI review round 2, Unicron 0.14
 - 2026-10-19 — to 2026-10-20 — S10, signing, item 14, S13, S2, icons
 - 2026-10-19 — Stage 3 items 9, 10, 12, 14, 16; D106–D108; U5; the Stage 4 draft
