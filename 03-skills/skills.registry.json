@@ -9355,7 +9355,7 @@
       ],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:f7c36bcf5ddbd68d50fd603b8ed0486d14e2b71e017cec02774de7f35d8912b9"
+      "hash": "sha256:025d3aadb190025f95ca2514afc59e9e02527e817840850e29409331aa405e38"
     },
     "visual-qa-accessibility": {
       "path": "03-skills/visual-qa-accessibility/SKILL.md",

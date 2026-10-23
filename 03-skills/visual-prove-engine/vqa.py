@@ -6,6 +6,7 @@ Subcommands:
   doctor          — report available deps and what degrades without them
   capture         — screenshot a URL to PNG + sibling *.capture.json (any project)
   verify-capture  — validate a capture PNG against its *.capture.json manifest
+  evidence        — assemble a harness run's evidence folder from captures
   perceive        — pixel-derived region inventory + shape grammar + ledger flags
   prove           — run a declarative cuespec against a build capture
   compare         — reference vs build(s): registration, SSIM, FLIP, delta-E, ranking
@@ -29,7 +30,7 @@ from pathlib import Path
 SKILL_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SKILL_DIR))
 
-from scripts import _core, calibrate, capture, compare, geometry, interact, judge, mesh, motion, perceive, prove, trajectory  # noqa: E402
+from scripts import _core, calibrate, capture, compare, evidence, geometry, interact, judge, mesh, motion, perceive, prove, trajectory  # noqa: E402
 
 
 def _print(payload: dict) -> None:
@@ -71,6 +72,9 @@ def cmd_capture(args) -> int:
             full_page=args.full_page,
             assistance=args.assistance,
             renderer=args.renderer,
+            theme=args.theme,
+            app=args.app,
+            build=args.build,
         )
     except RuntimeError as exc:
         _print({"status": "error", "error": str(exc)})
@@ -83,6 +87,24 @@ def cmd_verify_capture(args) -> int:
     result = _core.verify_capture(args.image, args.manifest)
     _print(result)
     return 0 if result["status"] == "verified" else 1
+
+
+def cmd_evidence(args) -> int:
+    widths = None
+    if args.supported_widths:
+        try:
+            widths = [int(w) for w in args.supported_widths.split(",") if w.strip()]
+        except ValueError:
+            print("vqa evidence --supported-widths must be numbers, e.g. 375,1440", file=sys.stderr)
+            return 2
+    try:
+        result = evidence.assemble(args.out, args.captures, app=args.app, build=args.build,
+                                   supported_widths=widths, cuespec=args.cuespec)
+    except ValueError as exc:
+        _print({"status": "error", "error": str(exc)})
+        return 2
+    _print(result)
+    return 0 if result["verify"]["status"] == "verified" else 1
 
 
 def cmd_perceive(args) -> int:
@@ -104,11 +126,27 @@ def cmd_perceive(args) -> int:
 
 
 def cmd_prove(args) -> int:
-    payload = prove.run_prove(args.build, args.cuespec, out_dir=args.output,
-                              manifest_path=args.manifest)
+    try:
+        payload = prove.run_prove(args.build, args.cuespec, out_dir=args.output,
+                                  manifest_path=args.manifest)
+    except (ValueError, OSError) as exc:
+        # A bad cuespec or unreadable input is not a failed match: exit 2, so a gate reads unknown
+        _print({"status": "error", "error": str(exc)})
+        return 2
     summary = payload["summary"]
     _print({"summary": summary, "capture": payload["capture"]["status"],
             **({"artifacts": payload["artifacts"]} if "artifacts" in payload else {})})
+    if summary["verdict"] != "matches":
+        # One plain line last, so a gate that shows the tail names what failed
+        failing = [c for c in payload["cues"] if c.get("status") in ("fail", "error")]
+        named = "; ".join(
+            f"cue {c['id']} {c['name']}: {c.get('value')} against {c.get('target')} ({c.get('tolerance')})"
+            for c in failing[:3]
+        )
+        more = f"; and {len(failing) - 3} more" if len(failing) > 3 else ""
+        reasons = ", ".join(summary.get("verdict_reasons") or []) or summary["verdict"]
+        print(f"vqa prove: {summary['verdict']} — {reasons}" + (f". {named}{more}" if named else ""),
+              file=sys.stderr)
     if summary["verdict"] == "fail":
         return 1
     if args.strict and summary["verdict"] != "matches":
@@ -203,12 +241,25 @@ def main(argv=None) -> int:
     p.add_argument("--assistance", choices=("off", "on", "unknown"), default="unknown",
                    help="whether extra agent rails (chunks/lint/MCP) were on during capture")
     p.add_argument("--renderer", help="optional renderer id for the manifest")
+    p.add_argument("--theme", choices=("light", "dark"),
+                   help="emulate prefers-color-scheme and record the theme")
+    p.add_argument("--app", help="the app under review, for the manifest")
+    p.add_argument("--build", help="the build under review (a commit, tag or version)")
     p.add_argument("--self-test", action="store_true",
                    help="manifest write+verify only; no browser")
 
     p = sub.add_parser("verify-capture", help="validate capture manifest")
     p.add_argument("image")
     p.add_argument("--manifest")
+
+    p = sub.add_parser("evidence", help="assemble a harness run's evidence folder")
+    p.add_argument("out", help="the run's evidence folder (made if missing)")
+    p.add_argument("captures", nargs="+",
+                   help="PNGs from `vqa capture`; the first is the one proved")
+    p.add_argument("--app")
+    p.add_argument("--build")
+    p.add_argument("--supported-widths", help="e.g. 375,1440 (default: the widths captured)")
+    p.add_argument("--cuespec", help="copied in as cuespec.json")
 
     p = sub.add_parser("perceive", help="pixel-derived structure inventory")
     p.add_argument("image")
@@ -270,6 +321,7 @@ def main(argv=None) -> int:
         "doctor": cmd_doctor,
         "capture": cmd_capture,
         "verify-capture": cmd_verify_capture,
+        "evidence": cmd_evidence,
         "perceive": cmd_perceive,
         "prove": cmd_prove,
         "compare": cmd_compare,

@@ -17,12 +17,14 @@ const dpr = Number(process.env.VQA_CAPTURE_DPR ?? 2);
 const waitMs = Number(process.env.VQA_CAPTURE_WAIT_MS ?? 1000);
 const fullPage = process.env.VQA_CAPTURE_FULL_PAGE === '1';
 const reducedMotion = process.env.VQA_CAPTURE_REDUCED_MOTION !== '0';
+const colorScheme = process.env.VQA_CAPTURE_COLOR_SCHEME;
 
 const browser = await chromium.launch();
 const page = await browser.newPage({
   viewport,
   deviceScaleFactor: dpr,
   ...(reducedMotion ? { reducedMotion: 'reduce' } : {}),
+  ...(colorScheme ? { colorScheme } : {}),
 });
 await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
 await page.waitForTimeout(waitMs);
