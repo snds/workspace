@@ -14,6 +14,7 @@ tier: spoke
 domain: game
 hub: lead-game-developer
 prerequisites: [lead-game-developer, science-foundations, imaging-foundations]
+triggers: [three.js shadermaterial, existing webgl shader, vertex shader, fragment shader]
 ---
 
 # GLSL Shader Architect for Three.js

@@ -20,6 +20,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-3d-designer]
 spec_version: "2.0"
+triggers: [environmental storytelling, world building in 3d, modular kit design, modular environment, snap units, grid alignment, connector discipline, tileable environment]
 ---
 
 # 3D Spatial Design for Games

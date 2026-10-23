@@ -7,6 +7,7 @@ tier: spoke
 domain: design
 hub: material-symbols-project
 prerequisites: [material-symbols-project]
+triggers: [material symbols svg, glyph to svg, fonttools svg export]
 ---
 
 # Material Symbols SVG Export

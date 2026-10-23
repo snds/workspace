@@ -23,6 +23,7 @@ tier: spoke
 domain: design
 hub: variable-icon-font-architect
 prerequisites: [variable-icon-font-architect]
+triggers: [delta computation, master placement optimization, extrapolation theory, compatibility as topological equivalence, avar table mapping, tensor product interpolation, scattered data interpolation, delaunay triangulation of designspace]
 ---
 
 # Interpolation & Designspace Theory

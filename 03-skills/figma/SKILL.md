@@ -30,6 +30,7 @@ rigor_role: command-hub
 spec_version: "2.3"
 tier: hub
 domain: design
+area: figma-authoring
 prerequisites: [design-foundations]
 related: [design-engineer, close-out]
 

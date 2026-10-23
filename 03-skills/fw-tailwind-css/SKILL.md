@@ -19,6 +19,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [generating tailwind-based theme files, tailwind]
 ---
 
 # Tailwind CSS — Framework Skill

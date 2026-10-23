@@ -16,6 +16,7 @@ domain: design
 hub: lead-ui-designer
 prerequisites: [lead-ui-designer]
 spec_version: "2.0"
+triggers: [critiquing a screen design, visual hierarchy evaluation, blur test, gestalt analysis of a layout, tonal range audits, type consistency audits, color discipline audits]
 ---
 
 # UID: Visual Critique

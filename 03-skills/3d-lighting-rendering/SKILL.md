@@ -18,6 +18,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-3d-designer, imaging-foundations]
 spec_version: "2.0"
+triggers: [lighting design, one-point lighting, fill light, rim light, back light, directional light, point light, spot light]
 ---
 
 # 3D Lighting and Rendering

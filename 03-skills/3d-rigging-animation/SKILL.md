@@ -18,6 +18,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-3d-designer]
 spec_version: "2.0"
+triggers: [bone hierarchy, bone naming conventions, parent-child bone relationships, rest pose, bind pose, inverse kinematics, forward kinematics, pole target]
 ---
 
 # 3D Rigging and Animation

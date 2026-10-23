@@ -347,7 +347,7 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `found-typography` | foundation | `typography`, `type hierarchy`, `type scale`, `leading`, `measure`, `letterform` (+4) | `design-foundations` → `found-typography` |
 | `game-foundations` | foundation | `game design`, `core loop`, `game feel`, `player experience`, `game balance`, `progression` (+4) | `game-foundations` |
 | `imaging-foundations` | foundation | `light transport`, `optics`, `auto exposure`, `exposure value`, `virtual camera`, `physical camera` (+14) | `imaging-foundations` |
-| `img-cinematography` | foundation | `cinematography`, `shot`, `framing`, `composition`, `camera movement`, `dolly` (+8) | `imaging-foundations` → `img-cinematography` |
+| `img-cinematography` | foundation | `cinematography`, `camera shot`, `shot type`, `shot framing`, `camera framing`, `shot composition` (+12) | `imaging-foundations` → `img-cinematography` |
 | `img-optics-light` | foundation | `radiometry`, `photometry`, `irradiance`, `radiance`, `flux`, `inverse square` (+7) | `imaging-foundations` → `img-optics-light` |
 | `img-photography` | foundation | `exposure triangle`, `exposure value`, `exposure compensation`, `overexposed`, `underexposed`, `aperture` (+16) | `imaging-foundations` → `img-photography` |
 | `img-photoreal-rendering` | foundation | `pbr`, `physically based rendering`, `brdf`, `metallic roughness`, `global illumination`, `ray tracing` (+10) | `imaging-foundations` → `img-photoreal-rendering` |
@@ -401,8 +401,13 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `svg-font-extraction` | hub | `svg font extraction` | `svg-font-extraction` |
 | `type` | hub | `type scale`, `type design`, `typeface pairing`, `typographic system`, `variable font axes` | `design-foundations` → `type` |
 | `variable-icon-font-architect` | hub | `variable axis`, `variable axes` | `design-foundations` → `lead-type-designer` → `variable-icon-font-architect` |
+| `a11y-assistive-tech` | cross-cutting | `screen reader testing`, `browse mode`, `application mode`, `forms mode`, `aria roles`, `aria states` (+2) | `design-foundations` → `lead-accessibility-architect` → `a11y-assistive-tech` |
 | `a11y-audit-toolkit` | cross-cutting | `accessibility audit`, `a11y audit`, `axe`, `axe-core`, `pa11y`, `lighthouse accessibility` (+8) | `design-foundations` → `lead-accessibility-architect` → `a11y-audit-toolkit` |
+| `a11y-auditory` | cross-cutting | `hearing impairment`, `hearing loss`, `hard of hearing`, `age-related hearing loss`, `closed captions`, `audio description` (+2) | `design-foundations` → `lead-accessibility-architect` → `a11y-auditory` |
+| `a11y-cognitive` | cross-cutting | `cognitive accessibility`, `cognitive load`, `extraneous load`, `attention deficit`, `working memory`, `reading disability` (+2) | `design-foundations` → `lead-accessibility-architect` → `a11y-cognitive` |
+| `a11y-legal-compliance` | cross-cutting | `wcag 2.1`, `wcag 2.2`, `wcag 3.0`, `americans with disabilities act`, `section 508`, `en 301 549` (+2) | `design-foundations` → `lead-accessibility-architect` → `a11y-legal-compliance` |
 | `a11y-motor-physical` | cross-cutting | `focus order`, `tab order`, `keyboard navigation`, `focus trap`, `keyboard access` | `design-foundations` → `lead-accessibility-architect` → `a11y-motor-physical` |
+| `a11y-neurodiversity` | cross-cutting | `autism spectrum condition`, `sensory processing`, `sensory sensitivity`, `sensory overload`, `consistent navigation`, `literal language` (+2) | `design-foundations` → `lead-accessibility-architect` → `a11y-neurodiversity` |
 | `a11y-visual` | cross-cutting | `contrast`, `color contrast`, `color blindness`, `color vision deficiency`, `cvd`, `wcag` (+8) | `a11y-visual` |
 | `ai-video-generation` | cross-cutting | `ai video`, `text to video`, `image to video`, `animate image`, `generate video`, `video generation` (+8) | `imaging-foundations` → `ai-video-generation` |
 | `artifact-ingest` | cross-cutting | `vendor artifact`, `llm canvas`, `chatgpt canvas`, `claude artifact`, `html artifact`, `clipboard ingest` (+2) | `artifact-ingest` |
@@ -429,18 +434,25 @@ Hubs, foundations, and cross-cutting skills that declare `triggers:` in frontmat
 | `sec-appsec-owasp` | cross-cutting | `owasp`, `injection`, `sql injection`, `xss`, `csrf`, `ssrf` (+12) | `eng-foundations` → `lead-security-architect` → `sec-appsec-owasp` |
 | `sec-authn-authz` | cross-cutting | `authentication`, `authorization`, `oauth`, `oidc`, `jwt`, `session management` (+14) | `eng-foundations` → `lead-security-architect` → `sec-authn-authz` |
 | `sec-supply-chain` | cross-cutting | `supply chain`, `dependency`, `sbom`, `provenance`, `slsa`, `sigstore` (+12) | `eng-foundations` → `lead-security-architect` → `sec-supply-chain` |
-| `sec-threat-modeling` | cross-cutting | `threat model`, `stride`, `pasta`, `attack tree`, `trust boundary`, `data flow diagram` (+8) | `eng-foundations` → `lead-security-architect` → `sec-threat-modeling` |
+| `sec-threat-modeling` | cross-cutting | `threat model`, `stride model`, `stride analysis`, `pasta methodology`, `pasta threat model`, `attack tree` (+10) | `eng-foundations` → `lead-security-architect` → `sec-threat-modeling` |
 | `self-improve` | cross-cutting | `self-improve`, `self-improving`, `self-heal`, `self-healing`, `self-correcting`, `connective tissue` (+2) | `self-improve` |
 | `session-end` | cross-cutting | `/session-end`, `end of session`, `end the session`, `session done`, `done for today`, `logging off` (+1) | `session-end` |
 | `side-chat-handback` | cross-cutting | `handback`, `/handback`, `end side chat`, `close side chat`, `hand this back`, `hand back` (+2) | `side-chat-handback` |
 | `skill-placement` | cross-cutting | `create a skill`, `generate skill`, `make a skill`, `new skill`, `skill placement` | `skill-placement` |
 | `today` | cross-cutting | `/today`, `daily note`, `plan my day` | `today` |
 | `visual-prove-engine` | cross-cutting | `prove this build`, `cuespec`, `measured verdict`, `visual prove`, `rank builds`, `improvement ledger` (+11) | `design-foundations` → `lead-visual-qa` → `visual-prove-engine` |
+| `visual-qa-accessibility` | cross-cutting | `text legibility for low-vision users`, `color-only information encoding failures`, `focus indicator visibility`, `click target sizing`, `keyboard navigation visual affordances`, `visual noise` (+2) | `design-foundations` → `lead-visual-qa` → `visual-qa-accessibility` |
+| `visual-qa-architecture` | cross-cutting | `architectural renders`, `facade composition`, `material accuracy`, `pbr correctness in renders`, `structural plausibility`, `site context integration` (+2) | `design-foundations` → `lead-visual-qa` → `visual-qa-architecture` |
 | `visual-qa-dataviz` | cross-cutting | `chart review`, `chart audit`, `dataviz qa`, `graph review`, `data table review`, `dashboard review` (+4) | `design-foundations` → `lead-visual-qa` → `visual-qa-dataviz` |
+| `visual-qa-game-design` | cross-cutting | `game ui`, `hud design`, `in-world visual clarity`, `level art composition`, `art style consistency across assets`, `damage numbers` (+2) | `design-foundations` → `lead-visual-qa` → `visual-qa-game-design` |
+| `visual-qa-interior-design` | cross-cutting | `interior renders`, `spatial proportion`, `room scale`, `furniture selection`, `arrangement quality`, `artificial lighting layers` (+2) | `design-foundations` → `lead-visual-qa` → `visual-qa-interior-design` |
 | `visual-qa-motion` | cross-cutting | `motion qa`, `motion review`, `animation review`, `animation audit`, `jank review`, `janky animation` (+7) | `design-foundations` → `lead-visual-qa` → `visual-qa-motion` |
 | `visual-qa-toolkit` | cross-cutting | `visual qa`, `pixel diff`, `visual regression`, `screenshot audit`, `design qa`, `qa audit` (+1) | `design-foundations` → `lead-visual-qa` → `visual-qa-toolkit` |
 | `visual-qa-type` | cross-cutting | `typography review`, `type qa`, `rendered type`, `font loading shift`, `fout`, `foit` (+5) | `design-foundations` → `lead-visual-qa` → `visual-qa-type` |
+| `visual-qa-ui-design` | cross-cutting | `screen compositions`, `ui component visual quality`, `design system adherence`, `responsive layout behavior`, `token application` | `design-foundations` → `lead-visual-qa` → `visual-qa-ui-design` |
+| `visual-qa-usability` | cross-cutting | `task completion paths`, `error prevention through visual design`, `learnability of interface patterns`, `efficiency of interaction flows`, `cognitive load assessment`, `visual feedback clarity` (+2) | `design-foundations` → `lead-visual-qa` → `visual-qa-usability` |
+| `visual-qa-ux-design` | cross-cutting | `user flows`, `navigation patterns`, `information architecture as expressed visually`, `low-to-high fidelity prototypes`, `journey maps`, `screen sequences` (+2) | `design-foundations` → `lead-visual-qa` → `visual-qa-ux-design` |
 | `web-automation` | cross-cutting | `browser automation`, `scrape`, `web scraping`, `headless browser`, `agent-browser`, `cdp` (+8) | `web-automation` |
 | `workspace-bootstrap` | cross-cutting | `workspace-bootstrap`, `reload the workspace`, `run the handshake`, `ritual missing`, `load context`, `reconcile sessions` (+1) | `workspace-bootstrap` |
 
-_Curated routes: 315 · Registry rows: 105_
+_Curated routes: 315 · Registry rows: 117_

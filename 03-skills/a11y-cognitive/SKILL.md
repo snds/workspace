@@ -18,6 +18,7 @@ tier: cross-cutting
 domain: accessibility
 hub: lead-accessibility-architect
 spec_version: "2.0"
+triggers: [cognitive accessibility, cognitive load, extraneous load, attention deficit, working memory, reading disability, reading difficulty, plain language]
 ---
 
 # a11y-cognitive

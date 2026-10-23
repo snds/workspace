@@ -21,6 +21,7 @@ description: >
 aliases: [lead-frontend-engineer]
 tier: hub
 domain: engineering
+area: frontend
 triggers: [frontend engineer, react component, implement the ui, frontend architecture]
 governed_by: [qa]
 spec_version: "2.0"

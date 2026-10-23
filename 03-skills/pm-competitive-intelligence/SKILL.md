@@ -18,6 +18,7 @@ tier: spoke
 domain: product
 hub: lead-product-manager
 prerequisites: [lead-product-manager]
+triggers: [competitive analysis, competitive positioning, feature parity, magic quadrant, forrester wave, competitive intelligence, analyzing why deals are won]
 ---
 
 # PM Competitive Intelligence

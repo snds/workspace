@@ -14,6 +14,7 @@ aliases: [lead-security-architect]
 triggers: [appsec, threat model, authentication, authorization, oauth, owasp, vulnerability, secrets, supply chain, csrf, xss, ssrf, least privilege, security review, security audit, fail closed, tenant isolation]
 tier: hub
 domain: security
+area: security
 prerequisites: [eng-foundations]
 related: [be-security-posture, lead-accessibility-architect, lead-backend-engineer, devops-ci-cd]
 surfaces: ["*"]

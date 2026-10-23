@@ -21,6 +21,7 @@ domain: engineering
 hub: lead-devops-engineer
 prerequisites: [lead-devops-engineer]
 spec_version: "2.0"
+triggers: [blue-green deployment, canary deployment, progressive delivery, rolling update, recreate deployment, argo rollouts, shadow deployment]
 ---
 
 # DevOps: Release Engineering

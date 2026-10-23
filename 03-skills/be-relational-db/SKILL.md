@@ -23,6 +23,7 @@ domain: engineering
 hub: lead-backend-engineer
 prerequisites: [lead-backend-engineer]
 spec_version: "2.0"
+triggers: [denormalization tradeoffs, query performance, explain analyze, join strategies, n+1 queries]
 ---
 
 # Be: Relational Database

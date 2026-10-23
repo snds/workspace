@@ -16,6 +16,7 @@ domain: design
 hub: lead-information-architect
 prerequisites: [lead-information-architect]
 spec_version: "2.0"
+triggers: [search behavior patterns, faceted search ux, search result anatomy, zero-results handling, search analytics as ia validation, autocomplete]
 ---
 
 # IA: Search & Findability

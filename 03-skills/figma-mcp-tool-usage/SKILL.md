@@ -9,6 +9,7 @@ hub: figma
 prerequisites: [figma]
 requires: [figma-mcp]
 spec_version: "2.1"
+triggers: [figma mcp tools, use_figma, get_design_context]
 ---
 
 # Figma MCP Tool Usage

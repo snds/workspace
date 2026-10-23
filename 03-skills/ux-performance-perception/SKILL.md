@@ -19,6 +19,7 @@ domain: design
 hub: lead-ux-designer
 prerequisites: [lead-ux-designer]
 spec_version: "2.0"
+triggers: [skeleton screen layout, progress indication for multi-step processes, timeout ux, perceived performance instrumentation, loading state, optimistic ui, skeleton screen, perceived performance]
 ---
 
 # UX — Performance Perception

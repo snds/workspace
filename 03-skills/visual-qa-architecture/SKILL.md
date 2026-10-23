@@ -19,6 +19,7 @@ tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
 spec_version: "2.0"
+triggers: [architectural renders, facade composition, material accuracy, pbr correctness in renders, structural plausibility, site context integration, hardscape rendering quality, time-of-day render quality]
 ---
 
 # Visual QA — Architecture

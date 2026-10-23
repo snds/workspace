@@ -23,6 +23,7 @@ hub: lead-backend-engineer
 prerequisites: [lead-backend-engineer]
 spec_version: "2.0"
 governed_by: [sec-authn-authz, sec-appsec-owasp]
+triggers: [rest resource modeling, http semantics, status codes, response envelope design, hateoas tradeoffs, graphql type system, n+1 in graphql, query complexity limits]
 ---
 
 # Be: API Design

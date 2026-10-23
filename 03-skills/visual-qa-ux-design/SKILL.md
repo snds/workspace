@@ -17,6 +17,7 @@ tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
 spec_version: "2.0"
+triggers: [user flows, navigation patterns, information architecture as expressed visually, low-to-high fidelity prototypes, journey maps, screen sequences, interaction design patterns, onboarding flows]
 ---
 
 # Visual QA — UX Design

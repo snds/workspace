@@ -23,6 +23,7 @@ domain: engineering
 hub: lead-backend-engineer
 prerequisites: [lead-backend-engineer]
 spec_version: "2.0"
+triggers: [cache invalidation, cache-aside, write-through cache, cache stampede, thundering herd, connection pooling, pgbouncer, stale-while-revalidate]
 ---
 
 # Be: Caching & Performance

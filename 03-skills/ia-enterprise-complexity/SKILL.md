@@ -16,6 +16,7 @@ domain: design
 hub: lead-information-architect
 prerequisites: [lead-information-architect]
 spec_version: "2.0"
+triggers: [role-based navigation decisions, admin vs end-user ia, umbrella navigation, multi-product suite navigation, multi-tenant ia]
 ---
 
 # IA: Enterprise Complexity

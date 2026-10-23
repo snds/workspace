@@ -17,6 +17,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-3d-designer]
 spec_version: "2.0"
+triggers: [mesh construction, edge flow, supporting loops, subdivision surface, hard surface modeling, retopology, polygon budget, quad topology]
 ---
 
 # 3D Modeling Fundamentals

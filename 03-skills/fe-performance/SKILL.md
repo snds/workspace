@@ -18,6 +18,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [core web vitals, bundle size, code splitting, tree shaking, lazy loading, dynamic imports, streaming ssr, webpack bundle analyzer]
 ---
 
 # FE Performance

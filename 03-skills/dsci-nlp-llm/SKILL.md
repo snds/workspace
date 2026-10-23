@@ -19,6 +19,7 @@ tier: spoke
 domain: data
 hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
+triggers: [text classification, sentiment analysis, few-shot prompting, vector databases, semantic search, dense retrieval, sparse retrieval, hybrid search]
 ---
 
 # DSci: NLP & LLM Engineering

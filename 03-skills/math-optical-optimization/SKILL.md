@@ -22,6 +22,7 @@ tier: spoke
 domain: design
 hub: variable-icon-font-architect
 prerequisites: [variable-icon-font-architect]
+triggers: [overshoot calculation, stroke contrast modeling, counter area optimization for legibility, gradient descent for parameter fitting, energy minimization for curve smoothness, laplacian smoothing of point sets, perceptual hashing for shape similarity]
 ---
 
 # Optical Optimization Mathematics

@@ -19,6 +19,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [chart library selection, observable plot, tanstack table, table sorting, column resize, column reorder]
 ---
 
 # FE Data Visualization

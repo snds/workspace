@@ -17,6 +17,7 @@ domain: design
 hub: lead-information-architect
 prerequisites: [lead-information-architect]
 spec_version: "2.0"
+triggers: [card sort design, tree testing methodology, first-click testing protocols, ia heuristic evaluation criteria, participant recruitment for ia studies, evaluate an information architecture, dendrogram]
 ---
 
 # IA: Research Methods

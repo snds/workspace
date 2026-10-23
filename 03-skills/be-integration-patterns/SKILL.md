@@ -24,6 +24,7 @@ domain: engineering
 hub: lead-backend-engineer
 prerequisites: [lead-backend-engineer]
 spec_version: "2.0"
+triggers: [outbound webhook delivery guarantees, hmac-sha256 signature verification, webhook retry, dead letter queues]
 ---
 
 # Be: Integration Patterns

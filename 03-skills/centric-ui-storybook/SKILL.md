@@ -19,6 +19,7 @@ domain: design
 hub: ds
 prerequisites: [ds]
 governed_by: [design-engineer]
+triggers: [installing storybook into centric-ui, running storybook locally, deploying storybook to github pages, adding storybook scripts to package.json]
 ---
 
 # Centric UI — Storybook

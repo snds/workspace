@@ -19,6 +19,7 @@ tier: spoke
 domain: product
 hub: lead-product-manager
 prerequisites: [lead-product-manager]
+triggers: [customer discovery, opportunity sizing, customer interviews, continuous discovery, assumption mapping, customer interviewing]
 ---
 
 # PM Discovery & Research

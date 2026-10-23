@@ -20,6 +20,7 @@ domain: engineering
 hub: lead-backend-engineer
 prerequisites: [lead-backend-engineer]
 spec_version: "2.0"
+triggers: [strangler fig pattern, ddd bounded contexts, event sourcing, saga pattern, cqrs, circuit breaker, compensating transactions, distributed monolith]
 ---
 
 # Be: Service Architecture

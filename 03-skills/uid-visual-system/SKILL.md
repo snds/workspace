@@ -14,6 +14,7 @@ domain: design
 hub: lead-ui-designer
 prerequisites: [lead-ui-designer]
 spec_version: "2.0"
+triggers: [visual system development, style guide authoring, visual language coherence, aesthetic consistency audits, brand-to-product visual translation, shape language, motion character, visual system evolution]
 ---
 
 # UID: Visual System

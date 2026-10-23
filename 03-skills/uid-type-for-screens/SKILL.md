@@ -16,6 +16,7 @@ domain: design
 hub: lead-ui-designer
 prerequisites: [lead-ui-designer]
 spec_version: "2.0"
+triggers: [screen typography decisions, type scale design for ui, font rendering on screens, line height in ui components]
 ---
 
 # UID: Type for Screens

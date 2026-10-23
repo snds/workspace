@@ -18,6 +18,7 @@ domain: design
 hub: lead-information-architect
 prerequisites: [lead-information-architect]
 spec_version: "2.0"
+triggers: [content strategy, ia alignment, content type design, content models]
 ---
 
 # IA: Content Strategy

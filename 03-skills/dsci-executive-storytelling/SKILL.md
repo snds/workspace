@@ -19,6 +19,7 @@ tier: spoke
 domain: data
 hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
+triggers: [executive presentation of data, board deck analysis, pyramid principle, bluf communication, data storytelling, insight communication, recommendation structure, scenario framing]
 ---
 
 # DSci: Executive Storytelling

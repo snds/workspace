@@ -16,6 +16,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-ux-designer]
 spec_version: "2.0"
+triggers: [service blueprinting, multi-touchpoint experience mapping, moments of truth mapping]
 ---
 
 # UX — Service Design

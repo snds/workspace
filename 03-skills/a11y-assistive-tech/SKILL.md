@@ -19,6 +19,7 @@ tier: cross-cutting
 domain: accessibility
 hub: lead-accessibility-architect
 spec_version: "2.0"
+triggers: [screen reader testing, browse mode, application mode, forms mode, aria roles, aria states, aria properties, focus management]
 ---
 
 # a11y-assistive-tech

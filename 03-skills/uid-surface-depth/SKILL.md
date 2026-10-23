@@ -15,6 +15,7 @@ domain: design
 hub: lead-ui-designer
 prerequisites: [lead-ui-designer]
 spec_version: "2.0"
+triggers: [surface design, elevation systems]
 ---
 
 # UID: Surface Depth

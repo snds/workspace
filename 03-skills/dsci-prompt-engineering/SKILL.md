@@ -20,6 +20,7 @@ spec_version: "2.0"
 tier: spoke
 domain: data
 prerequisites: [lead-data-scientist]
+triggers: [system prompt architecture, prompt versioning, few-shot example design, dynamic few-shot retrieval, output format contracts, json schema enforcement, structured output, evaluation harness design]
 ---
 
 # DSci: Prompt Engineering

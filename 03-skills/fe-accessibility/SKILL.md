@@ -20,6 +20,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [landmark roles, roving tabindex, skip links, focus visible, apca contrast, aria implementation]
 ---
 
 # FE Accessibility

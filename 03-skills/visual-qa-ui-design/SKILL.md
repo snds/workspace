@@ -19,6 +19,7 @@ tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
 spec_version: "2.0"
+triggers: [screen compositions, ui component visual quality, design system adherence, responsive layout behavior, token application]
 ---
 
 # Visual QA — UI Design

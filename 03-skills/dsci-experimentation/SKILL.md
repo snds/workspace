@@ -18,6 +18,7 @@ tier: spoke
 domain: data
 hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
+triggers: [experiment design, randomization unit, control group, treatment group, statistical power, type i error, type ii error, minimum detectable effect]
 ---
 
 # DSci: Experimentation

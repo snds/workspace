@@ -16,6 +16,7 @@ domain: design
 hub: lead-graphic-designer
 prerequisites: [lead-graphic-designer]
 spec_version: "2.0"
+triggers: [offset lithography, digital printing, screen printing, cmyk separations, spot colors, safe zone, crop marks, registration marks]
 ---
 
 # GD — Print Production

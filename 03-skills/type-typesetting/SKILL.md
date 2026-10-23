@@ -18,6 +18,7 @@ domain: design
 hub: lead-type-designer
 prerequisites: [lead-type-designer]
 spec_version: "2.0"
+triggers: [setting body text professionally, rag control, widows and orphans, optical margin alignment, paragraph composer, hyphenation settings]
 ---
 
 # Type Typesetting

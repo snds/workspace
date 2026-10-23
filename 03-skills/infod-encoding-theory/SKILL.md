@@ -15,6 +15,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-information-designer, found-color]
 spec_version: "2.0"
+triggers: [retinal variables, preattentive, cleveland and mcgill, encoding channel, perceptually uniform, colorblind-safe palette]
 ---
 
 # Encoding Theory

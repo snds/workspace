@@ -20,6 +20,7 @@ tier: spoke
 domain: data
 hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
+triggers: [dbt project structure, dbt tests, dbt incremental models, data contracts, pipeline orchestration, dag design, backfill strategy, data warehouse schema design]
 ---
 
 # DSci: Data Engineering

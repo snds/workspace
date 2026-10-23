@@ -15,6 +15,7 @@ domain: design
 hub: lead-motion-designer
 prerequisites: [lead-motion-designer, imaging-foundations]
 spec_version: "2.0"
+triggers: [css 3d transforms, transform-style: preserve-3d, card flip animation, parallax effects, depth layers, scroll-linked 3d, three.js in interfaces, webgl for ui]
 ---
 
 # Motion 3D Spatial

@@ -19,6 +19,7 @@ domain: design
 hub: ds
 prerequisites: [ds]
 governed_by: [design-engineer]
+triggers: [vms ui, naming for centric-ui, navigating the feature module structure, centric-ui]
 ---
 
 # Centric UI — Design-Engineer Workflow

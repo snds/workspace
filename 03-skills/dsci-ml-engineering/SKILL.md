@@ -17,6 +17,7 @@ tier: spoke
 domain: data
 hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
+triggers: [model training pipelines, model deployment, feature engineering, feature stores, production ml engineering]
 ---
 
 # DSci: ML Engineering

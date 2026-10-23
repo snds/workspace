@@ -24,6 +24,7 @@ domain: engineering
 hub: lead-devops-engineer
 prerequisites: [lead-devops-engineer]
 spec_version: "2.0"
+triggers: [recording rules, alerting rules, remote write, grafana mimir, distributed tracing, automatic instrumentation, manual instrumentation]
 ---
 
 # DevOps: Observability

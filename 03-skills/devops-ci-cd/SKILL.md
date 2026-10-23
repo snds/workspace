@@ -23,6 +23,7 @@ hub: lead-devops-engineer
 prerequisites: [lead-devops-engineer]
 spec_version: "2.0"
 governed_by: [sec-supply-chain]
+triggers: [github actions, reusable workflows, composite actions, job matrices, concurrency groups, self-hosted runners, oidc-based secrets, trunk-based development]
 ---
 
 # DevOps: CI/CD

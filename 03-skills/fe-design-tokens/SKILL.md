@@ -23,6 +23,7 @@ tier: spoke
 domain: engineering
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [style dictionary configuration, figma tokens, token studio export]
 ---
 
 # Fe: Design Tokens

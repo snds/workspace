@@ -8,6 +8,7 @@ domain: design
 hub: figma
 prerequisites: [figma]
 spec_version: "2.0"
+triggers: [figma plugin error, figma mcp error, figma api error]
 ---
 
 # Figma API Error Troubleshooting

@@ -24,6 +24,7 @@ domain: engineering
 hub: lead-devops-engineer
 prerequisites: [lead-devops-engineer]
 spec_version: "2.0"
+triggers: [finops foundation, inform optimize operate, unit economics, cost per customer, cost per request, cost attribution, tagging strategy, aws config tag enforcement]
 ---
 
 # DevOps: Cost Optimization

@@ -18,6 +18,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [component api design, compound components, headless ui, polymorphic components, controlled vs uncontrolled, class-variance-authority, render props]
 ---
 
 # FE Component Architecture

@@ -15,6 +15,7 @@ domain: design
 hub: lead-graphic-designer
 prerequisites: [lead-graphic-designer]
 spec_version: "2.0"
+triggers: [visual rhetoric, gestalt principles as communication tools, semiotics, signifier, signified, saussure]
 ---
 
 # GD — Visual Communication

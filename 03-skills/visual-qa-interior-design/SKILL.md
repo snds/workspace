@@ -21,6 +21,7 @@ tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
 spec_version: "2.0"
+triggers: [interior renders, spatial proportion, room scale, furniture selection, arrangement quality, artificial lighting layers, light color temperature accuracy, shadow quality in interior spaces]
 ---
 
 # Visual QA — Interior Design

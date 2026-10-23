@@ -27,7 +27,7 @@ ordered or cross-linked until migrated.
 | `name` | string | always | Identity. **Must equal the directory name.** Kebab-case. |
 | `description` | string | always | Routing prose. The zero-cost matching surface (already in the system prompt). Keep the trigger language rich. |
 | `aliases` | list | recommended | Obsidian wikilink targets. Set to `[<dir-name>]` so `[[name]]` resolves despite every file being `SKILL.md`. |
-| `triggers` | list | hubs + foundations | Lowercased keyword/phrase list — the deterministic half of `description`. Drives machine routing. **Required for hubs and foundations** — empty list fails `build-registry.py`. Quote multi-word phrases. Use domain phrases, not bare everyday words: `matrix`, `seed`, `smoke` or `exposure` fire on "RACI matrix", "seed data", "smoke test", "risk exposure". `evaluate-skill-routing.py --lint` refuses filler-only and article+noun phrases; for a trigger word with an everyday meaning, add a `forbid_skills` case to `skill-routing-cases.jsonl` (2026-10-14 trigger review). |
+| `triggers` | list | hubs, foundations and spokes | Lowercased keyword/phrase list — the deterministic half of `description`. Drives machine routing. **Required for hubs and foundations** — empty list fails `build-registry.py`. Quote multi-word phrases. Use domain phrases, not bare everyday words: `matrix`, `seed`, `smoke` or `exposure` fire on "RACI matrix", "seed data", "smoke test", "risk exposure". `evaluate-skill-routing.py --lint` refuses filler-only and article+noun phrases; for a trigger word with an everyday meaning, add a `forbid_skills` case to `skill-routing-cases.jsonl` (2026-10-14 trigger review). |
 | `tier` | enum | migrated skills | `foundation` \| `hub` \| `spoke` \| `cross-cutting`. The load-order class. |
 | `area` | string | hubs that own a subspecialty area | The area this hub owns (`design-system`, `ux`, `information-architecture`, `research` …). **One hub per area**: `09-tools/build-area-index.py` generates [[skill-areas]] from it and fails when two hubs claim one area. The harness compiler adopts the hub whose `area` matches before guessing by words. |
 | `domain` | string | optional | `design` \| `engineering` \| `product` \| `data` \| `game` \| … Facet for grouping + dedupe. |
@@ -176,6 +176,7 @@ measurement, linkage) over adding volume to already-deep spokes.
 
 - **Never rename a `SKILL.md` file or its directory** without re-pointing every loader path and
   wikilink — 200+ files hardcode `03-skills/<name>/SKILL.md`. Add `aliases` instead.
+- **Every spoke has triggers of its own** (taken from the asks its description lists, never a bare everyday word), and **every hub with spokes declares an `area`**. A spoke without triggers is reached only if an agent reads its hub ([[decision-routing-every-domain]]).
 - **One prefix, one domain.** A spoke's name prefix names its domain; two domains never share one. `ds-` always means design system and data science is `dsci-` — the template for any future collision ([[decision-skill-prefixes]]).
 - After editing frontmatter, run `python3 09-tools/build-registry.py` (or let CI catch the drift).
 - `prerequisites` is a DAG: no cycles. The generator hard-fails on a cycle or a dangling reference.

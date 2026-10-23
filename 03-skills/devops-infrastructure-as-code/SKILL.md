@@ -21,6 +21,7 @@ domain: engineering
 hub: lead-devops-engineer
 prerequisites: [lead-devops-engineer]
 spec_version: "2.0"
+triggers: [remote state, s3 backend, dynamodb lock, terraform cloud, plan apply workflow, module versioning]
 ---
 
 # DevOps: Infrastructure as Code

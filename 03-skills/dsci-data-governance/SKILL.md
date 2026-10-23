@@ -22,6 +22,7 @@ spec_version: "2.0"
 tier: spoke
 domain: data
 prerequisites: [lead-data-scientist]
+triggers: [data classification tiers, pii identification, gdpr article 5, hipaa data retention, data catalog design, apache atlas, dbt docs, business glossary]
 ---
 
 # DSci: Data Governance

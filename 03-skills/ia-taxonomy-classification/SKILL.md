@@ -15,6 +15,7 @@ domain: design
 hub: lead-information-architect
 prerequisites: [lead-information-architect]
 spec_version: "2.0"
+triggers: [classification theory, faceted navigation, controlled vocabularies, thesaurus design, ontology construction, term selection, taxonomy governance, enterprise knowledge organization]
 ---
 
 # IA: Taxonomy & Classification

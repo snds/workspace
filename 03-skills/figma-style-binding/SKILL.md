@@ -8,6 +8,7 @@ domain: design
 hub: figma
 prerequisites: [figma]
 spec_version: "2.0"
+triggers: [bind variables to styles, readonlyarray fills, clone-modify-reassign]
 ---
 
 # Figma Style Binding and Immutability Rules

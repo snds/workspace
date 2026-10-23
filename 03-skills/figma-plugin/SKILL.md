@@ -7,6 +7,7 @@ tier: spoke
 domain: design
 hub: figma
 prerequisites: [figma]
+triggers: [figma plugin development, figma plugin typescript, plugin manifest.json]
 ---
 
 # Figma Plugin Development

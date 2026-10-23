@@ -19,6 +19,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [component testing, testing library, react testing library, vue test utils, mock service worker, playwright screenshots, e2e testing, page object model]
 ---
 
 # FE Testing

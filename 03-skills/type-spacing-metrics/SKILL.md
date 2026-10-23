@@ -16,6 +16,7 @@ domain: design
 hub: lead-type-designer
 prerequisites: [lead-type-designer]
 spec_version: "2.0"
+triggers: [spacing a typeface, sidebearing values, kerning pairs, kerning groups, spacing string test, leading relationships, tracking at different sizes, cap height]
 ---
 
 # Type Spacing and Metrics

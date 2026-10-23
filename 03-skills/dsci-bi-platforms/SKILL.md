@@ -20,6 +20,7 @@ spec_version: "2.0"
 tier: spoke
 domain: data
 prerequisites: [lead-data-scientist]
+triggers: [power bi, apache superset, sql lab, semantic layer design, metric governance, certified metrics, bi tool selection]
 ---
 
 # DSci: BI Platforms & Embedded Analytics

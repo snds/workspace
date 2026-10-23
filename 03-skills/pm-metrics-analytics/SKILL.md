@@ -17,6 +17,7 @@ tier: spoke
 domain: product
 hub: lead-product-manager
 prerequisites: [lead-product-manager]
+triggers: [success metrics, north star metric, event tracking, leading indicators, metric definition, data spec]
 ---
 
 # PM Metrics & Analytics

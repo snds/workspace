@@ -19,6 +19,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [web components, custom elements, shadow dom, framework-agnostic design system components, lit-element]
 ---
 
 # Web Components / Lit — Framework Skill

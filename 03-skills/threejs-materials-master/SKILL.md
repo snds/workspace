@@ -15,6 +15,7 @@ tier: spoke
 domain: game
 hub: lead-game-developer
 prerequisites: [lead-game-developer, science-foundations, imaging-foundations]
+triggers: [texture compression, material recipe, three.js materials, meshphysicalmaterial]
 ---
 
 # Three.js Materials Master

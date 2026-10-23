@@ -17,6 +17,7 @@ tier: spoke
 domain: product
 hub: lead-product-manager
 prerequisites: [lead-product-manager]
+triggers: [backlog grooming, kano model, quarterly planning, platform sequencing, portfolio roadmap, cost of delay, communicating a roadmap]
 ---
 
 # PM Roadmap & Strategy

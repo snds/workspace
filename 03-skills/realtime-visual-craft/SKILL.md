@@ -14,6 +14,7 @@ aliases: [realtime-visual-craft, rvc]
 triggers: [photoreal, photorealism, realtime craft, realtime visual, flythrough, fly-through, northstar, render contract, RENDER.md, BUDGET.md, NORTHSTAR.md, cinematic look, movie-level, match the reference, frame budget qa, still grid, motion fidelity, interactive capture, craft photoreal, harden render, polish render]
 tier: hub
 domain: game
+area: realtime-visuals
 related: [imaging-foundations, realtime-render-performance, native-visual-eval, interactive-capture-eval, reference-video-review, visual-qa-photoreal-rendering, rendering-guild, failure-mode-premortem, lead-visual-qa, lead-game-developer, dynamic-gi-production, shadow-quality-craft, virtual-texturing-ops, bake-orchestration, gpu-capture-tooling, adapter-webgpu-three, adapter-unreal, adapter-unity-hdrp, vgpu-webgpu]
 surfaces: ["*"]
 spec_version: "2.0"

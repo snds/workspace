@@ -18,6 +18,7 @@ domain: design
 hub: lead-type-designer
 prerequisites: [lead-type-designer]
 spec_version: "2.0"
+triggers: [small caps, case-sensitive forms, contextual alternates, oldstyle figures, opentype features]
 ---
 
 # Type OpenType Features for Text

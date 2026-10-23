@@ -17,6 +17,7 @@ domain: design
 hub: lead-ui-designer
 prerequisites: [lead-ui-designer]
 spec_version: "2.0"
+triggers: [icon style, icon metaphor, icon size system]
 ---
 
 # UID: Iconography

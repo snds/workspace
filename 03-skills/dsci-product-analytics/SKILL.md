@@ -19,6 +19,7 @@ tier: spoke
 domain: data
 hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
+triggers: [aarrr metrics, activation rate, retention curves, churn cohorts, customer lifetime value, ltv modeling, expansion arr, funnel analysis]
 ---
 
 # DSci: Product Analytics

@@ -22,6 +22,7 @@ domain: engineering
 hub: lead-backend-engineer
 prerequisites: [lead-backend-engineer]
 spec_version: "2.0"
+triggers: [client credentials flow, refresh token rotation, token storage security, oauth 2.0, pkce, jwt claims, scim provisioning, saml]
 ---
 
 # Be: Auth Patterns

@@ -17,6 +17,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-ux-designer]
 spec_version: "2.0"
+triggers: [human-in-the-loop interaction patterns, ai disclosure requirements, streaming response ux, ai error state taxonomy, trust calibration, prompt exposure in enterprise ui, ai feature discovery and onboarding]
 ---
 
 # UX — AI Product Design

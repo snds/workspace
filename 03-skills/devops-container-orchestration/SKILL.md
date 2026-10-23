@@ -22,6 +22,7 @@ domain: engineering
 hub: lead-devops-engineer
 prerequisites: [lead-devops-engineer]
 spec_version: "2.0"
+triggers: [gateway api, resource requests, resource limits, cpu throttling, vertical pod autoscaler, horizontal pod autoscaler, pod disruption budget, helm chart]
 ---
 
 # DevOps: Container Orchestration

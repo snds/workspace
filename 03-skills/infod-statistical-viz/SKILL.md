@@ -15,6 +15,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-information-designer]
 spec_version: "2.0"
+triggers: [reference lines, legend-within-chart principle, small multiples]
 ---
 
 # Statistical Visualization

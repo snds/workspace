@@ -20,6 +20,7 @@ tier: spoke
 domain: product
 hub: lead-product-manager
 prerequisites: [lead-product-manager]
+triggers: [platform strategy, api product, api versioning, deprecation policy, integration ecosystem, developer experience]
 ---
 
 # PM Platform & API

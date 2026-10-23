@@ -18,6 +18,7 @@ tier: spoke
 domain: data
 hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
+triggers: [time series analysis, time series decomposition, trend analysis, temporal fusion transformer, xgboost for time series, lag features, rolling statistics, forecasting revenue]
 ---
 
 # DSci: Forecasting

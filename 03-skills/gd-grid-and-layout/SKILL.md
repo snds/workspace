@@ -14,6 +14,7 @@ domain: design
 hub: lead-graphic-designer
 prerequisites: [lead-graphic-designer]
 spec_version: "2.0"
+triggers: [page layout, column grids, baseline grids, modular grids, compositional balance, spatial rhythm, swiss international typographic style, van de graaf canon]
 ---
 
 # GD — Grid and Layout

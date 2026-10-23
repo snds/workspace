@@ -17,6 +17,7 @@ tier: cross-cutting
 domain: accessibility
 hub: lead-accessibility-architect
 spec_version: "2.0"
+triggers: [autism spectrum condition, sensory processing, sensory sensitivity, sensory overload, consistent navigation, literal language, social cues in ui, tourette syndrome]
 ---
 
 # a11y-neurodiversity

@@ -20,6 +20,7 @@ domain: design
 hub: figma
 prerequisites: [figma]
 requires: [figma-mcp]
+triggers: [audit figma file, audit components, review figma against source, grade figma library, figma visual qa, figma generation review, design-engineer audit]
 ---
 
 # Figma source-audit — methodology

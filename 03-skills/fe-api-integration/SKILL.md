@@ -21,6 +21,7 @@ hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
 governed_by: [sec-appsec-owasp]
+triggers: [rest client, fetch wrapper, request interceptors, response interceptors, auth header injection, typed fetch, zod runtime validation, retry logic]
 ---
 
 # FE API Integration

@@ -15,6 +15,7 @@ domain: design
 hub: lead-motion-designer
 prerequisites: [lead-motion-designer]
 spec_version: "2.0"
+triggers: [page transitions, view transitions, shared element transitions, drawer slide, dropdown animation, tooltip animation, skeleton-to-content transitions, micro-interaction design]
 ---
 
 # Motion Transitions

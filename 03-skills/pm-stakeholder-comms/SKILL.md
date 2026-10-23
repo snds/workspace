@@ -18,6 +18,7 @@ tier: spoke
 domain: product
 hub: lead-product-manager
 prerequisites: [lead-product-manager]
+triggers: [executive communication, briefing doc, steering committee, stakeholder alignment, decision rights, executive sponsor, presenting to leadership, amazon memo]
 ---
 
 # PM Stakeholder Communications

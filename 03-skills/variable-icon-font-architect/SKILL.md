@@ -20,6 +20,7 @@ related: [lead-icon-artist, lead-vector-designer, lead-technical-digital-artist]
 spec_version: "2.0"
 tier: hub
 domain: design
+area: icon-fonts
 ---
 
 # Variable Icon Font Architect

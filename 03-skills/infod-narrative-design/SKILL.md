@@ -14,6 +14,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-information-designer]
 spec_version: "2.0"
+triggers: [scrollytelling, data-ink ratio, chart junk, data story, annotation layer]
 ---
 
 # Narrative Design

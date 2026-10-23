@@ -7,6 +7,7 @@ tier: spoke
 domain: design
 hub: material-symbols-project
 prerequisites: [material-symbols-project]
+triggers: [material symbols automation, material symbols suite]
 ---
 
 # Material Symbols Suite Patterns

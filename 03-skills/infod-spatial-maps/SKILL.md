@@ -14,6 +14,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-information-designer]
 spec_version: "2.0"
+triggers: [choropleth, map projection, proportional symbol map, origin-destination map, mapbox gl]
 ---
 
 # Spatial Maps

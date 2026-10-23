@@ -15,6 +15,7 @@ aliases: [lead-mobile-engineer, mobile-lead]
 triggers: [mobile engineering, mobile app, ios app, android app, react native, expo, swiftui, jetpack compose, kotlin android, native vs cross-platform, app lifecycle, offline first, cold start, testflight, play console, store review, mobile performance, push notifications, deep linking]
 tier: hub
 domain: engineering
+area: mobile
 prerequisites: [eng-foundations]
 defers_to: [framework-13, framework-14, framework-16, eng-foundations]
 rigor_role: command-hub

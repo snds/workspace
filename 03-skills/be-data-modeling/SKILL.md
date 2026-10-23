@@ -22,6 +22,7 @@ domain: engineering
 hub: lead-backend-engineer
 prerequisites: [lead-backend-engineer]
 spec_version: "2.0"
+triggers: [aggregate root pattern, oltp schema design, multi-tenancy strategy, soft deletes, surrogate keys, bitemporal, audit trail architecture]
 ---
 
 # Be: Data Modeling
