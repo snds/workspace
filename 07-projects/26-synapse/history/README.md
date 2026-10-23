@@ -2,8 +2,10 @@
 
 _The long-term tier of [the baton](../SESSION-STATE.md): what it moved out once it passed 12 KB. Generated; don't edit by hand. Newest month first._
 
-## [2026-10](2026-10.md) — 55 entries
+## [2026-10](2026-10.md) — 57 entries
 
+- 2026-10-23 — Older history lines moved from the baton
+- 2026-10-23 — Accepted routing exceptions (D137)
 - 2026-10-23 — Exceptions kept; Shared config.json merged
 - 2026-10-23 — Review context on every proposal
 - 2026-10-23 — Review context in hub depth
