@@ -2,8 +2,9 @@
 
 _The long-term tier of [the baton](../SESSION-STATE.md): what it moved out once it passed 12 KB. Generated; don't edit by hand. Newest month first._
 
-## [2026-10](2026-10.md) — 57 entries
+## [2026-10](2026-10.md) — 58 entries
 
+- 2026-10-23 — Stage H's H1 built
 - 2026-10-23 — Older history lines moved from the baton
 - 2026-10-23 — Accepted routing exceptions (D137)
 - 2026-10-23 — Exceptions kept; Shared config.json merged
