@@ -120,6 +120,19 @@ widest answer is "generate a design system in Figma", which loads the design-sys
    | `lead-ux-designer` | 2,165 |
 
    Recommended: move depth into spokes, as `ds-advisor` did (its general visual foundations went to a reference file it reads on demand). Each hub is its own reviewed change, nothing deleted.
+
+   **Reviewed 2026-10-23 (Sean: "go ahead with the next step that reviews hubs for spoke depth").**
+   Synapse's `sy routing hubs` compares each hub section with its spokes and foundations, by shared wording and shared subject. Its rules are in [plan 11 §7](https://github.com/snds/synapse/blob/main/docs/plan/11-routing-suite.md#7-hub-depth). Calibration: on the vault as it was before 2026-10-22, it finds `ds-advisor`'s 2,689-word visual-principles section as `design-foundations`' territory, the same call the design audit made by hand.
+
+   The big hubs are big with hub material: spoke tables, principles, the execution protocol #13 asks for, and cross-hub references. Five hubs were flagged:
+
+   - **`material-symbols-project`: one move.** Its 581-word Figma icon-positioning technique went word for word to `references/figma-icon-positioning.md`. The hub keeps the rule in four lines (1,159 → 671 words).
+   - **`lead-visual-qa`: kept.** Its delta-analysis method is the one every visual-QA spoke shares.
+   - **`lead-game-developer`: kept.** Its Legion principles fit the Legion context the hub is scoped to.
+   - **`lead-motion-designer`: kept.** Its directive is area-wide.
+   - **`realtime-visual-craft`: kept.** Its intro shares phrasing with a spoke by design.
+
+   Two heavy contract sections are left for a later, separate change: `figma`'s execution protocol (1,122 words) and `lead-accessibility-architect`'s principles (810).
 3. **Description recall (49%).** Half the asks that descriptions quote still miss. Many are whole
    sentences written as examples ("how should this look AND how do I code it"). Either make
    short quoted asks triggers too, or leave the metric as a guide. Recommended: leave it, and add
