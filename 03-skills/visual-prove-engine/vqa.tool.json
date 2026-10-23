@@ -1,0 +1,36 @@
+{
+  "id": "n-5055k95z",
+  "name": "vqa",
+  "description": "The visual prove engine's CLI, bound to two harness checks (visual-qa.literal): a build capture proved against a cuespec whose thresholds were scouted from the reference (vqa.literal-diff), and the engine's own calibration on planted defects (vqa.planted-defect). The evidence folder holds capture.png, its capture.json and cuespec.json.",
+  "language": "python",
+  "entry": "vqa.py",
+  "runtime": "python>=3; numpy and Pillow",
+  "safety": "read-only",
+  "network": false,
+  "implements": [
+    "vqa.literal-diff",
+    "vqa.planted-defect"
+  ],
+  "params": {
+    "evidence": {
+      "description": "The run's evidence folder: capture.png, capture.json, cuespec.json",
+      "required": true
+    }
+  },
+  "run": {
+    "vqa.literal-diff": {
+      "args": ["prove", "{evidence}/capture.png", "{evidence}/cuespec.json", "--manifest", "{evidence}/capture.json", "--strict"],
+      "description": "Every cue matches: exit 0 matches, 1 a failed or partial verdict"
+    },
+    "vqa.planted-defect": {
+      "args": ["calibrate"],
+      "description": "Every detector catches every planted defect with no false fire; writes only to the system's temporary folder"
+    },
+    "self-test": {
+      "args": ["calibrate"],
+      "description": "The planted-defect calibration"
+    }
+  },
+  "output": "exit-code",
+  "timeout_s": 300
+}
