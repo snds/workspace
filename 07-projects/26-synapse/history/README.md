@@ -2,8 +2,9 @@
 
 _The long-term tier of [the baton](../SESSION-STATE.md): what it moved out once it passed 12 KB. Generated; don't edit by hand. Newest month first._
 
-## [2026-10](2026-10.md) — 60 entries
+## [2026-10](2026-10.md) — 61 entries
 
+- 2026-10-23 — Workspace tools as harness checks
 - 2026-10-23 — Stage H's H3 built
 - 2026-10-23 — Stage H's H2 built
 - 2026-10-23 — Stage H's H1 built
