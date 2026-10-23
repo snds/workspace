@@ -108,6 +108,7 @@
 !09-tools/validate-status-anchors.py
 !09-tools/build-trigger-routes.py
 !09-tools/build-history-index.py
+!09-tools/build-area-index.py
 !09-tools/project-recall.py
 !09-tools/validate-batons.py
 !09-tools/build-local-skill-plugin.py
