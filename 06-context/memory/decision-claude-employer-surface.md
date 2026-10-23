@@ -180,3 +180,9 @@ None of them depends on which vendor's model is typing.
   - **Still blocked:** pushing or committing on an employer default branch, force pushes, hook skips,
     a personal identity on employer commits, `gh api` writes and `gh repo` admin verbs on employer repos.
   - Takes effect after a human `--install-pin`, `--install-git-hooks` and `--install-claude-overlay`.
+
+- **Amendment 2026-10-23 (Sean: "allow for remote sessions to allow for both kinds of work").** Cloud
+  sessions are no longer an unknown device for employer work. Each attached repo's owner decides its
+  rules there (P37–P39, IR5–IR6), a mixed session is allowed, and employer work may read the workspace
+  but never writes employer content into it. Remote Control follows the machine it drives, as before.
+  Full record: [[decision-remote-sessions-both-contexts]].

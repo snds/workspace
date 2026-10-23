@@ -64,7 +64,7 @@ import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple
 
 TOOLS = Path(__file__).resolve().parent
 ROOT = TOOLS.parent
@@ -198,6 +198,7 @@ TABLE_SCHEMAS: Dict[str, Dict[str, Tuple[tuple, bool]]] = {
         "schema_version": (_INT, True), "doc": (_STR, True), "devices": (_LIST, True),
         "ssh_aliases": (_LIST, True), "identities": (_LIST, False), "personal_markers": (_DICT, False),
         "employer_allowlist": (_DICT, False), "identity_rules": (_LIST, False), "invariants": (_LIST, False),
+        "cloud": (_DICT, False),
     },
     "context-remotes": {
         "schema_version": (_INT, True), "doc": (_STR, True), "conduct_order": (_LIST, True),
@@ -293,6 +294,23 @@ def _validate_devices(obj: dict, errors: List[str]) -> None:
         home = row.get("home")
         if isinstance(home, str) and not home.startswith("/"):
             errors.append(f"{where}.home: must be absolute")
+    cloud = obj.get("cloud")
+    if cloud is not None:
+        _check_row(cloud, "cloud", {"id": (_STR, True), "label": (_STR, True), "doc": (_STR, False),
+                                    "markers": (_LIST, True)}, errors)
+        if cloud.get("id") != CLOUD_DEVICE:
+            errors.append(f"cloud.id: must be {CLOUD_DEVICE!r}")
+        if cloud.get("id") in seen_ids:
+            errors.append("cloud.id: also declared as a device")
+        markers = cloud.get("markers") if isinstance(cloud.get("markers"), list) else []
+        if not markers:
+            errors.append("cloud.markers: name at least one environment marker")
+        for j, m in enumerate(markers):
+            if not isinstance(m, dict):
+                errors.append(f"cloud.markers[{j}]: must be an object")
+                continue
+            _check_row(m, f"cloud.markers[{j}]", {"env": (_STR, True), "value": (_STR, True)}, errors)
+        seen_ids.add(CLOUD_DEVICE)
     alias_spec = {"alias": (_STR, True), "host": (_STR, True), "credential_scope": (_STR, True)}
     aliases = set()
     for i, row in enumerate(_rows(obj, "ssh_aliases", errors)):
@@ -702,7 +720,23 @@ def _match_device(hostname: str, table: dict) -> Tuple[Optional[dict], Optional[
     return None, None
 
 
-def _resolve_device(hostname: Optional[str], root: Optional[Path], scutil: Optional[Callable[[], Optional[str]]]) -> dict:
+CLOUD_DEVICE = "cloud"
+
+
+def _cloud_marked(table: dict, env: Optional[Mapping[str, str]]) -> bool:
+    """A cloud marker is set. Read only after every declared hostname missed, so a marker never turns a
+    known machine into a cloud session (decision-remote-sessions-both-contexts)."""
+    cloud = table.get("cloud") if isinstance(table.get("cloud"), dict) else None
+    if cloud is None or env is None:
+        return False
+    for m in cloud.get("markers") or []:
+        if isinstance(m, dict) and isinstance(m.get("env"), str) and env.get(m["env"]) == m.get("value"):
+            return True
+    return False
+
+
+def _resolve_device(hostname: Optional[str], root: Optional[Path], scutil: Optional[Callable[[], Optional[str]]],
+                    env: Optional[Mapping[str, str]] = None) -> dict:
     explicit = hostname is not None
     raw = hostname if explicit else socket.gethostname()
     out: Dict[str, Any] = {"row": None, "label": _raw_short(raw) or "unknown", "raw": _raw_short(raw), "notice": None}
@@ -720,6 +754,12 @@ def _resolve_device(hostname: Optional[str], root: Optional[Path], scutil: Optio
                 alt = None
             if alt:
                 dev, label = _match_device(alt, table)
+    if dev is None and _cloud_marked(table, env if env is not None else (None if explicit else os.environ)):
+        cloud = table["cloud"]
+        out.update(row={"id": CLOUD_DEVICE, "label": cloud.get("label"), "projects_root": "Projects", "brain": "",
+                        "default_identity": None, "cloud": True}, label=cloud.get("label"),
+                   notice="cloud session: each repo's owner decides its rules and identity")
+        return out
     if dev is None:
         out["notice"] = (
             f"unknown host {out['raw'] or '?'}: most restrictive rules, no default identity "
@@ -731,15 +771,19 @@ def _resolve_device(hostname: Optional[str], root: Optional[Path], scutil: Optio
 
 
 def current_device(*, hostname: Optional[str] = None, root: Optional[Path] = None,
-                   scutil: Optional[Callable[[], Optional[str]]] = None) -> dict:
+                   scutil: Optional[Callable[[], Optional[str]]] = None,
+                   env: Optional[Mapping[str, str]] = None) -> dict:
     """{id, label, projects_root, brain, hostname_known, notice}; unknown gives id 'unknown'.
 
     scutil (LocalHostName) is consulted on a miss: the injected callable when given, the real
     one only when the hostname was not supplied explicitly.
     """
-    r = _resolve_device(hostname, root, scutil)
+    r = _resolve_device(hostname, root, scutil, env)
     home = Path.home()
     row = r["row"]
+    if row is not None and row.get("cloud"):
+        return {"id": CLOUD_DEVICE, "label": r["label"], "projects_root": str(home / "Projects"), "brain": None,
+                "hostname_known": False, "notice": r["notice"]}
     if row is None:
         return {"id": "unknown", "label": r["label"], "projects_root": str(home / "Projects"), "brain": None,
                 "hostname_known": False, "notice": r["notice"]}
@@ -4569,7 +4613,8 @@ def _fixture_root(tmp: Path) -> Path:
 
 AP_FIXTURES = TOOLS / "fixtures" / "action_policy"
 CLAUDE_ANC = [{"comm": "claude"}]
-_ORACLE_ORDER = ("P00", "P05", "P10", "P40", "P29", "P30", "P31", "P32", "P33", "P34", "P35", "P36", "P20", "P19", "P21",
+_ORACLE_ORDER = ("P00", "P05", "P10", "P40", "P29", "P30", "P31", "P32", "P33", "P34", "P35", "P36", "P37", "P38", "P39",
+                 "P20", "P19", "P21",
                  "P22", "P50")
 
 
@@ -4610,6 +4655,13 @@ def _oracle(f: dict) -> str:
         if ac in ("author", "publish") and f["target_ref"] in ("default", "unknown"):
             return "deny"
         return "allow"
+    # P37-P39 (Sean 2026-10-23): a cloud session gives an employer repo the same conduct
+    if fam in approved and dev == "cloud" and oc == "employer":
+        if ac == "merge":
+            return "deny"
+        if ac in ("author", "publish") and f["target_ref"] in ("default", "unknown"):
+            return "deny"
+        return "allow"
     if fam in approved and not f["under_projects_root"] and not f["has_remote"]:
         return "allow"  # P33 (Sean 2026-09-24): local scratch dirs, as P19 is for Claude
     if fam == "claude":
@@ -4632,7 +4684,7 @@ def _matrix_facts() -> List[dict]:
         "unknown": [(False, True, True), (False, False, True), (False, False, False), (False, True, False)],
     }
     for fam, agent in fams.items():
-        for dev in ("dev-a", "dev-b", "unknown"):
+        for dev in ("dev-a", "dev-b", "cloud", "unknown"):
             for oc, shape_list in shapes.items():
                 for pp, under, remote in shape_list:
                     for ac in ACTION_CLASSES:

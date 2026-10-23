@@ -32,6 +32,16 @@
       "default_identity": null
     }
   ],
+  "cloud": {
+    "id": "cloud",
+    "label": "Cloud or remote container",
+    "markers": [
+      {
+        "env": "WS_CLOUD_SESSION",
+        "value": "1"
+      }
+    ]
+  },
   "ssh_aliases": [
     {
       "alias": "github-work",

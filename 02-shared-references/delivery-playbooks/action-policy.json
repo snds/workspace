@@ -389,6 +389,71 @@
       "note": "Sean 2026-10-12: an undeclared owner under projects_root on the Work MBP gets centric-engineering conduct (context-remotes unknown_owner), like P30-P32, instead of P20's flat deny"
     },
     {
+      "id": "P37-cc-cloud-employer-merge",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "cloud"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "merge"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "merge is human-only"
+    },
+    {
+      "id": "P38-cc-cloud-employer-default",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "cloud"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "author",
+          "publish"
+        ],
+        "target_ref": [
+          "default",
+          "unknown"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "employer work goes through a feature branch and a human-reviewed PR"
+    },
+    {
+      "id": "P39-cc-cloud-employer",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "cloud"
+        ],
+        "owner_class": [
+          "employer"
+        ]
+      },
+      "outcome": "allow",
+      "note": "Sean 2026-10-23: cloud and remote sessions may do employer work; each repo's owner decides its rules, so an employer repo gets the Work MBP's conduct (P30-P32) and a personal repo in the same session stays personal (decision-remote-sessions-both-contexts)"
+    },
+    {
       "id": "P20-claude-not-personal-under-root",
       "when": {
         "walls_family": [

@@ -1730,6 +1730,38 @@ class TestActionPolicy(unittest.TestCase):
                                         "action_class": "author", "chain_has_agent": True, "hook_bypass": False}, t)
             self.assertEqual((d["rule_id"][:3], d["outcome"]), ("P40", "deny"), fam)
 
+    def test_cloud_sessions_follow_each_repo(self):
+        """2026-10-23 (decision-remote-sessions-both-contexts): a cloud session does employer work under the
+        Work MBP's conduct, keeps personal repos personal, and a marker never relabels a declared machine."""
+        t = self.mod.load_table("action-policy")
+        base = {"device": "cloud", "positively_personal": False, "under_projects_root": False,
+                "chain_has_agent": True, "hook_bypass": False, "has_remote": True}
+        for fam in ("claude", "cursor", "codex"):
+            for oc, ac, ref, want in (("employer", "author", "non-default", ("P39", "allow")),
+                                      ("employer", "publish", "default", ("P38", "deny")),
+                                      ("employer", "author", "unknown", ("P38", "deny")),
+                                      ("employer", "merge", "non-default", ("P37", "deny"))):
+                d = self.mod.policy_decide(dict(base, walls_family=fam, owner_class=oc, action_class=ac,
+                                                target_ref=ref), t)
+                self.assertEqual((d["rule_id"][:3], d["outcome"]), want, (fam, oc, ac, ref))
+        d = self.mod.policy_decide(dict(base, walls_family="claude", owner_class="personal", positively_personal=True,
+                                        action_class="publish", target_ref="default"), t)
+        self.assertEqual(d["outcome"], "allow")
+        d = self.mod.policy_decide(dict(base, walls_family="claude", owner_class="unknown", action_class="publish",
+                                        target_ref="non-default"), t)
+        self.assertEqual(d["outcome"], "deny")  # an undeclared owner stays denied in the cloud too
+        marked = {"CLAUDE_CODE_REMOTE": "true"}
+        self.assertEqual(self.mod.current_device(hostname="vm-x", env=marked)["id"], "cloud")
+        self.assertEqual(self.mod.current_device(hostname="vm-x", env={"WS_CLOUD_SESSION": "1"})["id"], "cloud")
+        self.assertEqual(self.mod.current_device(hostname="vm-x", env={})["id"], "unknown")
+        dev = self.mod.load_table("devices")
+        for d0 in dev["devices"]:
+            h0 = d0["hostnames"][0]
+            self.assertEqual(self.mod.current_device(hostname=h0, env=marked)["id"], d0["id"], h0)
+        self.assertEqual(self.mod.identity_rule("cursor", "cloud", dev, "employer")["identity"], "centric")
+        self.assertEqual(self.mod.identity_rule("codex", "cloud", dev, "personal")["identity"], "snds")
+        self.assertEqual(self.mod.identity_rule("claude", "cloud", dev, "personal")["id"], "IR1")
+
     def test_verb_map_and_hook_bypass(self):
         tmp = self._tmp()
         root = self.mod._t7_fixture_root(tmp)
