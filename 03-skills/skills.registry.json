@@ -5601,7 +5601,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:312cc80e544eadb4e5519c702283f7b93c8eb724b33533dd3317ece38d60c231",
+      "hash": "sha256:2f4d065dde533736823b7ce59088f56b118cdfa0cc0e723abff401183f4859a7",
       "area": "material-symbols"
     },
     "material-symbols-suite": {
@@ -5625,7 +5625,7 @@
       "requires": [],
       "defers_to": [],
       "rigor_role": null,
-      "hash": "sha256:44ac6dce3cfad5de1a611f1de6577df4c3dc2a443bfe879c5b8216011a2b55a1"
+      "hash": "sha256:bcf36f0bb5b09646134a04dea7270c353cc23b29d38e170e6c6b4d5b45755940"
     },
     "material-symbols-svg-export": {
       "path": "03-skills/material-symbols-svg-export/SKILL.md",
