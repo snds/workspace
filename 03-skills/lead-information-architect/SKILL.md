@@ -13,6 +13,7 @@ description: >
 aliases: [lead-information-architect]
 tier: hub
 domain: design
+area: information-architecture
 prerequisites: [design-foundations]
 triggers: [information architect, navigation model, sitemap]
 spec_version: "2.0"
@@ -40,18 +41,17 @@ routing logic; spokes carry domain-specific depth.
 | Content types, content modeling, CMS IA | `ia-content-strategy` (this network) |
 | Multi-role IA, admin/end-user split, suite navigation | `ia-enterprise-complexity` (this network) |
 | Card sorting, tree testing, first-click testing | `ia-research-methods` (this network) |
-| Practical UX-oriented IA implementation (not deep theory) | `lead-ux-designer` → `ux-information-architecture` |
 | User research methods more broadly (interviews, JTBD, synthesis) | `pm-discovery-research` |
 | Visual expression of navigation | `lead-ui-designer` → `uid-spatial-composition` |
 | Navigation interaction patterns (transitions, hover states) | `lead-ux-designer` → `ux-interaction-design` |
 | Database schema for taxonomy hierarchies | `be-data-modeling` |
-| Quantitative navigation validation, search analytics | `ds-product-analytics` |
+| Quantitative navigation validation, search analytics | `dsci-product-analytics` |
 
-**The boundary**: `ux-information-architecture` is a practical implementation
-reference — appropriate for IA decisions made during UX design sprints.
-`lead-information-architect` carries the full discipline depth: theoretical
-lineage, named frameworks, failure mode analysis, and the research methods
-to validate IA decisions. When the UX spoke hits its limits, it defers here.
+**The boundary**: this network is the one home for IA, from sprint-level calls
+(which nav pattern, where does this live) to the full discipline depth: theoretical
+lineage, named frameworks, failure mode analysis, and the research methods to
+validate IA decisions. The practical UX spoke that used to sit in `lead-ux-designer`
+was folded into the `ia-*` spokes on 2026-10-22.
 
 ---
 
@@ -158,7 +158,7 @@ through navigation alone.
 ## Cross-Hub References
 
 ### → `lead-ux-designer`
-- `ux-information-architecture` spoke defers to this hub for deep expertise
+- Navigation and IA asks from UX work route here (the former `ux-information-architecture` spoke was folded into `ia-*` on 2026-10-22)
 - `ia-mental-models` ↔ `ux-research-synthesis`: mental model research and
   UX synthesis methods are closely related; both spokes serve the same
   understanding goal from different methodological angles
@@ -190,9 +190,9 @@ through navigation alone.
   the IA choice of taxonomy depth and polyhierarchy support has direct DB implications
 
 ### → `lead-data-scientist`
-- `ia-research-methods` → `ds-product-analytics`: navigation path analysis and
+- `ia-research-methods` → `dsci-product-analytics`: navigation path analysis and
   search query analysis validate IA decisions quantitatively
-- `ia-search-findability` → `ds-product-analytics`: zero-result query rate,
+- `ia-search-findability` → `dsci-product-analytics`: zero-result query rate,
   search-then-abandon rate, and navigation-vs-search ratio are IA quality metrics
 
 ---

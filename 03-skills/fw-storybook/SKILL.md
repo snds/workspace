@@ -18,6 +18,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [component state matrices, storybook, stories.tsx, chromatic]
 ---
 
 # Storybook — Framework Skill

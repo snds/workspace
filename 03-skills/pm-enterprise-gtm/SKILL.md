@@ -18,6 +18,7 @@ tier: spoke
 domain: product
 hub: lead-product-manager
 prerequisites: [lead-product-manager]
+triggers: [feature launch, sales enablement, net dollar retention, general availability, limited availability, customer advisory board, launch checklist, planning a product launch]
 ---
 
 # PM Enterprise GTM

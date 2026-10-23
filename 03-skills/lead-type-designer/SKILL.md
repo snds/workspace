@@ -25,6 +25,7 @@ description: >
 aliases: [lead-type-designer]
 tier: hub
 domain: design
+area: type-design
 prerequisites: [design-foundations]
 triggers: [type designer, type family, letterform]
 governed_by: [qa]
@@ -33,6 +34,10 @@ spec_version: "2.0"
 ---
 
 # Lead Type Designer
+
+**Doctrine, not implementation.** This hub owns letterform and typeface design craft. Type
+*systems and setting* in a product (scales, pairing, OpenType in UI) are carried out through
+the `/type` command hub, which defers here on craft.
 
 **Hub skill** for the text typeface design skill network. Routes to 7 specialist
 spoke skills based on topic. This hub provides foundational principles and

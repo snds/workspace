@@ -23,13 +23,14 @@ metadata:
   poc: false
   version: 0.1.0
 aliases: [figma]
-triggers: [figma, in figma, build in figma, component set, library file, generate a library, code connect, author the variables, stickersheet]
+triggers: [figma, in figma, build in figma, component set, library file, generate a library, code connect, author the variables, stickersheet, figma component, bind variables, theme/mode, variable modes]
 defers_to: [design-engineer]
 governed_by: [qa, a11y-visual]
 rigor_role: command-hub
 spec_version: "2.3"
 tier: hub
 domain: design
+area: figma-authoring
 prerequisites: [design-foundations]
 related: [design-engineer, close-out]
 

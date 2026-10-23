@@ -22,6 +22,7 @@ tier: spoke
 domain: engineering
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [i18n, l10n, icu message format, bcp 47, pseudo-localization, rtl layout, translation keys, intl api]
 ---
 
 # Fe: i18n

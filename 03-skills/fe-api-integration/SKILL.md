@@ -21,6 +21,7 @@ hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
 governed_by: [sec-appsec-owasp]
+triggers: [rest client, fetch wrapper, request interceptors, response interceptors, auth header injection, typed fetch, zod runtime validation, retry logic]
 ---
 
 # FE API Integration
@@ -39,7 +40,7 @@ This skill owns **client-side data fetching, transport, and data lifecycle**.
 - **API contract design, pagination contracts, error envelopes** → `be-api-design`
 - **WebSocket/SSE server implementation** → `be-integration-patterns`
 - **Loading state UX, skeleton screen design** → `ux-performance-perception`
-- **ML prediction API specifics** → `ds-ml-engineering`
+- **ML prediction API specifics** → `dsci-ml-engineering`
 
 ---
 
@@ -473,7 +474,7 @@ with error boundaries requires careful co-placement.
 | API contract, error envelope, versioning | `be-api-design` |
 | WebSocket/SSE server implementation | `be-integration-patterns` |
 | Loading state UX design, skeleton screens | `ux-performance-perception` |
-| ML prediction endpoints, streaming inference | `ds-ml-engineering` |
+| ML prediction endpoints, streaming inference | `dsci-ml-engineering` |
 
 ## Related
 - hub → [[lead-frontend-engineer]]

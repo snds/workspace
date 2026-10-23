@@ -21,6 +21,7 @@ tier: spoke
 domain: engineering
 prerequisites: [lead-backend-engineer]
 spec_version: "2.0"
+triggers: [horizontal privilege escalation, aws secrets manager, secret rotation patterns, lock file integrity]
 ---
 
 # Be: Security Posture

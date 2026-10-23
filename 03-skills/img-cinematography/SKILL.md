@@ -8,7 +8,7 @@ description: >
   cinematography, shot, framing, composition, rule of thirds, camera movement, dolly, crane,
   three-point lighting, key light, mood lighting, color grading, 180 degree rule, shot list.
 aliases: [img-cinematography]
-triggers: [cinematography, shot, framing, composition, camera movement, dolly, crane, three-point lighting, key light, mood lighting, color grading, 180 degree rule, shot list, blocking]
+triggers: [cinematography, camera shot, shot type, shot framing, camera framing, shot composition, camera movement, dolly shot, dolly zoom, crane shot, three-point lighting, key light, mood lighting, color grading, 180 degree rule, shot list, scene blocking, actor blocking]
 tier: foundation
 hub: imaging-foundations
 domain: imaging

@@ -18,6 +18,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-3d-designer, imaging-foundations]
 spec_version: "2.0"
+triggers: [base color, normal map, roughness map, metalness map, height map, subsurface scattering, substance painter, substance designer]
 ---
 
 # 3D Materials and Shading

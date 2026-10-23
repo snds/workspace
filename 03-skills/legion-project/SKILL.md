@@ -18,6 +18,7 @@ triggers: [legion game, game project]
 spec_version: "2.0"
 tier: hub
 domain: game
+area: legion
 prerequisites: [science-foundations, imaging-foundations]
 ---
 

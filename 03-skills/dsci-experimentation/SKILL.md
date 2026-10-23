@@ -1,5 +1,5 @@
 ---
-name: ds-experimentation
+name: dsci-experimentation
 description: >
   A/B testing, causal inference, experiment design, statistical power, and experiment
   platform architecture for enterprise SaaS. Use this skill whenever the conversation
@@ -11,16 +11,17 @@ description: >
   spillover effects, novelty effect, p-hacking, switchback experiments, experiment
   platforms, assignment service, guardrail metrics, or any question about measuring
   whether an intervention caused an effect. This skill covers causal measurement —
-  not model evaluation (ds-ml-engineering), not metric definition ownership (pm-metrics-analytics).
-aliases: [ds-experimentation]
+  not model evaluation (dsci-ml-engineering), not metric definition ownership (pm-metrics-analytics).
+aliases: [dsci-experimentation]
 spec_version: "2.0"
 tier: spoke
 domain: data
 hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
+triggers: [experiment design, randomization unit, control group, treatment group, statistical power, type i error, type ii error, minimum detectable effect]
 ---
 
-# DS: Experimentation
+# DSci: Experimentation
 
 Specialist lens for A/B testing, causal inference, and experiment platform design in
 enterprise SaaS. Part of the lead-data-scientist skill network.
@@ -34,8 +35,8 @@ experiments and quasi-experimental methods.
 
 - **Metric definition and OKR framing** → also engage `pm-metrics-analytics`
 - **Event instrumentation for experiment logging** → also engage `be-integration-patterns`
-- **Model evaluation methodology** → `ds-ml-engineering`
-- **Descriptive product analytics** → `ds-product-analytics`
+- **Model evaluation methodology** → `dsci-ml-engineering`
+- **Descriptive product analytics** → `dsci-product-analytics`
 
 ---
 
@@ -302,7 +303,7 @@ the experiment should be stopped regardless of primary metric performance.
 
 - For metric definition and OKR framing → `pm-metrics-analytics`
 - For event instrumentation for experiment logging → `be-integration-patterns`
-- For production model launch experiments (shadow/canary) → `ds-ml-engineering`
+- For production model launch experiments (shadow/canary) → `dsci-ml-engineering`
 
 ## Related
 - hub → [[lead-data-scientist]]

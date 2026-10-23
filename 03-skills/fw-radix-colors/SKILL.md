@@ -20,6 +20,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [radix colors, color scale generation]
 ---
 
 # Radix UI Colors — Framework Skill

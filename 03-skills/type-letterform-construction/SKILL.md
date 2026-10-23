@@ -17,6 +17,7 @@ domain: design
 hub: lead-type-designer
 prerequisites: [lead-type-designer]
 spec_version: "2.0"
+triggers: [drawing specific letterforms, letterform quality, stem weight decisions, overshoot values, counter design, optical corrections built into construction, g2 curvature continuity, node placement for text glyphs]
 ---
 
 # Type Letterform Construction

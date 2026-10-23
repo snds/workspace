@@ -15,7 +15,7 @@ description: >
   question about making a relational database schema correct and performant
   under production load. Primarily PostgreSQL-focused with callouts for MySQL
   divergence where it matters. Not for: application-level entity modeling
-  (be-data-modeling), analytical pipeline schema design (ds-data-engineering),
+  (be-data-modeling), analytical pipeline schema design (dsci-data-engineering),
   or Redis/cache patterns (be-caching-performance).
 aliases: [be-relational-db]
 tier: spoke
@@ -23,6 +23,7 @@ domain: engineering
 hub: lead-backend-engineer
 prerequisites: [lead-backend-engineer]
 spec_version: "2.0"
+triggers: [denormalization tradeoffs, query performance, explain analyze, join strategies, n+1 queries]
 ---
 
 # Be: Relational Database
@@ -38,7 +39,7 @@ This skill owns: **schema normalization, index design, query optimization,
 transaction semantics, and production migration strategies**.
 
 - Application-layer entity modeling and multi-tenancy strategy → `be-data-modeling`
-- Analytical schema design, warehouse modeling → `ds-data-engineering`
+- Analytical schema design, warehouse modeling → `dsci-data-engineering`
 - Read replica routing, connection pooling, cache-aside patterns → `be-caching-performance`
 - ORM configuration and N+1 in application code → addressed here, implementation detail in app layer
 
@@ -433,8 +434,8 @@ skills.sh). Postgres-specific application of the relational principles above._
 | Application-layer entity modeling, aggregate design | `be-data-modeling` |
 | Multi-tenancy schema strategy | `be-data-modeling` |
 | Connection pooling, read replica routing | `be-caching-performance` |
-| Analytical queries on OLTP data | `ds-product-analytics` |
-| OLTP schema as pipeline source | `ds-data-engineering` |
+| Analytical queries on OLTP data | `dsci-product-analytics` |
+| OLTP schema as pipeline source | `dsci-data-engineering` |
 
 ## Related
 - hub → [[lead-backend-engineer]]

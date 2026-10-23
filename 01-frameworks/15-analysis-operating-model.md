@@ -177,15 +177,15 @@ Between rung 2 and any causal statement sits the identification strategy. If it 
 | Consumer | What it takes from here |
 |---|---|
 | `lead-data-scientist` | The full pipeline and the ML, experiment, forecasting, and LLM-eval gates; routes to `ds-*` spokes |
-| `ds-experimentation` | Pre-registration, randomization integrity, peeking and multiple-comparison bans |
-| `ds-product-analytics` | Data contract, metric definition discipline, instrumentation validation, dashboard ownership gate |
-| `ds-ml-engineering` | Leakage, train/serve skew, held-out evaluation, calibration, drift monitoring and rollback triggers |
-| `ds-nlp-llm` and `ds-prompt-engineering` | Held-out eval set, rubric, judge-human agreement, contamination and non-determinism handling |
-| `ds-forecasting` | Baseline comparison, prediction intervals, regime-break handling |
-| `ds-executive-storytelling` and `infod-*` | Validity before narrative, uncertainty in the visual, encoding honesty |
+| `dsci-experimentation` | Pre-registration, randomization integrity, peeking and multiple-comparison bans |
+| `dsci-product-analytics` | Data contract, metric definition discipline, instrumentation validation, dashboard ownership gate |
+| `dsci-ml-engineering` | Leakage, train/serve skew, held-out evaluation, calibration, drift monitoring and rollback triggers |
+| `dsci-nlp-llm` and `dsci-prompt-engineering` | Held-out eval set, rubric, judge-human agreement, contamination and non-determinism handling |
+| `dsci-forecasting` | Baseline comparison, prediction intervals, regime-break handling |
+| `dsci-executive-storytelling` and `infod-*` | Validity before narrative, uncertainty in the visual, encoding honesty |
 | `lead-product-manager` and `pm-metrics-analytics` | Decision frame, evidence tier naming, and the ban on causal language over associational evidence |
 | `pm-discovery-research` | Question-before-method discipline for qualitative evidence, and honest population statements |
-| `ds-data-governance` and `ds-data-engineering` | The data contract as the upstream deliverable this framework depends on |
+| `dsci-data-governance` and `dsci-data-engineering` | The data contract as the upstream deliverable this framework depends on |
 
 Project-scoped analysis records its frame and contract in the repo or project folder, and ships its evidence in a form Sean can verify without rerunning the notebook, per the Proofboard standard in the delivery playbooks.
 

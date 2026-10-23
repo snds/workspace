@@ -1,42 +1,43 @@
 ---
-name: ux-design-systems
+name: ds-component-spec
 description: >
-  Component design decisions, variant and state coverage, behavior specification, and
-  pattern library thinking for enterprise design systems — from the UX design side.
-  Use this skill when working on: deciding what variants a component needs, enumerating
-  the states a component must cover, defining the interaction contract for interactive
-  components, documenting component behavior for engineering handoff, distinguishing
-  patterns from components, writing pattern documentation, designing the overflow and
-  edge case behavior of components, component API surface decisions (what props to
-  expose), or reviewing whether a component design is complete. Also trigger on:
-  "what states does this component need", "is this a component or a pattern",
-  "how should this component behave when X", "what variants should I create",
-  "how do I annotate this for engineers", or any question about the design-side
-  decisions in a design system. Token architecture, Figma ops, and DS strategy live
-  in `ds-advisor` — route there for those topics.
-aliases: [ux-design-systems]
-triggers: [what else moves, need a new component, system fit]
+  Component specification for a design system: the design-side contract engineering builds
+  from. Anatomy and slots, variant and state coverage (the variant × state matrix), behavior
+  and interaction contracts, overflow and edge cases, the prop API surface, pattern vs.
+  component, and the handoff annotation. Use when deciding what variants a component needs,
+  enumerating the states it must cover, choosing variant vs. prop vs. slot, specifying how it
+  behaves when X, writing the spec or pattern doc, or reviewing whether a component design is
+  complete. Also the ripple ("what else moves") and system-fit ("do we need a new component")
+  questions. Token architecture → token-architecture; DS strategy, triage and DDRs →
+  ds-advisor; Figma authoring → figma; component code → design-engineer.
+aliases: [ds-component-spec, ux-design-systems]
+triggers: [what else moves, need a new component, system fit, component spec, component specification, variant or a prop, variant or prop, variant matrix, state matrix, variant coverage, state coverage, states this component needs, states this combobox needs, component anatomy, anatomy and slots, component slots, component api, prop api, pattern or a component, component behavior spec, component handoff]
 tier: spoke
 domain: design
-hub: lead-ux-designer
-prerequisites: [lead-ux-designer]
+hub: ds
+prerequisites: [ds]
+related: [ux-component-library, ux-interaction-design, design-engineer, fe-component-architecture, figma-modes-for-variants]
+governed_by: [qa, a11y-visual, design-engineer]
 spec_version: "2.1"
 ---
 
-# UX — Design Systems (Component Behavior Layer)
+# DS — Component Spec (Component Behavior Layer)
 
-Spoke skill in the `lead-ux-designer` network. Owns the design *decision-making*
-layer of design systems: what variants to create, what states to cover, how components
-behave, what each component does for the user, and how to specify components for
-engineering implementation.
+Spoke skill in the `ds` (design-system) network, re-homed from `lead-ux-designer` on
+2026-10-22 (formerly `ux-design-systems`). Owns the design *decision-making* layer of a
+design system: what variants to create, what states to cover, how components behave, what
+each component does for the user, and how to specify components for engineering
+implementation. It is what the component-spec harness's anatomy, variant-state and prop-API
+criteria load.
 
-**IMPORTANT SCOPE BOUNDARY**: Token architecture (global → semantic → component
-token layers), Figma ops (auto-layout, variables, publish workflows), DDR format,
-and DS strategy live in `ds-advisor`. Load `ds-advisor` for those topics.
-This spoke owns the UX behavior layer — not the implementation infrastructure layer.
+**Scope boundary**: token architecture (global → semantic → component) lives in
+`token-architecture`; Figma ops (auto-layout, variables, publish) in `figma`; DDR format and
+DS strategy in `ds-advisor`. This spoke owns the behavior layer, not the implementation
+infrastructure. Choosing *which* existing component fits a screen is a UX call
+(`ux-component-library`).
 
 Also does not own: the design/code bridge and implementation patterns (→ `design-engineer`),
-ARIA implementation requirements (→ `ux-accessibility` for design spec, `fe-accessibility`
+ARIA implementation requirements (→ `lead-accessibility-architect` for design spec, `fe-accessibility`
 for implementation).
 
 ---
@@ -69,7 +70,7 @@ When the user asks "if we change this, what else moves?", answer before drawing.
 2. Scale: **contained** (this instance) / **shared** (every consumer of this component) /
    **cross-journey** (another flow's contract) / **foundational** (token, density, or
    behavior that many components inherit).
-3. Foundational ripples are a hand-off to `ds-advisor` (tokens/strategy) or
+3. Foundational ripples are a hand-off to `token-architecture` (tokens) or `ds-advisor` (strategy) or
    `design-engineer` (implementation), not a silent redesign here.
 
 ### Necessity test
@@ -291,7 +292,7 @@ Required annotations for every interactive component:
 - Interactive trigger areas (what is clickable vs. what is not)
 - Animation specifications: duration, easing, properties animated
 - Focus order within the component (for composite components)
-- ARIA roles and labels (for engineering; cross-reference `ux-accessibility`)
+- ARIA roles and labels (for engineering; cross-reference `lead-accessibility-architect`)
 
 ### Spec interactive behaviors
 
@@ -311,11 +312,11 @@ change is not ready for engineering until that API change is planned.
 
 ## Cross-Links
 
-- `ds-advisor` — token architecture, DDR format, Figma ops layer; token/color system decisions
+- `token-architecture` — token tiers and naming; `ds-advisor` — DDR format and DS strategy; `figma` — Figma ops
 - `design-engineer` — design/code bridge; implementation-specific component patterns; code-connected design
 - `fe-component-architecture` — implementation side; component API design; rendering constraints
 - `fe-accessibility` — ARIA implementation requirements that inform component behavior spec
-- `ux-accessibility` — state coverage for accessible design; focus state requirements; ARIA APG keyboard patterns
+- `lead-accessibility-architect` — state coverage for accessible design; focus state requirements; ARIA APG keyboard patterns
 - `ux-interaction-design` — interaction patterns that use components; behavioral logic within workflows
 
 ---
@@ -329,4 +330,5 @@ change is not ready for engineering until that API change is planned.
 - Nathan Curtis — Documenting Components (article): https://medium.com/eightshapes-llc/documenting-components-9fe59b80c015
 
 ## Related
-- hub → [[lead-ux-designer]]
+- hub → [[ds]]
+- governed-by → [[a11y-visual]] · [[design-engineer]] · [[qa]]

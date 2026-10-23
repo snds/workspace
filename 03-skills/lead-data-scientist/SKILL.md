@@ -14,6 +14,7 @@ description: >
 aliases: [lead-data-scientist]
 tier: hub
 domain: data
+area: data-science
 triggers: [what does the data say, experiment validity, decision owner, statistical claim]
 spec_version: "2.0"
 prerequisites: [data-foundations, science-foundations]
@@ -37,16 +38,16 @@ Load only the 1–2 spokes directly relevant to the current question.
 
 | Skill | Domain | Trigger When |
 |-------|--------|-------------|
-| `ds-ml-engineering` | Production ML systems, model lifecycle, MLOps, feature stores, serving, monitoring | Building or debugging a production model, discussing feature stores, model drift, train-serve skew, shadow deployments, model cards, CI/CD for ML |
-| `ds-experimentation` | A/B testing, causal inference, power analysis, experiment platforms, variance reduction | Designing an experiment, interpreting test results, causal inference without randomization, CUPED, switchback tests, p-value questions |
-| `ds-product-analytics` | Funnel analysis, retention, cohort analysis, LTV, behavioral segmentation, self-serve analytics | AARRR metrics, retention curves, churn cohorts, LTV modeling, feature adoption, engagement scoring, BI tool vs. data product decisions |
-| `ds-nlp-llm` | NLP pipelines, embeddings, RAG, LLM integration, classification at scale, evaluation | Text classification, semantic search, RAG architecture, LLM cost optimization, prompt engineering at scale, PII handling, LLM evaluation |
-| `ds-forecasting` | Time series modeling, demand/churn forecasting, anomaly detection, evaluation metrics | Revenue or usage forecasting, churn survival models, anomaly alerting, time series decomposition, model selection for forecasting |
-| `ds-data-engineering` | Analytical pipeline architecture, dbt, orchestration, warehouse design, data quality, streaming | dbt project design, pipeline orchestration, warehouse schema, data quality frameworks, streaming vs. batch tradeoffs, schema evolution |
-| `ds-executive-storytelling` | Translating analysis into decisions, data narratives, insight communication, uncertainty handling | Preparing executive briefings, dashboard design, communicating uncertainty to non-technical stakeholders, structuring a recommendation from analysis |
-| `ds-prompt-engineering` | Prompt engineering as a craft — system prompt architecture, few-shot design, output format contracts, evaluation harnesses, CoT/ReAct patterns, RAG prompts, agentic prompt patterns, cost/latency optimization | System prompt design, few-shot selection, JSON schema enforcement, prompt A/B testing, chain-of-thought, prompt caching, model routing, agentic loops |
-| `ds-bi-platforms` | BI tooling, semantic layer design, LookML, self-service analytics governance, embedded analytics, multi-tenant BI | Looker LookML architecture, Tableau/Metabase selection, semantic layer design, row-level security, embedded analytics, fanout bugs, certified metrics governance |
-| `ds-data-governance` | Data classification, catalog design, lineage, data quality frameworks, retention policies, access governance, stewardship models | PII classification, data catalog, column-level lineage, dbt/Great Expectations quality, retention by regulation, GDPR erasure, RBAC for data platforms, data mesh |
+| `dsci-ml-engineering` | Production ML systems, model lifecycle, MLOps, feature stores, serving, monitoring | Building or debugging a production model, discussing feature stores, model drift, train-serve skew, shadow deployments, model cards, CI/CD for ML |
+| `dsci-experimentation` | A/B testing, causal inference, power analysis, experiment platforms, variance reduction | Designing an experiment, interpreting test results, causal inference without randomization, CUPED, switchback tests, p-value questions |
+| `dsci-product-analytics` | Funnel analysis, retention, cohort analysis, LTV, behavioral segmentation, self-serve analytics | AARRR metrics, retention curves, churn cohorts, LTV modeling, feature adoption, engagement scoring, BI tool vs. data product decisions |
+| `dsci-nlp-llm` | NLP pipelines, embeddings, RAG, LLM integration, classification at scale, evaluation | Text classification, semantic search, RAG architecture, LLM cost optimization, prompt engineering at scale, PII handling, LLM evaluation |
+| `dsci-forecasting` | Time series modeling, demand/churn forecasting, anomaly detection, evaluation metrics | Revenue or usage forecasting, churn survival models, anomaly alerting, time series decomposition, model selection for forecasting |
+| `dsci-data-engineering` | Analytical pipeline architecture, dbt, orchestration, warehouse design, data quality, streaming | dbt project design, pipeline orchestration, warehouse schema, data quality frameworks, streaming vs. batch tradeoffs, schema evolution |
+| `dsci-executive-storytelling` | Translating analysis into decisions, data narratives, insight communication, uncertainty handling | Preparing executive briefings, dashboard design, communicating uncertainty to non-technical stakeholders, structuring a recommendation from analysis |
+| `dsci-prompt-engineering` | Prompt engineering as a craft — system prompt architecture, few-shot design, output format contracts, evaluation harnesses, CoT/ReAct patterns, RAG prompts, agentic prompt patterns, cost/latency optimization | System prompt design, few-shot selection, JSON schema enforcement, prompt A/B testing, chain-of-thought, prompt caching, model routing, agentic loops |
+| `dsci-bi-platforms` | BI tooling, semantic layer design, LookML, self-service analytics governance, embedded analytics, multi-tenant BI | Looker LookML architecture, Tableau/Metabase selection, semantic layer design, row-level security, embedded analytics, fanout bugs, certified metrics governance |
+| `dsci-data-governance` | Data classification, catalog design, lineage, data quality frameworks, retention policies, access governance, stewardship models | PII classification, data catalog, column-level lineage, dbt/Great Expectations quality, retention by regulation, GDPR erasure, RBAC for data platforms, data mesh |
 
 ### Spoke Loading Protocol
 
@@ -54,17 +55,17 @@ Load only the 1–2 spokes directly relevant to the current question.
 
 Common routing patterns:
 
-- **Production model going to staging/prod**: `ds-ml-engineering`
-- **"Did this launch work?" / experiment readout**: `ds-experimentation`
-- **Retention curve, funnel drop, churn cohort**: `ds-product-analytics`
-- **Text/LLM feature being built**: `ds-nlp-llm`
-- **Revenue or churn forecast**: `ds-forecasting`
-- **Pipeline architecture, dbt, data warehouse**: `ds-data-engineering`
-- **Executive presentation, board deck, metric framing**: `ds-executive-storytelling`
-- **Causal inference without an experiment**: `ds-experimentation`
-- **Model monitoring / drift alert**: `ds-ml-engineering`
-- **Multi-tenant analytics isolation**: `ds-data-engineering` + `ds-product-analytics`
-- **ML feature powering a SaaS product capability**: `ds-ml-engineering` + `ds-nlp-llm` (if NLP)
+- **Production model going to staging/prod**: `dsci-ml-engineering`
+- **"Did this launch work?" / experiment readout**: `dsci-experimentation`
+- **Retention curve, funnel drop, churn cohort**: `dsci-product-analytics`
+- **Text/LLM feature being built**: `dsci-nlp-llm`
+- **Revenue or churn forecast**: `dsci-forecasting`
+- **Pipeline architecture, dbt, data warehouse**: `dsci-data-engineering`
+- **Executive presentation, board deck, metric framing**: `dsci-executive-storytelling`
+- **Causal inference without an experiment**: `dsci-experimentation`
+- **Model monitoring / drift alert**: `dsci-ml-engineering`
+- **Multi-tenant analytics isolation**: `dsci-data-engineering` + `dsci-product-analytics`
+- **ML feature powering a SaaS product capability**: `dsci-ml-engineering` + `dsci-nlp-llm` (if NLP)
 - **End-to-end analytical project**: load spokes incrementally as each phase is reached
 
 **Step 2**: Load identified spoke(s) from the workspace:
@@ -78,14 +79,14 @@ Common routing patterns:
 
 ---
 
-## Core Principles — Shared Across All DS Work
+## Core Principles — Shared Across All DSci Work
 
 These apply regardless of which spokes are active. They are the lens through which all
 technical decisions get evaluated.
 
 ### 1. Start with the business question, not the model
 
-Every DS engagement should begin with: *What decision does this analysis need to support?*
+Every DSci engagement should begin with: *What decision does this analysis need to support?*
 The model, metric, or analytical approach is downstream of the question. "What model should
 I use for churn?" is the wrong starting point. "What action will the business take, for
 whom, with what lead time, and what's the cost of being wrong?" is the right starting point.
@@ -162,47 +163,47 @@ reporting. The rigor standard for "high-stakes" work (board-level metrics, ARR f
 product kill decisions) is higher than for exploratory work. Know which category you're in.
 
 ### Executive Stakeholders
-Enterprise DS work surfaces to executives who want business answers, not model metrics.
+Enterprise DSci work surfaces to executives who want business answers, not model metrics.
 "The model achieved 0.87 AUC" is rarely the right output. "We expect to identify 80% of
 accounts likely to churn in the next 90 days, giving CS 3 months to intervene, with a
 false positive rate that implies ~15% of interventions will be on healthy accounts" is
-what drives a business decision. Route executive communication to `ds-executive-storytelling`.
+what drives a business decision. Route executive communication to `dsci-executive-storytelling`.
 
 ### Product Integration
-DS work in enterprise SaaS increasingly integrates into the product surface itself — churn
+DSci work in enterprise SaaS increasingly integrates into the product surface itself — churn
 scores driving in-app nudges, recommendation models shaping UX, NLP features as product
 capabilities. Model serving reliability, latency, and API contract design are product
-engineering concerns, not just DS concerns. When a model is product-integrated, route to
-`ds-ml-engineering` and engage with Backend cross-links.
+engineering concerns, not just DSci concerns. When a model is product-integrated, route to
+`dsci-ml-engineering` and engage with Backend cross-links.
 
 ---
 
 ## Cross-Hub References
 
-### DS → Product Management
-- `ds-experimentation` ↔ `pm-metrics-analytics`: experiment framing, KPI definition, success criteria
-- `ds-product-analytics` ↔ `pm-metrics-analytics`: shared metric definitions, funnel instrumentation requirements
-- `ds-executive-storytelling` ↔ `pm-stakeholder-comms`: DS owns the analytical evidence; PM owns the recommendation framing
-- `ds-forecasting` → `pm-roadmap-strategy`: churn signals, usage forecasts, adoption curves as roadmap inputs
-- `ds-nlp-llm` → `pm-platform-api`: when building AI/LLM capabilities as enterprise product features
+### DSci → Product Management
+- `dsci-experimentation` ↔ `pm-metrics-analytics`: experiment framing, KPI definition, success criteria
+- `dsci-product-analytics` ↔ `pm-metrics-analytics`: shared metric definitions, funnel instrumentation requirements
+- `dsci-executive-storytelling` ↔ `pm-stakeholder-comms`: DSci owns the analytical evidence; PM owns the recommendation framing
+- `dsci-forecasting` → `pm-roadmap-strategy`: churn signals, usage forecasts, adoption curves as roadmap inputs
+- `dsci-nlp-llm` → `pm-platform-api`: when building AI/LLM capabilities as enterprise product features
 
-### DS → Backend
-- `ds-data-engineering` → `be-relational-db`: OLTP schema context before building analytical models
-- `ds-data-engineering` → `be-data-modeling`: multi-tenancy patterns, temporal data modeling from operational systems
-- `ds-data-engineering` → `be-integration-patterns`: event streaming from application layer into analytical pipelines
-- `ds-ml-engineering` → `be-service-architecture`: ML model serving deployed as a microservice
-- `ds-ml-engineering` → `be-caching-performance`: prediction caching and latency optimization for online inference
-- `ds-ml-engineering` → `be-api-design`: ML API design — prediction endpoints, model versioning in API contracts
-- `ds-nlp-llm` → `be-api-design`: LLM API integration, streaming response handling
-- `ds-nlp-llm` → `be-caching-performance`: prompt/response semantic caching
-- `ds-nlp-llm` → `be-auth-patterns`: API key management for third-party LLM services
-- `ds-experimentation` → `be-integration-patterns`: event logging infrastructure for experiment assignment and outcome tracking
-- `ds-product-analytics` → `be-integration-patterns`: event instrumentation requirements
-- `ds-product-analytics` → `be-relational-db`: analytical queries against OLTP data sources
+### DSci → Backend
+- `dsci-data-engineering` → `be-relational-db`: OLTP schema context before building analytical models
+- `dsci-data-engineering` → `be-data-modeling`: multi-tenancy patterns, temporal data modeling from operational systems
+- `dsci-data-engineering` → `be-integration-patterns`: event streaming from application layer into analytical pipelines
+- `dsci-ml-engineering` → `be-service-architecture`: ML model serving deployed as a microservice
+- `dsci-ml-engineering` → `be-caching-performance`: prediction caching and latency optimization for online inference
+- `dsci-ml-engineering` → `be-api-design`: ML API design — prediction endpoints, model versioning in API contracts
+- `dsci-nlp-llm` → `be-api-design`: LLM API integration, streaming response handling
+- `dsci-nlp-llm` → `be-caching-performance`: prompt/response semantic caching
+- `dsci-nlp-llm` → `be-auth-patterns`: API key management for third-party LLM services
+- `dsci-experimentation` → `be-integration-patterns`: event logging infrastructure for experiment assignment and outcome tracking
+- `dsci-product-analytics` → `be-integration-patterns`: event instrumentation requirements
+- `dsci-product-analytics` → `be-relational-db`: analytical queries against OLTP data sources
 
 ---
 
-## Enterprise DS Operating Directive
+## Enterprise DSci Operating Directive
 
 This network exists to help ship analytical and ML systems that improve real business
 outcomes in enterprise SaaS products. Mathematical rigor and technical depth are the tools;
@@ -274,4 +275,4 @@ Rigor model: [[13-domain-rigor-stack]]. Confidence tiers come from
 
 ## Related
 - foundation → [[data-foundations]] · [[science-foundations]]
-- spoke → [[ds-bi-platforms]] · [[ds-data-engineering]] · [[ds-data-governance]] · [[ds-executive-storytelling]] · [[ds-experimentation]] · [[ds-forecasting]] · [[ds-ml-engineering]] · [[ds-nlp-llm]] · [[ds-product-analytics]] · [[ds-prompt-engineering]]
+- spoke → [[dsci-bi-platforms]] · [[dsci-data-engineering]] · [[dsci-data-governance]] · [[dsci-executive-storytelling]] · [[dsci-experimentation]] · [[dsci-forecasting]] · [[dsci-ml-engineering]] · [[dsci-nlp-llm]] · [[dsci-product-analytics]] · [[dsci-prompt-engineering]]

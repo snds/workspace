@@ -1,5 +1,5 @@
 ---
-name: ds-prompt-engineering
+name: dsci-prompt-engineering
 description: >
   Prompt engineering as a production discipline for LLM systems. Staff/principal IC level.
   Use this skill whenever the conversation touches: system prompt architecture, prompt
@@ -13,16 +13,17 @@ description: >
   multi-agent orchestration prompts, reflection prompts, or any question about designing
   prompts that hold up in production at scale.
   This skill covers prompt engineering craft — not NLP/LLM pipeline architecture
-  (ds-nlp-llm), not LLM as a product decision (pm-platform-api).
+  (dsci-nlp-llm), not LLM as a product decision (pm-platform-api).
 hub: lead-data-scientist
-aliases: [ds-prompt-engineering]
+aliases: [dsci-prompt-engineering]
 spec_version: "2.0"
 tier: spoke
 domain: data
 prerequisites: [lead-data-scientist]
+triggers: [system prompt architecture, prompt versioning, few-shot example design, dynamic few-shot retrieval, output format contracts, json schema enforcement, structured output, evaluation harness design]
 ---
 
-# DS: Prompt Engineering
+# DSci: Prompt Engineering
 
 Production prompt engineering discipline for LLM systems. Part of the lead-data-scientist
 skill network.
@@ -33,8 +34,8 @@ skill network.
 
 This skill owns **prompt design and evaluation for production LLM systems**.
 
-- **NLP pipelines, embeddings, RAG architecture** → `ds-nlp-llm` (also load for RAG retrieval design)
-- **LLM API integration, serving infrastructure, rate limiting** → `ds-nlp-llm`
+- **NLP pipelines, embeddings, RAG architecture** → `dsci-nlp-llm` (also load for RAG retrieval design)
+- **LLM API integration, serving infrastructure, rate limiting** → `dsci-nlp-llm`
 - **LLM as product capability / build-vs-buy** → `pm-platform-api`
 - **API contract design for prompt endpoints** → `be-integration-patterns`
 - **AI-native product UX (streaming, progressive disclosure)** → `ux-ai-product-design`
@@ -516,7 +517,7 @@ Agentic tasks fail mid-loop. Prompts must handle:
 
 ## Cross-Hub References
 
-- For NLP pipelines, embeddings, and RAG architecture → `ds-nlp-llm`
+- For NLP pipelines, embeddings, and RAG architecture → `dsci-nlp-llm`
 - For LLM as product feature / API strategy → `pm-platform-api`
 - For API design for prompt endpoints → `be-integration-patterns`
 - For AI-native product UX patterns → `ux-ai-product-design`

@@ -15,6 +15,7 @@ domain: design
 hub: lead-graphic-designer
 prerequisites: [lead-graphic-designer]
 spec_version: "2.0"
+triggers: [type anatomy, typographic hierarchy, modular type scales, paragraph typography, optical sizing, historical type movements, typographic hierarchy for print]
 ---
 
 # GD — Typography

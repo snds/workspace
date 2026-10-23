@@ -14,9 +14,10 @@ instances:
     companion: ../dsds/dsds-constitution.md
     l1: [09-component-and-pattern-framework]
     foundation: design-foundations
-    leads: [ds-advisor, design-engineer]
+    leads: [ds]
     measurement: [visual-prove-engine, a11y-audit-toolkit]
     command: [qa, ds]
+    notes: "ds is the one design-system hub (2026-10-22): ds-advisor, ds-component-spec, token-architecture, design-system-ops and ds-generation-pipeline are its spokes; design-engineer is a lens."
   - id: ux-ui
     name: UX / UI / visual / interaction
     status: authored

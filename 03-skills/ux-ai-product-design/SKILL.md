@@ -17,6 +17,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-ux-designer]
 spec_version: "2.0"
+triggers: [human-in-the-loop interaction patterns, ai disclosure requirements, streaming response ux, ai error state taxonomy, trust calibration, prompt exposure in enterprise ui, ai feature discovery and onboarding]
 ---
 
 # UX — AI Product Design
@@ -25,7 +26,7 @@ Spoke skill in the `lead-ux-designer` network. Owns UX design for AI/LLM-powered
 features in enterprise SaaS — probabilistic output design, human-in-the-loop patterns,
 disclosure, streaming UX, AI error states, trust calibration, and prompt surface design.
 
-Does not own: the ML/NLP model selection or evaluation (→ `ds-nlp-llm`), the frontend
+Does not own: the ML/NLP model selection or evaluation (→ `dsci-nlp-llm`), the frontend
 state management for streaming responses (→ `fe-state-management`), or platform-level
 API design for AI endpoints (→ `pm-platform-api`). This spoke owns the design layer
 between the model output and the user.
@@ -406,9 +407,9 @@ letting users encounter features at the moment they're relevant.
 ## Cross-Links
 
 - `ux-interaction-design` — human-in-the-loop confirmation patterns; error state interaction design
-- `ds-nlp-llm` — model capability and limitation constraints that directly affect what UX is feasible
+- `dsci-nlp-llm` — model capability and limitation constraints that directly affect what UX is feasible
 - `pm-platform-api` — AI feature API surface design; disclosure requirements at the platform level
-- `ux-accessibility` — AI output and cognitive accessibility; plain language for AI-generated content
+- `lead-accessibility-architect` — AI output and cognitive accessibility; plain language for AI-generated content
 - `fe-state-management` — streaming state management; optimistic UI for AI suggestions; undo after AI auto-apply
 
 ---

@@ -75,7 +75,7 @@ Shells run `python3 09-tools/skill-loadset.py "<request>"` instead. Never ingest
 - chart → `02-shared-references/delivery-playbooks/03-data-and-charts.md`
 - write a spec, write a report, validation report, full report → `02-shared-references/delivery-playbooks/04-documents-and-specs.md`
 - challenge this, tear this apart → `03-skills/lead-ux-designer/SKILL.md`
-- what else moves, system fit, need a new component → `03-skills/ux-design-systems/SKILL.md`
+- what else moves, system fit, need a new component → `03-skills/ds-component-spec/SKILL.md`
 - state sweep, missing states → `03-skills/ux-interaction-design/SKILL.md`
 - design system ops, theme audit, docs coverage, undocumented components → `03-skills/design-system-ops/SKILL.md`
 - llm-safe → `08-knowledge/design/llm-safe-design-system-expressiveness.md` + `03-skills/design-engineer/SKILL.md`

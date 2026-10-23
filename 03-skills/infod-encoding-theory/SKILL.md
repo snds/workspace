@@ -15,6 +15,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-information-designer, found-color]
 spec_version: "2.0"
+triggers: [retinal variables, preattentive, cleveland and mcgill, encoding channel, perceptually uniform, colorblind-safe palette]
 ---
 
 # Encoding Theory
@@ -190,6 +191,12 @@ units, status types.
 
 **Example qualitative**: Set1, Set2, Paired (ColorBrewer)
 
+### Color Encodes Data, Not Chrome
+
+- Keep chart backgrounds, gridlines, and axes neutral; reserve color for data marks
+- On a dashboard, the same category gets the same color in every chart, so each
+  chart does not need to be decoded independently
+
 ### ColorBrewer Guidance
 
 ColorBrewer (Brewer, 2003; colorbrewer2.org) is the standard reference for
@@ -259,8 +266,9 @@ protanopia). Blue-yellow deficiency (tritanopia) is rare but must be considered.
    circle and a light-green triangle pass (three redundant channels).
 
 3. **Safe alternative to red/green:** Use blue/orange (diverging: OKL-safe),
-   or teal/red with lightness separation. The ColorBrewer "colorblind safe"
-   palettes are tested against deuteranopia simulation.
+   or teal/red with lightness separation. For a "warning" state, orange stays
+   distinguishable for deuteranopes where red does not. The ColorBrewer
+   "colorblind safe" palettes are tested against deuteranopia simulation.
 
 4. **Test with CVD simulation:** Tools — Figma's built-in accessibility view,
    Stark plugin, Adobe Color's accessibility checker, Coblis.

@@ -18,6 +18,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [angular, ng-content]
 ---
 
 # Angular — Framework Skill

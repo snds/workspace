@@ -18,6 +18,7 @@ tier: cross-cutting
 domain: accessibility
 hub: lead-accessibility-architect
 spec_version: "2.0"
+triggers: [wcag 2.1, wcag 2.2, wcag 3.0, americans with disabilities act, section 508, en 301 549, european accessibility act, eu web accessibility directive]
 ---
 
 # a11y-legal-compliance

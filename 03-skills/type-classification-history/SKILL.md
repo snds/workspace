@@ -17,6 +17,7 @@ domain: design
 hub: lead-type-designer
 prerequisites: [lead-type-designer]
 spec_version: "2.0"
+triggers: [typeface selection for a project, typeface pairing logic, vox-atypi system, type history]
 ---
 
 # Type Classification and History

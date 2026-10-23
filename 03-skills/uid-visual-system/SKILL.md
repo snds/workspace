@@ -14,6 +14,7 @@ domain: design
 hub: lead-ui-designer
 prerequisites: [lead-ui-designer]
 spec_version: "2.0"
+triggers: [visual system development, style guide authoring, visual language coherence, aesthetic consistency audits, brand-to-product visual translation, shape language, motion character, visual system evolution]
 ---
 
 # UID: Visual System
@@ -30,7 +31,7 @@ that govern all visual decisions and make a product recognizable as itself.
 
 - **Token architecture that encodes the visual system** → `ds-advisor`
 - **Brand identity that is upstream of the product visual language** → `gd-brand-identity`
-- **Behavioral design system (patterns, components, flows)** → `ux-design-systems` + `lead-ux-designer`
+- **Behavioral design system (patterns, components, flows)** → `ds-component-spec` + `lead-ux-designer`
 - **Individual visual domains in depth** → other `uid-*` spokes
 
 ---
@@ -256,7 +257,7 @@ usability.
 - `uid-surface-depth` — surface and elevation design in depth
 - `uid-iconography` — icon visual language in depth
 - `uid-visual-critique` — consistency audit frameworks in depth
-- `lead-ux-designer` / `ux-design-systems` — the behavioral design system is built on top of this visual system
+- `lead-ux-designer` / `ds-component-spec` — the behavioral design system is built on top of this visual system
 
 ## Related
 - hub → [[lead-ui-designer]]

@@ -19,6 +19,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [react aria, adobe spectrum, virtualized lists, react-aria, usebutton, usedialog]
 ---
 
 # React Aria / Adobe Spectrum — Framework Skill

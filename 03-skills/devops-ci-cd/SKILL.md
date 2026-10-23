@@ -23,6 +23,7 @@ hub: lead-devops-engineer
 prerequisites: [lead-devops-engineer]
 spec_version: "2.0"
 governed_by: [sec-supply-chain]
+triggers: [github actions, reusable workflows, composite actions, job matrices, concurrency groups, self-hosted runners, oidc-based secrets, trunk-based development]
 ---
 
 # DevOps: CI/CD
@@ -40,7 +41,7 @@ security scanning in CI, artifact management, and environment promotion chains**
 
 - Deep deployment strategies (blue-green, canary, Argo Rollouts) → `devops-release-engineering`
 - Kubernetes mechanics for routing canary traffic → `devops-container-orchestration`
-- ML model pipelines (MLOps) → `devops-ci-cd` for the pipeline pattern + `ds-ml-engineering` for ML specifics
+- ML model pipelines (MLOps) → `devops-ci-cd` for the pipeline pattern + `dsci-ml-engineering` for ML specifics
 - Frontend build pipeline and CDN → here for pipeline mechanics + `fe-performance` for perf budget enforcement
 
 ---
@@ -546,7 +547,7 @@ Attach the SBOM to the artifact, not just the build job. It must travel with the
 | SLO on CI build times | `devops-observability` |
 | Terraform plan in CI | `devops-infrastructure-as-code` (Atlantis pattern) |
 | Application security (OWASP, auth) | `be-security-posture` |
-| MLOps pipeline specifics | `ds-ml-engineering` |
+| MLOps pipeline specifics | `dsci-ml-engineering` |
 | Frontend performance budget in CI | `fe-performance` |
 
 ## Related

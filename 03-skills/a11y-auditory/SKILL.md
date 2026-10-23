@@ -16,6 +16,7 @@ tier: cross-cutting
 domain: accessibility
 hub: lead-accessibility-architect
 spec_version: "2.0"
+triggers: [hearing impairment, hearing loss, hard of hearing, age-related hearing loss, closed captions, audio description, sign language interpretation, visual alerts]
 ---
 
 # a11y-auditory

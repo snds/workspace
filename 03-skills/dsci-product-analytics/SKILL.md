@@ -1,5 +1,5 @@
 ---
-name: ds-product-analytics
+name: dsci-product-analytics
 description: >
   Funnel analysis, retention modeling, cohort analysis, customer LTV, behavioral
   segmentation, and self-serve analytics infrastructure for enterprise SaaS. Use this
@@ -12,16 +12,17 @@ description: >
   Tableau, BI tooling, self-serve analytics, or any question about understanding how
   users and accounts behave in the product and what that means for the business.
   This skill covers descriptive and predictive product analytics — not experiment
-  design (ds-experimentation), not production ML serving (ds-ml-engineering).
-aliases: [ds-product-analytics]
+  design (dsci-experimentation), not production ML serving (dsci-ml-engineering).
+aliases: [dsci-product-analytics]
 spec_version: "2.0"
 tier: spoke
 domain: data
 hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
+triggers: [aarrr metrics, activation rate, retention curves, churn cohorts, customer lifetime value, ltv modeling, expansion arr, funnel analysis]
 ---
 
-# DS: Product Analytics
+# DSci: Product Analytics
 
 Specialist lens for product analytics in enterprise SaaS. Part of the lead-data-scientist
 skill network.
@@ -33,8 +34,8 @@ skill network.
 This skill owns **behavioral analysis of users and accounts in the product** — funnel
 analysis, retention, LTV, segmentation, and self-serve analytics infrastructure.
 
-- **Causal measurement (did this feature change behavior?)** → `ds-experimentation`
-- **Production models on behavioral data** → `ds-ml-engineering`
+- **Causal measurement (did this feature change behavior?)** → `dsci-experimentation`
+- **Production models on behavioral data** → `dsci-ml-engineering`
 - **Metric definition and OKR ownership** → also engage `pm-metrics-analytics`
 - **Event instrumentation** → also engage `be-integration-patterns`
 - **Analytical queries on OLTP source data** → also engage `be-relational-db`
@@ -197,7 +198,7 @@ For more nuanced segmentation beyond RFM:
 - Determine k with elbow method + silhouette score — don't default to k=5
 - Profile each cluster with business metrics (retention rate, NRR, ACV) to validate
   that the clusters are business-meaningful, not just statistically distinct
-- Label clusters with interpretable names that non-DS stakeholders can use
+- Label clusters with interpretable names that non-DSci stakeholders can use
 
 **Anti-pattern**: Clustering on features that are highly correlated with each other
 produces clusters that are really just proxies for account size. Include diverse feature
@@ -284,8 +285,8 @@ and has a consistent consumer. Ad-hoc analysis infrastructure is tech debt.
 - For metric alignment and OKR ownership → `pm-metrics-analytics`
 - For event data pipeline and instrumentation requirements → `be-integration-patterns`
 - For analytical queries on OLTP data sources → `be-relational-db`
-- For causal measurement of feature impact → `ds-experimentation`
-- For churn prediction models → `ds-ml-engineering` and `ds-forecasting`
+- For causal measurement of feature impact → `dsci-experimentation`
+- For churn prediction models → `dsci-ml-engineering` and `dsci-forecasting`
 
 ## Related
 - hub → [[lead-data-scientist]]

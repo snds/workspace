@@ -15,13 +15,14 @@ description: >
   requirements, or any question about how to model domain entities and their
   relationships in the database. Not for: query optimization and index design
   on an existing schema (be-relational-db), authentication data models
-  (be-auth-patterns), or analytical/warehouse schema (ds-data-engineering).
+  (be-auth-patterns), or analytical/warehouse schema (dsci-data-engineering).
 aliases: [be-data-modeling]
 tier: spoke
 domain: engineering
 hub: lead-backend-engineer
 prerequisites: [lead-backend-engineer]
 spec_version: "2.0"
+triggers: [aggregate root pattern, oltp schema design, multi-tenancy strategy, soft deletes, surrogate keys, bitemporal, audit trail architecture]
 ---
 
 # Be: Data Modeling
@@ -39,7 +40,7 @@ strategy, temporal data, and audit trail architecture**.
 
 - Index design, query optimization on the schema → `be-relational-db`
 - Authentication-related data models (users, tokens, API keys) → `be-auth-patterns`
-- Warehouse/analytical schema design → `ds-data-engineering`
+- Warehouse/analytical schema design → `dsci-data-engineering`
 - Cache key design for multi-tenant data → `be-caching-performance`
 
 ---
@@ -493,8 +494,8 @@ as the primary audit record.
 | Zero-downtime migration of the schema | `be-relational-db` |
 | Authentication-related data models | `be-auth-patterns` |
 | Cache key design for tenant-scoped data | `be-caching-performance` |
-| Analytical schema design, warehouse modeling | `ds-data-engineering` |
-| Multi-tenancy in data pipelines | `ds-data-engineering` |
+| Analytical schema design, warehouse modeling | `dsci-data-engineering` |
+| Multi-tenancy in data pipelines | `dsci-data-engineering` |
 
 ## Related
 - hub → [[lead-backend-engineer]]

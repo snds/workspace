@@ -18,6 +18,7 @@ hub: lead-graphic-designer
 prerequisites: [lead-graphic-designer, found-color]
 governed_by: [a11y-visual]
 spec_version: "2.0"
+triggers: [color models, pantone]
 ---
 
 # GD — Color Theory

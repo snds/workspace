@@ -22,6 +22,7 @@ description: >
 aliases: [lead-visual-qa]
 tier: hub
 domain: quality
+area: visual-qa
 prerequisites: [design-foundations]
 triggers: [lead visual qa, pixel review, last mile craft, does this look right]
 related: [close-out, qa]

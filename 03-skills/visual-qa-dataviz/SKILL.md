@@ -12,7 +12,7 @@ description: >-
   alignment, density, header behavior, sortability affordance, totals), state coverage
   (loading/empty/partial/error/too-much-data), and dark-theme series contrast. Spoke of
   lead-visual-qa. Do NOT use for: choosing a chart type for an unbuilt need
-  (ux-data-visualization), encoding theory and perceptual grounding (infod-encoding-theory),
+  (lead-information-designer), encoding theory and perceptual grounding (infod-encoding-theory),
   charting-library or virtualization implementation (fe-data-visualization), statistical
   validity of the underlying analysis (infod-statistical-viz, ds-* skills), or dashboard
   information architecture (infod-dashboard-patterns).
@@ -21,7 +21,7 @@ triggers: [chart review, chart audit, dataviz qa, graph review, data table revie
 tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
-related: [infod-encoding-theory, fe-data-visualization, ux-data-visualization, qa]
+related: [infod-encoding-theory, fe-data-visualization, lead-information-designer, qa]
 rigor_role: multi-voice
 surfaces: ["*"]
 spec_version: "2.2"
@@ -38,7 +38,7 @@ this lens's first responsibility.
 
 | Question | Owner |
 |---|---|
-| What chart should this be, for this user need? | [[ux-data-visualization]] |
+| What chart should this be, for this user need? | [[lead-information-designer]] |
 | Why does this encoding work perceptually (position > length > area > hue) | [[infod-encoding-theory]] |
 | How do I build it (library choice, virtualization, cross-filter) | [[fe-data-visualization]] |
 | Is the statistic itself sound (sampling, aggregation, confidence) | [[infod-statistical-viz]] |
@@ -164,7 +164,7 @@ Tables are data visualization; they fail in their own ways.
 ## Report shape
 
 Return the shared `/qa` format (findings · severity · evidence · fix · owner · summary · next).
-Route fixes: encoding and labeling changes to [[ux-data-visualization]] or
+Route fixes: encoding and labeling changes to [[lead-information-designer]] or
 [[infod-encoding-theory]] for the rationale, implementation to [[fe-data-visualization]], chart
 token gaps to [[ds-advisor]], and accessibility failures to [[visual-qa-accessibility]] plus
 [[a11y-audit-toolkit]] for the structural half.

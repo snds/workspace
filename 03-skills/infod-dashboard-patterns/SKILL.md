@@ -7,13 +7,16 @@ description: >
   Use this spoke when designing or evaluating an executive, operational, or
   analytical dashboard; when specifying KPI card layout and content; when
   deciding on a drill-down navigation pattern; when designing filters for a
-  dashboard; or when addressing responsive layout degradation for dashboards.
+  dashboard; when addressing responsive layout degradation for dashboards; or
+  when designing data tables (column order, numeric alignment, null/zero cells,
+  row density, sort/filter/group, frozen columns, inline sparklines).
 hub: lead-information-designer
-aliases: [infod-dashboard-patterns]
+aliases: [infod-dashboard-patterns, ux-data-visualization]
 tier: spoke
 domain: design
 prerequisites: [lead-information-designer]
 spec_version: "2.0"
+triggers: [executive dashboard, dashboard layout, kpi card, data table design, dashboard design]
 ---
 
 # Dashboard Patterns
@@ -33,6 +36,8 @@ This spoke owns **dashboard architecture and component decisions**.
 - **Drill-down interaction patterns** → `ux-interaction-design` (for the
   navigation mechanics); this spoke covers the design decision
 - **Dashboard component tokens** → `ds-advisor`
+- **Data tables** — owned here (no dedicated table spoke); table rendering and
+  sticky-column mechanics → `fe-component-architecture`
 
 ---
 
@@ -107,6 +112,11 @@ seasonal plan vs. actual.
 
 ## Information Hierarchy in Dashboards
 
+Enterprise users are not overwhelmed by density. They are overwhelmed by
+inconsistency and poor hierarchy within density. The fix for an overwhelming
+dashboard is better structure, not less data. A dashboard with 15 equal-weight
+charts has no hierarchy — the user must scan all 15 to find what matters.
+
 Every dashboard should have a deliberate visual hierarchy:
 
 ```
@@ -177,6 +187,10 @@ A complete KPI card contains:
 | **Trend Magnitude** | Size of the change | Both absolute and % when both matter; chose one when space is tight |
 | **Comparison Period** | What is the trend measured against? | "vs. plan", "vs. last week", "vs. LY"; never omit — a trend without a baseline is meaningless |
 | **Status** | On track / warning / below threshold | Color + icon; colorblind-safe; top-right corner (conventional position) |
+| **Time window** | The period the value covers ("Today", "Last 30 days", "YTD") | Stated on every card; do not assume the user remembers the global date filter |
+
+Label specificity: "Q3 Orders", not "Orders". Format primary values consistently
+across every card on the dashboard. A bare number with no context is never acceptable.
 
 ### Optional Elements
 
@@ -277,6 +291,10 @@ requirements:
   all other data de-emphasizes
 - Deselect affordance must be obvious: click again to deselect, or a clear "×"
   on the selection state
+- Declare the filter graph explicitly in the design: which charts filter which.
+  Not every chart should filter every other chart
+- Filtered state is visible in the target charts too, not only the source;
+  a persistent "filters active" banner with "Clear all" is the minimum
 - Not appropriate for operational dashboards: unexpected filter application
   confuses operational users who expect the dashboard to always show current state
 
@@ -286,6 +304,80 @@ Operational users are monitoring, not exploring. Every interaction (hover for
 tooltip, click for filter, scroll for content) is a friction cost. Design the
 operational dashboard to be read, not operated. Show the right information without
 interaction; reserve interaction for drill-down (exception, not normal).
+
+---
+
+## Data Tables
+
+Tables are the dominant pattern in enterprise SaaS and the most commonly broken.
+Most table failures are decisions that were never made.
+
+### Column Hierarchy
+
+Left-to-right order is a claim about what matters. Default order:
+
+1. **Primary identifier** (name, SKU, ID) — left-anchored, usually frozen
+2. **Secondary classifiers** (type, category, status) — next to the identifier
+3. **Metric columns** (counts, values, percentages)
+4. **Contextual dates** (created, modified, due)
+5. **Actions** — rightmost, never leftmost
+
+Do not accept the API response order as the column order.
+
+### Alignment and Precision
+
+- Right-align all numbers: integers, decimals, currency, percentages
+- Left-align text: names, labels, descriptions, status strings
+- Center binary values (checkboxes, boolean badges) and icons
+- Use one decimal precision per column (1.20, 1.23, 1.00 — not 1.2, 1.23, 1)
+  so decimal positions compare vertically
+
+### Null, Zero, and Not Applicable
+
+Three states, three treatments. Collapsing them into one "—" forces users to guess.
+
+| State | Meaning | Treatment |
+|-------|---------|-----------|
+| **No data** | No record exists for this value | Em dash (—) or "N/A" |
+| **Zero** | A record exists and the value is zero | "0", formatted like other values — never a dash |
+| **Not applicable** | The field does not apply to this record type | Distinct treatment: lighter or italic text, or "—" with an explanatory tooltip |
+
+### Row Density Modes
+
+Offer density control; tasks vary between scanning many rows and reading one.
+
+| Mode | Row height | Use case |
+|------|-----------|---------|
+| Compact | ~32px | Scanning large datasets; power-user workflows |
+| Default | ~40px | Short text values; status indicators |
+| Comfortable | ~48px+ | Multi-line cells; embedded sparklines; thumbnails |
+
+### Sorting, Filtering, Grouping
+
+One interaction model across every table in the product.
+
+- **Sorting**: header click cycles ascending → descending → cleared; direction is
+  visually clear; multi-column sort shows sort priority (1st, 2nd); sort state
+  persists on return, or resets through a visible affordance
+- **Filtering**: consistent panel location, chip design, and "Clear all"; session
+  filters and saved filters are different states and look different
+- **Grouping**: group header rows show aggregate metric values (never blank);
+  expand/collapse state persists across pagination
+
+### Frozen Headers and Columns
+
+Tables wider than the viewport freeze at least the primary identifier column, so
+the user always knows which record a row is. `position: sticky` behaves
+specifically inside overflow containers — coordinate with
+`fe-component-architecture` before specifying multi-column freeze.
+
+### Sparklines in Table Rows
+
+- Every sparkline in a column shares one Y-axis scale; otherwise flat lines at
+  different absolute values look identical and cross-row comparison misleads
+- No axis labels, ticks, or gridlines — trend, not precise reading
+- 60–120px wide at compact density
+- Pair with the current value: the sparkline shows trend, the number shows value
 
 ---
 
@@ -373,6 +465,10 @@ changes the metric value and must match how the metric was defined.
   tokens in the main DS token architecture
 - **`lead-data-scientist`** — metric definitions; the distinction between
   rolling and fixed windows must match the data layer's aggregation logic
+- **`fe-component-architecture`** — table implementation; sticky header and
+  frozen-column constraints
+- **`be-api-design`** — API response shape; aggregate vs. raw data; date bucketing
+- **`dsci-product-analytics`** — instrumenting dashboard interactions; what to measure
 
 ---
 

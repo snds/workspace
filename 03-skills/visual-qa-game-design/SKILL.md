@@ -20,6 +20,7 @@ tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
 spec_version: "2.0"
+triggers: [game ui, hud design, in-world visual clarity, level art composition, art style consistency across assets, damage numbers, player character readability against backgrounds, enemy silhouette clarity]
 ---
 
 # Visual QA — Game Design

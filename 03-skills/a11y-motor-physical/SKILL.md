@@ -12,11 +12,12 @@ description: >
   pointer precision, drag and drop alternatives, single pointer, WCAG 2.1.1, WCAG
   2.1.2, WCAG 2.4.3, WCAG 2.5.3, WCAG 2.5.7, WCAG 2.5.8, keyboard shortcut, sticky
   keys, dwell activation, eye tracking pointer.
-aliases: [a11y-motor-physical]
+aliases: [a11y-motor-physical, ux-accessibility]
 tier: cross-cutting
 domain: accessibility
 hub: lead-accessibility-architect
 spec_version: "2.0"
+triggers: [focus order, tab order, keyboard navigation, focus trap, keyboard access]
 ---
 
 # a11y-motor-physical
@@ -74,6 +75,10 @@ Every action that is possible with a mouse is possible with keyboard:
 - Hover to reveal → Equivalent revealed on focus (tooltips, overflow menus)
 - Right-click context menu → Keyboard shortcut or Menu key equivalent
 
+The keyboard activation for every interactive element is part of the interaction
+contract, so the design spec states it. Which key activates a custom widget is a
+design decision, not an implementation detail left for the engineer to infer.
+
 **The test**: Hide the mouse. Can you complete every primary task using only Tab,
 Shift-Tab, arrow keys, Enter, Space, and Escape? If not, there's a keyboard
 accessibility failure.
@@ -90,6 +95,15 @@ This means:
 - `tabindex="-1"` removes from tab order but allows programmatic focus (use for focus
   management in dynamic content)
 - Fix reading order issues in the DOM, not with `tabindex` values
+- Group related form fields so they are tabbed through as a unit; skip decorative,
+  non-interactive images and icons
+- In dashboard grids, panels that read as a sequence (Step 1, Step 2, Step 3) are
+  tabbed in sequence order, even when they sit in visually parallel columns
+
+**Specify it in the design**: for complex layouts (multi-column forms, dashboard grids,
+modals), annotate the tab order in the interaction annotation (in Figma). Do not assume
+it follows visual order — responsive layouts can reorder content visually without
+reordering the DOM.
 
 **Common failures**:
 - Modal dialogs that don't trap focus — keyboard users can Tab out of the dialog into
@@ -115,6 +129,11 @@ The correct pattern for modal focus traps:
 3. Escape closes the modal and returns focus to the triggering element
 4. Background content has `aria-hidden="true"` and `inert` when modal is open
 
+**Design spec**: annotate (1) where focus lands on open — the title or the first
+interactive element, depending on content; (2) the trap boundary; (3) where focus
+returns on close, whether by button, Escape, or background click. These are design
+decisions and must be explicit.
+
 ### Keyboard Shortcuts
 
 **WCAG 2.1.4 Character Key Shortcuts**: Single-key and combination shortcuts that use
@@ -127,6 +146,26 @@ only printable characters (letters, numbers, punctuation) must provide a mechani
 single keys to navigate. A web app with `j`/`k` shortcuts for next/previous will
 conflict with NVDA's or JAWS's navigation keys. Dragon users speaking individual
 letters to dictate will accidentally trigger single-character shortcuts.
+
+### Widget Keyboard Patterns (ARIA APG)
+
+Complex widgets — menus, tabs, trees, data grids, comboboxes, date pickers — have
+specified keyboard patterns in the ARIA Authoring Practices Guide
+(https://www.w3.org/WAI/ARIA/apg/). Keyboard and screen reader users have learned
+these patterns; they are expectations, not suggestions.
+
+| Widget | Arrow keys | Activation |
+|--------|-----------|-----------|
+| Menu / dropdown | Up/Down moves through items | Enter activates; Escape closes |
+| Tablist | Left/Right (or Up/Down) moves between tabs | Enter or Space activates |
+| Tree | Up/Down moves through items; Left collapses, Right expands | Enter activates |
+| Data grid | Arrows move between cells | Enter activates cell; Escape exits cell editing |
+| Combobox | Up/Down moves through suggestions | Enter selects; Escape closes |
+| Date picker | Arrows navigate the calendar | Enter selects date |
+
+Annotate the keyboard model for every custom widget in the design spec, cross-checked
+against APG. Do not invent custom keyboard interactions. ARIA roles and states for these
+patterns → `a11y-assistive-tech`.
 
 ---
 
@@ -332,6 +371,8 @@ Before shipping any interactive component or flow:
 
 - [ ] All functionality accessible by keyboard only — Tab, arrows, Enter, Space, Escape
 - [ ] Tab order follows logical reading/task order (no `tabindex > 0`)
+- [ ] Complex layouts have the tab order and modal focus (open / trap / return) annotated in the design spec
+- [ ] Every custom widget's keyboard model is annotated and matches its ARIA APG pattern
 - [ ] Modal dialogs trap focus correctly and return focus on close
 - [ ] No unintended focus traps — all components navigable out of with standard keys
 - [ ] Skip navigation present and functional

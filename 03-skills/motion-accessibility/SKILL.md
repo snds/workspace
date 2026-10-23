@@ -16,6 +16,7 @@ domain: design
 hub: lead-motion-designer
 prerequisites: [lead-motion-designer]
 spec_version: "2.0"
+triggers: [reduced-motion alternatives, vestibular disorders, motion sickness from ui, parallax accessibility, looping animation accessibility, wcag 2.3.1, cognitive motion load, motion in design systems]
 ---
 
 # Motion Accessibility

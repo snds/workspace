@@ -15,6 +15,7 @@ description: >
 aliases: [lead-icon-artist]
 tier: hub
 domain: design
+area: iconography
 prerequisites: [design-foundations]
 related: [lead-vector-designer, lead-technical-digital-artist, variable-icon-font-architect]
 triggers: [icon artist, icon set, pictogram]

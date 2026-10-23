@@ -7,6 +7,7 @@ aliases: [job-search-strategist]
 triggers: [job search strategy, career positioning, target companies]
 tier: hub
 domain: career
+area: career
 related: [career-ops-job-search, job-application-optimizer]
 defers_to: [framework-13]
 rigor_role: load-chain

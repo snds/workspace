@@ -14,6 +14,7 @@ description: >
 aliases: [lead-vector-designer]
 tier: hub
 domain: design
+area: vector-illustration
 prerequisites: [design-foundations]
 related: [lead-icon-artist, lead-technical-digital-artist, variable-icon-font-architect, gd-display-graphics, motion-graphic-systems, gd-generation-tooling]
 triggers: [vector designer, bezier path, svg illustration]

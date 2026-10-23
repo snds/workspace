@@ -16,13 +16,14 @@ description: >
   more resilient under load. Not for: database schema design for query performance
   (be-relational-db handles query optimization, cross-reference here for
   application-layer decisions), prediction caching for ML inference
-  (ds-ml-engineering), or semantic caching for LLM responses (ds-nlp-llm).
+  (dsci-ml-engineering), or semantic caching for LLM responses (dsci-nlp-llm).
 aliases: [be-caching-performance]
 tier: spoke
 domain: engineering
 hub: lead-backend-engineer
 prerequisites: [lead-backend-engineer]
 spec_version: "2.0"
+triggers: [cache invalidation, cache-aside, write-through cache, cache stampede, thundering herd, connection pooling, pgbouncer, stale-while-revalidate]
 ---
 
 # Be: Caching & Performance
@@ -38,8 +39,8 @@ This skill owns: **cache invalidation strategy, Redis patterns, connection
 pool management, CDN configuration, and latency SLO design**.
 
 - Database query optimization (EXPLAIN ANALYZE, index design) → `be-relational-db`
-- ML prediction caching → `ds-ml-engineering`
-- LLM prompt/response semantic caching → `ds-nlp-llm`
+- ML prediction caching → `dsci-ml-engineering`
+- LLM prompt/response semantic caching → `dsci-nlp-llm`
 - Cache key design decisions overlap with multi-tenancy → `be-data-modeling`
 
 ---
@@ -465,8 +466,8 @@ of the period remaining) — that's a signal that the burn rate is too high.
 |-------|----------|
 | Database query optimization, index design | `be-relational-db` |
 | Multi-tenant cache key strategy | `be-data-modeling` |
-| ML prediction result caching | `ds-ml-engineering` |
-| LLM prompt/response semantic caching | `ds-nlp-llm` |
+| ML prediction result caching | `dsci-ml-engineering` |
+| LLM prompt/response semantic caching | `dsci-nlp-llm` |
 | API rate limiting implementation | `be-api-design` |
 
 ## Related

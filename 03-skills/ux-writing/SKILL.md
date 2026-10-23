@@ -15,6 +15,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-ux-designer]
 spec_version: "2.0"
+triggers: [empty state copy, microcopy, error message copy, button label copy, ux copy]
 ---
 
 # UX — Writing
@@ -24,8 +25,8 @@ error message writing, empty state strategy, label design, voice and tone, and
 plain language standards for enterprise SaaS.
 
 Does not own: the interaction pattern that error messages appear in (→ `ux-interaction-design`),
-accessibility requirements for error message placement and ARIA (→ `ux-accessibility`),
-the information architecture of label hierarchies (→ `ux-information-architecture`),
+accessibility requirements for error message placement and ARIA (→ `lead-accessibility-architect`),
+the information architecture of label hierarchies (→ `lead-information-architect`),
 or data table column header layout decisions (→ `lead-information-designer`). This spoke
 owns the words. The pattern that contains them lives in the relevant interaction spoke.
 
@@ -514,8 +515,8 @@ or documentation — not a tooltip that disappears after 2 seconds.
 ## Cross-Links
 
 - `ux-interaction-design` — error state interaction patterns, inline vs. summary error placement, validation timing
-- `ux-accessibility` — plain language as cognitive accessibility; error message ARIA requirements; tooltip as accessible label
-- `ux-information-architecture` — label strategy as IA taxonomy decision; navigation label design
+- `lead-accessibility-architect` — plain language as cognitive accessibility; error message ARIA requirements; tooltip as accessible label
+- `lead-information-architect` — label strategy as IA taxonomy decision; navigation label design
 - `lead-information-designer` — data table column header design and labeling in dense information layouts
 
 ---

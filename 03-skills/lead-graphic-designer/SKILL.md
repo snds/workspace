@@ -16,6 +16,7 @@ description: >
 aliases: [lead-graphic-designer]
 tier: hub
 domain: design
+area: graphic-design
 prerequisites: [design-foundations]
 triggers: [graphic designer, brand identity, poster design]
 governed_by: [qa]
@@ -194,9 +195,9 @@ isolation.
 
 | This Spoke | → UX Spoke | The Connection |
 |-----------|-----------|----------------|
-| `gd-visual-communication` | `ux-information-architecture` | The hierarchy of printed communication (headline, deck, body, caption, footnote) is the direct precursor to IA hierarchy levels |
+| `gd-visual-communication` | `lead-information-architect` | The hierarchy of printed communication (headline, deck, body, caption, footnote) is the direct precursor to IA hierarchy levels |
 | `gd-grid-and-layout` | `ux-interaction-design` | Compositional rhythm and visual grouping inform how interaction elements are organized and separated |
-| `gd-typography` | `ux-data-visualization` | Typographic clarity rules (contrast, measure, leading) are the baseline for readable data labels and annotations |
+| `gd-typography` | `lead-information-designer` | Typographic clarity rules (contrast, measure, leading) are the baseline for readable data labels and annotations |
 | `gd-visual-communication` | `ux-research-synthesis` | Visual synthesis artifacts (affinity maps, storyboards) apply composition and hierarchy principles from graphic design |
 
 ### → `ds-advisor` (SIGNIFICANT)

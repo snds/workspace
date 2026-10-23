@@ -18,13 +18,13 @@ triggers:
   - onori
 tier: spoke
 domain: design
-hub: ds-advisor
-prerequisites: [ds-advisor]
+hub: ds
+prerequisites: [ds]
 related: [design-system-ops, harness-map]
 surfaces: ["*"]
 spec_version: "2.2"
 rigor_role: measurement
-defers_to: [ds-advisor, framework-09]
+defers_to: [ds, framework-09]
 ---
 
 # DS source watch
@@ -76,4 +76,4 @@ when a writer (Onori, Curtis, Wolosin, Anthropic, Google A2A/A2UI, etc.) becomes
 load-bearing. Do not scrape the open web into the ontology.
 
 ## Related
-- hub → [[ds-advisor]]
+- hub → [[ds]]

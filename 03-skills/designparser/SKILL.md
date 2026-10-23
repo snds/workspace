@@ -83,7 +83,7 @@ Do not let a category replace the owner. Use the rule, then the spoke.
 | `spacing` · `layout` | [[found-composition]] |
 | `shadows` · `visual` | [[lead-ui-designer]] |
 | `ux-laws` · `interaction` · `forms` | [[lead-ux-designer]] → [[ux-interaction-design]] |
-| `navigation` | [[ux-information-architecture]] |
+| `navigation` | [[lead-information-architect]] |
 | `icons` | [[lead-icon-artist]] |
 | `motion` | [[lead-motion-designer]] / `/motion` |
 | `media` | imaging / visual spokes as the task implies |

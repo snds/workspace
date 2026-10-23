@@ -18,6 +18,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [state management, server state, client state, url state, form state, tanstack query, react query, vue query]
 ---
 
 # FE State Management

@@ -6,6 +6,7 @@ triggers: [material symbols project, icon automation suite]
 spec_version: "2.0"
 tier: hub
 domain: design
+area: material-symbols
 
 ---
 

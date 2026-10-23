@@ -18,6 +18,7 @@ description: >
 aliases: [lead-product-manager]
 tier: hub
 domain: product
+area: product-management
 triggers: [product decision, prioritization tradeoff, roadmap tradeoff]
 spec_version: "2.0"
 prerequisites: [product-foundations]
@@ -200,11 +201,11 @@ stronger.
 
 | From | To | When |
 |------|----|------|
-| `pm-metrics-analytics` | `ds-experimentation` | PM is framing an experiment — DS owns statistical design and MDE calculations |
-| `pm-metrics-analytics` | `ds-product-analytics` | Shared metric definitions, funnel instrumentation, analytics pipeline requirements |
-| `pm-stakeholder-comms` | `ds-executive-storytelling` | PM owns the recommendation; DS owns the analytical evidence — coordinate for exec presentations |
-| `pm-roadmap-strategy` | `ds-forecasting` | Churn signals, usage forecasts, adoption curves as roadmap inputs |
-| `pm-platform-api` | `ds-nlp-llm` | When building AI/LLM capabilities as product features |
+| `pm-metrics-analytics` | `dsci-experimentation` | PM is framing an experiment — DSci owns statistical design and MDE calculations |
+| `pm-metrics-analytics` | `dsci-product-analytics` | Shared metric definitions, funnel instrumentation, analytics pipeline requirements |
+| `pm-stakeholder-comms` | `dsci-executive-storytelling` | PM owns the recommendation; DSci owns the analytical evidence — coordinate for exec presentations |
+| `pm-roadmap-strategy` | `dsci-forecasting` | Churn signals, usage forecasts, adoption curves as roadmap inputs |
+| `pm-platform-api` | `dsci-nlp-llm` | When building AI/LLM capabilities as product features |
 
 ### PM → Backend Engineering
 

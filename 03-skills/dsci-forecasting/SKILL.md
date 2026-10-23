@@ -1,5 +1,5 @@
 ---
-name: ds-forecasting
+name: dsci-forecasting
 description: >
   Time series modeling, demand and churn forecasting, anomaly detection, and forecast
   evaluation for enterprise SaaS. Use this skill whenever the conversation touches:
@@ -11,16 +11,17 @@ description: >
   collective anomaly, forecast evaluation, MAE, RMSE, MAPE, SMAPE, MASE, prediction
   intervals, or any question about predicting future values from time-ordered data.
   This skill covers forecasting and anomaly detection — not general regression or
-  classification (ds-ml-engineering), not retention cohort analysis (ds-product-analytics).
-aliases: [ds-forecasting]
+  classification (dsci-ml-engineering), not retention cohort analysis (dsci-product-analytics).
+aliases: [dsci-forecasting]
 spec_version: "2.0"
 tier: spoke
 domain: data
 hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
+triggers: [time series analysis, time series decomposition, trend analysis, temporal fusion transformer, xgboost for time series, lag features, rolling statistics, forecasting revenue]
 ---
 
-# DS: Forecasting
+# DSci: Forecasting
 
 Specialist lens for time series forecasting, churn prediction, and anomaly detection in
 enterprise SaaS. Part of the lead-data-scientist skill network.
@@ -31,11 +32,11 @@ enterprise SaaS. Part of the lead-data-scientist skill network.
 
 This skill owns **time-ordered prediction and anomaly detection**.
 
-- **Churn scoring as a classification model** → `ds-ml-engineering` (if the output is a
+- **Churn scoring as a classification model** → `dsci-ml-engineering` (if the output is a
   real-time score, not a survival curve)
-- **Retention cohort analysis** → `ds-product-analytics`
+- **Retention cohort analysis** → `dsci-product-analytics`
 - **Roadmap inputs from usage forecasts** → also engage `pm-roadmap-strategy`
-- **Serving a forecast model as an API** → `ds-ml-engineering`
+- **Serving a forecast model as an API** → `dsci-ml-engineering`
 
 ---
 
@@ -314,8 +315,8 @@ data. Never use random splits for time series — it leaks future information in
 ## Cross-Hub References
 
 - For roadmap inputs from usage and growth forecasts → `pm-roadmap-strategy`
-- For serving forecast models as APIs → `ds-ml-engineering`
-- For leading indicators from product behavior → `ds-product-analytics`
+- For serving forecast models as APIs → `dsci-ml-engineering`
+- For leading indicators from product behavior → `dsci-product-analytics`
 
 ## Related
 - hub → [[lead-data-scientist]]

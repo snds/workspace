@@ -15,6 +15,7 @@ domain: design
 hub: lead-motion-designer
 prerequisites: [lead-motion-designer]
 spec_version: "2.0"
+triggers: [stagger direction, sequencing multiple elements, timing relationships between elements, animation narrative arc, entrance sequence, exit sequence, list animation, hero animation]
 ---
 
 # Motion Choreography

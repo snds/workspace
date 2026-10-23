@@ -19,6 +19,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [css modules, vanilla extract, zero-runtime css, scoped css, module.css]
 ---
 
 # CSS Modules & Vanilla Extract — Framework Skill

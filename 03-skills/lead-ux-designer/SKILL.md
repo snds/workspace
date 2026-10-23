@@ -20,6 +20,7 @@ aliases: [lead-ux-designer]
 triggers: [challenge this, tear this apart, information architecture, enterprise ux, how should this work, user flow]
 tier: hub
 domain: design
+area: ux
 prerequisites: [design-foundations]
 spec_version: "2.1"
 
@@ -46,16 +47,23 @@ The hub contains enough to triage and route. Spokes provide the deep domain know
 
 | Skill | Domain | Trigger When |
 |-------|--------|-------------|
-| `ux-information-architecture` | Navigation systems, IA for complex enterprise apps, wayfinding, mental models, content organization | Navigation structure questions, sidebar vs. top nav decisions, breadcrumbs, multi-role access patterns, card sorting, tree testing, "where does this live?" |
 | `ux-interaction-design` | Complex workflow design, multi-step flows, form patterns, error states, edge cases, micro-interactions | Form design, wizard patterns, validation, bulk editing, undo/redo, save states, state sweep / missing states, feedback loops, optimistic UI |
-| `ux-data-visualization` | Chart selection, dashboard design, data density, readable tables, encoding data visually | Choosing a chart type, dashboard layout, table column design, sparklines, color in data viz, cross-filter interactions, "how do I show X data" |
 | `ux-performance-perception` | Perceived performance UX, loading states, skeleton screens, optimistic UI, latency design | Loading state decisions, skeleton screen design, long-running operations, background jobs, how to handle slow API responses, what to show while waiting |
-| `ux-design-systems` | Component design decisions, variant/state coverage, pattern library, behavior specification — NOT token architecture | Component variant coverage, system-fit (reuse → compose → extend → create → feature-local), ripple ("what else moves?"), behavior contracts, pattern vs. component distinction |
 | `ux-research-synthesis` | Mixed-method research, synthesis for complex enterprise problems, insight-to-design pipeline | Research method selection, "who is this for", anti-ceremony grounding, affinity diagramming, JTBD analysis, insight-to-requirement pipeline, assumption mapping |
-| `ux-accessibility` | Inclusive design, WCAG at the design layer, cognitive load, keyboard navigation design, color/contrast | WCAG requirements, focus management, keyboard nav design, color contrast, error message standards, cognitive load reduction, prefers-reduced-motion |
 | `ux-writing` | Microcopy, error message architecture, empty state copy, label design, voice and tone, plain language, content style guides, alert copy, writing for data-dense interfaces | Error message writing, empty state copy, label wording, voice/tone guidelines, validation copy, notification copy, column header labeling |
 | `ux-ai-product-design` | UX for AI/LLM-powered features — probabilistic output design, human-in-the-loop patterns, AI disclosure, streaming UX, trust calibration, prompt surface design | AI confidence visualization, when to auto-apply vs. suggest, streaming loading states, AI error states, thumbs up/down feedback, AI disclosure, prompt UI |
 | `ux-service-design` | Service blueprinting, multi-touchpoint experience design, journey mapping methodology, back-stage actor mapping, service recovery, moments of truth, enterprise onboarding as a service | Who else is involved in this workflow, what happens between product touchpoints, support escalation design, onboarding as a multi-actor service, moments of truth, service recovery |
+
+### Routed to their specialist hubs (2026-10-22)
+
+These subspecialties have one home each, outside this hub. Route there; do not answer from here.
+
+| Ask | Home |
+|---|---|
+| Navigation, IA, wayfinding, card sorting, tree testing | `lead-information-architect` → `ia-*` (`ia-navigation-systems` first) |
+| Chart choice, dashboards, data tables, colour in data viz | `lead-information-designer` → `infod-*` (`infod-dashboard-patterns` first) |
+| WCAG at the design layer, keyboard and focus design, cognitive load | `lead-accessibility-architect` → `a11y-*` |
+| Component variants, states, anatomy, system-fit, "what else moves" | `ds` → `ds-component-spec` |
 
 ### Spoke Loading Protocol
 
@@ -64,14 +72,14 @@ Identify 1–2 spokes directly relevant to the question. Rarely load 3.
 
 Common routing patterns:
 
-- **Navigation or IA question**: `ux-information-architecture`
+- **Navigation or IA question**: `lead-information-architect` (`ia-navigation-systems`)
 - **Challenge the premise / tear this apart**: stay on this hub first (Process defaults below)
 - **Form, workflow, or edge case design / state sweep**: `ux-interaction-design`
-- **Chart, dashboard, or table design**: `ux-data-visualization`
+- **Chart, dashboard, or table design**: `lead-information-designer` (`infod-dashboard-patterns`)
 - **Loading states, skeletons, slow operations**: `ux-performance-perception`
-- **Component variants, system-fit, what else moves**: `ux-design-systems` (+ `ds-advisor` for tokens)
+- **Component variants, system-fit, what else moves**: `ds` → `ds-component-spec` (+ `token-architecture` for tokens)
 - **Research method, who is this for, do we know enough**: `ux-research-synthesis`
-- **WCAG, keyboard, focus, contrast**: `ux-accessibility`
+- **WCAG, keyboard, focus, contrast**: `lead-accessibility-architect` (`a11y-*`)
 - **System-level design review**: load spokes incrementally as each domain is addressed
 
 **Step 2**: Load the relevant spoke(s):
@@ -149,9 +157,9 @@ operation) requires its own explicitly designed treatment.
 These fire from language. Intensity matches the user's words, not a ceremony checklist.
 
 1. **Challenge before draw.** If the ask is "challenge this", "tear this apart", or the premise is load-bearing, test the premise before any screen. What would have to be true? What evidence do we have? What happens if we do nothing?
-2. **Ripple.** "If we change this, what else moves?" Route to `ux-design-systems`. Separate confirmed from possible. Scale: contained / shared / cross-journey / foundational.
+2. **Ripple.** "If we change this, what else moves?" Route to `ds-component-spec`. Separate confirmed from possible. Scale: contained / shared / cross-journey / foundational.
 3. **State sweep by transition.** "What states am I missing?" Route to `ux-interaction-design`. Walk each user/system action, not a five-row checklist (the five states stay the minimum set).
-4. **System-fit ladder.** "Does this need a new component?" Route to `ux-design-systems`. Order: reuse → compose → extend → create → feature-local. `feature-local` is a valid answer; it is not a failed component.
+4. **System-fit ladder.** "Does this need a new component?" Route to `ds-component-spec`. Order: reuse → compose → extend → create → feature-local. `feature-local` is a valid answer; it is not a failed component.
 5. **Anti-ceremony grounding.** "Who is this for?" Route to `ux-research-synthesis`. Do not invent personas or run research theater. Name the gap.
 
 ---
@@ -212,43 +220,42 @@ causes real errors with real consequences.
 
 ### UX/UI → Design Systems
 - Token architecture, Figma ops, DDR format: load `ds-advisor`
-- Component behavior decisions, variant coverage: load `ux-design-systems`
-- These are separate layers — `ds-advisor` owns the token/Figma layer; `ux-design-systems`
+- Component behavior decisions, variant coverage: load `ds-component-spec`
+- These are separate layers — `ds-advisor` owns the token/Figma layer; `ds-component-spec`
   owns the behavior/variant design layer
 
 ### UX/UI → Frontend
-- `ux-design-systems` ↔ `fe-component-architecture`: variant/state spec is the implementation contract
-- `ux-data-visualization` ↔ `fe-data-visualization`: chart selection is a design decision; rendering is FE
+- `ds-component-spec` ↔ `fe-component-architecture`: variant/state spec is the implementation contract
+- `lead-information-designer` ↔ `fe-data-visualization`: chart selection is a design decision; rendering is FE
 - `ux-performance-perception` ↔ `fe-performance`: skeleton layout, loading taxonomy must be coordinated
-- `ux-accessibility` ↔ `fe-accessibility`: focus order, ARIA copy, interactive spec generate ARIA requirements
+- `lead-accessibility-architect` ↔ `fe-accessibility`: focus order, ARIA copy, interactive spec generate ARIA requirements
 - `ux-interaction-design` → `fe-state-management`: optimistic UI feasibility, form dirty state, multi-step flow state
 
 ### UX/UI → Backend
-- `ux-data-visualization` → `be-api-design`: chart data requirements inform API response shape
+- `lead-information-designer` → `be-api-design`: chart data requirements inform API response shape
 - `ux-performance-perception` → `be-caching-performance`: what backend must provide for perceived performance
 - `ux-interaction-design` → `be-data-modeling`: form validation rules reflect data model constraints
-- `ux-accessibility` → `be-api-design`: error responses must include human-readable messages for inline display
+- `lead-accessibility-architect` → `be-api-design`: error responses must include human-readable messages for inline display
 
 ### UX/UI → Data Science
-- `ux-data-visualization` ↔ `ds-executive-storytelling`: DS specifies what story to tell; UX designs how
-- `ux-research-synthesis` ↔ `ds-experimentation`: qualitative and quantitative research address different questions
-- `ux-performance-perception` → `ds-product-analytics`: perceived performance instrumentation (rage clicks, TTI)
-- `ux-information-architecture` → `ds-product-analytics`: nav patterns validated by analytics
+- `lead-information-designer` ↔ `dsci-executive-storytelling`: DSci specifies what story to tell; UX designs how
+- `ux-research-synthesis` ↔ `dsci-experimentation`: qualitative and quantitative research address different questions
+- `ux-performance-perception` → `dsci-product-analytics`: perceived performance instrumentation (rage clicks, TTI)
+- `lead-information-architect` → `dsci-product-analytics`: nav patterns validated by analytics
 
 ### UX/UI → Information Design
-- `ux-data-visualization` defers to `lead-information-designer` for encoding theory depth, dashboard architecture, and the full chart taxonomy — `ux-data-visualization` is the entry-level design-decision spoke; `infod-*` spokes provide perceptual theory, Bertin's retinal variables, Cleveland & McGill hierarchy
-- `ux-data-visualization` → `infod-dashboard-patterns`: for KPI card anatomy, dashboard typology, drill-down architecture decisions
+- Charts, dashboards and tables are owned by `lead-information-designer` (`infod-*`); route there
 - `ux-research-synthesis` → `infod-narrative-design`: for data storytelling and communicating research findings visually
 
 ### UX/UI → Information Architecture
-- `ux-information-architecture` defers to `lead-information-architect` for full IA discipline depth — card sorting methodology, tree testing, faceted classification theory, enterprise IA scaling patterns
+- Navigation and IA are owned by `lead-information-architect` (`ia-*`); route there
 - `ux-interaction-design` → `ia-mental-models`: user mental model research as a constraint on interaction pattern design
 - `ux-research-synthesis` → `ia-research-methods`: IA-specific research methods (card sorting, tree testing) as part of the broader research toolkit
 
 ### UX/UI → Product Management
-- `ux-information-architecture` ↔ `pm-discovery-research`: IA informed by user mental models from research
+- `lead-information-architect` ↔ `pm-discovery-research`: IA informed by user mental models from research
 - `ux-research-synthesis` ↔ `pm-discovery-research`: PM and UX often research the same participants
-- `ux-design-systems` ↔ `pm-platform-api`: DS as a platform — versioning, breaking changes, external adoption
+- `ds-component-spec` ↔ `pm-platform-api`: DS as a platform — versioning, breaking changes, external adoption
 
 ---
 
@@ -280,4 +287,4 @@ causes real errors with real consequences.
 
 ## Related
 - foundation → [[design-foundations]]
-- spoke → [[ux-accessibility]] · [[ux-ai-product-design]] · [[ux-component-library]] · [[ux-data-visualization]] · [[ux-design-systems]] · [[ux-information-architecture]] · [[ux-interaction-design]] · [[ux-performance-perception]] · [[ux-research-synthesis]] · [[ux-service-design]] · [[ux-writing]]
+- spoke → [[ux-ai-product-design]] · [[ux-component-library]] · [[ux-interaction-design]] · [[ux-performance-perception]] · [[ux-research-synthesis]] · [[ux-service-design]] · [[ux-writing]]

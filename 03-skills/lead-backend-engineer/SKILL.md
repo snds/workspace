@@ -20,6 +20,7 @@ description: >
 aliases: [lead-backend-engineer]
 tier: hub
 domain: engineering
+area: backend
 triggers: [backend engineer, api contract, service boundary]
 spec_version: "2.0"
 prerequisites: [eng-foundations]
@@ -219,12 +220,12 @@ scaling is a distraction from the real work.
 
 | When this topic comes up | Route to |
 |--------------------------|----------|
-| OLTP schema as analytics data source | `ds-product-analytics`, `ds-data-engineering` |
-| ML model serving architecture | `ds-ml-engineering` |
-| Prediction caching | `ds-ml-engineering`, `ds-nlp-llm` |
-| LLM API integration patterns | `ds-nlp-llm` |
-| Event instrumentation for experiments | `ds-experimentation` |
-| Kafka topics as pipeline sources | `ds-data-engineering` |
+| OLTP schema as analytics data source | `dsci-product-analytics`, `dsci-data-engineering` |
+| ML model serving architecture | `dsci-ml-engineering` |
+| Prediction caching | `dsci-ml-engineering`, `dsci-nlp-llm` |
+| LLM API integration patterns | `dsci-nlp-llm` |
+| Event instrumentation for experiments | `dsci-experimentation` |
+| Kafka topics as pipeline sources | `dsci-data-engineering` |
 
 ### Backend → Product Management
 

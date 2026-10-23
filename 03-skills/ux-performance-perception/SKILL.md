@@ -19,6 +19,7 @@ domain: design
 hub: lead-ux-designer
 prerequisites: [lead-ux-designer]
 spec_version: "2.0"
+triggers: [skeleton screen layout, progress indication for multi-step processes, timeout ux, perceived performance instrumentation, loading state, optimistic ui, skeleton screen, perceived performance]
 ---
 
 # UX — Performance Perception
@@ -175,7 +176,7 @@ component rendered in error state. The animation makes the loading state unambig
   Appropriate for card-heavy layouts and simpler pages.
 
 Both must have a `prefers-reduced-motion` fallback — use a static skeleton when
-the user has reduced motion enabled (→ `ux-accessibility`).
+the user has reduced motion enabled (→ `lead-accessibility-architect`).
 
 ### Skeleton scope
 
@@ -336,9 +337,9 @@ always takes 8 seconds is worse than no timeout message.
 - `fe-performance` — rendering optimizations; lazy loading; code splitting
 - `fe-api-integration` — loading state implementation; request/response state management
 - `be-caching-performance` — what the backend can provide: response streaming, partial data, TTFB
-- `ds-product-analytics` — measuring perceived performance: rage clicks, time-to-interactive, task abandonment rates
+- `dsci-product-analytics` — measuring perceived performance: rage clicks, time-to-interactive, task abandonment rates
 - `ux-interaction-design` — optimistic UI as an interaction pattern; undo vs. confirmation decisions
-- `ux-design-systems` — skeleton screen as a design system component; loading state token design
+- `ds-component-spec` — skeleton screen as a design system component; loading state token design
 
 ---
 

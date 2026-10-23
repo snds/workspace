@@ -17,6 +17,7 @@ domain: design
 hub: lead-information-architect
 prerequisites: [lead-information-architect]
 spec_version: "2.0"
+triggers: [card sort design, tree testing methodology, first-click testing protocols, ia heuristic evaluation criteria, participant recruitment for ia studies, evaluate an information architecture, dendrogram]
 ---
 
 # IA: Research Methods
@@ -32,7 +33,7 @@ This skill owns **how IA decisions are validated and evaluated**.
 
 - **The insights these methods produce** → `ia-mental-models`
 - **Broader UX research synthesis** → `ux-research-synthesis`
-- **Product analytics as IA validation** → `ds-product-analytics`
+- **Product analytics as IA validation** → `dsci-product-analytics`
 - **JTBD and generative user research** → `pm-discovery-research`
 
 ---
@@ -98,6 +99,8 @@ in-person with physical index cards.
 - Too many cards (>100) causes participant fatigue and rushed sorting
 - Pre-seeded category labels bias toward the designer's model (that's a
   closed sort — use it deliberately, not accidentally)
+- Treating open-sort output as the final structure. Open sorting is generative:
+  it yields hypotheses, not architecture. Validate with tree testing
 
 ### Closed Card Sort
 
@@ -398,7 +401,7 @@ pages.
 page or section, that section has an IA or experience failure that's causing
 users to give up.
 
-Route to `ds-product-analytics` for instrumentation setup.
+Route to `dsci-product-analytics` for instrumentation setup.
 
 ---
 
@@ -418,6 +421,10 @@ task set divergence):
 - Segment analysis by role
 - Identify where role-based differences are significant vs. negligible
 
+**Stratify by usage depth too**: admin, power, and occasional users have
+different task sets and mental models even within one role. Recruit and
+analyze them as separate segments.
+
 **Failure mode**: Running composite studies for divergent roles, then
 averaging the results. The average of two different mental models is a
 third, incorrect mental model that serves neither role.
@@ -434,8 +441,8 @@ third, incorrect mental model that serves neither role.
   structures from `ia-navigation-systems`
 - **`ia-enterprise-complexity`**: Multi-role research design for systems with
   multiple user roles
-- **`ds-product-analytics`**: Quantitative IA validation through behavioral analytics
-- **`ds-experimentation`**: A/B testing navigation changes; statistical significance
+- **`dsci-product-analytics`**: Quantitative IA validation through behavioral analytics
+- **`dsci-experimentation`**: A/B testing navigation changes; statistical significance
   for navigation experiments
 
 ---

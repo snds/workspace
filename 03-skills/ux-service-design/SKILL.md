@@ -16,6 +16,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-ux-designer]
 spec_version: "2.0"
+triggers: [service blueprinting, multi-touchpoint experience mapping, moments of truth mapping]
 ---
 
 # UX — Service Design
@@ -25,7 +26,7 @@ experience design, journey mapping methodology, back-stage actor mapping, servic
 moments of truth, and enterprise onboarding as a service.
 
 Does not own: the UI design within any single touchpoint (route to the relevant spoke —
-`ux-interaction-design`, `ux-information-architecture`, etc.), user research methods for
+`ux-interaction-design`, `lead-information-architect`, etc.), user research methods for
 validating journeys (→ `ux-research-synthesis`), or content strategy across touchpoints
 (→ `ux-writing`). This spoke owns the system view: the design of the full service
 including the organizational actors and processes the product depends on.

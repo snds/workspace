@@ -15,6 +15,7 @@ domain: design
 hub: lead-motion-designer
 prerequisites: [lead-motion-designer]
 spec_version: "2.0"
+triggers: [easing selection, timing feel, spring physics, stretch in ui, anticipation in interactions, staging attention with motion, ease-in vs ease-out confusion, arc motion]
 ---
 
 # Motion Principles

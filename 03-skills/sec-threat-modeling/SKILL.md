@@ -10,7 +10,7 @@ description: >
   PASTA, attack tree, trust boundary, data flow diagram, attack surface, risk assessment,
   abuse case, DREAD, security design review, tenant isolation.
 aliases: [sec-threat-modeling]
-triggers: [threat model, stride, pasta, attack tree, trust boundary, data flow diagram, attack surface, risk assessment, abuse case, dread, security design review, tenant isolation, blast radius, accepted risk]
+triggers: [threat model, stride model, stride analysis, pasta methodology, pasta threat model, attack tree, trust boundary, data flow diagram, attack surface, risk assessment, abuse case, dread scoring, security design review, tenant isolation, blast radius, accepted risk]
 tier: cross-cutting
 hub: lead-security-architect
 prerequisites: [lead-security-architect]

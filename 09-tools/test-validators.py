@@ -2764,7 +2764,7 @@ class TestNightly(unittest.TestCase):
     def test_fixpoint_order_is_declared(self):
         tools = [s["tool"] for s in self.n.PHASES if s["phase"] == "rebuild"]
         self.assertEqual(tools, ["build-registry.py", "build-related.py", "build-registry.py",
-                                 "build-trigger-routes.py", "build-history-index.py"])
+                                 "build-trigger-routes.py", "build-area-index.py", "build-history-index.py"])
         self.assertTrue(self.n.PHASES[3]["fixpoint"])
 
     def test_lane_matches_only_skill_sources(self):

@@ -116,7 +116,8 @@ SKILLS = {
     "beta": ("cross-cutting", "beta-topic"),
     "gamma": ("hub", "gamma-topic"),
 }
-GENERATORS = ("build-registry.py", "build-related.py", "build-trigger-routes.py", "build-history-index.py")
+GENERATORS = ("build-registry.py", "build-related.py", "build-trigger-routes.py", "build-area-index.py",
+              "build-history-index.py")
 EDGE_LINE = "governed_by: [alpha]\n"
 
 
@@ -155,7 +156,7 @@ def build_vault(dest: Path, tools_src: Path, env: dict) -> Path:
     (dest / "06-context" / "sessions").mkdir(parents=True)
     (dest / "06-context" / "sessions" / ".keep").write_text("", encoding="utf-8")
     for gen in ("build-registry.py", "build-related.py", "build-registry.py", "build-trigger-routes.py",
-                "build-history-index.py"):
+                "build-area-index.py", "build-history-index.py"):
         r = py(dest / "09-tools" / gen, cwd=dest, env=env)
         if r.returncode != 0:
             raise RuntimeError(f"fixture vault: {gen} failed: {r.stderr.strip()}")

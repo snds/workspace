@@ -19,6 +19,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [component testing, testing library, react testing library, vue test utils, mock service worker, playwright screenshots, e2e testing, page object model]
 ---
 
 # FE Testing
@@ -35,7 +36,7 @@ This skill owns **test strategy, test patterns, and CI quality gates**.
 
 - **Accessibility implementation (ARIA, keyboard nav)** → `fe-accessibility`
 - **Performance optimization (what causes issues)** → `fe-performance`
-- **Storybook as design system documentation strategy** → `ux-design-systems`
+- **Storybook as design system documentation strategy** → `ds-component-spec`
 
 ---
 
@@ -473,7 +474,7 @@ adds too much to the bundle:
 |-------|----------|
 | ARIA implementation patterns being tested | `fe-accessibility` |
 | Performance budgets and what they measure | `fe-performance` |
-| Storybook as design system documentation | `ux-design-systems` |
+| Storybook as design system documentation | `ds-component-spec` |
 
 ## Related
 - hub → [[lead-frontend-engineer]]

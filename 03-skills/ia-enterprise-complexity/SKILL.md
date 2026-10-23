@@ -16,6 +16,7 @@ domain: design
 hub: lead-information-architect
 prerequisites: [lead-information-architect]
 spec_version: "2.0"
+triggers: [role-based navigation decisions, admin vs end-user ia, umbrella navigation, multi-product suite navigation, multi-tenant ia]
 ---
 
 # IA: Enterprise Complexity
@@ -164,6 +165,8 @@ header or a persistent launcher (the "app drawer" pattern).
 - Consistent placement and visual treatment across all products
 - Shows the user which product they're currently in
 - Provides direct access to all products the user has permission to use
+- Carries the suite-level shared elements (user account, notifications)
+  consistently, so session context survives a product switch
 
 **Failure mode**: Inconsistent umbrella navigation placement across products
 in the suite. If the app drawer is top-right in Product A and bottom-left
@@ -207,6 +210,11 @@ breadcrumb style, table-level actions) but not necessarily navigation
 **structure** (number of sections, section labels). Structural consistency
 should follow from shared conceptual model alignment, not from design mandate.
 
+The same holds inside one product: sections with fundamentally different
+workflows (configuration vs. operation vs. reporting) may legitimately use
+different navigation behaviors. Forcing them into one pattern creates
+cognitive mismatch.
+
 ---
 
 ## Scaling Navigation
@@ -242,6 +250,10 @@ Requires deliberate discoverability design.
 **Contextual navigation**: Surface features adjacent to the content they
 operate on, not in a global navigation structure. An action relevant to a
 Style record appears on the Style record page — not in a top-level "Actions" menu.
+On that page, keep an action hierarchy: one primary action (what most users
+need most of the time), visually subordinate secondary actions, and tertiary
+actions (destructive, rare, admin-only) that require deliberate discovery.
+Making every table-row action a primary button is a refusal to decide, not flexibility.
 
 **Personalized/customizable navigation**: Let power users configure their
 own navigation (pin frequently used items, hide unused items). This offloads
@@ -323,7 +335,7 @@ from the ground up — not retrofitted.
   multiple simultaneous mental models
 - **`pm-discovery-research`**: Enterprise buyer/user split; role definition;
   stakeholder alignment on role-based IA decisions
-- **`lead-ux-designer`** → `ux-information-architecture`: Practical navigation
+- **`lead-information-architect`**: Practical navigation
   implementation of enterprise IA decisions
 
 ---

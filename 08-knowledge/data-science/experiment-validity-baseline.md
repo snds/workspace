@@ -4,8 +4,8 @@ created: 2026-08-03
 updated: 2026-08-03
 status: working
 confidence: medium
-sources: [03-skills/ds-experimentation/SKILL.md, 01-frameworks/15-analysis-operating-model.md, 01-frameworks/04-research-and-evidence-framework.md, 01-frameworks/11-anticipatory-failure-analysis.md, 02-shared-references/epistemic-standards.md, 02-shared-references/delivery-playbooks/05-validation-harness.md]
-related_skills: [ds-experimentation, lead-data-scientist, ds-product-analytics, data-foundations]
+sources: [03-skills/dsci-experimentation/SKILL.md, 01-frameworks/15-analysis-operating-model.md, 01-frameworks/04-research-and-evidence-framework.md, 01-frameworks/11-anticipatory-failure-analysis.md, 02-shared-references/epistemic-standards.md, 02-shared-references/delivery-playbooks/05-validation-harness.md]
+related_skills: [dsci-experimentation, lead-data-scientist, dsci-product-analytics, data-foundations]
 related_projects: []
 relations:
   exemplifies: ["[[15-analysis-operating-model]]"]
@@ -26,7 +26,7 @@ relations:
     stopping rule is part of the design, not a judgment call made at read time.
   - *Timeless:* the denominator, the unit of randomization, and the count of metrics inspected are
     all part of the claim. Omitting them is not simplification, it is a missing premise.
-  - *Pointer:* method depth lives in [[ds-experimentation]]; evidence tiering in
+  - *Pointer:* method depth lives in [[dsci-experimentation]]; evidence tiering in
     [[04-research-and-evidence-framework]]; the show-me format in the Proofboard standard.
 - **As of:** 2026-08 · **Status:** current (seeded baseline, revise against real project evidence)
 
@@ -69,7 +69,7 @@ Answer them in this sequence, because a failure high up makes the ones below it 
 2. **Internal.** Is the comparison actually causal? Randomization integrity, contamination between
    arms, and interference between units belong here. Without an experiment, name the identification
    strategy explicitly (difference-in-differences, regression discontinuity, instrumental variables,
-   matching) and its assumption, per [[ds-experimentation]].
+   matching) and its assumption, per [[dsci-experimentation]].
 3. **External.** Does it hold outside the sample and the window? Seasonality, a single-segment
    result generalized to all users, and novelty effects live here.
 4. **Statistical.** Is the estimate stable? Power, variance, and multiplicity. This is last, not

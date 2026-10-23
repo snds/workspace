@@ -22,6 +22,7 @@ domain: engineering
 hub: lead-backend-engineer
 prerequisites: [lead-backend-engineer]
 spec_version: "2.0"
+triggers: [client credentials flow, refresh token rotation, token storage security, oauth 2.0, pkce, jwt claims, scim provisioning, saml]
 ---
 
 # Be: Auth Patterns
@@ -39,7 +40,7 @@ compliance-driven audit logging**.
 
 - Authorization enforcement in API endpoints → `be-api-design`
 - Multi-tenancy enforcement at query layer → `be-data-modeling`
-- LLM API key management for third-party services → `ds-nlp-llm`
+- LLM API key management for third-party services → `dsci-nlp-llm`
 - SSO as a sales/GTM requirement → `pm-enterprise-gtm`
 
 ---
@@ -433,7 +434,7 @@ is typically 1 year hot, 7 years cold.
 |-------|----------|
 | Auth enforcement in API endpoints | `be-api-design` |
 | Multi-tenancy query-layer enforcement | `be-data-modeling` |
-| API key management for LLM services | `ds-nlp-llm` |
+| API key management for LLM services | `dsci-nlp-llm` |
 | SSO as enterprise GTM requirement | `pm-enterprise-gtm` |
 | SCIM as enterprise feature in roadmap | `pm-enterprise-gtm` |
 

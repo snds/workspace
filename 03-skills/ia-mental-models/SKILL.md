@@ -17,6 +17,7 @@ domain: design
 hub: lead-information-architect
 prerequisites: [lead-information-architect]
 spec_version: "2.0"
+triggers: [conceptual design, gulf of execution, mental model mapping, mental models]
 ---
 
 # IA: Mental Models

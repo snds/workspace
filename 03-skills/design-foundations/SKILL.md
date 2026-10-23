@@ -60,5 +60,5 @@ tokens). If absent: degrade — say the lookup was skipped and continue. Protoco
 
 ## Related
 - spoke → [[found-color]] · [[found-composition]] · [[found-hierarchy]] · [[found-perception]] · [[found-typography]]
-- applies-in ← [[design-engineer]] · [[design-system-ops]] · [[designparser]] · [[ds]] · [[ds-advisor]] · [[ds-generation-pipeline]] · [[figma]] · [[gen-manifest]] · [[lead-3d-designer]] · [[lead-accessibility-architect]] · [[lead-graphic-designer]] · [[lead-icon-artist]] · [[lead-information-architect]] · [[lead-information-designer]] · [[lead-motion-designer]] · [[lead-technical-digital-artist]] · [[lead-type-designer]] · [[lead-ui-designer]] · [[lead-ux-designer]] · [[lead-vector-designer]] · [[lead-visual-qa]] · [[motion]] · [[qa]] · [[redesign]] · [[type]] · [[visual-reference-replication]]
+- applies-in ← [[design-engineer]] · [[designparser]] · [[ds]] · [[figma]] · [[lead-3d-designer]] · [[lead-accessibility-architect]] · [[lead-graphic-designer]] · [[lead-icon-artist]] · [[lead-information-architect]] · [[lead-information-designer]] · [[lead-motion-designer]] · [[lead-technical-digital-artist]] · [[lead-type-designer]] · [[lead-ui-designer]] · [[lead-ux-designer]] · [[lead-vector-designer]] · [[lead-visual-qa]] · [[motion]] · [[qa]] · [[redesign]] · [[type]] · [[visual-reference-replication]]
 - peer ↔ [[imaging-foundations]]

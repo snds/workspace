@@ -16,8 +16,10 @@ aliases: [centric-ui-workflow]
 spec_version: "2.0"
 tier: spoke
 domain: design
-hub: design-engineer
-prerequisites: [design-engineer]
+hub: ds
+prerequisites: [ds]
+governed_by: [design-engineer]
+triggers: [vms ui, naming for centric-ui, navigating the feature module structure, centric-ui]
 ---
 
 # Centric UI — Design-Engineer Workflow
@@ -387,4 +389,5 @@ Agent configuration: `plan_only`. Generate implementation plans before execution
 Human review is required before implementation begins. Max retries per task: 3.
 
 ## Related
-- hub → [[design-engineer]]
+- hub → [[ds]]
+- governed-by → [[design-engineer]]

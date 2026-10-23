@@ -49,7 +49,7 @@ Standing project home for vault work: `07-projects/19-workspace-brain/` Live han
 - Queue/claim/ledger mechanics → [[open-agent-engine]]
 - Harness inventory → [[harness-map]]
 - "Is this `done`?" as a five-check audit → [[mission-fit]] (call it as the verifier)
-- Prompt-craft for production LLM products → [[ds-prompt-engineering]]
+- Prompt-craft for production LLM products → [[dsci-prompt-engineering]]
 
 ## Execution protocol
 

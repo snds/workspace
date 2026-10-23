@@ -16,6 +16,7 @@ domain: design
 hub: lead-information-architect
 prerequisites: [lead-information-architect]
 spec_version: "2.0"
+triggers: [search behavior patterns, faceted search ux, search result anatomy, zero-results handling, search analytics as ia validation, autocomplete]
 ---
 
 # IA: Search & Findability
@@ -31,7 +32,7 @@ This skill owns **how users find things through search interfaces**.
 
 - **Navigation as the structural findability mechanism** → `ia-navigation-systems`
 - **The vocabulary and structure search operates on** → `ia-taxonomy-classification`
-- **Quantitative IA validation through analytics** → `ds-product-analytics`
+- **Quantitative IA validation through analytics** → `dsci-product-analytics`
 - **Mental model alignment (why users search what they search)** → `ia-mental-models`
 
 ---
@@ -320,6 +321,17 @@ Zero results is not a dead end — it's a design state.
 - Remove the search bar from the zero-results view
 - Give no path forward
 
+### Empty States as Findability Signals
+
+An empty section answers one question before any other: "Am I in the right
+place?" A good empty state says what the section is for, why it is empty,
+and gives a clear path to populate it or go elsewhere. A graphic plus "No
+items yet" fails that question.
+
+When a section shows "No items" but the items the user expected exist
+elsewhere in the navigation, it is not an empty state — it is a findability
+failure. Fix the structure or labels, not the illustration.
+
 ---
 
 ## Search as IA Validation
@@ -345,7 +357,7 @@ to identify the right item.
 dramatically high search rate relative to page views, the local navigation
 for that section is failing. Search is compensating for IA.
 
-Route to `ds-product-analytics` for quantitative tracking setup.
+Route to `dsci-product-analytics` for quantitative tracking setup.
 
 ---
 
@@ -357,7 +369,7 @@ Route to `ds-product-analytics` for quantitative tracking setup.
   analytics complement search analytics
 - **`ia-mental-models`**: Why users search the terms they do — their mental
   model vocabulary drives query construction
-- **`ds-product-analytics`**: Search analytics as IA quality metrics; query
+- **`dsci-product-analytics`**: Search analytics as IA quality metrics; query
   analysis, zero-result rates, click-through patterns
 - **`ia-research-methods`**: Quantitative validation of IA through analytics
   (complements tree testing and card sorting)

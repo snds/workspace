@@ -25,6 +25,7 @@ spec_version: "2.0"
 tier: spoke
 domain: game
 prerequisites: [legion-project]
+triggers: [lore document hierarchy, canon bible, faction compendium, event timeline, character dossiers, lore architecture for 4x games, codex design, civilopedia model]
 ---
 
 # Legion: Narrative Design

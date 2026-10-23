@@ -20,6 +20,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [usetransition, react hooks, react 19, react server components]
 ---
 
 # React — Framework Skill

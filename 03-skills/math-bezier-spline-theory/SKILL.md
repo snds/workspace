@@ -19,6 +19,7 @@ tier: spoke
 domain: design
 hub: variable-icon-font-architect
 prerequisites: [variable-icon-font-architect]
+triggers: [de casteljau evaluation, bernstein polynomial decomposition, cubic bezier parameterization, arc-length parameterization, torsion analysis, inflection point detection, offset curve computation, circle-to-bezier approximation error bounds]
 ---
 
 # Bezier & Spline Theory

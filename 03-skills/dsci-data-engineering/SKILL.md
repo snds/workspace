@@ -1,5 +1,5 @@
 ---
-name: ds-data-engineering
+name: dsci-data-engineering
 description: >
   Analytical pipeline architecture, dbt, orchestration, data warehouse design, data
   quality frameworks, and streaming infrastructure for enterprise SaaS. Use this skill
@@ -13,16 +13,17 @@ description: >
   tradeoff, or any question about designing or debugging the analytical data layer
   between operational systems and analytical consumers. This skill covers analytical
   data engineering — not OLTP schema design (be-relational-db), not ML feature
-  pipeline specifics (ds-ml-engineering).
-aliases: [ds-data-engineering]
+  pipeline specifics (dsci-ml-engineering).
+aliases: [dsci-data-engineering]
 spec_version: "2.0"
 tier: spoke
 domain: data
 hub: lead-data-scientist
 prerequisites: [lead-data-scientist]
+triggers: [dbt project structure, dbt tests, dbt incremental models, data contracts, pipeline orchestration, dag design, backfill strategy, data warehouse schema design]
 ---
 
-# DS: Data Engineering
+# DSci: Data Engineering
 
 Specialist lens for analytical pipeline architecture and data infrastructure in enterprise
 SaaS. Part of the lead-data-scientist skill network.
@@ -36,8 +37,8 @@ systems that turn operational data into analytical-ready data.
 
 - **OLTP schema design** → `be-relational-db` and `be-data-modeling`
 - **Event streaming from application** → also engage `be-integration-patterns`
-- **ML feature pipeline and feature stores** → `ds-ml-engineering`
-- **BI tooling and self-serve analytics** → `ds-product-analytics`
+- **ML feature pipeline and feature stores** → `dsci-ml-engineering`
+- **BI tooling and self-serve analytics** → `dsci-product-analytics`
 
 ---
 
@@ -171,7 +172,7 @@ models:
           - type: unique
 ```
 
-When downstream consumers (BI tools, DS models) depend on specific columns, breaking
+When downstream consumers (BI tools, DSci models) depend on specific columns, breaking
 changes to those columns must trigger consumer notification. dbt contracts make the
 dependency explicit.
 
@@ -389,8 +390,8 @@ interface layer between teams.
 
 - For OLTP schema design → `be-relational-db` and `be-data-modeling`
 - For event streaming from application into pipelines → `be-integration-patterns`
-- For ML feature pipelines and feature stores → `ds-ml-engineering`
-- For BI tooling and analytical consumers → `ds-product-analytics`
+- For ML feature pipelines and feature stores → `dsci-ml-engineering`
+- For BI tooling and analytical consumers → `dsci-product-analytics`
 
 ## Related
 - hub → [[lead-data-scientist]]

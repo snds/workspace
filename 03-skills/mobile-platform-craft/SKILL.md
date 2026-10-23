@@ -9,7 +9,7 @@ description: >
   offline first, app lifecycle, mobile performance, battery, push notifications,
   permissions, deep linking, app store submission.
 aliases: [mobile-platform-craft]
-triggers: [native vs cross-platform, flutter, offline first, app lifecycle, mobile performance, battery, push notifications, permissions, deep linking, app store submission]
+triggers: [native vs cross-platform, flutter, offline first, app lifecycle, mobile performance, battery drain, battery life, push notifications, runtime permissions, app permissions, deep linking, app store submission]
 tier: spoke
 hub: lead-mobile-engineer
 domain: engineering

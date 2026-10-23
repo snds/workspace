@@ -22,6 +22,7 @@ tier: spoke
 domain: design
 hub: variable-icon-font-architect
 prerequisites: [variable-icon-font-architect]
+triggers: [winding number computation, point-in-polygon algorithms, contour orientation detection]
 ---
 
 # Computational Geometry & Topology

@@ -17,6 +17,7 @@ tier: cross-cutting
 domain: quality
 hub: lead-visual-qa
 spec_version: "2.0"
+triggers: [text legibility for low-vision users, color-only information encoding failures, focus indicator visibility, click target sizing, keyboard navigation visual affordances, visual noise, text spacing, zoom compliance]
 ---
 
 # Visual QA — Accessibility

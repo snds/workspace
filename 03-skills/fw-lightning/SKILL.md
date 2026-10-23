@@ -17,6 +17,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [salesforce design system, salesforce platform ui, salesforce lightning]
 ---
 
 # Salesforce Lightning Design System — Framework Skill

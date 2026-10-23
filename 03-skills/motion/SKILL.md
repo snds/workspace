@@ -37,6 +37,10 @@ prerequisites: [design-foundations]
 
 # /motion — Motion Implementation Hub
 
+**Owns implementation, not doctrine.** `/motion` turns motion intent into code. What the
+motion should be (choreography, timing doctrine, motion accessibility) is
+`lead-motion-designer`'s; where they disagree on intent, it wins.
+
 The implementation surface for motion. The `motion-*` workspace skills hold the *theory*
 (easing, the 12 principles, choreography, performance budgets); the `lead-motion-designer`
 holds *direction*; this hub turns either into **working code** by routing to the right

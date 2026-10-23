@@ -18,6 +18,7 @@ domain: design
 hub: lead-type-designer
 prerequisites: [lead-type-designer]
 spec_version: "2.0"
+triggers: [opsz axis in ui typography, font-variation-settings in css, font-optical-sizing: auto, grad axis, optical size axis]
 ---
 
 # Type Variable Fonts for Text

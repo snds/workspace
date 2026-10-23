@@ -13,6 +13,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-information-designer]
 spec_version: "2.0"
+triggers: [network graph, node-link diagram, force-directed layout, graph layout, bom hierarchy]
 ---
 
 # Network Graphs

@@ -1,5 +1,5 @@
 ---
-name: ds-bi-platforms
+name: dsci-bi-platforms
 description: >
   Business intelligence tooling, semantic layer design, and embedded analytics for
   enterprise SaaS. Staff/principal IC level. Use this skill whenever the conversation
@@ -12,17 +12,18 @@ description: >
   BI for enterprise SaaS, bring-your-own-BI, or any question about measuring and surfacing
   data to business users or embedding analytics inside a product.
   This skill covers BI tooling and embedded analytics — not data pipeline engineering
-  (ds-data-engineering), not executive narrative (ds-executive-storytelling), not product
-  metrics definitions (ds-product-analytics).
+  (dsci-data-engineering), not executive narrative (dsci-executive-storytelling), not product
+  metrics definitions (dsci-product-analytics).
 hub: lead-data-scientist
-aliases: [ds-bi-platforms]
+aliases: [dsci-bi-platforms]
 spec_version: "2.0"
 tier: spoke
 domain: data
 prerequisites: [lead-data-scientist]
+triggers: [power bi, apache superset, sql lab, semantic layer design, metric governance, certified metrics, bi tool selection]
 ---
 
-# DS: BI Platforms & Embedded Analytics
+# DSci: BI Platforms & Embedded Analytics
 
 Business intelligence tooling, semantic layer design, and embedded analytics for enterprise
 SaaS. Part of the lead-data-scientist skill network.
@@ -34,10 +35,10 @@ SaaS. Part of the lead-data-scientist skill network.
 This skill owns **BI tool selection, semantic layer design, self-service governance, and
 embedded analytics patterns**.
 
-- **Data pipeline engineering, dbt models, warehouse design** → `ds-data-engineering`
-- **Executive narrative and presentation of data** → `ds-executive-storytelling`
-- **Product metrics, funnel analysis, experimentation** → `ds-product-analytics`
-- **Data catalog, lineage, classification, retention** → `ds-data-governance`
+- **Data pipeline engineering, dbt models, warehouse design** → `dsci-data-engineering`
+- **Executive narrative and presentation of data** → `dsci-executive-storytelling`
+- **Product metrics, funnel analysis, experimentation** → `dsci-product-analytics`
+- **Data catalog, lineage, classification, retention** → `dsci-data-governance`
 - **Information hierarchy, visual encoding** → `lead-information-designer`
 
 ---
@@ -399,10 +400,10 @@ or reverse ETL for customers who want integration into their own data warehouse.
 
 ## Cross-Hub References
 
-- For data pipeline engineering, dbt, warehouse design → `ds-data-engineering`
-- For data governance, catalog, lineage, access control → `ds-data-governance`
-- For executive narrative from data → `ds-executive-storytelling`
-- For product metrics, funnel analysis → `ds-product-analytics`
+- For data pipeline engineering, dbt, warehouse design → `dsci-data-engineering`
+- For data governance, catalog, lineage, access control → `dsci-data-governance`
+- For executive narrative from data → `dsci-executive-storytelling`
+- For product metrics, funnel analysis → `dsci-product-analytics`
 - For information hierarchy and visual encoding → `lead-information-designer`
 
 ## Related

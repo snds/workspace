@@ -14,6 +14,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-information-designer]
 spec_version: "2.0"
+triggers: [chart tokens, data viz tokens, dataviz tokens, chart components in a design system]
 ---
 
 # Design System Patterns for Visualization
@@ -250,7 +251,7 @@ not just the hovered series — this is the primary use case.
 
 ## Empty States for Data Components
 
-Data components have four distinct empty states, each with different causes and
+Data components have six distinct empty states, each with different causes and
 messages. Treating all four as the same state is a design failure.
 
 ### No Data (Genuinely Empty)
@@ -297,6 +298,26 @@ but no rows match.
 **Design**: Distinct from "No Data" — the key difference is that the user caused
 this state through filter action, and the solution is to change the filters.
 Show the active filter context prominently.
+
+### First Use (No Data Yet)
+
+**Cause**: A new user or account; nothing has generated data yet.
+
+**Message**: What this view will show, what generates its data, and the first
+action to take.
+
+**Design**: Onboarding content, not the filtered-empty message. This is the one
+empty state that teaches.
+
+### No Data in Time Range
+
+**Cause**: Data exists, but not in the selected period.
+
+**Message**: "No [items] in [time range]." + suggested adjacent ranges that do
+contain data.
+
+**Design**: Show the active time range prominently; the fix is a range change,
+not a filter reset.
 
 ---
 
@@ -433,6 +454,7 @@ plus a visually-hidden data table providing the same data in text form.
 - ARIA Authoring Practices Guide — Chart and data visualization patterns
 - deck.gl — accessibility layer docs: https://deck.gl/docs/developer-guide/accessibility
 - Figma — variable token documentation for design systems
+- Carbon Design System — data visualization guidelines: https://carbondesignsystem.com/data-visualization/
 
 ## Related
 - hub → [[lead-information-designer]]

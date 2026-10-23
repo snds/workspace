@@ -8,6 +8,7 @@ domain: design
 hub: figma
 prerequisites: [figma]
 spec_version: "2.0"
+triggers: [figma rest api, figma api surface, plugin api or rest, which figma api]
 ---
 
 # Figma API Router

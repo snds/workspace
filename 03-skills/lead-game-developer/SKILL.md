@@ -19,6 +19,7 @@ description: >
 aliases: [lead-game-developer]
 tier: hub
 domain: game
+area: game-development
 triggers: [game developer, web game, three.js game]
 spec_version: "2.0"
 prerequisites: [game-foundations, science-foundations]

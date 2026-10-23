@@ -16,8 +16,10 @@ aliases: [centric-ui-storybook]
 spec_version: "2.0"
 tier: spoke
 domain: design
-hub: design-engineer
-prerequisites: [design-engineer]
+hub: ds
+prerequisites: [ds]
+governed_by: [design-engineer]
+triggers: [installing storybook into centric-ui, running storybook locally, deploying storybook to github pages, adding storybook scripts to package.json]
 ---
 
 # Centric UI — Storybook
@@ -425,4 +427,5 @@ storybook-static/
 - [ ] Open PR via `centric-ui-workflow` process: branch `chore/storybook-setup`
 
 ## Related
-- hub → [[design-engineer]]
+- hub → [[ds]]
+- governed-by → [[design-engineer]]

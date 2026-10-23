@@ -14,6 +14,7 @@ tier: spoke
 domain: design
 prerequisites: [lead-information-designer]
 spec_version: "2.0"
+triggers: [scrollytelling, data-ink ratio, chart junk, data story, annotation layer]
 ---
 
 # Narrative Design
@@ -175,8 +176,9 @@ representing data. Minimize "chartjunk" — ink that does not encode data.
 - Fix: use 2D equivalents without exception
 
 **Superfluous borders and frames**
-- Bounding boxes around chart areas; redundant tick marks with gridlines present
-- Fix: remove chart frame; use axis lines only where necessary
+- Bounding boxes around chart areas; redundant tick marks with gridlines present;
+  background fills on the plot area (the default in most charting libraries)
+- Fix: remove chart frame and plot-area fill; use axis lines only where necessary
 
 **Moiré vibration**
 - Hatching, cross-hatching, and dense repetitive patterns in fills
@@ -291,7 +293,7 @@ of floating anchors destroys the addition/subtraction structure.
 - **`infod-design-system-patterns`** — annotation layer as a DS component;
   chart title and subtitle typographic spec
 - **`lead-data-scientist`** — the data story must accurately represent what the
-  data says; `ds-executive-storytelling` defines what the story is; this spoke
+  data says; `dsci-executive-storytelling` defines what the story is; this spoke
   designs how to tell it visually
 - **`ux-interaction-design`** — scrollytelling intersection observer implementation
   when it is warranted

@@ -17,6 +17,7 @@ tier: spoke
 domain: product
 hub: lead-product-manager
 prerequisites: [lead-product-manager]
+triggers: [success metrics, north star metric, event tracking, leading indicators, metric definition, data spec]
 ---
 
 # PM Metrics & Analytics
@@ -32,8 +33,8 @@ management skill network.
 This skill owns **what to measure and how to specify measurement** — metric
 frameworks, OKR craft, event tracking specs, and experiment framing.
 
-- **Statistical experiment design, MDE, p-values** → `ds-experimentation`
-- **Building analytics pipelines and dashboards** → `ds-product-analytics`
+- **Statistical experiment design, MDE, p-values** → `dsci-experimentation`
+- **Building analytics pipelines and dashboards** → `dsci-product-analytics`
 - **Communicating metrics to executives** → `pm-stakeholder-comms`
 - **Using metrics to prioritize the roadmap** → `pm-roadmap-strategy`
 
@@ -278,7 +279,7 @@ Document:
 - **Minimum run time**: How long before you evaluate (prevents peeking)
 
 Route statistical design questions (MDE, sample size, p-value, significance
-thresholds) to `ds-experimentation`.
+thresholds) to `dsci-experimentation`.
 
 ---
 
@@ -309,9 +310,9 @@ lower churn in your data, or are you assuming it does?
 
 ## Cross-Hub References
 
-- **Statistical design for experiments** → `ds-experimentation`: MDE
+- **Statistical design for experiments** → `dsci-experimentation`: MDE
   calculations, significance thresholds, sequential testing methods
-- **Analytics pipeline and funnel instrumentation** → `ds-product-analytics`:
+- **Analytics pipeline and funnel instrumentation** → `dsci-product-analytics`:
   when metric definitions need to be implemented in a data warehouse
 - **Communicating metrics in exec presentations** → `pm-stakeholder-comms`
 - **Metrics as roadmap inputs** → `pm-roadmap-strategy`: north star movement

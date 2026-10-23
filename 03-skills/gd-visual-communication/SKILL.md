@@ -15,6 +15,7 @@ domain: design
 hub: lead-graphic-designer
 prerequisites: [lead-graphic-designer]
 spec_version: "2.0"
+triggers: [visual rhetoric, gestalt principles as communication tools, semiotics, signifier, signified, saussure]
 ---
 
 # GD — Visual Communication
@@ -306,7 +307,7 @@ Assumptions are invisible until they cause offense.
 
 - **`gd-image-composition`**: visual communication theory is the *why*;
   image composition is the *how*; they are inseparable in practice
-- **`lead-ux-designer` / `ux-information-architecture`**: the hierarchy of
+- **`lead-information-architect`**: the hierarchy of
   printed communication (headline, deck, body, caption, footnote) is the
   direct precursor to IA hierarchy levels; proximity/similarity/continuity
   are the perceptual laws behind IA grouping decisions

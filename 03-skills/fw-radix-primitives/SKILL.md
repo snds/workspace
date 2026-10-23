@@ -19,6 +19,7 @@ domain: engineering
 hub: lead-frontend-engineer
 prerequisites: [lead-frontend-engineer]
 spec_version: "2.0"
+triggers: [headless components, radix, radix primitives]
 ---
 
 # Radix UI Primitives — Framework Skill

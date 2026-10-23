@@ -119,6 +119,7 @@ QUALITY_CHAIN = [
     ("build-related.py", ["--check"]),
     ("build-registry.py", ["--check"]),
     ("build-trigger-routes.py", ["--check"]),
+    ("build-area-index.py", ["--check"]),
     ("evaluate-skill-routing.py", ["--check"]),
     ("evaluate-surface-trajectories.py", ["--self-test"]),
     ("evaluate-surface-trajectories.py", ["--check"]),

@@ -18,6 +18,7 @@ tier: cross-cutting
 domain: accessibility
 hub: lead-accessibility-architect
 spec_version: "2.0"
+triggers: [cognitive accessibility, cognitive load, extraneous load, attention deficit, working memory, reading disability, reading difficulty, plain language]
 ---
 
 # a11y-cognitive
@@ -129,7 +130,14 @@ Design for accidental activations:
   action should be safe; destructive actions should require additional steps
 - **Forgiveness over prevention**: prevention mechanisms (disabled states, complex
   confirmation flows) create friction for all users; forgiveness (undo, recovery) is
-  more usable overall
+  more usable overall. Prefer undo over confirmation for destructive actions people
+  use often; keep confirmation for when undo isn't available
+- **Prevent invalid input before submit**: good defaults that are right for the common
+  case, and input constraints that block invalid formats. Recovery costs three extra
+  steps — re-read, re-understand the error, re-do the action — and breaks flow
+- **Instructions before input** (WCAG 3.3.2): format rules, password requirements, and
+  upload constraints appear before the field is used. "Enter date as MM/DD/YYYY" shows
+  before the user types, not only in the error after a failed submit
 
 ### Working Memory
 
@@ -234,6 +242,9 @@ with cognitive disabilities have less tolerance for exceptions:
   for the same action forces users to evaluate whether they're the same
 - Consistent feedback — success, error, and loading states should look and behave the
   same way across the product
+- Consistent placement — if dialogs put Cancel on the left and the primary action on
+  the right, every dialog does. Users learn it once; when it varies, they must read
+  every dialog before acting. Design system consistency is an accessibility feature.
 
 ---
 
@@ -291,6 +302,11 @@ For general consumer products, target Grade 6-8. For expert/professional tools, 
 | No idioms | Idioms fail for non-native speakers and literal readers |
 | Define first use | Acronyms spelled out on first occurrence: "Application Programming Interface (API)" |
 | Front-load instructions | The critical action comes first, conditions/exceptions after |
+
+**Domain jargon**: enterprise labels often carry field-specific terms ("disposition" in
+PLM, "effectivity" in manufacturing) that users from adjacent roles don't share. Validate
+such labels with real users from the intended role. The test: can a user in the target
+role read the label and know what to enter without looking it up? If not, rework it.
 
 ### Error Message Language
 

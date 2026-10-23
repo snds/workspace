@@ -15,6 +15,7 @@ domain: design
 hub: lead-ui-designer
 prerequisites: [lead-ui-designer]
 spec_version: "2.0"
+triggers: [page feels off, ui layout decisions, spacing choices, visual hierarchy in layout, compositional problems, 8px grid, base unit systems]
 ---
 
 # UID: Spatial Composition
