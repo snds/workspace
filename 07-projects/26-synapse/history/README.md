@@ -2,8 +2,9 @@
 
 _The long-term tier of [the baton](../SESSION-STATE.md): what it moved out once it passed 12 KB. Generated; don't edit by hand. Newest month first._
 
-## [2026-10](2026-10.md) — 52 entries
+## [2026-10](2026-10.md) — 53 entries
 
+- 2026-10-23 — Review context in hub depth
 - 2026-10-23 — Heavy contract sections kept
 - 2026-10-23 — Hub depth, mechanical
 - 2026-10-23 — D133 built
