@@ -2,8 +2,9 @@
 
 _The long-term tier of [the baton](../SESSION-STATE.md): what it moved out once it passed 12 KB. Generated; don't edit by hand. Newest month first._
 
-## [2026-10](2026-10.md) — 50 entries
+## [2026-10](2026-10.md) — 51 entries
 
+- 2026-10-23 — Hub depth, mechanical
 - 2026-10-23 — D133 built
 - 2026-10-23 — The routing suite; routing rules in every domain
 - 2026-10-22 — Design skills rearchitected
