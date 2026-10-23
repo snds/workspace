@@ -233,6 +233,20 @@ Full protocol: `03-skills/side-chat-handback/SKILL.md`.
 - Additional platforms only when requested (additive, not instead-of)
 - Runnable artifacts: always double-click to run, no terminal required
 
+### Changes for review: bring the context they need (set 2026-10-23)
+- **When you recommend a change I review, bring the lateral context that change needs to be
+  judged**, beside the diff: what else links to or loads the thing being changed, what it
+  duplicates or resembles (with the matching passage), the decision or rule that governs it, what
+  routing or token cost changes, and recent edits by others. Cite each with a link (Linked
+  references).
+- **Judge when it's needed, and say when it isn't.** A move, a rename, a structural or routing
+  change, a deletion or a change to something others depend on needs it. A typo, formatting, a
+  regenerated file or a mechanical fix doesn't: say "no context needed" and why, in one line.
+  Bring only what bears on the decision, not everything that's nearby.
+- **Not a hard requirement:** a small or obvious change can go without it. **Why:** reviewing the
+  hub-depth flags (2026-10-23) needed the spoke each section resembled and what loads the hub;
+  the bare flags didn't say enough to decide.
+
 ## Evidence Standards
 - Cite sources proactively for non-obvious recommendations
 - Both recency AND relevance required — neither alone is sufficient
