@@ -65,36 +65,9 @@ material-symbols-tools/
 
 ## Shared config.json
 
-All three parts reference the same config:
+All three parts read one `config.json` at the project root. Its full shape (variable axes, Figma component-set and category-frame settings, the export coordinate system) and the load-with-defaults pattern are in [[material-symbols-suite]] → Shared Configuration.
 
-```json
-{
-  "variable_axes": {
-    "optical_size": { "values": [14, 16, 20, 24, 48], "default": 24 },
-    "weight": { "values": [100, 200, 300, 400, 500, 600, 700], "default": 400 },
-    "grade": { "values": [-25, 0, 200], "default": 0 },
-    "fill": { "values": [0, 1], "default": 0 }
-  },
-  "figma_settings": {
-    "component_set": {
-      "fixed_width": 154,
-      "padding": 16,
-      "horizontal_gap": 16,
-      "vertical_gap": 16
-    },
-    "category_frame": {
-      "fixed_width": 1200,
-      "padding": 16,
-      "category_spacing": 104
-    }
-  },
-  "export_settings": {
-    "coordinate_system": {
-      "viewBox": "0 -960 960 960"
-    }
-  }
-}
-```
+---
 
 ## Debug vs Production Versions
 

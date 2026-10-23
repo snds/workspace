@@ -45,14 +45,27 @@ Central `config.json` at project root, consumed by all components:
 {
   "variable_axes": {
     "optical_size": { "values": [14, 16, 20, 24, 48], "default": 24 },
+    "weight": { "values": [100, 200, 300, 400, 500, 600, 700], "default": 400 },
+    "grade": { "values": [-25, 0, 200], "default": 0 },
     "fill": { "values": [0, 1], "default": 0 }
   },
-  "export_settings": {
-    "coordinate_system": { "viewBox": "0 -960 960 960" }
-  },
   "figma_settings": {
-    "component_set": { "fixed_width": 154, "padding": 16 },
-    "category_frame": { "fixed_width": 1200, "category_spacing": 104 }
+    "component_set": {
+      "fixed_width": 154,
+      "padding": 16,
+      "horizontal_gap": 16,
+      "vertical_gap": 16
+    },
+    "category_frame": {
+      "fixed_width": 1200,
+      "padding": 16,
+      "category_spacing": 104
+    }
+  },
+  "export_settings": {
+    "coordinate_system": {
+      "viewBox": "0 -960 960 960"
+    }
   }
 }
 ```
