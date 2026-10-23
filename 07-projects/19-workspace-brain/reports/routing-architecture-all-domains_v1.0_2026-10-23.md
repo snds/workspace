@@ -132,7 +132,7 @@ widest answer is "generate a design system in Figma", which loads the design-sys
    - **`lead-motion-designer`: kept.** Its directive is area-wide.
    - **`realtime-visual-craft`: kept.** Its intro shares phrasing with a spoke by design.
 
-   Two heavy contract sections are left for a later, separate change: `figma`'s execution protocol (1,122 words) and `lead-accessibility-architect`'s principles (810).
+   Two heavy contract sections, `figma`'s execution protocol (1,122 words) and `lead-accessibility-architect`'s principles (810), **stay as they are** (Sean, 2026-10-23).
 3. **Description recall (49%).** Half the asks that descriptions quote still miss. Many are whole
    sentences written as examples ("how should this look AND how do I code it"). Either make
    short quoted asks triggers too, or leave the metric as a guide. Recommended: leave it, and add
