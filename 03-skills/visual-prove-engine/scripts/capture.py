@@ -95,6 +95,7 @@ def _capture_python_playwright(
     reduced_motion: bool,
     wait_ms: int,
     full_page: bool,
+    theme: Optional[str] = None,
 ) -> None:
     from playwright.sync_api import sync_playwright  # type: ignore
 
@@ -106,6 +107,9 @@ def _capture_python_playwright(
         }
         if reduced_motion:
             context_kwargs["reduced_motion"] = "reduce"
+        if theme:
+            # prefers-color-scheme; an app that themes another way needs its own URL or toggle
+            context_kwargs["color_scheme"] = theme
         page = browser.new_page(**context_kwargs)
         page.goto(url, wait_until="networkidle", timeout=60000)
         page.wait_for_timeout(wait_ms)
@@ -121,6 +125,7 @@ def _capture_node_playwright(
     reduced_motion: bool,
     wait_ms: int,
     full_page: bool,
+    theme: Optional[str] = None,
 ) -> None:
     if not NODE_CAPTURE.exists():
         raise RuntimeError(f"missing {NODE_CAPTURE}")
@@ -133,6 +138,8 @@ def _capture_node_playwright(
     env["VQA_CAPTURE_WAIT_MS"] = str(int(wait_ms))
     env["VQA_CAPTURE_FULL_PAGE"] = "1" if full_page else "0"
     env["VQA_CAPTURE_REDUCED_MOTION"] = "1" if reduced_motion else "0"
+    if theme:
+        env["VQA_CAPTURE_COLOR_SCHEME"] = theme
     proc = subprocess.run(
         ["node", str(NODE_CAPTURE)],
         cwd=os.getcwd(),
@@ -157,6 +164,9 @@ def capture_url(
     full_page: bool = False,
     assistance: str = "unknown",
     renderer: Optional[str] = None,
+    theme: Optional[str] = None,
+    app: Optional[str] = None,
+    build: Optional[str] = None,
 ) -> dict:
     """Capture `url` to PNG + manifest. Raises RuntimeError if no browser backend."""
     out = Path(out)
@@ -164,10 +174,10 @@ def capture_url(
     backends = playwright_backends()
     used = None
     if backends["python_playwright"]:
-        _capture_python_playwright(url, out, viewport, dpr, reduced_motion, wait_ms, full_page)
+        _capture_python_playwright(url, out, viewport, dpr, reduced_motion, wait_ms, full_page, theme)
         used = "python-playwright"
     elif backends["node_playwright_script"]:
-        _capture_node_playwright(url, out, viewport, dpr, reduced_motion, wait_ms, full_page)
+        _capture_node_playwright(url, out, viewport, dpr, reduced_motion, wait_ms, full_page, theme)
         used = "node-playwright"
     else:
         raise RuntimeError(
@@ -188,6 +198,7 @@ def capture_url(
         reduced_motion=reduced_motion,
         assistance=assistance,
         renderer=renderer,
+        extra={k: v for k, v in (("theme", theme), ("app", app), ("build", build)) if v},
     )
     verified = _core.verify_capture(out, manifest)
     return {

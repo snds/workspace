@@ -54,7 +54,8 @@ same probes the calibration suite validates.
 | Command | What it does |
 |---|---|
 | `vqa doctor` | Dependency + degradation report (numpy/Pillow required; scipy/OpenCV accelerate; ffmpeg only for `--video`; FLIP/DreamSim/OCR/glTF/VGGT degrade honestly; Playwright only for `capture`) |
-| `vqa capture URL -o PNG` | Project-agnostic screenshot + sibling `*.capture.json`. Viewport/DPR/reduced-motion/`--assistance`. Backends: Python Playwright, else cwd `node_modules`. `--self-test` writes a fixture manifest with no browser |
+| `vqa capture URL -o PNG` | Project-agnostic screenshot + sibling `*.capture.json`. Viewport/DPR/reduced-motion/`--assistance`; `--theme light\|dark` emulates the color scheme and records it, `--app`/`--build` record what was captured. Backends: Python Playwright, else cwd `node_modules`. `--self-test` writes a fixture manifest with no browser |
+| `vqa evidence DIR PNG...` | Assemble a harness run's evidence folder (Synapse `visual-qa.literal`): the first PNG becomes `capture.png`, its manifest plus app, build, the capture matrix and supported widths becomes `capture.json`, `--cuespec` is copied in as `cuespec.json`, every capture goes to `matrix/`. Refuses a capture with no theme or a run with no app or build |
 | `vqa verify-capture IMG` | Validate a capture manifest (viewport, DPR, freeze state). Missing `renderer` / `rng_frozen` is a **warning**, not unverified |
 | `vqa perceive IMG` | Structure-independent inventory: regions, shapes, palette, background, plus ledger failure-mode detectors (banding, blowout, illegal shapes) |
 | `vqa prove BUILD CUESPEC` | Run a cuespec, emit `*.prove.json` + `*.prove.md` with measured/attested split, altitude coverage, uncued residuals |
@@ -106,6 +107,8 @@ Worked example on real project data: `07-projects/20-lcars-generative-interface/
 (13/16, movement improved, 7 newly passing, 2 newly failing flagged). Ranking agreed
 with human judgment on v2 vs v3, and prove refuted one false "pass" from the manual
 cue matrix (silhouette chip). Ledger: `S-SYS47-01.ledger.md` in the same directory.
+
+**Harness runs.** The Synapse gate decides `vqa.literal-diff` and `vqa.planted-defect` through `vqa.tool.json` once Sean trusts the tool at its hash; any edit to the manifest or a script untrusts it. Capture each theme and the narrowest and widest widths with `--theme`, then `vqa evidence`. A bad cuespec or unreadable input exits 2 (the gate reads unknown, never fail), and a failed prove ends with one plain line naming the failing cues, which the gate shows. Trial: [visual-qa-trial](../../07-projects/26-synapse/visual-qa-trial.md).
 
 ## Honest degradation
 
