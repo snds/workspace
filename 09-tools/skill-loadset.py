@@ -70,6 +70,13 @@ def load_set(prompt: str, data: dict | None = None) -> dict:
                 continue
             lens_seen.add(lens)
             lenses.append(lens)
+    # D133 (Synapse, approved by Sean 2026-10-23): foundations first across chains. Each chain
+    # already starts with its foundation; when chains merge, one chain's foundation could follow
+    # another's hub or spoke. A stable partition keeps every chain's own order. Suggestions and
+    # lenses above keep the merge order.
+    ordered = [n for n in ordered if (skills.get(n) or {}).get("tier") == "foundation"] + [
+        n for n in ordered if (skills.get(n) or {}).get("tier") != "foundation"
+    ]
     paths = [
         f"03-skills/{name}/SKILL.md"
         for name in ordered
@@ -122,6 +129,17 @@ def self_test() -> int:
     if "design-foundations" not in result["load"]:
         print("self-test FAIL: expected design-foundations first in chain", file=sys.stderr)
         return 1
+    # D133: a request that matches skills in two chains loads every foundation before any hub or spoke.
+    tiers = {n: (r or {}).get("tier") for n, r in (data.get("skills") or {}).items()}
+    for prompt in ("blackbody color", "aerial perspective", "dark-mode palette for this dashboard"):
+        load = load_set(prompt, data)["load"]
+        seen_other = False
+        for name in load:
+            if tiers.get(name) == "foundation" and seen_other:
+                print(f"self-test FAIL: {name} loads after a hub or spoke for {prompt!r}: {load}", file=sys.stderr)
+                return 1
+            seen_other = seen_other or tiers.get(name) != "foundation"
+
     print("OK skill-loadset self-test")
     return 0
 
