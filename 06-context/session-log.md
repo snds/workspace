@@ -59,6 +59,173 @@ Keep entries concise. This is a handoff log, not a journal.
 
 
 
+
+
+### 2026-10-22 — Synapse: the harness compiler (Stage H items 18–20)
+
+SessionID: 2026-10-22-cloud-w6fan1
+--- SESSION BLOCK ---
+Date: 2026-10-22
+Machine: cloud (remote session)
+Surface: Claude Code (web)
+Agent: Claude Opus 5.5
+Project(s): 26-synapse
+Summary: At Sean's ask, defined, planned and built the harness compiler: a role (job, role or domain mix) picks its harnesses, every supply gap becomes a requirement, and each is filled cheapest first (wire an existing file, else a draft in the workspace's own learned conventions at the role's level, with a research brief). It predicts supply after and writes nothing. Plan 10 + Stage H items 18–23 + D124–D129; items 18–20 built with tests HC0–HC6; PR snds/synapse#2. On the live vault the design-system lead role takes research.finding from 1/6 to 6/6 via a lead-research hub that links the existing research skills.
+Pending: Sean's go on items 21–23 and D124–D129; accept or change the research fill; decide on a component-spec harness.
+--- END BLOCK ---
+
+### 2026-10-22 — Research network for any field (framework #19, lead-research)
+
+SessionID: 2026-10-22-cloud-w6fan1-c
+--- SESSION BLOCK ---
+Date: 2026-10-22
+Machine: cloud (remote session)
+Surface: Claude Code (web)
+Agent: Claude Opus 5.5
+Project(s): 26-synapse, workspace
+Summary: On Sean's go, filled the research gap the harness compiler found, widened to every field: framework #19 (Research Operating Model, depth tiers D0–D4 with propose-more-or-less, field profiles, done-gates, retro into the workspace), research-foundations → lead-research → 11 spokes, two research notes, a quotes reference, and research-check.py as L3. dc-research superseded by decision-research-network. research.finding on the live vault went from 1/6 to 6/6. Healed rule_of_three.py's command-hub exemption. Sean approved D124–D129.
+Pending: Sean's review of the vault PR; first real research ask; compiler items 22–23 in snds/synapse.
+--- END BLOCK ---
+
+### 2026-10-22 — Synapse: compiler merged; accepting plans (item 21)
+
+SessionID: 2026-10-22-cloud-w6fan1-b
+--- SESSION BLOCK ---
+Date: 2026-10-22
+Machine: cloud (remote session)
+Surface: Claude Code (web)
+Agent: Claude Opus 5.5
+Project(s): 26-synapse
+Summary: On Sean's "merge then continue", merged snds/synapse#2 and snds/workspace#26, then built Stage H item 21: `sy harness accept` saves a supply plan as proposals, one per requirement, applied with `sy apply` and undone with `sy undo`. HC7 passes; on a copy of the live vault the 7 proposals bring all three harnesses to full supply and undo to a clean tree. PR snds/synapse#3. The vault itself was not written.
+Pending: Sean's go to accept the research fill in the vault; the reference track's agent posture and spend (item 22); a component-spec harness (item 23); D124–D129.
+--- END BLOCK ---
+
+SessionID: 2026-10-23-cloud-w6fan1-q
+
+## 2026-10-23 — Visual QA trial (D144) · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** trust in visual QA must come from real usage: test prompts for Legion and for CDS/Centric work, run by Sean, with a provisional approval that requires reviewing the outputs together; the Harnesses screen is a good start, reviewed in depth later; merge open work and continue.
+- **Done:** merged snds/synapse#13 and snds/workspace#37. Wrote `07-projects/26-synapse/visual-qa-trial.md`: gated prompts on LCARS SYS47, Legion, Unicron and the Harnesses screen, engine-only prompts, a joint-review protocol and log. D144 records the provisional approval. Made the trial runnable: `vqa capture --theme --app --build` and `vqa evidence` (the gate's evidence folder), a bad cuespec exits 2, a failed prove names its failing cues, and `sy harness trust-tool --revoke` plus the app's Revoke.
+- **Walls:** no CDS or Centric prompts. Vault content never goes into employer surfaces, and employer outputs can't come back here. Unicron stands in for the same kinds of QA effort (trial §7).
+- **Baton:** 26-synapse Live handoff rewritten; the old Last and Next action moved word for word to `history/2026-10.md`.
+- **Next:** Sean trusts the engine on the Personal MBP, runs the trial and logs his verdicts first; then a joint-review session on that Mac.
+
+SessionID: 2026-10-23-cloud-w6fan1-p
+
+## 2026-10-23 — Stage H decisions approved · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** "12 approved. 118-123 look good. Is there something I need to review re visual qa?"
+- **Done:** merged snds/synapse#12 and snds/workspace#36; D118–D123 recorded as approved (snds/synapse#13). Explained the visual QA trust decision: nothing to review until Sean chooses to trust the vqa tool.
+- **Baton:** 26-synapse Live handoff rewritten; the old Last and Next action moved word for word to `history/2026-10.md`.
+- **Next:** Sean trusts the vqa tool when ready; says whether cuespecs need his review.
+
+SessionID: 2026-10-23-cloud-w6fan1-o
+
+## 2026-10-23 — Review context for harness changes · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** "D143 approved, merge and continue".
+- **Done:** merged snds/synapse#11 and snds/workspace#35; D143 recorded as approved. Built plan 12 §3 items 3–4 in snds/synapse#12: harness proposals show what changes, where they relax the gate, and which recent runs they'd change (replayed without saving); `sy harness accept` shows its proposals' context.
+- **Baton:** 26-synapse Live handoff rewritten; the old Last and Next action moved word for word to `history/2026-10.md`.
+- **Next:** Sean reviews #12; trusts the vqa tool when ready.
+
+SessionID: 2026-10-23-cloud-w6fan1-n
+
+## 2026-10-23 — Workspace tools as harness checks · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** "D141/D142 approved, merge and continue".
+- **Done:** merged snds/synapse#10 and snds/workspace#34; D141 and D142 recorded as approved. Built item 8's workspace half in snds/synapse#11: a check with no built-in binds to a workspace tool that implements it, once a person trusts it at its hash (`sy harness trust-tool`, or Trust in the Harnesses screen). Added `03-skills/visual-prove-engine/vqa.tool.json` binding the visual prove engine to `vqa.literal-diff` and `vqa.planted-defect`.
+- **Decided / proposed:** D143 (workspace tools decide checks once trusted at their hash).
+- **Baton:** 26-synapse Live handoff rewritten; the old Last and Next action moved word for word to `history/2026-10.md`.
+- **Next:** Sean reviews #11, confirms or changes D143, and trusts the vqa tool when ready.
+
+SessionID: 2026-10-23-cloud-w6fan1-m
+
+## 2026-10-23 — Stage H, H3: surfaces and the Harnesses screen · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** "merge and continue. D139/D140 are approved."
+- **Done:** merged snds/synapse#9 and snds/workspace#33; D139 and D140 recorded as approved. Built H3, items 13–14, in snds/synapse#10: Claude Code's stop hook, the harness MCP server, the rules-block line, `sy harness ci` and its recipe, `sy harness surfaces` (which apps can block, `--setup`), the service's `harnesses` and `harness_decide`, and the app's Harnesses place. HE10 passes; app typecheck, tests, DS ratchet and a11y pass.
+- **Decided / proposed:** D141 (the stop hook blocks only a failed ship run), D142 (hook and MCP entries shown, not written, until Stage 5; signing waits on the device key).
+- **Baton:** 26-synapse Live handoff rewritten; the old Last and Next action moved word for word to `history/2026-10.md`.
+- **Next:** Sean reviews #10 and confirms or changes D141–D142. H4 needs Stage 5; H5 rides with Stage 3's track.
+
+SessionID: 2026-10-23-cloud-w6fan1-l
+
+## 2026-10-23 — Stage H, H2: the gate · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** "#8 and #32 are ok. Confirmed. Go for H2".
+- **Done:** merged snds/synapse#8 and snds/workspace#32; D138 recorded as confirmed. Built H2, items 8–12, in snds/synapse#9: 12 built-in checks with planted defects, `sy harness gate` (retry cap, escape hatch, modes, run records), the tamper wall, `sy harness propose` (§4.1 fields, reach, self-interest, flags, the daily cap), `decide`, `runs`, `checks`, and the stage's security review. HE6–HE9 pass.
+- **Decided / proposed:** D139 (workspace harnesses at `harnesses/<id>.json`, reviewed when an applied proposal wrote them), D140 (person decisions only at a terminal or in the app).
+- **Baton:** 26-synapse Live handoff rewritten; the old Last and Next action moved word for word to `history/2026-10.md`.
+- **Next:** Sean reviews #9, confirms or changes D139–D140, and says go for H3.
+
+SessionID: 2026-10-23-cloud-w6fan1-k
+
+## 2026-10-23 — Stage H, H1: resolve, the brief, coverage, the lint · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** "Go on Stage H, start H1".
+- **Done:** merged snds/synapse#7 and snds/workspace#31 once green (Sean's "merge when green"). Built H1, items 5–7, in snds/synapse#8: `sy harness resolve` (plan keyed by harness hash, index content hash and task), `sy harness brief` (Levels 1–3), `sy harness coverage`, `sy harness lint`. HE2–HE5 pass; the live vault resolves 93% of the three starters' supply.
+- **Decided / proposed:** D138 (proposed): the brief's load set is the task's plus the harness hub's chain.
+- **Baton:** 26-synapse Live handoff rewritten; the old Last and Next action and the baton's older History lines moved word for word to `history/2026-10.md`.
+- **Next:** Sean reviews #8, confirms or changes D138 and D118–D123, and says go for H2.
+
+SessionID: 2026-10-23-cloud-w6fan1-j
+
+## 2026-10-23 — Accepted routing exceptions · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** "D136 - confirmed. Yes, allow for exceptions that can be noted and accepted by the routing scripts."
+- **Done:** Synapse D137 (snds/synapse#7): `routing-exceptions.jsonl` read by `sy routing test` and `sy routing hubs`. Vault: `02-shared-references/routing-exceptions.jsonl` with 10 exceptions (2 by Sean, 8 from Claude's hub review, reported to Sean).
+
+SessionID: 2026-10-23-cloud-w6fan1-i
+
+## 2026-10-23 — Review context on every proposal · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** "Merge when green and continue."
+- **Done:** merged snds/synapse#6 and snds/workspace#30. Synapse snds/synapse#7: `sy_route::review::context` (D136) on every proposal; Health's fix view shows "What to weigh" or the one-line reason; `sy propose` and fact changes print it.
+
+SessionID: 2026-10-23-cloud-w6fan1-h
+
+## 2026-10-23 — Review context; D135 approved · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** "D135 is good." Changes for review should bring the lateral context they need, and the system should judge when they need none (not a hard requirement).
+- **Done:** preference "Changes for review: bring the context they need" in `04-preferences/user-preferences.md`; Synapse plan 12 (D136 proposed); `sy routing hubs` gives each movable section a judged context (evidence, loads, referrers, governing notes, or "no context needed" and why).
+
+SessionID: 2026-10-23-cloud-w6fan1-g
+
+## 2026-10-23 — Hub depth review, mechanical (`sy routing hubs`) · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** review hubs for spoke depth, and make it mechanical and reusable for Synapse.
+- **Done (Synapse):** `sy routing hubs` (plan 11 §7, D135 proposed): each hub section sorted into routing / contract / standard / duplicate / territory / homeless by shingles and TF-IDF against its spokes and foundations; notes in `sy routing test`; calibrated on the pre-2026-10-22 vault (finds `ds-advisor`'s visual principles); a planted-kinds test.
+- **Done (vault):** `material-symbols-project`'s Figma icon-positioning technique moved word for word to `references/figma-icon-positioning.md` (hub 1,159 → 671 words); other flags reviewed and kept; report decision 2 updated.
+- **Learned:** the 20 big hubs are big with hub material (spoke tables, principles, #13's protocol); word count alone is a weak signal. Method and philosophy sections are the tool's false positives.
+
+SessionID: 2026-10-23-cloud-w6fan1-f
+
+## 2026-10-23 — D133: foundations first across chains · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** "Merge any PRs. D133 ok"; plus two questions answered in chat (hubs over 1,500 words; descriptions as shortcuts).
+- **Done:** merged snds/workspace#29 and snds/synapse#5. `09-tools/skill-loadset.py` now puts every foundation ahead of any hub or spoke after merging chains (stable partition; suggestions and lenses keep the merge order), with a self-test; Synapse's router does the same (snds/synapse D133).
+- **Measured:** Python and Rust agree on 627/627 checked requests; late-foundation answers 515 → 0; routing cases 143/143.
+
+SessionID: 2026-10-23-cloud-w6fan1-e
+
+## 2026-10-23 — The routing suite; routing rules applied to every domain · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** "create a comprehensive testing suite for the router that would work for any potential routing … apply against all domains."
+- **Done (Synapse, snds/synapse#5):** `sy routing test <workspace>` (plan 11): cases written from the workspace (own triggers bare and in carriers, quoted description asks, chains, reach), an everyday-sentence corpus, metamorphic variants, trigger lint, architecture lints, the owner's cases, token and time budgets; both dialects. 14 planted defects, 25 generated workspaces, T2 clean. D130–D134 proposed; metric 21.
+- **Done (vault, stacked on snds/workspace#29):** `area` on 16 more hubs (31 of 31); own triggers for 129 hub-prose-only spokes from their descriptions' asks (about 780); everyday-word triggers fixed in `mobile-platform-craft`, `sec-threat-modeling`, `img-cinematography`; frontmatter spec: spokes carry triggers.
+- **Measured:** hub-prose-only 129 → 0; description recall 33% → 49%; noise 0 of 82; cases 143/143; p95 tokens 13,181 → 13,387.
+- **Decisions:** [[decision-routing-every-domain]]. Open for Sean: D133 (foundations across chains), thin hubs, quoted asks as triggers.
+
+SessionID: 2026-10-22-cloud-w6fan1-d
+
+## 2026-10-22 — Design skills rearchitected; data science is `dsci-` · Claude Opus 5.5 / Claude Code / cloud (remote session)
+
+- **Asked:** "merge both and rearchitect, ds as hub, use dsci- for data science … Yes move ux-design-systems under the main design-systems hub."
+- **Done:** merged snds/workspace#28 and snds/synapse#4. Renamed the ten data-science spokes `ds-*` → `dsci-*` and repointed every reference. `ds` is the one design-system hub (`area: design-system`); `ds-advisor`, `design-system-ops`, `token-architecture`, `ai-design-systems`, `canonical-docs-voice`, `ds-source-watch`, `ds-generation-pipeline` (with `gen-manifest` merged in) and the employer UI spokes moved under it; `ux-design-systems` → `ds-component-spec`; `design-engineer` a lens. Folded `ux-information-architecture`, `ux-data-visualization` and `ux-accessibility` into `ia-*`, `infod-*` and `a11y-*` (archived with provenance). Stated doctrine vs implementation for type and motion. Hubs declare `area:`; new generator `build-area-index.py` → `skill-areas.md`, wired into the rebuild and the harness. 19 routing cases added (`dsa-*`).
+- **Measured:** routing battery 2/19 → 19/19; token ask 2,983 words loaded (was ~7,250); `sy harness compile` for `design-system-lead`: component-spec supply 75% before the plan, no new spokes.
+- **Decisions:** [[decision-skill-prefixes]], [[decision-design-skill-architecture]].
+- **Next:** Sean reviews the PR; Claude gives the trigger-less spokes in `skill-areas.md` their own triggers.
+
 ### 2026-10-19 — Externals: REA wired into the workspace; install/update/remove method; Synapse D108
 
 SessionID: 2026-10-19-vm-rea7x
@@ -496,268 +663,4 @@ Next:
   - Personal MBP G3d and G4d
   - Sean: doctor drift (~/.cursor/hooks.json, 4 retired cursor-* scripts, launchd timer, 1 un-acked audit MISS)
   - Follow-up: keep one env_probe per `via` in tracked probe records (finding #2)
---- END BLOCK ---
-
-### 2026-09-23 — PlanetCompiler camera-following phase 5
-SessionID: 01a08bae-ad4a-7dc1-bfb2-f6d79fdd25fe-phase5
-
---- SESSION BLOCK ---
-Date: 2026-09-23
-Agent: Codex
-Surface: Codex desktop
-Machine: Personal Mac, Apple M3 Max
-Project(s): PlanetCompiler; independent Planet Lab scoped handoff
-
-Summary: Completed the bounded phase-five camera-driven terrain selection and measured committed-readiness increment in the separate personal-solo PlanetCompiler repository. Final project commit is `cdb16a4` on `codex/planet-compiler-environment`; no remote is configured and no Legion file changed.
-
-Evidence: Debug and Release pass 11/11 portable suites; the independent view oracle passes 91/91 with 17 detected corruptions and four prior regressions; native passes 28/28. Final live evidence records 230 actual submissions, 41 publications, 3,328 collision hits, five Slate lifecycle/control checks and 26 original reviewed captures. The complete checker, its 33 tests, ten evidence-audit tests, project doctor and whitespace checks pass. Its `human_acceptance: pending` field is the immutable pre-review machine-evidence snapshot. Sean subsequently reviewed the Proofboard and accepted the bounded visual approach; whole-planet scale and the original photographic, geological and production gates remain open.
-
-Commit: PlanetCompiler `cdb16a4` (`Complete bounded camera-following terrain evidence`).
-
-Runtime: Unreal stopped cleanly and released 127.0.0.1:8765. The self-contained Proofboard remains served at `http://127.0.0.1:8770/proofboard.html` for Sean's review.
-
-Next: scope a separate whole-planet validation only after a new instruction. It must address traversal/seams, source and tile availability, rebasing, cache/memory bounds, collision continuity, camera cadence and measured production performance. Preserve Legion, the browser prototype, original high-resolution references and adversarial gates.
-
-Review: On 2026-09-23 Sean stated that the intended camera-following visuals hold well for the approach, while the proof remains how it behaves at scale across an entire planetary surface.
-
-Handoff: Canonical live state is `07-projects/13-legion/docs/planet-lab-independent/SESSION-STATE.md`; project evidence index is `evidence/phase-5/phase-report.json` inside PlanetCompiler.
-
-Hook review: the earlier side-tab accent was already removed in PlanetCompiler commit `a0d35bf` and rechecked in the current template and board. No suppression was added and no design-hook issue remains standing.
---- END BLOCK ---
-
-### 2026-09-23 — Zero-Vector wave 0: fix round, publish, decisions, D5
-
-SessionID: 2026-09-23-work-4602a8
---- SESSION BLOCK ---
-Date: 2026-09-22 to 2026-09-23 (one conversation; resumed as 4602a8c3 after 42c33259 compacted)
-Machine: Work MacBook Pro
-Surface: Claude Code (Mac desktop app) · Claude Opus 5.5
-Project(s): 19-workspace-brain (Zero-Vector harness plan v1.1, wave 0)
-Summary:
-- Wave 0 (H16, H19, H24, H2, H22, H17, H25, H1, H3) built in intent worktrees T1–T8, verified by three
-  lenses (T10), fixed in T11 (23 fixes, including the walls F-01/F-02 floor blockers). Sean published
-  it: `main` fast-forwarded to `7fefad5`.
-- Harness triage: three red gates were all Claude Code sandbox effects (xcrun cache unwritable, `ps`
-  denied). With the real git the harness passed 35/36; profile_resolve passed 340/340 outside the
-  sandbox. The harness now prints an environment note naming those fingerprints and the fix.
-- Durable preference (a56782a): give Sean commands only when they are ready to run now.
-- Sean's decisions: walls F-11 pinned in wave 1 (declared residual until then); tests F-07 keep
-  blocking; D5 employer email domain `centricsoftware.com` (landed `6d30676`, exact match, three
-  reviewers clean); D7 three H25 parts to wave 1. Recorded in `1e217b1`. F-14 recommendation given;
-  waiting on Sean.
-- Ten merged intent worktrees removed (branches kept). T10/T11 findings register saved to held.
-- Queue: ^pc-47 gains the work-email finding (5 lines in 3 tracked files; scan does not count the
-  domain yet). New ^pc-48: router fires on task notifications (X2); ritual nag false alarm on resume.
-Next: Sean's F-14 call. If yes, move the H17 mechanics to a held register, rewrite `coverage.H17` at
-class level, and record the visibility rule in 00-context-profiles.md, before the first `--install-pin`.
---- END BLOCK ---
-
-### 2026-09-23 — Subatomic design-tokens course: capture, synthesis, token harness
-
-SessionID: 2026-09-23-work-sub8f6
---- SESSION BLOCK ---
-Date: 2026-09-23
-Machine: Work MacBook Pro
-Surface: Claude Code (desktop app) · Claude Opus 5.5
-Project(s): 23-subatomic-design-tokens-course (new)
-Summary: Sean logged into Brad & Ian Frost's *Subatomic: The Complete Guide To Design Tokens* in the in-app browser. The course explicitly offers downloads, and Sean approved them for this course only; project 22's no-video rule stands. Mapped all 372 items through the Thinkific player API at human pace. A paced, resumable downloader pulled 360 1080p Wistia videos, 358 course transcripts plus Wistia captions, slides, lesson notes and 7 demo repos (5.4 GB, 0 errors) into `<Projects>/subatomic-design-tokens-course/`, outside the vault. Wrote original notes for every chapter; delegated agents drafted Ch5–8 under a no-transcript contract. Graduated the doctrine:
-- knowledge `design-token-architecture`, which includes a Curtis-vs-Frost disagreement table
-- skill `token-architecture`, an L2 command hub under `ds-advisor`
-- L3 detector `09-tools/token-audit.py`: 23 rules, self-tested, and calibrated on the course's own demo repo, where it found 3 genuine contrast failures, 1 dark-theme drift and 15 CSS literals, and fixed 5 false-positive classes
-- a counter-stance note in framework #09
-- cross-links in `fe-design-tokens` / `design-system-ops` / `tokens-and-naming.md`
-- close-out detectors, knowledge hints, a trigger route, and routing corpus cases (52/52)
-Also captured the process lesson in `08-knowledge/cross-domain/in-app-browser-bulk-capture.md`. All write-quality validators pass.
-Pending:
-- `token-audit.py`: value-level Figma↔code parity (TA014 checks names only)
-- MCP probe for Figma variable scopes and the publish set
-- Self-improve: lexical misroutes seen in prompt hooks this session. `mvp`→sci-linear-algebra, `light`→imaging-foundations, `aliasing`→native-visual-eval, `distribution`→sci-probability-stochastic, `integration`→science-foundations and `dependency`→sec-supply-chain all fired on design-token prose. Tighten those triggers and add forbid cases.
---- END BLOCK ---
-
-### 2026-09-22 — Zero-Vector research and additive harness plan
-
-SessionID: 2026-09-22-work-zv7h
---- SESSION BLOCK ---
-Date: 2026-09-22
-Machine: Work MacBook Pro
-Surface: Claude Code (desktop app) · Claude Opus 5.5
-Project(s): 19-workspace-brain
-Summary: Researched Zero-Vector Design (site, Investiture tooling, Open Vector curriculum, Labrador) at a human reading pace. No AI or bot blocking was found. The upstream repos have no LICENSE file, so everything was synthesized clean-room. Planned an additive harness: 15 components in 4 waves, report-only first. The plan went through two multi-agent workflows (8 mappers; 3 designers, 3 judges, a synthesizer, 3 refuters, a reviser and a defect verifier). Healed the registry drift at HEAD.
-Decisions:
-  - Adopt ZV's patterns, not its tools or ideology. The employer walls and DS practice stand.
-  - Project intent goes in a README block or PROJECT.md, not in the living coordination spec.
-  - Nothing new is always-loaded, and nothing blocks before wave-2 telemetry and Sean's opt-in.
-Evidence:
-  - Registry drift healed @ 6cac460: build-registry --check 0, evaluate-skill-routing 49/49 — measured by 09-tools/build-registry.py
-  - Validator chain green (16 checks) plus workspace-harness --connections --tokens PASS; floors unchanged at 10,384 / 15,440 — measured by 09-tools/workspace-harness.py
-  - close-out-dispatch --run rc=0 (self-improve detectors). The plan's content is judgment-checked by the adversarial panel, not detector-verified.
-Next:
-  - Sean decides wave 0–1 (see ^pc-45 and the plan's "Decisions needed")
-  - Once wave 0 is approved: H1 heal sequencer, H3 intent-run hardening, H2 resolver plus playbook sign-off
---- END BLOCK ---
-
-### 2026-09-22 — Overlay rhythm and Lexical consume
-
-SessionID: 2026-09-22-work-q4n8
---- SESSION BLOCK ---
-Date: 2026-09-22
-Machine: Work MacBook Pro
-Surface: Cursor
-Project(s): Centric design system, SaaS PLM prototype
-Summary: Visual QA on menus, fields, page chrome, and comments. CDS #57 and proto #91 merged. Proto #92 consumes the rich text editor now that ./rich-text-editor is on cds main.
-Decisions:
-  - Menu rows share one nested radius on all four corners
-  - Pages must not import a CDS named export that is not on main
-  - Lexical consume waited until CDS #57 merged
-Evidence:
-  - CDS #57 merged @ github.com/cpes-software/cds/pull/57 — verified
-  - Proto #91 merged @ github.com/cpes-software/saas-plm-prototype/pull/91 — verified
-  - Proto #92 opened @ github.com/cpes-software/saas-plm-prototype/pull/92 — verified
-Next:
-  - Watch proto #92 Pages build and merge when it is green
---- END BLOCK ---
-
-### 2026-09-21 — cui #413 drop widget deps
-
---- SESSION BLOCK ---
-Date: 2026-09-21
-Project(s): 19-workspace-brain (centric-ui #413)
-Summary: Alex was right — the host must not declare CDS widget libraries. Removed `input-otp` and `react-day-picker` on cui #413 (`022c468`) and replied on both threads. Encoded the boundary in eng-foundations, #14, #18, ds-advisor, fe-component-architecture, and [[abstraction-hides-its-dependencies]].
-Shipped:
-  - centric-ui `022c468` on `feat/consume-cds-shadcn-federalization` — replies https://github.com/cpes-software/centric-ui/pull/413#discussion_r4068404303 and #discussion_r4068404401
-  - Knowledge [[abstraction-hides-its-dependencies]]
-Left open:
-  - npm still installs both as required `@centric/ui` peers (`peer: true`). Hiding that install is a CDS change (real dependency, or optional peer off the barrel). Not started. Do not bump `cds.pin`.
-  - Sean reviews cds #50. Do not agent-merge.
---- END SESSION BLOCK ---
-
-### 2026-09-21 — proto #87 Pages build, CDS split
-
---- SESSION BLOCK ---
-Date: 2026-09-21
-Agent: Grok 4.7 / Cursor
-Surface: Cursor
-Machine: Work MacBook Pro
-Project(s): saas-plm-prototype (proto #87); cds (prompt only, repo not edited)
-Summary: Proto #87 Pages build failed because `DisclosureChevron` is not exported from CDS `DetailSection`. Host chevron restored and pushed (`6bcd04e`). Sheet flush/border and the centered section chevron are CDS defaults. Paste-ready prompt left in chat for a CDS-rooted session.
-Evidence:
-  - Pages job https://github.com/cpes-software/saas-plm-prototype/actions/runs/35671930108/job/106570081611 — verified (missing export)
-  - Local `npm run build` after `6bcd04e` — verified (`build-ok`)
-  - Chevron centering on Classic blue Where Used — not verified (no browser pass)
-Decisions:
-  - Unblock Pages with the host `expand_more` icon. Do not invent `DisclosureChevron` on the proto.
-  - CDS owns sheet `gap-0` + `border-border`, and one centered section chevron on the existing `./DetailSection` subpath.
-Next:
-  - Open Cursor on `/Users/sean.sands/Projects/cpes-software/cds` and paste the prompt from this chat. Branch and PR. Do not merge. Do not edit the prototype in that chat.
-  - After that PR is on cds `main`, drop the proto sheet `gap-0 border-border` override and consume the centered chevron.
---- END BLOCK ---
-
-### 2026-09-21 — cui #413 peer replies
-
-SessionID: 2026-09-21-work-c4p13
---- SESSION BLOCK ---
-Date: 2026-09-21
-Machine: Work MacBook Pro
-Surface: Cursor
-Project(s): 19-workspace-brain (centric-ui #413)
-Summary: Replied on centric-ui #413. `input-otp` and `react-day-picker` are required `@centric/ui` peers re-exported from the barrel; the app does not use them yet.
-Evidence:
-  - Review replies @ https://github.com/cpes-software/centric-ui/pull/413#discussion_r4068308656 and #discussion_r4068308733 — verified (gh api read-back)
-Next:
-  - Sean reviews cds #50. Alex has the peer explanation on cui #413. Do not agent-merge. Do not bump a host cds.pin.
---- END BLOCK ---
-
-### 2026-09-21 — cds #50 CodeQL green
-
-SessionID: 2026-09-21-work-k7m2
---- SESSION BLOCK ---
-Date: 2026-09-21
-Machine: Work MacBook Pro
-Surface: Cursor
-Project(s): 19-workspace-brain (cds #50)
-Summary: Cleared the remaining CodeQL failure on cds #50. Polynomial CSS scans are now linear. Checks green at a346322.
-Decisions:
-  - Keep declaration and var() match behavior; change only the scan method.
-Evidence:
-  - CodeQL and CI on cds #50 @ a346322 — verified (gh pr checks)
-Next:
-  - Sean reviews cds #50. Do not agent-merge. Do not commit cds canvases/.
---- END BLOCK ---
-
-### 2026-09-18 — Figma Icons family (all ligature text selected)
-
-SessionID: 2026-09-18-work-figma-icon-family
---- SESSION BLOCK ---
-Date: 2026-09-18
-Agent: Cursor Grok 4.6
-Surface: Cursor
-Machine: Work MacBook Pro
-Project(s): 02-centricPLM
-Summary: Resumed the Aug 19 Icons catalog thread on Centric SaaS PLM DS Figma (`o6o1ZuGHxDow2vHLuYXT6X`, Icons page `4:2`). Plugin session still cannot load bare `Material Symbols` or `Material Symbols Outlined` (only Rounded + Sharp). Selected every ligature TEXT in every variant (8,362 nodes / 4,181 sets) so Sean can set the family in the Type panel. Fill: 1 on new Style=Filled variants is still pending after the family change.
-Decisions:
-  - Default family is `Material Symbols` (no Outlined/Rounded/Sharp suffix). Outlined is the default axis state; filled is FILL=1, not a second family.
-  - Do not assign Rounded/Sharp as a stand-in. Plugin cannot `loadFontAsync` the target family — Type panel only.
-Evidence:
-  - `listAvailableFontsAsync` (1,938 families): no exact `Material Symbols`; no `Material Symbols Outlined`
-  - Canvas families at select time: Outlined 4,244 · Rounded 4,100 · `Material Symbols` 18
-  - Selection applied: 8,362 TEXT nodes
-Pending added:
-  - After family apply: select only Style=Filled TEXT on newly added icons → set Fill: 1
-  - Then publish the Figma library (`^pc-18`)
-Next:
-  - Confirm Type panel family is `Material Symbols` on the current selection (re-select all icon TEXT if the selection dropped).
-  - Ask an agent to select new-icon Style=Filled TEXT only, then set Fill: 1.
-  - Spot-check Icons + publish.
---- END BLOCK ---
-
-### 2026-09-18 — CDS ShadCN federalization instance 0 (local)
-
-SessionID: 2026-09-18-work-cds-fed
---- SESSION BLOCK ---
-Date: 2026-09-18
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): employer cds (PR #48); centric-ui chat root only
-Summary: Instance 0 wrap pass is local on cds `feat/shadcn-federalization` @ `5b21ec9` (10 ahead of origin / PR #48 @ `8da550c`). True stock L0 + extras wrap + ShadCN vs CDS Storybook exists only for Button, Input, Badge. Remaining L0 files are previous CDS implementations moved under `vendor/shadcn`, not restored stock. Chat was rooted in centric-ui so every cds write prompted Allow; `move_agent_to_root` aborted. Sean takes a new chat with folder `/Users/sean.sands/Projects/cpes-software/cds`. Not pushed. Storybook on :6006 was stopped.
-Decisions:
-  - Keep local until Sean reviews. No push, no PR merge, no cui `cds.pin` bump.
-  - Public API stays additive. Extras on the wrap, not in L0, once stock is restored.
-  - Do not run `npm run shadcn:sync` until it merge-adds sibling checksums (today it rewrites the map to `tailwind.css` only).
-  - Progress stays native `<progress>`; AspectRatio stays CSS `aspect-ratio`. StatusPill/TypeTag stay laterals, not Badge.
-  - Resume in a CDS-rooted Cursor folder. Do not keep editing cds from a centric-ui chat.
-Evidence:
-  - cds `feat/shadcn-federalization` @ `5b21ec9` — 10 local commits ahead of origin — verified
-  - `l0:check` 52 files; stock stories only `{button,input,badge}.shadcn.stories.tsx` — verified
-  - cds PR #48 still the origin tip @ `8da550c` — not updated this session
-Pending resolved:
-  - Isolated wrap worktrees merged locally (button/input/badge/rest)
-  - Unused modules thin-wrapped into L0 (still CDS-as-L0, not stock)
-Next:
-  - Open Cursor on `/Users/sean.sands/Projects/cpes-software/cds`. Restore stock L0 + extras wrap + `*.shadcn.stories.tsx` for every remaining checksum module. Then fix `shadcn:sync`. Still no push until Sean reviews.
---- END BLOCK ---
-
-### 2026-09-17 — Phosphor consume (cds #46 / proto #84)
-
-SessionID: 2026-09-17-work-ph84
---- SESSION BLOCK ---
-Date: 2026-09-17
-Machine: Work MacBook Pro
-Surface: Cursor
-Agent: Cursor Grok 4.6
-Project(s): 19-workspace-brain; employer cds (#46); saas-plm-prototype (#84)
-Summary: Dual-set Icon landed on cds `main`. Proto consume PR is merge-ready: header Phosphor toggle, Vite 8 CSR resolve, lint-ds semantic tokens. Not merged. Harvested later-breakers into [[cds-host-consume-order]].
-Decisions:
-  - Catalog names stay Material ligatures; `set` is renderer only.
-  - `cds-exports-check` does not catch named exports on an existing subpath, nor Rolldown CSR maps.
-  - New proto files must author semantic color tokens; copying a baseline leak still fails the ratchet.
-Evidence:
-  - cds #46 MERGED @ https://github.com/cpes-software/cds/pull/46 — verified
-  - proto #84 MERGEABLE CLEAN @ https://github.com/cpes-software/saas-plm-prototype/pull/84 — verified
-  - proto #84 not merged — verified
-Pending resolved:
-  - Dual-set Icon on cds `main`
-  - Proto consume PR opened and CI green
-Next:
-  - Human merge of proto #84 if wanted. Do not agent-merge.
 --- END BLOCK ---
