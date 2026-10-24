@@ -382,6 +382,70 @@
       "outcome": "allow"
     },
     {
+      "id": "P37-cc-cloud-employer-merge",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "cloud"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "merge"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "merge is human-only"
+    },
+    {
+      "id": "P38-cc-cloud-employer-default",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "cloud"
+        ],
+        "owner_class": [
+          "employer"
+        ],
+        "action_class": [
+          "author",
+          "publish"
+        ],
+        "target_ref": [
+          "default",
+          "unknown"
+        ]
+      },
+      "outcome": "deny",
+      "reason": "employer work goes branch -> PR -> human review"
+    },
+    {
+      "id": "P39-cc-cloud-employer",
+      "when": {
+        "walls_family": [
+          "claude",
+          "cursor",
+          "codex"
+        ],
+        "device": [
+          "cloud"
+        ],
+        "owner_class": [
+          "employer"
+        ]
+      },
+      "outcome": "allow"
+    },
+    {
       "id": "P20-claude-not-personal-under-root",
       "when": {
         "walls_family": [

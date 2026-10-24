@@ -43,6 +43,21 @@
       "default_identity": "snds"
     }
   ],
+  "cloud": {
+    "id": "cloud",
+    "label": "Cloud or remote container",
+    "doc": "A session in a vendor's container (Claude Code on the web, Cursor cloud agents, Codex cloud). It has no declared hostname, so a marker names it; a declared hostname always wins, so a marker never turns a known machine into a cloud session. Each repo's owner decides its rules (decision-remote-sessions-both-contexts, 2026-10-23).",
+    "markers": [
+      {
+        "env": "CLAUDE_CODE_REMOTE",
+        "value": "true"
+      },
+      {
+        "env": "WS_CLOUD_SESSION",
+        "value": "1"
+      }
+    ]
+  },
   "ssh_aliases": [
     {
       "alias": "github-work",
@@ -123,6 +138,22 @@
       "family": "*",
       "device": "enterprise-pc",
       "identity": "snds",
+      "mismatch": "flag"
+    },
+    {
+      "id": "IR5",
+      "family": "*",
+      "device": "cloud",
+      "repo_class": "personal",
+      "identity": "snds",
+      "mismatch": "flag"
+    },
+    {
+      "id": "IR6",
+      "family": "*",
+      "device": "cloud",
+      "repo_class": "employer",
+      "identity": "centric",
       "mismatch": "flag"
     }
   ],

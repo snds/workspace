@@ -8,8 +8,9 @@ Hosts differ only in how a payload arrives and how a decision is rendered; the r
       Claude is an employer-approved surface (decision-claude-employer-surface): on the work device it
       meets P30-P32 like Cursor and Codex (branch -> PR -> human review, merge is human-only); off it,
       P40 and the not-positively-personal rules refuse. Employer vault folders, employer MCP channels
-      and employer browser hosts are refused for Claude only off the work device.
-  R2  non-Claude agents on employer repos (P30-P32, P40): branch -> PR -> human review.
+      and employer browser hosts are refused for Claude only off the work device. Since 2026-10-23 a
+      cloud session counts as the work device here, and meets P37-P39 (decision-remote-sessions-both-contexts).
+  R2  non-Claude agents on employer repos (P30-P32, P37-P40): branch -> PR -> human review.
   R3  I1: a personal effective identity never commits on an employer repo (any family).
   R4  an unknown or conflicted repo for a non-Claude agent: ask where the host can, deny elsewhere.
   R6  tamper (every family, every profile): hook skips and config bypasses (P05), git config and
@@ -913,7 +914,10 @@ def vault_root(root: Optional[Path], home: Optional[Path]) -> Path:
 
 def _work_device(ctx: "Ctx") -> bool:
     """True when ctx.device is a declared device whose default identity is an employer identity (the
-    Work MBP; dev-a in the fixtures). An unknown device is never the work device."""
+    Work MBP; dev-a in the fixtures), or a cloud session, where each repo's owner decides its rules
+    (decision-remote-sessions-both-contexts, 2026-10-23). An unknown device is never the work device."""
+    if ctx.device == "cloud":
+        return True
     try:
         dev_t = _pr().load_table("devices", root=ctx.root)
     except Exception:  # noqa: BLE001 - no table: most restrictive
@@ -964,7 +968,7 @@ def _map_policy(d: dict, walls: str) -> Optional[dict]:
     elif walls == "claude":
         rule = "R1"
     elif (facts.get("owner_class") in ("unknown", "third-party") or facts.get("repo_conflict")) \
-            and not (rid or "").startswith(("P30", "P31", "P40")):
+            and not (rid or "").startswith(("P30", "P31", "P37", "P38", "P40")):
         rule = "R4"
     else:
         rule = "R2"
@@ -1111,7 +1115,7 @@ def decide(action: dict, ctx: Ctx) -> dict:
                                          pc[1]))
         if walls == "claude" and _vault_folder_hit(path, ctx.root, ctx.home) and not _work_device(ctx):
             findings.append(_finding("R1", "deny", "an employer vault folder off the work device: employer work "
-                                                   "stays on the Work MBP"))
+                                                   "stays on the Work MBP or in a cloud session"))
         target = _target_dir(path) if path else (ctx.cwd or os.getcwd())
         if target:
             # a file write is `edit` (2026-10-13): never branch-checked; commit and push carry the branch rule
@@ -1122,7 +1126,7 @@ def decide(action: dict, ctx: Ctx) -> dict:
     elif kind == "mcp":
         if action.get("owner_class") == "employer" and walls == "claude" and not _work_device(ctx):
             f = _finding("R1", "deny", f"{action.get('server')} is an employer channel off the work device: "
-                                       "employer work stays on the Work MBP")
+                                       "employer work stays on the Work MBP or in a cloud session")
             if action.get("rollout") == "report":
                 f["mode"] = "report"
             findings.append(f)
@@ -1236,7 +1240,7 @@ def _url_owner_findings(ctx: Ctx, url: str, walls: str, rollout: Optional[str]) 
     if cls != "employer":
         return []
     f = _finding("R1", "deny", "an employer host in the browser off the work device: employer work stays on "
-                               "the Work MBP")
+                               "the Work MBP or in a cloud session")
     if rollout == "report":
         f["mode"] = "report"
     return [f]

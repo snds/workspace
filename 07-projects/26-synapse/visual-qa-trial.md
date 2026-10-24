@@ -2,7 +2,7 @@
 
 _Written 2026-10-23 on Sean's ask. Status: **running under D144** ([decisions](https://github.com/snds/synapse/blob/main/docs/plan/decisions.md#d144)). Visual QA is provisionally approved: the visual prove engine (`vqa`) may decide two checks in the Synapse gate while Sean and Claude review its real outputs together. Full approval waits for that review. Baton: [SESSION-STATE.md](SESSION-STATE.md)._
 
-**In short:** run the prompts below yourself, on the Personal MBP, against work you know. Record your own verdict before you read the agent's. Then open a review session with Claude and go through each run. Each disagreement becomes a fix to the engine, a cuespec, a harness or a skill. If the engine ever passes something you can see is wrong, revoke it at once.
+**In short:** run the prompts below yourself against work you know: the personal ones on the Personal MBP, the CDS ones (§7) in a Centric repo's session. Record your own verdict before you read the agent's. Then open a review session with Claude and go through each run. Each disagreement becomes a fix to the engine, a cuespec, a harness or a skill. If the engine ever passes something you can see is wrong, revoke it at once.
 
 ---
 
@@ -149,19 +149,26 @@ Trust again only after the fix is in and the run is repeated.
 
 Then D144 moves from provisional to approved.
 
-## 7. CDS and Centric: why they're not here
+## 7. CDS and Centric
 
-You asked for prompts covering your CDS and Centric work too. The walls rule that out from this side:
-- **Prompts.** Anything written in this vault is workspace content, and workspace content is never pasted into employer surfaces. That includes these prompts and the `vqa` engine itself, which lives in the vault.
-- **Outputs.** CDS or Centric results can't come back here for joint review either. This session and the vault are personal.
+_Rewritten 2026-10-23, when Sean let remote and cloud sessions do both kinds of work ([decision-remote-sessions-both-contexts](../../06-context/memory/decision-remote-sessions-both-contexts.md)). Employer work may now read the workspace, so these prompts and the engine may be used on CDS. Nothing from CDS comes back here._
 
-What this trial does instead: Unicron's prompts cover the same kinds of QA effort that CDS work needs:
-- U1: the component state matrix;
-- U2: theme parity;
-- U3: dense data screens;
-- the X1 pattern, for a token or version regression.
+**Where to run them.**
+- Run them in a session whose Centric repo holds the CDS work, on the Work MBP or in a cloud session.
+- Evidence stays with the employer work, in a folder of that repo's checkout or under `~/Projects/vqa-trial-cds/` on the Work MBP. It never goes into this vault.
+- The joint review happens in that same kind of session.
+- A course correction to the engine or a skill comes back here only as a generic lesson, with no CDS names, tokens or screens. H25's employer-substance check guards that.
 
-Whether a visual QA practice should exist on the employer side is a separate question. It would have to be built from employer-side material, in an employer-approved Claude session in a Centric repo on the Work MBP (see [decision-claude-employer-surface](../../06-context/memory/decision-claude-employer-surface.md)).
+**The prompts.** They mirror Unicron's. Name the CDS component or screen yourself when you run them, then paste the run block (§3), with the evidence folder changed as above.
+
+| ID | QA effort | Prompt |
+|---|---|---|
+| C1 | Component state matrix | "Visually check the CDS `<component>` in its documented examples against its reference: every variant in default, hover, focus-visible, active and disabled, light and dark." |
+| C2 | Theme parity and status tokens | "Capture `<screen>` in light and dark and check every status color against its reference. Report any status that reads the same in both themes or loses contrast." |
+| C3 | Dense data screen | "Visually check `<data-dense screen>` against its reference at the narrowest and widest supported widths. You read the text yourself (c3)." |
+| C4 | Token or version regression | "Compare `<screen>` on the last release with the current branch, the release as the reference. Report every region that changed and whether the change was intended." |
+
+**Watch for** the same signs as U1–U3, plus one more. The run must not write any CDS name, value or screen into this vault. If it does, that's a stop, like a false pass.
 
 ## 8. Review log
 
